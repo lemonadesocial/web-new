@@ -12,10 +12,8 @@ export default async function SiteHomePage({ params }: { params: { domain: strin
   }
 
   return (
-    <div className="h-dvh" style={{ background: 'var(--background)' }}>
-      {domain}
-
-      <button className="btn btn-primary">asd</button>
+    <div className="flex justify-center items-center h-dvh">
+      <h1>{domain}</h1>
     </div>
   );
 }

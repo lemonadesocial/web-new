@@ -4,6 +4,7 @@ export type StylesConfig = {
 };
 
 export type Config = {
+  title: string;
   theme: {
     styles: StylesConfig;
   };
