@@ -1,8 +1,10 @@
 import React from 'react';
 import { Metadata } from 'next';
 
-import { getSiteData } from '@/lib/fetchers';
-import { Config } from '@/lib/types';
+import { Sidebar } from '$ui/sidebar';
+
+import { getSiteData } from '$lib/fetchers';
+import { Config } from '$lib/types';
 
 import { StyleVariables } from './styled';
 
@@ -18,7 +20,11 @@ export async function generateMetadata(props: { params: { domain: string } }): P
   };
 }
 
-export default async function SiteLayout(props: { params: { domain: string }; children: React.ReactNode }) {
+export default async function SiteLayout(props: {
+  params: { domain: string };
+  children: React.ReactNode;
+  auth: React.ReactNode;
+}) {
   const params = await props.params;
   const domain = decodeURIComponent(params.domain);
   const data = (await getSiteData(domain)) as Config;
@@ -26,7 +32,11 @@ export default async function SiteLayout(props: { params: { domain: string }; ch
   return (
     <>
       <StyleVariables theme={data.theme.styles} />
-      {props.children}
+      {props.auth}
+      <div className="flex h-dvh w-full items-center">
+        <Sidebar />
+        <main className="flex-1">{props.children}</main>
+      </div>
     </>
   );
 }

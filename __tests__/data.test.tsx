@@ -1,5 +1,5 @@
 import { expect, it, describe } from 'vitest';
-import { DEFAULT_CONFIG } from '@/lib/data';
+import { DEFAULT_CONFIG } from '$lib/data';
 
 const value = {
   title: 'Lemonade',

@@ -1,6 +1,6 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { getSiteData } from '@/lib/fetchers';
+import { getSiteData } from '$lib/fetchers';
 
 export default async function SiteHomePage({ params }: { params: { domain: string } }) {
   const res = await params;
@@ -12,7 +12,7 @@ export default async function SiteHomePage({ params }: { params: { domain: strin
   }
 
   return (
-    <div className="flex justify-center items-center h-dvh">
+    <div className="flex justify-center items-center h-dvh ">
       <h1>{domain}</h1>
     </div>
   );

@@ -2,16 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  --font-title: '';
+  --font-body: '';
+
+  /* light */
+  --background-light: #f5f4f6;
+  --forceground-light: #000000;
+
+  /* dark */
+  --background-dark: #141216;
+  --forceground-light: #ffffff;
+  --primary-dark: #a667f3;
+  --secondary-dark: oklch(100% 0.0765 238 / 54%);
+  --border-dark: rgba(255, 255, 255, 0.08);
+
+  --button-secondary-background-dark: #f5f4f6;
+  --button-secondary-forceground-dark: #000000;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+
+  --background: var(--background-light);
+  --forceground: var(--forceground-light);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    color-scheme: dark;
+
+    --background: var(--background-dark);
+    --forceground: var(--forceground-dark);
+    --primary: var(--primary-dark);
+    --secondary: var(--secondary-dark);
+    --border: var(--border-dark);
+
+    --button-secondary-background: var(--button-secondary-background-dark);
+    --button-secondary-forceground: var(--button-secondary-forceground-dark);
   }
+}
+
+[color-scheme='light'] {
+  color-scheme: light;
+  --background: var(--background-light);
+  --forceground: var(--forceground-light);
+}
+
+[color-scheme='dark'] {
+  color-scheme: dark;
+
+  --background: var(--background-dark);
+  --forceground: var(--forceground-dark);
+  --primary: var(--primary-dark);
+  --secondary: var(--secondary-dark);
+  --border: var(--border-dark);
+
+  --button-secondary-background: var(--button-secondary-background-dark);
+  --button-secondary-forceground: var(--button-secondary-forceground-dark);
 }
 
 body {
