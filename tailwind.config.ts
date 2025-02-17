@@ -18,7 +18,7 @@ export default {
     optimizeUniversalDefaults: true,
   },
   plugins: [
-    plugin(function ({ matchComponents, theme }) {
+    plugin(function ({ matchComponents }) {
       let iconsDir = path.join(__dirname, './icons');
       let values: { [key: string]: any } = {};
       fs.readdirSync(iconsDir).forEach((file) => {
@@ -27,7 +27,7 @@ export default {
       });
       matchComponents(
         {
-          icon: ({ name, fullPath }) => {
+          icon: ({ name, fullPath }: { name: string; fullPath: string }) => {
             let content = fs
               .readFileSync(fullPath)
               .toString()
