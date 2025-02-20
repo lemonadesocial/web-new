@@ -2,9 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
+/* @font-face { */
+/*   font-family: ClashDisplay; */
+/*   src: url('/assets/fonts/clashdisplay-variable.ttf') format('truetype'); */
+/* } */
+/**/
+/* @font-face { */
+/*   font-family: GeneralSans; */
+/*   src: url('/assets/fonts/Generalsans-Variable.ttf') format('truetype'); */
+/* } */
+
+@theme {
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1;
+  --text-xs--letter-spacing: 1;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25;
+  --text-sm--letter-spacing: 1.125;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5;
+  --text-base--letter-spacing: 1.25;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.75;
+  --text-lg--letter-spacing: 1.5;
+  --text-xl: 1.5rem;
+  --text-xl--line-height: 2.25;
+  --text-xl--letter-spacing: 2;
+  --text-2xl: 2rem;
+  --text-2xl--line-height: 2.5;
+  --text-2xl--letter-spacing: 2.5;
+  --text-3xl: 3rem;
+  --text-3xl--line-height: 3.75;
+  --text-3xl--letter-spacing: 3;
+}
+
 html {
-  --font-title: '';
-  --font-body: '';
+  --font-title: ClashDisplay;
+  --font-body: GeneralSans;
 
   /* light */
   --background-light: #f5f4f6;
@@ -13,11 +47,13 @@ html {
   /* dark */
   --background-dark: #141216;
   --forceground-light: #ffffff;
-  --primary-dark: #a667f3;
+  --primary-dark: oklch(64.61% 0.2036 301.71);
   --secondary-dark: rgba(255, 255, 255, 0.54);
   --error-dark: #f57968;
   --border-dark: rgba(255, 255, 255, 0.08);
 
+  --button-primary-background-dark: var(--primary-dark);
+  --button-primary-forceground-dark: #ffffff;
   --button-secondary-background-dark: #f5f4f6;
   --button-secondary-forceground-dark: #000000;
 }
@@ -40,6 +76,8 @@ html {
     --error: var(--error-dark);
     --border: var(--border-dark);
 
+    --button-primary-background: var(--button-primary-background-dark);
+    --button-primary-forceground: var(--button-primary-forceground-dark);
     --button-secondary-background: var(--button-secondary-background-dark);
     --button-secondary-forceground: var(--button-secondary-forceground-dark);
   }
@@ -60,6 +98,8 @@ html {
   --secondary: var(--secondary-dark);
   --border: var(--border-dark);
 
+  --button-primary-background: var(--button-primary-background-dark);
+  --button-primary-forceground: var(--button-primary-forceground-dark);
   --button-secondary-background: var(--button-secondary-background-dark);
   --button-secondary-forceground: var(--button-secondary-forceground-dark);
 }
@@ -67,5 +107,5 @@ html {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
 }

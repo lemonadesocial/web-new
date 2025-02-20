@@ -33,7 +33,10 @@ export default async function SiteLayout(props: {
     <>
       <StyleVariables theme={data.theme.styles} />
       {props.auth}
-      {props.children}
+      <div className="flex h-dvh w-full">
+        <Sidebar />
+        <main className="flex-1 overflow-auto">{props.children}</main>
+      </div>
     </>
   );
 }
