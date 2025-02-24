@@ -55,7 +55,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="hidden md:flex flex-col h-full size-[96] border-r border-[--border]">
+    <div className="hidden md:flex flex-col h-full min-w-[96] max-w-[96] border-r border-[--border]">
       <div className="flex flex-col justify-center items-center gap-[16] py-[16] border-b border-[--border]">
         {MENU[0].map((item) => (
           <MenuItem key={item.path} path={item.path} icon={item.icon} active={pathname === item.path} />

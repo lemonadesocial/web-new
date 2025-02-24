@@ -1,8 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
 
-import { Sidebar } from '$ui/sidebar';
-
 import { getSiteData } from '$lib/fetchers';
 import { Config } from '$lib/types';
 

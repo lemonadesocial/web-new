@@ -7,6 +7,7 @@ import { getSiteData } from '$lib/fetchers';
 import { Config } from '$lib/types';
 
 import { StyleVariables } from './styled';
+import { Spacer } from '@heroui/spacer';
 
 export async function generateMetadata(props: { params: { domain: string } }): Promise<Metadata | null> {
   const params = await props.params;
@@ -35,7 +36,12 @@ export default async function SiteLayout(props: {
       {props.auth}
       <div className="flex h-dvh w-full">
         <Sidebar />
-        <main className="flex-1 overflow-auto">{props.children}</main>
+        <main className="w-full px-4 overflow-auto">
+          <div className="container mx-auto">
+            <Spacer y={14} />
+            {props.children}
+          </div>
+        </main>
       </div>
     </>
   );
