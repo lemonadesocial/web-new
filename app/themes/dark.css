@@ -5,7 +5,6 @@
   --color-forceground: #ffffff;
   --color-tertiary: #ffffff;
   --color-border: rgba(255, 255, 255, 0.08);
-  --button-hover-l: 0.08;
 
   --color-primary-50: #f5f3ff;
   --color-primary-100: #ede9fe;
@@ -18,4 +17,16 @@
   --color-primary-800: #5d0ec0;
   --color-primary-900: #4d179a;
   --color-primary-950: #2f0d68;
+
+  --color-success-50: #ecfdf5;
+  --color-success-100: #d0fae5;
+  --color-success-200: #a4f4cf;
+  --color-success-300: #5ee9b5;
+  --color-success-400: #00d492;
+  --color-success-500: #00bc7d;
+  --color-success-600: #009966;
+  --color-success-700: #007a55;
+  --color-success-800: #006045;
+  --color-success-900: #004f3b;
+  --color-success-950: #002c22;
 }

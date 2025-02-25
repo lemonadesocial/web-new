@@ -10,8 +10,6 @@ function generate(variables: { [key: string]: string }) {
 }
 
 export function StyleVariables({ theme: { variables, externals } }: { theme: StylesConfig }) {
-  // console.log(generate());
-  console.log(variables);
   return (
     <_JSXStyle>
       {`
