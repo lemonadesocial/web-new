@@ -58,8 +58,6 @@
   --color-success-800: var(--color-success-800);
   --color-success-900: var(--color-success-900);
   --color-success-950: var(--color-success-950);
-
-  --color-button-hover-l: var(--color-button-hover-l);
 }
 
 @layer base {

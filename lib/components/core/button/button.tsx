@@ -41,7 +41,7 @@ export default function Button({
   return (
     <button
       className={twMerge(
-        'cursor-pointer inline-flex items-center justify-center gap-2.5',
+        'transition cursor-pointer inline-flex items-center justify-center gap-2.5',
         sizes[size],
         variants[variant],
         clsx({ [iconOnlySizes[size]]: !!icon }),
