@@ -10,6 +10,7 @@ import { Divider } from '$core/divider';
 import EventList from '$ui/events/event-list';
 
 import PageHeader from './page-header';
+import { Card } from '$core/card';
 
 export default async function SiteHomePage({ params }: { params: { domain: string } }) {
   const res = await params;
