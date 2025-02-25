@@ -19,11 +19,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const cookieStore = await cookies();
-  // const theme = cookieStore.get('theme');
+  const cookieStore = await cookies();
+  const theme = cookieStore.get('theme');
 
   return (
-    <html lang="en" data-theme={'dark'}>
+    <html lang="en" data-theme={theme?.value || 'dark'}>
       <body className={clsx('transition antialiased overflow-hidden', generalSans.variable, classDisplay.variable)}>
         <StyledJsxRegistry>{children}</StyledJsxRegistry>
       </body>
