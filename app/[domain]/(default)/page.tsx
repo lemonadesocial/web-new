@@ -3,14 +3,12 @@ import { notFound } from 'next/navigation';
 
 import { getSiteData } from '$utils/fetchers';
 
-import { Button } from '$core/button';
 import { Spacer } from '$core/spacer';
 import { Divider } from '$core/divider';
 
 import EventList from '$ui/events/event-list';
 
 import PageHeader from './page-header';
-import { Card } from '$core/card';
 
 export default async function SiteHomePage({ params }: { params: { domain: string } }) {
   const res = await params;
