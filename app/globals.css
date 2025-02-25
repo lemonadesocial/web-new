@@ -1,0 +1,81 @@
+@import 'tailwindcss';
+@config "../tailwind.config.ts";
+@import './themes/dark.css';
+
+@theme {
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-xs--letter-spacing: 1;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-sm--letter-spacing: 1.125;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
+  --text-base--letter-spacing: 1.25;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.75rem;
+  --text-lg--letter-spacing: 1.5;
+  --text-xl: 1.5rem;
+  --text-xl--line-height: 2.25rem;
+  --text-xl--letter-spacing: 2;
+  --text-2xl: 2rem;
+  --text-2xl--line-height: 2.5rem;
+  --text-2xl--letter-spacing: 2.5;
+  --text-3xl: 3rem;
+  --text-3xl--line-height: 3.75rem;
+  --text-3xl--letter-spacing: 3;
+
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  --color-background: var(--color-background);
+  --color-forceground: var(--color-forceground);
+  --color-tertiary: var(--color-tertiary);
+
+  --color-primary-50: var(--color-primary-50);
+  --color-primary-100: var(--color-primary-100);
+  --color-primary-200: var(--color-primary-200);
+  --color-primary-300: var(--color-primary-300);
+  --color-primary-400: var(--color-primary-400);
+  --color-primary-500: var(--color-primary-500);
+  --color-primary-600: var(--color-primary-600);
+  --color-primary-700: var(--color-primary-700);
+  --color-primary-800: var(--color-primary-800);
+  --color-primary-900: var(--color-primary-900);
+  --color-primary-950: var(--color-primary-950);
+}
+
+@layer base {
+  * {
+    font-family: var(--font-body);
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-style: normal;
+    font-family: var(--font-title);
+  }
+}
+
+@layer components {
+  .border,
+  .border-r,
+  .border-l,
+  .border-t,
+  .border-b,
+  .border-x,
+  .border-y {
+    border-color: var(--color-border);
+  }
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-forceground);
+}
