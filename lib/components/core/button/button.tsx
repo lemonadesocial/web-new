@@ -18,17 +18,18 @@ const variants: { [key: string]: string } = {
   primary: 'bg-primary-500 hover:bg-primary-500/[0.8]',
   success: 'bg-success-600 hover:bg-success-600/[0.8]',
   tertiary: 'bg-tertiary/[.08] hover:bg-tertiary/[.16]',
+  secondary: 'bg-tertiary hover:bg-tertiary/[0.8] text-black',
 };
 
 interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonElement>> {
   size?: 'sm' | 'base' | 'lg';
-  variant?: 'primary' | 'success' | 'tertiary';
+  variant?: 'primary' | 'success' | 'tertiary' | 'secondary';
   icon?: string;
   iconLeft?: string;
   iconRight?: string;
 }
 
-export default function Button({
+export function Button({
   children,
   className,
   size = 'base',
@@ -41,7 +42,7 @@ export default function Button({
   return (
     <button
       className={twMerge(
-        'transition cursor-pointer inline-flex items-center justify-center gap-2.5',
+        'transition cursor-pointer inline-flex items-center justify-center gap-2.5 font-medium',
         sizes[size],
         variants[variant],
         clsx({ [iconOnlySizes[size]]: !!icon }),

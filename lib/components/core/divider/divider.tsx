@@ -9,6 +9,6 @@ interface DividerProps {
 
 const defaultOrientation = 'horizontal';
 
-export default function Divider({ orientation = defaultOrientation, className }: DividerProps) {
+export function Divider({ orientation = defaultOrientation, className }: DividerProps) {
   return <div className={twMerge('border-b ', clsx({ 'border-b-0 b-r': orientation === 'vertical' }), className)} />;
 }

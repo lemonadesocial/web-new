@@ -22,7 +22,7 @@ const spacerClasses = {
   },
 };
 
-export default function Spacer({ direction = 'vertical', size = 'md', className }: SpacerProps) {
+export function Spacer({ direction = 'vertical', size = 'md', className }: SpacerProps) {
   const baseClassName = `${spacerClasses[direction][size]}`;
   return <div className={twMerge(baseClassName, className)}></div>;
 }

@@ -91,3 +91,7 @@ body {
   background: var(--color-background);
   color: var(--color-forceground);
 }
+
+.page {
+  max-width: 67.5rem;
+}

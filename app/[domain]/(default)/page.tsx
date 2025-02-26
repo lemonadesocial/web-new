@@ -35,7 +35,7 @@ export default async function SiteHomePage({ params }: { params: { domain: strin
       <Divider className="my-2" />
 
       <div className="pt-6">
-        <EventList />
+        <EventList events={[]} />
       </div>
     </>
   );

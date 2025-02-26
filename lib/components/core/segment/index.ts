@@ -1,2 +1,1 @@
-import Segment from './segment';
-export { Segment };
+export * from './segment';

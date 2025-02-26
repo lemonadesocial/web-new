@@ -1,13 +1,9 @@
 'use client';
 import React from 'react';
-import { StylesConfig } from '$utils/types';
 import _JSXStyle from 'styled-jsx/style';
 
-function generate(variables: { [key: string]: string }) {
-  return Object.entries(variables)
-    .map(([key, value]) => `${key}: ${value};`)
-    .join('\n');
-}
+import { generateCssVariables } from '$utils/fetchers';
+import { StylesConfig } from '$utils/types';
 
 export function StyleVariables({ theme: { variables, externals } }: { theme: StylesConfig }) {
   return (
@@ -17,7 +13,7 @@ export function StyleVariables({ theme: { variables, externals } }: { theme: Sty
         
         [data-theme='dark'] {
           color-scheme: dark;
-          ${generate(variables)}
+          ${generateCssVariables(variables)}
         }       
       `}
     </_JSXStyle>

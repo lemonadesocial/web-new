@@ -12,7 +12,7 @@ interface SegmentProps<T> {
   onSelect?: (item: SegmentItem<T>) => void;
 }
 
-export default function Segment<T>({ items, selected, onSelect }: SegmentProps<T>) {
+export function Segment<T>({ items, selected, onSelect }: SegmentProps<T>) {
   const [active, setActive] = React.useState(selected);
 
   return (

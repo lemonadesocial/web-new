@@ -1,7 +1,9 @@
 'use client';
 import React from 'react';
+
 import { Button } from '$core/button';
 import { Segment } from '$core/segment';
+import { generateCssVariables } from '$lib/utils/fetchers';
 
 type SegmentValueType = 'upcoming' | 'past';
 type SegmentValue = { label: string; value: SegmentValueType };
@@ -13,9 +15,18 @@ const segments: SegmentValue[] = [
 
 export default function EventList() {
   const [selected, setSelected] = React.useState<SegmentValueType>('upcoming');
+  const [styled, setStyled] = React.useState({});
+  console.log(generateCssVariables(styled));
 
   return (
     <div className="flex flex-col gap-6">
+      <style jsx global>
+        {`
+          :root {
+            ${generateCssVariables(styled)}
+          }
+        `}
+      </style>
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-semibold ">Events</h2>
         <div className="flex items-center gap-3">
@@ -23,6 +34,7 @@ export default function EventList() {
             selected={selected}
             items={segments}
             onSelect={(item) => {
+              setStyled({ '--color-primary-500': 'red', '--color-background': 'blue' });
               setSelected(item.value);
             }}
           />

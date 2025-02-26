@@ -1,0 +1,63 @@
+fragment SpaceFragment on Space {
+  _id
+  title
+  admins {
+    _id
+    image_avatar
+  }
+  description
+  is_ambassador
+  followed
+  followers
+  image_avatar
+  image_avatar_expanded {
+    _id
+    bucket
+    url
+    type
+    key
+  }
+  image_cover
+  image_cover_expanded {
+    _id
+    bucket
+    url
+    type
+    key
+  }
+  creator
+  creator_expanded {
+    _id
+    name
+    image_avatar
+  }
+  slug
+  private
+  listed_events
+  website
+  address {
+    _id
+    city
+    country
+    latitude
+    longitude
+    street_1
+    street_2
+    region
+    title
+  }
+  handle_instagram
+  handle_twitter
+  handle_linkedin
+  handle_youtube
+  handle_tiktok
+  personal
+}
+
+# Queries
+
+query GetSpace($id: MongoID, $slug: String) {
+  getSpace(_id: $id, slug: $slug) {
+    ...SpaceFragment
+  }
+}

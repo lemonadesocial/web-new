@@ -13,3 +13,9 @@ export async function getSiteData(domain: string) {
     },
   )();
 }
+
+export function generateCssVariables(variables: { [key: string]: string }) {
+  return Object.entries(variables)
+    .map(([key, value]) => `${key}: ${value};`)
+    .join('\n');
+}

@@ -19,9 +19,11 @@
       }
     ],
     "paths": {
+      "$lib/*": ["./lib/*"],
       "$core/*": ["./lib/components/core/*"],
       "$ui/*": ["./lib/components/ui/*"],
-      "$utils/*": ["./lib/utils/*"]
+      "$utils/*": ["./lib/utils/*"],
+      "$request/*": ["./lib/request/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

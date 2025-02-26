@@ -13,7 +13,7 @@ interface InputProps {
   className?: string;
 }
 
-const Input: React.FC<InputProps> = ({
+export function Input({
   label,
   type = 'text',
   value = '',
@@ -22,7 +22,7 @@ const Input: React.FC<InputProps> = ({
   leftIcon,
   rightIcon,
   className,
-}) => {
+}: InputProps) {
   return (
     <div className={`flex flex-col ${className}`}>
       <label htmlFor={label} className="text-tertiary text-sm font-medium mb-1">
@@ -56,6 +56,6 @@ const Input: React.FC<InputProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default Input;

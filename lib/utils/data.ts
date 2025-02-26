@@ -5,7 +5,9 @@ export const DEFAULT_CONFIG: Config = {
   theme: {
     styles: {
       variables: {
+        // TODO: need to test
         // '--color-primary-500': 'red',
+        // '--color-background': 'white',
       },
       externals: [],
     },
