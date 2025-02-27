@@ -1,5 +1,6 @@
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
+import Image from 'next/image';
 
 interface AvatarProps {
   src?: string;
@@ -25,7 +26,7 @@ export function Avatar({ src, name, size = 40, className }: AvatarProps) {
       )}
     >
       {src ? (
-        <img src={src} alt={name || initials} className="w-full h-full object-cover" />
+        <Image src={src} alt={name || initials} className="w-full h-full object-cover" />
       ) : (
         <span className={twMerge(`text-${size / 2} font-medium`, className)}>{initials}</span>
       )}

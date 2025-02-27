@@ -13,31 +13,27 @@ interface QueryRequest<T, V extends object> {
   reject: (error: any) => void;
 }
 
-export default class GraphqlClient {
+export class GraphqlClient {
   private client: GraphQLClient;
-  cache?: InMemoryCache;
+  private cache?: InMemoryCache;
   private queue: QueryRequest<any, any>[] = [];
   private processing: boolean = false;
 
-  constructor({ url, cache, headers }: { url: string; cache?: InMemoryCache; headers?: HeadersInit }) {
-    this.client = new GraphQLClient(url, {
-      cache: 'no-store',
-      headers,
-    });
+  constructor({ url, cache }: { url: string; cache?: InMemoryCache }) {
+    this.client = new GraphQLClient(url, { cache: 'no-store' });
     this.cache = cache;
   }
 
-  // @ignore-check
-  async query<T, V extends object>({
+  async query<T, V>({
     query,
-    variables,
-    initData,
+    variables = {},
     headers,
+    initData,
   }: {
     query: TypedDocumentNode<T, V>;
+    headers?: HeadersInit;
     variables?: V;
     initData?: T;
-    headers?: HeadersInit;
   }): Promise<{ data: T; error: any }> {
     return new Promise((resolve, reject) => {
       this.queue.push({ query, variables, headers, initData, resolve, reject });
@@ -48,16 +44,17 @@ export default class GraphqlClient {
   private async processQueue<T, V extends object>() {
     if (this.processing || this.queue.length === 0) return;
 
-    this.processing = true;
-    const { query, variables = {}, initData, headers, resolve } = this.queue.shift()!;
+    const { query, variables, headers, initData, resolve } = this.queue.shift()!;
     if (headers) this.client.setHeaders(headers);
 
     try {
       const cacheData = this.cache?.readQuery<T, V>(query, variables);
 
       if (cacheData) {
-        resolve(cacheData);
+        resolve({ data: cacheData });
       } else {
+        this.processing = true;
+
         let result = initData;
         if (!result) result = await this.client.request(query, variables);
         this.cache?.normalizeAndStore<T, V>(query, variables, result);

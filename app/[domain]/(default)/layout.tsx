@@ -2,11 +2,13 @@ import React from 'react';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
 
-import { Spacer } from '$core/spacer';
-import { Sidebar } from '$ui/sidebar';
-import { getSiteData } from '$utils/fetchers';
-import { client } from '$lib/request/client';
+import { Spacer } from '$lib/components/core';
+import { getSiteData } from '$lib/utils/fetchers';
 import { GetMeDocument } from '$lib/generated/graphql';
+
+import { client } from '$lib/request';
+
+import Sidebar from './sidebar';
 
 export async function generateMetadata(props: { params: { domain: string } }): Promise<Metadata | null> {
   const params = await props.params;
@@ -23,7 +25,7 @@ export async function generateMetadata(props: { params: { domain: string } }): P
 export default async function SiteLayout(props: { params: { domain: string }; children: React.ReactNode }) {
   const key = 'x-ory-kratos-session';
   const cookieStore = await cookies();
-  const session = cookieStore.get(key);
+  const session = cookieStore.get('ory_kratos_session_staging');
 
   const { data } = await client.query({
     query: GetMeDocument,

@@ -15,7 +15,7 @@ export default async function Layout({ children }: React.PropsWithChildren) {
     headers: { [key]: session?.value as string },
   });
   const me = data?.getMe as User;
-  console.log(me);
+
   return (
     <>
       <div className="flex flex-col h-dvh w-full">

@@ -61,3 +61,57 @@ query GetSpace($id: MongoID, $slug: String) {
     ...SpaceFragment
   }
 }
+
+query GetSpaceEvents(
+  $skip: Int
+  $limit: Int
+  $startFrom: DateTimeISO
+  $startTo: DateTimeISO
+  $space: MongoID
+  $sort: EventSortInput
+  $endFrom: DateTimeISO
+  $endTo: DateTimeISO
+  $spaceTags: [MongoID!]
+) {
+  getEvents(
+    skip: $skip
+    limit: $limit
+    start_from: $startFrom
+    start_to: $startTo
+    space: $space
+    sort: $sort
+    end_from: $endFrom
+    end_to: $endTo
+    space_tags: $spaceTags
+  ) {
+    _id
+    shortid
+    title
+    host_expanded {
+      _id
+      image_avatar
+      name
+    }
+    address {
+      city
+      country
+      region
+    }
+    new_new_photos_expanded {
+      _id
+      bucket
+      key
+      type
+      url
+    }
+    start
+    event_ticket_types {
+      _id
+      prices {
+        cost
+        currency
+        default
+      }
+    }
+  }
+}

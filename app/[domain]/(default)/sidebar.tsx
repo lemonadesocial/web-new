@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { useClient } from '$lib/request';
 
 const MENU = [
   [
@@ -53,6 +54,9 @@ const MENU = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+
+  const { client } = useClient();
+  console.log(client);
 
   return (
     <div className="hidden md:flex flex-col h-full min-w-[96] max-w-[96] border-r border-[--border]">

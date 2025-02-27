@@ -16,7 +16,6 @@ const segments: SegmentValue[] = [
 export default function EventList() {
   const [selected, setSelected] = React.useState<SegmentValueType>('upcoming');
   const [styled, setStyled] = React.useState({});
-  console.log(generateCssVariables(styled));
 
   return (
     <div className="flex flex-col gap-6">

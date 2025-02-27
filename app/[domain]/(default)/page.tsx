@@ -1,12 +1,8 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 
+import { Divider, Spacer } from '$lib/components/core';
 import { getSiteData } from '$utils/fetchers';
-
-import { Spacer } from '$core/spacer';
-import { Divider } from '$core/divider';
-
-import EventList from '$ui/events/event-list';
 
 import PageHeader from './page-header';
 
@@ -34,9 +30,7 @@ export default async function SiteHomePage({ params }: { params: { domain: strin
       <Spacer className="h-6" />
       <Divider className="my-2" />
 
-      <div className="pt-6">
-        <EventList events={[]} />
-      </div>
+      <div className="pt-6">event list here</div>
     </>
   );
 }

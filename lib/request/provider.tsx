@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import GraphqlClient from './client';
+import { GraphqlClient } from './client';
 
 interface GraphqlClientContextType {
   client: GraphqlClient;
@@ -9,15 +9,16 @@ interface GraphqlClientContextType {
 
 const GraphqlClientContext = React.createContext<GraphqlClientContextType | null>(null);
 
-export default function GraphqlClienProvider(props: React.PropsWithChildren & { client: GraphqlClient }) {
-  return <GraphqlClientContext.Provider value={{ client: props.client }}>{props.children}</GraphqlClientContext.Provider>;
+export function GraphqlClienProvider(props: React.PropsWithChildren & { client: GraphqlClient }) {
+  return (
+    <GraphqlClientContext.Provider value={{ client: props.client }}>{props.children}</GraphqlClientContext.Provider>
+  );
 }
 
-export const useClient = () => {
+export function useClient() {
   const context = React.useContext(GraphqlClientContext);
   if (context === null) {
     throw new Error('useAppContext must be used within an GraphqlClienProvider');
   }
   return context;
-};
-
+}

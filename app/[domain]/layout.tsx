@@ -5,6 +5,7 @@ import { getSiteData } from '$utils/fetchers';
 import { Config } from '$utils/types';
 
 import { StyleVariables } from './styled';
+import Providers from './providers';
 
 export async function generateMetadata(props: { params: { domain: string } }): Promise<Metadata | null> {
   const params = await props.params;
@@ -28,10 +29,10 @@ export default async function SiteLayout(props: {
   const data = (await getSiteData(domain)) as Config;
 
   return (
-    <>
+    <Providers>
       <StyleVariables theme={data.theme.styles} />
-      {props.auth}
       {props.children}
-    </>
+      test
+    </Providers>
   );
 }

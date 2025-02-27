@@ -19,11 +19,12 @@ const variants: { [key: string]: string } = {
   success: 'bg-success-600 hover:bg-success-600/[0.8]',
   tertiary: 'bg-tertiary/[.08] hover:bg-tertiary/[.16]',
   secondary: 'bg-tertiary hover:bg-tertiary/[0.8] text-black',
+  flat: 'hover:bg-tertiary/[0.08]',
 };
 
 interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonElement>> {
   size?: 'sm' | 'base' | 'lg';
-  variant?: 'primary' | 'success' | 'tertiary' | 'secondary';
+  variant?: 'primary' | 'success' | 'tertiary' | 'secondary' | 'flat';
   icon?: string;
   iconLeft?: string;
   iconRight?: string;

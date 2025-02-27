@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { CodegenConfig } from '@graphql-codegen/cli';
+import { addTypenameSelectionDocumentTransform } from '@graphql-codegen/client-preset';
 
-console.log(process.env.NEXT_PUBLIC_GRAPHQL_URL);
 const config: CodegenConfig = {
   schema: process.env.NEXT_PUBLIC_GRAPHQL_URL,
   documents: ['./lib/gql/**/*.gql'],
@@ -10,6 +10,7 @@ const config: CodegenConfig = {
     './lib/generated/': {
       preset: 'client',
       plugins: [],
+      documentTransforms: [addTypenameSelectionDocumentTransform],
     },
   },
 };
