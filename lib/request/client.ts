@@ -24,7 +24,7 @@ export class GraphqlClient {
     this.cache = cache;
   }
 
-  async query<T, V>({
+  async query<T, V extends object>({
     query,
     variables = {},
     headers,
@@ -32,7 +32,7 @@ export class GraphqlClient {
   }: {
     query: TypedDocumentNode<T, V>;
     headers?: HeadersInit;
-    variables?: V;
+    variables?: object;
     initData?: T;
   }): Promise<{ data: T; error: any }> {
     return new Promise((resolve, reject) => {
@@ -49,7 +49,6 @@ export class GraphqlClient {
 
     try {
       const cacheData = this.cache?.readQuery<T, V>(query, variables);
-
       if (cacheData) {
         resolve({ data: cacheData });
       } else {

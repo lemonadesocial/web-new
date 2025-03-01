@@ -7,7 +7,7 @@ import { Config } from '$utils/types';
 import { StyleVariables } from './styled';
 import Providers from './providers';
 
-export async function generateMetadata(props: { params: { domain: string } }): Promise<Metadata | null> {
+export async function generateMetadata(props: { params: Promise<{ domain: string }> }): Promise<Metadata | null> {
   const params = await props.params;
   const domain = decodeURIComponent(params.domain);
   const data = await getSiteData(domain);

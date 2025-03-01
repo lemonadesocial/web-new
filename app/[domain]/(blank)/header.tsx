@@ -12,7 +12,7 @@ export default function Header({ me }: { me: User }) {
 
   return (
     <div className="p-4 flex justify-between items-center">
-      <Link href="/">
+      <Link href="/" aria-label="Lemonade">
         <i className="icon-lemonade size-[20]" />
       </Link>
 

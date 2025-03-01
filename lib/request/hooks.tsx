@@ -21,6 +21,7 @@ export function useQuery<T, V extends object>(
   const fetchData = async () => {
     try {
       setLoading(true);
+      console.log(initData);
       const { data } = await client.query({ query, variables, initData });
       setData(data);
     } catch (error) {

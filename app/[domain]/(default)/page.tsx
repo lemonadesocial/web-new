@@ -5,8 +5,9 @@ import { Divider, Spacer } from '$lib/components/core';
 import { getSiteData } from '$utils/fetchers';
 
 import PageHeader from './page-header';
+import Link from 'next/link';
 
-export default async function SiteHomePage({ params }: { params: { domain: string } }) {
+export default async function SiteHomePage({ params }: { params: Promise<{ domain: string }> }) {
   const res = await params;
   const domain = decodeURIComponent(res.domain);
   const [data] = await Promise.all([getSiteData(domain)]);
@@ -31,6 +32,7 @@ export default async function SiteHomePage({ params }: { params: { domain: strin
       <Divider className="my-2" />
 
       <div className="pt-6">event list here</div>
+      <Link href={'/c/new-space'}>asdasd</Link>
     </>
   );
 }

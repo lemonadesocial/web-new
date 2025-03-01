@@ -10,7 +10,7 @@ import { client } from '$lib/request';
 
 import Sidebar from './sidebar';
 
-export async function generateMetadata(props: { params: { domain: string } }): Promise<Metadata | null> {
+export async function generateMetadata(props: { params: Promise<{ domain: string }> }): Promise<Metadata | null> {
   const params = await props.params;
   const domain = decodeURIComponent(params.domain);
   const data = await getSiteData(domain);
@@ -22,7 +22,7 @@ export async function generateMetadata(props: { params: { domain: string } }): P
   };
 }
 
-export default async function SiteLayout(props: { params: { domain: string }; children: React.ReactNode }) {
+export default async function SiteLayout(props: { params: Promise<{ domain: string }>; children: React.ReactNode }) {
   const key = 'x-ory-kratos-session';
   const cookieStore = await cookies();
   const session = cookieStore.get('ory_kratos_session_staging');

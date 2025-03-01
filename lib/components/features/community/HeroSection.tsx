@@ -16,16 +16,18 @@ export function HeroSection({ space }: HeroSectionProps) {
     <>
       <div className="relative w-full h-44 md:h-96 overflow-hidden">
         <img
-          src={generateUrl(space?.image_cover_expanded)}
-          alt={space?.title}
-          className="aspect-[3.5/1] object-cover object-cover rounded-md"
+          src={generateUrl(space?.image_cover_expanded, {
+            resize: { width: 1080, height: 1080 * 3.5, fit: 'contain' },
+          })}
+          alt={space?.title as string}
+          className="aspect-[3.5/1] object-cover object-cover rounded-md w-full"
         />
 
         <div className="absolute bottom-8 md:bottom-4 outline-6 outline-background size-16 md:size-32 rounded-md overflow-hidden shadow-lg">
           {space?.image_cover_expanded && (
             <img
               className="w-full h-full outline outline-tertiary/[0.04] rounded-md"
-              src={generateUrl(space?.image_avatar_expanded)}
+              src={generateUrl(space?.image_avatar_expanded, { resize: { width: 128, height: 128 } })}
               alt={space?.title}
             />
           )}
@@ -46,6 +48,7 @@ export function HeroSection({ space }: HeroSectionProps) {
           {COMMUNITY_SOCIAL_LINKS.filter((item) => space?.[item.key as keyof Space]).map((item) => (
             <Button
               key={item.key}
+              aria-label={item.key}
               variant="flat"
               icon={item.icon}
               className="text-tertiary/[0.56]"
