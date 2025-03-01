@@ -46,6 +46,7 @@ export function Calendar({ events, footer }: { events?: Date[]; footer?: React.R
         <span className="text-lg font-medium">{format(active, 'MMMM')}</span>
         <div className="flex items-center text-tertiary/[.56]">
           <button
+            aria-label="prev-month"
             className="hover:text-white focus:outline-none"
             onClick={() => setActive((prev) => addMonths(prev, -1))}
           >
@@ -53,6 +54,7 @@ export function Calendar({ events, footer }: { events?: Date[]; footer?: React.R
           </button>
           <i className="icon-dot size-5" />
           <button
+            aria-label="next-month"
             className="hover:text-white focus:outline-none"
             onClick={() => setActive((prev) => addMonths(prev, 1))}
           >
@@ -72,6 +74,7 @@ export function Calendar({ events, footer }: { events?: Date[]; footer?: React.R
       <div className="grid grid-cols-7 gap-1">
         {getDates().map((d) => (
           <button
+            aria-label={d.toString()}
             key={d.toString()}
             className={twMerge(
               'relative text-center cursor-pointer px-2.5 py-2 font-medium',

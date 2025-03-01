@@ -64,7 +64,7 @@ export default function Container({ space }: { space?: Space }) {
           )}
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="hidden flex-col gap-4 md:flex">
           <Button variant="tertiary" iconLeft="icon-plus" className="w-full">
             Submit Event
           </Button>
