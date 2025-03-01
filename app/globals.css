@@ -110,3 +110,8 @@ body {
 .page {
   max-width: 67.5rem;
 }
+
+a[title='Open this area in Google Maps (opens a new window)'],
+.gm-style-cc {
+  display: none !important;
+}

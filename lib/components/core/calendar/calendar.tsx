@@ -18,7 +18,7 @@ import clsx from 'clsx';
 
 import { Card } from '../card';
 
-export function Calendar({ events, footer }: { events?: Date[]; footer?: React.ReactElement }) {
+export function Calendar({ events, footer }: { events?: Date[]; footer?: React.ReactElement | null }) {
   const [selected, setSelected] = React.useState(new Date());
   const [active, setActive] = React.useState(new Date());
 

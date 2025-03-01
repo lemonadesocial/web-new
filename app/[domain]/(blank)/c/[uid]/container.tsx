@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 
-import { Button, Divider, Segment } from '$lib/components/core';
+import { Button, Divider, Map, Segment } from '$lib/components/core';
 import { HeroSection } from '$lib/components/features/community';
 import { Event, GetSpaceEventsDocument, SortOrder, Space } from '$lib/generated/graphql';
 import { useQuery } from '$lib/request';
@@ -70,16 +70,21 @@ export default function Container({ space }: { space?: Space }) {
           </Button>
           <Calendar
             footer={
-              <Segment
-                className="w-full mt-3"
-                onSelect={(item) => setEventListType(item.value)}
-                items={[
-                  { label: 'Upcomping', value: 'upcoming' },
-                  { label: 'Past', value: 'past' },
-                ]}
-              />
+              !!upcomingEvents.length ? (
+                <Segment
+                  className="w-full mt-3"
+                  onSelect={(item) => setEventListType(item.value)}
+                  items={[
+                    { label: 'Upcomping', value: 'upcoming' },
+                    { label: 'Past', value: 'past' },
+                  ]}
+                />
+              ) : null
             }
           />
+          <div className="aspect-square rounded-lg overflow-hidden">
+            <Map />
+          </div>
         </div>
       </div>
     </>

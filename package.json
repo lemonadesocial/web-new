@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.0.8",
+    "@vis.gl/react-google-maps": "^1.5.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "graphql-request": "^7.1.2",
