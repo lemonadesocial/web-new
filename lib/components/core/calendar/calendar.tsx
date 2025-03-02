@@ -18,7 +18,13 @@ import clsx from 'clsx';
 
 import { Card } from '../card';
 
-export function Calendar({ events, footer }: { events?: Date[]; footer?: React.ReactElement | null }) {
+interface CalendarProps {
+  events?: Date[];
+  footer?: () => React.ReactElement | null;
+  onSelectDate?: (date: Date) => void;
+}
+
+export function Calendar({ events, footer, onSelectDate }: CalendarProps) {
   const [selected, setSelected] = React.useState(new Date());
   const [active, setActive] = React.useState(new Date());
 
@@ -47,7 +53,7 @@ export function Calendar({ events, footer }: { events?: Date[]; footer?: React.R
         <div className="flex items-center text-tertiary/[.56]">
           <button
             aria-label="prev-month"
-            className="hover:text-white focus:outline-none"
+            className="cursor-pointer hover:text-white focus:outline-none"
             onClick={() => setActive((prev) => addMonths(prev, -1))}
           >
             <i className="icon-chevron-left" />
@@ -55,7 +61,7 @@ export function Calendar({ events, footer }: { events?: Date[]; footer?: React.R
           <i className="icon-dot size-5" />
           <button
             aria-label="next-month"
-            className="hover:text-white focus:outline-none"
+            className="cursor-pointer hover:text-white focus:outline-none"
             onClick={() => setActive((prev) => addMonths(prev, 1))}
           >
             <i className="icon-chevron-right" />
@@ -85,7 +91,10 @@ export function Calendar({ events, footer }: { events?: Date[]; footer?: React.R
                 'bg-tertiary/[.08] rounded-sm': isToday(d),
               }),
             )}
-            onClick={() => setSelected(d)}
+            onClick={() => {
+              setSelected(d);
+              onSelectDate?.(d);
+            }}
           >
             {format(d, 'd')}
             {events && events.some((e) => isSameDay(e, d)) && (
@@ -96,7 +105,7 @@ export function Calendar({ events, footer }: { events?: Date[]; footer?: React.R
           </button>
         ))}
       </div>
-      {footer}
+      {footer?.()}
     </Card>
   );
 }

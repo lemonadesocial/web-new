@@ -54,6 +54,15 @@ fragment SpaceFragment on Space {
   personal
 }
 
+fragment SpaceTagFragment on SpaceTagBase {
+  _id
+  color
+  space
+  tag
+  targets
+  type
+}
+
 # Queries
 
 query GetSpace($id: MongoID, $slug: String) {
@@ -105,6 +114,7 @@ query GetSpaceEvents(
       url
     }
     start
+    end
     event_ticket_types {
       _id
       prices {
@@ -113,5 +123,24 @@ query GetSpaceEvents(
         default
       }
     }
+  }
+}
+
+# NOTE: This will get all events of space to display on calendar
+query GetSpaceEventsCalendar($space: MongoID) {
+  getEvents(space: $space) {
+    _id
+    start
+    address {
+      _id
+      latitude
+      longitude
+    }
+  }
+}
+
+query GetSpaceTags($space: MongoID!) {
+  listSpaceTags(space: $space) {
+    ...SpaceTagFragment
   }
 }

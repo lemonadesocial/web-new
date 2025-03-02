@@ -21,7 +21,6 @@ export function useQuery<T, V extends object>(
   const fetchData = async () => {
     try {
       setLoading(true);
-      console.log(initData);
       const { data } = await client.query({ query, variables, initData });
       setData(data);
     } catch (error) {
@@ -31,13 +30,13 @@ export function useQuery<T, V extends object>(
     }
   };
 
+  const variablesKey = React.useMemo(() => JSON.stringify(variables), [variables]);
+
   React.useEffect(() => {
     if (!skip) {
       fetchData();
-      // const key = client.cache?.createCacheKey(query);
-      // client.cache?.subscribe(key!, fetchData);
     }
-  }, [skip]);
+  }, [skip, variablesKey]);
 
   return { data, loading, error, client };
 }
