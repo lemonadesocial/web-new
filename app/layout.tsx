@@ -24,7 +24,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" data-theme={theme?.value || 'dark'}>
-      <body className={clsx('transition antialiased overflow-hidden', generalSans.variable, classDisplay.variable)}>
+      <body className={clsx('transition antialiased', generalSans.variable, classDisplay.variable)}>
         <StyledJsxRegistry>{children}</StyledJsxRegistry>
       </body>
     </html>

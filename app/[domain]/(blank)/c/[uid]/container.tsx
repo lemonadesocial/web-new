@@ -1,7 +1,9 @@
 'use client';
 import React from 'react';
+import { useAtom } from 'jotai';
+import { endOfDay, startOfDay, format } from 'date-fns';
 
-import { Button, Divider, Map, Segment } from '$lib/components/core';
+import { Button, Divider, Map, Segment, Tag } from '$lib/components/core';
 import { HeroSection } from '$lib/components/features/community';
 import {
   Event,
@@ -16,14 +18,16 @@ import {
 import { useQuery } from '$lib/request';
 import { EventList } from '$lib/components/features/EventList';
 import { Calendar } from '$lib/components/core/calendar';
-import { endOfDay, startOfDay, format } from 'date-fns';
+import { scrollAtBottomAtom } from '$lib/jotai';
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
 
 export default function Container({ space }: { space?: Space }) {
+  const [shouldLoadMore, setShouldLoadMore] = useAtom(scrollAtBottomAtom);
+
   const [mode, setMode] = React.useState<'list' | 'grid'>('list');
-  const [eventListType, setEventListType] = React.useState('upcoming');
+  const [eventListType, setEventListType] = React.useState('');
   const [selectedTag] = React.useState('all');
   const [selectedDate, setSelectedDate] = React.useState<Date>();
 
@@ -31,10 +35,8 @@ export default function Container({ space }: { space?: Space }) {
     variables: { space: space?._id },
     skip: !space?._id,
   });
-  const eventTags =
-    (dataGetSpaceTags?.listSpaceTags as SpaceTagBase[]).filter(
-      (t) => t.type === SpaceTagType.Event && !!t.targets?.length,
-    ) || [];
+  const spaceTags = (dataGetSpaceTags?.listSpaceTags || []) as SpaceTagBase[];
+  const eventTags = spaceTags.filter((t) => t.type === SpaceTagType.Event && !!t.targets?.length);
 
   const { data: dataGetSpaceEventsCalendar } = useQuery(GetSpaceEventsCalendarDocument, {
     variables: { space: space?._id },
@@ -45,13 +47,13 @@ export default function Container({ space }: { space?: Space }) {
     .filter((i) => i.address)
     .map((i) => ({ lat: i.address?.latitude as number, lng: i.address?.longitude as number }));
 
-  const { data: dataGetUpcomingEvent } = useQuery(GetSpaceEventsDocument, {
+  const resUpcomingEvents = useQuery(GetSpaceEventsDocument, {
     variables: { space: space?._id, limit: LIMIT, skip: 0, endFrom: FROM_NOW },
     skip: !space?._id,
   });
-  const upcomingEvents = (dataGetUpcomingEvent?.getEvents || []) as Event[];
+  const upcomingEvents = (resUpcomingEvents.data?.getEvents || []) as Event[];
 
-  const { data: dataGetPastEvent, loading } = useQuery(GetSpaceEventsDocument, {
+  const resPastEvents = useQuery(GetSpaceEventsDocument, {
     variables: {
       space: space?._id,
       limit: LIMIT,
@@ -62,9 +64,9 @@ export default function Container({ space }: { space?: Space }) {
     },
     skip: !space?._id,
   });
-  const pastEvents = (dataGetPastEvent?.getEvents || []) as Event[];
+  const pastEvents = (resPastEvents.data?.getEvents || []) as Event[];
 
-  const { data: dataSpaceEventsByDate } = useQuery(GetSpaceEventsDocument, {
+  const resEventsByDate = useQuery(GetSpaceEventsDocument, {
     variables: {
       space: space?._id,
       limit: LIMIT,
@@ -75,14 +77,62 @@ export default function Container({ space }: { space?: Space }) {
     },
     skip: !space?._id || !selectedDate,
   });
-  const events = (dataSpaceEventsByDate?.getEvents || []) as Event[];
+  const events = (resEventsByDate.data?.getEvents || []) as Event[];
+
+  const handleScroll = () => {
+    if (selectedDate) {
+      resEventsByDate.fetchMore({
+        variables: { skip: events.length },
+        updateQuery: (existing, res) => {
+          if (res?.getEvents?.length) {
+            return { __typename: 'Query', getEvents: [...(existing?.getEvents || []), ...res?.getEvents] };
+          }
+
+          setShouldLoadMore(false);
+          return existing;
+        },
+      });
+    } else {
+      if (eventListType === 'upcoming') {
+        resUpcomingEvents.fetchMore({
+          variables: { skip: upcomingEvents.length },
+          updateQuery: (existing, res) => {
+            if (res?.getEvents?.length) {
+              return { __typename: 'Query', getEvents: [...(existing?.getEvents || []), ...res?.getEvents] };
+            }
+
+            setShouldLoadMore(false);
+            return existing;
+          },
+        });
+      } else {
+        resPastEvents.fetchMore({
+          variables: { skip: pastEvents.length },
+          updateQuery: (existing, res) => {
+            if (res?.getEvents?.length) {
+              return { __typename: 'Query', getEvents: [...(existing?.getEvents || []), ...res?.getEvents] };
+            }
+
+            setShouldLoadMore(false);
+            return existing;
+          },
+        });
+      }
+    }
+  };
+
+  React.useEffect(() => {
+    if (shouldLoadMore) {
+      handleScroll();
+    }
+  }, [shouldLoadMore]);
 
   return (
     <>
       <HeroSection space={space} />
       <Divider className="my-8" />
       <div className="flex gap-18">
-        <div className="flex-1">
+        <div className="flex flex-col flex-1 gap-6">
           <div className="flex">
             <h1 className="text-2xl font-semibold flex-1">Events</h1>
             <div>
@@ -97,22 +147,28 @@ export default function Container({ space }: { space?: Space }) {
             </div>
           </div>
 
-          {eventTags.map((item) => (
-            <div key={item._id}>{item.tag}</div>
-          ))}
+          {!!eventTags.length && (
+            <div className="flex gap-1.5 flex-wrap">
+              {eventTags.map((item) => (
+                <Tag key={item._id}>
+                  {item.tag} <span className="text-tertiary/[.56]">{item.targets?.length}</span>
+                </Tag>
+              ))}
+            </div>
+          )}
 
           {!selectedDate ? (
             <>
               {!!upcomingEvents.length && eventListType === 'upcoming' && (
-                <EventsWithMode mode={mode} events={upcomingEvents} loading={loading} />
+                <EventsWithMode mode={mode} events={upcomingEvents} loading={resUpcomingEvents.loading} />
               )}
 
               {(!upcomingEvents.length || eventListType === 'past') && (
-                <EventsWithMode mode={mode} events={pastEvents} loading={loading} />
+                <EventsWithMode mode={mode} events={pastEvents} loading={resPastEvents.loading} />
               )}
             </>
           ) : (
-            <EventsWithMode mode={mode} events={events} loading={loading} />
+            <EventsWithMode mode={mode} events={events} loading={resEventsByDate.loading} />
           )}
         </div>
 
@@ -164,6 +220,16 @@ export default function Container({ space }: { space?: Space }) {
   );
 }
 
-function EventsWithMode({ mode, events, loading }: { mode: 'list' | 'grid'; events: Event[]; loading?: boolean }) {
-  return mode === 'list' ? <EventList events={events} loading={loading} /> : null;
+function EventsWithMode({
+  mode,
+  events,
+  loading,
+  onHover,
+}: {
+  mode: 'list' | 'grid';
+  events: Event[];
+  loading?: boolean;
+  onHover?: (event: Event) => void;
+}) {
+  return <>{mode === 'list' ? <EventList events={events} loading={loading} onHover={onHover} /> : null}</>;
 }

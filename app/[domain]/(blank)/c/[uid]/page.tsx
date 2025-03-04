@@ -11,8 +11,8 @@ export default async function Page({ params }: { params: Promise<{ uid: string }
 
   const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
 
-  const { data: dataGetSpace } = await client.query({ query: GetSpaceDocument, variables });
-  const space = dataGetSpace.getSpace as Space;
+  const { data } = await client.query({ query: GetSpaceDocument, variables });
+  const space = data?.getSpace as Space;
 
   if (!space) return notFound();
 

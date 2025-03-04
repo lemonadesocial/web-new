@@ -15,16 +15,18 @@ export function HeroSection({ space }: HeroSectionProps) {
   return (
     <>
       <div className="relative w-full h-44 md:h-96 overflow-hidden">
-        <img
-          src={generateUrl(space?.image_cover_expanded, {
-            resize: { width: 1080, height: 1080 * 3.5, fit: 'contain' },
-          })}
-          alt={space?.title as string}
-          className="aspect-[3.5/1] object-cover object-cover rounded-md w-full"
-        />
+        {space?.image_cover && (
+          <img
+            src={generateUrl(space?.image_cover_expanded, {
+              resize: { width: 1080, height: 1080 * 3.5, fit: 'contain' },
+            })}
+            alt={space?.title as string}
+            className="aspect-[3.5/1] object-cover object-cover rounded-md w-full"
+          />
+        )}
 
         <div className="absolute bottom-8 md:bottom-4 outline-6 outline-background size-16 md:size-32 rounded-md overflow-hidden shadow-lg">
-          {space?.image_cover_expanded && (
+          {space?.image_avatar && (
             <img
               className="w-full h-full outline outline-tertiary/[0.04] rounded-md"
               src={generateUrl(space?.image_avatar_expanded, { resize: { width: 128, height: 128 } })}

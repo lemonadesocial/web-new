@@ -12,16 +12,18 @@ if (!API_KEY) {
 interface MapProps {
   className?: string;
   markers?: { lat: number; lng: number }[];
+  center?: { lat: number; lng: number };
 }
 
 // TODO: need to create MapId and MapStyles to use with AdvancedMarker
-export function Map({ className, markers }: MapProps) {
+export function Map({ className, markers, center }: MapProps) {
   return (
     <APIProvider apiKey={API_KEY}>
       <GoogleMap
         mapId="DEMO_MAP_ID"
         className={twMerge('map h-full w-full outline-none', className)}
         defaultCenter={{ lat: markers?.[0]?.lat || 0, lng: markers?.[0]?.lng || 0 }}
+        center={center}
         defaultZoom={2}
         minZoom={2}
         disableDefaultUI

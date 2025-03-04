@@ -6,3 +6,4 @@ export * from './input';
 export * from './map';
 export * from './segment';
 export * from './spacer';
+export * from './tag';

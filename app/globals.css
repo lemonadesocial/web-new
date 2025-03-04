@@ -73,6 +73,12 @@
 
   --font-title: var(--font-title);
   --font-body: var(--font-body);
+
+  @keyframes pulse {
+    50% {
+      opacity: 0;
+    }
+  }
 }
 
 @layer base {

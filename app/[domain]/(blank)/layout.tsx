@@ -4,6 +4,7 @@ import React from 'react';
 import { GetMeDocument, User } from '$lib/generated/graphql';
 import { client } from '$lib/request/client';
 import Header from './header';
+import { Main } from './main';
 
 export default async function Layout({ children }: React.PropsWithChildren) {
   const key = 'x-ory-kratos-session';
@@ -20,10 +21,7 @@ export default async function Layout({ children }: React.PropsWithChildren) {
     <>
       <div className="flex flex-col h-dvh w-full">
         <Header me={me} />
-
-        <main className="w-full p-4 overflow-auto flex-1">
-          <div className="page mx-auto">{children}</div>
-        </main>
+        <Main>{children}</Main>
       </div>
     </>
   );

@@ -3,11 +3,13 @@
 import { GraphQLClient } from 'graphql-request';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { InMemoryCache } from './cache';
+import { FetchPolicy } from './type';
 
 interface QueryRequest<T, V extends object> {
   query: TypedDocumentNode<T, V>;
   variables?: V;
-  initData?: T;
+  initData?: T | null;
+  fetchPolicy?: FetchPolicy;
   headers?: HeadersInit;
   resolve: (result: T) => void;
   reject: (error: any) => void;
@@ -27,16 +29,18 @@ export class GraphqlClient {
   async query<T, V extends object>({
     query,
     variables = {},
+    fetchPolicy = 'cache-first',
     headers,
     initData,
   }: {
     query: TypedDocumentNode<T, V>;
     headers?: HeadersInit;
     variables?: object;
+    fetchPolicy?: FetchPolicy;
     initData?: T;
   }): Promise<{ data: T; error: any }> {
     return new Promise((resolve, reject) => {
-      this.queue.push({ query, variables, headers, initData, resolve, reject });
+      this.queue.push({ query, variables, headers, initData, fetchPolicy, resolve, reject });
       this.processQueue();
     });
   }
@@ -44,11 +48,17 @@ export class GraphqlClient {
   private async processQueue<T, V extends object>() {
     if (this.processing || this.queue.length === 0) return;
 
-    const { query, variables, headers, initData, resolve } = this.queue.shift()!;
+    const { query, variables, headers, fetchPolicy, initData, resolve } = this.queue.shift()!;
     if (headers) this.client.setHeaders(headers);
 
     try {
+      if (fetchPolicy === 'network-only') {
+        const result = await this.client.request(query, variables);
+        resolve({ data: result, error: null });
+      }
+
       const cacheData = this.cache?.readQuery<T, V>(query, variables);
+
       if (cacheData) {
         resolve({ data: cacheData });
       } else {

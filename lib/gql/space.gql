@@ -105,6 +105,8 @@ query GetSpaceEvents(
       city
       country
       region
+      latitude
+      longitude
     }
     new_new_photos_expanded {
       _id

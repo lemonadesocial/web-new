@@ -55,7 +55,7 @@ const MENU = [
 export default function Sidebar() {
   const pathname = usePathname();
 
-  const { client } = useClient();
+  const client = useClient();
   console.log(client);
 
   return (

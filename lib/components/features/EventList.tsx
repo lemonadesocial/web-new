@@ -6,7 +6,15 @@ import { Address, Event } from '$lib/generated/graphql';
 import { Card, Spacer } from '$lib/components/core';
 import { generateUrl } from '$lib/utils/cnd';
 
-export function EventList({ events, loading }: { events: Event[]; loading?: boolean }) {
+export function EventList({
+  events,
+  loading,
+  onHover,
+}: {
+  events: Event[];
+  loading?: boolean;
+  onHover?: (event: Event) => void;
+}) {
   const getLocattion = (address?: Address | null) => {
     let location = '';
     if (address?.city) location += address.city + ', ';
@@ -24,7 +32,7 @@ export function EventList({ events, loading }: { events: Event[]; loading?: bool
         <div className="flex flex-col relative" key={date}>
           <div className="border-l border-dashed border-l-2 absolute h-full left-1 top-2 z-10">
             <div className="size-2 bg-background -ml-[5px] absolute">
-              <div className="size-2 rounded-full bg-tertiary/[.24] " />
+              <div className="size-2 rounded-full bg-tertiary/[.24]" />
             </div>
           </div>
 
@@ -37,14 +45,14 @@ export function EventList({ events, loading }: { events: Event[]; loading?: bool
 
             <div className="flex flex-col gap-3">
               {data.map((item) => (
-                <div key={`event_${item._id}`}>
+                <div key={`event_${item.shortid}`}>
                   <Card>
-                    <div className="flex">
+                    <div className="flex" onMouseOver={() => onHover?.(item)}>
                       <div className="text-tertiary/[.56] flex-1">
                         <div className="flex gap-2 font-medium">
                           {isBefore(new Date(), item.end) && isAfter(new Date(), item.start) && (
                             <div className="flex gap-2 items-center">
-                              <div className="size-1.5 bg-danger-400 rounded-full" />
+                              <div className="size-1.5 bg-danger-400 rounded-full motion-safe:animate-pulse" />
                               <span className="text-danger-400 uppercase">Live</span>
                               <div className="size-0.5 bg-tertiary/[.24] rounded-full" />
                             </div>
@@ -82,6 +90,17 @@ export function EventList({ events, loading }: { events: Event[]; loading?: bool
           <Spacer className="h-6" />
         </div>
       ))}
+      <div className="flex flex-col relative">
+        <div className="border-l border-dashed border-l-2 absolute h-full left-1 top-2 z-10">
+          <div className="size-2 bg-background -ml-[5px] absolute">
+            <div className="size-2 rounded-full bg-tertiary/[.24] " />
+          </div>
+        </div>
+      </div>
+      <div className="ml-5 mt-0.5">
+        <p className="text-sm text-tertiary/[.56]">No more events to see here!</p>
+      </div>
+      <Spacer className="h-6" />
     </div>
   );
 }
