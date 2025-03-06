@@ -15,14 +15,19 @@ interface QueryRequest<T, V extends object> {
   reject: (error: any) => void;
 }
 
+interface RequestConfig {
+  cache?: 'no-store' | 'no-cache';
+  credentials?: 'omit' | 'include' | 'same-origin';
+}
+
 export class GraphqlClient {
   private client: GraphQLClient;
   private cache?: InMemoryCache;
   private queue: QueryRequest<any, any>[] = [];
   private processing: boolean = false;
 
-  constructor({ url, cache }: { url: string; cache?: InMemoryCache }) {
-    this.client = new GraphQLClient(url, { cache: 'no-store' });
+  constructor({ url, cache, options = {} }: { url: string; cache?: InMemoryCache; options?: RequestConfig }) {
+    this.client = new GraphQLClient(url, { cache: 'no-store', ...options });
     this.cache = cache;
   }
 
@@ -55,26 +60,45 @@ export class GraphqlClient {
       if (fetchPolicy === 'network-only') {
         const result = await this.client.request(query, variables);
         resolve({ data: result, error: null });
+        return;
       }
 
       const cacheData = this.cache?.readQuery<T, V>(query, variables);
 
       if (cacheData) {
         resolve({ data: cacheData });
-      } else {
-        this.processing = true;
-
-        let result = initData;
-        if (!result) result = await this.client.request(query, variables);
-        this.cache?.normalizeAndStore<T, V>(query, variables, result);
-        resolve({ data: result, error: null });
+        return;
       }
+
+      this.processing = true;
+
+      let result = initData;
+      if (!result) result = await this.client.request(query, variables);
+      this.cache?.normalizeAndStore<T, V>(query, variables, result);
+      resolve({ data: result, error: null });
     } catch (error) {
-      resolve({ data: null, error });
+      resolve({ data: null, error: error });
     } finally {
       this.processing = false;
       this.processQueue();
     }
+  }
+
+  writeFragment<T>({ id, data }: { id: string; data: Partial<T> }) {
+    this.cache?.writeFragment({ id, data });
+  }
+
+  subscribe<T, V extends object>({
+    query,
+    variables = {},
+    callback,
+  }: {
+    query: TypedDocumentNode<T, V>;
+    variables?: object;
+    callback: () => void;
+  }) {
+    const queryKey = this.cache?.createCacheKey(query, variables);
+    if (queryKey) this.cache?.subscribe(queryKey, callback);
   }
 }
 

@@ -1,4 +1,4 @@
-fragment SpaceFragment on Space {
+fragment Space on Space {
   _id
   title
   admins {
@@ -54,7 +54,7 @@ fragment SpaceFragment on Space {
   personal
 }
 
-fragment SpaceTagFragment on SpaceTagBase {
+fragment SpaceTag on SpaceTagBase {
   _id
   color
   space
@@ -63,11 +63,11 @@ fragment SpaceTagFragment on SpaceTagBase {
   type
 }
 
-# Queries
+#### Queries
 
 query GetSpace($id: MongoID, $slug: String) {
   getSpace(_id: $id, slug: $slug) {
-    ...SpaceFragment
+    ...Space
   }
 }
 
@@ -143,6 +143,16 @@ query GetSpaceEventsCalendar($space: MongoID) {
 
 query GetSpaceTags($space: MongoID!) {
   listSpaceTags(space: $space) {
-    ...SpaceTagFragment
+    ...SpaceTag
   }
+}
+
+#### Mutations
+
+mutation FollowSpace($space: MongoID!) {
+  followSpace(space: $space)
+}
+
+mutation UnfollowSpace($space: MongoID!) {
+  unfollowSpace(space: $space)
 }

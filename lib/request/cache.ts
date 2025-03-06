@@ -6,6 +6,8 @@ export class InMemoryCache {
     ROOT_QUERY: { __typename: 'Query' },
   };
 
+  private listeners: Record<string, Set<() => void>> = {};
+
   private getTypename(data: any): string | null {
     if (!data || typeof data !== 'object') return null;
     return data.__typename || null;
@@ -83,9 +85,27 @@ export class InMemoryCache {
       // it's because included __typename
       return Object.keys(result).length > 1 ? (result as T) : null;
     } catch (error) {
-      console.error('Error reading from cache:', error);
+      console.error('[InMemoryCache]: Error reading from cache:', error);
       return null;
     }
+  }
+
+  readFragment({ id }: { id: string }) {
+    return this.store[id];
+  }
+
+  writeFragment<T>({ id, data }: { id: string; data: Partial<T> }) {
+    if (!this.store[id]) {
+      console.error(`[InMemoryCache]: ${id} not found`);
+      return;
+    }
+
+    for (const [key, value] of Object.entries(data)) {
+      if (key === '__typename' || key === 'id' || key === '_id') continue;
+      this.store[id][key] = value;
+    }
+
+    Object.keys(this.listeners).forEach((key) => this.notifyListeners(key));
   }
 
   // Normalize and store entity
@@ -141,7 +161,7 @@ export class InMemoryCache {
   }
 
   normalizeAndStore<T, V extends object>(query: TypedDocumentNode<T, V>, variables: Record<string, V>, data: T) {
-    // const queryKey = this.createCacheKey<T, V>(query, variables);
+    const queryKey = this.createCacheKey<T, V>(query, variables);
 
     // Get operation name and extract root fields
     const operationDef = query.definitions.find((def) => def.kind === 'OperationDefinition');
@@ -176,6 +196,8 @@ export class InMemoryCache {
         this.store.ROOT_QUERY[fieldKey] = resultData;
       }
     });
+
+    if (queryKey) this.notifyListeners(queryKey);
   }
 
   // Extract arguments from query field
@@ -223,13 +245,37 @@ export class InMemoryCache {
     const varStrings = [];
     if (variables) {
       for (const [key, value] of Object.entries(variables)) {
-        const formattedValue = typeof value === 'string' ? `"${value}"` : value;
+        let formattedValue = '';
+        if (typeof value === 'object' || Array.isArray(value)) formattedValue = JSON.stringify(value);
+        if (typeof value === 'string') formattedValue = `"${value}"`;
+        if (typeof value === 'number' || typeof value === 'boolean') formattedValue = value.toString();
+
         varStrings.push(`${key}: ${formattedValue}`);
       }
     }
 
     // Combine operation name and variables
     return `${operationName}(${varStrings.join(', ')})`;
-    return `${query}:${variables ? JSON.stringify(variables) : ''}`;
+  }
+
+  private notifyListeners(queryKey: string): void {
+    this.listeners[queryKey]?.forEach((callback) => {
+      callback();
+    });
+  }
+
+  // Subscribe to cache updates
+  subscribe(queryKey: string, callback: () => void): () => void {
+    if (!this.listeners[queryKey]) {
+      this.listeners[queryKey] = new Set();
+    }
+    this.listeners[queryKey].add(callback);
+
+    return () => {
+      this.listeners[queryKey]?.delete(callback);
+      if (this.listeners[queryKey]?.size === 0) {
+        delete this.listeners[queryKey];
+      }
+    };
   }
 }

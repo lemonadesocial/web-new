@@ -2,16 +2,42 @@
 import React from 'react';
 
 import { Button, Spacer } from '$lib/components/core';
-import { Space } from '$lib/generated/graphql';
+import { FollowSpaceDocument, GetMeDocument, Space, UnfollowSpaceDocument } from '$lib/generated/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 
 import { COMMUNITY_SOCIAL_LINKS } from './constants';
+import { useMutation, useQuery } from '$lib/request';
 
 interface HeroSectionProps {
   space?: Space | null;
 }
 
 export function HeroSection({ space }: HeroSectionProps) {
+  const { data: dataGetMe } = useQuery(GetMeDocument);
+  const me = dataGetMe?.getMe;
+
+  const [follow, resFollow] = useMutation(FollowSpaceDocument, {
+    onComplete: (client) => {
+      client.writeFragment({ id: `Space:${space?._id}`, data: { followed: true } });
+    },
+  });
+  const [unfollow, resUnfollow] = useMutation(UnfollowSpaceDocument, {
+    onComplete: (client) => {
+      client.writeFragment({ id: `Space:${space?._id}`, data: { followed: false } });
+    },
+  });
+
+  const handleSubcribe = () => {
+    if (!me) {
+      // need to login to subscribe
+      return;
+    }
+
+    const variables = { space: space?._id };
+    if (space?.followed) unfollow({ variables });
+    else follow({ variables });
+  };
+
   return (
     <>
       <div className="relative w-full h-44 md:h-96 overflow-hidden">
@@ -37,7 +63,22 @@ export function HeroSection({ space }: HeroSectionProps) {
 
         {/* Subscribe button */}
         <div className="absolute bottom-4 right-4">
-          <Button variant="secondary">Subscribe</Button>
+          <Button
+            loading={resFollow.loading || resUnfollow.loading}
+            outlined={!!space?.followed}
+            variant="primary"
+            className="hover:bg-primary-500 hover:text-tertiary w-auto duration-300"
+            onClick={() => handleSubcribe()}
+          >
+            {!!space?.followed ? (
+              <>
+                <span className="hidden group-hover:block">Unsubscribe</span>
+                <span className="block group-hover:hidden">Subscribed</span>
+              </>
+            ) : (
+              'Subscribe'
+            )}
+          </Button>
         </div>
       </div>
 
@@ -53,7 +94,7 @@ export function HeroSection({ space }: HeroSectionProps) {
               aria-label={item.key}
               variant="flat"
               icon={item.icon}
-              className="text-tertiary/[0.56]"
+              className="text-tertiary/[0.56] border-transparent"
               onClick={() => window.open(`${item.prefix}${space?.[item.key as keyof Space]}`, '_blank')}
             />
           ))}

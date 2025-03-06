@@ -1,35 +1,33 @@
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
-import Image from 'next/image';
+
+const sizes = {
+  sm: 'w-6 h-6',
+  md: 'w-8 h-8',
+  lg: 'w-10 h-10',
+};
+
+const roundeds = {
+  sm: 'rounded-sm',
+  rounded: 'rounded',
+  lg: 'rounded-lg',
+  full: 'rounded-full',
+};
 
 interface AvatarProps {
-  src?: string;
-  name?: string;
-  size?: number;
-  className?: string;
+  src: string;
+  size?: 'sm' | 'md' | 'lg';
+  rounded?: 'full' | 'rounded' | 'sm' | 'lg';
 }
 
-export function Avatar({ src, name, size = 40, className }: AvatarProps) {
-  const initials = name
-    ? name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-    : '';
-
+export function Avatar({ src, size = 'md', rounded = 'full' }: AvatarProps) {
   return (
-    <div
-      className={twMerge(
-        `relative size-${size} rounded-full overflow-hidden bg-tertiary/[0.4] flex items-center justify-center`,
-        className,
-      )}
-    >
-      {src ? (
-        <Image src={src} alt={name || initials} className="w-full h-full object-cover" />
-      ) : (
-        <span className={twMerge(`text-${size / 2} font-medium`, className)}>{initials}</span>
-      )}
+    <div className={twMerge(`relative ${sizes[size]} overflow-hidden ${roundeds[rounded]}`)}>
+      <img
+        src={src || 'https://assets.lemonade.social/assets/images/avatars/lemonade_davatar_1.png'}
+        alt="Avatar"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
     </div>
   );
 }

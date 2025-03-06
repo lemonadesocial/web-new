@@ -2,11 +2,12 @@ import React from 'react';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 
 import { useClient } from './provider';
-import { QueryOptions } from './type';
+import { MutationOptions, QueryOptions } from './type';
+import { GraphqlClient } from './client';
 
 export function useQuery<T, V extends object>(
   query: TypedDocumentNode<T, V>,
-  { variables, initData = null, skip = false, fetchPolicy }: QueryOptions<T, V>,
+  { variables, initData = null, skip = false, fetchPolicy }: QueryOptions<T, V> = {},
 ) {
   const { client } = useClient();
   const [data, setData] = React.useState<T | null>(initData);
@@ -43,5 +44,44 @@ export function useQuery<T, V extends object>(
     }
   }, [skip, variablesKey]);
 
+  React.useEffect(() => {
+    client.subscribe({ query, variables, callback: fetchData });
+  }, []);
+
   return { data, loading, error, fetchMore, client };
+}
+
+export function useMutation<T, V extends object>(
+  query: TypedDocumentNode<T, V>,
+  options?: MutationOptions<T, V>,
+): [
+  (opts: MutationOptions<T, V>) => void,
+  { data?: T | null; error: unknown; loading: boolean; client: GraphqlClient },
+] {
+  const { client } = useClient();
+  const [data, setData] = React.useState<T | null>();
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<unknown>(null);
+
+  const mutate = async (opts: MutationOptions<T, V>) => {
+    const merged = { ...options, ...opts };
+    setLoading(true);
+    const { data, error } = await client.query({
+      query,
+      variables: merged.variables,
+      fetchPolicy: 'network-only',
+    });
+    setData(data);
+    setError(error);
+    setLoading(false);
+    if (error) {
+      merged.onError?.(error);
+    } else {
+      if (!error) {
+        merged.onComplete?.(client, data);
+      }
+    }
+  };
+
+  return [mutate, { data, error, client, loading }];
 }

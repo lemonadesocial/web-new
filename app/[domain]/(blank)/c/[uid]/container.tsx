@@ -7,11 +7,13 @@ import { Button, Divider, Map, Segment, Tag } from '$lib/components/core';
 import { HeroSection } from '$lib/components/features/community';
 import {
   Event,
+  GetSpaceDocument,
   GetSpaceEventsCalendarDocument,
   GetSpaceEventsDocument,
   GetSpaceTagsDocument,
   SortOrder,
   Space,
+  SpaceFragment,
   SpaceTagBase,
   SpaceTagType,
 } from '$lib/generated/graphql';
@@ -30,6 +32,11 @@ export default function Container({ space }: { space?: Space }) {
   const [eventListType, setEventListType] = React.useState('');
   const [selectedTag] = React.useState('all');
   const [selectedDate, setSelectedDate] = React.useState<Date>();
+
+  const { data: dataGetSpace } = useQuery(GetSpaceDocument, {
+    variables: { id: space?._id },
+    initData: { __typename: 'Query', getSpace: space as { __typename: string } & SpaceFragment },
+  });
 
   const { data: dataGetSpaceTags } = useQuery(GetSpaceTagsDocument, {
     variables: { space: space?._id },
@@ -129,7 +136,7 @@ export default function Container({ space }: { space?: Space }) {
 
   return (
     <>
-      <HeroSection space={space} />
+      <HeroSection space={dataGetSpace?.getSpace as Space} />
       <Divider className="my-8" />
       <div className="flex gap-18">
         <div className="flex flex-col flex-1 gap-6">
