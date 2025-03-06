@@ -12,7 +12,7 @@ export const COMMUNITY_SOCIAL_LINKS = [
   {
     key: 'handle_youtube',
     prefix: 'https://youtube.com/@',
-    icon: 'icon-youtube',
+    icon: 'icon-youtube-outline',
   },
   {
     key: 'handle_tiktok',

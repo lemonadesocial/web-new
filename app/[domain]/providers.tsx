@@ -1,9 +1,10 @@
 'use client';
 import React from 'react';
 import { GraphqlClienProvider, GraphqlClient, InMemoryCache } from '$lib/request';
+import { GRAPHQL_URL } from '$lib/utils/constants';
 
 const client = new GraphqlClient({
-  url: process.env.NEXT_PUBLIC_GRAPHQL_URL as string,
+  url: GRAPHQL_URL,
   cache: new InMemoryCache(),
   options: {
     credentials: 'include',

@@ -32,7 +32,7 @@ export function Map({ className, markers, center }: MapProps) {
       >
         {markers?.map((item, idx) => (
           <AdvancedMarker key={idx} position={{ lat: item.lat, lng: item.lng }}>
-            <div className="size-[12px] bg-primary-400 border rounded-full"></div>
+            <div className="size-[12px] bg-primary-400 border rounded-full border border-tertiary"></div>
           </AdvancedMarker>
         ))}
       </GoogleMap>

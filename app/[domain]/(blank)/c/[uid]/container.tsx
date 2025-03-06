@@ -18,7 +18,7 @@ import {
   SpaceTagType,
 } from '$lib/generated/graphql';
 import { useQuery } from '$lib/request';
-import { EventListCard } from '$lib/components/features/EventList';
+import { EventList, EventListCard } from '$lib/components/features/EventList';
 import { Calendar } from '$lib/components/core/calendar';
 import { scrollAtBottomAtom } from '$lib/jotai';
 import clsx from 'clsx';
@@ -198,47 +198,45 @@ export default function Container({ space }: { space?: Space }) {
           )}
         </div>
 
-        <div>
-          <div className="hidden sticky top-0 z-50 flex-col gap-4 md:flex">
-            <Button variant="tertiary" iconLeft="icon-plus" className="w-full">
-              Submit Event
-            </Button>
-            <Calendar
-              events={spaceEventsCalendar.map((item) => new Date(item.start))}
-              onSelectDate={setSelectedDate}
-              footer={() => {
-                if (selectedDate) {
-                  return (
-                    <div className="flex justify-between items-center text-tertiary/[.56] mt-3">
-                      <time className="font-medium">{format(selectedDate, 'E, dd MMM yyyy')}</time>
-                      <Button
-                        icon="icon-x"
-                        size="sm"
-                        aria-label="close"
-                        className="bg-transparent hover:bg-tertiary/[.08] "
-                        onClick={() => setSelectedDate(undefined)}
-                      />
-                    </div>
-                  );
-                }
-
-                if (!upcomingEvents.length) return null;
-
+        <div className="hidden sticky top-0 z-50 flex-col gap-4 md:flex max-w-[296px]">
+          <Button variant="tertiary" iconLeft="icon-plus" className="w-full">
+            Submit Event
+          </Button>
+          <Calendar
+            events={spaceEventsCalendar.map((item) => new Date(item.start))}
+            onSelectDate={setSelectedDate}
+            footer={() => {
+              if (selectedDate) {
                 return (
-                  <Segment
-                    className="w-full mt-3"
-                    onSelect={(item) => setEventListType(item.value)}
-                    items={[
-                      { label: 'Upcomping', value: 'upcoming' },
-                      { label: 'Past', value: 'past' },
-                    ]}
-                  />
+                  <div className="flex justify-between items-center text-tertiary/[.56] mt-3">
+                    <time className="font-medium">{format(selectedDate, 'E, dd MMM yyyy')}</time>
+                    <Button
+                      icon="icon-x"
+                      size="sm"
+                      aria-label="close"
+                      className="bg-transparent hover:bg-tertiary/[.08] "
+                      onClick={() => setSelectedDate(undefined)}
+                    />
+                  </div>
                 );
-              }}
-            />
-            <div className="aspect-square rounded-lg overflow-hidden">
-              <Map markers={mappins} />
-            </div>
+              }
+
+              if (!upcomingEvents.length) return null;
+
+              return (
+                <Segment
+                  className="w-full mt-3"
+                  onSelect={(item) => setEventListType(item.value)}
+                  items={[
+                    { label: 'Upcomping', value: 'upcoming' },
+                    { label: 'Past', value: 'past' },
+                  ]}
+                />
+              );
+            }}
+          />
+          <div className="aspect-square rounded-lg overflow-hidden">
+            <Map markers={mappins} />
           </div>
         </div>
       </div>
@@ -257,5 +255,13 @@ function EventsWithMode({
   loading?: boolean;
   tags?: SpaceTagBase[];
 }) {
-  return <>{mode === 'card' ? <EventListCard events={events} loading={loading} tags={tags} /> : null}</>;
+  return (
+    <>
+      {mode === 'card' ? (
+        <EventListCard events={events} loading={loading} tags={tags} />
+      ) : (
+        <EventList events={events} loading={loading} tags={tags} />
+      )}
+    </>
+  );
 }

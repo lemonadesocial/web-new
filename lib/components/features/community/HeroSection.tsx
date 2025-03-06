@@ -1,12 +1,13 @@
 'use client';
 import React from 'react';
+import clsx from 'clsx';
 
 import { Button, Spacer } from '$lib/components/core';
 import { FollowSpaceDocument, GetMeDocument, Space, UnfollowSpaceDocument } from '$lib/generated/graphql';
 import { generateUrl } from '$lib/utils/cnd';
+import { useMutation, useQuery } from '$lib/request';
 
 import { COMMUNITY_SOCIAL_LINKS } from './constants';
-import { useMutation, useQuery } from '$lib/request';
 
 interface HeroSectionProps {
   space?: Space | null;
@@ -42,13 +43,21 @@ export function HeroSection({ space }: HeroSectionProps) {
     <>
       <div className="relative w-full h-44 md:h-96 overflow-hidden">
         {space?.image_cover && (
-          <img
-            src={generateUrl(space?.image_cover_expanded, {
-              resize: { width: 1080, height: 1080 * 3.5, fit: 'contain' },
-            })}
-            alt={space?.title as string}
-            className="aspect-[3.5/1] object-cover object-cover rounded-md w-full"
-          />
+          <picture>
+            <source
+              media="(max-width:30rem)"
+              srcSet={generateUrl(space?.image_cover_expanded, {
+                resize: { width: 480, height: 480 * 3.5, fit: 'contain' },
+              })}
+            />
+            <img
+              src={generateUrl(space?.image_cover_expanded, {
+                resize: { width: 1080, height: 1080 * 3.5, fit: 'contain' },
+              })}
+              alt={space?.title as string}
+              className="aspect-[3.5/1] object-cover object-cover rounded-md w-full"
+            />
+          </picture>
         )}
 
         <div className="absolute bottom-8 md:bottom-4 outline-6 outline-background size-16 md:size-32 rounded-md overflow-hidden shadow-lg">
@@ -67,7 +76,7 @@ export function HeroSection({ space }: HeroSectionProps) {
             loading={resFollow.loading || resUnfollow.loading}
             outlined={!!space?.followed}
             variant="primary"
-            className="hover:bg-primary-500 hover:text-tertiary w-auto duration-300"
+            className={clsx(space?.followed && 'hover:bg-primary-500 hover:text-tertiary w-auto duration-300')}
             onClick={() => handleSubcribe()}
           >
             {!!space?.followed ? (
@@ -87,12 +96,13 @@ export function HeroSection({ space }: HeroSectionProps) {
         <h1 className="text-3xl font-semibold">{space?.title}</h1>
         <p className="text-md text-tertiary/[0.8] font-medium">{space?.description}</p>
         <Spacer className="h-3" />
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
           {COMMUNITY_SOCIAL_LINKS.filter((item) => space?.[item.key as keyof Space]).map((item) => (
             <Button
               key={item.key}
               aria-label={item.key}
               variant="flat"
+              size="sm"
               icon={item.icon}
               className="text-tertiary/[0.56] border-transparent"
               onClick={() => window.open(`${item.prefix}${space?.[item.key as keyof Space]}`, '_blank')}

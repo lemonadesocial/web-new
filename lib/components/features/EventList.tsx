@@ -4,14 +4,76 @@ import { format, isAfter, isBefore } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 
-import { Badge, Card, Spacer } from '$lib/components/core';
+import { Badge, Card, Divider, Spacer } from '$lib/components/core';
 import { Address, Event, SpaceTagBase } from '$lib/generated/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { getTicketCost } from '$lib/utils/event';
+import Link from 'next/link';
+import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 
-// export function EventList({ events, loading }: { events: Event[]; loading?: boolean }) {
-//   return <></>;
-// }
+export function EventList({ events, loading }: { events: Event[]; loading?: boolean; tags?: SpaceTagBase[] }) {
+  if (loading) return <EventListSkeleton />;
+
+  return (
+    <div className="flex flex-col gap-8">
+      {Object.entries(groupBy(events, ({ start }) => start)).map(([date, data]) => (
+        <div key={date}>
+          <p className="text-tertiary/[.56] font-medium">
+            <span className="text-tertiary">{format(date, 'MMM dd')}</span> {format(date, 'EEE')}
+          </p>
+          <Divider className="mt-2 mb-3" />
+
+          {data.map((item) => (
+            <Link
+              key={item._id}
+              href={`${LEMONADE_DOMAIN}/e/${item.shortid}`}
+              target="_blank"
+              className="transition flex text-tertiary/[.56] gap-4 hover:bg-tertiary/[.16] p-2 rounded-md cursor-pointer"
+            >
+              <p>{format(item.start, 'h:mm a')}</p>
+              <div className="flex flex-col gap-1">
+                <p className="text-tertiary font-medium text-lg">{item.title}</p>
+                <div>avatar here</div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      ))}
+      <Spacer className="h-6" />
+    </div>
+  );
+}
+
+function EventListSkeleton() {
+  return (
+    <div className="flex flex-col gap-10">
+      {Object.entries({ 1: [1, 2], 2: [1], 3: [1, 2, 3] }).map(([date, data]) => (
+        <div key={date}>
+          <SkeletonLine animate className="w-[96px] h-[16px] bg-tertiary/[.04] rounded-lg" />
+          <Divider className="mt-3 mb-4" />
+
+          <div className="flex flex-col gap-5">
+            {data.map((item) => (
+              <div key={item} className="transition flex gap-4 rounded-md">
+                <SkeletonLine className="w-[64px] h-[20px] bg-tertiary/[.04] rounded-lg" />
+                <div className="flex flex-col gap-2">
+                  <SkeletonLine animate className="w-[360px] h-[20px] bg-tertiary/[.04] rounded-lg" />
+                  <div className="flex gap-2">
+                    <SkeletonLine className="size-[16px] rounded-full bg-tertiary/[.04] rounded-lg" />
+                    <SkeletonLine className="w-[120px] h-[16px] bg-tertiary/[.04] rounded-lg" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+      <Spacer className="h-6" />
+    </div>
+  );
+}
+
+// ListEventCard
 
 export function EventListCard({
   events,
@@ -43,7 +105,9 @@ export function EventListCard({
 
             <div className="flex flex-col gap-3">
               {data.map((item) => (
-                <EventCardItem key={item._id} item={item} tags={tags} />
+                <Link key={item._id} href={`${LEMONADE_DOMAIN}/e/${item.shortid}`} target="_blank">
+                  <EventCardItem item={item} tags={tags} />
+                </Link>
               ))}
             </div>
           </div>
@@ -155,7 +219,7 @@ function EventCardSkeleton() {
   return (
     <Card className="bg-transparent border">
       <div className="flex">
-        <div className="text-tertiary/[.56] flex-1 flex flex-col gap-4">
+        <div className="flex-1 flex flex-col gap-4">
           <SkeletonLine className="h-4 w-[64px] rounded-full bg-tertiary/[.04]" />
           <SkeletonLine animate className="h-[28px] w-[400px] rounded" />
 
@@ -181,10 +245,8 @@ function SkeletonLine({ className, animate = false }: { className?: string; anim
   return (
     <div
       className={twMerge(
-        clsx(
-          animate && 'animate-skeleton bg-linear-to-r from-tertiary/[0.04] via-tertiary/[.08] to-tertiary/[0.04]',
-          className,
-        ),
+        clsx(animate && 'animate-skeleton bg-linear-to-r from-tertiary/[0.04] via-tertiary/[.1] to-tertiary/[0.04]'),
+        className,
       )}
       style={{ backgroundSize: '200% 100%' }}
     />

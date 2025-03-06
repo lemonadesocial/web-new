@@ -18,7 +18,7 @@ export default function Header({ me }: { me: User }) {
 
       <div>
         {me ? (
-          <Avatar src={me.image_avatar || ''} name={me.name} />
+          <Avatar src={me.image_avatar || ''} />
         ) : (
           <>
             <Button
