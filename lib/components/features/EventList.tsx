@@ -90,7 +90,7 @@ function EventCardItem({ item, tags = [] }: { item: Event; tags?: SpaceTagBase[]
           <div className="flex flex-col gap-1">
             <div className="inline-flex items-center gap-2">
               <i className="icon-location-outline size-4" />
-              <span className="text-md">{getLocattion(item.address)}</span>
+              <span className="text-md">{getLocation(item.address)}</span>
             </div>
           </div>
 
@@ -191,7 +191,7 @@ function SkeletonLine({ className, animate = false }: { className?: string; anim
   );
 }
 
-function getLocattion(address?: Address | null) {
+function getLocation(address?: Address | null) {
   let location = '';
   if (address?.city) location += address.city + ', ';
   if (address?.country) location += address.country;
