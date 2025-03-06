@@ -18,9 +18,10 @@ import {
   SpaceTagType,
 } from '$lib/generated/graphql';
 import { useQuery } from '$lib/request';
-import { EventList } from '$lib/components/features/EventList';
+import { EventListCard } from '$lib/components/features/EventList';
 import { Calendar } from '$lib/components/core/calendar';
 import { scrollAtBottomAtom } from '$lib/jotai';
+import clsx from 'clsx';
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
@@ -28,9 +29,9 @@ const FROM_NOW = new Date().toISOString();
 export default function Container({ space }: { space?: Space }) {
   const [shouldLoadMore, setShouldLoadMore] = useAtom(scrollAtBottomAtom);
 
-  const [mode, setMode] = React.useState<'list' | 'grid'>('list');
+  const [mode, setMode] = React.useState<'card' | 'list'>('card');
   const [eventListType, setEventListType] = React.useState('');
-  const [selectedTag] = React.useState('all');
+  const [selectedTag, setSelectedTag] = React.useState('');
   const [selectedDate, setSelectedDate] = React.useState<Date>();
 
   const { data: dataGetSpace } = useQuery(GetSpaceDocument, {
@@ -55,7 +56,13 @@ export default function Container({ space }: { space?: Space }) {
     .map((i) => ({ lat: i.address?.latitude as number, lng: i.address?.longitude as number }));
 
   const resUpcomingEvents = useQuery(GetSpaceEventsDocument, {
-    variables: { space: space?._id, limit: LIMIT, skip: 0, endFrom: FROM_NOW },
+    variables: {
+      space: space?._id,
+      limit: LIMIT,
+      skip: 0,
+      endFrom: FROM_NOW,
+      spaceTags: selectedTag ? [selectedTag] : [],
+    },
     skip: !space?._id,
   });
   const upcomingEvents = (resUpcomingEvents.data?.getEvents || []) as Event[];
@@ -67,7 +74,7 @@ export default function Container({ space }: { space?: Space }) {
       skip: 0,
       endTo: FROM_NOW,
       sort: { start: SortOrder.Desc },
-      spaceTags: selectedTag !== 'all' ? [selectedTag] : [],
+      spaceTags: selectedTag ? [selectedTag] : [],
     },
     skip: !space?._id,
   });
@@ -80,7 +87,7 @@ export default function Container({ space }: { space?: Space }) {
       skip: 0,
       startFrom: startOfDay(selectedDate as Date),
       startTo: endOfDay(selectedDate as Date),
-      spaceTags: selectedTag !== 'all' ? [selectedTag] : [],
+      spaceTags: selectedTag ? [selectedTag] : [],
     },
     skip: !space?._id || !selectedDate,
   });
@@ -144,11 +151,11 @@ export default function Container({ space }: { space?: Space }) {
             <h1 className="text-2xl font-semibold flex-1">Events</h1>
             <div>
               <Segment
-                selected="list"
-                onSelect={(item) => setMode(item.value as 'list' | 'grid')}
+                selected="card"
+                onSelect={(item) => setMode(item.value as 'card' | 'list')}
                 items={[
+                  { value: 'card', icon: 'icon-view-agenda-outline' },
                   { value: 'list', icon: 'icon-list-bulleted' },
-                  { value: 'grid', icon: 'icon-view-agenda-outline' },
                 ]}
               />
             </div>
@@ -157,7 +164,14 @@ export default function Container({ space }: { space?: Space }) {
           {!!eventTags.length && (
             <div className="flex gap-1.5 flex-wrap">
               {eventTags.map((item) => (
-                <Tag key={item._id}>
+                <Tag
+                  key={item._id}
+                  className={clsx(
+                    'hover:border-tertiary',
+                    selectedTag === item._id && 'bg-primary-500 hover:border-transparent text-tertiary',
+                  )}
+                  onClick={() => setSelectedTag((prev) => (prev === item._id ? '' : item._id))}
+                >
                   {item.tag} <span className="text-tertiary/[.56]">{item.targets?.length}</span>
                 </Tag>
               ))}
@@ -167,15 +181,20 @@ export default function Container({ space }: { space?: Space }) {
           {!selectedDate ? (
             <>
               {!!upcomingEvents.length && eventListType === 'upcoming' && (
-                <EventsWithMode mode={mode} events={upcomingEvents} loading={resUpcomingEvents.loading} />
+                <EventsWithMode
+                  mode={mode}
+                  events={upcomingEvents}
+                  loading={resUpcomingEvents.loading}
+                  tags={eventTags}
+                />
               )}
 
               {(!upcomingEvents.length || eventListType === 'past') && (
-                <EventsWithMode mode={mode} events={pastEvents} loading={resPastEvents.loading} />
+                <EventsWithMode mode={mode} events={pastEvents} loading={resPastEvents.loading} tags={eventTags} />
               )}
             </>
           ) : (
-            <EventsWithMode mode={mode} events={events} loading={resEventsByDate.loading} />
+            <EventsWithMode mode={mode} events={events} loading={resEventsByDate.loading} tags={eventTags} />
           )}
         </div>
 
@@ -231,12 +250,12 @@ function EventsWithMode({
   mode,
   events,
   loading,
-  onHover,
+  tags = [],
 }: {
-  mode: 'list' | 'grid';
+  mode: 'list' | 'card';
   events: Event[];
   loading?: boolean;
-  onHover?: (event: Event) => void;
+  tags?: SpaceTagBase[];
 }) {
-  return <>{mode === 'list' ? <EventList events={events} loading={loading} onHover={onHover} /> : null}</>;
+  return <>{mode === 'card' ? <EventListCard events={events} loading={loading} tags={tags} /> : null}</>;
 }

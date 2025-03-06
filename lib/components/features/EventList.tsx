@@ -1,31 +1,27 @@
 import React from 'react';
 import { groupBy } from 'lodash';
 import { format, isAfter, isBefore } from 'date-fns';
-
-import { Address, Event } from '$lib/generated/graphql';
-import { Card, Spacer } from '$lib/components/core';
-import { generateUrl } from '$lib/utils/cnd';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 
-export function EventList({
+import { Badge, Card, Spacer } from '$lib/components/core';
+import { Address, Event, SpaceTagBase } from '$lib/generated/graphql';
+import { generateUrl } from '$lib/utils/cnd';
+import { getTicketCost } from '$lib/utils/event';
+
+// export function EventList({ events, loading }: { events: Event[]; loading?: boolean }) {
+//   return <></>;
+// }
+
+export function EventListCard({
   events,
   loading,
-  onHover,
+  tags = [],
 }: {
   events: Event[];
   loading?: boolean;
-  onHover?: (event: Event) => void;
+  tags?: SpaceTagBase[];
 }) {
-  const getLocattion = (address?: Address | null) => {
-    let location = '';
-    if (address?.city) location += address.city + ', ';
-    if (address?.country) location += address.country;
-    else location = 'Unknow';
-
-    return location;
-  };
-
   if (loading) return <EventListCardSkeleton />;
 
   return (
@@ -47,42 +43,7 @@ export function EventList({
 
             <div className="flex flex-col gap-3">
               {data.map((item) => (
-                <Card key={`event_${item.shortid}`}>
-                  <div className="flex" onMouseOver={() => onHover?.(item)}>
-                    <div className="text-tertiary/[.56] flex-1">
-                      <div className="flex gap-2 font-medium">
-                        {isBefore(new Date(), item.end) && isAfter(new Date(), item.start) && (
-                          <div className="flex gap-2 items-center">
-                            <div className="size-1.5 bg-danger-400 rounded-full motion-safe:animate-pulse" />
-                            <span className="text-danger-400 uppercase">Live</span>
-                            <div className="size-0.5 bg-tertiary/[.24] rounded-full" />
-                          </div>
-                        )}
-
-                        <p>{format(item.start, 'hh:mm a')}</p>
-                      </div>
-                      <p className="font-title text-xl font-semibold text-tertiary">{item.title}</p>
-                      <div className="flex flex-col gap-1">
-                        <div className="inline-flex items-center gap-2">
-                          <i className="icon-location-outline size-4" />
-                          <span className="text-md">{getLocattion(item.address)}</span>
-                        </div>
-                        <div className="inline-flex items-center gap-2">
-                          <i className="icon-user-group-outline size-4" />
-                        </div>
-                      </div>
-                    </div>
-                    {!!item?.new_new_photos_expanded?.[0] && (
-                      <img
-                        className="aspect-square object-contain rounded-lg w-[120px] h-[120px]"
-                        src={generateUrl(item?.new_new_photos_expanded[0], {
-                          resize: { height: 120, width: 120, fit: 'cover' },
-                        })}
-                        alt={item.title}
-                      />
-                    )}
-                  </div>
-                </Card>
+                <EventCardItem key={item._id} item={item} tags={tags} />
               ))}
             </div>
           </div>
@@ -102,6 +63,63 @@ export function EventList({
       </div>
       <Spacer className="h-6" />
     </div>
+  );
+}
+
+function EventCardItem({ item, tags = [] }: { item: Event; tags?: SpaceTagBase[] }) {
+  const defaultTicketType = item.event_ticket_types?.find((p) => p.default);
+  return (
+    <Card key={`event_${item.shortid}`}>
+      <div className="flex gap-6">
+        <div className="text-tertiary/[.56] flex-1 flex flex-col gap-2">
+          <div>
+            <div className="flex gap-2 font-medium">
+              {isBefore(new Date(), item.end) && isAfter(new Date(), item.start) && (
+                <div className="flex gap-2 items-center">
+                  <div className="size-1.5 bg-danger-400 rounded-full motion-safe:animate-pulse" />
+                  <span className="text-danger-400 uppercase">Live</span>
+                  <div className="size-0.5 bg-tertiary/[.24] rounded-full" />
+                </div>
+              )}
+
+              <p>{format(item.start, 'hh:mm a')}</p>
+            </div>
+            <p className="font-title text-xl font-semibold text-tertiary">{item.title}</p>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <div className="inline-flex items-center gap-2">
+              <i className="icon-location-outline size-4" />
+              <span className="text-md">{getLocattion(item.address)}</span>
+            </div>
+          </div>
+
+          {tags.length && (
+            <div className="flex gap-1.5 flex-wrap">
+              {tags
+                .filter((t) => t.targets?.includes(item._id))
+                .map((t) => (
+                  <Badge key={t._id} title={t.tag} color={t.color} />
+                ))}
+            </div>
+          )}
+
+          {defaultTicketType && (
+            <Badge title={getTicketCost(defaultTicketType)} className="bg-success-500/[0.16] text-success-500" />
+          )}
+        </div>
+
+        {!!item?.new_new_photos_expanded?.[0] && (
+          <img
+            className="aspect-square object-contain rounded-lg w-[120px] h-[120px]"
+            src={generateUrl(item?.new_new_photos_expanded[0], {
+              resize: { height: 120, width: 120, fit: 'cover' },
+            })}
+            alt={item.title}
+          />
+        )}
+      </div>
+    </Card>
   );
 }
 
@@ -171,4 +189,13 @@ function SkeletonLine({ className, animate = false }: { className?: string; anim
       style={{ backgroundSize: '200% 100%' }}
     />
   );
+}
+
+function getLocattion(address?: Address | null) {
+  let location = '';
+  if (address?.city) location += address.city + ', ';
+  if (address?.country) location += address.country;
+  else location = 'Unknow';
+
+  return location;
 }

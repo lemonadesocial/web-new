@@ -18,6 +18,7 @@
     "@vis.gl/react-google-maps": "^1.5.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "ethers": "^6.13.5",
     "graphql-request": "^7.1.2",
     "jotai": "^2.12.1",
     "next": "15.1.7",
