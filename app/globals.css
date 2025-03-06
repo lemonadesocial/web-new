@@ -79,6 +79,20 @@
       opacity: 0;
     }
   }
+
+  --animate-skeleton: skeleton 2s ease-in-out infinite;
+
+  @keyframes skeleton {
+    0% {
+      background-position: 100% 50%;
+      opacity: 1;
+    }
+
+    100% {
+      background-position: -100% 50%;
+      opacity: 1;
+    }
+  }
 }
 
 @layer base {
