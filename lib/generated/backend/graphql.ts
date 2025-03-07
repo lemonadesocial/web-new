@@ -855,6 +855,7 @@ export type Donation = {
   tx_hash?: Maybe<Scalars['String']['output']>;
   user_info?: Maybe<DonationUserInfo>;
   vault: Scalars['MongoID']['output'];
+  vault_expanded?: Maybe<DonationVault>;
 };
 
 export enum DonationCategory {
@@ -4893,6 +4894,7 @@ export type QueryGetOffersArgs = {
 
 
 export type QueryGetPastEventsArgs = {
+  hosting_only?: InputMaybe<Scalars['Boolean']['input']>;
   limit?: Scalars['Int']['input'];
   site?: InputMaybe<Scalars['MongoID']['input']>;
   skip?: Scalars['Int']['input'];
@@ -6036,6 +6038,7 @@ export type Space = {
   private?: Maybe<Scalars['Boolean']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
   state: SpaceState;
+  theme_data?: Maybe<Scalars['JSON']['output']>;
   tint_color?: Maybe<Scalars['String']['output']>;
   title: Scalars['String']['output'];
   website?: Maybe<Scalars['String']['output']>;
@@ -6082,6 +6085,7 @@ export type SpaceInput = {
   private?: InputMaybe<Scalars['Boolean']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   state?: InputMaybe<SpaceState>;
+  theme_data?: InputMaybe<Scalars['JSON']['input']>;
   tint_color?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   website?: InputMaybe<Scalars['String']['input']>;

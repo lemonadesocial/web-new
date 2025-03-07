@@ -1,0 +1,146 @@
+query GetCastsByFarcasterId($fid: Identity!) {
+  FarcasterCasts(input: { filter: { castedBy: { _eq: $fid } }, blockchain: ALL }) {
+    Cast {
+      castedAtTimestamp
+      embeds
+      url
+      text
+      numberOfRecasts
+      numberOfLikes
+      castedBy {
+        id
+        profileName
+        profileImage
+        profileDisplayName
+      }
+      channel {
+        channelId
+      }
+      mentions {
+        position
+        profile {
+          profileName
+        }
+      }
+    }
+  }
+}
+
+query GetFarCasterCasts($rootParentUrl: String, $cursor: String) {
+  FarcasterCasts(
+    input: { cursor: $cursor, blockchain: ALL, filter: { rootParentUrl: { _eq: $rootParentUrl } }, limit: 25 }
+  ) {
+    Cast {
+      id
+      fid
+      text
+      url
+      embeds
+      hash
+      castedBy {
+        id
+        profileName
+        profileImage
+        profileDisplayName
+      }
+      mentions {
+        position
+        profile {
+          profileName
+        }
+      }
+      frame {
+        imageUrl
+        frameUrl
+        postUrl
+        buttons {
+          action
+          id
+          index
+          label
+          target
+        }
+      }
+      channel {
+        channelId
+        id
+        imageUrl
+        name
+        url
+      }
+      quotedCast {
+        castedBy {
+          id
+          profileName
+          profileImage
+        }
+      }
+      rootParentUrl
+      parentHash
+      parentFid
+      numberOfLikes
+      numberOfRecasts
+      numberOfReplies
+      castedAtTimestamp
+    }
+    pageInfo {
+      hasNextPage
+      nextCursor
+      prevCursor
+      hasPrevPage
+    }
+  }
+}
+
+query GetFarcasterFrame($frameUrl: String) {
+  FarcasterCasts(input: { filter: { frameUrl: { _eq: $frameUrl } }, blockchain: ALL, limit: 1 }) {
+    Cast {
+      frame {
+        buttons {
+          action
+          id
+          index
+          target
+        }
+        frameUrl
+        imageAspectRatio
+        imageUrl
+        inputText
+        postUrl
+        state
+      }
+    }
+  }
+}
+
+query GetFarcasterUserDetailByFid($fid: Identity!) {
+  Socials(input: { filter: { identity: { _eq: $fid } }, blockchain: ethereum }) {
+    Social {
+      fid: userId
+      profileName
+      profileDisplayName
+      profileUrl
+      profileImage
+      followingCount
+      followerCount
+      location
+      profileBio
+    }
+  }
+}
+
+query GetFarcasterUserDetailByProfileName($profileName: String) {
+  Socials(input: { filter: { profileName: { _eq: $profileName } }, blockchain: ethereum }) {
+    Social {
+      fid: userId
+      profileName
+      profileDisplayName
+      profileUrl
+      profileImage
+      followingCount
+      followerCount
+      location
+      profileBio
+    }
+  }
+}

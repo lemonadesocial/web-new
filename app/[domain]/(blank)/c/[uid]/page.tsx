@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { client } from '$lib/request/client';
 import { isObjectId } from '$lib/utils/helpers';
-import { GetSpaceDocument, Space } from '$lib/generated/graphql';
+import { GetSpaceDocument, Space } from '$lib/generated/backend/graphql';
 import Container from './container';
 
 export default async function Page({ params }: { params: Promise<{ uid: string }> }) {

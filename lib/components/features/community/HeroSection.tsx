@@ -3,7 +3,7 @@ import React from 'react';
 import clsx from 'clsx';
 
 import { Button, Spacer } from '$lib/components/core';
-import { FollowSpaceDocument, GetMeDocument, Space, UnfollowSpaceDocument } from '$lib/generated/graphql';
+import { FollowSpaceDocument, GetMeDocument, Space, UnfollowSpaceDocument } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { useMutation, useQuery } from '$lib/request';
 

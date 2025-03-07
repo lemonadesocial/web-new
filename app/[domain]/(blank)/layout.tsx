@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import React from 'react';
 
-import { GetMeDocument, User } from '$lib/generated/graphql';
+import { GetMeDocument, User } from '$lib/generated/backend/graphql';
 import { client } from '$lib/request/client';
 import Header from './header';
 import { Main } from './main';

@@ -16,7 +16,7 @@ import {
   SpaceFragment,
   SpaceTagBase,
   SpaceTagType,
-} from '$lib/generated/graphql';
+} from '$lib/generated/backend/graphql';
 import { useQuery } from '$lib/request';
 import { EventList, EventListCard } from '$lib/components/features/EventList';
 import { Calendar } from '$lib/components/core/calendar';
