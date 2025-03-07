@@ -1,0 +1,8 @@
+# Queries
+query GetMe {
+  getMe {
+    _id
+    name
+    image_avatar
+  }
+}

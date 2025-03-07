@@ -1,0 +1,7629 @@
+/* eslint-disable */
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+/** All built-in and custom scalars, mapped to their actual values */
+export type Scalars = {
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.This scalar is serialized to a string in ISO 8601 format and parsed from a string in ISO 8601 format. */
+  DateTimeISO: { input: any; output: any; }
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSON: { input: any; output: any; }
+  MongoID: { input: any; output: any; }
+};
+
+export type AcceptEventTermsInput = {
+  _id: Scalars['MongoID']['input'];
+  email_permission?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type AcceptUserDiscoveryResponse = {
+  __typename?: 'AcceptUserDiscoveryResponse';
+  state?: Maybe<UserDiscoverySwipeState>;
+  user?: Maybe<User>;
+};
+
+export type AccessPass = {
+  __typename?: 'AccessPass';
+  base: Scalars['String']['output'];
+  card_description: Scalars['String']['output'];
+  card_image_url: Scalars['String']['output'];
+  card_logo_url: Scalars['String']['output'];
+  checkin?: Maybe<Scalars['Boolean']['output']>;
+  contract: Scalars['String']['output'];
+  dialog_background_url: Scalars['String']['output'];
+  dialog_description: Scalars['String']['output'];
+  dialog_title: Scalars['String']['output'];
+  discord_url?: Maybe<Scalars['String']['output']>;
+  frame: Scalars['String']['output'];
+  gallery_logo_url: Scalars['String']['output'];
+  info_url: Scalars['String']['output'];
+  instagram_url?: Maybe<Scalars['String']['output']>;
+  logo_url: Scalars['String']['output'];
+  metadata_creators: Array<Scalars['String']['output']>;
+  metadata_description: Scalars['String']['output'];
+  metadata_name: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  network: Scalars['String']['output'];
+  twitter_url?: Maybe<Scalars['String']['output']>;
+  unlocked_description?: Maybe<Scalars['String']['output']>;
+};
+
+export type AccessPassInput = {
+  base: Scalars['String']['input'];
+  card_description: Scalars['String']['input'];
+  card_image_url: Scalars['String']['input'];
+  card_logo_url: Scalars['String']['input'];
+  checkin?: InputMaybe<Scalars['Boolean']['input']>;
+  contract: Scalars['String']['input'];
+  dialog_background_url: Scalars['String']['input'];
+  dialog_description: Scalars['String']['input'];
+  dialog_title: Scalars['String']['input'];
+  discord_url?: InputMaybe<Scalars['String']['input']>;
+  frame: Scalars['String']['input'];
+  gallery_logo_url: Scalars['String']['input'];
+  info_url: Scalars['String']['input'];
+  instagram_url?: InputMaybe<Scalars['String']['input']>;
+  logo_url: Scalars['String']['input'];
+  metadata_creators: Array<Scalars['String']['input']>;
+  metadata_description: Scalars['String']['input'];
+  metadata_name: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  network: Scalars['String']['input'];
+  twitter_url?: InputMaybe<Scalars['String']['input']>;
+  unlocked_description?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AccountInfo = DigitalAccount | EthereumAccount | EthereumEscrowAccount | EthereumRelayAccount | EthereumStakeAccount | SafeAccount | SolanaAccount | StripeAccount;
+
+export type AccountKeyRequest = {
+  __typename?: 'AccountKeyRequest';
+  accepted?: Maybe<Scalars['Boolean']['output']>;
+  deeplink_url: Scalars['String']['output'];
+  token: Scalars['String']['output'];
+};
+
+export type ActivatePersonalSpace = {
+  __typename?: 'ActivatePersonalSpace';
+  personal_space: Space;
+  space: Space;
+};
+
+export type AddMemberInput = {
+  email: Scalars['String']['input'];
+  user_name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AddSpaceMemberInput = {
+  role: SpaceRole;
+  space: Scalars['MongoID']['input'];
+  tags?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  users: Array<AddMemberInput>;
+  visible?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type Address = {
+  __typename?: 'Address';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  additional_directions?: Maybe<Scalars['String']['output']>;
+  city?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
+  latitude?: Maybe<Scalars['Float']['output']>;
+  longitude?: Maybe<Scalars['Float']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  postal?: Maybe<Scalars['String']['output']>;
+  recipient_name?: Maybe<Scalars['String']['output']>;
+  region?: Maybe<Scalars['String']['output']>;
+  street_1?: Maybe<Scalars['String']['output']>;
+  street_2?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type AddressInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  additional_directions?: InputMaybe<Scalars['String']['input']>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  country?: InputMaybe<Scalars['String']['input']>;
+  latitude?: InputMaybe<Scalars['Float']['input']>;
+  longitude?: InputMaybe<Scalars['Float']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  postal?: InputMaybe<Scalars['String']['input']>;
+  recipient_name?: InputMaybe<Scalars['String']['input']>;
+  region?: InputMaybe<Scalars['String']['input']>;
+  street_1?: InputMaybe<Scalars['String']['input']>;
+  street_2?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type Applicant = {
+  __typename?: 'Applicant';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  active?: Maybe<Scalars['Boolean']['output']>;
+  calendly_url?: Maybe<Scalars['String']['output']>;
+  company_name?: Maybe<Scalars['String']['output']>;
+  date_of_birth?: Maybe<Scalars['DateTimeISO']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  display_name?: Maybe<Scalars['String']['output']>;
+  education_title?: Maybe<Scalars['String']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  ethnicity?: Maybe<Scalars['String']['output']>;
+  handle_farcaster?: Maybe<Scalars['String']['output']>;
+  handle_github?: Maybe<Scalars['String']['output']>;
+  handle_instagram?: Maybe<Scalars['String']['output']>;
+  handle_lens?: Maybe<Scalars['String']['output']>;
+  handle_linkedin?: Maybe<Scalars['String']['output']>;
+  handle_mirror?: Maybe<Scalars['String']['output']>;
+  handle_twitter?: Maybe<Scalars['String']['output']>;
+  image_avatar?: Maybe<Scalars['String']['output']>;
+  industry?: Maybe<Scalars['String']['output']>;
+  job_title?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  new_gender?: Maybe<Scalars['String']['output']>;
+  pronoun?: Maybe<Scalars['String']['output']>;
+  tagline?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
+  wallet_custodial?: Maybe<Scalars['String']['output']>;
+  wallets_new?: Maybe<Scalars['JSON']['output']>;
+};
+
+export type ApplicationBlokchainPlatform = {
+  __typename?: 'ApplicationBlokchainPlatform';
+  platform: BlockchainPlatform;
+  required?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type ApplicationBlokchainPlatformInput = {
+  platform: BlockchainPlatform;
+  required?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ApplicationProfileField = {
+  __typename?: 'ApplicationProfileField';
+  field: Scalars['String']['output'];
+  required?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type ApplicationProfileFieldInput = {
+  field: Scalars['String']['input'];
+  required?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type AssignTicketsInput = {
+  assignees: Array<TicketAssignee>;
+  event: Scalars['MongoID']['input'];
+};
+
+export type Badge = {
+  __typename?: 'Badge';
+  _id: Scalars['MongoID']['output'];
+  city?: Maybe<Scalars['String']['output']>;
+  claimable?: Maybe<Scalars['Boolean']['output']>;
+  contract: Scalars['String']['output'];
+  country?: Maybe<Scalars['String']['output']>;
+  /** Distance in meters */
+  distance?: Maybe<Scalars['Float']['output']>;
+  list: Scalars['MongoID']['output'];
+  list_expanded?: Maybe<BadgeList>;
+  network: Scalars['String']['output'];
+};
+
+export type BadgeCity = {
+  __typename?: 'BadgeCity';
+  city: Scalars['String']['output'];
+  country: Scalars['String']['output'];
+};
+
+export type BadgeList = {
+  __typename?: 'BadgeList';
+  _id: Scalars['MongoID']['output'];
+  image_url?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  user: Scalars['MongoID']['output'];
+  user_expanded?: Maybe<User>;
+};
+
+export type BasicUserInfo = {
+  __typename?: 'BasicUserInfo';
+  _id: Scalars['MongoID']['output'];
+  company_name?: Maybe<Scalars['String']['output']>;
+  image_avatar?: Maybe<Scalars['String']['output']>;
+  job_title?: Maybe<Scalars['String']['output']>;
+  matrix_localpart?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  username?: Maybe<Scalars['String']['output']>;
+};
+
+export type BillingInfo = {
+  __typename?: 'BillingInfo';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  additional_directions?: Maybe<Scalars['String']['output']>;
+  city?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  firstname?: Maybe<Scalars['String']['output']>;
+  lastname?: Maybe<Scalars['String']['output']>;
+  latitude?: Maybe<Scalars['Float']['output']>;
+  longitude?: Maybe<Scalars['Float']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  postal?: Maybe<Scalars['String']['output']>;
+  recipient_name?: Maybe<Scalars['String']['output']>;
+  region?: Maybe<Scalars['String']['output']>;
+  street_1?: Maybe<Scalars['String']['output']>;
+  street_2?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type BillingInfoInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  additional_directions?: InputMaybe<Scalars['String']['input']>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  country?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  firstname?: InputMaybe<Scalars['String']['input']>;
+  lastname?: InputMaybe<Scalars['String']['input']>;
+  latitude?: InputMaybe<Scalars['Float']['input']>;
+  longitude?: InputMaybe<Scalars['Float']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  postal?: InputMaybe<Scalars['String']['input']>;
+  recipient_name?: InputMaybe<Scalars['String']['input']>;
+  region?: InputMaybe<Scalars['String']['input']>;
+  street_1?: InputMaybe<Scalars['String']['input']>;
+  street_2?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum BlockchainPlatform {
+  Ethereum = 'ethereum',
+  Solana = 'solana'
+}
+
+export type Broadcast = {
+  __typename?: 'Broadcast';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  active: Scalars['Boolean']['output'];
+  deactivation_code?: Maybe<Scalars['String']['output']>;
+  deactivation_message?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  eligible: Scalars['Boolean']['output'];
+  end_time?: Maybe<Scalars['DateTimeISO']['output']>;
+  life_cycle_status: BroadcastLifeCycleStatus;
+  meta_data?: Maybe<BroadcastMetaData>;
+  position?: Maybe<Scalars['Float']['output']>;
+  processed_by_job?: Maybe<Scalars['Boolean']['output']>;
+  provider: BroadcastProvider;
+  provider_id: Scalars['String']['output'];
+  recording_status: BroadcastRecordingStatus;
+  rooms?: Maybe<Array<Scalars['MongoID']['output']>>;
+  scheduled_end_time?: Maybe<Scalars['DateTimeISO']['output']>;
+  scheduled_start_time?: Maybe<Scalars['DateTimeISO']['output']>;
+  start_time?: Maybe<Scalars['DateTimeISO']['output']>;
+  thumbnail?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  user: Scalars['MongoID']['output'];
+  user_expanded?: Maybe<User>;
+};
+
+export enum BroadcastLifeCycleStatus {
+  Complete = 'complete',
+  Created = 'created',
+  Live = 'live',
+  LiveStarting = 'liveStarting',
+  Ready = 'ready',
+  Revoked = 'revoked',
+  TestStarting = 'testStarting',
+  Testing = 'testing'
+}
+
+export type BroadcastMetaData = {
+  __typename?: 'BroadcastMetaData';
+  boundStreamId?: Maybe<Scalars['String']['output']>;
+  boundStreamStamp?: Maybe<Scalars['DateTimeISO']['output']>;
+  enableAutoStop?: Maybe<Scalars['Boolean']['output']>;
+  password?: Maybe<Scalars['String']['output']>;
+  static_thumbnail?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  user?: Maybe<Scalars['String']['output']>;
+  video?: Maybe<Scalars['String']['output']>;
+};
+
+export enum BroadcastProvider {
+  Embed = 'embed',
+  Local = 'local',
+  Twitch = 'twitch',
+  Video = 'video',
+  Youtube = 'youtube',
+  Zoom = 'zoom'
+}
+
+export enum BroadcastRecordingStatus {
+  NotRecording = 'notRecording',
+  Recorded = 'recorded',
+  Recording = 'recording'
+}
+
+export type BroadcastRoom = {
+  __typename?: 'BroadcastRoom';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  event_payment_ticket_types?: Maybe<Array<Scalars['MongoID']['output']>>;
+  iframe_src?: Maybe<Scalars['String']['output']>;
+  photos?: Maybe<Array<Scalars['MongoID']['output']>>;
+  photos_expanded?: Maybe<Array<Maybe<File>>>;
+  position?: Maybe<Scalars['Float']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+
+export type BroadcastRoomPhotos_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+export type BroadcastRoomInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  event_payment_ticket_types?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  iframe_src?: InputMaybe<Scalars['String']['input']>;
+  photos?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  position?: InputMaybe<Scalars['Float']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type BuyTicketsInput = {
+  account_id: Scalars['MongoID']['input'];
+  billing_info?: InputMaybe<BillingInfoInput>;
+  buyer_info?: InputMaybe<BuyerInfoInput>;
+  connect_wallets?: InputMaybe<Array<ConnectWalletInput>>;
+  currency: Scalars['String']['input'];
+  discount?: InputMaybe<Scalars['String']['input']>;
+  event: Scalars['MongoID']['input'];
+  fee?: InputMaybe<Scalars['String']['input']>;
+  inviter?: InputMaybe<Scalars['MongoID']['input']>;
+  items: Array<PurchasableItem>;
+  total: Scalars['String']['input'];
+  transfer_params?: InputMaybe<Scalars['JSON']['input']>;
+  user_info?: InputMaybe<UserInput>;
+};
+
+export type BuyTicketsResponse = {
+  __typename?: 'BuyTicketsResponse';
+  join_request?: Maybe<EventJoinRequest>;
+  payment: NewPayment;
+};
+
+export type BuyerInfo = {
+  __typename?: 'BuyerInfo';
+  email: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+};
+
+export type BuyerInfoInput = {
+  email: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CalculateTicketsPricingInput = {
+  buyer_info?: InputMaybe<BuyerInfoInput>;
+  connect_wallets?: InputMaybe<Array<ConnectWalletInput>>;
+  currency: Scalars['String']['input'];
+  discount?: InputMaybe<Scalars['String']['input']>;
+  event: Scalars['MongoID']['input'];
+  inviter?: InputMaybe<Scalars['MongoID']['input']>;
+  items: Array<PurchasableItem>;
+  user_info?: InputMaybe<UserInput>;
+};
+
+export type CancelEventInvitationsInput = {
+  event: Scalars['MongoID']['input'];
+  invitations: Array<Scalars['MongoID']['input']>;
+};
+
+export type CancelTicketsInput = {
+  event: Scalars['MongoID']['input'];
+  tickets: Array<Scalars['MongoID']['input']>;
+};
+
+export type Capability = {
+  __typename?: 'Capability';
+  detail: CapabilityDetail;
+  type: StripeCapabilityType;
+};
+
+export type CapabilityDetail = {
+  __typename?: 'CapabilityDetail';
+  available: Scalars['Boolean']['output'];
+  display_preference: DisplayPreference;
+};
+
+export type CapabilityInput = {
+  preference: StripeAccountCapabilityDisplayPreferencePreference;
+  type: StripeCapabilityType;
+};
+
+export type CastVoteInput = {
+  option_id?: InputMaybe<Scalars['String']['input']>;
+  voting_id: Scalars['MongoID']['input'];
+};
+
+export type Chain = {
+  __typename?: 'Chain';
+  access_registry_contract?: Maybe<Scalars['String']['output']>;
+  active?: Maybe<Scalars['Boolean']['output']>;
+  aragon_network?: Maybe<Scalars['String']['output']>;
+  axelar_chain_name?: Maybe<Scalars['String']['output']>;
+  biconomy_api_key?: Maybe<Scalars['String']['output']>;
+  block_explorer_for_token?: Maybe<Scalars['String']['output']>;
+  block_explorer_for_tx?: Maybe<Scalars['String']['output']>;
+  block_explorer_name?: Maybe<Scalars['String']['output']>;
+  block_explorer_url?: Maybe<Scalars['String']['output']>;
+  block_time: Scalars['Float']['output'];
+  chain_id: Scalars['String']['output'];
+  code_name: Scalars['String']['output'];
+  donation_registry_contract?: Maybe<Scalars['String']['output']>;
+  eas_event_contract?: Maybe<Scalars['String']['output']>;
+  eas_graphql_url?: Maybe<Scalars['String']['output']>;
+  ens_registry?: Maybe<Scalars['String']['output']>;
+  escrow_manager_contract?: Maybe<Scalars['String']['output']>;
+  logo_url?: Maybe<Scalars['String']['output']>;
+  marketplace_contract?: Maybe<Scalars['String']['output']>;
+  marketplace_version?: Maybe<Scalars['Int']['output']>;
+  name: Scalars['String']['output'];
+  payment_config_registry_contract?: Maybe<Scalars['String']['output']>;
+  platform: Scalars['String']['output'];
+  poap_contract?: Maybe<Scalars['String']['output']>;
+  proxy_admin_contract?: Maybe<Scalars['String']['output']>;
+  relay_payment_contract?: Maybe<Scalars['String']['output']>;
+  reward_registry_contract?: Maybe<Scalars['String']['output']>;
+  rpc_url: Scalars['String']['output'];
+  safe_confirmations: Scalars['Float']['output'];
+  stake_payment_contract?: Maybe<Scalars['String']['output']>;
+  tokens?: Maybe<Array<Token>>;
+};
+
+export type CheckinTokenRewardSetting = {
+  __typename?: 'CheckinTokenRewardSetting';
+  _id: Scalars['MongoID']['output'];
+  currency_address: Scalars['String']['output'];
+  event: Scalars['MongoID']['output'];
+  photo?: Maybe<Scalars['MongoID']['output']>;
+  photo_expanded?: Maybe<File>;
+  rewards: Array<TicketTypeReward>;
+  title: Scalars['String']['output'];
+  user: Scalars['MongoID']['output'];
+  vault: Scalars['MongoID']['output'];
+  vault_expanded?: Maybe<TokenRewardVault>;
+};
+
+export type CheckinTokenRewardSettingInput = {
+  currency_address?: InputMaybe<Scalars['String']['input']>;
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+  photo?: InputMaybe<Scalars['MongoID']['input']>;
+  rewards?: InputMaybe<Array<TicketTypeRewardInput>>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  vault?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+export type ClaimCheckinRewardSignatureResponse = {
+  __typename?: 'ClaimCheckinRewardSignatureResponse';
+  settings: Array<CheckinTokenRewardSetting>;
+  signature?: Maybe<TokenRewardSignature>;
+};
+
+export type ClaimTicketRewardSignatureResponse = {
+  __typename?: 'ClaimTicketRewardSignatureResponse';
+  settings: Array<TicketTokenRewardSetting>;
+  signature: TokenRewardSignature;
+};
+
+export type CloneEventInput = {
+  dates: Array<Scalars['DateTimeISO']['input']>;
+  event: Scalars['MongoID']['input'];
+  overrides?: InputMaybe<EventInput>;
+};
+
+export type Comment = {
+  __typename?: 'Comment';
+  _id: Scalars['MongoID']['output'];
+  comment?: Maybe<Scalars['MongoID']['output']>;
+  created_at: Scalars['DateTimeISO']['output'];
+  post: Scalars['MongoID']['output'];
+  text: Scalars['String']['output'];
+  user: Scalars['MongoID']['output'];
+  user_expanded?: Maybe<User>;
+};
+
+export type CommentInput = {
+  comment?: InputMaybe<Scalars['MongoID']['input']>;
+  post: Scalars['MongoID']['input'];
+  text: Scalars['String']['input'];
+};
+
+export type ConfidentialUserInfo = {
+  __typename?: 'ConfidentialUserInfo';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  display_name?: Maybe<Scalars['String']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  image_avatar?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  username?: Maybe<Scalars['String']['output']>;
+};
+
+export type ConnectWalletInput = {
+  platform: BlockchainPlatform;
+  signature: Scalars['String']['input'];
+  token: Scalars['String']['input'];
+};
+
+export type CreateBadgeInput = {
+  contract: Scalars['String']['input'];
+  list: Scalars['MongoID']['input'];
+  network: Scalars['String']['input'];
+};
+
+export type CreateBadgeListInput = {
+  image_url?: InputMaybe<Scalars['String']['input']>;
+  title: Scalars['String']['input'];
+};
+
+export type CreateDonationInput = {
+  amount: Scalars['String']['input'];
+  category: DonationCategory;
+  /** Id of the target event or user that receives the donation */
+  category_ref: Scalars['String']['input'];
+  currency: Scalars['String']['input'];
+  from_email?: InputMaybe<Scalars['String']['input']>;
+  vault: Scalars['MongoID']['input'];
+};
+
+export type CreateEventBroadcastInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  position?: InputMaybe<Scalars['Float']['input']>;
+  provider: BroadcastProvider;
+  provider_id: Scalars['String']['input'];
+  rooms?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  scheduled_end_time?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  scheduled_start_time?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  thumbnail?: InputMaybe<Scalars['String']['input']>;
+  title: Scalars['String']['input'];
+};
+
+export type CreateEventEmailSettingInput = {
+  cc?: InputMaybe<Array<Scalars['String']['input']>>;
+  custom_body_html?: InputMaybe<Scalars['String']['input']>;
+  custom_subject_html?: InputMaybe<Scalars['String']['input']>;
+  disabled?: InputMaybe<Scalars['Boolean']['input']>;
+  event: Scalars['MongoID']['input'];
+  recipient_filters?: InputMaybe<EmailRecipientFiltersInput>;
+  recipient_types?: InputMaybe<Array<EmailRecipientType>>;
+  scheduled_at?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  type: EmailTemplateType;
+};
+
+export type CreateEventFromEventbriteInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  end?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  start?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CreateEventQuestionsInput = {
+  event: Scalars['MongoID']['input'];
+  question: Scalars['String']['input'];
+  session?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+export type CreateEventTicketCategoryInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  event: Scalars['MongoID']['input'];
+  position?: InputMaybe<Scalars['Int']['input']>;
+  ticket_types?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  title: Scalars['String']['input'];
+};
+
+export type CreateFarcasterAccountKeyResponse = {
+  __typename?: 'CreateFarcasterAccountKeyResponse';
+  account_key_request: AccountKeyRequest;
+};
+
+export type CreateNewPaymentAccountInput = {
+  account_info?: InputMaybe<Scalars['JSON']['input']>;
+  provider?: InputMaybe<NewPaymentProvider>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  type: PaymentAccountType;
+};
+
+export type CreateSiteInput = {
+  access_pass?: InputMaybe<AccessPassInput>;
+  ai_config?: InputMaybe<Scalars['MongoID']['input']>;
+  client: Scalars['String']['input'];
+  description: Scalars['String']['input'];
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+  favicon_url?: InputMaybe<Scalars['String']['input']>;
+  footer_scripts?: InputMaybe<Array<SiteFooterScriptInput>>;
+  header_links?: InputMaybe<Array<SiteHeaderLinkInput>>;
+  header_metas?: InputMaybe<Array<SiteHeaderMetaInput>>;
+  hostnames?: InputMaybe<Array<Scalars['String']['input']>>;
+  logo_mobile_url?: InputMaybe<Scalars['String']['input']>;
+  logo_url?: InputMaybe<Scalars['String']['input']>;
+  onboarding_steps?: InputMaybe<Array<SiteOnboardingStepInput>>;
+  owners?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  partners?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  passports?: InputMaybe<Array<SitePassportInput>>;
+  privacy_url?: InputMaybe<Scalars['String']['input']>;
+  share_url?: InputMaybe<Scalars['JSON']['input']>;
+  text?: InputMaybe<Scalars['JSON']['input']>;
+  theme_data?: InputMaybe<Scalars['JSON']['input']>;
+  theme_type?: InputMaybe<Scalars['String']['input']>;
+  title: Scalars['String']['input'];
+  visibility?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type CreateStripeOnrampSessionInput = {
+  destination_amount?: InputMaybe<Scalars['Float']['input']>;
+  destination_currency?: InputMaybe<Scalars['String']['input']>;
+  destination_network?: InputMaybe<Scalars['String']['input']>;
+  source_currency?: InputMaybe<Scalars['String']['input']>;
+  wallet_address?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CreateUserFriendshipInput = {
+  type?: InputMaybe<UserFriendshipType>;
+  user: Scalars['MongoID']['input'];
+};
+
+export type CryptoPaymentInfo = {
+  __typename?: 'CryptoPaymentInfo';
+  network?: Maybe<Scalars['String']['output']>;
+  tx_hash?: Maybe<Scalars['String']['output']>;
+};
+
+export type CryptoPaymentNetworkStatistics = {
+  __typename?: 'CryptoPaymentNetworkStatistics';
+  chain_id: Scalars['String']['output'];
+  count: Scalars['Int']['output'];
+};
+
+export type CryptoPaymentStatistics = {
+  __typename?: 'CryptoPaymentStatistics';
+  count: Scalars['Int']['output'];
+  networks: Array<CryptoPaymentNetworkStatistics>;
+  revenue: Array<PaymentRevenue>;
+};
+
+export type Currency = {
+  __typename?: 'Currency';
+  code: Scalars['String']['output'];
+  decimals: Scalars['Float']['output'];
+};
+
+export type DecideEventCohostRequestInput = {
+  decision: Scalars['Boolean']['input'];
+  event: Scalars['MongoID']['input'];
+};
+
+export type DecideRoomAccessRequestInput = {
+  _id: Scalars['MongoID']['input'];
+  decision: Scalars['Boolean']['input'];
+  user: Scalars['MongoID']['input'];
+};
+
+export type DecideRoomStageRequestInput = {
+  _id: Scalars['MongoID']['input'];
+  decision: Scalars['Boolean']['input'];
+  user: Scalars['MongoID']['input'];
+};
+
+export type DecideSpaceEventRequestsInput = {
+  decision: SpaceEventRequestState;
+  requests: Array<Scalars['MongoID']['input']>;
+  space: Scalars['MongoID']['input'];
+};
+
+export type DecideUserJoinRequestsInput = {
+  decision: EventJoinRequestState;
+  event: Scalars['MongoID']['input'];
+  requests: Array<Scalars['MongoID']['input']>;
+};
+
+export type DecidedJoinRequest = {
+  __typename?: 'DecidedJoinRequest';
+  _id: Scalars['MongoID']['output'];
+  processed: Scalars['Boolean']['output'];
+};
+
+export type DeleteSpaceMemberInput = {
+  ids: Array<Scalars['MongoID']['input']>;
+  space: Scalars['MongoID']['input'];
+};
+
+export type DeleteUserFriendshipInput = {
+  user: Scalars['MongoID']['input'];
+};
+
+export type DeliveryOption = {
+  __typename?: 'DeliveryOption';
+  _id: Scalars['MongoID']['output'];
+  cities?: Maybe<Array<Scalars['String']['output']>>;
+  cost: Scalars['Float']['output'];
+  countries?: Maybe<Array<Scalars['String']['output']>>;
+  description?: Maybe<Scalars['String']['output']>;
+  fulfillment_address?: Maybe<Scalars['MongoID']['output']>;
+  group?: Maybe<Scalars['String']['output']>;
+  latitude?: Maybe<Scalars['Float']['output']>;
+  longitude?: Maybe<Scalars['Float']['output']>;
+  pickup_addresses?: Maybe<Array<Scalars['MongoID']['output']>>;
+  polygon?: Maybe<Scalars['JSON']['output']>;
+  postal_ranges?: Maybe<Array<DeliveryOptionPostalRange>>;
+  postals?: Maybe<Array<Scalars['String']['output']>>;
+  regions?: Maybe<Array<Scalars['String']['output']>>;
+  search_range?: Maybe<Scalars['Float']['output']>;
+  title: Scalars['String']['output'];
+  type: DeliveryOptionType;
+  waive_type?: Maybe<DeliveryOptionWaiveType>;
+  waive_value_threshold?: Maybe<Scalars['Float']['output']>;
+};
+
+export type DeliveryOptionInput = {
+  _id: Scalars['MongoID']['input'];
+  cities?: InputMaybe<Array<Scalars['String']['input']>>;
+  cost: Scalars['Float']['input'];
+  countries?: InputMaybe<Array<Scalars['String']['input']>>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  fulfillment_address?: InputMaybe<Scalars['MongoID']['input']>;
+  group?: InputMaybe<Scalars['String']['input']>;
+  latitude?: InputMaybe<Scalars['Float']['input']>;
+  longitude?: InputMaybe<Scalars['Float']['input']>;
+  pickup_addresses?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  polygon?: InputMaybe<Scalars['JSON']['input']>;
+  postal_ranges?: InputMaybe<Array<DeliveryOptionPostalRangeInput>>;
+  postals?: InputMaybe<Array<Scalars['String']['input']>>;
+  regions?: InputMaybe<Array<Scalars['String']['input']>>;
+  search_range?: InputMaybe<Scalars['Float']['input']>;
+  title: Scalars['String']['input'];
+  type: DeliveryOptionType;
+  waive_type?: InputMaybe<DeliveryOptionWaiveType>;
+  waive_value_threshold?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type DeliveryOptionPostalRange = {
+  __typename?: 'DeliveryOptionPostalRange';
+  _id: Scalars['MongoID']['output'];
+  max: Scalars['Float']['output'];
+  min: Scalars['Float']['output'];
+  pattern: Scalars['String']['output'];
+};
+
+export type DeliveryOptionPostalRangeInput = {
+  _id: Scalars['MongoID']['input'];
+  max: Scalars['Float']['input'];
+  min: Scalars['Float']['input'];
+  pattern: Scalars['String']['input'];
+};
+
+export enum DeliveryOptionType {
+  City = 'city',
+  Country = 'country',
+  GeoZone = 'geo_zone',
+  Postal = 'postal',
+  Region = 'region',
+  Worldwide = 'worldwide'
+}
+
+export enum DeliveryOptionWaiveType {
+  Any = 'any',
+  Product = 'product',
+  Store = 'store'
+}
+
+export type DigitalAccount = {
+  __typename?: 'DigitalAccount';
+  account_id: Scalars['String']['output'];
+  currencies: Array<Scalars['String']['output']>;
+  currency_map?: Maybe<Scalars['JSON']['output']>;
+};
+
+export type DisplayPreference = {
+  __typename?: 'DisplayPreference';
+  overridable: Scalars['Boolean']['output'];
+  preference: StripeAccountCapabilityDisplayPreferencePreference;
+  value: StripeAccountCapabilityDisplayPreferenceValue;
+};
+
+export type Donation = {
+  __typename?: 'Donation';
+  _id: Scalars['MongoID']['output'];
+  amount: Scalars['String']['output'];
+  category: DonationCategory;
+  /** Id of the target event or user that receives the donation */
+  category_ref: Scalars['String']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  currency: Scalars['String']['output'];
+  from_email?: Maybe<Scalars['String']['output']>;
+  from_user?: Maybe<Scalars['MongoID']['output']>;
+  from_wallet?: Maybe<Scalars['String']['output']>;
+  ticket_type?: Maybe<Scalars['MongoID']['output']>;
+  ticket_type_expanded?: Maybe<EventTicketType>;
+  tx_hash?: Maybe<Scalars['String']['output']>;
+  user_info?: Maybe<DonationUserInfo>;
+  vault: Scalars['MongoID']['output'];
+  vault_expanded?: Maybe<DonationVault>;
+};
+
+export enum DonationCategory {
+  Event = 'EVENT',
+  User = 'USER'
+}
+
+export type DonationRecommendation = {
+  __typename?: 'DonationRecommendation';
+  amount: Array<Scalars['String']['output']>;
+  currency: Scalars['String']['output'];
+};
+
+export type DonationUserInfo = {
+  __typename?: 'DonationUserInfo';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  image_avatar?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+};
+
+export type DonationVault = {
+  __typename?: 'DonationVault';
+  _id: Scalars['MongoID']['output'];
+  address: Scalars['String']['output'];
+  events?: Maybe<Array<Scalars['MongoID']['output']>>;
+  network: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  user: Scalars['MongoID']['output'];
+};
+
+export type DonationVaultInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
+  network?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EasEvent = {
+  __typename?: 'EASEvent';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  cohosts: Array<EasEventCohost>;
+  creatorName?: Maybe<Scalars['String']['output']>;
+  creatorProfile?: Maybe<Scalars['String']['output']>;
+  date?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  detail_uid?: Maybe<Scalars['String']['output']>;
+  diff?: Maybe<Array<Scalars['String']['output']>>;
+  eventLink?: Maybe<Scalars['String']['output']>;
+  tickets: Scalars['Float']['output'];
+  title: Scalars['String']['output'];
+  type?: Maybe<Scalars['String']['output']>;
+  uid?: Maybe<Scalars['String']['output']>;
+};
+
+export type EasEventCohost = {
+  __typename?: 'EASEventCohost';
+  cohostName?: Maybe<Scalars['String']['output']>;
+  cohostProfile?: Maybe<Scalars['String']['output']>;
+  eventLink?: Maybe<Scalars['String']['output']>;
+  uid?: Maybe<Scalars['String']['output']>;
+  wallet: Scalars['String']['output'];
+};
+
+export type EasTicket = {
+  __typename?: 'EASTicket';
+  _id: Scalars['MongoID']['output'];
+  assignedBy?: Maybe<Scalars['String']['output']>;
+  eventLink?: Maybe<Scalars['String']['output']>;
+  eventName?: Maybe<Scalars['String']['output']>;
+  guest?: Maybe<Scalars['String']['output']>;
+  ticket?: Maybe<Scalars['String']['output']>;
+  wallet_address: Scalars['String']['output'];
+};
+
+export type EasTicketType = {
+  __typename?: 'EASTicketType';
+  _id: Scalars['MongoID']['output'];
+  cost: Scalars['String']['output'];
+  currency?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  detail_uid?: Maybe<Scalars['String']['output']>;
+  diff?: Maybe<Array<Scalars['String']['output']>>;
+  eventLink?: Maybe<Scalars['String']['output']>;
+  eventName?: Maybe<Scalars['String']['output']>;
+  provider?: Maybe<Scalars['String']['output']>;
+  tickets?: Maybe<Array<EasTicket>>;
+  title: Scalars['String']['output'];
+  uid?: Maybe<Scalars['String']['output']>;
+};
+
+export enum EasyshipCategory {
+  AccessoryBattery = 'accessory_battery',
+  AccessoryNoBattery = 'accessory_no_battery',
+  AudioVideo = 'audio_video',
+  BooksCollectionables = 'books_collectionables',
+  Cameras = 'cameras',
+  ComputersLaptops = 'computers_laptops',
+  Documents = 'documents',
+  DryFoodSupplements = 'dry_food_supplements',
+  Fashion = 'fashion',
+  Gaming = 'gaming',
+  HealthBeauty = 'health_beauty',
+  HomeAppliances = 'home_appliances',
+  HomeDecor = 'home_decor',
+  Jewelry = 'jewelry',
+  Luggage = 'luggage',
+  Mobiles = 'mobiles',
+  PetAccessory = 'pet_accessory',
+  Sport = 'sport',
+  Tablets = 'tablets',
+  Toys = 'toys',
+  Watches = 'watches'
+}
+
+export type EmailRecipientFilters = {
+  __typename?: 'EmailRecipientFilters';
+  join_request_states?: Maybe<Array<EventJoinRequestState>>;
+  ticket_types?: Maybe<Array<Scalars['MongoID']['output']>>;
+};
+
+export type EmailRecipientFiltersInput = {
+  join_request_states?: InputMaybe<Array<EventJoinRequestState>>;
+  ticket_types?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+export enum EmailRecipientType {
+  Assigned = 'assigned',
+  Attending = 'attending',
+  EventHosts = 'event_hosts',
+  Invited = 'invited',
+  JoinRequester = 'join_requester',
+  Registration = 'registration',
+  TicketCancelled = 'ticket_cancelled',
+  TicketIssued = 'ticket_issued',
+  TicketTypeWhitelisted = 'ticket_type_whitelisted'
+}
+
+export type EmailSetting = {
+  __typename?: 'EmailSetting';
+  _id: Scalars['MongoID']['output'];
+  body_preview?: Maybe<Scalars['String']['output']>;
+  cc?: Maybe<Array<Scalars['String']['output']>>;
+  context?: Maybe<Scalars['JSON']['output']>;
+  custom_body_html?: Maybe<Scalars['String']['output']>;
+  custom_subject_html?: Maybe<Scalars['String']['output']>;
+  disabled?: Maybe<Scalars['Boolean']['output']>;
+  is_system_email: Scalars['Boolean']['output'];
+  opened?: Maybe<Array<EmailTracking>>;
+  owner: Scalars['MongoID']['output'];
+  recipient_filters?: Maybe<EmailRecipientFilters>;
+  recipient_types?: Maybe<Array<EmailRecipientType>>;
+  recipients?: Maybe<Array<Scalars['String']['output']>>;
+  recipients_details?: Maybe<Array<RecipientDetail>>;
+  scheduled_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  sendgrid_template_id?: Maybe<Scalars['String']['output']>;
+  sent_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  subject_preview?: Maybe<Scalars['String']['output']>;
+  template: Scalars['MongoID']['output'];
+  type: EmailTemplateType;
+};
+
+export enum EmailTemplateType {
+  BuyerStoreOrderAccepted = 'buyer_store_order_accepted',
+  BuyerStoreOrderCancelled = 'buyer_store_order_cancelled',
+  BuyerStoreOrderDeclined = 'buyer_store_order_declined',
+  BuyerStoreOrderDelivered = 'buyer_store_order_delivered',
+  BuyerStoreOrderPending = 'buyer_store_order_pending',
+  BuyerStoreOrderPreparing = 'buyer_store_order_preparing',
+  BuyerStoreOrderTracking = 'buyer_store_order_tracking',
+  CryptoPaymentReceipt = 'crypto_payment_receipt',
+  Custom = 'custom',
+  EventCancelled = 'event_cancelled',
+  EventCohostInvitation = 'event_cohost_invitation',
+  Feedback = 'feedback',
+  Invitation = 'invitation',
+  InvitationCancelled = 'invitation_cancelled',
+  JoinRequestApproved = 'join_request_approved',
+  JoinRequestApprovedWithTickets = 'join_request_approved_with_tickets',
+  JoinRequestDeclined = 'join_request_declined',
+  JoinRequested = 'join_requested',
+  PostRsvp = 'post_rsvp',
+  Reminder = 'reminder',
+  SellerStoreOrderPending = 'seller_store_order_pending',
+  SpaceAddAdminInvitation = 'space_add_admin_invitation',
+  SpaceAddAmbassadorInvitation = 'space_add_ambassador_invitation',
+  SpaceAddSubscriberManuallyInvitation = 'space_add_subscriber_manually_invitation',
+  SpaceRequestPinningEvent = 'space_request_pinning_event',
+  TicketCancelled = 'ticket_cancelled',
+  TicketIssued = 'ticket_issued',
+  TicketReceived = 'ticket_received',
+  TicketTypeWhitelisted = 'ticket_type_whitelisted',
+  Updated = 'updated',
+  UserContactInvite = 'user_contact_invite'
+}
+
+export type EmailTracking = {
+  __typename?: 'EmailTracking';
+  email: Scalars['String']['output'];
+  stamp: Scalars['DateTimeISO']['output'];
+};
+
+export type EscrowDepositInfo = {
+  __typename?: 'EscrowDepositInfo';
+  minimum_amount: Scalars['String']['output'];
+  minimum_percent: Scalars['Float']['output'];
+};
+
+export type EthereumAccount = {
+  __typename?: 'EthereumAccount';
+  address: Scalars['String']['output'];
+  currencies: Array<Scalars['String']['output']>;
+  currency_map?: Maybe<Scalars['JSON']['output']>;
+  network: Scalars['String']['output'];
+};
+
+export type EthereumEscrowAccount = {
+  __typename?: 'EthereumEscrowAccount';
+  address: Scalars['String']['output'];
+  currencies: Array<Scalars['String']['output']>;
+  currency_map?: Maybe<Scalars['JSON']['output']>;
+  host_refund_percent: Scalars['Float']['output'];
+  minimum_deposit_percent: Scalars['Int']['output'];
+  network: Scalars['String']['output'];
+  refund_policies?: Maybe<Array<RefundPolicy>>;
+};
+
+export type EthereumRelayAccount = {
+  __typename?: 'EthereumRelayAccount';
+  address: Scalars['String']['output'];
+  currencies: Array<Scalars['String']['output']>;
+  currency_map?: Maybe<Scalars['JSON']['output']>;
+  network: Scalars['String']['output'];
+  payment_splitter_contract?: Maybe<Scalars['String']['output']>;
+};
+
+export type EthereumStakeAccount = {
+  __typename?: 'EthereumStakeAccount';
+  address: Scalars['String']['output'];
+  config_id: Scalars['String']['output'];
+  currencies: Array<Scalars['String']['output']>;
+  currency_map?: Maybe<Scalars['JSON']['output']>;
+  network: Scalars['String']['output'];
+  requirement_checkin_before?: Maybe<Scalars['DateTimeISO']['output']>;
+};
+
+export type Event = {
+  __typename?: 'Event';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  accepted?: Maybe<Array<Scalars['MongoID']['output']>>;
+  accepted_expanded?: Maybe<Array<Maybe<User>>>;
+  accepted_store_promotion?: Maybe<Scalars['MongoID']['output']>;
+  accepted_user_fields_required?: Maybe<Array<Scalars['String']['output']>>;
+  access_pass?: Maybe<AccessPass>;
+  active: Scalars['Boolean']['output'];
+  address?: Maybe<Address>;
+  address_directions?: Maybe<Array<Scalars['String']['output']>>;
+  application_form_submission?: Maybe<Scalars['DateTimeISO']['output']>;
+  application_form_url?: Maybe<Scalars['String']['output']>;
+  application_profile_fields?: Maybe<Array<ApplicationProfileField>>;
+  application_questions?: Maybe<Array<EventApplicationQuestion>>;
+  application_required?: Maybe<Scalars['Boolean']['output']>;
+  approval_required?: Maybe<Scalars['Boolean']['output']>;
+  approved?: Maybe<Scalars['Boolean']['output']>;
+  /** Number of users who have tickets */
+  attending_count?: Maybe<Scalars['Float']['output']>;
+  broadcast_rooms?: Maybe<Array<BroadcastRoom>>;
+  broadcasts?: Maybe<Array<Broadcast>>;
+  button_icon?: Maybe<Scalars['String']['output']>;
+  button_text?: Maybe<Scalars['String']['output']>;
+  button_url?: Maybe<Scalars['String']['output']>;
+  calendar_links?: Maybe<EventCalendarLinks>;
+  checkedin?: Maybe<Scalars['Boolean']['output']>;
+  checkin_count?: Maybe<Scalars['Float']['output']>;
+  checkin_menu_text?: Maybe<Scalars['String']['output']>;
+  cohosts?: Maybe<Array<Scalars['MongoID']['output']>>;
+  cohosts_expanded?: Maybe<Array<Maybe<User>>>;
+  comments?: Maybe<Scalars['String']['output']>;
+  cost?: Maybe<Scalars['Float']['output']>;
+  cover?: Maybe<Scalars['String']['output']>;
+  cta_button_text?: Maybe<Scalars['String']['output']>;
+  /** Show secondary CTA button text */
+  cta_secondary_visible?: Maybe<Scalars['Boolean']['output']>;
+  currency?: Maybe<Scalars['String']['output']>;
+  data?: Maybe<Scalars['JSON']['output']>;
+  declined?: Maybe<Array<Scalars['MongoID']['output']>>;
+  declined_expanded?: Maybe<Array<Maybe<User>>>;
+  description?: Maybe<Scalars['String']['output']>;
+  description_plain_text?: Maybe<Scalars['String']['output']>;
+  donation_enabled?: Maybe<Scalars['Boolean']['output']>;
+  donation_show_history?: Maybe<Scalars['Boolean']['output']>;
+  donation_vaults?: Maybe<Array<Scalars['MongoID']['output']>>;
+  donation_vaults_expanded?: Maybe<Array<DonationVault>>;
+  end: Scalars['DateTimeISO']['output'];
+  event_ticket_types?: Maybe<Array<EventTicketType>>;
+  eventbrite_enabled?: Maybe<Scalars['Boolean']['output']>;
+  eventbrite_event_id?: Maybe<Scalars['String']['output']>;
+  eventbrite_tickets_imported?: Maybe<Scalars['Boolean']['output']>;
+  events?: Maybe<Array<Scalars['MongoID']['output']>>;
+  events_expanded?: Maybe<Array<Maybe<Event>>>;
+  frequent_questions?: Maybe<Array<FrequentQuestion>>;
+  guest_directory_enabled?: Maybe<Scalars['Boolean']['output']>;
+  guest_limit?: Maybe<Scalars['Float']['output']>;
+  guest_limit_per?: Maybe<Scalars['Float']['output']>;
+  guests?: Maybe<Scalars['Int']['output']>;
+  has_terms_accepted?: Maybe<Scalars['Boolean']['output']>;
+  hide_attending?: Maybe<Scalars['Boolean']['output']>;
+  hide_chat_action?: Maybe<Scalars['Boolean']['output']>;
+  hide_cohosts?: Maybe<Scalars['Boolean']['output']>;
+  hide_creators?: Maybe<Scalars['Boolean']['output']>;
+  hide_invite_action?: Maybe<Scalars['Boolean']['output']>;
+  hide_lounge?: Maybe<Scalars['Boolean']['output']>;
+  hide_question_box?: Maybe<Scalars['Boolean']['output']>;
+  hide_rooms_action?: Maybe<Scalars['Boolean']['output']>;
+  hide_session_guests?: Maybe<Scalars['Boolean']['output']>;
+  hide_speakers?: Maybe<Scalars['Boolean']['output']>;
+  hide_stories_action?: Maybe<Scalars['Boolean']['output']>;
+  highlight?: Maybe<Scalars['Boolean']['output']>;
+  host: Scalars['MongoID']['output'];
+  host_expanded?: Maybe<User>;
+  inherited_cohosts?: Maybe<Array<Scalars['MongoID']['output']>>;
+  invited?: Maybe<Array<Scalars['MongoID']['output']>>;
+  invited_count?: Maybe<Scalars['Float']['output']>;
+  invited_expanded?: Maybe<Array<Maybe<User>>>;
+  inviter_user_map?: Maybe<Scalars['JSON']['output']>;
+  inviters?: Maybe<Array<Scalars['MongoID']['output']>>;
+  latitude?: Maybe<Scalars['Float']['output']>;
+  layout_sections?: Maybe<Array<LayoutSection>>;
+  listing_spaces?: Maybe<Array<Scalars['MongoID']['output']>>;
+  location?: Maybe<Point>;
+  longitude?: Maybe<Scalars['Float']['output']>;
+  matrix_event_room_id?: Maybe<Scalars['String']['output']>;
+  new_new_photos?: Maybe<Array<Scalars['MongoID']['output']>>;
+  new_new_photos_expanded?: Maybe<Array<Maybe<File>>>;
+  new_photos?: Maybe<Array<FileInline>>;
+  offers?: Maybe<Array<EventOffer>>;
+  payment_accounts_expanded?: Maybe<Array<Maybe<NewPaymentAccount>>>;
+  payment_accounts_new?: Maybe<Array<Scalars['MongoID']['output']>>;
+  payment_donation?: Maybe<Scalars['Boolean']['output']>;
+  payment_donation_amount_includes_tickets?: Maybe<Scalars['Boolean']['output']>;
+  payment_donation_amount_increment?: Maybe<Scalars['Float']['output']>;
+  payment_donation_message?: Maybe<Scalars['String']['output']>;
+  payment_donation_target?: Maybe<Scalars['Float']['output']>;
+  payment_enabled?: Maybe<Scalars['Boolean']['output']>;
+  payment_fee: Scalars['Float']['output'];
+  payment_optional?: Maybe<Scalars['Boolean']['output']>;
+  payment_ticket_count?: Maybe<Scalars['Float']['output']>;
+  payment_ticket_discounts?: Maybe<Array<EventPaymentTicketDiscount>>;
+  payment_ticket_external_message?: Maybe<Scalars['String']['output']>;
+  payment_ticket_external_url?: Maybe<Scalars['String']['output']>;
+  payment_ticket_purchase_title?: Maybe<Scalars['String']['output']>;
+  payment_ticket_unassigned_count?: Maybe<Scalars['Float']['output']>;
+  pending?: Maybe<Array<Scalars['MongoID']['output']>>;
+  pending_expanded?: Maybe<Array<Maybe<User>>>;
+  pending_request_count?: Maybe<Scalars['Float']['output']>;
+  photos?: Maybe<Array<Scalars['String']['output']>>;
+  private?: Maybe<Scalars['Boolean']['output']>;
+  published?: Maybe<Scalars['Boolean']['output']>;
+  registration_disabled?: Maybe<Scalars['Boolean']['output']>;
+  reward_uses?: Maybe<Scalars['JSON']['output']>;
+  rewards?: Maybe<Array<EventReward>>;
+  rsvp_wallet_platforms?: Maybe<Array<ApplicationBlokchainPlatform>>;
+  session_guests?: Maybe<Scalars['JSON']['output']>;
+  sessions?: Maybe<Array<EventSession>>;
+  shortid: Scalars['String']['output'];
+  slug: Scalars['String']['output'];
+  space?: Maybe<Scalars['MongoID']['output']>;
+  space_expanded?: Maybe<Space>;
+  space_tags?: Maybe<Array<SpaceTagBase>>;
+  speaker_users?: Maybe<Array<Scalars['MongoID']['output']>>;
+  speaker_users_expanded?: Maybe<Array<Maybe<User>>>;
+  stamp: Scalars['DateTimeISO']['output'];
+  start: Scalars['DateTimeISO']['output'];
+  state: EventState;
+  stores?: Maybe<Array<Scalars['MongoID']['output']>>;
+  stores_expanded?: Maybe<Array<Maybe<Store>>>;
+  stories?: Maybe<Array<Scalars['MongoID']['output']>>;
+  stories_eponym?: Maybe<Scalars['Boolean']['output']>;
+  subevent_enabled?: Maybe<Scalars['Boolean']['output']>;
+  subevent_parent?: Maybe<Scalars['MongoID']['output']>;
+  subevent_parent_expanded?: Maybe<Event>;
+  subevent_settings?: Maybe<SubeventSettings>;
+  tags?: Maybe<Array<Scalars['String']['output']>>;
+  telegram_channels?: Maybe<Array<TelegramChannel>>;
+  terms_email_permission_text?: Maybe<Scalars['Boolean']['output']>;
+  terms_text?: Maybe<Scalars['String']['output']>;
+  ticket_count?: Maybe<Scalars['Float']['output']>;
+  tickets?: Maybe<Array<TicketBase>>;
+  timezone?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  unlisted?: Maybe<Scalars['Boolean']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+  url_go?: Maybe<Scalars['String']['output']>;
+  videos?: Maybe<Array<Video>>;
+  virtual?: Maybe<Scalars['Boolean']['output']>;
+  virtual_url?: Maybe<Scalars['String']['output']>;
+  visible_cohosts?: Maybe<Array<Scalars['MongoID']['output']>>;
+  visible_cohosts_expanded?: Maybe<Array<Maybe<User>>>;
+  welcome_text?: Maybe<Scalars['String']['output']>;
+  welcome_video?: Maybe<Video>;
+  zones_menu_text?: Maybe<Scalars['String']['output']>;
+};
+
+
+export type EventAccepted_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type EventCohosts_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type EventDeclined_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type EventEvents_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type EventInvited_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type EventNew_New_Photos_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type EventPayment_Accounts_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type EventPending_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type EventSpeaker_Users_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type EventStores_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type EventVisible_Cohosts_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+export type EventApplicationAnswer = {
+  __typename?: 'EventApplicationAnswer';
+  _id: Scalars['MongoID']['output'];
+  answer?: Maybe<Scalars['String']['output']>;
+  answers?: Maybe<Array<Scalars['String']['output']>>;
+  email?: Maybe<Scalars['String']['output']>;
+  question: Scalars['MongoID']['output'];
+  question_expanded: EventApplicationQuestion;
+  user?: Maybe<Scalars['MongoID']['output']>;
+};
+
+export type EventApplicationAnswerExport = {
+  __typename?: 'EventApplicationAnswerExport';
+  _id: Scalars['MongoID']['output'];
+  answer?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventApplicationAnswerInput = {
+  answer?: InputMaybe<Scalars['String']['input']>;
+  answers?: InputMaybe<Array<Scalars['String']['input']>>;
+  question: Scalars['MongoID']['input'];
+};
+
+export type EventApplicationExport = {
+  __typename?: 'EventApplicationExport';
+  answers: Array<EventApplicationAnswerExport>;
+  non_login_user?: Maybe<EventApplicationUserExport>;
+  questions: Array<Scalars['String']['output']>;
+  user?: Maybe<EventApplicationUserExport>;
+};
+
+export type EventApplicationQuestion = {
+  __typename?: 'EventApplicationQuestion';
+  _id: Scalars['MongoID']['output'];
+  options?: Maybe<Array<Scalars['String']['output']>>;
+  position?: Maybe<Scalars['Int']['output']>;
+  question?: Maybe<Scalars['String']['output']>;
+  /** @deprecated Nolonger needed */
+  questions?: Maybe<Array<Scalars['String']['output']>>;
+  required?: Maybe<Scalars['Boolean']['output']>;
+  select_type?: Maybe<SelectType>;
+  type?: Maybe<QuestionType>;
+};
+
+export type EventApplicationQuestionAndAnswer = {
+  __typename?: 'EventApplicationQuestionAndAnswer';
+  answer?: Maybe<Scalars['String']['output']>;
+  answers?: Maybe<Array<Scalars['String']['output']>>;
+  question?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventApplicationUserExport = {
+  __typename?: 'EventApplicationUserExport';
+  _id: Scalars['MongoID']['output'];
+  email: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventAttestation = {
+  __typename?: 'EventAttestation';
+  event_address?: Maybe<Scalars['String']['output']>;
+  last_sync: Scalars['DateTimeISO']['output'];
+  uid?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventAttestationDiff = {
+  __typename?: 'EventAttestationDiff';
+  event?: Maybe<EasEvent>;
+  ticket_types?: Maybe<Array<EasTicketType>>;
+};
+
+export type EventCalendarLinks = {
+  __typename?: 'EventCalendarLinks';
+  google: Scalars['String']['output'];
+  ical: Scalars['String']['output'];
+  outlook: Scalars['String']['output'];
+  yahoo: Scalars['String']['output'];
+};
+
+export type EventCheckin = {
+  __typename?: 'EventCheckin';
+  _id: Scalars['MongoID']['output'];
+  active: Scalars['Boolean']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  email?: Maybe<Scalars['String']['output']>;
+  event: Scalars['MongoID']['output'];
+  login_user?: Maybe<UserWithEmail>;
+  non_login_user?: Maybe<NonloginUser>;
+  ticket?: Maybe<Scalars['MongoID']['output']>;
+  user?: Maybe<Scalars['MongoID']['output']>;
+};
+
+export type EventCohostRequest = {
+  __typename?: 'EventCohostRequest';
+  _id: Scalars['MongoID']['output'];
+  event: Scalars['MongoID']['output'];
+  from: Scalars['MongoID']['output'];
+  from_expanded?: Maybe<User>;
+  stamp: Scalars['DateTimeISO']['output'];
+  state: EventCohostRequestState;
+  to?: Maybe<Scalars['MongoID']['output']>;
+  to_email?: Maybe<Scalars['String']['output']>;
+  to_expanded?: Maybe<User>;
+};
+
+export enum EventCohostRequestState {
+  Accepted = 'ACCEPTED',
+  Declined = 'DECLINED',
+  Pending = 'PENDING'
+}
+
+export type EventCurrency = {
+  __typename?: 'EventCurrency';
+  currency: Scalars['String']['output'];
+  decimals: Scalars['Float']['output'];
+  network?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventFeedback = {
+  __typename?: 'EventFeedback';
+  comment?: Maybe<Scalars['String']['output']>;
+  created_at: Scalars['DateTimeISO']['output'];
+  email?: Maybe<Scalars['String']['output']>;
+  event: Scalars['MongoID']['output'];
+  rate_value: Scalars['Float']['output'];
+  user?: Maybe<Scalars['MongoID']['output']>;
+  user_info?: Maybe<User>;
+};
+
+export type EventFeedbackSummary = {
+  __typename?: 'EventFeedbackSummary';
+  rates: Array<RateSummary>;
+};
+
+export type EventGuestDetail = {
+  __typename?: 'EventGuestDetail';
+  application?: Maybe<Array<EventApplicationQuestionAndAnswer>>;
+  join_request?: Maybe<EventJoinRequest>;
+  payment?: Maybe<EventGuestPayment>;
+  ticket?: Maybe<Ticket>;
+  user: EventGuestUser;
+};
+
+export type EventGuestPayment = {
+  __typename?: 'EventGuestPayment';
+  _id: Scalars['MongoID']['output'];
+  account: Scalars['MongoID']['output'];
+  account_expanded?: Maybe<NewPaymentAccount>;
+  amount: Scalars['String']['output'];
+  attempting_refund?: Maybe<Scalars['Boolean']['output']>;
+  billing_info?: Maybe<BillingInfo>;
+  buyer_info?: Maybe<BuyerInfo>;
+  buyer_user?: Maybe<UserWithEmail>;
+  crypto_payment_info?: Maybe<CryptoPaymentInfo>;
+  currency: Scalars['String']['output'];
+  due_amount?: Maybe<Scalars['String']['output']>;
+  failure_reason?: Maybe<Scalars['String']['output']>;
+  fee?: Maybe<Scalars['String']['output']>;
+  formatted_discount_amount?: Maybe<Scalars['String']['output']>;
+  formatted_due_amount?: Maybe<Scalars['String']['output']>;
+  formatted_fee_amount?: Maybe<Scalars['String']['output']>;
+  formatted_total_amount?: Maybe<Scalars['String']['output']>;
+  ref_data?: Maybe<Scalars['JSON']['output']>;
+  stamps: Scalars['JSON']['output'];
+  state: NewPaymentState;
+  stripe_payment_info?: Maybe<StripePaymentInfo>;
+  transfer_metadata?: Maybe<Scalars['JSON']['output']>;
+  transfer_params?: Maybe<Scalars['JSON']['output']>;
+  user?: Maybe<Scalars['MongoID']['output']>;
+};
+
+export type EventGuestUser = {
+  __typename?: 'EventGuestUser';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  image_avatar?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventHost = {
+  __typename?: 'EventHost';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  events_count?: Maybe<Scalars['Float']['output']>;
+  image_avatar?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+};
+
+export type EventInput = {
+  accepted_store_promotion?: InputMaybe<Scalars['MongoID']['input']>;
+  accepted_user_fields_required?: InputMaybe<Array<Scalars['String']['input']>>;
+  access_pass?: InputMaybe<AccessPassInput>;
+  address?: InputMaybe<AddressInput>;
+  address_directions?: InputMaybe<Array<Scalars['String']['input']>>;
+  application_form_url?: InputMaybe<Scalars['String']['input']>;
+  application_profile_fields?: InputMaybe<Array<ApplicationProfileFieldInput>>;
+  application_required?: InputMaybe<Scalars['Boolean']['input']>;
+  approval_required?: InputMaybe<Scalars['Boolean']['input']>;
+  broadcast_rooms?: InputMaybe<Array<BroadcastRoomInput>>;
+  checkin_menu_text?: InputMaybe<Scalars['String']['input']>;
+  comments?: InputMaybe<Scalars['String']['input']>;
+  cost?: InputMaybe<Scalars['Float']['input']>;
+  cover?: InputMaybe<Scalars['String']['input']>;
+  cta_button_text?: InputMaybe<Scalars['String']['input']>;
+  /** Show secondary CTA button text */
+  cta_secondary_visible?: InputMaybe<Scalars['Boolean']['input']>;
+  currency?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  description_plain_text?: InputMaybe<Scalars['String']['input']>;
+  donation_enabled?: InputMaybe<Scalars['Boolean']['input']>;
+  donation_show_history?: InputMaybe<Scalars['Boolean']['input']>;
+  donation_vaults?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  end?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  events?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  frequent_questions?: InputMaybe<Array<FrequentQuestionInput>>;
+  guest_directory_enabled?: InputMaybe<Scalars['Boolean']['input']>;
+  guest_limit?: InputMaybe<Scalars['Float']['input']>;
+  guest_limit_per?: InputMaybe<Scalars['Float']['input']>;
+  hide_attending?: InputMaybe<Scalars['Boolean']['input']>;
+  hide_chat_action?: InputMaybe<Scalars['Boolean']['input']>;
+  hide_cohosts?: InputMaybe<Scalars['Boolean']['input']>;
+  hide_creators?: InputMaybe<Scalars['Boolean']['input']>;
+  hide_invite_action?: InputMaybe<Scalars['Boolean']['input']>;
+  hide_lounge?: InputMaybe<Scalars['Boolean']['input']>;
+  hide_question_box?: InputMaybe<Scalars['Boolean']['input']>;
+  hide_rooms_action?: InputMaybe<Scalars['Boolean']['input']>;
+  hide_session_guests?: InputMaybe<Scalars['Boolean']['input']>;
+  hide_speakers?: InputMaybe<Scalars['Boolean']['input']>;
+  hide_stories_action?: InputMaybe<Scalars['Boolean']['input']>;
+  latitude?: InputMaybe<Scalars['Float']['input']>;
+  layout_sections?: InputMaybe<Array<LayoutSectionInput>>;
+  listing_spaces?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  longitude?: InputMaybe<Scalars['Float']['input']>;
+  new_new_photos?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  new_photos?: InputMaybe<Array<FileInlineInput>>;
+  offers?: InputMaybe<Array<EventOfferInput>>;
+  payment_accounts_new?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  payment_donation?: InputMaybe<Scalars['Boolean']['input']>;
+  payment_donation_amount_includes_tickets?: InputMaybe<Scalars['Boolean']['input']>;
+  payment_donation_message?: InputMaybe<Scalars['String']['input']>;
+  payment_donation_target?: InputMaybe<Scalars['Float']['input']>;
+  payment_optional?: InputMaybe<Scalars['Boolean']['input']>;
+  payment_ticket_purchase_title?: InputMaybe<Scalars['String']['input']>;
+  photos?: InputMaybe<Array<Scalars['String']['input']>>;
+  private?: InputMaybe<Scalars['Boolean']['input']>;
+  published?: InputMaybe<Scalars['Boolean']['input']>;
+  registration_disabled?: InputMaybe<Scalars['Boolean']['input']>;
+  rewards?: InputMaybe<Array<EventRewardInput>>;
+  rsvp_wallet_platforms?: InputMaybe<Array<ApplicationBlokchainPlatformInput>>;
+  sessions?: InputMaybe<Array<EventSessionInput>>;
+  space?: InputMaybe<Scalars['MongoID']['input']>;
+  speaker_emails?: InputMaybe<Array<Scalars['String']['input']>>;
+  speaker_users?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  start?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  stores?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  stories?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  subevent_enabled?: InputMaybe<Scalars['Boolean']['input']>;
+  subevent_parent?: InputMaybe<Scalars['MongoID']['input']>;
+  subevent_settings?: InputMaybe<SubeventSettingsInput>;
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
+  telegram_channels?: InputMaybe<Array<TelegramChannelInput>>;
+  terms_email_permission_text?: InputMaybe<Scalars['Boolean']['input']>;
+  terms_text?: InputMaybe<Scalars['String']['input']>;
+  timezone?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  virtual?: InputMaybe<Scalars['Boolean']['input']>;
+  virtual_url?: InputMaybe<Scalars['String']['input']>;
+  visible_cohosts?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  welcome_text?: InputMaybe<Scalars['String']['input']>;
+  welcome_video?: InputMaybe<VideoInput>;
+  zones_menu_text?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventInvitation = {
+  __typename?: 'EventInvitation';
+  _id: Scalars['MongoID']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  email?: Maybe<Scalars['String']['output']>;
+  event: Scalars['MongoID']['output'];
+  inviters: Array<Scalars['MongoID']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  status: InvitationResponse;
+  user?: Maybe<Scalars['MongoID']['output']>;
+};
+
+export type EventInvitationUrl = {
+  __typename?: 'EventInvitationUrl';
+  event: Scalars['MongoID']['output'];
+  user: Scalars['MongoID']['output'];
+};
+
+export type EventInvite = {
+  __typename?: 'EventInvite';
+  event: Scalars['MongoID']['output'];
+  event_expanded?: Maybe<Event>;
+  inviter: Scalars['MongoID']['output'];
+  inviter_expanded?: Maybe<User>;
+};
+
+export type EventJoinRequest = {
+  __typename?: 'EventJoinRequest';
+  _id: Scalars['MongoID']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  decided_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  decided_by?: Maybe<Scalars['MongoID']['output']>;
+  decided_by_expanded?: Maybe<User>;
+  email?: Maybe<Scalars['String']['output']>;
+  event: Scalars['MongoID']['output'];
+  event_expanded?: Maybe<Event>;
+  non_login_user?: Maybe<NonloginUser>;
+  payment?: Maybe<JoinRequestPayment>;
+  payment_id?: Maybe<Scalars['MongoID']['output']>;
+  requested_tickets?: Maybe<Array<RequestedTicket>>;
+  state: EventJoinRequestState;
+  ticket_types_expanded?: Maybe<Array<Maybe<EventTicketType>>>;
+  user?: Maybe<Scalars['MongoID']['output']>;
+  user_expanded?: Maybe<UserWithEmail>;
+};
+
+export type EventJoinRequestBase = {
+  __typename?: 'EventJoinRequestBase';
+  _id: Scalars['MongoID']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  decided_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  decided_by?: Maybe<Scalars['MongoID']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  event: Scalars['MongoID']['output'];
+  payment_id?: Maybe<Scalars['MongoID']['output']>;
+  requested_tickets?: Maybe<Array<RequestedTicket>>;
+  state: EventJoinRequestState;
+  user?: Maybe<Scalars['MongoID']['output']>;
+};
+
+export enum EventJoinRequestState {
+  Approved = 'approved',
+  Declined = 'declined',
+  Pending = 'pending'
+}
+
+export type EventOffer = {
+  __typename?: 'EventOffer';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  auto?: Maybe<Scalars['Boolean']['output']>;
+  broadcast_rooms?: Maybe<Array<Scalars['MongoID']['output']>>;
+  position?: Maybe<Scalars['Float']['output']>;
+  provider: OfferProvider;
+  provider_id: Scalars['String']['output'];
+  provider_network: Scalars['String']['output'];
+};
+
+export type EventOfferInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  auto?: InputMaybe<Scalars['Boolean']['input']>;
+  broadcast_rooms?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  position?: InputMaybe<Scalars['Float']['input']>;
+  provider: OfferProvider;
+  provider_id: Scalars['String']['input'];
+  provider_network: Scalars['String']['input'];
+};
+
+export type EventPaymentStatistics = {
+  __typename?: 'EventPaymentStatistics';
+  crypto_payments: CryptoPaymentStatistics;
+  stripe_payments: PaymentStatistics;
+  total_payments: Scalars['Int']['output'];
+};
+
+export type EventPaymentSummary = {
+  __typename?: 'EventPaymentSummary';
+  amount: Scalars['String']['output'];
+  currency: Scalars['String']['output'];
+  decimals: Scalars['Float']['output'];
+  pending_transfer_amount: Scalars['String']['output'];
+  transfer_amount: Scalars['String']['output'];
+};
+
+export type EventPaymentTicketDiscount = {
+  __typename?: 'EventPaymentTicketDiscount';
+  active: Scalars['Boolean']['output'];
+  code: Scalars['String']['output'];
+  ratio: Scalars['Float']['output'];
+  stamp: Scalars['DateTimeISO']['output'];
+  ticket_count?: Maybe<Scalars['Float']['output']>;
+  ticket_count_map?: Maybe<Scalars['JSON']['output']>;
+  ticket_limit?: Maybe<Scalars['Float']['output']>;
+  ticket_limit_per?: Maybe<Scalars['Float']['output']>;
+  ticket_types?: Maybe<Array<Scalars['MongoID']['output']>>;
+  use_count?: Maybe<Scalars['Float']['output']>;
+  use_count_map?: Maybe<Scalars['JSON']['output']>;
+  use_limit?: Maybe<Scalars['Float']['output']>;
+  use_limit_per?: Maybe<Scalars['Float']['output']>;
+  users?: Maybe<Array<Scalars['MongoID']['output']>>;
+  users_expanded?: Maybe<Array<Maybe<User>>>;
+};
+
+
+export type EventPaymentTicketDiscountUsers_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+export type EventPaymentTicketDiscountInput = {
+  code: Scalars['String']['input'];
+  ratio: Scalars['Float']['input'];
+  ticket_limit?: InputMaybe<Scalars['Float']['input']>;
+  ticket_limit_per?: InputMaybe<Scalars['Float']['input']>;
+  ticket_types?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  use_limit?: InputMaybe<Scalars['Float']['input']>;
+  use_limit_per?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type EventQuestion = {
+  __typename?: 'EventQuestion';
+  _id: Scalars['MongoID']['output'];
+  event: Scalars['MongoID']['output'];
+  liked?: Maybe<Scalars['Boolean']['output']>;
+  likes: Scalars['Int']['output'];
+  question: Scalars['String']['output'];
+  session?: Maybe<Scalars['MongoID']['output']>;
+  stamp: Scalars['DateTimeISO']['output'];
+  user: Scalars['MongoID']['output'];
+  user_expanded?: Maybe<User>;
+};
+
+export type EventReward = {
+  __typename?: 'EventReward';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  active: Scalars['Boolean']['output'];
+  icon_color?: Maybe<Scalars['String']['output']>;
+  icon_url?: Maybe<Scalars['String']['output']>;
+  limit?: Maybe<Scalars['Float']['output']>;
+  limit_per: Scalars['Float']['output'];
+  payment_ticket_types?: Maybe<Array<Scalars['MongoID']['output']>>;
+  title: Scalars['String']['output'];
+};
+
+export type EventRewardInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  active: Scalars['Boolean']['input'];
+  icon_color?: InputMaybe<Scalars['String']['input']>;
+  icon_url?: InputMaybe<Scalars['String']['input']>;
+  limit?: InputMaybe<Scalars['Float']['input']>;
+  limit_per: Scalars['Float']['input'];
+  payment_ticket_types?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  title: Scalars['String']['input'];
+};
+
+export type EventRewardUse = {
+  __typename?: 'EventRewardUse';
+  _id: Scalars['MongoID']['output'];
+  active: Scalars['Boolean']['output'];
+  event: Scalars['MongoID']['output'];
+  reward_id: Scalars['MongoID']['output'];
+  reward_number: Scalars['Float']['output'];
+  user: Scalars['MongoID']['output'];
+  user_expanded?: Maybe<User>;
+};
+
+export type EventRsvp = {
+  __typename?: 'EventRsvp';
+  messages?: Maybe<EventRsvpMessages>;
+  payment?: Maybe<EventRsvpPayment>;
+  state: EventRsvpState;
+};
+
+export type EventRsvpMessages = {
+  __typename?: 'EventRsvpMessages';
+  primary: Scalars['String']['output'];
+  secondary?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventRsvpPayment = {
+  __typename?: 'EventRsvpPayment';
+  amount: Scalars['Float']['output'];
+  currency: Scalars['String']['output'];
+  provider: Scalars['String']['output'];
+};
+
+export enum EventRsvpState {
+  Accepted = 'accepted',
+  Declined = 'declined',
+  Payment = 'payment',
+  Pending = 'pending'
+}
+
+export type EventSession = {
+  __typename?: 'EventSession';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  broadcast?: Maybe<Scalars['MongoID']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  end: Scalars['DateTimeISO']['output'];
+  photos?: Maybe<Array<Scalars['MongoID']['output']>>;
+  photos_expanded?: Maybe<Array<Maybe<File>>>;
+  speaker_users?: Maybe<Array<Scalars['MongoID']['output']>>;
+  speaker_users_expanded?: Maybe<Array<Maybe<User>>>;
+  start: Scalars['DateTimeISO']['output'];
+  title: Scalars['String']['output'];
+  votings?: Maybe<Array<Scalars['MongoID']['output']>>;
+};
+
+
+export type EventSessionPhotos_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type EventSessionSpeaker_Users_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+export type EventSessionInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  broadcast?: InputMaybe<Scalars['MongoID']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  end: Scalars['DateTimeISO']['input'];
+  photos?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  speaker_users?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  start: Scalars['DateTimeISO']['input'];
+  title: Scalars['String']['input'];
+  votings?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+export type EventSessionReservation = {
+  __typename?: 'EventSessionReservation';
+  event: Scalars['MongoID']['output'];
+  session: Scalars['MongoID']['output'];
+  ticket_type?: Maybe<Scalars['MongoID']['output']>;
+  user: Scalars['MongoID']['output'];
+  user_expanded?: Maybe<User>;
+};
+
+export type EventSessionReservationInput = {
+  event: Scalars['MongoID']['input'];
+  session: Scalars['MongoID']['input'];
+};
+
+export type EventSessionReservationSummary = {
+  __typename?: 'EventSessionReservationSummary';
+  count: Scalars['Float']['output'];
+  session: Scalars['MongoID']['output'];
+  ticket_type?: Maybe<Scalars['MongoID']['output']>;
+};
+
+export type EventSortInput = {
+  end?: InputMaybe<SortOrder>;
+  start?: InputMaybe<SortOrder>;
+};
+
+export type EventStakePayment = {
+  __typename?: 'EventStakePayment';
+  _id: Scalars['MongoID']['output'];
+  currency: Scalars['String']['output'];
+  formatted_stake_amount: Scalars['String']['output'];
+  network: Scalars['String']['output'];
+  refund_requirements_met?: Maybe<Scalars['Boolean']['output']>;
+  staker: StakeUser;
+  state: StakeState;
+  ticket_count: Scalars['Float']['output'];
+};
+
+export enum EventState {
+  Cancelled = 'cancelled',
+  Created = 'created',
+  Ended = 'ended',
+  Started = 'started'
+}
+
+export type EventStoryInput = {
+  event: Scalars['MongoID']['input'];
+  file: Scalars['MongoID']['input'];
+};
+
+export enum EventTense {
+  Current = 'Current',
+  Future = 'Future',
+  Past = 'Past'
+}
+
+export type EventTicketCategory = {
+  __typename?: 'EventTicketCategory';
+  _id: Scalars['MongoID']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  event: Scalars['MongoID']['output'];
+  position?: Maybe<Scalars['Int']['output']>;
+  title: Scalars['String']['output'];
+};
+
+export type EventTicketPrice = {
+  __typename?: 'EventTicketPrice';
+  cost: Scalars['String']['output'];
+  currency: Scalars['String']['output'];
+  default?: Maybe<Scalars['Boolean']['output']>;
+  payment_accounts?: Maybe<Array<Scalars['MongoID']['output']>>;
+  payment_accounts_expanded?: Maybe<Array<NewPaymentAccount>>;
+};
+
+export type EventTicketPriceInput = {
+  cost: Scalars['String']['input'];
+  currency: Scalars['String']['input'];
+  default?: InputMaybe<Scalars['Boolean']['input']>;
+  payment_accounts?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+export type EventTicketSaleResponse = {
+  __typename?: 'EventTicketSaleResponse';
+  last_update: Scalars['DateTimeISO']['output'];
+  sales: Array<SaleAmountResponse>;
+};
+
+export type EventTicketType = {
+  __typename?: 'EventTicketType';
+  _id: Scalars['MongoID']['output'];
+  active?: Maybe<Scalars['Boolean']['output']>;
+  address_required?: Maybe<Scalars['Boolean']['output']>;
+  approval_required?: Maybe<Scalars['Boolean']['output']>;
+  category?: Maybe<Scalars['MongoID']['output']>;
+  category_expanded?: Maybe<EventTicketCategory>;
+  default?: Maybe<Scalars['Boolean']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  description_line?: Maybe<Scalars['String']['output']>;
+  event: Scalars['MongoID']['output'];
+  external_ids?: Maybe<Array<Scalars['String']['output']>>;
+  limited?: Maybe<Scalars['Boolean']['output']>;
+  limited_whitelist_users?: Maybe<Array<WhitelistUserInfo>>;
+  offers?: Maybe<Array<EventOffer>>;
+  photos?: Maybe<Array<Scalars['MongoID']['output']>>;
+  photos_expanded?: Maybe<Array<Maybe<File>>>;
+  position?: Maybe<Scalars['Int']['output']>;
+  prices: Array<EventTicketPrice>;
+  private?: Maybe<Scalars['Boolean']['output']>;
+  ticket_count?: Maybe<Scalars['Float']['output']>;
+  ticket_limit?: Maybe<Scalars['Float']['output']>;
+  ticket_limit_per?: Maybe<Scalars['Float']['output']>;
+  title: Scalars['String']['output'];
+};
+
+
+export type EventTicketTypePhotos_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+export type EventTicketTypeInput = {
+  active?: InputMaybe<Scalars['Boolean']['input']>;
+  added_whitelist_emails?: InputMaybe<Array<Scalars['String']['input']>>;
+  address_required?: InputMaybe<Scalars['Boolean']['input']>;
+  approval_required?: InputMaybe<Scalars['Boolean']['input']>;
+  category?: InputMaybe<Scalars['MongoID']['input']>;
+  default?: InputMaybe<Scalars['Boolean']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  description_line?: InputMaybe<Scalars['String']['input']>;
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+  external_ids?: InputMaybe<Array<Scalars['String']['input']>>;
+  limited?: InputMaybe<Scalars['Boolean']['input']>;
+  limited_whitelist_emails?: InputMaybe<Array<Scalars['String']['input']>>;
+  limited_whitelist_ids?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  offers?: InputMaybe<Array<EventTicketTypeOffersInput>>;
+  photos?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  position?: InputMaybe<Scalars['Int']['input']>;
+  prices?: InputMaybe<Array<EventTicketPriceInput>>;
+  private?: InputMaybe<Scalars['Boolean']['input']>;
+  removed_whitelist_emails?: InputMaybe<Array<Scalars['String']['input']>>;
+  ticket_limit?: InputMaybe<Scalars['Float']['input']>;
+  ticket_limit_per?: InputMaybe<Scalars['Float']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventTicketTypeOffersInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  auto?: InputMaybe<Scalars['Boolean']['input']>;
+  broadcast_rooms?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  position?: InputMaybe<Scalars['Float']['input']>;
+  provider?: InputMaybe<OfferProvider>;
+  provider_id?: InputMaybe<Scalars['String']['input']>;
+  provider_network?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventVoting = {
+  __typename?: 'EventVoting';
+  _id: Scalars['MongoID']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  end: Scalars['DateTimeISO']['output'];
+  hidden?: Maybe<Scalars['Boolean']['output']>;
+  selected_option?: Maybe<Scalars['String']['output']>;
+  speakers: Array<User>;
+  stage?: Maybe<Scalars['String']['output']>;
+  start: Scalars['DateTimeISO']['output'];
+  state: EventVotingState;
+  timezone?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  voting_options: Array<VotingOption>;
+};
+
+export enum EventVotingState {
+  Closed = 'closed',
+  NotStarted = 'not_started',
+  Paused = 'paused',
+  Starting = 'starting'
+}
+
+export type EventbriteEvent = {
+  __typename?: 'EventbriteEvent';
+  description?: Maybe<Scalars['String']['output']>;
+  end: Scalars['DateTimeISO']['output'];
+  id: Scalars['String']['output'];
+  logo_url?: Maybe<Scalars['String']['output']>;
+  stamp: Scalars['DateTimeISO']['output'];
+  start: Scalars['DateTimeISO']['output'];
+  status: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+};
+
+export enum EventbriteEventOrder {
+  CreatedAsc = 'CREATED_ASC',
+  CreatedDesc = 'CREATED_DESC'
+}
+
+export enum EventbriteEventStatus {
+  Canceled = 'CANCELED',
+  Draft = 'DRAFT',
+  Ended = 'ENDED',
+  Live = 'LIVE',
+  Started = 'STARTED'
+}
+
+export type ExportedTickets = {
+  __typename?: 'ExportedTickets';
+  count: Scalars['Float']['output'];
+  tickets: Array<TicketExport>;
+};
+
+export type FarcasterUserInfo = {
+  __typename?: 'FarcasterUserInfo';
+  account_key_request?: Maybe<AccountKeyRequest>;
+  fid?: Maybe<Scalars['Float']['output']>;
+};
+
+export type Feature = {
+  __typename?: 'Feature';
+  code: FeatureCode;
+  title: Scalars['String']['output'];
+};
+
+export enum FeatureCode {
+  CsvGuestList = 'CSVGuestList',
+  Checkin = 'Checkin',
+  CollectibleData = 'CollectibleData',
+  DataDashboard = 'DataDashboard',
+  EmailManager = 'EmailManager',
+  EventSettings = 'EventSettings',
+  GuestListDashboard = 'GuestListDashboard',
+  ManageSpace = 'ManageSpace',
+  ManageSpaceEvent = 'ManageSpaceEvent',
+  ManageSpaceMembership = 'ManageSpaceMembership',
+  ManageSpaceTag = 'ManageSpaceTag',
+  PromotionCodes = 'PromotionCodes',
+  TicketingSettings = 'TicketingSettings',
+  ViewSpace = 'ViewSpace',
+  ViewSpaceEvent = 'ViewSpaceEvent',
+  ViewSpaceMembership = 'ViewSpaceMembership',
+  ViewSpaceTag = 'ViewSpaceTag'
+}
+
+export type FiatCurrency = {
+  __typename?: 'FiatCurrency';
+  code: Scalars['String']['output'];
+  decimals: Scalars['Float']['output'];
+};
+
+export type File = {
+  __typename?: 'File';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  bucket: Scalars['String']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  key: Scalars['String']['output'];
+  liked?: Maybe<Scalars['Boolean']['output']>;
+  likers?: Maybe<Array<Scalars['MongoID']['output']>>;
+  likes: Scalars['Float']['output'];
+  link_events_expanded?: Maybe<Array<Maybe<Event>>>;
+  link_store_products_expanded?: Maybe<Array<Maybe<StoreProduct>>>;
+  link_stores_expanded?: Maybe<Array<Maybe<Store>>>;
+  link_users_expanded?: Maybe<Array<Maybe<User>>>;
+  links?: Maybe<Array<FileLink>>;
+  owner: Scalars['MongoID']['output'];
+  owner_expanded?: Maybe<User>;
+  size?: Maybe<Scalars['Float']['output']>;
+  stamp: Scalars['DateTimeISO']['output'];
+  state: FileState;
+  type: Scalars['String']['output'];
+  url: Scalars['String']['output'];
+};
+
+
+export type FileLink_Events_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type FileLink_Store_Products_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type FileLink_Stores_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type FileLink_Users_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+export type FileInline = {
+  __typename?: 'FileInline';
+  fa_file?: Maybe<Scalars['MongoID']['output']>;
+  fa_index?: Maybe<Scalars['Float']['output']>;
+  id: Scalars['MongoID']['output'];
+  key: Scalars['String']['output'];
+  url: Scalars['String']['output'];
+};
+
+export type FileInlineInput = {
+  fa_file?: InputMaybe<Scalars['MongoID']['input']>;
+  fa_index?: InputMaybe<Scalars['Float']['input']>;
+  id: Scalars['MongoID']['input'];
+  key: Scalars['String']['input'];
+  url: Scalars['String']['input'];
+};
+
+export type FileInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type FileLink = {
+  __typename?: 'FileLink';
+  id: Scalars['MongoID']['output'];
+  model: Scalars['String']['output'];
+  path: Scalars['String']['output'];
+  type: FileLinkType;
+};
+
+export type FileLinkInput = {
+  id: Scalars['MongoID']['input'];
+  model: Scalars['String']['input'];
+  path?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<FileLinkType>;
+};
+
+export enum FileLinkType {
+  FileInline = 'file_inline',
+  ObjectId = 'object_id'
+}
+
+export enum FileState {
+  Done = 'done',
+  Error = 'error',
+  Started = 'started'
+}
+
+export type FileUploadInfo = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  extension: Scalars['String']['input'];
+};
+
+export type FileWithPresignedUrl = {
+  __typename?: 'FileWithPresignedUrl';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  bucket: Scalars['String']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  key: Scalars['String']['output'];
+  liked?: Maybe<Scalars['Boolean']['output']>;
+  likers?: Maybe<Array<Scalars['MongoID']['output']>>;
+  likes: Scalars['Float']['output'];
+  link_events_expanded?: Maybe<Array<Maybe<Event>>>;
+  link_store_products_expanded?: Maybe<Array<Maybe<StoreProduct>>>;
+  link_stores_expanded?: Maybe<Array<Maybe<Store>>>;
+  link_users_expanded?: Maybe<Array<Maybe<User>>>;
+  links?: Maybe<Array<FileLink>>;
+  owner: Scalars['MongoID']['output'];
+  owner_expanded?: Maybe<User>;
+  presigned_url: Scalars['String']['output'];
+  size?: Maybe<Scalars['Float']['output']>;
+  stamp: Scalars['DateTimeISO']['output'];
+  state: FileState;
+  type: Scalars['String']['output'];
+  url: Scalars['String']['output'];
+};
+
+
+export type FileWithPresignedUrlLink_Events_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type FileWithPresignedUrlLink_Store_Products_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type FileWithPresignedUrlLink_Stores_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type FileWithPresignedUrlLink_Users_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+export type FilterEventInput = {
+  eq?: InputMaybe<EventState>;
+  in?: InputMaybe<Array<EventState>>;
+  nin?: InputMaybe<Array<EventState>>;
+};
+
+export type FilterPaymentStateInput = {
+  eq?: InputMaybe<NewPaymentState>;
+  in?: InputMaybe<Array<NewPaymentState>>;
+  nin?: InputMaybe<Array<NewPaymentState>>;
+};
+
+export type FreeSafeInitInfo = {
+  __typename?: 'FreeSafeInitInfo';
+  current: Scalars['Int']['output'];
+  max: Scalars['Int']['output'];
+};
+
+export type FrequentQuestion = {
+  __typename?: 'FrequentQuestion';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  answer: Scalars['String']['output'];
+  position?: Maybe<Scalars['Float']['output']>;
+  question: Scalars['String']['output'];
+  tag?: Maybe<Scalars['String']['output']>;
+  type: Array<FrequentQuestionType>;
+};
+
+export type FrequentQuestionInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  answer: Scalars['String']['input'];
+  position?: InputMaybe<Scalars['Float']['input']>;
+  question: Scalars['String']['input'];
+  tag?: InputMaybe<Scalars['String']['input']>;
+  type: Array<FrequentQuestionType>;
+};
+
+export enum FrequentQuestionType {
+  Event = 'event',
+  Poap = 'poap',
+  User = 'user'
+}
+
+export type GenerateEventInvitationUrlResponse = {
+  __typename?: 'GenerateEventInvitationUrlResponse';
+  shortid: Scalars['String']['output'];
+  tk?: Maybe<Scalars['String']['output']>;
+};
+
+export type GenerateRecurringDatesInput = {
+  count?: InputMaybe<Scalars['Float']['input']>;
+  dayOfWeeks?: InputMaybe<Array<Scalars['Int']['input']>>;
+  end?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  repeat: RecurringRepeat;
+  start: Scalars['DateTimeISO']['input'];
+  utcOffsetMinutes: Scalars['Float']['input'];
+};
+
+export type GenerateStripeAccountLinkResponse = {
+  __typename?: 'GenerateStripeAccountLinkResponse';
+  url: Scalars['String']['output'];
+};
+
+export type GetCommentsArgs = {
+  comment?: InputMaybe<Scalars['MongoID']['input']>;
+  post: Scalars['MongoID']['input'];
+};
+
+export type GetEventCheckinsInput = {
+  emails?: InputMaybe<Array<Scalars['String']['input']>>;
+  event: Scalars['MongoID']['input'];
+  users?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+export type GetEventCohostRequestsInput = {
+  event: Scalars['MongoID']['input'];
+  state?: InputMaybe<EventCohostRequestState>;
+};
+
+export type GetEventInvitedStatisticsResponse = {
+  __typename?: 'GetEventInvitedStatisticsResponse';
+  guests: Array<Guest>;
+  top_inviter?: Maybe<Scalars['MongoID']['output']>;
+  top_inviter_expanded?: Maybe<User>;
+  total: Scalars['Int']['output'];
+  total_joined: Scalars['Int']['output'];
+};
+
+export type GetEventJoinRequestsResponse = {
+  __typename?: 'GetEventJoinRequestsResponse';
+  records: Array<EventJoinRequest>;
+  total: Scalars['Int']['output'];
+};
+
+export type GetEventPendingInvitesResponse = {
+  __typename?: 'GetEventPendingInvitesResponse';
+  cohost_requests?: Maybe<Array<EventInvite>>;
+  event_invites?: Maybe<Array<EventInvite>>;
+};
+
+export enum GetEventQuestionInputSort {
+  Id = '_id',
+  Likes = 'likes'
+}
+
+export type GetEventQuestionsInput = {
+  event: Scalars['MongoID']['input'];
+  id_lt?: InputMaybe<Scalars['MongoID']['input']>;
+  limit?: Scalars['Int']['input'];
+  sort?: GetEventQuestionInputSort;
+};
+
+export type GetEventRewardUsesInput = {
+  event: Scalars['MongoID']['input'];
+  user: Scalars['MongoID']['input'];
+};
+
+export type GetEventSessionReservationSummaryInput = {
+  event: Scalars['MongoID']['input'];
+  session?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+export type GetEventSessionReservationsInput = {
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+export type GetEventTicketTypesInput = {
+  discount?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  event: Scalars['MongoID']['input'];
+};
+
+export type GetEventTicketTypesResponse = {
+  __typename?: 'GetEventTicketTypesResponse';
+  discount?: Maybe<TicketDiscount>;
+  limit: Scalars['Float']['output'];
+  ticket_types: Array<PurchasableTicketType>;
+};
+
+export type GetEventbriteEventsInput = {
+  order?: InputMaybe<EventbriteEventOrder>;
+  status?: InputMaybe<EventbriteEventStatus>;
+};
+
+export enum GetEventsState {
+  Accepted = 'ACCEPTED',
+  Declined = 'DECLINED',
+  Invited = 'INVITED',
+  Pending = 'PENDING'
+}
+
+export type GetFrequentQuestionsInput = {
+  type: Array<FrequentQuestionType>;
+};
+
+export type GetInitSafeTransactionInput = {
+  network: Scalars['String']['input'];
+  owners: Array<Scalars['String']['input']>;
+  threshold: Scalars['Int']['input'];
+};
+
+export type GetMyTicketsResponse = {
+  __typename?: 'GetMyTicketsResponse';
+  payments?: Maybe<Array<PaymentRefundInfo>>;
+  tickets: Array<Ticket>;
+};
+
+export type GetPostsCreatedAtInput = {
+  gte?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  lte?: InputMaybe<Scalars['DateTimeISO']['input']>;
+};
+
+export type GetPostsInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  created_at?: InputMaybe<GetPostsCreatedAtInput>;
+  published?: InputMaybe<Scalars['Boolean']['input']>;
+  user?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+export type GetRoomCredentialsInput = {
+  _id: Scalars['MongoID']['input'];
+  password?: InputMaybe<Scalars['String']['input']>;
+  role: GetRoomCredentialsInputRole;
+};
+
+export enum GetRoomCredentialsInputRole {
+  Publisher = 'PUBLISHER',
+  Subscriber = 'SUBSCRIBER'
+}
+
+export type GetRoomsInput = {
+  creator?: InputMaybe<Scalars['MongoID']['input']>;
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+  state?: InputMaybe<GetRoomsInputState>;
+};
+
+export type GetRoomsInputState = {
+  eq?: InputMaybe<RoomState>;
+  in?: InputMaybe<Array<RoomState>>;
+  nin?: InputMaybe<Array<RoomState>>;
+};
+
+export type GetSpaceEventRequestsResponse = {
+  __typename?: 'GetSpaceEventRequestsResponse';
+  records: Array<SpaceEventRequest>;
+  total: Scalars['Int']['output'];
+};
+
+export type GetUserContactsInput = {
+  invited_at_gt?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+export type GetUserContactsResponse = {
+  __typename?: 'GetUserContactsResponse';
+  counts?: Maybe<Scalars['JSON']['output']>;
+  items: Array<UserContact>;
+  total: Scalars['Int']['output'];
+};
+
+export type GetUserFollowsInput = {
+  followee?: InputMaybe<Scalars['MongoID']['input']>;
+  followee_search?: InputMaybe<Scalars['String']['input']>;
+  follower?: InputMaybe<Scalars['MongoID']['input']>;
+  follower_search?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type GetUserFriendshipsInput = {
+  other?: InputMaybe<Scalars['MongoID']['input']>;
+  other_search?: InputMaybe<Scalars['String']['input']>;
+  other_wallets?: InputMaybe<Scalars['Boolean']['input']>;
+  state?: InputMaybe<UserFriendshipState>;
+  type?: InputMaybe<UserFriendshipType>;
+  user?: InputMaybe<Scalars['MongoID']['input']>;
+  user1?: InputMaybe<Scalars['MongoID']['input']>;
+  user2?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+export type GetUserFriendshipsResponse = {
+  __typename?: 'GetUserFriendshipsResponse';
+  items: Array<UserFriendship>;
+  total: Scalars['Int']['output'];
+};
+
+export type Group = {
+  __typename?: 'Group';
+  _id: Scalars['MongoID']['output'];
+  position: Scalars['Float']['output'];
+  sub_title_1?: Maybe<Scalars['String']['output']>;
+  sub_title_2?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+};
+
+export type Guest = {
+  __typename?: 'Guest';
+  cancelled_by?: Maybe<Scalars['MongoID']['output']>;
+  cancelled_by_expanded?: Maybe<User>;
+  declined?: Maybe<Scalars['Boolean']['output']>;
+  /** Exists only if invited via email but has not joined to be a user */
+  email?: Maybe<Scalars['String']['output']>;
+  invitation: Scalars['MongoID']['output'];
+  invited_by: Scalars['MongoID']['output'];
+  invited_by_expanded?: Maybe<User>;
+  joined?: Maybe<Scalars['Boolean']['output']>;
+  /** Exists only if joined from email */
+  user?: Maybe<Scalars['MongoID']['output']>;
+  user_expanded?: Maybe<User>;
+};
+
+export type GuildRoom = {
+  __typename?: 'GuildRoom';
+  _id: Scalars['MongoID']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  created_by: Scalars['MongoID']['output'];
+  created_by_expanded?: Maybe<User>;
+  guild_id: Scalars['Float']['output'];
+  guild_role_ids?: Maybe<Array<Scalars['Int']['output']>>;
+  guild_role_require_all?: Maybe<Scalars['Boolean']['output']>;
+  joins?: Maybe<Scalars['Float']['output']>;
+  matrix_room_id: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type GuildRoomInput = {
+  guild_id: Scalars['Float']['input'];
+  guild_role_ids?: InputMaybe<Array<Scalars['Int']['input']>>;
+  guild_role_require_all?: InputMaybe<Scalars['Boolean']['input']>;
+  matrix_room_id: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+};
+
+export type HostFilter = {
+  host: Scalars['MongoID']['input'];
+  include_cohost_events?: InputMaybe<Scalars['Boolean']['input']>;
+  include_owned_events?: InputMaybe<Scalars['Boolean']['input']>;
+  include_subevents?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export enum InvitationResponse {
+  Accepted = 'ACCEPTED',
+  Cancelled = 'CANCELLED',
+  Declined = 'DECLINED',
+  Pending = 'PENDING'
+}
+
+export enum InvitationState {
+  Declined = 'DECLINED'
+}
+
+export type InviteEventInput = {
+  _id: Scalars['MongoID']['input'];
+  emails?: InputMaybe<Array<Scalars['String']['input']>>;
+  phones?: InputMaybe<Array<Scalars['String']['input']>>;
+  users?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+export type JoinRequestPayment = {
+  __typename?: 'JoinRequestPayment';
+  _id: Scalars['MongoID']['output'];
+  buyer_info?: Maybe<BuyerInfo>;
+  ref_data?: Maybe<Scalars['JSON']['output']>;
+  state: NewPaymentState;
+  transfer_metadata?: Maybe<Scalars['JSON']['output']>;
+};
+
+export type JoinRequestStatistic = {
+  __typename?: 'JoinRequestStatistic';
+  count: Scalars['Float']['output'];
+  state: EventJoinRequestState;
+};
+
+export type LayoutSection = {
+  __typename?: 'LayoutSection';
+  hidden?: Maybe<Scalars['Boolean']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+};
+
+export type LayoutSectionInput = {
+  hidden?: InputMaybe<Scalars['Boolean']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ListDonationsResponse = {
+  __typename?: 'ListDonationsResponse';
+  items: Array<Donation>;
+  total: Scalars['Int']['output'];
+};
+
+export type ListEventHostsResponse = {
+  __typename?: 'ListEventHostsResponse';
+  hosts: Array<EventHost>;
+  total: Scalars['Float']['output'];
+};
+
+export type ListEventPaymentsResponse = {
+  __typename?: 'ListEventPaymentsResponse';
+  records: Array<NewPayment>;
+  total: Scalars['Int']['output'];
+};
+
+export type ListEventStakePaymentsResponse = {
+  __typename?: 'ListEventStakePaymentsResponse';
+  items: Array<EventStakePayment>;
+  total: Scalars['Int']['output'];
+};
+
+export type ListSpaceMembersResponse = {
+  __typename?: 'ListSpaceMembersResponse';
+  items: Array<SpaceMember>;
+  total: Scalars['Int']['output'];
+};
+
+export type ListSpaceRoleFeaturesResponse = {
+  __typename?: 'ListSpaceRoleFeaturesResponse';
+  codes: Array<FeatureCode>;
+  features: Array<Feature>;
+};
+
+export type ManageEventCohostRequestsInput = {
+  decision: Scalars['Boolean']['input'];
+  emails?: InputMaybe<Array<Scalars['String']['input']>>;
+  event: Scalars['MongoID']['input'];
+  users?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+export type ModifyRoomStageInput = {
+  _id: Scalars['MongoID']['input'];
+  staged: Scalars['Boolean']['input'];
+  user: Scalars['MongoID']['input'];
+};
+
+export type ModifyRoomStagePayload = {
+  __typename?: 'ModifyRoomStagePayload';
+  credentials?: Maybe<RoomCredentials>;
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  acceptEvent: EventRsvp;
+  acceptEventTerms: Scalars['Boolean']['output'];
+  acceptUserDiscovery: AcceptUserDiscoveryResponse;
+  activatePersonalSpace: ActivatePersonalSpace;
+  addSpaceMembers: Scalars['Boolean']['output'];
+  addUserFcmToken: Scalars['Boolean']['output'];
+  assignTickets: Scalars['Boolean']['output'];
+  buyTickets: BuyTicketsResponse;
+  cancelEvent: Event;
+  cancelEventInvitations: Scalars['Boolean']['output'];
+  cancelTickets: Scalars['Boolean']['output'];
+  castVote: Scalars['Boolean']['output'];
+  checkinUser: EventRsvp;
+  cloneEvent: Array<Scalars['MongoID']['output']>;
+  confirmFileUploads: Scalars['Boolean']['output'];
+  createBadge: Badge;
+  createBadgeList: BadgeList;
+  createCast: Scalars['Boolean']['output'];
+  createCastReaction: Scalars['Boolean']['output'];
+  createCheckinTokenRewardSetting: CheckinTokenRewardSetting;
+  createComment: Comment;
+  createDonation: Donation;
+  createDonationVault: DonationVault;
+  createEvent: Event;
+  createEventBroadcast: Scalars['Boolean']['output'];
+  createEventCast: Scalars['Boolean']['output'];
+  createEventEmailSetting?: Maybe<EmailSetting>;
+  createEventFromEventbrite: Event;
+  createEventQuestion: EventQuestion;
+  createEventSessionReservation: Scalars['Boolean']['output'];
+  createEventStory: Scalars['Boolean']['output'];
+  createEventTicketCategory: EventTicketCategory;
+  createEventTicketDiscounts: Event;
+  createEventTicketType: EventTicketType;
+  createEventbriteWebhookForEvent: Scalars['Boolean']['output'];
+  createFarcasterAccountKey: CreateFarcasterAccountKeyResponse;
+  createFile: File;
+  createFileUploads: Array<FileWithPresignedUrl>;
+  createGuildRoom: GuildRoom;
+  createNewPaymentAccount: NewPaymentAccount;
+  createOauth2Client: OAuth2Client;
+  createPost: Post;
+  createRegistration: Scalars['Boolean']['output'];
+  createRewardVault: TokenRewardVault;
+  createRoom: Room;
+  createSite: Site;
+  createSpace: Space;
+  createStore: Store;
+  createStoreBucketItem: StoreBucketItem;
+  createStoreCategory: StoreCategory;
+  createStoreOrder: StoreOrder;
+  createStoreProduct: StoreProduct;
+  createStoreProductVariant: StoreProductVariant;
+  createStorePromotion: StorePromotion;
+  createStripeCard: StripeCard;
+  createStripeOnrampSession: StripeOnrampSession;
+  createTicketTokenRewardSetting: TicketTokenRewardSetting;
+  createTickets: Array<Ticket>;
+  createUserExpertise: UserExpertise;
+  createUserFollow: Scalars['Boolean']['output'];
+  createUserFriendship: UserFriendship;
+  createUserService: UserServiceOffer;
+  decideEventCohostRequest: Scalars['Boolean']['output'];
+  decideRoomAccessRequest: Scalars['Boolean']['output'];
+  decideRoomStageRequest: Scalars['Boolean']['output'];
+  decideSpaceEventRequests: Scalars['Boolean']['output'];
+  decideUserJoinRequests: Array<DecidedJoinRequest>;
+  declineEvent: EventRsvp;
+  declineUserDiscovery: Scalars['Boolean']['output'];
+  deleteBadge: Scalars['Boolean']['output'];
+  deleteBadgeList: Scalars['Boolean']['output'];
+  deleteCastReaction: Scalars['Boolean']['output'];
+  deleteComment: Scalars['Boolean']['output'];
+  deleteEventApplicationQuestions: Scalars['Boolean']['output'];
+  deleteEventBroadcast: Scalars['Boolean']['output'];
+  deleteEventEmailSetting: Scalars['Boolean']['output'];
+  deleteEventQuestion: Scalars['Boolean']['output'];
+  deleteEventSessionReservation: Scalars['Boolean']['output'];
+  deleteEventStory: Scalars['Boolean']['output'];
+  deleteEventTicketCategory: Scalars['Boolean']['output'];
+  deleteEventTicketDiscounts: Event;
+  deleteEventTicketType: Scalars['Boolean']['output'];
+  deleteGuildRoom: Scalars['Boolean']['output'];
+  deleteNotifications: Scalars['Boolean']['output'];
+  deleteOauth2Client: Scalars['Boolean']['output'];
+  deletePost: Scalars['Boolean']['output'];
+  deleteSite: Scalars['Boolean']['output'];
+  deleteSpace: Scalars['Boolean']['output'];
+  deleteSpaceMembers: Array<SpaceMember>;
+  deleteSpaceTag: Scalars['Boolean']['output'];
+  deleteStore: Scalars['Boolean']['output'];
+  deleteStoreBucketItem: Scalars['Boolean']['output'];
+  deleteStoreCategory: Scalars['Boolean']['output'];
+  deleteStoreProduct: Scalars['Boolean']['output'];
+  deleteStoreProductVariant: Scalars['Boolean']['output'];
+  deleteStorePromotion: Scalars['Boolean']['output'];
+  deleteStripeCard: StripeCard;
+  deleteUser: Scalars['Boolean']['output'];
+  deleteUserDiscoverySwipe: Scalars['Boolean']['output'];
+  deleteUserFollow: Scalars['Boolean']['output'];
+  deleteUserFriendship: Scalars['Boolean']['output'];
+  disconnectStripeAccount: Scalars['Boolean']['output'];
+  flagEvent: Scalars['Boolean']['output'];
+  flagPost: Scalars['Boolean']['output'];
+  flagUser: Scalars['Boolean']['output'];
+  followSpace: Scalars['Boolean']['output'];
+  generateCubejsToken: Scalars['String']['output'];
+  generateMatrixToken: Scalars['String']['output'];
+  generateStripeAccountLink: GenerateStripeAccountLinkResponse;
+  insertSpaceTag: SpaceTagBase;
+  inviteEvent: Event;
+  inviteUserContacts: Scalars['Boolean']['output'];
+  joinGuildRoom: Scalars['Boolean']['output'];
+  mailEventTicket: Scalars['Boolean']['output'];
+  mailTicketPaymentReceipt: Scalars['Boolean']['output'];
+  manageEventCohostRequests: Scalars['Boolean']['output'];
+  manageSpaceTag: Scalars['Boolean']['output'];
+  modifyRoomStage: ModifyRoomStagePayload;
+  pinEventsToSpace: PinEventsToSpaceResponse;
+  readNotifications: Scalars['Boolean']['output'];
+  redeemTickets: RedeemTicketsResponse;
+  removeUserFcmToken: Scalars['Boolean']['output'];
+  reorderTicketTypeCategories: Scalars['Boolean']['output'];
+  reorderTicketTypes: Scalars['Boolean']['output'];
+  reportUser: Scalars['Boolean']['output'];
+  requestRoomStage: Scalars['Boolean']['output'];
+  responseInvitation: Scalars['Boolean']['output'];
+  revokeFarcasterAccountKey: Scalars['Boolean']['output'];
+  revokeOauth2: Scalars['String']['output'];
+  revokeTwitter: Scalars['String']['output'];
+  rewindUserDiscovery: RewindUserDiscoveryResponse;
+  sendEventEmailSettingTestEmails: Scalars['Boolean']['output'];
+  sendRoomInvite: Scalars['Boolean']['output'];
+  setUserWallet: Scalars['Boolean']['output'];
+  submitEventApplicationAnswers: Scalars['Boolean']['output'];
+  submitEventApplicationQuestions: Array<EventApplicationQuestion>;
+  submitEventFeedback: Scalars['Boolean']['output'];
+  syncEventAttestation: Scalars['Boolean']['output'];
+  syncFarcasterConnectionStatus: SyncFarcasterConnectionStatusResponse;
+  tgSendCode: Scalars['String']['output'];
+  tgUnlinkAccount: Scalars['Boolean']['output'];
+  tgVerify: Scalars['Boolean']['output'];
+  toggleBlockUser: Scalars['Boolean']['output'];
+  toggleEventQuestionLike: Scalars['Boolean']['output'];
+  toggleFileLike: File;
+  toggleReaction: Scalars['Boolean']['output'];
+  unfollowSpace: Scalars['Boolean']['output'];
+  unpinEventsFromSpace: Scalars['Boolean']['output'];
+  updateBadge: Badge;
+  updateBadgeList: BadgeList;
+  updateCheckinTokenRewardSetting: CheckinTokenRewardSetting;
+  updateDonation: Scalars['Boolean']['output'];
+  updateDonationVault?: Maybe<DonationVault>;
+  updateEvent: Event;
+  updateEventBroadcast: Scalars['Boolean']['output'];
+  /**
+   * @deprecated
+   * prefer using updateEventCheckins instead,
+   * this mutation will be removed after this new checkin apis,
+   * after making sure FE/mobile has no longer using this mutation anymore
+   *
+   */
+  updateEventCheckin: EventCheckin;
+  updateEventCheckins: Array<EventCheckin>;
+  updateEventEmailSetting: EmailSetting;
+  updateEventRewardUse: Scalars['Boolean']['output'];
+  updateEventTicketCategory: Scalars['Boolean']['output'];
+  updateEventTicketType: EventTicketType;
+  updateFile: File;
+  updateNewPaymentAccount: NewPaymentAccount;
+  updateOauth2Client: OAuth2Client;
+  updatePayment: NewPayment;
+  updatePost: Post;
+  updateRewardVault?: Maybe<TokenRewardVault>;
+  updateRoom: Room;
+  updateSite?: Maybe<Site>;
+  updateSpace?: Maybe<Space>;
+  updateSpaceMember?: Maybe<SpaceMember>;
+  updateSpaceRoleFeatures: Scalars['Boolean']['output'];
+  updateStore: Store;
+  updateStoreBucketItem?: Maybe<StoreBucketItem>;
+  updateStoreCategory: StoreCategory;
+  updateStoreOrder: StoreOrder;
+  updateStoreProduct: StoreProduct;
+  updateStoreProductVariant: StoreProductVariant;
+  updateStripeConnectedAccountCapability: StripeAccountCapability;
+  updateTicketTokenRewardSetting: TicketTokenRewardSetting;
+  updateUser: User;
+};
+
+
+export type MutationAcceptEventArgs = {
+  _id: Scalars['MongoID']['input'];
+  email?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationAcceptEventTermsArgs = {
+  input: AcceptEventTermsInput;
+};
+
+
+export type MutationAcceptUserDiscoveryArgs = {
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+  message?: InputMaybe<Scalars['String']['input']>;
+  swipee: Scalars['MongoID']['input'];
+};
+
+
+export type MutationActivatePersonalSpaceArgs = {
+  input: SpaceInput;
+};
+
+
+export type MutationAddSpaceMembersArgs = {
+  input: AddSpaceMemberInput;
+};
+
+
+export type MutationAddUserFcmTokenArgs = {
+  token: Scalars['String']['input'];
+};
+
+
+export type MutationAssignTicketsArgs = {
+  input: AssignTicketsInput;
+};
+
+
+export type MutationBuyTicketsArgs = {
+  input: BuyTicketsInput;
+};
+
+
+export type MutationCancelEventArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationCancelEventInvitationsArgs = {
+  input: CancelEventInvitationsInput;
+};
+
+
+export type MutationCancelTicketsArgs = {
+  input: CancelTicketsInput;
+};
+
+
+export type MutationCastVoteArgs = {
+  input: CastVoteInput;
+};
+
+
+export type MutationCheckinUserArgs = {
+  event: Scalars['MongoID']['input'];
+  user: Scalars['MongoID']['input'];
+};
+
+
+export type MutationCloneEventArgs = {
+  input: CloneEventInput;
+};
+
+
+export type MutationConfirmFileUploadsArgs = {
+  ids: Array<Scalars['MongoID']['input']>;
+};
+
+
+export type MutationCreateBadgeArgs = {
+  input: CreateBadgeInput;
+};
+
+
+export type MutationCreateBadgeListArgs = {
+  input: CreateBadgeListInput;
+};
+
+
+export type MutationCreateCastArgs = {
+  embeds?: InputMaybe<Array<Scalars['String']['input']>>;
+  mentions?: InputMaybe<Array<Scalars['Int']['input']>>;
+  mentionsPositions?: InputMaybe<Array<Scalars['Int']['input']>>;
+  parent_cast?: InputMaybe<ParentCastInput>;
+  parent_url?: InputMaybe<Scalars['String']['input']>;
+  text: Scalars['String']['input'];
+};
+
+
+export type MutationCreateCastReactionArgs = {
+  target_cast_id?: InputMaybe<ParentCastInput>;
+  target_url?: InputMaybe<Scalars['String']['input']>;
+  type: ReactionType;
+};
+
+
+export type MutationCreateCheckinTokenRewardSettingArgs = {
+  input: CheckinTokenRewardSettingInput;
+};
+
+
+export type MutationCreateCommentArgs = {
+  input: CommentInput;
+};
+
+
+export type MutationCreateDonationArgs = {
+  input: CreateDonationInput;
+};
+
+
+export type MutationCreateDonationVaultArgs = {
+  input: DonationVaultInput;
+};
+
+
+export type MutationCreateEventArgs = {
+  input: EventInput;
+};
+
+
+export type MutationCreateEventBroadcastArgs = {
+  event: Scalars['MongoID']['input'];
+  input: CreateEventBroadcastInput;
+};
+
+
+export type MutationCreateEventCastArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type MutationCreateEventEmailSettingArgs = {
+  input: CreateEventEmailSettingInput;
+};
+
+
+export type MutationCreateEventFromEventbriteArgs = {
+  id: Scalars['String']['input'];
+  input: CreateEventFromEventbriteInput;
+};
+
+
+export type MutationCreateEventQuestionArgs = {
+  input: CreateEventQuestionsInput;
+};
+
+
+export type MutationCreateEventSessionReservationArgs = {
+  input: EventSessionReservationInput;
+};
+
+
+export type MutationCreateEventStoryArgs = {
+  input: EventStoryInput;
+};
+
+
+export type MutationCreateEventTicketCategoryArgs = {
+  input: CreateEventTicketCategoryInput;
+};
+
+
+export type MutationCreateEventTicketDiscountsArgs = {
+  event: Scalars['MongoID']['input'];
+  inputs: Array<EventPaymentTicketDiscountInput>;
+};
+
+
+export type MutationCreateEventTicketTypeArgs = {
+  input: EventTicketTypeInput;
+};
+
+
+export type MutationCreateEventbriteWebhookForEventArgs = {
+  _id: Scalars['MongoID']['input'];
+  eventbrite_event: Scalars['String']['input'];
+};
+
+
+export type MutationCreateFileArgs = {
+  input?: InputMaybe<FileInput>;
+  url: Scalars['String']['input'];
+};
+
+
+export type MutationCreateFileUploadsArgs = {
+  directory: Scalars['String']['input'];
+  upload_infos: Array<FileUploadInfo>;
+};
+
+
+export type MutationCreateGuildRoomArgs = {
+  input: GuildRoomInput;
+};
+
+
+export type MutationCreateNewPaymentAccountArgs = {
+  input: CreateNewPaymentAccountInput;
+};
+
+
+export type MutationCreateOauth2ClientArgs = {
+  input: Oauth2ClientInput;
+};
+
+
+export type MutationCreatePostArgs = {
+  input: PostInput;
+};
+
+
+export type MutationCreateRegistrationArgs = {
+  input: Registration;
+};
+
+
+export type MutationCreateRewardVaultArgs = {
+  input: TokenRewardVaultInput;
+};
+
+
+export type MutationCreateRoomArgs = {
+  input: RoomInput;
+};
+
+
+export type MutationCreateSiteArgs = {
+  input: CreateSiteInput;
+};
+
+
+export type MutationCreateSpaceArgs = {
+  input: SpaceInput;
+};
+
+
+export type MutationCreateStoreArgs = {
+  input: StoreInput;
+};
+
+
+export type MutationCreateStoreBucketItemArgs = {
+  input: StoreBucketItemInput;
+};
+
+
+export type MutationCreateStoreCategoryArgs = {
+  input: StoreCategoryInput;
+  store: Scalars['MongoID']['input'];
+};
+
+
+export type MutationCreateStoreOrderArgs = {
+  address: Scalars['MongoID']['input'];
+  bucket_items?: InputMaybe<Array<StoreBucketItemInput>>;
+  delivery_option?: InputMaybe<Scalars['MongoID']['input']>;
+  delivery_option_pickup_address?: InputMaybe<Scalars['MongoID']['input']>;
+  dry_run?: InputMaybe<Scalars['Boolean']['input']>;
+  easyship_courier_id?: InputMaybe<Scalars['String']['input']>;
+  place_reservation?: InputMaybe<Scalars['MongoID']['input']>;
+  promotion?: InputMaybe<Scalars['MongoID']['input']>;
+  store: Scalars['MongoID']['input'];
+};
+
+
+export type MutationCreateStoreProductArgs = {
+  input: StoreProductInput;
+  store: Scalars['MongoID']['input'];
+};
+
+
+export type MutationCreateStoreProductVariantArgs = {
+  input: StoreProductVariantInput;
+  product: Scalars['MongoID']['input'];
+  store: Scalars['MongoID']['input'];
+};
+
+
+export type MutationCreateStorePromotionArgs = {
+  input: StorePromotionInput;
+  store: Scalars['MongoID']['input'];
+};
+
+
+export type MutationCreateStripeCardArgs = {
+  payment_method: Scalars['String']['input'];
+};
+
+
+export type MutationCreateStripeOnrampSessionArgs = {
+  input: CreateStripeOnrampSessionInput;
+};
+
+
+export type MutationCreateTicketTokenRewardSettingArgs = {
+  input: TicketTokenRewardSettingInput;
+};
+
+
+export type MutationCreateTicketsArgs = {
+  ticket_assignments: Array<TicketAssignment>;
+  ticket_type: Scalars['MongoID']['input'];
+};
+
+
+export type MutationCreateUserExpertiseArgs = {
+  title: Scalars['String']['input'];
+};
+
+
+export type MutationCreateUserFollowArgs = {
+  followee: Scalars['MongoID']['input'];
+};
+
+
+export type MutationCreateUserFriendshipArgs = {
+  input: CreateUserFriendshipInput;
+};
+
+
+export type MutationCreateUserServiceArgs = {
+  title: Scalars['String']['input'];
+};
+
+
+export type MutationDecideEventCohostRequestArgs = {
+  input: DecideEventCohostRequestInput;
+};
+
+
+export type MutationDecideRoomAccessRequestArgs = {
+  input: DecideRoomAccessRequestInput;
+};
+
+
+export type MutationDecideRoomStageRequestArgs = {
+  input: DecideRoomStageRequestInput;
+};
+
+
+export type MutationDecideSpaceEventRequestsArgs = {
+  input: DecideSpaceEventRequestsInput;
+};
+
+
+export type MutationDecideUserJoinRequestsArgs = {
+  input: DecideUserJoinRequestsInput;
+};
+
+
+export type MutationDeclineEventArgs = {
+  _id: Scalars['MongoID']['input'];
+  message?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationDeclineUserDiscoveryArgs = {
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+  message?: InputMaybe<Scalars['String']['input']>;
+  swipee: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteBadgeArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteBadgeListArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteCastReactionArgs = {
+  target_cast_id?: InputMaybe<ParentCastInput>;
+  target_url?: InputMaybe<Scalars['String']['input']>;
+  type: ReactionType;
+};
+
+
+export type MutationDeleteCommentArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteEventApplicationQuestionsArgs = {
+  event: Scalars['MongoID']['input'];
+  questions: Array<Scalars['MongoID']['input']>;
+};
+
+
+export type MutationDeleteEventBroadcastArgs = {
+  _id: Scalars['MongoID']['input'];
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteEventEmailSettingArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteEventQuestionArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteEventSessionReservationArgs = {
+  input: EventSessionReservationInput;
+};
+
+
+export type MutationDeleteEventStoryArgs = {
+  input: EventStoryInput;
+};
+
+
+export type MutationDeleteEventTicketCategoryArgs = {
+  categories: Array<Scalars['MongoID']['input']>;
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteEventTicketDiscountsArgs = {
+  discounts: Array<Scalars['String']['input']>;
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteEventTicketTypeArgs = {
+  _id: Scalars['MongoID']['input'];
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteGuildRoomArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteNotificationsArgs = {
+  _id?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  type?: InputMaybe<NotificationTypeFilterInput>;
+};
+
+
+export type MutationDeleteOauth2ClientArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationDeletePostArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteSiteArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteSpaceArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteSpaceMembersArgs = {
+  input: DeleteSpaceMemberInput;
+};
+
+
+export type MutationDeleteSpaceTagArgs = {
+  _id: Scalars['MongoID']['input'];
+  space: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteStoreArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteStoreBucketItemArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteStoreCategoryArgs = {
+  _id: Scalars['MongoID']['input'];
+  store: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteStoreProductArgs = {
+  _id: Scalars['MongoID']['input'];
+  store: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteStoreProductVariantArgs = {
+  _id: Scalars['MongoID']['input'];
+  product: Scalars['MongoID']['input'];
+  store: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteStorePromotionArgs = {
+  _id: Scalars['MongoID']['input'];
+  store: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteStripeCardArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteUserDiscoverySwipeArgs = {
+  swipee: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteUserFollowArgs = {
+  followee: Scalars['MongoID']['input'];
+};
+
+
+export type MutationDeleteUserFriendshipArgs = {
+  input: DeleteUserFriendshipInput;
+};
+
+
+export type MutationFlagEventArgs = {
+  _id: Scalars['MongoID']['input'];
+  reason: Scalars['String']['input'];
+};
+
+
+export type MutationFlagPostArgs = {
+  _id: Scalars['MongoID']['input'];
+  reason: Scalars['String']['input'];
+};
+
+
+export type MutationFlagUserArgs = {
+  _id: Scalars['MongoID']['input'];
+  reason: Scalars['String']['input'];
+};
+
+
+export type MutationFollowSpaceArgs = {
+  space: Scalars['MongoID']['input'];
+};
+
+
+export type MutationGenerateCubejsTokenArgs = {
+  events?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  site?: InputMaybe<Scalars['MongoID']['input']>;
+  user?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type MutationGenerateStripeAccountLinkArgs = {
+  refresh_url: Scalars['String']['input'];
+  return_url: Scalars['String']['input'];
+};
+
+
+export type MutationInsertSpaceTagArgs = {
+  input: SpaceTagInput;
+};
+
+
+export type MutationInviteEventArgs = {
+  input: InviteEventInput;
+};
+
+
+export type MutationInviteUserContactsArgs = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type MutationJoinGuildRoomArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationMailEventTicketArgs = {
+  emails: Array<Scalars['String']['input']>;
+  event: Scalars['MongoID']['input'];
+  payment?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type MutationMailTicketPaymentReceiptArgs = {
+  ticket: Scalars['MongoID']['input'];
+};
+
+
+export type MutationManageEventCohostRequestsArgs = {
+  input: ManageEventCohostRequestsInput;
+};
+
+
+export type MutationManageSpaceTagArgs = {
+  _id: Scalars['MongoID']['input'];
+  space: Scalars['MongoID']['input'];
+  tagged: Scalars['Boolean']['input'];
+  target: Scalars['String']['input'];
+};
+
+
+export type MutationModifyRoomStageArgs = {
+  input: ModifyRoomStageInput;
+};
+
+
+export type MutationPinEventsToSpaceArgs = {
+  events: Array<Scalars['MongoID']['input']>;
+  space: Scalars['MongoID']['input'];
+  tags?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+
+export type MutationReadNotificationsArgs = {
+  _id?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  type?: InputMaybe<NotificationTypeFilterInput>;
+};
+
+
+export type MutationRedeemTicketsArgs = {
+  input: RedeemTicketsInput;
+};
+
+
+export type MutationRemoveUserFcmTokenArgs = {
+  token: Scalars['String']['input'];
+};
+
+
+export type MutationReorderTicketTypeCategoriesArgs = {
+  categories: Array<ReorderTicketTypeCategoryInput>;
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type MutationReorderTicketTypesArgs = {
+  event: Scalars['MongoID']['input'];
+  types: Array<ReorderTicketTypeInput>;
+};
+
+
+export type MutationReportUserArgs = {
+  input: ReportUserInput;
+};
+
+
+export type MutationRequestRoomStageArgs = {
+  input: RequestRoomStageInput;
+};
+
+
+export type MutationResponseInvitationArgs = {
+  input: ResponseInvitationInput;
+};
+
+
+export type MutationRevokeOauth2Args = {
+  name: Scalars['String']['input'];
+};
+
+
+export type MutationRewindUserDiscoveryArgs = {
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type MutationSendEventEmailSettingTestEmailsArgs = {
+  input: SendEventEmailSettingTestEmailsInput;
+};
+
+
+export type MutationSendRoomInviteArgs = {
+  input: SendRoomInviteInput;
+};
+
+
+export type MutationSetUserWalletArgs = {
+  signature: Scalars['String']['input'];
+  token: Scalars['String']['input'];
+};
+
+
+export type MutationSubmitEventApplicationAnswersArgs = {
+  answers: Array<EventApplicationAnswerInput>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type MutationSubmitEventApplicationQuestionsArgs = {
+  event: Scalars['MongoID']['input'];
+  questions: Array<QuestionInput>;
+};
+
+
+export type MutationSubmitEventFeedbackArgs = {
+  input: SubmitEventFeedbackInput;
+};
+
+
+export type MutationSyncEventAttestationArgs = {
+  chain_id: Scalars['String']['input'];
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type MutationTgSendCodeArgs = {
+  input: SendCodeInput;
+};
+
+
+export type MutationTgVerifyArgs = {
+  input: VerifyCodeInput;
+};
+
+
+export type MutationToggleBlockUserArgs = {
+  input: ToggleBlockUserInput;
+};
+
+
+export type MutationToggleEventQuestionLikeArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationToggleFileLikeArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationToggleReactionArgs = {
+  input: ReactionInput;
+};
+
+
+export type MutationUnfollowSpaceArgs = {
+  space: Scalars['MongoID']['input'];
+};
+
+
+export type MutationUnpinEventsFromSpaceArgs = {
+  events: Array<Scalars['MongoID']['input']>;
+  space: Scalars['MongoID']['input'];
+};
+
+
+export type MutationUpdateBadgeArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: UpdateBadgeInput;
+};
+
+
+export type MutationUpdateBadgeListArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: UpdateBadgeListInput;
+};
+
+
+export type MutationUpdateCheckinTokenRewardSettingArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: CheckinTokenRewardSettingInput;
+};
+
+
+export type MutationUpdateDonationArgs = {
+  input: UpdateDonationInput;
+};
+
+
+export type MutationUpdateDonationVaultArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: DonationVaultInput;
+};
+
+
+export type MutationUpdateEventArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: EventInput;
+};
+
+
+export type MutationUpdateEventBroadcastArgs = {
+  _id: Scalars['MongoID']['input'];
+  event: Scalars['MongoID']['input'];
+  input: UpdateEventBroadcastInput;
+};
+
+
+export type MutationUpdateEventCheckinArgs = {
+  input: UpdateEventCheckinInput;
+};
+
+
+export type MutationUpdateEventCheckinsArgs = {
+  input: UpdateEventCheckinInput;
+};
+
+
+export type MutationUpdateEventEmailSettingArgs = {
+  input: UpdateEventEmailSettingInput;
+};
+
+
+export type MutationUpdateEventRewardUseArgs = {
+  input: UpdateEventRewardUseInput;
+};
+
+
+export type MutationUpdateEventTicketCategoryArgs = {
+  input: UpdateTicketTypeCategoryInput;
+};
+
+
+export type MutationUpdateEventTicketTypeArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: EventTicketTypeInput;
+};
+
+
+export type MutationUpdateFileArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: FileInput;
+};
+
+
+export type MutationUpdateNewPaymentAccountArgs = {
+  input: UpdateNewPaymentAccountInput;
+};
+
+
+export type MutationUpdateOauth2ClientArgs = {
+  id: Scalars['String']['input'];
+  input: Oauth2ClientInput;
+};
+
+
+export type MutationUpdatePaymentArgs = {
+  input: UpdatePaymentInput;
+};
+
+
+export type MutationUpdatePostArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: UpdatePostInput;
+};
+
+
+export type MutationUpdateRewardVaultArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: TokenRewardVaultInput;
+};
+
+
+export type MutationUpdateRoomArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: RoomInput;
+};
+
+
+export type MutationUpdateSiteArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: UpdateSiteInput;
+};
+
+
+export type MutationUpdateSpaceArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: SpaceInput;
+};
+
+
+export type MutationUpdateSpaceMemberArgs = {
+  input: UpdateSpaceMemberInput;
+};
+
+
+export type MutationUpdateSpaceRoleFeaturesArgs = {
+  input: UpdateSpaceRoleFeaturesInput;
+};
+
+
+export type MutationUpdateStoreArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: StoreInput;
+};
+
+
+export type MutationUpdateStoreBucketItemArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: UpdateStoreBucketItemInput;
+};
+
+
+export type MutationUpdateStoreCategoryArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: StoreCategoryInput;
+  store: Scalars['MongoID']['input'];
+};
+
+
+export type MutationUpdateStoreOrderArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: StoreOrderInput;
+};
+
+
+export type MutationUpdateStoreProductArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: StoreProductInput;
+  store: Scalars['MongoID']['input'];
+};
+
+
+export type MutationUpdateStoreProductVariantArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: StoreProductVariantInput;
+  product: Scalars['MongoID']['input'];
+  store: Scalars['MongoID']['input'];
+};
+
+
+export type MutationUpdateStripeConnectedAccountCapabilityArgs = {
+  input: UpdateStripeConnectedAccountCapabilityInput;
+};
+
+
+export type MutationUpdateTicketTokenRewardSettingArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: TicketTokenRewardSettingInput;
+};
+
+
+export type MutationUpdateUserArgs = {
+  input: UserInput;
+};
+
+export type NewPayment = {
+  __typename?: 'NewPayment';
+  _id: Scalars['MongoID']['output'];
+  account: Scalars['MongoID']['output'];
+  account_expanded?: Maybe<NewPaymentAccount>;
+  amount: Scalars['String']['output'];
+  application?: Maybe<Array<EventApplicationQuestionAndAnswer>>;
+  attempting_refund?: Maybe<Scalars['Boolean']['output']>;
+  billing_info?: Maybe<BillingInfo>;
+  buyer_info?: Maybe<BuyerInfo>;
+  buyer_user?: Maybe<UserWithEmail>;
+  crypto_payment_info?: Maybe<CryptoPaymentInfo>;
+  currency: Scalars['String']['output'];
+  due_amount?: Maybe<Scalars['String']['output']>;
+  failure_reason?: Maybe<Scalars['String']['output']>;
+  fee?: Maybe<Scalars['String']['output']>;
+  formatted_discount_amount?: Maybe<Scalars['String']['output']>;
+  formatted_due_amount?: Maybe<Scalars['String']['output']>;
+  formatted_fee_amount?: Maybe<Scalars['String']['output']>;
+  formatted_total_amount?: Maybe<Scalars['String']['output']>;
+  join_request?: Maybe<EventJoinRequestBase>;
+  ref_data?: Maybe<Scalars['JSON']['output']>;
+  stamps: Scalars['JSON']['output'];
+  state: NewPaymentState;
+  stripe_payment_info?: Maybe<StripePaymentInfo>;
+  ticket_types_expanded?: Maybe<Array<Maybe<EventTicketType>>>;
+  tickets?: Maybe<Array<TicketBase>>;
+  transfer_metadata?: Maybe<Scalars['JSON']['output']>;
+  transfer_params?: Maybe<Scalars['JSON']['output']>;
+  user?: Maybe<Scalars['MongoID']['output']>;
+};
+
+export type NewPaymentAccount = {
+  __typename?: 'NewPaymentAccount';
+  _id: Scalars['MongoID']['output'];
+  account_info: AccountInfo;
+  active: Scalars['Boolean']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  provider?: Maybe<NewPaymentProvider>;
+  title?: Maybe<Scalars['String']['output']>;
+  type: PaymentAccountType;
+  user: Scalars['MongoID']['output'];
+};
+
+export enum NewPaymentProvider {
+  Safe = 'safe',
+  Stripe = 'stripe'
+}
+
+export enum NewPaymentState {
+  AwaitCapture = 'await_capture',
+  Created = 'created',
+  Failed = 'failed',
+  Initialized = 'initialized',
+  Refunded = 'refunded',
+  Succeeded = 'succeeded'
+}
+
+export type Newsfeed = {
+  __typename?: 'Newsfeed';
+  offset: Scalars['Float']['output'];
+  posts: Array<Post>;
+};
+
+export type NonloginUser = {
+  __typename?: 'NonloginUser';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  active?: Maybe<Scalars['Boolean']['output']>;
+  addresses?: Maybe<Array<Address>>;
+  age?: Maybe<Scalars['Float']['output']>;
+  attended?: Maybe<Scalars['Float']['output']>;
+  blocked?: Maybe<Array<Scalars['MongoID']['output']>>;
+  blocked_expanded?: Maybe<Array<User>>;
+  calendly_url?: Maybe<Scalars['String']['output']>;
+  company_address?: Maybe<Address>;
+  company_name?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
+  cover?: Maybe<Scalars['MongoID']['output']>;
+  cover_expanded?: Maybe<File>;
+  created_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  currency?: Maybe<Scalars['String']['output']>;
+  daos?: Maybe<Array<UserDao>>;
+  data?: Maybe<Scalars['JSON']['output']>;
+  date_of_birth?: Maybe<Scalars['DateTimeISO']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  discord_user_info?: Maybe<Scalars['JSON']['output']>;
+  discovery?: Maybe<UserDiscoverySettings>;
+  display_name?: Maybe<Scalars['String']['output']>;
+  education_title?: Maybe<Scalars['String']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  email_marketing?: Maybe<Scalars['Boolean']['output']>;
+  email_verified?: Maybe<Scalars['Boolean']['output']>;
+  ethnicity?: Maybe<Scalars['String']['output']>;
+  eventbrite_user_info?: Maybe<Scalars['JSON']['output']>;
+  events?: Maybe<Array<Scalars['MongoID']['output']>>;
+  events_expanded?: Maybe<Array<Event>>;
+  expertise?: Maybe<Array<Scalars['MongoID']['output']>>;
+  expertise_expanded?: Maybe<Array<UserExpertise>>;
+  farcaster_fid?: Maybe<Scalars['Float']['output']>;
+  farcaster_user_info?: Maybe<FarcasterUserInfo>;
+  fcm_tokens?: Maybe<Array<Scalars['String']['output']>>;
+  first_name?: Maybe<Scalars['String']['output']>;
+  followers?: Maybe<Scalars['Float']['output']>;
+  following?: Maybe<Scalars['Float']['output']>;
+  frequent_questions?: Maybe<Array<FrequentQuestion>>;
+  friends?: Maybe<Scalars['Float']['output']>;
+  google_user_info?: Maybe<Scalars['JSON']['output']>;
+  handle_facebook?: Maybe<Scalars['String']['output']>;
+  handle_farcaster?: Maybe<Scalars['String']['output']>;
+  handle_github?: Maybe<Scalars['String']['output']>;
+  handle_instagram?: Maybe<Scalars['String']['output']>;
+  handle_lens?: Maybe<Scalars['String']['output']>;
+  handle_linkedin?: Maybe<Scalars['String']['output']>;
+  handle_mirror?: Maybe<Scalars['String']['output']>;
+  handle_twitter?: Maybe<Scalars['String']['output']>;
+  hosted?: Maybe<Scalars['Float']['output']>;
+  icebreakers?: Maybe<Array<UserIcebreaker>>;
+  image_avatar?: Maybe<Scalars['String']['output']>;
+  industry?: Maybe<Scalars['String']['output']>;
+  interests?: Maybe<Array<Scalars['String']['output']>>;
+  job_title?: Maybe<Scalars['String']['output']>;
+  languages?: Maybe<Array<Scalars['String']['output']>>;
+  last_name?: Maybe<Scalars['String']['output']>;
+  layout_sections?: Maybe<Array<LayoutSection>>;
+  lemon_amount?: Maybe<Scalars['Float']['output']>;
+  lemon_cap?: Maybe<Scalars['Float']['output']>;
+  lemon_refresh_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  location_line?: Maybe<Scalars['String']['output']>;
+  matrix_localpart?: Maybe<Scalars['String']['output']>;
+  music?: Maybe<Array<Scalars['String']['output']>>;
+  name?: Maybe<Scalars['String']['output']>;
+  new_gender?: Maybe<Scalars['String']['output']>;
+  new_photos?: Maybe<Array<Scalars['MongoID']['output']>>;
+  new_photos_expanded?: Maybe<Array<File>>;
+  notification_filters?: Maybe<Array<Scalars['JSON']['output']>>;
+  offers?: Maybe<Array<UserOffer>>;
+  payment_verification?: Maybe<UserPaymentVerification>;
+  phone?: Maybe<Scalars['String']['output']>;
+  phone_verified?: Maybe<Scalars['Boolean']['output']>;
+  posts?: Maybe<Scalars['Float']['output']>;
+  preferred_network?: Maybe<Scalars['String']['output']>;
+  pronoun?: Maybe<Scalars['String']['output']>;
+  quest_points?: Maybe<Scalars['Float']['output']>;
+  razorpay_customer?: Maybe<Scalars['String']['output']>;
+  search_range?: Maybe<Scalars['Float']['output']>;
+  service_offers?: Maybe<Array<Scalars['MongoID']['output']>>;
+  service_offers_expanded?: Maybe<Array<UserServiceOffer>>;
+  settings?: Maybe<Scalars['JSON']['output']>;
+  shopify_user_info?: Maybe<Scalars['JSON']['output']>;
+  stripe_connected_account?: Maybe<StripeConnectedAccount>;
+  stripe_user_info?: Maybe<Scalars['JSON']['output']>;
+  tag_recommended?: Maybe<Scalars['Boolean']['output']>;
+  tag_site?: Maybe<Scalars['Boolean']['output']>;
+  tag_timeline?: Maybe<Scalars['Boolean']['output']>;
+  tag_verified?: Maybe<Scalars['Boolean']['output']>;
+  tagline?: Maybe<Scalars['String']['output']>;
+  telegram_user_info?: Maybe<Scalars['JSON']['output']>;
+  terms_accepted_adult?: Maybe<Scalars['Boolean']['output']>;
+  terms_accepted_conditions?: Maybe<Scalars['Boolean']['output']>;
+  timezone?: Maybe<Scalars['String']['output']>;
+  twitch_user_info?: Maybe<Scalars['JSON']['output']>;
+  twitter2_user_info?: Maybe<Scalars['JSON']['output']>;
+  twitter_user_info?: Maybe<Scalars['JSON']['output']>;
+  type?: Maybe<UserType>;
+  updated_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+  url_go?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
+  verified?: Maybe<Scalars['Boolean']['output']>;
+  wallet_custodial?: Maybe<Scalars['String']['output']>;
+  wallets?: Maybe<Array<Scalars['String']['output']>>;
+  wallets_new?: Maybe<Scalars['JSON']['output']>;
+  zoom_user_info?: Maybe<Scalars['JSON']['output']>;
+};
+
+export type Notification = {
+  __typename?: 'Notification';
+  _id: Scalars['MongoID']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  data?: Maybe<Scalars['JSON']['output']>;
+  from?: Maybe<Scalars['MongoID']['output']>;
+  from_expanded?: Maybe<User>;
+  image_url?: Maybe<Scalars['String']['output']>;
+  is_seen?: Maybe<Scalars['Boolean']['output']>;
+  message?: Maybe<Scalars['String']['output']>;
+  ref_event?: Maybe<Scalars['MongoID']['output']>;
+  ref_event_expanded?: Maybe<Event>;
+  ref_room?: Maybe<Scalars['MongoID']['output']>;
+  ref_room_expanded?: Maybe<Room>;
+  ref_space?: Maybe<Scalars['MongoID']['output']>;
+  ref_space_expanded?: Maybe<Space>;
+  ref_store_order?: Maybe<Scalars['MongoID']['output']>;
+  ref_store_order_expanded?: Maybe<StoreOrder>;
+  ref_user?: Maybe<Scalars['MongoID']['output']>;
+  ref_user_expanded?: Maybe<User>;
+  title?: Maybe<Scalars['String']['output']>;
+  type: NotificationType;
+};
+
+export enum NotificationType {
+  AdminPaymentVerification = 'admin_payment_verification',
+  ChatMessage = 'chat_message',
+  EventAnnounce = 'event_announce',
+  EventApprove = 'event_approve',
+  EventAttestationSyncCompleted = 'event_attestation_sync_completed',
+  EventBroadcastCreated = 'event_broadcast_created',
+  EventBroadcastDeactivated = 'event_broadcast_deactivated',
+  EventBroadcastDeleted = 'event_broadcast_deleted',
+  EventBroadcastEnded = 'event_broadcast_ended',
+  EventBroadcastRescheduled = 'event_broadcast_rescheduled',
+  EventBroadcastStarted = 'event_broadcast_started',
+  EventCancellation = 'event_cancellation',
+  EventChatAnnounce = 'event_chat_announce',
+  EventCohostRequest = 'event_cohost_request',
+  EventCohostRequestAnnounce = 'event_cohost_request_announce',
+  EventDeclined = 'event_declined',
+  EventDonation = 'event_donation',
+  EventInvite = 'event_invite',
+  EventInviteAttending = 'event_invite_attending',
+  EventInviteVerifyAcceptRequest = 'event_invite_verify_accept_request',
+  EventInviteVerifyRequest = 'event_invite_verify_request',
+  EventRequestApproved = 'event_request_approved',
+  EventRequestCreated = 'event_request_created',
+  EventRequestDeclined = 'event_request_declined',
+  EventUnlockVerifyAcceptRequest = 'event_unlock_verify_accept_request',
+  EventUnlockVerifyRequest = 'event_unlock_verify_request',
+  EventUpdate = 'event_update',
+  PaymentAuthorized = 'payment_authorized',
+  PaymentFailed = 'payment_failed',
+  PaymentRefunded = 'payment_refunded',
+  PaymentSucceeded = 'payment_succeeded',
+  PaymentsCapturedSummary = 'payments_captured_summary',
+  PaymentsWiredSummary = 'payments_wired_summary',
+  PlaceReservationDelete = 'place_reservation_delete',
+  PlaceReservationRequest = 'place_reservation_request',
+  PlaceReservationRequestAccept = 'place_reservation_request_accept',
+  PlaceReservationRequestDecline = 'place_reservation_request_decline',
+  ReservationAccept = 'reservation_accept',
+  RoomInvite = 'room_invite',
+  RoomStarted = 'room_started',
+  SafeVaultInitFailed = 'safe_vault_init_failed',
+  SafeVaultInitSuccess = 'safe_vault_init_success',
+  SpaceEventPinRequest = 'space_event_pin_request',
+  SpaceMemberAdded = 'space_member_added',
+  StoreOrderAccepted = 'store_order_accepted',
+  StoreOrderAwaitingPickup = 'store_order_awaiting_pickup',
+  StoreOrderCancelled = 'store_order_cancelled',
+  StoreOrderDeclined = 'store_order_declined',
+  StoreOrderDelivered = 'store_order_delivered',
+  StoreOrderDeliveryConfirmed = 'store_order_delivery_confirmed',
+  StoreOrderInTransit = 'store_order_in_transit',
+  StoreOrderPending = 'store_order_pending',
+  StoreOrderPreparing = 'store_order_preparing',
+  StripeConnected = 'stripe_connected',
+  TicketAssigned = 'ticket_assigned',
+  TicketCancelled = 'ticket_cancelled',
+  UserContactSignup = 'user_contact_signup',
+  UserDiscoveryMatch = 'user_discovery_match',
+  UserFriendshipRequest = 'user_friendship_request',
+  UserFriendshipRequestAccept = 'user_friendship_request_accept'
+}
+
+export type NotificationTypeFilterInput = {
+  eq?: InputMaybe<NotificationType>;
+  in?: InputMaybe<Array<NotificationType>>;
+  nin?: InputMaybe<Array<NotificationType>>;
+};
+
+export type OAuth2Client = {
+  __typename?: 'OAuth2Client';
+  allowed_cors_origins: Array<Scalars['String']['output']>;
+  audience: Array<Scalars['String']['output']>;
+  authorization_code_grant_access_token_lifespan?: Maybe<Scalars['String']['output']>;
+  authorization_code_grant_id_token_lifespan?: Maybe<Scalars['String']['output']>;
+  authorization_code_grant_refresh_token_lifespan?: Maybe<Scalars['String']['output']>;
+  client_credentials_grant_access_token_lifespan?: Maybe<Scalars['String']['output']>;
+  client_id: Scalars['String']['output'];
+  client_name: Scalars['String']['output'];
+  client_secret?: Maybe<Scalars['String']['output']>;
+  created_at: Scalars['DateTimeISO']['output'];
+  grant_types: Array<Scalars['String']['output']>;
+  implicit_grant_access_token_lifespan?: Maybe<Scalars['String']['output']>;
+  implicit_grant_id_token_lifespan?: Maybe<Scalars['String']['output']>;
+  jwt_bearer_grant_access_token_lifespan?: Maybe<Scalars['String']['output']>;
+  logo_uri?: Maybe<Scalars['String']['output']>;
+  metadata?: Maybe<Scalars['JSON']['output']>;
+  post_logout_redirect_uris?: Maybe<Array<Scalars['String']['output']>>;
+  redirect_uris?: Maybe<Array<Scalars['String']['output']>>;
+  refresh_token_grant_access_token_lifespan?: Maybe<Scalars['String']['output']>;
+  refresh_token_grant_id_token_lifespan?: Maybe<Scalars['String']['output']>;
+  refresh_token_grant_refresh_token_lifespan?: Maybe<Scalars['String']['output']>;
+  response_types?: Maybe<Array<Scalars['String']['output']>>;
+  scope: Scalars['String']['output'];
+  skip_consent?: Maybe<Scalars['Boolean']['output']>;
+  token_endpoint_auth_method?: Maybe<Scalars['String']['output']>;
+  updated_at: Scalars['DateTimeISO']['output'];
+};
+
+export type Oauth2ClientInput = {
+  allowed_cors_origins?: InputMaybe<Array<Scalars['String']['input']>>;
+  authorization_code_grant_access_token_lifespan?: InputMaybe<Scalars['String']['input']>;
+  authorization_code_grant_id_token_lifespan?: InputMaybe<Scalars['String']['input']>;
+  authorization_code_grant_refresh_token_lifespan?: InputMaybe<Scalars['String']['input']>;
+  client_credentials_grant_access_token_lifespan?: InputMaybe<Scalars['String']['input']>;
+  client_name?: InputMaybe<Scalars['String']['input']>;
+  implicit_grant_access_token_lifespan?: InputMaybe<Scalars['String']['input']>;
+  implicit_grant_id_token_lifespan?: InputMaybe<Scalars['String']['input']>;
+  jwt_bearer_grant_access_token_lifespan?: InputMaybe<Scalars['String']['input']>;
+  logo_uri?: InputMaybe<Scalars['String']['input']>;
+  metadata?: InputMaybe<Scalars['JSON']['input']>;
+  post_logout_redirect_uris?: InputMaybe<Array<Scalars['String']['input']>>;
+  redirect_uris?: InputMaybe<Array<Scalars['String']['input']>>;
+  refresh_token_grant_access_token_lifespan?: InputMaybe<Scalars['String']['input']>;
+  refresh_token_grant_id_token_lifespan?: InputMaybe<Scalars['String']['input']>;
+  refresh_token_grant_refresh_token_lifespan?: InputMaybe<Scalars['String']['input']>;
+  skip_consent?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type Offer = {
+  __typename?: 'Offer';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  color?: Maybe<Scalars['String']['output']>;
+  position?: Maybe<Scalars['Float']['output']>;
+  provider: OfferProvider;
+  provider_id: Scalars['String']['output'];
+  provider_network: Scalars['String']['output'];
+};
+
+export enum OfferProvider {
+  Claimable = 'claimable',
+  FestivalHeads = 'festival_heads',
+  Metaverse = 'metaverse',
+  Order = 'order',
+  Poap = 'poap',
+  Token = 'token'
+}
+
+export enum OfferType {
+  Home = 'HOME',
+  Poap = 'POAP'
+}
+
+export type PaginationInput = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+export type ParentCastInput = {
+  fid: Scalars['Float']['input'];
+  /** Hash of the parent cast without 0x prefix */
+  hash: Scalars['String']['input'];
+};
+
+export type PaymentAccountInfo = {
+  __typename?: 'PaymentAccountInfo';
+  _id: Scalars['MongoID']['output'];
+  account_info: AccountInfo;
+  active: Scalars['Boolean']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  escrow?: Maybe<EscrowDepositInfo>;
+  fee?: Maybe<Scalars['String']['output']>;
+  provider?: Maybe<NewPaymentProvider>;
+  relay?: Maybe<RelayPaymentInfo>;
+  title?: Maybe<Scalars['String']['output']>;
+  type: PaymentAccountType;
+  user: Scalars['MongoID']['output'];
+};
+
+export enum PaymentAccountType {
+  Digital = 'digital',
+  Ethereum = 'ethereum',
+  EthereumEscrow = 'ethereum_escrow',
+  EthereumRelay = 'ethereum_relay',
+  EthereumStake = 'ethereum_stake',
+  Solana = 'solana'
+}
+
+export type PaymentRefundInfo = {
+  __typename?: 'PaymentRefundInfo';
+  _id: Scalars['MongoID']['output'];
+  amount: Scalars['String']['output'];
+  attempting_refund?: Maybe<Scalars['Boolean']['output']>;
+  currency: Scalars['String']['output'];
+  payment_account: NewPaymentAccount;
+  refund_info?: Maybe<RefundInfo>;
+  /** If null is returned then this payment does not support refund */
+  refund_policy?: Maybe<PaymentRefundPolicy>;
+  /** Null for undeterminated, true if requirement met, otherwise false */
+  refund_requirements_met?: Maybe<Scalars['Boolean']['output']>;
+  state: NewPaymentState;
+};
+
+export type PaymentRefundPolicy = {
+  __typename?: 'PaymentRefundPolicy';
+  percent: Scalars['Float']['output'];
+  requirements?: Maybe<RefundRequirements>;
+  /** Whether all requirements must be met */
+  satisfy_all?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type PaymentRefundSignature = {
+  __typename?: 'PaymentRefundSignature';
+  /** The args that will be supplied to the contract refund function */
+  args: Array<Scalars['JSON']['output']>;
+  signature: Scalars['String']['output'];
+};
+
+export type PaymentRevenue = {
+  __typename?: 'PaymentRevenue';
+  currency: Scalars['String']['output'];
+  formatted_total_amount: Scalars['String']['output'];
+};
+
+export type PaymentStatistics = {
+  __typename?: 'PaymentStatistics';
+  count: Scalars['Int']['output'];
+  revenue: Array<PaymentRevenue>;
+};
+
+export type PinEventsToSpaceResponse = {
+  __typename?: 'PinEventsToSpaceResponse';
+  requests?: Maybe<Array<SpaceEventRequest>>;
+};
+
+export type Point = {
+  __typename?: 'Point';
+  coordinates: Array<Scalars['Float']['output']>;
+  type: Scalars['String']['output'];
+};
+
+export type PointConfigInfo = {
+  __typename?: 'PointConfigInfo';
+  _id: Scalars['MongoID']['output'];
+  first_level_group?: Maybe<Scalars['MongoID']['output']>;
+  first_time_only?: Maybe<Scalars['Boolean']['output']>;
+  points: Scalars['Float']['output'];
+  second_level_group?: Maybe<Scalars['MongoID']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  trackings: Array<PointTrackingInfo>;
+  type: PointType;
+};
+
+export type PointGroup = {
+  __typename?: 'PointGroup';
+  completed?: Maybe<Scalars['Float']['output']>;
+  count?: Maybe<Scalars['Float']['output']>;
+  first_level_group?: Maybe<Group>;
+  points?: Maybe<Scalars['Float']['output']>;
+  second_level_groups: Array<Maybe<Group>>;
+};
+
+export type PointTrackingInfo = {
+  __typename?: 'PointTrackingInfo';
+  _id: Scalars['MongoID']['output'];
+  config: Scalars['MongoID']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  points: Scalars['Float']['output'];
+};
+
+export enum PointType {
+  ConfigBio = 'config_bio',
+  ConfigDisplayName = 'config_display_name',
+  ConfigProfilePhoto = 'config_profile_photo',
+  ConfigUsername = 'config_username',
+  ConnectEventbrite = 'connect_eventbrite',
+  ConnectFarcaster = 'connect_farcaster',
+  ConnectStripe = 'connect_stripe',
+  ConnectWallet = 'connect_wallet',
+  CreatePost = 'create_post',
+  EventAttestation = 'event_attestation',
+  EveryNthRsvp = 'every_nth_rsvp',
+  InviteeRsvpEvent = 'invitee_rsvp_event',
+  PerEventCheckin = 'per_event_checkin',
+  PerEventRsvp = 'per_event_rsvp',
+  PerGuestCheckin = 'per_guest_checkin',
+  PerPaidTicketTierCreated = 'per_paid_ticket_tier_created',
+  PerPostHasMoreThanNLikes = 'per_post_has_more_than_n_likes',
+  PerPublishedEvent = 'per_published_event',
+  PerTicketSold = 'per_ticket_sold',
+  SignupOnMobileApp = 'signup_on_mobile_app',
+  UpdateEventAttestation = 'update_event_attestation',
+  VerifyEmail = 'verify_email'
+}
+
+export type Post = {
+  __typename?: 'Post';
+  _id: Scalars['MongoID']['output'];
+  comments?: Maybe<Scalars['Float']['output']>;
+  created_at: Scalars['DateTimeISO']['output'];
+  has_reaction?: Maybe<Scalars['Boolean']['output']>;
+  published?: Maybe<Scalars['Boolean']['output']>;
+  reactions?: Maybe<Scalars['Float']['output']>;
+  ref_event?: Maybe<Event>;
+  ref_file?: Maybe<File>;
+  ref_id?: Maybe<Scalars['String']['output']>;
+  ref_type?: Maybe<PostRefType>;
+  text?: Maybe<Scalars['String']['output']>;
+  user: Scalars['MongoID']['output'];
+  user_expanded?: Maybe<User>;
+  visibility: PostVisibility;
+};
+
+export type PostInput = {
+  ref_id?: InputMaybe<Scalars['String']['input']>;
+  ref_type?: InputMaybe<PostRefType>;
+  text?: InputMaybe<Scalars['String']['input']>;
+  visibility: PostVisibility;
+};
+
+export enum PostRefType {
+  Event = 'EVENT',
+  File = 'FILE'
+}
+
+export enum PostVisibility {
+  Followers = 'FOLLOWERS',
+  Friends = 'FRIENDS',
+  Mentions = 'MENTIONS',
+  Public = 'PUBLIC'
+}
+
+export type PricingInfo = {
+  __typename?: 'PricingInfo';
+  deposit_infos?: Maybe<Array<EscrowDepositInfo>>;
+  discount: Scalars['String']['output'];
+  payment_accounts: Array<PaymentAccountInfo>;
+  subtotal: Scalars['String']['output'];
+  total: Scalars['String']['output'];
+};
+
+export type PurchasableItem = {
+  count: Scalars['Int']['input'];
+  id: Scalars['MongoID']['input'];
+};
+
+export type PurchasableTicketType = {
+  __typename?: 'PurchasableTicketType';
+  _id: Scalars['MongoID']['output'];
+  active?: Maybe<Scalars['Boolean']['output']>;
+  address_required?: Maybe<Scalars['Boolean']['output']>;
+  approval_required?: Maybe<Scalars['Boolean']['output']>;
+  category?: Maybe<Scalars['MongoID']['output']>;
+  category_expanded?: Maybe<EventTicketCategory>;
+  default?: Maybe<Scalars['Boolean']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  description_line?: Maybe<Scalars['String']['output']>;
+  discountable: Scalars['Boolean']['output'];
+  event: Scalars['MongoID']['output'];
+  external_ids?: Maybe<Array<Scalars['String']['output']>>;
+  limit: Scalars['Float']['output'];
+  limited?: Maybe<Scalars['Boolean']['output']>;
+  offers?: Maybe<Array<EventOffer>>;
+  photos?: Maybe<Array<Scalars['MongoID']['output']>>;
+  photos_expanded?: Maybe<Array<Maybe<File>>>;
+  position?: Maybe<Scalars['Int']['output']>;
+  prices: Array<EventTicketPrice>;
+  private?: Maybe<Scalars['Boolean']['output']>;
+  title: Scalars['String']['output'];
+  whitelisted?: Maybe<Scalars['Boolean']['output']>;
+};
+
+
+export type PurchasableTicketTypePhotos_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+export type Query = {
+  __typename?: 'Query';
+  calculateTicketsPricing: PricingInfo;
+  canUseSpaceSlug: Scalars['Boolean']['output'];
+  exportEventApplications: Array<EventApplicationExport>;
+  exportEventTickets: ExportedTickets;
+  generateClaimCheckinRewardSignature?: Maybe<ClaimCheckinRewardSignatureResponse>;
+  generateClaimTicketRewardSignature?: Maybe<ClaimTicketRewardSignatureResponse>;
+  generateEventInvitationUrl?: Maybe<GenerateEventInvitationUrlResponse>;
+  generateRecurringDates: Array<Scalars['DateTimeISO']['output']>;
+  generateSlashPaymentSignature: PaymentRefundSignature;
+  getApplicantsInfo: Array<Applicant>;
+  getBadgeCities: Array<BadgeCity>;
+  getBadgeLists: Array<BadgeList>;
+  getBadges: Array<Badge>;
+  getBroadcasts: Array<Broadcast>;
+  getComments: Array<Comment>;
+  getConfigs: Scalars['JSON']['output'];
+  getEvent?: Maybe<Event>;
+  getEventApplicationAnswers: Array<EventApplicationAnswer>;
+  getEventAttestation?: Maybe<EventAttestation>;
+  getEventAttestationDiff?: Maybe<EventAttestationDiff>;
+  getEventCheckins: Array<EventCheckin>;
+  getEventCohostInvites: Array<EventCohostRequest>;
+  getEventCohostRequests: Array<EventCohostRequest>;
+  getEventCurrencies: Array<EventCurrency>;
+  getEventEmailSetting: EmailSetting;
+  getEventFeedbackSummary: EventFeedbackSummary;
+  getEventGuestDetail?: Maybe<EventGuestDetail>;
+  /** For guests, return attending guests basic information of an event */
+  getEventGuestDirectory: Array<BasicUserInfo>;
+  getEventInvitation?: Maybe<EventInvitation>;
+  getEventInvitationUrl?: Maybe<EventInvitationUrl>;
+  getEventInvitedStatistics: GetEventInvitedStatisticsResponse;
+  getEventJoinRequest: EventJoinRequest;
+  getEventJoinRequests: GetEventJoinRequestsResponse;
+  getEventPayment?: Maybe<NewPayment>;
+  getEventPaymentStatistics: EventPaymentStatistics;
+  getEventPaymentSummary: Array<EventPaymentSummary>;
+  getEventPendingInvites: GetEventPendingInvitesResponse;
+  getEventQuestions: Array<EventQuestion>;
+  getEventRewardUses: Array<EventRewardUse>;
+  getEventSessionReservationSummary: Array<EventSessionReservationSummary>;
+  getEventSessionReservations: Array<EventSessionReservation>;
+  getEventTags: Array<Scalars['String']['output']>;
+  getEventTicketCategories: Array<EventTicketCategory>;
+  getEventTicketSales: EventTicketSaleResponse;
+  getEventTicketTypes: GetEventTicketTypesResponse;
+  getEventbriteEvents: Array<EventbriteEvent>;
+  getEvents: Array<Event>;
+  getFiles: Array<File>;
+  getFrequentQuestions: Array<FrequentQuestion>;
+  getGuildRooms: Array<GuildRoom>;
+  getHomeEvents: Array<Event>;
+  getHostingEvents: Array<Event>;
+  getInitSafeTransaction: RawTransaction;
+  getMe: User;
+  getMyEventJoinRequest?: Maybe<EventJoinRequest>;
+  getMyEvents: Array<Event>;
+  getMyPayments: Array<NewPayment>;
+  getMyPoints: Array<PointConfigInfo>;
+  getMySpaceEventRequests: GetSpaceEventRequestsResponse;
+  getMyTickets: GetMyTicketsResponse;
+  getNewPayment?: Maybe<NewPayment>;
+  getNewsfeed?: Maybe<Newsfeed>;
+  getNotifications: Array<Notification>;
+  getOffers: Array<Offer>;
+  getPastEvents: Array<Event>;
+  getPaymentRefundSignature: PaymentRefundSignature;
+  getPointGroups: Array<PointGroup>;
+  getPosts: Array<Post>;
+  getProfileEvents: Array<Event>;
+  getRecommendedUsers: Array<User>;
+  getRoom?: Maybe<Room>;
+  getRoomCredentials: RoomCredentials;
+  getRooms: Array<Room>;
+  getSafeFreeLimit: FreeSafeInitInfo;
+  getSites: Array<Site>;
+  getSpace?: Maybe<Space>;
+  getSpaceEventRequests: GetSpaceEventRequestsResponse;
+  getSpaceMember: SpaceMember;
+  getStakePaymentStatistics: StakePaymentStatistics;
+  getStore?: Maybe<Store>;
+  getStoreBucketItems: Array<StoreBucketItem>;
+  getStoreCategories: Array<StoreCategory>;
+  getStoreCategory?: Maybe<StoreCategory>;
+  getStoreDeliveryOptions: Array<DeliveryOption>;
+  getStoreOrder?: Maybe<StoreOrder>;
+  getStoreOrders: Array<StoreOrder>;
+  getStoreProduct: StoreProduct;
+  getStoreProducts: Array<StoreProduct>;
+  getStoreSalesTax: SalesTax;
+  getStores: Array<Store>;
+  getStripeCards: Array<StripeCard>;
+  getStripeConnectedAccountCapability?: Maybe<StripeAccountCapability>;
+  getStripeTransferDetail: Scalars['JSON']['output'];
+  getTicket?: Maybe<Ticket>;
+  getTicketStatistics: TicketStatistics;
+  getTickets: Array<Ticket>;
+  getUpcomingEvents: Array<Event>;
+  getUser?: Maybe<User>;
+  getUserContacts: GetUserContactsResponse;
+  getUserDiscovery: UserDiscovery;
+  getUserDiscoverySwipes: Array<UserDiscoverySwipe>;
+  getUserFollows: Array<UserFollow>;
+  getUserFriendships: GetUserFriendshipsResponse;
+  getUserFromUserMigration?: Maybe<NonloginUser>;
+  getUserIcebreakerQuestions: Array<UserIcebreakerQuestion>;
+  getUserPaymentVerification: UserPaymentVerificationInfo;
+  getUserWalletRequest: UserWalletRequest;
+  getUsers: Array<User>;
+  getUsersSpotlight: Array<User>;
+  getVaultSalt: Scalars['String']['output'];
+  joinChannel: Scalars['Boolean']['output'];
+  listAllCurrencies: Array<Currency>;
+  listChains: Array<Chain>;
+  listCheckinTokenRewardSettings: Array<CheckinTokenRewardSetting>;
+  listDonationRecommendations: Array<DonationRecommendation>;
+  listDonationVaults: Array<DonationVault>;
+  listDonations: ListDonationsResponse;
+  listEventEmailSettings: Array<EmailSetting>;
+  listEventFeedBacks: Array<EventFeedback>;
+  listEventHosts: ListEventHostsResponse;
+  listEventPayments: ListEventPaymentsResponse;
+  listEventStakePayments: ListEventStakePaymentsResponse;
+  listEventTicketTypes: Array<EventTicketType>;
+  listEventVotings: Array<EventVoting>;
+  listFiatCurrencies: Array<FiatCurrency>;
+  listNewPaymentAccounts: Array<NewPaymentAccount>;
+  listNewPayments: Array<NewPayment>;
+  listOauth2Clients: Array<OAuth2Client>;
+  listRewardVaults: Array<TokenRewardVault>;
+  listSpaceMembers: ListSpaceMembersResponse;
+  listSpaceRoleFeatures: ListSpaceRoleFeaturesResponse;
+  listSpaceTags: Array<SpaceTagBase>;
+  listSpaces: Array<Space>;
+  listTicketTokenRewardSettings: Array<TicketTokenRewardSetting>;
+  listUserExpertises: Array<UserExpertise>;
+  listUserServices: Array<UserServiceOffer>;
+  tgGetMyChannels: ScanChannelsResult;
+};
+
+
+export type QueryCalculateTicketsPricingArgs = {
+  input: CalculateTicketsPricingInput;
+};
+
+
+export type QueryCanUseSpaceSlugArgs = {
+  slug: Scalars['String']['input'];
+};
+
+
+export type QueryExportEventApplicationsArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryExportEventTicketsArgs = {
+  _id: Scalars['MongoID']['input'];
+  checked_in?: InputMaybe<Scalars['Boolean']['input']>;
+  pagination?: InputMaybe<PaginationInput>;
+  search_text?: InputMaybe<Scalars['String']['input']>;
+  ticket_type_ids?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+
+export type QueryGenerateClaimCheckinRewardSignatureArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGenerateClaimTicketRewardSignatureArgs = {
+  event: Scalars['MongoID']['input'];
+  payment?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGenerateEventInvitationUrlArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGenerateRecurringDatesArgs = {
+  input: GenerateRecurringDatesInput;
+};
+
+
+export type QueryGenerateSlashPaymentSignatureArgs = {
+  event: Scalars['MongoID']['input'];
+  paymentIds: Array<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetApplicantsInfoArgs = {
+  emails?: InputMaybe<Array<Scalars['String']['input']>>;
+  event: Scalars['MongoID']['input'];
+  users?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+
+export type QueryGetBadgeCitiesArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type QueryGetBadgeListsArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
+  user?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetBadgesArgs = {
+  _id?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  city?: InputMaybe<Scalars['String']['input']>;
+  country?: InputMaybe<Scalars['String']['input']>;
+  distance?: InputMaybe<Scalars['Float']['input']>;
+  limit?: Scalars['Int']['input'];
+  list?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type QueryGetBroadcastsArgs = {
+  provider: BroadcastProvider;
+};
+
+
+export type QueryGetCommentsArgs = {
+  input: GetCommentsArgs;
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type QueryGetConfigsArgs = {
+  keys: Array<Scalars['String']['input']>;
+};
+
+
+export type QueryGetEventArgs = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  shortid?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetEventApplicationAnswersArgs = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  event: Scalars['MongoID']['input'];
+  user?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetEventAttestationArgs = {
+  chain_id: Scalars['String']['input'];
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetEventAttestationDiffArgs = {
+  chain_id: Scalars['String']['input'];
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetEventCheckinsArgs = {
+  input: GetEventCheckinsInput;
+};
+
+
+export type QueryGetEventCohostInvitesArgs = {
+  input: GetEventCohostRequestsInput;
+};
+
+
+export type QueryGetEventCohostRequestsArgs = {
+  input: GetEventCohostRequestsInput;
+};
+
+
+export type QueryGetEventCurrenciesArgs = {
+  _id: Scalars['MongoID']['input'];
+  used?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryGetEventEmailSettingArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetEventFeedbackSummaryArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetEventGuestDetailArgs = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  event: Scalars['MongoID']['input'];
+  user?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetEventGuestDirectoryArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetEventInvitationArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetEventInvitationUrlArgs = {
+  shortid: Scalars['String']['input'];
+  tk?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetEventInvitedStatisticsArgs = {
+  _id: Scalars['MongoID']['input'];
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetEventJoinRequestArgs = {
+  _id: Scalars['MongoID']['input'];
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetEventJoinRequestsArgs = {
+  event: Scalars['MongoID']['input'];
+  limit?: Scalars['Int']['input'];
+  payment_expired?: InputMaybe<Scalars['Boolean']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  skip?: Scalars['Int']['input'];
+  state?: InputMaybe<EventJoinRequestState>;
+};
+
+
+export type QueryGetEventPaymentArgs = {
+  _id: Scalars['MongoID']['input'];
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetEventPaymentStatisticsArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetEventPaymentSummaryArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetEventQuestionsArgs = {
+  input: GetEventQuestionsInput;
+};
+
+
+export type QueryGetEventRewardUsesArgs = {
+  input: GetEventRewardUsesInput;
+};
+
+
+export type QueryGetEventSessionReservationSummaryArgs = {
+  input: GetEventSessionReservationSummaryInput;
+};
+
+
+export type QueryGetEventSessionReservationsArgs = {
+  input?: InputMaybe<GetEventSessionReservationsInput>;
+};
+
+
+export type QueryGetEventTagsArgs = {
+  all?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryGetEventTicketCategoriesArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetEventTicketSalesArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetEventTicketTypesArgs = {
+  input: GetEventTicketTypesInput;
+};
+
+
+export type QueryGetEventbriteEventsArgs = {
+  input?: InputMaybe<GetEventbriteEventsInput>;
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type QueryGetEventsArgs = {
+  _id?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  accepted?: InputMaybe<Scalars['MongoID']['input']>;
+  end_from?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  end_to?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  highlight?: InputMaybe<Scalars['Boolean']['input']>;
+  host_filter?: InputMaybe<HostFilter>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  site?: InputMaybe<Scalars['MongoID']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<EventSortInput>;
+  space?: InputMaybe<Scalars['MongoID']['input']>;
+  space_tags?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  start_from?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  start_to?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  subevent_parent?: InputMaybe<Scalars['MongoID']['input']>;
+  unpublished?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryGetFilesArgs = {
+  id_lt?: InputMaybe<Scalars['MongoID']['input']>;
+  limit?: Scalars['Int']['input'];
+  links?: InputMaybe<FileLinkInput>;
+  skip?: Scalars['Int']['input'];
+  user?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetFrequentQuestionsArgs = {
+  input: GetFrequentQuestionsInput;
+};
+
+
+export type QueryGetHomeEventsArgs = {
+  latitude?: InputMaybe<Scalars['Float']['input']>;
+  limit?: Scalars['Int']['input'];
+  longitude?: InputMaybe<Scalars['Float']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  search_range?: InputMaybe<Scalars['Float']['input']>;
+  skip?: Scalars['Int']['input'];
+  tense?: InputMaybe<EventTense>;
+};
+
+
+export type QueryGetHostingEventsArgs = {
+  draft?: InputMaybe<Scalars['Boolean']['input']>;
+  limit?: Scalars['Int']['input'];
+  site?: InputMaybe<Scalars['MongoID']['input']>;
+  skip?: Scalars['Int']['input'];
+  sort?: InputMaybe<Scalars['JSON']['input']>;
+  state?: InputMaybe<FilterEventInput>;
+  user?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetInitSafeTransactionArgs = {
+  input: GetInitSafeTransactionInput;
+};
+
+
+export type QueryGetMyEventJoinRequestArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetMyEventsArgs = {
+  draft?: InputMaybe<Scalars['Boolean']['input']>;
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+  state?: InputMaybe<GetEventsState>;
+  subevent_parent?: InputMaybe<Scalars['MongoID']['input']>;
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+
+export type QueryGetMyPaymentsArgs = {
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+  state?: InputMaybe<FilterPaymentStateInput>;
+};
+
+
+export type QueryGetMyPointsArgs = {
+  first_level_group?: InputMaybe<Scalars['MongoID']['input']>;
+  second_level_group?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetMySpaceEventRequestsArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+  space: Scalars['MongoID']['input'];
+  state?: InputMaybe<EventJoinRequestState>;
+};
+
+
+export type QueryGetMyTicketsArgs = {
+  event: Scalars['MongoID']['input'];
+  with_payment_info?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryGetNewPaymentArgs = {
+  _id: Scalars['MongoID']['input'];
+  payment_secret?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetNewsfeedArgs = {
+  offset?: InputMaybe<Scalars['Float']['input']>;
+};
+
+
+export type QueryGetNotificationsArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+  type?: InputMaybe<NotificationTypeFilterInput>;
+};
+
+
+export type QueryGetOffersArgs = {
+  type: OfferType;
+};
+
+
+export type QueryGetPastEventsArgs = {
+  hosting_only?: InputMaybe<Scalars['Boolean']['input']>;
+  limit?: Scalars['Int']['input'];
+  site?: InputMaybe<Scalars['MongoID']['input']>;
+  skip?: Scalars['Int']['input'];
+  sort?: InputMaybe<Scalars['JSON']['input']>;
+  space?: InputMaybe<Scalars['MongoID']['input']>;
+  user?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetPaymentRefundSignatureArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetPointGroupsArgs = {
+  with_count?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryGetPostsArgs = {
+  input?: InputMaybe<GetPostsInput>;
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type QueryGetProfileEventsArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+  user?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetRecommendedUsersArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type QueryGetRoomArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetRoomCredentialsArgs = {
+  input: GetRoomCredentialsInput;
+};
+
+
+export type QueryGetRoomsArgs = {
+  input: GetRoomsInput;
+};
+
+
+export type QueryGetSafeFreeLimitArgs = {
+  network: Scalars['String']['input'];
+};
+
+
+export type QueryGetSitesArgs = {
+  _id?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  active?: InputMaybe<Scalars['Boolean']['input']>;
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type QueryGetSpaceArgs = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetSpaceEventRequestsArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+  space: Scalars['MongoID']['input'];
+  state?: InputMaybe<EventJoinRequestState>;
+};
+
+
+export type QueryGetSpaceMemberArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetStakePaymentStatisticsArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetStoreArgs = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  promotion?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetStoreBucketItemsArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type QueryGetStoreCategoriesArgs = {
+  limit?: Scalars['Int']['input'];
+  parents?: InputMaybe<Scalars['MongoID']['input']>;
+  skip?: Scalars['Int']['input'];
+  store?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetStoreCategoryArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetStoreDeliveryOptionsArgs = {
+  address: AddressInput;
+  store: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetStoreOrderArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetStoreOrdersArgs = {
+  limit?: Scalars['Int']['input'];
+  place_reservation?: InputMaybe<Scalars['MongoID']['input']>;
+  skip?: Scalars['Int']['input'];
+  state?: InputMaybe<StoreOrderStateFilterInput>;
+  store?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetStoreProductArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetStoreProductsArgs = {
+  categories?: InputMaybe<Scalars['MongoID']['input']>;
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+  store?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetStoreSalesTaxArgs = {
+  address: AddressInput;
+  store: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetStoresArgs = {
+  city?: InputMaybe<Scalars['String']['input']>;
+  country?: InputMaybe<Scalars['String']['input']>;
+  latitude?: InputMaybe<Scalars['Float']['input']>;
+  limit?: Scalars['Int']['input'];
+  longitude?: InputMaybe<Scalars['Float']['input']>;
+  postal?: InputMaybe<Scalars['String']['input']>;
+  region?: InputMaybe<Scalars['String']['input']>;
+  skip?: Scalars['Int']['input'];
+  tags?: InputMaybe<Scalars['String']['input']>;
+  user?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetStripeCardsArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type QueryGetStripeTransferDetailArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetTicketArgs = {
+  shortid: Scalars['String']['input'];
+};
+
+
+export type QueryGetTicketStatisticsArgs = {
+  id: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetTicketsArgs = {
+  _id?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+  limit?: Scalars['Int']['input'];
+  payment?: InputMaybe<Scalars['MongoID']['input']>;
+  skip?: Scalars['Int']['input'];
+  ticket_types?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  user?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetUpcomingEventsArgs = {
+  host?: InputMaybe<Scalars['Boolean']['input']>;
+  limit?: Scalars['Int']['input'];
+  search?: InputMaybe<Scalars['String']['input']>;
+  site?: InputMaybe<Scalars['MongoID']['input']>;
+  skip?: Scalars['Int']['input'];
+  sort?: InputMaybe<Scalars['JSON']['input']>;
+  space?: InputMaybe<Scalars['MongoID']['input']>;
+  user?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetUserArgs = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  matrix_localpart?: InputMaybe<Scalars['String']['input']>;
+  username?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetUserContactsArgs = {
+  input?: InputMaybe<GetUserContactsInput>;
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type QueryGetUserDiscoveryArgs = {
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+  latitude: Scalars['Float']['input'];
+  longitude: Scalars['Float']['input'];
+  offerings?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  search_range?: InputMaybe<Scalars['Float']['input']>;
+};
+
+
+export type QueryGetUserDiscoverySwipesArgs = {
+  incoming?: InputMaybe<Scalars['Boolean']['input']>;
+  limit?: Scalars['Int']['input'];
+  other_wallets?: InputMaybe<Scalars['Boolean']['input']>;
+  skip?: Scalars['Int']['input'];
+  state?: InputMaybe<UserDiscoverySwipeState>;
+};
+
+
+export type QueryGetUserFollowsArgs = {
+  input: GetUserFollowsInput;
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type QueryGetUserFriendshipsArgs = {
+  input?: InputMaybe<GetUserFriendshipsInput>;
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type QueryGetUserFromUserMigrationArgs = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  username?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetUserWalletRequestArgs = {
+  wallet: Scalars['String']['input'];
+};
+
+
+export type QueryGetUsersArgs = {
+  _id?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  limit?: Scalars['Int']['input'];
+  search?: InputMaybe<Scalars['String']['input']>;
+  skip?: Scalars['Int']['input'];
+  tag_recommended?: InputMaybe<Scalars['Boolean']['input']>;
+  wallets?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+
+export type QueryGetVaultSaltArgs = {
+  name: Scalars['String']['input'];
+  type: Scalars['String']['input'];
+};
+
+
+export type QueryJoinChannelArgs = {
+  event_ids: Scalars['MongoID']['input'];
+};
+
+
+export type QueryListCheckinTokenRewardSettingsArgs = {
+  event: Scalars['MongoID']['input'];
+  ticket_types?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+
+export type QueryListDonationsArgs = {
+  event: Scalars['MongoID']['input'];
+  from_emails?: InputMaybe<Array<Scalars['String']['input']>>;
+  from_users?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  networks?: InputMaybe<Array<Scalars['String']['input']>>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  vaults?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+
+export type QueryListEventEmailSettingsArgs = {
+  event: Scalars['MongoID']['input'];
+  scheduled?: InputMaybe<Scalars['Boolean']['input']>;
+  sent?: InputMaybe<Scalars['Boolean']['input']>;
+  system?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryListEventFeedBacksArgs = {
+  event: Scalars['MongoID']['input'];
+  limit?: Scalars['Int']['input'];
+  rate_value?: InputMaybe<Scalars['Float']['input']>;
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type QueryListEventHostsArgs = {
+  limit?: Scalars['Int']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type QueryListEventPaymentsArgs = {
+  checked_in?: InputMaybe<Scalars['Boolean']['input']>;
+  event: Scalars['MongoID']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  networks?: InputMaybe<Array<Scalars['String']['input']>>;
+  provider?: InputMaybe<NewPaymentProvider>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  ticket_types?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+
+export type QueryListEventStakePaymentsArgs = {
+  event: Scalars['MongoID']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  networks?: InputMaybe<Array<Scalars['String']['input']>>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryListEventTicketTypesArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryListEventVotingsArgs = {
+  event: Scalars['MongoID']['input'];
+  hidden?: InputMaybe<Scalars['Boolean']['input']>;
+  votings?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+
+export type QueryListNewPaymentAccountsArgs = {
+  _id?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  limit?: Scalars['Int']['input'];
+  provider?: InputMaybe<NewPaymentProvider>;
+  skip?: Scalars['Int']['input'];
+  type?: InputMaybe<PaymentAccountType>;
+};
+
+
+export type QueryListNewPaymentsArgs = {
+  event: Scalars['MongoID']['input'];
+  ids?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+  users?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+
+export type QueryListOauth2ClientsArgs = {
+  ids?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+
+export type QueryListSpaceMembersArgs = {
+  deletion?: InputMaybe<Scalars['Boolean']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  roles?: InputMaybe<Array<SpaceRole>>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<SortInput>;
+  space: Scalars['MongoID']['input'];
+  state?: InputMaybe<SpaceMembershipState>;
+  tags?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  visible?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryListSpaceRoleFeaturesArgs = {
+  role: SpaceRole;
+  space: Scalars['MongoID']['input'];
+};
+
+
+export type QueryListSpaceTagsArgs = {
+  space: Scalars['MongoID']['input'];
+};
+
+
+export type QueryListSpacesArgs = {
+  roles?: InputMaybe<Array<SpaceRole>>;
+  with_my_spaces?: InputMaybe<Scalars['Boolean']['input']>;
+  with_public_spaces?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryListTicketTokenRewardSettingsArgs = {
+  event: Scalars['MongoID']['input'];
+  ticket_types?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+
+export type QueryTgGetMyChannelsArgs = {
+  input: ScanChannelsInput;
+};
+
+export type QuestionInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  options?: InputMaybe<Array<Scalars['String']['input']>>;
+  position?: InputMaybe<Scalars['Int']['input']>;
+  question?: InputMaybe<Scalars['String']['input']>;
+  questions?: InputMaybe<Array<Scalars['String']['input']>>;
+  required?: InputMaybe<Scalars['Boolean']['input']>;
+  select_type?: InputMaybe<SelectType>;
+  type: QuestionType;
+};
+
+/** The type of the question in the event application question */
+export enum QuestionType {
+  Checkbox = 'checkbox',
+  Company = 'company',
+  Options = 'options',
+  Text = 'text',
+  Website = 'website'
+}
+
+export type RateSummary = {
+  __typename?: 'RateSummary';
+  count: Scalars['Int']['output'];
+  rate_value: Scalars['Int']['output'];
+};
+
+export type RawTransaction = {
+  __typename?: 'RawTransaction';
+  data: Scalars['String']['output'];
+  to: Scalars['String']['output'];
+  value: Scalars['String']['output'];
+};
+
+export type ReactionInput = {
+  active: Scalars['Boolean']['input'];
+  post: Scalars['MongoID']['input'];
+};
+
+export enum ReactionType {
+  Like = 'LIKE',
+  None = 'NONE',
+  Recast = 'RECAST'
+}
+
+export type RecipientDetail = {
+  __typename?: 'RecipientDetail';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  image_avatar?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+};
+
+export enum RecurringRepeat {
+  Daily = 'daily',
+  Monthly = 'monthly',
+  Weekly = 'weekly'
+}
+
+export type RedeemTicketsInput = {
+  buyer_info?: InputMaybe<BuyerInfoInput>;
+  connect_wallets?: InputMaybe<Array<ConnectWalletInput>>;
+  event: Scalars['MongoID']['input'];
+  inviter?: InputMaybe<Scalars['MongoID']['input']>;
+  items: Array<PurchasableItem>;
+  user_info?: InputMaybe<UserInput>;
+};
+
+export type RedeemTicketsResponse = {
+  __typename?: 'RedeemTicketsResponse';
+  join_request?: Maybe<EventJoinRequest>;
+  tickets?: Maybe<Array<Ticket>>;
+};
+
+export type RefundInfo = {
+  __typename?: 'RefundInfo';
+  available_amount: Scalars['String']['output'];
+  refunded?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type RefundPolicy = {
+  __typename?: 'RefundPolicy';
+  percent: Scalars['Float']['output'];
+  timestamp: Scalars['Float']['output'];
+};
+
+export type RefundRequirements = {
+  __typename?: 'RefundRequirements';
+  checkin_before?: Maybe<Scalars['DateTimeISO']['output']>;
+};
+
+export type Registration = {
+  client: Scalars['String']['input'];
+  consent_communications?: InputMaybe<Scalars['Boolean']['input']>;
+  country?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  first_name: Scalars['String']['input'];
+  last_name: Scalars['String']['input'];
+  organization?: InputMaybe<Scalars['String']['input']>;
+  postal_code?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type RelayPaymentInfo = {
+  __typename?: 'RelayPaymentInfo';
+  payment_splitter_contract: Scalars['String']['output'];
+};
+
+export type ReorderTicketTypeCategoryInput = {
+  _id: Scalars['MongoID']['input'];
+  position?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type ReorderTicketTypeInput = {
+  _id: Scalars['MongoID']['input'];
+  position?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type ReportUserInput = {
+  block?: InputMaybe<Scalars['Boolean']['input']>;
+  reason?: InputMaybe<Scalars['String']['input']>;
+  user: Scalars['MongoID']['input'];
+};
+
+export type RequestRoomStageInput = {
+  _id: Scalars['MongoID']['input'];
+  user: Scalars['MongoID']['input'];
+};
+
+export type RequestedTicket = {
+  __typename?: 'RequestedTicket';
+  count: Scalars['Float']['output'];
+  ticket_type: Scalars['MongoID']['output'];
+};
+
+export type ResponseInvitationInput = {
+  _id: Scalars['MongoID']['input'];
+  action: InvitationState;
+};
+
+export type RewardToken = {
+  __typename?: 'RewardToken';
+  address: Scalars['String']['output'];
+  decimals: Scalars['Int']['output'];
+  icon?: Maybe<Scalars['MongoID']['output']>;
+  icon_expanded?: Maybe<File>;
+  icon_url?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  symbol: Scalars['String']['output'];
+};
+
+export type RewardTokenInput = {
+  address: Scalars['String']['input'];
+  decimals: Scalars['Int']['input'];
+  icon?: InputMaybe<Scalars['MongoID']['input']>;
+  icon_url?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  symbol: Scalars['String']['input'];
+};
+
+export type RewindUserDiscoveryResponse = {
+  __typename?: 'RewindUserDiscoveryResponse';
+  decision: UserDiscoverySwipeDecision;
+  user?: Maybe<User>;
+};
+
+export type Room = {
+  __typename?: 'Room';
+  _id: Scalars['MongoID']['output'];
+  access_requesters?: Maybe<Array<Scalars['MongoID']['output']>>;
+  access_requesters_expanded?: Maybe<Array<User>>;
+  access_users?: Maybe<Array<Scalars['MongoID']['output']>>;
+  access_users_expanded?: Maybe<Array<User>>;
+  active: Scalars['Boolean']['output'];
+  attending_users?: Maybe<Array<Scalars['MongoID']['output']>>;
+  attending_users_expanded?: Maybe<Array<User>>;
+  audience_size?: Maybe<Scalars['Float']['output']>;
+  audience_total?: Maybe<Scalars['Float']['output']>;
+  broadcasters_count?: Maybe<Scalars['Float']['output']>;
+  cohosts?: Maybe<Array<Scalars['MongoID']['output']>>;
+  cohosts_expanded?: Maybe<Array<Maybe<User>>>;
+  creator_last_seen_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  event?: Maybe<Scalars['MongoID']['output']>;
+  event_expanded?: Maybe<Event>;
+  has_access?: Maybe<Scalars['Boolean']['output']>;
+  highlight_events?: Maybe<Array<Scalars['MongoID']['output']>>;
+  highlight_events_expanded?: Maybe<Array<Event>>;
+  highlight_rooms?: Maybe<Array<Scalars['MongoID']['output']>>;
+  highlight_rooms_expanded?: Maybe<Array<Room>>;
+  highlight_stores?: Maybe<Array<Scalars['MongoID']['output']>>;
+  highlight_stores_expanded?: Maybe<Array<Store>>;
+  highlight_users?: Maybe<Array<Scalars['MongoID']['output']>>;
+  highlight_users_expanded?: Maybe<Array<User>>;
+  host: Scalars['MongoID']['output'];
+  host_expanded?: Maybe<User>;
+  offers?: Maybe<Array<RoomOffer>>;
+  payment_direct?: Maybe<Scalars['Boolean']['output']>;
+  photos?: Maybe<Array<Scalars['MongoID']['output']>>;
+  photos_expanded?: Maybe<Array<File>>;
+  private?: Maybe<Scalars['Boolean']['output']>;
+  shortid: Scalars['String']['output'];
+  stage_invitees?: Maybe<Array<Scalars['MongoID']['output']>>;
+  stage_invitees_expanded?: Maybe<Array<User>>;
+  stage_open?: Maybe<Scalars['Boolean']['output']>;
+  stage_requesters?: Maybe<Array<Scalars['MongoID']['output']>>;
+  stage_requesters_expanded?: Maybe<Array<User>>;
+  staged_size?: Maybe<Scalars['Float']['output']>;
+  staged_uids?: Maybe<Array<Scalars['Float']['output']>>;
+  staged_users?: Maybe<Array<Scalars['MongoID']['output']>>;
+  staged_users_expanded?: Maybe<Array<User>>;
+  stamp: Scalars['DateTimeISO']['output'];
+  start: Scalars['DateTimeISO']['output'];
+  state: RoomState;
+  theme_background_photo?: Maybe<Scalars['MongoID']['output']>;
+  theme_background_photo_expanded?: Maybe<File>;
+  theme_color?: Maybe<Scalars['String']['output']>;
+  theme_layout?: Maybe<Scalars['Float']['output']>;
+  title: Scalars['String']['output'];
+  url: Scalars['String']['output'];
+  url_go: Scalars['String']['output'];
+  used?: Maybe<Scalars['Boolean']['output']>;
+  verify?: Maybe<Scalars['Boolean']['output']>;
+  video?: Maybe<Video>;
+};
+
+
+export type RoomAccess_Requesters_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type RoomAccess_Users_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type RoomAttending_Users_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type RoomCohosts_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type RoomHighlight_Events_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type RoomHighlight_Rooms_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type RoomHighlight_Stores_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type RoomHighlight_Users_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type RoomPhotos_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type RoomStage_Invitees_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type RoomStage_Requesters_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type RoomStaged_Users_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+export type RoomActionPayload = RoomActionPayload_AccessRequestDecided | RoomActionPayload_AccessRequested | RoomActionPayload_AttendingUsersModified | RoomActionPayload_Notify | RoomActionPayload_Renew | RoomActionPayload_StageInvited | RoomActionPayload_StageModified | RoomActionPayload_StageRequestDecided | RoomActionPayload_StageRequested;
+
+export type RoomActionPayload_AccessRequestDecided = {
+  __typename?: 'RoomActionPayload_AccessRequestDecided';
+  user: Scalars['MongoID']['output'];
+};
+
+export type RoomActionPayload_AccessRequested = {
+  __typename?: 'RoomActionPayload_AccessRequested';
+  message: Scalars['String']['output'];
+  user: Scalars['MongoID']['output'];
+  user_expanded: RoomUser;
+};
+
+export type RoomActionPayload_AttendingUsersModified = {
+  __typename?: 'RoomActionPayload_AttendingUsersModified';
+  attending: Scalars['Boolean']['output'];
+  user: Scalars['MongoID']['output'];
+  user_expanded: RoomUser;
+};
+
+export type RoomActionPayload_Notify = {
+  __typename?: 'RoomActionPayload_Notify';
+  message: Scalars['String']['output'];
+};
+
+export type RoomActionPayload_Renew = {
+  __typename?: 'RoomActionPayload_Renew';
+  credentials: RoomCredentials;
+};
+
+export type RoomActionPayload_StageInvited = {
+  __typename?: 'RoomActionPayload_StageInvited';
+  message: Scalars['String']['output'];
+  requested?: Maybe<Scalars['Boolean']['output']>;
+  user: Scalars['MongoID']['output'];
+  user_expanded: RoomUser;
+};
+
+export type RoomActionPayload_StageModified = {
+  __typename?: 'RoomActionPayload_StageModified';
+  staged: Scalars['Boolean']['output'];
+  uid: Scalars['Float']['output'];
+  user: Scalars['MongoID']['output'];
+};
+
+export type RoomActionPayload_StageRequestDecided = {
+  __typename?: 'RoomActionPayload_StageRequestDecided';
+  user: Scalars['MongoID']['output'];
+};
+
+export type RoomActionPayload_StageRequested = {
+  __typename?: 'RoomActionPayload_StageRequested';
+  message: Scalars['String']['output'];
+  user: Scalars['MongoID']['output'];
+  user_expanded: RoomUser;
+};
+
+export type RoomCredentials = {
+  __typename?: 'RoomCredentials';
+  token: Scalars['String']['output'];
+  uid: Scalars['Float']['output'];
+};
+
+export type RoomInput = {
+  access_users?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  active?: InputMaybe<Scalars['Boolean']['input']>;
+  cohosts?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+  highlight_events?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  highlight_rooms?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  highlight_stores?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  highlight_users?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  offers?: InputMaybe<Array<RoomOfferInput>>;
+  payment_direct?: InputMaybe<Scalars['Boolean']['input']>;
+  photos?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  private?: InputMaybe<Scalars['Boolean']['input']>;
+  stage_open?: InputMaybe<Scalars['Boolean']['input']>;
+  start?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  state?: InputMaybe<RoomState>;
+  theme_background_photo?: InputMaybe<Scalars['MongoID']['input']>;
+  theme_color?: InputMaybe<Scalars['String']['input']>;
+  theme_layout?: InputMaybe<Scalars['Float']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  verify?: InputMaybe<Scalars['Boolean']['input']>;
+  video?: InputMaybe<VideoInput>;
+};
+
+export type RoomOffer = {
+  __typename?: 'RoomOffer';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  position?: Maybe<Scalars['Float']['output']>;
+  provider: OfferProvider;
+  provider_id: Scalars['String']['output'];
+  provider_network: Scalars['String']['output'];
+};
+
+export type RoomOfferInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  position?: InputMaybe<Scalars['Float']['input']>;
+  provider?: InputMaybe<OfferProvider>;
+  provider_id?: InputMaybe<Scalars['String']['input']>;
+  provider_network?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum RoomState {
+  Ended = 'ended',
+  Scheduled = 'scheduled',
+  Started = 'started'
+}
+
+export type RoomUser = {
+  __typename?: 'RoomUser';
+  _id: Scalars['MongoID']['output'];
+  image_avatar?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
+};
+
+export type SafeAccount = {
+  __typename?: 'SafeAccount';
+  address: Scalars['String']['output'];
+  currencies: Array<Scalars['String']['output']>;
+  currency_map?: Maybe<Scalars['JSON']['output']>;
+  network: Scalars['String']['output'];
+  owners: Array<Scalars['String']['output']>;
+  pending?: Maybe<Scalars['Boolean']['output']>;
+  threshold: Scalars['Float']['output'];
+};
+
+export type SaleAmountResponse = {
+  __typename?: 'SaleAmountResponse';
+  amount: Scalars['String']['output'];
+  currency: Scalars['String']['output'];
+  decimals: Scalars['Int']['output'];
+};
+
+export type SalesTax = {
+  __typename?: 'SalesTax';
+  _id: Scalars['MongoID']['output'];
+  countries?: Maybe<Array<Scalars['String']['output']>>;
+  flat_map?: Maybe<Scalars['JSON']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  ratio_map?: Maybe<Scalars['JSON']['output']>;
+  regions?: Maybe<Array<Scalars['String']['output']>>;
+  type: SalesTaxType;
+};
+
+export type SalesTaxInput = {
+  _id: Scalars['MongoID']['input'];
+  countries?: InputMaybe<Array<Scalars['String']['input']>>;
+  flat_map?: InputMaybe<Scalars['JSON']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  ratio_map?: InputMaybe<Scalars['JSON']['input']>;
+  regions?: InputMaybe<Array<Scalars['String']['input']>>;
+  type: SalesTaxType;
+};
+
+export enum SalesTaxType {
+  Country = 'country',
+  Region = 'region',
+  Worldwide = 'worldwide'
+}
+
+export type ScanChannelsInput = {
+  offset_date: Scalars['Float']['input'];
+  offset_id: Scalars['Float']['input'];
+};
+
+export type ScanChannelsResult = {
+  __typename?: 'ScanChannelsResult';
+  channels?: Maybe<Array<TelegramChannel>>;
+  offset_date: Scalars['Float']['output'];
+  offset_id: Scalars['Float']['output'];
+  user?: Maybe<TgUser>;
+};
+
+/** Select type for the question of type "options" */
+export enum SelectType {
+  Multi = 'multi',
+  Single = 'single'
+}
+
+export type SendCodeInput = {
+  phone_number: Scalars['String']['input'];
+};
+
+export type SendEventEmailSettingTestEmailsInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  custom_body_html?: InputMaybe<Scalars['String']['input']>;
+  custom_subject_html?: InputMaybe<Scalars['String']['input']>;
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+  recipient_filters?: InputMaybe<EmailRecipientFiltersInput>;
+  test_recipients: Array<Scalars['String']['input']>;
+  type?: InputMaybe<EmailTemplateType>;
+};
+
+export type SendRoomInviteInput = {
+  _id: Scalars['MongoID']['input'];
+  users: Array<Scalars['MongoID']['input']>;
+};
+
+export type Site = {
+  __typename?: 'Site';
+  _id: Scalars['MongoID']['output'];
+  access_pass?: Maybe<AccessPass>;
+  active: Scalars['Boolean']['output'];
+  ai_config?: Maybe<Scalars['MongoID']['output']>;
+  client: Scalars['String']['output'];
+  daos?: Maybe<Array<SiteDao>>;
+  description: Scalars['String']['output'];
+  event?: Maybe<Scalars['MongoID']['output']>;
+  farcaster_channel_url?: Maybe<Scalars['String']['output']>;
+  favicon_url?: Maybe<Scalars['String']['output']>;
+  footer_scripts?: Maybe<Array<SiteFooterScript>>;
+  header_links?: Maybe<Array<SiteHeaderLink>>;
+  header_metas?: Maybe<Array<SiteHeaderMeta>>;
+  hostnames?: Maybe<Array<Scalars['String']['output']>>;
+  logo_mobile_url?: Maybe<Scalars['String']['output']>;
+  logo_url?: Maybe<Scalars['String']['output']>;
+  onboarding_steps?: Maybe<Array<SiteOnboardingStep>>;
+  owners?: Maybe<Array<Scalars['MongoID']['output']>>;
+  partners?: Maybe<Array<Scalars['MongoID']['output']>>;
+  passports?: Maybe<Array<SitePassport>>;
+  privacy_url?: Maybe<Scalars['String']['output']>;
+  share_url?: Maybe<Scalars['JSON']['output']>;
+  text?: Maybe<Scalars['JSON']['output']>;
+  theme_data?: Maybe<Scalars['JSON']['output']>;
+  theme_type?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  user?: Maybe<Scalars['MongoID']['output']>;
+  user_expanded?: Maybe<User>;
+  visibility?: Maybe<Scalars['JSON']['output']>;
+};
+
+export type SiteDao = {
+  __typename?: 'SiteDao';
+  address: Scalars['String']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  network: Scalars['String']['output'];
+};
+
+export type SiteFooterScript = {
+  __typename?: 'SiteFooterScript';
+  children?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  src?: Maybe<Scalars['String']['output']>;
+  strategy?: Maybe<SiteFooterScriptStrategy>;
+};
+
+export type SiteFooterScriptInput = {
+  children?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  src?: InputMaybe<Scalars['String']['input']>;
+  strategy?: InputMaybe<SiteFooterScriptStrategy>;
+};
+
+export enum SiteFooterScriptStrategy {
+  AfterInteractive = 'AfterInteractive',
+  BeforeInteractive = 'BeforeInteractive',
+  LazyOnload = 'LazyOnload'
+}
+
+export type SiteHeaderLink = {
+  __typename?: 'SiteHeaderLink';
+  href?: Maybe<Scalars['String']['output']>;
+  rel?: Maybe<SiteHeaderLinkRel>;
+};
+
+export type SiteHeaderLinkInput = {
+  href?: InputMaybe<Scalars['String']['input']>;
+  rel?: InputMaybe<SiteHeaderLinkRel>;
+};
+
+export enum SiteHeaderLinkRel {
+  Icon = 'Icon',
+  Stylesheet = 'Stylesheet'
+}
+
+export type SiteHeaderMeta = {
+  __typename?: 'SiteHeaderMeta';
+  content?: Maybe<Scalars['String']['output']>;
+  key?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  property?: Maybe<Scalars['String']['output']>;
+};
+
+export type SiteHeaderMetaInput = {
+  content?: InputMaybe<Scalars['String']['input']>;
+  key?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  property?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SiteOnboardingStep = {
+  __typename?: 'SiteOnboardingStep';
+  data?: Maybe<Scalars['JSON']['output']>;
+  name: SiteOnboardingStepName;
+};
+
+export type SiteOnboardingStepInput = {
+  data?: InputMaybe<Scalars['JSON']['input']>;
+  name: SiteOnboardingStepName;
+};
+
+export enum SiteOnboardingStepName {
+  About = 'About',
+  AdultCheck = 'AdultCheck',
+  Biography = 'Biography',
+  ConditionsCheck = 'ConditionsCheck',
+  Custom = 'Custom',
+  DisplayName = 'DisplayName',
+  Done = 'Done',
+  Feeds = 'Feeds',
+  Interests = 'Interests',
+  Job = 'Job',
+  Photo = 'Photo',
+  SocialHandles = 'SocialHandles',
+  Username = 'Username',
+  Wallet = 'Wallet',
+  WalletInput = 'WalletInput'
+}
+
+export type SitePassport = {
+  __typename?: 'SitePassport';
+  baseV1Address: Scalars['String']['output'];
+  baseV1ChainId: Scalars['Float']['output'];
+  crowdfundAddress?: Maybe<Scalars['JSON']['output']>;
+  image: Scalars['String']['output'];
+  logo: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  passportV1AxelarAddress?: Maybe<Scalars['JSON']['output']>;
+  passportV1CallAddress: Scalars['String']['output'];
+  ssiGroup: Scalars['String']['output'];
+};
+
+export type SitePassportInput = {
+  baseV1Address: Scalars['String']['input'];
+  baseV1ChainId: Scalars['Float']['input'];
+  crowdfundAddress?: InputMaybe<Scalars['JSON']['input']>;
+  image: Scalars['String']['input'];
+  logo: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  passportV1AxelarAddress?: InputMaybe<Scalars['JSON']['input']>;
+  passportV1CallAddress: Scalars['String']['input'];
+  ssiGroup: Scalars['String']['input'];
+};
+
+export type SlashInfo = {
+  __typename?: 'SlashInfo';
+  account_info?: Maybe<NewPaymentAccount>;
+  payouts: Array<SlashPayout>;
+  slashable_payments: Array<Scalars['MongoID']['output']>;
+  vault: Scalars['String']['output'];
+};
+
+export type SlashPayout = {
+  __typename?: 'SlashPayout';
+  currency: Scalars['String']['output'];
+  formatted_amount: Scalars['String']['output'];
+};
+
+export type SolanaAccount = {
+  __typename?: 'SolanaAccount';
+  address: Scalars['String']['output'];
+  currencies: Array<Scalars['String']['output']>;
+  currency_map?: Maybe<Scalars['JSON']['output']>;
+  network: Scalars['String']['output'];
+};
+
+export type SortInput = {
+  field: Scalars['String']['input'];
+  /**
+   *
+   *     - 1 for increasing
+   *     - -1 for descreasing
+   */
+  order?: Scalars['Int']['input'];
+};
+
+export enum SortOrder {
+  Asc = 'asc',
+  Desc = 'desc'
+}
+
+export type Space = {
+  __typename?: 'Space';
+  _id: Scalars['MongoID']['output'];
+  address?: Maybe<Address>;
+  admins?: Maybe<Array<User>>;
+  creator: Scalars['MongoID']['output'];
+  creator_expanded?: Maybe<User>;
+  daos?: Maybe<SpaceDao>;
+  description?: Maybe<Scalars['String']['output']>;
+  followed?: Maybe<Scalars['Boolean']['output']>;
+  followers?: Maybe<Array<Scalars['MongoID']['output']>>;
+  handle_instagram?: Maybe<Scalars['String']['output']>;
+  handle_linkedin?: Maybe<Scalars['String']['output']>;
+  handle_tiktok?: Maybe<Scalars['String']['output']>;
+  handle_twitter?: Maybe<Scalars['String']['output']>;
+  handle_youtube?: Maybe<Scalars['String']['output']>;
+  image_avatar?: Maybe<Scalars['MongoID']['output']>;
+  image_avatar_expanded?: Maybe<File>;
+  image_cover?: Maybe<Scalars['MongoID']['output']>;
+  image_cover_expanded?: Maybe<File>;
+  is_ambassador?: Maybe<Scalars['Boolean']['output']>;
+  /** External events are listed on this space */
+  listed_events?: Maybe<Array<Scalars['MongoID']['output']>>;
+  personal?: Maybe<Scalars['Boolean']['output']>;
+  /** Private space requires moderation for membership */
+  private?: Maybe<Scalars['Boolean']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+  state: SpaceState;
+  theme_data?: Maybe<Scalars['JSON']['output']>;
+  tint_color?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  website?: Maybe<Scalars['String']['output']>;
+};
+
+export type SpaceDao = {
+  __typename?: 'SpaceDao';
+  address: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  network: Scalars['String']['output'];
+};
+
+export type SpaceEventRequest = {
+  __typename?: 'SpaceEventRequest';
+  _id: Scalars['MongoID']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  created_by?: Maybe<Scalars['MongoID']['output']>;
+  decided_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  decided_by?: Maybe<Scalars['MongoID']['output']>;
+  event: Scalars['MongoID']['output'];
+  event_expanded?: Maybe<Event>;
+  space: Scalars['MongoID']['output'];
+  state: SpaceEventRequestState;
+  tags?: Maybe<Array<Scalars['MongoID']['output']>>;
+};
+
+export enum SpaceEventRequestState {
+  Approved = 'approved',
+  Declined = 'declined',
+  Pending = 'pending'
+}
+
+export type SpaceInput = {
+  address?: InputMaybe<AddressInput>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  handle_instagram?: InputMaybe<Scalars['String']['input']>;
+  handle_linkedin?: InputMaybe<Scalars['String']['input']>;
+  handle_tiktok?: InputMaybe<Scalars['String']['input']>;
+  handle_twitter?: InputMaybe<Scalars['String']['input']>;
+  handle_youtube?: InputMaybe<Scalars['String']['input']>;
+  image_avatar?: InputMaybe<Scalars['MongoID']['input']>;
+  image_cover?: InputMaybe<Scalars['MongoID']['input']>;
+  /** Private space requires moderation for membership */
+  private?: InputMaybe<Scalars['Boolean']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  state?: InputMaybe<SpaceState>;
+  theme_data?: InputMaybe<Scalars['JSON']['input']>;
+  tint_color?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  website?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SpaceMember = {
+  __typename?: 'SpaceMember';
+  _id: Scalars['MongoID']['output'];
+  checkin_count?: Maybe<Scalars['Float']['output']>;
+  deleted_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  event_count?: Maybe<Scalars['Float']['output']>;
+  role: SpaceRole;
+  role_changed_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  space: Scalars['MongoID']['output'];
+  state: SpaceMembershipState;
+  tags?: Maybe<Array<SpaceTagBase>>;
+  user?: Maybe<Scalars['MongoID']['output']>;
+  user_expanded?: Maybe<UserWithEmail>;
+  user_name?: Maybe<Scalars['String']['output']>;
+  visible?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export enum SpaceMembershipState {
+  Invited = 'invited',
+  Joined = 'joined',
+  Rejected = 'rejected',
+  Requested = 'requested'
+}
+
+export enum SpaceRole {
+  Admin = 'admin',
+  Ambassador = 'ambassador',
+  Creator = 'creator',
+  Subscriber = 'subscriber',
+  Unsubscriber = 'unsubscriber'
+}
+
+export enum SpaceState {
+  Active = 'active',
+  Archived = 'archived'
+}
+
+export type SpaceTagBase = {
+  __typename?: 'SpaceTagBase';
+  _id: Scalars['MongoID']['output'];
+  color: Scalars['String']['output'];
+  space: Scalars['MongoID']['output'];
+  tag: Scalars['String']['output'];
+  targets?: Maybe<Array<Scalars['String']['output']>>;
+  type: SpaceTagType;
+};
+
+export type SpaceTagInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  color: Scalars['String']['input'];
+  space: Scalars['MongoID']['input'];
+  tag: Scalars['String']['input'];
+  type: SpaceTagType;
+};
+
+export enum SpaceTagType {
+  Event = 'event',
+  Member = 'member'
+}
+
+export type StakePaymentStateStatistic = {
+  __typename?: 'StakePaymentStateStatistic';
+  count: Scalars['Int']['output'];
+  state: StakeState;
+};
+
+export type StakePaymentStatistics = {
+  __typename?: 'StakePaymentStatistics';
+  slash_infos: Array<SlashInfo>;
+  slash_states: Array<StakePaymentStateStatistic>;
+  total: Scalars['Int']['output'];
+};
+
+export enum StakeState {
+  Defaulted = 'defaulted',
+  Locked = 'locked',
+  Slashed = 'slashed',
+  Unlocked = 'unlocked',
+  Unstaked = 'unstaked'
+}
+
+export type StakeUser = {
+  __typename?: 'StakeUser';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  display_name?: Maybe<Scalars['String']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  image_avatar?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  wallet: Scalars['String']['output'];
+};
+
+export type Store = {
+  __typename?: 'Store';
+  _id: Scalars['MongoID']['output'];
+  active: Scalars['Boolean']['output'];
+  address?: Maybe<Address>;
+  age_restriction_min?: Maybe<Scalars['Float']['output']>;
+  age_restriction_reason?: Maybe<Scalars['String']['output']>;
+  api_secret?: Maybe<Scalars['String']['output']>;
+  approved?: Maybe<Scalars['Boolean']['output']>;
+  currency: Scalars['String']['output'];
+  delivery_options?: Maybe<Array<DeliveryOption>>;
+  easyship_company_id?: Maybe<Scalars['String']['output']>;
+  easyship_enabled?: Maybe<Scalars['Boolean']['output']>;
+  easyship_secret_key?: Maybe<Scalars['String']['output']>;
+  easyship_token?: Maybe<Scalars['String']['output']>;
+  fulfillment_addresses: Array<Address>;
+  managers: Array<Scalars['MongoID']['output']>;
+  managers_expanded?: Maybe<Array<Maybe<User>>>;
+  new_photos: Array<Scalars['MongoID']['output']>;
+  new_photos_expanded?: Maybe<Array<Maybe<File>>>;
+  order_count?: Maybe<Scalars['Float']['output']>;
+  payment_fee_store: Scalars['Float']['output'];
+  payment_fee_user: Scalars['Float']['output'];
+  photos?: Maybe<Array<FileInline>>;
+  pickup_addresses?: Maybe<Array<Address>>;
+  promotions?: Maybe<Array<Maybe<StorePromotion>>>;
+  sales_taxes?: Maybe<Array<SalesTax>>;
+  stamp: Scalars['DateTimeISO']['output'];
+  tags?: Maybe<Array<Scalars['String']['output']>>;
+  title: Scalars['String']['output'];
+  user: Scalars['MongoID']['output'];
+  user_expanded?: Maybe<User>;
+};
+
+
+export type StoreManagers_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type StoreNew_Photos_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+export type StoreBucketItem = {
+  __typename?: 'StoreBucketItem';
+  _id: Scalars['MongoID']['output'];
+  active: Scalars['Boolean']['output'];
+  count: Scalars['Float']['output'];
+  product: Scalars['MongoID']['output'];
+  product_expanded?: Maybe<StoreProduct>;
+  product_groups: Scalars['JSON']['output'];
+  product_variant: Scalars['MongoID']['output'];
+  stamp: Scalars['DateTimeISO']['output'];
+  store: Scalars['MongoID']['output'];
+  store_expanded?: Maybe<Store>;
+  user: Scalars['MongoID']['output'];
+};
+
+export type StoreBucketItemInput = {
+  count: Scalars['Float']['input'];
+  product: Scalars['MongoID']['input'];
+  product_groups: Scalars['JSON']['input'];
+  product_variant: Scalars['MongoID']['input'];
+};
+
+export type StoreCategory = {
+  __typename?: 'StoreCategory';
+  _id: Scalars['MongoID']['output'];
+  active: Scalars['Boolean']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  parents?: Maybe<Array<Scalars['MongoID']['output']>>;
+  stamp: Scalars['DateTimeISO']['output'];
+  store: Scalars['MongoID']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type StoreCategoryInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  parents?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type StoreInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  age_restriction_min?: InputMaybe<Scalars['Float']['input']>;
+  age_restriction_reason?: InputMaybe<Scalars['String']['input']>;
+  api_secret?: InputMaybe<Scalars['String']['input']>;
+  currency?: InputMaybe<Scalars['String']['input']>;
+  delivery_options?: InputMaybe<Array<DeliveryOptionInput>>;
+  easyship_company_id?: InputMaybe<Scalars['String']['input']>;
+  easyship_enabled?: InputMaybe<Scalars['Boolean']['input']>;
+  easyship_secret_key?: InputMaybe<Scalars['String']['input']>;
+  easyship_token?: InputMaybe<Scalars['String']['input']>;
+  managers?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  new_photos?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  photos?: InputMaybe<Array<FileInlineInput>>;
+  sales_taxes?: InputMaybe<Array<SalesTaxInput>>;
+  tags?: InputMaybe<Array<Scalars['String']['input']>>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type StoreOrder = {
+  __typename?: 'StoreOrder';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  active: Scalars['Boolean']['output'];
+  address: Address;
+  amount: Scalars['Float']['output'];
+  currency: Scalars['String']['output'];
+  delivery_cost: Scalars['Float']['output'];
+  delivery_option: DeliveryOption;
+  delivery_option_cost_waived?: Maybe<Scalars['Boolean']['output']>;
+  easyship_courier_id?: Maybe<Scalars['String']['output']>;
+  easyship_rates?: Maybe<Array<Scalars['JSON']['output']>>;
+  easyship_selected_courier?: Maybe<Scalars['JSON']['output']>;
+  easyship_shipment_id?: Maybe<Scalars['String']['output']>;
+  fulfillment_address?: Maybe<Address>;
+  history?: Maybe<Array<StoreOrderHistoryItem>>;
+  items: Array<StoreOrderItem>;
+  label_error?: Maybe<Scalars['String']['output']>;
+  label_state?: Maybe<Scalars['String']['output']>;
+  label_url?: Maybe<Scalars['String']['output']>;
+  order_nr: Scalars['Float']['output'];
+  pickup_address?: Maybe<Address>;
+  promotion?: Maybe<Scalars['MongoID']['output']>;
+  sales_tax?: Maybe<SalesTax>;
+  stamp: Scalars['DateTimeISO']['output'];
+  stamp_created: Scalars['DateTimeISO']['output'];
+  state: StoreOrderState;
+  store: Scalars['MongoID']['output'];
+  store_expanded?: Maybe<Store>;
+  tracking_url?: Maybe<Scalars['String']['output']>;
+  user: Scalars['MongoID']['output'];
+  user_expanded?: Maybe<User>;
+  value: Scalars['Float']['output'];
+};
+
+export type StoreOrderHistoryItem = {
+  __typename?: 'StoreOrderHistoryItem';
+  stamp: Scalars['DateTimeISO']['output'];
+  state: Scalars['String']['output'];
+  user?: Maybe<Scalars['MongoID']['output']>;
+  user_expanded?: Maybe<User>;
+};
+
+export type StoreOrderInput = {
+  items: Array<StoreOrderItemInput>;
+  state: StoreOrderState;
+};
+
+export type StoreOrderItem = {
+  __typename?: 'StoreOrderItem';
+  _id: Scalars['MongoID']['output'];
+  amount: Scalars['Float']['output'];
+  count: Scalars['Float']['output'];
+  delivery_cost?: Maybe<Scalars['Float']['output']>;
+  delivery_option?: Maybe<DeliveryOption>;
+  delivery_option_cost_waived?: Maybe<Scalars['Boolean']['output']>;
+  fee?: Maybe<Scalars['Float']['output']>;
+  inventory?: Maybe<Scalars['Float']['output']>;
+  product: StoreProduct;
+  product_groups: Scalars['JSON']['output'];
+  product_variant: Scalars['MongoID']['output'];
+  promotion?: Maybe<Scalars['Float']['output']>;
+  promotion_amount?: Maybe<Scalars['Float']['output']>;
+  state: StoreOrderItemState;
+  tax?: Maybe<Scalars['Float']['output']>;
+  tracking_url?: Maybe<Scalars['String']['output']>;
+  value: Scalars['Float']['output'];
+};
+
+export type StoreOrderItemInput = {
+  _id: Scalars['MongoID']['input'];
+  amount: Scalars['Float']['input'];
+  delivery_cost?: InputMaybe<Scalars['Float']['input']>;
+  delivery_option?: InputMaybe<DeliveryOptionInput>;
+  delivery_option_cost_waived?: InputMaybe<Scalars['Boolean']['input']>;
+  inventory?: InputMaybe<Scalars['Float']['input']>;
+  state: StoreOrderItemState;
+  tax?: InputMaybe<Scalars['Float']['input']>;
+  tracking_url?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum StoreOrderItemState {
+  Accepted = 'accepted',
+  Declined = 'declined',
+  Pending = 'pending'
+}
+
+export enum StoreOrderState {
+  Accepted = 'accepted',
+  AwaitingPickup = 'awaiting_pickup',
+  Cancelled = 'cancelled',
+  Created = 'created',
+  Declined = 'declined',
+  Delivered = 'delivered',
+  DeliveryConfirmed = 'delivery_confirmed',
+  InTransit = 'in_transit',
+  Pending = 'pending',
+  Preparing = 'preparing'
+}
+
+export type StoreOrderStateFilterInput = {
+  eq?: InputMaybe<StoreOrderState>;
+  in?: InputMaybe<Array<StoreOrderState>>;
+  nin?: InputMaybe<Array<StoreOrderState>>;
+};
+
+export type StoreProduct = {
+  __typename?: 'StoreProduct';
+  _id: Scalars['MongoID']['output'];
+  active: Scalars['Boolean']['output'];
+  categories?: Maybe<Array<Scalars['MongoID']['output']>>;
+  delivery_options?: Maybe<Array<DeliveryOption>>;
+  description: Scalars['String']['output'];
+  easyship_category?: Maybe<EasyshipCategory>;
+  groups?: Maybe<Scalars['JSON']['output']>;
+  highlight?: Maybe<Scalars['Boolean']['output']>;
+  order: Scalars['Float']['output'];
+  primary_group?: Maybe<Scalars['String']['output']>;
+  sales_tax_tag?: Maybe<Scalars['String']['output']>;
+  stamp: Scalars['DateTimeISO']['output'];
+  store: Scalars['MongoID']['output'];
+  store_expanded?: Maybe<Store>;
+  title: Scalars['String']['output'];
+  variants: Array<StoreProductVariant>;
+};
+
+export type StoreProductInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  categories?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  delivery_options?: InputMaybe<Array<DeliveryOptionInput>>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  easyship_category?: InputMaybe<EasyshipCategory>;
+  highlight?: InputMaybe<Scalars['Boolean']['input']>;
+  order?: InputMaybe<Scalars['Float']['input']>;
+  primary_group?: InputMaybe<Scalars['String']['input']>;
+  sales_tax_tag?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type StoreProductVariant = {
+  __typename?: 'StoreProductVariant';
+  _id: Scalars['MongoID']['output'];
+  cost: Scalars['Float']['output'];
+  groups: Scalars['JSON']['output'];
+  height: Scalars['Float']['output'];
+  inventory?: Maybe<Scalars['Float']['output']>;
+  length: Scalars['Float']['output'];
+  new_photos?: Maybe<Array<Scalars['MongoID']['output']>>;
+  new_photos_expanded?: Maybe<Array<Maybe<File>>>;
+  photos?: Maybe<Array<FileInline>>;
+  title: Scalars['String']['output'];
+  weight: Scalars['Float']['output'];
+  width: Scalars['Float']['output'];
+};
+
+
+export type StoreProductVariantNew_Photos_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+export type StoreProductVariantInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  cost?: InputMaybe<Scalars['Float']['input']>;
+  groups?: InputMaybe<Scalars['JSON']['input']>;
+  height?: InputMaybe<Scalars['Float']['input']>;
+  inventory?: InputMaybe<Scalars['Float']['input']>;
+  length?: InputMaybe<Scalars['Float']['input']>;
+  new_photos?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  photos?: InputMaybe<Array<FileInlineInput>>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  weight?: InputMaybe<Scalars['Float']['input']>;
+  width?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type StorePromotion = {
+  __typename?: 'StorePromotion';
+  _id: Scalars['MongoID']['output'];
+  active: Scalars['Boolean']['output'];
+  event?: Maybe<Scalars['MongoID']['output']>;
+  products?: Maybe<Array<Scalars['MongoID']['output']>>;
+  products_expanded?: Maybe<Array<Maybe<StoreProduct>>>;
+  ratio: Scalars['Float']['output'];
+  title: Scalars['String']['output'];
+  type: StorePromotionType;
+  use_count?: Maybe<Scalars['Float']['output']>;
+  use_count_map?: Maybe<Scalars['JSON']['output']>;
+  use_limit?: Maybe<Scalars['Float']['output']>;
+  use_limit_per?: Maybe<Scalars['Float']['output']>;
+  waive_delivery_option_cost?: Maybe<Scalars['Boolean']['output']>;
+};
+
+
+export type StorePromotionProducts_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+export type StorePromotionInput = {
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+  products?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  ratio?: InputMaybe<Scalars['Float']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<StorePromotionType>;
+  use_limit?: InputMaybe<Scalars['Float']['input']>;
+  use_limit_per?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export enum StorePromotionType {
+  Event = 'event'
+}
+
+export type StripeAccount = {
+  __typename?: 'StripeAccount';
+  account_id: Scalars['String']['output'];
+  currencies: Array<Scalars['String']['output']>;
+  currency_map?: Maybe<Scalars['JSON']['output']>;
+  publishable_key: Scalars['String']['output'];
+};
+
+export type StripeAccountCapability = {
+  __typename?: 'StripeAccountCapability';
+  capabilities: Array<Capability>;
+  id: Scalars['String']['output'];
+};
+
+export enum StripeAccountCapabilityDisplayPreferencePreference {
+  None = 'none',
+  Off = 'off',
+  On = 'on'
+}
+
+export enum StripeAccountCapabilityDisplayPreferenceValue {
+  Off = 'off',
+  On = 'on'
+}
+
+export enum StripeCapabilityType {
+  ApplePay = 'apple_pay',
+  Card = 'card',
+  GooglePay = 'google_pay'
+}
+
+export type StripeCard = {
+  __typename?: 'StripeCard';
+  _id: Scalars['MongoID']['output'];
+  active: Scalars['Boolean']['output'];
+  brand: Scalars['String']['output'];
+  last4: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  provider_id: Scalars['String']['output'];
+  stamp: Scalars['DateTimeISO']['output'];
+  user: Scalars['MongoID']['output'];
+};
+
+export type StripeCardInfo = {
+  __typename?: 'StripeCardInfo';
+  brand?: Maybe<Scalars['String']['output']>;
+  last4?: Maybe<Scalars['String']['output']>;
+};
+
+export type StripeConnectedAccount = {
+  __typename?: 'StripeConnectedAccount';
+  account_id: Scalars['String']['output'];
+  connected?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type StripeOnrampSession = {
+  __typename?: 'StripeOnrampSession';
+  client_secret: Scalars['String']['output'];
+  publishable_key: Scalars['String']['output'];
+};
+
+export type StripePaymentInfo = {
+  __typename?: 'StripePaymentInfo';
+  card?: Maybe<StripeCardInfo>;
+  payment_intent: Scalars['String']['output'];
+};
+
+export type SubeventSettings = {
+  __typename?: 'SubeventSettings';
+  ticket_required_for_creation?: Maybe<Scalars['Boolean']['output']>;
+  ticket_required_for_purchase?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type SubeventSettingsInput = {
+  ticket_required_for_creation?: InputMaybe<Scalars['Boolean']['input']>;
+  ticket_required_for_purchase?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type SubmitEventFeedbackInput = {
+  comment?: InputMaybe<Scalars['String']['input']>;
+  rate_value: Scalars['Float']['input'];
+  token: Scalars['String']['input'];
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  notificationCreated: Notification;
+  postCreated: Post;
+  roomAccess: Scalars['Boolean']['output'];
+  roomAction: RoomActionPayload;
+  roomStarted: Room;
+  roomUpdated: Room;
+  votingUpdated: Scalars['MongoID']['output'];
+};
+
+
+export type SubscriptionRoomAccessArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type SubscriptionRoomActionArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type SubscriptionRoomStartedArgs = {
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type SubscriptionRoomUpdatedArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+
+export type SubscriptionVotingUpdatedArgs = {
+  _id: Scalars['MongoID']['input'];
+};
+
+export type SyncFarcasterConnectionStatusResponse = {
+  __typename?: 'SyncFarcasterConnectionStatusResponse';
+  accepted: Scalars['Boolean']['output'];
+  userFid: Scalars['Float']['output'];
+};
+
+export type TelegramChannel = {
+  __typename?: 'TelegramChannel';
+  accessHash?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['String']['output']>;
+  inviteLink?: Maybe<Scalars['String']['output']>;
+  joined?: Maybe<Array<Scalars['MongoID']['output']>>;
+  photo?: Maybe<Scalars['MongoID']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
+};
+
+export type TelegramChannelInput = {
+  accessHash?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  inviteLink?: InputMaybe<Scalars['String']['input']>;
+  joined?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  photo?: InputMaybe<Scalars['MongoID']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  username?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type TgUser = {
+  __typename?: 'TgUser';
+  accessHash: Scalars['String']['output'];
+  applyMinPhoto?: Maybe<Scalars['Boolean']['output']>;
+  attachMenuEnabled?: Maybe<Scalars['Boolean']['output']>;
+  contact?: Maybe<Scalars['Boolean']['output']>;
+  deleted?: Maybe<Scalars['Boolean']['output']>;
+  fake?: Maybe<Scalars['Boolean']['output']>;
+  firstName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  langCode?: Maybe<Scalars['String']['output']>;
+  lastName?: Maybe<Scalars['String']['output']>;
+  min?: Maybe<Scalars['Boolean']['output']>;
+  mutualContact?: Maybe<Scalars['Boolean']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  restricted?: Maybe<Scalars['Boolean']['output']>;
+  scam?: Maybe<Scalars['Boolean']['output']>;
+  self?: Maybe<Scalars['Boolean']['output']>;
+  support?: Maybe<Scalars['Boolean']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
+  verified?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type Ticket = {
+  __typename?: 'Ticket';
+  _id: Scalars['MongoID']['output'];
+  accepted?: Maybe<Scalars['Boolean']['output']>;
+  acquired_by?: Maybe<Scalars['MongoID']['output']>;
+  acquired_by_email?: Maybe<Scalars['String']['output']>;
+  acquired_expanded?: Maybe<UserWithEmail>;
+  acquired_tickets?: Maybe<Array<Ticket>>;
+  assigned_email?: Maybe<Scalars['String']['output']>;
+  assigned_to?: Maybe<Scalars['MongoID']['output']>;
+  assigned_to_expanded?: Maybe<User>;
+  assigned_to_info?: Maybe<ConfidentialUserInfo>;
+  /** This object includes the email when compared to the `assigned_to_expanded` field. */
+  assignee_expanded?: Maybe<UserWithEmail>;
+  cancelled_by?: Maybe<Scalars['MongoID']['output']>;
+  checkin?: Maybe<EventCheckin>;
+  created_at: Scalars['DateTimeISO']['output'];
+  event: Scalars['MongoID']['output'];
+  event_expanded?: Maybe<Event>;
+  invited_by?: Maybe<Scalars['MongoID']['output']>;
+  metadata?: Maybe<Scalars['JSON']['output']>;
+  payment_id?: Maybe<Scalars['MongoID']['output']>;
+  shortid: Scalars['String']['output'];
+  type: Scalars['MongoID']['output'];
+  type_expanded?: Maybe<EventTicketType>;
+};
+
+export type TicketAssignee = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  ticket: Scalars['MongoID']['input'];
+  user?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+export type TicketAssignment = {
+  count: Scalars['Float']['input'];
+  email: Scalars['String']['input'];
+};
+
+export type TicketBase = {
+  __typename?: 'TicketBase';
+  _id: Scalars['MongoID']['output'];
+  accepted?: Maybe<Scalars['Boolean']['output']>;
+  acquired_by?: Maybe<Scalars['MongoID']['output']>;
+  acquired_by_email?: Maybe<Scalars['String']['output']>;
+  assigned_email?: Maybe<Scalars['String']['output']>;
+  assigned_to?: Maybe<Scalars['MongoID']['output']>;
+  assigned_to_info?: Maybe<ConfidentialUserInfo>;
+  cancelled_by?: Maybe<Scalars['MongoID']['output']>;
+  created_at: Scalars['DateTimeISO']['output'];
+  event: Scalars['MongoID']['output'];
+  invited_by?: Maybe<Scalars['MongoID']['output']>;
+  metadata?: Maybe<Scalars['JSON']['output']>;
+  payment_id?: Maybe<Scalars['MongoID']['output']>;
+  shortid: Scalars['String']['output'];
+  type: Scalars['MongoID']['output'];
+};
+
+export type TicketDiscount = {
+  __typename?: 'TicketDiscount';
+  discount: Scalars['String']['output'];
+  limit: Scalars['Float']['output'];
+  ratio: Scalars['Float']['output'];
+};
+
+export type TicketExport = {
+  __typename?: 'TicketExport';
+  _id: Scalars['MongoID']['output'];
+  active?: Maybe<Scalars['Boolean']['output']>;
+  assigned_email?: Maybe<Scalars['String']['output']>;
+  assigned_to?: Maybe<Scalars['MongoID']['output']>;
+  assignee_email?: Maybe<Scalars['String']['output']>;
+  buyer_avatar?: Maybe<Scalars['String']['output']>;
+  buyer_email?: Maybe<Scalars['String']['output']>;
+  buyer_first_name?: Maybe<Scalars['String']['output']>;
+  buyer_id?: Maybe<Scalars['MongoID']['output']>;
+  buyer_last_name?: Maybe<Scalars['String']['output']>;
+  buyer_name?: Maybe<Scalars['String']['output']>;
+  buyer_username?: Maybe<Scalars['String']['output']>;
+  buyer_wallet?: Maybe<Scalars['String']['output']>;
+  cancelled_by?: Maybe<Scalars['String']['output']>;
+  checkin_date?: Maybe<Scalars['DateTimeISO']['output']>;
+  currency?: Maybe<Scalars['String']['output']>;
+  discount_amount?: Maybe<Scalars['String']['output']>;
+  discount_code?: Maybe<Scalars['String']['output']>;
+  is_assigned?: Maybe<Scalars['Boolean']['output']>;
+  is_claimed?: Maybe<Scalars['Boolean']['output']>;
+  is_issued?: Maybe<Scalars['Boolean']['output']>;
+  issued_by?: Maybe<Scalars['String']['output']>;
+  payment_amount?: Maybe<Scalars['String']['output']>;
+  payment_id?: Maybe<Scalars['MongoID']['output']>;
+  payment_provider?: Maybe<Scalars['String']['output']>;
+  purchase_date: Scalars['DateTimeISO']['output'];
+  quantity: Scalars['Float']['output'];
+  shortid: Scalars['String']['output'];
+  ticket_category?: Maybe<Scalars['String']['output']>;
+  ticket_type?: Maybe<Scalars['String']['output']>;
+  ticket_type_id?: Maybe<Scalars['MongoID']['output']>;
+};
+
+export type TicketStatisticPerTier = {
+  __typename?: 'TicketStatisticPerTier';
+  count: Scalars['Float']['output'];
+  ticket_type: Scalars['MongoID']['output'];
+  ticket_type_title: Scalars['String']['output'];
+};
+
+export type TicketStatistics = {
+  __typename?: 'TicketStatistics';
+  all: Scalars['Float']['output'];
+  applicants: Array<JoinRequestStatistic>;
+  cancelled: Scalars['Float']['output'];
+  checked_in: Scalars['Float']['output'];
+  invited: Scalars['Float']['output'];
+  issued: Scalars['Float']['output'];
+  not_checked_in: Scalars['Float']['output'];
+  ticket_types: Array<TicketStatisticPerTier>;
+};
+
+export type TicketTokenRewardSetting = {
+  __typename?: 'TicketTokenRewardSetting';
+  _id: Scalars['MongoID']['output'];
+  currency_address: Scalars['String']['output'];
+  event: Scalars['MongoID']['output'];
+  photo?: Maybe<Scalars['MongoID']['output']>;
+  photo_expanded?: Maybe<File>;
+  rewards: Array<TicketTypeReward>;
+  title: Scalars['String']['output'];
+  user: Scalars['MongoID']['output'];
+  vault: Scalars['MongoID']['output'];
+  vault_expanded?: Maybe<TokenRewardVault>;
+};
+
+export type TicketTokenRewardSettingInput = {
+  currency_address?: InputMaybe<Scalars['String']['input']>;
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+  photo?: InputMaybe<Scalars['MongoID']['input']>;
+  rewards?: InputMaybe<Array<TicketTypeRewardInput>>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  vault?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+export type TicketTypeReward = {
+  __typename?: 'TicketTypeReward';
+  reward_id: Scalars['String']['output'];
+  reward_per_ticket: Scalars['String']['output'];
+  ticket_type: Scalars['MongoID']['output'];
+  ticket_type_expanded?: Maybe<EventTicketType>;
+};
+
+export type TicketTypeRewardInput = {
+  reward_per_ticket: Scalars['String']['input'];
+  ticket_type: Scalars['MongoID']['input'];
+};
+
+export type ToggleBlockUserInput = {
+  block: Scalars['Boolean']['input'];
+  user: Scalars['MongoID']['input'];
+};
+
+export type Token = {
+  __typename?: 'Token';
+  active?: Maybe<Scalars['Boolean']['output']>;
+  contract: Scalars['String']['output'];
+  decimals: Scalars['Float']['output'];
+  logo_url?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  symbol: Scalars['String']['output'];
+};
+
+export type TokenRewardSignature = {
+  __typename?: 'TokenRewardSignature';
+  /** The args that will be supplied to the contract */
+  args: Array<Scalars['JSON']['output']>;
+  claimId: Scalars['String']['output'];
+  signature: Scalars['String']['output'];
+};
+
+export type TokenRewardVault = {
+  __typename?: 'TokenRewardVault';
+  _id: Scalars['MongoID']['output'];
+  address: Scalars['String']['output'];
+  network: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  tokens?: Maybe<Array<RewardToken>>;
+  user: Scalars['MongoID']['output'];
+};
+
+export type TokenRewardVaultInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
+  network?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  tokens?: InputMaybe<Array<RewardTokenInput>>;
+};
+
+export type UpdateBadgeInput = {
+  contract?: InputMaybe<Scalars['String']['input']>;
+  network?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateBadgeListInput = {
+  image_url?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateDonationInput = {
+  _id: Scalars['MongoID']['input'];
+  from_wallet?: InputMaybe<Scalars['String']['input']>;
+  tx_hash?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateEventBroadcastInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  position?: InputMaybe<Scalars['Float']['input']>;
+  rooms?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  thumbnail?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateEventCheckinInput = {
+  active: Scalars['Boolean']['input'];
+  shortids?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+export type UpdateEventEmailSettingInput = {
+  _id: Scalars['MongoID']['input'];
+  cc?: InputMaybe<Array<Scalars['String']['input']>>;
+  custom_body_html?: InputMaybe<Scalars['String']['input']>;
+  custom_subject_html?: InputMaybe<Scalars['String']['input']>;
+  disabled?: InputMaybe<Scalars['Boolean']['input']>;
+  recipient_filters?: InputMaybe<EmailRecipientFiltersInput>;
+  recipient_types?: InputMaybe<Array<EmailRecipientType>>;
+  scheduled_at?: InputMaybe<Scalars['DateTimeISO']['input']>;
+};
+
+export type UpdateEventRewardUseInput = {
+  active: Scalars['Boolean']['input'];
+  event: Scalars['MongoID']['input'];
+  reward_id: Scalars['MongoID']['input'];
+  reward_number: Scalars['Float']['input'];
+  user: Scalars['MongoID']['input'];
+};
+
+export type UpdateNewPaymentAccountInput = {
+  _id: Scalars['MongoID']['input'];
+  account_info: Scalars['JSON']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdatePaymentInput = {
+  _id: Scalars['MongoID']['input'];
+  payment_secret?: InputMaybe<Scalars['String']['input']>;
+  transfer_params?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type UpdatePostInput = {
+  published?: InputMaybe<Scalars['Boolean']['input']>;
+  visibility?: InputMaybe<PostVisibility>;
+};
+
+export type UpdateSiteInput = {
+  access_pass?: InputMaybe<AccessPassInput>;
+  active?: InputMaybe<Scalars['Boolean']['input']>;
+  ai_config?: InputMaybe<Scalars['MongoID']['input']>;
+  client?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+  favicon_url?: InputMaybe<Scalars['String']['input']>;
+  footer_scripts?: InputMaybe<Array<SiteFooterScriptInput>>;
+  header_links?: InputMaybe<Array<SiteHeaderLinkInput>>;
+  header_metas?: InputMaybe<Array<SiteHeaderMetaInput>>;
+  hostnames?: InputMaybe<Array<Scalars['String']['input']>>;
+  logo_mobile_url?: InputMaybe<Scalars['String']['input']>;
+  logo_url?: InputMaybe<Scalars['String']['input']>;
+  onboarding_steps?: InputMaybe<Array<SiteOnboardingStepInput>>;
+  owners?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  partners?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  passports?: InputMaybe<Array<SitePassportInput>>;
+  privacy_url?: InputMaybe<Scalars['String']['input']>;
+  share_url?: InputMaybe<Scalars['JSON']['input']>;
+  text?: InputMaybe<Scalars['JSON']['input']>;
+  theme_data?: InputMaybe<Scalars['JSON']['input']>;
+  theme_type?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  visibility?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type UpdateSpaceMemberInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  role?: InputMaybe<SpaceRole>;
+  visible?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type UpdateSpaceRoleFeaturesInput = {
+  codes: Array<FeatureCode>;
+  role: Scalars['String']['input'];
+  space: Scalars['MongoID']['input'];
+};
+
+export type UpdateStoreBucketItemInput = {
+  count: Scalars['Float']['input'];
+};
+
+export type UpdateStripeConnectedAccountCapabilityInput = {
+  capabilities: Array<CapabilityInput>;
+  id: Scalars['String']['input'];
+};
+
+export type UpdateTicketTypeCategoryInput = {
+  _id: Scalars['MongoID']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  event: Scalars['MongoID']['input'];
+  position?: InputMaybe<Scalars['Int']['input']>;
+  ticket_types?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  title: Scalars['String']['input'];
+};
+
+export type User = {
+  __typename?: 'User';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  active: Scalars['Boolean']['output'];
+  addresses?: Maybe<Array<Address>>;
+  age?: Maybe<Scalars['Float']['output']>;
+  attended?: Maybe<Scalars['Float']['output']>;
+  blocked?: Maybe<Array<Scalars['MongoID']['output']>>;
+  blocked_expanded?: Maybe<Array<Maybe<User>>>;
+  calendly_url?: Maybe<Scalars['String']['output']>;
+  company_address?: Maybe<Address>;
+  company_name?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
+  cover?: Maybe<Scalars['MongoID']['output']>;
+  cover_expanded?: Maybe<File>;
+  created_at: Scalars['DateTimeISO']['output'];
+  currency?: Maybe<Scalars['String']['output']>;
+  daos?: Maybe<Array<UserDao>>;
+  data?: Maybe<Scalars['JSON']['output']>;
+  date_of_birth?: Maybe<Scalars['DateTimeISO']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  discord_user_info?: Maybe<Scalars['JSON']['output']>;
+  discovery?: Maybe<UserDiscoverySettings>;
+  display_name?: Maybe<Scalars['String']['output']>;
+  education_title?: Maybe<Scalars['String']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  email_marketing?: Maybe<Scalars['Boolean']['output']>;
+  email_verified?: Maybe<Scalars['Boolean']['output']>;
+  ethnicity?: Maybe<Scalars['String']['output']>;
+  eventbrite_user_info?: Maybe<Scalars['JSON']['output']>;
+  events?: Maybe<Array<Scalars['MongoID']['output']>>;
+  events_expanded?: Maybe<Array<Maybe<Event>>>;
+  expertise?: Maybe<Array<Scalars['MongoID']['output']>>;
+  expertise_expanded?: Maybe<Array<Maybe<UserExpertise>>>;
+  farcaster_fid?: Maybe<Scalars['Float']['output']>;
+  farcaster_user_info?: Maybe<FarcasterUserInfo>;
+  fcm_tokens?: Maybe<Array<Scalars['String']['output']>>;
+  first_name?: Maybe<Scalars['String']['output']>;
+  followers?: Maybe<Scalars['Float']['output']>;
+  following?: Maybe<Scalars['Float']['output']>;
+  frequent_questions?: Maybe<Array<FrequentQuestion>>;
+  friends?: Maybe<Scalars['Float']['output']>;
+  google_user_info?: Maybe<Scalars['JSON']['output']>;
+  handle_facebook?: Maybe<Scalars['String']['output']>;
+  handle_farcaster?: Maybe<Scalars['String']['output']>;
+  handle_github?: Maybe<Scalars['String']['output']>;
+  handle_instagram?: Maybe<Scalars['String']['output']>;
+  handle_lens?: Maybe<Scalars['String']['output']>;
+  handle_linkedin?: Maybe<Scalars['String']['output']>;
+  handle_mirror?: Maybe<Scalars['String']['output']>;
+  handle_twitter?: Maybe<Scalars['String']['output']>;
+  hosted?: Maybe<Scalars['Float']['output']>;
+  icebreakers?: Maybe<Array<UserIcebreaker>>;
+  image_avatar?: Maybe<Scalars['String']['output']>;
+  industry?: Maybe<Scalars['String']['output']>;
+  interests?: Maybe<Array<Scalars['String']['output']>>;
+  job_title?: Maybe<Scalars['String']['output']>;
+  languages?: Maybe<Array<Scalars['String']['output']>>;
+  last_name?: Maybe<Scalars['String']['output']>;
+  layout_sections?: Maybe<Array<LayoutSection>>;
+  lemon_amount: Scalars['Float']['output'];
+  lemon_cap: Scalars['Float']['output'];
+  lemon_refresh_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  location_line?: Maybe<Scalars['String']['output']>;
+  matrix_localpart?: Maybe<Scalars['String']['output']>;
+  music?: Maybe<Array<Scalars['String']['output']>>;
+  name: Scalars['String']['output'];
+  new_gender?: Maybe<Scalars['String']['output']>;
+  new_photos?: Maybe<Array<Scalars['MongoID']['output']>>;
+  new_photos_expanded?: Maybe<Array<Maybe<File>>>;
+  notification_filters?: Maybe<Array<Scalars['JSON']['output']>>;
+  offers?: Maybe<Array<UserOffer>>;
+  payment_verification?: Maybe<UserPaymentVerification>;
+  phone?: Maybe<Scalars['String']['output']>;
+  phone_verified?: Maybe<Scalars['Boolean']['output']>;
+  posts?: Maybe<Scalars['Float']['output']>;
+  preferred_network?: Maybe<Scalars['String']['output']>;
+  pronoun?: Maybe<Scalars['String']['output']>;
+  quest_points?: Maybe<Scalars['Float']['output']>;
+  razorpay_customer?: Maybe<Scalars['String']['output']>;
+  search_range?: Maybe<Scalars['Float']['output']>;
+  service_offers?: Maybe<Array<Scalars['MongoID']['output']>>;
+  service_offers_expanded?: Maybe<Array<Maybe<UserServiceOffer>>>;
+  settings?: Maybe<Scalars['JSON']['output']>;
+  shopify_user_info?: Maybe<Scalars['JSON']['output']>;
+  stripe_connected_account?: Maybe<StripeConnectedAccount>;
+  stripe_user_info?: Maybe<Scalars['JSON']['output']>;
+  tag_recommended?: Maybe<Scalars['Boolean']['output']>;
+  tag_site?: Maybe<Scalars['Boolean']['output']>;
+  tag_timeline?: Maybe<Scalars['Boolean']['output']>;
+  tag_verified?: Maybe<Scalars['Boolean']['output']>;
+  tagline?: Maybe<Scalars['String']['output']>;
+  telegram_user_info?: Maybe<Scalars['JSON']['output']>;
+  terms_accepted_adult?: Maybe<Scalars['Boolean']['output']>;
+  terms_accepted_conditions?: Maybe<Scalars['Boolean']['output']>;
+  timezone?: Maybe<Scalars['String']['output']>;
+  twitch_user_info?: Maybe<Scalars['JSON']['output']>;
+  twitter2_user_info?: Maybe<Scalars['JSON']['output']>;
+  twitter_user_info?: Maybe<Scalars['JSON']['output']>;
+  type?: Maybe<UserType>;
+  updated_at: Scalars['DateTimeISO']['output'];
+  url?: Maybe<Scalars['String']['output']>;
+  url_go?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
+  verified?: Maybe<Scalars['Boolean']['output']>;
+  wallet_custodial?: Maybe<Scalars['String']['output']>;
+  wallets?: Maybe<Array<Scalars['String']['output']>>;
+  wallets_new?: Maybe<Scalars['JSON']['output']>;
+  zoom_user_info?: Maybe<Scalars['JSON']['output']>;
+};
+
+
+export type UserEvents_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type UserNew_Photos_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+export type UserContact = {
+  __typename?: 'UserContact';
+  _id: Scalars['MongoID']['output'];
+  contact?: Maybe<Scalars['MongoID']['output']>;
+  contact_expanded?: Maybe<User>;
+  converted_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  created_at: Scalars['DateTimeISO']['output'];
+  email?: Maybe<Scalars['String']['output']>;
+  first_name?: Maybe<Scalars['String']['output']>;
+  invited_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  invited_count?: Maybe<Scalars['Float']['output']>;
+  last_name?: Maybe<Scalars['String']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  tags?: Maybe<Array<Scalars['String']['output']>>;
+  user: Scalars['MongoID']['output'];
+};
+
+export type UserDao = {
+  __typename?: 'UserDao';
+  address: Scalars['String']['output'];
+  network: Scalars['String']['output'];
+};
+
+export type UserDaoInput = {
+  address: Scalars['String']['input'];
+  network: Scalars['String']['input'];
+};
+
+export type UserDiscovery = {
+  __typename?: 'UserDiscovery';
+  _id: Scalars['MongoID']['output'];
+  event?: Maybe<Scalars['MongoID']['output']>;
+  max_age: Scalars['Float']['output'];
+  min_age: Scalars['Float']['output'];
+  search_range: Scalars['Float']['output'];
+  selected: Array<Scalars['MongoID']['output']>;
+  selected_expanded?: Maybe<Array<Maybe<User>>>;
+  stamp: Scalars['DateTimeISO']['output'];
+  user: Scalars['MongoID']['output'];
+};
+
+export type UserDiscoverySettings = {
+  __typename?: 'UserDiscoverySettings';
+  enabled: Scalars['Boolean']['output'];
+  max_age: Scalars['Float']['output'];
+  min_age: Scalars['Float']['output'];
+};
+
+export type UserDiscoverySettingsInput = {
+  enabled: Scalars['Boolean']['input'];
+  max_age: Scalars['Float']['input'];
+  min_age: Scalars['Float']['input'];
+};
+
+export type UserDiscoverySwipe = {
+  __typename?: 'UserDiscoverySwipe';
+  _id: Scalars['MongoID']['output'];
+  decision1?: Maybe<UserDiscoverySwipeDecision>;
+  decision2?: Maybe<UserDiscoverySwipeDecision>;
+  message?: Maybe<Scalars['String']['output']>;
+  other?: Maybe<Scalars['MongoID']['output']>;
+  other_expanded?: Maybe<User>;
+  source: UserDiscoverySwipeSource;
+  stamp: Scalars['DateTimeISO']['output'];
+  state: UserDiscoverySwipeState;
+  user1: Scalars['MongoID']['output'];
+  user2: Scalars['MongoID']['output'];
+};
+
+export enum UserDiscoverySwipeDecision {
+  Accept = 'accept',
+  Decline = 'decline'
+}
+
+export enum UserDiscoverySwipeSource {
+  Discovery = 'discovery',
+  Live = 'live'
+}
+
+export enum UserDiscoverySwipeState {
+  Declined = 'declined',
+  Matched = 'matched',
+  Pending = 'pending',
+  Undecided = 'undecided'
+}
+
+export type UserExpertise = {
+  __typename?: 'UserExpertise';
+  _id: Scalars['MongoID']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type UserFollow = {
+  __typename?: 'UserFollow';
+  _id: Scalars['MongoID']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  followee: Scalars['MongoID']['output'];
+  followee_expanded?: Maybe<User>;
+  follower: Scalars['MongoID']['output'];
+  follower_expanded?: Maybe<User>;
+};
+
+export type UserFriendship = {
+  __typename?: 'UserFriendship';
+  _id: Scalars['MongoID']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  other?: Maybe<Scalars['MongoID']['output']>;
+  other_expanded?: Maybe<User>;
+  state: UserFriendshipState;
+  type?: Maybe<UserFriendshipType>;
+  types?: Maybe<Scalars['JSON']['output']>;
+  user1: Scalars['MongoID']['output'];
+  user2: Scalars['MongoID']['output'];
+};
+
+export enum UserFriendshipState {
+  Accepted = 'accepted',
+  Pending = 'pending'
+}
+
+export enum UserFriendshipType {
+  Crew = 'crew',
+  Tribe = 'tribe'
+}
+
+export type UserIcebreaker = {
+  __typename?: 'UserIcebreaker';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  question: Scalars['MongoID']['output'];
+  question_expanded?: Maybe<UserIcebreakerQuestion>;
+  value: Scalars['String']['output'];
+};
+
+export type UserIcebreakerInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  question: Scalars['MongoID']['input'];
+  value: Scalars['String']['input'];
+};
+
+export type UserIcebreakerQuestion = {
+  __typename?: 'UserIcebreakerQuestion';
+  _id: Scalars['MongoID']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+};
+
+export type UserInput = {
+  addresses?: InputMaybe<Array<AddressInput>>;
+  calendly_url?: InputMaybe<Scalars['String']['input']>;
+  company_address?: InputMaybe<AddressInput>;
+  company_name?: InputMaybe<Scalars['String']['input']>;
+  cover?: InputMaybe<Scalars['MongoID']['input']>;
+  currency?: InputMaybe<Scalars['String']['input']>;
+  daos?: InputMaybe<Array<UserDaoInput>>;
+  data?: InputMaybe<Scalars['JSON']['input']>;
+  date_of_birth?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  discovery?: InputMaybe<UserDiscoverySettingsInput>;
+  display_name?: InputMaybe<Scalars['String']['input']>;
+  education_title?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  email_marketing?: InputMaybe<Scalars['Boolean']['input']>;
+  ethnicity?: InputMaybe<Scalars['String']['input']>;
+  events?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  expertise?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  frequent_questions?: InputMaybe<Array<FrequentQuestionInput>>;
+  handle_facebook?: InputMaybe<Scalars['String']['input']>;
+  handle_farcaster?: InputMaybe<Scalars['String']['input']>;
+  handle_github?: InputMaybe<Scalars['String']['input']>;
+  handle_instagram?: InputMaybe<Scalars['String']['input']>;
+  handle_lens?: InputMaybe<Scalars['String']['input']>;
+  handle_linkedin?: InputMaybe<Scalars['String']['input']>;
+  handle_mirror?: InputMaybe<Scalars['String']['input']>;
+  handle_twitter?: InputMaybe<Scalars['String']['input']>;
+  icebreakers?: InputMaybe<Array<UserIcebreakerInput>>;
+  industry?: InputMaybe<Scalars['String']['input']>;
+  interests?: InputMaybe<Array<Scalars['String']['input']>>;
+  job_title?: InputMaybe<Scalars['String']['input']>;
+  languages?: InputMaybe<Array<Scalars['String']['input']>>;
+  layout_sections?: InputMaybe<Array<LayoutSectionInput>>;
+  music?: InputMaybe<Array<Scalars['String']['input']>>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  new_gender?: InputMaybe<Scalars['String']['input']>;
+  new_photos?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  notification_filters?: InputMaybe<Array<Scalars['JSON']['input']>>;
+  offers?: InputMaybe<Array<UserOfferInput>>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  preferred_network?: InputMaybe<Scalars['String']['input']>;
+  pronoun?: InputMaybe<Scalars['String']['input']>;
+  search_range?: InputMaybe<Scalars['Float']['input']>;
+  service_offers?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  settings?: InputMaybe<Scalars['JSON']['input']>;
+  tagline?: InputMaybe<Scalars['String']['input']>;
+  terms_accepted_adult?: InputMaybe<Scalars['Boolean']['input']>;
+  terms_accepted_conditions?: InputMaybe<Scalars['Boolean']['input']>;
+  timezone?: InputMaybe<Scalars['String']['input']>;
+  username?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UserOffer = {
+  __typename?: 'UserOffer';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  auto?: Maybe<Scalars['Boolean']['output']>;
+  position?: Maybe<Scalars['Float']['output']>;
+  provider: OfferProvider;
+  provider_id: Scalars['String']['output'];
+  provider_network: Scalars['String']['output'];
+};
+
+export type UserOfferInput = {
+  _id?: InputMaybe<Scalars['MongoID']['input']>;
+  auto?: InputMaybe<Scalars['Boolean']['input']>;
+  position?: InputMaybe<Scalars['Float']['input']>;
+  provider: OfferProvider;
+  provider_id: Scalars['String']['input'];
+  provider_network: Scalars['String']['input'];
+};
+
+export type UserPaymentVerification = {
+  __typename?: 'UserPaymentVerification';
+  reason?: Maybe<Scalars['String']['output']>;
+  stamp: Scalars['DateTimeISO']['output'];
+  state: UserPaymentVerificationState;
+  verified_by?: Maybe<Scalars['MongoID']['output']>;
+};
+
+export type UserPaymentVerificationCondition = {
+  __typename?: 'UserPaymentVerificationCondition';
+  prop: Scalars['String']['output'];
+  satisfied: Scalars['Boolean']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type UserPaymentVerificationInfo = {
+  __typename?: 'UserPaymentVerificationInfo';
+  conditions: Array<UserPaymentVerificationCondition>;
+  eligible: Scalars['Boolean']['output'];
+  verified: Scalars['Boolean']['output'];
+};
+
+export enum UserPaymentVerificationState {
+  Completed = 'completed',
+  Declined = 'declined',
+  Pending = 'pending'
+}
+
+export type UserServiceOffer = {
+  __typename?: 'UserServiceOffer';
+  _id: Scalars['MongoID']['output'];
+  title: Scalars['String']['output'];
+};
+
+export enum UserType {
+  Admin = 'Admin'
+}
+
+export type UserWalletRequest = {
+  __typename?: 'UserWalletRequest';
+  message: Scalars['String']['output'];
+  token: Scalars['String']['output'];
+};
+
+export type UserWithEmail = {
+  __typename?: 'UserWithEmail';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  active: Scalars['Boolean']['output'];
+  addresses?: Maybe<Array<Address>>;
+  age?: Maybe<Scalars['Float']['output']>;
+  attended?: Maybe<Scalars['Float']['output']>;
+  blocked?: Maybe<Array<Scalars['MongoID']['output']>>;
+  blocked_expanded?: Maybe<Array<Maybe<User>>>;
+  calendly_url?: Maybe<Scalars['String']['output']>;
+  company_address?: Maybe<Address>;
+  company_name?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
+  cover?: Maybe<Scalars['MongoID']['output']>;
+  cover_expanded?: Maybe<File>;
+  created_at: Scalars['DateTimeISO']['output'];
+  currency?: Maybe<Scalars['String']['output']>;
+  daos?: Maybe<Array<UserDao>>;
+  data?: Maybe<Scalars['JSON']['output']>;
+  date_of_birth?: Maybe<Scalars['DateTimeISO']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  discord_user_info?: Maybe<Scalars['JSON']['output']>;
+  discovery?: Maybe<UserDiscoverySettings>;
+  display_name?: Maybe<Scalars['String']['output']>;
+  education_title?: Maybe<Scalars['String']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  email_marketing?: Maybe<Scalars['Boolean']['output']>;
+  email_verified?: Maybe<Scalars['Boolean']['output']>;
+  ethnicity?: Maybe<Scalars['String']['output']>;
+  eventbrite_user_info?: Maybe<Scalars['JSON']['output']>;
+  events?: Maybe<Array<Scalars['MongoID']['output']>>;
+  events_expanded?: Maybe<Array<Maybe<Event>>>;
+  expertise?: Maybe<Array<Scalars['MongoID']['output']>>;
+  expertise_expanded?: Maybe<Array<Maybe<UserExpertise>>>;
+  farcaster_fid?: Maybe<Scalars['Float']['output']>;
+  farcaster_user_info?: Maybe<FarcasterUserInfo>;
+  fcm_tokens?: Maybe<Array<Scalars['String']['output']>>;
+  first_name?: Maybe<Scalars['String']['output']>;
+  followers?: Maybe<Scalars['Float']['output']>;
+  following?: Maybe<Scalars['Float']['output']>;
+  frequent_questions?: Maybe<Array<FrequentQuestion>>;
+  friends?: Maybe<Scalars['Float']['output']>;
+  google_user_info?: Maybe<Scalars['JSON']['output']>;
+  handle_facebook?: Maybe<Scalars['String']['output']>;
+  handle_farcaster?: Maybe<Scalars['String']['output']>;
+  handle_github?: Maybe<Scalars['String']['output']>;
+  handle_instagram?: Maybe<Scalars['String']['output']>;
+  handle_lens?: Maybe<Scalars['String']['output']>;
+  handle_linkedin?: Maybe<Scalars['String']['output']>;
+  handle_mirror?: Maybe<Scalars['String']['output']>;
+  handle_twitter?: Maybe<Scalars['String']['output']>;
+  hosted?: Maybe<Scalars['Float']['output']>;
+  icebreakers?: Maybe<Array<UserIcebreaker>>;
+  image_avatar?: Maybe<Scalars['String']['output']>;
+  industry?: Maybe<Scalars['String']['output']>;
+  interests?: Maybe<Array<Scalars['String']['output']>>;
+  job_title?: Maybe<Scalars['String']['output']>;
+  languages?: Maybe<Array<Scalars['String']['output']>>;
+  last_name?: Maybe<Scalars['String']['output']>;
+  layout_sections?: Maybe<Array<LayoutSection>>;
+  lemon_amount: Scalars['Float']['output'];
+  lemon_cap: Scalars['Float']['output'];
+  lemon_refresh_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  location_line?: Maybe<Scalars['String']['output']>;
+  matrix_localpart?: Maybe<Scalars['String']['output']>;
+  music?: Maybe<Array<Scalars['String']['output']>>;
+  name: Scalars['String']['output'];
+  new_gender?: Maybe<Scalars['String']['output']>;
+  new_photos?: Maybe<Array<Scalars['MongoID']['output']>>;
+  new_photos_expanded?: Maybe<Array<Maybe<File>>>;
+  notification_filters?: Maybe<Array<Scalars['JSON']['output']>>;
+  offers?: Maybe<Array<UserOffer>>;
+  payment_verification?: Maybe<UserPaymentVerification>;
+  phone?: Maybe<Scalars['String']['output']>;
+  phone_verified?: Maybe<Scalars['Boolean']['output']>;
+  posts?: Maybe<Scalars['Float']['output']>;
+  preferred_network?: Maybe<Scalars['String']['output']>;
+  pronoun?: Maybe<Scalars['String']['output']>;
+  quest_points?: Maybe<Scalars['Float']['output']>;
+  razorpay_customer?: Maybe<Scalars['String']['output']>;
+  search_range?: Maybe<Scalars['Float']['output']>;
+  service_offers?: Maybe<Array<Scalars['MongoID']['output']>>;
+  service_offers_expanded?: Maybe<Array<Maybe<UserServiceOffer>>>;
+  settings?: Maybe<Scalars['JSON']['output']>;
+  shopify_user_info?: Maybe<Scalars['JSON']['output']>;
+  stripe_connected_account?: Maybe<StripeConnectedAccount>;
+  stripe_user_info?: Maybe<Scalars['JSON']['output']>;
+  tag_recommended?: Maybe<Scalars['Boolean']['output']>;
+  tag_site?: Maybe<Scalars['Boolean']['output']>;
+  tag_timeline?: Maybe<Scalars['Boolean']['output']>;
+  tag_verified?: Maybe<Scalars['Boolean']['output']>;
+  tagline?: Maybe<Scalars['String']['output']>;
+  telegram_user_info?: Maybe<Scalars['JSON']['output']>;
+  terms_accepted_adult?: Maybe<Scalars['Boolean']['output']>;
+  terms_accepted_conditions?: Maybe<Scalars['Boolean']['output']>;
+  timezone?: Maybe<Scalars['String']['output']>;
+  twitch_user_info?: Maybe<Scalars['JSON']['output']>;
+  twitter2_user_info?: Maybe<Scalars['JSON']['output']>;
+  twitter_user_info?: Maybe<Scalars['JSON']['output']>;
+  type?: Maybe<UserType>;
+  updated_at: Scalars['DateTimeISO']['output'];
+  url?: Maybe<Scalars['String']['output']>;
+  url_go?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
+  verified?: Maybe<Scalars['Boolean']['output']>;
+  wallet_custodial?: Maybe<Scalars['String']['output']>;
+  wallets?: Maybe<Array<Scalars['String']['output']>>;
+  wallets_new?: Maybe<Scalars['JSON']['output']>;
+  zoom_user_info?: Maybe<Scalars['JSON']['output']>;
+};
+
+
+export type UserWithEmailEvents_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+
+export type UserWithEmailNew_Photos_ExpandedArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
+};
+
+export type VerifyCodeInput = {
+  password_2fa?: InputMaybe<Scalars['String']['input']>;
+  phone_code: Scalars['String']['input'];
+  phone_code_hash: Scalars['String']['input'];
+  phone_number: Scalars['String']['input'];
+};
+
+export type Video = {
+  __typename?: 'Video';
+  provider: Scalars['String']['output'];
+  provider_id: Scalars['String']['output'];
+  thumbnail?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+export type VideoInput = {
+  provider: Scalars['String']['input'];
+  provider_id: Scalars['String']['input'];
+  thumbnail?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type VotingOption = {
+  __typename?: 'VotingOption';
+  option_id: Scalars['String']['output'];
+  voters: Array<User>;
+};
+
+export type WhitelistUserInfo = {
+  __typename?: 'WhitelistUserInfo';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  email: Scalars['String']['output'];
+};
+
+export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMeQuery = { __typename: 'Query', getMe: { __typename: 'User', _id?: any | null, name: string, image_avatar?: string | null } };
+
+export type CreateFileUploadsMutationVariables = Exact<{
+  uploadInfos: Array<FileUploadInfo> | FileUploadInfo;
+  directory: Scalars['String']['input'];
+}>;
+
+
+export type CreateFileUploadsMutation = { __typename: 'Mutation', createFileUploads: Array<{ __typename: 'FileWithPresignedUrl', _id?: any | null, stamp: any, state: FileState, owner: any, type: string, size?: number | null, url: string, bucket: string, key: string, presignedUrl: string }> };
+
+export type ConfirmFileUploadsMutationVariables = Exact<{
+  ids: Array<Scalars['MongoID']['input']> | Scalars['MongoID']['input'];
+}>;
+
+
+export type ConfirmFileUploadsMutation = { __typename: 'Mutation', confirmFileUploads: boolean };
+
+export type UpdateFileDescriptionMutationMutationVariables = Exact<{
+  input: FileInput;
+  id: Scalars['MongoID']['input'];
+}>;
+
+
+export type UpdateFileDescriptionMutationMutation = { __typename: 'Mutation', updateFile: { __typename: 'File', _id?: any | null, stamp: any, state: FileState, owner: any, type: string, size?: number | null, url: string, bucket: string, key: string, description?: string | null } };
+
+export type SpaceFragment = { __typename: 'Space', _id: any, title: string, description?: string | null, is_ambassador?: boolean | null, followed?: boolean | null, followers?: Array<any> | null, image_avatar?: any | null, image_cover?: any | null, creator: any, slug?: string | null, private?: boolean | null, listed_events?: Array<any> | null, website?: string | null, handle_instagram?: string | null, handle_twitter?: string | null, handle_linkedin?: string | null, handle_youtube?: string | null, handle_tiktok?: string | null, personal?: boolean | null, admins?: Array<{ __typename: 'User', _id?: any | null, image_avatar?: string | null }> | null, image_avatar_expanded?: { __typename: 'File', _id?: any | null, bucket: string, url: string, type: string, key: string } | null, image_cover_expanded?: { __typename: 'File', _id?: any | null, bucket: string, url: string, type: string, key: string } | null, creator_expanded?: { __typename: 'User', _id?: any | null, name: string, image_avatar?: string | null } | null, address?: { __typename: 'Address', _id?: any | null, city?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null, street_1?: string | null, street_2?: string | null, region?: string | null, title?: string | null } | null } & { ' $fragmentName'?: 'SpaceFragment' };
+
+export type SpaceTagFragment = { __typename: 'SpaceTagBase', _id: any, color: string, space: any, tag: string, targets?: Array<string> | null, type: SpaceTagType } & { ' $fragmentName'?: 'SpaceTagFragment' };
+
+export type GetSpaceQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['MongoID']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetSpaceQuery = { __typename: 'Query', getSpace?: (
+    { __typename: 'Space' }
+    & { ' $fragmentRefs'?: { 'SpaceFragment': SpaceFragment } }
+  ) | null };
+
+export type GetSpaceEventsQueryVariables = Exact<{
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  startFrom?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  startTo?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  space?: InputMaybe<Scalars['MongoID']['input']>;
+  sort?: InputMaybe<EventSortInput>;
+  endFrom?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  endTo?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  spaceTags?: InputMaybe<Array<Scalars['MongoID']['input']> | Scalars['MongoID']['input']>;
+}>;
+
+
+export type GetSpaceEventsQuery = { __typename: 'Query', getEvents: Array<{ __typename: 'Event', _id?: any | null, shortid: string, title: string, start: any, end: any, host_expanded?: { __typename: 'User', _id?: any | null, image_avatar?: string | null, name: string } | null, address?: { __typename: 'Address', city?: string | null, country?: string | null, region?: string | null, latitude?: number | null, longitude?: number | null } | null, new_new_photos_expanded?: Array<{ __typename: 'File', _id?: any | null, bucket: string, key: string, type: string, url: string } | null> | null, event_ticket_types?: Array<{ __typename: 'EventTicketType', _id: any, prices: Array<{ __typename: 'EventTicketPrice', cost: string, currency: string, default?: boolean | null }> }> | null }> };
+
+export type GetSpaceEventsCalendarQueryVariables = Exact<{
+  space?: InputMaybe<Scalars['MongoID']['input']>;
+}>;
+
+
+export type GetSpaceEventsCalendarQuery = { __typename: 'Query', getEvents: Array<{ __typename: 'Event', _id?: any | null, start: any, address?: { __typename: 'Address', _id?: any | null, latitude?: number | null, longitude?: number | null } | null }> };
+
+export type GetSpaceTagsQueryVariables = Exact<{
+  space: Scalars['MongoID']['input'];
+}>;
+
+
+export type GetSpaceTagsQuery = { __typename: 'Query', listSpaceTags: Array<(
+    { __typename: 'SpaceTagBase' }
+    & { ' $fragmentRefs'?: { 'SpaceTagFragment': SpaceTagFragment } }
+  )> };
+
+export type FollowSpaceMutationVariables = Exact<{
+  space: Scalars['MongoID']['input'];
+}>;
+
+
+export type FollowSpaceMutation = { __typename: 'Mutation', followSpace: boolean };
+
+export type UnfollowSpaceMutationVariables = Exact<{
+  space: Scalars['MongoID']['input'];
+}>;
+
+
+export type UnfollowSpaceMutation = { __typename: 'Mutation', unfollowSpace: boolean };
+
+export const SpaceFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Space"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Space"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"admins"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"is_ambassador"}},{"kind":"Field","name":{"kind":"Name","value":"followed"}},{"kind":"Field","name":{"kind":"Name","value":"followers"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"key"}}]}},{"kind":"Field","name":{"kind":"Name","value":"image_cover"}},{"kind":"Field","name":{"kind":"Name","value":"image_cover_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"key"}}]}},{"kind":"Field","name":{"kind":"Name","value":"creator"}},{"kind":"Field","name":{"kind":"Name","value":"creator_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"private"}},{"kind":"Field","name":{"kind":"Name","value":"listed_events"}},{"kind":"Field","name":{"kind":"Name","value":"website"}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}},{"kind":"Field","name":{"kind":"Name","value":"street_1"}},{"kind":"Field","name":{"kind":"Name","value":"street_2"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"handle_instagram"}},{"kind":"Field","name":{"kind":"Name","value":"handle_twitter"}},{"kind":"Field","name":{"kind":"Name","value":"handle_linkedin"}},{"kind":"Field","name":{"kind":"Name","value":"handle_youtube"}},{"kind":"Field","name":{"kind":"Name","value":"handle_tiktok"}},{"kind":"Field","name":{"kind":"Name","value":"personal"}}]}}]} as unknown as DocumentNode<SpaceFragment, unknown>;
+export const SpaceTagFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SpaceTag"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SpaceTagBase"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"space"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"targets"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]} as unknown as DocumentNode<SpaceTagFragment, unknown>;
+export const GetMeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMe"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getMe"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}}]}}]} as unknown as DocumentNode<GetMeQuery, GetMeQueryVariables>;
+export const CreateFileUploadsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createFileUploads"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"uploadInfos"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FileUploadInfo"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"directory"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"createFileUploads"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"upload_infos"},"value":{"kind":"Variable","name":{"kind":"Name","value":"uploadInfos"}}},{"kind":"Argument","name":{"kind":"Name","value":"directory"},"value":{"kind":"Variable","name":{"kind":"Name","value":"directory"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"stamp"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"owner"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","alias":{"kind":"Name","value":"presignedUrl"},"name":{"kind":"Name","value":"presigned_url"}}]}}]}}]} as unknown as DocumentNode<CreateFileUploadsMutation, CreateFileUploadsMutationVariables>;
+export const ConfirmFileUploadsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"confirmFileUploads"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"confirmFileUploads"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ids"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}]}]}}]} as unknown as DocumentNode<ConfirmFileUploadsMutation, ConfirmFileUploadsMutationVariables>;
+export const UpdateFileDescriptionMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateFileDescriptionMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FileInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"updateFile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}},{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"stamp"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"owner"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<UpdateFileDescriptionMutationMutation, UpdateFileDescriptionMutationMutationVariables>;
+export const GetSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getSpace"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"Space"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Space"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Space"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"admins"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"is_ambassador"}},{"kind":"Field","name":{"kind":"Name","value":"followed"}},{"kind":"Field","name":{"kind":"Name","value":"followers"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"key"}}]}},{"kind":"Field","name":{"kind":"Name","value":"image_cover"}},{"kind":"Field","name":{"kind":"Name","value":"image_cover_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"key"}}]}},{"kind":"Field","name":{"kind":"Name","value":"creator"}},{"kind":"Field","name":{"kind":"Name","value":"creator_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"private"}},{"kind":"Field","name":{"kind":"Name","value":"listed_events"}},{"kind":"Field","name":{"kind":"Name","value":"website"}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}},{"kind":"Field","name":{"kind":"Name","value":"street_1"}},{"kind":"Field","name":{"kind":"Name","value":"street_2"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"handle_instagram"}},{"kind":"Field","name":{"kind":"Name","value":"handle_twitter"}},{"kind":"Field","name":{"kind":"Name","value":"handle_linkedin"}},{"kind":"Field","name":{"kind":"Name","value":"handle_youtube"}},{"kind":"Field","name":{"kind":"Name","value":"handle_tiktok"}},{"kind":"Field","name":{"kind":"Name","value":"personal"}}]}}]} as unknown as DocumentNode<GetSpaceQuery, GetSpaceQueryVariables>;
+export const GetSpaceEventsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSpaceEvents"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"startFrom"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTimeISO"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"startTo"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTimeISO"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"space"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"EventSortInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endFrom"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTimeISO"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endTo"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTimeISO"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spaceTags"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getEvents"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"start_from"},"value":{"kind":"Variable","name":{"kind":"Name","value":"startFrom"}}},{"kind":"Argument","name":{"kind":"Name","value":"start_to"},"value":{"kind":"Variable","name":{"kind":"Name","value":"startTo"}}},{"kind":"Argument","name":{"kind":"Name","value":"space"},"value":{"kind":"Variable","name":{"kind":"Name","value":"space"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"end_from"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endFrom"}}},{"kind":"Argument","name":{"kind":"Name","value":"end_to"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endTo"}}},{"kind":"Argument","name":{"kind":"Name","value":"space_tags"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spaceTags"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"shortid"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"host_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}}]}},{"kind":"Field","name":{"kind":"Name","value":"new_new_photos_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"start"}},{"kind":"Field","name":{"kind":"Name","value":"end"}},{"kind":"Field","name":{"kind":"Name","value":"event_ticket_types"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"prices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"cost"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"default"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetSpaceEventsQuery, GetSpaceEventsQueryVariables>;
+export const GetSpaceEventsCalendarDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSpaceEventsCalendar"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"space"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getEvents"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"space"},"value":{"kind":"Variable","name":{"kind":"Name","value":"space"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"start"}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}}]}}]}}]}}]} as unknown as DocumentNode<GetSpaceEventsCalendarQuery, GetSpaceEventsCalendarQueryVariables>;
+export const GetSpaceTagsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSpaceTags"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"space"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listSpaceTags"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"space"},"value":{"kind":"Variable","name":{"kind":"Name","value":"space"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"SpaceTag"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SpaceTag"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"SpaceTagBase"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"color"}},{"kind":"Field","name":{"kind":"Name","value":"space"}},{"kind":"Field","name":{"kind":"Name","value":"tag"}},{"kind":"Field","name":{"kind":"Name","value":"targets"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]} as unknown as DocumentNode<GetSpaceTagsQuery, GetSpaceTagsQueryVariables>;
+export const FollowSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"FollowSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"space"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"followSpace"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"space"},"value":{"kind":"Variable","name":{"kind":"Name","value":"space"}}}]}]}}]} as unknown as DocumentNode<FollowSpaceMutation, FollowSpaceMutationVariables>;
+export const UnfollowSpaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UnfollowSpace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"space"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"unfollowSpace"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"space"},"value":{"kind":"Variable","name":{"kind":"Name","value":"space"}}}]}]}}]} as unknown as DocumentNode<UnfollowSpaceMutation, UnfollowSpaceMutationVariables>;
