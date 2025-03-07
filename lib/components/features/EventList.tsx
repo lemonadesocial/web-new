@@ -3,13 +3,13 @@ import { groupBy } from 'lodash';
 import { format, isAfter, isBefore } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
+import Link from 'next/link';
 
 import { Badge, Card, Divider, Spacer } from '$lib/components/core';
-import { Address, Event, SpaceTagBase } from '$lib/generated/graphql';
+import { Address, Event, SpaceTagBase } from '$lib/generated/backend/graphql';
+import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { generateUrl } from '$lib/utils/cnd';
 import { getTicketCost } from '$lib/utils/event';
-import Link from 'next/link';
-import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 
 export function EventList({ events, loading }: { events: Event[]; loading?: boolean; tags?: SpaceTagBase[] }) {
   if (loading) return <EventListSkeleton />;
@@ -105,9 +105,7 @@ export function EventListCard({
 
             <div className="flex flex-col gap-3">
               {data.map((item) => (
-                <Link key={item._id} href={`${LEMONADE_DOMAIN}/e/${item.shortid}`} target="_blank">
-                  <EventCardItem item={item} tags={tags} />
-                </Link>
+                <EventCardItem key={item._id} item={item} tags={tags} />
               ))}
             </div>
           </div>
@@ -133,7 +131,7 @@ export function EventListCard({
 function EventCardItem({ item, tags = [] }: { item: Event; tags?: SpaceTagBase[] }) {
   const defaultTicketType = item.event_ticket_types?.find((p) => p.default);
   return (
-    <Card key={`event_${item.shortid}`}>
+    <Card as="link" key={`event_${item.shortid}`} href={`${LEMONADE_DOMAIN}/e/${item.shortid}`} target="_blank">
       <div className="flex gap-6">
         <div className="text-tertiary/[.56] flex-1 flex flex-col gap-2">
           <div>
