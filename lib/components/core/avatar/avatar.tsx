@@ -2,9 +2,9 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 const sizes = {
-  sm: 'w-6 h-6',
-  md: 'w-8 h-8',
-  lg: 'w-10 h-10',
+  sm: 'w-4 h-4',
+  md: 'w-6 h-6',
+  lg: 'w-8 h-8',
 };
 
 const roundeds = {
@@ -15,14 +15,15 @@ const roundeds = {
 };
 
 interface AvatarProps {
-  src: string;
+  src?: string;
+  className?: string;
   size?: 'sm' | 'md' | 'lg';
   rounded?: 'full' | 'rounded' | 'sm' | 'lg';
 }
 
-export function Avatar({ src, size = 'md', rounded = 'full' }: AvatarProps) {
+export function Avatar({ src, size = 'md', rounded = 'full', className }: AvatarProps) {
   return (
-    <div className={twMerge(`relative ${sizes[size]} overflow-hidden ${roundeds[rounded]}`)}>
+    <div className={twMerge(`relative ${sizes[size]} overflow-hidden ${roundeds[rounded]}`, className)}>
       <img
         src={src || 'https://assets.lemonade.social/assets/images/avatars/lemonade_davatar_1.png'}
         alt="Avatar"
