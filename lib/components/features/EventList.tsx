@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import Link from 'next/link';
 
-import { Badge, Card, Divider, Spacer } from '$lib/components/core';
+import { Avatar, Badge, Card, Divider, Spacer } from '$lib/components/core';
 import { Address, Event, SpaceTagBase } from '$lib/generated/backend/graphql';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { generateUrl } from '$lib/utils/cnd';
@@ -24,23 +24,53 @@ export function EventList({ events, loading }: { events: Event[]; loading?: bool
           <Divider className="mt-2 mb-3" />
 
           {data.map((item) => (
-            <Link
-              key={item._id}
-              href={`${LEMONADE_DOMAIN}/e/${item.shortid}`}
-              target="_blank"
-              className="transition flex text-tertiary/[.56] gap-4 hover:bg-tertiary/[.16] p-2 rounded-md cursor-pointer"
-            >
-              <p>{format(item.start, 'h:mm a')}</p>
-              <div className="flex flex-col gap-1">
-                <p className="text-tertiary font-medium text-lg">{item.title}</p>
-                <div>avatar here</div>
-              </div>
-            </Link>
+            <EventItem key={item._id} item={item} />
           ))}
         </div>
       ))}
       <Spacer className="h-6" />
     </div>
+  );
+}
+
+function EventItem({ item }: { item: Event }) {
+  const defaultTicketType = item.event_ticket_types?.find((p) => p.default);
+  const users = [item.host_expanded, ...(item.visible_cohosts_expanded || [])];
+
+  return (
+    <Link
+      href={`${LEMONADE_DOMAIN}/e/${item.shortid}`}
+      target="_blank"
+      className="transition flex text-tertiary/[.56] gap-4 hover:bg-tertiary/[.16] p-2 rounded-md cursor-pointer"
+    >
+      <p>{format(item.start, 'h:mm a')}</p>
+      <div className="flex flex-col gap-1 flex-1">
+        <p className="text-tertiary font-medium text-lg">{item.title}</p>
+        <div className="flex gap-2 items-center">
+          {!!users.filter((p) => p?.image_avatar).length && (
+            <div className="flex -space-x-1 overflow-hidden p-1">
+              {users
+                .filter((p) => p?.image_avatar)
+                .map((p) => (
+                  <Avatar
+                    key={p?._id}
+                    src={generateUrl(p?.image_avatar)}
+                    size="sm"
+                    className="ring-2 border-background"
+                  />
+                ))}
+            </div>
+          )}
+
+          <p className="font-medium text-sm text-tertiary/[.56]">By {users.map((p) => p?.name).join(',')}</p>
+        </div>
+      </div>
+      <div>
+        {defaultTicketType && (
+          <Badge title={getTicketCost(defaultTicketType)} className="bg-success-500/[0.16] text-success-500" />
+        )}
+      </div>
+    </Link>
   );
 }
 
@@ -130,8 +160,16 @@ export function EventListCard({
 
 function EventCardItem({ item, tags = [] }: { item: Event; tags?: SpaceTagBase[] }) {
   const defaultTicketType = item.event_ticket_types?.find((p) => p.default);
+  const users = [item.host_expanded, ...(item.visible_cohosts_expanded || [])];
+
   return (
-    <Card as="link" key={`event_${item.shortid}`} href={`${LEMONADE_DOMAIN}/e/${item.shortid}`} target="_blank">
+    <Card
+      as="link"
+      key={`event_${item.shortid}`}
+      href={`${LEMONADE_DOMAIN}/e/${item.shortid}`}
+      target="_blank"
+      className="flex flex-col gap-3"
+    >
       <div className="flex gap-6">
         <div className="text-tertiary/[.56] flex-1 flex flex-col gap-2">
           <div>
@@ -147,6 +185,24 @@ function EventCardItem({ item, tags = [] }: { item: Event; tags?: SpaceTagBase[]
               <p>{format(item.start, 'hh:mm a')}</p>
             </div>
             <p className="font-title text-xl font-semibold text-tertiary">{item.title}</p>
+            <div className="flex gap-2 item-center">
+              {!!users.filter((p) => p?.image_avatar).length && (
+                <div className="flex -space-x-1 overflow-hidden p-1">
+                  {users
+                    .filter((p) => p?.image_avatar)
+                    .map((p) => (
+                      <Avatar
+                        key={p?._id}
+                        src={generateUrl(p?.image_avatar)}
+                        size="sm"
+                        className="ring-2 border-background"
+                      />
+                    ))}
+                </div>
+              )}
+
+              <p className="font-medium text-tertiary/[.56]">By {users.map((p) => p?.name).join(',')}</p>
+            </div>
           </div>
 
           <div className="flex flex-col gap-1">

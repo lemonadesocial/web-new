@@ -125,6 +125,14 @@ query GetSpaceEvents(
         default
       }
     }
+    host_expanded {
+      _id
+      image_avatar
+    }
+    visible_cohosts_expanded {
+      _id
+      image_avatar
+    }
   }
 }
 
