@@ -6,6 +6,7 @@ import { Config } from '$utils/types';
 
 import { StyleVariables } from './styled';
 import Providers from './providers';
+import { DrawerContainer } from '$lib/components/core/dialog';
 
 export async function generateMetadata(props: { params: Promise<{ domain: string }> }): Promise<Metadata | null> {
   const params = await props.params;
@@ -28,6 +29,7 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
     <Providers>
       <StyleVariables theme={data.theme.styles} />
       {props.children}
+      <DrawerContainer />
     </Providers>
   );
 }

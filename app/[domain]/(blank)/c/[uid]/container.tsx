@@ -2,6 +2,7 @@
 import React from 'react';
 import { useAtom } from 'jotai';
 import { endOfDay, startOfDay, format } from 'date-fns';
+import clsx from 'clsx';
 
 import { Button, Divider, Map, Segment, Tag } from '$lib/components/core';
 import { HeroSection } from '$lib/components/features/community';
@@ -21,7 +22,6 @@ import { useQuery } from '$lib/request';
 import { EventList, EventListCard } from '$lib/components/features/EventList';
 import { Calendar } from '$lib/components/core/calendar';
 import { scrollAtBottomAtom } from '$lib/jotai';
-import clsx from 'clsx';
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();

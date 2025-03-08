@@ -17,7 +17,7 @@ const iconOnlySizes = {
 const variants: { [key: string]: string } = {
   primary: 'bg-primary-500 hover:bg-primary-500/[0.8]',
   success: 'bg-success-600 hover:bg-success-600/[0.8]',
-  tertiary: 'bg-tertiary/[.08] hover:bg-tertiary/[.16]',
+  tertiary: 'bg-tertiary/[.08] hover:bg-tertiary/[.16] text-tertiary/[.56]',
   secondary: 'bg-tertiary hover:bg-tertiary/[0.8] text-black',
   flat: 'hover:bg-tertiary/[0.08]',
 };
@@ -79,7 +79,7 @@ export function Button({
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         ></path>
       </svg>
-      <div className={twMerge('flex justify-center items-center', clsx({ invisible: loading }))}>
+      <div className={twMerge('flex justify-center items-center gap-2.5', clsx({ invisible: loading }))}>
         {iconLeft && <i className={twMerge('size-[18]', iconLeft)} />}
         {icon ? <i className={twMerge('size-[18]', icon)} /> : children}
         {iconRight && <i className={twMerge('size-[18]', iconRight)} />}
