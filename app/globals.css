@@ -31,6 +31,66 @@
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
 
+  --color-woodsmoke-50: #f7f7f8;
+  --color-woodsmoke-100: #eeedf1;
+  --color-woodsmoke-200: #d9d8df;
+  --color-woodsmoke-300: #b8b5c4;
+  --color-woodsmoke-400: #918da3;
+  --color-woodsmoke-500: #736f88;
+  --color-woodsmoke-600: #5e5970;
+  --color-woodsmoke-700: #4c495b;
+  --color-woodsmoke-800: #423f4d;
+  --color-woodsmoke-900: #393743;
+  --color-woodsmoke-950: #141317;
+
+  --color-violet-50: #f5f3ff;
+  --color-violet-100: #ede9fe;
+  --color-violet-200: #ddd6ff;
+  --color-violet-300: #c4b4ff;
+  --color-violet-400: #a684ff;
+  --color-violet-500: #8e51ff;
+  --color-violet-600: #7f22fe;
+  --color-violet-700: #7008e7;
+  --color-violet-800: #5d0ec0;
+  --color-violet-900: #4d179a;
+  --color-violet-950: #2f0d68;
+
+  --color-emerald-50: #ecfdf5;
+  --color-emerald--100: #d0fae5;
+  --color-emerald--200: #a4f4cf;
+  --color-emerald--300: #5ee9b5;
+  --color-emerald--400: #00d492;
+  --color-emerald--500: #00bc7d;
+  --color-emerald--600: #009966;
+  --color-emerald--700: #007a55;
+  --color-emerald--800: #006045;
+  --color-emerald--900: #004f3b;
+  --color-emerald--950: #002c22;
+
+  --color-rose-50: #fff1f2;
+  --color-rose-100: #ffe4e6;
+  --color-rose-200: #ffccd3;
+  --color-rose-300: #ffa1ad;
+  --color-rose-400: #ff637e;
+  --color-rose-500: #ff2056;
+  --color-rose-600: #ec003f;
+  --color-rose-700: #c70036;
+  --color-rose-800: #a50036;
+  --color-rose-900: #8b0836;
+  --color-rose-950: #4d0218;
+
+  --color-alabaster-50: #f7f7f8;
+  --color-alabaster-100: #eeeef0;
+  --color-alabaster-200: #d9d9de;
+  --color-alabaster-300: #b8b9c1;
+  --color-alabaster-400: #92939e;
+  --color-alabaster-500: #747583;
+  --color-alabaster-600: #5e5f6b;
+  --color-alabaster-700: #4d4e57;
+  --color-alabaster-800: #42424a;
+  --color-alabaster-900: #3a3a40;
+  --color-alabaster-950: #26262b;
+
   --color-background: var(--color-background);
   --color-forceground: var(--color-forceground);
   --color-tertiary: var(--color-tertiary);
@@ -71,9 +131,6 @@
   --color-danger-900: var(--color-danger-900);
   --color-danger-950: var(--color-danger-950);
 
-  --font-title: var(--font-title);
-  --font-body: var(--font-body);
-
   @keyframes pulse {
     50% {
       opacity: 0;
@@ -97,6 +154,8 @@
 
 @layer base {
   * {
+    --font-title: var(--font-class-display);
+    --font-body: var(--font-general-sans);
     font-family: var(--font-body);
   }
   h1,

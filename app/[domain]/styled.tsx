@@ -7,7 +7,7 @@ import { StylesConfig } from '$utils/types';
 
 export function StyleVariables({ theme: { variables, externals } }: { theme: StylesConfig }) {
   return (
-    <_JSXStyle>
+    <_JSXStyle id="main">
       {`
         ${externals.map((link: string) => `@import url('${link}');`).join('\n')}
         

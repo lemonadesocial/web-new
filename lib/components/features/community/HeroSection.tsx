@@ -2,12 +2,13 @@
 import React from 'react';
 import clsx from 'clsx';
 
-import { Button, Spacer } from '$lib/components/core';
+import { Button, sheet, Spacer } from '$lib/components/core';
 import { FollowSpaceDocument, GetMeDocument, Space, UnfollowSpaceDocument } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { useMutation, useQuery } from '$lib/request';
 
 import { COMMUNITY_SOCIAL_LINKS } from './constants';
+import ThemeBuilder from './ThemeBuilder';
 
 interface HeroSectionProps {
   space?: Space | null;
@@ -72,22 +73,25 @@ export function HeroSection({ space }: HeroSectionProps) {
 
         {/* Subscribe button */}
         <div className="absolute bottom-4 right-4">
-          <Button
-            loading={resFollow.loading || resUnfollow.loading}
-            outlined={!!space?.followed}
-            variant="primary"
-            className={clsx(space?.followed && 'hover:bg-primary-500 hover:text-tertiary w-auto duration-300')}
-            onClick={() => handleSubcribe()}
-          >
-            {!!space?.followed ? (
-              <>
-                <span className="hidden group-hover:block">Unsubscribe</span>
-                <span className="block group-hover:hidden">Subscribed</span>
-              </>
-            ) : (
-              'Subscribe'
-            )}
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button icon="icon-dark-theme-filled" outlined onClick={() => sheet.open(ThemeBuilder)} />
+            <Button
+              loading={resFollow.loading || resUnfollow.loading}
+              outlined={!!space?.followed}
+              variant="primary"
+              className={clsx(space?.followed && 'hover:bg-primary-500 hover:text-tertiary w-auto duration-300')}
+              onClick={() => handleSubcribe()}
+            >
+              {!!space?.followed ? (
+                <>
+                  <span className="hidden group-hover:block">Unsubscribe</span>
+                  <span className="block group-hover:hidden">Subscribed</span>
+                </>
+              ) : (
+                'Subscribe'
+              )}
+            </Button>
+          </div>
         </div>
       </div>
 

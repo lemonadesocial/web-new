@@ -1,7 +1,7 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 
-import { Divider, Spacer } from '$lib/components/core';
+import { Button, Divider, Spacer } from '$lib/components/core';
 import { getSiteData } from '$utils/fetchers';
 
 import PageHeader from './page-header';
@@ -31,7 +31,9 @@ export default async function SiteHomePage({ params }: { params: Promise<{ domai
       <Spacer className="h-6" />
       <Divider className="my-2" />
 
-      <div className="pt-6">event list here</div>
+      <div className="pt-6">
+        <Button>primary</Button>
+      </div>
       <Link href={'/c/new-space'}>asdasd</Link>
     </>
   );

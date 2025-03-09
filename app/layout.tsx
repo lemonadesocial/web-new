@@ -6,8 +6,8 @@ import clsx from 'clsx';
 import StyledJsxRegistry from './registry';
 import './globals.css';
 
-const generalSans = localFont({ src: '../public/fonts/GeneralSans-Variable.ttf', variable: '--font-body' });
-const classDisplay = localFont({ src: '../public/fonts/ClashDisplay-Variable.ttf', variable: '--font-title' });
+const generalSans = localFont({ src: '../public/fonts/GeneralSans-Variable.ttf', variable: '--font-general-sans' });
+const classDisplay = localFont({ src: '../public/fonts/ClashDisplay-Variable.ttf', variable: '--font-class-display' });
 
 export const metadata: Metadata = {
   title: 'Create Next App',

@@ -19,12 +19,12 @@
  *   }
  */
 
-import clsx from 'clsx';
 import React from 'react';
+import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
 
-interface DrawerOptions<T> {
+interface Options<T> {
   props?: T;
   position?: 'left' | 'right';
   duration?: number;
@@ -32,7 +32,7 @@ interface DrawerOptions<T> {
 }
 
 interface Drawer {
-  open: <T extends object>(component: React.ComponentType<T>, options?: DrawerOptions<T>) => void;
+  open: <T extends object>(component: React.ComponentType<T>, options?: Options<T>) => void;
   close: () => void;
 }
 
@@ -47,21 +47,18 @@ export const drawer: Drawer = {
 
 export function DrawerContainer() {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [drawerContent, setDrawerContent] = React.useState<React.ReactNode>();
-  const [drawerOptions, setDrawerOptions] = React.useState<DrawerOptions<unknown>>({ duration: 0.3 });
-  const drawerRef = React.useRef<HTMLDivElement | null>(null);
+  const [content, setContent] = React.useState<React.ReactNode>();
+  const [options, setOptions] = React.useState<Options<unknown>>({ duration: 0.3 });
+  const ref = React.useRef<HTMLDivElement | null>(null);
 
-  const openDrawer = React.useCallback(
-    <T extends object>(Component: React.ComponentType<T>, options: DrawerOptions<T> = {}) => {
-      setDrawerContent(<Component {...(options.props as T)} />);
-      setDrawerOptions((prev) => ({ ...prev, ...options }));
-      setIsOpen(true);
-    },
-    [],
-  );
+  const handleOpen = React.useCallback(<T extends object>(Component: React.ComponentType<T>, opts: Options<T> = {}) => {
+    setContent(<Component {...(options.props as T)} />);
+    setOptions((prev) => ({ ...prev, ...opts }));
+    setIsOpen(true);
+  }, []);
 
   const handleOutsideClick = (event: MouseEvent) => {
-    if (drawerRef.current && event.target instanceof Node && drawerRef.current.contains(event.target)) {
+    if (ref.current && event.target instanceof Node && ref.current.contains(event.target)) {
       // do nothing here
     } else {
       setIsOpen(false);
@@ -69,7 +66,7 @@ export function DrawerContainer() {
   };
 
   React.useEffect(() => {
-    drawer.open = openDrawer;
+    drawer.open = handleOpen;
     drawer.close = () => {
       setIsOpen(false);
     };
@@ -92,17 +89,17 @@ export function DrawerContainer() {
       {isOpen && (
         <div className="fixed z-50 inset-0">
           <div className="h-full w-full p-4">
-            <div className={clsx('flex h-full', drawerOptions.position === 'right' && 'justify-end')}>
+            <div className={clsx('flex h-full', options.position === 'right' && 'justify-end')}>
               <motion.div
                 key="drawer"
                 initial={{ x: '100%' }}
                 animate={{ x: 0 }}
                 exit={{ x: '100%' }}
-                transition={{ duration: drawerOptions.duration }}
-                ref={drawerRef}
-                className={twMerge('rounded-sm flex-1 max-w-[528px]', drawerOptions.contentClass)}
+                transition={{ duration: options.duration }}
+                ref={ref}
+                className={twMerge('rounded-sm flex-1 max-w-[528px]', options.contentClass)}
               >
-                {drawerContent}
+                {content}
               </motion.div>
             </div>
           </div>
