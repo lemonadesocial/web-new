@@ -3,13 +3,7 @@ import React from 'react';
 import clsx from 'clsx';
 
 import { Button, sheet, Spacer } from '$lib/components/core';
-import {
-  FollowSpaceDocument,
-  Space,
-  UnfollowSpaceDocument,
-  UpdateSpaceDocument,
-  User,
-} from '$lib/generated/backend/graphql';
+import { FollowSpaceDocument, Space, UnfollowSpaceDocument, User } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { useMutation } from '$lib/request';
 
