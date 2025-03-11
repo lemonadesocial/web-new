@@ -3,21 +3,27 @@ import React from 'react';
 import clsx from 'clsx';
 
 import { Button, sheet, Spacer } from '$lib/components/core';
-import { FollowSpaceDocument, GetMeDocument, Space, UnfollowSpaceDocument } from '$lib/generated/backend/graphql';
+import {
+  FollowSpaceDocument,
+  Space,
+  UnfollowSpaceDocument,
+  UpdateSpaceDocument,
+  User,
+} from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
-import { useMutation, useQuery } from '$lib/request';
+import { useMutation } from '$lib/request';
 
 import { COMMUNITY_SOCIAL_LINKS } from './constants';
 import ThemeBuilder from './ThemeBuilder';
+import Link from 'next/link';
+import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 
 interface HeroSectionProps {
   space?: Space | null;
+  me?: User | null;
 }
 
-export function HeroSection({ space }: HeroSectionProps) {
-  const { data: dataGetMe } = useQuery(GetMeDocument);
-  const me = dataGetMe?.getMe;
-
+export function HeroSection({ me, space }: HeroSectionProps) {
   const [follow, resFollow] = useMutation(FollowSpaceDocument, {
     onComplete: (client) => {
       client.writeFragment({ id: `Space:${space?._id}`, data: { followed: true } });
@@ -39,6 +45,8 @@ export function HeroSection({ space }: HeroSectionProps) {
     if (space?.followed) unfollow({ variables });
     else follow({ variables });
   };
+
+  const canManage = [space?.creator, space?.admins?.map((p) => p._id)].filter((p) => p).includes(me?._id);
 
   return (
     <>
@@ -65,7 +73,7 @@ export function HeroSection({ space }: HeroSectionProps) {
           {space?.image_avatar && (
             <img
               className="w-full h-full outline outline-tertiary/[0.04] rounded-md"
-              src={generateUrl(space?.image_avatar_expanded, { resize: { width: 128, height: 128 } })}
+              src={generateUrl(space?.image_avatar_expanded, { resize: { width: 80, height: 56 } })}
               alt={space?.title}
             />
           )}
@@ -74,23 +82,39 @@ export function HeroSection({ space }: HeroSectionProps) {
         {/* Subscribe button */}
         <div className="absolute bottom-4 right-4">
           <div className="flex items-center gap-3">
-            <Button icon="icon-dark-theme-filled" outlined onClick={() => sheet.open(ThemeBuilder)} />
-            <Button
-              loading={resFollow.loading || resUnfollow.loading}
-              outlined={!!space?.followed}
-              variant="primary"
-              className={clsx(space?.followed && 'hover:bg-primary-500 hover:text-tertiary w-auto duration-300')}
-              onClick={() => handleSubcribe()}
-            >
-              {!!space?.followed ? (
-                <>
-                  <span className="hidden group-hover:block">Unsubscribe</span>
-                  <span className="block group-hover:hidden">Subscribed</span>
-                </>
-              ) : (
-                'Subscribe'
-              )}
-            </Button>
+            {[space?.creator, ...(space?.admins?.map((p) => p._id) || [])].includes(me?._id) && (
+              <Button
+                icon="icon-dark-theme-filled"
+                outlined
+                onClick={() => {
+                  sheet.open(ThemeBuilder, { snapPoints: [324], props: { space } });
+                }}
+              />
+            )}
+            {canManage ? (
+              <Link href={`${LEMONADE_DOMAIN}/s/${space?.slug || space?._id}`} target="_blank">
+                <Button variant="primary" outlined iconRight="icon-arrow-outward">
+                  <span className="block">Manage</span>
+                </Button>
+              </Link>
+            ) : (
+              <Button
+                loading={resFollow.loading || resUnfollow.loading}
+                outlined={!!space?.followed}
+                variant="primary"
+                className={clsx(space?.followed && 'hover:bg-primary-500 hover:text-tertiary w-auto duration-300')}
+                onClick={() => handleSubcribe()}
+              >
+                {!!space?.followed ? (
+                  <>
+                    <span className="hidden group-hover:block">Unsubscribe</span>
+                    <span className="block group-hover:hidden">Subscribed</span>
+                  </>
+                ) : (
+                  'Subscribe'
+                )}
+              </Button>
+            )}
           </div>
         </div>
       </div>

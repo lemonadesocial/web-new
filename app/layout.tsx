@@ -1,13 +1,10 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
-import localFont from 'next/font/local';
 import clsx from 'clsx';
 
 import StyledJsxRegistry from './registry';
 import './globals.css';
-
-const generalSans = localFont({ src: '../public/fonts/GeneralSans-Variable.ttf', variable: '--font-general-sans' });
-const classDisplay = localFont({ src: '../public/fonts/ClashDisplay-Variable.ttf', variable: '--font-class-display' });
+import fonts from './fonts';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -24,7 +21,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" data-theme={theme?.value || 'dark'}>
-      <body className={clsx('transition antialiased', generalSans.variable, classDisplay.variable)}>
+      <body className={clsx('transition antialiased', fonts)}>
         <StyledJsxRegistry>{children}</StyledJsxRegistry>
       </body>
     </html>

@@ -7,6 +7,7 @@ interface Options<T> {
   onClose?: () => void;
   snapPoints?: number[];
   contentClass?: string;
+  initialSnap?: number;
 }
 
 interface BottomSheet {
@@ -28,10 +29,12 @@ export function BottomSheetContainer() {
   const [content, setContent] = React.useState<React.ReactNode>();
   const [options, setOptions] = React.useState<Options<unknown>>({
     snapPoints: [600, 400, 100, 0],
+    initialSnap: 0,
   });
 
   const handleOpen = React.useCallback(<T extends object>(Component: React.ComponentType<T>, opts: Options<T> = {}) => {
-    setContent(<Component {...(options.props as T)} />);
+    console.log(options);
+    setContent(<Component {...(opts.props as T)} />);
     setOptions((prev) => ({ ...prev, ...opts }));
     setIsOpen(true);
   }, []);
@@ -47,7 +50,12 @@ export function BottomSheetContainer() {
   }, [isOpen]);
 
   return (
-    <Sheet isOpen={isOpen} onClose={() => handleClose()} snapPoints={options.snapPoints} initialSnap={1}>
+    <Sheet
+      isOpen={isOpen}
+      onClose={() => handleClose()}
+      snapPoints={options.snapPoints}
+      initialSnap={options.initialSnap}
+    >
       <Sheet.Container className="bg-transparent! rounded-tl-lg! rounded-tr-lg!">
         <Sheet.Content className="bg-alabaster-950/80 backdrop-blur-2xl rounded-tl-lg rounded-tr-lg">
           <div className="flex justify-center items-end h-[20px]">

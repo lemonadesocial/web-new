@@ -43,42 +43,6 @@
   --color-woodsmoke-900: #393743;
   --color-woodsmoke-950: #141317;
 
-  --color-violet-50: #f5f3ff;
-  --color-violet-100: #ede9fe;
-  --color-violet-200: #ddd6ff;
-  --color-violet-300: #c4b4ff;
-  --color-violet-400: #a684ff;
-  --color-violet-500: #8e51ff;
-  --color-violet-600: #7f22fe;
-  --color-violet-700: #7008e7;
-  --color-violet-800: #5d0ec0;
-  --color-violet-900: #4d179a;
-  --color-violet-950: #2f0d68;
-
-  --color-emerald-50: #ecfdf5;
-  --color-emerald--100: #d0fae5;
-  --color-emerald--200: #a4f4cf;
-  --color-emerald--300: #5ee9b5;
-  --color-emerald--400: #00d492;
-  --color-emerald--500: #00bc7d;
-  --color-emerald--600: #009966;
-  --color-emerald--700: #007a55;
-  --color-emerald--800: #006045;
-  --color-emerald--900: #004f3b;
-  --color-emerald--950: #002c22;
-
-  --color-rose-50: #fff1f2;
-  --color-rose-100: #ffe4e6;
-  --color-rose-200: #ffccd3;
-  --color-rose-300: #ffa1ad;
-  --color-rose-400: #ff637e;
-  --color-rose-500: #ff2056;
-  --color-rose-600: #ec003f;
-  --color-rose-700: #c70036;
-  --color-rose-800: #a50036;
-  --color-rose-900: #8b0836;
-  --color-rose-950: #4d0218;
-
   --color-alabaster-50: #f7f7f8;
   --color-alabaster-100: #eeeef0;
   --color-alabaster-200: #d9d9de;
@@ -152,12 +116,10 @@
   }
 }
 
+@theme inline {
+}
+
 @layer base {
-  * {
-    --font-title: var(--font-class-display);
-    --font-body: var(--font-general-sans);
-    font-family: var(--font-body);
-  }
   h1,
   h2,
   h3,
@@ -181,9 +143,36 @@
   }
 }
 
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  html {
+    color-scheme: light;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
 body {
+  --font-title: var(--font-class-display);
+  --font-body: var(--font-general-sans);
   background: var(--color-background);
   color: var(--color-forceground);
+  font-family: var(--font-body);
 }
 
 .page {

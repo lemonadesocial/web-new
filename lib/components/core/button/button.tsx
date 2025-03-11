@@ -61,7 +61,7 @@ export function Button({
         'transition border border-transparent group cursor-pointer inline-flex items-center justify-center gap-2.5 font-medium',
         sizes[size],
         outlined ? outlineVariants[variant] : variants[variant],
-        clsx({ [iconOnlySizes[size]]: !!icon }),
+        clsx({ [iconOnlySizes[size]]: !!icon, 'cursor-not-allowed opacity-50 ': disabled || loading }),
         className,
       )}
       {...rest}

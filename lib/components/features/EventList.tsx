@@ -184,7 +184,7 @@ function EventCardItem({ item, tags = [] }: { item: Event; tags?: SpaceTagBase[]
 
               <p>{format(item.start, 'hh:mm a')}</p>
             </div>
-            <p className="font-title text-xl font-semibold text-tertiary">{item.title}</p>
+            <h3 className="text-xl font-semibold text-tertiary">{item.title}</h3>
             <div className="flex gap-2 item-center">
               {!!users.filter((p) => p?.image_avatar).length && (
                 <div className="flex -space-x-1 overflow-hidden p-1">

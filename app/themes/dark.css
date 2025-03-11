@@ -1,7 +1,6 @@
 [data-theme='dark'] {
   color-scheme: dark;
 
-  /* --color-background: #141216; */
   --color-background: var(--color-woodsmoke-950);
   --color-forceground: #ffffff;
   --color-tertiary: #ffffff;
