@@ -52,6 +52,7 @@ fragment Space on Space {
   handle_youtube
   handle_tiktok
   personal
+  theme_data
 }
 
 fragment SpaceTag on SpaceTagBase {
@@ -163,4 +164,10 @@ mutation FollowSpace($space: MongoID!) {
 
 mutation UnfollowSpace($space: MongoID!) {
   unfollowSpace(space: $space)
+}
+
+mutation UpdateSpace($id: MongoID!, $input: SpaceInput!) {
+  updateSpace(_id: $id, input: $input) {
+    ...Space
+  }
 }

@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import Link from 'next/link';
-import React, { JSX } from 'react';
+import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface CardProps extends React.PropsWithChildren {
@@ -9,6 +9,7 @@ interface CardProps extends React.PropsWithChildren {
   as?: 'button' | 'link';
   href?: string;
   target?: '_blank';
+  style?: React.CSSProperties | Record<string, string>;
 }
 
 export function Card({ children, href = '', onClick, as: tag = 'button', className, ...rest }: CardProps) {
@@ -26,18 +27,17 @@ export function Card({ children, href = '', onClick, as: tag = 'button', classNa
       </Link>
     );
 
-  const Comp =
-    typeof onClick === 'function' ? ('button' as keyof JSX.IntrinsicElements) : ('div' as keyof JSX.IntrinsicElements);
   return (
-    <Comp
+    <div
       className={twMerge(
-        'p-4 rounded-md border border-tertiary/[0.04] bg-tertiary/[0.04]',
-        clsx((typeof onClick === 'function' || !!href) && 'hover:bg-tertiary/[.08]'),
+        'text-left p-4 rounded-md border border-tertiary/[0.04] bg-tertiary/[0.04]',
+        clsx((typeof onClick === 'function' || !!href) && 'cursor-pointer hover:bg-tertiary/[.08]'),
         className,
       )}
+      onClick={onClick}
       {...rest}
     >
       {children}
-    </Comp>
+    </div>
   );
 }

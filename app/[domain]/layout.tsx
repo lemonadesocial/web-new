@@ -1,12 +1,13 @@
 import React from 'react';
 import { Metadata } from 'next';
 
+import { BottomSheetContainer, DrawerContainer } from '$lib/components/core/dialog';
+
 import { getSiteData } from '$utils/fetchers';
 import { Config } from '$utils/types';
 
 import { StyleVariables } from './styled';
 import Providers from './providers';
-import { DrawerContainer } from '$lib/components/core/dialog';
 
 export async function generateMetadata(props: { params: Promise<{ domain: string }> }): Promise<Metadata | null> {
   const params = await props.params;
@@ -30,6 +31,7 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
       <StyleVariables theme={data.theme.styles} />
       {props.children}
       <DrawerContainer />
+      <BottomSheetContainer />
     </Providers>
   );
 }

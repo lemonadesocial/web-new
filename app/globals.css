@@ -31,6 +31,30 @@
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
 
+  --color-woodsmoke-50: #f7f7f8;
+  --color-woodsmoke-100: #eeedf1;
+  --color-woodsmoke-200: #d9d8df;
+  --color-woodsmoke-300: #b8b5c4;
+  --color-woodsmoke-400: #918da3;
+  --color-woodsmoke-500: #736f88;
+  --color-woodsmoke-600: #5e5970;
+  --color-woodsmoke-700: #4c495b;
+  --color-woodsmoke-800: #423f4d;
+  --color-woodsmoke-900: #393743;
+  --color-woodsmoke-950: #141317;
+
+  --color-alabaster-50: #f7f7f8;
+  --color-alabaster-100: #eeeef0;
+  --color-alabaster-200: #d9d9de;
+  --color-alabaster-300: #b8b9c1;
+  --color-alabaster-400: #92939e;
+  --color-alabaster-500: #747583;
+  --color-alabaster-600: #5e5f6b;
+  --color-alabaster-700: #4d4e57;
+  --color-alabaster-800: #42424a;
+  --color-alabaster-900: #3a3a40;
+  --color-alabaster-950: #26262b;
+
   --color-background: var(--color-background);
   --color-forceground: var(--color-forceground);
   --color-tertiary: var(--color-tertiary);
@@ -71,9 +95,6 @@
   --color-danger-900: var(--color-danger-900);
   --color-danger-950: var(--color-danger-950);
 
-  --font-title: var(--font-title);
-  --font-body: var(--font-body);
-
   @keyframes pulse {
     50% {
       opacity: 0;
@@ -95,10 +116,10 @@
   }
 }
 
+@theme inline {
+}
+
 @layer base {
-  * {
-    font-family: var(--font-body);
-  }
   h1,
   h2,
   h3,
@@ -122,9 +143,36 @@
   }
 }
 
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  html {
+    color-scheme: light;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
 body {
+  --font-title: var(--font-class-display);
+  --font-body: var(--font-general-sans);
   background: var(--color-background);
   color: var(--color-forceground);
+  font-family: var(--font-body);
 }
 
 .page {
