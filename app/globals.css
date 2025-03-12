@@ -179,6 +179,14 @@ body {
   max-width: 67.5rem;
 }
 
+.font-title {
+  font-family: var(--font-title);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
 a[title='Open this area in Google Maps (opens a new window)'],
 .gm-style-cc {
   display: none !important;

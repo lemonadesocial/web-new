@@ -2,11 +2,13 @@ import localFont from 'next/font/local';
 import { twMerge } from 'tailwind-merge';
 
 const generalSans = localFont({
+  display: 'swap',
   src: '../public/fonts/GeneralSans-Variable.ttf',
   variable: '--font-general-sans',
 });
 
 const classDisplay = localFont({
+  display: 'swap',
   src: '../public/fonts/ClashDisplay-Variable.ttf',
   variable: '--font-class-display',
 });
@@ -14,11 +16,13 @@ const classDisplay = localFont({
 // title fonts
 
 const aktura = localFont({
+  display: 'swap',
   src: '../public/fonts/title/Aktura-Regular.otf',
   variable: '--font-aktura',
 });
 
 const array = localFont({
+  display: 'swap',
   src: '../public/fonts/title/Array-Bold.otf',
   variable: '--font-aktura',
 });
@@ -29,6 +33,7 @@ const sarpanch = localFont({
 });
 
 const chillax = localFont({
+  display: 'swap',
   src: '../public/fonts/title/Chillax-Semibold.otf',
   variable: '--font-chillax',
 });
@@ -44,6 +49,7 @@ const comico = localFont({
 });
 
 const khand = localFont({
+  display: 'swap',
   src: '../public/fonts/title/Khand-Bold.otf',
   variable: '--font-khand',
 });
@@ -54,6 +60,7 @@ const melodrama = localFont({
 });
 
 const poppins = localFont({
+  display: 'swap',
   src: '../public/fonts/title/Poppins-SemiBold.otf',
   variable: '--font-poppins',
 });
@@ -69,6 +76,7 @@ const sharpie = localFont({
 });
 
 const rubik_dirt = localFont({
+  display: 'swap',
   src: '../public/fonts/title/RubikDirt-Regular.ttf',
   variable: '--font-rubik-dirt',
 });
@@ -79,6 +87,7 @@ const stencil = localFont({
 });
 
 const tanker = localFont({
+  display: 'swap',
   src: '../public/fonts/title/Tanker-Regular.otf',
   variable: '--font-tanker',
 });
@@ -94,6 +103,7 @@ const zina = localFont({
 });
 
 const zodiak = localFont({
+  display: 'swap',
   src: '../public/fonts/title/Zodiak-Bold.otf',
   variable: '--font-zodiak',
 });
@@ -105,31 +115,37 @@ const archivo = localFont({
 });
 
 const azeret_mono = localFont({
+  display: 'swap',
   src: '../public/fonts/body/AzeretMono-Regular.otf',
   variable: '--font-azeret-mono',
 });
 
 const ranade = localFont({
+  display: 'swap',
   src: '../public/fonts/body/Ranade-Regular.otf',
   variable: '--font-ranade',
 });
 
 const sentient = localFont({
+  display: 'swap',
   src: '../public/fonts/body/Sentient-Regular.otf',
   variable: '--font-sentient',
 });
 
 const spline_sans = localFont({
+  display: 'swap',
   src: '../public/fonts/body/SplineSans-Regular.otf',
   variable: '--font-spline-sans',
 });
 
 const supreme = localFont({
+  display: 'swap',
   src: '../public/fonts/body/Supreme-Medium.otf',
   variable: '--font-supreme',
 });
 
 const synonym = localFont({
+  display: 'swap',
   src: '../public/fonts/body/Synonym-Medium.otf',
   variable: '--font-synonym',
 });

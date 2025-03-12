@@ -21,11 +21,11 @@ function MenuContent({ children }: React.PropsWithChildren) {
 function MenuRoot({ children, className, contentClass, disabled }: MenuProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [placement, setPlacement] = React.useState('bottom-start');
-  const triggerRef = React.useRef(null);
-  const dropdownRef = React.useRef(null);
+  const triggerRef = React.useRef<HTMLDivElement>(null);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
 
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
       setIsOpen(false);
     }
   };

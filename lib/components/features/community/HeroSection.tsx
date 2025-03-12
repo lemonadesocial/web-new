@@ -46,21 +46,22 @@ export function HeroSection({ me, space }: HeroSectionProps) {
     <>
       <div className="relative w-full h-44 md:h-96 overflow-hidden">
         {space?.image_cover && (
-          <picture>
-            <source
-              media="(max-width:30rem)"
-              srcSet={generateUrl(space?.image_cover_expanded, {
-                resize: { width: 480, height: 480 * 3.5, fit: 'contain' },
+          <>
+            <img
+              className="md:hidden aspect-[3.5/1] object-cover object-cover rounded-md w-full"
+              alt={space?.title as string}
+              src={generateUrl(space?.image_cover_expanded, {
+                resize: { width: 480, fit: 'contain' },
               })}
             />
             <img
               src={generateUrl(space?.image_cover_expanded, {
-                resize: { width: 1080, height: 1080 * 3.5, fit: 'contain' },
+                resize: { width: 1080, fit: 'contain' },
               })}
               alt={space?.title as string}
-              className="aspect-[3.5/1] object-cover object-cover rounded-md w-full"
+              className="hidden md:block aspect-[3.5/1] object-cover object-cover rounded-md w-full"
             />
-          </picture>
+          </>
         )}
 
         <div className="absolute bottom-8 md:bottom-4 outline-6 outline-background size-16 md:size-32 rounded-md overflow-hidden shadow-lg">

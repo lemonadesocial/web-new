@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 
-import { User } from '$lib/generated/graphql';
+import { User } from '$lib/generated/backend/graphql';
 import { Avatar } from '$lib/components/core/avatar';
 import { Button } from '$lib/components/core/button';
 import { useRouter } from 'next/navigation';

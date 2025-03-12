@@ -461,6 +461,7 @@ export type Chain = {
   aragon_network?: Maybe<Scalars['String']['output']>;
   axelar_chain_name?: Maybe<Scalars['String']['output']>;
   biconomy_api_key?: Maybe<Scalars['String']['output']>;
+  block_explorer_for_address?: Maybe<Scalars['String']['output']>;
   block_explorer_for_token?: Maybe<Scalars['String']['output']>;
   block_explorer_for_tx?: Maybe<Scalars['String']['output']>;
   block_explorer_name?: Maybe<Scalars['String']['output']>;
@@ -1187,6 +1188,7 @@ export type Event = {
   location?: Maybe<Point>;
   longitude?: Maybe<Scalars['Float']['output']>;
   matrix_event_room_id?: Maybe<Scalars['String']['output']>;
+  me_awaiting_approval?: Maybe<Scalars['Boolean']['output']>;
   new_new_photos?: Maybe<Array<Scalars['MongoID']['output']>>;
   new_new_photos_expanded?: Maybe<Array<Maybe<File>>>;
   new_photos?: Maybe<Array<FileInline>>;
@@ -6190,6 +6192,8 @@ export enum SpaceTagType {
 export type SpaceTokenGate = {
   __typename?: 'SpaceTokenGate';
   _id: Scalars['MongoID']['output'];
+  /** Decimal places of this token, for display purpose only */
+  decimals: Scalars['Float']['output'];
   /** ERC721 if true, else ERC20 */
   is_nft?: Maybe<Scalars['Boolean']['output']>;
   max_value?: Maybe<Scalars['String']['output']>;
@@ -6205,6 +6209,8 @@ export type SpaceTokenGate = {
 
 export type SpaceTokenGateInput = {
   _id?: InputMaybe<Scalars['MongoID']['input']>;
+  /** Decimal places of this token, for display purpose only */
+  decimals?: InputMaybe<Scalars['Float']['input']>;
   /** ERC721 if true, else ERC20 */
   is_nft?: InputMaybe<Scalars['Boolean']['input']>;
   max_value?: InputMaybe<Scalars['String']['input']>;
