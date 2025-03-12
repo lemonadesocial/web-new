@@ -143,12 +143,11 @@ export default function Container({ me, space }: { me?: User; space?: Space }) {
     }
   }, [shouldLoadMore]);
 
-  const styled = space?.theme_data;
-
+  const styled = (dataGetSpace?.getSpace as Space).theme_data;
   return (
     <>
       {styled && (
-        <style jsx global>
+        <style global jsx>
           {`
             body {
               ${generateCssVariables(styled.font)}

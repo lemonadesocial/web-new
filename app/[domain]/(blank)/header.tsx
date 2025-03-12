@@ -6,6 +6,7 @@ import { Avatar } from '$lib/components/core/avatar';
 import { Button } from '$lib/components/core/button';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Menu } from '$lib/components/core';
 
 export default function Header({ me }: { me: User }) {
   const router = useRouter();
@@ -18,7 +19,11 @@ export default function Header({ me }: { me: User }) {
 
       <div>
         {me ? (
-          <Avatar src={me.image_avatar || ''} />
+          <Menu disabled>
+            <Menu.Trigger>
+              <Avatar src={me.image_avatar || ''} />
+            </Menu.Trigger>
+          </Menu>
         ) : (
           <>
             <Button

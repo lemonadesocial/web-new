@@ -280,7 +280,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
                   updateCommunity({
                     variables: { id: space._id, input: { theme_data: styled } },
                     onComplete: (client) => {
-                      client.writeFragment({ id: `Space:${space._id}`, data: { styled } });
+                      client.writeFragment<Space>({ id: `Space:${space._id}`, data: { theme_data: styled } });
                     },
                   });
                 }
