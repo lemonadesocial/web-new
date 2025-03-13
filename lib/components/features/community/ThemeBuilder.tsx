@@ -285,7 +285,7 @@ function PopoverFont({
   onSelect: (font: string) => void;
 }) {
   return (
-    <Menu className="flex-1" contentClass="max-h-38 overflow-scroll no-scrollbar">
+    <Menu className="flex-1" contentClass="max-h-38 w-[370px] overflow-scroll no-scrollbar">
       <Menu.Trigger>
         <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
           <h3 style={{ fontFamily: fonts[name] }} className={clsx(label === 'title' ? 'font-semibold' : 'font-medium')}>
@@ -304,7 +304,7 @@ function PopoverFont({
       </Menu.Trigger>
 
       <Menu.Content>
-        <div className="grid grid-cols-4 gap-5">
+        <div className="flex gap-4 flex-wrap">
           {Object.entries(fonts).map(([key, font]) => (
             <div
               key={key}
@@ -313,11 +313,13 @@ function PopoverFont({
             >
               <div
                 className={clsx(
-                  'border rounded px-4 py-2',
+                  'border rounded px-4 py-2 w-[72px] h-[56px]',
                   key === name.toLowerCase().replaceAll(' ', '_') && 'border border-tertiary',
                 )}
               >
-                <h3 style={{ fontFamily: font }}>Ag</h3>
+                <h3 style={{ fontFamily: font }} className="size-10 text-xl text-center">
+                  Ag
+                </h3>
               </div>
               <p className="capitalize font-general-sans">{join(split(key, '_'), ' ')}</p>
             </div>
