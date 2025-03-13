@@ -170,6 +170,9 @@
 body {
   --font-title: var(--font-class-display);
   --font-body: var(--font-general-sans);
+}
+
+main {
   background: var(--color-background);
   color: var(--color-forceground);
   font-family: var(--font-body);

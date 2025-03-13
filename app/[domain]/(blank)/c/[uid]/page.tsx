@@ -26,5 +26,9 @@ export default async function Page({ params }: { params: Promise<{ uid: string }
 
   if (!space) return notFound();
 
-  return <Container space={space} me={me} />;
+  return (
+    <div className={space._id}>
+      <Container space={space} me={me} />
+    </div>
+  );
 }

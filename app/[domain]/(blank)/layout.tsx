@@ -19,10 +19,10 @@ export default async function Layout({ children }: React.PropsWithChildren) {
 
   return (
     <>
-      <div className="flex flex-col h-dvh w-full">
+      <main className="flex flex-col h-dvh w-full">
         <Header me={me} />
         <Main>{children}</Main>
-      </div>
+      </main>
     </>
   );
 }

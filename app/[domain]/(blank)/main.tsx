@@ -28,8 +28,8 @@ export function Main({ children }: React.PropsWithChildren) {
   }, []);
 
   return (
-    <main ref={mainRef} className="w-full p-4 overflow-auto flex-1">
+    <div ref={mainRef} className="w-full p-4 overflow-auto flex-1">
       <div className="page mx-auto">{children}</div>
-    </main>
+    </div>
   );
 }
