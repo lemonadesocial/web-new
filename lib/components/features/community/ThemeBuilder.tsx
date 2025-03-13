@@ -158,7 +158,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
               setFont((prev) => ({ ...prev, title: font }));
               setVariables((prev) => ({
                 ...prev,
-                font: { '--font-title': fonts.title[font] },
+                font: { ...prev.font, '--font-title': fonts.title[font] },
               }));
             }}
           />
@@ -171,7 +171,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
               setFont((prev) => ({ ...prev, body: font }));
               setVariables((prev) => ({
                 ...prev,
-                font: { '--font-body': fonts.body[font] },
+                font: { ...prev.font, '--font-body': fonts.body[font] },
               }));
             }}
           />
@@ -209,6 +209,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
               onClick={() => {
                 if (space) {
                   const theme_data = { name: selected, color, variables };
+                  console.log(theme_data);
                   updateCommunity({
                     variables: { id: space._id, input: { theme_data } },
                     onComplete: (client) => {

@@ -143,25 +143,25 @@ export default function Container({ me, space }: { me?: User; space?: Space }) {
     }
   }, [shouldLoadMore]);
 
-  const styled = (dataGetSpace?.getSpace as Space).theme_data;
+  const theme = (dataGetSpace?.getSpace as Space).theme_data;
   return (
     <>
-      {styled && (
+      {theme?.variables && (
         <style global jsx>
           {`
             body {
-              ${generateCssVariables(styled.font)}
+              ${theme.variables.font && generateCssVariables(theme.variables.font)}
             }
 
             @media (prefers-color-scheme: dark) {
-              :root {
-                ${generateCssVariables(styled.dark)}
+              main {
+                ${theme.variables.dark && generateCssVariables(theme.variables.dark)}
               }
             }
 
             @media (prefers-color-scheme: light) {
-              :root {
-                ${generateCssVariables(styled.light)}
+              main {
+                ${theme.variables.light && generateCssVariables(theme.variables.light)}
               }
             }
           `}
