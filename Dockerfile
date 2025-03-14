@@ -43,7 +43,7 @@ ARG AWS_ACCESS_KEY_ID
 ARG AWS_DEFAULT_REGION
 ARG AWS_SECRET_ACCESS_KEY
 ARG AWS_SESSION_TOKEN
-RUN aws s3 sync . s3://$ASSET_BUCKET_NAME --acl public-read --size-only
+RUN aws s3 sync . s3://$ASSET_BUCKET_NAME --size-only
 
 ### app
 FROM public.ecr.aws/docker/library/node:20-alpine AS app
