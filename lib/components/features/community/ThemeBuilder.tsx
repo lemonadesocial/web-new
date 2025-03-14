@@ -65,7 +65,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
         </style>
       )}
 
-      <div className="flex flex-col gap-6 w-[1080px] m-auto py-6">
+      <div className="flex flex-col gap-6 w-[1080px] m-auto py-4">
         <div className="flex flex-1 gap-3 overflow-x no-scrollbar justify-center">
           {Object.entries(presets).map(([key, value]) => (
             <div key={key} className="flex flex-col gap-2 items-center">
