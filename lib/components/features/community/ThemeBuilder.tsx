@@ -10,13 +10,12 @@ import { Menu } from '$lib/components/core/menu';
 import { join, split } from 'lodash';
 import { useMutation } from '$lib/request';
 import { Space, UpdateSpaceDocument } from '$lib/generated/backend/graphql';
-import { ColorPreset, fonts, presets } from './themes_preset/constants';
+import { ColorPreset, defaultColorPreset, fonts, presets } from './themes_preset/constants';
 
 type Styled = {
   font: Record<string, string>;
   dark: Record<string, string>;
   light: Record<string, string>;
-  prefersColor: boolean;
 };
 
 type KeyPreset = 'minimal' | 'gradient';
@@ -197,6 +196,17 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
               icon="icon-shuffle"
               variant="flat"
               className="bg-tertiary/8 hover:bg-tertiary/16 text-tertiary/56"
+              onClick={() => {
+                setVariables(defaultColorPreset);
+                if (space?._id) {
+                  updateCommunity({
+                    variables: { id: space._id, input: { theme_data: null } },
+                    onComplete: (client) => {
+                      client.writeFragment<Space>({ id: `Space:${space._id}`, data: { theme_data: null } });
+                    },
+                  });
+                }
+              }}
             />
           </div>
           <div className="flex gap-2">
@@ -209,7 +219,6 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
               onClick={() => {
                 if (space) {
                   const theme_data = { name: selected, color, variables };
-                  console.log(theme_data);
                   updateCommunity({
                     variables: { id: space._id, input: { theme_data } },
                     onComplete: (client) => {

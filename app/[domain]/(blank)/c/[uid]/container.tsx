@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 import { endOfDay, startOfDay, format } from 'date-fns';
 import clsx from 'clsx';
 
-import { Button, Divider, Map, Segment, Tag } from '$lib/components/core';
+import { Button, Divider, Map, Menu, MenuItem, Segment, Tag } from '$lib/components/core';
 import { HeroSection } from '$lib/components/features/community';
 import {
   Event,
@@ -24,6 +24,7 @@ import { EventList, EventListCard } from '$lib/components/features/EventList';
 import { Calendar } from '$lib/components/core/calendar';
 import { scrollAtBottomAtom } from '$lib/jotai';
 import { generateCssVariables } from '$lib/utils/fetchers';
+import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
@@ -225,9 +226,22 @@ export default function Container({ me, space }: { me?: User; space?: Space }) {
           </div>
 
           <div className="hidden sticky top-0 z-50 flex-col gap-4 md:flex max-w-[296px]">
-            <Button variant="tertiary" iconLeft="icon-plus" className="w-full">
-              Submit Event
-            </Button>
+            <Menu contentClass="px-1.5 py-2">
+              <Menu.Trigger>
+                <Button variant="tertiary" iconLeft="icon-plus" className="w-full">
+                  Submit Event
+                </Button>
+              </Menu.Trigger>
+              <Menu.Content>
+                <MenuItem
+                  title="Create New Event"
+                  iconLeft="icon-edit-square"
+                  onClick={() => window.open(`${LEMONADE_DOMAIN}/create/experience?space=${space?._id}`)}
+                />
+                <MenuItem title="Submit Existing Event" iconLeft="icon-celebration-outline" />
+              </Menu.Content>
+            </Menu>
+
             <Calendar
               events={spaceEventsCalendar.map((item) => new Date(item.start))}
               onSelectDate={setSelectedDate}
