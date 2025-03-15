@@ -2,6 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import Image from 'next/image';
+import { createPortal } from 'react-dom';
 
 import { generateCssVariables } from '$lib/utils/fetchers';
 import { Button, Card } from '$lib/components/core';
@@ -11,6 +12,7 @@ import { join, split } from 'lodash';
 import { useMutation } from '$lib/request';
 import { Space, UpdateSpaceDocument } from '$lib/generated/backend/graphql';
 import { ColorPreset, defaultColorPreset, fonts, presets } from './themes_preset/constants';
+import { ShaderGradient } from './themes_preset/shader';
 
 type Styled = {
   font: Record<string, string>;
@@ -65,6 +67,12 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
         </style>
       )}
 
+      {selected === 'gradient' &&
+        createPortal(
+          <ShaderGradient colors={{ color1: '#808bff', color2: '#9880FF', color3: '#80D3FF' }} />,
+          document.body,
+        )}
+
       <div className="flex flex-col gap-6 w-[1080px] m-auto py-4">
         <div className="flex flex-1 gap-3 overflow-x no-scrollbar justify-center">
           {Object.entries(presets).map(([key, value]) => (
@@ -76,8 +84,18 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
                   selected === key && 'outline-2 outline-offset-2 ring-tertiary',
                 )}
                 onClick={() => {
-                  // setStyled(value);
                   setSelected(key as KeyPreset);
+                  if (key === 'gradient') {
+                    setVariables((prev) => ({
+                      ...prev,
+                      dark: {
+                        '--color-background': 'transparent',
+                      },
+                      light: {
+                        '--color-background': 'transparent',
+                      },
+                    }));
+                  }
                 }}
               >
                 <Image src={value.image} className="rounded-sm" width={80} height={56} alt={key} />
@@ -241,7 +259,7 @@ function PopoverColor({
   label,
   name,
   colors,
-  mode,
+  mode = 'default',
   onSelect,
 }: {
   label: string;
@@ -254,7 +272,7 @@ function PopoverColor({
     <Menu className="flex-1">
       <Menu.Trigger>
         <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
-          <i className={twMerge('size-[24px] rounded-full', colors[name][mode])} />
+          <i className={twMerge('size-[24px] rounded-full', colors[name] && colors[name][mode])} />
           <span className="text-left flex-1  font-general-sans">{label}</span>
           <p className="flex items-center gap-1">
             <span className="capitalize">{name}</span>

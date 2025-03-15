@@ -79,6 +79,8 @@ export const presets = {
   },
   gradient: {
     image: GradientPreview,
-    colors: {},
+    colors: {
+      '1': {},
+    },
   },
 };
