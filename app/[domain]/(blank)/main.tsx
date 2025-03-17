@@ -4,7 +4,7 @@ import { useSetAtom } from 'jotai';
 import { scrollAtBottomAtom } from '$lib/jotai';
 
 export function Main({ children }: React.PropsWithChildren) {
-  const mainRef = React.useRef<HTMLElement | null>(null);
+  const mainRef = React.useRef<HTMLElement>(null);
   const setShouldLoadMore = useSetAtom(scrollAtBottomAtom);
 
   const handleScroll = () => {

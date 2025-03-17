@@ -6,7 +6,7 @@ import { Spacer } from '$lib/components/core';
 import { getSiteData } from '$lib/utils/fetchers';
 import { GetMeDocument } from '$lib/generated/backend/graphql';
 
-import { client } from '$lib/request';
+import { getClient } from '$lib/request';
 
 import Sidebar from './sidebar';
 
@@ -26,6 +26,7 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
   const key = 'x-ory-kratos-session';
   const cookieStore = await cookies();
   const session = cookieStore.get('ory_kratos_session_staging');
+  const client = getClient();
 
   const { data } = await client.query({
     query: GetMeDocument,

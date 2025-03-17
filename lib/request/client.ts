@@ -108,6 +108,8 @@ export class GraphqlClient {
   }
 }
 
-export const client = new GraphqlClient({
-  url: GRAPHQL_URL!,
-});
+export function getClient() {
+  return new GraphqlClient({
+    url: GRAPHQL_URL!,
+  });
+}
