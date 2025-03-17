@@ -15,6 +15,8 @@
     "codegen": "graphql-codegen"
   },
   "dependencies": {
+    "@react-three/fiber": "^9.1.0",
+    "@shadergradient/react": "^2.0.22",
     "@tailwindcss/postcss": "^4.0.8",
     "@vis.gl/react-google-maps": "^1.5.1",
     "clsx": "^2.1.1",
@@ -30,7 +32,8 @@
     "react-dom": "^19.0.0",
     "react-modal-sheet": "^4.0.1",
     "tailwind-merge": "^3.0.2",
-    "tailwindcss": "^4.0.8"
+    "tailwindcss": "^4.0.8",
+    "three": "^0.174.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -43,6 +46,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.174.0",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9",
     "eslint-config-next": "15.1.7",

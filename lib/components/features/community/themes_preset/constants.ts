@@ -56,7 +56,7 @@ export const fonts: { title: Record<string, string>; body: Record<string, string
   },
 };
 
-export const defaultStyles = {
+export const defaultColorPreset = {
   font: {
     '--font-title': 'var(--font-class-display)',
     '--font-body': 'var(--font-general-sans)',
@@ -76,23 +76,11 @@ export const presets = {
     prefersColor: true,
     image: MinimalPreview,
     colors,
-    styles: {
-      font: {
-        // '--font-title': 'var(--font-class-display)',
-        // '--font-body': 'var(--font-general-sans)',
-      },
-      dark: {
-        // '--color-background': 'var(--color-woodsmoke-950)',
-        // '--color-primary-500': 'var(--color-violet-500)',
-      },
-      light: {
-        // '--color-primary-500': 'var(--color-violet-500)',
-        // '--color-background': 'var(--color-woodsmoke-50)',
-      },
-    },
   },
   gradient: {
     image: GradientPreview,
-    colors: {},
+    colors: {
+      '1': {},
+    },
   },
 };
