@@ -3,11 +3,8 @@ import React from 'react';
 import { AdvancedMarker, APIProvider, Map as GoogleMap } from '@vis.gl/react-google-maps';
 import { twMerge } from 'tailwind-merge';
 import { darkMapTheme } from './constant';
-
-const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY as string;
-if (!API_KEY) {
-  console.warn('[WARN]: Missing google api key');
-}
+import { GOOGLE_MAP_KEY } from '$lib/utils/constants';
+import { log } from '$lib/utils/helpers';
 
 interface MapProps {
   className?: string;
@@ -17,8 +14,13 @@ interface MapProps {
 
 // TODO: need to create MapId and MapStyles to use with AdvancedMarker
 export function Map({ className, markers, center }: MapProps) {
+  if (!GOOGLE_MAP_KEY) {
+    log.warn({ message: 'Missing GOOGLE_MAP_KEY.' });
+    return null;
+  }
+
   return (
-    <APIProvider apiKey={API_KEY}>
+    <APIProvider apiKey={GOOGLE_MAP_KEY}>
       <GoogleMap
         mapId="DEMO_MAP_ID"
         className={twMerge('map h-full w-full outline-none', className)}
