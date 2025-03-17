@@ -28,7 +28,7 @@ import { generateCssVariables } from '$lib/utils/fetchers';
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
 
-export default function Container({ me, space }: { me?: User; space?: Space }) {
+export function Community({ me, space }: { me?: User; space?: Space }) {
   const [shouldLoadMore, setShouldLoadMore] = useAtom(scrollAtBottomAtom);
 
   const [mode, setMode] = React.useState<'card' | 'list'>('card');

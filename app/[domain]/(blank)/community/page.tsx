@@ -7,8 +7,9 @@ import { isObjectId } from '$lib/utils/helpers';
 import { GetMeDocument, GetSpaceDocument, Space, User } from '$lib/generated/backend/graphql';
 import { Community } from '$lib/components/features/community';
 
-export default async function Page({ params }: { params: Promise<{ uid: string }> }) {
-  const uid = (await params).uid;
+export default async function Page() {
+  // TODO: need to get from site config
+  const uid = 'new-spaceabc';
   const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
 
   const { data } = await client.query({ query: GetSpaceDocument, variables });
