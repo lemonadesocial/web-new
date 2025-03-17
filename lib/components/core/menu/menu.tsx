@@ -90,8 +90,8 @@ function MenuRoot({ children, className, contentClass, disabled }: MenuProps) {
         {isOpen && (
           <motion.div
             className={twMerge(
-              'absolute focus:outline-none border rounded-sm border-tertiary/4 bg-alabaster-950 w-full p-4',
-              clsx(placement === 'bottom-start' ? 'mt-2 right-0' : 'mb-2 right-0 bottom-full'),
+              'absolute focus:outline-none border rounded-sm border-tertiary/4 bg-alabaster-950 w-full p-4 left-1/2 -translate-x-1/2 z-50',
+              clsx(placement === 'bottom-start' ? 'mt-2' : 'mb-2 bottom-full'),
               contentClass,
             )}
             role="menu"

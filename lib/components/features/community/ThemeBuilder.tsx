@@ -2,6 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import Image from 'next/image';
+import { createPortal } from 'react-dom';
 
 import { generateCssVariables } from '$lib/utils/fetchers';
 import { Button, Card } from '$lib/components/core';
@@ -10,13 +11,13 @@ import { Menu } from '$lib/components/core/menu';
 import { join, split } from 'lodash';
 import { useMutation } from '$lib/request';
 import { Space, UpdateSpaceDocument } from '$lib/generated/backend/graphql';
-import { ColorPreset, fonts, presets } from './themes_preset/constants';
+import { ColorPreset, defaultColorPreset, fonts, presets } from './themes_preset/constants';
+import { ShaderGradient } from './themes_preset/shader';
 
 type Styled = {
   font: Record<string, string>;
   dark: Record<string, string>;
   light: Record<string, string>;
-  prefersColor: boolean;
 };
 
 type KeyPreset = 'minimal' | 'gradient';
@@ -66,7 +67,13 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
         </style>
       )}
 
-      <div className="flex flex-col gap-6 w-[1080px] m-auto py-6">
+      {selected === 'gradient' &&
+        createPortal(
+          <ShaderGradient colors={{ color1: '#808bff', color2: '#9880FF', color3: '#80D3FF' }} />,
+          document.body,
+        )}
+
+      <div className="flex flex-col gap-6 w-[1080px] m-auto py-4">
         <div className="flex flex-1 gap-3 overflow-x no-scrollbar justify-center">
           {Object.entries(presets).map(([key, value]) => (
             <div key={key} className="flex flex-col gap-2 items-center">
@@ -77,8 +84,18 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
                   selected === key && 'outline-2 outline-offset-2 ring-tertiary',
                 )}
                 onClick={() => {
-                  // setStyled(value);
                   setSelected(key as KeyPreset);
+                  if (key === 'gradient') {
+                    setVariables((prev) => ({
+                      ...prev,
+                      dark: {
+                        '--color-background': 'transparent',
+                      },
+                      light: {
+                        '--color-background': 'transparent',
+                      },
+                    }));
+                  }
                 }}
               >
                 <Image src={value.image} className="rounded-sm" width={80} height={56} alt={key} />
@@ -197,6 +214,17 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
               icon="icon-shuffle"
               variant="flat"
               className="bg-tertiary/8 hover:bg-tertiary/16 text-tertiary/56"
+              onClick={() => {
+                setVariables(defaultColorPreset);
+                if (space?._id) {
+                  updateCommunity({
+                    variables: { id: space._id, input: { theme_data: null } },
+                    onComplete: (client) => {
+                      client.writeFragment<Space>({ id: `Space:${space._id}`, data: { theme_data: null } });
+                    },
+                  });
+                }
+              }}
             />
           </div>
           <div className="flex gap-2">
@@ -209,7 +237,6 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
               onClick={() => {
                 if (space) {
                   const theme_data = { name: selected, color, variables };
-                  console.log(theme_data);
                   updateCommunity({
                     variables: { id: space._id, input: { theme_data } },
                     onComplete: (client) => {
@@ -232,7 +259,7 @@ function PopoverColor({
   label,
   name,
   colors,
-  mode,
+  mode = 'default',
   onSelect,
 }: {
   label: string;
@@ -245,7 +272,7 @@ function PopoverColor({
     <Menu className="flex-1">
       <Menu.Trigger>
         <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
-          <i className={twMerge('size-[24px] rounded-full', colors[name][mode])} />
+          <i className={twMerge('size-[24px] rounded-full', colors[name] && colors[name][mode])} />
           <span className="text-left flex-1  font-general-sans">{label}</span>
           <p className="flex items-center gap-1">
             <span className="capitalize">{name}</span>
@@ -285,7 +312,7 @@ function PopoverFont({
   onSelect: (font: string) => void;
 }) {
   return (
-    <Menu className="flex-1" contentClass="max-h-38 overflow-scroll no-scrollbar">
+    <Menu className="flex-1" contentClass="max-h-38 w-[370px] overflow-scroll no-scrollbar">
       <Menu.Trigger>
         <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
           <h3 style={{ fontFamily: fonts[name] }} className={clsx(label === 'title' ? 'font-semibold' : 'font-medium')}>
@@ -304,7 +331,7 @@ function PopoverFont({
       </Menu.Trigger>
 
       <Menu.Content>
-        <div className="grid grid-cols-4 gap-5">
+        <div className="flex gap-4 flex-wrap">
           {Object.entries(fonts).map(([key, font]) => (
             <div
               key={key}
@@ -313,11 +340,13 @@ function PopoverFont({
             >
               <div
                 className={clsx(
-                  'border rounded px-4 py-2',
+                  'border rounded px-4 py-2 w-[72px] h-[56px]',
                   key === name.toLowerCase().replaceAll(' ', '_') && 'border border-tertiary',
                 )}
               >
-                <h3 style={{ fontFamily: font }}>Ag</h3>
+                <h3 style={{ fontFamily: font }} className="size-10 text-xl text-center">
+                  Ag
+                </h3>
               </div>
               <p className="capitalize font-general-sans">{join(split(key, '_'), ' ')}</p>
             </div>

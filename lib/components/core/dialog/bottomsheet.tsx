@@ -57,11 +57,12 @@ export function BottomSheetContainer() {
       initialSnap={options.initialSnap}
     >
       <Sheet.Container className="bg-transparent! rounded-tl-lg! rounded-tr-lg!">
-        <Sheet.Content className="bg-alabaster-950/80 backdrop-blur-2xl rounded-tl-lg rounded-tr-lg">
+        <Sheet.Header className="bg-alabaster-950 rounded-tl-lg rounded-tr-lg">
           <div className="flex justify-center items-end h-[20px]">
             <div className="bg-tertiary/8 rounded-xs w-[48px] h-1 cursor-row-resize"></div>
           </div>
-
+        </Sheet.Header>
+        <Sheet.Content className="bg-alabaster-950" disableDrag>
           <Sheet.Scroller draggableAt="top">
             <div className="">{content}</div>
           </Sheet.Scroller>
