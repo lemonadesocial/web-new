@@ -2,7 +2,7 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
 
-import { client } from '$lib/request/client';
+import { getClient } from '$lib/request/client';
 import { isObjectId } from '$lib/utils/helpers';
 import { GetMeDocument, GetSpaceDocument, Space, User } from '$lib/generated/backend/graphql';
 import { Community } from '$lib/components/features/community';
@@ -10,6 +10,8 @@ import { Community } from '$lib/components/features/community';
 export default async function Page({ params }: { params: Promise<{ uid: string }> }) {
   const uid = (await params).uid;
   const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
+
+  const client = getClient();
 
   const { data } = await client.query({ query: GetSpaceDocument, variables });
   const space = data?.getSpace as Space;

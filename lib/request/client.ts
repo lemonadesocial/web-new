@@ -4,6 +4,12 @@ import { GraphQLClient } from 'graphql-request';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { InMemoryCache } from './cache';
 import { FetchPolicy } from './type';
+import { GRAPHQL_URL } from '$lib/utils/constants';
+import { log } from '$lib/utils/helpers';
+
+if (!GRAPHQL_URL) {
+  log.error({ message: 'Missing GRAPHQL_URL', exit: true });
+}
 
 interface QueryRequest<T, V extends object> {
   query: TypedDocumentNode<T, V>;
@@ -102,6 +108,8 @@ export class GraphqlClient {
   }
 }
 
-export const client = new GraphqlClient({
-  url: process.env.NEXT_PUBLIC_GRAPHQL_URL!,
-});
+export function getClient() {
+  return new GraphqlClient({
+    url: GRAPHQL_URL!,
+  });
+}

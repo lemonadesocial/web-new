@@ -6,7 +6,7 @@ import { Avatar } from '$lib/components/core/avatar';
 import { Button } from '$lib/components/core/button';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Menu } from '$lib/components/core';
+import { Menu, MenuItem } from '$lib/components/core';
 
 export default function Header({ me }: { me: User }) {
   const router = useRouter();
@@ -19,10 +19,13 @@ export default function Header({ me }: { me: User }) {
 
       <div>
         {me ? (
-          <Menu disabled>
+          <Menu className="w-fit right-0">
             <Menu.Trigger>
               <Avatar src={me.image_avatar || ''} />
             </Menu.Trigger>
+            <Menu.Content>
+              <MenuItem iconLeft="icon-" title="logout" />
+            </Menu.Content>
           </Menu>
         ) : (
           <>

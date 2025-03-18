@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import React from 'react';
 
 import { GetMeDocument, User } from '$lib/generated/backend/graphql';
-import { client } from '$lib/request/client';
+import { getClient } from '$lib/request/client';
 import Header from './header';
 import { Main } from './main';
 
@@ -10,6 +10,7 @@ export default async function Layout({ children }: React.PropsWithChildren) {
   const key = 'x-ory-kratos-session';
   const cookieStore = await cookies();
   const session = cookieStore.get('ory_kratos_session_staging');
+  const client = getClient();
 
   const { data } = await client.query({
     query: GetMeDocument,
