@@ -45,36 +45,12 @@ function MenuRoot({ children, className, contentClass, disabled, placement = 'bo
     };
   }, []);
 
-  // React.useEffect(() => {
-  //   if (isOpen && triggerRef.current) {
-  //     const buttonRect = triggerRef.current.getBoundingClientRect();
-  //     const windowHeight = window.innerHeight;
-  //
-  //     if (buttonRect.bottom + 200 > windowHeight) {
-  //       // 200 is an approximate dropdown height.
-  //       setPlacement('top-start');
-  //     } else {
-  //       setPlacement('bottom-start');
-  //     }
-  //   }
-  // }, [isOpen]);
-
   const dropdownVariants = {
     open: {
       opacity: 1,
-      // y: 0,
-      // transition: {
-      //   duration: 0.2,
-      //   ease: 'easeInOut',
-      // },
     },
     closed: {
       opacity: 0,
-      // y: -10,
-      // transition: {
-      //   duration: 0.15,
-      //   ease: 'easeInOut',
-      // },
     },
   };
 
@@ -90,8 +66,7 @@ function MenuRoot({ children, className, contentClass, disabled, placement = 'bo
         ref={refs.setReference}
       >
         {React.Children.toArray(children).find(
-          (child) =>
-            React.isValidElement(child) && typeof child.type === 'function' && child.type.name === 'MenuTrigger',
+          (child) => React.isValidElement(child) && typeof child.type === 'function' && child.type === MenuTrigger,
         )}
       </div>
       <AnimatePresence>
@@ -100,8 +75,7 @@ function MenuRoot({ children, className, contentClass, disabled, placement = 'bo
             ref={refs.setFloating}
             style={floatingStyles}
             className={twMerge(
-              'absolute focus:outline-none border rounded-sm border-tertiary/4 bg-menu w-fit p-4 z-50',
-              // clsx(placement === 'bottom-start' ? 'mt-2' : 'mb-2 bottom-full'),
+              'absolute focus:outline-none border rounded-sm border-tertiary/4 bg-menu w-fit p-4 z-50 shadow-md',
               contentClass,
             )}
             role="menu"
@@ -114,8 +88,7 @@ function MenuRoot({ children, className, contentClass, disabled, placement = 'bo
             variants={dropdownVariants}
           >
             {React.Children.toArray(children).find(
-              (child) =>
-                React.isValidElement(child) && typeof child.type === 'function' && child.type.name === 'MenuContent',
+              (child) => React.isValidElement(child) && typeof child.type === 'function' && child.type === MenuContent,
             )}
           </motion.div>
         )}
