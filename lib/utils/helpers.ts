@@ -8,6 +8,6 @@ export const log = {
   },
   error: ({ message, exit }: { message: string; exit?: boolean }) => {
     console.error('\x1b[31m', `[ERROR] - ${message}`);
-    if (exit) process.exit(0);
+    if (exit && !process.env.NODE_ENV) process.exit(0);
   },
 };
