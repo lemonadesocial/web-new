@@ -2,7 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import Image from 'next/image';
-import { createPortal } from 'react-dom';
+// import { createPortal } from 'react-dom';
 
 import { generateCssVariables } from '$lib/utils/fetchers';
 import { Button, Card } from '$lib/components/core';
@@ -12,7 +12,7 @@ import { join, split } from 'lodash';
 import { useMutation } from '$lib/request';
 import { Space, UpdateSpaceDocument } from '$lib/generated/backend/graphql';
 import { ColorPreset, defaultColorPreset, fonts, presets } from './themes_preset/constants';
-import { ShaderGradient } from './themes_preset/shader';
+// import { ShaderGradient } from './themes_preset/shader';
 
 type Styled = {
   font: Record<string, string>;
@@ -20,10 +20,10 @@ type Styled = {
   light: Record<string, string>;
 };
 
-type KeyPreset = 'minimal' | 'gradient';
+type KeyPreset = 'minimal';
 
 export default function ThemeBuilder({ space }: { space?: Space | null }) {
-  const [variables, setVariables] = React.useState<Styled>(space?.theme_data?.variables);
+  const [variables, setVariables] = React.useState<Styled>(space?.theme_data?.variables || {});
   const [selected, setSelected] = React.useState<KeyPreset>(space?.theme_data?.name || 'minimal');
   const [color, setColor] = React.useState<{
     forceground: keyof ColorPreset;
@@ -67,13 +67,13 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
         </style>
       )}
 
-      {selected === 'gradient' &&
-        createPortal(
-          <ShaderGradient colors={{ color1: '#808bff', color2: '#9880FF', color3: '#80D3FF' }} />,
-          document.body,
-        )}
+      {/* {selected === 'gradient' && */}
+      {/*   createPortal( */}
+      {/*     <ShaderGradient colors={{ color1: '#808bff', color2: '#9880FF', color3: '#80D3FF' }} />, */}
+      {/*     document.body, */}
+      {/*   )} */}
 
-      <div className="flex flex-col gap-6 w-[1080px] m-auto py-4">
+      <div className="flex flex-col gap-6 w-[1080px] m-auto py-6">
         <div className="flex flex-1 gap-3 overflow-x no-scrollbar justify-center">
           {Object.entries(presets).map(([key, value]) => (
             <div key={key} className="flex flex-col gap-2 items-center">
@@ -106,107 +106,107 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
           ))}
         </div>
 
-        <div className="flex gap-2 w-full">
-          <PopoverColor
-            label="Accent"
-            name={color.forceground}
-            mode="default"
-            colors={presets[selected].colors}
-            onSelect={(color) => {
-              setColor((prev) => ({ ...prev, forceground: color }));
-              setVariables((prev) => ({
-                ...prev,
-                dark: {
-                  ...prev?.dark,
-                  '--color-primary-500': `var(--color-${color}-500)`,
-                },
-                light: {
-                  ...prev?.light,
-                  '--color-primary-500': `var(--color-${color}-500)`,
-                },
-              }));
-            }}
-          />
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-2 w-full">
+            <PopoverColor
+              label="Accent"
+              name={color.forceground}
+              mode="default"
+              colors={presets[selected].colors}
+              onSelect={(color) => {
+                setColor((prev) => ({ ...prev, forceground: color }));
+                setVariables((prev) => ({
+                  ...prev,
+                  dark: {
+                    ...prev?.dark,
+                    '--color-primary-500': `var(--color-${color}-500)`,
+                  },
+                  light: {
+                    ...prev?.light,
+                    '--color-primary-500': `var(--color-${color}-500)`,
+                  },
+                }));
+              }}
+            />
 
-          <PopoverColor
-            label="Background"
-            name={color.background}
-            mode={color.mode}
-            colors={presets[selected].colors}
-            onSelect={(color) => {
-              setColor((prev) => ({ ...prev, background: color }));
+            <PopoverColor
+              label="Background"
+              name={color.background}
+              mode={color.mode}
+              colors={presets[selected].colors}
+              onSelect={(color) => {
+                setColor((prev) => ({ ...prev, background: color }));
 
-              setVariables((prev) => ({
-                ...prev,
-                dark: {
-                  ...prev?.dark,
-                  '--color-background': `var(--color-${color}-950)`,
-                },
-                light: {
-                  ...prev?.light,
-                  '--color-tertiary': `var(--color-black)`,
-                  '--color-forceground': `var(--color-black)`,
-                  '--color-background': `var(--color-${color}-50)`,
-                },
-              }));
-            }}
-          />
+                setVariables((prev) => ({
+                  ...prev,
+                  dark: {
+                    ...prev?.dark,
+                    '--color-background': `var(--color-${color}-950)`,
+                  },
+                  light: {
+                    ...prev?.light,
+                    '--color-tertiary': `var(--color-black)`,
+                    '--color-forceground': `var(--color-black)`,
+                    '--color-background': `var(--color-${color}-50)`,
+                  },
+                }));
+              }}
+            />
 
-          <Menu className="flex-1" disabled>
-            <Menu.Trigger>
-              <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
-                <i className="size-[24px] rounded-full bg-tertiary/24" />
-                <span className="text-left flex-1">Display</span>
-                <p className="flex items-center gap-1">
-                  <span className="capitalize">Auto</span>
-                  <i className="icon-chevrons-up-down text-tertiary/24" />
-                </p>
-              </div>
-            </Menu.Trigger>
-          </Menu>
+            <Menu className="flex-1" disabled>
+              <Menu.Trigger>
+                <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
+                  <i className="size-[24px] rounded-full bg-tertiary/24" />
+                  <span className="text-left flex-1">Display</span>
+                  <p className="flex items-center gap-1">
+                    <span className="capitalize">Auto</span>
+                    <i className="icon-chevrons-up-down text-tertiary/24" />
+                  </p>
+                </div>
+              </Menu.Trigger>
+            </Menu>
+          </div>
+
+          <div className="flex gap-2 w-full">
+            <PopoverFont
+              label="title"
+              name={font.title}
+              fonts={fonts.title}
+              onSelect={(font) => {
+                setFont((prev) => ({ ...prev, title: font }));
+                setVariables((prev) => ({
+                  ...prev,
+                  font: { ...prev?.font, '--font-title': fonts.title[font] },
+                }));
+              }}
+            />
+            <PopoverFont
+              label="body"
+              name={font.body}
+              fonts={fonts.body}
+              onSelect={(font) => {
+                setFont((prev) => ({ ...prev, body: font }));
+                setVariables((prev) => ({
+                  ...prev,
+                  font: { ...prev?.font, '--font-body': fonts.body[font] },
+                }));
+              }}
+            />
+
+            <Menu className="flex-1" disabled>
+              <Menu.Trigger>
+                <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
+                  <i className="icon-dark-theme-filled size-[24px] rounded-full" />
+                  <span className="text-left flex-1">Display</span>
+                  <p className="flex items-center gap-1">
+                    <span className="capitalize">Auto</span>
+                    <i className="icon-chevrons-up-down text-tertiary/24" />
+                  </p>
+                </div>
+              </Menu.Trigger>
+            </Menu>
+          </div>
         </div>
-
-        <div className="flex gap-2 w-full">
-          <PopoverFont
-            label="title"
-            name={font.title}
-            fonts={fonts.title}
-            onSelect={(font) => {
-              setFont((prev) => ({ ...prev, title: font }));
-              setVariables((prev) => ({
-                ...prev,
-                font: { ...prev.font, '--font-title': fonts.title[font] },
-              }));
-            }}
-          />
-          <PopoverFont
-            label="body"
-            name={font.body}
-            fonts={fonts.body}
-            onSelect={(font) => {
-              console.log(font);
-              setFont((prev) => ({ ...prev, body: font }));
-              setVariables((prev) => ({
-                ...prev,
-                font: { ...prev.font, '--font-body': fonts.body[font] },
-              }));
-            }}
-          />
-
-          <Menu className="flex-1" disabled>
-            <Menu.Trigger>
-              <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
-                <i className="icon-dark-theme-filled size-[24px] rounded-full" />
-                <span className="text-left flex-1">Display</span>
-                <p className="flex items-center gap-1">
-                  <span className="capitalize">Auto</span>
-                  <i className="icon-chevrons-up-down text-tertiary/24" />
-                </p>
-              </div>
-            </Menu.Trigger>
-          </Menu>
-        </div>
-
         <div className="flex justify-between">
           <div>
             <Button
@@ -269,7 +269,7 @@ function PopoverColor({
   onSelect: (color: string) => void;
 }) {
   return (
-    <Menu className="flex-1">
+    <Menu className="flex-1" contentClass="w-fit" placement="top">
       <Menu.Trigger>
         <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
           <i className={twMerge('size-[24px] rounded-full', colors[name] && colors[name][mode])} />
@@ -282,7 +282,7 @@ function PopoverColor({
       </Menu.Trigger>
 
       <Menu.Content>
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="grid grid-cols-9 gap-2.5">
           {Object.entries(colors).map(([key, value]) => (
             <div
               key={key}
@@ -312,7 +312,7 @@ function PopoverFont({
   onSelect: (font: string) => void;
 }) {
   return (
-    <Menu className="flex-1" contentClass="max-h-38 w-[370px] overflow-scroll no-scrollbar">
+    <Menu className="flex-1" contentClass="max-h-80 w-[370px] overflow-scroll no-scrollbar" placement="top">
       <Menu.Trigger>
         <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
           <h3 style={{ fontFamily: fonts[name] }} className={clsx(label === 'title' ? 'font-semibold' : 'font-medium')}>
