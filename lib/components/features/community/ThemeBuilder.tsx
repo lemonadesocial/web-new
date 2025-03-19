@@ -73,7 +73,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
       {/*     document.body, */}
       {/*   )} */}
 
-      <div className="flex flex-col gap-6 w-[1080px] m-auto py-6">
+      <div className="flex flex-col gap-6 max-w-[1080px] m-auto py-6 px-4">
         <div className="flex flex-1 gap-3 overflow-x no-scrollbar justify-center">
           {Object.entries(presets).map(([key, value]) => (
             <div key={key} className="flex flex-col gap-2 items-center">
@@ -107,7 +107,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
         </div>
 
         <div className="flex flex-col gap-2">
-          <div className="flex gap-2 w-full">
+          <div className="flex gap-2 flex-wrap w-full">
             <PopoverColor
               label="Accent"
               name={color.forceground}
@@ -167,7 +167,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
             </Menu>
           </div>
 
-          <div className="flex gap-2 w-full">
+          <div className="flex gap-2 flex-wrap w-full">
             <PopoverFont
               label="title"
               name={font.title}
@@ -228,9 +228,9 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
             />
           </div>
           <div className="flex gap-2">
-            <Button variant="tertiary" size="sm">
-              Save Theme
-            </Button>
+            {/* <Button variant="tertiary" size="sm"> */}
+            {/*   Save Theme */}
+            {/* </Button> */}
             <Button
               size="sm"
               loading={loading}
