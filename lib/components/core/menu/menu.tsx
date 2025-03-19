@@ -1,49 +1,49 @@
 'use client';
 import React from 'react';
 import clsx from 'clsx';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, MotionStyle } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
-import { useFloating, offset, Placement } from '@floating-ui/react';
+import { useFloating, offset, Placement, ReferenceType } from '@floating-ui/react';
 
-interface MenuProps extends React.PropsWithChildren {
-  className?: string;
-  contentClass?: string;
+type MenuState = {
+  isOpen?: boolean;
+  toggle: () => void;
+  close?: () => void;
   disabled?: boolean;
   placement?: Placement;
-}
+  refs?: {
+    reference: React.MutableRefObject<ReferenceType | null>;
+    floating: React.MutableRefObject<HTMLElement | null>;
+    setReference: (node: ReferenceType | null) => void;
+    setFloating: (node: HTMLElement | null) => void;
+  };
+  floatingStyles?: MotionStyle;
+};
+const MenuContext = React.createContext<MenuState>({ toggle: () => {} });
 
 function MenuTrigger({ children }: React.PropsWithChildren) {
-  return <>{children}</>;
+  const { toggle, refs, disabled } = React.useContext(MenuContext);
+
+  return (
+    <div
+      ref={refs?.setReference}
+      onClick={toggle}
+      className={clsx(disabled ? 'cursor-not-allowed' : 'cursor-pointer')}
+      aria-haspopup="true"
+    >
+      {children}
+    </div>
+  );
 }
 
-function MenuContent({ children }: React.PropsWithChildren) {
-  return <>{children}</>;
-}
-
-function MenuRoot({ children, className, contentClass, disabled, placement = 'bottom-end' }: MenuProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
-
-  const { refs, floatingStyles } = useFloating({
-    open: isOpen,
-    onOpenChange: setIsOpen,
-    strategy: 'fixed',
-    placement,
-    middleware: [offset(10)],
-  });
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-      setIsOpen(false);
-    }
-  };
-
-  React.useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+function MenuContent({
+  children,
+  className,
+}: {
+  className?: string;
+  children: React.ReactNode | ((props: { toggle: () => void }) => React.ReactNode);
+}) {
+  const { isOpen, toggle, refs, floatingStyles } = React.useContext(MenuContext);
 
   const dropdownVariants = {
     open: {
@@ -55,61 +55,79 @@ function MenuRoot({ children, className, contentClass, disabled, placement = 'bo
   };
 
   return (
-    <div className={clsx(className, 'relative inline-block', disabled && 'opacity-50')} ref={dropdownRef}>
-      <div
-        onClick={() => {
-          if (disabled) return;
-          setIsOpen(!isOpen);
-        }}
-        className={clsx(disabled ? 'cursor-not-allowed' : 'cursor-pointer')}
-        aria-haspopup="true"
-        ref={refs.setReference}
-      >
-        {React.Children.toArray(children).find(
-          (child) => React.isValidElement(child) && typeof child.type === 'function' && child.type === MenuTrigger,
-        )}
-      </div>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            ref={refs.setFloating}
-            style={floatingStyles}
-            className={twMerge(
-              'absolute focus:outline-none border rounded-sm border-tertiary/4 bg-menu w-fit p-4 z-50 shadow-md',
-              contentClass,
-            )}
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="menu-button"
-            tabIndex={-1}
-            initial="closed"
-            animate="open"
-            exit="closed"
-            variants={dropdownVariants}
-          >
-            {React.Children.toArray(children).find(
-              (child) => React.isValidElement(child) && typeof child.type === 'function' && child.type === MenuContent,
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          ref={refs?.setFloating}
+          style={floatingStyles}
+          className={twMerge(
+            'absolute focus:outline-none border rounded-sm border-tertiary/4 bg-menu w-fit p-4 z-50 shadow-md',
+            className,
+          )}
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="menu-button"
+          tabIndex={-1}
+          initial="closed"
+          animate="open"
+          exit="closed"
+          variants={dropdownVariants}
+        >
+          {typeof children === 'function' ? children({ toggle }) : children}
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
-export function Menu({
+function MenuRoot({
   children,
   className,
-  contentClass,
   disabled,
-  placement,
-}: { className?: string; contentClass?: string; disabled?: boolean; placement?: Placement } & React.PropsWithChildren) {
+  placement = 'bottom-end',
+}: { className?: string; disabled?: boolean; placement?: Placement } & React.PropsWithChildren) {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  const toggle = () => setIsOpen(!isOpen);
+  const close = () => setIsOpen(false);
+
+  const { refs, floatingStyles } = useFloating({
+    open: isOpen,
+    onOpenChange: toggle,
+    strategy: 'absolute',
+    placement,
+    middleware: [offset(10)],
+  });
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      refs.floating.current &&
+      !refs.floating.current.contains(event.target as Node) &&
+      refs.reference.current &&
+      !(refs.reference.current as HTMLDivElement).contains(event.target as Node)
+    ) {
+      close();
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [refs.reference, refs.floating]);
+
+  const value = { isOpen, toggle, close, refs, floatingStyles, disabled };
+
   return (
-    <MenuRoot className={className} contentClass={contentClass} disabled={disabled} placement={placement}>
-      {children}
-    </MenuRoot>
+    <MenuContext.Provider value={value}>
+      <div className={clsx(className, 'relative inline-block', disabled && 'opacity-50')}>{children}</div>
+    </MenuContext.Provider>
   );
 }
 
-Menu.Trigger = MenuTrigger;
-Menu.Content = MenuContent;
+export const Menu = {
+  Root: MenuRoot,
+  Trigger: MenuTrigger,
+  Content: MenuContent,
+};

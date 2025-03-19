@@ -226,13 +226,13 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
           </div>
 
           <div className="hidden sticky top-0 z-50 flex-col gap-4 md:flex max-w-[296px]">
-            <Menu contentClass="px-1.5 py-2">
+            <Menu.Root>
               <Menu.Trigger>
                 <Button variant="tertiary" iconLeft="icon-plus" className="w-full">
                   Submit Event
                 </Button>
               </Menu.Trigger>
-              <Menu.Content>
+              <Menu.Content className="px-1.5 py-2">
                 <MenuItem
                   title="Create New Event"
                   iconLeft="icon-edit-square"
@@ -240,7 +240,7 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
                 />
                 <MenuItem title="Submit Existing Event" iconLeft="icon-celebration-outline" />
               </Menu.Content>
-            </Menu>
+            </Menu.Root>
 
             <Calendar
               events={spaceEventsCalendar.map((item) => new Date(item.start))}

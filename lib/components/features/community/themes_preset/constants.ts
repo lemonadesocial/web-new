@@ -1,5 +1,4 @@
-import MinimalPreview from './assets/minimal.png';
-// import GradientPreview from './assets/gradient.png';
+import { ASSET_PREFIX } from '$lib/utils/constants';
 
 export type ColorPreset = Record<string, { light: string; dark: string; default: string }>;
 
@@ -74,7 +73,7 @@ export const defaultColorPreset = {
 export const presets = {
   minimal: {
     prefersColor: true,
-    image: MinimalPreview,
+    image: `${ASSET_PREFIX}/assets/images/minimal.png`,
     colors,
   },
   // gradient: {

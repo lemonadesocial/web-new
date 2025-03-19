@@ -1,7 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import Image from 'next/image';
 // import { createPortal } from 'react-dom';
 
 import { generateCssVariables } from '$lib/utils/fetchers';
@@ -98,7 +97,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
                   }
                 }}
               >
-                <Image src={value.image} className="rounded-sm" width={80} height={56} alt={key} />
+                <img src={value.image} className="rounded-sm" width={80} height={56} alt={key} />
               </Card>
 
               <p className="capitalize font-medium text-xs">{key === 'violet' ? 'default' : key}</p>
@@ -153,7 +152,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
               }}
             />
 
-            <Menu className="flex-1" disabled>
+            <Menu.Root className="flex-1" disabled>
               <Menu.Trigger>
                 <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
                   <i className="size-[24px] rounded-full bg-tertiary/24" />
@@ -164,7 +163,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
                   </p>
                 </div>
               </Menu.Trigger>
-            </Menu>
+            </Menu.Root>
           </div>
 
           <div className="flex gap-2 flex-wrap w-full">
@@ -193,7 +192,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
               }}
             />
 
-            <Menu className="flex-1" disabled>
+            <Menu.Root className="flex-1" disabled>
               <Menu.Trigger>
                 <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
                   <i className="icon-dark-theme-filled size-[24px] rounded-full" />
@@ -204,7 +203,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
                   </p>
                 </div>
               </Menu.Trigger>
-            </Menu>
+            </Menu.Root>
           </div>
         </div>
         <div className="flex justify-between">
@@ -269,7 +268,7 @@ function PopoverColor({
   onSelect: (color: string) => void;
 }) {
   return (
-    <Menu className="flex-1" contentClass="w-fit" placement="top">
+    <Menu.Root className="flex-1" placement="top">
       <Menu.Trigger>
         <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
           <i className={twMerge('size-[24px] rounded-full', colors[name] && colors[name][mode])} />
@@ -281,7 +280,7 @@ function PopoverColor({
         </div>
       </Menu.Trigger>
 
-      <Menu.Content>
+      <Menu.Content className="w-fit">
         <div className="grid grid-cols-9 gap-2.5">
           {Object.entries(colors).map(([key, value]) => (
             <div
@@ -296,7 +295,7 @@ function PopoverColor({
           ))}
         </div>
       </Menu.Content>
-    </Menu>
+    </Menu.Root>
   );
 }
 
@@ -312,7 +311,7 @@ function PopoverFont({
   onSelect: (font: string) => void;
 }) {
   return (
-    <Menu className="flex-1" contentClass="max-h-80 w-[370px] overflow-scroll no-scrollbar" placement="top">
+    <Menu.Root className="flex-1" placement="top">
       <Menu.Trigger>
         <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
           <h3 style={{ fontFamily: fonts[name] }} className={clsx(label === 'title' ? 'font-semibold' : 'font-medium')}>
@@ -330,7 +329,7 @@ function PopoverFont({
         </div>
       </Menu.Trigger>
 
-      <Menu.Content>
+      <Menu.Content className="max-h-80 w-[370px] overflow-scroll no-scrollbar">
         <div className="flex gap-4 flex-wrap">
           {Object.entries(fonts).map(([key, font]) => (
             <div
@@ -353,6 +352,6 @@ function PopoverFont({
           ))}
         </div>
       </Menu.Content>
-    </Menu>
+    </Menu.Root>
   );
 }
