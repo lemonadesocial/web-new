@@ -6,12 +6,14 @@ const sizes: { [key: string]: string } = {
   base: 'px-[12] py-[7] rounded-md text-md ',
   sm: 'px-2.5 py-1.5 rounded-sm text-sm',
   lg: 'px-4 py-2 rounded-md text-lg',
+  xs: 'px-2 py-1 text-sm',
 };
 
 const iconOnlySizes = {
   base: 'p-[10]',
   sm: 'p-[8]',
   lg: 'p-[12] ',
+  xs: 'p-[5]',
 };
 
 const variants: { [key: string]: string } = {
@@ -31,7 +33,7 @@ const outlineVariants: { [key: string]: string } = {
 };
 
 interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonElement>> {
-  size?: 'sm' | 'base' | 'lg';
+  size?: 'sm' | 'base' | 'lg' | 'xs';
   variant?: 'primary' | 'success' | 'tertiary' | 'secondary' | 'flat';
   icon?: string;
   iconLeft?: string;
