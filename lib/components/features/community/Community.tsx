@@ -34,7 +34,7 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
   const [shouldLoadMore, setShouldLoadMore] = useAtom(scrollAtBottomAtom);
 
   const [mode, setMode] = React.useState<'card' | 'list'>('card');
-  const [eventListType, setEventListType] = React.useState('');
+  const [eventListType, setEventListType] = React.useState('upcoming');
   const [selectedTag, setSelectedTag] = React.useState('');
   const [selectedDate, setSelectedDate] = React.useState<Date>();
 
@@ -282,6 +282,7 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
                   <Segment
                     className="w-full mt-3"
                     onSelect={(item) => setEventListType(item.value)}
+                    selected={eventListType}
                     items={[
                       { label: 'Upcomping', value: 'upcoming' },
                       { label: 'Past', value: 'past' },
