@@ -43,6 +43,14 @@ jobs:
           aws-region: ${{ secrets.STAGING_REGION }}
           role-to-assume: ${{ secrets.STAGING_ROLE_TO_ASSUME }}
 
+      - name: Generate .env file from GitHub variables
+        run: |
+          echo "NEXT_PUBLIC_ENABLE_WHITELABEL=${{ vars.STAGING_NEXT_PUBLIC_ENABLE_WHITELABEL }}" >> .env
+          echo "NEXT_PUBLIC_GRAPHQL_URL=${{ vars.STAGING_NEXT_PUBLIC_GRAPHQL_URL }}" >> .env
+          echo "NEXT_PUBLIC_AIRSTACK_URL=${{ vars.STAGING_NEXT_PUBLIC_AIRSTACK_URL }}" >> .env
+          echo "NEXT_PUBLIC_GOOGLE_MAP_KEY=${{ vars.STAGING_NEXT_PUBLIC_GOOGLE_MAP_KEY }}" >> .env
+          echo "NEXT_PUBLIC_LEMONADE_DOMAIN=${{ vars.STAGING_NEXT_PUBLIC_LEMONADE_DOMAIN }}" >> .env
+
       - name: Configure environment
         run: |
           aws ssm get-parameter --name ${{ secrets.STAGING_PARAMETER_NAME }} | jq '.Parameter.Value' | jq '. | fromjson' | jq -r 'to_entries | .[] | .key + "=" + .value' >> $GITHUB_ENV || exit 1
