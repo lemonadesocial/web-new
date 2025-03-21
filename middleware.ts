@@ -10,7 +10,7 @@ export const config = {
 export default async function middleware(req: NextRequest) {
   const url = req.nextUrl;
 
-  let hostname = req.headers.get('authority') || req.headers.get('host');
+  let hostname = req.headers.get('x-forwarded-host') || req.headers.get('host');
   const searchParams = req.nextUrl.searchParams.toString();
   const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ''}`;
 
