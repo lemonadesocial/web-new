@@ -8,6 +8,7 @@ import {
   SpaceTagType,
 } from '$lib/generated/backend/graphql';
 import { useClient, useQuery } from '$lib/request';
+import { format } from 'date-fns';
 import { uniq } from 'lodash';
 import React from 'react';
 
@@ -22,6 +23,7 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
 
   const handleAddEvent = async () => {
     const shortid = linkEvent ? linkEvent.substring(linkEvent.lastIndexOf('/') + 1) : '';
+    if (events.find((e) => e.shortid === shortid)) return;
     setAdding(true);
     const { data } = await client.query({
       query: GetEventDocument,
@@ -29,7 +31,7 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
       fetchPolicy: 'network-only',
     });
 
-    if (data.getEvent) {
+    if (data?.getEvent) {
       setEvents((prev) => [...prev, data.getEvent as Event]);
     }
 
@@ -50,6 +52,8 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
     modal.close();
   };
 
+  const existing = events.find((e) => e.shortid === linkEvent?.substring(linkEvent.lastIndexOf('/') + 1));
+
   return (
     <Card className="p-0 rounded-lg bg-alabaster-950 w-[480]">
       <div className="flex justify-between items-center bg-tertiary/4 px-5 py-3 rounded-tl-lg rounded-tr-lg">
@@ -63,17 +67,36 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
         />
       </div>
       <div className="p-5 flex flex-col gap-3 items-start">
+        {events.map((e) => (
+          <Card key={e._id} className="flex justify-between items-center w-full">
+            <div>
+              <p className="text-md">{e.title}</p>
+              <span className="text-tertiary/56">
+                {format(e.start, 'MMM dd')} at {format(e.start, 'h:mm a')}
+              </span>
+            </div>
+            <Button
+              icon="icon-minus"
+              size="sm"
+              variant="tertiary"
+              onClick={() => setEvents((prev) => prev.filter((p) => e._id !== p._id))}
+            />
+          </Card>
+        ))}
         <div className="w-full">
-          <div className="focus-within:border-tertiary bg-woodsmoke-950/64 border flex py-1 px-1.5 gap-3.5 rounded-sm items-center">
+          <div className="focus-within:border-tertiary bg-woodsmoke-950/64 border flex py-1 px-1.5 gap-3.5 rounded-sm items-center  h-[44px]">
             <input
               className="flex-1 outline-none px-1.5"
               value={linkEvent}
               onChange={(e) => setLinkEvent(e.target.value)}
             />
-            <Button loading={adding} size="sm" variant="tertiary" iconLeft="icon-plus" onClick={handleAddEvent}>
-              Add
-            </Button>
+            {linkEvent && !existing && (
+              <Button loading={adding} size="sm" variant="tertiary" iconLeft="icon-plus" onClick={handleAddEvent}>
+                Add
+              </Button>
+            )}
           </div>
+          {existing && <p className="text-danger-500 text-sm mt-1">* This event was added</p>}
         </div>
         <AddTags type={SpaceTagType.Event} spaceId={spaceId} onChange={(value) => setTags(value)} />
 

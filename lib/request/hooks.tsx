@@ -55,7 +55,9 @@ export function useMutation<T, V extends object>(
   query: TypedDocumentNode<T, V>,
   options?: MutationOptions<T, V>,
 ): [
-  (opts: MutationOptions<T, V>) => void,
+  (
+    opts: MutationOptions<T, V>,
+  ) => Promise<{ data?: T | null; error: unknown; loading: boolean; client: GraphqlClient }>,
   { data?: T | null; error: unknown; loading: boolean; client: GraphqlClient },
 ] {
   const { client } = useClient();

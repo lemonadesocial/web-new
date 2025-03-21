@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 // import { createPortal } from 'react-dom';
 
 import { generateCssVariables } from '$lib/utils/fetchers';
-import { Button, Card } from '$lib/components/core';
+import { Button, Card, sheet } from '$lib/components/core';
 import { Menu } from '$lib/components/core/menu';
 
 import { join, split } from 'lodash';
@@ -233,15 +233,16 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
             <Button
               size="sm"
               loading={loading}
-              onClick={() => {
+              onClick={async () => {
                 if (space) {
                   const theme_data = { name: selected, color, variables };
-                  updateCommunity({
+                  await updateCommunity({
                     variables: { id: space._id, input: { theme_data } },
                     onComplete: (client) => {
                       client.writeFragment<Space>({ id: `Space:${space._id}`, data: { theme_data } });
                     },
                   });
+                  sheet.close();
                 }
               }}
             >
