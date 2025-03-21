@@ -19,6 +19,7 @@
       }
     ],
     "paths": {
+      "$app/*": ["./app/*"],
       "$lib/*": ["./lib/*"],
       "$core/*": ["./lib/components/core/*"],
       "$ui/*": ["./lib/components/ui/*"],

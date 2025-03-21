@@ -4,5 +4,6 @@ query GetMe {
     _id
     name
     image_avatar
+    username
   }
 }

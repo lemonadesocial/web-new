@@ -3,11 +3,13 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { logout } from '$app/actions/auth';
+
 import { User } from '$lib/generated/backend/graphql';
 import { Avatar } from '$lib/components/core/avatar';
 import { Button } from '$lib/components/core/button';
 import { Divider, Menu, MenuItem } from '$lib/components/core';
-// import { logout } from './actions';
+import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 
 export default function Header({ me }: { me: User }) {
   const router = useRouter();
@@ -36,13 +38,18 @@ export default function Header({ me }: { me: User }) {
                   </div>
                   <Divider />
                   <div className="p-2.5">
-                    <MenuItem title="View Profile" />
-                    <MenuItem title="Settings" />
+                    <Link href={`${LEMONADE_DOMAIN}/u/${me.username}`} target="_blank">
+                      <MenuItem title="View Profile" />
+                    </Link>
+                    <Link href={`${LEMONADE_DOMAIN}/settings`} target="_blank">
+                      <MenuItem title="Settings" />
+                    </Link>
                     <MenuItem
                       title="Sign Out"
                       onClick={async () => {
-                        // await logout();
                         toggle();
+                        await logout();
+                        window.location.reload();
                       }}
                     />
                   </div>

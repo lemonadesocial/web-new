@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.5",
+    "@ory/client": "^1.18.5",
     "@react-three/fiber": "^9.1.0",
     "@shadergradient/react": "^2.0.22",
     "@tailwindcss/postcss": "^4.0.8",
@@ -26,6 +27,7 @@
     "framer-motion": "^12.4.10",
     "graphql-request": "^7.1.2",
     "jotai": "^2.12.1",
+    "js-cookie": "^3.0.5",
     "next": "15.1.7",
     "oidc-client-ts": "^3.2.0",
     "postcss": "^8.5.3",
@@ -43,6 +45,7 @@
     "@playwright/test": "^1.50.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
+    "@types/js-cookie": "^3.0.6",
     "@types/lodash": "^4.17.15",
     "@types/node": "^20",
     "@types/react": "^19",
