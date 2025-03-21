@@ -205,14 +205,16 @@ function EventCardItem({ item, tags = [] }: { item: Event; tags?: SpaceTagBase[]
             </div>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <div className="inline-flex items-center gap-2">
-              <i className="icon-location-outline size-4" />
-              <span className="text-md">{getLocation(item.address)}</span>
+          {!!getLocation(item.address) && (
+            <div className="flex flex-col gap-1">
+              <div className="inline-flex items-center gap-2">
+                <i className="icon-location-outline size-4" />
+                <span className="text-md">{getLocation(item.address)}</span>
+              </div>
             </div>
-          </div>
+          )}
 
-          {tags.length && (
+          {!!tags.length && (
             <div className="flex gap-1.5 flex-wrap">
               {tags
                 .filter((t) => t.targets?.includes(item._id))
@@ -222,7 +224,7 @@ function EventCardItem({ item, tags = [] }: { item: Event; tags?: SpaceTagBase[]
             </div>
           )}
 
-          {defaultTicketType && (
+          {!!defaultTicketType && (
             <Badge title={getTicketCost(defaultTicketType)} className="bg-success-500/[0.16] text-success-500" />
           )}
         </div>
@@ -311,7 +313,6 @@ function getLocation(address?: Address | null) {
   let location = '';
   if (address?.city) location += address.city + ', ';
   if (address?.country) location += address.country;
-  else location = 'Unknow';
 
   return location;
 }
