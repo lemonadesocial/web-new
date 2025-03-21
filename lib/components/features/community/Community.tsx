@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 import { endOfDay, startOfDay, format } from 'date-fns';
 import clsx from 'clsx';
 
-import { Button, Divider, Map, Menu, MenuItem, Segment, Tag } from '$lib/components/core';
+import { Button, Divider, Map, Menu, MenuItem, modal, Segment, Tag } from '$lib/components/core';
 import { HeroSection } from '$lib/components/features/community';
 import {
   Event,
@@ -25,6 +25,7 @@ import { Calendar } from '$lib/components/core/calendar';
 import { scrollAtBottomAtom } from '$lib/jotai';
 import { generateCssVariables } from '$lib/utils/fetchers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { ListingEvent } from './ListingEvent';
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
@@ -233,12 +234,26 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
                 </Button>
               </Menu.Trigger>
               <Menu.Content className="px-1.5 py-2">
-                <MenuItem
-                  title="Create New Event"
-                  iconLeft="icon-edit-square"
-                  onClick={() => window.open(`${LEMONADE_DOMAIN}/create/experience?space=${space?._id}`)}
-                />
-                <MenuItem title="Submit Existing Event" iconLeft="icon-celebration-outline" />
+                {({ toggle }) => (
+                  <>
+                    <MenuItem
+                      title="Create New Event"
+                      iconLeft="icon-edit-square"
+                      onClick={() => {
+                        toggle();
+                        window.open(`${LEMONADE_DOMAIN}/create/experience?space=${space?._id}`);
+                      }}
+                    />
+                    <MenuItem
+                      title="Submit Existing Event"
+                      iconLeft="icon-celebration-outline"
+                      onClick={() => {
+                        toggle();
+                        if (space?._id) modal.open(ListingEvent, { props: { spaceId: space._id } });
+                      }}
+                    />
+                  </>
+                )}
               </Menu.Content>
             </Menu.Root>
 

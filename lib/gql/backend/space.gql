@@ -64,10 +64,20 @@ fragment SpaceTag on SpaceTagBase {
   type
 }
 
+fragment SpaceEventRequestFragment on SpaceEventRequest {
+  _id
+  created_at
+  space
+  event
+  state
+  decided_at
+  decided_by
+}
+
 #### Queries
 
-query GetSpace($id: MongoID, $slug: String) {
-  getSpace(_id: $id, slug: $slug) {
+query GetSpace($id: MongoID, $slug: String, $hostname: String) {
+  getSpace(_id: $id, slug: $slug, hostname: $hostname) {
     ...Space
   }
 }
@@ -169,5 +179,13 @@ mutation UnfollowSpace($space: MongoID!) {
 mutation UpdateSpace($id: MongoID!, $input: SpaceInput!) {
   updateSpace(_id: $id, input: $input) {
     ...Space
+  }
+}
+
+mutation PinEventsToSpace($space: MongoID!, $events: [MongoID!]!, $tags: [MongoID!]) {
+  pinEventsToSpace(space: $space, events: $events, tags: $tags) {
+    requests {
+      ...SpaceEventRequestFragment
+    }
   }
 }

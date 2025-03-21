@@ -16,7 +16,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark">
       <body className={clsx('transition antialiased', fonts)}>
         <StyledJsxRegistry>{children}</StyledJsxRegistry>
       </body>

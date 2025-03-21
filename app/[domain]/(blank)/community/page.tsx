@@ -3,17 +3,16 @@ import { notFound } from 'next/navigation';
 import { cookies } from 'next/headers';
 
 import { getClient } from '$lib/request/client';
-import { isObjectId } from '$lib/utils/helpers';
 import { GetMeDocument, GetSpaceDocument, Space, User } from '$lib/generated/backend/graphql';
 import { Community } from '$lib/components/features/community';
 
-export default async function Page() {
-  // TODO: need to get from site config
-  const uid = 'new-spaceabc';
-  const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
+export default async function Page({ params }: { params: Promise<{ domain: string }> }) {
+  const res = await params;
+  const domain = decodeURIComponent(res.domain);
+
   const client = getClient();
 
-  const { data } = await client.query({ query: GetSpaceDocument, variables });
+  const { data } = await client.query({ query: GetSpaceDocument, variables: { hostname: domain } });
   const space = data?.getSpace as Space;
 
   const key = 'x-ory-kratos-session';
