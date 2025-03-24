@@ -25,10 +25,14 @@ export interface EditProps {
 }
 
 export enum EDIT_KEY {
-  SPACE_IMAGE_COVER,
+  TICKET_PHOTO,
 }
 
-const EDIT_MAP: Record<string, EditProps> = {};
+const EDIT_MAP: Record<string, EditProps> = {
+  [EDIT_KEY.TICKET_PHOTO]: {
+    resize: { width: 135, fit: 'cover' },
+  },
+};
 
 export function generateUrl(file?: File | null, edits?: keyof typeof EDIT_KEY | EditProps) {
   if (!file || !file.bucket || !file.key) return '';

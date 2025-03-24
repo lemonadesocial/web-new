@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 import { endOfDay, startOfDay, format } from 'date-fns';
 import clsx from 'clsx';
 
-import { Button, Divider, Map, Menu, MenuItem, modal, Segment, Tag } from '$lib/components/core';
+import { Button, Divider, drawer, Map, Menu, MenuItem, modal, Segment, Tag } from '$lib/components/core';
 import { HeroSection } from '$lib/components/features/community';
 import {
   Event,
@@ -26,6 +26,7 @@ import { scrollAtBottomAtom } from '$lib/jotai';
 import { generateCssVariables } from '$lib/utils/fetchers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { ListingEvent } from './ListingEvent';
+import { EventPane } from '../pane';
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
@@ -315,9 +316,19 @@ function EventsWithMode({
   return (
     <>
       {mode === 'card' ? (
-        <EventListCard events={events} loading={loading} tags={tags} />
+        <EventListCard
+          events={events}
+          loading={loading}
+          tags={tags}
+          onSelect={(event) => drawer.open(EventPane, { props: { eventId: event._id } })}
+        />
       ) : (
-        <EventList events={events} loading={loading} tags={tags} />
+        <EventList
+          events={events}
+          loading={loading}
+          tags={tags}
+          onSelect={(event) => drawer.open(EventPane, { props: { eventId: event._id } })}
+        />
       )}
     </>
   );

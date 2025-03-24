@@ -3,15 +3,22 @@ import { groupBy } from 'lodash';
 import { format, isAfter, isBefore } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
-import Link from 'next/link';
 
 import { Avatar, Badge, Card, Divider, Spacer } from '$lib/components/core';
 import { Address, Event, SpaceTagBase } from '$lib/generated/backend/graphql';
-import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { generateUrl } from '$lib/utils/cnd';
 import { getTicketCost } from '$lib/utils/event';
 
-export function EventList({ events, loading }: { events: Event[]; loading?: boolean; tags?: SpaceTagBase[] }) {
+export function EventList({
+  events,
+  loading,
+  onSelect,
+}: {
+  events: Event[];
+  loading?: boolean;
+  tags?: SpaceTagBase[];
+  onSelect?: (event: Event) => void;
+}) {
   if (loading) return <EventListSkeleton />;
 
   return (
@@ -24,7 +31,9 @@ export function EventList({ events, loading }: { events: Event[]; loading?: bool
           <Divider className="mt-2 mb-3" />
 
           {data.map((item) => (
-            <EventItem key={item._id} item={item} />
+            <div key={item._id} onClick={() => onSelect?.(item)}>
+              <EventItem item={item} />
+            </div>
           ))}
         </div>
       ))}
@@ -38,11 +47,7 @@ function EventItem({ item }: { item: Event }) {
   const users = [item.host_expanded, ...(item.visible_cohosts_expanded || [])];
 
   return (
-    <Link
-      href={`${LEMONADE_DOMAIN}/e/${item.shortid}`}
-      target="_blank"
-      className="transition flex text-tertiary/[.56] gap-4 hover:bg-tertiary/[.16] p-2 rounded-md cursor-pointer"
-    >
+    <div className="transition flex text-tertiary/[.56] gap-4 hover:bg-tertiary/[.16] p-2 rounded-md cursor-pointer">
       <p>{format(item.start, 'h:mm a')}</p>
       <div className="flex flex-col gap-1 flex-1">
         <p className="text-tertiary font-medium text-lg">{item.title}</p>
@@ -70,7 +75,7 @@ function EventItem({ item }: { item: Event }) {
           <Badge title={getTicketCost(defaultTicketType)} className="bg-success-500/[0.16] text-success-500" />
         )}
       </div>
-    </Link>
+    </div>
   );
 }
 
@@ -89,7 +94,7 @@ function EventListSkeleton() {
                 <div className="flex flex-col gap-2">
                   <SkeletonLine animate className="w-[360px] h-[20px] bg-tertiary/[.04] rounded-lg" />
                   <div className="flex gap-2">
-                    <SkeletonLine className="size-[16px] rounded-full bg-tertiary/[.04] rounded-lg" />
+                    <SkeletonLine className="size-[16px] bg-tertiary/[.04] rounded-lg" />
                     <SkeletonLine className="w-[120px] h-[16px] bg-tertiary/[.04] rounded-lg" />
                   </div>
                 </div>
@@ -109,10 +114,12 @@ export function EventListCard({
   events,
   loading,
   tags = [],
+  onSelect,
 }: {
   events: Event[];
   loading?: boolean;
   tags?: SpaceTagBase[];
+  onSelect?: (event: Event) => void;
 }) {
   if (loading) return <EventListCardSkeleton />;
 
@@ -120,7 +127,7 @@ export function EventListCard({
     <div className="flex flex-col">
       {Object.entries(groupBy(events, ({ start }) => start)).map(([date, data]) => (
         <div className="flex flex-col relative" key={date}>
-          <div className="border-l border-dashed border-l-2 absolute h-full left-1 top-2 z-10">
+          <div className="border-dashed border border-l-2 absolute h-full left-1 top-2 z-10">
             <div className="size-2 bg-background -ml-[5px] absolute">
               <div className="size-2 rounded-full bg-tertiary/[.24]" />
             </div>
@@ -135,7 +142,7 @@ export function EventListCard({
 
             <div className="flex flex-col gap-3">
               {data.map((item) => (
-                <EventCardItem key={item._id} item={item} tags={tags} />
+                <EventCardItem key={item._id} item={item} tags={tags} onClick={() => onSelect?.(item)} />
               ))}
             </div>
           </div>
@@ -144,7 +151,7 @@ export function EventListCard({
         </div>
       ))}
       <div className="flex flex-col relative">
-        <div className="border-l border-dashed border-l-2 absolute h-full left-1 top-2 z-10">
+        <div className="border-dashed border-l-2 absolute h-full left-1 top-2 z-10">
           <div className="size-2 bg-background -ml-[5px] absolute">
             <div className="size-2 rounded-full bg-tertiary/[.24] " />
           </div>
@@ -158,20 +165,14 @@ export function EventListCard({
   );
 }
 
-function EventCardItem({ item, tags = [] }: { item: Event; tags?: SpaceTagBase[] }) {
+function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: SpaceTagBase[]; onClick?: () => void }) {
   const defaultTicketType = item.event_ticket_types?.find((p) => p.default);
   const users = [item.host_expanded, ...(item.visible_cohosts_expanded || [])];
 
   return (
-    <Card
-      as="link"
-      key={`event_${item.shortid}`}
-      href={`${LEMONADE_DOMAIN}/e/${item.shortid}`}
-      target="_blank"
-      className="flex flex-col gap-3"
-    >
-      <div className="flex gap-6">
-        <div className="text-tertiary/[.56] flex-1 flex flex-col gap-2">
+    <Card.Root as="button" onClick={onClick} key={`event_${item.shortid}`} className="flex flex-col gap-3">
+      <Card.Content className="flex gap-6">
+        <div className="text-tertiary/56 flex-1 flex flex-col gap-2">
           <div>
             <div className="flex gap-2 font-medium">
               {isBefore(new Date(), item.end) && isAfter(new Date(), item.start) && (
@@ -238,8 +239,8 @@ function EventCardItem({ item, tags = [] }: { item: Event; tags?: SpaceTagBase[]
             alt={item.title}
           />
         )}
-      </div>
-    </Card>
+      </Card.Content>
+    </Card.Root>
   );
 }
 
@@ -248,7 +249,7 @@ function EventListCardSkeleton() {
     <div className="flex flex-col">
       {Object.entries({ 1: [1, 2], 2: [1], 3: [1, 2, 3] }).map(([date, data]) => (
         <div className="flex flex-col relative" key={date}>
-          <div className="border-l border-dashed border-l-2 absolute h-full left-1 top-2 z-10">
+          <div className="border-dashed border-l-2 absolute h-full left-1 top-2 z-10">
             <div className="size-2 bg-background -ml-[5px] absolute">
               <div className="size-2 rounded-full bg-tertiary/[.24]" />
             </div>
@@ -273,8 +274,8 @@ function EventListCardSkeleton() {
 
 function EventCardSkeleton() {
   return (
-    <Card className="bg-transparent border">
-      <div className="flex">
+    <Card.Root className="bg-transparent border">
+      <Card.Content className="flex">
         <div className="flex-1 flex flex-col gap-4">
           <SkeletonLine className="h-4 w-[64px] rounded-full bg-tertiary/[.04]" />
           <SkeletonLine animate className="h-[28px] w-[400px] rounded" />
@@ -292,8 +293,8 @@ function EventCardSkeleton() {
           </div>
         </div>
         <div className="size-[124px] bg-tertiary/[.04] rounded-lg"></div>
-      </div>
-    </Card>
+      </Card.Content>
+    </Card.Root>
   );
 }
 

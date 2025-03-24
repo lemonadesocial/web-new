@@ -4,5 +4,23 @@ query GetEvent($id: MongoID, $shortid: String) {
     title
     start
     shortid
+    new_new_photos_expanded {
+      _id
+      stamp
+      type
+      url
+      size
+      bucket
+      key
+    }
+    address {
+      street_1
+      city
+      title
+      region
+      country
+      additional_directions
+    }
+    address_directions
   }
 }

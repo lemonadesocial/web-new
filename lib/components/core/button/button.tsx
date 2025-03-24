@@ -3,7 +3,7 @@ import React, { HTMLAttributes } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 const sizes: { [key: string]: string } = {
-  base: 'px-[12] py-[7] rounded-md text-md ',
+  base: 'px-[12] py-[7] rounded-sm text-md ',
   sm: 'px-2.5 py-1.5 rounded-sm text-sm',
   lg: 'px-4 py-2 rounded-md text-lg',
   xs: 'px-2 py-1 text-sm',
@@ -17,10 +17,11 @@ const iconOnlySizes = {
 };
 
 const variants: { [key: string]: string } = {
-  primary: 'bg-primary-500 hover:bg-primary-500/[0.8]',
-  success: 'bg-success-600 hover:bg-success-600/[0.8]',
-  tertiary: 'bg-tertiary/[.08] hover:bg-tertiary/[.16] text-tertiary/[.56]',
-  secondary: 'bg-tertiary hover:bg-tertiary/[0.8] text-black',
+  primary: 'bg-primary-500 hover:bg-primary-500/8',
+  success: 'bg-success-600 hover:bg-success-600/8',
+  tertiary: 'bg-tertiary/8 hover:bg-tertiary/16 text-tertiary/56',
+  'tertiary-alt': 'bg-tertiary/8 hover:bg-tertiary/80 text-tertiary/56 hover:text-black',
+  secondary: 'bg-tertiary hover:bg-tertiary/8 text-black',
   flat: 'hover:bg-tertiary/[0.08]',
 };
 
@@ -34,7 +35,7 @@ const outlineVariants: { [key: string]: string } = {
 
 interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonElement>> {
   size?: 'sm' | 'base' | 'lg' | 'xs';
-  variant?: 'primary' | 'success' | 'tertiary' | 'secondary' | 'flat';
+  variant?: 'primary' | 'success' | 'tertiary' | 'tertiary-alt' | 'secondary' | 'flat';
   icon?: string;
   iconLeft?: string;
   iconRight?: string;

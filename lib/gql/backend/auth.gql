@@ -1,9 +1,11 @@
 # Queries
 query GetMe {
   getMe {
+    __typename
     _id
     name
     image_avatar
     username
+    email
   }
 }

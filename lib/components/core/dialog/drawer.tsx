@@ -48,11 +48,11 @@ export const drawer: Drawer = {
 export function DrawerContainer() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [content, setContent] = React.useState<React.ReactNode>();
-  const [options, setOptions] = React.useState<Options<unknown>>({ duration: 0.3 });
+  const [options, setOptions] = React.useState<Options<unknown>>({ duration: 0.3, position: 'right' });
   const ref = React.useRef<HTMLDivElement | null>(null);
 
   const handleOpen = React.useCallback(<T extends object>(Component: React.ComponentType<T>, opts: Options<T> = {}) => {
-    setContent(<Component {...(options.props as T)} />);
+    setContent(<Component {...(opts.props as T)} />);
     setOptions((prev) => ({ ...prev, ...opts }));
     setIsOpen(true);
   }, []);
@@ -87,7 +87,7 @@ export function DrawerContainer() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed z-50 inset-0">
+        <div className="fixed z-100 inset-0">
           <div className="h-full w-full p-4">
             <div className={clsx('flex h-full', options.position === 'right' && 'justify-end')}>
               <motion.div
@@ -97,7 +97,7 @@ export function DrawerContainer() {
                 exit={{ x: '100%' }}
                 transition={{ duration: options.duration }}
                 ref={ref}
-                className={twMerge('rounded-sm flex-1 max-w-[528px]', options.contentClass)}
+                className={twMerge('bg-menu rounded-sm flex-1 max-w-[528px]', options.contentClass)}
               >
                 {content}
               </motion.div>
