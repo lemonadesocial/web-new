@@ -1,6 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
-
+import { ToastContainer } from 'react-toastify';
 import { BottomSheetContainer, DrawerContainer, ModalContainer } from '$lib/components/core/dialog';
 
 import { getSiteData } from '$utils/fetchers';
@@ -33,6 +33,12 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
       <ModalContainer />
       <DrawerContainer />
       <BottomSheetContainer />
+      <ToastContainer
+        newestOnTop
+        toastStyle={{ padding: 0, background: 'transparent', minHeight: 0, width: 'inherit' }}
+        closeButton={false}
+        hideProgressBar
+      />
     </Providers>
   );
 }

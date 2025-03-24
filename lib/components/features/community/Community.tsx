@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 import { endOfDay, startOfDay, format } from 'date-fns';
 import clsx from 'clsx';
 
-import { Button, Divider, Map, Menu, MenuItem, modal, Segment, Tag } from '$lib/components/core';
+import { Button, Divider, Map, Menu, MenuItem, modal, Segment, Tag, toast } from '$lib/components/core';
 import { HeroSection } from '$lib/components/features/community';
 import {
   Event,
@@ -146,6 +146,7 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
   }, [shouldLoadMore]);
 
   const theme = (dataGetSpace?.getSpace as Space).theme_data;
+
   return (
     <>
       {theme?.variables && (
@@ -170,6 +171,15 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
         </style>
       )}
 
+      <button
+        onClick={() =>
+          toast.success('Events submitted successfully! We will notify you once approved by the community admins.', {
+            position: 'top-center',
+          })
+        }
+      >
+        show toast
+      </button>
       <div>
         <HeroSection space={dataGetSpace?.getSpace as Space} me={me} />
         <Divider className="my-8" />
