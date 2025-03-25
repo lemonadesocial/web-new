@@ -11,3 +11,22 @@ export const log = {
     // if (exit && !process.env.NODE_ENV) process.exit(0);
   },
 };
+
+export function getEventAddress(address?: Address | undefined, short?: boolean) {
+  if (!address) return;
+
+  if (short) return [address.title, address.city || address.region, address.country].filter(Boolean).join(', ');
+
+  return [
+    address.title,
+    address.street_1,
+    address.street_2,
+    address.postal,
+    address.city,
+    address.region,
+    address.country,
+    address.additional_directions,
+  ]
+    .filter(Boolean)
+    .join(', \n');
+}

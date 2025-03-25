@@ -11,10 +11,10 @@ import {
   GetSpaceDocument,
   GetSpaceEventsCalendarDocument,
   GetSpaceEventsDocument,
+  GetSpaceQuery,
   GetSpaceTagsDocument,
   SortOrder,
   Space,
-  SpaceFragment,
   SpaceTagBase,
   SpaceTagType,
   User,
@@ -41,7 +41,7 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
 
   const { data: dataGetSpace } = useQuery(GetSpaceDocument, {
     variables: { id: space?._id },
-    initData: { __typename: 'Query', getSpace: space as { __typename: string } & SpaceFragment },
+    initData: { getSpace: space } as GetSpaceQuery,
   });
 
   const { data: dataGetSpaceTags } = useQuery(GetSpaceTagsDocument, {

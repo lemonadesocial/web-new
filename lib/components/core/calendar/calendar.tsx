@@ -88,8 +88,8 @@ export function Calendar({ events, footer, onSelectDate }: CalendarProps) {
                 clsx({
                   'text-tertiary/[.24]': !isSameMonth(d, active),
                   'text-tertiary/[.56]': events && !events.some((e) => isSameDay(e, d)),
-                  'text-primary-400': isEqual(selected, d),
-                  'bg-tertiary/[.08] rounded-sm': isToday(d),
+                  'bg-tertiary text-black rounded-full': isEqual(selected, d),
+                  'text-primary-400': isToday(d),
                 }),
               )}
               onClick={() => {

@@ -29,7 +29,7 @@ query GetEvent($id: MongoID, $shortid: String) {
       longitude
     }
     address_directions
-
+    subevent_enabled
     sessions {
       _id
       start
@@ -46,6 +46,132 @@ query GetEvent($id: MongoID, $shortid: String) {
       speaker_users
       speaker_users_expanded {
         ...User
+      }
+    }
+    space
+  }
+}
+
+query GetEvents(
+  $subeventParent: MongoID
+  $skip: Int = 0
+  $limit: Int = 100
+  $id: [MongoID!]
+  $site: MongoID
+  $search: String
+  $accepted: MongoID
+  $highlight: Boolean
+  $unpublished: Boolean
+  $startFrom: DateTimeISO
+  $startTo: DateTimeISO
+  $endFrom: DateTimeISO
+  $hostFilter: HostFilter
+  $sort: EventSortInput
+) {
+  getEvents(
+    subevent_parent: $subeventParent
+    skip: $skip
+    limit: $limit
+    _id: $id
+    site: $site
+    search: $search
+    accepted: $accepted
+    highlight: $highlight
+    unpublished: $unpublished
+    start_from: $startFrom
+    start_to: $startTo
+    end_from: $endFrom
+    host_filter: $hostFilter
+    sort: $sort
+  ) {
+    _id
+    shortid
+    title
+    host
+    host_expanded {
+      _id
+      name
+      new_photos_expanded(limit: 1) {
+        _id
+        key
+        bucket
+      }
+    }
+    cohosts
+    cohosts_expanded {
+      _id
+      name
+      new_photos_expanded(limit: 1) {
+        _id
+        key
+        bucket
+      }
+    }
+    new_new_photos_expanded(limit: 1) {
+      _id
+      key
+      bucket
+      url
+      type
+    }
+    start
+    end
+    timezone
+    event_ticket_types {
+      _id
+      prices {
+        cost
+        currency
+        default
+        payment_accounts
+      }
+    }
+    broadcasts {
+      provider_id
+    }
+    address {
+      title
+      city
+      title
+      region
+      additional_directions
+    }
+    accepted
+    sessions {
+      _id
+      broadcast
+      description
+      end
+      speaker_users
+      speaker_users_expanded {
+        _id
+        name
+        new_photos_expanded(limit: 1) {
+          _id
+          key
+          bucket
+        }
+      }
+      start
+      title
+    }
+    subevent_parent_expanded {
+      _id
+      shortid
+      title
+      slug
+      start
+      timezone
+      new_new_photos_expanded(limit: 1) {
+        _id
+        key
+        bucket
+        type
+        url
+      }
+      subevent_settings {
+        ticket_required_for_creation
+        ticket_required_for_purchase
       }
     }
   }

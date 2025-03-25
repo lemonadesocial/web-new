@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { format } from 'date-fns';
 
@@ -9,6 +10,10 @@ import { useQuery } from '$lib/request';
 import RegistrationCard from '../event/RegistrationCard';
 import { AboutSection } from '../event/AboutSection';
 import { LocationSection } from '../event/LocationSection';
+import { SubEventSection } from '../event/SubEventSection';
+import { GalarySection } from '../event/GalarySection';
+import { CommunitySection } from '../event/CommunitySection';
+import { HostedBySection } from '../event/HostedBySection';
 
 export function EventPane({ eventId }: { eventId: string }) {
   const { data: dataGetMe } = useQuery(GetMeDocument);
@@ -25,7 +30,8 @@ export function EventPane({ eventId }: { eventId: string }) {
 
   return (
     <div>
-      <EventPaneHeader />
+      <EventPaneHeader eventShortId={event.shortid} />
+
       {canManage && (
         <Alert message="You have manage access for this event.">
           <Button iconRight="icon-arrow-outward" className="rounded-full">
@@ -100,19 +106,28 @@ export function EventPane({ eventId }: { eventId: string }) {
         <RegistrationCard />
         <AboutSection event={event} />
         <LocationSection event={event} />
+        <SubEventSection event={event} />
+        <GalarySection event={event} />
+        <CommunitySection event={event} />
+        <HostedBySection event={event} />
       </div>
     </div>
   );
 }
 
-function EventPaneHeader() {
+function EventPaneHeader({ eventShortId }: { eventShortId: string }) {
   return (
-    <div className="px-3 py-2 flex gap-3 border-b sticky top-0 bg-menu">
+    <div className="px-3 py-2 flex gap-3 border-b sticky top-0  z-50 backdrop-blur-xl">
       <Button icon="icon-chevron-double-right" variant="tertiary-alt" size="sm" onClick={() => drawer.close()} />
       <Button iconLeft="icon-duplicate" variant="tertiary" size="sm">
         Copy Link
       </Button>
-      <Button iconRight="icon-arrow-outward" variant="tertiary" size="sm">
+      <Button
+        iconRight="icon-arrow-outward"
+        variant="tertiary"
+        size="sm"
+        onClick={() => window.open(`/e/${eventShortId}`, '_blank')}
+      >
         Event Page
       </Button>
     </div>

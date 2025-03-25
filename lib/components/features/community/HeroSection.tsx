@@ -1,16 +1,16 @@
 'use client';
 import React from 'react';
 import clsx from 'clsx';
+import Link from 'next/link';
 
 import { Button, sheet, Spacer } from '$lib/components/core';
+import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { FollowSpaceDocument, Space, UnfollowSpaceDocument, User } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { useMutation } from '$lib/request';
 
 import { COMMUNITY_SOCIAL_LINKS } from './constants';
 import ThemeBuilder from './ThemeBuilder';
-import Link from 'next/link';
-import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 
 interface HeroSectionProps {
   space?: Space | null;
