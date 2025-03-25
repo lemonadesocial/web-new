@@ -293,7 +293,7 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
               }}
             />
             <div className="aspect-square rounded-lg overflow-hidden">
-              <Map markers={mappins} />
+              <Map markers={mappins} marker="advanced" />
             </div>
           </div>
         </div>

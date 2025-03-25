@@ -97,7 +97,10 @@ export function DrawerContainer() {
                 exit={{ x: '100%' }}
                 transition={{ duration: options.duration }}
                 ref={ref}
-                className={twMerge('bg-menu rounded-sm flex-1 max-w-[528px]', options.contentClass)}
+                className={twMerge(
+                  'bg-menu rounded-sm flex-1 max-w-[528px] overflow-auto no-scrollbar',
+                  options.contentClass,
+                )}
               >
                 {content}
               </motion.div>

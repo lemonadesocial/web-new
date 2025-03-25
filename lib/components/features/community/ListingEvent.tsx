@@ -55,8 +55,8 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
   const existing = events.find((e) => e.shortid === linkEvent?.substring(linkEvent.lastIndexOf('/') + 1));
 
   return (
-    <Card className="p-0 rounded-lg bg-alabaster-950 w-[480]">
-      <div className="flex justify-between items-center bg-tertiary/4 px-5 py-3 rounded-tl-lg rounded-tr-lg">
+    <Card.Root className="p-0 rounded-lg bg-alabaster-950 w-[480]">
+      <Card.Content className="flex justify-between items-center bg-tertiary/4 px-5 py-3 rounded-tl-lg rounded-tr-lg">
         <p className="text-lg font-medium">Submit Lemonade Event</p>
         <Button
           icon="icon-x size-[14]"
@@ -65,23 +65,25 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
           size="xs"
           onClick={() => modal.close()}
         />
-      </div>
+      </Card.Content>
       <div className="p-5 flex flex-col gap-3 items-start">
         {events.map((e) => (
-          <Card key={e._id} className="flex justify-between items-center w-full">
-            <div>
-              <p className="text-md">{e.title}</p>
-              <span className="text-tertiary/56">
-                {format(e.start, 'MMM dd')} at {format(e.start, 'h:mm a')}
-              </span>
-            </div>
-            <Button
-              icon="icon-minus"
-              size="sm"
-              variant="tertiary"
-              onClick={() => setEvents((prev) => prev.filter((p) => e._id !== p._id))}
-            />
-          </Card>
+          <Card.Root key={e._id} className="flex justify-between items-center w-full">
+            <Card.Content>
+              <div>
+                <p className="text-md">{e.title}</p>
+                <span className="text-tertiary/56">
+                  {format(e.start, 'MMM dd')} at {format(e.start, 'h:mm a')}
+                </span>
+              </div>
+              <Button
+                icon="icon-minus"
+                size="sm"
+                variant="tertiary"
+                onClick={() => setEvents((prev) => prev.filter((p) => e._id !== p._id))}
+              />
+            </Card.Content>
+          </Card.Root>
         ))}
         <div className="w-full">
           <div className="focus-within:border-tertiary bg-woodsmoke-950/64 border flex py-1 px-1.5 gap-3.5 rounded-sm items-center  h-[44px]">
@@ -104,7 +106,7 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
           Submit Event
         </Button>
       </div>
-    </Card>
+    </Card.Root>
   );
 }
 

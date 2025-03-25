@@ -1,0 +1,31 @@
+fragment User on User {
+  _id
+  name
+  first_name
+  last_name
+  username
+  description
+  job_title
+  company_name
+  icebreakers {
+    _id
+    value
+    question_expanded {
+      _id
+      title
+    }
+  }
+  handle_facebook
+  handle_instagram
+  handle_linkedin
+  handle_twitter
+  calendly_url
+  new_photos_expanded(limit: 1) {
+    _id
+    key
+    bucket
+  }
+  wallets
+  url
+  url_go
+}

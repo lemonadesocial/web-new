@@ -2,8 +2,12 @@ query GetEvent($id: MongoID, $shortid: String) {
   getEvent(_id: $id, shortid: $shortid) {
     _id
     title
+    description
     start
     shortid
+    host_expanded {
+      ...User
+    }
     new_new_photos_expanded {
       _id
       stamp
@@ -20,7 +24,29 @@ query GetEvent($id: MongoID, $shortid: String) {
       region
       country
       additional_directions
+
+      latitude
+      longitude
     }
     address_directions
+
+    sessions {
+      _id
+      start
+      end
+      broadcast
+      description
+      title
+      broadcast
+      photos_expanded {
+        _id
+        key
+        bucket
+      }
+      speaker_users
+      speaker_users_expanded {
+        ...User
+      }
+    }
   }
 }

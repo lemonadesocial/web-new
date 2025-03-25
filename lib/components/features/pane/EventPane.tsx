@@ -1,14 +1,18 @@
 import React from 'react';
+import { format } from 'date-fns';
 
-import { Alert, Avatar, Button, Card, Divider, drawer } from '$lib/components/core';
-import { Event, GetEventDocument, GetMeDocument } from '$lib/generated/backend/graphql';
+import { Alert, Avatar, Button, Divider, drawer } from '$lib/components/core';
+import { Event, GetEventDocument, GetMeDocument, User } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { useQuery } from '$lib/request';
-import { format } from 'date-fns';
+
+import RegistrationCard from '../event/RegistrationCard';
+import { AboutSection } from '../event/AboutSection';
+import { LocationSection } from '../event/LocationSection';
 
 export function EventPane({ eventId }: { eventId: string }) {
   const { data: dataGetMe } = useQuery(GetMeDocument);
-  const me = dataGetMe?.getMe;
+  const me = dataGetMe?.getMe as User;
 
   const { data, loading } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
   const event = data?.getEvent as Event;
@@ -93,23 +97,9 @@ export function EventPane({ eventId }: { eventId: string }) {
             </div>
           )}
         </div>
-
-        <Card.Root>
-          <Card.Header title="Registration" />
-          <Card.Content className="flex flex-col gap-4 font-medium">
-            <p>Welcome! To join the event, please register below.</p>
-            {me && (
-              <div className="flex gap-2 items-center">
-                <Avatar src={generateUrl(me.image_avatar)} size="sm" />
-                <div className="flex gap-1 items-center">
-                  {me.name && <p>{me.name}</p>}
-                  {me.email && <p>{me.email}</p>}
-                </div>
-              </div>
-            )}
-            <Button variant="secondary">One-Click Register</Button>
-          </Card.Content>
-        </Card.Root>
+        <RegistrationCard />
+        <AboutSection event={event} />
+        <LocationSection event={event} />
       </div>
     </div>
   );
@@ -117,7 +107,7 @@ export function EventPane({ eventId }: { eventId: string }) {
 
 function EventPaneHeader() {
   return (
-    <div className="px-3 py-2 flex gap-3 border-b">
+    <div className="px-3 py-2 flex gap-3 border-b sticky top-0 bg-menu">
       <Button icon="icon-chevron-double-right" variant="tertiary-alt" size="sm" onClick={() => drawer.close()} />
       <Button iconLeft="icon-duplicate" variant="tertiary" size="sm">
         Copy Link
