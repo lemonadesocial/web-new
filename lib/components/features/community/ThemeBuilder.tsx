@@ -76,7 +76,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
         <div className="flex flex-1 gap-3 overflow-x no-scrollbar justify-center">
           {Object.entries(presets).map(([key, value]) => (
             <div key={key} className="flex flex-col gap-2 items-center">
-              <Card
+              <Card.Root
                 key={key}
                 className={clsx(
                   'p-0 bg-transparent border-transparent transition-all hover:outline-2 hover:outline-offset-2 hover:ring-tertiary rounded-sm',
@@ -98,7 +98,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
                 }}
               >
                 <img src={value.image} className="rounded-sm" width={80} height={56} alt={key} />
-              </Card>
+              </Card.Root>
 
               <p className="capitalize font-medium text-xs">{key === 'violet' ? 'default' : key}</p>
             </div>
@@ -113,16 +113,18 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
               mode="default"
               colors={presets[selected].colors}
               onSelect={(color) => {
-                setColor((prev) => ({ ...prev, forceground: color }));
+                setColor((prev) => ({ ...prev, forceground: color, background: color }));
                 setVariables((prev) => ({
                   ...prev,
                   dark: {
                     ...prev?.dark,
                     '--color-primary-500': `var(--color-${color}-500)`,
+                    '--color-background': `var(--color-${color}-950)`,
                   },
                   light: {
                     ...prev?.light,
                     '--color-primary-500': `var(--color-${color}-500)`,
+                    '--color-background': `var(--color-${color}-50)`,
                   },
                 }));
               }}

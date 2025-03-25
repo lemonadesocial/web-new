@@ -1,0 +1,23 @@
+@reference "tailwindcss/theme.css";
+
+.event-description {
+  h1 {
+    @apply text-3xl;
+  }
+
+  h2 {
+    @apply text-2xl font-medium my-3.5;
+  }
+
+  h3 {
+    @apply text-xl font-medium;
+  }
+
+  hr {
+    @apply border-[var(--color-border)] my-2;
+  }
+
+  blockquote {
+    @apply border-l-4 px-2;
+  }
+}
