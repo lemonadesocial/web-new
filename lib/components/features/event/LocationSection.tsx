@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Event } from '$lib/generated/backend/graphql';
 import { Divider, Map } from '$lib/components/core';
-import { getEventAddress } from '$lib/utils/helpers';
+import { getEventAddress } from '$lib/utils/event';
 
 export function LocationSection({ event }: { event: Event }) {
   if (!event.address) return null;

@@ -14,6 +14,8 @@ import { SubEventSection } from '../event/SubEventSection';
 import { GalarySection } from '../event/GalarySection';
 import { CommunitySection } from '../event/CommunitySection';
 import { HostedBySection } from '../event/HostedBySection';
+import { convertFromUtcToTimezone } from '$lib/utils/date';
+import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event';
 
 export function EventPane({ eventId }: { eventId: string }) {
   const { data: dataGetMe } = useQuery(GetMeDocument);
@@ -75,15 +77,15 @@ export function EventPane({ eventId }: { eventId: string }) {
         <div className="flex gap-4">
           <div className="flex gap-4 flex-1">
             <div className="border rounded-sm size-12 text-tertiary/80 flex flex-col justify-center items-center font-medium">
-              <span className="py-0.5 text-xs">{format(event.start, 'MMM')}</span>
+              <span className="py-0.5 text-xs">
+                {format(convertFromUtcToTimezone(event.start, event.timezone as string), 'MMM')}
+              </span>
               <Divider className="h-1 w-full" />
-              <span>{format(event.start, 'dd')}</span>
+              <span>{format(convertFromUtcToTimezone(event.start, event.timezone as string), 'dd')}</span>
             </div>
             <div className="flex flex-col">
-              <span>{format(event.start, 'EEEE, MMMM dd')}</span>
-              <span>
-                {format(event.start, 'h:mm a')} - {format(event.end, 'h:mm a')}
-              </span>
+              <span>{getEventDateBlockStart(event)}</span>
+              <span className="text-sm">{getEventDateBlockRange(event)}</span>
             </div>
           </div>
 
@@ -96,7 +98,7 @@ export function EventPane({ eventId }: { eventId: string }) {
                 <p>
                   {event.address?.title} <i className="icon-arrow-outward text-tertiary/24 size-[18px]" />
                 </p>
-                <p>
+                <p className="text-sm">
                   {[event.address?.city || event.address?.region, event.address?.country].filter(Boolean).join(', ')}
                 </p>
               </div>
