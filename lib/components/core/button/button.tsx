@@ -3,10 +3,10 @@ import React, { HTMLAttributes } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 const sizes: { [key: string]: string } = {
-  base: 'px-[12] py-[7] rounded-sm text-md ',
+  base: 'px-[12] py-[7] rounded-sm text-md',
   sm: 'px-2.5 py-1.5 rounded-sm text-sm',
   lg: 'px-4 py-2 rounded-md text-lg',
-  xs: 'px-2 py-1 text-sm',
+  xs: 'px-2 py-1 text-sm rounded-xs',
 };
 
 const iconOnlySizes = {
@@ -17,12 +17,13 @@ const iconOnlySizes = {
 };
 
 const variants: { [key: string]: string } = {
-  primary: 'bg-primary-500 hover:bg-primary-500/8',
+  primary: 'bg-primary-500 hover:bg-primary-700',
   success: 'bg-success-600 hover:bg-success-600/8',
   danger: 'bg-danger-500 hover:bg-danger-500/8',
   tertiary: 'bg-tertiary/8 hover:bg-tertiary/16 text-tertiary/56',
-  'tertiary-alt': 'bg-tertiary/8 hover:bg-tertiary/80 text-tertiary/56 hover:text-black',
-  secondary: 'bg-tertiary hover:bg-tertiary/8 text-black',
+  'tertiary-alt':
+    'bg-tertiary/8 hover:bg-tertiary/80 text-tertiary/56 hover:text-black disabled:opacity-50 disabled:hover:bg-tertiary/8 disabled:hover:text-tertiary/56',
+  secondary: 'bg-tertiary hover:bg-tertiary/80 disabled:bg-tertiary/50 text-black',
   flat: 'hover:bg-tertiary/[0.08]',
 };
 

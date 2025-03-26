@@ -12,6 +12,8 @@ import { SubEventSection } from './SubEventSection';
 import { GalarySection } from './GalarySection';
 import { CommunitySection } from './CommunitySection';
 import { HostedBySection } from './HostedBySection';
+import { convertFromUtcToTimezone } from '$lib/utils/date';
+import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event';
 
 export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
   const { data } = useQuery(GetEventDocument, {
@@ -60,18 +62,18 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           <p className="font-medium text-tertiary/80">Hosted By {hosts.map((p) => p?.name).join(',')}</p>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col gap-4">
           <div className="flex gap-4 flex-1">
             <div className="border rounded-sm size-12 text-tertiary/80 flex flex-col justify-center items-center font-medium">
-              <span className="py-0.5 text-xs">{format(event.start, 'MMM')}</span>
+              <span className="py-0.5 text-xs">
+                {format(convertFromUtcToTimezone(event.start, event.timezone as string), 'MMM')}
+              </span>
               <Divider className="h-1 w-full" />
-              <span>{format(event.start, 'dd')}</span>
+              <span>{format(convertFromUtcToTimezone(event.start, event.timezone as string), 'dd')}</span>
             </div>
             <div className="flex flex-col">
-              <span>{format(event.start, 'EEEE, MMMM dd')}</span>
-              <span>
-                {format(event.start, 'h:mm a')} - {event.end && format(event.end, 'h:mm a')}
-              </span>
+              <span>{getEventDateBlockStart(event)}</span>
+              <span className="text-sm">{getEventDateBlockRange(event)}</span>
             </div>
           </div>
 

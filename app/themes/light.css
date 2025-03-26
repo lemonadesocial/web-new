@@ -5,6 +5,8 @@
   --color-forceground: #000000;
   --color-tertiary: #000000;
   --color-border: rgba(255, 255, 255, 0.08);
-  --color-menu: var(--color-alabaster-50);
-  --color-overlay: var(--color-woodsmoke-50);
+  --color-menu: rgba(32, 32, 34, 0.8);
+  --color-modal: var(--color-woodsmoke-950);
+  --color-drawer: var(--color-woodsmoke-950);
+  --color-overlay: rgba(0, 0, 0, 0.6);
 }

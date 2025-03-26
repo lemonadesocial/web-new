@@ -2,6 +2,7 @@
 import React from 'react';
 import { useSetAtom } from 'jotai';
 import { scrollAtBottomAtom } from '$lib/jotai';
+import Header from './header';
 
 export function Main({ children }: React.PropsWithChildren) {
   const mainRef = React.useRef<HTMLDivElement>(null);
@@ -28,8 +29,9 @@ export function Main({ children }: React.PropsWithChildren) {
   }, []);
 
   return (
-    <div ref={mainRef} className="w-full p-4 overflow-auto flex-1">
+    <main ref={mainRef} className="relative flex flex-col h-dvh w-full z-100 overflow-auto">
+      <Header />
       <div className="page mx-auto">{children}</div>
-    </div>
+    </main>
   );
 }

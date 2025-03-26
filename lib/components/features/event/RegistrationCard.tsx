@@ -10,7 +10,7 @@ export default function RegistrationCard() {
 
   return (
     <Card.Root>
-      <Card.Header title="Registration" />
+      <Card.Header>Registration</Card.Header>
       <Card.Content className="flex flex-col gap-4 font-medium">
         <p>Welcome! To join the event, please register below.</p>
         {me && (

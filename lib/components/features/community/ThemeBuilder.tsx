@@ -11,7 +11,14 @@ import { Menu } from '$lib/components/core/menu';
 import { join, split } from 'lodash';
 import { useMutation } from '$lib/request';
 import { Space, UpdateSpaceDocument } from '$lib/generated/backend/graphql';
-import { ColorPreset, defaultColorPreset, fonts, presets } from './themes_preset/constants';
+import {
+  ColorPreset,
+  defaultColorPreset,
+  fonts,
+  getRandomColor,
+  getRandomFont,
+  presets,
+} from './themes_preset/constants';
 import { ColorPicker } from '$lib/components/core/color-picker/color-picker';
 // import { ShaderGradient } from './themes_preset/shader';
 
@@ -273,22 +280,47 @@ export default function ThemeBuilder({
           </div>
         </div>
         <div className="flex justify-between">
-          <div>
+          <div className="flex gap-2">
             <Button
               size="sm"
-              icon="icon-shuffle"
-              variant="flat"
-              className="bg-tertiary/8 hover:bg-tertiary/16 text-tertiary/56"
-              onClick={() => {
+              icon="icon-recent"
+              variant="tertiary-alt"
+              onClick={async () => {
                 setVariables(defaultColorPreset);
                 if (space?._id) {
-                  updateCommunity({
+                  await updateCommunity({
                     variables: { id: space._id, input: { theme_data: null } },
                     onComplete: (client) => {
                       client.writeFragment<Space>({ id: `Space:${space._id}`, data: { theme_data: null } });
                     },
                   });
                 }
+                onClose(true);
+              }}
+            />
+            <Button
+              size="sm"
+              icon="icon-shuffle"
+              variant="tertiary-alt"
+              onClick={async () => {
+                const [name, color] = getRandomColor();
+                setColor((prev) => ({ ...prev, forceground: name, background: name }));
+                const random = {
+                  font: {
+                    '--font-title': getRandomFont('title'),
+                    '--font-body': getRandomFont('body'),
+                  },
+                  dark: {
+                    '--color-background': `var(--${color.dark.replace('bg-', 'color-')})`,
+                    '--color-primary-500': `var(--${color.default.replace('bg-', 'color-')})`,
+                  },
+                  light: {
+                    '--color-background': `var(--${color.light.replace('bg-', 'color-')})`,
+                    '--color-primary-500': `var(--${color.default.replace('bg-', 'color-')})`,
+                  },
+                };
+                setVariables(random);
+                onClose(false);
               }}
             />
           </div>

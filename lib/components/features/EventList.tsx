@@ -127,7 +127,7 @@ export function EventListCard({
     <div className="flex flex-col">
       {Object.entries(groupBy(events, ({ start }) => start)).map(([date, data]) => (
         <div className="flex flex-col relative" key={date}>
-          <div className="border-dashed border border-l-2 absolute h-full left-1 top-2 z-10">
+          <div className="border-dashed border-l-2 border-l-[var(--color-border)] absolute h-full left-1 top-2 z-10">
             <div className="size-2 bg-background -ml-[5px] absolute">
               <div className="size-2 rounded-full bg-tertiary/[.24]" />
             </div>
@@ -249,7 +249,7 @@ function EventListCardSkeleton() {
     <div className="flex flex-col">
       {Object.entries({ 1: [1, 2], 2: [1], 3: [1, 2, 3] }).map(([date, data]) => (
         <div className="flex flex-col relative" key={date}>
-          <div className="border border-dashed border-l-2 absolute h-full left-1 top-2 z-10">
+          <div className="border-dashed border-l-2 border-l-[var(--color-border)] absolute h-full left-1 top-2 z-10">
             <div className="size-2 bg-background -ml-[5px] absolute">
               <div className="size-2 rounded-full bg-tertiary/[.24]" />
             </div>

@@ -84,7 +84,7 @@ export function Calendar({ events, footer, onSelectDate }: CalendarProps) {
               aria-label={d.toString()}
               key={d.toString()}
               className={twMerge(
-                'relative text-center cursor-pointer px-2.5 py-2 font-medium size-9',
+                'relative text-center cursor-pointer text-sm px-2.5 py-2 font-medium size-9',
                 clsx({
                   'text-tertiary/24': !isSameMonth(d, active),
                   'text-tertiary/56': events && !events.some((e) => isSameDay(e, d)),
@@ -94,6 +94,9 @@ export function Calendar({ events, footer, onSelectDate }: CalendarProps) {
                 }),
               )}
               onClick={() => {
+                if (events && !events.some((e) => isSameDay(e, d))) {
+                  return;
+                }
                 setSelected(d);
                 onSelectDate?.(d);
               }}
