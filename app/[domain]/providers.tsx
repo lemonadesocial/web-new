@@ -1,7 +1,8 @@
 'use client';
 import React from 'react';
-import { GraphqlClienProvider, GraphqlClient, InMemoryCache } from '$lib/request';
+import { GraphqlClientProvider, GraphqlClient, InMemoryCache } from '$lib/request';
 import { GRAPHQL_URL } from '$lib/utils/constants';
+import { OryAuthProvider } from '$lib/providers/OryAuthProvider';
 
 const client = new GraphqlClient({
   url: GRAPHQL_URL,
@@ -12,5 +13,9 @@ const client = new GraphqlClient({
 });
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  return <GraphqlClienProvider client={client}>{children}</GraphqlClienProvider>;
+  return (
+    <OryAuthProvider>
+      <GraphqlClientProvider client={client}>{children}</GraphqlClientProvider>
+    </OryAuthProvider>
+  );
 }
