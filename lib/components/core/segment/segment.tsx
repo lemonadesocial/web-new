@@ -19,7 +19,7 @@ export function Segment<T>({ items, selected, onSelect, className }: SegmentProp
   const [active, setActive] = React.useState(selected);
 
   return (
-    <ul className={twMerge('inline-flex bg-tertiary/[.08] rounded-sm', className)}>
+    <ul className={twMerge('inline-flex bg-tertiary/8 rounded-sm', className)}>
       {items.map((item) => (
         <li key={item.value as string} className="flex-1">
           <button
@@ -29,15 +29,15 @@ export function Segment<T>({ items, selected, onSelect, className }: SegmentProp
               onSelect?.(item);
             }}
             className={clsx(
-              'transition cursor-pointer outline-none text-sm font-medium px-2.5 py-1.5 rounded-sm flex-1 w-full',
+              'flex items-center justify-center transition cursor-pointer outline-none text-sm font-medium p-2 rounded-sm flex-1 w-full',
               {
-                'bg-tertiary/[0.08] text-tertiary': active === item.value,
-                'text-tertiary/[.56]': active !== item.value,
+                'bg-tertiary/8 text-tertiary': active === item.value,
+                'text-tertiary/56': active !== item.value,
               },
             )}
           >
             {item.label}
-            {item.icon && <i className={item.icon} />}
+            {item.icon && <i className={twMerge(item.icon, 'size-4')} />}
           </button>
         </li>
       ))}

@@ -49,6 +49,7 @@ query GetEvent($id: MongoID, $shortid: String) {
       }
     }
     space
+    timezone
   }
 }
 

@@ -85,7 +85,8 @@ function MenuRoot({
   className,
   disabled,
   placement = 'bottom-end',
-}: { className?: string; disabled?: boolean; placement?: Placement } & React.PropsWithChildren) {
+  dismissable = true,
+}: { className?: string; disabled?: boolean; placement?: Placement; dismissable?: boolean } & React.PropsWithChildren) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
@@ -106,7 +107,7 @@ function MenuRoot({
       refs.reference.current &&
       !(refs.reference.current as HTMLDivElement).contains(event.target as Node)
     ) {
-      close();
+      if (dismissable) close();
     }
   };
 

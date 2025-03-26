@@ -234,7 +234,7 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
                   Submit Event
                 </Button>
               </Menu.Trigger>
-              <Menu.Content className="px-1.5 py-2">
+              <Menu.Content className="px-1">
                 {({ toggle }) => (
                   <>
                     <MenuItem

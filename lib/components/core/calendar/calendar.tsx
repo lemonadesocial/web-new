@@ -84,12 +84,13 @@ export function Calendar({ events, footer, onSelectDate }: CalendarProps) {
               aria-label={d.toString()}
               key={d.toString()}
               className={twMerge(
-                'relative text-center cursor-pointer px-2.5 py-2 font-medium',
+                'relative text-center cursor-pointer px-2.5 py-2 font-medium size-9',
                 clsx({
-                  'text-tertiary/[.24]': !isSameMonth(d, active),
-                  'text-tertiary/[.56]': events && !events.some((e) => isSameDay(e, d)),
+                  'text-tertiary/24': !isSameMonth(d, active),
+                  'text-tertiary/56': events && !events.some((e) => isSameDay(e, d)),
                   'bg-tertiary text-black rounded-full': isEqual(selected, d),
-                  'text-primary-400': isToday(d),
+                  'text-primary-500': isToday(d),
+                  'bg-primary-500 text-tertiary rounded-full': isEqual(selected, d) && isToday(d),
                 }),
               )}
               onClick={() => {

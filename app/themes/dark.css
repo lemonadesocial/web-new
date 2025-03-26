@@ -6,4 +6,5 @@
   --color-tertiary: #ffffff;
   --color-border: rgba(255, 255, 255, 0.08);
   --color-menu: var(--color-alabaster-950);
+  --color-overlay: var(--color-woodsmoke-950);
 }
