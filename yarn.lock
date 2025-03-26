@@ -1210,10 +1210,10 @@
   resolved "https://registry.npmjs.org/@nolyfill/is-core-module/-/is-core-module-1.0.39.tgz"
   integrity sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==
 
-"@ory/client@^1.18.5":
-  version "1.18.5"
-  resolved "https://registry.yarnpkg.com/@ory/client/-/client-1.18.5.tgz#5e8737940d2e76666f42ce97f854d54acd7fe181"
-  integrity sha512-w8S5J2dNJ2JayWhHfXL1ZPr8gvVeDSu6KuaQA4Q4WVj2erndOhcfSm9ITznSZlZk46BWJ3mw/PkVqPZsE5R47w==
+"@ory/client@^1.19.0":
+  version "1.19.0"
+  resolved "https://registry.yarnpkg.com/@ory/client/-/client-1.19.0.tgz#8970254e3dd75db6591033b3928195842f8afce1"
+  integrity sha512-f5Vz4KsSmWWh5u0FN0g7uNBmyOr0IEeKFC2SUU0haPvXMJUtsx5ndwD9vypd73uhtdNXD8ocCX6W9m6I69QnNg==
   dependencies:
     axios "^1.6.1"
 
