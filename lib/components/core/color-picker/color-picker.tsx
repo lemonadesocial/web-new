@@ -1,3 +1,4 @@
+'use client';
 import React, { PropsWithChildren } from 'react';
 
 import { autoPlacement, offset, ReferenceType, useFloating } from '@floating-ui/react';
@@ -20,6 +21,10 @@ type ColorPickerState = {
   floatingStyles?: MotionStyle;
 };
 const ColorPickerContext = React.createContext<ColorPickerState>({ toggle: () => {} });
+
+function randomColorHex() {
+  return '#' + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, '0');
+}
 
 function ColorPickerTrigger({ children }: PropsWithChildren) {
   const { toggle, refs, disabled } = React.useContext(ColorPickerContext);
@@ -54,7 +59,7 @@ export function ColorPickerContent({
     },
   };
 
-  const [color, setColor] = React.useState(colorValue);
+  const [color, setColor] = React.useState(colorValue || randomColorHex());
 
   return (
     <>

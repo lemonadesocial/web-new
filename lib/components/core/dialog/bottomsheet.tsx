@@ -34,7 +34,7 @@ export function BottomSheetContainer() {
   const ref = React.useRef<SheetRef>(null);
 
   const handleOpen = React.useCallback(<T extends object>(Component: React.ComponentType<T>, opts: Options<T> = {}) => {
-    setContent(<Component sheetRef={ref} {...(opts.props as T)} />);
+    setContent(<Component {...(opts.props as T)} />);
     setOptions((prev) => ({ ...prev, ...opts }));
     setIsOpen(true);
   }, []);
@@ -43,14 +43,6 @@ export function BottomSheetContainer() {
     setIsOpen(false);
   };
 
-  React.useImperativeHandle(ref, () => {
-    return {
-      skipOpen: () => {
-        setIsOpen(true);
-      },
-    };
-  }, []);
-
   React.useEffect(() => {
     sheet.open = handleOpen;
     sheet.close = handleClose;
@@ -58,6 +50,7 @@ export function BottomSheetContainer() {
 
   return (
     <Sheet
+      ref={ref}
       isOpen={isOpen}
       onClose={() => handleClose()}
       snapPoints={options.snapPoints}
