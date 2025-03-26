@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -22,7 +23,15 @@ type Styled = {
 
 type KeyPreset = 'minimal';
 
-export default function ThemeBuilder({ space, onClose }: { space?: Space | null; onClose: (saved: boolean) => void }) {
+export default function ThemeBuilder({
+  space,
+  onClose,
+  onSave,
+}: {
+  space?: Space | null;
+  onClose: (saved: boolean) => void;
+  onSave: () => void;
+}) {
   const [variables, setVariables] = React.useState<Styled>(space?.theme_data?.variables || {});
   const [selected, setSelected] = React.useState<KeyPreset>(space?.theme_data?.name || 'minimal');
   const [color, setColor] = React.useState<{
@@ -300,6 +309,7 @@ export default function ThemeBuilder({ space, onClose }: { space?: Space | null;
                     },
                   });
                   onClose(true);
+                  onSave();
                 }
               }}
             >
