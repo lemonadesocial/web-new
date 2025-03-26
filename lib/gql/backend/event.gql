@@ -3,6 +3,7 @@ query GetEvent($id: MongoID, $shortid: String) {
     _id
     title
     description
+    approval_required
     start
     end
     shortid
@@ -175,6 +176,50 @@ query GetEvents(
         ticket_required_for_creation
         ticket_required_for_purchase
       }
+    }
+  }
+}
+
+query getEventInvitation($event: MongoID!) {
+  getEventInvitation(event: $event) {
+    _id
+    inviters
+  }
+}
+
+query getEventTicketTypes($event: MongoID!) {
+  getEventTicketTypes(input: { event: $event }) {
+    ticket_types {
+      _id
+      title
+      default
+      description
+      event
+      limited
+      limit
+      prices {
+        cost
+        currency
+        default
+        payment_accounts
+        payment_accounts_expanded {
+          ...PaymentAccount
+        }
+      }
+      whitelisted
+      photos_expanded(limit: 1) {
+        _id,
+        key,
+        bucket
+      }
+      category
+      category_expanded {
+        _id
+        description
+        title
+        position
+      }
+      position
     }
   }
 }
