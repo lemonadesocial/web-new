@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import getPalette from 'tailwindcss-palette-generator';
 
 import { generateCssVariables } from '$lib/utils/fetchers';
-import { Button, Card, modal, sheet } from '$lib/components/core';
+import { Button, Card } from '$lib/components/core';
 import { Menu } from '$lib/components/core/menu';
 
 import { join, split } from 'lodash';
@@ -12,7 +12,6 @@ import { useMutation } from '$lib/request';
 import { Space, UpdateSpaceDocument } from '$lib/generated/backend/graphql';
 import { ColorPreset, defaultColorPreset, fonts, presets } from './themes_preset/constants';
 import { ColorPicker } from '$lib/components/core/color-picker/color-picker';
-import { SheetRef } from 'react-modal-sheet';
 // import { ShaderGradient } from './themes_preset/shader';
 
 type Styled = {
@@ -23,41 +22,7 @@ type Styled = {
 
 type KeyPreset = 'minimal';
 
-function ConfirmModal() {
-  return (
-    <div className="flex flex-col gap-4 max-w-[308px]">
-      <div className="p-3 rounded-full bg-danger-400/16 w-fit">
-        <i className="icon-info text-danger-400" />
-      </div>
-      <div className="flex flex-col gap-2">
-        <p className="text-lg font-medium">Discard Customizations?</p>
-        <p className="text-sm font-medium text-tertiary/80">
-          Your theme changes haven’t been applied. Discard them or go back to keep editing.
-        </p>
-      </div>
-      <div className="flex gap-3">
-        <Button variant="tertiary" className="flex-1" onClick={() => modal.close()}>
-          Cancel
-        </Button>
-        <Button
-          variant="danger"
-          className="flex-1"
-          onClick={() => {
-            modal.close();
-            sheet.close();
-          }}
-        >
-          Discard
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-export default function ThemeBuilder({ space, ...rest }: { space?: Space | null }) {
-  const { sheetRef } = rest as { sheetRef: React.RefObject<SheetRef | null> };
-
-  const [saved, setSaved] = React.useState(true);
+export default function ThemeBuilder({ space, onClose }: { space?: Space | null; onClose: (saved: boolean) => void }) {
   const [variables, setVariables] = React.useState<Styled>(space?.theme_data?.variables || {});
   const [selected, setSelected] = React.useState<KeyPreset>(space?.theme_data?.name || 'minimal');
   const [color, setColor] = React.useState<{
@@ -76,16 +41,6 @@ export default function ThemeBuilder({ space, ...rest }: { space?: Space | null 
   });
 
   const [updateCommunity, { loading }] = useMutation(UpdateSpaceDocument);
-
-  React.useEffect(() => {
-    return () => {
-      if (!saved) {
-        console.log('asd');
-        modal.open(ConfirmModal);
-        sheetRef.current?.skipOpen();
-      }
-    };
-  }, [sheetRef.current, saved]);
 
   return (
     <>
@@ -198,7 +153,7 @@ export default function ThemeBuilder({ space, ...rest }: { space?: Space | null 
                     },
                   };
                 });
-                setSaved(false);
+                onClose(false);
               }}
             />
 
@@ -248,7 +203,7 @@ export default function ThemeBuilder({ space, ...rest }: { space?: Space | null 
                     ...cssVars.light,
                   },
                 }));
-                setSaved(false);
+                onClose(false);
               }}
             />
 
@@ -277,7 +232,7 @@ export default function ThemeBuilder({ space, ...rest }: { space?: Space | null 
                   ...prev,
                   font: { ...prev?.font, '--font-title': fonts.title[font] },
                 }));
-                setSaved(false);
+                onClose(false);
               }}
             />
             <PopoverFont
@@ -290,7 +245,7 @@ export default function ThemeBuilder({ space, ...rest }: { space?: Space | null 
                   ...prev,
                   font: { ...prev?.font, '--font-body': fonts.body[font] },
                 }));
-                setSaved(false);
+                onClose(false);
               }}
             />
 
@@ -344,8 +299,7 @@ export default function ThemeBuilder({ space, ...rest }: { space?: Space | null 
                       client.writeFragment<Space>({ id: `Space:${space._id}`, data: { theme_data } });
                     },
                   });
-                  setSaved(true);
-                  sheet.close();
+                  onClose(true);
                 }
               }}
             >
@@ -364,7 +318,6 @@ function PopoverColor({
   colors,
   mode = 'default',
   onSelect,
-  customColor: color,
 }: {
   label: string;
   name: string;
