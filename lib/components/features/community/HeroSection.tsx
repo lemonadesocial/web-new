@@ -168,7 +168,11 @@ export function HeroSection({ me, space }: HeroSectionProps) {
           </Sheet.Header>
           <Sheet.Content disableDrag>
             <Sheet.Scroller draggableAt="top">
-              <ThemeBuilder space={space} onClose={(saved: boolean) => setSaved(saved)} />
+              <ThemeBuilder
+                space={space}
+                onClose={(saved: boolean) => setSaved(saved)}
+                onSave={() => setOpenSheet(false)}
+              />
             </Sheet.Scroller>
           </Sheet.Content>
         </Sheet.Container>
