@@ -17,7 +17,6 @@ import {
   Space,
   SpaceTagBase,
   SpaceTagType,
-  User,
 } from '$lib/generated/backend/graphql';
 import { useQuery } from '$lib/request';
 import { EventList, EventListCard } from '$lib/components/features/EventList';
@@ -31,7 +30,7 @@ import { EventPane } from '../pane';
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
 
-export function Community({ me, space }: { me?: User; space?: Space }) {
+export function Community({ space }: { space?: Space }) {
   const [shouldLoadMore, setShouldLoadMore] = useAtom(scrollAtBottomAtom);
 
   const [mode, setMode] = React.useState<'card' | 'list'>('card');
@@ -169,7 +168,7 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
       )}
 
       <div>
-        <HeroSection space={dataGetSpace?.getSpace as Space} me={me} />
+        <HeroSection space={dataGetSpace?.getSpace as Space} />
         <Divider className="my-8" />
         <div className="flex gap-18">
           <div className="flex flex-col flex-1 gap-6">

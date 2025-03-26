@@ -9,7 +9,7 @@ interface GraphqlClientContextType {
 
 const GraphqlClientContext = React.createContext<GraphqlClientContextType | null>(null);
 
-export function GraphqlClienProvider(props: React.PropsWithChildren & { client: GraphqlClient }) {
+export function GraphqlClientProvider(props: React.PropsWithChildren & { client: GraphqlClient }) {
   return (
     <GraphqlClientContext.Provider value={{ client: props.client }}>{props.children}</GraphqlClientContext.Provider>
   );
@@ -18,7 +18,7 @@ export function GraphqlClienProvider(props: React.PropsWithChildren & { client: 
 export function useClient() {
   const context = React.useContext(GraphqlClientContext);
   if (context === null) {
-    throw new Error('useAppContext must be used within an GraphqlClienProvider');
+    throw new Error('useAppContext must be used within an GraphqlClientProvider');
   }
   return context;
 }

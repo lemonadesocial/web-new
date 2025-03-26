@@ -2,17 +2,22 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAtom } from 'jotai';
 
-import { logout } from '$app/actions/auth';
+import { sessionAtom } from '$lib/jotai';
+import { LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { useMe } from '$lib/hooks/useMe';
+import { useLogOut } from '$lib/hooks/useLogout';
 
-import { User } from '$lib/generated/backend/graphql';
 import { Avatar } from '$lib/components/core/avatar';
 import { Button } from '$lib/components/core/button';
 import { Divider, Menu, MenuItem } from '$lib/components/core';
-import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 
-export default function Header({ me }: { me: User }) {
+export default function Header() {
+  const [session] = useAtom(sessionAtom);
+  const me = useMe();
   const router = useRouter();
+  const logOut = useLogOut();
 
   return (
     <div className="p-4 flex justify-between items-center">
@@ -21,7 +26,7 @@ export default function Header({ me }: { me: User }) {
       </Link>
 
       <div>
-        {me ? (
+        {session && me ? (
           <Menu.Root>
             <Menu.Trigger>
               <Avatar src={me.image_avatar || ''} />
@@ -32,7 +37,7 @@ export default function Header({ me }: { me: User }) {
                   <div className="flex gap-2.5 px-2 py-1.5 items-center">
                     <Avatar size="lg" src={me.image_avatar || ''} />
                     <div>
-                      <p className="text-md font-medium">{me.name}</p>
+                      <p className="text-md font-medium whitespace-nowrap">{me.name}</p>
                       <p className="text-xs font-medium text-tertiary/56">{me.email}</p>
                     </div>
                   </div>
@@ -48,8 +53,7 @@ export default function Header({ me }: { me: User }) {
                       title="Sign Out"
                       onClick={async () => {
                         toggle();
-                        await logout();
-                        window.location.reload();
+                        logOut();
                       }}
                     />
                   </div>
@@ -57,19 +61,21 @@ export default function Header({ me }: { me: User }) {
               )}
             </Menu.Content>
           </Menu.Root>
-        ) : (
-          <>
-            <Button
-              size="sm"
-              variant="tertiary"
-              onClick={() =>
-                router.replace(`http://identity.staging.lemonade.social/login?return_to=${window.location.href}`)
-              }
-            >
-              Sign In
-            </Button>
-          </>
-        )}
+        ) : <>
+          {
+            !session && (
+              <Button
+                size="sm"
+                variant="tertiary"
+                onClick={() =>
+                  router.replace(`http://identity.staging.lemonade.social/login?return_to=${window.location.href}`)
+                }
+              >
+                Sign In
+              </Button>
+            )
+          }
+        </>}
       </div>
     </div>
   );

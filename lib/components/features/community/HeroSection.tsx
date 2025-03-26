@@ -1,24 +1,29 @@
 'use client';
-import React from 'react';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { Sheet, SheetRef } from 'react-modal-sheet';
+import { useAtom } from 'jotai';
+import React from 'react';
 
 import { Button, Card, modal, Spacer } from '$lib/components/core';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
-import { FollowSpaceDocument, Space, UnfollowSpaceDocument, User } from '$lib/generated/backend/graphql';
+import { FollowSpaceDocument, Space, UnfollowSpaceDocument } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { useMutation } from '$lib/request';
+import { sessionAtom } from '$lib/jotai';
+import { useMe } from '$lib/hooks/useMe';
 
 import { COMMUNITY_SOCIAL_LINKS } from './constants';
 import ThemeBuilder from './ThemeBuilder';
 
 interface HeroSectionProps {
   space?: Space | null;
-  me?: User | null;
 }
 
-export function HeroSection({ me, space }: HeroSectionProps) {
+export function HeroSection({ space }: HeroSectionProps) {
+  const [session] = useAtom(sessionAtom);
+  const me = useMe();
+
   const [follow, resFollow] = useMutation(FollowSpaceDocument, {
     onComplete: (client) => {
       client.writeFragment({ id: `Space:${space?._id}`, data: { followed: true } });
@@ -30,8 +35,8 @@ export function HeroSection({ me, space }: HeroSectionProps) {
     },
   });
 
-  const handleSubcribe = () => {
-    if (!me) {
+  const handleSubscribe = () => {
+    if (!session) {
       // need to login to subscribe
       return;
     }
@@ -104,7 +109,7 @@ export function HeroSection({ me, space }: HeroSectionProps) {
                 outlined={!!space?.followed}
                 variant="primary"
                 className={clsx(space?.followed && 'hover:bg-primary-500 hover:text-tertiary w-auto duration-300')}
-                onClick={() => handleSubcribe()}
+                onClick={() => handleSubscribe()}
               >
                 {!!space?.followed ? (
                   <>
