@@ -60,6 +60,7 @@
   --color-forceground: var(--color-forceground);
   --color-tertiary: var(--color-tertiary);
   --color-menu: var(--color-menu);
+  --color-overlay: var(--color-overlay);
 
   --color-primary-50: var(--color-violet-50);
   --color-primary-100: var(--color-violet-100);

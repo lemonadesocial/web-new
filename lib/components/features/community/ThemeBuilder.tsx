@@ -1,16 +1,18 @@
 import React from 'react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
-// import { createPortal } from 'react-dom';
+import getPalette from 'tailwindcss-palette-generator';
 
 import { generateCssVariables } from '$lib/utils/fetchers';
-import { Button, Card, sheet } from '$lib/components/core';
+import { Button, Card, modal, sheet } from '$lib/components/core';
 import { Menu } from '$lib/components/core/menu';
 
 import { join, split } from 'lodash';
 import { useMutation } from '$lib/request';
 import { Space, UpdateSpaceDocument } from '$lib/generated/backend/graphql';
 import { ColorPreset, defaultColorPreset, fonts, presets } from './themes_preset/constants';
+import { ColorPicker } from '$lib/components/core/color-picker/color-picker';
+import { SheetRef } from 'react-modal-sheet';
 // import { ShaderGradient } from './themes_preset/shader';
 
 type Styled = {
@@ -21,7 +23,41 @@ type Styled = {
 
 type KeyPreset = 'minimal';
 
-export default function ThemeBuilder({ space }: { space?: Space | null }) {
+function ConfirmModal() {
+  return (
+    <div className="flex flex-col gap-4 max-w-[308px]">
+      <div className="p-3 rounded-full bg-danger-400/16 w-fit">
+        <i className="icon-info text-danger-400" />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-lg font-medium">Discard Customizations?</p>
+        <p className="text-sm font-medium text-tertiary/80">
+          Your theme changes haven’t been applied. Discard them or go back to keep editing.
+        </p>
+      </div>
+      <div className="flex gap-3">
+        <Button variant="tertiary" className="flex-1" onClick={() => modal.close()}>
+          Cancel
+        </Button>
+        <Button
+          variant="danger"
+          className="flex-1"
+          onClick={() => {
+            modal.close();
+            sheet.close();
+          }}
+        >
+          Discard
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export default function ThemeBuilder({ space, ...rest }: { space?: Space | null }) {
+  const { sheetRef } = rest as { sheetRef: React.RefObject<SheetRef | null> };
+
+  const [saved, setSaved] = React.useState(true);
   const [variables, setVariables] = React.useState<Styled>(space?.theme_data?.variables || {});
   const [selected, setSelected] = React.useState<KeyPreset>(space?.theme_data?.name || 'minimal');
   const [color, setColor] = React.useState<{
@@ -40,6 +76,17 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
   });
 
   const [updateCommunity, { loading }] = useMutation(UpdateSpaceDocument);
+
+  React.useEffect(() => {
+    return () => {
+      if (!saved) {
+        console.log('asd');
+        modal.open(ConfirmModal);
+        sheetRef.current?.skipOpen();
+      }
+    };
+  }, [sheetRef.current, saved]);
+
   return (
     <>
       {variables && (
@@ -59,19 +106,19 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
 
             @media (prefers-color-scheme: light) {
               :root {
-                ${variables.light && generateCssVariables(variables.light)}
+                main {
+                  ${variables.light && generateCssVariables(variables.light)}
+                }
               }
             }
           `}
         </style>
       )}
-
       {/* {selected === 'gradient' && */}
       {/*   createPortal( */}
       {/*     <ShaderGradient colors={{ color1: '#808bff', color2: '#9880FF', color3: '#80D3FF' }} />, */}
       {/*     document.body, */}
       {/*   )} */}
-
       <div className="flex flex-col gap-6 max-w-[1080px] m-auto py-6 px-4">
         <div className="flex flex-1 gap-3 overflow-x no-scrollbar justify-center">
           {Object.entries(presets).map(([key, value]) => (
@@ -87,12 +134,8 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
                   if (key === 'gradient') {
                     setVariables((prev) => ({
                       ...prev,
-                      dark: {
-                        '--color-background': 'transparent',
-                      },
-                      light: {
-                        '--color-background': 'transparent',
-                      },
+                      dark: { '--color-background': 'transparent' },
+                      light: { '--color-background': 'transparent' },
                     }));
                   }
                 }}
@@ -112,21 +155,50 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
               name={color.forceground}
               mode="default"
               colors={presets[selected].colors}
-              onSelect={(color) => {
-                setColor((prev) => ({ ...prev, forceground: color, background: color }));
-                setVariables((prev) => ({
-                  ...prev,
+              onSelect={({ key, color }) => {
+                setColor((prev) => ({ ...prev, forceground: key, background: key }));
+                let cssVars = {
                   dark: {
-                    ...prev?.dark,
-                    '--color-primary-500': `var(--color-${color}-500)`,
-                    '--color-background': `var(--color-${color}-950)`,
+                    '--color-primary-500': `var(--color-${key}-500)`,
+                    '--color-background': `var(--color-${key}-950)`,
                   },
                   light: {
-                    ...prev?.light,
-                    '--color-primary-500': `var(--color-${color}-500)`,
-                    '--color-background': `var(--color-${color}-50)`,
+                    '--color-primary-500': `var(--color-${key}-500)`,
+                    '--color-background': `var(--color-${key}-50)`,
                   },
-                }));
+                };
+
+                if (key === 'custom' && color) {
+                  const palette = getPalette([{ color, name: key, shade: 500, shades: [50, 500, 950] }]) as unknown as {
+                    custom: { 500: string; 950: string; 50: string };
+                  };
+
+                  cssVars = {
+                    dark: {
+                      '--color-primary-500': palette.custom[500],
+                      '--color-background': palette.custom[950],
+                    },
+                    light: {
+                      '--color-primary-500': palette.custom[500],
+                      '--color-background': palette.custom[50],
+                    },
+                  };
+                }
+
+                setVariables((prev) => {
+                  return {
+                    ...prev,
+                    dark: {
+                      ...prev?.dark,
+                      ...cssVars.dark,
+                    },
+                    light: {
+                      ...prev?.light,
+                      ...cssVars.light,
+                    },
+                  };
+                });
+                setSaved(false);
               }}
             />
 
@@ -135,22 +207,48 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
               name={color.background}
               mode={color.mode}
               colors={presets[selected].colors}
-              onSelect={(color) => {
-                setColor((prev) => ({ ...prev, background: color }));
+              onSelect={({ key, color }) => {
+                setColor((prev) => ({ ...prev, background: key }));
+
+                let cssVars = {
+                  dark: {
+                    '--color-background': `var(--color-${key}-950)`,
+                  },
+                  light: {
+                    '--color-tertiary': `var(--color-black)`,
+                    '--color-forceground': `var(--color-black)`,
+                    '--color-background': `var(--color-${color}-50)`,
+                  },
+                };
+
+                if (key === 'custom' && color) {
+                  const palette = getPalette([{ color, name: key, shade: 500, shades: [50, 500, 950] }]) as unknown as {
+                    custom: { 500: string; 950: string; 50: string };
+                  };
+
+                  cssVars = {
+                    dark: {
+                      '--color-background': palette.custom[950],
+                    },
+                    light: {
+                      ...cssVars.light,
+                      '--color-background': palette.custom[50],
+                    },
+                  };
+                }
 
                 setVariables((prev) => ({
                   ...prev,
                   dark: {
                     ...prev?.dark,
-                    '--color-background': `var(--color-${color}-950)`,
+                    ...cssVars.dark,
                   },
                   light: {
                     ...prev?.light,
-                    '--color-tertiary': `var(--color-black)`,
-                    '--color-forceground': `var(--color-black)`,
-                    '--color-background': `var(--color-${color}-50)`,
+                    ...cssVars.light,
                   },
                 }));
+                setSaved(false);
               }}
             />
 
@@ -179,6 +277,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
                   ...prev,
                   font: { ...prev?.font, '--font-title': fonts.title[font] },
                 }));
+                setSaved(false);
               }}
             />
             <PopoverFont
@@ -191,6 +290,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
                   ...prev,
                   font: { ...prev?.font, '--font-body': fonts.body[font] },
                 }));
+                setSaved(false);
               }}
             />
 
@@ -244,6 +344,7 @@ export default function ThemeBuilder({ space }: { space?: Space | null }) {
                       client.writeFragment<Space>({ id: `Space:${space._id}`, data: { theme_data } });
                     },
                   });
+                  setSaved(true);
                   sheet.close();
                 }
               }}
@@ -263,18 +364,25 @@ function PopoverColor({
   colors,
   mode = 'default',
   onSelect,
+  customColor: color,
 }: {
   label: string;
   name: string;
   mode?: 'default' | 'dark' | 'light';
   colors: ColorPreset;
-  onSelect: (color: string) => void;
+  onSelect: (params: { key: string; color: string }) => void;
 }) {
+  const [customColor, setCustomColor] = React.useState('');
+
   return (
     <Menu.Root className="flex-1" placement="top">
       <Menu.Trigger>
         <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
-          <i className={twMerge('size-[24px] rounded-full', colors[name] && colors[name][mode])} />
+          <i
+            className={twMerge('size-[24px] rounded-full', colors[name] && colors[name][mode])}
+            style={customColor ? { backgroundColor: customColor } : undefined}
+          />
+
           <span className="text-left flex-1  font-general-sans">{label}</span>
           <p className="flex items-center gap-1">
             <span className="capitalize">{name}</span>
@@ -288,7 +396,10 @@ function PopoverColor({
           {Object.entries(colors).map(([key, value]) => (
             <div
               key={key}
-              onClick={() => onSelect(key)}
+              onClick={() => {
+                onSelect({ key: key, color: key });
+                setCustomColor('');
+              }}
               className={twMerge(
                 value.default,
                 'size-5 cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
@@ -296,6 +407,32 @@ function PopoverColor({
               )}
             ></div>
           ))}
+
+          <ColorPicker.Root>
+            <ColorPicker.Trigger>
+              <div
+                onClick={() => {
+                  onSelect({ key: 'custom', color: customColor });
+                }}
+                className={twMerge(
+                  'size-5 cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
+                  clsx(name === 'custom' && 'outline-2'),
+                )}
+                style={{
+                  background:
+                    customColor ||
+                    'conic-gradient(from 180deg at 50% 50%, rgb(222, 97, 134) 0deg, rgb(197, 95, 205) 58.12deg, rgb(175, 145, 246) 114.38deg, rgb(53, 130, 245) 168.75deg, rgb(69, 194, 121) 208.13deg, rgb(243, 209, 90) 243.75deg, rgb(247, 145, 62) 285deg, rgb(244, 87, 95) 360deg)',
+                }}
+              ></div>
+            </ColorPicker.Trigger>
+            <ColorPicker.Content
+              color={customColor}
+              onChange={(result) => {
+                setCustomColor(result.hex);
+                onSelect({ key: 'custom', color: result.hex });
+              }}
+            />
+          </ColorPicker.Root>
         </div>
       </Menu.Content>
     </Menu.Root>

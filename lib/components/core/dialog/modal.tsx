@@ -83,10 +83,17 @@ export function ModalContainer() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed z-100 inset-0">
+        <div className="fixed inset-0 bg-overlay/80" style={{ zIndex: 10000 }}>
           <div className="h-full w-full p-4">
             <div className="flex h-full items-center justify-center">
-              <motion.div key="modal" ref={ref} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <motion.div
+                key="modal"
+                ref={ref}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="bg-menu rounded-lg p-4"
+              >
                 {content}
               </motion.div>
             </div>

@@ -20,6 +20,8 @@
     "@react-three/fiber": "^9.1.0",
     "@shadergradient/react": "^2.0.22",
     "@tailwindcss/postcss": "^4.0.8",
+    "@uiw/react-color": "^2.4.5",
+    "@uiw/react-color-github": "^2.4.5",
     "@vis.gl/react-google-maps": "^1.5.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -37,6 +39,7 @@
     "react-modal-sheet": "^4.0.1",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.8",
+    "tailwindcss-palette-generator": "^0.10.0",
     "three": "^0.174.0"
   },
   "devDependencies": {

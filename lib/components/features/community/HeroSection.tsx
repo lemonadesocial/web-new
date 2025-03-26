@@ -48,7 +48,7 @@ export function HeroSection({ me, space }: HeroSectionProps) {
         {space?.image_cover && (
           <>
             <img
-              className="md:hidden aspect-[3.5/1] object-cover object-cover rounded-md w-full"
+              className="md:hidden aspect-[3.5/1] object-cover rounded-md w-full"
               alt={space?.title as string}
               src={generateUrl(space?.image_cover_expanded, {
                 resize: { width: 480, fit: 'contain' },
@@ -59,7 +59,7 @@ export function HeroSection({ me, space }: HeroSectionProps) {
                 resize: { width: 1080, fit: 'contain' },
               })}
               alt={space?.title as string}
-              className="hidden md:block aspect-[3.5/1] object-cover object-cover rounded-md w-full"
+              className="hidden md:block aspect-[3.5/1] object-cover rounded-md w-full"
             />
           </>
         )}

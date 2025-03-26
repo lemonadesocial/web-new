@@ -19,6 +19,7 @@ const iconOnlySizes = {
 const variants: { [key: string]: string } = {
   primary: 'bg-primary-500 hover:bg-primary-500/8',
   success: 'bg-success-600 hover:bg-success-600/8',
+  danger: 'bg-danger-500 hover:bg-danger-500/8',
   tertiary: 'bg-tertiary/8 hover:bg-tertiary/16 text-tertiary/56',
   'tertiary-alt': 'bg-tertiary/8 hover:bg-tertiary/80 text-tertiary/56 hover:text-black',
   secondary: 'bg-tertiary hover:bg-tertiary/8 text-black',
@@ -35,7 +36,7 @@ const outlineVariants: { [key: string]: string } = {
 
 interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonElement>> {
   size?: 'sm' | 'base' | 'lg' | 'xs';
-  variant?: 'primary' | 'success' | 'tertiary' | 'tertiary-alt' | 'secondary' | 'flat';
+  variant?: 'primary' | 'success' | 'danger' | 'tertiary' | 'tertiary-alt' | 'secondary' | 'flat';
   icon?: string;
   iconLeft?: string;
   iconRight?: string;

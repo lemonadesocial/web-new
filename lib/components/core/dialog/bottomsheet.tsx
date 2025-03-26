@@ -1,10 +1,9 @@
 'use client';
 import React from 'react';
-import { Sheet } from 'react-modal-sheet';
+import { Sheet, SheetRef } from 'react-modal-sheet';
 
 interface Options<T> {
   props?: T;
-  onClose?: () => void;
   snapPoints?: number[];
   contentClass?: string;
   initialSnap?: number;
@@ -32,16 +31,25 @@ export function BottomSheetContainer() {
     initialSnap: 0,
   });
 
+  const ref = React.useRef<SheetRef>(null);
+
   const handleOpen = React.useCallback(<T extends object>(Component: React.ComponentType<T>, opts: Options<T> = {}) => {
-    setContent(<Component {...(opts.props as T)} />);
+    setContent(<Component sheetRef={ref} {...(opts.props as T)} />);
     setOptions((prev) => ({ ...prev, ...opts }));
     setIsOpen(true);
   }, []);
 
   const handleClose = () => {
     setIsOpen(false);
-    options.onClose?.();
   };
+
+  React.useImperativeHandle(ref, () => {
+    return {
+      skipOpen: () => {
+        setIsOpen(true);
+      },
+    };
+  }, []);
 
   React.useEffect(() => {
     sheet.open = handleOpen;
