@@ -59,8 +59,10 @@
   --color-background: var(--color-background);
   --color-forceground: var(--color-forceground);
   --color-tertiary: var(--color-tertiary);
+  --color-modal: var(--color-modal);
   --color-menu: var(--color-menu);
   --color-overlay: var(--color-overlay);
+  --color-drawer: var(--color-drawer);
 
   --color-primary-50: var(--color-violet-50);
   --color-primary-100: var(--color-violet-100);
@@ -189,6 +191,14 @@ main {
 
 .font-body {
   font-family: var(--font-body);
+}
+
+.font-title-default {
+  font-family: var(--font-class-display);
+}
+
+.font-body-default {
+  font-family: var(--font-general-sans);
 }
 
 a[title='Open this area in Google Maps (opens a new window)'],

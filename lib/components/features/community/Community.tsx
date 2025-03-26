@@ -106,7 +106,6 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
           if (res?.getEvents?.length) {
             return { __typename: 'Query', getEvents: [...(existing?.getEvents || []), ...res?.getEvents] };
           }
-
           setShouldLoadMore(false);
           return existing;
         },
@@ -119,7 +118,6 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
             if (res?.getEvents?.length) {
               return { __typename: 'Query', getEvents: [...(existing?.getEvents || []), ...res?.getEvents] };
             }
-
             setShouldLoadMore(false);
             return existing;
           },
@@ -131,7 +129,6 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
             if (res?.getEvents?.length) {
               return { __typename: 'Query', getEvents: [...(existing?.getEvents || []), ...res?.getEvents] };
             }
-
             setShouldLoadMore(false);
             return existing;
           },
@@ -230,11 +227,11 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
           <div className="hidden sticky top-0 z-50 flex-col gap-4 md:flex max-w-[296px]">
             <Menu.Root>
               <Menu.Trigger>
-                <Button variant="tertiary" iconLeft="icon-plus" className="w-full">
+                <Button variant="tertiary" iconLeft="icon-plus" size="sm" className="w-full">
                   Submit Event
                 </Button>
               </Menu.Trigger>
-              <Menu.Content className="px-1">
+              <Menu.Content className="p-1">
                 {({ toggle }) => (
                   <>
                     <MenuItem
@@ -264,13 +261,13 @@ export function Community({ me, space }: { me?: User; space?: Space }) {
               footer={() => {
                 if (selectedDate) {
                   return (
-                    <div className="flex justify-between items-center text-tertiary/[.56] mt-3">
+                    <div className="flex justify-between items-center text-tertiary mt-3">
                       <time className="font-medium">{format(selectedDate, 'E, dd MMM yyyy')}</time>
                       <Button
+                        variant="tertiary-alt"
                         icon="icon-x"
-                        size="sm"
+                        size="xs"
                         aria-label="close"
-                        className="bg-transparent hover:bg-tertiary/[.08] "
                         onClick={() => setSelectedDate(undefined)}
                       />
                     </div>

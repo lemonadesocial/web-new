@@ -92,7 +92,7 @@ export function ModalContainer() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="bg-menu rounded-lg p-4"
+                className="bg-modal rounded-lg overflow-hidden"
               >
                 {content}
               </motion.div>

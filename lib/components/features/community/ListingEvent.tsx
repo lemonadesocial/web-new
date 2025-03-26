@@ -55,8 +55,8 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
   const existing = events.find((e) => e.shortid === linkEvent?.substring(linkEvent.lastIndexOf('/') + 1));
 
   return (
-    <Card.Root className="p-0 rounded-lg bg-alabaster-950 w-[480]">
-      <Card.Content className="flex justify-between items-center bg-tertiary/4 px-5 py-3 rounded-tl-lg rounded-tr-lg">
+    <Card.Root className="w-[480]">
+      <Card.Header className="flex justify-between items-center">
         <p className="text-lg font-medium">Submit Lemonade Event</p>
         <Button
           icon="icon-x size-[14]"
@@ -65,47 +65,55 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
           size="xs"
           onClick={() => modal.close()}
         />
-      </Card.Content>
-      <div className="p-5 flex flex-col gap-3 items-start">
-        {events.map((e) => (
-          <Card.Root key={e._id} className="flex justify-between items-center w-full">
-            <Card.Content>
-              <div>
-                <p className="text-md">{e.title}</p>
-                <span className="text-tertiary/56">
-                  {format(e.start, 'MMM dd')} at {format(e.start, 'h:mm a')}
-                </span>
-              </div>
-              <Button
-                icon="icon-minus"
-                size="sm"
-                variant="tertiary"
-                onClick={() => setEvents((prev) => prev.filter((p) => e._id !== p._id))}
+      </Card.Header>
+      <Card.Content>
+        <div className="p-1 flex flex-col gap-3 items-start">
+          {events.map((e) => (
+            <Card.Root key={e._id} className="w-full">
+              <Card.Content className="flex justify-between items-center w-full">
+                <div>
+                  <p className="text-md">{e.title}</p>
+                  <span className="text-tertiary/56">
+                    {format(e.start, 'MMM dd')} at {format(e.start, 'h:mm a')}
+                  </span>
+                </div>
+                <Button
+                  icon="icon-minus"
+                  size="sm"
+                  variant="tertiary"
+                  onClick={() => setEvents((prev) => prev.filter((p) => e._id !== p._id))}
+                />
+              </Card.Content>
+            </Card.Root>
+          ))}
+          <div className="w-full">
+            <div className="bg-background/64 border flex py-1 px-1.5 gap-3.5 rounded-sm items-center h-[44px] border-tertiary/8 focus-within:border-tertiary">
+              <input
+                className="flex-1 outline-none px-1.5"
+                value={linkEvent}
+                onChange={(e) => setLinkEvent(e.target.value)}
               />
-            </Card.Content>
-          </Card.Root>
-        ))}
-        <div className="w-full">
-          <div className="focus-within:border-tertiary bg-woodsmoke-950/64 border flex py-1 px-1.5 gap-3.5 rounded-sm items-center  h-[44px]">
-            <input
-              className="flex-1 outline-none px-1.5"
-              value={linkEvent}
-              onChange={(e) => setLinkEvent(e.target.value)}
-            />
-            {linkEvent && !existing && (
-              <Button loading={adding} size="sm" variant="tertiary" iconLeft="icon-plus" onClick={handleAddEvent}>
-                Add
-              </Button>
-            )}
+              {linkEvent && !existing && (
+                <Button loading={adding} size="sm" variant="tertiary" iconLeft="icon-plus" onClick={handleAddEvent}>
+                  Add
+                </Button>
+              )}
+            </div>
+            {existing && <p className="text-danger-500 text-sm mt-1">* This event was added</p>}
           </div>
-          {existing && <p className="text-danger-500 text-sm mt-1">* This event was added</p>}
-        </div>
-        <AddTags type={SpaceTagType.Event} spaceId={spaceId} onChange={(value) => setTags(value)} />
+          <AddTags type={SpaceTagType.Event} spaceId={spaceId} onChange={(value) => setTags(value)} />
 
-        <Button loading={submiting} variant="secondary" className="w-full rounded-sm" onClick={() => handlePinEvents()}>
-          Submit Event
-        </Button>
-      </div>
+          <Button
+            loading={submiting}
+            disabled={!events.length}
+            variant="secondary"
+            className="w-full"
+            onClick={() => handlePinEvents()}
+          >
+            Submit Event
+          </Button>
+        </div>
+      </Card.Content>
     </Card.Root>
   );
 }

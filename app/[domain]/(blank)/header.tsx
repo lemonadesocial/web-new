@@ -26,18 +26,18 @@ export default function Header({ me }: { me: User }) {
             <Menu.Trigger>
               <Avatar src={me.image_avatar || ''} />
             </Menu.Trigger>
-            <Menu.Content className="p-0">
+            <Menu.Content className="p-0 min-w-[228px]">
               {({ toggle }) => (
                 <>
-                  <div className="flex gap-2.5 p-2.5 items-center">
+                  <div className="flex gap-2.5 px-2 py-1.5 items-center">
                     <Avatar size="lg" src={me.image_avatar || ''} />
                     <div>
                       <p className="text-md font-medium">{me.name}</p>
-                      <p className="text-xs font-medium text-tertiary/56">{me.email || 'johndoe@gmail.com'}</p>
+                      <p className="text-xs font-medium text-tertiary/56">{me.email}</p>
                     </div>
                   </div>
                   <Divider />
-                  <div className="p-2.5">
+                  <div className="p-1">
                     <Link href={`${LEMONADE_DOMAIN}/u/${me.username}`} target="_blank">
                       <MenuItem title="View Profile" />
                     </Link>

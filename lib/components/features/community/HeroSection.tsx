@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { Sheet, SheetRef } from 'react-modal-sheet';
 
-import { Button, modal, Spacer } from '$lib/components/core';
+import { Button, Card, modal, Spacer } from '$lib/components/core';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { FollowSpaceDocument, Space, UnfollowSpaceDocument, User } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
@@ -160,7 +160,7 @@ export function HeroSection({ me, space }: HeroSectionProps) {
         snapPoints={[324]}
         initialSnap={0}
       >
-        <Sheet.Container className="bg-transparent! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
+        <Sheet.Container className="bg-overlay! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
           <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
             <div className="flex justify-center items-end h-[20px]">
               <div className="bg-tertiary/8 rounded-xs w-[48px] h-1 cursor-row-resize"></div>
@@ -183,37 +183,41 @@ export function HeroSection({ me, space }: HeroSectionProps) {
 
 function ConfirmModal({ onDiscard }: { onDiscard: () => void }) {
   return (
-    <div className="flex flex-col gap-4 max-w-[308px]">
-      <div className="p-3 rounded-full bg-danger-400/16 w-fit">
-        <i className="icon-info text-danger-400" />
-      </div>
-      <div className="flex flex-col gap-2">
-        <p className="text-lg font-medium">Discard Customizations?</p>
-        <p className="text-sm font-medium text-tertiary/80">
-          Your theme changes haven’t been applied. Discard them or go back to keep editing.
-        </p>
-      </div>
-      <div className="flex gap-3">
-        <Button
-          variant="tertiary"
-          className="flex-1"
-          onClick={() => {
-            modal.close();
-          }}
-        >
-          Cancel
-        </Button>
-        <Button
-          variant="danger"
-          className="flex-1"
-          onClick={() => {
-            modal.close();
-            onDiscard();
-          }}
-        >
-          Discard
-        </Button>
-      </div>
-    </div>
+    <Card.Root>
+      <Card.Content>
+        <div className="flex flex-col gap-4 max-w-[308px]">
+          <div className="p-3 rounded-full bg-danger-400/16 w-fit">
+            <i className="icon-info text-danger-400" />
+          </div>
+          <div className="flex flex-col gap-2">
+            <p className="text-lg font-medium">Discard Customizations?</p>
+            <p className="text-sm font-medium text-tertiary/80">
+              Your theme changes haven’t been applied. Discard them or go back to keep editing.
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <Button
+              variant="tertiary"
+              className="flex-1"
+              onClick={() => {
+                modal.close();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              className="flex-1"
+              onClick={() => {
+                modal.close();
+                onDiscard();
+              }}
+            >
+              Discard
+            </Button>
+          </div>
+        </div>
+      </Card.Content>
+    </Card.Root>
   );
 }

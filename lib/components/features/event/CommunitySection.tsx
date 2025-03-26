@@ -4,6 +4,7 @@ import { useQuery } from '$lib/request';
 import { generateUrl } from '$lib/utils/cnd';
 import React from 'react';
 import { COMMUNITY_SOCIAL_LINKS } from '../community/constants';
+import Link from 'next/link';
 
 export function CommunitySection({ event }: { event: Event }) {
   const { data: dataGetMe } = useQuery(GetMeDocument);
@@ -23,13 +24,19 @@ export function CommunitySection({ event }: { event: Event }) {
         )}
         <div className="flex flex-col flex-1">
           <p className="text-xs font-medium">Presented by</p>
-          <div className="flex gap-1 items-center flex-1">
-            <span className="font-medium">{space.title}</span>
-            <i className="icon-chevron-right" />
+          <div className="group flex gap-1 items-center flex-1">
+            <Link
+              href={space.hostnames?.[0] || '/'}
+              className="font-medium group-hover:text-primary-400"
+              target="_blank"
+            >
+              {space.title}
+            </Link>
+            <i className="transition icon-chevron-right text-tertiary/24 group-hover:translate-x-1" />
           </div>
         </div>
         {!canManage && (
-          <Button className="rounded-full" variant="tertiary">
+          <Button className="rounded-full" variant="tertiary-alt">
             {space.followed ? 'UnSubscribe' : 'Subscribe'}
           </Button>
         )}

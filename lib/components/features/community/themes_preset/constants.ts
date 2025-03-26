@@ -81,3 +81,16 @@ export const presets = {
   //   colors: {},
   // },
 };
+
+export function getRandomFont(type: 'title' | 'body'): string {
+  const bodyFonts = Object.keys(fonts[type]);
+  const randomIndex = Math.floor(Math.random() * bodyFonts.length);
+  return fonts.body[bodyFonts[randomIndex]];
+}
+
+export function getRandomColor(): [string, { light: string; dark: string; default: string }] {
+  const colorKeys = Object.keys(colors);
+  const randomIndex = Math.floor(Math.random() * colorKeys.length);
+  const randomColorKey = colorKeys[randomIndex];
+  return [randomColorKey, colors[randomColorKey]];
+}

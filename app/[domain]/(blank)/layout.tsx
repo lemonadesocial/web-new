@@ -3,7 +3,6 @@ import React from 'react';
 
 import { GetMeDocument, User } from '$lib/generated/backend/graphql';
 import { getClient } from '$lib/request/client';
-import Header from './header';
 import { Main } from './main';
 
 export default async function Layout({ children }: React.PropsWithChildren) {
@@ -18,12 +17,5 @@ export default async function Layout({ children }: React.PropsWithChildren) {
   });
   const me = data?.getMe as User;
 
-  return (
-    <>
-      <main className="relative flex flex-col h-dvh w-full z-100">
-        <Header me={me} />
-        <Main>{children}</Main>
-      </main>
-    </>
-  );
+  return <Main me={me}>{children}</Main>;
 }

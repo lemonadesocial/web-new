@@ -57,7 +57,9 @@ export function DrawerContainer() {
     setIsOpen(true);
   }, []);
 
+  // NOTE: handle props to allow click outside to close
   const handleOutsideClick = (event: MouseEvent) => {
+    return;
     if (ref.current && event.target instanceof Node && ref.current.contains(event.target)) {
       // do nothing here
     } else {
@@ -88,7 +90,8 @@ export function DrawerContainer() {
     <AnimatePresence>
       {isOpen && (
         <div className="fixed z-100 inset-0">
-          <div className="h-full w-full p-4">
+          <div className="h-full w-full p-2">
+            <div className="bg-overlay fixed inset-0 z-0" />
             <div className={clsx('flex h-full', options.position === 'right' && 'justify-end')}>
               <motion.div
                 key="drawer"
@@ -98,9 +101,14 @@ export function DrawerContainer() {
                 transition={{ duration: options.duration }}
                 ref={ref}
                 className={twMerge(
-                  'bg-menu rounded-sm flex-1 max-w-[528px] overflow-auto no-scrollbar',
+                  'bg-drawer backdrop-blur-md rounded-sm flex-1 max-w-[528px] overflow-auto no-scrollbar z-10',
                   options.contentClass,
                 )}
+                style={{
+                  // @ts-expect-error accept variables
+                  '--font-title': 'var(--font-class-display)',
+                  '--font-body': 'var(--font-general-sans)',
+                }}
               >
                 {content}
               </motion.div>

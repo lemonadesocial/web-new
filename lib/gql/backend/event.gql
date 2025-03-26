@@ -4,6 +4,7 @@ query GetEvent($id: MongoID, $shortid: String) {
     title
     description
     start
+    end
     shortid
     host_expanded {
       ...User

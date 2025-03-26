@@ -59,9 +59,14 @@ function MenuContent({
       {isOpen && (
         <motion.div
           ref={refs?.setFloating}
-          style={floatingStyles}
+          style={{
+            ...floatingStyles,
+            // @ts-expect-error accept variables
+            '--font-title': 'var(--font-class-display)',
+            '--font-body': 'var(--font-general-sans)',
+          }}
           className={twMerge(
-            'absolute focus:outline-none border rounded-sm border-tertiary/4 bg-menu w-fit p-4 z-50 shadow-md',
+            'outline outline-tertiary/4 rounded-sm bg-menu backdrop-blur-md w-fit p-4 z-50 shadow-md',
             className,
           )}
           role="menu"
@@ -95,7 +100,7 @@ function MenuRoot({
   const { refs, floatingStyles } = useFloating({
     open: isOpen,
     onOpenChange: toggle,
-    strategy: 'absolute',
+    strategy: 'fixed',
     placement,
     middleware: [offset(10)],
   });

@@ -119,14 +119,14 @@ export function EventPane({ eventId }: { eventId: string }) {
 
 function EventPaneHeader({ eventShortId }: { eventShortId: string }) {
   return (
-    <div className="px-3 py-2 flex gap-3 border-b sticky top-0  z-50 backdrop-blur-xl">
+    <div className="px-3 py-2 flex gap-3 border-b sticky top-0 z-50 backdrop-blur-xl">
       <Button icon="icon-chevron-double-right" variant="tertiary-alt" size="sm" onClick={() => drawer.close()} />
-      <Button iconLeft="icon-duplicate" variant="tertiary" size="sm">
+      <Button iconLeft="icon-duplicate" variant="tertiary-alt" size="sm">
         Copy Link
       </Button>
       <Button
         iconRight="icon-arrow-outward"
-        variant="tertiary"
+        variant="tertiary-alt"
         size="sm"
         onClick={() => window.open(`/e/${eventShortId}`, '_blank')}
       >
