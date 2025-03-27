@@ -13,355 +13,15 @@ import { Menu } from '$lib/components/core/menu';
 import { join, split } from 'lodash';
 import { useMutation } from '$lib/request';
 import { Space, UpdateSpaceDocument } from '$lib/generated/backend/graphql';
-import {
-  ColorPreset,
-  defaultColorPreset,
-  fonts,
-  getRandomColor,
-  getRandomFont,
-  presets,
-} from './themes_preset/constants';
+import { ColorPreset, fonts, getRandomColor, getRandomFont, presets } from './themes_preset/constants';
 import { ColorPicker } from '$lib/components/core/color-picker/color-picker';
 // import { ShaderGradient } from './themes_preset/shader';
-
-type Styled = {
-  font: Record<string, string>;
-  dark: Record<string, string>;
-  light: Record<string, string>;
-};
-
 type KeyPreset = 'minimal';
-
-export function ThemeBuilder1({
-  space,
-  onClose,
-  onSave,
-}: {
-  space?: Space | null;
-  onClose: (saved: boolean) => void;
-  onSave: () => void;
-}) {
-  const [variables, setVariables] = React.useState<Styled>(space?.theme_data?.variables || {});
-  const [selected, setSelected] = React.useState<KeyPreset>(space?.theme_data?.name || 'minimal');
-  const [color, setColor] = React.useState<{
-    forceground: keyof ColorPreset;
-    background: keyof ColorPreset;
-    mode: 'default' | 'dark' | 'light';
-  }>({
-    forceground: space?.theme_data?.forceground || 'violet',
-    background: space?.theme_data?.background || 'violet',
-    mode: 'dark',
-  });
-
-  const [font, setFont] = React.useState<{ title: string; body: string }>({
-    title: 'default',
-    body: 'default',
-  });
-
-  console.log(variables);
-
-  const [updateCommunity, { loading }] = useMutation(UpdateSpaceDocument);
-
-  return (
-    <>
-      {variables && (
-        <style jsx global>
-          {`
-            body {
-              ${variables.font && generateCssVariables(variables.font)}
-            }
-
-            @media (prefers-color-scheme: dark) {
-              :root {
-                main {
-                  ${variables.dark && generateCssVariables(variables.dark)}
-                }
-              }
-            }
-
-            @media (prefers-color-scheme: light) {
-              :root {
-                main {
-                  ${variables.light && generateCssVariables(variables.light)}
-                }
-              }
-            }
-          `}
-        </style>
-      )}
-      {/* {selected === 'gradient' && */}
-      {/*   createPortal( */}
-      {/*     <ShaderGradient colors={{ color1: '#808bff', color2: '#9880FF', color3: '#80D3FF' }} />, */}
-      {/*     document.body, */}
-      {/*   )} */}
-      <div className="flex flex-col gap-6 max-w-[1080px] m-auto py-6 px-4">
-        <div className="flex flex-1 gap-3 overflow-x no-scrollbar justify-center">
-          {Object.entries(presets).map(([key, value]) => (
-            <div key={key} className="flex flex-col gap-2 items-center">
-              <Card.Root
-                key={key}
-                className={clsx(
-                  'p-0 bg-transparent border-transparent transition-all hover:outline-2 hover:outline-offset-2 hover:ring-tertiary rounded-sm',
-                  selected === key && 'outline-2 outline-offset-2 ring-tertiary',
-                )}
-                onClick={() => {
-                  setSelected(key as KeyPreset);
-                  if (key === 'gradient') {
-                    setVariables((prev) => ({
-                      ...prev,
-                      dark: { '--color-background': 'transparent' },
-                      light: { '--color-background': 'transparent' },
-                    }));
-                  }
-                }}
-              >
-                <img src={value.image} className="rounded-sm" width={80} height={56} alt={key} />
-              </Card.Root>
-
-              <p className="capitalize font-medium text-xs">{key === 'violet' ? 'default' : key}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-2 flex-wrap w-full">
-            <PopoverColor
-              label="Accent"
-              name={color.forceground}
-              mode="default"
-              colors={presets[selected].colors}
-              onSelect={({ key, color }) => {
-                setColor((prev) => ({ ...prev, forceground: key, background: key }));
-                let cssVars = {
-                  dark: {
-                    '--color-primary-500': `var(--color-${key}-500)`,
-                    '--color-background': `var(--color-${key}-950)`,
-                  },
-                  light: {
-                    '--color-primary-500': `var(--color-${key}-500)`,
-                    '--color-background': `var(--color-${key}-50)`,
-                  },
-                };
-
-                if (key === 'custom' && color) {
-                  const palette = getPalette([{ color, name: key, shade: 500, shades: [50, 500, 950] }]) as unknown as {
-                    custom: { 500: string; 950: string; 50: string };
-                  };
-
-                  cssVars = {
-                    dark: {
-                      '--color-primary-500': palette.custom[500],
-                      '--color-background': palette.custom[950],
-                    },
-                    light: {
-                      '--color-primary-500': palette.custom[500],
-                      '--color-background': palette.custom[50],
-                    },
-                  };
-                }
-
-                setVariables((prev) => {
-                  return {
-                    ...prev,
-                    dark: {
-                      ...prev?.dark,
-                      ...cssVars.dark,
-                    },
-                    light: {
-                      ...prev?.light,
-                      ...cssVars.light,
-                    },
-                  };
-                });
-                onClose(false);
-              }}
-            />
-
-            <PopoverColor
-              label="Background"
-              name={color.background}
-              mode={color.mode}
-              colors={presets[selected].colors}
-              onSelect={({ key, color }) => {
-                setColor((prev) => ({ ...prev, background: key }));
-
-                let cssVars = {
-                  dark: {
-                    '--color-background': `var(--color-${key}-950)`,
-                  },
-                  light: {
-                    '--color-tertiary': `var(--color-black)`,
-                    '--color-forceground': `var(--color-black)`,
-                    '--color-background': `var(--color-${color}-50)`,
-                  },
-                };
-
-                if (key === 'custom' && color) {
-                  const palette = getPalette([{ color, name: key, shade: 500, shades: [50, 500, 950] }]) as unknown as {
-                    custom: { 500: string; 950: string; 50: string };
-                  };
-
-                  cssVars = {
-                    dark: {
-                      '--color-background': palette.custom[950],
-                    },
-                    light: {
-                      ...cssVars.light,
-                      '--color-background': palette.custom[50],
-                    },
-                  };
-                }
-
-                setVariables((prev) => ({
-                  ...prev,
-                  dark: {
-                    ...prev?.dark,
-                    ...cssVars.dark,
-                  },
-                  light: {
-                    ...prev?.light,
-                    ...cssVars.light,
-                  },
-                }));
-                onClose(false);
-              }}
-            />
-
-            <Menu.Root className="flex-1" disabled>
-              <Menu.Trigger>
-                <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
-                  <i className="size-[24px] rounded-full bg-tertiary/24" />
-                  <span className="text-left flex-1">Display</span>
-                  <p className="flex items-center gap-1">
-                    <span className="capitalize">Auto</span>
-                    <i className="icon-chevrons-up-down text-tertiary/24" />
-                  </p>
-                </div>
-              </Menu.Trigger>
-            </Menu.Root>
-          </div>
-
-          <div className="flex gap-2 flex-wrap w-full">
-            <PopoverFont
-              label="title"
-              name={font.title}
-              fonts={fonts.title}
-              onSelect={(font) => {
-                setFont((prev) => ({ ...prev, title: font }));
-                setVariables((prev) => ({
-                  ...prev,
-                  font: { ...prev?.font, '--font-title': fonts.title[font] },
-                }));
-                onClose(false);
-              }}
-            />
-            <PopoverFont
-              label="body"
-              name={font.body}
-              fonts={fonts.body}
-              onSelect={(font) => {
-                setFont((prev) => ({ ...prev, body: font }));
-                setVariables((prev) => ({
-                  ...prev,
-                  font: { ...prev?.font, '--font-body': fonts.body[font] },
-                }));
-                onClose(false);
-              }}
-            />
-
-            <Menu.Root className="flex-1" disabled>
-              <Menu.Trigger>
-                <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
-                  <i className="icon-dark-theme-filled size-[24px] rounded-full" />
-                  <span className="text-left flex-1">Display</span>
-                  <p className="flex items-center gap-1">
-                    <span className="capitalize">Auto</span>
-                    <i className="icon-chevrons-up-down text-tertiary/24" />
-                  </p>
-                </div>
-              </Menu.Trigger>
-            </Menu.Root>
-          </div>
-        </div>
-        <div className="flex justify-between">
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              icon="icon-recent"
-              variant="tertiary-alt"
-              onClick={async () => {
-                setVariables(defaultColorPreset);
-                if (space?._id) {
-                  await updateCommunity({
-                    variables: { id: space._id, input: { theme_data: null } },
-                    onComplete: (client) => {
-                      client.writeFragment<Space>({ id: `Space:${space._id}`, data: { theme_data: null } });
-                    },
-                  });
-                }
-                onClose(true);
-              }}
-            />
-            <Button
-              size="sm"
-              icon="icon-shuffle"
-              variant="tertiary-alt"
-              onClick={async () => {
-                const [name, color] = getRandomColor();
-                setColor((prev) => ({ ...prev, forceground: name, background: name }));
-                const random = {
-                  font: {
-                    '--font-title': getRandomFont('title'),
-                    '--font-body': getRandomFont('body'),
-                  },
-                  dark: {
-                    '--color-background': `var(--${color.dark.replace('bg-', 'color-')})`,
-                    '--color-primary-500': `var(--${color.default.replace('bg-', 'color-')})`,
-                  },
-                  light: {
-                    '--color-background': `var(--${color.light.replace('bg-', 'color-')})`,
-                    '--color-primary-500': `var(--${color.default.replace('bg-', 'color-')})`,
-                  },
-                };
-                setVariables(random);
-                onClose(false);
-              }}
-            />
-          </div>
-          <div className="flex gap-2">
-            {/* <Button variant="tertiary" size="sm"> */}
-            {/*   Save Theme */}
-            {/* </Button> */}
-            <Button
-              size="sm"
-              loading={loading}
-              onClick={async () => {
-                if (space) {
-                  const theme_data = { name: selected, color, variables };
-                  await updateCommunity({
-                    variables: { id: space._id, input: { theme_data } },
-                    onComplete: (client) => {
-                      client.writeFragment<Space>({ id: `Space:${space._id}`, data: { theme_data } });
-                    },
-                  });
-                  onClose(true);
-                  onSave();
-                }
-              }}
-            >
-              Apply
-            </Button>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
 
 type FormValues = {
   theme: string;
-  forceground: string;
-  background: string;
+  forceground: { key: string; value: string };
+  background: { key: string; value: string };
   font_title: string;
   font_body: string;
   variables: {
@@ -373,8 +33,8 @@ type FormValues = {
 
 const defaultValues: FormValues = {
   theme: 'minimal',
-  forceground: 'violet',
-  background: 'violet',
+  forceground: { key: 'violet', value: 'violet' },
+  background: { key: 'violet', value: 'violet' },
   font_title: 'default',
   font_body: 'default',
   variables: {
@@ -478,18 +138,19 @@ export default function ThemeBuilder({
                 control={form.control}
                 render={({ field }) => {
                   const values = form.getValues();
-                  const themeName = values.theme;
+                  const themeName = values.theme as KeyPreset;
                   const colors = presets[themeName].colors;
 
                   return (
                     <PopoverColor
                       label="Accent"
-                      name={field.value}
+                      name={field.value.key}
                       mode="default"
+                      defaultValue={field.value.value}
                       colors={colors}
                       onSelect={({ key, color }) => {
-                        form.setValue('forceground', key);
-                        form.setValue('background', key);
+                        form.setValue('forceground', { key, value: color });
+                        form.setValue('background', { key, value: color });
                         let cssVars = {
                           dark: {
                             '--color-primary-500': `var(--color-${key}-500)`,
@@ -534,17 +195,18 @@ export default function ThemeBuilder({
                 control={form.control}
                 render={({ field }) => {
                   const values = form.getValues();
-                  const themeName = values.theme;
+                  const themeName = values.theme as KeyPreset;
                   const colors = presets[themeName].colors;
 
                   return (
                     <PopoverColor
                       label="Background"
-                      name={field.value}
+                      name={field.value.key}
+                      defaultValue={field.value.value}
                       mode="dark"
                       colors={colors}
                       onSelect={({ key, color }) => {
-                        form.setValue('background', key);
+                        form.setValue('background', { key, value: color });
                         let cssVars = {
                           dark: {
                             '--color-background': `var(--color-${key}-950)`,
@@ -718,15 +380,17 @@ function PopoverColor({
   name,
   colors,
   mode = 'default',
+  defaultValue,
   onSelect,
 }: {
   label: string;
   name: string;
+  defaultValue?: string;
   mode?: 'default' | 'dark' | 'light';
   colors: ColorPreset;
   onSelect: (params: { key: string; color: string }) => void;
 }) {
-  const [customColor, setCustomColor] = React.useState('');
+  const [customColor, setCustomColor] = React.useState(defaultValue);
 
   return (
     <Menu.Root className="flex-1" placement="top">
