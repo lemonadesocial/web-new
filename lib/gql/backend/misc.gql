@@ -1,0 +1,43 @@
+query listChains {
+  listChains {
+    active
+    platform
+    chain_id
+    name
+    code_name
+    rpc_url
+    block_explorer_url
+    block_explorer_name
+    block_explorer_for_tx
+    block_explorer_for_token
+    block_explorer_for_address
+    block_time
+    safe_confirmations
+    logo_url
+    tokens {
+      active
+      name
+      symbol
+      decimals
+      contract
+      logo_url
+    }
+    access_registry_contract
+    poap_contract
+    marketplace_contract
+    marketplace_version
+    biconomy_api_key
+    ens_registry
+    proxy_admin_contract
+    payment_config_registry_contract
+    escrow_manager_contract
+    relay_payment_contract
+    stake_payment_contract
+    reward_registry_contract
+    eas_event_contract
+    eas_graphql_url
+    aragon_network
+    axelar_chain_name
+    donation_registry_contract
+  }
+}
