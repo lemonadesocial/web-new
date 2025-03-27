@@ -50,6 +50,7 @@ jobs:
           echo "NEXT_PUBLIC_AIRSTACK_URL=${{ vars.STAGING_NEXT_PUBLIC_AIRSTACK_URL }}" >> .env
           echo "NEXT_PUBLIC_GOOGLE_MAP_KEY=${{ vars.STAGING_NEXT_PUBLIC_GOOGLE_MAP_KEY }}" >> .env
           echo "NEXT_PUBLIC_LEMONADE_DOMAIN=${{ vars.STAGING_NEXT_PUBLIC_LEMONADE_DOMAIN }}" >> .env
+          echo "NEXT_PUBLIC_KRATOS_PUBLIC_URL=${{ vars.STAGING_NEXT_PUBLIC_KRATOS_PUBLIC_URL }}" >> .env
 
       - name: Configure environment
         run: |
