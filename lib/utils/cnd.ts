@@ -1,4 +1,4 @@
-import { File } from '$lib/generated/graphql';
+import { File } from '$lib/generated/backend/graphql';
 
 export interface EditProps {
   resize?: {
@@ -25,10 +25,14 @@ export interface EditProps {
 }
 
 export enum EDIT_KEY {
-  TICKET_PHOTO,
+  EVENT_PHOTO = 'EVENT_PHOTO',
+  PROFILE = 'PROFILE',
+  TICKET_PHOTO = 'TICKET_PHOTO',
 }
 
 const EDIT_MAP: Record<string, EditProps> = {
+  [EDIT_KEY.EVENT_PHOTO]: { resize: { height: 540, fit: 'cover' } },
+  [EDIT_KEY.PROFILE]: { resize: { height: 48, width: 48, fit: 'cover' } },
   [EDIT_KEY.TICKET_PHOTO]: {
     resize: { width: 135, fit: 'cover' },
   },

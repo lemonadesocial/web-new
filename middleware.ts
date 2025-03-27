@@ -4,13 +4,24 @@ import { GetSpaceDocument } from '$lib/generated/backend/graphql';
 import { getClient } from '$lib/request';
 
 export const config = {
-  matcher: ['/((?!api/|_next/|_static/|_vercel|[\\w-]+\\.\\w+).*)'],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - assets (static assets)
+     * - favicon.ico
+     * And exclude file extensions
+     */
+    '/((?!api/|_next/|_static/|_vercel|assets|favicon\\.ico|[\\w-]+\\.\\w+).*)',
+  ],
 };
 
 export default async function middleware(req: NextRequest) {
   const url = req.nextUrl;
 
-  let hostname = req.headers.get('x-forwarded-host') || req.headers.get('host');
+  const hostname = req.headers.get('x-forwarded-host') || req.headers.get('host');
   const searchParams = req.nextUrl.searchParams.toString();
   const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ''}`;
 

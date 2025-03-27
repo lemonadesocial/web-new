@@ -25,7 +25,7 @@ export function Avatar({ src, size = 'md', rounded = 'full', className }: Avatar
   return (
     <div className={twMerge(`relative ${sizes[size]} overflow-hidden ${roundeds[rounded]}`, className)}>
       <img
-        src={src || 'https://assets.lemonade.social/assets/images/avatars/lemonade_davatar_1.png'}
+        src={src || '/assets/images/avatars/lemonade_davatar_2.png'}
         alt="Avatar"
         className="absolute inset-0 w-full h-full object-cover"
       />
