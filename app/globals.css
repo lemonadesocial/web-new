@@ -183,6 +183,7 @@ main {
 
 .page {
   max-width: 67.5rem;
+  width: 100%;
 }
 
 .font-title {

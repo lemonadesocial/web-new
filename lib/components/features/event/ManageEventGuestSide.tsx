@@ -96,7 +96,6 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           )}
         </div>
         <EventRegistration event={event} />
-        <EventRegistration event={{ title: 'Event Registration heheh' }} />
         <AboutSection event={event} />
         <LocationSection event={event} />
         <SubEventSection event={event} />
