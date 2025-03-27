@@ -23,6 +23,7 @@ interface HeroSectionProps {
 export function HeroSection({ space }: HeroSectionProps) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
+  console.log(me);
 
   const [follow, resFollow] = useMutation(FollowSpaceDocument, {
     onComplete: (client) => {
@@ -46,7 +47,7 @@ export function HeroSection({ space }: HeroSectionProps) {
     else follow({ variables });
   };
 
-  const canManage = [space?.creator, space?.admins?.map((p) => p._id)].filter((p) => p).includes(me?._id);
+  const canManage = [space?.creator, ...(space?.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
 
   const [openSheet, setOpenSheet] = React.useState(false);
   const [saved, setSaved] = React.useState(false);
