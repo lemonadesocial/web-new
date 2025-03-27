@@ -17,6 +17,8 @@ import { HostedBySection } from '../event/HostedBySection';
 import { convertFromUtcToTimezone } from '$lib/utils/date';
 import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event';
 import { userAvatar } from '$lib/utils/user';
+import { copy } from '$lib/utils/helpers';
+import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 
 export function EventPane({ eventId }: { eventId: string }) {
   const { data: dataGetMe } = useQuery(GetMeDocument);
@@ -62,12 +64,7 @@ export function EventPane({ eventId }: { eventId: string }) {
               {hosts
                 .filter((p) => p?.image_avatar)
                 .map((p) => (
-                  <Avatar
-                    key={p?._id}
-                    src={userAvatar(p)}
-                    size="sm"
-                    className="ring-2 border-background"
-                  />
+                  <Avatar key={p?._id} src={userAvatar(p)} size="sm" className="ring-2 border-background" />
                 ))}
             </div>
           )}
@@ -122,7 +119,12 @@ function EventPaneHeader({ eventShortId }: { eventShortId: string }) {
   return (
     <div className="px-3 py-2 flex gap-3 border-b sticky top-0 z-50 backdrop-blur-xl">
       <Button icon="icon-chevron-double-right" variant="tertiary-alt" size="sm" onClick={() => drawer.close()} />
-      <Button iconLeft="icon-duplicate" variant="tertiary-alt" size="sm">
+      <Button
+        iconLeft="icon-duplicate"
+        variant="tertiary-alt"
+        size="sm"
+        onClick={() => copy(`${LEMONADE_DOMAIN}/e/${eventShortId}`)}
+      >
         Copy Link
       </Button>
       <Button

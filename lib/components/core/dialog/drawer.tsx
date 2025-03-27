@@ -57,9 +57,7 @@ export function DrawerContainer() {
     setIsOpen(true);
   }, []);
 
-  // NOTE: handle props to allow click outside to close
   const handleOutsideClick = (event: MouseEvent) => {
-    return;
     if (ref.current && event.target instanceof Node && ref.current.contains(event.target)) {
       // do nothing here
     } else {

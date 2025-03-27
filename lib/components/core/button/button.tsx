@@ -44,6 +44,7 @@ interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonE
   loading?: boolean;
   disabled?: boolean;
   outlined?: boolean;
+  type?: 'button' | 'submit';
 }
 
 export function Button({
@@ -57,11 +58,13 @@ export function Button({
   loading,
   disabled,
   outlined,
+  type = 'button',
   ...rest
 }: ButtonProps) {
   return (
     <button
       disabled={disabled || loading}
+      type={type}
       className={twMerge(
         'transition border border-transparent group cursor-pointer inline-flex items-center justify-center gap-2.5 font-medium',
         sizes[size],
