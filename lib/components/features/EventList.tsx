@@ -8,6 +8,7 @@ import { Avatar, Badge, Card, Divider, Spacer } from '$lib/components/core';
 import { Address, Event, SpaceTagBase } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { getTicketCost } from '$lib/utils/event';
+import { userAvatar } from '$lib/utils/user';
 
 export function EventList({
   events,
@@ -52,14 +53,13 @@ function EventItem({ item }: { item: Event }) {
       <div className="flex flex-col gap-1 flex-1">
         <p className="text-tertiary font-medium text-lg">{item.title}</p>
         <div className="flex gap-2 items-center">
-          {!!users.filter((p) => p?.image_avatar).length && (
+          {!!users.length && (
             <div className="flex -space-x-1 overflow-hidden p-1">
               {users
-                .filter((p) => p?.image_avatar)
                 .map((p) => (
                   <Avatar
                     key={p?._id}
-                    src={generateUrl(p?.image_avatar)}
+                    src={userAvatar(p)}
                     size="sm"
                     className="ring-2 border-background"
                   />
@@ -190,11 +190,10 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
               {!!users.filter((p) => p?.image_avatar).length && (
                 <div className="flex -space-x-1 overflow-hidden p-1">
                   {users
-                    .filter((p) => p?.image_avatar)
                     .map((p) => (
                       <Avatar
                         key={p?._id}
-                        src={generateUrl(p?.image_avatar)}
+                        src={userAvatar(p)}
                         size="sm"
                         className="ring-2 border-background"
                       />

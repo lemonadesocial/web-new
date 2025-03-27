@@ -12,6 +12,7 @@ import { useLogOut } from '$lib/hooks/useLogout';
 import { Avatar } from '$lib/components/core/avatar';
 import { Button } from '$lib/components/core/button';
 import { Divider, Menu, MenuItem } from '$lib/components/core';
+import { userAvatar } from '$lib/utils/user';
 
 export default function Header() {
   const [session] = useAtom(sessionAtom);
@@ -29,13 +30,13 @@ export default function Header() {
         {session && me ? (
           <Menu.Root>
             <Menu.Trigger>
-              <Avatar src={me.image_avatar || ''} />
+              <Avatar src={userAvatar(me)} />
             </Menu.Trigger>
             <Menu.Content className="p-0 min-w-[228px]">
               {({ toggle }) => (
                 <>
                   <div className="flex gap-2.5 px-2 py-1.5 items-center">
-                    <Avatar size="lg" src={me.image_avatar || ''} />
+                    <Avatar size="lg" src={userAvatar(me)} />
                     <div>
                       <p className="text-md font-medium whitespace-nowrap">{me.name}</p>
                       <p className="text-xs font-medium text-tertiary/56">{me.email}</p>

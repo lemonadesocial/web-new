@@ -14,6 +14,7 @@ import { CommunitySection } from './CommunitySection';
 import { HostedBySection } from './HostedBySection';
 import { convertFromUtcToTimezone } from '$lib/utils/date';
 import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event';
+import { userAvatar } from '$lib/utils/user';
 
 export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
   const { data } = useQuery(GetEventDocument, {
@@ -51,7 +52,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
                 .map((p) => (
                   <Avatar
                     key={p?._id}
-                    src={generateUrl(p?.image_avatar)}
+                    src={userAvatar(p)}
                     size="sm"
                     className="ring-2 border-background"
                   />

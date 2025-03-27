@@ -12,3 +12,18 @@ export function userAvatar(user: User, edits: keyof typeof EDIT_KEY = 'PROFILE')
 
   return randomUserImage(user?._id || '');
 }
+
+function randomImage(id: string, length: number, template: (num: number) => string): string {
+  const idLength = id ? id.length : 0;
+
+  let hash = 0;
+  for (let i = 0; i < idLength; i++) {
+    hash += id.charCodeAt(i);
+  }
+
+  return template((hash % length) + 1);
+}
+
+export function randomUserImage(id: string): string {
+  return randomImage(id, 10, (num) => `/assets/images/avatars/lemonade_davatar_${num}.png`);
+}

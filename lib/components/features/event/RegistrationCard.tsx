@@ -1,7 +1,7 @@
 import { Avatar, Button, Card } from '$lib/components/core';
 import { GetMeDocument, User } from '$lib/generated/backend/graphql';
 import { useQuery } from '$lib/request';
-import { generateUrl } from '$lib/utils/cnd';
+import { userAvatar } from '$lib/utils/user';
 import React from 'react';
 
 export default function RegistrationCard() {
@@ -15,7 +15,7 @@ export default function RegistrationCard() {
         <p>Welcome! To join the event, please register below.</p>
         {me && (
           <div className="flex gap-2 items-center">
-            <Avatar src={generateUrl(me.image_avatar)} size="sm" />
+            <Avatar src={userAvatar(me)} size="sm" />
             <div className="flex gap-1 items-center">
               {me.name && <p>{me.name}</p>}
               {me.email && <p>{me.email}</p>}
