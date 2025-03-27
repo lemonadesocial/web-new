@@ -74,7 +74,7 @@ export function HeroSection({ space }: HeroSectionProps) {
           </>
         )}
 
-        <div className="absolute bottom-8 md:bottom-4 outline-6 outline-background size-16 md:size-32 rounded-md overflow-hidden shadow-lg">
+        <div className="absolute bottom-8 md:bottom-4 outline-6 outline-background size-16 md:size-32 rounded-md overflow-hidden">
           {space?.image_avatar && (
             <img
               className="w-full h-full outline outline-tertiary/[0.04] rounded-md"
@@ -85,7 +85,7 @@ export function HeroSection({ space }: HeroSectionProps) {
         </div>
 
         {/* Subscribe button */}
-        <div className="absolute bottom-4 right-4">
+        <div className="absolute bottom-4 right-0">
           <div className="flex items-center gap-3">
             {[space?.creator, ...(space?.admins?.map((p) => p._id) || [])].includes(me?._id) && (
               <Button
