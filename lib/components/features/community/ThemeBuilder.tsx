@@ -354,8 +354,9 @@ export default function ThemeBuilder({
                     },
                   };
 
-                  form.setValue('forceground', name, { shouldDirty: true });
-                  form.setValue('background', name, { shouldDirty: true });
+
+                  form.setValue('forceground', {key: name, value: name}, { shouldDirty: true });
+                  form.setValue('background', {key: name, value: name}, { shouldDirty: true });
                   form.setValue('variables', random, { shouldDirty: true });
                 }}
               />
@@ -398,7 +399,7 @@ function PopoverColor({
         <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
           <i
             className={twMerge('size-[24px] rounded-full', colors[name] && colors[name][mode])}
-            style={customColor ? { backgroundColor: customColor } : undefined}
+            style={customColor && name === 'custom' ? { backgroundColor: customColor } : undefined}
           />
 
           <span className="text-left flex-1  font-general-sans">{label}</span>

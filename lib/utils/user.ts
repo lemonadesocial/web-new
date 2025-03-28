@@ -25,6 +25,5 @@ function randomImage(id: string, length: number, template: (num: number) => stri
 }
 
 export function randomUserImage(id: string): string {
-  console.log(process.env.ASSET_PREFIX)
   return randomImage(id, 10, (num) => `${process.env.ASSET_PREFIX || ''}/assets/images/avatars/lemonade_davatar_${num}.png`);
 }

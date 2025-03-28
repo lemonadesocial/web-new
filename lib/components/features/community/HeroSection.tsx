@@ -23,7 +23,6 @@ interface HeroSectionProps {
 export function HeroSection({ space }: HeroSectionProps) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
-  console.log(me);
 
   const [follow, resFollow] = useMutation(FollowSpaceDocument, {
     onComplete: (client) => {
