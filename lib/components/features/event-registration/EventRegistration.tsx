@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { useAtom as useJotaiAtom } from 'jotai';
 
-import { Avatar, Card, SkeletonBox } from '$lib/components/core';
-
 import { CalculateTicketsPricingDocument, Event, GetEventInvitationDocument, GetEventTicketTypesDocument, NewPaymentAccount, PurchasableTicketType } from '$lib/generated/backend/graphql';
 import { useQuery } from '$lib/request';
-import { approvalRequiredAtom, currencyAtom, eventAtom, hasSingleFreeTicketAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
+import { Avatar, Card, SkeletonBox } from '$lib/components/core';
+
+import { approvalRequiredAtom, currencyAtom, eventAtom, hasSingleFreeTicketAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
 
 import { EventRegistrationStoreProvider } from './context';
 import { TicketSelect } from './TicketSelect';
