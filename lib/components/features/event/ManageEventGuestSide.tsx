@@ -15,7 +15,7 @@ import { HostedBySection } from './HostedBySection';
 import { convertFromUtcToTimezone } from '$lib/utils/date';
 import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event';
 import { userAvatar } from '$lib/utils/user';
-import { EventRegistration } from '$lib/components/features/event-registration';
+// import { EventRegistration } from '$lib/components/features/event-registration';
 
 export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
   const { data } = useQuery(GetEventDocument, {
@@ -95,7 +95,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
             </div>
           )}
         </div>
-        <EventRegistration event={event} />
+        {/* <EventRegistration event={event} /> */}
         <AboutSection event={event} />
         <LocationSection event={event} />
         <SubEventSection event={event} />

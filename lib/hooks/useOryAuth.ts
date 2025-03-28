@@ -1,17 +1,19 @@
-import * as React from 'react';
 import { useAtom } from 'jotai';
+import React from 'react';
 
 import { ory } from '$lib/utils/ory';
 import { sessionAtom } from '$lib/jotai';
 import { useLogOut } from '$lib/hooks/useLogout';
 
-export function OryAuthProvider({ children }: { children: React.ReactNode }) {
+export function useOryAuth() {
   const [session, setSession] = useAtom(sessionAtom);
   const [loading, setLoading] = React.useState(true);
   const logOut = useLogOut();
 
   React.useEffect(() => {
-    if (!ory) return;
+    if (!ory) {
+      throw new Error('Ory is not initialized');
+    }
 
     ory
       .toSession()
@@ -21,7 +23,7 @@ export function OryAuthProvider({ children }: { children: React.ReactNode }) {
 
         if (id && user?.user) setSession({ id, user: user.user });
       })
-      .catch((error) => {
+      .catch((error) => { 
         if (error.response?.status === 401) {
           if (session) logOut();
           return;
@@ -32,9 +34,7 @@ export function OryAuthProvider({ children }: { children: React.ReactNode }) {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [setSession, session, logOut]);
 
-  if (loading) return <></>;
-
-  return <>{children}</>;
+  return loading;
 }
