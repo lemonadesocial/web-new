@@ -22,7 +22,7 @@ export function useListChains() {
       setLoading(false);
       throw error;
     });
-  }, [setListChains]);
+  }, []);
 
   return loading;
 }

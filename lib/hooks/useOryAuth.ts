@@ -23,7 +23,7 @@ export function useOryAuth() {
 
         if (id && user?.user) setSession({ id, user: user.user });
       })
-      .catch((error) => { 
+      .catch((error) => {
         if (error.response?.status === 401) {
           if (session) logOut();
           return;
@@ -34,7 +34,7 @@ export function useOryAuth() {
       .finally(() => {
         setLoading(false);
       });
-  }, [setSession, session, logOut]);
+  }, []);
 
   return loading;
 }
