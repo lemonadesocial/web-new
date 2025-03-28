@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react';
 import { useAtom as useJotaiAtom } from 'jotai';
 
-import { Event, GetEventInvitationDocument, GetEventTicketTypesDocument, PurchasableTicketType } from '$lib/generated/backend/graphql';
-import { useQuery } from '$lib/request';
 import { Avatar, Card, SkeletonBox } from '$lib/components/core';
 
-import { approvalRequiredAtom, eventAtom, hasSingleFreeTicketAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
+import { Event, GetEventInvitationDocument, GetEventTicketTypesDocument, PurchasableTicketType } from '$lib/generated/backend/graphql';
+import { useQuery } from '$lib/request';
+import { approvalRequiredAtom, eventAtom, hasSingleFreeTicketAtom, requiredProfileFieldsAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
 import { sessionAtom } from '$lib/jotai';
-import { EventRegistrationStoreProvider } from './context';
 import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
+
+import { EventRegistrationStoreProvider } from './context';
 import { TicketSelect } from './TicketSelect';
+import { RegisterButton } from './RegisterButton';
 
 const EventRegistrationContent: React.FC = () => {
   const me = useMe();
@@ -65,6 +67,7 @@ const EventRegistrationContent: React.FC = () => {
             </div>
           )
         }
+        <RegisterButton />
       </div>
     </Card.Root>
   );
@@ -73,9 +76,12 @@ const EventRegistrationContent: React.FC = () => {
 const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent }) => {
   const [event, setEvent] = useAtom(eventAtom);
   const setApprovalRequired = useSetAtom(approvalRequiredAtom);
-  const [session] = useJotaiAtom(sessionAtom);
   const setTicketTypes = useSetAtom(ticketTypesAtom);
   const setTicketLimit = useSetAtom(ticketLimitAtom);
+  const setRequiredProfileFields = useSetAtom(requiredProfileFieldsAtom);
+
+  const [session] = useJotaiAtom(sessionAtom);
+  const me = useMe();
 
   useEffect(() => {
     setEvent(initialEvent);
@@ -106,6 +112,25 @@ const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent
     const invited = inviteData.getEventInvitation.inviters.some((inviter) => hosts.includes(inviter));
     setApprovalRequired(!invited);
   }, [inviteData, initialEvent, setApprovalRequired]);
+
+  React.useEffect(() => {
+    const requireFields = initialEvent.application_profile_fields || [];
+
+    if (!me?._id) {
+      setRequiredProfileFields(requireFields);
+      return;
+    }
+
+    if (!me.email && !requireFields.some(field => field.field === 'email')) {
+      requireFields.push({ field: 'email', required: true });
+    }
+
+    if (!me.display_name && !requireFields.some(field => field.field === 'display_name')) {
+      requireFields.push({ field: 'display_name', required: true });
+    }
+
+    setRequiredProfileFields(requireFields);
+  }, [initialEvent, me]);
 
   if (!event) return null;
 
