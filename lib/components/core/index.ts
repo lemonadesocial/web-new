@@ -13,3 +13,6 @@ export * from './segment';
 export * from './spacer';
 export * from './tag';
 export * from './skeleton';
+export * from './collapsible';
+export * from './number-input';
+

@@ -1,5 +1,5 @@
 import { Atom, atom, WritableAtom, useAtom as useJotaiAtom, useAtomValue as useJotaiAtomValue, useSetAtom as useJotaiSetAtom } from "jotai";
-import { Event, PurchasableTicketType } from '$lib/generated/backend/graphql';
+import { ApplicationProfileField, Event, NewPaymentAccount, PurchasableItem, PurchasableTicketType } from '$lib/generated/backend/graphql';
 import { useContext } from "react";
 import { EventRegistrationStoreContext } from "./context";
 
@@ -44,3 +44,12 @@ export const hasSingleFreeTicketAtom = atom((get) => {
 });
 
 export const ticketLimitAtom = atom<number>(0);
+
+export const purchaseItemsAtom = atom<PurchasableItem[]>([]);
+export const currencyAtom = atom<string>('');
+
+export const paymentAccountsAtom = atom<string[]>([]);
+export const currenciesAtom = atom<string[]>([]);
+export const selectedPaymentAccountAtom = atom<NewPaymentAccount | null>(null);
+
+export const requiredProfileFieldsAtom = atom<ApplicationProfileField[]>([]);

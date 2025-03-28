@@ -4,13 +4,16 @@ import { format, isSameDay, isSameYear } from 'date-fns';
 import {
   Address,
   Event,
+  EventTicketCategory,
   EventTicketPrice,
+  PurchasableTicketType,
 } from '$lib/generated/backend/graphql';
 
 import { formatCurrency } from './string';
 
 import { convertFromUtcToTimezone, formatWithTimezone } from './date';
 import { getListChains } from './crypto';
+import { groupBy } from 'lodash';
 
 export function formatCryptoPrice(price: EventTicketPrice, skipCurrency: boolean = false) {
   const { cost, currency } = price;
@@ -89,3 +92,25 @@ export const getEventDateBlockRange = (event: Event) => {
 
   return `${format(startTime, 'hh:mm a')} - ${formatWithTimezone(endTime, 'dd MMM, hh:mm a OOO', event.timezone as string)}`;
 };
+
+export interface GroupedTicketTypes {
+  category: EventTicketCategory | null;
+  ticketTypes: Array<PurchasableTicketType>;
+};
+
+export function groupTicketTypesByCategory(ticketTypes: Array<PurchasableTicketType>): Array<GroupedTicketTypes> {
+  const groupedByCategory = groupBy(ticketTypes, (ticket) => ticket.category_expanded?._id || 'uncategorized');
+
+  return Object.entries(groupedByCategory).map(([, tickets]) => ({
+    category: tickets[0]?.category_expanded || null,
+    ticketTypes: tickets,
+  }));
+}
+
+export function getPaymentAccounts(prices: EventTicketPrice[]) {
+  const accounts = prices
+    .flatMap(price => price.payment_accounts_expanded || [])
+    .map(account => account._id);
+
+  return [...new Set(accounts)];
+}
