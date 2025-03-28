@@ -223,3 +223,93 @@ query getEventTicketTypes($event: MongoID!) {
     }
   }
 }
+
+query CalculateTicketsPricing($input: CalculateTicketsPricingInput!) {
+  calculateTicketsPricing(input: $input) {
+    deposit_infos {
+      minimum_amount
+      minimum_percent
+    }
+    discount
+    payment_accounts {
+      _id
+      account_info {
+        ... on SolanaAccount {
+          currencies
+          currency_map
+          address
+          network
+        }
+        ... on EthereumAccount {
+          currencies
+          currency_map
+          address
+          network
+        }
+        ... on SafeAccount {
+          currencies
+          currency_map
+          address
+          network
+          owners
+          threshold
+          pending
+        }
+        ... on DigitalAccount {
+          currencies
+          currency_map
+          account_id
+        }
+        ... on StripeAccount {
+          currencies
+          currency_map
+          account_id
+          publishable_key
+        }
+        ... on EthereumEscrowAccount {
+          currencies
+          currency_map
+          address
+          network
+          minimum_deposit_percent
+          host_refund_percent
+          refund_policies {
+            percent
+            timestamp
+          }
+        }
+        ... on EthereumRelayAccount {
+          currencies
+          currency_map
+          address
+          network
+          payment_splitter_contract
+        }
+        ... on EthereumStakeAccount {
+          currencies
+          currency_map
+          address
+          network
+          config_id
+          requirement_checkin_before
+        }
+      }
+      active
+      created_at
+      escrow {
+        minimum_amount
+        minimum_percent
+      }
+      fee
+      provider
+      relay {
+        payment_splitter_contract
+      }
+      title
+      type
+      user
+    }
+    subtotal
+    total
+  }
+}
