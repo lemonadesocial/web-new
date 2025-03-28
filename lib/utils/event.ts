@@ -5,17 +5,16 @@ import {
   Address,
   Event,
   EventTicketPrice,
-  EventTicketType,
-  PurchasableTicketType,
 } from '$lib/generated/backend/graphql';
 
-import { formatCurrency } from './number';
-import { Currency } from './payment';
-import { convertFromUtcToTimezone, formatWithTimezone } from './date';
+import { formatCurrency } from './string';
 
-export function formatCryptoCurrency(price: EventTicketPrice, skipCurrency: boolean = false) {
+import { convertFromUtcToTimezone, formatWithTimezone } from './date';
+import { getListChains } from './crypto';
+
+export function formatCryptoPrice(price: EventTicketPrice, skipCurrency: boolean = false) {
   const { cost, currency } = price;
-  const decimals = window.supportedPaymentChains
+  const decimals = getListChains()
     ?.flatMap(({ tokens }) => tokens)
     ?.find((token) => token?.symbol === price.currency)?.decimals;
 
@@ -28,16 +27,29 @@ export function formatCryptoCurrency(price: EventTicketPrice, skipCurrency: bool
   return `${ethers.formatUnits(cost, decimals)} ${currency.toUpperCase()}`;
 }
 
-export function getTicketCost(ticket: EventTicketType | PurchasableTicketType) {
-  const defaultPrice: EventTicketPrice = ticket.prices.find((price) => price.default) || ticket.prices[0];
+export function formatFiatPrice(price: EventTicketPrice) {
+  const { cost, currency, payment_accounts_expanded } = price;
+  const decimals = payment_accounts_expanded?.[0]?.account_info?.currency_map[currency]?.decimals;
 
-  if (defaultPrice.cost === '0') return 'Free';
+  if (!decimals) return '';
 
-  const isStripe = defaultPrice.payment_accounts_expanded?.[0]?.provider === 'stripe';
+  return formatCurrency(Number(cost), currency, decimals, false);
+}
 
-  if (isStripe) return formatCurrency(Number(defaultPrice.cost), defaultPrice.currency as Currency);
+export function formatPrice(price: EventTicketPrice) {
+  if (!price.payment_accounts_expanded?.[0]) return 'Free';
 
-  return formatCryptoCurrency(defaultPrice);
+  const isStripe = price.payment_accounts_expanded[0].provider === 'stripe';
+
+  return isStripe ? formatFiatPrice(price) : formatCryptoPrice(price);
+}
+
+export function getEventPrice(event: Event) {
+  const defaultPrice = event.event_ticket_types?.[0]?.prices.find((price) => price.default) || event.event_ticket_types?.[0]?.prices[0];
+
+  if (!defaultPrice) return '';
+
+  return formatPrice(defaultPrice);
 }
 
 export function getEventAddress(address?: Address | undefined, short?: boolean) {

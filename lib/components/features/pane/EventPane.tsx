@@ -3,7 +3,7 @@ import React from 'react';
 import { format } from 'date-fns';
 
 import { Alert, Avatar, Button, Divider, drawer } from '$lib/components/core';
-import { Event, GetEventDocument, GetMeDocument, User } from '$lib/generated/backend/graphql';
+import { Event, GetEventDocument } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { useQuery } from '$lib/request';
 
@@ -19,11 +19,10 @@ import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event
 import { userAvatar } from '$lib/utils/user';
 import { copy } from '$lib/utils/helpers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { useMe } from '$lib/hooks/useMe';
 
 export function EventPane({ eventId }: { eventId: string }) {
-  const { data: dataGetMe } = useQuery(GetMeDocument);
-  const me = dataGetMe?.getMe as User;
-
+  const me = useMe();
   const { data, loading } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
   const event = data?.getEvent as Event;
 

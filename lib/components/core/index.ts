@@ -12,3 +12,4 @@ export * from './menu';
 export * from './segment';
 export * from './spacer';
 export * from './tag';
+export * from './skeleton';

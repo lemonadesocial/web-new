@@ -57,7 +57,7 @@
   --color-alabaster-950: #26262b;
 
   --color-background: var(--color-background);
-  --color-forceground: var(--color-forceground);
+  --color-foreground: var(--color-foreground);
   --color-tertiary: var(--color-tertiary);
   --color-modal: var(--color-modal);
   --color-menu: var(--color-menu);
@@ -183,6 +183,7 @@ main {
 
 .page {
   max-width: 67.5rem;
+  width: 100%;
 }
 
 .font-title {

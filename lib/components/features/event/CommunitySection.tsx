@@ -1,20 +1,20 @@
-import { Button } from '$lib/components/core';
-import { Event, GetMeDocument, GetSpaceDocument, Space, User } from '$lib/generated/backend/graphql';
-import { useQuery } from '$lib/request';
-import { generateUrl } from '$lib/utils/cnd';
-import React from 'react';
-import { COMMUNITY_SOCIAL_LINKS } from '../community/constants';
 import Link from 'next/link';
 
+import { Button } from '$lib/components/core';
+import { Event, GetSpaceDocument, Space } from '$lib/generated/backend/graphql';
+import { useQuery } from '$lib/request';
+import { generateUrl } from '$lib/utils/cnd';
+import { COMMUNITY_SOCIAL_LINKS } from '../community/constants';
+import { useMe } from '$lib/hooks/useMe';
+
 export function CommunitySection({ event }: { event: Event }) {
-  const { data: dataGetMe } = useQuery(GetMeDocument);
-  const me = dataGetMe?.getMe as User;
+  const me = useMe();
 
   const { data } = useQuery(GetSpaceDocument, { variables: { id: event.space }, skip: !event.space });
   const space = data?.getSpace as Space;
 
   if (!space) return null;
-  const canManage = space.creator === me._id || space.admins?.map((p) => p._id).includes(me._id);
+  const canManage = space.creator === me?._id || space.admins?.map((p) => p._id).includes(me?._id);
 
   return (
     <div className="flex flex-col gap-3">

@@ -30,3 +30,71 @@ fragment User on User {
   url
   url_go
 }
+
+fragment PaymentAccount on NewPaymentAccount {
+  _id
+  provider
+  type
+  title
+  account_info {
+    ... on EthereumAccount {
+      currencies
+      currency_map
+      address
+      network
+    }
+    ... on SafeAccount {
+      currencies
+      currency_map
+      address
+      network
+      owners
+      threshold
+      pending
+    }
+    ... on DigitalAccount {
+      currencies
+      currency_map
+      account_id
+    }
+    ... on StripeAccount {
+      currencies
+      currency_map
+      account_id
+      publishable_key
+    }
+    ... on EthereumEscrowAccount {
+      currencies
+      currency_map
+      address
+      network
+      minimum_deposit_percent
+      host_refund_percent
+      refund_policies {
+        percent
+        timestamp
+      }
+    }
+    ... on EthereumRelayAccount {
+      currencies
+      currency_map
+      address
+      network
+      payment_splitter_contract
+    }
+    ... on EthereumStakeAccount {
+      currencies
+      currency_map
+      address
+      network
+      config_id
+      requirement_checkin_before
+    }
+    ... on SolanaAccount {
+      currencies
+      currency_map
+      address
+      network
+    }
+  }
+}

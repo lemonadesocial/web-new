@@ -13,7 +13,7 @@ export function HostedBySection({ event }: { event: Event }) {
       <Divider className="h-1 w-full mb-2" />
       {hosts.map((u) => (
         <div key={u?._id}>
-          {u?.new_photos_expanded && <img src={generateUrl(u?.new_photos_expanded)} />}
+          {u?.new_photos_expanded && <img src={generateUrl(u?.new_photos_expanded[0])} alt={u?.name} />}
           <Link className="hover:text-primary-400" href={`${LEMONADE_DOMAIN}/u/${u?.username}`} target="_blank">
             {u?.name}
           </Link>

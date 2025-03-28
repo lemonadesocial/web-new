@@ -7,8 +7,8 @@ import clsx from 'clsx';
 import { Avatar, Badge, Card, Divider, Spacer } from '$lib/components/core';
 import { Address, Event, SpaceTagBase } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
-import { getTicketCost } from '$lib/utils/event';
 import { userAvatar } from '$lib/utils/user';
+import { getEventPrice } from '$lib/utils/event';
 
 export function EventList({
   events,
@@ -44,7 +44,6 @@ export function EventList({
 }
 
 function EventItem({ item }: { item: Event }) {
-  const defaultTicketType = item.event_ticket_types?.find((p) => p.default);
   const users = [item.host_expanded, ...(item.visible_cohosts_expanded || [])];
 
   return (
@@ -70,11 +69,7 @@ function EventItem({ item }: { item: Event }) {
           <p className="font-medium text-sm text-tertiary/[.56]">By {users.map((p) => p?.name).join(',')}</p>
         </div>
       </div>
-      <div>
-        {defaultTicketType && (
-          <Badge title={getTicketCost(defaultTicketType)} className="bg-success-500/[0.16] text-success-500" />
-        )}
-      </div>
+      <Badge title={getEventPrice(item.event_ticket_types)} className="bg-success-500/[0.16] text-success-500" />
     </div>
   );
 }
@@ -166,7 +161,6 @@ export function EventListCard({
 }
 
 function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: SpaceTagBase[]; onClick?: () => void }) {
-  const defaultTicketType = item.event_ticket_types?.find((p) => p.default);
   const users = [item.host_expanded, ...(item.visible_cohosts_expanded || [])];
 
   return (
@@ -224,9 +218,7 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
             </div>
           )}
 
-          {!!defaultTicketType && (
-            <Badge title={getTicketCost(defaultTicketType)} className="bg-success-500/[0.16] text-success-500" />
-          )}
+          <Badge title={getEventPrice(item.event_ticket_types)} className="bg-success-500/[0.16] text-success-500" />
         </div>
 
         {!!item?.new_new_photos_expanded?.[0] && (
