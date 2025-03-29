@@ -26,7 +26,7 @@ export function EventList({
     <div className="flex flex-col gap-8">
       {Object.entries(groupBy(events, ({ start }) => start)).map(([date, data]) => (
         <div key={date}>
-          <p className="text-tertiary/[.56] font-medium">
+          <p className="text-tertiary font-medium">
             <span className="text-tertiary">{format(date, 'MMM dd')}</span> {format(date, 'EEE')}
           </p>
           <Divider className="mt-2 mb-3" />
@@ -47,7 +47,7 @@ function EventItem({ item }: { item: Event }) {
   const users = [item.host_expanded, ...(item.visible_cohosts_expanded || [])];
 
   return (
-    <div className="transition flex text-tertiary/[.56] gap-4 hover:bg-tertiary/[.16] p-2 rounded-md cursor-pointer">
+    <div className="transition flex text-tertiary gap-4 hover:bg-primary/[.16] p-2 rounded-md cursor-pointer">
       <p>{format(item.start, 'h:mm a')}</p>
       <div className="flex flex-col gap-1 flex-1">
         <p className="text-tertiary font-medium text-lg">{item.title}</p>
@@ -66,7 +66,7 @@ function EventItem({ item }: { item: Event }) {
             </div>
           )}
 
-          <p className="font-medium text-sm text-tertiary/[.56]">By {users.map((p) => p?.name).join(',')}</p>
+          <p className="font-medium text-sm text-tertiary">By {users.map((p) => p?.name).join(',')}</p>
         </div>
       </div>
       <Badge title={getEventPrice(item.event_ticket_types)} className="bg-success-500/[0.16] text-success-500" />
@@ -79,18 +79,18 @@ function EventListSkeleton() {
     <div className="flex flex-col gap-10">
       {Object.entries({ 1: [1, 2], 2: [1], 3: [1, 2, 3] }).map(([date, data]) => (
         <div key={date}>
-          <SkeletonLine animate className="w-[96px] h-[16px] bg-tertiary/[.04] rounded-lg" />
+          <SkeletonLine animate className="w-[96px] h-[16px] bg-card rounded-lg" />
           <Divider className="mt-3 mb-4" />
 
           <div className="flex flex-col gap-5">
             {data.map((item) => (
               <div key={item} className="transition flex gap-4 rounded-md">
-                <SkeletonLine className="w-[64px] h-[20px] bg-tertiary/[.04] rounded-lg" />
+                <SkeletonLine className="w-[64px] h-[20px] bg-card rounded-lg" />
                 <div className="flex flex-col gap-2">
-                  <SkeletonLine animate className="w-[360px] h-[20px] bg-tertiary/[.04] rounded-lg" />
+                  <SkeletonLine animate className="w-[360px] h-[20px] bg-card rounded-lg" />
                   <div className="flex gap-2">
-                    <SkeletonLine className="size-[16px] bg-tertiary/[.04] rounded-lg" />
-                    <SkeletonLine className="w-[120px] h-[16px] bg-tertiary/[.04] rounded-lg" />
+                    <SkeletonLine className="size-[16px] bg-card rounded-lg" />
+                    <SkeletonLine className="w-[120px] h-[16px] bg-card rounded-lg" />
                   </div>
                 </div>
               </div>
@@ -122,14 +122,14 @@ export function EventListCard({
     <div className="flex flex-col">
       {Object.entries(groupBy(events, ({ start }) => start)).map(([date, data]) => (
         <div className="flex flex-col relative" key={date}>
-          <div className="border-dashed border-l-2 border-l-[var(--color-border)] absolute h-full left-1 top-2 z-10">
+          <div className="border-dashed border-l-2 border-l-[var(--color-divider)] absolute h-full left-1 top-2 z-10">
             <div className="size-2 bg-background -ml-[5px] absolute">
-              <div className="size-2 rounded-full bg-tertiary/[.24]" />
+              <div className="size-2 rounded-full bg-quaternary" />
             </div>
           </div>
 
           <div className="ml-5">
-            <p className="text-md text-tertiary/[.56] font-medium">
+            <p className="text-md text-tertiary font-medium">
               <span className="text-tertiary">{format(new Date(date), 'MMM dd ')}</span>{' '}
               {format(new Date(date), 'EEEE')}
             </p>
@@ -148,12 +148,12 @@ export function EventListCard({
       <div className="flex flex-col relative">
         <div className="border-dashed border-l-2 absolute h-full left-1 top-2 z-10">
           <div className="size-2 bg-background -ml-[5px] absolute">
-            <div className="size-2 rounded-full bg-tertiary/[.24] " />
+            <div className="size-2 rounded-full bg-quaternary " />
           </div>
         </div>
       </div>
       <div className="ml-5 mt-0.5">
-        <p className="text-sm text-tertiary/[.56]">No more events to see here!</p>
+        <p className="text-sm text-tertiary">No more events to see here!</p>
       </div>
       <Spacer className="h-6" />
     </div>
@@ -166,14 +166,14 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
   return (
     <Card.Root as="button" onClick={onClick} key={`event_${item.shortid}`} className="flex flex-col gap-3">
       <Card.Content className="flex gap-6">
-        <div className="text-tertiary/56 flex-1 flex flex-col gap-2">
+        <div className="text-tertiary flex-1 flex flex-col gap-2">
           <div>
             <div className="flex gap-2 font-medium">
               {isBefore(new Date(), item.end) && isAfter(new Date(), item.start) && (
                 <div className="flex gap-2 items-center">
                   <div className="size-1.5 bg-danger-400 rounded-full motion-safe:animate-pulse" />
                   <span className="text-danger-400 uppercase">Live</span>
-                  <div className="size-0.5 bg-tertiary/[.24] rounded-full" />
+                  <div className="size-0.5 bg-quaternary rounded-full" />
                 </div>
               )}
 
@@ -195,7 +195,7 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
                 </div>
               )}
 
-              <p className="font-medium text-tertiary/[.56]">By {users.map((p) => p?.name).join(',')}</p>
+              <p className="font-medium text-tertiary">By {users.map((p) => p?.name).join(',')}</p>
             </div>
           </div>
 
@@ -240,9 +240,9 @@ function EventListCardSkeleton() {
     <div className="flex flex-col">
       {Object.entries({ 1: [1, 2], 2: [1], 3: [1, 2, 3] }).map(([date, data]) => (
         <div className="flex flex-col relative" key={date}>
-          <div className="border-dashed border-l-2 border-l-[var(--color-border)] absolute h-full left-1 top-2 z-10">
+          <div className="border-dashed border-l-2 border-l-[var(--color-divider)] absolute h-full left-1 top-2 z-10">
             <div className="size-2 bg-background -ml-[5px] absolute">
-              <div className="size-2 rounded-full bg-tertiary/[.24]" />
+              <div className="size-2 rounded-full bg-quaternary" />
             </div>
           </div>
           <div className="ml-5 mt-1">
@@ -268,22 +268,22 @@ function EventCardSkeleton() {
     <Card.Root className="bg-transparent border">
       <Card.Content className="flex">
         <div className="flex-1 flex flex-col gap-4">
-          <SkeletonLine className="h-4 w-[64px] rounded-full bg-tertiary/[.04]" />
+          <SkeletonLine className="h-4 w-[64px] rounded-full bg-card" />
           <SkeletonLine animate className="h-[28px] w-[400px] rounded" />
 
           <div className="flex flex-col gap-4">
             <div className="inline-flex items-center gap-2">
-              <SkeletonLine className="size-4 rounded-full bg-tertiary/[.04]" />
-              <SkeletonLine className="h-4 w-[64px] rounded-full bg-tertiary/[.04]" />
+              <SkeletonLine className="size-4 rounded-full bg-card" />
+              <SkeletonLine className="h-4 w-[64px] rounded-full bg-card" />
             </div>
 
             <div className="inline-flex items-center gap-2">
-              <SkeletonLine className="size-4 rounded-full bg-tertiary/[.04]" />
-              <SkeletonLine className="h-4 w-[120px] rounded-full bg-tertiary/[.04]" />
+              <SkeletonLine className="size-4 rounded-full bg-card" />
+              <SkeletonLine className="h-4 w-[120px] rounded-full bg-card" />
             </div>
           </div>
         </div>
-        <div className="size-[124px] bg-tertiary/[.04] rounded-lg"></div>
+        <div className="size-[124px] bg-card rounded-lg"></div>
       </Card.Content>
     </Card.Root>
   );

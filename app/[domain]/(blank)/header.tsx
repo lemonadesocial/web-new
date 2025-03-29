@@ -39,7 +39,7 @@ export default function Header() {
                     <Avatar size="lg" src={userAvatar(me)} />
                     <div>
                       <p className="text-md font-medium whitespace-nowrap">{me.name}</p>
-                      <p className="text-xs font-medium text-tertiary/56">{me.email}</p>
+                      <p className="text-xs font-medium text-tertiary">{me.email}</p>
                     </div>
                   </div>
                   <Divider />

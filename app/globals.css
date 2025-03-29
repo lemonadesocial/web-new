@@ -57,24 +57,31 @@
   --color-alabaster-950: #26262b;
 
   --color-background: var(--color-background);
-  --color-foreground: var(--color-foreground);
+
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
   --color-tertiary: var(--color-tertiary);
+  --color-quaternary: var(--color-quaternary);
+
+  --color-card: var(--color-card);
+  --color-card-border: var(--color-card-border);
+
   --color-modal: var(--color-modal);
   --color-menu: var(--color-menu);
   --color-overlay: var(--color-overlay);
   --color-drawer: var(--color-drawer);
 
-  --color-primary-50: var(--color-violet-50);
-  --color-primary-100: var(--color-violet-100);
-  --color-primary-200: var(--color-violet-200);
-  --color-primary-300: var(--color-violet-300);
-  --color-primary-400: var(--color-violet-400);
-  --color-primary-500: var(--color-violet-500);
-  --color-primary-600: var(--color-violet-600);
-  --color-primary-700: var(--color-violet-700);
-  --color-primary-800: var(--color-violet-800);
-  --color-primary-900: var(--color-violet-900);
-  --color-primary-950: var(--color-violet-950);
+  --color-accent-50: var(--color-violet-50);
+  --color-accent-100: var(--color-violet-100);
+  --color-accent-200: var(--color-violet-200);
+  --color-accent-300: var(--color-violet-300);
+  --color-accent-400: var(--color-violet-400);
+  --color-accent-500: var(--color-violet-500);
+  --color-accent-600: var(--color-violet-600);
+  --color-accent-700: var(--color-violet-700);
+  --color-accent-800: var(--color-violet-800);
+  --color-accent-900: var(--color-violet-900);
+  --color-accent-950: var(--color-violet-950);
 
   --color-success-50: var(--color-emerald-50);
   --color-success-100: var(--color-emerald-100);
@@ -141,7 +148,7 @@
   .border-b,
   .border-x,
   .border-y {
-    border-color: var(--color-border);
+    border-color: var(--color-divider);
   }
 }
 
@@ -177,7 +184,7 @@ body {
 
 main {
   background: var(--color-background);
-  color: var(--color-foreground);
+  color: var(--color-primary);
   font-family: var(--font-body);
 }
 

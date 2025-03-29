@@ -46,7 +46,7 @@ export function Map({
           if (marker == 'advanced') {
             return (
               <AdvancedMarker key={idx} position={{ lat: item.lat, lng: item.lng }}>
-                <div className="size-[12px] bg-primary-400 border rounded-full  border-tertiary"></div>
+                <div className="size-[12px] bg-accent-400 border rounded-full  border-primary"></div>
               </AdvancedMarker>
             );
           }

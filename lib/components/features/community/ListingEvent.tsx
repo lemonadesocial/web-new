@@ -73,7 +73,7 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
               <Card.Content className="flex justify-between items-center w-full">
                 <div>
                   <p className="text-md">{e.title}</p>
-                  <span className="text-tertiary/56">
+                  <span className="text-tertiary">
                     {format(e.start, 'MMM dd')} at {format(e.start, 'h:mm a')}
                   </span>
                 </div>
@@ -87,7 +87,7 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
             </Card.Root>
           ))}
           <div className="w-full">
-            <div className="bg-background/64 border flex py-1 px-1.5 gap-3.5 rounded-sm items-center h-[44px] border-tertiary/8 focus-within:border-tertiary">
+            <div className="bg-background/64 border flex py-1 px-1.5 gap-3.5 rounded-sm items-center h-[44px] focus-within:border-primary">
               <input
                 className="flex-1 outline-none px-1.5"
                 value={linkEvent}
@@ -159,7 +159,7 @@ export function AddTags({
         </div>
         <Menu.Content className="w-[252px] max-h-[300px] overflow-auto p-0">
           <input
-            className="outline-none bg-tertiary/4 text-md px-2.5 py-2 w-full"
+            className="outline-none bg-card text-md px-2.5 py-2 w-full"
             placeholder="Search Tag"
             value={tag}
             onChange={(e) => setTag(e.target.value)}
@@ -170,7 +170,7 @@ export function AddTags({
               <div
                 key={t._id}
                 onClick={() => onSelectTag(t)}
-                className="flex px-2 py-1.5 gap-2.5 items-center hover:bg-tertiary/8 rounded-xs cursor-pointer"
+                className="flex px-2 py-1.5 gap-2.5 items-center hover:bg-primary/8 rounded-xs cursor-pointer"
               >
                 <i className="icon-dot" style={{ color: t.color }} />
                 <p className="text-sm font-medium">{t.tag}</p>

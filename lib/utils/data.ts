@@ -5,7 +5,7 @@ export const DEFAULT_CONFIG: Config = {
   theme: {
     styles: {
       variables: {
-        // '--color-primary-500': 'red',
+        // '--color-accent-500': 'red',
         // '--color-background': 'white',
       },
       externals: [],

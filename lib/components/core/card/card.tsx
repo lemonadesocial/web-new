@@ -18,7 +18,7 @@ export function CardRoot({ children, href = '', onClick, as: tag = 'button', cla
       <Link
         href={href}
         {...rest}
-        className={twMerge('p-4 rounded-md border border-tertiary/4 bg-tertiary/4 hover:bg-tertiary/8', className)}
+        className={twMerge('p-4 rounded-md border border-card-border bg-card hover:bg-primary/8', className)}
       >
         {children}
       </Link>
@@ -27,8 +27,8 @@ export function CardRoot({ children, href = '', onClick, as: tag = 'button', cla
   return (
     <div
       className={twMerge(
-        'text-left rounded-md border border-tertiary/4 bg-tertiary/4 overflow-hidden',
-        clsx((typeof onClick === 'function' || !!href) && 'cursor-pointer hover:border-tertiary/16'),
+        'text-left rounded-md border border-card-border bg-card overflow-hidden',
+        clsx((typeof onClick === 'function' || !!href) && 'cursor-pointer hover:border-primary/16'),
         className,
       )}
       onClick={onClick}
@@ -40,7 +40,7 @@ export function CardRoot({ children, href = '', onClick, as: tag = 'button', cla
 }
 
 function CardHeader({ children, className }: { className?: string } & PropsWithChildren) {
-  return <div className={twMerge('py-2.5 px-4 bg-tertiary/4', className)}>{children}</div>;
+  return <div className={twMerge('py-2.5 px-4 bg-card', className)}>{children}</div>;
 }
 
 function CardContent({ children, className }: { className?: string } & PropsWithChildren) {

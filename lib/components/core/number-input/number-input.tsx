@@ -13,11 +13,11 @@ export function NumberInput({ value, limit, onChange, hideMinusAtZero, disabled 
     <div className={clsx('flex items-center gap-2', disabled && 'opacity-30')}>
       {!(hideMinusAtZero && value === 0) && <>
         <button
-          className={clsx('size-6 flex items-center justify-center bg-tertiary/8 rounded-xs', disabled ? 'cursor-not-allowed' : 'cursor-pointer')}
+          className={clsx('size-6 flex items-center justify-center bg-primary/8 rounded-xs', disabled ? 'cursor-not-allowed' : 'cursor-pointer')}
           onClick={value >= 1 ? () => onChange(value - 1) : undefined}
           disabled={value < 1 || disabled}
         >
-          <i className="icon-minus size-3.5 text-tertiary/56" />
+          <i className="icon-minus size-3.5 text-tertiary" />
         </button>
         <input
           type="number"
@@ -27,11 +27,11 @@ export function NumberInput({ value, limit, onChange, hideMinusAtZero, disabled 
         />
       </>}
       <button
-        className={clsx('size-6 flex items-center justify-center bg-tertiary/8 rounded-xs', disabled ? 'cursor-not-allowed' : 'cursor-pointer')}
+        className={clsx('size-6 flex items-center justify-center bg-primary/8 rounded-xs', disabled ? 'cursor-not-allowed' : 'cursor-pointer')}
         onClick={() => onChange(Math.min(value + 1, limit ?? Infinity))}
         disabled={value === limit || disabled}
       >
-        <i className="icon-plus size-3.5 text-tertiary/56" />
+        <i className="icon-plus size-3.5 text-tertiary" />
       </button>
     </div>
   );

@@ -41,7 +41,7 @@ export function Input({
           onChange={onChange}
           placeholder={placeholder}
           className={twMerge(
-            'transition w-full border font-medium rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500',
+            'transition w-full border font-medium rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent-500',
             clsx({
               'pl-11': !!leftIcon,
               'pr-11': !!rightIcon,
