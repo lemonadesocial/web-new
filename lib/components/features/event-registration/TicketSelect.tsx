@@ -29,7 +29,7 @@ function TicketCategory({ category, ticketTypes }: GroupedTicketTypes) {
     <Collapsible
       header={
         <div className='flex gap-3'>
-          <i className="icon-folder text-tertiary/80" />
+          <i className="icon-folder text-secondary" />
           <div>
             {category?.title || 'Uncategorized'}
           </div>

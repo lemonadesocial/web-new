@@ -244,12 +244,12 @@ export default function ThemeBuilder({
 
               <Menu.Root className="flex-1" disabled>
                 <Menu.Trigger>
-                  <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
+                  <div className="w-full bg-tertiary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
                     <i className="size-[24px] rounded-full bg-tertiary/24" />
                     <span className="text-left flex-1">Display</span>
                     <p className="flex items-center gap-1">
                       <span className="capitalize">Auto</span>
-                      <i className="icon-chevrons-up-down text-tertiary/24" />
+                      <i className="icon-chevrons-up-down text-quaternary" />
                     </p>
                   </div>
                 </Menu.Trigger>
@@ -301,12 +301,12 @@ export default function ThemeBuilder({
 
               <Menu.Root className="flex-1" disabled>
                 <Menu.Trigger>
-                  <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
+                  <div className="w-full bg-tertiary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
                     <i className="icon-dark-theme-filled size-[24px] rounded-full" />
                     <span className="text-left flex-1">Display</span>
                     <p className="flex items-center gap-1">
                       <span className="capitalize">Auto</span>
-                      <i className="icon-chevrons-up-down text-tertiary/24" />
+                      <i className="icon-chevrons-up-down text-quaternary" />
                     </p>
                   </div>
                 </Menu.Trigger>
@@ -396,7 +396,7 @@ function PopoverColor({
   return (
     <Menu.Root className="flex-1" placement="top">
       <Menu.Trigger>
-        <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
+        <div className="w-full bg-tertiary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <i
             className={twMerge('size-[24px] rounded-full', colors[name] && colors[name][mode])}
             style={customColor && name === 'custom' ? { backgroundColor: customColor } : undefined}
@@ -405,7 +405,7 @@ function PopoverColor({
           <span className="text-left flex-1  font-general-sans">{label}</span>
           <p className="flex items-center gap-1">
             <span className="capitalize">{name}</span>
-            <i className="icon-chevrons-up-down text-tertiary/24" />
+            <i className="icon-chevrons-up-down text-quaternary" />
           </p>
         </div>
       </Menu.Trigger>
@@ -472,7 +472,7 @@ function PopoverFont({
   return (
     <Menu.Root className="flex-1" placement="top">
       <Menu.Trigger>
-        <div className="w-full bg-tertiary/8 text-tertiary/56 px-2.5 py-2 rounded-sm flex items-center gap-2">
+        <div className="w-full bg-tertiary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <h3 style={{ fontFamily: fonts[name] }} className={clsx(label === 'title' ? 'font-semibold' : 'font-medium')}>
             Ag
           </h3>
@@ -483,7 +483,7 @@ function PopoverFont({
                 .find((key) => key === name)
                 ?.replaceAll('_', ' ')}
             </span>
-            <i className="icon-chevrons-up-down text-tertiary/24" />
+            <i className="icon-chevrons-up-down text-quaternary" />
           </p>
         </div>
       </Menu.Trigger>

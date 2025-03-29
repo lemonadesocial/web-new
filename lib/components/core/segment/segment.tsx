@@ -32,7 +32,7 @@ export function Segment<T>({ items, selected, onSelect, className }: SegmentProp
               'flex items-center justify-center transition cursor-pointer outline-none text-sm font-medium p-2 rounded-sm flex-1 w-full',
               {
                 'bg-tertiary/8 text-tertiary': active === item.value,
-                'text-tertiary/56': active !== item.value,
+                'text-tertiary': active !== item.value,
               },
             )}
           >

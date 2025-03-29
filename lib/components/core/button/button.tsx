@@ -20,9 +20,9 @@ const variants: { [key: string]: string } = {
   primary: 'bg-primary-500 hover:bg-primary-700',
   success: 'bg-success-600 hover:bg-success-600/8',
   danger: 'bg-danger-500 hover:bg-danger-500/8',
-  tertiary: 'bg-tertiary/8 hover:bg-tertiary/16 text-tertiary/56',
+  tertiary: 'bg-tertiary/8 hover:bg-tertiary/16 text-tertiary',
   'tertiary-alt':
-    'bg-tertiary/8 hover:bg-tertiary/80 text-tertiary/56 hover:text-black disabled:opacity-50 disabled:hover:bg-tertiary/8 disabled:hover:text-tertiary/56',
+    'bg-tertiary/8 hover:bg-tertiary/80 text-tertiary hover:text-black disabled:opacity-50 disabled:hover:bg-tertiary/8 disabled:hover:text-tertiary',
   secondary: 'bg-tertiary hover:bg-tertiary/80 disabled:bg-tertiary/50 text-black',
   flat: 'hover:bg-tertiary/[0.08]',
 };

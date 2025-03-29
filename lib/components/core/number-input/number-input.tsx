@@ -17,7 +17,7 @@ export function NumberInput({ value, limit, onChange, hideMinusAtZero, disabled 
           onClick={value >= 1 ? () => onChange(value - 1) : undefined}
           disabled={value < 1 || disabled}
         >
-          <i className="icon-minus size-3.5 text-tertiary/56" />
+          <i className="icon-minus size-3.5 text-tertiary" />
         </button>
         <input
           type="number"
@@ -31,7 +31,7 @@ export function NumberInput({ value, limit, onChange, hideMinusAtZero, disabled 
         onClick={() => onChange(Math.min(value + 1, limit ?? Infinity))}
         disabled={value === limit || disabled}
       >
-        <i className="icon-plus size-3.5 text-tertiary/56" />
+        <i className="icon-plus size-3.5 text-tertiary" />
       </button>
     </div>
   );

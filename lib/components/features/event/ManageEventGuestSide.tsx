@@ -61,12 +61,12 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
             </div>
           )}
 
-          <p className="font-medium text-tertiary/80">Hosted By {hosts.map((p) => p?.name).join(',')}</p>
+          <p className="font-medium text-secondary">Hosted By {hosts.map((p) => p?.name).join(',')}</p>
         </div>
 
         <div className="flex flex-col gap-4">
           <div className="flex gap-4 flex-1">
-            <div className="border rounded-sm size-12 text-tertiary/80 flex flex-col justify-center items-center font-medium">
+            <div className="border rounded-sm size-12 text-secondary flex flex-col justify-center items-center font-medium">
               <span className="py-0.5 text-xs">
                 {format(convertFromUtcToTimezone(event.start, event.timezone as string), 'MMM')}
               </span>
@@ -86,7 +86,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
               </div>
               <div>
                 <p>
-                  {event.address?.title} <i className="icon-arrow-outward text-tertiary/24 size-[18px]" />
+                  {event.address?.title} <i className="icon-arrow-outward text-quaternary size-[18px]" />
                 </p>
                 <p>
                   {[event.address?.city || event.address?.region, event.address?.country].filter(Boolean).join(', ')}

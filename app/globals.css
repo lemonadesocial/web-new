@@ -58,7 +58,9 @@
 
   --color-background: var(--color-background);
   --color-foreground: var(--color-foreground);
+  --color-secondary: var(--color-secondary);
   --color-tertiary: var(--color-tertiary);
+  --color-quaternary: var(--color-quaternary);
   --color-modal: var(--color-modal);
   --color-menu: var(--color-menu);
   --color-overlay: var(--color-overlay);

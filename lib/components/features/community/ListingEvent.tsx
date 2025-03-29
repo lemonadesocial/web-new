@@ -73,7 +73,7 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
               <Card.Content className="flex justify-between items-center w-full">
                 <div>
                   <p className="text-md">{e.title}</p>
-                  <span className="text-tertiary/56">
+                  <span className="text-tertiary">
                     {format(e.start, 'MMM dd')} at {format(e.start, 'h:mm a')}
                   </span>
                 </div>

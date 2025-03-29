@@ -197,7 +197,7 @@ export function Community({ space }: { space?: Space }) {
                     )}
                     onClick={() => setSelectedTag((prev) => (prev === item._id ? '' : item._id))}
                   >
-                    {item.tag} <span className="text-tertiary/[.56]">{item.targets?.length}</span>
+                    {item.tag} <span className="text-tertiary">{item.targets?.length}</span>
                   </Tag>
                 ))}
               </div>

@@ -26,7 +26,7 @@ export function EventList({
     <div className="flex flex-col gap-8">
       {Object.entries(groupBy(events, ({ start }) => start)).map(([date, data]) => (
         <div key={date}>
-          <p className="text-tertiary/[.56] font-medium">
+          <p className="text-tertiary font-medium">
             <span className="text-tertiary">{format(date, 'MMM dd')}</span> {format(date, 'EEE')}
           </p>
           <Divider className="mt-2 mb-3" />
@@ -47,7 +47,7 @@ function EventItem({ item }: { item: Event }) {
   const users = [item.host_expanded, ...(item.visible_cohosts_expanded || [])];
 
   return (
-    <div className="transition flex text-tertiary/[.56] gap-4 hover:bg-tertiary/[.16] p-2 rounded-md cursor-pointer">
+    <div className="transition flex text-tertiary gap-4 hover:bg-tertiary/[.16] p-2 rounded-md cursor-pointer">
       <p>{format(item.start, 'h:mm a')}</p>
       <div className="flex flex-col gap-1 flex-1">
         <p className="text-tertiary font-medium text-lg">{item.title}</p>
@@ -66,7 +66,7 @@ function EventItem({ item }: { item: Event }) {
             </div>
           )}
 
-          <p className="font-medium text-sm text-tertiary/[.56]">By {users.map((p) => p?.name).join(',')}</p>
+          <p className="font-medium text-sm text-tertiary">By {users.map((p) => p?.name).join(',')}</p>
         </div>
       </div>
       <Badge title={getEventPrice(item.event_ticket_types)} className="bg-success-500/[0.16] text-success-500" />
@@ -129,7 +129,7 @@ export function EventListCard({
           </div>
 
           <div className="ml-5">
-            <p className="text-md text-tertiary/[.56] font-medium">
+            <p className="text-md text-tertiary font-medium">
               <span className="text-tertiary">{format(new Date(date), 'MMM dd ')}</span>{' '}
               {format(new Date(date), 'EEEE')}
             </p>
@@ -153,7 +153,7 @@ export function EventListCard({
         </div>
       </div>
       <div className="ml-5 mt-0.5">
-        <p className="text-sm text-tertiary/[.56]">No more events to see here!</p>
+        <p className="text-sm text-tertiary">No more events to see here!</p>
       </div>
       <Spacer className="h-6" />
     </div>
@@ -166,7 +166,7 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
   return (
     <Card.Root as="button" onClick={onClick} key={`event_${item.shortid}`} className="flex flex-col gap-3">
       <Card.Content className="flex gap-6">
-        <div className="text-tertiary/56 flex-1 flex flex-col gap-2">
+        <div className="text-tertiary flex-1 flex flex-col gap-2">
           <div>
             <div className="flex gap-2 font-medium">
               {isBefore(new Date(), item.end) && isAfter(new Date(), item.start) && (
@@ -195,7 +195,7 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
                 </div>
               )}
 
-              <p className="font-medium text-tertiary/[.56]">By {users.map((p) => p?.name).join(',')}</p>
+              <p className="font-medium text-tertiary">By {users.map((p) => p?.name).join(',')}</p>
             </div>
           </div>
 

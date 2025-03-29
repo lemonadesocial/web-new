@@ -29,11 +29,11 @@ const EventRegistrationContent: React.FC = () => {
             !!ticketLimit && (
               <div className='flex gap-3 items-center'>
                 <div className='rounded-sm bg-tertiary/[.04] h-[28] w-[28] flex items-center justify-center'>
-                  <i className='icon-alarm size-4 text-tertiary/[.56]' />
+                  <i className='icon-alarm size-4 text-tertiary' />
                 </div>
                 <div>
                   <p className='font-medium'>Limited Spots Remaining</p>
-                  <p className='text-sm text-tertiary/[.8]'>Hurry up and register before the event fills up!</p>
+                  <p className='text-sm text-secondary'>Hurry up and register before the event fills up!</p>
                 </div>
               </div>
             )
@@ -42,11 +42,11 @@ const EventRegistrationContent: React.FC = () => {
             approvalRequired && (
               <div className='flex gap-3 items-center'>
                 <div className='rounded-sm bg-tertiary/[.04] h-[28] w-[28] flex items-center justify-center'>
-                  <i className='icon-list-check size-4 text-tertiary/[.56]' />
+                  <i className='icon-list-check size-4 text-tertiary' />
                 </div>
                 <div>
                   <p className='font-medium'>Approval required</p>
-                  <p className='text-sm text-tertiary/[.8]'>Your registration is subject to approval by the host.</p>
+                  <p className='text-sm text-secondary'>Your registration is subject to approval by the host.</p>
                 </div>
               </div>
             )
@@ -63,7 +63,7 @@ const EventRegistrationContent: React.FC = () => {
             <div className='flex gap-2 items-center'>
               <Avatar src={userAvatar(me)} className='size-5' />
               <p className='font-medium'>{me.name}</p>
-              <p className='font-medium text-tertiary/80'>{me.email}</p>
+              <p className='font-medium text-secondary'>{me.email}</p>
             </div>
           )
         }

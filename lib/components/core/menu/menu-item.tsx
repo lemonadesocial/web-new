@@ -13,7 +13,7 @@ export function MenuItem({ iconLeft, title, onClick }: MenuItemProps) {
       className="inline-flex gap-2.5 px-2 py-1.5 items-center w-full hover:bg-tertiary/8 rounded-xs cursor-pointer"
       onClick={onClick}
     >
-      {iconLeft && <i className={twMerge(iconLeft, 'text-tertiary/56 size-4')} />}
+      {iconLeft && <i className={twMerge(iconLeft, 'text-tertiary size-4')} />}
       <p className="font-medium text-sm">{title}</p>
     </div>
   );

@@ -86,7 +86,7 @@ function MenuItem({ path, icon, active }: { path: string; icon: string; active?:
         'transition size-[64] flex items-center justify-center rounded-md hover:bg-tertiary/[.08] hover:text-tertiary',
         {
           'text-black bg-tertiary': active,
-          'text-tertiary/[.56]': !active,
+          'text-tertiary': !active,
         },
       )}
     >

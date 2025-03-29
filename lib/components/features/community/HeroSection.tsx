@@ -127,7 +127,7 @@ export function HeroSection({ space }: HeroSectionProps) {
       <Spacer className="h-6" />
       <div>
         <h1 className="text-3xl font-semibold">{space?.title}</h1>
-        <p className="text-md text-tertiary/[0.8] font-medium">{space?.description}</p>
+        <p className="text-md text-secondary font-medium">{space?.description}</p>
         <Spacer className="h-3" />
         <div className="flex items-center gap-3">
           {COMMUNITY_SOCIAL_LINKS.filter((item) => space?.[item.key as keyof Space]).map((item) => (
@@ -137,7 +137,7 @@ export function HeroSection({ space }: HeroSectionProps) {
               variant="flat"
               size="sm"
               icon={item.icon}
-              className="text-tertiary/[0.56] border-transparent"
+              className="text-tertiary border-transparent"
               onClick={() => window.open(`${item.prefix}${space?.[item.key as keyof Space]}`, '_blank')}
             />
           ))}
@@ -196,7 +196,7 @@ function ConfirmModal({ onDiscard }: { onDiscard: () => void }) {
           </div>
           <div className="flex flex-col gap-2">
             <p className="text-lg font-medium">Discard Customizations?</p>
-            <p className="text-sm font-medium text-tertiary/80">
+            <p className="text-sm font-medium text-secondary">
               Your theme changes haven’t been applied. Discard them or go back to keep editing.
             </p>
           </div>
