@@ -62,11 +62,11 @@ export const defaultColorPreset = {
   },
   dark: {
     '--color-background': 'var(--color-woodsmoke-950)',
-    '--color-primary-500': 'var(--color-violet-500)',
+    '--color-accent-500': 'var(--color-violet-500)',
   },
   light: {
     '--color-background': 'var(--color-woodsmoke-50)',
-    '--color-primary-500': 'var(--color-violet-500)',
+    '--color-accent-500': 'var(--color-violet-500)',
   },
 };
 

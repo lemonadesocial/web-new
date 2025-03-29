@@ -27,12 +27,12 @@ export function CommunitySection({ event }: { event: Event }) {
           <div className="group flex gap-1 items-center flex-1">
             <Link
               href={space.hostnames?.[0] || '/'}
-              className="font-medium group-hover:text-primary-400"
+              className="font-medium group-hover:text-accent-400"
               target="_blank"
             >
               {space.title}
             </Link>
-            <i className="transition icon-chevron-right text-tertiary/24 group-hover:translate-x-1" />
+            <i className="transition icon-chevron-right text-quaternary group-hover:translate-x-1" />
           </div>
         </div>
         {!canManage && (
@@ -49,7 +49,7 @@ export function CommunitySection({ event }: { event: Event }) {
           <i
             key={item.key}
             aria-label={item.key}
-            className={`${item.icon} cursor-pointer text-tertiary/56 hover:text-tertiary`}
+            className={`${item.icon} cursor-pointer text-tertiary hover:text-tertiary`}
             onClick={() => window.open(`${item.prefix}${space?.[item.key as keyof Space]}`, '_blank')}
           />
         ))}

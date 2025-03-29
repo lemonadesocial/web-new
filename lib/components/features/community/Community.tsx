@@ -192,12 +192,12 @@ export function Community({ space }: { space?: Space }) {
                   <Tag
                     key={item._id}
                     className={clsx(
-                      'hover:border-tertiary',
-                      selectedTag === item._id && 'bg-primary-500 hover:border-transparent text-tertiary',
+                      'hover:border-primary',
+                      selectedTag === item._id && 'bg-accent-500 hover:border-transparent text-tertiary',
                     )}
                     onClick={() => setSelectedTag((prev) => (prev === item._id ? '' : item._id))}
                   >
-                    {item.tag} <span className="text-tertiary/[.56]">{item.targets?.length}</span>
+                    {item.tag} <span className="text-tertiary">{item.targets?.length}</span>
                   </Tag>
                 ))}
               </div>

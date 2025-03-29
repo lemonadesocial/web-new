@@ -51,7 +51,7 @@ export function Calendar({ events, footer, onSelectDate }: CalendarProps) {
       <Card.Content>
         <div className="flex items-center justify-between mb-4">
           <span className="text-lg font-medium">{format(active, 'MMMM')}</span>
-          <div className="flex items-center text-tertiary/[.56]">
+          <div className="flex items-center text-tertiary">
             <button
               aria-label="prev-month"
               className="cursor-pointer hover:text-white focus:outline-none"
@@ -84,13 +84,13 @@ export function Calendar({ events, footer, onSelectDate }: CalendarProps) {
               aria-label={d.toString()}
               key={d.toString()}
               className={twMerge(
-                'relative text-center cursor-pointer text-sm px-2.5 py-2 font-medium size-9 hover:bg-tertiary/8 rounded-full',
+                'relative text-center cursor-pointer text-sm px-2.5 py-2 font-medium size-9 hover:bg-primary/8 rounded-full',
                 clsx({
-                  'text-tertiary/24': !isSameMonth(d, active),
-                  'text-tertiary/56': events && !events.some((e) => isSameDay(e, d)),
-                  'bg-tertiary text-black rounded-full hover:bg-tertiary': isEqual(selected, d),
-                  'text-primary-500': isToday(d),
-                  'bg-primary-500 text-tertiary rounded-full': isEqual(selected, d) && isToday(d),
+                  'text-quaternary': !isSameMonth(d, active),
+                  'text-tertiary': events && !events.some((e) => isSameDay(e, d)),
+                  'bg-primary text-black rounded-full hover:bg-primary': isEqual(selected, d),
+                  'text-accent-500': isToday(d),
+                  'bg-accent-500 text-tertiary rounded-full': isEqual(selected, d) && isToday(d),
                 }),
               )}
               onClick={() => {

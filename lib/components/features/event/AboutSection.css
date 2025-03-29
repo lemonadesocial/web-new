@@ -14,7 +14,7 @@
   }
 
   hr {
-    @apply border-[var(--color-border)] my-2;
+    @apply border-[var(--color-divider)] my-2;
   }
 
   blockquote {

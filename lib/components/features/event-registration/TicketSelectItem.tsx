@@ -78,14 +78,14 @@ export function TicketSelectItem({ ticketType, single }: { ticketType: Purchasab
   if (single) return (
     <div className="flex gap-4 flex-col">
       <div>
-        <p className="text-sm text-tertiary/80">Ticket Price</p>
+        <p className="text-sm text-secondary">Ticket Price</p>
         <TicketPrices prices={ticketType.prices} single={single} groupRegistration={ticketType.limit > 1} />
       </div>
       {
         ticketType.limit > 1 && (
-          <div className='pt-4 border-t border-tertiary/4 flex justify-between gap-3'>
-            <div className="flex justify-center items-center size-[28px] rounded-sm bg-tertiary/4">
-              <i className="icon-tag size-4 text-tertiary/56" />
+          <div className='pt-4 border-t border-card-border flex justify-between gap-3'>
+            <div className="flex justify-center items-center size-[28px] rounded-sm bg-card">
+              <i className="icon-tag size-4 text-tertiary" />
             </div>
             <p className="font-medium flex-1">Tickets</p>
             <NumberInput
@@ -102,9 +102,9 @@ export function TicketSelectItem({ ticketType, single }: { ticketType: Purchasab
   );
 
   return (
-    <div className={clsx('flex p-3 rounded-sm justify-between items-start', active ? 'border border-tertiary' : 'border border-transparent bg-tertiary/8')}>
+    <div className={clsx('flex p-3 rounded-sm justify-between items-start', active ? 'border border-primary' : 'border border-transparent bg-primary/8')}>
       <div>
-        <p className={clsx('font-medium', active ? 'text-primary' : 'text-tertiary/80')}>{ticketType.title}</p>
+        <p className={clsx('font-medium', active ? 'text-accent' : 'text-secondary')}>{ticketType.title}</p>
         <TicketPrices prices={ticketType.prices} groupRegistration={ticketType.limit > 1} active={active} />
       </div>
       <NumberInput
@@ -135,10 +135,10 @@ function TicketPrices({ prices, single, groupRegistration, active }: TicketPrice
   if (secondPrice) {
     return (
       <div className={clsx('flex items-baseline', single ? 'gap-2' : 'gap-1.5')}>
-        <p className={clsx(single ? 'text-xl font-semibold' : 'text-medium font-medium', active || single ? 'text-primary' : 'text-tertiary/80')}>
+        <p className={clsx(single ? 'text-xl font-semibold' : 'text-medium font-medium', active || single ? 'text-accent' : 'text-secondary')}>
           {formatPrice(firstPrice)}
         </p>
-        <p className={clsx('font-medium', single ? 'text-sm text-tertiary/80' : 'text-medium', active || single ? 'text-primary' : 'text-tertiary/80')}>
+        <p className={clsx('font-medium', single ? 'text-sm text-secondary' : 'text-medium', active || single ? 'text-accent' : 'text-secondary')}>
           or {formatPrice(secondPrice)}
           {(groupRegistration && single) && ' per ticket'}
         </p>
@@ -149,10 +149,10 @@ function TicketPrices({ prices, single, groupRegistration, active }: TicketPrice
 
   return (
     <div className="flex gap-1.5 items-baseline">
-      <p className={clsx(single ? 'text-xl font-semibold' : 'text-medium font-medium', active || single ? 'text-primary' : 'text-tertiary/80')}>
+      <p className={clsx(single ? 'text-xl font-semibold' : 'text-medium font-medium', active || single ? 'text-accent' : 'text-secondary')}>
         {formatPrice(firstPrice)}
       </p>
-      {(groupRegistration && single) && <p className="text-sm font-medium text-tertiary/80">per ticket</p>}
+      {(groupRegistration && single) && <p className="text-sm font-medium text-secondary">per ticket</p>}
       <PaymentNetworks paymentAccounts={firstPrice.payment_accounts_expanded || []} />
     </div>
   );

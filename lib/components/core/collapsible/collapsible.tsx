@@ -27,7 +27,7 @@ export const Collapsible = ({
   };
 
   return (
-    <div className='rounded-sm border border-tertiary/8'>
+    <div className='rounded-sm border'>
       <div
         onClick={() => setIsOpen(!isOpen)}
         className='flex justify-between gap-3 p-2'
@@ -37,7 +37,7 @@ export const Collapsible = ({
         <motion.i
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3 }}
-          className="icon-arrow-down text-tertiary/56"
+          className="icon-arrow-down text-tertiary"
         />
       </div>
 
@@ -51,7 +51,7 @@ export const Collapsible = ({
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <div className="p-3 border-t border-tertiary/8">{children}</div>
+            <div className="p-3 border-t">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>

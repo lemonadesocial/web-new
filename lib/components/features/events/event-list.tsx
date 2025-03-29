@@ -33,7 +33,7 @@ export default function EventList() {
             selected={selected}
             items={segments}
             onSelect={(item) => {
-              setStyled({ '--color-primary-500': 'red', '--color-background': 'blue' });
+              setStyled({ '--color-accent-500': 'red', '--color-background': 'blue' });
               setSelected(item.value);
             }}
           />

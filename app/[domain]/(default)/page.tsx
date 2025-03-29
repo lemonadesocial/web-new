@@ -24,7 +24,7 @@ export default async function SiteHomePage({ params }: { params: Promise<{ domai
           <div className="flex items-center gap-1">
             <span>You have</span>
             <span className="text-tertiary">6 pending notifications</span>
-            <i className="icon-chevron-right text-tertiary/[.24] size-[18]" />
+            <i className="icon-chevron-right text-quaternary size-[18]" />
           </div>
         }
       />

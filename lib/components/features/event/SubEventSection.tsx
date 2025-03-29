@@ -16,7 +16,7 @@ export function SubEventSection({ event }: { event: Event }) {
         <p className="font-medium">{events?.length} sessions</p>
         <div className="flex gap-1">
           <Link href="/">Create Session</Link>
-          <Link href="/" className="text-tertiary/56">
+          <Link href="/" className="text-tertiary">
             View All
           </Link>
         </div>

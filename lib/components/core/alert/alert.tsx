@@ -9,7 +9,7 @@ interface AlertProps extends PropsWithChildren {
 const classes = {
   base: 'flex gap-4 items-center justify-center p-4',
   variants: {
-    primary: { fg: 'text-primary-400', bg: 'bg-primary-400/16' },
+    primary: { fg: 'text-accent-400', bg: 'bg-accent-400/16' },
   },
 };
 

@@ -108,7 +108,7 @@ export function HeroSection({ space }: HeroSectionProps) {
                 loading={resFollow.loading || resUnfollow.loading}
                 outlined={!!space?.followed}
                 variant="primary"
-                className={clsx(space?.followed && 'hover:bg-primary-500 hover:text-tertiary w-auto duration-300')}
+                className={clsx(space?.followed && 'hover:bg-accent-500 hover:text-tertiary w-auto duration-300')}
                 onClick={() => handleSubscribe()}
               >
                 {!!space?.followed ? (
@@ -127,7 +127,7 @@ export function HeroSection({ space }: HeroSectionProps) {
       <Spacer className="h-6" />
       <div>
         <h1 className="text-3xl font-semibold">{space?.title}</h1>
-        <p className="text-md text-tertiary/[0.8] font-medium">{space?.description}</p>
+        <p className="text-md text-secondary font-medium">{space?.description}</p>
         <Spacer className="h-3" />
         <div className="flex items-center gap-3">
           {COMMUNITY_SOCIAL_LINKS.filter((item) => space?.[item.key as keyof Space]).map((item) => (
@@ -137,7 +137,7 @@ export function HeroSection({ space }: HeroSectionProps) {
               variant="flat"
               size="sm"
               icon={item.icon}
-              className="text-tertiary/[0.56] border-transparent"
+              className="text-tertiary border-transparent"
               onClick={() => window.open(`${item.prefix}${space?.[item.key as keyof Space]}`, '_blank')}
             />
           ))}
@@ -168,7 +168,7 @@ export function HeroSection({ space }: HeroSectionProps) {
         <Sheet.Container className="bg-overlay! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
           <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
             <div className="flex justify-center items-end h-[20px]">
-              <div className="bg-tertiary/8 rounded-xs w-[48px] h-1 cursor-row-resize"></div>
+              <div className="bg-primary/8 rounded-xs w-[48px] h-1 cursor-row-resize"></div>
             </div>
           </Sheet.Header>
           <Sheet.Content disableDrag>
@@ -196,7 +196,7 @@ function ConfirmModal({ onDiscard }: { onDiscard: () => void }) {
           </div>
           <div className="flex flex-col gap-2">
             <p className="text-lg font-medium">Discard Customizations?</p>
-            <p className="text-sm font-medium text-tertiary/80">
+            <p className="text-sm font-medium text-secondary">
               Your theme changes haven’t been applied. Discard them or go back to keep editing.
             </p>
           </div>

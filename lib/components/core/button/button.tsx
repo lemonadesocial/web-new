@@ -17,22 +17,22 @@ const iconOnlySizes = {
 };
 
 const variants: { [key: string]: string } = {
-  primary: 'bg-primary-500 hover:bg-primary-700',
+  primary: 'bg-accent-500 hover:bg-accent-700',
   success: 'bg-success-600 hover:bg-success-600/8',
   danger: 'bg-danger-500 hover:bg-danger-500/8',
-  tertiary: 'bg-tertiary/8 hover:bg-tertiary/16 text-tertiary/56',
+  tertiary: 'bg-primary/8 hover:bg-primary/16 text-tertiary',
   'tertiary-alt':
-    'bg-tertiary/8 hover:bg-tertiary/80 text-tertiary/56 hover:text-black disabled:opacity-50 disabled:hover:bg-tertiary/8 disabled:hover:text-tertiary/56',
-  secondary: 'bg-tertiary hover:bg-tertiary/80 disabled:bg-tertiary/50 text-black',
-  flat: 'hover:bg-tertiary/[0.08]',
+    'bg-primary/8 hover:bg-primary/80 text-tertiary hover:text-black disabled:opacity-50 disabled:hover:bg-primary/8 disabled:hover:text-tertiary',
+  secondary: 'bg-primary hover:bg-primary/80 disabled:bg-primary/50 text-black',
+  flat: 'hover:bg-primary/[0.08]',
 };
 
 const outlineVariants: { [key: string]: string } = {
-  primary: 'border-primary-500 hover:bg-primary-500/[0.1] text-primary-500',
+  primary: 'border-accent-500 hover:bg-accent-500/[0.1] text-accent-500',
   success: 'border-success-600 hover:bg-success-600/[0.1] text-success-600',
-  tertiary: 'border-tertiary/[0.8] hover:bg-tertiary/[.1] text-tertiary',
-  secondary: 'border-tertiary hover:bg-tertiary/[0.1] text-black',
-  flat: 'border-tertiary/[0.1] hover:bg-tertiary/[0.08] text-tertiary',
+  tertiary: 'border-primary/[0.8] hover:bg-primary/[.1] text-tertiary',
+  secondary: 'border-primary hover:bg-primary/[0.1] text-black',
+  flat: 'border-primary/[0.1] hover:bg-primary/[0.08] text-tertiary',
 };
 
 interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonElement>> {
