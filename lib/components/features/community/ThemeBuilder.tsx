@@ -20,7 +20,7 @@ type KeyPreset = 'minimal';
 
 type FormValues = {
   theme: string;
-  forceground: { key: string; value: string };
+  foreground: { key: string; value: string };
   background: { key: string; value: string };
   font_title: string;
   font_body: string;
@@ -33,7 +33,7 @@ type FormValues = {
 
 const defaultValues: FormValues = {
   theme: 'minimal',
-  forceground: { key: 'violet', value: 'violet' },
+  foreground: { key: 'violet', value: 'violet' },
   background: { key: 'violet', value: 'violet' },
   font_title: 'default',
   font_body: 'default',
@@ -134,7 +134,7 @@ export default function ThemeBuilder({
           <div className="flex flex-col gap-2">
             <div className="flex gap-2 flex-wrap w-full">
               <Controller
-                name="forceground"
+                name="foreground"
                 control={form.control}
                 render={({ field }) => {
                   const values = form.getValues();
@@ -149,7 +149,7 @@ export default function ThemeBuilder({
                       defaultValue={field.value.value}
                       colors={colors}
                       onSelect={({ key, color }) => {
-                        form.setValue('forceground', { key, value: color });
+                        form.setValue('foreground', { key, value: color });
                         form.setValue('background', { key, value: color });
                         let cssVars = {
                           dark: {
@@ -213,7 +213,7 @@ export default function ThemeBuilder({
                           },
                           light: {
                             '--color-tertiary': `var(--color-black)`,
-                            '--color-forceground': `var(--color-black)`,
+                            '--color-foreground': `var(--color-black)`,
                             '--color-background': `var(--color-${key}-50)`,
                           },
                         };
@@ -229,7 +229,7 @@ export default function ThemeBuilder({
                             },
                             light: {
                               '--color-tertiary': `var(--color-black)`,
-                              '--color-forceground': `var(--color-black)`,
+                              '--color-foreground': `var(--color-black)`,
                               '--color-background': palette.custom[50],
                             },
                           };
@@ -355,7 +355,7 @@ export default function ThemeBuilder({
                   };
 
 
-                  form.setValue('forceground', {key: name, value: name}, { shouldDirty: true });
+                  form.setValue('foreground', {key: name, value: name}, { shouldDirty: true });
                   form.setValue('background', {key: name, value: name}, { shouldDirty: true });
                   form.setValue('variables', random, { shouldDirty: true });
                 }}

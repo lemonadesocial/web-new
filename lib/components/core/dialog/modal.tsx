@@ -1,24 +1,5 @@
 'use client';
 
-/**
- * How to use it.
- * 1. Add ModalContainer at top level
- * 2. import drawer
- * 3. define component
- *   Example:
- *    function MyComponent({text}: {text: string}) {
- *      return <>{text}</>
- *    }
- *
- *   // in other compent call action.
- *   funct OtherComponent() {
- *     const showDrawer = () => {
- *        modal.open(MyComponent, {width: 300, props: {text: 'Hi there'}})
- *     }
- *     return ....
- *   }
- */
-
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -27,9 +8,15 @@ interface Options<T> {
   dismiss?: boolean;
 }
 
+interface ModalItem {
+  id: number;
+  content: React.ReactNode;
+  options: Options<unknown>;
+}
+
 interface Modal {
-  open: <T extends object>(component: React.ComponentType<T>, options?: Options<T>) => void;
-  close: () => void;
+  open: <T extends object>(component: React.ComponentType<T>, options?: Options<T>) => number;
+  close: (id?: number) => void;
 }
 
 export const modal: Modal = {
@@ -42,64 +29,85 @@ export const modal: Modal = {
 };
 
 export function ModalContainer() {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [content, setContent] = React.useState<React.ReactNode>();
-  const [options, setOptions] = React.useState<Options<unknown>>({});
-  const ref = React.useRef<HTMLDivElement | null>(null);
+  const [modals, setModals] = React.useState<ModalItem[]>([]);
+  const nextId = React.useRef(0);
+  const modalRefs = React.useRef<Map<number, HTMLDivElement>>(new Map());
 
-  const handleOpen = React.useCallback(<T extends object>(Component: React.ComponentType<T>, opts: Options<T> = {}) => {
-    setContent(<Component {...(opts.props as T)} />);
-    setOptions((prev) => ({ ...prev, ...opts }));
-    setIsOpen(true);
+  const handleOpen = React.useCallback(<T extends object>(
+    Component: React.ComponentType<T>,
+    opts: Options<T> = {}
+  ): number => {
+    const id = nextId.current++;
+    setModals((prev) => [
+      ...prev,
+      { id, content: <Component {...(opts.props as T)} />, options: opts },
+    ]);
+    return id;
   }, []);
 
-  const handleOutsideClick = (event: MouseEvent) => {
-    if (ref.current && event.target instanceof Node && ref.current.contains(event.target)) {
-      // do nothing here
+  const handleClose = React.useCallback((id?: number) => {
+    if (id !== undefined) {
+      setModals((prev) => prev.filter((modal) => modal.id !== id));
     } else {
-      if (options.dismiss) setIsOpen(false);
+      setModals((prev) => prev.slice(0, -1));
     }
-  };
+  }, []);
+
+  const handleOutsideClick = React.useCallback(
+    (event: MouseEvent) => {
+      if (modals.length === 0) return;
+      const topModal = modals[modals.length - 1];
+      const modalRef = modalRefs.current.get(topModal.id);
+      if (
+        modalRef &&
+        event.target instanceof Node &&
+        !modalRef.contains(event.target)
+      ) {
+        if (topModal.options.dismiss) {
+          handleClose(topModal.id);
+        }
+      }
+    },
+    [modals, handleClose]
+  );
 
   React.useEffect(() => {
     modal.open = handleOpen;
-    modal.close = () => {
-      setIsOpen(false);
-    };
+    modal.close = handleClose;
 
-    if (isOpen) {
+    if (modals.length > 0) {
       document.addEventListener('mousedown', handleOutsideClick);
     }
-
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, [isOpen]);
-
-  if (!modal.open || !modal.close) {
-    return null;
-  }
+  }, [handleOpen, handleClose, modals.length]);
 
   return (
     <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 bg-overlay/80" style={{ zIndex: 10000 }}>
-          <div className="h-full w-full p-4">
-            <div className="flex h-full items-center justify-center">
-              <motion.div
-                key="modal"
-                ref={ref}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="bg-modal rounded-lg overflow-hidden"
-              >
-                {content}
-              </motion.div>
-            </div>
-          </div>
+      {modals.map((modal, index) => (
+        <div
+          key={modal.id}
+          className="fixed inset-0 bg-overlay/80 flex w-full h-full items-center justify-center"
+          style={{ zIndex: 10000 + index }}
+        >
+          <motion.div
+            ref={(el) => {
+              if (el) {
+                modalRefs.current.set(modal.id, el);
+              } else {
+                modalRefs.current.delete(modal.id);
+              }
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="bg-modal rounded-lg overflow-hidden"
+          >
+            {modal.content}
+          </motion.div>
         </div>
-      )}
+      ))}
     </AnimatePresence>
   );
 }
