@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider } from '$lib/components/core';
+import { Avatar, Divider } from '$lib/components/core';
 import { Event } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import Link from 'next/link';
@@ -12,8 +12,8 @@ export function HostedBySection({ event }: { event: Event }) {
       <p className="font-medium text-sm">Hosted by</p>
       <Divider className="h-1 w-full mb-2" />
       {hosts.map((u) => (
-        <div key={u?._id}>
-          {u?.new_photos_expanded && <img src={generateUrl(u?.new_photos_expanded[0])} alt={u?.name} />}
+        <div key={u?._id} className='flex gap-3'>
+          {u?.new_photos_expanded && <Avatar src={generateUrl(u?.new_photos_expanded[0])} />}
           <Link className="hover:text-primary-400" href={`${LEMONADE_DOMAIN}/u/${u?.username}`} target="_blank">
             {u?.name}
           </Link>

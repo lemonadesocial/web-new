@@ -431,7 +431,7 @@ function PopoverColor({
             <ColorPicker.Trigger>
               <div
                 onClick={() => {
-                  onSelect({ key: 'custom', color: customColor });
+                  if(customColor) onSelect({ key: 'custom', color: customColor });
                 }}
                 className={twMerge(
                   'size-5 cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
