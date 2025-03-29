@@ -177,7 +177,7 @@ body {
 
 main {
   background: var(--color-background);
-  color: var(--color-forceground);
+  color: var(--color-foreground);
   font-family: var(--font-body);
 }
 

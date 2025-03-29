@@ -2,7 +2,7 @@
   color-scheme: light;
 
   --color-background: var(--color-woodsmoke-50);
-  --color-forceground: #000000;
+  --color-foreground: #000000;
   --color-tertiary: #000000;
   --color-border: rgba(255, 255, 255, 0.08);
   --color-menu: rgba(32, 32, 34, 0.8);

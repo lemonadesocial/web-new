@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { useAtom as useJotaiAtom } from 'jotai';
 
-import { Avatar, Card, SkeletonBox } from '$lib/components/core';
-
-import { Event, GetEventInvitationDocument, GetEventTicketTypesDocument, PurchasableTicketType } from '$lib/generated/backend/graphql';
+import { CalculateTicketsPricingDocument, Event, GetEventInvitationDocument, GetEventTicketTypesDocument, NewPaymentAccount, PurchasableTicketType } from '$lib/generated/backend/graphql';
 import { useQuery } from '$lib/request';
-import { approvalRequiredAtom, eventAtom, hasSingleFreeTicketAtom, requiredProfileFieldsAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
+import { Avatar, Card, SkeletonBox } from '$lib/components/core';
+
+import { approvalRequiredAtom, currencyAtom, eventAtom, hasSingleFreeTicketAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
 
 import { EventRegistrationStoreProvider } from './context';
 import { TicketSelect } from './TicketSelect';
@@ -75,10 +75,15 @@ const EventRegistrationContent: React.FC = () => {
 
 const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent }) => {
   const [event, setEvent] = useAtom(eventAtom);
+  const [currency, setCurrency] = useAtom(currencyAtom);
+  const [purchaseItems, setPurchaseItems] = useAtom(purchaseItemsAtom);
+
   const setApprovalRequired = useSetAtom(approvalRequiredAtom);
   const setTicketTypes = useSetAtom(ticketTypesAtom);
   const setTicketLimit = useSetAtom(ticketLimitAtom);
   const setRequiredProfileFields = useSetAtom(requiredProfileFieldsAtom);
+  const setPricingInfo = useSetAtom(pricingInfoAtom);
+  const setSelectedPaymentAccount = useSetAtom(selectedPaymentAccountAtom);
 
   const [session] = useJotaiAtom(sessionAtom);
   const me = useMe();
@@ -95,8 +100,33 @@ const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent
   const { loading: loadingTicketTypes } = useQuery(GetEventTicketTypesDocument, {
     variables: { event: initialEvent._id },
     onComplete(data) {
-      setTicketTypes(data.getEventTicketTypes.ticket_types as PurchasableTicketType[]);
-      setTicketLimit(data.getEventTicketTypes.ticket_types.reduce((acc, ticketType) => acc + ticketType.limit, 0));
+      const ticketTypes = data.getEventTicketTypes.ticket_types as PurchasableTicketType[];
+
+      setTicketTypes(ticketTypes);
+      setTicketLimit(ticketTypes.reduce((acc, ticketType) => acc + ticketType.limit, 0));
+
+      if (ticketTypes.length == 1) {
+        const ticket = ticketTypes[0];
+        const price = ticket.prices[0];
+
+        setPurchaseItems([{ id: ticket._id, count: 1 }]);
+        setCurrency(price.currency);
+        setSelectedPaymentAccount(price.payment_accounts_expanded?.[0] as NewPaymentAccount);
+      }
+    },
+  });
+
+  useQuery(CalculateTicketsPricingDocument, {
+    variables: {
+      input: {
+        event: initialEvent._id,
+        currency,
+        items: purchaseItems,
+      },
+    },
+    skip: !purchaseItems.length,
+    onComplete(data) {
+      setPricingInfo(data.calculateTicketsPricing);
     },
   });
 
