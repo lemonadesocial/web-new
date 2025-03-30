@@ -85,7 +85,7 @@ export function HeroSection({ space }: HeroSectionProps) {
         </div>
 
         {/* Subscribe button */}
-        <div className="absolute bottom-4 right-0">
+        <div className="absolute bottom-4 right-0.5">
           <div className="flex items-center gap-3">
             {[space?.creator, ...(space?.admins?.map((p) => p._id) || [])].includes(me?._id) && (
               <Button

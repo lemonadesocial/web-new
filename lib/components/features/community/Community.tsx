@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 import { endOfDay, startOfDay, format } from 'date-fns';
 import clsx from 'clsx';
 
-import { Button, Divider, drawer, Map, Menu, MenuItem, modal, Segment, Tag } from '$lib/components/core';
+import { Button, Divider, drawer, Menu, MenuItem, modal, Segment, Tag } from '$lib/components/core';
 import { HeroSection } from '$lib/components/features/community';
 import {
   Event,
@@ -55,9 +55,9 @@ export function Community({ space }: { space?: Space }) {
     skip: !space?._id,
   });
   const spaceEventsCalendar = dataGetSpaceEventsCalendar?.getEvents || [];
-  const mappins = spaceEventsCalendar
-    .filter((i) => i.address)
-    .map((i) => ({ lat: i.address?.latitude as number, lng: i.address?.longitude as number }));
+  // const mappins = spaceEventsCalendar
+  //   .filter((i) => i.address)
+  //   .map((i) => ({ lat: i.address?.latitude as number, lng: i.address?.longitude as number }));
 
   const resUpcomingEvents = useQuery(GetSpaceEventsDocument, {
     variables: {
@@ -176,6 +176,7 @@ export function Community({ space }: { space?: Space }) {
               <h1 className="text-2xl font-semibold flex-1">Events</h1>
               <div>
                 <Segment
+                  size="sm"
                   selected="card"
                   onSelect={(item) => setMode(item.value as 'card' | 'list')}
                   items={[
@@ -226,7 +227,7 @@ export function Community({ space }: { space?: Space }) {
           <div className="hidden sticky top-0 z-50 flex-col gap-4 md:flex max-w-[296px]">
             <Menu.Root>
               <Menu.Trigger>
-                <Button variant="tertiary" iconLeft="icon-plus" size="sm" className="w-full">
+                <Button variant="tertiary-alt" iconLeft="icon-plus" size="sm" className="w-full">
                   Submit Event
                 </Button>
               </Menu.Trigger>
@@ -256,6 +257,7 @@ export function Community({ space }: { space?: Space }) {
 
             <Calendar
               events={spaceEventsCalendar.map((item) => new Date(item.start))}
+              selected={selectedDate}
               onSelectDate={setSelectedDate}
               footer={() => {
                 if (selectedDate) {
@@ -278,6 +280,7 @@ export function Community({ space }: { space?: Space }) {
                 return (
                   <Segment
                     className="w-full mt-3"
+                    size="sm"
                     onSelect={(item) => setEventListType(item.value)}
                     selected={eventListType}
                     items={[
@@ -288,9 +291,9 @@ export function Community({ space }: { space?: Space }) {
                 );
               }}
             />
-            <div className="aspect-square rounded-lg overflow-hidden">
-              <Map markers={mappins} marker="advanced" />
-            </div>
+            {/* <div className="aspect-square rounded-lg overflow-hidden"> */}
+            {/*   <Map markers={mappins} marker="advanced" /> */}
+            {/* </div> */}
           </div>
         </div>
       </div>

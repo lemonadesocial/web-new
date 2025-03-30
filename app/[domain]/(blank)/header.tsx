@@ -21,8 +21,8 @@ export default function Header() {
   const logOut = useLogOut();
 
   return (
-    <div className="p-4 flex justify-between items-center">
-      <Link href="/" aria-label="Lemonade">
+    <div className="py-3 px-4 min-h-[56px] flex justify-between items-center">
+      <Link href="/" aria-label="Lemonade" className="text-tertiary hover:text-primary">
         <i className="icon-lemonade size-[20]" />
       </Link>
 
@@ -62,9 +62,9 @@ export default function Header() {
               )}
             </Menu.Content>
           </Menu.Root>
-        ) : <>
-          {
-            !session && (
+        ) : (
+          <>
+            {!session && (
               <Button
                 size="sm"
                 variant="tertiary"
@@ -74,9 +74,9 @@ export default function Header() {
               >
                 Sign In
               </Button>
-            )
-          }
-        </>}
+            )}
+          </>
+        )}
       </div>
     </div>
   );

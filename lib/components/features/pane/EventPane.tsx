@@ -63,7 +63,7 @@ export function EventPane({ eventId }: { eventId: string }) {
               {hosts
                 .filter((p) => p?.image_avatar)
                 .map((p) => (
-                  <Avatar key={p?._id} src={userAvatar(p)} size="sm" className="ring-2 border-background" />
+                  <Avatar key={p?._id} src={userAvatar(p)} size="sm" className="outline-2 outline-background" />
                 ))}
             </div>
           )}

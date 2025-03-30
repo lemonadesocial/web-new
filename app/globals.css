@@ -209,6 +209,23 @@ main {
   font-family: var(--font-general-sans);
 }
 
+/* force override font by default all elements under menu */
+.menu {
+  * {
+    font-family: var(--font-general-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-style: normal;
+    font-family: var(--font-title);
+  }
+}
+
 a[title='Open this area in Google Maps (opens a new window)'],
 .gm-style-cc {
   display: none !important;

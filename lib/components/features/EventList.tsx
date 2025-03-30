@@ -189,7 +189,7 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
                         key={p?._id}
                         src={userAvatar(p)}
                         size="sm"
-                        className="ring-2 border-background"
+                        className="outline outline-background"
                       />
                     ))}
                 </div>

@@ -14,7 +14,7 @@ export function MenuItem({ iconLeft, title, onClick }: MenuItemProps) {
       onClick={onClick}
     >
       {iconLeft && <i className={twMerge(iconLeft, 'text-tertiary size-4')} />}
-      <p className="font-medium text-sm">{title}</p>
+      <p className="font-medium text-sm font-default-body">{title}</p>
     </div>
   );
 }

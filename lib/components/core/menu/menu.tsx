@@ -61,12 +61,9 @@ function MenuContent({
           ref={refs?.setFloating}
           style={{
             ...floatingStyles,
-            // @ts-expect-error accept variables
-            '--font-title': 'var(--font-class-display)',
-            '--font-body': 'var(--font-general-sans)',
           }}
           className={twMerge(
-            'outline outline-tertiary/4 rounded-sm bg-menu backdrop-blur-md w-fit p-4 z-50 shadow-md',
+            'menu outline outline-tertiary/4 rounded-sm bg-menu backdrop-blur-md w-fit p-4 z-50 shadow-md',
             className,
           )}
           role="menu"
@@ -90,8 +87,15 @@ function MenuRoot({
   className,
   disabled,
   placement = 'bottom-end',
+  strategy = 'absolute',
   dismissable = true,
-}: { className?: string; disabled?: boolean; placement?: Placement; dismissable?: boolean } & React.PropsWithChildren) {
+}: {
+  className?: string;
+  disabled?: boolean;
+  placement?: Placement;
+  dismissable?: boolean;
+  strategy?: 'fixed' | 'absolute';
+} & React.PropsWithChildren) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
@@ -100,7 +104,7 @@ function MenuRoot({
   const { refs, floatingStyles } = useFloating({
     open: isOpen,
     onOpenChange: toggle,
-    strategy: 'fixed',
+    strategy,
     placement,
     middleware: [offset(10)],
   });
