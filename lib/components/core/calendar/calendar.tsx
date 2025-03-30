@@ -21,15 +21,20 @@ import { Card } from '../card';
 interface CalendarProps {
   events?: Date[];
   footer?: () => React.ReactElement | null;
-  onSelectDate?: (date: Date) => void;
+  selected?: Date;
+  onSelectDate?: (date?: Date) => void;
 }
 
-export function Calendar({ events, footer, onSelectDate }: CalendarProps) {
-  const [selected, setSelected] = React.useState(new Date());
+export function Calendar({ events, selected: selectedDate, footer, onSelectDate }: CalendarProps) {
+  const [selected, setSelected] = React.useState<Date>();
   const [active, setActive] = React.useState(new Date());
 
+  React.useEffect(() => {
+    setSelected(selectedDate);
+  }, [selectedDate]);
+
   const getWeekDaysNames = () => {
-    const weekStartDate = startOfWeek(selected);
+    const weekStartDate = startOfWeek(selected || new Date());
     const weekDays = [];
     for (let day = 0; day < 7; day++) {
       weekDays.push(format(addDays(weekStartDate, day), 'EEEEE'));
@@ -88,17 +93,20 @@ export function Calendar({ events, footer, onSelectDate }: CalendarProps) {
                 clsx({
                   'text-quaternary': !isSameMonth(d, active),
                   'text-tertiary': events && !events.some((e) => isSameDay(e, d)),
-                  'bg-primary text-black rounded-full hover:bg-primary': isEqual(selected, d),
+                  'bg-primary text-black rounded-full hover:bg-primary': selected && isEqual(selected, d),
                   'text-accent-500': isToday(d),
-                  'bg-accent-500 text-tertiary rounded-full': isEqual(selected, d) && isToday(d),
+                  'bg-accent-500 text-tertiary rounded-full': selected && isEqual(selected, d) && isToday(d),
                 }),
               )}
               onClick={() => {
                 if (events && !events.some((e) => isSameDay(e, d))) {
                   return;
                 }
-                setSelected(d);
-                onSelectDate?.(d);
+
+                let _d: Date | undefined = d;
+                if (selected && isSameDay(selected, _d)) _d = undefined;
+                setSelected(_d);
+                onSelectDate?.(_d);
               }}
             >
               {format(d, 'd')}

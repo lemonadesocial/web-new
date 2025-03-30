@@ -256,6 +256,7 @@ export function Community({ space }: { space?: Space }) {
 
             <Calendar
               events={spaceEventsCalendar.map((item) => new Date(item.start))}
+              selected={selectedDate}
               onSelectDate={setSelectedDate}
               footer={() => {
                 if (selectedDate) {
