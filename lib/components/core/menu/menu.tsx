@@ -61,12 +61,9 @@ function MenuContent({
           ref={refs?.setFloating}
           style={{
             ...floatingStyles,
-            // @ts-expect-error accept variables
-            '--font-title': 'var(--font-class-display)',
-            '--font-body': 'var(--font-general-sans)',
           }}
           className={twMerge(
-            'outline outline-tertiary/4 rounded-sm bg-menu backdrop-blur-md w-fit p-4 z-50 shadow-md',
+            'menu outline outline-tertiary/4 rounded-sm bg-menu backdrop-blur-md w-fit p-4 z-50 shadow-md',
             className,
           )}
           role="menu"

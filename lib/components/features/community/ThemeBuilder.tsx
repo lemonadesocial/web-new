@@ -290,7 +290,7 @@ export default function ThemeBuilder({
                       fonts={fonts.body}
                       onSelect={(font) => {
                         form.setValue('font_body', font, { shouldDirty: true });
-                        form.setValue('variables', merge(variables, { font: { '--font-body': fonts.title[font] } }), {
+                        form.setValue('variables', merge(variables, { font: { '--font-body': fonts.body[font] } }), {
                           shouldDirty: true,
                         });
                       }}
