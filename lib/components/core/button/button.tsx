@@ -9,11 +9,18 @@ const sizes: { [key: string]: string } = {
   xs: 'px-2 py-1 text-sm rounded-xs',
 };
 
-const iconOnlySizes = {
+const btnIconSizes = {
   base: 'p-[10]',
   sm: 'p-[8]',
   lg: 'p-[12] ',
   xs: 'p-[5]',
+};
+
+const iconSize = {
+  base: 'size-5',
+  sm: 'size-4',
+  lg: 'size-5',
+  xs: 'size-4',
 };
 
 const variants: { [key: string]: string } = {
@@ -28,11 +35,11 @@ const variants: { [key: string]: string } = {
 };
 
 const outlineVariants: { [key: string]: string } = {
-  primary: 'border-accent-500 hover:bg-accent-500/[0.1] text-accent-500',
-  success: 'border-success-600 hover:bg-success-600/[0.1] text-success-600',
-  tertiary: 'border-primary/[0.8] hover:bg-primary/[.1] text-tertiary',
-  secondary: 'border-primary hover:bg-primary/[0.1] text-black',
-  flat: 'border-primary/[0.1] hover:bg-primary/[0.08] text-tertiary',
+  primary: 'outline-accent-500 hover:bg-accent-500/[0.1] text-accent-500',
+  success: 'outline-success-600 hover:bg-success-600/[0.1] text-success-600',
+  tertiary: 'outline-primary/[0.8] hover:bg-primary/[.1] text-tertiary',
+  secondary: 'outline-primary hover:bg-primary/[0.1] text-black',
+  flat: 'outline-primary/[0.1] hover:bg-primary/[0.08] text-tertiary',
 };
 
 interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonElement>> {
@@ -66,16 +73,16 @@ export function Button({
       disabled={disabled || loading}
       type={type}
       className={twMerge(
-        'transition border border-transparent group cursor-pointer inline-flex items-center justify-center gap-2.5 font-medium',
+        'transition outline outline-transparent group cursor-pointer inline-flex items-center justify-center gap-2.5 font-medium',
         sizes[size],
         outlined ? outlineVariants[variant] : variants[variant],
-        clsx({ [iconOnlySizes[size]]: !!icon, 'cursor-not-allowed opacity-50 ': disabled || loading }),
+        clsx({ [btnIconSizes[size]]: !!icon, 'cursor-not-allowed opacity-50 ': disabled || loading }),
         className,
       )}
       {...rest}
     >
       <svg
-        className={twMerge('absolute size-5 animate-spin', clsx({ invisible: !loading }))}
+        className={twMerge('absolute animate-spin', iconSize[size], clsx({ invisible: !loading }))}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -88,9 +95,9 @@ export function Button({
         ></path>
       </svg>
       <div className={twMerge('flex justify-center items-center gap-2.5', clsx({ invisible: loading }))}>
-        {iconLeft && <i className={twMerge('size-[18]', iconLeft)} />}
-        {icon ? <i className={twMerge('size-[18]', icon)} /> : children}
-        {iconRight && <i className={twMerge('size-[18]', iconRight)} />}
+        {iconLeft && <i className={twMerge(iconSize[size], iconLeft)} />}
+        {icon ? <i className={twMerge(iconSize[size], icon)} /> : children}
+        {iconRight && <i className={twMerge(iconSize[size], iconRight)} />}
       </div>
     </button>
   );
