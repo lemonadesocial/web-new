@@ -354,9 +354,8 @@ export default function ThemeBuilder({
                     },
                   };
 
-
-                  form.setValue('foreground', {key: name, value: name}, { shouldDirty: true });
-                  form.setValue('background', {key: name, value: name}, { shouldDirty: true });
+                  form.setValue('foreground', { key: name, value: name }, { shouldDirty: true });
+                  form.setValue('background', { key: name, value: name }, { shouldDirty: true });
                   form.setValue('variables', random, { shouldDirty: true });
                 }}
               />
@@ -394,7 +393,7 @@ function PopoverColor({
   const [customColor, setCustomColor] = React.useState(defaultValue);
 
   return (
-    <Menu.Root className="flex-1" placement="top">
+    <Menu.Root className="flex-1" placement="top" strategy="fixed">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <i
@@ -431,7 +430,7 @@ function PopoverColor({
             <ColorPicker.Trigger>
               <div
                 onClick={() => {
-                  if(customColor) onSelect({ key: 'custom', color: customColor });
+                  if (customColor) onSelect({ key: 'custom', color: customColor });
                 }}
                 className={twMerge(
                   'size-5 cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
@@ -470,7 +469,7 @@ function PopoverFont({
   onSelect: (font: string) => void;
 }) {
   return (
-    <Menu.Root className="flex-1" placement="top">
+    <Menu.Root className="flex-1" placement="top" strategy="fixed">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <h3 style={{ fontFamily: fonts[name] }} className={clsx(label === 'title' ? 'font-semibold' : 'font-medium')}>

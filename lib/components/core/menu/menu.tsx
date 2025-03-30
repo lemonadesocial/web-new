@@ -90,8 +90,15 @@ function MenuRoot({
   className,
   disabled,
   placement = 'bottom-end',
+  strategy = 'absolute',
   dismissable = true,
-}: { className?: string; disabled?: boolean; placement?: Placement; dismissable?: boolean } & React.PropsWithChildren) {
+}: {
+  className?: string;
+  disabled?: boolean;
+  placement?: Placement;
+  dismissable?: boolean;
+  strategy?: 'fixed' | 'absolute';
+} & React.PropsWithChildren) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
@@ -100,7 +107,7 @@ function MenuRoot({
   const { refs, floatingStyles } = useFloating({
     open: isOpen,
     onOpenChange: toggle,
-    strategy: 'fixed',
+    strategy,
     placement,
     middleware: [offset(10)],
   });
