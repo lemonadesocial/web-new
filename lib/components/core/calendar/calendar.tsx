@@ -92,7 +92,7 @@ export function Calendar({ events, selected: selectedDate, footer, onSelectDate 
                 'relative text-center cursor-pointer text-sm px-2.5 py-2 font-medium size-9 hover:bg-primary/8 rounded-full',
                 clsx({
                   'text-quaternary': !isSameMonth(d, active),
-                  'text-tertiary': events && !events.some((e) => isSameDay(e, d)),
+                  'text-tertiary hover:bg-transparent': events && !events.some((e) => isSameDay(e, d)),
                   'bg-primary text-black rounded-full hover:bg-primary': selected && isEqual(selected, d),
                   'text-accent-500': isToday(d),
                   'bg-accent-500 text-tertiary rounded-full': selected && isEqual(selected, d) && isToday(d),
