@@ -13,6 +13,8 @@ import { Avatar } from '$lib/components/core/avatar';
 import { Button } from '$lib/components/core/button';
 import { Divider, Menu, MenuItem } from '$lib/components/core';
 import { userAvatar } from '$lib/utils/user';
+import { twMerge } from 'tailwind-merge';
+import clsx from 'clsx';
 
 export default function Header() {
   const [session] = useAtom(sessionAtom);
@@ -30,7 +32,16 @@ export default function Header() {
         {session && me ? (
           <Menu.Root>
             <Menu.Trigger>
-              <Avatar src={userAvatar(me)} />
+              {({ isOpen }) => (
+                <div
+                  className={twMerge(
+                    'transition p-2 flex justify-center items-center rounded-full hover:bg-tertiary/8',
+                    clsx(isOpen && 'bg-tertiary/8'),
+                  )}
+                >
+                  <Avatar src={userAvatar(me)} />
+                </div>
+              )}
             </Menu.Trigger>
             <Menu.Content className="p-0 min-w-[228px]">
               {({ toggle }) => (

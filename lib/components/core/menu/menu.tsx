@@ -21,17 +21,23 @@ type MenuState = {
 };
 const MenuContext = React.createContext<MenuState>({ toggle: () => {} });
 
-function MenuTrigger({ children }: React.PropsWithChildren) {
-  const { toggle, refs, disabled } = React.useContext(MenuContext);
+function MenuTrigger({
+  children,
+  className,
+}: {
+  className?: string;
+  children: React.ReactNode | ((props: { toggle: () => void; isOpen?: boolean }) => React.ReactNode);
+}) {
+  const { toggle, isOpen, refs, disabled } = React.useContext(MenuContext);
 
   return (
     <div
       ref={refs?.setReference}
       onClick={toggle}
-      className={clsx(disabled ? 'cursor-not-allowed' : 'cursor-pointer')}
+      className={twMerge(className, clsx(disabled ? 'cursor-not-allowed' : 'cursor-pointer'))}
       aria-haspopup="true"
     >
-      {children}
+      {typeof children === 'function' ? children({ toggle, isOpen }) : children}
     </div>
   );
 }
