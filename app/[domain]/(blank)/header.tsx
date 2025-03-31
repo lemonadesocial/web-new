@@ -35,7 +35,9 @@ export default function Header() {
             <Menu.Content className="p-0 min-w-[228px]">
               {({ toggle }) => (
                 <>
-                  <div className="flex gap-2.5 px-2 py-1.5 items-center">
+                  <div
+                    className={'flex gap-2.5 px-2 py-1.5 items-center hover:bg-primary/8 rounded-t-xs cursor-pointer'}
+                  >
                     <Avatar size="lg" src={userAvatar(me)} />
                     <div>
                       <p className="text-md font-medium whitespace-nowrap">{me.name}</p>
@@ -44,12 +46,11 @@ export default function Header() {
                   </div>
                   <Divider />
                   <div className="p-1">
-                    <Link href={`${LEMONADE_DOMAIN}/u/${me.username}`} target="_blank">
-                      <MenuItem title="View Profile" />
-                    </Link>
-                    <Link href={`${LEMONADE_DOMAIN}/settings`} target="_blank">
-                      <MenuItem title="Settings" />
-                    </Link>
+                    <MenuItem
+                      title="View Profile"
+                      onClick={() => window.open(`${LEMONADE_DOMAIN}/u/${me.username}`, '_blank')}
+                    />
+                    <MenuItem title="Settings" onClick={() => window.open(`${LEMONADE_DOMAIN}/settings`, '_blank')} />
                     <MenuItem
                       title="Sign Out"
                       onClick={async () => {
