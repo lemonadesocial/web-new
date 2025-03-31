@@ -8,6 +8,7 @@ interface Options<T> {
   props?: T;
   dismissible?: boolean;
   className?: string;
+  skipBaseClassName?: boolean;
 }
 
 interface ModalItem {
@@ -105,7 +106,7 @@ export function ModalContainer() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className={twMerge(
-              'bg-overlay-primary border border-card-border rounded-lg overflow-hidden',
+              modal.options.skipBaseClassName ? '' : 'bg-overlay-primary border border-card-border rounded-lg overflow-hidden',
               modal.options.className
             )}
           >

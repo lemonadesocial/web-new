@@ -2,6 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 
 import { BottomSheetContainer, DrawerContainer, ModalContainer } from '$lib/components/core/dialog';
+import { ToastContainer } from '$lib/components/core/toast';
 
 import { getSiteData } from '$utils/fetchers';
 import { Config } from '$utils/types';
@@ -33,6 +34,7 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
       <ModalContainer />
       <DrawerContainer />
       <BottomSheetContainer />
+      <ToastContainer />
     </Providers>
   );
 }

@@ -70,6 +70,8 @@
   --color-overlay-secondary: var(--color-overlay-secondary);
   --color-overlay-backdrop: var(--color-overlay-backdrop);
 
+  --backdrop-filter: blur(24px) contrast(50%) brightness(70%);
+
   --color-accent-50: var(--color-violet-50);
   --color-accent-100: var(--color-violet-100);
   --color-accent-200: var(--color-violet-200);
