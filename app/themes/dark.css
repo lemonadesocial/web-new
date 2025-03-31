@@ -12,8 +12,8 @@
   --color-card-border: rgba(255, 255, 255, 0.04);
 
   --color-divider: rgba(255, 255, 255, 0.08);
-  --color-menu: rgba(32, 32, 34, 0.8);
-  --color-modal: var(--color-woodsmoke-950);
-  --color-drawer: var(--color-woodsmoke-950);
-  --color-overlay: rgba(0, 0, 0, 0.6);
+
+  --color-overlay-primary: #202022;
+  --color-overlay-secondary: rgba(32, 32, 34, 0.8);
+  --color-overlay-backdrop: rgba(0, 0, 0, 0.6);
 }

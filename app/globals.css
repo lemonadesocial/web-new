@@ -66,10 +66,9 @@
   --color-card: var(--color-card);
   --color-card-border: var(--color-card-border);
 
-  --color-modal: var(--color-modal);
-  --color-menu: var(--color-menu);
-  --color-overlay: var(--color-overlay);
-  --color-drawer: var(--color-drawer);
+  --color-overlay-primary: var(--color-overlay-primary);
+  --color-overlay-secondary: var(--color-overlay-secondary);
+  --color-overlay-backdrop: var(--color-overlay-backdrop);
 
   --color-accent-50: var(--color-violet-50);
   --color-accent-100: var(--color-violet-100);

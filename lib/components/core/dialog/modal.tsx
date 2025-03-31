@@ -2,10 +2,12 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { twMerge } from 'tailwind-merge';
 
 interface Options<T> {
   props?: T;
-  dismiss?: boolean;
+  dismissible?: boolean;
+  className?: string;
 }
 
 interface ModalItem {
@@ -63,7 +65,7 @@ export function ModalContainer() {
         event.target instanceof Node &&
         !modalRef.contains(event.target)
       ) {
-        if (topModal.options.dismiss) {
+        if (topModal.options.dismissible) {
           handleClose(topModal.id);
         }
       }
@@ -88,7 +90,7 @@ export function ModalContainer() {
       {modals.map((modal, index) => (
         <div
           key={modal.id}
-          className="fixed inset-0 bg-overlay/80 flex w-full h-full items-center justify-center"
+          className="fixed inset-0 bg-overlay-backdrop flex w-full h-full items-center justify-center"
           style={{ zIndex: 10000 + index }}
         >
           <motion.div
@@ -102,7 +104,10 @@ export function ModalContainer() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="bg-modal rounded-lg overflow-hidden"
+            className={twMerge(
+              'bg-overlay-primary border border-card-border rounded-lg overflow-hidden',
+              modal.options.className
+            )}
           >
             {modal.content}
           </motion.div>
