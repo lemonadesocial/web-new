@@ -55,7 +55,7 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
   const existing = events.find((e) => e.shortid === linkEvent?.substring(linkEvent.lastIndexOf('/') + 1));
 
   return (
-    <Card.Root className="w-[480]">
+    <div className="w-[480]">
       <Card.Header className="flex justify-between items-center">
         <p className="text-lg font-medium">Submit Lemonade Event</p>
         <Button
@@ -114,7 +114,7 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
           </Button>
         </div>
       </Card.Content>
-    </Card.Root>
+    </div>
   );
 }
 
