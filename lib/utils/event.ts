@@ -114,3 +114,7 @@ export function getPaymentAccounts(prices: EventTicketPrice[]) {
 
   return [...new Set(accounts)];
 }
+
+export function attending(event: Event, user: string | undefined) {
+  return event.accepted?.includes(user);
+}

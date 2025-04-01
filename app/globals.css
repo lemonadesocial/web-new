@@ -229,6 +229,10 @@ main {
   }
 }
 
+p {
+  font-weight: var(--font-weight-medium);
+}
+
 a[title='Open this area in Google Maps (opens a new window)'],
 .gm-style-cc {
   display: none !important;

@@ -28,6 +28,12 @@ export function RegisterButton() {
     registrationModal.open(RegistrationModal, { skipBaseClassName: true });
   };
 
+  if (event.approval_required && !session) return (
+    <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
+      Sign In
+    </Button>
+  );
+
   if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session) return (
     <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
       {approvalRequired ? 'Request to Join' : isFree ? 'Register' : 'Get Tickets'}

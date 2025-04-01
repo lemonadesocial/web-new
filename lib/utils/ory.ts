@@ -22,14 +22,6 @@ export const identity = new IdentityApi(
   }),
 );
 
-export const getServerSideOry = (cookie?: string) => {
-  return new FrontendApi(
-    new Configuration({
-      basePath: KRATOS_PUBLIC_URL,
-      baseOptions: {
-        withCredentials: true,
-        headers: cookie ? { cookie } : undefined,
-      },
-    }),
-  );
+export const handleSignIn = async () => {
+  window.location.href = `http://identity.staging.lemonade.social/login?return_to=${window.location.href}`
 };

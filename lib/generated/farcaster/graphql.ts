@@ -164,95 +164,6 @@ export type Date_Range_Comparator_Exp = {
   _eq?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type Domain = {
-  __typename?: 'Domain';
-  /** Avatar of the domain */
-  avatar?: Maybe<Scalars['String']['output']>;
-  /** Blockchain where the NFT sale took place */
-  blockchain: Blockchain;
-  /** Unique identifier for the blockchain */
-  chainId?: Maybe<Scalars['String']['output']>;
-  /** Block number when the domain was created */
-  createdAtBlockNumber?: Maybe<Scalars['Int']['output']>;
-  /** Timestamp when the domain was created */
-  createdAtBlockTimestamp?: Maybe<Scalars['Time']['output']>;
-  /** DApp name associated with the domain (e.g. ENS) */
-  dappName?: Maybe<DomainDappName>;
-  /** DApp slug (contract version) associated with the domain */
-  dappSlug?: Maybe<DomainDappSlug>;
-  /** Timestamp when the domain registration expires */
-  expiryTimestamp?: Maybe<Scalars['Time']['output']>;
-  /** Domain registration cost in decimals */
-  formattedRegistrationCost?: Maybe<Scalars['Float']['output']>;
-  /** Domain registration cost in native blockchain token in decimals */
-  formattedRegistrationCostInNativeToken?: Maybe<Scalars['Float']['output']>;
-  /** Domain registration cost in USDC in decimals */
-  formattedRegistrationCostInUSDC?: Maybe<Scalars['Float']['output']>;
-  /** Airstack unique identifier for the data point */
-  id?: Maybe<Scalars['ID']['output']>;
-  /** Domain is name wrapped or not */
-  isNameWrapped?: Maybe<Scalars['Boolean']['output']>;
-  /** Indicates if the domain is set to be primary - true or false */
-  isPrimary?: Maybe<Scalars['Boolean']['output']>;
-  /** Airstack unique domain hash */
-  labelHash?: Maybe<Scalars['String']['output']>;
-  /** Domain name without the domain ending, e.g. vitalik instead of vitalik.eth */
-  labelName?: Maybe<Scalars['String']['output']>;
-  /** Block number when the domain was last updated */
-  lastUpdatedBlockNumber?: Maybe<Scalars['Int']['output']>;
-  /** Timestamp when the domain was last updated */
-  lastUpdatedBlockTimestamp?: Maybe<Scalars['Time']['output']>;
-  /** Manager of Domain */
-  manager: Scalars['Address']['output'];
-  /** Manager wallet related information, including address, domains, social profile, other token balances, and transfer history */
-  managerDetails?: Maybe<Wallet>;
-  /** Multichain associated with the domain */
-  multiChainAddresses?: Maybe<Array<DomainMultiChainAddress>>;
-  /** Full domain name, e.g. vitalik.eth */
-  name?: Maybe<Scalars['String']['output']>;
-  /** Owner of token associated with the domain */
-  owner: Scalars['Address']['output'];
-  /** Owner wallet related information, including address, domains, social profile, other token balances, and transfer history */
-  ownerDetails?: Maybe<Wallet>;
-  /** Parent domain name, if the entity is a subdomain */
-  parent?: Maybe<Scalars['String']['output']>;
-  /** Nested query - can retrieve payment token data (name, symbol, etc.) */
-  paymentToken?: Maybe<Scalars['Address']['output']>;
-  /** payment amount in blockchain native token for the domain */
-  paymentTokenCostInNativeToken?: Maybe<Scalars['Float']['output']>;
-  /** payment amount in USDC for the domain */
-  paymentTokenCostInUSDC?: Maybe<Scalars['Float']['output']>;
-  /** Domain registration cost */
-  registrationCost?: Maybe<Scalars['String']['output']>;
-  /** Domain registration cost in blockchain native token */
-  registrationCostInNativeToken?: Maybe<Scalars['String']['output']>;
-  /** Domain registration cost in USDC */
-  registrationCostInUSDC?: Maybe<Scalars['String']['output']>;
-  /** Blockchain address to which the domain is resolved */
-  resolvedAddress?: Maybe<Scalars['Address']['output']>;
-  /** Nested query - on-chain resolvedAddress wallet related information, including address, domains, social profile, other token balances, and transfer history */
-  resolvedAddressDetails?: Maybe<Wallet>;
-  /** Resolver address associated with Domain */
-  resolverAddress?: Maybe<Scalars['Address']['output']>;
-  /** Count of subdomains linked to the domain */
-  subDomainCount?: Maybe<Scalars['Int']['output']>;
-  /** Nested query allowing to retrieve subdomain information associated with the domain */
-  subDomains?: Maybe<Array<Maybe<Domain>>>;
-  /** Texts associated with the domain */
-  texts?: Maybe<Array<DomainTexts>>;
-  /** Token Address associated with the domain, if applicable */
-  tokenAddress: Scalars['Address']['output'];
-  /** Domain Token ID associated with the domain, if applicable */
-  tokenId?: Maybe<Scalars['String']['output']>;
-  /** Time-to-live value for the domain */
-  ttl?: Maybe<Scalars['String']['output']>;
-};
-
-
-export type DomainSubDomainsArgs = {
-  input?: InputMaybe<DomainsNestedInput>;
-};
-
 export enum DomainDappName {
   Ens = 'ens'
 }
@@ -309,19 +220,6 @@ export type DomainsInput = {
   order?: InputMaybe<Array<DomainOrderBy>>;
 };
 
-export type DomainsNestedInput = {
-  blockchain?: InputMaybe<Blockchain>;
-  filter?: InputMaybe<DomainFilter>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<Array<InputMaybe<DomainOrderBy>>>;
-};
-
-export type DomainsOutput = {
-  __typename?: 'DomainsOutput';
-  Domain?: Maybe<Array<Domain>>;
-  pageInfo?: Maybe<PageInfo>;
-};
-
 export enum EarnerType {
   ChannelFans = 'CHANNEL_FANS',
   Creator = 'CREATOR',
@@ -342,25 +240,6 @@ export type EarningsDistribution = {
 export enum EveryBlockchain {
   All = 'ALL'
 }
-
-export type FarScore = {
-  __typename?: 'FarScore';
-  farRank?: Maybe<Scalars['Int']['output']>;
-  farScore?: Maybe<Scalars['Float']['output']>;
-  heroBoost?: Maybe<Scalars['Float']['output']>;
-  lpBoost?: Maybe<Scalars['Float']['output']>;
-  organicScore?: Maybe<Scalars['Float']['output']>;
-  organicScoreRank?: Maybe<Scalars['Int']['output']>;
-  powerBoost?: Maybe<Scalars['Float']['output']>;
-  social?: Maybe<Social>;
-  tvl?: Maybe<Scalars['String']['output']>;
-  tvlBoost?: Maybe<Scalars['Float']['output']>;
-};
-
-
-export type FarScoreSocialArgs = {
-  input?: InputMaybe<SocialsNestedInput>;
-};
 
 export type FarScoreFilter = {
   farRank?: InputMaybe<Int_Comparator_Exp>;
@@ -392,41 +271,6 @@ export type FarScoreOrderBy = {
   tvlBoost?: InputMaybe<OrderBy>;
 };
 
-export type FarScoreOutput = {
-  __typename?: 'FarScoreOutput';
-  FarScore?: Maybe<Array<FarScore>>;
-  pageInfo?: Maybe<PageInfo>;
-};
-
-export type FarcasterCast = {
-  __typename?: 'FarcasterCast';
-  castValue?: Maybe<CastValue>;
-  castedAtTimestamp?: Maybe<Scalars['Time']['output']>;
-  castedBy?: Maybe<Social>;
-  channel?: Maybe<FarcasterChannel>;
-  embeds?: Maybe<Array<Maybe<Scalars['Map']['output']>>>;
-  fid?: Maybe<Scalars['String']['output']>;
-  frame?: Maybe<FarcasterFrame>;
-  hash?: Maybe<Scalars['String']['output']>;
-  id?: Maybe<Scalars['String']['output']>;
-  isDeleted?: Maybe<Scalars['Boolean']['output']>;
-  mentions?: Maybe<Array<Mentions>>;
-  moxieEarningsSplit?: Maybe<Array<Maybe<MoxieEarningsSplit>>>;
-  notaTokenEarned?: Maybe<SocialCapitalValue>;
-  numberOfLikes?: Maybe<Scalars['Int']['output']>;
-  numberOfRecasts?: Maybe<Scalars['Int']['output']>;
-  numberOfReplies?: Maybe<Scalars['Int']['output']>;
-  parentCast?: Maybe<FarcasterCast>;
-  parentFid?: Maybe<Scalars['String']['output']>;
-  parentHash?: Maybe<Scalars['String']['output']>;
-  quotedCast?: Maybe<Array<Maybe<FarcasterCast>>>;
-  rawText?: Maybe<Scalars['String']['output']>;
-  rootParentUrl?: Maybe<Scalars['String']['output']>;
-  socialCapitalValue?: Maybe<SocialCapitalValue>;
-  text?: Maybe<Scalars['String']['output']>;
-  url?: Maybe<Scalars['String']['output']>;
-};
-
 export type FarcasterCastFilter = {
   castedAtTimestamp?: InputMaybe<Time_Comparator_Exp>;
   castedBy?: InputMaybe<Identity_Comparator_Exp>;
@@ -438,55 +282,6 @@ export type FarcasterCastFilter = {
   rootParentUrl?: InputMaybe<String_Eq_In_Comparator_Exp>;
   showDeleted?: InputMaybe<Boolean_Comparator_Exp>;
   url?: InputMaybe<String_Eq_In_Comparator_Exp>;
-};
-
-export type FarcasterCastInput = {
-  blockchain: EveryBlockchain;
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  filter: FarcasterCastFilter;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type FarcasterCastOutput = {
-  __typename?: 'FarcasterCastOutput';
-  Cast?: Maybe<Array<FarcasterCast>>;
-  pageInfo?: Maybe<PageInfo>;
-};
-
-export type FarcasterChannel = {
-  __typename?: 'FarcasterChannel';
-  channelId: Scalars['String']['output'];
-  createdAtTimestamp: Scalars['Time']['output'];
-  dappName: Scalars['String']['output'];
-  dappSlug: Scalars['String']['output'];
-  description: Scalars['String']['output'];
-  followerCount?: Maybe<Scalars['Int']['output']>;
-  /** Airstack unique identifier for the data point */
-  id: Scalars['ID']['output'];
-  imageUrl: Scalars['String']['output'];
-  isModerationEnabled?: Maybe<Scalars['Boolean']['output']>;
-  leadIds?: Maybe<Array<Scalars['String']['output']>>;
-  leadProfiles?: Maybe<Array<Social>>;
-  moderatorIds?: Maybe<Array<Scalars['String']['output']>>;
-  moderatorProfiles?: Maybe<Array<Social>>;
-  name: Scalars['String']['output'];
-  participants?: Maybe<Array<FarcasterChannelParticipant>>;
-  url: Scalars['String']['output'];
-};
-
-
-export type FarcasterChannelLeadProfilesArgs = {
-  input?: InputMaybe<SocialsNestedInput>;
-};
-
-
-export type FarcasterChannelModeratorProfilesArgs = {
-  input?: InputMaybe<SocialsNestedInput>;
-};
-
-
-export type FarcasterChannelParticipantsArgs = {
-  input?: InputMaybe<FarcasterChannelParticipantNestedInput>;
 };
 
 export enum FarcasterChannelActionType {
@@ -512,45 +307,9 @@ export type FarcasterChannelFilter = {
   url?: InputMaybe<String_Comparator_Exp>;
 };
 
-export type FarcasterChannelNestedInput = {
-  blockchain?: InputMaybe<EveryBlockchain>;
-  filter?: InputMaybe<FarcasterChannelFilter>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<Array<InputMaybe<FarcasterChannelOrderBy>>>;
-};
-
 export type FarcasterChannelOrderBy = {
   createdAtTimestamp?: InputMaybe<OrderBy>;
   followerCount?: InputMaybe<OrderBy>;
-};
-
-export type FarcasterChannelParticipant = {
-  __typename?: 'FarcasterChannelParticipant';
-  channel?: Maybe<FarcasterChannel>;
-  channelActions?: Maybe<Array<FarcasterChannelActionType>>;
-  channelId: Scalars['String']['output'];
-  channelName: Scalars['String']['output'];
-  dappName: Scalars['String']['output'];
-  dappSlug: Scalars['String']['output'];
-  /** Airstack unique identifier for the data point */
-  id?: Maybe<Scalars['ID']['output']>;
-  lastActionTimestamp: Scalars['Time']['output'];
-  lastCastedTimestamp?: Maybe<Scalars['Time']['output']>;
-  lastFollowedTimestamp?: Maybe<Scalars['Time']['output']>;
-  lastMembershipTimestamp?: Maybe<Scalars['Time']['output']>;
-  lastRepliedTimestamp?: Maybe<Scalars['Time']['output']>;
-  participant?: Maybe<Social>;
-  participantId: Scalars['String']['output'];
-};
-
-
-export type FarcasterChannelParticipantChannelArgs = {
-  input?: InputMaybe<FarcasterChannelNestedInput>;
-};
-
-
-export type FarcasterChannelParticipantParticipantArgs = {
-  input?: InputMaybe<SocialsNestedInput>;
 };
 
 export type FarcasterChannelParticipantFilter = {
@@ -560,13 +319,6 @@ export type FarcasterChannelParticipantFilter = {
   lastActionTimestamp?: InputMaybe<Time_Comparator_Exp>;
   participant?: InputMaybe<Identity_Comparator_Exp>;
   participantId?: InputMaybe<String_Eq_In_Comparator_Exp>;
-};
-
-export type FarcasterChannelParticipantNestedInput = {
-  blockchain?: InputMaybe<EveryBlockchain>;
-  filter?: InputMaybe<FarcasterChannelParticipantFilter>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<Array<InputMaybe<FarcasterChannelParticipantOrderBy>>>;
 };
 
 export type FarcasterChannelParticipantOrderBy = {
@@ -581,12 +333,6 @@ export type FarcasterChannelParticipantsInput = {
   order?: InputMaybe<Array<FarcasterChannelParticipantOrderBy>>;
 };
 
-export type FarcasterChannelParticipantsOutput = {
-  __typename?: 'FarcasterChannelParticipantsOutput';
-  FarcasterChannelParticipant?: Maybe<Array<FarcasterChannelParticipant>>;
-  pageInfo?: Maybe<PageInfo>;
-};
-
 export type FarcasterChannelsInput = {
   blockchain: EveryBlockchain;
   cursor?: InputMaybe<Scalars['String']['input']>;
@@ -595,17 +341,10 @@ export type FarcasterChannelsInput = {
   order?: InputMaybe<Array<FarcasterChannelOrderBy>>;
 };
 
-export type FarcasterChannelsOutput = {
-  __typename?: 'FarcasterChannelsOutput';
-  FarcasterChannel?: Maybe<Array<FarcasterChannel>>;
-  pageInfo?: Maybe<PageInfo>;
-};
-
 export type FarcasterFanTokenAuction = {
   __typename?: 'FarcasterFanTokenAuction';
   auctionId?: Maybe<Scalars['Int']['output']>;
   auctionSupply?: Maybe<Scalars['Float']['output']>;
-  channel?: Maybe<FarcasterChannel>;
   decimals?: Maybe<Scalars['Int']['output']>;
   entityId: Scalars['String']['output'];
   entityName?: Maybe<Scalars['String']['output']>;
@@ -618,14 +357,8 @@ export type FarcasterFanTokenAuction = {
   minFundingAmount?: Maybe<Scalars['Float']['output']>;
   minPriceInMoxie?: Maybe<Scalars['Float']['output']>;
   rewardDistributionPercentage?: Maybe<RewardDistributionPercentage>;
-  socials?: Maybe<Array<Maybe<Social>>>;
   status: FarcasterFanTokenAuctionStatusType;
   subjectAddress?: Maybe<Scalars['String']['output']>;
-};
-
-
-export type FarcasterFanTokenAuctionSocialsArgs = {
-  input?: InputMaybe<SocialsNestedInput>;
 };
 
 export enum FarcasterFanTokenAuctionEntityType {
@@ -676,37 +409,12 @@ export type FarcasterFanTokenAuctionsOutput = {
   pageInfo?: Maybe<PageInfo>;
 };
 
-export type FarcasterFrame = {
-  __typename?: 'FarcasterFrame';
-  buttons?: Maybe<Array<FrameButton>>;
-  castedAtTimestamp?: Maybe<Scalars['Time']['output']>;
-  frameHash?: Maybe<Scalars['String']['output']>;
-  frameUrl?: Maybe<Scalars['String']['output']>;
-  imageAspectRatio?: Maybe<Scalars['String']['output']>;
-  imageUrl?: Maybe<Scalars['String']['output']>;
-  inputText?: Maybe<Scalars['String']['output']>;
-  postUrl?: Maybe<Scalars['String']['output']>;
-  state?: Maybe<Scalars['String']['output']>;
-};
-
 export type FarcasterFrameMessageInput = {
   filter: FarcasterFrameMessageInputFilter;
 };
 
 export type FarcasterFrameMessageInputFilter = {
   messageBytes?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type FarcasterFrameMessageOutput = {
-  __typename?: 'FarcasterFrameMessageOutput';
-  castedBy?: Maybe<Social>;
-  castedByFid?: Maybe<Scalars['Int']['output']>;
-  interactedBy?: Maybe<Social>;
-  interactedByFid?: Maybe<Scalars['Int']['output']>;
-  isValid?: Maybe<Scalars['Boolean']['output']>;
-  message?: Maybe<FrameMessage>;
-  messageByte?: Maybe<Scalars['String']['output']>;
-  messageRaw?: Maybe<Scalars['Map']['output']>;
 };
 
 export type FarcasterMoxieClaimDetails = {
@@ -722,14 +430,8 @@ export type FarcasterMoxieClaimDetails = {
   processingAmount?: Maybe<Scalars['Float']['output']>;
   processingAmountInWei?: Maybe<Scalars['String']['output']>;
   processingAmountSplits?: Maybe<Array<Maybe<ClaimSplit>>>;
-  socials?: Maybe<Array<Maybe<Social>>>;
   tokenAddress?: Maybe<Scalars['String']['output']>;
   transactionAmountSplits?: Maybe<Array<Maybe<ClaimSplit>>>;
-};
-
-
-export type FarcasterMoxieClaimDetailsSocialsArgs = {
-  input?: InputMaybe<SocialsNestedInput>;
 };
 
 export type FarcasterMoxieClaimDetailsFilter = {
@@ -762,7 +464,6 @@ export type FarcasterMoxieEarningStat = {
   allEarningsAmountInWei?: Maybe<Scalars['String']['output']>;
   castEarningsAmount?: Maybe<Scalars['Float']['output']>;
   castEarningsAmountInWei?: Maybe<Scalars['String']['output']>;
-  channel?: Maybe<FarcasterChannel>;
   endTimestamp: Scalars['Time']['output'];
   entityId: Scalars['String']['output'];
   entityType: FarcasterMoxieEarningStatsEntityType;
@@ -770,15 +471,9 @@ export type FarcasterMoxieEarningStat = {
   frameDevEarningsAmountInWei?: Maybe<Scalars['String']['output']>;
   otherEarningsAmount?: Maybe<Scalars['Float']['output']>;
   otherEarningsAmountInWei?: Maybe<Scalars['String']['output']>;
-  socials?: Maybe<Array<Maybe<Social>>>;
   splitDetails?: Maybe<Array<FarcasterMoxieEarningStatSplitDetails>>;
   startTimestamp: Scalars['Time']['output'];
   timeframe: FarcasterMoxieEarningStatsTimeframe;
-};
-
-
-export type FarcasterMoxieEarningStatSocialsArgs = {
-  input?: InputMaybe<SocialsNestedInput>;
 };
 
 export type FarcasterMoxieEarningStatSplitDetails = {
@@ -797,20 +492,13 @@ export type FarcasterMoxieEarningStatV2 = {
   allEarningsAmount?: Maybe<Scalars['Float']['output']>;
   allEarningsAmountInWei?: Maybe<Scalars['String']['output']>;
   allocationDistribution?: Maybe<Array<AllocationDistribution>>;
-  channel?: Maybe<FarcasterChannel>;
   earningsDistribution?: Maybe<Array<EarningsDistribution>>;
   entityId: Scalars['String']['output'];
   entityType: FarcasterMoxieEarningStatsV2EntityType;
   isFtaUser?: Maybe<Scalars['Boolean']['output']>;
   isNonFtaEarner?: Maybe<Scalars['Boolean']['output']>;
   nonFtaEarnerLimits?: Maybe<Scalars['Int']['output']>;
-  socials?: Maybe<Array<Maybe<Social>>>;
   timeframe: FarcasterMoxieEarningStatsTimeframe;
-};
-
-
-export type FarcasterMoxieEarningStatV2SocialsArgs = {
-  input?: InputMaybe<SocialsNestedInput>;
 };
 
 export enum FarcasterMoxieEarningStatsEntityType {
@@ -902,7 +590,6 @@ export type FarcasterNotaEarningStat = {
   allEarningsAmountInWei?: Maybe<Scalars['String']['output']>;
   castEarningsAmount?: Maybe<Scalars['Float']['output']>;
   castEarningsAmountInWei?: Maybe<Scalars['String']['output']>;
-  channel?: Maybe<FarcasterChannel>;
   endTimestamp: Scalars['Time']['output'];
   entityId: Scalars['String']['output'];
   entityType: FarcasterFanTokenAuctionEntityType;
@@ -910,14 +597,8 @@ export type FarcasterNotaEarningStat = {
   frameDevEarningsAmountInWei?: Maybe<Scalars['String']['output']>;
   otherEarningsAmount?: Maybe<Scalars['Float']['output']>;
   otherEarningsAmountInWei?: Maybe<Scalars['String']['output']>;
-  socials?: Maybe<Array<Maybe<Social>>>;
   startTimestamp: Scalars['Time']['output'];
   timeframe: FarcasterNotaEarningStatsTimeframe;
-};
-
-
-export type FarcasterNotaEarningStatSocialsArgs = {
-  input?: InputMaybe<SocialsNestedInput>;
 };
 
 export enum FarcasterNotaEarningStatsEntityType {
@@ -961,83 +642,6 @@ export enum FarcasterNotaEarningStatsTimeframe {
   Lifetime = 'LIFETIME'
 }
 
-export type FarcasterQuotedRecastsFilter = {
-  parentCastedBy?: InputMaybe<Identity_Comparator_Exp>;
-  parentHash?: InputMaybe<String_Eq_In_Comparator_Exp>;
-  parentUrl?: InputMaybe<String_Eq_In_Comparator_Exp>;
-  recastedBy?: InputMaybe<Identity_Comparator_Exp>;
-};
-
-export type FarcasterQuotedRecastsInput = {
-  blockchain: EveryBlockchain;
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  filter: FarcasterQuotedRecastsFilter;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type FarcasterQuotedRecastsOutput = {
-  __typename?: 'FarcasterQuotedRecastsOutput';
-  QuotedRecast?: Maybe<Array<FarcasterCast>>;
-  pageInfo?: Maybe<PageInfo>;
-};
-
-export type FarcasterReaction = {
-  __typename?: 'FarcasterReaction';
-  cast?: Maybe<FarcasterCast>;
-  castHash?: Maybe<Scalars['String']['output']>;
-  reactedBy?: Maybe<Social>;
-};
-
-export enum FarcasterReactionCriteria {
-  Liked = 'liked',
-  Recasted = 'recasted',
-  Replied = 'replied'
-}
-
-export type FarcasterReactionsFilter = {
-  castHash?: InputMaybe<String_Eq_In_Comparator_Exp>;
-  castUrl?: InputMaybe<String_Eq_In_Comparator_Exp>;
-  channelId?: InputMaybe<Regex_String_Comparator_Exp>;
-  criteria: FarcasterReactionCriteria;
-  frameUrl?: InputMaybe<String_Eq_In_Comparator_Exp>;
-  reactedBy?: InputMaybe<Identity_Comparator_Exp>;
-};
-
-export type FarcasterReactionsInput = {
-  blockchain: EveryBlockchain;
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  filter: FarcasterReactionsFilter;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type FarcasterReactionsOutput = {
-  __typename?: 'FarcasterReactionsOutput';
-  Criteria?: Maybe<FarcasterReactionCriteria>;
-  Reaction?: Maybe<Array<FarcasterReaction>>;
-  pageInfo?: Maybe<PageInfo>;
-};
-
-export type FarcasterRepliesFilter = {
-  hash?: InputMaybe<String_Eq_In_Comparator_Exp>;
-  parentCastedBy?: InputMaybe<Identity_Comparator_Exp>;
-  parentHash?: InputMaybe<String_Eq_In_Comparator_Exp>;
-  parentUrl?: InputMaybe<String_Eq_In_Comparator_Exp>;
-  repliedBy?: InputMaybe<Identity_Comparator_Exp>;
-};
-
-export type FarcasterRepliesInput = {
-  blockchain: EveryBlockchain;
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  filter: FarcasterRepliesFilter;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type FarcasterRepliesOutput = {
-  __typename?: 'FarcasterRepliesOutput';
-  Reply?: Maybe<Array<FarcasterCast>>;
-  pageInfo?: Maybe<PageInfo>;
-};
-
 export type FarcasterScore = {
   __typename?: 'FarcasterScore';
   farBoost?: Maybe<Scalars['Float']['output']>;
@@ -1060,55 +664,6 @@ export type Float_Comparator_Exp = {
   _lte?: InputMaybe<Scalars['Float']['input']>;
   _ne?: InputMaybe<Scalars['Float']['input']>;
   _nin?: InputMaybe<Array<Scalars['Float']['input']>>;
-};
-
-export type FrameButton = {
-  __typename?: 'FrameButton';
-  action?: Maybe<Scalars['String']['output']>;
-  id?: Maybe<Scalars['String']['output']>;
-  index?: Maybe<Scalars['Int']['output']>;
-  label?: Maybe<Scalars['String']['output']>;
-  target?: Maybe<Scalars['String']['output']>;
-};
-
-export type FrameMessage = {
-  __typename?: 'FrameMessage';
-  data?: Maybe<FrameMessageData>;
-  hash?: Maybe<Scalars['String']['output']>;
-  hashScheme?: Maybe<Scalars['String']['output']>;
-  signature?: Maybe<Scalars['String']['output']>;
-  signatureScheme?: Maybe<Scalars['String']['output']>;
-  signer?: Maybe<Scalars['String']['output']>;
-};
-
-export type FrameMessageActionBody = {
-  __typename?: 'FrameMessageActionBody';
-  address?: Maybe<Scalars['String']['output']>;
-  buttonIndex?: Maybe<Scalars['Int']['output']>;
-  castId?: Maybe<FrameMessageCastId>;
-  inputText?: Maybe<Scalars['String']['output']>;
-  inputTextDecoded?: Maybe<Scalars['String']['output']>;
-  state?: Maybe<Scalars['String']['output']>;
-  stateDecoded?: Maybe<Scalars['Any']['output']>;
-  transactionHash?: Maybe<Scalars['String']['output']>;
-  transactionId?: Maybe<Scalars['String']['output']>;
-  url?: Maybe<Scalars['String']['output']>;
-  urlDecoded?: Maybe<Scalars['String']['output']>;
-};
-
-export type FrameMessageCastId = {
-  __typename?: 'FrameMessageCastId';
-  fid?: Maybe<Scalars['Int']['output']>;
-  hash?: Maybe<Scalars['String']['output']>;
-};
-
-export type FrameMessageData = {
-  __typename?: 'FrameMessageData';
-  fid?: Maybe<Scalars['Int']['output']>;
-  frameActionBody?: Maybe<FrameMessageActionBody>;
-  network?: Maybe<Scalars['String']['output']>;
-  time?: Maybe<Scalars['Time']['output']>;
-  type?: Maybe<Scalars['String']['output']>;
 };
 
 export type Identity_Comparator_Exp = {
@@ -1172,13 +727,6 @@ export type Media = {
   video?: Maybe<VideoVariants>;
 };
 
-export type Mentions = {
-  __typename?: 'Mentions';
-  fid?: Maybe<Scalars['String']['output']>;
-  position?: Maybe<Scalars['Int']['output']>;
-  profile?: Maybe<Social>;
-};
-
 export type MoxieEarningsSplit = {
   __typename?: 'MoxieEarningsSplit';
   earnerType: EarnerType;
@@ -1188,7 +736,6 @@ export type MoxieEarningsSplit = {
 
 export type MoxieFanToken = {
   __typename?: 'MoxieFanToken';
-  channel?: Maybe<FarcasterChannel>;
   currentPrice?: Maybe<Scalars['Float']['output']>;
   currentPriceInWei?: Maybe<Scalars['Float']['output']>;
   dailyVolumeChange?: Maybe<Scalars['Float']['output']>;
@@ -1197,7 +744,6 @@ export type MoxieFanToken = {
   fanTokenSymbol?: Maybe<Scalars['String']['output']>;
   lockedTvl?: Maybe<Scalars['Float']['output']>;
   lockedTvlInWei?: Maybe<Scalars['String']['output']>;
-  socials?: Maybe<Array<Maybe<Social>>>;
   tlv?: Maybe<Scalars['Float']['output']>;
   tokenLockedAmount?: Maybe<Scalars['Float']['output']>;
   tokenLockedAmountInWei?: Maybe<Scalars['String']['output']>;
@@ -1207,16 +753,6 @@ export type MoxieFanToken = {
   uniqueHolders?: Maybe<Scalars['Int']['output']>;
   unlockedTvl?: Maybe<Scalars['Float']['output']>;
   unlockedTvlInWei?: Maybe<Scalars['String']['output']>;
-};
-
-
-export type MoxieFanTokenChannelArgs = {
-  input?: InputMaybe<FarcasterChannelNestedInput>;
-};
-
-
-export type MoxieFanTokenSocialsArgs = {
-  input?: InputMaybe<SocialsNestedInput>;
 };
 
 export type MoxieFanTokenFilter = {
@@ -1320,13 +856,10 @@ export type MoxieUserPortfolio = {
   currentPrice?: Maybe<Scalars['Float']['output']>;
   currentPriceInWei?: Maybe<Scalars['Float']['output']>;
   fanTokenAddress?: Maybe<Scalars['String']['output']>;
-  fanTokenChannel?: Maybe<FarcasterChannel>;
   fanTokenMoxieUserId?: Maybe<Scalars['String']['output']>;
   fanTokenName?: Maybe<Scalars['String']['output']>;
-  fanTokenSocial?: Maybe<Array<Maybe<Social>>>;
   fanTokenSymbol?: Maybe<Scalars['String']['output']>;
   fid?: Maybe<Scalars['String']['output']>;
-  holderSocial?: Maybe<Array<Maybe<Social>>>;
   lockedTvl?: Maybe<Scalars['Float']['output']>;
   lockedTvlInWei?: Maybe<Scalars['String']['output']>;
   protocolTokenInvested?: Maybe<Scalars['Float']['output']>;
@@ -1345,21 +878,6 @@ export type MoxieUserPortfolio = {
   unlockedTvlInWei?: Maybe<Scalars['String']['output']>;
   walletAddresses?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   walletFanTokens?: Maybe<Array<Maybe<WalletFanTokens>>>;
-};
-
-
-export type MoxieUserPortfolioFanTokenChannelArgs = {
-  input?: InputMaybe<FarcasterChannelNestedInput>;
-};
-
-
-export type MoxieUserPortfolioFanTokenSocialArgs = {
-  input?: InputMaybe<SocialsNestedInput>;
-};
-
-
-export type MoxieUserPortfolioHolderSocialArgs = {
-  input?: InputMaybe<SocialsNestedInput>;
 };
 
 export type MoxieUserPortfolioFilter = {
@@ -1451,8 +969,6 @@ export type Query = {
   __typename?: 'Query';
   BaseMoxieEarningLeaderboard?: Maybe<BaseMoxieEarningLeaderboardOutput>;
   BaseMoxieEarningStatsV2?: Maybe<BaseMoxieEarningStatsV2Output>;
-  Domains?: Maybe<DomainsOutput>;
-  FarcasterChannels?: Maybe<FarcasterChannelsOutput>;
   FarcasterFanTokenAuctions?: Maybe<FarcasterFanTokenAuctionsOutput>;
   FarcasterMoxieEarningStats?: Maybe<FarcasterMoxieEarningStatsOutput>;
   FarcasterMoxieEarningStatsV2?: Maybe<FarcasterMoxieEarningStatsV2Output>;
@@ -1460,8 +976,6 @@ export type Query = {
   MoxieOrdersCandlesticks?: Maybe<MoxieOrdersCandlestickOutput>;
   MoxieReferralEarningLeaderboard?: Maybe<MoxieReferralEarningLeaderboardOutput>;
   MoxieUserPortfolios?: Maybe<MoxieUserPortfolioOutput>;
-  Socials?: Maybe<SocialsOutput>;
-  Wallet?: Maybe<Wallet>;
 };
 
 
@@ -1472,16 +986,6 @@ export type QueryBaseMoxieEarningLeaderboardArgs = {
 
 export type QueryBaseMoxieEarningStatsV2Args = {
   input: BaseMoxieEarningStatsV2Input;
-};
-
-
-export type QueryDomainsArgs = {
-  input: DomainsInput;
-};
-
-
-export type QueryFarcasterChannelsArgs = {
-  input: FarcasterChannelsInput;
 };
 
 
@@ -1517,16 +1021,6 @@ export type QueryMoxieReferralEarningLeaderboardArgs = {
 
 export type QueryMoxieUserPortfoliosArgs = {
   input: MoxieUserPortfolioInput;
-};
-
-
-export type QuerySocialsArgs = {
-  input: SocialsInput;
-};
-
-
-export type QueryWalletArgs = {
-  input: WalletInput;
 };
 
 export type Range_Comparator_Exp = {
@@ -1574,68 +1068,6 @@ export type Simple_String_Comparator_Exp = {
   _nin?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
-export type Social = {
-  __typename?: 'Social';
-  /** Blockchain associated with the social identity */
-  blockchain?: Maybe<Blockchain>;
-  /** Unique identifier for the blockchain */
-  chainId?: Maybe<Scalars['String']['output']>;
-  connectedAddresses?: Maybe<Array<ConnectedAddress>>;
-  coverImageContentValue?: Maybe<Media>;
-  coverImageURI?: Maybe<Scalars['String']['output']>;
-  /** Social DApp name */
-  dappName?: Maybe<SocialDappName>;
-  /** Social DApp slug (contract version) */
-  dappSlug?: Maybe<SocialDappSlug>;
-  /** Airstack unique dapp version number */
-  dappVersion?: Maybe<Scalars['String']['output']>;
-  fnames?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  followerCount?: Maybe<Scalars['Int']['output']>;
-  followerTokenAddress?: Maybe<Scalars['Address']['output']>;
-  followingCount?: Maybe<Scalars['Int']['output']>;
-  handleTokenAddress?: Maybe<Scalars['Address']['output']>;
-  handleTokenId?: Maybe<Scalars['String']['output']>;
-  /** Airstack unique identifier for the data point */
-  id?: Maybe<Scalars['ID']['output']>;
-  /** Blockchain address, ENS domain name, social identity such as Farcaster (for Farcaster use 'fc_fid:' prefix followed by the Farcaster user ID like fc_fid:5650, or use 'fc_fname:' prefix followed by the Farcaster user ID like 'fc_fname:vbuterin') */
-  identity?: Maybe<Scalars['Identity']['output']>;
-  isDefault?: Maybe<Scalars['Boolean']['output']>;
-  location?: Maybe<Scalars['String']['output']>;
-  metadataURI?: Maybe<Scalars['String']['output']>;
-  profileBio?: Maybe<Scalars['String']['output']>;
-  profileCreatedAtBlockNumber?: Maybe<Scalars['Int']['output']>;
-  profileCreatedAtBlockTimestamp?: Maybe<Scalars['Time']['output']>;
-  profileDisplayName?: Maybe<Scalars['String']['output']>;
-  profileHandle?: Maybe<Scalars['String']['output']>;
-  profileImage?: Maybe<Scalars['String']['output']>;
-  profileImageContentValue?: Maybe<Media>;
-  profileLastUpdatedAtBlockNumber?: Maybe<Scalars['Int']['output']>;
-  profileLastUpdatedAtBlockTimestamp?: Maybe<Scalars['Time']['output']>;
-  profileMetadata?: Maybe<Scalars['Map']['output']>;
-  profileName?: Maybe<Scalars['String']['output']>;
-  profileTokenAddress?: Maybe<Scalars['String']['output']>;
-  profileTokenId?: Maybe<Scalars['String']['output']>;
-  profileTokenIdHex?: Maybe<Scalars['String']['output']>;
-  profileTokenUri?: Maybe<Scalars['String']['output']>;
-  profileUrl?: Maybe<Scalars['String']['output']>;
-  totalSpendAllowance?: Maybe<TotalSpendAllowance>;
-  twitterUserName?: Maybe<Scalars['String']['output']>;
-  updatedAt?: Maybe<Scalars['Time']['output']>;
-  userAddress?: Maybe<Scalars['Address']['output']>;
-  userAddressDetails?: Maybe<Wallet>;
-  userAssociatedAddressDetails?: Maybe<Array<Wallet>>;
-  /** blockchain addresses associated with the social profile */
-  userAssociatedAddresses?: Maybe<Array<Scalars['Address']['output']>>;
-  userCreatedAtBlockNumber?: Maybe<Scalars['Int']['output']>;
-  userCreatedAtBlockTimestamp?: Maybe<Scalars['Time']['output']>;
-  userHomeURL?: Maybe<Scalars['String']['output']>;
-  userId?: Maybe<Scalars['String']['output']>;
-  userLastUpdatedAtBlockNumber?: Maybe<Scalars['Int']['output']>;
-  userLastUpdatedAtBlockTimestamp?: Maybe<Scalars['Time']['output']>;
-  userRecoveryAddress?: Maybe<Scalars['Address']['output']>;
-  website?: Maybe<Scalars['String']['output']>;
-};
-
 export type SocialCapital = {
   __typename?: 'SocialCapital';
   farBoost?: Maybe<Scalars['Float']['output']>;
@@ -1675,154 +1107,6 @@ export enum SocialDappSlug {
 export type SocialDappSlug_Comparator_Exp = {
   _eq?: InputMaybe<SocialDappSlug>;
   _in?: InputMaybe<Array<SocialDappSlug>>;
-};
-
-export type SocialFilter = {
-  dappName?: InputMaybe<SocialDappName_Comparator_Exp>;
-  dappSlug?: InputMaybe<SocialDappSlug_Comparator_Exp>;
-  followerCount?: InputMaybe<Int_Comparator_Exp>;
-  followingCount?: InputMaybe<Int_Comparator_Exp>;
-  identity?: InputMaybe<Identity_Comparator_Exp>;
-  isDefault?: InputMaybe<Boolean_Comparator_Exp>;
-  profileCreatedAtBlockTimestamp?: InputMaybe<Time_Comparator_Exp>;
-  profileName?: InputMaybe<Regex_String_Comparator_Exp>;
-  twitterUserName?: InputMaybe<String_Comparator_Exp>;
-  updatedAt?: InputMaybe<Time_Comparator_Exp>;
-  userAssociatedAddresses?: InputMaybe<Address_Comparator_Exp>;
-  userId?: InputMaybe<String_Comparator_Exp>;
-};
-
-export type SocialFollower = {
-  __typename?: 'SocialFollower';
-  blockNumber?: Maybe<Scalars['Int']['output']>;
-  blockchain?: Maybe<EveryBlockchain>;
-  dappName?: Maybe<Scalars['String']['output']>;
-  dappSlug?: Maybe<Scalars['String']['output']>;
-  followerAddress?: Maybe<Wallet>;
-  followerProfileId?: Maybe<Scalars['String']['output']>;
-  followerSince?: Maybe<Scalars['Time']['output']>;
-  followerTokenId?: Maybe<Scalars['String']['output']>;
-  followingAddress?: Maybe<Wallet>;
-  followingProfileId?: Maybe<Scalars['String']['output']>;
-  id?: Maybe<Scalars['ID']['output']>;
-};
-
-export type SocialFollowerFilter = {
-  blockNumber?: InputMaybe<Int_Comparator_Exp>;
-  dappName?: InputMaybe<SocialDappName_Comparator_Exp>;
-  dappSlug?: InputMaybe<SocialDappSlug_Comparator_Exp>;
-  followerProfileId?: InputMaybe<String_Comparator_Exp>;
-  followerSince?: InputMaybe<Time_Comparator_Exp>;
-  followingProfileId?: InputMaybe<String_Comparator_Exp>;
-  identity?: InputMaybe<Identity_Comparator_Exp>;
-};
-
-export type SocialFollowerInput = {
-  blockchain: EveryBlockchain;
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  filter: SocialFollowerFilter;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<Array<SocialFollowerOrderBy>>;
-};
-
-export type SocialFollowerNestedInput = {
-  blockchain?: InputMaybe<EveryBlockchain>;
-  filter?: InputMaybe<SocialFollowerFilter>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<Array<InputMaybe<SocialFollowerOrderBy>>>;
-};
-
-export type SocialFollowerOrderBy = {
-  blockNumber?: InputMaybe<OrderBy>;
-  followerSince?: InputMaybe<OrderBy>;
-};
-
-export type SocialFollowerOutput = {
-  __typename?: 'SocialFollowerOutput';
-  Follower?: Maybe<Array<SocialFollower>>;
-  pageInfo?: Maybe<PageInfo>;
-};
-
-export type SocialFollowing = {
-  __typename?: 'SocialFollowing';
-  blockNumber?: Maybe<Scalars['Int']['output']>;
-  blockchain?: Maybe<EveryBlockchain>;
-  dappName?: Maybe<Scalars['String']['output']>;
-  dappSlug?: Maybe<Scalars['String']['output']>;
-  followerAddress?: Maybe<Wallet>;
-  followerProfileId?: Maybe<Scalars['String']['output']>;
-  followerTokenId?: Maybe<Scalars['String']['output']>;
-  followingAddress?: Maybe<Wallet>;
-  followingProfileId?: Maybe<Scalars['String']['output']>;
-  followingSince?: Maybe<Scalars['Time']['output']>;
-  id?: Maybe<Scalars['ID']['output']>;
-};
-
-export type SocialFollowingFilter = {
-  blockNumber?: InputMaybe<Int_Comparator_Exp>;
-  dappName?: InputMaybe<SocialDappName_Comparator_Exp>;
-  dappSlug?: InputMaybe<SocialDappSlug_Comparator_Exp>;
-  followerProfileId?: InputMaybe<String_Comparator_Exp>;
-  followingProfileId?: InputMaybe<String_Comparator_Exp>;
-  followingSince?: InputMaybe<Time_Comparator_Exp>;
-  identity?: InputMaybe<Identity_Comparator_Exp>;
-};
-
-export type SocialFollowingInput = {
-  blockchain: EveryBlockchain;
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  filter: SocialFollowingFilter;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<Array<SocialFollowingOrderBy>>;
-};
-
-export type SocialFollowingNestedInput = {
-  blockchain?: InputMaybe<EveryBlockchain>;
-  filter?: InputMaybe<SocialFollowingFilter>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<Array<InputMaybe<SocialFollowingOrderBy>>>;
-};
-
-export type SocialFollowingOrderBy = {
-  blockNumber?: InputMaybe<OrderBy>;
-  followingSince?: InputMaybe<OrderBy>;
-};
-
-export type SocialFollowingOutput = {
-  __typename?: 'SocialFollowingOutput';
-  Following?: Maybe<Array<SocialFollowing>>;
-  pageInfo?: Maybe<PageInfo>;
-};
-
-export type SocialOrderBy = {
-  farRank?: InputMaybe<OrderBy>;
-  farScore?: InputMaybe<OrderBy>;
-  followerCount?: InputMaybe<OrderBy>;
-  followingCount?: InputMaybe<OrderBy>;
-  profileCreatedAtBlockTimestamp?: InputMaybe<OrderBy>;
-  socialCapitalRank?: InputMaybe<OrderBy>;
-  socialCapitalScore?: InputMaybe<OrderBy>;
-  updatedAt?: InputMaybe<OrderBy>;
-};
-
-export type SocialsInput = {
-  blockchain: Blockchain;
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  filter: SocialFilter;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<Array<SocialOrderBy>>;
-};
-
-export type SocialsNestedInput = {
-  blockchain?: InputMaybe<Blockchain>;
-  filter?: InputMaybe<SocialFilter>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type SocialsOutput = {
-  __typename?: 'SocialsOutput';
-  Social?: Maybe<Array<Social>>;
-  pageInfo?: Maybe<PageInfo>;
 };
 
 export type String_Comparator_Exp = {
@@ -1920,30 +1204,6 @@ export type Trending_Comparator_Exp = {
 export type VideoVariants = {
   __typename?: 'VideoVariants';
   original?: Maybe<Scalars['String']['output']>;
-};
-
-export type Wallet = {
-  __typename?: 'Wallet';
-  /** Returns addresses associated with the identity input */
-  addresses?: Maybe<Array<Scalars['Address']['output']>>;
-  /** Nested query - allows querying domains owned by the address */
-  domains?: Maybe<Array<Domain>>;
-  /** Blockchain address, ENS domain name, social identity such as Farcaster (for Farcaster use 'fc_fid:' prefix followed by the Farcaster user ID like fc_fid:5650, or use 'fc_fname:' prefix followed by the Farcaster user ID like 'fc_fname:vbuterin') */
-  identity: Scalars['Identity']['output'];
-  /** Nested query - allows returning primary domains, if applicable */
-  primaryDomain?: Maybe<Domain>;
-  /** Returns social profile information related to the address */
-  socials?: Maybe<Array<Social>>;
-};
-
-
-export type WalletDomainsArgs = {
-  input?: InputMaybe<DomainsNestedInput>;
-};
-
-
-export type WalletSocialsArgs = {
-  input?: InputMaybe<SocialsNestedInput>;
 };
 
 export type WalletFanTokens = {
