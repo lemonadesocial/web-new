@@ -13,6 +13,8 @@ import { Avatar } from '$lib/components/core/avatar';
 import { Button } from '$lib/components/core/button';
 import { Divider, Menu, MenuItem } from '$lib/components/core';
 import { userAvatar } from '$lib/utils/user';
+import { twMerge } from 'tailwind-merge';
+import clsx from 'clsx';
 
 export default function Header() {
   const [session] = useAtom(sessionAtom);
@@ -30,12 +32,23 @@ export default function Header() {
         {session && me ? (
           <Menu.Root>
             <Menu.Trigger>
-              <Avatar src={userAvatar(me)} />
+              {({ isOpen }) => (
+                <div
+                  className={twMerge(
+                    'transition p-2 flex justify-center items-center rounded-full hover:bg-primary/8',
+                    clsx(isOpen && 'bg-primary/8'),
+                  )}
+                >
+                  <Avatar src={userAvatar(me)} />
+                </div>
+              )}
             </Menu.Trigger>
             <Menu.Content className="p-0 min-w-[228px]">
               {({ toggle }) => (
                 <>
-                  <div className="flex gap-2.5 px-2 py-1.5 items-center">
+                  <div
+                    className={'flex gap-2.5 px-2 py-1.5 items-center hover:bg-primary/8 rounded-t-xs cursor-pointer'}
+                  >
                     <Avatar size="lg" src={userAvatar(me)} />
                     <div>
                       <p className="text-md font-medium whitespace-nowrap">{me.name}</p>
@@ -44,12 +57,11 @@ export default function Header() {
                   </div>
                   <Divider />
                   <div className="p-1">
-                    <Link href={`${LEMONADE_DOMAIN}/u/${me.username}`} target="_blank">
-                      <MenuItem title="View Profile" />
-                    </Link>
-                    <Link href={`${LEMONADE_DOMAIN}/settings`} target="_blank">
-                      <MenuItem title="Settings" />
-                    </Link>
+                    <MenuItem
+                      title="View Profile"
+                      onClick={() => window.open(`${LEMONADE_DOMAIN}/u/${me.username}`, '_blank')}
+                    />
+                    <MenuItem title="Settings" onClick={() => window.open(`${LEMONADE_DOMAIN}/settings`, '_blank')} />
                     <MenuItem
                       title="Sign Out"
                       onClick={async () => {

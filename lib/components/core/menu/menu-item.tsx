@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -10,7 +11,10 @@ interface MenuItemProps {
 export function MenuItem({ iconLeft, title, onClick }: MenuItemProps) {
   return (
     <div
-      className="inline-flex gap-2.5 px-2 py-1.5 items-center w-full hover:bg-primary/8 rounded-xs cursor-pointer"
+      className={clsx(
+        'inline-flex gap-2.5 px-2 py-1.5 items-center w-full rounded-xs cursor-pointer',
+        typeof onClick === 'function' && 'hover:bg-primary/8',
+      )}
       onClick={onClick}
     >
       {iconLeft && <i className={twMerge(iconLeft, 'text-tertiary size-4')} />}

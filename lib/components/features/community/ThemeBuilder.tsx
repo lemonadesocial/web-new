@@ -20,6 +20,7 @@ type KeyPreset = 'minimal';
 
 type FormValues = {
   theme: string;
+  mode: 'dark' | 'light';
   foreground: { key: string; value: string };
   background: { key: string; value: string };
   font_title: string;
@@ -33,6 +34,7 @@ type FormValues = {
 
 const defaultValues: FormValues = {
   theme: 'minimal',
+  mode: 'dark',
   foreground: { key: 'violet', value: 'violet' },
   background: { key: 'violet', value: 'violet' },
   font_title: 'default',
@@ -54,7 +56,7 @@ export default function ThemeBuilder({
   onSave: () => void;
 }) {
   const themeData = space?.theme_data;
-  const form = useForm<FormValues>({ defaultValues: themeData || defaultValues });
+  const form = useForm<FormValues>({ defaultValues: merge(defaultValues, themeData) });
   const variables = form.watch('variables');
 
   const [updateCommunity, { loading }] = useMutation(UpdateSpaceDocument);
@@ -140,17 +142,18 @@ export default function ThemeBuilder({
                   const values = form.getValues();
                   const themeName = values.theme as KeyPreset;
                   const colors = presets[themeName].colors;
+                  const mode = values.mode;
 
                   return (
                     <PopoverColor
                       label="Accent"
-                      name={field.value.key}
+                      name={field?.value?.key}
                       mode="default"
-                      defaultValue={field.value.value}
+                      defaultValue={field?.value?.value}
                       colors={colors}
                       onSelect={({ key, color }) => {
+                        let bgColor = color;
                         form.setValue('foreground', { key, value: color });
-                        form.setValue('background', { key, value: color });
                         let cssVars = {
                           dark: {
                             '--color-accent-500': `var(--color-${key}-500)`,
@@ -168,6 +171,7 @@ export default function ThemeBuilder({
                           const palette = getPalette([
                             { color, name: key, shade: 500, shades: [50, 500, 700, 950] },
                           ]) as unknown as { custom: { 500: string; 950: string; 50: string } };
+                          bgColor = palette.custom[mode === 'dark' ? 950 : 50];
 
                           cssVars = {
                             dark: {
@@ -182,7 +186,7 @@ export default function ThemeBuilder({
                             },
                           };
                         }
-
+                        form.setValue('background', { key, value: bgColor });
                         form.setValue('variables', merge(variables, cssVars), { shouldDirty: true });
                       }}
                     />
@@ -201,8 +205,8 @@ export default function ThemeBuilder({
                   return (
                     <PopoverColor
                       label="Background"
-                      name={field.value.key}
-                      defaultValue={field.value.value}
+                      name={field?.value?.key}
+                      defaultValue={field?.value?.value}
                       mode="dark"
                       colors={colors}
                       onSelect={({ key, color }) => {
@@ -390,14 +394,18 @@ function PopoverColor({
   colors: ColorPreset;
   onSelect: (params: { key: string; color: string }) => void;
 }) {
-  const [customColor, setCustomColor] = React.useState(defaultValue);
+  const [customColor, setCustomColor] = React.useState('');
+
+  React.useEffect(() => {
+    if (defaultValue) setCustomColor(defaultValue);
+  }, [defaultValue]);
 
   return (
     <Menu.Root className="flex-1" placement="top" strategy="fixed">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <i
-            className={twMerge('size-[24px] rounded-full', colors[name] && colors[name][mode])}
+            className={twMerge('size-[24px] rounded-full', name !== 'custom' && colors[name] && colors[name][mode])}
             style={customColor && name === 'custom' ? { backgroundColor: customColor } : undefined}
           />
 
@@ -430,7 +438,7 @@ function PopoverColor({
             <ColorPicker.Trigger>
               <div
                 onClick={() => {
-                  if (customColor) onSelect({ key: 'custom', color: customColor });
+                  if (name === 'custom' && customColor) onSelect({ key: 'custom', color: customColor });
                 }}
                 className={twMerge(
                   'size-5 cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
@@ -438,7 +446,7 @@ function PopoverColor({
                 )}
                 style={{
                   background:
-                    customColor ||
+                    (name === 'custom' && customColor) ||
                     'conic-gradient(from 180deg at 50% 50%, rgb(222, 97, 134) 0deg, rgb(197, 95, 205) 58.12deg, rgb(175, 145, 246) 114.38deg, rgb(53, 130, 245) 168.75deg, rgb(69, 194, 121) 208.13deg, rgb(243, 209, 90) 243.75deg, rgb(247, 145, 62) 285deg, rgb(244, 87, 95) 360deg)',
                 }}
               ></div>

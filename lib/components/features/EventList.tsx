@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 
 import { Avatar, Badge, Card, Divider, Spacer } from '$lib/components/core';
-import { Address, Event, SpaceTagBase } from '$lib/generated/backend/graphql';
+import { Address, Event, SpaceTagBase, User } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
 import { getEventPrice } from '$lib/utils/event';
@@ -52,24 +52,20 @@ function EventItem({ item }: { item: Event }) {
       <div className="flex flex-col gap-1 flex-1">
         <p className="text-tertiary font-medium text-lg">{item.title}</p>
         <div className="flex gap-2 items-center">
-          {!!users.length && (
-            <div className="flex -space-x-1 overflow-hidden p-1">
-              {users
-                .map((p) => (
-                  <Avatar
-                    key={p?._id}
-                    src={userAvatar(p)}
-                    size="sm"
-                    className="ring-2 border-background"
-                  />
-                ))}
-            </div>
-          )}
+          <div className="flex -space-x-1 overflow-hidden p-1">
+            {users.map((p) => (
+              <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="ring-2 border-background" />
+            ))}
+          </div>
 
           <p className="font-medium text-sm text-tertiary">By {users.map((p) => p?.name).join(',')}</p>
         </div>
       </div>
-      <Badge title={getEventPrice(item.event_ticket_types)} className="bg-success-500/[0.16] text-success-500" />
+      <div>
+        {getEventPrice(item) && (
+          <Badge title={getEventPrice(item)} className="bg-success-500/[0.16] text-success-500" />
+        )}
+      </div>
     </div>
   );
 }
@@ -145,17 +141,17 @@ export function EventListCard({
           <Spacer className="h-6" />
         </div>
       ))}
-      <div className="flex flex-col relative">
-        <div className="border-dashed border-l-2 absolute h-full left-1 top-2 z-10">
-          <div className="size-2 bg-background -ml-[5px] absolute">
-            <div className="size-2 rounded-full bg-quaternary " />
-          </div>
-        </div>
-      </div>
-      <div className="ml-5 mt-0.5">
-        <p className="text-sm text-tertiary">No more events to see here!</p>
-      </div>
-      <Spacer className="h-6" />
+      {/* <div className="flex flex-col relative"> */}
+      {/*   <div className="border-dashed border-l-2 absolute h-full left-1 top-2 z-10"> */}
+      {/*     <div className="size-2 bg-background -ml-[5px] absolute"> */}
+      {/*       <div className="size-2 rounded-full bg-quaternary " /> */}
+      {/*     </div> */}
+      {/*   </div> */}
+      {/* </div> */}
+      {/* <div className="ml-5 mt-0.5"> */}
+      {/*   <p className="text-sm text-tertiary">No more events to see here!</p> */}
+      {/* </div> */}
+      {/* <Spacer className="h-6" /> */}
     </div>
   );
 }
@@ -181,19 +177,11 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
             </div>
             <p className="font-title text-xl font-semibold text-tertiary">{item.title}</p>
             <div className="flex gap-2 item-center">
-              {!!users.filter((p) => p?.image_avatar).length && (
-                <div className="flex -space-x-1 overflow-hidden p-1">
-                  {users
-                    .map((p) => (
-                      <Avatar
-                        key={p?._id}
-                        src={userAvatar(p)}
-                        size="sm"
-                        className="outline outline-background"
-                      />
-                    ))}
-                </div>
-              )}
+              <div className="flex -space-x-1 overflow-hidden p-1">
+                {users.map((p) => (
+                  <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="outline outline-background" />
+                ))}
+              </div>
 
               <p className="font-medium text-tertiary">By {users.map((p) => p?.name).join(',')}</p>
             </div>
@@ -218,7 +206,9 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
             </div>
           )}
 
-          <Badge title={getEventPrice(item.event_ticket_types)} className="bg-success-500/[0.16] text-success-500" />
+          {getEventPrice(item) && (
+            <Badge title={getEventPrice(item)} className="bg-success-500/[0.16] text-success-500" />
+          )}
         </div>
 
         {!!item?.new_new_photos_expanded?.[0] && (
