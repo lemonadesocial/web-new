@@ -1,10 +1,10 @@
 import { useMe } from "$lib/hooks/useMe";
-import { userAvatar } from "$lib/utils/user";
-import { Card, Avatar, SkeletonBox } from "$lib/components/core";
+import { SkeletonBox } from "$lib/components/core";
 import { Event } from '$lib/generated/backend/graphql';
 import { useQuery } from '$lib/request';
 import { GetTicketsDocument } from '$lib/generated/backend/graphql';
 import { useMemo } from "react";
+import { AccessCard } from "./AccessCard";
 
 export function MyTickets({ event }: { event: Event }) {
   const me = useMe();
@@ -42,14 +42,11 @@ export function MyTickets({ event }: { event: Event }) {
   if (!me || !data?.getTickets?.length) return null;
 
   return (
-    <Card.Root className="p-4 flex flex-col gap-4">
-      <div className="flex justify-between">
-        <Avatar src={userAvatar(me)} className="size-12" />
-      </div>
+    <AccessCard>
       <div>
         <h3 className="text-xl font-semibold">You&apos;re In</h3>
         <p className="text-lg text-tertiary">{ticketTypeText}</p>
       </div>
-    </Card.Root>
+    </AccessCard>
   );
 }

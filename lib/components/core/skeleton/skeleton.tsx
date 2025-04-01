@@ -7,7 +7,7 @@ export function Skeleton({ width = '100%', height = '1em' }) {
       style={{ width, height }}
       className="relative overflow-hidden bg-card rounded-md"
     >
-      <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-tertiary/[.04] to-transparent"></div>
+      <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-primary/[.04] to-transparent"></div>
     </div>
   );
 }

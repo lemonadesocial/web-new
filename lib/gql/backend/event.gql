@@ -340,3 +340,32 @@ query getTickets ($event: MongoID, $user: MongoID, $ticket_types: [MongoID!], $e
     shortid
   }
 }
+
+query getMyEventJoinRequest($event: MongoID!) {
+  getMyEventJoinRequest(event: $event) {
+    _id
+    created_at
+    decided_at
+    decided_by
+    decided_by_expanded {
+      _id
+      display_name
+      image_avatar
+      username
+      wallets
+    }
+    state
+    payment {
+      _id
+      state
+    }
+    requested_tickets {
+      count
+      ticket_type
+    }
+    ticket_types_expanded {
+      _id
+      title
+    }
+  }
+}
