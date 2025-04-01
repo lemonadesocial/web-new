@@ -35,8 +35,8 @@ export default function Header() {
               {({ isOpen }) => (
                 <div
                   className={twMerge(
-                    'transition p-2 flex justify-center items-center rounded-full hover:bg-tertiary/8',
-                    clsx(isOpen && 'bg-tertiary/8'),
+                    'transition p-2 flex justify-center items-center rounded-full hover:bg-primary/8',
+                    clsx(isOpen && 'bg-primary/8'),
                   )}
                 >
                   <Avatar src={userAvatar(me)} />
