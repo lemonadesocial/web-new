@@ -1,7 +1,11 @@
+import { UseFormReturn } from "react-hook-form";
 import { Atom, atom, WritableAtom, useAtom as useJotaiAtom, useAtomValue as useJotaiAtomValue, useSetAtom as useJotaiSetAtom } from "jotai";
-import { ApplicationProfileField, Event, NewPaymentAccount, PricingInfo, PurchasableItem, PurchasableTicketType } from '$lib/generated/backend/graphql';
 import { useContext } from "react";
+
+import { ApplicationProfileField, Event, NewPaymentAccount, PricingInfo, PurchasableItem, PurchasableTicketType } from '$lib/generated/backend/graphql';
+
 import { EventRegistrationStoreContext } from "./context";
+import { createModal } from "$lib/components/core";
 
 export const useEventRegistrationStore = () => {
   const store = useContext(EventRegistrationStoreContext);
@@ -27,6 +31,8 @@ export function useSetAtom<Value, Update>(
   const store = useEventRegistrationStore();
   return useJotaiSetAtom(atom, { store });
 }
+
+export const registrationModal = createModal();
 
 export const eventAtom = atom<Event | null>(null);
 
@@ -55,3 +61,14 @@ export const selectedPaymentAccountAtom = atom<NewPaymentAccount | null>(null);
 export const requiredProfileFieldsAtom = atom<ApplicationProfileField[]>([]);
 
 export const pricingInfoAtom = atom<PricingInfo | null>(null);
+
+interface FormInstances {
+  [key: string]: UseFormReturn<any>;
+}
+
+interface SubmitHandlers {
+  [key: string]: (data: any) => void;
+}
+
+export const formInstancesAtom = atom<FormInstances>({});
+export const submitHandlersAtom = atom<SubmitHandlers>({});

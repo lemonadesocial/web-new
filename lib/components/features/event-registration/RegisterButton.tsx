@@ -1,9 +1,13 @@
-import { Button, modal } from "$lib/components/core";
-import { toast } from "$lib/components/core/toast";
+
+import { Button } from "$lib/components/core";
+// import { toast } from "$lib/components/core/toast";
 import { RegistrationModal } from "./RegistrationModal";
-import { approvalRequiredAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, useAtomValue } from "./store";
+import { approvalRequiredAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, registrationModal, useAtomValue } from "./store";
+import { useSession } from "$lib/hooks/useSession";
 
 export function RegisterButton() {
+  const session = useSession();
+
   const pricingInfo = useAtomValue(pricingInfoAtom);
   const purchaseItems = useAtomValue(purchaseItemsAtom);
   const event = useAtomValue(eventDataAtom);
@@ -19,12 +23,12 @@ export function RegisterButton() {
   const isFree = pricingInfo?.total === '0';
 
   const openRegistrationModal = () => {
-    toast.success('Coming soon!');
-    return;
-    modal.open(RegistrationModal, { skipBaseClassName: true });
+    // toast.success('Coming soon!');
+    // return;
+    registrationModal.open(RegistrationModal, { skipBaseClassName: true });
   };
 
-  if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms) return (
+  if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session) return (
     <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
       {approvalRequired ? 'Request to Join' : isFree ? 'Register' : 'Get Tickets'}
     </Button>

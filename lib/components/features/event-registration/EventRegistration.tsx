@@ -6,9 +6,9 @@ import { useQuery } from '$lib/request';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
-import { Avatar, Card, SkeletonBox } from '$lib/components/core';
+import { Avatar, Card, ModalContainer, SkeletonBox } from '$lib/components/core';
 
-import { approvalRequiredAtom, currencyAtom, eventAtom, hasSingleFreeTicketAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
+import { approvalRequiredAtom, currencyAtom, eventAtom, hasSingleFreeTicketAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
 
 import { EventRegistrationStoreProvider } from './context';
 import { TicketSelect } from './TicketSelect';
@@ -166,7 +166,10 @@ const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent
 
   if (loadingInvitation || loadingTicketTypes) return <SkeletonBox rows={4} />;
 
-  return <EventRegistrationContent />;
+  return <>
+    <EventRegistrationContent />
+    <ModalContainer modal={registrationModal} />
+  </>;
 };
 
 export const EventRegistration: React.FC<{ event: Event }> = ({ event }) => (

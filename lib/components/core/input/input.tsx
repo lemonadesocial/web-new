@@ -1,26 +1,24 @@
-import React, { ChangeEvent } from 'react';
+import React, { forwardRef } from 'react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-interface InputProps {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   variant?: 'default' | 'outlined';
-  size?: 's' | 'm';
-  type?: string;
-  value: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  className?: string;
+  inputSize?: 's' | 'm';
+  error?: boolean;
 }
 
-export const Input: React.FC<InputProps> = ({
+export const Input = forwardRef<HTMLInputElement, InputProps>(({
   variant = 'default',
-  size = 'm',
+  inputSize = 'm',
   type = 'text',
   value,
   onChange,
   placeholder,
   className,
-}) => {
+  error,
+  ...props
+}, ref) => {
   const baseClasses = 'w-full rounded-sm focus:outline-none border border-transparent placeholder-quaternary px-2.5 hover:border hover:border-tertiary h-10';
 
   const finalClassName = twMerge(
@@ -31,21 +29,48 @@ export const Input: React.FC<InputProps> = ({
         '': variant === 'outlined', // TODO
       },
       {
-        'text-sm': size === 's',
-        'text-base': size === 'm',
+        'text-sm': inputSize === 's',
+        'text-base': inputSize === 'm',
       },
       value && 'border border-tertiary',
+      error && 'border border-error',
       className
     )
   );
 
   return (
     <input
+      ref={ref}
       type={type}
       value={value}
       onChange={onChange}
       placeholder={placeholder}
       className={finalClassName}
+      {...props}
     />
   );
+});
+
+Input.displayName = 'Input';
+
+interface LabeledInputProps {
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+}
+
+export const LabeledInput: React.FC<LabeledInputProps> = ({ label, required, children }) => {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="font-medium text-sm text-secondary">
+        {label}
+        {required && <span>{' '}*</span>}
+      </label>
+      {children}
+    </div>
+  );
 };
+
+export function ErrorText({ message }: { message: string }) {
+  return <p className="text-sm text-error">{message}</p>;
+}
