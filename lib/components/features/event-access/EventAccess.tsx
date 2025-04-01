@@ -14,6 +14,9 @@ export function EventAccess({ event }: { event: Event }) {
   const session = useSession();
   const isAttending = attending(event, session?.user);
 
+  console.log('event', event);
+  console.log('isAttending', isAttending);
+
   const { data: requestData, loading: requestLoading } = useQuery(GetMyEventJoinRequestDocument, {
     variables: {
       event: event._id

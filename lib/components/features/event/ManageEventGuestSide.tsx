@@ -17,6 +17,7 @@ import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event
 import { userAvatar } from '$lib/utils/user';
 
 import { EventAccess } from '../event-access';
+import { useTickets } from '$lib/hooks/useTickets';
 
 export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
   const { data } = useQuery(GetEventDocument, {
@@ -27,6 +28,8 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
 
   const event = data?.getEvent as Event;
   const hosts = [event.host_expanded, ...(event.visible_cohosts_expanded || [])];
+
+  useTickets(event);
 
   return (
     <div className="flex gap-[72px]">

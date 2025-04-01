@@ -1,5 +1,3 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
-
 import { GraphQLClient } from 'graphql-request';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { InMemoryCache } from './cache';
@@ -12,12 +10,13 @@ if (!GRAPHQL_URL) {
 }
 
 interface QueryRequest<T, V extends object> {
+  type: 'query' | 'refetch';
   query: TypedDocumentNode<T, V>;
   variables?: V;
   initData?: T | null;
   fetchPolicy?: FetchPolicy;
   headers?: HeadersInit;
-  resolve: (result: T) => void;
+  resolve: (result: { data: T | null; error: any }) => void;
   reject: (error: any) => void;
 }
 
@@ -49,41 +48,77 @@ export class GraphqlClient {
     variables?: object;
     fetchPolicy?: FetchPolicy;
     initData?: T;
-  }): Promise<{ data: T; error: any }> {
+  }): Promise<{ data: T | null; error: any }> {
     return new Promise((resolve, reject) => {
-      this.queue.push({ query, variables, headers, initData, fetchPolicy, resolve, reject });
+      this.queue.push({
+        type: 'query',
+        query,
+        variables,
+        headers,
+        initData,
+        fetchPolicy,
+        resolve,
+        reject,
+      });
       this.processQueue();
     });
   }
 
-  private async processQueue<T, V extends object>() {
+  async refetchQuery<T, V extends object>({
+    query,
+    variables,
+    headers,
+  }: {
+    query: TypedDocumentNode<T, V>;
+    variables?: V;
+    headers?: HeadersInit;
+  }): Promise<{ data: T | null; error: any }> {
+    return new Promise((resolve, reject) => {
+      this.queue.push({
+        type: 'refetch',
+        query,
+        variables,
+        headers,
+        resolve,
+        reject,
+      });
+      this.processQueue();
+    });
+  }
+
+  private async processQueue() {
     if (this.processing || this.queue.length === 0) return;
 
-    const { query, variables, headers, fetchPolicy, initData, resolve } = this.queue.shift()!;
-    if (headers) this.client.setHeaders(headers);
+    const request = this.queue.shift()!;
+    this.processing = true;
 
     try {
-      if (fetchPolicy === 'network-only') {
+      if (request.headers) this.client.setHeaders(request.headers);
+
+      if (request.type === 'query') {
+        const { query, variables, fetchPolicy, initData } = request;
+        if (fetchPolicy === 'network-only') {
+          const result = await this.client.request(query, variables);
+          request.resolve({ data: result, error: null });
+        } else {
+          const cacheData = this.cache?.readQuery(query, variables);
+          if (cacheData) {
+            request.resolve({ data: cacheData, error: null });
+          } else {
+            let result = initData;
+            if (!result) result = await this.client.request(query, variables);
+            this.cache?.normalizeAndStore(query, variables, result);
+            request.resolve({ data: result, error: null });
+          }
+        }
+      } else if (request.type === 'refetch') {
+        const { query, variables } = request;
         const result = await this.client.request(query, variables);
-        resolve({ data: result, error: null });
-        return;
+        this.cache?.normalizeAndStore(query, variables, result);
+        request.resolve({ data: result, error: null });
       }
-
-      const cacheData = this.cache?.readQuery<T, V>(query, variables);
-
-      if (cacheData) {
-        resolve({ data: cacheData });
-        return;
-      }
-
-      this.processing = true;
-
-      let result = initData;
-      if (!result) result = await this.client.request(query, variables);
-      this.cache?.normalizeAndStore<T, V>(query, variables, result);
-      resolve({ data: result, error: null });
     } catch (error) {
-      resolve({ data: null, error: error });
+      request.resolve({ data: null, error });
     } finally {
       this.processing = false;
       this.processQueue();

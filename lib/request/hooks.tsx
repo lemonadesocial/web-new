@@ -99,6 +99,7 @@ export function useMutation<T, V extends object>(
         merged.onComplete?.(client, data);
       }
     }
+    return { data, error, loading: false, client };
   };
 
   return [mutate, { data, error, client, loading }];
