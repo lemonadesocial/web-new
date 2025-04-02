@@ -2,7 +2,7 @@ import { UseFormReturn } from "react-hook-form";
 import { Atom, atom, WritableAtom, useAtom as useJotaiAtom, useAtomValue as useJotaiAtomValue, useSetAtom as useJotaiSetAtom } from "jotai";
 import { useContext } from "react";
 
-import { ApplicationProfileField, BuyerInfoInput, Event, NewPaymentAccount, PricingInfo, PurchasableItem, PurchasableTicketType } from '$lib/generated/backend/graphql';
+import { ApplicationProfileField, BuyerInfoInput, Event, NewPaymentAccount, PricingInfo, PurchasableItem, PurchasableTicketType, UserInput } from '$lib/generated/backend/graphql';
 
 import { EventRegistrationStoreContext } from "./context";
 import { createModal } from "$lib/components/core";
@@ -74,5 +74,6 @@ export const formInstancesAtom = atom<FormInstances>({});
 export const submitHandlersAtom = atom<SubmitHandlers>({});
 
 export const buyerInfoAtom = atom<BuyerInfoInput | null>(null);
+export const userInfoAtom = atom<UserInput | null>(null);
 
 export const nonLoggedInStatusAtom = atom<'success' | 'pending' | null>(null);

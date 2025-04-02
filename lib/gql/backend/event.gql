@@ -53,6 +53,19 @@ query GetEvent($id: MongoID, $shortid: String) {
     }
     space
     timezone
+    application_questions {
+      _id
+      question
+      required
+      position
+      type
+      options
+      select_type
+    }
+    application_profile_fields {
+      field
+      required
+    }
   }
 }
 
