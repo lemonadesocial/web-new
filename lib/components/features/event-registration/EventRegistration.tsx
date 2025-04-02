@@ -8,7 +8,7 @@ import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
 import { Avatar, Card, ModalContainer, SkeletonBox } from '$lib/components/core';
 
-import { approvalRequiredAtom, currencyAtom, eventAtom, hasSingleFreeTicketAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
+import { approvalRequiredAtom, buyerInfoAtom, currencyAtom, eventAtom, hasSingleFreeTicketAtom, nonLoggedInStatusAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
 
 import { EventRegistrationStoreProvider } from './context';
 import { TicketSelect } from './TicketSelect';
@@ -19,6 +19,24 @@ const EventRegistrationContent: React.FC = () => {
   const approvalRequired = useAtomValue(approvalRequiredAtom);
   const ticketLimit = useAtomValue(ticketLimitAtom);
   const hasSingleFreeTicket = useAtomValue(hasSingleFreeTicketAtom);
+  const nonLoggedInStatus = useAtomValue(nonLoggedInStatusAtom);
+  const buyerInfo = useAtomValue(buyerInfoAtom);
+
+  if (nonLoggedInStatus) {
+    return (
+      <Card.Root className="p-4">
+        <h3 className="text-xl font-semibold">
+          {nonLoggedInStatus === 'success' ? `You're In` : 'Pending Approval'}
+        </h3>
+        <p className="text-secondary">
+          {
+            nonLoggedInStatus === 'success'
+              ? <>A confirmation email has been sent to <span style={{ fontWeight: 'bold' }}>{buyerInfo?.email}</span></>
+              : 'We will let you know when the host approves your registration.'}
+        </p>
+      </Card.Root>
+    );
+  }
 
   return (
     <Card.Root>

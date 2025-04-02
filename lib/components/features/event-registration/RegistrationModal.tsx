@@ -6,10 +6,13 @@ import { BuyerInfoForm } from "./forms/BuyerInfoForm";
 import { registrationModal, useAtomValue } from "./store";
 import { SubmitForm } from "./SubmitForm";
 import { pricingInfoAtom } from "./store";
+import { useRedeemTickets } from "./hooks";
 
 export function RegistrationModal() {
   const me = useMe();
   const pricing = useAtomValue(pricingInfoAtom);
+
+  const { redeemTickets, loadingRedeem } = useRedeemTickets();
 
   const isFree = pricing?.total === '0';
 
@@ -47,9 +50,9 @@ export function RegistrationModal() {
         </div>
         {
           isFree && (
-            <SubmitForm onComplete={() => registrationModal.close()}>
+            <SubmitForm onComplete={() => redeemTickets()}>
               {(handleSubmit) => (
-                <Button onClick={handleSubmit}>Register</Button>
+                <Button onClick={handleSubmit} loading={loadingRedeem}>Register</Button>
               )}
             </SubmitForm>
           )

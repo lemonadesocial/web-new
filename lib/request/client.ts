@@ -118,6 +118,14 @@ export class GraphqlClient {
         request.resolve({ data: result, error: null });
       }
     } catch (error) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const gqlError = error as { response: { errors: Array<{ message: string }> } };
+        if (gqlError.response?.errors?.[0]?.message) {
+          request.resolve({ data: null, error: { message: gqlError.response.errors[0].message } });
+          return;
+        }
+      }
+
       request.resolve({ data: null, error });
     } finally {
       this.processing = false;

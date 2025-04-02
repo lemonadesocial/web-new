@@ -1,6 +1,6 @@
 
 import { Button } from "$lib/components/core";
-// import { toast } from "$lib/components/core/toast";
+import { toast } from "$lib/components/core/toast";
 import { RegistrationModal } from "./RegistrationModal";
 import { approvalRequiredAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, registrationModal, useAtomValue } from "./store";
 import { useSession } from "$lib/hooks/useSession";
@@ -47,7 +47,7 @@ export function RegisterButton() {
     <Button
       variant="secondary"
       disabled={disabled}
-      onClick={() => approvalRequired ? openRegistrationModal() : redeemTickets()}
+      onClick={() => isFree ? redeemTickets() : toast.success('Coming soon!')}
       loading={loadingRedeem}
     >
       {approvalRequired ? (isFree ? 'One-click Apply' : 'Request to Join') : (isFree ? 'One-click Register' : 'Get Tickets')}

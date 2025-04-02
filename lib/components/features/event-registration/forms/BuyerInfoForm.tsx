@@ -2,7 +2,7 @@ import { useForm, UseFormReturn } from "react-hook-form";
 import { useEffect } from "react";
 
 import { BuyerInfoInput } from "$lib/generated/backend/graphql";
-import { formInstancesAtom, submitHandlersAtom, useSetAtom } from "../store";
+import { buyerInfoAtom, formInstancesAtom, submitHandlersAtom, useSetAtom } from "../store";
 import { ErrorText, Input, LabeledInput } from "$lib/components/core";
 
 const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -17,9 +17,10 @@ export function BuyerInfoForm() {
   });
   const setFormInstances = useSetAtom(formInstancesAtom);
   const setSubmitHandlers = useSetAtom(submitHandlersAtom);
+  const setBuyerInfo = useSetAtom(buyerInfoAtom);
 
   const onSubmit = (data: BuyerInfoInput) => {
-    console.log('BuyerInfoForm submitted with:', data);
+    setBuyerInfo(data);
   };
 
   useEffect(() => {

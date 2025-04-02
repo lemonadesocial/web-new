@@ -12,6 +12,7 @@ export function SubmitForm({ children, onComplete }: { children: (handleSubmit: 
     const forms: UseFormReturn<any>[] = Object.values(formInstances);
 
     const isValid: boolean[] = await Promise.all(forms.map(form => form.trigger()));
+
     if (isValid.every(Boolean)) {
       formKeys.forEach(key => {
         const form = formInstances[key];
