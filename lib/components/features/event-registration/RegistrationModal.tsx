@@ -3,18 +3,20 @@ import { useMe } from "$lib/hooks/useMe";
 import { userAvatar } from "$lib/utils/user";
 
 import { BuyerInfoForm } from "./forms/BuyerInfoForm";
-import { registrationModal, requiredProfileFieldsAtom, useAtomValue } from "./store";
+import { eventDataAtom, registrationModal, requiredProfileFieldsAtom, useAtomValue } from "./store";
 import { SubmitForm } from "./SubmitForm";
 import { pricingInfoAtom } from "./store";
 import { useRedeemTickets } from "./hooks";
 import { UserForm } from "./forms/UserInfoForm";
 import { useSession } from "$lib/hooks/useSession";
+import { ApplicationForm } from "./forms/ApplicationForm";
 
 export function RegistrationModal() {
   const me = useMe();
   const session = useSession();
   const pricing = useAtomValue(pricingInfoAtom);
   const requiredProfileFields = useAtomValue(requiredProfileFieldsAtom);
+  const event = useAtomValue(eventDataAtom);
 
   const { redeemTickets, loadingRedeem } = useRedeemTickets();
 
@@ -53,6 +55,9 @@ export function RegistrationModal() {
           }
           {
             !!requiredProfileFields?.length && <UserForm />
+          }
+          {
+            !!event.application_questions?.length && <ApplicationForm />
           }
         </div>
         {
