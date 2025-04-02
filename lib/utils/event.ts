@@ -7,6 +7,7 @@ import {
   EventTicketCategory,
   EventTicketPrice,
   PurchasableTicketType,
+  Ticket,
 } from '$lib/generated/backend/graphql';
 
 import { formatCurrency } from './string';
@@ -113,4 +114,12 @@ export function getPaymentAccounts(prices: EventTicketPrice[]) {
     .map(account => account._id);
 
   return [...new Set(accounts)];
+}
+
+export function attending(event: Event, user: string | undefined) {
+  return event.accepted?.includes(user);
+}
+
+export function getAssignedTicket(tickets: Ticket[], user?: string, email?: string) {
+  return tickets?.find(({ assigned_to, assigned_email }) => assigned_to === user || assigned_email === email);
 }

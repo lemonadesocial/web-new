@@ -22,16 +22,20 @@ interface Modal {
   close: (id?: number) => void;
 }
 
-export const modal: Modal = {
-  open: () => {
-    throw new Error('Modal not initialized');
-  },
-  close: () => {
-    throw new Error('Modal not initialized');
-  },
-};
+export function createModal(): Modal {
+  return ({
+    open: () => {
+      throw new Error('Modal not initialized');
+    },
+    close: () => {
+      throw new Error('Modal not initialized');
+    },
+  });
+}
 
-export function ModalContainer() {
+export const modal = createModal();
+
+export function ModalContainer({ modal }: { modal: Modal }) {
   const [modals, setModals] = React.useState<ModalItem[]>([]);
   const nextId = React.useRef(0);
   const modalRefs = React.useRef<Map<number, HTMLDivElement>>(new Map());

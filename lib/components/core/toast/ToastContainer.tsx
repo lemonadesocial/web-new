@@ -37,8 +37,6 @@ const Toast: React.FC<{ toast: ToastProps }> = ({ toast }) => {
 export const ToastContainer: React.FC = () => {
   const [activeToast, setActiveToast] = useState<ToastProps | null>(null);
 
-  console.log(activeToast)
-
   useEffect(() => {
     const unsubscribe = toast.subscribe(setActiveToast);
     return unsubscribe;

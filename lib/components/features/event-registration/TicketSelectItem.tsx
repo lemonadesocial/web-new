@@ -49,11 +49,9 @@ export function TicketSelectItem({ ticketType, single }: { ticketType: Purchasab
       setSelectedPaymentAccount(null);
     } else {
       const selectedTicketTypes = ticketTypes.filter(ticket => filteredPurchaseItems.some(item => item.id === ticket._id));
-      console.log(ticketTypes, filteredPurchaseItems);
 
       const paymentCurrencies = selectedTicketTypes.map(ticket => ticket.prices.map(price => price.currency));
       const newCurrencies = intersection(...paymentCurrencies);
-      console.log(newCurrencies);
       setCurrencies(newCurrencies);
 
       const selectedPaymentAccounts = selectedTicketTypes.map(ticket => getPaymentAccounts(ticket.prices.filter(price => newCurrencies.includes(price.currency))));

@@ -10,6 +10,7 @@ query GetEvent($id: MongoID, $shortid: String) {
     host_expanded {
       ...User
     }
+    accepted
     new_new_photos_expanded {
       _id
       stamp
@@ -224,92 +225,37 @@ query getEventTicketTypes($event: MongoID!) {
   }
 }
 
-query CalculateTicketsPricing($input: CalculateTicketsPricingInput!) {
-  calculateTicketsPricing(input: $input) {
-    deposit_infos {
-      minimum_amount
-      minimum_percent
-    }
-    discount
-    payment_accounts {
+query getMyEventJoinRequest($event: MongoID!) {
+  getMyEventJoinRequest(event: $event) {
+    _id
+    created_at
+    decided_at
+    decided_by
+    decided_by_expanded {
       _id
-      account_info {
-        ... on SolanaAccount {
-          currencies
-          currency_map
-          address
-          network
-        }
-        ... on EthereumAccount {
-          currencies
-          currency_map
-          address
-          network
-        }
-        ... on SafeAccount {
-          currencies
-          currency_map
-          address
-          network
-          owners
-          threshold
-          pending
-        }
-        ... on DigitalAccount {
-          currencies
-          currency_map
-          account_id
-        }
-        ... on StripeAccount {
-          currencies
-          currency_map
-          account_id
-          publishable_key
-        }
-        ... on EthereumEscrowAccount {
-          currencies
-          currency_map
-          address
-          network
-          minimum_deposit_percent
-          host_refund_percent
-          refund_policies {
-            percent
-            timestamp
-          }
-        }
-        ... on EthereumRelayAccount {
-          currencies
-          currency_map
-          address
-          network
-          payment_splitter_contract
-        }
-        ... on EthereumStakeAccount {
-          currencies
-          currency_map
-          address
-          network
-          config_id
-          requirement_checkin_before
-        }
-      }
-      active
-      created_at
-      escrow {
-        minimum_amount
-        minimum_percent
-      }
-      fee
-      provider
-      relay {
-        payment_splitter_contract
-      }
-      title
-      type
-      user
+      display_name
+      image_avatar
+      username
+      wallets
     }
-    subtotal
-    total
+    state
+    payment {
+      _id
+      state
+    }
+    requested_tickets {
+      count
+      ticket_type
+    }
+    ticket_types_expanded {
+      _id
+      title
+    }
+  }
+}
+
+mutation acceptEvent($id: MongoID!, $email: String) {
+  acceptEvent(_id: $id, email: $email) {
+    state
   }
 }

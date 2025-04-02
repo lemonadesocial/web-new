@@ -9,8 +9,8 @@ export type QueryOptions<T, V> = {
 
 export type MutationOptions<T, V> = {
   variables?: V;
-  onError?: (error: unknown) => void;
-  onComplete?: (client: GraphqlClient, resonse: T) => void;
+  onError?: (error: Error) => void;
+  onComplete?: (client: GraphqlClient, response: T) => void;
 };
 
 export type FetchPolicy = 'cache-first' | 'cache-and-network' | 'network-only';
