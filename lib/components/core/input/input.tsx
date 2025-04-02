@@ -23,8 +23,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
 
   const [inputValue, setInputValue] = React.useState(value);
 
-  const [inputValue, setInputValue] = React.useState(value);
-
   const finalClassName = twMerge(
     clsx(
       baseClasses,

@@ -4527,6 +4527,10 @@ export type Query = {
   getSpaceEventRequests: GetSpaceEventRequestsResponse;
   getSpaceEventsInsight: SpaceEventInsightResponse;
   getSpaceMember: SpaceMember;
+  getSpaceMemberAttendedEvents: Array<Event>;
+  getSpaceMemberHostedEvents: Array<Event>;
+  getSpaceMemberSubmittedEvents: Array<Event>;
+  getSpaceMembersLeaderboard: SpaceMembersLeaderboardResponse;
   getSpaceStatistics: SpaceStatisticResponse;
   getStakePaymentStatistics: StakePaymentStatistics;
   getStore?: Maybe<Store>;
@@ -5086,6 +5090,34 @@ export type QueryGetSpaceMemberArgs = {
   _id?: InputMaybe<Scalars['MongoID']['input']>;
   space: Scalars['MongoID']['input'];
   user?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryGetSpaceMemberAttendedEventsArgs = {
+  _id: Scalars['MongoID']['input'];
+  space: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetSpaceMemberHostedEventsArgs = {
+  _id: Scalars['MongoID']['input'];
+  space: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetSpaceMemberSubmittedEventsArgs = {
+  _id: Scalars['MongoID']['input'];
+  space: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetSpaceMembersLeaderboardArgs = {
+  limit?: Scalars['Int']['input'];
+  roles?: InputMaybe<Array<SpaceRole>>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  skip?: Scalars['Int']['input'];
+  sort?: InputMaybe<SortInput>;
+  space: Scalars['MongoID']['input'];
 };
 
 
@@ -6438,6 +6470,32 @@ export type SpaceMemberBase = {
   user?: Maybe<Scalars['MongoID']['output']>;
   user_name?: Maybe<Scalars['String']['output']>;
   visible?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type SpaceMemberLeaderboard = {
+  __typename?: 'SpaceMemberLeaderboard';
+  _id: Scalars['MongoID']['output'];
+  attended_count: Scalars['Float']['output'];
+  decided_by?: Maybe<Scalars['MongoID']['output']>;
+  deleted_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  hosted_event_count: Scalars['Float']['output'];
+  non_user_login?: Maybe<UserWithEmail>;
+  role: SpaceRole;
+  role_changed_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  space: Scalars['MongoID']['output'];
+  state: SpaceMembershipState;
+  submitted_event_count: Scalars['Float']['output'];
+  user?: Maybe<Scalars['MongoID']['output']>;
+  user_expanded?: Maybe<UserWithEmail>;
+  user_name?: Maybe<Scalars['String']['output']>;
+  visible?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type SpaceMembersLeaderboardResponse = {
+  __typename?: 'SpaceMembersLeaderboardResponse';
+  items: Array<SpaceMemberLeaderboard>;
+  total: Scalars['Int']['output'];
 };
 
 export enum SpaceMembershipState {
