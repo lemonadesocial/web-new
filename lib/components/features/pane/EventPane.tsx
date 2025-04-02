@@ -28,7 +28,7 @@ export function EventPane({ eventId }: { eventId: string }) {
 
   useTickets(event);
 
-  const hosts = [event.host_expanded, ...(event.visible_cohosts_expanded || [])];
+  const hosts = [event?.host_expanded, ...(event?.visible_cohosts_expanded || [])];
   const canManage = hosts.map((i) => i?._id).includes(me?._id);
 
   return (
@@ -80,7 +80,7 @@ export function EventPane({ eventId }: { eventId: string }) {
           <EventDateTimeBlock event={event} />
           <EventLocationBlock event={event} loading={loading} />
         </div>
-        <EventAccess event={event} />
+        {event && <EventAccess event={event} />}
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />
