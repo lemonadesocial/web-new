@@ -108,7 +108,27 @@ export class InMemoryCache {
     Object.keys(this.listeners).forEach((key) => this.notifyListeners(key));
   }
 
-  // Normalize and store entity
+  writeQuery<T, V extends Record<string, any>>({
+    query,
+    variables = {} as V,
+    data,
+  }: {
+    query: TypedDocumentNode<T, V>;
+    variables?: V;
+    data: T;
+  }) {
+    try {
+      this.normalizeAndStore(query, variables, data);
+
+      const queryKey = this.createCacheKey(query, variables);
+      if (queryKey) {
+        this.notifyListeners(queryKey);
+      }
+    } catch (error) {
+      console.error('[InMemoryCache]: Error writing to cache:', error);
+    }
+  }
+
   private storeEntity(data: any): { __ref: string } | null {
     if (!data || typeof data !== 'object') return null;
 

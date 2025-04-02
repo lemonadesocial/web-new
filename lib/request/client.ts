@@ -125,6 +125,18 @@ export class GraphqlClient {
     }
   }
 
+  writeQuery<T, V extends Record<string, any>>({
+    query,
+    variables = {} as V,
+    data,
+  }: {
+    query: TypedDocumentNode<T, V>;
+    variables?: V;
+    data: T;
+  }) {
+    this.cache?.writeQuery({ query, variables, data });
+  }
+
   writeFragment<T>({ id, data }: { id: string; data: Partial<T> }) {
     this.cache?.writeFragment({ id, data });
   }

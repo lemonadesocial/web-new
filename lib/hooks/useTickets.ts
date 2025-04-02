@@ -1,9 +1,10 @@
+import { groupBy } from "lodash";
+
 import { attending, getAssignedTicket } from "$lib/utils/event";
 import { useSession } from "./useSession";
 import { useClient, useMutation, useQuery } from "$lib/request";
 import { AcceptEventDocument, AssignTicketsDocument, Event, GetEventDocument, GetTicketsDocument, Ticket } from "$lib/generated/backend/graphql";
 import { useMe } from "./useMe";
-import { groupBy } from "lodash";
 
 export const useTickets = (event: Event) => {
   const session = useSession();
@@ -20,17 +21,15 @@ export const useTickets = (event: Event) => {
 
     if (!session?.user) return;
 
-    // client.writeFragment({
-    //   id: `Event:${event._id}`,
-    //   data: {
-    //     ...event,
-    //     accepted: [...(event.accepted || []), session.user],
-    //   },
-    // });
-
-    client.refetchQuery({
+    client.writeQuery({
       query: GetEventDocument,
       variables: { id: event._id },
+      data: {
+        getEvent: {
+          ...event,
+          accepted: [...(event.accepted || []), session.user],
+        },
+      },
     });
   };
 

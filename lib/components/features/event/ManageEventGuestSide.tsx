@@ -29,6 +29,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
   const event = data?.getEvent as Event;
   const hosts = [event.host_expanded, ...(event.visible_cohosts_expanded || [])];
 
+  console.log(event);
   useTickets(event);
 
   return (
