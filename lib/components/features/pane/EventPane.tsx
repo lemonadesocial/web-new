@@ -7,7 +7,6 @@ import { Event, GetEventDocument } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { useQuery } from '$lib/request';
 
-import RegistrationCard from '../event/RegistrationCard';
 import { AboutSection } from '../event/AboutSection';
 import { LocationSection } from '../event/LocationSection';
 import { SubEventSection } from '../event/SubEventSection';
@@ -20,11 +19,15 @@ import { userAvatar } from '$lib/utils/user';
 import { copy } from '$lib/utils/helpers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useMe } from '$lib/hooks/useMe';
+import { EventAccess } from '../event-access';
+import { useTickets } from '$lib/hooks/useTickets';
 
 export function EventPane({ eventId }: { eventId: string }) {
   const me = useMe();
   const { data, loading } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
   const event = data?.getEvent as Event;
+
+  useTickets(event);
 
   if (loading) return <>Loading...</>;
   if (!event) return <>Not Found</>;
@@ -102,7 +105,7 @@ export function EventPane({ eventId }: { eventId: string }) {
             </div>
           )}
         </div>
-        <RegistrationCard />
+        <EventAccess event={event}   />
         <AboutSection event={event} />
         <LocationSection event={event} />
         <SubEventSection event={event} />

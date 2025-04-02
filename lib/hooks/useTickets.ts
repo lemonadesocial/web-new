@@ -9,7 +9,7 @@ import { useMe } from "./useMe";
 export const useTickets = (event: Event) => {
   const session = useSession();
   const me = useMe();
-  const isAttending = attending(event, session?.user);
+  const isAttending = event ? attending(event, session?.user) : false;
 
   const [acceptEvent] = useMutation(AcceptEventDocument);
   const [assignTickets] = useMutation(AssignTicketsDocument);
@@ -35,10 +35,10 @@ export const useTickets = (event: Event) => {
 
   useQuery(GetTicketsDocument, {
     variables: {
-      event: event._id,
+      event: event?._id,
       user: session?.user,
     },
-    skip: !session?.user,
+    skip: !session?.user || !event?._id,
     onComplete: async (data) => {
       if (isAttending || !data?.getTickets.length || !session?.user) return;
 

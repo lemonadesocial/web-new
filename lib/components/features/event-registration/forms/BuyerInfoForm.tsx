@@ -4,8 +4,7 @@ import { useEffect } from "react";
 import { BuyerInfoInput } from "$lib/generated/backend/graphql";
 import { buyerInfoAtom, formInstancesAtom, submitHandlersAtom, useSetAtom } from "../store";
 import { ErrorText, Input, LabeledInput } from "$lib/components/core";
-
-const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+import { EMAIL_REGEX } from "$lib/utils/regex";
 
 export function BuyerInfoForm() {
   const form: UseFormReturn<BuyerInfoInput> = useForm<BuyerInfoInput>({
