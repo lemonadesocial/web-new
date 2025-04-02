@@ -47,7 +47,7 @@ export function RegisterButton() {
     <Button
       variant="secondary"
       disabled={disabled}
-      onClick={() => isFree ? redeemTickets() : toast.success('Coming soon!')}
+      onClick={() => isFree ? redeemTickets() : openRegistrationModal()}
       loading={loadingRedeem}
     >
       {approvalRequired ? (isFree ? 'One-click Apply' : 'Request to Join') : (isFree ? 'One-click Register' : 'Get Tickets')}

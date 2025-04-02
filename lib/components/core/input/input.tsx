@@ -19,7 +19,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
   error,
   ...props
 }, ref) => {
-  const baseClasses = 'w-full rounded-sm focus:outline-none border border-transparent placeholder-quaternary px-2.5 hover:border hover:border-tertiary h-10';
+  const baseClasses = 'w-full rounded-sm focus:outline-none border border-transparent placeholder-quaternary px-2.5 hover:border hover:border-tertiary h-10 font-medium';
 
   const [inputValue, setInputValue] = React.useState(value);
 

@@ -272,3 +272,7 @@ mutation acceptEvent($id: MongoID!, $email: String) {
     state
   }
 }
+
+mutation SubmitEventApplicationAnswers($answers: [EventApplicationAnswerInput!]!, $event: MongoID!, $email: String) {
+  submitEventApplicationAnswers(answers: $answers, event: $event, email: $email)
+}

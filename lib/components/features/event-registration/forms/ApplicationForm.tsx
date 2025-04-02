@@ -10,7 +10,8 @@ import {
   useSetAtom,
   eventDataAtom
 } from '../store';
-import { EventApplicationQuestion } from '$lib/generated/backend/graphql';
+import { EventApplicationAnswerInput, EventApplicationQuestion, SubmitEventApplicationAnswersDocument } from '$lib/generated/backend/graphql';
+import { useMutation } from '$lib/request';
 
 interface ApplicationFormValues {
   [key: string]: string | string[];
@@ -39,6 +40,8 @@ export function ApplicationForm() {
 
   const { control, formState: { errors } } = form;
 
+  const [submitEventApplication] = useMutation(SubmitEventApplicationAnswersDocument);
+
   const onSubmit = (data: ApplicationFormValues) => {
     const answers = questions.map(question => ({
       question: question._id,
@@ -46,7 +49,12 @@ export function ApplicationForm() {
       answers: question.type === 'options' ? data[question._id] : undefined
     }));
 
-    console.log(answers);
+    submitEventApplication({
+      variables: {
+        event: event._id,
+        answers: answers as EventApplicationAnswerInput[]
+      }
+    });
   };
 
   React.useEffect(() => {

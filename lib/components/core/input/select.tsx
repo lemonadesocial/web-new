@@ -18,7 +18,7 @@ export interface SelectProps {
 
 export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
   ({ value, onChange, options, placeholder, error, className, variant = 'default', inputSize = 'm' }, ref) => {
-    const baseClasses = 'w-full rounded-sm focus:outline-none border border-transparent placeholder-quaternary px-2.5 hover:border hover:border-tertiary h-10 flex justify-between items-center gap-1.5';
+    const baseClasses = 'w-full rounded-sm focus:outline-none border border-transparent placeholder-quaternary px-2.5 hover:border hover:border-tertiary h-10 flex justify-between items-center gap-1.5 font-medium';
 
     const triggerClassName = twMerge(
       clsx(

@@ -10,6 +10,7 @@ import { useRedeemTickets } from "./hooks";
 import { UserForm } from "./forms/UserInfoForm";
 import { useSession } from "$lib/hooks/useSession";
 import { ApplicationForm } from "./forms/ApplicationForm";
+import { CardPayment } from "./payments/CardPayment";
 
 export function RegistrationModal() {
   const me = useMe();
@@ -61,12 +62,17 @@ export function RegistrationModal() {
           }
         </div>
         {
-          isFree && (
+          isFree ? (
             <SubmitForm onComplete={() => redeemTickets()}>
               {(handleSubmit) => (
                 <Button onClick={handleSubmit} loading={loadingRedeem}>Register</Button>
               )}
             </SubmitForm>
+          ) : (
+            <div className='flex flex-col gap-4'>
+              <h3 className='font-semibold text-[24px]'>Payment</h3>
+              <CardPayment />
+            </div>
           )
         }
       </div>
