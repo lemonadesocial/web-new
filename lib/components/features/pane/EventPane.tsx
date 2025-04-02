@@ -1,40 +1,36 @@
 'use client';
 import React from 'react';
-import { format } from 'date-fns';
 
-import { Alert, Avatar, Button, Divider, drawer } from '$lib/components/core';
-import { Event, GetEventDocument } from '$lib/generated/backend/graphql';
+import { Alert, Avatar, Button, drawer } from '$lib/components/core';
+import { Event, GetEventDocument, User } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { useQuery } from '$lib/request';
+import { userAvatar } from '$lib/utils/user';
+import { copy } from '$lib/utils/helpers';
+import { LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { useMe } from '$lib/hooks/useMe';
 
-import RegistrationCard from '../event/RegistrationCard';
 import { AboutSection } from '../event/AboutSection';
 import { LocationSection } from '../event/LocationSection';
 import { SubEventSection } from '../event/SubEventSection';
 import { GalarySection } from '../event/GalarySection';
 import { CommunitySection } from '../event/CommunitySection';
 import { HostedBySection } from '../event/HostedBySection';
-import { convertFromUtcToTimezone } from '$lib/utils/date';
-import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event';
-import { userAvatar } from '$lib/utils/user';
-import { copy } from '$lib/utils/helpers';
-import { LEMONADE_DOMAIN } from '$lib/utils/constants';
-import { useMe } from '$lib/hooks/useMe';
+import { EventDateTimeBlock } from '../event/EventDateTimeBlock';
+import { EventLocationBlock } from '../event/EventLocationBlock';
+import { EventRegistration } from '../event-registration';
 
 export function EventPane({ eventId }: { eventId: string }) {
   const me = useMe();
   const { data, loading } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
   const event = data?.getEvent as Event;
 
-  if (loading) return <>Loading...</>;
-  if (!event) return <>Not Found</>;
-
-  const hosts = [event.host_expanded, ...(event.visible_cohosts_expanded || [])];
+  const hosts = [event?.host_expanded, ...(event?.visible_cohosts_expanded || [])];
   const canManage = hosts.map((i) => i?._id).includes(me?._id);
 
   return (
     <div>
-      <EventPaneHeader eventShortId={event.shortid} />
+      <EventPaneHeader eventShortId={event?.shortid} />
 
       {canManage && (
         <Alert message="You have manage access for this event.">
@@ -45,17 +41,23 @@ export function EventPane({ eventId }: { eventId: string }) {
       )}
 
       <div className="p-4 flex flex-col gap-6">
-        {event.new_new_photos_expanded?.[0] && (
+        {loading ? (
           <div className="p-4">
-            <img
-              src={generateUrl(event.new_new_photos_expanded[0], 'TICKET_PHOTO')}
-              alt={event.title}
-              className="mx-auto size-[280px] aspect-square border rounded-md"
-            />
+            <div className="w-[280px] h-[280px] bg-card rounded-md m-auto" />
           </div>
+        ) : (
+          event?.new_new_photos_expanded?.[0] && (
+            <div className="p-4">
+              <img
+                src={generateUrl(event.new_new_photos_expanded[0], 'TICKET_PHOTO')}
+                alt={event.title}
+                className="mx-auto size-[280px] aspect-square border rounded-md"
+              />
+            </div>
+          )
         )}
 
-        <h3 className="text-2xl font-bold">{event.title}</h3>
+        <h3 className="text-2xl font-bold">{event?.title}</h3>
 
         <div className="flex gap-2 item-center">
           {!!hosts.filter((p) => p?.image_avatar).length && (
@@ -63,7 +65,7 @@ export function EventPane({ eventId }: { eventId: string }) {
               {hosts
                 .filter((p) => p?.image_avatar)
                 .map((p) => (
-                  <Avatar key={p?._id} src={userAvatar(p)} size="sm" className="outline-2 outline-background" />
+                  <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="outline-2 outline-background" />
                 ))}
             </div>
           )}
@@ -72,41 +74,15 @@ export function EventPane({ eventId }: { eventId: string }) {
         </div>
 
         <div className="flex gap-4">
-          <div className="flex gap-4 flex-1">
-            <div className="border rounded-sm size-12 text-secondary flex flex-col justify-center items-center font-medium">
-              <span className="py-0.5 text-xs">
-                {format(convertFromUtcToTimezone(event.start, event.timezone as string), 'MMM')}
-              </span>
-              <Divider className="h-1 w-full" />
-              <span>{format(convertFromUtcToTimezone(event.start, event.timezone as string), 'dd')}</span>
-            </div>
-            <div className="flex flex-col">
-              <span>{getEventDateBlockStart(event)}</span>
-              <span className="text-sm">{getEventDateBlockRange(event)}</span>
-            </div>
-          </div>
-
-          {event.address && (
-            <div className="flex gap-4 flex-1">
-              <div className="border rounded-sm size-12 flex items-center justify-center">
-                <i className="icon-location-outline" />
-              </div>
-              <div>
-                <p>
-                  {event.address?.title} <i className="icon-arrow-outward text-quaternary size-[18px]" />
-                </p>
-                <p className="text-sm">
-                  {[event.address?.city || event.address?.region, event.address?.country].filter(Boolean).join(', ')}
-                </p>
-              </div>
-            </div>
-          )}
+          <EventDateTimeBlock event={event} />
+          <EventLocationBlock event={event} loading={loading} />
         </div>
-        <RegistrationCard />
-        <AboutSection event={event} />
-        <LocationSection event={event} />
+
+        {event && <EventRegistration event={event} />}
+        <AboutSection event={event} loading={loading} />
+        <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />
-        <GalarySection event={event} />
+        <GalarySection event={event} loading={loading} />
         <CommunitySection event={event} />
         <HostedBySection event={event} />
       </div>
@@ -114,26 +90,30 @@ export function EventPane({ eventId }: { eventId: string }) {
   );
 }
 
-function EventPaneHeader({ eventShortId }: { eventShortId: string }) {
+function EventPaneHeader({ eventShortId }: { eventShortId?: string }) {
   return (
     <div className="px-3 py-2 flex gap-3 border-b sticky top-0 z-50 backdrop-blur-xl">
       <Button icon="icon-chevron-double-right" variant="tertiary-alt" size="sm" onClick={() => drawer.close()} />
-      <Button
-        iconLeft="icon-duplicate"
-        variant="tertiary-alt"
-        size="sm"
-        onClick={() => copy(`${LEMONADE_DOMAIN}/e/${eventShortId}`)}
-      >
-        Copy Link
-      </Button>
-      <Button
-        iconRight="icon-arrow-outward"
-        variant="tertiary-alt"
-        size="sm"
-        onClick={() => window.open(`/e/${eventShortId}`, '_blank')}
-      >
-        Event Page
-      </Button>
+      {eventShortId && (
+        <>
+          <Button
+            iconLeft="icon-duplicate"
+            variant="tertiary-alt"
+            size="sm"
+            onClick={() => copy(`${LEMONADE_DOMAIN}/e/${eventShortId}`)}
+          >
+            Copy Link
+          </Button>
+          <Button
+            iconRight="icon-arrow-outward"
+            variant="tertiary-alt"
+            size="sm"
+            onClick={() => window.open(`/e/${eventShortId}`, '_blank')}
+          >
+            Event Page
+          </Button>
+        </>
+      )}
     </div>
   );
 }
