@@ -1,9 +1,14 @@
-import { Button, modal } from "$lib/components/core";
+
+import { Button } from "$lib/components/core";
 import { toast } from "$lib/components/core/toast";
 import { RegistrationModal } from "./RegistrationModal";
-import { approvalRequiredAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, useAtomValue } from "./store";
+import { approvalRequiredAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, registrationModal, useAtomValue } from "./store";
+import { useSession } from "$lib/hooks/useSession";
+import { useRedeemTickets } from "./hooks";
 
 export function RegisterButton() {
+  const session = useSession();
+
   const pricingInfo = useAtomValue(pricingInfoAtom);
   const purchaseItems = useAtomValue(purchaseItemsAtom);
   const event = useAtomValue(eventDataAtom);
@@ -15,16 +20,24 @@ export function RegisterButton() {
   const connectWalletRequired = event.rsvp_wallet_platforms?.length;
   const hasTerms = event.terms_text;
 
+  const { redeemTickets, loadingRedeem } = useRedeemTickets();
+
   const disabled = purchaseItems.length ? !pricingInfo : true;
   const isFree = pricingInfo?.total === '0';
 
   const openRegistrationModal = () => {
-    toast.success('Coming soon!');
-    return;
-    modal.open(RegistrationModal, { skipBaseClassName: true });
+    // toast.success('Coming soon!');
+    // return;
+    registrationModal.open(RegistrationModal, { skipBaseClassName: true });
   };
 
-  if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms) return (
+  if (event.approval_required && !session) return (
+    <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
+      Sign In
+    </Button>
+  );
+
+  if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session) return (
     <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
       {approvalRequired ? 'Request to Join' : isFree ? 'Register' : 'Get Tickets'}
     </Button>
@@ -34,7 +47,8 @@ export function RegisterButton() {
     <Button
       variant="secondary"
       disabled={disabled}
-      onClick={() => approvalRequired ? openRegistrationModal() : undefined}
+      onClick={() => isFree ? redeemTickets() : toast.success('Coming soon!')}
+      loading={loadingRedeem}
     >
       {approvalRequired ? (isFree ? 'One-click Apply' : 'Request to Join') : (isFree ? 'One-click Register' : 'Get Tickets')}
     </Button>

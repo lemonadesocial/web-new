@@ -18,14 +18,17 @@ import { CommunitySection } from '../event/CommunitySection';
 import { HostedBySection } from '../event/HostedBySection';
 import { EventDateTimeBlock } from '../event/EventDateTimeBlock';
 import { EventLocationBlock } from '../event/EventLocationBlock';
-import { EventRegistration } from '../event-registration';
+import { EventAccess } from '../event-access';
+import { useTickets } from '$lib/hooks/useTickets';
 
 export function EventPane({ eventId }: { eventId: string }) {
   const me = useMe();
   const { data, loading } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
   const event = data?.getEvent as Event;
 
-  const hosts = [event?.host_expanded, ...(event?.visible_cohosts_expanded || [])];
+  useTickets(event);
+
+  const hosts = [event.host_expanded, ...(event.visible_cohosts_expanded || [])];
   const canManage = hosts.map((i) => i?._id).includes(me?._id);
 
   return (
@@ -77,8 +80,7 @@ export function EventPane({ eventId }: { eventId: string }) {
           <EventDateTimeBlock event={event} />
           <EventLocationBlock event={event} loading={loading} />
         </div>
-
-        {event && <EventRegistration event={event} />}
+        <EventAccess event={event} />
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />

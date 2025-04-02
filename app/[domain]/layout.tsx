@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 
-import { BottomSheetContainer, DrawerContainer, ModalContainer } from '$lib/components/core/dialog';
+import { BottomSheetContainer, DrawerContainer, modal, ModalContainer } from '$lib/components/core/dialog';
 import { ToastContainer } from '$lib/components/core/toast';
 
 import { getSiteData } from '$utils/fetchers';
@@ -31,7 +31,7 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
     <Providers>
       <StyleVariables theme={data.theme.styles} />
       {props.children}
-      <ModalContainer />
+      <ModalContainer modal={modal} />
       <DrawerContainer />
       <BottomSheetContainer />
       <ToastContainer />

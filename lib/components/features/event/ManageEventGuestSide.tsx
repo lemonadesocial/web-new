@@ -1,21 +1,24 @@
 'use client';
 import React from 'react';
+import { format } from 'date-fns';
 
 import { Event, GetEventDocument, GetEventQuery, User } from '$lib/generated/backend/graphql';
 import { useQuery } from '$lib/request';
 import { Avatar, Divider } from '$lib/components/core';
-import { format } from 'date-fns';
 import { generateUrl } from '$lib/utils/cnd';
+import { convertFromUtcToTimezone } from '$lib/utils/date';
+import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event';
+import { userAvatar } from '$lib/utils/user';
+import { useTickets } from '$lib/hooks/useTickets';
+
 import { AboutSection } from './AboutSection';
 import { LocationSection } from './LocationSection';
 import { SubEventSection } from './SubEventSection';
 import { GalarySection } from './GalarySection';
 import { CommunitySection } from './CommunitySection';
 import { HostedBySection } from './HostedBySection';
-import { convertFromUtcToTimezone } from '$lib/utils/date';
-import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event';
-import { userAvatar } from '$lib/utils/user';
-import { EventRegistration } from '$lib/components/features/event-registration';
+
+import { EventAccess } from '../event-access';
 
 export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
   const { data, loading } = useQuery(GetEventDocument, {
@@ -26,6 +29,8 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
 
   const event = data?.getEvent as Event;
   const hosts = [event.host_expanded, ...(event.visible_cohosts_expanded || [])];
+
+  useTickets(event);
 
   return (
     <div className="flex gap-[72px]">
@@ -90,7 +95,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
             </div>
           )}
         </div>
-        <EventRegistration event={event} />
+        <EventAccess event={event} />
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />

@@ -1,0 +1,137 @@
+query CalculateTicketsPricing($input: CalculateTicketsPricingInput!) {
+  calculateTicketsPricing(input: $input) {
+    deposit_infos {
+      minimum_amount
+      minimum_percent
+    }
+    discount
+    payment_accounts {
+      _id
+      account_info {
+        ... on SolanaAccount {
+          currencies
+          currency_map
+          address
+          network
+        }
+        ... on EthereumAccount {
+          currencies
+          currency_map
+          address
+          network
+        }
+        ... on SafeAccount {
+          currencies
+          currency_map
+          address
+          network
+          owners
+          threshold
+          pending
+        }
+        ... on DigitalAccount {
+          currencies
+          currency_map
+          account_id
+        }
+        ... on StripeAccount {
+          currencies
+          currency_map
+          account_id
+          publishable_key
+        }
+        ... on EthereumEscrowAccount {
+          currencies
+          currency_map
+          address
+          network
+          minimum_deposit_percent
+          host_refund_percent
+          refund_policies {
+            percent
+            timestamp
+          }
+        }
+        ... on EthereumRelayAccount {
+          currencies
+          currency_map
+          address
+          network
+          payment_splitter_contract
+        }
+        ... on EthereumStakeAccount {
+          currencies
+          currency_map
+          address
+          network
+          config_id
+          requirement_checkin_before
+        }
+      }
+      active
+      created_at
+      escrow {
+        minimum_amount
+        minimum_percent
+      }
+      fee
+      provider
+      relay {
+        payment_splitter_contract
+      }
+      title
+      type
+      user
+    }
+    subtotal
+    total
+  }
+}
+
+query getTickets ($event: MongoID, $user: MongoID, $ticket_types: [MongoID!], $email: String) {
+  getTickets(event: $event, user: $user, ticket_types: $ticket_types, email: $email) {
+    _id
+    accepted
+    assigned_email
+    assigned_to
+    assigned_to_expanded {
+      _id,
+      name,
+      new_photos_expanded(limit: 1) {
+        _id
+        key
+        bucket
+      }
+    }
+    event
+    invited_by
+    type
+    type_expanded {
+      _id
+      title
+    }
+    shortid
+  }
+}
+
+mutation redeemTickets($event: MongoID!, $items: [PurchasableItem!]!, $buyer_info: BuyerInfoInput, $inviter: MongoID, $user_info: UserInput, $connect_wallets: [ConnectWalletInput!]) {
+  redeemTickets(input: { event: $event, items: $items, buyer_info: $buyer_info, inviter: $inviter, user_info: $user_info, connect_wallets: $connect_wallets }) {
+    tickets {
+      _id
+      accepted
+      assigned_email
+      assigned_to
+      event
+      invited_by
+      type
+    }
+    join_request {
+      _id
+      state
+    }
+  }
+}
+
+mutation AssignTickets($input: AssignTicketsInput!) {
+  assignTickets(input: $input)
+}
