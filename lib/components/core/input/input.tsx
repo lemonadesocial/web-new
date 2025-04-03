@@ -22,8 +22,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
 }, ref) => {
   const baseClasses = 'w-full rounded-sm focus:outline-none border border-transparent placeholder-quaternary px-2.5 hover:border hover:border-tertiary h-10 font-medium';
 
-  const [inputValue, setInputValue] = React.useState(value);
-
   const finalClassName = twMerge(
     clsx(
       baseClasses,
@@ -35,7 +33,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
         'text-sm': inputSize === 's',
         'text-base': inputSize === 'm',
       },
-      inputValue && 'border border-tertiary',
       error && 'border border-error',
       className
     )
@@ -46,10 +43,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
       ref={ref}
       type={type}
       value={value}
-      onChange={e => {
-        onChange?.(e);
-        setInputValue(e.target.value);
-      }}
+      onChange={onChange}
       placeholder={placeholder}
       className={finalClassName}
       {...props}

@@ -1,0 +1,19 @@
+mutation createStripeCard($paymentMethod: String!) {
+  createStripeCard(payment_method: $paymentMethod) {
+    _id
+    provider_id
+  }
+}
+
+query getStripeCards {
+  getStripeCards {
+    _id
+    active
+    brand
+    last4
+    name
+    provider_id
+    stamp
+    user
+  }
+}
