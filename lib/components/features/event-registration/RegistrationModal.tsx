@@ -10,7 +10,7 @@ import { useRedeemTickets } from "./hooks";
 import { UserForm } from "./forms/UserInfoForm";
 import { useSession } from "$lib/hooks/useSession";
 import { ApplicationForm } from "./forms/ApplicationForm";
-import { CardPayment } from "./payments/CardPayment";
+// import { CardPayment } from "./payments/CardPayment";
 
 export function RegistrationModal() {
   const me = useMe();
