@@ -5,10 +5,13 @@ import { EventListCard } from '../EventList';
 import { useQuery } from '$lib/request';
 import Link from 'next/link';
 
-export function SubEventSection({ event }: { event: Event }) {
-  const { data } = useQuery(GetEventsDocument, { variables: { skip: 0, limit: 1, subeventParent: event._id } });
+export function SubEventSection({ event }: { event?: Event }) {
+  const { data } = useQuery(GetEventsDocument, {
+    variables: { skip: 0, limit: 1, subeventParent: event?._id },
+    skip: !event?._id,
+  });
   const events = (data?.getEvents || []) as Event[];
-  if (!event.subevent_enabled) return null;
+  if (!event?.subevent_enabled) return null;
 
   return (
     <div className="event-description flex flex-col gap-2 w-full">

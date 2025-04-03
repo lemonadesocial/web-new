@@ -7,10 +7,10 @@ import { generateUrl } from '$lib/utils/cnd';
 import { COMMUNITY_SOCIAL_LINKS } from '../community/constants';
 import { useMe } from '$lib/hooks/useMe';
 
-export function CommunitySection({ event }: { event: Event }) {
+export function CommunitySection({ event }: { event?: Event }) {
   const me = useMe();
 
-  const { data } = useQuery(GetSpaceDocument, { variables: { id: event.space }, skip: !event.space });
+  const { data } = useQuery(GetSpaceDocument, { variables: { id: event?.space }, skip: !event?.space });
   const space = data?.getSpace as Space;
 
   if (!space) return null;

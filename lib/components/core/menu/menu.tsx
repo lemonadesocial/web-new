@@ -69,7 +69,7 @@ function MenuContent({
             ...floatingStyles,
           }}
           className={twMerge(
-            'menu outline outline-tertiary/4 rounded-sm bg-menu backdrop-blur-md w-fit p-4 z-50 shadow-md',
+            'menu outline outline-tertiary/4 rounded-sm bg-overlay-secondary backdrop-blur-md w-fit p-4 z-50 shadow-md',
             className,
           )}
           role="menu"

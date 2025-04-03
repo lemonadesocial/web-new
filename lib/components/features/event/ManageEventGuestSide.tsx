@@ -2,7 +2,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 
-import { Event, GetEventDocument, GetEventQuery } from '$lib/generated/backend/graphql';
+import { Event, GetEventDocument, GetEventQuery, User } from '$lib/generated/backend/graphql';
 import { useQuery } from '$lib/request';
 import { Avatar, Divider } from '$lib/components/core';
 import { generateUrl } from '$lib/utils/cnd';
@@ -21,7 +21,7 @@ import { HostedBySection } from './HostedBySection';
 import { EventAccess } from '../event-access';
 
 export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
-  const { data } = useQuery(GetEventDocument, {
+  const { data, loading } = useQuery(GetEventDocument, {
     variables: { id: eventDetail._id },
     skip: !eventDetail._id,
     initData: { getEvent: eventDetail } as unknown as GetEventQuery,
@@ -56,12 +56,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
               {hosts
                 .filter((p) => p?.image_avatar)
                 .map((p) => (
-                  <Avatar
-                    key={p?._id}
-                    src={userAvatar(p)}
-                    size="sm"
-                    className="ring-2 border-background"
-                  />
+                  <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="ring-2 border-background" />
                 ))}
             </div>
           )}
@@ -101,10 +96,10 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           )}
         </div>
         <EventAccess event={event} />
-        <AboutSection event={event} />
-        <LocationSection event={event} />
+        <AboutSection event={event} loading={loading} />
+        <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />
-        <GalarySection event={event} />
+        <GalarySection event={event} loading={loading} />
       </div>
     </div>
   );
