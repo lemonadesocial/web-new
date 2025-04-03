@@ -60,6 +60,9 @@ export function RegistrationModal() {
           {
             !!event.application_questions?.length && <ApplicationForm />
           }
+          {
+            !!requiredProfileFields?.length && <UserForm />
+          }
         </div>
         {
           isFree ? (
