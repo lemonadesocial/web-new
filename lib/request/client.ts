@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { GraphQLClient } from 'graphql-request';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { InMemoryCache } from './cache';

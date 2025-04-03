@@ -1,11 +1,27 @@
-import { UseFormReturn } from "react-hook-form";
-import { Atom, atom, WritableAtom, useAtom as useJotaiAtom, useAtomValue as useJotaiAtomValue, useSetAtom as useJotaiSetAtom } from "jotai";
-import { useContext } from "react";
+import { UseFormReturn } from 'react-hook-form';
+import {
+  Atom,
+  atom,
+  WritableAtom,
+  useAtom as useJotaiAtom,
+  useAtomValue as useJotaiAtomValue,
+  useSetAtom as useJotaiSetAtom,
+} from 'jotai';
+import { useContext } from 'react';
 
-import { ApplicationProfileField, BuyerInfoInput, Event, NewPaymentAccount, PricingInfo, PurchasableItem, PurchasableTicketType, UserInput } from '$lib/generated/backend/graphql';
+import {
+  ApplicationProfileField,
+  BuyerInfoInput,
+  Event,
+  NewPaymentAccount,
+  PricingInfo,
+  PurchasableItem,
+  PurchasableTicketType,
+  UserInput,
+} from '$lib/generated/backend/graphql';
 
-import { EventRegistrationStoreContext } from "./context";
-import { createModal } from "$lib/components/core";
+import { EventRegistrationStoreContext } from './context';
+import { createModal } from '$lib/components/core';
 
 export const useEventRegistrationStore = () => {
   const store = useContext(EventRegistrationStoreContext);
@@ -14,7 +30,7 @@ export const useEventRegistrationStore = () => {
 };
 
 export function useAtom<Value, Update>(
-  atom: Atom<Value> | WritableAtom<Value, Update[], void>
+  atom: Atom<Value> | WritableAtom<Value, Update[], void>,
 ): [Value, (...args: Update[]) => void] {
   const store = useEventRegistrationStore();
   return useJotaiAtom(atom, { store });
@@ -25,9 +41,7 @@ export function useAtomValue<Value>(atom: Atom<Value>): Value {
   return useJotaiAtomValue(atom, { store });
 }
 
-export function useSetAtom<Value, Update>(
-  atom: WritableAtom<Value, Update[], void>
-): (...args: Update[]) => void {
+export function useSetAtom<Value, Update>(atom: WritableAtom<Value, Update[], void>): (...args: Update[]) => void {
   const store = useEventRegistrationStore();
   return useJotaiSetAtom(atom, { store });
 }
@@ -63,10 +77,12 @@ export const requiredProfileFieldsAtom = atom<ApplicationProfileField[]>([]);
 export const pricingInfoAtom = atom<PricingInfo | null>(null);
 
 interface FormInstances {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: UseFormReturn<any>;
 }
 
 interface SubmitHandlers {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: (data: any) => void;
 }
 

@@ -32,12 +32,13 @@ export const CardInput: React.FC = () => {
   const handleBlur = () => setFocusedElement(null);
 
   // Card number change handler to detect completion
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleCardChange = (event: any) => {
     setIsCardNumberComplete(event.complete);
   };
 
   // Container width and slide amount
-  const containerWidth = 400; // pixels
+  // const containerWidth = 400; // pixels
   const slideAmount = (3 / 4) * 150; // Slide left by 3/4 of container width
 
   // Determine the x-position based on focus and completion state
