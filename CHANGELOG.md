@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.1.0](https://github.com/lemonadesocial/web-new/compare/v1.0.0...v1.1.0) (2025-04-03)
+
+
+### Features
+
+* add access to event pane ([a341967](https://github.com/lemonadesocial/web-new/commit/a34196760c213e7ead7b0b4b9f1b38b8999cd6d7))
+* add approval card ([723f9fc](https://github.com/lemonadesocial/web-new/commit/723f9fcfbcacbaf674b2c096fff8d25c9a3011d0))
+* add form handles ([d070f3f](https://github.com/lemonadesocial/web-new/commit/d070f3fb22c714b80c5ae4c08724ccfc4c8669f1))
+* add ticket card ([2d2db70](https://github.com/lemonadesocial/web-new/commit/2d2db701d71aa284f48f23bd9b16381effa2e50a))
+* disable root page ([830899a](https://github.com/lemonadesocial/web-new/commit/830899a81beee470ee548ec6323cbce63681ffa6))
+* new modal instance ([14ae0c6](https://github.com/lemonadesocial/web-new/commit/14ae0c6ca0bfed2d18e1937b49395b5552ed1738))
+* redeem tickets ([21db7ff](https://github.com/lemonadesocial/web-new/commit/21db7ff57b27d85ac2ff6d2fe27f71e9f2d56c65))
+* update graphql client ([adbc7e8](https://github.com/lemonadesocial/web-new/commit/adbc7e892072fc1cc45fb98d0ab25abf8b7f6f09))
+* write query ([b8a332b](https://github.com/lemonadesocial/web-new/commit/b8a332b0feebfd0ca1b5b011791e51c83ad1b42c))
+
+
+### Bug Fixes
+
+* revert ([a45b681](https://github.com/lemonadesocial/web-new/commit/a45b681f1c291a6284194063cffcd4270d3d6c68))
+* update bg color menu ([1b31454](https://github.com/lemonadesocial/web-new/commit/1b31454da5f385f3fa31fabccfaac1f57e690d53))
+* update loading state event right pane ([d2f1ae8](https://github.com/lemonadesocial/web-new/commit/d2f1ae8424209cb6781e009ef951b8abf10f4411))
+* update loading state event right pane ([7d1545d](https://github.com/lemonadesocial/web-new/commit/7d1545d082d21cc810ade65d55618a50550e6fa7))
+
 ## 1.0.0 (2025-04-01)
 
 
