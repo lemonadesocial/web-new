@@ -9,7 +9,7 @@ export default async function Page({ params }: { params: Promise<{ shortid: stri
 
   const client = getClient();
   const { data } = await client.query({ query: GetEventDocument, variables: { shortid } });
-  const event = data.getEvent as Event;
+  const event = data?.getEvent as Event;
 
   if (!event) return notFound();
 

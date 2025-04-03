@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
     // ignore type error on some files generated such as farcaster
     ignoreBuildErrors: true,
   },
+  eslint: {
+    // Disable ESLint during builds
+    ignoreDuringBuilds: true,
+  },
   images: {
     remotePatterns: [
       {

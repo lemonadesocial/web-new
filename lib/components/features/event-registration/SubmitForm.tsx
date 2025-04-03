@@ -19,6 +19,7 @@ export function SubmitForm({ children, onComplete }: { children: (handleSubmit: 
         const handler = submitHandlers[key];
         if (form && handler) {
           const data = form.getValues();
+          console.log(data);
           handler(data);
         }
       });
