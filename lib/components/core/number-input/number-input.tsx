@@ -18,7 +18,7 @@ export function NumberInput({ value, limit, onChange, hideMinusAtZero, disabled 
           icon="icon-minus"
           onClick={value >= 1 ? () => onChange(value - 1) : undefined}
           disabled={value < 1 || disabled}
-          variant="tertiary"
+          variant="tertiary-alt"
           size="xs"
         />
         <input
@@ -32,7 +32,7 @@ export function NumberInput({ value, limit, onChange, hideMinusAtZero, disabled 
         icon="icon-plus"
         onClick={() => onChange(Math.min(value + 1, limit ?? Infinity))}
         disabled={value === limit || disabled}
-        variant="tertiary"
+        variant="tertiary-alt"
         size="xs"
       />
     </div>
