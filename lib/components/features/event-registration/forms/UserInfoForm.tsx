@@ -83,77 +83,77 @@ function ProfileField({
       case 'display_name':
         return {
           label: 'Name',
-          placeholder: 'John Smith'
+          placeholder: 'Enter your name'
         };
       case 'pronoun':
         return {
           label: 'Pronoun',
-          placeholder: 'He/Him'
+          placeholder: 'Enter your pronoun'
         };
       case 'description':
         return {
           label: 'Biography',
-          placeholder: 'I specialize in decentralized applications'
+          placeholder: 'Enter your biography'
         };
       case 'handle_twitter':
         return {
           label: 'Twitter username',
-          placeholder: '@username'
+          placeholder: 'Enter your Twitter username'
         };
       case 'handle_linkedin':
         return {
           label: 'LinkedIn username',
-          placeholder: 'john-smith'
+          placeholder: 'Enter your LinkedIn username'
         };
       case 'handle_instagram':
         return {
           label: 'Instagram username',
-          placeholder: '@username'
+          placeholder: 'Enter your Instagram username'
         };
       case 'handle_facebook':
         return {
           label: 'Facebook username',
-          placeholder: 'username'
+          placeholder: 'Enter your Facebook username'
         };
       case 'handle_farcaster':
         return {
           label: 'Farcaster username',
-          placeholder: '@username'
+          placeholder: 'Enter your Farcaster username'
         };
       case 'handle_lens':
         return {
           label: 'Lens handle',
-          placeholder: 'username.lens'
+          placeholder: 'Enter your Lens handle'
         };
       case 'handle_mirror':
         return {
           label: 'Mirror username',
-          placeholder: 'username.mirror.xyz'
+          placeholder: 'Enter your Mirror username'
         };
       case 'handle_github':
         return {
           label: 'Github username',
-          placeholder: 'username'
+          placeholder: 'Enter your Github username'
         };
       case 'calendly_url':
         return {
           label: 'Calendly handle',
-          placeholder: 'username.calendly.com'
+          placeholder: 'Enter your Calendly handle'
         };
       case 'job_title':
         return {
           label: 'Job title',
-          placeholder: 'Senior Developer'
+          placeholder: 'Enter your job title'
         };
       case 'company_name':
         return {
           label: 'Organization',
-          placeholder: 'Acme Inc.'
+          placeholder: 'Enter your organization'
         };
       case 'education_title':
         return {
           label: 'Education',
-          placeholder: 'Computer Science, Stanford'
+          placeholder: 'Enter your education'
         };
       case 'ethnicity':
         return {

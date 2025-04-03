@@ -2,7 +2,7 @@
 import { Button } from "$lib/components/core";
 // import { toast } from "$lib/components/core/toast";
 import { RegistrationModal } from "./RegistrationModal";
-import { approvalRequiredAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, registrationModal, useAtomValue } from "./store";
+import { approvalRequiredAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, registrationModal, useAtomValue, hasSingleFreeTicketAtom } from "./store";
 import { useSession } from "$lib/hooks/useSession";
 import { useRedeemTickets } from "./hooks";
 
@@ -14,6 +14,7 @@ export function RegisterButton() {
   const event = useAtomValue(eventDataAtom);
   const requiredProfileFields = useAtomValue(requiredProfileFieldsAtom);
   const approvalRequired = useAtomValue(approvalRequiredAtom);
+  const hasSingleFreeTicket = useAtomValue(hasSingleFreeTicketAtom);
 
   const profileFieldsRequired = requiredProfileFields?.length;
   const applicationQuestionsRequired = event.application_questions?.length;
@@ -39,7 +40,7 @@ export function RegisterButton() {
 
   if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session) return (
     <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
-      {approvalRequired ? 'Request to Join' : isFree ? 'Register' : 'Get Tickets'}
+      {approvalRequired ? 'Request to Join' : hasSingleFreeTicket ? 'Register' : 'Get Tickets'}
     </Button>
   );
 
@@ -50,7 +51,7 @@ export function RegisterButton() {
       onClick={() => isFree ? redeemTickets() : openRegistrationModal()}
       loading={loadingRedeem}
     >
-      {approvalRequired ? (isFree ? 'One-click Apply' : 'Request to Join') : (isFree ? 'One-click Register' : 'Get Tickets')}
+      {approvalRequired ? (hasSingleFreeTicket ? 'One-click Apply' : 'Request to Join') : (hasSingleFreeTicket ? 'One-click Register' : 'Get Tickets')}
     </Button>
   );
 }

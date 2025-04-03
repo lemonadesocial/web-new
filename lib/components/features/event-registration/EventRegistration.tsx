@@ -170,11 +170,11 @@ const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent
     }
 
     if (!me.email && !requireFields.some(field => field.field === 'email')) {
-      requireFields.push({ field: 'email', required: true });
+      requireFields.unshift({ field: 'email', required: true });
     }
 
     if (!me.display_name && !requireFields.some(field => field.field === 'display_name')) {
-      requireFields.push({ field: 'display_name', required: true });
+      requireFields.unshift({ field: 'display_name', required: true });
     }
 
     setRequiredProfileFields(requireFields);
