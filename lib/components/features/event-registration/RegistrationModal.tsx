@@ -71,7 +71,8 @@ export function RegistrationModal() {
           ) : (
             <div className='flex flex-col gap-4'>
               <h3 className='font-semibold text-[24px]'>Payment</h3>
-              <CardPayment />
+              {/* <CardPayment /> */}
+              <p>Coming soon...</p>
             </div>
           )
         }
