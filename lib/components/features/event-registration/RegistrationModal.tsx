@@ -1,16 +1,16 @@
 import { Avatar, Button } from "$lib/components/core";
 import { useMe } from "$lib/hooks/useMe";
 import { userAvatar } from "$lib/utils/user";
+import { useSession } from "$lib/hooks/useSession";
 
 import { BuyerInfoForm } from "./forms/BuyerInfoForm";
+import { ApplicationForm } from "./forms/ApplicationForm";
+import { UserForm } from "./forms/UserInfoForm";
+import { CardPayment } from "./payments/CardPayment";
 import { eventDataAtom, registrationModal, requiredProfileFieldsAtom, useAtomValue } from "./store";
 import { SubmitForm } from "./SubmitForm";
 import { pricingInfoAtom } from "./store";
 import { useRedeemTickets } from "./hooks";
-import { UserForm } from "./forms/UserInfoForm";
-import { useSession } from "$lib/hooks/useSession";
-import { ApplicationForm } from "./forms/ApplicationForm";
-// import { CardPayment } from "./payments/CardPayment";
 
 export function RegistrationModal() {
   const me = useMe();
@@ -24,7 +24,7 @@ export function RegistrationModal() {
   const isFree = pricing?.total === '0';
 
   return (
-    <div className='h-screen w-screen bg-background/80 [backdrop-filter:var(--backdrop-filter)] flex pt-24 justify-center gap-12'>
+    <div className='h-screen overflow-auto w-screen bg-background/80 [backdrop-filter:var(--backdrop-filter)] flex pt-24 justify-center gap-12'>
       <div className="absolute top-4 right-4">
         <Button
           variant="tertiary-alt"
@@ -60,9 +60,6 @@ export function RegistrationModal() {
           {
             !!event.application_questions?.length && <ApplicationForm />
           }
-          {
-            !!requiredProfileFields?.length && <UserForm />
-          }
         </div>
         {
           isFree ? (
@@ -74,11 +71,11 @@ export function RegistrationModal() {
           ) : (
             <div className='flex flex-col gap-4'>
               <h3 className='font-semibold text-[24px]'>Payment</h3>
-              {/* <CardPayment /> */}
-              <p>Coming soon...</p>
+              <CardPayment />
             </div>
           )
         }
+        <div className="min-h-4" />
       </div>
     </div>
   );

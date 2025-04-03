@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
-import { pricingInfoAtom, useAtomValue } from "../store";
-import { CardInput } from "./CardInput";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
-import { StripeAccount } from "$lib/generated/backend/graphql";
-import { SkeletonBox } from "$lib/components/core";
 import { Elements } from "@stripe/react-stripe-js";
 
+import { StripeAccount } from "$lib/generated/backend/graphql";
+import { SkeletonBox } from "$lib/components/core";
+
+import { pricingInfoAtom, useAtomValue } from "../store";
+import { CardInput } from "./CardInput";
+
 export function CardPayment() {
-  return <CardFormProvider />;
+  return <>
+    Coming Soon
+  </>;
 }
 
 export function CardFormProvider() {

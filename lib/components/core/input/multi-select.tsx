@@ -32,7 +32,6 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
           'text-sm': inputSize === 's',
           'text-base': inputSize === 'm',
         },
-        value?.length > 0 && 'border border-tertiary',
         error && 'border border-error',
         className
       )

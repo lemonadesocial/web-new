@@ -15,7 +15,8 @@ const eslintConfig = [
     rules: {
       '@next/next/no-img-element': 'off',
       'jsx-a11y/alt-text': 'off',
-      'react-hooks/exhaustive-deps': 'off'
+      'react-hooks/exhaustive-deps': 'off',
+      '@typescript-eslint/no-explicit-any': 'off'
     }
   }
 ];

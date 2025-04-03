@@ -32,7 +32,6 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
           'text-sm': inputSize === 's',
           'text-base': inputSize === 'm',
         },
-        value && 'border border-tertiary',
         error && 'border border-error',
         className
       )

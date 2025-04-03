@@ -93,3 +93,5 @@ export const buyerInfoAtom = atom<BuyerInfoInput | null>(null);
 export const userInfoAtom = atom<UserInput | null>(null);
 
 export const nonLoggedInStatusAtom = atom<'success' | 'pending' | null>(null);
+
+// export const pay
