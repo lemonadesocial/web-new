@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { Controller, Control, FieldValues, Path, FieldError } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
