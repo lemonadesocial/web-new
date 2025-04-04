@@ -308,7 +308,7 @@ export default function ThemeBuilder({
                         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
                           <div className="w-[24px] h-[24px] rounded-full">
                             <div
-                              // @ts-ignore
+                              // @ts-expect-error allow vars inline
                               style={{ ...variables.pattern, '--pattern-opacity': 1 }}
                               className={`pattern ${field.value} rounded-full w-full h-full relative!`}
                             />
@@ -346,7 +346,7 @@ export default function ThemeBuilder({
                               )}
                             >
                               <div
-                                // @ts-ignore
+                                // @ts-expect-error allow vars inline
                                 style={{ ...variables.pattern, '--pattern-opacity': 1 }}
                                 className={twMerge('pattern rounded-full relative! w-full h-full', item)}
                               />
