@@ -163,11 +163,17 @@ export function Community({ space }: { space?: Space }) {
                 ${theme.variables.light && generateCssVariables(theme.variables.light)}
               }
             }
+
+            :root {
+              ${theme.variables.pattern && generateCssVariables(theme.variables.pattern)}
+            }
           `}
         </style>
       )}
 
-      <div>
+      <div id="pattern" className={`pattern ${theme?.class}`}></div>
+
+      <div className="relative">
         <HeroSection space={dataGetSpace?.getSpace as Space} />
         <Divider className="my-8" />
         <div className="flex gap-18">

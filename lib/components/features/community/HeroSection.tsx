@@ -158,6 +158,7 @@ export function HeroSection({ space }: HeroSectionProps) {
               props: {
                 onDiscard: () => {
                   setOpenSheet(false);
+                  document.getElementById('pattern')?.removeAttribute('class');
                 },
               },
             });
