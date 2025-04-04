@@ -10,7 +10,7 @@ import { formatPrice, getPaymentAccounts } from "$lib/utils/event";
 import { getPaymentNetworks } from "$lib/utils/payment";
 import { currenciesAtom, currencyAtom, paymentAccountsAtom, purchaseItemsAtom, selectedPaymentAccountAtom, ticketTypesAtom, useAtom, useAtomValue } from "./store";
 
-export function TicketSelectItem({ ticketType, single }: { ticketType: PurchasableTicketType; single?: boolean }) {
+export function TicketSelectItem({ ticketType, single, compact }: { ticketType: PurchasableTicketType; single?: boolean; compact?: boolean }) {
   const [purchaseItems, setPurchaseItems] = useAtom(purchaseItemsAtom);
   const [currency, setCurrency] = useAtom(currencyAtom);
   const [paymentAccounts, setPaymentAccounts] = useAtom(paymentAccountsAtom);
@@ -72,6 +72,19 @@ export function TicketSelectItem({ ticketType, single }: { ticketType: Purchasab
 
   const count = purchaseItems.find(item => item.id === ticketType._id)?.count || 0;
   const active = count > 0;
+
+  if (compact) return (
+    <div className="flex justify-between items-center">
+      <p>Tickets</p>
+      <NumberInput
+        value={count}
+        limit={ticketType.limit as number}
+        onChange={value => handleTicketChange(ticketType, Number(value))}
+        hideMinusAtZero
+        disabled={disabled}
+      />
+    </div>
+  );
 
   if (single) return (
     <div className="flex gap-4 flex-col">

@@ -1,4 +1,4 @@
-import { EventJoinRequest, GetMyEventJoinRequestDocument, GetTicketsDocument } from "$lib/generated/backend/graphql";
+import { GetMyEventJoinRequestDocument, GetTicketsDocument } from "$lib/generated/backend/graphql";
 import { useSession } from "$lib/hooks/useSession";
 import { useClient } from "$lib/request";
 import { eventDataAtom, nonLoggedInStatusAtom, registrationModal, useAtomValue, useSetAtom } from "../store";

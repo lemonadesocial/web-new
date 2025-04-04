@@ -7,10 +7,11 @@ import { BuyerInfoForm } from "./forms/BuyerInfoForm";
 import { ApplicationForm } from "./forms/ApplicationForm";
 import { UserForm } from "./forms/UserInfoForm";
 import { CardPayment } from "./payments/CardPayment";
-import { eventDataAtom, registrationModal, requiredProfileFieldsAtom, useAtomValue } from "./store";
+import { eventDataAtom, hasSingleFreeTicketAtom, registrationModal, requiredProfileFieldsAtom, useAtomValue } from "./store";
 import { SubmitForm } from "./SubmitForm";
 import { pricingInfoAtom } from "./store";
 import { useRedeemTickets } from "./hooks/useRedeemTickets";
+import { OrderSummary } from "./OrderSummary";
 
 export function RegistrationModal() {
   const me = useMe();
@@ -18,6 +19,7 @@ export function RegistrationModal() {
   const pricing = useAtomValue(pricingInfoAtom);
   const requiredProfileFields = useAtomValue(requiredProfileFieldsAtom);
   const event = useAtomValue(eventDataAtom);
+  const hasSingleFreeTicket = useAtomValue(hasSingleFreeTicketAtom);
 
   const { redeemTickets, loadingRedeem } = useRedeemTickets();
 
@@ -77,6 +79,9 @@ export function RegistrationModal() {
         }
         <div className="min-h-4" />
       </div>
+      {
+        !hasSingleFreeTicket && <OrderSummary />
+      }
     </div>
   );
 }

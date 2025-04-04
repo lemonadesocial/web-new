@@ -56,6 +56,7 @@ export function useCardPayment() {
         return;
       }
 
+      // TODO: confirm payment
       joinEvent(buyTicketsData?.buyTickets?.join_request?.state === 'pending');
     },
     onError(err) {
