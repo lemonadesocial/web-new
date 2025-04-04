@@ -27,9 +27,9 @@ const variants: { [key: string]: string } = {
   primary: 'bg-accent-500 hover:bg-accent-700',
   success: 'bg-success-600 hover:bg-success-600/8',
   danger: 'bg-danger-500 hover:bg-danger-500/8',
-  tertiary: 'bg-primary/8 hover:bg-primary/16 text-tertiary',
+  tertiary: 'bg-primary/8 hover:bg-primary/16 backdrop-blur-lg text-tertiary',
   'tertiary-alt':
-    'bg-primary/8 hover:bg-primary/80 text-tertiary hover:text-black disabled:opacity-50 disabled:hover:bg-primary/8 disabled:hover:text-tertiary',
+    'bg-primary/8 hover:bg-primary/80 text-tertiary backdrop-blur-lg hover:text-black disabled:opacity-50 disabled:hover:bg-primary/8 disabled:hover:text-tertiary',
   secondary: 'bg-primary hover:bg-primary/80 disabled:bg-primary/50 text-black',
   flat: 'hover:bg-primary/[0.08]',
 };
@@ -73,7 +73,7 @@ export function Button({
       disabled={disabled || loading}
       type={type}
       className={twMerge(
-        'transition outline outline-transparent group cursor-pointer inline-flex items-center justify-center gap-2.5 font-medium',
+        'transition outline outline-transparent group cursor-pointer inline-flex items-center justify-center gap-2.5 font-medium backdrop-blur-lg',
         sizes[size],
         outlined ? outlineVariants[variant] : variants[variant],
         clsx({ [btnIconSizes[size]]: !!icon, 'cursor-not-allowed opacity-50 ': disabled || loading }),

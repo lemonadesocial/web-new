@@ -104,7 +104,9 @@ function MenuRoot({
 } & React.PropsWithChildren) {
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const toggle = () => setIsOpen(!isOpen);
+  const toggle = () => {
+    if (!disabled) setIsOpen(!isOpen);
+  };
   const close = () => setIsOpen(false);
 
   const { refs, floatingStyles } = useFloating({
