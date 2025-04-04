@@ -70,11 +70,23 @@ export const defaultColorPreset = {
   },
 };
 
-export const presets = {
+export type PresetKey = 'minimal' | 'pattern';
+
+type Presets = {
+  [k in PresetKey]: { image: string; background: boolean; colors: ColorPreset; assets?: string[] };
+};
+
+export const presets: Presets = {
   minimal: {
-    prefersColor: true,
     image: `${ASSET_PREFIX}/assets/images/minimal.png`,
+    background: true,
     colors,
+  },
+  pattern: {
+    image: `${ASSET_PREFIX}/assets/images/pattern.png`,
+    colors,
+    background: false,
+    assets: ['cross', 'hypnotic', 'plus', 'polkadot', 'wave', 'zigzag'],
   },
   // gradient: {
   //   image: GradientPreview,

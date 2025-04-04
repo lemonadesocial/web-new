@@ -15,7 +15,6 @@ import { useMe } from '$lib/hooks/useMe';
 
 import { COMMUNITY_SOCIAL_LINKS } from './constants';
 import ThemeBuilder from './ThemeBuilder';
-import { size } from 'lodash';
 
 interface HeroSectionProps {
   space?: Space | null;
@@ -158,6 +157,7 @@ export function HeroSection({ space }: HeroSectionProps) {
               props: {
                 onDiscard: () => {
                   setOpenSheet(false);
+                  document.getElementById('pattern')?.removeAttribute('class');
                 },
               },
             });
