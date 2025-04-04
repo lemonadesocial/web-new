@@ -61,6 +61,7 @@ export function HeroSection({ space }: HeroSectionProps) {
             <img
               className="md:hidden aspect-[3.5/1] object-cover rounded-md w-full"
               alt={space?.title as string}
+              loading="lazy"
               src={generateUrl(space?.image_cover_expanded, {
                 resize: { width: 480, fit: 'contain' },
               })}
@@ -69,6 +70,7 @@ export function HeroSection({ space }: HeroSectionProps) {
               src={generateUrl(space?.image_cover_expanded, {
                 resize: { width: 1080, fit: 'contain' },
               })}
+              loading="lazy"
               alt={space?.title as string}
               className="hidden md:block aspect-[3.5/1] object-cover rounded-md w-full"
             />
@@ -81,6 +83,7 @@ export function HeroSection({ space }: HeroSectionProps) {
               className="w-full h-full outline outline-tertiary/4 rounded-md"
               src={generateUrl(space?.image_avatar_expanded, { resize: { width: 384, height: 384, fit: 'contain' } })}
               alt={space?.title}
+              loading="lazy"
             />
           )}
         </div>
