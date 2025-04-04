@@ -116,8 +116,7 @@ const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent
   });
 
   const { loading: loadingTicketTypes } = useQuery(GetEventTicketTypesDocument, {
-    fetchPolicy: 'network-only',
-    variables: { event: initialEvent._id },
+    variables: { input: { event: initialEvent._id } },
     onComplete(data) {
       const ticketTypes = data.getEventTicketTypes.ticket_types as PurchasableTicketType[];
 

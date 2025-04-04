@@ -201,8 +201,8 @@ query getEventInvitation($event: MongoID!) {
   }
 }
 
-query getEventTicketTypes($event: MongoID!) {
-  getEventTicketTypes(input: { event: $event }) {
+query GetEventTicketTypes($input: GetEventTicketTypesInput!) {
+  getEventTicketTypes(input: $input) {
     ticket_types {
       _id
       title

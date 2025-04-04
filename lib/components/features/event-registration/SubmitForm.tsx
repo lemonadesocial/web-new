@@ -9,7 +9,6 @@ export function SubmitForm({ children, onComplete }: { children: (handleSubmit: 
     const formKeys: string[] = Object.keys(formInstances);
     if (formKeys.length === 0) return;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const forms: UseFormReturn<any>[] = Object.values(formInstances);
 
     const isValid: boolean[] = await Promise.all(forms.map(form => form.trigger()));
