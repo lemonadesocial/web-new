@@ -27,8 +27,8 @@ type FormValues = {
   font_body: string;
   variables: {
     font: Record<string, string>;
-    dark: Record<string, string>;
-    light: Record<string, string>;
+    dark: Record<string, string | number>;
+    light: Record<string, string | number>;
     pattern: Record<string, string>;
   };
 };
@@ -43,8 +43,10 @@ const defaultValues: FormValues = {
   font_body: 'default',
   variables: {
     font: {},
-    dark: {},
-    light: {},
+    dark: { '--pattern-opacity': 0.3 },
+    light: {
+      '--pattern-opacity': 0,
+    },
     pattern: {
       '--pattern-50': `var(--color-accent-50)`,
       '--pattern-100': `var(--color-accent-100)`,
@@ -136,6 +138,18 @@ export default function ThemeBuilder({
                         field.value === key && 'outline-2 outline-offset-2 ring-tertiary',
                       )}
                       onClick={() => {
+                        if (key === 'pattern') {
+                          const assets = presets.pattern.assets || [];
+
+                          const index = Math.floor(Math.random() * assets.length);
+                          const value = assets[index];
+                          form.setValue('class', value);
+                          document.getElementById('pattern')?.setAttribute('class', `pattern ${value}`);
+                        } else {
+                          // TODO: support minimal and pattern for now. Need to check when add more theme
+                          document.getElementById('pattern')?.removeAttribute('class');
+                        }
+
                         form.setValue('theme', key as PresetKey);
                       }}
                     >
@@ -436,19 +450,28 @@ export default function ThemeBuilder({
                       '--font-body': getRandomFont('body'),
                     },
                     dark: {
+                      '--pattern-opacity': 0.3,
                       '--color-background': `var(--${color.dark.replace('bg-', 'color-')})`,
                       '--color-accent-500': `var(--${color.default.replace('bg-', 'color-')})`,
                     },
                     light: {
+                      '--pattern-opacity': 0,
                       '--color-background': `var(--${color.light.replace('bg-', 'color-')})`,
                       '--color-accent-500': `var(--${color.default.replace('bg-', 'color-')})`,
                     },
-                    pattern: {},
+                    pattern: {
+                      '--pattern-50': `var(--color-${name}-50)`,
+                      '--pattern-100': `var(--color-${name}-100)`,
+                      '--pattern-200': `var(--color-${name}-200)`,
+                      '--pattern-300': `var(--color-${name}-300)`,
+                    },
                   };
 
+                  form.setValue('theme', 'minimal');
                   form.setValue('foreground', { key: name, value: name }, { shouldDirty: true });
                   form.setValue('background', { key: name, value: name }, { shouldDirty: true });
                   form.setValue('variables', random, { shouldDirty: true });
+                  document.getElementById('pattern')?.removeAttribute('class');
                 }}
               />
             </div>
