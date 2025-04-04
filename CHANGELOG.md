@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.3.0](https://github.com/lemonadesocial/web-new/compare/v1.2.0...v1.3.0) (2025-04-04)
+
+
+### Features
+
+* select random pattern ([5bd83e0](https://github.com/lemonadesocial/web-new/commit/5bd83e0e4f63f64f5a49d0e3a400d889e89f7242))
+* updat favicon and metadata ([537c850](https://github.com/lemonadesocial/web-new/commit/537c850304606b6f56614250f34f996d5eb39acc))
+* update blur on button, card, and menu components ([1bcead0](https://github.com/lemonadesocial/web-new/commit/1bcead0aede2d994c2f6bcac12db859ffc8c68b4))
+* update theme pattern ([75fe234](https://github.com/lemonadesocial/web-new/commit/75fe2344b76b05522fca071e0e8d8f594939a89a))
+
+
+### Bug Fixes
+
+* avatar image style event detail ([38568e5](https://github.com/lemonadesocial/web-new/commit/38568e5c9e2d4d4b42b3cdcb5a9e04bb99d083ef))
+* get ticket types args cache ([1644250](https://github.com/lemonadesocial/web-new/commit/16442502788b48394daf360064b701f78cfc0b60))
+* get ticket types network only ([31c511c](https://github.com/lemonadesocial/web-new/commit/31c511c8efce5f19437933809ed11353ff5a10bd))
+* increase image resolution image avatar ([fe822a0](https://github.com/lemonadesocial/web-new/commit/fe822a0737f05120b27ea9a0ac8a17066fc465f7))
+* lint code ([ac6451d](https://github.com/lemonadesocial/web-new/commit/ac6451db496c2c8bda2e37be45f72368383b00fd))
+* missing entity key ([7fde7eb](https://github.com/lemonadesocial/web-new/commit/7fde7eb0f385e02ed584833affd6a6fdedf84228))
+* update image avatar community ([0e7edd9](https://github.com/lemonadesocial/web-new/commit/0e7edd9409131ccb4add600c156c1011fe93f0e5))
+* update size event photo ([8b5200e](https://github.com/lemonadesocial/web-new/commit/8b5200e225f6ce92da2f9311d8f2c1ef50336e12))
+
 ## [1.2.0](https://github.com/lemonadesocial/web-new/compare/v1.1.0...v1.2.0) (2025-04-04)
 
 
