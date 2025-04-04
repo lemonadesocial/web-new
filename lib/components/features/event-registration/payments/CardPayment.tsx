@@ -89,7 +89,6 @@ export function CardPayment() {
                   <MenuItem
                     onClick={() => {
                       setShowCardForm(true);
-                      // setCard(null);
                       toggle();
                     }}
                     iconLeft={<i className="icon-card min-w-6" />}
@@ -108,7 +107,7 @@ export function CardPayment() {
       ) : (
         <SubmitForm onComplete={pay}>
           {(handleSubmit) => (
-            <Button onClick={handleSubmit} loading={loadingPay} disabled={loadingPay}>Pay with Card</Button>
+            <Button onClick={handleSubmit} loading={loadingPay}>Pay with Card</Button>
           )}
         </SubmitForm>
       )

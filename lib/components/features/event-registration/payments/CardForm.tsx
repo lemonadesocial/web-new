@@ -12,10 +12,11 @@ import { StripeCardNumberElementChangeEvent, StripeCardNumberElementOptions, Str
 import { Button, toast } from '$lib/components/core';
 import { useSession } from '$lib/hooks/useSession';
 
-import { stripePaymentMethodAtom, useSetAtom } from '../store';
+import { registrationModal, stripePaymentMethodAtom, useSetAtom } from '../store';
 import { useCardPayment } from '../hooks/useCardPayment';
 import { SubmitForm } from '../SubmitForm';
 import { CardIcon } from './CardIcon';
+import { PaymentProcessingModal } from '../modals/PaymentProcessingModal';
 
 type ElementState = {
   [key: string]: StripeElementChangeEvent | null;
@@ -167,7 +168,6 @@ export const CardForm: React.FC = () => {
       {(handleSubmit) => (
         <Button
           onClick={handleSubmit}
-          disabled={loadingCreatePaymentMethod || loadingPay}
           loading={loadingCreatePaymentMethod || loadingPay}
         >
           Pay with Card

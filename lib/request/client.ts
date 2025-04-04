@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { GraphQLClient } from 'graphql-request';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { InMemoryCache } from './cache';
@@ -99,8 +97,10 @@ export class GraphqlClient {
 
       if (request.type === 'query') {
         const { query, variables, fetchPolicy, initData } = request;
+
         if (fetchPolicy === 'network-only') {
           const result = await this.client.request(query, variables);
+          this.cache?.normalizeAndStore(query, variables, result);
           request.resolve({ data: result, error: null });
         } else {
           const cacheData = this.cache?.readQuery(query, variables);

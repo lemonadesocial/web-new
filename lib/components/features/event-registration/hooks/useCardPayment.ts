@@ -5,8 +5,11 @@ import { toast } from "$lib/components/core";
 import { BuyTicketsDocument, StripeAccount, UpdatePaymentDocument } from "$lib/generated/backend/graphql";
 import { useMutation } from "$lib/request";
 
-import { buyerInfoAtom, currencyAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, selectedPaymentAccountAtom, stripePaymentMethodAtom, useAtomValue, useEventRegistrationStore, userInfoAtom } from "../store";
-import { useJoinEvent } from "./useJoinEvent";
+import { buyerInfoAtom, currencyAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, selectedPaymentAccountAtom, stripePaymentMethodAtom, useAtomValue, useEventRegistrationStore, userInfoAtom } from "../store";
+
+import { useJoinRequest } from "./useJoinRequest";
+import { PaymentProcessingModal } from "../modals/PaymentProcessingModal";
+import { useProcessTickets } from "./useProcessTickets";
 
 export function useCardPayment() {
   const store = useEventRegistrationStore();
@@ -16,14 +19,15 @@ export function useCardPayment() {
   const currency = useAtomValue(currencyAtom);
   const purchaseItems = useAtomValue(purchaseItemsAtom);
   const selectedPaymentAccount = store.get(selectedPaymentAccountAtom);
-  const joinEvent = useJoinEvent();
+  const handleJoinRequest = useJoinRequest();
+  const processTickets = useProcessTickets();
 
   const [loadingStripe, setLoadingStripe] = useState(false);
 
   const paymentAccount = selectedPaymentAccount ? pricingInfo?.payment_accounts?.find(account => account._id === selectedPaymentAccount._id) : pricingInfo?.payment_accounts?.[0];
 
   const [handleUpdatePayment, { loading: loadingUpdatePayment }] = useMutation(UpdatePaymentDocument, {
-    onComplete: async (client, data) => {
+    onComplete: async (_, data) => {
       if (data.updatePayment.transfer_metadata.next_action_url) {
         try {
           setLoadingStripe(true);
@@ -56,8 +60,14 @@ export function useCardPayment() {
         return;
       }
 
-      // TODO: confirm payment
-      joinEvent(buyTicketsData?.buyTickets?.join_request?.state === 'pending');
+      registrationModal.close();
+
+      if (buyTicketsData?.buyTickets?.join_request?.state === 'pending') {
+        handleJoinRequest();
+        return;
+      }
+
+      registrationModal.open(PaymentProcessingModal);
     },
     onError(err) {
       toast.error(err.message);
@@ -65,9 +75,16 @@ export function useCardPayment() {
   });
 
   const [handleBuyTickets, { loading: loadingBuyTickets, data: buyTicketsData }] = useMutation(BuyTicketsDocument, {
-    onComplete(client, data) {
+    onComplete(_, data) {
       if (pricingInfo?.total === '0') {
-        joinEvent(data.buyTickets.join_request?.state === 'pending');
+        registrationModal.close();
+
+        if (data.buyTickets?.join_request?.state === 'pending') {
+          handleJoinRequest();
+          return;
+        }
+
+        processTickets();
         return;
       }
 

@@ -1,10 +1,12 @@
 import { useMutation } from "$lib/request";
 import { RedeemTicketsDocument } from "$lib/generated/backend/graphql";
 import { toast } from "$lib/components/core";
-
-import { buyerInfoAtom, eventDataAtom, purchaseItemsAtom, useAtomValue, useEventRegistrationStore, userInfoAtom } from "../store";
 import { useMe } from "$lib/hooks/useMe";
-import { useJoinEvent } from "./useJoinEvent";
+
+import { buyerInfoAtom, eventDataAtom, purchaseItemsAtom, registrationModal, useAtomValue, useEventRegistrationStore, userInfoAtom } from "../store";
+
+import { useJoinRequest } from "./useJoinRequest";
+import { useProcessTickets } from "./useProcessTickets";
 
 export const useRedeemTickets = () => {
   const event = useAtomValue(eventDataAtom);
@@ -12,11 +14,19 @@ export const useRedeemTickets = () => {
   const store = useEventRegistrationStore();
 
   const me = useMe();
-  const joinEvent = useJoinEvent();
+  const handleJoinRequest = useJoinRequest();
+  const processTickets = useProcessTickets();
 
   const [redeem, { loading: loadingRedeem }] = useMutation(RedeemTicketsDocument, {
-    onComplete: (client, data) => {
-      joinEvent(data.redeemTickets?.join_request?.state === 'pending');
+    onComplete: (_, data) => {
+      registrationModal.close();
+
+      if (data.redeemTickets?.join_request?.state === 'pending') {
+        handleJoinRequest();
+        return;
+      }
+
+      processTickets();
     },
     onError: (error) => {
       toast.error(error.message);
