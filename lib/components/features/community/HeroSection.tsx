@@ -15,6 +15,7 @@ import { useMe } from '$lib/hooks/useMe';
 
 import { COMMUNITY_SOCIAL_LINKS } from './constants';
 import ThemeBuilder from './ThemeBuilder';
+import { size } from 'lodash';
 
 interface HeroSectionProps {
   space?: Space | null;
@@ -77,8 +78,8 @@ export function HeroSection({ space }: HeroSectionProps) {
         <div className="absolute bottom-8 md:bottom-4 outline-6 outline-background size-16 md:size-32 rounded-md overflow-hidden">
           {space?.image_avatar && (
             <img
-              className="w-full h-full outline outline-tertiary/4 rounded-md object-center"
-              src={generateUrl(space?.image_avatar_expanded)}
+              className="w-full h-full outline outline-tertiary/4 rounded-md"
+              src={generateUrl(space?.image_avatar_expanded, { resize: { width: 384, height: 384, fit: 'contain' } })}
               alt={space?.title}
             />
           )}
