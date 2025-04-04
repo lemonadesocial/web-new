@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
+import { createPortal } from 'react-dom';
 
 interface Options<T> {
   props?: T;
@@ -78,7 +79,7 @@ export function ModalContainer({ modal }: { modal: Modal }) {
     [modals, handleClose]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     modal.open = handleOpen;
     modal.close = handleClose;
 
@@ -93,30 +94,34 @@ export function ModalContainer({ modal }: { modal: Modal }) {
   return (
     <AnimatePresence>
       {modals.map((modal, index) => (
-        <div
-          key={modal.id}
-          className="fixed inset-0 bg-overlay-backdrop flex w-full h-full items-center justify-center"
-          style={{ zIndex: 10000 + index }}
-        >
-          <motion.div
-            ref={(el) => {
-              if (el) {
-                modalRefs.current.set(modal.id, el);
-              } else {
-                modalRefs.current.delete(modal.id);
-              }
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className={twMerge(
-              modal.options.skipBaseClassName ? '' : 'bg-overlay-primary border border-card-border rounded-lg overflow-hidden',
-              modal.options.className
-            )}
-          >
-            {modal.content}
-          </motion.div>
-        </div>
+        <React.Fragment key={modal.id}>
+          {createPortal(
+            <div
+              className="fixed inset-0 bg-overlay-backdrop flex w-full h-full items-center justify-center"
+              style={{ zIndex: 10000 + index }}
+            >
+              <motion.div
+                ref={(el) => {
+                  if (el) {
+                    modalRefs.current.set(modal.id, el);
+                  } else {
+                    modalRefs.current.delete(modal.id);
+                  }
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className={twMerge(
+                  modal.options.skipBaseClassName ? '' : 'bg-overlay-primary border border-card-border rounded-lg overflow-hidden',
+                  modal.options.className
+                )}
+              >
+                {modal.content}
+              </motion.div>
+            </div>,
+            document.body
+          )}
+        </React.Fragment>
       ))}
     </AnimatePresence>
   );
