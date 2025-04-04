@@ -6,11 +6,11 @@ import { StripeAccount } from "$lib/generated/backend/graphql";
 import { SkeletonBox } from "$lib/components/core";
 
 import { pricingInfoAtom, useAtomValue } from "../store";
-import { CardInput } from "./CardInput";
+import { CardForm } from "./CardForm";
 
 export function CardPayment() {
   return <>
-    Coming Soon
+    <CardFormProvider />
   </>;
 }
 
@@ -34,7 +34,7 @@ export function CardFormProvider() {
 
   return (
     <Elements stripe={stripe}>
-      <CardInput />
+      <CardForm />
     </Elements>
   );
 }

@@ -6,8 +6,12 @@ export function SubmitForm({ children, onComplete }: { children: (handleSubmit: 
   const [submitHandlers] = useAtom(submitHandlersAtom);
 
   const handleSubmitAll = async (): Promise<void> => {
+    console.log('submit');
     const formKeys: string[] = Object.keys(formInstances);
-    if (formKeys.length === 0) return;
+    if (formKeys.length === 0) {
+      onComplete?.();
+      return;
+    }
 
     const forms: UseFormReturn<any>[] = Object.values(formInstances);
 
@@ -19,7 +23,6 @@ export function SubmitForm({ children, onComplete }: { children: (handleSubmit: 
         const handler = submitHandlers[key];
         if (form && handler) {
           const data = form.getValues();
-          console.log(data);
           handler(data);
         }
       });

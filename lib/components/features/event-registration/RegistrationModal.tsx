@@ -10,7 +10,7 @@ import { CardPayment } from "./payments/CardPayment";
 import { eventDataAtom, registrationModal, requiredProfileFieldsAtom, useAtomValue } from "./store";
 import { SubmitForm } from "./SubmitForm";
 import { pricingInfoAtom } from "./store";
-import { useRedeemTickets } from "./hooks";
+import { useRedeemTickets } from "./hooks/useRedeemTickets";
 
 export function RegistrationModal() {
   const me = useMe();

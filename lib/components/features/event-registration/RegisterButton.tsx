@@ -4,7 +4,7 @@ import { Button } from "$lib/components/core";
 import { RegistrationModal } from "./RegistrationModal";
 import { approvalRequiredAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, registrationModal, useAtomValue, hasSingleFreeTicketAtom } from "./store";
 import { useSession } from "$lib/hooks/useSession";
-import { useRedeemTickets } from "./hooks";
+import { useRedeemTickets } from "./hooks/useRedeemTickets";
 
 export function RegisterButton() {
   const session = useSession();

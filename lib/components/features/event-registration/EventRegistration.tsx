@@ -31,7 +31,7 @@ const EventRegistrationContent: React.FC = () => {
         <p className="text-secondary">
           {
             nonLoggedInStatus === 'success'
-              ? <>A confirmation email has been sent to <span style={{ fontWeight: 'bold' }}>{buyerInfo?.email}</span></>
+              ? <>Please sign in with <span style={{ fontWeight: 'bold' }}>{buyerInfo?.email}</span> to check your tickets.</>
               : 'We will let you know when the host approves your registration.'}
         </p>
       </Card.Root>

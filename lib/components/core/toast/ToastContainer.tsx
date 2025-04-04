@@ -45,7 +45,7 @@ export const ToastContainer: React.FC = () => {
   if (!activeToast) return null;
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-1000 flex flex-col items-center w-full max-w-md">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-100000 flex flex-col items-center w-full max-w-md">
       <Toast toast={activeToast} />
     </div>
   );

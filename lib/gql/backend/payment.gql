@@ -17,3 +17,12 @@ query getStripeCards {
     user
   }
 }
+
+mutation updatePayment($input: UpdatePaymentInput!) {
+  updatePayment(input: $input) {
+    _id
+    transfer_metadata
+    state
+    failure_reason
+  }
+}
