@@ -39,7 +39,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           <img
             src={generateUrl(event.new_new_photos_expanded[0], 'TICKET_PHOTO')}
             alt={event.title}
-            className="aspect-square border rounded-md"
+            className="aspect-square object-contain border rounded-md"
           />
         )}
 

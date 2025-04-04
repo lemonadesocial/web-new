@@ -54,7 +54,7 @@ export function EventPane({ eventId }: { eventId: string }) {
               <img
                 src={generateUrl(event.new_new_photos_expanded[0], 'TICKET_PHOTO')}
                 alt={event.title}
-                className="mx-auto size-[280px] aspect-square border rounded-md"
+                className="mx-auto object-contain size-[280px] border rounded-md"
               />
             </div>
           )
