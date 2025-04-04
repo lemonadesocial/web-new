@@ -136,8 +136,8 @@ export class InMemoryCache {
     if (!typename) return null;
 
     // Try to get ID from common ID fields
-    const id = data.id || data._id;
-    if (!id) return null;
+    const id = data.id || data._id || crypto.randomUUID();
+    // if (!id) return null;
 
     const entityId = this.generateEntityId(typename, id);
 
