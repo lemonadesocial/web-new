@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.2.0](https://github.com/lemonadesocial/web-new/compare/v1.1.0...v1.2.0) (2025-04-04)
+
+
+### Features
+
+* add multi select component ([c587d10](https://github.com/lemonadesocial/web-new/commit/c587d10f4b1854e292a09eb9f6f25395761c1705))
+* add stripe card ([576636a](https://github.com/lemonadesocial/web-new/commit/576636a36d9b853981a891c2f30767aa94ae39ea))
+* add user form ([58817b0](https://github.com/lemonadesocial/web-new/commit/58817b0b51b6f09ebf5b57f95a0ac2246bc1efb3))
+* hide card payment ([03851f9](https://github.com/lemonadesocial/web-new/commit/03851f95ed8668d746af7eb224689474d2ad94ec))
+* submit application form ([6986cea](https://github.com/lemonadesocial/web-new/commit/6986cea8d90e9aeef7914cd831feda3887a57de4))
+* update inputs ([8d5acaa](https://github.com/lemonadesocial/web-new/commit/8d5acaac57b36b3662f3e32296bf1c5c61eb0910))
+
+
+### Bug Fixes
+
+* can not resolve client module ([3baa6a1](https://github.com/lemonadesocial/web-new/commit/3baa6a1f54ea01ad67e40ccb5094e2a843a27896))
+* create portal for modal ([7b1ca79](https://github.com/lemonadesocial/web-new/commit/7b1ca796c0b0bb74ea796588c802f13792f00dd8))
+* lint code ([318a029](https://github.com/lemonadesocial/web-new/commit/318a029c8ab6e0d3a0da91c2c228e33b5fd2751b))
+* number input button color ([52d1d96](https://github.com/lemonadesocial/web-new/commit/52d1d963e055a790b222aa47b8e1855d3663ab81))
+* rsvp flow ([f2796b5](https://github.com/lemonadesocial/web-new/commit/f2796b551676e65e16b6f5fcff9f83eeab32fbd2))
+
 ## [1.1.0](https://github.com/lemonadesocial/web-new/compare/v1.0.0...v1.1.0) (2025-04-03)
 
 
