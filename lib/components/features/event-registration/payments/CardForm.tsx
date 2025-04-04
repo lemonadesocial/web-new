@@ -7,12 +7,15 @@ import {
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
-import { StripeCardNumberElementOptions, StripeElementChangeEvent, StripeElementType } from '@stripe/stripe-js';
-import { SubmitForm } from '../SubmitForm';
+import { StripeCardNumberElementChangeEvent, StripeCardNumberElementOptions, StripeElementChangeEvent, StripeElementType } from '@stripe/stripe-js';
+
 import { Button, toast } from '$lib/components/core';
-import { stripePaymentMethodAtom, useSetAtom } from '../store';
 import { useSession } from '$lib/hooks/useSession';
+
+import { stripePaymentMethodAtom, useSetAtom } from '../store';
 import { useCardPayment } from '../hooks/useCardPayment';
+import { SubmitForm } from '../SubmitForm';
+import { CardIcon } from './CardIcon';
 
 type ElementState = {
   [key: string]: StripeElementChangeEvent | null;
@@ -64,7 +67,7 @@ export const CardForm: React.FC = () => {
     }));
   };
 
-  const handleCardChange = (event: any) => {
+  const handleCardChange = (event: StripeCardNumberElementChangeEvent) => {
     setIsCardNumberComplete(event.complete);
     if (event.brand) {
       setCardBrand(event.brand);
@@ -87,19 +90,7 @@ export const CardForm: React.FC = () => {
     <div
       className="w-full bg-primary/8 h-10 px-2.5 rounded-sm relative flex gap-2.5 items-center"
     >
-      {
-        cardBrand ? <div className="size-6 flex items-center">
-          {
-            cardBrand === 'visa' && <img src="/assets/images/cards/visa.svg" width={20} alt="visa" />
-          }
-          {
-            cardBrand === 'mastercard' && <img src="/assets/images/cards/mastercard.svg" width={20} alt="mastercard" />
-          }
-          {
-            cardBrand === 'unknown' && <img src="/assets/images/cards/card-active.svg" width={20} alt="card-active" />
-          }
-        </div> : <i className="icon-card min-w-6" />
-      }
+      <CardIcon cardBrand={cardBrand} />
 
       <div className="overflow-hidden">
         <motion.div
