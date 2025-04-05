@@ -89,50 +89,72 @@ export class GraphqlClient {
   private async processQueue() {
     if (this.processing || this.queue.length === 0) return;
 
-    const request = this.queue.shift()!;
     this.processing = true;
+    const request = this.queue.shift()!;
 
     try {
-      if (request.headers) this.client.setHeaders(request.headers);
-
-      if (request.type === 'query') {
-        const { query, variables, fetchPolicy, initData } = request;
-
-        if (fetchPolicy === 'network-only') {
-          const result = await this.client.request(query, variables);
-          this.cache?.normalizeAndStore(query, variables, result);
-          request.resolve({ data: result, error: null });
-        } else {
-          const cacheData = this.cache?.readQuery(query, variables);
-          if (cacheData) {
-            request.resolve({ data: cacheData, error: null });
-          } else {
-            let result = initData;
-            if (!result) result = await this.client.request(query, variables);
-            this.cache?.normalizeAndStore(query, variables, result);
-            request.resolve({ data: result, error: null });
-          }
-        }
-      } else if (request.type === 'refetch') {
-        const { query, variables } = request;
-        const result = await this.client.request(query, variables);
-        this.cache?.normalizeAndStore(query, variables, result);
-        request.resolve({ data: result, error: null });
+      if (request.headers) {
+        this.client.setHeaders(request.headers);
       }
+
+      await this.executeRequest(request);
     } catch (error) {
-      if (error && typeof error === 'object' && 'response' in error) {
-        const gqlError = error as { response: { errors: Array<{ message: string }> } };
-        if (gqlError.response?.errors?.[0]?.message) {
-          request.resolve({ data: null, error: { message: gqlError.response.errors[0].message } });
-          return;
-        }
-      }
-
-      request.resolve({ data: null, error });
+      this.handleRequestError(request, error);
     } finally {
       this.processing = false;
       this.processQueue();
     }
+  }
+
+  private async executeRequest(request: QueryRequest<any, any>) {
+    if (request.type === 'refetch') {
+      await this.executeNetworkRequest(request);
+      return;
+    }
+
+    const { fetchPolicy, initData } = request;
+
+    if (fetchPolicy === 'network-only') {
+      await this.executeNetworkRequest(request);
+      return;
+    }
+
+    const cacheData = this.cache?.readQuery(request.query, request.variables);
+    if (cacheData) {
+      request.resolve({ data: cacheData, error: null });
+      return;
+    }
+
+    let result = initData;
+    if (!result) {
+      result = await this.client.request(request.query, request.variables);
+    }
+    this.cache?.normalizeAndStore(request.query, request.variables, result);
+    request.resolve({ data: result, error: null });
+  }
+
+  private async executeNetworkRequest(request: QueryRequest<any, any>) {
+    const { query, variables } = request;
+    const result = await this.client.request(query, variables);
+
+    this.cache?.normalizeAndStore(query, variables, result);
+    request.resolve({ data: result, error: null });
+  }
+
+  private handleRequestError(request: QueryRequest<any, any>, error: any) {
+    if (error && typeof error === 'object' && 'response' in error) {
+      const gqlError = error as { response: { errors: Array<{ message: string }> } };
+
+      if (gqlError.response?.errors?.[0]?.message) {
+        request.resolve({
+          data: null,
+          error: { message: gqlError.response.errors[0].message }
+        });
+        return;
+      }
+    }
+
+    request.resolve({ data: null, error });
   }
 
   writeQuery<T, V extends Record<string, any>>({
