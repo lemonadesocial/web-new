@@ -13,20 +13,17 @@ import { useMe } from '$lib/hooks/useMe';
 import { AboutSection } from '../event/AboutSection';
 import { LocationSection } from '../event/LocationSection';
 import { SubEventSection } from '../event/SubEventSection';
-import { GalarySection } from '../event/GalarySection';
+import { GallerySection } from '../event/GallerySection';
 import { CommunitySection } from '../event/CommunitySection';
 import { HostedBySection } from '../event/HostedBySection';
 import { EventDateTimeBlock } from '../event/EventDateTimeBlock';
 import { EventLocationBlock } from '../event/EventLocationBlock';
 import { EventAccess } from '../event-access';
-import { useTickets } from '$lib/hooks/useTickets';
 
 export function EventPane({ eventId }: { eventId: string }) {
   const me = useMe();
   const { data, loading } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
   const event = data?.getEvent as Event;
-
-  useTickets(event);
 
   const hosts = [event?.host_expanded, ...(event?.visible_cohosts_expanded || [])];
   const canManage = hosts.map((i) => i?._id).includes(me?._id);
@@ -85,7 +82,7 @@ export function EventPane({ eventId }: { eventId: string }) {
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />
-        <GalarySection event={event} loading={loading} />
+        <GallerySection event={event} loading={loading} />
         <CommunitySection event={event} />
         <HostedBySection event={event} />
       </div>

@@ -9,12 +9,11 @@ import { generateUrl } from '$lib/utils/cnd';
 import { convertFromUtcToTimezone } from '$lib/utils/date';
 import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event';
 import { userAvatar } from '$lib/utils/user';
-import { useTickets } from '$lib/hooks/useTickets';
 
 import { AboutSection } from './AboutSection';
 import { LocationSection } from './LocationSection';
 import { SubEventSection } from './SubEventSection';
-import { GalarySection } from './GalarySection';
+import { GallerySection } from './GallerySection';
 import { CommunitySection } from './CommunitySection';
 import { HostedBySection } from './HostedBySection';
 
@@ -29,8 +28,6 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
 
   const event = data?.getEvent as Event;
   const hosts = [event.host_expanded, ...(event.visible_cohosts_expanded || [])];
-
-  useTickets(event);
 
   return (
     <div className="flex gap-[72px]">
@@ -100,7 +97,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />
-        <GalarySection event={event} loading={loading} />
+        <GallerySection event={event} loading={loading} />
       </div>
     </div>
   );
