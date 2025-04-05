@@ -1,7 +1,7 @@
 
 import { Button } from "$lib/components/core";
 // import { toast } from "$lib/components/core/toast";
-import { RegistrationModal } from "./RegistrationModal";
+import { RegistrationModal } from "./modals/RegistrationModal";
 import { approvalRequiredAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, registrationModal, useAtomValue, hasSingleFreeTicketAtom } from "./store";
 import { useSession } from "$lib/hooks/useSession";
 import { useRedeemTickets } from "./hooks/useRedeemTickets";

@@ -26,3 +26,33 @@ mutation updatePayment($input: UpdatePaymentInput!) {
     failure_reason
   }
 }
+
+query getNewPayment($id: MongoID!, $paymentSecret: String) {
+  getNewPayment(_id: $id, payment_secret: $paymentSecret) {
+    _id
+    due_amount
+    amount
+    currency
+    ref_data
+    state
+    failure_reason
+    account_expanded {
+      _id
+      type
+      account_info {
+        ... on EthereumEscrowAccount {
+          currencies
+          currency_map
+          address
+          network
+          minimum_deposit_percent
+          host_refund_percent
+          refund_policies {
+            percent
+            timestamp
+          }
+        }
+      }
+    }
+  }
+}

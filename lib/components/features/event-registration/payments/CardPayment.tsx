@@ -1,18 +1,18 @@
+import { capitalize } from "lodash";
 import { useEffect, useState } from "react";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
 import { GetStripeCardsDocument, StripeAccount, StripeCard } from "$lib/generated/backend/graphql";
 import { Button, Menu, MenuItem, Skeleton, SkeletonBox } from "$lib/components/core";
-
-import { pricingInfoAtom, stripePaymentMethodAtom, useAtomValue, useSetAtom } from "../store";
 import { CardForm } from "./CardForm";
 import { useQuery } from "$lib/request";
 import { useSession } from "$lib/hooks/useSession";
+
+import { pricingInfoAtom, stripePaymentMethodAtom, useAtomValue, useSetAtom } from "../store";
+import { useCardPayment } from "../hooks/useCardPayment";
 import { SubmitForm } from "../SubmitForm";
 import { CardIcon } from "./CardIcon";
-import { capitalize } from "lodash";
-import { useCardPayment } from "../hooks/useCardPayment";
 
 export function CardPayment() {
   const pricingInfo = useAtomValue(pricingInfoAtom);
@@ -26,7 +26,6 @@ export function CardPayment() {
 
   const { data: stripeCardsData, loading: loadingCards } = useQuery(GetStripeCardsDocument, {
     skip: !pricingInfo?.payment_accounts?.[0]?._id || !session?.user,
-    fetchPolicy: 'network-only',
     onComplete(data) {
       const card = data.getStripeCards[0];
       if (!card) {

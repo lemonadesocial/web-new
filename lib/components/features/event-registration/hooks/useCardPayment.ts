@@ -6,9 +6,8 @@ import { BuyTicketsDocument, StripeAccount, UpdatePaymentDocument } from "$lib/g
 import { useMutation } from "$lib/request";
 
 import { buyerInfoAtom, currencyAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, selectedPaymentAccountAtom, stripePaymentMethodAtom, useAtomValue, useEventRegistrationStore, userInfoAtom } from "../store";
-
-import { useJoinRequest } from "./useJoinRequest";
 import { PaymentProcessingModal } from "../modals/PaymentProcessingModal";
+import { useJoinRequest } from "./useJoinRequest";
 import { useProcessTickets } from "./useProcessTickets";
 
 export function useCardPayment() {
@@ -62,12 +61,13 @@ export function useCardPayment() {
 
       registrationModal.close();
 
-      if (buyTicketsData?.buyTickets?.join_request?.state === 'pending') {
-        handleJoinRequest();
-        return;
-      }
-
-      registrationModal.open(PaymentProcessingModal);
+      registrationModal.open(PaymentProcessingModal, {
+        props: {
+          paymentId: data.updatePayment._id,
+          paymentSecret: data.updatePayment.transfer_metadata?.payment_secret,
+          hasJoinRequest: buyTicketsData?.buyTickets?.join_request?.state === 'pending',
+        }
+      });
     },
     onError(err) {
       toast.error(err.message);
