@@ -41,77 +41,82 @@ export function CardPayment() {
 
   if (loadingCards) return <Skeleton height="40px" />;
 
-  return <>
-    {
-      card && (
-        <Menu.Root>
-          <Menu.Trigger>
-            {({ toggle }) => (
-              <div
-                className="w-full rounded-sm px-2.5 h-10 flex justify-between items-center gap-1.5 bg-primary/8"
-                onClick={() => toggle()}
-              >
-                <div className="flex items-center gap-2.5">
-                  {
-                    showCardForm ? <p className="text-tertiary">New Credit or Debit Card</p> : <>
-                      <CardIcon cardBrand={card.brand} />
-                      <p>{capitalize(card.brand)} •••• {card.last4}</p>
-                    </>
-                  }
+  return (
+    <div className="space-y-1.5">
+      <p className="text-secondary text-sm">Credit or Debit Card *</p>
+      <div className="flex flex-col gap-4">
+        {
+          card && (
+            <Menu.Root>
+              <Menu.Trigger>
+                {({ toggle }) => (
+                  <div
+                    className="w-full rounded-sm px-2.5 h-10 flex justify-between items-center gap-1.5 bg-primary/8"
+                    onClick={() => toggle()}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      {
+                        showCardForm ? <p className="text-tertiary">New Credit or Debit Card</p> : <>
+                          <CardIcon cardBrand={card.brand} />
+                          <p>{capitalize(card.brand)} •••• {card.last4}</p>
+                        </>
+                      }
 
-                </div>
-                <i className="icon-arrow-down size-5 text-quaternary" />
-              </div>
-            )}
-          </Menu.Trigger>
-          <Menu.Content className="p-0 min-w-[372px]">
-            {({ toggle }) => (
-              <>
-                <div className="p-1">
-                  <p className="text-tertiary text-sm py-1 px-2">Saved Cards</p>
-                  {stripeCardsData?.getStripeCards.map(card => (
-                    <MenuItem
-                      key={card._id}
-                      onClick={() => {
-                        setCard(card);
-                        setStripePaymentMethod(card.provider_id);
-                        setShowCardForm(false);
-                        toggle();
-                      }}
-                      iconLeft={<CardIcon cardBrand={card.brand} />}
-                      title={`${capitalize(card.brand)} •••• ${card.last4}`}
-                    />
-                  ))}
-                </div>
-                <hr className="border-card-border" />
-                <div className="p-1">
-                  <MenuItem
-                    onClick={() => {
-                      setShowCardForm(true);
-                      toggle();
-                    }}
-                    iconLeft={<i className="icon-card min-w-6" />}
-                    title="New Credit or Debit Card"
-                  />
-                </div>
-              </>
-            )}
-          </Menu.Content>
-        </Menu.Root>
-      )
-    }
-    {
-      showCardForm ? (
-        <CardFormProvider />
-      ) : (
-        <SubmitForm onComplete={pay}>
-          {(handleSubmit) => (
-            <Button onClick={handleSubmit} loading={loadingPay}>Pay with Card</Button>
-          )}
-        </SubmitForm>
-      )
-    }
-  </>;
+                    </div>
+                    <i className="icon-arrow-down size-5 text-quaternary" />
+                  </div>
+                )}
+              </Menu.Trigger>
+              <Menu.Content className="p-0 min-w-[372px]">
+                {({ toggle }) => (
+                  <>
+                    <div className="p-1">
+                      <p className="text-tertiary text-sm py-1 px-2">Saved Cards</p>
+                      {stripeCardsData?.getStripeCards.map(card => (
+                        <MenuItem
+                          key={card._id}
+                          onClick={() => {
+                            setCard(card);
+                            setStripePaymentMethod(card.provider_id);
+                            setShowCardForm(false);
+                            toggle();
+                          }}
+                          iconLeft={<CardIcon cardBrand={card.brand} />}
+                          title={`${capitalize(card.brand)} •••• ${card.last4}`}
+                        />
+                      ))}
+                    </div>
+                    <hr className="border-card-border" />
+                    <div className="p-1">
+                      <MenuItem
+                        onClick={() => {
+                          setShowCardForm(true);
+                          toggle();
+                        }}
+                        iconLeft={<i className="icon-card min-w-6" />}
+                        title="New Credit or Debit Card"
+                      />
+                    </div>
+                  </>
+                )}
+              </Menu.Content>
+            </Menu.Root>
+          )
+        }
+        {
+          showCardForm ? (
+            <CardFormProvider />
+          ) : (
+            <SubmitForm onComplete={pay}>
+              {(handleSubmit) => (
+                <Button onClick={handleSubmit} loading={loadingPay}>Pay with Card</Button>
+              )}
+            </SubmitForm>
+          )
+        }
+      </div>
+    </div>
+  );
 }
 
 export function CardFormProvider() {

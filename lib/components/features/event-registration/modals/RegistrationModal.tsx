@@ -73,7 +73,7 @@ export function RegistrationModal() {
               )}
             </SubmitForm>
           ) : (
-            <div className='flex flex-col gap-4'>
+            <div className='space-y-4'>
               <h3 className='font-semibold text-[24px]'>Payment</h3>
               {
                 selectedPaymentAccount?.provider === 'stripe' ? <CardPayment /> : <p>Crypto payment is not available yet</p>
