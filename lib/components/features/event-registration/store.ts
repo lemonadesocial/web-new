@@ -77,12 +77,10 @@ export const requiredProfileFieldsAtom = atom<ApplicationProfileField[]>([]);
 export const pricingInfoAtom = atom<PricingInfo | null>(null);
 
 interface FormInstances {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: UseFormReturn<any>;
 }
 
 interface SubmitHandlers {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: (data: any) => void;
 }
 
@@ -94,4 +92,4 @@ export const userInfoAtom = atom<UserInput | null>(null);
 
 export const nonLoggedInStatusAtom = atom<'success' | 'pending' | null>(null);
 
-// export const pay
+export const stripePaymentMethodAtom = atom<string>('');

@@ -3,14 +3,16 @@ import { useMe } from "$lib/hooks/useMe";
 import { userAvatar } from "$lib/utils/user";
 import { useSession } from "$lib/hooks/useSession";
 
-import { BuyerInfoForm } from "./forms/BuyerInfoForm";
-import { ApplicationForm } from "./forms/ApplicationForm";
-import { UserForm } from "./forms/UserInfoForm";
-import { CardPayment } from "./payments/CardPayment";
-import { eventDataAtom, registrationModal, requiredProfileFieldsAtom, useAtomValue } from "./store";
-import { SubmitForm } from "./SubmitForm";
-import { pricingInfoAtom } from "./store";
-import { useRedeemTickets } from "./hooks";
+import { eventDataAtom, hasSingleFreeTicketAtom, registrationModal, requiredProfileFieldsAtom, selectedPaymentAccountAtom, useAtomValue } from "../store";
+import { pricingInfoAtom } from "../store";
+import { useRedeemTickets } from "../hooks/useRedeemTickets";
+
+import { BuyerInfoForm } from "../forms/BuyerInfoForm";
+import { ApplicationForm } from "../forms/ApplicationForm";
+import { UserForm } from "../forms/UserInfoForm";
+import { CardPayment } from "../payments/CardPayment";
+import { SubmitForm } from "../SubmitForm";
+import { OrderSummary } from "../OrderSummary";
 
 export function RegistrationModal() {
   const me = useMe();
@@ -18,6 +20,8 @@ export function RegistrationModal() {
   const pricing = useAtomValue(pricingInfoAtom);
   const requiredProfileFields = useAtomValue(requiredProfileFieldsAtom);
   const event = useAtomValue(eventDataAtom);
+  const hasSingleFreeTicket = useAtomValue(hasSingleFreeTicketAtom);
+  const selectedPaymentAccount = useAtomValue(selectedPaymentAccountAtom);
 
   const { redeemTickets, loadingRedeem } = useRedeemTickets();
 
@@ -71,12 +75,17 @@ export function RegistrationModal() {
           ) : (
             <div className='flex flex-col gap-4'>
               <h3 className='font-semibold text-[24px]'>Payment</h3>
-              <CardPayment />
+              {
+                selectedPaymentAccount?.provider === 'stripe' ? <CardPayment /> : <p>Crypto payment is not available yet</p>
+              }
             </div>
           )
         }
         <div className="min-h-4" />
       </div>
+      {
+        !hasSingleFreeTicket && <OrderSummary />
+      }
     </div>
   );
 }

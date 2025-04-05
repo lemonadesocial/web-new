@@ -4,8 +4,8 @@ import { Divider, SkeletonComp } from '$lib/components/core';
 import { Event } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 
-export function GalarySection({ event, loading }: { event: Event; loading?: boolean }) {
-  if (loading) return <GalarySectionSkeleton />;
+export function GallerySection({ event, loading }: { event: Event; loading?: boolean }) {
+  if (loading) return <GallerySectionSkeleton />;
   if (!event?.new_new_photos_expanded?.length) return null;
 
   return (
@@ -23,7 +23,7 @@ export function GalarySection({ event, loading }: { event: Event; loading?: bool
   );
 }
 
-function GalarySectionSkeleton() {
+function GallerySectionSkeleton() {
   return (
     <div className="event-description flex flex-col gap-2 w-full">
       <SkeletonComp animate className="h-4 w-24" />

@@ -135,3 +135,19 @@ mutation redeemTickets($event: MongoID!, $items: [PurchasableItem!]!, $buyer_inf
 mutation AssignTickets($input: AssignTicketsInput!) {
   assignTickets(input: $input)
 }
+
+mutation buyTickets($input: BuyTicketsInput!) {
+  buyTickets(input: $input) {
+    payment {
+      _id
+      failure_reason
+      state
+      stamps
+      transfer_metadata
+    }
+    join_request {
+      _id
+      state
+    }
+  }
+}

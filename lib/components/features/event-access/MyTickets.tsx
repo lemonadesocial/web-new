@@ -1,26 +1,12 @@
-import { useMe } from "$lib/hooks/useMe";
-import { SkeletonBox } from "$lib/components/core";
-import { Event } from '$lib/generated/backend/graphql';
-import { useQuery } from '$lib/request';
-import { GetTicketsDocument } from '$lib/generated/backend/graphql';
 import { useMemo } from "react";
+
+import { Ticket } from '$lib/generated/backend/graphql';
+
 import { AccessCard } from "./AccessCard";
 
-export function MyTickets({ event }: { event: Event }) {
-  const me = useMe();
-
-  const { data, loading } = useQuery(GetTicketsDocument, {
-    variables: {
-      event: event._id,
-      user: me?._id,
-    },
-    skip: !me,
-  });
-
+export function MyTickets({ tickets }: { tickets: Ticket[] }) {
   const ticketTypeText = useMemo(() => {
-    if (!data?.getTickets?.length) return '';
-
-    const ticketTypes = data.getTickets.reduce((acc, ticket) => {
+    const ticketTypes = tickets.reduce((acc, ticket) => {
       const typeId = ticket.type;
       if (!acc[typeId]) {
         acc[typeId] = {
@@ -35,11 +21,7 @@ export function MyTickets({ event }: { event: Event }) {
     return Object.values(ticketTypes)
       .map(({ count, title }) => `${count}x ${title}`)
       .join(', ');
-  }, [data]);
-
-  if (loading) return <SkeletonBox rows={4} />;
-
-  if (!me || !data?.getTickets?.length) return null;
+  }, [tickets]);
 
   return (
     <AccessCard>

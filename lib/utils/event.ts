@@ -1,11 +1,12 @@
 import { ethers } from 'ethers';
-import { format, isSameDay, isSameYear } from 'date-fns';
+import { format, isSameDay, isSameYear, isToday, isTomorrow } from 'date-fns';
 
 import {
   Address,
   Event,
   EventTicketCategory,
   EventTicketPrice,
+  NewPaymentAccount,
   PurchasableTicketType,
   Ticket,
 } from '$lib/generated/backend/graphql';
@@ -123,3 +124,24 @@ export function attending(event: Event, user: string | undefined) {
 export function getAssignedTicket(tickets: Ticket[], user?: string, email?: string) {
   return tickets?.find(({ assigned_to, assigned_email }) => assigned_to === user || assigned_email === email);
 }
+
+export function getEventCardStart(event: Event | { start: string; end: string; timezone?: string; }) {
+  const startTime = convertFromUtcToTimezone(event.start, event.timezone);
+
+  if (isToday(startTime)) return `Today, ${formatWithTimezone(startTime, 'hh:mm a OOO', event.timezone)}`;
+  if (isTomorrow(startTime)) return `Tomorrow, ${formatWithTimezone(startTime, 'hh:mm a OOO', event.timezone)}`;
+
+  return `${formatWithTimezone(startTime, 'EEE, dd MMM, hh:mm a OOO', event.timezone)}`;
+}
+
+export const getDisplayPrice = (cost: string, currency: string, account: NewPaymentAccount | null) => {
+  if (!currency) return 0;
+
+  const decimals = account?.account_info.currency_map[currency]?.decimals;
+
+  if (!decimals) return 0;
+
+  if (account.provider === 'stripe') return formatCurrency(Number(cost), currency, decimals, false);
+
+  return `${ethers.formatUnits(cost, decimals)} ${currency}`;
+};
