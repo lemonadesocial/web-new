@@ -57,6 +57,7 @@ export function PaymentProcessingModal({ paymentId, paymentSecret, hasJoinReques
 
         return false;
       } catch (error: any) {
+        registrationModal.close();
         toast.error(error.message || 'Failed to check payment status');
         return false;
       }

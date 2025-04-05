@@ -1,10 +1,10 @@
+import { modal } from "$lib/components/core";
 import { GetMyEventJoinRequestDocument } from "$lib/generated/backend/graphql";
 import { useSession } from "$lib/hooks/useSession";
 import { useClient } from "$lib/request";
 import { RequestSentModal } from "../modals/RequestSentModal";
 
 import { eventDataAtom, nonLoggedInStatusAtom, useAtomValue, useSetAtom } from "../store";
-import { registrationModal } from "../store";
 
 export function useJoinRequest() {
   const session = useSession();
@@ -14,7 +14,7 @@ export function useJoinRequest() {
   const setNonLoggedInStatus = useSetAtom(nonLoggedInStatusAtom);
 
   return () => {
-    registrationModal.open(RequestSentModal);
+    modal.open(RequestSentModal, { dismissible: true });
 
     if (session?.user) {
       client.refetchQuery({

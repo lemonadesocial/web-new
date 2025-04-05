@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
+
 import { GetTicketsDocument } from "$lib/generated/backend/graphql";
 import { useSession } from "$lib/hooks/useSession";
 import { useClient } from "$lib/request";
+import { toast } from "$lib/components/core";
+
 import { eventDataAtom, registrationModal, useAtomValue } from "../store";
 
 export function TicketsProcessingModal() {
@@ -28,14 +31,14 @@ export function TicketsProcessingModal() {
         const hasTickets = !!data?.getTickets?.length;
 
         if (hasTickets) {
-          // Tickets found, close the modal
           registrationModal.close();
           return true;
         }
 
         return false;
-      } catch (error) {
-        console.error('Failed to fetch tickets:', error);
+      } catch (error: any) {
+        registrationModal.close();
+        toast.error(error.message || 'Failed to check for tickets. Please try again later.');
         return false;
       }
     };
