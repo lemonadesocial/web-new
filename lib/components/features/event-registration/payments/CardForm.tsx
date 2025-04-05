@@ -11,12 +11,13 @@ import { StripeCardNumberElementChangeEvent, StripeCardNumberElementOptions, Str
 
 import { Button, toast } from '$lib/components/core';
 import { useSession } from '$lib/hooks/useSession';
+import { useMutation } from '$lib/request';
+import { CreateStripeCardDocument } from '$lib/generated/backend/graphql';
 
-import { registrationModal, stripePaymentMethodAtom, useSetAtom } from '../store';
+import { stripePaymentMethodAtom, useSetAtom } from '../store';
 import { useCardPayment } from '../hooks/useCardPayment';
 import { SubmitForm } from '../SubmitForm';
 import { CardIcon } from './CardIcon';
-import { PaymentProcessingModal } from '../modals/PaymentProcessingModal';
 
 type ElementState = {
   [key: string]: StripeElementChangeEvent | null;
@@ -58,6 +59,21 @@ export const CardForm: React.FC = () => {
   });
 
   const [loadingCreatePaymentMethod, setLoadingCreatePaymentMethod] = useState(false);
+  const [createCard, { loading: loadingCreateCard }] = useMutation(CreateStripeCardDocument, {
+    onComplete(_, data) {
+      if (!data.createStripeCard?.provider_id) {
+        toast.error('Failed to add card. Please check your card details and try again.');
+        return;
+      }
+
+      setStripePaymentMethod(data.createStripeCard.provider_id);
+      pay();
+    },
+    onError(error) {
+      toast.error(error.message);
+    },
+  });
+
 
   const handleFocus = (element: StripeElementType) => () => setFocusedElement(element);
   const handleBlur = () => setFocusedElement(null);
@@ -157,10 +173,10 @@ export const CardForm: React.FC = () => {
         setStripePaymentMethod(paymentMethodData.paymentMethod.id);
         setLoadingCreatePaymentMethod(false);
 
-        // if (session) {
-        //   createCard
-        //   return;
-        // }
+        if (session) {
+          createCard({ variables: { paymentMethod: paymentMethodData.paymentMethod.id } });
+          return;
+        }
 
         pay();
       }}
@@ -168,7 +184,7 @@ export const CardForm: React.FC = () => {
       {(handleSubmit) => (
         <Button
           onClick={handleSubmit}
-          loading={loadingCreatePaymentMethod || loadingPay}
+          loading={loadingCreatePaymentMethod || loadingPay || loadingCreateCard}
         >
           Pay with Card
         </Button>

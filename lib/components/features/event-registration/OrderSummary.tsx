@@ -36,7 +36,7 @@ export function OrderSummary() {
         </div>
       </div>
       {
-        ticketLimit && (
+        !!ticketLimit && (
           <div className="px-4 pt-2 pb-3 border-b border-divider">
             <TicketSelect />
           </div>
