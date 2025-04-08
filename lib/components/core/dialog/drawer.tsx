@@ -58,11 +58,19 @@ export function DrawerContainer() {
   }, []);
 
   const handleOutsideClick = (event: MouseEvent) => {
-    if (ref.current && event.target instanceof Node && ref.current.contains(event.target)) {
-      // do nothing here
-    } else {
-      setIsOpen(false);
+    if (event.target instanceof Node) {
+      const modalElements = document.querySelectorAll('[role="modal"]');
+      for (const element of Array.from(modalElements)) {
+        // If click is inside a modal, do nothing
+        if (element.contains(event.target)) return;
+      }
     }
+
+    // Check if click is inside the drawer
+    if (ref.current && event.target instanceof Node && ref.current.contains(event.target)) return;
+
+    // Otherwise close the drawer
+    setIsOpen(false);
   };
 
   React.useEffect(() => {
