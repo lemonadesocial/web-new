@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.4.0](https://github.com/lemonadesocial/web-new/compare/v1.3.0...v1.4.0) (2025-04-08)
+
+
+### Features
+
+* card payment ([a28f69e](https://github.com/lemonadesocial/web-new/commit/a28f69ebbb5dd07c98193727486d1ac986c350fc))
+* order summary ([4da16ec](https://github.com/lemonadesocial/web-new/commit/4da16ec07445aea9bc56775cd647f992073a64ae))
+* pay by saved cards ([cb2c81a](https://github.com/lemonadesocial/web-new/commit/cb2c81a70a031a9cc7df28db97e1fb7e6afad1f2))
+* request sent modal ([8a06aac](https://github.com/lemonadesocial/web-new/commit/8a06aac6814329cd0cf91424dd1a36d3fb8a4005))
+* save card ([9fff09f](https://github.com/lemonadesocial/web-new/commit/9fff09f4cdbb1124b2ea78c3639b4170c4dca42d))
+* update form title ([ea2092d](https://github.com/lemonadesocial/web-new/commit/ea2092ddfdd2bf2c1bc3c4cad9de40e4bdc0db86))
+* update process tickets ([1779276](https://github.com/lemonadesocial/web-new/commit/177927690bbd5cf13c196373dff2e68ab656ea7e))
+
+
+### Bug Fixes
+
+* typo ([aa1fa67](https://github.com/lemonadesocial/web-new/commit/aa1fa67ef3fb0edcb183a80c13688415429dae3b))
+
 ## [1.3.0](https://github.com/lemonadesocial/web-new/compare/v1.2.0...v1.3.0) (2025-04-04)
 
 
