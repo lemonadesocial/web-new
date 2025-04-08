@@ -290,7 +290,7 @@ export function Community({ space }: { space?: Space }) {
                     onSelect={(item) => setEventListType(item.value)}
                     selected={eventListType}
                     items={[
-                      { label: 'Upcomping', value: 'upcoming' },
+                      { label: 'Upcoming', value: 'upcoming' },
                       { label: 'Past', value: 'past' },
                     ]}
                   />
