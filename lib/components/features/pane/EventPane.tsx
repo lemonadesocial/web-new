@@ -1,5 +1,4 @@
 'use client';
-import React from 'react';
 
 import { Alert, Avatar, Button, drawer } from '$lib/components/core';
 import { Event, GetEventDocument, User } from '$lib/generated/backend/graphql';
@@ -8,7 +7,6 @@ import { useQuery } from '$lib/request';
 import { userAvatar } from '$lib/utils/user';
 import { copy } from '$lib/utils/helpers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
-import { useMe } from '$lib/hooks/useMe';
 
 import { AboutSection } from '../event/AboutSection';
 import { LocationSection } from '../event/LocationSection';
@@ -19,14 +17,17 @@ import { HostedBySection } from '../event/HostedBySection';
 import { EventDateTimeBlock } from '../event/EventDateTimeBlock';
 import { EventLocationBlock } from '../event/EventLocationBlock';
 import { EventAccess } from '../event-access';
+import { useSession } from '$lib/hooks/useSession';
+import { hosting } from '$lib/utils/event';
 
 export function EventPane({ eventId }: { eventId: string }) {
-  const me = useMe();
+  const session = useSession();
   const { data, loading } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
   const event = data?.getEvent as Event;
 
   const hosts = [event?.host_expanded, ...(event?.visible_cohosts_expanded || [])];
-  const canManage = hosts.map((i) => i?._id).includes(me?._id);
+
+  const canManage = session?.user && event && hosting(event, session.user);
 
   return (
     <div>
@@ -78,7 +79,7 @@ export function EventPane({ eventId }: { eventId: string }) {
           <EventDateTimeBlock event={event} />
           <EventLocationBlock event={event} loading={loading} />
         </div>
-        {event && <EventAccess event={event} />}
+        {(event && !canManage) && <EventAccess event={event} />}
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />

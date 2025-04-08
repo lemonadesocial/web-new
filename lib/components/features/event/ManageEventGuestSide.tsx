@@ -7,8 +7,9 @@ import { useQuery } from '$lib/request';
 import { Avatar, Divider } from '$lib/components/core';
 import { generateUrl } from '$lib/utils/cnd';
 import { convertFromUtcToTimezone } from '$lib/utils/date';
-import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event';
+import { getEventDateBlockRange, getEventDateBlockStart, hosting } from '$lib/utils/event';
 import { userAvatar } from '$lib/utils/user';
+import { useSession } from '$lib/hooks/useSession';
 
 import { AboutSection } from './AboutSection';
 import { LocationSection } from './LocationSection';
@@ -26,8 +27,12 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
     initData: { getEvent: eventDetail } as unknown as GetEventQuery,
   });
 
+  const session = useSession();
+
   const event = data?.getEvent as Event;
   const hosts = [event.host_expanded, ...(event.visible_cohosts_expanded || [])];
+
+  const isHost = session?.user && event && hosting(event, session.user);
 
   return (
     <div className="flex gap-[72px]">
@@ -93,7 +98,9 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
             </div>
           )}
         </div>
-        <EventAccess event={event} />
+        {
+          !isHost && <EventAccess event={event} />
+        }
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />
