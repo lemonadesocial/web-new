@@ -177,10 +177,40 @@ export function Community({ space }: { space?: Space }) {
         <HeroSection space={dataGetSpace?.getSpace as Space} />
         <Divider className="my-8" />
         <div className="flex gap-18">
-          <div className="flex flex-col flex-1 gap-6">
+          <div className="flex flex-col flex-1 gap-6 w-full">
             <div className="flex">
-              <h1 className="text-2xl font-semibold flex-1">Events</h1>
-              <div>
+              <h1 className="text-xl md:text-2xl font-semibold flex-1">Events</h1>
+              <div className="flex gap-2 items-center">
+                <Menu.Root className="md:hidden">
+                  <Menu.Trigger>
+                    <Button variant="tertiary-alt" iconLeft="icon-plus" size="sm" className="w-full">
+                      Submit
+                    </Button>
+                  </Menu.Trigger>
+                  <Menu.Content className="p-1">
+                    {({ toggle }) => (
+                      <>
+                        <MenuItem
+                          title="Create New Event"
+                          iconLeft="icon-edit-square"
+                          onClick={() => {
+                            toggle();
+                            window.open(`${LEMONADE_DOMAIN}/create/experience?space=${space?._id}`);
+                          }}
+                        />
+                        <MenuItem
+                          title="Submit Existing Event"
+                          iconLeft="icon-celebration-outline"
+                          onClick={() => {
+                            toggle();
+                            if (space?._id) modal.open(ListingEvent, { props: { spaceId: space._id } });
+                          }}
+                        />
+                      </>
+                    )}
+                  </Menu.Content>
+                </Menu.Root>
+
                 <Segment
                   size="sm"
                   selected="card"
@@ -194,17 +224,18 @@ export function Community({ space }: { space?: Space }) {
             </div>
 
             {!!eventTags.length && (
-              <div className="flex gap-1.5 flex-wrap">
+              <div className="flex gap-1.5 overflow-auto md:flex-wrap no-scrollbar">
                 {eventTags.map((item) => (
                   <Tag
                     key={item._id}
                     className={clsx(
-                      'hover:border-primary',
+                      'hover:border-primary min-w-fit',
                       selectedTag === item._id && 'bg-accent-500 hover:border-transparent text-tertiary',
                     )}
                     onClick={() => setSelectedTag((prev) => (prev === item._id ? '' : item._id))}
                   >
-                    {item.tag} <span className="text-tertiary">{item.targets?.length}</span>
+                    <span className="text-sm">{item.tag}</span>{' '}
+                    <span className="text-tertiary text-sm">{item.targets?.length}</span>
                   </Tag>
                 ))}
               </div>

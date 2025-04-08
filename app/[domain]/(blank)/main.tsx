@@ -31,7 +31,7 @@ export function Main({ children }: React.PropsWithChildren) {
   return (
     <main ref={mainRef} className="relative flex flex-col h-dvh w-full z-100 overflow-auto">
       <Header />
-      <div className="page mx-auto">{children}</div>
+      <div className="page mx-auto px-4 md:px-0">{children}</div>
     </main>
   );
 }

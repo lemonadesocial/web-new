@@ -4,9 +4,16 @@ import { twMerge } from 'tailwind-merge';
 
 const sizes: { [key: string]: string } = {
   base: 'px-[12] py-[7] rounded-sm text-md',
-  sm: 'px-2.5 py-1.5 rounded-sm text-sm',
-  lg: 'px-4 py-2 rounded-md text-lg',
+  sm: 'px-2.5 py-1.5 rounded-sm text-sm max-h-8',
+  lg: 'px-4 py-2 rounded-md text-md md:text-lg max-h-10 md:max-h-11',
   xs: 'px-2 py-1 text-sm rounded-xs',
+};
+
+const gaps: { [key: string]: string } = {
+  base: 'gap-2.5',
+  sm: 'gap-1.5',
+  lg: 'gap-3',
+  xs: 'gap-1',
 };
 
 const btnIconSizes = {
@@ -35,11 +42,11 @@ const variants: { [key: string]: string } = {
 };
 
 const outlineVariants: { [key: string]: string } = {
-  primary: 'outline-accent-500 hover:bg-accent-500/[0.1] text-accent-500',
-  success: 'outline-success-600 hover:bg-success-600/[0.1] text-success-600',
-  tertiary: 'outline-primary/[0.8] hover:bg-primary/[.1] text-tertiary',
-  secondary: 'outline-primary hover:bg-primary/[0.1] text-black',
-  flat: 'outline-primary/[0.1] hover:bg-primary/[0.08] text-tertiary',
+  primary: 'border-accent-500 hover:bg-accent-500/[0.1] text-accent-500',
+  success: 'border-success-600 hover:bg-success-600/[0.1] text-success-600',
+  tertiary: 'border-primary/[0.8] hover:bg-primary/[.1] text-tertiary',
+  secondary: 'border-primary hover:bg-primary/[0.1] text-black',
+  flat: 'border-primary/[0.1] hover:bg-primary/[0.08] text-tertiary',
 };
 
 interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonElement>> {
@@ -73,8 +80,9 @@ export function Button({
       disabled={disabled || loading}
       type={type}
       className={twMerge(
-        'transition outline outline-transparent group cursor-pointer inline-flex items-center justify-center gap-2.5 font-medium backdrop-blur-lg',
+        'transition border border-transparent group cursor-pointer inline-flex items-center justify-center font-medium backdrop-blur-lg',
         sizes[size],
+        gaps[size],
         outlined ? outlineVariants[variant] : variants[variant],
         clsx({ [btnIconSizes[size]]: !!icon, 'cursor-not-allowed opacity-50 ': disabled || loading }),
         className,
@@ -94,7 +102,7 @@ export function Button({
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         ></path>
       </svg>
-      <div className={twMerge('flex justify-center items-center gap-2.5', clsx({ invisible: loading }))}>
+      <div className={twMerge('flex justify-center items-center', gaps[size], clsx({ invisible: loading }))}>
         {iconLeft && <i className={twMerge(iconSize[size], iconLeft)} />}
         {icon ? <i className={twMerge(iconSize[size], icon)} /> : children}
         {iconRight && <i className={twMerge(iconSize[size], iconRight)} />}

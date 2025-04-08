@@ -17,7 +17,7 @@ export function Badge({
       className={twMerge('text-xs py-1 px-2 w-fit flex items-center gap-1 rounded-xs font-medium', className)}
       style={{ backgroundColor: `rgb(from ${color} r g b / 0.16)`, color }}
     >
-      {title}
+      <p className="truncate">{title}</p>
       {typeof onClose === 'function' && (
         <button onClick={onClose} className="flex items-center cursor-pointer">
           <i className="icon-x size-[14]" />
