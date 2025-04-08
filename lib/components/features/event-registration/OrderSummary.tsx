@@ -47,7 +47,7 @@ export function OrderSummary() {
           pricingInfo?.subtotal && (
             <div className="flex justify-between items-center">
               <p className="text-tertiary">Subtotal</p>
-              <p className="text-tertiary">{getDisplayPrice(pricingInfo.subtotal.toString(), currency, selectedPaymentAccount)}</p>
+              <p className="text-tertiary">{getDisplayPrice(pricingInfo.subtotal.toString(), currency, pricingPaymentAccount)}</p>
             </div>
           )
         }
@@ -55,13 +55,13 @@ export function OrderSummary() {
           !!fee && (
             <div className="flex justify-between items-center">
               <p className="text-tertiary">Platform fees</p>
-              <p className="text-tertiary">{getDisplayPrice(fee.toString(), currency, selectedPaymentAccount)}</p>
+              <p className="text-tertiary">{getDisplayPrice(fee.toString(), currency, pricingPaymentAccount)}</p>
             </div>
           )
         }
         <div className="flex justify-between items-center">
           <p className="text-tertiary">Total</p>
-          <h4 className="text-xl font-semibold">{getDisplayPrice(grandTotal, currency, selectedPaymentAccount)}</h4>
+          <h4 className="text-xl font-semibold">{getDisplayPrice(grandTotal, currency, pricingPaymentAccount)}</h4>
         </div>
       </div>
     </div>

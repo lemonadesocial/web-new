@@ -7,6 +7,7 @@ import {
   EventTicketCategory,
   EventTicketPrice,
   NewPaymentAccount,
+  PaymentAccountInfo,
   PurchasableTicketType,
   Ticket,
 } from '$lib/generated/backend/graphql';
@@ -138,7 +139,7 @@ export function getEventCardStart(event: Event | { start: string; end: string; t
   return `${formatWithTimezone(startTime, 'EEE, dd MMM, hh:mm a OOO', event.timezone)}`;
 }
 
-export const getDisplayPrice = (cost: string, currency: string, account: NewPaymentAccount | null) => {
+export const getDisplayPrice = (cost: string, currency: string, account?: PaymentAccountInfo) => {
   if (!currency) return 0;
 
   const decimals = account?.account_info.currency_map[currency]?.decimals;
