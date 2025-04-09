@@ -133,7 +133,7 @@ export function ModalContainer({ modal }: { modal: Modal }) {
 interface ModalContentProps {
   children: React.ReactNode;
   title?: React.ReactNode;
-  icon?: string;
+  icon?: React.ReactNode;
   onClose?: () => void;
 }
 
@@ -145,7 +145,9 @@ export function ModalContent({ children, onClose, title, icon }: ModalContentPro
           <div className="flex justify-between items-start">
             {icon && (
               <div className="size-[56px] flex justify-center items-center rounded-full bg-primary/8">
-                <i className={clsx(icon, 'size-8 text-tertiary')} />
+                {
+                  typeof icon === 'string' ? <i className={clsx(icon, 'size-8 text-tertiary')} /> : icon
+                }
               </div>
             )}
             {title}
@@ -155,7 +157,9 @@ export function ModalContent({ children, onClose, title, icon }: ModalContentPro
           </div>
         )
       }
-      {children}
+      <div>
+        {children}
+      </div>
     </div>
   );
 }

@@ -1,14 +1,27 @@
 import { useAtomValue as useJotaiAtomValue } from "jotai";
 
-import { LabeledInput, Menu, MenuItem } from "$lib/components/core";
+import { Button, LabeledInput, Menu, MenuItem, modal } from "$lib/components/core";
 import { EthereumAccount, NewPaymentAccount } from "$lib/generated/backend/graphql";
 import { chainsMapAtom } from "$lib/jotai";
 
 import { selectedPaymentAccountAtom, useAtom } from "../store";
 import { ChainDisplay } from "../../ChainDislay";
+import { SubmitForm } from "../SubmitForm";
+import { ConnectWallet } from "../../modals/ConnectWallet";
 
 export function CryptoPayment({ accounts }: { accounts: NewPaymentAccount[] }) {
   const [selectedPaymentAccount, setSelectedPaymentAccount] = useAtom(selectedPaymentAccountAtom);
+  const chainsMap = useJotaiAtomValue(chainsMapAtom);
+  const chain = chainsMap[(selectedPaymentAccount?.account_info as EthereumAccount).network];
+
+  const payWithWallet = () => {
+    modal.open(ConnectWallet, {
+      props: {
+        onConnect: () => console.log('connected'),
+        chain
+      }
+    });
+  };
 
   return <>
     <LabeledInput label="Preferred Network">
@@ -45,6 +58,14 @@ export function CryptoPayment({ accounts }: { accounts: NewPaymentAccount[] }) {
         </Menu.Content>
       </Menu.Root>
     </LabeledInput>
+    <SubmitForm
+      onComplete={payWithWallet}>
+      {(handleSubmit) => (
+        <Button className="w-full" onClick={handleSubmit}>
+          Pay with Wallet
+        </Button>
+      )}
+    </SubmitForm>
   </>;
 }
 

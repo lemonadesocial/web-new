@@ -45,7 +45,7 @@ export const getAppKitNetwork = (chain: Chain) => {
 
 export const ethersAdapter = new EthersAdapter()
 
-const modal = createAppKit({
+const appKit = createAppKit({
   adapters: [new EthersAdapter()],
   networks: listChains.filter((chain) => chain.tokens?.length).map((chain) => getAppKitNetwork(chain)) as [AppKitNetwork, ...AppKitNetwork[]],
   metadata: {
@@ -58,13 +58,14 @@ const modal = createAppKit({
   themeVariables: {
     '--w3m-font-family': 'var(--font-general-sans)',
     '--w3m-accent': 'var(--color-accent-400)',
+    '--w3m-z-index': 99999999
   },
   allowUnsupportedChain: true,
   coinbasePreference: 'smartWalletOnly',
 });
 
 export {
-  modal,
+  appKit,
   useAppKit,
   useAppKitState,
   useAppKitTheme,
