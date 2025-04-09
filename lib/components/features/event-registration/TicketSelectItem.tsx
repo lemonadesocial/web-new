@@ -47,26 +47,29 @@ export function TicketSelectItem({ ticketType, single, compact }: { ticketType: 
       setPaymentAccounts([]);
       setCurrencies([]);
       setSelectedPaymentAccount(null);
-    } else {
-      const selectedTicketTypes = ticketTypes.filter(ticket => filteredPurchaseItems.some(item => item.id === ticket._id));
+      return;
+    }
 
-      const paymentCurrencies = selectedTicketTypes.map(ticket => ticket.prices.map(price => price.currency));
-      const newCurrencies = intersection(...paymentCurrencies);
-      setCurrencies(newCurrencies);
+    const selectedTicketTypes = ticketTypes.filter(ticket => filteredPurchaseItems.some(item => item.id === ticket._id));
 
-      const selectedPaymentAccounts = selectedTicketTypes.map(ticket => getPaymentAccounts(ticket.prices.filter(price => newCurrencies.includes(price.currency))));
-      const newAccounts = intersection(...selectedPaymentAccounts);
-      setPaymentAccounts(newAccounts);
+    const paymentCurrencies = selectedTicketTypes.map(ticket => ticket.prices.map(price => price.currency));
+    const newCurrencies = intersection(...paymentCurrencies);
+    setCurrencies(newCurrencies);
 
-      if (!newCurrencies.includes(currency)) {
-        setCurrency(newCurrencies[0]);
-      }
+    if (!newCurrencies.includes(currency)) {
+      setCurrency(newCurrencies[0]);
+    }
 
-      if (!newAccounts.includes(selectedPaymentAccount?._id)) {
-        const price = ticketType.prices.find(price => price.payment_accounts?.includes(newAccounts[0])) || ticketType.prices[0];
-        const newPaymentAccount = price.payment_accounts_expanded?.[0] as NewPaymentAccount;
-        setSelectedPaymentAccount(newPaymentAccount);
-      }
+    if (!currentPaymentAccounts?.length) return;
+
+    const selectedPaymentAccounts = selectedTicketTypes.map(ticket => getPaymentAccounts(ticket.prices.filter(price => newCurrencies.includes(price.currency))));
+    const newAccounts = intersection(...selectedPaymentAccounts);
+    setPaymentAccounts(newAccounts);
+
+    if (!newAccounts.includes(selectedPaymentAccount?._id)) {
+      const price = ticketType.prices.find(price => price.payment_accounts?.includes(newAccounts[0])) || ticketType.prices[0];
+      const newPaymentAccount = price.payment_accounts_expanded?.[0] as NewPaymentAccount;
+      setSelectedPaymentAccount(newPaymentAccount);
     }
   };
 

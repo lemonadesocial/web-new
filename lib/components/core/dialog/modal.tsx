@@ -99,6 +99,7 @@ export function ModalContainer({ modal }: { modal: Modal }) {
             <div
               className="fixed inset-0 bg-overlay-backdrop flex w-full h-full items-center justify-center"
               style={{ zIndex: 10000 + index }}
+              role="modal"
             >
               <motion.div
                 ref={(el) => {
