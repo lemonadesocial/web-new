@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
 import { createPortal } from 'react-dom';
+import { Button } from '../button';
+import clsx from 'clsx';
 
 interface Options<T> {
   props?: T;
@@ -125,5 +127,35 @@ export function ModalContainer({ modal }: { modal: Modal }) {
         </React.Fragment>
       ))}
     </AnimatePresence>
+  );
+}
+
+interface ModalContentProps {
+  children: React.ReactNode;
+  title?: React.ReactNode;
+  icon?: string;
+  onClose?: () => void;
+}
+
+export function ModalContent({ children, onClose, title, icon }: ModalContentProps) {
+  return (
+    <div className="p-4 space-y-4 w-[340px]">
+      {
+        (title || icon || onClose) && (
+          <div className="flex justify-between items-start">
+            {icon && (
+              <div className="size-[56px] flex justify-center items-center rounded-full bg-primary/8">
+                <i className={clsx(icon, 'size-8 text-tertiary')} />
+              </div>
+            )}
+            {title}
+            {onClose && (
+              <Button icon="icon-x" size='xs' variant="tertiary" className="rounded-full" onClick={onClose} />
+            )}
+          </div>
+        )
+      }
+      {children}
+    </div>
   );
 }

@@ -4,7 +4,7 @@ import { AcceptEventDocument, AssignTicketsDocument, Event, EventJoinRequest, Ge
 
 import { attending, getAssignedTicket } from '$lib/utils/event';
 import { useClient, useMutation, useQuery } from '$lib/request';
-import { SkeletonBox } from '$lib/components/core';
+import { SkeletonCard } from '$lib/components/core';
 import { useSession } from '$lib/hooks/useSession';
 import { useMe } from '$lib/hooks/useMe';
 
@@ -80,7 +80,7 @@ export function EventAccess({ event }: { event: Event }) {
     });
   };
 
-  if (requestLoading || ticketsLoading) return <SkeletonBox rows={4} />;
+  if (requestLoading || ticketsLoading) return <SkeletonCard />;
 
   if (ticketsData?.getTickets.length) return <MyTickets tickets={ticketsData.getTickets as Ticket[]} />;
 

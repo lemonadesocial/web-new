@@ -1,12 +1,12 @@
 import React from 'react';
-import { useAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 
 import { getClient } from '$lib/request';
 import { ListChainsDocument } from '$lib/generated/backend/graphql';
 import { listChainsAtom } from '$lib/jotai/chains';
 
 export function useListChains() {
-  const setListChains = useAtom(listChainsAtom)[1];
+  const setListChains = useSetAtom(listChainsAtom);
   const [loading, setLoading] = React.useState(true);
   const client = getClient();
 

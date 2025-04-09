@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Divider, SkeletonComp } from '$lib/components/core';
+import { Divider, Skeleton } from '$lib/components/core';
 import { Event } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 
@@ -30,11 +30,11 @@ export function GallerySection({ event, loading }: { event: Event; loading?: boo
 function GallerySectionSkeleton() {
   return (
     <div className="event-description flex flex-col gap-2 w-full">
-      <SkeletonComp animate className="h-4 w-24" />
+      <Skeleton animate className="h-4 w-24" />
       <Divider className="h-1 w-full mb-2" />
       <div className="flex gap-3 flex-wrap">
         {Array.from({ length: 5 }).map((_, num) => (
-          <SkeletonComp key={num} className="h-[157] aspect-square" />
+          <Skeleton key={num} className="h-[157] aspect-square" />
         ))}
       </div>
     </div>

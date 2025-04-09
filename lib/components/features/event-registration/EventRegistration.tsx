@@ -6,7 +6,7 @@ import { useQuery } from '$lib/request';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
-import { Avatar, Card, ModalContainer, SkeletonBox } from '$lib/components/core';
+import { Avatar, Card, ModalContainer, SkeletonCard } from '$lib/components/core';
 
 import { approvalRequiredAtom, buyerInfoAtom, currencyAtom, eventAtom, hasSingleFreeTicketAtom, nonLoggedInStatusAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
 
@@ -182,7 +182,7 @@ const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent
 
   if (!event) return null;
 
-  if (loadingInvitation || loadingTicketTypes) return <SkeletonBox rows={4} />;
+  if (loadingInvitation || loadingTicketTypes) return <SkeletonCard />;
 
   return <>
     <EventRegistrationContent />

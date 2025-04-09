@@ -1,9 +1,9 @@
-import { Avatar, Button } from "$lib/components/core";
+import { Avatar, Button, Segment } from "$lib/components/core";
 import { useMe } from "$lib/hooks/useMe";
 import { userAvatar } from "$lib/utils/user";
 import { useSession } from "$lib/hooks/useSession";
 
-import { eventDataAtom, hasSingleFreeTicketAtom, registrationModal, requiredProfileFieldsAtom, selectedPaymentAccountAtom, useAtomValue } from "../store";
+import { currenciesAtom, currencyAtom, eventDataAtom, hasSingleFreeTicketAtom, purchaseItemsAtom, registrationModal, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from "../store";
 import { pricingInfoAtom } from "../store";
 import { useRedeemTickets } from "../hooks/useRedeemTickets";
 
@@ -13,17 +13,31 @@ import { UserForm } from "../forms/UserInfoForm";
 import { CardPayment } from "../payments/CardPayment";
 import { SubmitForm } from "../SubmitForm";
 import { OrderSummary } from "../OrderSummary";
+import { CryptoPayment } from "../payments/CryptoPayment";
+import { intersection, partition, uniqBy } from "lodash";
 
 export function RegistrationModal() {
   const me = useMe();
   const session = useSession();
+
   const pricing = useAtomValue(pricingInfoAtom);
   const requiredProfileFields = useAtomValue(requiredProfileFieldsAtom);
   const event = useAtomValue(eventDataAtom);
   const hasSingleFreeTicket = useAtomValue(hasSingleFreeTicketAtom);
-  const selectedPaymentAccount = useAtomValue(selectedPaymentAccountAtom);
+  const [selectedPaymentAccount, setSelectedPaymentAccount] = useAtom(selectedPaymentAccountAtom);
+  const ticketTypes = useAtomValue(ticketTypesAtom);
+  const purchaseItems = useAtomValue(purchaseItemsAtom);
+  const setCurrency = useSetAtom(currencyAtom);
+  const currencies = useAtomValue(currenciesAtom);
 
   const { redeemTickets, loadingRedeem } = useRedeemTickets();
+
+  const selectedTicketTypes = ticketTypes.filter(ticket => purchaseItems.some(item => item.id === ticket._id));
+  const ticketPaymentAccounts = selectedTicketTypes.flatMap(ticket => ticket.prices.flatMap(price => price.payment_accounts_expanded || []));
+  const paymentAccountsSet = uniqBy(ticketPaymentAccounts, '_id');
+  const [stripeAccounts, cryptoAccounts] = partition(paymentAccountsSet, account => account.provider === 'stripe');
+
+  const showPaymentSwitch = stripeAccounts.length && cryptoAccounts.length;
 
   const isFree = pricing?.total === '0';
 
@@ -76,7 +90,23 @@ export function RegistrationModal() {
             <div className='space-y-4'>
               <h3 className='font-semibold text-[24px]'>Payment</h3>
               {
-                selectedPaymentAccount?.provider === 'stripe' ? <CardPayment /> : <p>Crypto payment is not available yet</p>
+                !!showPaymentSwitch && (
+                  <Segment
+                    className="w-full"
+                    onSelect={(item) => {
+                      const account = item.value === 'card' ? stripeAccounts[0] : cryptoAccounts[0];
+                      setSelectedPaymentAccount(account);
+                      setCurrency(intersection(currencies, account.account_info.currencies)[0]);
+                    }}
+                    selected={selectedPaymentAccount?.provider === 'stripe' ? 'card' : 'wallet'}
+                    items={[
+                      { label: 'Card', value: 'card' },
+                      { label: 'Wallet', value: 'wallet' },
+                    ]}
+                  />)
+              }
+              {
+                selectedPaymentAccount?.provider === 'stripe' ? <CardPayment /> : selectedPaymentAccount?.type === 'solana' ? 'Solana Payment' : <CryptoPayment accounts={cryptoAccounts} />
               }
             </div>
           )
