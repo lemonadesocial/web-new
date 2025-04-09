@@ -1763,6 +1763,12 @@ export type EventQuestion = {
   user_expanded?: Maybe<User>;
 };
 
+export type EventRequestStateStatistic = {
+  __typename?: 'EventRequestStateStatistic';
+  state: EventJoinRequestState;
+  total: Scalars['Float']['output'];
+};
+
 export type EventReward = {
   __typename?: 'EventReward';
   _id?: Maybe<Scalars['MongoID']['output']>;
@@ -4488,6 +4494,7 @@ export type Query = {
   getEventInvitationUrl?: Maybe<EventInvitationUrl>;
   getEventInvitedStatistics: GetEventInvitedStatisticsResponse;
   getEventJoinRequest: EventJoinRequest;
+  getEventJoinRequestStateStatistic: Array<EventRequestStateStatistic>;
   getEventJoinRequests: GetEventJoinRequestsResponse;
   getEventPayment?: Maybe<NewPayment>;
   getEventPaymentStatistics: EventPaymentStatistics;
@@ -4799,6 +4806,11 @@ export type QueryGetEventInvitedStatisticsArgs = {
 
 export type QueryGetEventJoinRequestArgs = {
   _id: Scalars['MongoID']['input'];
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetEventJoinRequestStateStatisticArgs = {
   event: Scalars['MongoID']['input'];
 };
 
