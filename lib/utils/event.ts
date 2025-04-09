@@ -6,7 +6,6 @@ import {
   Event,
   EventTicketCategory,
   EventTicketPrice,
-  NewPaymentAccount,
   PaymentAccountInfo,
   PurchasableTicketType,
   Ticket,
@@ -51,7 +50,8 @@ export function formatPrice(price: EventTicketPrice) {
 }
 
 export function getEventPrice(event: Event) {
-  const defaultPrice = event.event_ticket_types?.[0]?.prices.find((price) => price.default) || event.event_ticket_types?.[0]?.prices[0];
+  const defaultPrice =
+    event.event_ticket_types?.[0]?.prices.find((price) => price.default) || event.event_ticket_types?.[0]?.prices[0];
 
   if (!defaultPrice) return '';
 
@@ -99,7 +99,7 @@ export const getEventDateBlockRange = (event: Event) => {
 export interface GroupedTicketTypes {
   category: EventTicketCategory | null;
   ticketTypes: Array<PurchasableTicketType>;
-};
+}
 
 export function groupTicketTypesByCategory(ticketTypes: Array<PurchasableTicketType>): Array<GroupedTicketTypes> {
   const groupedByCategory = groupBy(ticketTypes, (ticket) => ticket.category_expanded?._id || 'uncategorized');
@@ -111,9 +111,7 @@ export function groupTicketTypesByCategory(ticketTypes: Array<PurchasableTicketT
 }
 
 export function getPaymentAccounts(prices: EventTicketPrice[]) {
-  const accounts = prices
-    .flatMap(price => price.payment_accounts_expanded || [])
-    .map(account => account._id);
+  const accounts = prices.flatMap((price) => price.payment_accounts_expanded || []).map((account) => account._id);
 
   return [...new Set(accounts)];
 }
@@ -130,7 +128,7 @@ export function getAssignedTicket(tickets: Ticket[], user?: string, email?: stri
   return tickets?.find(({ assigned_to, assigned_email }) => assigned_to === user || assigned_email === email);
 }
 
-export function getEventCardStart(event: Event | { start: string; end: string; timezone?: string; }) {
+export function getEventCardStart(event: Event | { start: string; end: string; timezone?: string }) {
   const startTime = convertFromUtcToTimezone(event.start, event.timezone);
 
   if (isToday(startTime)) return `Today, ${formatWithTimezone(startTime, 'hh:mm a OOO', event.timezone)}`;

@@ -54,7 +54,7 @@ export function HeroSection({ space }: HeroSectionProps) {
 
   return (
     <>
-      <div className="relative w-full h-44 md:h-96 overflow-hidden">
+      <div className="relative w-full h-[154px] md:h-96 overflow-hidden">
         {space?.image_cover && (
           <>
             <img
@@ -76,7 +76,7 @@ export function HeroSection({ space }: HeroSectionProps) {
           </>
         )}
 
-        <div className="absolute bottom-8 md:bottom-4 outline-6 outline-background size-16 md:size-32 rounded-md overflow-hidden">
+        <div className="absolute bottom-1.5 md:bottom-4 outline-6 outline-background size-20 md:size-32 rounded-md overflow-hidden">
           {space?.image_avatar && (
             <img
               className="w-full h-full outline outline-tertiary/4 rounded-md"
@@ -88,12 +88,13 @@ export function HeroSection({ space }: HeroSectionProps) {
         </div>
 
         {/* Subscribe button */}
-        <div className="absolute bottom-4 right-0.5">
+        <div className="absolute bottom-0 md:bottom-4 right-0">
           <div className="flex items-center gap-3">
             {[space?.creator, ...(space?.admins?.map((p) => p._id) || [])].includes(me?._id) && (
               <Button
                 icon="icon-dark-theme-filled"
                 outlined
+                size="lg"
                 onClick={() => {
                   setOpenSheet(true);
                   // sheet.open(ThemeBuilder, { snapPoints: [324], props: { space } });
@@ -102,7 +103,7 @@ export function HeroSection({ space }: HeroSectionProps) {
             )}
             {canManage ? (
               <Link href={`${LEMONADE_DOMAIN}/s/${space?.slug || space?._id}`} target="_blank">
-                <Button variant="primary" outlined iconRight="icon-arrow-outward">
+                <Button variant="primary" outlined iconRight="icon-arrow-outward" size="lg">
                   <span className="block">Manage</span>
                 </Button>
               </Link>
@@ -111,6 +112,7 @@ export function HeroSection({ space }: HeroSectionProps) {
                 loading={resFollow.loading || resUnfollow.loading}
                 outlined={!!space?.followed}
                 variant="primary"
+                size="lg"
                 className={clsx(space?.followed && 'hover:bg-accent-500 hover:text-tertiary w-auto duration-300')}
                 onClick={() => handleSubscribe()}
               >
@@ -129,8 +131,8 @@ export function HeroSection({ space }: HeroSectionProps) {
       </div>
       <Spacer className="h-6" />
       <div>
-        <h1 className="text-3xl font-semibold">{space?.title}</h1>
-        <p className="text-md text-secondary font-medium">{space?.description}</p>
+        <h1 className="text-2xl md:text-3xl font-semibold">{space?.title}</h1>
+        <p className="text-sm md:text-md text-secondary font-medium">{space?.description}</p>
         <Spacer className="h-3" />
         <div className="flex items-center gap-3">
           {COMMUNITY_SOCIAL_LINKS.filter((item) => space?.[item.key as keyof Space]).map((item) => (

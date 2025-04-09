@@ -27,7 +27,7 @@ export function EventList({
       {Object.entries(groupBy(events, ({ start }) => start)).map(([date, data]) => (
         <div key={date}>
           <p className="text-tertiary font-medium">
-            <span className="text-tertiary">{format(date, 'MMM dd')}</span> {format(date, 'EEE')}
+            <span className="text-primary">{format(date, 'MMM dd')}</span> {format(date, 'EEE')}
           </p>
           <Divider className="mt-2 mb-3" />
 
@@ -50,15 +50,15 @@ function EventItem({ item }: { item: Event }) {
     <div className="transition flex text-tertiary gap-4 hover:bg-primary/[.16] p-2 rounded-md cursor-pointer">
       <p>{format(item.start, 'h:mm a')}</p>
       <div className="flex flex-col gap-1 flex-1">
-        <p className="text-tertiary font-medium text-lg">{item.title}</p>
+        <p className="text-primary font-medium text-base md:text-lg">{item.title}</p>
         <div className="flex gap-2 items-center">
-          <div className="flex -space-x-1 overflow-hidden p-1">
+          <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
             {users.map((p) => (
               <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="ring-2 border-background" />
             ))}
           </div>
 
-          <p className="font-medium text-sm text-tertiary">By {users.map((p) => p?.name).join(',')}</p>
+          <p className="font-medium text-sm md:text-base text-tertiary">By {users.map((p) => p?.name).join(',')}</p>
         </div>
       </div>
       <div>
@@ -119,15 +119,14 @@ export function EventListCard({
       {Object.entries(groupBy(events, ({ start }) => start)).map(([date, data]) => (
         <div className="flex flex-col relative" key={date}>
           <div className="border-dashed border-l-2 border-l-[var(--color-divider)] absolute h-full left-1 top-2 z-10">
-            <div className="size-2 bg-background -ml-[5px] absolute">
+            <div className="size-2 backdrop-blur-lg -ml-[5px] absolute">
               <div className="size-2 rounded-full bg-quaternary" />
             </div>
           </div>
 
           <div className="ml-5">
             <p className="text-md text-tertiary font-medium">
-              <span className="text-tertiary">{format(new Date(date), 'MMM dd ')}</span>{' '}
-              {format(new Date(date), 'EEEE')}
+              <span className="text-primary">{format(new Date(date), 'MMM dd ')}</span> {format(new Date(date), 'EEEE')}
             </p>
             <Spacer className="h-3" />
 
@@ -162,9 +161,9 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
   return (
     <Card.Root as="button" onClick={onClick} key={`event_${item.shortid}`} className="flex flex-col gap-3">
       <Card.Content className="flex gap-6">
-        <div className="text-tertiary flex-1 flex flex-col gap-2">
+        <div className="text-tertiary flex-1 w-[173px] flex flex-col gap-2">
           <div>
-            <div className="flex gap-2 font-medium">
+            <div className="flex gap-2 text-sm md:text-base font-medium">
               {isBefore(new Date(), item.end) && isAfter(new Date(), item.start) && (
                 <div className="flex gap-2 items-center">
                   <div className="size-1.5 bg-danger-400 rounded-full motion-safe:animate-pulse" />
@@ -175,15 +174,17 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
 
               <p>{format(item.start, 'hh:mm a')}</p>
             </div>
-            <p className="font-title text-xl font-semibold text-tertiary">{item.title}</p>
+            <p className="font-title text-lg md:text-xl font-semibold text-tertiary">{item.title}</p>
             <div className="flex gap-2 item-center">
-              <div className="flex -space-x-1 overflow-hidden p-1">
+              <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
                 {users.map((p) => (
                   <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="outline outline-background" />
                 ))}
               </div>
 
-              <p className="font-medium text-tertiary">By {users.map((p) => p?.name).join(',')}</p>
+              <p className="font-medium text-tertiary text-sm md:text-base truncate">
+                By {users.map((p) => p?.name).join(',')}
+              </p>
             </div>
           </div>
 
@@ -191,7 +192,7 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
             <div className="flex flex-col gap-1">
               <div className="inline-flex items-center gap-2">
                 <i className="icon-location-outline size-4" />
-                <span className="text-md">{getLocation(item.address)}</span>
+                <span className="text-sm md:text-md">{getLocation(item.address)}</span>
               </div>
             </div>
           )}
@@ -201,7 +202,7 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
               {tags
                 .filter((t) => t.targets?.includes(item._id))
                 .map((t) => (
-                  <Badge key={t._id} title={t.tag} color={t.color} />
+                  <Badge key={t._id} title={t.tag} color={t.color} className="truncate" />
                 ))}
             </div>
           )}
@@ -213,10 +214,11 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
 
         {!!item?.new_new_photos_expanded?.[0] && (
           <img
-            className="aspect-square object-contain rounded-lg w-[120px] h-[120px]"
+            className="aspect-square object-contain rounded-lg size-[90px] md:size-[120px]"
             src={generateUrl(item?.new_new_photos_expanded[0], {
               resize: { height: 120, width: 120, fit: 'cover' },
             })}
+            loading="lazy"
             alt={item.title}
           />
         )}
@@ -231,7 +233,7 @@ function EventListCardSkeleton() {
       {Object.entries({ 1: [1, 2], 2: [1], 3: [1, 2, 3] }).map(([date, data]) => (
         <div className="flex flex-col relative" key={date}>
           <div className="border-dashed border-l-2 border-l-[var(--color-divider)] absolute h-full left-1 top-2 z-10">
-            <div className="size-2 bg-background -ml-[5px] absolute">
+            <div className="size-2 backdrop-blur-lg -ml-[5px] absolute">
               <div className="size-2 rounded-full bg-quaternary" />
             </div>
           </div>
@@ -256,10 +258,10 @@ function EventListCardSkeleton() {
 function EventCardSkeleton() {
   return (
     <Card.Root className="bg-transparent border">
-      <Card.Content className="flex">
+      <Card.Content className="flex gap-6">
         <div className="flex-1 flex flex-col gap-4">
           <SkeletonLine className="h-4 w-[64px] rounded-full bg-card" />
-          <SkeletonLine animate className="h-[28px] w-[400px] rounded" />
+          <SkeletonLine animate className="h-[28px] w-full md:w-[400px] rounded" />
 
           <div className="flex flex-col gap-4">
             <div className="inline-flex items-center gap-2">
@@ -273,7 +275,7 @@ function EventCardSkeleton() {
             </div>
           </div>
         </div>
-        <div className="size-[124px] bg-card rounded-lg"></div>
+        <div className="size-[80px] md:size-[124px] bg-card rounded-lg"></div>
       </Card.Content>
     </Card.Root>
   );
@@ -283,7 +285,7 @@ function SkeletonLine({ className, animate = false }: { className?: string; anim
   return (
     <div
       className={twMerge(
-        clsx(animate && 'animate-skeleton bg-linear-to-r from-tertiary/[0.04] via-tertiary/[.1] to-tertiary/[0.04]'),
+        clsx(animate && 'animate-skeleton bg-linear-to-r from-tertiary/4 via-tertiary/10 to-tertiary/4'),
         className,
       )}
       style={{ backgroundSize: '200% 100%' }}
