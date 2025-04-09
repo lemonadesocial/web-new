@@ -1,13 +1,10 @@
 'use client';
 import React from 'react';
-import { format } from 'date-fns';
 
 import { Event, GetEventDocument, GetEventQuery, User } from '$lib/generated/backend/graphql';
 import { useQuery } from '$lib/request';
-import { Avatar, Divider } from '$lib/components/core';
+import { Avatar, Badge, Spacer } from '$lib/components/core';
 import { generateUrl } from '$lib/utils/cnd';
-import { convertFromUtcToTimezone } from '$lib/utils/date';
-import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event';
 import { userAvatar } from '$lib/utils/user';
 
 import { AboutSection } from './AboutSection';
@@ -18,6 +15,8 @@ import { CommunitySection } from './CommunitySection';
 import { HostedBySection } from './HostedBySection';
 
 import { EventAccess } from '../event-access';
+import { EventDateTimeBlock } from './EventDateTimeBlock';
+import { EventLocationBlock } from './EventLocationBlock';
 
 export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
   const { data, loading } = useQuery(GetEventDocument, {
@@ -31,7 +30,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
 
   return (
     <div className="flex gap-[72px]">
-      <div className="w-[296px] flex flex-col gap-6">
+      <div className="hidden md:flex w-[296px] flex-col gap-6">
         {event.new_new_photos_expanded?.[0] && (
           <img
             src={generateUrl(event.new_new_photos_expanded[0])}
@@ -45,7 +44,29 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
         <HostedBySection event={event} />
       </div>
 
-      <div className="flex-1 flex flex-col gap-6">
+      <div className="flex-1 flex flex-col gap-6 w-full">
+        <div className="block md:hidden">
+          {event.new_new_photos_expanded?.[0] && (
+            <img
+              src={generateUrl(event.new_new_photos_expanded[0])}
+              alt={event.title}
+              loading="lazy"
+              className="aspect-square object-contain border rounded-md"
+            />
+          )}
+          {event.private && (
+            <>
+              <Spacer className="h-6" />
+              <Badge className="bg-gradient-to-r from-accent-500/16 to-warning-500/16">
+                <div className="bg-gradient-to-r from-accent-500 to-warning-500 bg-clip-text flex items-center gap-1">
+                  <i className="icon-sparkles size-3.5 bg-gradient-to-r from-accent-500 to-accent-500/70 " />
+                  <span className="text-transparent bg-clip-text">Private Event</span>
+                </div>
+              </Badge>
+            </>
+          )}
+        </div>
+
         <h3 className="text-2xl font-bold">{event.title}</h3>
 
         <div className="flex gap-2 item-center">
@@ -59,45 +80,21 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
             </div>
           )}
 
-          <p className="font-medium text-secondary">Hosted By {hosts.map((p) => p?.name).join(',')}</p>
+          <p className="text-sm md:text-base font-medium text-secondary">
+            Hosted By {hosts.map((p) => p?.name).join(',')}
+          </p>
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="flex gap-4 flex-1">
-            <div className="border rounded-sm size-12 text-secondary flex flex-col justify-center items-center font-medium">
-              <span className="py-0.5 text-xs">
-                {format(convertFromUtcToTimezone(event.start, event.timezone as string), 'MMM')}
-              </span>
-              <Divider className="h-1 w-full" />
-              <span>{format(convertFromUtcToTimezone(event.start, event.timezone as string), 'dd')}</span>
-            </div>
-            <div className="flex flex-col">
-              <span>{getEventDateBlockStart(event)}</span>
-              <span className="text-sm">{getEventDateBlockRange(event)}</span>
-            </div>
-          </div>
-
-          {event.address && (
-            <div className="flex gap-4 flex-1">
-              <div className="border rounded-sm size-12 flex items-center justify-center">
-                <i className="icon-location-outline" />
-              </div>
-              <div>
-                <p>
-                  {event.address?.title} <i className="icon-arrow-outward text-quaternary size-[18px]" />
-                </p>
-                <p>
-                  {[event.address?.city || event.address?.region, event.address?.country].filter(Boolean).join(', ')}
-                </p>
-              </div>
-            </div>
-          )}
+          <EventDateTimeBlock event={event} />
+          <EventLocationBlock event={event} />
         </div>
         <EventAccess event={event} />
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />
         <GallerySection event={event} loading={loading} />
+        <Spacer className="h-8" />
       </div>
     </div>
   );

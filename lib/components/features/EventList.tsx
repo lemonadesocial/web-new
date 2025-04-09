@@ -27,7 +27,7 @@ export function EventList({
       {Object.entries(groupBy(events, ({ start }) => start)).map(([date, data]) => (
         <div key={date}>
           <p className="text-tertiary font-medium">
-            <span className="text-tertiary">{format(date, 'MMM dd')}</span> {format(date, 'EEE')}
+            <span className="text-primary">{format(date, 'MMM dd')}</span> {format(date, 'EEE')}
           </p>
           <Divider className="mt-2 mb-3" />
 
@@ -126,8 +126,7 @@ export function EventListCard({
 
           <div className="ml-5">
             <p className="text-md text-tertiary font-medium">
-              <span className="text-tertiary">{format(new Date(date), 'MMM dd ')}</span>{' '}
-              {format(new Date(date), 'EEEE')}
+              <span className="text-primary">{format(new Date(date), 'MMM dd ')}</span> {format(new Date(date), 'EEEE')}
             </p>
             <Spacer className="h-3" />
 

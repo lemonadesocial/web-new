@@ -14,9 +14,13 @@ export function GallerySection({ event, loading }: { event: Event; loading?: boo
         {event.new_new_photos_expanded?.length} Photo{event.new_new_photos_expanded?.length > 1 ? 's' : ''}
       </p>
       <Divider className="h-1 w-full mb-2" />
-      <div className="grid grid-cols-3 gap-3">
+      <div className="flex md:grid md:grid-cols-3 gap-3 overflow-auto no-scrollbar">
         {event.new_new_photos_expanded.map((photo, idx) => (
-          <img key={idx} src={generateUrl(photo)} className="rounded-xl aspect-square object-contain border" />
+          <img
+            key={idx}
+            src={generateUrl(photo)}
+            className="rounded-xl aspect-square object-contain border size-[144] md:size-full"
+          />
         ))}
       </div>
     </div>

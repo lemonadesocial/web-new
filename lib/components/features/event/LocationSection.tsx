@@ -18,8 +18,8 @@ export function LocationSection({ event, loading = false }: { event?: Event; loa
       <p className="font-medium text-sm">Location</p>
       <Divider className="h-1 w-full mb-2" />
       <div className="flex flex-col gap-1">
-        <p className="text-lg font-medium">{event.address?.title}</p>
-        <p>{getEventAddress(event.address, true) || 'Virtual'}</p>
+        <p className="md:text-lg font-medium">{event.address?.title}</p>
+        <p className="text-sm">{getEventAddress(event.address, true) || 'Virtual'}</p>
       </div>
       <div className="aspect-video h-[240px] rounded-lg overflow-hidden">
         <Map colorscheme="LIGHT" markers={markers} defaultZoom={5} />
