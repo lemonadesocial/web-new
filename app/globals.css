@@ -2,6 +2,7 @@
 @config "../tailwind.config.ts";
 @import './themes/light.css';
 @import './themes/dark.css';
+@import './themes/tooltips.css';
 
 @theme static {
   --text-xs: 0.75rem;

@@ -176,7 +176,7 @@ export function Community({ space }: { space?: Space }) {
       <div className="relative">
         <HeroSection space={dataGetSpace?.getSpace as Space} />
         <Divider className="my-8" />
-        <div className="flex gap-18">
+        <div className="flex md:gap-18">
           <div className="flex flex-col flex-1 gap-6 w-full">
             <div className="flex">
               <h1 className="text-xl md:text-2xl font-semibold flex-1">Events</h1>
@@ -261,76 +261,78 @@ export function Community({ space }: { space?: Space }) {
             )}
           </div>
 
-          <div className="hidden sticky top-0 z-50 flex-col gap-4 md:flex max-w-[296px]">
-            <Menu.Root>
-              <Menu.Trigger>
-                <Button variant="tertiary-alt" iconLeft="icon-plus" size="sm" className="w-full">
-                  Submit Event
-                </Button>
-              </Menu.Trigger>
-              <Menu.Content className="p-1">
-                {({ toggle }) => (
-                  <>
-                    <MenuItem
-                      title="Create New Event"
-                      iconLeft="icon-edit-square"
-                      onClick={() => {
-                        toggle();
-                        window.open(`${LEMONADE_DOMAIN}/create/experience?space=${space?._id}`);
-                      }}
-                    />
-                    <MenuItem
-                      title="Submit Existing Event"
-                      iconLeft="icon-celebration-outline"
-                      onClick={() => {
-                        toggle();
-                        if (space?._id) modal.open(ListingEvent, { props: { spaceId: space._id } });
-                      }}
-                    />
-                  </>
-                )}
-              </Menu.Content>
-            </Menu.Root>
-
-            <Calendar
-              events={spaceEventsCalendar.map((item) => new Date(item.start))}
-              selected={selectedDate}
-              onSelectDate={setSelectedDate}
-              footer={() => {
-                if (selectedDate) {
-                  return (
-                    <div className="flex justify-between items-center text-tertiary mt-3">
-                      <time className="font-medium">{format(selectedDate, 'E, dd MMM yyyy')}</time>
-                      <Button
-                        variant="tertiary-alt"
-                        icon="icon-x"
-                        size="xs"
-                        aria-label="close"
-                        onClick={() => setSelectedDate(undefined)}
+          <div>
+            <div className="hidden sticky top-7 z-50 flex-col gap-4 md:flex max-w-[296px]">
+              <Menu.Root>
+                <Menu.Trigger>
+                  <Button variant="tertiary-alt" iconLeft="icon-plus" size="sm" className="w-full">
+                    Submit Event
+                  </Button>
+                </Menu.Trigger>
+                <Menu.Content className="p-1">
+                  {({ toggle }) => (
+                    <>
+                      <MenuItem
+                        title="Create New Event"
+                        iconLeft="icon-edit-square"
+                        onClick={() => {
+                          toggle();
+                          window.open(`${LEMONADE_DOMAIN}/create/experience?space=${space?._id}`);
+                        }}
                       />
-                    </div>
+                      <MenuItem
+                        title="Submit Existing Event"
+                        iconLeft="icon-celebration-outline"
+                        onClick={() => {
+                          toggle();
+                          if (space?._id) modal.open(ListingEvent, { props: { spaceId: space._id } });
+                        }}
+                      />
+                    </>
+                  )}
+                </Menu.Content>
+              </Menu.Root>
+
+              <Calendar
+                events={spaceEventsCalendar.map((item) => new Date(item.start))}
+                selected={selectedDate}
+                onSelectDate={setSelectedDate}
+                footer={() => {
+                  if (selectedDate) {
+                    return (
+                      <div className="flex justify-between items-center text-primary mt-3">
+                        <time className="font-medium">{format(selectedDate, 'E, dd MMM yyyy')}</time>
+                        <Button
+                          variant="tertiary-alt"
+                          icon="icon-x"
+                          size="xs"
+                          aria-label="close"
+                          onClick={() => setSelectedDate(undefined)}
+                        />
+                      </div>
+                    );
+                  }
+
+                  if (!upcomingEvents.length) return null;
+
+                  return (
+                    <Segment
+                      className="w-full mt-3"
+                      size="sm"
+                      onSelect={(item) => setEventListType(item.value)}
+                      selected={eventListType}
+                      items={[
+                        { label: 'Upcoming', value: 'upcoming' },
+                        { label: 'Past', value: 'past' },
+                      ]}
+                    />
                   );
-                }
-
-                if (!upcomingEvents.length) return null;
-
-                return (
-                  <Segment
-                    className="w-full mt-3"
-                    size="sm"
-                    onSelect={(item) => setEventListType(item.value)}
-                    selected={eventListType}
-                    items={[
-                      { label: 'Upcoming', value: 'upcoming' },
-                      { label: 'Past', value: 'past' },
-                    ]}
-                  />
-                );
-              }}
-            />
-            {/* <div className="aspect-square rounded-lg overflow-hidden"> */}
-            {/*   <Map markers={mappins} marker="advanced" /> */}
-            {/* </div> */}
+                }}
+              />
+              {/* <div className="aspect-square rounded-lg overflow-hidden"> */}
+              {/*   <Map markers={mappins} marker="advanced" /> */}
+              {/* </div> */}
+            </div>
           </div>
         </div>
       </div>

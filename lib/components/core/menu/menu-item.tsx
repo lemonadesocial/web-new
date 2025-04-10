@@ -13,26 +13,16 @@ export function MenuItem({ iconLeft, iconRight, title, onClick }: MenuItemProps)
   return (
     <div
       className={clsx(
-        'inline-flex gap-2.5 px-2 py-1.5 items-center w-full rounded-xs cursor-pointer',
+        'inline-flex gap-2.5 px-2 py-1.5 items-center w-full rounded-xs cursor-pointer text-nowrap max-w-3xs',
         typeof onClick === 'function' && 'hover:bg-primary/8',
       )}
       onClick={onClick}
     >
-      {iconLeft && (
-        typeof iconLeft === 'string' ? (
-          <i className={twMerge(iconLeft, 'text-tertiary size-4')} />
-        ) : (
-          iconLeft
-        )
-      )}
+      {iconLeft &&
+        (typeof iconLeft === 'string' ? <i className={twMerge(iconLeft, 'text-tertiary size-4')} /> : iconLeft)}
       <p className="font-medium text-sm font-default-body text-secondary flex-1">{title}</p>
-      {iconRight && (
-        typeof iconRight === 'string' ? (
-          <i className={twMerge(iconRight, 'text-tertiary size-4')} />
-        ) : (
-          iconRight
-        )
-      )}
+      {iconRight &&
+        (typeof iconRight === 'string' ? <i className={twMerge(iconRight, 'text-tertiary size-4')} /> : iconRight)}
     </div>
   );
 }

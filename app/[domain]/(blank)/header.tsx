@@ -75,8 +75,9 @@ export default function Header() {
             {!session && (
               <Button
                 size="sm"
-                variant="tertiary"
+                variant="tertiary-alt"
                 onClick={handleSignIn}
+                className="rounded-full backdrop-blur-none"
               >
                 Sign In
               </Button>

@@ -134,8 +134,8 @@ export default function ThemeBuilder({
                     <Card.Root
                       key={key}
                       className={clsx(
-                        'p-0 bg-transparent border-transparent transition-all hover:outline-2 hover:outline-offset-2 hover:ring-tertiary rounded-sm',
-                        field.value === key && 'outline-2 outline-offset-2 ring-tertiary',
+                        'p-0 bg-transparent border-transparent transition-all hover:outline-2 hover:outline-offset-2 hover:outline-primary/16 rounded-sm',
+                        field.value === key && 'outline-2 outline-offset-2 outline-primary!',
                       )}
                       onClick={() => {
                         if (key === 'pattern') {
@@ -164,258 +164,263 @@ export default function ThemeBuilder({
           />
 
           <div className="flex flex-col gap-2">
-            <div className="flex gap-2 flex-wrap w-full">
-              <Controller
-                name="foreground"
-                control={form.control}
-                render={({ field }) => {
-                  const values = form.getValues();
-                  const colors = presets[theme].colors;
-                  const mode = values.mode;
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2 flex-wrap w-full">
+                <Controller
+                  name="foreground"
+                  control={form.control}
+                  render={({ field }) => {
+                    const values = form.getValues();
+                    const colors = presets[theme].colors;
+                    const mode = values.mode;
 
-                  return (
-                    <PopoverColor
-                      label="Accent"
-                      name={field?.value?.key}
-                      mode="default"
-                      defaultValue={field?.value?.value}
-                      colors={colors}
-                      onSelect={({ key, color }) => {
-                        let bgColor = color;
-                        form.setValue('foreground', { key, value: color });
-                        let cssVars = {
-                          dark: {
-                            '--color-accent-500': `var(--color-${key}-500)`,
-                            '--color-accent-700': `var(--color-${key}-700)`,
-                            '--color-background': `var(--color-${key}-950)`,
-                          },
-                          light: {
-                            '--color-accent-500': `var(--color-${key}-500)`,
-                            '--color-accent-700': `var(--color-${key}-700)`,
-                            '--color-background': `var(--color-${key}-50)`,
-                          },
-                          pattern: {
-                            '--pattern-50': `var(--color-${key}-50)`,
-                            '--pattern-100': `var(--color-${key}-100)`,
-                            '--pattern-200': `var(--color-${key}-200)`,
-                            '--pattern-300': `var(--color-${key}-300)`,
-                          },
-                        };
-
-                        if (key === 'custom' && color) {
-                          const palette = getPalette([
-                            { color, name: key, shade: 500, shades: [50, 100, 200, 300, 500, 700, 950] },
-                          ]) as unknown as {
-                            custom: {
-                              500: string;
-                              700: string;
-                              950: string;
-                              50: string;
-                              100: string;
-                              200: string;
-                              300: string;
-                            };
-                          };
-                          bgColor = palette.custom[mode === 'dark' ? 950 : 50];
-
-                          cssVars = {
+                    return (
+                      <PopoverColor
+                        label="Accent"
+                        name={field?.value?.key}
+                        mode="default"
+                        defaultValue={field?.value?.value}
+                        colors={colors}
+                        onSelect={({ key, color }) => {
+                          let bgColor = color;
+                          form.setValue('foreground', { key, value: color });
+                          let cssVars = {
                             dark: {
-                              '--color-accent-500': palette.custom[500],
-                              '--color-accent-700': palette.custom[700],
-                              '--color-background': palette.custom[950],
+                              '--color-accent-500': `var(--color-${key}-500)`,
+                              '--color-accent-700': `var(--color-${key}-700)`,
+                              '--color-background': `var(--color-${key}-950)`,
                             },
                             light: {
-                              '--color-accent-500': palette.custom[500],
-                              '--color-accent-700': palette.custom[700],
-                              '--color-background': palette.custom[50],
+                              '--color-accent-500': `var(--color-${key}-500)`,
+                              '--color-accent-700': `var(--color-${key}-700)`,
+                              '--color-background': `var(--color-${key}-50)`,
                             },
                             pattern: {
-                              '--pattern-50': palette.custom[50],
-                              '--pattern-100': palette.custom[100],
-                              '--pattern-200': palette.custom[200],
-                              '--pattern-300': palette.custom[300],
+                              '--pattern-50': `var(--color-${key}-50)`,
+                              '--pattern-100': `var(--color-${key}-100)`,
+                              '--pattern-200': `var(--color-${key}-200)`,
+                              '--pattern-300': `var(--color-${key}-300)`,
                             },
                           };
-                        }
 
-                        form.setValue('background', { key, value: bgColor });
-                        form.setValue('variables', merge(variables, cssVars), { shouldDirty: true });
-                      }}
-                    />
-                  );
-                }}
-              />
+                          if (key === 'custom' && color) {
+                            const palette = getPalette([
+                              { color, name: key, shade: 500, shades: [50, 100, 200, 300, 500, 700, 950] },
+                            ]) as unknown as {
+                              custom: {
+                                500: string;
+                                700: string;
+                                950: string;
+                                50: string;
+                                100: string;
+                                200: string;
+                                300: string;
+                              };
+                            };
+                            bgColor = palette.custom[mode === 'dark' ? 950 : 50];
 
-              <Controller
-                name="background"
-                control={form.control}
-                render={({ field }) => {
-                  const values = form.getValues();
-                  const colors = presets[theme].colors;
-                  const mode = values.mode;
+                            cssVars = {
+                              dark: {
+                                '--color-accent-500': palette.custom[500],
+                                '--color-accent-700': palette.custom[700],
+                                '--color-background': palette.custom[950],
+                              },
+                              light: {
+                                '--color-accent-500': palette.custom[500],
+                                '--color-accent-700': palette.custom[700],
+                                '--color-background': palette.custom[50],
+                              },
+                              pattern: {
+                                '--pattern-50': palette.custom[50],
+                                '--pattern-100': palette.custom[100],
+                                '--pattern-200': palette.custom[200],
+                                '--pattern-300': palette.custom[300],
+                              },
+                            };
+                          }
 
-                  return (
-                    <PopoverColor
-                      label="Background"
-                      name={field?.value?.key}
-                      defaultValue={field?.value?.value}
-                      mode={mode}
-                      colors={colors}
-                      onSelect={({ key, color }) => {
-                        form.setValue('background', { key, value: color });
-                        let cssVars = {
-                          dark: {
-                            '--color-background': `var(--color-${key}-950)`,
-                          },
-                          light: {
-                            '--color-tertiary': `var(--color-black)`,
-                            '--color-foreground': `var(--color-black)`,
-                            '--color-background': `var(--color-${key}-50)`,
-                          },
-                        };
+                          form.setValue('background', { key, value: bgColor });
+                          form.setValue('variables', merge(variables, cssVars), { shouldDirty: true });
+                        }}
+                      />
+                    );
+                  }}
+                />
 
-                        if (key === 'custom' && color) {
-                          const palette = getPalette([
-                            { color, name: key, shade: 500, shades: [50, 500, 950] },
-                          ]) as unknown as { custom: { 500: string; 950: string; 50: string } };
+                <Controller
+                  name="background"
+                  control={form.control}
+                  render={({ field }) => {
+                    const values = form.getValues();
+                    const colors = presets[theme].colors;
+                    const mode = values.mode;
 
-                          cssVars = {
+                    return (
+                      <PopoverColor
+                        label="Background"
+                        name={field?.value?.key}
+                        defaultValue={field?.value?.value}
+                        mode={mode}
+                        colors={colors}
+                        onSelect={({ key, color }) => {
+                          form.setValue('background', { key, value: color });
+                          let cssVars = {
                             dark: {
-                              '--color-background': palette.custom[950],
+                              '--color-background': `var(--color-${key}-950)`,
                             },
                             light: {
                               '--color-tertiary': `var(--color-black)`,
                               '--color-foreground': `var(--color-black)`,
-                              '--color-background': palette.custom[50],
+                              '--color-background': `var(--color-${key}-50)`,
                             },
                           };
-                        }
 
-                        form.setValue('variables', merge(variables, cssVars), { shouldDirty: true });
-                      }}
-                    />
-                  );
-                }}
-              />
+                          if (key === 'custom' && color) {
+                            const palette = getPalette([
+                              { color, name: key, shade: 500, shades: [50, 500, 950] },
+                            ]) as unknown as { custom: { 500: string; 950: string; 50: string } };
 
-              <Controller
-                name="class"
-                control={form.control}
-                render={({ field }) => {
-                  return (
-                    <Menu.Root className="flex-1" disabled={!presets[theme].assets} strategy="fixed" placement="top">
-                      <Menu.Trigger>
-                        <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
-                          <div className="w-[24px] h-[24px] rounded-full">
-                            <div
-                              // @ts-expect-error allow vars inline
-                              style={{ ...variables.pattern, '--pattern-opacity': 1 }}
-                              className={`pattern ${field.value} rounded-full w-full h-full relative!`}
-                            />
-                          </div>
-                          <span className="text-left flex-1">Pattern</span>
-                          <p className="flex items-center gap-1">
-                            <span className="capitalize">{field.value}</span>
-                            <i className="icon-chevrons-up-down text-quaternary" />
-                          </p>
-                        </div>
-                      </Menu.Trigger>
-                      <Menu.Content className="flex gap-3 max-w-[356px] flex-wrap">
-                        {presets[theme].assets?.map((item) => (
-                          <div
-                            key={item}
-                            className="capitalize flex flex-col items-center cursor-pointer"
-                            onClick={() => {
-                              form.setValue('class', item);
-                              const cssVars = {
-                                dark: {
-                                  '--pattern-opacity': 0.3,
-                                },
-                                light: {
-                                  '--pattern-opacity': 0,
-                                },
-                              };
-                              document.getElementById('pattern')?.setAttribute('class', `pattern ${item}`);
-                              form.setValue('variables', merge(variables, cssVars), { shouldDirty: true });
-                            }}
-                          >
-                            <div
-                              className={clsx(
-                                'w-16! h-16! rounded-full p-1 border-2 border-transparent mb-1 overflow-hidden',
-                                field.value === item && 'border-white',
-                              )}
-                            >
+                            cssVars = {
+                              dark: {
+                                '--color-background': palette.custom[950],
+                              },
+                              light: {
+                                '--color-tertiary': `var(--color-black)`,
+                                '--color-foreground': `var(--color-black)`,
+                                '--color-background': palette.custom[50],
+                              },
+                            };
+                          }
+
+                          form.setValue('variables', merge(variables, cssVars), { shouldDirty: true });
+                        }}
+                      />
+                    );
+                  }}
+                />
+
+                <Controller
+                  name="class"
+                  control={form.control}
+                  render={({ field }) => {
+                    return (
+                      <Menu.Root className="flex-1" disabled={!presets[theme].assets} strategy="fixed" placement="top">
+                        <Menu.Trigger>
+                          <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
+                            <div className="w-[24px] h-[24px] rounded-full">
                               <div
                                 // @ts-expect-error allow vars inline
                                 style={{ ...variables.pattern, '--pattern-opacity': 1 }}
-                                className={twMerge('pattern rounded-full relative! w-full h-full', item)}
+                                className={`pattern ${field.value} rounded-full w-full h-full relative!`}
                               />
                             </div>
-                            {item}
+                            <span className="text-left flex-1">Pattern</span>
+                            <p className="flex items-center gap-1">
+                              <span className="capitalize">{field.value}</span>
+                              <i className="icon-chevrons-up-down text-quaternary" />
+                            </p>
                           </div>
-                        ))}
-                      </Menu.Content>
-                    </Menu.Root>
-                  );
-                }}
-              />
+                        </Menu.Trigger>
+                        <Menu.Content className="flex gap-3 max-w-[356px] flex-wrap">
+                          {presets[theme].assets?.map((item) => (
+                            <div
+                              key={item}
+                              className="capitalize flex flex-col items-center cursor-pointer"
+                              onClick={() => {
+                                form.setValue('class', item);
+                                const cssVars = {
+                                  dark: {
+                                    '--pattern-opacity': 0.3,
+                                  },
+                                  light: {
+                                    '--pattern-opacity': 0,
+                                  },
+                                };
+                                document.getElementById('pattern')?.setAttribute('class', `pattern ${item}`);
+                                form.setValue('variables', merge(variables, cssVars), { shouldDirty: true });
+                              }}
+                            >
+                              <div
+                                className={clsx(
+                                  'w-16! h-16! rounded-full p-1 border-2 border-transparent mb-1 overflow-hidden',
+                                  field.value === item && 'border-white',
+                                )}
+                              >
+                                <div
+                                  // @ts-expect-error allow vars inline
+                                  style={{ ...variables.pattern, '--pattern-opacity': 1 }}
+                                  className={twMerge('pattern rounded-full relative! w-full h-full', item)}
+                                />
+                              </div>
+                              {item}
+                            </div>
+                          ))}
+                        </Menu.Content>
+                      </Menu.Root>
+                    );
+                  }}
+                />
+              </div>
             </div>
-          </div>
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2 flex-wrap w-full">
+                <Controller
+                  name="font_title"
+                  control={form.control}
+                  render={({ field }) => {
+                    return (
+                      <PopoverFont
+                        label="title"
+                        name={field.value}
+                        fonts={fonts.title}
+                        onSelect={(font) => {
+                          form.setValue('font_title', font, { shouldDirty: true });
+                          form.setValue(
+                            'variables',
+                            merge(variables, { font: { '--font-title': fonts.title[font] } }),
+                            {
+                              shouldDirty: true,
+                            },
+                          );
+                        }}
+                      />
+                    );
+                  }}
+                />
 
-          <div className="flex flex-col gap-2">
-            <div className="flex gap-2 flex-wrap w-full">
-              <Controller
-                name="font_title"
-                control={form.control}
-                render={({ field }) => {
-                  return (
-                    <PopoverFont
-                      label="title"
-                      name={field.value}
-                      fonts={fonts.title}
-                      onSelect={(font) => {
-                        form.setValue('font_title', font, { shouldDirty: true });
-                        form.setValue('variables', merge(variables, { font: { '--font-title': fonts.title[font] } }), {
-                          shouldDirty: true,
-                        });
-                      }}
-                    />
-                  );
-                }}
-              />
+                <Controller
+                  name="font_body"
+                  control={form.control}
+                  render={({ field }) => {
+                    return (
+                      <PopoverFont
+                        label="body"
+                        name={field.value}
+                        fonts={fonts.body}
+                        onSelect={(font) => {
+                          form.setValue('font_body', font, { shouldDirty: true });
+                          form.setValue('variables', merge(variables, { font: { '--font-body': fonts.body[font] } }), {
+                            shouldDirty: true,
+                          });
+                        }}
+                      />
+                    );
+                  }}
+                />
 
-              <Controller
-                name="font_body"
-                control={form.control}
-                render={({ field }) => {
-                  return (
-                    <PopoverFont
-                      label="body"
-                      name={field.value}
-                      fonts={fonts.body}
-                      onSelect={(font) => {
-                        form.setValue('font_body', font, { shouldDirty: true });
-                        form.setValue('variables', merge(variables, { font: { '--font-body': fonts.body[font] } }), {
-                          shouldDirty: true,
-                        });
-                      }}
-                    />
-                  );
-                }}
-              />
-
-              <Menu.Root className="flex-1" disabled>
-                <Menu.Trigger>
-                  <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
-                    <i className="icon-dark-theme-filled size-[24px] rounded-full" />
-                    <span className="text-left flex-1">Display</span>
-                    <p className="flex items-center gap-1">
-                      <span className="capitalize">Auto</span>
-                      <i className="icon-chevrons-up-down text-quaternary" />
-                    </p>
-                  </div>
-                </Menu.Trigger>
-              </Menu.Root>
+                <Menu.Root className="flex-1" disabled>
+                  <Menu.Trigger>
+                    <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
+                      <i className="icon-dark-theme-filled size-[24px] rounded-full" />
+                      <span className="text-left flex-1">Display</span>
+                      <p className="flex items-center gap-1">
+                        <span className="capitalize">Auto</span>
+                        <i className="icon-chevrons-up-down text-quaternary" />
+                      </p>
+                    </div>
+                  </Menu.Trigger>
+                </Menu.Root>
+              </div>
             </div>
           </div>
 

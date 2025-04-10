@@ -1,4 +1,5 @@
 'use client';
+import { uniqBy } from 'lodash';
 
 import { Alert, Avatar, Button, drawer } from '$lib/components/core';
 import { Event, GetEventDocument, User } from '$lib/generated/backend/graphql';
@@ -7,6 +8,8 @@ import { useQuery } from '$lib/request';
 import { userAvatar } from '$lib/utils/user';
 import { copy } from '$lib/utils/helpers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { useSession } from '$lib/hooks/useSession';
+import { hosting } from '$lib/utils/event';
 
 import { AboutSection } from '../event/AboutSection';
 import { LocationSection } from '../event/LocationSection';
@@ -17,15 +20,13 @@ import { HostedBySection } from '../event/HostedBySection';
 import { EventDateTimeBlock } from '../event/EventDateTimeBlock';
 import { EventLocationBlock } from '../event/EventLocationBlock';
 import { EventAccess } from '../event-access';
-import { useSession } from '$lib/hooks/useSession';
-import { hosting } from '$lib/utils/event';
 
 export function EventPane({ eventId }: { eventId: string }) {
   const session = useSession();
   const { data, loading } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
   const event = data?.getEvent as Event;
 
-  const hosts = [event?.host_expanded, ...(event?.visible_cohosts_expanded || [])];
+  const hosts = uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id);
 
   const canManage = session?.user && event && hosting(event, session.user);
 
@@ -59,27 +60,40 @@ export function EventPane({ eventId }: { eventId: string }) {
           )
         )}
 
-        <h3 className="text-2xl font-bold">{event?.title}</h3>
+        <div className="flex flex-col gap-2">
+          <h3 className="text-2xl font-bold">{event?.title}</h3>
 
-        <div className="flex gap-2 item-center">
-          {!!hosts.filter((p) => p?.image_avatar).length && (
-            <div className="flex -space-x-1 overflow-hidden p-1">
+          <div className="flex gap-2 item-center">
+            {!!hosts.filter((p) => p?.image_avatar).length && (
+              <div className="flex -space-x-1 overflow-hidden p-1">
+                {hosts
+                  .filter((p) => p?.image_avatar)
+                  .map((p) => (
+                    <Avatar
+                      key={p?._id}
+                      src={userAvatar(p as User)}
+                      size="sm"
+                      className="outline-2 outline-background"
+                    />
+                  ))}
+              </div>
+            )}
+
+            <p className="font-medium text-secondary">
+              Hosted By{' '}
               {hosts
-                .filter((p) => p?.image_avatar)
-                .map((p) => (
-                  <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="outline-2 outline-background" />
-                ))}
-            </div>
-          )}
-
-          <p className="font-medium text-secondary">Hosted By {hosts.map((p) => p?.name).join(',')}</p>
+                .map((p) => p?.name)
+                .join(', ')
+                .replace(/,(?=[^,]*$)/, ' & ')}
+            </p>
+          </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
           <EventDateTimeBlock event={event} />
           <EventLocationBlock event={event} loading={loading} />
         </div>
-        {(event && !canManage) && <EventAccess event={event} />}
+        {event && !canManage && <EventAccess event={event} />}
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />

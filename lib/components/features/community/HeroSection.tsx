@@ -46,6 +46,22 @@ export function HeroSection({ space }: HeroSectionProps) {
     else follow({ variables });
   };
 
+  const handleCloseSheet = () => {
+    if (!saved) {
+      modal.open(ConfirmModal, {
+        props: {
+          onDiscard: () => {
+            setOpenSheet(false);
+            document.getElementById('pattern')?.removeAttribute('class');
+          },
+        },
+      });
+      sheetRef.current?.snapTo(0);
+    } else {
+      setOpenSheet(false);
+    }
+  };
+
   const canManage = [space?.creator, ...(space?.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
 
   const [openSheet, setOpenSheet] = React.useState(false);
@@ -136,41 +152,25 @@ export function HeroSection({ space }: HeroSectionProps) {
         <Spacer className="h-3" />
         <div className="flex items-center gap-3">
           {COMMUNITY_SOCIAL_LINKS.filter((item) => space?.[item.key as keyof Space]).map((item) => (
-            <Button
-              key={item.key}
-              aria-label={item.key}
-              variant="flat"
-              size="sm"
-              icon={item.icon}
-              className="text-tertiary border-transparent"
-              onClick={() => window.open(`${item.prefix}${space?.[item.key as keyof Space]}`, '_blank')}
-            />
+            <div key={item.key} className="tooltip sm:tooltip">
+              <div className="tooltip-content">
+                <div className="text-sm font-medium">
+                  <span className="capitalize">{item.key.replace('handle_', '')}</span>:{' '}
+                  {space?.[item.key as keyof Space]}
+                </div>
+              </div>
+              <i
+                className={`${item.icon} tooltip tooltip-open cursor-pointer text-tertiary hover:text-primary`}
+                onClick={() => window.open(`${item.prefix}${space?.[item.key as keyof Space]}`, '_blank')}
+              />
+            </div>
           ))}
         </div>
       </div>
 
-      <Sheet
-        ref={sheetRef}
-        isOpen={openSheet}
-        onClose={() => {
-          console.log(saved);
-          if (!saved) {
-            modal.open(ConfirmModal, {
-              props: {
-                onDiscard: () => {
-                  setOpenSheet(false);
-                  document.getElementById('pattern')?.removeAttribute('class');
-                },
-              },
-            });
-            sheetRef.current?.snapTo(0);
-          } else {
-            setOpenSheet(false);
-          }
-        }}
-        snapPoints={[324]}
-        initialSnap={0}
-      >
+      <Sheet ref={sheetRef} isOpen={openSheet} onClose={handleCloseSheet} snapPoints={[324]} initialSnap={0}>
+        <Sheet.Backdrop onTap={handleCloseSheet} />
+
         <Sheet.Container className="bg-overlay-backdrop! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
           <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
             <div className="flex justify-center items-end h-[20px]">

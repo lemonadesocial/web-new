@@ -148,3 +148,13 @@ export const getDisplayPrice = (cost: string, currency: string, account?: Paymen
 
   return `${ethers.formatUnits(cost, decimals)} ${currency}`;
 };
+
+export function isAttending(event: Event, userId: string): boolean {
+  if (!event?._id) return false;
+  return new Set(
+    [...([event?.host] || [])]
+      .concat(event?.cohosts || [])
+      .concat(event?.speaker_users || [])
+      .concat(event?.accepted || []),
+  ).has(userId);
+}

@@ -1,8 +1,14 @@
 import Link from 'next/link';
 
 import { Button } from '$lib/components/core';
-import { Event, GetSpaceDocument, Space } from '$lib/generated/backend/graphql';
-import { useQuery } from '$lib/request';
+import {
+  Event,
+  FollowSpaceDocument,
+  GetSpaceDocument,
+  Space,
+  UnfollowSpaceDocument,
+} from '$lib/generated/backend/graphql';
+import { useMutation, useQuery } from '$lib/request';
 import { generateUrl } from '$lib/utils/cnd';
 import { COMMUNITY_SOCIAL_LINKS } from '../community/constants';
 import { useMe } from '$lib/hooks/useMe';
@@ -13,8 +19,30 @@ export function CommunitySection({ event }: { event?: Event }) {
   const { data } = useQuery(GetSpaceDocument, { variables: { id: event?.space }, skip: !event?.space });
   const space = data?.getSpace as Space;
 
+  const [follow, resFollow] = useMutation(FollowSpaceDocument, {
+    onComplete: (client) => {
+      client.writeFragment({ id: `Space:${space?._id}`, data: { followed: true } });
+    },
+  });
+  const [unfollow, resUnfollow] = useMutation(UnfollowSpaceDocument, {
+    onComplete: (client) => {
+      client.writeFragment({ id: `Space:${space?._id}`, data: { followed: false } });
+    },
+  });
+
   if (!space) return null;
   const canManage = space.creator === me?._id || space.admins?.map((p) => p._id).includes(me?._id);
+
+  const handleSubscribe = () => {
+    if (!me) {
+      // need to login to subscribe
+      return;
+    }
+
+    const variables = { space: space?._id };
+    if (space?.followed) unfollow({ variables });
+    else follow({ variables });
+  };
 
   return (
     <div className="flex flex-col gap-3">
@@ -27,7 +55,7 @@ export function CommunitySection({ event }: { event?: Event }) {
           <div className="group flex gap-1 items-center flex-1">
             <Link
               href={space.hostnames?.[0] || '/'}
-              className="font-medium group-hover:text-accent-400"
+              className="font-medium group-hover:text-accent-400 line-clamp-1"
               target="_blank"
             >
               {space.title}
@@ -36,7 +64,12 @@ export function CommunitySection({ event }: { event?: Event }) {
           </div>
         </div>
         {!canManage && (
-          <Button className="rounded-full" variant="tertiary-alt">
+          <Button
+            className="rounded-full"
+            variant="tertiary-alt"
+            loading={resFollow.loading || resUnfollow.loading}
+            onClick={() => handleSubscribe()}
+          >
             {space.followed ? 'UnSubscribe' : 'Subscribe'}
           </Button>
         )}

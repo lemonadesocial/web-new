@@ -21,7 +21,7 @@ export function LocationSection({ event, loading = false }: { event?: Event; loa
         <p className="md:text-lg font-medium">{event.address?.title}</p>
         <p className="text-sm">{getEventAddress(event.address, true) || 'Virtual'}</p>
       </div>
-      <div className="aspect-video h-[240px] rounded-lg overflow-hidden">
+      <div className="aspect-video h-[240px] rounded-sm overflow-hidden">
         <Map colorscheme="LIGHT" markers={markers} defaultZoom={5} />
       </div>
     </div>
@@ -39,7 +39,7 @@ function LocationSectionSkeleton() {
           <SkeletonComp animate className="h-4 w-[400px]" />
         </div>
 
-        <SkeletonComp className="h-60 w-full rounded-xl" />
+        <SkeletonComp className="h-60 w-full rounded-sm" />
       </div>
     </div>
   );
