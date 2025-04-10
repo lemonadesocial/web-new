@@ -1,10 +1,16 @@
+import React from 'react';
 import { SkeletonComp } from '$lib/components/core';
 import { Event } from '$lib/generated/backend/graphql';
-import React from 'react';
+import { useSession } from '$lib/hooks/useSession';
+import { isAttending } from '$lib/utils/event';
 
 export function EventLocationBlock({ loading = false, event }: { loading?: boolean; event?: Event }) {
+  const session = useSession();
+
   if (loading) return <EventLocationBlockSekeleton />;
   if (!event?.address) return null;
+
+  const attending = session?.user ? isAttending(event, session?.user) : false;
 
   return (
     <div className="flex gap-4 flex-1 text-nowrap">
@@ -13,7 +19,13 @@ export function EventLocationBlock({ loading = false, event }: { loading?: boole
       </div>
       <div>
         <p>
-          {event.address?.title} <i className="icon-arrow-outward text-quaternary size-[18px]" />
+          {attending ? (
+            <>
+              {event.address?.title} <i className="icon-arrow-outward text-quaternary size-[18px]" />
+            </>
+          ) : (
+            'Register to See Address'
+          )}
         </p>
         <p className="text-sm">
           {[event.address?.city || event.address?.region, event.address?.country].filter(Boolean).join(', ')}

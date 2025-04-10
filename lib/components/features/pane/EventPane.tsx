@@ -1,4 +1,5 @@
 'use client';
+import { uniqBy } from 'lodash';
 
 import { Alert, Avatar, Button, drawer } from '$lib/components/core';
 import { Event, GetEventDocument, User } from '$lib/generated/backend/graphql';
@@ -7,6 +8,8 @@ import { useQuery } from '$lib/request';
 import { userAvatar } from '$lib/utils/user';
 import { copy } from '$lib/utils/helpers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { useSession } from '$lib/hooks/useSession';
+import { hosting } from '$lib/utils/event';
 
 import { AboutSection } from '../event/AboutSection';
 import { LocationSection } from '../event/LocationSection';
@@ -17,15 +20,13 @@ import { HostedBySection } from '../event/HostedBySection';
 import { EventDateTimeBlock } from '../event/EventDateTimeBlock';
 import { EventLocationBlock } from '../event/EventLocationBlock';
 import { EventAccess } from '../event-access';
-import { useSession } from '$lib/hooks/useSession';
-import { hosting } from '$lib/utils/event';
 
 export function EventPane({ eventId }: { eventId: string }) {
   const session = useSession();
   const { data, loading } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
   const event = data?.getEvent as Event;
 
-  const hosts = [event?.host_expanded, ...(event?.visible_cohosts_expanded || [])];
+  const hosts = uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id);
 
   const canManage = session?.user && event && hosting(event, session.user);
 
@@ -78,7 +79,13 @@ export function EventPane({ eventId }: { eventId: string }) {
               </div>
             )}
 
-            <p className="font-medium text-secondary">Hosted By {hosts.map((p) => p?.name).join(',')}</p>
+            <p className="font-medium text-secondary">
+              Hosted By{' '}
+              {hosts
+                .map((p) => p?.name)
+                .join(', ')
+                .replace(/,(?=[^,]*$)/, ' & ')}
+            </p>
           </div>
         </div>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { groupBy } from 'lodash';
+import { groupBy, uniqBy } from 'lodash';
 import { format, isAfter, isBefore } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
@@ -44,7 +44,7 @@ export function EventList({
 }
 
 function EventItem({ item }: { item: Event }) {
-  const users = [item.host_expanded, ...(item.visible_cohosts_expanded || [])];
+  const users = uniqBy([item.host_expanded, ...(item.visible_cohosts_expanded || [])], (u) => u?._id);
 
   return (
     <div className="transition flex text-tertiary gap-4 hover:bg-primary/[.16] p-2 rounded-md cursor-pointer backdrop-blur-lg">
@@ -54,11 +54,17 @@ function EventItem({ item }: { item: Event }) {
         <div className="flex gap-2 items-center">
           <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
             {users.map((p) => (
-              <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="ring-2 border-background" />
+              <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="outline outline-background" />
             ))}
           </div>
 
-          <p className="font-medium text-sm md:text-base text-tertiary">By {users.map((p) => p?.name).join(',')}</p>
+          <p className="font-medium text-sm md:text-base text-tertiary">
+            By{' '}
+            {users
+              .map((p) => p?.name)
+              .join(', ')
+              .replace(/,(?=[^,]*$)/, ' & ')}
+          </p>
         </div>
       </div>
       <div>
@@ -156,7 +162,7 @@ export function EventListCard({
 }
 
 function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: SpaceTagBase[]; onClick?: () => void }) {
-  const users = [item.host_expanded, ...(item.visible_cohosts_expanded || [])];
+  const users = uniqBy([item.host_expanded, ...(item.visible_cohosts_expanded || [])], (u) => u?._id);
 
   return (
     <Card.Root as="button" onClick={onClick} key={`event_${item.shortid}`} className="flex flex-col gap-3">
@@ -183,7 +189,11 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
               </div>
 
               <p className="font-medium text-tertiary text-sm md:text-base truncate">
-                By {users.map((p) => p?.name).join(',')}
+                By{' '}
+                {users
+                  .map((p) => p?.name)
+                  .join(', ')
+                  .replace(/,(?=[^,]*$)/, ' & ')}
               </p>
             </div>
           </div>
@@ -192,7 +202,7 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
             <div className="flex flex-col gap-1">
               <div className="inline-flex items-center gap-2">
                 <i className="icon-location-outline size-4" />
-                <span className="text-sm md:text-md">{getLocation(item.address)}</span>
+                <span className="text-sm md:text-md truncate">{getLocation(item.address)}</span>
               </div>
             </div>
           )}
@@ -295,8 +305,8 @@ function SkeletonLine({ className, animate = false }: { className?: string; anim
 
 function getLocation(address?: Address | null) {
   let location = '';
-  if (address?.city) location += address.city + ', ';
-  if (address?.country) location += address.country;
+  if (address?.city) location += address.city;
+  if (address?.country) location += `, ${address.country}`;
 
   return location;
 }

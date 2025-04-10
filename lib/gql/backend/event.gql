@@ -12,6 +12,9 @@ query GetEvent($id: MongoID, $shortid: String) {
     host_expanded {
       ...User
     }
+    visible_cohosts_expanded {
+      ...User
+    }
     accepted
     new_new_photos_expanded {
       _id
@@ -224,8 +227,8 @@ query GetEventTicketTypes($input: GetEventTicketTypesInput!) {
       }
       whitelisted
       photos_expanded(limit: 1) {
-        _id,
-        key,
+        _id
+        key
         bucket
       }
       category

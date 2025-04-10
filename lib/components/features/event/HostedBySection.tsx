@@ -4,11 +4,12 @@ import { Event } from '$lib/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import Link from 'next/link';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { uniqBy } from 'lodash';
 
 export function HostedBySection({ event }: { event: Event }) {
   if (!event) return null;
 
-  const hosts = [event?.host_expanded, ...(event?.visible_cohosts_expanded || [])];
+  const hosts = uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id);
 
   return (
     <div className="event-description flex flex-col gap-2 w-full">

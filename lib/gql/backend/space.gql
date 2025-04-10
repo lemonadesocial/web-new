@@ -112,6 +112,11 @@ query GetSpaceEvents(
       image_avatar
       name
     }
+    visible_cohosts_expanded {
+      _id
+      image_avatar
+      name
+    }
     address {
       city
       country
