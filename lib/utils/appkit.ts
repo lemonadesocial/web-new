@@ -8,15 +8,14 @@ import {
   useAppKitState,
   useAppKitTheme,
   useDisconnect,
-  useWalletInfo
+  useWalletInfo,
+  useAppKitProvider
 } from '@reown/appkit/react';
-import { getDefaultStore } from 'jotai';
-
-import { Chain } from '$lib/generated/backend/graphql';
-import { listChainsAtom } from '$lib/jotai';
 import { AppKitNetwork } from '@reown/appkit/networks';
 
-const listChains = getDefaultStore().get(listChainsAtom);
+import { Chain } from '$lib/generated/backend/graphql';
+
+import { getListChains } from './crypto';
 
 export const getAppKitNetwork = (chain: Chain) => {
   return {
@@ -47,7 +46,7 @@ export const ethersAdapter = new EthersAdapter()
 
 const appKit = createAppKit({
   adapters: [new EthersAdapter()],
-  networks: listChains.filter((chain) => chain.tokens?.length).map((chain) => getAppKitNetwork(chain)) as [AppKitNetwork, ...AppKitNetwork[]],
+  networks: getListChains().filter((chain) => chain.tokens?.length).map((chain) => getAppKitNetwork(chain)) as [AppKitNetwork, ...AppKitNetwork[]],
   metadata: {
     name: 'Lemonade',
     description: 'Discover events & communities, find your tribe! Create your own Lemonade Stand to build and collaborate with creators across the world. #makelemonade',
@@ -73,5 +72,6 @@ export {
   useAppKitAccount,
   useWalletInfo,
   useAppKitNetwork,
-  useDisconnect
+  useDisconnect,
+  useAppKitProvider
 }

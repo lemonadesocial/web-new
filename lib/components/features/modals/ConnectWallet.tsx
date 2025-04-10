@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button, modal, ModalContent } from "$lib/components/core";
 import { Chain } from "$lib/generated/backend/graphql";
@@ -10,28 +10,35 @@ export function ConnectWallet({ onConnect, chain }: { onConnect: () => void; cha
   const { chainId, switchNetwork } = useAppKitNetwork();
 
   const [showSwitchNetwork, setShowSwitchNetwork] = useState(false);
+  const hasConnected = useRef(false);
 
   useEffect(() => {
-    if (!isConnected) return;
+    if (hasConnected.current || !isConnected) return;
 
     if (!chain) {
       onConnect();
+      hasConnected.current = true;
       modal.close();
       return;
     }
 
     if (chainId?.toString() === chain.chain_id) {
       onConnect();
+      hasConnected.current = true;
       modal.close();
       return;
     }
 
     setShowSwitchNetwork(true);
-  }, [isConnected, chain, chainId]);
+
+    return () => {
+      hasConnected.current = true;
+    };
+  }, [isConnected, chain, chainId, onConnect]);
 
   if (showSwitchNetwork && chain) {
     return (
-      <ModalContent icon={chain.logo_url && <img src={chain.logo_url} className="w-6" /> }>
+      <ModalContent icon={chain.logo_url && <img src={chain.logo_url} className="w-6" />}>
         <p className="text-lg">Switch Network</p>
         <p className="text-secondary mt-2">
           You&apos;re connected to a different network than the one you selected. Please switch to ${chain.name} in your wallet to continue.

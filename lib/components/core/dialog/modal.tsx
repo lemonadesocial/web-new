@@ -142,7 +142,7 @@ export function ModalContent({ children, onClose, title, icon }: ModalContentPro
     <div className="p-4 space-y-4 w-[340px]">
       {
         (title || icon || onClose) && (
-          <div className="flex justify-between items-start">
+          <div className={clsx("flex justify-between", icon ? 'items-start' : 'items-center')}>
             {icon && (
               <div className="size-[56px] flex justify-center items-center rounded-full bg-primary/8">
                 {
@@ -150,6 +150,7 @@ export function ModalContent({ children, onClose, title, icon }: ModalContentPro
                 }
               </div>
             )}
+            {title && <span className='min-w-6' />}
             {title}
             {onClose && (
               <Button icon="icon-x" size='xs' variant="tertiary" className="rounded-full" onClick={onClose} />

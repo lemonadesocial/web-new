@@ -8,18 +8,22 @@ import { selectedPaymentAccountAtom, useAtom } from "../store";
 import { ChainDisplay } from "../../ChainDislay";
 import { SubmitForm } from "../SubmitForm";
 import { ConnectWallet } from "../../modals/ConnectWallet";
+import { useCryptoPayment } from "../hooks/useCryptoPayment";
 
 export function CryptoPayment({ accounts }: { accounts: NewPaymentAccount[] }) {
   const [selectedPaymentAccount, setSelectedPaymentAccount] = useAtom(selectedPaymentAccountAtom);
   const chainsMap = useJotaiAtomValue(chainsMapAtom);
   const chain = chainsMap[(selectedPaymentAccount?.account_info as EthereumAccount).network];
 
+  const { pay, loading } = useCryptoPayment();
+
   const payWithWallet = () => {
     modal.open(ConnectWallet, {
       props: {
-        onConnect: () => console.log('connected'),
+        onConnect: pay,
         chain
-      }
+      },
+      dismissible: true
     });
   };
 
@@ -61,7 +65,7 @@ export function CryptoPayment({ accounts }: { accounts: NewPaymentAccount[] }) {
     <SubmitForm
       onComplete={payWithWallet}>
       {(handleSubmit) => (
-        <Button className="w-full" onClick={handleSubmit}>
+        <Button className="w-full" onClick={handleSubmit} loading={loading}>
           Pay with Wallet
         </Button>
       )}
