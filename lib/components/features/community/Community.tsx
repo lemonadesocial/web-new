@@ -176,7 +176,7 @@ export function Community({ space }: { space?: Space }) {
       <div className="relative">
         <HeroSection space={dataGetSpace?.getSpace as Space} />
         <Divider className="my-8" />
-        <div className="flex gap-18">
+        <div className="flex md:gap-18">
           <div className="flex flex-col flex-1 gap-6 w-full">
             <div className="flex">
               <h1 className="text-xl md:text-2xl font-semibold flex-1">Events</h1>
