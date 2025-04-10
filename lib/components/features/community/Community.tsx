@@ -300,7 +300,7 @@ export function Community({ space }: { space?: Space }) {
                 footer={() => {
                   if (selectedDate) {
                     return (
-                      <div className="flex justify-between items-center text-tertiary mt-3">
+                      <div className="flex justify-between items-center text-primary mt-3">
                         <time className="font-medium">{format(selectedDate, 'E, dd MMM yyyy')}</time>
                         <Button
                           variant="tertiary-alt"
