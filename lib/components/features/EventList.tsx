@@ -174,7 +174,7 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
 
               <p>{format(item.start, 'hh:mm a')}</p>
             </div>
-            <p className="font-title text-lg md:text-xl font-semibold text-tertiary">{item.title}</p>
+            <p className="font-title text-lg md:text-xl font-semibold text-primary">{item.title}</p>
             <div className="flex gap-2 item-center">
               <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
                 {users.map((p) => (
