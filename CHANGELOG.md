@@ -1,5 +1,36 @@
 # Changelog
 
+## [1.5.0](https://github.com/lemonadesocial/web-new/compare/v1.4.0...v1.5.0) (2025-04-10)
+
+
+### Features
+
+* update font scale full page event detail ([4b9ee9b](https://github.com/lemonadesocial/web-new/commit/4b9ee9b7ed10e3157374b7a81afb1284bd0a4c5e))
+* update mobile view main hub ([3aba955](https://github.com/lemonadesocial/web-new/commit/3aba9553bb004ac2df7408f35d994760eb5d3722))
+
+
+### Bug Fixes
+
+* add blur segment container ([464618e](https://github.com/lemonadesocial/web-new/commit/464618e620a580a81d7a5e11350569f05996cb48))
+* add host and cohosts info to event ([8de7095](https://github.com/lemonadesocial/web-new/commit/8de70958520bc32ed74885ee00461db30395b0df))
+* approval status ([77a65c0](https://github.com/lemonadesocial/web-new/commit/77a65c03216861f1c21841c00309b838610caa15))
+* buy free and stripe tickets ([763e358](https://github.com/lemonadesocial/web-new/commit/763e358389cb96693c61e1259ee2172b6805242d))
+* click on modal close dialog ([fd3da72](https://github.com/lemonadesocial/web-new/commit/fd3da72bf19e4d3a7f184e0c9d5a5c9247011344))
+* content menu item ([12bf338](https://github.com/lemonadesocial/web-new/commit/12bf338cb3f8bd46f3ddc06b017eb2618b5a2cdb))
+* hide event access for host ([deaa651](https://github.com/lemonadesocial/web-new/commit/deaa651506df038e0935e6d480e880412c675155))
+* lint code ([8e28d5b](https://github.com/lemonadesocial/web-new/commit/8e28d5bd44809783562192d67d2c6a7b4de5ba7e))
+* missing event field codegen ([00e2505](https://github.com/lemonadesocial/web-new/commit/00e2505323047c20af9bd1f4627802f4d95ed600))
+* mobile width on community ([e12538f](https://github.com/lemonadesocial/web-new/commit/e12538fa39b5b924c8793ae940eb48ef4f881dc1))
+* revert middleware after merge ([d753ff4](https://github.com/lemonadesocial/web-new/commit/d753ff4766d948ec78fc9e4feb814490419a6de9))
+* sticky right col ([bd19c4b](https://github.com/lemonadesocial/web-new/commit/bd19c4bbd47451b494dec9e4b453a5e173a6305c))
+* ui theme builder ([47e1830](https://github.com/lemonadesocial/web-new/commit/47e1830f3baed99fb2c4cbd0428ba9114f416e30))
+* update button signin style ([4531591](https://github.com/lemonadesocial/web-new/commit/45315911a31cc580700e0adda36babace21e2334))
+* update icons link social ([27386d1](https://github.com/lemonadesocial/web-new/commit/27386d1ba6ce72e237456d1bdeb25c14f1260d77))
+* update tooltip icon social ([7b5c930](https://github.com/lemonadesocial/web-new/commit/7b5c930374c8c34d2b7859d75649c8e09530961b))
+* update width on datetime/location event blocks ([575fa43](https://github.com/lemonadesocial/web-new/commit/575fa435c2810717f8317bcf5c5726e2e81e439b))
+* wrong color footer calendar ([9741a92](https://github.com/lemonadesocial/web-new/commit/9741a9219159a2261be61934f163a829fcabfb2b))
+* wrong color vars calendar ([ff281f1](https://github.com/lemonadesocial/web-new/commit/ff281f14ba1ea0ffb5a03c51ba7642268172f15d))
+
 ## [1.4.0](https://github.com/lemonadesocial/web-new/compare/v1.3.0...v1.4.0) (2025-04-08)
 
 
