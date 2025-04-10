@@ -136,13 +136,9 @@ export function HeroSection({ space }: HeroSectionProps) {
         <Spacer className="h-3" />
         <div className="flex items-center gap-3">
           {COMMUNITY_SOCIAL_LINKS.filter((item) => space?.[item.key as keyof Space]).map((item) => (
-            <Button
+            <i
               key={item.key}
-              aria-label={item.key}
-              variant="flat"
-              size="sm"
-              icon={item.icon}
-              className="text-tertiary border-transparent"
+              className={`${item.icon} cursor-pointer text-tertiary hover:text-primary`}
               onClick={() => window.open(`${item.prefix}${space?.[item.key as keyof Space]}`, '_blank')}
             />
           ))}
