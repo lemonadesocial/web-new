@@ -59,27 +59,34 @@ export function EventPane({ eventId }: { eventId: string }) {
           )
         )}
 
-        <h3 className="text-2xl font-bold">{event?.title}</h3>
+        <div className="flex flex-col gap-2">
+          <h3 className="text-2xl font-bold">{event?.title}</h3>
 
-        <div className="flex gap-2 item-center">
-          {!!hosts.filter((p) => p?.image_avatar).length && (
-            <div className="flex -space-x-1 overflow-hidden p-1">
-              {hosts
-                .filter((p) => p?.image_avatar)
-                .map((p) => (
-                  <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="outline-2 outline-background" />
-                ))}
-            </div>
-          )}
+          <div className="flex gap-2 item-center">
+            {!!hosts.filter((p) => p?.image_avatar).length && (
+              <div className="flex -space-x-1 overflow-hidden p-1">
+                {hosts
+                  .filter((p) => p?.image_avatar)
+                  .map((p) => (
+                    <Avatar
+                      key={p?._id}
+                      src={userAvatar(p as User)}
+                      size="sm"
+                      className="outline-2 outline-background"
+                    />
+                  ))}
+              </div>
+            )}
 
-          <p className="font-medium text-secondary">Hosted By {hosts.map((p) => p?.name).join(',')}</p>
+            <p className="font-medium text-secondary">Hosted By {hosts.map((p) => p?.name).join(',')}</p>
+          </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
           <EventDateTimeBlock event={event} />
           <EventLocationBlock event={event} loading={loading} />
         </div>
-        {(event && !canManage) && <EventAccess event={event} />}
+        {event && !canManage && <EventAccess event={event} />}
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />

@@ -47,7 +47,7 @@ function EventItem({ item }: { item: Event }) {
   const users = [item.host_expanded, ...(item.visible_cohosts_expanded || [])];
 
   return (
-    <div className="transition flex text-tertiary gap-4 hover:bg-primary/[.16] p-2 rounded-md cursor-pointer">
+    <div className="transition flex text-tertiary gap-4 hover:bg-primary/[.16] p-2 rounded-md cursor-pointer backdrop-blur-lg">
       <p>{format(item.start, 'h:mm a')}</p>
       <div className="flex flex-col gap-1 flex-1">
         <p className="text-primary font-medium text-base md:text-lg">{item.title}</p>

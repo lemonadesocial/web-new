@@ -7,7 +7,7 @@ export function EventLocationBlock({ loading = false, event }: { loading?: boole
   if (!event?.address) return null;
 
   return (
-    <div className="flex gap-4 flex-1">
+    <div className="flex gap-4 flex-1 text-nowrap">
       <div className="border rounded-sm size-12 flex items-center justify-center">
         <i className="icon-location-outline" />
       </div>
