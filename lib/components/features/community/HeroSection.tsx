@@ -46,6 +46,22 @@ export function HeroSection({ space }: HeroSectionProps) {
     else follow({ variables });
   };
 
+  const handleCloseSheet = () => {
+    if (!saved) {
+      modal.open(ConfirmModal, {
+        props: {
+          onDiscard: () => {
+            setOpenSheet(false);
+            document.getElementById('pattern')?.removeAttribute('class');
+          },
+        },
+      });
+      sheetRef.current?.snapTo(0);
+    } else {
+      setOpenSheet(false);
+    }
+  };
+
   const canManage = [space?.creator, ...(space?.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
 
   const [openSheet, setOpenSheet] = React.useState(false);
@@ -152,28 +168,9 @@ export function HeroSection({ space }: HeroSectionProps) {
         </div>
       </div>
 
-      <Sheet
-        ref={sheetRef}
-        isOpen={openSheet}
-        onClose={() => {
-          console.log(saved);
-          if (!saved) {
-            modal.open(ConfirmModal, {
-              props: {
-                onDiscard: () => {
-                  setOpenSheet(false);
-                  document.getElementById('pattern')?.removeAttribute('class');
-                },
-              },
-            });
-            sheetRef.current?.snapTo(0);
-          } else {
-            setOpenSheet(false);
-          }
-        }}
-        snapPoints={[324]}
-        initialSnap={0}
-      >
+      <Sheet ref={sheetRef} isOpen={openSheet} onClose={handleCloseSheet} snapPoints={[324]} initialSnap={0}>
+        <Sheet.Backdrop onTap={handleCloseSheet} />
+
         <Sheet.Container className="bg-overlay-backdrop! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
           <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
             <div className="flex justify-center items-end h-[20px]">
