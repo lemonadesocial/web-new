@@ -136,11 +136,18 @@ export function HeroSection({ space }: HeroSectionProps) {
         <Spacer className="h-3" />
         <div className="flex items-center gap-3">
           {COMMUNITY_SOCIAL_LINKS.filter((item) => space?.[item.key as keyof Space]).map((item) => (
-            <i
-              key={item.key}
-              className={`${item.icon} cursor-pointer text-tertiary hover:text-primary`}
-              onClick={() => window.open(`${item.prefix}${space?.[item.key as keyof Space]}`, '_blank')}
-            />
+            <div key={item.key} className="tooltip sm:tooltip">
+              <div className="tooltip-content">
+                <div className="text-sm font-medium">
+                  <span className="capitalize">{item.key.replace('handle_', '')}</span>:{' '}
+                  {space?.[item.key as keyof Space]}
+                </div>
+              </div>
+              <i
+                className={`${item.icon} tooltip tooltip-open cursor-pointer text-tertiary hover:text-primary`}
+                onClick={() => window.open(`${item.prefix}${space?.[item.key as keyof Space]}`, '_blank')}
+              />
+            </div>
           ))}
         </div>
       </div>
