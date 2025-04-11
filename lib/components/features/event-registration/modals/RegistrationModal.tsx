@@ -42,18 +42,19 @@ export function RegistrationModal() {
   const isFree = pricing?.total === '0';
 
   return (
-    <div className='h-screen overflow-auto w-screen bg-background/80 [backdrop-filter:var(--backdrop-filter)] flex pt-24 justify-center gap-12'>
+    <div className='h-screen overflow-auto w-screen bg-background/80 [backdrop-filter:var(--backdrop-filter)] flex flex-col-reverse justify-end md:justify-center md:flex-row md:pt-24 md:gap-12'>
       <div className="absolute top-4 right-4">
         <Button
           variant="tertiary-alt"
           icon="icon-x"
           className="rounded-full"
           onClick={() => registrationModal.close()}
+          size="sm"
         >
           Close
         </Button>
       </div>
-      <div className='flex flex-col gap-8 w-[372]'>
+      <div className='flex flex-col gap-8 md:w-[372] p-4 md:p-0'>
         <div className='flex flex-col gap-6'>
           <div className='flex flex-col gap-4'>
             <h3 className='font-semibold text-[24px]'>Your Info</h3>

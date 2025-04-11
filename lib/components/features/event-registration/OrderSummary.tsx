@@ -18,7 +18,10 @@ export function OrderSummary() {
   const grandTotal = (BigInt(pricingInfo?.total || '0') + BigInt(fee || '0')).toString();
 
   return (
-    <div className="border border-divider rounded-lg w-[340] h-min">
+    <div className="border-b md:border border-divider md:rounded-lg md:w-[340] h-min bg-primary/8 md:bg-transparent">
+      <h3 className="text-xl font-semibold px-4 pt-4 pb-0 leading-8 md:hidden">
+        Registration
+      </h3>
       <div className="p-4 flex gap-3 pb-2">
         {
           event.new_new_photos_expanded?.[0] && (
