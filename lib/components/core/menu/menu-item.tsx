@@ -3,13 +3,14 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface MenuItemProps {
-  title: string;
+  title?: string;
   onClick?: () => void;
   iconLeft?: React.ReactNode;
   iconRight?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-export function MenuItem({ iconLeft, iconRight, title, onClick }: MenuItemProps) {
+export function MenuItem({ iconLeft, iconRight, title, onClick, children }: MenuItemProps) {
   return (
     <div
       className={clsx(
@@ -18,11 +19,22 @@ export function MenuItem({ iconLeft, iconRight, title, onClick }: MenuItemProps)
       )}
       onClick={onClick}
     >
-      {iconLeft &&
-        (typeof iconLeft === 'string' ? <i className={twMerge(iconLeft, 'text-tertiary size-4')} /> : iconLeft)}
-      <p className="font-medium text-sm font-default-body text-secondary flex-1">{title}</p>
-      {iconRight &&
-        (typeof iconRight === 'string' ? <i className={twMerge(iconRight, 'text-tertiary size-4')} /> : iconRight)}
+      {iconLeft && (
+        typeof iconLeft === 'string' ? (
+          <i className={twMerge(iconLeft, 'text-tertiary size-4')} />
+        ) : (
+          iconLeft
+        )
+      )}
+      {title && <p className="font-medium text-sm font-default-body text-secondary flex-1">{title}</p>}
+      {children}
+      {iconRight && (
+        typeof iconRight === 'string' ? (
+          <i className={twMerge(iconRight, 'text-tertiary size-4')} />
+        ) : (
+          iconRight
+        )
+      )}
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
 import { GetStripeCardsDocument, StripeAccount, StripeCard } from "$lib/generated/backend/graphql";
-import { Button, Menu, MenuItem, Skeleton, SkeletonBox } from "$lib/components/core";
+import { Button, Menu, MenuItem, Skeleton } from "$lib/components/core";
 import { CardForm } from "./CardForm";
 import { useQuery } from "$lib/request";
 import { useSession } from "$lib/hooks/useSession";
@@ -39,7 +39,7 @@ export function CardPayment() {
     },
   });
 
-  if (loadingCards) return <Skeleton height="40px" />;
+  if (loadingCards) return <Skeleton animate className="h-10 w-full rounded-sm" />;
 
   return (
     <div className="space-y-1.5">
@@ -135,7 +135,7 @@ export function CardFormProvider() {
     })();
   }, [pricingInfo]);
 
-  if (!stripe) return <SkeletonBox />;
+  if (!stripe) return <Skeleton animate className="h-10 w-full rounded-sm" />;
 
   return (
     <Elements stripe={stripe}>
