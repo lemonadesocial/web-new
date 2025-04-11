@@ -8,7 +8,7 @@ import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
 import { Avatar, Card, ModalContainer, SkeletonCard } from '$lib/components/core';
 
-import { approvalRequiredAtom, buyerInfoAtom, currencyAtom, eventAtom, hasSingleFreeTicketAtom, nonLoggedInStatusAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
+import { approvalRequiredAtom, buyerInfoAtom, currencyAtom, discountCodeAtom, eventAtom, hasSingleFreeTicketAtom, nonLoggedInStatusAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
 
 import { EventRegistrationStoreProvider } from './context';
 import { TicketSelect } from './TicketSelect';
@@ -102,6 +102,7 @@ const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent
   const setRequiredProfileFields = useSetAtom(requiredProfileFieldsAtom);
   const setPricingInfo = useSetAtom(pricingInfoAtom);
   const setSelectedPaymentAccount = useSetAtom(selectedPaymentAccountAtom);
+  const discountCode = useAtomValue(discountCodeAtom);
 
   const [session] = useJotaiAtom(sessionAtom);
   const me = useMe();
@@ -140,6 +141,7 @@ const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent
         event: initialEvent._id,
         currency,
         items: purchaseItems,
+        discount: discountCode,
       },
     },
     skip: !purchaseItems.length,
