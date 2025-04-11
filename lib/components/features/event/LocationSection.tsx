@@ -2,14 +2,19 @@ import React from 'react';
 
 import { Event } from '$lib/generated/backend/graphql';
 import { Divider, Map, Skeleton } from '$lib/components/core';
-import { getEventAddress } from '$lib/utils/event';
+import { getEventAddress, isAttending } from '$lib/utils/event';
+import { useSession } from '$lib/hooks/useSession';
 
 export function LocationSection({ event, loading = false }: { event?: Event; loading?: boolean }) {
+  const session = useSession();
+
   if (loading) return <LocationSectionSkeleton />;
   if (!event?.address) return null;
 
+  const attending = session?.user ? isAttending(event, session?.user) : false;
+
   const markers =
-    event.address.latitude && event.address.longitude
+    attending && event.address.latitude && event.address.longitude
       ? [{ lat: event.address.latitude, lng: event.address.longitude }]
       : [];
 
@@ -18,8 +23,14 @@ export function LocationSection({ event, loading = false }: { event?: Event; loa
       <p className="font-medium text-sm">Location</p>
       <Divider className="h-1 w-full mb-2" />
       <div className="flex flex-col gap-1">
-        <p className="md:text-lg font-medium">{event.address?.title}</p>
-        <p className="text-sm">{getEventAddress(event.address, true) || 'Virtual'}</p>
+        {attending ? (
+          <>
+            <p className="md:text-lg font-medium">{event.address?.title}</p>
+            <p className="text-sm">{getEventAddress(event.address, true) || 'Virtual'}</p>
+          </>
+        ) : (
+          <p className="md:text-lg font-medium">Please register to see the exact location of this event.</p>
+        )}
       </div>
       <div className="aspect-video h-[240px] rounded-sm overflow-hidden">
         <Map colorscheme="LIGHT" markers={markers} defaultZoom={5} />

@@ -74,7 +74,7 @@ export function HeroSection({ space }: HeroSectionProps) {
         {space?.image_cover && (
           <>
             <img
-              className="md:hidden aspect-[3.5/1] object-cover rounded-md w-full"
+              className="md:hidden aspect-[3.5/1] object-cover rounded-md w-full max-h-2/3"
               alt={space?.title as string}
               loading="lazy"
               src={generateUrl(space?.image_cover_expanded, {
@@ -171,7 +171,7 @@ export function HeroSection({ space }: HeroSectionProps) {
       <Sheet ref={sheetRef} isOpen={openSheet} onClose={handleCloseSheet} snapPoints={[324]} initialSnap={0}>
         <Sheet.Backdrop onTap={handleCloseSheet} />
 
-        <Sheet.Container className="bg-overlay-backdrop! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
+        <Sheet.Container className="bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
           <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
             <div className="flex justify-center items-end h-[20px]">
               <div className="bg-primary/8 rounded-xs w-[48px] h-1 cursor-row-resize"></div>

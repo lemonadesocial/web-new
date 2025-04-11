@@ -48,7 +48,7 @@ export function CommunitySection({ event }: { event?: Event }) {
     <div className="flex flex-col gap-3">
       <div className="flex gap-3 justify-between items-center">
         {space.image_avatar_expanded && (
-          <img src={generateUrl(space.image_avatar_expanded)} className="size-8 border rounded-lg" />
+          <img src={generateUrl(space.image_avatar_expanded)} className="size-8 border rounded-sm" />
         )}
         <div className="flex flex-col flex-1">
           <p className="text-xs font-medium">Presented by</p>
