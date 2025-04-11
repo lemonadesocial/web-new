@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { uniqBy } from 'lodash';
 
 import { Event, GetEventDocument, GetEventQuery, User } from '$lib/generated/backend/graphql';
 import { useQuery } from '$lib/request';
@@ -30,7 +31,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
   const session = useSession();
 
   const event = data?.getEvent as Event;
-  const hosts = [event.host_expanded, ...(event.visible_cohosts_expanded || [])];
+  const hosts = uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id);
 
   const isHost = session?.user && event && hosting(event, session.user);
 
