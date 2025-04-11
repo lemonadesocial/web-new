@@ -48,3 +48,41 @@ export async function approveERC20Spender(tokenAddress: string, spender: string,
 
   await transaction.wait();
 }
+
+export async function transfer(toAddress: string, amount: string, tokenAddress: string, walletProvider: Eip1193Provider) {
+  try {
+    if (tokenAddress !== ethers.ZeroAddress) {
+      const transaction = await writeContract(
+        ERC20Contract,
+        tokenAddress,
+        walletProvider,
+        'transfer',
+        [toAddress, amount]
+      );
+
+      return transaction.hash;
+    }
+
+    const browserProvider = new ethers.BrowserProvider(walletProvider);
+    const signer = await browserProvider.getSigner();
+    const fromAddress = await signer.getAddress();
+    const txDetails = {
+      from: fromAddress,
+      to: toAddress,
+      value: amount,
+      data: '0x'
+    };
+
+    const gasLimit = await browserProvider.estimateGas(txDetails);
+
+    const transaction = await signer.sendTransaction({
+      ...txDetails,
+      gasLimit
+    });
+
+    return transaction.hash;
+  } catch (err: any) {
+    if (err.transactionHash) return err.transactionHash; // workaround for Rainbow
+    throw err;
+  }
+};

@@ -6,7 +6,7 @@ import { Button, ModalContent } from "$lib/components/core";
 import { EthereumAccount, EthereumRelayAccount, EthereumStakeAccount, UpdatePaymentDocument } from "$lib/generated/backend/graphql";
 import { useMutation } from "$lib/request";
 import { useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
-import { approveERC20Spender, formatWallet, LemonadeRelayPaymentContract, writeContract } from "$lib/utils/crypto";
+import { approveERC20Spender, formatWallet, LemonadeRelayPaymentContract, LemonadeStakePaymentContract, transfer, writeContract } from "$lib/utils/crypto";
 import { chainsMapAtom } from "$lib/jotai";
 
 import { currencyAtom, eventDataAtom, pricingInfoAtom, registrationModal, selectedPaymentAccountAtom, useAtomValue } from "../store";
@@ -82,9 +82,38 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
         );
 
         handleConfirm(transaction.hash);
+
+        return;
       }
+
+      if (paymentAccount?.type === 'ethereum_stake' && chain?.stake_payment_contract) {
+        await approveERC20Payment(chain.stake_payment_contract);
+
+        const transaction = await writeContract(
+          LemonadeStakePaymentContract,
+          chain.stake_payment_contract,
+          walletProvider as Eip1193Provider,
+          'stake',
+          [
+            (paymentAccountInfo as EthereumStakeAccount).config_id,
+            event._id,
+            paymentId,
+            tokenAddress,
+            payAmount.toString(),
+          ],
+          { value: tokenAddress === ethers.ZeroAddress ? payAmount.toString() : 0 }
+        );
+
+        handleConfirm(transaction.hash);
+
+        return;
+      }
+
+      const toAddress = paymentAccountInfo.address;
+      const txHash = await transfer(toAddress, (pricingInfo?.total || 0).toString(), tokenAddress, walletProvider as Eip1193Provider);
+
+      handleConfirm(txHash);
     } catch (e) {
-      console.error(e);
       setError(e instanceof Error ? e.message : 'Please try again');
     } finally {
       setLoadingSign(false);
