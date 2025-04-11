@@ -9,6 +9,7 @@ import { Address, Event, SpaceTagBase, User } from '$lib/generated/backend/graph
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
 import { getEventPrice } from '$lib/utils/event';
+import { ASSET_PREFIX } from '$lib/utils/constants';
 
 export function EventList({
   events,
@@ -21,6 +22,7 @@ export function EventList({
   onSelect?: (event: Event) => void;
 }) {
   if (loading) return <EventListSkeleton />;
+  if (!events.length) return <EmptyComp />;
 
   return (
     <div className="flex flex-col gap-8">
@@ -119,6 +121,7 @@ export function EventListCard({
   onSelect?: (event: Event) => void;
 }) {
   if (loading) return <EventListCardSkeleton />;
+  if (!events.length) return <EmptyComp />;
 
   return (
     <div className="flex flex-col">
@@ -309,4 +312,16 @@ function getLocation(address?: Address | null) {
   if (address?.country) location += `, ${address.country}`;
 
   return location;
+}
+
+function EmptyComp() {
+  return (
+    <div className="flex flex-col items-center flex-1 gap-5 mt-10 mb-20">
+      <img src={`${ASSET_PREFIX}/assets/images/ic_dashboard.png`} />
+      <div className="text-center">
+        <p className="font-title text-tertiary font-semibold! text-xl">No Upcoming Events</p>
+        <p className="text-tertiary">Subscribe to keep up with new events.</p>
+      </div>
+    </div>
+  );
 }
