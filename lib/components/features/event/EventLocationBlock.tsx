@@ -16,18 +16,20 @@ export function EventLocationBlock({ loading = false, event }: { loading?: boole
       <div className="border rounded-sm size-12 flex items-center justify-center">
         <i className="icon-location-outline" />
       </div>
-      {attending ? (
-        <div>
-          <p>
-            {event.address?.title} <i className="icon-arrow-outward text-quaternary size-[18px]" />
-          </p>
-          <p className="text-sm">
-            {[event.address?.city || event.address?.region, event.address?.country].filter(Boolean).join(', ')}
-          </p>
-        </div>
-      ) : (
-        <div className="flex items-center text-lg">To Be Announced</div>
-      )}
+      <div>
+        <p>
+          {attending ? (
+            <>
+              {event.address?.title} <i className="icon-arrow-outward text-quaternary size-[18px]" />
+            </>
+          ) : (
+            'Register to See Address'
+          )}
+        </p>
+        <span className="text-sm">
+          {[event.address?.city || event.address?.region, event.address?.country].filter(Boolean).join(', ')}
+        </span>
+      </div>
     </div>
   );
 }

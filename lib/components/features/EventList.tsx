@@ -307,11 +307,11 @@ function SkeletonLine({ className, animate = false }: { className?: string; anim
 }
 
 function getLocation(address?: Address | null) {
-  let location = '';
-  if (address?.city) location += address.city;
-  if (address?.country) location += `, ${address.country}`;
+  const location = [];
+  if (address?.city) location.push(address.city);
+  if (address?.country) location.push(address.country);
 
-  return location;
+  return location.join(', ');
 }
 
 function EmptyComp() {
