@@ -10,7 +10,6 @@ target "builder" {
 }
 
 variable "APP_ENV" { }
-variable "ASSET_PREFIX" { }
 variable "SENTRY_AUTH_TOKEN" { }
 variable "SENTRY_ORG" { }
 variable "SENTRY_PROJECT" { }
@@ -25,7 +24,6 @@ target "build" {
   }
   args = {
     APP_ENV = APP_ENV
-    ASSET_PREFIX = ASSET_PREFIX
     SENTRY_AUTH_TOKEN = SENTRY_AUTH_TOKEN
     SENTRY_ORG = SENTRY_ORG
     SENTRY_PROJECT = SENTRY_PROJECT
