@@ -2,20 +2,89 @@ import { useState } from "react";
 
 import { generateUrl } from "$lib/utils/cnd";
 import { getDisplayPrice, getEventCardStart } from "$lib/utils/event";
+import { useClient } from "$lib/request/provider";
+import { Button, Input, toast } from "$lib/components/core";
+import { CalculateTicketsPricingDocument } from "$lib/generated/backend/graphql";
 
-import { currencyAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtomValue } from "./store";
+import { currencyAtom, discountCodeAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtomValue, useSetAtom } from "./store";
 import { TicketSelectItem } from "./TicketSelectItem";
 
 export function OrderSummary() {
   const event = useAtomValue(eventDataAtom);
   const ticketLimit = useAtomValue(ticketLimitAtom);
   const pricingInfo = useAtomValue(pricingInfoAtom);
+  const purchaseItems = useAtomValue(purchaseItemsAtom);
   const selectedPaymentAccount = useAtomValue(selectedPaymentAccountAtom);
   const currency = useAtomValue(currencyAtom)!;
+  const setPricingInfo = useSetAtom(pricingInfoAtom);
+
+  const setDiscountCode = useSetAtom(discountCodeAtom);
+  const [showDiscountInput, setShowDiscountInput] = useState(false);
+  const [discountCodeInput, setDiscountCodeInput] = useState('');
+  const [isApplying, setIsApplying] = useState(false);
+
+  const { client } = useClient();
 
   const pricingPaymentAccount = pricingInfo?.payment_accounts?.find(account => account._id === selectedPaymentAccount?._id) || pricingInfo?.payment_accounts?.[0];
   const fee = pricingPaymentAccount?.fee;
   const grandTotal = (BigInt(pricingInfo?.total || '0') + BigInt(fee || '0')).toString();
+
+  const handleApplyDiscount = async () => {
+    if (!discountCodeInput.trim().length) return;
+
+    setIsApplying(true);
+
+    try {
+      const { data, error } = await client.query({
+        query: CalculateTicketsPricingDocument,
+        variables: {
+          input: {
+            event: event._id,
+            currency,
+            items: purchaseItems,
+            discount: discountCodeInput.trim().toUpperCase(),
+          },
+        },
+        fetchPolicy: 'network-only',
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.calculateTicketsPricing) {
+        setPricingInfo(data.calculateTicketsPricing);
+        setDiscountCode(discountCodeInput.trim().toUpperCase());
+        setShowDiscountInput(false);
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to apply discount code');
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
+  const handleClearDiscount = async () => {
+    setDiscountCodeInput('');
+    setDiscountCode(null);
+
+    const { data } = await client.query({
+      query: CalculateTicketsPricingDocument,
+      variables: {
+        input: {
+          event: event._id,
+          currency,
+          items: purchaseItems,
+          discount: null,
+        },
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    if (data?.calculateTicketsPricing) {
+      setPricingInfo(data.calculateTicketsPricing);
+    }
+  };
 
   return (
     <div className="border-b md:border border-divider md:rounded-lg md:w-[340] h-min bg-primary/8 md:bg-transparent">
@@ -51,6 +120,31 @@ export function OrderSummary() {
             <div className="flex justify-between items-center">
               <p className="text-tertiary">Subtotal</p>
               <p className="text-tertiary">{getDisplayPrice(pricingInfo.subtotal.toString(), currency, pricingPaymentAccount)}</p>
+            </div>
+          )
+        }
+        {
+          (!showDiscountInput && Number(pricingInfo?.discount || '0') > 0 && discountCodeInput) ? (
+            <div className="flex justify-between items-center gap-2">
+              <p className="text-tertiary flex-1">Coupon</p>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
+                  <p className="text-success-500 uppercase">{discountCodeInput}</p>
+                  <i className="icon-dot text-success-500 size-2" />
+                  <p className="text-success-500">{getDisplayPrice(pricingInfo!.discount.toString(), currency, pricingPaymentAccount)}</p>
+                </div>
+                <i className="icon-cancel size-4 text-tertiary cursor-pointer" onClick={handleClearDiscount} />
+              </div>
+            </div>
+          ) : <p className="text-accent-400 cursor-pointer" onClick={() => setShowDiscountInput(true)}>Add Coupon</p>
+        }
+        {
+          showDiscountInput && (
+            <div className="flex gap-2">
+              <Input onChange={(e) => setDiscountCodeInput(e.target.value)} value={discountCodeInput} />
+              <Button variant="secondary" onClick={handleApplyDiscount} loading={isApplying} disabled={!discountCodeInput.trim().length}>
+                Apply
+              </Button>
             </div>
           )
         }

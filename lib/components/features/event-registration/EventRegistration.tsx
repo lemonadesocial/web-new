@@ -9,7 +9,24 @@ import { randomUserImage, userAvatar } from '$lib/utils/user';
 import { Avatar, Button, Card, ModalContainer, SkeletonCard } from '$lib/components/core';
 import { handleSignIn } from '$lib/utils/ory';
 
-import { approvalRequiredAtom, currencyAtom, eventAtom, hasSingleFreeTicketAtom, nonLoggedInStatusAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
+import {
+  approvalRequiredAtom,
+  currencyAtom,
+  discountCodeAtom,
+  eventAtom,
+  hasSingleFreeTicketAtom,
+  nonLoggedInStatusAtom,
+  pricingInfoAtom,
+  purchaseItemsAtom,
+  registrationModal,
+  requiredProfileFieldsAtom,
+  selectedPaymentAccountAtom,
+  ticketLimitAtom,
+  ticketTypesAtom,
+  useAtom,
+  useAtomValue,
+  useSetAtom
+} from './store';
 
 import { EventRegistrationStoreProvider } from './context';
 import { TicketSelect } from './TicketSelect';
@@ -119,6 +136,7 @@ const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent
   const setRequiredProfileFields = useSetAtom(requiredProfileFieldsAtom);
   const setPricingInfo = useSetAtom(pricingInfoAtom);
   const setSelectedPaymentAccount = useSetAtom(selectedPaymentAccountAtom);
+  const discountCode = useAtomValue(discountCodeAtom);
 
   const [session] = useJotaiAtom(sessionAtom);
   const me = useMe();
@@ -157,6 +175,7 @@ const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent
         event: initialEvent._id,
         currency,
         items: purchaseItems,
+        discount: discountCode,
       },
     },
     skip: !purchaseItems.length,
