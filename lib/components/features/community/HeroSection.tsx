@@ -74,7 +74,7 @@ export function HeroSection({ space }: HeroSectionProps) {
         {space?.image_cover && (
           <>
             <img
-              className="md:hidden aspect-[3.5/1] object-cover rounded-md w-full"
+              className="md:hidden aspect-[3.5/1] object-cover rounded-md w-full max-h-2/3"
               alt={space?.title as string}
               loading="lazy"
               src={generateUrl(space?.image_cover_expanded, {
