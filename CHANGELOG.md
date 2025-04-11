@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/lemonadesocial/web-new/compare/v1.6.0...v1.6.1) (2025-04-11)
+
+
+### Bug Fixes
+
+* missing code merge ([d605674](https://github.com/lemonadesocial/web-new/commit/d6056740ceaa72e044d946585f621499d409cfd4))
+
 ## [1.6.0](https://github.com/lemonadesocial/web-new/compare/v1.5.0...v1.6.0) (2025-04-11)
 
 
