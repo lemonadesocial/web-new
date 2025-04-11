@@ -1,5 +1,4 @@
-import React from 'react';
-import { SkeletonComp } from '$lib/components/core';
+import { Skeleton } from '$lib/components/core';
 import { Event } from '$lib/generated/backend/graphql';
 import { useSession } from '$lib/hooks/useSession';
 import { isAttending } from '$lib/utils/event';
@@ -7,7 +6,7 @@ import { isAttending } from '$lib/utils/event';
 export function EventLocationBlock({ loading = false, event }: { loading?: boolean; event?: Event }) {
   const session = useSession();
 
-  if (loading) return <EventLocationBlockSekeleton />;
+  if (loading) return <EventLocationBlockSkeleton />;
   if (!event?.address) return null;
 
   const attending = session?.user ? isAttending(event, session?.user) : false;
@@ -33,15 +32,15 @@ export function EventLocationBlock({ loading = false, event }: { loading?: boole
   );
 }
 
-function EventLocationBlockSekeleton() {
+function EventLocationBlockSkeleton() {
   return (
     <div className="flex gap-4 flex-1">
       <div className="border rounded-sm size-12 text-secondary flex flex-col justify-center items-center font-medium">
         <span className="py-0.5 text-xs"></span>
       </div>
       <div className="flex flex-col justify-between">
-        <SkeletonComp animate className="w-40 h-6" />
-        <SkeletonComp animate className="w-24 h-4" />
+        <Skeleton animate className="w-40 h-6" />
+        <Skeleton animate className="w-24 h-4" />
       </div>
     </div>
   );

@@ -6,7 +6,6 @@ export function SubmitForm({ children, onComplete }: { children: (handleSubmit: 
   const [submitHandlers] = useAtom(submitHandlersAtom);
 
   const handleSubmitAll = async (): Promise<void> => {
-    console.log('submit');
     const formKeys: string[] = Object.keys(formInstances);
     if (formKeys.length === 0) {
       onComplete?.();

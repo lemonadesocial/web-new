@@ -1,7 +1,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 
-import { Divider, SkeletonComp } from '$lib/components/core';
+import { Divider, Skeleton } from '$lib/components/core';
 import { Event } from '$lib/generated/backend/graphql';
 import { convertFromUtcToTimezone } from '$lib/utils/date';
 import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event';
@@ -39,8 +39,8 @@ function EventDateTimeBlockSkeleton() {
         <span className="h-3"></span>
       </div>
       <div className="flex flex-col justify-between">
-        <SkeletonComp animate className="w-40 h-6" />
-        <SkeletonComp animate className="w-24 h-4" />
+        <Skeleton animate className="w-40 h-6" />
+        <Skeleton animate className="w-24 h-4" />
       </div>
     </div>
   );

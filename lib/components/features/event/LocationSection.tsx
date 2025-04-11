@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Event } from '$lib/generated/backend/graphql';
-import { Divider, Map, SkeletonComp } from '$lib/components/core';
+import { Divider, Map, Skeleton } from '$lib/components/core';
 import { getEventAddress, isAttending } from '$lib/utils/event';
 import { useSession } from '$lib/hooks/useSession';
 
@@ -42,15 +42,15 @@ export function LocationSection({ event, loading = false }: { event?: Event; loa
 function LocationSectionSkeleton() {
   return (
     <div className="event-description flex flex-col gap-2 w-full">
-      <SkeletonComp animate className="h-4 w-24" />
+      <Skeleton animate className="h-4 w-24" />
       <Divider className="h-1 w-full mb-2" />
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2.5">
-          <SkeletonComp animate className="h-6 w-[160px]" />
-          <SkeletonComp animate className="h-4 w-[400px]" />
+          <Skeleton animate className="h-6 w-[160px]" />
+          <Skeleton animate className="h-4 w-[400px]" />
         </div>
 
-        <SkeletonComp className="h-60 w-full rounded-sm" />
+        <Skeleton className="h-60 w-full rounded-sm" />
       </div>
     </div>
   );
