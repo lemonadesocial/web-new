@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.6.0](https://github.com/lemonadesocial/web-new/compare/v1.5.0...v1.6.0) (2025-04-11)
+
+
+### Features
+
+* add appkit ([44a4738](https://github.com/lemonadesocial/web-new/commit/44a473839331c1a59ebd27c60bead86520548577))
+* add connect modal ([a7abc3c](https://github.com/lemonadesocial/web-new/commit/a7abc3c7e4e4fd62e1f125d34290e49c02795417))
+* add empty state event list ([9121955](https://github.com/lemonadesocial/web-new/commit/9121955ea390f02a0b741f5d3bffc6c39164fc0c))
+* crypto payment ([2a34e23](https://github.com/lemonadesocial/web-new/commit/2a34e23afe2c427b894021ce863b92f5042e3bf5))
+* direct transfer ([9477b03](https://github.com/lemonadesocial/web-new/commit/9477b031c9d3a4bb2c4508582f9699aeeddf4907))
+* handle relay payment ([c502e13](https://github.com/lemonadesocial/web-new/commit/c502e139c79b00c049bc40a1d38c0d79193710ca))
+* update env ([a8b5310](https://github.com/lemonadesocial/web-new/commit/a8b5310c658532644d6faaafa3f63fd2edd1298c))
+* update mobile rsvp ([97637e6](https://github.com/lemonadesocial/web-new/commit/97637e697285c1c1d660501205e358cabc3d9f6c))
+
+
+### Bug Fixes
+
+* overlap cover image ([998e2bd](https://github.com/lemonadesocial/web-new/commit/998e2bdaa32a382fd6ea3ddb2df74b0383d0247c))
+* rounded community avatar - hide location rsvp ([ef6d29f](https://github.com/lemonadesocial/web-new/commit/ef6d29fb5d757faed8046b0bf0b680a93fd0ce9e))
+* update bg bottomsheet ([836898d](https://github.com/lemonadesocial/web-new/commit/836898dc23463509e4187ac9c465def73fc17318))
+
 ## [1.5.0](https://github.com/lemonadesocial/web-new/compare/v1.4.0...v1.5.0) (2025-04-10)
 
 
