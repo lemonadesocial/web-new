@@ -93,3 +93,5 @@ export const userInfoAtom = atom<UserInput | null>(null);
 export const nonLoggedInStatusAtom = atom<'success' | 'pending' | null>(null);
 
 export const stripePaymentMethodAtom = atom<string>('');
+
+export const discountCodeAtom = atom<string | null>(null);
