@@ -12,6 +12,7 @@ import { generateUrl } from '$lib/utils/cnd';
 import { useMutation } from '$lib/request';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
+import { handleSignIn } from '$lib/utils/ory';
 
 import { COMMUNITY_SOCIAL_LINKS } from './constants';
 import ThemeBuilder from './ThemeBuilder';
@@ -38,6 +39,7 @@ export function HeroSection({ space }: HeroSectionProps) {
   const handleSubscribe = () => {
     if (!session) {
       // need to login to subscribe
+      handleSignIn();
       return;
     }
 
