@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.0](https://github.com/lemonadesocial/web-new/compare/v1.6.1...v1.7.0) (2025-04-13)
+
+
+### Features
+
+* update env ([3802325](https://github.com/lemonadesocial/web-new/commit/3802325619628f008f93ee50e9ee0e79f8952ff8))
+
+
+### Bug Fixes
+
+* handle signin ([b2a4d40](https://github.com/lemonadesocial/web-new/commit/b2a4d40fb0f166b36bc4361847c2485c1ed4df36))
+
 ## [1.6.1](https://github.com/lemonadesocial/web-new/compare/v1.6.0...v1.6.1) (2025-04-11)
 
 
