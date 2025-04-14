@@ -269,6 +269,18 @@
   resolved "https://registry.yarnpkg.com/@date-fns/tz/-/tz-1.2.0.tgz#81cb3211693830babaf3b96aff51607e143030a6"
   integrity sha512-LBrd7MiJZ9McsOgxqWX7AaxrDjcFVjWH/tIKJd7pnR7McaslGYOP1QmmiBXdJH/H/yLCT+rcQ7FaPBUxRGUtrg==
 
+"@dicebear/core@^9.2.2":
+  version "9.2.2"
+  resolved "https://registry.yarnpkg.com/@dicebear/core/-/core-9.2.2.tgz#dcaf941e4d9e79046d466b3197dfa3393288e5b2"
+  integrity sha512-ROhgHG249dPtcXgBHcqPEsDeAPRPRD/9d+tZCjLYyueO+cXDlIA8dUlxpwIVcOuZFvCyW6RJtqo8BhNAi16pIQ==
+  dependencies:
+    "@types/json-schema" "^7.0.11"
+
+"@dicebear/thumbs@^9.2.2":
+  version "9.2.2"
+  resolved "https://registry.yarnpkg.com/@dicebear/thumbs/-/thumbs-9.2.2.tgz#234814c889509682992bd3f93daaa960cb5326a2"
+  integrity sha512-FkPLDNu7n5kThLSk7lR/0cz/NkUqgGdZGfLZv6fLkGNGtv6W+e2vZaO7HCXVwIgJ+II+kImN41zVIZ6Jlll7pQ==
+
 "@emnapi/runtime@^1.2.0":
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/@emnapi/runtime/-/runtime-1.3.1.tgz#0fcaa575afc31f455fd33534c19381cfce6c6f60"
@@ -1745,7 +1757,7 @@
   resolved "https://registry.npmjs.org/@types/js-yaml/-/js-yaml-4.0.9.tgz"
   integrity sha512-k4MGaQl5TGo/iipqb2UDG2UwjXziSWkh0uysQelTlJpX1qGlpUZYm8PnO4DxG1qBomtJUdYJ6qR6xdIah10JLg==
 
-"@types/json-schema@^7.0.15":
+"@types/json-schema@^7.0.11", "@types/json-schema@^7.0.15":
   version "7.0.15"
   resolved "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.15.tgz"
   integrity sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==
