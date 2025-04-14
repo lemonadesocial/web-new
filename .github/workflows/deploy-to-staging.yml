@@ -52,6 +52,8 @@ jobs:
           echo "NEXT_PUBLIC_LEMONADE_DOMAIN=${{ vars.STAGING_NEXT_PUBLIC_LEMONADE_DOMAIN }}" >> .env
           echo "NEXT_PUBLIC_KRATOS_PUBLIC_URL=${{ vars.STAGING_NEXT_PUBLIC_KRATOS_PUBLIC_URL }}" >> .env
           echo "NEXT_PUBLIC_IDENTITY_URL=${{ vars.STAGING_NEXT_PUBLIC_IDENTITY_URL }}" >> .env
+          echo "NEXT_PUBLIC_ASSET_PREFIX=${{ vars.STAGING_NEXT_PUBLIC_ASSET_PREFIX }}" >> .env
+          echo "NEXT_PUBLIC_REOWN_PROJECT_ID=${{ vars.STAGING_NEXT_PUBLIC_REOWN_PROJECT_ID }}" >> .env
 
       - name: Configure environment
         run: |
