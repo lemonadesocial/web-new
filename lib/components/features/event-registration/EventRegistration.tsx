@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useAtom as useJotaiAtom } from 'jotai';
 
 import { CalculateTicketsPricingDocument, Event, GetEventInvitationDocument, GetEventTicketTypesDocument, NewPaymentAccount, PurchasableTicketType } from '$lib/generated/backend/graphql';
 import { useQuery } from '$lib/request';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
-import { userAvatar } from '$lib/utils/user';
-import { Avatar, Card, ModalContainer, SkeletonCard } from '$lib/components/core';
+import { randomUserImage, userAvatar } from '$lib/utils/user';
+import { Avatar, Button, Card, ModalContainer, SkeletonCard } from '$lib/components/core';
+import { handleSignIn } from '$lib/utils/ory';
 
-import { approvalRequiredAtom, buyerInfoAtom, currencyAtom, eventAtom, hasSingleFreeTicketAtom, nonLoggedInStatusAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
+import { approvalRequiredAtom, currencyAtom, eventAtom, hasSingleFreeTicketAtom, nonLoggedInStatusAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from './store';
 
 import { EventRegistrationStoreProvider } from './context';
 import { TicketSelect } from './TicketSelect';
@@ -20,20 +21,36 @@ const EventRegistrationContent: React.FC = () => {
   const ticketLimit = useAtomValue(ticketLimitAtom);
   const hasSingleFreeTicket = useAtomValue(hasSingleFreeTicketAtom);
   const nonLoggedInStatus = useAtomValue(nonLoggedInStatusAtom);
-  const buyerInfo = useAtomValue(buyerInfoAtom);
+  const purchaseItems = useAtomValue(purchaseItemsAtom);
+  const ticketTypes = useAtomValue(ticketTypesAtom);
+
+  const ticketTypeText = useMemo(() => {
+    return purchaseItems
+      .map(ticket => {
+        const ticketType = ticketTypes.find(t => t?._id === ticket.id);
+        return `${ticket.count}x ${ticketType?.title || ''}`;
+      })
+      .join(', ');
+  }, [purchaseItems, ticketTypes]);
 
   if (nonLoggedInStatus) {
     return (
-      <Card.Root className="p-4">
-        <h3 className="text-xl font-semibold">
-          {nonLoggedInStatus === 'success' ? `You're In` : 'Pending Approval'}
-        </h3>
-        <p className="text-secondary">
-          {
-            nonLoggedInStatus === 'success'
-              ? <>Please sign in with <span style={{ fontWeight: 'bold' }}>{buyerInfo?.email}</span> to check your tickets.</>
-              : 'We will let you know when the host approves your registration.'}
-        </p>
+      <Card.Root className="p-4 space-y-4">
+        <Avatar src={randomUserImage()} className='size-12' />
+        <div>
+          <h3 className="text-xl font-semibold">
+            {nonLoggedInStatus === 'success' ? `You're In` : 'Pending Approval'}
+          </h3>
+          <p className="text-lg text-tertiary">{ticketTypeText}</p>
+        </div>
+        <hr className="border-primary/8" />
+        <div className="p-4 space-y-3 bg-primary/8 rounded-sm">
+          <div className='size-8 flex items-center justify-center bg-white rounded-full'>
+            <i className='icon-login size-5 text-black' />
+          </div>
+          <p>Please sign in to manage your registration and see more event details.</p>
+          <Button size='sm' variant='tertiary' iconRight='icon-chevron-right' onClick={handleSignIn}>Sign In</Button>
+        </div>
       </Card.Root>
     );
   }

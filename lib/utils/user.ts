@@ -17,7 +17,7 @@ export function userAvatar(user: User, edits: keyof typeof EDIT_KEY = 'PROFILE')
   return randomUserImage(user?._id || '');
 }
 
-export function randomUserImage(id: string): string {
+export function randomUserImage(id?: string): string {
   const avatar = createAvatar(thumbs, {
     seed: id,
     flip: false,

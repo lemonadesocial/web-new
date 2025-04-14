@@ -1,10 +1,10 @@
 
 import { Button } from "$lib/components/core";
-// import { toast } from "$lib/components/core/toast";
 import { RegistrationModal } from "./modals/RegistrationModal";
 import { approvalRequiredAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, registrationModal, useAtomValue, hasSingleFreeTicketAtom } from "./store";
 import { useSession } from "$lib/hooks/useSession";
 import { useRedeemTickets } from "./hooks/useRedeemTickets";
+import { handleSignIn } from "$lib/utils/ory";
 
 export function RegisterButton() {
   const session = useSession();
@@ -27,14 +27,12 @@ export function RegisterButton() {
   const isFree = pricingInfo?.total === '0';
 
   const openRegistrationModal = () => {
-    // toast.success('Coming soon!');
-    // return;
     registrationModal.open(RegistrationModal, { skipBaseClassName: true });
   };
 
   if (event.approval_required && !session) return (
-    <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
-      Sign In
+    <Button variant="secondary" disabled={disabled} onClick={handleSignIn}>
+      Request to Join
     </Button>
   );
 
