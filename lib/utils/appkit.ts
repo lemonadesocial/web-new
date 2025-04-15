@@ -42,26 +42,30 @@ export const getAppKitNetwork = (chain: Chain) => {
   } as AppKitNetwork;
 };
 
-export const ethersAdapter = new EthersAdapter()
+let appKit: ReturnType<typeof createAppKit>;
 
-const appKit = createAppKit({
-  adapters: [new EthersAdapter()],
-  networks: getListChains().filter((chain) => chain.tokens?.length).map((chain) => getAppKitNetwork(chain)) as [AppKitNetwork, ...AppKitNetwork[]],
-  metadata: {
-    name: 'Lemonade',
-    description: 'Discover events & communities, find your tribe! Create your own Lemonade Stand to build and collaborate with creators across the world. #makelemonade',
-    url: window.location.origin,
-    icons: [''],
-  },
-  projectId: process.env.NEXT_PUBLIC_REOWN_PROJECT_ID as string,
-  themeVariables: {
-    '--w3m-font-family': 'var(--font-general-sans)',
-    '--w3m-accent': 'var(--color-accent-400)',
-    '--w3m-z-index': 99999999
-  },
-  allowUnsupportedChain: true,
-  coinbasePreference: 'smartWalletOnly',
-});
+export function initializeAppKit() {
+  appKit = createAppKit({
+    adapters: [new EthersAdapter()],
+    networks: getListChains()
+      .filter((chain) => chain.tokens?.length)
+      .map((chain) => getAppKitNetwork(chain)) as [AppKitNetwork, ...AppKitNetwork[]],
+    metadata: {
+      name: 'Lemonade',
+      description: 'Discover events & communities, find your tribe! Create your own Lemonade Stand to build and collaborate with creators across the world. #makelemonade',
+      url: window.location.origin,
+      icons: [''],
+    },
+    projectId: process.env.NEXT_PUBLIC_REOWN_PROJECT_ID as string,
+    themeVariables: {
+      '--w3m-font-family': 'var(--font-general-sans)',
+      '--w3m-accent': 'var(--color-accent-400)',
+      '--w3m-z-index': 99999999
+    },
+    allowUnsupportedChain: true,
+    coinbasePreference: 'smartWalletOnly',
+  });
+}
 
 export {
   appKit,
