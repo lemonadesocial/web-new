@@ -9,7 +9,6 @@ import { Address, Event, SpaceTagBase, User } from '$lib/generated/backend/graph
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
 import { getEventPrice } from '$lib/utils/event';
-import { ASSET_PREFIX } from '$lib/utils/constants';
 
 export function EventList({
   events,
