@@ -5,7 +5,7 @@ import { toast } from "$lib/components/core";
 import { BuyTicketsDocument, StripeAccount, UpdatePaymentDocument } from "$lib/generated/backend/graphql";
 import { useMutation } from "$lib/request";
 
-import { buyerInfoAtom, currencyAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, selectedPaymentAccountAtom, stripePaymentMethodAtom, useAtomValue, useEventRegistrationStore, userInfoAtom } from "../store";
+import { buyerInfoAtom, currencyAtom, discountCodeAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, selectedPaymentAccountAtom, stripePaymentMethodAtom, useAtomValue, useEventRegistrationStore, userInfoAtom } from "../store";
 import { PaymentProcessingModal } from "../modals/PaymentProcessingModal";
 import { useJoinRequest } from "./useJoinRequest";
 import { useProcessTickets } from "./useProcessTickets";
@@ -103,13 +103,14 @@ export function useCardPayment() {
   const pay = () => {
     const buyerInfo = store.get(buyerInfoAtom);
     const userInfo = store.get(userInfoAtom);
+    const discountCode = store.get(discountCodeAtom);
 
     handleBuyTickets({
       variables: {
         input: {
           account_id: paymentAccount?._id,
           currency: currency,
-          // discount: promotionCode || undefined,
+          discount: discountCode,
           event: event._id,
           items: purchaseItems,
           total: pricingInfo?.total || '0',

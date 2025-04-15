@@ -3,7 +3,7 @@ import { toast } from "$lib/components/core";
 import { BuyTicketsDocument } from "$lib/generated/backend/graphql";
 import { useMutation } from "$lib/request";
 
-import { buyerInfoAtom, currencyAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, selectedPaymentAccountAtom, useAtomValue, useEventRegistrationStore, userInfoAtom } from "../store";
+import { buyerInfoAtom, currencyAtom, discountCodeAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, selectedPaymentAccountAtom, useAtomValue, useEventRegistrationStore, userInfoAtom } from "../store";
 import { ConfirmCryptoPaymentModal } from "../modals/ConfirmCryptoPaymentModal";
 import { useJoinRequest } from "./useJoinRequest";
 import { useProcessTickets } from "./useProcessTickets";
@@ -53,13 +53,14 @@ export function useCryptoPayment() {
     // TODO: check balance
     const buyerInfo = store.get(buyerInfoAtom);
     const userInfo = store.get(userInfoAtom);
+    const discountCode = store.get(discountCodeAtom);
 
     handleBuyTickets({
       variables: {
         input: {
           account_id: paymentAccount?._id,
           currency: currency,
-          // discount: promotionCode || undefined,
+          discount: discountCode,
           event: event._id,
           items: purchaseItems,
           total: pricingInfo?.total || '0',
