@@ -20,9 +20,6 @@ export function useQuery<T, V extends object>(
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<unknown>(null);
 
-  const [, updateState] = React.useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
-
   const fetchData = async () => {
     try {
       setLoading(true);
