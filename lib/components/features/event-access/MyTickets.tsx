@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
 
-import { Ticket, Event, EventCalendarLinks } from '$lib/generated/backend/graphql';
+import { Ticket, Event, EventCalendarLinks, PaymentRefundInfo } from '$lib/generated/backend/graphql';
 import { Button, modal, ModalContent } from "$lib/components/core";
 
 import { AccessCard } from "./AccessCard";
+import { StakeRefundItem } from "./StakeRefund";
 
-export function MyTickets({ tickets, event }: { tickets: Ticket[], event: Event }) {
+export function MyTickets({ tickets, payments }: { tickets: Ticket[]; payments?: PaymentRefundInfo[]; event: Event; }) {
   const ticketTypeText = useMemo(() => {
     const ticketTypes = tickets.reduce((acc, ticket) => {
       const typeId = ticket.type;
@@ -23,6 +24,8 @@ export function MyTickets({ tickets, event }: { tickets: Ticket[], event: Event 
       .map(({ count, title }) => `${count}x ${title}`)
       .join(', ');
   }, [tickets]);
+
+  const refundPayments = payments?.filter(p => p.refund_policy?.requirements?.checkin_before && !p.attempting_refund);
 
   return (
     <AccessCard>
@@ -58,6 +61,20 @@ export function MyTickets({ tickets, event }: { tickets: Ticket[], event: Event 
           Invite a Friend
         </Button>
       </div>
+      {
+        !!refundPayments?.length && (
+          <>
+            <hr className="border-t border-divider" />
+            <div className="space-y-2">
+              {
+                refundPayments.map(payment => (
+                  <StakeRefundItem key={payment._id} payment={payment} />
+                ))
+              }
+            </div>
+          </>
+        )
+      }
     </AccessCard>
   );
 }

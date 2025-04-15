@@ -1,13 +1,15 @@
 import React, { useEffect, useMemo } from 'react';
 import { useAtom as useJotaiAtom } from 'jotai';
+import { format } from 'date-fns';
 
-import { CalculateTicketsPricingDocument, Event, GetEventInvitationDocument, GetEventTicketTypesDocument, NewPaymentAccount, PurchasableTicketType } from '$lib/generated/backend/graphql';
+import { CalculateTicketsPricingDocument, EthereumStakeAccount, Event, GetEventInvitationDocument, GetEventTicketTypesDocument, NewPaymentAccount, PurchasableTicketType } from '$lib/generated/backend/graphql';
 import { useQuery } from '$lib/request';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
 import { randomUserImage, userAvatar } from '$lib/utils/user';
 import { Avatar, Button, Card, ModalContainer, SkeletonCard } from '$lib/components/core';
-
+import { useSignIn } from '$lib/hooks/useSignIn';
+import { useStakeRefundRate } from '$lib/utils/stake';
 import {
   approvalRequiredAtom,
   currencyAtom,
@@ -30,7 +32,7 @@ import {
 import { EventRegistrationStoreProvider } from './context';
 import { TicketSelect } from './TicketSelect';
 import { RegisterButton } from './RegisterButton';
-import { useSignIn } from '$lib/hooks/useSignIn';
+
 const EventRegistrationContent: React.FC = () => {
   const signIn = useSignIn();
   const me = useMe();
@@ -40,6 +42,9 @@ const EventRegistrationContent: React.FC = () => {
   const nonLoggedInStatus = useAtomValue(nonLoggedInStatusAtom);
   const purchaseItems = useAtomValue(purchaseItemsAtom);
   const ticketTypes = useAtomValue(ticketTypesAtom);
+  const paymentAccount = ticketTypes[0].prices[0].payment_accounts_expanded?.[0];
+
+  const { refundRate } = useStakeRefundRate(paymentAccount?.account_info as EthereumStakeAccount);
 
   const ticketTypeText = useMemo(() => {
     return purchaseItems
@@ -77,6 +82,19 @@ const EventRegistrationContent: React.FC = () => {
       <Card.Header>{hasSingleFreeTicket ? 'Registration' : 'Get Tickets'}</Card.Header>
       {!!(approvalRequired || ticketLimit) && (
         <div className='p-3 flex flex-col gap-3 border border-card-border'>
+          {
+            ticketTypes.length === 1 && paymentAccount?.type === 'ethereum_stake' && (
+              <div className='flex gap-3 items-center'>
+                <div className='rounded-sm bg-card h-[28] w-[28] flex items-center justify-center'>
+                  <i className='icon-send-money size-4 text-tertiary' />
+                </div>
+                <div>
+                  <p className='font-medium'>Check In to Earn</p>
+                  <p className='text-sm text-secondary'>Get {refundRate}% back if you check in by {format(new Date((paymentAccount.account_info as EthereumStakeAccount).requirement_checkin_before), 'EEEE, MMM d, h:mm a')}.</p>
+                </div>
+              </div>
+            )
+          }
           {
             !!ticketLimit && (
               <div className='flex gap-3 items-center'>
