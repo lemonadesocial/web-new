@@ -12,13 +12,16 @@ export function useQuery<T, V extends object>(
     initData = null,
     skip = false,
     fetchPolicy,
-    onComplete
+    onComplete,
   }: QueryOptions<T, V> & { onComplete?: (data: T) => void } = {},
 ) {
   const { client } = useClient();
   const [data, setData] = React.useState<T | null>(initData);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<unknown>(null);
+
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
 
   const fetchData = async () => {
     try {
@@ -27,7 +30,7 @@ export function useQuery<T, V extends object>(
         query,
         variables,
         initData,
-        fetchPolicy
+        fetchPolicy,
       });
       setData(queryData);
       onComplete?.(queryData as T);
@@ -38,10 +41,7 @@ export function useQuery<T, V extends object>(
     }
   };
 
-  const fetchMore = async (params: {
-    variables: Partial<V>;
-    updateQuery?: (existing: T, res: T) => T
-  }) => {
+  const fetchMore = async (params: { variables: Partial<V>; updateQuery?: (existing: T, res: T) => T }) => {
     const { data: newData } = await client.query({
       query,
       variables: { ...variables, ...params.variables },
@@ -61,7 +61,14 @@ export function useQuery<T, V extends object>(
   }, [skip, variablesKey]);
 
   React.useEffect(() => {
-    client.subscribe({ query, variables, callback: fetchData });
+    client.subscribe({
+      query,
+      variables,
+      callback: () => {
+        const res = client.readQuery(query, variables);
+        setData(res as T);
+      },
+    });
   }, []);
 
   return { data, loading, error, fetchMore, client };
@@ -71,11 +78,11 @@ export function useMutation<T, V extends object>(
   query: TypedDocumentNode<T, V>,
   options?: MutationOptions<T, V>,
 ): [
-    (
-      opts: MutationOptions<T, V>,
-    ) => Promise<{ data?: T | null; error: unknown; loading: boolean; client: GraphqlClient }>,
-    { data?: T | null; error: unknown; loading: boolean; client: GraphqlClient },
-  ] {
+  (
+    opts: MutationOptions<T, V>,
+  ) => Promise<{ data?: T | null; error: unknown; loading: boolean; client: GraphqlClient }>,
+  { data?: T | null; error: unknown; loading: boolean; client: GraphqlClient },
+] {
   const { client } = useClient();
   const [data, setData] = React.useState<T | null>();
   const [loading, setLoading] = React.useState(false);

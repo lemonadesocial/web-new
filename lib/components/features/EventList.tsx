@@ -317,7 +317,7 @@ function getLocation(address?: Address | null) {
 function EmptyComp() {
   return (
     <div className="flex flex-col items-center flex-1 gap-5 mt-10 mb-20">
-      <img src={`${ASSET_PREFIX}/assets/images/ic_dashboard.png`} />
+      <i className="icon-dashboard w-[184px] h-[184px] text-primary/16 blur-md" />
       <div className="text-center">
         <p className="font-title text-tertiary font-semibold! text-xl">No Upcoming Events</p>
         <p className="text-tertiary">Subscribe to keep up with new events.</p>

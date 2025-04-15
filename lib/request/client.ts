@@ -119,6 +119,11 @@ export class GraphqlClient {
       return;
     }
 
+    if (fetchPolicy === 'cache-and-network') {
+      await this.executeNetworkRequest(request);
+      return;
+    }
+
     const cacheData = this.cache?.readQuery(request.query, request.variables);
     if (cacheData) {
       request.resolve({ data: cacheData, error: null });
@@ -148,7 +153,7 @@ export class GraphqlClient {
       if (gqlError.response?.errors?.[0]?.message) {
         request.resolve({
           data: null,
-          error: { message: gqlError.response.errors[0].message }
+          error: { message: gqlError.response.errors[0].message },
         });
         return;
       }
@@ -184,6 +189,10 @@ export class GraphqlClient {
   }) {
     const queryKey = this.cache?.createCacheKey(query, variables);
     if (queryKey) this.cache?.subscribe(queryKey, callback);
+  }
+
+  readQuery<T, V extends Record<string, any>>(query: TypedDocumentNode<T, V>, variables?: V) {
+    return this.cache?.readQuery(query, variables);
   }
 }
 
