@@ -2,6 +2,7 @@
 import React from 'react';
 import { GraphqlClientProvider, GraphqlClient, InMemoryCache } from '$lib/request';
 import { GRAPHQL_URL } from '$lib/utils/constants';
+import { initializeAppKit } from '$lib/utils/appkit';
 
 import { useOryAuth } from '$lib/hooks/useOryAuth';
 import { useListChains } from '$lib/hooks/useListChains';
@@ -17,6 +18,12 @@ const client = new GraphqlClient({
 export default function Providers({ children }: { children: React.ReactNode }) {
   const oryLoading = useOryAuth();
   const chainsLoading = useListChains();
+
+  React.useEffect(() => {
+    if (!chainsLoading) {
+      initializeAppKit();
+    }
+  }, [chainsLoading]);
 
   if (oryLoading || chainsLoading) return null;
 
