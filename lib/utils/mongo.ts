@@ -4,7 +4,7 @@ let mongoClient: MongoClient | undefined;
 
 export async function get(): Promise<MongoClient> {
   if (!mongoClient) {
-    mongoClient = new MongoClient(process.env.MONGO_URL as string);
+    mongoClient = new MongoClient(process.env.DATABASE_URL as string);
 
     await mongoClient.connect();
   }
