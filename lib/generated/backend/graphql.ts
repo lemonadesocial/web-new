@@ -231,6 +231,18 @@ export type BadgeList = {
   user_expanded?: Maybe<User>;
 };
 
+export type BaseTokenRewardSetting = {
+  __typename?: 'BaseTokenRewardSetting';
+  _id: Scalars['MongoID']['output'];
+  currency_address: Scalars['String']['output'];
+  photo?: Maybe<Scalars['MongoID']['output']>;
+  photo_expanded?: Maybe<File>;
+  title: Scalars['String']['output'];
+  user: Scalars['MongoID']['output'];
+  vault: Scalars['MongoID']['output'];
+  vault_expanded?: Maybe<TokenRewardVault>;
+};
+
 export type BasicUserInfo = {
   __typename?: 'BasicUserInfo';
   _id: Scalars['MongoID']['output'];
@@ -536,6 +548,20 @@ export type ClaimTicketRewardSignatureResponse = {
   claim?: Maybe<TokenRewardClaim>;
   settings: Array<TicketTokenRewardSetting>;
   signature: TokenRewardSignature;
+};
+
+export enum ClaimType {
+  Checkin = 'checkin',
+  Ticket = 'ticket'
+}
+
+export type ClaimedToken = {
+  __typename?: 'ClaimedToken';
+  amount: Scalars['String']['output'];
+  formatted_amount?: Maybe<Scalars['String']['output']>;
+  network: Scalars['String']['output'];
+  token?: Maybe<RewardToken>;
+  token_address: Scalars['String']['output'];
 };
 
 export type CloneEventInput = {
@@ -1410,6 +1436,150 @@ export type EventAttestationDiff = {
   __typename?: 'EventAttestationDiff';
   event?: Maybe<EasEvent>;
   ticket_types?: Maybe<Array<EasTicketType>>;
+};
+
+export type EventBase = {
+  __typename?: 'EventBase';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  accepted?: Maybe<Array<Scalars['MongoID']['output']>>;
+  accepted_store_promotion?: Maybe<Scalars['MongoID']['output']>;
+  accepted_user_fields_required?: Maybe<Array<Scalars['String']['output']>>;
+  access_pass?: Maybe<AccessPass>;
+  active: Scalars['Boolean']['output'];
+  address?: Maybe<Address>;
+  address_directions?: Maybe<Array<Scalars['String']['output']>>;
+  alert_payments?: Maybe<Array<Scalars['MongoID']['output']>>;
+  alert_tickets?: Maybe<Scalars['JSON']['output']>;
+  application_form_url?: Maybe<Scalars['String']['output']>;
+  application_profile_fields?: Maybe<Array<ApplicationProfileField>>;
+  application_required?: Maybe<Scalars['Boolean']['output']>;
+  approval_required?: Maybe<Scalars['Boolean']['output']>;
+  approved?: Maybe<Scalars['Boolean']['output']>;
+  /** Number of users who have tickets */
+  attending_count?: Maybe<Scalars['Float']['output']>;
+  broadcast_rooms?: Maybe<Array<BroadcastRoomBase>>;
+  button_icon?: Maybe<Scalars['String']['output']>;
+  button_text?: Maybe<Scalars['String']['output']>;
+  button_url?: Maybe<Scalars['String']['output']>;
+  /** @deprecated No longer in use and will be removed in a future release. */
+  checkin_count?: Maybe<Scalars['Float']['output']>;
+  checkin_menu_text?: Maybe<Scalars['String']['output']>;
+  cohosts?: Maybe<Array<Scalars['MongoID']['output']>>;
+  comments?: Maybe<Scalars['String']['output']>;
+  cost?: Maybe<Scalars['Float']['output']>;
+  cover?: Maybe<Scalars['String']['output']>;
+  cta_button_text?: Maybe<Scalars['String']['output']>;
+  /** Show secondary CTA button text */
+  cta_secondary_visible?: Maybe<Scalars['Boolean']['output']>;
+  currency?: Maybe<Scalars['String']['output']>;
+  declined?: Maybe<Array<Scalars['MongoID']['output']>>;
+  description?: Maybe<Scalars['String']['output']>;
+  description_plain_text?: Maybe<Scalars['String']['output']>;
+  donation_enabled?: Maybe<Scalars['Boolean']['output']>;
+  donation_show_history?: Maybe<Scalars['Boolean']['output']>;
+  donation_vaults?: Maybe<Array<Scalars['MongoID']['output']>>;
+  end: Scalars['DateTimeISO']['output'];
+  eventbrite_enabled?: Maybe<Scalars['Boolean']['output']>;
+  eventbrite_event_id?: Maybe<Scalars['String']['output']>;
+  eventbrite_tickets_imported?: Maybe<Scalars['Boolean']['output']>;
+  eventbrite_token?: Maybe<Scalars['String']['output']>;
+  events?: Maybe<Array<Scalars['MongoID']['output']>>;
+  frequent_questions?: Maybe<Array<FrequentQuestion>>;
+  guest_directory_enabled?: Maybe<Scalars['Boolean']['output']>;
+  guest_limit?: Maybe<Scalars['Float']['output']>;
+  guest_limit_per?: Maybe<Scalars['Float']['output']>;
+  guests?: Maybe<Scalars['Int']['output']>;
+  hide_attending?: Maybe<Scalars['Boolean']['output']>;
+  hide_chat_action?: Maybe<Scalars['Boolean']['output']>;
+  hide_cohosts?: Maybe<Scalars['Boolean']['output']>;
+  hide_creators?: Maybe<Scalars['Boolean']['output']>;
+  hide_invite_action?: Maybe<Scalars['Boolean']['output']>;
+  hide_lounge?: Maybe<Scalars['Boolean']['output']>;
+  hide_question_box?: Maybe<Scalars['Boolean']['output']>;
+  hide_rooms_action?: Maybe<Scalars['Boolean']['output']>;
+  hide_session_guests?: Maybe<Scalars['Boolean']['output']>;
+  hide_speakers?: Maybe<Scalars['Boolean']['output']>;
+  hide_stories_action?: Maybe<Scalars['Boolean']['output']>;
+  highlight?: Maybe<Scalars['Boolean']['output']>;
+  host: Scalars['MongoID']['output'];
+  inherited_cohosts?: Maybe<Array<Scalars['MongoID']['output']>>;
+  insider_enabled?: Maybe<Scalars['Boolean']['output']>;
+  insider_token?: Maybe<Scalars['String']['output']>;
+  invited?: Maybe<Array<Scalars['MongoID']['output']>>;
+  invited_count?: Maybe<Scalars['Float']['output']>;
+  invited_email_map?: Maybe<Scalars['JSON']['output']>;
+  invited_emails?: Maybe<Array<Scalars['String']['output']>>;
+  invited_phone_map?: Maybe<Scalars['JSON']['output']>;
+  invited_user_map?: Maybe<Scalars['JSON']['output']>;
+  inviter_email_map?: Maybe<Scalars['JSON']['output']>;
+  inviter_phone_map?: Maybe<Scalars['JSON']['output']>;
+  inviter_user_map?: Maybe<Scalars['JSON']['output']>;
+  inviters?: Maybe<Array<Scalars['MongoID']['output']>>;
+  latitude?: Maybe<Scalars['Float']['output']>;
+  layout_sections?: Maybe<Array<LayoutSection>>;
+  listing_spaces?: Maybe<Array<Scalars['MongoID']['output']>>;
+  location?: Maybe<Point>;
+  longitude?: Maybe<Scalars['Float']['output']>;
+  matrix_event_room_id?: Maybe<Scalars['String']['output']>;
+  new_new_photos?: Maybe<Array<Scalars['MongoID']['output']>>;
+  new_photos?: Maybe<Array<FileInline>>;
+  offers?: Maybe<Array<EventOffer>>;
+  payment_accounts_new?: Maybe<Array<Scalars['MongoID']['output']>>;
+  payment_donation?: Maybe<Scalars['Boolean']['output']>;
+  payment_donation_amount_includes_tickets?: Maybe<Scalars['Boolean']['output']>;
+  payment_donation_amount_increment?: Maybe<Scalars['Float']['output']>;
+  payment_donation_message?: Maybe<Scalars['String']['output']>;
+  payment_donation_target?: Maybe<Scalars['Float']['output']>;
+  payment_enabled?: Maybe<Scalars['Boolean']['output']>;
+  payment_fee: Scalars['Float']['output'];
+  payment_optional?: Maybe<Scalars['Boolean']['output']>;
+  payment_ticket_count?: Maybe<Scalars['Float']['output']>;
+  payment_ticket_external_message?: Maybe<Scalars['String']['output']>;
+  payment_ticket_external_url?: Maybe<Scalars['String']['output']>;
+  payment_ticket_purchase_title?: Maybe<Scalars['String']['output']>;
+  payment_ticket_unassigned_count?: Maybe<Scalars['Float']['output']>;
+  pending?: Maybe<Array<Scalars['MongoID']['output']>>;
+  photos?: Maybe<Array<Scalars['String']['output']>>;
+  private?: Maybe<Scalars['Boolean']['output']>;
+  published?: Maybe<Scalars['Boolean']['output']>;
+  registration_disabled?: Maybe<Scalars['Boolean']['output']>;
+  reward_uses?: Maybe<Scalars['JSON']['output']>;
+  rewards?: Maybe<Array<EventReward>>;
+  rsvp_wallet_platforms?: Maybe<Array<ApplicationBlokchainPlatform>>;
+  session_guests?: Maybe<Scalars['JSON']['output']>;
+  sessions?: Maybe<Array<EventSessionBase>>;
+  shortid: Scalars['String']['output'];
+  slug: Scalars['String']['output'];
+  space?: Maybe<Scalars['MongoID']['output']>;
+  speaker_emails?: Maybe<Array<Scalars['String']['output']>>;
+  speaker_users?: Maybe<Array<Scalars['MongoID']['output']>>;
+  stamp: Scalars['DateTimeISO']['output'];
+  start: Scalars['DateTimeISO']['output'];
+  state: EventState;
+  stores?: Maybe<Array<Scalars['MongoID']['output']>>;
+  stories?: Maybe<Array<Scalars['MongoID']['output']>>;
+  stories_eponym?: Maybe<Scalars['Boolean']['output']>;
+  subevent_enabled?: Maybe<Scalars['Boolean']['output']>;
+  subevent_parent?: Maybe<Scalars['MongoID']['output']>;
+  subevent_settings?: Maybe<SubeventSettings>;
+  tags?: Maybe<Array<Scalars['String']['output']>>;
+  telegram_channels?: Maybe<Array<TelegramChannel>>;
+  terms_accepted?: Maybe<Array<Scalars['MongoID']['output']>>;
+  terms_accepted_with_email_permission?: Maybe<Array<Scalars['MongoID']['output']>>;
+  terms_email_permission_text?: Maybe<Scalars['Boolean']['output']>;
+  terms_text?: Maybe<Scalars['String']['output']>;
+  timezone?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  unlisted?: Maybe<Scalars['Boolean']['output']>;
+  url?: Maybe<Scalars['String']['output']>;
+  url_go?: Maybe<Scalars['String']['output']>;
+  videos?: Maybe<Array<Video>>;
+  virtual?: Maybe<Scalars['Boolean']['output']>;
+  virtual_url?: Maybe<Scalars['String']['output']>;
+  visible_cohosts?: Maybe<Array<Scalars['MongoID']['output']>>;
+  welcome_text?: Maybe<Scalars['String']['output']>;
+  welcome_video?: Maybe<Video>;
+  zones_menu_text?: Maybe<Scalars['String']['output']>;
 };
 
 export type EventCalendarLinks = {
@@ -2678,6 +2848,10 @@ export type ListSpaceRoleFeaturesResponse = {
   __typename?: 'ListSpaceRoleFeaturesResponse';
   codes: Array<FeatureCode>;
   features: Array<Feature>;
+};
+
+export type ListSpaceTokenRewardClaimsSortInput = {
+  claim_date?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type ManageEventCohostRequestsInput = {
@@ -4550,6 +4724,7 @@ export type Query = {
   getSpaceMemberHostedEvents: Array<Event>;
   getSpaceMemberSubmittedEvents: Array<Event>;
   getSpaceMembersLeaderboard: SpaceMembersLeaderboardResponse;
+  getSpaceRewardSettingClaims: Array<SpaceTokenRewardClaim>;
   getSpaceRewardStatistics: SpaceRewardStatistics;
   getSpaceStatistics: SpaceStatisticResponse;
   getStakePaymentStatistics: StakePaymentStatistics;
@@ -4608,9 +4783,12 @@ export type Query = {
   listRewardVaults: Array<TokenRewardVault>;
   listSpaceCategories: Array<SpaceCategory>;
   listSpaceMembers: ListSpaceMembersResponse;
+  listSpaceRewardSettings: SpaceRewardSettings;
+  listSpaceRewardVaults: Array<TokenRewardVault>;
   listSpaceRoleFeatures: ListSpaceRoleFeaturesResponse;
   listSpaceTags: Array<SpaceTagBase>;
   listSpaceTokenGates: Array<SpaceTokenGate>;
+  listSpaceTokenRewardClaims: SpaceTokenRewardClaims;
   listSpaces: Array<Space>;
   listTicketTokenRewardSettings: Array<TicketTokenRewardSetting>;
   listUserExpertises: Array<UserExpertise>;
@@ -5166,6 +5344,13 @@ export type QueryGetSpaceMembersLeaderboardArgs = {
 };
 
 
+export type QueryGetSpaceRewardSettingClaimsArgs = {
+  setting: Scalars['MongoID']['input'];
+  space: Scalars['MongoID']['input'];
+  type: ClaimType;
+};
+
+
 export type QueryGetSpaceRewardStatisticsArgs = {
   space: Scalars['MongoID']['input'];
 };
@@ -5507,6 +5692,17 @@ export type QueryListSpaceMembersArgs = {
 };
 
 
+export type QueryListSpaceRewardSettingsArgs = {
+  space: Scalars['MongoID']['input'];
+  vaults?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+
+export type QueryListSpaceRewardVaultsArgs = {
+  space: Scalars['MongoID']['input'];
+};
+
+
 export type QueryListSpaceRoleFeaturesArgs = {
   role: SpaceRole;
   space: Scalars['MongoID']['input'];
@@ -5520,6 +5716,16 @@ export type QueryListSpaceTagsArgs = {
 
 export type QueryListSpaceTokenGatesArgs = {
   space: Scalars['MongoID']['input'];
+};
+
+
+export type QueryListSpaceTokenRewardClaimsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<ListSpaceTokenRewardClaimsSortInput>;
+  space: Scalars['MongoID']['input'];
+  vaults?: InputMaybe<Array<Scalars['MongoID']['input']>>;
 };
 
 
@@ -6583,6 +6789,20 @@ export enum SpaceMembershipState {
   Requested = 'requested'
 }
 
+export type SpaceRewardSetting = {
+  __typename?: 'SpaceRewardSetting';
+  claims_count?: Maybe<Scalars['Int']['output']>;
+  event?: Maybe<EventBase>;
+  recipients_count?: Maybe<Scalars['Int']['output']>;
+  setting: BaseTokenRewardSetting;
+  type: ClaimType;
+};
+
+export type SpaceRewardSettings = {
+  __typename?: 'SpaceRewardSettings';
+  settings: Array<SpaceRewardSetting>;
+};
+
 export type SpaceRewardStatistics = {
   __typename?: 'SpaceRewardStatistics';
   checkin_settings_count: Scalars['Float']['output'];
@@ -6670,6 +6890,22 @@ export type SpaceTokenGateInput = {
   roles?: InputMaybe<Array<SpaceRole>>;
   space?: InputMaybe<Scalars['MongoID']['input']>;
   token_address?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SpaceTokenRewardClaim = {
+  __typename?: 'SpaceTokenRewardClaim';
+  _id: Scalars['MongoID']['output'];
+  claimed_tokens: Array<ClaimedToken>;
+  created_at: Scalars['DateTimeISO']['output'];
+  event?: Maybe<EventBase>;
+  user_expanded?: Maybe<User>;
+  wallet_id?: Maybe<Scalars['String']['output']>;
+};
+
+export type SpaceTokenRewardClaims = {
+  __typename?: 'SpaceTokenRewardClaims';
+  items: Array<SpaceTokenRewardClaim>;
+  total: Scalars['Int']['output'];
 };
 
 export type StakePaymentStateStatistic = {
@@ -7382,6 +7618,7 @@ export type TokenRewardVault = {
   _id: Scalars['MongoID']['output'];
   address: Scalars['String']['output'];
   network: Scalars['String']['output'];
+  settings_count?: Maybe<Scalars['Float']['output']>;
   title: Scalars['String']['output'];
   tokens?: Maybe<Array<RewardToken>>;
   user: Scalars['MongoID']['output'];

@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 import { endOfDay, startOfDay, format } from 'date-fns';
 import clsx from 'clsx';
 
-import { Button, Divider, drawer, Menu, MenuItem, modal, Segment, Tag } from '$lib/components/core';
+import { Button, Card, Divider, drawer, Menu, MenuItem, modal, Segment, Tag } from '$lib/components/core';
 import { HeroSection } from '$lib/components/features/community';
 import {
   Event,
@@ -26,11 +26,12 @@ import { generateCssVariables } from '$lib/utils/fetchers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { ListingEvent } from './ListingEvent';
 import { EventPane } from '../pane';
+import CommunityCard from "./CommunityCard";
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
 
-export function Community({ space }: { space?: Space }) {
+export function Community({ space }: { space?: Space; }) {
   const [shouldLoadMore, setShouldLoadMore] = useAtom(scrollAtBottomAtom);
 
   const [mode, setMode] = React.useState<'card' | 'list'>('card');
@@ -175,6 +176,20 @@ export function Community({ space }: { space?: Space }) {
 
       <div className="relative">
         <HeroSection space={dataGetSpace?.getSpace as Space} />
+        <Divider className="my-8" />
+        <section className="flex flex-col gap-6">
+          <div className="w-full flex justify-between items-center">
+            <h1 className="text-xl md:text-2xl font-semibold flex-1">Hubs</h1>
+            <Button variant="tertiary-alt" size="sm">
+              View All (6)
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <CommunityCard space={dataGetSpace?.getSpace as Space} />
+            <CommunityCard space={dataGetSpace?.getSpace as Space} />
+            <CommunityCard space={dataGetSpace?.getSpace as Space} />
+          </div>
+        </section>
         <Divider className="my-8" />
         <div className="flex md:gap-18">
           <div className="flex flex-col flex-1 gap-6 w-full">
