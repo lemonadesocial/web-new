@@ -11,12 +11,14 @@ import { useMe } from '$lib/hooks/useMe';
 import { useLogOut } from '$lib/hooks/useLogout';
 import { Divider, Menu, MenuItem, Button, Avatar } from '$lib/components/core';
 import { userAvatar } from '$lib/utils/user';
-import { handleSignIn } from '$lib/utils/ory';
+
+import { useSignIn } from '$lib/hooks/useSignIn';
 
 export default function Header() {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
   const logOut = useLogOut();
+  const signIn = useSignIn();
 
   return (
     <div className="py-3 px-4 min-h-[56px] flex justify-between items-center">
@@ -76,7 +78,7 @@ export default function Header() {
               <Button
                 size="sm"
                 variant="tertiary-alt"
-                onClick={handleSignIn}
+                onClick={signIn}
                 className="rounded-full backdrop-blur-none"
               >
                 Sign In

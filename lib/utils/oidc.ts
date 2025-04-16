@@ -4,20 +4,19 @@ import { HYDRA_PUBLIC_URL } from './constants';
 class Oidc {
   userManager?: UserManager;
 
-  setUserManager(clientId: string, clientSecret: string) {
+  setUserManager(clientId: string) {
     const oauth2Url = HYDRA_PUBLIC_URL;
 
     const userManager = new UserManager({
       automaticSilentRenew: false,
       authority: oauth2Url,
       metadata: {
-        authorization_endpoint: `${oauth2Url}oauth2/auth`,
-        token_endpoint: `${oauth2Url}oauth2/token`,
-        userinfo_endpoint: `${oauth2Url}userinfo`,
-        end_session_endpoint: `${oauth2Url}oauth2/sessions/logout`,
+        authorization_endpoint: `${oauth2Url}/oauth2/auth`,
+        token_endpoint: `${window.location.origin}/api/oauth2/token`,
+        userinfo_endpoint: `${oauth2Url}/userinfo`,
+        end_session_endpoint: `${oauth2Url}/oauth2/sessions/logout`,
       },
       client_id: clientId,
-      client_secret: clientSecret,
       redirect_uri: `${window.location.origin}/oauth2/callback`,
       response_mode: 'query',
     });
@@ -44,8 +43,5 @@ class Oidc {
     return user;
   }
 }
-
-Log.setLogger(console);
-Log.setLevel(Log.DEBUG);
 
 export const oidc = new Oidc();

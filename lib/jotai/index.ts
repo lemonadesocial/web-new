@@ -5,3 +5,4 @@ export * from './chains';
 
 export const scrollAtBottomAtom = atom(false);
 export const dataTheme = atom('dark');
+export const hydraClientIdAtom = atom('');
