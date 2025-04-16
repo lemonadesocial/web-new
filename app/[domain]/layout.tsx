@@ -1,9 +1,10 @@
 import React from 'react';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 import { BottomSheetContainer, DrawerContainer, modal, ModalContainer } from '$lib/components/core/dialog';
 import { ToastContainer } from '$lib/components/core/toast';
-
+import { getSpace } from '$lib/utils/space';
 import { getSiteData } from '$utils/fetchers';
 import { Config } from '$utils/types';
 
@@ -25,10 +26,15 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
 export default async function SiteLayout(props: { params: Promise<{ domain: string }>; children: React.ReactNode }) {
   const params = await props.params;
   const domain = decodeURIComponent(params.domain);
-  const data = (await getSiteData(domain)) as Config;
+  const [data, space] = await Promise.all([
+    getSiteData(domain) as Promise<Config>,
+    getSpace(domain)
+  ]);
+
+  if (!space) return notFound();
 
   return (
-    <Providers>
+    <Providers space={space}>
       <StyleVariables theme={data.theme.styles} />
       {props.children}
       <ModalContainer modal={modal} />

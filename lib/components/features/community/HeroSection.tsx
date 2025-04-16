@@ -12,10 +12,10 @@ import { generateUrl } from '$lib/utils/cnd';
 import { useMutation } from '$lib/request';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
-import { handleSignIn } from '$lib/utils/ory';
 
 import { COMMUNITY_SOCIAL_LINKS } from './constants';
 import ThemeBuilder from './ThemeBuilder';
+import { useSignIn } from '$lib/hooks/useSignIn';
 
 interface HeroSectionProps {
   space?: Space | null;
@@ -24,7 +24,7 @@ interface HeroSectionProps {
 export function HeroSection({ space }: HeroSectionProps) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
-
+  const signIn = useSignIn();
   const [follow, resFollow] = useMutation(FollowSpaceDocument, {
     onComplete: (client) => {
       client.writeFragment({ id: `Space:${space?._id}`, data: { followed: true } });
@@ -39,7 +39,7 @@ export function HeroSection({ space }: HeroSectionProps) {
   const handleSubscribe = () => {
     if (!session) {
       // need to login to subscribe
-      handleSignIn();
+      signIn();
       return;
     }
 
