@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1](https://github.com/lemonadesocial/web-new/compare/v1.8.0...v1.8.1) (2025-04-16)
+
+
+### Bug Fixes
+
+* hide sub events instead empty state ([97d107e](https://github.com/lemonadesocial/web-new/commit/97d107e81f74bfac533288e8409b9bd9d053846d))
+
 ## [1.8.0](https://github.com/lemonadesocial/web-new/compare/v1.7.0...v1.8.0) (2025-04-15)
 
 
