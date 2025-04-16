@@ -3,6 +3,8 @@ import { Collection, MongoClient, Document } from 'mongodb';
 let mongoClient: MongoClient | undefined;
 
 export async function get(): Promise<MongoClient> {
+  if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
+
   if (!mongoClient) {
     mongoClient = new MongoClient(process.env.DATABASE_URL as string);
 
