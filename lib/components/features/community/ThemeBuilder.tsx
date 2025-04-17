@@ -140,7 +140,7 @@ export default function ThemeBuilder({
                       onClick={() => {
                         if (key === 'pattern') {
                           const assets = presets.pattern.assets || [];
-                          let patternValue = themeData.class;
+                          let patternValue = themeData?.class;
 
                           if (!patternValue) {
                             const index = Math.floor(Math.random() * assets.length);
