@@ -1,13 +1,10 @@
-import Link from "next/link";
-import clsx from "clsx";
-
-import { useMutation } from "$lib/request";
 import { useAtom } from "jotai";
+
 import { useMe } from "$lib/hooks/useMe";
+import { useMutation } from "$lib/request";
 import { generateUrl } from "$lib/utils/cnd";
 import { sessionAtom } from "$lib/jotai";
 import { handleSignIn } from "$lib/utils/ory";
-import { LEMONADE_DOMAIN } from "$lib/utils/constants";
 import { FollowSpaceDocument, UnfollowSpaceDocument, type Space } from "$lib/generated/backend/graphql";
 
 import { Button } from "$lib/components/core";
@@ -44,9 +41,9 @@ const CommunityCard = ({ space }: CommunityCardProps) => {
   };
 
   const canManage = [space?.creator, ...(space?.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
-  console.log(space);
+
   return (
-    <Card.Root as="link" href={`/c/${space?.slug}`} className="flex flex-col gap-y-6">
+    <Card.Root as="link" href={`/c/${space?.slug || space?._id}`} className="flex flex-col gap-y-6">
 
       <div className="flex justify-between">
         <div className="w-12 h-12 rounded-sm bg-quaternary overflow-hidden">
@@ -59,11 +56,14 @@ const CommunityCard = ({ space }: CommunityCardProps) => {
           )}
         </div>
         {canManage ? (
-          <Link href={`${LEMONADE_DOMAIN}/s/${space?.slug || space?._id}`} target="_blank">
-            <Button variant="primary" outlined iconRight="icon-arrow-outward" size="lg">
+          <div>
+            <Button variant="primary" outlined iconRight="icon-arrow-outward" size="sm" onClick={(e) => {
+              e.preventDefault();
+              window.open(`/s/${space?.slug || space?._id}`, '_blank');
+            }}>
               <span className="block">Manage</span>
             </Button>
-          </Link>
+          </div>
         ) : (
           <Button
             loading={resFollow.loading || resUnfollow.loading}
