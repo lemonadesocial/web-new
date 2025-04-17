@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.9.0](https://github.com/lemonadesocial/web-new/compare/v1.8.1...v1.9.0) (2025-04-17)
+
+
+### Features
+
+* oauth2 ([ffe967b](https://github.com/lemonadesocial/web-new/commit/ffe967b978a1d092479bf4255860c533cbf0372d))
+* rename env ([eb485bb](https://github.com/lemonadesocial/web-new/commit/eb485bbe4d2049a954c7b0897fba1075d5e1f268))
+
+
+### Bug Fixes
+
+* correct payment account ([74dec5a](https://github.com/lemonadesocial/web-new/commit/74dec5ac64a050650a3fa1e7a24f3ce9879e79bd))
+* error state theming ([d90100b](https://github.com/lemonadesocial/web-new/commit/d90100b1e2920b1e059359abd6023540708a50c2))
+* lint code ([c6af4ee](https://github.com/lemonadesocial/web-new/commit/c6af4ee455fc16f48bcc8101d9f13fdc13765139))
+* nullable space ([84b9a81](https://github.com/lemonadesocial/web-new/commit/84b9a811b65d259e70e73b92039678139887c037))
+* query space ([ba7a1a0](https://github.com/lemonadesocial/web-new/commit/ba7a1a0cef9953d4c3c16fd6cf86482fe4970ca0))
+* uncategorized tickets are shown ([c9cd1af](https://github.com/lemonadesocial/web-new/commit/c9cd1af7db1c782150c5d6967628f96f19739749))
+
 ## [1.8.1](https://github.com/lemonadesocial/web-new/compare/v1.8.0...v1.8.1) (2025-04-16)
 
 
