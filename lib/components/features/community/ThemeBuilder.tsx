@@ -147,6 +147,7 @@ export default function ThemeBuilder({
                           document.getElementById('pattern')?.setAttribute('class', `pattern ${value}`);
                         } else {
                           // TODO: support minimal and pattern for now. Need to check when add more theme
+                          form.setValue('class', '');
                           document.getElementById('pattern')?.removeAttribute('class');
                         }
 
