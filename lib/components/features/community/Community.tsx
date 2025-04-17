@@ -182,9 +182,11 @@ export function Community({ space }: { space?: Space; }) {
             <section className="flex flex-col gap-6">
               <div className="w-full flex justify-between items-center">
                 <h1 className="text-xl md:text-2xl font-semibold flex-1">Hubs</h1>
-                <Button variant="tertiary-alt" size="sm">
-                  View All (6)
-                </Button>
+                {spaceData.sub_spaces_expanded.length > 3 && (
+                  <Button variant="tertiary-alt" size="sm">
+                    {`View All (${spaceData.sub_spaces_expanded.length})`}
+                  </Button>
+                )}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {spaceData.sub_spaces_expanded.map((space) => (
