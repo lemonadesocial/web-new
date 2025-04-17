@@ -1,6 +1,5 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 
 import { BottomSheetContainer, DrawerContainer, modal, ModalContainer } from '$lib/components/core/dialog';
 import { ToastContainer } from '$lib/components/core/toast';
@@ -30,8 +29,6 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
     getSiteData(domain) as Promise<Config>,
     getSpace(domain)
   ]);
-
-  if (!space) return notFound();
 
   return (
     <Providers space={space}>
