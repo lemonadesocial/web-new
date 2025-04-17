@@ -4,9 +4,21 @@ import { userAvatar } from "$lib/utils/user";
 import { useSession } from "$lib/hooks/useSession";
 
 import { Avatar, Button, Segment } from "$lib/components/core";
-
-import { currenciesAtom, currencyAtom, eventDataAtom, hasSingleFreeTicketAtom, purchaseItemsAtom, registrationModal, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from "../store";
-import { pricingInfoAtom } from "../store";
+import {
+  currenciesAtom,
+  currencyAtom,
+  eventDataAtom,
+  hasSingleFreeTicketAtom,
+  purchaseItemsAtom,
+  registrationModal,
+  requiredProfileFieldsAtom,
+  selectedPaymentAccountAtom,
+  ticketTypesAtom,
+  useAtom,
+  useAtomValue,
+  useSetAtom,
+  pricingInfoAtom
+} from "../store";
 import { useRedeemTickets } from "../hooks/useRedeemTickets";
 import { BuyerInfoForm } from "../forms/BuyerInfoForm";
 import { ApplicationForm } from "../forms/ApplicationForm";

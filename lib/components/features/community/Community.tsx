@@ -26,10 +26,10 @@ import { scrollAtBottomAtom, sessionAtom } from '$lib/jotai';
 import { generateCssVariables } from '$lib/utils/fetchers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useMe } from '$lib/hooks/useMe';
-import { handleSignIn } from '$lib/utils/ory';
 
 import { ListingEvent } from './ListingEvent';
 import { EventPane } from '../pane';
+import { useSignIn } from '$lib/hooks/useSignIn';
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
@@ -386,7 +386,7 @@ function EventsWithMode({
 
 function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: boolean | null }) {
   const [session] = useAtom(sessionAtom);
-
+  const signIn = useSignIn();
   const [follow, { loading }] = useMutation(FollowSpaceDocument, {
     onComplete: (client) => {
       client.writeFragment({ id: `Space:${spaceId}`, data: { followed: true } });
@@ -395,7 +395,7 @@ function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: 
 
   const handleSubscribe = () => {
     if (!session) {
-      handleSignIn();
+      signIn();
       return;
     }
 

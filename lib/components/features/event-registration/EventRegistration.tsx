@@ -7,7 +7,6 @@ import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
 import { randomUserImage, userAvatar } from '$lib/utils/user';
 import { Avatar, Button, Card, ModalContainer, SkeletonCard } from '$lib/components/core';
-import { handleSignIn } from '$lib/utils/ory';
 
 import {
   approvalRequiredAtom,
@@ -31,8 +30,9 @@ import {
 import { EventRegistrationStoreProvider } from './context';
 import { TicketSelect } from './TicketSelect';
 import { RegisterButton } from './RegisterButton';
-
+import { useSignIn } from '$lib/hooks/useSignIn';
 const EventRegistrationContent: React.FC = () => {
+  const signIn = useSignIn();
   const me = useMe();
   const approvalRequired = useAtomValue(approvalRequiredAtom);
   const ticketLimit = useAtomValue(ticketLimitAtom);
@@ -66,7 +66,7 @@ const EventRegistrationContent: React.FC = () => {
             <i className='icon-login size-5 text-black' />
           </div>
           <p>Please sign in to manage your registration and see more event details.</p>
-          <Button size='sm' variant='tertiary' iconRight='icon-chevron-right' onClick={handleSignIn}>Sign In</Button>
+          <Button size='sm' variant='tertiary' iconRight='icon-chevron-right' onClick={signIn}>Sign In</Button>
         </div>
       </Card.Root>
     );

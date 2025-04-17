@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 
 export interface Session {
-  id: string,
+  _id: string,
   user?: string;
   token?: string;
   oidcUser?: string;
