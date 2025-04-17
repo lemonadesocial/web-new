@@ -14,6 +14,7 @@ import {
   GetSpaceEventsDocument,
   GetSpaceQuery,
   GetSpaceTagsDocument,
+  GetSubSpacesDocument,
   SortOrder,
   Space,
   SpaceTagBase,
@@ -48,6 +49,11 @@ export function Community({ space }: { space?: Space; }) {
     initData: { getSpace: space } as GetSpaceQuery,
   });
 
+  const { data: dataGetSubSpaces } = useQuery(GetSubSpacesDocument, {
+    variables: { id: space?._id },
+    skip: !space?._id || !space?.sub_spaces?.length,
+  });
+
   const { data: dataGetSpaceTags } = useQuery(GetSpaceTagsDocument, {
     variables: { space: space?._id },
     skip: !space?._id,
@@ -59,6 +65,9 @@ export function Community({ space }: { space?: Space; }) {
     variables: { space: space?._id },
     skip: !space?._id,
   });
+
+
+  const subSpaces = (dataGetSubSpaces?.getSubSpaces || []) as Space[];
   const spaceEventsCalendar = dataGetSpaceEventsCalendar?.getEvents || [];
   // const mappins = spaceEventsCalendar
   //   .filter((i) => i.address)
@@ -181,19 +190,19 @@ export function Community({ space }: { space?: Space; }) {
       <div className="relative">
         <HeroSection space={dataGetSpace?.getSpace as Space} />
         <Divider className="my-8" />
-        {spaceData.sub_spaces_expanded && (
+        {subSpaces.length > 0 && (
           <>
             <section className="flex flex-col gap-6">
               <div className="w-full flex justify-between items-center">
                 <h1 className="text-xl md:text-2xl font-semibold flex-1">Hubs</h1>
-                {spaceData.sub_spaces_expanded.length > 3 && (
-                  <Button variant="tertiary-alt" size="sm" onClick={() => drawer.open(CommunityPane, { props: { subSpaces: spaceData.sub_spaces_expanded as Space[] } })}>
-                    {`View All (${spaceData.sub_spaces_expanded.length})`}
+                {subSpaces.length > 3 && (
+                  <Button variant="tertiary-alt" size="sm" onClick={() => drawer.open(CommunityPane, { props: { subSpaces } })}>
+                    {`View All (${subSpaces.length})`}
                   </Button>
                 )}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {spaceData.sub_spaces_expanded.map((space) => (
+                {subSpaces.slice(0, 3).map((space) => (
                   <CommunityCard key={space._id} space={space} />
                 ))}
               </div>

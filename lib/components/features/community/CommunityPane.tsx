@@ -25,7 +25,7 @@ const CommunityPane = ({ subSpaces }: { subSpaces: Space[]; }) => {
 
 const HubCard = ({ space }: { space: Space; }) => {
   return (
-    <Card.Root as="link" href={`/c/${space?.slug}`} target="_blank" className="flex gap-x-3 items-center px-4 py-3">
+    <Card.Root as="link" href={`/c/${space?.slug || space._id}`} target="_blank" className="flex gap-x-3 items-center px-4 py-3">
       <div className="w-12 h-12 rounded-sm bg-quaternary overflow-hidden">
         {space?.image_avatar_expanded && (
           <img
