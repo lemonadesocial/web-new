@@ -142,8 +142,8 @@ export function Community({ space }: { space?: Space; }) {
       handleScroll();
     }
   }, [shouldLoadMore]);
-
-  const theme = (dataGetSpace?.getSpace as Space).theme_data;
+  const spaceData = dataGetSpace?.getSpace as Space;
+  const theme = spaceData.theme_data;
   return (
     <>
       {theme?.variables && (
@@ -177,20 +177,24 @@ export function Community({ space }: { space?: Space; }) {
       <div className="relative">
         <HeroSection space={dataGetSpace?.getSpace as Space} />
         <Divider className="my-8" />
-        <section className="flex flex-col gap-6">
-          <div className="w-full flex justify-between items-center">
-            <h1 className="text-xl md:text-2xl font-semibold flex-1">Hubs</h1>
-            <Button variant="tertiary-alt" size="sm">
-              View All (6)
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <CommunityCard space={dataGetSpace?.getSpace as Space} />
-            <CommunityCard space={dataGetSpace?.getSpace as Space} />
-            <CommunityCard space={dataGetSpace?.getSpace as Space} />
-          </div>
-        </section>
-        <Divider className="my-8" />
+        {spaceData.sub_spaces_expanded && (
+          <>
+            <section className="flex flex-col gap-6">
+              <div className="w-full flex justify-between items-center">
+                <h1 className="text-xl md:text-2xl font-semibold flex-1">Hubs</h1>
+                <Button variant="tertiary-alt" size="sm">
+                  View All (6)
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {spaceData.sub_spaces_expanded.map((space) => (
+                  <CommunityCard key={space._id} space={space} />
+                ))}
+              </div>
+            </section>
+            <Divider className="my-8" />
+          </>
+        )}
         <div className="flex md:gap-18">
           <div className="flex flex-col flex-1 gap-6 w-full">
             <div className="flex">

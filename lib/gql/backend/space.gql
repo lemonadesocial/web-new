@@ -53,6 +53,25 @@ fragment Space on Space {
   handle_tiktok
   personal
   theme_data
+  sub_spaces_expanded {
+    _id
+    title
+    description
+    followers_count
+    slug
+    followed
+    creator
+    admins {
+      _id
+    }
+    image_avatar_expanded {
+      _id
+      bucket
+      url
+      type
+      key
+    }
+  }
 }
 
 fragment SpaceTag on SpaceTagBase {
