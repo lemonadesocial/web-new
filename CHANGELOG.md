@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.1](https://github.com/lemonadesocial/web-new/compare/v1.9.0...v1.9.1) (2025-04-17)
+
+
+### Bug Fixes
+
+* check empty theme ([c9b1258](https://github.com/lemonadesocial/web-new/commit/c9b12587aafdd97a2eaf44af67ad15abcf69416f))
+
 ## [1.9.0](https://github.com/lemonadesocial/web-new/compare/v1.8.1...v1.9.0) (2025-04-17)
 
 
