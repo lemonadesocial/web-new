@@ -3,8 +3,9 @@ import React from 'react';
 import { useAtom } from 'jotai';
 import { endOfDay, startOfDay, format } from 'date-fns';
 import clsx from 'clsx';
+import dynamic from "next/dynamic";
 
-import { Button, Card, Divider, drawer, Menu, MenuItem, modal, Segment, Tag } from '$lib/components/core';
+import { Button, Divider, drawer, Menu, MenuItem, modal, Segment, Tag } from '$lib/components/core';
 import { HeroSection } from '$lib/components/features/community';
 import {
   Event,
@@ -19,14 +20,17 @@ import {
   SpaceTagType,
 } from '$lib/generated/backend/graphql';
 import { useQuery } from '$lib/request';
-import { EventList, EventListCard } from '$lib/components/features/EventList';
 import { Calendar } from '$lib/components/core/calendar';
 import { scrollAtBottomAtom } from '$lib/jotai';
 import { generateCssVariables } from '$lib/utils/fetchers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { EventList, EventListCard } from '$lib/components/features/EventList';
 import { ListingEvent } from './ListingEvent';
 import { EventPane } from '../pane';
+
 import CommunityCard from "./CommunityCard";
+
+const CommunityPane = dynamic(() => import('./CommunityPane'), { ssr: false });
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
@@ -183,7 +187,7 @@ export function Community({ space }: { space?: Space; }) {
               <div className="w-full flex justify-between items-center">
                 <h1 className="text-xl md:text-2xl font-semibold flex-1">Hubs</h1>
                 {spaceData.sub_spaces_expanded.length > 3 && (
-                  <Button variant="tertiary-alt" size="sm">
+                  <Button variant="tertiary-alt" size="sm" onClick={() => drawer.open(CommunityPane, { props: { subSpaces: spaceData.sub_spaces_expanded as Space[] } })}>
                     {`View All (${spaceData.sub_spaces_expanded.length})`}
                   </Button>
                 )}
@@ -356,7 +360,7 @@ export function Community({ space }: { space?: Space; }) {
             </div>
           </div>
         </div>
-      </div>
+      </div >
     </>
   );
 }
