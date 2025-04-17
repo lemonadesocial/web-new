@@ -7,7 +7,7 @@ import { GRAPHQL_URL } from '$lib/utils/constants';
 import { initializeAppKit } from '$lib/utils/appkit';
 import { useAuth } from '$lib/hooks/useAuth';
 import { useListChains } from '$lib/hooks/useListChains';
-import { SpaceWithHydraKeys } from '$lib/utils/space';
+import { SpaceHydraKeys } from '$lib/utils/space';
 import { hydraClientIdAtom } from '$lib/jotai';
 
 const client = new GraphqlClient({
@@ -18,8 +18,8 @@ const client = new GraphqlClient({
   },
 });
 
-export default function Providers({ children, space }: { children: React.ReactNode; space: SpaceWithHydraKeys }) {
-  const oryLoading = useAuth(space.hydra_client_id);
+export default function Providers({ children, space }: { children: React.ReactNode; space?: SpaceHydraKeys | null; }) {
+  const oryLoading = useAuth(space?.hydra_client_id);
   const chainsLoading = useListChains();
   const setHydraClientId = useSetAtom(hydraClientIdAtom);
 
@@ -30,7 +30,7 @@ export default function Providers({ children, space }: { children: React.ReactNo
   }, [chainsLoading]);
 
   React.useEffect(() => {
-    if (space.hydra_client_id) {
+    if (space?.hydra_client_id) {
       setHydraClientId(space.hydra_client_id);
     }
   }, [space]);
