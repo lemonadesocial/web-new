@@ -30,7 +30,7 @@ RUN NEXT_TELEMETRY_DISABLED=1 NODE_OPTIONS="--max-old-space-size=8192" yarn buil
 FROM public.ecr.aws/nginx/nginx:1.21-alpine AS nginx
 
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=build /app/.next/static /var/www/_next/static
+COPY --from=build /app/.next/static /var/www/proxy_static/_next/static
 COPY --from=build /app/public /var/www
 
 ### upload
