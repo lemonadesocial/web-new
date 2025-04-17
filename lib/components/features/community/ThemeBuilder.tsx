@@ -140,14 +140,21 @@ export default function ThemeBuilder({
                       onClick={() => {
                         if (key === 'pattern') {
                           const assets = presets.pattern.assets || [];
+                          let patternValue = themeData.class;
 
-                          const index = Math.floor(Math.random() * assets.length);
-                          const value = assets[index];
-                          form.setValue('class', value);
-                          document.getElementById('pattern')?.setAttribute('class', `pattern ${value}`);
+                          if (!patternValue) {
+                            const index = Math.floor(Math.random() * assets.length);
+                            patternValue = assets[index];
+                            form.setValue('class', patternValue, { shouldDirty: true });
+                          } else {
+                            form.setValue('class', patternValue);
+                          }
+
+                          document.getElementById('pattern')?.setAttribute('class', `pattern ${patternValue}`);
                         } else {
+                          form.setValue('class', '', { shouldDirty: true });
                           // TODO: support minimal and pattern for now. Need to check when add more theme
-                          document.getElementById('pattern')?.removeAttribute('class');
+                          document.getElementById('pattern')?.setAttribute('class', 'pattern');
                         }
 
                         form.setValue('theme', key as PresetKey);
