@@ -9,6 +9,7 @@ import { Button, Divider, drawer, Menu, MenuItem, modal, Segment, Tag } from '$l
 import { HeroSection } from '$lib/components/features/community';
 import {
   Event,
+  FollowSpaceDocument,
   GetSpaceDocument,
   GetSpaceEventsCalendarDocument,
   GetSpaceEventsDocument,
@@ -20,15 +21,17 @@ import {
   SpaceTagBase,
   SpaceTagType,
 } from '$lib/generated/backend/graphql';
-import { useQuery } from '$lib/request';
+import { useMutation, useQuery } from '$lib/request';
+import { EventList, EventListCard } from '$lib/components/features/EventList';
 import { Calendar } from '$lib/components/core/calendar';
-import { scrollAtBottomAtom } from '$lib/jotai';
+import { scrollAtBottomAtom, sessionAtom } from '$lib/jotai';
 import { generateCssVariables } from '$lib/utils/fetchers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
-import { EventList, EventListCard } from '$lib/components/features/EventList';
+import { useMe } from '$lib/hooks/useMe';
+
 import { ListingEvent } from './ListingEvent';
 import { EventPane } from '../pane';
-
+import { useSignIn } from '$lib/hooks/useSignIn';
 import CommunityCard from "./CommunityCard";
 
 const CommunityPane = dynamic(() => import('./CommunityPane'), { ssr: false });
@@ -37,6 +40,7 @@ const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
 
 export function Community({ space }: { space?: Space; }) {
+  const me = useMe();
   const [shouldLoadMore, setShouldLoadMore] = useAtom(scrollAtBottomAtom);
 
   const [mode, setMode] = React.useState<'card' | 'list'>('card');
@@ -46,6 +50,7 @@ export function Community({ space }: { space?: Space; }) {
 
   const { data: dataGetSpace } = useQuery(GetSpaceDocument, {
     variables: { id: space?._id },
+    fetchPolicy: 'cache-and-network',
     initData: { getSpace: space } as GetSpaceQuery,
   });
 
@@ -110,6 +115,8 @@ export function Community({ space }: { space?: Space; }) {
     skip: !space?._id || !selectedDate,
   });
   const events = (resEventsByDate.data?.getEvents || []) as Event[];
+
+  const canManage = [space?.creator, ...(space?.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
 
   const handleScroll = () => {
     if (selectedDate) {
@@ -275,6 +282,10 @@ export function Community({ space }: { space?: Space; }) {
               </div>
             )}
 
+            {!canManage && !upcomingEvents.length && (
+              <NoUpcomingEvents spaceId={space?._id} followed={dataGetSpace?.getSpace?.followed} />
+            )}
+
             {!selectedDate ? (
               <>
                 {!!upcomingEvents.length && eventListType === 'upcoming' && (
@@ -403,5 +414,42 @@ function EventsWithMode({
         />
       )}
     </>
+  );
+}
+
+function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: boolean | null; }) {
+  const [session] = useAtom(sessionAtom);
+  const signIn = useSignIn();
+  const [follow, { loading }] = useMutation(FollowSpaceDocument, {
+    onComplete: (client) => {
+      client.writeFragment({ id: `Space:${spaceId}`, data: { followed: true } });
+    },
+  });
+
+  const handleSubscribe = () => {
+    if (!session) {
+      signIn();
+      return;
+    }
+
+    follow({ variables: { space: spaceId } });
+  };
+
+  return (
+    <div className="bg-card rounded-md flex gap-3 px-4 py-3">
+      <i className="icon-dashboard size-[48px] text-primary/16" />
+      <div className="flex-1">
+        <p className="text-lg">No Upcoming Events</p>
+        <p className="text-tertiary">Subscribe to the calendar to get notified when new events are posted.</p>
+        {!followed && (
+          <>
+            <Divider className="my-3" />
+            <Button variant="flat" loading={loading} className="text-accent-400" onClick={handleSubscribe}>
+              Subscribe
+            </Button>
+          </>
+        )}
+      </div>
+    </div>
   );
 }

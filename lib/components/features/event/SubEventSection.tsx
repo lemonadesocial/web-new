@@ -11,7 +11,7 @@ export function SubEventSection({ event }: { event?: Event }) {
     skip: !event?._id,
   });
   const events = (data?.getEvents || []) as Event[];
-  if (!event?.subevent_enabled) return null;
+  if (!event?.subevent_enabled || !events.length) return null;
 
   return (
     <div className="event-description flex flex-col gap-2 w-full">

@@ -1,12 +1,25 @@
-import { Avatar, Button, Segment } from "$lib/components/core";
+import { intersection, partition, uniqBy } from "lodash";
 import { useMe } from "$lib/hooks/useMe";
 import { userAvatar } from "$lib/utils/user";
 import { useSession } from "$lib/hooks/useSession";
 
-import { currenciesAtom, currencyAtom, eventDataAtom, hasSingleFreeTicketAtom, purchaseItemsAtom, registrationModal, requiredProfileFieldsAtom, selectedPaymentAccountAtom, ticketTypesAtom, useAtom, useAtomValue, useSetAtom } from "../store";
-import { pricingInfoAtom } from "../store";
+import { Avatar, Button, Segment } from "$lib/components/core";
+import {
+  currenciesAtom,
+  currencyAtom,
+  eventDataAtom,
+  hasSingleFreeTicketAtom,
+  purchaseItemsAtom,
+  registrationModal,
+  requiredProfileFieldsAtom,
+  selectedPaymentAccountAtom,
+  ticketTypesAtom,
+  useAtom,
+  useAtomValue,
+  useSetAtom,
+  pricingInfoAtom
+} from "../store";
 import { useRedeemTickets } from "../hooks/useRedeemTickets";
-
 import { BuyerInfoForm } from "../forms/BuyerInfoForm";
 import { ApplicationForm } from "../forms/ApplicationForm";
 import { UserForm } from "../forms/UserInfoForm";
@@ -14,7 +27,6 @@ import { CardPayment } from "../payments/CardPayment";
 import { SubmitForm } from "../SubmitForm";
 import { OrderSummary } from "../OrderSummary";
 import { CryptoPayment } from "../payments/CryptoPayment";
-import { intersection, partition, uniqBy } from "lodash";
 
 export function RegistrationModal() {
   const me = useMe();
@@ -107,7 +119,13 @@ export function RegistrationModal() {
                   />)
               }
               {
-                selectedPaymentAccount?.provider === 'stripe' ? <CardPayment /> : selectedPaymentAccount?.type === 'solana' ? 'Solana Payment' : <CryptoPayment accounts={cryptoAccounts} />
+                selectedPaymentAccount?.provider === 'stripe' && <CardPayment />
+              }
+              {
+                selectedPaymentAccount?.type === 'solana' && 'Solana Payment'
+              }
+              {
+                selectedPaymentAccount?.type && ['ethereum', 'ethereum_relay', 'ethereum_stake'].includes(selectedPaymentAccount.type) && <CryptoPayment accounts={cryptoAccounts} />
               }
             </div>
           )

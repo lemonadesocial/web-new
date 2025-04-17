@@ -1,9 +1,11 @@
+import { useMemo } from "react";
+
 import { Collapsible } from "$lib/components/core";
 import { GroupedTicketTypes, groupTicketTypesByCategory } from "$lib/utils/event";
-import { useMemo } from "react";
+import { PurchasableTicketType } from "$lib/generated/backend/graphql";
+
 import { hasSingleFreeTicketAtom, ticketLimitAtom, ticketTypesAtom, useAtomValue } from "./store";
 import { TicketSelectItem } from "./TicketSelectItem";
-import { PurchasableTicketType } from "$lib/generated/backend/graphql";
 
 export function TicketSelect() {
   const ticketTypes = useAtomValue(ticketTypesAtom);
@@ -24,6 +26,8 @@ export function TicketSelect() {
 
 function TicketCategory({ category, ticketTypes }: GroupedTicketTypes) {
   if (ticketTypes.length === 1) return <TicketSelectItem ticketType={ticketTypes[0]} />;
+
+  if (!category) return <TicketList ticketTypes={ticketTypes} />;
 
   return (
     <Collapsible

@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.8.1](https://github.com/lemonadesocial/web-new/compare/v1.8.0...v1.8.1) (2025-04-16)
+
+
+### Bug Fixes
+
+* hide sub events instead empty state ([97d107e](https://github.com/lemonadesocial/web-new/commit/97d107e81f74bfac533288e8409b9bd9d053846d))
+
+## [1.8.0](https://github.com/lemonadesocial/web-new/compare/v1.7.0...v1.8.0) (2025-04-15)
+
+
+### Features
+
+* add coupon ([cb05e0a](https://github.com/lemonadesocial/web-new/commit/cb05e0ac1eaa083135c95b7643bb0d1469e9b7b4))
+* add dice avatar ([1ec735d](https://github.com/lemonadesocial/web-new/commit/1ec735d05d30e3dc3d6a687ad6fe3add45858689))
+* update signed out state ([b589d4b](https://github.com/lemonadesocial/web-new/commit/b589d4b0985278d4094d85dd6aab79d384f487ed))
+
+
+### Bug Fixes
+
+* init appkit after chains loaded ([a5155d4](https://github.com/lemonadesocial/web-new/commit/a5155d4019a0f8ed416249aaf13ca6a328aa7c34))
+* lint code ([58e7e4b](https://github.com/lemonadesocial/web-new/commit/58e7e4b211f67abc03d4420507baf7dbacbfbd7c))
+* missing envs ([8259435](https://github.com/lemonadesocial/web-new/commit/8259435469f05ed206fcffa4cc20c432c16ad049))
+* remove unused ([b8751f9](https://github.com/lemonadesocial/web-new/commit/b8751f9bad5fe40ea09794c8461d328753592ff6))
+* request subscribe issue ([096db4c](https://github.com/lemonadesocial/web-new/commit/096db4cf0770de02a51577464544eb75a1d04642))
+
 ## [1.7.0](https://github.com/lemonadesocial/web-new/compare/v1.6.1...v1.7.0) (2025-04-13)
 
 

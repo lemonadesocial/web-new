@@ -1,9 +1,13 @@
 import { GraphQLClient } from 'graphql-request';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
-import { InMemoryCache } from './cache';
-import { FetchPolicy } from './type';
+import { getDefaultStore } from 'jotai';
+
 import { GRAPHQL_URL } from '$lib/utils/constants';
 import { log } from '$lib/utils/helpers';
+import { sessionAtom } from '$lib/jotai';
+
+import { InMemoryCache } from './cache';
+import { FetchPolicy } from './type';
 
 if (!GRAPHQL_URL) {
   log.error({ message: 'Missing GRAPHQL_URL', exit: true });
@@ -54,7 +58,7 @@ export class GraphqlClient {
         type: 'query',
         query,
         variables,
-        headers,
+        headers: this.getHeaders(headers),
         initData,
         fetchPolicy,
         resolve,
@@ -78,7 +82,7 @@ export class GraphqlClient {
         type: 'refetch',
         query,
         variables,
-        headers,
+        headers: this.getHeaders(headers),
         resolve,
         reject,
       });
@@ -119,6 +123,11 @@ export class GraphqlClient {
       return;
     }
 
+    if (fetchPolicy === 'cache-and-network') {
+      await this.executeNetworkRequest(request);
+      return;
+    }
+
     const cacheData = this.cache?.readQuery(request.query, request.variables);
     if (cacheData) {
       request.resolve({ data: cacheData, error: null });
@@ -148,7 +157,7 @@ export class GraphqlClient {
       if (gqlError.response?.errors?.[0]?.message) {
         request.resolve({
           data: null,
-          error: { message: gqlError.response.errors[0].message }
+          error: { message: gqlError.response.errors[0].message },
         });
         return;
       }
@@ -184,6 +193,22 @@ export class GraphqlClient {
   }) {
     const queryKey = this.cache?.createCacheKey(query, variables);
     if (queryKey) this.cache?.subscribe(queryKey, callback);
+  }
+
+  readQuery<T, V extends Record<string, any>>(query: TypedDocumentNode<T, V>, variables?: V) {
+    return this.cache?.readQuery(query, variables);
+  }
+
+  private getHeaders(headers?: HeadersInit): HeadersInit {
+    const store = getDefaultStore();
+    const session = store.get(sessionAtom);
+    const defaultHeaders: HeadersInit = {};
+
+    if (session?.token) {
+      defaultHeaders['Authorization'] = `Bearer ${session.token}`;
+    }
+
+    return { ...defaultHeaders, ...headers };
   }
 }
 
