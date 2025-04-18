@@ -1,4 +1,4 @@
-import { User, UserManager, Log } from 'oidc-client-ts';
+import { User, UserManager } from 'oidc-client-ts';
 import { HYDRA_PUBLIC_URL } from './constants';
 
 class Oidc {
