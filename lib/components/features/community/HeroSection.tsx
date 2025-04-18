@@ -54,7 +54,8 @@ export function HeroSection({ space }: HeroSectionProps) {
         props: {
           onDiscard: () => {
             setOpenSheet(false);
-            document.getElementById('pattern')?.removeAttribute('class');
+            console.log(space?.theme_data);
+            document.getElementById('pattern')?.setAttribute('class', `pattern ${space?.theme_data?.class}`);
           },
         },
       });

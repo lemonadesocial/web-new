@@ -22,7 +22,7 @@ const getSpaceData = async (hostname: string): Promise<SpaceHydraKeys | null> =>
       ...space,
       _id: space._id.toString(),
     };
-  } catch (error) {
+  } catch (_error) {
     return null;
   }
 };
