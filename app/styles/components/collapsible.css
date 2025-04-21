@@ -1,0 +1,40 @@
+@layer utilities {
+  .collapse:not(td, tr, colgroup) {
+    visibility: visible;
+  }
+
+  .collapse {
+    @apply rounded-sm border;
+
+    --collapse-rounded: var(--rounded-sm);
+    --collapse-bg: transparent;
+    --collapse-fg: var(--color-tertiary);
+    --collapse-p-block: var(--spacing-2);
+    --collapse-p-inline: var(--spacing-2);
+
+    background-color: var(--collapse-bg);
+    color: var(--collapse-fg);
+    border-color: var(--color-divider);
+    visibility: visible;
+    border-radius: var(--collapse-rounded);
+
+    .trigger {
+      @apply flex justify-between gap-3;
+
+      i {
+        color: var(--color-fg);
+      }
+    }
+
+    .content {
+      @apply overflow-hidden;
+      background-color: var(--color-background);
+      border-end-end-radius: var(--collapse-rounded);
+    }
+
+    &.warning {
+      --collapse-bg: color-mix(in oklab, var(--color-warning-300) 16%, transparent);
+      --collapse-fg: var(--color-warning-300);
+    }
+  }
+}
