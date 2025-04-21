@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { GetSpaceDocument } from '$lib/generated/backend/graphql';
 import { getClient } from '$lib/request';
+import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 
 export const config = {
   matcher: [
@@ -25,7 +26,8 @@ export default async function middleware(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams.toString();
   const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ''}`;
 
-  if (path.includes('/s/')) {
+  // NOTE: only allow lemonade domain for subpath /s/:uid for now
+  if (hostname === LEMONADE_DOMAIN?.replace('https://', '') && path.includes('/s/')) {
     // e.g: url = 'https://example.com/s/uid'
     return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
   }
