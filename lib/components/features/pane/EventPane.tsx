@@ -36,7 +36,11 @@ export function EventPane({ eventId }: { eventId: string }) {
 
       {canManage && (
         <Alert message="You have manage access for this event.">
-          <Button iconRight="icon-arrow-outward" className="rounded-full">
+          <Button
+            iconRight="icon-arrow-outward"
+            className="rounded-full"
+            onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event?.shortid}`)}
+          >
             Manage
           </Button>
         </Alert>
