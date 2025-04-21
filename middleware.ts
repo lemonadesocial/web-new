@@ -27,7 +27,7 @@ export default async function middleware(req: NextRequest) {
   const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ''}`;
 
   // NOTE: only allow lemonade domain for subpath /s/:uid for now
-  if (hostname === LEMONADE_DOMAIN?.replace('https://', '') && path.includes('/s/')) {
+  if (path.includes('/s/')) {
     // e.g: url = 'https://example.com/s/uid'
     return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
   }
