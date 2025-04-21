@@ -82,7 +82,7 @@ export function EventAccess({ event }: { event: Event }) {
 
   if (requestLoading || ticketsLoading) return <SkeletonCard />;
 
-  if (ticketsData?.getTickets.length) return <MyTickets tickets={ticketsData.getTickets as Ticket[]} />;
+  if (ticketsData?.getTickets.length) return <MyTickets tickets={ticketsData.getTickets as Ticket[]} event={event} />;
 
   if (requestData?.getMyEventJoinRequest) return <ApprovalStatus joinRequest={requestData.getMyEventJoinRequest as EventJoinRequest} />;
 
