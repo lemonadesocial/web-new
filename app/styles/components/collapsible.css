@@ -6,11 +6,11 @@
   .collapse {
     @apply rounded-sm border;
 
-    --collapse-rounded: var(--rounded-sm);
+    --collapse-rounded: var(--radius-md);
     --collapse-bg: transparent;
     --collapse-fg: var(--color-tertiary);
-    --collapse-p-block: var(--spacing-2);
-    --collapse-p-inline: var(--spacing-2);
+    --collapse-p-block: calc(var(--spacing) * 3);
+    --collapse-p-inline: calc(var(--spacing) * 4);
 
     background-color: var(--collapse-bg);
     color: var(--collapse-fg);
@@ -19,7 +19,9 @@
     border-radius: var(--collapse-rounded);
 
     .trigger {
-      @apply flex justify-between gap-3;
+      @apply flex justify-between items-center gap-2;
+      padding-inline: var(--collapse-p-inline);
+      padding-block: var(--collapse-p-block);
 
       i {
         color: var(--color-fg);
@@ -30,6 +32,12 @@
       @apply overflow-hidden;
       background-color: var(--color-background);
       border-end-end-radius: var(--collapse-rounded);
+      border-end-start-radius: var(--collapse-rounded);
+
+      .content-box {
+        padding-inline: var(--collapse-p-inline);
+        padding-block: var(--collapse-p-block);
+      }
     }
 
     &.warning {

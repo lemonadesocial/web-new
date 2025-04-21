@@ -57,7 +57,7 @@ function Content({ children }: React.PropsWithChildren) {
           transition={{ duration: 0.3 }}
           className="content"
         >
-          {children}
+          <div className="content-box">{children}</div>
         </motion.div>
       )}
     </AnimatePresence>
