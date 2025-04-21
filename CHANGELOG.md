@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.10.1](https://github.com/lemonadesocial/web-new/compare/v1.10.0...v1.10.1) (2025-04-21)
+
+
+### Bug Fixes
+
+* miss action manage event ([345bef4](https://github.com/lemonadesocial/web-new/commit/345bef42da509d139e3db287f75a1bd7b4ab80d4))
+
+## [1.10.0](https://github.com/lemonadesocial/web-new/compare/v1.9.1...v1.10.0) (2025-04-21)
+
+
+### Features
+
+* add to calendar ([3426057](https://github.com/lemonadesocial/web-new/commit/34260574fc7b9b4926d6a759bf665c525339193b))
+* check allow domain can access path ([4191897](https://github.com/lemonadesocial/web-new/commit/419189729539dc42e1ddce022684a1d8bb080733))
+* check static path ([ca7c353](https://github.com/lemonadesocial/web-new/commit/ca7c3536a8279c6f1e711c619cf1b6e7de9c1144))
+* checking static path ([3d74700](https://github.com/lemonadesocial/web-new/commit/3d747009b110f2cae5dbe961bc5bf26df7deaa3a))
+* update router ([54b4a9d](https://github.com/lemonadesocial/web-new/commit/54b4a9d35a24186b4978c5a4e427b7b81b727092))
+
+
+### Bug Fixes
+
+* revert ([ff5ccec](https://github.com/lemonadesocial/web-new/commit/ff5ccec14ab100f736fa69463b24c7ffd3c00a6f))
+
 ## [1.9.1](https://github.com/lemonadesocial/web-new/compare/v1.9.0...v1.9.1) (2025-04-17)
 
 
