@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/lemonadesocial/web-new/compare/v1.10.0...v1.10.1) (2025-04-21)
+
+
+### Bug Fixes
+
+* miss action manage event ([345bef4](https://github.com/lemonadesocial/web-new/commit/345bef42da509d139e3db287f75a1bd7b4ab80d4))
+
 ## [1.10.0](https://github.com/lemonadesocial/web-new/compare/v1.9.1...v1.10.0) (2025-04-21)
 
 
