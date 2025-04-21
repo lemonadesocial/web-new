@@ -49,3 +49,8 @@ node_modules/
 /playwright/.cache/
 
 certificates
+
+# ide
+.vscode/
+.cursorrules
+.cursor/
