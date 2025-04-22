@@ -172,6 +172,57 @@ query GetSpaceTags($space: MongoID!) {
   }
 }
 
+query GetSpaceEventRequests($space: MongoID!, $skip: Int!, $limit: Int!, $state: EventJoinRequestState) {
+  getSpaceEventRequests(space: $space, skip: $skip, limit: $limit, state: $state) {
+    records {
+      _id
+      created_at
+      space
+      event
+      state
+      decided_at
+      decided_by
+      event_expanded {
+        title
+        start
+        address {
+          city
+          country
+          region
+        }
+        new_new_photos_expanded {
+          _id
+          bucket
+          key
+          type
+          url
+        }
+      }
+    }
+    total
+  }
+}
+
+query GetMySpaceEventRequests($space: MongoID!, $skip: Int!, $limit: Int!, $state: EventJoinRequestState) {
+  getMySpaceEventRequests(space: $space, skip: $skip, limit: $limit, state: $state) {
+    records {
+      _id
+      state
+      event_expanded {
+        _id
+        title
+        new_new_photos_expanded {
+          key
+          bucket
+          _id
+          url
+          type
+        }
+      }
+    }
+  }
+}
+
 #### Mutations
 
 mutation FollowSpace($space: MongoID!) {

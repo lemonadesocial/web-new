@@ -32,6 +32,7 @@ import { useMe } from '$lib/hooks/useMe';
 import { ListingEvent } from './ListingEvent';
 import { EventPane } from '../pane';
 import { useSignIn } from '$lib/hooks/useSignIn';
+import { MyEventRequests } from './MyEventRequests';
 import CommunityCard from "./CommunityCard";
 
 const CommunityPane = dynamic(() => import('./CommunityPane'), { ssr: false });
@@ -285,6 +286,8 @@ export function Community({ space }: { space?: Space; }) {
             {!canManage && !upcomingEvents.length && (
               <NoUpcomingEvents spaceId={space?._id} followed={dataGetSpace?.getSpace?.followed} />
             )}
+
+            <MyEventRequests spaceId={space?._id} />
 
             {!selectedDate ? (
               <>

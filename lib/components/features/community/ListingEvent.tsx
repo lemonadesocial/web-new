@@ -17,7 +17,7 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
   const [events, setEvents] = React.useState<Event[]>([]);
   const [linkEvent, setLinkEvent] = React.useState('');
   const [adding, setAdding] = React.useState(false);
-  const [submiting, setSubmitting] = React.useState(false);
+  const [submitting, setSubmitting] = React.useState(false);
 
   const { client } = useClient();
 
@@ -104,7 +104,7 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
           <AddTags type={SpaceTagType.Event} spaceId={spaceId} onChange={(value) => setTags(value)} />
 
           <Button
-            loading={submiting}
+            loading={submitting}
             disabled={!events.length}
             variant="secondary"
             className="w-full"
