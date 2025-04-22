@@ -1,49 +1,49 @@
-import { useAtom } from "jotai";
-
 import { useMe } from "$lib/hooks/useMe";
 import { useMutation } from "$lib/request";
 import { generateUrl } from "$lib/utils/cnd";
-import { sessionAtom } from "$lib/jotai";
-import { handleSignIn } from "$lib/utils/ory";
+import { useSignIn } from "$lib/hooks/useSignIn";
+import { useSession } from "$lib/hooks/useSession";
 import { FollowSpaceDocument, UnfollowSpaceDocument, type Space } from "$lib/generated/backend/graphql";
 
 import { Button } from "$lib/components/core";
 import { Card } from "$lib/components/core";
 
+
 interface CommunityCardProps {
-  space?: Space;
+  space: Space;
 }
 
 const CommunityCard = ({ space }: CommunityCardProps) => {
-  const [session] = useAtom(sessionAtom);
+  const session = useSession();
   const me = useMe();
+  const signIn = useSignIn();
   const [follow, resFollow] = useMutation(FollowSpaceDocument, {
     onComplete: (client) => {
-      client.writeFragment({ id: `Space:${space?._id}`, data: { followed: true } });
+      client.writeFragment({ id: `Space:${space._id}`, data: { followed: true } });
     },
   });
   const [unfollow, resUnfollow] = useMutation(UnfollowSpaceDocument, {
     onComplete: (client) => {
-      client.writeFragment({ id: `Space:${space?._id}`, data: { followed: false } });
+      client.writeFragment({ id: `Space:${space._id}`, data: { followed: false } });
     },
   });
 
   const handleSubscribe = () => {
     if (!session) {
       // need to login to subscribe
-      handleSignIn();
+      signIn();
       return;
     }
 
-    const variables = { space: space?._id };
-    if (space?.followed) unfollow({ variables });
+    const variables = { space: space._id };
+    if (space.followed) unfollow({ variables });
     else follow({ variables });
   };
 
-  const canManage = [space?.creator, ...(space?.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
+  const canManage = [space.creator, ...(space.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
 
   return (
-    <Card.Root as="link" href={`/c/${space?.slug || space?._id}`} className="flex flex-col gap-y-6">
+    <Card.Root as="link" href={`/c/${space.slug || space._id}`} className="flex flex-col gap-y-6">
 
       <div className="flex justify-between">
         <div className="w-12 h-12 rounded-sm bg-quaternary overflow-hidden">
@@ -59,7 +59,7 @@ const CommunityCard = ({ space }: CommunityCardProps) => {
           <div>
             <Button variant="primary" outlined iconRight="icon-arrow-outward" size="sm" onClick={(e) => {
               e.preventDefault();
-              window.open(`/s/${space?.slug || space?._id}`, '_blank');
+              window.open(`/s/${space.slug || space._id}`, '_blank');
             }}>
               <span className="block">Manage</span>
             </Button>
@@ -67,11 +67,11 @@ const CommunityCard = ({ space }: CommunityCardProps) => {
         ) : (
           <Button
             loading={resFollow.loading || resUnfollow.loading}
-            outlined={!!space?.followed}
+            outlined={!!space.followed}
             variant="tertiary-alt" size="sm"
             onClick={() => handleSubscribe()}
           >
-            {!!space?.followed ? (
+            {!!space.followed ? (
               <>
                 <span className="hidden group-hover:block">Unsubscribe</span>
                 <span className="block group-hover:hidden">Subscribed</span>
@@ -83,8 +83,8 @@ const CommunityCard = ({ space }: CommunityCardProps) => {
         )}
       </div>
       <div className="flex flex-col gap-y-2">
-        <h3 className="text-xl font-semibold">{space?.title}</h3>
-        {space?.description && <p className="text-md text-tertiary line-clamp-2">{space.description}</p>}
+        <h3 className="text-xl font-semibold">{space.title}</h3>
+        {space.description && <p className="text-md text-tertiary line-clamp-2">{space.description}</p>}
       </div>
     </Card.Root>
   );
