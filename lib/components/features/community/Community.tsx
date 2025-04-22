@@ -31,6 +31,7 @@ import { ListingEvent } from './ListingEvent';
 import { EventPane } from '../pane';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { MyEventRequests } from './MyEventRequests';
+import { ShaderGradient } from './themes_preset/shader';
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
@@ -181,6 +182,10 @@ export function Community({ space }: { space?: Space }) {
       )}
 
       <div id="pattern" className={`pattern ${theme?.class}`}></div>
+
+      <div className="shader light dreamy blur-lg">
+        <ShaderGradient />
+      </div>
 
       <div className="relative">
         <HeroSection space={dataGetSpace?.getSpace as Space} />

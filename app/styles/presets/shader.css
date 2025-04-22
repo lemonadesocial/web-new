@@ -1,0 +1,93 @@
+@layer utilities {
+  .shader {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    --color-accent-500: '#7A51CD';
+    &.light {
+      &.dreamy {
+        --shader-color-1: #e1dbfc;
+        --shader-color-2: #f0a7fa;
+        --shader-color-3: #ddf9fe;
+      }
+      &.summer {
+        --shader-color-1: #eef3e9;
+        --shader-color-2: #f2f6cd;
+        --shader-color-3: #b1eefc;
+      }
+      &.melon {
+        --shader-color-1: #fcfbd1;
+        --shader-color-2: #dbfae3;
+        --shader-color-3: #f8aec1;
+      }
+      &.barbie {
+        --shader-color-1: #fef7ca;
+        --shader-color-2: #fee8df;
+        --shader-color-3: #fbb9f1;
+      }
+      &.sunset {
+        --shader-color-1: #fbd8d6;
+        --shader-color-2: #fdf2d8;
+        --shader-color-3: #fef9d9;
+      }
+      &.ocean {
+        --shader-color-1: #dbf5fe;
+        --shader-color-2: #dadffb;
+        --shader-color-3: #dbf1fd;
+      }
+      &.forest {
+        --shader-color-1: #f5fcb0;
+        --shader-color-2: #d9fcf5;
+        --shader-color-3: #ddfcc7;
+      }
+      &.lavender {
+        --shader-color-1: #e7e1fa;
+        --shader-color-2: #f9ddfd;
+        --shader-color-3: #d5dffa;
+      }
+    }
+
+    &.dark {
+      &.dreamy {
+        --shader-color-1: #368077;
+        --shader-color-2: #46156f;
+        --shader-color-3: #140f6f;
+      }
+      &.summer {
+        --shader-color-1: #34514a;
+        --shader-color-2: #835c33;
+        --shader-color-3: #082590;
+      }
+      &.melon {
+        --shader-color-1: #8f6217;
+        --shader-color-2: #36852f;
+        --shader-color-3: #8b250e;
+      }
+      &.barbie {
+        --shader-color-1: #7b8a2c;
+        --shader-color-2: #701784;
+        --shader-color-3: #70172d;
+      }
+      &.sunset {
+        --shader-color-1: #fef9d9;
+        --shader-color-2: #768f1f;
+        --shader-color-3: #735312;
+      }
+      &.ocean {
+        --shader-color-1: #1c6174;
+        --shader-color-2: #08176f;
+        --shader-color-3: #227676;
+      }
+      &.forest {
+        --shader-color-1: #226f87;
+        --shader-color-2: #256e1f;
+        --shader-color-3: #837024;
+      }
+      &.lavender {
+        --shader-color-1: #8b2285;
+        --shader-color-2: #4b166d;
+        --shader-color-3: #181369;
+      }
+    }
+  }
+}
