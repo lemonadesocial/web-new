@@ -1,11 +1,12 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
-import { Ticket, Event, EventCalendarLinks } from '$lib/generated/backend/graphql';
-
-import { AccessCard } from "./AccessCard";
+import { Ticket, Event, EventCalendarLinks, PaymentRefundInfo } from '$lib/generated/backend/graphql';
 import { Button, modal, ModalContent } from "$lib/components/core";
 
-export function MyTickets({ tickets, event }: { tickets: Ticket[], event: Event }) {
+import { AccessCard } from "./AccessCard";
+import { StakeRefundItem } from "./StakeRefund";
+
+export function MyTickets({ tickets, payments }: { tickets: Ticket[]; payments?: PaymentRefundInfo[]; event: Event; }) {
   const ticketTypeText = useMemo(() => {
     const ticketTypes = tickets.reduce((acc, ticket) => {
       const typeId = ticket.type;
@@ -24,14 +25,16 @@ export function MyTickets({ tickets, event }: { tickets: Ticket[], event: Event 
       .join(', ');
   }, [tickets]);
 
+  const refundPayments = payments?.filter(p => p.refund_policy?.requirements?.checkin_before && !p.attempting_refund);
+
   return (
     <AccessCard>
       <div>
         <h3 className="text-xl font-semibold">You&apos;re In</h3>
         <p className="text-lg text-tertiary">{ticketTypeText}</p>
       </div>
-      <div>
-      <Button
+      <div className="flex justify-between">
+        <Button
           variant="tertiary"
           size="sm"
           iconLeft="icon-calendar-add"
@@ -44,7 +47,34 @@ export function MyTickets({ tickets, event }: { tickets: Ticket[], event: Event 
         >
           Add to Calendar
         </Button>
+        <Button
+          variant="tertiary"
+          size="sm"
+          iconLeft="icon-share"
+          onClick={() => modal.open(InviteFriendModal, {
+            props: {
+              event
+            },
+            dismissible: true
+          })}
+        >
+          Invite a Friend
+        </Button>
       </div>
+      {
+        !!refundPayments?.length && (
+          <>
+            <hr className="border-t border-divider" />
+            <div className="space-y-2">
+              {
+                refundPayments.map(payment => (
+                  <StakeRefundItem key={payment._id} payment={payment} />
+                ))
+              }
+            </div>
+          </>
+        )
+      }
     </AccessCard>
   );
 }
@@ -62,7 +92,7 @@ function AddToCalendarModal({ event }: { event: Event }) {
       <div className="space-y-4">
         <div className="space-y-2">
           <p className="text-lg">Add to Calendar</p>
-          <p className="text-sm text-secondary">On registration, we sent you an email that should’ve added an event to your calendar.</p>
+          <p className="text-sm text-secondary">On registration, we sent you an email that should've added an event to your calendar.</p>
           <p className="text-sm text-secondary">You can also click on one of the buttons to manually add the event to your calendar.</p>
         </div>
         <div className="space-y-2">
@@ -97,5 +127,93 @@ function AddToCalendarModal({ event }: { event: Event }) {
         </div>
       </div>
     </ModalContent>
+  );
+}
+
+function InviteFriendModal({ event }: { event: Event }) {
+  const [copyText, setCopyText] = useState('Copy');
+  const shareUrl = `${window.location.origin}/e/${event.shortid}`;
+  const shareText = `I am going to ${event.title}. Join me!`;
+
+  const handleShare = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => {
+        setCopyText('Copied!');
+      });
+  };
+
+  const shareOptions = [
+    { name: 'Tweet', icon: 'icon-twitter', onClick: () => handleShare(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${shareText}`) },
+    { name: 'Cast', icon: 'icon-warpcast', onClick: () => handleShare(`https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}&embeds[]=${encodeURIComponent(shareUrl)}`) },
+    { name: 'Post', icon: 'icon-linkedin', onClick: () => handleShare(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`) },
+    { name: 'Share', icon: 'icon-facebook', onClick: () => handleShare(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`) },
+    { name: 'Email', icon: 'icon-email', onClick: () => handleShare(`mailto:?subject=${encodeURIComponent(shareText)}&body=${encodeURIComponent(shareUrl)}`) },
+    ...(navigator.share ? [{
+      name: 'Native',
+      icon: 'icon-share',
+      onClick: () => navigator.share({
+        title: event.title,
+        text: shareText,
+        url: shareUrl
+      })
+    }] : [])
+  ];
+
+  return (
+    <ModalContent icon="icon-share" className="w-[480px]">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <p className="text-lg">Invite a Friend</p>
+          <p className="text-sm text-secondary">It&apos;s always more fun with friends. We&apos;ll let you know when your friends accept your invite.</p>
+        </div>
+        <div className="grid grid-cols-4 gap-4">
+          {shareOptions.map((option) => (
+            <ShareButton
+              key={option.icon}
+              title={option.name}
+              icon={option.icon}
+              onClick={option.onClick}
+            />
+          ))}
+        </div>
+        <hr className="border-t border-divider" />
+        <div className="space-y-1.5">
+          <p className="text-sm text-secondary">Share the link:</p>
+          <div className="flex items-center gap-2">
+            <div className="flex-grow rounded-sm border border-primary/8 bg-woodsmoke-950/64 py-2 px-3 overflow-hidden">
+              <p className="truncate">{shareUrl}</p>
+            </div>
+            <Button
+              variant="tertiary"
+              onClick={handleCopy}
+            >
+              {copyText}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </ModalContent>
+  );
+}
+
+interface ShareButtonProps {
+  title: string;
+  icon: string;
+  onClick: () => void;
+}
+
+function ShareButton({ title, icon, onClick }: ShareButtonProps) {
+  return (
+    <div
+      onClick={onClick}
+      className="flex flex-col items-center justify-center gap-3 px-1 py-4 rounded-sm bg-primary/8 cursor-pointer"
+    >
+      <i className={`${icon} size-8 text-secondary`} />
+      <span className="text-sm text-secondary">{title}</span>
+    </div>
   );
 }

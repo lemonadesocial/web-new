@@ -88,29 +88,64 @@ query CalculateTicketsPricing($input: CalculateTicketsPricingInput!) {
   }
 }
 
-query getTickets ($event: MongoID, $user: MongoID, $ticket_types: [MongoID!], $email: String) {
-  getTickets(event: $event, user: $user, ticket_types: $ticket_types, email: $email) {
-    _id
-    accepted
-    assigned_email
-    assigned_to
-    assigned_to_expanded {
-      _id,
-      name,
-      new_photos_expanded(limit: 1) {
+query getMyTickets($event: MongoID!, $withPaymentInfo: Boolean) {
+  getMyTickets(event: $event, with_payment_info: $withPaymentInfo) {
+    tickets {
+      _id
+      accepted
+      assigned_email
+      assigned_to
+      assigned_to_expanded {
+        _id,
+        name,
+        new_photos_expanded(limit: 1) {
+          _id
+          key
+          bucket
+        }
+      }
+      event
+      invited_by
+      type
+      type_expanded {
         _id
-        key
-        bucket
+        title
+      }
+      shortid
+    }
+    payments {
+      _id
+      state
+      amount
+      attempting_refund
+      currency
+      refund_info {
+        available_amount
+        refunded
+      }
+      refund_policy {
+        percent
+        requirements {
+          checkin_before
+        }
+        satisfy_all
+      }
+      refund_requirements_met
+      payment_account {
+        _id
+        account_info {
+          ... on EthereumStakeAccount {
+            currencies
+            currency_map
+            address
+            network
+            config_id
+            requirement_checkin_before
+          }
+        }
+        type
       }
     }
-    event
-    invited_by
-    type
-    type_expanded {
-      _id
-      title
-    }
-    shortid
   }
 }
 

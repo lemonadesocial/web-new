@@ -4,7 +4,7 @@ import { intersection } from "lodash";
 import clsx from "clsx";
 
 import { NumberInput } from "$lib/components/core";
-import { EventTicketPrice, NewPaymentAccount, PurchasableTicketType } from "$lib/generated/backend/graphql";
+import { EthereumStakeAccount, EventTicketPrice, NewPaymentAccount, PurchasableTicketType } from "$lib/generated/backend/graphql";
 import { chainsMapAtom } from "$lib/jotai";
 import { formatPrice, getPaymentAccounts } from "$lib/utils/event";
 import { getPaymentNetworks } from "$lib/utils/payment";
@@ -76,6 +76,8 @@ export function TicketSelectItem({ ticketType, single, compact }: { ticketType: 
   const count = purchaseItems.find(item => item.id === ticketType._id)?.count || 0;
   const active = count > 0;
 
+  console.log(ticketType)
+
   if (compact) return (
     <div className="flex justify-between items-center">
       <p>Tickets</p>
@@ -118,7 +120,16 @@ export function TicketSelectItem({ ticketType, single, compact }: { ticketType: 
   return (
     <div className={clsx('flex p-3 rounded-sm justify-between items-start', active ? 'border border-primary' : 'border border-transparent bg-primary/8')}>
       <div>
-        <p className={clsx('font-medium', active ? 'text-accent' : 'text-secondary')}>{ticketType.title}</p>
+        <div className="flex items-center gap-1.5">
+          <p className={clsx('font-medium', active ? 'text-accent' : 'text-secondary')}>{ticketType.title}</p>
+          {
+            ticketType.prices[0].payment_accounts_expanded?.[0]?.type === 'ethereum_stake' && (
+              <div className="px-1.5 py-0.5 rounded-full bg-success-500/16">
+                <p className="text-xs text-success-500">Check In to Earn</p>
+              </div>
+            )
+          }
+        </div>
         <TicketPrices prices={ticketType.prices} groupRegistration={ticketType.limit > 1} active={active} />
       </div>
       <NumberInput
