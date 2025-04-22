@@ -56,3 +56,10 @@ query getNewPayment($id: MongoID!, $paymentSecret: String) {
     }
   }
 }
+
+query getPaymentRefundSignature($id: MongoID!) {
+  getPaymentRefundSignature(_id: $id) {
+    args
+    signature
+  }
+}

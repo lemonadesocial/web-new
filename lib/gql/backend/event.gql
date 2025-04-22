@@ -71,6 +71,12 @@ query GetEvent($id: MongoID, $shortid: String) {
       field
       required
     }
+    calendar_links {
+      google
+      ical
+      outlook
+      yahoo
+    }
   }
 }
 

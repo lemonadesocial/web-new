@@ -1,7 +1,7 @@
 import { getDefaultStore } from 'jotai';
 import { Eip1193Provider, ethers } from 'ethers';
 
-import { listChainsAtom } from '$lib/jotai';
+import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
 
 import ERC20 from '$lib/abis/ERC20.json';
 import LemonadeRelayPayment from '$lib/abis/LemonadeRelayPayment.json';
@@ -13,6 +13,10 @@ export const LemonadeStakePaymentContract = new ethers.Contract(ethers.ZeroAddre
 
 export function getListChains() {
   return getDefaultStore().get(listChainsAtom);
+}
+
+export function getChain(network: string) {
+  return getDefaultStore().get(chainsMapAtom)[network];
 }
 
 export function formatWallet(address: string, length = 4): string {

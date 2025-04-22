@@ -121,7 +121,7 @@ export function HeroSection({ space }: HeroSectionProps) {
               />
             )}
             {canManage ? (
-              <Link href={`${LEMONADE_DOMAIN}/s/${space?.slug || space?._id}`} target="_blank">
+              <Link href={`${LEMONADE_DOMAIN}/s/${space?.slug || space?._id}/overview`} target="_blank">
                 <Button variant="primary" outlined iconRight="icon-arrow-outward" size="lg">
                   <span className="block">Manage</span>
                 </Button>

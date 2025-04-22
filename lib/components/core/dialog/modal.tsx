@@ -68,6 +68,12 @@ export function ModalContainer({ modal }: { modal: Modal }) {
       if (modals.length === 0) return;
       const topModal = modals[modals.length - 1];
       const modalRef = modalRefs.current.get(topModal.id);
+
+      const w3mModal = document.querySelector('w3m-modal');
+      if (w3mModal && w3mModal.contains(event.target as Node)) {
+        return;
+      }
+
       if (
         modalRef &&
         event.target instanceof Node &&
@@ -135,11 +141,12 @@ interface ModalContentProps {
   title?: React.ReactNode;
   icon?: React.ReactNode;
   onClose?: () => void;
+  className?: string;
 }
 
-export function ModalContent({ children, onClose, title, icon }: ModalContentProps) {
+export function ModalContent({ children, onClose, title, icon, className }: ModalContentProps) {
   return (
-    <div className="p-4 space-y-4 w-[340px]">
+    <div className={twMerge("p-4 space-y-4 w-[340px]", className)}>
       {
         (title || icon || onClose) && (
           <div className={clsx("flex justify-between", icon ? 'items-start' : 'items-center')}>
