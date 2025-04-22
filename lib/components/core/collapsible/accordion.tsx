@@ -64,6 +64,18 @@ function Content({ children }: React.PropsWithChildren) {
   );
 }
 
+/**
+ * How to usage:
+ *
+ *   <Accordion.Root color="warning">
+ *     <Accordion.Header>
+ *       Header
+ *     </Accordion.Header>
+ *     <Accordion.Content>
+ *       Content
+ *     </Accordion.Content>
+ *   </Accordion.Root>
+*/
 export const Accordion = {
   Root,
   Header,
