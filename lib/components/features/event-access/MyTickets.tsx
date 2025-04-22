@@ -92,7 +92,7 @@ function AddToCalendarModal({ event }: { event: Event }) {
       <div className="space-y-4">
         <div className="space-y-2">
           <p className="text-lg">Add to Calendar</p>
-          <p className="text-sm text-secondary">On registration, we sent you an email that should've added an event to your calendar.</p>
+          <p className="text-sm text-secondary">On registration, we sent you an email that should&apos;ve added an event to your calendar.</p>
           <p className="text-sm text-secondary">You can also click on one of the buttons to manually add the event to your calendar.</p>
         </div>
         <div className="space-y-2">

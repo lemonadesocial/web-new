@@ -50,7 +50,7 @@ export function StakeRefundItem({ payment }: { payment: PaymentRefundInfo; }) {
   if (payment.state === 'refunded') return (
     <div>
       <div>Stake Claimed</div>
-      <div className="text-sm text-secondary">You've claimed {formattedAmount} ({percent}%) for checking in on time.</div>
+      <div className="text-sm text-secondary">You&apos;ve claimed {formattedAmount} ({percent}%) for checking in on time.</div>
     </div>
   );
 
