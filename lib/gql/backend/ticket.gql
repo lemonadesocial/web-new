@@ -110,8 +110,21 @@ query getMyTickets($event: MongoID!, $withPaymentInfo: Boolean) {
       type_expanded {
         _id
         title
+        prices {
+          cost
+          currency
+          default
+          payment_accounts
+          payment_accounts_expanded {
+            ...PaymentAccount
+          }
+        }
       }
       shortid
+      event_expanded {
+        _id
+        title
+      }
     }
     payments {
       _id
