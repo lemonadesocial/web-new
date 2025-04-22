@@ -1,4 +1,4 @@
-import { Accordion, Alert, Collapsible, Divider } from '$lib/components/core';
+import { Accordion, Divider } from '$lib/components/core';
 import { GetMySpaceEventRequestsDocument } from '$lib/generated/backend/graphql';
 import { useQuery } from '$lib/request';
 

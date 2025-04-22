@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { AnimatePresence, motion, MotionStyle } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import clsx from 'clsx';
 
 type State = { isOpen?: boolean; toggle: () => void; close?: () => void };
