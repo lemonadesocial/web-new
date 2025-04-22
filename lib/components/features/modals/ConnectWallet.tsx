@@ -30,10 +30,6 @@ export function ConnectWallet({ onConnect, chain }: { onConnect: () => void; cha
     }
 
     setShowSwitchNetwork(true);
-
-    return () => {
-      hasConnected.current = true;
-    };
   }, [isConnected, chain, chainId, onConnect]);
 
   if (showSwitchNetwork && chain) {

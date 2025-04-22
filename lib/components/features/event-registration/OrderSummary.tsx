@@ -4,10 +4,12 @@ import { generateUrl } from "$lib/utils/cnd";
 import { getDisplayPrice, getEventCardStart } from "$lib/utils/event";
 import { useClient } from "$lib/request/provider";
 import { Button, Input, toast } from "$lib/components/core";
-import { CalculateTicketsPricingDocument } from "$lib/generated/backend/graphql";
+import { CalculateTicketsPricingDocument, EthereumStakeAccount } from "$lib/generated/backend/graphql";
 
 import { currencyAtom, discountCodeAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtomValue, useSetAtom } from "./store";
 import { TicketSelectItem } from "./TicketSelectItem";
+import { format } from "date-fns";
+import { useStakeRefundRate } from "$lib/utils/stake";
 
 export function OrderSummary() {
   const event = useAtomValue(eventDataAtom);
@@ -28,6 +30,8 @@ export function OrderSummary() {
   const pricingPaymentAccount = pricingInfo?.payment_accounts?.find(account => account._id === selectedPaymentAccount?._id) || pricingInfo?.payment_accounts?.[0];
   const fee = pricingPaymentAccount?.fee;
   const grandTotal = (BigInt(pricingInfo?.total || '0') + BigInt(fee || '0')).toString();
+
+  const { refundRate } = useStakeRefundRate(pricingPaymentAccount?.account_info as EthereumStakeAccount);
 
   const handleApplyDiscount = async () => {
     if (!discountCodeInput.trim().length) return;
@@ -145,6 +149,13 @@ export function OrderSummary() {
               <Button variant="secondary" onClick={handleApplyDiscount} loading={isApplying} disabled={!discountCodeInput.trim().length}>
                 Apply
               </Button>
+            </div>
+          )
+        }
+        {
+          pricingPaymentAccount?.type === 'ethereum_stake' && (
+            <div className="py-2 px-3 rounded-sm bg-primary/8 my-2">
+              <p className="text-sm text-secondary">Get {refundRate}% back if you check in by {format(new Date((pricingPaymentAccount.account_info as EthereumStakeAccount).requirement_checkin_before), 'EEEE, MMM d, h:mm a')}.</p>
             </div>
           )
         }

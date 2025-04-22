@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { GetTicketsDocument } from "$lib/generated/backend/graphql";
+import { GetMyTicketsDocument } from "$lib/generated/backend/graphql";
 import { useSession } from "$lib/hooks/useSession";
 import { useClient } from "$lib/request";
 import { toast } from "$lib/components/core";
@@ -20,15 +20,15 @@ export function TicketsProcessingModal() {
     const checkForTickets = async () => {
       try {
         const { data } = await client.query({
-          query: GetTicketsDocument,
+          query: GetMyTicketsDocument,
           variables: {
             event: event._id,
-            user: session.user,
+            withPaymentInfo: true,
           },
           fetchPolicy: 'network-only',
         });
 
-        const hasTickets = !!data?.getTickets?.length;
+        const hasTickets = !!data?.getMyTickets?.tickets?.length;
 
         if (hasTickets) {
           registrationModal.close();

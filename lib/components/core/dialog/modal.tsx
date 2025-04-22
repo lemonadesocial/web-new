@@ -68,6 +68,12 @@ export function ModalContainer({ modal }: { modal: Modal }) {
       if (modals.length === 0) return;
       const topModal = modals[modals.length - 1];
       const modalRef = modalRefs.current.get(topModal.id);
+
+      const w3mModal = document.querySelector('w3m-modal');
+      if (w3mModal && w3mModal.contains(event.target as Node)) {
+        return;
+      }
+
       if (
         modalRef &&
         event.target instanceof Node &&

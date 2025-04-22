@@ -1,6 +1,6 @@
 import { groupBy } from 'lodash';
 
-import { AcceptEventDocument, AssignTicketsDocument, Event, EventJoinRequest, GetEventDocument, GetMyEventJoinRequestDocument, GetTicketsDocument, Ticket } from '$lib/generated/backend/graphql';
+import { AcceptEventDocument, AssignTicketsDocument, Event, EventJoinRequest, GetEventDocument, GetMyEventJoinRequestDocument, GetMyTicketsDocument, PaymentRefundInfo, Ticket } from '$lib/generated/backend/graphql';
 
 import { attending, getAssignedTicket } from '$lib/utils/event';
 import { useClient, useMutation, useQuery } from '$lib/request';
@@ -28,23 +28,23 @@ export function EventAccess({ event }: { event: Event }) {
   const [assignTickets] = useMutation(AssignTicketsDocument);
   const { client } = useClient();
 
-  const { data: ticketsData, loading: ticketsLoading } = useQuery(GetTicketsDocument, {
+  const { data: ticketsData, loading: ticketsLoading } = useQuery(GetMyTicketsDocument, {
     variables: {
       event: event?._id,
-      user: session?.user,
+      withPaymentInfo: true
     },
     skip: !session?.user || !event?._id,
     onComplete: async (data) => {
-      if (isAttending || !data?.getTickets.length || !session?.user) return;
+      if (isAttending || !data?.getMyTickets.tickets.length || !session?.user) return;
 
-      const assignedTicket = getAssignedTicket(data.getTickets as Ticket[], session.user, me?.email as string);
+      const assignedTicket = getAssignedTicket(data.getMyTickets.tickets as Ticket[], session.user, me?.email as string);
 
       if (assignedTicket) {
         joinEvent();
         return;
       }
 
-      const ticketsByType = groupBy(data.getTickets, 'type');
+      const ticketsByType = groupBy(data.getMyTickets.tickets, 'type');
       const ticketTypes = Object.keys(ticketsByType);
 
       if (ticketTypes.length === 1) {
@@ -52,7 +52,7 @@ export function EventAccess({ event }: { event: Event }) {
           variables: {
             input: {
               event: event._id,
-              assignees: [{ ticket: data.getTickets[0]._id, user: session.user }]
+              assignees: [{ ticket: data.getMyTickets.tickets[0]._id, user: session.user }]
             }
           }
         });
@@ -82,7 +82,13 @@ export function EventAccess({ event }: { event: Event }) {
 
   if (requestLoading || ticketsLoading) return <SkeletonCard />;
 
-  if (ticketsData?.getTickets.length) return <MyTickets tickets={ticketsData.getTickets as Ticket[]} event={event} />;
+  if (ticketsData?.getMyTickets.tickets.length) return (
+    <MyTickets
+      tickets={ticketsData.getMyTickets.tickets as Ticket[]}
+      payments={ticketsData.getMyTickets.payments as PaymentRefundInfo[]}
+      event={event}
+    />
+  );
 
   if (requestData?.getMyEventJoinRequest) return <ApprovalStatus joinRequest={requestData.getMyEventJoinRequest as EventJoinRequest} />;
 
