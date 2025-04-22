@@ -43,7 +43,7 @@ const CommunityCard = ({ space }: CommunityCardProps) => {
   const canManage = [space.creator, ...(space.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
 
   return (
-    <Card.Root as="link" href={`/c/${space.slug || space._id}`} className="flex flex-col gap-y-6">
+    <Card.Root as="link" href={`/s/${space.slug || space._id}`} className="flex flex-col gap-y-6">
 
       <div className="flex justify-between">
         <div className="w-12 h-12 rounded-sm bg-quaternary overflow-hidden">
