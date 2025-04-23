@@ -1,21 +1,18 @@
-import { useMe } from "$lib/hooks/useMe";
 import { useMutation } from "$lib/request";
 import { generateUrl } from "$lib/utils/cnd";
 import { useSignIn } from "$lib/hooks/useSignIn";
 import { useSession } from "$lib/hooks/useSession";
-import { FollowSpaceDocument, UnfollowSpaceDocument, type Space } from "$lib/generated/backend/graphql";
+import { FollowSpaceDocument, PublicSpace, UnfollowSpaceDocument } from "$lib/generated/backend/graphql";
 
 import { Button } from "$lib/components/core";
 import { Card } from "$lib/components/core";
 
-
 interface CommunityCardProps {
-  space: Space;
+  space: PublicSpace;
 }
 
 const CommunityCard = ({ space }: CommunityCardProps) => {
   const session = useSession();
-  const me = useMe();
   const signIn = useSignIn();
   const [follow, resFollow] = useMutation(FollowSpaceDocument, {
     onComplete: (client) => {
@@ -40,7 +37,6 @@ const CommunityCard = ({ space }: CommunityCardProps) => {
     else follow({ variables });
   };
 
-  const canManage = [space.creator, ...(space.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
 
   return (
     <Card.Root as="link" href={`/s/${space.slug || space._id}`} className="flex flex-col gap-y-6">
@@ -55,7 +51,7 @@ const CommunityCard = ({ space }: CommunityCardProps) => {
             />
           )}
         </div>
-        {canManage ? (
+        {space.is_admin ? (
           <div>
             <Button variant="primary" outlined iconRight="icon-arrow-outward" size="sm" onClick={(e) => {
               e.preventDefault();
