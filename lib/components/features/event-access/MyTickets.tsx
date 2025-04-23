@@ -6,7 +6,7 @@ import { Button, modal, ModalContent } from "$lib/components/core";
 import { AccessCard } from "./AccessCard";
 import { StakeRefundItem } from "./StakeRefund";
 
-export function MyTickets({ tickets, payments }: { tickets: Ticket[]; payments?: PaymentRefundInfo[]; event: Event; }) {
+export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; payments?: PaymentRefundInfo[]; event: Event; }) {
   const ticketTypeText = useMemo(() => {
     const ticketTypes = tickets.reduce((acc, ticket) => {
       const typeId = ticket.type;
