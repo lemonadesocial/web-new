@@ -53,6 +53,7 @@ fragment Space on Space {
   handle_tiktok
   personal
   theme_data
+  sub_spaces
 }
 
 fragment SpaceTag on SpaceTagBase {
@@ -245,3 +246,23 @@ mutation PinEventsToSpace($space: MongoID!, $events: [MongoID!]!, $tags: [MongoI
     }
   }
 }
+
+query getSubSpaces($id: MongoID!) {
+  getSubSpaces(_id: $id) {
+      _id
+      title
+      description
+      followers_count
+      slug
+      admins {
+        _id
+      }
+      image_avatar_expanded {
+         _id
+        bucket
+        url
+        type
+        key
+      }
+    }
+  }
