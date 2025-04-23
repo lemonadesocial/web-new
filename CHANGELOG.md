@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.11.0](https://github.com/lemonadesocial/web-new/compare/v1.10.1...v1.11.0) (2025-04-23)
+
+
+### Features
+
+* add doc ([87da503](https://github.com/lemonadesocial/web-new/commit/87da5035c1d5568a8437f1edd7f0357a35335e14))
+* invite friends ([050e29b](https://github.com/lemonadesocial/web-new/commit/050e29b52c85a6527a8f92ca27701022ba6de6d0))
+* staking ([cc282f7](https://github.com/lemonadesocial/web-new/commit/cc282f78f2f7c1d704a806c2905c308208fb2c99))
+
+
+### Bug Fixes
+
+* allow only guest can subcribe hub ([fec01b4](https://github.com/lemonadesocial/web-new/commit/fec01b40159f9b71ef27d245d6f3ee38372ab5c6))
+* hover state full container ([a40f32e](https://github.com/lemonadesocial/web-new/commit/a40f32ed37511fe25cff422838f35ec1a87a49ad))
+* lint code ([60d1d7c](https://github.com/lemonadesocial/web-new/commit/60d1d7cfa41bc785c9375704d10b591d85007417))
+* lint code ([51ba0e4](https://github.com/lemonadesocial/web-new/commit/51ba0e4fd14bb265c6703aa34a129726a859d7fc))
+* missing event props ([3128cb6](https://github.com/lemonadesocial/web-new/commit/3128cb643b90796939f812e992e0d1b0cb773e72))
+* temp to check path hostname ([a690ff8](https://github.com/lemonadesocial/web-new/commit/a690ff85aeb3d98db75f87b176ace52ad0eb4820))
+* update sub hub router ([7369d6b](https://github.com/lemonadesocial/web-new/commit/7369d6b840ffc2498d21cffd6f63c1f78606ccb4))
+
 ## [1.10.1](https://github.com/lemonadesocial/web-new/compare/v1.10.0...v1.10.1) (2025-04-21)
 
 
