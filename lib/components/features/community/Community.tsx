@@ -16,6 +16,7 @@ import {
   GetSpaceQuery,
   GetSpaceTagsDocument,
   GetSubSpacesDocument,
+  PublicSpace,
   SortOrder,
   Space,
   SpaceTagBase,
@@ -73,7 +74,7 @@ export function Community({ space }: { space?: Space; }) {
   });
 
 
-  const subSpaces = (dataGetSubSpaces?.getSubSpaces || []) as Space[];
+  const subSpaces = (dataGetSubSpaces?.getSubSpaces || []) as PublicSpace[];
   const spaceEventsCalendar = dataGetSpaceEventsCalendar?.getEvents || [];
   // const mappins = spaceEventsCalendar
   //   .filter((i) => i.address)
