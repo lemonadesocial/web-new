@@ -254,9 +254,7 @@ query getSubSpaces($id: MongoID!) {
       description
       followers_count
       slug
-      admins {
-        _id
-      }
+      is_admin
       image_avatar_expanded {
          _id
         bucket

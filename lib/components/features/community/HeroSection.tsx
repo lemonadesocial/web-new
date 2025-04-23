@@ -127,23 +127,25 @@ export function HeroSection({ space }: HeroSectionProps) {
                 </Button>
               </Link>
             ) : (
-              <Button
-                loading={resFollow.loading || resUnfollow.loading}
-                outlined={!!space?.followed}
-                variant="primary"
-                size="lg"
-                className={clsx(space?.followed && 'hover:bg-accent-500 hover:text-tertiary w-auto duration-300')}
-                onClick={() => handleSubscribe()}
-              >
-                {!!space?.followed ? (
-                  <>
-                    <span className="hidden group-hover:block">Unsubscribe</span>
-                    <span className="block group-hover:hidden">Subscribed</span>
-                  </>
-                ) : (
-                  'Subscribe'
-                )}
-              </Button>
+              !space?.is_ambassador && (
+                <Button
+                  loading={resFollow.loading || resUnfollow.loading}
+                  outlined={!!space?.followed}
+                  variant="primary"
+                  size="lg"
+                  className={clsx(space?.followed && 'hover:bg-accent-500 hover:text-tertiary w-auto duration-300')}
+                  onClick={() => handleSubscribe()}
+                >
+                  {!!space?.followed ? (
+                    <>
+                      <span className="hidden group-hover:block">Unsubscribe</span>
+                      <span className="block group-hover:hidden">Subscribed</span>
+                    </>
+                  ) : (
+                    'Subscribe'
+                  )}
+                </Button>
+              )
             )}
           </div>
         </div>
