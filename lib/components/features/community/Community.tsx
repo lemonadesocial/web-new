@@ -15,7 +15,9 @@ import {
   GetSpaceEventsDocument,
   GetSpaceQuery,
   GetSpaceTagsDocument,
+  GetSpaceTagsQuery,
   GetSubSpacesDocument,
+  GetSubSpacesQuery,
   PublicSpace,
   SortOrder,
   Space,
@@ -41,7 +43,16 @@ const CommunityPane = dynamic(() => import('./CommunityPane'), { ssr: false });
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
 
-export function Community({ space }: { space?: Space; }) {
+type Props = {
+  initData: {
+    space?: Space;
+    subSpaces?: PublicSpace[];
+    spaceTags?: SpaceTagBase[];
+  };
+};
+
+export function Community({ initData }: Props) {
+  const space = initData.space;
   const me = useMe();
   const [shouldLoadMore, setShouldLoadMore] = useAtom(scrollAtBottomAtom);
 
@@ -59,12 +70,17 @@ export function Community({ space }: { space?: Space; }) {
   const { data: dataGetSubSpaces } = useQuery(GetSubSpacesDocument, {
     variables: { id: space?._id },
     skip: !space?._id || !space?.sub_spaces?.length,
+    fetchPolicy: 'cache-and-network',
+    initData: { getSubSpaces: initData.subSpaces } as GetSubSpacesQuery,
   });
 
   const { data: dataGetSpaceTags } = useQuery(GetSpaceTagsDocument, {
     variables: { space: space?._id },
     skip: !space?._id,
+    fetchPolicy: 'cache-and-network',
+    initData: { listSpaceTags: initData.spaceTags } as unknown as GetSpaceTagsQuery,
   });
+
   const spaceTags = (dataGetSpaceTags?.listSpaceTags || []) as SpaceTagBase[];
   const eventTags = spaceTags.filter((t) => t.type === SpaceTagType.Event && !!t.targets?.length);
 
