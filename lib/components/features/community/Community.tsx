@@ -70,12 +70,14 @@ export function Community({ initData }: Props) {
   const { data: dataGetSubSpaces } = useQuery(GetSubSpacesDocument, {
     variables: { id: space?._id },
     skip: !space?._id || !space?.sub_spaces?.length,
+    fetchPolicy: 'cache-and-network',
     initData: { getSubSpaces: initData.subSpaces } as GetSubSpacesQuery,
   });
 
   const { data: dataGetSpaceTags } = useQuery(GetSpaceTagsDocument, {
     variables: { space: space?._id },
     skip: !space?._id,
+    fetchPolicy: 'cache-and-network',
     initData: { listSpaceTags: initData.spaceTags } as unknown as GetSpaceTagsQuery,
   });
 
