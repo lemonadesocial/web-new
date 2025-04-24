@@ -40,7 +40,6 @@ import { ShaderGradient } from './themes_preset/shader';
 
 import CommunityCard from './CommunityCard';
 import { defaultTheme, themeAtom } from './theme_builder/store';
-import { config } from 'process';
 
 const CommunityPane = dynamic(() => import('./CommunityPane'), { ssr: false });
 
@@ -240,7 +239,7 @@ export function Community({ initData }: Props) {
           <>
             <section className="flex flex-col gap-6">
               <div className="w-full flex justify-between items-center">
-                <h1 className="text-xl md:text-2xl font-semibold flex-1">Hubs</h1>
+                <h1 className="text-xl md:text-2xl font-semibold flex-1 text-primary">Hubs</h1>
                 {subSpaces.length > 3 && (
                   <Button
                     variant="tertiary-alt"
