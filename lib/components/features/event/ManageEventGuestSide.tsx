@@ -20,6 +20,7 @@ import { HostedBySection } from './HostedBySection';
 import { EventAccess } from '../event-access';
 import { EventDateTimeBlock } from './EventDateTimeBlock';
 import { EventLocationBlock } from './EventLocationBlock';
+import { AttendeesSection } from './AttendeesSection';
 
 export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
   const { data, loading } = useQuery(GetEventDocument, {
@@ -48,7 +49,8 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
         )}
 
         <CommunitySection event={event} />
-        <HostedBySection event={event} />
+        <HostedBySection event={event} /> 
+        <AttendeesSection eventId={event._id} />
       </div>
 
       <div className="flex-1 flex flex-col gap-6 w-full">

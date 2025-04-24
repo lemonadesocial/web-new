@@ -287,3 +287,15 @@ mutation acceptEvent($id: MongoID!, $email: String) {
 mutation SubmitEventApplicationAnswers($answers: [EventApplicationAnswerInput!]!, $event: MongoID!, $email: String) {
   submitEventApplicationAnswers(answers: $answers, event: $event, email: $email)
 }
+
+query PeekEventGuests($id: MongoID!, $limit: Int) {
+  peekEventGuests(_id: $id, limit: $limit) {
+    items {
+      _id
+      email
+      image_avatar
+      name
+    }
+    total
+  }
+}
