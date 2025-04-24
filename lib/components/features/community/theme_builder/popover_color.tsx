@@ -70,7 +70,12 @@ export function PopoverShaderColor({ label, colorClass, selected, onSelect }: Pr
     <Menu.Root placement="top" strategy="fixed" className="max-w-1/3 min-w-1/3">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
-          <div className={twMerge('size-[24px] rounded-full', colorClass, selected)} />
+          <div
+            className={twMerge(
+              'size-[24px] cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
+              `item-color-${selected}`,
+            )}
+          />
 
           <span className="text-left flex-1  font-general-sans">{label}</span>
           <p className="flex items-center gap-1">

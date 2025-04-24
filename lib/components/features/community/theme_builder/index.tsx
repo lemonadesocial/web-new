@@ -75,6 +75,7 @@ export function ThemeBuilder({
             label="Accent"
             colorClass={`item-color-fg`}
             selected={config.fg}
+            disabled={theme && presets[theme].ui.disabled.fg}
             onSelect={(color, hex) => {
               let customColors: Record<string, string> = {};
               if (color === 'custom' && hex) {
