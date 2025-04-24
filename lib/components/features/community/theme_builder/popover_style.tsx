@@ -11,6 +11,23 @@ interface Props {
   onSelect: (color: string, hex?: string) => void;
 }
 
+export function PopoverEmpty() {
+  return (
+    <Menu.Root className="flex-1 mix-w-1/3" placement="top" strategy="fixed" disabled>
+      <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
+        <div className="w-[24px] h-[24px] bg-quaternary rounded-full">
+          <div className="rounded-full w-full h-full!" />
+        </div>
+        <span className="text-left flex-1">Style</span>
+        <p className="flex items-center gap-1">
+          <span className="capitalize">-</span>
+          <i className="icon-chevrons-up-down text-quaternary" />
+        </p>
+      </div>
+    </Menu.Root>
+  );
+}
+
 export function PopoverPattern({ selected, colorClass, onSelect }: Props) {
   return (
     <Menu.Root strategy="fixed" placement="top" className="flex-1">

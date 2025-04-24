@@ -124,7 +124,7 @@ const pattern = {
   name: 'Pattern',
   ui: {
     mode: 'all',
-    disabled: { mode: true, bg: true },
+    disabled: { mode: true },
   },
 };
 

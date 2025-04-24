@@ -22,7 +22,7 @@ import {
 } from './store';
 import { PopoverFont } from './popover_font';
 import { PopoverColor, PopoverShaderColor } from './popover_color';
-import { PopoverPattern } from './popover_style';
+import { PopoverEmpty, PopoverPattern } from './popover_style';
 
 export function ThemeBuilder({
   space,
@@ -105,23 +105,29 @@ export function ThemeBuilder({
             label="Accent"
             colorClass={`item-color-fg`}
             selected={config?.fg}
-            disabled={theme && presets[theme].ui?.disabled.fg}
+            disabled={theme && presets[theme].ui?.disabled?.fg}
             onSelect={(color, hex) => {
               let customColors: Record<string, string> = {};
               if (color === 'custom' && hex) {
                 const palette = getPalette([
-                  { color: hex, name: 'custom', shade: 500, shades: [50, 500, 700, 950] },
+                  { color: hex, name: 'custom', shade: 500, shades: [50, 100, 200, 300, 500, 700, 950] },
                 ]) as unknown as {
-                  custom: { 500: string; 950: string; 700: string; 50: string };
+                  custom: { 500: string; 950: string; 700: string; 50: string; 100: string; 200: string; 300: string };
                 };
                 const el: any = document.querySelector(':root');
                 el?.style.setProperty('--color-custom-50', palette.custom[50]);
+                el?.style.setProperty('--color-custom-100', palette.custom[100]);
+                el?.style.setProperty('--color-custom-200', palette.custom[200]);
+                el?.style.setProperty('--color-custom-300', palette.custom[300]);
                 el?.style.setProperty('--color-custom-500', palette.custom[500]);
                 el?.style.setProperty('--color-custom-700', palette.custom[700]);
                 el?.style.setProperty('--color-custom-950', palette.custom[950]);
 
                 customColors = {
                   '--color-custom-50': palette.custom[50],
+                  '--color-custom-100': palette.custom[100],
+                  '--color-custom-200': palette.custom[200],
+                  '--color-custom-300': palette.custom[300],
                   '--color-custom-500': palette.custom[500],
                   '--color-custom-700': palette.custom[700],
                   '--color-custom-950': palette.custom[950],
@@ -130,7 +136,7 @@ export function ThemeBuilder({
 
               let conf = {
                 config: { ...config, fg: color },
-                variables: { ...variables, ...customColors },
+                variables: { ...variables, custom: { ...customColors } },
               };
 
               if (theme === 'minimal') {
@@ -149,21 +155,47 @@ export function ThemeBuilder({
               selected={config?.bg}
               disabled={presets[theme]?.ui.disabled.bg}
               onSelect={(color, hex) => {
+                let customColors: Record<string, string> = {};
+
                 if (color === 'custom' && hex) {
                   const palette = getPalette([
-                    { color: hex, name: 'custom', shade: 500, shades: [50, 500, 700, 950] },
+                    { color: hex, name: 'custom', shade: 500, shades: [50, 500, 100, 200, 300, 700, 950] },
                   ]) as unknown as {
-                    custom: { 500: string; 950: string; 700: string; 50: string };
+                    custom: {
+                      500: string;
+                      950: string;
+                      700: string;
+                      50: string;
+                      100: string;
+                      200: string;
+                      300: string;
+                    };
                   };
                   const el: any = document.querySelector(':root');
                   el?.style.setProperty('--color-custom-50', palette.custom[50]);
+                  el?.style.setProperty('--color-custom-100', palette.custom[100]);
+                  el?.style.setProperty('--color-custom-200', palette.custom[200]);
+                  el?.style.setProperty('--color-custom-300', palette.custom[300]);
                   el?.style.setProperty('--color-custom-950', palette.custom[950]);
+
+                  customColors = {
+                    '--color-custom-50': palette.custom[50],
+                    '--color-custom-100': palette.custom[100],
+                    '--color-custom-200': palette.custom[200],
+                    '--color-custom-300': palette.custom[300],
+                    '--color-custom-950': palette.custom[950],
+                  };
                 }
 
-                handleChange({ config: { ...config, bg: color } });
+                handleChange({
+                  config: { ...config, bg: color },
+                  variables: { ...variables, custom: { ...variables.custom, ...customColors } },
+                });
               }}
             />
           )}
+
+          {theme === 'minimal' && <PopoverEmpty />}
 
           {theme === 'shader' && (
             <>
@@ -173,23 +205,7 @@ export function ThemeBuilder({
                 selected={config?.name}
                 onSelect={(name) => handleChange({ config: { ...config, name: name } })}
               />
-              <Menu.Root
-                className="flex-1 mix-w-1/3"
-                placement="top"
-                strategy="fixed"
-                disabled={presets[theme].ui.disabled.mode}
-              >
-                <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
-                  <div className="w-[24px] h-[24px] bg-quaternary rounded-full">
-                    <div className="rounded-full w-full h-full!" />
-                  </div>
-                  <span className="text-left flex-1">Style</span>
-                  <p className="flex items-center gap-1">
-                    <span className="capitalize">-</span>
-                    <i className="icon-chevrons-up-down text-quaternary" />
-                  </p>
-                </div>
-              </Menu.Root>
+              <PopoverEmpty />
             </>
           )}
 

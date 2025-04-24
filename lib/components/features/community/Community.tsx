@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useAtom } from 'jotai';
-import { endOfDay, startOfDay, format } from 'date-fns';
+import { endOfDay, startOfDay, format, setMonth } from 'date-fns';
 import clsx from 'clsx';
 import dynamic from 'next/dynamic';
 
@@ -39,7 +39,8 @@ import { MyEventRequests } from './MyEventRequests';
 import { ShaderGradient } from './themes_preset/shader';
 
 import CommunityCard from './CommunityCard';
-import { themeAtom } from './theme_builder/store';
+import { defaultTheme, themeAtom } from './theme_builder/store';
+import { config } from 'process';
 
 const CommunityPane = dynamic(() => import('./CommunityPane'), { ssr: false });
 
@@ -191,7 +192,16 @@ export function Community({ initData }: Props) {
   const [data, setThemeAtom] = useAtom(themeAtom);
 
   React.useEffect(() => {
-    if (theme) setThemeAtom(theme);
+    if (theme) {
+      setThemeAtom({
+        ...defaultTheme,
+        theme: theme.theme,
+        config: { fg: theme.foreground?.key, bg: theme.background?.key, name: theme?.class, ...(theme.config || {}) },
+        font_title: theme.font_title,
+        font_body: theme.font_body,
+        variables: { ...theme.variables },
+      });
+    }
   }, []);
 
   return (
@@ -204,6 +214,7 @@ export function Community({ initData }: Props) {
             }
 
             :root {
+              ${data.variables?.custom && generateCssVariables(data.variables?.custom)}
               ${data.variables.pattern && generateCssVariables(data.variables.pattern)}
             }
           `}
@@ -215,7 +226,6 @@ export function Community({ initData }: Props) {
           'background',
           data?.theme,
           ['shader', 'pattern'].includes(data.theme as string) && data?.config?.name,
-          data.theme === 'pattern' && data.config.fg,
           data?.config?.bg,
           data?.config?.class,
         )}
