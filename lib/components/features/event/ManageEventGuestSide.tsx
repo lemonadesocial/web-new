@@ -4,7 +4,7 @@ import { uniqBy } from 'lodash';
 
 import { Event, GetEventDocument, GetEventQuery, User } from '$lib/generated/backend/graphql';
 import { useQuery } from '$lib/request';
-import { Avatar, Badge, Spacer } from '$lib/components/core';
+import { Avatar, Badge, Button, Spacer } from '$lib/components/core';
 import { generateUrl } from '$lib/utils/cnd';
 import { hosting } from '$lib/utils/event';
 import { userAvatar } from '$lib/utils/user';
@@ -21,6 +21,7 @@ import { EventAccess } from '../event-access';
 import { EventDateTimeBlock } from './EventDateTimeBlock';
 import { EventLocationBlock } from './EventLocationBlock';
 import { AttendeesSection } from './AttendeesSection';
+import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 
 export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
   const { data, loading } = useQuery(GetEventDocument, {
@@ -47,6 +48,23 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
             className="aspect-square object-contain border rounded-md"
           />
         )}
+
+        {
+          isHost && (
+            <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
+              <p className="text-accent-500">You have manage access for this event.</p>
+              <Button
+                variant="primary"
+                size="sm"
+                iconRight="icon-arrow-outward"
+                className="rounded-full"
+                onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event.shortid}/`, '_blank')}
+              >
+                Manage
+              </Button>
+            </div>
+          )
+        }
 
         <CommunitySection event={event} />
         <HostedBySection event={event} /> 
@@ -100,7 +118,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           <EventDateTimeBlock event={event} />
           <EventLocationBlock event={event} />
         </div>
-        {!isHost && <EventAccess event={event} />}
+        <EventAccess event={event} />
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />

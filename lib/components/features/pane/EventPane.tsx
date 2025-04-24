@@ -98,14 +98,16 @@ export function EventPane({ eventId }: { eventId: string }) {
           <EventDateTimeBlock event={event} />
           <EventLocationBlock event={event} loading={loading} />
         </div>
-        {event && !canManage && <EventAccess event={event} />}
+        {
+          event && <EventAccess event={event} />
+        }
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />
         <GallerySection event={event} loading={loading} />
         <CommunitySection event={event} />
         <HostedBySection event={event} />
-        <AttendeesSection eventId={event._id} />
+        <AttendeesSection eventId={eventId} />
       </div>
     </div>
   );
