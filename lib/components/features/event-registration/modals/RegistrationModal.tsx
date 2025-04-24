@@ -54,7 +54,7 @@ export function RegistrationModal() {
   const isFree = pricing?.total === '0';
 
   return (
-    <div className='h-screen overflow-auto w-screen bg-background/80 [backdrop-filter:var(--backdrop-filter)] flex flex-col-reverse justify-end md:justify-center md:flex-row md:pt-24 md:gap-12'>
+    <div className='h-dvh overflow-auto w-screen bg-background/80 [backdrop-filter:var(--backdrop-filter)] flex flex-col-reverse justify-end md:justify-center md:flex-row md:pt-24 md:gap-12'>
       <div className="absolute top-4 right-4">
         <Button
           variant="tertiary-alt"

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { useQuery } from '$lib/request';
-import { Avatar, Divider } from '$lib/components/core';
+import { Avatar } from '$lib/components/core';
 import { PeekEventGuestsDocument, User } from '$lib/generated/backend/graphql';
 import { userAvatar } from '$lib/utils/user';
 
