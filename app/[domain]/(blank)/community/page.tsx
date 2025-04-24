@@ -45,7 +45,7 @@ export default async function Page({ params }: Props) {
   if (!space) return notFound();
 
   return (
-    <div className={space._id}>
+    <div id={space._id} className={space.theme_data?.config?.mode || 'dark'}>
       <Community space={space} />
     </div>
   );

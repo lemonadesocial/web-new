@@ -39,6 +39,7 @@ import { MyEventRequests } from './MyEventRequests';
 import { ShaderGradient } from './themes_preset/shader';
 
 import CommunityCard from './CommunityCard';
+import { themeAtom } from './theme_builder/store';
 
 const CommunityPane = dynamic(() => import('./CommunityPane'), { ssr: false });
 
@@ -183,43 +184,47 @@ export function Community({ initData }: Props) {
       handleScroll();
     }
   }, [shouldLoadMore]);
+
   const spaceData = dataGetSpace?.getSpace as Space;
   const theme = spaceData.theme_data;
+
+  const [data, setThemeAtom] = useAtom(themeAtom);
+
+  React.useEffect(() => {
+    if (theme) setThemeAtom(theme);
+  }, []);
+
   return (
     <>
-      {theme?.variables && (
+      {data?.variables && (
         <style global jsx>
           {`
             body {
-              ${theme.variables.font && generateCssVariables(theme.variables.font)}
-            }
-
-            @media (prefers-color-scheme: dark) {
-              main {
-                ${theme.variables.dark && generateCssVariables(theme.variables.dark)}
-              }
-            }
-
-            @media (prefers-color-scheme: light) {
-              main {
-                ${theme.variables.light && generateCssVariables(theme.variables.light)}
-              }
+              ${data.variables.font && generateCssVariables(data.variables.font)}
             }
 
             :root {
-              ${theme.variables.pattern && generateCssVariables(theme.variables.pattern)}
+              ${data.variables.pattern && generateCssVariables(data.variables.pattern)}
             }
           `}
         </style>
       )}
 
-      <div id="pattern" className={`pattern ${theme?.class}`}></div>
+      {/* <div id="pattern" className={`pattern ${theme?.class}`}></div> */}
 
-      <div className="shader light dreamy blur-lg">
-        <ShaderGradient />
+      <div
+        className={clsx(
+          'background',
+          data?.theme,
+          data.theme === 'shader' && data.config.name,
+          data?.config?.bg,
+          data?.config.class,
+        )}
+      >
+        {data?.theme === 'shader' && <ShaderGradient />}
       </div>
 
-      <div className="relative">
+      <div className={`relative ${data.config.fg}`}>
         <HeroSection space={dataGetSpace?.getSpace as Space} />
         <Divider className="my-8" />
         {subSpaces.length > 0 && (
@@ -249,7 +254,7 @@ export function Community({ initData }: Props) {
         <div className="flex md:gap-18">
           <div className="flex flex-col flex-1 gap-6 w-full">
             <div className="flex">
-              <h1 className="text-xl md:text-2xl font-semibold flex-1">Events</h1>
+              <h1 className="text-xl md:text-2xl text-primary font-semibold flex-1">Events</h1>
               <div className="flex gap-2 items-center">
                 <Menu.Root className="md:hidden">
                   <Menu.Trigger>
@@ -304,7 +309,7 @@ export function Community({ initData }: Props) {
                     )}
                     onClick={() => setSelectedTag((prev) => (prev === item._id ? '' : item._id))}
                   >
-                    <span className="text-sm">{item.tag}</span>{' '}
+                    <span className="text-sm text-primary">{item.tag}</span>{' '}
                     <span className="text-tertiary text-sm">{item.targets?.length}</span>
                   </Tag>
                 ))}

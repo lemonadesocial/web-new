@@ -1,0 +1,163 @@
+@layer utilities {
+  .background.minimal {
+    --minimal-color-bg: var(--color-accent-950);
+
+    position: fixed;
+    inset: 0;
+    background-color: var(--minimal-color-bg);
+  }
+
+  .item-color-fg {
+    background: var(--color-accent-500);
+  }
+
+  .item-color-bg {
+    background: var(--color-accent-950);
+  }
+
+  .light {
+    .background.minimal {
+      --minimal-color-bg: var(--color-accent-50);
+    }
+
+    .item-color-bg {
+      background: var(--color-accent-50);
+    }
+  }
+
+  .dark {
+    .background.minimal {
+      --minimal-color-bg: var(--color-accent-950);
+    }
+
+    .item-color-bg {
+      background: var(--color-accent-950);
+    }
+  }
+
+  .violet {
+    --color-accent-50: var(--color-violet-50);
+    --color-accent-500: var(--color-violet-500);
+    --color-accent-700: var(--color-violet-700);
+    --color-accent-950: var(--color-violet-950);
+  }
+
+  .red {
+    --color-accent-50: var(--color-red-50);
+    --color-accent-500: var(--color-red-500);
+    --color-accent-700: var(--color-red-700);
+    --color-accent-950: var(--color-red-950);
+  }
+
+  .orange {
+    --color-accent-50: var(--color-orange-50);
+    --color-accent-500: var(--color-orange-500);
+    --color-accent-700: var(--color-orange-700);
+    --color-accent-950: var(--color-orange-950);
+  }
+
+  .amber {
+    --color-accent-50: var(--color-amber-50);
+    --color-accent-500: var(--color-amber-500);
+    --color-accent-700: var(--color-amber-700);
+    --color-accent-950: var(--color-amber-950);
+  }
+
+  .yellow {
+    --color-accent-50: var(--color-yellow-50);
+    --color-accent-500: var(--color-yellow-500);
+    --color-accent-700: var(--color-yellow-700);
+    --color-accent-950: var(--color-yellow-950);
+  }
+
+  .lime {
+    --color-accent-50: var(--color-lime-50);
+    --color-accent-500: var(--color-lime-500);
+    --color-accent-700: var(--color-lime-700);
+    --color-accent-950: var(--color-lime-950);
+  }
+
+  .green {
+    --color-accent-50: var(--color-green-50);
+    --color-accent-500: var(--color-green-500);
+    --color-accent-700: var(--color-green-700);
+    --color-accent-950: var(--color-green-950);
+  }
+
+  .emerald {
+    --color-accent-50: var(--color-emerald-50);
+    --color-accent-500: var(--color-emerald-500);
+    --color-accent-700: var(--color-emerald-700);
+    --color-accent-950: var(--color-emerald-950);
+  }
+
+  .teal {
+    --color-accent-50: var(--color-teal-50);
+    --color-accent-500: var(--color-teal-500);
+    --color-accent-700: var(--color-teal-700);
+    --color-accent-950: var(--color-teal-950);
+  }
+
+  .cyan {
+    --color-accent-50: var(--color-cyan-50);
+    --color-accent-500: var(--color-cyan-500);
+    --color-accent-700: var(--color-cyan-700);
+    --color-accent-950: var(--color-cyan-950);
+  }
+
+  .sky {
+    --color-accent-50: var(--color-sky-50);
+    --color-accent-500: var(--color-sky-500);
+    --color-accent-700: var(--color-sky-700);
+    --color-accent-950: var(--color-sky-950);
+  }
+
+  .blue {
+    --color-accent-50: var(--color-blue-50);
+    --color-accent-500: var(--color-blue-500);
+    --color-accent-700: var(--color-blue-700);
+    --color-accent-950: var(--color-blue-950);
+  }
+
+  .indigo {
+    --color-accent-50: var(--color-indigo-50);
+    --color-accent-500: var(--color-indigo-500);
+    --color-accent-700: var(--color-indigo-700);
+    --color-accent-950: var(--color-indigo-950);
+  }
+
+  .purple {
+    --color-accent-50: var(--color-purple-50);
+    --color-accent-500: var(--color-purple-500);
+    --color-accent-700: var(--color-purple-700);
+    --color-accent-950: var(--color-purple-950);
+  }
+
+  .fuchsia {
+    --color-accent-50: var(--color-fuchsia-50);
+    --color-accent-500: var(--color-fuchsia-500);
+    --color-accent-700: var(--color-fuchsia-700);
+    --color-accent-950: var(--color-fuchsia-950);
+  }
+
+  .pink {
+    --color-accent-50: var(--color-pink-50);
+    --color-accent-500: var(--color-pink-500);
+    --color-accent-700: var(--color-pink-700);
+    --color-accent-950: var(--color-pink-950);
+  }
+
+  .rose {
+    --color-accent-50: var(--color-rose-50);
+    --color-accent-500: var(--color-rose-500);
+    --color-accent-700: var(--color-rose-700);
+    --color-accent-950: var(--color-rose-950);
+  }
+
+  .custom {
+    --color-accent-50: var(--color-custom-50);
+    --color-accent-500: var(--color-custom-500);
+    --color-accent-700: var(--color-custom-700);
+    --color-accent-950: var(--color-custom-950);
+  }
+}

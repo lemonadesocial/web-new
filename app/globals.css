@@ -1,11 +1,12 @@
 @import 'tailwindcss';
 @config "../tailwind.config.ts";
-@import './themes/light.css';
-@import './themes/dark.css';
+@import './styles/themes/light.css';
+@import './styles/themes/dark.css';
 
 @import './styles/components/collapsible.css';
 @import './styles/components/tooltips.css';
 
+@import './styles/presets/minimal.css';
 @import './styles/presets/shader.css';
 
 @theme static {
