@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.1](https://github.com/lemonadesocial/web-new/compare/v1.11.0...v1.11.1) (2025-04-24)
+
+
+### Bug Fixes
+
+* miss sub hub at root ([8d2ced9](https://github.com/lemonadesocial/web-new/commit/8d2ced92343354764b576ff7348e8ffd8623e42d))
+
 ## [1.11.0](https://github.com/lemonadesocial/web-new/compare/v1.10.1...v1.11.0) (2025-04-23)
 
 
