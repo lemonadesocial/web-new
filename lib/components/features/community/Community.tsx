@@ -216,15 +216,15 @@ export function Community({ initData }: Props) {
         className={clsx(
           'background',
           data?.theme,
-          data.theme === 'shader' && data.config.name,
+          data.theme === 'shader' && data?.config?.name,
           data?.config?.bg,
-          data?.config.class,
+          data?.config?.class,
         )}
       >
         {data?.theme === 'shader' && <ShaderGradient />}
       </div>
 
-      <div className={`relative ${data.config.fg}`}>
+      <div className={`relative ${data?.config?.fg}`}>
         <HeroSection space={dataGetSpace?.getSpace as Space} />
         <Divider className="my-8" />
         {subSpaces.length > 0 && (
