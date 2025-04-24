@@ -36,10 +36,10 @@ import { ListingEvent } from './ListingEvent';
 import { EventPane } from '../pane';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { MyEventRequests } from './MyEventRequests';
-import { ShaderGradient } from './themes_preset/shader';
 
 import CommunityCard from './CommunityCard';
 import { defaultTheme, themeAtom } from './theme_builder/store';
+import { ShaderGradient } from './theme_builder/shader';
 
 const CommunityPane = dynamic(() => import('./CommunityPane'), { ssr: false });
 
