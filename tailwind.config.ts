@@ -6,33 +6,64 @@ import * as path from 'path';
 export default {
   plugins: [
     plugin(function ({ matchComponents }) {
-      let iconsDir = path.join(__dirname, './lib/icons');
-      let values: { [key: string]: any } = {};
-      fs.readdirSync(iconsDir).forEach((file) => {
-        let name = path.basename(file, '.svg');
-        values[name] = { name, fullPath: path.join(iconsDir, file) };
-      });
+      const iconsDir = path.join(__dirname, './lib/icons');
+      const values: { [key: string]: { fullPath: string; isMultiColor: boolean } } = {};
+
+      try {
+        fs.readdirSync(iconsDir).forEach((file) => {
+          if (path.extname(file) === '.svg') {
+            const baseName = path.basename(file, '.svg');
+            const isMultiColor = baseName.endsWith('-color');
+            const utilityName = isMultiColor ? baseName.replace(/-color$/, '') : baseName;
+
+            values[utilityName] = {
+              fullPath: path.join(iconsDir, file),
+              isMultiColor,
+            };
+          }
+        });
+      } catch (e) {
+        console.error(`Error reading icons directory: ${iconsDir}`, e);
+        return;
+      }
+
       matchComponents(
         {
-          // @ts-ignore
-          icon: ({ name, fullPath }: { name: string; fullPath: string }) => {
-            let content = fs
-              .readFileSync(fullPath)
-              .toString()
-              .replace(/\r?\n|\r/g, '');
+          icon: ({ fullPath, isMultiColor }: { fullPath: string; isMultiColor: boolean }) => {
+            try {
+              const content = fs.readFileSync(fullPath).toString().replace(/\r?\n|\r/g, '');
+              const encodedContent = encodeURIComponent(content);
+              const svgUrl = `url('data:image/svg+xml;utf8,${encodedContent}')`;
 
-            return {
-              [`--icon-${name}`]: `url('data:image/svg+xml;utf8,${content}')`,
-              '-webkit-mask': `var(--icon-${name})`,
-              mask: `var(--icon-${name})`,
-              'mask-repeat': 'no-repeat',
-              'mask-size': 'cover',
-              'background-color': 'currentColor',
-              'vertical-align': 'middle',
-              display: 'inline-block',
-              width: 24,
-              height: 24,
-            };
+              const baseStyles = {
+                display: 'inline-block',
+                width: 24,
+                height: 24,
+                'background-repeat': 'no-repeat',
+                'vertical-align': 'middle',
+              };
+
+              if (isMultiColor) {
+                return {
+                  ...baseStyles,
+                  'background-image': svgUrl,
+                  'background-position': 'center center',
+                  'background-size': 'contain',
+                  'background-color': 'transparent',
+                };
+              } else {
+                const maskValue = `${svgUrl} center center / contain no-repeat`;
+                return {
+                  ...baseStyles,
+                  '-webkit-mask': maskValue,
+                  mask: maskValue,
+                  'background-color': 'currentColor',
+                };
+              }
+            } catch (e) {
+              console.error(`Error processing SVG file: ${fullPath}`, e);
+              return {};
+            }
           },
         },
         { values },

@@ -19,6 +19,7 @@ import { CommunitySection } from '../event/CommunitySection';
 import { HostedBySection } from '../event/HostedBySection';
 import { EventDateTimeBlock } from '../event/EventDateTimeBlock';
 import { EventLocationBlock } from '../event/EventLocationBlock';
+import { AttendeesSection } from '../event/AttendeesSection';
 import { EventAccess } from '../event-access';
 
 export function EventPane({ eventId }: { eventId: string }) {
@@ -104,6 +105,7 @@ export function EventPane({ eventId }: { eventId: string }) {
         <GallerySection event={event} loading={loading} />
         <CommunitySection event={event} />
         <HostedBySection event={event} />
+        <AttendeesSection eventId={event._id} />
       </div>
     </div>
   );
