@@ -124,8 +124,12 @@ export function hosting(event: Event, user: string) {
   return [event.host, ...(event.cohosts || [])].includes(user);
 }
 
-export function getAssignedTicket(tickets: Ticket[], user?: string, email?: string) {
+export function getAssignedTicket(tickets: Ticket[], user?: string, email?: string | null) {
   return tickets?.find(({ assigned_to, assigned_email }) => assigned_to === user || assigned_email === email);
+}
+
+export function getUnassignedTickets (tickets: Ticket[]) {
+  return tickets.filter(t => !t.assigned_to && !t.assigned_email);
 }
 
 export function getEventCardStart(event: Event | { start: string; end: string; timezone?: string }) {
@@ -157,4 +161,8 @@ export function isAttending(event: Event, userId: string): boolean {
       .concat(event?.speaker_users || [])
       .concat(event?.accepted || []),
   ).has(userId);
+}
+
+export function downloadTicketPass(ticket: Ticket) {
+  window.open(`${process.env.LMD_BE}/event/pass/${/iPad|iPhone|iPod/.test(navigator.userAgent) ? 'apple' : 'google'}/${ticket._id}?shortid=${ticket.shortid}`, '_blank');
 }

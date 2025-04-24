@@ -1,12 +1,19 @@
 import { useMemo, useState } from "react";
 
-import { Ticket, Event, EventCalendarLinks, PaymentRefundInfo } from '$lib/generated/backend/graphql';
-import { Button, modal, ModalContent } from "$lib/components/core";
+import { Ticket, Event, PaymentRefundInfo } from '$lib/generated/backend/graphql';
+import { Button, drawer, modal, ModalContent } from "$lib/components/core";
+import { downloadTicketPass, getAssignedTicket, getUnassignedTickets } from "$lib/utils/event";
+import { useMe } from "$lib/hooks/useMe";
 
 import { AccessCard } from "./AccessCard";
 import { StakeRefundItem } from "./StakeRefund";
+import { MyTicketsPane } from "./MyTicketsPane";
+import { AddToCalendarModal } from "./AddToCalendar";
+import { AdditionalTicketsPane } from "./AdditionalTicketsPane";
 
 export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; payments?: PaymentRefundInfo[]; event: Event; }) {
+  const me = useMe();
+
   const ticketTypeText = useMemo(() => {
     const ticketTypes = tickets.reduce((acc, ticket) => {
       const typeId = ticket.type;
@@ -26,6 +33,8 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
   }, [tickets]);
 
   const refundPayments = payments?.filter(p => p.refund_policy?.requirements?.checkin_before && !p.attempting_refund);
+  const myTicket = getAssignedTicket(tickets, me?._id, me?.email) || tickets[0];
+  const unassignedTickets = getUnassignedTickets(tickets);
 
   return (
     <AccessCard>
@@ -34,32 +43,69 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
         <p className="text-lg text-tertiary">{ticketTypeText}</p>
       </div>
       <div className="flex justify-between">
-        <Button
-          variant="tertiary"
-          size="sm"
-          iconLeft="icon-calendar-add"
-          onClick={() => modal.open(AddToCalendarModal, {
-            props: {
-              event
-            },
-            dismissible: true
-          })}
-        >
-          Add to Calendar
-        </Button>
-        <Button
-          variant="tertiary"
-          size="sm"
-          iconLeft="icon-share"
-          onClick={() => modal.open(InviteFriendModal, {
-            props: {
-              event
-            },
-            dismissible: true
-          })}
-        >
-          Invite a Friend
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="tertiary"
+            size="sm"
+            iconLeft="icon-calendar-add"
+            onClick={() => modal.open(AddToCalendarModal, {
+              props: {
+                event
+              },
+              dismissible: true
+            })}
+          >
+            Add to Calendar
+          </Button>
+          <Button
+            variant="tertiary"
+            size="sm"
+            icon="icon-ticket"
+            onClick={() => drawer.open(MyTicketsPane, {
+              props: {
+                tickets,
+                event
+              },
+            })}
+          />
+          <Button
+            variant="tertiary"
+            size="sm"
+            icon="icon-pass"
+            onClick={() => downloadTicketPass(myTicket)}
+          />
+        </div>
+        <div className="flex gap-2">
+          {
+            unassignedTickets.length > 0 && (
+              <Button
+                variant="tertiary"
+                size="sm"
+                iconLeft="icon-assign-ticket"
+                onClick={() => drawer.open(AdditionalTicketsPane, {
+                  props: {
+                    tickets
+                  },
+                })}
+              >
+                Assign ({unassignedTickets.length})
+              </Button>
+            )
+          }
+          <Button
+            variant="tertiary"
+            size="sm"
+            iconLeft="icon-share"
+            onClick={() => modal.open(InviteFriendModal, {
+              props: {
+                event
+              },
+              dismissible: true
+            })}
+          >
+            Invite a Friend
+          </Button>
+        </div>
       </div>
       {
         !!refundPayments?.length && (
@@ -76,57 +122,6 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
         )
       }
     </AccessCard>
-  );
-}
-
-function AddToCalendarModal({ event }: { event: Event }) {
-  const addToCalendar = (calendar: keyof EventCalendarLinks) => {
-    window.open(
-      `${event.calendar_links![calendar]}`,
-      '_blank'
-    )
-  };
-
-  return (
-    <ModalContent icon="icon-calendar-add">
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <p className="text-lg">Add to Calendar</p>
-          <p className="text-sm text-secondary">On registration, we sent you an email that should&apos;ve added an event to your calendar.</p>
-          <p className="text-sm text-secondary">You can also click on one of the buttons to manually add the event to your calendar.</p>
-        </div>
-        <div className="space-y-2">
-          <div
-            className="flex items-center justify-center gap-2.5 px-3 py-2 rounded-sm cursor-pointer bg-blue-400/16"
-            onClick={() => addToCalendar('google')}
-          >
-            <i className="icon-google size-5 text-blue-400" />
-            <p className="text-blue-400">Google Calendar</p>
-          </div>
-          <div
-            className="flex items-center justify-center gap-2.5 px-3 py-2 rounded-sm cursor-pointer bg-violet-400/16"
-            onClick={() => addToCalendar('yahoo')}
-          >
-            <i className="icon-yahoo size-5 text-accent-400" />
-            <p className="text-accent-400">Yahoo</p>
-          </div>
-          <div
-            className="flex items-center justify-center gap-2.5 px-3 py-2 rounded-sm cursor-pointer bg-amber-400/16"
-            onClick={() => addToCalendar('google')}
-          >
-            <i className="icon-microsoft size-5 text-warning-300" />
-            <p className="text-warning-300">Outlook.com</p>
-          </div>
-          <div
-            className="flex items-center justify-center gap-2.5 px-3 py-2 rounded-sm cursor-pointer bg-primary/8"
-            onClick={() => addToCalendar('ical')}
-          >
-            <i className="icon-calendar-add size-5 text-tertiary" />
-            <p className="text-tertiary">iCal (Apple / Outlook)</p>
-          </div>
-        </div>
-      </div>
-    </ModalContent>
   );
 }
 
