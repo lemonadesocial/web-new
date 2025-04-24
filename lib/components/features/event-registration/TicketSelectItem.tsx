@@ -76,8 +76,6 @@ export function TicketSelectItem({ ticketType, single, compact }: { ticketType: 
   const count = purchaseItems.find(item => item.id === ticketType._id)?.count || 0;
   const active = count > 0;
 
-  console.log(ticketType)
-
   if (compact) return (
     <div className="flex justify-between items-center">
       <p>Tickets</p>
