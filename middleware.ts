@@ -26,8 +26,8 @@ export default async function middleware(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams.toString();
   const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ''}`;
 
-  // NOTE: only allow lemonade domain for subpath /s/:uid for now
-  if (path.includes('/s/')) {
+  // NOTE: only allow lemonade domain for subpath /s/:uid and /e/:shortid for now
+  if (path.includes('/s/') || path.includes('/e/')) {
     // e.g: url = 'https://example.com/s/uid'
     return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
   }
@@ -38,7 +38,6 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.rewrite(new URL(`/${hostname}/community${path === '/' ? '' : path}`, req.url));
   }
 
-  // return NextResponse.rewrite(new URL(`/${hostname}/community${path === '/' ? '' : path}`, req.url));
   // rewrite everything else to `/[domain]/path dynamic route
   // return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
 }
