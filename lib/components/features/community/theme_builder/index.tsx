@@ -51,7 +51,7 @@ export function ThemeBuilder({
               onClick={() => {
                 switch (key) {
                   case 'shader':
-                    document.getElementById(space?._id)?.setAttribute('class', config.mode || 'dark');
+                    document.getElementById(space?._id)?.setAttribute('class', config?.mode || 'dark');
                     handleChange({ theme: 'shader', config: { name: 'ocean', class: 'blur-lg', mode: 'dark' } });
                     break;
                   case 'pattern':
@@ -74,8 +74,8 @@ export function ThemeBuilder({
           <PopoverColor
             label="Accent"
             colorClass={`item-color-fg`}
-            selected={config.fg}
-            disabled={theme && presets[theme].ui.disabled.fg}
+            selected={config?.fg}
+            disabled={theme && presets[theme].ui?.disabled.fg}
             onSelect={(color, hex) => {
               let customColors: Record<string, string> = {};
               if (color === 'custom' && hex) {
@@ -109,7 +109,7 @@ export function ThemeBuilder({
             <PopoverColor
               label="Background"
               colorClass={`item-color-bg`}
-              selected={config.bg}
+              selected={config?.bg}
               onSelect={(color, hex) => {
                 if (color === 'custom' && hex) {
                   const palette = getPalette([
@@ -131,7 +131,7 @@ export function ThemeBuilder({
             <PopoverShaderColor
               label="Background"
               colorClass={`item-color-bg`}
-              selected={config.name}
+              selected={config?.name}
               onSelect={(name) => handleChange({ config: { ...config, name: name } })}
             />
           )}
@@ -169,7 +169,7 @@ export function ThemeBuilder({
                 <i className="icon-dark-theme-filled size-[24px] rounded-full" />
                 <span className="text-left flex-1">Display</span>
                 <p className="flex items-center gap-1">
-                  <span className="capitalize">{config.mode === 'system' ? 'auto' : config.mode}</span>
+                  <span className="capitalize">{config?.mode === 'system' ? 'auto' : config?.mode}</span>
                   <i className="icon-chevrons-up-down text-quaternary" />
                 </p>
               </div>
