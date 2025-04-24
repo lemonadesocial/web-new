@@ -9,9 +9,20 @@ import { useMutation } from '$lib/request';
 import { Space, UpdateSpaceDocument } from '$lib/generated/backend/graphql';
 import { Button, Card, Menu, MenuItem } from '$lib/components/core';
 
-import { themeAtom, presets, ThemeValues, fonts, getRandomColor, getRandomFont, defaultTheme } from './store';
+import {
+  themeAtom,
+  presets,
+  ThemeValues,
+  fonts,
+  getRandomColor,
+  getRandomFont,
+  defaultTheme,
+  patterns,
+  shaders,
+} from './store';
 import { PopoverFont } from './popover_font';
 import { PopoverColor, PopoverShaderColor } from './popover_color';
+import { PopoverPattern } from './popover_style';
 
 export function ThemeBuilder({
   space,
@@ -51,14 +62,33 @@ export function ThemeBuilder({
               onClick={() => {
                 switch (key) {
                   case 'shader':
+                    let shaderName = space?.theme_data?.config?.name;
+                    if (!shaderName || !shaders.includes(shaderName)) {
+                      const index = Math.floor(Math.random() * shaders.length);
+                      shaderName = shaders[index];
+                    }
+
+                    handleChange({ theme: 'shader', config: { name: shaderName, class: 'blur-lg', mode: 'dark' } });
                     document.getElementById(space?._id)?.setAttribute('class', config?.mode || 'dark');
-                    handleChange({ theme: 'shader', config: { name: 'ocean', class: 'blur-lg', mode: 'dark' } });
                     break;
+
                   case 'pattern':
+                    let patternName = space?.theme_data?.class || space?.theme_data?.config?.name;
+
+                    if (!patternName || !patterns.includes(patternName)) {
+                      const index = Math.floor(Math.random() * patterns.length);
+                      patternName = patterns[index];
+                    }
+                    document.getElementById(space?._id)?.setAttribute('class', 'dark');
+                    handleChange({ theme: key as any, config: { mode: 'dark', name: patternName } });
+                    break;
+
+                  default:
+                    // should set default dark when switch theme
+                    document.getElementById(space?._id)?.setAttribute('class', 'dark');
+                    handleChange({ theme: key as any, config: { mode: 'dark' } });
                     break;
                 }
-
-                handleChange({ theme: key as any });
               }}
             >
               <img src={value.image} className="rounded-sm" width={80} height={56} alt={key} />
@@ -98,10 +128,17 @@ export function ThemeBuilder({
                 };
               }
 
-              handleChange({
-                config: { ...config, name: color, fg: color, bg: color },
+              let conf = {
+                config: { ...config, fg: color },
                 variables: { ...variables, ...customColors },
-              });
+              };
+
+              if (theme === 'minimal') {
+                conf.config.name = color;
+                conf.config.bg = color;
+              }
+
+              handleChange(conf);
             }}
           />
 
@@ -110,6 +147,7 @@ export function ThemeBuilder({
               label="Background"
               colorClass={`item-color-bg`}
               selected={config?.bg}
+              disabled={presets[theme]?.ui.disabled.bg}
               onSelect={(color, hex) => {
                 if (color === 'custom' && hex) {
                   const palette = getPalette([
@@ -128,9 +166,37 @@ export function ThemeBuilder({
           )}
 
           {theme === 'shader' && (
-            <PopoverShaderColor
-              label="Background"
-              colorClass={`item-color-bg`}
+            <>
+              <PopoverShaderColor
+                label="Background"
+                colorClass={`item-color-bg`}
+                selected={config?.name}
+                onSelect={(name) => handleChange({ config: { ...config, name: name } })}
+              />
+              <Menu.Root
+                className="flex-1 mix-w-1/3"
+                placement="top"
+                strategy="fixed"
+                disabled={presets[theme].ui.disabled.mode}
+              >
+                <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
+                  <div className="w-[24px] h-[24px] bg-quaternary rounded-full">
+                    <div className="rounded-full w-full h-full!" />
+                  </div>
+                  <span className="text-left flex-1">Style</span>
+                  <p className="flex items-center gap-1">
+                    <span className="capitalize">-</span>
+                    <i className="icon-chevrons-up-down text-quaternary" />
+                  </p>
+                </div>
+              </Menu.Root>
+            </>
+          )}
+
+          {theme === 'pattern' && (
+            <PopoverPattern
+              label="Pattern"
+              colorClass={config?.fg}
               selected={config?.name}
               onSelect={(name) => handleChange({ config: { ...config, name: name } })}
             />
@@ -163,7 +229,12 @@ export function ThemeBuilder({
             }
           />
 
-          <Menu.Root className="flex-1 mix-w-1/3" placement="top" strategy="fixed">
+          <Menu.Root
+            className="flex-1 mix-w-1/3"
+            placement="top"
+            strategy="fixed"
+            disabled={presets[theme].ui.disabled.mode}
+          >
             <Menu.Trigger>
               <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
                 <i className="icon-dark-theme-filled size-[24px] rounded-full" />

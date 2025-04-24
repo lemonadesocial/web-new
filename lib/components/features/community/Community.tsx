@@ -210,13 +210,12 @@ export function Community({ initData }: Props) {
         </style>
       )}
 
-      {/* <div id="pattern" className={`pattern ${theme?.class}`}></div> */}
-
       <div
         className={clsx(
           'background',
           data?.theme,
-          data.theme === 'shader' && data?.config?.name,
+          ['shader', 'pattern'].includes(data.theme as string) && data?.config?.name,
+          data.theme === 'pattern' && data.config.fg,
           data?.config?.bg,
           data?.config?.class,
         )}
@@ -475,7 +474,7 @@ function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: 
     <div className="bg-card rounded-md flex gap-3 px-4 py-3">
       <i className="icon-dashboard size-[48px] text-primary/16" />
       <div className="flex-1">
-        <p className="text-lg">No Upcoming Events</p>
+        <p className="text-lg text-primary">No Upcoming Events</p>
         <p className="text-tertiary">Subscribe to the calendar to get notified when new events are posted.</p>
         {!followed && (
           <>

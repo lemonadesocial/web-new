@@ -8,6 +8,7 @@
 
 @import './styles/presets/minimal.css';
 @import './styles/presets/shader.css';
+@import './styles/presets/pattern.css';
 
 @theme static {
   --text-xs: 0.75rem;
@@ -499,252 +500,252 @@ a[title='Open this area in Google Maps (opens a new window)'],
   display: none !important;
 }
 
-.pattern {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-}
-
-.pattern.zigzag {
-  height: 100%;
-  width: 100%;
-  background-color: var(--pattern-50);
-  opacity: var(--pattern-opacity);
-  background:
-    linear-gradient(135deg, var(--pattern-100) 25%, transparent 25%),
-    linear-gradient(225deg, var(--pattern-100) 25%, transparent 25%),
-    linear-gradient(45deg, var(--pattern-100) 25%, transparent 25%),
-    linear-gradient(315deg, var(--pattern-100) 25%, var(--color-accent-50) 25%);
-  background-position:
-    32px 0,
-    32px 0,
-    0 0,
-    0 0;
-  background-size: 64px 64px;
-  background-repeat: repeat;
-}
-
-.pattern.pattern-zigzag {
-  opacity: 1;
-  background:
-    linear-gradient(135deg, var(--pattern-300) 25%, transparent 25%),
-    linear-gradient(225deg, var(--pattern-300) 25%, transparent 25%),
-    linear-gradient(45deg, var(--pattern-300) 25%, transparent 25%),
-    linear-gradient(315deg, var(--pattern-300) 25%, var(--pattern-50) 25%);
-  background-position:
-    15px 0,
-    15px 0,
-    0 0,
-    0 0;
-  background-size: 30px 30px;
-  background-repeat: repeat;
-}
-
-.pattern.plus {
-  height: 100%;
-  width: 100%;
-  background-color: var(--pattern-50);
-  opacity: var(--pattern-opacity);
-  background:
-    radial-gradient(
-      circle,
-      transparent 20%,
-      var(--pattern-50) 20%,
-      var(--pattern-50) 80%,
-      transparent 80%,
-      transparent
-    ),
-    radial-gradient(circle, transparent 20%, var(--pattern-50) 20%, var(--pattern-50) 80%, transparent 80%, transparent)
-      50px 50px,
-    linear-gradient(var(--pattern-200) 4px, transparent 4px) 0 -2px,
-    linear-gradient(90deg, var(--pattern-200) 4px, var(--pattern-50) 4px) -2px 0;
-  background-size:
-    100px 100px,
-    100px 100px,
-    50px 50px,
-    50px 50px;
-}
-
-.pattern.wave {
-  opacity: var(--pattern-opacity);
-  background:
-    radial-gradient(
-      circle at top left,
-      transparent 25%,
-      var(--pattern-100) 25.5%,
-      var(--pattern-100) 36%,
-      transparent 37%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle at bottom right,
-      transparent 34%,
-      var(--pattern-100) 34.5%,
-      var(--pattern-100) 45.5%,
-      transparent 46%,
-      transparent 100%
-    );
-
-  background-size: 50px 50px;
-  background-color: var(--pattern-50);
-}
-
-.pattern.cross {
-  opacity: var(--pattern-opacity);
-  background:
-    repeating-linear-gradient(
-      transparent,
-      transparent 8px,
-      var(--pattern-100) 8px,
-      var(--pattern-100) 12px,
-      transparent 12px,
-      transparent 16px,
-      var(--pattern-100) 12px,
-      var(--pattern-100) 32px,
-      transparent 32px,
-      transparent 36px,
-      var(--pattern-100) 36px,
-      var(--pattern-100) 40px,
-      transparent 40px,
-      transparent 64px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 8px,
-      var(--pattern-100) 8px,
-      var(--pattern-100) 12px,
-      transparent 12px,
-      transparent 16px,
-      var(--pattern-100) 12px,
-      var(--pattern-100) 32px,
-      transparent 32px,
-      transparent 36px,
-      var(--pattern-100) 36px,
-      var(--pattern-100) 40px,
-      transparent 40px,
-      transparent 64px
-    ),
-    var(--pattern-50);
-
-  background-blend-mode: multiply;
-  background-color: var(--pattern-50);
-}
-
-.pattern.hypnotic {
-  opacity: var(--pattern-opacity);
-  background:
-    radial-gradient(
-      50% 50% at 100% 0,
-      var(--pattern-300) 0,
-      var(--pattern-300) 5%,
-      var(--pattern-50) 6%,
-      var(--pattern-50) 15%,
-      var(--pattern-300) 16%,
-      var(--pattern-300) 25%,
-      var(--pattern-50) 26%,
-      var(--pattern-50) 35%,
-      var(--pattern-300) 36%,
-      var(--pattern-300) 45%,
-      var(--pattern-50) 46%,
-      var(--pattern-50) 55%,
-      var(--pattern-300) 56%,
-      var(--pattern-300) 65%,
-      var(--pattern-50) 66%,
-      var(--pattern-50) 75%,
-      var(--pattern-300) 76%,
-      var(--pattern-300) 85%,
-      var(--pattern-50) 86%,
-      var(--pattern-50) 95%,
-      transparent 96%
-    ),
-    radial-gradient(
-      50% 50% at 0 100%,
-      var(--pattern-300) 0,
-      var(--pattern-300) 5%,
-      var(--pattern-50) 6%,
-      var(--pattern-50) 15%,
-      var(--pattern-300) 16%,
-      var(--pattern-300) 25%,
-      var(--pattern-50) 26%,
-      var(--pattern-50) 35%,
-      var(--pattern-300) 36%,
-      var(--pattern-300) 45%,
-      var(--pattern-50) 46%,
-      var(--pattern-50) 55%,
-      var(--pattern-300) 56%,
-      var(--pattern-300) 65%,
-      var(--pattern-50) 66%,
-      var(--pattern-50) 75%,
-      var(--pattern-300) 76%,
-      var(--pattern-300) 85%,
-      var(--pattern-50) 86%,
-      var(--pattern-50) 95%,
-      transparent 96%
-    ),
-    radial-gradient(
-      closest-side at 50% 50%,
-      var(--pattern-300) 0,
-      var(--pattern-300) 5%,
-      var(--pattern-50) 6%,
-      var(--pattern-50) 15%,
-      var(--pattern-300) 16%,
-      var(--pattern-300) 25%,
-      var(--pattern-50) 26%,
-      var(--pattern-50) 35%,
-      var(--pattern-300) 36%,
-      var(--pattern-300) 45%,
-      var(--pattern-50) 46%,
-      var(--pattern-50) 55%,
-      var(--pattern-300) 56%,
-      var(--pattern-300) 65%,
-      var(--pattern-50) 66%,
-      var(--pattern-50) 75%,
-      var(--pattern-300) 76%,
-      var(--pattern-300) 85%,
-      var(--pattern-50) 86%,
-      var(--pattern-50) 95%,
-      transparent 96%
-    ),
-    radial-gradient(
-        closest-side at 50% 50%,
-        var(--pattern-300) 0,
-        var(--pattern-300) 5%,
-        var(--pattern-50) 6%,
-        var(--pattern-50) 15%,
-        var(--pattern-300) 16%,
-        var(--pattern-300) 25%,
-        var(--pattern-50) 26%,
-        var(--pattern-50) 35%,
-        var(--pattern-300) 36%,
-        var(--pattern-300) 45%,
-        var(--pattern-50) 46%,
-        var(--pattern-50) 55%,
-        var(--pattern-300) 56%,
-        var(--pattern-300) 65%,
-        var(--pattern-50) 66%,
-        var(--pattern-50) 75%,
-        var(--pattern-300) 76%,
-        var(--pattern-300) 85%,
-        var(--pattern-50) 86%,
-        var(--pattern-50) 95%,
-        transparent 96%
-      )
-      32px 32px;
-
-  background-size: 64px 64px;
-  background-color: var(--pattern-50);
-}
-
-.pattern.polkadot {
-  opacity: var(--pattern-opacity);
-  background:
-    radial-gradient(circle, var(--pattern-300) 10%, transparent 12%),
-    radial-gradient(circle at bottom left, var(--pattern-300) 5%, transparent 7%),
-    radial-gradient(circle at bottom right, var(--pattern-300) 5%, transparent 7%),
-    radial-gradient(circle at top left, var(--pattern-300) 5%, transparent 7%),
-    radial-gradient(circle at top right, var(--pattern-300) 5%, transparent 7%);
-
-  background-size: 50px 50px;
-  background-color: var(--pattern-50);
-}
+/* .pattern { */
+/*   position: fixed; */
+/*   inset: 0; */
+/*   pointer-events: none; */
+/* } */
+/**/
+/* .pattern.zigzag { */
+/*   height: 100%; */
+/*   width: 100%; */
+/*   background-color: var(--pattern-50); */
+/*   opacity: var(--pattern-opacity); */
+/*   background: */
+/*     linear-gradient(135deg, var(--pattern-100) 25%, transparent 25%), */
+/*     linear-gradient(225deg, var(--pattern-100) 25%, transparent 25%), */
+/*     linear-gradient(45deg, var(--pattern-100) 25%, transparent 25%), */
+/*     linear-gradient(315deg, var(--pattern-100) 25%, var(--color-accent-50) 25%); */
+/*   background-position: */
+/*     32px 0, */
+/*     32px 0, */
+/*     0 0, */
+/*     0 0; */
+/*   background-size: 64px 64px; */
+/*   background-repeat: repeat; */
+/* } */
+/**/
+/* .pattern.pattern-zigzag { */
+/*   opacity: 1; */
+/*   background: */
+/*     linear-gradient(135deg, var(--pattern-300) 25%, transparent 25%), */
+/*     linear-gradient(225deg, var(--pattern-300) 25%, transparent 25%), */
+/*     linear-gradient(45deg, var(--pattern-300) 25%, transparent 25%), */
+/*     linear-gradient(315deg, var(--pattern-300) 25%, var(--pattern-50) 25%); */
+/*   background-position: */
+/*     15px 0, */
+/*     15px 0, */
+/*     0 0, */
+/*     0 0; */
+/*   background-size: 30px 30px; */
+/*   background-repeat: repeat; */
+/* } */
+/**/
+/* .pattern.plus { */
+/*   height: 100%; */
+/*   width: 100%; */
+/*   background-color: var(--pattern-50); */
+/*   opacity: var(--pattern-opacity); */
+/*   background: */
+/*     radial-gradient( */
+/*       circle, */
+/*       transparent 20%, */
+/*       var(--pattern-50) 20%, */
+/*       var(--pattern-50) 80%, */
+/*       transparent 80%, */
+/*       transparent */
+/*     ), */
+/*     radial-gradient(circle, transparent 20%, var(--pattern-50) 20%, var(--pattern-50) 80%, transparent 80%, transparent) */
+/*       50px 50px, */
+/*     linear-gradient(var(--pattern-200) 4px, transparent 4px) 0 -2px, */
+/*     linear-gradient(90deg, var(--pattern-200) 4px, var(--pattern-50) 4px) -2px 0; */
+/*   background-size: */
+/*     100px 100px, */
+/*     100px 100px, */
+/*     50px 50px, */
+/*     50px 50px; */
+/* } */
+/**/
+/* .pattern.wave { */
+/*   opacity: var(--pattern-opacity); */
+/*   background: */
+/*     radial-gradient( */
+/*       circle at top left, */
+/*       transparent 25%, */
+/*       var(--pattern-100) 25.5%, */
+/*       var(--pattern-100) 36%, */
+/*       transparent 37%, */
+/*       transparent 100% */
+/*     ), */
+/*     radial-gradient( */
+/*       circle at bottom right, */
+/*       transparent 34%, */
+/*       var(--pattern-100) 34.5%, */
+/*       var(--pattern-100) 45.5%, */
+/*       transparent 46%, */
+/*       transparent 100% */
+/*     ); */
+/**/
+/*   background-size: 50px 50px; */
+/*   background-color: var(--pattern-50); */
+/* } */
+/**/
+/* .pattern.cross { */
+/*   opacity: var(--pattern-opacity); */
+/*   background: */
+/*     repeating-linear-gradient( */
+/*       transparent, */
+/*       transparent 8px, */
+/*       var(--pattern-100) 8px, */
+/*       var(--pattern-100) 12px, */
+/*       transparent 12px, */
+/*       transparent 16px, */
+/*       var(--pattern-100) 12px, */
+/*       var(--pattern-100) 32px, */
+/*       transparent 32px, */
+/*       transparent 36px, */
+/*       var(--pattern-100) 36px, */
+/*       var(--pattern-100) 40px, */
+/*       transparent 40px, */
+/*       transparent 64px */
+/*     ), */
+/*     repeating-linear-gradient( */
+/*       90deg, */
+/*       transparent, */
+/*       transparent 8px, */
+/*       var(--pattern-100) 8px, */
+/*       var(--pattern-100) 12px, */
+/*       transparent 12px, */
+/*       transparent 16px, */
+/*       var(--pattern-100) 12px, */
+/*       var(--pattern-100) 32px, */
+/*       transparent 32px, */
+/*       transparent 36px, */
+/*       var(--pattern-100) 36px, */
+/*       var(--pattern-100) 40px, */
+/*       transparent 40px, */
+/*       transparent 64px */
+/*     ), */
+/*     var(--pattern-50); */
+/**/
+/*   background-blend-mode: multiply; */
+/*   background-color: var(--pattern-50); */
+/* } */
+/**/
+/* .pattern.hypnotic { */
+/*   opacity: var(--pattern-opacity); */
+/*   background: */
+/*     radial-gradient( */
+/*       50% 50% at 100% 0, */
+/*       var(--pattern-300) 0, */
+/*       var(--pattern-300) 5%, */
+/*       var(--pattern-50) 6%, */
+/*       var(--pattern-50) 15%, */
+/*       var(--pattern-300) 16%, */
+/*       var(--pattern-300) 25%, */
+/*       var(--pattern-50) 26%, */
+/*       var(--pattern-50) 35%, */
+/*       var(--pattern-300) 36%, */
+/*       var(--pattern-300) 45%, */
+/*       var(--pattern-50) 46%, */
+/*       var(--pattern-50) 55%, */
+/*       var(--pattern-300) 56%, */
+/*       var(--pattern-300) 65%, */
+/*       var(--pattern-50) 66%, */
+/*       var(--pattern-50) 75%, */
+/*       var(--pattern-300) 76%, */
+/*       var(--pattern-300) 85%, */
+/*       var(--pattern-50) 86%, */
+/*       var(--pattern-50) 95%, */
+/*       transparent 96% */
+/*     ), */
+/*     radial-gradient( */
+/*       50% 50% at 0 100%, */
+/*       var(--pattern-300) 0, */
+/*       var(--pattern-300) 5%, */
+/*       var(--pattern-50) 6%, */
+/*       var(--pattern-50) 15%, */
+/*       var(--pattern-300) 16%, */
+/*       var(--pattern-300) 25%, */
+/*       var(--pattern-50) 26%, */
+/*       var(--pattern-50) 35%, */
+/*       var(--pattern-300) 36%, */
+/*       var(--pattern-300) 45%, */
+/*       var(--pattern-50) 46%, */
+/*       var(--pattern-50) 55%, */
+/*       var(--pattern-300) 56%, */
+/*       var(--pattern-300) 65%, */
+/*       var(--pattern-50) 66%, */
+/*       var(--pattern-50) 75%, */
+/*       var(--pattern-300) 76%, */
+/*       var(--pattern-300) 85%, */
+/*       var(--pattern-50) 86%, */
+/*       var(--pattern-50) 95%, */
+/*       transparent 96% */
+/*     ), */
+/*     radial-gradient( */
+/*       closest-side at 50% 50%, */
+/*       var(--pattern-300) 0, */
+/*       var(--pattern-300) 5%, */
+/*       var(--pattern-50) 6%, */
+/*       var(--pattern-50) 15%, */
+/*       var(--pattern-300) 16%, */
+/*       var(--pattern-300) 25%, */
+/*       var(--pattern-50) 26%, */
+/*       var(--pattern-50) 35%, */
+/*       var(--pattern-300) 36%, */
+/*       var(--pattern-300) 45%, */
+/*       var(--pattern-50) 46%, */
+/*       var(--pattern-50) 55%, */
+/*       var(--pattern-300) 56%, */
+/*       var(--pattern-300) 65%, */
+/*       var(--pattern-50) 66%, */
+/*       var(--pattern-50) 75%, */
+/*       var(--pattern-300) 76%, */
+/*       var(--pattern-300) 85%, */
+/*       var(--pattern-50) 86%, */
+/*       var(--pattern-50) 95%, */
+/*       transparent 96% */
+/*     ), */
+/*     radial-gradient( */
+/*         closest-side at 50% 50%, */
+/*         var(--pattern-300) 0, */
+/*         var(--pattern-300) 5%, */
+/*         var(--pattern-50) 6%, */
+/*         var(--pattern-50) 15%, */
+/*         var(--pattern-300) 16%, */
+/*         var(--pattern-300) 25%, */
+/*         var(--pattern-50) 26%, */
+/*         var(--pattern-50) 35%, */
+/*         var(--pattern-300) 36%, */
+/*         var(--pattern-300) 45%, */
+/*         var(--pattern-50) 46%, */
+/*         var(--pattern-50) 55%, */
+/*         var(--pattern-300) 56%, */
+/*         var(--pattern-300) 65%, */
+/*         var(--pattern-50) 66%, */
+/*         var(--pattern-50) 75%, */
+/*         var(--pattern-300) 76%, */
+/*         var(--pattern-300) 85%, */
+/*         var(--pattern-50) 86%, */
+/*         var(--pattern-50) 95%, */
+/*         transparent 96% */
+/*       ) */
+/*       32px 32px; */
+/**/
+/*   background-size: 64px 64px; */
+/*   background-color: var(--pattern-50); */
+/* } */
+/**/
+/* .pattern.polkadot { */
+/*   opacity: var(--pattern-opacity); */
+/*   background: */
+/*     radial-gradient(circle, var(--pattern-300) 10%, transparent 12%), */
+/*     radial-gradient(circle at bottom left, var(--pattern-300) 5%, transparent 7%), */
+/*     radial-gradient(circle at bottom right, var(--pattern-300) 5%, transparent 7%), */
+/*     radial-gradient(circle at top left, var(--pattern-300) 5%, transparent 7%), */
+/*     radial-gradient(circle at top right, var(--pattern-300) 5%, transparent 7%); */
+/**/
+/*   background-size: 50px 50px; */
+/*   background-color: var(--pattern-50); */
+/* } */

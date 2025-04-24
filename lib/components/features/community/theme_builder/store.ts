@@ -91,7 +91,6 @@ export const colors = [
   'fuchsia',
   'pink',
   'rose',
-  // 'custom',
 ];
 
 const minimal = {
@@ -119,9 +118,20 @@ const shader = {
   },
 };
 
+export const patterns = ['cross', 'hypnotic', 'plus', 'polkadot', 'wave', 'zigzag'];
+const pattern = {
+  image: `${ASSET_PREFIX}/assets/images/pattern.png`,
+  name: 'Pattern',
+  ui: {
+    mode: 'all',
+    disabled: { mode: true, bg: true },
+  },
+};
+
 export const presets = {
   minimal,
   shader,
+  pattern,
 };
 
 export function getRandomFont(type: 'title' | 'body') {
