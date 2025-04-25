@@ -86,7 +86,7 @@ export function ThemeBuilder({
               <img src={value.image} className="rounded-sm" width={80} height={56} alt={key} />
             </Card.Root>
 
-            <p className="capitalize font-medium text-xs">{key}</p>
+            <p className="capitalize font-medium text-xs">{value.name}</p>
           </div>
         ))}
       </div>
