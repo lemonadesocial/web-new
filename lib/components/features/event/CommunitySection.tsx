@@ -54,7 +54,7 @@ export function CommunitySection({ event }: { event?: Event }) {
           <p className="text-xs font-medium">Presented by</p>
           <div className="group flex gap-1 items-center flex-1">
             <Link
-              href={space.hostnames?.[0] || '/'}
+              href={`/s/${space.slug || space._id}`}
               className="font-medium group-hover:text-accent-400 line-clamp-1"
               target="_blank"
             >
