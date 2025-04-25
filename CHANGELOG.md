@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.2](https://github.com/lemonadesocial/web-new/compare/v1.12.1...v1.12.2) (2025-04-25)
+
+
+### Bug Fixes
+
+* check reset correct theme ([06a3975](https://github.com/lemonadesocial/web-new/commit/06a39753c5c5f185d379cd02ba63146879a7e037))
+
 ## [1.12.1](https://github.com/lemonadesocial/web-new/compare/v1.12.0...v1.12.1) (2025-04-25)
 
 
