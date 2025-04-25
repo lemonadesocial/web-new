@@ -187,7 +187,6 @@ export function Community({ initData }: Props) {
 
   const spaceData = dataGetSpace?.getSpace as Space;
   const theme = spaceData.theme_data;
-
   const [data, setThemeAtom] = useAtom(themeAtom);
 
   React.useEffect(() => {
