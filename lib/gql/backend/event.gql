@@ -292,7 +292,6 @@ query PeekEventGuests($id: MongoID!, $limit: Int) {
   peekEventGuests(_id: $id, limit: $limit) {
     items {
       _id
-      email
       image_avatar
       name
     }

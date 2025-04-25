@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { useQuery } from '$lib/request';
-import { Avatar, Divider } from '$lib/components/core';
+import { Avatar } from '$lib/components/core';
 import { PeekEventGuestsDocument, User } from '$lib/generated/backend/graphql';
 import { userAvatar } from '$lib/utils/user';
 
@@ -36,20 +36,20 @@ export function AttendeesSection({ eventId, limit = 5 }: AttendeesSectionProps) 
       <hr className="mt-2 mb-4 border-t border-t-divider" />
 
       <div className="flex -space-x-1.5 overflow-hidden">
-          {guests.map((guest) => (
-            <Avatar 
-              key={guest._id} 
-              src={userAvatar(guest as User)} 
-              size="md"
-              className="border border-card-border"
-            />
-          ))}
-        </div>
-    
-        <p className="text-sm mt-2">
-          {visibleAttendees.join(', ')}
-          {othersCount > 0 && ` & ${othersCount} ${othersCount === 1 ? 'other' : 'others'}`}
-        </p>
+        {guests.map((guest, index) => (
+          <Avatar
+            key={index}
+            src={userAvatar(guest as User)}
+            size="md"
+            className="border border-card-border"
+          />
+        ))}
+      </div>
+
+      <p className="text-sm mt-2">
+        {visibleAttendees.join(', ')}
+        {othersCount > 0 && ` & ${othersCount} ${othersCount === 1 ? 'other' : 'others'}`}
+      </p>
     </div>
   );
 }

@@ -32,7 +32,6 @@ export function useOAuth2() {
 	const processSignIn = async () => {
 		const userManager = getUserManager();
 
-		console.log('processSignIn');
 		const response = await userManager.signinRedirectCallback();
 
 		const {
