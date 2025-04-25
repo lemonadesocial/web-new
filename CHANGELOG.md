@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.12.0](https://github.com/lemonadesocial/web-new/compare/v1.11.1...v1.12.0) (2025-04-25)
+
+
+### Features
+
+* host view of event guest ([20228c3](https://github.com/lemonadesocial/web-new/commit/20228c3ebfb39fae6b2fe1e6eaa80350d3c5f6c0))
+* my ticket ([266a5d4](https://github.com/lemonadesocial/web-new/commit/266a5d44ae5028496dd06693f331cfcfb4068e9f))
+
+
+### Bug Fixes
+
+* mobile screen ([6108c2d](https://github.com/lemonadesocial/web-new/commit/6108c2d9dfdd347589af487a75259e3a1721764c))
+
 ## [1.11.1](https://github.com/lemonadesocial/web-new/compare/v1.11.0...v1.11.1) (2025-04-24)
 
 
