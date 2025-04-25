@@ -55,11 +55,11 @@ export function Calendar({ events, selected: selectedDate, footer, onSelectDate 
     <Card.Root className="transition bg-transparent text-sm">
       <Card.Content>
         <div className="flex items-center justify-between mb-4">
-          <span className="text-lg font-medium">{format(active, 'MMMM')}</span>
+          <span className="text-lg font-medium text-primary">{format(active, 'MMMM')}</span>
           <div className="flex items-center text-tertiary">
             <button
               aria-label="prev-month"
-              className="cursor-pointer hover:text-white focus:outline-none"
+              className="cursor-pointer hover:text-primary focus:outline-none"
               onClick={() => setActive((prev) => addMonths(prev, -1))}
             >
               <i className="icon-chevron-left" />
@@ -67,7 +67,7 @@ export function Calendar({ events, selected: selectedDate, footer, onSelectDate 
             <i className="icon-dot size-5" />
             <button
               aria-label="next-month"
-              className="cursor-pointer hover:text-white focus:outline-none"
+              className="cursor-pointer hover:text-primary focus:outline-none"
               onClick={() => setActive((prev) => addMonths(prev, 1))}
             >
               <i className="icon-chevron-right" />
@@ -93,7 +93,7 @@ export function Calendar({ events, selected: selectedDate, footer, onSelectDate 
                 clsx({
                   'text-quaternary': !isSameMonth(d, active),
                   'text-tertiary hover:bg-transparent': events && !events.some((e) => isSameDay(e, d)),
-                  'bg-primary text-black rounded-full hover:bg-primary': selected && isEqual(selected, d),
+                  'bg-primary text-primary-invert rounded-full hover:bg-primary': selected && isEqual(selected, d),
                   'text-accent-500': isToday(d),
                   'bg-accent-500 text-tertiary rounded-full': selected && isEqual(selected, d) && isToday(d),
                 }),

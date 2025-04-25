@@ -55,7 +55,7 @@ export default async function Page({ params }: Props) {
   const { subSpaces, spaceTags } = await prefetchData(client, space);
 
   return (
-    <div className={space._id}>
+    <div id={space._id} className={space.theme_data?.config?.mode || 'dark'}>
       <Community initData={{ space, subSpaces, spaceTags }} />
     </div>
   );

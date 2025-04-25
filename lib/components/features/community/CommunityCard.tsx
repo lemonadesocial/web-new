@@ -79,7 +79,7 @@ const CommunityCard = ({ space }: CommunityCardProps) => {
         )}
       </div>
       <div className="flex flex-col gap-y-2">
-        <h3 className="text-xl font-semibold">{space.title}</h3>
+        <h3 className="text-xl font-semibold text-primary">{space.title}</h3>
         {space.description && <p className="text-md text-tertiary line-clamp-2">{space.description}</p>}
       </div>
     </Card.Root>

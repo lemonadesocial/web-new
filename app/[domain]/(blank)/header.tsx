@@ -21,7 +21,7 @@ export default function Header() {
   const signIn = useSignIn();
 
   return (
-    <div className="py-3 px-4 min-h-[56px] flex justify-between items-center">
+    <div className="py-3 px-4 min-h-[56px] flex justify-between items-center z-10">
       <Link href="/" aria-label="Lemonade" className="text-tertiary hover:text-primary">
         <i className="icon-lemonade size-[20]" />
       </Link>
@@ -75,12 +75,7 @@ export default function Header() {
         ) : (
           <>
             {!session && (
-              <Button
-                size="sm"
-                variant="tertiary-alt"
-                onClick={signIn}
-                className="rounded-full backdrop-blur-none"
-              >
+              <Button size="sm" variant="tertiary-alt" onClick={signIn} className="rounded-full backdrop-blur-none">
                 Sign In
               </Button>
             )}

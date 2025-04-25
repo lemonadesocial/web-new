@@ -2,7 +2,7 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import { Sheet, SheetRef } from 'react-modal-sheet';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import React from 'react';
 
 import { Button, modal, Spacer } from '$lib/components/core';
@@ -12,10 +12,11 @@ import { generateUrl } from '$lib/utils/cnd';
 import { useMutation } from '$lib/request';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
+import { useSignIn } from '$lib/hooks/useSignIn';
 
 import { COMMUNITY_SOCIAL_LINKS } from './constants';
-import ThemeBuilder from './ThemeBuilder';
-import { useSignIn } from '$lib/hooks/useSignIn';
+import { ThemeBuilder } from './theme_builder';
+import { defaultTheme, themeAtom } from './theme_builder/store';
 
 interface HeroSectionProps {
   space?: Space | null;
@@ -25,6 +26,9 @@ export function HeroSection({ space }: HeroSectionProps) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
   const signIn = useSignIn();
+
+  const setThemeAtom = useSetAtom(themeAtom);
+
   const [follow, resFollow] = useMutation(FollowSpaceDocument, {
     onComplete: (client) => {
       client.writeFragment({ id: `Space:${space?._id}`, data: { followed: true } });
@@ -54,8 +58,7 @@ export function HeroSection({ space }: HeroSectionProps) {
         props: {
           onDiscard: () => {
             setOpenSheet(false);
-            console.log(space?.theme_data);
-            document.getElementById('pattern')?.setAttribute('class', `pattern ${space?.theme_data?.class}`);
+            setThemeAtom(space?.theme_data || defaultTheme);
           },
         },
       });
@@ -68,7 +71,7 @@ export function HeroSection({ space }: HeroSectionProps) {
   const canManage = [space?.creator, ...(space?.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
 
   const [openSheet, setOpenSheet] = React.useState(false);
-  const [saved, setSaved] = React.useState(false);
+  const [saved, setSaved] = React.useState(true);
   const sheetRef = React.useRef<SheetRef>(null);
 
   return (
@@ -111,7 +114,7 @@ export function HeroSection({ space }: HeroSectionProps) {
           <div className="flex items-center gap-3">
             {[space?.creator, ...(space?.admins?.map((p) => p._id) || [])].includes(me?._id) && (
               <Button
-                icon="icon-dark-theme-filled"
+                icon="icon-palette-outline"
                 outlined
                 size="lg"
                 onClick={() => {
@@ -152,7 +155,7 @@ export function HeroSection({ space }: HeroSectionProps) {
       </div>
       <Spacer className="h-6" />
       <div>
-        <h1 className="text-2xl md:text-3xl font-semibold">{space?.title}</h1>
+        <h1 className="text-2xl text-primary md:text-3xl font-semibold">{space?.title}</h1>
         <p className="text-sm md:text-md text-secondary font-medium">{space?.description}</p>
         <Spacer className="h-3" />
         <div className="flex items-center gap-3">

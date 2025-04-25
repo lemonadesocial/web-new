@@ -3,7 +3,7 @@ import React from 'react';
 import { useAtom } from 'jotai';
 import { endOfDay, startOfDay, format } from 'date-fns';
 import clsx from 'clsx';
-import dynamic from "next/dynamic";
+import dynamic from 'next/dynamic';
 
 import { Button, Divider, drawer, Menu, MenuItem, modal, Segment, Tag } from '$lib/components/core';
 import { HeroSection } from '$lib/components/features/community';
@@ -36,7 +36,10 @@ import { ListingEvent } from './ListingEvent';
 import { EventPane } from '../pane';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { MyEventRequests } from './MyEventRequests';
-import CommunityCard from "./CommunityCard";
+
+import CommunityCard from './CommunityCard';
+import { defaultTheme, themeAtom } from './theme_builder/store';
+import { ShaderGradient } from './theme_builder/shader';
 
 const CommunityPane = dynamic(() => import('./CommunityPane'), { ssr: false });
 
@@ -53,6 +56,7 @@ type Props = {
 
 export function Community({ initData }: Props) {
   const space = initData.space;
+
   const me = useMe();
   const [shouldLoadMore, setShouldLoadMore] = useAtom(scrollAtBottomAtom);
 
@@ -89,8 +93,8 @@ export function Community({ initData }: Props) {
     skip: !space?._id,
   });
 
-
   const subSpaces = (dataGetSubSpaces?.getSubSpaces || []) as PublicSpace[];
+
   const spaceEventsCalendar = dataGetSpaceEventsCalendar?.getEvents || [];
   // const mappins = spaceEventsCalendar
   //   .filter((i) => i.address)
@@ -180,48 +184,70 @@ export function Community({ initData }: Props) {
       handleScroll();
     }
   }, [shouldLoadMore]);
+
   const spaceData = dataGetSpace?.getSpace as Space;
   const theme = spaceData.theme_data;
+
+  const [data, setThemeAtom] = useAtom(themeAtom);
+
+  React.useEffect(() => {
+    if (theme) {
+      setThemeAtom({
+        ...defaultTheme,
+        theme: theme.theme,
+        config: { fg: theme.foreground?.key, bg: theme.background?.key, name: theme?.class, ...(theme.config || {}) },
+        font_title: theme.font_title,
+        font_body: theme.font_body,
+        variables: { ...theme.variables },
+      });
+    }
+  }, []);
+
   return (
     <>
-      {theme?.variables && (
+      {data?.variables && (
         <style global jsx>
           {`
             body {
-              ${theme.variables.font && generateCssVariables(theme.variables.font)}
-            }
-
-            @media (prefers-color-scheme: dark) {
-              main {
-                ${theme.variables.dark && generateCssVariables(theme.variables.dark)}
-              }
-            }
-
-            @media (prefers-color-scheme: light) {
-              main {
-                ${theme.variables.light && generateCssVariables(theme.variables.light)}
-              }
+              ${data.variables.font && generateCssVariables(data.variables.font)}
             }
 
             :root {
-              ${theme.variables.pattern && generateCssVariables(theme.variables.pattern)}
+              ${data.variables?.custom && generateCssVariables(data.variables?.custom)}
+              ${data.variables.pattern && generateCssVariables(data.variables.pattern)}
             }
           `}
         </style>
       )}
 
-      <div id="pattern" className={`pattern ${theme?.class}`}></div>
+      {data?.theme && (
+        <div
+          className={clsx(
+            'background',
+            data?.theme,
+            ['shader', 'pattern'].includes(data?.theme as string) && data?.config?.name,
+            data?.config?.bg,
+            data?.config?.class,
+          )}
+        >
+          {data?.theme === 'shader' && <ShaderGradient />}
+        </div>
+      )}
 
-      <div className="relative">
+      <div className={clsx('relative', data?.theme && data?.config?.fg)}>
         <HeroSection space={dataGetSpace?.getSpace as Space} />
         <Divider className="my-8" />
         {subSpaces.length > 0 && (
           <>
             <section className="flex flex-col gap-6">
               <div className="w-full flex justify-between items-center">
-                <h1 className="text-xl md:text-2xl font-semibold flex-1">Hubs</h1>
+                <h1 className="text-xl md:text-2xl font-semibold flex-1 text-primary">Hubs</h1>
                 {subSpaces.length > 3 && (
-                  <Button variant="tertiary-alt" size="sm" onClick={() => drawer.open(CommunityPane, { props: { subSpaces } })}>
+                  <Button
+                    variant="tertiary-alt"
+                    size="sm"
+                    onClick={() => drawer.open(CommunityPane, { props: { subSpaces } })}
+                  >
                     {`View All (${subSpaces.length})`}
                   </Button>
                 )}
@@ -238,7 +264,7 @@ export function Community({ initData }: Props) {
         <div className="flex md:gap-18">
           <div className="flex flex-col flex-1 gap-6 w-full">
             <div className="flex">
-              <h1 className="text-xl md:text-2xl font-semibold flex-1">Events</h1>
+              <h1 className="text-xl md:text-2xl text-primary font-semibold flex-1">Events</h1>
               <div className="flex gap-2 items-center">
                 <Menu.Root className="md:hidden">
                   <Menu.Trigger>
@@ -293,7 +319,7 @@ export function Community({ initData }: Props) {
                     )}
                     onClick={() => setSelectedTag((prev) => (prev === item._id ? '' : item._id))}
                   >
-                    <span className="text-sm">{item.tag}</span>{' '}
+                    <span className="text-sm text-primary">{item.tag}</span>{' '}
                     <span className="text-tertiary text-sm">{item.targets?.length}</span>
                   </Tag>
                 ))}
@@ -331,7 +357,7 @@ export function Community({ initData }: Props) {
               <Menu.Root>
                 <Menu.Trigger>
                   <Button variant="tertiary-alt" iconLeft="icon-plus" size="sm" className="w-full">
-                    Submit Event
+                    {space?.is_ambassador || canManage ? 'Add Event' : 'Submit Event'}
                   </Button>
                 </Menu.Trigger>
                 <Menu.Content className="p-1">
@@ -400,7 +426,7 @@ export function Community({ initData }: Props) {
             </div>
           </div>
         </div>
-      </div >
+      </div>
     </>
   );
 }
@@ -437,7 +463,7 @@ function EventsWithMode({
   );
 }
 
-function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: boolean | null; }) {
+function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: boolean | null }) {
   const [session] = useAtom(sessionAtom);
   const signIn = useSignIn();
   const [follow, { loading }] = useMutation(FollowSpaceDocument, {
@@ -459,7 +485,7 @@ function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: 
     <div className="bg-card rounded-md flex gap-3 px-4 py-3">
       <i className="icon-dashboard size-[48px] text-primary/16" />
       <div className="flex-1">
-        <p className="text-lg">No Upcoming Events</p>
+        <p className="text-lg text-primary">No Upcoming Events</p>
         <p className="text-tertiary">Subscribe to the calendar to get notified when new events are posted.</p>
         {!followed && (
           <>
