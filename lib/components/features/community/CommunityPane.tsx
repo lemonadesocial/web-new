@@ -26,7 +26,7 @@ const CommunityPane = ({ subSpaces }: { subSpaces: Space[]; }) => {
 const HubCard = ({ space }: { space: Space; }) => {
   return (
     <Card.Root as="link" href={`/s/${space.slug || space._id}`} target="_blank" className="flex gap-x-3 items-center px-4 py-3">
-      <div className="w-12 h-12 rounded-sm bg-quaternary overflow-hidden">
+      <div className="w-12 h-12 rounded-sm bg-quaternary overflow-hidden flex-none">
         {space.image_avatar_expanded && (
           <img
             src={generateUrl(space.image_avatar_expanded, { resize: { width: 96, fit: 'contain' } })}
@@ -37,7 +37,7 @@ const HubCard = ({ space }: { space: Space; }) => {
       </div>
       <div className="flex flex-col gap-0.5">
         <p className="text-md font-medium">{space.title}</p>
-        <p className="text-sm font-medium">{space.description}</p>
+        <p className="text-sm font-medium line-clamp-2">{space.description}</p>
       </div>
     </Card.Root>
   );
