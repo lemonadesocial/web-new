@@ -14,15 +14,16 @@ import {
 import { Community } from '$lib/components/features/community';
 import { generateUrl } from '$lib/utils/cnd';
 
-type Props = { params: Promise<{ domain: string }> };
+type Props = { params: Promise<{ domain: string, uid: string }> };
 
 export async function generateMetadata({ params }: Props, parent: ResolvingMetadata) {
   const res = await params;
-  const domain = decodeURIComponent(res.domain);
+  const uid = res.uid;
+  const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
 
   const client = getClient();
 
-  const { data } = await client.query({ query: GetSpaceDocument, variables: { hostname: domain } });
+  const { data } = await client.query({ query: GetSpaceDocument, variables });
   const space = data?.getSpace as Space;
 
   const previousImages = (await parent).openGraph?.images || [];
