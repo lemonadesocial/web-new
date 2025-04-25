@@ -45,11 +45,18 @@ export function ShaderGradient() {
       >
         <ReactShaderGradient
           type="waterPlane"
-
           brightness={1.2}
           uSpeed={0.2}
           cDistance={4.4}
           grain="off" 
+          positionX={0}
+          positionY={0.9}
+          positionZ={-0.3}
+          cAzimuthAngle={170}
+          cPolarAngle={70}
+          rotationX={45}
+          rotationY={0}
+          rotationZ={0}
           color1={getCSSVariable('--shader-color-1') || colors.color1}
           color2={getCSSVariable('--shader-color-2') || colors.color2}
           color3={getCSSVariable('--shader-color-3') || colors.color3}
