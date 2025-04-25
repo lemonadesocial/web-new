@@ -140,12 +140,12 @@ export function ThemeBuilder({
             }}
           />
 
-          {theme && ['minimal', 'pattern'].includes(theme) && (
+          {(!theme || ['minimal', 'pattern'].includes(theme)) && (
             <PopoverColor
               label="Background"
               colorClass="item-color-bg"
               selected={config?.bg}
-              disabled={presets[theme]?.ui.disabled.bg}
+              disabled={theme && presets[theme] && presets[theme].ui?.disabled?.bg}
               onSelect={(color, hex) => {
                 let customColors: Record<string, string> = {};
 
@@ -187,7 +187,7 @@ export function ThemeBuilder({
             />
           )}
 
-          {theme === 'minimal' && <PopoverEmpty />}
+          {(!theme || theme === 'minimal') && <PopoverEmpty />}
 
           {theme === 'shader' && (
             <>
@@ -242,7 +242,7 @@ export function ThemeBuilder({
             className="flex-1 mix-w-1/3"
             placement="top"
             strategy="fixed"
-            disabled={presets[theme].ui.disabled.mode}
+            disabled={theme && presets[theme] && presets[theme].ui?.disabled?.mode}
           >
             <Menu.Trigger>
               <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
@@ -296,6 +296,7 @@ export function ThemeBuilder({
             size="sm"
             icon="icon-shuffle"
             variant="tertiary-alt"
+            disabled={theme !== 'minimal'}
             onClick={async () => {
               const [fontTitle, fontTitleValue] = getRandomFont('title');
               const [fontBody, fontBodyValue] = getRandomFont('body');
@@ -306,6 +307,7 @@ export function ThemeBuilder({
                 font_body: fontBody,
                 config: { fg: color, bg: color, name: color },
                 variables: {
+                  ...variables,
                   font: {
                     '--font-title': fontTitleValue,
                     '--font-body': fontBodyValue,

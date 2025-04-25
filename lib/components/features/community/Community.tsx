@@ -220,19 +220,21 @@ export function Community({ initData }: Props) {
         </style>
       )}
 
-      <div
-        className={clsx(
-          'background',
-          data?.theme,
-          ['shader', 'pattern'].includes(data.theme as string) && data?.config?.name,
-          data?.config?.bg,
-          data?.config?.class,
-        )}
-      >
-        {data?.theme === 'shader' && <ShaderGradient />}
-      </div>
+      {data?.theme && (
+        <div
+          className={clsx(
+            'background',
+            data?.theme,
+            ['shader', 'pattern'].includes(data?.theme as string) && data?.config?.name,
+            data?.config?.bg,
+            data?.config?.class,
+          )}
+        >
+          {data?.theme === 'shader' && <ShaderGradient />}
+        </div>
+      )}
 
-      <div className={`relative ${data?.config?.fg}`}>
+      <div className={clsx('relative', data?.theme && data?.config?.fg)}>
         <HeroSection space={dataGetSpace?.getSpace as Space} />
         <Divider className="my-8" />
         {subSpaces.length > 0 && (
