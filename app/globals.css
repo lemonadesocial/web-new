@@ -68,6 +68,7 @@
   --color-background: var(--color-background);
 
   --color-primary: var(--color-primary);
+  --color-primary-invert: var(--color-primary-invert);
   --color-secondary: var(--color-secondary);
   --color-tertiary: var(--color-tertiary);
   --color-quaternary: var(--color-quaternary);

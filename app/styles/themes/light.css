@@ -5,6 +5,7 @@
   --color-background: var(--color-woodsmoke-50);
 
   --color-primary: #000000;
+  --color-primary-invert: #ffffff;
   --color-secondary: rgba(0, 0, 0, 0.8);
   --color-tertiary: rgba(0, 0, 0, 0.56);
   --color-quaternary: rgba(0, 0, 0, 0.24);

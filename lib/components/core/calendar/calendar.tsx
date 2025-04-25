@@ -93,7 +93,7 @@ export function Calendar({ events, selected: selectedDate, footer, onSelectDate 
                 clsx({
                   'text-quaternary': !isSameMonth(d, active),
                   'text-tertiary hover:bg-transparent': events && !events.some((e) => isSameDay(e, d)),
-                  'bg-primary text-black rounded-full hover:bg-primary': selected && isEqual(selected, d),
+                  'bg-primary text-primary-invert rounded-full hover:bg-primary': selected && isEqual(selected, d),
                   'text-accent-500': isToday(d),
                   'bg-accent-500 text-tertiary rounded-full': selected && isEqual(selected, d) && isToday(d),
                 }),
