@@ -42,7 +42,7 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
         <h3 className="text-xl font-semibold">You&apos;re In</h3>
         <p className="text-lg text-tertiary">{ticketTypeText}</p>
       </div>
-      <div className="flex justify-between">
+      <div className="flex justify-between whitespace-nowrap flex-wrap gap-2">
         <div className="flex gap-2">
           <Button
             variant="tertiary"

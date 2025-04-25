@@ -1,4 +1,5 @@
 import { groupBy } from 'lodash';
+import { useEffect } from 'react';
 
 import { AcceptEventDocument, AssignTicketsDocument, Event, EventJoinRequest, GetEventDocument, GetMyEventJoinRequestDocument, GetMyTicketsDocument, PaymentRefundInfo, Ticket } from '$lib/generated/backend/graphql';
 
@@ -25,43 +26,46 @@ export function EventAccess({ event }: { event: Event }) {
   });
 
   const [acceptEvent] = useMutation(AcceptEventDocument);
-  const [assignTickets] = useMutation(AssignTicketsDocument);
+  const [assignTickets] = useMutation(AssignTicketsDocument, {
+    onComplete() {
+      refetchTickets();
+      joinEvent();
+    }
+  });
   const { client } = useClient();
 
-  const { data: ticketsData, loading: ticketsLoading } = useQuery(GetMyTicketsDocument, {
+  const { data: ticketsData, loading: ticketsLoading, refetch: refetchTickets } = useQuery(GetMyTicketsDocument, {
     variables: {
       event: event?._id,
       withPaymentInfo: true
     },
     skip: !session?.user || !event?._id,
-    onComplete: async (data) => {
-      if (isAttending || !data?.getMyTickets.tickets.length || !session?.user) return;
-
-      const assignedTicket = getAssignedTicket(data.getMyTickets.tickets as Ticket[], session.user, me?.email as string);
-
-      if (assignedTicket) {
-        joinEvent();
-        return;
-      }
-
-      const ticketsByType = groupBy(data.getMyTickets.tickets, 'type');
-      const ticketTypes = Object.keys(ticketsByType);
-
-      if (ticketTypes.length === 1) {
-        await assignTickets({
-          variables: {
-            input: {
-              event: event._id,
-              assignees: [{ ticket: data.getMyTickets.tickets[0]._id, user: session.user }]
-            }
-          }
-        });
-
-        joinEvent();
-        return;
-      }
-    }
   });
+
+  useEffect(() => {
+    if (isAttending || !ticketsData?.getMyTickets.tickets.length || !session?.user) return;
+
+    const assignedTicket = getAssignedTicket(ticketsData.getMyTickets.tickets as Ticket[], session.user, me?.email as string);
+
+    if (assignedTicket) {
+      joinEvent();
+      return;
+    }
+
+    const ticketsByType = groupBy(ticketsData.getMyTickets.tickets, 'type');
+    const ticketTypes = Object.keys(ticketsByType);
+  
+    if (ticketTypes.length === 1) {
+      assignTickets({
+        variables: {
+          input: {
+            event: event._id,
+            assignees: [{ ticket: ticketsData.getMyTickets.tickets[0]._id, user: session.user }]
+          }
+        }
+      });
+    }
+  }, [ticketsData]);
 
   const joinEvent = () => {
     acceptEvent({ variables: { id: event._id } });

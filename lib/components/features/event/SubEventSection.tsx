@@ -1,9 +1,10 @@
-import { Divider } from '$lib/components/core';
+import { Divider, drawer } from '$lib/components/core';
 import { Event, GetEventsDocument } from '$lib/generated/backend/graphql';
 import React from 'react';
 import { EventListCard } from '../EventList';
 import { useQuery } from '$lib/request';
 import Link from 'next/link';
+import { EventPane } from '../pane';
 
 export function SubEventSection({ event }: { event?: Event }) {
   const { data } = useQuery(GetEventsDocument, {
@@ -17,15 +18,15 @@ export function SubEventSection({ event }: { event?: Event }) {
     <div className="event-description flex flex-col gap-2 w-full">
       <div className="flex justify-between text-sm">
         <p className="font-medium">{events?.length} sessions</p>
-        <div className="flex gap-1">
+        {/* <div className="flex gap-1">
           <Link href="#">Create Session</Link>
           <Link href="#" className="text-tertiary">
             View All
           </Link>
-        </div>
+        </div> */}
       </div>
       <Divider className="h-1 w-full mb-2" />
-      <EventListCard events={events} />
+      <EventListCard events={events} onSelect={(event) => drawer.open(EventPane, { props: { eventId: event._id } })} />
     </div>
   );
 }
