@@ -60,7 +60,7 @@ export function ThemeBuilder({
                       fg = shaders[index].accent;
                     }
 
-                    handleChange({ theme: 'shader', config: { name: shaderName, fg, class: 'blur-lg', mode: 'dark' } });
+                    handleChange({ theme: 'shader', config: { name: shaderName, fg, mode: 'dark' } });
                     document.getElementById(space?._id)?.setAttribute('class', config?.mode || 'dark');
                     break;
 

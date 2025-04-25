@@ -16,7 +16,7 @@ import { useSignIn } from '$lib/hooks/useSignIn';
 
 import { COMMUNITY_SOCIAL_LINKS } from './constants';
 import { ThemeBuilder } from './theme_builder';
-import { themeAtom } from './theme_builder/store';
+import { defaultTheme, themeAtom } from './theme_builder/store';
 
 interface HeroSectionProps {
   space?: Space | null;
@@ -58,7 +58,7 @@ export function HeroSection({ space }: HeroSectionProps) {
         props: {
           onDiscard: () => {
             setOpenSheet(false);
-            setThemeAtom(space?.theme_data);
+            setThemeAtom(space?.theme_data || defaultTheme);
           },
         },
       });

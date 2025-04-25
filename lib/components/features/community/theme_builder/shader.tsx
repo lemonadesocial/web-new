@@ -48,7 +48,7 @@ export function ShaderGradient() {
           brightness={1.2}
           uSpeed={0.2}
           cDistance={4.4}
-          grain="off" 
+          grain="off"
           positionX={0}
           positionY={0.9}
           positionZ={-0.3}
