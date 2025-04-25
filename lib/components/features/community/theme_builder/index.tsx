@@ -9,7 +9,17 @@ import { useMutation } from '$lib/request';
 import { Space, UpdateSpaceDocument } from '$lib/generated/backend/graphql';
 import { Button, Card, Menu, MenuItem } from '$lib/components/core';
 
-import { themeAtom, presets, ThemeValues, fonts, getRandomColor, getRandomFont, patterns, shaders } from './store';
+import {
+  themeAtom,
+  presets,
+  ThemeValues,
+  fonts,
+  getRandomColor,
+  getRandomFont,
+  patterns,
+  shaders,
+  defaultTheme,
+} from './store';
 import { PopoverFont } from './popover_font';
 import { PopoverColor, PopoverShaderColor } from './popover_color';
 import { PopoverEmpty, PopoverPattern } from './popover_style';
@@ -286,6 +296,9 @@ export function ThemeBuilder({
                 await updateCommunity({
                   variables: { id: space._id, input: { theme_data: null } },
                   onComplete: (client) => {
+                    handleChange(defaultTheme);
+                    document.getElementById(space._id)?.setAttribute('class', 'dark');
+                    setSaved(true);
                     client.writeFragment<Space>({ id: `Space:${space._id}`, data: { theme_data: null } });
                   },
                 });

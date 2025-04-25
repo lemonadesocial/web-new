@@ -58,6 +58,7 @@ export function HeroSection({ space }: HeroSectionProps) {
         props: {
           onDiscard: () => {
             setOpenSheet(false);
+            document.getElementById(space?._id)?.setAttribute('class', space?.theme_data?.config?.mode || 'dark');
             setThemeAtom(space?.theme_data || defaultTheme);
           },
         },

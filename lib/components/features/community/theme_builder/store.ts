@@ -23,11 +23,11 @@ export type ThemeValues = {
 
 export const defaultTheme: ThemeValues = {
   config: {
-    mode: 'system',
+    mode: 'dark',
     name: '',
     class: '',
-    fg: 'violet',
-    bg: 'violet',
+    fg: '',
+    bg: '',
   },
   font_title: 'default',
   font_body: 'default',
