@@ -9,17 +9,7 @@ import { useMutation } from '$lib/request';
 import { Space, UpdateSpaceDocument } from '$lib/generated/backend/graphql';
 import { Button, Card, Menu, MenuItem } from '$lib/components/core';
 
-import {
-  themeAtom,
-  presets,
-  ThemeValues,
-  fonts,
-  getRandomColor,
-  getRandomFont,
-  defaultTheme,
-  patterns,
-  shaders,
-} from './store';
+import { themeAtom, presets, ThemeValues, fonts, getRandomColor, getRandomFont, patterns, shaders } from './store';
 import { PopoverFont } from './popover_font';
 import { PopoverColor, PopoverShaderColor } from './popover_color';
 import { PopoverEmpty, PopoverPattern } from './popover_style';
@@ -103,7 +93,7 @@ export function ThemeBuilder({
         <div className="flex gap-2 flex-wrap">
           <PopoverColor
             label="Accent"
-            colorClass={`item-color-fg`}
+            colorClass="item-color-fg"
             selected={config?.fg}
             disabled={theme && presets[theme].ui?.disabled?.fg}
             onSelect={(color, hex) => {
@@ -151,7 +141,7 @@ export function ThemeBuilder({
           {theme && ['minimal', 'pattern'].includes(theme) && (
             <PopoverColor
               label="Background"
-              colorClass={`item-color-bg`}
+              colorClass="item-color-bg"
               selected={config?.bg}
               disabled={presets[theme]?.ui.disabled.bg}
               onSelect={(color, hex) => {
@@ -201,9 +191,10 @@ export function ThemeBuilder({
             <>
               <PopoverShaderColor
                 label="Background"
-                colorClass={`item-color-bg`}
                 selected={config?.name}
-                onSelect={(name) => handleChange({ config: { ...config, name: name } })}
+                onSelect={(item) =>
+                  handleChange({ config: { ...config, name: item.name, fg: item.accent, bg: item.accent } })
+                }
               />
               <PopoverEmpty />
             </>

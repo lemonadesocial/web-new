@@ -14,6 +14,7 @@ export type ThemeValues = {
   font_body: string;
   variables: {
     font: Record<string, string>;
+    custom: Record<string, string>;
     dark?: Record<string, string | number>;
     light?: Record<string, string | number>;
     pattern?: Record<string, string>;
@@ -32,6 +33,7 @@ export const defaultTheme: ThemeValues = {
   font_body: 'default',
   variables: {
     font: {},
+    custom: {},
     light: {},
     dark: {},
     pattern: {},
@@ -103,7 +105,16 @@ const minimal = {
   },
 };
 
-export const shaders = ['dreamy', 'summer', 'melon', 'barbie', 'sunset', 'ocean', 'forest', 'lavender'];
+export const shaders = [
+  { name: 'dreamy', accent: 'violet' },
+  { name: 'summer', accent: 'sky' },
+  { name: 'melon', accent: 'orange' },
+  { name: 'barbie', accent: 'pink' },
+  { name: 'sunset', accent: 'orange' },
+  { name: 'ocean', accent: 'blue' },
+  { name: 'forest', accent: 'green' },
+  { name: 'lavender', accent: 'purple' },
+];
 
 const shader = {
   image: `${ASSET_PREFIX}/assets/images/gradient.png`,

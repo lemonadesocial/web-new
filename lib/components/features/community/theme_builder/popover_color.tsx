@@ -65,7 +65,13 @@ export function PopoverColor({ label, selected = 'violet', colorClass, onSelect,
   );
 }
 
-export function PopoverShaderColor({ label, colorClass, selected, onSelect }: Props) {
+type PopoverShaderColorProps = {
+  label: string;
+  selected?: string;
+  onSelect: (shader: { name: string; accent: string }) => void;
+};
+
+export function PopoverShaderColor({ label, selected, onSelect }: PopoverShaderColorProps) {
   return (
     <Menu.Root placement="top" strategy="fixed" className="max-w-1/3 min-w-1/3">
       <Menu.Trigger>
@@ -88,12 +94,12 @@ export function PopoverShaderColor({ label, colorClass, selected, onSelect }: Pr
         <div className="grid grid-cols-4 gap-3">
           {shaders.map((s) => (
             <div
-              key={s}
+              key={s.name}
               onClick={() => onSelect(s)}
               className={twMerge(
                 'size-16 cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
-                `item-color-${s}`,
-                clsx(s === selected && 'outline-2'),
+                `item-color-${s.name}`,
+                clsx(s.name === selected && 'outline-2'),
               )}
             />
           ))}
