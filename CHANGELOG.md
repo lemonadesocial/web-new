@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.12.1](https://github.com/lemonadesocial/web-new/compare/v1.12.0...v1.12.1) (2025-04-25)
+
+
+### Bug Fixes
+
+* remove unused ([bbf08e7](https://github.com/lemonadesocial/web-new/commit/bbf08e7c8f230cdf1019cf2b9771df06bc9a0c7b))
+* update text submit event ([cc54d7f](https://github.com/lemonadesocial/web-new/commit/cc54d7f98b349032b6d005e6fa23fa9f5d7cbb92))
+* use theme name instead of key ([1ec77a6](https://github.com/lemonadesocial/web-new/commit/1ec77a6b029dd6a553e44e6e1e05ba0b0572145f))
+
 ## [1.12.0](https://github.com/lemonadesocial/web-new/compare/v1.11.1...v1.12.0) (2025-04-25)
 
 
