@@ -53,12 +53,14 @@ export function ThemeBuilder({
                 switch (key) {
                   case 'shader':
                     let shaderName = space?.theme_data?.config?.name;
+                    let fg = space?.theme_data?.config?.fg;
                     if (!shaderName || !shaders.includes(shaderName)) {
                       const index = Math.floor(Math.random() * shaders.length);
-                      shaderName = shaders[index];
+                      shaderName = shaders[index].name;
+                      fg = shaders[index].accent;
                     }
 
-                    handleChange({ theme: 'shader', config: { name: shaderName, class: 'blur-lg', mode: 'dark' } });
+                    handleChange({ theme: 'shader', config: { name: shaderName, fg, class: 'blur-lg', mode: 'dark' } });
                     document.getElementById(space?._id)?.setAttribute('class', config?.mode || 'dark');
                     break;
 
