@@ -19,7 +19,7 @@ export function useMe(): User | null {
   });
 
   useEffect(() => {
-    if (!session || loading || !me || !queryData) return;
+    if (!session || loading || me || !queryData) return;
 
     setMe(queryData?.getMe as User);
   }, [session, loading, queryData, me, setMe]);
