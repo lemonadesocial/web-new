@@ -124,7 +124,7 @@ export function ThemeBuilder({
                 };
               }
 
-              let conf = {
+              const conf = {
                 config: { ...config, fg: color },
                 variables: { ...variables, custom: { ...customColors } },
               };
