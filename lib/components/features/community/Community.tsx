@@ -357,7 +357,7 @@ export function Community({ initData }: Props) {
               <Menu.Root>
                 <Menu.Trigger>
                   <Button variant="tertiary-alt" iconLeft="icon-plus" size="sm" className="w-full">
-                    Submit Event
+                    {space?.is_ambassador || canManage ? 'Add Event' : 'Submit Event'}
                   </Button>
                 </Menu.Trigger>
                 <Menu.Content className="p-1">
