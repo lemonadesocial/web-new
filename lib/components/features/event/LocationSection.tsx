@@ -26,7 +26,11 @@ export function LocationSection({ event, loading = false }: { event?: Event; loa
         <p className="md:text-lg font-medium">
           {attending ? event.address?.title : 'Please register to see the exact location of this event.'}
         </p>
-        <p className="text-sm">{getEventAddress(event.address, true) || 'Virtual'}</p>
+        <p className="text-sm">
+          {attending
+            ? getEventAddress(event.address, true) || 'Virtual'
+            : [event.address?.city || event.address?.region, event.address?.country].filter(Boolean).join(', ')}
+        </p>
       </div>
       <div className="aspect-video h-[240px] rounded-sm overflow-hidden">
         <Map colorscheme="LIGHT" markers={markers} defaultZoom={5} />
