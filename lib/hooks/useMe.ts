@@ -1,8 +1,8 @@
 import { atom, useAtom } from 'jotai';
 import { useEffect } from 'react';
 
-import { useQuery } from '$lib/request';
-import { GetMeDocument, User } from '$lib/generated/backend/graphql';
+import { useQuery } from '$lib/graphql/request';
+import { GetMeDocument, User } from '$lib/graphql/generated/backend/graphql';
 import { sessionAtom } from '$lib/jotai';
 
 const meAtom = atom<User | null>(null);

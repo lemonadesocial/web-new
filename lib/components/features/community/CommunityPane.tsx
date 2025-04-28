@@ -1,5 +1,5 @@
 import { Button, Card, drawer } from "$lib/components/core";
-import { Space } from "$lib/generated/backend/graphql";
+import { Space } from "$lib/graphql/generated/backend/graphql";
 import { generateUrl } from "$lib/utils/cnd";
 
 const CommunityPane = ({ subSpaces }: { subSpaces: Space[]; }) => {

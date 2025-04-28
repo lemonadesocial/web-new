@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
-import { GetStripeCardsDocument, StripeAccount, StripeCard } from "$lib/generated/backend/graphql";
+import { GetStripeCardsDocument, StripeAccount, StripeCard } from "$lib/graphql/generated/backend/graphql";
 import { Button, Menu, MenuItem, Skeleton } from "$lib/components/core";
 import { CardForm } from "./CardForm";
-import { useQuery } from "$lib/request";
+import { useQuery } from "$lib/graphql/request";
 import { useSession } from "$lib/hooks/useSession";
 
 import { pricingInfoAtom, stripePaymentMethodAtom, useAtomValue, useSetAtom } from "../store";

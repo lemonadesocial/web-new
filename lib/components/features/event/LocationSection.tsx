@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Event } from '$lib/generated/backend/graphql';
+import { Event } from '$lib/graphql/generated/backend/graphql';
 import { Divider, Map, Skeleton } from '$lib/components/core';
 import { getEventAddress, isAttending } from '$lib/utils/event';
 import { useSession } from '$lib/hooks/useSession';

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { ResolvingMetadata } from 'next';
 
-import { getClient, GraphqlClient } from '$lib/request/client';
+import { getClient, GraphqlClient } from '$lib/graphql/request/client';
 import { isObjectId } from '$lib/utils/helpers';
 import {
   GetSpaceDocument,
@@ -10,7 +10,7 @@ import {
   Space,
   PublicSpace,
   SpaceTagBase,
-} from '$lib/generated/backend/graphql';
+} from '$lib/graphql/generated/backend/graphql';
 import { Community } from '$lib/components/features/community';
 import { generateUrl } from '$lib/utils/cnd';
 

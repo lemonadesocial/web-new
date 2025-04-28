@@ -1,8 +1,8 @@
-import { useMutation } from "$lib/request";
+import { useMutation } from "$lib/graphql/request";
 import { generateUrl } from "$lib/utils/cnd";
 import { useSignIn } from "$lib/hooks/useSignIn";
 import { useSession } from "$lib/hooks/useSession";
-import { FollowSpaceDocument, PublicSpace, UnfollowSpaceDocument } from "$lib/generated/backend/graphql";
+import { FollowSpaceDocument, PublicSpace, UnfollowSpaceDocument } from "$lib/graphql/generated/backend/graphql";
 
 import { Button } from "$lib/components/core";
 import { Card } from "$lib/components/core";

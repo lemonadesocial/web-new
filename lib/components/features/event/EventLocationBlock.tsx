@@ -1,5 +1,5 @@
 import { Skeleton } from '$lib/components/core';
-import { Event } from '$lib/generated/backend/graphql';
+import { Event } from '$lib/graphql/generated/backend/graphql';
 import { useSession } from '$lib/hooks/useSession';
 import { isAttending } from '$lib/utils/event';
 

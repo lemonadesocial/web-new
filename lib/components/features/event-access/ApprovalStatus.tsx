@@ -1,4 +1,4 @@
-import { EventJoinRequest, EventJoinRequestState } from '$lib/generated/backend/graphql';
+import { EventJoinRequest, EventJoinRequestState } from '$lib/graphql/generated/backend/graphql';
 import { AccessCard } from './AccessCard';
 import { useMemo } from 'react';
 

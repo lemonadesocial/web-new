@@ -5,8 +5,8 @@ import clsx from 'clsx';
 import getPalette from 'tailwindcss-palette-generator';
 import { merge } from 'lodash';
 
-import { useMutation } from '$lib/request';
-import { Space, UpdateSpaceDocument } from '$lib/generated/backend/graphql';
+import { useMutation } from '$lib/graphql/request';
+import { Space, UpdateSpaceDocument } from '$lib/graphql/generated/backend/graphql';
 import { Button, Card, Menu, MenuItem } from '$lib/components/core';
 
 import {

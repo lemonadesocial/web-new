@@ -1,5 +1,5 @@
 import { ModalContent } from "$lib/components/core";
-import { EventCalendarLinks, Event } from "$lib/generated/backend/graphql";
+import { EventCalendarLinks, Event } from "$lib/graphql/generated/backend/graphql";
 
 export function AddToCalendarModal({ event }: { event: Event }) {
   const addToCalendar = (calendar: keyof EventCalendarLinks) => {

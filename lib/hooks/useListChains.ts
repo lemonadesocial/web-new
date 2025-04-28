@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSetAtom } from 'jotai';
 
-import { getClient } from '$lib/request';
-import { ListChainsDocument } from '$lib/generated/backend/graphql';
+import { getClient } from '$lib/graphql/request';
+import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
 import { listChainsAtom } from '$lib/jotai/chains';
 
 export function useListChains() {

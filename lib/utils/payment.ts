@@ -1,4 +1,4 @@
-import { EthereumAccount, EthereumRelayAccount, EthereumStakeAccount, NewPaymentAccount } from "$lib/generated/backend/graphql";
+import { EthereumAccount, EthereumRelayAccount, EthereumStakeAccount, NewPaymentAccount } from "$lib/graphql/generated/backend/graphql";
 
 export function getPaymentNetworks(paymentAccounts?: NewPaymentAccount[] | null) {
   if (!paymentAccounts) return [];

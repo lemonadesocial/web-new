@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Button, modal, ModalContent } from "$lib/components/core";
-import { Chain } from "$lib/generated/backend/graphql";
+import { Chain } from "$lib/graphql/generated/backend/graphql";
 import { getAppKitNetwork, useAppKit, useAppKitAccount, useAppKitNetwork } from "$lib/utils/appkit";
 
 export function ConnectWallet({ onConnect, chain }: { onConnect: () => void; chain?: Chain; }) {

@@ -3,8 +3,8 @@ import { useAtomValue as useJotaiAtomValue } from "jotai";
 import { Eip1193Provider, ethers } from "ethers";
 
 import { Button, ModalContent } from "$lib/components/core";
-import { EthereumAccount, EthereumRelayAccount, EthereumStakeAccount, UpdatePaymentDocument } from "$lib/generated/backend/graphql";
-import { useMutation } from "$lib/request";
+import { EthereumAccount, EthereumRelayAccount, EthereumStakeAccount, UpdatePaymentDocument } from "$lib/graphql/generated/backend/graphql";
+import { useMutation } from "$lib/graphql/request";
 import { useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
 import { approveERC20Spender, formatWallet, LemonadeRelayPaymentContract, LemonadeStakePaymentContract, transfer, writeContract } from "$lib/utils/crypto";
 import { chainsMapAtom } from "$lib/jotai";

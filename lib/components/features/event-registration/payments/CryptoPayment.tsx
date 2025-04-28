@@ -1,7 +1,7 @@
 import { useAtomValue as useJotaiAtomValue } from "jotai";
 
 import { Button, LabeledInput, Menu, MenuItem, modal } from "$lib/components/core";
-import { EthereumAccount, NewPaymentAccount } from "$lib/generated/backend/graphql";
+import { EthereumAccount, NewPaymentAccount } from "$lib/graphql/generated/backend/graphql";
 import { chainsMapAtom } from "$lib/jotai";
 
 import { selectedPaymentAccountAtom, useAtom } from "../store";

@@ -1,6 +1,6 @@
 import { toast } from "$lib/components/core";
-import { BuyTicketsDocument, BuyTicketsMutation } from "$lib/generated/backend/graphql";
-import { useMutation } from "$lib/request";
+import { BuyTicketsDocument, BuyTicketsMutation } from "$lib/graphql/generated/backend/graphql";
+import { useMutation } from "$lib/graphql/request";
 
 import { buyerInfoAtom, currencyAtom, discountCodeAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, selectedPaymentAccountAtom, useAtomValue, useEventRegistrationStore, userInfoAtom } from "../store";
 import { useJoinRequest } from "./useJoinRequest";

@@ -6,8 +6,8 @@ import {
   PinEventsToSpaceDocument,
   SpaceTagBase,
   SpaceTagType,
-} from '$lib/generated/backend/graphql';
-import { useClient, useQuery } from '$lib/request';
+} from '$lib/graphql/generated/backend/graphql';
+import { useClient, useQuery } from '$lib/graphql/request';
 import { format } from 'date-fns';
 import { uniq } from 'lodash';
 import React from 'react';

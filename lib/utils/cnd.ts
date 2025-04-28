@@ -1,4 +1,4 @@
-import { File } from '$lib/generated/backend/graphql';
+import { File } from '$lib/graphql/generated/backend/graphql';
 
 export interface EditProps {
   resize?: {

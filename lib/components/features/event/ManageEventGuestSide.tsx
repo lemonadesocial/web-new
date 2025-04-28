@@ -2,8 +2,8 @@
 import React from 'react';
 import { uniqBy } from 'lodash';
 
-import { Event, GetEventDocument, GetEventQuery, User } from '$lib/generated/backend/graphql';
-import { useQuery } from '$lib/request';
+import { Event, GetEventDocument, GetEventQuery, User } from '$lib/graphql/generated/backend/graphql';
+import { useQuery } from '$lib/graphql/request';
 import { Avatar, Badge, Button, Spacer } from '$lib/components/core';
 import { generateUrl } from '$lib/utils/cnd';
 import { hosting } from '$lib/utils/event';

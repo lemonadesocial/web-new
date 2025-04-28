@@ -1,10 +1,10 @@
 import { groupBy } from 'lodash';
 import { useEffect } from 'react';
 
-import { AcceptEventDocument, AssignTicketsDocument, Event, EventJoinRequest, GetEventDocument, GetMyEventJoinRequestDocument, GetMyTicketsDocument, PaymentRefundInfo, Ticket } from '$lib/generated/backend/graphql';
+import { AcceptEventDocument, AssignTicketsDocument, Event, EventJoinRequest, GetEventDocument, GetMyEventJoinRequestDocument, GetMyTicketsDocument, PaymentRefundInfo, Ticket } from '$lib/graphql/generated/backend/graphql';
 
 import { attending, getAssignedTicket } from '$lib/utils/event';
-import { useClient, useMutation, useQuery } from '$lib/request';
+import { useClient, useMutation, useQuery } from '$lib/graphql/request';
 import { SkeletonCard } from '$lib/components/core';
 import { useSession } from '$lib/hooks/useSession';
 import { useMe } from '$lib/hooks/useMe';

@@ -23,8 +23,8 @@ import {
   Space,
   SpaceTagBase,
   SpaceTagType,
-} from '$lib/generated/backend/graphql';
-import { useMutation, useQuery } from '$lib/request';
+} from '$lib/graphql/generated/backend/graphql';
+import { useMutation, useQuery } from '$lib/graphql/request';
 import { EventList, EventListCard } from '$lib/components/features/EventList';
 import { Calendar } from '$lib/components/core/calendar';
 import { scrollAtBottomAtom, sessionAtom } from '$lib/jotai';

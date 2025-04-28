@@ -2,7 +2,7 @@
 import React from 'react';
 import { useSetAtom } from 'jotai';
 
-import { GraphqlClientProvider, GraphqlClient, InMemoryCache } from '$lib/request';
+import { GraphqlClientProvider, GraphqlClient, InMemoryCache } from '$lib/graphql/request';
 import { GRAPHQL_URL } from '$lib/utils/constants';
 import { initializeAppKit } from '$lib/utils/appkit';
 import { useAuth } from '$lib/hooks/useAuth';

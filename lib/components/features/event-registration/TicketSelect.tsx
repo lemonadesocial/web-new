@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { Collapsible } from "$lib/components/core";
 import { GroupedTicketTypes, groupTicketTypesByCategory } from "$lib/utils/event";
-import { PurchasableTicketType } from "$lib/generated/backend/graphql";
+import { PurchasableTicketType } from "$lib/graphql/generated/backend/graphql";
 
 import { hasSingleFreeTicketAtom, ticketLimitAtom, ticketTypesAtom, useAtomValue } from "./store";
 import { TicketSelectItem } from "./TicketSelectItem";

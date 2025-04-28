@@ -1,6 +1,6 @@
 import React from 'react';
 import { Avatar, Divider } from '$lib/components/core';
-import { Event } from '$lib/generated/backend/graphql';
+import { Event } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import Link from 'next/link';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';

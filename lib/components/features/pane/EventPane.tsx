@@ -2,9 +2,9 @@
 import { uniqBy } from 'lodash';
 
 import { Alert, Avatar, Button, drawer } from '$lib/components/core';
-import { Event, GetEventDocument, User } from '$lib/generated/backend/graphql';
+import { Event, GetEventDocument, User } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
-import { useQuery } from '$lib/request';
+import { useQuery } from '$lib/graphql/request';
 import { userAvatar } from '$lib/utils/user';
 import { copy } from '$lib/utils/helpers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';

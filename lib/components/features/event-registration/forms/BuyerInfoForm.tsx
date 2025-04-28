@@ -1,7 +1,7 @@
 import { useForm, UseFormReturn } from "react-hook-form";
 import { useEffect } from "react";
 
-import { BuyerInfoInput } from "$lib/generated/backend/graphql";
+import { BuyerInfoInput } from "$lib/graphql/generated/backend/graphql";
 import { buyerInfoAtom, formInstancesAtom, submitHandlersAtom, useSetAtom } from "../store";
 import { ErrorText, Input, LabeledInput } from "$lib/components/core";
 import { EMAIL_REGEX } from "$lib/utils/regex";

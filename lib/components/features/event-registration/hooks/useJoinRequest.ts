@@ -1,7 +1,7 @@
 import { modal } from "$lib/components/core";
-import { GetMyEventJoinRequestDocument } from "$lib/generated/backend/graphql";
+import { GetMyEventJoinRequestDocument } from "$lib/graphql/generated/backend/graphql";
 import { useSession } from "$lib/hooks/useSession";
-import { useClient } from "$lib/request";
+import { useClient } from "$lib/graphql/request";
 import { RequestSentModal } from "../modals/RequestSentModal";
 
 import { eventDataAtom, nonLoggedInStatusAtom, useAtomValue, useSetAtom } from "../store";

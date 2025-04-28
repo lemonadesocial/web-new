@@ -13,7 +13,7 @@ import {
 } from '@reown/appkit/react';
 import { AppKitNetwork } from '@reown/appkit/networks';
 
-import { Chain } from '$lib/generated/backend/graphql';
+import { Chain } from '$lib/graphql/generated/backend/graphql';
 
 import { getListChains } from './crypto';
 

@@ -4,7 +4,7 @@ import { intersection } from "lodash";
 import clsx from "clsx";
 
 import { NumberInput } from "$lib/components/core";
-import { EventTicketPrice, NewPaymentAccount, PurchasableTicketType } from "$lib/generated/backend/graphql";
+import { EventTicketPrice, NewPaymentAccount, PurchasableTicketType } from "$lib/graphql/generated/backend/graphql";
 import { chainsMapAtom } from "$lib/jotai";
 import { formatPrice, getPaymentAccounts } from "$lib/utils/event";
 import { getPaymentNetworks } from "$lib/utils/payment";

@@ -2,7 +2,7 @@ import React from 'react';
 import { format } from 'date-fns';
 
 import { Divider, Skeleton } from '$lib/components/core';
-import { Event } from '$lib/generated/backend/graphql';
+import { Event } from '$lib/graphql/generated/backend/graphql';
 import { convertFromUtcToTimezone } from '$lib/utils/date';
 import { getEventDateBlockRange, getEventDateBlockStart } from '$lib/utils/event';
 
