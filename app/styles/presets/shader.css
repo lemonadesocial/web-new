@@ -104,88 +104,88 @@
 
   .shader {
     &.dreamy {
-      --shader-color-1: #368077;
-      --shader-color-2: #46156f;
-      --shader-color-3: #140f6f;
+      --shader-color-1: #e1dbfc;
+      --shader-color-2: #ebd0fa;
+      --shader-color-3: #ddf9fe;
     }
     &.summer {
-      --shader-color-1: #34514a;
-      --shader-color-2: #835c33;
-      --shader-color-3: #082590;
+      --shader-color-1: #c5e3fc;
+      --shader-color-2: #b1eefc;
+      --shader-color-3: #f6edc7;
     }
     &.melon {
-      --shader-color-1: #8f6217;
-      --shader-color-2: #36852f;
-      --shader-color-3: #8b250e;
+      --shader-color-1: #f8d8dd;
+      --shader-color-2: #fcedd4;
+      --shader-color-3: #dffae8;
     }
     &.barbie {
-      --shader-color-1: #7b8a2c;
-      --shader-color-2: #701784;
-      --shader-color-3: #70172d;
+      --shader-color-1: #fbd0d0;
+      --shader-color-2: #fbcbee;
+      --shader-color-3: #feedcb;
     }
     &.sunset {
-      --shader-color-1: #fef9d9;
-      --shader-color-2: #768f1f;
-      --shader-color-3: #735312;
+      --shader-color-1: #fde9d5;
+      --shader-color-2: #fef2d5;
+      --shader-color-3: #fbe4e2;
     }
     &.ocean {
-      --shader-color-1: #1c6174;
-      --shader-color-2: #08176f;
-      --shader-color-3: #227676;
+      --shader-color-1: #daf2fe;
+      --shader-color-2: #e0f4fe;
+      --shader-color-3: #dadffb;
     }
     &.forest {
-      --shader-color-1: #226f87;
-      --shader-color-2: #256e1f;
-      --shader-color-3: #837024;
+      --shader-color-1: #ddfcc7;
+      --shader-color-2: #e7fccf;
+      --shader-color-3: #d9fcf5;
     }
     &.lavender {
-      --shader-color-1: #8b2285;
-      --shader-color-2: #4b166d;
-      --shader-color-3: #181369;
+      --shader-color-1: #eedafa;
+      --shader-color-2: #e7e1fa;
+      --shader-color-3: #cbdefa;
     }
   }
 
   .light {
     .shader {
       &.dreamy {
-        --shader-color-1: #ddf9fe;
-        --shader-color-2: #e1dbfc;
-        --shader-color-3: #f4befa;
+        --shader-color-1: #e1dbfc;
+        --shader-color-2: #ebd0fa;
+        --shader-color-3: #ddf9fe;
       }
       &.summer {
-        --shader-color-1: #eef3e9;
-        --shader-color-2: #f2f6cd;
-        --shader-color-3: #b1eefc;
+        --shader-color-1: #c5e3fc;
+        --shader-color-2: #b1eefc;
+        --shader-color-3: #f6edc7;
       }
       &.melon {
-        --shader-color-1: #fcfbd1;
-        --shader-color-2: #dbfae3;
-        --shader-color-3: #f8ced3;
+        --shader-color-1: #f8d8dd;
+        --shader-color-2: #fcedd4;
+        --shader-color-3: #dffae8;
       }
       &.barbie {
-        --shader-color-1: #fef7ca;
-        --shader-color-2: #fee8df;
-        --shader-color-3: #fbb9f1;
+        --shader-color-1: #fbd0d0;
+        --shader-color-2: #fbcbee;
+        --shader-color-3: #feedcb;
       }
       &.sunset {
-        --shader-color-1: #fbd8d6;
-        --shader-color-2: #fdf2d8;
-        --shader-color-3: #fef9d9;
+        --shader-color-1: #fde9d5;
+        --shader-color-2: #fef2d5;
+        --shader-color-3: #fbe4e2;
       }
       &.ocean {
-        --shader-color-1: #dbf5fe;
-        --shader-color-2: #dadffb;
-        --shader-color-3: #dbf1fd;
+        --shader-color-1: #daf2fe;
+        --shader-color-2: #e0f4fe;
+        --shader-color-3: #dadffb;
       }
       &.forest {
-        --shader-color-1: #f5fcb0;
-        --shader-color-2: #d9fcf5;
-        --shader-color-3: #ddfcc7;
+        --shader-color-1: #ddfcc7;
+        --shader-color-2: #e7fccf;
+        --shader-color-3: #d9fcf5;
       }
       &.lavender {
-        --shader-color-1: #e7e1fa;
-        --shader-color-2: #f9ddfd;
-        --shader-color-3: #d5dffa;
+        --shader-color-1: #eedafa;
+        --shader-color-2: #e7e1fa;
+        --shader-color-3: #cbdefa;
       }
     }
   }
@@ -193,34 +193,34 @@
   .dark {
     .shader {
       &.dreamy {
-        --shader-color-1: #368077;
-        --shader-color-2: #46156f;
-        --shader-color-3: #140f6f;
+        --shader-color-1: #46156f;
+        --shader-color-2: #140f6f;
+        --shader-color-3: #368077;
       }
       &.summer {
-        --shader-color-1: #34514a;
-        --shader-color-2: #835c33;
-        --shader-color-3: #082590;
+        --shader-color-1: #082590;
+        --shader-color-2: #254d70;
+        --shader-color-3: #835c33;
       }
       &.melon {
         --shader-color-1: #8f6217;
-        --shader-color-2: #36852f;
-        --shader-color-3: #8b250e;
+        --shader-color-2: #8b250e;
+        --shader-color-3: #478543;
       }
       &.barbie {
-        --shader-color-1: #7b8a2c;
-        --shader-color-2: #701784;
-        --shader-color-3: #70172d;
+        --shader-color-1: #70172d;
+        --shader-color-2: #772184;
+        --shader-color-3: #7b8a2c;
       }
       &.sunset {
-        --shader-color-1: #fef9d9;
-        --shader-color-2: #768f1f;
-        --shader-color-3: #735312;
+        --shader-color-1: #6e220a;
+        --shader-color-2: #774c13;
+        --shader-color-3: #75751c;
       }
       &.ocean {
-        --shader-color-1: #1c6174;
-        --shader-color-2: #08176f;
-        --shader-color-3: #227676;
+        --shader-color-1: #234976;
+        --shader-color-2: #1e5674;
+        --shader-color-3: #08176f;
       }
       &.forest {
         --shader-color-1: #226f87;
@@ -228,9 +228,9 @@
         --shader-color-3: #837024;
       }
       &.lavender {
-        --shader-color-1: #8b2285;
-        --shader-color-2: #4b166d;
-        --shader-color-3: #181369;
+        --shader-color-1: #4b166d;
+        --shader-color-2: #181369;
+        --shader-color-3: #8b2285;
       }
     }
   }
