@@ -27,6 +27,7 @@ import { CardPayment } from "../payments/CardPayment";
 import { SubmitForm } from "../SubmitForm";
 import { OrderSummary } from "../OrderSummary";
 import { CryptoPayment } from "../payments/CryptoPayment";
+import { useBuyTickets } from "../hooks/useBuyTickets";
 
 export function RegistrationModal() {
   const me = useMe();
@@ -43,6 +44,7 @@ export function RegistrationModal() {
   const currencies = useAtomValue(currenciesAtom);
 
   const { redeemTickets, loadingRedeem } = useRedeemTickets();
+  const { pay, loading: loadingBuyTickets } = useBuyTickets();
 
   const selectedTicketTypes = ticketTypes.filter(ticket => purchaseItems.some(item => item.id === ticket._id));
   const ticketPaymentAccounts = selectedTicketTypes.flatMap(ticket => ticket.prices.flatMap(price => price.payment_accounts_expanded || []));
@@ -94,9 +96,18 @@ export function RegistrationModal() {
         </div>
         {
           isFree ? (
-            <SubmitForm onComplete={() => redeemTickets()}>
+            <SubmitForm
+              onComplete={() => {
+                if (pricing?.discount) {
+                  pay();
+                  return;
+                }
+
+                redeemTickets();
+              }}
+            >
               {(handleSubmit) => (
-                <Button onClick={handleSubmit} loading={loadingRedeem}>Register</Button>
+                <Button onClick={handleSubmit} loading={loadingRedeem || loadingBuyTickets}>Register</Button>
               )}
             </SubmitForm>
           ) : (
