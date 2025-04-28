@@ -2,10 +2,10 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { Eip1193Provider } from "ethers";
 
-import { EthereumStakeAccount, PaymentAccountInfo, PaymentRefundInfo, PaymentRefundSignature } from '$lib/generated/backend/graphql';
+import { EthereumStakeAccount, PaymentAccountInfo, PaymentRefundInfo, PaymentRefundSignature } from '$lib/graphql/generated/backend/graphql';
 import { formatWallet, getChain, LemonadeStakePaymentContract } from "$lib/utils/crypto";
-import { useClient } from "$lib/request";
-import { GetPaymentRefundSignatureDocument } from "$lib/generated/backend/graphql";
+import { useClient } from "$lib/graphql/request";
+import { GetPaymentRefundSignatureDocument } from "$lib/graphql/generated/backend/graphql";
 import { toast, Button, modal, ModalContent } from "$lib/components/core";
 import { useAppKitAccount } from "$lib/utils/appkit";
 import { useAppKitProvider } from "$lib/utils/appkit";

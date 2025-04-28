@@ -2,8 +2,8 @@ import React, { useEffect, useMemo } from 'react';
 import { useAtom as useJotaiAtom } from 'jotai';
 import { format } from 'date-fns';
 
-import { CalculateTicketsPricingDocument, EthereumStakeAccount, Event, GetEventInvitationDocument, GetEventTicketTypesDocument, NewPaymentAccount, PurchasableTicketType } from '$lib/generated/backend/graphql';
-import { useQuery } from '$lib/request';
+import { CalculateTicketsPricingDocument, EthereumStakeAccount, Event, GetEventInvitationDocument, GetEventTicketTypesDocument, NewPaymentAccount, PurchasableTicketType } from '$lib/graphql/generated/backend/graphql';
+import { useQuery } from '$lib/graphql/request';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
 import { randomUserImage, userAvatar } from '$lib/utils/user';

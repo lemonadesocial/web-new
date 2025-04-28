@@ -1,7 +1,7 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { Event, GetEventDocument } from '$lib/generated/backend/graphql';
-import { getClient } from '$lib/request';
+import { Event, GetEventDocument } from '$lib/graphql/generated/backend/graphql';
+import { getClient } from '$lib/graphql/request';
 import ManageEventGuestSide from '$lib/components/features/event/ManageEventGuestSide';
 
 export default async function Page({ params }: { params: Promise<{ shortid: string }> }) {

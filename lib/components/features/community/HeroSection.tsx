@@ -7,9 +7,9 @@ import React from 'react';
 
 import { Button, modal, Spacer } from '$lib/components/core';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
-import { FollowSpaceDocument, Space, UnfollowSpaceDocument } from '$lib/generated/backend/graphql';
+import { FollowSpaceDocument, Space, UnfollowSpaceDocument } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
-import { useMutation } from '$lib/request';
+import { useMutation } from '$lib/graphql/request';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';

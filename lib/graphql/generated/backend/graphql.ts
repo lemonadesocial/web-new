@@ -6509,6 +6509,7 @@ export type Space = {
   image_cover?: Maybe<Scalars['MongoID']['output']>;
   image_cover_expanded?: Maybe<File>;
   is_ambassador?: Maybe<Scalars['Boolean']['output']>;
+  lens_feed_id?: Maybe<Scalars['String']['output']>;
   /** External events are listed on this space */
   listed_events?: Maybe<Array<Scalars['MongoID']['output']>>;
   personal?: Maybe<Scalars['Boolean']['output']>;
@@ -6765,6 +6766,7 @@ export type SpaceInput = {
   hostnames?: InputMaybe<Array<Scalars['String']['input']>>;
   image_avatar?: InputMaybe<Scalars['MongoID']['input']>;
   image_cover?: InputMaybe<Scalars['MongoID']['input']>;
+  lens_feed_id?: InputMaybe<Scalars['String']['input']>;
   /** Private space requires moderation for membership */
   private?: InputMaybe<Scalars['Boolean']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;

@@ -3,8 +3,8 @@ import { BrowserProvider, Eip1193Provider } from 'ethers';
 import { useAtomValue as useJotaiAtomValue } from "jotai";
 
 import { useAppKitNetwork, useAppKitProvider } from '$lib/utils/appkit';
-import { useMutation } from '$lib/request';
-import { UpdatePaymentDocument } from "$lib/generated/backend/graphql";
+import { useMutation } from '$lib/graphql/request';
+import { UpdatePaymentDocument } from "$lib/graphql/generated/backend/graphql";
 import { chainsMapAtom } from "$lib/jotai";
 
 import { registrationModal } from "../store";

@@ -1,7 +1,7 @@
 import { QRCodeSVG } from 'qrcode.react';
 
 import { Button, drawer, modal } from "$lib/components/core";
-import { Ticket, Event } from "$lib/generated/backend/graphql";
+import { Ticket, Event } from "$lib/graphql/generated/backend/graphql";
 import { useMe } from "$lib/hooks/useMe";
 import { downloadTicketPass, getAssignedTicket, getUnassignedTickets } from '$lib/utils/event';
 

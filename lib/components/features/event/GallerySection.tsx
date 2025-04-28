@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Divider, Skeleton } from '$lib/components/core';
-import { Event } from '$lib/generated/backend/graphql';
+import { Event } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 
 export function GallerySection({ event, loading }: { event: Event; loading?: boolean }) {

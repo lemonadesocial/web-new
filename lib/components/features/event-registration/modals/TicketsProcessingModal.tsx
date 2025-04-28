@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { GetMyTicketsDocument } from "$lib/generated/backend/graphql";
+import { GetMyTicketsDocument } from "$lib/graphql/generated/backend/graphql";
 import { useSession } from "$lib/hooks/useSession";
-import { useClient } from "$lib/request";
+import { useClient } from "$lib/graphql/request";
 import { toast } from "$lib/components/core";
 
 import { eventDataAtom, registrationModal, useAtomValue } from "../store";

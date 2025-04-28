@@ -1,8 +1,8 @@
 import { Divider, drawer } from '$lib/components/core';
-import { Event, GetEventsDocument } from '$lib/generated/backend/graphql';
+import { Event, GetEventsDocument } from '$lib/graphql/generated/backend/graphql';
 import React from 'react';
 import { EventListCard } from '../EventList';
-import { useQuery } from '$lib/request';
+import { useQuery } from '$lib/graphql/request';
 import Link from 'next/link';
 import { EventPane } from '../pane';
 

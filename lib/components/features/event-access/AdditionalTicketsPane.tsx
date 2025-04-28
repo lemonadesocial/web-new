@@ -2,11 +2,11 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useState } from 'react';
 
 import { Button, drawer, Input, modal, ModalContent, toast } from '$lib/components/core';
-import { AssignTicketsDocument, GetMyTicketsDocument, Ticket } from '$lib/generated/backend/graphql';
+import { AssignTicketsDocument, GetMyTicketsDocument, Ticket } from '$lib/graphql/generated/backend/graphql';
 import { useMe } from '$lib/hooks/useMe';
 import { downloadTicketPass, formatPrice } from '$lib/utils/event';
 import { EMAIL_REGEX } from '$lib/utils/regex';
-import { useMutation } from '$lib/request';
+import { useMutation } from '$lib/graphql/request';
 
 export function AdditionalTicketsPane({ tickets }: { tickets: Ticket[] }) {
   const me = useMe();

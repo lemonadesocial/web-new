@@ -1,7 +1,7 @@
 import { useForm, UseFormRegister, FieldErrors, Control } from 'react-hook-form';
 import * as React from 'react';
 
-import { UserInput } from '$lib/generated/backend/graphql';
+import { UserInput } from '$lib/graphql/generated/backend/graphql';
 import { Input, LabeledInput, SelectController } from '$lib/components/core';
 import { formInstancesAtom, requiredProfileFieldsAtom, submitHandlersAtom, useAtomValue, userInfoAtom, useSetAtom } from '../store';
 import { useMe } from '$lib/hooks/useMe';

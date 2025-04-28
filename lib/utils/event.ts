@@ -9,7 +9,7 @@ import {
   PaymentAccountInfo,
   PurchasableTicketType,
   Ticket,
-} from '$lib/generated/backend/graphql';
+} from '$lib/graphql/generated/backend/graphql';
 
 import { formatCurrency } from './string';
 

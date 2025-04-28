@@ -7,8 +7,8 @@ import {
   GetSpaceDocument,
   Space,
   UnfollowSpaceDocument,
-} from '$lib/generated/backend/graphql';
-import { useMutation, useQuery } from '$lib/request';
+} from '$lib/graphql/generated/backend/graphql';
+import { useMutation, useQuery } from '$lib/graphql/request';
 import { generateUrl } from '$lib/utils/cnd';
 import { COMMUNITY_SOCIAL_LINKS } from '../community/constants';
 import { useMe } from '$lib/hooks/useMe';

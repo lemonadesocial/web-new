@@ -3,7 +3,7 @@ import { atom, getDefaultStore } from 'jotai';
 import { ethers } from 'ethers';
 
 import { getListChains } from '$lib/utils/crypto';
-import { EthereumStakeAccount } from '$lib/generated/backend/graphql';
+import { EthereumStakeAccount } from '$lib/graphql/generated/backend/graphql';
 import StakeVaultABI from '$lib/abis/StakeVault.json';
 
 const StakeVaultContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(StakeVaultABI.abi));

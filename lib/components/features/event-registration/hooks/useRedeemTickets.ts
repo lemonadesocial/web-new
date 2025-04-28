@@ -1,5 +1,5 @@
-import { useMutation } from "$lib/request";
-import { RedeemTicketsDocument } from "$lib/generated/backend/graphql";
+import { useMutation } from "$lib/graphql/request";
+import { RedeemTicketsDocument } from "$lib/graphql/generated/backend/graphql";
 import { toast } from "$lib/components/core";
 import { useMe } from "$lib/hooks/useMe";
 

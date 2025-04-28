@@ -2,9 +2,9 @@ import { useState } from "react";
 
 import { generateUrl } from "$lib/utils/cnd";
 import { getDisplayPrice, getEventCardStart } from "$lib/utils/event";
-import { useClient } from "$lib/request/provider";
+import { useClient } from "$lib/graphql/request/provider";
 import { Button, Input, toast } from "$lib/components/core";
-import { CalculateTicketsPricingDocument, EthereumStakeAccount } from "$lib/generated/backend/graphql";
+import { CalculateTicketsPricingDocument, EthereumStakeAccount } from "$lib/graphql/generated/backend/graphql";
 
 import { currencyAtom, discountCodeAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtomValue, useSetAtom } from "./store";
 import { TicketSelectItem } from "./TicketSelectItem";

@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 
 import { Avatar, Badge, Card, Divider, Spacer } from '$lib/components/core';
-import { Address, Event, SpaceTagBase, User } from '$lib/generated/backend/graphql';
+import { Address, Event, SpaceTagBase, User } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
 import { getEventPrice } from '$lib/utils/event';

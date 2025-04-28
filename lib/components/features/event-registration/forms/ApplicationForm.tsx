@@ -10,8 +10,8 @@ import {
   useSetAtom,
   eventDataAtom
 } from '../store';
-import { EventApplicationAnswerInput, EventApplicationQuestion, SubmitEventApplicationAnswersDocument } from '$lib/generated/backend/graphql';
-import { useMutation } from '$lib/request';
+import { EventApplicationAnswerInput, EventApplicationQuestion, SubmitEventApplicationAnswersDocument } from '$lib/graphql/generated/backend/graphql';
+import { useMutation } from '$lib/graphql/request';
 
 interface ApplicationFormValues {
   [key: string]: string | string[];

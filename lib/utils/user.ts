@@ -1,7 +1,7 @@
 import { createAvatar } from '@dicebear/core';
 import * as thumbs from '@dicebear/thumbs';
 
-import { User } from "$lib/generated/backend/graphql";
+import { User } from "$lib/graphql/generated/backend/graphql";
 
 import { EDIT_KEY, generateUrl } from "./cnd";
 

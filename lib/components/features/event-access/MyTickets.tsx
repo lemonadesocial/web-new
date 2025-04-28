@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { Ticket, Event, PaymentRefundInfo } from '$lib/generated/backend/graphql';
+import { Ticket, Event, PaymentRefundInfo } from '$lib/graphql/generated/backend/graphql';
 import { Button, drawer, modal, ModalContent } from "$lib/components/core";
 import { downloadTicketPass, getAssignedTicket, getUnassignedTickets } from "$lib/utils/event";
 import { useMe } from "$lib/hooks/useMe";

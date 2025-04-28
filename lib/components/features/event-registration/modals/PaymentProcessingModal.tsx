@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-import { GetNewPaymentDocument, NewPaymentState } from '$lib/generated/backend/graphql';
+import { GetNewPaymentDocument, NewPaymentState } from '$lib/graphql/generated/backend/graphql';
 import { toast } from '$lib/components/core';
-import { useClient } from "$lib/request";
+import { useClient } from "$lib/graphql/request";
 
 import { registrationModal } from "../store";
 import { useProcessTickets } from '../hooks/useProcessTickets';

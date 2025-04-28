@@ -18,7 +18,7 @@ import {
   PurchasableItem,
   PurchasableTicketType,
   UserInput,
-} from '$lib/generated/backend/graphql';
+} from '$lib/graphql/generated/backend/graphql';
 
 import { EventRegistrationStoreContext } from './context';
 import { createModal } from '$lib/components/core';

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { GetSpaceDocument } from '$lib/generated/backend/graphql';
-import { getClient } from '$lib/request';
+import { GetSpaceDocument } from '$lib/graphql/generated/backend/graphql';
+import { getClient } from '$lib/graphql/request';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 
 export const config = {

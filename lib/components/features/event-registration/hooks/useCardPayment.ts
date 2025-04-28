@@ -2,8 +2,8 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useState } from "react";
 
 import { toast } from "$lib/components/core";
-import { StripeAccount, UpdatePaymentDocument } from "$lib/generated/backend/graphql";
-import { useMutation } from "$lib/request";
+import { StripeAccount, UpdatePaymentDocument } from "$lib/graphql/generated/backend/graphql";
+import { useMutation } from "$lib/graphql/request";
 
 import { pricingInfoAtom, registrationModal, selectedPaymentAccountAtom, stripePaymentMethodAtom, useAtomValue, useEventRegistrationStore } from "../store";
 import { PaymentProcessingModal } from "../modals/PaymentProcessingModal";

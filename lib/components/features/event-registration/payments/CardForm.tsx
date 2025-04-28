@@ -11,8 +11,8 @@ import { StripeCardNumberElementChangeEvent, StripeCardNumberElementOptions, Str
 
 import { Button, toast } from '$lib/components/core';
 import { useSession } from '$lib/hooks/useSession';
-import { useMutation } from '$lib/request';
-import { CreateStripeCardDocument } from '$lib/generated/backend/graphql';
+import { useMutation } from '$lib/graphql/request';
+import { CreateStripeCardDocument } from '$lib/graphql/generated/backend/graphql';
 
 import { stripePaymentMethodAtom, useSetAtom } from '../store';
 import { useCardPayment } from '../hooks/useCardPayment';

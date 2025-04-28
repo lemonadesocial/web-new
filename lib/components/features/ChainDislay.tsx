@@ -1,4 +1,4 @@
-import { Chain } from "$lib/generated/backend/graphql";
+import { Chain } from "$lib/graphql/generated/backend/graphql";
 
 const iconSizes = {
   sm: 'size-4',

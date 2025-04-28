@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 
-import { useQuery } from '$lib/request';
+import { useQuery } from '$lib/graphql/request';
 import { Avatar } from '$lib/components/core';
-import { PeekEventGuestsDocument, User } from '$lib/generated/backend/graphql';
+import { PeekEventGuestsDocument, User } from '$lib/graphql/generated/backend/graphql';
 import { userAvatar } from '$lib/utils/user';
 
 interface AttendeesSectionProps {

@@ -1,6 +1,6 @@
 import { Accordion, Divider } from '$lib/components/core';
-import { GetMySpaceEventRequestsDocument } from '$lib/generated/backend/graphql';
-import { useQuery } from '$lib/request';
+import { GetMySpaceEventRequestsDocument } from '$lib/graphql/generated/backend/graphql';
+import { useQuery } from '$lib/graphql/request';
 
 export function MyEventRequests({ spaceId }: { spaceId?: string }) {
   const { data } = useQuery(GetMySpaceEventRequestsDocument, {

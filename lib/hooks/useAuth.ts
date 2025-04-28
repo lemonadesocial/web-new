@@ -27,11 +27,12 @@ export function useAuth(hydraClientId?: string) {
         if (id && user?.user) setSession({ _id: id, user: user.user });
       })
       .catch((error) => {
-        toast.error(error.message);
-
         if (error.response?.status === 401) {
           if (session) logOut();
+          return;
         }
+
+        toast.error(error.message);
       })
       .finally(() => {
         setLoading(false);
