@@ -164,5 +164,5 @@ export function isAttending(event: Event, userId: string): boolean {
 }
 
 export function downloadTicketPass(ticket: Ticket) {
-  window.open(`${process.env.LMD_BE}/event/pass/${/iPad|iPhone|iPod/.test(navigator.userAgent) ? 'apple' : 'google'}/${ticket._id}?shortid=${ticket.shortid}`, '_blank');
+  window.open(`${process.env.NEXT_PUBLIC_LMD_BE}/event/pass/${/iPad|iPhone|iPod/.test(navigator.userAgent) ? 'apple' : 'google'}/${ticket._id}?shortid=${ticket.shortid}`, '_blank');
 }

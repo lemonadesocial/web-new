@@ -20,14 +20,14 @@ export function useQuery<T, V extends object>(
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<unknown>(null);
 
-  const fetchData = async () => {
+  const fetchData = async (fetchDataPolicy = fetchPolicy) => {
     try {
       setLoading(true);
       const { data: queryData } = await client.query({
         query,
         variables,
         initData,
-        fetchPolicy,
+        fetchPolicy: fetchDataPolicy,
       });
       setData(queryData);
       onComplete?.(queryData as T);
@@ -68,7 +68,7 @@ export function useQuery<T, V extends object>(
     });
   }, []);
 
-  return { data, loading, error, fetchMore, client };
+  return { data, loading, error, fetchMore, client, refetch: () => fetchData('network-only') };
 }
 
 export function useMutation<T, V extends object>(

@@ -124,6 +124,7 @@ export class GraphqlClient {
     }
 
     if (fetchPolicy === 'cache-and-network') {
+      // FIXME: read cache and fetch data to update cache
       await this.executeNetworkRequest(request);
       return;
     }
