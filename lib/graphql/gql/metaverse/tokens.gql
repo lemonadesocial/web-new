@@ -1,0 +1,112 @@
+query tokens($limit: Int, $skip: Int, $sample: Int, $where: TokenWhereComplex, $sort: TokenSort) {
+  tokens(limit: $limit, skip: $skip, sample: $sample, where: $where, sort: $sort) {
+    id
+    contract
+    tokenId
+    uri
+    creator
+    creatorExpanded {
+      _id
+      name
+      username
+      image_avatar
+    }
+    metadata
+    network
+  }
+}
+
+query getToken($id: String!, $network: String) {
+  token: getToken(id: $id, network: $network) {
+    network
+    id
+    contract
+    tokenId
+    uri
+    metadata
+    royalties {
+      account
+      value
+    }
+    owner
+    ownerExpanded {
+      name
+      image_avatar
+      username
+      _id
+    }
+    creator
+    creatorExpanded {
+      _id
+      name
+      username
+      image_avatar
+    }
+    metadataCreatorsExpanded {
+      _id
+      name
+      username
+      image_avatar
+    }
+    orders {
+      createdAt
+      updatedAt
+      updatedTransaction
+      maker
+      makerExpanded {
+        _id
+        image_avatar
+        name
+        username
+      }
+      currency {
+        id
+        name
+        symbol
+      }
+      price
+      bids {
+        createdAt
+        bidder
+        bidderExpanded {
+          _id
+          image_avatar
+          name
+          username
+        }
+        bidAmount
+        transaction
+      }
+      transaction
+      paidAmount
+      taker
+      takerExpanded {
+        _id
+        image_avatar
+        name
+        username
+      }
+    }
+    transfers {
+      createdAt
+      from
+      to
+      fromExpanded {
+        _id
+        image_avatar
+        name
+        username
+      }
+      toExpanded {
+        _id
+        username
+        image_avatar
+        name
+      }
+      transaction
+    }
+    registry {
+      supportsLemonadePoapV1
+    }
+  }
+}

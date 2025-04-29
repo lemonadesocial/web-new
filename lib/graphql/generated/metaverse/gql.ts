@@ -1,0 +1,46 @@
+/* eslint-disable */
+import * as types from './graphql';
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+
+/**
+ * Map of all GraphQL operations in the project.
+ *
+ * This map has several performance disadvantages:
+ * 1. It is not tree-shakeable, so it will include all operations in the project.
+ * 2. It is not minifiable, so the string of a GraphQL query will be multiple times inside the bundle.
+ * 3. It does not support dead code elimination, so it will add unused operations.
+ *
+ * Therefore it is highly recommended to use the babel or swc plugin for production.
+ * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
+ */
+type Documents = {
+    "query tokens($limit: Int, $skip: Int, $sample: Int, $where: TokenWhereComplex, $sort: TokenSort) {\n  tokens(limit: $limit, skip: $skip, sample: $sample, where: $where, sort: $sort) {\n    id\n    contract\n    tokenId\n    uri\n    creator\n    creatorExpanded {\n      _id\n      name\n      username\n      image_avatar\n    }\n    metadata\n    network\n  }\n}\n\nquery getToken($id: String!, $network: String) {\n  token: getToken(id: $id, network: $network) {\n    network\n    id\n    contract\n    tokenId\n    uri\n    metadata\n    royalties {\n      account\n      value\n    }\n    owner\n    ownerExpanded {\n      name\n      image_avatar\n      username\n      _id\n    }\n    creator\n    creatorExpanded {\n      _id\n      name\n      username\n      image_avatar\n    }\n    metadataCreatorsExpanded {\n      _id\n      name\n      username\n      image_avatar\n    }\n    orders {\n      createdAt\n      updatedAt\n      updatedTransaction\n      maker\n      makerExpanded {\n        _id\n        image_avatar\n        name\n        username\n      }\n      currency {\n        id\n        name\n        symbol\n      }\n      price\n      bids {\n        createdAt\n        bidder\n        bidderExpanded {\n          _id\n          image_avatar\n          name\n          username\n        }\n        bidAmount\n        transaction\n      }\n      transaction\n      paidAmount\n      taker\n      takerExpanded {\n        _id\n        image_avatar\n        name\n        username\n      }\n    }\n    transfers {\n      createdAt\n      from\n      to\n      fromExpanded {\n        _id\n        image_avatar\n        name\n        username\n      }\n      toExpanded {\n        _id\n        username\n        image_avatar\n        name\n      }\n      transaction\n    }\n    registry {\n      supportsLemonadePoapV1\n    }\n  }\n}": typeof types.TokensDocument,
+};
+const documents: Documents = {
+    "query tokens($limit: Int, $skip: Int, $sample: Int, $where: TokenWhereComplex, $sort: TokenSort) {\n  tokens(limit: $limit, skip: $skip, sample: $sample, where: $where, sort: $sort) {\n    id\n    contract\n    tokenId\n    uri\n    creator\n    creatorExpanded {\n      _id\n      name\n      username\n      image_avatar\n    }\n    metadata\n    network\n  }\n}\n\nquery getToken($id: String!, $network: String) {\n  token: getToken(id: $id, network: $network) {\n    network\n    id\n    contract\n    tokenId\n    uri\n    metadata\n    royalties {\n      account\n      value\n    }\n    owner\n    ownerExpanded {\n      name\n      image_avatar\n      username\n      _id\n    }\n    creator\n    creatorExpanded {\n      _id\n      name\n      username\n      image_avatar\n    }\n    metadataCreatorsExpanded {\n      _id\n      name\n      username\n      image_avatar\n    }\n    orders {\n      createdAt\n      updatedAt\n      updatedTransaction\n      maker\n      makerExpanded {\n        _id\n        image_avatar\n        name\n        username\n      }\n      currency {\n        id\n        name\n        symbol\n      }\n      price\n      bids {\n        createdAt\n        bidder\n        bidderExpanded {\n          _id\n          image_avatar\n          name\n          username\n        }\n        bidAmount\n        transaction\n      }\n      transaction\n      paidAmount\n      taker\n      takerExpanded {\n        _id\n        image_avatar\n        name\n        username\n      }\n    }\n    transfers {\n      createdAt\n      from\n      to\n      fromExpanded {\n        _id\n        image_avatar\n        name\n        username\n      }\n      toExpanded {\n        _id\n        username\n        image_avatar\n        name\n      }\n      transaction\n    }\n    registry {\n      supportsLemonadePoapV1\n    }\n  }\n}": types.TokensDocument,
+};
+
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ *
+ *
+ * @example
+ * ```ts
+ * const query = graphql(`query GetUser($id: ID!) { user(id: $id) { name } }`);
+ * ```
+ *
+ * The query argument is unknown!
+ * Please regenerate the types.
+ */
+export function graphql(source: string): unknown;
+
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query tokens($limit: Int, $skip: Int, $sample: Int, $where: TokenWhereComplex, $sort: TokenSort) {\n  tokens(limit: $limit, skip: $skip, sample: $sample, where: $where, sort: $sort) {\n    id\n    contract\n    tokenId\n    uri\n    creator\n    creatorExpanded {\n      _id\n      name\n      username\n      image_avatar\n    }\n    metadata\n    network\n  }\n}\n\nquery getToken($id: String!, $network: String) {\n  token: getToken(id: $id, network: $network) {\n    network\n    id\n    contract\n    tokenId\n    uri\n    metadata\n    royalties {\n      account\n      value\n    }\n    owner\n    ownerExpanded {\n      name\n      image_avatar\n      username\n      _id\n    }\n    creator\n    creatorExpanded {\n      _id\n      name\n      username\n      image_avatar\n    }\n    metadataCreatorsExpanded {\n      _id\n      name\n      username\n      image_avatar\n    }\n    orders {\n      createdAt\n      updatedAt\n      updatedTransaction\n      maker\n      makerExpanded {\n        _id\n        image_avatar\n        name\n        username\n      }\n      currency {\n        id\n        name\n        symbol\n      }\n      price\n      bids {\n        createdAt\n        bidder\n        bidderExpanded {\n          _id\n          image_avatar\n          name\n          username\n        }\n        bidAmount\n        transaction\n      }\n      transaction\n      paidAmount\n      taker\n      takerExpanded {\n        _id\n        image_avatar\n        name\n        username\n      }\n    }\n    transfers {\n      createdAt\n      from\n      to\n      fromExpanded {\n        _id\n        image_avatar\n        name\n        username\n      }\n      toExpanded {\n        _id\n        username\n        image_avatar\n        name\n      }\n      transaction\n    }\n    registry {\n      supportsLemonadePoapV1\n    }\n  }\n}"): (typeof documents)["query tokens($limit: Int, $skip: Int, $sample: Int, $where: TokenWhereComplex, $sort: TokenSort) {\n  tokens(limit: $limit, skip: $skip, sample: $sample, where: $where, sort: $sort) {\n    id\n    contract\n    tokenId\n    uri\n    creator\n    creatorExpanded {\n      _id\n      name\n      username\n      image_avatar\n    }\n    metadata\n    network\n  }\n}\n\nquery getToken($id: String!, $network: String) {\n  token: getToken(id: $id, network: $network) {\n    network\n    id\n    contract\n    tokenId\n    uri\n    metadata\n    royalties {\n      account\n      value\n    }\n    owner\n    ownerExpanded {\n      name\n      image_avatar\n      username\n      _id\n    }\n    creator\n    creatorExpanded {\n      _id\n      name\n      username\n      image_avatar\n    }\n    metadataCreatorsExpanded {\n      _id\n      name\n      username\n      image_avatar\n    }\n    orders {\n      createdAt\n      updatedAt\n      updatedTransaction\n      maker\n      makerExpanded {\n        _id\n        image_avatar\n        name\n        username\n      }\n      currency {\n        id\n        name\n        symbol\n      }\n      price\n      bids {\n        createdAt\n        bidder\n        bidderExpanded {\n          _id\n          image_avatar\n          name\n          username\n        }\n        bidAmount\n        transaction\n      }\n      transaction\n      paidAmount\n      taker\n      takerExpanded {\n        _id\n        image_avatar\n        name\n        username\n      }\n    }\n    transfers {\n      createdAt\n      from\n      to\n      fromExpanded {\n        _id\n        image_avatar\n        name\n        username\n      }\n      toExpanded {\n        _id\n        username\n        image_avatar\n        name\n      }\n      transaction\n    }\n    registry {\n      supportsLemonadePoapV1\n    }\n  }\n}"];
+
+export function graphql(source: string) {
+  return (documents as any)[source] ?? {};
+}
+
+export type DocumentType<TDocumentNode extends DocumentNode<any, any>> = TDocumentNode extends DocumentNode<  infer TType,  any>  ? TType  : never;

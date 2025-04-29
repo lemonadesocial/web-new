@@ -2,21 +2,13 @@
 import React from 'react';
 import { useSetAtom } from 'jotai';
 
-import { GraphqlClientProvider, GraphqlClient, InMemoryCache } from '$lib/graphql/request';
-import { GRAPHQL_URL } from '$lib/utils/constants';
+import { GraphqlClientProvider } from '$lib/graphql/request';
 import { initializeAppKit } from '$lib/utils/appkit';
 import { useAuth } from '$lib/hooks/useAuth';
 import { useListChains } from '$lib/hooks/useListChains';
 import { SpaceHydraKeys } from '$lib/utils/space';
 import { hydraClientIdAtom } from '$lib/jotai';
-
-const client = new GraphqlClient({
-  url: GRAPHQL_URL,
-  cache: new InMemoryCache(),
-  options: {
-    credentials: 'include',
-  },
-});
+import { defaultClient } from '$lib/graphql/request/instances';
 
 export default function Providers({ children, space }: { children: React.ReactNode; space?: SpaceHydraKeys | null; }) {
   const oryLoading = useAuth(space?.hydra_client_id);
@@ -38,7 +30,7 @@ export default function Providers({ children, space }: { children: React.ReactNo
   if (oryLoading || chainsLoading) return null;
 
   return (
-    <GraphqlClientProvider client={client}>
+    <GraphqlClientProvider client={defaultClient}>
       {children}
     </GraphqlClientProvider>
   );

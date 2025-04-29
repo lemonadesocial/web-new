@@ -1,6 +1,5 @@
 fragment User on User {
   _id
-  email
   name
   display_name
   first_name
@@ -27,7 +26,6 @@ fragment User on User {
     key
     bucket
   }
-  wallets
   url
   url_go
 }

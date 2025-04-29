@@ -77,6 +77,12 @@ query GetEvent($id: MongoID, $shortid: String) {
       outlook
       yahoo
     }
+    offers {
+      _id
+      provider
+      provider_id
+      provider_network
+    }
   }
 }
 
