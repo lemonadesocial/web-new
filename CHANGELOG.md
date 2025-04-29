@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.13.0](https://github.com/lemonadesocial/web-new/compare/v1.12.2...v1.13.0) (2025-04-29)
+
+
+### Features
+
+* add starts in ([d3b8637](https://github.com/lemonadesocial/web-new/commit/d3b8637f1b1065068156cdb5a21d3576e0483b90))
+* graphql subscription ([eadce29](https://github.com/lemonadesocial/web-new/commit/eadce293b66a97e863f7d82f3a9004d16e7c751d))
+* update shader config ([64c2757](https://github.com/lemonadesocial/web-new/commit/64c275705374c3e5b1e289b72b8dce0849305852))
+
+
+### Bug Fixes
+
+* assign tickets not updating tickets data ([ec17b3d](https://github.com/lemonadesocial/web-new/commit/ec17b3d74cdb58850d194cde82afcdc47217d932))
+* cannot apply code 100% ([23ac6ba](https://github.com/lemonadesocial/web-new/commit/23ac6bacd6b0691a6657be68f2a3978ef30f8a9f))
+* show short location ([0664117](https://github.com/lemonadesocial/web-new/commit/0664117545deeb501dbcd2f32bc110683b5f17aa))
+
 ## [1.12.2](https://github.com/lemonadesocial/web-new/compare/v1.12.1...v1.12.2) (2025-04-25)
 
 
