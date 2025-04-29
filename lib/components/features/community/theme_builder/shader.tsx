@@ -2,7 +2,7 @@ import React from 'react';
 import { ShaderGradientCanvas, ShaderGradient as ReactShaderGradient } from '@shadergradient/react';
 
 export function ShaderGradient() {
-  const [colors, setColors] = React.useState({ color1: '#e1dbfc', color2: '#f0a7fa', color3: '#ddf9fe' });
+  const [colors, setColors] = React.useState({ color1: '#e1dbfc', color2: '#ebd0fa', color3: '#ddf9fe' });
 
   const getCSSVariable = (variable: string) => {
     const el = document.querySelector('.shader');
@@ -47,16 +47,12 @@ export function ShaderGradient() {
           type="waterPlane"
           brightness={1.2}
           uSpeed={0.2}
-          cDistance={4.4}
           grain="off"
-          positionX={0}
-          positionY={0.9}
-          positionZ={-0.3}
-          cAzimuthAngle={170}
-          cPolarAngle={70}
-          rotationX={45}
-          rotationY={0}
-          rotationZ={0}
+          cAzimuthAngle={180}
+          cPolarAngle={90}
+          rotationZ={90}
+          uStrength={2.4}
+          uDensity={0.8}
           color1={getCSSVariable('--shader-color-1') || colors.color1}
           color2={getCSSVariable('--shader-color-2') || colors.color2}
           color3={getCSSVariable('--shader-color-3') || colors.color3}
