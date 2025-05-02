@@ -98,7 +98,7 @@ export function RegistrationModal() {
           isFree ? (
             <SubmitForm
               onComplete={() => {
-                if (pricing?.discount) {
+                if (pricing?.discount !== '0') {
                   pay();
                   return;
                 }
