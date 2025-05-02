@@ -83,6 +83,15 @@ query GetEvent($id: MongoID, $shortid: String) {
       provider_id
       provider_network
     }
+    event_ticket_types {
+      _id
+      offers {
+        _id
+        provider_network
+        provider_id
+        provider
+      }
+    }
   }
 }
 
