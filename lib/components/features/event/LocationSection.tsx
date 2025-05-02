@@ -35,7 +35,7 @@ export function LocationSection({ event, loading = false }: { event?: Event; loa
       {
         attending && (
           <div className="aspect-video h-[240px] rounded-sm overflow-hidden">
-            <Map colorscheme="LIGHT" markers={markers} defaultZoom={17} />
+            <Map colorscheme="LIGHT" markers={markers} defaultZoom={15} />
           </div>
         )
       }
