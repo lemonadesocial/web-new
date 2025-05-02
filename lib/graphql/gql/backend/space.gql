@@ -56,7 +56,7 @@ fragment Space on Space {
   sub_spaces
 }
 
-fragment SpaceTag on SpaceTagBase {
+fragment SpaceTagFragment on SpaceTag {
   _id
   color
   space
@@ -168,7 +168,7 @@ query GetSpaceEventsCalendar($space: MongoID) {
 
 query GetSpaceTags($space: MongoID!) {
   listSpaceTags(space: $space) {
-    ...SpaceTag
+    ...SpaceTagFragment
   }
 }
 

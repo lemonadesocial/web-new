@@ -140,16 +140,20 @@ interface ModalContentProps {
   children: React.ReactNode;
   title?: React.ReactNode;
   icon?: React.ReactNode;
-  onClose?: () => void;
   className?: string;
+  onClose?: () => void;
+  onBack?: () => void;
 }
 
-export function ModalContent({ children, onClose, title, icon, className }: ModalContentProps) {
+export function ModalContent({ children, onClose, title, icon, className, onBack }: ModalContentProps) {
   return (
     <div className={twMerge("p-4 space-y-4 w-[340px]", className)}>
       {
-        (title || icon || onClose) && (
+        (title || icon || onClose || onBack) && (
           <div className={clsx("flex justify-between", icon ? 'items-start' : 'items-center')}>
+            {onBack && (
+              <Button icon="icon-chevron-left" size='xs' variant="tertiary" className="rounded-full" onClick={onBack} />
+            )}
             {icon && (
               <div className="size-[56px] flex justify-center items-center rounded-full bg-primary/8">
                 {
@@ -157,7 +161,7 @@ export function ModalContent({ children, onClose, title, icon, className }: Moda
                 }
               </div>
             )}
-            {title && <span className='min-w-6' />}
+            {title && !onBack && <span className='min-w-6' />}
             {title}
             {onClose && (
               <Button icon="icon-x" size='xs' variant="tertiary" className="rounded-full" onClick={onClose} />

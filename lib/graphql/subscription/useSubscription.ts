@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, useRef, useMemo } from 'react';
-import { DocumentNode } from 'graphql';
+import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { print } from 'graphql/language/printer';
 
 import { GraphQLWSContext } from './context';
@@ -17,15 +17,14 @@ export interface SubscriptionHookResult<TData = any> {
   error: any | null;
 }
 
-export const useSubscription = <TData = any, TVariables = OperationVariables>(
-  query: DocumentNode | string,
-  options?: SubscriptionHookOptions<TData, TVariables>
-): SubscriptionHookResult<TData> => {
+export const useSubscription = <T, V>(
+  query: TypedDocumentNode<T, V>,
+  options?: SubscriptionHookOptions<T, V>
+): SubscriptionHookResult<T> => {
   const { client } = useContext(GraphQLWSContext);
-  console.log('client', client);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any | null>(null);
-  const [data, setData] = useState<TData | null>(null);
+  const [data, setData] = useState<T | null>(null);
 
   const unsubscribeRef = useRef<(() => void) | null>(null);
 
@@ -59,7 +58,7 @@ export const useSubscription = <TData = any, TVariables = OperationVariables>(
 
     unsubscribeRef.current?.();
 
-    const unsubscribe = client.subscribe<TData>(
+    const unsubscribe = client.subscribe<T>(
       {
         query: queryString,
         variables: options?.variables,
@@ -102,7 +101,7 @@ export const useSubscription = <TData = any, TVariables = OperationVariables>(
       unsubscribeRef.current = null;
     };
 
-  }, [client, queryString, variablesString, onData, onErrorCallback]);
+  }, [client, queryString, variablesString]);
 
   return { data, loading, error };
 };

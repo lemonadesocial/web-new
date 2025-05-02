@@ -1,9 +1,9 @@
 import React from 'react';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 
-import { useClient } from './provider';
 import { MutationOptions, QueryOptions } from './type';
 import { GraphqlClient } from './client';
+import { defaultClient } from './instances';
 
 export function useQuery<T, V extends object>(
   query: TypedDocumentNode<T, V>,
@@ -14,8 +14,8 @@ export function useQuery<T, V extends object>(
     fetchPolicy,
     onComplete,
   }: QueryOptions<T, V> & { onComplete?: (data: T) => void } = {},
+  client: GraphqlClient = defaultClient,
 ) {
-  const { client } = useClient();
   const [data, setData] = React.useState<T | null>(initData);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<unknown>(null);
@@ -74,13 +74,14 @@ export function useQuery<T, V extends object>(
 export function useMutation<T, V extends object>(
   query: TypedDocumentNode<T, V>,
   options?: MutationOptions<T, V>,
+  client: GraphqlClient = defaultClient,
 ): [
   (
     opts: MutationOptions<T, V>,
   ) => Promise<{ data?: T | null; error: unknown; loading: boolean; client: GraphqlClient }>,
   { data?: T | null; error: unknown; loading: boolean; client: GraphqlClient },
+  client: GraphqlClient,
 ] {
-  const { client } = useClient();
   const [data, setData] = React.useState<T | null>();
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<unknown>(null);

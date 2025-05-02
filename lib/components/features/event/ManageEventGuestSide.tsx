@@ -6,7 +6,7 @@ import { Event, GetEventDocument, GetEventQuery, User } from '$lib/graphql/gener
 import { useQuery } from '$lib/graphql/request';
 import { Avatar, Badge, Button, Spacer } from '$lib/components/core';
 import { generateUrl } from '$lib/utils/cnd';
-import { hosting } from '$lib/utils/event';
+import { hosting, isAttending } from '$lib/utils/event';
 import { userAvatar } from '$lib/utils/user';
 import { useSession } from '$lib/hooks/useSession';
 
@@ -22,6 +22,7 @@ import { EventDateTimeBlock } from './EventDateTimeBlock';
 import { EventLocationBlock } from './EventLocationBlock';
 import { AttendeesSection } from './AttendeesSection';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { EventCollectibles } from '../event-collectibles';
 
 export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
   const { data, loading } = useQuery(GetEventDocument, {
@@ -36,6 +37,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
   const hosts = uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id);
 
   const isHost = session?.user && event && hosting(event, session.user);
+  const attending = session?.user ? isAttending(event, session?.user) : false;
 
   return (
     <div className="flex gap-[72px]">
@@ -123,6 +125,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />
         <GallerySection event={event} loading={loading} />
+        {attending && <EventCollectibles event={event} />}
         <Spacer className="h-8" />
       </div>
     </div>

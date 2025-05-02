@@ -1,2 +1,2 @@
-export * from './GraphQLWSProvider';
+export * from './provider';
 export * from './useSubscription';

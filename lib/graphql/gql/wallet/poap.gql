@@ -1,0 +1,53 @@
+query poapView($network: String!, $address: Address!, $name: String!, $args: [JSON!]) {
+  poapView(network: $network, address: $address, name: $name, args: $args)
+}
+
+mutation claimPoap($network: String!, $address: Address!, $input: ClaimArgsInput) {
+  claimPoap(network: $network, address: $address, input: $input) {
+    _id
+  }
+}
+
+subscription claimModified {
+  claimModified {
+    to
+    network
+    state
+    errorDescription
+    errorMessage
+    address
+    tokenId
+    chainlinkRequest { fulfilled }
+    args { tokenURI }
+  }
+}
+
+mutation transfer($input: TransferArgsInput!, $network: String!, $address: Address!) {
+  transfer(input: $input, network: $network, address: $address) {
+    _id
+    network
+    state
+    to
+    errorMessage
+    address
+    args {
+      to
+      tokenId
+    }
+  }
+}
+
+subscription transferModified {
+  transferModified {
+    to
+    network
+    state
+    errorMessage
+    address
+    tokenId
+    args {
+      to
+      tokenId
+    }
+  }
+}
