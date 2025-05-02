@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.1](https://github.com/lemonadesocial/web-new/compare/v1.16.0...v1.16.1) (2025-05-02)
+
+
+### Bug Fixes
+
+* copy ([d2fc4af](https://github.com/lemonadesocial/web-new/commit/d2fc4af4a1aa7dd60a693ed704690c607be1c764))
+
 ## [1.16.0](https://github.com/lemonadesocial/web-new/compare/v1.15.0...v1.16.0) (2025-05-02)
 
 
