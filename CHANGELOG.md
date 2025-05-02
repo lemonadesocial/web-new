@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.2](https://github.com/lemonadesocial/web-new/compare/v1.16.1...v1.16.2) (2025-05-02)
+
+
+### Bug Fixes
+
+* collectibles per ticket ([9c3d6c7](https://github.com/lemonadesocial/web-new/commit/9c3d6c706240a9a45d946cf777268410615ed0e7))
+
 ## [1.16.1](https://github.com/lemonadesocial/web-new/compare/v1.16.0...v1.16.1) (2025-05-02)
 
 
