@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.0](https://github.com/lemonadesocial/web-new/compare/v1.15.0...v1.16.0) (2025-05-02)
+
+
+### Features
+
+* event collectible ([94b4535](https://github.com/lemonadesocial/web-new/commit/94b45358d2760fc487a0def93558827dc2470901))
+
 ## [1.15.0](https://github.com/lemonadesocial/web-new/compare/v1.14.0...v1.15.0) (2025-05-02)
 
 
