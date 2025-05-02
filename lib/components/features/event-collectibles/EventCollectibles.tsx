@@ -1,13 +1,30 @@
 import { TokenComplex, TokensDocument } from "$lib/graphql/generated/metaverse/graphql";
 import { useQuery } from "$lib/graphql/request";
-import { Event } from "$lib/graphql/generated/backend/graphql";
+import { Event, GetMyTicketsDocument, Ticket } from "$lib/graphql/generated/backend/graphql";
 import { metaverseClient } from "$lib/graphql/request/instances";
 import { GraphQLWSProvider } from "$lib/graphql/subscription";
+import { getAssignedTicket } from "$lib/utils/event";
+import { useSession } from "$lib/hooks/useSession";
 
 import { CollectibleList } from "./CollectibleList";
+import { usePoapOffers } from "./hooks";
 
 export function EventCollectibles({ event }: { event: Event }) {
-  const offers = event.offers?.filter(offer => offer.provider === 'poap');
+  const session = useSession();
+
+  const { data: ticketsData } = useQuery(GetMyTicketsDocument, {
+    variables: {
+      event: event._id,
+      withPaymentInfo: true
+    },
+    skip: !session?.user
+  });
+
+  const tickets = ticketsData?.getMyTickets.tickets as Ticket[];
+  const myTicket = getAssignedTicket(tickets, session?.user) || tickets?.[0];
+  const ticketType = myTicket?.type;
+
+  const offers = usePoapOffers(event, ticketType);
 
   const { data } = useQuery(
     TokensDocument,
