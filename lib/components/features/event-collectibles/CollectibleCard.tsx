@@ -31,7 +31,7 @@ export function CollectibleCard({ token, offer }: { token: TokenComplex; offer: 
   return (
     <div className="bg-card-background border border-card-border rounded-md p-4 space-y-4">
       <div className="flex items-center justify-center aspect-square">
-        <MetaMedia metadata={token.metadata} className="border border-card-border rounded-sm h-min max-h-full" />
+        <MetaMedia metadata={token.metadata} className="border border-card-border rounded-sm max-h-full" />
       </div>
       <div className="flex items-center justify-between">
         <p className="font-lg truncate">{token.metadata?.name}</p>
