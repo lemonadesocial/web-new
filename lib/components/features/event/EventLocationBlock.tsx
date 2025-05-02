@@ -12,15 +12,15 @@ export function EventLocationBlock({ loading = false, event }: { loading?: boole
   const attending = session?.user ? isAttending(event, session?.user) : false;
 
   return (
-    <div className="flex gap-4 flex-1 text-nowrap">
-      <div className="border rounded-sm size-12 flex items-center justify-center">
+    <div className="flex gap-4 flex-1">
+      <div className="border rounded-sm size-12 min-w-12 flex items-center justify-center">
         <i className="icon-location-outline" />
       </div>
-      <div>
-        <p>
+      <div className="truncate">
+        <p className="truncate">
           {attending ? (
             <>
-              {event.address?.title} <i className="icon-arrow-outward text-quaternary size-[18px]" />
+              {'Tokey Towr Tokey Towr Tokey Towr Tokey Towr'} <i className="icon-arrow-outward text-quaternary size-[18px]" />
             </>
           ) : (
             'Register to See Address'
