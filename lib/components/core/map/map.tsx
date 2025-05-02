@@ -41,6 +41,7 @@ export function Map({
         disableDefaultUI
         styles={colorscheme == 'DARK' ? darkMapTheme : undefined}
         colorScheme={colorscheme}
+        gestureHandling={null}
       >
         {markers?.map((item, idx) => {
           if (marker == 'advanced') {

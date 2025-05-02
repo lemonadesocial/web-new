@@ -32,9 +32,13 @@ export function LocationSection({ event, loading = false }: { event?: Event; loa
             : [event.address?.city || event.address?.region, event.address?.country].filter(Boolean).join(', ')}
         </p>
       </div>
-      <div className="aspect-video h-[240px] rounded-sm overflow-hidden">
-        <Map colorscheme="LIGHT" markers={markers} defaultZoom={5} />
-      </div>
+      {
+        attending && (
+          <div className="aspect-video h-[240px] rounded-sm overflow-hidden">
+            <Map colorscheme="LIGHT" markers={markers} defaultZoom={17} />
+          </div>
+        )
+      }
     </div>
   );
 }
