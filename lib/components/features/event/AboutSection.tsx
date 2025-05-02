@@ -25,15 +25,15 @@ function AboutSectionSkeleton() {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2.5">
           <Skeleton animate className="h-4 w-full" />
-          <Skeleton animate className="h-4 w-[448px]" />
-          <Skeleton animate className="h-4 w-[240px]" />
+          <Skeleton animate className="h-4 w-2/3" />
+          <Skeleton animate className="h-4 w-1/2" />
         </div>
         <div className="flex flex-col gap-2.5">
           <Skeleton animate className="h-4 w-full" />
-          <Skeleton animate className="h-4 w-[472px]" />
+          <Skeleton animate className="h-4 w-2/3" />
           <Skeleton animate className="h-4 w-full" />
-          <Skeleton animate className="h-4 w-[448px]" />
-          <Skeleton animate className="h-4 w-[120px]" />
+          <Skeleton animate className="h-4 w-2/3" />
+          <Skeleton animate className="h-4 w-1/2" />
         </div>
       </div>
     </div>

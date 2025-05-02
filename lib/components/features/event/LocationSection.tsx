@@ -50,8 +50,8 @@ function LocationSectionSkeleton() {
       <Divider className="h-1 w-full mb-2" />
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2.5">
-          <Skeleton animate className="h-6 w-[160px]" />
-          <Skeleton animate className="h-4 w-[400px]" />
+          <Skeleton animate className="h-6 w-1/3" />
+          <Skeleton animate className="h-4 w-2/3" />
         </div>
 
         <Skeleton className="h-60 w-full rounded-sm" />
