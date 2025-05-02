@@ -11,6 +11,20 @@
 ### Bug Fixes
 
 * drawer bg ([3d10365](https://github.com/lemonadesocial/web-new/commit/3d10365f8937dea994d76d2e9b2fedf7b9faff57))
+* gesture handle map ([0748f98](https://github.com/lemonadesocial/web-new/commit/0748f986e393a1a6b59b95f4f520b771c0246930))
+* hide cover photo in gallery ([6857683](https://github.com/lemonadesocial/web-new/commit/68576831fcbf4636a6ede72b45c8d4cdf175afb4))
+
+## [1.14.0](https://github.com/lemonadesocial/web-new/compare/v1.13.1...v1.14.0) (2025-05-02)
+
+
+### Features
+
+* disable map gesture ([ceda157](https://github.com/lemonadesocial/web-new/commit/ceda157ca5e6c3717c1d366577e5d1f7d1305809))
+
+
+### Bug Fixes
+
+* drawer bg ([3d10365](https://github.com/lemonadesocial/web-new/commit/3d10365f8937dea994d76d2e9b2fedf7b9faff57))
 
 ## [1.13.1](https://github.com/lemonadesocial/web-new/compare/v1.13.0...v1.13.1) (2025-05-02)
 
