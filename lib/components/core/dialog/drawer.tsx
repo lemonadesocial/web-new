@@ -80,10 +80,12 @@ export function DrawerContainer() {
     };
 
     if (isOpen) {
+      document.body.style.overflow = 'hidden';
       document.addEventListener('mousedown', handleOutsideClick);
     }
 
     return () => {
+      document.body.style.overflow = 'auto';
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, [isOpen]);
@@ -97,7 +99,7 @@ export function DrawerContainer() {
       {isOpen && (
         <div className="fixed z-100 inset-0">
           <div className="h-full w-full p-2">
-            <div className="bg-overlay-backdrop fixed inset-0 z-0" />
+            <div className="fixed inset-0 z-0" />
             <div className={clsx('flex h-full', options.position === 'right' && 'justify-end')}>
               <motion.div
                 key="drawer"
@@ -107,7 +109,7 @@ export function DrawerContainer() {
                 transition={{ duration: options.duration }}
                 ref={ref}
                 className={twMerge(
-                  'bg-background  backdrop-blur-md rounded-sm flex-1 max-w-[528px] overflow-auto no-scrollbar z-10',
+                  'rounded-sm flex-1 max-w-[528px] overflow-auto no-scrollbar z-10',
                   options.contentClass,
                 )}
                 style={{
