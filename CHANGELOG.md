@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.1](https://github.com/lemonadesocial/web-new/compare/v1.13.0...v1.13.1) (2025-05-02)
+
+
+### Bug Fixes
+
+* lock body scroll mobile ([caf1583](https://github.com/lemonadesocial/web-new/commit/caf15831fe0065182f06668786e92a924f494d8f))
+
 ## [1.13.0](https://github.com/lemonadesocial/web-new/compare/v1.12.2...v1.13.0) (2025-04-29)
 
 
