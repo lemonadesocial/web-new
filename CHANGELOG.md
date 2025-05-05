@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.17.0](https://github.com/lemonadesocial/web-new/compare/v1.16.4...v1.17.0) (2025-05-05)
+
+
+### Features
+
+* update shader with mode theme ([81270a7](https://github.com/lemonadesocial/web-new/commit/81270a72c9c1f99ea637256c898721ba6c7be3c5))
+
+
+### Bug Fixes
+
+* event new ([83c3614](https://github.com/lemonadesocial/web-new/commit/83c361437614b65a58955b1481ffd39d1f859f6b))
+* hide personal space on event ([5d05f12](https://github.com/lemonadesocial/web-new/commit/5d05f1208dbc912c5cb5a18ad7bd47409848706b))
+* remove outline image avatar community ([7ce56a8](https://github.com/lemonadesocial/web-new/commit/7ce56a8badab7d4bcbf6d2ab4b5e4c592455e3d8))
+* ui issues ([b4eefd6](https://github.com/lemonadesocial/web-new/commit/b4eefd6cff536d4bd0b247ecbf0d650c29a11c70))
+
 ## [1.16.4](https://github.com/lemonadesocial/web-new/compare/v1.16.3...v1.16.4) (2025-05-02)
 
 
