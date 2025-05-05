@@ -82,7 +82,7 @@ export function CommunitySection({ event }: { event?: Event }) {
           <i
             key={item.key}
             aria-label={item.key}
-            className={`${item.icon} cursor-pointer text-tertiary hover:text-tertiary`}
+            className={`${item.icon} cursor-pointer text-tertiary hover:text-primary size-5`}
             onClick={() => window.open(`${item.prefix}${space?.[item.key as keyof Space]}`, '_blank')}
           />
         ))}

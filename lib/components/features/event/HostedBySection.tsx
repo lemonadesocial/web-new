@@ -1,26 +1,39 @@
 import React from 'react';
-import { Avatar, Divider } from '$lib/components/core';
-import { Event } from '$lib/graphql/generated/backend/graphql';
-import { generateUrl } from '$lib/utils/cnd';
-import Link from 'next/link';
-import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { uniqBy } from 'lodash';
+import Link from 'next/link';
+
+import { Avatar, Divider } from '$lib/components/core';
+import { Event, User } from '$lib/graphql/generated/backend/graphql';
+import { generateUrl } from '$lib/utils/cnd';
+import { LEMONADE_DOMAIN } from '$lib/utils/constants';
+
+import { COMMUNITY_SOCIAL_LINKS } from '../community/constants';
 
 export function HostedBySection({ event }: { event: Event }) {
   if (!event) return null;
 
-  const hosts = uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id);
+  const hosts = uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id).filter((u) => u?._id) as User[];
 
   return (
     <div className="event-description flex flex-col gap-2 w-full">
       <p className="font-medium text-sm">Hosted by</p>
       <Divider className="h-1 w-full mb-2" />
       {hosts.map((u) => (
-        <div key={u?._id} className="flex gap-3">
-          {u?.new_photos_expanded && <Avatar src={generateUrl(u?.new_photos_expanded[0])} />}
-          <Link className="hover:text-accent-400" href={`${LEMONADE_DOMAIN}/u/${u?.username}`} target="_blank">
-            {u?.name}
+        <div key={u._id} className="flex gap-3">
+          {u.new_photos_expanded && <Avatar src={generateUrl(u.new_photos_expanded[0])} />}
+          <Link className="hover:text-accent-400 flex-1 font-medium" href={`${LEMONADE_DOMAIN}/u/${u?.username}`} target="_blank">
+            {u.name}
           </Link>
+          <div className="flex items-center gap-3">
+            {COMMUNITY_SOCIAL_LINKS.filter((item) => u[item.key as keyof User]).map((item) => (
+              <i
+                key={item.key}
+                aria-label={item.key}
+                className={`${item.icon} cursor-pointer text-tertiary hover:text-primary size-5`}
+                onClick={() => window.open(`${item.prefix}${u[item.key as keyof User]}`, '_blank')}
+              />
+            ))}
+          </div>
         </div>
       ))}
     </div>

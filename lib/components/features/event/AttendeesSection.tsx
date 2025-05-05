@@ -20,7 +20,7 @@ export function AttendeesSection({ eventId, limit = 5 }: AttendeesSectionProps) 
   const totalAttendees = useMemo(() => data?.peekEventGuests?.total || 0, [data]);
 
   const visibleAttendees = useMemo(() => {
-    return guests.slice(0, 2).map(guest => guest.name).filter(Boolean);
+    return guests.slice(0, 2).map(guest => guest.name || 'Anonymous');
   }, [guests]);
 
   const othersCount = totalAttendees - visibleAttendees.length;

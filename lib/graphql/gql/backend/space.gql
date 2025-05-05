@@ -140,6 +140,10 @@ query GetSpaceEvents(
         cost
         currency
         default
+        payment_accounts
+        payment_accounts_expanded {
+          ...PaymentAccount
+        }
       }
     }
     host_expanded {
