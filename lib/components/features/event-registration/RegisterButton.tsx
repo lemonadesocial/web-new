@@ -30,12 +30,6 @@ export function RegisterButton() {
     registrationModal.open(RegistrationModal, { skipBaseClassName: true });
   };
 
-  if (event.approval_required && !session) return (
-    <Button variant="secondary" disabled={disabled} onClick={signIn}>
-      Request to Join
-    </Button>
-  );
-
   if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session) return (
     <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
       {approvalRequired ? 'Request to Join' : hasSingleFreeTicket ? 'Register' : 'Get Tickets'}

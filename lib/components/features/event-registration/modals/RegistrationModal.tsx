@@ -47,8 +47,8 @@ export function RegistrationModal() {
   const { pay, loading: loadingBuyTickets } = useBuyTickets();
 
   const selectedTicketTypes = ticketTypes.filter(ticket => purchaseItems.some(item => item.id === ticket._id));
-  const ticketPaymentAccounts = selectedTicketTypes.flatMap(ticket => ticket.prices.flatMap(price => price.payment_accounts_expanded || []));
-  const paymentAccountsSet = uniqBy(ticketPaymentAccounts, '_id');
+  const ticketPaymentAccounts = selectedTicketTypes.map(ticket => ticket.prices.flatMap(price => price.payment_accounts_expanded || []));
+  const paymentAccountsSet = intersection(...ticketPaymentAccounts);
   const [stripeAccounts, cryptoAccounts] = partition(paymentAccountsSet, account => account.provider === 'stripe');
 
   const showPaymentSwitch = stripeAccounts.length && cryptoAccounts.length;

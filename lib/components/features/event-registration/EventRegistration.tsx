@@ -15,6 +15,7 @@ import {
   currencyAtom,
   discountCodeAtom,
   eventAtom,
+  eventDataAtom,
   hasSingleFreeTicketAtom,
   nonLoggedInStatusAtom,
   pricingInfoAtom,
@@ -37,12 +38,13 @@ const EventRegistrationContent: React.FC = () => {
   const signIn = useSignIn();
   const me = useMe();
   const approvalRequired = useAtomValue(approvalRequiredAtom);
-  const ticketLimit = useAtomValue(ticketLimitAtom);
   const hasSingleFreeTicket = useAtomValue(hasSingleFreeTicketAtom);
   const nonLoggedInStatus = useAtomValue(nonLoggedInStatusAtom);
   const purchaseItems = useAtomValue(purchaseItemsAtom);
   const ticketTypes = useAtomValue(ticketTypesAtom);
   const paymentAccount = ticketTypes[0].prices[0].payment_accounts_expanded?.[0];
+
+  const event = useAtomValue(eventDataAtom);
 
   const { refundRate } = useStakeRefundRate(paymentAccount?.account_info as EthereumStakeAccount);
 
@@ -77,13 +79,15 @@ const EventRegistrationContent: React.FC = () => {
     );
   }
 
+  const showCheckInEarn = ticketTypes.length === 1 && paymentAccount?.type === 'ethereum_stake';
+
   return (
     <Card.Root>
       <Card.Header>{hasSingleFreeTicket ? 'Registration' : 'Get Tickets'}</Card.Header>
-      {!!(approvalRequired || ticketLimit) && (
+      {!!(approvalRequired || showCheckInEarn || event.guest_limit) && (
         <div className='p-3 flex flex-col gap-3 border border-card-border'>
           {
-            ticketTypes.length === 1 && paymentAccount?.type === 'ethereum_stake' && (
+            showCheckInEarn && (
               <div className='flex gap-3 items-center'>
                 <div className='rounded-sm bg-card h-[28] w-[28] flex items-center justify-center'>
                   <i className='icon-send-money size-4 text-tertiary' />
@@ -96,7 +100,7 @@ const EventRegistrationContent: React.FC = () => {
             )
           }
           {
-            !!ticketLimit && (
+            !!event.guest_limit && (
               <div className='flex gap-3 items-center'>
                 <div className='rounded-sm bg-card h-[28] w-[28] flex items-center justify-center'>
                   <i className='icon-alarm size-4 text-tertiary' />

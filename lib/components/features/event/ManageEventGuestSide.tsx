@@ -96,25 +96,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           )}
         </div>
 
-        <div className="flex flex-col gap-2">
-          <h3 className="text-2xl font-bold">{event.title}</h3>
-
-          <div className="flex gap-2 item-center">
-            {!!hosts.filter((p) => p?.image_avatar).length && (
-              <div className="flex -space-x-1 overflow-hidden p-1">
-                {hosts
-                  .filter((p) => p?.image_avatar)
-                  .map((p) => (
-                    <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="ring-2 border-background" />
-                  ))}
-              </div>
-            )}
-
-            <p className="text-sm md:text-base font-medium text-secondary">
-              Hosted By {hosts.map((p) => p?.name).join(',')}
-            </p>
-          </div>
-        </div>
+        <h3 className="text-3xl font-bold">{event.title}</h3>
 
         <div className="flex flex-col gap-4">
           <EventDateTimeBlock event={event} />
