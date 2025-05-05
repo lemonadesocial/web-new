@@ -161,8 +161,8 @@ export function ModalContent({ children, onClose, title, icon, className, onBack
                 }
               </div>
             )}
-            {title && !onBack && <span className='min-w-6 font-medium' />}
-            {title}
+            {title && !onBack && <span className='min-w-6' />}
+            <p className='font-medium'>{title}</p>
             {onClose && (
               <Button icon="icon-x" size='xs' variant="tertiary" className="rounded-full" onClick={onClose} />
             )}
