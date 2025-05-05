@@ -20,7 +20,7 @@ export function EventLocationBlock({ loading = false, event }: { loading?: boole
         <p className="truncate text-lg">
           {attending ? (
             <>
-              {'Tokey Towr Tokey Towr Tokey Towr Tokey Towr'} <i className="icon-arrow-outward text-quaternary size-[18px]" />
+              {event.address.title} <i className="icon-arrow-outward text-quaternary size-[18px]" />
             </>
           ) : (
             'Register to See Address'
