@@ -30,7 +30,8 @@ export function CommunitySection({ event }: { event?: Event }) {
     },
   });
 
-  if (!space) return null;
+  if (!space || space?.personal) return null;
+
   const canManage = space.creator === me?._id || space.admins?.map((p) => p._id).includes(me?._id);
 
   const handleSubscribe = () => {
