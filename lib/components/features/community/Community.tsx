@@ -229,7 +229,7 @@ export function Community({ initData }: Props) {
             data?.config?.class,
           )}
         >
-          {data?.theme === 'shader' && <ShaderGradient />}
+          {data?.theme === 'shader' && <ShaderGradient mode={data.config.mode} />}
         </div>
       )}
 
