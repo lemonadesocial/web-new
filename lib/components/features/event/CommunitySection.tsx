@@ -71,7 +71,7 @@ export function CommunitySection({ event }: { event?: Event }) {
             loading={resFollow.loading || resUnfollow.loading}
             onClick={() => handleSubscribe()}
           >
-            {space.followed ? 'UnSubscribe' : 'Subscribe'}
+            {space.followed ? 'Unsubscribe' : 'Subscribe'}
           </Button>
         )}
       </div>

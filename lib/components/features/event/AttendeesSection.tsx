@@ -35,14 +35,20 @@ export function AttendeesSection({ eventId, limit = 5 }: AttendeesSectionProps) 
 
       <hr className="mt-2 mb-4 border-t border-t-divider" />
 
-      <div className="flex -space-x-1.5 overflow-hidden">
+      <div className="flex -space-x-1.5">
         {guests.map((guest, index) => (
-          <Avatar
-            key={index}
-            src={userAvatar(guest as User)}
-            size="md"
-            className="border border-card-border"
-          />
+          <div key={index} className="tooltip sm:tooltip">
+            <div className="tooltip-content">
+              <p className="text-sm font-medium">
+                {guest.name || 'Anonymous'}
+              </p>
+            </div>
+            <Avatar
+              src={userAvatar(guest as User)}
+              size="md"
+              className="border border-card-border tooltip tooltip-open"
+            />
+          </div>
         ))}
       </div>
 
