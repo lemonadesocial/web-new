@@ -13,8 +13,7 @@ export function LocationSection({ event, loading = false }: { event?: Event; loa
 
   const attending = session?.user ? isAttending(event, session?.user) : false;
 
-  const markers =
-    attending && event.address.latitude && event.address.longitude
+  const markers = event.address.latitude && event.address.longitude
       ? [{ lat: event.address.latitude, lng: event.address.longitude }]
       : [];
 
@@ -33,9 +32,9 @@ export function LocationSection({ event, loading = false }: { event?: Event; loa
         </p>
       </div>
       {
-        attending && (
+        markers.length > 0 && (
           <div className="aspect-video h-[240px] rounded-sm overflow-hidden">
-            <Map colorscheme="LIGHT" markers={markers} defaultZoom={15} />
+            <Map colorscheme="LIGHT" markers={attending ? markers : []} defaultZoom={attending ? 15 : 10} center={markers[0]} />
           </div>
         )
       }

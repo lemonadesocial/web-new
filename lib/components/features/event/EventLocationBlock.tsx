@@ -17,7 +17,7 @@ export function EventLocationBlock({ loading = false, event }: { loading?: boole
         <i className="icon-location-outline" />
       </div>
       <div className="truncate">
-        <p className="truncate">
+        <p className="truncate text-lg">
           {attending ? (
             <>
               {'Tokey Towr Tokey Towr Tokey Towr Tokey Towr'} <i className="icon-arrow-outward text-quaternary size-[18px]" />
