@@ -99,7 +99,7 @@ export function HeroSection({ space }: HeroSectionProps) {
           </>
         )}
 
-        <div className="absolute bottom-1.5 md:bottom-4 outline-6 outline-background size-20 md:size-32 rounded-md overflow-hidden">
+        <div className="absolute bottom-1.5 md:bottom-4 size-20 md:size-32 rounded-md overflow-hidden">
           {space?.image_avatar && (
             <img
               className="w-full h-full outline outline-tertiary/4 rounded-md"
