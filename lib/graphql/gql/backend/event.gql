@@ -317,6 +317,8 @@ query PeekEventGuests($id: MongoID!, $limit: Int) {
       _id
       image_avatar
       name
+      display_name
+      first_name
     }
     total
   }
