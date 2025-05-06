@@ -20,7 +20,7 @@ export function AttendeesSection({ eventId, limit = 5 }: AttendeesSectionProps) 
   const totalAttendees = useMemo(() => data?.peekEventGuests?.total || 0, [data]);
 
   const visibleAttendees = useMemo(() => {
-    return guests.slice(0, 2).map(guest => guest.name || 'Anonymous');
+    return guests.slice(0, 2).map(guest => guest.first_name || guest.display_name || guest.name || 'Anonymous');
   }, [guests]);
 
   const othersCount = totalAttendees - visibleAttendees.length;
@@ -40,7 +40,7 @@ export function AttendeesSection({ eventId, limit = 5 }: AttendeesSectionProps) 
           <div key={index} className="tooltip sm:tooltip">
             <div className="tooltip-content">
               <p className="text-sm font-medium">
-                {guest.name || 'Anonymous'}
+                {guest.display_name || guest.name || 'Anonymous'}
               </p>
             </div>
             <Avatar
