@@ -3,6 +3,10 @@ query GetMe {
   getMe {
     ...User
     email
-    wallets
+    wallets_new
   }
+}
+
+mutation SetUserWallet($token: String!, $signature: String!) {
+  setUserWallet(token: $token, signature: $signature)
 }

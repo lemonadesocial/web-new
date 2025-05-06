@@ -1,28 +1,14 @@
-import { atom, useAtom } from 'jotai';
-import { useEffect } from 'react';
-
 import { useQuery } from '$lib/graphql/request';
 import { GetMeDocument, User } from '$lib/graphql/generated/backend/graphql';
-import { sessionAtom } from '$lib/jotai';
-
-const meAtom = atom<User | null>(null);
+import { useSession } from './useSession';
 
 export function useMe(): User | null {
-  const [session] = useAtom(sessionAtom);
-  const [me, setMe] = useAtom(meAtom);
+  const session = useSession();
 
-  const {
-    data: queryData,
-    loading,
-  } = useQuery(GetMeDocument, {
+  const { data: dataGetMe } = useQuery(GetMeDocument, {
     skip: !session,
   });
 
-  useEffect(() => {
-    if (!session || loading || me || !queryData) return;
-
-    setMe(queryData?.getMe as User);
-  }, [session, loading, queryData, me, setMe]);
-
-  return me;
+  if (!dataGetMe?.getMe) return null;
+  return dataGetMe?.getMe as User;
 }
