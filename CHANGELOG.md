@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.18.0](https://github.com/lemonadesocial/web-new/compare/v1.17.0...v1.18.0) (2025-05-06)
+
+
+### Features
+
+* update render community description ([eeba83c](https://github.com/lemonadesocial/web-new/commit/eeba83cd458e4173601a731cd4cb2894d260340f))
+* verify wallet ([36665e4](https://github.com/lemonadesocial/web-new/commit/36665e4fc828a26d42a89b0f0cf3f87ba5c89136))
+* verify wallet ([2c793c1](https://github.com/lemonadesocial/web-new/commit/2c793c193b4b096aa86111b2f8aba938e1d9aae1))
+
+
+### Bug Fixes
+
+* attending name ([90dd1f9](https://github.com/lemonadesocial/web-new/commit/90dd1f957472e724991ed278c08edf91617f8582))
+
 ## [1.17.0](https://github.com/lemonadesocial/web-new/compare/v1.16.4...v1.17.0) (2025-05-05)
 
 
