@@ -17,6 +17,7 @@ export function SignedOutWalletForm({ required }: { required: boolean }) {
       connectWalletInput: null,
     },
   });
+
   const setFormInstances = useSetAtom(formInstancesAtom);
   const setSubmitHandlers = useSetAtom(submitHandlersAtom);
   const setEthereumWalletInput = useSetAtom(ethereumWalletInputAtom);

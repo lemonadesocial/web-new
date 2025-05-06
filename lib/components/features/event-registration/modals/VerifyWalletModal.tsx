@@ -35,7 +35,7 @@ export function VerifyWalletModal({ onSuccess }: { onSuccess: (signature: string
         <p>
           Please sign a message to verify your ownership of the wallet. This will not incur any cost.
         </p>
-        <p className="text-sm text-tertiary">Make sure the message starts with 'Lemonade would like you...'.</p>
+        <p className="text-sm text-tertiary">Make sure the message contains 'Lemonade' text.</p>
       </div>
       <Button
         className="w-full mt-4"
