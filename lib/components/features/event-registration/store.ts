@@ -12,6 +12,7 @@ import { useContext } from 'react';
 import {
   ApplicationProfileField,
   BuyerInfoInput,
+  ConnectWalletInput,
   Event,
   NewPaymentAccount,
   PricingInfo,
@@ -95,3 +96,5 @@ export const nonLoggedInStatusAtom = atom<'success' | 'pending' | null>(null);
 export const stripePaymentMethodAtom = atom<string>('');
 
 export const discountCodeAtom = atom<string | null>(null);
+
+export const ethereumWalletInputAtom = atom<ConnectWalletInput | null>(null);

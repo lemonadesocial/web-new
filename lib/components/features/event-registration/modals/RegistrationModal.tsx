@@ -28,6 +28,9 @@ import { SubmitForm } from "../SubmitForm";
 import { OrderSummary } from "../OrderSummary";
 import { CryptoPayment } from "../payments/CryptoPayment";
 import { useBuyTickets } from "../hooks/useBuyTickets";
+import { BlockchainPlatform } from "$lib/graphql/generated/backend/graphql";
+import { SignedOutWalletForm } from "../forms/SignedOutWalletForm";
+import { SignedInWalletForm } from "../forms/SignedInWalletForm";
 
 export function RegistrationModal() {
   const me = useMe();
@@ -50,6 +53,7 @@ export function RegistrationModal() {
   const ticketPaymentAccounts = selectedTicketTypes.map(ticket => ticket.prices.flatMap(price => price.payment_accounts_expanded || []));
   const paymentAccountsSet = intersection(...ticketPaymentAccounts);
   const [stripeAccounts, cryptoAccounts] = partition(paymentAccountsSet, account => account.provider === 'stripe');
+  const ethereumWalletCondition = event.rsvp_wallet_platforms?.find(platform => platform.platform === BlockchainPlatform.Ethereum);
 
   const showPaymentSwitch = stripeAccounts.length && cryptoAccounts.length;
 
@@ -86,6 +90,11 @@ export function RegistrationModal() {
           </div>
           {
             !session && <BuyerInfoForm />
+          }
+          {
+            ethereumWalletCondition && (
+              session ? <SignedInWalletForm required={!!ethereumWalletCondition.required} /> : <SignedOutWalletForm required={!!ethereumWalletCondition.required} />
+            )
           }
           {
             !!requiredProfileFields?.length && <UserForm />

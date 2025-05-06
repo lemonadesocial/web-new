@@ -2,7 +2,7 @@ import { toast } from "$lib/components/core";
 import { BuyTicketsDocument, BuyTicketsMutation } from "$lib/graphql/generated/backend/graphql";
 import { useMutation } from "$lib/graphql/request";
 
-import { buyerInfoAtom, currencyAtom, discountCodeAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, selectedPaymentAccountAtom, useAtomValue, useEventRegistrationStore, userInfoAtom } from "../store";
+import { buyerInfoAtom, ethereumWalletInputAtom, currencyAtom, discountCodeAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, selectedPaymentAccountAtom, useAtomValue, useEventRegistrationStore, userInfoAtom } from "../store";
 import { useJoinRequest } from "./useJoinRequest";
 import { useProcessTickets } from "./useProcessTickets";
 
@@ -45,6 +45,7 @@ export function useBuyTickets(callback?: (data: BuyTicketsMutation) => void) {
     const buyerInfo = store.get(buyerInfoAtom);
     const userInfo = store.get(userInfoAtom);
     const discountCode = store.get(discountCodeAtom);
+    const ethereumWalletInput = store.get(ethereumWalletInputAtom);
 
     handleBuyTickets({
       variables: {
@@ -58,6 +59,7 @@ export function useBuyTickets(callback?: (data: BuyTicketsMutation) => void) {
           fee: paymentAccount?.fee,
           buyer_info: buyerInfo,
           user_info: userInfo ? { ...userInfo, email: buyerInfo?.email, display_name: buyerInfo?.name } : undefined,
+          connect_wallets: ethereumWalletInput ? [ethereumWalletInput] : undefined,
         }
       }
     });

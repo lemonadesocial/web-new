@@ -41,3 +41,10 @@ query listChains {
     donation_registry_contract
   }
 }
+
+query GetUserWalletRequest($wallet: String!) {
+  getUserWalletRequest(wallet: $wallet) {
+    message
+    token
+  }
+}

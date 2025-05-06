@@ -71,6 +71,10 @@ query GetEvent($id: MongoID, $shortid: String) {
       field
       required
     }
+    rsvp_wallet_platforms {
+      platform
+      required
+    }
     calendar_links {
       google
       ical
