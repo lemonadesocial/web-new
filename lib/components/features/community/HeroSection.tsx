@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Sheet, SheetRef } from 'react-modal-sheet';
 import { useAtom, useSetAtom } from 'jotai';
 import React from 'react';
+import linkify from 'linkify-it';
 
 import { Button, modal, Spacer } from '$lib/components/core';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
@@ -157,9 +158,9 @@ export function HeroSection({ space }: HeroSectionProps) {
       <Spacer className="h-6" />
       <div>
         <h1 className="text-2xl text-primary md:text-3xl font-semibold">{space?.title}</h1>
-        <p className="text-sm md:text-md text-secondary font-medium whitespace-pre-wrap">
-          <div dangerouslySetInnerHTML={{ __html: space?.description || '' }} />
-        </p>
+        <div className="text-sm md:text-md text-secondary font-medium whitespace-pre-wrap">
+          {renderTextWithLinks(space?.description || '')}
+        </div>
         <Spacer className="h-3" />
         <div className="flex items-center gap-3">
           {COMMUNITY_SOCIAL_LINKS.filter((item) => space?.[item.key as keyof Space]).map((item) => (
@@ -238,4 +239,38 @@ function ConfirmModal({ onDiscard }: { onDiscard: () => void }) {
       </div>
     </div>
   );
+}
+
+// TODO: it could be render more. just link for now
+function renderTextWithLinks(text?: string) {
+  if (!text) return null;
+
+  const matches = new linkify().match(text);
+  if (!matches) return text;
+
+  let lastIndex = 0;
+  const elements = [];
+
+  matches.forEach((match: any) => {
+    // Push the text before the match
+    if (lastIndex < match.index) {
+      elements.push(text.slice(lastIndex, match.index));
+    }
+
+    // Create a link element for the match
+    elements.push(
+      <a key={match.index} href={match.url} target="_blank" rel="noopener noreferrer" className="underline">
+        {match.raw}
+      </a>,
+    );
+
+    lastIndex = match.lastIndex;
+  });
+
+  // Push the remaining text after the last match
+  if (lastIndex < text.length) {
+    elements.push(text.slice(lastIndex));
+  }
+
+  return elements;
 }
