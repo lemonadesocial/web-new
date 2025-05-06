@@ -157,7 +157,9 @@ export function HeroSection({ space }: HeroSectionProps) {
       <Spacer className="h-6" />
       <div>
         <h1 className="text-2xl text-primary md:text-3xl font-semibold">{space?.title}</h1>
-        <p className="text-sm md:text-md text-secondary font-medium">{space?.description}</p>
+        <p className="text-sm md:text-md text-secondary font-medium whitespace-pre-wrap">
+          <div dangerouslySetInnerHTML={{ __html: space?.description || '' }} />
+        </p>
         <Spacer className="h-3" />
         <div className="flex items-center gap-3">
           {COMMUNITY_SOCIAL_LINKS.filter((item) => space?.[item.key as keyof Space]).map((item) => (
