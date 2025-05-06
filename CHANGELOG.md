@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.19.0](https://github.com/lemonadesocial/web-new/compare/v1.18.0...v1.19.0) (2025-05-06)
+
+
+### Features
+
+* update render link ([08f0a60](https://github.com/lemonadesocial/web-new/commit/08f0a606c141ce07b6c1577e178b67c289d22a07))
+
 ## [1.18.0](https://github.com/lemonadesocial/web-new/compare/v1.17.0...v1.18.0) (2025-05-06)
 
 
