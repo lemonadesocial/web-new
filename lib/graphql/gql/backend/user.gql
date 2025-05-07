@@ -4,6 +4,7 @@ query GetMe {
     ...User
     email
     wallets_new
+    wallet_custodial
   }
 }
 

@@ -17,7 +17,7 @@ import { VerifyWalletModal } from "../modals/VerifyWalletModal";
 export function SignedInWalletForm({ required }: { required: boolean }) {
   const me = useMe();
 
-  const userWallets = me?.wallets_new?.ethereum || [];
+  const userWallets = me?.wallets_new?.ethereum?.filter((wallet: string) => wallet !== me?.wallet_custodial) || [];
 
   const form: UseFormReturn<{ selectedAddress: string }> = useForm<{ selectedAddress: string }>({
     defaultValues: {
