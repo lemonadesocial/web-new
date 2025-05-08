@@ -31,6 +31,7 @@ import { useBuyTickets } from "../hooks/useBuyTickets";
 import { BlockchainPlatform } from "$lib/graphql/generated/backend/graphql";
 import { SignedOutWalletForm } from "../forms/SignedOutWalletForm";
 import { SignedInWalletForm } from "../forms/SignedInWalletForm";
+import { TermsForm } from "../forms/TermsForm";
 
 export function RegistrationModal() {
   const me = useMe();
@@ -101,6 +102,9 @@ export function RegistrationModal() {
           }
           {
             !!event.application_questions?.length && <ApplicationForm />
+          }
+          {
+            !!event.terms_text && <TermsForm />
           }
         </div>
         {
