@@ -25,6 +25,12 @@ export function formatWallet(address: string, length = 4): string {
   return `${address.substring(0, length)}...${address.substring(address.length - length, address.length)}`;
 }
 
+export const isNativeToken = (tokenAddress: string, network: string) => {
+  const chain = getListChains().find(c => c.chain_id === network);
+  const token = chain?.tokens?.find(t => t.contract === tokenAddress);
+  return token?.is_native;
+};
+
 export async function writeContract(
   contractInstance: ethers.Contract,
   contractAddress: string,
@@ -53,9 +59,9 @@ export async function approveERC20Spender(tokenAddress: string, spender: string,
   await transaction.wait();
 }
 
-export async function transfer(toAddress: string, amount: string, tokenAddress: string, walletProvider: Eip1193Provider) {
+export async function transfer(toAddress: string, amount: string, tokenAddress: string, walletProvider: Eip1193Provider, network: string) {
   try {
-    if (tokenAddress !== ethers.ZeroAddress) {
+    if (!isNativeToken(tokenAddress, network)) {
       const transaction = await writeContract(
         ERC20Contract,
         tokenAddress,

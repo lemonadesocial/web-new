@@ -21,6 +21,7 @@ query listChains {
       decimals
       contract
       logo_url
+      is_native
     }
     access_registry_contract
     poap_contract

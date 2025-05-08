@@ -2311,6 +2311,7 @@ export enum FeatureCode {
   GuestListDashboard = 'GuestListDashboard',
   ManageSpace = 'ManageSpace',
   ManageSpaceEvent = 'ManageSpaceEvent',
+  ManageSpaceEventRequest = 'ManageSpaceEventRequest',
   ManageSpaceMembership = 'ManageSpaceMembership',
   ManageSpaceNewsletter = 'ManageSpaceNewsletter',
   ManageSpaceTag = 'ManageSpaceTag',
@@ -2377,6 +2378,11 @@ export type FileLink_Users_ExpandedArgs = {
   limit?: Scalars['Int']['input'];
   skip?: Scalars['Int']['input'];
 };
+
+export enum FileCategory {
+  SpaceDarkTheme = 'space_dark_theme',
+  SpaceLightTheme = 'space_light_theme'
+}
 
 export type FileInline = {
   __typename?: 'FileInline';
@@ -4826,6 +4832,7 @@ export type Query = {
   getSpaceMemberHostedEvents: Array<Event>;
   getSpaceMemberSubmittedEvents: Array<Event>;
   getSpaceMembersLeaderboard: SpaceMembersLeaderboardResponse;
+  getSpaceNewsletter?: Maybe<EmailSetting>;
   getSpaceNewsletterStatistics: SpaceNewsletterStatistics;
   getSpaceRewardSettingClaims: Array<SpaceTokenRewardClaim>;
   getSpaceRewardStatistics: SpaceRewardStatistics;
@@ -4847,6 +4854,7 @@ export type Query = {
   getStripeConnectedAccountCapability?: Maybe<StripeAccountCapability>;
   getStripeTransferDetail: Scalars['JSON']['output'];
   getSubSpaces?: Maybe<Array<PublicSpace>>;
+  getSystemFiles: Array<SystemFileBase>;
   getTicket?: Maybe<Ticket>;
   getTicketStatistics: TicketStatistics;
   getTickets: Array<Ticket>;
@@ -5451,6 +5459,12 @@ export type QueryGetSpaceMembersLeaderboardArgs = {
 };
 
 
+export type QueryGetSpaceNewsletterArgs = {
+  _id: Scalars['MongoID']['input'];
+  space: Scalars['MongoID']['input'];
+};
+
+
 export type QueryGetSpaceNewsletterStatisticsArgs = {
   space: Scalars['MongoID']['input'];
 };
@@ -5574,6 +5588,11 @@ export type QueryGetStripeTransferDetailArgs = {
 
 export type QueryGetSubSpacesArgs = {
   _id: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetSystemFilesArgs = {
+  categories?: InputMaybe<Array<FileCategory>>;
 };
 
 
@@ -7587,6 +7606,20 @@ export type SyncSpaceTokenGateAccessResponse = {
   roles: Array<SpaceRole>;
 };
 
+export type SystemFileBase = {
+  __typename?: 'SystemFileBase';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  bucket: Scalars['String']['output'];
+  category: FileCategory;
+  description?: Maybe<Scalars['String']['output']>;
+  key: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  size?: Maybe<Scalars['Float']['output']>;
+  stamp: Scalars['DateTimeISO']['output'];
+  type: Scalars['String']['output'];
+  url: Scalars['String']['output'];
+};
+
 export type TelegramChannel = {
   __typename?: 'TelegramChannel';
   accessHash?: Maybe<Scalars['String']['output']>;
@@ -7836,6 +7869,8 @@ export type TokenRewardVaultInput = {
 export type UnsubscribeSpaceNewsletterInput = {
   reason?: InputMaybe<Scalars['String']['input']>;
   space: Scalars['MongoID']['input'];
+  /** The unsubscribe token from the email */
+  token: Scalars['String']['input'];
 };
 
 export type UpdateBadgeInput = {
@@ -8640,7 +8675,7 @@ export type PaymentAccountFragment = { __typename: 'NewPaymentAccount', _id: any
 export type ListChainsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListChainsQuery = { __typename: 'Query', listChains: Array<{ __typename: 'Chain', active?: boolean | null, platform: string, chain_id: string, name: string, code_name: string, rpc_url: string, block_explorer_url?: string | null, block_explorer_name?: string | null, block_explorer_for_tx?: string | null, block_explorer_for_token?: string | null, block_explorer_for_address?: string | null, block_time: number, safe_confirmations: number, logo_url?: string | null, access_registry_contract?: string | null, poap_contract?: string | null, marketplace_contract?: string | null, marketplace_version?: number | null, biconomy_api_key?: string | null, ens_registry?: string | null, proxy_admin_contract?: string | null, payment_config_registry_contract?: string | null, escrow_manager_contract?: string | null, relay_payment_contract?: string | null, stake_payment_contract?: string | null, reward_registry_contract?: string | null, eas_event_contract?: string | null, eas_graphql_url?: string | null, aragon_network?: string | null, axelar_chain_name?: string | null, donation_registry_contract?: string | null, tokens?: Array<{ __typename: 'Token', active?: boolean | null, name: string, symbol: string, decimals: number, contract: string, logo_url?: string | null }> | null }> };
+export type ListChainsQuery = { __typename: 'Query', listChains: Array<{ __typename: 'Chain', active?: boolean | null, platform: string, chain_id: string, name: string, code_name: string, rpc_url: string, block_explorer_url?: string | null, block_explorer_name?: string | null, block_explorer_for_tx?: string | null, block_explorer_for_token?: string | null, block_explorer_for_address?: string | null, block_time: number, safe_confirmations: number, logo_url?: string | null, access_registry_contract?: string | null, poap_contract?: string | null, marketplace_contract?: string | null, marketplace_version?: number | null, biconomy_api_key?: string | null, ens_registry?: string | null, proxy_admin_contract?: string | null, payment_config_registry_contract?: string | null, escrow_manager_contract?: string | null, relay_payment_contract?: string | null, stake_payment_contract?: string | null, reward_registry_contract?: string | null, eas_event_contract?: string | null, eas_graphql_url?: string | null, aragon_network?: string | null, axelar_chain_name?: string | null, donation_registry_contract?: string | null, tokens?: Array<{ __typename: 'Token', active?: boolean | null, name: string, symbol: string, decimals: number, contract: string, logo_url?: string | null, is_native?: boolean | null }> | null }> };
 
 export type GetUserWalletRequestQueryVariables = Exact<{
   wallet: Scalars['String']['input'];
@@ -8876,7 +8911,7 @@ export const PeekEventGuestsDocument = {"kind":"Document","definitions":[{"kind"
 export const CreateFileUploadsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createFileUploads"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"uploadInfos"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FileUploadInfo"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"directory"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"createFileUploads"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"upload_infos"},"value":{"kind":"Variable","name":{"kind":"Name","value":"uploadInfos"}}},{"kind":"Argument","name":{"kind":"Name","value":"directory"},"value":{"kind":"Variable","name":{"kind":"Name","value":"directory"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"stamp"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"owner"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","alias":{"kind":"Name","value":"presignedUrl"},"name":{"kind":"Name","value":"presigned_url"}}]}}]}}]} as unknown as DocumentNode<CreateFileUploadsMutation, CreateFileUploadsMutationVariables>;
 export const ConfirmFileUploadsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"confirmFileUploads"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"confirmFileUploads"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ids"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}]}]}}]} as unknown as DocumentNode<ConfirmFileUploadsMutation, ConfirmFileUploadsMutationVariables>;
 export const UpdateFileDescriptionMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateFileDescriptionMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FileInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"updateFile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}},{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"stamp"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"owner"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<UpdateFileDescriptionMutationMutation, UpdateFileDescriptionMutationMutationVariables>;
-export const ListChainsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"listChains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listChains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"platform"}},{"kind":"Field","name":{"kind":"Name","value":"chain_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"code_name"}},{"kind":"Field","name":{"kind":"Name","value":"rpc_url"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_url"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_name"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_tx"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_token"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_address"}},{"kind":"Field","name":{"kind":"Name","value":"block_time"}},{"kind":"Field","name":{"kind":"Name","value":"safe_confirmations"}},{"kind":"Field","name":{"kind":"Name","value":"logo_url"}},{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"contract"}},{"kind":"Field","name":{"kind":"Name","value":"logo_url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"access_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"poap_contract"}},{"kind":"Field","name":{"kind":"Name","value":"marketplace_contract"}},{"kind":"Field","name":{"kind":"Name","value":"marketplace_version"}},{"kind":"Field","name":{"kind":"Name","value":"biconomy_api_key"}},{"kind":"Field","name":{"kind":"Name","value":"ens_registry"}},{"kind":"Field","name":{"kind":"Name","value":"proxy_admin_contract"}},{"kind":"Field","name":{"kind":"Name","value":"payment_config_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"escrow_manager_contract"}},{"kind":"Field","name":{"kind":"Name","value":"relay_payment_contract"}},{"kind":"Field","name":{"kind":"Name","value":"stake_payment_contract"}},{"kind":"Field","name":{"kind":"Name","value":"reward_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"eas_event_contract"}},{"kind":"Field","name":{"kind":"Name","value":"eas_graphql_url"}},{"kind":"Field","name":{"kind":"Name","value":"aragon_network"}},{"kind":"Field","name":{"kind":"Name","value":"axelar_chain_name"}},{"kind":"Field","name":{"kind":"Name","value":"donation_registry_contract"}}]}}]}}]} as unknown as DocumentNode<ListChainsQuery, ListChainsQueryVariables>;
+export const ListChainsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"listChains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listChains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"platform"}},{"kind":"Field","name":{"kind":"Name","value":"chain_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"code_name"}},{"kind":"Field","name":{"kind":"Name","value":"rpc_url"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_url"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_name"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_tx"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_token"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_address"}},{"kind":"Field","name":{"kind":"Name","value":"block_time"}},{"kind":"Field","name":{"kind":"Name","value":"safe_confirmations"}},{"kind":"Field","name":{"kind":"Name","value":"logo_url"}},{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"contract"}},{"kind":"Field","name":{"kind":"Name","value":"logo_url"}},{"kind":"Field","name":{"kind":"Name","value":"is_native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"access_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"poap_contract"}},{"kind":"Field","name":{"kind":"Name","value":"marketplace_contract"}},{"kind":"Field","name":{"kind":"Name","value":"marketplace_version"}},{"kind":"Field","name":{"kind":"Name","value":"biconomy_api_key"}},{"kind":"Field","name":{"kind":"Name","value":"ens_registry"}},{"kind":"Field","name":{"kind":"Name","value":"proxy_admin_contract"}},{"kind":"Field","name":{"kind":"Name","value":"payment_config_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"escrow_manager_contract"}},{"kind":"Field","name":{"kind":"Name","value":"relay_payment_contract"}},{"kind":"Field","name":{"kind":"Name","value":"stake_payment_contract"}},{"kind":"Field","name":{"kind":"Name","value":"reward_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"eas_event_contract"}},{"kind":"Field","name":{"kind":"Name","value":"eas_graphql_url"}},{"kind":"Field","name":{"kind":"Name","value":"aragon_network"}},{"kind":"Field","name":{"kind":"Name","value":"axelar_chain_name"}},{"kind":"Field","name":{"kind":"Name","value":"donation_registry_contract"}}]}}]}}]} as unknown as DocumentNode<ListChainsQuery, ListChainsQueryVariables>;
 export const GetUserWalletRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserWalletRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getUserWalletRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"wallet"},"value":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<GetUserWalletRequestQuery, GetUserWalletRequestQueryVariables>;
 export const CreateStripeCardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createStripeCard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paymentMethod"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"createStripeCard"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"payment_method"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paymentMethod"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"provider_id"}}]}}]}}]} as unknown as DocumentNode<CreateStripeCardMutation, CreateStripeCardMutationVariables>;
 export const GetStripeCardsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getStripeCards"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getStripeCards"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"brand"}},{"kind":"Field","name":{"kind":"Name","value":"last4"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"provider_id"}},{"kind":"Field","name":{"kind":"Name","value":"stamp"}},{"kind":"Field","name":{"kind":"Name","value":"user"}}]}}]}}]} as unknown as DocumentNode<GetStripeCardsQuery, GetStripeCardsQueryVariables>;

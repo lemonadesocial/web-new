@@ -6,7 +6,7 @@ import { Button, ModalContent } from "$lib/components/core";
 import { EthereumAccount, EthereumRelayAccount, EthereumStakeAccount, UpdatePaymentDocument } from "$lib/graphql/generated/backend/graphql";
 import { useMutation } from "$lib/graphql/request";
 import { useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
-import { approveERC20Spender, formatWallet, LemonadeRelayPaymentContract, LemonadeStakePaymentContract, transfer, writeContract } from "$lib/utils/crypto";
+import { approveERC20Spender, formatWallet, isNativeToken, LemonadeRelayPaymentContract, LemonadeStakePaymentContract, transfer, writeContract } from "$lib/utils/crypto";
 import { chainsMapAtom } from "$lib/jotai";
 
 import { currencyAtom, eventDataAtom, pricingInfoAtom, registrationModal, selectedPaymentAccountAtom, useAtomValue } from "../store";
@@ -40,7 +40,7 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
   const [error, setError] = useState('');
 
   const approveERC20Payment = async (contract: string) => {
-    if (tokenAddress === ethers.ZeroAddress) return;
+    if (isNativeToken(tokenAddress, network)) return;
     await approveERC20Spender(tokenAddress, contract, payAmount, walletProvider as Eip1193Provider);
   };
 
@@ -78,7 +78,7 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
             tokenAddress,
             payAmount.toString(),
           ],
-          { value: tokenAddress === ethers.ZeroAddress ? payAmount.toString() : 0 }
+          { value: isNativeToken(tokenAddress, network) ? payAmount.toString() : 0 }
         );
 
         handleConfirm(transaction.hash);
@@ -101,7 +101,7 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
             tokenAddress,
             payAmount.toString(),
           ],
-          { value: tokenAddress === ethers.ZeroAddress ? payAmount.toString() : 0 }
+          { value: isNativeToken(tokenAddress, network) ? payAmount.toString() : 0 }
         );
 
         handleConfirm(transaction.hash);
@@ -110,7 +110,7 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
       }
 
       const toAddress = paymentAccountInfo.address;
-      const txHash = await transfer(toAddress, (pricingInfo?.total || 0).toString(), tokenAddress, walletProvider as Eip1193Provider);
+      const txHash = await transfer(toAddress, (pricingInfo?.total || 0).toString(), tokenAddress, walletProvider as Eip1193Provider, network);
 
       handleConfirm(txHash);
     } catch (e) {
