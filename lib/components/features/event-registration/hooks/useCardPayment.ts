@@ -9,7 +9,6 @@ import { pricingInfoAtom, registrationModal, selectedPaymentAccountAtom, stripeP
 import { PaymentProcessingModal } from "../modals/PaymentProcessingModal";
 import { useBuyTickets } from "./useBuyTickets";
 
-
 export function useCardPayment() {
   const store = useEventRegistrationStore();
   const pricingInfo = useAtomValue(pricingInfoAtom);

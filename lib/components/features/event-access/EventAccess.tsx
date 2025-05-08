@@ -43,7 +43,6 @@ export function EventAccess({ event }: { event: Event }) {
   });
 
   useEffect(() => {
-    console.log('Checking for tickets');
     if (isAttending || !ticketsData?.getMyTickets.tickets.length || !session?.user || loadingAssignTickets || ticketsLoading) return;
 
     const assignedTicket = getAssignedTicket(ticketsData.getMyTickets.tickets as Ticket[], session.user, me?.email as string);
