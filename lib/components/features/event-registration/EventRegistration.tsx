@@ -46,7 +46,7 @@ const EventRegistrationContent: React.FC = () => {
 
   const event = useAtomValue(eventDataAtom);
 
-  const { refundRate } = useStakeRefundRate(paymentAccount?.account_info as EthereumStakeAccount);
+  const { refundRate } = useStakeRefundRate(paymentAccount?.type === 'ethereum_stake' ? (paymentAccount?.account_info as EthereumStakeAccount) : undefined);
 
   const ticketTypeText = useMemo(() => {
     return purchaseItems

@@ -31,7 +31,7 @@ export function OrderSummary() {
   const fee = pricingPaymentAccount?.fee;
   const grandTotal = (BigInt(pricingInfo?.total || '0') + BigInt(fee || '0')).toString();
 
-  const { refundRate } = useStakeRefundRate(pricingPaymentAccount?.account_info as EthereumStakeAccount);
+  const { refundRate } = useStakeRefundRate(pricingPaymentAccount?.type === 'ethereum_stake' ? (pricingPaymentAccount?.account_info as EthereumStakeAccount) : undefined);
 
   const handleApplyDiscount = async () => {
     if (!discountCodeInput.trim().length) return;

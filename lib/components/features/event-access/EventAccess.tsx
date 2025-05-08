@@ -26,10 +26,10 @@ export function EventAccess({ event }: { event: Event }) {
   });
 
   const [acceptEvent] = useMutation(AcceptEventDocument);
-  const [assignTickets] = useMutation(AssignTicketsDocument, {
+  const [assignTickets, { loading: loadingAssignTickets }] = useMutation(AssignTicketsDocument, {
     onComplete() {
-      refetchTickets();
       joinEvent();
+      refetchTickets();
     }
   });
   const { client } = useClient();
@@ -43,7 +43,8 @@ export function EventAccess({ event }: { event: Event }) {
   });
 
   useEffect(() => {
-    if (isAttending || !ticketsData?.getMyTickets.tickets.length || !session?.user) return;
+    console.log('Checking for tickets');
+    if (isAttending || !ticketsData?.getMyTickets.tickets.length || !session?.user || loadingAssignTickets || ticketsLoading) return;
 
     const assignedTicket = getAssignedTicket(ticketsData.getMyTickets.tickets as Ticket[], session.user, me?.email as string);
 
@@ -65,7 +66,7 @@ export function EventAccess({ event }: { event: Event }) {
         }
       });
     }
-  }, [ticketsData]);
+  }, [ticketsData, isAttending, loadingAssignTickets, ticketsLoading]);
 
   const joinEvent = () => {
     acceptEvent({ variables: { id: event._id } });
