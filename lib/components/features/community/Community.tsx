@@ -38,8 +38,8 @@ import { useSignIn } from '$lib/hooks/useSignIn';
 import { MyEventRequests } from './MyEventRequests';
 
 import CommunityCard from './CommunityCard';
-import { defaultTheme, themeAtom } from './theme_builder/store';
-import { ShaderGradient } from './theme_builder/shader';
+import { defaultTheme, themeAtom } from './theme-builder/store';
+import { ShaderGradient } from './theme-builder/shader';
 
 const CommunityPane = dynamic(() => import('./CommunityPane'), { ssr: false });
 
@@ -202,6 +202,8 @@ export function Community({ initData }: Props) {
     }
   }, []);
 
+  console.log(data.variables?.custom);
+
   return (
     <>
       {data?.variables && (
@@ -214,6 +216,14 @@ export function Community({ initData }: Props) {
             :root {
               ${data.variables?.custom && generateCssVariables(data.variables?.custom)}
               ${data.variables.pattern && generateCssVariables(data.variables.pattern)}
+            }
+
+            main {
+              ${data.variables?.image && generateCssVariables(data.variables?.image)}
+
+              background-image: var(--color-background);
+              background-repeat: no-repeat;
+              background-size: cover;
             }
           `}
         </style>

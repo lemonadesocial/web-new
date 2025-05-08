@@ -2,7 +2,7 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { atom } from 'jotai';
 
 export type ThemeValues = {
-  theme?: 'minimal' | 'shader' | 'pattern';
+  theme?: 'minimal' | 'shader' | 'pattern' | 'image';
   config: {
     mode?: 'dark' | 'light' | 'system';
     name?: string;
@@ -13,6 +13,7 @@ export type ThemeValues = {
   font_title: string;
   font_body: string;
   variables: {
+    image: Record<string, string>;
     font: Record<string, string>;
     custom: Record<string, string>;
     dark?: Record<string, string | number>;
@@ -139,10 +140,19 @@ const pattern = {
   },
 };
 
+const image = {
+  image: `${ASSET_PREFIX}/assets/images/image.png`,
+  name: 'Image',
+  ui: {
+    disabled: { mode: true },
+  },
+};
+
 export const presets = {
   minimal,
   shader,
   pattern,
+  image,
 };
 
 export function getRandomFont(type: 'title' | 'body') {

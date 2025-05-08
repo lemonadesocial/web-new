@@ -5,8 +5,15 @@ import clsx from 'clsx';
 import getPalette from 'tailwindcss-palette-generator';
 import { merge } from 'lodash';
 
-import { useMutation } from '$lib/graphql/request';
-import { Space, UpdateSpaceDocument } from '$lib/graphql/generated/backend/graphql';
+import { useMutation, useQuery } from '$lib/graphql/request';
+import {
+  FileCategory,
+  GetSystemFilesDocument,
+  GetSystemFilesQuery,
+  GetSystemFilesQueryVariables,
+  Space,
+  UpdateSpaceDocument,
+} from '$lib/graphql/generated/backend/graphql';
 import { Button, Card, Menu, MenuItem } from '$lib/components/core';
 
 import {
@@ -20,9 +27,19 @@ import {
   shaders,
   defaultTheme,
 } from './store';
-import { PopoverFont } from './popover_font';
-import { PopoverColor, PopoverShaderColor } from './popover_color';
-import { PopoverEmpty, PopoverPattern } from './popover_style';
+import { PopoverFont } from './popover-font';
+import { PopoverColor, PopoverShaderColor } from './popover-color';
+import { PopoverEmpty, PopoverPattern } from './popover-style';
+import { PopoverImage } from './popover-image';
+
+const images = [
+  { id: 1, url: 'https://picsum.photos/400/225?random=1', name: 'Doodles' },
+  { id: 2, url: 'https://picsum.photos/400/225?random=2', name: 'Pixel Pals' },
+  { id: 3, url: 'https://picsum.photos/400/225?random=7', name: 'Bored Apes' },
+  { id: 4, url: 'https://picsum.photos/400/225?random=4', name: 'Fluffles' },
+  { id: 5, url: 'https://picsum.photos/400/225?random=5', name: 'Cool Cats' },
+  { id: 6, url: 'https://picsum.photos/400/225?random=6', name: 'Art Blocks' },
+];
 
 export function ThemeBuilder({
   space,
@@ -38,6 +55,10 @@ export function ThemeBuilder({
   const [saved, setSaved] = React.useState(true);
   const [data, onChange] = useAtom(themeAtom);
   const { theme, font_title, font_body, config, variables } = data;
+
+  const { data: dataImages } = useQuery<GetSystemFilesQuery, GetSystemFilesQueryVariables>(GetSystemFilesDocument, {
+    variables: { categories: [FileCategory.SpaceDarkTheme, FileCategory.SpaceLightTheme] },
+  });
 
   const handleChange = (values: Partial<ThemeValues>) => {
     setSaved(false);
@@ -197,7 +218,24 @@ export function ThemeBuilder({
             />
           )}
 
-          {(!theme || theme === 'minimal') && <PopoverEmpty />}
+          {theme === 'image' && (
+            <PopoverImage
+              images={dataImages?.getSystemFiles || []}
+              selected={images.find((item) => config.bg === item._id)}
+              onSelect={(value) => {
+                const mode = value?.category === FileCategory.SpaceLightTheme ? 'light' : 'dark';
+                document.getElementById(space?._id)?.setAttribute('class', mode);
+                const el: any = document.querySelector('main');
+                el?.style.setProperty('--color-background', `url(${value.url})`);
+                handleChange({
+                  config: { ...config, bg: value.id, mode },
+                  variables: { ...variables, image: { '--color-background': `url(${value.url})` } },
+                });
+              }}
+            />
+          )}
+
+          {(!theme || ['minimal', 'image'].includes(theme)) && <PopoverEmpty />}
 
           {theme === 'shader' && (
             <>
@@ -255,8 +293,29 @@ export function ThemeBuilder({
             disabled={theme && presets[theme] && presets[theme].ui?.disabled?.mode}
           >
             <Menu.Trigger>
-              <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
-                <i className="icon-dark-theme-filled size-[24px] rounded-full" />
+              <div
+                className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2"
+                onClick={(e) => {
+                  if (theme && presets[theme] && presets[theme].ui?.disabled?.mode) {
+                    e.preventDefault();
+                    return;
+                  }
+
+                  if (['light', 'auto'].includes(config.mode as string)) {
+                    document.getElementById(space?._id)?.setAttribute('class', 'dark');
+                    handleChange({ config: { ...config, mode: 'dark' } });
+                  } else {
+                    document.getElementById(space?._id)?.setAttribute('class', 'light');
+                    handleChange({ config: { ...config, mode: 'light' } });
+                  }
+                }}
+              >
+                {config.mode === 'dark' ? (
+                  <i className="icon-clear-night text-blue-400" />
+                ) : (
+                  <i className="icon-dark-theme-filled size-[24px] rounded-full" />
+                )}
+
                 <span className="text-left flex-1">Display</span>
                 <p className="flex items-center gap-1">
                   <span className="capitalize">{config?.mode === 'system' ? 'auto' : config?.mode}</span>
@@ -264,22 +323,6 @@ export function ThemeBuilder({
                 </p>
               </div>
             </Menu.Trigger>
-            <Menu.Content className="w-[300px]">
-              <MenuItem
-                title="Light"
-                onClick={() => {
-                  document.getElementById(space?._id)?.setAttribute('class', 'light');
-                  handleChange({ config: { ...config, mode: 'light' } });
-                }}
-              />
-              <MenuItem
-                title="Dark"
-                onClick={() => {
-                  document.getElementById(space?._id)?.setAttribute('class', 'dark');
-                  handleChange({ config: { ...config, mode: 'dark' } });
-                }}
-              />
-            </Menu.Content>
           </Menu.Root>
         </div>
       </div>

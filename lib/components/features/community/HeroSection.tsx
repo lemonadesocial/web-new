@@ -16,8 +16,8 @@ import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 
 import { COMMUNITY_SOCIAL_LINKS } from './constants';
-import { ThemeBuilder } from './theme_builder';
-import { defaultTheme, themeAtom } from './theme_builder/store';
+import { ThemeBuilder } from './theme-builder';
+import { defaultTheme, themeAtom } from './theme-builder/store';
 
 interface HeroSectionProps {
   space?: Space | null;

@@ -227,6 +227,16 @@ query GetMySpaceEventRequests($space: MongoID!, $skip: Int!, $limit: Int!, $stat
   }
 }
 
+#NOTE:using for image theme builder
+query GetSystemFiles($categories: [FileCategory!]) {
+  getSystemFiles(categories: $categories) {
+    _id
+    url
+    category
+    name
+  }
+}
+
 #### Mutations
 
 mutation FollowSpace($space: MongoID!) {
@@ -253,18 +263,18 @@ mutation PinEventsToSpace($space: MongoID!, $events: [MongoID!]!, $tags: [MongoI
 
 query getSubSpaces($id: MongoID!) {
   getSubSpaces(_id: $id) {
+    _id
+    title
+    description
+    followers_count
+    slug
+    is_admin
+    image_avatar_expanded {
       _id
-      title
-      description
-      followers_count
-      slug
-      is_admin
-      image_avatar_expanded {
-         _id
-        bucket
-        url
-        type
-        key
-      }
+      bucket
+      url
+      type
+      key
     }
   }
+}
