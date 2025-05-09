@@ -34,7 +34,6 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
   const session = useSession();
 
   const event = data?.getEvent as Event;
-  const hosts = uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id);
 
   const isHost = session?.user && event && hosting(event, session.user);
   const attending = session?.user ? isAttending(event, session?.user) : false;
@@ -96,7 +95,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           )}
         </div>
 
-        <h3 className="text-3xl font-bold">{event.title}</h3>
+        <h3 className="text-2xl md:text-3xl font-bold">{event.title}</h3>
 
         <div className="flex flex-col gap-4">
           <EventDateTimeBlock event={event} />
@@ -108,6 +107,11 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
         <SubEventSection event={event} />
         <GallerySection event={event} loading={loading} />
         {attending && <EventCollectibles event={event} />}
+        <div className="flex flex-col gap-6 md:hidden">
+          <CommunitySection event={event} />
+          <HostedBySection event={event} /> 
+          <AttendeesSection eventId={event._id} />
+        </div>
         <Spacer className="h-8" />
       </div>
     </div>
