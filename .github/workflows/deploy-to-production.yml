@@ -53,6 +53,7 @@ jobs:
           echo "NEXT_PUBLIC_WALLET_WSS_URL=${{ vars.PRODUCTION_NEXT_PUBLIC_WALLET_WSS_URL }}" >> .env
           echo "NEXT_PUBLIC_HOST_URL=${{ vars.PRODUCTION_NEXT_PUBLIC_HOST_URL }}" >> .env
           echo "NEXT_PUBLIC_APP_ENV=${{ vars.PRODUCTION_NEXT_PUBLIC_APP_ENV }}" >> .env
+          echo "NEXT_PUBLIC_LENS_APP_ID=${{ vars.PRODUCTION_NEXT_PUBLIC_LENS_APP_ID }}" >> .env
 
       - name: Configure environment
         run: |
