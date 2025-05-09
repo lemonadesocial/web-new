@@ -45,6 +45,7 @@ export const getAppKitNetwork = (chain: Chain) => {
 let appKit: ReturnType<typeof createAppKit>;
 
 export function initializeAppKit() {
+  console.log ('initializeAppKit');
   appKit = createAppKit({
     adapters: [new EthersAdapter()],
     networks: getListChains()
