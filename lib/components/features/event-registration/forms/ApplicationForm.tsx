@@ -8,7 +8,9 @@ import {
   submitHandlersAtom,
   useAtomValue,
   useSetAtom,
-  eventDataAtom
+  eventDataAtom,
+  buyerInfoAtom,
+  useEventRegistrationStore
 } from '../store';
 import { EventApplicationAnswerInput, EventApplicationQuestion, SubmitEventApplicationAnswersDocument } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
@@ -19,6 +21,7 @@ interface ApplicationFormValues {
 
 export function ApplicationForm() {
   const event = useAtomValue(eventDataAtom);
+  const store = useEventRegistrationStore();
 
   const setFormInstances = useSetAtom(formInstancesAtom);
   const setSubmitHandlers = useSetAtom(submitHandlersAtom);
@@ -49,10 +52,13 @@ export function ApplicationForm() {
       answers: question.type === 'options' ? data[question._id] : undefined
     }));
 
+    const buyerInfo = store.get(buyerInfoAtom);
+
     submitEventApplication({
       variables: {
         event: event._id,
-        answers: answers as EventApplicationAnswerInput[]
+        answers: answers as EventApplicationAnswerInput[],
+        email: buyerInfo?.email
       }
     });
   };

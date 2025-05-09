@@ -96,7 +96,7 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
 
   return (
     <>
-      <LabeledInput label="Your Ethereum Address" required>
+      <LabeledInput label="Your Ethereum Address" required={required}>
         {
           userWallets.length && selectedAddress ? (
             <Menu.Root>
