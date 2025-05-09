@@ -19,7 +19,7 @@ export function LocationSection({ event, loading = false }: { event?: Event; loa
 
   return (
     <div className="event-description flex flex-col gap-2 w-full">
-      <p className="font-medium text-sm">Location</p>
+      <p className="text-secondary text-sm">Location</p>
       <Divider className="h-1 w-full mb-2" />
       <div className="flex flex-col gap-1">
         <p className="md:text-lg font-medium">

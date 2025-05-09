@@ -13,7 +13,7 @@ export function GallerySection({ event, loading }: { event: Event; loading?: boo
 
   return (
     <div className="event-description flex flex-col gap-2 w-full">
-      <p className="font-medium text-sm">
+      <p className="text-secondary text-sm">
         {photos.length} {photos.length > 1 ? 'Photos' : 'Photo'}
       </p>
       <Divider className="h-1 w-full mb-2" />
