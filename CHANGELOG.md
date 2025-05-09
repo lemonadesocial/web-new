@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.21.0](https://github.com/lemonadesocial/web-new/compare/v1.20.0...v1.21.0) (2025-05-09)
+
+
+### Features
+
+* polish event details ([2832ca6](https://github.com/lemonadesocial/web-new/commit/2832ca6bc9cedb86abe27f169d248a3bd752e051))
+* polish event details ([9d8f594](https://github.com/lemonadesocial/web-new/commit/9d8f594d847bb7692684c9ef1c61b594f0f3f8e0))
+
 ## [1.20.0](https://github.com/lemonadesocial/web-new/compare/v1.19.0...v1.20.0) (2025-05-09)
 
 
