@@ -85,7 +85,7 @@ const EventRegistrationContent: React.FC = () => {
     <Card.Root>
       <Card.Header>{hasSingleFreeTicket ? 'Registration' : 'Get Tickets'}</Card.Header>
       {!!(approvalRequired || showCheckInEarn || event.guest_limit) && (
-        <div className='p-3 flex flex-col gap-3 border border-card-border'>
+        <div className='p-3 flex flex-col gap-3 border-b border-card-border'>
           {
             showCheckInEarn && (
               <div className='flex gap-3 items-center'>
@@ -151,10 +151,10 @@ const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent
   const [event, setEvent] = useAtom(eventAtom);
   const [currency, setCurrency] = useAtom(currencyAtom);
   const [purchaseItems, setPurchaseItems] = useAtom(purchaseItemsAtom);
+  const [ticketLimit, setTicketLimit] = useAtom(ticketLimitAtom);
 
   const setApprovalRequired = useSetAtom(approvalRequiredAtom);
   const setTicketTypes = useSetAtom(ticketTypesAtom);
-  const setTicketLimit = useSetAtom(ticketLimitAtom);
   const setRequiredProfileFields = useSetAtom(requiredProfileFieldsAtom);
   const setPricingInfo = useSetAtom(pricingInfoAtom);
   const setSelectedPaymentAccount = useSetAtom(selectedPaymentAccountAtom);
@@ -241,6 +241,19 @@ const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent
   if (!event) return null;
 
   if (loadingInvitation || loadingTicketTypes) return <SkeletonCard />;
+
+  if (ticketLimit === 0) return (
+    <Card.Root>
+      <Card.Header>Registration</Card.Header>
+      <Card.Content>
+        <div className="flex gap-2 items-center">
+          <i className="icon-ticket size-5" />
+          <p className="text-lg">Sold Out</p>
+        </div>
+        <p className="text-sm text-secondary">This event is sold out and no longer taking registrations.</p>
+      </Card.Content>
+    </Card.Root>
+  );
 
   return <>
     <EventRegistrationContent />

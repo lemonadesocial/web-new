@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.21.0](https://github.com/lemonadesocial/web-new/compare/v1.20.0...v1.21.0) (2025-05-09)
+
+
+### Features
+
+* polish event details ([2832ca6](https://github.com/lemonadesocial/web-new/commit/2832ca6bc9cedb86abe27f169d248a3bd752e051))
+* polish event details ([9d8f594](https://github.com/lemonadesocial/web-new/commit/9d8f594d847bb7692684c9ef1c61b594f0f3f8e0))
+
+## [1.20.0](https://github.com/lemonadesocial/web-new/compare/v1.19.0...v1.20.0) (2025-05-09)
+
+
+### Features
+
+* check native token ([1e7233e](https://github.com/lemonadesocial/web-new/commit/1e7233e16df68c0b356c82a9448459c670b5d6e6))
+* event terms check ([db57c6f](https://github.com/lemonadesocial/web-new/commit/db57c6f0a7ba8e8d150172ed22f9839b5bb6fa43))
+
+
+### Bug Fixes
+
+* check tickets infinite loop ([a5781a4](https://github.com/lemonadesocial/web-new/commit/a5781a4bc040668a70d324131048d1fb42d29f1b))
+* clickable checkbox ([ccab88b](https://github.com/lemonadesocial/web-new/commit/ccab88bd3b1d8e451a131dd6e270ae4262a099ba))
+* close rsvp modal ([759cf7e](https://github.com/lemonadesocial/web-new/commit/759cf7e72e54934feccf94775441b95273dc1aa9))
+* filter custodial wallet ([568c1e7](https://github.com/lemonadesocial/web-new/commit/568c1e7dcb42e46976247f96e5aae590b940a005))
+* submit answers ([042d575](https://github.com/lemonadesocial/web-new/commit/042d5759d0381ebfe898069d26937e7878836306))
+
 ## [1.19.0](https://github.com/lemonadesocial/web-new/compare/v1.18.0...v1.19.0) (2025-05-06)
 
 

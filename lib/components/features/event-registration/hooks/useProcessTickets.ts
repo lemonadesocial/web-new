@@ -12,6 +12,7 @@ export function useProcessTickets() {
       return;
     }
 
+    registrationModal.close();
     setNonLoggedInStatus('success');
   }
 }

@@ -52,7 +52,7 @@ export function CommunitySection({ event }: { event?: Event }) {
           <img src={generateUrl(space.image_avatar_expanded)} className="size-8 border rounded-sm" />
         )}
         <div className="flex flex-col flex-1">
-          <p className="text-xs font-medium">Presented by</p>
+          <p className="text-xs text-secondary">Presented by</p>
           <div className="group flex gap-1 items-center flex-1">
             <Link
               href={`/s/${space.slug || space._id}`}

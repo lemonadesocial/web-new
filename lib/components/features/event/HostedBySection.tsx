@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { Avatar, Divider } from '$lib/components/core';
 import { Event, User } from '$lib/graphql/generated/backend/graphql';
-import { generateUrl } from '$lib/utils/cnd';
+import {  userAvatar } from '$lib/utils/user';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 
 import { COMMUNITY_SOCIAL_LINKS } from '../community/constants';
@@ -16,11 +16,11 @@ export function HostedBySection({ event }: { event: Event }) {
 
   return (
     <div className="event-description flex flex-col gap-2 w-full">
-      <p className="font-medium text-sm">Hosted by</p>
+      <p className="text-secondary text-sm">Hosted by</p>
       <Divider className="h-1 w-full mb-2" />
       {hosts.map((u) => (
         <div key={u._id} className="flex gap-3">
-          {u.new_photos_expanded && <Avatar src={generateUrl(u.new_photos_expanded[0])} />}
+          <Avatar src={userAvatar(u)} />
           <Link className="hover:text-accent-400 flex-1 font-medium" href={`${LEMONADE_DOMAIN}/u/${u?.username}`} target="_blank">
             {u.name}
           </Link>

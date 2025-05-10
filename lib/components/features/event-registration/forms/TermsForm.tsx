@@ -42,7 +42,12 @@ export function TermsForm() {
               required: "You must accept the terms to continue"
             })}
           />
-          {acceptTerms ? <i className="icon-checkbox-sharp size-5 text-white" /> : <i className="icon-checkbox-outline size-5 text-tertiary" />}
+          <div 
+            onClick={() => form.setValue('acceptTerms', !acceptTerms)}
+            className="cursor-pointer"
+          >
+            {acceptTerms ? <i className="icon-checkbox-sharp size-5 text-white" /> : <i className="icon-checkbox-outline size-5 text-tertiary" />}
+          </div>
         </div>
         <label htmlFor="acceptTerms" className="text-sm flex-1 cursor-pointer" dangerouslySetInnerHTML={{ __html: event.terms_text }} />
       </div>

@@ -10,7 +10,7 @@ export function AboutSection({ event, loading }: { event: Event; loading?: boole
 
   return (
     <div className="event-description flex flex-col gap-2 w-full">
-      <p className="font-medium text-sm">About</p>
+      <p className="text-secondary text-sm">About</p>
       <Divider className="h-1 w-full mb-2" />
       <div dangerouslySetInnerHTML={{ __html: event.description }} />
     </div>

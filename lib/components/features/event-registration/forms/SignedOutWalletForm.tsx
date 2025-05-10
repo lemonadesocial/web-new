@@ -71,7 +71,7 @@ export function SignedOutWalletForm({ required }: { required: boolean }) {
 
   return (
     <>
-      <LabeledInput label="Your Ethereum Address" required>
+      <LabeledInput label="Your Ethereum Address" required={required}>
         {
           form.watch('connectWalletInput') ? (
             <div className="flex items-center gap-2.5 w-full px-3.5 py-2 rounded-sm bg-primary/8">
