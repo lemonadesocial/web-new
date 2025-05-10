@@ -60,6 +60,12 @@ export function HeroSection({ space }: HeroSectionProps) {
           onDiscard: () => {
             setOpenSheet(false);
             document.getElementById(space?._id)?.setAttribute('class', space?.theme_data?.config?.mode || 'dark');
+            console.log(space?.theme_data);
+            if (space?.theme_data?.theme !== 'image') {
+              const el = document.querySelector('main');
+              el?.removeAttribute('style');
+            }
+
             setThemeAtom(space?.theme_data || defaultTheme);
           },
         },

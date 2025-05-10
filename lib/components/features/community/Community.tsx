@@ -9,6 +9,7 @@ import { Button, Divider, drawer, Menu, MenuItem, modal, Segment, Tag } from '$l
 import { HeroSection } from '$lib/components/features/community';
 import {
   Event,
+  FileCategory,
   FollowSpaceDocument,
   GetSpaceDocument,
   GetSpaceEventsCalendarDocument,
@@ -18,6 +19,9 @@ import {
   GetSpaceTagsQuery,
   GetSubSpacesDocument,
   GetSubSpacesQuery,
+  GetSystemFilesDocument,
+  GetSystemFilesQuery,
+  GetSystemFilesQueryVariables,
   PublicSpace,
   SortOrder,
   Space,
@@ -85,7 +89,12 @@ export function Community({ initData }: Props) {
     initData: { listSpaceTags: initData.spaceTags } as unknown as GetSpaceTagsQuery,
   });
 
-  const spaceTags = (dataGetSpaceTags?.listSpaceTags || []) as SpaceTagBase[];
+  /** NOTE: this perform load when open bottomsheet theme builder */
+  useQuery<GetSystemFilesQuery, GetSystemFilesQueryVariables>(GetSystemFilesDocument, {
+    variables: { categories: [FileCategory.SpaceDarkTheme, FileCategory.SpaceLightTheme] },
+  });
+
+  const spaceTags = (dataGetSpaceTags?.listSpaceTags || []) as unknown as SpaceTagBase[];
   const eventTags = spaceTags.filter((t) => t.type === SpaceTagType.Event && !!t.targets?.length);
 
   const { data: dataGetSpaceEventsCalendar } = useQuery(GetSpaceEventsCalendarDocument, {
@@ -202,7 +211,7 @@ export function Community({ initData }: Props) {
     }
   }, []);
 
-  console.log(data.variables?.custom);
+  console.log(theme);
 
   return (
     <>
@@ -221,7 +230,6 @@ export function Community({ initData }: Props) {
             main {
               ${data.variables?.image && generateCssVariables(data.variables?.image)}
 
-              background-image: var(--color-background);
               background-repeat: no-repeat;
               background-size: cover;
             }

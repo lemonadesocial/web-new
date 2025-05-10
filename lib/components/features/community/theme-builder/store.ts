@@ -23,6 +23,7 @@ export type ThemeValues = {
 };
 
 export const defaultTheme: ThemeValues = {
+  theme: undefined,
   config: {
     mode: 'dark',
     name: '',
@@ -33,6 +34,7 @@ export const defaultTheme: ThemeValues = {
   font_title: 'default',
   font_body: 'default',
   variables: {
+    image: {},
     font: {},
     custom: {},
     light: {},

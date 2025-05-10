@@ -12,6 +12,7 @@ import {
   GetSystemFilesQuery,
   GetSystemFilesQueryVariables,
   Space,
+  SystemFileBase,
   UpdateSpaceDocument,
 } from '$lib/graphql/generated/backend/graphql';
 import { Button, Card, Menu, MenuItem } from '$lib/components/core';
@@ -32,33 +33,26 @@ import { PopoverColor, PopoverShaderColor } from './popover-color';
 import { PopoverEmpty, PopoverPattern } from './popover-style';
 import { PopoverImage } from './popover-image';
 
-const images = [
-  { id: 1, url: 'https://picsum.photos/400/225?random=1', name: 'Doodles' },
-  { id: 2, url: 'https://picsum.photos/400/225?random=2', name: 'Pixel Pals' },
-  { id: 3, url: 'https://picsum.photos/400/225?random=7', name: 'Bored Apes' },
-  { id: 4, url: 'https://picsum.photos/400/225?random=4', name: 'Fluffles' },
-  { id: 5, url: 'https://picsum.photos/400/225?random=5', name: 'Cool Cats' },
-  { id: 6, url: 'https://picsum.photos/400/225?random=6', name: 'Art Blocks' },
-];
-
-export function ThemeBuilder({
-  space,
-  onClose,
-  onSave,
-}: {
+type Props = {
   space?: Space | null;
   onClose: (saved: boolean) => void;
   onSave: () => void;
-}) {
+};
+
+export function ThemeBuilder({ space, onClose, onSave }: Props) {
   const [updateCommunity, { loading }] = useMutation(UpdateSpaceDocument);
 
   const [saved, setSaved] = React.useState(true);
   const [data, onChange] = useAtom(themeAtom);
   const { theme, font_title, font_body, config, variables } = data;
 
-  const { data: dataImages } = useQuery<GetSystemFilesQuery, GetSystemFilesQueryVariables>(GetSystemFilesDocument, {
-    variables: { categories: [FileCategory.SpaceDarkTheme, FileCategory.SpaceLightTheme] },
-  });
+  const { data: dataImages, loading: loadingImages } = useQuery<GetSystemFilesQuery, GetSystemFilesQueryVariables>(
+    GetSystemFilesDocument,
+    {
+      variables: { categories: [FileCategory.SpaceDarkTheme, FileCategory.SpaceLightTheme] },
+    },
+  );
+  const images = (dataImages?.getSystemFiles || []) as SystemFileBase[];
 
   const handleChange = (values: Partial<ThemeValues>) => {
     setSaved(false);
@@ -81,6 +75,8 @@ export function ThemeBuilder({
                 theme === key && 'outline-2 outline-offset-2 outline-primary!',
               )}
               onClick={() => {
+                const mainEl = document.querySelector('main');
+
                 switch (key) {
                   case 'shader':
                     let shaderName = space?.theme_data?.config?.name;
@@ -91,6 +87,7 @@ export function ThemeBuilder({
                       fg = shaders[index].accent;
                     }
 
+                    mainEl?.removeAttribute('style');
                     handleChange({ theme: 'shader', config: { name: shaderName, fg, mode: 'dark' } });
                     document.getElementById(space?._id)?.setAttribute('class', config?.mode || 'dark');
                     break;
@@ -106,8 +103,31 @@ export function ThemeBuilder({
                     handleChange({ theme: key as any, config: { mode: 'dark', name: patternName } });
                     break;
 
+                  case 'image':
+                    let imageId = space?.theme_data?.config?.name;
+                    let bg = space?.theme_data?.config?.bg;
+                    let mode = space?.theme_data?.config?.mode;
+                    if (!imageId) {
+                      const index = Math.floor(Math.random() * images.length);
+                      imageId = images[index]?._id;
+                      bg = images[index]?.url;
+                      mode = images[index]?.category === FileCategory.SpaceLightTheme ? 'light' : 'dark';
+                    }
+
+                    mainEl?.removeAttribute('style');
+                    document.getElementById(space?._id)?.setAttribute('class', mode);
+                    mainEl?.style.setProperty('--color-background', `url(${bg})`);
+                    handleChange({
+                      theme: 'image',
+                      config: { ...config, name: imageId, bg, mode },
+                      variables: { ...variables, image: { '--color-background': `url(${bg})` } },
+                    });
+
+                    break;
+
                   default:
                     // should set default dark when switch theme
+                    mainEl?.removeAttribute('style');
                     document.getElementById(space?._id)?.setAttribute('class', 'dark');
                     handleChange({ theme: key as any, config: { mode: 'dark' } });
                     break;
@@ -220,15 +240,15 @@ export function ThemeBuilder({
 
           {theme === 'image' && (
             <PopoverImage
-              images={dataImages?.getSystemFiles || []}
-              selected={images.find((item) => config.bg === item._id)}
+              images={images}
+              selected={images.find((item) => config.name === item._id)}
               onSelect={(value) => {
                 const mode = value?.category === FileCategory.SpaceLightTheme ? 'light' : 'dark';
                 document.getElementById(space?._id)?.setAttribute('class', mode);
                 const el: any = document.querySelector('main');
                 el?.style.setProperty('--color-background', `url(${value.url})`);
                 handleChange({
-                  config: { ...config, bg: value.id, mode },
+                  config: { ...config, bg: value.url, name: value._id, mode },
                   variables: { ...variables, image: { '--color-background': `url(${value.url})` } },
                 });
               }}
@@ -334,13 +354,14 @@ export function ThemeBuilder({
             icon="icon-recent"
             variant="tertiary-alt"
             onClick={async () => {
-              handleChange({ theme: undefined });
               if (space?._id) {
                 await updateCommunity({
                   variables: { id: space._id, input: { theme_data: null } },
                   onComplete: (client) => {
                     handleChange(defaultTheme);
                     document.getElementById(space._id)?.setAttribute('class', 'dark');
+                    const el = document.querySelector('main');
+                    el?.removeAttribute('style');
                     setSaved(true);
                     client.writeFragment<Space>({ id: `Space:${space._id}`, data: { theme_data: null } });
                   },

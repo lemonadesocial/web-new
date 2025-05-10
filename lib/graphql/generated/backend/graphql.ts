@@ -730,6 +730,11 @@ export type CreateStripeOnrampSessionInput = {
   wallet_address?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type CreateSubscriptionInput = {
+  items: Array<SubscriptionItemType>;
+  payment_method_id: Scalars['String']['input'];
+};
+
 export type CreateUserFriendshipInput = {
   type?: InputMaybe<UserFriendshipType>;
   user: Scalars['MongoID']['input'];
@@ -1066,9 +1071,12 @@ export type EmailSetting = {
   custom_subject_html?: Maybe<Scalars['String']['output']>;
   disabled?: Maybe<Scalars['Boolean']['output']>;
   draft?: Maybe<Scalars['Boolean']['output']>;
+  failed_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  failed_reason?: Maybe<Scalars['String']['output']>;
   is_system_email: Scalars['Boolean']['output'];
   opened?: Maybe<Array<EmailTracking>>;
   owner: Scalars['MongoID']['output'];
+  pending_recipients?: Maybe<Array<Scalars['String']['output']>>;
   recipient_filters?: Maybe<EmailRecipientFilters>;
   recipient_types?: Maybe<Array<EmailRecipientType>>;
   recipients?: Maybe<Array<Scalars['String']['output']>>;
@@ -2920,6 +2928,7 @@ export type Mutation = {
   buyTickets: BuyTicketsResponse;
   cancelEvent: Event;
   cancelEventInvitations: Scalars['Boolean']['output'];
+  cancelSubscription: Scalars['Boolean']['output'];
   cancelTickets: Scalars['Boolean']['output'];
   castVote: Scalars['Boolean']['output'];
   checkinUser: EventRsvp;
@@ -2969,6 +2978,7 @@ export type Mutation = {
   createStorePromotion: StorePromotion;
   createStripeCard: StripeCard;
   createStripeOnrampSession: StripeOnrampSession;
+  createSubscription: SubscriptionResponse;
   createTicketTokenRewardSetting: TicketTokenRewardSetting;
   createTickets: Array<Ticket>;
   createUserExpertise: UserExpertise;
@@ -3064,9 +3074,10 @@ export type Mutation = {
   toggleEventQuestionLike: Scalars['Boolean']['output'];
   toggleFileLike: File;
   toggleReaction: Scalars['Boolean']['output'];
+  /** @deprecated Use unsubscribeSpace instead */
   unfollowSpace: Scalars['Boolean']['output'];
   unpinEventsFromSpace: Scalars['Boolean']['output'];
-  unsubscribeSpaceNewsletter: Scalars['Boolean']['output'];
+  unsubscribeSpace: Scalars['Boolean']['output'];
   updateBadge: Badge;
   updateBadgeList: BadgeList;
   updateCheckinTokenRewardSetting: CheckinTokenRewardSetting;
@@ -3109,6 +3120,7 @@ export type Mutation = {
   updateStoreProductVariant: StoreProductVariant;
   updateStripeConnectedAccountCapability: StripeAccountCapability;
   updateSubSpaceOrder: Scalars['Boolean']['output'];
+  updateSubscription: SubscriptionResponse;
   updateTicketTokenRewardSetting: TicketTokenRewardSetting;
   updateTokenRewardClaim: Scalars['Boolean']['output'];
   updateUser: User;
@@ -3171,6 +3183,11 @@ export type MutationCancelEventArgs = {
 
 export type MutationCancelEventInvitationsArgs = {
   input: CancelEventInvitationsInput;
+};
+
+
+export type MutationCancelSubscriptionArgs = {
+  _id: Scalars['MongoID']['input'];
 };
 
 
@@ -3438,6 +3455,11 @@ export type MutationCreateStripeCardArgs = {
 
 export type MutationCreateStripeOnrampSessionArgs = {
   input: CreateStripeOnrampSessionInput;
+};
+
+
+export type MutationCreateSubscriptionArgs = {
+  input: CreateSubscriptionInput;
 };
 
 
@@ -3933,8 +3955,8 @@ export type MutationUnpinEventsFromSpaceArgs = {
 };
 
 
-export type MutationUnsubscribeSpaceNewsletterArgs = {
-  input: UnsubscribeSpaceNewsletterInput;
+export type MutationUnsubscribeSpaceArgs = {
+  input: UnsubscribeSpaceInput;
 };
 
 
@@ -4132,6 +4154,12 @@ export type MutationUpdateStripeConnectedAccountCapabilityArgs = {
 export type MutationUpdateSubSpaceOrderArgs = {
   _id: Scalars['MongoID']['input'];
   sub_spaces: Array<Scalars['MongoID']['input']>;
+};
+
+
+export type MutationUpdateSubscriptionArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: UpdateSubscriptionInput;
 };
 
 
@@ -4353,6 +4381,7 @@ export type Notification = {
 export enum NotificationType {
   AdminPaymentVerification = 'admin_payment_verification',
   ChatMessage = 'chat_message',
+  EmailSendFailed = 'email_send_failed',
   EventAnnounce = 'event_announce',
   EventApprove = 'event_approve',
   EventAttestationSyncCompleted = 'event_attestation_sync_completed',
@@ -4757,6 +4786,7 @@ export type Query = {
   getBroadcasts: Array<Broadcast>;
   getComments: Array<Comment>;
   getConfigs: Scalars['JSON']['output'];
+  getCurrentSubscription?: Maybe<SubscriptionResponse>;
   getEvent?: Maybe<Event>;
   getEventApplicationAnswers: Array<EventApplicationAnswer>;
   getEventAttestation?: Maybe<EventAttestation>;
@@ -4836,6 +4866,7 @@ export type Query = {
   getSpaceNewsletterStatistics: SpaceNewsletterStatistics;
   getSpaceRewardSettingClaims: Array<SpaceTokenRewardClaim>;
   getSpaceRewardStatistics: SpaceRewardStatistics;
+  getSpaceSendingQuota: SpaceSendingQuota;
   getSpaceStatistics: SpaceStatisticResponse;
   getSpaceVerificationSubmission?: Maybe<SpaceVerificationSubmission>;
   getStakePaymentStatistics: StakePaymentStatistics;
@@ -4904,10 +4935,12 @@ export type Query = {
   listSpaceTokenGates: Array<SpaceTokenGate>;
   listSpaceTokenRewardClaims: SpaceTokenRewardClaims;
   listSpaces: Array<Space>;
+  listSubscriptionItems: Array<SubscriptionItem>;
   listTicketTokenRewardSettings: Array<TicketTokenRewardSetting>;
   listUserExpertises: Array<UserExpertise>;
   listUserServices: Array<UserServiceOffer>;
   peekEventGuests: PeekEventGuestsResponse;
+  previewUpdateSubscription?: Maybe<SubscriptionPricing>;
   tgGetMyChannels: ScanChannelsResult;
 };
 
@@ -5482,6 +5515,11 @@ export type QueryGetSpaceRewardStatisticsArgs = {
 };
 
 
+export type QueryGetSpaceSendingQuotaArgs = {
+  space: Scalars['MongoID']['input'];
+};
+
+
 export type QueryGetSpaceStatisticsArgs = {
   space: Scalars['MongoID']['input'];
 };
@@ -5897,6 +5935,12 @@ export type QueryListTicketTokenRewardSettingsArgs = {
 export type QueryPeekEventGuestsArgs = {
   _id: Scalars['MongoID']['input'];
   limit?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryPreviewUpdateSubscriptionArgs = {
+  _id: Scalars['MongoID']['input'];
+  input: UpdateSubscriptionInput;
 };
 
 
@@ -6412,6 +6456,18 @@ export type SendSpaceNewsletterTestEmailsInput = {
   space?: InputMaybe<Scalars['MongoID']['input']>;
   test_recipients: Array<Scalars['String']['input']>;
 };
+
+export enum SendgridCreditResetFrequency {
+  Daily = 'daily',
+  Monthly = 'monthly',
+  Weekly = 'weekly'
+}
+
+export enum SendgridCreditType {
+  Nonrecurring = 'nonrecurring',
+  Recurring = 'recurring',
+  Unlimited = 'unlimited'
+}
 
 export type Site = {
   __typename?: 'Site';
@@ -6998,6 +7054,15 @@ export enum SpaceRole {
   Subscriber = 'subscriber',
   Unsubscriber = 'unsubscriber'
 }
+
+export type SpaceSendingQuota = {
+  __typename?: 'SpaceSendingQuota';
+  remain?: Maybe<Scalars['Int']['output']>;
+  reset_frequency?: Maybe<SendgridCreditResetFrequency>;
+  total?: Maybe<Scalars['Int']['output']>;
+  type: SendgridCreditType;
+  used?: Maybe<Scalars['Int']['output']>;
+};
 
 export enum SpaceState {
   Active = 'active',
@@ -7595,6 +7660,65 @@ export type SubscriptionVotingUpdatedArgs = {
   _id: Scalars['MongoID']['input'];
 };
 
+export type SubscriptionDetail = {
+  __typename?: 'SubscriptionDetail';
+  active?: Maybe<Scalars['Boolean']['output']>;
+  type: SubscriptionItemType;
+};
+
+export type SubscriptionItem = {
+  __typename?: 'SubscriptionItem';
+  pricing?: Maybe<SubscriptionPricing>;
+  title: Scalars['String']['output'];
+  type: SubscriptionItemType;
+  weekly_email_limit?: Maybe<Scalars['Int']['output']>;
+};
+
+export enum SubscriptionItemType {
+  FreePlan = 'free_plan',
+  PaidPlan_1 = 'paid_plan_1',
+  PaidPlan_2 = 'paid_plan_2',
+  PaidPlan_3 = 'paid_plan_3',
+  PaidPlan_4 = 'paid_plan_4'
+}
+
+export type SubscriptionPayment = {
+  __typename?: 'SubscriptionPayment';
+  client_secret: Scalars['String']['output'];
+  publishable_key: Scalars['String']['output'];
+};
+
+export type SubscriptionPricing = {
+  __typename?: 'SubscriptionPricing';
+  currency: Scalars['String']['output'];
+  decimals: Scalars['Float']['output'];
+  price: Scalars['String']['output'];
+};
+
+export type SubscriptionRecord = {
+  __typename?: 'SubscriptionRecord';
+  _id: Scalars['MongoID']['output'];
+  cancel_at_period_end?: Maybe<Scalars['Boolean']['output']>;
+  created_at: Scalars['DateTimeISO']['output'];
+  current_period_end: Scalars['DateTimeISO']['output'];
+  current_period_start: Scalars['DateTimeISO']['output'];
+  status: SubscriptionStatus;
+  user: Scalars['MongoID']['output'];
+};
+
+export type SubscriptionResponse = {
+  __typename?: 'SubscriptionResponse';
+  items: Array<SubscriptionDetail>;
+  payment?: Maybe<SubscriptionPayment>;
+  subscription: SubscriptionRecord;
+};
+
+export enum SubscriptionStatus {
+  Active = 'active',
+  Incomplete = 'incomplete',
+  PastDue = 'past_due'
+}
+
 export type SyncFarcasterConnectionStatusResponse = {
   __typename?: 'SyncFarcasterConnectionStatusResponse';
   accepted: Scalars['Boolean']['output'];
@@ -7866,7 +7990,7 @@ export type TokenRewardVaultInput = {
   tokens?: InputMaybe<Array<RewardTokenInput>>;
 };
 
-export type UnsubscribeSpaceNewsletterInput = {
+export type UnsubscribeSpaceInput = {
   reason?: InputMaybe<Scalars['String']['input']>;
   space: Scalars['MongoID']['input'];
   /** The unsubscribe token from the email */
@@ -7996,6 +8120,11 @@ export type UpdateStoreBucketItemInput = {
 export type UpdateStripeConnectedAccountCapabilityInput = {
   capabilities: Array<CapabilityInput>;
   id: Scalars['String']['input'];
+};
+
+export type UpdateSubscriptionInput = {
+  items?: InputMaybe<Array<SubscriptionItemType>>;
+  payment_method_id?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateTicketTypeCategoryInput = {
