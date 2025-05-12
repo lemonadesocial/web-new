@@ -6,6 +6,7 @@ import './globals.css';
 import fonts from './fonts';
 
 export const metadata: Metadata = {
+  metadataBase: null,
   title: 'Lemonade',
   description:
     'Discover events & communities, find your tribe! Create your own Lemonade Stand to build and collaborate with creators across the world. #makelemonade',
