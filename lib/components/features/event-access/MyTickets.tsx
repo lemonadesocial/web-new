@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { Ticket, Event, PaymentRefundInfo } from '$lib/graphql/generated/backend/graphql';
 import { Button, drawer, modal, ModalContent } from "$lib/components/core";
 import { downloadTicketPass, getAssignedTicket, getUnassignedTickets } from "$lib/utils/event";
+import { useEventStatus } from "$lib/hooks/useEventStatus";
 import { useMe } from "$lib/hooks/useMe";
 
 import { AccessCard } from "./AccessCard";
@@ -13,6 +14,8 @@ import { AdditionalTicketsPane } from "./AdditionalTicketsPane";
 
 export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; payments?: PaymentRefundInfo[]; event: Event; }) {
   const me = useMe();
+
+  const { status, timeLabel } = useEventStatus(event.start, event.end);
 
   const ticketTypeText = useMemo(() => {
     const ticketTypes = tickets.reduce((acc, ticket) => {
@@ -37,37 +40,90 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
   const unassignedTickets = getUnassignedTickets(tickets);
 
   return (
-    <AccessCard start={event.start}>
+    <AccessCard event={event}>
       <div>
         <h3 className="text-xl font-semibold">You&apos;re In</h3>
         <p className="text-lg text-tertiary">{ticketTypeText}</p>
       </div>
+      {
+        ((status === 'starting-soon' || status === 'upcoming') && event.virtual) && (
+          <div className="bg-primary/8 rounded-sm py-2 px-3.5 flex gap-2">
+            <i className="icon-clock size-5 text-secondary mt-0.5" />
+            <div className="w-full space-y-2">
+              <div className="flex justify-between">
+                <p className="text-secondary">Event starting in</p>
+                <p className="text-warning-300">{timeLabel}</p>
+              </div>
+              {
+                status === 'upcoming' && <>
+                  <hr className="border-t border-divider" />
+                  <p className="text-secondary text-sm">
+                    The join button will be shown when the event is about to start.
+                  </p>
+                </>
+              }
+            </div>
+          </div>
+        )
+      }
       <div className="flex justify-between whitespace-nowrap flex-wrap gap-2">
         <div className="flex gap-2">
-          <Button
-            variant="tertiary"
-            size="sm"
-            iconLeft="icon-calendar-add"
-            onClick={() => modal.open(AddToCalendarModal, {
-              props: {
-                event
-              },
-              dismissible: true
-            })}
-          >
-            Add to Calendar
-          </Button>
-          <Button
-            variant="tertiary"
-            size="sm"
-            icon="icon-ticket"
-            onClick={() => drawer.open(MyTicketsPane, {
-              props: {
-                tickets,
-                event
-              },
-            })}
-          />
+          {
+            status === 'upcoming' && <>
+              <Button
+                variant="tertiary"
+                size="sm"
+                iconLeft="icon-calendar-add"
+                onClick={() => modal.open(AddToCalendarModal, {
+                  props: {
+                    event
+                  },
+                  dismissible: true
+                })}
+              >
+                Add to Calendar
+              </Button>
+              <Button
+                variant="tertiary"
+                size="sm"
+                icon="icon-ticket"
+                onClick={() => drawer.open(MyTicketsPane, {
+                  props: {
+                    tickets,
+                    event
+                  },
+                })}
+              />
+            </>
+          }
+          {
+            (status === 'starting-soon' || status === 'live') && (
+              event.virtual ? (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  iconLeft="icon-video"
+                  onClick={() => window.open(event.virtual_url!, '_blank')}
+                >
+                  Join Event
+                </Button>
+              ) : (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  iconLeft="icon-ticket"
+                  onClick={() => drawer.open(MyTicketsPane, {
+                    props: {
+                      tickets,
+                      event
+                    },
+                  })}
+                >
+                  My Ticket
+                </Button>
+              )
+            )
+          }
           <Button
             variant="tertiary"
             size="sm"

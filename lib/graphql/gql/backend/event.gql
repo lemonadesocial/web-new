@@ -98,6 +98,8 @@ query GetEvent($id: MongoID, $shortid: String) {
     }
     guest_limit
     terms_text
+    virtual
+    virtual_url
   }
 }
 

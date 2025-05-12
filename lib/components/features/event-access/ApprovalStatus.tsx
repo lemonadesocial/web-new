@@ -1,8 +1,9 @@
-import { EventJoinRequest, EventJoinRequestState } from '$lib/graphql/generated/backend/graphql';
-import { AccessCard } from './AccessCard';
 import { useMemo } from 'react';
 
-export function ApprovalStatus({ joinRequest }: { joinRequest: EventJoinRequest }) {
+import { EventJoinRequest, EventJoinRequestState, Event } from '$lib/graphql/generated/backend/graphql';
+import { AccessCard } from './AccessCard';
+
+export function ApprovalStatus({ joinRequest, event }: { joinRequest: EventJoinRequest; event: Event; }) {
   const ticketTypeText = useMemo(() => {
     if (joinRequest.state === EventJoinRequestState.Declined) return '';
 
@@ -17,7 +18,7 @@ export function ApprovalStatus({ joinRequest }: { joinRequest: EventJoinRequest 
   }, [joinRequest]);
 
   return (
-    <AccessCard>
+    <AccessCard event={event}>
       <div>
         {joinRequest.state === EventJoinRequestState.Pending && (
           <>

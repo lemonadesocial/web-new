@@ -101,7 +101,9 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           <EventDateTimeBlock event={event} />
           <EventLocationBlock event={event} />
         </div>
-        <EventAccess event={event} />
+        {
+          event && <EventAccess event={event} />
+        }
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />
