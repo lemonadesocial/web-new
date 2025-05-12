@@ -6,10 +6,20 @@ import { isAttending } from '$lib/utils/event';
 export function EventLocationBlock({ loading = false, event }: { loading?: boolean; event?: Event }) {
   const session = useSession();
 
+  const attending = session?.user && event ? isAttending(event, session?.user) : false;
+  
   if (loading) return <EventLocationBlockSkeleton />;
-  if (!event?.address) return null;
 
-  const attending = session?.user ? isAttending(event, session?.user) : false;
+  if (event?.virtual) return (
+    <div className="flex gap-4 flex-1 items-center">
+      <div className="border rounded-sm size-12 min-w-12 flex items-center justify-center">
+        <i className="icon-video" />
+      </div>
+      <p>Virtual</p>
+    </div>
+  );
+
+  if (!event?.address) return null;
 
   return (
     <div className="flex gap-4 flex-1">
