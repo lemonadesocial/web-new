@@ -39,14 +39,24 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
   const myTicket = getAssignedTicket(tickets, me?._id, me?.email) || tickets[0];
   const unassignedTickets = getUnassignedTickets(tickets);
 
+  if (status === 'ended') return (
+    <AccessCard event={event}>
+      <div>
+        <h3 className="text-xl font-semibold">Thank You for Joining</h3>
+        <p className="text-lg text-tertiary">Tickets: {ticketTypeText}</p>
+        <p className="text-secondary">We hope you enjoyed the event!</p>
+      </div>
+    </AccessCard>
+  );
+
   return (
     <AccessCard event={event}>
       <div>
         <h3 className="text-xl font-semibold">You&apos;re In</h3>
-        <p className="text-lg text-tertiary">{ticketTypeText}</p>
+        <p className="text-lg text-tertiary">Tickets: {ticketTypeText}</p>
       </div>
       {
-        ((status === 'starting-soon' || status === 'upcoming') && event.virtual) && (
+        ((status === 'starting-soon' || status === 'upcoming') && event.virtual_url) && (
           <div className="bg-primary/8 rounded-sm py-2 px-3.5 flex gap-2">
             <i className="icon-clock size-5 text-secondary mt-0.5" />
             <div className="w-full space-y-2">
@@ -98,7 +108,7 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
           }
           {
             (status === 'starting-soon' || status === 'live') && (
-              event.virtual ? (
+              event.virtual_url ? (
                 <Button
                   variant="secondary"
                   size="sm"
