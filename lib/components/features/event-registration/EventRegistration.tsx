@@ -33,6 +33,7 @@ import {
 import { EventRegistrationStoreProvider } from './context';
 import { TicketSelect } from './TicketSelect';
 import { RegisterButton } from './RegisterButton';
+import { AccessCard } from '../event-access/AccessCard';
 
 const EventRegistrationContent: React.FC = () => {
   const signIn = useSignIn();
@@ -59,8 +60,7 @@ const EventRegistrationContent: React.FC = () => {
 
   if (nonLoggedInStatus) {
     return (
-      <Card.Root className="p-4 space-y-4">
-        <Avatar src={randomUserImage()} className='size-12' />
+      <AccessCard event={event}>
         <div>
           <h3 className="text-xl font-semibold">
             {nonLoggedInStatus === 'success' ? `You're In` : 'Pending Approval'}
@@ -75,7 +75,7 @@ const EventRegistrationContent: React.FC = () => {
           <p>Please sign in to manage your registration and see more event details.</p>
           <Button size='sm' variant='tertiary' iconRight='icon-chevron-right' onClick={signIn}>Sign In</Button>
         </div>
-      </Card.Root>
+      </AccessCard>
     );
   }
 

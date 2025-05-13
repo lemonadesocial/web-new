@@ -10,18 +10,7 @@ export function EventLocationBlock({ loading = false, event }: { loading?: boole
   
   if (loading) return <EventLocationBlockSkeleton />;
 
-  if (event?.virtual) return (
-    <div className="flex gap-4 flex-1 items-center">
-      <div className="border rounded-sm size-12 min-w-12 flex items-center justify-center">
-        <i className="icon-video" />
-      </div>
-      <p>Virtual</p>
-    </div>
-  );
-
-  if (!event?.address) return null;
-
-  return (
+  if (event?.address) return (
     <div className="flex gap-4 flex-1">
       <div className="border rounded-sm size-12 min-w-12 flex items-center justify-center">
         <i className="icon-location-outline" />
@@ -42,6 +31,17 @@ export function EventLocationBlock({ loading = false, event }: { loading?: boole
       </div>
     </div>
   );
+
+  if (event?.virtual_url) return (
+    <div className="flex gap-4 flex-1 items-center">
+      <div className="border rounded-sm size-12 min-w-12 flex items-center justify-center">
+        <i className="icon-video" />
+      </div>
+      <p>Virtual</p>
+    </div>
+  );
+
+  return null;
 }
 
 function EventLocationBlockSkeleton() {
