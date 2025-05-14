@@ -108,7 +108,7 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
           }
           {
             (status === 'starting-soon' || status === 'live') && (
-              event.virtual_url ? (
+              event.virtual_url ? <>
                 <Button
                   variant="secondary"
                   size="sm"
@@ -117,7 +117,22 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
                 >
                   Join Event
                 </Button>
-              ) : (
+                {
+                  event.address && (
+                    <Button
+                      variant="tertiary"
+                      size="sm"
+                      icon="icon-ticket"
+                      onClick={() => drawer.open(MyTicketsPane, {
+                        props: {
+                          tickets,
+                          event
+                        },
+                      })}
+                    />
+                  )
+                }
+              </> : (
                 <Button
                   variant="secondary"
                   size="sm"
@@ -134,12 +149,16 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
               )
             )
           }
-          <Button
-            variant="tertiary"
-            size="sm"
-            icon="icon-pass"
-            onClick={() => downloadTicketPass(myTicket)}
-          />
+          {
+            !event.virtual_url && (
+              <Button
+                variant="tertiary"
+                size="sm"
+                iconLeft="icon-pass"
+                onClick={() => downloadTicketPass(myTicket)}
+              />
+            )
+          }
         </div>
         <div className="flex gap-2">
           {
