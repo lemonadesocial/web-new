@@ -34,7 +34,7 @@ import { EventRegistrationStoreProvider } from './context';
 import { TicketSelect } from './TicketSelect';
 import { RegisterButton } from './RegisterButton';
 import { AccessCard } from '../event-access/AccessCard';
-import { useEventStatus } from '$lib/hooks/useEventStatus';
+import { EventCountdown } from '../event-access/EventCountdown';
 
 const EventRegistrationContent: React.FC = () => {
   const signIn = useSignIn();
@@ -47,7 +47,6 @@ const EventRegistrationContent: React.FC = () => {
   const paymentAccount = ticketTypes[0].prices[0].payment_accounts_expanded?.[0];
 
   const event = useAtomValue(eventDataAtom);
-  const { status, timeLabel } = useEventStatus(event.start, event.end);
 
   const { refundRate } = useStakeRefundRate(paymentAccount?.type === 'ethereum_stake' ? (paymentAccount?.account_info as EthereumStakeAccount) : undefined);
 
@@ -69,27 +68,7 @@ const EventRegistrationContent: React.FC = () => {
           </h3>
           <p className="text-lg text-tertiary">{ticketTypeText}</p>
         </div>
-        {
-        ((status === 'starting-soon' || status === 'upcoming') && event.virtual_url) && (
-          <div className="bg-primary/8 rounded-sm py-2 px-3.5 flex gap-2">
-            <i className="icon-clock size-5 text-secondary mt-0.5" />
-            <div className="w-full space-y-2">
-              <div className="flex justify-between">
-                <p className="text-secondary">Event starting in</p>
-                <p className="text-warning-300">{timeLabel}</p>
-              </div>
-              {
-                status === 'upcoming' && <>
-                  <hr className="border-t border-divider" />
-                  <p className="text-secondary text-sm">
-                    The join button will be shown when the event is about to start.
-                  </p>
-                </>
-              }
-            </div>
-          </div>
-        )
-      }
+        <EventCountdown event={event} />
         <hr className="border-primary/8" />
         <div className="p-4 space-y-3 bg-primary/8 rounded-sm">
           <div className='size-8 flex items-center justify-center bg-white rounded-full'>
