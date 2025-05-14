@@ -6,7 +6,6 @@ import { CalculateTicketsPricingDocument, EthereumStakeAccount, Event, GetEventI
 import { useQuery } from '$lib/graphql/request';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
-import { randomUserImage, userAvatar } from '$lib/utils/user';
 import { Avatar, Button, Card, ModalContainer, SkeletonCard } from '$lib/components/core';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { useStakeRefundRate } from '$lib/utils/stake';
@@ -70,26 +69,26 @@ const EventRegistrationContent: React.FC = () => {
           <p className="text-lg text-tertiary">{ticketTypeText}</p>
         </div>
         {
-        ((status === 'starting-soon' || status === 'upcoming') && event.virtual_url) && (
-          <div className="bg-primary/8 rounded-sm py-2 px-3.5 flex gap-2">
-            <i className="icon-clock size-5 text-secondary mt-0.5" />
-            <div className="w-full space-y-2">
-              <div className="flex justify-between">
-                <p className="text-secondary">Event starting in</p>
-                <p className="text-warning-300">{timeLabel}</p>
+          ((status === 'starting-soon' || status === 'upcoming') && event.virtual_url) && (
+            <div className="bg-primary/8 rounded-sm py-2 px-3.5 flex gap-2">
+              <i className="icon-clock size-5 text-secondary mt-0.5" />
+              <div className="w-full space-y-2">
+                <div className="flex justify-between">
+                  <p className="text-secondary">Event starting in</p>
+                  <p className="text-warning-300">{timeLabel}</p>
+                </div>
+                {
+                  status === 'upcoming' && <>
+                    <hr className="border-t border-divider" />
+                    <p className="text-secondary text-sm">
+                      The join button will be shown when the event is about to start.
+                    </p>
+                  </>
+                }
               </div>
-              {
-                status === 'upcoming' && <>
-                  <hr className="border-t border-divider" />
-                  <p className="text-secondary text-sm">
-                    The join button will be shown when the event is about to start.
-                  </p>
-                </>
-              }
             </div>
-          </div>
-        )
-      }
+          )
+        }
         <hr className="border-primary/8" />
         <div className="p-4 space-y-3 bg-primary/8 rounded-sm">
           <div className='size-8 flex items-center justify-center bg-white rounded-full'>
@@ -170,7 +169,7 @@ const EventRegistrationContent: React.FC = () => {
   );
 };
 
-const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent }) => {
+const BaseEventRegistration: React.FC<{ event: Event; }> = ({ event: initialEvent }) => {
   const [event, setEvent] = useAtom(eventAtom);
   const [currency, setCurrency] = useAtom(currencyAtom);
   const [purchaseItems, setPurchaseItems] = useAtom(purchaseItemsAtom);
@@ -284,7 +283,7 @@ const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent
   </>;
 };
 
-export const EventRegistration: React.FC<{ event: Event }> = ({ event }) => (
+export const EventRegistration: React.FC<{ event: Event; }> = ({ event }) => (
   <EventRegistrationStoreProvider>
     <BaseEventRegistration event={event} />
   </EventRegistrationStoreProvider>

@@ -4,11 +4,9 @@ import { RegistrationModal } from "./modals/RegistrationModal";
 import { approvalRequiredAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, registrationModal, useAtomValue, hasSingleFreeTicketAtom } from "./store";
 import { useSession } from "$lib/hooks/useSession";
 import { useRedeemTickets } from "./hooks/useRedeemTickets";
-import { useSignIn } from "$lib/hooks/useSignIn";
 
 export function RegisterButton() {
   const session = useSession();
-  const signIn = useSignIn();
   const pricingInfo = useAtomValue(pricingInfoAtom);
   const purchaseItems = useAtomValue(purchaseItemsAtom);
   const event = useAtomValue(eventDataAtom);

@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { ResultOf, DocumentTypeDecoration, TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { FragmentDefinitionNode } from 'graphql';
 import { Incremental } from './graphql';
@@ -8,11 +7,11 @@ export type FragmentType<TDocumentType extends DocumentTypeDecoration<any, any>>
   infer TType,
   any
 >
-  ? [TType] extends [{ ' $fragmentName'?: infer TKey }]
-    ? TKey extends string
-      ? { ' $fragmentRefs'?: { [key in TKey]: TType } }
-      : never
-    : never
+  ? [TType] extends [{ ' $fragmentName'?: infer TKey; }]
+  ? TKey extends string
+  ? { ' $fragmentRefs'?: { [key in TKey]: TType }; }
+  : never
+  : never
   : never;
 
 // return non-nullable if `fragmentType` is non-nullable
@@ -74,7 +73,7 @@ export function isFragmentReady<TQuery, TFrag>(
   fragmentNode: TypedDocumentNode<TFrag>,
   data: FragmentType<TypedDocumentNode<Incremental<TFrag>, any>> | null | undefined
 ): data is FragmentType<typeof fragmentNode> {
-  const deferredFields = (queryNode as { __meta__?: { deferredFields: Record<string, (keyof TFrag)[]> } }).__meta__
+  const deferredFields = (queryNode as { __meta__?: { deferredFields: Record<string, (keyof TFrag)[]>; }; }).__meta__
     ?.deferredFields;
 
   if (!deferredFields) return true;
