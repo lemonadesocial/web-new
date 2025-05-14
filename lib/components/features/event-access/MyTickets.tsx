@@ -11,11 +11,12 @@ import { StakeRefundItem } from "./StakeRefund";
 import { MyTicketsPane } from "./MyTicketsPane";
 import { AddToCalendarModal } from "./AddToCalendar";
 import { AdditionalTicketsPane } from "./AdditionalTicketsPane";
+import { EventCountdown } from "./EventCountdown";
 
 export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; payments?: PaymentRefundInfo[]; event: Event; }) {
   const me = useMe();
 
-  const { status, timeLabel } = useEventStatus(event.start, event.end);
+  const { status } = useEventStatus(event.start, event.end);
 
   const ticketTypeText = useMemo(() => {
     const ticketTypes = tickets.reduce((acc, ticket) => {
@@ -55,27 +56,7 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
         <h3 className="text-xl font-semibold">You&apos;re In</h3>
         <p className="text-lg text-tertiary">Tickets: {ticketTypeText}</p>
       </div>
-      {
-        ((status === 'starting-soon' || status === 'upcoming') && event.virtual_url) && (
-          <div className="bg-primary/8 rounded-sm py-2 px-3.5 flex gap-2">
-            <i className="icon-clock size-5 text-secondary mt-0.5" />
-            <div className="w-full space-y-2">
-              <div className="flex justify-between">
-                <p className="text-secondary">Event starting in</p>
-                <p className="text-warning-300">{timeLabel}</p>
-              </div>
-              {
-                status === 'upcoming' && <>
-                  <hr className="border-t border-divider" />
-                  <p className="text-secondary text-sm">
-                    The join button will be shown when the event is about to start.
-                  </p>
-                </>
-              }
-            </div>
-          </div>
-        )
-      }
+      <EventCountdown event={event} />
       <div className="flex justify-between whitespace-nowrap flex-wrap gap-2">
         <div className="flex gap-2">
           {
@@ -150,7 +131,7 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
             )
           }
           {
-            !event.virtual_url && (
+            (!event.virtual_url || event.address) && (
               <Button
                 variant="tertiary"
                 size="sm"

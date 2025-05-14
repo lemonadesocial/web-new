@@ -29,7 +29,7 @@ export function AccessCard({
             </div>
           )
         }
-        {(status === 'upcoming' && !event.virtual_url) && (
+        {(status === 'upcoming' || status === 'starting-soon') && !event.virtual_url && (
           <div className="px-2 py-1 bg-primary/8 rounded-full">
             <p className="text-xs text-tertiary">Starts in <span className="text-warning-300">{timeLabel}</span></p>
           </div>
