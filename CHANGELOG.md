@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.22.1](https://github.com/lemonadesocial/web-new/compare/v1.22.0...v1.22.1) (2025-05-15)
+
+
+### Bug Fixes
+
+* missing import ([8bd88a4](https://github.com/lemonadesocial/web-new/commit/8bd88a4b2e59047331e48808d720bd7d89fd95cc))
+* sort order ([82d78f2](https://github.com/lemonadesocial/web-new/commit/82d78f2b1a1aaafc2fc7828eb55298179ead23fa))
+
 ## [1.22.0](https://github.com/lemonadesocial/web-new/compare/v1.21.0...v1.22.0) (2025-05-15)
 
 
