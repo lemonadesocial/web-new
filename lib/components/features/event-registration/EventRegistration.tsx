@@ -34,6 +34,7 @@ import { TicketSelect } from './TicketSelect';
 import { RegisterButton } from './RegisterButton';
 import { AccessCard } from '../event-access/AccessCard';
 import { EventCountdown } from '../event-access/EventCountdown';
+import { userAvatar } from '$lib/utils/user';
 
 const EventRegistrationContent: React.FC = () => {
   const signIn = useSignIn();
