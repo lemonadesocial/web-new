@@ -9,6 +9,8 @@ import { useMe } from '$lib/hooks/useMe';
 import { Avatar, Button, Card, ModalContainer, SkeletonCard } from '$lib/components/core';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { useStakeRefundRate } from '$lib/utils/stake';
+import { userAvatar } from '$lib/utils/user';
+
 import {
   approvalRequiredAtom,
   currencyAtom,
@@ -34,7 +36,6 @@ import { TicketSelect } from './TicketSelect';
 import { RegisterButton } from './RegisterButton';
 import { AccessCard } from '../event-access/AccessCard';
 import { EventCountdown } from '../event-access/EventCountdown';
-import { userAvatar } from '$lib/utils/user';
 
 const EventRegistrationContent: React.FC = () => {
   const signIn = useSignIn();
