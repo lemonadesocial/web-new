@@ -8,13 +8,13 @@ import {
   GetSubSpacesDocument,
   Space,
   PublicSpace,
-  SpaceTagBase,
+  SpaceTag,
 } from '$lib/graphql/generated/backend/graphql';
 
 import { Community } from '$lib/components/features/community';
 import { generateUrl } from '$lib/utils/cnd';
 
-type Props = { params: Promise<{ domain: string }> };
+type Props = { params: Promise<{ domain: string; }>; };
 
 export async function generateMetadata({ params }: Props, parent: ResolvingMetadata) {
   const res = await params;
@@ -69,6 +69,6 @@ const prefetchData = async (client: GraphqlClient, space: Space) => {
 
   return {
     subSpaces: (subSpaces.data?.getSubSpaces || []) as PublicSpace[],
-    spaceTags: (spaceTags.data?.listSpaceTags || []) as SpaceTagBase[],
+    spaceTags: (spaceTags.data?.listSpaceTags || []) as SpaceTag[],
   };
 };
