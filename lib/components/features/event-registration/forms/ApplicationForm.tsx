@@ -90,7 +90,6 @@ export function ApplicationForm() {
 
 function renderQuestionField(
   question: EventApplicationQuestion,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<ApplicationFormValues, any>,
   errors: FieldErrors<ApplicationFormValues>
 ) {

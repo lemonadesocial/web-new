@@ -3,10 +3,9 @@ import { Event, GetEventsDocument } from '$lib/graphql/generated/backend/graphql
 import React from 'react';
 import { EventListCard } from '../EventList';
 import { useQuery } from '$lib/graphql/request';
-import Link from 'next/link';
 import { EventPane } from '../pane';
 
-export function SubEventSection({ event }: { event?: Event }) {
+export function SubEventSection({ event }: { event?: Event; }) {
   const { data } = useQuery(GetEventsDocument, {
     variables: { skip: 0, limit: 1, subeventParent: event?._id },
     skip: !event?._id,

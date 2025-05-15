@@ -17,6 +17,7 @@
   "dependencies": {
     "@date-fns/tz": "^1.2.0",
     "@dicebear/core": "^9.2.2",
+    "@dicebear/glass": "^9.2.2",
     "@dicebear/thumbs": "^9.2.2",
     "@floating-ui/react": "^0.27.5",
     "@ory/client": "^1.19.0",
