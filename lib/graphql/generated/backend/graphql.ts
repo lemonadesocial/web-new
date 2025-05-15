@@ -1033,13 +1033,13 @@ export enum EasyshipCategory {
 export type EmailRecipientFilters = {
   __typename?: 'EmailRecipientFilters';
   join_request_states?: Maybe<Array<EventJoinRequestState>>;
-  space_tags?: Maybe<Array<Scalars['MongoID']['output']>>;
+  space_members?: Maybe<SpaceMemberRecipientFilter>;
   ticket_types?: Maybe<Array<Scalars['MongoID']['output']>>;
 };
 
 export type EmailRecipientFiltersInput = {
   join_request_states?: InputMaybe<Array<EventJoinRequestState>>;
-  space_tags?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  space_members?: InputMaybe<SpaceMemberRecipientFilterInput>;
   ticket_types?: InputMaybe<Array<Scalars['MongoID']['input']>>;
 };
 
@@ -1054,6 +1054,7 @@ export enum EmailRecipientType {
   SpaceAmbassadors = 'space_ambassadors',
   SpaceEventAttendees = 'space_event_attendees',
   SpaceEventHosts = 'space_event_hosts',
+  SpaceSubscribers = 'space_subscribers',
   SpaceTaggedPeople = 'space_tagged_people',
   TicketCancelled = 'ticket_cancelled',
   TicketIssued = 'ticket_issued',
@@ -1299,7 +1300,7 @@ export type Event = {
   slug: Scalars['String']['output'];
   space?: Maybe<Scalars['MongoID']['output']>;
   space_expanded?: Maybe<Space>;
-  space_tags?: Maybe<Array<SpaceTagBase>>;
+  space_tags?: Maybe<Array<SpaceTag>>;
   speaker_users?: Maybe<Array<Scalars['MongoID']['output']>>;
   speaker_users_expanded?: Maybe<Array<Maybe<User>>>;
   stamp: Scalars['DateTimeISO']['output'];
@@ -1795,6 +1796,7 @@ export type EventInput = {
   rewards?: InputMaybe<Array<EventRewardInput>>;
   rsvp_wallet_platforms?: InputMaybe<Array<ApplicationBlokchainPlatformInput>>;
   sessions?: InputMaybe<Array<EventSessionInput>>;
+  shortid?: InputMaybe<Scalars['String']['input']>;
   space?: InputMaybe<Scalars['MongoID']['input']>;
   speaker_emails?: InputMaybe<Array<Scalars['String']['input']>>;
   speaker_users?: InputMaybe<Array<Scalars['MongoID']['input']>>;
@@ -6957,7 +6959,7 @@ export type SpaceMember = {
   role_changed_at?: Maybe<Scalars['DateTimeISO']['output']>;
   space?: Maybe<Scalars['MongoID']['output']>;
   state?: Maybe<SpaceMembershipState>;
-  tags?: Maybe<Array<SpaceTagBase>>;
+  tags?: Maybe<Array<SpaceTag>>;
   user?: Maybe<Scalars['MongoID']['output']>;
   user_expanded?: Maybe<UserWithEmail>;
   user_name?: Maybe<Scalars['String']['output']>;
@@ -7003,6 +7005,17 @@ export type SpaceMemberLeaderboard = {
   user_expanded?: Maybe<UserWithEmail>;
   user_name?: Maybe<Scalars['String']['output']>;
   visible?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type SpaceMemberRecipientFilter = {
+  __typename?: 'SpaceMemberRecipientFilter';
+  include_untagged?: Maybe<Scalars['Boolean']['output']>;
+  space_tags?: Maybe<Array<Scalars['MongoID']['output']>>;
+};
+
+export type SpaceMemberRecipientFilterInput = {
+  include_untagged?: InputMaybe<Scalars['Boolean']['input']>;
+  space_tags?: InputMaybe<Array<Scalars['MongoID']['input']>>;
 };
 
 export type SpaceMembersLeaderboardResponse = {
@@ -7088,16 +7101,6 @@ export type SpaceTag = {
   tag: Scalars['String']['output'];
   targets?: Maybe<Array<Scalars['String']['output']>>;
   targets_count?: Maybe<Scalars['Float']['output']>;
-  type: SpaceTagType;
-};
-
-export type SpaceTagBase = {
-  __typename?: 'SpaceTagBase';
-  _id: Scalars['MongoID']['output'];
-  color: Scalars['String']['output'];
-  space: Scalars['MongoID']['output'];
-  tag: Scalars['String']['output'];
-  targets?: Maybe<Array<Scalars['String']['output']>>;
   type: SpaceTagType;
 };
 

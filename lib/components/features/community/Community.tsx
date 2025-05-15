@@ -21,7 +21,7 @@ import {
   PublicSpace,
   SortOrder,
   Space,
-  SpaceTagBase,
+  SpaceTag,
   SpaceTagType,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
@@ -50,7 +50,7 @@ type Props = {
   initData: {
     space?: Space;
     subSpaces?: PublicSpace[];
-    spaceTags?: SpaceTagBase[];
+    spaceTags?: SpaceTag[];
   };
 };
 
@@ -85,7 +85,7 @@ export function Community({ initData }: Props) {
     initData: { listSpaceTags: initData.spaceTags } as unknown as GetSpaceTagsQuery,
   });
 
-  const spaceTags = (dataGetSpaceTags?.listSpaceTags || []) as SpaceTagBase[];
+  const spaceTags = (dataGetSpaceTags?.listSpaceTags || []) as SpaceTag[];
   const eventTags = spaceTags.filter((t) => t.type === SpaceTagType.Event && !!t.targets?.length);
 
   const { data: dataGetSpaceEventsCalendar } = useQuery(GetSpaceEventsCalendarDocument, {
@@ -439,7 +439,7 @@ function EventsWithMode({
   mode: 'list' | 'card';
   events: Event[];
   loading?: boolean;
-  tags?: SpaceTagBase[];
+  tags?: SpaceTag[];
 }) {
   return (
     <>
@@ -462,7 +462,7 @@ function EventsWithMode({
   );
 }
 
-function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: boolean | null }) {
+function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: boolean | null; }) {
   const [session] = useAtom(sessionAtom);
   const signIn = useSignIn();
   const [follow, { loading }] = useMutation(FollowSpaceDocument, {
