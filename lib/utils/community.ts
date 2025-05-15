@@ -1,5 +1,5 @@
 import { createAvatar } from '@dicebear/core';
-import { glass } from '@dicebear/collection';
+import * as glass from '@dicebear/glass';
 
 import { generateUrl } from "./cnd";
 import { Space } from "$lib/graphql/generated/backend/graphql";

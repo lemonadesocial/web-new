@@ -6,7 +6,6 @@ import { CalculateTicketsPricingDocument, EthereumStakeAccount, Event, GetEventI
 import { useQuery } from '$lib/graphql/request';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
-import { randomUserImage, userAvatar } from '$lib/utils/user';
 import { Avatar, Button, Card, ModalContainer, SkeletonCard } from '$lib/components/core';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { useStakeRefundRate } from '$lib/utils/stake';
@@ -149,7 +148,7 @@ const EventRegistrationContent: React.FC = () => {
   );
 };
 
-const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent }) => {
+const BaseEventRegistration: React.FC<{ event: Event; }> = ({ event: initialEvent }) => {
   const [event, setEvent] = useAtom(eventAtom);
   const [currency, setCurrency] = useAtom(currencyAtom);
   const [purchaseItems, setPurchaseItems] = useAtom(purchaseItemsAtom);
@@ -263,7 +262,7 @@ const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent
   </>;
 };
 
-export const EventRegistration: React.FC<{ event: Event }> = ({ event }) => (
+export const EventRegistration: React.FC<{ event: Event; }> = ({ event }) => (
   <EventRegistrationStoreProvider>
     <BaseEventRegistration event={event} />
   </EventRegistrationStoreProvider>

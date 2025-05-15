@@ -11,8 +11,8 @@ const fetchFont = (url: string) => {
 };
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ shortid: string }> },
+  _request: NextRequest,
+  { params }: { params: Promise<{ shortid: string; }>; },
 ) {
   const shortid = (await params).shortid;
   const client = getClient();
@@ -48,25 +48,25 @@ export async function GET(
             gap: '36px'
           }}
         >
-          <img 
-            src={`${ASSET_PREFIX}/assets/images/lemonade-logo.svg`} 
-            width={48} 
-            height={48} 
+          <img
+            src={`${ASSET_PREFIX}/assets/images/lemonade-logo.svg`}
+            width={48}
+            height={48}
           />
-          <div 
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              flex: 1 
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              flex: 1
             }}
           >
-            <h1 
-              style={{ 
-                fontFamily: 'General Sans', 
-                color: '#FFF', 
-                margin: 0, 
-                padding: 0, 
-                fontSize: '54px' 
+            <h1
+              style={{
+                fontFamily: 'General Sans',
+                color: '#FFF',
+                margin: 0,
+                padding: 0,
+                fontSize: '54px'
               }}
             >
               {event.title}
@@ -88,8 +88,8 @@ export async function GET(
             RSVP
           </div>
         </div>
-        <div 
-          style={{ 
+        <div
+          style={{
             display: 'flex',
             flex: 1,
             maxWidth: 518,

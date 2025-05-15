@@ -1,6 +1,5 @@
 import { useForm, UseFormReturn } from "react-hook-form";
 import { useEffect } from "react";
-import clsx from "clsx";
 
 import { eventDataAtom, formInstancesAtom, useAtomValue, useSetAtom } from "../store";
 import { ErrorText } from "$lib/components/core";
@@ -11,14 +10,14 @@ interface TermsFormInput {
 
 export function TermsForm() {
   const event = useAtomValue(eventDataAtom);
-  
+
   const form: UseFormReturn<TermsFormInput> = useForm<TermsFormInput>({
     mode: 'onChange',
     defaultValues: {
       acceptTerms: false
     }
   });
-  
+
   const setFormInstances = useSetAtom(formInstancesAtom);
 
   useEffect(() => {
@@ -34,7 +33,7 @@ export function TermsForm() {
     <div className="flex flex-col gap-1.5">
       <div className="flex items-start gap-3">
         <div className="flex items-start">
-          <input 
+          <input
             type="checkbox"
             id="acceptTerms"
             className="sr-only"
@@ -42,7 +41,7 @@ export function TermsForm() {
               required: "You must accept the terms to continue"
             })}
           />
-          <div 
+          <div
             onClick={() => form.setValue('acceptTerms', !acceptTerms)}
             className="cursor-pointer"
           >
@@ -51,7 +50,7 @@ export function TermsForm() {
         </div>
         <label htmlFor="acceptTerms" className="text-sm flex-1 cursor-pointer" dangerouslySetInnerHTML={{ __html: event.terms_text }} />
       </div>
-      
+
       {errors.acceptTerms && <ErrorText message={errors.acceptTerms.message!} />}
     </div>
   );
