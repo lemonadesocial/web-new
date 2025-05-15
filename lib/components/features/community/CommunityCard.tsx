@@ -1,3 +1,5 @@
+'use client';
+
 import { useMutation } from "$lib/graphql/request";
 import { generateUrl } from "$lib/utils/cnd";
 import { useSignIn } from "$lib/hooks/useSignIn";

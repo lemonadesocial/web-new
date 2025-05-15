@@ -4,6 +4,7 @@ import { useAtom } from 'jotai';
 import { endOfDay, startOfDay, format } from 'date-fns';
 import clsx from 'clsx';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 
 import { Button, Divider, drawer, Menu, MenuItem, modal, Segment, Tag } from '$lib/components/core';
 import { HeroSection } from '$lib/components/features/community';
@@ -28,20 +29,15 @@ import { useMutation, useQuery } from '$lib/graphql/request';
 import { EventList, EventListCard } from '$lib/components/features/EventList';
 import { Calendar } from '$lib/components/core/calendar';
 import { scrollAtBottomAtom, sessionAtom } from '$lib/jotai';
-import { generateCssVariables } from '$lib/utils/fetchers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useMe } from '$lib/hooks/useMe';
+import { defaultTheme, themeAtom } from './theme_builder/store';
 
 import { ListingEvent } from './ListingEvent';
 import { EventPane } from '../pane';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { MyEventRequests } from './MyEventRequests';
-
 import CommunityCard from './CommunityCard';
-import { defaultTheme, themeAtom } from './theme_builder/store';
-import { ShaderGradient } from './theme_builder/shader';
-
-const CommunityPane = dynamic(() => import('./CommunityPane'), { ssr: false });
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
@@ -204,36 +200,7 @@ export function Community({ initData }: Props) {
 
   return (
     <>
-      {data?.variables && (
-        <style global jsx>
-          {`
-            body {
-              ${data.variables.font && generateCssVariables(data.variables.font)}
-            }
-
-            :root {
-              ${data.variables?.custom && generateCssVariables(data.variables?.custom)}
-              ${data.variables.pattern && generateCssVariables(data.variables.pattern)}
-            }
-          `}
-        </style>
-      )}
-
-      {data?.theme && (
-        <div
-          className={clsx(
-            'background',
-            data?.theme,
-            ['shader', 'pattern'].includes(data?.theme as string) && data?.config?.name,
-            data?.config?.bg,
-            data?.config?.class,
-          )}
-        >
-          {data?.theme === 'shader' && <ShaderGradient mode={data.config.mode} />}
-        </div>
-      )}
-
-      <div className={clsx('relative', data?.theme && data?.config?.fg)}>
+      <div className={clsx('relative pt-6', data?.theme && data?.config?.fg)}>
         <HeroSection space={dataGetSpace?.getSpace as Space} />
         <Divider className="my-8" />
         {subSpaces.length > 0 && (
@@ -242,13 +209,15 @@ export function Community({ initData }: Props) {
               <div className="w-full flex justify-between items-center">
                 <h1 className="text-xl md:text-2xl font-semibold flex-1 text-primary">Hubs</h1>
                 {subSpaces.length > 3 && (
-                  <Button
-                    variant="tertiary-alt"
-                    size="sm"
-                    onClick={() => drawer.open(CommunityPane, { props: { subSpaces } })}
-                  >
-                    {`View All (${subSpaces.length})`}
-                  </Button>
+                  <Link href={`/s/${space?.slug || space?._id}/featured-hubs`}>
+                    <Button
+                      variant="tertiary-alt"
+                      size="sm"
+
+                    >
+                      {`View All (${subSpaces.length})`}
+                    </Button>
+                  </Link>
                 )}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -462,7 +431,7 @@ function EventsWithMode({
   );
 }
 
-function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: boolean | null }) {
+function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: boolean | null; }) {
   const [session] = useAtom(sessionAtom);
   const signIn = useSignIn();
   const [follow, { loading }] = useMutation(FollowSpaceDocument, {

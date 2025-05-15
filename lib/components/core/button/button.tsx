@@ -2,14 +2,14 @@ import clsx from 'clsx';
 import React, { HTMLAttributes } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-const sizes: { [key: string]: string } = {
+const sizes: { [key: string]: string; } = {
   base: 'px-[12] py-[7] rounded-sm text-md',
   sm: 'px-2.5 py-1.5 rounded-sm text-sm max-h-8',
   lg: 'px-4 py-2 rounded-md text-md md:text-lg max-h-10 md:max-h-11',
   xs: 'px-2 py-1 text-sm rounded-xs',
 };
 
-const gaps: { [key: string]: string } = {
+const gaps: { [key: string]: string; } = {
   base: 'gap-2.5',
   sm: 'gap-1.5',
   lg: 'gap-3',
@@ -23,14 +23,14 @@ const btnIconSizes = {
   xs: 'p-[5]',
 };
 
-const iconSize = {
+const iconSizeBase = {
   base: 'size-5',
   sm: 'size-4',
   lg: 'size-5',
   xs: 'size-4',
 };
 
-const variants: { [key: string]: string } = {
+const variants: { [key: string]: string; } = {
   primary: 'bg-accent-500 hover:bg-accent-700',
   success: 'bg-success-600 hover:bg-success-600/8',
   danger: 'bg-danger-500 hover:bg-danger-500/8',
@@ -41,7 +41,7 @@ const variants: { [key: string]: string } = {
   flat: 'hover:bg-primary/[0.08]',
 };
 
-const outlineVariants: { [key: string]: string } = {
+const outlineVariants: { [key: string]: string; } = {
   primary: 'border-accent-500 hover:bg-accent-500/[0.1] text-accent-500',
   success: 'border-success-600 hover:bg-success-600/[0.1] text-success-600',
   tertiary: 'border-primary/[0.8] hover:bg-primary/[.1] text-tertiary',
@@ -59,6 +59,7 @@ interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonE
   disabled?: boolean;
   outlined?: boolean;
   type?: 'button' | 'submit';
+  iconSize?: string;
 }
 
 export function Button({
@@ -73,6 +74,7 @@ export function Button({
   disabled,
   outlined,
   type = 'button',
+  iconSize,
   ...rest
 }: ButtonProps) {
   return (
@@ -90,7 +92,7 @@ export function Button({
       {...rest}
     >
       <svg
-        className={twMerge('absolute animate-spin', iconSize[size], clsx({ invisible: !loading }))}
+        className={twMerge('absolute animate-spin', iconSize ? iconSize : iconSizeBase[size], clsx({ invisible: !loading }))}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -103,9 +105,9 @@ export function Button({
         ></path>
       </svg>
       <div className={twMerge('flex justify-center items-center', gaps[size], clsx({ invisible: loading }))}>
-        {iconLeft && <i className={twMerge(iconSize[size], iconLeft)} />}
-        {icon ? <i className={twMerge(iconSize[size], icon)} /> : children}
-        {iconRight && <i className={twMerge(iconSize[size], iconRight)} />}
+        {iconLeft && <i className={twMerge(iconSize ? iconSize : iconSizeBase[size], iconLeft)} />}
+        {icon ? <i className={twMerge(iconSize ? iconSize : iconSizeBase[size], icon)} /> : children}
+        {iconRight && <i className={twMerge(iconSize ? iconSize : iconSizeBase[size], iconRight)} />}
       </div>
     </button>
   );
