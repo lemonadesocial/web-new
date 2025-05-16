@@ -3,7 +3,6 @@ import React from 'react';
 import { useAtom } from 'jotai';
 import { endOfDay, startOfDay, format } from 'date-fns';
 import clsx from 'clsx';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
 import { Button, Divider, drawer, Menu, MenuItem, modal, Segment, Tag } from '$lib/components/core';
