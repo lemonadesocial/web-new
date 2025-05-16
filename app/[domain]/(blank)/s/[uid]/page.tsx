@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import { ResolvingMetadata } from 'next';
 import clsx from "clsx";
 
-
 import { getClient, GraphqlClient } from '$lib/graphql/request/client';
 import { isObjectId } from '$lib/utils/helpers';
 import {

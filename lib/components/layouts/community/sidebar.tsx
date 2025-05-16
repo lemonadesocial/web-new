@@ -5,15 +5,16 @@ import { Button } from "../../core/button/button";
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
 const Menu = [{
-  icon: 'icon-home',
+  icon: 'icon-house-party',
   path: '',
 },
+// {
+//   icon: 'icon-newsfeed',
+//   path: 'timeline',
+//   label: 'Timeline'
+// }, 
 {
-  icon: 'icon-newsfeed',
-  path: 'timeline',
-  label: 'Timeline'
-}, {
-  icon: 'icon-explore',
+  icon: 'icon-sub-hubs',
   path: 'featured-hubs',
   label: 'Featured Hubs'
 }];

@@ -200,7 +200,7 @@ export function Community({ initData }: Props) {
 
   return (
     <>
-      <div className={clsx('relative pt-6', data?.theme && data?.config?.fg)}>
+      <div className={clsx('relative', data?.theme && data?.config?.fg)}>
         <HeroSection space={dataGetSpace?.getSpace as Space} />
         <Divider className="my-8" />
         {subSpaces.length > 0 && (
