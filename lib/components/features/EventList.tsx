@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 
 import { Avatar, Badge, Card, Divider, Spacer } from '$lib/components/core';
-import { Address, Event, SpaceTagBase, User } from '$lib/graphql/generated/backend/graphql';
+import { Address, Event, SpaceTag, User } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
 import { getEventPrice } from '$lib/utils/event';
@@ -17,7 +17,7 @@ export function EventList({
 }: {
   events: Event[];
   loading?: boolean;
-  tags?: SpaceTagBase[];
+  tags?: SpaceTag[];
   onSelect?: (event: Event) => void;
 }) {
   if (loading) return <EventListSkeleton />;
@@ -44,7 +44,7 @@ export function EventList({
   );
 }
 
-function EventItem({ item }: { item: Event }) {
+function EventItem({ item }: { item: Event; }) {
   const users = uniqBy([item.host_expanded, ...(item.visible_cohosts_expanded || [])], (u) => u?._id);
 
   return (
@@ -116,7 +116,7 @@ export function EventListCard({
 }: {
   events: Event[];
   loading?: boolean;
-  tags?: SpaceTagBase[];
+  tags?: SpaceTag[];
   onSelect?: (event: Event) => void;
 }) {
   if (loading) return <EventListCardSkeleton />;
@@ -163,7 +163,7 @@ export function EventListCard({
   );
 }
 
-function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: SpaceTagBase[]; onClick?: () => void }) {
+function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: SpaceTag[]; onClick?: () => void; }) {
   const users = uniqBy([item.host_expanded, ...(item.visible_cohosts_expanded || [])], (u) => u?._id);
 
   return (
@@ -293,7 +293,7 @@ function EventCardSkeleton() {
   );
 }
 
-function SkeletonLine({ className, animate = false }: { className?: string; animate?: boolean }) {
+function SkeletonLine({ className, animate = false }: { className?: string; animate?: boolean; }) {
   return (
     <div
       className={twMerge(

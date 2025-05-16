@@ -4,7 +4,7 @@ import {
   GetEventDocument,
   GetSpaceTagsDocument,
   PinEventsToSpaceDocument,
-  SpaceTagBase,
+  SpaceTag,
   SpaceTagType,
 } from '$lib/graphql/generated/backend/graphql';
 import { useClient, useQuery } from '$lib/graphql/request';
@@ -12,8 +12,8 @@ import { format } from 'date-fns';
 import { uniq } from 'lodash';
 import React from 'react';
 
-export function ListingEvent({ spaceId }: { spaceId: string }) {
-  const [tags, setTags] = React.useState<SpaceTagBase[]>([]);
+export function ListingEvent({ spaceId }: { spaceId: string; }) {
+  const [tags, setTags] = React.useState<SpaceTag[]>([]);
   const [events, setEvents] = React.useState<Event[]>([]);
   const [linkEvent, setLinkEvent] = React.useState('');
   const [adding, setAdding] = React.useState(false);
@@ -125,14 +125,14 @@ export function AddTags({
 }: {
   spaceId: string;
   type: SpaceTagType;
-  onChange?: (tags: SpaceTagBase[]) => void;
+  onChange?: (tags: SpaceTag[]) => void;
 }) {
   const [tag, setTag] = React.useState('');
-  const [tags, setTags] = React.useState<SpaceTagBase[]>([]);
+  const [tags, setTags] = React.useState<SpaceTag[]>([]);
   const { data } = useQuery(GetSpaceTagsDocument, { variables: { space: spaceId } });
-  const list = (data?.listSpaceTags.filter((t) => (t as SpaceTagBase).type === type) || []) as SpaceTagBase[];
+  const list = (data?.listSpaceTags.filter((t) => (t as SpaceTag).type === type) || []) as SpaceTag[];
 
-  const onSelectTag = (t: SpaceTagBase) => {
+  const onSelectTag = (t: SpaceTag) => {
     const _tags = uniq([...tags, t]);
     setTags(_tags);
     onChange?.(_tags);
@@ -166,7 +166,7 @@ export function AddTags({
           />
           {list
             .filter((t) => (tag ? t.tag.includes(tag) : true))
-            .map((t: SpaceTagBase) => (
+            .map((t: SpaceTag) => (
               <div
                 key={t._id}
                 onClick={() => onSelectTag(t)}

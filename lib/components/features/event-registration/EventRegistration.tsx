@@ -9,6 +9,8 @@ import { useMe } from '$lib/hooks/useMe';
 import { Avatar, Button, Card, ModalContainer, SkeletonCard } from '$lib/components/core';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { useStakeRefundRate } from '$lib/utils/stake';
+import { userAvatar } from '$lib/utils/user';
+
 import {
   approvalRequiredAtom,
   currencyAtom,
