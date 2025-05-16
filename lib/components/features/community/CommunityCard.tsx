@@ -57,7 +57,7 @@ const CommunityCard = ({ space }: CommunityCardProps) => {
           <div>
             <Button variant="primary" outlined iconRight="icon-arrow-outward" size="sm" onClick={(e) => {
               e.preventDefault();
-              window.open(`/s/${space.slug || space._id}`, '_blank');
+              window.open(`/manage/community/${space.slug || space._id}`, '_blank');
             }}>
               <span className="block">Manage</span>
             </Button>
