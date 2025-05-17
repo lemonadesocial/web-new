@@ -114,7 +114,7 @@ export function ThemeBuilder({
                 const palette = getPalette([
                   { color: hex, name: 'custom', shade: 500, shades: [50, 100, 200, 300, 500, 700, 950] },
                 ]) as unknown as {
-                  custom: { 500: string; 950: string; 700: string; 50: string; 100: string; 200: string; 300: string };
+                  custom: { 500: string; 950: string; 700: string; 50: string; 100: string; 200: string; 300: string; };
                 };
                 const el: any = document.querySelector(':root');
                 el?.style.setProperty('--color-custom-50', palette.custom[50]);
@@ -243,7 +243,7 @@ export function ThemeBuilder({
             onSelect={(font) =>
               handleChange({
                 font_body: font,
-                variables: { ...variables, font: { ...variables.font, '--font-body': fonts.title[font] } },
+                variables: { ...variables, font: { ...variables.font, '--font-body': fonts.body[font] } },
               })
             }
           />
