@@ -180,22 +180,7 @@ export function Community({ initData }: Props) {
     }
   }, [shouldLoadMore]);
 
-  const spaceData = dataGetSpace?.getSpace as Space;
-  const theme = spaceData.theme_data;
-  const [data, setThemeAtom] = useAtom(themeAtom);
-
-  React.useEffect(() => {
-    if (theme) {
-      setThemeAtom({
-        ...defaultTheme,
-        theme: theme.theme,
-        config: { fg: theme.foreground?.key, bg: theme.background?.key, name: theme?.class, ...(theme.config || {}) },
-        font_title: theme.font_title,
-        font_body: theme.font_body,
-        variables: { ...theme.variables },
-      });
-    }
-  }, []);
+  const [data] = useAtom(themeAtom);
 
   return (
     <>

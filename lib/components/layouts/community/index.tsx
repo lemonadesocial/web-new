@@ -8,6 +8,7 @@ import { GetSpaceDocument } from "$lib/graphql/generated/backend/graphql";
 import { isObjectId } from "$lib/utils/helpers";
 import { getClient } from "$lib/graphql/request";
 import { Space } from "$lib/graphql/generated/backend/graphql";
+import clsx from "clsx";
 
 type LayoutProps = {
   children: React.ReactElement;
@@ -25,14 +26,14 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
 
   return (
     <main className="relative flex flex-col h-dvh w-full z-100 overflow-auto">
-      <ThemeGenerator />
+      <ThemeGenerator space={space} />
       <LoadMoreWrapper>
         <div className="fixed top-0 left-0 w-screen h-[64px] z-[9] border-b backdrop-blur-md">
           <Header title={space?.title} />
         </div>
         <Sidebar uid={uid} />
         <div className="lg:pl-[97px] pt-[64px]">
-          <div className="page mx-auto px-4 xl:px-0">
+          <div className={clsx("page mx-auto px-4 xl:px-0", space.theme_data?.config?.mode || 'dark')} id={space._id} >
             {children}
           </div>
         </div>
