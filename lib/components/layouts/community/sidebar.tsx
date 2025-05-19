@@ -1,26 +1,30 @@
 "use client";
-
-import Link from "next/link";
-import { Button } from "../../core/button/button";
-import clsx from "clsx";
 import { usePathname } from "next/navigation";
-const Menu = [{
-  icon: 'icon-house-party',
-  path: '',
-},
-// {
-//   icon: 'icon-newsfeed',
-//   path: 'timeline',
-//   label: 'Timeline'
-// }, 
-{
-  icon: 'icon-sub-hubs',
-  path: 'featured-hubs',
-  label: 'Featured Hubs'
-}];
+import clsx from "clsx";
+import Link from "next/link";
 
-const Sidebar = ({ uid }: { uid: string; }) => {
+import { Button } from "../../core/button/button";
+import { Space } from "$lib/graphql/generated/backend/graphql";
+
+
+
+const Sidebar = ({ uid, space }: { uid: string; space: Space; }) => {
   const pathname = usePathname();
+
+  const Menu = [{
+    icon: 'icon-house-party',
+    path: '',
+  },
+  // {
+  //   icon: 'icon-newsfeed',
+  //   path: 'timeline',
+  //   label: 'Timeline'
+  // }, 
+  ...(!!space.sub_spaces ? [{
+    icon: 'icon-sub-hubs',
+    path: 'featured-hubs',
+    label: 'Featured Hubs'
+  }] : [])];
 
   return (
     <div className="hidden lg:block fixed left-0 top-[64px] w-[97px] h-screen p-4 border-r z-[9]">
