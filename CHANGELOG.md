@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.0](https://github.com/lemonadesocial/web-new/compare/v1.22.1...v1.23.0) (2025-05-19)
+
+
+### Features
+
+* update env ([0632ce1](https://github.com/lemonadesocial/web-new/commit/0632ce107208376ed69466460ce12f2b9182f1a9))
+
 ## [1.22.1](https://github.com/lemonadesocial/web-new/compare/v1.22.0...v1.22.1) (2025-05-15)
 
 
