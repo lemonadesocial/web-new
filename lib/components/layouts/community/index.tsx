@@ -1,5 +1,4 @@
 import React from "react";
-import { twMerge } from "tailwind-merge";
 
 import Header from "$lib/components/layouts/header";
 import Sidebar from "./sidebar";
