@@ -259,6 +259,7 @@ query getSubSpaces($id: MongoID!) {
       followers_count
       slug
       is_admin
+      followed
       image_avatar_expanded {
          _id
         bucket
