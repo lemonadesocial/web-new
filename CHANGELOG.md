@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.24.0](https://github.com/lemonadesocial/web-new/compare/v1.23.0...v1.24.0) (2025-05-20)
+
+
+### Features
+
+* adjust font size ([1e62ad0](https://github.com/lemonadesocial/web-new/commit/1e62ad0826299ef4a406bc3d0e8be38d277be16f))
+
+
+### Bug Fixes
+
+* event list same date ([8734b94](https://github.com/lemonadesocial/web-new/commit/8734b947772a79abf5258c71270d2d00c63c8867))
+* lint code ([5477116](https://github.com/lemonadesocial/web-new/commit/5477116a24a9e53dd280e44db9bda126629ec4a0))
+
 ## [1.23.0](https://github.com/lemonadesocial/web-new/compare/v1.22.1...v1.23.0) (2025-05-19)
 
 
