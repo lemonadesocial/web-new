@@ -51,6 +51,8 @@ jobs:
           echo "NEXT_PUBLIC_IPFS_GATEWAY_URL=${{ vars.PRODUCTION_NEXT_PUBLIC_IPFS_GATEWAY_URL }}" >> .env
           echo "NEXT_PUBLIC_WALLET_HTTP_URL=${{ vars.PRODUCTION_NEXT_PUBLIC_WALLET_HTTP_URL }}" >> .env
           echo "NEXT_PUBLIC_WALLET_WSS_URL=${{ vars.PRODUCTION_NEXT_PUBLIC_WALLET_WSS_URL }}" >> .env
+          echo "NEXT_PUBLIC_HOST_URL=${{ vars.PRODUCTION_NEXT_PUBLIC_HOST_URL }}" >> .env
+          echo "NEXT_PUBLIC_APP_ENV=${{ vars.PRODUCTION_NEXT_PUBLIC_APP_ENV }}" >> .env
 
       - name: Configure environment
         run: |
