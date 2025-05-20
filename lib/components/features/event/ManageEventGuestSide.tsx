@@ -21,6 +21,7 @@ import { EventLocationBlock } from './EventLocationBlock';
 import { AttendeesSection } from './AttendeesSection';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { EventCollectibles } from '../event-collectibles';
+import { uniqBy } from 'lodash';
 
 export default function ManageEventGuestSide({ event: eventDetail }: { event: Event; }) {
   const { data, loading } = useQuery(GetEventDocument, {
@@ -35,6 +36,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
 
   const isHost = session?.user && event && hosting(event, session.user);
   const attending = session?.user ? isAttending(event, session?.user) : false;
+  const hosts = uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id);
 
   return (
     <div className="flex gap-[72px]">
@@ -93,7 +95,17 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           )}
         </div>
 
-        <h3 className="text-2xl md:text-3xl font-bold">{event.title}</h3>
+        <div className="space-y-2">
+          <h3 className="text-xl md:text-3xl font-bold">{event.title}</h3>
+
+          <p className="md:hidden text-secondary text-sm">
+            Hosted By{' '}
+            {hosts
+              .map((p) => p?.name)
+              .join(', ')
+              .replace(/,(?=[^,]*$)/, ' & ')}
+          </p>
+        </div>
 
         <div className="flex flex-col gap-4">
           <EventDateTimeBlock event={event} />
@@ -109,7 +121,6 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
         {attending && <EventCollectibles event={event} />}
         <div className="flex flex-col gap-6 md:hidden">
           <CommunitySection event={event} />
-          <HostedBySection event={event} />
           <AttendeesSection eventId={event._id} />
         </div>
         <Spacer className="h-8" />
