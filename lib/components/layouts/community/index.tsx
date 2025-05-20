@@ -8,6 +8,7 @@ import { GetSpaceDocument } from "$lib/graphql/generated/backend/graphql";
 import { isObjectId } from "$lib/utils/helpers";
 import { getClient } from "$lib/graphql/request";
 import { Space } from "$lib/graphql/generated/backend/graphql";
+import { notFound } from "next/navigation";
 
 
 type LayoutProps = {
@@ -23,6 +24,10 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
 
   const { data } = await client.query({ query: GetSpaceDocument, variables });
   const space = data?.getSpace as Space;
+
+  if (!space) {
+    return notFound();
+  }
 
   return (
     <main className="relative flex flex-col h-dvh w-full z-100 overflow-auto">
