@@ -25,7 +25,7 @@ export function EventList({
 
   return (
     <div className="flex flex-col gap-8">
-      {Object.entries(groupBy(events, ({ start }) => start)).map(([date, data]) => (
+      {Object.entries(groupBy(events, ({ start }) => format(new Date(start), 'yyyy-MM-dd'))).map(([date, data]) => (
         <div key={date}>
           <p className="text-tertiary font-medium">
             <span className="text-primary">{format(date, 'MMM dd')}</span> {format(date, 'EEE')}
@@ -44,7 +44,7 @@ export function EventList({
   );
 }
 
-function EventItem({ item }: { item: Event; }) {
+function EventItem({ item }: { item: Event }) {
   const users = uniqBy([item.host_expanded, ...(item.visible_cohosts_expanded || [])], (u) => u?._id);
 
   return (
@@ -121,10 +121,9 @@ export function EventListCard({
 }) {
   if (loading) return <EventListCardSkeleton />;
   if (!events.length) return <EmptyComp />;
-
   return (
     <div className="flex flex-col">
-      {Object.entries(groupBy(events, ({ start }) => start)).map(([date, data]) => (
+      {Object.entries(groupBy(events, ({ start }) => format(new Date(start), 'yyyy-MM-dd'))).map(([date, data]) => (
         <div className="flex flex-col relative" key={date}>
           <div className="border-dashed border-l-2 border-l-[var(--color-divider)] absolute h-full left-1 top-2 z-10">
             <div className="size-2 backdrop-blur-lg -ml-[5px] absolute">
@@ -163,7 +162,7 @@ export function EventListCard({
   );
 }
 
-function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: SpaceTag[]; onClick?: () => void; }) {
+function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: SpaceTag[]; onClick?: () => void }) {
   const users = uniqBy([item.host_expanded, ...(item.visible_cohosts_expanded || [])], (u) => u?._id);
 
   return (
@@ -293,7 +292,7 @@ function EventCardSkeleton() {
   );
 }
 
-function SkeletonLine({ className, animate = false }: { className?: string; animate?: boolean; }) {
+function SkeletonLine({ className, animate = false }: { className?: string; animate?: boolean }) {
   return (
     <div
       className={twMerge(
