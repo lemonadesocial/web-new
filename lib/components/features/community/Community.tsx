@@ -30,7 +30,7 @@ import { Calendar } from '$lib/components/core/calendar';
 import { scrollAtBottomAtom, sessionAtom } from '$lib/jotai';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useMe } from '$lib/hooks/useMe';
-import { defaultTheme, themeAtom } from './theme_builder/store';
+import { themeAtom } from './theme_builder/store';
 
 import { ListingEvent } from './ListingEvent';
 import { EventPane } from '../pane';
@@ -194,11 +194,7 @@ export function Community({ initData }: Props) {
                 <h1 className="text-xl md:text-2xl font-semibold flex-1 text-primary">Hubs</h1>
                 {subSpaces.length > 3 && (
                   <Link href={`/s/${space?.slug || space?._id}/featured-hubs`}>
-                    <Button
-                      variant="tertiary-alt"
-                      size="sm"
-
-                    >
+                    <Button variant="tertiary-alt" size="sm">
                       {`View All (${subSpaces.length})`}
                     </Button>
                   </Link>
@@ -415,7 +411,7 @@ function EventsWithMode({
   );
 }
 
-function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: boolean | null; }) {
+function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: boolean | null }) {
   const [session] = useAtom(sessionAtom);
   const signIn = useSignIn();
   const [follow, { loading }] = useMutation(FollowSpaceDocument, {
