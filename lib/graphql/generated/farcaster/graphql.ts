@@ -972,10 +972,8 @@ export type Query = {
   FarcasterFanTokenAuctions?: Maybe<FarcasterFanTokenAuctionsOutput>;
   FarcasterMoxieEarningStats?: Maybe<FarcasterMoxieEarningStatsOutput>;
   FarcasterMoxieEarningStatsV2?: Maybe<FarcasterMoxieEarningStatsV2Output>;
-  MoxieFanTokens?: Maybe<MoxieFanTokenOutput>;
   MoxieOrdersCandlesticks?: Maybe<MoxieOrdersCandlestickOutput>;
   MoxieReferralEarningLeaderboard?: Maybe<MoxieReferralEarningLeaderboardOutput>;
-  MoxieUserPortfolios?: Maybe<MoxieUserPortfolioOutput>;
 };
 
 
@@ -1004,11 +1002,6 @@ export type QueryFarcasterMoxieEarningStatsV2Args = {
 };
 
 
-export type QueryMoxieFanTokensArgs = {
-  input: MoxieFanTokenInput;
-};
-
-
 export type QueryMoxieOrdersCandlesticksArgs = {
   input: MoxieOrdersCandlestickInput;
 };
@@ -1016,11 +1009,6 @@ export type QueryMoxieOrdersCandlesticksArgs = {
 
 export type QueryMoxieReferralEarningLeaderboardArgs = {
   input: MoxieReferralEarningLeaderboardInput;
-};
-
-
-export type QueryMoxieUserPortfoliosArgs = {
-  input: MoxieUserPortfolioInput;
 };
 
 export type Range_Comparator_Exp = {

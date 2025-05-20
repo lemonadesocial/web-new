@@ -14,7 +14,7 @@ import { userAvatar } from '$lib/utils/user';
 
 import { useSignIn } from '$lib/hooks/useSignIn';
 
-export default function Header() {
+export default function Header({ title }: { title?: string; }) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
   const logOut = useLogOut();
@@ -22,9 +22,12 @@ export default function Header() {
 
   return (
     <div className="py-3 px-4 min-h-[56px] flex justify-between items-center z-10">
-      <Link href="/" aria-label="Lemonade" className="text-tertiary hover:text-primary">
-        <i className="icon-lemonade size-[20]" />
-      </Link>
+      <div className="flex items-center gap-3">
+        <Link href="/" aria-label="Lemonade" className="text-tertiary hover:text-primary">
+          <i className="icon-lemonade size-[20]" />
+        </Link>
+        {title && <h1 className="text-md text-tertiary font-medium">{title}</h1>}
+      </div>
 
       <div>
         {session && me ? (

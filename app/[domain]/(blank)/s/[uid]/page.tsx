@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { ResolvingMetadata } from 'next';
+import clsx from "clsx";
 
 import { getClient, GraphqlClient } from '$lib/graphql/request/client';
 import { isObjectId } from '$lib/utils/helpers';
@@ -55,7 +56,7 @@ export default async function Page({ params }: { params: Promise<{ uid: string; 
   const { subSpaces, spaceTags } = await prefetchData(client, space);
 
   return (
-    <div id={space._id} className={space.theme_data?.config?.mode || 'dark'}>
+    <div id={space._id} className={clsx('pt-6', space.theme_data?.config?.mode || 'dark')}>
       <Community initData={{ space, subSpaces, spaceTags }} />
     </div>
   );
