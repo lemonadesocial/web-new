@@ -36,6 +36,7 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
         'relative flex flex-col h-dvh w-full z-100 overflow-auto',
         space.theme_data?.config?.mode || 'dark',
       )}
+      style={space.theme_data?.theme === 'image' ? {"--color-background": `url(${space.theme_data?.config?.bg})`} : {}}
     >
       <ThemeGenerator space={space} />
       <LoadMoreWrapper>

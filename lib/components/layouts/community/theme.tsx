@@ -3,10 +3,10 @@ import React from 'react';
 import clsx from 'clsx';
 import { useAtom } from 'jotai';
 
-import { defaultTheme, themeAtom } from '$lib/components/features/community/theme_builder/store';
+import { defaultTheme, themeAtom } from '$lib/components/features/community/theme-builder/store';
 import { generateCssVariables } from '$lib/utils/fetchers';
 
-import { ShaderGradient } from '$lib/components/features/community/theme_builder/shader';
+import { ShaderGradient } from '$lib/components/features/community/theme-builder/shader';
 import { Space } from '$lib/graphql/generated/backend/graphql';
 
 const ThemeGenerator = ({ space }: { space: Space }) => {
@@ -45,6 +45,7 @@ const ThemeGenerator = ({ space }: { space: Space }) => {
 
               background-repeat: no-repeat;
               background-size: cover;
+              background-attachment: fixed;
             }
           `}
         </style>

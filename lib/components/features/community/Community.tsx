@@ -34,17 +34,14 @@ import { Calendar } from '$lib/components/core/calendar';
 import { scrollAtBottomAtom, sessionAtom } from '$lib/jotai';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useMe } from '$lib/hooks/useMe';
-import { themeAtom } from './theme_builder/store';
 
 import { ListingEvent } from './ListingEvent';
 import { EventPane } from '../pane';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { MyEventRequests } from './MyEventRequests';
 import CommunityCard from './CommunityCard';
-import { defaultTheme, themeAtom } from './theme-builder/store';
-import { ShaderGradient } from './theme-builder/shader';
+import { themeAtom } from './theme-builder/store';
 
-const CommunityPane = dynamic(() => import('./CommunityPane'), { ssr: false });
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
@@ -93,7 +90,7 @@ export function Community({ initData }: Props) {
     variables: { categories: [FileCategory.SpaceDarkTheme, FileCategory.SpaceLightTheme] },
   });
 
-  const spaceTags = (dataGetSpaceTags?.listSpaceTags || []) as unknown as SpaceTagBase[];
+  const spaceTags = (dataGetSpaceTags?.listSpaceTags || []) as unknown as SpaceTag[];
   const eventTags = spaceTags.filter((t) => t.type === SpaceTagType.Event && !!t.targets?.length);
 
   const { data: dataGetSpaceEventsCalendar } = useQuery(GetSpaceEventsCalendarDocument, {
@@ -194,8 +191,6 @@ export function Community({ initData }: Props) {
   }, [shouldLoadMore]);
 
   const [data] = useAtom(themeAtom);
-
-  console.log(theme);
 
   return (
     <>

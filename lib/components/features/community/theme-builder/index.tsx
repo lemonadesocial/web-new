@@ -15,7 +15,7 @@ import {
   SystemFileBase,
   UpdateSpaceDocument,
 } from '$lib/graphql/generated/backend/graphql';
-import { Button, Card, Menu, MenuItem } from '$lib/components/core';
+import { Button, Card, Menu } from '$lib/components/core';
 
 import {
   themeAtom,
