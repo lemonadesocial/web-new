@@ -1,0 +1,72 @@
+/* TODO: WIP */
+
+@layer utilities {
+  .btn {
+    --btn-bg: transparent;
+    --btn-bg-hover: transparent;
+    --btn-content: inherit;
+    --btn-content-hover: inherit;
+    --btn-border-color: transparent;
+
+    background-color: var(--btn-bg);
+    color: var(--btn-content);
+    border: 1px solid var(--btn-border-color);
+
+    &:hover {
+      background-color: var(--btn-bg-hover);
+      color: var(--btn-content-hover);
+    }
+  }
+
+  .btn-outlined {
+    --btn-bg: transparent !important;
+    &.btn-primary {
+      --btn-content: var(--color-accent-500);
+      --btn-content-hover: var(--color-accent-500);
+      --btn-border-color: var(--color-accent-500);
+      --btn-bg-hover: color-mix(in oklab, var(--color-accent-500) 10%, transparent);
+    }
+
+    &.btn-tertiary-alt {
+      --btn-border-color: var(--btn-tertiary-content);
+    }
+  }
+
+  .btn-primary {
+    --btn-bg: var(--color-accent-500);
+    --btn-bg-hover: var(--color-accent-700);
+  }
+
+  .btn-success {
+    --btn-bg: var(--color-success-500);
+    --btn-bg-hover: var(--color-success-700);
+  }
+
+  .btn-danger {
+    --btn-bg: var(--color-danger-500);
+    --btn-bg-hover: var(--color-danger-700);
+  }
+
+  .btn-secondary {
+    --btn-bg: var(--btn-secondary);
+    --btn-bg-hover: var(--btn-secondary-hover);
+    --btn-content: var(--btn-secondary-content);
+  }
+
+  .btn-tertiary {
+    --btn-bg: var(--btn-tertiary);
+    --btn-bg-hover: var(--btn-tertiary-hover);
+    --btn-content: var(--btn-tertiary-content);
+  }
+
+  .btn-tertiary-alt {
+    --btn-bg: var(--btn-tertiary);
+    --btn-bg-hover: var(--btn-secondary-hover);
+    --btn-content: var(--btn-tertiary-content);
+    --btn-content-hover: var(--btn-secondary-content);
+  }
+
+  .btn-flat {
+    --btn-bg-hover: var(--bg-primary);
+  }
+}

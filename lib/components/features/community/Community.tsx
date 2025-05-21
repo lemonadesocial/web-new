@@ -438,7 +438,7 @@ function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: 
         {!followed && (
           <>
             <Divider className="my-3" />
-            <Button variant="flat" loading={loading} className="text-accent-400" onClick={handleSubscribe}>
+            <Button variant="flat" loading={loading} className="text-accent-400!" onClick={handleSubscribe}>
               Subscribe
             </Button>
           </>
