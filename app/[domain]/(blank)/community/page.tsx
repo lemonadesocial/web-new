@@ -14,7 +14,7 @@ import {
 import { Community } from '$lib/components/features/community';
 import { generateUrl } from '$lib/utils/cnd';
 
-type Props = { params: Promise<{ domain: string; }>; };
+type Props = { params: Promise<{ domain: string }> };
 
 export async function generateMetadata({ params }: Props, parent: ResolvingMetadata) {
   const res = await params;
@@ -54,11 +54,7 @@ export default async function Page({ params }: Props) {
 
   const { subSpaces, spaceTags } = await prefetchData(client, space);
 
-  return (
-    <div >
-      <Community initData={{ space, subSpaces, spaceTags }} />
-    </div>
-  );
+  return <Community initData={{ space, subSpaces, spaceTags }} />;
 }
 
 const prefetchData = async (client: GraphqlClient, space: Space) => {

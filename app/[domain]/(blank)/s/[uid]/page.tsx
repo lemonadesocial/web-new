@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { ResolvingMetadata } from 'next';
-import clsx from "clsx";
+import clsx from 'clsx';
 
 import { getClient, GraphqlClient } from '$lib/graphql/request/client';
 import { isObjectId } from '$lib/utils/helpers';
@@ -15,7 +15,7 @@ import {
 import { Community } from '$lib/components/features/community';
 import { generateUrl } from '$lib/utils/cnd';
 
-type Props = { params: Promise<{ domain: string, uid: string; }>; };
+type Props = { params: Promise<{ domain: string; uid: string }> };
 
 export async function generateMetadata({ params }: Props, parent: ResolvingMetadata) {
   const res = await params;
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
   };
 }
 
-export default async function Page({ params }: { params: Promise<{ uid: string; }>; }) {
+export default async function Page({ params }: { params: Promise<{ uid: string }> }) {
   const uid = (await params).uid;
   const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
 
@@ -55,11 +55,7 @@ export default async function Page({ params }: { params: Promise<{ uid: string; 
 
   const { subSpaces, spaceTags } = await prefetchData(client, space);
 
-  return (
-    <div id={space._id} className={clsx('pt-6', space.theme_data?.config?.mode || 'dark')}>
-      <Community initData={{ space, subSpaces, spaceTags }} />
-    </div>
-  );
+  return <Community initData={{ space, subSpaces, spaceTags }} />;
 }
 
 const prefetchData = async (client: GraphqlClient, space: Space) => {
