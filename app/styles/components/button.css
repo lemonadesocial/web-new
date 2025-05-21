@@ -4,7 +4,7 @@
   .btn {
     --btn-bg: transparent;
     --btn-bg-hover: transparent;
-    --btn-content: #ffffff;
+    --btn-content: inherit;
     --btn-content-hover: inherit;
     --btn-border-color: transparent;
 
