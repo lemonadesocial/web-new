@@ -41,13 +41,13 @@ const iconSizeBase = {
 //   flat: 'hover:bg-primary/[0.08]',
 // };
 
-const outlineVariants: { [key: string]: string } = {
-  primary: 'border-accent-500 hover:bg-accent-500/[0.1] text-accent-500',
-  success: 'border-success-600 hover:bg-success-600/[0.1] text-success-600',
-  tertiary: 'border-primary/[0.8] hover:bg-primary/[.1] text-tertiary',
-  secondary: 'border-primary hover:bg-primary/[0.1] text-black',
-  flat: 'border-primary/[0.1] hover:bg-primary/[0.08] text-tertiary',
-};
+// const outlineVariants: { [key: string]: string } = {
+//   primary: 'border-accent-500 hover:bg-accent-500/[0.1] text-accent-500',
+//   success: 'border-success-600 hover:bg-success-600/[0.1] text-success-600',
+//   tertiary: 'border-primary/[0.8] hover:bg-primary/[.1] text-tertiary',
+//   secondary: 'border-primary hover:bg-primary/[0.1] text-black',
+//   flat: 'border-primary/[0.1] hover:bg-primary/[0.08] text-tertiary',
+// };
 
 interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonElement>> {
   size?: 'sm' | 'base' | 'lg' | 'xs';
