@@ -18,4 +18,16 @@
   --color-overlay-primary: #202022;
   --color-overlay-secondary: rgba(32, 32, 34, 0.8);
   --color-overlay-backdrop: rgba(0, 0, 0, 0.6);
+
+  /* btn colors */
+
+  --btn-secondary-content: #000;
+  --btn-secondary: #fff;
+  --btn-secondary-hover: rgba(255, 255, 255, 0.8);
+
+  --btn-tertiary-content: rgba(255, 255, 255, 0.56);
+  --btn-tertiary: rgba(255, 255, 255, 0.08);
+  --btn-tertiary-hover: rgba(255, 255, 255, 0.16);
+
+  --btn-flat-hover: rgba(255, 255, 255, 0.08);
 }

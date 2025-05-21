@@ -94,7 +94,7 @@ export function EventAccess({ event }: { event: Event }) {
     />
   );
 
-  if (requestData?.getMyEventJoinRequest) return <ApprovalStatus joinRequest={requestData.getMyEventJoinRequest as EventJoinRequest} />;
+  if (requestData?.getMyEventJoinRequest) return <ApprovalStatus joinRequest={requestData.getMyEventJoinRequest as EventJoinRequest} event={event} />;
 
   return <EventRegistration event={event} />;
 }

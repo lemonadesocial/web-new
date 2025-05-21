@@ -7,7 +7,7 @@ import { formatWallet } from "$lib/utils/crypto";
 import { registrationModal } from "../store";
 import { useSignWallet } from "../hooks/useSignWallet";
 
-export function VerifyWalletModal({ onSuccess }: { onSuccess: (signature: string, token: string) => void }) {
+export function VerifyWalletModal({ onSuccess }: { onSuccess: (signature: string, token: string) => void; }) {
   const { address } = useAppKitAccount();
   const [loadingSign, setLoadingSign] = useState(false);
 
@@ -35,7 +35,7 @@ export function VerifyWalletModal({ onSuccess }: { onSuccess: (signature: string
         <p>
           Please sign a message to verify your ownership of the wallet. This will not incur any cost.
         </p>
-        <p className="text-sm text-tertiary">Make sure the message contains 'Lemonade' text.</p>
+        <p className="text-sm text-tertiary">Make sure the message contains &quot;Lemonade&quot; text.</p>
       </div>
       <Button
         className="w-full mt-4"

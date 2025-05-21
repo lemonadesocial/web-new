@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 
 import { Avatar, Badge, Card, Divider, Spacer } from '$lib/components/core';
-import { Address, Event, SpaceTagBase, User } from '$lib/graphql/generated/backend/graphql';
+import { Address, Event, SpaceTag, User } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
 import { getEventPrice } from '$lib/utils/event';
@@ -17,7 +17,7 @@ export function EventList({
 }: {
   events: Event[];
   loading?: boolean;
-  tags?: SpaceTagBase[];
+  tags?: SpaceTag[];
   onSelect?: (event: Event) => void;
 }) {
   if (loading) return <EventListSkeleton />;
@@ -25,7 +25,7 @@ export function EventList({
 
   return (
     <div className="flex flex-col gap-8">
-      {Object.entries(groupBy(events, ({ start }) => start)).map(([date, data]) => (
+      {Object.entries(groupBy(events, ({ start }) => format(new Date(start), 'yyyy-MM-dd'))).map(([date, data]) => (
         <div key={date}>
           <p className="text-tertiary font-medium">
             <span className="text-primary">{format(date, 'MMM dd')}</span> {format(date, 'EEE')}
@@ -116,15 +116,14 @@ export function EventListCard({
 }: {
   events: Event[];
   loading?: boolean;
-  tags?: SpaceTagBase[];
+  tags?: SpaceTag[];
   onSelect?: (event: Event) => void;
 }) {
   if (loading) return <EventListCardSkeleton />;
   if (!events.length) return <EmptyComp />;
-
   return (
     <div className="flex flex-col">
-      {Object.entries(groupBy(events, ({ start }) => start)).map(([date, data]) => (
+      {Object.entries(groupBy(events, ({ start }) => format(new Date(start), 'yyyy-MM-dd'))).map(([date, data]) => (
         <div className="flex flex-col relative" key={date}>
           <div className="border-dashed border-l-2 border-l-[var(--color-divider)] absolute h-full left-1 top-2 z-10">
             <div className="size-2 backdrop-blur-lg -ml-[5px] absolute">
@@ -163,7 +162,7 @@ export function EventListCard({
   );
 }
 
-function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: SpaceTagBase[]; onClick?: () => void }) {
+function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: SpaceTag[]; onClick?: () => void }) {
   const users = uniqBy([item.host_expanded, ...(item.visible_cohosts_expanded || [])], (u) => u?._id);
 
   return (

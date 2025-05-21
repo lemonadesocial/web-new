@@ -8,7 +8,7 @@ import {
   GetSubSpacesDocument,
   Space,
   PublicSpace,
-  SpaceTagBase,
+  SpaceTag,
 } from '$lib/graphql/generated/backend/graphql';
 
 import { Community } from '$lib/components/features/community';
@@ -54,11 +54,7 @@ export default async function Page({ params }: Props) {
 
   const { subSpaces, spaceTags } = await prefetchData(client, space);
 
-  return (
-    <div id={space._id} className={space.theme_data?.config?.mode || 'dark'}>
-      <Community initData={{ space, subSpaces, spaceTags }} />
-    </div>
-  );
+  return <Community initData={{ space, subSpaces, spaceTags }} />;
 }
 
 const prefetchData = async (client: GraphqlClient, space: Space) => {
@@ -69,6 +65,6 @@ const prefetchData = async (client: GraphqlClient, space: Space) => {
 
   return {
     subSpaces: (subSpaces.data?.getSubSpaces || []) as PublicSpace[],
-    spaceTags: (spaceTags.data?.listSpaceTags || []) as SpaceTagBase[],
+    spaceTags: (spaceTags.data?.listSpaceTags || []) as SpaceTag[],
   };
 };

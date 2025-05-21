@@ -1,13 +1,11 @@
 'use client';
 import React from 'react';
-import { uniqBy } from 'lodash';
 
-import { Event, GetEventDocument, GetEventQuery, User } from '$lib/graphql/generated/backend/graphql';
+import { Event, GetEventDocument, GetEventQuery } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
-import { Avatar, Badge, Button, Spacer } from '$lib/components/core';
+import { Badge, Button, Spacer } from '$lib/components/core';
 import { generateUrl } from '$lib/utils/cnd';
 import { hosting, isAttending } from '$lib/utils/event';
-import { userAvatar } from '$lib/utils/user';
 import { useSession } from '$lib/hooks/useSession';
 
 import { AboutSection } from './AboutSection';
@@ -23,8 +21,9 @@ import { EventLocationBlock } from './EventLocationBlock';
 import { AttendeesSection } from './AttendeesSection';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { EventCollectibles } from '../event-collectibles';
+import { uniqBy } from 'lodash';
 
-export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
+export default function ManageEventGuestSide({ event: eventDetail }: { event: Event; }) {
   const { data, loading } = useQuery(GetEventDocument, {
     variables: { id: eventDetail._id },
     skip: !eventDetail._id,
@@ -37,6 +36,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
 
   const isHost = session?.user && event && hosting(event, session.user);
   const attending = session?.user ? isAttending(event, session?.user) : false;
+  const hosts = uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id);
 
   return (
     <div className="flex gap-[72px]">
@@ -68,7 +68,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
         }
 
         <CommunitySection event={event} />
-        <HostedBySection event={event} /> 
+        <HostedBySection event={event} />
         <AttendeesSection eventId={event._id} />
       </div>
 
@@ -95,13 +95,25 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           )}
         </div>
 
-        <h3 className="text-2xl md:text-3xl font-bold">{event.title}</h3>
+        <div className="space-y-2">
+          <h3 className="text-xl md:text-3xl font-bold">{event.title}</h3>
+
+          <p className="md:hidden text-secondary text-sm">
+            Hosted By{' '}
+            {hosts
+              .map((p) => p?.name)
+              .join(', ')
+              .replace(/,(?=[^,]*$)/, ' & ')}
+          </p>
+        </div>
 
         <div className="flex flex-col gap-4">
           <EventDateTimeBlock event={event} />
           <EventLocationBlock event={event} />
         </div>
-        <EventAccess event={event} />
+        {
+          event && <EventAccess event={event} />
+        }
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />
@@ -109,7 +121,6 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
         {attending && <EventCollectibles event={event} />}
         <div className="flex flex-col gap-6 md:hidden">
           <CommunitySection event={event} />
-          <HostedBySection event={event} /> 
           <AttendeesSection eventId={event._id} />
         </div>
         <Spacer className="h-8" />

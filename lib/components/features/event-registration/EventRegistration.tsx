@@ -6,10 +6,11 @@ import { CalculateTicketsPricingDocument, EthereumStakeAccount, Event, GetEventI
 import { useQuery } from '$lib/graphql/request';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
-import { randomUserImage, userAvatar } from '$lib/utils/user';
 import { Avatar, Button, Card, ModalContainer, SkeletonCard } from '$lib/components/core';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { useStakeRefundRate } from '$lib/utils/stake';
+import { userAvatar } from '$lib/utils/user';
+
 import {
   approvalRequiredAtom,
   currencyAtom,
@@ -33,6 +34,8 @@ import {
 import { EventRegistrationStoreProvider } from './context';
 import { TicketSelect } from './TicketSelect';
 import { RegisterButton } from './RegisterButton';
+import { AccessCard } from '../event-access/AccessCard';
+import { EventCountdown } from '../event-access/EventCountdown';
 
 const EventRegistrationContent: React.FC = () => {
   const signIn = useSignIn();
@@ -59,14 +62,14 @@ const EventRegistrationContent: React.FC = () => {
 
   if (nonLoggedInStatus) {
     return (
-      <Card.Root className="p-4 space-y-4">
-        <Avatar src={randomUserImage()} className='size-12' />
+      <AccessCard event={event}>
         <div>
           <h3 className="text-xl font-semibold">
             {nonLoggedInStatus === 'success' ? `You're In` : 'Pending Approval'}
           </h3>
           <p className="text-lg text-tertiary">{ticketTypeText}</p>
         </div>
+        <EventCountdown event={event} />
         <hr className="border-primary/8" />
         <div className="p-4 space-y-3 bg-primary/8 rounded-sm">
           <div className='size-8 flex items-center justify-center bg-white rounded-full'>
@@ -75,7 +78,7 @@ const EventRegistrationContent: React.FC = () => {
           <p>Please sign in to manage your registration and see more event details.</p>
           <Button size='sm' variant='tertiary' iconRight='icon-chevron-right' onClick={signIn}>Sign In</Button>
         </div>
-      </Card.Root>
+      </AccessCard>
     );
   }
 
@@ -147,7 +150,7 @@ const EventRegistrationContent: React.FC = () => {
   );
 };
 
-const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent }) => {
+const BaseEventRegistration: React.FC<{ event: Event; }> = ({ event: initialEvent }) => {
   const [event, setEvent] = useAtom(eventAtom);
   const [currency, setCurrency] = useAtom(currencyAtom);
   const [purchaseItems, setPurchaseItems] = useAtom(purchaseItemsAtom);
@@ -261,7 +264,7 @@ const BaseEventRegistration: React.FC<{ event: Event }> = ({ event: initialEvent
   </>;
 };
 
-export const EventRegistration: React.FC<{ event: Event }> = ({ event }) => (
+export const EventRegistration: React.FC<{ event: Event; }> = ({ event }) => (
   <EventRegistrationStoreProvider>
     <BaseEventRegistration event={event} />
   </EventRegistrationStoreProvider>

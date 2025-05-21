@@ -1,5 +1,57 @@
 # Changelog
 
+## [1.24.1](https://github.com/lemonadesocial/web-new/compare/v1.24.0...v1.24.1) (2025-05-21)
+
+
+### Bug Fixes
+
+* text wrap ([8e510f4](https://github.com/lemonadesocial/web-new/commit/8e510f4d4d269d309c8e595b31c7e846f50e1d8e))
+
+## [1.24.0](https://github.com/lemonadesocial/web-new/compare/v1.23.0...v1.24.0) (2025-05-20)
+
+
+### Features
+
+* adjust font size ([1e62ad0](https://github.com/lemonadesocial/web-new/commit/1e62ad0826299ef4a406bc3d0e8be38d277be16f))
+
+
+### Bug Fixes
+
+* event list same date ([8734b94](https://github.com/lemonadesocial/web-new/commit/8734b947772a79abf5258c71270d2d00c63c8867))
+* lint code ([5477116](https://github.com/lemonadesocial/web-new/commit/5477116a24a9e53dd280e44db9bda126629ec4a0))
+
+## [1.23.0](https://github.com/lemonadesocial/web-new/compare/v1.22.1...v1.23.0) (2025-05-19)
+
+
+### Features
+
+* update env ([0632ce1](https://github.com/lemonadesocial/web-new/commit/0632ce107208376ed69466460ce12f2b9182f1a9))
+
+## [1.22.1](https://github.com/lemonadesocial/web-new/compare/v1.22.0...v1.22.1) (2025-05-15)
+
+
+### Bug Fixes
+
+* missing import ([8bd88a4](https://github.com/lemonadesocial/web-new/commit/8bd88a4b2e59047331e48808d720bd7d89fd95cc))
+* sort order ([82d78f2](https://github.com/lemonadesocial/web-new/commit/82d78f2b1a1aaafc2fc7828eb55298179ead23fa))
+
+## [1.22.0](https://github.com/lemonadesocial/web-new/compare/v1.21.0...v1.22.0) (2025-05-15)
+
+
+### Features
+
+* add default avatar ([eab71bd](https://github.com/lemonadesocial/web-new/commit/eab71bd9831aa19c8522b42a1c5e32b6a5823f64))
+* event og ([faa6313](https://github.com/lemonadesocial/web-new/commit/faa63137ea2ab5a5dc781f9b4a8197d9b9261882))
+* event status ([e7691bf](https://github.com/lemonadesocial/web-new/commit/e7691bf5f6edb427d386e12c2acbf0ba8b85a13a))
+
+
+### Bug Fixes
+
+* clean linting ([0b87dd6](https://github.com/lemonadesocial/web-new/commit/0b87dd660f689ffdb0dbeb75d8576c329a83846d))
+* event status ([cb9f366](https://github.com/lemonadesocial/web-new/commit/cb9f366f4bb011241ba0d27b146d9e6d992a52e2))
+* event status ([33fdb0a](https://github.com/lemonadesocial/web-new/commit/33fdb0ab54320c2f9b2bfb488c8673b924a773b6))
+* event status ([0eb3317](https://github.com/lemonadesocial/web-new/commit/0eb33177fd5f78bce510165d92dfed4f50eccae1))
+
 ## [1.21.0](https://github.com/lemonadesocial/web-new/compare/v1.20.0...v1.21.0) (2025-05-09)
 
 

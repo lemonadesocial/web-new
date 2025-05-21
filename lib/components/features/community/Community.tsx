@@ -3,7 +3,7 @@ import React from 'react';
 import { useAtom } from 'jotai';
 import { endOfDay, startOfDay, format } from 'date-fns';
 import clsx from 'clsx';
-import dynamic from 'next/dynamic';
+import Link from 'next/link';
 
 import { Button, Divider, drawer, Menu, MenuItem, modal, Segment, Tag } from '$lib/components/core';
 import { HeroSection } from '$lib/components/features/community';
@@ -25,22 +25,21 @@ import {
   PublicSpace,
   SortOrder,
   Space,
-  SpaceTagBase,
+  SpaceTag,
   SpaceTagType,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { EventList, EventListCard } from '$lib/components/features/EventList';
 import { Calendar } from '$lib/components/core/calendar';
 import { scrollAtBottomAtom, sessionAtom } from '$lib/jotai';
-import { generateCssVariables } from '$lib/utils/fetchers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useMe } from '$lib/hooks/useMe';
+import { themeAtom } from './theme_builder/store';
 
 import { ListingEvent } from './ListingEvent';
 import { EventPane } from '../pane';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { MyEventRequests } from './MyEventRequests';
-
 import CommunityCard from './CommunityCard';
 import { defaultTheme, themeAtom } from './theme-builder/store';
 import { ShaderGradient } from './theme-builder/shader';
@@ -54,7 +53,7 @@ type Props = {
   initData: {
     space?: Space;
     subSpaces?: PublicSpace[];
-    spaceTags?: SpaceTagBase[];
+    spaceTags?: SpaceTag[];
   };
 };
 
@@ -194,63 +193,12 @@ export function Community({ initData }: Props) {
     }
   }, [shouldLoadMore]);
 
-  const spaceData = dataGetSpace?.getSpace as Space;
-  const theme = spaceData.theme_data;
-  const [data, setThemeAtom] = useAtom(themeAtom);
-
-  React.useEffect(() => {
-    if (theme) {
-      setThemeAtom({
-        ...defaultTheme,
-        theme: theme.theme,
-        config: { fg: theme.foreground?.key, bg: theme.background?.key, name: theme?.class, ...(theme.config || {}) },
-        font_title: theme.font_title,
-        font_body: theme.font_body,
-        variables: { ...theme.variables },
-      });
-    }
-  }, []);
+  const [data] = useAtom(themeAtom);
 
   console.log(theme);
 
   return (
     <>
-      {data?.variables && (
-        <style global jsx>
-          {`
-            body {
-              ${data.variables.font && generateCssVariables(data.variables.font)}
-            }
-
-            :root {
-              ${data.variables?.custom && generateCssVariables(data.variables?.custom)}
-              ${data.variables.pattern && generateCssVariables(data.variables.pattern)}
-            }
-
-            main {
-              ${data.variables?.image && generateCssVariables(data.variables?.image)}
-
-              background-repeat: no-repeat;
-              background-size: cover;
-            }
-          `}
-        </style>
-      )}
-
-      {data?.theme && (
-        <div
-          className={clsx(
-            'background',
-            data?.theme,
-            ['shader', 'pattern'].includes(data?.theme as string) && data?.config?.name,
-            data?.config?.bg,
-            data?.config?.class,
-          )}
-        >
-          {data?.theme === 'shader' && <ShaderGradient mode={data.config.mode} />}
-        </div>
-      )}
-
       <div className={clsx('relative', data?.theme && data?.config?.fg)}>
         <HeroSection space={dataGetSpace?.getSpace as Space} />
         <Divider className="my-8" />
@@ -260,13 +208,11 @@ export function Community({ initData }: Props) {
               <div className="w-full flex justify-between items-center">
                 <h1 className="text-xl md:text-2xl font-semibold flex-1 text-primary">Hubs</h1>
                 {subSpaces.length > 3 && (
-                  <Button
-                    variant="tertiary-alt"
-                    size="sm"
-                    onClick={() => drawer.open(CommunityPane, { props: { subSpaces } })}
-                  >
-                    {`View All (${subSpaces.length})`}
-                  </Button>
+                  <Link href={`/s/${space?.slug || space?._id}/featured-hubs`}>
+                    <Button variant="tertiary-alt" size="sm">
+                      {`View All (${subSpaces.length})`}
+                    </Button>
+                  </Link>
                 )}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -457,7 +403,7 @@ function EventsWithMode({
   mode: 'list' | 'card';
   events: Event[];
   loading?: boolean;
-  tags?: SpaceTagBase[];
+  tags?: SpaceTag[];
 }) {
   return (
     <>
@@ -507,7 +453,7 @@ function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: 
         {!followed && (
           <>
             <Divider className="my-3" />
-            <Button variant="flat" loading={loading} className="text-accent-400" onClick={handleSubscribe}>
+            <Button variant="flat" loading={loading} className="text-accent-400!" onClick={handleSubscribe}>
               Subscribe
             </Button>
           </>

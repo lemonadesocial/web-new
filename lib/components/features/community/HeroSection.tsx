@@ -7,7 +7,7 @@ import React from 'react';
 import linkify from 'linkify-it';
 
 import { Button, modal, Spacer } from '$lib/components/core';
-import { LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { ASSET_PREFIX, LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { FollowSpaceDocument, Space, UnfollowSpaceDocument } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { useMutation } from '$lib/graphql/request';
@@ -16,8 +16,9 @@ import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 
 import { COMMUNITY_SOCIAL_LINKS } from './constants';
-import { ThemeBuilder } from './theme-builder';
-import { defaultTheme, themeAtom } from './theme-builder/store';
+import { ThemeBuilder } from './theme_builder';
+import { defaultTheme, themeAtom } from './theme_builder/store';
+import { communityAvatar } from "$lib/utils/community";
 
 interface HeroSectionProps {
   space?: Space | null;
@@ -85,7 +86,7 @@ export function HeroSection({ space }: HeroSectionProps) {
   return (
     <>
       <div className="relative w-full h-[154px] md:h-96 overflow-hidden">
-        {space?.image_cover && (
+        {space?.image_cover ? (
           <>
             <img
               className="md:hidden aspect-[3.5/1] object-cover rounded-md w-full max-h-2/3"
@@ -104,17 +105,19 @@ export function HeroSection({ space }: HeroSectionProps) {
               className="hidden md:block aspect-[3.5/1] object-cover rounded-md w-full"
             />
           </>
+        ) : (
+          <div className="absolute inset-0 top-0 left-0 aspect-[3.5/1] object-cover rounded-md w-full bg-blend-darken"></div>
         )}
 
+
         <div className="absolute bottom-1.5 md:bottom-4 size-20 md:size-32 rounded-md overflow-hidden">
-          {space?.image_avatar && (
-            <img
-              className="w-full h-full outline outline-tertiary/4 rounded-md"
-              src={generateUrl(space?.image_avatar_expanded, { resize: { width: 384, height: 384, fit: 'contain' } })}
-              alt={space?.title}
-              loading="lazy"
-            />
-          )}
+          <img
+            className="w-full h-full outline outline-tertiary/4 rounded-md"
+            src={communityAvatar(space)}
+            alt={space?.title}
+            loading="lazy"
+          />
+          {!space?.image_avatar_expanded && <img src={`${ASSET_PREFIX}/assets/images/blank-avatar.svg`} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 icon-blank-avatar w-[62%] h-[62%]" />}
         </div>
 
         {/* Subscribe button */}
@@ -132,7 +135,7 @@ export function HeroSection({ space }: HeroSectionProps) {
               />
             )}
             {canManage ? (
-              <Link href={`${LEMONADE_DOMAIN}/s/${space?.slug || space?._id}/overview`} target="_blank">
+              <Link href={`${LEMONADE_DOMAIN}/manage/community/${space?.slug || space?._id}`} target="_blank">
                 <Button variant="primary" outlined iconRight="icon-arrow-outward" size="lg">
                   <span className="block">Manage</span>
                 </Button>
@@ -210,7 +213,7 @@ export function HeroSection({ space }: HeroSectionProps) {
   );
 }
 
-function ConfirmModal({ onDiscard }: { onDiscard: () => void }) {
+function ConfirmModal({ onDiscard }: { onDiscard: () => void; }) {
   return (
     <div className="p-4 flex flex-col gap-4 max-w-[308px]">
       <div className="p-3 rounded-full bg-danger-400/16 w-fit">

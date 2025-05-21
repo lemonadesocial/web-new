@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAtomValue as useJotaiAtomValue } from "jotai";
-import { Eip1193Provider, ethers } from "ethers";
+import { Eip1193Provider } from "ethers";
 
 import { Button, ModalContent } from "$lib/components/core";
 import { EthereumAccount, EthereumRelayAccount, EthereumStakeAccount, UpdatePaymentDocument } from "$lib/graphql/generated/backend/graphql";

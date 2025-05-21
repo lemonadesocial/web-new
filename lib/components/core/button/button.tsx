@@ -23,31 +23,31 @@ const btnIconSizes = {
   xs: 'p-[5]',
 };
 
-const iconSize = {
+const iconSizeBase = {
   base: 'size-5',
   sm: 'size-4',
   lg: 'size-5',
   xs: 'size-4',
 };
 
-const variants: { [key: string]: string } = {
-  primary: 'bg-accent-500 hover:bg-accent-700',
-  success: 'bg-success-600 hover:bg-success-600/8',
-  danger: 'bg-danger-500 hover:bg-danger-500/8',
-  tertiary: 'bg-primary/8 hover:bg-primary/16 text-tertiary',
-  'tertiary-alt':
-    'bg-primary/8 hover:bg-primary/80 text-tertiary hover:text-black disabled:opacity-50 disabled:hover:bg-primary/8 disabled:hover:text-tertiary',
-  secondary: 'bg-primary hover:bg-primary/80 disabled:bg-primary/50 text-black',
-  flat: 'hover:bg-primary/[0.08]',
-};
+// const variants: { [key: string]: string } = {
+//   primary: 'bg-accent-500 hover:bg-accent-700',
+//   success: 'bg-success-600 hover:bg-success-600/8',
+//   danger: 'bg-danger-500 hover:bg-danger-500/8',
+//   tertiary: 'bg-primary/8 hover:bg-primary/16 text-tertiary',
+//   'tertiary-alt':
+//     'bg-primary/8 hover:bg-primary/80 text-tertiary hover:text-black light:hover:text-white! disabled:opacity-50 disabled:hover:bg-primary/8 disabled:hover:text-tertiary',
+//   secondary: 'bg-primary hover:bg-primary/80 disabled:bg-primary/50 text-black',
+//   flat: 'hover:bg-primary/[0.08]',
+// };
 
-const outlineVariants: { [key: string]: string } = {
-  primary: 'border-accent-500 hover:bg-accent-500/[0.1] text-accent-500',
-  success: 'border-success-600 hover:bg-success-600/[0.1] text-success-600',
-  tertiary: 'border-primary/[0.8] hover:bg-primary/[.1] text-tertiary',
-  secondary: 'border-primary hover:bg-primary/[0.1] text-black',
-  flat: 'border-primary/[0.1] hover:bg-primary/[0.08] text-tertiary',
-};
+// const outlineVariants: { [key: string]: string } = {
+//   primary: 'border-accent-500 hover:bg-accent-500/[0.1] text-accent-500',
+//   success: 'border-success-600 hover:bg-success-600/[0.1] text-success-600',
+//   tertiary: 'border-primary/[0.8] hover:bg-primary/[.1] text-tertiary',
+//   secondary: 'border-primary hover:bg-primary/[0.1] text-black',
+//   flat: 'border-primary/[0.1] hover:bg-primary/[0.08] text-tertiary',
+// };
 
 interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonElement>> {
   size?: 'sm' | 'base' | 'lg' | 'xs';
@@ -59,6 +59,7 @@ interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonE
   disabled?: boolean;
   outlined?: boolean;
   type?: 'button' | 'submit';
+  iconSize?: string;
 }
 
 export function Button({
@@ -73,6 +74,7 @@ export function Button({
   disabled,
   outlined,
   type = 'button',
+  iconSize,
   ...rest
 }: ButtonProps) {
   return (
@@ -83,14 +85,19 @@ export function Button({
         'transition border border-transparent group cursor-pointer inline-flex items-center justify-center font-medium',
         sizes[size],
         gaps[size],
-        outlined ? outlineVariants[variant] : variants[variant],
+        // outlined ? outlineVariants[variant] : variants[variant],
         clsx({ [btnIconSizes[size]]: !!icon, 'cursor-not-allowed opacity-50 ': disabled || loading }),
+        clsx('btn', outlined && 'btn-outlined', `btn-${variant}`),
         className,
       )}
       {...rest}
     >
       <svg
-        className={twMerge('absolute animate-spin', iconSize[size], clsx({ invisible: !loading }))}
+        className={twMerge(
+          'absolute animate-spin',
+          iconSize ? iconSize : iconSizeBase[size],
+          clsx({ invisible: !loading }),
+        )}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -103,9 +110,9 @@ export function Button({
         ></path>
       </svg>
       <div className={twMerge('flex justify-center items-center', gaps[size], clsx({ invisible: loading }))}>
-        {iconLeft && <i className={twMerge(iconSize[size], iconLeft)} />}
-        {icon ? <i className={twMerge(iconSize[size], icon)} /> : children}
-        {iconRight && <i className={twMerge(iconSize[size], iconRight)} />}
+        {iconLeft && <i className={twMerge(iconSize ? iconSize : iconSizeBase[size], iconLeft)} />}
+        {icon ? <i className={twMerge(iconSize ? iconSize : iconSizeBase[size], icon)} /> : children}
+        {iconRight && <i className={twMerge(iconSize ? iconSize : iconSizeBase[size], iconRight)} />}
       </div>
     </button>
   );

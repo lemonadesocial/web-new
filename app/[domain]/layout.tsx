@@ -18,6 +18,7 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
   if (!data) return null;
 
   return {
+    metadataBase: null,
     title: data.title,
   };
 }

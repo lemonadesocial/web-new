@@ -78,7 +78,7 @@ export default function Sidebar() {
   );
 }
 
-function MenuItem({ path, icon, active }: { path: string; icon: string; active?: boolean }) {
+export function MenuItem({ path, icon, active }: { path: string; icon: string; active?: boolean; }) {
   return (
     <Link
       href={path}

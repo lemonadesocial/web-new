@@ -13,9 +13,21 @@
   --color-card: rgba(0, 0, 0, 0.04);
   --color-card-border: rgba(0, 0, 0, 0.04);
 
-  --color-divider: rgba(255, 255, 255, 0.08);
+  --color-divider: rgba(0, 0, 0, 0.08);
 
-  --color-overlay-primary: var(--color-woodsmoke-950);
-  --color-overlay-secondary: rgba(32, 32, 34, 0.8);
-  --color-overlay-backdrop: rgba(0, 0, 0, 0.6);
+  --color-overlay-primary: color-mix(in oklab, var(--color-woodsmoke-50) 80%, transparent);
+  --color-overlay-secondary: rgba(255, 255, 255, 0.8);
+  --color-overlay-backdrop: rgba(255, 255, 255, 0.56);
+
+  /* btn colors */
+
+  --btn-secondary-content: #fff;
+  --btn-secondary: #000;
+  --btn-secondary-hover: rgba(0, 0, 0, 0.8);
+
+  --btn-tertiary-content: rgba(0, 0, 0, 0.56);
+  --btn-tertiary: rgba(0, 0, 0, 0.08);
+  --btn-tertiary-hover: rgba(0, 0, 0, 0.16);
+
+  --btn-flat-hover: rgba(255, 255, 255, 0.08);
 }
