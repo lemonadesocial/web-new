@@ -3,6 +3,7 @@
 @import './styles/themes/light.css';
 @import './styles/themes/dark.css';
 
+@import './styles/components/button.css';
 @import './styles/components/collapsible.css';
 @import './styles/components/tooltips.css';
 
@@ -38,6 +39,16 @@
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
+
+  --btn-secondary-content: var(--btn-secondary-content);
+  --btn-secondary: var(--btn-secondary);
+  --btn-secondary-hover: var(--btn-secondary-hover);
+
+  --btn-tertiary: var(--btn-tertiary);
+  --btn-tertiary-content: var(--btn-tertiary-content);
+  --btn-tertiary-hover: var(--btn-tertiary-hover);
+
+  --btn-flat-hover: var(--btn-flat-hover);
 
   --color-woodsmoke-50: #f7f7f8;
   --color-woodsmoke-100: #eeedf1;
