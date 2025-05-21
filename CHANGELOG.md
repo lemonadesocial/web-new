@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.24.1](https://github.com/lemonadesocial/web-new/compare/v1.24.0...v1.24.1) (2025-05-21)
+
+
+### Bug Fixes
+
+* text wrap ([8e510f4](https://github.com/lemonadesocial/web-new/commit/8e510f4d4d269d309c8e595b31c7e846f50e1d8e))
+
 ## [1.24.0](https://github.com/lemonadesocial/web-new/compare/v1.23.0...v1.24.0) (2025-05-20)
 
 
