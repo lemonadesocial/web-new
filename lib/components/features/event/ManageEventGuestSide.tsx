@@ -22,8 +22,9 @@ import { AttendeesSection } from './AttendeesSection';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { EventCollectibles } from '../event-collectibles';
 import { uniqBy } from 'lodash';
+import { EventBuilder } from '../theme-builder/event';
 
-export default function ManageEventGuestSide({ event: eventDetail }: { event: Event; }) {
+export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
   const { data, loading } = useQuery(GetEventDocument, {
     variables: { id: eventDetail._id },
     skip: !eventDetail._id,
@@ -50,8 +51,9 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           />
         )}
 
-        {
-          isHost && (
+        {isHost && (
+          <>
+            <EventBuilder />
             <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
               <p className="text-accent-500">You have manage access for this event.</p>
               <Button
@@ -64,8 +66,8 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
                 Manage
               </Button>
             </div>
-          )
-        }
+          </>
+        )}
 
         <CommunitySection event={event} />
         <HostedBySection event={event} />
@@ -111,9 +113,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           <EventDateTimeBlock event={event} />
           <EventLocationBlock event={event} />
         </div>
-        {
-          event && <EventAccess event={event} />
-        }
+        {event && <EventAccess event={event} />}
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />
