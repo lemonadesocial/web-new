@@ -1,6 +1,6 @@
 {
   "name": "web-new",
-  "version": "1.24.3",
+  "version": "1.24.5",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 8000 --experimental-https -H localhost.staging.lemonade.social",
@@ -20,6 +20,9 @@
     "@dicebear/glass": "^9.2.2",
     "@dicebear/thumbs": "^9.2.2",
     "@floating-ui/react": "^0.27.5",
+    "@lens-chain/storage-client": "^1.0.4",
+    "@lens-protocol/client": "^0.0.0-canary-20250507164041",
+    "@lens-protocol/metadata": "^2.0.0",
     "@ory/client": "^1.19.0",
     "@react-three/fiber": "^9.1.0",
     "@reown/appkit": "^1.7.3",
@@ -38,6 +41,7 @@
     "framer-motion": "^12.4.10",
     "graphql-request": "^7.1.2",
     "graphql-ws": "^6.0.4",
+    "html-to-text": "^9.0.5",
     "jotai": "^2.12.1",
     "js-cookie": "^3.0.5",
     "linkify-it": "^5.0.0",
@@ -53,7 +57,8 @@
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.8",
     "tailwindcss-palette-generator": "^0.10.0",
-    "three": "^0.174.0"
+    "three": "^0.174.0",
+    "zksync-ethers": "^6.17.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.24.5](https://github.com/lemonadesocial/web-new/compare/v1.24.4...v1.24.5) (2025-05-22)
+
+
+### Bug Fixes
+
+* missing condition ([61e3468](https://github.com/lemonadesocial/web-new/commit/61e34681b68ef3c1e1c8e065a55bdd1b25f77cda))
+
+## [1.24.4](https://github.com/lemonadesocial/web-new/compare/v1.24.3...v1.24.4) (2025-05-22)
+
+
+### Bug Fixes
+
+* missing theme ui ([e2619e5](https://github.com/lemonadesocial/web-new/commit/e2619e5d3e1b035973d21d0229e07893bd7730de))
+* santize desc ([80ba973](https://github.com/lemonadesocial/web-new/commit/80ba9731a98a340a3353474824be67afce95c2d8))
+
 ## [1.24.3](https://github.com/lemonadesocial/web-new/compare/v1.24.2...v1.24.3) (2025-05-22)
 
 

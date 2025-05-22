@@ -45,9 +45,11 @@ function MenuTrigger({
 function MenuContent({
   children,
   className,
+  onClick,
 }: {
   className?: string;
   children: React.ReactNode | ((props: { toggle: () => void }) => React.ReactNode);
+  onClick?: () => void;
 }) {
   const { isOpen, toggle, refs, floatingStyles } = React.useContext(MenuContext);
 
@@ -68,8 +70,10 @@ function MenuContent({
           style={{
             ...floatingStyles,
           }}
+          onClick={onClick}
           className={twMerge(
             'menu border border-card-border rounded-sm bg-overlay-secondary [backdrop-filter:var(--backdrop-filter)] w-fit p-4 z-50 shadow-md',
+            onClick && 'cursor-pointer',
             className,
           )}
           role="menu"
@@ -95,14 +99,28 @@ function MenuRoot({
   placement = 'bottom-end',
   strategy = 'absolute',
   dismissable = true,
+  isOpen: controlledOpen,
+  onOpenChange,
 }: {
   className?: string;
   disabled?: boolean;
   placement?: Placement;
   dismissable?: boolean;
   strategy?: 'fixed' | 'absolute';
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 } & React.PropsWithChildren) {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const isOpen = isControlled ? controlledOpen : uncontrolledOpen;
+
+  const setIsOpen = (open: boolean) => {
+    if (isControlled) {
+      onOpenChange?.(open);
+    } else {
+      setUncontrolledOpen(open);
+    }
+  };
 
   const toggle = () => {
     if (!disabled) setIsOpen(!isOpen);

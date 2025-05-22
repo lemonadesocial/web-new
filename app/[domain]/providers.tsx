@@ -3,7 +3,7 @@ import React from 'react';
 import { useSetAtom } from 'jotai';
 
 import { GraphqlClientProvider } from '$lib/graphql/request';
-import { initializeAppKit } from '$lib/utils/appkit';
+import { initializeAppKit, appKit } from '$lib/utils/appkit';
 import { useAuth } from '$lib/hooks/useAuth';
 import { useListChains } from '$lib/hooks/useListChains';
 import { SpaceHydraKeys } from '$lib/utils/space';
@@ -14,10 +14,12 @@ export default function Providers({ children, space }: { children: React.ReactNo
   const oryLoading = useAuth(space?.hydra_client_id);
   const chainsLoading = useListChains();
   const setHydraClientId = useSetAtom(hydraClientIdAtom);
+  const [appKitReady, setAppKitReady] = React.useState(false);
 
   React.useEffect(() => {
     if (!chainsLoading) {
       initializeAppKit();
+      setAppKitReady(true);
     }
   }, [chainsLoading]);
 
@@ -27,7 +29,7 @@ export default function Providers({ children, space }: { children: React.ReactNo
     }
   }, [space]);
 
-  if (oryLoading || chainsLoading) return null;
+  if (oryLoading || chainsLoading || !appKitReady) return null;
 
   return (
     <GraphqlClientProvider client={defaultClient}>
