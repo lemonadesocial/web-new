@@ -20,8 +20,11 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
   const { uid, domain } = await params;
   let variables = {};
 
-  if (uid) variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
-  if (domain) variables = { hostname: decodeURIComponent(domain) };
+  if (uid) {
+    variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
+  } else {
+    if (domain) variables = { hostname: decodeURIComponent(domain) };
+  }
 
   const client = getClient();
 
