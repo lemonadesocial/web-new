@@ -12,13 +12,14 @@ export async function generateMetadata({ params }: { params: Promise<{ shortid: 
 
   const { data } = await client.query({ query: GetEventDocument, variables: { shortid } });
   const event = data?.getEvent as Event;
+  const fileId = event.new_new_photos_expanded?.[0] ? event.new_new_photos_expanded?.[0]._id : 'default'
 
   return {
     metadataBase: null,
     title: event?.title,
     description: event?.description,
     openGraph: {
-      images: `${process.env.NEXT_PUBLIC_HOST_URL}/api/og/event/${event.shortid}`,
+      images: `${process.env.NEXT_PUBLIC_HOST_URL}/api/og/event/${event.shortid}?file=${fileId}`,
     },
   };
 }
