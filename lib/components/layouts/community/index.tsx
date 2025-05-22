@@ -13,12 +13,15 @@ import clsx from 'clsx';
 
 type LayoutProps = {
   children: React.ReactElement;
-  params: { uid: string };
+  params: { uid: string; domain: string };
 };
 
 export default async function CommunityLayout({ children, params }: LayoutProps) {
-  const { uid } = await params;
-  const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
+  const { uid, domain } = await params;
+  let variables = {};
+
+  if (uid) variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
+  if (domain) variables = { hostname: decodeURIComponent(domain) };
 
   const client = getClient();
 
