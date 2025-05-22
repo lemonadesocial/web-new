@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.24.3](https://github.com/lemonadesocial/web-new/compare/v1.24.2...v1.24.3) (2025-05-22)
+
+
+### Bug Fixes
+
+* update og image when event updated cover image ([5180880](https://github.com/lemonadesocial/web-new/commit/5180880e22263d92fc7181b36b81c4c966c6b9c0))
+
+## [1.24.2](https://github.com/lemonadesocial/web-new/compare/v1.24.1...v1.24.2) (2025-05-21)
+
+
+### Bug Fixes
+
+* light mode colors ([ed0d5d1](https://github.com/lemonadesocial/web-new/commit/ed0d5d155371ef967752ec93fd91dd8a28fc18a0))
+* lint code ([0e8c279](https://github.com/lemonadesocial/web-new/commit/0e8c27974ea62bc8acfc5e8c0a126cbf5f0cce36))
+* refactor button variants ([c87a218](https://github.com/lemonadesocial/web-new/commit/c87a218adb4639ce8418a4bc68d3b56271c45023))
+* update color class ([084108a](https://github.com/lemonadesocial/web-new/commit/084108a634dead11a9cb7e142267580be1519029))
+* update color light mode ([050f11e](https://github.com/lemonadesocial/web-new/commit/050f11e67db8c4441ce2ca45a30180116f25edeb))
+
 ## [1.24.1](https://github.com/lemonadesocial/web-new/compare/v1.24.0...v1.24.1) (2025-05-21)
 
 

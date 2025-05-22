@@ -107,14 +107,14 @@ export function ThemeBuilder({
             label="Accent"
             colorClass="item-color-fg"
             selected={config?.fg}
-            disabled={theme && presets[theme].ui?.disabled?.fg}
+            disabled={theme && presets[theme]?.ui?.disabled?.fg}
             onSelect={(color, hex) => {
               let customColors: Record<string, string> = {};
               if (color === 'custom' && hex) {
                 const palette = getPalette([
                   { color: hex, name: 'custom', shade: 500, shades: [50, 100, 200, 300, 500, 700, 950] },
                 ]) as unknown as {
-                  custom: { 500: string; 950: string; 700: string; 50: string; 100: string; 200: string; 300: string; };
+                  custom: { 500: string; 950: string; 700: string; 50: string; 100: string; 200: string; 300: string };
                 };
                 const el: any = document.querySelector(':root');
                 el?.style.setProperty('--color-custom-50', palette.custom[50]);
