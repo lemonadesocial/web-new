@@ -43,7 +43,7 @@
     "js-cookie": "^3.0.5",
     "linkify-it": "^5.0.0",
     "mongodb": "^6.15.0",
-    "next": "15.2.3",
+    "next": "15.2.4",
     "oidc-client-ts": "^3.2.0",
     "postcss": "^8.5.3",
     "qrcode.react": "^4.2.0",
