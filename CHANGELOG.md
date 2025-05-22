@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.24.6](https://github.com/lemonadesocial/web-new/compare/v1.24.5...v1.24.6) (2025-05-22)
+
+
+### Bug Fixes
+
+* check condition ([63da540](https://github.com/lemonadesocial/web-new/commit/63da540bec0b99a7364faefe2c3744f0dbb1524e))
+* crash issue ([6465511](https://github.com/lemonadesocial/web-new/commit/6465511c347fa53b76fbd7a37bd22a2a9f10fd85))
+
 ## [1.24.5](https://github.com/lemonadesocial/web-new/compare/v1.24.4...v1.24.5) (2025-05-22)
 
 
