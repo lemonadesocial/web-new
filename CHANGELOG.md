@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.24.3](https://github.com/lemonadesocial/web-new/compare/v1.24.2...v1.24.3) (2025-05-22)
+
+
+### Bug Fixes
+
+* update og image when event updated cover image ([5180880](https://github.com/lemonadesocial/web-new/commit/5180880e22263d92fc7181b36b81c4c966c6b9c0))
+
 ## [1.24.2](https://github.com/lemonadesocial/web-new/compare/v1.24.1...v1.24.2) (2025-05-21)
 
 
