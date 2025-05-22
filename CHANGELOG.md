@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.24.5](https://github.com/lemonadesocial/web-new/compare/v1.24.4...v1.24.5) (2025-05-22)
+
+
+### Bug Fixes
+
+* missing condition ([61e3468](https://github.com/lemonadesocial/web-new/commit/61e34681b68ef3c1e1c8e065a55bdd1b25f77cda))
+
 ## [1.24.4](https://github.com/lemonadesocial/web-new/compare/v1.24.3...v1.24.4) (2025-05-22)
 
 
