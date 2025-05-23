@@ -8,7 +8,7 @@ export interface SpaceHydraKeys {
   hydra_client_secret?: string;
 }
 
-const getSpaceData = async (hostname: string): Promise<SpaceHydraKeys | null> => {
+const getSpaceHydraKeysData = async (hostname: string): Promise<SpaceHydraKeys | null> => {
   try {
     const spacesCollection = await collection<SpaceHydraKeys>('spaces');
     const space = await spacesCollection.findOne(
@@ -27,8 +27,8 @@ const getSpaceData = async (hostname: string): Promise<SpaceHydraKeys | null> =>
   }
 };
 
-export const getSpace = unstable_cache(
-  getSpaceData,
+export const getSpaceHydraKeys = unstable_cache(
+  getSpaceHydraKeysData,
   ['get-space'],
   {
     revalidate: 3600, // Cache for 1 hour

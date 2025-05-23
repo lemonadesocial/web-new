@@ -1,9 +1,8 @@
 import { notFound } from 'next/navigation';
 import type { ResolvingMetadata } from 'next';
 
-import { getClient, GraphqlClient } from '$lib/graphql/request/client';
+import { getClient } from '$lib/graphql/request/client';
 import {
-  GetSpaceDocument,
   GetSpaceTagsDocument,
   GetSubSpacesDocument,
   Space,
@@ -13,6 +12,7 @@ import {
 
 import { Community } from '$lib/components/features/community';
 import { generateUrl } from '$lib/utils/cnd';
+import { getSpace } from '$lib/utils/getSpace';
 
 type Props = { params: Promise<{ domain: string }> };
 
@@ -20,10 +20,7 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
   const res = await params;
   const domain = decodeURIComponent(res.domain);
 
-  const client = getClient();
-
-  const { data } = await client.query({ query: GetSpaceDocument, variables: { hostname: domain } });
-  const space = data?.getSpace as Space;
+  const space = await getSpace({ hostname: domain });
 
   const previousImages = (await parent).openGraph?.images || [];
   let images = [...previousImages];
@@ -45,19 +42,18 @@ export default async function Page({ params }: Props) {
   const res = await params;
   const domain = decodeURIComponent(res.domain);
 
-  const client = getClient();
-
-  const { data } = await client.query({ query: GetSpaceDocument, variables: { hostname: domain } });
-  const space = data?.getSpace as Space;
-
+  const space = await getSpace({ hostname: domain });
+  
   if (!space) return notFound();
 
-  const { subSpaces, spaceTags } = await prefetchData(client, space);
+  const { subSpaces, spaceTags } = await prefetchData(space);
 
   return <Community initData={{ space, subSpaces, spaceTags }} />;
 }
 
-const prefetchData = async (client: GraphqlClient, space: Space) => {
+const prefetchData = async (space: Space) => {
+  const client = getClient();
+
   const [subSpaces, spaceTags] = await Promise.all([
     client.query({ query: GetSubSpacesDocument, variables: { id: space._id } }),
     client.query({ query: GetSpaceTagsDocument, variables: { space: space._id } }),

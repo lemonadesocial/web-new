@@ -54,6 +54,7 @@ fragment Space on Space {
   personal
   theme_data
   sub_spaces
+  lens_feed_id
 }
 
 fragment SpaceTagFragment on SpaceTag {
