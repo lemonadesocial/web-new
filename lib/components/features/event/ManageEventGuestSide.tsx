@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { uniqBy } from 'lodash';
 
 import { Event, GetEventDocument, GetEventQuery } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
@@ -21,10 +22,12 @@ import { EventLocationBlock } from './EventLocationBlock';
 import { AttendeesSection } from './AttendeesSection';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { EventCollectibles } from '../event-collectibles';
-import { uniqBy } from 'lodash';
-import { EventBuilder } from '../theme-builder/event';
+import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
+import { useEventTheme } from '$lib/components/features/theme-builder/provider';
+import clsx from 'clsx';
 
 export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
+  const [state] = useEventTheme();
   const { data, loading } = useQuery(GetEventDocument, {
     variables: { id: eventDetail._id },
     skip: !eventDetail._id,
@@ -40,7 +43,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
   const hosts = uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id);
 
   return (
-    <div className="flex gap-[72px]">
+    <div className={clsx('flex gap-[72px]', state.theme && state.config.fg)}>
       <div className="hidden md:flex w-[296px] flex-col gap-6">
         {event.new_new_photos_expanded?.[0] && (
           <img
@@ -53,7 +56,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
 
         {isHost && (
           <>
-            <EventBuilder />
+            <EventThemeBuilder />
             <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
               <p className="text-accent-500">You have manage access for this event.</p>
               <Button
@@ -84,6 +87,28 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
               className="aspect-square object-contain border rounded-md"
             />
           )}
+
+          {isHost && (
+            <>
+              <Spacer className="h-4" />
+              <div className="flex flex-col gap-4">
+                <EventThemeBuilder />
+                <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
+                  <p className="text-accent-500">You have manage access for this event.</p>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    iconRight="icon-arrow-outward"
+                    className="rounded-full"
+                    onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event.shortid}/`, '_blank')}
+                  >
+                    Manage
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+
           {event.private && (
             <>
               <Spacer className="h-6" />

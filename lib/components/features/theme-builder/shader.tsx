@@ -1,7 +1,7 @@
 import React from 'react';
 import { ShaderGradientCanvas, ShaderGradient as ReactShaderGradient } from '@shadergradient/react';
 
-export function ShaderGradient({ mode = 'dark' }: { mode?: 'dark' | 'light' | 'system' }) {
+export function ShaderGradient({ mode = 'dark' }: { mode?: 'dark' | 'light' | 'auto' }) {
   const [colors, setColors] = React.useState({ color1: '#e1dbfc', color2: '#ebd0fa', color3: '#ddf9fe' });
 
   const getCSSVariable = (variable: string) => {

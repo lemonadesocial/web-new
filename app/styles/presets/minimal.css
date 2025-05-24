@@ -1,4 +1,8 @@
 @layer utilities {
+  .background {
+    z-index: -1;
+  }
+
   .background.minimal {
     --minimal-color-bg: var(--color-accent-950);
 
@@ -40,6 +44,7 @@
     --color-accent-100: var(--color-violet-100);
     --color-accent-200: var(--color-violet-200);
     --color-accent-300: var(--color-violet-300);
+    --color-accent-400: var(--color-violet-400);
     --color-accent-500: var(--color-violet-500);
     --color-accent-700: var(--color-violet-700);
     --color-accent-950: var(--color-violet-950);
@@ -50,6 +55,7 @@
     --color-accent-100: var(--color-red-100);
     --color-accent-200: var(--color-red-200);
     --color-accent-300: var(--color-red-300);
+    --color-accent-400: var(--color-red-400);
     --color-accent-500: var(--color-red-500);
     --color-accent-700: var(--color-red-700);
     --color-accent-950: var(--color-red-950);
@@ -60,6 +66,7 @@
     --color-accent-100: var(--color-orange-100);
     --color-accent-200: var(--color-orange-200);
     --color-accent-300: var(--color-orange-300);
+    --color-accent-400: var(--color-orange-400);
     --color-accent-500: var(--color-orange-500);
     --color-accent-700: var(--color-orange-700);
     --color-accent-950: var(--color-orange-950);
@@ -70,6 +77,7 @@
     --color-accent-100: var(--color-amber-100);
     --color-accent-200: var(--color-amber-200);
     --color-accent-300: var(--color-amber-300);
+    --color-accent-400: var(--color-amber-400);
     --color-accent-500: var(--color-amber-500);
     --color-accent-700: var(--color-amber-700);
     --color-accent-950: var(--color-amber-950);
@@ -80,6 +88,7 @@
     --color-accent-100: var(--color-yellow-100);
     --color-accent-200: var(--color-yellow-200);
     --color-accent-300: var(--color-yellow-300);
+    --color-accent-400: var(--color-yellow-400);
     --color-accent-500: var(--color-yellow-500);
     --color-accent-700: var(--color-yellow-700);
     --color-accent-950: var(--color-yellow-950);
@@ -90,6 +99,7 @@
     --color-accent-100: var(--color-lime-100);
     --color-accent-200: var(--color-lime-200);
     --color-accent-300: var(--color-lime-300);
+    --color-accent-400: var(--color-lime-400);
     --color-accent-500: var(--color-lime-500);
     --color-accent-700: var(--color-lime-700);
     --color-accent-950: var(--color-lime-950);
@@ -100,6 +110,7 @@
     --color-accent-100: var(--color-green-100);
     --color-accent-200: var(--color-green-200);
     --color-accent-300: var(--color-green-300);
+    --color-accent-400: var(--color-green-400);
     --color-accent-500: var(--color-green-500);
     --color-accent-700: var(--color-green-700);
     --color-accent-950: var(--color-green-950);
@@ -110,6 +121,7 @@
     --color-accent-100: var(--color-emerald-100);
     --color-accent-200: var(--color-emerald-200);
     --color-accent-300: var(--color-emerald-300);
+    --color-accent-400: var(--color-emerald-400);
     --color-accent-500: var(--color-emerald-500);
     --color-accent-700: var(--color-emerald-700);
     --color-accent-950: var(--color-emerald-950);
@@ -120,6 +132,7 @@
     --color-accent-100: var(--color-teal-100);
     --color-accent-200: var(--color-teal-200);
     --color-accent-300: var(--color-teal-300);
+    --color-accent-400: var(--color-teal-400);
     --color-accent-500: var(--color-teal-500);
     --color-accent-700: var(--color-teal-700);
     --color-accent-950: var(--color-teal-950);
@@ -130,6 +143,7 @@
     --color-accent-100: var(--color-cyan-100);
     --color-accent-200: var(--color-cyan-200);
     --color-accent-300: var(--color-cyan-300);
+    --color-accent-400: var(--color-cyan-400);
     --color-accent-500: var(--color-cyan-500);
     --color-accent-700: var(--color-cyan-700);
     --color-accent-950: var(--color-cyan-950);
@@ -140,6 +154,7 @@
     --color-accent-100: var(--color-sky-100);
     --color-accent-200: var(--color-sky-200);
     --color-accent-300: var(--color-sky-300);
+    --color-accent-400: var(--color-sky-400);
     --color-accent-500: var(--color-sky-500);
     --color-accent-700: var(--color-sky-700);
     --color-accent-950: var(--color-sky-950);
@@ -150,6 +165,7 @@
     --color-accent-100: var(--color-blue-100);
     --color-accent-200: var(--color-blue-200);
     --color-accent-300: var(--color-blue-300);
+    --color-accent-400: var(--color-blue-400);
     --color-accent-500: var(--color-blue-500);
     --color-accent-700: var(--color-blue-700);
     --color-accent-950: var(--color-blue-950);
@@ -160,6 +176,7 @@
     --color-accent-100: var(--color-indigo-100);
     --color-accent-200: var(--color-indigo-200);
     --color-accent-300: var(--color-indigo-300);
+    --color-accent-400: var(--color-indigo-400);
     --color-accent-500: var(--color-indigo-500);
     --color-accent-700: var(--color-indigo-700);
     --color-accent-950: var(--color-indigo-950);
@@ -170,6 +187,7 @@
     --color-accent-100: var(--color-purple-100);
     --color-accent-200: var(--color-purple-200);
     --color-accent-300: var(--color-purple-300);
+    --color-accent-400: var(--color-purple-400);
     --color-accent-500: var(--color-purple-500);
     --color-accent-700: var(--color-purple-700);
     --color-accent-950: var(--color-purple-950);
@@ -180,6 +198,7 @@
     --color-accent-100: var(--color-fuchsia-100);
     --color-accent-200: var(--color-fuchsia-200);
     --color-accent-300: var(--color-fuchsia-300);
+    --color-accent-400: var(--color-fuchsia-400);
     --color-accent-500: var(--color-fuchsia-500);
     --color-accent-700: var(--color-fuchsia-700);
     --color-accent-950: var(--color-fuchsia-950);
@@ -190,6 +209,7 @@
     --color-accent-100: var(--color-pink-100);
     --color-accent-200: var(--color-pink-200);
     --color-accent-300: var(--color-pink-300);
+    --color-accent-400: var(--color-pink-400);
     --color-accent-500: var(--color-pink-500);
     --color-accent-700: var(--color-pink-700);
     --color-accent-950: var(--color-pink-950);
@@ -200,6 +220,7 @@
     --color-accent-100: var(--color-rose-100);
     --color-accent-200: var(--color-rose-200);
     --color-accent-300: var(--color-rose-300);
+    --color-accent-400: var(--color-rose-400);
     --color-accent-500: var(--color-rose-500);
     --color-accent-700: var(--color-rose-700);
     --color-accent-950: var(--color-rose-950);
@@ -210,6 +231,7 @@
     --color-accent-100: var(--color-custom-100);
     --color-accent-200: var(--color-custom-200);
     --color-accent-300: var(--color-custom-300);
+    --color-accent-400: var(--color-custom-400);
     --color-accent-500: var(--color-custom-500);
     --color-accent-700: var(--color-custom-700);
     --color-accent-950: var(--color-custom-950);

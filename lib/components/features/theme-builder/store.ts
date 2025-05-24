@@ -2,10 +2,11 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { atom } from 'jotai';
 
 export type ThemeValues = {
-  theme?: 'minimal' | 'shader' | 'pattern';
+  theme?: 'default' | 'minimal' | 'shader' | 'pattern';
   config: {
-    mode?: 'dark' | 'light' | 'system';
+    mode?: 'dark' | 'light' | 'auto';
     name?: string;
+    color?: string;
     fg?: string;
     bg?: string;
     class?: string;
@@ -13,8 +14,8 @@ export type ThemeValues = {
   font_title: string;
   font_body: string;
   variables: {
-    font: Record<string, string>;
-    custom: Record<string, string>;
+    font?: Record<string, string>;
+    custom?: Record<string, string>;
     dark?: Record<string, string | number>;
     light?: Record<string, string | number>;
     pattern?: Record<string, string>;
@@ -22,6 +23,7 @@ export type ThemeValues = {
 };
 
 export const defaultTheme: ThemeValues = {
+  theme: 'default',
   config: {
     mode: 'dark',
     name: '',
@@ -95,13 +97,40 @@ export const colors = [
   'rose',
 ];
 
-const minimal = {
+type ThemePresetType = {
+  image: string;
+  name: string;
+  ui?: {
+    mode?: 'all' | 'system' | 'dark' | 'light';
+    config?: { colors?: string[]; shaders?: Array<{ name: string; accent: string }> };
+    disabled?: {
+      color?: boolean;
+      effect?: boolean;
+      /** @deprecated fg - bg */
+      fg?: boolean;
+      bg?: boolean;
+      style?: boolean;
+      mode?: boolean;
+    };
+  };
+};
+
+const minimal: ThemePresetType = {
   image: `${ASSET_PREFIX}/assets/images/minimal.png`,
   name: 'Minimal',
   ui: {
     mode: 'system',
-    config: { fg: colors, bg: colors },
-    disabled: { fg: false, bg: false, style: true, mode: true },
+    config: { colors },
+    disabled: {
+      effect: true,
+      style: true,
+      mode: true,
+
+      /** @deprecated fg */
+      fg: false,
+      /** @deprecated bg */
+      bg: false,
+    },
   },
 };
 
@@ -116,26 +145,22 @@ export const shaders = [
   { name: 'lavender', accent: 'purple' },
 ];
 
-const shader = {
+const shader: ThemePresetType = {
   image: `${ASSET_PREFIX}/assets/images/gradient.png`,
   name: 'Gradient',
   ui: {
     mode: 'all',
-    config: {
-      fg: colors,
-      bg: shaders,
-    },
-    disabled: { fg: true, bg: false, style: true, mode: false },
+    config: { colors, shaders },
+    disabled: { color: true, effect: true },
   },
 };
 
 export const patterns = ['cross', 'hypnotic', 'plus', 'polkadot', 'wave', 'zigzag'];
-const pattern = {
+const pattern: ThemePresetType = {
   image: `${ASSET_PREFIX}/assets/images/pattern.png`,
   name: 'Pattern',
   ui: {
-    mode: 'all',
-    disabled: { mode: true, bg: false },
+    disabled: { mode: true, effect: true },
   },
 };
 
