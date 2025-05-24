@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.24.7](https://github.com/lemonadesocial/web-new/compare/v1.24.6...v1.24.7) (2025-05-24)
+
+
+### Bug Fixes
+
+* accept event non logged in ([751d018](https://github.com/lemonadesocial/web-new/commit/751d018cb28706db0b372773d342a4881bb464a7))
+
 ## [1.24.6](https://github.com/lemonadesocial/web-new/compare/v1.24.5...v1.24.6) (2025-05-22)
 
 
