@@ -43,10 +43,8 @@ function EventThemeBuilderPane({ show, onClose }: { show: boolean; onClose: () =
   return (
     <AnimatePresence>
       {show && (
-        <div className="fixed z-100 inset-0">
+        <div className="fixed z-10 inset-0">
           <div className="h-full w-full p-2">
-            <div className="fixed inset-0 z-0" onClick={onClose} />
-
             {/* tablet - destop view */}
             <div className="h-full hidden md:flex">
               <motion.div
@@ -54,7 +52,8 @@ function EventThemeBuilderPane({ show, onClose }: { show: boolean; onClose: () =
                 animate={{ x: 0 }}
                 exit={{ x: '-100%' }}
                 transition={{ duration: 0.1 }}
-                className="h-full flex gap-2 z-10"
+                className="h-full flex gap-2 z-30"
+                onClick={onClose}
                 style={{
                   // @ts-expect-error accept variables
                   '--font-title': 'var(--font-class-display)',
@@ -72,7 +71,8 @@ function EventThemeBuilderPane({ show, onClose }: { show: boolean; onClose: () =
                 animate={{ y: 0 }}
                 exit={{ y: '100%' }}
                 transition={{ duration: 0.1 }}
-                className="h-full flex gap-2 z-10"
+                onClick={onClose}
+                className="w-full relative flex flex-col-reverse gap-2"
                 style={{
                   // @ts-expect-error accept variables
                   '--font-title': 'var(--font-class-display)',
@@ -110,8 +110,8 @@ function EventBuilderPaneOptions() {
 
   return (
     <>
-      <div className="bg-overlay-secondary overflow-auto no-scrollbar w-[96px] backdrop-blur-md rounded-sm h-full p-2 flex justify-center">
-        <div className="flex flex-col gap-1">
+      <div className="bg-overlay-secondary overflow-auto no-scrollbar backdrop-blur-md rounded-sm h-[94px] md:h-full md:w-[96px] p-2 flex md:justify-center">
+        <div className="flex md:flex-col gap-1">
           <ActionButton
             active={state === 'template'}
             onClick={() => {
@@ -159,7 +159,7 @@ function EventBuilderPaneOptions() {
 
           <ActionButton active={state === 'font_body'} onClick={() => setState('font_body')}>
             <div className="size-[32px]">
-              <h3 style={{ fontFamily: fonts.title[data.font_body || 'default'] }} className="font-semibold">
+              <h3 style={{ fontFamily: fonts.body[data.font_body || 'default'] }} className="font-semibold">
                 Ag
               </h3>
             </div>
@@ -187,7 +187,7 @@ function EventBuilderPaneOptions() {
         </div>
       </div>
 
-      <div className="transition-all bg-overlay-secondary overflow-auto no-scrollbar backdrop-blur-md rounded-sm h-full py-4">
+      <div className="transition-all bg-overlay-secondary overflow-auto no-scrollbar backdrop-blur-md rounded-sm md:h-full">
         <Comp />
       </div>
     </>
@@ -198,15 +198,16 @@ function ThemeTemplate() {
   const [data, dispatch] = useEventTheme();
 
   return (
-    <div className="flex flex-col items-center gap-3 w-[96px]">
-      {Object.entries(presets).map(([key, { image }]) => (
-        <div key={key}>
+    <div className="flex md:flex-col items-center gap-3 p-4 md:w-[96px]">
+      {Object.entries(presets).map(([key, { image, name }]) => (
+        <div key={key} className="flex flex-col items-center gap-2">
           <Card.Root
             className={clsx(
               'p-0 bg-transparent border-transparent transition-all hover:outline-2 hover:outline-offset-2 hover:outline-primary/16 rounded-sm',
               data.theme === key && 'outline-2 outline-offset-2 outline-primary!',
             )}
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               let color = data.config.color;
               if (!color) color = getRandomColor();
               dispatch({
@@ -217,6 +218,7 @@ function ThemeTemplate() {
           >
             <img src={image} className="rounded-sm" width={72} height={54} />
           </Card.Root>
+          <p className="text-xs">{name}</p>
         </div>
       ))}
     </div>
@@ -227,18 +229,19 @@ function ThemeColor() {
   const [data, dispatch] = useEventTheme();
 
   return (
-    <div className="flex flex-col items-center w-[60px] gap-3">
+    <div className="flex md:flex-col items-center overflow-auto w-full md:w-[60px] gap-3 p-4">
       {colors.map((color) => (
         <button
           key={color}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             dispatch({
               type: ThemeBuilderActionKind.select_color,
               payload: { config: { color } },
             });
           }}
           className={twMerge(
-            'size-5 cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
+            'size-5 min-w-5 min-h-5 cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
             `${color} item-color-fg`,
             clsx(color === data.config?.color && 'outline-2'),
           )}
@@ -292,9 +295,16 @@ function ThemeFont({
   onClick: (font: string) => void;
 }) {
   return (
-    <div className="grid grid-cols-2 items-center gap-3 w-[188px]">
+    <div className="flex md:grid md:grid-cols-2 items-center gap-3 w-full md:w-[188px] p-4 overflow-auto">
       {Object.entries(fonts).map(([key, font]) => (
-        <div key={key} className="flex flex-col items-center text-xs gap-2 cursor-pointer" onClick={() => onClick(key)}>
+        <button
+          key={key}
+          className="flex flex-col items-center text-xs gap-2 cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick(key);
+          }}
+        >
           <div
             className={clsx(
               'border-2 border-[var(--color-divider)] rounded-sm px-4 py-2 w-[72px] h-[56px] hover:border-primary',
@@ -306,7 +316,7 @@ function ThemeFont({
             </h3>
           </div>
           <p className="capitalize font-body-default">{join(split(key, '_'), ' ')}</p>
-        </div>
+        </button>
       ))}
     </div>
   );
@@ -324,7 +334,7 @@ function ThemeShader() {
   const [state, dispatch] = useEventTheme();
 
   return (
-    <div className="flex flex-col items-center gap-3 w-[96px]">
+    <div className="flex md:flex-col items-center gap-3 w-full md:w-[96px] overflow-auto p-4">
       {shaders.map((s) => (
         <button
           key={s.name}
@@ -332,7 +342,8 @@ function ThemeShader() {
             'flex flex-col gap-2 items-center',
             s.name === state.config.name ? 'text-primary' : 'text-tertiary',
           )}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             dispatch({
               type: ThemeBuilderActionKind.select_style,
               payload: { config: { name: s.name, fg: s.accent } },
@@ -357,12 +368,13 @@ function ThemePattern() {
   const [data, dispatch] = useEventTheme();
 
   return (
-    <div className="flex flex-col items-center gap-3 w-[96px]">
+    <div className="flex md:flex-col items-center gap-3 w-full md:w-[96px] overflow-auto p-4">
       {patterns.map((item) => (
         <button
           key={item}
           className="capitalize flex flex-col items-center cursor-pointer gap-2"
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             dispatch({
               type: ThemeBuilderActionKind.select_style,
               payload: { config: { name: item } },
@@ -393,11 +405,12 @@ const modes = [
 function ThemeMode() {
   const [data, dispatch] = useEventTheme();
   return (
-    <div className="flex flex-col items-center w-[92px] gap-3">
+    <div className="flex md:flex-col items-center w-full md:w-[92px] gap-3 overflow-auto p-4">
       {modes.map((item) => (
         <button
           key={item.mode}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             dispatch({ type: ThemeBuilderActionKind.select_color, payload: { config: { mode: item.mode as any } } });
           }}
           className={twMerge(
@@ -429,7 +442,10 @@ function ActionButton({
   return (
     <button
       disabled={disabled}
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick?.();
+      }}
       className={clsx(
         'flex items-center justify-center flex-col gap-2 border border-transparent pt-3 pb-2 px-1 hover:bg-card-hover aspect-4/3 cursor-pointer rounded-sm w-[80px] font-body-default disabled:opacity-50 disabled:bg-transparent disabled:cursor-not-allowed',
         active && 'bg-card-hover!',

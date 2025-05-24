@@ -41,6 +41,7 @@ function reducers(state: ThemeValues, action: ThemeBuilderAction) {
     case ThemeBuilderActionKind.select_font: {
       return {
         ...state,
+        ...action.payload,
         variables: {
           ...state.variables,
           ...action.payload.variables,
