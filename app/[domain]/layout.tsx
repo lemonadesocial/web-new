@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 
 import { BottomSheetContainer, DrawerContainer, modal, ModalContainer } from '$lib/components/core/dialog';
 import { ToastContainer } from '$lib/components/core/toast';
-import { getSpace } from '$lib/utils/space';
+import { getSpaceHydraKeys } from '$lib/utils/space';
 import { getSiteData } from '$utils/fetchers';
 import { Config } from '$utils/types';
 
@@ -28,7 +28,7 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
   const domain = decodeURIComponent(params.domain);
   const [data, space] = await Promise.all([
     getSiteData(domain) as Promise<Config>,
-    getSpace(domain)
+    getSpaceHydraKeys(domain)
   ]);
 
   return (

@@ -1,6 +1,6 @@
 import { handleOperationWith, signMessageWith } from "@lens-protocol/client/ethers";
-import { createAccountWithUsername, fetchAccountsAvailable, lastLoggedInAccount } from "@lens-protocol/client/actions";
-import { MetadataAttributeType, account } from "@lens-protocol/metadata";
+import { createAccountWithUsername, fetchAccountsAvailable, fetchFeed, lastLoggedInAccount, post } from "@lens-protocol/client/actions";
+import { account, textOnly } from "@lens-protocol/metadata";
 import { useAtomValue, useSetAtom } from "jotai";
 
 import { evmAddress, never } from "@lens-protocol/client";
@@ -8,13 +8,14 @@ import { fetchAccount } from "@lens-protocol/client/actions";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 
-import { sessionClientAtom, accountAtom } from "$lib/jotai";
+import { sessionClientAtom, accountAtom, feedAtom } from "$lib/jotai";
 import { useAppKitAccount } from "$lib/utils/appkit";
 import { client, storageClient } from "$lib/utils/lens/client";
 
 import { useSigner } from "./useSigner";
 import { useState } from "react";
 import { useMe } from "./useMe";
+import { toast } from "$lib/components/core/toast";
 
 export function useResumeSession() {
   const signer = useSigner();
@@ -207,4 +208,91 @@ export function useClaimUsername() {
     claimUsername,
     isLoading,
   }
+}
+
+export function useFeed(feedId: string) {
+  const sessionClient = useAtomValue(sessionClientAtom);
+  const [feed, setFeed] = useAtom(feedAtom);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchFeedData = async () => {
+    if (!sessionClient || feed) return;
+
+    setIsLoading(true);
+    try {
+      const result = await fetchFeed(sessionClient, {
+        feed: feedId,
+      });
+
+      if (result.isOk()) {
+        setFeed(result.value);
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFeedData();
+  }, [sessionClient, feedId]);
+
+  return {
+    feed,
+    isLoading,
+    refetch: fetchFeedData,
+  };
+}
+
+type CreatePostParams = {
+  content: string;
+  feedAddress?: string;
+};
+
+export function usePost() {
+  const sessionClient = useAtomValue(sessionClientAtom);
+  const signer = useSigner();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const createPost = async ({ content, feedAddress }: CreatePostParams) => {
+    if (!sessionClient || !signer) return;
+
+    setIsLoading(true);
+    try {
+      const metadata = textOnly({
+        content,
+      });
+
+      const { uri } = await storageClient.uploadAsJson(metadata);
+
+      const result = await post(sessionClient, {
+        contentUri: uri,
+        ...(feedAddress && { feed: evmAddress(feedAddress) }),
+      })
+        .andThen(handleOperationWith(signer))
+        .andThen(sessionClient.waitForTransaction)
+        .mapErr((error) => {
+          throw error;
+        });
+
+      if (result.isErr()) {
+        throw new Error("Failed to create post");
+      }
+
+      toast.success("Post created successfully!");
+      return result.value;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to create post";
+      toast.error(errorMessage);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    createPost,
+    isLoading,
+  };
 }
