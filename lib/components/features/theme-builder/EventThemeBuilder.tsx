@@ -2,17 +2,19 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { colors, fonts, getRandomColor, patterns, presets, shaders } from './store';
-import { Card } from '$lib/components/core';
+import { colors, fonts, getRandomColor, getRandomFont, patterns, presets, shaders } from './store';
+import { Card, ColorPicker } from '$lib/components/core';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { join, split } from 'lodash';
 import { useEventTheme, ThemeBuilderActionKind } from './provider';
+import getPalette from 'tailwindcss-palette-generator';
 
 export function EventThemeBuilder() {
   const [toggle, setToggle] = React.useState(false);
-  const [data] = useEventTheme();
+  const [data, dispatch] = useEventTheme();
   const themeName = !data.theme || data.theme === 'default' ? 'minimal' : data.theme;
+
   return (
     <>
       <div className="flex gap-2 h-[62px]">
@@ -20,40 +22,64 @@ export function EventThemeBuilder() {
           className="btn btn-tertiary inline-flex px-3 py-2.5 w-full gap-2.5 rounded-sm text-left"
           onClick={() => setToggle(true)}
         >
-          <img src={presets[themeName].image} className="w-[51px] h-[38px] rounded-xs" />
+          <img src={presets[themeName]?.image} className="w-[51px] h-[38px] rounded-xs" />
           <div className="flex justify-between items-center flex-1">
             <div>
               <p className="text-xs">Theme</p>
-              <p className="text-primary">{presets[themeName].name}</p>
+              <p className="text-primary">{presets[themeName]?.name}</p>
             </div>
             <i className="icon-chevrons-up-down size-5" />
           </div>
         </button>
-        <button className="btn btn-tertiary inline-flex items-center justify-center p-[21px] rounded-sm">
+        <button
+          disabled={themeName !== 'minimal'}
+          onClick={() => {
+            const [fontTitle, fontTitleVariable] = getRandomFont('title');
+            const [fontBody, fontBodyVariable] = getRandomFont('body');
+            const payload = {
+              font_title: fontTitle,
+              font_body: fontBody,
+              variables: { font: { '--font-title': fontTitleVariable, '--font-body': fontBodyVariable } },
+            };
+            dispatch({ type: ThemeBuilderActionKind.select_font, payload });
+            dispatch({
+              type: ThemeBuilderActionKind.select_template,
+              payload: { theme: 'minimal', config: { color: getRandomColor() } },
+            });
+          }}
+          className="btn btn-tertiary inline-flex items-center justify-center p-[21px] rounded-sm"
+        >
           <i className="icon-shuffle size-5" />
         </button>
       </div>
 
-      <EventThemeBuilderPane show={toggle} onClose={() => setToggle(false)} />
+      {toggle && <EventThemeBuilderPane show={toggle} onClose={() => setToggle(false)} />}
     </>
   );
 }
 
 function EventThemeBuilderPane({ show, onClose }: { show: boolean; onClose: () => void }) {
+  const [data, dispatch] = useEventTheme();
+
+  React.useEffect(() => {
+    if (!data.theme || data.theme === 'default')
+      dispatch({ type: ThemeBuilderActionKind.select_template, payload: { theme: 'minimal' } });
+  }, [data.theme]);
+
   return (
     <AnimatePresence>
       {show && (
         <div className="fixed z-10 inset-0">
+          <div className="hidden md:block fixed inset-0 z-20" onClick={onClose} />
           <div className="h-full w-full p-2">
             {/* tablet - destop view */}
-            <div className="h-full hidden md:flex">
+            <div className="h-full hidden md:flex  relative">
               <motion.div
                 initial={{ x: '-100%' }}
                 animate={{ x: 0 }}
                 exit={{ x: '-100%' }}
                 transition={{ duration: 0.1 }}
                 className="h-full flex gap-2 z-30"
-                onClick={onClose}
                 style={{
                   // @ts-expect-error accept variables
                   '--font-title': 'var(--font-class-display)',
@@ -110,7 +136,10 @@ function EventBuilderPaneOptions() {
 
   return (
     <>
-      <div className="bg-overlay-secondary overflow-auto no-scrollbar backdrop-blur-md rounded-sm h-[94px] md:h-full md:w-[96px] p-2 flex md:justify-center">
+      <div
+        className="bg-overlay-secondary overflow-auto no-scrollbar backdrop-blur-md rounded-sm h-[94px] md:h-full md:w-[96px] p-2 flex md:justify-center"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex md:flex-col gap-1">
           <ActionButton
             active={state === 'template'}
@@ -144,7 +173,12 @@ function EventBuilderPaneOptions() {
             disabled={data.theme && presets[themeName].ui?.disabled?.color}
             onClick={() => setState('colors')}
           >
-            <div className="size-[32px] bg-accent-400 rounded-full" />
+            <div
+              className={clsx(
+                'size-[32px] rounded-full',
+                data.config.color === 'custom' ? 'bg-[var(--color-custom-400)]' : 'bg-accent-400',
+              )}
+            />
             <p className="text-xs">Color</p>
           </ActionButton>
 
@@ -169,11 +203,7 @@ function EventBuilderPaneOptions() {
           <ActionButton
             active={state === 'mode'}
             disabled={data.theme && presets[themeName].ui?.disabled?.mode}
-            onClick={() => {
-              setState('mode');
-              // const mode = data.config?.mode === 'dark' ? 'light' : 'dark';
-              // dispatch({ type: ThemeBuilderActionKind.select_mode, payload: { config: { mode } } });
-            }}
+            onClick={() => setState('mode')}
           >
             <div className="size-[32px]">
               {data.config?.mode === 'dark' ? (
@@ -187,7 +217,10 @@ function EventBuilderPaneOptions() {
         </div>
       </div>
 
-      <div className="transition-all bg-overlay-secondary overflow-auto no-scrollbar backdrop-blur-md rounded-sm md:h-full">
+      <div
+        className="transition-all bg-overlay-secondary no-scrollbar backdrop-blur-md rounded-sm md:h-full"
+        onClick={(e) => e.stopPropagation()}
+      >
         <Comp />
       </div>
     </>
@@ -247,6 +280,61 @@ function ThemeColor() {
           )}
         />
       ))}
+
+      <ColorPicker.Root strategy="fixed">
+        <ColorPicker.Trigger>
+          <div
+            className={twMerge(
+              'size-5 cursor-pointer hover:outline-2 outline-offset-2 rounded-full custom',
+              clsx(data.config.name === 'custom' && 'outline-2'),
+            )}
+            style={{
+              background:
+                'conic-gradient(from 180deg at 50% 50%, rgb(222, 97, 134) 0deg, rgb(197, 95, 205) 58.12deg, rgb(175, 145, 246) 114.38deg, rgb(53, 130, 245) 168.75deg, rgb(69, 194, 121) 208.13deg, rgb(243, 209, 90) 243.75deg, rgb(247, 145, 62) 285deg, rgb(244, 87, 95) 360deg)',
+            }}
+          ></div>
+        </ColorPicker.Trigger>
+        <ColorPicker.Content
+          color={'#fff'}
+          onChange={(result) => {
+            const hex = result.hex;
+            let customColors: Record<string, string> = {};
+            console.log(data);
+            if (data.config.color === 'custom' && hex) {
+              const palette = getPalette([
+                { color: hex, name: 'custom', shade: 500, shades: [50, 100, 200, 300, 400, 500, 700, 950] },
+              ]) as unknown as {
+                custom: {
+                  500: string;
+                  950: string;
+                  700: string;
+                  50: string;
+                  100: string;
+                  200: string;
+                  300: string;
+                  400: string;
+                };
+              };
+
+              customColors = {
+                '--color-custom-50': palette.custom[50],
+                '--color-custom-100': palette.custom[100],
+                '--color-custom-200': palette.custom[200],
+                '--color-custom-300': palette.custom[300],
+                '--color-custom-400': palette.custom[400],
+                '--color-custom-500': palette.custom[500],
+                '--color-custom-700': palette.custom[700],
+                '--color-custom-950': palette.custom[950],
+              };
+            }
+
+            dispatch({
+              type: ThemeBuilderActionKind.select_color,
+              payload: { config: { color: 'custom' }, variables: { custom: customColors } },
+            });
+          }}
+        />
+      </ColorPicker.Root>
     </div>
   );
 }

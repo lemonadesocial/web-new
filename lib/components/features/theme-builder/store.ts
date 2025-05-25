@@ -26,6 +26,7 @@ export const defaultTheme: ThemeValues = {
   theme: 'default',
   config: {
     mode: 'dark',
+    color: 'violet',
     name: '',
     class: '',
     fg: '',

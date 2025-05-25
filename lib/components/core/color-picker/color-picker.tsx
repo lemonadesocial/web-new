@@ -32,7 +32,10 @@ function ColorPickerTrigger({ children }: PropsWithChildren) {
   return (
     <div
       ref={refs?.setReference}
-      onClick={toggle}
+      onClick={(e) => {
+        e.stopPropagation();
+        toggle();
+      }}
       className={clsx(disabled ? 'cursor-not-allowed' : 'cursor-pointer')}
       aria-haspopup="true"
     >
@@ -96,7 +99,8 @@ function ColorPickerRoot({
   children,
   className,
   disabled,
-}: { className?: string; disabled?: boolean } & React.PropsWithChildren) {
+  strategy = 'absolute',
+}: { className?: string; disabled?: boolean; strategy: 'fixed' | 'absolute' } & React.PropsWithChildren) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
@@ -105,7 +109,7 @@ function ColorPickerRoot({
   const { refs, floatingStyles } = useFloating({
     open: isOpen,
     onOpenChange: toggle,
-    strategy: 'absolute',
+    strategy,
     middleware: [offset(10), autoPlacement()],
   });
 

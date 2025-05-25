@@ -35,7 +35,11 @@ function reducers(state: ThemeValues, action: ThemeBuilderAction) {
     }
 
     case ThemeBuilderActionKind.select_color: {
-      return { ...state, config: { ...state.config, ...action.payload.config } };
+      return {
+        ...state,
+        config: { ...state.config, ...action.payload.config },
+        variables: { ...state.variables, ...action.payload.variables },
+      };
     }
 
     case ThemeBuilderActionKind.select_font: {
