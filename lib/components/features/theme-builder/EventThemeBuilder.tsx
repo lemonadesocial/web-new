@@ -47,7 +47,7 @@ export function EventThemeBuilder() {
               payload: { theme: 'minimal', config: { color: getRandomColor() } },
             });
           }}
-          className="btn btn-tertiary inline-flex items-center justify-center p-[21px] rounded-sm"
+          className="btn btn-tertiary inline-flex items-center justify-center p-[21px] rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <i className="icon-shuffle size-5" />
         </button>
