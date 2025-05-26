@@ -1,15 +1,14 @@
 import React from 'react';
+import clsx from 'clsx';
+import { notFound } from 'next/navigation';
 
 import Header from '$lib/components/layouts/header';
+import { isObjectId } from '$lib/utils/helpers';
+import { getSpace } from '$lib/utils/getSpace';
+
 import Sidebar from './sidebar';
 import LoadMoreWrapper from './loadMoreWrapper';
 import ThemeGenerator from './theme';
-import { GetSpaceDocument } from '$lib/graphql/generated/backend/graphql';
-import { isObjectId } from '$lib/utils/helpers';
-import { getClient } from '$lib/graphql/request';
-import { Space } from '$lib/graphql/generated/backend/graphql';
-import { notFound } from 'next/navigation';
-import clsx from 'clsx';
 
 type LayoutProps = {
   children: React.ReactElement;
@@ -26,10 +25,7 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
     if (domain) variables = { hostname: decodeURIComponent(domain) };
   }
 
-  const client = getClient();
-
-  const { data } = await client.query({ query: GetSpaceDocument, variables });
-  const space = data?.getSpace as Space;
+  const space = await getSpace(variables);
 
   if (!space) {
     return notFound();

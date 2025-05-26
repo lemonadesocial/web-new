@@ -1,63 +1,33 @@
 import { notFound } from 'next/navigation';
-import { ResolvingMetadata } from 'next';
 
-import { getClient, GraphqlClient } from '$lib/graphql/request/client';
+import { getClient } from '$lib/graphql/request/client';
 import { isObjectId } from '$lib/utils/helpers';
 import {
-  GetSpaceDocument,
   GetSpaceTagsDocument,
   GetSubSpacesDocument,
   Space,
   PublicSpace,
-  SpaceTag,
+  SpaceTag
 } from '$lib/graphql/generated/backend/graphql';
 import { Community } from '$lib/components/features/community';
-import { generateUrl } from '$lib/utils/cnd';
-
-type Props = { params: Promise<{ domain: string; uid: string }> };
-
-export async function generateMetadata({ params }: Props, parent: ResolvingMetadata) {
-  const res = await params;
-  const uid = res.uid;
-  const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
-
-  const client = getClient();
-
-  const { data } = await client.query({ query: GetSpaceDocument, variables });
-  const space = data?.getSpace as Space;
-
-  const previousImages = (await parent).openGraph?.images || [];
-  let images = [...previousImages];
-
-  if (space?.image_cover_expanded) {
-    images = [generateUrl(space?.image_cover_expanded), ...images];
-  }
-
-  return {
-    title: space?.title,
-    description: space?.description,
-    openGraph: {
-      images,
-    },
-  };
-}
+import { getSpace } from '$lib/utils/getSpace';
 
 export default async function Page({ params }: { params: Promise<{ uid: string }> }) {
   const uid = (await params).uid;
   const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
 
-  const client = getClient();
+  const space = await getSpace(variables);
 
-  const { data } = await client.query({ query: GetSpaceDocument, variables });
-  const space = data?.getSpace as Space;
   if (!space) return notFound();
 
-  const { subSpaces, spaceTags } = await prefetchData(client, space);
+  const { subSpaces, spaceTags } = await prefetchData(space);
 
   return <Community initData={{ space, subSpaces, spaceTags }} />;
 }
 
-const prefetchData = async (client: GraphqlClient, space: Space) => {
+const prefetchData = async (space: Space) => {
+  const client = getClient();
+
   const [subSpaces, spaceTags] = await Promise.all([
     client.query({ query: GetSubSpacesDocument, variables: { id: space._id } }),
     client.query({ query: GetSpaceTagsDocument, variables: { space: space._id } }),
