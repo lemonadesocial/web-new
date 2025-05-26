@@ -400,7 +400,7 @@ export function PopoverPattern() {
         {patterns.map((item) => (
           <button
             key={item}
-            className="capitalize flex flex-col items-center cursor-pointer gap-2"
+            className={clsx('capitalize flex flex-col items-center cursor-pointer gap-2', state.config.color)}
             onClick={(e) => {
               e.stopPropagation();
               dispatch({
