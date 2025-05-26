@@ -100,7 +100,7 @@ function ColorPickerRoot({
   className,
   disabled,
   strategy = 'absolute',
-}: { className?: string; disabled?: boolean; strategy: 'fixed' | 'absolute' } & React.PropsWithChildren) {
+}: { className?: string; disabled?: boolean; strategy?: 'fixed' | 'absolute' } & React.PropsWithChildren) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   const toggle = () => setIsOpen(!isOpen);

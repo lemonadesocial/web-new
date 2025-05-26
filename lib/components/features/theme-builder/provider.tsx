@@ -18,15 +18,33 @@ export function useEventTheme(): [state: ThemeValues, dispatch: React.Dispatch<T
   return context;
 }
 
+// Community builder context
+export const CommunityThemeContext = React.createContext(null);
+
+export function CommunityThemeProvider({ themeData, children }: React.PropsWithChildren & { themeData?: ThemeValues }) {
+  const [state, dispatch] = React.useReducer(reducers, themeData || defaultTheme);
+  const value: any = React.useMemo(() => [state, dispatch], [state]);
+
+  return <CommunityThemeContext.Provider value={value}>{children}</CommunityThemeContext.Provider>;
+}
+
+export function useCommunityTheme(): [state: ThemeValues, dispatch: React.Dispatch<ThemeBuilderAction>] {
+  const context = React.useContext(CommunityThemeContext);
+  if (!context) throw new Error('useCommunityTheme must be used within a EventThemeProvider');
+
+  return context;
+}
+
 export enum ThemeBuilderActionKind {
   'select_template',
   'select_color',
   'select_font',
   'select_mode',
   'select_style',
+  'reset',
 }
 
-type ThemeBuilderAction = { type: ThemeBuilderActionKind; payload: Partial<ThemeValues> };
+export type ThemeBuilderAction = { type: ThemeBuilderActionKind; payload: Partial<ThemeValues> };
 
 function reducers(state: ThemeValues, action: ThemeBuilderAction) {
   switch (action.type) {
@@ -65,6 +83,10 @@ function reducers(state: ThemeValues, action: ThemeBuilderAction) {
         ...state,
         config: { ...state.config, ...action.payload.config },
       };
+    }
+
+    case ThemeBuilderActionKind.reset: {
+      return action.payload || defaultTheme;
     }
 
     default:

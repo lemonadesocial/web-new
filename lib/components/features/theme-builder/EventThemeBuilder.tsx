@@ -1,14 +1,15 @@
 'use client';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-import { colors, fonts, getRandomColor, getRandomFont, patterns, presets, shaders } from './store';
-import { Card, ColorPicker } from '$lib/components/core';
-import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { join, split } from 'lodash';
+import clsx from 'clsx';
+
+import { Card } from '$lib/components/core';
+
 import { useEventTheme, ThemeBuilderActionKind } from './provider';
-import getPalette from 'tailwindcss-palette-generator';
+import { MenuColorPicker } from './ColorPicker';
+import { colors, fonts, getRandomColor, getRandomFont, patterns, presets, shaders } from './store';
 
 export function EventThemeBuilder() {
   const [toggle, setToggle] = React.useState(false);
@@ -47,7 +48,7 @@ export function EventThemeBuilder() {
               payload: { theme: 'minimal', config: { color: getRandomColor() } },
             });
           }}
-          className="btn btn-tertiary inline-flex items-center justify-center p-[21px] rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn btn-tertiary inline-flex items-center justify-center p-[21px] rounded-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-none!"
         >
           <i className="icon-shuffle size-5" />
         </button>
@@ -281,60 +282,7 @@ function ThemeColor() {
         />
       ))}
 
-      <ColorPicker.Root strategy="fixed">
-        <ColorPicker.Trigger>
-          <div
-            className={twMerge(
-              'size-5 cursor-pointer hover:outline-2 outline-offset-2 rounded-full custom',
-              clsx(data.config.name === 'custom' && 'outline-2'),
-            )}
-            style={{
-              background:
-                'conic-gradient(from 180deg at 50% 50%, rgb(222, 97, 134) 0deg, rgb(197, 95, 205) 58.12deg, rgb(175, 145, 246) 114.38deg, rgb(53, 130, 245) 168.75deg, rgb(69, 194, 121) 208.13deg, rgb(243, 209, 90) 243.75deg, rgb(247, 145, 62) 285deg, rgb(244, 87, 95) 360deg)',
-            }}
-          ></div>
-        </ColorPicker.Trigger>
-        <ColorPicker.Content
-          color={'#fff'}
-          onChange={(result) => {
-            const hex = result.hex;
-            let customColors: Record<string, string> = {};
-            console.log(data);
-            if (data.config.color === 'custom' && hex) {
-              const palette = getPalette([
-                { color: hex, name: 'custom', shade: 500, shades: [50, 100, 200, 300, 400, 500, 700, 950] },
-              ]) as unknown as {
-                custom: {
-                  500: string;
-                  950: string;
-                  700: string;
-                  50: string;
-                  100: string;
-                  200: string;
-                  300: string;
-                  400: string;
-                };
-              };
-
-              customColors = {
-                '--color-custom-50': palette.custom[50],
-                '--color-custom-100': palette.custom[100],
-                '--color-custom-200': palette.custom[200],
-                '--color-custom-300': palette.custom[300],
-                '--color-custom-400': palette.custom[400],
-                '--color-custom-500': palette.custom[500],
-                '--color-custom-700': palette.custom[700],
-                '--color-custom-950': palette.custom[950],
-              };
-            }
-
-            dispatch({
-              type: ThemeBuilderActionKind.select_color,
-              payload: { config: { color: 'custom' }, variables: { custom: customColors } },
-            });
-          }}
-        />
-      </ColorPicker.Root>
+      <MenuColorPicker color={data.config.color} dispatch={dispatch} strategy="fixed" />
     </div>
   );
 }

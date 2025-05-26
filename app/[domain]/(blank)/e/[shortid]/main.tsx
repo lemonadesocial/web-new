@@ -16,7 +16,7 @@ export function MainEventLayout({ children }: React.PropsWithChildren) {
         state.theme !== 'default' && [state.config.color, state.config.mode],
       )}
     >
-      <ThemeGenerator />
+      <ThemeGenerator data={state} />
       <Header />
       <div className="page mx-auto px-4 xl:px-0">{children}</div>
     </main>

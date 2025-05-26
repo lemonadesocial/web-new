@@ -1,12 +1,11 @@
 'use client';
 import clsx from 'clsx';
 import Link from 'next/link';
-import { Sheet, SheetRef } from 'react-modal-sheet';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import React from 'react';
 import linkify from 'linkify-it';
 
-import { Button, modal, Spacer } from '$lib/components/core';
+import { Button, Spacer } from '$lib/components/core';
 import { ASSET_PREFIX, LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { FollowSpaceDocument, Space, UnfollowSpaceDocument } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
@@ -16,9 +15,8 @@ import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 
 import { COMMUNITY_SOCIAL_LINKS } from './constants';
-import { ThemeBuilder } from './theme_builder';
-import { defaultTheme, themeAtom } from './theme_builder/store';
-import { communityAvatar } from "$lib/utils/community";
+import { communityAvatar } from '$lib/utils/community';
+import { CommunityThemeBuilder } from '$lib/components/features/theme-builder/CommunityThemeBuilder';
 
 interface HeroSectionProps {
   space?: Space | null;
@@ -28,8 +26,6 @@ export function HeroSection({ space }: HeroSectionProps) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
   const signIn = useSignIn();
-
-  const setThemeAtom = useSetAtom(themeAtom);
 
   const [follow, resFollow] = useMutation(FollowSpaceDocument, {
     onComplete: (client) => {
@@ -54,28 +50,7 @@ export function HeroSection({ space }: HeroSectionProps) {
     else follow({ variables });
   };
 
-  const handleCloseSheet = () => {
-    if (!saved) {
-      modal.open(ConfirmModal, {
-        props: {
-          onDiscard: () => {
-            setOpenSheet(false);
-            document.getElementById(space?._id)?.setAttribute('class', space?.theme_data?.config?.mode || 'dark');
-            setThemeAtom(space?.theme_data || defaultTheme);
-          },
-        },
-      });
-      sheetRef.current?.snapTo(0);
-    } else {
-      setOpenSheet(false);
-    }
-  };
-
   const canManage = [space?.creator, ...(space?.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
-
-  const [openSheet, setOpenSheet] = React.useState(false);
-  const [saved, setSaved] = React.useState(true);
-  const sheetRef = React.useRef<SheetRef>(null);
 
   return (
     <>
@@ -103,7 +78,6 @@ export function HeroSection({ space }: HeroSectionProps) {
           <div className="absolute inset-0 top-0 left-0 aspect-[3.5/1] object-cover rounded-md w-full bg-blend-darken"></div>
         )}
 
-
         <div className="absolute bottom-1.5 md:bottom-4 size-20 md:size-32 rounded-md overflow-hidden">
           <img
             className="w-full h-full outline outline-tertiary/4 rounded-md"
@@ -111,22 +85,19 @@ export function HeroSection({ space }: HeroSectionProps) {
             alt={space?.title}
             loading="lazy"
           />
-          {!space?.image_avatar_expanded && <img src={`${ASSET_PREFIX}/assets/images/blank-avatar.svg`} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 icon-blank-avatar w-[62%] h-[62%]" />}
+          {!space?.image_avatar_expanded && (
+            <img
+              src={`${ASSET_PREFIX}/assets/images/blank-avatar.svg`}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 icon-blank-avatar w-[62%] h-[62%]"
+            />
+          )}
         </div>
 
         {/* Subscribe button */}
         <div className="absolute bottom-0 md:bottom-4 right-0">
           <div className="flex items-center gap-3">
             {[space?.creator, ...(space?.admins?.map((p) => p._id) || [])].includes(me?._id) && (
-              <Button
-                icon="icon-palette-outline"
-                outlined
-                size="lg"
-                onClick={() => {
-                  setOpenSheet(true);
-                  // sheet.open(ThemeBuilder, { snapPoints: [324], props: { space } });
-                }}
-              />
+              <CommunityThemeBuilder themeData={space?.theme_data} spaceId={space?._id} />
             )}
             {canManage ? (
               <Link href={`${LEMONADE_DOMAIN}/manage/community/${space?.slug || space?._id}`} target="_blank">
@@ -182,65 +153,7 @@ export function HeroSection({ space }: HeroSectionProps) {
           ))}
         </div>
       </div>
-
-      <Sheet ref={sheetRef} isOpen={openSheet} onClose={handleCloseSheet} snapPoints={[324]} initialSnap={0}>
-        <Sheet.Backdrop onTap={handleCloseSheet} />
-
-        <Sheet.Container className="bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
-          <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
-            <div className="flex justify-center items-end h-[20px]">
-              <div className="bg-primary/8 rounded-xs w-[48px] h-1 cursor-row-resize"></div>
-            </div>
-          </Sheet.Header>
-          <Sheet.Content disableDrag>
-            <Sheet.Scroller draggableAt="top">
-              <ThemeBuilder
-                space={space}
-                onClose={(saved: boolean) => setSaved(saved)}
-                onSave={() => setOpenSheet(false)}
-              />
-            </Sheet.Scroller>
-          </Sheet.Content>
-        </Sheet.Container>
-      </Sheet>
     </>
-  );
-}
-
-function ConfirmModal({ onDiscard }: { onDiscard: () => void; }) {
-  return (
-    <div className="p-4 flex flex-col gap-4 max-w-[308px]">
-      <div className="p-3 rounded-full bg-danger-400/16 w-fit">
-        <i className="icon-info text-danger-400" />
-      </div>
-      <div className="flex flex-col gap-2">
-        <p className="text-lg font-medium">Discard Customizations?</p>
-        <p className="text-sm font-medium text-secondary">
-          Your theme changes haven’t been applied. Discard them or go back to keep editing.
-        </p>
-      </div>
-      <div className="flex gap-3">
-        <Button
-          variant="tertiary"
-          className="flex-1"
-          onClick={() => {
-            modal.close();
-          }}
-        >
-          Cancel
-        </Button>
-        <Button
-          variant="danger"
-          className="flex-1"
-          onClick={() => {
-            modal.close();
-            onDiscard();
-          }}
-        >
-          Discard
-        </Button>
-      </div>
-    </div>
   );
 }
 

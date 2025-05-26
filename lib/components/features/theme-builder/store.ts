@@ -171,6 +171,12 @@ export const presets = {
   pattern,
 };
 
+export const modes = [
+  { mode: 'light', icon: 'icon-sunny', label: 'Light' },
+  { mode: 'dark', icon: 'icon-clear-night', active: 'text-blue-400', label: 'Dark' },
+  { mode: 'auto', icon: 'icon-dark-theme-filled', label: 'Auto' },
+];
+
 export function getRandomFont(type: 'title' | 'body') {
   const keys = Object.keys(fonts[type]);
   const randomIndex = Math.floor(Math.random() * keys.length);

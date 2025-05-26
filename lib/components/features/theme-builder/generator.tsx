@@ -1,12 +1,10 @@
 'use client';
 import { generateCssVariables } from '$lib/utils/fetchers';
 import clsx from 'clsx';
-import { useEventTheme } from './provider';
 import { ShaderGradient } from './shader';
+import { ThemeValues } from './store';
 
-export function ThemeGenerator() {
-  const [data] = useEventTheme();
-
+export function ThemeGenerator({ data }: { data: ThemeValues }) {
   return (
     <>
       {data?.variables && (
