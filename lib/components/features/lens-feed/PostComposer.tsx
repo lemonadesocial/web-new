@@ -1,16 +1,17 @@
 import { useState, useRef, useEffect } from "react";
+import { useAtomValue } from "jotai";
 
 import { Avatar, Button } from "$lib/components/core";
-import { useMe } from "$lib/hooks/useMe";
 import { usePost } from "$lib/hooks/useLens";
-import { userAvatar } from "$lib/utils/user";
+import { randomUserImage } from "$lib/utils/user";
 import { MediaFile, uploadFiles } from "$lib/utils/file";
 import { generatePostMetadata } from "$lib/utils/lens/utils";
+import { accountAtom } from "$lib/jotai";
 
 import { ImageInput } from "./ImageInput";
 
 export function PostComposer({ feedAddress }: { feedAddress?: string }) {
-  const me = useMe();
+  const account = useAtomValue(accountAtom);
   const { createPost, isLoading } = usePost();
   const [value, setValue] = useState('');
   const [isActive, setIsActive] = useState(false);
@@ -44,17 +45,18 @@ export function PostComposer({ feedAddress }: { feedAddress?: string }) {
 
   return (
     <div className="bg-card rounded-md px-4 py-3 flex gap-3">
-      <Avatar src={userAvatar(me)} size="xl" rounded="full" />
+      <Avatar src={randomUserImage(account?.address)} size="xl" rounded="full" />
 
       <div className="space-y-4 flex-1">
         <textarea
           ref={textareaRef}
           value={value}
           onChange={e => setValue(e.target.value)}
-          placeholder={`What's on your mind, ${me?.username}?`}
+          placeholder={account ? `What's on your mind, ${account?.username}?` : 'Please connect your wallet to post'}
           className="w-full bg-transparent border-none outline-none text-white text-lg mt-2 placeholder-quaternary resize-none overflow-hidden min-h-[24px] max-h-[200px]"
           onFocus={() => setIsActive(true)}
           rows={1}
+          disabled={!account}
         />
         {
           files.length > 0 && <ImageInput value={files} onChange={setFiles} />

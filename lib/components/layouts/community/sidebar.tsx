@@ -13,16 +13,17 @@ const Sidebar = ({ space }: { space: Space; }) => {
     icon: 'icon-house-party',
     path: '',
   },
-  {
+  ...(!!space.lens_feed_id ? [{
     icon: 'icon-newsfeed',
     path: 'timeline',
     label: 'Timeline'
-  }, 
+  }] : []),
   ...(!!space.sub_spaces ? [{
     icon: 'icon-sub-hubs',
     path: 'featured-hubs',
     label: 'Featured Hubs'
-  }] : [])];
+  }] : []),
+  ];
 
   const uid = space.slug || space._id;
 
@@ -35,7 +36,7 @@ const Sidebar = ({ space }: { space: Space; }) => {
             : pathname === `/s/${uid}/${item.path}`;
 
           return (
-            <Link href={`/s/${space.slug}/${item.path}`} key={item.path}>
+            <Link href={`/s/${uid}/${item.path}`} key={item.path}>
               <div className={clsx(" w-full", item?.label && "tooltip tooltip-right")}>
                 {item?.label && (
                   <div className="tooltip-content">

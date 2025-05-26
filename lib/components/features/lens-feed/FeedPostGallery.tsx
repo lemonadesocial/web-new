@@ -9,13 +9,11 @@ export function FeedPostGallery({ attachments }: { attachments: string[] }) {
 
   if (attachments.length === 1) {
     return (
-      <div className="flex justify-center">
-        <img
-          src={attachments[0]}
-          alt="Post attachment"
-          className="rounded-md object-contain max-h-80 border border-card-border"
-        />
-      </div>
+      <img
+        src={attachments[0]}
+        alt="Post attachment"
+        className="rounded-sm object-cover border border-card-border h-full w-full aspect-video"
+      />
     );
   }
 
