@@ -10,6 +10,7 @@ import { formatWallet } from "$lib/utils/crypto";
 import { useConnectWallet } from "$lib/hooks/useConnectWallet";
 import { chainsMapAtom } from "$lib/jotai";
 import { LENS_CHAIN_ID } from "$lib/utils/lens/constants";
+
 import { ClaimUsernameModal } from "./ClaimUsernameModal";
 
 export function LensAccountCard() {
@@ -34,21 +35,21 @@ export function LensAccountCard() {
   }
 
   if (loadingSession || loadingAccount) return (
-    <div className="rounded-sm border border-divider space-y-4 p-4 w-[336px]">
+    <div className="rounded-sm border border-divider space-y-4 p-4">
       <Skeleton className="size-14 rounded-full" />
       <Skeleton className="w-full h-10" />
     </div>
   );
 
   if (account?.username) return (
-    <div className="rounded-sm border border-divider space-y-4 p-4 w-[336px]">
+    <div className="rounded-sm border border-divider space-y-4 p-4">
       <Avatar src={randomUserImage()} className="size-14" />
       <p className="text-lg">{account.username.localName}</p>
     </div>
   );
 
   if (account && !account.username) return (
-    <div className="rounded-sm border border-divider space-y-4 p-4 w-[336px]">
+    <div className="rounded-sm border border-divider space-y-4 p-4">
       <Avatar src={randomUserImage()} className="size-14" />
       <div className="space-y-2">
         <p className="text-lg">{formatWallet(address || '')}</p>
@@ -62,7 +63,7 @@ export function LensAccountCard() {
   );
 
   return (
-    <div className="rounded-sm border border-divider space-y-4 p-4 w-[336px]">
+    <div className="rounded-sm border border-divider space-y-4 p-4">
       <div className="size-[56px] flex justify-center items-center rounded-full bg-primary/8">
         <i className="icon-wallet size-8 text-tertiary" />
       </div>

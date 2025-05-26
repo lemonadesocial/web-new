@@ -1,19 +1,20 @@
 import { handleOperationWith, signMessageWith } from "@lens-protocol/client/ethers";
-import { createAccountWithUsername, fetchAccountsAvailable, lastLoggedInAccount } from "@lens-protocol/client/actions";
-import { MetadataAttributeType, account } from "@lens-protocol/metadata";
+import { createAccountWithUsername, fetchAccountsAvailable, fetchFeed, fetchPost, lastLoggedInAccount, post, fetchPosts as lensFetchPosts } from "@lens-protocol/client/actions";
+import { account } from "@lens-protocol/metadata";
 import { useAtomValue, useSetAtom } from "jotai";
+import { useState } from "react";
 
-import { evmAddress, never } from "@lens-protocol/client";
+import { evmAddress, never, ok, EvmAddress, AnyPost } from "@lens-protocol/client";
 import { fetchAccount } from "@lens-protocol/client/actions";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
+import { toast } from "$lib/components/core/toast";
 
-import { sessionClientAtom, accountAtom } from "$lib/jotai";
+import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom } from "$lib/jotai";
 import { useAppKitAccount } from "$lib/utils/appkit";
 import { client, storageClient } from "$lib/utils/lens/client";
 
 import { useSigner } from "./useSigner";
-import { useState } from "react";
 import { useMe } from "./useMe";
 
 export function useResumeSession() {
@@ -207,4 +208,145 @@ export function useClaimUsername() {
     claimUsername,
     isLoading,
   }
+}
+
+export function useFeed(feedId: string) {
+  const sessionClient = useAtomValue(sessionClientAtom);
+  const [feed, setFeed] = useAtom(feedAtom);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchFeedData = async () => {
+    if (feed) return;
+
+    setIsLoading(true);
+    try {
+      const result = await fetchFeed(sessionClient || client, {
+        feed: feedId,
+      });
+
+      if (result.isOk()) {
+        setFeed(result.value);
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFeedData();
+  }, [sessionClient, feedId]);
+
+  return {
+    feed,
+    isLoading,
+    refetch: fetchFeedData,
+  };
+}
+
+export function useFeedPosts(feedId: EvmAddress) {
+  const sessionClient = useAtomValue(sessionClientAtom);
+  const [posts, setPosts] = useAtom(feedPostsAtom);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
+  const [cursor, setCursor] = useState<string | undefined>();
+
+  const fetchPostsData = async (refresh = false) => {    
+    setIsLoading(true);
+    try {
+      const result = await lensFetchPosts(sessionClient || client, {
+        filter: {
+          feeds: [{ feed: feedId }]
+        },
+        ...(cursor && !refresh ? { cursor } : {})
+      });
+
+      if (result.isOk()) {
+        const { items, pageInfo } = result.value;
+        
+        setHasMore(!!pageInfo.next);
+        if (pageInfo.next) {
+          setCursor(pageInfo.next);
+        }
+        
+        const validPosts = items.filter((post): post is NonNullable<typeof post> => post !== null) as AnyPost[];
+        
+        if (refresh) {
+          setPosts(validPosts);
+        } else {
+          setPosts(prev => [...prev, ...validPosts]);
+        }
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPostsData(true);
+  }, [sessionClient, feedId]);
+
+  return {
+    posts,
+    isLoading,
+    hasMore,
+    loadMore: () => hasMore && !isLoading && fetchPostsData(),
+    refresh: () => fetchPostsData(true),
+  };
+}
+
+type CreatePostParams = {
+  metadata: unknown;
+  feedAddress?: string;
+};
+
+export function usePost() {
+  const sessionClient = useAtomValue(sessionClientAtom);
+  const signer = useSigner();
+  const [isLoading, setIsLoading] = useState(false);
+  const setPosts= useSetAtom(feedPostsAtom);
+
+  const createPost = async ({ metadata, feedAddress }: CreatePostParams) => {
+    if (!sessionClient || !signer) return;
+
+    setIsLoading(true);
+    try {
+      const { uri } = await storageClient.uploadAsJson(metadata);
+
+      const result = await post(sessionClient, {
+        contentUri: uri,
+        ...(feedAddress && { feed: evmAddress(feedAddress) }),
+      })
+        .andThen(handleOperationWith(signer))
+        .andThen(sessionClient.waitForTransaction)
+        .andThen((txHash) => fetchPost(sessionClient, { txHash }))
+        .andThen((post) => {
+          setPosts(prev => [post, ...prev]);
+          return ok(post);
+        })
+        .mapErr((error) => {
+          throw error;
+        });
+
+      if (result.isErr()) {
+        throw new Error("Failed to create post");
+      }
+
+      return result.value;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to create post";
+      toast.error(errorMessage);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    createPost,
+    isLoading,
+  };
 }

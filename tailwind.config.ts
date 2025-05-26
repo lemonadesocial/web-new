@@ -6,7 +6,7 @@ import * as path from 'path';
 export default {
   plugins: [
     plugin(function ({ matchComponents }) {
-      const iconsDir = path.join(__dirname, './lib/icons');
+      const iconsDir = path.join(import.meta.dirname, './lib/icons');
       const values: { [key: string]: { fullPath: string; isMultiColor: boolean } } = {};
 
       try {
@@ -31,7 +31,10 @@ export default {
         {
           icon: ({ fullPath, isMultiColor }: { fullPath: string; isMultiColor: boolean }) => {
             try {
-              const content = fs.readFileSync(fullPath).toString().replace(/\r?\n|\r/g, '');
+              const content = fs
+                .readFileSync(fullPath)
+                .toString()
+                .replace(/\r?\n|\r/g, '');
               const encodedContent = encodeURIComponent(content);
               const svgUrl = `url('data:image/svg+xml;utf8,${encodedContent}')`;
 

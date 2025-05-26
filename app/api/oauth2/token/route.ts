@@ -1,10 +1,10 @@
 import { HYDRA_PUBLIC_URL } from "$lib/utils/constants";
-import { getSpace } from "$lib/utils/space";
+import { getSpaceHydraKeys } from "$lib/utils/space";
 
 export async function POST(request: Request) {
 	const body = await request.formData();
 	const hostname = request.headers.get('host') || '';
-	const space = await getSpace(hostname);
+	const space = await getSpaceHydraKeys(hostname);
 
 	if (!space?.hydra_client_secret) {
 		return new Response('Unauthorized', { status: 401 });

@@ -420,6 +420,7 @@
 
 @layer components {
   .border,
+  .border-2,
   .border-r,
   .border-l,
   .border-t,
