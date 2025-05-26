@@ -43,7 +43,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
   const hosts = uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id);
 
   return (
-    <div className={clsx('flex gap-[72px]', state.theme && state.config.fg)}>
+    <div className={clsx('flex gap-[72px]', state.theme && state.config.color)}>
       <div className="hidden md:flex w-[296px] flex-col gap-6">
         {event.new_new_photos_expanded?.[0] && (
           <img

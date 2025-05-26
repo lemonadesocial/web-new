@@ -6,12 +6,12 @@ import { isEqual, join, split } from 'lodash';
 import clsx from 'clsx';
 
 import { Card } from '$lib/components/core';
-
-import { useEventTheme, ThemeBuilderActionKind } from './provider';
-import { MenuColorPicker } from './ColorPicker';
-import { colors, fonts, getRandomColor, getRandomFont, patterns, presets, shaders } from './store';
 import { useMutation } from '$lib/graphql/request';
 import { UpdateEventThemeDocument } from '$lib/graphql/generated/backend/graphql';
+
+import { colors, fonts, getRandomColor, getRandomFont, patterns, presets, shaders } from './store';
+import { useEventTheme, ThemeBuilderActionKind } from './provider';
+import { MenuColorPicker } from './ColorPicker';
 
 export function EventThemeBuilder({ eventId }: { eventId: string }) {
   const [toggle, setToggle] = React.useState(false);
@@ -408,7 +408,7 @@ function ThemeShader() {
             e.stopPropagation();
             dispatch({
               type: ThemeBuilderActionKind.select_style,
-              payload: { config: { name: s.name, fg: s.accent } },
+              payload: { config: { name: s.name, color: s.accent } },
             });
           }}
         >
