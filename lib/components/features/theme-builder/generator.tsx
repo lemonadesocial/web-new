@@ -23,7 +23,16 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
       )}
 
       {data?.theme && (
-        <div className={clsx('background', data?.theme, data.config.name, data?.config?.color, data?.config?.class)}>
+        <div
+          className={clsx(
+            'background',
+            data?.theme,
+            data.config.name,
+            data?.config?.color,
+            data?.config?.class,
+            data.config.mode,
+          )}
+        >
           {data?.theme === 'shader' && <ShaderGradient mode={data.config.mode} />}
         </div>
       )}

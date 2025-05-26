@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { defaultTheme, ThemeValues } from './store';
+import { defaultTheme, patterns, shaders, ThemeValues } from './store';
 
 export const EventThemeContext = React.createContext(null);
 
@@ -49,7 +49,25 @@ export type ThemeBuilderAction = { type: ThemeBuilderActionKind; payload: Partia
 function reducers(state: ThemeValues, action: ThemeBuilderAction) {
   switch (action.type) {
     case ThemeBuilderActionKind.select_template: {
-      return { ...state, theme: action.payload.theme, config: { ...state.config, ...action.payload.config } };
+      let payload = { ...action.payload };
+
+      if (payload.theme === 'minimal') {
+        payload = { ...payload, config: { ...payload.config, name: '' } };
+      }
+
+      if (payload.theme === 'shader' && !shaders.map((item) => item.name).includes(state.config.name as string)) {
+        const index = Math.floor(Math.random() * shaders.length);
+        const shader = shaders[index];
+        payload = { ...payload, config: { ...payload.config, name: shader.name, color: shader.accent } };
+      }
+
+      if (payload.theme === 'pattern' && !patterns.includes(state.config.name as string)) {
+        const index = Math.floor(Math.random() * patterns.length);
+        const pattern = patterns[index];
+        payload = { ...payload, config: { ...payload.config, name: pattern } };
+      }
+
+      return { ...state, theme: payload.theme, config: { ...state.config, ...payload.config } };
     }
 
     case ThemeBuilderActionKind.select_color: {
@@ -66,7 +84,7 @@ function reducers(state: ThemeValues, action: ThemeBuilderAction) {
         ...action.payload,
         variables: {
           ...state.variables,
-          ...action.payload.variables,
+          font: { ...state.variables.font, ...action.payload.variables?.font },
         },
       };
     }

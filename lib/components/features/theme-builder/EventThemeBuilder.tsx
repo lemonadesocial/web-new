@@ -169,7 +169,17 @@ function EventBuilderPaneOptions() {
             disabled={presets[themeName].ui?.disabled?.style}
             onClick={() => setState('style')}
           >
-            <div className="size-[32px] bg-quaternary rounded-full" />
+            <div className={clsx('size-[32px] bg-quaternary rounded-full')}>
+              <div
+                className={clsx(
+                  'w-full h-full',
+                  data.theme === 'shader' && `rounded-full item-color-${data.config.name}`,
+                  data.theme === 'pattern' &&
+                    `pattern rounded-full ${data.config.name} ${data.config.color} relative! opacity-100!`,
+                )}
+              />
+            </div>
+
             <p className="text-xs">Style</p>
           </ActionButton>
 
@@ -189,7 +199,7 @@ function EventBuilderPaneOptions() {
             <div
               className={clsx(
                 'size-[32px] rounded-full',
-                data.config.color === 'custom' ? 'bg-[var(--color-custom-400)]' : 'bg-accent-400',
+                data.config.color === 'custom' ? 'bg-[var(--color-custom-400)]' : `${data.config.color} bg-accent-400`,
               )}
             />
             <p className="text-xs">Color</p>
@@ -254,11 +264,15 @@ function ThemeTemplate() {
             )}
             onClick={(e) => {
               e.stopPropagation();
-              let color = data.config.color;
-              if (!color) color = getRandomColor();
+              const config: any = {};
+              const themeName = !data.theme || data.theme === 'default' ? 'minimal' : data.theme;
+
+              if (!data.config.color) config.color = getRandomColor();
+              if (presets[themeName].ui?.disabled?.mode) config.mode = 'auto';
+
               dispatch({
                 type: ThemeBuilderActionKind.select_template,
-                payload: { theme: key as any, config: { color } },
+                payload: { theme: key as any, config },
               });
             }}
           >
@@ -435,7 +449,13 @@ function ThemePattern() {
               data.config.name === item && 'border-white',
             )}
           >
-            <div className={twMerge('pattern rounded-full item-pattern relative! w-full h-full opacity-100!', item)} />
+            <div
+              className={twMerge(
+                'pattern rounded-full item-pattern relative! w-full h-full opacity-100!',
+                data.config.color,
+                item,
+              )}
+            />
           </div>
           <p className="text-xs">{item}</p>
         </button>
