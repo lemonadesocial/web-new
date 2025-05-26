@@ -19,7 +19,7 @@ import { ThemeBuilderActionKind, useCommunityTheme } from './provider';
 import { Sheet, SheetRef } from 'react-modal-sheet';
 import { twMerge } from 'tailwind-merge';
 import { MenuColorPicker } from './ColorPicker';
-import { join, split } from 'lodash';
+import { isEqual, join, split } from 'lodash';
 import { Space, UpdateSpaceDocument } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
 
@@ -46,8 +46,8 @@ function CommunityThemeBuilderPane({
   onClose: () => void;
 }) {
   const [state, dispatch] = useCommunityTheme();
+  const [prevState, setPrevState] = React.useState(state);
   const sheetRef = React.useRef<SheetRef>(null);
-  const [saved, setSaved] = React.useState(false);
 
   const themeName = !state.theme || state.theme === 'default' ? 'minimal' : state.theme;
   const mode = state.config.mode || 'dark';
@@ -55,7 +55,8 @@ function CommunityThemeBuilderPane({
   const [updateCommunity, { loading }] = useMutation(UpdateSpaceDocument);
 
   const handleCloseSheet = () => {
-    if (!saved) {
+    const dirty = !isEqual(state, prevState);
+    if (dirty) {
       modal.open(ConfirmModal, {
         props: {
           onDiscard: () => {
@@ -172,6 +173,7 @@ function CommunityThemeBuilderPane({
                           onComplete: (client) => {
                             client.writeFragment<Space>({ id: `Space:${spaceId}`, data: { theme_data: null } });
                             dispatch({ type: ThemeBuilderActionKind.reset, payload: defaultTheme });
+                            setPrevState(defaultTheme);
                           },
                         });
                       }
@@ -212,6 +214,7 @@ function CommunityThemeBuilderPane({
                           variables: { id: spaceId, input: { theme_data: state } },
                           onComplete: (client) => {
                             client.writeFragment<Space>({ id: `Space:${spaceId}`, data: { theme_data: state } });
+                            setPrevState(state);
                           },
                         });
                       }
