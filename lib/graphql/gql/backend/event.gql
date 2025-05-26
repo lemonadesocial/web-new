@@ -327,3 +327,10 @@ query PeekEventGuests($id: MongoID!, $limit: Int) {
     total
   }
 }
+
+mutation UpdateEventTheme($id: MongoID!, $input: EventInput!) {
+  updateEvent(_id: $id, input: $input) {
+    _id
+    theme_data
+  }
+}

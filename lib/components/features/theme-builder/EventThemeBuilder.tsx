@@ -1,8 +1,8 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
-import { join, split } from 'lodash';
+import { isEqual, join, split } from 'lodash';
 import clsx from 'clsx';
 
 import { Card } from '$lib/components/core';
@@ -10,11 +10,22 @@ import { Card } from '$lib/components/core';
 import { useEventTheme, ThemeBuilderActionKind } from './provider';
 import { MenuColorPicker } from './ColorPicker';
 import { colors, fonts, getRandomColor, getRandomFont, patterns, presets, shaders } from './store';
+import { useMutation } from '$lib/graphql/request';
+import { UpdateEventThemeDocument } from '$lib/graphql/generated/backend/graphql';
 
-export function EventThemeBuilder() {
+export function EventThemeBuilder({ eventId }: { eventId: string }) {
   const [toggle, setToggle] = React.useState(false);
   const [data, dispatch] = useEventTheme();
+  const [prevState, setPrevState] = useState(data);
   const themeName = !data.theme || data.theme === 'default' ? 'minimal' : data.theme;
+
+  const [updateEventTheme] = useMutation(UpdateEventThemeDocument);
+  React.useEffect(() => {
+    if (!isEqual(data, prevState) && eventId) {
+      setPrevState(data);
+      updateEventTheme({ variables: { id: eventId, input: { theme_data: data } } });
+    }
+  }, [data, prevState, eventId]);
 
   return (
     <>
@@ -63,8 +74,9 @@ function EventThemeBuilderPane({ show, onClose }: { show: boolean; onClose: () =
   const [data, dispatch] = useEventTheme();
 
   React.useEffect(() => {
-    if (!data.theme || data.theme === 'default')
+    if (!data.theme || data.theme === 'default') {
       dispatch({ type: ThemeBuilderActionKind.select_template, payload: { theme: 'minimal' } });
+    }
   }, [data.theme]);
 
   return (

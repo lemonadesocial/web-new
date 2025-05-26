@@ -56,7 +56,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
 
         {isHost && (
           <>
-            <EventThemeBuilder />
+            <EventThemeBuilder eventId={event._id} />
             <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
               <p className="text-accent-500">You have manage access for this event.</p>
               <Button
@@ -92,7 +92,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
             <>
               <Spacer className="h-4" />
               <div className="flex flex-col gap-4">
-                <EventThemeBuilder />
+                <EventThemeBuilder eventId={event._id} />
                 <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
                   <p className="text-accent-500">You have manage access for this event.</p>
                   <Button
