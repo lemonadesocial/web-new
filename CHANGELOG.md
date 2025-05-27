@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.26.1](https://github.com/lemonadesocial/web-new/compare/v1.26.0...v1.26.1) (2025-05-27)
+
+
+### Bug Fixes
+
+* logged in state ([b49e041](https://github.com/lemonadesocial/web-new/commit/b49e041677cf88d0a5916734be1eee7f36c58926))
+* metadata bio ([1321fbd](https://github.com/lemonadesocial/web-new/commit/1321fbde14d2eb7e5a114b61ee6c3e2126268132))
+
 ## [1.26.0](https://github.com/lemonadesocial/web-new/compare/v1.25.0...v1.26.0) (2025-05-27)
 
 
