@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.0](https://github.com/lemonadesocial/web-new/compare/v1.25.0...v1.26.0) (2025-05-27)
+
+
+### Features
+
+* post actions placeholder ([87ec5d0](https://github.com/lemonadesocial/web-new/commit/87ec5d08d12d7bed652972f5443d26fa34617341))
+
 ## [1.25.0](https://github.com/lemonadesocial/web-new/compare/v1.24.7...v1.25.0) (2025-05-27)
 
 
