@@ -86,7 +86,7 @@ export function ClaimUsernameModal() {
         title={`@${username}`}
       >
         <p className='text-secondary text-sm'>
-          Secure <span className='font-semibold'>@{username}</span> as your unique identity on Lemonade. Once claimed, it's yours <span className='italic'>forever</span>.
+          Secure <span className='font-semibold'>@{username}</span> as your unique identity on Lemonade. Once claimed, it&apos;s yours <span className='italic'>forever</span>.
         </p>
         <div className="rounded-sm border border-divider px-3 py-2 bg-primary/8 mt-4 gap-2.5 flex items-center">
           <i className="icon-wallet size-5 text-tertiary" />
