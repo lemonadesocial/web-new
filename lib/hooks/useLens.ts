@@ -183,7 +183,7 @@ export function useClaimUsername() {
   
     const metadata = account({
       name: me.display_name || me.name,
-      bio: me.description ?? undefined,
+      bio: me.description || undefined,
     });
     
     const { uri } = await storageClient.uploadAsJson(metadata);
