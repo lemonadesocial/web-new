@@ -30,9 +30,7 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
 
   return (
     <CommunityThemeProvider themeData={space.theme_data}>
-      <CommunityContainer space={space} uid={uid}>
-        {children}
-      </CommunityContainer>
+      <CommunityContainer space={space}>{children}</CommunityContainer>
     </CommunityThemeProvider>
   );
 }

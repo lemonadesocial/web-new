@@ -1,5 +1,5 @@
 import { Avatar } from "$lib/components/core";
-import { userAvatar } from "$lib/utils/user";
+import { randomUserImage, userAvatar } from "$lib/utils/user";
 import { formatDistanceToNow } from "date-fns";
 import { ImageMetadata, Post, TextOnlyMetadata } from "@lens-protocol/client";
 import { FeedPostGallery } from './FeedPostGallery';
@@ -15,7 +15,7 @@ export function FeedPost({ post }: FeedPostProps) {
     <div className="bg-card rounded-md border border-card-border px-4 py-3 space-y-3">
       <div className="flex gap-3">
         <Avatar
-          src={author.metadata?.picture || userAvatar(author.owner)}
+          src={author.metadata?.picture || randomUserImage(author.owner)}
           size="xl"
           rounded="full"
         />
