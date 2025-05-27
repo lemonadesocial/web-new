@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.25.0](https://github.com/lemonadesocial/web-new/compare/v1.24.7...v1.25.0) (2025-05-27)
+
+
+### Features
+
+* lens feed ([2913d6c](https://github.com/lemonadesocial/web-new/commit/2913d6c170f6307579a4fc83afbcbbbad1931064))
+* post reactions ([9e5db23](https://github.com/lemonadesocial/web-new/commit/9e5db239b5e23ab14f556081bca2e348158c819b))
+* refactor community them builder ([d2e8a15](https://github.com/lemonadesocial/web-new/commit/d2e8a15612fd535dd0d92945ce4a2f6daf6aaf4c))
+* update default color for event builder ([1ca40bf](https://github.com/lemonadesocial/web-new/commit/1ca40bf1191a449a06a959a4d2003948fd9dd10b))
+* update save event theme ([0d9cdcf](https://github.com/lemonadesocial/web-new/commit/0d9cdcfbb7e661c65119a8d26fad9206aebaaec6))
+
+
+### Bug Fixes
+
+* auto select style for shader/pattern ([25d94d0](https://github.com/lemonadesocial/web-new/commit/25d94d01f9fbe1020ac7ea59ddedc4d3e28bc4e0))
+* format event start by timezone ([5028396](https://github.com/lemonadesocial/web-new/commit/502839674215461e653131b7b5abbb7358878c7b))
+* hide tage free ([a623334](https://github.com/lemonadesocial/web-new/commit/a623334aba9ee075c933ba6f8525b81b452c604b))
+* hover state btn secondary ([aa87b58](https://github.com/lemonadesocial/web-new/commit/aa87b585d1f1f13a1ccd2b9d58b17983257c6136))
+* lens feed ([6b05ec3](https://github.com/lemonadesocial/web-new/commit/6b05ec34ff52315e2fbf15fb38313438dc8cb6b0))
+* lint ([23d0a43](https://github.com/lemonadesocial/web-new/commit/23d0a438d8e6f10587cba368a80a61eeb6ae2ee6))
+* missing config color on card ([12a4bee](https://github.com/lemonadesocial/web-new/commit/12a4bee58915d931239931d7e88c5b741d04c5ab))
+* post author name ([d83e556](https://github.com/lemonadesocial/web-new/commit/d83e5562052fad8707648dc0732ff4f5ca0c6bfc))
+* update color on pattern menu ([2190986](https://github.com/lemonadesocial/web-new/commit/2190986d4d7ad6caeac1791c2582087874c8a4c7))
+* update community theme builder actions ([622be2b](https://github.com/lemonadesocial/web-new/commit/622be2b093ca1429a9896f2e5548daea52e3da22))
+* update modal listing event mobile view ([f9dfca4](https://github.com/lemonadesocial/web-new/commit/f9dfca47219a64ac6ceb72711a1be628def8c465))
+* update ui community theme builder mobile ([49e5617](https://github.com/lemonadesocial/web-new/commit/49e5617567fa42ae10f0504ad4c9cb04fd8d88fc))
+
 ## [1.24.7](https://github.com/lemonadesocial/web-new/compare/v1.24.6...v1.24.7) (2025-05-25)
 
 
