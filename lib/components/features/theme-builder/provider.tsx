@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
-import { defaultTheme, patterns, shaders, ThemeValues } from './store';
+import { defaultTheme, getRandomColor, getRandomFont, patterns, shaders, ThemeValues } from './store';
+import { merge } from 'lodash';
 
 export const EventThemeContext = React.createContext(null);
 
@@ -41,10 +42,11 @@ export enum ThemeBuilderActionKind {
   'select_font',
   'select_mode',
   'select_style',
+  'random',
   'reset',
 }
 
-export type ThemeBuilderAction = { type: ThemeBuilderActionKind; payload: Partial<ThemeValues> };
+export type ThemeBuilderAction = { type: ThemeBuilderActionKind; payload?: Partial<ThemeValues> };
 
 function reducers(state: ThemeValues, action: ThemeBuilderAction) {
   switch (action.type) {
@@ -67,44 +69,57 @@ function reducers(state: ThemeValues, action: ThemeBuilderAction) {
         payload = { ...payload, config: { ...payload.config, name: pattern } };
       }
 
-      return { ...state, theme: payload.theme, config: { ...state.config, ...payload.config } };
+      return { ...merge(state, payload) };
     }
 
     case ThemeBuilderActionKind.select_color: {
-      return {
-        ...state,
-        config: { ...state.config, ...action.payload.config },
-        variables: { ...state.variables, ...action.payload.variables },
-      };
+      return { ...merge(state, action.payload) };
     }
 
     case ThemeBuilderActionKind.select_font: {
-      return {
-        ...state,
-        ...action.payload,
-        variables: {
-          ...state.variables,
-          font: { ...state.variables.font, ...action.payload.variables?.font },
-        },
-      };
+      return { ...merge(state, action.payload) };
     }
 
     case ThemeBuilderActionKind.select_mode: {
-      return {
-        ...state,
-        config: { ...state.config, ...action.payload.config },
-      };
+      return { ...merge(state, action.payload) };
     }
 
     case ThemeBuilderActionKind.select_style: {
-      return {
+      return { ...merge(state, action.payload) };
+    }
+
+    case ThemeBuilderActionKind.random: {
+      const [fontTitle, fontTitleVariable] = getRandomFont('title');
+      const [fontBody, fontBodyVariable] = getRandomFont('body');
+
+      let payload = {
         ...state,
-        config: { ...state.config, ...action.payload.config },
+        font_title: fontTitle,
+        font_body: fontBody,
+        variables: { ...state.variables, font: { '--font-title': fontTitleVariable, '--font-body': fontBodyVariable } },
       };
+
+      if (payload.theme === 'minimal') {
+        payload = { ...payload, config: { ...payload.config, color: getRandomColor(), name: '' } };
+      }
+
+      if (payload.theme === 'shader') {
+        const index = Math.floor(Math.random() * shaders.length);
+        const shader = shaders[index];
+        payload = { ...payload, config: { ...payload.config, name: shader.name, color: shader.accent } };
+      }
+
+      if (payload.theme === 'pattern') {
+        const index = Math.floor(Math.random() * patterns.length);
+        const pattern = patterns[index];
+        payload = { ...payload, config: { ...payload.config, name: pattern } };
+      }
+
+      return { ...payload };
     }
 
     case ThemeBuilderActionKind.reset: {
-      return action.payload || defaultTheme;
+      return { ...merge(defaultTheme, action.payload) };
     }
 
     default:

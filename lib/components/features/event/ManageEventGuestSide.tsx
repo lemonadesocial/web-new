@@ -45,32 +45,34 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
   return (
     <div className={clsx('flex gap-[72px]', state.theme && state.config.color)}>
       <div className="hidden md:flex w-[296px] flex-col gap-6">
-        {event.new_new_photos_expanded?.[0] && (
-          <img
-            src={generateUrl(event.new_new_photos_expanded[0])}
-            alt={event.title}
-            loading="lazy"
-            className="aspect-square object-contain border rounded-md"
-          />
-        )}
+        <div className="flex flex-col gap-4">
+          {event.new_new_photos_expanded?.[0] && (
+            <img
+              src={generateUrl(event.new_new_photos_expanded[0])}
+              alt={event.title}
+              loading="lazy"
+              className="aspect-square object-contain border rounded-md"
+            />
+          )}
 
-        {isHost && (
-          <>
-            <EventThemeBuilder eventId={event._id} />
-            <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
-              <p className="text-accent-500">You have manage access for this event.</p>
-              <Button
-                variant="primary"
-                size="sm"
-                iconRight="icon-arrow-outward"
-                className="rounded-full"
-                onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event.shortid}/`, '_blank')}
-              >
-                Manage
-              </Button>
-            </div>
-          </>
-        )}
+          {isHost && (
+            <>
+              <EventThemeBuilder eventId={event._id} />
+              <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
+                <p className="text-accent-500">You have manage access for this event.</p>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  iconRight="icon-arrow-outward"
+                  className="rounded-full"
+                  onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event.shortid}/`, '_blank')}
+                >
+                  Manage
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
 
         <CommunitySection event={event} />
         <HostedBySection event={event} />

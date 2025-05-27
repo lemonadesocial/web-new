@@ -39,6 +39,17 @@
     }
   }
 
+  .woodsmoke {
+    --color-accent-50: var(--color-woodsmoke-50);
+    --color-accent-100: var(--color-violet-100);
+    --color-accent-200: var(--color-violet-200);
+    --color-accent-300: var(--color-violet-300);
+    --color-accent-400: var(--color-woodsmoke-400);
+    --color-accent-500: var(--color-violet-500);
+    --color-accent-700: var(--color-violet-700);
+    --color-accent-950: var(--color-woodsmoke-950);
+  }
+
   .violet {
     --color-accent-50: var(--color-violet-50);
     --color-accent-100: var(--color-violet-100);

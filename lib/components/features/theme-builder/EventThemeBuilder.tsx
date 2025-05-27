@@ -1,37 +1,39 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
-import { isEqual, join, split } from 'lodash';
+import { join, split } from 'lodash';
 import clsx from 'clsx';
 
 import { Card } from '$lib/components/core';
 import { useMutation } from '$lib/graphql/request';
 import { UpdateEventThemeDocument } from '$lib/graphql/generated/backend/graphql';
 
-import { colors, fonts, getRandomColor, getRandomFont, patterns, presets, shaders } from './store';
+import { colors, fonts, getRandomColor, patterns, presets, shaders } from './store';
 import { useEventTheme, ThemeBuilderActionKind } from './provider';
 import { MenuColorPicker } from './ColorPicker';
 
 export function EventThemeBuilder({ eventId }: { eventId: string }) {
   const [toggle, setToggle] = React.useState(false);
   const [data, dispatch] = useEventTheme();
-  const [prevState, setPrevState] = useState(data);
   const themeName = !data.theme || data.theme === 'default' ? 'minimal' : data.theme;
+  const mounted = React.useRef(false);
 
   const [updateEventTheme] = useMutation(UpdateEventThemeDocument);
+
   React.useEffect(() => {
-    if (!isEqual(data, prevState) && eventId) {
-      setPrevState(data);
+    if (mounted.current) {
       updateEventTheme({ variables: { id: eventId, input: { theme_data: data } } });
+    } else {
+      mounted.current = true;
     }
-  }, [data, prevState, eventId]);
+  }, [data]);
 
   return (
     <>
       <div className="flex gap-2 h-[62px]">
         <button
-          className="btn btn-tertiary inline-flex px-3 py-2.5 w-full gap-2.5 rounded-sm text-left"
+          className="btn btn-tertiary inline-flex px-3 py-2.5 w-full gap-2.5 rounded-sm text-left backdrop-blur-sm"
           onClick={() => setToggle(true)}
         >
           <img src={presets[themeName]?.image} className="w-[51px] h-[38px] rounded-xs" />
@@ -44,22 +46,8 @@ export function EventThemeBuilder({ eventId }: { eventId: string }) {
           </div>
         </button>
         <button
-          disabled={themeName !== 'minimal'}
-          onClick={() => {
-            const [fontTitle, fontTitleVariable] = getRandomFont('title');
-            const [fontBody, fontBodyVariable] = getRandomFont('body');
-            const payload = {
-              font_title: fontTitle,
-              font_body: fontBody,
-              variables: { font: { '--font-title': fontTitleVariable, '--font-body': fontBodyVariable } },
-            };
-            dispatch({ type: ThemeBuilderActionKind.select_font, payload });
-            dispatch({
-              type: ThemeBuilderActionKind.select_template,
-              payload: { theme: 'minimal', config: { color: getRandomColor() } },
-            });
-          }}
-          className="btn btn-tertiary inline-flex items-center justify-center p-[21px] rounded-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-none!"
+          onClick={() => dispatch({ type: ThemeBuilderActionKind.random })}
+          className="btn btn-tertiary inline-flex items-center justify-center p-[21px] backdrop-blur-sm rounded-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-none!"
         >
           <i className="icon-shuffle size-5" />
         </button>
@@ -183,14 +171,14 @@ function EventBuilderPaneOptions() {
             <p className="text-xs">Style</p>
           </ActionButton>
 
-          <ActionButton
-            active={state === 'effect'}
-            disabled={presets[themeName].ui?.disabled?.effect}
-            onClick={() => setState('effect')}
-          >
-            <div className="size-[32px] bg-quaternary rounded-full" />
-            <p className="text-xs">Effect</p>
-          </ActionButton>
+          {/* <ActionButton */}
+          {/*   active={state === 'effect'} */}
+          {/*   disabled={presets[themeName].ui?.disabled?.effect} */}
+          {/*   onClick={() => setState('effect')} */}
+          {/* > */}
+          {/*   <div className="size-[32px] bg-quaternary rounded-full" /> */}
+          {/*   <p className="text-xs">Effect</p> */}
+          {/* </ActionButton> */}
           <ActionButton
             active={state === 'colors'}
             disabled={data.theme && presets[themeName].ui?.disabled?.color}
@@ -290,6 +278,20 @@ function ThemeColor() {
 
   return (
     <div className="flex md:flex-col items-center overflow-auto w-full md:w-[60px] gap-3 p-4">
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          dispatch({
+            type: ThemeBuilderActionKind.select_color,
+            payload: { config: { color: 'woodsmoke' } },
+          });
+        }}
+        className={twMerge(
+          'size-5 min-w-5 min-h-5 cursor-pointer hover:outline-2 outline-offset-2 rounded-full woodsmoke bg-woodsmoke-400',
+          clsx('woodsmoke' === data.config?.color && 'outline-2'),
+        )}
+      />
+
       {colors.map((color) => (
         <button
           key={color}
