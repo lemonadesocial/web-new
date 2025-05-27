@@ -51,6 +51,7 @@
     --btn-bg: var(--btn-secondary);
     --btn-bg-hover: var(--btn-secondary-hover);
     --btn-content: var(--btn-secondary-content);
+    --btn-content-hover: var(--btn-secondary-content);
   }
 
   .btn-tertiary {
