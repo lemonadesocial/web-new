@@ -18,7 +18,6 @@ import { useSigner } from "./useSigner";
 import { useMe } from "./useMe";
 
 export function useResumeSession() {
-  const signer = useSigner();
   const setSessionClient = useSetAtom(sessionClientAtom);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -173,7 +172,6 @@ export function useAccount() {
 }
 
 export function useClaimUsername() {
-  const { address } = useAppKitAccount();
   const [sessionClient, setSessionClient] = useAtom(sessionClientAtom);
   const me = useMe();
   const signer = useSigner();

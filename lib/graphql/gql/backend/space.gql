@@ -135,6 +135,7 @@ query GetSpaceEvents(
     }
     start
     end
+    timezone
     event_ticket_types {
       _id
       prices {
@@ -254,19 +255,19 @@ mutation PinEventsToSpace($space: MongoID!, $events: [MongoID!]!, $tags: [MongoI
 
 query getSubSpaces($id: MongoID!) {
   getSubSpaces(_id: $id) {
+    _id
+    title
+    description
+    followers_count
+    slug
+    is_admin
+    followed
+    image_avatar_expanded {
       _id
-      title
-      description
-      followers_count
-      slug
-      is_admin
-      followed
-      image_avatar_expanded {
-         _id
-        bucket
-        url
-        type
-        key
-      }
+      bucket
+      url
+      type
+      key
     }
   }
+}

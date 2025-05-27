@@ -9,6 +9,7 @@ import { Address, Event, SpaceTag, User } from '$lib/graphql/generated/backend/g
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
 import { getEventPrice } from '$lib/utils/event';
+import { convertFromUtcToTimezone } from '$lib/utils/date';
 
 export function EventList({
   events,
@@ -49,7 +50,7 @@ function EventItem({ item }: { item: Event }) {
 
   return (
     <div className="transition flex text-tertiary gap-4 hover:bg-primary/[.16] p-2 rounded-md cursor-pointer backdrop-blur-lg">
-      <p>{format(item.start, 'h:mm a')}</p>
+      <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), 'hh:mm a')}</p>
       <div className="flex flex-col gap-1 flex-1">
         <p className="text-primary font-medium text-base md:text-lg">{item.title}</p>
         <div className="flex gap-2 items-center">
@@ -179,7 +180,7 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
                 </div>
               )}
 
-              <p>{format(item.start, 'hh:mm a')}</p>
+              <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), 'hh:mm a')}</p>
             </div>
             <p className="font-title text-lg md:text-xl font-semibold text-primary">{item.title}</p>
             <div className="flex gap-2 item-center">

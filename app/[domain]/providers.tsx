@@ -3,7 +3,7 @@ import React from 'react';
 import { useSetAtom } from 'jotai';
 
 import { GraphqlClientProvider } from '$lib/graphql/request';
-import { initializeAppKit, appKit } from '$lib/utils/appkit';
+import { initializeAppKit } from '$lib/utils/appkit';
 import { useAuth } from '$lib/hooks/useAuth';
 import { useListChains } from '$lib/hooks/useListChains';
 import { SpaceHydraKeys } from '$lib/utils/space';

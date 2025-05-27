@@ -27,7 +27,7 @@ export function FeedPost({ post }: FeedPostProps) {
         />
         <div className="flex-1">
           <p>
-            {author.metadata?.name || author.username?.localName}
+            {author.username?.localName}
           </p>
           <p className="text-sm text-tertiary">
             {formatDistanceToNow(new Date(timestamp), { addSuffix: true })}
