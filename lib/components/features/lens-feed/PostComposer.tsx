@@ -45,14 +45,14 @@ export function PostComposer({ feedAddress }: { feedAddress?: string }) {
 
   return (
     <div className="bg-card rounded-md px-4 py-3 flex gap-3">
-      <Avatar src={randomUserImage(account?.address)} size="xl" rounded="full" />
+      <Avatar src={randomUserImage(account?.owner)} size="xl" rounded="full" />
 
       <div className="space-y-4 flex-1">
         <textarea
           ref={textareaRef}
           value={value}
           onChange={e => setValue(e.target.value)}
-          placeholder={account ? `What's on your mind, ${account?.username}?` : 'Please connect your wallet to post'}
+          placeholder={account ? `What's on your mind, ${account?.username?.localName}?` : 'Please connect your wallet to post'}
           className="w-full bg-transparent border-none outline-none text-white text-lg mt-2 placeholder-quaternary resize-none overflow-hidden min-h-[24px] max-h-[200px]"
           onFocus={() => setIsActive(true)}
           rows={1}

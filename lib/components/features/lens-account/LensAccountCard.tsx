@@ -43,7 +43,7 @@ export function LensAccountCard() {
 
   if (account?.username) return (
     <div className="rounded-sm border border-divider space-y-4 p-4">
-      <Avatar src={randomUserImage()} className="size-14" />
+      <Avatar src={randomUserImage(account.owner)} className="size-14" />
       <p className="text-lg">{account.username.localName}</p>
     </div>
   );
