@@ -109,7 +109,7 @@ export function DrawerContainer() {
                 transition={{ duration: options.duration }}
                 ref={ref}
                 className={twMerge(
-                  'bg-background  backdrop-blur-md rounded-sm flex-1 max-w-[528px] overflow-auto no-scrollbar z-10',
+                  'bg-background backdrop-blur-md rounded-sm flex-1 max-w-[528px] overflow-auto no-scrollbar z-10',
                   options.contentClass,
                 )}
                 style={{

@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 
 interface CardProps extends React.PropsWithChildren {
   className?: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
   as?: 'button' | 'link';
   href?: string;
   target?: '_blank';

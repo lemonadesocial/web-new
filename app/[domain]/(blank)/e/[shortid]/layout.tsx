@@ -1,10 +1,26 @@
-import Header from "$lib/components/layouts/header";
+import { notFound } from 'next/navigation';
 
-export default function EventLayout({ children }: React.PropsWithChildren) {
+import { EventThemeProvider } from '$lib/components/features/theme-builder/provider';
+import { GetEventDocument } from '$lib/graphql/generated/backend/graphql';
+import { getClient } from '$lib/graphql/request';
+import { MainEventLayout } from './main';
+
+type LayoutProps = React.PropsWithChildren & {
+  params: { shortid: string };
+};
+
+export default async function EventLayout({ children, params }: LayoutProps) {
+  const shortid = (await params).shortid;
+
+  const client = getClient();
+  const { data } = await client.query({ query: GetEventDocument, variables: { shortid } });
+
+  if (!data?.getEvent) return notFound();
+  const themeData = data?.getEvent?.theme_data;
+
   return (
-    <main className="relative flex flex-col h-dvh w-full z-100 overflow-auto">
-      <Header />
-      <div className="page mx-auto px-4 xl:px-0">{children}</div>
-    </main>
+    <EventThemeProvider themeData={themeData}>
+      <MainEventLayout>{children}</MainEventLayout>
+    </EventThemeProvider>
   );
 }

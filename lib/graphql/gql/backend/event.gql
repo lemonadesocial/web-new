@@ -100,6 +100,7 @@ query GetEvent($id: MongoID, $shortid: String) {
     terms_text
     virtual
     virtual_url
+    theme_data
   }
 }
 
@@ -324,5 +325,12 @@ query PeekEventGuests($id: MongoID!, $limit: Int) {
       first_name
     }
     total
+  }
+}
+
+mutation UpdateEventTheme($id: MongoID!, $input: EventInput!) {
+  updateEvent(_id: $id, input: $input) {
+    _id
+    theme_data
   }
 }

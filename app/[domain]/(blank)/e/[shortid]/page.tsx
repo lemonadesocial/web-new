@@ -13,19 +13,21 @@ export async function generateMetadata({ params }: { params: Promise<{ shortid: 
 
   const { data } = await client.query({ query: GetEventDocument, variables: { shortid } });
   const event = data?.getEvent as Event;
-  const fileId = event.new_new_photos_expanded?.[0] ? event.new_new_photos_expanded?.[0]._id : 'default'
+  const fileId = event.new_new_photos_expanded?.[0] ? event.new_new_photos_expanded?.[0]._id : 'default';
 
   return {
     metadataBase: null,
     title: event?.title,
-    description: event?.description? htmlToText(event.description, { 
-      selectors: [
-        { selector: 'img', format: 'skip' }, 
-        { selector: 'hr', format: 'skip' }, 
-        { selector: 'h1', format: 'skip' },
-        { selector: 'h2', format: 'skip' },
-      ], 
-    }) : '',
+    description: event?.description
+      ? htmlToText(event.description, {
+          selectors: [
+            { selector: 'img', format: 'skip' },
+            { selector: 'hr', format: 'skip' },
+            { selector: 'h1', format: 'skip' },
+            { selector: 'h2', format: 'skip' },
+          ],
+        })
+      : '',
     openGraph: {
       images: `${process.env.NEXT_PUBLIC_HOST_URL}/api/og/event/${event.shortid}?file=${fileId}`,
     },

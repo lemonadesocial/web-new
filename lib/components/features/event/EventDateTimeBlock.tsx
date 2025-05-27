@@ -15,14 +15,14 @@ export function EventDateTimeBlock({ event }: Props) {
 
   return (
     <div className="flex gap-4 flex-1 w-full text-nowrap">
-      <div className="border rounded-sm size-12 text-secondary flex flex-col justify-center items-center font-medium">
+      <div className="border rounded-sm size-12 min-w-12 text-secondary flex flex-col justify-center items-center font-medium">
         <span className="py-0.5 text-xs">
           {format(convertFromUtcToTimezone(event.start, event.timezone as string), 'MMM')}
         </span>
         <Divider className="h-1 w-full" />
         <span>{format(convertFromUtcToTimezone(event.start, event.timezone as string), 'dd')}</span>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col truncate">
         <p className="text-lg">{getEventDateBlockStart(event)}</p>
         <span className="text-sm">{getEventDateBlockRange(event)}</span>
       </div>

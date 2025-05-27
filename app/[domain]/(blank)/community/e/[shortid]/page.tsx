@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 import { Event, GetEventDocument } from '$lib/graphql/generated/backend/graphql';
 import { getClient } from '$lib/graphql/request';
 import ManageEventGuestSide from '$lib/components/features/event/ManageEventGuestSide';
+import { EventThemeProvider } from '$lib/components/features/theme-builder/provider';
+import { EventContainer } from './container';
 
 export async function generateMetadata({ params }: { params: Promise<{ shortid: string }> }) {
   const shortid = (await params).shortid;
@@ -31,6 +33,13 @@ export default async function Page({ params }: { params: Promise<{ shortid: stri
   const event = data?.getEvent as Event;
 
   if (!event) return notFound();
+  const themeData = data?.getEvent?.theme_data;
 
-  return <ManageEventGuestSide event={event} />;
+  return (
+    <EventThemeProvider themeData={themeData}>
+      <EventContainer>
+        <ManageEventGuestSide event={event} />;
+      </EventContainer>
+    </EventThemeProvider>
+  );
 }
