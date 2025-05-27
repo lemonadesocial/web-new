@@ -93,7 +93,7 @@ function CommunityThemeBuilderPane({
                   <PopoverEffect />
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <PopoverFont
                     fonts={fonts.title}
                     label="Title"
@@ -120,7 +120,7 @@ function CommunityThemeBuilderPane({
                   />
 
                   <Menu.Root
-                    className="flex-1 mix-w-1/3"
+                    className="flex-1 min-w-full md:min-w-auto"
                     placement="top"
                     strategy="fixed"
                     disabled={presets[themeName]?.ui?.disabled?.mode}
@@ -269,7 +269,7 @@ function PopoverColor({ disabled }: { disabled?: boolean }) {
   const [state, dispatch] = useCommunityTheme();
 
   return (
-    <Menu.Root placement="top" disabled={disabled} strategy="fixed" className="flex-1">
+    <Menu.Root placement="top" disabled={disabled} strategy="fixed" className="flex-1 min-w-full md:min-w-auto">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <i
@@ -317,7 +317,7 @@ function PopoverStyle() {
   if (state.theme === 'pattern') return <PopoverPattern />;
 
   return (
-    <Menu.Root disabled className="flex-1">
+    <Menu.Root disabled className="flex-1 min-w-full md:min-w-auto">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <div className="size-[24px] rounded-full bg-quaternary" />
@@ -336,7 +336,7 @@ export function PopoverShaderColor() {
   const [state, dispatch] = useCommunityTheme();
 
   return (
-    <Menu.Root placement="top" strategy="fixed" className="flex-1">
+    <Menu.Root placement="top" strategy="fixed" className="flex-1 min-w-full md:min-w-auto">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <div className={twMerge('size-[24px] rounded-full', `item-color-${state.config.name}`)} />
@@ -376,7 +376,7 @@ export function PopoverPattern() {
   const [state, dispatch] = useCommunityTheme();
 
   return (
-    <Menu.Root placement="top" strategy="fixed" className="flex-1">
+    <Menu.Root placement="top" strategy="fixed" className="flex-1 min-w-full md:min-w-auto">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <div className="w-[24px] h-[24px] rounded-full">
@@ -429,7 +429,7 @@ export function PopoverPattern() {
 
 export function PopoverEffect() {
   return (
-    <Menu.Root disabled className="flex-1">
+    <Menu.Root disabled className="flex-1 min-w-full md:min-w-auto">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <div className="size-[24px] rounded-full bg-quaternary" />
@@ -456,7 +456,7 @@ export function PopoverFont({
   onClick: (font: string) => void;
 }) {
   return (
-    <Menu.Root placement="top" strategy="fixed" className="flex-1">
+    <Menu.Root placement="top" strategy="fixed" className="flex-1 min-w-full md:min-w-auto">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <h3 style={{ fontFamily: fonts[selected] }} className="font-semibold">
