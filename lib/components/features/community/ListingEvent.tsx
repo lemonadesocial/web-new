@@ -12,7 +12,7 @@ import { format } from 'date-fns';
 import { uniq } from 'lodash';
 import React from 'react';
 
-export function ListingEvent({ spaceId }: { spaceId: string; }) {
+export function ListingEvent({ spaceId }: { spaceId: string }) {
   const [tags, setTags] = React.useState<SpaceTag[]>([]);
   const [events, setEvents] = React.useState<Event[]>([]);
   const [linkEvent, setLinkEvent] = React.useState('');
@@ -55,7 +55,7 @@ export function ListingEvent({ spaceId }: { spaceId: string; }) {
   const existing = events.find((e) => e.shortid === linkEvent?.substring(linkEvent.lastIndexOf('/') + 1));
 
   return (
-    <div className="w-[480]">
+    <div className="w-[350] md:w-[480]">
       <Card.Header className="flex justify-between items-center">
         <p className="text-lg font-medium">Submit Lemonade Event</p>
         <Button
