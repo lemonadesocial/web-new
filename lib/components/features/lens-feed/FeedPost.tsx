@@ -1,15 +1,21 @@
-import { Avatar } from "$lib/components/core";
-import { randomUserImage, userAvatar } from "$lib/utils/user";
+import { ImageMetadata, Post, Repost, TextOnlyMetadata } from "@lens-protocol/client";
 import { formatDistanceToNow } from "date-fns";
-import { ImageMetadata, Post, TextOnlyMetadata } from "@lens-protocol/client";
+
+import { Avatar } from "$lib/components/core";
+import { randomUserImage } from "$lib/utils/user";
+
 import { FeedPostGallery } from './FeedPostGallery';
+import { PostReaction } from "./PostReaction";
+import { PostRepost } from "./PostRepost";
 
 type FeedPostProps = {
-  post: Post;
+  post: Post | Repost;
 };
 
 export function FeedPost({ post }: FeedPostProps) {
-  const { author, metadata, timestamp, stats } = post;
+  const { author, timestamp } = post;
+  const rootPost = post.__typename === 'Repost' ? post.repostOf : post;
+  const metadata = rootPost.metadata;
 
   return (
     <div className="bg-card rounded-md border border-card-border px-4 py-3 space-y-3">
@@ -32,6 +38,10 @@ export function FeedPost({ post }: FeedPostProps) {
       {(metadata as ImageMetadata).attachments?.length > 0 && (
         <FeedPostGallery attachments={(metadata as ImageMetadata).attachments.map(({ item }) => item)} />
       )}
+      <div className="flex gap-2">
+        <PostReaction post={rootPost} />
+        <PostRepost post={rootPost} />
+      </div>
     </div>
   );
 }
