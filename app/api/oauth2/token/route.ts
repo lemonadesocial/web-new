@@ -1,9 +1,16 @@
+import { NextRequest } from "next/server";
+
 import { HYDRA_PUBLIC_URL } from "$lib/utils/constants";
 import { getSpaceHydraKeys } from "$lib/utils/space";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
 	const body = await request.formData();
-	const hostname = request.headers.get('host') || '';
+	const hostname = request.headers.get('x-forwarded-host');
+
+	if (!hostname) {
+		return new Response('Hostname is required', { status: 400 });
+	}
+
 	const space = await getSpaceHydraKeys(hostname);
 
 	if (!space?.hydra_client_secret) {
