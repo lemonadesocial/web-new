@@ -8,7 +8,7 @@ import { useAccount, useLogIn, useResumeSession } from "$lib/hooks/useLens";
 import { randomUserImage } from "$lib/utils/user";
 import { formatWallet } from "$lib/utils/crypto";
 import { useConnectWallet } from "$lib/hooks/useConnectWallet";
-import { chainsMapAtom } from "$lib/jotai";
+import { chainsMapAtom, sessionClientAtom } from "$lib/jotai";
 import { LENS_CHAIN_ID } from "$lib/utils/lens/constants";
 
 import { ClaimUsernameModal } from "./ClaimUsernameModal";
@@ -16,6 +16,7 @@ import { ClaimUsernameModal } from "./ClaimUsernameModal";
 export function LensAccountCard() {
   const { address } = useAppKitAccount();
   const { walletProvider } = useAppKitProvider('eip155');
+  const sessionClient = useAtomValue(sessionClientAtom);
 
   const chainsMap = useAtomValue(chainsMapAtom);
   const { connect, isReady } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);
@@ -48,7 +49,7 @@ export function LensAccountCard() {
     </div>
   );
 
-  if (account && !account.username) return (
+  if (sessionClient) return (
     <div className="rounded-sm border border-divider space-y-4 p-4">
       <Avatar src={randomUserImage()} className="size-14" />
       <div className="space-y-2">
