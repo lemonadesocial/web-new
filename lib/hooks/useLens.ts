@@ -117,19 +117,42 @@ export function useAccount() {
   const [account, setAccount] = useAtom(accountAtom);
   const [isLoading, setIsLoading] = useState(false);
 
+  const getAccountAddress = async (): Promise<string> => {
+    if (!sessionClient || !address) return '';
+
+    const lastLoggedIn = await lastLoggedInAccount(sessionClient, {
+      address: evmAddress(address),
+    });
+
+    if (lastLoggedIn.isOk() && lastLoggedIn.value) {
+      return lastLoggedIn.value.address;
+    }
+
+    const accountsResult = await fetchAccountsAvailable(client, {
+      managedBy: address,
+      includeOwned: true,
+    });
+
+    if (accountsResult.isOk() && accountsResult.value.items.length > 0) {
+      return accountsResult.value.items[0].account.address;
+    }
+
+    return '';
+  };
+
   useEffect(() => {
     const fetchAccountData = async () => {
-      if (!sessionClient || !address) return;
+      if (!sessionClient || !address || account?.username) return;
 
       setIsLoading(true);
 
-      const lastLoggedIn = await lastLoggedInAccount(sessionClient, {
-        address: evmAddress(address),
-      });
-
       try {
+        const accountAddress = await getAccountAddress();
+
+        if (!accountAddress) return;
+
         const result = await fetchAccount(sessionClient, {
-          address: lastLoggedIn.isOk() && lastLoggedIn.value ? lastLoggedIn.value.address : evmAddress(address),
+          address: accountAddress,
         });
 
         if (result.isErr()) return;
