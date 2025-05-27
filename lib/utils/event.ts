@@ -42,7 +42,8 @@ export function formatFiatPrice(price: EventTicketPrice) {
 }
 
 export function formatPrice(price: EventTicketPrice) {
-  if (!price.payment_accounts_expanded?.[0]) return 'Free';
+  // if (!price.payment_accounts_expanded?.[0]) return 'Free';
+  if (!price.payment_accounts_expanded?.[0]) return '';
 
   const isStripe = price.payment_accounts_expanded[0].provider === 'stripe';
 
@@ -128,8 +129,8 @@ export function getAssignedTicket(tickets: Ticket[], user?: string, email?: stri
   return tickets?.find(({ assigned_to, assigned_email }) => assigned_to === user || assigned_email === email);
 }
 
-export function getUnassignedTickets (tickets: Ticket[]) {
-  return tickets.filter(t => !t.assigned_to && !t.assigned_email);
+export function getUnassignedTickets(tickets: Ticket[]) {
+  return tickets.filter((t) => !t.assigned_to && !t.assigned_email);
 }
 
 export function getEventCardStart(event: Event | { start: string; end: string; timezone?: string }) {
@@ -164,5 +165,8 @@ export function isAttending(event: Event, userId: string): boolean {
 }
 
 export function downloadTicketPass(ticket: Ticket) {
-  window.open(`${process.env.NEXT_PUBLIC_LMD_BE}/event/pass/${/iPad|iPhone|iPod/.test(navigator.userAgent) ? 'apple' : 'google'}/${ticket._id}?shortid=${ticket.shortid}`, '_blank');
+  window.open(
+    `${process.env.NEXT_PUBLIC_LMD_BE}/event/pass/${/iPad|iPhone|iPod/.test(navigator.userAgent) ? 'apple' : 'google'}/${ticket._id}?shortid=${ticket.shortid}`,
+    '_blank',
+  );
 }
