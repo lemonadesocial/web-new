@@ -6,12 +6,14 @@ import { addReaction, undoReaction, fetchPostReactions } from '@lens-protocol/cl
 import { Button, toast } from '$lib/components/core';
 import { client } from '$lib/utils/lens/client';
 import { accountAtom, sessionClientAtom } from '$lib/jotai/lens';
+import clsx from 'clsx';
 
 interface PostReactionProps {
   post: Post;
+  isComment?: boolean;
 }
 
-export function PostReaction({ post }: PostReactionProps) {
+export function PostReaction({ post, isComment }: PostReactionProps) {
   const [isUpvoted, setIsUpvoted] = useState(false);
 
   const [upvotes, setUpvotes] = useState(post.stats.upvotes);
@@ -74,14 +76,12 @@ export function PostReaction({ post }: PostReactionProps) {
     }
   };
 
-  if (upvotes === 0) return (
-    <Button
-      variant="tertiary"
-      onClick={handleUpvote}
-      icon={isUpvoted ? "icon-heart-filled" : "icon-heart-outline"}
-      className="rounded-full"
-    />
-  );
+  if (isComment) return (
+    <div className="flex gap-2 items-center">
+      <i className={clsx(isUpvoted ? "icon-heart-filled text-accent-400" : "icon-heart-outline text-tertiary hover:text-primary", "size-5 cursor-pointer")} onClick={handleUpvote} />
+      <p className="text-tertiary">{upvotes}</p>
+    </div>
+  )
 
   return (
     <Button
