@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 
 import { Avatar, Button, modal, Skeleton } from "$lib/components/core";
 import { useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
-import { useAccount, useLogIn, useResumeSession } from "$lib/hooks/useLens";
+import { useAccount, useAccountStats, useLogIn, useResumeSession } from "$lib/hooks/useLens";
 import { randomUserImage } from "$lib/utils/user";
 import { formatWallet } from "$lib/utils/crypto";
 import { useConnectWallet } from "$lib/hooks/useConnectWallet";
@@ -25,6 +25,7 @@ export function LensAccountCard() {
   const { isLoading: loadingSession, resumeSession } = useResumeSession();
   const { logIn, isLoading: loadingLogIn } = useLogIn();
   const { account, isLoading: loadingAccount } = useAccount();
+  const { stats } = useAccountStats();
 
   useEffect(() => {
     if (!address || !walletProvider) return;
@@ -46,7 +47,17 @@ export function LensAccountCard() {
   if (account?.username) return (
     <div className="rounded-sm border border-divider space-y-4 p-4">
       <Avatar src={getAccountAvatar(account)} className="size-14" />
-      <p className="text-lg">{account.username.localName}</p>
+      <div className="space-y-2">
+        <p className="text-lg">{account.username.localName}</p>
+        <div className="flex gap-3">
+          <p className="text-secondary text-sm">
+            {stats.followers} Followers
+          </p>
+          <p className="text-secondary text-sm">
+            {stats.following} Following
+          </p>
+        </div>
+      </div>
     </div>
   );
 

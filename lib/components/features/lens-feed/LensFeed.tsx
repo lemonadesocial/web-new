@@ -1,6 +1,6 @@
 'use client';
 
-import { useFeed } from "$lib/hooks/useLens";
+import { useFeed, usePost } from "$lib/hooks/useLens";
 import { Skeleton } from "$lib/components/core";
 
 import { PostComposer } from "./PostComposer";
@@ -8,6 +8,7 @@ import { FeedPosts } from "./FeedPosts";
 
 export function LensFeed({ feedAddress }: { feedAddress: string }) {
   const { feed, isLoading: isLoadingFeed } = useFeed(feedAddress);
+  const { createPost } = usePost();
 
   if (isLoadingFeed) return (
     <div className="flex flex-col gap-2.5 w-full">
@@ -19,9 +20,13 @@ export function LensFeed({ feedAddress }: { feedAddress: string }) {
 
   if (!feed) return;
 
+  const onPost = async (metadata: unknown) => {
+    await createPost({ metadata, feedAddress });
+  };
+
   return (
     <div className="w-full space-y-4">
-      <PostComposer feedAddress={feedAddress} />
+      <PostComposer onPost={onPost} />
       <FeedPosts feedAddress={feedAddress} />
     </div>
   );

@@ -42,19 +42,10 @@ export function PostRepost({ post }: PostRepostProps) {
     }
   };
 
-  if (reposts === 0) return (
-    <Button
-      variant="tertiary"
-      onClick={handleRepost}
-      icon="icon-repost"
-      className="rounded-full"
-    />
-  );
-
   return (
     <Button
       variant="tertiary"
-      onClick={handleRepost}
+      onClick={() => toast.success('Coming soon')}
       iconLeft="icon-repost"
       className="rounded-full"
     >

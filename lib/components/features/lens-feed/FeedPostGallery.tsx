@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { Button } from '$lib/components/core';
 
-export function FeedPostGallery({ attachments }: { attachments: string[] }) {
+export function FeedPostGallery({ attachments, className }: { attachments: string[]; className?: string }) {
   const [current, setCurrent] = useState(0);
 
   if (!attachments?.length) return null;
@@ -21,7 +22,7 @@ export function FeedPostGallery({ attachments }: { attachments: string[] }) {
   const next = () => setCurrent((c) => (c === attachments.length - 1 ? 0 : c + 1));
 
   return (
-    <div className="relative flex flex-col items-center aspect-video">
+    <div className={twMerge("relative flex flex-col items-center aspect-video", className)}>
       <img
         src={attachments[current]}
         alt={`Post attachment ${current + 1}`}

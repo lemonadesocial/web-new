@@ -1,15 +1,12 @@
 import { handleOperationWith, signMessageWith } from "@lens-protocol/client/ethers";
-import { createAccountWithUsername, fetchAccountsAvailable, fetchFeed, fetchPost, lastLoggedInAccount, post, fetchPosts as lensFetchPosts } from "@lens-protocol/client/actions";
+import { createAccountWithUsername, fetchAccountsAvailable, fetchFeed, fetchPost, lastLoggedInAccount, post, fetchPosts as lensFetchPosts, fetchPostReferences, fetchAccountGraphStats } from "@lens-protocol/client/actions";
 import { account } from "@lens-protocol/metadata";
-import { useAtomValue, useSetAtom } from "jotai";
-import { useState } from "react";
+import { useAtomValue, useSetAtom, useAtom } from "jotai";
+import { useState, useEffect } from "react";
 
-import { evmAddress, never, ok, EvmAddress, AnyPost } from "@lens-protocol/client";
+import { evmAddress, never, ok, EvmAddress, AnyPost, postId, PostReferenceType } from "@lens-protocol/client";
 import { fetchAccount } from "@lens-protocol/client/actions";
-import { useAtom } from "jotai";
-import { useEffect } from "react";
 import { toast } from "$lib/components/core/toast";
-
 import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom } from "$lib/jotai";
 import { useAppKitAccount } from "$lib/utils/appkit";
 import { client, storageClient } from "$lib/utils/lens/client";
@@ -369,5 +366,147 @@ export function usePost() {
   return {
     createPost,
     isLoading,
+  };
+}
+
+type UseCommentsProps = {
+  postId: string;
+  feedAddress?: string;
+};
+
+export function useComments({ postId: targetPostId, feedAddress }: UseCommentsProps) {
+  const sessionClient = useAtomValue(sessionClientAtom);
+  const signer = useSigner();
+  const [comments, setComments] = useState<AnyPost[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
+  const [cursor, setCursor] = useState<string | undefined>();
+
+  const fetchComments = async (refresh = false) => {
+    if (!targetPostId) return;
+    
+    setIsLoading(true);
+    try {
+      const result = await fetchPostReferences(client, {
+        referencedPost: postId(targetPostId),
+        referenceTypes: [PostReferenceType.CommentOn],
+        ...(cursor && !refresh ? { cursor } : {})
+      });
+
+      if (result.isOk()) {
+        const { items, pageInfo } = result.value;
+        
+        setHasMore(!!pageInfo.next);
+        if (pageInfo.next) {
+          setCursor(pageInfo.next);
+        }
+        
+        const validComments = items.filter((comment): comment is NonNullable<typeof comment> => 
+          comment !== null
+        ) as AnyPost[];
+        
+        if (refresh) {
+          setComments(validComments);
+        } else {
+          setComments(prev => [...prev, ...validComments]);
+        }
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const createComment = async (metadata: unknown) => {
+    if (!sessionClient || !signer || !targetPostId) return;
+
+    setIsCreating(true);
+    try {
+      const { uri: contentUri } = await storageClient.uploadAsJson(metadata);
+
+      const result = await post(sessionClient, {
+        contentUri,
+        ...(feedAddress && { feed: evmAddress(feedAddress) }),
+        commentOn: {
+          post: postId(targetPostId),
+        },
+      })
+        .andThen(handleOperationWith(signer))
+        .andThen(sessionClient.waitForTransaction)
+        .andThen((txHash) => fetchPost(sessionClient, { txHash }))
+        .andThen((comment) => {
+          setComments(prev => [comment, ...prev]);
+          return ok(comment);
+        })
+        .mapErr((error) => {
+          throw error;
+        });
+
+      if (result.isErr()) {
+        throw new Error("Failed to create comment");
+      }
+
+      return result.value;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to create comment";
+      toast.error(errorMessage);
+      throw error;
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchComments(true);
+  }, [targetPostId]);
+
+  return {
+    comments,
+    isLoading,
+    isCreating,
+    hasMore,
+    loadMore: () => hasMore && !isLoading && fetchComments(),
+    refresh: () => fetchComments(true),
+    createComment,
+  };
+}
+
+export function useAccountStats() {
+  const [stats, setStats] = useState<{ followers: number; following: number }>({ followers: 0, following: 0 });
+  const [isLoading, setIsLoading] = useState(false);
+  const { account } = useAccount();
+
+  const fetchStats = async () => {
+    if (!account) return;
+
+    setIsLoading(true);
+    try {
+      const result = await fetchAccountGraphStats(client, {
+        account: evmAddress(account.address),
+      });
+
+      if (result.isOk() && result.value) {
+        setStats({
+          followers: result.value.followers,
+          following: result.value.following,
+        });
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, [account]);
+
+  return {
+    stats,
+    isLoading,
+    refetch: fetchStats,
   };
 }
