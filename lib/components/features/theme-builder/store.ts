@@ -2,7 +2,7 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { atom } from 'jotai';
 
 export type ThemeValues = {
-  theme?: 'default' | 'minimal' | 'shader' | 'pattern';
+  theme?: 'default' | 'minimal' | 'shader' | 'pattern' | 'emoji';
   config: {
     mode?: 'dark' | 'light' | 'auto';
     name?: string;
@@ -10,6 +10,10 @@ export type ThemeValues = {
     fg?: string;
     bg?: string;
     class?: string;
+    effect?: {
+      type?: 'video' | 'float';
+      url?: string;
+    };
   };
   font_title: string;
   font_body: string;
@@ -26,11 +30,14 @@ export const defaultTheme: ThemeValues = {
   theme: 'default',
   config: {
     mode: 'dark',
-    color: 'violet',
+    color: '',
     name: '',
     class: '',
     fg: '',
     bg: '',
+    effect: {
+      url: '',
+    },
   },
   font_title: 'default',
   font_body: 'default',
@@ -165,10 +172,22 @@ const pattern: ThemePresetType = {
   },
 };
 
+export const emojis: Record<string, { emoji: string; type: 'video' | 'float'; label: string; url?: string }> = {
+  rabbit: { emoji: '🐇', type: 'video', label: 'Rabbit', url: `${ASSET_PREFIX}/assets/video/bunny.webm` },
+  football: { emoji: '🏈', type: 'video', label: 'Football', url: '' },
+  beer_pong: { emoji: '🥤', type: 'video', label: 'Beer Pong', url: `${ASSET_PREFIX}/assets/video/beer_pong.webm` },
+};
+const emoji: ThemePresetType = {
+  image: `${ASSET_PREFIX}/assets/images/emoji.png`,
+  name: 'Emoji',
+  ui: { disabled: { style: true } },
+};
+
 export const presets = {
   minimal,
   shader,
   pattern,
+  emoji,
 };
 
 export const modes = [

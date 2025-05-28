@@ -42,6 +42,7 @@ export enum ThemeBuilderActionKind {
   'select_font',
   'select_mode',
   'select_style',
+  'select_effect',
   'random',
   'reset',
 }
@@ -85,6 +86,10 @@ function reducers(state: ThemeValues, action: ThemeBuilderAction) {
     }
 
     case ThemeBuilderActionKind.select_style: {
+      return { ...merge(state, action.payload) };
+    }
+
+    case ThemeBuilderActionKind.select_effect: {
       return { ...merge(state, action.payload) };
     }
 

@@ -34,6 +34,11 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
           )}
         >
           {data?.theme === 'shader' && <ShaderGradient mode={data.config.mode} />}
+          {data?.theme === 'emoji' && data.config?.effect?.type === 'video' && data?.config?.effect?.url && (
+            <video key={data.config.name} className="w-full h-full fixed inset-0" autoPlay loop muted>
+              <source src={data?.config?.effect?.url}></source>
+            </video>
+          )}
         </div>
       )}
     </>
