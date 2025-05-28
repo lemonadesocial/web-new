@@ -23,7 +23,7 @@ export function useEventTheme(): [state: ThemeValues, dispatch: React.Dispatch<T
 export const CommunityThemeContext = React.createContext(null);
 
 export function CommunityThemeProvider({ themeData, children }: React.PropsWithChildren & { themeData?: ThemeValues }) {
-  const [state, dispatch] = React.useReducer(reducers, merge(defaultTheme, themeData));
+  const [state, dispatch] = React.useReducer(reducers, themeData || defaultTheme);
   const value: any = React.useMemo(() => [state, dispatch], [state]);
 
   return <CommunityThemeContext.Provider value={value}>{children}</CommunityThemeContext.Provider>;

@@ -7,8 +7,6 @@ export type ThemeValues = {
     mode?: 'dark' | 'light' | 'auto';
     name?: string;
     color?: string;
-    fg?: string;
-    bg?: string;
     class?: string;
   };
   font_title: string;
@@ -26,11 +24,9 @@ export const defaultTheme: ThemeValues = {
   theme: 'default',
   config: {
     mode: 'dark',
-    color: 'violet',
+    color: '',
     name: '',
     class: '',
-    fg: '',
-    bg: '',
   },
   font_title: 'default',
   font_body: 'default',

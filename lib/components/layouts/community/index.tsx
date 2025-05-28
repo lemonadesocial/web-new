@@ -6,6 +6,7 @@ import { getSpace } from '$lib/utils/getSpace';
 
 import { CommunityThemeProvider } from '$lib/components/features/theme-builder/provider';
 import { CommunityContainer } from './container';
+import { defaultTheme } from '$lib/components/features/theme-builder/store';
 
 type LayoutProps = {
   children: React.ReactElement;
@@ -28,8 +29,24 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
     return notFound();
   }
 
+  const themeData = defaultTheme;
+  // NOTE: adapt existing config
+  if (space.theme_data) {
+    themeData.theme = space.theme_data.theme;
+    themeData.font_title = space.theme_data.font_title;
+    themeData.font_body = space.theme_data.font_body;
+    themeData.variables = { ...themeData.variables, ...space.theme_data.variables };
+    themeData.config = {
+      ...themeData.config,
+      mode: space.theme_data.mode || space.theme_data.config?.mode,
+      color: space.theme_data.foreground?.key || space.theme_data.config?.fg || space.theme_data.config?.color,
+      class: space.theme_data.class,
+      name: space.theme_data.config?.name,
+    };
+  }
+
   return (
-    <CommunityThemeProvider themeData={space.theme_data}>
+    <CommunityThemeProvider themeData={themeData}>
       <CommunityContainer space={space}>{children}</CommunityContainer>
     </CommunityThemeProvider>
   );
