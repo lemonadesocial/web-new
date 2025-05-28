@@ -3,12 +3,12 @@ import { useAtomValue } from "jotai";
 
 import { Avatar, Button } from "$lib/components/core";
 import { usePost } from "$lib/hooks/useLens";
-import { randomUserImage } from "$lib/utils/user";
 import { MediaFile, uploadFiles } from "$lib/utils/file";
-import { generatePostMetadata } from "$lib/utils/lens/utils";
+import { generatePostMetadata, getAccountAvatar } from "$lib/utils/lens/utils";
 import { accountAtom } from "$lib/jotai";
 
 import { ImageInput } from "./ImageInput";
+import { randomUserImage } from "$lib/utils/user";
 
 export function PostComposer({ feedAddress }: { feedAddress?: string }) {
   const account = useAtomValue(accountAtom);
@@ -45,7 +45,7 @@ export function PostComposer({ feedAddress }: { feedAddress?: string }) {
 
   return (
     <div className="bg-card rounded-md px-4 py-3 flex gap-3">
-      <Avatar src={randomUserImage(account?.owner)} size="xl" rounded="full" />
+      <Avatar src={account ? getAccountAvatar(account) : randomUserImage()} size="xl" rounded="full" />
 
       <div className="space-y-4 flex-1">
         <textarea

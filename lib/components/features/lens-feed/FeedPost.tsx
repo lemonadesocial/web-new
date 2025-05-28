@@ -7,6 +7,7 @@ import { randomUserImage } from "$lib/utils/user";
 import { FeedPostGallery } from './FeedPostGallery';
 import { PostReaction } from "./PostReaction";
 import { PostRepost } from "./PostRepost";
+import { getAccountAvatar } from "$lib/utils/lens/utils";
 
 type FeedPostProps = {
   post: Post | Repost;
@@ -22,7 +23,7 @@ export function FeedPost({ post }: FeedPostProps) {
       <div className="flex justify-between">
         <div className="flex gap-3">
           <Avatar
-            src={author.metadata?.picture || randomUserImage(author.owner)}
+            src={getAccountAvatar(author)}
             size="xl"
             rounded="full"
           />
