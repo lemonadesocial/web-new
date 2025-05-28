@@ -106,7 +106,7 @@ export function FeedPost({ post, isComment }: FeedPostProps) {
           />
         </div>
       </div>
-      <PostComments postId={rootPost.id} feedAddress={rootPost.feed?.address} />
+      {/* <PostComments postId={rootPost.id} feedAddress={rootPost.feed?.address} /> */}
     </div>
   );
 }
