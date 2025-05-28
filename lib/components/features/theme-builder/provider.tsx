@@ -24,7 +24,6 @@ export const CommunityThemeContext = React.createContext(null);
 
 export function CommunityThemeProvider({ themeData, children }: React.PropsWithChildren & { themeData?: ThemeValues }) {
   const [state, dispatch] = React.useReducer(reducers, themeData || defaultTheme);
-  console.log(state);
   const value: any = React.useMemo(() => [state, dispatch], [state]);
 
   return <CommunityThemeContext.Provider value={value}>{children}</CommunityThemeContext.Provider>;
