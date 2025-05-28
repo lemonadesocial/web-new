@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.2](https://github.com/lemonadesocial/web-new/compare/v1.26.1...v1.26.2) (2025-05-28)
+
+
+### Bug Fixes
+
+* merge default value config builder ([8b2aa73](https://github.com/lemonadesocial/web-new/commit/8b2aa73d7be5a19574d6f72358814d6c6df4678e))
+
 ## [1.26.1](https://github.com/lemonadesocial/web-new/compare/v1.26.0...v1.26.1) (2025-05-27)
 
 
