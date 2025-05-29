@@ -14,16 +14,16 @@ let generates: Record<string, Types.ConfiguredOutput | Types.ConfiguredPlugin[]>
   },
 };
 
-const AIRSTACK_SCHEMA = process.env.NEXT_PUBLIC_AIRSTACK_URL;
-if (AIRSTACK_SCHEMA) {
-  generates['./lib/graphql/generated/farcaster/'] = {
-    schema: AIRSTACK_SCHEMA,
-    documents: ['./lib/graphql/gql/farcaster/*.gql'],
-    preset: 'client',
-    plugins: [],
-    documentTransforms: [addTypenameSelectionDocumentTransform],
-  };
-}
+// const AIRSTACK_SCHEMA = process.env.NEXT_PUBLIC_AIRSTACK_URL;
+// if (AIRSTACK_SCHEMA) {
+//   generates['./lib/graphql/generated/farcaster/'] = {
+//     schema: AIRSTACK_SCHEMA,
+//     documents: ['./lib/graphql/gql/farcaster/*.gql'],
+//     preset: 'client',
+//     plugins: [],
+//     documentTransforms: [addTypenameSelectionDocumentTransform],
+//   };
+// }
 
 const METAVERSE_SCHEMA = process.env.NEXT_PUBLIC_METAVERSE_HTTP_URL;
 if (METAVERSE_SCHEMA) {
