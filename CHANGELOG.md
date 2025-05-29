@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.26.3](https://github.com/lemonadesocial/web-new/compare/v1.26.2...v1.26.3) (2025-05-28)
+
+
+### Bug Fixes
+
+* account picture not showing ([c97c0b8](https://github.com/lemonadesocial/web-new/commit/c97c0b880cb9f3a48dfcfef557f27e9282c11348))
+* adapt existing config community ([c267830](https://github.com/lemonadesocial/web-new/commit/c2678306d40892b073f8fdd14d1dc1c6dfd58059))
+* remove console ([d78fbef](https://github.com/lemonadesocial/web-new/commit/d78fbef8872847f26428a11f6ab2cdb59cd35b7c))
+
 ## [1.26.2](https://github.com/lemonadesocial/web-new/compare/v1.26.1...v1.26.2) (2025-05-28)
 
 

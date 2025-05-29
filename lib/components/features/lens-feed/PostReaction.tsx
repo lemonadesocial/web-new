@@ -1,48 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { PostReactionType, postId, Post } from '@lens-protocol/client';
-import { addReaction, undoReaction, fetchPostReactions } from '@lens-protocol/client/actions';
+import { addReaction, undoReaction } from '@lens-protocol/client/actions';
+import clsx from 'clsx';
 
 import { Button, toast } from '$lib/components/core';
-import { client } from '$lib/utils/lens/client';
-import { accountAtom, sessionClientAtom } from '$lib/jotai/lens';
+import { sessionClientAtom } from '$lib/jotai/lens';
 
 interface PostReactionProps {
   post: Post;
+  isComment?: boolean;
 }
 
-export function PostReaction({ post }: PostReactionProps) {
-  const [isUpvoted, setIsUpvoted] = useState(false);
+export function PostReaction({ post, isComment }: PostReactionProps) {
+  const [isUpvoted, setIsUpvoted] = useState(post.operations?.hasUpvoted);
 
   const [upvotes, setUpvotes] = useState(post.stats.upvotes);
   const sessionClient = useAtomValue(sessionClientAtom);
-  const account = useAtomValue(accountAtom);
-
-
-  useEffect(() => {
-    const checkUpvoteState = async () => {
-      if (!sessionClient || !account) return;
-      const result = await fetchPostReactions(client, {
-        post: postId(post.id),
-      });
-
-      if (result.isErr()) return;
-
-      const { items } = result.value;
-      const userReaction = items.find(
-        (item) => item.account.address === account.address
-      );
-
-      if (userReaction) {
-        const hasUpvote = userReaction.reactions.some(
-          (r) => r.reaction === PostReactionType.Upvote
-        );
-        setIsUpvoted(hasUpvote);
-      }
-    };
-
-    checkUpvoteState();
-  }, [sessionClient, account]);
 
   const handleUpvote = async () => {
     if (!sessionClient) {
@@ -74,14 +48,12 @@ export function PostReaction({ post }: PostReactionProps) {
     }
   };
 
-  if (upvotes === 0) return (
-    <Button
-      variant="tertiary"
-      onClick={handleUpvote}
-      icon={isUpvoted ? "icon-heart-filled" : "icon-heart-outline"}
-      className="rounded-full"
-    />
-  );
+  if (isComment) return (
+    <div className="flex gap-2 items-center">
+      <i className={clsx(isUpvoted ? "icon-heart-filled text-accent-400" : "icon-heart-outline text-tertiary hover:text-primary", "size-5 cursor-pointer")} onClick={handleUpvote} />
+      <p className="text-tertiary">{upvotes}</p>
+    </div>
+  )
 
   return (
     <Button
