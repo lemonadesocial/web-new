@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { PostReactionType, postId, Post } from '@lens-protocol/client';
-import { addReaction, undoReaction, fetchPostReactions } from '@lens-protocol/client/actions';
+import { addReaction, undoReaction } from '@lens-protocol/client/actions';
+import clsx from 'clsx';
 
 import { Button, toast } from '$lib/components/core';
-import { client } from '$lib/utils/lens/client';
-import { accountAtom, sessionClientAtom } from '$lib/jotai/lens';
-import clsx from 'clsx';
+import { sessionClientAtom } from '$lib/jotai/lens';
 
 interface PostReactionProps {
   post: Post;
@@ -14,37 +13,10 @@ interface PostReactionProps {
 }
 
 export function PostReaction({ post, isComment }: PostReactionProps) {
-  const [isUpvoted, setIsUpvoted] = useState(false);
+  const [isUpvoted, setIsUpvoted] = useState(post.operations?.hasUpvoted);
 
   const [upvotes, setUpvotes] = useState(post.stats.upvotes);
   const sessionClient = useAtomValue(sessionClientAtom);
-  const account = useAtomValue(accountAtom);
-
-
-  useEffect(() => {
-    const checkUpvoteState = async () => {
-      if (!sessionClient || !account) return;
-      const result = await fetchPostReactions(client, {
-        post: postId(post.id),
-      });
-
-      if (result.isErr()) return;
-
-      const { items } = result.value;
-      const userReaction = items.find(
-        (item) => item.account.address === account.address
-      );
-
-      if (userReaction) {
-        const hasUpvote = userReaction.reactions.some(
-          (r) => r.reaction === PostReactionType.Upvote
-        );
-        setIsUpvoted(hasUpvote);
-      }
-    };
-
-    checkUpvoteState();
-  }, [sessionClient, account]);
 
   const handleUpvote = async () => {
     if (!sessionClient) {
