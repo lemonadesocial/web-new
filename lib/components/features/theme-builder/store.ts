@@ -7,12 +7,11 @@ export type ThemeValues = {
     mode?: 'dark' | 'light' | 'auto';
     name?: string;
     color?: string;
-    fg?: string;
-    bg?: string;
     class?: string;
     effect?: {
       type?: 'video' | 'float';
       url?: string;
+      emoji?: string;
     };
   };
   font_title: string;
@@ -33,10 +32,9 @@ export const defaultTheme: ThemeValues = {
     color: '',
     name: '',
     class: '',
-    fg: '',
-    bg: '',
     effect: {
       url: '',
+      emoji: '',
     },
   },
   font_title: 'default',
@@ -174,8 +172,23 @@ const pattern: ThemePresetType = {
 
 export const emojis: Record<string, { emoji: string; type: 'video' | 'float'; label: string; url?: string }> = {
   rabbit: { emoji: '🐇', type: 'video', label: 'Rabbit', url: `${ASSET_PREFIX}/assets/video/bunny.webm` },
-  football: { emoji: '🏈', type: 'video', label: 'Football', url: '' },
+  football: { emoji: '🏈', type: 'float', label: 'Football', url: `` },
   beer_pong: { emoji: '🥤', type: 'video', label: 'Beer Pong', url: `${ASSET_PREFIX}/assets/video/beer_pong.webm` },
+  heart: { emoji: '❤️', type: 'float', label: 'Heart', url: '' },
+  party: { emoji: '🥳', type: 'float', label: 'Party', url: '' },
+  glasses: { emoji: '😎', type: 'float', label: 'Glasses', url: '' },
+  clover: { emoji: '🍀', type: 'float', label: 'Clover', url: '' },
+  pumpkin: { emoji: '🎃', type: 'float', label: 'Pumpkin', url: '' },
+  lollipop: { emoji: '🍭', type: 'float', label: 'Lollipop', url: '' },
+  earth: { emoji: '🌎', type: 'float', label: 'Earth', url: '' },
+  fire: { emoji: '🔥', type: 'float', label: 'Fire', url: '' },
+  ghost: { emoji: '👻', type: 'float', label: 'Ghost', url: '' },
+  dragon: { emoji: '🐲', type: 'float', label: 'Dragon', url: '' },
+  cocktail: { emoji: '🍸', type: 'float', label: 'Cocktail', url: '' },
+  basketball: { emoji: '🏀', type: 'float', label: 'Basketball', url: '' },
+  demon: { emoji: '😈', type: 'float', label: 'Demon', url: '' },
+  alien: { emoji: '👽', type: 'float', label: 'Alien', url: '' },
+  skull: { emoji: '💀', type: 'float', label: 'Skull', url: '' },
 };
 const emoji: ThemePresetType = {
   image: `${ASSET_PREFIX}/assets/images/emoji.png`,

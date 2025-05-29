@@ -484,7 +484,7 @@ function ThemeEffect() {
               e.stopPropagation();
               dispatch({
                 type: ThemeBuilderActionKind.select_effect,
-                payload: { config: { name: key, effect: { type: value.type, url: value.url } } },
+                payload: { config: { name: key, effect: { type: value.type, url: value.url, emoji: value.emoji } } },
               });
             }}
           >

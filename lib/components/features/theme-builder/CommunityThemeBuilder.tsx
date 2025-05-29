@@ -46,7 +46,6 @@ function CommunityThemeBuilderPane({
   onClose: () => void;
 }) {
   const [state, dispatch] = useCommunityTheme();
-  const [prevState, setPrevState] = React.useState(state);
   const sheetRef = React.useRef<SheetRef>(null);
 
   const themeName = !state.theme || state.theme === 'default' ? 'minimal' : state.theme;
@@ -55,7 +54,7 @@ function CommunityThemeBuilderPane({
   const [updateCommunity, { loading }] = useMutation(UpdateSpaceDocument);
 
   const handleCloseSheet = () => {
-    const dirty = !isEqual(state, prevState);
+    const dirty = !isEqual(state, initial);
     if (dirty) {
       modal.open(ConfirmModal, {
         props: {
@@ -173,7 +172,6 @@ function CommunityThemeBuilderPane({
                           onComplete: (client) => {
                             client.writeFragment<Space>({ id: `Space:${spaceId}`, data: { theme_data: null } });
                             dispatch({ type: ThemeBuilderActionKind.reset, payload: defaultTheme });
-                            setPrevState(defaultTheme);
                           },
                         });
                       }
@@ -356,7 +354,7 @@ export function PopoverShaderColor() {
               onClick={() => {
                 dispatch({
                   type: ThemeBuilderActionKind.select_style,
-                  payload: { config: { name: s.name, fg: s.accent } },
+                  payload: { config: { name: s.name, color: s.accent } },
                 });
               }}
               className={twMerge(
