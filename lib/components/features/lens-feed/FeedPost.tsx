@@ -1,4 +1,4 @@
-import { ImageMetadata, Post, Repost, TextOnlyMetadata } from "@lens-protocol/client";
+import { ImageMetadata, LinkMetadata, Post, Repost, TextOnlyMetadata } from "@lens-protocol/client";
 import { formatDistanceToNow } from "date-fns";
 
 import { Avatar, Button, toast } from "$lib/components/core";
@@ -8,6 +8,7 @@ import { FeedPostGallery } from './FeedPostGallery';
 import { PostReaction } from "./PostReaction";
 import { PostRepost } from "./PostRepost";
 import { PostComments } from "./PostComments";
+import { EventPreview } from "./EventPreview";
 
 type FeedPostProps = {
   post: Post | Repost;
@@ -86,6 +87,11 @@ export function FeedPost({ post, isComment }: FeedPostProps) {
         {(metadata as ImageMetadata).attachments?.length > 0 && (
           <FeedPostGallery attachments={(metadata as ImageMetadata).attachments.map(({ item }) => item)} />
         )}
+        {
+          (metadata as LinkMetadata).sharingLink && (
+            <EventPreview url={(metadata as LinkMetadata).sharingLink} />
+          )
+        }
         <div className="flex justify-between">
           <div className="flex gap-2">
             <PostReaction post={rootPost} />

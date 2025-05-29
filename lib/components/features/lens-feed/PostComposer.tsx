@@ -1,13 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { useAtomValue } from "jotai";
 
-import { Avatar, Button } from "$lib/components/core";
+import { Avatar, Button, modal, toast } from "$lib/components/core";
 import { MediaFile, uploadFiles } from "$lib/utils/file";
 import { generatePostMetadata, getAccountAvatar } from "$lib/utils/lens/utils";
 import { accountAtom } from "$lib/jotai";
 import { randomUserImage } from "$lib/utils/user";
+import { Event } from "$lib/graphql/generated/backend/graphql";
 
 import { ImageInput } from "./ImageInput";
+import { AddEventModal } from "./AddEventModal";
+import { EventPreview } from "./EventPreview";
 
 type PostComposerProps = {
   placeholder?: string;
@@ -16,13 +19,18 @@ type PostComposerProps = {
 
 export function PostComposer({ placeholder, onPost }: PostComposerProps) {
   const account = useAtomValue(accountAtom);
-  const [isLoading, setIsLoading] = useState(false);
+
   const [value, setValue] = useState('');
   const [isActive, setIsActive] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const [files, setFiles] = useState<File[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+
+  const [sharingLink, setSharingLink] = useState<string | undefined>(undefined);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -40,13 +48,20 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
       images = await uploadFiles(files, 'post');
       setIsUploading(false);
     }
-    
-    setIsLoading(true);
-    await onPost(generatePostMetadata({ content, images }));
-    setIsLoading(false);
-    setValue('');
-    setFiles([]);
-    setIsActive(false);
+
+    try {
+      setIsLoading(true);
+      await onPost(generatePostMetadata({ content, images, sharingLink }));
+      setIsLoading(false);
+      setValue('');
+      setFiles([]);
+      setSharingLink(undefined);
+      setIsActive(false);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to post');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -64,15 +79,46 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
           rows={1}
           disabled={!account}
         />
+
         {
           files.length > 0 && <ImageInput value={files} onChange={setFiles} />
         }
+
+        {
+          sharingLink && (
+            <div className="relative">
+              <EventPreview url={sharingLink} />
+              <Button
+                icon="icon-x size-[14]"
+                variant="tertiary"
+                className="rounded-full absolute top-3 right-3"
+                size="xs"
+                onClick={() => setSharingLink(undefined)}
+              />
+            </div>
+          )
+        }
+
         {isActive && (
           <div className="flex items-center justify-between">
-            <Button icon="icon-image" variant="tertiary" className="rounded-full" onClick={() => inputRef.current?.click()} />
-            <Button 
-              variant="primary" 
-              className="rounded-full" 
+            <div className="flex gap-2">
+              <Button icon="icon-image" variant="tertiary" className="rounded-full" onClick={() => inputRef.current?.click()} />
+              <Button
+                icon="icon-celebration"
+                variant="tertiary"
+                className="rounded-full"
+                onClick={() => {
+                  modal.open(AddEventModal, {
+                    props: {
+                      onConfirm: link => setSharingLink(link),
+                    },
+                  });
+                }}
+              />
+            </div>
+            <Button
+              variant="primary"
+              className="rounded-full"
               disabled={!value.trim() || isLoading}
               onClick={handlePost}
               loading={isLoading || isUploading}

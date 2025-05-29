@@ -101,6 +101,8 @@ query GetEvent($id: MongoID, $shortid: String) {
     virtual
     virtual_url
     theme_data
+    url
+    url_go
   }
 }
 

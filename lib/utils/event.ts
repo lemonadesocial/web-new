@@ -170,3 +170,8 @@ export function downloadTicketPass(ticket: Ticket) {
     '_blank',
   );
 }
+
+export function extractShortId(url: string): string | null {
+  const match = url.match(/lemonade\.social\/e\/([\w-]+)/i);
+  return match ? match[1] : null;
+}

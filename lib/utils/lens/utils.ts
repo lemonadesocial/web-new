@@ -1,10 +1,18 @@
-import { image, MediaImageMimeType, textOnly } from "@lens-protocol/metadata";
+import { image, link, MediaImageMimeType, textOnly } from "@lens-protocol/metadata";
 import { Account } from "@lens-protocol/client";
+
 
 import { MediaFile } from "../file";
 import { randomUserImage } from "../user";
 
-export function generatePostMetadata({ content, images }: { content: string, images?: MediaFile[] }) {
+export function generatePostMetadata({ content, images, sharingLink }: { content: string, images?: MediaFile[]; sharingLink?: string; }) {
+  if (sharingLink) {
+    return link({
+      content,
+      sharingLink
+    })
+  }
+
   if (images?.length) {
     return image({
       content,
