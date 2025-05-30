@@ -8,6 +8,7 @@ import { FeedPostGallery } from './FeedPostGallery';
 import { PostReaction } from "./PostReaction";
 import { PostRepost } from "./PostRepost";
 import { EventPreview } from "./EventPreview";
+import { PostButton } from "./PostButton";
 
 type FeedPostProps = {
   post: Post | Repost;
@@ -68,17 +69,13 @@ export function FeedPost({ post, isComment }: FeedPostProps) {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button
-              variant="tertiary"
+            <PostButton
+              icon="icon-upload"
               onClick={() => toast.success('Coming soon')}
-              iconLeft="icon-upload"
-              className="rounded-full"
             />
-            <Button
-              variant="tertiary"
+            <PostButton
+              icon="icon-more-vert"
               onClick={() => toast.success('Coming soon')}
-              iconLeft="icon-more-vert"
-              className="rounded-full"
             />
           </div>
         </div>
@@ -92,22 +89,18 @@ export function FeedPost({ post, isComment }: FeedPostProps) {
           )
         }
         <div className="flex justify-between">
-          <div className="flex gap-2">
+          <div className="flex gap-4 sm:gap-2">
             <PostReaction post={rootPost} />
-            <Button
-              variant="tertiary"
-              iconLeft="icon-chat"
-              className="rounded-full"
-            >
-              {rootPost.stats.comments}
-            </Button>
+            <PostButton
+              icon="icon-chat"
+              label={rootPost.stats.comments}
+              onClick={() => toast.success('Coming soon')}
+            />
             <PostRepost post={rootPost} />
           </div>
-          <Button
-            variant="tertiary"
+          <PostButton
+            icon="icon-share"
             onClick={() => toast.success('Coming soon')}
-            iconLeft="icon-share"
-            className="rounded-full"
           />
         </div>
       </div>

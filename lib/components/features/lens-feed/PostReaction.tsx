@@ -4,8 +4,9 @@ import { PostReactionType, postId, Post } from '@lens-protocol/client';
 import { addReaction, undoReaction } from '@lens-protocol/client/actions';
 import clsx from 'clsx';
 
-import { Button, toast } from '$lib/components/core';
+import { toast } from '$lib/components/core';
 import { sessionClientAtom } from '$lib/jotai/lens';
+import { PostButton } from './PostButton';
 
 interface PostReactionProps {
   post: Post;
@@ -56,13 +57,12 @@ export function PostReaction({ post, isComment }: PostReactionProps) {
   )
 
   return (
-    <Button
-      variant={isUpvoted ? "primary" : "tertiary"}
+    <PostButton
+      icon={isUpvoted ? "icon-heart-filled" : "icon-heart-outline"}
       onClick={handleUpvote}
-      iconLeft={isUpvoted ? "icon-heart-filled" : "icon-heart-outline"}
-      className="rounded-full"
-    >
-      {upvotes}
-    </Button>
+      label={upvotes}
+      isActive={isUpvoted}
+      className={isUpvoted ? 'sm:bg-accent-500 sm:hover:bg-accent-700' : ''}
+    />
   );
 }
