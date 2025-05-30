@@ -118,7 +118,20 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
             )}
           />
 
-          <Controller control={control} name="location" render={() => <PlaceAutoComplete label="Event Location *" />} />
+          <Controller
+            control={control}
+            name="location"
+            render={() => (
+              <PlaceAutoComplete
+                label="Event Location *"
+                onSelect={(address) => {
+                  if (address.latitude) setValue('location.latitude', address.latitude);
+                  if (address.longitude) setValue('location.longitude', address.longitude);
+                  setValue('location.address', address);
+                }}
+              />
+            )}
+          />
 
           <Controller
             control={control}
