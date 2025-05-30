@@ -179,7 +179,11 @@ function EventBuilderPaneOptions() {
             disabled={presets[themeName].ui?.disabled?.effect}
             onClick={() => setState('effect')}
           >
-            <div className="size-[32px] bg-quaternary rounded-full" />
+            {!data.config.effect?.name ? (
+              <div className="size-[32px] bg-quaternary rounded-full" />
+            ) : (
+              <div className="size-[32px] text-2xl">{emojis[data.config.effect.name].emoji}</div>
+            )}
             <p className="text-xs">Effect</p>
           </ActionButton>
 
@@ -481,13 +485,13 @@ function ThemeEffect() {
           <div
             className={clsx(
               'border-2 border-[var(--color-divider)] rounded-full px-4 py-2 w-[60px] h-[60px] hover:border-primary flex items-center justify-between',
-              key === state.config.name && 'border border-primary',
+              key === state.config?.effect?.name && 'border border-primary',
             )}
             onClick={(e) => {
               e.stopPropagation();
               dispatch({
                 type: ThemeBuilderActionKind.select_effect,
-                payload: { config: { name: key, effect: { type: value.type, url: value.url, emoji: value.emoji } } },
+                payload: { config: { effect: { name: key, type: value.type, url: value.url, emoji: value.emoji } } },
               });
             }}
           >
@@ -551,7 +555,7 @@ function ActionButton({
         onClick?.();
       }}
       className={clsx(
-        'flex items-center justify-center flex-col gap-2 border border-transparent pt-3 pb-2 px-1 hover:bg-card-hover aspect-4/3 cursor-pointer rounded-sm w-[80px] font-body-default disabled:opacity-50 disabled:bg-transparent disabled:cursor-not-allowed',
+        'flex items-center justify-center flex-col gap-2 border border-transparent pt-3 pb-2 px-1 hover:bg-card-hover cursor-pointer rounded-sm w-[80px] font-body-default disabled:opacity-50 disabled:bg-transparent disabled:cursor-not-allowed',
         active && 'bg-card-hover!',
       )}
     >
