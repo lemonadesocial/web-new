@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.30.0](https://github.com/lemonadesocial/web-new/compare/v1.29.0...v1.30.0) (2025-05-30)
+
+
+### Features
+
+* add effect on top of other theme ([c6e1524](https://github.com/lemonadesocial/web-new/commit/c6e152409ab473a53d443cabe9409a121fed9e08))
+
+
+### Bug Fixes
+
+* update effect icon on main builder event ([f26e6aa](https://github.com/lemonadesocial/web-new/commit/f26e6aa9bea2cc5d5f6515cb93c9232ced58f5a4))
+
 ## [1.29.0](https://github.com/lemonadesocial/web-new/compare/v1.28.0...v1.29.0) (2025-05-30)
 
 
