@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.27.0](https://github.com/lemonadesocial/web-new/compare/v1.26.3...v1.27.0) (2025-05-30)
+
+
+### Features
+
+* attach event ([386ae96](https://github.com/lemonadesocial/web-new/commit/386ae9631b401c17d22e68dbe2329da5abccec75))
+* post comments ([3e75656](https://github.com/lemonadesocial/web-new/commit/3e75656a2acbab6705db6cd9384ae377da4b192c))
+* **temp:** hide comments ([238c6ae](https://github.com/lemonadesocial/web-new/commit/238c6ae6687cbbbad31cc6a5102ccc0d8abd2e4a))
+* use upvote status from api ([4ff36d5](https://github.com/lemonadesocial/web-new/commit/4ff36d5e47b9a5f0031bcb2e333e2e31289d3fc0))
+
+
+### Bug Fixes
+
+* event desc long text ([4237698](https://github.com/lemonadesocial/web-new/commit/423769866f4c8cc7aa3f3e1126af5908a9218f4d))
+* lint ([be71b12](https://github.com/lemonadesocial/web-new/commit/be71b1290b13d36ffced8b7f2c2c8db91092b2a8))
+
 ## [1.26.3](https://github.com/lemonadesocial/web-new/compare/v1.26.2...v1.26.3) (2025-05-28)
 
 
