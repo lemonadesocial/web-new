@@ -21,7 +21,7 @@ export function HostedBySection({ event }: { event: Event }) {
       {hosts.map((u) => (
         <div key={u._id} className="flex gap-3">
           <Avatar src={userAvatar(u)} />
-          <Link className="hover:text-accent-400 flex-1 font-medium" href={`${LEMONADE_DOMAIN}/u/${u?.username}`} target="_blank">
+          <Link className="hover:text-accent-400 flex-1 font-medium" href={`${LEMONADE_DOMAIN}/u/${u.username || u._id}`} target="_blank">
             {u.name}
           </Link>
           <div className="flex items-center gap-3">
