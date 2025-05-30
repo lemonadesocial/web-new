@@ -5,7 +5,9 @@ import { addReaction, undoReaction } from '@lens-protocol/client/actions';
 import clsx from 'clsx';
 
 import { toast } from '$lib/components/core';
+import { useLensAuth } from '$lib/hooks/useLens';
 import { sessionClientAtom } from '$lib/jotai/lens';
+
 import { PostButton } from './PostButton';
 
 interface PostReactionProps {
@@ -18,6 +20,7 @@ export function PostReaction({ post, isComment }: PostReactionProps) {
 
   const [upvotes, setUpvotes] = useState(post.stats.upvotes);
   const sessionClient = useAtomValue(sessionClientAtom);
+  const handleLensAuth = useLensAuth();
 
   const handleUpvote = async () => {
     if (!sessionClient) {
@@ -59,7 +62,7 @@ export function PostReaction({ post, isComment }: PostReactionProps) {
   return (
     <PostButton
       icon={isUpvoted ? "icon-heart-filled" : "icon-heart-outline"}
-      onClick={handleUpvote}
+      onClick={() => handleLensAuth(handleUpvote)}
       label={upvotes}
       isActive={isUpvoted}
       className={isUpvoted ? 'sm:bg-accent-500 sm:hover:bg-accent-700' : ''}

@@ -7,12 +7,16 @@ import { useState, useEffect } from "react";
 import { evmAddress, never, ok, EvmAddress, AnyPost, postId, PostReferenceType } from "@lens-protocol/client";
 import { fetchAccount } from "@lens-protocol/client/actions";
 import { toast } from "$lib/components/core/toast";
-import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom } from "$lib/jotai";
+import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom, chainsMapAtom } from "$lib/jotai";
 import { useAppKitAccount } from "$lib/utils/appkit";
 import { client, storageClient } from "$lib/utils/lens/client";
+import { LENS_CHAIN_ID } from "$lib/utils/lens/constants";
+import { modal } from "$lib/components/core";
+import { ClaimUsernameModal } from "$lib/components/features/lens-account/ClaimUsernameModal";
 
 import { useSigner } from "./useSigner";
 import { useMe } from "./useMe";
+import { useConnectWallet } from "./useConnectWallet";
 
 export function useResumeSession() {
   const setSessionClient = useSetAtom(sessionClientAtom);
@@ -509,4 +513,35 @@ export function useAccountStats() {
     isLoading,
     refetch: fetchStats,
   };
+}
+
+export function useLensAuth() {
+  const { account } = useAccount();
+  const sessionClient = useAtomValue(sessionClientAtom);
+  const chainsMap = useAtomValue(chainsMapAtom);
+  const { isReady, connect } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);
+  const { logIn } = useLogIn();
+
+  const handleAuth = async (action: () => Promise<void>): Promise<void> => {
+    if (account?.username) {
+      await action();
+      return;
+    }
+
+    if (sessionClient) {
+      toast.error('You need to claim a username to post');
+      modal.open(ClaimUsernameModal);
+      return;
+    }
+
+    if (isReady) {
+      toast.error('Please login to your Lens account to continue');
+      await logIn();
+      return;
+    }
+
+    connect();
+  };
+
+  return handleAuth;
 }

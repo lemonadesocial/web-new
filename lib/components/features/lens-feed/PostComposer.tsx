@@ -6,6 +6,7 @@ import { MediaFile, uploadFiles } from "$lib/utils/file";
 import { generatePostMetadata, getAccountAvatar } from "$lib/utils/lens/utils";
 import { accountAtom } from "$lib/jotai";
 import { randomUserImage } from "$lib/utils/user";
+import { useLensAuth } from "$lib/hooks/useLens";
 
 import { ImageInput } from "./ImageInput";
 import { AddEventModal } from "./AddEventModal";
@@ -31,6 +32,8 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleLensAuth = useLensAuth();
+  
   useEffect(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
@@ -72,11 +75,10 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
           ref={textareaRef}
           value={value}
           onChange={e => setValue(e.target.value)}
-          placeholder={account ? placeholder || `What's on your mind, ${account?.username?.localName}?` : 'Please connect your wallet to post'}
+          placeholder={placeholder || (account ? `What's on your mind, ${account?.username?.localName}?` : `What's on your mind?`)}
           className="w-full bg-transparent border-none outline-none font-medium text-lg mt-2 placeholder-quaternary resize-none overflow-hidden min-h-[24px] max-h-[200px]"
           onFocus={() => setIsActive(true)}
           rows={1}
-          disabled={!account}
         />
 
         {
@@ -119,7 +121,7 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
               variant="primary"
               className="rounded-full"
               disabled={!value.trim() || isLoading}
-              onClick={handlePost}
+              onClick={() => handleLensAuth(handlePost)}
               loading={isLoading || isUploading}
             >
               Post
