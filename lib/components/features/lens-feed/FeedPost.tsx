@@ -7,7 +7,6 @@ import { getAccountAvatar } from "$lib/utils/lens/utils";
 import { FeedPostGallery } from './FeedPostGallery';
 import { PostReaction } from "./PostReaction";
 import { PostRepost } from "./PostRepost";
-import { PostComments } from "./PostComments";
 import { EventPreview } from "./EventPreview";
 
 type FeedPostProps = {

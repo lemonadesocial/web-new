@@ -6,7 +6,6 @@ import { MediaFile, uploadFiles } from "$lib/utils/file";
 import { generatePostMetadata, getAccountAvatar } from "$lib/utils/lens/utils";
 import { accountAtom } from "$lib/jotai";
 import { randomUserImage } from "$lib/utils/user";
-import { Event } from "$lib/graphql/generated/backend/graphql";
 
 import { ImageInput } from "./ImageInput";
 import { AddEventModal } from "./AddEventModal";

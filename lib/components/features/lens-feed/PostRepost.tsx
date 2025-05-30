@@ -42,6 +42,8 @@ export function PostRepost({ post }: PostRepostProps) {
     }
   };
 
+  console.log(handleRepost)
+
   return (
     <Button
       variant="tertiary"
