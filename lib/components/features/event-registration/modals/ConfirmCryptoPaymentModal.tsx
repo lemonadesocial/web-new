@@ -9,7 +9,7 @@ import { useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
 import { approveERC20Spender, formatWallet, isNativeToken, LemonadeRelayPaymentContract, LemonadeStakePaymentContract, transfer, writeContract } from "$lib/utils/crypto";
 import { chainsMapAtom } from "$lib/jotai";
 
-import { currencyAtom, eventDataAtom, pricingInfoAtom, registrationModal, selectedPaymentAccountAtom, useAtomValue } from "../store";
+import { eventDataAtom, pricingInfoAtom, registrationModal, selectedPaymentAccountAtom, tokenAddressAtom, useAtomValue } from "../store";
 import { VerifyingTransactionModal } from "./VerifyingTransactionModal";
 import { ErrorModal } from "../../modals/ErrorModal";
 
@@ -26,13 +26,12 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
   const event = useAtomValue(eventDataAtom);
   const selectedPaymentAccount = useAtomValue(selectedPaymentAccountAtom);
   const pricingInfo = useAtomValue(pricingInfoAtom);
-  const currency = useAtomValue(currencyAtom);
   const network = (selectedPaymentAccount!.account_info as EthereumAccount)!.network;
   const chain = useJotaiAtomValue(chainsMapAtom)[network];
+  const tokenAddress = useAtomValue(tokenAddressAtom)!;
 
   const paymentAccount = selectedPaymentAccount ? pricingInfo?.payment_accounts?.find(account => account._id === selectedPaymentAccount._id) : pricingInfo?.payment_accounts?.[0];
   const paymentAccountInfo = paymentAccount?.account_info as (EthereumAccount | EthereumRelayAccount | EthereumStakeAccount);
-  const tokenAddress = paymentAccountInfo.currency_map[currency].contracts[network];
   const payAmount = paymentAccount && pricingInfo ? BigInt(pricingInfo.total) + BigInt(paymentAccount.fee || 0) : BigInt(0);
 
   const [handleUpdatePayment, { loading: loadingUpdatePayment }] = useMutation(UpdatePaymentDocument);

@@ -41,7 +41,6 @@ export function useBuyTickets(callback?: (data: BuyTicketsMutation) => void) {
   });
 
   const pay = () => {
-    // TODO: check balance
     const buyerInfo = store.get(buyerInfoAtom);
     const userInfo = store.get(userInfoAtom);
     const discountCode = store.get(discountCodeAtom);
