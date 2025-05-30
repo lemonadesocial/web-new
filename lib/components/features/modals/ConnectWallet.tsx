@@ -37,7 +37,7 @@ export function ConnectWallet({ onConnect, chain }: { onConnect: () => void; cha
       <ModalContent icon={chain.logo_url && <img src={chain.logo_url} className="w-6" />}>
         <p className="text-lg">Switch Network</p>
         <p className="text-secondary mt-2">
-          You&apos;re connected to a different network than the one you selected. Please switch to ${chain.name} in your wallet to continue.
+          You&apos;re connected to a different network than the one you selected. Please switch to {chain.name} in your wallet to continue.
         </p>
         <Button variant="secondary" className="w-full mt-4" onClick={() => switchNetwork(getAppKitNetwork(chain))}>
           Switch to {chain.name}
