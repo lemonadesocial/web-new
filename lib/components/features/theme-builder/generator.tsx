@@ -36,27 +36,24 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
             data.config.mode,
           )}
         >
-          {data?.theme === 'shader' && <ShaderGradient mode={data.config.mode} />}
-          {data?.theme === 'emoji' && (
-            <>
-              {data.config?.effect?.type === 'video' && data?.config?.effect?.url && (
-                <video
-                  key={data.config.name}
-                  className="min-w-full min-h-full fixed inset-0"
-                  autoPlay
-                  loop
-                  playsInline
-                  muted
-                >
-                  <source src={data?.config?.effect?.url} type="video/webm"></source>
-                </video>
-              )}
-
-              {data.config.effect?.type === 'float' && (
-                <EmojiAnimate key={data.config.effect.emoji} emoji={data.config.effect.emoji} />
-              )}
-            </>
+          {data.config?.effect?.type === 'video' && data?.config?.effect?.url && (
+            <video
+              key={data.config.name}
+              className="min-w-full min-h-full fixed inset-0"
+              autoPlay
+              loop
+              playsInline
+              muted
+            >
+              <source src={data?.config?.effect?.url} type="video/webm"></source>
+            </video>
           )}
+
+          {data.config.effect?.type === 'float' && (
+            <EmojiAnimate key={data.config.effect.emoji} emoji={data.config.effect.emoji} />
+          )}
+
+          {data?.theme === 'shader' && <ShaderGradient mode={data.config.mode} />}
         </div>
       )}
     </>

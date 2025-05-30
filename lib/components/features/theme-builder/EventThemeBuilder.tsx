@@ -63,7 +63,10 @@ function EventThemeBuilderPane({ show, onClose }: { show: boolean; onClose: () =
 
   React.useEffect(() => {
     if (!data.theme || data.theme === 'default') {
-      dispatch({ type: ThemeBuilderActionKind.select_template, payload: { theme: 'minimal' } });
+      dispatch({
+        type: ThemeBuilderActionKind.select_template,
+        payload: { theme: 'minimal', config: { color: 'woodsmoke' } },
+      });
     }
   }, [data.theme]);
 

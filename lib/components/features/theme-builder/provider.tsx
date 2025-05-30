@@ -55,7 +55,7 @@ function reducers(state: ThemeValues, action: ThemeBuilderAction) {
       let payload = { ...action.payload };
 
       if (payload.theme === 'minimal') {
-        payload = { ...payload, config: { ...payload.config, name: '' } };
+        payload = { ...payload, config: { ...payload.config, name: '', color: payload.config?.color || 'woodsmoke' } };
       }
 
       if (payload.theme === 'shader' && !shaders.map((item) => item.name).includes(state.config.name as string)) {

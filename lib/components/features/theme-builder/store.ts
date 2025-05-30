@@ -2,13 +2,14 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { atom } from 'jotai';
 
 export type ThemeValues = {
-  theme?: 'default' | 'minimal' | 'shader' | 'pattern' | 'emoji';
+  theme?: 'default' | 'minimal' | 'shader' | 'pattern';
   config: {
     mode?: 'dark' | 'light' | 'auto';
     name?: string;
     color?: string;
     class?: string;
     effect?: {
+      name: string;
       type?: 'video' | 'float';
       url?: string;
       emoji?: string;
@@ -33,6 +34,7 @@ export const defaultTheme: ThemeValues = {
     name: '',
     class: '',
     effect: {
+      name: '',
       url: '',
       emoji: '',
     },
@@ -128,7 +130,6 @@ const minimal: ThemePresetType = {
     mode: 'system',
     config: { colors },
     disabled: {
-      effect: true,
       style: true,
       mode: true,
 
@@ -157,7 +158,7 @@ const shader: ThemePresetType = {
   ui: {
     mode: 'all',
     config: { colors, shaders },
-    disabled: { color: true, effect: true },
+    disabled: { color: true },
   },
 };
 
@@ -166,7 +167,7 @@ const pattern: ThemePresetType = {
   image: `${ASSET_PREFIX}/assets/images/pattern.png`,
   name: 'Pattern',
   ui: {
-    disabled: { mode: true, effect: true },
+    disabled: { mode: true },
   },
 };
 
@@ -190,17 +191,11 @@ export const emojis: Record<string, { emoji: string; type: 'video' | 'float'; la
   alien: { emoji: '👽', type: 'float', label: 'Alien', url: '' },
   skull: { emoji: '💀', type: 'float', label: 'Skull', url: '' },
 };
-const emoji: ThemePresetType = {
-  image: `${ASSET_PREFIX}/assets/images/emoji.png`,
-  name: 'Emoji',
-  ui: { disabled: { style: true } },
-};
 
 export const presets = {
   minimal,
   shader,
   pattern,
-  emoji,
 };
 
 export const modes = [
