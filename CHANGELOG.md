@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.0](https://github.com/lemonadesocial/web-new/compare/v1.28.0...v1.29.0) (2025-05-30)
+
+
+### Features
+
+* check lens auth ([379dcb6](https://github.com/lemonadesocial/web-new/commit/379dcb6038e0a78037750abeb5bceaa1fe43f5ee))
+
 ## [1.28.0](https://github.com/lemonadesocial/web-new/compare/v1.27.0...v1.28.0) (2025-05-30)
 
 
