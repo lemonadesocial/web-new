@@ -1,0 +1,483 @@
+import React from 'react';
+import clsx from 'clsx';
+import { format } from 'date-fns';
+import { Controller, useForm } from 'react-hook-form';
+import { twMerge } from 'tailwind-merge';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { isDate } from 'lodash';
+
+import { Button, Card, Input, Menu, modal, Spacer, toast } from '$lib/components/core';
+import { Calendar } from '$lib/components/core/calendar';
+import { TimezoneOption, timezoneOptions } from '$lib/utils/timezone';
+import { convertFromUtcToTimezone, formatWithTimezone } from '$lib/utils/date';
+import {
+  CreateExternalEventDocument,
+  PinEventsToSpaceDocument,
+  SpaceTag,
+  SpaceTagType,
+} from '$lib/graphql/generated/backend/graphql';
+import { useClient } from '$lib/graphql/request';
+import { PlaceAutoComplete } from '$lib/components/core/map/place-autocomplete';
+
+import { AddTags } from './ListingEvent';
+
+type FormValues = {
+  title?: string;
+  location?: {
+    address?: any;
+    latitude?: number;
+    longitude?: number;
+  };
+  datetime?: {
+    timezone?: string;
+    start?: string;
+    end?: string;
+  };
+
+  /** this not match - just show - DONT DO ANYTHING */
+  host?: string;
+};
+
+export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
+  const [tags, setTags] = React.useState<SpaceTag[]>([]);
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { isSubmitting },
+    setValue,
+  } = useForm<FormValues>({
+    defaultValues: { title: '' },
+  });
+
+  const { client } = useClient();
+
+  const title = watch('title');
+
+  const onSubmit = async (values: FormValues) => {
+    const { data } = await client.query({
+      query: CreateExternalEventDocument,
+      variables: {
+        input: {
+          private: false,
+          published: true,
+          title: values.title,
+          start: convertFromUtcToTimezone(values.datetime?.start as string, values.datetime?.timezone),
+          end: convertFromUtcToTimezone(values.datetime?.end as string, values.datetime?.timezone),
+        },
+      },
+    });
+    const event = data?.createEvent;
+
+    if (event) {
+      await client.query({
+        query: PinEventsToSpaceDocument,
+        variables: { events: [event._id], tags: tags.map((item) => item._id), space: spaceId },
+        fetchPolicy: 'network-only',
+      });
+      modal.close();
+      toast.success('Submitted');
+    }
+  };
+
+  return (
+    <div className="w-[350] md:w-[480]">
+      <Card.Header className="flex justify-between items-center">
+        <p className="text-lg font-medium">Submit Lemonade Event</p>
+        <Button
+          icon="icon-x size-[14]"
+          variant="tertiary"
+          className="rounded-full"
+          size="xs"
+          onClick={() => modal.close()}
+        />
+      </Card.Header>
+      <Card.Content className="overflow-inherit!">
+        <InputFieldCustom
+          onChange={(data) => {
+            setValue('title', data.title);
+            setValue('datetime.start', data.startDate);
+            setValue('datetime.end', data.endDate);
+          }}
+        />
+        <Spacer className="h-3" />
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+          <Controller
+            control={control}
+            name="title"
+            rules={{ required: true }}
+            render={({ field }) => (
+              <InputField
+                label="Event Name *"
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="Happy Hour Drinks"
+              />
+            )}
+          />
+
+          <Controller control={control} name="location" render={() => <PlaceAutoComplete label="Event Location *" />} />
+
+          <Controller
+            control={control}
+            name="host"
+            render={() => <InputField label="Host" placeholder="Friends of the City" readOnly />}
+          />
+
+          <Controller
+            control={control}
+            name="datetime"
+            render={() => (
+              <DateTimeWithTimeZone
+                label="Event Time"
+                onSelect={({ start, end }) => {
+                  setValue('datetime.start', start);
+                  setValue('datetime.end', end);
+                }}
+              />
+            )}
+          />
+
+          <AddTags type={SpaceTagType.Event} spaceId={spaceId} onChange={(value) => setTags(value)} />
+
+          <div className="p-1 flex flex-col gap-3 items-start">
+            <Button disabled={!title} variant="secondary" type="submit" loading={isSubmitting} className="w-full">
+              Submit Event
+            </Button>
+          </div>
+        </form>
+      </Card.Content>
+    </div>
+  );
+}
+
+function InputFieldCustom({ onChange }: { onChange?: (data: any) => void }) {
+  const [value, setValue] = React.useState('');
+  const [extracting, setExtracting] = React.useState(false);
+
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const text = e.target.value;
+    setValue(text);
+
+    if (text) {
+      handleExtractUrl(text);
+    }
+  };
+
+  const handleExtractUrl = async (url: string) => {
+    setExtracting(true);
+    try {
+      setExtracting(true);
+      const res = await fetch('/api/og/extractor', {
+        method: 'POST',
+        body: JSON.stringify({ url }),
+      });
+      const data = await res.json();
+      if ('jsonLD' in data && data.jsonLD.length) {
+        // const location = data.jsonLD[0].location;
+      }
+
+      onChange?.({
+        title: data.ogTitle,
+        startDate: isDate(data.articlePublishedTime) ? data.articlePublishedTime : new Date(),
+        endDate: isDate(data.articleExpirationTime) ? data.articleExpirationTime : new Date(),
+      });
+    } catch (_err) {
+      toast.error('Cannot extract url');
+    } finally {
+      setExtracting(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex justify-between items-center">
+        <label className="text-sm text-secondary font-medium">Event Page URL *</label>
+        <div
+          className={twMerge(
+            'transition opacity-0 text-tertiary flex items-center gap-1.5',
+            clsx(extracting && 'opacity-100'),
+          )}
+        >
+          <svg className="animate-spin size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <p>Parsing URL...</p>
+        </div>
+      </div>
+
+      <div className="bg-background/64 border flex py-1 px-3.5 rounded-sm items-center h-[44px] focus-within:border-primary">
+        <input
+          className="flex-1 outline-none"
+          value={value}
+          placeholder="https://eventbrite.com/e/some-event"
+          onChange={handleChange}
+        />
+      </div>
+    </div>
+  );
+}
+
+function InputField({
+  label,
+  iconLeft,
+  placeholder,
+  value,
+  readOnly = false,
+  onChange,
+}: {
+  label: string;
+  iconLeft?: string;
+  placeholder?: string;
+  value?: string;
+  readOnly?: boolean;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="text-sm text-secondary font-medium">{label}</label>
+      <div
+        className={twMerge(
+          'bg-background/64 border flex py-1 px-3.5 rounded-sm items-center h-[44px] focus-within:border-primary',
+          clsx(iconLeft && 'px-3.5 gap-2.5'),
+        )}
+      >
+        {iconLeft && <i className={iconLeft} />}
+        <input
+          readOnly={readOnly}
+          className="flex-1 outline-none"
+          value={value}
+          placeholder={placeholder}
+          onChange={onChange}
+        />
+      </div>
+    </div>
+  );
+}
+
+function DateTimeWithTimeZone({
+  label,
+  start,
+  end,
+  onSelect,
+}: {
+  label?: string;
+  start?: string;
+  end?: string;
+  onSelect: (value: { start: string; end: string }) => void;
+}) {
+  const [startTime, setStartTime] = React.useState(start ? new Date(start).toISOString() : new Date().toISOString());
+  const [endTime, setEndTime] = React.useState(end ? new Date(end).toISOString() : new Date().toISOString());
+  const [zone, setZone] = React.useState<TimezoneOption>();
+
+  const handleSelect = ({ start, end, timezone }: { start: string; end: string; timezone?: TimezoneOption }) => {
+    onSelect({
+      start: timezone ? formatWithTimezone(new Date(start), timezone.value) : start,
+      end: timezone ? formatWithTimezone(new Date(start), timezone.value) : end,
+    });
+  };
+
+  return (
+    <div className="flex flex-col gap-2">
+      {label && <label className="text-sm text-secondary font-medium">{label}</label>}
+      <Card.Root style={{ overflow: 'inherit' }}>
+        <Card.Content className="pl-3.5 py-1 pr-1">
+          <div className="flex flex-col relative">
+            <div className="border-dashed border-l-2 border-l-[var(--color-divider)] absolute h-full left-1 top-3 z-10">
+              <div className="size-2 backdrop-blur-lg bg-quaternary rounded-full -ml-[5px] absolute">
+                <div className="size-2 rounded-full bg-quaternary" />
+              </div>
+            </div>
+
+            <div className="ml-7.5 flex justify-between items-center">
+              <p className="text-secondary">Start</p>
+              <DateTimeGroup
+                value={startTime}
+                onSelect={(datetime) => {
+                  setStartTime(datetime);
+                  handleSelect({ start: datetime, end: endTime, timezone: zone });
+                }}
+              />
+            </div>
+          </div>
+
+          <Spacer className="h-1" />
+          <div className="flex flex-col relative">
+            <div className="border-dashed border-l-2 border-l-transparent absolute h-full left-1 top-3 z-10">
+              <div className="size-2 border rounded-full -ml-[5px] absolute border-quaternary">
+                <div className="size-2 rounded-full " />
+              </div>
+            </div>
+
+            <div className="ml-7.5 flex justify-between items-center">
+              <p className="text-secondary">End</p>
+              <DateTimeGroup
+                value={endTime}
+                onSelect={(dateTime) => {
+                  setEndTime(dateTime);
+                  handleSelect({ start: startTime, end: dateTime, timezone: zone });
+                }}
+              />
+            </div>
+          </div>
+        </Card.Content>
+      </Card.Root>
+
+      <Timezone
+        value={zone}
+        onSelect={(data) => {
+          setZone(data);
+          handleSelect({ start: startTime, end: endTime, timezone: data });
+        }}
+      />
+    </div>
+  );
+}
+
+function DateTimeGroup({ value = '', onSelect }: { value?: string; onSelect: (datetime: string) => void }) {
+  const times = React.useMemo(() => {
+    const formatTime = (hour: number, minutes: number) => {
+      const period = hour < 12 ? 'AM' : 'PM';
+      const formattedHour = (hour % 12 === 0 ? 12 : hour % 12).toString().padStart(2, '0');
+      const formattedMinutes = minutes.toString().padStart(2, '0');
+      return {
+        value: `${hour.toString().padStart(2, '0')}:${formattedMinutes}`,
+        label: `${formattedHour}:${formattedMinutes} ${period}`,
+      };
+    };
+
+    const hours = Array.from({ length: 24 }, (_, i) => i);
+    const minutes = Array.from({ length: 2 }, (_, i) => i * 30);
+
+    return hours.flatMap((hour) => minutes.map((minute) => formatTime(hour, minute)));
+  }, []);
+
+  const handleSelect = (args: { value: Date; timezone?: string }) => {
+    // const res = new Date();
+    onSelect(args.value.toISOString());
+  };
+
+  return (
+    <div className="flex gap-0.5">
+      <Menu.Root placement="top-end">
+        <Menu.Trigger>
+          <Button variant="tertiary" size="sm" className="rounded-e-none! min-w-[110px]!">
+            {format(value ? new Date(value) : new Date(), 'EEE, dd yyyy')}
+          </Button>
+        </Menu.Trigger>
+        <Menu.Content className="w-[296px] p-0 rounded-lg">
+          {({ toggle }) => (
+            <Calendar
+              onSelectDate={(date = new Date()) => {
+                const datetime = value ? new Date(value) : new Date();
+                datetime.setFullYear(date.getFullYear());
+                datetime.setMonth(date.getMonth());
+                datetime.setDate(date.getDate());
+                handleSelect({ value: datetime });
+                toggle();
+              }}
+            />
+          )}
+        </Menu.Content>
+      </Menu.Root>
+      <Menu.Root placement="top-end">
+        <Menu.Trigger>
+          <Button variant="tertiary" size="sm" className="rounded-s-none! min-w-[84px]">
+            {format(value ? new Date(value) : new Date(), 'hh:mm a')}
+          </Button>
+        </Menu.Trigger>
+        <Menu.Content className="min-w-[120px] p-0 rounded-lg overflow-auto h-[200px] p-2">
+          {({ toggle }) => {
+            return (
+              <div>
+                {times.map((t, i) => (
+                  <Button
+                    key={i}
+                    variant="flat"
+                    className="hover:bg-quaternary! w-full"
+                    onClick={() => {
+                      const [hours, minutes] = t.value.split(':').map(Number);
+                      const datetime = value ? new Date(value) : new Date();
+                      datetime.setHours(hours);
+                      datetime.setMinutes(minutes);
+                      handleSelect({ value: datetime });
+                      toggle();
+                    }}
+                  >
+                    {t.label}
+                  </Button>
+                ))}
+              </div>
+            );
+          }}
+        </Menu.Content>
+      </Menu.Root>
+    </div>
+  );
+}
+
+function Timezone({ value, onSelect }: { value?: TimezoneOption; onSelect: (zone: TimezoneOption) => void }) {
+  const [zones, setZone] = React.useState(timezoneOptions);
+  const [query, setQuery] = React.useState('');
+
+  return (
+    <Menu.Root placement="top">
+      <Menu.Trigger>
+        <button className="btn btn-tertiary inline-flex items-center w-full rounded-sm h-[40px] pl-3.5 pr-2.5">
+          <div className="flex flex-1 items-center gap-2.5">
+            <i className="icon-globe size-[20px]" />
+            <span>{value?.text}</span>
+          </div>
+          <i className="icon-chevron-down size-[20px]" />
+        </button>
+      </Menu.Trigger>
+      <Menu.Content className="p-0 border-0">
+        {({ toggle }) => (
+          <Card.Root>
+            <Card.Header className="p-0">
+              <Input
+                className="rounded-none border-none"
+                value={query}
+                onChange={(e) => {
+                  const text = e.target.value;
+                  setQuery(text);
+                  if (!text) setZone(timezoneOptions);
+                  else setZone(timezoneOptions.filter((p) => p.value.toLowerCase().includes(text.toLowerCase())));
+                }}
+              />
+            </Card.Header>
+            <Card.Content className="p-0 w-[446px]">
+              <div className="p-1 overflow-auto h-[170px]">
+                {zones.map((zone, i) => {
+                  return (
+                    <div
+                      key={i}
+                      className={clsx(
+                        'flex justify-between items-center text-sm px-2 py-1.5 cursor-pointer hover:bg-[var(--btn-tertiary)]',
+                        value?.value === zone.value,
+                      )}
+                      onClick={() => {
+                        onSelect(zone);
+                        toggle();
+                      }}
+                    >
+                      <p>{zone.value}</p>
+                      <p>{zone.short}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </Card.Content>
+          </Card.Root>
+        )}
+      </Menu.Content>
+    </Menu.Root>
+  );
+}

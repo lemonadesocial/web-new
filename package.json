@@ -20,6 +20,7 @@
     "@dicebear/glass": "^9.2.2",
     "@dicebear/thumbs": "^9.2.2",
     "@floating-ui/react": "^0.27.5",
+    "@hookform/resolvers": "^5.0.1",
     "@lens-chain/storage-client": "^1.0.4",
     "@lens-protocol/client": "^0.0.0-canary-20250507164041",
     "@lens-protocol/metadata": "^2.0.0",
@@ -48,6 +49,7 @@
     "mongodb": "^6.15.0",
     "next": "15.2.3",
     "oidc-client-ts": "^3.2.0",
+    "open-graph-scraper": "^6.10.0",
     "postcss": "^8.5.3",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
@@ -58,6 +60,7 @@
     "tailwindcss": "^4.0.8",
     "tailwindcss-palette-generator": "^0.10.0",
     "three": "^0.174.0",
+    "yup": "^1.6.1",
     "zksync-ethers": "^6.17.0"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { TZDate, tz } from "@date-fns/tz";
+import { TZDate, tz } from '@date-fns/tz';
 
 import { Maybe } from 'graphql/jsutils/Maybe';
 

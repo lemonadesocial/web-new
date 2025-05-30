@@ -137,47 +137,46 @@ export function AddTags({
     setTags(_tags);
     onChange?.(_tags);
   };
+
   return (
-    <>
-      <Menu.Root placement="bottom-start">
-        <div className="flex gap-1 items-center flex-wrap">
-          {tags.map((t) => (
-            <Badge
-              key={t._id}
-              title={t.tag}
-              color={t.color}
-              onClose={() => {
-                setTags((prev) => prev.filter((i) => i._id !== t._id));
-              }}
-            />
-          ))}
-          <Menu.Trigger>
-            <Button iconLeft="icon-plus" variant="tertiary" size="xs" className="rounded-full">
-              Add Tag
-            </Button>
-          </Menu.Trigger>
-        </div>
-        <Menu.Content className="w-[252px] max-h-[300px] overflow-auto p-0">
-          <input
-            className="outline-none bg-card text-md px-2.5 py-2 w-full"
-            placeholder="Search Tag"
-            value={tag}
-            onChange={(e) => setTag(e.target.value)}
+    <Menu.Root strategy="fixed" placement="bottom-start">
+      <div className="flex gap-1 items-center flex-wrap">
+        {tags.map((t) => (
+          <Badge
+            key={t._id}
+            title={t.tag}
+            color={t.color}
+            onClose={() => {
+              setTags((prev) => prev.filter((i) => i._id !== t._id));
+            }}
           />
-          {list
-            .filter((t) => (tag ? t.tag.includes(tag) : true))
-            .map((t: SpaceTag) => (
-              <div
-                key={t._id}
-                onClick={() => onSelectTag(t)}
-                className="flex px-2 py-1.5 gap-2.5 items-center hover:bg-primary/8 rounded-xs cursor-pointer"
-              >
-                <i className="icon-dot" style={{ color: t.color }} />
-                <p className="text-sm font-medium">{t.tag}</p>
-              </div>
-            ))}
-        </Menu.Content>
-      </Menu.Root>
-    </>
+        ))}
+        <Menu.Trigger>
+          <Button iconLeft="icon-plus" variant="tertiary" size="xs" className="rounded-full">
+            Add Tag
+          </Button>
+        </Menu.Trigger>
+      </div>
+      <Menu.Content className="w-[252px] max-h-[300px] overflow-auto p-0">
+        <input
+          className="outline-none bg-card text-md px-2.5 py-2 w-full"
+          placeholder="Search Tag"
+          value={tag}
+          onChange={(e) => setTag(e.target.value)}
+        />
+        {list
+          .filter((t) => (tag ? t.tag.includes(tag) : true))
+          .map((t: SpaceTag) => (
+            <div
+              key={t._id}
+              onClick={() => onSelectTag(t)}
+              className="flex px-2 py-1.5 gap-2.5 items-center hover:bg-primary/8 rounded-xs cursor-pointer"
+            >
+              <i className="icon-dot" style={{ color: t.color }} />
+              <p className="text-sm font-medium">{t.tag}</p>
+            </div>
+          ))}
+      </Menu.Content>
+    </Menu.Root>
   );
 }
