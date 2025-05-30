@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.28.0](https://github.com/lemonadesocial/web-new/compare/v1.27.0...v1.28.0) (2025-05-30)
+
+
+### Features
+
+* community mobile nav ([73d921a](https://github.com/lemonadesocial/web-new/commit/73d921aff7c6ca019190f0e6e64a81698434eb8a))
+* **nginx:** proxy Sendgrid open & click tracking ([88d1a92](https://github.com/lemonadesocial/web-new/commit/88d1a922e2ebd02a4f2b3205f29ed85f7a733103))
+
 ## [1.27.0](https://github.com/lemonadesocial/web-new/compare/v1.26.3...v1.27.0) (2025-05-30)
 
 
