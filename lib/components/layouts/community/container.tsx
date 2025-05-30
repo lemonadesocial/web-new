@@ -8,6 +8,7 @@ import { Space } from '$lib/graphql/generated/backend/graphql';
 import Header from '../header';
 import LoadMoreWrapper from './loadMoreWrapper';
 import Sidebar from './sidebar';
+import { Footer } from './footer';
 
 export function CommunityContainer({ space, children }: React.PropsWithChildren & { space: Space }) {
   const [state] = useCommunityTheme();
@@ -30,6 +31,7 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
             <div className="page mx-auto px-4 xl:px-0 pt-6">{children}</div>
           </div>
         </div>
+        <Footer space={space} />
       </LoadMoreWrapper>
     </main>
   );
