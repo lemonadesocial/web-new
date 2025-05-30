@@ -9,7 +9,7 @@ import { Card } from '$lib/components/core';
 import { useMutation } from '$lib/graphql/request';
 import { UpdateEventThemeDocument } from '$lib/graphql/generated/backend/graphql';
 
-import { colors, fonts, getRandomColor, patterns, presets, shaders } from './store';
+import { colors, emojis, fonts, getRandomColor, patterns, presets, shaders } from './store';
 import { useEventTheme, ThemeBuilderActionKind } from './provider';
 import { MenuColorPicker } from './ColorPicker';
 
@@ -63,7 +63,10 @@ function EventThemeBuilderPane({ show, onClose }: { show: boolean; onClose: () =
 
   React.useEffect(() => {
     if (!data.theme || data.theme === 'default') {
-      dispatch({ type: ThemeBuilderActionKind.select_template, payload: { theme: 'minimal' } });
+      dispatch({
+        type: ThemeBuilderActionKind.select_template,
+        payload: { theme: 'minimal', config: { color: 'woodsmoke' } },
+      });
     }
   }, [data.theme]);
 
@@ -119,7 +122,7 @@ function EventThemeBuilderPane({ show, onClose }: { show: boolean; onClose: () =
 const MAPPINGS: Record<string, React.FC> = {
   template: ThemeTemplate,
   style: ThemeStyle,
-  effect: React.Fragment,
+  effect: ThemeEffect,
   colors: ThemeColor,
   font_title: ThemeFontTitle,
   font_body: ThemeFontBody,
@@ -171,14 +174,19 @@ function EventBuilderPaneOptions() {
             <p className="text-xs">Style</p>
           </ActionButton>
 
-          {/* <ActionButton */}
-          {/*   active={state === 'effect'} */}
-          {/*   disabled={presets[themeName].ui?.disabled?.effect} */}
-          {/*   onClick={() => setState('effect')} */}
-          {/* > */}
-          {/*   <div className="size-[32px] bg-quaternary rounded-full" /> */}
-          {/*   <p className="text-xs">Effect</p> */}
-          {/* </ActionButton> */}
+          <ActionButton
+            active={state === 'effect'}
+            disabled={presets[themeName].ui?.disabled?.effect}
+            onClick={() => setState('effect')}
+          >
+            {!data.config.effect?.name ? (
+              <div className="size-[32px] bg-quaternary rounded-full" />
+            ) : (
+              <div className="size-[32px] text-2xl">{emojis[data.config.effect.name].emoji}</div>
+            )}
+            <p className="text-xs">Effect</p>
+          </ActionButton>
+
           <ActionButton
             active={state === 'colors'}
             disabled={data.theme && presets[themeName].ui?.disabled?.color}
@@ -332,6 +340,7 @@ function ThemeFontTitle() {
     />
   );
 }
+
 function ThemeFontBody() {
   const [data, dispatch] = useEventTheme();
   return (
@@ -466,6 +475,35 @@ function ThemePattern() {
   );
 }
 
+function ThemeEffect() {
+  const [state, dispatch] = useEventTheme();
+
+  return (
+    <div className="flex md:grid md:grid-cols-2 items-center gap-3 w-full md:w-[188px] p-4 overflow-auto">
+      {Object.entries(emojis).map(([key, value]) => (
+        <button key={key} className="flex flex-col items-center text-xs gap-2 cursor-pointer">
+          <div
+            className={clsx(
+              'border-2 border-[var(--color-divider)] rounded-full px-4 py-2 w-[60px] h-[60px] hover:border-primary flex items-center justify-between',
+              key === state.config?.effect?.name && 'border border-primary',
+            )}
+            onClick={(e) => {
+              e.stopPropagation();
+              dispatch({
+                type: ThemeBuilderActionKind.select_effect,
+                payload: { config: { effect: { name: key, type: value.type, url: value.url, emoji: value.emoji } } },
+              });
+            }}
+          >
+            <span className="text-xl">{value.emoji}</span>
+          </div>
+          <p className="capitalize font-body-default">{value.label}</p>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 const modes = [
   { mode: 'light', icon: 'icon-sunny', label: 'Light' },
   { mode: 'dark', icon: 'icon-clear-night', active: 'text-blue-400', label: 'Dark' },
@@ -517,7 +555,7 @@ function ActionButton({
         onClick?.();
       }}
       className={clsx(
-        'flex items-center justify-center flex-col gap-2 border border-transparent pt-3 pb-2 px-1 hover:bg-card-hover aspect-4/3 cursor-pointer rounded-sm w-[80px] font-body-default disabled:opacity-50 disabled:bg-transparent disabled:cursor-not-allowed',
+        'flex items-center justify-center flex-col gap-2 border border-transparent pt-3 pb-2 px-1 hover:bg-card-hover cursor-pointer rounded-sm w-[80px] font-body-default disabled:opacity-50 disabled:bg-transparent disabled:cursor-not-allowed',
         active && 'bg-card-hover!',
       )}
     >
