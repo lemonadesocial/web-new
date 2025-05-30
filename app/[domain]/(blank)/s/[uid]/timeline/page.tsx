@@ -13,9 +13,11 @@ export default async function Page({ params }: { params: Promise<{ uid: string }
   if (!space?.lens_feed_id) return notFound();
 
   return (
-    <div className="grid grid-cols-[1fr_336px] gap-8 items-start pb-10">
+    <div className="grid grid-cols-1 md:grid-cols-[1fr_336px] gap-8 items-start pb-10">
       <LensFeed feedAddress={space.lens_feed_id} />
-      <LensAccountCard />
+      <div className="hidden md:block">
+        <LensAccountCard />
+      </div>
     </div>
   );
 }

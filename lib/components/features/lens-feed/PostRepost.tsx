@@ -4,9 +4,10 @@ import { postId, Post } from '@lens-protocol/client';
 import { repost } from '@lens-protocol/client/actions';
 import { handleOperationWith } from '@lens-protocol/client/ethers';
 
-import { Button, toast } from '$lib/components/core';
+import { toast } from '$lib/components/core';
 import { sessionClientAtom } from '$lib/jotai/lens';
 import { useSigner } from '$lib/hooks/useSigner';
+import { PostButton } from './PostButton';
 
 interface PostRepostProps {
   post: Post;
@@ -45,13 +46,11 @@ export function PostRepost({ post }: PostRepostProps) {
   console.log(handleRepost)
 
   return (
-    <Button
-      variant="tertiary"
-      onClick={() => toast.success('Coming soon')}
-      iconLeft="icon-repost"
-      className="rounded-full"
-    >
-      {reposts}
-    </Button>
+    <PostButton
+      icon="icon-repost"
+      label={reposts}
+      onClick={handleRepost}
+      isActive={!!post.operations?.hasReposted}
+    />
   );
 } 
