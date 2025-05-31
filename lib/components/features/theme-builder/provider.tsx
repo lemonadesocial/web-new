@@ -42,6 +42,7 @@ export enum ThemeBuilderActionKind {
   'select_font',
   'select_mode',
   'select_style',
+  'select_effect',
   'random',
   'reset',
 }
@@ -54,7 +55,7 @@ function reducers(state: ThemeValues, action: ThemeBuilderAction) {
       let payload = { ...action.payload };
 
       if (payload.theme === 'minimal') {
-        payload = { ...payload, config: { ...payload.config, name: '' } };
+        payload = { ...payload, config: { ...payload.config, name: '', color: payload.config?.color || 'woodsmoke' } };
       }
 
       if (payload.theme === 'shader' && !shaders.map((item) => item.name).includes(state.config.name as string)) {
@@ -85,6 +86,10 @@ function reducers(state: ThemeValues, action: ThemeBuilderAction) {
     }
 
     case ThemeBuilderActionKind.select_style: {
+      return { ...merge(state, action.payload) };
+    }
+
+    case ThemeBuilderActionKind.select_effect: {
       return { ...merge(state, action.payload) };
     }
 

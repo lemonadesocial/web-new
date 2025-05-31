@@ -30,7 +30,6 @@ import { Calendar } from '$lib/components/core/calendar';
 import { scrollAtBottomAtom, sessionAtom } from '$lib/jotai';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useMe } from '$lib/hooks/useMe';
-import { themeAtom } from './theme_builder/store';
 
 import { ListingEvent } from './ListingEvent';
 import { EventPane } from '../pane';
@@ -181,11 +180,9 @@ export function Community({ initData }: Props) {
     }
   }, [shouldLoadMore]);
 
-  const [data] = useAtom(themeAtom);
-
   return (
     <>
-      <div className={clsx('relative', data?.theme && data?.config?.fg)}>
+      <div className="relative">
         <HeroSection space={dataGetSpace?.getSpace as Space} />
         <Divider className="my-8" />
         {subSpaces.length > 0 && (

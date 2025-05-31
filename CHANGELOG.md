@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.31.0](https://github.com/lemonadesocial/web-new/compare/v1.30.0...v1.31.0) (2025-05-31)
+
+
+### Features
+
+* add comment ([95537e0](https://github.com/lemonadesocial/web-new/commit/95537e072e2928e4516d3bc6cc3e3f6b7c8f42af))
+
+
+### Bug Fixes
+
+* sort color under template ([fe08f0d](https://github.com/lemonadesocial/web-new/commit/fe08f0dc14a2cff6442228dccc529dcb1f0cfbc9))
+* update theme builder config ([0e64fd6](https://github.com/lemonadesocial/web-new/commit/0e64fd6794c2126db8132e434f209881885f3d57))
+
+## [1.30.0](https://github.com/lemonadesocial/web-new/compare/v1.29.0...v1.30.0) (2025-05-30)
+
+
+### Features
+
+* add effect on top of other theme ([c6e1524](https://github.com/lemonadesocial/web-new/commit/c6e152409ab473a53d443cabe9409a121fed9e08))
+
+
+### Bug Fixes
+
+* update effect icon on main builder event ([f26e6aa](https://github.com/lemonadesocial/web-new/commit/f26e6aa9bea2cc5d5f6515cb93c9232ced58f5a4))
+
+## [1.29.0](https://github.com/lemonadesocial/web-new/compare/v1.28.0...v1.29.0) (2025-05-30)
+
+
+### Features
+
+* check lens auth ([379dcb6](https://github.com/lemonadesocial/web-new/commit/379dcb6038e0a78037750abeb5bceaa1fe43f5ee))
+
+## [1.28.0](https://github.com/lemonadesocial/web-new/compare/v1.27.0...v1.28.0) (2025-05-30)
+
+
+### Features
+
+* community mobile nav ([73d921a](https://github.com/lemonadesocial/web-new/commit/73d921aff7c6ca019190f0e6e64a81698434eb8a))
+* **nginx:** proxy Sendgrid open & click tracking ([88d1a92](https://github.com/lemonadesocial/web-new/commit/88d1a922e2ebd02a4f2b3205f29ed85f7a733103))
+
 ## [1.27.0](https://github.com/lemonadesocial/web-new/compare/v1.26.3...v1.27.0) (2025-05-30)
 
 

@@ -6,6 +6,7 @@ import { Button, Card, Menu, MenuItem, modal } from '$lib/components/core';
 import {
   colors,
   defaultTheme,
+  emojis,
   fonts,
   getRandomColor,
   getRandomFont,
@@ -212,7 +213,6 @@ function CommunityThemeBuilderPane({
                           variables: { id: spaceId, input: { theme_data: state } },
                           onComplete: (client) => {
                             client.writeFragment<Space>({ id: `Space:${spaceId}`, data: { theme_data: state } });
-                            setPrevState(state);
                           },
                         });
                       }
@@ -426,18 +426,56 @@ export function PopoverPattern() {
 }
 
 export function PopoverEffect() {
+  const [state, dispatch] = useCommunityTheme();
+
   return (
-    <Menu.Root disabled className="flex-1 min-w-full md:min-w-auto">
+    <Menu.Root className="flex-1 min-w-full md:min-w-auto" strategy="fixed" placement="top">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
-          <div className="size-[24px] rounded-full bg-quaternary" />
+          {!state.config?.effect?.name ? (
+            <i className="icon-wand-shine-outline-sharp size-[24px] text-primary" />
+          ) : (
+            <div className="size-[24px] text-center">{emojis[state.config?.effect.name].emoji}</div>
+          )}
           <span className="text-left flex-1 font-general-sans">Effect</span>
           <p className="flex items-center gap-1">
-            <span className="capitalize">-</span>
+            <span className="capitalize">{!state.config?.effect?.name ? '-' : state.config?.effect?.name}</span>
             <i className="icon-chevrons-up-down text-quaternary" />
           </p>
         </div>
       </Menu.Trigger>
+      <Menu.Content>
+        <div className="flex md:grid md:grid-cols-4 items-center gap-3 w-full md:w-[324px] max-h-[550px] p-4 overflow-auto">
+          {Object.entries(emojis).map(([key, value]) => (
+            <button key={key} className="flex flex-col items-center text-xs gap-2 cursor-pointer">
+              <div
+                className={clsx(
+                  'border-2 border-[var(--color-divider)] rounded-full px-4 py-2 w-[60px] h-[60px] hover:border-primary flex items-center justify-between',
+                  key === state.config?.effect?.name && 'border border-primary',
+                )}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  let effect: any = { name: key, type: value.type, url: value.url, emoji: value.emoji };
+                  if (state.config.effect?.name && key === state.config?.effect?.name) {
+                    // toggle effect to remove effect
+                    effect = { name: '', type: undefined, url: '', emoji: '' };
+                  }
+
+                  dispatch({
+                    type: ThemeBuilderActionKind.select_effect,
+                    payload: {
+                      config: { effect },
+                    },
+                  });
+                }}
+              >
+                <span className="text-xl">{value.emoji}</span>
+              </div>
+              <p className="capitalize font-body-default">{value.label}</p>
+            </button>
+          ))}
+        </div>
+      </Menu.Content>
     </Menu.Root>
   );
 }

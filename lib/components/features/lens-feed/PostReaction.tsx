@@ -4,8 +4,11 @@ import { PostReactionType, postId, Post } from '@lens-protocol/client';
 import { addReaction, undoReaction } from '@lens-protocol/client/actions';
 import clsx from 'clsx';
 
-import { Button, toast } from '$lib/components/core';
+import { toast } from '$lib/components/core';
+import { useLensAuth } from '$lib/hooks/useLens';
 import { sessionClientAtom } from '$lib/jotai/lens';
+
+import { PostButton } from './PostButton';
 
 interface PostReactionProps {
   post: Post;
@@ -17,6 +20,7 @@ export function PostReaction({ post, isComment }: PostReactionProps) {
 
   const [upvotes, setUpvotes] = useState(post.stats.upvotes);
   const sessionClient = useAtomValue(sessionClientAtom);
+  const handleLensAuth = useLensAuth();
 
   const handleUpvote = async () => {
     if (!sessionClient) {
@@ -56,13 +60,12 @@ export function PostReaction({ post, isComment }: PostReactionProps) {
   )
 
   return (
-    <Button
-      variant={isUpvoted ? "primary" : "tertiary"}
-      onClick={handleUpvote}
-      iconLeft={isUpvoted ? "icon-heart-filled" : "icon-heart-outline"}
-      className="rounded-full"
-    >
-      {upvotes}
-    </Button>
+    <PostButton
+      icon={isUpvoted ? "icon-heart-filled" : "icon-heart-outline"}
+      onClick={() => handleLensAuth(handleUpvote)}
+      label={upvotes}
+      isActive={isUpvoted}
+      className={isUpvoted ? 'sm:bg-accent-500 sm:hover:bg-accent-700' : ''}
+    />
   );
 }

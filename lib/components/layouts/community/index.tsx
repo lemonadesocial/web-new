@@ -42,6 +42,7 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
       color: space.theme_data.foreground?.key || space.theme_data.config?.fg || space.theme_data.config?.color,
       class: space.theme_data.class,
       name: space.theme_data.config?.name,
+      effect: space.theme_data.config?.effect,
     };
   }
 

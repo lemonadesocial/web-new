@@ -8,6 +8,12 @@ export type ThemeValues = {
     name?: string;
     color?: string;
     class?: string;
+    effect?: {
+      name: string;
+      type?: 'video' | 'float';
+      url?: string;
+      emoji?: string;
+    };
   };
   font_title: string;
   font_body: string;
@@ -27,6 +33,11 @@ export const defaultTheme: ThemeValues = {
     color: '',
     name: '',
     class: '',
+    effect: {
+      name: '',
+      url: '',
+      emoji: '',
+    },
   },
   font_title: 'default',
   font_body: 'default',
@@ -119,14 +130,7 @@ const minimal: ThemePresetType = {
     mode: 'system',
     config: { colors },
     disabled: {
-      effect: true,
       style: true,
-      mode: true,
-
-      /** @deprecated fg */
-      fg: false,
-      /** @deprecated bg */
-      bg: false,
     },
   },
 };
@@ -148,7 +152,7 @@ const shader: ThemePresetType = {
   ui: {
     mode: 'all',
     config: { colors, shaders },
-    disabled: { color: true, effect: true },
+    disabled: { color: true },
   },
 };
 
@@ -157,8 +161,29 @@ const pattern: ThemePresetType = {
   image: `${ASSET_PREFIX}/assets/images/pattern.png`,
   name: 'Pattern',
   ui: {
-    disabled: { mode: true, effect: true },
+    disabled: {},
   },
+};
+
+export const emojis: Record<string, { emoji: string; type: 'video' | 'float'; label: string; url?: string }> = {
+  rabbit: { emoji: '🐇', type: 'video', label: 'Rabbit', url: `${ASSET_PREFIX}/assets/video/bunny.webm` },
+  football: { emoji: '🏈', type: 'float', label: 'Football', url: `` },
+  beer_pong: { emoji: '🥤', type: 'video', label: 'Beer Pong', url: `${ASSET_PREFIX}/assets/video/beer_pong.webm` },
+  heart: { emoji: '❤️', type: 'float', label: 'Heart', url: '' },
+  party: { emoji: '🥳', type: 'float', label: 'Party', url: '' },
+  glasses: { emoji: '😎', type: 'float', label: 'Glasses', url: '' },
+  clover: { emoji: '🍀', type: 'float', label: 'Clover', url: '' },
+  pumpkin: { emoji: '🎃', type: 'float', label: 'Pumpkin', url: '' },
+  lollipop: { emoji: '🍭', type: 'float', label: 'Lollipop', url: '' },
+  earth: { emoji: '🌎', type: 'float', label: 'Earth', url: '' },
+  fire: { emoji: '🔥', type: 'float', label: 'Fire', url: '' },
+  ghost: { emoji: '👻', type: 'float', label: 'Ghost', url: '' },
+  dragon: { emoji: '🐲', type: 'float', label: 'Dragon', url: '' },
+  cocktail: { emoji: '🍸', type: 'float', label: 'Cocktail', url: '' },
+  basketball: { emoji: '🏀', type: 'float', label: 'Basketball', url: '' },
+  demon: { emoji: '😈', type: 'float', label: 'Demon', url: '' },
+  alien: { emoji: '👽', type: 'float', label: 'Alien', url: '' },
+  skull: { emoji: '💀', type: 'float', label: 'Skull', url: '' },
 };
 
 export const presets = {
