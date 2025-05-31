@@ -156,6 +156,20 @@ function EventBuilderPaneOptions() {
           </ActionButton>
 
           <ActionButton
+            active={state === 'colors'}
+            disabled={data.theme && presets[themeName].ui?.disabled?.color}
+            onClick={() => setState('colors')}
+          >
+            <div
+              className={clsx(
+                'size-[32px] rounded-full',
+                data.config.color === 'custom' ? 'bg-[var(--color-custom-400)]' : `${data.config.color} bg-accent-400`,
+              )}
+            />
+            <p className="text-xs">Color</p>
+          </ActionButton>
+
+          <ActionButton
             active={state === 'style'}
             disabled={presets[themeName].ui?.disabled?.style}
             onClick={() => setState('style')}
@@ -185,20 +199,6 @@ function EventBuilderPaneOptions() {
               <div className="size-[32px] text-2xl">{emojis[data.config.effect.name].emoji}</div>
             )}
             <p className="text-xs">Effect</p>
-          </ActionButton>
-
-          <ActionButton
-            active={state === 'colors'}
-            disabled={data.theme && presets[themeName].ui?.disabled?.color}
-            onClick={() => setState('colors')}
-          >
-            <div
-              className={clsx(
-                'size-[32px] rounded-full',
-                data.config.color === 'custom' ? 'bg-[var(--color-custom-400)]' : `${data.config.color} bg-accent-400`,
-              )}
-            />
-            <p className="text-xs">Color</p>
           </ActionButton>
 
           <ActionButton active={state === 'font_title'} onClick={() => setState('font_title')}>
@@ -489,9 +489,15 @@ function ThemeEffect() {
             )}
             onClick={(e) => {
               e.stopPropagation();
+              let effect: any = { name: key, type: value.type, url: value.url, emoji: value.emoji };
+              if (state.config.effect?.name && key === state.config?.effect?.name) {
+                // toggle effect to remove effect
+                effect = { name: '', type: undefined, url: '', emoji: '' };
+              }
+
               dispatch({
                 type: ThemeBuilderActionKind.select_effect,
-                payload: { config: { effect: { name: key, type: value.type, url: value.url, emoji: value.emoji } } },
+                payload: { config: { effect } },
               });
             }}
           >

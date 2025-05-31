@@ -455,10 +455,16 @@ export function PopoverEffect() {
                 )}
                 onClick={(e) => {
                   e.stopPropagation();
+                  let effect: any = { name: key, type: value.type, url: value.url, emoji: value.emoji };
+                  if (state.config.effect?.name && key === state.config?.effect?.name) {
+                    // toggle effect to remove effect
+                    effect = { name: '', type: undefined, url: '', emoji: '' };
+                  }
+
                   dispatch({
                     type: ThemeBuilderActionKind.select_effect,
                     payload: {
-                      config: { effect: { name: key, type: value.type, url: value.url, emoji: value.emoji } },
+                      config: { effect },
                     },
                   });
                 }}
