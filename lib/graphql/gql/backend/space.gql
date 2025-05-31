@@ -136,6 +136,7 @@ query GetSpaceEvents(
     start
     end
     timezone
+    external_url
     event_ticket_types {
       _id
       prices {
