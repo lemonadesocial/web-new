@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useAtomValue } from "jotai";
 
 import { Avatar, Button, modal, toast } from "$lib/components/core";
@@ -11,6 +11,8 @@ import { useLensAuth } from "$lib/hooks/useLens";
 import { ImageInput } from "./ImageInput";
 import { AddEventModal } from "./AddEventModal";
 import { EventPreview } from "./EventPreview";
+import { PostTextarea } from "./PostTextarea";
+import { FileInput } from "./FileInput";
 
 type PostComposerProps = {
   placeholder?: string;
@@ -22,10 +24,8 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
 
   const [value, setValue] = useState('');
   const [isActive, setIsActive] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [files, setFiles] = useState<File[]>([]);
-  const inputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
 
   const [sharingLink, setSharingLink] = useState<string | undefined>(undefined);
@@ -33,13 +33,6 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLensAuth = useLensAuth();
-  
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-    textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight}px`;
-  }, [value]);
 
   const handlePost = async () => {
     const content = value.trim();
@@ -71,14 +64,12 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
       <Avatar src={account ? getAccountAvatar(account) : randomUserImage()} size="xl" rounded="full" />
 
       <div className="space-y-4 flex-1">
-        <textarea
-          ref={textareaRef}
+        <PostTextarea
           value={value}
-          onChange={e => setValue(e.target.value)}
+          setValue={setValue}
           placeholder={placeholder || (account ? `What's on your mind, ${account?.username?.localName}?` : `What's on your mind?`)}
-          className="w-full bg-transparent border-none outline-none font-medium text-lg mt-2 placeholder-quaternary resize-none overflow-hidden min-h-[24px] max-h-[200px]"
           onFocus={() => setIsActive(true)}
-          rows={1}
+          className="mt-2"
         />
 
         {
@@ -103,7 +94,20 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
         {isActive && (
           <div className="flex items-center justify-between">
             <div className="flex gap-2">
-              <Button icon="icon-image" variant="tertiary" className="rounded-full" onClick={() => inputRef.current?.click()} />
+              <FileInput
+                onChange={setFiles}
+                accept="image/*"
+                multiple
+              >
+                {open => (
+                  <Button
+                    icon="icon-image"
+                    variant="tertiary"
+                    className="rounded-full"
+                    onClick={open}
+                  />
+                )}
+              </FileInput>
               <Button
                 icon="icon-celebration"
                 variant="tertiary"
@@ -113,6 +117,7 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
                     props: {
                       onConfirm: link => setSharingLink(link),
                     },
+                    dismissible: true
                   });
                 }}
               />
@@ -129,15 +134,6 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
           </div>
         )}
       </div>
-
-      <input
-        ref={inputRef}
-        type="file"
-        multiple
-        className="hidden"
-        accept="image/*"
-        onChange={e => setFiles(e.target.files ? Array.from(e.target.files) : [])}
-      />
     </div>
   );
 }

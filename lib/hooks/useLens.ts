@@ -323,6 +323,7 @@ export function useFeedPosts(feedId: EvmAddress) {
 type CreatePostParams = {
   metadata: unknown;
   feedAddress?: string;
+  commentOn?: string;
 };
 
 export function usePost() {
@@ -331,7 +332,7 @@ export function usePost() {
   const [isLoading, setIsLoading] = useState(false);
   const setPosts= useSetAtom(feedPostsAtom);
 
-  const createPost = async ({ metadata, feedAddress }: CreatePostParams) => {
+  const createPost = async ({ metadata, feedAddress, commentOn }: CreatePostParams) => {
     if (!sessionClient || !signer) return;
 
     setIsLoading(true);
@@ -341,12 +342,13 @@ export function usePost() {
       const result = await post(sessionClient, {
         contentUri: uri,
         ...(feedAddress && { feed: evmAddress(feedAddress) }),
+        ...(commentOn && { commentOn: { post: postId(commentOn) } }),
       })
         .andThen(handleOperationWith(signer))
         .andThen(sessionClient.waitForTransaction)
         .andThen((txHash) => fetchPost(sessionClient, { txHash }))
         .andThen((post) => {
-          setPosts(prev => [post, ...prev]);
+          setPosts(prev => [post as AnyPost, ...prev]);
           return ok(post);
         })
         .mapErr((error) => {
