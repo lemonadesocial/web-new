@@ -1,20 +1,25 @@
 import { Post } from "@lens-protocol/client";
-import { PostButton } from "./PostButton";
+import { useState } from "react";
+
 import { useLensAuth } from "$lib/hooks/useLens";
-import { AddCommentModal } from "./AddCommentModal";
 import { modal } from "$lib/components/core";
+
+import { PostButton } from "./PostButton";
+import { AddCommentModal } from "./AddCommentModal";
 
 type PostCommentProps = {
   post: Post;
 };
 
 export function PostComment({ post }: PostCommentProps) {
+  const [commentCount, setCommentCount] = useState(post.stats.comments);
   const handleLensAuth = useLensAuth();
 
   const handleAddComment = async () => {
     modal.open(AddCommentModal, {
       props: {
-        post
+        post,
+        onSuccess: () => setCommentCount(commentCount + 1),
       },
       dismissible: true,
     });
@@ -23,7 +28,7 @@ export function PostComment({ post }: PostCommentProps) {
   return (
     <PostButton
       icon="icon-chat"
-      label={post.stats.comments}
+      label={commentCount}
       onClick={() => handleLensAuth(handleAddComment)}
     />
   );

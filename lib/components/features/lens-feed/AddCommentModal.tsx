@@ -18,9 +18,10 @@ import { EventPreview } from "./EventPreview";
 
 type AddCommentModalProps = {
   post: Post;
+  onSuccess: () => void;
 };
 
-export function AddCommentModal({ post }: AddCommentModalProps) {
+export function AddCommentModal({ post, onSuccess }: AddCommentModalProps) {
   const [content, setContent] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [sharingLink, setSharingLink] = useState<string | undefined>(undefined);
@@ -49,6 +50,7 @@ export function AddCommentModal({ post }: AddCommentModalProps) {
       setIsLoading(false);
       modal.close();
       toast.success('Comment posted');
+      onSuccess();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to post');
     } finally {
