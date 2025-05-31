@@ -121,7 +121,7 @@ export function ModalContainer({ modal }: { modal: Modal }) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className={twMerge(
-                  modal.options.skipBaseClassName ? '' : 'bg-overlay-primary border border-card-border rounded-lg overflow-hidden',
+                  modal.options.skipBaseClassName ? '' : 'bg-overlay-primary border border-card-border rounded-lg overflow-hidden m-4',
                   modal.options.className
                 )}
               >
@@ -147,7 +147,7 @@ interface ModalContentProps {
 
 export function ModalContent({ children, onClose, title, icon, className, onBack }: ModalContentProps) {
   return (
-    <div className={twMerge("p-4 space-y-4 w-[340px]", className)}>
+    <div className={twMerge("p-4 space-y-4 w-[340px] max-w-full", className)}>
       {
         (title || icon || onClose || onBack) && (
           <div className={clsx("flex justify-between", icon ? 'items-start' : 'items-center')}>

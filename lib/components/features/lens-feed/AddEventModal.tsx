@@ -58,7 +58,7 @@ export function AddEventModal({ onConfirm }: { onConfirm: (url: string) => void;
 
   return (
     <div>
-      <Card.Header className="flex justify-between items-center w-[480px]">
+      <Card.Header className="flex justify-between items-center w-[480px] max-w-full">
         <p className="text-lg font-medium">Add Event</p>
         <Button
           icon="icon-x size-[14]"
