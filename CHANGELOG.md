@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.32.0](https://github.com/lemonadesocial/web-new/compare/v1.31.0...v1.32.0) (2025-05-31)
+
+
+### Features
+
+* update comment count ([db82158](https://github.com/lemonadesocial/web-new/commit/db821582bf8c60eaf00c71cfb5c423369a69fb78))
+
+
+### Bug Fixes
+
+* mobile modal ([255a7ca](https://github.com/lemonadesocial/web-new/commit/255a7ca7bfdaa4a56831b5862afc758917897375))
+
 ## [1.31.0](https://github.com/lemonadesocial/web-new/compare/v1.30.0...v1.31.0) (2025-05-31)
 
 
