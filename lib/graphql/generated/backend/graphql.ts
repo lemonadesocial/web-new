@@ -1241,6 +1241,7 @@ export type Event = {
   eventbrite_tickets_imported?: Maybe<Scalars['Boolean']['output']>;
   events?: Maybe<Array<Scalars['MongoID']['output']>>;
   events_expanded?: Maybe<Array<Maybe<Event>>>;
+  external_url?: Maybe<Scalars['String']['output']>;
   frequent_questions?: Maybe<Array<FrequentQuestion>>;
   guest_directory_enabled?: Maybe<Scalars['Boolean']['output']>;
   guest_limit?: Maybe<Scalars['Float']['output']>;
@@ -1536,6 +1537,7 @@ export type EventBase = {
   eventbrite_tickets_imported?: Maybe<Scalars['Boolean']['output']>;
   eventbrite_token?: Maybe<Scalars['String']['output']>;
   events?: Maybe<Array<Scalars['MongoID']['output']>>;
+  external_url?: Maybe<Scalars['String']['output']>;
   frequent_questions?: Maybe<Array<FrequentQuestion>>;
   guest_directory_enabled?: Maybe<Scalars['Boolean']['output']>;
   guest_limit?: Maybe<Scalars['Float']['output']>;
@@ -1782,6 +1784,7 @@ export type EventInput = {
   donation_vaults?: InputMaybe<Array<Scalars['MongoID']['input']>>;
   end?: InputMaybe<Scalars['DateTimeISO']['input']>;
   events?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+  external_url?: InputMaybe<Scalars['String']['input']>;
   frequent_questions?: InputMaybe<Array<FrequentQuestionInput>>;
   guest_directory_enabled?: InputMaybe<Scalars['Boolean']['input']>;
   guest_limit?: InputMaybe<Scalars['Float']['input']>;
@@ -6832,6 +6835,7 @@ export type SpaceEventInsight = {
   eventbrite_tickets_imported?: Maybe<Scalars['Boolean']['output']>;
   eventbrite_token?: Maybe<Scalars['String']['output']>;
   events?: Maybe<Array<Scalars['MongoID']['output']>>;
+  external_url?: Maybe<Scalars['String']['output']>;
   frequent_questions?: Maybe<Array<FrequentQuestion>>;
   guest_directory_enabled?: Maybe<Scalars['Boolean']['output']>;
   guest_limit?: Maybe<Scalars['Float']['output']>;

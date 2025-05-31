@@ -23,6 +23,7 @@ import { PlaceAutoComplete } from '$lib/components/core/map/place-autocomplete';
 import { AddTags } from './ListingEvent';
 
 type FormValues = {
+  external_url?: string;
   title?: string;
   location?: {
     address?: any;
@@ -66,6 +67,13 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
           title: values.title,
           start: convertFromUtcToTimezone(values.datetime?.start as string, values.datetime?.timezone),
           end: convertFromUtcToTimezone(values.datetime?.end as string, values.datetime?.timezone),
+          longitude: values.location?.longitude,
+          latitude: values.location?.latitude,
+          address: {
+            longitude: values.location?.longitude,
+            latitude: values.location?.latitude,
+          },
+          external_url: values.external_url,
         },
       },
     });
@@ -196,6 +204,7 @@ function InputFieldCustom({ onChange }: { onChange?: (data: any) => void }) {
         title: data.ogTitle,
         startDate: isDate(data.articlePublishedTime) ? data.articlePublishedTime : new Date(),
         endDate: isDate(data.articleExpirationTime) ? data.articleExpirationTime : new Date(),
+        external_url: url,
       });
     } catch (_err) {
       toast.error('Cannot extract url');
