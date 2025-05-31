@@ -24,7 +24,6 @@ export function PlaceAutoComplete({
       const autocompleteService = new window.google.maps.places.AutocompleteService();
       autocompleteService.getPlacePredictions({ input: query }, (predictions) => {
         setPredictions(predictions);
-        console.log(predictions);
       });
     } else {
       setPredictions([]);
@@ -64,7 +63,7 @@ export function PlaceAutoComplete({
       <div className="flex flex-col gap-2">
         <label className="text-sm text-secondary font-medium">{label}</label>
         <div className="bg-background/64 border flex py-1 px-3.5 rounded-sm items-center h-[44px] left-0 right-0 focus-within:border-primary px-3.5 gap-2.5">
-          <i className="icon-location-outline" />
+          <i className="icon-location-outline text-tertiary" />
           <input
             className="flex-1 outline-none"
             value={query}

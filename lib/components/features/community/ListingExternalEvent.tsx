@@ -1,15 +1,13 @@
 import React from 'react';
 import clsx from 'clsx';
-import { format } from 'date-fns';
+import { addHours, format } from 'date-fns';
 import { Controller, useForm } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { isDate } from 'lodash';
 
 import { Button, Card, Input, Menu, modal, Spacer, toast } from '$lib/components/core';
 import { Calendar } from '$lib/components/core/calendar';
-import { TimezoneOption, timezoneOptions } from '$lib/utils/timezone';
+import { getUserTimezoneOption, TimezoneOption, timezoneOptions } from '$lib/utils/timezone';
 import { convertFromUtcToTimezone, formatWithTimezone } from '$lib/utils/date';
 import {
   CreateExternalEventDocument,
@@ -42,6 +40,7 @@ type FormValues = {
 
 export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
   const [tags, setTags] = React.useState<SpaceTag[]>([]);
+  const now = new Date();
 
   const {
     control,
@@ -50,12 +49,18 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
     formState: { isSubmitting },
     setValue,
   } = useForm<FormValues>({
-    defaultValues: { title: '' },
+    defaultValues: {
+      title: '',
+      datetime: {
+        start: now.toISOString(),
+        end: addHours(now, 1).toISOString(),
+      },
+    },
   });
 
   const { client } = useClient();
 
-  const title = watch('title');
+  const [title, datetime, external_url] = watch(['title', 'datetime', 'external_url']);
 
   const onSubmit = async (values: FormValues) => {
     const { data } = await client.query({
@@ -69,10 +74,8 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
           end: convertFromUtcToTimezone(values.datetime?.end as string, values.datetime?.timezone),
           longitude: values.location?.longitude,
           latitude: values.location?.latitude,
-          address: {
-            longitude: values.location?.longitude,
-            latitude: values.location?.latitude,
-          },
+          timezone: values.datetime?.timezone,
+          address: values.location?.address,
           external_url: values.external_url,
         },
       },
@@ -103,15 +106,16 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
         />
       </Card.Header>
       <Card.Content className="overflow-inherit!">
-        <InputFieldCustom
-          onChange={(data) => {
-            setValue('title', data.title);
-            setValue('datetime.start', data.startDate);
-            setValue('datetime.end', data.endDate);
-          }}
-        />
-        <Spacer className="h-3" />
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+          <InputFieldCustom
+            onChange={(data) => {
+              setValue('title', data.title);
+              setValue('datetime.start', data.startDate);
+              setValue('datetime.end', data.endDate);
+              setValue('external_url', data.external_url);
+            }}
+          />
+
           <Controller
             control={control}
             name="title"
@@ -132,6 +136,7 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
             render={() => (
               <PlaceAutoComplete
                 label="Event Location *"
+                placeholder="What’s the address?"
                 onSelect={(address) => {
                   if (address.latitude) setValue('location.latitude', address.latitude);
                   if (address.longitude) setValue('location.longitude', address.longitude);
@@ -144,7 +149,7 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
           <Controller
             control={control}
             name="host"
-            render={() => <InputField label="Host" placeholder="Friends of the City" readOnly />}
+            render={() => <InputField label="Host" placeholder="Friends of the City" />}
           />
 
           <Controller
@@ -153,6 +158,8 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
             render={() => (
               <DateTimeWithTimeZone
                 label="Event Time"
+                start={datetime?.start}
+                end={datetime?.end}
                 onSelect={({ start, end }) => {
                   setValue('datetime.start', start);
                   setValue('datetime.end', end);
@@ -164,7 +171,13 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
           <AddTags type={SpaceTagType.Event} spaceId={spaceId} onChange={(value) => setTags(value)} />
 
           <div className="p-1 flex flex-col gap-3 items-start">
-            <Button disabled={!title} variant="secondary" type="submit" loading={isSubmitting} className="w-full">
+            <Button
+              disabled={!title || !external_url}
+              variant="secondary"
+              type="submit"
+              loading={isSubmitting}
+              className="w-full"
+            >
               Submit Event
             </Button>
           </div>
@@ -288,21 +301,28 @@ function DateTimeWithTimeZone({
   label,
   start,
   end,
+  timezone = getUserTimezoneOption()?.value,
   onSelect,
 }: {
   label?: string;
   start?: string;
   end?: string;
+  timezone?: string;
   onSelect: (value: { start: string; end: string }) => void;
 }) {
   const [startTime, setStartTime] = React.useState(start ? new Date(start).toISOString() : new Date().toISOString());
   const [endTime, setEndTime] = React.useState(end ? new Date(end).toISOString() : new Date().toISOString());
-  const [zone, setZone] = React.useState<TimezoneOption>();
+  const [zone, setZone] = React.useState<TimezoneOption>(
+    timezoneOptions.find((item) => item.value === timezone) as TimezoneOption,
+  );
 
-  const handleSelect = ({ start, end, timezone }: { start: string; end: string; timezone?: TimezoneOption }) => {
+  // TODO: double check start/end correct with timezone response from be
+  const handleSelect = ({ start, end }: { start: string; end: string; timezone?: TimezoneOption }) => {
     onSelect({
-      start: timezone ? formatWithTimezone(new Date(start), timezone.value) : start,
-      end: timezone ? formatWithTimezone(new Date(start), timezone.value) : end,
+      start,
+      end,
+      // start: timezone ? formatWithTimezone(new Date(start), timezone.value) : start,
+      // end: timezone ? formatWithTimezone(new Date(start), timezone.value) : end,
     });
   };
 
@@ -382,7 +402,6 @@ function DateTimeGroup({ value = '', onSelect }: { value?: string; onSelect: (da
   }, []);
 
   const handleSelect = (args: { value: Date; timezone?: string }) => {
-    // const res = new Date();
     onSelect(args.value.toISOString());
   };
 
@@ -467,6 +486,7 @@ function Timezone({ value, onSelect }: { value?: TimezoneOption; onSelect: (zone
               <Input
                 className="rounded-none border-none"
                 value={query}
+                autoFocus
                 onChange={(e) => {
                   const text = e.target.value;
                   setQuery(text);
@@ -487,6 +507,7 @@ function Timezone({ value, onSelect }: { value?: TimezoneOption; onSelect: (zone
                       )}
                       onClick={() => {
                         onSelect(zone);
+                        setQuery('');
                         toggle();
                       }}
                     >
