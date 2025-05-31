@@ -16,7 +16,7 @@ export function PlaceAutoComplete({
   onSelect?: (address: Address) => void;
 }) {
   const [toggle, setToggle] = React.useState(false);
-  const [query, setQuery] = React.useState(value);
+  const [query, setQuery] = React.useState('');
   const [predictions, setPredictions] = React.useState<any>([]);
 
   React.useEffect(() => {
@@ -29,6 +29,15 @@ export function PlaceAutoComplete({
       setPredictions([]);
     }
   }, [query]);
+
+  React.useEffect(() => {
+    if (value && value !== query) {
+      const autocompleteService = new window.google.maps.places.AutocompleteService();
+      autocompleteService.getPlacePredictions({ input: value }, (predictions) => {
+        handleSelect(predictions?.[0]);
+      });
+    }
+  }, [value, query]);
 
   const handleSelect = (prediction: any) => {
     const service = new window.google.maps.places.PlacesService(document.createElement('div'));

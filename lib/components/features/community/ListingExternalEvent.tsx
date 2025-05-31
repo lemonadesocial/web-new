@@ -4,8 +4,9 @@ import { addHours, format } from 'date-fns';
 import { Controller, useForm } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { isDate } from 'lodash';
+import ct from 'countries-and-timezones';
 
-import { Button, Card, Input, Menu, modal, Spacer, toast } from '$lib/components/core';
+import { Button, Card, Input, Map, Menu, modal, Spacer, toast } from '$lib/components/core';
 import { Calendar } from '$lib/components/core/calendar';
 import { getUserTimezoneOption, TimezoneOption, timezoneOptions } from '$lib/utils/timezone';
 import { convertFromUtcToTimezone } from '$lib/utils/date';
@@ -60,7 +61,7 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
 
   const { client } = useClient();
 
-  const [title, external_url] = watch(['title', 'external_url']);
+  const [title, external_url, location] = watch(['title', 'external_url', 'location']);
 
   const onSubmit = async (values: FormValues) => {
     const { data, error } = await client.query({
@@ -76,6 +77,7 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
           latitude: values.location?.latitude,
           timezone: values.datetime?.timezone,
           address: values.location?.address,
+          external_host: values.host,
           external_url: values.external_url,
         },
       },
@@ -119,6 +121,10 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
               setValue('datetime.start', data.startDate);
               setValue('datetime.end', data.endDate);
               setValue('external_url', data.external_url);
+              setValue('host', data.host);
+              setValue('location', data.location);
+              const country = ct.getCountry(data.location.address.country);
+              setValue('datetime.timezone', country?.timezones?.[0]);
             }}
           />
 
@@ -139,23 +145,44 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
           <Controller
             control={control}
             name="location"
-            render={() => (
-              <PlaceAutoComplete
-                label="Event Location"
-                placeholder="What’s the address?"
-                onSelect={(address) => {
-                  if (address.latitude) setValue('location.latitude', address.latitude);
-                  if (address.longitude) setValue('location.longitude', address.longitude);
-                  setValue('location.address', address);
-                }}
-              />
-            )}
+            render={({ field }) => {
+              return (
+                <>
+                  <PlaceAutoComplete
+                    label="Event Location"
+                    value={field.value?.address?.title}
+                    placeholder="What’s the address?"
+                    onSelect={(address) => {
+                      if (address.latitude) setValue('location.latitude', address.latitude);
+                      if (address.longitude) setValue('location.longitude', address.longitude);
+                      setValue('location.address', address);
+                    }}
+                  />
+                  {location?.address?.latitude && location?.address?.longitude && (
+                    <div className="aspect-video h-[240px] rounded-sm overflow-hidden">
+                      <Map
+                        gestureHandling="greedy"
+                        defaultZoom={11}
+                        markers={[{ lat: location?.address?.latitude, lng: location?.address?.longitude }]}
+                      />
+                    </div>
+                  )}
+                </>
+              );
+            }}
           />
 
           <Controller
             control={control}
             name="host"
-            render={() => <InputField label="Host" placeholder="Friends of the City" />}
+            render={({ field }) => (
+              <InputField
+                label="Host"
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="Friends of the City"
+              />
+            )}
           />
 
           <Controller
@@ -166,6 +193,7 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
                 label="Event Time"
                 start={field.value?.start}
                 end={field.value?.end}
+                timezone={field.value?.timezone}
                 onSelect={({ start, end }) => {
                   setValue('datetime.start', start);
                   setValue('datetime.end', end);
@@ -214,16 +242,38 @@ function InputFieldCustom({ onChange }: { onChange?: (data: any) => void }) {
         method: 'POST',
         body: JSON.stringify({ url }),
       });
+
       const data = await res.json();
+      let startDate = isDate(data.articlePublishedTime) ? data.articlePublishedTime : new Date();
+      let endDate = isDate(data.articleExpirationTime) ? data.articleExpirationTime : new Date();
+      let host = '';
+      let location = {};
+
       if ('jsonLD' in data && data.jsonLD.length) {
-        // const location = data.jsonLD[0].location;
+        startDate = data.jsonLD.find((item: any) => item.startDate)?.startDate || null;
+        endDate = data.jsonLD.find((item: any) => item.endDate)?.endDate || null;
+        host = data.jsonLD.find((item: any) => item.organizer)?.organizer?.name || null;
+
+        const _location = data.jsonLD.find((item: any) => item.location)?.location || null;
+        location = {
+          address: {
+            street_1: _location?.address?.streetAddress,
+            city: _location?.address?.addressLocality,
+            region: _location?.address?.addressRegion,
+            postal: _location?.address?.postalCode,
+            country: _location?.address?.addressCountry,
+            title: _location?.name,
+          },
+        };
       }
 
       onChange?.({
         title: data.ogTitle,
-        startDate: isDate(data.articlePublishedTime) ? data.articlePublishedTime : new Date(),
-        endDate: isDate(data.articleExpirationTime) ? data.articleExpirationTime : new Date(),
+        startDate,
+        endDate,
+        host,
         external_url: url,
+        location,
       });
     } catch (_err) {
       toast.error('Cannot extract url');
@@ -321,6 +371,7 @@ function DateTimeWithTimeZone({
   const [zone, setZone] = React.useState<TimezoneOption>(
     timezoneOptions.find((item) => item.value === timezone) as TimezoneOption,
   );
+  console.log(start);
 
   // TODO: double check start/end correct with timezone response from be
   const handleSelect = ({ start, end }: { start: string; end: string; timezone?: TimezoneOption }) => {
@@ -440,7 +491,7 @@ function DateTimeGroup({ value = '', onSelect }: { value?: string; onSelect: (da
             {format(value ? new Date(value) : new Date(), 'hh:mm a')}
           </Button>
         </Menu.Trigger>
-        <Menu.Content className="min-w-[120px] p-0 rounded-lg overflow-auto h-[200px] p-2">
+        <Menu.Content className="w-fit no-scrollbar p-0 rounded-lg overflow-auto h-[200px] p-2">
           {({ toggle }) => {
             return (
               <div>
@@ -448,7 +499,7 @@ function DateTimeGroup({ value = '', onSelect }: { value?: string; onSelect: (da
                   <Button
                     key={i}
                     variant="flat"
-                    className="hover:bg-quaternary! w-full"
+                    className="hover:bg-quaternary! w-full whitespace-nowrap"
                     onClick={() => {
                       const [hours, minutes] = t.value.split(':').map(Number);
                       const datetime = value ? new Date(value) : new Date();
