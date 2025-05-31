@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.31.0](https://github.com/lemonadesocial/web-new/compare/v1.30.0...v1.31.0) (2025-05-31)
+
+
+### Features
+
+* add comment ([95537e0](https://github.com/lemonadesocial/web-new/commit/95537e072e2928e4516d3bc6cc3e3f6b7c8f42af))
+
+
+### Bug Fixes
+
+* sort color under template ([fe08f0d](https://github.com/lemonadesocial/web-new/commit/fe08f0dc14a2cff6442228dccc529dcb1f0cfbc9))
+* update theme builder config ([0e64fd6](https://github.com/lemonadesocial/web-new/commit/0e64fd6794c2126db8132e434f209881885f3d57))
+
 ## [1.30.0](https://github.com/lemonadesocial/web-new/compare/v1.29.0...v1.30.0) (2025-05-30)
 
 
