@@ -8,7 +8,7 @@ import { isDate } from 'lodash';
 import { Button, Card, Input, Menu, modal, Spacer, toast } from '$lib/components/core';
 import { Calendar } from '$lib/components/core/calendar';
 import { getUserTimezoneOption, TimezoneOption, timezoneOptions } from '$lib/utils/timezone';
-import { convertFromUtcToTimezone, formatWithTimezone } from '$lib/utils/date';
+import { convertFromUtcToTimezone } from '$lib/utils/date';
 import {
   CreateExternalEventDocument,
   PinEventsToSpaceDocument,
@@ -60,10 +60,10 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
 
   const { client } = useClient();
 
-  const [title, datetime, external_url] = watch(['title', 'datetime', 'external_url']);
+  const [title, external_url] = watch(['title', 'external_url']);
 
   const onSubmit = async (values: FormValues) => {
-    const { data } = await client.query({
+    const { data, error } = await client.query({
       query: CreateExternalEventDocument,
       variables: {
         input: {
@@ -80,6 +80,12 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
         },
       },
     });
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
     const event = data?.createEvent;
 
     if (event) {
@@ -135,7 +141,7 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
             name="location"
             render={() => (
               <PlaceAutoComplete
-                label="Event Location *"
+                label="Event Location"
                 placeholder="What’s the address?"
                 onSelect={(address) => {
                   if (address.latitude) setValue('location.latitude', address.latitude);
@@ -155,11 +161,11 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
           <Controller
             control={control}
             name="datetime"
-            render={() => (
+            render={({ field }) => (
               <DateTimeWithTimeZone
                 label="Event Time"
-                start={datetime?.start}
-                end={datetime?.end}
+                start={field.value?.start}
+                end={field.value?.end}
                 onSelect={({ start, end }) => {
                   setValue('datetime.start', start);
                   setValue('datetime.end', end);
@@ -310,8 +316,8 @@ function DateTimeWithTimeZone({
   timezone?: string;
   onSelect: (value: { start: string; end: string }) => void;
 }) {
-  const [startTime, setStartTime] = React.useState(start ? new Date(start).toISOString() : new Date().toISOString());
-  const [endTime, setEndTime] = React.useState(end ? new Date(end).toISOString() : new Date().toISOString());
+  const [startTime, setStartTime] = React.useState(start || new Date().toISOString());
+  const [endTime, setEndTime] = React.useState(end || new Date().toISOString());
   const [zone, setZone] = React.useState<TimezoneOption>(
     timezoneOptions.find((item) => item.value === timezone) as TimezoneOption,
   );
