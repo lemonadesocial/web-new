@@ -131,12 +131,6 @@ const minimal: ThemePresetType = {
     config: { colors },
     disabled: {
       style: true,
-      mode: true,
-
-      /** @deprecated fg */
-      fg: false,
-      /** @deprecated bg */
-      bg: false,
     },
   },
 };
@@ -167,7 +161,7 @@ const pattern: ThemePresetType = {
   image: `${ASSET_PREFIX}/assets/images/pattern.png`,
   name: 'Pattern',
   ui: {
-    disabled: { mode: true },
+    disabled: {},
   },
 };
 

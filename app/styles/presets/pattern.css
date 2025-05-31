@@ -13,7 +13,7 @@
 
   .light {
     .pattern {
-      --pattern-opacity: 0;
+      --pattern-opacity: 1;
     }
   }
 
