@@ -34,7 +34,13 @@ export function EventList({
           <Divider className="mt-2 mb-3" />
 
           {data.map((item) => (
-            <div key={item._id} onClick={() => onSelect?.(item)}>
+            <div
+              key={item._id}
+              onClick={() => {
+                if (item.external_url) window.open(item.external_url);
+                else onSelect?.(item);
+              }}
+            >
               <EventItem item={item} />
             </div>
           ))}
@@ -54,22 +60,30 @@ function EventItem({ item }: { item: Event }) {
       <div className="flex flex-col gap-1 flex-1">
         <p className="text-primary font-medium text-base md:text-lg">{item.title}</p>
         <div className="flex gap-2 items-center">
-          <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
-            {users.map((p) => (
-              <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="outline outline-background" />
-            ))}
-          </div>
+          {item.external_url && item.external_hostname ? (
+            <p className="font-medium text-sm md:text-base text-tertiary">{`By ${item.external_hostname}`}</p>
+          ) : (
+            <>
+              <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
+                {users.map((p) => (
+                  <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="outline outline-background" />
+                ))}
+              </div>
 
-          <p className="font-medium text-sm md:text-base text-tertiary">
-            By{' '}
-            {users
-              .map((p) => p?.name)
-              .join(', ')
-              .replace(/,(?=[^,]*$)/, ' & ')}
-          </p>
+              <p className="font-medium text-sm md:text-base text-tertiary">
+                By{' '}
+                {users
+                  .map((p) => p?.name)
+                  .join(', ')
+                  .replace(/,(?=[^,]*$)/, ' & ')}
+              </p>
+            </>
+          )}
         </div>
       </div>
       <div>
+        {item.external_url && <Badge title="External" className="bg-quaternary text-tertiary" />}
+
         {getEventPrice(item) && (
           <Badge title={getEventPrice(item)} className="bg-success-500/[0.16] text-success-500" />
         )}
@@ -140,7 +154,15 @@ export function EventListCard({
 
             <div className="flex flex-col gap-3">
               {data.map((item) => (
-                <EventCardItem key={item._id} item={item} tags={tags} onClick={() => onSelect?.(item)} />
+                <EventCardItem
+                  key={item._id}
+                  item={item}
+                  tags={tags}
+                  onClick={() => {
+                    if (item.external_url) window.open(item.external_url);
+                    else onSelect?.(item);
+                  }}
+                />
               ))}
             </div>
           </div>
@@ -183,20 +205,34 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
               <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), 'hh:mm a')}</p>
             </div>
             <p className="font-title text-lg md:text-xl font-semibold text-primary">{item.title}</p>
-            <div className="flex gap-2 item-center">
-              <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
-                {users.map((p) => (
-                  <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="outline outline-background" />
-                ))}
-              </div>
 
-              <p className="font-medium text-tertiary text-sm md:text-base truncate">
-                By{' '}
-                {users
-                  .map((p) => p?.name)
-                  .join(', ')
-                  .replace(/,(?=[^,]*$)/, ' & ')}
-              </p>
+            <div className="flex gap-2 item-center">
+              {item.external_url && item.external_hostname ? (
+                <p className="font-medium text-tertiary text-sm md:text-base truncate">
+                  {`By ${item.external_hostname}`}
+                </p>
+              ) : (
+                <>
+                  <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
+                    {users.map((p) => (
+                      <Avatar
+                        key={p?._id}
+                        src={userAvatar(p as User)}
+                        size="sm"
+                        className="outline outline-background"
+                      />
+                    ))}
+                  </div>
+
+                  <p className="font-medium text-tertiary text-sm md:text-base truncate">
+                    By{' '}
+                    {users
+                      .map((p) => p?.name)
+                      .join(', ')
+                      .replace(/,(?=[^,]*$)/, ' & ')}
+                  </p>
+                </>
+              )}
             </div>
           </div>
 
@@ -208,6 +244,8 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
               </div>
             </div>
           )}
+
+          {item.external_url && <Badge className="bg-quaternary text-tertiary" title="External" />}
 
           {!!tags.length && (
             <div className="flex gap-1.5 flex-wrap">

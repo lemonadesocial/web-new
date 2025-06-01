@@ -103,6 +103,8 @@ query GetEvent($id: MongoID, $shortid: String) {
     theme_data
     url
     url_go
+    external_url
+    external_hostname
   }
 }
 

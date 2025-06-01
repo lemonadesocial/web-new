@@ -136,6 +136,8 @@ query GetSpaceEvents(
     start
     end
     timezone
+    external_url
+    external_hostname
     event_ticket_types {
       _id
       prices {
@@ -229,6 +231,25 @@ query GetMySpaceEventRequests($space: MongoID!, $skip: Int!, $limit: Int!, $stat
   }
 }
 
+query getSubSpaces($id: MongoID!) {
+  getSubSpaces(_id: $id) {
+    _id
+    title
+    description
+    followers_count
+    slug
+    is_admin
+    followed
+    image_avatar_expanded {
+      _id
+      bucket
+      url
+      type
+      key
+    }
+  }
+}
+
 #### Mutations
 
 mutation FollowSpace($space: MongoID!) {
@@ -253,21 +274,9 @@ mutation PinEventsToSpace($space: MongoID!, $events: [MongoID!]!, $tags: [MongoI
   }
 }
 
-query getSubSpaces($id: MongoID!) {
-  getSubSpaces(_id: $id) {
+# NOTE: ONLY NEED _id -> call PinEventsToSpace
+mutation CreateExternalEvent($input: EventInput!) {
+  createEvent(input: $input) {
     _id
-    title
-    description
-    followers_count
-    slug
-    is_admin
-    followed
-    image_avatar_expanded {
-      _id
-      bucket
-      url
-      type
-      key
-    }
   }
 }

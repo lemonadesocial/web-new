@@ -36,6 +36,7 @@ import { EventPane } from '../pane';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { MyEventRequests } from './MyEventRequests';
 import CommunityCard from './CommunityCard';
+import { ListingExternalEvent } from './ListingExternalEvent';
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
@@ -236,6 +237,14 @@ export function Community({ initData }: Props) {
                             if (space?._id) modal.open(ListingEvent, { props: { spaceId: space._id } });
                           }}
                         />
+                        <MenuItem
+                          title="Submit External Event"
+                          iconLeft="icon-globe"
+                          onClick={() => {
+                            toggle();
+                            if (space?._id) modal.open(ListingExternalEvent, { props: { spaceId: space._id } });
+                          }}
+                        />
                       </>
                     )}
                   </Menu.Content>
@@ -322,6 +331,14 @@ export function Community({ initData }: Props) {
                         onClick={() => {
                           toggle();
                           if (space?._id) modal.open(ListingEvent, { props: { spaceId: space._id } });
+                        }}
+                      />
+                      <MenuItem
+                        title="Submit External Event"
+                        iconLeft="icon-globe"
+                        onClick={() => {
+                          toggle();
+                          if (space?._id) modal.open(ListingExternalEvent, { props: { spaceId: space._id } });
                         }}
                       />
                     </>

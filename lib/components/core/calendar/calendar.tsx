@@ -58,6 +58,7 @@ export function Calendar({ events, selected: selectedDate, footer, onSelectDate 
           <span className="text-lg font-medium text-primary">{format(active, 'MMMM')}</span>
           <div className="flex items-center text-tertiary">
             <button
+              type="button"
               aria-label="prev-month"
               className="cursor-pointer hover:text-primary focus:outline-none"
               onClick={() => setActive((prev) => addMonths(prev, -1))}
@@ -66,6 +67,7 @@ export function Calendar({ events, selected: selectedDate, footer, onSelectDate 
             </button>
             <i className="icon-dot size-5" />
             <button
+              type="button"
               aria-label="next-month"
               className="cursor-pointer hover:text-primary focus:outline-none"
               onClick={() => setActive((prev) => addMonths(prev, 1))}
@@ -86,6 +88,7 @@ export function Calendar({ events, selected: selectedDate, footer, onSelectDate 
         <div className="grid grid-cols-7 gap-1">
           {getDates().map((d) => (
             <button
+              type="button"
               aria-label={d.toString()}
               key={d.toString()}
               className={twMerge(

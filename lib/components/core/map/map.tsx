@@ -13,6 +13,7 @@ interface MapProps {
   colorscheme?: 'DARK' | 'LIGHT';
   defaultZoom?: number;
   marker?: 'marker' | 'advanced';
+  gestureHandling?: 'none' | 'cooperative' | 'greedy';
 }
 
 // TODO: need to create MapId and MapStyles to use with AdvancedMarker
@@ -23,6 +24,7 @@ export function Map({
   colorscheme = 'DARK',
   defaultZoom = 2,
   marker = 'marker',
+  gestureHandling = 'none',
 }: MapProps) {
   if (!GOOGLE_MAP_KEY) {
     log.warn({ message: 'Missing GOOGLE_MAP_KEY.' });
@@ -41,7 +43,7 @@ export function Map({
         disableDefaultUI
         styles={colorscheme == 'DARK' ? darkMapTheme : undefined}
         colorScheme={colorscheme}
-        gestureHandling='none'
+        gestureHandling={gestureHandling}
       >
         {markers?.map((item, idx) => {
           if (marker == 'advanced') {
