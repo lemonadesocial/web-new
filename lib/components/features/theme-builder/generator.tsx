@@ -59,12 +59,21 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
           {data.config?.effect?.type === 'video' && data?.config?.effect?.url && (
             <div key={data.config.effect.name}>
               <video className="min-w-full min-h-full fixed hidden md:block inset-0" autoPlay loop playsInline muted>
-                <source src={data?.config?.effect?.url + '_web.mov'} type="video/mp4;codecs=hvc1"></source>
-                <source src={data?.config?.effect?.url + '_web.webm'} type="video/webm"></source>
+                <source
+                  src={data?.config?.effect?.url.replace('.webm', '') + '_web.mov'}
+                  type="video/mp4;codecs=hvc1"
+                ></source>
+                <source src={data?.config?.effect?.url.replace('.webm', '') + '_web.webm'} type="video/webm"></source>
               </video>
               <video className="min-w-full min-h-full fixed inset-0 md:hidden" autoPlay loop playsInline muted>
-                <source src={data?.config?.effect?.url + '_mobile.mov'} type="video/mp4;codecs=hvc1"></source>
-                <source src={data?.config?.effect?.url + '_mobile.webm'} type="video/webm"></source>
+                <source
+                  src={data?.config?.effect?.url.replace('.webm', '') + '_mobile.mov'}
+                  type="video/mp4;codecs=hvc1"
+                ></source>
+                <source
+                  src={data?.config?.effect?.url.replace('.webm', '') + '_mobile.webm'}
+                  type="video/webm"
+                ></source>
               </video>
             </div>
           )}
