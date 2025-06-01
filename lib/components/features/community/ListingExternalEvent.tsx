@@ -20,6 +20,7 @@ import { useClient } from '$lib/graphql/request';
 import { PlaceAutoComplete } from '$lib/components/core/map/place-autocomplete';
 
 import { AddTags } from './ListingEvent';
+import { FloatingPortal } from '@floating-ui/react';
 
 type FormValues = {
   external_url?: string;
@@ -510,20 +511,22 @@ function DateTimeGroup({ value = '', onSelect }: { value?: string; onSelect: (da
             {format(value ? new Date(value) : new Date(), 'EEE, dd MMM')}
           </Button>
         </Menu.Trigger>
-        <Menu.Content className="w-[296px] p-0 rounded-lg">
-          {({ toggle }) => (
-            <Calendar
-              onSelectDate={(date = new Date()) => {
-                const datetime = value ? new Date(value) : new Date();
-                datetime.setFullYear(date.getFullYear());
-                datetime.setMonth(date.getMonth());
-                datetime.setDate(date.getDate());
-                handleSelect({ value: datetime });
-                toggle();
-              }}
-            />
-          )}
-        </Menu.Content>
+        <FloatingPortal>
+          <Menu.Content className="w-[296px] p-0 rounded-lg">
+            {({ toggle }) => (
+              <Calendar
+                onSelectDate={(date = new Date()) => {
+                  const datetime = value ? new Date(value) : new Date();
+                  datetime.setFullYear(date.getFullYear());
+                  datetime.setMonth(date.getMonth());
+                  datetime.setDate(date.getDate());
+                  handleSelect({ value: datetime });
+                  toggle();
+                }}
+              />
+            )}
+          </Menu.Content>
+        </FloatingPortal>
       </Menu.Root>
       <Menu.Root placement="top-end">
         <Menu.Trigger>
