@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.33.0](https://github.com/lemonadesocial/web-new/compare/v1.32.0...v1.33.0) (2025-06-01)
+
+
+### Features
+
+* completed location ([326433c](https://github.com/lemonadesocial/web-new/commit/326433cf58c58b3d417d5144e9c629159ddb0b4d))
+* update logic external event link on list event ([27aaf8a](https://github.com/lemonadesocial/web-new/commit/27aaf8a0ae575020e1c77f33947b4063efb761b8))
+
+
+### Bug Fixes
+
+* update datetime picker logic ([3665450](https://github.com/lemonadesocial/web-new/commit/36654501416e231ff273ae54ae5d12ef5d291426))
+* update mobile view ([f585f3b](https://github.com/lemonadesocial/web-new/commit/f585f3b1ecb512bb4d60ead4d6bfdc4591113d59))
+
 ## [1.32.0](https://github.com/lemonadesocial/web-new/compare/v1.31.0...v1.32.0) (2025-05-31)
 
 
