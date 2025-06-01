@@ -7,6 +7,8 @@ import { getSpace } from '$lib/utils/getSpace';
 import { CommunityThemeProvider } from '$lib/components/features/theme-builder/provider';
 import { CommunityContainer } from './container';
 import { defaultTheme } from '$lib/components/features/theme-builder/store';
+import { getClient } from '$lib/graphql/request';
+import { GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
 
 type LayoutProps = {
   children: React.ReactElement;
@@ -23,7 +25,10 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
     if (domain) variables = { hostname: decodeURIComponent(domain) };
   }
 
-  const space = await getSpace(variables);
+  const client = getClient();
+
+  const { data } = await client.query({ query: GetSpaceDocument, variables });
+  const space = data?.getSpace as Space;
 
   if (!space) {
     return notFound();

@@ -1,4 +1,4 @@
-import { motion, useTime, useTransform } from 'framer-motion';
+import { motion, useAnimationFrame, useTime, useTransform } from 'framer-motion';
 import { useEffect, useState, createContext, useContext } from 'react';
 
 interface EmojiState {
@@ -175,56 +175,51 @@ export function EmojiAnimateItem({
     };
   };
 
-  useEffect(() => {
+  useAnimationFrame(() => {
     if (typeof window === 'undefined') return;
 
-    const updatePosition = () => {
-      setEmojiState((prev) => {
-        if (!prev.isActive) return prev;
+    setEmojiState((prev) => {
+      if (!prev.isActive) return prev;
 
-        // Check for collisions with other emojis
-        const afterCollision = checkCollisions(prev, allEmojis);
+      // Check for collisions with other emojis
+      const afterCollision = checkCollisions(prev, allEmojis);
 
-        // Move emoji with updated velocity
-        const newX = afterCollision.x + afterCollision.velocityX;
-        const newY = afterCollision.y + afterCollision.velocityY;
+      // Move emoji with updated velocity
+      const newX = afterCollision.x + afterCollision.velocityX;
+      const newY = afterCollision.y + afterCollision.velocityY;
 
-        // Get window dimensions
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
+      // Get window dimensions
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
 
-        // Check if emoji is completely off screen on the opposite side
-        const isOffScreen =
-          (afterCollision.velocityX > 0 && newX > windowWidth + 100) ||
-          (afterCollision.velocityX < 0 && newX < -100) ||
-          (afterCollision.velocityY > 0 && newY > windowHeight + 100) ||
-          (afterCollision.velocityY < 0 && newY < -100);
+      // Check if emoji is completely off screen on the opposite side
+      const isOffScreen =
+        (afterCollision.velocityX > 0 && newX > windowWidth + 100) ||
+        (afterCollision.velocityX < 0 && newX < -100) ||
+        (afterCollision.velocityY > 0 && newY > windowHeight + 100) ||
+        (afterCollision.velocityY < 0 && newY < -100);
 
-        if (isOffScreen) {
-          // Remove current emoji from context
-          removeEmoji(prev.id);
-          // Create new emoji starting from outside window
-          const newEmoji = createNewEmoji();
-          addEmoji(newEmoji);
-          return newEmoji;
-        }
+      if (isOffScreen) {
+        // Remove current emoji from context
+        removeEmoji(prev.id);
+        // Create new emoji starting from outside window
+        const newEmoji = createNewEmoji();
+        addEmoji(newEmoji);
+        return newEmoji;
+      }
 
-        const updatedEmoji = {
-          ...afterCollision,
-          x: newX,
-          y: newY,
-        };
+      const updatedEmoji = {
+        ...afterCollision,
+        x: newX,
+        y: newY,
+      };
 
-        // Update in context
-        updateEmoji(prev.id, updatedEmoji);
+      // Update in context
+      updateEmoji(prev.id, updatedEmoji);
 
-        return updatedEmoji;
-      });
-    };
-
-    const interval = setInterval(updatePosition, 16); // ~60fps
-    return () => clearInterval(interval);
-  }, [allEmojis, updateEmoji, removeEmoji, addEmoji, emojis]);
+      return updatedEmoji;
+    });
+  });
 
   if (!emojiState.isActive) return null;
 
