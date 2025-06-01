@@ -436,7 +436,7 @@ export function PopoverEffect() {
           {!state.config?.effect?.name ? (
             <i className="icon-wand-shine-outline-sharp size-[24px] text-primary" />
           ) : (
-            <div className="size-[24px] text-center">{emojis[state.config?.effect.name].emoji}</div>
+            <div className="size-[24px] text-center">{emojis[state.config?.effect.name]?.emoji}</div>
           )}
           <span className="text-left flex-1 font-general-sans">Effect</span>
           <p className="flex items-center gap-1">
@@ -446,7 +446,7 @@ export function PopoverEffect() {
         </div>
       </Menu.Trigger>
       <Menu.Content>
-        <div className="grid grid-cols-4 items-center gap-3 w-[324px] max-h-[550px] p-4 overflow-auto">
+        <div className="grid grid-cols-4 items-center gap-3 w-[324px] max-h-[250px] md:max-h-[550px] p-4 overflow-auto no-scrollbar">
           {Object.entries(emojis).map(([key, value]) => (
             <button key={key} className="flex flex-col items-center text-xs gap-2 cursor-pointer">
               <div
@@ -493,7 +493,7 @@ export function PopoverFont({
   onClick: (font: string) => void;
 }) {
   return (
-    <Menu.Root placement="top" className="flex-1 min-w-full md:min-w-auto">
+    <Menu.Root placement="top" strategy="fixed" className="flex-1 min-w-full md:min-w-auto">
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           <h3 style={{ fontFamily: fonts[selected] }} className="font-semibold">
