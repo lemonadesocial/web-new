@@ -24,6 +24,7 @@ import { MenuColorPicker } from './ColorPicker';
 import { isEqual, join, split } from 'lodash';
 import { Space, UpdateSpaceDocument } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
+import { FloatingPortal } from '@floating-ui/react';
 
 export function CommunityThemeBuilder({ themeData, spaceId }: { themeData: ThemeValues; spaceId?: string }) {
   const [toggle, setToggle] = React.useState(false);
@@ -142,21 +143,23 @@ function CommunityThemeBuilderPane({
                         </p>
                       </div>
                     </Menu.Trigger>
-                    <Menu.Content className="w-[300px]">
-                      {modes.map((item) => (
-                        <MenuItem
-                          key={item.mode}
-                          iconLeft={item.icon}
-                          title={item.label}
-                          onClick={() => {
-                            dispatch({
-                              type: ThemeBuilderActionKind.select_color,
-                              payload: { config: { mode: item.mode as any } },
-                            });
-                          }}
-                        />
-                      ))}
-                    </Menu.Content>
+                    <FloatingPortal>
+                      <Menu.Content className="w-[300px]">
+                        {modes.map((item) => (
+                          <MenuItem
+                            key={item.mode}
+                            iconLeft={item.icon}
+                            title={item.label}
+                            onClick={() => {
+                              dispatch({
+                                type: ThemeBuilderActionKind.select_color,
+                                payload: { config: { mode: item.mode as any } },
+                              });
+                            }}
+                          />
+                        ))}
+                      </Menu.Content>
+                    </FloatingPortal>
                   </Menu.Root>
                 </div>
               </div>
@@ -285,27 +288,29 @@ function PopoverColor({ disabled }: { disabled?: boolean }) {
           </p>
         </div>
       </Menu.Trigger>
-      <Menu.Content>
-        <div className="grid grid-cols-9 gap-2.5">
-          {colors.map((color) => (
-            <div
-              key={color}
-              onClick={() => {
-                dispatch({
-                  type: ThemeBuilderActionKind.select_color,
-                  payload: { config: { color } },
-                });
-              }}
-              className={twMerge(
-                'size-5 cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
-                `${color} item-color-fg`,
-                clsx(color === state.config.color && 'outline-2'),
-              )}
-            />
-          ))}
-          <MenuColorPicker color={state.config.color} dispatch={dispatch} />
-        </div>
-      </Menu.Content>
+      <FloatingPortal>
+        <Menu.Content>
+          <div className="grid grid-cols-9 gap-2.5">
+            {colors.map((color) => (
+              <div
+                key={color}
+                onClick={() => {
+                  dispatch({
+                    type: ThemeBuilderActionKind.select_color,
+                    payload: { config: { color } },
+                  });
+                }}
+                className={twMerge(
+                  'size-5 cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
+                  `${color} item-color-fg`,
+                  clsx(color === state.config.color && 'outline-2'),
+                )}
+              />
+            ))}
+            <MenuColorPicker color={state.config.color} dispatch={dispatch} />
+          </div>
+        </Menu.Content>
+      </FloatingPortal>
     </Menu.Root>
   );
 }
@@ -347,26 +352,28 @@ export function PopoverShaderColor() {
           </p>
         </div>
       </Menu.Trigger>
-      <Menu.Content>
-        <div className="grid grid-cols-4 gap-3">
-          {shaders.map((s) => (
-            <div
-              key={s.name}
-              onClick={() => {
-                dispatch({
-                  type: ThemeBuilderActionKind.select_style,
-                  payload: { config: { name: s.name, color: s.accent } },
-                });
-              }}
-              className={twMerge(
-                'size-16 cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
-                `item-color-${s.name}`,
-                clsx(s.name === state.config.name && 'outline-2'),
-              )}
-            />
-          ))}
-        </div>
-      </Menu.Content>
+      <FloatingPortal>
+        <Menu.Content>
+          <div className="grid grid-cols-4 gap-3">
+            {shaders.map((s) => (
+              <div
+                key={s.name}
+                onClick={() => {
+                  dispatch({
+                    type: ThemeBuilderActionKind.select_style,
+                    payload: { config: { name: s.name, color: s.accent } },
+                  });
+                }}
+                className={twMerge(
+                  'size-16 cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
+                  `item-color-${s.name}`,
+                  clsx(s.name === state.config.name && 'outline-2'),
+                )}
+              />
+            ))}
+          </div>
+        </Menu.Content>
+      </FloatingPortal>
     </Menu.Root>
   );
 }
@@ -395,33 +402,35 @@ export function PopoverPattern() {
           </p>
         </div>
       </Menu.Trigger>
-      <Menu.Content className="flex gap-3 max-w-[356px] flex-wrap">
-        {patterns.map((item) => (
-          <button
-            key={item}
-            className={clsx('capitalize flex flex-col items-center cursor-pointer gap-2', state.config.color)}
-            onClick={(e) => {
-              e.stopPropagation();
-              dispatch({
-                type: ThemeBuilderActionKind.select_style,
-                payload: { config: { name: item } },
-              });
-            }}
-          >
-            <div
-              className={clsx(
-                'w-16! h-16! rounded-full p-1 border-2 border-transparent mb-1 overflow-hidden',
-                state.config.name === item && 'border-white',
-              )}
+      <FloatingPortal>
+        <Menu.Content className="flex gap-3 max-w-[356px] flex-wrap">
+          {patterns.map((item) => (
+            <button
+              key={item}
+              className={clsx('capitalize flex flex-col items-center cursor-pointer gap-2', state.config.color)}
+              onClick={(e) => {
+                e.stopPropagation();
+                dispatch({
+                  type: ThemeBuilderActionKind.select_style,
+                  payload: { config: { name: item } },
+                });
+              }}
             >
               <div
-                className={twMerge('pattern rounded-full item-pattern relative! w-full h-full opacity-100!', item)}
-              />
-            </div>
-            <p className="text-xs">{item}</p>
-          </button>
-        ))}
-      </Menu.Content>
+                className={clsx(
+                  'w-16! h-16! rounded-full p-1 border-2 border-transparent mb-1 overflow-hidden',
+                  state.config.name === item && 'border-white',
+                )}
+              >
+                <div
+                  className={twMerge('pattern rounded-full item-pattern relative! w-full h-full opacity-100!', item)}
+                />
+              </div>
+              <p className="text-xs">{item}</p>
+            </button>
+          ))}
+        </Menu.Content>
+      </FloatingPortal>
     </Menu.Root>
   );
 }
@@ -445,38 +454,40 @@ export function PopoverEffect() {
           </p>
         </div>
       </Menu.Trigger>
-      <Menu.Content>
-        <div className="grid grid-cols-4 items-center gap-3 w-[324px] max-h-[250px] md:max-h-[550px] p-4 overflow-auto no-scrollbar">
-          {Object.entries(emojis).map(([key, value]) => (
-            <button key={key} className="flex flex-col items-center text-xs gap-2 cursor-pointer">
-              <div
-                className={clsx(
-                  'border-2 border-[var(--color-divider)] rounded-full px-4 py-2 w-[60px] h-[60px] hover:border-primary flex items-center justify-between',
-                  key === state.config?.effect?.name && 'border border-primary',
-                )}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  let effect: any = { name: key, type: value.type, url: value.url, emoji: value.emoji };
-                  if (state.config.effect?.name && key === state.config?.effect?.name) {
-                    // toggle effect to remove effect
-                    effect = { name: '', type: undefined, url: '', emoji: '' };
-                  }
+      <FloatingPortal>
+        <Menu.Content>
+          <div className="grid grid-cols-4 items-center gap-3 w-[324px] max-h-[250px] md:max-h-[550px] p-4 overflow-auto no-scrollbar">
+            {Object.entries(emojis).map(([key, value]) => (
+              <button key={key} className="flex flex-col items-center text-xs gap-2 cursor-pointer">
+                <div
+                  className={clsx(
+                    'border-2 border-[var(--color-divider)] rounded-full px-4 py-2 w-[60px] h-[60px] hover:border-primary flex items-center justify-between',
+                    key === state.config?.effect?.name && 'border border-primary',
+                  )}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    let effect: any = { name: key, type: value.type, url: value.url, emoji: value.emoji };
+                    if (state.config.effect?.name && key === state.config?.effect?.name) {
+                      // toggle effect to remove effect
+                      effect = { name: '', type: undefined, url: '', emoji: '' };
+                    }
 
-                  dispatch({
-                    type: ThemeBuilderActionKind.select_effect,
-                    payload: {
-                      config: { effect },
-                    },
-                  });
-                }}
-              >
-                <span className="text-xl">{value.emoji}</span>
-              </div>
-              <p className="capitalize font-body-default">{value.label}</p>
-            </button>
-          ))}
-        </div>
-      </Menu.Content>
+                    dispatch({
+                      type: ThemeBuilderActionKind.select_effect,
+                      payload: {
+                        config: { effect },
+                      },
+                    });
+                  }}
+                >
+                  <span className="text-xl">{value.emoji}</span>
+                </div>
+                <p className="capitalize font-body-default">{value.label}</p>
+              </button>
+            ))}
+          </div>
+        </Menu.Content>
+      </FloatingPortal>
     </Menu.Root>
   );
 }
@@ -510,29 +521,31 @@ export function PopoverFont({
           </p>
         </div>
       </Menu.Trigger>
-      <Menu.Content className="max-h-80 w-[370px] overflow-scroll no-scrollbar">
-        <div className="flex gap-4 flex-wrap">
-          {Object.entries(fonts).map(([key, font]) => (
-            <div
-              key={key}
-              className="flex flex-col items-center text-xs gap-2 cursor-pointer"
-              onClick={() => onClick(key)}
-            >
+      <FloatingPortal>
+        <Menu.Content className="max-h-80 w-[370px] overflow-scroll no-scrollbar">
+          <div className="flex gap-4 flex-wrap">
+            {Object.entries(fonts).map(([key, font]) => (
               <div
-                className={clsx(
-                  'border rounded px-4 py-2 w-[72px] h-[56px]',
-                  key === selected.toLowerCase().replaceAll(' ', '_') && 'border border-primary',
-                )}
+                key={key}
+                className="flex flex-col items-center text-xs gap-2 cursor-pointer"
+                onClick={() => onClick(key)}
               >
-                <h3 style={{ fontFamily: font }} className="size-10 text-xl text-center">
-                  Ag
-                </h3>
+                <div
+                  className={clsx(
+                    'border rounded px-4 py-2 w-[72px] h-[56px]',
+                    key === selected.toLowerCase().replaceAll(' ', '_') && 'border border-primary',
+                  )}
+                >
+                  <h3 style={{ fontFamily: font }} className="size-10 text-xl text-center">
+                    Ag
+                  </h3>
+                </div>
+                <p className="capitalize font-general-sans">{join(split(key, '_'), ' ')}</p>
               </div>
-              <p className="capitalize font-general-sans">{join(split(key, '_'), ' ')}</p>
-            </div>
-          ))}
-        </div>
-      </Menu.Content>
+            ))}
+          </div>
+        </Menu.Content>
+      </FloatingPortal>
     </Menu.Root>
   );
 }

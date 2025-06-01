@@ -3,7 +3,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { AnimatePresence, motion, MotionStyle } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
-import { useFloating, offset, Placement, ReferenceType, FloatingPortal } from '@floating-ui/react';
+import { useFloating, offset, Placement, ReferenceType } from '@floating-ui/react';
 
 type MenuState = {
   isOpen?: boolean;
@@ -63,35 +63,33 @@ function MenuContent({
   };
 
   return (
-    <FloatingPortal>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            ref={refs?.setFloating}
-            style={{
-              ...floatingStyles,
-              zIndex: 9999,
-            }}
-            onClick={onClick}
-            className={twMerge(
-              'menu border border-card-border rounded-sm bg-overlay-secondary [backdrop-filter:var(--backdrop-filter)] w-fit p-4 z-50 shadow-md',
-              onClick && 'cursor-pointer',
-              className,
-            )}
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="menu-button"
-            tabIndex={-1}
-            initial="closed"
-            animate="open"
-            exit="closed"
-            variants={dropdownVariants}
-          >
-            {typeof children === 'function' ? children({ toggle }) : children}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </FloatingPortal>
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          ref={refs?.setFloating}
+          style={{
+            ...floatingStyles,
+            zIndex: 9999,
+          }}
+          onClick={onClick}
+          className={twMerge(
+            'menu border border-card-border rounded-sm bg-overlay-secondary [backdrop-filter:var(--backdrop-filter)] w-fit p-4 z-50 shadow-md',
+            onClick && 'cursor-pointer',
+            className,
+          )}
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="menu-button"
+          tabIndex={-1}
+          initial="closed"
+          animate="open"
+          exit="closed"
+          variants={dropdownVariants}
+        >
+          {typeof children === 'function' ? children({ toggle }) : children}
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
