@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.33.1](https://github.com/lemonadesocial/web-new/compare/v1.33.0...v1.33.1) (2025-06-01)
+
+
+### Bug Fixes
+
+* adapt existing url ([4f858bf](https://github.com/lemonadesocial/web-new/commit/4f858bf5da9fde34adcce3e89fff89e377b29188))
+* reduce emoji - fps ([625cf50](https://github.com/lemonadesocial/web-new/commit/625cf50208b40199eedf8388ad5b342b12985b0a))
+* resolve issue on safari ([a7b507c](https://github.com/lemonadesocial/web-new/commit/a7b507c41d682927eff7e11aa68c08fe8b3249c1))
+* rollback effect ([63e5e93](https://github.com/lemonadesocial/web-new/commit/63e5e93fc8c48f1e1f14d49558c9c8d2890e4536))
+
 ## [1.33.0](https://github.com/lemonadesocial/web-new/compare/v1.32.0...v1.33.0) (2025-06-01)
 
 
