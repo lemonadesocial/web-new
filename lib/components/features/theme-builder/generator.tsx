@@ -57,16 +57,25 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
           {data?.theme === 'shader' && <ShaderGradient mode={mode} />}
 
           {data.config?.effect?.type === 'video' && data?.config?.effect?.url && (
-            <video
-              key={data.config.name}
-              className="min-w-full min-h-full fixed inset-0"
-              autoPlay
-              loop
-              playsInline
-              muted
-            >
-              <source src={data?.config?.effect?.url} type="video/webm"></source>
-            </video>
+            <div key={data.config.effect.name}>
+              <video className="min-w-full min-h-full fixed hidden md:block inset-0" autoPlay loop playsInline muted>
+                <source
+                  src={data?.config?.effect?.url.replace('.webm', '') + '_web.mov'}
+                  type="video/mp4;codecs=hvc1"
+                ></source>
+                <source src={data?.config?.effect?.url.replace('.webm', '') + '_web.webm'} type="video/webm"></source>
+              </video>
+              <video className="min-w-full min-h-full fixed inset-0 md:hidden" autoPlay loop playsInline muted>
+                <source
+                  src={data?.config?.effect?.url.replace('.webm', '') + '_mobile.mov'}
+                  type="video/mp4;codecs=hvc1"
+                ></source>
+                <source
+                  src={data?.config?.effect?.url.replace('.webm', '') + '_mobile.webm'}
+                  type="video/webm"
+                ></source>
+              </video>
+            </div>
           )}
 
           {data.config.effect?.type === 'float' && (

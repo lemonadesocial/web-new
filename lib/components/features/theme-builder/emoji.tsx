@@ -1,5 +1,6 @@
 import { motion, useTime, useTransform } from 'framer-motion';
 import { useEffect, useState, createContext, useContext } from 'react';
+import { emojis } from './store';
 
 interface EmojiState {
   id: string;
@@ -222,7 +223,7 @@ export function EmojiAnimateItem({
       });
     };
 
-    const interval = setInterval(updatePosition, 16); // ~60fps
+    const interval = setInterval(updatePosition, 8); // ~30fps
     return () => clearInterval(interval);
   }, [allEmojis, updateEmoji, removeEmoji, addEmoji, emojis]);
 
@@ -254,11 +255,11 @@ export function EmojiAnimate({ emoji }: { emoji?: string }) {
   // const emojis = ['🚀', '✨', '🌟', '💫', '🎉', '⚡', '🔥', '💎', '🌈', '🦋', '🎨', '🌙', '☀️', '🌊'];
   if (!emoji) return null;
 
-  const emojis = Array.from({ length: 10 }, (_) => emoji);
+  const emojis = Array.from({ length: 8 }, (_) => emoji);
 
   return (
     <EmojiProvider>
-      {Array.from({ length: 10 }, (_, i) => (
+      {Array.from({ length: 8 }, (_, i) => (
         <EmojiAnimateItem key={i} emojis={emojis} />
       ))}
     </EmojiProvider>
