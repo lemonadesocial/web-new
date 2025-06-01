@@ -110,7 +110,7 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
   };
 
   return (
-    <div className="w-[350] md:w-[480]">
+    <div className="w-[350] md:w-[480] max-h-[700px] overflow-auto no-scrollbar">
       <Card.Header className="flex justify-between items-center">
         <p className="text-lg font-medium">Submit Lemonade Event</p>
         <Button
@@ -504,7 +504,7 @@ function DateTimeGroup({ value = '', onSelect }: { value?: string; onSelect: (da
 
   return (
     <div className="flex gap-0.5">
-      <Menu.Root placement="top-end">
+      <Menu.Root strategy="fixed" placement="top">
         <Menu.Trigger>
           <Button variant="tertiary" size="sm" className="rounded-e-none! min-w-[110px]!">
             {format(value ? new Date(value) : new Date(), 'EEE, dd MMM')}
@@ -531,7 +531,7 @@ function DateTimeGroup({ value = '', onSelect }: { value?: string; onSelect: (da
             {format(value ? new Date(value) : new Date(), 'hh:mm a')}
           </Button>
         </Menu.Trigger>
-        <Menu.Content className="w-fit no-scrollbar p-0 rounded-lg overflow-auto h-[200px] p-2">
+        <Menu.Content className="w-fit no-scrollbar rounded-lg overflow-auto h-[200px] p-2">
           {({ toggle }) => {
             return (
               <div>
@@ -566,12 +566,15 @@ function Timezone({ value, onSelect }: { value?: TimezoneOption; onSelect: (zone
   const [query, setQuery] = React.useState('');
 
   return (
-    <Menu.Root placement="top">
+    <Menu.Root strategy="fixed" placement="top">
       <Menu.Trigger>
-        <button className="btn btn-tertiary inline-flex items-center w-full rounded-sm h-[40px] pl-3.5 pr-2.5">
-          <div className="flex flex-1 items-center gap-2.5">
+        <button
+          type="button"
+          className="btn btn-tertiary inline-flex items-center w-full rounded-sm h-[40px] pl-3.5 pr-2.5"
+        >
+          <div className="flex flex-1 w-3xs md:w-auto items-center gap-2.5">
             <i className="icon-globe size-[20px]" />
-            <span>{value?.text}</span>
+            <span className="truncate w-fit">{value?.text}</span>
           </div>
           <i className="icon-chevron-down size-[20px]" />
         </button>
@@ -592,7 +595,7 @@ function Timezone({ value, onSelect }: { value?: TimezoneOption; onSelect: (zone
                 }}
               />
             </Card.Header>
-            <Card.Content className="p-0 w-[446px]">
+            <Card.Content className="p-0  md:w-[446px]">
               <div className="p-1 overflow-auto h-[170px]">
                 {zones.map((zone, i) => {
                   return (

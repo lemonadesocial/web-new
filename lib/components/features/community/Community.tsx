@@ -237,6 +237,14 @@ export function Community({ initData }: Props) {
                             if (space?._id) modal.open(ListingEvent, { props: { spaceId: space._id } });
                           }}
                         />
+                        <MenuItem
+                          title="Submit External Event"
+                          iconLeft="icon-globe"
+                          onClick={() => {
+                            toggle();
+                            if (space?._id) modal.open(ListingExternalEvent, { props: { spaceId: space._id } });
+                          }}
+                        />
                       </>
                     )}
                   </Menu.Content>
