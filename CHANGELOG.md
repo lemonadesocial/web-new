@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.33.3](https://github.com/lemonadesocial/web-new/compare/v1.33.2...v1.33.3) (2025-06-01)
+
+
+### Bug Fixes
+
+* calender menu picker on modal ([8664d51](https://github.com/lemonadesocial/web-new/commit/8664d516cf61d3e62a0140fdd7f00f61ab716f39))
+
 ## [1.33.2](https://github.com/lemonadesocial/web-new/compare/v1.33.1...v1.33.2) (2025-06-01)
 
 
