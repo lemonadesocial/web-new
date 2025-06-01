@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { addHours, format } from 'date-fns';
+import { addHours, format, isBefore } from 'date-fns';
 import { Controller, useForm } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { isDate } from 'lodash';
@@ -9,7 +9,7 @@ import ct from 'countries-and-timezones';
 import { Button, Card, Input, Map, Menu, modal, Spacer, toast } from '$lib/components/core';
 import { Calendar } from '$lib/components/core/calendar';
 import { getUserTimezoneOption, TimezoneOption, timezoneOptions } from '$lib/utils/timezone';
-import { convertFromUtcToTimezone } from '$lib/utils/date';
+
 import {
   CreateExternalEventDocument,
   PinEventsToSpaceDocument,
@@ -429,8 +429,14 @@ function DateTimeWithTimeZone({
               <DateTimeGroup
                 value={startTime}
                 onSelect={(datetime) => {
+                  let _endTime = endTime;
+                  if (isBefore(endTime, datetime)) {
+                    _endTime = addHours(datetime, 1).toISOString();
+                  }
+
                   setStartTime(datetime);
-                  handleSelect({ start: datetime, end: endTime, timezone: zone });
+                  setEndTime(_endTime);
+                  handleSelect({ start: datetime, end: _endTime, timezone: zone });
                 }}
               />
             </div>
@@ -448,9 +454,14 @@ function DateTimeWithTimeZone({
               <p className="text-secondary">End</p>
               <DateTimeGroup
                 value={endTime}
-                onSelect={(dateTime) => {
-                  setEndTime(dateTime);
-                  handleSelect({ start: startTime, end: dateTime, timezone: zone });
+                onSelect={(datetime) => {
+                  let endTime = datetime;
+                  if (isBefore(endTime, startTime)) {
+                    endTime = addHours(startTime, 1).toISOString();
+                  }
+
+                  setEndTime(endTime);
+                  handleSelect({ start: startTime, end: endTime, timezone: zone });
                 }}
               />
             </div>
@@ -496,7 +507,7 @@ function DateTimeGroup({ value = '', onSelect }: { value?: string; onSelect: (da
       <Menu.Root placement="top-end">
         <Menu.Trigger>
           <Button variant="tertiary" size="sm" className="rounded-e-none! min-w-[110px]!">
-            {format(value ? new Date(value) : new Date(), 'EEE, dd yyyy')}
+            {format(value ? new Date(value) : new Date(), 'EEE, dd MMM')}
           </Button>
         </Menu.Trigger>
         <Menu.Content className="w-[296px] p-0 rounded-lg">
