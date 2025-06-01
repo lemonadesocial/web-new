@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.33.2](https://github.com/lemonadesocial/web-new/compare/v1.33.1...v1.33.2) (2025-06-01)
+
+
+### Bug Fixes
+
+* float portal ([84dd612](https://github.com/lemonadesocial/web-new/commit/84dd6127171b2eb0e6f0b915cd27ae0795d59a80))
+
 ## [1.33.1](https://github.com/lemonadesocial/web-new/compare/v1.33.0...v1.33.1) (2025-06-01)
 
 
