@@ -31,13 +31,14 @@ export function PlaceAutoComplete({
   }, [query]);
 
   React.useEffect(() => {
+    setQuery(value || '');
     if (value && value !== query) {
       const autocompleteService = new window.google.maps.places.AutocompleteService();
       autocompleteService.getPlacePredictions({ input: value }, (predictions) => {
         handleSelect(predictions?.[0]);
       });
     }
-  }, [value, query]);
+  }, [value]);
 
   const handleSelect = (prediction: any) => {
     const service = new window.google.maps.places.PlacesService(document.createElement('div'));

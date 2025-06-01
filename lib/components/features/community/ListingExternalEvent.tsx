@@ -47,21 +47,29 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
     control,
     handleSubmit,
     watch,
+    reset,
     formState: { isSubmitting },
     setValue,
   } = useForm<FormValues>({
     defaultValues: {
       title: '',
+      host: '',
+      location: {
+        address: {},
+        latitude: 0,
+        longitude: 0,
+      },
       datetime: {
         start: now.toISOString(),
         end: addHours(now, 1).toISOString(),
+        timezone: getUserTimezoneOption()?.value,
       },
     },
   });
 
   const { client } = useClient();
 
-  const [title, external_url, location] = watch(['title', 'external_url', 'location']);
+  const [title, external_url, location, datetime] = watch(['title', 'external_url', 'location', 'datetime']);
 
   const onSubmit = async (values: FormValues) => {
     const { data, error } = await client.query({
@@ -71,13 +79,13 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
           private: false,
           published: true,
           title: values.title,
-          start: convertFromUtcToTimezone(values.datetime?.start as string, values.datetime?.timezone),
-          end: convertFromUtcToTimezone(values.datetime?.end as string, values.datetime?.timezone),
+          start: new Date(values.datetime?.start as string).toISOString(),
+          end: new Date(values.datetime?.end as string).toISOString(),
           longitude: values.location?.longitude,
           latitude: values.location?.latitude,
           timezone: values.datetime?.timezone,
           address: values.location?.address,
-          external_host: values.host,
+          external_hostname: values.host,
           external_url: values.external_url,
         },
       },
@@ -116,6 +124,7 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
       <Card.Content className="overflow-inherit!">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
           <InputFieldCustom
+            onStartExtract={() => reset()}
             onChange={(data) => {
               setValue('title', data.title);
               setValue('datetime.start', data.startDate);
@@ -163,6 +172,7 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
                       <Map
                         gestureHandling="greedy"
                         defaultZoom={11}
+                        center={{ lat: location?.address?.latitude, lng: location?.address?.longitude }}
                         markers={[{ lat: location?.address?.latitude, lng: location?.address?.longitude }]}
                       />
                     </div>
@@ -188,12 +198,12 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
           <Controller
             control={control}
             name="datetime"
-            render={({ field }) => (
+            render={() => (
               <DateTimeWithTimeZone
                 label="Event Time"
-                start={field.value?.start}
-                end={field.value?.end}
-                timezone={field.value?.timezone}
+                start={datetime?.start}
+                end={datetime?.end}
+                country={location?.address?.country}
                 onSelect={({ start, end }) => {
                   setValue('datetime.start', start);
                   setValue('datetime.end', end);
@@ -221,7 +231,13 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
   );
 }
 
-function InputFieldCustom({ onChange }: { onChange?: (data: any) => void }) {
+function InputFieldCustom({
+  onStartExtract,
+  onChange,
+}: {
+  onStartExtract?: () => void;
+  onChange?: (data: any) => void;
+}) {
   const [value, setValue] = React.useState('');
   const [extracting, setExtracting] = React.useState(false);
 
@@ -236,6 +252,7 @@ function InputFieldCustom({ onChange }: { onChange?: (data: any) => void }) {
 
   const handleExtractUrl = async (url: string) => {
     setExtracting(true);
+    onStartExtract?.();
     try {
       setExtracting(true);
       const res = await fetch('/api/og/extractor', {
@@ -358,11 +375,13 @@ function DateTimeWithTimeZone({
   start,
   end,
   timezone = getUserTimezoneOption()?.value,
+  country,
   onSelect,
 }: {
   label?: string;
   start?: string;
   end?: string;
+  country?: string;
   timezone?: string;
   onSelect: (value: { start: string; end: string }) => void;
 }) {
@@ -371,7 +390,6 @@ function DateTimeWithTimeZone({
   const [zone, setZone] = React.useState<TimezoneOption>(
     timezoneOptions.find((item) => item.value === timezone) as TimezoneOption,
   );
-  console.log(start);
 
   // TODO: double check start/end correct with timezone response from be
   const handleSelect = ({ start, end }: { start: string; end: string; timezone?: TimezoneOption }) => {
@@ -382,6 +400,17 @@ function DateTimeWithTimeZone({
       // end: timezone ? formatWithTimezone(new Date(start), timezone.value) : end,
     });
   };
+
+  React.useEffect(() => {
+    if (start) setStartTime(start);
+    if (end) setEndTime(end);
+
+    /** @description work around with list timezoneOptions - there some some timezone not match */
+    if (country) {
+      const tz = timezoneOptions.find((item) => item.text.includes(country)) || getUserTimezoneOption();
+      setZone(tz as TimezoneOption);
+    }
+  }, [start, end, country]);
 
   return (
     <div className="flex flex-col gap-2">

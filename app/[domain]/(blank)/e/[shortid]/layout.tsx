@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 import { EventThemeProvider } from '$lib/components/features/theme-builder/provider';
 import { GetEventDocument } from '$lib/graphql/generated/backend/graphql';
@@ -16,6 +16,9 @@ export default async function EventLayout({ children, params }: LayoutProps) {
   const { data } = await client.query({ query: GetEventDocument, variables: { shortid } });
 
   if (!data?.getEvent) return notFound();
+
+  if (data.getEvent.external_url) redirect(data.getEvent.external_url);
+
   const themeData = data?.getEvent?.theme_data;
 
   return (
