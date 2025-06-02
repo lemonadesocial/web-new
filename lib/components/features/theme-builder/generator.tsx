@@ -38,13 +38,13 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
 
       if (videoWebRef.current && videoWebRef.current.paused) {
         videoWebRef.current.preload = 'auto';
-        videoWebRef.current?.play();
+        setTimeout(() => videoWebRef.current?.play(), 500);
       }
     }
 
     if (document.visibilityState === 'hidden') {
       if (videoMobRef.current) videoMobRef.current?.pause();
-      if (videoWebRef.current) videoMobRef.current?.pause();
+      if (videoWebRef.current) videoWebRef.current?.pause();
     }
   };
 
