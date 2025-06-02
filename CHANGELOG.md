@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.33.4](https://github.com/lemonadesocial/web-new/compare/v1.33.3...v1.33.4) (2025-06-02)
+
+
+### Bug Fixes
+
+* check alway play control ([2ae6735](https://github.com/lemonadesocial/web-new/commit/2ae673527fc549660a229cc04fa26a7a9cc2aa4e))
+* check visibilitychange ([c1e4fa3](https://github.com/lemonadesocial/web-new/commit/c1e4fa3eb4f68d1c383337a0fb838205a2001bbe))
+* checking autoplay ([1c9e7bc](https://github.com/lemonadesocial/web-new/commit/1c9e7bcff11cc95acf9e5f869b3d8c4e2837c5ac))
+* checking autoplay ([1dfcef4](https://github.com/lemonadesocial/web-new/commit/1dfcef437dbb1966d4c67bd8a9728fd4160df6c6))
+* completed ([4e2cbf0](https://github.com/lemonadesocial/web-new/commit/4e2cbf081d421d8c29805a7b0b5654fce151006b))
+* remove deps ([93a8457](https://github.com/lemonadesocial/web-new/commit/93a845769a10d165e8408e96a12928f854053f2a))
+* testing visible app ([4974601](https://github.com/lemonadesocial/web-new/commit/49746019bff6ee01b5232ca1033bf6a7a1e36e47))
+* video autoplay ([58a3d52](https://github.com/lemonadesocial/web-new/commit/58a3d52fd9d638b7051f4911623c2c183e8cbb69))
+* wrong ref ([6e45290](https://github.com/lemonadesocial/web-new/commit/6e452909d6281311c4f295dfcd85a5994913d99b))
+
 ## [1.33.3](https://github.com/lemonadesocial/web-new/compare/v1.33.2...v1.33.3) (2025-06-01)
 
 
