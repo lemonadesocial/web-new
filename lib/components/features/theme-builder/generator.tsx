@@ -7,11 +7,9 @@ import { isMobile } from 'react-device-detect';
 import { ShaderGradient } from './shader';
 import { ThemeValues } from './store';
 import { EmojiAnimate } from './emoji';
-import { useIOSVisibility } from './hooks';
 
 export function ThemeGenerator({ data }: { data: ThemeValues }) {
   const [mode, setMode] = React.useState(data.config.mode);
-  const { isVisible } = useIOSVisibility();
   const videoMobRef = React.useRef<HTMLVideoElement>(null);
   const videoWebRef = React.useRef<HTMLVideoElement>(null);
 
@@ -32,18 +30,29 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
   }, [data.config.mode]);
 
   const autoplay = () => {
-    if (videoMobRef.current && videoMobRef.current.paused) {
-      videoMobRef.current?.play();
-    }
+    if (document.visibilityState === 'visible') {
+      console.log('document.visibilityState', document.visibilityState);
+      console.log('videoMobRef.current:', videoMobRef.current?.paused);
+      console.log('videoWebRef.current:', videoWebRef.current?.paused);
 
-    if (videoWebRef.current && videoWebRef.current.paused) {
-      videoMobRef.current?.play();
+      if (videoMobRef.current && videoMobRef.current.paused) {
+        videoMobRef.current?.play().then();
+      }
+
+      if (videoWebRef.current && videoWebRef.current.paused) {
+        videoMobRef.current?.play().then();
+      }
     }
   };
 
-  React.useEffect(() => {
-    if (isVisible) autoplay();
-  }, [isVisible, videoMobRef.current, videoWebRef.current]);
+  // React.useEffect(() => {
+  //   if (isVisible) autoplay();
+  // }, [isVisible, videoMobRef.current, videoWebRef.current]);
+  React.useLayoutEffect(() => {
+    document.addEventListener('visibilitychange', autoplay);
+
+    return () => document.removeEventListener('visibilitychange', autoplay);
+  }, []);
 
   return (
     <>
