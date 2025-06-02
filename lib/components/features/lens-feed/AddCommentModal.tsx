@@ -11,7 +11,7 @@ import { generatePostMetadata } from "$lib/utils/lens/utils";
 import { PostHeader } from "./PostHeader";
 import { PostContent } from "./PostContent";
 import { PostTextarea } from "./PostTextarea";
-import { FileInput } from "./FileInput";
+import { FileInput } from "../../core/file-input/file-input";
 import { AddEventModal } from "./AddEventModal";
 import { ImageInput } from "./ImageInput";
 import { EventPreview } from "./EventPreview";

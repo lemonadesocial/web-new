@@ -7,12 +7,14 @@ import { generatePostMetadata, getAccountAvatar } from "$lib/utils/lens/utils";
 import { accountAtom } from "$lib/jotai";
 import { randomUserImage } from "$lib/utils/user";
 import { useLensAuth } from "$lib/hooks/useLens";
+import { useMediaQuery } from "$lib/hooks/useMediaQuery";
 
 import { ImageInput } from "./ImageInput";
 import { AddEventModal } from "./AddEventModal";
 import { EventPreview } from "./EventPreview";
 import { PostTextarea } from "./PostTextarea";
-import { FileInput } from "./FileInput";
+import { FileInput } from "../../core/file-input/file-input";
+import { ProfileMenu } from "../lens-account/ProfileMenu";
 
 type PostComposerProps = {
   placeholder?: string;
@@ -21,6 +23,7 @@ type PostComposerProps = {
 
 export function PostComposer({ placeholder, onPost }: PostComposerProps) {
   const account = useAtomValue(accountAtom);
+  const isDesktop = useMediaQuery('md');
 
   const [value, setValue] = useState('');
   const [isActive, setIsActive] = useState(false);
@@ -60,7 +63,7 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
   };
 
   return (
-    <div className="bg-card border border-card-border rounded-md px-4 py-3 flex gap-3">
+    <div className="bg-card border border-card-border rounded-md px-4 py-3 flex gap-3 items-center">
       <Avatar src={account ? getAccountAvatar(account) : randomUserImage()} size="xl" rounded="full" />
 
       <div className="space-y-4 flex-1">
@@ -134,6 +137,14 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
           </div>
         )}
       </div>
+
+      {
+        !!(account && !isDesktop) && (
+          <ProfileMenu>
+            <i className="icon-more-vert size-5 text-tertiary cursor-pointer" />
+          </ProfileMenu>
+        )
+      }
     </div>
   );
 }

@@ -16,4 +16,4 @@ export * from './skeleton';
 export * from './collapsible';
 export * from './number-input';
 export * from './toast';
-
+export * from './file-input';
