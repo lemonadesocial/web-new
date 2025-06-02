@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.34.0](https://github.com/lemonadesocial/web-new/compare/v1.33.4...v1.34.0) (2025-06-02)
+
+
+### Features
+
+* empty posts ([f81570f](https://github.com/lemonadesocial/web-new/commit/f81570fa35f880ca9bfd612bbfdfe203494750df))
+* **lens:** select profile ([447ff06](https://github.com/lemonadesocial/web-new/commit/447ff06c551ddab58bceb77fdc4559147645ab2b))
+
 ## [1.33.4](https://github.com/lemonadesocial/web-new/compare/v1.33.3...v1.33.4) (2025-06-02)
 
 
