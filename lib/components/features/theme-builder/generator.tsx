@@ -29,16 +29,21 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
     }
   }, [data.config.mode]);
 
-  React.useEffect(() => {
-    window.addEventListener('focus', (_event) => {
-      if (videoMobRef.current && videoMobRef.current.paused) {
-        videoMobRef.current?.play();
-      }
+  const autoplay = () => {
+    if (videoMobRef.current && videoMobRef.current.paused) {
+      videoMobRef.current?.play();
+    }
 
-      if (videoWebRef.current && videoWebRef.current.paused) {
-        videoMobRef.current?.play();
-      }
-    });
+    if (videoWebRef.current && videoWebRef.current.paused) {
+      videoMobRef.current?.play();
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener('visibilitychange', autoplay);
+    return () => {
+      document.removeEventListener('visibilitychange', autoplay);
+    };
   }, []);
 
   return (
