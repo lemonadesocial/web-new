@@ -30,8 +30,9 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
   }, [data.config.mode]);
 
   const autoplay = () => {
+    console.log('document.visibilityState', document.visibilityState);
+
     if (document.visibilityState === 'visible') {
-      console.log('document.visibilityState', document.visibilityState);
       console.log('videoMobRef.current:', videoMobRef.current?.paused);
       console.log('videoWebRef.current:', videoWebRef.current?.paused);
 
@@ -52,7 +53,7 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
     document.addEventListener('visibilitychange', autoplay);
 
     return () => document.removeEventListener('visibilitychange', autoplay);
-  }, []);
+  }, [videoMobRef.current, videoMobRef.current]);
 
   return (
     <>
