@@ -2,12 +2,16 @@
 import React from 'react';
 import { generateCssVariables } from '$lib/utils/fetchers';
 import clsx from 'clsx';
+import { isMobile } from 'react-device-detect';
+
 import { ShaderGradient } from './shader';
 import { ThemeValues } from './store';
 import { EmojiAnimate } from './emoji';
 
 export function ThemeGenerator({ data }: { data: ThemeValues }) {
   const [mode, setMode] = React.useState(data.config.mode);
+  const videoMobRef = React.useRef<HTMLVideoElement>(null);
+  const videoWebRef = React.useRef<HTMLVideoElement>(null);
 
   React.useEffect(() => {
     if (data.config.mode === 'auto' && window.matchMedia) {
@@ -24,6 +28,18 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
       });
     }
   }, [data.config.mode]);
+
+  React.useEffect(() => {
+    window.addEventListener('focus', (_event) => {
+      if (videoMobRef.current && videoMobRef.current.paused) {
+        videoMobRef.current?.play();
+      }
+
+      if (videoWebRef.current && videoWebRef.current.paused) {
+        videoMobRef.current?.play();
+      }
+    });
+  }, []);
 
   return (
     <>
@@ -58,23 +74,40 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
 
           {data.config?.effect?.type === 'video' && data?.config?.effect?.url && (
             <div key={data.config.effect.name}>
-              <video className="min-w-full min-h-full fixed hidden md:block inset-0" autoPlay loop playsInline muted>
-                <source
-                  src={data?.config?.effect?.url.replace('.webm', '') + '_web.mov'}
-                  type="video/mp4;codecs=hvc1"
-                ></source>
-                <source src={data?.config?.effect?.url.replace('.webm', '') + '_web.webm'} type="video/webm"></source>
-              </video>
-              <video className="min-w-full min-h-full fixed inset-0 md:hidden" autoPlay loop playsInline muted>
-                <source
-                  src={data?.config?.effect?.url.replace('.webm', '') + '_mobile.mov'}
-                  type="video/mp4;codecs=hvc1"
-                ></source>
-                <source
-                  src={data?.config?.effect?.url.replace('.webm', '') + '_mobile.webm'}
-                  type="video/webm"
-                ></source>
-              </video>
+              {!isMobile ? (
+                <video
+                  ref={videoWebRef}
+                  className="min-w-full min-h-full fixed hidden md:block inset-0"
+                  autoPlay
+                  loop
+                  playsInline
+                  muted
+                >
+                  <source
+                    src={data?.config?.effect?.url.replace('.webm', '') + '_web.mov'}
+                    type="video/mp4;codecs=hvc1"
+                  ></source>
+                  <source src={data?.config?.effect?.url.replace('.webm', '') + '_web.webm'} type="video/webm"></source>
+                </video>
+              ) : (
+                <video
+                  ref={videoMobRef}
+                  className="min-w-full min-h-full fixed inset-0 md:hidden"
+                  autoPlay
+                  loop
+                  playsInline
+                  muted
+                >
+                  <source
+                    src={data?.config?.effect?.url.replace('.webm', '') + '_mobile.mov'}
+                    type="video/mp4;codecs=hvc1"
+                  ></source>
+                  <source
+                    src={data?.config?.effect?.url.replace('.webm', '') + '_mobile.webm'}
+                    type="video/webm"
+                  ></source>
+                </video>
+              )}
             </div>
           )}
 
