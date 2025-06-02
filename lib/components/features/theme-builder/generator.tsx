@@ -53,7 +53,7 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
     document.addEventListener('visibilitychange', autoplay);
 
     return () => document.removeEventListener('visibilitychange', autoplay);
-  }, [videoMobRef.current, videoMobRef.current]);
+  }, []);
 
   return (
     <>
