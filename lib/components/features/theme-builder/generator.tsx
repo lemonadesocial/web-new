@@ -36,11 +36,11 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
       console.log('videoMobRef.current:', videoMobRef.current?.paused);
       console.log('videoWebRef.current:', videoWebRef.current?.paused);
 
-      if (videoMobRef.current && videoMobRef.current.paused) {
+      if (videoMobRef.current) {
         videoMobRef.current?.play().then();
       }
 
-      if (videoWebRef.current && videoWebRef.current.paused) {
+      if (videoWebRef.current) {
         videoMobRef.current?.play().then();
       }
     }
