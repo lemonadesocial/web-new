@@ -30,25 +30,24 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
   }, [data.config.mode]);
 
   const autoplay = () => {
-    console.log('document.visibilityState', document.visibilityState);
-
     if (document.visibilityState === 'visible') {
-      console.log('videoMobRef.current:', videoMobRef.current?.paused);
-      console.log('videoWebRef.current:', videoWebRef.current?.paused);
-
-      if (videoMobRef.current) {
-        videoMobRef.current?.play().then();
+      if (videoMobRef.current && videoMobRef.current.paused) {
+        videoMobRef.current.preload = 'auto';
+        setTimeout(() => videoMobRef.current?.play(), 500);
       }
 
-      if (videoWebRef.current) {
-        videoMobRef.current?.play().then();
+      if (videoWebRef.current && videoWebRef.current.paused) {
+        videoWebRef.current.preload = 'auto';
+        videoWebRef.current?.play();
       }
+    }
+
+    if (document.visibilityState === 'hidden') {
+      if (videoMobRef.current) videoMobRef.current?.pause();
+      if (videoWebRef.current) videoMobRef.current?.pause();
     }
   };
 
-  // React.useEffect(() => {
-  //   if (isVisible) autoplay();
-  // }, [isVisible, videoMobRef.current, videoWebRef.current]);
   React.useLayoutEffect(() => {
     document.addEventListener('visibilitychange', autoplay);
 
