@@ -1,6 +1,6 @@
 import { handleOperationWith, signMessageWith } from "@lens-protocol/client/ethers";
 import { createAccountWithUsername, fetchAccountsAvailable, fetchFeed, fetchPost, lastLoggedInAccount, post, fetchPosts as lensFetchPosts, fetchPostReferences, fetchAccountGraphStats } from "@lens-protocol/client/actions";
-import { account } from "@lens-protocol/metadata";
+import { AccountMetadata } from "@lens-protocol/metadata";
 import { useAtomValue, useSetAtom, useAtom } from "jotai";
 import { useState, useEffect } from "react";
 
@@ -15,21 +15,45 @@ import { modal } from "$lib/components/core";
 import { ClaimUsernameModal } from "$lib/components/features/lens-account/ClaimUsernameModal";
 
 import { useSigner } from "./useSigner";
-import { useMe } from "./useMe";
 import { useConnectWallet } from "./useConnectWallet";
 
 export function useResumeSession() {
   const setSessionClient = useSetAtom(sessionClientAtom);
+  const setAccount = useSetAtom(accountAtom);
+  const { address } = useAppKitAccount();
 
   const [isLoading, setIsLoading] = useState(false);
 
   const resumeSession = async () => {
-    setIsLoading(true);
+    if (!address) return;
   
     try {
+      setIsLoading(true);
       const resumed = await client.resumeSession();
-      if (resumed.isErr()) return;
+    
+      if (resumed.isErr()) {
+        setIsLoading(false);
+        return;
+      }
+
       setSessionClient(resumed.value);
+
+      const lastLoggedIn = await lastLoggedInAccount(resumed.value, {
+        address: evmAddress(address),
+      });
+  
+      if (lastLoggedIn.isErr()) {
+        setIsLoading(false);
+        return;
+      }
+
+      const result = await fetchAccount(resumed.value, {
+        address: lastLoggedIn.value?.address ?? never("Account not found"),
+      });
+
+      if (result.isErr()) return;
+
+      setAccount(result.value);
     } finally {
       setIsLoading(false);
     }
@@ -111,6 +135,21 @@ export function useLogIn() {
   }
 }
 
+export function useLogOut() {
+  const [sessionClient, setSessionClient] = useAtom(sessionClientAtom);
+  const setAccount = useSetAtom(accountAtom);
+
+  const logOut = async () => {
+    setAccount(null);
+    await sessionClient?.logout();
+    setSessionClient(null);
+  }
+
+  return {
+    logOut,
+  }
+}
+
 export function useAccount() {
   const { address } = useAppKitAccount();
   const sessionClient = useAtomValue(sessionClientAtom);
@@ -174,31 +213,18 @@ export function useAccount() {
 
 export function useClaimUsername() {
   const [sessionClient, setSessionClient] = useAtom(sessionClientAtom);
-  const me = useMe();
   const signer = useSigner();
+  const setAccount = useSetAtom(accountAtom);
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const getMetadataUri = async () => {
-    if (!me) return;
-  
-    const metadata = account({
-      name: me.display_name || me.name,
-      bio: me.description || undefined,
-    });
-    
-    const { uri } = await storageClient.uploadAsJson(metadata);
-    
-    return uri;
-  }
-
-  const claimUsername = async (username: string) => {
+  const claimUsername = async (username: string, accountMedadata: AccountMetadata) => {
     if (!sessionClient || !signer) return;
 
     try {
       setIsLoading(true);
 
-      const uri = await getMetadataUri();
+      const { uri } = await storageClient.uploadAsJson(accountMedadata);
 
       const created = await createAccountWithUsername(sessionClient, {
         metadataUri: uri,
@@ -210,11 +236,12 @@ export function useClaimUsername() {
         .andThen(handleOperationWith(signer))
         .andThen(sessionClient.waitForTransaction)
         .andThen((txHash) => fetchAccount(sessionClient, { txHash }))
-        .andThen((account) =>
-          sessionClient.switchAccount({
+        .andThen((account) => {
+          setAccount(account);
+          return sessionClient.switchAccount({
             account: account?.address ?? never("Account not found"),
           })
-        ).mapErr((error) => {
+        }).mapErr((error) => {
           throw error;
         });
 
@@ -482,7 +509,7 @@ export function useComments({ postId: targetPostId, feedAddress }: UseCommentsPr
 export function useAccountStats() {
   const [stats, setStats] = useState<{ followers: number; following: number }>({ followers: 0, following: 0 });
   const [isLoading, setIsLoading] = useState(false);
-  const { account } = useAccount();
+  const account = useAtomValue(accountAtom);
 
   const fetchStats = async () => {
     if (!account) return;
@@ -518,7 +545,7 @@ export function useAccountStats() {
 }
 
 export function useLensAuth() {
-  const { account } = useAccount();
+  const account = useAtomValue(accountAtom);
   const sessionClient = useAtomValue(sessionClientAtom);
   const chainsMap = useAtomValue(chainsMapAtom);
   const { isReady, connect } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);

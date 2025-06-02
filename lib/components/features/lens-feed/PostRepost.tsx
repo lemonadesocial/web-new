@@ -43,7 +43,7 @@ export function PostRepost({ post }: PostRepostProps) {
     }
   };
 
-  console.log(handleRepost)
+  // console.log(handleRepost)
 
   return (
     <PostButton
