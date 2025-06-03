@@ -6,14 +6,12 @@ import { account } from '@lens-protocol/metadata';
 
 import { Avatar, Button, Input, modal, ModalContent, toast, FileInput, Menu, LabeledInput } from "$lib/components/core";
 import { ASSET_PREFIX } from "$lib/utils/constants";
-import { useAppKitAccount } from '$lib/utils/appkit';
 import { useClaimUsername } from '$lib/hooks/useLens';
 import { randomUserImage } from '$lib/utils/user';
 import { storageClient } from '$lib/utils/lens/client';
 
 export function ClaimUsernameModal() {
   const sessionClient = useAtomValue(sessionClientAtom);
-  const { address } = useAppKitAccount();
 
   const [username, setUsername] = useState('');
   const [step, setStep] = useState<'search' | 'profile'>('search');
