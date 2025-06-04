@@ -2,13 +2,12 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 
 import { isObjectId } from '$lib/utils/helpers';
-import { getSpace } from '$lib/utils/getSpace';
 
 import { CommunityThemeProvider } from '$lib/components/features/theme-builder/provider';
-import { CommunityContainer } from './container';
 import { defaultTheme } from '$lib/components/features/theme-builder/store';
 import { getClient } from '$lib/graphql/request';
 import { GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
+import { CommunityContainer } from './container';
 
 type LayoutProps = {
   children: React.ReactElement;

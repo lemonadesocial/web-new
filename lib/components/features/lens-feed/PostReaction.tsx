@@ -62,7 +62,10 @@ export function PostReaction({ post, isComment }: PostReactionProps) {
   return (
     <PostButton
       icon={isUpvoted ? "icon-heart-filled" : "icon-heart-outline"}
-      onClick={() => handleLensAuth(handleUpvote)}
+      onClick={(e) => {
+        e.stopPropagation();
+        handleLensAuth(handleUpvote);
+      }}
       label={upvotes}
       isActive={isUpvoted}
       className={isUpvoted ? 'sm:bg-accent-500 sm:hover:bg-accent-700' : ''}

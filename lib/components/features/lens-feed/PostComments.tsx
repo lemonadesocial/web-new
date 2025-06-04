@@ -1,18 +1,17 @@
-import { useComments } from "$lib/hooks/useLens";
+import { useComments } from '$lib/hooks/useLens';
+import { AnyPost } from '@lens-protocol/client';
 
-import { FeedPost } from "./FeedPost";
-import { PostComposer } from "./PostComposer";
+import { FeedPost } from './FeedPost';
+import { PostComposer } from './PostComposer';
 
 type PostCommentsProps = {
   postId: string;
   feedAddress?: string;
+  onSelectComment?: (comment: AnyPost) => void;
 };
 
-export function PostComments({ postId, feedAddress }: PostCommentsProps) {
-  const {
-    comments,
-    createComment,
-  } = useComments({ postId, feedAddress });
+export function PostComments({ postId, feedAddress, onSelectComment }: PostCommentsProps) {
+  const { comments, createComment } = useComments({ postId, feedAddress });
 
   const onPost = async (metadata: unknown) => {
     await createComment(metadata);
@@ -20,18 +19,14 @@ export function PostComments({ postId, feedAddress }: PostCommentsProps) {
 
   return (
     <div className="space-y-5">
-      <PostComposer
-        placeholder="Add a comment..."
-        onPost={onPost}
-      />
-      {comments.map((comment, index) => (
-        <div className="rounded-md border" key={comment.id}>
-          <FeedPost post={comment} isComment />
-          {
-            index < comments.length - 1 && <hr className="border-t" />
-          }
+      <PostComposer placeholder="Add a comment..." onPost={onPost} />
+
+      {!!comments.length && (
+        <div className="border rounded-md divide-y divide-[var(--color-divider)]">
+          {comments.map((comment) => (
+            <FeedPost key={comment.id} post={comment} isComment onSelect={() => onSelectComment?.(comment)} />
+          ))}
         </div>
-      )
       )}
     </div>
   );

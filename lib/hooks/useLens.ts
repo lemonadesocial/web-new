@@ -359,6 +359,24 @@ export function usePost() {
   const [isLoading, setIsLoading] = useState(false);
   const setPosts= useSetAtom(feedPostsAtom);
 
+  const getPost = async (params: {postId: string}) => {
+    setIsLoading(true)
+    const result = await fetchPost(client, {
+      post: postId(params.postId),
+    });
+    setIsLoading(false)
+
+    if (result.isErr()) {
+      const error = result.error
+      const errorMessage = error instanceof Error ? error.message : "Failed to fetch post";
+      toast.error(errorMessage);
+      throw new Error(errorMessage)
+    }
+
+    return result.value
+  };
+
+
   const createPost = async ({ metadata, feedAddress, commentOn }: CreatePostParams) => {
     if (!sessionClient || !signer) return;
 
@@ -397,6 +415,7 @@ export function usePost() {
   };
 
   return {
+    getPost,
     createPost,
     isLoading,
   };

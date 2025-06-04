@@ -29,7 +29,10 @@ export function PostComment({ post }: PostCommentProps) {
     <PostButton
       icon="icon-chat"
       label={commentCount}
-      onClick={() => handleLensAuth(handleAddComment)}
+      onClick={(e) => {
+        e.stopPropagation();
+        handleLensAuth(handleAddComment);
+      }}
     />
   );
 }

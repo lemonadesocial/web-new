@@ -1,14 +1,18 @@
+import { usePathname, useRouter } from 'next/navigation';
 
-import { evmAddress } from "@lens-protocol/client";
-import { useAtomValue } from "jotai";
+import { AnyPost, evmAddress } from '@lens-protocol/client';
+import { useAtomValue } from 'jotai';
 
-import { useFeedPosts } from "$lib/hooks/useLens";
-import { Skeleton } from "$lib/components/core";
-import { accountAtom } from "$lib/jotai";
+import { useFeedPosts } from '$lib/hooks/useLens';
+import { Skeleton } from '$lib/components/core';
+import { accountAtom } from '$lib/jotai';
 
-import { FeedPost } from "./FeedPost";
+import { FeedPost } from './FeedPost';
 
-export function FeedPosts({ feedAddress }: { feedAddress: string; }) {
+export function FeedPosts({ feedAddress }: { feedAddress: string }) {
+  const router = useRouter();
+  const pathName = usePathname();
+
   const { posts, isLoading } = useFeedPosts(evmAddress(feedAddress));
   const account = useAtomValue(accountAtom);
 
@@ -33,7 +37,9 @@ export function FeedPosts({ feedAddress }: { feedAddress: string; }) {
         <div className="space-y-2">
           <h1 className="text-xl font-semibold text-center">No Posts</h1>
           <p className="text-tertiary text-center">
-            {account ? "Nothing here yet. Be the first to post something!" : "Want to share something? Connect your wallet to get started."}
+            {account
+              ? 'Nothing here yet. Be the first to post something!'
+              : 'Want to share something? Connect your wallet to get started.'}
           </p>
         </div>
       </div>
@@ -42,8 +48,8 @@ export function FeedPosts({ feedAddress }: { feedAddress: string; }) {
 
   return (
     <div className="space-y-4">
-      {posts.map((post) => (
-        <FeedPost key={post.slug} post={post} />
+      {posts.filter((item: any) => !item.root).map((post) => (
+        <FeedPost key={post.slug} post={post} onSelect={() => router.push(`${pathName}/${post.id}`)} />
       ))}
     </div>
   );

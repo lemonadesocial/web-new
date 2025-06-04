@@ -63,7 +63,7 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
   };
 
   return (
-    <div className="bg-card border border-card-border rounded-md px-4 py-3 flex gap-3 items-center">
+    <div className="bg-card border border-card-border rounded-md px-4 py-3 flex gap-3">
       <Avatar src={account ? getAccountAvatar(account) : randomUserImage()} size="xl" rounded="full" />
 
       <div className="space-y-4 flex-1">

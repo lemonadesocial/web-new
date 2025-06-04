@@ -18,8 +18,15 @@ export function FeedPostGallery({ attachments, className }: { attachments: strin
     );
   }
 
-  const prev = () => setCurrent((c) => (c === 0 ? attachments.length - 1 : c - 1));
-  const next = () => setCurrent((c) => (c === attachments.length - 1 ? 0 : c + 1));
+  const prev = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    setCurrent((c) => (c === 0 ? attachments.length - 1 : c - 1));
+  }
+
+  const next = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    setCurrent((c) => (c === attachments.length - 1 ? 0 : c + 1));
+  }
 
   return (
     <div className={twMerge("relative flex flex-col items-center aspect-video", className)}>

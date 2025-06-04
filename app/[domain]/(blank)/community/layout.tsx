@@ -1,4 +1,2 @@
-import CommunityLayout from "$lib/components/layouts/community";
-
-
+import CommunityLayout from '$lib/components/layouts/community';
 export default CommunityLayout;

@@ -86,6 +86,8 @@
 
   --color-card: var(--color-card);
   --color-card-border: var(--color-card-border);
+  --color-card-border-hover: var(--color-card-border-hover);
+
   --color-card-hover: var(--color-card-hover);
 
   --color-overlay-primary: var(--color-overlay-primary);
