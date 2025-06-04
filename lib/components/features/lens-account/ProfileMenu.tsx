@@ -4,6 +4,7 @@ import { Menu, MenuItem, modal } from "$lib/components/core";
 import { useAccount, useLogOut } from "$lib/hooks/useLens";
 
 import { SelectProfileModal } from "./SelectProfileModal";
+import { EditProfileModal } from "./EditProfileModal";
 
 export function ProfileMenu({ children }: { children: React.ReactNode }) {
   const { logOut } = useLogOut();
@@ -17,6 +18,19 @@ export function ProfileMenu({ children }: { children: React.ReactNode }) {
       </Menu.Trigger>
       <Menu.Content className="p-1">
         {({ toggle }) => <>
+          {
+            account && (
+              <MenuItem
+                onClick={async () => modal.open(EditProfileModal, { dismissible: true })}
+              >
+                <div className="flex items-center gap-2.5">
+                  <i className="icon-person-edit size-4 text-secondary" />
+                  <p className="text-sm text-secondary">Edit Profile</p>
+                </div>
+              </MenuItem>
+            )
+          }
+
           {
             account?.username && (
               <MenuItem
