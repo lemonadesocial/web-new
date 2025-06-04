@@ -26,8 +26,8 @@ export function FeedPostDetail({ postId }: Props) {
   if (!post) return null;
 
   return (
-    <div className="-mt-6 flex flex-col gap-5">
-      <div className="flex items-center border border-t-0 backdrop-blur-lg h-[48px] px-4 py-3 rounded-b-md">
+    <div className="-mt-6 flex flex-col gap-5 w-full">
+      <div className="items-center border border-t-0 backdrop-blur-lg h-[48px] px-4 py-3 rounded-b-md">
         <button className="inline-flex items-center cursor-pointer gap-3" onClick={router.back}>
           <i className="icon-arrow-back-sharp size-[20px] text-tertiary" />
           Post
