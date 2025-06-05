@@ -9,26 +9,49 @@ import { useAtomValue } from 'jotai';
 import { accountAtom, feedPostAtom } from '$lib/jotai';
 import { FeedPostEmpty } from './FeedPostEmpty';
 import { FeedPostLoading } from './FeedPostLoading';
+import { AnyPost } from '@lens-protocol/client';
+import { LensProfileCard } from '../lens-account/LensProfileCard';
 
 type Props = {
   postId: string;
 };
-export function FeedPostDetail({ postId }: Props) {
-  const router = useRouter();
-  const pathName = usePathname();
-  const { selectPost, isLoading } = usePost();
-  const account = useAtomValue(accountAtom);
-  const post = useAtomValue(feedPostAtom);
 
-  console.log(post)
+export function FeedPostDetail({ postId }: Props) {
+  const { selectPost, isLoading } = usePost();
+  const post = useAtomValue(feedPostAtom);
+  const account = useAtomValue(accountAtom);
+
   React.useEffect(() => {
     if (postId) {
       selectPost({ postId });
     }
   }, [postId]);
 
-  if (isLoading) return <FeedPostLoading />;
-  if (!post) return <FeedPostEmpty account={account} />;
+  const author = React.useMemo(() => {
+    if(post) {
+      const rootPost = post.__typename === 'Repost' ? post.repostOf : post
+      return rootPost.author
+    }
+  }, [post])
+
+  return (
+    <div className="flex flex-col-reverse md:grid md:grid-cols-[1fr_336px] gap-5 md:gap-8 items-start pb-10">
+      {isLoading ? (
+        <FeedPostLoading />
+      ) : !post ? (
+        <FeedPostEmpty account={account} />
+      ) : (
+        <FeedPostDetailContent post={post} />
+      )}
+
+      {author && <LensProfileCard account={author} />}
+    </div>
+  );
+}
+
+export function FeedPostDetailContent({ post }: { post: AnyPost }) {
+  const router = useRouter();
+  const pathName = usePathname();
 
   return (
     <div className="-mt-6 flex flex-col gap-5 w-full">
@@ -43,7 +66,7 @@ export function FeedPostDetail({ postId }: Props) {
       <PostComments
         postId={post.id}
         onSelectComment={(data) => {
-          router.push(pathName.replace(postId, data.id));
+          router.push(pathName.replace(post.id, data.id));
         }}
       />
     </div>

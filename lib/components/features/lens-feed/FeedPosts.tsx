@@ -4,7 +4,6 @@ import { evmAddress } from '@lens-protocol/client';
 import { useAtomValue } from 'jotai';
 
 import { useFeedPosts } from '$lib/hooks/useLens';
-import { Skeleton } from '$lib/components/core';
 import { accountAtom } from '$lib/jotai';
 
 import { FeedPost } from './FeedPost';
