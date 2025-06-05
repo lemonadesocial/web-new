@@ -5,6 +5,7 @@ import { Event, GetEventDocument } from '$lib/graphql/generated/backend/graphql'
 import { getClient } from '$lib/graphql/request';
 import ManageEventGuestSide from '$lib/components/features/event/ManageEventGuestSide';
 import { EventThemeProvider } from '$lib/components/features/theme-builder/provider';
+
 import { EventContainer } from './container';
 
 export async function generateMetadata({ params }: { params: Promise<{ shortid: string }> }) {

@@ -1,9 +1,7 @@
 'use client';
-import { useEffect } from "react";
 import { useAtomValue } from "jotai";
 
 import { Avatar, Button, modal, Skeleton } from "$lib/components/core";
-import { useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
 import { useAccountStats, useResumeSession } from "$lib/hooks/useLens";
 import { accountAtom } from "$lib/jotai";
 import { getAccountAvatar } from "$lib/utils/lens/utils";
@@ -13,19 +11,9 @@ import { SelectProfileModal } from "./SelectProfileModal";
 import { ProfileMenu } from "./ProfileMenu";
 
 export function LensAccountCard() {
-  const { address } = useAppKitAccount();
-  const { walletProvider } = useAppKitProvider('eip155');
-
-  const { isLoading: loadingSession, resumeSession } = useResumeSession();
+  const { isLoading: loadingSession } = useResumeSession();
   const account = useAtomValue(accountAtom);
   const { stats } = useAccountStats();
-
-  useEffect(() => {
-    if (!address || !walletProvider) return;
-
-    resumeSession();
-  }, [address, walletProvider]);
-
 
   const selectProfile = () => {
     modal.open(SelectProfileModal, { dismissible: true });
@@ -47,7 +35,12 @@ export function LensAccountCard() {
         </ProfileMenu>
       </div>
       <div className="space-y-2">
-        <p className="text-lg">{account.username.localName}</p>
+        <div className="flex flex-col gap-0.5">
+          <p className="text-lg">{account.metadata?.name || account.username?.localName}</p>
+          {
+            !!account.metadata?.name && <p className="text-secondary text-sm">{account.username?.localName}</p>
+          }
+        </div>
         <div className="flex gap-3">
           <p className="text-secondary text-sm">
             {stats.followers} Followers

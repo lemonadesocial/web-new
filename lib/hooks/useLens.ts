@@ -2,7 +2,7 @@ import { handleOperationWith, signMessageWith } from "@lens-protocol/client/ethe
 import { createAccountWithUsername, fetchAccountsAvailable, fetchFeed, fetchPost, lastLoggedInAccount, post, fetchPosts as lensFetchPosts, fetchPostReferences, fetchAccountGraphStats } from "@lens-protocol/client/actions";
 import { AccountMetadata } from "@lens-protocol/metadata";
 import { useAtomValue, useSetAtom, useAtom } from "jotai";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { evmAddress, never, ok, EvmAddress, AnyPost, postId, PostReferenceType } from "@lens-protocol/client";
 import { fetchAccount } from "@lens-protocol/client/actions";
@@ -12,11 +12,11 @@ import { useAppKitAccount } from "$lib/utils/appkit";
 import { client, storageClient } from "$lib/utils/lens/client";
 import { LENS_CHAIN_ID } from "$lib/utils/lens/constants";
 import { modal } from "$lib/components/core";
-import { ClaimUsernameModal } from "$lib/components/features/lens-account/ClaimUsernameModal";
 
 import { useSigner } from "./useSigner";
 import { useConnectWallet } from "./useConnectWallet";
 import { delay } from "lodash";
+import { SelectProfileModal } from "$lib/components/features/lens-account/SelectProfileModal";
 
 export function useResumeSession() {
   const setSessionClient = useSetAtom(sessionClientAtom);
@@ -60,9 +60,12 @@ export function useResumeSession() {
     }
   }
 
+  useEffect(() => {
+    resumeSession();
+  }, [address]);
+
   return {
     isLoading,
-    resumeSession,
   }
 }
 
@@ -152,62 +155,29 @@ export function useLogOut() {
 }
 
 export function useAccount() {
-  const { address } = useAppKitAccount();
   const sessionClient = useAtomValue(sessionClientAtom);
   const [account, setAccount] = useAtom(accountAtom);
   const [isLoading, setIsLoading] = useState(false);
 
-  const getAccountAddress = async (): Promise<string> => {
-    if (!sessionClient || !address) return '';
+  const myAccount = useAtomValue(accountAtom);
 
-    const lastLoggedIn = await lastLoggedInAccount(sessionClient, {
-      address: evmAddress(address),
-    });
+  const refreshAccount = useCallback(async () => {
+    if (!sessionClient || !myAccount?.address) return;
 
-    if (lastLoggedIn.isOk() && lastLoggedIn.value) {
-      return lastLoggedIn.value.address;
-    }
-
-    const accountsResult = await fetchAccountsAvailable(client, {
-      managedBy: address,
-      includeOwned: true,
-    });
-
-    if (accountsResult.isOk() && accountsResult.value.items.length > 0) {
-      return accountsResult.value.items[0].account.address;
-    }
-
-    return '';
-  };
-
-  useEffect(() => {
-    const fetchAccountData = async () => {
-      if (!sessionClient || !address || account?.username) return;
-
-      setIsLoading(true);
-
-      try {
-        const accountAddress = await getAccountAddress();
-
-        if (!accountAddress) return;
-
-        const result = await fetchAccount(sessionClient, {
-          address: accountAddress,
-        });
-
-        if (result.isErr()) return;
-
+    setIsLoading(true);
+    try {
+      const result = await fetchAccount(sessionClient, { address: myAccount.address });
+      if (result.isOk()) {
         setAccount(result.value);
-      } finally {
-        setIsLoading(false);
       }
-    };
-
-    fetchAccountData();
-  }, [sessionClient, address]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [sessionClient, myAccount?.address, setAccount]);
 
   return {
     account,
+    refreshAccount,
     isLoading,
   };
 }
@@ -601,8 +571,7 @@ export function useLensAuth() {
     }
 
     if (sessionClient) {
-      toast.error('You need to claim a username to post');
-      modal.open(ClaimUsernameModal);
+      modal.open(SelectProfileModal, { dismissible: true });
       return;
     }
 

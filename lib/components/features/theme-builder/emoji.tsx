@@ -1,6 +1,5 @@
 import { motion, useTime, useTransform } from 'framer-motion';
 import { useEffect, useState, createContext, useContext } from 'react';
-import { emojis } from './store';
 
 interface EmojiState {
   id: string;
