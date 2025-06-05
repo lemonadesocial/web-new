@@ -1,11 +1,14 @@
 'use client';
 import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { AnyPost } from '@lens-protocol/client';
 
 import { usePost } from '$lib/hooks/useLens';
 import { FeedPost } from './FeedPost';
 import { PostComments } from './PostComments';
+import { useAtom, useAtomValue } from 'jotai';
+import { accountAtom, feedPostAtom } from '$lib/jotai';
+import { FeedPostEmpty } from './FeedPostEmpty';
+import { FeedPostLoading } from './FeedPostLoading';
 
 type Props = {
   postId: string;
@@ -13,17 +16,20 @@ type Props = {
 export function FeedPostDetail({ postId }: Props) {
   const router = useRouter();
   const pathName = usePathname();
-  const { getPost } = usePost();
+  const { getPost, isLoading } = usePost();
+  const account = useAtomValue(accountAtom);
 
-  const [post, setPost] = React.useState<AnyPost | null>();
+  const [post] = useAtom(feedPostAtom);
 
   React.useEffect(() => {
     if (postId) {
-      getPost({ postId }).then((res) => setPost(res));
+      getPost({ postId });
     }
   }, [postId]);
 
-  if (!post) return null;
+  if (isLoading) return <FeedPostLoading />;
+  if (!post) return <FeedPostEmpty account={account} />;
+  console.log(post);
 
   return (
     <div className="-mt-6 flex flex-col gap-5 w-full">

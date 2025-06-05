@@ -52,16 +52,26 @@ export function PostReaction({ post, isComment }: PostReactionProps) {
     }
   };
 
-  if (isComment) return (
-    <div className="flex gap-2 items-center">
-      <i className={clsx(isUpvoted ? "icon-heart-filled text-accent-400" : "icon-heart-outline text-tertiary hover:text-primary", "size-5 cursor-pointer")} onClick={handleUpvote} />
-      <p className="text-tertiary">{upvotes}</p>
-    </div>
-  )
+  if (isComment)
+    return (
+      <div className="flex gap-2 items-center">
+        <i
+          className={clsx(
+            isUpvoted ? 'icon-heart-filled text-accent-400' : 'icon-heart-outline text-tertiary hover:text-primary',
+            'size-5 cursor-pointer',
+          )}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleUpvote();
+          }}
+        />
+        {upvotes > 0 && <p className="text-tertiary">{upvotes}</p>}
+      </div>
+    );
 
   return (
     <PostButton
-      icon={isUpvoted ? "icon-heart-filled" : "icon-heart-outline"}
+      icon={isUpvoted ? 'icon-heart-filled' : 'icon-heart-outline'}
       onClick={(e) => {
         e.stopPropagation();
         handleLensAuth(handleUpvote);

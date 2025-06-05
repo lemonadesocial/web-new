@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { evmAddress, never, ok, EvmAddress, AnyPost, postId, PostReferenceType } from "@lens-protocol/client";
 import { fetchAccount } from "@lens-protocol/client/actions";
 import { toast } from "$lib/components/core/toast";
-import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom, chainsMapAtom } from "$lib/jotai";
+import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom, chainsMapAtom, feedPostAtom } from "$lib/jotai";
 import { useAppKitAccount } from "$lib/utils/appkit";
 import { client, storageClient } from "$lib/utils/lens/client";
 import { LENS_CHAIN_ID } from "$lib/utils/lens/constants";
@@ -429,6 +429,7 @@ type UseCommentsProps = {
 export function useComments({ postId: targetPostId, feedAddress }: UseCommentsProps) {
   const sessionClient = useAtomValue(sessionClientAtom);
   const signer = useSigner();
+  const [currentPost, setCurrentPost] = useAtom(feedPostAtom);
   const [comments, setComments] = useState<AnyPost[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -489,6 +490,11 @@ export function useComments({ postId: targetPostId, feedAddress }: UseCommentsPr
         .andThen(sessionClient.waitForTransaction)
         .andThen((txHash) => fetchPost(sessionClient, { txHash }))
         .andThen((comment) => {
+          // NOTE: update state current post
+          if (currentPost?.id === targetPostId) {
+            setCurrentPost((prev) => ({ ...prev, stats: { ...prev.stats, comments: prev.stats.comments + 1 } }));
+          }
+
           setComments(prev => [comment, ...prev]);
           return ok(comment);
         })
