@@ -16,6 +16,7 @@ import { ClaimUsernameModal } from "$lib/components/features/lens-account/ClaimU
 
 import { useSigner } from "./useSigner";
 import { useConnectWallet } from "./useConnectWallet";
+import { delay } from "lodash";
 
 export function useResumeSession() {
   const setSessionClient = useSetAtom(sessionClientAtom);
@@ -357,25 +358,40 @@ export function usePost() {
   const sessionClient = useAtomValue(sessionClientAtom);
   const signer = useSigner();
   const [isLoading, setIsLoading] = useState(false);
-  const setPosts= useSetAtom(feedPostsAtom);
+  const [posts, setPosts] = useAtom(feedPostsAtom);
+  const setCurrentPost = useSetAtom(feedPostAtom);
 
   const getPost = async (params: {postId: string}) => {
-    setIsLoading(true)
-    const result = await fetchPost(client, {
-      post: postId(params.postId),
-    });
-    setIsLoading(false)
+    let data: AnyPost | null | undefined;
+    if(posts?.length) {
+      data = posts.find(p => p.id === params.postId)
+    } else {
+      const result = await fetchPost(client, {
+        post: postId(params.postId),
+      });
+      setIsLoading(false);
 
-    if (result.isErr()) {
-      const error = result.error
-      const errorMessage = error instanceof Error ? error.message : "Failed to fetch post";
-      toast.error(errorMessage);
-      throw new Error(errorMessage)
+      if (result.isErr()) {
+        const error = result.error;
+        const errorMessage = error instanceof Error ? error.message : "Failed to fetch post";
+        toast.error(errorMessage);
+        throw new Error(errorMessage);
+      }
+      data = result.value
     }
-
-    return result.value
+    return data
   };
 
+  const selectPost = async (params: {postId: string}) => {
+    setIsLoading(true);
+    const currentPost = await getPost(params);
+
+    // NOTE: for better UI
+    delay(() => {
+      setIsLoading(false);
+      setCurrentPost(currentPost);
+    }, 500);
+  }
 
   const createPost = async ({ metadata, feedAddress, commentOn }: CreatePostParams) => {
     if (!sessionClient || !signer) return;
@@ -417,6 +433,7 @@ export function usePost() {
   return {
     getPost,
     createPost,
+    selectPost,
     isLoading,
   };
 }
@@ -492,7 +509,7 @@ export function useComments({ postId: targetPostId, feedAddress }: UseCommentsPr
         .andThen((comment) => {
           // NOTE: update state current post
           if (currentPost?.id === targetPostId) {
-            setCurrentPost((prev) => ({ ...prev, stats: { ...prev.stats, comments: prev.stats.comments + 1 } }));
+            setCurrentPost((prev: any) => ({ ...prev, stats: { ...prev.stats, comments: prev.stats.comments + 1 } }));
           }
 
           setComments(prev => [comment, ...prev]);
@@ -510,6 +527,7 @@ export function useComments({ postId: targetPostId, feedAddress }: UseCommentsPr
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Failed to create comment";
       toast.error(errorMessage);
+      console.log(error)
       throw error;
     } finally {
       setIsCreating(false);
@@ -599,3 +617,5 @@ export function useLensAuth() {
 
   return handleAuth;
 }
+
+

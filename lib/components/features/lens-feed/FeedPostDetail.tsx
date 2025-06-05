@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { usePost } from '$lib/hooks/useLens';
 import { FeedPost } from './FeedPost';
 import { PostComments } from './PostComments';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { accountAtom, feedPostAtom } from '$lib/jotai';
 import { FeedPostEmpty } from './FeedPostEmpty';
 import { FeedPostLoading } from './FeedPostLoading';
@@ -16,20 +16,19 @@ type Props = {
 export function FeedPostDetail({ postId }: Props) {
   const router = useRouter();
   const pathName = usePathname();
-  const { getPost, isLoading } = usePost();
+  const { selectPost, isLoading } = usePost();
   const account = useAtomValue(accountAtom);
+  const post = useAtomValue(feedPostAtom);
 
-  const [post] = useAtom(feedPostAtom);
-
+  console.log(post)
   React.useEffect(() => {
     if (postId) {
-      getPost({ postId });
+      selectPost({ postId });
     }
   }, [postId]);
 
   if (isLoading) return <FeedPostLoading />;
   if (!post) return <FeedPostEmpty account={account} />;
-  console.log(post);
 
   return (
     <div className="-mt-6 flex flex-col gap-5 w-full">

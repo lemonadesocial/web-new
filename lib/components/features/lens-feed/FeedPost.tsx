@@ -3,7 +3,7 @@ import { formatDistanceToNow } from "date-fns";
 import clsx from "clsx";
 import { twMerge } from "tailwind-merge";
 
-import { Avatar, toast } from "$lib/components/core";
+import { Avatar, Spacer, toast } from "$lib/components/core";
 import { getAccountAvatar } from "$lib/utils/lens/utils";
 
 import { FeedPostGallery } from './FeedPostGallery';
@@ -37,7 +37,7 @@ export function FeedPost({ post, isComment, onSelect}: FeedPostProps) {
           size="xl"
           rounded="full"
         />
-        <div>
+        <div className="flex-1 h-full">
           <div className="flex gap-1.5">
             <p>
               {author.username?.localName}
@@ -48,7 +48,11 @@ export function FeedPost({ post, isComment, onSelect}: FeedPostProps) {
           </div>
           <p className="text-secondary whitespace-pre-line">{(metadata as TextOnlyMetadata).content}</p>
           {(metadata as ImageMetadata).attachments?.length > 0 && (
-            <FeedPostGallery attachments={(metadata as ImageMetadata).attachments.map(({ item }) => item)} className="mt-2" />
+            <>
+              <Spacer className="h-2" />
+              <FeedPostGallery attachments={(metadata as ImageMetadata).attachments.map(({ item }) => item)} className="mt-2" />
+              <Spacer className="h-2" />
+            </>
           )}
           <div className="mt-2 flex gap-2">
             <PostReaction post={rootPost} isComment />

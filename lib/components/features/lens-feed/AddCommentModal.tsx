@@ -3,7 +3,7 @@ import { useState } from "react";
 import clsx from "clsx";
 
 import { Button, modal, toast } from "$lib/components/core";
-import { usePost } from "$lib/hooks/useLens";
+import { useComments } from "$lib/hooks/useLens";
 import { uploadFiles } from "$lib/utils/file";
 import { MediaFile } from "$lib/utils/file";
 import { generatePostMetadata } from "$lib/utils/lens/utils";
@@ -25,7 +25,7 @@ export function AddCommentModal({ post, onSuccess }: AddCommentModalProps) {
   const [content, setContent] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [sharingLink, setSharingLink] = useState<string | undefined>(undefined);
-  const { createPost } = usePost();
+  const {createComment} = useComments({ postId: post.id });
 
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,10 +43,8 @@ export function AddCommentModal({ post, onSuccess }: AddCommentModalProps) {
 
     try {
       setIsLoading(true);
-      await createPost({
-        metadata: generatePostMetadata({ content, images, sharingLink }),
-        commentOn: post.id,
-      });
+      const metadata = generatePostMetadata({ content, images, sharingLink });
+      await createComment(metadata);
       setIsLoading(false);
       modal.close();
       toast.success('Comment posted');
