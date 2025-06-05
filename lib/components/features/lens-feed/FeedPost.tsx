@@ -15,14 +15,19 @@ import { PostComment } from "./PostComment";
 type FeedPostProps = {
   post: Post | Repost;
   isComment?: boolean;
+  showRepost?: boolean;
 };
 
-export function FeedPost({ post, isComment }: FeedPostProps) {
+export function FeedPost({ post, isComment, showRepost }: FeedPostProps) {
   const { author, timestamp } = post;
-  const rootPost = post.__typename === 'Repost' ? post.repostOf : post;
+
+  const isRepost = post.__typename === 'Repost';
+  const rootPost = isRepost ? post.repostOf : post;
   const metadata = rootPost.metadata;
 
   if ((post as Post).commentOn && !isComment) return null;
+
+  if (isRepost && !showRepost) return null;
 
   if (isComment) return (
     <div className="py-3 px-4 gap-3 flex">
@@ -54,20 +59,30 @@ export function FeedPost({ post, isComment }: FeedPostProps) {
   return (
     <div className="space-y-2">
       <div className="bg-card rounded-md border border-card-border px-4 py-3 space-y-3">
-        <div className="flex justify-between">
-          <PostHeader post={rootPost} />
-          <div className="flex gap-2">
-            <PostButton
-              icon="icon-upload"
-              onClick={() => toast.success('Coming soon')}
-            />
-            <PostButton
-              icon="icon-more-vert"
-              onClick={() => toast.success('Coming soon')}
-            />
+        <div className="space-y-2">
+          {isRepost && (
+            <div className="flex items-center gap-2">
+              <i className="icon-repost size-4 text-tertiary" />
+              <p className="text-tertiary text-sm">{author.username?.localName} reposted</p>
+            </div>
+          )}
+          <div className="flex justify-between">
+            <PostHeader post={rootPost} />
+            <div className="flex gap-2">
+              <PostButton
+                icon="icon-upload"
+                onClick={() => toast.success('Coming soon')}
+              />
+              <PostButton
+                icon="icon-more-vert"
+                onClick={() => toast.success('Coming soon')}
+              />
+            </div>
           </div>
         </div>
+      
         <PostContent post={rootPost} />
+        
         <div className="flex justify-between">
           <div className="flex gap-4 sm:gap-2">
             <PostReaction post={rootPost} />
@@ -80,7 +95,6 @@ export function FeedPost({ post, isComment }: FeedPostProps) {
           />
         </div>
       </div>
-      {/* <PostComments postId={rootPost.id} feedAddress={rootPost.feed?.address} /> */}
     </div>
   );
 }

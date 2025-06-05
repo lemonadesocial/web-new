@@ -5,6 +5,7 @@ export const GOOGLE_MAP_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY as string;
 export const ASSET_PREFIX = process.env.NEXT_PUBLIC_ASSET_PREFIX || '';
 export const KRATOS_PUBLIC_URL = process.env.NEXT_PUBLIC_KRATOS_PUBLIC_URL as string;
 export const IDENTITY_URL = process.env.NEXT_PUBLIC_IDENTITY_URL as string;
+export const LEMONADE_FEED_ADDRESS = process.env.NEXT_PUBLIC_LEMONADE_FEED_ADDRESS as string;
 
 export const ETHNICITIES = ['African American', 'Alaska Native', 'Arab', 'Asian', 'Black', 'Han Chinese', 'Hispanic / Latino', 'Indian', 'Native American', 'Native Hawaiian', 'Pacific Islander', 'White', 'Other'];
 

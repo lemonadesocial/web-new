@@ -1,5 +1,4 @@
 
-import { evmAddress } from "@lens-protocol/client";
 import { useAtomValue } from "jotai";
 
 import { useFeedPosts } from "$lib/hooks/useLens";
@@ -8,8 +7,8 @@ import { accountAtom } from "$lib/jotai";
 
 import { FeedPost } from "./FeedPost";
 
-export function FeedPosts({ feedAddress }: { feedAddress: string; }) {
-  const { posts, isLoading } = useFeedPosts(evmAddress(feedAddress));
+export function FeedPosts({ feedAddress, authorId, showReposts }: { feedAddress?: string; authorId?: string; showReposts?: boolean; }) {
+  const { posts, isLoading } = useFeedPosts({ feedAddress, authorId });
   const account = useAtomValue(accountAtom);
 
   if (isLoading) {
@@ -43,7 +42,7 @@ export function FeedPosts({ feedAddress }: { feedAddress: string; }) {
   return (
     <div className="space-y-4">
       {posts.map((post) => (
-        <FeedPost key={post.slug} post={post} />
+        <FeedPost key={post.slug} post={post} showRepost={showReposts} />
       ))}
     </div>
   );

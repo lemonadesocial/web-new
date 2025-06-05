@@ -49,6 +49,13 @@ export function LensAccountCard() {
             {stats.following} Following
           </p>
         </div>
+        {
+          account.metadata?.bio && (
+            <p className="text-secondary text-sm">
+              {account.metadata?.bio}
+            </p>
+          )
+        }
       </div>
     </div>
   );

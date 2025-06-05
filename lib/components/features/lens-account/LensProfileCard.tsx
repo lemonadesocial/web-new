@@ -90,6 +90,13 @@ export function LensProfileCard({ account }: { account: Account }) {
             {stats.following} Following
           </p>
         </div>
+        {
+          displayAccount.metadata?.bio && (
+            <p className="text-secondary text-sm">
+              {displayAccount.metadata?.bio}
+            </p>
+          )
+        }
       </div>
       {
         isOwner ? (
