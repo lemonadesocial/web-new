@@ -4,7 +4,7 @@ import { AccountMetadata } from "@lens-protocol/metadata";
 import { useAtomValue, useSetAtom, useAtom } from "jotai";
 import { useState, useEffect, useCallback } from "react";
 
-import { evmAddress, never, ok, EvmAddress, AnyPost, postId, PostReferenceType } from "@lens-protocol/client";
+import { evmAddress, never, ok, AnyPost, postId, PostReferenceType } from "@lens-protocol/client";
 import { fetchAccount } from "@lens-protocol/client/actions";
 import { toast } from "$lib/components/core/toast";
 import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom, chainsMapAtom, feedPostAtom } from "$lib/jotai";
@@ -17,6 +17,7 @@ import { useSigner } from "./useSigner";
 import { useConnectWallet } from "./useConnectWallet";
 import { delay } from "lodash";
 import { SelectProfileModal } from "$lib/components/features/lens-account/SelectProfileModal";
+import { LEMONADE_FEED_ADDRESS } from "$lib/utils/constants";
 
 export function useResumeSession() {
   const setSessionClient = useSetAtom(sessionClientAtom);
@@ -265,20 +266,28 @@ export function useFeed(feedId: string) {
   };
 }
 
-export function useFeedPosts(feedId: EvmAddress) {
+type PostFilter = {
+  feedAddress?: string;
+  authorId?: string;
+}
+
+export function useFeedPosts(postFilter: PostFilter) {
   const sessionClient = useAtomValue(sessionClientAtom);
   const [posts, setPosts] = useAtom(feedPostsAtom);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [cursor, setCursor] = useState<string | undefined>();
 
+  const filter = {
+    ...(postFilter.feedAddress && { feeds: [{ feed: postFilter.feedAddress }] }),
+    ...(postFilter.authorId && { authors: [postFilter.authorId] }),
+  };
+
   const fetchPostsData = async (refresh = false) => {    
     setIsLoading(true);
     try {
       const result = await lensFetchPosts(sessionClient || client, {
-        filter: {
-          feeds: [{ feed: feedId }]
-        },
+        filter,
         ...(cursor && !refresh ? { cursor } : {})
       });
 
@@ -307,7 +316,7 @@ export function useFeedPosts(feedId: EvmAddress) {
 
   useEffect(() => {
     fetchPostsData(true);
-  }, [sessionClient, feedId]);
+  }, [sessionClient]);
 
   return {
     posts,
@@ -372,7 +381,7 @@ export function usePost() {
 
       const result = await post(sessionClient, {
         contentUri: uri,
-        ...(feedAddress && { feed: evmAddress(feedAddress) }),
+        feed: evmAddress(feedAddress ?? LEMONADE_FEED_ADDRESS),
         ...(commentOn && { commentOn: { post: postId(commentOn) } }),
       })
         .andThen(handleOperationWith(signer))

@@ -1,6 +1,4 @@
 import { usePathname, useRouter } from 'next/navigation';
-
-import { evmAddress } from '@lens-protocol/client';
 import { useAtomValue } from 'jotai';
 
 import { useFeedPosts } from '$lib/hooks/useLens';
@@ -10,11 +8,16 @@ import { FeedPost } from './FeedPost';
 import { FeedPostEmpty } from './FeedPostEmpty';
 import { FeedPostLoading } from './FeedPostLoading';
 
-export function FeedPosts({ feedAddress }: { feedAddress: string }) {
+type Props = {
+  feedAddress?: string;
+  authorId?: string;
+  showReposts?: boolean;
+};
+
+export function FeedPosts({ feedAddress, authorId, showReposts }: Props) {
   const router = useRouter();
   const pathName = usePathname();
-
-  const { posts, isLoading } = useFeedPosts(evmAddress(feedAddress));
+  const { posts, isLoading } = useFeedPosts({ feedAddress, authorId });
   const account = useAtomValue(accountAtom);
 
   if (isLoading) {
@@ -30,7 +33,12 @@ export function FeedPosts({ feedAddress }: { feedAddress: string }) {
       {posts
         .filter((item: any) => !item.root)
         .map((post) => (
-          <FeedPost key={post.slug} post={post} onSelect={() => router.push(`${pathName}/${post.id}`)} />
+          <FeedPost
+            key={post.slug}
+            post={post}
+            showRepost={showReposts}
+            onSelect={() => router.push(`${pathName}/${post.id}`)}
+          />
         ))}
     </div>
   );
