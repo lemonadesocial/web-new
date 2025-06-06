@@ -12,7 +12,7 @@ export function GallerySection({ event, loading }: { event: Event; loading?: boo
   if (!photos.length) return null;
 
   return (
-    <div className="event-description flex flex-col gap-2 w-full">
+    <div className="flex flex-col gap-2 w-full">
       <p className="text-secondary text-sm">
         {photos.length} {photos.length > 1 ? 'Photos' : 'Photo'}
       </p>
@@ -32,7 +32,7 @@ export function GallerySection({ event, loading }: { event: Event; loading?: boo
 
 function GallerySectionSkeleton() {
   return (
-    <div className="event-description flex flex-col gap-2 w-full">
+    <div className="flex flex-col gap-2 w-full">
       <Skeleton animate className="h-4 w-24" />
       <Divider className="h-1 w-full mb-2" />
       <div className="flex gap-3 flex-wrap">

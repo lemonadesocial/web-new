@@ -18,7 +18,7 @@ export function LocationSection({ event, loading = false }: { event?: Event; loa
       : [];
 
   return (
-    <div className="event-description flex flex-col gap-2 w-full">
+    <div className="flex flex-col gap-2 w-full">
       <p className="text-secondary text-sm">Location</p>
       <Divider className="h-1 w-full mb-2" />
       <div className="flex flex-col gap-1">
@@ -44,7 +44,7 @@ export function LocationSection({ event, loading = false }: { event?: Event; loa
 
 function LocationSectionSkeleton() {
   return (
-    <div className="event-description flex flex-col gap-2 w-full">
+    <div className="flex flex-col gap-2 w-full">
       <Skeleton animate className="h-4 w-24" />
       <Divider className="h-1 w-full mb-2" />
       <div className="flex flex-col gap-4">

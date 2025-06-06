@@ -15,7 +15,7 @@ export function HostedBySection({ event }: { event: Event }) {
   const hosts = uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id).filter((u) => u?._id) as User[];
 
   return (
-    <div className="event-description flex flex-col gap-2 w-full">
+    <div className="flex flex-col gap-2 w-full">
       <p className="text-secondary text-sm">Hosted by</p>
       <Divider className="h-1 w-full mb-2" />
       {hosts.map((u) => (

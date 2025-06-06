@@ -21,7 +21,7 @@ export function Segment<T>({ items, selected, size, onSelect, className }: Segme
   const [active, setActive] = React.useState(selected);
 
   return (
-    <ul className={twMerge('inline-flex bg-primary/8 rounded-sm backdrop-blur-lg', className)}>
+    <ul className={twMerge('inline-flex bg-primary/8 rounded-sm backdrop-blur-lg list-none', className)}>
       {items.map((item) => (
         <li key={item.value as string} className="flex-1">
           <Button
