@@ -53,17 +53,6 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
             <p className="text-tertiary">{formatDistanceToNow(new Date(timestamp), { addSuffix: true })}</p>
           </div>
           <PostContent post={rootPost} />
-          {/* <p className="text-secondary whitespace-pre-line">{(metadata as TextOnlyMetadata).content}</p> */}
-          {(metadata as ImageMetadata).attachments?.length > 0 && (
-            <>
-              <Spacer className="h-2" />
-              <FeedPostGallery
-                attachments={(metadata as ImageMetadata).attachments.map(({ item }) => item)}
-                className="mt-2"
-              />
-              <Spacer className="h-2" />
-            </>
-          )}
           <div className="mt-2 flex gap-2">
             <PostReaction post={rootPost} isComment />
           </div>
