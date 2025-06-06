@@ -111,7 +111,7 @@ export function CollectibleList({ tokens, offers }: { tokens: TokenComplex[]; of
   }
 
   return (
-    <div className="event-description flex flex-col gap-2 w-full">
+    <div className="flex flex-col gap-2 w-full">
       <p className="font-medium text-sm">Collectibles</p>
       <hr className="border-t border-divider" />
       <div className={`grid ${gridCols} gap-3`}>

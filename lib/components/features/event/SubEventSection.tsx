@@ -14,7 +14,7 @@ export function SubEventSection({ event }: { event?: Event; }) {
   if (!event?.subevent_enabled || !events.length) return null;
 
   return (
-    <div className="event-description flex flex-col gap-2 w-full">
+    <div className="flex flex-col gap-2 w-full">
       <div className="flex justify-between">
         <p className="text-secondary text-sm">{events?.length} sessions</p>
         {/* <div className="flex gap-1">
