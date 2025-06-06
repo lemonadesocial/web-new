@@ -1,7 +1,8 @@
-import { ImageMetadata, Post, Repost, TextOnlyMetadata } from '@lens-protocol/client';
+import { ImageMetadata, Post, Repost } from '@lens-protocol/client';
 import { formatDistanceToNow } from 'date-fns';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { useRouter } from 'next/navigation';
 
 import { Avatar, Spacer, toast } from '$lib/components/core';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
@@ -23,6 +24,7 @@ type FeedPostProps = {
 
 export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProps) {
   const { author, timestamp } = post;
+  const router = useRouter();
 
   const isRepost = post.__typename === 'Repost';
   const rootPost = isRepost ? post.repostOf : post;
@@ -36,7 +38,15 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
   if (isComment) {
     return (
       <div className={clsx('py-3 px-4 gap-3 flex', onSelect && 'cursor-pointer')} onClick={onSelect}>
-        <Avatar src={getAccountAvatar(author)} size="xl" rounded="full" />
+        <Avatar
+          src={getAccountAvatar(author)}
+          size="xl"
+          rounded="full"
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push(`/l/${author.username?.localName}`);
+          }}
+        />
         <div className="flex-1 h-full">
           <div className="flex gap-1.5">
             <p>{author.username?.localName}</p>

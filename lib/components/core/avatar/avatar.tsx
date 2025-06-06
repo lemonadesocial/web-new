@@ -21,13 +21,14 @@ interface AvatarProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   rounded?: 'full' | 'rounded' | 'sm' | 'lg';
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-export function Avatar({ src, size = 'md', rounded = 'full', className }: AvatarProps) {
+export function Avatar({ src, size = 'md', rounded = 'full', className, onClick }: AvatarProps) {
   const [isLoading, setIsLoading] = React.useState(true);
 
   return (
-    <div className={twMerge(`relative ${sizes[size]} overflow-hidden ${roundeds[rounded]}`, className)}>
+    <div className={twMerge(`relative ${sizes[size]} overflow-hidden ${roundeds[rounded]}`, onClick && 'cursor-pointer', className)} onClick={onClick}>
       <div
         className={twMerge(
           'absolute inset-0 w-full h-full bg-card border border-card-border block',

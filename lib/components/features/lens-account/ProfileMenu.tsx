@@ -34,7 +34,7 @@ export function ProfileMenu({ children }: { children: React.ReactNode }) {
           {
             account?.username && (
               <MenuItem
-                onClick={async () => router.push(`/u/${account!.username!.localName}`)}
+                onClick={async () => router.push(`/l/${account!.username!.localName}`)}
               >
                 <div className="flex items-center gap-2.5">
                   <i className="icon-account size-4 text-secondary" />
