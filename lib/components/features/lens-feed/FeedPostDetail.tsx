@@ -13,26 +13,26 @@ import { AnyPost } from '@lens-protocol/client';
 import { LensProfileCard } from '../lens-account/LensProfileCard';
 
 type Props = {
-  postId: string;
+  postSlug: string;
 };
 
-export function FeedPostDetail({ postId }: Props) {
+export function FeedPostDetail({ postSlug }: Props) {
   const { selectPost, isLoading } = usePost();
   const post = useAtomValue(feedPostAtom);
   const account = useAtomValue(accountAtom);
 
   React.useEffect(() => {
-    if (postId) {
-      selectPost({ postId });
+    if (postSlug) {
+      selectPost({ slug: postSlug });
     }
-  }, [postId]);
+  }, [postSlug]);
 
   const author = React.useMemo(() => {
-    if(post) {
-      const rootPost = post.__typename === 'Repost' ? post.repostOf : post
-      return rootPost.author
+    if (post) {
+      const rootPost = post.__typename === 'Repost' ? post.repostOf : post;
+      return rootPost.author;
     }
-  }, [post])
+  }, [post]);
 
   return (
     <div className="flex flex-col-reverse md:grid md:grid-cols-[1fr_336px] gap-5 md:gap-8 items-start pb-10">
@@ -62,11 +62,11 @@ export function FeedPostDetailContent({ post }: { post: AnyPost }) {
         </button>
       </div>
 
-      <FeedPost post={post} />
+      <FeedPost post={post} showRepost />
       <PostComments
         postId={post.id}
         onSelectComment={(data) => {
-          router.push(pathName.replace(post.id, data.id));
+          router.push(pathName.replace(post.slug, data.slug));
         }}
       />
     </div>

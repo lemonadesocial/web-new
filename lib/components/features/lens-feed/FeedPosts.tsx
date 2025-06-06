@@ -37,7 +37,7 @@ export function FeedPosts({ feedAddress, authorId, showReposts }: Props) {
             key={post.slug}
             post={post}
             showRepost={showReposts}
-            onSelect={() => router.push(`${pathName}/${post.id}`)}
+            onSelect={() => router.push(`${pathName}/${post.slug}`)}
           />
         ))}
     </div>
