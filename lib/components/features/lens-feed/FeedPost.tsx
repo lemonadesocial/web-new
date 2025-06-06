@@ -42,7 +42,8 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
             <p>{author.username?.localName}</p>
             <p className="text-tertiary">{formatDistanceToNow(new Date(timestamp), { addSuffix: true })}</p>
           </div>
-          <p className="text-secondary whitespace-pre-line">{(metadata as TextOnlyMetadata).content}</p>
+          <PostContent post={rootPost} />
+          {/* <p className="text-secondary whitespace-pre-line">{(metadata as TextOnlyMetadata).content}</p> */}
           {(metadata as ImageMetadata).attachments?.length > 0 && (
             <>
               <Spacer className="h-2" />

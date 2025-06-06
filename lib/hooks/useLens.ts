@@ -356,7 +356,7 @@ export function usePost() {
     if (posts?.length) {
       data = posts.find((p) => p.id === params.postId || p.slug === params.slug);
     } else {
-      const variables = params.postId ? { post: postId(params.postId) } : { slug: params.slug };
+      const variables = { post: postId((params.postId || params.slug) as string) };
 
       const result = await fetchPost(client, variables);
       setIsLoading(false);
