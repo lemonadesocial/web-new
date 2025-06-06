@@ -1,5 +1,6 @@
 import { ImageMetadata, Post, Repost, TextOnlyMetadata } from "@lens-protocol/client";
 import { formatDistanceToNow } from "date-fns";
+import { useRouter } from "next/navigation";
 
 import { Avatar, toast } from "$lib/components/core";
 import { getAccountAvatar } from "$lib/utils/lens/utils";
@@ -20,6 +21,7 @@ type FeedPostProps = {
 
 export function FeedPost({ post, isComment, showRepost }: FeedPostProps) {
   const { author, timestamp } = post;
+  const router = useRouter();
 
   const isRepost = post.__typename === 'Repost';
   const rootPost = isRepost ? post.repostOf : post;
@@ -35,6 +37,7 @@ export function FeedPost({ post, isComment, showRepost }: FeedPostProps) {
         src={getAccountAvatar(author)}
         size="xl"
         rounded="full"
+        onClick={() => router.push(`/l/${author.username?.localName}`)}
       />
       <div>
         <div className="flex gap-1.5">
