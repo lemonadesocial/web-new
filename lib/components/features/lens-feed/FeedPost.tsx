@@ -37,7 +37,10 @@ export function FeedPost({ post, isComment, showRepost }: FeedPostProps) {
         src={getAccountAvatar(author)}
         size="xl"
         rounded="full"
-        onClick={() => router.push(`/l/${author.username?.localName}`)}
+        onClick={(e) => {
+          e.stopPropagation();
+          router.push(`/l/${author.username?.localName}`);
+        }}
       />
       <div>
         <div className="flex gap-1.5">

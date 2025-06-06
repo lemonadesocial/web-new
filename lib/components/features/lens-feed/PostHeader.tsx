@@ -19,7 +19,10 @@ export function PostHeader({ post }: PostHeaderProps) {
         src={getAccountAvatar(author)}
         size="xl"
         rounded="full"
-        onClick={() => router.push(`/l/${author.username?.localName}`)}
+        onClick={(e) => {
+          e.stopPropagation();
+          router.push(`/l/${author.username?.localName}`);
+        }}
       />
       <div className="flex-1">
         <p>

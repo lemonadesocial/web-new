@@ -21,7 +21,7 @@ interface AvatarProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   rounded?: 'full' | 'rounded' | 'sm' | 'lg';
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export function Avatar({ src, size = 'md', rounded = 'full', className, onClick }: AvatarProps) {
