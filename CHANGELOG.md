@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.35.1](https://github.com/lemonadesocial/web-new/compare/v1.35.0...v1.35.1) (2025-06-06)
+
+
+### Bug Fixes
+
+* duplicate image gallery in feed post ([0ebec62](https://github.com/lemonadesocial/web-new/commit/0ebec6249a9357e47d64a9c019b6f72350cc3ceb))
+* event desc format ([0bb4607](https://github.com/lemonadesocial/web-new/commit/0bb4607bb2bd6d17c2769b46b034cfd7ff2b38e3))
+* missing lens route ([4d46f8a](https://github.com/lemonadesocial/web-new/commit/4d46f8a44e7cdf64aa2186b43352cca7b5b28248))
+
 ## [1.35.0](https://github.com/lemonadesocial/web-new/compare/v1.34.0...v1.35.0) (2025-06-06)
 
 
