@@ -47,7 +47,10 @@ export function PostRepost({ post }: PostRepostProps) {
     <PostButton
       icon="icon-repost"
       label={reposts}
-      onClick={handleRepost}
+      onClick={(e) => {
+        e.stopPropagation();
+        handleRepost();
+      }}
       isActive={!!post.operations?.hasReposted}
     />
   );

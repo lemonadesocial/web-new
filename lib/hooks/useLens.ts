@@ -1,22 +1,33 @@
-import { handleOperationWith, signMessageWith } from "@lens-protocol/client/ethers";
-import { createAccountWithUsername, fetchAccountsAvailable, fetchFeed, fetchPost, lastLoggedInAccount, post, fetchPosts as lensFetchPosts, fetchPostReferences, fetchAccountGraphStats } from "@lens-protocol/client/actions";
-import { AccountMetadata } from "@lens-protocol/metadata";
-import { useAtomValue, useSetAtom, useAtom } from "jotai";
-import { useState, useEffect, useCallback } from "react";
+import { handleOperationWith, signMessageWith } from '@lens-protocol/client/ethers';
+import {
+  createAccountWithUsername,
+  fetchAccountsAvailable,
+  fetchFeed,
+  fetchPost,
+  lastLoggedInAccount,
+  post,
+  fetchPosts as lensFetchPosts,
+  fetchPostReferences,
+  fetchAccountGraphStats,
+} from '@lens-protocol/client/actions';
+import { AccountMetadata } from '@lens-protocol/metadata';
+import { useAtomValue, useSetAtom, useAtom } from 'jotai';
+import { useState, useEffect, useCallback } from 'react';
 
-import { evmAddress, never, ok, AnyPost, postId, PostReferenceType } from "@lens-protocol/client";
-import { fetchAccount } from "@lens-protocol/client/actions";
-import { toast } from "$lib/components/core/toast";
-import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom, chainsMapAtom } from "$lib/jotai";
-import { useAppKitAccount } from "$lib/utils/appkit";
-import { client, storageClient } from "$lib/utils/lens/client";
-import { LENS_CHAIN_ID } from "$lib/utils/lens/constants";
-import { modal } from "$lib/components/core";
+import { evmAddress, never, ok, AnyPost, postId, PostReferenceType } from '@lens-protocol/client';
+import { fetchAccount } from '@lens-protocol/client/actions';
+import { toast } from '$lib/components/core/toast';
+import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom, chainsMapAtom, feedPostAtom } from '$lib/jotai';
+import { useAppKitAccount } from '$lib/utils/appkit';
+import { client, storageClient } from '$lib/utils/lens/client';
+import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
+import { modal } from '$lib/components/core';
 
-import { useSigner } from "./useSigner";
-import { useConnectWallet } from "./useConnectWallet";
-import { SelectProfileModal } from "$lib/components/features/lens-account/SelectProfileModal";
-import { LEMONADE_FEED_ADDRESS } from "$lib/utils/constants";
+import { useSigner } from './useSigner';
+import { useConnectWallet } from './useConnectWallet';
+import { delay } from 'lodash';
+import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
+import { LEMONADE_FEED_ADDRESS } from '$lib/utils/constants';
 
 export function useResumeSession() {
   const setSessionClient = useSetAtom(sessionClientAtom);
@@ -27,11 +38,11 @@ export function useResumeSession() {
 
   const resumeSession = async () => {
     if (!address) return;
-  
+
     try {
       setIsLoading(true);
       const resumed = await client.resumeSession();
-    
+
       if (resumed.isErr()) {
         setIsLoading(false);
         return;
@@ -42,14 +53,14 @@ export function useResumeSession() {
       const lastLoggedIn = await lastLoggedInAccount(resumed.value, {
         address: evmAddress(address),
       });
-  
+
       if (lastLoggedIn.isErr()) {
         setIsLoading(false);
         return;
       }
 
       const result = await fetchAccount(resumed.value, {
-        address: lastLoggedIn.value?.address ?? never("Account not found"),
+        address: lastLoggedIn.value?.address ?? never('Account not found'),
       });
 
       if (result.isErr()) return;
@@ -58,7 +69,7 @@ export function useResumeSession() {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     resumeSession();
@@ -66,7 +77,7 @@ export function useResumeSession() {
 
   return {
     isLoading,
-  }
+  };
 }
 
 export function useLogIn() {
@@ -93,18 +104,18 @@ export function useLogIn() {
         const loginAs =
           items[0].__typename === 'AccountOwned'
             ? {
-              accountOwner: {
-                owner: address,
-                account: items[0].account.address,
-              },
-            }
+                accountOwner: {
+                  owner: address,
+                  account: items[0].account.address,
+                },
+              }
             : {
-              accountManager: {
-                manager: address,
-                account: items[0].account.address,
-              },
-            };
-      
+                accountManager: {
+                  manager: address,
+                  account: items[0].account.address,
+                },
+              };
+
         const loginResult = await client.login({
           ...loginAs,
           signMessage: signMessageWith(signer),
@@ -131,12 +142,12 @@ export function useLogIn() {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return {
     isLoading,
     logIn,
-  }
+  };
 }
 
 export function useLogOut() {
@@ -147,11 +158,11 @@ export function useLogOut() {
     setAccount(null);
     await sessionClient?.logout();
     setSessionClient(null);
-  }
+  };
 
   return {
     logOut,
-  }
+  };
 }
 
 export function useAccount() {
@@ -210,9 +221,10 @@ export function useClaimUsername() {
         .andThen((account) => {
           setAccount(account);
           return sessionClient.switchAccount({
-            account: account?.address ?? never("Account not found"),
-          })
-        }).mapErr((error) => {
+            account: account?.address ?? never('Account not found'),
+          });
+        })
+        .mapErr((error) => {
           throw error;
         });
 
@@ -222,12 +234,12 @@ export function useClaimUsername() {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return {
     claimUsername,
     isLoading,
-  }
+  };
 }
 
 export function useFeed(feedId: string) {
@@ -268,7 +280,7 @@ export function useFeed(feedId: string) {
 type PostFilter = {
   feedAddress?: string;
   authorId?: string;
-}
+};
 
 export function useFeedPosts(postFilter: PostFilter) {
   const sessionClient = useAtomValue(sessionClientAtom);
@@ -282,28 +294,28 @@ export function useFeedPosts(postFilter: PostFilter) {
     ...(postFilter.authorId && { authors: [postFilter.authorId] }),
   };
 
-  const fetchPostsData = async (refresh = false) => {    
+  const fetchPostsData = async (refresh = false) => {
     setIsLoading(true);
     try {
       const result = await lensFetchPosts(sessionClient || client, {
         filter,
-        ...(cursor && !refresh ? { cursor } : {})
+        ...(cursor && !refresh ? { cursor } : {}),
       });
 
       if (result.isOk()) {
         const { items, pageInfo } = result.value;
-        
+
         setHasMore(!!pageInfo.next);
         if (pageInfo.next) {
           setCursor(pageInfo.next);
         }
-        
+
         const validPosts = items.filter((post): post is NonNullable<typeof post> => post !== null) as AnyPost[];
-        
+
         if (refresh) {
           setPosts(validPosts);
         } else {
-          setPosts(prev => [...prev, ...validPosts]);
+          setPosts((prev) => [...prev, ...validPosts]);
         }
       }
     } catch (error: any) {
@@ -336,7 +348,40 @@ export function usePost() {
   const sessionClient = useAtomValue(sessionClientAtom);
   const signer = useSigner();
   const [isLoading, setIsLoading] = useState(false);
-  const setPosts= useSetAtom(feedPostsAtom);
+  const [posts, setPosts] = useAtom(feedPostsAtom);
+  const setCurrentPost = useSetAtom(feedPostAtom);
+
+  const getPost = async (params: { postId?: string; slug?: string }) => {
+    let data: AnyPost | null | undefined;
+    if (posts?.length) {
+      data = posts.find((p) => p.id === params.postId || p.slug === params.slug);
+    } else {
+      const variables = { post: postId((params.postId || params.slug) as string) };
+
+      const result = await fetchPost(client, variables);
+      setIsLoading(false);
+
+      if (result.isErr()) {
+        const error = result.error;
+        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch post';
+        toast.error(errorMessage);
+        throw new Error(errorMessage);
+      }
+      data = result.value;
+    }
+    return data;
+  };
+
+  const selectPost = async (params: { id?: string; slug?: string }) => {
+    setIsLoading(true);
+    const currentPost = await getPost(params);
+
+    // NOTE: for better UI
+    delay(() => {
+      setIsLoading(false);
+      setCurrentPost(currentPost);
+    }, 500);
+  };
 
   const createPost = async ({ metadata, feedAddress, commentOn }: CreatePostParams) => {
     if (!sessionClient || !signer) return;
@@ -354,7 +399,7 @@ export function usePost() {
         .andThen(sessionClient.waitForTransaction)
         .andThen((txHash) => fetchPost(sessionClient, { txHash }))
         .andThen((post) => {
-          setPosts(prev => [post as AnyPost, ...prev]);
+          setPosts((prev) => [post as AnyPost, ...prev]);
           return ok(post);
         })
         .mapErr((error) => {
@@ -362,12 +407,12 @@ export function usePost() {
         });
 
       if (result.isErr()) {
-        throw new Error("Failed to create post");
+        throw new Error('Failed to create post');
       }
 
       return result.value;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to create post";
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create post';
       toast.error(errorMessage);
       throw error;
     } finally {
@@ -376,7 +421,9 @@ export function usePost() {
   };
 
   return {
+    getPost,
     createPost,
+    selectPost,
     isLoading,
   };
 }
@@ -389,6 +436,7 @@ type UseCommentsProps = {
 export function useComments({ postId: targetPostId, feedAddress }: UseCommentsProps) {
   const sessionClient = useAtomValue(sessionClientAtom);
   const signer = useSigner();
+  const [currentPost, setCurrentPost] = useAtom(feedPostAtom);
   const [comments, setComments] = useState<AnyPost[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -397,31 +445,31 @@ export function useComments({ postId: targetPostId, feedAddress }: UseCommentsPr
 
   const fetchComments = async (refresh = false) => {
     if (!targetPostId) return;
-    
+
     setIsLoading(true);
     try {
       const result = await fetchPostReferences(client, {
         referencedPost: postId(targetPostId),
         referenceTypes: [PostReferenceType.CommentOn],
-        ...(cursor && !refresh ? { cursor } : {})
+        ...(cursor && !refresh ? { cursor } : {}),
       });
 
       if (result.isOk()) {
         const { items, pageInfo } = result.value;
-        
+
         setHasMore(!!pageInfo.next);
         if (pageInfo.next) {
           setCursor(pageInfo.next);
         }
-        
-        const validComments = items.filter((comment): comment is NonNullable<typeof comment> => 
-          comment !== null
+
+        const validComments = items.filter(
+          (comment): comment is NonNullable<typeof comment> => comment !== null,
         ) as AnyPost[];
-        
+
         if (refresh) {
           setComments(validComments);
         } else {
-          setComments(prev => [...prev, ...validComments]);
+          setComments((prev) => [...prev, ...validComments]);
         }
       }
     } catch (error: any) {
@@ -449,7 +497,12 @@ export function useComments({ postId: targetPostId, feedAddress }: UseCommentsPr
         .andThen(sessionClient.waitForTransaction)
         .andThen((txHash) => fetchPost(sessionClient, { txHash }))
         .andThen((comment) => {
-          setComments(prev => [comment, ...prev]);
+          // NOTE: update state current post
+          if (currentPost?.id === targetPostId) {
+            setCurrentPost((prev: any) => ({ ...prev, stats: { ...prev.stats, comments: prev.stats.comments + 1 } }));
+          }
+
+          setComments((prev) => [comment, ...prev]);
           return ok(comment);
         })
         .mapErr((error) => {
@@ -457,13 +510,14 @@ export function useComments({ postId: targetPostId, feedAddress }: UseCommentsPr
         });
 
       if (result.isErr()) {
-        throw new Error("Failed to create comment");
+        throw new Error('Failed to create comment');
       }
 
       return result.value;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to create comment";
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create comment';
       toast.error(errorMessage);
+      console.log(error);
       throw error;
     } finally {
       setIsCreating(false);

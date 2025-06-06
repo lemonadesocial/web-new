@@ -1,13 +1,21 @@
 'use client';
-import { useAtomValue } from "jotai";
+import { useAtomValue } from 'jotai';
 
-import { usePost } from "$lib/hooks/useLens";
-import { accountAtom } from "$lib/jotai";
+import { usePost } from '$lib/hooks/useLens';
+import { accountAtom } from '$lib/jotai';
 
-import { PostComposer } from "./PostComposer";
-import { FeedPosts } from "./FeedPosts";
+import { PostComposer } from './PostComposer';
+import { FeedPosts } from './FeedPosts';
 
-export function LensFeed({ feedAddress, authorId, showReposts }: { feedAddress?: string; authorId?: string; showReposts?: boolean; }) {
+export function LensFeed({
+  feedAddress,
+  authorId,
+  showReposts,
+}: {
+  feedAddress?: string;
+  authorId?: string;
+  showReposts?: boolean;
+}) {
   const { createPost } = usePost();
   const account = useAtomValue(accountAtom);
 

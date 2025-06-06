@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 type PostButtonProps = {
   icon: string;
   label?: ReactNode;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent<HTMLElement>) => void;
   className?: string;
   iconClassName?: string;
   isActive?: boolean;
