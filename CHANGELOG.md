@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.35.1](https://github.com/lemonadesocial/web-new/compare/v1.35.0...v1.35.1) (2025-06-06)
+
+
+### Bug Fixes
+
+* event desc format ([944f9f8](https://github.com/lemonadesocial/web-new/commit/944f9f87590935546d90691dc7bb4e79b2bc3eef))
+* missing lens route ([4d46f8a](https://github.com/lemonadesocial/web-new/commit/4d46f8a44e7cdf64aa2186b43352cca7b5b28248))
+
 ## [1.35.0](https://github.com/lemonadesocial/web-new/compare/v1.34.0...v1.35.0) (2025-06-06)
 
 
