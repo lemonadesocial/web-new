@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.35.0](https://github.com/lemonadesocial/web-new/compare/v1.34.0...v1.35.0) (2025-06-06)
+
+
+### Features
+
+* edit profile menu item ([9cfb233](https://github.com/lemonadesocial/web-new/commit/9cfb2331e5921ce3bb750579f60d0a5f0fa6d986))
+* implement lens post fullscreen ([820a953](https://github.com/lemonadesocial/web-new/commit/820a9538a6fe62c1c84cf94da737a725b298b74c))
+* lens profile page ([c910fe6](https://github.com/lemonadesocial/web-new/commit/c910fe65244f1966089e58c6e8b1a7eb1d3b7dbe))
+* update comment post detail ([fea14d6](https://github.com/lemonadesocial/web-new/commit/fea14d6f0bb19c1495dff686aa89ac06a41060e2))
+* update LenProfileCard ([98606dc](https://github.com/lemonadesocial/web-new/commit/98606dcab7f67285301670740b8dcb34921e3a96))
+* update lens profile link ([880a453](https://github.com/lemonadesocial/web-new/commit/880a453a7a00b01ca3418610d2c21fc7470efb2d))
+* update post state ([cd97f7b](https://github.com/lemonadesocial/web-new/commit/cd97f7ba76654d2638da54a9c80e91e390c987bc))
+* user posts ([6b55a9f](https://github.com/lemonadesocial/web-new/commit/6b55a9f08de0cfa7b1df881a21fc16c68d98731c))
+
+
+### Bug Fixes
+
+* click user profile event ([addea5b](https://github.com/lemonadesocial/web-new/commit/addea5bb98cdbf4a7516e061244b285160ef925a))
+* load post content for comment as post ([62e13d6](https://github.com/lemonadesocial/web-new/commit/62e13d612dc3c7887579744bce3919a87f4059d0))
+* mobile view ([cd5bb6c](https://github.com/lemonadesocial/web-new/commit/cd5bb6cedf5a41bf354160b7b9935bb9ce545ef5))
+* open comment as post ([c61a13d](https://github.com/lemonadesocial/web-new/commit/c61a13d2b8226ffe482cae6765048465719f2018))
+
 ## [1.34.0](https://github.com/lemonadesocial/web-new/compare/v1.33.4...v1.34.0) (2025-06-02)
 
 
