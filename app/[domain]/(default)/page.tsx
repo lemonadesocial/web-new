@@ -17,13 +17,9 @@ export default async function SiteHomePage({ params }: { params: Promise<{ domai
   }
 
   return (
-    <>
-      <Spacer className="h-11" />
-
-      <div className="flex flex-col-reverse md:grid md:grid-cols-[1fr_336px] gap-5 md:gap-[72px] items-start pb-10">
-        <HomePageContent />
-        <LensAccountCard />
-      </div>
-    </>
+    <div className="flex flex-col-reverse md:grid md:grid-cols-[1fr_336px] gap-5 md:gap-[72px] items-start pb-10">
+      <HomePageContent />
+      <LensAccountCard />
+    </div>
   );
 }

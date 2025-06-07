@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 
 import { getSiteData } from '$lib/utils/fetchers';
 import Header, { RootMenu } from '$lib/components/layouts/header';
+import { Spacer } from '$lib/components/core';
 
 export async function generateMetadata(props: { params: Promise<{ domain: string }> }): Promise<Metadata | null> {
   const params = await props.params;
@@ -25,6 +26,7 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
         </div>
 
         <main className="w-full m-auto px-4 overflow-auto h-full pt-[56px] no-scrollbar">
+          <Spacer className="h-6 md:h-11" />
           <div className="container mx-auto max-w-[1080px]">{props.children}</div>
         </main>
       </div>
