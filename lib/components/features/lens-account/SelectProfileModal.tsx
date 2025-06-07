@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useState } from "react";
 import { AccountManaged } from "@lens-protocol/client";
 import { fetchAccountsAvailable } from "@lens-protocol/client/actions";
