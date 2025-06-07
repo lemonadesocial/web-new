@@ -4,9 +4,8 @@ import { notFound } from 'next/navigation';
 import { Spacer } from '$lib/components/core';
 import { getSiteData } from '$utils/fetchers';
 import { LensAccountCard } from '$lib/components/features/lens-account/LensAccountCard';
-import { LensFeed } from '$lib/components/features/lens-feed/LensFeed';
 
-import { HomeTitle } from './title';
+import { HomePageContent } from './content';
 
 export default async function SiteHomePage({ params }: { params: Promise<{ domain: string }> }) {
   const res = await params;
@@ -22,10 +21,7 @@ export default async function SiteHomePage({ params }: { params: Promise<{ domai
       <Spacer className="h-11" />
 
       <div className="flex flex-col-reverse md:grid md:grid-cols-[1fr_336px] gap-5 md:gap-[72px] items-start pb-10">
-        <div className="flex flex-col gap-5">
-          <HomeTitle />
-          <LensFeed />
-        </div>
+        <HomePageContent />
         <LensAccountCard />
       </div>
     </>

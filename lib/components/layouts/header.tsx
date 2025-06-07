@@ -35,13 +35,11 @@ export function RootMenu() {
       <ul className="flex flex-1 gap-5">
         {menu.map((item, idx) => (
           <li key={idx} className="inline-flex items-center">
-            <Link
-              href={item.path}
-              text={item.text}
-              active={pathName === item.path}
-              variant="secondary"
-              iconLeft={item.icon}
-            />
+            <NextLink href={item.path} className={clsx('link secondary', pathName === item.path && 'active')}>
+              <i className={twMerge('text-tertiary', item.icon)} />
+              <span className="hidden md:block">{item.text}</span>
+              <i className="icon-chevron-right text-quaternary! hidden md:block" />
+            </NextLink>
           </li>
         ))}
       </ul>
@@ -56,7 +54,7 @@ export default function Header({ title, mainMenu }: Props) {
   const signIn = useSignIn();
 
   return (
-    <div className="py-3 px-4 min-h-[56px] flex justify-between items-center z-10">
+    <div className="py-3 px-4 min-h-[56px] flex justify-between items-center z-10 gap-4">
       <div className="flex items-center gap-3 flex-1">
         <NextLink
           href="/"

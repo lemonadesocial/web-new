@@ -1,13 +1,12 @@
-import { ImageMetadata, Post, Repost } from '@lens-protocol/client';
+import { Post, Repost } from '@lens-protocol/client';
 import { formatDistanceToNow } from 'date-fns';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useRouter } from 'next/navigation';
 
-import { Avatar, Spacer, toast } from '$lib/components/core';
+import { Avatar, toast } from '$lib/components/core';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 
-import { FeedPostGallery } from './FeedPostGallery';
 import { PostReaction } from './PostReaction';
 import { PostRepost } from './PostRepost';
 import { PostButton } from './PostButton';
@@ -28,7 +27,6 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
 
   const isRepost = post.__typename === 'Repost';
   const rootPost = isRepost ? post.repostOf : post;
-  const metadata = rootPost.metadata;
 
   // NOTE: it filter on timeline list post - double-check
   // if ((post as Post).commentOn && !isComment) return null;
@@ -53,17 +51,6 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
             <p className="text-tertiary">{formatDistanceToNow(new Date(timestamp), { addSuffix: true })}</p>
           </div>
           <PostContent post={rootPost} />
-          {/* <p className="text-secondary whitespace-pre-line">{(metadata as TextOnlyMetadata).content}</p> */}
-          {(metadata as ImageMetadata).attachments?.length > 0 && (
-            <>
-              <Spacer className="h-2" />
-              <FeedPostGallery
-                attachments={(metadata as ImageMetadata).attachments.map(({ item }) => item)}
-                className="mt-2"
-              />
-              <Spacer className="h-2" />
-            </>
-          )}
           <div className="mt-2 flex gap-2">
             <PostReaction post={rootPost} isComment />
           </div>

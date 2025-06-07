@@ -1,5 +1,4 @@
 'use client';
-import { usePathname, useRouter } from 'next/navigation';
 import { useAtomValue } from 'jotai';
 
 import { useFeedPosts } from '$lib/hooks/useLens';
@@ -13,11 +12,10 @@ type Props = {
   feedAddress?: string;
   authorId?: string;
   showReposts?: boolean;
+  onSelectPost?: (slug: string) => void;
 };
 
-export function FeedPosts({ feedAddress, authorId, showReposts }: Props) {
-  const router = useRouter();
-  const pathName = usePathname();
+export function FeedPosts({ feedAddress, authorId, showReposts, onSelectPost }: Props) {
   const { posts, isLoading } = useFeedPosts({ feedAddress, authorId });
   const account = useAtomValue(accountAtom);
 
@@ -34,12 +32,7 @@ export function FeedPosts({ feedAddress, authorId, showReposts }: Props) {
       {posts
         .filter((item: any) => !item.root)
         .map((post) => (
-          <FeedPost
-            key={post.slug}
-            post={post}
-            showRepost={showReposts}
-            onSelect={() => router.push(`${pathName}/${post.slug}`)}
-          />
+          <FeedPost key={post.slug} post={post} showRepost={showReposts} onSelect={() => onSelectPost?.(post.slug)} />
         ))}
     </div>
   );

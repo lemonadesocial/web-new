@@ -78,6 +78,7 @@
   --color-error: #ff637e;
 
   --color-background: var(--color-background);
+  --color-page-background-overlay: var(--color-page-background-overlay);
 
   --color-primary: var(--color-primary);
   --color-primary-invert: var(--color-primary-invert);
