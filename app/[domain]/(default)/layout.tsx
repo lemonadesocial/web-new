@@ -3,8 +3,7 @@ import { Metadata } from 'next';
 
 import { Spacer } from '$lib/components/core';
 import { getSiteData } from '$lib/utils/fetchers';
-
-import Sidebar from './sidebar';
+import Header, { RootMenu } from '$lib/components/layouts/header';
 
 export async function generateMetadata(props: { params: Promise<{ domain: string }> }): Promise<Metadata | null> {
   const params = await props.params;
@@ -21,10 +20,10 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
 export default async function SiteLayout(props: { params: Promise<{ domain: string }>; children: React.ReactNode }) {
   return (
     <>
-      <div className="flex h-dvh w-full">
-        <Sidebar />
-        <main className="w-full p-4 overflow-auto">
-          <div className="container mx-auto">
+      <div className="flex flex-col h-dvh w-full">
+        <Header mainMenu={RootMenu} />
+        <main className="w-full  m-auto p-4 overflow-auto h-full">
+          <div className="container mx-auto max-w-[1080px]">
             <Spacer className="h-14" />
             {props.children}
           </div>

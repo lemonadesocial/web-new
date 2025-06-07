@@ -4,6 +4,7 @@
 @import './styles/themes/dark.css';
 
 @import './styles/components/button.css';
+@import './styles/components/link.css';
 @import './styles/components/collapsible.css';
 @import './styles/components/tooltips.css';
 

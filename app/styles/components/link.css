@@ -1,0 +1,29 @@
+@layer utilities {
+  .link {
+    --link-color: inherit;
+    --link-size: var(--text-base);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 500;
+    color: var(--link-color);
+
+    i {
+      width: 20px !important;
+      height: 20px !important;
+    }
+  }
+
+  .secondary {
+    --link-color: var(--color-tertiary);
+    &:hover,
+    &.active {
+      --link-color: inherit;
+      i {
+        color: inherit;
+      }
+    }
+  }
+}

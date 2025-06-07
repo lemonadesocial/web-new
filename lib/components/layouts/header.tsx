@@ -1,9 +1,9 @@
 'use client';
-import React from 'react';
-import Link from 'next/link';
+import React, { ReactElement } from 'react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useAtom } from 'jotai';
+import NextLink from 'next/link';
 
 import { sessionAtom } from '$lib/jotai';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
@@ -13,8 +13,43 @@ import { Divider, Menu, MenuItem, Button, Avatar } from '$lib/components/core';
 import { userAvatar } from '$lib/utils/user';
 
 import { useSignIn } from '$lib/hooks/useSignIn';
+import { Link } from '$lib/components/core/link';
+import { usePathname } from 'next/navigation';
 
-export default function Header({ title }: { title?: string; }) {
+type Props = {
+  title?: string;
+  mainMenu?: () => ReactElement;
+};
+
+const menu = [
+  { text: 'Home', path: '/', icon: 'icon-home' },
+  { text: 'Events', path: '/events', icon: 'icon-ticket' },
+  { text: 'Communities', path: '/communities', icon: 'icon-community' },
+  { text: 'Explore', path: '/explore', icon: 'icon-explore' },
+];
+
+export function RootMenu() {
+  const pathName = usePathname();
+  return (
+    <nav className="flex flex-3_1_auto w-[1080px]">
+      <ul className="flex flex-1 gap-5">
+        {menu.map((item, idx) => (
+          <li key={idx} className="inline-flex items-center">
+            <Link
+              href={item.path}
+              text={item.text}
+              active={pathName === item.path}
+              variant="secondary"
+              iconLeft={item.icon}
+            />
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+export default function Header({ title, mainMenu }: Props) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
   const logOut = useLogOut();
@@ -22,14 +57,22 @@ export default function Header({ title }: { title?: string; }) {
 
   return (
     <div className="py-3 px-4 min-h-[56px] flex justify-between items-center z-10">
-      <div className="flex items-center gap-3">
-        <Link href="/" aria-label="Lemonade" className="text-tertiary hover:text-primary">
+      <div className="flex items-center gap-3 flex-1">
+        <NextLink
+          href="/"
+          aria-label="Lemonade"
+          className="text-tertiary hover:text-primary size-10 flex items-center justify-center"
+        >
           <i className="icon-lemonade size-[20]" />
-        </Link>
+        </NextLink>
         {title && <h1 className="text-md text-tertiary font-medium">{title}</h1>}
       </div>
 
-      <div>
+      {mainMenu?.()}
+
+      <div className="flex flex-1 justify-end items-center">
+        {/* right content here */}
+
         {session && me ? (
           <Menu.Root>
             <Menu.Trigger>
