@@ -1,4 +1,6 @@
 'use client';
+import React from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { Button, drawer, Menu, MenuItem, Segment } from '$lib/components/core';
 import { EventListCard } from '$lib/components/features/EventList';
@@ -6,9 +8,8 @@ import { EventPane } from '$lib/components/features/pane';
 import { Event, GetPastEventsDocument, GetUpcomingEventsDocument } from '$lib/graphql/generated/backend/graphql';
 import { getClient } from '$lib/graphql/request';
 import { useSession } from '$lib/hooks/useSession';
-import { useRouter } from 'next/navigation';
-import React from 'react';
-import { twMerge } from 'tailwind-merge';
+import { useSignIn } from '$lib/hooks/useSignIn';
+
 enum FilterItem {
   AllEvents,
   Drafts,
@@ -23,8 +24,8 @@ const FILTER_OPTIONS = {
 };
 
 export function EventsContent() {
-  const router = useRouter();
   const me = useSession();
+  const signIn = useSignIn();
 
   const [loading, setLoading] = React.useState(false);
   const [filter, setFilter] = React.useState({
@@ -63,6 +64,10 @@ export function EventsContent() {
     setFilter((prev) => ({ ...prev, data: events }));
     setLoading(false);
   }, [filter.type, me, filter.by]);
+
+  React.useEffect(() => {
+    if (!me) signIn();
+  }, [me]);
 
   React.useEffect(() => {
     fetchData();
@@ -121,6 +126,7 @@ export function EventsContent() {
             icon="icon-edit-square"
             size="sm"
             onClick={() => {
+              // TODO: will need to update router after update from legacy code
               window.location.href = '/create/experience';
             }}
           />

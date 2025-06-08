@@ -13,7 +13,6 @@ import { Divider, Menu, MenuItem, Button, Avatar } from '$lib/components/core';
 import { userAvatar } from '$lib/utils/user';
 
 import { useSignIn } from '$lib/hooks/useSignIn';
-import { Link } from '$lib/components/core/link';
 import { usePathname } from 'next/navigation';
 
 type Props = {
@@ -30,6 +29,7 @@ const menu = [
 
 export function RootMenu() {
   const pathName = usePathname();
+
   return (
     <nav className="flex flex-3_1_auto w-[1080px]">
       <ul className="flex flex-1 gap-5">
