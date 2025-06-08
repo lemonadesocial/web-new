@@ -12,6 +12,7 @@
     color: var(--btn-content);
     border: 1px solid var(--btn-border-color);
     cursor: pointer;
+    white-space: nowrap;
 
     &:hover {
       background-color: var(--btn-bg-hover);
