@@ -212,7 +212,7 @@ export function useClaimUsername() {
         metadataUri: uri,
         username: {
           localName: username,
-          // namespace: process.env.NEXT_PUBLIC_LENS_NAMESPACE ? evmAddress(process.env.NEXT_PUBLIC_LENS_NAMESPACE) : undefined,
+          namespace: process.env.NEXT_PUBLIC_LENS_NAMESPACE ? evmAddress(process.env.NEXT_PUBLIC_LENS_NAMESPACE) : undefined,
         },
       })
         .andThen(handleOperationWith(signer))

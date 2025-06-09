@@ -9,6 +9,7 @@ import { ASSET_PREFIX } from "$lib/utils/constants";
 import { useClaimUsername } from '$lib/hooks/useLens';
 import { randomUserImage } from '$lib/utils/user';
 import { storageClient } from '$lib/utils/lens/client';
+import { evmAddress } from '@lens-protocol/client';
 
 export function ClaimUsernameModal() {
   const sessionClient = useAtomValue(sessionClientAtom);
@@ -34,7 +35,7 @@ export function ClaimUsernameModal() {
       try {
         const result = await canCreateUsername(sessionClient, {
           localName: value,
-          // namespace: process.env.NEXT_PUBLIC_LENS_NAMESPACE ? evmAddress(process.env.NEXT_PUBLIC_LENS_NAMESPACE) : undefined,
+          namespace: process.env.NEXT_PUBLIC_LENS_NAMESPACE ? evmAddress(process.env.NEXT_PUBLIC_LENS_NAMESPACE) : undefined,
         });
 
         if (result.isErr()) {
@@ -171,7 +172,7 @@ export function ClaimUsernameModal() {
           onClick={status === 'available' ? () => setStep('profile') : undefined}
         >
           <div>
-            <p className='text-secondary text-sm'>lens/@{username}</p>
+            <p className='text-secondary text-sm'>lemonade/@{username}</p>
             {status !== 'idle' && (
               <>
                 {status === 'checking' && <p className='text-quaternary text-xs'>Checking...</p>}
