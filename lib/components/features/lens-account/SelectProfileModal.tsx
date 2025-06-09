@@ -23,6 +23,7 @@ export function SelectProfileModal() {
 
   const [isLoadingAccounts, setIsLoadingAccounts] = useState(true);
   const [isLoadingSignIn, setIsLoadingSignIn] = useState(false);
+  const [isLoadingNewProfile, setIsLoadingNewProfile] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
   useEffect(() => {
@@ -93,21 +94,45 @@ export function SelectProfileModal() {
         },
       };
 
-      const loginResult = await client.login({
-        ...loginAs,
-        signMessage: signMessageWith(signer),
-      });
+    const loginResult = await client.login({
+      ...loginAs,
+      signMessage: signMessageWith(signer),
+    });
 
-      setSelectedAccount(null);
+    setSelectedAccount(null);
 
-      if (loginResult.isErr()) {
-        toast.error(loginResult.error.message);
-        return;
-      }
+    if (loginResult.isErr()) {
+      toast.error(loginResult.error.message);
+      return;
+    }
 
-      setSessionClient(loginResult.value);
-      setAccount(item.account);
-      modal.close();
+    setSessionClient(loginResult.value);
+    setAccount(item.account);
+    modal.close();
+  }
+
+  const handleNewProfile = async () => {
+    if (!signer) return;
+
+    setIsLoadingNewProfile(true);
+    const onboardingResult = await client.login({
+      onboardingUser: {
+        app: process.env.NEXT_PUBLIC_LENS_APP_ID,
+        wallet: signer.address,
+      },
+      signMessage: signMessageWith(signer),
+    });
+
+    setIsLoadingNewProfile(false);
+
+    if (onboardingResult.isErr()) {
+      toast.error(onboardingResult.error.message);
+      return;
+    }
+
+    setSessionClient(onboardingResult.value);
+    modal.close();
+    modal.open(ClaimUsernameModal);
   }
 
   if (isLoadingAccounts) return (
@@ -147,11 +172,9 @@ export function SelectProfileModal() {
       <Button
         variant="secondary"
         className="w-full mt-4"
-        onClick={() => {
-          modal.close();
-          modal.open(ClaimUsernameModal);
-        }}
+        onClick={handleNewProfile}
         disabled={!!selectedAccount}
+        loading={isLoadingNewProfile}
       >
         New Profile
       </Button>

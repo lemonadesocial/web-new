@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useAtomValue } from 'jotai';
 import { sessionClientAtom } from '$lib/jotai/lens';
 import { canCreateUsername } from '@lens-protocol/client/actions';
+import { evmAddress } from '@lens-protocol/client';
 import { account } from '@lens-protocol/metadata';
 
 import { Avatar, Button, Input, modal, ModalContent, toast, FileInput, Menu, LabeledInput } from "$lib/components/core";
@@ -9,7 +10,7 @@ import { ASSET_PREFIX } from "$lib/utils/constants";
 import { useClaimUsername } from '$lib/hooks/useLens';
 import { randomUserImage } from '$lib/utils/user';
 import { storageClient } from '$lib/utils/lens/client';
-import { evmAddress } from '@lens-protocol/client';
+import { getTokenRequirementMessage } from '$lib/utils/lens/utils';
 
 export function ClaimUsernameModal() {
   const sessionClient = useAtomValue(sessionClientAtom);
@@ -47,10 +48,16 @@ export function ClaimUsernameModal() {
           case "NamespaceOperationValidationPassed":
             setStatus('available');
             break;
-          case "NamespaceOperationValidationFailed":
-            toast.error(result.value.reason);
+          case "NamespaceOperationValidationFailed": {
+            const tokenMessage = getTokenRequirementMessage(result.value);
+            if (tokenMessage) {
+              toast.error(tokenMessage);
+            } else {
+              toast.error(result.value.reason);
+            }
             setStatus('unavailable');
             break;
+          }
           case "NamespaceOperationValidationUnknown":
             setStatus('error');
             break;

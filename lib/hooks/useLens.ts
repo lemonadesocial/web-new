@@ -54,13 +54,13 @@ export function useResumeSession() {
         address: evmAddress(address),
       });
 
-      if (lastLoggedIn.isErr()) {
+      if (lastLoggedIn.isErr() || !lastLoggedIn.value) {
         setIsLoading(false);
         return;
       }
 
       const result = await fetchAccount(resumed.value, {
-        address: lastLoggedIn.value?.address ?? never('Account not found'),
+        address: lastLoggedIn.value.address,
       });
 
       if (result.isErr()) return;
