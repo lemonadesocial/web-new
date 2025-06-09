@@ -38,7 +38,6 @@ export function RootMenu() {
             <NextLink href={item.path} className={clsx('link secondary', pathName === item.path && 'active')}>
               <i className={twMerge('text-tertiary', item.icon)} />
               <span className="hidden md:block">{item.text}</span>
-              <i className="icon-chevron-right text-quaternary! hidden md:block" />
             </NextLink>
           </li>
         ))}
