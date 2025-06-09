@@ -53,6 +53,7 @@ export function SelectProfileModal() {
     if (!signer) return;
 
     setIsLoadingSignIn(true);
+    console.log(process.env.NEXT_PUBLIC_LENS_APP_ID)
 
     const onboardingResult = await client.login({
       onboardingUser: {
@@ -72,8 +73,6 @@ export function SelectProfileModal() {
 
     setSessionClient(onboardingResult.value);
     modal.open(ClaimUsernameModal);
-
-    return;
   }
 
   const handleSelectProfile = async (item: AccountManaged) => {
@@ -94,21 +93,21 @@ export function SelectProfileModal() {
         },
       };
 
-      const loginResult = await client.login({
-        ...loginAs,
-        signMessage: signMessageWith(signer),
-      });
+    const loginResult = await client.login({
+      ...loginAs,
+      signMessage: signMessageWith(signer),
+    });
 
-      setSelectedAccount(null);
+    setSelectedAccount(null);
 
-      if (loginResult.isErr()) {
-        toast.error(loginResult.error.message);
-        return;
-      }
+    if (loginResult.isErr()) {
+      toast.error(loginResult.error.message);
+      return;
+    }
 
-      setSessionClient(loginResult.value);
-      setAccount(item.account);
-      modal.close();
+    setSessionClient(loginResult.value);
+    setAccount(item.account);
+    modal.close();
   }
 
   if (isLoadingAccounts) return (
@@ -148,11 +147,9 @@ export function SelectProfileModal() {
       <Button
         variant="secondary"
         className="w-full mt-4"
-        onClick={() => {
-          modal.close();
-          modal.open(ClaimUsernameModal);
-        }}
+        onClick={handleSignIn}
         disabled={!!selectedAccount}
+        loading={isLoadingSignIn}
       >
         New Profile
       </Button>

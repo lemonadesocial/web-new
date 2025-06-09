@@ -55,13 +55,13 @@ export function useResumeSession() {
         address: evmAddress(address),
       });
 
-      if (lastLoggedIn.isErr()) {
+      if (lastLoggedIn.isErr() || !lastLoggedIn.value) {
         setIsLoading(false);
         return;
       }
 
       const result = await fetchAccount(resumed.value, {
-        address: lastLoggedIn.value?.address ?? never('Account not found'),
+        address: lastLoggedIn.value.address,
       });
 
       if (result.isErr()) return;
@@ -213,7 +213,7 @@ export function useClaimUsername() {
         metadataUri: uri,
         username: {
           localName: username,
-          // namespace: process.env.NEXT_PUBLIC_LENS_NAMESPACE ? evmAddress(process.env.NEXT_PUBLIC_LENS_NAMESPACE) : undefined,
+          namespace: process.env.NEXT_PUBLIC_LENS_NAMESPACE ? evmAddress(process.env.NEXT_PUBLIC_LENS_NAMESPACE) : undefined,
         },
       })
         .andThen(handleOperationWith(signer))

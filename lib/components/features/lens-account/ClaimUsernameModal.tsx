@@ -3,6 +3,7 @@ import { useState, useCallback } from 'react';
 import { useAtomValue } from 'jotai';
 import { sessionClientAtom } from '$lib/jotai/lens';
 import { canCreateUsername } from '@lens-protocol/client/actions';
+import { evmAddress } from '@lens-protocol/client';
 import { account } from '@lens-protocol/metadata';
 
 import { Avatar, Button, Input, modal, ModalContent, toast, FileInput, Menu, LabeledInput } from "$lib/components/core";
@@ -10,6 +11,7 @@ import { ASSET_PREFIX } from "$lib/utils/constants";
 import { useClaimUsername } from '$lib/hooks/useLens';
 import { randomUserImage } from '$lib/utils/user';
 import { storageClient } from '$lib/utils/lens/client';
+import { getTokenRequirementMessage } from '$lib/utils/lens/utils';
 
 export function ClaimUsernameModal() {
   const sessionClient = useAtomValue(sessionClientAtom);
@@ -35,7 +37,7 @@ export function ClaimUsernameModal() {
       try {
         const result = await canCreateUsername(sessionClient, {
           localName: value,
-          // namespace: process.env.NEXT_PUBLIC_LENS_NAMESPACE ? evmAddress(process.env.NEXT_PUBLIC_LENS_NAMESPACE) : undefined,
+          namespace: process.env.NEXT_PUBLIC_LENS_NAMESPACE ? evmAddress(process.env.NEXT_PUBLIC_LENS_NAMESPACE) : undefined,
         });
 
         if (result.isErr()) {
@@ -47,10 +49,16 @@ export function ClaimUsernameModal() {
           case "NamespaceOperationValidationPassed":
             setStatus('available');
             break;
-          case "NamespaceOperationValidationFailed":
-            toast.error(result.value.reason);
+          case "NamespaceOperationValidationFailed": {
+            const tokenMessage = getTokenRequirementMessage(result.value);
+            if (tokenMessage) {
+              toast.error(tokenMessage);
+            } else {
+              toast.error(result.value.reason);
+            }
             setStatus('unavailable');
             break;
+          }
           case "NamespaceOperationValidationUnknown":
             setStatus('error');
             break;
@@ -172,7 +180,7 @@ export function ClaimUsernameModal() {
           onClick={status === 'available' ? () => setStep('profile') : undefined}
         >
           <div>
-            <p className='text-secondary text-sm'>lens/@{username}</p>
+            <p className='text-secondary text-sm'>lemonade/@{username}</p>
             {status !== 'idle' && (
               <>
                 {status === 'checking' && <p className='text-quaternary text-xs'>Checking...</p>}
