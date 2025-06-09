@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { generateUrl } from '$lib/utils/cnd';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 
-import { PageCardItem, PageSection } from '../shared';
+import { PageCardItem, PageCardItemSkeleton, PageSection } from '../shared';
 import { isMobile } from 'react-device-detect';
 
 export function Content() {
@@ -37,8 +37,18 @@ export function Content() {
 
 function BrowseByCategories() {
   const router = useRouter();
-  const { data } = useQuery(GetListSpaceCategoriesDocument);
+  const { data, loading } = useQuery(GetListSpaceCategoriesDocument, { fetchPolicy: 'cache-and-network' });
   const list = data?.listSpaceCategories || [];
+
+  if (loading) {
+    return (
+      <div className="flex overflow-x-auto md:w-full md:grid lg:grid-cols-3 gap-4 no-scrollbar">
+        {[...Array(5)].map((i) => (
+          <PageCardItemSkeleton key={i} />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="flex overflow-x-auto md:w-full md:grid lg:grid-cols-3 gap-4 no-scrollbar">
@@ -58,7 +68,7 @@ function BrowseByCategories() {
 
 function FeaturedCommunityHub() {
   const router = useRouter();
-  const { data } = useQuery(GetSpacesDocument, { variables: { featured: true } });
+  const { data, loading } = useQuery(GetSpacesDocument, { variables: { featured: true } });
   const list = (data?.listSpaces || []) as Space[];
 
   const getImageSrc = (item: Space) => {
@@ -66,6 +76,16 @@ function FeaturedCommunityHub() {
     if (item.image_avatar) src = generateUrl(item.image_avatar_expanded);
     return src;
   };
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {[...Array(5)].map((i) => (
+          <PageCardItemSkeleton key={i} view={isMobile ? 'list-item' : 'card'} />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

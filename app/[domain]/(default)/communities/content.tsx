@@ -10,7 +10,7 @@ import { generateUrl } from '$lib/utils/cnd';
 import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
 
-import { PageCardItem, PageSection } from '../shared';
+import { PageCardItem, PageCardItemSkeleton, PageSection } from '../shared';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { isMobile } from 'react-device-detect';
 
@@ -40,7 +40,7 @@ export function Content() {
 
 function MyHubs() {
   const me = useMe();
-  const { data } = useQuery(GetSpacesDocument, {
+  const { data, loading } = useQuery(GetSpacesDocument, {
     variables: {
       with_my_spaces: true,
       roles: [SpaceRole.Creator, SpaceRole.Admin],
@@ -55,6 +55,16 @@ function MyHubs() {
     if (item.image_avatar) src = generateUrl(item.image_avatar_expanded);
     return src;
   };
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {[...Array(5)].map((i) => (
+          <PageCardItemSkeleton key={i} view={isMobile ? 'list-item' : 'card'} />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -79,7 +89,7 @@ function MyHubs() {
 
 function SubscribedHubs() {
   const router = useRouter();
-  const { data } = useQuery(GetSpacesDocument, {
+  const { data, loading } = useQuery(GetSpacesDocument, {
     variables: { with_my_spaces: false, roles: [SpaceRole.Subscriber] },
     fetchPolicy: 'cache-and-network',
   });
@@ -90,6 +100,16 @@ function SubscribedHubs() {
     if (item.image_avatar) src = generateUrl(item.image_avatar_expanded);
     return src;
   };
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {[...Array(4)].map((i) => (
+          <PageCardItemSkeleton key={i} view={isMobile ? 'list-item' : 'card'} />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
