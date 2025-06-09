@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.37.2](https://github.com/lemonadesocial/web-new/compare/v1.37.1...v1.37.2) (2025-06-09)
+
+
+### Bug Fixes
+
+* remmove duplicated onboarding user ([1cbef8d](https://github.com/lemonadesocial/web-new/commit/1cbef8d03404e2c00315c69b9a859ad050e3b531))
+
 ## [1.37.1](https://github.com/lemonadesocial/web-new/compare/v1.37.0...v1.37.1) (2025-06-09)
 
 
