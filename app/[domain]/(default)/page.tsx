@@ -1,7 +1,5 @@
-import React from 'react';
 import { notFound } from 'next/navigation';
 
-import { Spacer } from '$lib/components/core';
 import { getSiteData } from '$utils/fetchers';
 import { LensAccountCard } from '$lib/components/features/lens-account/LensAccountCard';
 

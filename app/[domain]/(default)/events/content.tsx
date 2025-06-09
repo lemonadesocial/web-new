@@ -9,6 +9,7 @@ import { Event, GetPastEventsDocument, GetUpcomingEventsDocument } from '$lib/gr
 import { getClient } from '$lib/graphql/request';
 import { useSession } from '$lib/hooks/useSession';
 import { useSignIn } from '$lib/hooks/useSignIn';
+import { PageTitle } from '../shared';
 
 enum FilterItem {
   AllEvents,
@@ -75,8 +76,7 @@ export function EventsContent() {
 
   return (
     <div className="flex flex-col gap-5 flex-1 w-full">
-      <div className="flex justify-between items-center flex-wrap gap-3">
-        <h1 className="text-2xl md:text-3xl leading-none font-semibold">Events</h1>
+      <PageTitle title="Events">
         <div className="flex gap-2 items-center justify-between w-full md:w-fit">
           <div className="flex gap-2 items-center">
             <Segment
@@ -131,7 +131,7 @@ export function EventsContent() {
             }}
           />
         </div>
-      </div>
+      </PageTitle>
 
       <EventListCard
         loading={loading}

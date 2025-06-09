@@ -78,6 +78,17 @@ fragment SpaceEventRequestFragment on SpaceEventRequest {
 
 #### Queries
 
+query GetSpaces($with_my_spaces: Boolean, $with_public_spaces: Boolean, $roles: [SpaceRole!], $featured: Boolean) {
+  listSpaces(
+    with_my_spaces: $with_my_spaces
+    with_public_spaces: $with_public_spaces
+    roles: $roles
+    featured: $featured
+  ) {
+    ...Space
+  }
+}
+
 query GetSpace($id: MongoID, $slug: String, $hostname: String) {
   getSpace(_id: $id, slug: $slug, hostname: $hostname) {
     ...Space
