@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.37.3](https://github.com/lemonadesocial/web-new/compare/v1.37.2...v1.37.3) (2025-06-09)
+
+
+### Bug Fixes
+
+* update display rules ([9cf26da](https://github.com/lemonadesocial/web-new/commit/9cf26da0fd00db32e44099553fa463241f9d282b))
+
 ## [1.37.2](https://github.com/lemonadesocial/web-new/compare/v1.37.1...v1.37.2) (2025-06-09)
 
 
