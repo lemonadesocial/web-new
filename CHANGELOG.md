@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.37.0](https://github.com/lemonadesocial/web-new/compare/v1.36.0...v1.37.0) (2025-06-09)
+
+
+### Features
+
+* lens namespace ([ca0c053](https://github.com/lemonadesocial/web-new/commit/ca0c05345d2ca5bd0c288d6688d1a3d3d42d69d9))
+
 ## [1.36.0](https://github.com/lemonadesocial/web-new/compare/v1.35.1...v1.36.0) (2025-06-06)
 
 
