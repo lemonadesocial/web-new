@@ -261,6 +261,30 @@ query getSubSpaces($id: MongoID!) {
   }
 }
 
+query GetListSpaceCategories {
+  listSpaceCategories {
+    description
+    image_url
+    listed_events_count
+    space
+    title
+  }
+}
+
+query GetListGeoRegions {
+  listGeoRegions {
+    _id
+    title
+    cities {
+      name
+      region
+      space
+      icon_url
+      listed_events_count
+    }
+  }
+}
+
 #### Mutations
 
 mutation FollowSpace($space: MongoID!) {

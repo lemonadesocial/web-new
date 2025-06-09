@@ -31,7 +31,7 @@ export function RootMenu() {
   const pathName = usePathname();
 
   return (
-    <nav className="flex flex-3_1_auto w-[1080px]">
+    <nav className="flex md:flex-3_1_auto w-[1080px]">
       <ul className="flex flex-1 gap-5">
         {menu.map((item, idx) => (
           <li key={idx} className="inline-flex items-center">

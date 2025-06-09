@@ -19,17 +19,15 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
 
 export default async function SiteLayout(props: { params: Promise<{ domain: string }>; children: React.ReactNode }) {
   return (
-    <>
-      <div className="flex flex-col h-dvh w-full divide-y divide-[var(--color-divider)]">
-        <div className="fixed top-0 left-0 right-0 backdrop-blur-md bg-page-background-overlay z-10">
-          <Header mainMenu={RootMenu} />
-        </div>
-
-        <main className="w-full m-auto px-4 overflow-auto h-full pt-[56px] no-scrollbar">
-          <Spacer className="h-6 md:h-11" />
-          <div className="container mx-auto max-w-[1080px]">{props.children}</div>
-        </main>
+    <div className="flex flex-col h-dvh w-full divide-y divide-[var(--color-divider)] overflow-y-auto no-scrollbar">
+      <div className="sticky z-10 top-0 backdrop-blur-md bg-page-background-overlay">
+        <Header mainMenu={RootMenu} />
       </div>
-    </>
+
+      <main className="w-full h-full px-4">
+        <Spacer className="h-6 md:h-11" />
+        <div className="mx-auto max-w-[1080px]">{props.children}</div>
+      </main>
+    </div>
   );
 }

@@ -12,12 +12,13 @@ import { userAvatar } from '$lib/utils/user';
 
 import { PageCardItem, PageSection } from '../shared';
 import { ASSET_PREFIX } from '$lib/utils/constants';
+import { isMobile } from 'react-device-detect';
 
 export function Content() {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col gap-6 my-8">
+    <div className="flex flex-col gap-6 py-8">
       <PageSection
         title="My Hubs"
         toolbar={() => (
@@ -63,6 +64,7 @@ function MyHubs() {
           <PageCardItem
             key={item._id}
             title={item.title}
+            view={isMobile ? 'list-item' : 'card'}
             onClick={() => (window.location.href = `/manage/community/${item.slug || item._id}`)}
             subtitle={`${item.followers_count || 0} Subscribers`}
             image={{
@@ -85,7 +87,6 @@ function SubscribedHubs() {
 
   const getImageSrc = (item: Space) => {
     let src = `${ASSET_PREFIX}/assets/images/default-dp.png`;
-    if (item.personal) src = userAvatar(me);
     if (item.image_avatar) src = generateUrl(item.image_avatar_expanded);
     return src;
   };
@@ -97,6 +98,7 @@ function SubscribedHubs() {
         .map((item) => (
           <PageCardItem
             key={item._id}
+            view={isMobile ? 'list-item' : 'card'}
             title={item.title}
             image={{ src: getImageSrc(item), class: 'rounded-sm' }}
             onClick={() => router.push(`/s/${item.slug || item._id}`)}

@@ -1,11 +1,16 @@
 import React from 'react';
+import { PageTitle } from '../shared';
+import { Content } from './content';
 
 export default function ExplorePage() {
   return (
     <>
-      <div className="flex flex-col gap-8">
-        <div>Explore</div>
-      </div>
+      <PageTitle
+        title="Explore"
+        subtitle="Explore popular events near you, browse by category, or check out some of the great community hubs."
+      />
+
+      <Content />
     </>
   );
 }
