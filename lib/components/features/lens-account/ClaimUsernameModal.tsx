@@ -11,7 +11,7 @@ import { ASSET_PREFIX } from "$lib/utils/constants";
 import { useClaimUsername } from '$lib/hooks/useLens';
 import { randomUserImage } from '$lib/utils/user';
 import { storageClient } from '$lib/utils/lens/client';
-import { getTokenRequirementMessage } from '$lib/utils/lens/utils';
+import { getUsernameValidationMessage } from '$lib/utils/lens/utils';
 
 export function ClaimUsernameModal() {
   const sessionClient = useAtomValue(sessionClientAtom);
@@ -50,7 +50,7 @@ export function ClaimUsernameModal() {
             setStatus('available');
             break;
           case "NamespaceOperationValidationFailed": {
-            const tokenMessage = getTokenRequirementMessage(result.value);
+            const tokenMessage = getUsernameValidationMessage(result.value, username.length);
             if (tokenMessage) {
               toast.error(tokenMessage);
             } else {
@@ -72,7 +72,7 @@ export function ClaimUsernameModal() {
         setStatus('error');
       }
     },
-    [sessionClient]
+    [sessionClient, username.length]
   );
 
   const getProfilePicture = async () => {

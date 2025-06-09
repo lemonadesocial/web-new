@@ -34,26 +34,53 @@ export function getAccountAvatar(account: Account) {
   return account.metadata?.picture || randomUserImage(account.owner);
 }
 
-export function getTokenRequirementMessage(validationResult: any): string | null {
+export function getUsernameValidationMessage(validationResult: any, usernameLength?: number): string | null {
   if (validationResult.__typename !== 'NamespaceOperationValidationFailed') {
     return null;
   }
 
   const requiredRules = validationResult.unsatisfiedRules?.required || [];
-  const tokenRule = requiredRules.find((rule: any) => rule.reason === 'TOKEN_GATED_NOT_A_TOKEN_HOLDER');
   
-  if (!tokenRule) {
-    return null;
+  const tokenRule = requiredRules.find((rule: any) => rule.reason === 'TOKEN_GATED_NOT_A_TOKEN_HOLDER');
+  if (tokenRule) {
+    const config = tokenRule.config || [];
+    const amount = config.find((c: any) => c.key === 'amount')?.bigDecimal;
+    const symbol = config.find((c: any) => c.key === 'assetSymbol')?.string;
+    const name = config.find((c: any) => c.key === 'assetName')?.string;
+
+    if (amount && symbol) {
+      return `You need to hold at least ${amount} ${symbol} (${name}) to claim this username`;
+    }
   }
 
-  const config = tokenRule.config || [];
-  const amount = config.find((c: any) => c.key === 'amount')?.bigDecimal;
-  const symbol = config.find((c: any) => c.key === 'assetSymbol')?.string;
-  const name = config.find((c: any) => c.key === 'assetName')?.string;
+  const priceRule = requiredRules.find((rule: any) => rule.reason === 'USERNAME_PRICE_PER_LENGTH_NOT_ENOUGH_BALANCE');
+  if (priceRule) {
+    const config = priceRule.config || [];
+    const symbol = config.find((c: any) => c.key === 'assetSymbol')?.string;
+    const overrides = config.find((c: any) => c.key === 'overrides')?.array || [];
 
-  if (!amount || !symbol) {
-    return null;
+    if (symbol && overrides.length > 0) {
+      if (usernameLength !== undefined) {
+        const specificOverride = overrides.find((override: any) => {
+          const length = override.dictionary?.find((d: any) => d.key === 'length')?.int;
+          return length === usernameLength;
+        });
+        
+        if (specificOverride) {
+          const amount = specificOverride.dictionary?.find((d: any) => d.key === 'amount')?.bigDecimal;
+          return `You do not have sufficient balance. Username with ${usernameLength} ${usernameLength > 1 ? 'characters' : 'character'} costs ${amount} ${symbol}.`;
+        }
+      }
+      
+      const pricingInfo = overrides.map((override: any) => {
+        const length = override.dictionary?.find((d: any) => d.key === 'length')?.int;
+        const amount = override.dictionary?.find((d: any) => d.key === 'amount')?.bigDecimal;
+        return `${length} chars: ${amount} ${symbol}`;
+      }).join(', ');
+
+      return `Username pricing: ${pricingInfo}`;
+    }
   }
 
-  return `You need to hold at least ${amount} ${symbol} (${name}) to claim this username`;
+  return null;
 };
