@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.37.1](https://github.com/lemonadesocial/web-new/compare/v1.37.0...v1.37.1) (2025-06-09)
+
+
+### Bug Fixes
+
+* onboarding user ([b42d86a](https://github.com/lemonadesocial/web-new/commit/b42d86adccb05914373d935e11d8f524b406087c))
+
 ## [1.37.0](https://github.com/lemonadesocial/web-new/compare/v1.36.0...v1.37.0) (2025-06-09)
 
 
