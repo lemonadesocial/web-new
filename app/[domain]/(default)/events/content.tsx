@@ -10,6 +10,7 @@ import { getClient } from '$lib/graphql/request';
 import { useSession } from '$lib/hooks/useSession';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { PageTitle } from '../shared';
+import { useMe } from '$lib/hooks/useMe';
 
 enum FilterItem {
   AllEvents,
@@ -25,13 +26,13 @@ const FILTER_OPTIONS = {
 };
 
 export function EventsContent() {
-  const me = useSession();
+  const session = useSession();
+  const me = useMe();
   const signIn = useSignIn();
 
   const [loading, setLoading] = React.useState(false);
   const [filter, setFilter] = React.useState({
     type: 'upcoming',
-    showHost: false,
     by: FilterItem.AllEvents,
     data: [] as Event[],
   });
@@ -42,9 +43,15 @@ export function EventsContent() {
     if (!me) return;
 
     let events = [] as Event[];
+    let showHost: any = null;
+    if (Number(filter.by) === FilterItem.Hosting) showHost = true;
+    if (Number(filter.by) === FilterItem.Attending) showHost = false;
+
     const variables = {
-      user: me.user,
-      host: filter.showHost,
+      limit: 100,
+      skip: 0,
+      user: me._id,
+      host: showHost,
       unpublished: Number(filter.by) === FilterItem.Drafts ? true : undefined,
     };
     setLoading(true);
@@ -67,12 +74,12 @@ export function EventsContent() {
   }, [filter.type, me, filter.by]);
 
   React.useEffect(() => {
-    if (!me) signIn();
-  }, [me]);
+    if (!me && !session) signIn();
+  }, [me, session]);
 
   React.useEffect(() => {
     fetchData();
-  }, [filter.type, filter.by]);
+  }, [filter.type, filter.by, me]);
 
   return (
     <div className="flex flex-col gap-5 flex-1 w-full">
