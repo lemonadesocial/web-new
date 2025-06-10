@@ -1,10 +1,10 @@
-import { Post, Repost } from '@lens-protocol/client';
+import { EventMetadata, ImageMetadata, Post, Repost } from '@lens-protocol/client';
 import { formatDistanceToNow } from 'date-fns';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useRouter } from 'next/navigation';
 
-import { Avatar, toast } from '$lib/components/core';
+import { Avatar, Button, Spacer, toast } from '$lib/components/core';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 
 import { PostReaction } from './PostReaction';
@@ -50,7 +50,9 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
             <p>{author.username?.localName}</p>
             <p className="text-tertiary">{formatDistanceToNow(new Date(timestamp), { addSuffix: true })}</p>
           </div>
+
           <PostContent post={rootPost} />
+          
           <div className="mt-2 flex gap-2">
             <PostReaction post={rootPost} isComment />
           </div>
@@ -103,13 +105,29 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
             <PostComment post={rootPost} />
             <PostRepost post={rootPost} />
           </div>
-          <PostButton
-            icon="icon-share"
-            onClick={(e) => {
-              e.stopPropagation();
-              toast.success('Coming soon');
-            }}
-          />
+          <div className="flex gap-4 sm:gap-2">
+            {
+              rootPost.metadata.__typename === 'EventMetadata' && (
+                <Button
+                  className="rounded-full hidden sm:block"
+                  variant="secondary"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/e/${(rootPost.metadata as EventMetadata).location.physical}`);
+                  }}
+                >
+                  Get Tickets
+                </Button>
+              )
+            }
+            <PostButton
+              icon="icon-share"
+              onClick={(e) => {
+                e.stopPropagation();
+                toast.success('Coming soon');
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>
