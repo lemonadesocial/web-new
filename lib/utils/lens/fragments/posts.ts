@@ -3,6 +3,7 @@ import {
   ImageMetadataFragment,
   LinkMetadataFragment,
   MintMetadataFragment,
+  EventMetadataFragment,
   graphql
 } from "@lens-protocol/client";
 
@@ -22,6 +23,9 @@ export const PostMetadataFragment = graphql(
       ... on LinkMetadata {
         ...LinkMetadata
       }
+      ... on EventMetadata {
+        ...EventMetadata
+      }
     }
   `,
   [
@@ -29,5 +33,6 @@ export const PostMetadataFragment = graphql(
     TextOnlyMetadataFragment,
     ImageMetadataFragment,
     LinkMetadataFragment,
+    EventMetadataFragment,
   ]
 );

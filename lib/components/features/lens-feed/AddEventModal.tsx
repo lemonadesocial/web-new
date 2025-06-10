@@ -7,7 +7,7 @@ import { GetEventDocument, Event } from '$lib/graphql/generated/backend/graphql'
 import { generateUrl } from '$lib/utils/cnd';
 import { extractShortId } from '$lib/utils/event';
 
-export function AddEventModal({ onConfirm }: { onConfirm: (url: string) => void; }) {
+export function AddEventModal({ onConfirm }: { onConfirm: (event: Event) => void; }) {
   const [url, setUrl] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -105,7 +105,7 @@ export function AddEventModal({ onConfirm }: { onConfirm: (url: string) => void;
         <Button
           disabled={!url.trim() || !!error || !event}
           onClick={() => {
-            onConfirm(url.trim());
+            onConfirm(event!);
             modal.close();
           }}
           variant="secondary"

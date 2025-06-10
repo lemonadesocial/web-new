@@ -8,6 +8,7 @@ import { accountAtom } from "$lib/jotai";
 import { randomUserImage } from "$lib/utils/user";
 import { useLensAuth } from "$lib/hooks/useLens";
 import { useMediaQuery } from "$lib/hooks/useMediaQuery";
+import { Event } from "$lib/graphql/generated/backend/graphql";
 
 import { ImageInput } from "./ImageInput";
 import { AddEventModal } from "./AddEventModal";
@@ -31,7 +32,7 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
-  const [sharingLink, setSharingLink] = useState<string | undefined>(undefined);
+  const [event, setEvent] = useState<Event | undefined>(undefined);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -49,11 +50,11 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
 
     try {
       setIsLoading(true);
-      await onPost(generatePostMetadata({ content, images, sharingLink }));
+      await onPost(generatePostMetadata({ content, images, event }));
       setIsLoading(false);
       setValue('');
       setFiles([]);
-      setSharingLink(undefined);
+      setEvent(undefined);
       setIsActive(false);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to post');
@@ -80,15 +81,15 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
         }
 
         {
-          sharingLink && (
+          event && (
             <div className="relative">
-              <EventPreview url={sharingLink} />
+              <EventPreview event={event} />
               <Button
                 icon="icon-x size-[14]"
                 variant="tertiary"
                 className="rounded-full absolute top-3 right-3"
                 size="xs"
-                onClick={() => setSharingLink(undefined)}
+                onClick={() => setEvent(undefined)}
               />
             </div>
           )
@@ -118,7 +119,7 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
                 onClick={() => {
                   modal.open(AddEventModal, {
                     props: {
-                      onConfirm: link => setSharingLink(link),
+                      onConfirm: setEvent,
                     },
                     dismissible: true
                   });

@@ -15,7 +15,7 @@ import { formatCurrency } from './string';
 
 import { convertFromUtcToTimezone, formatWithTimezone } from './date';
 import { getListChains } from './crypto';
-import { groupBy } from 'lodash';
+import { groupBy, uniqBy } from 'lodash';
 
 export function formatCryptoPrice(price: EventTicketPrice, skipCurrency: boolean = false) {
   const { cost, currency } = price;
@@ -174,4 +174,8 @@ export function downloadTicketPass(ticket: Ticket) {
 export function extractShortId(url: string): string | null {
   const match = url.match(/lemonade\.social\/e\/([\w-]+)/i);
   return match ? match[1] : null;
+}
+
+export function getEventHosts(event: Event) {
+  return uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id);
 }

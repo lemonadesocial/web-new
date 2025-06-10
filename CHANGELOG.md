@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.38.1](https://github.com/lemonadesocial/web-new/compare/v1.38.0...v1.38.1) (2025-06-10)
+
+
+### Bug Fixes
+
+* logic fetch events ([46b967e](https://github.com/lemonadesocial/web-new/commit/46b967ea2629564a0c5d6cc2fc54b37629c9b72e))
+
 ## [1.38.0](https://github.com/lemonadesocial/web-new/compare/v1.37.3...v1.38.0) (2025-06-10)
 
 
