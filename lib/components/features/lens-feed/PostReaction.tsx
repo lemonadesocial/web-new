@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { PostReactionType, postId, Post } from '@lens-protocol/client';
 import { addReaction, undoReaction } from '@lens-protocol/client/actions';
@@ -16,11 +16,16 @@ interface PostReactionProps {
 }
 
 export function PostReaction({ post, isComment }: PostReactionProps) {
-  const [isUpvoted, setIsUpvoted] = useState(post.operations?.hasUpvoted);
+  const [isUpvoted, setIsUpvoted] = useState(false);
+  const [upvotes, setUpvotes] = useState(0);
 
-  const [upvotes, setUpvotes] = useState(post.stats.upvotes);
   const sessionClient = useAtomValue(sessionClientAtom);
   const handleLensAuth = useLensAuth();
+
+  useEffect(() => {
+    setIsUpvoted(!!post.operations?.hasUpvoted);
+    setUpvotes(post.stats.upvotes);
+  }, [post]);
 
   const handleUpvote = async () => {
     if (!sessionClient) {
