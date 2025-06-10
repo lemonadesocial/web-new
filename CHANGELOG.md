@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.38.0](https://github.com/lemonadesocial/web-new/compare/v1.37.3...v1.38.0) (2025-06-10)
+
+
+### Features
+
+* update post menu ([bc9c80d](https://github.com/lemonadesocial/web-new/commit/bc9c80d117f1f49c7308cfbe0eff41eb84ceb985))
+
 ## [1.37.3](https://github.com/lemonadesocial/web-new/compare/v1.37.2...v1.37.3) (2025-06-09)
 
 
