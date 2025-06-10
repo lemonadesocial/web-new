@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.38.2](https://github.com/lemonadesocial/web-new/compare/v1.38.1...v1.38.2) (2025-06-10)
+
+
+### Bug Fixes
+
+* registration modal overflow ([95650e4](https://github.com/lemonadesocial/web-new/commit/95650e4391971a2358f7ae252a52bda8a128faf1))
+* update vote status ([3195092](https://github.com/lemonadesocial/web-new/commit/3195092005cd9aac4037d51930c2f680535aaca1))
+
 ## [1.38.1](https://github.com/lemonadesocial/web-new/compare/v1.38.0...v1.38.1) (2025-06-10)
 
 
