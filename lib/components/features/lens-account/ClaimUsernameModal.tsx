@@ -1,3 +1,4 @@
+'use client';
 import { useState, useCallback } from 'react';
 import { useAtomValue } from 'jotai';
 import { sessionClientAtom } from '$lib/jotai/lens';

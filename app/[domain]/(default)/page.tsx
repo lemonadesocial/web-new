@@ -1,11 +1,9 @@
-import React from 'react';
 import { notFound } from 'next/navigation';
 
-import { Button, Divider, Spacer } from '$lib/components/core';
 import { getSiteData } from '$utils/fetchers';
+import { LensAccountCard } from '$lib/components/features/lens-account/LensAccountCard';
 
-import PageHeader from './page-header';
-import Link from 'next/link';
+import { HomePageContent } from './content';
 
 export default async function SiteHomePage({ params }: { params: Promise<{ domain: string }> }) {
   const res = await params;
@@ -17,24 +15,9 @@ export default async function SiteHomePage({ params }: { params: Promise<{ domai
   }
 
   return (
-    <>
-      <PageHeader
-        title="Welcome, John"
-        subtitle={
-          <div className="flex items-center gap-1">
-            <span>You have</span>
-            <span className="text-tertiary">6 pending notifications</span>
-            <i className="icon-chevron-right text-quaternary size-[18]" />
-          </div>
-        }
-      />
-      <Spacer className="h-6" />
-      <Divider className="my-2" />
-
-      <div className="pt-6">
-        <Button>primary</Button>
-      </div>
-      <Link href={'/c/new-space'}>asdasd</Link>
-    </>
+    <div className="flex flex-col-reverse md:grid md:grid-cols-[1fr_336px] gap-5 md:gap-[72px] items-start pb-10">
+      <HomePageContent />
+      <LensAccountCard />
+    </div>
   );
 }

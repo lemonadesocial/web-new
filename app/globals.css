@@ -4,6 +4,7 @@
 @import './styles/themes/dark.css';
 
 @import './styles/components/button.css';
+@import './styles/components/link.css';
 @import './styles/components/collapsible.css';
 @import './styles/components/tooltips.css';
 
@@ -77,6 +78,7 @@
   --color-error: #ff637e;
 
   --color-background: var(--color-background);
+  --color-page-background-overlay: var(--color-page-background-overlay);
 
   --color-primary: var(--color-primary);
   --color-primary-invert: var(--color-primary-invert);

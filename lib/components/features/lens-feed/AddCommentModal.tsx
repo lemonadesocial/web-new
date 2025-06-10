@@ -1,3 +1,4 @@
+'use client';
 import { Post } from "@lens-protocol/client";
 import { useState } from "react";
 import clsx from "clsx";

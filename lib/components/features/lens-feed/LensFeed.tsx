@@ -11,10 +11,12 @@ export function LensFeed({
   feedAddress,
   authorId,
   showReposts,
+  onSelectPost,
 }: {
   feedAddress?: string;
   authorId?: string;
   showReposts?: boolean;
+  onSelectPost?: (slug: string) => void;
 }) {
   const { createPost } = usePost();
   const account = useAtomValue(accountAtom);
@@ -28,7 +30,7 @@ export function LensFeed({
   return (
     <div className="w-full space-y-4">
       {canPost && <PostComposer onPost={onPost} />}
-      <FeedPosts feedAddress={feedAddress} authorId={authorId} showReposts={showReposts} />
+      <FeedPosts feedAddress={feedAddress} authorId={authorId} showReposts={showReposts} onSelectPost={onSelectPost} />
     </div>
   );
 }

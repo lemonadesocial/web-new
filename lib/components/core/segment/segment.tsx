@@ -1,3 +1,4 @@
+'use client';
 import clsx from 'clsx';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -26,8 +27,8 @@ export function Segment<T>({ items, selected, size, onSelect, className }: Segme
         <li key={item.value as string} className="flex-1">
           <Button
             className={clsx(
-              'w-full hover:bg-initial text-primary backdrop-blur-none',
-              active !== item.value && 'hover:bg-transparent text-tertiary hover:text-primary',
+              'w-full hover:bg-initial text-primary! backdrop-blur-none',
+              active !== item.value && 'hover:bg-transparent text-tertiary! hover:text-primary',
             )}
             variant={active === item.value ? 'tertiary' : 'flat'}
             icon={item.icon}

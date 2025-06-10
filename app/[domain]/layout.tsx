@@ -26,10 +26,7 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
 export default async function SiteLayout(props: { params: Promise<{ domain: string }>; children: React.ReactNode }) {
   const params = await props.params;
   const domain = decodeURIComponent(params.domain);
-  const [data, space] = await Promise.all([
-    getSiteData(domain) as Promise<Config>,
-    getSpaceHydraKeys(domain)
-  ]);
+  const [data, space] = await Promise.all([getSiteData(domain) as Promise<Config>, getSpaceHydraKeys(domain)]);
 
   return (
     <Providers space={space}>

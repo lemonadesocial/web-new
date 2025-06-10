@@ -236,6 +236,132 @@ query GetEvents(
   }
 }
 
+query GetUpcomingEvents(
+  $user: MongoID!
+  $limit: Int = 100
+  $skip: Int = 0
+  $host: Boolean
+  $sort: JSON
+  $site: MongoID
+  $unpublished: Boolean
+) {
+  events: getUpcomingEvents(
+    user: $user
+    limit: $limit
+    skip: $skip
+    host: $host
+    sort: $sort
+    site: $site
+    unpublished: $unpublished
+  ) {
+    _id
+    shortid
+    title
+    slug
+    host
+    host_expanded {
+      _id
+      name
+      new_photos_expanded {
+        _id
+        key
+        bucket
+      }
+    }
+    cohosts
+    new_new_photos_expanded(limit: 1) {
+      _id
+      key
+      bucket
+      type
+      url
+    }
+    start
+    end
+    timezone
+    address {
+      street_1
+      city
+      title
+      region
+    }
+    tickets {
+      _id
+      accepted
+      assigned_email
+      assigned_to
+      event
+      invited_by
+      type
+    }
+    me_awaiting_approval
+    published
+  }
+}
+
+query GetPastEvents(
+  $user: MongoID!
+  $limit: Int = 100
+  $skip: Int = 0
+  $sort: JSON
+  $site: MongoID
+  $hosting_only: Boolean
+  $unpublished: Boolean
+) {
+  events: getPastEvents(
+    user: $user
+    limit: $limit
+    skip: $skip
+    sort: $sort
+    site: $site
+    hosting_only: $hosting_only
+    unpublished: $unpublished
+  ) {
+    _id
+    shortid
+    title
+    slug
+    host
+    host_expanded {
+      _id
+      name
+      new_photos_expanded {
+        _id
+        key
+        bucket
+      }
+    }
+    cohosts
+    new_new_photos_expanded(limit: 1) {
+      _id
+      key
+      bucket
+      type
+      url
+    }
+    start
+    end
+    timezone
+    address {
+      street_1
+      city
+      title
+      region
+    }
+    tickets {
+      _id
+      accepted
+      assigned_email
+      assigned_to
+      event
+      invited_by
+      type
+    }
+    me_awaiting_approval
+    published
+  }
+}
+
 query getEventInvitation($event: MongoID!) {
   getEventInvitation(event: $event) {
     _id

@@ -1,3 +1,4 @@
+'use client';
 import { handleOperationWith, signMessageWith } from '@lens-protocol/client/ethers';
 import {
   createAccountWithUsername,
