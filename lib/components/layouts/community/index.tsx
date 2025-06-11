@@ -51,7 +51,7 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
   }
 
   return (
-    <CommunityThemeProvider themeData={themeData}>
+    <CommunityThemeProvider themeData={!space.theme_data ? space.theme_data : themeData}>
       <CommunityContainer space={space}>{children}</CommunityContainer>
     </CommunityThemeProvider>
   );
