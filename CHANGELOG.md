@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.39.0](https://github.com/lemonadesocial/web-new/compare/v1.38.7...v1.39.0) (2025-06-11)
+
+
+### Features
+
+* refactor routes ([411db7d](https://github.com/lemonadesocial/web-new/commit/411db7d7161cf538434dee5b3026b2d16b8c98d3))
+
+
+### Bug Fixes
+
+* check authentication on communities page ([06d2ece](https://github.com/lemonadesocial/web-new/commit/06d2ece904315056c6fe6da3b33c3e32bfc8a482))
+* open user post ([075feea](https://github.com/lemonadesocial/web-new/commit/075feea577fe9095e85a460691310c4ada22d2bc))
+
 ## [1.38.7](https://github.com/lemonadesocial/web-new/compare/v1.38.6...v1.38.7) (2025-06-11)
 
 
