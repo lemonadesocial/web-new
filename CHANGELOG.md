@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.38.7](https://github.com/lemonadesocial/web-new/compare/v1.38.6...v1.38.7) (2025-06-11)
+
+
+### Bug Fixes
+
+* loading skeleton card ([7fc368e](https://github.com/lemonadesocial/web-new/commit/7fc368ec30dd2a0bd233a2fef10f0967b140a3f0))
+* theme caching ([7bbfc0b](https://github.com/lemonadesocial/web-new/commit/7bbfc0b0195644d673069e402513fb57eabc7983))
+
 ## [1.38.6](https://github.com/lemonadesocial/web-new/compare/v1.38.5...v1.38.6) (2025-06-11)
 
 
