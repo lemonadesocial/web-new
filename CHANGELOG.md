@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.38.5](https://github.com/lemonadesocial/web-new/compare/v1.38.4...v1.38.5) (2025-06-11)
+
+
+### Bug Fixes
+
+* reduce image size ([1e29a3a](https://github.com/lemonadesocial/web-new/commit/1e29a3a8df0d4ac662ded9f1c97dcb42d1e3384a))
+
 ## [1.38.4](https://github.com/lemonadesocial/web-new/compare/v1.38.3...v1.38.4) (2025-06-11)
 
 
