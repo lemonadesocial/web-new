@@ -13,7 +13,7 @@ import { ProfileMenu } from "./ProfileMenu";
 export function LensAccountCard() {
   const { isLoading: loadingSession } = useResumeSession();
   const account = useAtomValue(accountAtom);
-  const { stats } = useAccountStats();
+  const { stats } = useAccountStats(account);
 
   const selectProfile = () => {
     modal.open(SelectProfileModal, { dismissible: true });
