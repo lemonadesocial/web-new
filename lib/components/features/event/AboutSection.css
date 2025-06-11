@@ -1,7 +1,9 @@
 @reference "tailwindcss/theme.css";
 
 .event-description {
-  line-break: anywhere;
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: none;
 
   h1 {
     @apply !text-xl mt-4 mb-3;

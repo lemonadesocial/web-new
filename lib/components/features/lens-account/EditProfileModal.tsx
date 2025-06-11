@@ -81,7 +81,7 @@ export function EditProfileModal() {
   return (
     <ModalContent
       onClose={() => modal.close()}
-      title="Create Your Profile"
+      title="Edit Your Profile"
     >
       <div className="flex items-center justify-center">
         <div className="relative">

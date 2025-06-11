@@ -73,7 +73,7 @@ export function RegistrationModal() {
           Close
         </Button>
       </div>
-      <div className='flex flex-col gap-8 md:w-[372] p-4 md:p-0'>
+      <div className='flex flex-col gap-8 overflow-auto md:overflow-visible md:w-[372] p-4 md:p-0'>
         <div className='flex flex-col gap-6'>
           <div className='flex flex-col gap-4'>
             <h3 className='font-semibold text-[24px]'>Your Info</h3>

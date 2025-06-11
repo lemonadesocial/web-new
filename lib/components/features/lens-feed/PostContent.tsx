@@ -41,6 +41,8 @@ export function PostContent({ post }: PostContentProps) {
 
     fetchEvent();
   }, [metadata]);
+  
+  const sharingLink = (metadata as LinkMetadata).sharingLink;
 
   return (
     <div className="space-y-2">
@@ -51,6 +53,9 @@ export function PostContent({ post }: PostContentProps) {
       {event && (
         <EventPreview event={event} />
       )}
+      {
+        sharingLink && <a href={sharingLink} target="_blank" rel="noopener noreferrer" className="text-accent-500 font-medium">{sharingLink}</a>
+      }
     </div>
   );
 }

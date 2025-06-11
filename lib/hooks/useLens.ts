@@ -15,7 +15,7 @@ import { AccountMetadata } from '@lens-protocol/metadata';
 import { useAtomValue, useSetAtom, useAtom } from 'jotai';
 import { useState, useEffect, useCallback } from 'react';
 
-import { evmAddress, never, ok, AnyPost, postId, PostReferenceType } from '@lens-protocol/client';
+import { evmAddress, never, ok, AnyPost, postId, PostReferenceType, Account } from '@lens-protocol/client';
 import { fetchAccount } from '@lens-protocol/client/actions';
 import { toast } from '$lib/components/core/toast';
 import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom, chainsMapAtom, feedPostAtom } from '$lib/jotai';
@@ -540,10 +540,9 @@ export function useComments({ postId: targetPostId, feedAddress }: UseCommentsPr
   };
 }
 
-export function useAccountStats() {
+export function useAccountStats(account: Account | null) {
   const [stats, setStats] = useState<{ followers: number; following: number }>({ followers: 0, following: 0 });
   const [isLoading, setIsLoading] = useState(false);
-  const account = useAtomValue(accountAtom);
 
   const fetchStats = async () => {
     if (!account) return;

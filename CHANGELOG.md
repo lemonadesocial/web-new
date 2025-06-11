@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.38.4](https://github.com/lemonadesocial/web-new/compare/v1.38.3...v1.38.4) (2025-06-11)
+
+
+### Bug Fixes
+
+* fallback sharing link ([0509783](https://github.com/lemonadesocial/web-new/commit/0509783f5bb07f2cb58de0be55a4ecb50f0f4f8c))
+* smart work break ([2ad3400](https://github.com/lemonadesocial/web-new/commit/2ad34008305be1308bca514db460b2eadec2bb96))
+
+## [1.38.3](https://github.com/lemonadesocial/web-new/compare/v1.38.2...v1.38.3) (2025-06-11)
+
+
+### Bug Fixes
+
+* account stats ([e2fc48a](https://github.com/lemonadesocial/web-new/commit/e2fc48ad726298a847eed78c07b2d2856c09783e))
+
+## [1.38.2](https://github.com/lemonadesocial/web-new/compare/v1.38.1...v1.38.2) (2025-06-10)
+
+
+### Bug Fixes
+
+* registration modal overflow ([95650e4](https://github.com/lemonadesocial/web-new/commit/95650e4391971a2358f7ae252a52bda8a128faf1))
+* update vote status ([3195092](https://github.com/lemonadesocial/web-new/commit/3195092005cd9aac4037d51930c2f680535aaca1))
+
 ## [1.38.1](https://github.com/lemonadesocial/web-new/compare/v1.38.0...v1.38.1) (2025-06-10)
 
 

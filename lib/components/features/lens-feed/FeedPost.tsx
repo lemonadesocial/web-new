@@ -1,10 +1,10 @@
-import { EventMetadata, ImageMetadata, Post, Repost } from '@lens-protocol/client';
+import { EventMetadata, Post, Repost } from '@lens-protocol/client';
 import { formatDistanceToNow } from 'date-fns';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useRouter } from 'next/navigation';
 
-import { Avatar, Button, Spacer, toast } from '$lib/components/core';
+import { Avatar, Button, toast } from '$lib/components/core';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 
 import { PostReaction } from './PostReaction';

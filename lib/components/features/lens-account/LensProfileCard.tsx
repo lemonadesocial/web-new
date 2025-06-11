@@ -14,7 +14,7 @@ import { ProfileMenu } from "./ProfileMenu";
 import { EditProfileModal } from "./EditProfileModal";
 
 export function LensProfileCard({ account }: { account: Account }) {
-  const { stats } = useAccountStats();
+  const { stats } = useAccountStats(account);
   const sessionClient = useAtomValue(sessionClientAtom);
   const myAccount = useAtomValue(accountAtom);
 
