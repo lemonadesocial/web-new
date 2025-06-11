@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.38.4](https://github.com/lemonadesocial/web-new/compare/v1.38.3...v1.38.4) (2025-06-11)
+
+
+### Bug Fixes
+
+* fallback sharing link ([0509783](https://github.com/lemonadesocial/web-new/commit/0509783f5bb07f2cb58de0be55a4ecb50f0f4f8c))
+* smart work break ([2ad3400](https://github.com/lemonadesocial/web-new/commit/2ad34008305be1308bca514db460b2eadec2bb96))
+
 ## [1.38.3](https://github.com/lemonadesocial/web-new/compare/v1.38.2...v1.38.3) (2025-06-11)
 
 
