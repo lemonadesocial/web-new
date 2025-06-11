@@ -83,7 +83,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
         <div className="block md:hidden">
           {event.new_new_photos_expanded?.[0] && (
             <img
-              src={generateUrl(event.new_new_photos_expanded[0])}
+              src={generateUrl(event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)}
               alt={event.title}
               loading="lazy"
               className="aspect-square object-contain border rounded-md"
