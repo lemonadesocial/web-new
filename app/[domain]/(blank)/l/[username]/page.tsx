@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 
 import { LensProfileCard } from "$lib/components/features/lens-account/LensProfileCard";
 import { client } from "$lib/utils/lens/client";
-import { LensFeed } from "$lib/components/features/lens-feed/LensFeed";
+
+import { UserFeed } from "./feed";
 
 export default async function Page({ params }: { params: Promise<{ username: string }> }) {
   const username = (await params).username;
@@ -19,7 +20,7 @@ export default async function Page({ params }: { params: Promise<{ username: str
   return (
     <div className="md:grid md:grid-cols-[336px_1fr] gap-5 md:gap-8 items-start pb-10">
       <LensProfileCard account={result.value} />
-      <LensFeed authorId={result.value.address} showReposts />
+      <UserFeed authorId={result.value.address} />
     </div>
   );
 }
