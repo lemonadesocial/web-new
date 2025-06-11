@@ -102,7 +102,7 @@ export function PageCardItemSkeleton({ view = 'card' }: { view?: 'card' | 'list-
   }
 
   return (
-    <Card.Root>
+    <Card.Root className="min-w-[144px]">
       <Card.Content className="flex flex-col gap-6">
         <div className="w-[32px] h-[32px] md:w-[48px] md:h-[48px]">
           <Skeleton animate className="w-full h-full" />
