@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.38.3](https://github.com/lemonadesocial/web-new/compare/v1.38.2...v1.38.3) (2025-06-11)
+
+
+### Bug Fixes
+
+* account stats ([e2fc48a](https://github.com/lemonadesocial/web-new/commit/e2fc48ad726298a847eed78c07b2d2856c09783e))
+
 ## [1.38.2](https://github.com/lemonadesocial/web-new/compare/v1.38.1...v1.38.2) (2025-06-10)
 
 
