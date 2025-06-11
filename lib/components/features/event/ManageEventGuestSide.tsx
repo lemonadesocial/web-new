@@ -5,7 +5,7 @@ import { uniqBy } from 'lodash';
 import { Event, GetEventDocument, GetEventQuery } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { Badge, Button, Spacer } from '$lib/components/core';
-import { generateUrl } from '$lib/utils/cnd';
+import { EDIT_KEY, generateUrl } from '$lib/utils/cnd';
 import { hosting, isAttending } from '$lib/utils/event';
 import { useSession } from '$lib/hooks/useSession';
 
@@ -48,7 +48,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
         <div className="flex flex-col gap-4">
           {event.new_new_photos_expanded?.[0] && (
             <img
-              src={generateUrl(event.new_new_photos_expanded[0])}
+              src={generateUrl(event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)}
               alt={event.title}
               loading="lazy"
               className="aspect-square object-contain border rounded-md"
