@@ -1,4 +1,4 @@
-import { image, link, MediaImageMimeType, textOnly, event as eventMetadata } from "@lens-protocol/metadata";
+import { image, MediaImageMimeType, textOnly, event as eventMetadata } from "@lens-protocol/metadata";
 import { Account } from "@lens-protocol/client";
 
 import { Event } from '$lib/graphql/generated/backend/graphql';
