@@ -45,6 +45,7 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
       mode: space.theme_data.mode || space.theme_data.config?.mode,
       color: space.theme_data.foreground?.key || space.theme_data.config?.fg || space.theme_data.config?.color,
       class: space.theme_data.class,
+      image: space.theme_data.config?.image,
       name: space.theme_data.config?.name,
       effect: space.theme_data.config?.effect,
     };

@@ -214,7 +214,7 @@ export function Community({ initData }: Props) {
               <div className="flex gap-2 items-center">
                 <Menu.Root className="md:hidden">
                   <Menu.Trigger>
-                    <Button variant="tertiary-alt" iconLeft="icon-plus" size="sm" className="w-full">
+                    <Button variant="tertiary-alt" iconLeft="icon-plus" size="sm" className="w-full backdrop-blur-md">
                       Submit
                     </Button>
                   </Menu.Trigger>
@@ -310,7 +310,7 @@ export function Community({ initData }: Props) {
             <div className="hidden sticky top-7 z-50 flex-col gap-4 md:flex max-w-[296px]">
               <Menu.Root>
                 <Menu.Trigger>
-                  <Button variant="tertiary-alt" iconLeft="icon-plus" size="sm" className="w-full">
+                  <Button variant="tertiary-alt" iconLeft="icon-plus" size="sm" className="w-full backdrop-blur-md">
                     {space?.is_ambassador || canManage ? 'Add Event' : 'Submit Event'}
                   </Button>
                 </Menu.Trigger>
@@ -444,7 +444,7 @@ function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: 
   };
 
   return (
-    <div className="bg-card rounded-md flex gap-3 px-4 py-3">
+    <div className="bg-card rounded-md flex gap-3 px-4 py-3 backdrop-blur-md">
       <i className="icon-dashboard size-[48px] text-primary/16" />
       <div className="flex-1">
         <p className="text-lg text-primary">No Upcoming Events</p>

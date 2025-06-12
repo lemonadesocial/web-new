@@ -22,12 +22,25 @@ import { Sheet, SheetRef } from 'react-modal-sheet';
 import { twMerge } from 'tailwind-merge';
 import { MenuColorPicker } from './ColorPicker';
 import { isEqual, join, split } from 'lodash';
-import { Space, UpdateSpaceDocument } from '$lib/graphql/generated/backend/graphql';
-import { useMutation } from '$lib/graphql/request';
+import {
+  File,
+  FileCategory,
+  GetSystemFilesDocument,
+  Space,
+  SystemFile,
+  UpdateSpaceDocument,
+} from '$lib/graphql/generated/backend/graphql';
+import { useMutation, useQuery } from '$lib/graphql/request';
 import { FloatingPortal } from '@floating-ui/react';
+import { generateUrl } from '$lib/utils/cnd';
 
 export function CommunityThemeBuilder({ themeData, spaceId }: { themeData: ThemeValues; spaceId?: string }) {
   const [toggle, setToggle] = React.useState(false);
+
+  // PERF: loading images
+  useQuery(GetSystemFilesDocument, {
+    variables: { categories: [FileCategory.SpaceDarkTheme, FileCategory.SpaceLightTheme] },
+  });
 
   return (
     <>
@@ -90,7 +103,7 @@ function CommunityThemeBuilderPane({
 
               <div className="flex flex-col gap-2">
                 <div className="flex gap-2 flex-wrap">
-                  <PopoverColor disabled={state.theme && presets[themeName].ui?.disabled?.color} />
+                  <PopoverColor disabled={state.theme && presets[themeName]?.ui?.disabled?.color} />
                   <PopoverStyle />
                   <PopoverEffect />
                 </div>
@@ -319,6 +332,7 @@ function PopoverStyle() {
   const [state] = useCommunityTheme();
   if (state.theme === 'shader') return <PopoverShaderColor />;
   if (state.theme === 'pattern') return <PopoverPattern />;
+  if (state.theme === 'image') return <PopoverImage />;
 
   return (
     <Menu.Root disabled className="flex-1 min-w-full md:min-w-auto">
@@ -546,6 +560,75 @@ export function PopoverFont({
           </div>
         </Menu.Content>
       </FloatingPortal>
+    </Menu.Root>
+  );
+}
+
+export function PopoverImage() {
+  const [state, dispatch] = useCommunityTheme();
+
+  const { data: data } = useQuery(GetSystemFilesDocument, {
+    variables: { categories: [FileCategory.SpaceDarkTheme, FileCategory.SpaceLightTheme] },
+  });
+  const images = (data?.getSystemFiles || []) as SystemFile[];
+
+  React.useEffect(() => {
+    if (images.length && !state.config.image?._id) {
+      const randomIndex = Math.floor(Math.random() * images.length);
+      const selected = images[randomIndex];
+      dispatch({
+        type: ThemeBuilderActionKind.select_image,
+        payload: {
+          config: {
+            image: { _id: selected._id, url: selected.url, name: selected.name },
+          },
+        },
+      });
+    }
+  }, [images.length, state.config.image?._id]);
+
+  return (
+    <Menu.Root placement="top" strategy="fixed" className="flex-1">
+      <Menu.Trigger>
+        <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
+          <img src={state.config?.image?.url} className="size-[24px] aspect-square rounded" />
+          <span className="text-left flex-1  font-general-sans">Background</span>
+          <p className="flex items-center gap-1">
+            <span className="capitalize">{state.config?.image?.name || '-'}</span>
+            <i className="icon-chevrons-up-down text-quaternary" />
+          </p>
+        </div>
+      </Menu.Trigger>
+      <Menu.Content className="grid grid-cols-4 gap-3">
+        {images.map((item) => (
+          <div
+            key={item._id}
+            className={clsx('flex flex-col items-center gap-1 cursor-pointer')}
+            onClick={() => {
+              dispatch({
+                type: ThemeBuilderActionKind.select_image,
+                payload: {
+                  config: {
+                    mode: item.category.includes('dark') ? 'dark' : 'light',
+                    image: {
+                      _id: item._id,
+                      url: generateUrl(item as unknown as File, {
+                        resize: { fit: 'cover', height: 1080, width: 1920 },
+                      }),
+                      name: item.name,
+                    },
+                  },
+                },
+              });
+            }}
+          >
+            <div className={clsx('rounded-sm outline-offset-2', item._id === state.config?.image?._id && 'outline-2')}>
+              <img src={item.url} className="aspect-[4/3] h-[48px] rounded-sm self-stretch" loading="lazy" />
+            </div>
+            <p className="text-xs font-normal text-tertiary">{item.name}</p>
+          </div>
+        ))}
+      </Menu.Content>
     </Menu.Root>
   );
 }
