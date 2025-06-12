@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.40.0](https://github.com/lemonadesocial/web-new/compare/v1.39.0...v1.40.0) (2025-06-12)
+
+
+### Features
+
+* infinite scoll feed ([07d8d75](https://github.com/lemonadesocial/web-new/commit/07d8d75f56a9b40a834a85bd72c8cfc3fd4a09e7))
+
+
+### Bug Fixes
+
+* starts in time ([1ae9bcc](https://github.com/lemonadesocial/web-new/commit/1ae9bcc32f7a2802ff34ce5320dbc06f70f9ce3c))
+
 ## [1.39.0](https://github.com/lemonadesocial/web-new/compare/v1.38.7...v1.39.0) (2025-06-11)
 
 
