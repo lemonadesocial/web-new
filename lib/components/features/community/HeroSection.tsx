@@ -54,7 +54,9 @@ export function HeroSection({ space }: HeroSectionProps) {
 
   return (
     <>
-      <div className="relative w-full h-[154px] md:h-96 overflow-hidden">
+      <div
+        className={clsx('relative w-full overflow-hidden', space?.image_cover ? 'h-[154px] md:h-96' : 'h-24 md:h-36')}
+      >
         {space?.image_cover ? (
           <>
             <img
