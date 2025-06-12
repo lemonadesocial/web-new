@@ -90,7 +90,7 @@ function CommunityThemeBuilderPane({
 
               <div className="flex flex-col gap-2">
                 <div className="flex gap-2 flex-wrap">
-                  <PopoverColor disabled={state.theme && presets[themeName].ui?.disabled?.color} />
+                  <PopoverColor disabled={state.theme && presets[themeName]?.ui?.disabled?.color} />
                   <PopoverStyle />
                   <PopoverEffect />
                 </div>
