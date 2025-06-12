@@ -2,12 +2,17 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { atom } from 'jotai';
 
 export type ThemeValues = {
-  theme?: 'default' | 'minimal' | 'shader' | 'pattern';
+  theme?: 'default' | 'minimal' | 'shader' | 'pattern' | 'image';
   config: {
     mode?: 'dark' | 'light' | 'auto';
     name?: string;
     color?: string;
     class?: string;
+    image?: {
+      name: string;
+      _id: string;
+      url: string;
+    };
     effect?: {
       name: string;
       type?: 'video' | 'float';
@@ -186,10 +191,19 @@ export const emojis: Record<string, { emoji: string; type: 'video' | 'float'; la
   skull: { emoji: '💀', type: 'float', label: 'Skull' },
 };
 
+const image: ThemePresetType = {
+  image: `${ASSET_PREFIX}/assets/images/image.png`,
+  name: 'Image',
+  ui: {
+    disabled: { mode: true },
+  },
+};
+
 export const presets = {
   minimal,
   shader,
   pattern,
+  image,
 };
 
 export const modes = [

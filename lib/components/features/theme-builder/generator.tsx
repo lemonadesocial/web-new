@@ -50,7 +50,6 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
 
   React.useLayoutEffect(() => {
     document.addEventListener('visibilitychange', autoplay);
-
     return () => document.removeEventListener('visibilitychange', autoplay);
   }, []);
 
@@ -75,7 +74,7 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
         <div
           className={clsx(
             'background',
-            data?.theme,
+            data.theme,
             data.config.name,
             // allow bg for emoji
             data?.config?.color,
@@ -83,7 +82,14 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
             mode,
           )}
         >
-          {data?.theme === 'shader' && <ShaderGradient mode={mode} />}
+          {data.theme === 'shader' && <ShaderGradient mode={mode} />}
+
+          {data.theme === 'image' && data.config?.image && (
+            <div
+              className="min-w-full min-h-full fixed inset-0"
+              style={{ background: `url(${data.config.image?.url})` }}
+            />
+          )}
 
           {data.config?.effect?.type === 'video' && data?.config?.effect?.url && (
             <div key={data.config.effect.name}>

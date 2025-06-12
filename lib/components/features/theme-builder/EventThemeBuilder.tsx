@@ -251,32 +251,35 @@ function ThemeTemplate() {
 
   return (
     <div className="flex md:flex-col items-center gap-3 p-4 md:w-[96px]">
-      {Object.entries(presets).map(([key, { image, name }]) => (
-        <div key={key} className="flex flex-col items-center gap-2">
-          <Card.Root
-            className={clsx(
-              'p-0 bg-transparent border-transparent transition-all hover:outline-2 hover:outline-offset-2 hover:outline-primary/16 rounded-sm',
-              data.theme === key && 'outline-2 outline-offset-2 outline-primary!',
-            )}
-            onClick={(e) => {
-              e.stopPropagation();
-              const config: any = {};
-              const themeName = !data.theme || data.theme === 'default' ? 'minimal' : data.theme;
+      {Object.entries(presets).map(([key, { image, name }]) => {
+        if (key === 'image') return null;
+        return (
+          <div key={key} className="flex flex-col items-center gap-2">
+            <Card.Root
+              className={clsx(
+                'p-0 bg-transparent border-transparent transition-all hover:outline-2 hover:outline-offset-2 hover:outline-primary/16 rounded-sm',
+                data.theme === key && 'outline-2 outline-offset-2 outline-primary!',
+              )}
+              onClick={(e) => {
+                e.stopPropagation();
+                const config: any = {};
+                const themeName = !data.theme || data.theme === 'default' ? 'minimal' : data.theme;
 
-              if (!data.config.color) config.color = getRandomColor();
-              if (presets[themeName].ui?.disabled?.mode) config.mode = 'auto';
+                if (!data.config.color) config.color = getRandomColor();
+                if (presets[themeName].ui?.disabled?.mode) config.mode = 'auto';
 
-              dispatch({
-                type: ThemeBuilderActionKind.select_template,
-                payload: { theme: key as any, config },
-              });
-            }}
-          >
-            <img src={image} className="rounded-sm" width={72} height={54} />
-          </Card.Root>
-          <p className="text-xs">{name}</p>
-        </div>
-      ))}
+                dispatch({
+                  type: ThemeBuilderActionKind.select_template,
+                  payload: { theme: key as any, config },
+                });
+              }}
+            >
+              <img src={image} className="rounded-sm" width={72} height={54} />
+            </Card.Root>
+            <p className="text-xs">{name}</p>
+          </div>
+        );
+      })}
     </div>
   );
 }
