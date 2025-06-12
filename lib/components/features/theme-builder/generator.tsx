@@ -86,7 +86,7 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
 
           {data.theme === 'image' && data.config?.image && (
             <div
-              className="min-w-full min-h-full fixed inset-0"
+              className="min-w-full min-h-full fixed inset-0 aspect-video bg-cover! bg-no-repeat"
               style={{ background: `url(${data.config.image?.url})` }}
             />
           )}
