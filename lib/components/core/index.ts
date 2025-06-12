@@ -17,3 +17,5 @@ export * from './collapsible';
 export * from './number-input';
 export * from './toast';
 export * from './file-input';
+export * from './map';
+export * from './text-editor';

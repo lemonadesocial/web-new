@@ -70,7 +70,7 @@ function MenuContent({
           style={{
             ...floatingStyles,
             // config on top of modal - work with FloatingPortal
-            zIndex: 10001,
+            zIndex: 100001,
           }}
           onClick={onClick}
           className={twMerge(
