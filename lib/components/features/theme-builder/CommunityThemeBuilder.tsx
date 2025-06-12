@@ -23,6 +23,7 @@ import { twMerge } from 'tailwind-merge';
 import { MenuColorPicker } from './ColorPicker';
 import { isEqual, join, split } from 'lodash';
 import {
+  File,
   FileCategory,
   GetSystemFilesDocument,
   Space,
@@ -31,9 +32,15 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { FloatingPortal } from '@floating-ui/react';
+import { generateUrl } from '$lib/utils/cnd';
 
 export function CommunityThemeBuilder({ themeData, spaceId }: { themeData: ThemeValues; spaceId?: string }) {
   const [toggle, setToggle] = React.useState(false);
+
+  // PERF: loading images
+  useQuery(GetSystemFilesDocument, {
+    variables: { categories: [FileCategory.SpaceDarkTheme, FileCategory.SpaceLightTheme] },
+  });
 
   return (
     <>
@@ -604,7 +611,14 @@ export function PopoverImage() {
                 type: ThemeBuilderActionKind.select_image,
                 payload: {
                   config: {
-                    image: { _id: item._id, url: item.url, name: item.name },
+                    mode: item.category.includes('dark') ? 'dark' : 'light',
+                    image: {
+                      _id: item._id,
+                      url: generateUrl(item as unknown as File, {
+                        resize: { fit: 'cover', height: 1080, width: 1920 },
+                      }),
+                      name: item.name,
+                    },
                   },
                 },
               });
