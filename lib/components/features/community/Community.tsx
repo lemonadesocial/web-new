@@ -37,6 +37,7 @@ import { useSignIn } from '$lib/hooks/useSignIn';
 import { MyEventRequests } from './MyEventRequests';
 import CommunityCard from './CommunityCard';
 import { ListingExternalEvent } from './ListingExternalEvent';
+import { useRouter } from 'next/navigation';
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
@@ -52,6 +53,7 @@ type Props = {
 export function Community({ initData }: Props) {
   const space = initData.space;
 
+  const router = useRouter();
   const me = useMe();
   const [shouldLoadMore, setShouldLoadMore] = useAtom(scrollAtBottomAtom);
 
@@ -226,7 +228,7 @@ export function Community({ initData }: Props) {
                           iconLeft="icon-edit-square"
                           onClick={() => {
                             toggle();
-                            window.open(`${LEMONADE_DOMAIN}/create/experience?space=${space?._id}`);
+                            router.push('/create/events?space=${space?._id}');
                           }}
                         />
                         <MenuItem
