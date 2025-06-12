@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.41.1](https://github.com/lemonadesocial/web-new/compare/v1.41.0...v1.41.1) (2025-06-12)
+
+
+### Bug Fixes
+
+* missing assets ([855a2a4](https://github.com/lemonadesocial/web-new/commit/855a2a4010fb08e01130ea73e64626d3c648a3a1))
+
 ## [1.41.0](https://github.com/lemonadesocial/web-new/compare/v1.40.0...v1.41.0) (2025-06-12)
 
 
