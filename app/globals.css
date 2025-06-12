@@ -510,7 +510,7 @@ main {
   }
 }
 
-p {
+p, span {
   font-weight: var(--font-weight-medium);
 }
 

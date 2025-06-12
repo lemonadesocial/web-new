@@ -1,0 +1,27 @@
+'use client';
+import { modal } from "$lib/components/core";
+import { useEvent } from "./store";
+import { InviteGuestsModal } from "./modals/InviteGuestsModal";
+
+export function EventOverview() {
+  const event = useEvent();
+
+  if (!event) return null;
+
+  return (
+    <div className="space-y-8">
+      <div className="grid grid-cols-4 gap-2">
+        <div
+          className="py-2 px-3 items-center flex gap-3 rounded-md border border-card-border bg-card cursor-pointer"
+          onClick={() => modal.open(InviteGuestsModal, { props: { event } })}
+        >
+          <div className="size-[38px] rounded-sm bg-blue-400/16 flex items-center justify-center">
+            <i className="icon-person-add size-5 text-blue-400" />
+          </div>
+          <p>Invite Guests</p>
+        </div>
+
+      </div>
+    </div>
+  );
+}
