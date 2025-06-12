@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { uniqBy } from 'lodash';
+import clsx from 'clsx';
 
 import { Event, GetEventDocument, GetEventQuery } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
@@ -24,9 +25,8 @@ import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { EventCollectibles } from '../event-collectibles';
 import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
 import { useEventTheme } from '$lib/components/features/theme-builder/provider';
-import clsx from 'clsx';
 
-export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
+export default function EventGuestSide({ event: eventDetail }: { event: Event }) {
   const [state] = useEventTheme();
   const { data, loading } = useQuery(GetEventDocument, {
     variables: { id: eventDetail._id },
@@ -43,7 +43,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
   const hosts = uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id);
 
   return (
-    <div className={clsx('flex gap-[72px]', state.theme && state.config.color)}>
+    <div className={clsx('flex gap-[72px] mt-7 md:mt-11', state.theme && state.config.color)}>
       <div className="hidden md:flex w-[296px] flex-col gap-6">
         <div className="flex flex-col gap-4">
           {event.new_new_photos_expanded?.[0] && (
