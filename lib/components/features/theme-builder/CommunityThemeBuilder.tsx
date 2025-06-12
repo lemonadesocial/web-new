@@ -567,7 +567,7 @@ export function PopoverFont({
 export function PopoverImage() {
   const [state, dispatch] = useCommunityTheme();
 
-  const { data: data } = useQuery(GetSystemFilesDocument, {
+  const { data } = useQuery(GetSystemFilesDocument, {
     variables: { categories: [FileCategory.SpaceDarkTheme, FileCategory.SpaceLightTheme] },
   });
   const images = (data?.getSystemFiles || []) as SystemFile[];
