@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.41.0](https://github.com/lemonadesocial/web-new/compare/v1.40.0...v1.41.0) (2025-06-12)
+
+
+### Features
+
+* fix blur - empty cover image ([f12fbf5](https://github.com/lemonadesocial/web-new/commit/f12fbf5d2325997f8baaffd6f2ca9c8974663057))
+* merge image theme ([a732afd](https://github.com/lemonadesocial/web-new/commit/a732afd504958b4a547393be62aa45d9c2671a91))
+* missing loading image background ([c565d31](https://github.com/lemonadesocial/web-new/commit/c565d318017271954978260b935125c27a00c2b4))
+* update image size and dark/light mode ([352e7bb](https://github.com/lemonadesocial/web-new/commit/352e7bbd2fa0828d0c9e1333711765abac6ad80c))
+
+
+### Bug Fixes
+
+* cover bg image ([9923617](https://github.com/lemonadesocial/web-new/commit/99236174bfedd2ab14a5582c69d1ac1b12c73ca1))
+* loading state ([fdeae09](https://github.com/lemonadesocial/web-new/commit/fdeae099e8e92340def4e588024c08ddebaf350f))
+* missing check undefined theme ([f6cd79f](https://github.com/lemonadesocial/web-new/commit/f6cd79f47102f7e5440bcfc1f238b7d83740b382))
+
 ## [1.40.0](https://github.com/lemonadesocial/web-new/compare/v1.39.0...v1.40.0) (2025-06-12)
 
 
