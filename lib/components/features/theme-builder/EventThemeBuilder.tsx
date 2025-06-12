@@ -13,7 +13,7 @@ import { colors, emojis, fonts, getRandomColor, patterns, presets, shaders } fro
 import { useEventTheme, ThemeBuilderActionKind } from './provider';
 import { MenuColorPicker } from './ColorPicker';
 
-export function EventThemeBuilder({ eventId }: { eventId: string }) {
+export function EventThemeBuilder({ eventId }: { eventId?: string }) {
   const [toggle, setToggle] = React.useState(false);
   const [data, dispatch] = useEventTheme();
   const themeName = !data.theme || data.theme === 'default' ? 'minimal' : data.theme;
@@ -22,12 +22,12 @@ export function EventThemeBuilder({ eventId }: { eventId: string }) {
   const [updateEventTheme] = useMutation(UpdateEventThemeDocument);
 
   React.useEffect(() => {
-    if (mounted.current) {
+    if (mounted.current && eventId) {
       updateEventTheme({ variables: { id: eventId, input: { theme_data: data } } });
     } else {
       mounted.current = true;
     }
-  }, [data]);
+  }, [data, eventId]);
 
   return (
     <>
