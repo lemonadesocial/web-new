@@ -567,7 +567,7 @@ export function PopoverFont({
 export function PopoverImage() {
   const [state, dispatch] = useCommunityTheme();
 
-  const { data: data, loading } = useQuery(GetSystemFilesDocument, {
+  const { data: data } = useQuery(GetSystemFilesDocument, {
     variables: { categories: [FileCategory.SpaceDarkTheme, FileCategory.SpaceLightTheme] },
   });
   const images = (data?.getSystemFiles || []) as SystemFile[];
@@ -587,8 +587,6 @@ export function PopoverImage() {
     }
   }, [images.length, state.config.image?._id]);
 
-  if (loading) return null;
-
   return (
     <Menu.Root placement="top" strategy="fixed" className="flex-1">
       <Menu.Trigger>
@@ -596,7 +594,7 @@ export function PopoverImage() {
           <img src={state.config?.image?.url} className="size-[24px] aspect-square rounded" />
           <span className="text-left flex-1  font-general-sans">Background</span>
           <p className="flex items-center gap-1">
-            <span className="capitalize">{state.config?.image?.name}</span>
+            <span className="capitalize">{state.config?.image?.name || '-'}</span>
             <i className="icon-chevrons-up-down text-quaternary" />
           </p>
         </div>
