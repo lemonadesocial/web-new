@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.42.0](https://github.com/lemonadesocial/web-new/compare/v1.41.1...v1.42.0) (2025-06-12)
+
+
+### Features
+
+* update event bg image ([d326166](https://github.com/lemonadesocial/web-new/commit/d326166cb04c1e6da5c1612af595a1a379514be9))
+
 ## [1.41.1](https://github.com/lemonadesocial/web-new/compare/v1.41.0...v1.41.1) (2025-06-12)
 
 
