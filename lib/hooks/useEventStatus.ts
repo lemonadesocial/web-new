@@ -36,6 +36,8 @@ export function useEventStatus(start?: string, end?: string): EventStatusData {
       }
 
       const d = intervalToDuration({ start: now, end: startDate });
+
+      const months = d.months ?? 0;
       const days = d.days ?? 0;
       const hours = (d.hours ?? 0) + days * 24;
       const minutes = d.minutes ?? 0;
@@ -43,7 +45,9 @@ export function useEventStatus(start?: string, end?: string): EventStatusData {
       const status = hours === 0 && minutes < 60 ? 'starting-soon' : 'upcoming';
 
       let timeLabel = '';
-      if (days > 1) {
+      if (months > 0) {
+        timeLabel = days > 0 ? `${months}m ${days}d` : `${months}m`;
+      } else if (days > 1) {
         timeLabel = `${days}d`;
       } else if (hours > 0) {
         timeLabel = `${hours}h`;
