@@ -89,6 +89,7 @@ query GetEvent($id: MongoID, $shortid: String) {
     }
     event_ticket_types {
       _id
+      title
       offers {
         _id
         provider_network
@@ -105,6 +106,7 @@ query GetEvent($id: MongoID, $shortid: String) {
     url_go
     external_url
     external_hostname
+    published
   }
 }
 
@@ -175,6 +177,7 @@ query GetEvents(
     timezone
     event_ticket_types {
       _id
+      title
       prices {
         cost
         currency
@@ -469,7 +472,7 @@ query GetEventCohostInvites($input: GetEventCohostRequestsInput!) {
   getEventCohostInvites(input: $input) {
     event
     from_expanded {
-      _id
+      _id 
       name
     }
   }
@@ -484,4 +487,49 @@ mutation createEvent($input: EventInput!) {
     _id
     shortid
   }
+}
+
+mutation PublishEvent($event: MongoID!) {
+  updateEvent(
+    _id: $event,
+    input: {
+      published: true,
+    }
+  ) {
+    _id
+    published
+  }
+}
+
+mutation UpdateEventSettings($id: MongoID!, $input: EventInput!) {
+  updateEvent(_id: $id, input: $input) {
+    _id
+    title
+    description
+    theme_data
+    address {
+      street_1
+      city
+      title
+      region
+      country
+      additional_directions
+      latitude
+      longitude
+    }
+    longitude
+    latitude
+    virtual_url
+  }
+}
+
+mutation inviteEvent($event: MongoID!, $users: [MongoID!], $emails: [String!]) {
+  inviteEvent(input: { _id: $event, users: $users, emails: $emails }) {
+    _id,
+    invited
+  }
+}
+
+mutation AssignTickets($input: AssignTicketsInput!) {
+  assignTickets(input: $input)
 }

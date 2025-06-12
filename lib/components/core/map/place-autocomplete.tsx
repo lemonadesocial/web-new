@@ -14,7 +14,7 @@ export function PlaceAutoComplete({
   label?: string;
   placeholder?: string;
   value?: string;
-  onSelect?: (address: Address) => void;
+  onSelect?: (address: Address | undefined) => void;
   autoFocus?: boolean;
 }) {
   const [toggle, setToggle] = React.useState(false);
@@ -70,11 +70,18 @@ export function PlaceAutoComplete({
     });
   };
 
+  const handleClear = () => {
+    setQuery('');
+    setPredictions([]);
+    setToggle(false);
+    onSelect?.(undefined);
+  };
+
   return (
     <div className="relative">
       <div className="flex flex-col gap-2">
         <label className="text-sm text-secondary font-medium">{label}</label>
-        <div className="bg-background/64 border flex py-1 px-3.5 rounded-sm items-center h-[44px] left-0 right-0 focus-within:border-primary px-3.5 gap-2.5">
+        <div className="bg-background/64 border flex py-1 rounded-sm items-center h-[44px] left-0 right-0 focus-within:border-primary px-3.5 gap-2.5">
           <i className="icon-location-outline text-tertiary" />
           <input
             autoFocus={autoFocus}
@@ -86,6 +93,9 @@ export function PlaceAutoComplete({
               setToggle(true);
             }}
           />
+          {query && (
+            <i className="icon-cancel text-tertiary size-5 cursor-pointer" onClick={handleClear} />
+          )}
         </div>
       </div>
 

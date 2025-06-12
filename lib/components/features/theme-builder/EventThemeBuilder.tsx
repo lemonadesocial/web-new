@@ -15,7 +15,7 @@ import {
   UpdateEventThemeDocument,
 } from '$lib/graphql/generated/backend/graphql';
 
-import { colors, emojis, fonts, getRandomColor, patterns, presets, shaders } from './store';
+import { colors, emojis, fonts, getRandomColor, getThemeName, patterns, presets, shaders } from './store';
 import { useEventTheme, ThemeBuilderActionKind } from './provider';
 import { MenuColorPicker } from './ColorPicker';
 import { generateUrl } from '$lib/utils/cnd';
@@ -23,7 +23,7 @@ import { generateUrl } from '$lib/utils/cnd';
 export function EventThemeBuilder({ eventId }: { eventId?: string }) {
   const [toggle, setToggle] = React.useState(false);
   const [data, dispatch] = useEventTheme();
-  const themeName = !data.theme || data.theme === 'default' ? 'minimal' : data.theme;
+  const themeName = getThemeName(data);
   const mounted = React.useRef(false);
 
   const [updateEventTheme] = useMutation(UpdateEventThemeDocument);
@@ -166,7 +166,7 @@ function EventBuilderPaneOptions() {
     'template' | 'style' | 'effect' | 'colors' | 'font_title' | 'font_body' | 'mode'
   >('template');
   const [data] = useEventTheme();
-  const themeName = !data.theme || data.theme === 'default' ? 'minimal' : data.theme;
+  const themeName = getThemeName(data);
 
   const Comp = MAPPINGS[state];
 
@@ -300,7 +300,7 @@ function ThemeTemplate() {
               onClick={(e) => {
                 e.stopPropagation();
                 const config: any = {};
-                const themeName = !data.theme || data.theme === 'default' ? 'minimal' : data.theme;
+                const themeName = getThemeName(data);
 
                 if (!data.config.color) config.color = getRandomColor();
                 if (presets[themeName].ui?.disabled?.mode) config.mode = 'auto';

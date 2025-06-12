@@ -4,7 +4,6 @@ import clsx from 'clsx';
 
 import { ThemeGenerator } from '$lib/components/features/theme-builder/generator';
 import { useEventTheme } from '$lib/components/features/theme-builder/provider';
-import Header from '$lib/components/layouts/header';
 
 export function MainEventLayout({ children }: React.PropsWithChildren) {
   const [state] = useEventTheme();
@@ -17,7 +16,6 @@ export function MainEventLayout({ children }: React.PropsWithChildren) {
       )}
     >
       <ThemeGenerator data={state} />
-      <Header />
       <div className="page mx-auto px-4 xl:px-0">{children}</div>
     </main>
   );

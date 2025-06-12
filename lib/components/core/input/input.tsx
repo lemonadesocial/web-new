@@ -27,7 +27,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
       baseClasses,
       {
         'bg-primary/8': variant === 'default',
-        '': variant === 'outlined', // TODO
+        'bg-background/64 border-primary/8 hover:border-primary focus:border-primary': variant === 'outlined',
       },
       {
         'text-sm': inputSize === 's',
@@ -52,6 +52,57 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
 });
 
 Input.displayName = 'Input';
+
+interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  variant?: 'default' | 'outlined';
+  inputSize?: 's' | 'm';
+  error?: boolean;
+  rows?: number;
+}
+
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
+  variant = 'default',
+  inputSize = 'm',
+  value,
+  onChange,
+  placeholder,
+  className,
+  error,
+  rows = 3,
+  ...props
+}, ref) => {
+  const baseClasses = 'w-full rounded-sm focus:outline-none placeholder-quaternary px-2.5 py-2 font-medium resize-none';
+
+  const finalClassName = twMerge(
+    clsx(
+      baseClasses,
+      {
+        'bg-primary/8': variant === 'default',
+        'bg-background/64 border-primary/8 hover:border-primary focus:border-primary': variant === 'outlined',
+      },
+      {
+        'text-sm': inputSize === 's',
+        'text-base': inputSize === 'm',
+      },
+      error && 'border border-error',
+      className
+    )
+  );
+
+  return (
+    <textarea
+      ref={ref}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      rows={rows}
+      className={finalClassName}
+      {...props}
+    />
+  );
+});
+
+Textarea.displayName = 'Textarea';
 
 interface LabeledInputProps {
   label: string;
