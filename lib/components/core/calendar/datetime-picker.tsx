@@ -125,7 +125,7 @@ function DateTimePicker({
     <div className="flex gap-0.5">
       <Menu.Root placement={placement}>
         <Menu.Trigger>
-          <Button variant="tertiary" size="sm" className="rounded-e-none! min-w-[110px]! text-primary! min-h-[36px]!">
+          <Button variant="tertiary" size="sm" className="rounded-e-none! min-w-[110px]! text-primary! min-h-[36px]! text-base">
             {format(value ? new Date(value) : new Date(), 'EEE, dd MMM')}
           </Button>
         </Menu.Trigger>
@@ -150,7 +150,7 @@ function DateTimePicker({
       </Menu.Root>
       <Menu.Root placement={placement}>
         <Menu.Trigger>
-          <Button variant="tertiary" size="sm" className="rounded-s-none! min-w-[84px] text-primary! min-h-[36px]!">
+          <Button variant="tertiary" size="sm" className="rounded-s-none! min-w-[84px] text-primary! min-h-[36px]! text-base">
             {format(value ? new Date(value) : new Date(), 'hh:mm a')}
           </Button>
         </Menu.Trigger>

@@ -49,11 +49,7 @@ export const drawer: Drawer = {
 export function DrawerContainer() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [content, setContent] = React.useState<React.ReactNode>();
-  const [options, setOptions] = React.useState<Options<unknown>>({
-    duration: 0.3,
-    position: 'right',
-    dismissible: true,
-  });
+  const [options, setOptions] = React.useState<Options<unknown>>({ duration: 0.3, position: 'right', dismissible: true });
   const ref = React.useRef<HTMLDivElement | null>(null);
 
   const handleOpen = React.useCallback(<T extends object>(Component: React.ComponentType<T>, opts: Options<T> = {}) => {
@@ -104,7 +100,7 @@ export function DrawerContainer() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed z-100 inset-0">
+        <div className="fixed z-100000 inset-0">
           <div className="h-full w-full p-2">
             <div className="bg-overlay-backdrop fixed inset-0 z-0" />
             <div className={clsx('flex h-full', options.position === 'right' && 'justify-end')}>
