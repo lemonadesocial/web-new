@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.43.1](https://github.com/lemonadesocial/web-new/compare/v1.43.0...v1.43.1) (2025-06-13)
+
+
+### Bug Fixes
+
+* cohosts display ([2ddee63](https://github.com/lemonadesocial/web-new/commit/2ddee63692083096eabd467cf30727e6ccb852fc))
+
 ## [1.43.0](https://github.com/lemonadesocial/web-new/compare/v1.42.0...v1.43.0) (2025-06-12)
 
 
