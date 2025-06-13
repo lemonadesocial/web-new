@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.43.3](https://github.com/lemonadesocial/web-new/compare/v1.43.2...v1.43.3) (2025-06-13)
+
+
+### Bug Fixes
+
+* event time status ([18b8fb8](https://github.com/lemonadesocial/web-new/commit/18b8fb8e4c5465bbeb15944e806f07d47a06d0d2))
+
 ## [1.43.2](https://github.com/lemonadesocial/web-new/compare/v1.43.1...v1.43.2) (2025-06-13)
 
 
