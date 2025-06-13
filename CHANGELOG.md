@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.43.4](https://github.com/lemonadesocial/web-new/compare/v1.43.3...v1.43.4) (2025-06-13)
+
+
+### Bug Fixes
+
+* claim username flow ([940c653](https://github.com/lemonadesocial/web-new/commit/940c653dc7095a70273a0fbd7cd5d6b9a3098f6b))
+
 ## [1.43.3](https://github.com/lemonadesocial/web-new/compare/v1.43.2...v1.43.3) (2025-06-13)
 
 
