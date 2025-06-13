@@ -141,6 +141,7 @@ export function EventsContent() {
       </PageTitle>
 
       <EventListCard
+        ownEvent
         loading={loading}
         events={filter.data}
         onSelect={(event) => drawer.open(EventPane, { props: { eventId: event._id } })}

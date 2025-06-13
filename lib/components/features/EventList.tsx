@@ -1,26 +1,27 @@
 import React from 'react';
 import { groupBy, uniqBy } from 'lodash';
-import { format, isAfter, isBefore } from 'date-fns';
+import { differenceInHours, format, isAfter, isBefore, isSameDay } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
+import { toZonedTime } from 'date-fns-tz';
 
-import { Avatar, Badge, Card, Divider, Spacer } from '$lib/components/core';
+import { Avatar, Badge, Button, Card, Divider, Spacer } from '$lib/components/core';
 import { Address, Event, SpaceTag, User } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
 import { getEventPrice } from '$lib/utils/event';
-import { convertFromUtcToTimezone } from '$lib/utils/date';
+import { formatWithTimezone } from '$lib/utils/date';
+import { useMe } from '$lib/hooks/useMe';
 
-export function EventList({
-  events,
-  loading,
-  onSelect,
-}: {
+type EventListProps = {
   events: Event[];
   loading?: boolean;
   tags?: SpaceTag[];
   onSelect?: (event: Event) => void;
-}) {
+  ownEvent?: boolean;
+};
+
+export function EventList({ events, loading, onSelect }: EventListProps) {
   if (loading) return <EventListSkeleton />;
   if (!events.length) return <EmptyComp />;
 
@@ -56,7 +57,7 @@ function EventItem({ item }: { item: Event }) {
 
   return (
     <div className="transition flex text-tertiary gap-4 hover:bg-primary/[.16] p-2 rounded-md cursor-pointer backdrop-blur-lg">
-      <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), 'hh:mm a')}</p>
+      <EventDateBlock event={item} />
       <div className="flex flex-col gap-1 flex-1">
         <p className="text-primary font-medium text-base md:text-lg">{item.title}</p>
         <div className="flex gap-2 items-center">
@@ -123,17 +124,7 @@ function EventListSkeleton() {
 
 // ListEventCard
 
-export function EventListCard({
-  events,
-  loading,
-  tags = [],
-  onSelect,
-}: {
-  events: Event[];
-  loading?: boolean;
-  tags?: SpaceTag[];
-  onSelect?: (event: Event) => void;
-}) {
+export function EventListCard({ events, loading, tags = [], onSelect, ownEvent }: EventListProps) {
   if (loading) return <EventListCardSkeleton />;
   if (!events.length) return <EmptyComp />;
   return (
@@ -157,6 +148,7 @@ export function EventListCard({
                 <EventCardItem
                   key={item._id}
                   item={item}
+                  ownEvent={ownEvent}
                   tags={tags}
                   onClick={() => {
                     if (item.external_url) window.open(item.external_url);
@@ -170,30 +162,31 @@ export function EventListCard({
           <Spacer className="h-6" />
         </div>
       ))}
-      {/* <div className="flex flex-col relative"> */}
-      {/*   <div className="border-dashed border-l-2 absolute h-full left-1 top-2 z-10"> */}
-      {/*     <div className="size-2 bg-background -ml-[5px] absolute"> */}
-      {/*       <div className="size-2 rounded-full bg-quaternary " /> */}
-      {/*     </div> */}
-      {/*   </div> */}
-      {/* </div> */}
-      {/* <div className="ml-5 mt-0.5"> */}
-      {/*   <p className="text-sm text-tertiary">No more events to see here!</p> */}
-      {/* </div> */}
-      {/* <Spacer className="h-6" /> */}
     </div>
   );
 }
 
-function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: SpaceTag[]; onClick?: () => void }) {
+function EventCardItem({
+  item,
+  tags = [],
+  ownEvent,
+  onClick,
+}: {
+  item: Event;
+  tags?: SpaceTag[];
+  onClick?: () => void;
+  ownEvent?: boolean;
+}) {
+  const me = useMe();
   const users = uniqBy([item.host_expanded, ...(item.visible_cohosts_expanded || [])], (u) => u?._id);
+  const hosting = users.find((u) => u?._id === me?._id);
 
   return (
     <Card.Root as="button" onClick={onClick} key={`event_${item.shortid}`} className="flex flex-col gap-3">
       <Card.Content className="flex gap-6">
         <div className="text-tertiary flex-1 w-[173px] flex flex-col gap-2">
           <div>
-            <div className="flex gap-2 text-sm md:text-base font-medium">
+            <div className="flex gap-2 text-sm items-center md:text-base font-medium">
               {isBefore(new Date(), item.end) && isAfter(new Date(), item.start) && (
                 <div className="flex gap-2 items-center">
                   <div className="size-1.5 bg-danger-400 rounded-full motion-safe:animate-pulse" />
@@ -202,7 +195,7 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
                 </div>
               )}
 
-              <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), 'hh:mm a')}</p>
+              <EventDateBlock event={item} />
             </div>
             <p className="font-title text-lg md:text-xl font-semibold text-primary">{item.title}</p>
 
@@ -259,6 +252,14 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
 
           {getEventPrice(item) && (
             <Badge title={getEventPrice(item)} className="bg-success-500/[0.16] text-success-500" />
+          )}
+
+          {ownEvent && (
+            <div>
+              <Button size="xs" variant="tertiary-alt">
+                Check In
+              </Button>
+            </div>
           )}
         </div>
 
@@ -361,4 +362,35 @@ function EmptyComp() {
       </div>
     </div>
   );
+}
+
+function EventDateBlock({ event }: { event: Event }) {
+  const startDate = event.start;
+  const localTimeLabel = format(new Date(event.start), 'hh:mm a');
+  const eventTimezone = event.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  // If the event is in a different timezone, we need to show the event in both the local timezone and the event timezone
+  if (eventTimezone !== localTimezone) {
+    const eventDate = toZonedTime(startDate, eventTimezone);
+    const timeDiffInHours = Math.abs(differenceInHours(new Date(startDate), eventDate));
+
+    if (timeDiffInHours >= 1) {
+      const eventTimeLabel = formatWithTimezone(eventDate, 'hh:mm a OOO', eventTimezone);
+      const eventDateLabel = formatWithTimezone(eventDate, 'MMM d', eventTimezone);
+      // If the event date is not the same as the local date, we need to show the event date
+      // Otherwise, we can just show the time
+      const showDate = !isSameDay(new Date(startDate), eventDate);
+      const eventDisplay = showDate ? `${eventDateLabel}, ${eventTimeLabel}` : eventTimeLabel;
+
+      return (
+        <>
+          <p>{localTimeLabel}</p>
+          <p className="text-warning-300">{eventDisplay}</p>
+        </>
+      );
+    }
+  }
+
+  return <p>{localTimeLabel}</p>;
 }
