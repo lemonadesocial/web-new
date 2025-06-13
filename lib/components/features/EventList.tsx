@@ -1,5 +1,4 @@
-import React from 'react';
-import { groupBy, uniqBy } from 'lodash';
+import { groupBy } from 'lodash';
 import { format, isAfter, isBefore } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
@@ -8,7 +7,7 @@ import { Avatar, Badge, Card, Divider, Spacer } from '$lib/components/core';
 import { Address, Event, SpaceTag, User } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
-import { getEventPrice } from '$lib/utils/event';
+import { getEventCohosts, getEventPrice } from '$lib/utils/event';
 import { convertFromUtcToTimezone } from '$lib/utils/date';
 
 export function EventList({
@@ -52,7 +51,7 @@ export function EventList({
 }
 
 function EventItem({ item }: { item: Event }) {
-  const users = uniqBy([item.host_expanded, ...(item.visible_cohosts_expanded || [])], (u) => u?._id);
+  const users = getEventCohosts(item);
 
   return (
     <div className="transition flex text-tertiary gap-4 hover:bg-primary/[.16] p-2 rounded-md cursor-pointer backdrop-blur-lg">
@@ -186,7 +185,7 @@ export function EventListCard({
 }
 
 function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: SpaceTag[]; onClick?: () => void }) {
-  const users = uniqBy([item.host_expanded, ...(item.visible_cohosts_expanded || [])], (u) => u?._id);
+  const users = getEventCohosts(item);
 
   return (
     <Card.Root as="button" onClick={onClick} key={`event_${item.shortid}`} className="flex flex-col gap-3">
@@ -227,7 +226,7 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
                   <p className="font-medium text-tertiary text-sm md:text-base truncate">
                     By{' '}
                     {users
-                      .map((p) => p?.name)
+                      .map((p) => p.display_name || p.name)
                       .join(', ')
                       .replace(/,(?=[^,]*$)/, ' & ')}
                   </p>

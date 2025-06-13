@@ -1,13 +1,15 @@
 'use client';
-import React from 'react';
-import { uniqBy } from 'lodash';
+import clsx from 'clsx';
 
 import { Event, GetEventDocument, GetEventQuery } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { Badge, Button, Spacer } from '$lib/components/core';
 import { EDIT_KEY, generateUrl } from '$lib/utils/cnd';
-import { hosting, isAttending } from '$lib/utils/event';
+import { getEventCohosts, hosting, isAttending } from '$lib/utils/event';
 import { useSession } from '$lib/hooks/useSession';
+
+import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
+import { useEventTheme } from '$lib/components/features/theme-builder/provider';
 
 import { AboutSection } from './AboutSection';
 import { LocationSection } from './LocationSection';
@@ -22,9 +24,6 @@ import { EventLocationBlock } from './EventLocationBlock';
 import { AttendeesSection } from './AttendeesSection';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { EventCollectibles } from '../event-collectibles';
-import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
-import { useEventTheme } from '$lib/components/features/theme-builder/provider';
-import clsx from 'clsx';
 
 export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
   const [state] = useEventTheme();
@@ -40,7 +39,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
 
   const isHost = session?.user && event && hosting(event, session.user);
   const attending = session?.user ? isAttending(event, session?.user) : false;
-  const hosts = uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id);
+  const hosts = getEventCohosts(event);
 
   return (
     <div className={clsx('flex gap-[72px]', state.theme && state.config.color)}>
@@ -130,7 +129,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           <p className="md:hidden text-secondary text-sm">
             Hosted By{' '}
             {hosts
-              .map((p) => p?.name)
+              .map((p) => p.display_name || p.name)
               .join(', ')
               .replace(/,(?=[^,]*$)/, ' & ')}
           </p>
