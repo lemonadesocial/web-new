@@ -26,7 +26,7 @@ export function EventPane({ eventId }: { eventId: string }) {
   const { data, loading } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
   const event = data?.getEvent as Event;
 
-  const hosts = getEventCohosts(event);
+  const hosts = event ? getEventCohosts(event) : [];
 
   const canManage = session?.user && event && hosting(event, session.user);
 
