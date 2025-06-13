@@ -17,9 +17,9 @@ import { GetSpacesDocument, GetSpacesQuery, Space, SpaceRole } from '$lib/graphq
 import { generateUrl } from '$lib/utils/cnd';
 import { communityAvatar } from '$lib/utils/community';
 import { ASSET_PREFIX } from '$lib/utils/constants';
-import { Container } from 'postcss';
 import { getUserTimezoneOption } from '$lib/utils/timezone';
 import { DateTimeGroup, Timezone } from '$lib/components/core/calendar';
+import { roundToNext30Minutes } from '$lib/utils/date';
 
 export function Content({ initData }: { initData: { spaces: Space[] } }) {
   const signIn = useSignIn();
@@ -44,28 +44,76 @@ export function Content({ initData }: { initData: { spaces: Space[] } }) {
 }
 
 const PUBLIC_OPTIONS = [
-  { title: 'Public', subtitle: 'Shown on your community & eligible to be featured', icon: 'icon-globe', public: true },
+  {
+    title: 'Public',
+    subtitle: 'Shown on your community & eligible to be featured',
+    icon: 'icon-globe',
+    private: false,
+  },
   {
     title: 'Private',
     subtitle: 'Unlisted. Only people with the link can register.',
     icon: 'icon-sparkles',
-    public: false,
+    private: true,
   },
 ];
+
+type EventFormValue = {
+  title: string;
+  date: {
+    start: string;
+    end: string;
+    timezone: string;
+  };
+  private: boolean;
+  startDate: string;
+  endDate: string;
+  timezone: string;
+  duration: number;
+  approval_required: boolean;
+  description: string;
+  cost: number;
+  currency: string;
+  payment_optional: boolean;
+  address?: {
+    address: string;
+    latitude?: number;
+    longitude?: number;
+  };
+  guest_limit?: undefined;
+  guest_limit_per: number;
+  virtual: boolean;
+  virtual_url: string;
+  cover: '';
+  space?: string;
+  // listToSpace: string;
+};
 
 function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
   const [state] = useEventTheme();
   const [timezone, setTimeZone] = React.useState(getUserTimezoneOption());
+  const startDate = roundToNext30Minutes(new Date());
 
-  const { control, setValue } = useForm({
+  const { control, setValue } = useForm<EventFormValue>({
     defaultValues: {
       title: '',
-      cover: null,
+      private: false,
+      duration: 3,
+      approval_required: false,
+      description: '',
+      cost: 0,
+      currency: 'USD',
+      payment_optional: false,
+      address: undefined,
+      guest_limit: undefined,
+      guest_limit_per: 0,
+      virtual: true,
+      virtual_url: '',
       space: space?._id,
-      public: true,
+      cover: '',
       date: {
-        start: '',
-        end: '',
+        start: startDate.toString(),
+        end: roundToNext30Minutes(startDate).toString(),
         timezone: getUserTimezoneOption()?.value,
       },
     },
@@ -162,7 +210,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
 
             <Controller
               control={control}
-              name="public"
+              name="private"
               render={({ field }) => (
                 <Menu.Root>
                   <Menu.Trigger>
@@ -170,10 +218,10 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
                       size="sm"
                       variant="tertiary"
                       className="w-[112px]"
-                      iconLeft={PUBLIC_OPTIONS.find((item) => item.public === field.value)?.icon}
+                      iconLeft={PUBLIC_OPTIONS.find((item) => item.private === field.value)?.icon}
                       iconRight="icon-chevron-down"
                     >
-                      {field.value ? 'Public' : 'Private'}
+                      {!field.value ? 'Public' : 'Private'}
                     </Button>
                   </Menu.Trigger>
                   <Menu.Content className="w-[280px] p-1">
@@ -184,7 +232,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
                             key={idx}
                             className="flex gap-1.5 rounded-xs px-2 py-1.5 items-center cursor-pointer hover:bg-[var(--btn-tertiary)]"
                             onClick={() => {
-                              setValue('public', item.public);
+                              setValue('private', item.private);
                               toggle();
                             }}
                           >
@@ -193,7 +241,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
                               <p className="text-sm">{item.title}</p>
                               <p className="text-xs text-tertiary">{item.subtitle}</p>
                             </div>
-                            <i className={clsx('hidden size-5 icon-check', item.public === field.value && 'block!')} />
+                            <i className={clsx('hidden size-5 icon-check', item.private === field.value && 'block!')} />
                           </div>
                         ))}
                       </>
@@ -238,6 +286,44 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
               </div>
             )}
           />
+
+          <div className="flex gap-3">
+            <Controller
+              control={control}
+              name="address"
+              render={({ field }) => {
+                return (
+                  <Card.Root className="flex-1">
+                    <Card.Content className="flex gap-2 items-start content-stretch">
+                      <i className="icon-location-outline size-5" />
+                      <div>
+                        <p>Add Location</p>
+                        <p className="text-sm text-tertiary">for offline events</p>
+                      </div>
+                    </Card.Content>
+                  </Card.Root>
+                );
+              }}
+            />
+
+            <Controller
+              control={control}
+              name="virtual_url"
+              render={({ field }) => {
+                return (
+                  <Card.Root className="flex-1">
+                    <Card.Content className="flex gap-2">
+                      <i className="icon-location-outline" />
+                      <div>
+                        <p>Add Virtual Link</p>
+                        <p className="text-sm text-tertiary">for offline events</p>
+                      </div>
+                    </Card.Content>
+                  </Card.Root>
+                );
+              }}
+            />
+          </div>
         </div>
       </div>
     </form>
