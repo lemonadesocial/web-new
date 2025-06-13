@@ -16,7 +16,7 @@ import { formatCurrency } from './string';
 
 import { convertFromUtcToTimezone, formatWithTimezone } from './date';
 import { getListChains } from './crypto';
-import { groupBy, uniqBy } from 'lodash';
+import { groupBy } from 'lodash';
 
 export function formatCryptoPrice(price: EventTicketPrice, skipCurrency: boolean = false) {
   const { cost, currency } = price;
