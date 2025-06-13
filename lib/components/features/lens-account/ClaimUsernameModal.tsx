@@ -1,5 +1,5 @@
 'use client';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import { sessionClientAtom } from '$lib/jotai/lens';
 import { canCreateUsername } from '@lens-protocol/client/actions';
@@ -30,9 +30,15 @@ export function ClaimUsernameModal() {
 
   const [errorMessage, setErrorMessage] = useState('');
 
+  const usernameRef = useRef(username);
+
+  useEffect(() => {
+    usernameRef.current = username;
+  }, [username]);
+
   const checkUsername = useCallback(
     async (value: string) => {
-      if (!sessionClient) return;
+      if (!sessionClient || value !== usernameRef.current) return;
 
       setStatus('checking');
       setErrorMessage('');
@@ -41,7 +47,7 @@ export function ClaimUsernameModal() {
         localName: value,
         namespace: process.env.NEXT_PUBLIC_LENS_NAMESPACE ? evmAddress(process.env.NEXT_PUBLIC_LENS_NAMESPACE) : undefined,
       });
-
+  
       if (result.isErr()) {
         setErrorMessage(result.error?.message || 'Unknown error');
         return;
@@ -54,7 +60,7 @@ export function ClaimUsernameModal() {
           break;
         case 'NamespaceOperationValidationFailed': {
           setStatus('available');
-          const msg = getUsernameValidationMessage(result.value, username.length);
+          const msg = getUsernameValidationMessage(result.value, value.length);
           setErrorMessage(msg);
           break;
         }
@@ -67,7 +73,7 @@ export function ClaimUsernameModal() {
           break;
       }
     },
-    [sessionClient, username.length]
+    [sessionClient]
   );
 
   const debouncedCheckUsername = useCallback(
@@ -166,11 +172,15 @@ export function ClaimUsernameModal() {
 
   return (
     <ModalContent
-      icon={<i className='icon-lemonade size-8 text-warning-300' />}
+      title="Pick Username"
       onClose={() => modal.close()}
     >
-      <p className='text-lg'>Pick Username</p>
-      <p className='text-secondary text-sm mt-2'>Username pricing depends on character count and naming rules. Secure your identity before someone else does.</p>
+      <p className='text-secondary text-sm'>Secure your identity before someone else does. Price depends on character count. This cannot be changed later.</p>
+
+      <div className='flex items-center gap-1.5 mt-2'>
+        <p className='text-sm text-tertiary'>Powered by</p>
+        <img src={`${ASSET_PREFIX}/assets/images/lens.svg`} alt='Lens' className='h-3' />
+      </div>
 
       <div className='flex items-center justify-between mt-4 h-6'>
         <p className='text-sm'>Search Username</p>
@@ -181,13 +191,16 @@ export function ClaimUsernameModal() {
         </div>
       </div>
 
-      <Input
-        placeholder='johndoe'
-        className='w-full mt-1.5'
-        value={username}
-        onChange={onInputChange}
-      />
-
+      <div className="w-full rounded-sm flex items-center px-2.5 border border-tertiary h-10 font-medium text-sm mt-1.5">
+        <span className="text-tertiary">lemonade/</span>
+        <input
+          placeholder='johndoe'
+          className='focus:outline-none placeholder-quaternary'
+          value={username}
+          onChange={onInputChange}
+        />
+      </div>
+      
       {errorMessage && <p className='text-error text-sm mt-2'>{errorMessage}</p>}
 
       <Button
@@ -198,11 +211,6 @@ export function ClaimUsernameModal() {
       >
         Continue
       </Button>
-      <hr className='mt-4 border-t border-t-divider -mx-4' />
-      <div className='flex items-center justify-center gap-1.5 mt-4'>
-        <p className='text-xs text-quaternary'>Powered by</p>
-        <img src={`${ASSET_PREFIX}/assets/images/lens.svg`} alt='Lens' className='h-3' />
-      </div>
     </ModalContent>
   );
 }
