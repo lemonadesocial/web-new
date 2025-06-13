@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.44.0](https://github.com/lemonadesocial/web-new/compare/v1.43.4...v1.44.0) (2025-06-13)
+
+
+### Features
+
+* add verify email button ([b82947a](https://github.com/lemonadesocial/web-new/commit/b82947af37a83210da8376b15363e506d7ec205a))
+
 ## [1.43.4](https://github.com/lemonadesocial/web-new/compare/v1.43.3...v1.43.4) (2025-06-13)
 
 
