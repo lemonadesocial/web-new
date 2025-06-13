@@ -32,6 +32,12 @@
     &.btn-tertiary-alt {
       --btn-border-color: var(--btn-tertiary-content);
     }
+
+    &.btn-warning {
+      --btn-content: var(--color-yellow-300);
+      --btn-border-color: var(--color-yellow-300);
+      --btn-content-hover: var(--color-yellow-500);
+    }
   }
 
   .btn-primary {
@@ -71,5 +77,9 @@
 
   .btn-flat {
     --btn-bg-hover: var(--bg-primary);
+  }
+
+  .btn-warning {
+    --btn-content: var(--color-yellow-300);
   }
 }

@@ -305,7 +305,7 @@ query GetPastEvents(
   $skip: Int = 0
   $sort: JSON
   $site: MongoID
-  $hosting_only: Boolean
+  $host: Boolean
   $unpublished: Boolean
 ) {
   events: getPastEvents(
@@ -314,7 +314,7 @@ query GetPastEvents(
     skip: $skip
     sort: $sort
     site: $site
-    hosting_only: $hosting_only
+    host: $host
     unpublished: $unpublished
   ) {
     _id

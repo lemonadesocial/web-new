@@ -5,6 +5,7 @@ query GetMe {
     email
     wallets_new
     wallet_custodial
+    email_verified
   }
 }
 
