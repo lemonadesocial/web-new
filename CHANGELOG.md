@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.45.0](https://github.com/lemonadesocial/web-new/compare/v1.44.0...v1.45.0) (2025-06-14)
+
+
+### Features
+
+* accept cohost ([938d530](https://github.com/lemonadesocial/web-new/commit/938d530f853e85c4d7ac7d969fb45bce613e985c))
+
 ## [1.44.0](https://github.com/lemonadesocial/web-new/compare/v1.43.4...v1.44.0) (2025-06-13)
 
 
