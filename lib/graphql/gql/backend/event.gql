@@ -464,3 +464,17 @@ mutation UpdateEventTheme($id: MongoID!, $input: EventInput!) {
     theme_data
   }
 }
+
+query GetEventCohostInvites($input: GetEventCohostRequestsInput!) {
+  getEventCohostInvites(input: $input) {
+    event
+    from_expanded {
+      _id
+      name
+    }
+  }
+}
+
+mutation DecideEventCohostRequest($input: DecideEventCohostRequestInput!) {
+  decideEventCohostRequest(input: $input)
+}

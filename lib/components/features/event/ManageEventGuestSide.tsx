@@ -7,9 +7,10 @@ import { Badge, Button, Spacer } from '$lib/components/core';
 import { EDIT_KEY, generateUrl } from '$lib/utils/cnd';
 import { getEventCohosts, hosting, isAttending } from '$lib/utils/event';
 import { useSession } from '$lib/hooks/useSession';
+import { LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { useEventTheme } from '$lib/components/features/theme-builder/provider';
 
 import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
-import { useEventTheme } from '$lib/components/features/theme-builder/provider';
 
 import { AboutSection } from './AboutSection';
 import { LocationSection } from './LocationSection';
@@ -22,8 +23,8 @@ import { EventAccess } from '../event-access';
 import { EventDateTimeBlock } from './EventDateTimeBlock';
 import { EventLocationBlock } from './EventLocationBlock';
 import { AttendeesSection } from './AttendeesSection';
-import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { EventCollectibles } from '../event-collectibles';
+import { PendingCohostRequest } from './PendingCohostRequest';
 
 export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
   const [state] = useEventTheme();
@@ -73,6 +74,9 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           )}
         </div>
 
+        {
+          event && <PendingCohostRequest event={event} />
+        }
         <CommunitySection event={event} />
         <HostedBySection event={event} />
         <AttendeesSection eventId={event._id} />
