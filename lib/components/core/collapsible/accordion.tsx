@@ -2,13 +2,18 @@
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import clsx from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 type State = { isOpen?: boolean; toggle: () => void; close?: () => void };
 
 const Context = React.createContext<State>({ toggle: () => {} });
 
-function Root({ children, color }: React.PropsWithChildren & { color: 'warning' }) {
-  const [isOpen, setIsOpen] = React.useState(false);
+function Root({ children, color, open }: React.PropsWithChildren & { color?: 'warning'; open?: boolean }) {
+  const [isOpen, setIsOpen] = React.useState(open);
+
+  React.useEffect(() => {
+    setIsOpen(open);
+  }, [open]);
 
   const toggle = () => {
     setIsOpen(!isOpen);
@@ -23,22 +28,38 @@ function Root({ children, color }: React.PropsWithChildren & { color: 'warning' 
   );
 }
 
-function Header({ children }: React.PropsWithChildren) {
+function Header({
+  children,
+  chevron = true,
+  className,
+  disabled = false,
+}: {
+  chevron?: boolean;
+  className?: string;
+  disabled?: boolean;
+  children: React.ReactNode | ((props: { toggle: () => void; isOpen?: boolean }) => React.ReactNode);
+}) {
   const { isOpen, toggle } = React.useContext(Context);
 
   return (
-    <div onClick={toggle} className="trigger" role="button">
-      <div>{children}</div>
-      <motion.i
-        animate={{ rotate: isOpen ? 180 : 0 }}
-        transition={{ duration: 0.3 }}
-        className="icon-arrow-down text-tertiary"
-      />
+    <div
+      onClick={!disabled ? toggle : undefined}
+      className={twMerge('trigger cursor-pointer', className)}
+      role="button"
+    >
+      {typeof children === 'function' ? children({ toggle, isOpen }) : <div className="w-full">{children}</div>}
+      {chevron && (
+        <motion.i
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+          className="icon-arrow-down text-tertiary"
+        />
+      )}
     </div>
   );
 }
 
-function Content({ children }: React.PropsWithChildren) {
+function Content({ children, className }: React.PropsWithChildren & { className?: string }) {
   const { isOpen } = React.useContext(Context);
 
   const variants = {
@@ -57,7 +78,7 @@ function Content({ children }: React.PropsWithChildren) {
           transition={{ duration: 0.3 }}
           className="content"
         >
-          <div className="content-box">{children}</div>
+          <div className={twMerge('content-box', className)}>{children}</div>
         </motion.div>
       )}
     </AnimatePresence>
@@ -75,7 +96,7 @@ function Content({ children }: React.PropsWithChildren) {
  *       Content
  *     </Accordion.Content>
  *   </Accordion.Root>
-*/
+ */
 export const Accordion = {
   Root,
   Header,

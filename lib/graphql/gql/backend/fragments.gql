@@ -8,6 +8,20 @@ fragment User on User {
   description
   job_title
   company_name
+  addresses {
+    _id
+    street_1
+    street_2
+    city
+    region
+    postal
+    country
+    title
+    phone
+    longitude
+    latitude
+    additional_directions
+  }
   icebreakers {
     _id
     value

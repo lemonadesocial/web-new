@@ -305,18 +305,9 @@ query GetPastEvents(
   $skip: Int = 0
   $sort: JSON
   $site: MongoID
-  $hosting_only: Boolean
   $unpublished: Boolean
 ) {
-  events: getPastEvents(
-    user: $user
-    limit: $limit
-    skip: $skip
-    sort: $sort
-    site: $site
-    hosting_only: $hosting_only
-    unpublished: $unpublished
-  ) {
+  events: getPastEvents(user: $user, limit: $limit, skip: $skip, sort: $sort, site: $site, unpublished: $unpublished) {
     _id
     shortid
     title
@@ -462,5 +453,11 @@ mutation UpdateEventTheme($id: MongoID!, $input: EventInput!) {
   updateEvent(_id: $id, input: $input) {
     _id
     theme_data
+  }
+}
+
+mutation createEvent($input: EventInput!) {
+  createEvent(input: $input) {
+    _id
   }
 }
