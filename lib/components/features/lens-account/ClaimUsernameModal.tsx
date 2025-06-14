@@ -1,12 +1,13 @@
 'use client';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import { sessionClientAtom } from '$lib/jotai/lens';
 import { canCreateUsername } from '@lens-protocol/client/actions';
 import { evmAddress } from '@lens-protocol/client';
 import { account } from '@lens-protocol/metadata';
+import debounce from 'lodash/debounce';
 
-import { Avatar, Button, Input, modal, ModalContent, toast, FileInput, Menu, LabeledInput } from "$lib/components/core";
+import { Avatar, Button, Input, modal, ModalContent, toast, FileInput, LabeledInput } from "$lib/components/core";
 import { ASSET_PREFIX } from "$lib/utils/constants";
 import { useClaimUsername } from '$lib/hooks/useLens';
 import { randomUserImage } from '$lib/utils/user';
@@ -18,7 +19,7 @@ export function ClaimUsernameModal() {
 
   const [username, setUsername] = useState('');
   const [step, setStep] = useState<'search' | 'profile'>('search');
-  const [status, setStatus] = useState<'idle' | 'checking' | 'available' | 'unavailable' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'checking' | 'available' | 'unavailable'>('idle');
 
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
@@ -27,52 +28,59 @@ export function ClaimUsernameModal() {
 
   const { claimUsername, isLoading } = useClaimUsername();
 
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const usernameRef = useRef(username);
+
+  useEffect(() => {
+    usernameRef.current = username;
+  }, [username]);
+
   const checkUsername = useCallback(
     async (value: string) => {
-      if (!sessionClient) {
-        setStatus('idle');
+      if (!sessionClient || value !== usernameRef.current) return;
+
+      setStatus('checking');
+      setErrorMessage('');
+
+      const result = await canCreateUsername(sessionClient, {
+        localName: value,
+        namespace: process.env.NEXT_PUBLIC_LENS_NAMESPACE ? evmAddress(process.env.NEXT_PUBLIC_LENS_NAMESPACE) : undefined,
+      });
+  
+      if (result.isErr()) {
+        setErrorMessage(result.error?.message || 'Unknown error');
         return;
       }
-      setStatus('checking');
-      try {
-        const result = await canCreateUsername(sessionClient, {
-          localName: value,
-          namespace: process.env.NEXT_PUBLIC_LENS_NAMESPACE ? evmAddress(process.env.NEXT_PUBLIC_LENS_NAMESPACE) : undefined,
-        });
 
-        if (result.isErr()) {
+      switch (result.value.__typename) {
+        case 'NamespaceOperationValidationPassed':
+          setStatus('available');
+          setErrorMessage('');
+          break;
+        case 'NamespaceOperationValidationFailed': {
+          setStatus('available');
+          const msg = getUsernameValidationMessage(result.value, value.length);
+          setErrorMessage(msg);
+          break;
+        }
+        case 'NamespaceOperationValidationUnknown':
+          setErrorMessage('Unknown error');
+          break;
+        case 'UsernameTaken':
           setStatus('unavailable');
-          return;
-        }
-
-        switch (result.value.__typename) {
-          case "NamespaceOperationValidationPassed":
-            setStatus('available');
-            break;
-          case "NamespaceOperationValidationFailed": {
-            const tokenMessage = getUsernameValidationMessage(result.value, username.length);
-            if (tokenMessage) {
-              toast.error(tokenMessage);
-            } else {
-              toast.error(result.value.reason);
-            }
-            setStatus('unavailable');
-            break;
-          }
-          case "NamespaceOperationValidationUnknown":
-            setStatus('error');
-            break;
-          case "UsernameTaken":
-            setStatus('unavailable');
-            break;
-          default:
-            setStatus('error');
-        }
-      } catch {
-        setStatus('error');
+          setErrorMessage('Username is already taken');
+          break;
       }
     },
-    [sessionClient, username.length]
+    [sessionClient]
+  );
+
+  const debouncedCheckUsername = useCallback(
+    debounce((value: string) => {
+      checkUsername(value);
+    }, 600),
+    [checkUsername]
   );
 
   const getProfilePicture = async () => {
@@ -90,9 +98,9 @@ export function ClaimUsernameModal() {
       const accountMetadata = account({
         name: name || username,
         bio: bio || undefined,
-        picture 
+        picture
       });
-    
+
       await claimUsername(username, accountMetadata);
 
       modal.close();
@@ -106,8 +114,12 @@ export function ClaimUsernameModal() {
     setUsername(value);
     setName(value);
     setStatus('idle');
-    clearTimeout((onInputChange as any).debounce);
-    (onInputChange as any).debounce = setTimeout(() => checkUsername(value), 400);
+    setErrorMessage('');
+
+    if (value.length > 0) {
+      debouncedCheckUsername(value);
+      return;
+    }
   };
 
   if (step === 'profile') {
@@ -160,46 +172,45 @@ export function ClaimUsernameModal() {
 
   return (
     <ModalContent
-      icon={<i className='icon-lemonade size-8 text-warning-300' />}
+      title="Pick Username"
       onClose={() => modal.close()}
     >
-      <p className='text-lg'>Pick Username</p>
-      <p className='text-secondary text-sm mt-2'>Username pricing depends on character count and naming rules. Secure your identity before someone else does.</p>
-      <p className='text-sm mt-4'>Search Username</p>
-      <Menu.Root className='w-full' isOpen={status !== 'idle'}>
-        <Menu.Trigger className='w-full'>
-          <Input
-            placeholder='johndoe'
-            className='mt-1.5 w-full'
-            value={username}
-            onChange={onInputChange}
-          />
-        </Menu.Trigger>
-        <Menu.Content
-          className='w-full p-1.5 flex justify-between items-center'
-          onClick={status === 'available' ? () => setStep('profile') : undefined}
-        >
-          <div>
-            <p className='text-secondary text-sm'>lemonade/@{username}</p>
-            {status !== 'idle' && (
-              <>
-                {status === 'checking' && <p className='text-quaternary text-xs'>Checking...</p>}
-                {status === 'available' && <p className='text-success-500 text-xs'>Available</p>}
-                {status === 'unavailable' && <p className='text-error text-xs'>Unavailable</p>}
-                {status === 'error' && <p className='text-error text-xs'>Error checking username</p>}
-              </>
-            )}
-          </div>
-          {
-            status === 'available' && <i className='icon-chevron-right size-4 text-tertiary' />
-          }
-        </Menu.Content>
-      </Menu.Root>
-      <hr className='mt-4 border-t border-t-divider -mx-4' />
-      <div className='flex items-center justify-center gap-1.5 mt-4'>
-        <p className='text-xs text-quaternary'>Powered by</p>
+      <p className='text-secondary text-sm'>Secure your identity before someone else does. Price depends on character count. This cannot be changed later.</p>
+
+      <div className='flex items-center gap-1.5 mt-2'>
+        <p className='text-sm text-tertiary'>Powered by</p>
         <img src={`${ASSET_PREFIX}/assets/images/lens.svg`} alt='Lens' className='h-3' />
       </div>
+
+      <div className='flex items-center justify-between mt-4 h-6'>
+        <p className='text-sm'>Search Username</p>
+        <div>
+          {status === 'checking' && <i className='icon-loader animate-spin size-4 text-tertiary' />}
+          {status === 'available' && <p className='text-success-500 text-sm'>Available</p>}
+          {status === 'unavailable' && <p className='text-error text-sm'>Unavailable</p>}
+        </div>
+      </div>
+
+      <div className="w-full rounded-sm flex items-center px-2.5 border border-tertiary h-10 font-medium text-sm mt-1.5">
+        <span className="text-tertiary">lemonade/</span>
+        <input
+          placeholder='johndoe'
+          className='focus:outline-none placeholder-quaternary'
+          value={username}
+          onChange={onInputChange}
+        />
+      </div>
+      
+      {errorMessage && <p className='text-error text-sm mt-2'>{errorMessage}</p>}
+
+      <Button
+        className="w-full mt-4"
+        variant="secondary"
+        onClick={() => setStep('profile')}
+        disabled={status !== 'available'}
+      >
+        Continue
+      </Button>
     </ModalContent>
   );
 }

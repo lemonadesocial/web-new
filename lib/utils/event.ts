@@ -9,13 +9,14 @@ import {
   PaymentAccountInfo,
   PurchasableTicketType,
   Ticket,
+  User,
 } from '$lib/graphql/generated/backend/graphql';
 
 import { formatCurrency } from './string';
 
 import { convertFromUtcToTimezone, formatWithTimezone } from './date';
 import { getListChains } from './crypto';
-import { groupBy, uniqBy } from 'lodash';
+import { groupBy } from 'lodash';
 
 export function formatCryptoPrice(price: EventTicketPrice, skipCurrency: boolean = false) {
   const { cost, currency } = price;
@@ -176,6 +177,8 @@ export function extractShortId(url: string): string | null {
   return match ? match[1] : null;
 }
 
-export function getEventHosts(event: Event) {
-  return uniqBy([event?.host_expanded, ...(event?.visible_cohosts_expanded || [])], (u) => u?._id);
+export function getEventCohosts(event: Event) {
+  const visibleCohosts = event.visible_cohosts_expanded?.length ? event.visible_cohosts_expanded : [event.host_expanded, ...(event.cohosts_expanded || [])];
+
+  return visibleCohosts.filter((u) => u?._id) as User[];
 }

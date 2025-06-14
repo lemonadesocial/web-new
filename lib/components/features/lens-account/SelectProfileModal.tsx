@@ -53,7 +53,6 @@ export function SelectProfileModal() {
     if (!signer) return;
 
     setIsLoadingSignIn(true);
-    console.log(process.env.NEXT_PUBLIC_LENS_APP_ID)
 
     const onboardingResult = await client.login({
       onboardingUser: {

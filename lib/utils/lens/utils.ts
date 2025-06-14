@@ -39,11 +39,7 @@ export function getAccountAvatar(account: Account) {
   return account.metadata?.picture || randomUserImage(account.owner);
 }
 
-export function getUsernameValidationMessage(validationResult: any, usernameLength?: number): string | null {
-  if (validationResult.__typename !== 'NamespaceOperationValidationFailed') {
-    return null;
-  }
-
+export function getUsernameValidationMessage(validationResult: any, usernameLength?: number): string {
   const requiredRules = validationResult.unsatisfiedRules?.required || [];
   
   const tokenRule = requiredRules.find((rule: any) => rule.reason === 'TOKEN_GATED_NOT_A_TOKEN_HOLDER');
@@ -87,5 +83,7 @@ export function getUsernameValidationMessage(validationResult: any, usernameLeng
     }
   }
 
-  return null;
+  if (requiredRules[0]) return requiredRules[0].message;
+
+  return validationResult.reason || 'Unknown error';
 };

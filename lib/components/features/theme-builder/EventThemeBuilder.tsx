@@ -6,12 +6,19 @@ import { join, split } from 'lodash';
 import clsx from 'clsx';
 
 import { Card } from '$lib/components/core';
-import { useMutation } from '$lib/graphql/request';
-import { UpdateEventThemeDocument } from '$lib/graphql/generated/backend/graphql';
+import { useMutation, useQuery } from '$lib/graphql/request';
+import {
+  File,
+  FileCategory,
+  GetSystemFilesDocument,
+  SystemFile,
+  UpdateEventThemeDocument,
+} from '$lib/graphql/generated/backend/graphql';
 
 import { colors, emojis, fonts, getRandomColor, patterns, presets, shaders } from './store';
 import { useEventTheme, ThemeBuilderActionKind } from './provider';
 import { MenuColorPicker } from './ColorPicker';
+import { generateUrl } from '$lib/utils/cnd';
 
 export function EventThemeBuilder({ eventId }: { eventId?: string }) {
   const [toggle, setToggle] = React.useState(false);
@@ -20,6 +27,29 @@ export function EventThemeBuilder({ eventId }: { eventId?: string }) {
   const mounted = React.useRef(false);
 
   const [updateEventTheme] = useMutation(UpdateEventThemeDocument);
+
+  // PERF: improve image loading
+  useQuery(GetSystemFilesDocument, {
+    variables: {
+      categories: [
+        FileCategory.SpaceDarkTheme,
+        FileCategory.SpaceLightTheme,
+        FileCategory.EventDarkTheme,
+        FileCategory.EventLightTheme,
+      ],
+    },
+  });
+
+  useQuery(GetSystemFilesDocument, {
+    variables: {
+      categories: [
+        FileCategory.SpaceDarkTheme,
+        FileCategory.SpaceLightTheme,
+        FileCategory.EventDarkTheme,
+        FileCategory.EventLightTheme,
+      ],
+    },
+  });
 
   React.useEffect(() => {
     if (mounted.current && eventId) {
@@ -151,13 +181,13 @@ function EventBuilderPaneOptions() {
               setState('template');
             }}
           >
-            <img src={presets[themeName].image} className="h-[32px] w-[43px] rounded-xs" />
+            <img src={presets[themeName]?.image} className="h-[32px] w-[43px] rounded-xs" />
             <p className="text-xs">Template</p>
           </ActionButton>
 
           <ActionButton
             active={state === 'colors'}
-            disabled={data.theme && presets[themeName].ui?.disabled?.color}
+            disabled={data.theme && presets[themeName]?.ui?.disabled?.color}
             onClick={() => setState('colors')}
           >
             <div
@@ -171,17 +201,23 @@ function EventBuilderPaneOptions() {
 
           <ActionButton
             active={state === 'style'}
-            disabled={presets[themeName].ui?.disabled?.style}
+            disabled={presets[themeName]?.ui?.disabled?.style}
             onClick={() => setState('style')}
           >
-            <div className={clsx('size-[32px] bg-quaternary rounded-full')}>
+            <div className={clsx('size-[32px] bg-quaternary rounded-full', data.theme === 'image' && 'w-[43px]')}>
               <div
                 className={clsx(
                   'w-full h-full',
                   data.theme === 'shader' && `rounded-full item-color-${data.config.name}`,
                   data.theme === 'pattern' &&
                     `pattern rounded-full ${data.config.name} ${data.config.color} relative! opacity-100!`,
+                  data.theme === 'image' && 'h-[32px] w-[43px] rounded-xs bg-cover!',
                 )}
+                style={
+                  data.theme === 'image' && data.config.image
+                    ? { background: `url(${data.config.image.url})` }
+                    : undefined
+                }
               />
             </div>
 
@@ -190,7 +226,7 @@ function EventBuilderPaneOptions() {
 
           <ActionButton
             active={state === 'effect'}
-            disabled={presets[themeName].ui?.disabled?.effect}
+            disabled={presets[themeName]?.ui?.disabled?.effect}
             onClick={() => setState('effect')}
           >
             {!data.config.effect?.name ? (
@@ -221,7 +257,7 @@ function EventBuilderPaneOptions() {
 
           <ActionButton
             active={state === 'mode'}
-            disabled={data.theme && presets[themeName].ui?.disabled?.mode}
+            disabled={data.theme && presets[themeName]?.ui?.disabled?.mode}
             onClick={() => setState('mode')}
           >
             <div className="size-[32px]">
@@ -251,32 +287,34 @@ function ThemeTemplate() {
 
   return (
     <div className="flex md:flex-col items-center gap-3 p-4 md:w-[96px]">
-      {Object.entries(presets).map(([key, { image, name }]) => (
-        <div key={key} className="flex flex-col items-center gap-2">
-          <Card.Root
-            className={clsx(
-              'p-0 bg-transparent border-transparent transition-all hover:outline-2 hover:outline-offset-2 hover:outline-primary/16 rounded-sm',
-              data.theme === key && 'outline-2 outline-offset-2 outline-primary!',
-            )}
-            onClick={(e) => {
-              e.stopPropagation();
-              const config: any = {};
-              const themeName = !data.theme || data.theme === 'default' ? 'minimal' : data.theme;
+      {Object.entries(presets).map(([key, { image, name }]) => {
+        return (
+          <div key={key} className="flex flex-col items-center gap-2">
+            <Card.Root
+              className={clsx(
+                'p-0 bg-transparent border-transparent transition-all hover:outline-2 hover:outline-offset-2 hover:outline-primary/16 rounded-sm',
+                data.theme === key && 'outline-2 outline-offset-2 outline-primary!',
+              )}
+              onClick={(e) => {
+                e.stopPropagation();
+                const config: any = {};
+                const themeName = !data.theme || data.theme === 'default' ? 'minimal' : data.theme;
 
-              if (!data.config.color) config.color = getRandomColor();
-              if (presets[themeName].ui?.disabled?.mode) config.mode = 'auto';
+                if (!data.config.color) config.color = getRandomColor();
+                if (presets[themeName].ui?.disabled?.mode) config.mode = 'auto';
 
-              dispatch({
-                type: ThemeBuilderActionKind.select_template,
-                payload: { theme: key as any, config },
-              });
-            }}
-          >
-            <img src={image} className="rounded-sm" width={72} height={54} />
-          </Card.Root>
-          <p className="text-xs">{name}</p>
-        </div>
-      ))}
+                dispatch({
+                  type: ThemeBuilderActionKind.select_template,
+                  payload: { theme: key as any, config },
+                });
+              }}
+            >
+              <img src={image} className="rounded-sm" width={72} height={54} />
+            </Card.Root>
+            <p className="text-xs">{name}</p>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -399,6 +437,7 @@ function ThemeStyle() {
   const [state] = useEventTheme();
   if (state.theme === 'shader') return <ThemeShader />;
   if (state.theme === 'pattern') return <ThemePattern />;
+  if (state.theme === 'image') return <ThemeImage />;
 
   return null;
 }
@@ -471,6 +510,66 @@ function ThemePattern() {
           <p className="text-xs">{item}</p>
         </button>
       ))}
+    </div>
+  );
+}
+
+function ThemeImage() {
+  const [state, dispatch] = useEventTheme();
+
+  const { data } = useQuery(GetSystemFilesDocument, {
+    variables: {
+      categories: [
+        FileCategory.SpaceDarkTheme,
+        FileCategory.SpaceLightTheme,
+        FileCategory.EventDarkTheme,
+        FileCategory.EventLightTheme,
+      ],
+    },
+  });
+  const images = (data?.getSystemFiles || []) as SystemFile[];
+
+  return (
+    <div className="flex md:flex-col items-center gap-3 p-4 md:w-[96px]">
+      {images.map((item) => {
+        return (
+          <div key={item._id} className="flex flex-col items-center gap-2">
+            <Card.Root
+              className={clsx(
+                'p-0 bg-transparent border-transparent transition-all hover:outline-2 hover:outline-offset-2 hover:outline-primary/16 rounded-sm',
+                state.config?.image?._id === item._id && 'outline-2 outline-offset-2 outline-primary!',
+              )}
+              onClick={(e) => {
+                e.stopPropagation();
+
+                dispatch({
+                  type: ThemeBuilderActionKind.select_image,
+                  payload: {
+                    config: {
+                      mode: item.category.includes('dark') ? 'dark' : 'light',
+                      image: {
+                        _id: item._id,
+                        url: generateUrl(item as unknown as File, {
+                          resize: { fit: 'cover', height: 1080, width: 1920 },
+                        }),
+                        name: item.name,
+                      },
+                    },
+                  },
+                });
+              }}
+            >
+              <img
+                src={generateUrl(item as unknown as File, { resize: { width: 72, height: 54, fit: 'cover' } })}
+                className="rounded-sm"
+                width={72}
+                height={54}
+              />
+            </Card.Root>
+            <p className="text-xs">{state.config?.image?.name}</p>
+          </div>
+        );
+      })}
     </div>
   );
 }

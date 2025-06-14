@@ -1,3 +1,17 @@
+# Queries
+query GetSystemFiles($categories: [FileCategory!]) {
+  getSystemFiles(categories: $categories) {
+    _id
+    name
+    category
+    url
+    type
+    bucket
+    key
+  }
+}
+
+# Mutations
 mutation createFileUploads($uploadInfos: [FileUploadInfo!]!, $directory: String!) {
   createFileUploads(upload_infos: $uploadInfos, directory: $directory) {
     _id

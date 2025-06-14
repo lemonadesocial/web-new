@@ -51,7 +51,7 @@ const iconSizeBase = {
 
 interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonElement>> {
   size?: 'sm' | 'base' | 'lg' | 'xs';
-  variant?: 'primary' | 'success' | 'danger' | 'tertiary' | 'tertiary-alt' | 'secondary' | 'flat';
+  variant?: 'primary' | 'success' | 'danger' | 'tertiary' | 'tertiary-alt' | 'secondary' | 'flat' | 'warning';
   icon?: string;
   iconLeft?: string;
   iconRight?: string;

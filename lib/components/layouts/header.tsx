@@ -6,7 +6,7 @@ import { useAtom } from 'jotai';
 import NextLink from 'next/link';
 
 import { sessionAtom } from '$lib/jotai';
-import { LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { IDENTITY_URL, LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useMe } from '$lib/hooks/useMe';
 import { useLogOut } from '$lib/hooks/useLogout';
 import { Divider, Menu, MenuItem, Button, Avatar } from '$lib/components/core';
@@ -71,50 +71,66 @@ export default function Header({ title, mainMenu }: Props) {
         {/* right content here */}
 
         {session && me ? (
-          <Menu.Root>
-            <Menu.Trigger>
-              {({ isOpen }) => (
-                <div
-                  className={twMerge(
-                    'transition p-2 flex justify-center items-center rounded-full hover:bg-primary/8',
-                    clsx(isOpen && 'bg-primary/8'),
-                  )}
+          <div className="flex gap-4 items-center">
+            {
+              !me.email_verified && (
+                <Button
+                  onClick={() => window.open(`${IDENTITY_URL}/verification?return_to=${window.location.origin}`)}
+                  size="sm"
+                  className="rounded-full"
+                  variant="warning"
+                  iconLeft="icon-error"
+                  outlined
                 >
-                  <Avatar src={userAvatar(me)} />
-                </div>
-              )}
-            </Menu.Trigger>
-            <Menu.Content className="p-0 min-w-[228px]">
-              {({ toggle }) => (
-                <>
+                  Verify Email
+                </Button>
+              )
+            }
+            <Menu.Root>
+              <Menu.Trigger>
+                {({ isOpen }) => (
                   <div
-                    className={'flex gap-2.5 px-2 py-1.5 items-center hover:bg-primary/8 rounded-t-xs cursor-pointer'}
+                    className={twMerge(
+                      'transition p-2 flex justify-center items-center rounded-full hover:bg-primary/8',
+                      clsx(isOpen && 'bg-primary/8'),
+                    )}
                   >
-                    <Avatar size="lg" src={userAvatar(me)} />
-                    <div>
-                      <p className="text-md font-medium whitespace-nowrap">{me.name}</p>
-                      <p className="text-xs font-medium text-tertiary">{me.email}</p>
+                    <Avatar src={userAvatar(me)} />
+                  </div>
+                )}
+              </Menu.Trigger>
+              <Menu.Content className="p-0 min-w-[228px]">
+                {({ toggle }) => (
+                  <>
+                    <div
+                      className={'flex gap-2.5 px-2 py-1.5 items-center hover:bg-primary/8 rounded-t-xs cursor-pointer'}
+                    >
+                      <Avatar size="lg" src={userAvatar(me)} />
+                      <div>
+                        <p className="text-md font-medium whitespace-nowrap">{me.name}</p>
+                        <p className="text-xs font-medium text-tertiary">{me.email}</p>
+                      </div>
                     </div>
-                  </div>
-                  <Divider />
-                  <div className="p-1">
-                    <MenuItem
-                      title="View Profile"
-                      onClick={() => window.open(`${LEMONADE_DOMAIN}/u/${me.username}`, '_blank')}
-                    />
-                    <MenuItem title="Settings" onClick={() => window.open(`${LEMONADE_DOMAIN}/settings`, '_blank')} />
-                    <MenuItem
-                      title="Sign Out"
-                      onClick={async () => {
-                        toggle();
-                        logOut();
-                      }}
-                    />
-                  </div>
-                </>
-              )}
-            </Menu.Content>
-          </Menu.Root>
+                    <Divider />
+                    <div className="p-1">
+                      <MenuItem
+                        title="View Profile"
+                        onClick={() => window.open(`${LEMONADE_DOMAIN}/u/${me.username}`, '_blank')}
+                      />
+                      <MenuItem title="Settings" onClick={() => window.open(`${LEMONADE_DOMAIN}/settings`, '_blank')} />
+                      <MenuItem
+                        title="Sign Out"
+                        onClick={async () => {
+                          toggle();
+                          logOut();
+                        }}
+                      />
+                    </div>
+                  </>
+                )}
+              </Menu.Content>
+            </Menu.Root>
+          </div>
         ) : (
           <>
             {!session && (

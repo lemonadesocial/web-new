@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { intervalToDuration } from 'date-fns';
+import { intervalToDuration, differenceInDays } from 'date-fns';
 
 export type EventStatus = 'upcoming' | 'starting-soon' | 'live' | 'ended' | 'unknown';
 
@@ -36,15 +36,19 @@ export function useEventStatus(start?: string, end?: string): EventStatusData {
       }
 
       const d = intervalToDuration({ start: now, end: startDate });
-      const days = d.days ?? 0;
-      const hours = (d.hours ?? 0) + days * 24;
+
+      const totalDays = differenceInDays(startDate, now);
+      const hours = d.hours ?? 0;
       const minutes = d.minutes ?? 0;
       const seconds = d.seconds ?? 0;
       const status = hours === 0 && minutes < 60 ? 'starting-soon' : 'upcoming';
 
       let timeLabel = '';
-      if (days > 1) {
-        timeLabel = `${days}d`;
+      if (totalDays > 0) {
+        timeLabel = `${totalDays}d`;
+        if (hours > 0) {
+          timeLabel += ` ${hours}h`;
+        }
       } else if (hours > 0) {
         timeLabel = `${hours}h`;
         if (minutes > 0) {

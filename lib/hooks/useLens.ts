@@ -15,7 +15,7 @@ import { AccountMetadata } from '@lens-protocol/metadata';
 import { useAtomValue, useSetAtom, useAtom } from 'jotai';
 import { useState, useEffect, useCallback } from 'react';
 
-import { evmAddress, never, ok, AnyPost, postId, PostReferenceType, Account } from '@lens-protocol/client';
+import { evmAddress, never, ok, AnyPost, postId, PostReferenceType, Account, PostType, PageSize } from '@lens-protocol/client';
 import { fetchAccount } from '@lens-protocol/client/actions';
 import { toast } from '$lib/components/core/toast';
 import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom, chainsMapAtom, feedPostAtom } from '$lib/jotai';
@@ -293,6 +293,7 @@ export function useFeedPosts(postFilter: PostFilter) {
   const filter = {
     ...(postFilter.feedAddress && { feeds: [{ feed: postFilter.feedAddress }] }),
     ...(postFilter.authorId && { authors: [postFilter.authorId] }),
+    postTypes: [PostType.Root],
   };
 
   const fetchPostsData = async (refresh = false) => {
@@ -301,6 +302,7 @@ export function useFeedPosts(postFilter: PostFilter) {
       const result = await lensFetchPosts(sessionClient || client, {
         filter,
         ...(cursor && !refresh ? { cursor } : {}),
+        pageSize: PageSize.Ten,
       });
 
       if (result.isOk()) {
@@ -400,7 +402,9 @@ export function usePost() {
         .andThen(sessionClient.waitForTransaction)
         .andThen((txHash) => fetchPost(sessionClient, { txHash }))
         .andThen((post) => {
-          setPosts((prev) => [post as AnyPost, ...prev]);
+          if (post) {
+            setPosts((prev) => [post as AnyPost, ...prev]);
+          }
           return ok(post);
         })
         .mapErr((error) => {
@@ -503,7 +507,9 @@ export function useComments({ postId: targetPostId, feedAddress }: UseCommentsPr
             setCurrentPost((prev: any) => ({ ...prev, stats: { ...prev.stats, comments: prev.stats.comments + 1 } }));
           }
 
-          setComments((prev) => [comment, ...prev]);
+          if (comment) {
+            setComments((prev) => [comment, ...prev]);
+          }
           return ok(comment);
         })
         .mapErr((error) => {

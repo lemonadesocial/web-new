@@ -2,6 +2,7 @@
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useRouter } from 'next/navigation';
+import { isMobile } from 'react-device-detect';
 
 import { Button, Divider } from '$lib/components/core';
 import { useQuery } from '$lib/graphql/request';
@@ -10,12 +11,21 @@ import { generateUrl } from '$lib/utils/cnd';
 import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
 
-import { PageCardItem, PageCardItemSkeleton, PageSection } from '../shared';
 import { ASSET_PREFIX } from '$lib/utils/constants';
-import { isMobile } from 'react-device-detect';
+import { useSession } from '$lib/hooks/useSession';
+import { useSignIn } from '$lib/hooks/useSignIn';
+
+import { PageCardItem, PageCardItemSkeleton, PageSection } from '../shared';
 
 export function Content() {
+  const session = useSession();
+  const me = useMe();
+  const signIn = useSignIn();
   const router = useRouter();
+
+  React.useEffect(() => {
+    if (!me && !session) signIn();
+  }, [me, session]);
 
   return (
     <div className="flex flex-col gap-6 py-8">

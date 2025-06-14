@@ -1,11 +1,11 @@
 import { Event } from "$lib/graphql/generated/backend/graphql";
-import { getEventHosts } from "$lib/utils/event";
+import { getEventCohosts } from "$lib/utils/event";
 
 export function EventPreview({ event }: { event: Event }) {
 
   if (!event?._id) return null; // fallback to old metadata
 
-  const hosts = getEventHosts(event);
+  const hosts = getEventCohosts(event);
 
   return (
     <div className="flex flex-col gap-3">
@@ -18,7 +18,7 @@ export function EventPreview({ event }: { event: Event }) {
       <p className="text-sm text-secondary">
         Hosted By{' '}
         {hosts
-          .map((p) => p?.name)
+          .map((p) => p.display_name || p.name)
           .join(', ')
           .replace(/,(?=[^,]*$)/, ' & ')}
       </p>

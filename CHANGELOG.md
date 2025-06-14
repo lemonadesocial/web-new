@@ -1,5 +1,104 @@
 # Changelog
 
+## [1.44.0](https://github.com/lemonadesocial/web-new/compare/v1.43.4...v1.44.0) (2025-06-13)
+
+
+### Features
+
+* add verify email button ([b82947a](https://github.com/lemonadesocial/web-new/commit/b82947af37a83210da8376b15363e506d7ec205a))
+
+## [1.43.4](https://github.com/lemonadesocial/web-new/compare/v1.43.3...v1.43.4) (2025-06-13)
+
+
+### Bug Fixes
+
+* claim username flow ([940c653](https://github.com/lemonadesocial/web-new/commit/940c653dc7095a70273a0fbd7cd5d6b9a3098f6b))
+
+## [1.43.3](https://github.com/lemonadesocial/web-new/compare/v1.43.2...v1.43.3) (2025-06-13)
+
+
+### Bug Fixes
+
+* event time status ([18b8fb8](https://github.com/lemonadesocial/web-new/commit/18b8fb8e4c5465bbeb15944e806f07d47a06d0d2))
+
+## [1.43.2](https://github.com/lemonadesocial/web-new/compare/v1.43.1...v1.43.2) (2025-06-13)
+
+
+### Bug Fixes
+
+* event null ([094ab20](https://github.com/lemonadesocial/web-new/commit/094ab206a008a2d9d25d3f8bb5f08f033f9a5619))
+* lint ([352ecca](https://github.com/lemonadesocial/web-new/commit/352ecca44120f15632f2dd618432987edddc3307))
+
+## [1.43.1](https://github.com/lemonadesocial/web-new/compare/v1.43.0...v1.43.1) (2025-06-13)
+
+
+### Bug Fixes
+
+* cohosts display ([2ddee63](https://github.com/lemonadesocial/web-new/commit/2ddee63692083096eabd467cf30727e6ccb852fc))
+
+## [1.43.0](https://github.com/lemonadesocial/web-new/compare/v1.42.0...v1.43.0) (2025-06-12)
+
+
+### Features
+
+* update claim username flow ([0bf92cf](https://github.com/lemonadesocial/web-new/commit/0bf92cf2494ce0380cf92960ab0a663b92da61d8))
+
+## [1.42.0](https://github.com/lemonadesocial/web-new/compare/v1.41.1...v1.42.0) (2025-06-12)
+
+
+### Features
+
+* update event bg image ([d326166](https://github.com/lemonadesocial/web-new/commit/d326166cb04c1e6da5c1612af595a1a379514be9))
+
+## [1.41.1](https://github.com/lemonadesocial/web-new/compare/v1.41.0...v1.41.1) (2025-06-12)
+
+
+### Bug Fixes
+
+* missing assets ([855a2a4](https://github.com/lemonadesocial/web-new/commit/855a2a4010fb08e01130ea73e64626d3c648a3a1))
+
+## [1.41.0](https://github.com/lemonadesocial/web-new/compare/v1.40.0...v1.41.0) (2025-06-12)
+
+
+### Features
+
+* fix blur - empty cover image ([f12fbf5](https://github.com/lemonadesocial/web-new/commit/f12fbf5d2325997f8baaffd6f2ca9c8974663057))
+* merge image theme ([a732afd](https://github.com/lemonadesocial/web-new/commit/a732afd504958b4a547393be62aa45d9c2671a91))
+* missing loading image background ([c565d31](https://github.com/lemonadesocial/web-new/commit/c565d318017271954978260b935125c27a00c2b4))
+* update image size and dark/light mode ([352e7bb](https://github.com/lemonadesocial/web-new/commit/352e7bbd2fa0828d0c9e1333711765abac6ad80c))
+
+
+### Bug Fixes
+
+* cover bg image ([9923617](https://github.com/lemonadesocial/web-new/commit/99236174bfedd2ab14a5582c69d1ac1b12c73ca1))
+* loading state ([fdeae09](https://github.com/lemonadesocial/web-new/commit/fdeae099e8e92340def4e588024c08ddebaf350f))
+* missing check undefined theme ([f6cd79f](https://github.com/lemonadesocial/web-new/commit/f6cd79f47102f7e5440bcfc1f238b7d83740b382))
+
+## [1.40.0](https://github.com/lemonadesocial/web-new/compare/v1.39.0...v1.40.0) (2025-06-12)
+
+
+### Features
+
+* infinite scoll feed ([07d8d75](https://github.com/lemonadesocial/web-new/commit/07d8d75f56a9b40a834a85bd72c8cfc3fd4a09e7))
+
+
+### Bug Fixes
+
+* starts in time ([1ae9bcc](https://github.com/lemonadesocial/web-new/commit/1ae9bcc32f7a2802ff34ce5320dbc06f70f9ce3c))
+
+## [1.39.0](https://github.com/lemonadesocial/web-new/compare/v1.38.7...v1.39.0) (2025-06-11)
+
+
+### Features
+
+* refactor routes ([411db7d](https://github.com/lemonadesocial/web-new/commit/411db7d7161cf538434dee5b3026b2d16b8c98d3))
+
+
+### Bug Fixes
+
+* check authentication on communities page ([06d2ece](https://github.com/lemonadesocial/web-new/commit/06d2ece904315056c6fe6da3b33c3e32bfc8a482))
+* open user post ([075feea](https://github.com/lemonadesocial/web-new/commit/075feea577fe9095e85a460691310c4ada22d2bc))
+
 ## [1.38.7](https://github.com/lemonadesocial/web-new/compare/v1.38.6...v1.38.7) (2025-06-11)
 
 
