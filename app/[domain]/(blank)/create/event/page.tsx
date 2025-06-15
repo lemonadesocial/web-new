@@ -1,4 +1,3 @@
-import { EventThemeProvider } from '$lib/components/features/theme-builder/provider';
 import { GetSpacesDocument, Space, SpaceRole } from '$lib/graphql/generated/backend/graphql';
 import { getClient } from '$lib/graphql/request';
 import { cookies } from 'next/headers';
@@ -14,9 +13,5 @@ export default async function Page() {
   });
   const spaces = (data?.listSpaces || []) as Space[];
 
-  return (
-    <EventThemeProvider>
-      <Content initData={{ spaces }} />
-    </EventThemeProvider>
-  );
+  return <Content initData={{ spaces }} />;
 }

@@ -53,7 +53,7 @@ export function Content({ initData }: { initData: { spaces: Space[] } }) {
   }, [me, session]);
 
   return (
-    <div className="max-w-[984px] mx-auto">
+    <div className="max-w-[984px] mx-auto pt-4">
       <FormContent spaces={spaces} space={personalSpace} />
     </div>
   );
@@ -132,6 +132,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
         approval_required: false,
         guest_limit_per: 0,
       },
+      theme_data: null,
       space: space?._id,
       date: {
         start: startDate.toString(),
@@ -159,6 +160,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
           start: new Date(value.date.start).toISOString(),
           end: new Date(value.date.end).toISOString(),
           timezone: value.date.timezone,
+          theme_data: state,
           ...value.address,
           ...value.options,
         },
