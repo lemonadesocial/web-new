@@ -32,6 +32,7 @@ import { roundToNext30Minutes } from '$lib/utils/date';
 import { AddLocationPane } from '$lib/components/features/pane';
 import { uploadFiles } from '$lib/utils/file';
 import { TextEditor } from '$lib/components/core/text-editor';
+import { Map } from '$lib/components/core';
 
 export function Content({ initData }: { initData: { spaces: Space[] } }) {
   const signIn = useSignIn();
@@ -141,7 +142,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
     },
   });
 
-  const title = watch('title');
+  const [title, address] = watch(['title', 'address']);
 
   const onSubmit = (value: EventFormValue) => {
     create({
@@ -486,6 +487,17 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
             }}
           />
         </div>
+
+        {address?.latitude && address?.longitude && (
+          <div className="aspect-video h-[240px] rounded-sm overflow-hidden">
+            <Map
+              gestureHandling="greedy"
+              defaultZoom={11}
+              center={{ lat: address?.latitude, lng: address?.longitude }}
+              markers={[{ lat: address?.latitude, lng: address?.longitude }]}
+            />
+          </div>
+        )}
 
         <Controller
           control={control}
