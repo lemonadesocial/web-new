@@ -53,7 +53,7 @@ export function Content({ initData }: { initData: { spaces: Space[] } }) {
   }, [me, session]);
 
   return (
-    <div className="max-w-[984px] mx-auto pt-4">
+    <div className="pt-4">
       <FormContent spaces={spaces} space={personalSpace} />
     </div>
   );
@@ -183,8 +183,11 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
   };
 
   return (
-    <form className={clsx('flex gap-[72px]', state.theme && state.config.color)} onSubmit={handleSubmit(onSubmit)}>
-      <div className="hidden md:flex w-[296px] flex-col gap-6">
+    <form
+      className={clsx('grid gap-[36px] grid-cols-1 pb-10 md:flex md:gap-[72px]', state.theme && state.config.color)}
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <div className="md:w-[296px] flex-col gap-6">
         <Controller
           control={control}
           name="cover"
@@ -217,6 +220,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
           )}
         />
       </div>
+
       <div className="flex flex-col flex-1 w-full gap-6">
         <div className="flex items-center justify-between">
           <Controller
@@ -251,34 +255,36 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
                     {({ toggle }) => (
                       <>
                         <p className="text-xs text-tertiary py-1 px-2">Choose the community of the event:</p>
-                        {spaces.map((item) => (
-                          <div
-                            key={item._id}
-                            className="flex px-2 py-1.5 items-center gap-2.5 cursor-pointer hover:bg-[var(--btn-tertiary)]"
-                            onClick={() => {
-                              setValue('space', item._id);
-                              toggle();
-                            }}
-                          >
-                            <div className="flex items-center gap-2.5 flex-1">
-                              <div className="size-4 rounded-xs overflow-hidden relative">
-                                <img
-                                  className="w-full h-full outline outline-tertiary/4 rounded-xs"
-                                  src={communityAvatar(item)}
-                                  alt={item?.title}
-                                  loading="lazy"
-                                />
-                                {!item?.image_avatar_expanded && (
+                        <div className="max-h-[210px] overflow-auto no-scrollbar">
+                          {spaces.map((item) => (
+                            <div
+                              key={item._id}
+                              className="flex px-2 py-1.5 items-center gap-2.5 cursor-pointer hover:bg-[var(--btn-tertiary)]"
+                              onClick={() => {
+                                setValue('space', item._id);
+                                toggle();
+                              }}
+                            >
+                              <div className="flex items-center gap-2.5 flex-1">
+                                <div className="size-4 rounded-xs overflow-hidden relative">
                                   <img
-                                    src={`${ASSET_PREFIX}/assets/images/blank-avatar.svg`}
-                                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[62%] h-[62%]"
+                                    className="w-full h-full outline outline-tertiary/4 rounded-xs"
+                                    src={communityAvatar(item)}
+                                    alt={item?.title}
+                                    loading="lazy"
                                   />
-                                )}
+                                  {!item?.image_avatar_expanded && (
+                                    <img
+                                      src={`${ASSET_PREFIX}/assets/images/blank-avatar.svg`}
+                                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[62%] h-[62%]"
+                                    />
+                                  )}
+                                </div>
+                                <p className="text-sm text-secondary">{item.title}</p>
                               </div>
-                              <p className="text-sm text-secondary">{item.title}</p>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </>
                     )}
                   </Menu.Content>
@@ -349,7 +355,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
           control={control}
           name="date"
           render={({ field }) => (
-            <div className="flex gap-3 items-center">
+            <div className="flex flex-wrap md:flex-nowrap gap-3 md:items-center">
               <DateTimeGroup
                 start={field.value.start}
                 end={field.value.end}
@@ -361,11 +367,14 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
                   setTimeZone(timezone);
                   setValue('date', { ...field.value, timezone: timezone.value });
                 }}
+                strategy="absolute"
+                className="w-full md:w-auto"
                 trigger={() => (
                   <Card.Root>
-                    <Card.Content className="flex flex-col justify-between w-[142px] h-[84px] p-2">
+                    <Card.Content className="flex md:flex-col gap-3 items-center md:items-start md:justify-between flex-1 md:w-[142px] md:h-[84px] p-2">
                       <i className="icon-globe size-5" />
-                      <div>
+                      <p className="block md:hidden">{timezone?.text}</p>
+                      <div className="hidden md:block">
                         <p className="text-sm">{timezone?.short}</p>
                         <p className="text-xs text-tertiary line-clamp-1 truncate">{timezone?.value}</p>
                       </div>
@@ -406,7 +415,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
                     </p>
                     <div className=" w-full">
                       <div className="flex items-center justify-between">
-                        <p>Add Location</p>
+                        <p className="line-clamp-1">Add Location</p>
                         {address?.address && (
                           <p>
                             <i
@@ -454,7 +463,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
                     </p>
                     <div className="w-full">
                       <div className="flex items-center justify-between">
-                        <p>Add Virtual Link</p>
+                        <p className="line-clamp-1">Add Virtual Link</p>
                         {url && (
                           <p>
                             <i
@@ -667,6 +676,7 @@ function CapacityModal({ value: limit = 0, onSetLimit }: { value?: number; onSet
             onClick={() => {
               setValue(0);
               onSetLimit(0);
+              modal.close();
             }}
           >
             Remove Limit

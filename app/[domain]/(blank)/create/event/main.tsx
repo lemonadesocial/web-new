@@ -18,9 +18,7 @@ export function MainEventLayout({ children }: React.PropsWithChildren) {
     >
       <ThemeGenerator data={state} />
       <Header mainMenu={RootMenu} />
-      <div className="w-full h-full px-4">
-        <div className="mx-auto max-w-[1080px] px-4 xl:px-0">{children}</div>
-      </div>
+      <div className="w-full h-full mx-auto max-w-[984px] px-4 xl:px-0">{children}</div>
     </main>
   );
 }

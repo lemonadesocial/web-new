@@ -25,7 +25,7 @@ export function DateTimeGroup({
   const [endTime, setEndTime] = React.useState(end || new Date().toISOString());
 
   return (
-    <Card.Root style={{ overflow: 'inherit' }} className="w-full h-full">
+    <Card.Root style={{ overflow: 'inherit' }} className="w-full">
       <Card.Content className="pl-3.5 py-1 pr-1">
         <div className="flex relative flex-col">
           <div className="border-dashed border-l-2 border-l-[var(--color-divider)] absolute h-full left-1 top-4 z-10">
@@ -169,17 +169,21 @@ export function Timezone({
   trigger,
   onSelect,
   placement = 'top',
+  className,
+  strategy = 'fixed',
 }: {
   trigger: () => React.ReactElement;
   value?: TimezoneOption;
   onSelect: (zone: TimezoneOption) => void;
   placement?: Placement;
+  className?: string;
+  strategy?: 'fixed' | 'absolute';
 }) {
   const [zones, setZone] = React.useState(timezoneOptions);
   const [query, setQuery] = React.useState('');
 
   return (
-    <Menu.Root strategy="fixed" placement={placement}>
+    <Menu.Root strategy={strategy} className={className} placement={placement}>
       <Menu.Trigger>{trigger()}</Menu.Trigger>
       <Menu.Content className="p-0 border-0 rounded-md!">
         {({ toggle }) => (
