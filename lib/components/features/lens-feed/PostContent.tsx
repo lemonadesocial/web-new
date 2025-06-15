@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 
 import { FeedPostGallery } from "./FeedPostGallery";
 import { EventPreview } from "./EventPreview";
+import { UrlPreview } from "./UrlPreview";
 import { GetEventDocument, Event } from "$lib/graphql/generated/backend/graphql";
 import { defaultClient } from "$lib/graphql/request/instances";
 
@@ -42,7 +43,13 @@ export function PostContent({ post }: PostContentProps) {
     fetchEvent();
   }, [metadata]);
   
-  const sharingLink = (metadata as LinkMetadata).sharingLink;
+  const extractFirstUrl = (content: string): string | null => {
+    const urlRegex = /https?:\/\/[^\s]+/g;
+    const matches = content.match(urlRegex);
+    return matches ? matches[0] : null;
+  };
+
+  const sharingLink = (metadata as LinkMetadata).sharingLink || extractFirstUrl((metadata as TextOnlyMetadata).content);
 
   return (
     <div className="space-y-2">
@@ -53,9 +60,7 @@ export function PostContent({ post }: PostContentProps) {
       {event && (
         <EventPreview event={event} />
       )}
-      {
-        sharingLink && <a href={sharingLink} target="_blank" rel="noopener noreferrer" className="text-accent-500 font-medium">{sharingLink}</a>
-      }
+      {sharingLink && <UrlPreview url={sharingLink} />}
     </div>
   );
 }

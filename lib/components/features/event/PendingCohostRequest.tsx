@@ -16,7 +16,7 @@ export function PendingCohostRequest({ event }: Props) {
   });
 
   const [decideEventCohostRequest, { loading }] = useMutation(DecideEventCohostRequestDocument, {
-    onComplete: (client, data) => {
+    onComplete: (client) => {
       toast.success('Cohost request accepted');
       
       client.writeQuery({
@@ -51,7 +51,7 @@ export function PendingCohostRequest({ event }: Props) {
 
   return (
     <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
-      <p className="text-accent-500 flex-1">You've been invited to co-host this event</p>
+      <p className="text-accent-500 flex-1">You&apos;ve been invited to co-host this event</p>
       <Button
         variant="primary"
         size="sm"
