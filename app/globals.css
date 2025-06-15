@@ -7,6 +7,7 @@
 @import './styles/components/link.css';
 @import './styles/components/collapsible.css';
 @import './styles/components/tooltips.css';
+@import './styles/components/tiptap.css';
 
 @import './styles/presets/minimal.css';
 @import './styles/presets/shader.css';

@@ -482,5 +482,6 @@ mutation DecideEventCohostRequest($input: DecideEventCohostRequestInput!) {
 mutation createEvent($input: EventInput!) {
   createEvent(input: $input) {
     _id
+    shortid
   }
 }

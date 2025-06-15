@@ -31,6 +31,7 @@ import { DateTimeGroup, Timezone } from '$lib/components/core/calendar';
 import { roundToNext30Minutes } from '$lib/utils/date';
 import { AddLocationPane } from '$lib/components/features/pane';
 import { uploadFiles } from '$lib/utils/file';
+import { TextEditor } from '$lib/components/core/text-editor';
 
 export function Content({ initData }: { initData: { spaces: Space[] } }) {
   const signIn = useSignIn();
@@ -111,7 +112,11 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
   const fileInputRef = React.useRef<any>(null);
   const [uploading, setUploading] = React.useState(false);
 
-  const [create, { loading }] = useMutation(CreateEventDocument);
+  const [create, { loading }] = useMutation(CreateEventDocument, {
+    onComplete: (_, data) => {
+      window.location.href = `manage/event/${data?.createEvent?.shortid}`;
+    },
+  });
 
   const { control, watch, setValue, handleSubmit } = useForm<EventFormValue>({
     defaultValues: {
@@ -135,6 +140,8 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
       },
     },
   });
+
+  const title = watch('title');
 
   const onSubmit = (value: EventFormValue) => {
     create({
@@ -325,6 +332,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
 
         <Controller
           name="title"
+          rules={{ required: true }}
           control={control}
           render={({ field }) => (
             <Input
@@ -471,6 +479,24 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
 
         <Controller
           control={control}
+          name="description"
+          render={() => {
+            const desc = watch('description');
+            return (
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium">Event Description</label>
+                <TextEditor
+                  content={desc}
+                  placeholder="Who should come? What's the event about?"
+                  onChange={(value) => setValue('description', value)}
+                />
+              </div>
+            );
+          }}
+        />
+
+        <Controller
+          control={control}
           name="options"
           render={({ field }) => {
             const options = watch('options');
@@ -529,7 +555,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
           }}
         />
 
-        <Button loading={loading} className="w-full" variant="secondary" type="submit">
+        <Button loading={loading} disabled={!title} className="w-full" variant="secondary" type="submit">
           Create Event
         </Button>
       </div>
