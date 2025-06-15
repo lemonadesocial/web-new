@@ -34,14 +34,14 @@ export function AddLocationPane({
             }}
           />
 
-          {selectedAddress?.address?.latitude && selected?.address?.longitude && (
+          {selectedAddress?.address?.latitude && selectedAddress?.address?.longitude && (
             <>
               <div className="aspect-video h-[240px] rounded-sm overflow-hidden">
                 <Map
                   gestureHandling="greedy"
                   defaultZoom={11}
-                  center={{ lat: selectedAddress?.address?.latitude, lng: selected?.address?.longitude }}
-                  markers={[{ lat: selectedAddress?.address?.latitude, lng: selected?.address?.longitude }]}
+                  center={{ lat: selectedAddress?.address?.latitude, lng: selectedAddress?.address?.longitude }}
+                  markers={[{ lat: selectedAddress?.address?.latitude, lng: selectedAddress?.address?.longitude }]}
                 />
               </div>
 
