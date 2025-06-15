@@ -21,7 +21,7 @@ export function PostButton({
   return (
     <div
       className={twMerge(
-        'flex items-center gap-2 sm:gap-2.5 sm:px-3.5 sm:rounded-full sm:bg-primary/8 cursor-pointer sm:h-10 hover:bg-primary/16 group',
+        'flex items-center gap-2 cursor-pointer hover:bg-primary/16 group',
         className
       )}
       onClick={onClick}
