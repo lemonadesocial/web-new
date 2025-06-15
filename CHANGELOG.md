@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.45.0](https://github.com/lemonadesocial/web-new/compare/v1.44.0...v1.45.0) (2025-06-15)
+
+
+### Features
+
+* accept cohost ([938d530](https://github.com/lemonadesocial/web-new/commit/938d530f853e85c4d7ac7d969fb45bce613e985c))
+* highlight post link ([98abe4c](https://github.com/lemonadesocial/web-new/commit/98abe4c609ca1f26cfa000fb0ef666f77383beae))
+* update post action buttons ([15ea20c](https://github.com/lemonadesocial/web-new/commit/15ea20c41e1bc2b07d43a3bbb35c469711d1b40f))
+
 ## [1.44.0](https://github.com/lemonadesocial/web-new/compare/v1.43.4...v1.44.0) (2025-06-13)
 
 
