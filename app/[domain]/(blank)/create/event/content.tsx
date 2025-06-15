@@ -114,7 +114,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
 
   const [create, { loading }] = useMutation(CreateEventDocument, {
     onComplete: (_, data) => {
-      window.location.href = `manage/event/${data?.createEvent?.shortid}`;
+      window.location.pathname = `/manage/event/${data?.createEvent?.shortid}`;
     },
   });
 
@@ -132,7 +132,6 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
         approval_required: false,
         guest_limit_per: 0,
       },
-      theme_data: null,
       space: space?._id,
       date: {
         start: startDate.toString(),
