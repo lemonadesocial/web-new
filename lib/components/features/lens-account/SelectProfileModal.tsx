@@ -11,10 +11,11 @@ import { client } from "$lib/utils/lens/client";
 import { useSigner } from "$lib/hooks/useSigner";
 import { accountAtom, sessionClientAtom } from "$lib/jotai";
 import { getAccountAvatar } from "$lib/utils/lens/utils";
+import { LENS_NAMESPACE } from "$lib/utils/constants";
 
 import { SignTransactionModal } from "../modals/SignTransaction";
-import { ClaimUsernameModal } from "./ClaimUsernameModal";
-import { LENS_NAMESPACE } from "$lib/utils/constants";
+import { ClaimLemonadeUsernameModal } from "./ClaimLemonadeUsernameModal";
+import { ClaimLensUsernameModal } from "./ClaimLensUsernameModal";
 
 export function SelectProfileModal() {
   const [accounts, setAccounts] = useState<AccountManaged[]>([]);
@@ -72,7 +73,7 @@ export function SelectProfileModal() {
     }
 
     setSessionClient(onboardingResult.value);
-    modal.open(ClaimUsernameModal);
+    modal.open(ClaimLensUsernameModal);
   }
 
   const handleSelectProfile = async (item: AccountManaged) => {
@@ -124,7 +125,7 @@ export function SelectProfileModal() {
 
     if (lemonadeUsernames.length) return;
 
-    modal.open(ClaimUsernameModal);
+    modal.open(ClaimLemonadeUsernameModal);
   }
 
   if (isLoadingAccounts) return (

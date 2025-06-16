@@ -10,10 +10,12 @@ import {
   fetchPosts as lensFetchPosts,
   fetchPostReferences,
   fetchAccountGraphStats,
+  fetchUsername
 } from '@lens-protocol/client/actions';
 import { AccountMetadata } from '@lens-protocol/metadata';
 import { useAtomValue, useSetAtom, useAtom } from 'jotai';
 import { useState, useEffect, useCallback } from 'react';
+import { delay } from 'lodash';
 
 import { evmAddress, never, ok, AnyPost, postId, PostReferenceType, Account, PostType, PageSize } from '@lens-protocol/client';
 import { fetchAccount } from '@lens-protocol/client/actions';
@@ -23,12 +25,11 @@ import { useAppKitAccount } from '$lib/utils/appkit';
 import { client, storageClient } from '$lib/utils/lens/client';
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { modal } from '$lib/components/core';
+import { LENS_NAMESPACE, LEMONADE_FEED_ADDRESS } from '$lib/utils/constants';
+import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
 
 import { useSigner } from './useSigner';
 import { useConnectWallet } from './useConnectWallet';
-import { delay } from 'lodash';
-import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
-import { LEMONADE_FEED_ADDRESS } from '$lib/utils/constants';
 
 export function useResumeSession() {
   const setSessionClient = useSetAtom(sessionClientAtom);
@@ -213,7 +214,6 @@ export function useClaimUsername() {
         metadataUri: uri,
         username: {
           localName: username,
-          namespace: process.env.NEXT_PUBLIC_LENS_NAMESPACE ? evmAddress(process.env.NEXT_PUBLIC_LENS_NAMESPACE) : undefined,
         },
       })
         .andThen(handleOperationWith(signer))
@@ -611,4 +611,43 @@ export function useLensAuth() {
   };
 
   return handleAuth;
+}
+
+export function useLemonadeUsername(account: Account | null) {
+  const [username, setUsername] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchUsernameData = async () => {
+      if (!account?.address) return;
+
+      setIsLoading(true);
+      try {
+        const result = await fetchUsername(client, {
+          username: {
+            localName: account.username?.localName || '',
+            namespace: evmAddress(LENS_NAMESPACE),
+          },
+        });
+
+        if (result.isOk() && result.value) {
+          setUsername(result.value.localName);
+        } else {
+          setUsername(null);
+        }
+      } catch (error: any) {
+        toast.error(error.message);
+        setUsername(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUsernameData();
+  }, [account?.address, account?.username?.localName]);
+
+  return {
+    username,
+    isLoading,
+  };
 }
