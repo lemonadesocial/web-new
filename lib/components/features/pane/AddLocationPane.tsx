@@ -4,6 +4,7 @@ import { PlaceAutoComplete } from '$lib/components/core/map/place-autocomplete';
 import { Address, UpdateUserDocument } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
 import { useMe } from '$lib/hooks/useMe';
+import clsx from 'clsx';
 import React from 'react';
 
 export function AddLocationPane({
@@ -23,7 +24,7 @@ export function AddLocationPane({
     <div className="flex flex-col h-full">
       <PaneHeader />
 
-      <div className="flex-1">
+      <div className="flex-1 overflow-auto no-scrollbar">
         <div className="flex flex-col gap-4 px-4 pt-4 pb-6!">
           <div className="flex flex-col gap-1">
             <h3 className="text-xl font-semibold">Add Location</h3>
@@ -32,6 +33,7 @@ export function AddLocationPane({
           <PlaceAutoComplete
             autoFocus
             label="Event Location"
+            placeholder={`What's the address?`}
             onSelect={(value) => {
               setSelectedAddress({ address: value, retrict: false, save: false });
               setSelected((prev) => ({ ...prev, address: value, retrict: false }));
@@ -85,7 +87,14 @@ export function AddLocationPane({
             <div className="flex flex-col gap-2">
               {me.addresses.map((item) => {
                 return (
-                  <Accordion.Root key={item._id} open={item._id === selected.address?._id}>
+                  <Accordion.Root
+                    key={item._id}
+                    open={item._id === selected.address?._id}
+                    className={clsx(
+                      'bg-card!',
+                      item._id === selected?.address?._id && 'border-[var(--color-primary)]! bg-transparent!',
+                    )}
+                  >
                     <Accordion.Header chevron={false} className="px-0! py-0!" disabled>
                       {({ toggle }) => (
                         <div className="flex w-full items-center z-10 px-3! py-2.5!">
@@ -103,7 +112,7 @@ export function AddLocationPane({
                               }}
                             >
                               <span className="flex flex-col flex-1 w-full">
-                                <span className="text-primary">{item.title}</span>
+                                <span className="font-medium text-primary">{item.title}</span>
                                 <span className="text-secondary text-sm">{item.street_1}</span>
                               </span>
                             </Radiobox>

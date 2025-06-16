@@ -8,7 +8,12 @@ type State = { isOpen?: boolean; toggle: () => void; close?: () => void };
 
 const Context = React.createContext<State>({ toggle: () => {} });
 
-function Root({ children, color, open }: React.PropsWithChildren & { color?: 'warning'; open?: boolean }) {
+function Root({
+  children,
+  color,
+  open,
+  className,
+}: React.PropsWithChildren & { color?: 'warning'; open?: boolean; className?: string }) {
   const [isOpen, setIsOpen] = React.useState(open);
 
   React.useEffect(() => {
@@ -23,7 +28,7 @@ function Root({ children, color, open }: React.PropsWithChildren & { color?: 'wa
   const value = { isOpen, toggle, close };
   return (
     <Context.Provider value={value}>
-      <div className={clsx('collapse', color)}>{children}</div>
+      <div className={clsx('collapse', color, className)}>{children}</div>
     </Context.Provider>
   );
 }

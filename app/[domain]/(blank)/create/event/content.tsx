@@ -528,7 +528,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
           render={({ field }) => {
             const options = watch('options');
             return (
-              <div>
+              <div className="flex flex-col gap-1.5">
                 <p className="text-sm text-secondary">Event Options</p>
                 <Card.Root>
                   <Card.Content className="p-0">

@@ -76,7 +76,10 @@ export default function TextEditor({
     content,
     editorProps: {
       attributes: {
-        class: twMerge('tiptap border px-3 py-2.5 min-h-[110px] text-sm rounded-sm outline-none', containerClass),
+        class: twMerge(
+          'tiptap border hover:border-primary focus:border-primary px-3 py-2.5 min-h-[110px] text-sm rounded-sm outline-none',
+          containerClass,
+        ),
       },
     },
     onUpdate({ editor }) {
