@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.46.2](https://github.com/lemonadesocial/web-new/compare/v1.46.1...v1.46.2) (2025-06-16)
+
+
+### Bug Fixes
+
+* missing namespace ([e5c2b7e](https://github.com/lemonadesocial/web-new/commit/e5c2b7e7a5d31febb4c81e6ebf60e430bddfb3bc))
+
 ## [1.46.1](https://github.com/lemonadesocial/web-new/compare/v1.46.0...v1.46.1) (2025-06-16)
 
 
