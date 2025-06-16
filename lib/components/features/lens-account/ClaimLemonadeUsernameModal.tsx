@@ -86,6 +86,7 @@ export function ClaimLemonadeUsernameModal() {
       const result = await createUsername(sessionClient, {
         username: {
           localName: username,
+          namespace: LENS_NAMESPACE,
         },
       })
         .andThen(handleOperationWith(signer))
