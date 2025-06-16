@@ -13,10 +13,10 @@ export function Checkbox({
     <div className={twMerge('flex gap-3', containerClass)}>
       <input id={id} name={id} type="checkbox" checked={value} className="peer hidden" onChange={onChange} />
       <label htmlFor={id} className="hidden peer-checked:block cursor-pointer">
-        <i className="icon-square-check" />
+        <i className="icon-square-check text-primary" />
       </label>
       <label htmlFor={id} className="peer-checked:hidden cursor-pointer">
-        <i className="icon-square" />
+        <i className="icon-square text-quaternary" />
       </label>
       <label htmlFor={id} className="cursor-pointer">
         {children}

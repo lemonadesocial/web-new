@@ -9,11 +9,13 @@ export function PlaceAutoComplete({
   placeholder,
   value,
   onSelect,
+  autoFocus,
 }: {
   label?: string;
   placeholder?: string;
   value?: string;
   onSelect?: (address: Address) => void;
+  autoFocus?: boolean;
 }) {
   const [toggle, setToggle] = React.useState(false);
   const [query, setQuery] = React.useState('');
@@ -75,6 +77,7 @@ export function PlaceAutoComplete({
         <div className="bg-background/64 border flex py-1 px-3.5 rounded-sm items-center h-[44px] left-0 right-0 focus-within:border-primary px-3.5 gap-2.5">
           <i className="icon-location-outline text-tertiary" />
           <input
+            autoFocus={autoFocus}
             className="flex-1 outline-none"
             value={query}
             placeholder={placeholder}

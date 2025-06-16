@@ -12,6 +12,8 @@ import {
   isToday,
   startOfMonth,
   startOfWeek,
+  isBefore,
+  startOfDay,
 } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
@@ -23,9 +25,10 @@ interface CalendarProps {
   footer?: () => React.ReactElement | null;
   selected?: Date;
   onSelectDate?: (date?: Date) => void;
+  minDate?: Date;
 }
 
-export function Calendar({ events, selected: selectedDate, footer, onSelectDate }: CalendarProps) {
+export function Calendar({ events, minDate, selected: selectedDate, footer, onSelectDate }: CalendarProps) {
   const [selected, setSelected] = React.useState<Date>();
   const [active, setActive] = React.useState(new Date());
 
@@ -89,14 +92,17 @@ export function Calendar({ events, selected: selectedDate, footer, onSelectDate 
           {getDates().map((d) => (
             <button
               type="button"
+              disabled={minDate && isBefore(d, minDate)}
               aria-label={d.toString()}
               key={d.toString()}
               className={twMerge(
                 'relative text-center cursor-pointer text-sm px-2.5 py-2 font-medium size-9 hover:bg-primary/8 rounded-full',
                 clsx({
-                  'text-quaternary': !isSameMonth(d, active),
+                  'text-quaternary': !isSameMonth(d, active) || (minDate && isBefore(d, minDate)),
+                  'cursor-not-allowed': minDate && isBefore(d, minDate),
                   'text-tertiary hover:bg-transparent': events && !events.some((e) => isSameDay(e, d)),
-                  'bg-primary text-primary-invert rounded-full hover:bg-primary': selected && isEqual(selected, d),
+                  'bg-primary text-primary-invert rounded-full hover:bg-primary':
+                    selected && isEqual(startOfDay(selected), d),
                   'text-accent-500': isToday(d),
                   'bg-accent-500 text-tertiary rounded-full': selected && isEqual(selected, d) && isToday(d),
                 }),

@@ -30,6 +30,7 @@ export function AddLocationPane({
             <p className="text-secondary">Add your event location so guests know where to show up.</p>
           </div>
           <PlaceAutoComplete
+            autoFocus
             label="Event Location"
             onSelect={(value) => {
               setSelectedAddress({ address: value, retrict: false, save: false });

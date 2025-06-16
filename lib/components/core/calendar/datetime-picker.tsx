@@ -17,9 +17,11 @@ export function DateTimeGroup({
   end,
   onSelect,
   placement = 'top',
+  minDate,
 }: {
   start: string;
   end: string;
+  minDate?: Date;
   onSelect: (value: { start: string; end: string }) => void;
   placement?: 'top' | 'bottom';
 }) {
@@ -39,6 +41,7 @@ export function DateTimeGroup({
           <div className="ml-7.5 flex justify-between items-center">
             <p className="text-secondary">Start</p>
             <DateTimePicker
+              minDate={minDate}
               placement={placement}
               value={startTime}
               onSelect={(datetime) => {
@@ -67,6 +70,7 @@ export function DateTimeGroup({
             <p className="text-secondary">End</p>
             <DateTimePicker
               value={endTime}
+              minDate={minDate}
               placement={placement}
               onSelect={(datetime) => {
                 let endTime = datetime;
@@ -89,10 +93,12 @@ function DateTimePicker({
   value = '',
   onSelect,
   placement = 'top',
+  minDate,
 }: {
   value?: string;
   onSelect: (datetime: string) => void;
   placement?: 'top' | 'bottom';
+  minDate?: Date;
 }) {
   const times = React.useMemo(() => {
     const formatTime = (hour: number, minutes: number) => {
@@ -127,6 +133,8 @@ function DateTimePicker({
           <Menu.Content className="w-[296px] p-0 rounded-lg">
             {({ toggle }) => (
               <Calendar
+                minDate={minDate}
+                selected={value ? new Date(value) : undefined}
                 onSelectDate={(date = new Date()) => {
                   const datetime = value ? new Date(value) : new Date();
                   datetime.setFullYear(date.getFullYear());

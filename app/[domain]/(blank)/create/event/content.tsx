@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { isNumber } from 'lodash';
 import { useSearchParams } from 'next/navigation';
+import { startOfDay } from 'date-fns';
 
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
@@ -362,6 +363,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
             <div className="flex flex-wrap md:flex-nowrap gap-3 md:items-center">
               <DateTimeGroup
                 placement="bottom"
+                minDate={startOfDay(new Date())}
                 start={field.value.start}
                 end={field.value.end}
                 onSelect={(date) => setValue('date', { ...field.value, ...date })}
@@ -408,7 +410,6 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
                           setValue('address.address', value.address as Address);
                           setValue('address.latitude', value.address?.latitude as number);
                           setValue('address.longitude', value.address?.longitude as number);
-                          // setValue('')
                         },
                       },
                     });
@@ -420,7 +421,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
                     </p>
                     <div className=" w-full">
                       <div className="flex items-center justify-between">
-                        <p className="line-clamp-1">Add Location</p>
+                        <p className="line-clamp-1">{address?.address ? address.address.title : 'Add Location'}</p>
                         {address?.address && (
                           <p>
                             <i
