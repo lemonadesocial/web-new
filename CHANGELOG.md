@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.46.1](https://github.com/lemonadesocial/web-new/compare/v1.46.0...v1.46.1) (2025-06-16)
+
+
+### Bug Fixes
+
+* correct createUsername ([f7efddb](https://github.com/lemonadesocial/web-new/commit/f7efddbdfba01eaaa222d71f94d1d6f56c1d1a97))
+
 ## [1.46.0](https://github.com/lemonadesocial/web-new/compare/v1.45.0...v1.46.0) (2025-06-16)
 
 
