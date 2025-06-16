@@ -28,7 +28,6 @@ import { useMutation, useQuery } from '$lib/graphql/request';
 import { EventList, EventListCard } from '$lib/components/features/EventList';
 import { Calendar } from '$lib/components/core/calendar';
 import { scrollAtBottomAtom, sessionAtom } from '$lib/jotai';
-import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useMe } from '$lib/hooks/useMe';
 
 import { ListingEvent } from './ListingEvent';
