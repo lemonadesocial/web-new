@@ -1,7 +1,8 @@
 'use client';
 import { Accordion, Button, Checkbox, Divider, drawer, Map, Radiobox } from '$lib/components/core';
 import { PlaceAutoComplete } from '$lib/components/core/map/place-autocomplete';
-import { Address } from '$lib/graphql/generated/backend/graphql';
+import { Address, UpdateUserDocument } from '$lib/graphql/generated/backend/graphql';
+import { useMutation } from '$lib/graphql/request';
 import { useMe } from '$lib/hooks/useMe';
 import React from 'react';
 
@@ -15,6 +16,8 @@ export function AddLocationPane({
   const me = useMe();
   const [selectedAddress, setSelectedAddress] = React.useState<{ address: Address; retrict: boolean; save: boolean }>();
   const [selected, setSelected] = React.useState({ address, retrict: false, save: false });
+
+  const [updateUserAddresses, { loading }] = useMutation(UpdateUserDocument);
 
   return (
     <div className="flex flex-col h-full">
@@ -136,7 +139,14 @@ export function AddLocationPane({
         <Button
           variant="secondary"
           disabled={!selected.address}
-          onClick={() => {
+          loading={loading}
+          onClick={async () => {
+            if (selectedAddress?.save) {
+              const arr = me?.addresses?.map(({ __typename, ...rest }) => rest) || [];
+              await updateUserAddresses({
+                variables: { input: { addresses: [selectedAddress.address, ...arr] } },
+              });
+            }
             onConfirm?.(selected);
             drawer.close();
           }}

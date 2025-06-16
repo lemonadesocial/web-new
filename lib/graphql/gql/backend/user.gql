@@ -12,3 +12,9 @@ query GetMe {
 mutation SetUserWallet($token: String!, $signature: String!) {
   setUserWallet(token: $token, signature: $signature)
 }
+
+mutation UpdateUser($input: UserInput!) {
+  updateUser(input: $input) {
+    ...User
+  }
+}

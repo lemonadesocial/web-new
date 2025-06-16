@@ -5,6 +5,7 @@ import { useForm, Controller } from 'react-hook-form';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { isNumber } from 'lodash';
+import { useSearchParams } from 'next/navigation';
 
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
@@ -38,6 +39,8 @@ export function Content({ initData }: { initData: { spaces: Space[] } }) {
   const signIn = useSignIn();
   const session = useSession();
   const me = useMe();
+  const searchParams = useSearchParams();
+  const spaceId = searchParams.get('space');
 
   const { data: dataGetMySpace } = useQuery(GetSpacesDocument, {
     variables: {
@@ -47,7 +50,7 @@ export function Content({ initData }: { initData: { spaces: Space[] } }) {
     initData: { listSpaces: initData.spaces } as unknown as GetSpacesQuery,
   });
   const spaces = (dataGetMySpace?.listSpaces || []) as Space[];
-  const personalSpace = spaces.find((item) => item.personal);
+  const personalSpace = spaces.find((item) => item._id === spaceId || item.personal);
 
   React.useEffect(() => {
     if (!session && !me) signIn();
@@ -358,6 +361,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
           render={({ field }) => (
             <div className="flex flex-wrap md:flex-nowrap gap-3 md:items-center">
               <DateTimeGroup
+                placement="bottom"
                 start={field.value.start}
                 end={field.value.end}
                 onSelect={(date) => setValue('date', { ...field.value, ...date })}
@@ -430,7 +434,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
                         )}
                       </div>
                       <p className="text-sm text-tertiary line-clamp-1">
-                        {address?.address ? address.address.street_1 : 'for offline events'}
+                        {address?.address ? getLocation(address.address) : 'for offline events'}
                       </p>
                     </div>
                   </Card.Content>
@@ -729,7 +733,7 @@ function InviteByGuestModal({ value: limit = 0, onSetLimit }: { value?: number; 
 
       <Card.Content className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
-          <p className="text-lg">vertical-align-top</p>
+          <p className="text-lg">Invites by Guests</p>
           <p className="text-sm text-secondary">
             Let your guests bring friends by sharing a referral link or sending email invites.
           </p>
@@ -760,4 +764,12 @@ function InviteByGuestModal({ value: limit = 0, onSetLimit }: { value?: number; 
       </Card.Content>
     </Card.Root>
   );
+}
+
+function getLocation(address: Address) {
+  const location = [];
+  if (address.street_1) return address.street_1;
+  if (address.city) location.push(address.city);
+  if (address.country) location.push(address.country);
+  return location.join(', ');
 }

@@ -16,10 +16,12 @@ export function DateTimeGroup({
   start,
   end,
   onSelect,
+  placement = 'top',
 }: {
   start: string;
   end: string;
   onSelect: (value: { start: string; end: string }) => void;
+  placement?: 'top' | 'bottom';
 }) {
   const [startTime, setStartTime] = React.useState(start || new Date().toISOString());
   const [endTime, setEndTime] = React.useState(end || new Date().toISOString());
@@ -37,6 +39,7 @@ export function DateTimeGroup({
           <div className="ml-7.5 flex justify-between items-center">
             <p className="text-secondary">Start</p>
             <DateTimePicker
+              placement={placement}
               value={startTime}
               onSelect={(datetime) => {
                 let _endTime = endTime;
@@ -64,6 +67,7 @@ export function DateTimeGroup({
             <p className="text-secondary">End</p>
             <DateTimePicker
               value={endTime}
+              placement={placement}
               onSelect={(datetime) => {
                 let endTime = datetime;
                 if (isBefore(endTime, startTime)) {
@@ -81,7 +85,15 @@ export function DateTimeGroup({
   );
 }
 
-function DateTimePicker({ value = '', onSelect }: { value?: string; onSelect: (datetime: string) => void }) {
+function DateTimePicker({
+  value = '',
+  onSelect,
+  placement = 'top',
+}: {
+  value?: string;
+  onSelect: (datetime: string) => void;
+  placement?: 'top' | 'bottom';
+}) {
   const times = React.useMemo(() => {
     const formatTime = (hour: number, minutes: number) => {
       const period = hour < 12 ? 'AM' : 'PM';
@@ -105,7 +117,7 @@ function DateTimePicker({ value = '', onSelect }: { value?: string; onSelect: (d
 
   return (
     <div className="flex gap-0.5">
-      <Menu.Root strategy="fixed" placement="top">
+      <Menu.Root placement={placement}>
         <Menu.Trigger>
           <Button variant="tertiary" size="sm" className="rounded-e-none! min-w-[110px]! text-primary! min-h-[36px]!">
             {format(value ? new Date(value) : new Date(), 'EEE, dd MMM')}
@@ -128,37 +140,39 @@ function DateTimePicker({ value = '', onSelect }: { value?: string; onSelect: (d
           </Menu.Content>
         </FloatingPortal>
       </Menu.Root>
-      <Menu.Root placement="top-end">
+      <Menu.Root placement={placement}>
         <Menu.Trigger>
           <Button variant="tertiary" size="sm" className="rounded-s-none! min-w-[84px] text-primary! min-h-[36px]!">
             {format(value ? new Date(value) : new Date(), 'hh:mm a')}
           </Button>
         </Menu.Trigger>
-        <Menu.Content className="w-fit no-scrollbar rounded-lg overflow-auto h-[200px] p-2">
-          {({ toggle }) => {
-            return (
-              <div>
-                {times.map((t, i) => (
-                  <Button
-                    key={i}
-                    variant="flat"
-                    className="hover:bg-quaternary! w-full whitespace-nowrap"
-                    onClick={() => {
-                      const [hours, minutes] = t.value.split(':').map(Number);
-                      const datetime = value ? new Date(value) : new Date();
-                      datetime.setHours(hours);
-                      datetime.setMinutes(minutes);
-                      handleSelect({ value: datetime });
-                      toggle();
-                    }}
-                  >
-                    {t.label}
-                  </Button>
-                ))}
-              </div>
-            );
-          }}
-        </Menu.Content>
+        <FloatingPortal>
+          <Menu.Content className="w-[100px] no-scrollbar rounded-lg overflow-auto h-[200px] p-2">
+            {({ toggle }) => {
+              return (
+                <div>
+                  {times.map((t, i) => (
+                    <Button
+                      key={i}
+                      variant="flat"
+                      className="hover:bg-quaternary! w-full whitespace-nowrap"
+                      onClick={() => {
+                        const [hours, minutes] = t.value.split(':').map(Number);
+                        const datetime = value ? new Date(value) : new Date();
+                        datetime.setHours(hours);
+                        datetime.setMinutes(minutes);
+                        handleSelect({ value: datetime });
+                        toggle();
+                      }}
+                    >
+                      {t.label}
+                    </Button>
+                  ))}
+                </div>
+              );
+            }}
+          </Menu.Content>
+        </FloatingPortal>
       </Menu.Root>
     </div>
   );

@@ -1,6 +1,10 @@
+import { cookies } from 'next/headers';
+
 import { GetSpacesDocument, Space, SpaceRole } from '$lib/graphql/generated/backend/graphql';
 import { getClient } from '$lib/graphql/request';
-import { cookies } from 'next/headers';
+import { EventThemeProvider } from '$lib/components/features/theme-builder/provider';
+
+import { MainEventLayout } from './main';
 import { Content } from './content';
 
 export default async function Page() {
@@ -13,5 +17,11 @@ export default async function Page() {
   });
   const spaces = (data?.listSpaces || []) as Space[];
 
-  return <Content initData={{ spaces }} />;
+  return (
+    <EventThemeProvider>
+      <MainEventLayout>
+        <Content initData={{ spaces }} />
+      </MainEventLayout>
+    </EventThemeProvider>
+  );
 }
