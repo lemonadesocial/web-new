@@ -11,6 +11,7 @@ import { useSession } from '$lib/hooks/useSession';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { PageTitle } from '../shared';
 import { useMe } from '$lib/hooks/useMe';
+import { useRouter } from 'next/navigation';
 
 enum FilterItem {
   AllEvents,
@@ -29,6 +30,7 @@ export function EventsContent() {
   const session = useSession();
   const me = useMe();
   const signIn = useSignIn();
+  const router = useRouter();
 
   const [loading, setLoading] = React.useState(false);
   const [filter, setFilter] = React.useState({
@@ -129,14 +131,7 @@ export function EventsContent() {
               </Menu.Content>
             </Menu.Root>
           </div>
-          <Button
-            icon="icon-edit-square"
-            size="sm"
-            onClick={() => {
-              // TODO: will need to update router after update from legacy code
-              window.location.href = '/create/experience';
-            }}
-          />
+          <Button icon="icon-edit-square" size="sm" onClick={() => router.push('/create/event')} />
         </div>
       </PageTitle>
 

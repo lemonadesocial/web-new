@@ -11,6 +11,7 @@ import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useEventTheme } from '$lib/components/features/theme-builder/provider';
 
 import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
+import { randomEventDP } from '$lib/utils/user';
 
 import { AboutSection } from './AboutSection';
 import { LocationSection } from './LocationSection';
@@ -46,13 +47,15 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
     <div className={clsx('flex gap-[72px]', state.theme && state.config.color)}>
       <div className="hidden md:flex w-[296px] flex-col gap-6">
         <div className="flex flex-col gap-4">
-          {event.new_new_photos_expanded?.[0] && (
+          {event.new_new_photos_expanded?.[0] ? (
             <img
               src={generateUrl(event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)}
               alt={event.title}
               loading="lazy"
               className="aspect-square object-contain border rounded-md"
             />
+          ) : (
+            <img className="aspect-square object-contain border rounded-md" src={randomEventDP()} />
           )}
 
           {isHost && (
@@ -74,9 +77,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           )}
         </div>
 
-        {
-          event && <PendingCohostRequest event={event} />
-        }
+        {event && <PendingCohostRequest event={event} />}
         <CommunitySection event={event} />
         <HostedBySection event={event} />
         <AttendeesSection eventId={event._id} />
@@ -84,13 +85,15 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
 
       <div className="flex-1 flex flex-col gap-6 w-full">
         <div className="block md:hidden">
-          {event.new_new_photos_expanded?.[0] && (
+          {event.new_new_photos_expanded?.[0] ? (
             <img
               src={generateUrl(event.new_new_photos_expanded[0], EDIT_KEY.EVENT_PHOTO)}
               alt={event.title}
               loading="lazy"
               className="aspect-square object-contain border rounded-md"
             />
+          ) : (
+            <img className="aspect-square object-contain border rounded-md" src={randomEventDP()} />
           )}
 
           {isHost && (

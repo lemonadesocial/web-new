@@ -1,13 +1,13 @@
 import React from 'react';
 import clsx from 'clsx';
-import { addHours, format, isBefore } from 'date-fns';
+import { addHours } from 'date-fns';
 import { Controller, useForm } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { isDate } from 'lodash';
 import ct from 'countries-and-timezones';
 
-import { Button, Card, Input, Map, Menu, modal, Spacer, toast } from '$lib/components/core';
-import { Calendar } from '$lib/components/core/calendar';
+import { Button, Card, Map, modal, toast } from '$lib/components/core';
+import { DateTimeGroup, Timezone } from '$lib/components/core/calendar';
 import { getUserTimezoneOption, TimezoneOption, timezoneOptions } from '$lib/utils/timezone';
 
 import {
@@ -20,7 +20,6 @@ import { useClient } from '$lib/graphql/request';
 import { PlaceAutoComplete } from '$lib/components/core/map/place-autocomplete';
 
 import { AddTags } from './ListingEvent';
-import { FloatingPortal } from '@floating-ui/react';
 
 type FormValues = {
   external_url?: string;
@@ -416,62 +415,21 @@ function DateTimeWithTimeZone({
   return (
     <div className="flex flex-col gap-2">
       {label && <label className="text-sm text-secondary font-medium">{label}</label>}
-      <Card.Root style={{ overflow: 'inherit' }}>
-        <Card.Content className="pl-3.5 py-1 pr-1">
-          <div className="flex flex-col relative">
-            <div className="border-dashed border-l-2 border-l-[var(--color-divider)] absolute h-full left-1 top-3 z-10">
-              <div className="size-2 backdrop-blur-lg bg-quaternary rounded-full -ml-[5px] absolute">
-                <div className="size-2 rounded-full bg-quaternary" />
-              </div>
-            </div>
-
-            <div className="ml-7.5 flex justify-between items-center">
-              <p className="text-secondary">Start</p>
-              <DateTimeGroup
-                value={startTime}
-                onSelect={(datetime) => {
-                  let _endTime = endTime;
-                  if (isBefore(endTime, datetime)) {
-                    _endTime = addHours(datetime, 1).toISOString();
-                  }
-
-                  setStartTime(datetime);
-                  setEndTime(_endTime);
-                  handleSelect({ start: datetime, end: _endTime, timezone: zone });
-                }}
-              />
-            </div>
-          </div>
-
-          <Spacer className="h-1" />
-          <div className="flex flex-col relative">
-            <div className="border-dashed border-l-2 border-l-transparent absolute h-full left-1 top-3 z-10">
-              <div className="size-2 border rounded-full -ml-[5px] absolute border-quaternary">
-                <div className="size-2 rounded-full " />
-              </div>
-            </div>
-
-            <div className="ml-7.5 flex justify-between items-center">
-              <p className="text-secondary">End</p>
-              <DateTimeGroup
-                value={endTime}
-                onSelect={(datetime) => {
-                  let endTime = datetime;
-                  if (isBefore(endTime, startTime)) {
-                    endTime = addHours(startTime, 1).toISOString();
-                  }
-
-                  setEndTime(endTime);
-                  handleSelect({ start: startTime, end: endTime, timezone: zone });
-                }}
-              />
-            </div>
-          </div>
-        </Card.Content>
-      </Card.Root>
-
+      <DateTimeGroup start={startTime} end={endTime} onSelect={(value) => handleSelect({ ...value, timezone: zone })} />
       <Timezone
         value={zone}
+        trigger={() => (
+          <button
+            type="button"
+            className="btn btn-tertiary inline-flex items-center w-full rounded-sm h-[40px] pl-3.5 pr-2.5"
+          >
+            <div className="flex flex-1 w-3xs md:w-auto items-center gap-2.5">
+              <i className="icon-globe size-[20px]" />
+              <span className="truncate w-fit">{zone?.text}</span>
+            </div>
+            <i className="icon-chevron-down size-[20px]" />
+          </button>
+        )}
         onSelect={(data) => {
           setZone(data);
           handleSelect({ start: startTime, end: endTime, timezone: data });
@@ -481,149 +439,149 @@ function DateTimeWithTimeZone({
   );
 }
 
-function DateTimeGroup({ value = '', onSelect }: { value?: string; onSelect: (datetime: string) => void }) {
-  const times = React.useMemo(() => {
-    const formatTime = (hour: number, minutes: number) => {
-      const period = hour < 12 ? 'AM' : 'PM';
-      const formattedHour = (hour % 12 === 0 ? 12 : hour % 12).toString().padStart(2, '0');
-      const formattedMinutes = minutes.toString().padStart(2, '0');
-      return {
-        value: `${hour.toString().padStart(2, '0')}:${formattedMinutes}`,
-        label: `${formattedHour}:${formattedMinutes} ${period}`,
-      };
-    };
-
-    const hours = Array.from({ length: 24 }, (_, i) => i);
-    const minutes = Array.from({ length: 2 }, (_, i) => i * 30);
-
-    return hours.flatMap((hour) => minutes.map((minute) => formatTime(hour, minute)));
-  }, []);
-
-  const handleSelect = (args: { value: Date; timezone?: string }) => {
-    onSelect(args.value.toISOString());
-  };
-
-  return (
-    <div className="flex gap-0.5">
-      <Menu.Root strategy="fixed" placement="top">
-        <Menu.Trigger>
-          <Button variant="tertiary" size="sm" className="rounded-e-none! min-w-[110px]!">
-            {format(value ? new Date(value) : new Date(), 'EEE, dd MMM')}
-          </Button>
-        </Menu.Trigger>
-        <FloatingPortal>
-          <Menu.Content className="w-[296px] p-0 rounded-lg">
-            {({ toggle }) => (
-              <Calendar
-                onSelectDate={(date = new Date()) => {
-                  const datetime = value ? new Date(value) : new Date();
-                  datetime.setFullYear(date.getFullYear());
-                  datetime.setMonth(date.getMonth());
-                  datetime.setDate(date.getDate());
-                  handleSelect({ value: datetime });
-                  toggle();
-                }}
-              />
-            )}
-          </Menu.Content>
-        </FloatingPortal>
-      </Menu.Root>
-      <Menu.Root placement="top-end">
-        <Menu.Trigger>
-          <Button variant="tertiary" size="sm" className="rounded-s-none! min-w-[84px]">
-            {format(value ? new Date(value) : new Date(), 'hh:mm a')}
-          </Button>
-        </Menu.Trigger>
-        <Menu.Content className="w-fit no-scrollbar rounded-lg overflow-auto h-[200px] p-2">
-          {({ toggle }) => {
-            return (
-              <div>
-                {times.map((t, i) => (
-                  <Button
-                    key={i}
-                    variant="flat"
-                    className="hover:bg-quaternary! w-full whitespace-nowrap"
-                    onClick={() => {
-                      const [hours, minutes] = t.value.split(':').map(Number);
-                      const datetime = value ? new Date(value) : new Date();
-                      datetime.setHours(hours);
-                      datetime.setMinutes(minutes);
-                      handleSelect({ value: datetime });
-                      toggle();
-                    }}
-                  >
-                    {t.label}
-                  </Button>
-                ))}
-              </div>
-            );
-          }}
-        </Menu.Content>
-      </Menu.Root>
-    </div>
-  );
-}
-
-function Timezone({ value, onSelect }: { value?: TimezoneOption; onSelect: (zone: TimezoneOption) => void }) {
-  const [zones, setZone] = React.useState(timezoneOptions);
-  const [query, setQuery] = React.useState('');
-
-  return (
-    <Menu.Root strategy="fixed" placement="top">
-      <Menu.Trigger>
-        <button
-          type="button"
-          className="btn btn-tertiary inline-flex items-center w-full rounded-sm h-[40px] pl-3.5 pr-2.5"
-        >
-          <div className="flex flex-1 w-3xs md:w-auto items-center gap-2.5">
-            <i className="icon-globe size-[20px]" />
-            <span className="truncate w-fit">{value?.text}</span>
-          </div>
-          <i className="icon-chevron-down size-[20px]" />
-        </button>
-      </Menu.Trigger>
-      <Menu.Content className="p-0 border-0">
-        {({ toggle }) => (
-          <Card.Root>
-            <Card.Header className="p-0">
-              <Input
-                className="rounded-none border-none"
-                value={query}
-                autoFocus
-                onChange={(e) => {
-                  const text = e.target.value;
-                  setQuery(text);
-                  if (!text) setZone(timezoneOptions);
-                  else setZone(timezoneOptions.filter((p) => p.value.toLowerCase().includes(text.toLowerCase())));
-                }}
-              />
-            </Card.Header>
-            <Card.Content className="p-0  md:w-[446px]">
-              <div className="p-1 overflow-auto h-[170px]">
-                {zones.map((zone, i) => {
-                  return (
-                    <div
-                      key={i}
-                      className={clsx(
-                        'flex justify-between items-center text-sm px-2 py-1.5 cursor-pointer hover:bg-[var(--btn-tertiary)]',
-                        value?.value === zone.value,
-                      )}
-                      onClick={() => {
-                        onSelect(zone);
-                        setQuery('');
-                        toggle();
-                      }}
-                    >
-                      <p>{zone.value}</p>
-                      <p>{zone.short}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </Card.Content>
-          </Card.Root>
-        )}
-      </Menu.Content>
-    </Menu.Root>
-  );
-}
+// function DateTimeGroup({ value = '', onSelect }: { value?: string; onSelect: (datetime: string) => void }) {
+//   const times = React.useMemo(() => {
+//     const formatTime = (hour: number, minutes: number) => {
+//       const period = hour < 12 ? 'AM' : 'PM';
+//       const formattedHour = (hour % 12 === 0 ? 12 : hour % 12).toString().padStart(2, '0');
+//       const formattedMinutes = minutes.toString().padStart(2, '0');
+//       return {
+//         value: `${hour.toString().padStart(2, '0')}:${formattedMinutes}`,
+//         label: `${formattedHour}:${formattedMinutes} ${period}`,
+//       };
+//     };
+//
+//     const hours = Array.from({ length: 24 }, (_, i) => i);
+//     const minutes = Array.from({ length: 2 }, (_, i) => i * 30);
+//
+//     return hours.flatMap((hour) => minutes.map((minute) => formatTime(hour, minute)));
+//   }, []);
+//
+//   const handleSelect = (args: { value: Date; timezone?: string }) => {
+//     onSelect(args.value.toISOString());
+//   };
+//
+//   return (
+//     <div className="flex gap-0.5">
+//       <Menu.Root strategy="fixed" placement="top">
+//         <Menu.Trigger>
+//           <Button variant="tertiary" size="sm" className="rounded-e-none! min-w-[110px]!">
+//             {format(value ? new Date(value) : new Date(), 'EEE, dd MMM')}
+//           </Button>
+//         </Menu.Trigger>
+//         <FloatingPortal>
+//           <Menu.Content className="w-[296px] p-0 rounded-lg">
+//             {({ toggle }) => (
+//               <Calendar
+//                 onSelectDate={(date = new Date()) => {
+//                   const datetime = value ? new Date(value) : new Date();
+//                   datetime.setFullYear(date.getFullYear());
+//                   datetime.setMonth(date.getMonth());
+//                   datetime.setDate(date.getDate());
+//                   handleSelect({ value: datetime });
+//                   toggle();
+//                 }}
+//               />
+//             )}
+//           </Menu.Content>
+//         </FloatingPortal>
+//       </Menu.Root>
+//       <Menu.Root placement="top-end">
+//         <Menu.Trigger>
+//           <Button variant="tertiary" size="sm" className="rounded-s-none! min-w-[84px]">
+//             {format(value ? new Date(value) : new Date(), 'hh:mm a')}
+//           </Button>
+//         </Menu.Trigger>
+//         <Menu.Content className="w-fit no-scrollbar rounded-lg overflow-auto h-[200px] p-2">
+//           {({ toggle }) => {
+//             return (
+//               <div>
+//                 {times.map((t, i) => (
+//                   <Button
+//                     key={i}
+//                     variant="flat"
+//                     className="hover:bg-quaternary! w-full whitespace-nowrap"
+//                     onClick={() => {
+//                       const [hours, minutes] = t.value.split(':').map(Number);
+//                       const datetime = value ? new Date(value) : new Date();
+//                       datetime.setHours(hours);
+//                       datetime.setMinutes(minutes);
+//                       handleSelect({ value: datetime });
+//                       toggle();
+//                     }}
+//                   >
+//                     {t.label}
+//                   </Button>
+//                 ))}
+//               </div>
+//             );
+//           }}
+//         </Menu.Content>
+//       </Menu.Root>
+//     </div>
+//   );
+// }
+//
+// function Timezone({ value, onSelect }: { value?: TimezoneOption; onSelect: (zone: TimezoneOption) => void }) {
+//   const [zones, setZone] = React.useState(timezoneOptions);
+//   const [query, setQuery] = React.useState('');
+//
+//   return (
+//     <Menu.Root strategy="fixed" placement="top">
+//       <Menu.Trigger>
+//         <button
+//           type="button"
+//           className="btn btn-tertiary inline-flex items-center w-full rounded-sm h-[40px] pl-3.5 pr-2.5"
+//         >
+//           <div className="flex flex-1 w-3xs md:w-auto items-center gap-2.5">
+//             <i className="icon-globe size-[20px]" />
+//             <span className="truncate w-fit">{value?.text}</span>
+//           </div>
+//           <i className="icon-chevron-down size-[20px]" />
+//         </button>
+//       </Menu.Trigger>
+//       <Menu.Content className="p-0 border-0">
+//         {({ toggle }) => (
+//           <Card.Root>
+//             <Card.Header className="p-0">
+//               <Input
+//                 className="rounded-none border-none"
+//                 value={query}
+//                 autoFocus
+//                 onChange={(e) => {
+//                   const text = e.target.value;
+//                   setQuery(text);
+//                   if (!text) setZone(timezoneOptions);
+//                   else setZone(timezoneOptions.filter((p) => p.value.toLowerCase().includes(text.toLowerCase())));
+//                 }}
+//               />
+//             </Card.Header>
+//             <Card.Content className="p-0  md:w-[446px]">
+//               <div className="p-1 overflow-auto h-[170px]">
+//                 {zones.map((zone, i) => {
+//                   return (
+//                     <div
+//                       key={i}
+//                       className={clsx(
+//                         'flex justify-between items-center text-sm px-2 py-1.5 cursor-pointer hover:bg-[var(--btn-tertiary)]',
+//                         value?.value === zone.value,
+//                       )}
+//                       onClick={() => {
+//                         onSelect(zone);
+//                         setQuery('');
+//                         toggle();
+//                       }}
+//                     >
+//                       <p>{zone.value}</p>
+//                       <p>{zone.short}</p>
+//                     </div>
+//                   );
+//                 })}
+//               </div>
+//             </Card.Content>
+//           </Card.Root>
+//         )}
+//       </Menu.Content>
+//     </Menu.Root>
+//   );
+// }

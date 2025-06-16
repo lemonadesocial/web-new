@@ -478,3 +478,10 @@ query GetEventCohostInvites($input: GetEventCohostRequestsInput!) {
 mutation DecideEventCohostRequest($input: DecideEventCohostRequestInput!) {
   decideEventCohostRequest(input: $input)
 }
+
+mutation createEvent($input: EventInput!) {
+  createEvent(input: $input) {
+    _id
+    shortid
+  }
+}

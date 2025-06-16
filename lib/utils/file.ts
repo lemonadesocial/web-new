@@ -28,7 +28,7 @@ export async function uploadFiles(files: File[], directory: FileDirectory): Prom
       throw new Error('Failed to get upload data');
     }
 
-    const { presignedUrl, type, url } = uploadData;
+    const { presignedUrl, type, url, _id, bucket, key } = uploadData;
 
     if (!presignedUrl || !url) {
       throw new Error('Failed to get upload data');
@@ -47,10 +47,8 @@ export async function uploadFiles(files: File[], directory: FileDirectory): Prom
       throw new Error(`Failed to upload file ${file.name}`);
     }
 
-    return {
-      url,
-      type
-    };
+    // NOTE: add extra file for generate url after upload
+    return { _id, bucket, key, url, type };
   });
 
   return Promise.all(uploadPromises);

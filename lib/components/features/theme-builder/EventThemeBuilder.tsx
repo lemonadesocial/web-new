@@ -20,7 +20,7 @@ import { useEventTheme, ThemeBuilderActionKind } from './provider';
 import { MenuColorPicker } from './ColorPicker';
 import { generateUrl } from '$lib/utils/cnd';
 
-export function EventThemeBuilder({ eventId }: { eventId: string }) {
+export function EventThemeBuilder({ eventId }: { eventId?: string }) {
   const [toggle, setToggle] = React.useState(false);
   const [data, dispatch] = useEventTheme();
   const themeName = !data.theme || data.theme === 'default' ? 'minimal' : data.theme;
@@ -52,17 +52,18 @@ export function EventThemeBuilder({ eventId }: { eventId: string }) {
   });
 
   React.useEffect(() => {
-    if (mounted.current) {
+    if (mounted.current && eventId) {
       updateEventTheme({ variables: { id: eventId, input: { theme_data: data } } });
     } else {
       mounted.current = true;
     }
-  }, [data]);
+  }, [data, eventId]);
 
   return (
     <>
       <div className="flex gap-2 h-[62px]">
         <button
+          type="button"
           className="btn btn-tertiary inline-flex px-3 py-2.5 w-full gap-2.5 rounded-sm text-left backdrop-blur-sm"
           onClick={() => setToggle(true)}
         >
@@ -76,6 +77,7 @@ export function EventThemeBuilder({ eventId }: { eventId: string }) {
           </div>
         </button>
         <button
+          type="button"
           onClick={() => dispatch({ type: ThemeBuilderActionKind.random })}
           className="btn btn-tertiary inline-flex items-center justify-center p-[21px] backdrop-blur-sm rounded-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-none!"
         >
@@ -325,6 +327,7 @@ function ThemeColor() {
   return (
     <div className="flex md:flex-col items-center overflow-auto w-full md:w-[60px] gap-3 p-4">
       <button
+        type="button"
         onClick={(e) => {
           e.stopPropagation();
           dispatch({
@@ -340,6 +343,7 @@ function ThemeColor() {
 
       {colors.map((color) => (
         <button
+          type="button"
           key={color}
           onClick={(e) => {
             e.stopPropagation();
@@ -409,6 +413,7 @@ function ThemeFont({
     <div className="flex md:grid md:grid-cols-2 items-center gap-3 w-full md:w-[188px] p-4 overflow-auto">
       {Object.entries(fonts).map(([key, font]) => (
         <button
+          type="button"
           key={key}
           className="flex flex-col items-center text-xs gap-2 cursor-pointer"
           onClick={(e) => {
@@ -449,6 +454,7 @@ function ThemeShader() {
     <div className="flex md:flex-col items-center gap-3 w-full md:w-[96px] overflow-auto p-4">
       {shaders.map((s) => (
         <button
+          type="button"
           key={s.name}
           className={clsx(
             'flex flex-col gap-2 items-center',
@@ -483,6 +489,7 @@ function ThemePattern() {
     <div className="flex md:flex-col items-center gap-3 w-full md:w-[96px] overflow-auto p-4">
       {patterns.map((item) => (
         <button
+          type="button"
           key={item}
           className="capitalize flex flex-col items-center cursor-pointer gap-2"
           onClick={(e) => {
@@ -580,7 +587,7 @@ function ThemeEffect() {
   return (
     <div className="flex md:grid md:grid-cols-2 items-center gap-3 w-full md:w-[188px] p-4 overflow-auto">
       {Object.entries(emojis).map(([key, value]) => (
-        <button key={key} className="flex flex-col items-center text-xs gap-2 cursor-pointer">
+        <button type="button" key={key} className="flex flex-col items-center text-xs gap-2 cursor-pointer">
           <div
             className={clsx(
               'border-2 border-[var(--color-divider)] rounded-full px-4 py-2 w-[60px] h-[60px] hover:border-primary flex items-center justify-between',
@@ -621,6 +628,7 @@ function ThemeMode() {
     <div className="flex md:flex-col items-center w-full md:w-[92px] gap-3 overflow-auto p-4">
       {modes.map((item) => (
         <button
+          type="button"
           key={item.mode}
           onClick={(e) => {
             e.stopPropagation();
@@ -654,6 +662,7 @@ function ActionButton({
 }: React.PropsWithChildren & { disabled?: boolean; active?: boolean; onClick?: () => void }) {
   return (
     <button
+      type="button"
       disabled={disabled}
       onClick={(e) => {
         e.stopPropagation();

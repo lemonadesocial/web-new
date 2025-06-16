@@ -1,4 +1,5 @@
 import { createAvatar } from '@dicebear/core';
+import { identicon } from '@dicebear/collection';
 import * as thumbs from '@dicebear/thumbs';
 
 import { User } from "$lib/graphql/generated/backend/graphql";
@@ -40,4 +41,22 @@ export function randomUserImage(id?: string): string {
   });
 
   return avatar.toDataUri();
+}
+
+export function randomEventDP(id?: string) {
+  const avatar = createAvatar(identicon, {
+    seed: id,
+    radius: 0,
+    backgroundColor: ['b6e3f4', 'c0aede', 'd1d4f9', 'ffd5dc', 'ffdfbf'],
+    backgroundType: ['solid'],
+    rowColor: ['00897b', '3949ab', '5e35b1', '6d4c41', '8e24aa', 'd81b60', 'e53935', 'f4511e'],
+    row1: ['xoxox', 'oxxxo', 'xxoxx', 'xooox', 'xxxxx', 'oxoxo', 'ooxoo'],
+    row2: ['xoxox', 'oxxxo', 'xxoxx', 'xooox', 'xxxxx', 'oxoxo', 'ooxoo'],
+    row3: ['xoxox', 'oxxxo', 'xxoxx', 'xooox', 'xxxxx', 'oxoxo', 'ooxoo'],
+    row4: ['xoxox', 'oxxxo', 'xxoxx', 'xooox', 'xxxxx', 'oxoxo', 'ooxoo'],
+    row5: ['xoxox', 'oxxxo', 'xxoxx', 'xooox', 'xxxxx', 'oxoxo', 'ooxoo'],
+  });
+
+  return avatar.toDataUri();
+
 }
