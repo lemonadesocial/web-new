@@ -228,7 +228,9 @@ export function Community({ initData }: Props) {
                           iconLeft="icon-edit-square"
                           onClick={() => {
                             toggle();
-                            router.push('/create/events?space=${space?._id}');
+                            //NOTE: it handles from legacy web/os
+                            window.location.pathname = `/create/events?space=${space?._id}`;
+                            // router.push(`/create/events?space=${space?._id}`);
                           }}
                         />
                         <MenuItem
