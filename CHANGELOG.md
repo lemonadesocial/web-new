@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.46.0](https://github.com/lemonadesocial/web-new/compare/v1.45.0...v1.46.0) (2025-06-16)
+
+
+### Features
+
+* update username flow for existing lens users ([3d9675c](https://github.com/lemonadesocial/web-new/commit/3d9675ccb776352ffdb16ad786c42a9853b31506))
+
 ## [1.45.0](https://github.com/lemonadesocial/web-new/compare/v1.44.0...v1.45.0) (2025-06-15)
 
 
