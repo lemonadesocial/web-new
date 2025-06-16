@@ -60,7 +60,7 @@ export function LensConnectWallet({ onConnect }: { onConnect: () => void }) {
         <p className="text-secondary text-sm">Select a profile to join the conversation, explore posts, and share your own.</p>
       </div>
       <Button variant="secondary" className="w-full" onClick={onConnect}>
-        Select Profile
+        Select Account
       </Button>
     </div>
   );
@@ -73,7 +73,7 @@ export function LensConnectWallet({ onConnect }: { onConnect: () => void }) {
       </div>
       <div className="flex items-center justify-between">
         <Button variant="secondary" size="sm" onClick={onConnect}>
-          Select Profile
+          Select Account
         </Button>
         <Menu.Root>
           <Menu.Trigger>

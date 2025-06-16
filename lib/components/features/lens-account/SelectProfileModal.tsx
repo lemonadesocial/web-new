@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
-import { AccountManaged } from "@lens-protocol/client";
-import { fetchAccountsAvailable } from "@lens-protocol/client/actions";
+import { AccountManaged, evmAddress } from "@lens-protocol/client";
+import { fetchAccountsAvailable, fetchUsernames } from "@lens-protocol/client/actions";
 import { signMessageWith } from "@lens-protocol/client/ethers";
 import { useSetAtom } from "jotai";
 
@@ -14,6 +14,7 @@ import { getAccountAvatar } from "$lib/utils/lens/utils";
 
 import { SignTransactionModal } from "../modals/SignTransaction";
 import { ClaimUsernameModal } from "./ClaimUsernameModal";
+import { LENS_NAMESPACE } from "$lib/utils/constants";
 
 export function SelectProfileModal() {
   const [accounts, setAccounts] = useState<AccountManaged[]>([]);
@@ -77,7 +78,9 @@ export function SelectProfileModal() {
   const handleSelectProfile = async (item: AccountManaged) => {
     if (!signer) return;
 
-    setSelectedAccount(item.account.address);
+    const account = item.account;
+
+    setSelectedAccount(account.address);
     const loginAs = (item as { __typename: 'AccountOwned' | 'AccountManaged' }).__typename === 'AccountOwned'
       ? {
         accountOwner: {
@@ -88,7 +91,7 @@ export function SelectProfileModal() {
       : {
         accountManager: {
           manager: address,
-          account: item.account.address,
+          account: account.address,
         },
       };
 
@@ -105,8 +108,23 @@ export function SelectProfileModal() {
     }
 
     setSessionClient(loginResult.value);
-    setAccount(item.account);
-    modal.close();
+    setAccount(account);
+    modal.close(); 
+
+    const lemonadeUsernamesRes = await fetchUsernames(client, {
+      filter: {
+        owner: account.address,
+        namespace: evmAddress(LENS_NAMESPACE),
+      },
+    });
+
+    if (lemonadeUsernamesRes.isErr()) return;
+
+    const lemonadeUsernames = lemonadeUsernamesRes.value.items;
+
+    if (lemonadeUsernames.length) return;
+
+    modal.open(ClaimUsernameModal);
   }
 
   if (isLoadingAccounts) return (
@@ -128,8 +146,8 @@ export function SelectProfileModal() {
 
   return (
     <ModalContent icon="icon-account">
-      <p>Select Profile</p>
-      <p className="mt-2 text-secondary text-sm">Pick your profile to load your personalized timeline—or create a new one to start fresh!.</p>
+      <p>Select Account</p>
+      <p className="mt-2 text-secondary text-sm">Pick your account to load your personalized timeline—or create a new one to start fresh!.</p>
       <div className="mt-4 space-y-2">
         {accounts.map((item) => (
           <div
@@ -150,7 +168,7 @@ export function SelectProfileModal() {
         disabled={!!selectedAccount}
         loading={isLoadingSignIn}
       >
-        New Profile
+        New Account
       </Button>
     </ModalContent>
   );

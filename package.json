@@ -22,7 +22,7 @@
     "@floating-ui/react": "^0.27.5",
     "@hookform/resolvers": "^5.0.1",
     "@lens-chain/storage-client": "^1.0.4",
-    "@lens-protocol/client": "^0.0.0-canary-20250507164041",
+    "@lens-protocol/client": "^0.0.0-canary-20250611103544",
     "@lens-protocol/metadata": "^2.0.0",
     "@ory/client": "^1.19.0",
     "@react-three/fiber": "^9.1.0",

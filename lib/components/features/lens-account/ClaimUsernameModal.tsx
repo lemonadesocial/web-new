@@ -172,7 +172,7 @@ export function ClaimUsernameModal() {
 
   return (
     <ModalContent
-      title="Pick Username"
+      title="Lemonade Username"
       onClose={() => modal.close()}
     >
       <p className='text-secondary text-sm'>Secure your identity before someone else does. Price depends on character count. This cannot be changed later.</p>
@@ -183,7 +183,7 @@ export function ClaimUsernameModal() {
       </div>
 
       <div className='flex items-center justify-between mt-4 h-6'>
-        <p className='text-sm'>Search Username</p>
+        <p className='text-sm'>Lemonade Username</p>
         <div>
           {status === 'checking' && <i className='icon-loader animate-spin size-4 text-tertiary' />}
           {status === 'available' && <p className='text-success-500 text-sm'>Available</p>}
@@ -191,11 +191,13 @@ export function ClaimUsernameModal() {
         </div>
       </div>
 
-      <div className="w-full rounded-sm flex items-center px-2.5 border border-tertiary h-10 font-medium text-sm mt-1.5">
-        <span className="text-tertiary">lemonade/</span>
+      <div className="w-full rounded-sm flex border border-card-border h-10 mt-1.5 overflow-hidden">
+        <div className="flex items-center px-3.5 py-2.5 bg-primary/8">
+          <span className="text-tertiary font-medium">lemonade/</span>
+        </div>
         <input
           placeholder='johndoe'
-          className='focus:outline-none placeholder-quaternary'
+          className='focus:outline-none placeholder-quaternary px-3.5 font-medium w-full'
           value={username}
           onChange={onInputChange}
         />
