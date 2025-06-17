@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.46.6](https://github.com/lemonadesocial/web-new/compare/v1.46.5...v1.46.6) (2025-06-17)
+
+
+### Bug Fixes
+
+* valid url - add prefix ([a00e55f](https://github.com/lemonadesocial/web-new/commit/a00e55f677758421f9ef281a9d04008610071b78))
+
 ## [1.46.5](https://github.com/lemonadesocial/web-new/compare/v1.46.4...v1.46.5) (2025-06-17)
 
 
