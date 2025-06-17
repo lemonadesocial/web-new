@@ -26,6 +26,8 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
           else setMode('light');
         }
       });
+    } else {
+      setMode(data.config.mode);
     }
   }, [data.config.mode]);
 
