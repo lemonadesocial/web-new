@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.46.4](https://github.com/lemonadesocial/web-new/compare/v1.46.3...v1.46.4) (2025-06-17)
+
+
+### Bug Fixes
+
+* remove __typename on address ([d15667e](https://github.com/lemonadesocial/web-new/commit/d15667e13556e46d97e0a760bfb5339ecd3cdc67))
+
 ## [1.46.3](https://github.com/lemonadesocial/web-new/compare/v1.46.2...v1.46.3) (2025-06-16)
 
 
