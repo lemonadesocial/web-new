@@ -1193,7 +1193,7 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lens-chain/sdk@^1.0.0":
+"@lens-chain/sdk@^1.0.0", "@lens-chain/sdk@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@lens-chain/sdk/-/sdk-1.0.3.tgz#785c8cb4372bd40b1a3d5efb89c0d0735c0317e8"
   integrity sha512-ysfCKyhC2CouFQbysnduwKGQU8L6MI1VVBcClMLisKAJAunHFowsBaUp+j8nuQyWmUETpokqpe2Mk0P9bSGhfw==
