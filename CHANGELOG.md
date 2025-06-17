@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.46.5](https://github.com/lemonadesocial/web-new/compare/v1.46.4...v1.46.5) (2025-06-17)
+
+
+### Bug Fixes
+
+* post button ([02b087a](https://github.com/lemonadesocial/web-new/commit/02b087aa614244c953bba415c969076f7125afe9))
+
 ## [1.46.4](https://github.com/lemonadesocial/web-new/compare/v1.46.3...v1.46.4) (2025-06-17)
 
 
