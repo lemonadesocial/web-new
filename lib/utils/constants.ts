@@ -6,7 +6,9 @@ export const ASSET_PREFIX = process.env.NEXT_PUBLIC_ASSET_PREFIX || '';
 export const KRATOS_PUBLIC_URL = process.env.NEXT_PUBLIC_KRATOS_PUBLIC_URL as string;
 export const IDENTITY_URL = process.env.NEXT_PUBLIC_IDENTITY_URL as string;
 export const LEMONADE_FEED_ADDRESS = process.env.NEXT_PUBLIC_LEMONADE_FEED_ADDRESS as string;
-export const LENS_NAMESPACE = process.env.NEXT_PUBLIC_LENS_NAMESPACE as string;
+// export const LENS_NAMESPACE = process.env.NEXT_PUBLIC_LENS_NAMESPACE as string;
+
+export const LENS_NAMESPACE = '0x5acb86a479d159c469595bc196212da3DD5AAeA7';
 
 export const ETHNICITIES = ['African American', 'Alaska Native', 'Arab', 'Asian', 'Black', 'Han Chinese', 'Hispanic / Latino', 'Indian', 'Native American', 'Native Hawaiian', 'Pacific Islander', 'White', 'Other'];
 

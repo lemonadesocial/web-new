@@ -10,7 +10,8 @@ import {
   fetchPosts as lensFetchPosts,
   fetchPostReferences,
   fetchAccountGraphStats,
-  fetchUsername
+  fetchUsername,
+  fetchUsernames
 } from '@lens-protocol/client/actions';
 import { AccountMetadata } from '@lens-protocol/metadata';
 import { useAtomValue, useSetAtom, useAtom } from 'jotai';
@@ -623,15 +624,15 @@ export function useLemonadeUsername(account: Account | null) {
 
       setIsLoading(true);
       try {
-        const result = await fetchUsername(client, {
-          username: {
-            localName: account.username?.localName || '',
+        const result = await fetchUsernames(client, {
+          filter: {
+            owner: account.address,
             namespace: evmAddress(LENS_NAMESPACE),
           },
         });
 
-        if (result.isOk() && result.value) {
-          setUsername(result.value.localName);
+        if (result.isOk() && result.value.items.length > 0) {
+          setUsername(result.value.items[0].localName);
         } else {
           setUsername(null);
         }
@@ -644,7 +645,7 @@ export function useLemonadeUsername(account: Account | null) {
     };
 
     fetchUsernameData();
-  }, [account?.address, account?.username?.localName]);
+  }, [account?.address]);
 
   return {
     username,

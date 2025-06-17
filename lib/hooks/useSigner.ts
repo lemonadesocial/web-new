@@ -22,7 +22,7 @@ export function useSigner() {
         Number(network.chainId),
         getDefaultProvider(process.env.NEXT_PUBLIC_APP_ENV === 'production' ? Network.Mainnet : Network.Testnet) as unknown as Provider
       );
-      
+
       setSigner(signer);
     })();
   }, [walletProvider]);

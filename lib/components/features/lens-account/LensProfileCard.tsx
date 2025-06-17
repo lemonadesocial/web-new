@@ -69,11 +69,21 @@ export function LensProfileCard({ account }: { account: Account }) {
     <div className="hidden md:block rounded-sm border border-divider space-y-4 p-4">
       <div className="flex justify-between">
         <Avatar src={getAccountAvatar(displayAccount)} className="size-14" />
-        {isOwner && (
-          <ProfileMenu>
-            <Button variant="tertiary" size="sm" icon="icon-more-vert" className="rounded-full" />
-          </ProfileMenu>
-        )}
+        <div className="flex items-center gap-2">
+          {
+            displayAccount.username && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-primary/8">
+                <i className="icon-lens text-secondary size-4" />
+                <p className="text-sm text-tertiary max-w-[100px] truncate">{displayAccount.username.localName}</p>
+              </div>
+            )
+          }
+          {isOwner && (
+            <ProfileMenu>
+              <Button variant="tertiary" size="sm" icon="icon-more-vert" className="rounded-full" />
+            </ProfileMenu>
+          )}
+        </div>
       </div>
       <div className="space-y-2">
         <div className="flex flex-col gap-0.5">
@@ -90,13 +100,6 @@ export function LensProfileCard({ account }: { account: Account }) {
             {stats.following} Following
           </p>
         </div>
-        {
-          displayAccount.metadata?.bio && (
-            <p className="text-secondary text-sm">
-              {displayAccount.metadata?.bio}
-            </p>
-          )
-        }
       </div>
       {
         isOwner ? (
