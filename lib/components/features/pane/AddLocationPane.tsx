@@ -157,6 +157,7 @@ export function AddLocationPane({
                 variables: { input: { addresses: [selectedAddress.address, ...arr] } },
               });
             }
+            delete selected.address?.__typename;
             onConfirm?.(selected);
             drawer.close();
           }}
