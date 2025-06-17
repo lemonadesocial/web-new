@@ -456,7 +456,11 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
                     modal.open(VirtualModal, {
                       props: {
                         onConfirm: (value) => {
-                          setValue('virtual_url', value);
+                          let _url = value;
+                          if (!/^(?:f|ht)tps?\:\/\//.test(_url)) {
+                            _url = 'https://' + _url;
+                          }
+                          setValue('virtual_url', _url);
                           setValue('virtual', true);
                         },
                       },
@@ -469,7 +473,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
                     </p>
                     <div className="w-full">
                       <div className="flex items-center justify-between">
-                        <p className="line-clamp-1">Add Virtual Link</p>
+                        <p className="line-clamp-1">{url ? 'Virtual' : 'Add Virtual Link'}</p>
                         {url && (
                           <p>
                             <i
@@ -614,7 +618,7 @@ function VirtualModal({ url, onConfirm }: { url?: string; onConfirm?: (url: stri
   return (
     <Card.Root className="w-[480px]">
       <Card.Header className="flex justify-between items-center">
-        <p className="text-lg font-medium">Add Virtual Link </p>
+        <p className="text-lg font-medium">Add Virtual Link</p>
         <Button
           icon="icon-x size-[14]"
           variant="tertiary"
@@ -634,7 +638,7 @@ function VirtualModal({ url, onConfirm }: { url?: string; onConfirm?: (url: stri
           <Button
             variant="secondary"
             className="w-full"
-            disabled={!value}
+            disabled={!isValidUrl(value)}
             onClick={() => {
               onConfirm?.(value as string);
               modal.close();
@@ -773,4 +777,17 @@ function getLocation(address: Address) {
   if (address.city) location.push(address.city);
   if (address.country) location.push(address.country);
   return location.join(', ');
+}
+
+function isValidUrl(url?: string) {
+  const pattern = new RegExp(
+    '^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+      '(\\#[-a-z\\d_]*)?$',
+    'i',
+  ); // fragment locator
+  return pattern.test(url);
 }
