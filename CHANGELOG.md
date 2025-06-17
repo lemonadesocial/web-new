@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.46.7](https://github.com/lemonadesocial/web-new/compare/v1.46.6...v1.46.7) (2025-06-17)
+
+
+### Bug Fixes
+
+* content can null ([291b21f](https://github.com/lemonadesocial/web-new/commit/291b21f44d375ae852ef0833b97b0f6f7cd26f19))
+
 ## [1.46.6](https://github.com/lemonadesocial/web-new/compare/v1.46.5...v1.46.6) (2025-06-17)
 
 
