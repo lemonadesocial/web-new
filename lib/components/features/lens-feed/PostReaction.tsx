@@ -83,7 +83,7 @@ export function PostReaction({ post, isComment }: PostReactionProps) {
       }}
       label={upvotes}
       isActive={isUpvoted}
-      className={isUpvoted ? 'sm:bg-accent-500 sm:hover:bg-accent-700' : ''}
+      className={isUpvoted ? 'text-accent-500 hover:text-accent-700' : ''}
     />
   );
 }

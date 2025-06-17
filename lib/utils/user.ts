@@ -1,5 +1,5 @@
 import { createAvatar } from '@dicebear/core';
-import { identicon } from '@dicebear/collection';
+import * as identicon from '@dicebear/identicon';
 import * as thumbs from '@dicebear/thumbs';
 
 import { User } from "$lib/graphql/generated/backend/graphql";

@@ -21,7 +21,8 @@ export function PostButton({
   return (
     <div
       className={twMerge(
-        'flex items-center gap-2 cursor-pointer hover:bg-primary/16 group',
+        'flex items-center gap-2 cursor-pointer group',
+        isActive ? 'text-primary' : 'text-tertiary',
         className
       )}
       onClick={onClick}
@@ -30,7 +31,6 @@ export function PostButton({
         <i className={clsx(
           icon,
           'size-5 transition-all duration-200 group-hover:size-6 group-hover:text-primary',
-          isActive ? 'text-primary' : 'text-tertiary'
         )} />
       </div>
       {!!label && <span className={twMerge('text-tertiary font-medium', isActive && 'text-primary')}>{label}</span>}
