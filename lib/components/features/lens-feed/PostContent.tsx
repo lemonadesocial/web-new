@@ -43,9 +43,9 @@ export function PostContent({ post }: PostContentProps) {
     fetchEvent();
   }, [metadata]);
   
-  const extractFirstUrl = (content: string): string | null => {
+  const extractFirstUrl = (content?: string): string | null => {
     const urlRegex = /https?:\/\/[^\s]+/g;
-    const matches = content.match(urlRegex);
+    const matches = content?.match(urlRegex);
     return matches ? matches[0] : null;
   };
 
