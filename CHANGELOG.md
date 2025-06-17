@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.47.0](https://github.com/lemonadesocial/web-new/compare/v1.46.7...v1.47.0) (2025-06-17)
+
+
+### Features
+
+* update account card ([ca723f6](https://github.com/lemonadesocial/web-new/commit/ca723f624aaae779022798152a0dd332331ca29d))
+* update lens signer ([a7900f6](https://github.com/lemonadesocial/web-new/commit/a7900f6c22ac9d7cfc530d69eeeb92a4ec5de67f))
+
 ## [1.46.7](https://github.com/lemonadesocial/web-new/compare/v1.46.6...v1.46.7) (2025-06-17)
 
 
