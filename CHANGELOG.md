@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.47.1](https://github.com/lemonadesocial/web-new/compare/v1.47.0...v1.47.1) (2025-06-17)
+
+
+### Bug Fixes
+
+* env ([de599bd](https://github.com/lemonadesocial/web-new/commit/de599bd47d5ee76b7b8d6c2c71871b1c4f069647))
+
 ## [1.47.0](https://github.com/lemonadesocial/web-new/compare/v1.46.7...v1.47.0) (2025-06-17)
 
 
