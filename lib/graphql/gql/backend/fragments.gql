@@ -34,6 +34,9 @@ fragment User on User {
   handle_instagram
   handle_linkedin
   handle_twitter
+  handle_farcaster
+  handle_github
+  pronoun
   calendly_url
   new_photos_expanded(limit: 1) {
     _id

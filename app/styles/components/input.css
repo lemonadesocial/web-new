@@ -30,6 +30,10 @@
       height: 40px;
     }
 
+    &:has(textarea) {
+      height: auto;
+    }
+
     &:has(.prefix) {
       --input-size: 0px 0px;
       .prefix {

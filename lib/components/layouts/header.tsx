@@ -112,7 +112,7 @@ export default function Header({ title, mainMenu }: Props) {
                     </div>
                     <Divider />
                     <div className="p-1">
-                      <MenuItem title="View Profile" onClick={() => drawer.open(ProfilePane)} />
+                      <MenuItem title="View Profile" onClick={() => drawer.open(ProfilePane, { dismissible: false })} />
                       <MenuItem title="Settings" onClick={() => window.open(`${LEMONADE_DOMAIN}/settings`, '_blank')} />
                       <MenuItem
                         title="Sign Out"

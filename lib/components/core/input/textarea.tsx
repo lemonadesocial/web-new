@@ -4,7 +4,7 @@ import React from 'react';
 
 type Props = {
   label?: string;
-  value?: string;
+  value?: string | null;
   rows?: number;
   placeholder?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -18,7 +18,7 @@ export function TextAreaField(props: Props) {
       <div className="control">
         <textarea
           rows={props.rows}
-          value={props.value}
+          value={props.value || ''}
           placeholder={props.placeholder}
           onChange={(e) => {
             props.onChange?.(e);
