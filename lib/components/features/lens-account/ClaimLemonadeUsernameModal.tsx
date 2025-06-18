@@ -12,10 +12,13 @@ import { getUsernameValidationMessage } from '$lib/utils/lens/utils';
 import { useSigner } from '$lib/hooks/useSigner';
 
 import { SuccessModal } from '../modals/SuccessModal';
+import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 
 export function ClaimLemonadeUsernameModal() {
   const sessionClient = useAtomValue(sessionClientAtom);
   const signer = useSigner();
+  const { account } = useAccount();
+  const { refetch } = useLemonadeUsername(account);
 
   const [username, setUsername] = useState('');
   const [step, setStep] = useState<'search' | 'success'>('search');
@@ -100,6 +103,7 @@ export function ClaimLemonadeUsernameModal() {
       }
 
       setStep('success');
+      refetch();
     } catch (error: any) {
       toast.error(error.message);
     }

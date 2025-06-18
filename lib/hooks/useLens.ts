@@ -618,37 +618,38 @@ export function useLemonadeUsername(account: Account | null) {
   const [username, setUsername] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchUsernameData = async () => {
-      if (!account?.address) return;
+  const fetchUsernameData = async () => {
+    if (!account?.address) return;
 
-      setIsLoading(true);
-      try {
-        const result = await fetchUsernames(client, {
-          filter: {
-            owner: account.address,
-            namespace: evmAddress(LENS_NAMESPACE),
-          },
-        });
+    setIsLoading(true);
+    try {
+      const result = await fetchUsernames(client, {
+        filter: {
+          owner: account.address,
+          namespace: evmAddress(LENS_NAMESPACE),
+        },
+      });
 
-        if (result.isOk() && result.value.items.length > 0) {
-          setUsername(result.value.items[0].localName);
-        } else {
-          setUsername(null);
-        }
-      } catch (error: any) {
-        toast.error(error.message);
+      if (result.isOk() && result.value.items.length > 0) {
+        setUsername(result.value.items[0].localName);
+      } else {
         setUsername(null);
-      } finally {
-        setIsLoading(false);
       }
-    };
+    } catch (error: any) {
+      toast.error(error.message);
+      setUsername(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchUsernameData();
   }, [account?.address]);
 
   return {
     username,
     isLoading,
+    refetch: fetchUsernameData,
   };
 }
