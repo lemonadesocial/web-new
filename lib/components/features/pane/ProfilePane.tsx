@@ -1,4 +1,4 @@
-import { Button, Dropdown, InputField, TextAreaField } from '$lib/components/core';
+import { Button, Dropdown, FileInput, InputField, TextAreaField } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
@@ -45,11 +45,16 @@ export function ProfilePane() {
         <div className="flex items-center justify-center py-4">
           <div className="size-[140px] relative">
             <img src={userAvatar(me)} className="w-full h-full rounded-full" />
-            <Button
-              icon="icon-upload-sharp"
-              variant="secondary"
-              className="rounded-full absolute bottom-0 right-0 border-4! border-overlay-primary! max-w-[40px] max-h-[40px]"
-            />
+            <FileInput onChange={(e) => console.log(e)}>
+              {(open) => (
+                <Button
+                  icon="icon-upload-sharp"
+                  variant="secondary"
+                  onClick={open}
+                  className="rounded-full absolute bottom-0 right-0 border-4! border-overlay-primary! max-w-[40px] max-h-[40px]"
+                />
+              )}
+            </FileInput>
           </div>
         </div>
 

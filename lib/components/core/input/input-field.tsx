@@ -8,7 +8,7 @@ type Props = {
   value?: string;
   placeholder?: string;
   iconLeft?: string;
-  iconRight?: string;
+  right?: { icon: string; onClick?: () => void };
   prefix?: string;
   readOnly?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -32,7 +32,9 @@ export function InputField(props: Props) {
             props.onChangeText?.(e.target.value);
           }}
         />
-        {props.iconRight && <i className={twMerge('size-5 text-tertiary', props.iconRight)} />}
+        {props.right && (
+          <i className={twMerge('size-5 text-tertiary', props.right.icon)} onClick={props.right.onClick} />
+        )}
       </div>
     </fieldset>
   );

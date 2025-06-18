@@ -12,10 +12,11 @@ type Props = { iconLeft?: string; defaultValue?: Option; options: Option[]; onSe
 
 export function Dropdown(props: Props) {
   const [selected, setSelected] = React.useState<Option | undefined>(props.defaultValue);
+
   return (
     <Menu.Root>
       <Menu.Trigger>
-        <InputField iconLeft={props.iconLeft} iconRight="icon-chevron-dow" value={selected?.value} readOnly />
+        <InputField iconLeft={props.iconLeft} right={{ icon: 'icon-chevron-down' }} value={selected?.value} readOnly />
       </Menu.Trigger>
       <Menu.Content className="w-full p-2">
         {({ toggle }) => (
