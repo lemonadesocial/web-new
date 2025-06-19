@@ -12,7 +12,7 @@ import { Pane } from '$lib/components/core/pane/pane';
 import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
 import { useMutation } from '$lib/graphql/request';
-import { UpdateUserDocument, User } from '$lib/graphql/generated/backend/graphql';
+import { File, UpdateUserDocument, User } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom, sessionClientAtom } from '$lib/jotai';
 import { useConnectWallet } from '$lib/hooks/useConnectWallet';
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
@@ -21,6 +21,8 @@ import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { SelectProfileModal } from '../lens-account/SelectProfileModal';
 import { ProfileMenu } from '../lens-account/ProfileMenu';
 import { useAccount } from '$lib/hooks/useLens';
+import { uploadFiles } from '$lib/utils/file';
+import { generateUrl } from '$lib/utils/cnd';
 
 type ProfileValues = {
   name?: string | null;
@@ -36,6 +38,7 @@ type ProfileValues = {
   handle_twitter?: string | null;
   handle_linkedin?: string | null;
   calendly_url?: string | null;
+  new_photos?: string[];
 };
 
 const SOCIAL_LINKS = [
@@ -55,8 +58,9 @@ export function ProfilePane() {
   const chainsMap = useAtomValue(chainsMapAtom);
   const { connect, isReady } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);
 
+  const [uploading, setUploading] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [file, setFile] = React.useState<File | null>(null);
+  const [file, setFile] = React.useState<{ lens: any; lemonade: File } | null>(null);
 
   const [updateProfile] = useMutation(UpdateUserDocument, {
     onComplete(client, data) {
@@ -67,7 +71,7 @@ export function ProfilePane() {
 
   const { control, watch, setValue, handleSubmit } = useForm<ProfileValues>({
     defaultValues: {
-      name: me?.display_name,
+      name: me?.name,
       username: me?.username,
       description: me?.description,
       website: '',
@@ -80,12 +84,13 @@ export function ProfilePane() {
       job_title: me?.job_title,
       pronoun: me?.pronoun,
       company_name: me?.company_name,
+      new_photos: me?.new_photos || [],
     },
   });
 
   React.useEffect(() => {
     if (me) {
-      setValue('name', me?.display_name);
+      setValue('name', me?.name);
       setValue('description', me?.description);
       setValue('website', undefined);
       setValue('handle_farcaster', me?.handle_farcaster);
@@ -97,6 +102,7 @@ export function ProfilePane() {
       setValue('job_title', me?.job_title);
       setValue('pronoun', me?.pronoun);
       setValue('company_name', me?.company_name);
+      setValue('new_photos', me.new_photos || []);
     }
 
     if (myAccount) {
@@ -105,10 +111,8 @@ export function ProfilePane() {
   }, [me, myAccount]);
 
   const getProfilePicture = async () => {
-    if (!file) return undefined;
-
-    const { uri } = await storageClient.uploadFile(file);
-
+    if (!file?.lens) return undefined;
+    const { uri } = await storageClient.uploadFile(file.lens);
     return uri;
   };
 
@@ -194,15 +198,34 @@ export function ProfilePane() {
           <div className="flex items-center justify-center py-4">
             <div className="size-[140px] relative">
               <img
-                src={myAccount ? getAccountAvatar(myAccount) : userAvatar(me)}
-                className="w-full h-full rounded-full"
+                src={
+                  file?.lemonade ? generateUrl(file.lemonade) : myAccount ? getAccountAvatar(myAccount) : userAvatar(me)
+                }
+                className="w-full h-full aspect-square object-cover rounded-full"
               />
-              <FileInput onChange={(e) => console.log(e)}>
+              <FileInput
+                onChange={async (files) => {
+                  try {
+                    setUploading(true);
+                    const photos = watch('new_photos') || [];
+                    const lemonadeFiles = await uploadFiles(files, 'user');
+                    const file = lemonadeFiles[0] as File;
+                    setValue('new_photos', [file._id, ...photos]);
+                    setFile({ lens: files[0], lemonade: file });
+                  } catch (err) {
+                    console.log(err);
+                    toast.error('Upload fail!');
+                  } finally {
+                    setUploading(false);
+                  }
+                }}
+              >
                 {(open) => (
                   <Button
                     icon="icon-upload-sharp"
                     variant="secondary"
                     onClick={open}
+                    loading={uploading}
                     className="rounded-full absolute bottom-0 right-0 border-4! border-overlay-primary! max-w-[40px] max-h-[40px]"
                   />
                 )}
