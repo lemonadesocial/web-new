@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.49.0](https://github.com/lemonadesocial/web-new/compare/v1.48.0...v1.49.0) (2025-06-19)
+
+
+### Features
+
+* render text with links ([2870920](https://github.com/lemonadesocial/web-new/commit/2870920c4dbdc77e00c7ba4b7b70a3662944b833))
+
 ## [1.48.0](https://github.com/lemonadesocial/web-new/compare/v1.47.1...v1.48.0) (2025-06-18)
 
 
