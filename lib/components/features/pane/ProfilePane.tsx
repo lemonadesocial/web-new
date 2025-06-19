@@ -23,6 +23,7 @@ import { ProfileMenu } from '../lens-account/ProfileMenu';
 import { useAccount } from '$lib/hooks/useLens';
 import { uploadFiles } from '$lib/utils/file';
 import { generateUrl } from '$lib/utils/cnd';
+import { copy } from '$lib/utils/helpers';
 
 type ProfileValues = {
   name?: string | null;
@@ -189,9 +190,6 @@ export function ProfilePane() {
         <Pane.Header.Center className="flex items-center justify-center">
           <p className="text-primary">Edit Profile</p>
         </Pane.Header.Center>
-        <Pane.Header.Right>
-          <Button icon="icon-arrow-outward" variant="tertiary" size="sm" />
-        </Pane.Header.Right>
       </Pane.Header.Root>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Pane.Content className="p-4 flex flex-col gap-5">
@@ -261,7 +259,7 @@ export function ProfilePane() {
                         </div>
 
                         <ProfileMenu options={{ canView: false, canEdit: false }}>
-                          <Button variant="tertiary" icon="icon-more-vert" className="w-[40px] h-[40px]" />
+                          <Button variant="tertiary-alt" icon="icon-more-vert" className="w-[40px] h-[40px]" />
                         </ProfileMenu>
                       </div>
                     );
