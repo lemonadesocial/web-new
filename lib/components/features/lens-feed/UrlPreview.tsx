@@ -96,14 +96,5 @@ export function UrlPreview({ url }: UrlPreviewProps) {
     );
   }
 
-  return (
-    <a 
-      href={url} 
-      target="_blank" 
-      rel="noopener noreferrer" 
-      className="text-accent-500 font-medium hover:underline"
-    >
-      {url}
-    </a>
-  );
+  return null;
 }

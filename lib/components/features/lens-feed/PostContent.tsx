@@ -53,7 +53,9 @@ export function PostContent({ post }: PostContentProps) {
 
   return (
     <div className="space-y-2">
-      <p className="text-secondary whitespace-pre-line">{(metadata as TextOnlyMetadata).content}</p>
+      <p className="text-secondary whitespace-pre-line">
+        {renderTextWithLinks((metadata as TextOnlyMetadata).content || '')}
+      </p>
       {(metadata as ImageMetadata).attachments?.length > 0 && (
         <FeedPostGallery attachments={(metadata as ImageMetadata).attachments.map(({ item }) => item)} />
       )}
@@ -64,3 +66,26 @@ export function PostContent({ post }: PostContentProps) {
     </div>
   );
 }
+
+const renderTextWithLinks = (text: string) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+  
+  return parts.map((part, index) => {
+    if (urlRegex.test(part)) {
+      return (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-accent-500 font-medium hover:underline"
+        >
+          {part}
+        </a>
+      );
+    }
+    
+    return part;
+  });
+};

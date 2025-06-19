@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.49.0](https://github.com/lemonadesocial/web-new/compare/v1.48.0...v1.49.0) (2025-06-19)
+
+
+### Features
+
+* render text with links ([2870920](https://github.com/lemonadesocial/web-new/commit/2870920c4dbdc77e00c7ba4b7b70a3662944b833))
+
+## [1.48.0](https://github.com/lemonadesocial/web-new/compare/v1.47.1...v1.48.0) (2025-06-18)
+
+
+### Features
+
+* refetch lemonade username ([2ec0a36](https://github.com/lemonadesocial/web-new/commit/2ec0a36bb93a034149129affdb19ddc6f985094e))
+
+## [1.47.1](https://github.com/lemonadesocial/web-new/compare/v1.47.0...v1.47.1) (2025-06-17)
+
+
+### Bug Fixes
+
+* env ([de599bd](https://github.com/lemonadesocial/web-new/commit/de599bd47d5ee76b7b8d6c2c71871b1c4f069647))
+
+## [1.47.0](https://github.com/lemonadesocial/web-new/compare/v1.46.7...v1.47.0) (2025-06-17)
+
+
+### Features
+
+* update account card ([ca723f6](https://github.com/lemonadesocial/web-new/commit/ca723f624aaae779022798152a0dd332331ca29d))
+* update lens signer ([a7900f6](https://github.com/lemonadesocial/web-new/commit/a7900f6c22ac9d7cfc530d69eeeb92a4ec5de67f))
+
 ## [1.46.7](https://github.com/lemonadesocial/web-new/compare/v1.46.6...v1.46.7) (2025-06-17)
 
 
