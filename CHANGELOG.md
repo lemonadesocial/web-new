@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.48.0](https://github.com/lemonadesocial/web-new/compare/v1.47.1...v1.48.0) (2025-06-18)
+
+
+### Features
+
+* refetch lemonade username ([2ec0a36](https://github.com/lemonadesocial/web-new/commit/2ec0a36bb93a034149129affdb19ddc6f985094e))
+
 ## [1.47.1](https://github.com/lemonadesocial/web-new/compare/v1.47.0...v1.47.1) (2025-06-17)
 
 
