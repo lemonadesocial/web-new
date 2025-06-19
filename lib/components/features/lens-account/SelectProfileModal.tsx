@@ -16,6 +16,7 @@ import { LENS_NAMESPACE } from "$lib/utils/constants";
 import { SignTransactionModal } from "../modals/SignTransaction";
 import { ClaimLemonadeUsernameModal } from "./ClaimLemonadeUsernameModal";
 import { ClaimLensUsernameModal } from "./ClaimLensUsernameModal";
+import { useSyncLensAccount } from "$lib/hooks/useLens";
 
 export function SelectProfileModal() {
   const [accounts, setAccounts] = useState<AccountManaged[]>([]);
@@ -23,6 +24,8 @@ export function SelectProfileModal() {
   const signer = useSigner();
   const setSessionClient = useSetAtom(sessionClientAtom);
   const setAccount = useSetAtom(accountAtom);
+
+  const { triggerSync } = useSyncLensAccount();
 
   const [isLoadingAccounts, setIsLoadingAccounts] = useState(true);
   const [isLoadingSignIn, setIsLoadingSignIn] = useState(false);
@@ -111,6 +114,8 @@ export function SelectProfileModal() {
     setSessionClient(loginResult.value);
     setAccount(account);
     modal.close(); 
+
+    await triggerSync(account, loginResult.value);
 
     const lemonadeUsernamesRes = await fetchUsernames(client, {
       filter: {

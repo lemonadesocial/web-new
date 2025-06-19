@@ -15,21 +15,20 @@ import { useMutation } from '$lib/graphql/request';
 import { File, UpdateUserDocument, User } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom, sessionClientAtom } from '$lib/jotai';
 import { useConnectWallet } from '$lib/hooks/useConnectWallet';
-import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
+import { ATTRIBUTES_SAFE_KEYS, LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
-
-import { SelectProfileModal } from '../lens-account/SelectProfileModal';
-import { ProfileMenu } from '../lens-account/ProfileMenu';
 import { useAccount } from '$lib/hooks/useLens';
 import { uploadFiles } from '$lib/utils/file';
 import { generateUrl } from '$lib/utils/cnd';
-import { copy } from '$lib/utils/helpers';
+
+import { SelectProfileModal } from '../lens-account/SelectProfileModal';
+import { ProfileMenu } from '../lens-account/ProfileMenu';
 
 type ProfileValues = {
   name?: string | null;
   username?: string | null;
   description?: string | null;
-  website?: string;
+  website?: string | null;
   job_title?: string | null;
   pronoun?: string | null;
   company_name?: string | null;
@@ -89,11 +88,14 @@ export function ProfilePane() {
     },
   });
 
+  const username = watch('username');
+
   React.useEffect(() => {
     if (me) {
       setValue('name', me?.name);
       setValue('description', me?.description);
-      setValue('website', undefined);
+      setValue('username', me.username);
+      setValue('website', me?.website);
       setValue('handle_farcaster', me?.handle_farcaster);
       setValue('handle_github', me?.handle_github);
       setValue('handle_instagram', me?.handle_instagram);
@@ -105,11 +107,7 @@ export function ProfilePane() {
       setValue('company_name', me?.company_name);
       setValue('new_photos', me.new_photos || []);
     }
-
-    if (myAccount) {
-      setValue('username', myAccount?.username?.localName);
-    }
-  }, [me, myAccount]);
+  }, [me]);
 
   const getProfilePicture = async () => {
     if (!file?.lens) return undefined;
@@ -120,7 +118,7 @@ export function ProfilePane() {
   const onSubmit = async (values: ProfileValues) => {
     setIsSubmitting(true);
     try {
-      const { website: _, username: _username, ...data } = values;
+      const { username: _, ...data } = values;
       const { error } = await updateProfile({ variables: { input: data } });
       if (error) {
         toast.error(error.message);
@@ -130,21 +128,8 @@ export function ProfilePane() {
       if (myAccount && sessionClient) {
         const picture = await getProfilePicture();
 
-        const keys = [
-          'website',
-          'handle_farcaster',
-          'handle_github',
-          'handle_instagram',
-          'handle_twitter',
-          'handle_linkedin',
-          'calendly_url',
-          'job_title',
-          'pronoun',
-          'company_name',
-        ];
-
         const attributes = [] as { key: string; type: MetadataAttributeType; value: string }[];
-        keys.forEach((k) => {
+        ATTRIBUTES_SAFE_KEYS.forEach((k) => {
           // @ts-expect-error ignore ts check
           if (values[k]) attributes.push({ key: k, type: MetadataAttributeType.STRING, value: values[k] });
         });
@@ -242,7 +227,7 @@ export function ProfilePane() {
                   );
                 }}
               />
-              {myAccount?.username?.localName ? (
+              {myAccount && username ? (
                 <Controller
                   control={control}
                   name="username"
@@ -253,6 +238,7 @@ export function ProfilePane() {
                           <InputField
                             label="Username"
                             prefix="@lemonade/"
+                            readOnly
                             value={field.value}
                             onChange={field.onChange}
                           />
