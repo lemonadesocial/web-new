@@ -687,6 +687,7 @@ export function useSyncLensAccount() {
       const variables = {
         input: {
           name: myAccount.metadata?.name,
+          display_name: myAccount.metadata?.name,
           description: myAccount.metadata?.bio,
           lens_profile_synced: true,
         },
@@ -728,7 +729,7 @@ export function useSyncLensAccount() {
 
         setTimeout(() => {
           refreshAccount();
-          toast.success('Sync success!')
+          toast.success('Sync success!');
         }, 1000);
       }
     }
