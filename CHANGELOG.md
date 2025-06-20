@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.50.0](https://github.com/lemonadesocial/web-new/compare/v1.49.0...v1.50.0) (2025-06-20)
+
+
+### Features
+
+* add custom header ([3905d36](https://github.com/lemonadesocial/web-new/commit/3905d365bc9dad1e58e9cdf733f0ceeb92072594))
+* format error message ([5306a93](https://github.com/lemonadesocial/web-new/commit/5306a93432649a889834eb0cb11462bffe569237))
+* remove unused icon ([9e38532](https://github.com/lemonadesocial/web-new/commit/9e385323e36f93648fae51b8b3c6daabebeb65d6))
+* update sync data ([417c8ab](https://github.com/lemonadesocial/web-new/commit/417c8abf362de4dd34e14fdaedd7453895f59036))
+
+
+### Bug Fixes
+
+* missing confirm upload ([4053100](https://github.com/lemonadesocial/web-new/commit/40531005ac0428f88948416e43492c40ac7b6660))
+* missing display_name ([e37dc80](https://github.com/lemonadesocial/web-new/commit/e37dc803d47fb3e3dd7721bf1b21bb0c8cf6d5f1))
+* polish edit profile ([8696e29](https://github.com/lemonadesocial/web-new/commit/8696e29f4a6b7eb22139e9ca7827d1e4e2f182d8))
+* revert code ([d77a05c](https://github.com/lemonadesocial/web-new/commit/d77a05cdb9629210c59e624bde03a8a5b0e96477))
+* revert test file ([625e9f8](https://github.com/lemonadesocial/web-new/commit/625e9f86ff997177d89779f81d7488fc1885f6e3))
+* use lemonade avatar by default ([46878c6](https://github.com/lemonadesocial/web-new/commit/46878c647b8579b3ccab58168fbcd6392c9a481c))
+
 ## [1.49.0](https://github.com/lemonadesocial/web-new/compare/v1.48.0...v1.49.0) (2025-06-19)
 
 
