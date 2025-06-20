@@ -710,8 +710,9 @@ export function useSyncLensAccount() {
         });
 
         const accountMetadata = account({
-          name: user.name,
-          bio: user.description || undefined,
+          name: myAccount.metadata?.name || undefined,
+          bio: myAccount.metadata?.bio || undefined,
+          picture: myAccount.metadata?.picture || undefined,
           // @ts-expect-error ignore ts check
           attributes,
         });
