@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.51.0](https://github.com/lemonadesocial/web-new/compare/v1.50.1...v1.51.0) (2025-06-20)
+
+
+### Features
+
+* call resume account lens on community/event ([91f8295](https://github.com/lemonadesocial/web-new/commit/91f8295b48883671d7e272cdcb0219cd643fb4ff))
+
 ## [1.50.1](https://github.com/lemonadesocial/web-new/compare/v1.50.0...v1.50.1) (2025-06-20)
 
 
