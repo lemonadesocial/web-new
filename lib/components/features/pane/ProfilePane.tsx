@@ -51,8 +51,14 @@ const SOCIAL_LINKS = [
 ];
 
 export function ProfilePane() {
-  const sessionClient = useAtomValue(sessionClientAtom);
   const me = useMe();
+
+  if (!me) return null;
+  return <ProfilePaneContent me={me} />;
+}
+
+export function ProfilePaneContent({ me }: { me: User }) {
+  const sessionClient = useAtomValue(sessionClientAtom);
   const { account: myAccount, refreshAccount } = useAccount();
 
   const chainsMap = useAtomValue(chainsMapAtom);
@@ -69,7 +75,13 @@ export function ProfilePane() {
     },
   });
 
-  const { control, watch, setValue, handleSubmit } = useForm<ProfileValues>({
+  const {
+    control,
+    watch,
+    setValue,
+    handleSubmit,
+    formState: { isDirty },
+  } = useForm<ProfileValues>({
     defaultValues: {
       name: me?.name,
       username: me?.username,
@@ -89,25 +101,6 @@ export function ProfilePane() {
   });
 
   const username = watch('username');
-
-  React.useEffect(() => {
-    if (me) {
-      setValue('name', me?.name);
-      setValue('description', me?.description);
-      setValue('username', me.username);
-      setValue('website', me?.website);
-      setValue('handle_farcaster', me?.handle_farcaster);
-      setValue('handle_github', me?.handle_github);
-      setValue('handle_instagram', me?.handle_instagram);
-      setValue('handle_twitter', me?.handle_twitter);
-      setValue('handle_linkedin', me?.handle_linkedin);
-      setValue('calendly_url', me.calendly_url);
-      setValue('job_title', me?.job_title);
-      setValue('pronoun', me?.pronoun);
-      setValue('company_name', me?.company_name);
-      setValue('new_photos', me.new_photos || []);
-    }
-  }, [me]);
 
   const getProfilePicture = async () => {
     if (!file?.lens) return undefined;
@@ -335,6 +328,7 @@ export function ProfilePane() {
                     const selected = options.find((item) => item.key === pronoun);
                     return (
                       <Dropdown
+                        label="Pronouns"
                         placeholder="Select the pronouns you use"
                         iconLeft="icon-user"
                         value={selected}
@@ -377,7 +371,7 @@ export function ProfilePane() {
           </div>
         </Pane.Content>
         <Pane.Footer className="border-t px-4 py-3">
-          <Button variant="secondary" disabled={false} loading={isSubmitting} type="submit">
+          <Button variant="secondary" disabled={!isDirty} loading={isSubmitting} type="submit">
             Save Changes
           </Button>
         </Pane.Footer>

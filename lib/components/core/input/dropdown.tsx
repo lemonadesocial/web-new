@@ -11,6 +11,7 @@ type Option = {
 
 type Props = {
   iconLeft?: string;
+  label?: string;
   value?: Option;
   placeholder?: string;
   options: Option[];
@@ -28,6 +29,7 @@ export function Dropdown(props: Props) {
     <Menu.Root>
       <Menu.Trigger>
         <InputField
+          label={props.label}
           iconLeft={props.iconLeft}
           placeholder={props.placeholder}
           right={{ icon: 'icon-chevron-down' }}
