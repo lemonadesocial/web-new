@@ -5,9 +5,11 @@ import clsx from 'clsx';
 import { ThemeGenerator } from '$lib/components/features/theme-builder/generator';
 import { useEventTheme } from '$lib/components/features/theme-builder/provider';
 import Header from '$lib/components/layouts/header';
+import { useResumeSession } from '$lib/hooks/useLens';
 
 export function MainEventLayout({ children }: React.PropsWithChildren) {
   const [state] = useEventTheme();
+  useResumeSession();
 
   return (
     <main

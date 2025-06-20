@@ -33,6 +33,8 @@ import { generateUrl } from '$lib/utils/cnd';
 
 import { SelectProfileModal } from '../lens-account/SelectProfileModal';
 import { ProfileMenu } from '../lens-account/ProfileMenu';
+import { walletOnly } from '@lens-chain/storage-client';
+import { ClaimLensUsernameModal } from '../lens-account/ClaimLensUsernameModal';
 
 type ProfileValues = {
   name?: string | null;
@@ -276,16 +278,29 @@ export function ProfilePaneContent({ me }: { me: User }) {
               ) : (
                 <div className="flex flex-col gap-1.5">
                   <label className="font-medium text-sm">Username</label>
-                  <Button
-                    variant={isReady ? 'secondary' : 'tertiary'}
-                    className="w-fit"
-                    onClick={() => {
-                      if (!isReady) connect();
-                      else modal.open(SelectProfileModal, { dismissible: true });
-                    }}
-                  >
-                    {isReady ? 'Select Account' : 'Claim Your Username'}
-                  </Button>
+                  <div className="flex w-full flex-between gap-5">
+                    <div className="flex-1">
+                      <Button
+                        variant={isReady ? 'secondary' : 'tertiary'}
+                        className="w-full"
+                        onClick={() => {
+                          if (!isReady) connect();
+                          if (!myAccount) modal.open(SelectProfileModal, { dismissible: true });
+                          else modal.open(ClaimLensUsernameModal);
+                        }}
+                      >
+                        {isReady
+                          ? myAccount && !username
+                            ? 'Claim Your Username'
+                            : 'Select Account'
+                          : 'Connect Wallet'}
+                      </Button>
+                    </div>
+
+                    <ProfileMenu options={{ canView: false, canEdit: false }}>
+                      <Button variant="tertiary-alt" icon="icon-more-vert" className="w-[40px] h-[40px]" />
+                    </ProfileMenu>
+                  </div>
                 </div>
               )}
 
