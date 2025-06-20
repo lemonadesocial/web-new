@@ -9,11 +9,12 @@ import { sessionAtom } from '$lib/jotai';
 import { IDENTITY_URL, LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useMe } from '$lib/hooks/useMe';
 import { useLogOut } from '$lib/hooks/useLogout';
-import { Divider, Menu, MenuItem, Button, Avatar } from '$lib/components/core';
+import { Divider, Menu, MenuItem, Button, Avatar, drawer } from '$lib/components/core';
 import { userAvatar } from '$lib/utils/user';
 
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { usePathname } from 'next/navigation';
+import { ProfilePane } from '../features/pane';
 
 type Props = {
   title?: string;
@@ -72,20 +73,18 @@ export default function Header({ title, mainMenu }: Props) {
 
         {session && me ? (
           <div className="flex gap-4 items-center">
-            {
-              !me.email_verified && (
-                <Button
-                  onClick={() => window.open(`${IDENTITY_URL}/verification?return_to=${window.location.origin}`)}
-                  size="sm"
-                  className="rounded-full"
-                  variant="warning"
-                  iconLeft="icon-error"
-                  outlined
-                >
-                  Verify Email
-                </Button>
-              )
-            }
+            {!me.email_verified && (
+              <Button
+                onClick={() => window.open(`${IDENTITY_URL}/verification?return_to=${window.location.origin}`)}
+                size="sm"
+                className="rounded-full"
+                variant="warning"
+                iconLeft="icon-error"
+                outlined
+              >
+                Verify Email
+              </Button>
+            )}
             <Menu.Root>
               <Menu.Trigger>
                 {({ isOpen }) => (
@@ -113,10 +112,7 @@ export default function Header({ title, mainMenu }: Props) {
                     </div>
                     <Divider />
                     <div className="p-1">
-                      <MenuItem
-                        title="View Profile"
-                        onClick={() => window.open(`${LEMONADE_DOMAIN}/u/${me.username}`, '_blank')}
-                      />
+                      <MenuItem title="View Profile" onClick={() => drawer.open(ProfilePane, { dismissible: false })} />
                       <MenuItem title="Settings" onClick={() => window.open(`${LEMONADE_DOMAIN}/settings`, '_blank')} />
                       <MenuItem
                         title="Sign Out"

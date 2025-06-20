@@ -10,27 +10,40 @@ import {
   fetchPosts as lensFetchPosts,
   fetchPostReferences,
   fetchAccountGraphStats,
-  fetchUsername,
-  fetchUsernames
+  fetchUsernames,
 } from '@lens-protocol/client/actions';
-import { AccountMetadata } from '@lens-protocol/metadata';
+import { AccountMetadata, account, MetadataAttributeType } from '@lens-protocol/metadata';
+import { setAccountMetadata } from '@lens-protocol/client/actions';
 import { useAtomValue, useSetAtom, useAtom } from 'jotai';
 import { useState, useEffect, useCallback } from 'react';
 import { delay } from 'lodash';
 
-import { evmAddress, never, ok, AnyPost, postId, PostReferenceType, Account, PostType, PageSize } from '@lens-protocol/client';
+import {
+  evmAddress,
+  never,
+  ok,
+  AnyPost,
+  postId,
+  PostReferenceType,
+  Account,
+  PostType,
+  PageSize,
+} from '@lens-protocol/client';
 import { fetchAccount } from '@lens-protocol/client/actions';
 import { toast } from '$lib/components/core/toast';
 import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom, chainsMapAtom, feedPostAtom } from '$lib/jotai';
 import { useAppKitAccount } from '$lib/utils/appkit';
 import { client, storageClient } from '$lib/utils/lens/client';
-import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
+import { ATTRIBUTES_SAFE_KEYS, LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { modal } from '$lib/components/core';
 import { LENS_NAMESPACE, LEMONADE_FEED_ADDRESS } from '$lib/utils/constants';
 import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
+import { useClient } from '$lib/graphql/request';
 
 import { useSigner } from './useSigner';
 import { useConnectWallet } from './useConnectWallet';
+import { useMe } from './useMe';
+import { UpdateUserDocument, UpdateUserMutationVariables, User } from '$lib/graphql/generated/backend/graphql';
 
 export function useResumeSession() {
   const setSessionClient = useSetAtom(sessionClientAtom);
@@ -652,4 +665,74 @@ export function useLemonadeUsername(account: Account | null) {
     isLoading,
     refetch: fetchUsernameData,
   };
+}
+
+export function useSyncLensAccount() {
+  const me = useMe();
+  const { refreshAccount } = useAccount();
+
+  const { client } = useClient();
+
+  /**
+   * @description sync data from lens to lemonade - ignore username bc it can be claim
+   *
+   * 1. sync from lens to lemonade
+   * 2. sync back from lemonade to lens
+   *
+   * note: step 2 is necessary it's bc lens might not have value from lemonade and need to sync back.
+   * picture is more complex - need to figure out later
+   */
+  const triggerSync = async (myAccount: any, sessionClient: any) => {
+    if (!me?.lens_profile_synced && myAccount && sessionClient) {
+      const variables = {
+        input: {
+          name: myAccount.metadata?.name,
+          description: myAccount.metadata?.bio,
+          lens_profile_synced: true,
+        },
+      } as UpdateUserMutationVariables;
+
+      ATTRIBUTES_SAFE_KEYS.forEach((key) => {
+        const attr = myAccount.metadata?.attributes.find((i) => i.key === key);
+        // @ts-expect-error no need to check type on safe keys
+        variables.input[key] = attr?.value;
+      });
+
+      const { data } = await client.query({ query: UpdateUserDocument, variables });
+      const user = data?.updateUser as User;
+
+      if (user) {
+        const attributes = [] as { key: string; type: MetadataAttributeType; value: string }[];
+        ATTRIBUTES_SAFE_KEYS.forEach((k) => {
+          // @ts-expect-error ignore ts check
+          if (user[k]) attributes.push({ key: k, type: MetadataAttributeType.STRING, value: user[k] });
+        });
+
+        const accountMetadata = account({
+          name: user.name,
+          bio: user.description || undefined,
+          // @ts-expect-error ignore ts check
+          attributes,
+        });
+
+        const { uri } = await storageClient.uploadAsJson(accountMetadata);
+
+        const result = await setAccountMetadata(sessionClient, {
+          metadataUri: uri,
+        });
+
+        if (result.isErr()) {
+          toast.error(result.error.message);
+          return;
+        }
+
+        setTimeout(() => {
+          refreshAccount();
+          toast.success('Sync success!')
+        }, 1000);
+      }
+    }
+  };
+
+  return { triggerSync };
 }

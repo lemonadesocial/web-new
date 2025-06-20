@@ -34,7 +34,11 @@ fragment User on User {
   handle_instagram
   handle_linkedin
   handle_twitter
+  handle_farcaster
+  handle_github
+  pronoun
   calendly_url
+  website
   new_photos_expanded(limit: 1) {
     _id
     key
@@ -42,6 +46,7 @@ fragment User on User {
   }
   url
   url_go
+  lens_profile_synced
 }
 
 fragment PaymentAccount on NewPaymentAccount {

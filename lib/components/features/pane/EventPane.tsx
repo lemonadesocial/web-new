@@ -1,6 +1,6 @@
 'use client';
 
-import { Alert, Avatar, Button, drawer } from '$lib/components/core';
+import { Alert, Avatar, Button, drawer, toast } from '$lib/components/core';
 import { Event, GetEventDocument, User } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { useQuery } from '$lib/graphql/request';
@@ -97,9 +97,7 @@ export function EventPane({ eventId }: { eventId: string }) {
           <EventDateTimeBlock event={event} />
           <EventLocationBlock event={event} loading={loading} />
         </div>
-        {
-          event && <EventAccess event={event} />
-        }
+        {event && <EventAccess event={event} />}
         <AboutSection event={event} loading={loading} />
         <LocationSection event={event} loading={loading} />
         <SubEventSection event={event} />
@@ -122,7 +120,7 @@ function EventPaneHeader({ eventShortId }: { eventShortId?: string }) {
             iconLeft="icon-duplicate"
             variant="tertiary-alt"
             size="sm"
-            onClick={() => copy(`${LEMONADE_DOMAIN}/e/${eventShortId}`)}
+            onClick={() => copy(`${LEMONADE_DOMAIN}/e/${eventShortId}`, () => toast.success('Url Copied!'))}
           >
             Copy Link
           </Button>

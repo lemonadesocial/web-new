@@ -34,10 +34,19 @@ export class GraphqlClient {
   private cache?: InMemoryCache;
   private queue: QueryRequest<any, any>[] = [];
   private processing: boolean = false;
+  customHeader: Record<string, string> = {};
 
   constructor({ url, cache, options = {} }: { url: string; cache?: InMemoryCache; options?: RequestConfig }) {
     this.client = new GraphQLClient(url, { cache: 'no-store', ...options });
     this.cache = cache;
+  }
+
+  addCustomheader(header: Record<string, string>) {
+    this.customHeader = header;
+  }
+
+  resetCustomerHeader() {
+    this.customHeader = {};
   }
 
   async query<T, V extends object>({
@@ -209,7 +218,7 @@ export class GraphqlClient {
       defaultHeaders['Authorization'] = `Bearer ${session.token}`;
     }
 
-    return { ...defaultHeaders, ...headers };
+    return { ...defaultHeaders, ...headers, ...this.customHeader };
   }
 }
 
