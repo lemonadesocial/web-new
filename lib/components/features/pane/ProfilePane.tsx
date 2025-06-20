@@ -3,11 +3,21 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { useAtomValue } from 'jotai';
-import { account, MetadataAttributeType } from '@lens-protocol/metadata';
+import { account, AccountOptions, MetadataAttributeType } from '@lens-protocol/metadata';
 import { setAccountMetadata } from '@lens-protocol/client/actions';
 import { storageClient } from '$lib/utils/lens/client';
 
-import { Button, drawer, Dropdown, FileInput, InputField, modal, TextAreaField, toast } from '$lib/components/core';
+import {
+  Button,
+  drawer,
+  Dropdown,
+  FileInput,
+  InputField,
+  modal,
+  Skeleton,
+  TextAreaField,
+  toast,
+} from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
@@ -17,7 +27,7 @@ import { chainsMapAtom, sessionClientAtom } from '$lib/jotai';
 import { useConnectWallet } from '$lib/hooks/useConnectWallet';
 import { ATTRIBUTES_SAFE_KEYS, LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
-import { useAccount } from '$lib/hooks/useLens';
+import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { uploadFiles } from '$lib/utils/file';
 import { generateUrl } from '$lib/utils/cnd';
 
@@ -60,6 +70,7 @@ export function ProfilePane() {
 export function ProfilePaneContent({ me }: { me: User }) {
   const sessionClient = useAtomValue(sessionClientAtom);
   const { account: myAccount, refreshAccount } = useAccount();
+  const { username, isLoading } = useLemonadeUsername(myAccount);
 
   const chainsMap = useAtomValue(chainsMapAtom);
   const { connect, isReady } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);
@@ -84,9 +95,9 @@ export function ProfilePaneContent({ me }: { me: User }) {
   } = useForm<ProfileValues>({
     defaultValues: {
       name: me?.name,
-      username: me?.username,
+      // username: me?.username,
       description: me?.description,
-      website: '',
+      website: me.website,
       handle_farcaster: me?.handle_farcaster,
       handle_github: me?.handle_github,
       handle_instagram: me?.handle_instagram,
@@ -100,7 +111,17 @@ export function ProfilePaneContent({ me }: { me: User }) {
     },
   });
 
-  const username = watch('username');
+  React.useEffect(() => {
+    if (myAccount) {
+      setValue('name', myAccount.metadata?.name);
+      setValue('username', username);
+      setValue('description', myAccount.metadata?.bio);
+      ATTRIBUTES_SAFE_KEYS.forEach((key) => {
+        const attr = myAccount.metadata?.attributes.find((p) => p.key === key);
+        setValue(key as any, attr?.value || '');
+      });
+    }
+  }, [myAccount, username]);
 
   const getProfilePicture = async () => {
     if (!file?.lens) return undefined;
@@ -129,13 +150,16 @@ export function ProfilePaneContent({ me }: { me: User }) {
           if (values[k]) attributes.push({ key: k, type: MetadataAttributeType.STRING, value: values[k] });
         });
 
-        const accountMetadata = account({
+        const accountVariables = {
           name: values.name || undefined,
           bio: values.description || undefined,
           picture,
-          // @ts-expect-error ignore ts check
-          attributes,
-        });
+        } as AccountOptions;
+
+        // @ts-expect-error no need to check attributes type
+        if (attributes.length) accountVariables.attributes = attributes;
+
+        const accountMetadata = account(accountVariables);
 
         const { uri } = await storageClient.uploadAsJson(accountMetadata);
 
@@ -188,7 +212,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
                     const photos = watch('new_photos') || [];
                     const lemonadeFiles = await uploadFiles(files, 'user');
                     const file = lemonadeFiles[0] as File;
-                    setValue('new_photos', [file._id, ...photos]);
+                    setValue('new_photos', [file._id, ...photos], { shouldDirty: true });
                     setFile({ lens: files[0], lemonade: file });
                   } catch (err) {
                     console.log(err);
@@ -222,7 +246,10 @@ export function ProfilePaneContent({ me }: { me: User }) {
                   );
                 }}
               />
-              {myAccount && username ? (
+
+              {isLoading ? (
+                <Skeleton animate className="h-8 w-1/2 rounded" />
+              ) : myAccount && username ? (
                 <Controller
                   control={control}
                   name="username"
@@ -261,6 +288,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
                   </Button>
                 </div>
               )}
+
               <Controller
                 control={control}
                 name="description"

@@ -15,6 +15,8 @@ import { userAvatar } from '$lib/utils/user';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { usePathname } from 'next/navigation';
 import { ProfilePane } from '../features/pane';
+import { useAccount } from '$lib/hooks/useLens';
+import { getAccountAvatar } from '$lib/utils/lens/utils';
 
 type Props = {
   title?: string;
@@ -50,6 +52,7 @@ export function RootMenu() {
 export default function Header({ title, mainMenu }: Props) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
+  const { account } = useAccount();
   const logOut = useLogOut();
   const signIn = useSignIn();
 
@@ -94,7 +97,7 @@ export default function Header({ title, mainMenu }: Props) {
                       clsx(isOpen && 'bg-primary/8'),
                     )}
                   >
-                    <Avatar src={userAvatar(me)} />
+                    <Avatar src={account ? getAccountAvatar(account) : userAvatar(me)} />
                   </div>
                 )}
               </Menu.Trigger>
@@ -104,15 +107,15 @@ export default function Header({ title, mainMenu }: Props) {
                     <div
                       className={'flex gap-2.5 px-2 py-1.5 items-center hover:bg-primary/8 rounded-t-xs cursor-pointer'}
                     >
-                      <Avatar size="lg" src={userAvatar(me)} />
+                      <Avatar size="lg" src={account ? getAccountAvatar(account) : userAvatar(me)} />
                       <div>
-                        <p className="text-md font-medium whitespace-nowrap">{me.name}</p>
+                        <p className="text-md font-medium whitespace-nowrap">{account?.metadata?.name || me.name}</p>
                         <p className="text-xs font-medium text-tertiary">{me.email}</p>
                       </div>
                     </div>
                     <Divider />
                     <div className="p-1">
-                      <MenuItem title="View Profile" onClick={() => drawer.open(ProfilePane, { dismissible: false })} />
+                      <MenuItem title="Edit Profile" onClick={() => drawer.open(ProfilePane, { dismissible: false })} />
                       <MenuItem title="Settings" onClick={() => window.open(`${LEMONADE_DOMAIN}/settings`, '_blank')} />
                       <MenuItem
                         title="Sign Out"
