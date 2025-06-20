@@ -12,6 +12,7 @@ import { useSigner } from '$lib/hooks/useSigner';
 import { accountAtom, sessionClientAtom } from '$lib/jotai';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { LENS_NAMESPACE } from '$lib/utils/constants';
+import { formatError } from '$lib/utils/crypto';
 
 import { SignTransactionModal } from '../modals/SignTransaction';
 import { ClaimLemonadeUsernameModal } from './ClaimLemonadeUsernameModal';
@@ -73,7 +74,8 @@ export function SelectProfileModal() {
     modal.close();
 
     if (onboardingResult.isErr()) {
-      toast.error(onboardingResult.error.message);
+      const friendlyMessage = formatError(onboardingResult.error);
+      toast.error(friendlyMessage);
       return;
     }
 
@@ -110,7 +112,8 @@ export function SelectProfileModal() {
     setSelectedAccount(null);
 
     if (loginResult.isErr()) {
-      toast.error(loginResult.error.message);
+      const friendlyMessage = formatError(loginResult.error);
+      toast.error(friendlyMessage);
       return;
     }
 

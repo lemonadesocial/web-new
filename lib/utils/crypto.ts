@@ -1,5 +1,5 @@
 import { getDefaultStore } from 'jotai';
-import { Eip1193Provider, ethers } from 'ethers';
+import { Eip1193Provider, ethers, isError } from 'ethers';
 
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
 
@@ -96,3 +96,75 @@ export async function transfer(toAddress: string, amount: string, tokenAddress: 
     throw err;
   }
 };
+
+export function formatError(error: any): string {
+  if (isError(error, 'ACTION_REJECTED')) {
+    return 'Transaction was rejected by user';
+  }
+
+  if (isError(error, 'INSUFFICIENT_FUNDS')) {
+    return 'Insufficient funds to complete transaction';
+  }
+
+  if (isError(error, 'NETWORK_ERROR')) {
+    return 'Network error. Please check your connection and try again';
+  }
+
+  if (isError(error, 'TIMEOUT')) {
+    return 'Transaction timed out. Please try again';
+  }
+
+  if (isError(error, 'CALL_EXCEPTION')) {
+    return 'Transaction failed. Please check your inputs and try again';
+  }
+
+  if (isError(error, 'NONCE_EXPIRED')) {
+    return 'Transaction nonce expired. Please try again';
+  }
+
+  if (isError(error, 'REPLACEMENT_UNDERPRICED')) {
+    return 'Transaction replacement under-priced. Please try again with higher gas';
+  }
+
+  if (isError(error, 'UNSUPPORTED_OPERATION')) {
+    return 'Operation not supported. Please try a different approach';
+  }
+
+  if (isError(error, 'INVALID_ARGUMENT')) {
+    return 'Invalid input provided. Please check your parameters';
+  }
+
+  if (isError(error, 'SERVER_ERROR')) {
+    return 'Server error occurred. Please try again later';
+  }
+
+  if (error?.message) {
+    const message = error.message.toLowerCase();
+    
+    if (message.includes('user rejected') || message.includes('user denied')) {
+      return 'Transaction was rejected by user';
+    }
+    
+    if (message.includes('insufficient funds')) {
+      return 'Insufficient funds to complete transaction';
+    }
+    
+    if (message.includes('network') || message.includes('connection')) {
+      return 'Network error. Please check your connection and try again';
+    }
+    
+    if (message.includes('timeout')) {
+      return 'Transaction timed out. Please try again';
+    }
+    
+    if (message.includes('gas') && message.includes('limit')) {
+      return 'Gas limit exceeded. Please try again with higher gas limit';
+    }
+    
+    if (message.includes('nonce')) {
+      return 'Transaction nonce error. Please try again';
+    }
+  }
+
+  return 'An unexpected error occurred. Please try again';
+}
