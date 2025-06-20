@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.52.0](https://github.com/lemonadesocial/web-new/compare/v1.51.1...v1.52.0) (2025-06-20)
+
+
+### Features
+
+* update ui after claim username ([c229bff](https://github.com/lemonadesocial/web-new/commit/c229bffb965316e8bff926d1ae58a4634581b5da))
+
+
+### Bug Fixes
+
+* missing picture ([96d9b84](https://github.com/lemonadesocial/web-new/commit/96d9b84543dce33f9a6d33527546fd6397c223a3))
+
 ## [1.51.1](https://github.com/lemonadesocial/web-new/compare/v1.51.0...v1.51.1) (2025-06-20)
 
 
