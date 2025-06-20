@@ -2,7 +2,7 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { account, AccountOptions, MetadataAttributeType } from '@lens-protocol/metadata';
 import { setAccountMetadata } from '@lens-protocol/client/actions';
 import { storageClient } from '$lib/utils/lens/client';
@@ -13,6 +13,8 @@ import {
   Dropdown,
   FileInput,
   InputField,
+  Menu,
+  MenuItem,
   modal,
   Skeleton,
   TextAreaField,
@@ -21,7 +23,7 @@ import {
 import { Pane } from '$lib/components/core/pane/pane';
 import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
-import { useMutation } from '$lib/graphql/request';
+import { useClient, useMutation } from '$lib/graphql/request';
 import { File, UpdateUserDocument, User } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom, sessionClientAtom } from '$lib/jotai';
 import { useConnectWallet } from '$lib/hooks/useConnectWallet';
@@ -30,11 +32,11 @@ import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { uploadFiles } from '$lib/utils/file';
 import { generateUrl } from '$lib/utils/cnd';
+import { useDisconnect } from '$lib/utils/appkit';
 
 import { SelectProfileModal } from '../lens-account/SelectProfileModal';
 import { ProfileMenu } from '../lens-account/ProfileMenu';
-import { walletOnly } from '@lens-chain/storage-client';
-import { ClaimLensUsernameModal } from '../lens-account/ClaimLensUsernameModal';
+import { ClaimLemonadeUsernameModal } from '../lens-account/ClaimLemonadeUsernameModal';
 
 type ProfileValues = {
   name?: string | null;
@@ -73,6 +75,9 @@ export function ProfilePaneContent({ me }: { me: User }) {
   const sessionClient = useAtomValue(sessionClientAtom);
   const { account: myAccount, refreshAccount } = useAccount();
   const { username, isLoading } = useLemonadeUsername(myAccount);
+  const { disconnect } = useDisconnect();
+  const { client } = useClient();
+  const setSessionClient = useSetAtom(sessionClientAtom);
 
   const chainsMap = useAtomValue(chainsMapAtom);
   const { connect, isReady } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);
@@ -281,12 +286,12 @@ export function ProfilePaneContent({ me }: { me: User }) {
                   <div className="flex w-full flex-between gap-5">
                     <div className="flex-1">
                       <Button
-                        variant={isReady ? 'secondary' : 'tertiary'}
+                        variant="secondary"
                         className="w-full"
                         onClick={() => {
                           if (!isReady) connect();
                           if (!myAccount) modal.open(SelectProfileModal, { dismissible: true });
-                          else modal.open(ClaimLensUsernameModal);
+                          else modal.open(ClaimLemonadeUsernameModal);
                         }}
                       >
                         {isReady
@@ -297,9 +302,34 @@ export function ProfilePaneContent({ me }: { me: User }) {
                       </Button>
                     </div>
 
-                    <ProfileMenu options={{ canView: false, canEdit: false }}>
-                      <Button variant="tertiary-alt" icon="icon-more-vert" className="w-[40px] h-[40px]" />
-                    </ProfileMenu>
+                    {myAccount ? (
+                      <ProfileMenu options={{ canView: false, canEdit: false }}>
+                        <Button variant="tertiary-alt" icon="icon-more-vert" className="w-[40px] h-[40px]" />
+                      </ProfileMenu>
+                    ) : (
+                      <Menu.Root>
+                        <Menu.Trigger>
+                          <Button variant="tertiary-alt" icon="icon-more-vert" className="w-[40px] h-[40px]" />
+                        </Menu.Trigger>
+                        <Menu.Content className="p-1">
+                          {({ toggle }) => (
+                            <MenuItem
+                              onClick={async () => {
+                                disconnect();
+                                client.resetCustomerHeader();
+                                setSessionClient(null);
+                                toggle();
+                              }}
+                            >
+                              <div className="flex items-center gap-2.5">
+                                <i className="icon-exit size-4 text-error" />
+                                <p className="text-sm text-error">Disconnect</p>
+                              </div>
+                            </MenuItem>
+                          )}
+                        </Menu.Content>
+                      </Menu.Root>
+                    )}
                   </div>
                 </div>
               )}
