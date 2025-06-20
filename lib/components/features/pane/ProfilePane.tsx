@@ -118,8 +118,10 @@ export function ProfilePane() {
   const onSubmit = async (values: ProfileValues) => {
     setIsSubmitting(true);
     try {
-      const { username: _, ...data } = values;
-      const { error } = await updateProfile({ variables: { input: data } });
+      const { username: _, new_photos, ...data } = values;
+      let input: any = data;
+      if (new_photos?.length) input = { ...input, new_photos };
+      const { error } = await updateProfile({ variables: { input } });
       if (error) {
         toast.error(error.message);
         return;
@@ -255,14 +257,14 @@ export function ProfilePane() {
                 <div className="flex flex-col gap-1.5">
                   <label className="font-medium text-sm">Username</label>
                   <Button
-                    variant="tertiary"
+                    variant={isReady ? 'secondary' : 'tertiary'}
                     className="w-fit"
                     onClick={() => {
                       if (!isReady) connect();
                       else modal.open(SelectProfileModal, { dismissible: true });
                     }}
                   >
-                    Claim Your Username
+                    {isReady ? 'Select Account' : 'Claim Your Username'}
                   </Button>
                 </div>
               )}
