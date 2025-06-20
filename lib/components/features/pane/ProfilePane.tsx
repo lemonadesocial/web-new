@@ -177,11 +177,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
             <div className="size-[140px] relative">
               <img
                 src={
-                  file?.lemonade
-                    ? generateUrl(file.lemonade)
-                    : myAccount?.metadata?.picture
-                      ? getAccountAvatar(myAccount)
-                      : userAvatar(me)
+                  file?.lemonade ? generateUrl(file.lemonade) : myAccount ? getAccountAvatar(myAccount) : userAvatar(me)
                 }
                 className="w-full h-full aspect-square object-cover rounded-full"
               />
