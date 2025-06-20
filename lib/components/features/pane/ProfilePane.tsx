@@ -74,7 +74,7 @@ export function ProfilePane() {
 export function ProfilePaneContent({ me }: { me: User }) {
   const sessionClient = useAtomValue(sessionClientAtom);
   const { account: myAccount, refreshAccount } = useAccount();
-  const { username, isLoading } = useLemonadeUsername(myAccount);
+  const { username, isLoading, refetch } = useLemonadeUsername(myAccount);
   const { disconnect } = useDisconnect();
   const { client } = useClient();
   const setSessionClient = useSetAtom(sessionClientAtom);
@@ -291,7 +291,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
                         onClick={() => {
                           if (!isReady) connect();
                           if (!myAccount) modal.open(SelectProfileModal, { dismissible: true });
-                          else modal.open(ClaimLemonadeUsernameModal);
+                          else modal.open(ClaimLemonadeUsernameModal, {props: {onComplete: () => refetch()}});
                         }}
                       >
                         {isReady

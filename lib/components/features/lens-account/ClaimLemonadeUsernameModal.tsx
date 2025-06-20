@@ -14,7 +14,7 @@ import { useSigner } from '$lib/hooks/useSigner';
 import { SuccessModal } from '../modals/SuccessModal';
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 
-export function ClaimLemonadeUsernameModal() {
+export function ClaimLemonadeUsernameModal({onComplete}: {onComplete?: () => void}) {
   const sessionClient = useAtomValue(sessionClientAtom);
   const signer = useSigner();
   const { account } = useAccount();
@@ -126,6 +126,7 @@ export function ClaimLemonadeUsernameModal() {
       <SuccessModal 
         title="Username Claimed!"
         description={`@${username} is now yours. You're all set to join conversations, share your voice and connect with others on Lemonade.`}
+        onClose={onComplete}
       />
     );
   }

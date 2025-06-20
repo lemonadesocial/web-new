@@ -15,7 +15,7 @@ export function LensAccountCard() {
   const { isLoading: loadingSession } = useResumeSession();
   const account = useAtomValue(accountAtom);
   const { stats } = useAccountStats(account);
-  const { username, isLoading: isLoadingUsername } = useLemonadeUsername(account);
+  const { username, isLoading: isLoadingUsername, refetch } = useLemonadeUsername(account);
 
   const selectProfile = () => {
     modal.open(SelectProfileModal, { dismissible: true });
@@ -64,7 +64,7 @@ export function LensAccountCard() {
       </div>
       {
         !username && (
-          <Button variant="secondary" className="w-full" onClick={() => modal.open(ClaimLemonadeUsernameModal, { dismissible: true })}>
+          <Button variant="secondary" className="w-full" onClick={() => modal.open(ClaimLemonadeUsernameModal, { dismissible: true, props: {onComplete: () => refetch() } })}>
             Claim Username
           </Button>
         )
