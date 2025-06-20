@@ -1,6 +1,14 @@
-import { Button, modal } from "$lib/components/core";
+import { Button, modal } from '$lib/components/core';
 
-export function SuccessModal({ title, description }: { title: string; description: string }) {
+export function SuccessModal({
+  title,
+  description,
+  onClose,
+}: {
+  title: string;
+  description: string;
+  onClose?: () => void;
+}) {
   return (
     <div className="p-4 space-y-4 w-[340px]">
       <div className="size-[56px] flex justify-center items-center rounded-full bg-success-500/16">
@@ -8,13 +16,18 @@ export function SuccessModal({ title, description }: { title: string; descriptio
       </div>
       <div className="space-y-2">
         <p className="text-lg">{title}</p>
-        <p className="text-sm text-secondary">
-          {description}
-        </p>
+        <p className="text-sm text-secondary">{description}</p>
       </div>
-      <Button variant="secondary" onClick={() => modal.close()} className="w-full">
+      <Button
+        variant="secondary"
+        onClick={() => {
+          onClose?.();
+          modal.close();
+        }}
+        className="w-full"
+      >
         Done
       </Button>
     </div>
-  )
+  );
 }
