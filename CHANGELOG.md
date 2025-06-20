@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.51.1](https://github.com/lemonadesocial/web-new/compare/v1.51.0...v1.51.1) (2025-06-20)
+
+
+### Bug Fixes
+
+* update flow disconnect account/wallet ([d8b763b](https://github.com/lemonadesocial/web-new/commit/d8b763b321a1678e9e45c1a7ff2c90f6b881d290))
+
 ## [1.51.0](https://github.com/lemonadesocial/web-new/compare/v1.50.1...v1.51.0) (2025-06-20)
 
 
