@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.50.1](https://github.com/lemonadesocial/web-new/compare/v1.50.0...v1.50.1) (2025-06-20)
+
+
+### Bug Fixes
+
+* update data profile top nav ([88cc302](https://github.com/lemonadesocial/web-new/commit/88cc3022f29ee4a437350bfb128f7bead3b1d3f4))
+
 ## [1.50.0](https://github.com/lemonadesocial/web-new/compare/v1.49.0...v1.50.0) (2025-06-20)
 
 
