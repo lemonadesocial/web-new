@@ -112,7 +112,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
     setIsSubmitting(true);
     try {
       const { username: _, new_photos, ...data } = values;
-      let input: any = data;
+      let input: any = { data, display_name: data.name };
       if (new_photos?.length) input = { ...input, new_photos };
       const { error } = await updateProfile({ variables: { input } });
       if (error) {
