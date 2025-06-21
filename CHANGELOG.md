@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.53.0](https://github.com/lemonadesocial/web-new/compare/v1.52.0...v1.53.0) (2025-06-21)
+
+
+### Features
+
+* sync photo from lens to lemonade ([4e09d65](https://github.com/lemonadesocial/web-new/commit/4e09d656ec125f86d2def3f9382d94d0b0b50384))
+
+
+### Bug Fixes
+
+* catch error ([45a11c4](https://github.com/lemonadesocial/web-new/commit/45a11c4d2746dc0f08513a90e415816193c8e0a3))
+* remove unused ([33612ec](https://github.com/lemonadesocial/web-new/commit/33612ecfca1e2a22cc222003aed8f6abc66ee560))
+
 ## [1.52.0](https://github.com/lemonadesocial/web-new/compare/v1.51.1...v1.52.0) (2025-06-20)
 
 
