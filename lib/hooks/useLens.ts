@@ -16,7 +16,7 @@ import { AccountMetadata, account, MetadataAttributeType } from '@lens-protocol/
 import { setAccountMetadata } from '@lens-protocol/client/actions';
 import { useAtomValue, useSetAtom, useAtom } from 'jotai';
 import { useState, useEffect, useCallback } from 'react';
-import { delay } from 'lodash';
+import { delay, values } from 'lodash';
 
 import {
   evmAddress,
@@ -687,22 +687,26 @@ export function useSyncLensAccount() {
     if (!me?.lens_profile_synced && myAccount && sessionClient) {
       let new_photos = me?.new_photos || [];
       if (myAccount.metadata?.picture) {
-        const response = await fetch(myAccount.metadata?.picture);
+        try {
+          const response = await fetch(myAccount.metadata?.picture);
 
-        // Check if the request was successful
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+          // Check if the request was successful
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
 
-        const imageBlob = await response.blob();
-        const contentType = response.headers.get('content-type') || 'application/octet-stream';
-        const file = new File([imageBlob], generateRandomAlphanumeric() + '.' + contentType.split('/')[1], {
-          type: contentType,
-          lastModified: Date.now(),
-        });
-        const res = await uploadFiles([file], 'user');
-        if (res.length) {
-          new_photos = [res[0]._id, ...new_photos];
+          const imageBlob = await response.blob();
+          const contentType = response.headers.get('content-type') || 'application/octet-stream';
+          const file = new File([imageBlob], generateRandomAlphanumeric() + '.' + contentType.split('/')[1], {
+            type: contentType,
+            lastModified: Date.now(),
+          });
+          const res = await uploadFiles([file], 'user');
+          if (res.length) {
+            new_photos = [res[0]._id, ...new_photos];
+          }
+        } catch (err) {
+          console.log(err);
         }
       }
 
@@ -712,9 +716,10 @@ export function useSyncLensAccount() {
           display_name: myAccount.metadata?.name,
           description: myAccount.metadata?.bio,
           lens_profile_synced: true,
-          new_photos,
         },
       } as UpdateUserMutationVariables;
+
+      if (new_photos.length) variables.input.new_photos = new_photos;
 
       ATTRIBUTES_SAFE_KEYS.forEach((key) => {
         const attr = myAccount.metadata?.attributes.find((i) => i.key === key);
