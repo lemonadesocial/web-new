@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.53.1](https://github.com/lemonadesocial/web-new/compare/v1.53.0...v1.53.1) (2025-06-21)
+
+
+### Bug Fixes
+
+* missing picture when update profile ([87b1be3](https://github.com/lemonadesocial/web-new/commit/87b1be30db6a6d956f2a6e3250989bfb9e110129))
+
 ## [1.53.0](https://github.com/lemonadesocial/web-new/compare/v1.52.0...v1.53.0) (2025-06-21)
 
 
