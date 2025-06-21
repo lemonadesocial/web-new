@@ -6,6 +6,7 @@ export type FileDirectory = 'event' | 'place' | 'store' | 'store_product' | 'use
 export type MediaFile = {
   url: string;
   type: string;
+  _id: string;
 };
 
 export async function uploadFiles(files: File[], directory: FileDirectory): Promise<MediaFile[]> {
