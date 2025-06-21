@@ -149,7 +149,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
       }
 
       if (myAccount && sessionClient) {
-        const picture = await getProfilePicture();
+        const picture = (await getProfilePicture()) || myAccount.metadata?.picture;
 
         const attributes = [] as { key: string; type: MetadataAttributeType; value: string }[];
         ATTRIBUTES_SAFE_KEYS.forEach((k) => {
@@ -291,7 +291,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
                         onClick={() => {
                           if (!isReady) connect();
                           if (!myAccount) modal.open(SelectProfileModal, { dismissible: true });
-                          else modal.open(ClaimLemonadeUsernameModal, {props: {onComplete: () => refetch()}});
+                          else modal.open(ClaimLemonadeUsernameModal, { props: { onComplete: () => refetch() } });
                         }}
                       >
                         {isReady
