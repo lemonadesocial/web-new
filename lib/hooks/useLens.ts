@@ -44,6 +44,7 @@ import { useSigner } from './useSigner';
 import { useConnectWallet } from './useConnectWallet';
 import { useMe } from './useMe';
 import { UpdateUserDocument, UpdateUserMutationVariables, User } from '$lib/graphql/generated/backend/graphql';
+import { uploadFiles } from '$lib/utils/file';
 
 export function useResumeSession() {
   const setSessionClient = useSetAtom(sessionClientAtom);
@@ -684,12 +685,34 @@ export function useSyncLensAccount() {
    */
   const triggerSync = async (myAccount: any, sessionClient: any) => {
     if (!me?.lens_profile_synced && myAccount && sessionClient) {
+      let new_photos = me?.new_photos || [];
+      if (myAccount.metadata?.picture) {
+        const response = await fetch(myAccount.metadata?.picture);
+
+        // Check if the request was successful
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const imageBlob = await response.blob();
+        const contentType = response.headers.get('content-type') || 'application/octet-stream';
+        const file = new File([imageBlob], generateRandomAlphanumeric() + '.' + contentType.split('/')[1], {
+          type: contentType,
+          lastModified: Date.now(),
+        });
+        const res = await uploadFiles([file], 'user');
+        if (res.length) {
+          new_photos = [res[0]._id, ...new_photos];
+        }
+      }
+
       const variables = {
         input: {
           name: myAccount.metadata?.name,
           display_name: myAccount.metadata?.name,
           description: myAccount.metadata?.bio,
           lens_profile_synced: true,
+          new_photos,
         },
       } as UpdateUserMutationVariables;
 
@@ -737,4 +760,14 @@ export function useSyncLensAccount() {
   };
 
   return { triggerSync };
+}
+
+function generateRandomAlphanumeric(length: number = 12) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0987654321';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 }
