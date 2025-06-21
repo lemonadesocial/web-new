@@ -16,7 +16,7 @@ import { AccountMetadata, account, MetadataAttributeType } from '@lens-protocol/
 import { setAccountMetadata } from '@lens-protocol/client/actions';
 import { useAtomValue, useSetAtom, useAtom } from 'jotai';
 import { useState, useEffect, useCallback } from 'react';
-import { delay, values } from 'lodash';
+import { delay } from 'lodash';
 
 import {
   evmAddress,
@@ -692,7 +692,7 @@ export function useSyncLensAccount() {
 
           // Check if the request was successful
           if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            console.log(`HTTP error! status: ${response.status}`);
           }
 
           const imageBlob = await response.blob();
