@@ -220,7 +220,7 @@ export class GraphqlClient {
 
     /**
      * @description using for detect user profile with lens account -
-     * for some reasons it's not work at some requests it's bc waiting for detect connect wallet - account frm lens
+     * for some reasons it doesn't work at some requests - it's bc waiting for detect connect wallet - account from lens
      *
      * NOTE: it could be changed when user switch lens account - updated with customerHeader
      * */
