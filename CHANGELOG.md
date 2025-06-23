@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.53.2](https://github.com/lemonadesocial/web-new/compare/v1.53.1...v1.53.2) (2025-06-23)
+
+
+### Bug Fixes
+
+* typos ([0573a60](https://github.com/lemonadesocial/web-new/commit/0573a609a5b61490823a2cc3e94de8801b4562e9))
+* update requests from session with lens account ([1a11f25](https://github.com/lemonadesocial/web-new/commit/1a11f2523f3a31e3207a50a91065173bc14707f5))
+* wrong key ([22aab0b](https://github.com/lemonadesocial/web-new/commit/22aab0be5ca5702b1dde491bbdfa434881ac55ca))
+
 ## [1.53.1](https://github.com/lemonadesocial/web-new/compare/v1.53.0...v1.53.1) (2025-06-21)
 
 
