@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.53.3](https://github.com/lemonadesocial/web-new/compare/v1.53.2...v1.53.3) (2025-06-23)
+
+
+### Bug Fixes
+
+* wrong qr code ([0e2eea4](https://github.com/lemonadesocial/web-new/commit/0e2eea4a6558d51ae95aff351397aeee6178ec29))
+
 ## [1.53.2](https://github.com/lemonadesocial/web-new/compare/v1.53.1...v1.53.2) (2025-06-23)
 
 
