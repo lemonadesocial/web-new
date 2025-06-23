@@ -149,7 +149,8 @@ export function ProfilePaneContent({ me }: { me: User }) {
       }
 
       if (myAccount && sessionClient) {
-        const picture = (await getProfilePicture()) || myAccount.metadata?.picture;
+        // NOTE: picture not accept empty string
+        const picture = (await getProfilePicture()) || myAccount.metadata?.picture || undefined;
 
         const attributes = [] as { key: string; type: MetadataAttributeType; value: string }[];
         ATTRIBUTES_SAFE_KEYS.forEach((k) => {
