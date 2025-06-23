@@ -69,7 +69,7 @@ function MyHubs() {
   if (loading) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {[...Array(5)].map((i) => (
+        {[...Array(5)].map((_, i) => (
           <PageCardItemSkeleton key={i} view={isMobile ? 'list-item' : 'card'} />
         ))}
       </div>
@@ -114,7 +114,7 @@ function SubscribedHubs() {
   if (loading) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {[...Array(4)].map((i) => (
+        {[...Array(4)].map((_, i) => (
           <PageCardItemSkeleton key={i} view={isMobile ? 'list-item' : 'card'} />
         ))}
       </div>
