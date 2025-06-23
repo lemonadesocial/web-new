@@ -218,6 +218,16 @@ export class GraphqlClient {
       defaultHeaders['Authorization'] = `Bearer ${session.token}`;
     }
 
+    /**
+     * @description using for detect user profile with lens account -
+     * for some reasons it's not work at some requests it's bc waiting for detect connect wallet - account frm lens
+     *
+     * NOTE: it could be changed when user switch lens account - updated with customerHeader
+     * */
+    if (session?.lens_address) {
+      defaultHeaders['x-lens-profile-id'] = session.lens_address;
+    }
+
     return { ...defaultHeaders, ...headers, ...this.customHeader };
   }
 }

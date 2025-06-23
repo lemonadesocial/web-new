@@ -7,11 +7,13 @@ import { useLogOut } from '$lib/hooks/useLogout';
 import { oidc } from '$lib/utils/oidc';
 import { toast } from '$lib/components/core';
 import { HYDRA_PUBLIC_URL } from '$lib/utils/constants';
+import { useAccount } from './useLens';
 
 export function useAuth(hydraClientId?: string) {
   const [session, setSession] = useAtom(sessionAtom);
   const [loading, setLoading] = React.useState(true);
   const logOut = useLogOut();
+  const { account } = useAccount();
 
   const handleOryAuth = async () => {
     if (!ory) {
@@ -37,7 +39,7 @@ export function useAuth(hydraClientId?: string) {
       .finally(() => {
         setLoading(false);
       });
-  }
+  };
 
   const getSessionStorageKey = (clientId: string) => {
     return `oidc.user:${HYDRA_PUBLIC_URL}:${clientId}`;
@@ -93,6 +95,11 @@ export function useAuth(hydraClientId?: string) {
     handleOryAuth();
   }, []);
 
+  React.useEffect(() => {
+    if (account && session) {
+      setSession({ ...session, lens_address: account.address });
+    }
+  }, [account]);
 
   return loading;
 }
