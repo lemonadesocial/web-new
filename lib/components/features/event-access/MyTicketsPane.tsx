@@ -26,7 +26,7 @@ export function MyTicketsPane({ tickets, event }: { tickets: Ticket[]; event: Ev
           <div className="rounded-md border border-card-border bg-card mt-4">
             <div className="pt-11 px-4 pb-9 flex justify-center border-b border-b-divider">
               <QRCodeSVG
-                value={myTicket._id}
+                value={myTicket.shortid}
                 size={280}
                 bgColor="transparent"
                 fgColor="white"
