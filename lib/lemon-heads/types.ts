@@ -30,13 +30,40 @@ export type LemonHeadAttachment = {
   thumbnails: LemonHeadThumnail;
 };
 
+type GenderType = 'male' | 'female';
+type BodyType = 'small' | 'medium' | 'large' | 'extra_large';
+
 export type LemonHeadBodyType = {
   Id: number;
   name: string;
   skin_tone: string;
-  gender: 'male' | 'female';
-  body_type: 'small' | 'medium' | 'large' | 'extra_large';
+  gender: GenderType;
+  body_type: BodyType;
   attachment: LemonHeadAttachment[];
   origin: 'alien' | 'human';
   CreatedAt: string;
+};
+
+export type LemonHeadAccessory = {
+  Id: number;
+  name: string;
+  skin_tone?: string | null;
+  gender: GenderType;
+  body_type: BodyType;
+  attachment: LemonHeadAttachment[];
+  type:
+    | 'top'
+    | 'bottom'
+    | 'background'
+    | 'earings'
+    | 'eyes'
+    | 'eyewear'
+    | 'facial_hair'
+    | 'footwear'
+    | 'hair'
+    | 'headgear'
+    | 'mouth'
+    | 'mouthgear'
+    | 'outfit'
+    | 'outfits';
 };

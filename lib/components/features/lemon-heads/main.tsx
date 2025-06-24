@@ -4,18 +4,20 @@ import { twMerge } from 'tailwind-merge';
 
 import { Button } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
-import { LemonHeadBodyType } from '$lib/lemon-heads/types';
+import { LemonHeadAccessory, LemonHeadBodyType } from '$lib/lemon-heads/types';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { AboutYou } from './steps/about';
 import { LemonHeadValues } from './types';
+import { LemonHeadPreview } from './preview';
+import { CreateStep } from './steps/create';
 
 const STEPS = [
-  { key: 'about', label: 'About You', component: AboutYou },
-  { key: 'create', label: 'Create', component: () => null },
-  { key: 'claim', label: 'Claim', component: () => null },
-  { key: 'collaborate', label: 'Collaborate', component: () => null },
-  { key: 'celebrate', label: 'Celebrate', componenent: () => null },
+  { key: 'about', label: 'About You', component: AboutYou, btnText: 'Enter Customizer' },
+  { key: 'create', label: 'Create', component: CreateStep, btnText: 'Claim' },
+  // { key: 'claim', label: 'Claim', component: () => null },
+  // { key: 'collaborate', label: 'Collaborate', component: () => null },
+  // { key: 'celebrate', label: 'Celebrate', componenent: () => null },
 ];
 
 export function LemonHeadMain({ dataBody = [] }: { dataBody?: LemonHeadBodyType[] }) {
@@ -33,10 +35,15 @@ export function LemonHeadMain({ dataBody = [] }: { dataBody?: LemonHeadBodyType[
   });
 
   return (
-    <div className="flex flex-col h-screen we-full divide-y divide-[var(--color-divider)]">
+    <div className="flex flex-col h-screen w-full divide-y divide-[var(--color-divider)]">
       <Header />
-      <div className="flex-1 w-[1440px] mx-auto">
-        <Comp form={form} bodyBase={dataBody} />
+      <div className="flex-1 w-full">
+        <div className="flex-1 w-[1440px] mx-auto">
+          <div className="p-11 flex gap-1 gap-18">
+            <Comp form={form} bodyBase={dataBody} />
+            <LemonHeadPreview form={form} bodyBase={dataBody} />
+          </div>
+        </div>
       </div>
       <Footer
         step={currentStep}
@@ -75,7 +82,7 @@ function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; o
       </ul>
       <div className="flex flex-1 justify-end">
         <Button iconRight="icon-chevron-right" variant="secondary" size="sm" onClick={onNext}>
-          Enter Customizer
+          {STEPS[step].btnText}
         </Button>
       </div>
     </div>

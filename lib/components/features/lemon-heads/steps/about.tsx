@@ -5,7 +5,6 @@ import { LemonHeadValues } from '../types';
 import { SquareButton } from '../shared';
 import { LemonHeadBodyType } from '$lib/lemon-heads/types';
 import { Image } from '$lib/components/core/image';
-import { Card } from '$lib/components/core';
 
 const BodyTypeMapping = { medium: 'Regular', small: 'Small', large: 'Large', extra_large: 'Larger' };
 const customOrder = {
@@ -17,8 +16,11 @@ const customOrder = {
 
 export function AboutYou({ form, bodyBase }: { form: UseFormReturn<LemonHeadValues>; bodyBase: LemonHeadBodyType[] }) {
   const [gender, size, body, skin_tone] = form.watch(['gender', 'size', 'body', 'skin_tone']);
-  const human = bodyBase.find((i) => i.gender === gender && i.name === 'human' && i.body_type === size);
-  const alien = bodyBase.find((i) => i.gender === gender && i.name === 'alien' && i.body_type === size);
+
+  const condition = (i: LemonHeadBodyType) => i.gender === gender && i.body_type === size && i.skin_tone === skin_tone;
+
+  const human = bodyBase.find((i) => condition(i) && i.name === 'human');
+  const alien = bodyBase.find((i) => condition(i) && i.name === 'alien');
   const assets = bodyBase
     .filter((i) => i.gender === gender && i.name === body && i.skin_tone === skin_tone)
     .sort((a, b) => {
@@ -28,86 +30,80 @@ export function AboutYou({ form, bodyBase }: { form: UseFormReturn<LemonHeadValu
     });
 
   return (
-    <div className="p-11 flex gap-18">
-      <div className="flex flex-col gap-8 w-[588px]">
-        <div className="flex flex-col gap-2">
-          <h3 className="text-3xl font-semibold">Build Your Base</h3>
-          <p className="text-tertiary">Choose your gender, species & body type.</p>
-        </div>
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
+        <h3 className="text-3xl font-semibold">Build Your Base</h3>
+        <p className="text-tertiary">Choose your gender, species & body type.</p>
+      </div>
 
-        <div className="flex flex-col gap-3">
-          <p>Pick your persona</p>
-          <div className="grid grid-cols-5 gap-3">
-            <div className="grid grid-rows-2 gap-3">
-              <Controller
-                control={form.control}
-                name="gender"
-                render={() => {
-                  return (
-                    <>
-                      <SquareButton active={gender === 'female'} onClick={() => form.setValue('gender', 'female')}>
-                        <i className="icon-lh-female size-10 text-[#F270A4]" />
-                      </SquareButton>
-                      <SquareButton active={gender === 'male'} onClick={() => form.setValue('gender', 'male')}>
-                        <i className="icon-lh-male size-10 text-[#70A4FE]" />
-                      </SquareButton>
-                    </>
-                  );
-                }}
-              />
-            </div>
-
+      <div className="flex flex-col gap-3">
+        <p>Pick your persona</p>
+        <div className="grid grid-cols-5 gap-3">
+          <div className="grid grid-rows-2 gap-3">
             <Controller
               control={form.control}
-              name="body"
+              name="gender"
               render={() => {
                 return (
                   <>
-                    <SquareButton
-                      className="size-[228px] col-span-2"
-                      active={body === 'human'}
-                      onClick={() => form.setValue('body', 'human')}
-                    >
-                      <Image src={human?.attachment[0]?.signedUrl} lazy />
+                    <SquareButton active={gender === 'female'} onClick={() => form.setValue('gender', 'female')}>
+                      <i className="icon-lh-female size-10 text-[#F270A4]" />
                     </SquareButton>
-
-                    <SquareButton
-                      className="size-[228px] col-span-2"
-                      active={body === 'alien'}
-                      onClick={() => form.setValue('body', 'alien')}
-                    >
-                      <Image src={alien?.attachment[0]?.signedUrl} lazy />
+                    <SquareButton active={gender === 'male'} onClick={() => form.setValue('gender', 'male')}>
+                      <i className="icon-lh-male size-10 text-[#70A4FE]" />
                     </SquareButton>
                   </>
                 );
               }}
             />
           </div>
-        </div>
 
-        <div className="flex flex-col gap-3">
-          <p>Choose your frame</p>
-          <div className="flex gap-3">
-            {assets.map((item) => (
-              <div key={item.Id} className="flex flex-col gap-1 items-center">
-                <SquareButton
-                  className="flex-1 size-[136px]"
-                  onClick={() => form.setValue('size', item.body_type)}
-                  active={item.body_type === size}
-                >
-                  <Image src={item.attachment[0].thumbnails.card_cover.signedUrl} lazy />
-                </SquareButton>
+          <Controller
+            control={form.control}
+            name="body"
+            render={() => {
+              return (
+                <>
+                  <SquareButton
+                    className="size-[228px] col-span-2"
+                    active={body === 'human'}
+                    onClick={() => form.setValue('body', 'human')}
+                  >
+                    <Image src={human?.attachment[0]?.signedUrl} lazy />
+                  </SquareButton>
 
-                <p>{BodyTypeMapping[item.body_type]}</p>
-              </div>
-            ))}
-          </div>
+                  <SquareButton
+                    className="size-[228px] col-span-2"
+                    active={body === 'alien'}
+                    onClick={() => form.setValue('body', 'alien')}
+                  >
+                    <Image src={alien?.attachment[0]?.signedUrl} lazy />
+                  </SquareButton>
+                </>
+              );
+            }}
+          />
         </div>
       </div>
-      <Card.Root className="flex-1">
-        <Card.Content>right</Card.Content>
-      </Card.Root>
-      {/* <div className="flex-1 w-[692px]">right</div> */}
+
+      <div className="flex flex-col gap-3">
+        <p>Choose your frame</p>
+        <div className="flex gap-3">
+          {assets.map((item) => (
+            <div key={item.Id} className="flex flex-col gap-1 items-center">
+              <SquareButton
+                className="flex-1 size-[136px]"
+                onClick={() => form.setValue('size', item.body_type)}
+                active={item.body_type === size}
+              >
+                <Image src={item.attachment[0].thumbnails.card_cover.signedUrl} lazy />
+              </SquareButton>
+
+              <p>{BodyTypeMapping[item.body_type]}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

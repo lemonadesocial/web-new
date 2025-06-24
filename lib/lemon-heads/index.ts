@@ -1,10 +1,10 @@
 import axios, { Axios } from 'axios';
-import { LemonHeadBodyType, LemonHeadPageInfo } from './types';
+import { LemonHeadAccessory, LemonHeadBodyType, LemonHeadPageInfo } from './types';
 
 type PARAMS = {
-  offset?: string;
-  limit?: string;
-  where?: string;
+  offset?: string | null;
+  limit?: string | null;
+  where?: string | null;
   viewId?: string;
 };
 
@@ -30,7 +30,7 @@ class Response<T extends JSONValue> {
   }
 }
 
-export default class LemonHead {
+class LemonHead {
   instance: Axios;
 
   constructor() {
@@ -41,7 +41,7 @@ export default class LemonHead {
     });
   }
 
-  async getBody(params: PARAMS = { limit: '10000' }) {
+  async getBody(params: PARAMS = { limit: '100' }) {
     try {
       const res = await this.instance.request<{ list: LemonHeadBodyType[]; pageInfo: LemonHeadPageInfo }>({
         method: 'get',
@@ -54,4 +54,20 @@ export default class LemonHead {
       return Response.error(err.message).toJSON();
     }
   }
+
+  async getAccessories(params: PARAMS = { limit: '100' }) {
+    try {
+      const res = await this.instance.request<{ list: LemonHeadAccessory[]; pageInfo: LemonHeadPageInfo }>({
+        method: 'get',
+        url: '/tables/m8fys8d596wooeq/records',
+        params,
+      });
+
+      return Response.success(res.data).toJSON();
+    } catch (err: any) {
+      return Response.error(err.message).toJSON();
+    }
+  }
 }
+
+export default new LemonHead();
