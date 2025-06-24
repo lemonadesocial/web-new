@@ -6,6 +6,9 @@ import { Button } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
 import { LemonHeadBodyType } from '$lib/lemon-heads/types';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { AboutYou } from './steps/about';
+import { LemonHeadValues } from './types';
 
 const STEPS = [
   { key: 'about', label: 'About You', component: AboutYou },
@@ -15,17 +18,25 @@ const STEPS = [
   { key: 'celebrate', label: 'Celebrate', componenent: () => null },
 ];
 
-export function Content({ dataBody = [] }: { dataBody?: LemonHeadBodyType[] }) {
+export function LemonHeadMain({ dataBody = [] }: { dataBody?: LemonHeadBodyType[] }) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = React.useState(0);
-  console.log(STEPS[currentStep].component);
   const Comp = STEPS[currentStep].component;
+
+  const form = useForm<LemonHeadValues>({
+    defaultValues: {
+      gender: 'male',
+      body: 'human',
+      size: 'small',
+      skin_tone: 'light',
+    },
+  });
 
   return (
     <div className="flex flex-col h-screen we-full divide-y divide-[var(--color-divider)]">
       <Header />
       <div className="flex-1 w-[1440px] mx-auto">
-        <Comp />
+        <Comp form={form} bodyBase={dataBody} />
       </div>
       <Footer
         step={currentStep}
@@ -67,32 +78,6 @@ function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; o
           Enter Customizer
         </Button>
       </div>
-    </div>
-  );
-}
-
-function AboutYou() {
-  return (
-    <div className="p-11 flex gap-18">
-      <div className="flex flex-col gap-8 w-[588px]">
-        <div className="flex flex-col gap-2">
-          <h3 className="text-3xl font-semibold">Build Your Base</h3>
-          <p className="text-tertiary">Choose your gender, species & body type.</p>
-        </div>
-
-        <div>
-          <p>Pick your persona</p>
-          <div className="flex gap-3">
-            <div className="flex flex-col gap-3">
-              <div className="border rounded aspect-square w-[108px]">col 1</div>
-              <div className="border rounded aspect-square w-[108px]">col 1</div>
-            </div>
-            <div className="flex-1 border rounded aspect-square">col 2</div>
-            <div className="flex-1 border rounded aspect-square">col 3</div>
-          </div>
-        </div>
-      </div>
-      <div className="flex-1">right</div>
     </div>
   );
 }

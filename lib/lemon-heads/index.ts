@@ -8,6 +8,28 @@ type PARAMS = {
   viewId?: string;
 };
 
+type JSONValue = null | boolean | number | string | JSONValue[] | { [key: string]: JSONValue };
+
+class Response<T extends JSONValue> {
+  private data: { success: boolean; data?: T; error?: string };
+
+  constructor(data: { success: boolean; data?: T; error?: string }) {
+    this.data = data;
+  }
+
+  toJSON(): { success: boolean; data?: T; error?: string } {
+    return this.data;
+  }
+
+  static success<T extends JSONValue>(data: T): Response<T> {
+    return new Response<T>({ success: true, data });
+  }
+
+  static error(error: string): Response<never> {
+    return new Response({ success: false, error });
+  }
+}
+
 export default class LemonHead {
   instance: Axios;
 
@@ -19,19 +41,17 @@ export default class LemonHead {
     });
   }
 
-  async getBody(params: PARAMS = {}) {
-    const response: { data: { list: LemonHeadBodyType[]; pageInfo: LemonHeadPageInfo } | null; error: any } = {
-      data: null,
-      error: null,
-    };
+  async getBody(params: PARAMS = { limit: '10000' }) {
     try {
-      const res = await this.instance.request({ method: 'get', url: '/tables/m4qe842pv8myt4x/records', params });
-      response.data = res.data;
-      console.log(res.data);
-    } catch (err) {
-      response.error = err;
-    } finally {
-      return response;
+      const res = await this.instance.request<{ list: LemonHeadBodyType[]; pageInfo: LemonHeadPageInfo }>({
+        method: 'get',
+        url: '/tables/m4qe842pv8myt4x/records',
+        params,
+      });
+
+      return Response.success(res.data).toJSON();
+    } catch (err: any) {
+      return Response.error(err.message).toJSON();
     }
   }
 }
