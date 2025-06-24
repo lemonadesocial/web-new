@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { Button } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
-import { LemonHeadAccessory, LemonHeadBodyType } from '$lib/lemon-heads/types';
+import { LemonHeadBodyType } from '$lib/lemon-heads/types';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { AboutYou } from './steps/about';
@@ -30,7 +30,7 @@ export function LemonHeadMain({ dataBody = [] }: { dataBody?: LemonHeadBodyType[
       gender: 'male',
       body: 'human',
       size: 'small',
-      skin_tone: 'light',
+      skin_tone: { value: 'light', color: '#FDCCA8' },
     },
   });
 
