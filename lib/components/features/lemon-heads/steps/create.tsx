@@ -160,7 +160,7 @@ function FaceItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
       <ul className="flex px-4 py-3">
         {faceItems.map((item) => (
           <li key={item.value}>
-            <a href={`#${item.value}`} onClick={() => setSelected(activeId)}>
+            <a href={`#${item.value}`} onClick={() => setSelected(item.value)}>
               <div
                 className={clsx(
                   'px-2.5 py-1.5 text-tertiary hover:bg-[var(--btn-tertiary)] rounded-sm font-medium text-sm',

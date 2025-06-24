@@ -11,7 +11,16 @@ export function LemonHeadPreview({
   form: UseFormReturn<LemonHeadValues>;
   bodyBase: LemonHeadBodyType[];
 }) {
-  const [gender, size, body, skin_tone] = form.watch(['gender', 'size', 'body', 'skin_tone']);
+  const [gender, size, body, skin_tone, eyes, mouth, hair, facial_hair] = form.watch([
+    'gender',
+    'size',
+    'body',
+    'skin_tone',
+    'eyes',
+    'mouth',
+    'hair',
+    'facial_hair',
+  ]);
   const data = bodyBase.find(
     (i) => i.gender === gender && i.body_type === size && i.skin_tone === skin_tone && i.name === body,
   );
@@ -20,6 +29,10 @@ export function LemonHeadPreview({
     <Card.Root className="flex-1">
       <Card.Content className="p-0">
         <Image src={data?.attachment?.[0].signedUrl} lazy className="w-full h-full" />
+        <img src={eyes?.attachment?.[0].signedUrl} className="absolute top-0" />
+        <img src={mouth?.attachment?.[0].signedUrl} className="absolute top-0" />
+        <img src={hair?.attachment?.[0].signedUrl} className="absolute top-0" />
+        <img src={facial_hair?.attachment?.[0].signedUrl} className="absolute top-0" />
       </Card.Content>
     </Card.Root>
   );
