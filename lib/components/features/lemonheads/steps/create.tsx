@@ -28,12 +28,12 @@ export function CreateStep({
   bodyBase?: LemonHeadBodyType[];
 }) {
   const [selected, setSelected] = React.useState('skin');
-  const skin_tone = form.watch('skin_tone');
+  const [skin_tone, background] = form.watch(['skin_tone', 'background']);
 
   return (
-    <div className="flex w-full flex-1 gap-2">
-      <Card.Root>
-        <Card.Content className="flex flex-col gap-1 p-2 w-[96px] max-h-[692px] overflow-auto no-scrollbar">
+    <div className="flex w-full gap-2">
+      <Card.Root className="max-h-fit">
+        <Card.Content className="flex flex-col gap-1 p-2 w-[96px] overflow-auto no-scrollbar">
           {Object.entries(menuOpts).map(([key, item]) => {
             return (
               <div
@@ -45,7 +45,18 @@ export function CreateStep({
                 onClick={() => setSelected(key)}
               >
                 {key === 'skin' && <div className="size-8 rounded-full" style={{ background: skin_tone.color }} />}
-                {key !== 'skin' && <i className={twMerge('size-8', item.icon)} />}
+                {key === 'background' && (
+                  <div
+                    className="size-8 aspect-square rounded-sm"
+                    style={{
+                      background:
+                        background && background.attachment.length
+                          ? `url(${background?.attachment?.[0].signedUrl})`
+                          : 'var(--color-card-hover)',
+                    }}
+                  />
+                )}
+                {!['skin', 'background'].includes(key) && <i className={twMerge('size-8', item.icon)} />}
                 <p className="text-xs">{item.label}</p>
               </div>
             );
@@ -54,7 +65,7 @@ export function CreateStep({
       </Card.Root>
 
       <Card.Root className="flex-1">
-        <Card.Content className="p-0 max-h-[692px] overflow-auto no-scrollbar scroll-smooth">
+        <Card.Content className="p-0">
           {Object.entries(menuOpts).map(([key, item]) => {
             const Comp = item.component;
             return (
@@ -180,8 +191,8 @@ function FaceItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
   const [eyes, mouth, hair, facial_hair] = form.watch(['eyes', 'mouth', 'hair', 'facial_hair']);
 
   return (
-    <div className="divide-y divide-[var(--color-divider)] flex flex-col gap">
-      <ul className="flex px-4 py-3">
+    <div className="divide-y divide-[var(--color-divider)] flex flex-col">
+      <ul className="flex px-4 py-3 sticky">
         {faceOpts.map((item) => (
           <li key={item.value}>
             <a href={`#${item.value}`} onClick={() => setSelected(item.value)}>
@@ -198,7 +209,7 @@ function FaceItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
         ))}
       </ul>
 
-      <div className="p-4 divide-y divide-[var(--color-divider)] space-y-4">
+      <WrapScrollableContent>
         <ListView
           id="eyes"
           data={list.filter((i) => i.type === 'eyes')}
@@ -227,7 +238,7 @@ function FaceItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
           selected={facial_hair?.Id}
           onClick={(item) => form.setValue('facial_hair', { Id: item.Id, attachment: item.attachment })}
         />
-      </div>
+      </WrapScrollableContent>
     </div>
   );
 }
@@ -329,7 +340,7 @@ function AccessoryItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
         ))}
       </ul>
 
-      <div className="p-4 divide-y divide-[var(--color-divider)] space-y-4">
+      <WrapScrollableContent>
         <ListView
           id="eyewear"
           data={list.filter((i) => i.type === 'eyewear')}
@@ -351,21 +362,37 @@ function AccessoryItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
           selected={headgear?.Id}
           onClick={(item) => form.setValue('headgear', { Id: item.Id, attachment: item.attachment })}
         />
-      </div>
+      </WrapScrollableContent>
     </div>
   );
 }
 
-function FootwearItems() {
-  return <>Footwear</>;
+function FootwearItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
+  const footwear = form.watch('footwear');
+
+  return (
+    <ViewWithoutTab
+      field={footwear}
+      filter="footwear"
+      onClick={(item) => form.setValue('footwear', { Id: item.Id, attachment: item.attachment })}
+    />
+  );
 }
 
-function BackgroundItems() {
-  return <>Background</>;
+function BackgroundItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
+  const background = form.watch('background');
+
+  return (
+    <ViewWithoutTab
+      field={background}
+      filter="background"
+      onClick={(item) => form.setValue('background', { Id: item.Id, attachment: item.attachment })}
+    />
+  );
 }
 
 function PetItems() {
-  return <>Pets</>;
+  return <div className="flex items-center justify-center min-h-[692px]">Coming Soon</div>;
 }
 
 function ViewWithoutTab({
@@ -410,8 +437,16 @@ function ViewWithoutTab({
   if (loading) return <Loading />;
 
   return (
-    <div className="p-4">
+    <WrapScrollableContent>
       <ListView data={list} selected={field?.Id} onClick={onClick} />
+    </WrapScrollableContent>
+  );
+}
+
+function WrapScrollableContent({ children }: React.PropsWithChildren) {
+  return (
+    <div className="p-4 overflow-auto no-scrollbar max-h-[calc(100dvh-56px-64px-200px)] scroll-smooth divide-y divide-[var(--color-divider)] space-y-4">
+      {children}
     </div>
   );
 }
@@ -436,7 +471,7 @@ function ListView({
         {data.map((i) => (
           <div key={i.Id} className="text-center space-y-1">
             <SquareButton active={i.Id === selected} className="flex-col items-stretch" onClick={() => onClick(i)}>
-              <img src={i.attachment?.[0]?.thumbnails.card_cover.signedUrl} />
+              <img src={i.attachment?.[0]?.thumbnails.card_cover.signedUrl} className="rounded-md" />
             </SquareButton>
             <p className={clsx('text-sm', i.Id === selected ? 'text-primary' : 'text-tertiary')}>{i.name}</p>
           </div>

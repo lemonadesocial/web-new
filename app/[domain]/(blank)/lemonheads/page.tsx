@@ -1,5 +1,5 @@
-import { LemonHeadMain } from '$lib/components/features/lemon-heads/main';
-import lemonhead from '$lib/lemon-heads';
+import { LemonHeadMain } from '$lib/components/features/lemonheads/main';
+import lemonhead from '$lib/lemonheads';
 
 export default async function Page() {
   const { data } = await lemonhead.getBody();

@@ -15,4 +15,7 @@ export type LemonHeadValues = {
   eyewear?: { Id: number; attachment: LemonHeadAttachment[] };
   mouthgear?: { Id: number; attachment: LemonHeadAttachment[] };
   headgear?: { Id: number; attachment: LemonHeadAttachment[] };
+  footwear?: { Id: number; attachment: LemonHeadAttachment[] };
+  background?: { Id: number; attachment: LemonHeadAttachment[] };
+  pets?: { Id: number; attachment: LemonHeadAttachment[] };
 };

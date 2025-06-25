@@ -17,12 +17,13 @@ const customOrder = {
 export function AboutYou({ form, bodyBase }: { form: UseFormReturn<LemonHeadValues>; bodyBase: LemonHeadBodyType[] }) {
   const [gender, size, body, skin_tone] = form.watch(['gender', 'size', 'body', 'skin_tone']);
 
-  const condition = (i: LemonHeadBodyType) => i.gender === gender && i.body_type === size && i.skin_tone === skin_tone;
+  const condition = (i: LemonHeadBodyType) =>
+    i.gender === gender && i.body_type === size && i.skin_tone === skin_tone.value;
 
   const human = bodyBase.find((i) => condition(i) && i.name === 'human');
   const alien = bodyBase.find((i) => condition(i) && i.name === 'alien');
   const assets = bodyBase
-    .filter((i) => i.gender === gender && i.name === body && i.skin_tone === skin_tone)
+    .filter((i) => i.gender === gender && i.name === body && i.skin_tone === skin_tone.value)
     .sort((a, b) => {
       const rankA = customOrder[a.body_type] ?? Infinity;
       const rankB = customOrder[b.body_type] ?? Infinity;

@@ -11,11 +11,12 @@ import { AboutYou } from './steps/about';
 import { LemonHeadValues } from './types';
 import { LemonHeadPreview } from './preview';
 import { CreateStep } from './steps/create';
+import { ClaimStep } from './steps/claim';
 
 const STEPS = [
   { key: 'about', label: 'About You', component: AboutYou, btnText: 'Enter Customizer' },
   { key: 'create', label: 'Create', component: CreateStep, btnText: 'Claim' },
-  // { key: 'claim', label: 'Claim', component: () => null },
+  { key: 'claim', label: 'Claim', component: ClaimStep, btnText: 'Continue' },
   // { key: 'collaborate', label: 'Collaborate', component: () => null },
   // { key: 'celebrate', label: 'Celebrate', componenent: () => null },
 ];
@@ -37,11 +38,39 @@ export function LemonHeadMain({ dataBody = [] }: { dataBody?: LemonHeadBodyType[
   return (
     <div className="flex flex-col h-screen w-full divide-y divide-[var(--color-divider)]">
       <Header />
-      <div className="flex-1 w-full">
+      <div className="flex-1 overflow-hidden">
+        <div className="h-full w-[1440px] mx-auto flex p-11 gap-18 overflow-hidden">
+          <div className="flex-1 items-stretch overflow-hidden">
+            <Comp form={form} bodyBase={dataBody} />
+          </div>
+          <div className="flex-1">
+            <LemonHeadPreview form={form} bodyBase={dataBody} />
+          </div>
+        </div>
+      </div>
+      <Footer
+        step={currentStep}
+        onNext={() => setCurrentStep((prev) => prev + 1)}
+        onPrev={() => {
+          if (currentStep === 0) router.back();
+          else setCurrentStep((prev) => prev - 1);
+        }}
+      />
+    </div>
+  );
+
+  return (
+    <div className="flex flex-col h-screen w-full divide-y divide-[var(--color-divider)]">
+      <Header />
+      <div className="flex-1 w-full h-full">
         <div className="flex-1 w-[1440px] mx-auto">
           <div className="p-11 flex gap-1 gap-18">
-            <Comp form={form} bodyBase={dataBody} />
-            <LemonHeadPreview form={form} bodyBase={dataBody} />
+            <div className="flex-1 max-w-[616px]">
+              <Comp form={form} bodyBase={dataBody} />
+            </div>
+            <div className="flex-1 max-w-[692px]">
+              <LemonHeadPreview form={form} bodyBase={dataBody} />
+            </div>
           </div>
         </div>
       </div>

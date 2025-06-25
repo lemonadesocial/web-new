@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import lemonhead from '$lib/lemon-heads';
+import lemonhead from '$lib/lemonheads';
 
 export async function GET(req: NextRequest, { params }: any) {
   const searchParams = req.nextUrl.searchParams;
