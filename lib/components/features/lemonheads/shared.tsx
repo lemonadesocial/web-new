@@ -18,7 +18,7 @@ export function SquareButton({
       onClick={onClick}
       style={style}
       className={twMerge(
-        'border cursor-pointer rounded-md aspect-square flex justify-center items-center hover:border-quaternary',
+        'border-2 p-1 cursor-pointer rounded-md aspect-square flex justify-center items-center hover:border-quaternary',
         className,
         active && 'border-primary!',
       )}

@@ -3,7 +3,7 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import { UseFormReturn } from 'react-hook-form';
-import { LemonHeadAccessory, LemonHeadBodyType, LemonHeadPageInfo } from '$lib/lemon-heads/types';
+import { LemonHeadAccessory, LemonHeadBodyType, LemonHeadPageInfo } from '$lib/lemonheads/types';
 import { Card } from '$lib/components/core';
 import { LemonHeadValues } from '../types';
 import { SquareButton } from '../shared';
@@ -138,7 +138,9 @@ function SkinToneItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
           className="flex flex-col gap-1"
           onClick={() => form.setValue('skin_tone', { value: item.value, color: item.color })}
         >
-          <SquareButton active={skin_tone.value === item.value} style={{ background: item.color }}></SquareButton>
+          <SquareButton active={skin_tone.value === item.value}>
+            <div className="w-full h-full rounded-sm" style={{ background: item.color }} />
+          </SquareButton>
           <p>{item.label}</p>
         </div>
       ))}
@@ -472,7 +474,7 @@ function ListView({
         {data.map((i) => (
           <div key={i.Id} className="text-center space-y-1">
             <SquareButton active={i.Id === selected} className="flex-col items-stretch" onClick={() => onClick(i)}>
-              <img src={i.attachment?.[0]?.thumbnails.card_cover.signedUrl} className="rounded-md" />
+              <img src={i.attachment?.[0]?.thumbnails.card_cover.signedUrl} className="rounded-sm" />
             </SquareButton>
             <p className={clsx('text-sm', i.Id === selected ? 'text-primary' : 'text-tertiary')}>{i.name}</p>
           </div>

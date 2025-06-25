@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { Button } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
-import { LemonHeadBodyType } from '$lib/lemon-heads/types';
+import { LemonHeadBodyType } from '$lib/lemonheads/types';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { AboutYou } from './steps/about';

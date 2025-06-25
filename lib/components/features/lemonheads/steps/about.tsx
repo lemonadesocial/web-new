@@ -3,14 +3,14 @@
 import { Controller, UseFormReturn } from 'react-hook-form';
 import { LemonHeadValues } from '../types';
 import { SquareButton } from '../shared';
-import { LemonHeadBodyType } from '$lib/lemon-heads/types';
+import { LemonHeadBodyType } from '$lib/lemonheads/types';
 import { Image } from '$lib/components/core/image';
 
-const BodyTypeMapping = { medium: 'Regular', small: 'Small', large: 'Large', extra_large: 'Larger' };
+const BodyTypeMapping = { medium: 'Regular', small: 'Skinny', large: 'Toned', extra_large: 'Larger' };
 const customOrder = {
   medium: 0, // Medium is rank 0 (first)
-  small: 1, // Small is rank 1 (second)
-  large: 2, // Large is rank 2 (third)
+  large: 1, // Large is rank 1 (second)
+  small: 2, // Small is rank 3 (third)
   extra_large: 3, // Extra_large is rank 3 (fourth)
 };
 
