@@ -34,7 +34,7 @@ class LemonHead {
   instance: Axios;
 
   constructor() {
-    const token = process.env.LEMONHEAD_KEY;
+    const token = process.env.NOCODB_ACCESS_KEY;
     this.instance = axios.create({
       baseURL: 'https://app.nocodb.com/api/v2',
       headers: { 'xc-token': token },

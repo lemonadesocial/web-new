@@ -19,7 +19,7 @@ export async function GET(req: NextRequest, { params }: any) {
       return NextResponse.json(error);
     }
 
-    if (data) return NextResponse.json(data);
+    return NextResponse.json(data);
   }
 
   return NextResponse.json('OK');
