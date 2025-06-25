@@ -167,7 +167,6 @@ function FaceItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
       }).toString();
       const res = await fetch('/api/lemonheads/accessories?' + decodeURI(params), { method: 'GET' });
       const json = (await res.json()) as { list: LemonHeadAccessory[]; pageInfo: LemonHeadPageInfo };
-      console.log(json);
       const result = [...data, ...json.list] as LemonHeadAccessory[];
       if (!json.pageInfo?.isLastPage) {
         await new Promise((r) => setTimeout(r, 1000));

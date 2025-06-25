@@ -39,7 +39,7 @@ export function AboutYou({ form, bodyBase }: { form: UseFormReturn<LemonHeadValu
 
       <div className="flex flex-col gap-3">
         <p>Pick your persona</p>
-        <div className="grid grid-cols-5 gap-3">
+        <div className="grid grid-cols-5 gap-3 pr-1">
           <div className="grid grid-rows-2 gap-3">
             <Controller
               control={form.control}
