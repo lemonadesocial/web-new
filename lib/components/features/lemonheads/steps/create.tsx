@@ -165,10 +165,12 @@ function FaceItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
         offset: data.length.toString(),
         limit: '100',
       }).toString();
-      const res = await fetch('/api/lemonhead/accessories?' + decodeURI(params), { method: 'GET' });
+      const res = await fetch('/api/lemonheads/accessories?' + decodeURI(params), { method: 'GET' });
       const json = (await res.json()) as { list: LemonHeadAccessory[]; pageInfo: LemonHeadPageInfo };
+      console.log(json);
       const result = [...data, ...json.list] as LemonHeadAccessory[];
       if (!json.pageInfo?.isLastPage) {
+        await new Promise((r) => setTimeout(r, 1000));
         fetchData(result);
       }
 
@@ -296,7 +298,7 @@ function AccessoryItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
         offset: data.length.toString(),
         limit: '100',
       }).toString();
-      const res = await fetch('/api/lemonhead/accessories?' + decodeURI(params), { method: 'GET' });
+      const res = await fetch('/api/lemonheads/accessories?' + decodeURI(params), { method: 'GET' });
       const json = (await res.json()) as { list: LemonHeadAccessory[]; pageInfo: LemonHeadPageInfo };
       const result = [...data, ...json.list] as LemonHeadAccessory[];
       if (!json.pageInfo?.isLastPage) {
@@ -415,7 +417,7 @@ function ViewWithoutTab({
         offset: data.length.toString(),
         limit: '100',
       }).toString();
-      const res = await fetch('/api/lemonhead/accessories?' + decodeURI(params), { method: 'GET' });
+      const res = await fetch('/api/lemonheads/accessories?' + decodeURI(params), { method: 'GET' });
       const json = (await res.json()) as { list: LemonHeadAccessory[]; pageInfo: LemonHeadPageInfo };
       const result = [...data, ...json.list] as LemonHeadAccessory[];
       if (!json.pageInfo?.isLastPage) {
