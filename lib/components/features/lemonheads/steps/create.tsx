@@ -3,22 +3,10 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import { UseFormReturn } from 'react-hook-form';
-import { LemonHeadAccessory, LemonHeadBodyType, LemonHeadPageInfo } from '$lib/lemonheads/types';
+import { LemonHeadBodyType } from '$lib/lemonheads/types';
 import { Card } from '$lib/components/core';
 import { LemonHeadValues } from '../types';
-import { SquareButton } from '../shared';
-
-const menuOpts: Record<string, any> = {
-  skin: { label: 'Skin Tone', icon: '', component: SkinToneItems },
-  face: { label: 'Face', icon: 'icon-lh-mood', component: FaceItems },
-  tops: { label: 'Tops', icon: 'icon-lh-tshirt-crew', component: TopItems },
-  bottom: { label: 'Bottoms', icon: 'icon-lh-pants', component: BottomItems },
-  outfits: { label: 'Outfits', icon: 'icon-lh-dress', component: OutfitItems },
-  accessories: { label: 'Accessories', icon: 'icon-lh-glasses-fill', component: AccessoryItems },
-  footwear: { label: 'Footwear', icon: 'icon-lh-footprint', component: FootwearItems },
-  background: { label: 'Background', icon: '', component: BackgroundItems },
-  pets: { label: 'Pets', icon: 'icon-lh-pets', component: PetItems },
-};
+import { SquareButton, SubContent, SubContentWithTabs } from '../shared';
 
 export function CreateStep({
   bodyBase = [],
@@ -27,6 +15,18 @@ export function CreateStep({
   form: UseFormReturn<LemonHeadValues>;
   bodyBase?: LemonHeadBodyType[];
 }) {
+  const [tabs, setTabs] = React.useState({
+    skin: { label: 'Skin Tone', icon: '', component: SkinToneItems, mount: true },
+    face: { label: 'Face', icon: 'icon-lh-mood', component: FaceItems, mount: false },
+    tops: { label: 'Tops', icon: 'icon-lh-tshirt-crew', component: TopItems, mount: false },
+    bottom: { label: 'Bottoms', icon: 'icon-lh-pants', component: BottomItems, mount: false },
+    outfits: { label: 'Outfits', icon: 'icon-lh-dress', component: OutfitItems, mount: false },
+    accessories: { label: 'Accessories', icon: 'icon-lh-glasses-fill', component: AccessoryItems, mount: false },
+    footwear: { label: 'Footwear', icon: 'icon-lh-footprint', component: FootwearItems, mount: false },
+    background: { label: 'Background', icon: '', component: BackgroundItems, mount: false },
+    pets: { label: 'Pets', icon: 'icon-lh-pets', component: PetItems, mount: false },
+  });
+
   const [selected, setSelected] = React.useState('skin');
   const [skin_tone, background] = form.watch(['skin_tone', 'background']);
 
@@ -34,7 +34,7 @@ export function CreateStep({
     <div className="flex w-full gap-2">
       <Card.Root className="max-h-fit">
         <Card.Content className="flex flex-col gap-1 p-2 w-[96px] overflow-auto no-scrollbar">
-          {Object.entries(menuOpts).map(([key, item]) => {
+          {Object.entries(tabs).map(([key, item]) => {
             return (
               <div
                 key={key}
@@ -42,7 +42,12 @@ export function CreateStep({
                   'flex flex-col items-center justify-center gap-2 pt-3 px-2 pb-2 hover:bg-card-hover rounded-md cursor-pointer',
                   key === selected && 'bg-card-hover',
                 )}
-                onClick={() => setSelected(key)}
+                onClick={() => {
+                  setSelected(key);
+                  const _tabs = { ...tabs } as any;
+                  if (!_tabs[key].mount) _tabs[key].mount = true;
+                  setTabs(_tabs);
+                }}
               >
                 {key === 'skin' && <div className="size-8 rounded-full" style={{ background: skin_tone.color }} />}
                 {key === 'background' && (
@@ -66,8 +71,11 @@ export function CreateStep({
 
       <Card.Root className="flex-1">
         <Card.Content className="p-0">
-          {Object.entries(menuOpts).map(([key, item]) => {
+          {Object.entries(tabs).map(([key, item]) => {
+            if (!item.mount) return null;
+
             const Comp = item.component;
+
             return (
               <div key={key} className={clsx(selected !== key && 'hidden')}>
                 <Comp bodyBase={bodyBase} form={form} />
@@ -79,48 +87,6 @@ export function CreateStep({
     </div>
   );
 }
-
-// const clamp = (value: number) => Math.max(0, value);
-//
-// const isBetween = (value: number, floor: number, ceil: number) => value >= floor && value <= ceil;
-//
-// const useScrollspy = (ids: string[], offset: number = 0) => {
-//   const [activeId, setActiveId] = React.useState('');
-//
-//   React.useLayoutEffect(() => {
-//     const listener = () => {
-//       const scroll = window.pageYOffset;
-//
-//       const position = ids
-//         .map((id) => {
-//           const element = document.getElementById(id);
-//
-//           if (!element) return { id, top: -1, bottom: -1 };
-//
-//           const rect = element.getBoundingClientRect();
-//           const top = clamp(rect.top + scroll - offset);
-//           const bottom = clamp(rect.bottom + scroll - offset);
-//
-//           return { id, top, bottom };
-//         })
-//         .find(({ top, bottom }) => isBetween(scroll, top, bottom));
-//
-//       setActiveId(position?.id || '');
-//     };
-//
-//     listener();
-//
-//     window.addEventListener('resize', listener);
-//     window.addEventListener('scroll', listener);
-//
-//     return () => {
-//       window.removeEventListener('resize', listener);
-//       window.removeEventListener('scroll', listener);
-//     };
-//   }, [ids, offset]);
-//
-//   return activeId;
-// };
 
 const skinToneOpts = [
   { value: 'light', label: 'Soft', color: '#FDCCA8' },
@@ -148,111 +114,81 @@ function SkinToneItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
   );
 }
 
-const faceOpts = [
-  { value: 'eyes', label: 'Eyes' },
-  { value: 'mouth', label: 'Mouth' },
-  { value: 'hair', label: 'Hair' },
-  { value: 'facial_hair', label: 'Facial Hair' },
-];
+// ---- START FACE ----
+
 function FaceItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const [loading, setLoading] = React.useState(false);
-  const [selected, setSelected] = React.useState('eyes');
-  const [list, setList] = React.useState<LemonHeadAccessory[]>([]);
+  const [tabs] = React.useState([
+    { value: 'eyes', label: 'Eyes', mount: true, component: FaceEyes },
+    { value: 'mouth', label: 'Mouth', mount: false, component: FaceMouth },
+    { value: 'hair', label: 'Hair', mount: false, component: FaceHair },
+    { value: 'facial_hair', label: 'Facial Hair', mount: false, component: FaceFacialHair },
+  ]);
 
-  const fetchData = async (data: LemonHeadAccessory[] = []) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        where: '(type,anyof,eyes,mouth,hair,facial_hair)',
-        offset: data.length.toString(),
-        limit: '100',
-      }).toString();
-      const res = await fetch('/api/lemonheads/accessories?' + decodeURI(params), { method: 'GET' });
-      const json = (await res.json()) as { list: LemonHeadAccessory[]; pageInfo: LemonHeadPageInfo };
-      const result = [...data, ...json.list] as LemonHeadAccessory[];
-      if (!json.pageInfo?.isLastPage) {
-        await new Promise((r) => setTimeout(r, 1000));
-        fetchData(result);
-      }
+  return <SubContentWithTabs tabs={tabs} form={form} />;
+}
 
-      setList(result);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  React.useEffect(() => {
-    fetchData();
-  }, []);
-
-  // const activeId = useScrollspy(faceItems.map((i) => i.value));
-
-  if (loading) return <Loading />;
-
-  const [eyes, mouth, hair, facial_hair] = form.watch(['eyes', 'mouth', 'hair', 'facial_hair']);
+function FaceEyes({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
+  const eyes = form.watch('eyes');
+  if (!active) return null;
 
   return (
-    <div className="divide-y divide-[var(--color-divider)] flex flex-col">
-      <ul className="flex px-4 py-3 sticky">
-        {faceOpts.map((item) => (
-          <li key={item.value}>
-            <a href={`#${item.value}`} onClick={() => setSelected(item.value)}>
-              <div
-                className={clsx(
-                  'px-2.5 py-1.5 text-tertiary hover:bg-[var(--btn-tertiary)] rounded-sm font-medium text-sm',
-                  selected === item.value && 'text-primary bg-[var(--btn-tertiary)]!',
-                )}
-              >
-                {item.label}
-              </div>
-            </a>
-          </li>
-        ))}
-      </ul>
-
-      <WrapScrollableContent>
-        <ListView
-          id="eyes"
-          data={list.filter((i) => i.type === 'eyes')}
-          title="Eyes"
-          selected={eyes?.Id}
-          onClick={(item) => form.setValue('eyes', { Id: item.Id, attachment: item.attachment })}
-        />
-        <ListView
-          id="mouth"
-          data={list.filter((i) => i.type === 'mouth')}
-          title="Mounth"
-          selected={mouth?.Id}
-          onClick={(item) => form.setValue('mouth', { Id: item.Id, attachment: item.attachment })}
-        />
-        <ListView
-          id="hair"
-          data={list.filter((i) => i.type === 'hair')}
-          title="Hair"
-          selected={hair?.Id}
-          onClick={(item) => form.setValue('hair', { Id: item.Id, attachment: item.attachment })}
-        />
-        <ListView
-          id="facial_hair"
-          data={list.filter((i) => i.type === 'facial_hair')}
-          title="Facial Hair"
-          selected={facial_hair?.Id}
-          onClick={(item) => form.setValue('facial_hair', { Id: item.Id, attachment: item.attachment })}
-        />
-      </WrapScrollableContent>
-    </div>
+    <SubContent
+      selected={eyes}
+      where="(type,eq,eyes)"
+      onSelect={(item) => form.setValue('eyes', { Id: item.Id, attachment: item.attachment })}
+    />
   );
 }
 
+function FaceMouth({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
+  const mouth = form.watch('mouth');
+  if (!active) return null;
+
+  return (
+    <SubContent
+      selected={mouth}
+      where="(type,eq,mouth)"
+      onSelect={(item) => form.setValue('mouth', { Id: item.Id, attachment: item.attachment })}
+    />
+  );
+}
+
+function FaceHair({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
+  const hair = form.watch('hair');
+  if (!active) return null;
+
+  return (
+    <SubContent
+      selected={hair}
+      where="(type,eq,hair)"
+      onSelect={(item) => form.setValue('hair', { Id: item.Id, attachment: item.attachment })}
+    />
+  );
+}
+
+function FaceFacialHair({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
+  const facial_hair = form.watch('facial_hair');
+  if (!active) return null;
+
+  return (
+    <SubContent
+      selected={facial_hair}
+      where="(type,eq,facial_hair)"
+      onSelect={(item) => form.setValue('facial_hair', { Id: item.Id, attachment: item.attachment })}
+    />
+  );
+}
+
+// ---- END FACE ----
+
 function TopItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
   const top = form.watch('top');
+
   return (
-    <ViewWithoutTab
-      field={top}
-      filter="top"
-      onClick={(item) => form.setValue('top', { Id: item.Id, attachment: item.attachment })}
+    <SubContent
+      selected={top}
+      where="(type,eq,top)"
+      onSelect={(item) => form.setValue('top', { Id: item.Id, attachment: item.attachment })}
     />
   );
 }
@@ -261,10 +197,10 @@ function BottomItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
   const bottom = form.watch('bottom');
 
   return (
-    <ViewWithoutTab
-      field={bottom}
-      filter="bottom"
-      onClick={(item) => form.setValue('bottom', { Id: item.Id, attachment: item.attachment })}
+    <SubContent
+      selected={bottom}
+      where="(type,eq,bottom)"
+      onSelect={(item) => form.setValue('bottom', { Id: item.Id, attachment: item.attachment })}
     />
   );
 }
@@ -273,111 +209,76 @@ function OutfitItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
   const outfit = form.watch('outfit');
 
   return (
-    <ViewWithoutTab
-      field={outfit}
-      filter="outfit"
-      onClick={(item) => form.setValue('outfit', { Id: item.Id, attachment: item.attachment })}
+    <SubContent
+      selected={outfit}
+      where="(type,eq,outfit)"
+      onSelect={(item) => form.setValue('outfit', { Id: item.Id, attachment: item.attachment })}
     />
   );
 }
 
-const accessoryOpts = [
-  { value: 'eyewear', label: 'Eyewear' },
-  { value: 'mouthgear', label: 'Mouthgear' },
-  { value: 'headgear', label: 'Headgear' },
-];
-function AccessoryItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const [loading, setLoading] = React.useState(false);
-  const [selected, setSelected] = React.useState('eyewear');
-  const [list, setList] = React.useState<LemonHeadAccessory[]>([]);
+// ---- START ACCESSORIES ----
 
-  const fetchData = async (data: LemonHeadAccessory[] = []) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        where: '(type,anyof,eyewear,mouthgear,headgear)',
-        offset: data.length.toString(),
-        limit: '100',
-      }).toString();
-      const res = await fetch('/api/lemonheads/accessories?' + decodeURI(params), { method: 'GET' });
-      const json = (await res.json()) as { list: LemonHeadAccessory[]; pageInfo: LemonHeadPageInfo };
-      const result = [...data, ...json.list] as LemonHeadAccessory[];
-      if (!json.pageInfo?.isLastPage) {
-        fetchData(result);
-      }
+function AccessoriesEyeWear({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
+  const eyewear = form.watch('eyewear');
 
-      setList(result);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  React.useEffect(() => {
-    fetchData();
-  }, []);
-
-  // const activeId = useScrollspy(faceItems.map((i) => i.value));
-
-  if (loading) return <Loading />;
-
-  const [eyewear, mouthgear, headgear] = form.watch(['eyewear', 'mouthgear', 'headgear']);
+  if (!active) return null;
 
   return (
-    <div className="divide-y divide-[var(--color-divider)] flex flex-col gap">
-      <ul className="flex px-4 py-3">
-        {accessoryOpts.map((item) => (
-          <li key={item.value}>
-            <a href={`#${item.value}`} onClick={() => setSelected(item.value)}>
-              <div
-                className={clsx(
-                  'px-2.5 py-1.5 text-tertiary hover:bg-[var(--btn-tertiary)] rounded-sm font-medium text-sm',
-                  selected === item.value && 'text-primary bg-[var(--btn-tertiary)]!',
-                )}
-              >
-                {item.label}
-              </div>
-            </a>
-          </li>
-        ))}
-      </ul>
-
-      <WrapScrollableContent>
-        <ListView
-          id="eyewear"
-          data={list.filter((i) => i.type === 'eyewear')}
-          title="Eyes"
-          selected={eyewear?.Id}
-          onClick={(item) => form.setValue('eyewear', { Id: item.Id, attachment: item.attachment })}
-        />
-        <ListView
-          id="mouthgear"
-          data={list.filter((i) => i.type === 'mouthgear')}
-          title="Mounth"
-          selected={mouthgear?.Id}
-          onClick={(item) => form.setValue('mouthgear', { Id: item.Id, attachment: item.attachment })}
-        />
-        <ListView
-          id="headgear"
-          data={list.filter((i) => i.type === 'headgear')}
-          title="Hair"
-          selected={headgear?.Id}
-          onClick={(item) => form.setValue('headgear', { Id: item.Id, attachment: item.attachment })}
-        />
-      </WrapScrollableContent>
-    </div>
+    <SubContent
+      selected={eyewear}
+      where="(type,eq,eyewear)"
+      onSelect={(item) => form.setValue('eyewear', { Id: item.Id, attachment: item.attachment })}
+    />
   );
 }
+
+function AccessoriesMouthGear({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
+  const mouthgear = form.watch('mouthgear');
+  if (!active) return null;
+
+  return (
+    <SubContent
+      selected={mouthgear}
+      where="(type,eq,mouthgear)"
+      onSelect={(item) => form.setValue('mouthgear', { Id: item.Id, attachment: item.attachment })}
+    />
+  );
+}
+
+function AccessoriesHeadGear({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
+  const headgear = form.watch('headgear');
+  if (!active) return null;
+
+  return (
+    <SubContent
+      selected={headgear}
+      where="(type,eq,headgear)"
+      onSelect={(item) => form.setValue('headgear', { Id: item.Id, attachment: item.attachment })}
+    />
+  );
+}
+
+function AccessoryItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
+  const [tabs] = React.useState([
+    { value: 'eyewear', label: 'Eyewear', mount: true, component: AccessoriesEyeWear },
+    { value: 'mouthgear', label: 'Mouthgear', mount: true, component: AccessoriesMouthGear },
+    { value: 'headgear', label: 'Headgear', mount: true, component: AccessoriesHeadGear },
+  ]);
+
+  return <SubContentWithTabs tabs={tabs} form={form} />;
+}
+
+// ---- END ACCESSORIES ----
 
 function FootwearItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
   const footwear = form.watch('footwear');
 
   return (
-    <ViewWithoutTab
-      field={footwear}
-      filter="footwear"
-      onClick={(item) => form.setValue('footwear', { Id: item.Id, attachment: item.attachment })}
+    <SubContent
+      selected={footwear}
+      where="(type,eq,footwear)"
+      onSelect={(item) => form.setValue('footwear', { Id: item.Id, attachment: item.attachment })}
     />
   );
 }
@@ -386,104 +287,14 @@ function BackgroundItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
   const background = form.watch('background');
 
   return (
-    <ViewWithoutTab
-      field={background}
-      filter="background"
-      onClick={(item) => form.setValue('background', { Id: item.Id, attachment: item.attachment })}
+    <SubContent
+      selected={background}
+      where="(type,eq,background)"
+      onSelect={(item) => form.setValue('background', { Id: item.Id, attachment: item.attachment })}
     />
   );
 }
 
 function PetItems() {
   return <div className="flex items-center justify-center min-h-[692px]">Coming Soon</div>;
-}
-
-function ViewWithoutTab({
-  field,
-  filter,
-  onClick,
-}: {
-  field?: { Id: number };
-  filter: string;
-  onClick: (item: LemonHeadAccessory) => void;
-}) {
-  const [loading, setLoading] = React.useState(false);
-  const [list, setList] = React.useState<LemonHeadAccessory[]>([]);
-
-  const fetchData = async (data: LemonHeadAccessory[] = []) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        where: `(type,anyof,${filter})`,
-        offset: data.length.toString(),
-        limit: '100',
-      }).toString();
-      const res = await fetch('/api/lemonheads/accessories?' + decodeURI(params), { method: 'GET' });
-      const json = (await res.json()) as { list: LemonHeadAccessory[]; pageInfo: LemonHeadPageInfo };
-      const result = [...data, ...json.list] as LemonHeadAccessory[];
-      if (!json.pageInfo?.isLastPage) {
-        fetchData(result);
-      }
-
-      setList(result);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  React.useEffect(() => {
-    fetchData();
-  }, []);
-
-  if (loading) return <Loading />;
-
-  return (
-    <WrapScrollableContent>
-      <ListView data={list} selected={field?.Id} onClick={onClick} />
-    </WrapScrollableContent>
-  );
-}
-
-function WrapScrollableContent({ children }: React.PropsWithChildren) {
-  return (
-    <div className="p-4 overflow-auto no-scrollbar max-h-[calc(100dvh-56px-64px-200px)] scroll-smooth divide-y divide-[var(--color-divider)] space-y-4">
-      {children}
-    </div>
-  );
-}
-
-function ListView({
-  data = [],
-  title,
-  onClick,
-  selected,
-  id,
-}: {
-  id?: string;
-  data?: LemonHeadAccessory[];
-  title?: string;
-  selected?: number;
-  onClick: (item: LemonHeadAccessory) => void;
-}) {
-  return (
-    <div id={id} className="flex flex-col gap-4 pb-4">
-      {title && <p>{title}</p>}
-      <div className="grid grid-cols-3 gap-3">
-        {data.map((i) => (
-          <div key={i.Id} className="text-center space-y-1">
-            <SquareButton active={i.Id === selected} className="flex-col items-stretch" onClick={() => onClick(i)}>
-              <img src={i.attachment?.[0]?.thumbnails.card_cover.signedUrl} className="rounded-sm" />
-            </SquareButton>
-            <p className={clsx('text-sm', i.Id === selected ? 'text-primary' : 'text-tertiary')}>{i.name}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function Loading() {
-  return <div className="flex justify-center items-center h-[692px]">Loading...</div>;
 }

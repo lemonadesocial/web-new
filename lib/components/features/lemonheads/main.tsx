@@ -1,12 +1,13 @@
 'use client';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
-import { LemonHeadBodyType } from '$lib/lemonheads/types';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
+
 import { AboutYou } from './steps/about';
 import { LemonHeadValues } from './types';
 import { LemonHeadPreview } from './preview';
@@ -21,14 +22,14 @@ const STEPS = [
   // { key: 'celebrate', label: 'Celebrate', componenent: () => null },
 ];
 
-export function LemonHeadMain({ dataBody = [] }: { dataBody?: LemonHeadBodyType[] }) {
+export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = React.useState(0);
   const Comp = STEPS[currentStep].component;
 
   const form = useForm<LemonHeadValues>({
     defaultValues: {
-      gender: 'male',
+      gender: 'female',
       body: 'human',
       size: 'small',
       skin_tone: { value: 'light', color: '#FDCCA8' },

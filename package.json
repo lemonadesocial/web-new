@@ -34,6 +34,7 @@
     "@stripe/react-stripe-js": "^3.6.0",
     "@stripe/stripe-js": "^7.0.0",
     "@tailwindcss/postcss": "^4.0.8",
+    "@tanstack/react-query": "^5.81.2",
     "@tiptap/extension-code-block": "^2.10.3",
     "@tiptap/extension-image": "^2.10.2",
     "@tiptap/extension-link": "^2.10.2",
@@ -43,6 +44,9 @@
     "@tiptap/pm": "^2.10.2",
     "@tiptap/react": "^2.10.2",
     "@tiptap/starter-kit": "^2.10.2",
+    "@trpc/client": "^11.4.2",
+    "@trpc/react-query": "^11.4.2",
+    "@trpc/server": "^11.4.2",
     "@uiw/react-color": "^2.4.5",
     "@uiw/react-color-github": "^2.4.5",
     "@vis.gl/react-google-maps": "^1.5.1",
@@ -75,7 +79,8 @@
     "tailwindcss-palette-generator": "^0.10.0",
     "three": "^0.174.0",
     "yup": "^1.6.1",
-    "zksync-ethers": "^6.17.0"
+    "zksync-ethers": "^6.17.0",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
