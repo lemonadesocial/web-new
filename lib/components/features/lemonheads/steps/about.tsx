@@ -1,6 +1,6 @@
 'use client';
 
-import { Controller, UseFormReturn } from 'react-hook-form';
+import { UseFormReturn } from 'react-hook-form';
 import { Image } from '$lib/components/core/image';
 import { LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
 
