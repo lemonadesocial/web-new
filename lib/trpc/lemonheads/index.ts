@@ -26,7 +26,7 @@ class LemonHead {
     });
   }
 
-  async getAccessories(params: PARAMS = { limit: 100 }) {
+  getAccessories(params: PARAMS = { limit: 100 }) {
     return this.instance.request<{ list: LemonHeadAccessory[]; pageInfo: LemonHeadPageInfo }>({
       method: 'get',
       url: '/tables/m8fys8d596wooeq/records',

@@ -40,7 +40,7 @@ export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
     <div className="flex flex-col h-screen w-full divide-y divide-[var(--color-divider)]">
       <Header />
       <div className="flex-1 overflow-hidden">
-        <div className="flex w-[1440px] mx-auto gap-18 p-11 max-h-full">
+        <div className="flex max-w-[1440px] mx-auto gap-18 p-11 max-h-full">
           <Comp form={form} bodyBase={dataBody} />
           <div className="flex-1">
             <LemonHeadPreview form={form} bodyBase={dataBody} />
