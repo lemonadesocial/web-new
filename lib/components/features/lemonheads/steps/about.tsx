@@ -40,61 +40,32 @@ export function AboutYou({ form, bodyBase }: { form: UseFormReturn<LemonHeadValu
 
       <div className="flex flex-col gap-3">
         <p>Pick your persona</p>
-        <div className="grid grid-cols-5 gap-3 pr-1">
+        <div className="grid grid-cols-5 gap-3">
           <div className="grid grid-rows-2 gap-3">
-            <Controller
-              control={form.control}
-              name="gender"
-              render={() => {
-                return (
-                  <>
-                    <SquareButton active={gender === 'female'} onClick={() => form.setValue('gender', 'female')}>
-                      <i className="icon-lh-female size-10 text-[#F270A4]" />
-                    </SquareButton>
-                    <SquareButton active={gender === 'male'} onClick={() => form.setValue('gender', 'male')}>
-                      <i className="icon-lh-male size-10 text-[#70A4FE]" />
-                    </SquareButton>
-                  </>
-                );
-              }}
-            />
+            <SquareButton active={gender === 'female'} onClick={() => form.setValue('gender', 'female')}>
+              <i className="icon-lh-female size-10 text-[#F270A4]" />
+            </SquareButton>
+
+            <SquareButton active={gender === 'male'} onClick={() => form.setValue('gender', 'male')}>
+              <i className="icon-lh-male size-10 text-[#70A4FE]" />
+            </SquareButton>
           </div>
-
-          <Controller
-            control={form.control}
-            name="body"
-            render={() => {
-              return (
-                <>
-                  <SquareButton
-                    className="size-[228px] col-span-2"
-                    active={body === 'human'}
-                    onClick={() => form.setValue('body', 'human')}
-                  >
-                    <Image src={human?.attachment[0]?.signedUrl} lazy />
-                  </SquareButton>
-
-                  <SquareButton
-                    className="size-[228px] col-span-2"
-                    active={body === 'alien'}
-                    onClick={() => form.setValue('body', 'alien')}
-                  >
-                    <Image src={alien?.attachment[0]?.signedUrl} lazy />
-                  </SquareButton>
-                </>
-              );
-            }}
-          />
+          <SquareButton className="col-span-2" active={body === 'human'} onClick={() => form.setValue('body', 'human')}>
+            <Image src={human?.attachment[0]?.signedUrl} lazy />
+          </SquareButton>
+          <SquareButton className="col-span-2" active={body === 'alien'} onClick={() => form.setValue('body', 'alien')}>
+            <Image src={alien?.attachment[0]?.signedUrl} lazy />
+          </SquareButton>
         </div>
       </div>
 
       <div className="flex flex-col gap-3">
         <p>Choose your frame</p>
-        <div className="flex gap-3">
+        <div className="grid grid-cols-4 gap-3">
           {assets.map((item) => (
             <div key={item.Id} className="flex flex-col gap-1 items-center">
               <SquareButton
-                className="flex-1 size-[136px]"
+                className="flex-1"
                 onClick={() => form.setValue('size', item.body_type)}
                 active={item.body_type === size}
               >

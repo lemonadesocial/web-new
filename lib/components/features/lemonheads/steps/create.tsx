@@ -32,9 +32,9 @@ export function CreateStep({
   const [skin_tone, background] = form.watch(['skin_tone', 'background']);
 
   return (
-    <div className="flex w-full gap-2">
-      <Card.Root className="max-h-fit">
-        <Card.Content className="flex flex-col gap-1 p-2 w-[96px] overflow-auto no-scrollbar">
+    <div className="flex w-full gap-2 overflow-hidden">
+      <Card.Root className="w-[96px] overflow-auto max-h-fit">
+        <Card.Content className="flex flex-col gap-1 p-2">
           {Object.entries(tabs).map(([key, item]) => {
             return (
               <div
@@ -70,15 +70,15 @@ export function CreateStep({
         </Card.Content>
       </Card.Root>
 
-      <Card.Root className="flex-1">
-        <Card.Content className="p-0">
+      <Card.Root className="flex-1 min-h-[692px]">
+        <Card.Content className="p-0 h-full">
           {Object.entries(tabs).map(([key, item]) => {
             if (!item.mount) return null;
 
             const Comp = item.component;
 
             return (
-              <div key={key} className={clsx(selected !== key && 'hidden')}>
+              <div key={key} className={clsx('h-full', selected !== key ? 'hidden' : '')}>
                 <Comp bodyBase={bodyBase} form={form} />
               </div>
             );

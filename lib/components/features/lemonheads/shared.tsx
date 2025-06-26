@@ -102,7 +102,7 @@ function Loading() {
 }
 
 export function SubContent({
-  limit = 25,
+  limit = 28,
   selected,
   onSelect,
   where,
@@ -153,10 +153,7 @@ export function SubContent({
   }, [list.length]);
 
   return (
-    <div
-      ref={listInnerRef}
-      className="p-4 overflow-auto no-scrollbar max-h-[calc(100dvh-56px-64px-200px)] scroll-smooth space-y-4"
-    >
+    <div ref={listInnerRef} className="p-4 space-y-4 overflow-auto no-scrollbar" style={{ height: 'inherit' }}>
       <ListView data={list} selected={selected?.Id} onSelect={onSelect} />
       {loading && <Loading />}
     </div>
@@ -176,7 +173,7 @@ export function SubContentWithTabs(props: { tabs: any; form: UseFormReturn<Lemon
           setCurrentTab(tab);
         }}
       />
-      <div>
+      <div className="pb-10 h-full">
         {tabs.map((item: any) => {
           if (!item.mount) return null;
           const Comp = item.component || null;

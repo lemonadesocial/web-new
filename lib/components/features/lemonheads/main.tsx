@@ -40,38 +40,10 @@ export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
     <div className="flex flex-col h-screen w-full divide-y divide-[var(--color-divider)]">
       <Header />
       <div className="flex-1 overflow-hidden">
-        <div className="h-full w-[1440px] mx-auto flex p-11 gap-18 overflow-hidden">
-          <div className="flex-1 items-stretch overflow-hidden">
-            <Comp form={form} bodyBase={dataBody} />
-          </div>
+        <div className="grid w-[1440px] mx-auto grid-cols-2 gap-18 py-11 h-full">
+          <Comp form={form} bodyBase={dataBody} />
           <div className="flex-1">
             <LemonHeadPreview form={form} bodyBase={dataBody} />
-          </div>
-        </div>
-      </div>
-      <Footer
-        step={currentStep}
-        onNext={() => setCurrentStep((prev) => prev + 1)}
-        onPrev={() => {
-          if (currentStep === 0) router.back();
-          else setCurrentStep((prev) => prev - 1);
-        }}
-      />
-    </div>
-  );
-
-  return (
-    <div className="flex flex-col h-screen w-full divide-y divide-[var(--color-divider)]">
-      <Header />
-      <div className="flex-1 w-full h-full">
-        <div className="flex-1 w-[1440px] mx-auto">
-          <div className="p-11 flex gap-1 gap-18">
-            <div className="flex-1 max-w-[616px]">
-              <Comp form={form} bodyBase={dataBody} />
-            </div>
-            <div className="flex-1 max-w-[692px]">
-              <LemonHeadPreview form={form} bodyBase={dataBody} />
-            </div>
           </div>
         </div>
       </div>
@@ -89,7 +61,7 @@ export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
 
 function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; onPrev?: () => void }) {
   return (
-    <div className="flex justify-between items-center h-[64px] px-4">
+    <div className="flex justify-between items-center min-h-[64px] px-4">
       <div className="flex-1">
         <Button variant="tertiary" size="sm" onClick={onPrev} iconLeft={step > 0 ? 'icon-chevron-left' : undefined}>
           {step === 0 ? 'Exit' : 'Back'}
