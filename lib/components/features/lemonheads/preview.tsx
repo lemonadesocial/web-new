@@ -1,8 +1,7 @@
 import { UseFormReturn } from 'react-hook-form';
-import { LemonHeadValues } from './types';
 import { Card } from '$lib/components/core';
-import { LemonHeadAttachment, LemonHeadBodyType } from '$lib/lemonheads/types';
-import { twMerge } from 'tailwind-merge';
+import { LemonHeadAttachment, LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
+import { LemonHeadValues } from './types';
 
 export function LemonHeadPreview({
   form,

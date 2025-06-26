@@ -1,4 +1,4 @@
-import { LemonHeadAttachment } from '$lib/lemonheads/types';
+import { LemonHeadAttachment } from '$lib/trpc/lemonheads/types';
 
 export type LemonHeadValues = {
   gender: 'male' | 'female';

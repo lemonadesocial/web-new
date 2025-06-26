@@ -1,10 +1,11 @@
 'use client';
 
 import { Controller, UseFormReturn } from 'react-hook-form';
+import { Image } from '$lib/components/core/image';
+import { LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
+
 import { LemonHeadValues } from '../types';
 import { SquareButton } from '../shared';
-import { LemonHeadBodyType } from '$lib/lemonheads/types';
-import { Image } from '$lib/components/core/image';
 
 const BodyTypeMapping = { medium: 'Regular', small: 'Skinny', large: 'Toned', extra_large: 'Larger' };
 const customOrder = {

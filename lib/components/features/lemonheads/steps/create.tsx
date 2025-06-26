@@ -3,8 +3,9 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import { UseFormReturn } from 'react-hook-form';
-import { LemonHeadBodyType } from '$lib/lemonheads/types';
 import { Card } from '$lib/components/core';
+import { LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
+
 import { LemonHeadValues } from '../types';
 import { SquareButton, SubContent, SubContentWithTabs } from '../shared';
 
