@@ -200,7 +200,7 @@ function BottomItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
   return (
     <SubContent
       selected={bottom}
-      where={`(type,eq,bottop)~and(gender,eq,${gender})`}
+      where={`(type,eq,bottom)~and(gender,eq,${gender})`}
       onSelect={(item) => form.setValue('bottom', { Id: item.Id, attachment: item.attachment })}
     />
   );
