@@ -33,7 +33,7 @@ export function CreateStep({
 
   return (
     <div className="flex w-full gap-2 overflow-hidden">
-      <Card.Root className="w-[96px] overflow-auto max-h-fit">
+      <Card.Root className="w-[96px] overflow-auto max-h-fit no-scrollbar">
         <Card.Content className="flex flex-col gap-1 p-2">
           {Object.entries(tabs).map(([key, item]) => {
             return (
@@ -183,36 +183,36 @@ function FaceFacialHair({ form, active = false }: { form: UseFormReturn<LemonHea
 // ---- END FACE ----
 
 function TopItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const top = form.watch('top');
+  const [top, gender] = form.watch(['top', 'gender']);
 
   return (
     <SubContent
       selected={top}
-      where="(type,eq,top)"
+      where={`(type,eq,top)~and(gender,eq,${gender})`}
       onSelect={(item) => form.setValue('top', { Id: item.Id, attachment: item.attachment })}
     />
   );
 }
 
 function BottomItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const bottom = form.watch('bottom');
+  const [bottom, gender] = form.watch(['bottom', 'gender']);
 
   return (
     <SubContent
       selected={bottom}
-      where="(type,eq,bottom)"
+      where={`(type,eq,bottop)~and(gender,eq,${gender})`}
       onSelect={(item) => form.setValue('bottom', { Id: item.Id, attachment: item.attachment })}
     />
   );
 }
 
 function OutfitItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const outfit = form.watch('outfit');
+  const [outfit, gender] = form.watch(['outfit', 'gender']);
 
   return (
     <SubContent
       selected={outfit}
-      where="(type,eq,outfit)"
+      where={`(type,eq,outfit)~and(gender,eq,${gender})`}
       onSelect={(item) => form.setValue('outfit', { Id: item.Id, attachment: item.attachment })}
     />
   );

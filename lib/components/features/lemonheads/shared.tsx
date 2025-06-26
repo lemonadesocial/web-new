@@ -73,7 +73,7 @@ export function TabsSubContent({
 }) {
   const [selected, setSelected] = React.useState(tabs?.[0]?.value);
   return (
-    <ul className="flex px-4 py-3 sticky">
+    <ul className="flex px-4 py-3 sticky border-b">
       {tabs.map((item) => (
         <li
           key={item.value}
@@ -102,7 +102,7 @@ function Loading() {
 }
 
 export function SubContent({
-  limit = 28,
+  limit = 27,
   selected,
   onSelect,
   where,

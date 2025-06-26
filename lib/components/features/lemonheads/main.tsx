@@ -52,7 +52,9 @@ export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
         onNext={() => setCurrentStep((prev) => prev + 1)}
         onPrev={() => {
           if (currentStep === 0) router.back();
-          else setCurrentStep((prev) => prev - 1);
+          else {
+            setCurrentStep((prev) => prev - 1);
+          }
         }}
       />
     </div>

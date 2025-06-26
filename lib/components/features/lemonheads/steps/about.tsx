@@ -42,11 +42,23 @@ export function AboutYou({ form, bodyBase }: { form: UseFormReturn<LemonHeadValu
         <p>Pick your persona</p>
         <div className="grid grid-cols-5 gap-3">
           <div className="grid grid-rows-2 gap-3">
-            <SquareButton active={gender === 'female'} onClick={() => form.setValue('gender', 'female')}>
+            <SquareButton
+              active={gender === 'female'}
+              onClick={() => {
+                form.reset();
+                form.setValue('gender', 'female');
+              }}
+            >
               <i className="icon-lh-female size-10 text-[#F270A4]" />
             </SquareButton>
 
-            <SquareButton active={gender === 'male'} onClick={() => form.setValue('gender', 'male')}>
+            <SquareButton
+              active={gender === 'male'}
+              onClick={() => {
+                form.reset();
+                form.setValue('gender', 'male');
+              }}
+            >
               <i className="icon-lh-male size-10 text-[#70A4FE]" />
             </SquareButton>
           </div>
