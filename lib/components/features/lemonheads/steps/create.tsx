@@ -47,12 +47,15 @@ export function CreateStep({ form }: { form: UseFormReturn<LemonHeadValues>; bod
                 {key === 'skin' && <div className="size-8 rounded-full" style={{ background: skin_tone.color }} />}
                 {key === 'background' && (
                   <div
-                    className="size-8 aspect-square rounded-sm bg-contain"
+                    className="size-8 aspect-square rounded-sm"
                     style={{
-                      background:
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: 'cover',
+                      backgroundColor: 'var(--color-card-hover)',
+                      backgroundImage:
                         background && background.attachment.length
-                          ? `url(${background?.attachment?.[0].signedUrl})`
-                          : 'var(--color-card-hover)',
+                          ? `url(${background?.attachment?.[0].thumbnails.tiny.signedUrl})`
+                          : '',
                     }}
                   />
                 )}
