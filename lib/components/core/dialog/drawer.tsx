@@ -10,8 +10,8 @@
  *      return <>{text}</>
  *    }
  *
- *   // in other compent call action.
- *   funct OtherComponent() {
+ *   // in other component call action.
+ *   function OtherComponent() {
  *     const showDrawer = () => {
  *        drawer.open(MyComponent, {position: 'right', width: 300, props: {text: 'Hi there'}})
  *     }
@@ -32,9 +32,15 @@ interface Options<T> {
   dismissible?: boolean;
 }
 
+interface DrawerItem {
+  id: number;
+  content: React.ReactNode;
+  options: Options<unknown>;
+}
+
 interface Drawer {
-  open: <T extends object>(component: React.ComponentType<T>, options?: Options<T>) => void;
-  close: () => void;
+  open: <T extends object>(component: React.ComponentType<T>, options?: Options<T>) => number;
+  close: (id?: number) => void;
 }
 
 export const drawer: Drawer = {
@@ -47,42 +53,59 @@ export const drawer: Drawer = {
 };
 
 export function DrawerContainer() {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [content, setContent] = React.useState<React.ReactNode>();
-  const [options, setOptions] = React.useState<Options<unknown>>({ duration: 0.3, position: 'right', dismissible: true });
-  const ref = React.useRef<HTMLDivElement | null>(null);
+  const [drawers, setDrawers] = React.useState<DrawerItem[]>([]);
+  const nextId = React.useRef(0);
+  const drawerRefs = React.useRef<Map<number, HTMLDivElement>>(new Map());
 
-  const handleOpen = React.useCallback(<T extends object>(Component: React.ComponentType<T>, opts: Options<T> = {}) => {
-    setContent(<Component {...(opts.props as T)} />);
-    setOptions((prev) => ({ ...prev, ...opts }));
-    setIsOpen(true);
+  const handleOpen = React.useCallback(<T extends object>(Component: React.ComponentType<T>, opts: Options<T> = {}): number => {
+    const id = nextId.current++;
+    setDrawers((prev) => [
+      ...prev,
+      {
+        id,
+        content: <Component {...(opts.props as T)} />,
+        options: { duration: 0.3, position: 'right', dismissible: true, ...opts },
+      },
+    ]);
+    return id;
   }, []);
 
-  const handleOutsideClick = (event: MouseEvent) => {
-    if (!options.dismissible) return;
+  const handleClose = React.useCallback((id?: number) => {
+    if (id !== undefined) {
+      setDrawers((prev) => prev.filter((drawer) => drawer.id !== id));
+    } else {
+      setDrawers((prev) => prev.slice(0, -1));
+    }
+  }, []);
 
-    if (event.target instanceof Node) {
+  const handleOutsideClick = React.useCallback(
+    (event: MouseEvent) => {
+      if (drawers.length === 0) return;
+      const topDrawer = drawers[drawers.length - 1];
+      const drawerRef = drawerRefs.current.get(topDrawer.id);
+
+      // Prevent closing if clicking inside a modal
       const modalElements = document.querySelectorAll('[role="modal"]');
       for (const element of Array.from(modalElements)) {
-        // If click is inside a modal, do nothing
-        if (element.contains(event.target)) return;
+        if (element.contains(event.target as Node)) return;
       }
-    }
 
-    // Check if click is inside the drawer
-    if (ref.current && event.target instanceof Node && ref.current.contains(event.target)) return;
+      // Prevent closing if clicking inside the drawer
+      if (drawerRef && event.target instanceof Node && drawerRef.contains(event.target)) return;
 
-    // Otherwise close the drawer
-    setIsOpen(false);
-  };
+      // Close the top drawer if dismissible
+      if (topDrawer.options.dismissible) {
+        handleClose(topDrawer.id);
+      }
+    },
+    [drawers, handleClose],
+  );
 
   React.useEffect(() => {
     drawer.open = handleOpen;
-    drawer.close = () => {
-      setIsOpen(false);
-    };
+    drawer.close = handleClose;
 
-    if (isOpen) {
+    if (drawers.length > 0) {
       document.body.style.overflow = 'hidden';
       document.addEventListener('mousedown', handleOutsideClick);
     }
@@ -91,7 +114,7 @@ export function DrawerContainer() {
       document.body.style.overflow = 'auto';
       document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, [isOpen]);
+  }, [drawers.length, handleOpen, handleClose]);
 
   if (!drawer.open || !drawer.close) {
     return null;
@@ -99,34 +122,44 @@ export function DrawerContainer() {
 
   return (
     <AnimatePresence>
-      {isOpen && (
-        <div className="fixed z-100000 inset-0">
-          <div className="h-full w-full p-2">
-            <div className="bg-overlay-backdrop fixed inset-0 z-0" />
-            <div className={clsx('flex h-full', options.position === 'right' && 'justify-end')}>
-              <motion.div
-                key="drawer"
-                initial={{ x: '100%' }}
-                animate={{ x: 0 }}
-                exit={{ x: '100%' }}
-                transition={{ duration: options.duration }}
-                ref={ref}
-                className={twMerge(
-                  'bg-background backdrop-blur-md rounded-sm flex-1 max-w-[528px] overflow-auto no-scrollbar z-10',
-                  options.contentClass,
-                )}
-                style={{
-                  // @ts-expect-error accept variables
-                  '--font-title': 'var(--font-class-display)',
-                  '--font-body': 'var(--font-general-sans)',
-                }}
-              >
-                {content}
-              </motion.div>
+      {drawers.map((drawer, index) => (
+        <React.Fragment key={drawer.id}>
+          <div
+            className="fixed inset-0"
+            style={{ zIndex: 10000 + index }}
+          >
+            <div className="h-full w-full p-2">
+              <div className="bg-overlay-backdrop fixed inset-0 z-0" />
+              <div className={clsx('flex h-full', drawer.options.position === 'right' ? 'justify-end' : 'justify-start')}>
+                <motion.div
+                  initial={{ x: drawer.options.position === 'right' ? '100%' : '-100%' }}
+                  animate={{ x: 0 }}
+                  exit={{ x: drawer.options.position === 'right' ? '100%' : '-100%' }}
+                  transition={{ duration: drawer.options.duration }}
+                  ref={(el) => {
+                    if (el) {
+                      drawerRefs.current.set(drawer.id, el);
+                    } else {
+                      drawerRefs.current.delete(drawer.id);
+                    }
+                  }}
+                  className={twMerge(
+                    'bg-background backdrop-blur-md rounded-sm flex-1 max-w-[528px] overflow-auto no-scrollbar z-10',
+                    drawer.options.contentClass,
+                  )}
+                  style={{
+                    // @ts-expect-error accept variables
+                    '--font-title': 'var(--font-class-display)',
+                    '--font-body': 'var(--font-general-sans)',
+                  }}
+                >
+                  {drawer.content}
+                </motion.div>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        </React.Fragment>
+      ))}
     </AnimatePresence>
   );
 }

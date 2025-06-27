@@ -2,11 +2,11 @@ import { useForm, UseFormReturn } from "react-hook-form";
 import { useEffect } from "react";
 import clsx from "clsx";
 
-import { ethereumWalletInputAtom, formInstancesAtom, registrationModal, submitHandlersAtom, useSetAtom } from "../store";
+import { buyerWalletAtom, ethereumWalletInputAtom, formInstancesAtom, registrationModal, submitHandlersAtom, useSetAtom } from "../store";
 import { Button, LabeledInput, modal } from "$lib/components/core";
 import { BlockchainPlatform, ConnectWalletInput } from "$lib/graphql/generated/backend/graphql";
 import { formatWallet } from "$lib/utils/crypto";
-import { useAppKit, useAppKitAccount } from "$lib/utils/appkit";
+import { appKit, useAppKit, useAppKitAccount } from "$lib/utils/appkit";
 
 import { ConnectWallet } from "../../modals/ConnectWallet";
 import { VerifyWalletModal } from "../modals/VerifyWalletModal";
@@ -21,6 +21,7 @@ export function SignedOutWalletForm({ required }: { required: boolean }) {
   const setFormInstances = useSetAtom(formInstancesAtom);
   const setSubmitHandlers = useSetAtom(submitHandlersAtom);
   const setEthereumWalletInput = useSetAtom(ethereumWalletInputAtom);
+  const setBuyerWallet = useSetAtom(buyerWalletAtom);
 
   const { address } = useAppKitAccount();
   const { open } = useAppKit();
@@ -50,6 +51,9 @@ export function SignedOutWalletForm({ required }: { required: boolean }) {
             token,
             platform: BlockchainPlatform.Ethereum,
           });
+
+          const currentAddress = appKit.getAddress();
+          setBuyerWallet(currentAddress);
 
           registrationModal.close();
         },

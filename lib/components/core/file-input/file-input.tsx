@@ -7,6 +7,7 @@ type FileInputProps = {
   multiple?: boolean;
   allowDrop?: boolean;
   children: (open: () => void, isDragOver?: boolean) => React.ReactNode;
+  className?: string;
 };
 
 export function FileInput({ 
@@ -14,7 +15,8 @@ export function FileInput({
   accept = 'image/*', 
   multiple = true,
   allowDrop = false,
-  children 
+  children,
+  className,
 }: FileInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -56,7 +58,7 @@ export function FileInput({
   } : {};
 
   return (
-    <Wrapper {...wrapperProps}>
+    <Wrapper {...wrapperProps} className={className}>
       {children(open, allowDrop ? isDragOver : undefined)}
       <input
         ref={inputRef}

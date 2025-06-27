@@ -61,7 +61,7 @@ export function EventManageLayout({ children, event: initEvent }: React.PropsWit
           entries.forEach((entry) => {
             setIsScrolled(!entry.isIntersecting);
           });
-        },
+        }
       );
 
       observer.observe(sentinelRef.current);
@@ -93,10 +93,12 @@ export function EventManageLayout({ children, event: initEvent }: React.PropsWit
   return (
     <div>
       <div ref={sentinelRef}  />
-      <div className={clsx("sticky top-0 backdrop-blur-md transition-all duration-300", isScrolled ? "pt-2" : "pt-7")}>
+      {/* <div className={clsx("sticky top-0 backdrop-blur-md transition-all duration-300 z-1", isScrolled ? "pt-2" : "pt-7")}> */}
+      <div className={clsx("sticky top-0 backdrop-blur-md transition-all duration-300 z-1 pt-7")}>
         <div className="page mx-auto px-4 md:px-0">
           <div className="flex justify-between items-center">
-            <h1 className={clsx("font-semibold transition-all duration-300", isScrolled ? "text-lg font-body" : "text-2xl")}>{event.title}</h1>
+            {/* <h1 className={clsx("font-semibold transition-all duration-300", isScrolled ? "text-lg font-body" : "text-2xl")}>{event.title}</h1> */}
+            <h1 className={clsx("font-semibold transition-all duration-300 text-2xl")}>{event.title}</h1>
             <div className="flex gap-2">
               {event.published ? (
                 <Button
@@ -148,7 +150,7 @@ export function EventManageLayout({ children, event: initEvent }: React.PropsWit
         </div>
         <hr className="w-screen -mx-[50vw] ml-[calc(-50vw+50%)] border-t border-t-divider" />
       </div>
-      <div className="page mx-auto pt-7 px-4 md:px-0">
+      <div className="page mx-auto py-7 px-4 md:px-0">
         {children}
       </div>
     </div>);

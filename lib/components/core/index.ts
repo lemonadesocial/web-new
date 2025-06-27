@@ -19,3 +19,4 @@ export * from './toast';
 export * from './file-input';
 export * from './map';
 export * from './text-editor';
+export * from './chip';

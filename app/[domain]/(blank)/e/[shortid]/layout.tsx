@@ -13,9 +13,7 @@ export default async function EventLayout({ children, params }: LayoutProps) {
   const shortid = (await params).shortid;
 
   const client = getClient();
-  const { data, error } = await client.query({ query: GetEventDocument, variables: { shortid } });
-
-  console.log(error)
+  const { data } = await client.query({ query: GetEventDocument, variables: { shortid } });
 
   if (!data?.getEvent) return notFound();
 
