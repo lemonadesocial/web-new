@@ -9,7 +9,7 @@ import { trpc } from '$lib/trpc/client';
 import { LemonHeadValues } from '../types';
 import { SquareButton } from '../shared';
 
-const BodyTypeMapping = { medium: 'Regular', small: 'Skinny', large: 'Toned', extra_large: 'Larger' };
+const BodyTypeMapping = { medium: 'Regular', small: 'Skinny', large: 'Toned', extra_large: 'Large' };
 const customOrder = {
   medium: 0, // Medium is rank 0 (first)
   large: 1, // Large is rank 1 (second)
@@ -23,7 +23,7 @@ export function AboutYou({ form, bodyBase }: { form: UseFormReturn<LemonHeadValu
   const { data } = trpc.preselect.useQuery({ size, gender });
 
   React.useEffect(() => {
-    if (data) Object.entries(data).forEach(([key, value]) => form.setValue(key, value));
+    if (data) Object.entries(data).forEach(([key, value]) => form.setValue(key as keyof LemonHeadValues, value));
   }, [data]);
 
   const condition = (i: LemonHeadBodyType) =>
