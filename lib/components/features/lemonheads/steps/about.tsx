@@ -3,7 +3,7 @@ import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 import { Image } from '$lib/components/core/image';
-import { LemonHeadAccessory, LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
+import { LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
 import { trpc } from '$lib/trpc/client';
 
 import { LemonHeadValues } from '../types';
@@ -40,7 +40,7 @@ export function AboutYou({ form, bodyBase }: { form: UseFormReturn<LemonHeadValu
     });
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex-1 max-w-[588px] flex flex-col gap-8">
       <div className="flex flex-col gap-2">
         <h3 className="text-3xl font-semibold">Build Your Base</h3>
         <p className="text-tertiary">Choose your gender, species & body type.</p>

@@ -26,7 +26,7 @@ export function LemonHeadPreview({
 
   return (
     <Card.Root className="flex-1">
-      <Card.Content className="p-0 md:size-[692px] relative">
+      <Card.Content className="p-0 max-w-[692px] aspect-square relative">
         {formValues.background && <PreviewImageItem src={getSource(formValues.background.attachment)} />}
 
         <img src={data?.attachment?.[0].thumbnails.card_cover.signedUrl} className="w-full h-full absolute top-0" />

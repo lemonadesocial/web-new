@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import { Button } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
-import { LemonHeadAccessory, LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
+import { LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
 
 import { AboutYou } from './steps/about';
 import { LemonHeadValues } from './types';

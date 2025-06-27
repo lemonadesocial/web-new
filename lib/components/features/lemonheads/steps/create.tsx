@@ -26,7 +26,7 @@ export function CreateStep({ form }: { form: UseFormReturn<LemonHeadValues>; bod
   const [skin_tone, background] = form.watch(['skin_tone', 'background']);
 
   return (
-    <div className="flex w-full gap-2 overflow-hidden">
+    <div className="flex flex-1 w-full max-w-[588px] gap-2 overflow-hidden">
       <Card.Root className="w-[96px] overflow-auto max-h-fit no-scrollbar">
         <Card.Content className="flex flex-col gap-1 p-2">
           {Object.entries(tabs).map(([key, item]) => {
@@ -67,7 +67,7 @@ export function CreateStep({ form }: { form: UseFormReturn<LemonHeadValues>; bod
         </Card.Content>
       </Card.Root>
 
-      <Card.Root className="flex-1 min-h-[692px]">
+      <Card.Root className="flex-1">
         <Card.Content className="p-0 h-full">
           {Object.entries(tabs).map(([key, item]) => {
             if (!item.mount) return null;
