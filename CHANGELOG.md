@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.54.0](https://github.com/lemonadesocial/web-new/compare/v1.53.3...v1.54.0) (2025-06-27)
+
+
+### Features
+
+* update accout creation ([d702af0](https://github.com/lemonadesocial/web-new/commit/d702af0214f353f2a045d41e86a4a5fd5477a5cc))
+
 ## [1.53.3](https://github.com/lemonadesocial/web-new/compare/v1.53.2...v1.53.3) (2025-06-23)
 
 
