@@ -102,7 +102,7 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
                   autoPlay
                   loop
                   playsInline
-                  muted
+                  // muted
                 >
                   <source
                     src={data?.config?.effect?.url.replace('.webm', '') + '_web.mov'}

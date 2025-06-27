@@ -169,8 +169,15 @@ export function SubContent({
 }
 
 export function SubContentWithTabs(props: { tabs: any; form: UseFormReturn<LemonHeadValues> }) {
-  const [tabs, setTabs] = React.useState(props.tabs);
+  const gender = props.form.watch('gender');
+  const [tabs, setTabs] = React.useState(props.tabs || []);
   const [currentTab, setCurrentTab] = React.useState(tabs[0].value);
+
+  React.useEffect(() => {
+    if (gender === 'female') {
+      setTabs((prev: any) => prev.filter((i: any) => i.value !== 'facial_hair'));
+    }
+  }, [gender]);
 
   return (
     <>

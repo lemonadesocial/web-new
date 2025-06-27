@@ -15,7 +15,7 @@ import { CreateStep } from './steps/create';
 import { ClaimStep } from './steps/claim';
 import { trpc } from '$lib/trpc/client';
 
-const STEPS = [
+const steps = [
   { key: 'about', label: 'About You', component: AboutYou, btnText: 'Enter Customizer' },
   { key: 'create', label: 'Create', component: CreateStep, btnText: 'Claim' },
   { key: 'claim', label: 'Claim', component: ClaimStep, btnText: 'Continue' },
@@ -26,7 +26,7 @@ const STEPS = [
 export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = React.useState(0);
-  const Comp = STEPS[currentStep].component;
+  const Comp = steps[currentStep].component;
 
   const { data } = trpc.preselect.useQuery({ size: 'small', gender: 'female' });
 
@@ -41,8 +41,10 @@ export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
   });
 
   return (
-    <div className="flex flex-col h-screen w-full divide-y divide-[var(--color-divider)]">
-      <Header />
+    <main className="flex flex-col h-screen w-full divide-y divide-[var(--color-divider)]">
+      <div className="bg-background/80 backdrop-blur-md">
+        <Header />
+      </div>
       <div className="flex-1 overflow-hidden">
         <div className="flex max-w-[1440px] mx-auto gap-18 p-11 max-h-full">
           <Comp form={form} bodyBase={dataBody} />
@@ -53,7 +55,9 @@ export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
       </div>
       <Footer
         step={currentStep}
-        onNext={() => setCurrentStep((prev) => prev + 1)}
+        onNext={() => {
+          if (currentStep < steps.length - 1) setCurrentStep((prev) => prev + 1);
+        }}
         onPrev={() => {
           if (currentStep === 0) router.back();
           else {
@@ -61,13 +65,13 @@ export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
           }
         }}
       />
-    </div>
+    </main>
   );
 }
 
 function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; onPrev?: () => void }) {
   return (
-    <div className="flex justify-between items-center min-h-[64px] px-4">
+    <div className="flex justify-between items-center min-h-[64px] px-4 bg-background/80 backdrop-blur-md">
       <div className="flex-1">
         <Button variant="tertiary" size="sm" onClick={onPrev} iconLeft={step > 0 ? 'icon-chevron-left' : undefined}>
           {step === 0 ? 'Exit' : 'Back'}
@@ -75,11 +79,11 @@ function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; o
       </div>
 
       <ul className="flex items-center flex-auto justify-center flex-1 gap-1.5">
-        {STEPS.map((item, index) => {
+        {steps.map((item, index) => {
           return (
             <li key={item.key} className="flex items-center gap-1.5">
               <p className={twMerge('text-quaternary', index <= step && 'text-primary')}>{item.label}</p>
-              {index < STEPS.length && (
+              {index < steps.length && (
                 <i
                   className={twMerge('icon-chevron-right size-5 text-quaternary', index <= step - 1 && 'text-primary')}
                 />
@@ -90,7 +94,7 @@ function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; o
       </ul>
       <div className="flex flex-1 justify-end">
         <Button iconRight="icon-chevron-right" variant="secondary" size="sm" onClick={onNext}>
-          {STEPS[step].btnText}
+          {steps[step].btnText}
         </Button>
       </div>
     </div>
