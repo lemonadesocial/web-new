@@ -5,18 +5,18 @@ import clsx from 'clsx';
 import { ThemeGenerator } from '$lib/components/features/theme-builder/generator';
 import { useEventTheme } from '$lib/components/features/theme-builder/provider';
 
-export function MainEventLayout({ children }: React.PropsWithChildren) {
+export function EventThemeLayout({ children }: React.PropsWithChildren) {
   const [state] = useEventTheme();
 
   return (
     <main
       className={clsx(
-        'relative flex flex-col h-dvh w-full z-100 overflow-auto mt-7 md:mt-11',
+        'relative h-full w-full z-100 overflow-auto p-6',
         state.theme !== 'default' && [state.config.color, state.config.mode],
       )}
     >
-      <ThemeGenerator data={state} />
-      <div className="page mx-auto px-4 xl:px-0">{children}</div>
+      <ThemeGenerator data={state} style={{ position: 'absolute' }} />
+      {children}
     </main>
   );
 }
