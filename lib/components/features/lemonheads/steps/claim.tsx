@@ -265,7 +265,7 @@ function MintSuccess() {
   const [value, setValue] = useAtom(mintVideoAtom);
 
   React.useEffect(() => {
-    setValue({ show: true, mute: false });
+    setValue({ ...value, show: true });
   }, []);
 
   return (

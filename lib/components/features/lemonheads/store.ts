@@ -1,3 +1,3 @@
 import { atom } from 'jotai';
 
-export const mintVideoAtom = atom({ show: false, mute: false });
+export const mintVideoAtom = atom({ show: false, mute: true });
