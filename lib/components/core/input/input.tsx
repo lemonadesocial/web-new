@@ -1,5 +1,5 @@
 'use client';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useRef, useCallback, useEffect } from 'react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -71,14 +71,14 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   rows = 3,
   ...props
 }, ref) => {
-  const baseClasses = 'w-full rounded-sm focus:outline-none placeholder-quaternary px-2.5 py-2 font-medium resize-none';
+  const baseClasses = 'w-full rounded-sm focus:outline-none placeholder-quaternary px-2.5 py-2 font-medium resize-none no-scrollbar';
 
   const finalClassName = twMerge(
     clsx(
       baseClasses,
       {
         'bg-primary/8': variant === 'default',
-        'bg-background/64 border-primary/8 hover:border-primary focus:border-primary': variant === 'outlined',
+        'bg-background/64 border border-primary/8 hover:border-primary focus:border-primary': variant === 'outlined',
       },
       {
         'text-sm': inputSize === 's',
@@ -89,11 +89,35 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
     )
   );
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const adjustHeight = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, []);
+
+  useEffect(() => {
+    adjustHeight();
+  }, [value, adjustHeight]);
+
   return (
     <textarea
-      ref={ref}
+      ref={(node) => {
+        textareaRef.current = node;
+        if (typeof ref === 'function') {
+          ref(node);
+        } else if (ref) {
+          ref.current = node;
+        }
+      }}
       value={value}
-      onChange={onChange}
+      onChange={(e) => {
+        onChange?.(e);
+        adjustHeight();
+      }}
       placeholder={placeholder}
       rows={rows}
       className={finalClassName}

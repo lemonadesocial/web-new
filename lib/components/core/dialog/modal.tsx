@@ -99,7 +99,7 @@ export function ModalContainer({ modal }: { modal: Modal }) {
           {createPortal(
             <div
               className="fixed inset-0 bg-overlay-backdrop flex w-full h-full items-center justify-center"
-              style={{ zIndex: 10000 + index }}
+              style={{ zIndex: 100000 + index }}
               role="modal"
             >
               <motion.div

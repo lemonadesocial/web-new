@@ -100,7 +100,7 @@ export function DrawerContainer() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed z-100000 inset-0">
+        <div className="fixed z-10000 inset-0">
           <div className="h-full w-full p-2">
             <div className="bg-overlay-backdrop fixed inset-0 z-0" />
             <div className={clsx('flex h-full', options.position === 'right' && 'justify-end')}>

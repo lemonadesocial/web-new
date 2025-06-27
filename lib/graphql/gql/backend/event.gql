@@ -12,6 +12,9 @@ query GetEvent($id: MongoID, $shortid: String) {
     host_expanded {
       ...User
     }
+    cohosts_expanded {
+      ...User
+    }
     visible_cohosts_expanded {
       ...User
     }
@@ -107,6 +110,11 @@ query GetEvent($id: MongoID, $shortid: String) {
     external_url
     external_hostname
     published
+
+    payment_accounts_new
+    payment_accounts_expanded {
+      ...PaymentAccount
+    }
   }
 }
 
@@ -520,6 +528,22 @@ mutation UpdateEventSettings($id: MongoID!, $input: EventInput!) {
     longitude
     latitude
     virtual_url
+    registration_disabled
+    guest_limit
+  }
+}
+
+mutation UpdateEventPhotos($id: MongoID!,$new_new_photos: [MongoID!]) {
+  updateEvent(
+    _id: $id,
+    input: { new_new_photos: $new_new_photos },
+) {
+    new_new_photos
+    new_new_photos_expanded(limit: 50) {
+      _id,
+      key,
+      bucket,
+    },
   }
 }
 
@@ -532,4 +556,70 @@ mutation inviteEvent($event: MongoID!, $users: [MongoID!], $emails: [String!]) {
 
 mutation AssignTickets($input: AssignTicketsInput!) {
   assignTickets(input: $input)
+}
+
+query GetEventTicketSales($event: MongoID!) {
+  getEventTicketSales(event: $event) {
+    sales {
+      amount
+      currency
+      decimals
+    }
+    last_update
+  }
+}
+
+query listEventTicketTypes($event: MongoID!) {
+  listEventTicketTypes(event: $event) {
+    limited_whitelist_users {
+      _id
+      email
+    }
+    _id
+    active
+    address_required
+    default
+    description
+    description_line
+    event
+    external_ids
+    limited
+    offers {
+      _id
+      auto
+      broadcast_rooms
+      position
+      provider
+      provider_id
+      provider_network
+    }
+    photos
+    photos_expanded {
+      _id
+      bucket
+      key
+    }
+    prices {
+      cost
+      currency
+      default
+      payment_accounts
+      payment_accounts_expanded {
+        ...PaymentAccount
+      }
+    }
+    private
+    ticket_count
+    ticket_limit
+    title
+    ticket_limit_per
+    category
+    category_expanded {
+      _id
+      description
+      title
+      position
+    }
+    position
+  }
 }
