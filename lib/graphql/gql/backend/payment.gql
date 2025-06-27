@@ -63,3 +63,40 @@ query getPaymentRefundSignature($id: MongoID!) {
     signature
   }
 }
+
+mutation GenerateStripeAccountLink($refreshUrl: String!, $returnUrl: String!) {
+  generateStripeAccountLink(refresh_url: $refreshUrl, return_url: $returnUrl) {
+    url
+  }
+}
+
+query listNewPaymentAccounts($id: [MongoID!], $type: PaymentAccountType, $provider: NewPaymentProvider) {
+  listNewPaymentAccounts(_id: $id, type: $type, provider: $provider) {
+    _id
+    account_info {
+      ...AccountInfoFragment
+    }
+    active
+    provider
+    created_at
+    type
+    user
+    title
+  }
+}
+
+mutation updateEventPaymentAccounts(
+  $id: MongoID!
+  $payment_accounts_new: [MongoID!]
+) {
+  updateEvent(
+    _id: $id
+    input: { payment_accounts_new: $payment_accounts_new }
+  ) {
+    payment_accounts_new
+    payment_accounts_expanded {
+      ...PaymentAccount
+    }
+  }
+}
+

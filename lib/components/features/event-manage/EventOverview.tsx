@@ -3,6 +3,9 @@ import { modal } from "$lib/components/core";
 import { useEvent } from "./store";
 import { InviteGuestsModal } from "./modals/InviteGuestsModal";
 import { InviteFriendModal } from "../modals/InviteFriendModal";
+import { EventAccessInfo } from "./EventAccessInfo";
+import { ManageHost } from "./ManageHost";
+import { PaymentOverview } from "./PaymentOverview";
 
 export function EventOverview() {
   const event = useEvent();
@@ -31,6 +34,16 @@ export function EventOverview() {
           <p>Share Event</p>
         </div>
       </div>
+
+      <EventAccessInfo event={event} />
+
+      <hr className="border-t" />
+
+      <ManageHost event={event} />
+
+      <hr className="border-t" />
+
+      <PaymentOverview event={event} />
     </div>
   );
 }

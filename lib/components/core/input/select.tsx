@@ -15,10 +15,11 @@ export interface SelectProps {
   className?: string;
   variant?: 'default' | 'outlined';
   inputSize?: 's' | 'm';
+  removeable?: boolean;
 }
 
 export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
-  ({ value, onChange, options, placeholder, error, className, variant = 'default', inputSize = 'm' }, ref) => {
+  ({ value, onChange, options, placeholder, error, className, variant = 'default', inputSize = 'm', removeable = true }, ref) => {
     const baseClasses = 'w-full rounded-sm focus:outline-none border border-transparent placeholder-quaternary px-2.5 hover:border hover:border-tertiary h-10 flex justify-between items-center gap-1.5 font-medium';
 
     const triggerClassName = twMerge(
@@ -44,10 +45,14 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
             <span className={clsx("truncate flex-1", !value && "text-quaternary")}>
               {value || placeholder}
             </span>
-            <i
-              className="icon-cancel size-5 text-quaternary cursor-pointer"
-              onClick={() => onChange(undefined)}
-            />
+            {
+              removeable && (
+                <i
+                  className="icon-cancel size-5 text-quaternary cursor-pointer"
+                  onClick={() => onChange(undefined)}
+                />
+              )
+            }
             <i className="icon-arrow-down size-5 text-quaternary" />
           </Menu.Trigger>
 

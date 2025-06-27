@@ -18,3 +18,17 @@ mutation UpdateUser($input: UserInput!) {
     ...User
   }
 }
+
+query GetUsers($search: String) {
+  getUsers(search: $search) {
+    _id
+    email
+    name
+    display_name
+    new_photos_expanded(limit: 1) {
+      _id
+      key
+      bucket
+    }
+  }
+}

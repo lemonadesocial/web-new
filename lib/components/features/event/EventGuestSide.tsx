@@ -28,24 +28,26 @@ import { EventCollectibles } from '../event-collectibles';
 import { PendingCohostRequest } from './PendingCohostRequest';
 import { useMe } from '$lib/hooks/useMe';
 
-export default function EventGuestSide({ event: eventDetail }: { event: Event }) {
-  const [state] = useEventTheme();
-  const { data, loading } = useQuery(GetEventDocument, {
-    variables: { id: eventDetail._id },
-    skip: !eventDetail._id,
-    initData: { getEvent: eventDetail } as unknown as GetEventQuery,
+export function EventGuestSide({ event: initEvent }: { event: Event }) {
+  const { data } = useQuery(GetEventDocument, {
+    variables: { id: initEvent._id },
+    initData: { getEvent: initEvent } as unknown as GetEventQuery,
   });
 
-  const me = useMe();
+  return <EventGuestSideContent event={data?.getEvent as Event || initEvent} />;
+}
 
-  const event = data?.getEvent as Event;
+export function EventGuestSideContent({ event }: { event: Event }) {
+  const [state] = useEventTheme();
+
+  const me = useMe();
 
   const isHost = me?._id && event && hosting(event, me._id);
   const attending = me?._id ? isAttending(event, me._id) : false;
   const hosts = getEventCohosts(event);
 
   return (
-    <div className={clsx('flex gap-[72px] mt-7 md:mt-11', state.theme && state.config.color)}>
+    <div className={clsx('flex gap-[72px]', state.theme && state.config.color)}>
       <div className="hidden md:flex w-[296px] flex-col gap-6">
         <div className="flex flex-col gap-4">
           {event.new_new_photos_expanded?.[0] ? (
@@ -78,7 +80,7 @@ export default function EventGuestSide({ event: eventDetail }: { event: Event })
           )}
         </div>
 
-        {event && <PendingCohostRequest event={event} />}
+        <PendingCohostRequest event={event} />
         <CommunitySection event={event} />
         <HostedBySection event={event} />
         <AttendeesSection eventId={event._id} />
@@ -148,10 +150,10 @@ export default function EventGuestSide({ event: eventDetail }: { event: Event })
           <EventLocationBlock event={event} />
         </div>
         {event && <EventAccess event={event} />}
-        <AboutSection event={event} loading={loading} />
-        <LocationSection event={event} loading={loading} />
+        <AboutSection event={event} />
+        <LocationSection event={event} />
         <SubEventSection event={event} />
-        <GallerySection event={event} loading={loading} />
+        <GallerySection event={event} />
         {attending && <EventCollectibles event={event} />}
         <div className="flex flex-col gap-6 md:hidden">
           <CommunitySection event={event} />
