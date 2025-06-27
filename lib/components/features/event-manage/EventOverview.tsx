@@ -3,6 +3,7 @@ import { modal } from "$lib/components/core";
 import { useEvent } from "./store";
 import { InviteGuestsModal } from "./modals/InviteGuestsModal";
 import { InviteFriendModal } from "../modals/InviteFriendModal";
+import { EventAccessInfo } from "./EventAccessInfo";
 
 export function EventOverview() {
   const event = useEvent();
@@ -31,6 +32,8 @@ export function EventOverview() {
           <p>Share Event</p>
         </div>
       </div>
+
+      <EventAccessInfo event={event} />
     </div>
   );
 }

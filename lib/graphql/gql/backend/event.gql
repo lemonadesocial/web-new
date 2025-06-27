@@ -523,6 +523,20 @@ mutation UpdateEventSettings($id: MongoID!, $input: EventInput!) {
   }
 }
 
+mutation UpdateEventPhotos($id: MongoID!,$new_new_photos: [MongoID!]) {
+  updateEvent(
+    _id: $id,
+    input: { new_new_photos: $new_new_photos },
+) {
+    new_new_photos
+    new_new_photos_expanded(limit: 50) {
+      _id,
+      key,
+      bucket,
+    },
+  }
+}
+
 mutation inviteEvent($event: MongoID!, $users: [MongoID!], $emails: [String!]) {
   inviteEvent(input: { _id: $event, users: $users, emails: $emails }) {
     _id,
