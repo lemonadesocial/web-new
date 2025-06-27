@@ -22,6 +22,7 @@ import {
   PurchasableItem,
   PurchasableTicketType,
   UserInput,
+  EventTokenGate,
 } from '$lib/graphql/generated/backend/graphql';
 
 import { EventRegistrationStoreContext } from './context';
@@ -121,3 +122,18 @@ export const discountCodeAtom = atom<string | null>(null);
 
 export const ethereumWalletInputAtom = atom<ConnectWalletInput | null>(null);
 
+export const eventTokenGatesAtom = atom<EventTokenGate[]>([]);
+
+export const requiresTokenGatingAtom = atom((get) => {
+  const purchaseItems = get(purchaseItemsAtom);
+  const eventTokenGates = get(eventTokenGatesAtom);
+
+  if (!purchaseItems.length || !eventTokenGates.length) return false;
+
+  const ticketIds = purchaseItems.map((item) => item.id);
+  return eventTokenGates.some((gate) =>
+    gate.gated_ticket_types?.some((gatedId) => ticketIds.includes(gatedId))
+  );
+});
+
+export const buyerWalletAtom = atom<string | null>(null);

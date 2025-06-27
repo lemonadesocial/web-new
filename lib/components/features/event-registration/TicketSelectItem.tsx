@@ -3,12 +3,12 @@ import { useAtomValue as useJotaiAtomValue } from "jotai";
 import { intersection } from "lodash";
 import clsx from "clsx";
 
-import { NumberInput } from "$lib/components/core";
+import { Chip, NumberInput } from "$lib/components/core";
 import { EventTicketPrice, NewPaymentAccount, PurchasableTicketType } from "$lib/graphql/generated/backend/graphql";
 import { chainsMapAtom } from "$lib/jotai";
-import { formatPrice, getPaymentAccounts } from "$lib/utils/event";
+import { formatPrice, formatTokenGateRange, getPaymentAccounts } from "$lib/utils/event";
 import { getPaymentNetworks } from "$lib/utils/payment";
-import { currenciesAtom, currencyAtom, paymentAccountsAtom, purchaseItemsAtom, selectedPaymentAccountAtom, ticketTypesAtom, useAtom, useAtomValue } from "./store";
+import { currenciesAtom, currencyAtom, eventTokenGatesAtom, paymentAccountsAtom, purchaseItemsAtom, selectedPaymentAccountAtom, ticketTypesAtom, useAtom, useAtomValue } from "./store";
 import { renderTextWithLinks } from "$lib/utils/render";
 
 export function TicketSelectItem({ ticketType, single, compact }: { ticketType: PurchasableTicketType; single?: boolean; compact?: boolean }) {
@@ -18,9 +18,11 @@ export function TicketSelectItem({ ticketType, single, compact }: { ticketType: 
   const [currencies, setCurrencies] = useAtom(currenciesAtom);
   const [selectedPaymentAccount, setSelectedPaymentAccount] = useAtom(selectedPaymentAccountAtom);
   const ticketTypes = useAtomValue(ticketTypesAtom);
+  const eventTokenGates = useAtomValue(eventTokenGatesAtom);
 
   const currentPaymentAccounts = getPaymentAccounts(ticketType.prices);
   const currentCurrencies = ticketType.prices.map(price => price.currency);
+  const tokenGate = eventTokenGates.find(gate => gate.gated_ticket_types?.includes(ticketType._id));
 
   const disabled = useMemo(() => {
     if (currencies.length && !intersection(currencies, currentCurrencies).length) return true;
@@ -117,32 +119,43 @@ export function TicketSelectItem({ ticketType, single, compact }: { ticketType: 
   );
 
   return (
-    <div className={clsx('flex p-3 rounded-sm justify-between items-start', active ? 'border border-primary' : 'border border-transparent bg-primary/8')}>
-      <div>
-        <div className="flex items-center gap-1.5">
-          <p className={clsx('font-medium', active ? 'text-accent' : 'text-secondary')}>{ticketType.title}</p>
+    <div className={clsx('flex flex-col gap-2 p-3 rounded-sm', active ? 'border border-primary' : 'border border-transparent bg-primary/8')}>
+      <div className="flex justify-between items-start">
+        <div>
+          <div className="flex items-center gap-1.5">
+            <p className={clsx('font-medium', active ? 'text-accent' : 'text-secondary')}>{ticketType.title}</p>
+            {
+              ticketType.prices[0].payment_accounts_expanded?.[0]?.type === 'ethereum_stake' && (
+                <Chip variant="success" size="xxs" className="rounded-full">Check In to Earn</Chip>
+              )
+            }
+            {
+              !!tokenGate && <Chip variant="primary" size="xxs" className="rounded-full">Token Holder Exclusive</Chip>
+            }
+          </div>
+          <TicketPrices prices={ticketType.prices} groupRegistration={ticketType.limit > 1} active={active} />
           {
-            ticketType.prices[0].payment_accounts_expanded?.[0]?.type === 'ethereum_stake' && (
-              <div className="px-1.5 py-0.5 rounded-full bg-success-500/16">
-                <p className="text-xs text-success-500">Check In to Earn</p>
-              </div>
-            )
+            ticketType.description && <p className="text-secondary whitespace-pre" style={{ textWrap: 'wrap' }}>
+              {renderTextWithLinks(ticketType.description)}
+            </p>
           }
         </div>
-        <TicketPrices prices={ticketType.prices} groupRegistration={ticketType.limit > 1} active={active} />
-        {
-          ticketType.description && <p className="text-secondary whitespace-pre" style={{ textWrap: 'wrap' }}>
-            {renderTextWithLinks(ticketType.description)}
-          </p>
-        }
+        <NumberInput
+          value={count}
+          limit={ticketType.limit as number}
+          onChange={value => handleTicketChange(ticketType, Number(value))}
+          disabled={disabled}
+          hideMinusAtZero
+        />
       </div>
-      <NumberInput
-        value={count}
-        limit={ticketType.limit as number}
-        onChange={value => handleTicketChange(ticketType, Number(value))}
-        disabled={disabled}
-        hideMinusAtZero
-      />
+      {
+        !!tokenGate && <>
+          <hr className="border-t border-t-divider" />
+          <p className="text-sm">
+            {tokenGate.name} {formatTokenGateRange(tokenGate)}
+          </p>
+        </>
+      }
     </div>
   );
 }

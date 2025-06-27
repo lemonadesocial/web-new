@@ -1,7 +1,7 @@
 
 import { Button } from "$lib/components/core";
 import { RegistrationModal } from "./modals/RegistrationModal";
-import { approvalRequiredAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, registrationModal, useAtomValue, hasSingleFreeTicketAtom } from "./store";
+import { approvalRequiredAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, registrationModal, useAtomValue, hasSingleFreeTicketAtom, requiresTokenGatingAtom } from "./store";
 import { useSession } from "$lib/hooks/useSession";
 import { useRedeemTickets } from "./hooks/useRedeemTickets";
 
@@ -13,6 +13,7 @@ export function RegisterButton() {
   const requiredProfileFields = useAtomValue(requiredProfileFieldsAtom);
   const approvalRequired = useAtomValue(approvalRequiredAtom);
   const hasSingleFreeTicket = useAtomValue(hasSingleFreeTicketAtom);
+  const requiresTokenGating = useAtomValue(requiresTokenGatingAtom);
 
   const profileFieldsRequired = requiredProfileFields?.length;
   const applicationQuestionsRequired = event.application_questions?.length;
@@ -28,7 +29,7 @@ export function RegisterButton() {
     registrationModal.open(RegistrationModal, { dismissible: false, skipBaseClassName: true });
   };
 
-  if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session) return (
+  if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session || requiresTokenGating) return (
     <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
       {approvalRequired ? 'Request to Join' : hasSingleFreeTicket ? 'Register' : 'Get Tickets'}
     </Button>

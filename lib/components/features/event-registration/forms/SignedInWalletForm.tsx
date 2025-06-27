@@ -2,7 +2,7 @@ import { useForm, UseFormReturn } from "react-hook-form";
 import { useEffect } from "react";
 import clsx from "clsx";
 
-import { formInstancesAtom, registrationModal, useSetAtom } from "../store";
+import { buyerWalletAtom, formInstancesAtom, registrationModal, useSetAtom } from "../store";
 import { Button, LabeledInput, Menu, MenuItem, modal, toast } from "$lib/components/core";
 import { SetUserWalletDocument } from "$lib/graphql/generated/backend/graphql";
 import { formatWallet } from "$lib/utils/crypto";
@@ -16,6 +16,7 @@ import { VerifyWalletModal } from "../modals/VerifyWalletModal";
 
 export function SignedInWalletForm({ required }: { required: boolean }) {
   const me = useMe();
+  const setBuyerWallet = useSetAtom(buyerWalletAtom);
 
   const userWallets = me?.wallets_new?.ethereum?.filter((wallet: string) => wallet !== me?.wallet_custodial) || [];
 
@@ -38,6 +39,11 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
         onConnect: verifyWallet,
       },
     });
+  };
+
+  const updateBuyerWallet = (address: string) => {
+    setBuyerWallet(address);
+    form.setValue('selectedAddress', address);
   };
 
   const verifyWallet = () => {
@@ -64,7 +70,8 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
                 }
               }
             });
-            form.setValue('selectedAddress', currentAddress);
+            
+            updateBuyerWallet(currentAddress);
           } catch (error: any) {
             toast.error(error.message);
           } finally {
@@ -88,7 +95,7 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
 
   useEffect(() => {
     if (userWallets.length && !form.getValues('selectedAddress')) {
-      form.setValue('selectedAddress', userWallets[0]);
+      updateBuyerWallet(userWallets[0]);
     }
   }, [userWallets, form]);
 
@@ -123,7 +130,7 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
                         <MenuItem
                           key={wallet}
                           onClick={() => {
-                            form.setValue('selectedAddress', wallet);
+                            updateBuyerWallet(wallet);
                             toggle();
                           }}
                           title={formatWallet(wallet)}

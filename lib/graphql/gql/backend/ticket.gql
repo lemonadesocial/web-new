@@ -162,8 +162,8 @@ query getMyTickets($event: MongoID!, $withPaymentInfo: Boolean) {
   }
 }
 
-mutation redeemTickets($event: MongoID!, $items: [PurchasableItem!]!, $buyer_info: BuyerInfoInput, $inviter: MongoID, $user_info: UserInput, $connect_wallets: [ConnectWalletInput!]) {
-  redeemTickets(input: { event: $event, items: $items, buyer_info: $buyer_info, inviter: $inviter, user_info: $user_info, connect_wallets: $connect_wallets }) {
+mutation redeemTickets($event: MongoID!, $items: [PurchasableItem!]!, $buyer_info: BuyerInfoInput, $inviter: MongoID, $user_info: UserInput, $connect_wallets: [ConnectWalletInput!], $buyer_wallet: String) {
+  redeemTickets(input: { event: $event, items: $items, buyer_info: $buyer_info, inviter: $inviter, user_info: $user_info, connect_wallets: $connect_wallets, buyer_wallet: $buyer_wallet }) {
     tickets {
       _id
       accepted
@@ -196,6 +196,151 @@ mutation buyTickets($input: BuyTicketsInput!) {
     join_request {
       _id
       state
+    }
+  }
+}
+
+mutation createEventTicketType($input: EventTicketTypeInput!) {
+  createEventTicketType(input: $input) {
+    _id
+    active
+    private
+    default
+    description
+    photos
+    photos_expanded {
+      _id
+      bucket
+      key
+    }
+    prices {
+      cost
+      currency
+      default
+      payment_accounts
+      payment_accounts_expanded {
+        ...PaymentAccount
+      }
+    }
+    ticket_limit
+    title
+    limited
+    limited_whitelist_users {
+      _id
+      email
+    }
+    category
+    category_expanded {
+      _id
+      description
+      title
+      position
+    }
+    position
+  }
+}
+
+mutation deleteEventTicketType($event: MongoID!, $id: MongoID!) {
+  deleteEventTicketType(event: $event, _id: $id)
+}
+
+mutation updateEventTicketType($input: EventTicketTypeInput!, $id: MongoID!) {
+  updateEventTicketType(input: $input, _id: $id) {
+    _id
+    active
+    default
+    private
+    description
+    event
+    photos
+    photos_expanded {
+      _id
+      bucket
+      key
+    }
+    prices {
+      cost
+      currency
+      default
+      payment_accounts
+      payment_accounts_expanded {
+        ...PaymentAccount
+      }
+    }
+    ticket_limit
+    title
+    offers {
+      _id
+      auto
+      broadcast_rooms
+      position
+      provider
+      provider_id
+      provider_network
+    }
+    limited
+    limited_whitelist_users {
+      _id
+      email
+    }
+    category
+    category_expanded {
+      _id
+      description
+      title
+      position
+    }
+    position
+  }
+}
+
+query exportEventTickets(
+  $id: MongoID!
+  $ticketTypeIds: [MongoID!]
+  $searchText: String
+  $pagination: PaginationInput
+  $checkedIn: Boolean
+) {
+  exportEventTickets(
+    _id: $id
+    ticket_type_ids: $ticketTypeIds
+    search_text: $searchText
+    pagination: $pagination
+    checked_in: $checkedIn
+  ) {
+    count
+    tickets {
+      _id
+      buyer_name
+      buyer_first_name
+      buyer_last_name
+      buyer_email
+      ticket_category
+      ticket_type
+      quantity
+      payment_amount
+      discount_amount
+      currency
+      discount_code
+      purchase_date
+      payment_provider
+      payment_id
+      checkin_date
+      is_assigned
+      assignee_email
+      assigned_to
+      assigned_email
+      is_issued
+      issued_by
+      is_claimed
+      active
+      cancelled_by
+      buyer_wallet
+      buyer_id
+      buyer_avatar
+      buyer_username
+      ticket_type_id
+      shortid
     }
   }
 }

@@ -118,7 +118,7 @@ export function ModalContainer({ modal }: { modal: Modal }) {
                 modal.options.position === 'bottom' && 'items-end',
                 modal.options.position === 'center' && 'items-center justify-center',
               )}
-              style={{ zIndex: 10000 + index }}
+              style={{ zIndex: 100000 + index }}
               role="modal"
             >
               <motion.div
