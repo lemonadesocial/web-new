@@ -3,6 +3,9 @@ import { modal } from "$lib/components/core";
 import { useEvent } from "./store";
 import { InviteGuestsModal } from "./modals/InviteGuestsModal";
 import { InviteFriendModal } from "../modals/InviteFriendModal";
+import { EventThemeProvider } from "../theme-builder/provider";
+import EventGuestSide from "../event/EventGuestSide";
+import { EventThemeLayout } from "./EventThemeLayout";
 
 export function EventOverview() {
   const event = useEvent();
@@ -29,6 +32,20 @@ export function EventOverview() {
             <i className="icon-person-add size-5 text-[#F472B6]" />
           </div>
           <p>Share Event</p>
+        </div>
+      </div>
+      <div className="rounded-md border border-card-border bg-card p-3 grid grid-cols-2 gap-5">
+        <div className="h-[320px] rounded-sm overflow-hidden relative">
+          <div className="absolute scale-50 origin-top-left w-[200%]">
+            <EventThemeProvider themeData={event.theme_data}>
+              <EventThemeLayout>
+                <EventGuestSide event={event} />
+              </EventThemeLayout>
+            </EventThemeProvider>
+          </div>
+        </div>
+        <div>
+          hello
         </div>
       </div>
     </div>
