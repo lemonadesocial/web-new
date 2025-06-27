@@ -12,7 +12,7 @@ import { useSigner } from '$lib/hooks/useSigner';
 import { accountAtom, sessionClientAtom } from '$lib/jotai';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { LENS_NAMESPACE } from '$lib/utils/constants';
-import { formatError } from '$lib/utils/crypto';
+import { formatError, formatWallet } from '$lib/utils/crypto';
 
 import { SignTransactionModal } from '../modals/SignTransaction';
 import { ClaimLemonadeUsernameModal } from './ClaimLemonadeUsernameModal';
@@ -173,7 +173,7 @@ export function SelectProfileModal() {
             onClick={() => handleSelectProfile(item)}
           >
             <Avatar src={getAccountAvatar(item.account)} className="size-5" />
-            <p className="flex-1">{item.account.username?.localName}</p>
+            <p className="flex-1">{item.account.username?.localName || item.account.metadata?.name || formatWallet(item.account.address)}</p>
             {selectedAccount === item.account.address && <i className="size-5 animate-spin icon-loader" />}
           </div>
         ))}
