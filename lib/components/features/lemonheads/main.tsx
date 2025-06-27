@@ -14,6 +14,8 @@ import { LemonHeadPreview } from './preview';
 import { CreateStep } from './steps/create';
 import { ClaimStep } from './steps/claim';
 import { trpc } from '$lib/trpc/client';
+import { useAtom } from 'jotai';
+import { mintVideoAtom } from './store';
 
 const steps = [
   { key: 'about', label: 'About You', component: AboutYou, btnText: 'Enter Customizer' },
@@ -70,6 +72,7 @@ export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
 }
 
 function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; onPrev?: () => void }) {
+  const [mintVideo, setMintVideo] = useAtom(mintVideoAtom);
   return (
     <div className="flex justify-between items-center min-h-[64px] px-4 bg-background/80 backdrop-blur-md">
       <div className="flex-1">
@@ -83,7 +86,7 @@ function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; o
           return (
             <li key={item.key} className="flex items-center gap-1.5">
               <p className={twMerge('text-quaternary', index <= step && 'text-primary')}>{item.label}</p>
-              {index < steps.length && (
+              {index < steps.length - 1 && (
                 <i
                   className={twMerge('icon-chevron-right size-5 text-quaternary', index <= step - 1 && 'text-primary')}
                 />
@@ -92,7 +95,15 @@ function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; o
           );
         })}
       </ul>
-      <div className="flex flex-1 justify-end">
+      <div className="flex gap-2 flex-1 justify-end">
+        {mintVideo.show && (
+          <Button
+            size="sm"
+            variant="tertiary-alt"
+            icon={mintVideo.mute ? 'icon-speaker-wave' : 'icon-speaker-x-mark'}
+            onClick={() => setMintVideo({ show: true, mute: !mintVideo.mute })}
+          />
+        )}
         <Button iconRight="icon-chevron-right" variant="secondary" size="sm" onClick={onNext}>
           {steps[step].btnText}
         </Button>

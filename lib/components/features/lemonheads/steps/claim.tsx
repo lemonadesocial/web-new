@@ -1,7 +1,7 @@
 'use client';
 import clsx from 'clsx';
 import React from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { isMobile } from 'react-device-detect';
 import { useDisconnect } from '@reown/appkit/react';
 
@@ -17,6 +17,7 @@ import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
 import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
 import { ProfileMenu } from '../../lens-account/ProfileMenu';
 import { ProfilePane } from '../../pane';
+import { mintVideoAtom } from '../store';
 
 const steps = [
   {
@@ -47,7 +48,7 @@ export function ClaimStep() {
     if (!myAccount) setCurrentStep(0);
   }, [myAccount]);
 
-  if (true) {
+  if (currentStep === 3) {
     return (
       <div className="flex flex-col gap-8 max-w-[680px]">
         <MintSuccess />
@@ -261,6 +262,12 @@ function MintLemonHead({ onHandleStep }: { onHandleStep?: (value: number) => voi
 }
 
 function MintSuccess() {
+  const [value, setValue] = useAtom(mintVideoAtom);
+
+  React.useEffect(() => {
+    setValue({ show: true, mute: false });
+  }, []);
+
   return (
     <>
       <div className="flex flex-col justify-between flex-1 text-secondary z-10">
@@ -291,12 +298,12 @@ function MintSuccess() {
       </div>
       <div className="fixed inset-0 z-0">
         <div className="fixed inset-0 bg-background/56 z-0" />
-        {!isMobile ? (
-          <video autoPlay loop playsInline muted className="min-w-full min-h-full">
+        {isMobile ? (
+          <video autoPlay loop playsInline muted={value.mute} className="min-w-full min-h-full">
             <source src={`${ASSET_PREFIX}/assets/video/mint_mobile.mov`} />
           </video>
         ) : (
-          <video autoPlay loop playsInline muted className="min-w-full min-h-full">
+          <video autoPlay loop playsInline muted={value.mute} className="min-w-full min-h-full">
             <source src={`${ASSET_PREFIX}/assets/video/mint_web.mov`} />
           </video>
         )}
