@@ -2,20 +2,21 @@
 import clsx from 'clsx';
 import React from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { isMobile } from 'react-device-detect';
+import { useDisconnect } from '@reown/appkit/react';
 
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { Button, drawer, Menu, MenuItem, modal, Skeleton } from '$lib/components/core';
 import { useConnectWallet } from '$lib/hooks/useConnectWallet';
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
+import { ASSET_PREFIX } from '$lib/utils/constants';
 import { chainsMapAtom, sessionClientAtom } from '$lib/jotai';
+import { useClient } from '$lib/graphql/request';
+
 import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
 import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
 import { ProfileMenu } from '../../lens-account/ProfileMenu';
-import { useClient } from '$lib/graphql/request';
-import { useDisconnect } from '@reown/appkit/react';
 import { ProfilePane } from '../../pane';
-import { ASSET_PREFIX } from '$lib/utils/constants';
-import { isMobile } from 'react-device-detect';
 
 const steps = [
   {
