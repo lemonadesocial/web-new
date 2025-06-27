@@ -6,3 +6,4 @@ export const accountAtom = atom<Account | null>(null);
 export const feedAtom = atom<Feed | null>(null);
 export const feedPostsAtom = atom<AnyPost[]>([]);
 export const feedPostAtom = atom<AnyPost | null>();
+export const lemonadeUsernameAtom = atom<string | null>(null);
