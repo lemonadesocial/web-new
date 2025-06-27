@@ -17,7 +17,9 @@ import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
 import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
 import { ProfileMenu } from '../../lens-account/ProfileMenu';
 import { ProfilePane } from '../../pane';
-import { mintVideoAtom } from '../store';
+import { mintAtom } from '../store';
+import { useMe } from '$lib/hooks/useMe';
+import { useSignIn } from '$lib/hooks/useSignIn';
 
 const steps = [
   {
@@ -43,12 +45,13 @@ const steps = [
 export function ClaimStep() {
   const { account: myAccount } = useAccount();
   const [currentStep, setCurrentStep] = React.useState(0);
+  const mintState = useAtomValue(mintAtom);
 
   React.useEffect(() => {
     if (!myAccount) setCurrentStep(0);
   }, [myAccount]);
 
-  if (currentStep === 3) {
+  if (mintState.minted || currentStep === 3) {
     return (
       <div className="flex flex-col gap-8 max-w-[680px]">
         <MintSuccess />
@@ -262,10 +265,12 @@ function MintLemonHead({ onHandleStep }: { onHandleStep?: (value: number) => voi
 }
 
 function MintSuccess() {
-  const [value, setValue] = useAtom(mintVideoAtom);
+  const [value, setValue] = useAtom(mintAtom);
+  const me = useMe();
+  const signIn = useSignIn();
 
   React.useEffect(() => {
-    setValue({ ...value, show: true });
+    setValue({ ...value, video: true, minted: true });
   }, []);
 
   return (
@@ -288,12 +293,21 @@ function MintSuccess() {
           <div className="size-14 rounded-full items-center justify-center flex bg-(--btn-tertiary)/80">
             <i className="icon-user size-[32px]" />
           </div>
-          <p>Personalize your profile and make your presence unforgettable.</p>
-          <div>
-            <Button iconLeft="icon-user-edit-outline" variant="secondary" onClick={() => drawer.open(ProfilePane)}>
-              Update Profile
-            </Button>
-          </div>
+          <p className="w-xs">Personalize your profile and make your presence unforgettable.</p>
+          {me && (
+            <div>
+              <Button
+                iconLeft="icon-user-edit-outline"
+                variant="secondary"
+                onClick={() => {
+                  if (me) drawer.open(ProfilePane);
+                  else signIn();
+                }}
+              >
+                Update Profile
+              </Button>
+            </div>
+          )}
         </div>
       </div>
       <div className="fixed inset-0 z-0">

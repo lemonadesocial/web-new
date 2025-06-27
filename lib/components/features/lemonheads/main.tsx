@@ -15,20 +15,22 @@ import { CreateStep } from './steps/create';
 import { ClaimStep } from './steps/claim';
 import { trpc } from '$lib/trpc/client';
 import { useAtom } from 'jotai';
-import { mintVideoAtom } from './store';
+import { mintAtom } from './store';
+import { Collaborate } from './steps/collaborate';
+import { Celebrate } from './steps/celebrate';
 
 const steps = [
   { key: 'about', label: 'About You', component: AboutYou, btnText: 'Enter Customizer' },
   { key: 'create', label: 'Create', component: CreateStep, btnText: 'Claim' },
   { key: 'claim', label: 'Claim', component: ClaimStep, btnText: 'Continue' },
-  // { key: 'collaborate', label: 'Collaborate', component: () => null },
-  // { key: 'celebrate', label: 'Celebrate', componenent: () => null },
+  { key: 'collaborate', label: 'Collaborate', component: Collaborate, btnText: 'Continue' },
+  { key: 'celebrate', label: 'Celebrate', componenent: Celebrate, btnText: 'Continue' },
 ];
 
 export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = React.useState(0);
-  const Comp = steps[currentStep].component;
+  const Comp = steps[currentStep].component as any;
 
   const { data } = trpc.preselect.useQuery({ size: 'small', gender: 'female' });
 
@@ -44,7 +46,7 @@ export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
 
   return (
     <main className="flex flex-col h-screen w-full divide-y divide-[var(--color-divider)]">
-      <div className="bg-background/80 backdrop-blur-md">
+      <div className="bg-background/80 backdrop-blur-md z-10">
         <Header />
       </div>
       <div className="flex-1 overflow-hidden">
@@ -72,7 +74,9 @@ export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
 }
 
 function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; onPrev?: () => void }) {
-  const [mintVideo, setMintVideo] = useAtom(mintVideoAtom);
+  const [mint, setMintAtom] = useAtom(mintAtom);
+  const disabled = step === 2 && !mint.minted;
+
   return (
     <div className="flex justify-between items-center min-h-[64px] px-4 bg-background/80 backdrop-blur-md">
       <div className="flex-1">
@@ -96,15 +100,15 @@ function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; o
         })}
       </ul>
       <div className="flex gap-2 flex-1 justify-end">
-        {mintVideo.show && (
+        {mint.video && (
           <Button
             size="sm"
             variant="tertiary-alt"
-            icon={mintVideo.mute ? 'icon-speaker-wave' : 'icon-speaker-x-mark'}
-            onClick={() => setMintVideo({ show: true, mute: !mintVideo.mute })}
+            icon={mint.mute ? 'icon-speaker-wave' : 'icon-speaker-x-mark'}
+            onClick={() => setMintAtom({ ...mint, mute: !mint.mute })}
           />
         )}
-        <Button iconRight="icon-chevron-right" variant="secondary" size="sm" onClick={onNext}>
+        <Button iconRight="icon-chevron-right" disabled={disabled} variant="secondary" size="sm" onClick={onNext}>
           {steps[step].btnText}
         </Button>
       </div>
