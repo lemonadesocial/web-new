@@ -5,6 +5,7 @@ type PARAMS = {
   offset?: number;
   limit?: number;
   where?: string;
+  viewId?: string;
 };
 
 class LemonHead {

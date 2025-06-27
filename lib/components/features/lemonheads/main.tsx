@@ -6,13 +6,14 @@ import { useRouter } from 'next/navigation';
 
 import { Button } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
-import { LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
+import { LemonHeadAccessory, LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
 
 import { AboutYou } from './steps/about';
 import { LemonHeadValues } from './types';
 import { LemonHeadPreview } from './preview';
 import { CreateStep } from './steps/create';
 import { ClaimStep } from './steps/claim';
+import { trpc } from '$lib/trpc/client';
 
 const STEPS = [
   { key: 'about', label: 'About You', component: AboutYou, btnText: 'Enter Customizer' },
@@ -27,8 +28,11 @@ export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
   const [currentStep, setCurrentStep] = React.useState(0);
   const Comp = STEPS[currentStep].component;
 
+  const { data } = trpc.preselect.useQuery({ size: 'small', gender: 'female' });
+
   const form = useForm<LemonHeadValues>({
     defaultValues: {
+      ...data,
       gender: 'female',
       body: 'human',
       size: 'small',

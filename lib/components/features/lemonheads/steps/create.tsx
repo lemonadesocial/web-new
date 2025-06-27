@@ -133,7 +133,7 @@ function FaceEyes({ form, active = false }: { form: UseFormReturn<LemonHeadValue
     <SubContent
       selected={eyes}
       where={`(type,eq,eyes)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('eyes', { Id: item.Id, attachment: item.attachment })}
+      onSelect={(item) => form.setValue('eyes', { Id: item.Id, attachment: item.attachment, name: item.name })}
     />
   );
 }
@@ -146,7 +146,7 @@ function FaceMouth({ form, active = false }: { form: UseFormReturn<LemonHeadValu
     <SubContent
       selected={mouth}
       where={`(type,eq,mouth)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('mouth', { Id: item.Id, attachment: item.attachment })}
+      onSelect={(item) => form.setValue('mouth', { Id: item.Id, attachment: item.attachment, name: item.name })}
     />
   );
 }
@@ -159,7 +159,7 @@ function FaceHair({ form, active = false }: { form: UseFormReturn<LemonHeadValue
     <SubContent
       selected={hair}
       where={`(type,eq,hair)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('hair', { Id: item.Id, attachment: item.attachment })}
+      onSelect={(item) => form.setValue('hair', { Id: item.Id, attachment: item.attachment, name: item.name })}
     />
   );
 }
@@ -172,7 +172,7 @@ function FaceFacialHair({ form, active = false }: { form: UseFormReturn<LemonHea
     <SubContent
       selected={facial_hair}
       where={`(type,eq,facial_hair)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('facial_hair', { Id: item.Id, attachment: item.attachment })}
+      onSelect={(item) => form.setValue('facial_hair', { Id: item.Id, attachment: item.attachment, name: item.name })}
     />
   );
 }
@@ -186,7 +186,7 @@ function TopItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
     <SubContent
       selected={top}
       where={`(type,eq,top)~and(gender,eq,${gender})~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('top', { Id: item.Id, attachment: item.attachment })}
+      onSelect={(item) => form.setValue('top', { Id: item.Id, attachment: item.attachment, name: item.name })}
     />
   );
 }
@@ -198,7 +198,7 @@ function BottomItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
     <SubContent
       selected={bottom}
       where={`(type,eq,bottom)~and(gender,eq,${gender})~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('bottom', { Id: item.Id, attachment: item.attachment })}
+      onSelect={(item) => form.setValue('bottom', { Id: item.Id, attachment: item.attachment, name: item.name })}
     />
   );
 }
@@ -210,7 +210,7 @@ function OutfitItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
     <SubContent
       selected={outfit}
       where={`(type,eq,outfit)~and(gender,eq,${gender})~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('outfit', { Id: item.Id, attachment: item.attachment })}
+      onSelect={(item) => form.setValue('outfit', { Id: item.Id, attachment: item.attachment, name: item.name })}
     />
   );
 }
@@ -226,7 +226,7 @@ function AccessoriesEyeWear({ form, active = false }: { form: UseFormReturn<Lemo
     <SubContent
       selected={eyewear}
       where={`(type,eq,eyewear)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('eyewear', { Id: item.Id, attachment: item.attachment })}
+      onSelect={(item) => form.setValue('eyewear', { Id: item.Id, attachment: item.attachment, name: item.name })}
     />
   );
 }
@@ -239,7 +239,7 @@ function AccessoriesMouthGear({ form, active = false }: { form: UseFormReturn<Le
     <SubContent
       selected={mouthgear}
       where={`(type,eq,mouthgear)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('mouthgear', { Id: item.Id, attachment: item.attachment })}
+      onSelect={(item) => form.setValue('mouthgear', { Id: item.Id, attachment: item.attachment, name: item.name })}
     />
   );
 }
@@ -252,7 +252,7 @@ function AccessoriesHeadGear({ form, active = false }: { form: UseFormReturn<Lem
     <SubContent
       selected={headgear}
       where={`(type,eq,headgear)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('headgear', { Id: item.Id, attachment: item.attachment })}
+      onSelect={(item) => form.setValue('headgear', { Id: item.Id, attachment: item.attachment, name: item.name })}
     />
   );
 }
@@ -276,7 +276,7 @@ function FootwearItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
     <SubContent
       selected={footwear}
       where={`(type,eq,footwear)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('footwear', { Id: item.Id, attachment: item.attachment })}
+      onSelect={(item) => form.setValue('footwear', { Id: item.Id, attachment: item.attachment, name: item.name })}
     />
   );
 }
@@ -288,7 +288,7 @@ function BackgroundItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
     <SubContent
       selected={background}
       where={`(type,eq,background)`}
-      onSelect={(item) => form.setValue('background', { Id: item.Id, attachment: item.attachment })}
+      onSelect={(item) => form.setValue('background', { Id: item.Id, attachment: item.attachment, name: item.name })}
     />
   );
 }

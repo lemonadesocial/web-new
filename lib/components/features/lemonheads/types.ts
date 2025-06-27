@@ -1,21 +1,23 @@
-import { LemonHeadAttachment } from '$lib/trpc/lemonheads/types';
+import { LemonHeadAccessory } from '$lib/trpc/lemonheads/types';
+
+export type LemonHeadBodyType = 'small' | 'medium' | 'large' | 'extra_large';
 
 export type LemonHeadValues = {
   gender: 'male' | 'female';
   body: 'human' | 'alien';
-  size: 'small' | 'medium' | 'large' | 'extra_large';
+  size: LemonHeadBodyType;
   skin_tone: { value: string; color: string };
-  eyes?: { Id: number; attachment: LemonHeadAttachment[] };
-  mouth?: { Id: number; attachment: LemonHeadAttachment[] };
-  hair?: { Id: number; attachment: LemonHeadAttachment[] };
-  facial_hair?: { Id: number; attachment: LemonHeadAttachment[] };
-  top?: { Id: number; attachment: LemonHeadAttachment[] };
-  bottom?: { Id: number; attachment: LemonHeadAttachment[] };
-  outfit?: { Id: number; attachment: LemonHeadAttachment[] };
-  eyewear?: { Id: number; attachment: LemonHeadAttachment[] };
-  mouthgear?: { Id: number; attachment: LemonHeadAttachment[] };
-  headgear?: { Id: number; attachment: LemonHeadAttachment[] };
-  footwear?: { Id: number; attachment: LemonHeadAttachment[] };
-  background?: { Id: number; attachment: LemonHeadAttachment[] };
-  pets?: { Id: number; attachment: LemonHeadAttachment[] };
+  eyes?: Partial<LemonHeadAccessory>;
+  mouth?: Partial<LemonHeadAccessory>;
+  hair?: Partial<LemonHeadAccessory>;
+  facial_hair?: Partial<LemonHeadAccessory>;
+  top?: Partial<LemonHeadAccessory>;
+  bottom?: Partial<LemonHeadAccessory>;
+  outfit?: Partial<LemonHeadAccessory>;
+  eyewear?: Partial<LemonHeadAccessory>;
+  mouthgear?: Partial<LemonHeadAccessory>;
+  headgear?: Partial<LemonHeadAccessory>;
+  footwear?: Partial<LemonHeadAccessory>;
+  background?: Partial<LemonHeadAccessory>;
+  pets?: Partial<LemonHeadAccessory>;
 };

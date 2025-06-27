@@ -1,8 +1,10 @@
 'use client';
-
+import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
+
 import { Image } from '$lib/components/core/image';
-import { LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
+import { LemonHeadAccessory, LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
+import { trpc } from '$lib/trpc/client';
 
 import { LemonHeadValues } from '../types';
 import { SquareButton } from '../shared';
@@ -17,6 +19,12 @@ const customOrder = {
 
 export function AboutYou({ form, bodyBase }: { form: UseFormReturn<LemonHeadValues>; bodyBase: LemonHeadBodyType[] }) {
   const [gender, size, body, skin_tone] = form.watch(['gender', 'size', 'body', 'skin_tone']);
+
+  const { data } = trpc.preselect.useQuery({ size, gender });
+
+  React.useEffect(() => {
+    if (data) Object.entries(data).forEach(([key, value]) => form.setValue(key, value));
+  }, [data]);
 
   const condition = (i: LemonHeadBodyType) =>
     i.gender === gender && i.body_type === size && i.skin_tone === skin_tone.value;

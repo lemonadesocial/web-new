@@ -1,7 +1,8 @@
 import { z } from 'zod';
-import lemonheads from './lemonheads';
 
 import { publicProcedure, router } from './trpc';
+import lemonheads from './lemonheads';
+import { getPreSelect } from './lemonheads/preselect';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -10,14 +11,20 @@ export const appRouter = router({
   bodyBase: publicProcedure
     .input(
       z
-        .object({ offset: z.number().optional(), limit: z.number().optional(), where: z.string().optional() })
+        .object({
+          offset: z.number().optional(),
+          limit: z.number().optional(),
+          where: z.string().optional(),
+          viewId: z.string().optional(),
+        })
         .optional(),
     )
-    .query(async (params) => {
+    .query(async ({ input }) => {
       const { data } = await lemonheads.getBody({
-        limit: params?.input?.limit || 100,
-        offset: params.input?.offset || 0,
-        where: params.input?.where,
+        limit: input?.limit || 100,
+        offset: input?.offset || 0,
+        where: input?.where,
+        viewId: input?.viewId,
       });
 
       return data;
@@ -25,18 +32,30 @@ export const appRouter = router({
   accessories: publicProcedure
     .input(
       z
-        .object({ offset: z.number().optional(), limit: z.number().optional(), where: z.string().optional() })
+        .object({
+          offset: z.number().optional(),
+          limit: z.number().optional(),
+          where: z.string().optional(),
+          viewId: z.string().optional(),
+        })
         .optional(),
     )
-    .query(async (params) => {
+    .query(async ({ input }) => {
       const { data } = await lemonheads.getAccessories({
-        limit: params?.input?.limit || 100,
-        offset: params.input?.offset || 0,
-        where: params.input?.where,
+        limit: input?.limit || 100,
+        offset: input?.offset || 0,
+        where: input?.where,
+        viewId: input?.viewId,
       });
 
       return data;
     }),
+  preselect: publicProcedure.input(z.object({ gender: z.string(), size: z.string() })).query(async ({ input }) => {
+    const { data: dataPreSelect } = await lemonheads.getAccessories({ viewId: 'vwziaxm5nfh9652q', limit: 50 });
+    const preselect = dataPreSelect.list;
+
+    return getPreSelect({ preselect, ...input });
+  }),
 });
 
 export type AppRouter = typeof appRouter;
