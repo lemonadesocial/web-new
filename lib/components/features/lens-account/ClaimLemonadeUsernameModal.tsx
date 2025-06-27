@@ -13,8 +13,9 @@ import { useSigner } from '$lib/hooks/useSigner';
 
 import { SuccessModal } from '../modals/SuccessModal';
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
+import { RulesSubject } from '@lens-protocol/client';
 
-export function ClaimLemonadeUsernameModal({onComplete}: {onComplete?: () => void}) {
+export function ClaimLemonadeUsernameModal() {
   const sessionClient = useAtomValue(sessionClientAtom);
   const signer = useSigner();
   const { account } = useAccount();
@@ -43,6 +44,7 @@ export function ClaimLemonadeUsernameModal({onComplete}: {onComplete?: () => voi
       const result = await canCreateUsername(sessionClient, {
         localName: value,
         namespace: LENS_NAMESPACE,
+        rulesSubject: RulesSubject.Signer,
       });
   
       if (result.isErr()) {
@@ -91,6 +93,7 @@ export function ClaimLemonadeUsernameModal({onComplete}: {onComplete?: () => voi
           localName: username,
           namespace: LENS_NAMESPACE,
         },
+        rulesSubject: RulesSubject.Signer,
       })
         .andThen(handleOperationWith(signer))
         .andThen(sessionClient.waitForTransaction);
@@ -126,7 +129,6 @@ export function ClaimLemonadeUsernameModal({onComplete}: {onComplete?: () => voi
       <SuccessModal 
         title="Username Claimed!"
         description={`@${username} is now yours. You're all set to join conversations, share your voice and connect with others on Lemonade.`}
-        onClose={onComplete}
       />
     );
   }

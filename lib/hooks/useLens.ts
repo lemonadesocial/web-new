@@ -31,7 +31,7 @@ import {
 } from '@lens-protocol/client';
 import { fetchAccount } from '@lens-protocol/client/actions';
 import { toast } from '$lib/components/core/toast';
-import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom, chainsMapAtom, feedPostAtom } from '$lib/jotai';
+import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom, chainsMapAtom, feedPostAtom, lemonadeUsernameAtom } from '$lib/jotai';
 import { useAppKitAccount } from '$lib/utils/appkit';
 import { client, storageClient } from '$lib/utils/lens/client';
 import { ATTRIBUTES_SAFE_KEYS, LENS_CHAIN_ID } from '$lib/utils/lens/constants';
@@ -629,7 +629,7 @@ export function useLensAuth() {
 }
 
 export function useLemonadeUsername(account: Account | null) {
-  const [username, setUsername] = useState<string | null>(null);
+  const [username, setUsername] = useAtom(lemonadeUsernameAtom);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchUsernameData = async () => {
@@ -651,7 +651,6 @@ export function useLemonadeUsername(account: Account | null) {
       }
     } catch (error: any) {
       toast.error(error.message);
-      setUsername(null);
     } finally {
       setIsLoading(false);
     }

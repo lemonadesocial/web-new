@@ -15,7 +15,7 @@ export function LensAccountCard() {
   const { isLoading: loadingSession } = useResumeSession();
   const account = useAtomValue(accountAtom);
   const { stats } = useAccountStats(account);
-  const { username, isLoading: isLoadingUsername, refetch } = useLemonadeUsername(account);
+  const { username, isLoading: isLoadingUsername } = useLemonadeUsername(account);
 
   const selectProfile = () => {
     modal.open(SelectProfileModal, { dismissible: true });
@@ -28,15 +28,19 @@ export function LensAccountCard() {
     </div>
   );
 
-  if (account?.username) return (
+  if (account) return (
     <div className="hidden md:block rounded-sm border border-divider space-y-4 p-4">
       <div className="flex justify-between items-start">
         <Avatar src={getAccountAvatar(account)} className="size-14" />
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-primary/8">
-            <i className="icon-lens text-secondary size-4" />
-            <p className="text-sm text-tertiary max-w-[100px] truncate">{account.username.localName}</p>
-          </div>
+          {
+            account.username?.localName && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-primary/8">
+                <i className="icon-lens text-secondary size-4" />
+                <p className="text-sm text-tertiary max-w-[100px] truncate">{account.username?.localName}</p>
+              </div>
+            )
+          }
           <ProfileMenu>
             <Button variant="tertiary" size="sm" icon="icon-more-vert" className="rounded-full" />
           </ProfileMenu>
@@ -64,7 +68,7 @@ export function LensAccountCard() {
       </div>
       {
         !username && (
-          <Button variant="secondary" className="w-full" onClick={() => modal.open(ClaimLemonadeUsernameModal, { dismissible: true, props: {onComplete: () => refetch() } })}>
+          <Button variant="secondary" className="w-full" onClick={() => modal.open(ClaimLemonadeUsernameModal, { dismissible: true })}>
             Claim Username
           </Button>
         )
