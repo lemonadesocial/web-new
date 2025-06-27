@@ -103,15 +103,16 @@ function Loading() {
 
 export function SubContent({
   limit = 27,
-  selected,
-  onSelect,
+  field,
   where,
+  form,
 }: {
+  field: keyof LemonHeadValues;
   limit?: number;
   where: string;
-  selected?: Partial<LemonHeadAccessory>;
-  onSelect: (item: LemonHeadAccessory) => void;
+  form: UseFormReturn<LemonHeadValues>;
 }) {
+  const selected = form.watch(field) as Partial<LemonHeadAccessory>;
   const [offset, setOffSet] = React.useState(0);
   const { data, isLoading: loading } = trpc.accessories.useQuery({
     limit: limit,
@@ -154,7 +155,14 @@ export function SubContent({
 
   return (
     <div ref={listInnerRef} className="p-4 space-y-4 overflow-auto no-scrollbar" style={{ height: 'inherit' }}>
-      <ListView data={list} selected={selected?.Id} onSelect={onSelect} />
+      <ListView
+        data={list}
+        selected={selected?.Id}
+        onSelect={(item) => {
+          if (item.Id === selected?.Id) form.setValue(field, undefined);
+          else form.setValue(field, { Id: item.Id, attachment: item.attachment, name: item.name });
+        }}
+      />
       {loading && <Loading />}
     </div>
   );

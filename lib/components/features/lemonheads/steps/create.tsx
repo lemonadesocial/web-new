@@ -53,8 +53,8 @@ export function CreateStep({ form }: { form: UseFormReturn<LemonHeadValues>; bod
                       backgroundSize: 'cover',
                       backgroundColor: 'var(--color-card-hover)',
                       backgroundImage:
-                        background && background.attachment.length
-                          ? `url(${background?.attachment?.[0].thumbnails.tiny.signedUrl})`
+                        background && background.attachment?.length
+                          ? `url(${background?.attachment[0].thumbnails.tiny.signedUrl})`
                           : '',
                     }}
                   />
@@ -126,91 +126,63 @@ function FaceItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
 }
 
 function FaceEyes({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const [eyes, size] = form.watch(['eyes', 'size']);
+  const size = form.watch('size');
   if (!active) return null;
 
-  return (
-    <SubContent
-      selected={eyes}
-      where={`(type,eq,eyes)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('eyes', { Id: item.Id, attachment: item.attachment, name: item.name })}
-    />
-  );
+  return <SubContent field="eyes" form={form} where={`(type,eq,eyes)~and(body_type,eq,${size})`} />;
 }
 
 function FaceMouth({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const [mouth, size] = form.watch(['mouth', 'size']);
+  const size = form.watch('size');
   if (!active) return null;
 
-  return (
-    <SubContent
-      selected={mouth}
-      where={`(type,eq,mouth)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('mouth', { Id: item.Id, attachment: item.attachment, name: item.name })}
-    />
-  );
+  return <SubContent field="mouth" form={form} where={`(type,eq,mouth)~and(body_type,eq,${size})`} />;
 }
 
 function FaceHair({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const [hair, size] = form.watch(['hair', 'size']);
+  const size = form.watch('size');
   if (!active) return null;
 
-  return (
-    <SubContent
-      selected={hair}
-      where={`(type,eq,hair)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('hair', { Id: item.Id, attachment: item.attachment, name: item.name })}
-    />
-  );
+  return <SubContent field="hair" form={form} where={`(type,eq,hair)~and(body_type,eq,${size})`} />;
 }
 
 function FaceFacialHair({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const [facial_hair, size] = form.watch(['facial_hair', 'size']);
+  const size = form.watch('size');
   if (!active) return null;
 
-  return (
-    <SubContent
-      selected={facial_hair}
-      where={`(type,eq,facial_hair)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('facial_hair', { Id: item.Id, attachment: item.attachment, name: item.name })}
-    />
-  );
+  return <SubContent field="facial_hair" form={form} where={`(type,eq,facial_hair)~and(body_type,eq,${size})`} />;
 }
 
 // ---- END FACE ----
 
 function TopItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const [top, gender, size] = form.watch(['top', 'gender', 'size']);
+  const [gender, size] = form.watch(['gender', 'size']);
 
   return (
-    <SubContent
-      selected={top}
-      where={`(type,eq,top)~and(gender,eq,${gender})~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('top', { Id: item.Id, attachment: item.attachment, name: item.name })}
-    />
+    <SubContent field="top" form={form} where={`(type,eq,top)~and(gender,eq,${gender})~and(body_type,eq,${size})`} />
   );
 }
 
 function BottomItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const [bottom, gender, size] = form.watch(['bottom', 'gender', 'size']);
+  const [gender, size] = form.watch(['gender', 'size']);
 
   return (
     <SubContent
-      selected={bottom}
+      field="bottom"
+      form={form}
       where={`(type,eq,bottom)~and(gender,eq,${gender})~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('bottom', { Id: item.Id, attachment: item.attachment, name: item.name })}
     />
   );
 }
 
 function OutfitItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const [outfit, gender, size] = form.watch(['outfit', 'gender', 'size']);
+  const [gender, size] = form.watch(['gender', 'size']);
 
   return (
     <SubContent
-      selected={outfit}
+      field="outfit"
+      form={form}
       where={`(type,eq,outfit)~and(gender,eq,${gender})~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('outfit', { Id: item.Id, attachment: item.attachment, name: item.name })}
     />
   );
 }
@@ -218,43 +190,24 @@ function OutfitItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
 // ---- START ACCESSORIES ----
 
 function AccessoriesEyeWear({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const [eyewear, size] = form.watch(['eyewear', 'size']);
-
+  const size = form.watch('size');
   if (!active) return null;
 
-  return (
-    <SubContent
-      selected={eyewear}
-      where={`(type,eq,eyewear)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('eyewear', { Id: item.Id, attachment: item.attachment, name: item.name })}
-    />
-  );
+  return <SubContent field="eyewear" form={form} where={`(type,eq,eyewear)~and(body_type,eq,${size})`} />;
 }
 
 function AccessoriesMouthGear({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const [mouthgear, size] = form.watch(['mouthgear', 'size']);
+  const size = form.watch('size');
   if (!active) return null;
 
-  return (
-    <SubContent
-      selected={mouthgear}
-      where={`(type,eq,mouthgear)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('mouthgear', { Id: item.Id, attachment: item.attachment, name: item.name })}
-    />
-  );
+  return <SubContent field="mouthgear" form={form} where={`(type,eq,mouthgear)~and(body_type,eq,${size})`} />;
 }
 
 function AccessoriesHeadGear({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const [headgear, size] = form.watch(['headgear', 'size']);
+  const size = form.watch('size');
   if (!active) return null;
 
-  return (
-    <SubContent
-      selected={headgear}
-      where={`(type,eq,headgear)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('headgear', { Id: item.Id, attachment: item.attachment, name: item.name })}
-    />
-  );
+  return <SubContent field="headgear" form={form} where={`(type,eq,headgear)~and(body_type,eq,${size})`} />;
 }
 
 function AccessoryItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
@@ -270,27 +223,12 @@ function AccessoryItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
 // ---- END ACCESSORIES ----
 
 function FootwearItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const [footwear, size] = form.watch(['footwear', 'size']);
-
-  return (
-    <SubContent
-      selected={footwear}
-      where={`(type,eq,footwear)~and(body_type,eq,${size})`}
-      onSelect={(item) => form.setValue('footwear', { Id: item.Id, attachment: item.attachment, name: item.name })}
-    />
-  );
+  const size = form.watch('size');
+  return <SubContent field="footwear" form={form} where={`(type,eq,footwear)~and(body_type,eq,${size})`} />;
 }
 
 function BackgroundItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const background = form.watch('background');
-
-  return (
-    <SubContent
-      selected={background}
-      where={`(type,eq,background)`}
-      onSelect={(item) => form.setValue('background', { Id: item.Id, attachment: item.attachment, name: item.name })}
-    />
-  );
+  return <SubContent field="background" form={form} where={`(type,eq,background)`} />;
 }
 
 function PetItems() {
