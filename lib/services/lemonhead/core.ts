@@ -1,58 +1,69 @@
 import * as ethers from 'ethers';
 
 export enum TraitType {
-  origin = 'origin',
-  gender = 'gender',
-  body_type = 'body_type',
-  skin_tone = 'skin_tone',
   background = 'background',
-  top = 'top',
-  bottom = 'bottom',
-  outfit = 'outfit',
-  eyes = 'eyes',
-  earrings = 'earrings',
-  eyewear = 'eyewear',
-  hair = 'hair',
-  headgear = 'headgear',
-  mouth = 'mouth',
-  mouthgear = 'mouthgear',
-  facial_hair = 'facial_hair',
+  body = 'body',
   footwear = 'footwear',
+  bottom = 'bottom',
+  top = 'top',
+  outfit = 'outfit',
+  mouth = 'mouth',
+  facial_hair = 'facial_hair',
+  hair = 'hair',
+  earrings = 'earrings',
+  headgear = 'headgear',
+  mouthgear = 'mouthgear',
+  eyes = 'eyes',
+  eyewear = 'eyewear',
+  pet = 'pet',
+  instrument = 'instrument',
 }
 
-export const baseTraitTypes = [TraitType.origin, TraitType.gender, TraitType.skin_tone] as const;
+export enum FilterType {
+  race = 'race',
+  gender = 'gender',
+  skin_tone = 'skin_tone',
+  size = 'size',
+  color = 'color',
+}
 
 export const requiredTraits = [
-  ...baseTraitTypes,
   TraitType.background,
-  TraitType.body_type,
-  TraitType.eyes,
-  TraitType.hair,
+  TraitType.body,
   TraitType.mouth,
+  TraitType.hair,
+  TraitType.eyes,
+  //-- top and bottom are mutually exclusive with outfit so they are not always required
 ];
 
-export type BaseTraitType = (typeof baseTraitTypes)[number];
+export interface Filter {
+  type: FilterType;
+  value: string;
+}
 
 export interface Trait {
   type: TraitType;
   value: string;
+  filter?: Filter[];
 }
 
-export const layerings: { [key in TraitType]?: number[] } = {
-  [TraitType.background]: [10],
-  [TraitType.body_type]: [20],
-  [TraitType.footwear]: [30], //-- optional
-  [TraitType.bottom]: [40],
-  [TraitType.top]: [50],
-  [TraitType.outfit]: [40, 50], //-- mutually exclusive with top and bottom
-  [TraitType.mouth]: [60],
-  [TraitType.facial_hair]: [70], //-- optional
-  [TraitType.hair]: [80],
-  [TraitType.earrings]: [90], //-- optional
-  [TraitType.headgear]: [100], //-- optional
-  [TraitType.mouthgear]: [120], //-- optional
-  [TraitType.eyes]: [130],
-  [TraitType.eyewear]: [140], //-- optional
+export const layerings: Record<TraitType, { order: number[]; filterTypes: FilterType[] }> = {
+  [TraitType.background]: { order: [10], filterTypes: [] },
+  [TraitType.body]: { order: [20], filterTypes: [FilterType.race, FilterType.gender, FilterType.skin_tone] },
+  [TraitType.footwear]: { order: [30], filterTypes: [FilterType.gender, FilterType.size] },
+  [TraitType.bottom]: { order: [40], filterTypes: [FilterType.gender, FilterType.size] },
+  [TraitType.top]: { order: [50], filterTypes: [FilterType.gender, FilterType.size] },
+  [TraitType.outfit]: { order: [40, 50], filterTypes: [FilterType.gender, FilterType.size] }, //-- mutually exclusive with top and bottom
+  [TraitType.mouth]: { order: [60], filterTypes: [FilterType.size] },
+  [TraitType.facial_hair]: { order: [70], filterTypes: [FilterType.gender, FilterType.size] }, //-- optional
+  [TraitType.hair]: { order: [80], filterTypes: [FilterType.gender, FilterType.size] },
+  [TraitType.earrings]: { order: [90], filterTypes: [FilterType.gender, FilterType.size] }, //-- optional
+  [TraitType.headgear]: { order: [100], filterTypes: [FilterType.gender, FilterType.size] }, //-- optional
+  [TraitType.mouthgear]: { order: [120], filterTypes: [FilterType.size] }, //-- optional
+  [TraitType.eyes]: { order: [130], filterTypes: [FilterType.size] },
+  [TraitType.eyewear]: { order: [140], filterTypes: [FilterType.size] }, //-- optional
+  [TraitType.pet]: { order: [150], filterTypes: [FilterType.race, FilterType.color] }, //-- optional
+  [TraitType.instrument]: { order: [160], filterTypes: [] }, //-- optional
 };
 
 export function findConflictTraits(existingTraits: Trait[], newTrait: Trait) {
@@ -61,22 +72,12 @@ export function findConflictTraits(existingTraits: Trait[], newTrait: Trait) {
     // If trait types are the same, they conflict
     if (trait.type === newTrait.type) return true;
 
-    // If newTrait is a base trait type, it's always valid (no conflicts)
-    if (newTrait.type in baseTraitTypes) {
-      return false;
-    }
-
-    // If trait is a base trait type, it doesn't conflict with renderable traits
-    if (trait.type in baseTraitTypes) {
-      return false;
-    }
-
     // Check if the layers conflict between renderable traits
     const traitLayers = layerings[trait.type] || [];
     const newTraitLayers = layerings[newTrait.type] || [];
 
     // If any layer overlaps, there's a conflict
-    return traitLayers.some((layer) => newTraitLayers.includes(layer));
+    return traitLayers.order.some((layer) => newTraitLayers.order.includes(layer));
   });
 }
 
@@ -84,7 +85,7 @@ export function validateTraits(traits: Trait[]) {
   //-- make sure:
 
   //-- 1. no layer conflict
-  const layers = traits.flatMap((trait) => layerings[trait.type] || []).sort();
+  const layers = traits.flatMap((trait) => layerings[trait.type]?.order || []).sort();
 
   for (let i = 0; i < layers.length - 1; i++) {
     if (layers[i] === layers[i + 1]) {
@@ -97,7 +98,7 @@ export function validateTraits(traits: Trait[]) {
     throw new Error('Required traits are missing');
   }
 
-  //-- 3. custom validations
+  //-- 3. custom trait validations
 
   //-- if no outfit then there must be top & bottom
   if (
@@ -105,6 +106,22 @@ export function validateTraits(traits: Trait[]) {
     [TraitType.top, TraitType.bottom].some((trait) => !traits.some((t) => t.type === trait))
   ) {
     throw new Error('Top and bottom are required if no outfit is present');
+  }
+
+  const invalidFilter = traits.some((trait) => {
+    //-- 4.1 filter must not be duplicated
+    const filters = trait.filter?.map((filter) => filter.type).sort() || [];
+
+    for (let i = 0; i < filters.length - 1; i++) {
+      if (layers[i] === layers[i + 1]) {
+        throw new Error('Duplicated filter detected');
+      }
+    }
+  });
+
+  //-- 4. filter validations
+  if (invalidFilter) {
+    throw new Error('Invalid filters');
   }
 }
 
@@ -121,26 +138,28 @@ export function getFinalTraits(traits: Trait[]) {
   return traits
     .filter((trait) => !!trait.value)
     .sort((a, b) => {
-      const aType = a.type;
-      const bType = b.type;
-
-      //-- base traits, sort by index within baseTraitTypes
-      if (aType in baseTraitTypes && bType in baseTraitTypes) {
-        return baseTraitTypes.indexOf(aType as BaseTraitType) - baseTraitTypes.indexOf(bType as BaseTraitType);
-      }
-
-      //-- renderable traits, sort by max layer
-      if (!(aType in baseTraitTypes) && !(bType in baseTraitTypes)) {
-        return Math.max(...(layerings[aType] || [0])) - Math.max(...(layerings[bType] || [0]));
-      }
-
-      return aType in baseTraitTypes ? -1 : 1;
-    });
+      return Math.max(...(layerings[a.type].order || [0])) - Math.max(...(layerings[b.type].order || [0]));
+    })
+    .map((trait) => ({
+      ...trait,
+      filter: layerings[trait.type].filterTypes.flatMap((filterType) => {
+        const filter = trait.filter?.find((filter) => filter.type === filterType);
+        return filter ? [filter] : [];
+      }),
+    }));
 }
 
 //-- this assumes that the traits are final
 export function calculateLookHash(finalTraits: Trait[]) {
-  const content = finalTraits.map((trait) => `${formatString(trait.type)}:${formatString(trait.value)}`).join('\n');
+  const content = finalTraits
+    .map((trait) =>
+      [
+        '--',
+        `${formatString(trait.type)}:${formatString(trait.value)}`,
+        ...(trait.filter?.map((filter) => `${formatString(filter.type)}:${formatString(filter.value)}`) || []),
+      ].join('\n'),
+    )
+    .join('\n');
 
   return ethers.keccak256(ethers.toUtf8Bytes(content));
 }

@@ -1,13 +1,12 @@
 import assert from 'assert';
 import { Canvas, Image } from 'canvas';
 
-import { Trait, TraitType } from './core';
+import { type Trait } from './core';
 
 const baseUrl = 'https://app.nocodb.com/api/v2';
 const apikey = process.env.NOCODB_ACCESS_KEY!;
 
-const accessoryTable = 'm8fys8d596wooeq';
-const bodyBaseTable = 'm4qe842pv8myt4x';
+const tableId = 'm8fys8d596wooeq';
 
 const readUrlToBuffer = async (url: string) => {
   const response = await fetch(url);
@@ -34,72 +33,21 @@ const getImageUrl = async (url: string) => {
   return image;
 };
 
-const buildQuery = (table: string, filterTraits: Trait[], mainTrait?: Trait) => {
-  const query = filterTraits
-    .map((trait) => `(${trait.type},eq,${trait.value})`)
-    .concat(...(mainTrait ? [`(type,eq,${mainTrait.type})`, `(name,eq,${mainTrait.value})`] : []))
-    .join('~and');
+const buildQuery = (trait: Trait) => {
+  const query = [
+    `(type,eq,${trait.type})`,
+    `(name,eq,${trait.value})`,
+    ...(trait.filter?.map((filter) => `(${filter.type},eq,${filter.value})`) || []),
+  ].join('~and');
 
-  const uri = `/tables/${table}/records?where=${query}&limit=1&shuffle=0&offset=0`;
+  const uri = `/tables/${tableId}/records?where=${query}&limit=1&shuffle=0&offset=0`;
 
   return uri;
 };
 
-const queryBuilder =
-  (table: string, traitTypes: TraitType[], mainTraitType?: TraitType, force?: boolean) => (finalTraits: Trait[]) => {
-    const traits = finalTraits.filter((trait) => traitTypes.includes(trait.type) && trait.value);
-    const mainTrait = mainTraitType && finalTraits.find((trait) => trait.type === mainTraitType && trait.value);
-
-    if (!force && !mainTrait) {
-      return;
-    }
-
-    return buildQuery(table, traits, mainTrait);
-  };
-
-const backgroundQuery = queryBuilder(accessoryTable, [], TraitType.background);
-const bodyBaseQuery = queryBuilder(
-  bodyBaseTable,
-  [TraitType.body_type, TraitType.gender, TraitType.origin, TraitType.skin_tone],
-  undefined,
-  true,
-);
-const footwearQuery = queryBuilder(accessoryTable, [TraitType.gender, TraitType.body_type], TraitType.footwear);
-const bottomQuery = queryBuilder(accessoryTable, [TraitType.gender, TraitType.body_type], TraitType.bottom);
-const topQuery = queryBuilder(accessoryTable, [TraitType.gender, TraitType.body_type], TraitType.top);
-const outfitQuery = queryBuilder(accessoryTable, [TraitType.gender, TraitType.body_type], TraitType.outfit);
-const mouthQuery = queryBuilder(accessoryTable, [TraitType.body_type], TraitType.mouth);
-const facialHairQuery = queryBuilder(accessoryTable, [TraitType.gender, TraitType.body_type], TraitType.facial_hair);
-const hairQuery = queryBuilder(accessoryTable, [TraitType.gender, TraitType.body_type], TraitType.hair);
-const earringsQuery = queryBuilder(accessoryTable, [TraitType.gender, TraitType.body_type], TraitType.earrings);
-const headgearQuery = queryBuilder(accessoryTable, [TraitType.gender, TraitType.body_type], TraitType.headgear);
-const mouthgearQuery = queryBuilder(accessoryTable, [TraitType.body_type], TraitType.mouthgear);
-const eyesQuery = queryBuilder(accessoryTable, [TraitType.body_type], TraitType.eyes);
-const eyeWearQuery = queryBuilder(accessoryTable, [TraitType.body_type], TraitType.eyewear);
-
-const queries = [
-  backgroundQuery,
-  bodyBaseQuery,
-  footwearQuery,
-  bottomQuery,
-  topQuery,
-  outfitQuery,
-  mouthQuery,
-  facialHairQuery,
-  hairQuery,
-  earringsQuery,
-  headgearQuery,
-  mouthgearQuery,
-  eyesQuery,
-  eyeWearQuery,
-];
-
 //-- this function expects the final traits
 export const getImageUrlsFromTraits = async (finalTraits: Trait[]) => {
-  const queryUrls = queries.flatMap((query) => {
-    const url = query(finalTraits);
-    return url ? [url] : [];
-  });
+  const queryUrls = finalTraits.map(buildQuery);
 
   //-- nocoDB is throtlting, let's apply it setrially
   const imageUrls: string[] = [];
