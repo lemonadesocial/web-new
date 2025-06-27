@@ -51,6 +51,7 @@
     "@uiw/react-color-github": "^2.4.5",
     "@vis.gl/react-google-maps": "^1.5.1",
     "axios": "^1.10.0",
+    "canvas": "^3.1.2",
     "cid": "multiformats/cid",
     "clsx": "^2.1.1",
     "countries-and-timezones": "^3.8.0",
