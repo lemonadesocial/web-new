@@ -16,7 +16,7 @@ import { formatError } from '$lib/utils/crypto';
 
 import { SignTransactionModal } from '../modals/SignTransaction';
 import { ClaimLemonadeUsernameModal } from './ClaimLemonadeUsernameModal';
-import { ClaimLensUsernameModal } from './ClaimLensUsernameModal';
+import { ClaimAccountModal } from './ClaimAccountModal';
 import { useSyncLensAccount } from '$lib/hooks/useLens';
 import { useClient } from '$lib/graphql/request';
 
@@ -80,7 +80,7 @@ export function SelectProfileModal() {
     }
 
     setSessionClient(onboardingResult.value);
-    modal.open(ClaimLensUsernameModal);
+    modal.open(ClaimAccountModal);
   };
 
   const handleSelectProfile = async (item: AccountManaged) => {
