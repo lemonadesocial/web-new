@@ -59,8 +59,6 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
   const signIn = useSignIn();
   const { hasLemonhead } = useLemonhead();
 
-  console.log(hasLemonhead);
-
   return (
     <div className="py-3 px-4 h-[56px] flex justify-between items-center z-10 gap-4">
       <div className="flex items-center gap-3 flex-1">
@@ -82,7 +80,7 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
         {/* right content here */}
 
         {session && me ? (
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-2 items-center">
             {!me.email_verified && (
               <Button
                 onClick={() => window.open(`${IDENTITY_URL}/verification?return_to=${window.location.origin}`)}
@@ -95,6 +93,18 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
                 Verify Email
               </Button>
             )}
+            {
+              hasLemonhead ? (
+                <div className="px-2.5 py-1.5 h-8 rounded-sm flex gap-1.5 items-center bg-accent-400/16">
+                  <i className="icon-passport size-5 text-accent-400" />
+                  <p className="text-sm text-accent-400">Citizen</p>
+                </div>
+              ) : (
+                <div className="px-2.5 py-1.5 h-8 rounded-sm bg-primary/8">
+                  <p className="text-sm text-tertiary">Visitor</p>
+                </div>
+              )
+            }
             <Menu.Root>
               <Menu.Trigger>
                 {({ isOpen }) => (
@@ -104,7 +114,7 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
                       clsx(isOpen && 'bg-primary/8'),
                     )}
                   >
-                    <Avatar src={account ? getAccountAvatar(account) : userAvatar(me)} />
+                    <Avatar size="lg" src={account ? getAccountAvatar(account) : userAvatar(me)} />
                   </div>
                 )}
               </Menu.Trigger>
