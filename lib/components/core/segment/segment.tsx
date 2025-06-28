@@ -8,6 +8,7 @@ interface SegmentItem<T> {
   label?: string;
   value: T;
   icon?: string;
+  iconLeft?: string;
 }
 
 interface SegmentProps<T> {
@@ -32,6 +33,7 @@ export function Segment<T>({ items, selected, size, onSelect, className }: Segme
             )}
             variant={active === item.value ? 'tertiary' : 'flat'}
             icon={item.icon}
+            iconLeft={item.iconLeft}
             size={size}
             onClick={() => {
               setActive(item.value);
