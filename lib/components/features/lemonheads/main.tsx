@@ -20,8 +20,10 @@ import { Collaborate } from './steps/collaborate';
 import { Celebrate } from './steps/celebrate';
 import { isMobile } from 'react-device-detect';
 import clsx from 'clsx';
+import { LemonHeadGetStarted } from './steps/get-started';
 
 const steps = [
+  { key: 'getstarted', label: '', component: LemonHeadGetStarted, btnText: 'Get Started' },
   { key: 'about', label: 'About You', component: AboutYou, btnText: 'Enter Customizer' },
   { key: 'create', label: 'Create', component: CreateStep, btnText: 'Claim' },
   { key: 'claim', label: 'Claim', component: ClaimStep, btnText: 'Continue' },
@@ -78,7 +80,7 @@ export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
 
 function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; onPrev?: () => void }) {
   const [mint, setMintAtom] = useAtom(mintAtom);
-  const disabled = step === 2 && !mint.minted;
+  const disabled = step === 3 && !mint.minted;
 
   if (isMobile) {
     return (
@@ -99,20 +101,26 @@ function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; o
         </Button>
       </div>
 
-      <ul className="flex items-center flex-auto justify-center flex-1 gap-1.5">
-        {steps.map((item, index) => {
-          return (
-            <li key={item.key} className="flex items-center gap-1.5">
-              <p className={twMerge('text-quaternary', index <= step && 'text-primary')}>{item.label}</p>
-              {index < steps.length - 1 && (
-                <i
-                  className={twMerge('icon-chevron-right size-5 text-quaternary', index <= step - 1 && 'text-primary')}
-                />
-              )}
-            </li>
-          );
-        })}
-      </ul>
+      {step > 0 && (
+        <ul className="flex items-center flex-auto justify-center flex-1 gap-1.5">
+          {steps.map((item, index) => {
+            if (index === 0) return null;
+            return (
+              <li key={item.key} className="flex items-center gap-1.5">
+                <p className={twMerge('text-quaternary', index <= step && 'text-primary')}>{item.label}</p>
+                {index < steps.length - 1 && (
+                  <i
+                    className={twMerge(
+                      'icon-chevron-right size-5 text-quaternary',
+                      index <= step - 1 && 'text-primary',
+                    )}
+                  />
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
       <div className="flex gap-2 flex-1 justify-end">
         {mint.video && (
           <Button
