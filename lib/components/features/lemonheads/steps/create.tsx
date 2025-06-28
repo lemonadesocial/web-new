@@ -26,15 +26,31 @@ export function CreateStep({ form }: { form: UseFormReturn<LemonHeadValues>; bod
   const [skin_tone, background] = form.watch(['skin_tone', 'background']);
 
   return (
-    <div className="flex flex-1 w-full max-w-[588px] gap-2 overflow-hidden">
-      <Card.Root className="w-[96px] overflow-auto max-h-fit no-scrollbar">
-        <Card.Content className="flex flex-col gap-1 p-2">
+    <div className="flex flex-col md:flex-row-reverse flex-1 w-full md:max-w-[588px] gap-2 overflow-hidden">
+      <Card.Root className="flex-1">
+        <Card.Content className="p-0 h-full">
+          {Object.entries(tabs).map(([key, item]) => {
+            if (!item.mount) return null;
+
+            const Comp = item.component;
+
+            return (
+              <div key={key} className={clsx('h-full', selected !== key ? 'hidden' : '')}>
+                <Comp form={form} />
+              </div>
+            );
+          })}
+        </Card.Content>
+      </Card.Root>
+
+      <Card.Root className="w-full md:w-[96px] overflow-auto max-h-fit no-scrollbar">
+        <Card.Content className="flex md:flex-col gap-1 p-2">
           {Object.entries(tabs).map(([key, item]) => {
             return (
               <div
                 key={key}
                 className={clsx(
-                  'flex flex-col items-center justify-center gap-2 pt-3 px-2 pb-2 hover:bg-card-hover rounded-md cursor-pointer',
+                  'flex flex-col items-center justify-center gap-2 pt-3 px-2 pb-2 hover:bg-card-hover rounded-md cursor-pointer min-w-[72px]',
                   key === selected && 'bg-card-hover',
                 )}
                 onClick={() => {
@@ -66,22 +82,6 @@ export function CreateStep({ form }: { form: UseFormReturn<LemonHeadValues>; bod
           })}
         </Card.Content>
       </Card.Root>
-
-      <Card.Root className="flex-1">
-        <Card.Content className="p-0 h-full">
-          {Object.entries(tabs).map(([key, item]) => {
-            if (!item.mount) return null;
-
-            const Comp = item.component;
-
-            return (
-              <div key={key} className={clsx('h-full', selected !== key ? 'hidden' : '')}>
-                <Comp form={form} />
-              </div>
-            );
-          })}
-        </Card.Content>
-      </Card.Root>
     </div>
   );
 }
@@ -95,11 +95,11 @@ const skinToneOpts = [
 function SkinToneItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
   const skin_tone = form.watch('skin_tone');
   return (
-    <div className="grid grid-cols-2 text-center gap-3 p-4">
+    <div className="flex md:grid grid-cols-2 text-center gap-3 p-4 overflow-x-auto no-scrollbar">
       {skinToneOpts.map((item) => (
         <div
           key={item.value}
-          className="flex flex-col gap-1"
+          className="flex flex-col gap-1 min-w-[80px]"
           onClick={() => form.setValue('skin_tone', { value: item.value, color: item.color })}
         >
           <SquareButton active={skin_tone.value === item.value}>

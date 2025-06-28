@@ -60,15 +60,15 @@ export function ClaimStep() {
   }
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-2">
-        <h3 className="text-3xl font-semibold">Claim LemonHead</h3>
+    <div className="flex flex-col gap-5 md:gap-8">
+      <div className="flex flex-col gap-5 md:gap-2">
+        <h3 className="text-2xl md:text-3xl font-semibold">Claim LemonHead</h3>
         <p className="text-tertiary">
           Let’s bring your avatar to life. Just follow these quick steps to mint your one-of-a-kind LemonHead.
         </p>
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col px-4 md:p-0">
         {steps.map((i, idx) => {
           const Comp = i.component;
 
@@ -275,15 +275,15 @@ function MintSuccess() {
 
   return (
     <>
-      <div className="flex flex-col justify-between flex-1 text-secondary z-10">
+      <div className="flex flex-col justify-between flex-1 text-secondary z-10 gap-5">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <p className="text-xl">Welcome to</p>
-            <h3 className="text-[72px]! text-primary font-semibold" style={{ lineHeight: '110%' }}>
+            <p className="md:text-xl">Welcome to</p>
+            <h3 className="text-2xl md:text-[72px]! text-primary font-semibold" style={{ lineHeight: '110%' }}>
               United Stands of Lemonade
             </h3>
           </div>
-          <p className="text-xl max-w-xl">
+          <p className="md:text-xl max-w-xl">
             You’ve officially joined a bold new world of self-expression and onchain identity. Your LemonHead isn’t just
             an avatar—it’s your ticket to create, connect, and stand out in style.
           </p>

@@ -3,6 +3,7 @@ import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { uniqBy } from 'lodash';
+import { isMobile } from 'react-device-detect';
 import { LemonHeadAccessory } from '$lib/trpc/lemonheads/types';
 import { trpc } from '$lib/trpc/client';
 import { LemonHeadValues } from './types';
@@ -34,35 +35,37 @@ export function SquareButton({
   );
 }
 
-function ListView({
-  data = [],
-  title,
-  onSelect,
-  selected,
-  id,
-}: {
-  id?: string;
-  data?: LemonHeadAccessory[];
-  title?: string;
-  selected?: number;
-  onSelect: (item: LemonHeadAccessory) => void;
-}) {
-  return (
-    <div id={id} className="flex flex-col gap-4 pb-4">
-      {title && <p>{title}</p>}
-      <div className="grid grid-cols-3 gap-3">
-        {data.map((i) => (
-          <div key={i.Id} className="text-center space-y-1">
-            <SquareButton active={i.Id === selected} className="flex-col items-stretch" onClick={() => onSelect(i)}>
-              <img src={i.attachment?.[0]?.thumbnails.card_cover.signedUrl} className="rounded-sm" />
-            </SquareButton>
-            <p className={clsx('text-sm', i.Id === selected ? 'text-primary' : 'text-tertiary')}>{i.name}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+// function ListView({
+//   data = [],
+//   title,
+//   onSelect,
+//   selected,
+//   id,
+// }: {
+//   id?: string;
+//   data?: LemonHeadAccessory[];
+//   title?: string;
+//   selected?: number;
+//   onSelect: (item: LemonHeadAccessory) => void;
+// }) {
+//   return (
+//     <div id={id} className="flex flex-col gap-4 md:pb-4">
+//       {title && <p>{title}</p>}
+//       <div className="flex md:grid grid-cols-3 gap-3">
+//         {data.map((i) => (
+//           <div key={i.Id} className="text-center space-y-1 min-w-[80px]">
+//             <SquareButton active={i.Id === selected} className="flex-col items-stretch" onClick={() => onSelect(i)}>
+//               <img src={i.attachment?.[0]?.thumbnails.card_cover.signedUrl} className="rounded-sm" />
+//             </SquareButton>
+//             <p className={clsx('text-sm capitalize truncate', i.Id === selected ? 'text-primary' : 'text-tertiary')}>
+//               {i.name.replaceAll('_', ' ')}
+//             </p>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
 
 export function TabsSubContent({
   tabs = [],
@@ -73,7 +76,7 @@ export function TabsSubContent({
 }) {
   const [selected, setSelected] = React.useState(tabs?.[0]?.value);
   return (
-    <ul className="flex px-4 py-3 sticky border-b">
+    <ul className="flex px-4 py-3 sticky top-0 border-b">
       {tabs.map((item) => (
         <li
           key={item.value}
@@ -154,17 +157,33 @@ export function SubContent({
   }, [list.length]);
 
   return (
-    <div ref={listInnerRef} className="p-4 space-y-4 overflow-auto no-scrollbar" style={{ height: 'inherit' }}>
-      <ListView
-        data={list}
-        selected={selected?.Id}
-        onSelect={(item) => {
-          if (item.Id === selected?.Id) form.setValue(field, undefined);
-          else form.setValue(field, { Id: item.Id, attachment: item.attachment, name: item.name });
-        }}
-      />
-      {loading && <Loading />}
-    </div>
+    <>
+      <div className="flex flex-col gap-4 md:pb-4 p-4 min-h-[136px]" style={{ height: 'inherit' }}>
+        <div ref={listInnerRef} className="flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar">
+          {list.map((item) => (
+            <div key={item.Id} className="text-center space-y-1 min-w-[80px]">
+              <SquareButton
+                active={item.Id === selected.Id}
+                className="flex-col items-stretch"
+                onClick={() => {
+                  if (item.Id === selected?.Id) form.setValue(field, undefined);
+                  else form.setValue(field, { Id: item.Id, attachment: item.attachment, name: item.name });
+                }}
+              >
+                <img src={item.attachment?.[0]?.thumbnails.card_cover.signedUrl} className="rounded-sm" />
+              </SquareButton>
+              <p
+                className={clsx('text-sm capitalize truncate', item.Id === selected ? 'text-primary' : 'text-tertiary')}
+              >
+                {item.name.replaceAll('_', ' ')}
+              </p>
+            </div>
+          ))}
+          {loading && isMobile && <Loading />}
+        </div>
+      </div>
+      {loading && !isMobile && <Loading />}
+    </>
   );
 }
 
@@ -188,7 +207,7 @@ export function SubContentWithTabs(props: { tabs: any; form: UseFormReturn<Lemon
           setCurrentTab(tab);
         }}
       />
-      <div className="pb-10 h-full">
+      <div className="h-full pb-14">
         {tabs.map((item: any) => {
           if (!item.mount) return null;
           const Comp = item.component || null;

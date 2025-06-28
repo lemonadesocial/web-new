@@ -18,6 +18,8 @@ import { useAtom } from 'jotai';
 import { mintAtom } from './store';
 import { Collaborate } from './steps/collaborate';
 import { Celebrate } from './steps/celebrate';
+import { isMobile } from 'react-device-detect';
+import clsx from 'clsx';
 
 const steps = [
   { key: 'about', label: 'About You', component: AboutYou, btnText: 'Enter Customizer' },
@@ -49,12 +51,13 @@ export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
       <div className="bg-background/80 backdrop-blur-md z-10">
         <Header />
       </div>
-      <div className="flex-1 overflow-hidden">
-        <div className="flex max-w-[1440px] mx-auto gap-18 p-11 max-h-full">
-          <Comp form={form} bodyBase={dataBody} />
-          <div className="flex-1">
+      <div className="flex-1 overflow-auto md:overflow-hidden">
+        <div className="flex flex-col md:flex md:flex-row-reverse max-w-[1440px] mx-auto gap-5 overflow-auto md:gap-18 p-4 md:p-11 md:max-h-full">
+          <div className={clsx('flex-1', isMobile && currentStep > 1 && 'size-[80px] z-10')}>
             <LemonHeadPreview form={form} bodyBase={dataBody} />
           </div>
+
+          <Comp form={form} bodyBase={dataBody} />
         </div>
       </div>
       <Footer
@@ -76,6 +79,17 @@ export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
 function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; onPrev?: () => void }) {
   const [mint, setMintAtom] = useAtom(mintAtom);
   const disabled = step === 2 && !mint.minted;
+
+  if (isMobile) {
+    return (
+      <div className="flex items-center gap-2 min-h-[64px] px-4">
+        <Button icon="icon-logout" onClick={onPrev} variant="tertiary" />
+        <Button variant="secondary" className="w-full" onClick={onNext} disabled={disabled}>
+          {steps[step].btnText}
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-between items-center min-h-[64px] px-4 bg-background/80 backdrop-blur-md">
