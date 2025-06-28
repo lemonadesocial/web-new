@@ -48,11 +48,7 @@ export async function GET(
             gap: '36px'
           }}
         >
-          <img
-            src={`${ASSET_PREFIX}/assets/images/lemonade-logo.svg`}
-            width={48}
-            height={48}
-          />
+          <i className="icon-lemonade-logo size-12 text-tertiary" />
           <div
             style={{
               display: 'flex',

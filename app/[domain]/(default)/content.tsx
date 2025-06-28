@@ -5,10 +5,12 @@ import { LensFeed } from '$lib/components/features/lens-feed/LensFeed';
 import { useRouter } from 'next/navigation';
 import { LEMONADE_FEED_ADDRESS } from '$lib/utils/constants';
 import { PageTitle } from './shared';
+import { useLemonhead } from '$lib/hooks/useLemonhead';
 
 export function HomePageContent() {
   const router = useRouter();
   const { account } = useAccount();
+  const { hasLemonhead } = useLemonhead();
 
   return (
     <div className="flex flex-col gap-5 flex-1 w-full">
