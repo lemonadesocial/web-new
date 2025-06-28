@@ -17,10 +17,12 @@ import { usePathname } from 'next/navigation';
 import { ProfilePane } from '../features/pane';
 import { useAccount } from '$lib/hooks/useLens';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
+import { useLemonhead } from '$lib/hooks/useLemonhead';
 
 type Props = {
   title?: string;
   mainMenu?: () => ReactElement;
+  hideLogo?: boolean;
 };
 
 const menu = [
@@ -49,23 +51,28 @@ export function RootMenu() {
   );
 }
 
-export default function Header({ title, mainMenu }: Props) {
+export default function Header({ title, mainMenu, hideLogo }: Props) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
   const { account } = useAccount();
   const logOut = useLogOut();
   const signIn = useSignIn();
+  const { hasLemonhead } = useLemonhead();
+
+  console.log(hasLemonhead);
 
   return (
     <div className="py-3 px-4 h-[56px] flex justify-between items-center z-10 gap-4">
       <div className="flex items-center gap-3 flex-1">
-        <NextLink
-          href="/"
-          aria-label="Lemonade"
-          className="text-tertiary hover:text-primary size-10 flex items-center justify-center"
-        >
-          <i className="icon-lemonade size-[20]" />
-        </NextLink>
+        {!hideLogo && (
+          <NextLink
+            href="/"
+            aria-label="Lemonade"
+            className="text-tertiary hover:text-primary size-10 flex items-center justify-center"
+          >
+            <i className="icon-lemonade size-[20]" />
+          </NextLink>
+        )}
         {title && <h1 className="text-md text-tertiary font-medium">{title}</h1>}
       </div>
 
