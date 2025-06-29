@@ -20,17 +20,17 @@ const mapping: Record<string, any> = {
   },
 };
 
-export function getPreSelect({
+export function transformPreselect({
   gender,
   size,
-  preselect,
+  data = [],
 }: {
   gender: string;
   size: string;
-  preselect: LemonHeadAccessory[];
+  data?: LemonHeadAccessory[];
 }) {
   let result: Partial<LemonHeadValues> = {};
-  const ds = preselect.filter((i) => {
+  const ds = data.filter((i) => {
     let condition = false;
     if (i.body_type && i.body_type === size) condition = i.body_type === size;
     return condition;
@@ -43,8 +43,8 @@ export function getPreSelect({
     };
   });
 
-  if (gender === 'male') result.background = preselect.find((i) => i.name === 'regular_03');
-  if (gender === 'female') result.background = preselect.find((i) => i.name === 'regular_10');
+  if (gender === 'male') result.background = data.find((i) => i.name === 'regular_03');
+  if (gender === 'female') result.background = data.find((i) => i.name === 'regular_10');
 
   return result;
 }

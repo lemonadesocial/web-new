@@ -51,10 +51,10 @@ export const appRouter = router({
       return data;
     }),
   preselect: publicProcedure.input(z.object({ gender: z.string(), size: z.string() })).query(async ({ input }) => {
-    const { data: dataPreSelect } = await lemonheads.getAccessories({ viewId: 'vwziaxm5nfh9652q', limit: 50 });
-    const preselect = dataPreSelect.list;
-
-    return getPreSelect({ preselect, ...input });
+    const { data: dataPreSelect } = await lemonheads.getAccessories({ viewId: 'vwziaxm5nfh9652q', limit: 100 });
+    return dataPreSelect.list;
+    // const preselect = dataPreSelect.list;
+    // return getPreSelect({ preselect, ...input });
   }),
 });
 

@@ -3,23 +3,23 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
+import { useAtom } from 'jotai';
+import { isMobile } from 'react-device-detect';
+import clsx from 'clsx';
 
 import { Button } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
-import { LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
+import { LemonHeadAccessory, LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
+import { transformPreselect } from '$lib/trpc/lemonheads/preselect';
 
 import { AboutYou } from './steps/about';
 import { LemonHeadValues } from './types';
 import { LemonHeadPreview } from './preview';
 import { CreateStep } from './steps/create';
 import { ClaimStep } from './steps/claim';
-import { trpc } from '$lib/trpc/client';
-import { useAtom } from 'jotai';
 import { mintAtom } from './store';
 import { Collaborate } from './steps/collaborate';
 import { Celebrate } from './steps/celebrate';
-import { isMobile } from 'react-device-detect';
-import clsx from 'clsx';
 import { LemonHeadGetStarted } from './steps/get-started';
 
 const steps = [
@@ -31,22 +31,28 @@ const steps = [
   { key: 'celebrate', label: 'Celebrate', componenent: Celebrate, btnText: 'Continue' },
 ];
 
-export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
+export function LemonHeadMain({
+  dataBody,
+  dataPreSelect,
+}: {
+  dataBody: LemonHeadBodyType[];
+  dataPreSelect: LemonHeadAccessory[];
+}) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = React.useState(0);
   const Comp = steps[currentStep].component as any;
 
-  const { data } = trpc.preselect.useQuery({ size: 'small', gender: 'female' });
-
   const form = useForm<LemonHeadValues>({
     defaultValues: {
-      ...data,
+      ...(transformPreselect({ data: dataPreSelect, gender: 'female', size: 'small' }) || {}),
       gender: 'female',
       body: 'human',
       size: 'small',
       skin_tone: { value: 'light', color: '#FDCCA8' },
     },
   });
+
+  const formValues = form.watch();
 
   return (
     <main className="flex flex-col h-screen w-full divide-y divide-[var(--color-divider)]">
@@ -56,10 +62,10 @@ export function LemonHeadMain({ dataBody }: { dataBody: LemonHeadBodyType[] }) {
       <div className="flex-1 overflow-auto md:overflow-hidden">
         <div className="flex flex-col md:flex md:flex-row-reverse max-w-[1440px] mx-auto gap-5 overflow-auto md:gap-18 p-4 md:p-11 md:max-h-full">
           <div className={clsx('flex-1', isMobile && currentStep > 1 && 'size-[80px] z-10')}>
-            <LemonHeadPreview form={form} bodyBase={dataBody} />
+            <LemonHeadPreview form={formValues} bodyBase={dataBody} />
           </div>
 
-          <Comp form={form} bodyBase={dataBody} />
+          <Comp form={form} bodyBase={dataBody} accessoriesBase={dataPreSelect} />
         </div>
       </div>
       <Footer
