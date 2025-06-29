@@ -37,11 +37,6 @@ export function AboutYou({
     }
   }, [accessoriesBase?.length, size, gender]);
 
-  const condition = (i: LemonHeadBodyType) =>
-    i.gender === gender && i.body_type === size && i.skin_tone === skin_tone.value;
-
-  const human = bodyBase.find((i) => condition(i) && i.name === 'human');
-  const alien = bodyBase.find((i) => condition(i) && i.name === 'alien');
   const assets = bodyBase
     .filter((i) => i.gender === gender && i.name === body && i.skin_tone === skin_tone.value)
     .sort((a, b) => {

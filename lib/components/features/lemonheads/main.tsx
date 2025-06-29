@@ -18,8 +18,8 @@ import { LemonHeadPreview } from './preview';
 import { CreateStep } from './steps/create';
 import { ClaimStep } from './steps/claim';
 import { mintAtom } from './store';
-import { Collaborate } from './steps/collaborate';
-import { Celebrate } from './steps/celebrate';
+// import { Collaborate } from './steps/collaborate';
+// import { Celebrate } from './steps/celebrate';
 import { LemonHeadGetStarted } from './steps/get-started';
 
 const steps = [
@@ -27,8 +27,8 @@ const steps = [
   { key: 'about', label: 'About You', component: AboutYou, btnText: 'Enter Customizer' },
   { key: 'create', label: 'Create', component: CreateStep, btnText: 'Claim' },
   { key: 'claim', label: 'Claim', component: ClaimStep, btnText: 'Continue' },
-  { key: 'collaborate', label: 'Collaborate', component: Collaborate, btnText: 'Continue' },
-  { key: 'celebrate', label: 'Celebrate', componenent: Celebrate, btnText: 'Continue' },
+  // { key: 'collaborate', label: 'Collaborate', component: Collaborate, btnText: 'Continue' },
+  // { key: 'celebrate', label: 'Celebrate', componenent: Celebrate, btnText: 'Continue' },
 ];
 
 export function LemonHeadMain({
@@ -72,6 +72,11 @@ export function LemonHeadMain({
         step={currentStep}
         onNext={() => {
           if (currentStep < steps.length - 1) setCurrentStep((prev) => prev + 1);
+
+          // FIXME: it's last step for now. should update logic here when implement 2 more steps
+          if (steps[currentStep].key === 'claim') {
+            router.push('/');
+          }
         }}
         onPrev={() => {
           if (currentStep === 0) router.back();
