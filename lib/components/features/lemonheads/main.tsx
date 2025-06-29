@@ -108,7 +108,7 @@ function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; o
       </div>
 
       {step > 0 && (
-        <ul className="flex items-center flex-auto justify-center flex-1 gap-1.5">
+        <ul className="flex items-center justify-center flex-1 gap-1.5">
           {steps.map((item, index) => {
             if (index === 0) return null;
             return (

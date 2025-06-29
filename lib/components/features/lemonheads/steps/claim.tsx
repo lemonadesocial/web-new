@@ -12,6 +12,8 @@ import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { chainsMapAtom, sessionClientAtom } from '$lib/jotai';
 import { useClient } from '$lib/graphql/request';
+import { trpc } from '$lib/trpc/client';
+import { Trait, TraitType } from '$lib/services/lemonhead/core';
 
 import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
 import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
@@ -205,7 +207,7 @@ function ClaimLemonadeUsername({ onHandleStep }: { onHandleStep?: (value: number
   const chainsMap = useAtomValue(chainsMapAtom);
   const { isReady } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);
 
-  const { username, isLoading, refetch } = useLemonadeUsername(myAccount);
+  const { username, isLoading } = useLemonadeUsername(myAccount);
 
   React.useEffect(() => {
     if (isReady && username) onHandleStep?.(2);
@@ -221,7 +223,7 @@ function ClaimLemonadeUsername({ onHandleStep }: { onHandleStep?: (value: number
         <Button
           variant="secondary"
           onClick={() => {
-            modal.open(ClaimLemonadeUsernameModal, { props: { onComplete: () => refetch() } });
+            modal.open(ClaimLemonadeUsernameModal);
           }}
         >
           Claim Your Username
@@ -249,10 +251,43 @@ function MintLemonHead({
   const { account: myAccount } = useAccount();
   const { username, isLoading } = useLemonadeUsername(myAccount);
   const formValues = form.watch();
-  console.log(formValues);
+  const mutation = trpc.mintNft.useMutation();
 
-  // TODO: replace value here
-  const value = '0.01337 ETH';
+  const convertFormValuesToTraits = (formValues: LemonHeadValues) => {
+    const traits = [] as Trait[];
+    Object.keys(TraitType).forEach((k) => {
+      let value = '';
+
+      // @ts-expect-error check wrong types
+      if (typeof formValues[k] === 'string') value = formValues[k];
+      // @ts-expect-error check wrong types
+      if (typeof formValues[k] === 'object') value = formValues[k].name;
+
+      // @ts-expect-error check wrong types
+      if (value) traits.push({ type: k, value: value });
+    });
+
+    return traits;
+  };
+
+  const handleMint = async () => {
+    try {
+      const traits = convertFormValuesToTraits(formValues);
+      console.log('Converted traits:', traits);
+
+      if (!myAccount?.owner) {
+        console.error('No wallet address found');
+        return;
+      }
+
+      const mintData = await mutation.mutateAsync({ wallet: myAccount.owner, traits });
+      console.log('Mint data:', mintData);
+
+      onHandleStep?.(3);
+    } catch (error) {
+      console.error('Error minting LemonHead:', error);
+    }
+  };
 
   if (!myAccount || !username) return null;
 
@@ -260,15 +295,8 @@ function MintLemonHead({
 
   return (
     <div>
-      <Button
-        variant="secondary"
-        className="hover:bg-[var(--btn-tertiary)]!"
-        onClick={() => {
-          // FIXME: handle mint lemonhead here
-          onHandleStep?.(3);
-        }}
-      >
-        Mint ‣ {value}
+      <Button variant="secondary" onClick={handleMint}>
+        Mint
       </Button>
     </div>
   );

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { publicProcedure, router } from './trpc';
 import lemonheads from './lemonheads';
 import { getPreSelect } from './lemonheads/preselect';
+import { getMintNftData } from '$lib/services/lemonhead';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -56,6 +57,12 @@ export const appRouter = router({
     // const preselect = dataPreSelect.list;
     // return getPreSelect({ preselect, ...input });
   }),
+  mintNft: publicProcedure
+    .input(z.object({ wallet: z.string(), traits: z.any(), sponsor: z.string().optional() }))
+    .mutation(async ({ input }) => {
+      const { wallet, traits, sponsor } = input;
+      return getMintNftData(traits, wallet, sponsor);
+    }),
 });
 
 export type AppRouter = typeof appRouter;
