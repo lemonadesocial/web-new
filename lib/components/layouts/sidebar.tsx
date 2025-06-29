@@ -1,10 +1,9 @@
-"use client";
-import clsx from "clsx";
-import Link from "next/link";
+'use client';
+import clsx from 'clsx';
+import Link from 'next/link';
 
-import { Button } from "$lib/components/core/button/button";
-import { useMemo } from "react";
-import { usePathname } from "next/navigation";
+import { useMemo } from 'react';
+import { usePathname } from 'next/navigation';
 
 type SidebarItemProps = {
   item: {
@@ -18,15 +17,18 @@ type SidebarItemProps = {
 const SidebarItem = ({ item, isActive }: SidebarItemProps) => {
   return (
     <Link href={item.path} key={item.path}>
-      <div className={clsx(" w-full", item?.label && "tooltip tooltip-right")}>
+      <div className={clsx(' w-full', item?.label && 'tooltip tooltip-right')}>
         {item?.label && (
           <div className="tooltip-content">
-            <p className="text-md font-medium ">
-              {item?.label}
-            </p>
+            <p className="text-md font-medium ">{item?.label}</p>
           </div>
         )}
-        <div className={clsx("size-16 flex items-center justify-center rounded-md", isActive(item) && "bg-[var(--btn-secondary)]")}>
+        <div
+          className={clsx(
+            'size-16 flex items-center justify-center rounded-md',
+            isActive(item) && 'bg-[var(--btn-secondary)]',
+          )}
+        >
           <i className={clsx(item.icon, isActive(item) ? 'text-[var(--btn-secondary-content)]' : 'text-tertiary')} />
         </div>
       </div>
@@ -36,7 +38,7 @@ const SidebarItem = ({ item, isActive }: SidebarItemProps) => {
 
 const Sidebar = () => {
   const pathname = usePathname();
-  
+
   const mainMenu = useMemo(() => {
     const menu = [
       {
