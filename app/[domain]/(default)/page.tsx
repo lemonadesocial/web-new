@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 
 import { getSiteData } from '$utils/fetchers';
-import { LensAccountCard } from '$lib/components/features/lens-account/LensAccountCard';
 
 import { HomePageContent } from './content';
 import { ClaimLemonHeadCard } from '$lib/components/features/lemonheads/ClaimLemonHeadCard';
@@ -19,7 +18,6 @@ export default async function SiteHomePage({ params }: { params: Promise<{ domai
     <div className="flex flex-col-reverse md:grid md:grid-cols-[1fr_336px] gap-5 md:gap-[72px] items-start pb-10 mt-6 md:mt-11">
       <HomePageContent />
       <div className="flex flex-col gap-4">
-        <LensAccountCard />
         <ClaimLemonHeadCard />
       </div>
     </div>

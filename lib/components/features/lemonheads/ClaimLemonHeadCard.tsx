@@ -1,12 +1,14 @@
 'use client';
 import { Button } from '$lib/components/core';
+import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { useRouter } from 'next/navigation';
 
-// FIXME: only display when not claim lemonheads - check ui LensAccountCard
-// figma: https://www.figma.com/design/uoWFLMZqiciullnEk1qNWY/Lemonade---Open-Source?node-id=8319-424763&t=AhoNGz4dmdSdI08d-0
 export function ClaimLemonHeadCard() {
   const router = useRouter();
+  const { hasLemonhead, loading } = useLemonhead();
+
+  if (loading || hasLemonhead) return null;
 
   return (
     <div className="hidden md:block rounded-sm border border-divider space-y-4 p-4">
