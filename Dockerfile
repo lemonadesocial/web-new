@@ -2,8 +2,6 @@
 ### manifest
 FROM public.ecr.aws/docker/library/node:20-alpine AS manifest
 
-RUN apt-get install net-tools build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
-
 COPY package.json yarn.lock /tmp/
 RUN sed -e 's/"version": "[^"]\+",/"version": "0.0.0",/' -i /tmp/package.json
 
@@ -16,6 +14,8 @@ COPY --from=manifest /tmp/package.json /tmp/yarn.lock ./
 RUN --mount=type=secret,id=npmrc,dst=/root/.npmrc \
     yarn install --frozen-lockfile && \
     rm -rf /usr/local/share/.cache/yarn
+
+RUN apk add --no-cache build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 
 ### build
 FROM builder AS build
