@@ -3,11 +3,12 @@ import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 import { Image } from '$lib/components/core/image';
-import { LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
-import { trpc } from '$lib/trpc/client';
+import { LemonHeadAccessory, LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
 
 import { LemonHeadValues } from '../types';
 import { SquareButton } from '../shared';
+import { transformPreselect } from '$lib/trpc/lemonheads/preselect';
+import { LemonHeadPreview } from '../preview';
 
 const BodyTypeMapping = { medium: 'Regular', small: 'Skinny', large: 'Toned', extra_large: 'Large' };
 const customOrder = {
@@ -17,20 +18,25 @@ const customOrder = {
   extra_large: 3, // Extra_large is rank 3 (fourth)
 };
 
-export function AboutYou({ form, bodyBase }: { form: UseFormReturn<LemonHeadValues>; bodyBase: LemonHeadBodyType[] }) {
+export function AboutYou({
+  form,
+  bodyBase,
+  accessoriesBase,
+}: {
+  form: UseFormReturn<LemonHeadValues>;
+  bodyBase: LemonHeadBodyType[];
+  accessoriesBase?: LemonHeadAccessory[];
+}) {
   const [gender, size, body, skin_tone] = form.watch(['gender', 'size', 'body', 'skin_tone']);
-
-  const { data } = trpc.preselect.useQuery({ size, gender });
+  const formValues = form.watch();
 
   React.useEffect(() => {
-    if (data) Object.entries(data).forEach(([key, value]) => form.setValue(key as keyof LemonHeadValues, value));
-  }, [data]);
+    if (accessoriesBase?.length) {
+      const data = transformPreselect({ size, gender, data: accessoriesBase });
+      Object.entries(data).forEach(([key, value]) => form.setValue(key as keyof LemonHeadValues, value));
+    }
+  }, [accessoriesBase?.length, size, gender]);
 
-  const condition = (i: LemonHeadBodyType) =>
-    i.gender === gender && i.body_type === size && i.skin_tone === skin_tone.value;
-
-  const human = bodyBase.find((i) => condition(i) && i.name === 'human');
-  const alien = bodyBase.find((i) => condition(i) && i.name === 'alien');
   const assets = bodyBase
     .filter((i) => i.gender === gender && i.name === body && i.skin_tone === skin_tone.value)
     .sort((a, b) => {
@@ -71,10 +77,28 @@ export function AboutYou({ form, bodyBase }: { form: UseFormReturn<LemonHeadValu
             </SquareButton>
           </div>
           <SquareButton className="col-span-2" active={body === 'human'} onClick={() => form.setValue('body', 'human')}>
-            <Image src={human?.attachment[0]?.signedUrl} lazy />
+            <LemonHeadPreview
+              className="w-full rounded-sm"
+              form={{
+                ...formValues,
+                ...(transformPreselect({ data: accessoriesBase, gender, size: 'medium' }) || {}),
+                body: 'human',
+                size: 'medium',
+              }}
+              bodyBase={bodyBase}
+            />
           </SquareButton>
           <SquareButton className="col-span-2" active={body === 'alien'} onClick={() => form.setValue('body', 'alien')}>
-            <Image src={alien?.attachment[0]?.signedUrl} lazy />
+            <LemonHeadPreview
+              className="w-full rounded-sm"
+              form={{
+                ...formValues,
+                ...(transformPreselect({ data: accessoriesBase, gender, size: 'medium' }) || {}),
+                body: 'alien',
+                size: 'medium',
+              }}
+              bodyBase={bodyBase}
+            />
           </SquareButton>
         </div>
       </div>
@@ -89,7 +113,15 @@ export function AboutYou({ form, bodyBase }: { form: UseFormReturn<LemonHeadValu
                 onClick={() => form.setValue('size', item.body_type)}
                 active={item.body_type === size}
               >
-                <Image src={item.attachment[0].thumbnails.card_cover.signedUrl} lazy />
+                <LemonHeadPreview
+                  className="w-full rounded-sm"
+                  form={{
+                    ...formValues,
+                    ...(transformPreselect({ data: accessoriesBase, gender: item.gender, size: item.body_type }) || {}),
+                    size: item.body_type,
+                  }}
+                  bodyBase={assets}
+                />
               </SquareButton>
 
               <p>{BodyTypeMapping[item.body_type]}</p>

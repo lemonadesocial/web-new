@@ -4,9 +4,10 @@ import React from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { isMobile } from 'react-device-detect';
 import { useDisconnect } from '@reown/appkit/react';
+import { UseFormReturn } from 'react-hook-form';
 
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
-import { Button, drawer, Menu, MenuItem, modal, Skeleton } from '$lib/components/core';
+import { Button, drawer, Menu, MenuItem, modal, Skeleton, toast } from '$lib/components/core';
 import { useConnectWallet } from '$lib/hooks/useConnectWallet';
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { ASSET_PREFIX } from '$lib/utils/constants';
@@ -14,16 +15,17 @@ import { chainsMapAtom, sessionClientAtom } from '$lib/jotai';
 import { useClient } from '$lib/graphql/request';
 import { trpc } from '$lib/trpc/client';
 import { Trait, TraitType } from '$lib/services/lemonhead/core';
+import { useMe } from '$lib/hooks/useMe';
+import { useSignIn } from '$lib/hooks/useSignIn';
 
 import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
 import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
 import { ProfileMenu } from '../../lens-account/ProfileMenu';
 import { ProfilePane } from '../../pane';
 import { mintAtom } from '../store';
-import { useMe } from '$lib/hooks/useMe';
-import { useSignIn } from '$lib/hooks/useSignIn';
-import { UseFormReturn } from 'react-hook-form';
 import { LemonHeadValues } from '../types';
+import { truncateStr } from '$lib/utils/string';
+import { isArray } from 'lodash';
 
 const steps = [
   {
@@ -150,8 +152,8 @@ function ConnectAccount({ onHandleStep }: { onHandleStep?: (value: number) => vo
   if (myAccount) {
     return (
       <div className="flex gap-2">
-        <Button iconLeft="icon-lens" variant="tertiary" className="hover:bg-[var(--btn-tertiary)]!">
-          {myAccount.username?.value.replace('lens/', '')}
+        <Button iconLeft="icon-wallet" variant="tertiary" className="hover:bg-[var(--btn-tertiary)]!">
+          {truncateStr({ str: myAccount.owner, prefix: 6, subfix: 4 })}
         </Button>
 
         <ProfileMenu options={{ canView: false, canEdit: false }}>
@@ -248,6 +250,7 @@ function MintLemonHead({
   form: UseFormReturn<LemonHeadValues>;
   onHandleStep?: (value: number) => void;
 }) {
+  const [isMinting, setIsMinting] = React.useState(false);
   const { account: myAccount } = useAccount();
   const { username, isLoading } = useLemonadeUsername(myAccount);
   const formValues = form.watch();
@@ -272,6 +275,7 @@ function MintLemonHead({
 
   const handleMint = async () => {
     try {
+      setIsMinting(true);
       const traits = convertFormValuesToTraits(formValues);
       console.log('Converted traits:', traits);
 
@@ -286,6 +290,8 @@ function MintLemonHead({
       onHandleStep?.(3);
     } catch (error) {
       console.error('Error minting LemonHead:', error);
+    } finally {
+      setIsMinting(false);
     }
   };
 
@@ -295,7 +301,7 @@ function MintLemonHead({
 
   return (
     <div>
-      <Button variant="secondary" onClick={handleMint}>
+      <Button variant="secondary" onClick={handleMint} loading={isMinting}>
         Mint
       </Button>
     </div>

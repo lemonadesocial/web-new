@@ -1,17 +1,16 @@
-import { UseFormReturn } from 'react-hook-form';
 import { Card } from '$lib/components/core';
 import { LemonHeadAttachment, LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
 import { LemonHeadValues } from './types';
 
 export function LemonHeadPreview({
-  form,
+  form: formValues,
   bodyBase,
+  className,
 }: {
-  form: UseFormReturn<LemonHeadValues>;
+  form: LemonHeadValues;
   bodyBase: LemonHeadBodyType[];
+  className?: string;
 }) {
-  const formValues = form.watch();
-
   const data = bodyBase.find(
     (i) =>
       i.gender === formValues.gender &&
@@ -25,7 +24,7 @@ export function LemonHeadPreview({
   };
 
   return (
-    <Card.Root>
+    <Card.Root className={className}>
       <Card.Content className="p-0 max-w-[692px] aspect-square relative">
         {formValues.background && <PreviewImageItem src={getSource(formValues.background.attachment)} />}
 
