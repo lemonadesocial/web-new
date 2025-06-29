@@ -12,6 +12,8 @@ import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { chainsMapAtom, sessionClientAtom } from '$lib/jotai';
 import { useClient } from '$lib/graphql/request';
+import { trpc } from '$lib/trpc/client';
+import { Trait, TraitType } from '$lib/services/lemonhead/core';
 
 import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
 import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
@@ -249,31 +251,38 @@ function MintLemonHead({
   const { account: myAccount } = useAccount();
   const { username, isLoading } = useLemonadeUsername(myAccount);
   const formValues = form.watch();
-  
+  const mutation = trpc.mintNft.useMutation();
+
+  const convertFormValuesToTraits = (formValues: LemonHeadValues) => {
+    const traits = [] as Trait[];
+    Object.keys(TraitType).forEach((k) => {
+      let value = '';
+
+      // @ts-expect-error check wrong types
+      if (typeof formValues[k] === 'string') value = formValues[k];
+      // @ts-expect-error check wrong types
+      if (typeof formValues[k] === 'object') value = formValues[k].name;
+
+      // @ts-expect-error check wrong types
+      if (value) traits.push({ type: k, value: value });
+    });
+
+    return traits;
+  };
+
   const handleMint = async () => {
     try {
-      // const traits = convertFormValuesToTraits(formValues);
-      // console.log('Converted traits:', traits);
-      
-      // if (!myAccount?.owner) {
-      //   console.error('No wallet address found');
-      //   return;
-      // }
+      const traits = convertFormValuesToTraits(formValues);
+      console.log('Converted traits:', traits);
 
-      // const response = await fetch('/api/lemonhead', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     wallet: myAccount.owner,
-      //     traits: traits,
-      //   }),
-      // });
+      if (!myAccount?.owner) {
+        console.error('No wallet address found');
+        return;
+      }
 
-      // const mintData = await response.json();
-      // console.log('Mint data:', mintData);
-      
+      const mintData = await mutation.mutateAsync({ wallet: myAccount.owner, traits });
+      console.log('Mint data:', mintData);
+
       onHandleStep?.(3);
     } catch (error) {
       console.error('Error minting LemonHead:', error);
@@ -286,10 +295,7 @@ function MintLemonHead({
 
   return (
     <div>
-      <Button
-        variant="secondary"
-        onClick={handleMint}
-      >
+      <Button variant="secondary" onClick={handleMint}>
         Mint
       </Button>
     </div>
