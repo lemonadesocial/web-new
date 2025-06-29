@@ -20,6 +20,8 @@ import { ProfilePane } from '../../pane';
 import { mintAtom } from '../store';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
+import { UseFormReturn } from 'react-hook-form';
+import { LemonHeadValues } from '../types';
 
 const steps = [
   {
@@ -42,7 +44,7 @@ const steps = [
   },
 ];
 
-export function ClaimStep() {
+export function ClaimStep({ form }: { form: UseFormReturn<LemonHeadValues> }) {
   const { account: myAccount } = useAccount();
   const [currentStep, setCurrentStep] = React.useState(0);
   const mintState = useAtomValue(mintAtom);
@@ -113,7 +115,7 @@ export function ClaimStep() {
                       {i.subtitle}
                     </p>
                   </div>
-                  <Comp onHandleStep={(value: number) => setCurrentStep(value)} />
+                  <Comp form={form} onHandleStep={(value: number) => setCurrentStep(value)} />
                 </div>
               </div>
             )
@@ -237,9 +239,17 @@ function ClaimLemonadeUsername({ onHandleStep }: { onHandleStep?: (value: number
   );
 }
 
-function MintLemonHead({ onHandleStep }: { onHandleStep?: (value: number) => void }) {
+function MintLemonHead({
+  form,
+  onHandleStep,
+}: {
+  form: UseFormReturn<LemonHeadValues>;
+  onHandleStep?: (value: number) => void;
+}) {
   const { account: myAccount } = useAccount();
   const { username, isLoading } = useLemonadeUsername(myAccount);
+  const formValues = form.watch();
+  console.log(formValues);
 
   // TODO: replace value here
   const value = '0.01337 ETH';
