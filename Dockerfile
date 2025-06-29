@@ -16,6 +16,7 @@ RUN --mount=type=secret,id=npmrc,dst=/root/.npmrc \
     rm -rf /usr/local/share/.cache/yarn
 
 RUN apk add --no-cache python3 py3-pip make g++
+ENV PYTHON /usr/bin/python3
 
 ### build
 FROM builder AS build
