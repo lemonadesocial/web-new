@@ -2,6 +2,8 @@
 ### manifest
 FROM public.ecr.aws/docker/library/node:20-alpine AS manifest
 
+RUN apt-get install net-tools build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+
 COPY package.json yarn.lock /tmp/
 RUN sed -e 's/"version": "[^"]\+",/"version": "0.0.0",/' -i /tmp/package.json
 
