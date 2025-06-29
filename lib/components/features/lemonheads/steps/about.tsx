@@ -86,15 +86,24 @@ export function AboutYou({
               className="w-full rounded-sm"
               form={{
                 ...formValues,
-                ...(transformPreselect({ data: accessoriesBase, gender, size }) || {}),
+                ...(transformPreselect({ data: accessoriesBase, gender, size: 'medium' }) || {}),
+                body: 'human',
+                size: 'medium',
               }}
-              bodyBase={assets}
+              bodyBase={bodyBase}
             />
-
-            {/* <Image src={human?.attachment[0]?.signedUrl} lazy /> */}
           </SquareButton>
           <SquareButton className="col-span-2" active={body === 'alien'} onClick={() => form.setValue('body', 'alien')}>
-            <Image src={alien?.attachment[0]?.signedUrl} lazy />
+            <LemonHeadPreview
+              className="w-full rounded-sm"
+              form={{
+                ...formValues,
+                ...(transformPreselect({ data: accessoriesBase, gender, size: 'medium' }) || {}),
+                body: 'alien',
+                size: 'medium',
+              }}
+              bodyBase={bodyBase}
+            />
           </SquareButton>
         </div>
       </div>
@@ -114,6 +123,7 @@ export function AboutYou({
                   form={{
                     ...formValues,
                     ...(transformPreselect({ data: accessoriesBase, gender: item.gender, size: item.body_type }) || {}),
+                    size: item.body_type,
                   }}
                   bodyBase={assets}
                 />

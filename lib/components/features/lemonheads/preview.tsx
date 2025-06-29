@@ -1,4 +1,3 @@
-import { UseFormReturn } from 'react-hook-form';
 import { Card } from '$lib/components/core';
 import { LemonHeadAttachment, LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
 import { LemonHeadValues } from './types';
