@@ -15,8 +15,9 @@ RUN --mount=type=secret,id=npmrc,dst=/root/.npmrc \
     yarn install --frozen-lockfile && \
     rm -rf /usr/local/share/.cache/yarn
 
-RUN apk add --no-cache python3 py3-pip make g++
-ENV PYTHON /usr/bin/python3
+RUN apk add --no-cache python3 py3-pip make g++ \
+    && ln -sf python3 /usr/bin/python \
+    && ln -sf pip3 /usr/bin/pip
 
 ### build
 FROM builder AS build
