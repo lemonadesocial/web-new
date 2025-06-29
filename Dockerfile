@@ -15,7 +15,7 @@ RUN --mount=type=secret,id=npmrc,dst=/root/.npmrc \
     yarn install --frozen-lockfile && \
     rm -rf /usr/local/share/.cache/yarn
 
-RUN apk add --no-cache build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+RUN apk add --no-cache python3 py3-pip make g++
 
 ### build
 FROM builder AS build
