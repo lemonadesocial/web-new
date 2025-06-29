@@ -205,7 +205,7 @@ function ClaimLemonadeUsername({ onHandleStep }: { onHandleStep?: (value: number
   const chainsMap = useAtomValue(chainsMapAtom);
   const { isReady } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);
 
-  const { username, isLoading, refetch } = useLemonadeUsername(myAccount);
+  const { username, isLoading } = useLemonadeUsername(myAccount);
 
   React.useEffect(() => {
     if (isReady && username) onHandleStep?.(2);
@@ -221,7 +221,7 @@ function ClaimLemonadeUsername({ onHandleStep }: { onHandleStep?: (value: number
         <Button
           variant="secondary"
           onClick={() => {
-            modal.open(ClaimLemonadeUsernameModal, { props: { onComplete: () => refetch() } });
+            modal.open(ClaimLemonadeUsernameModal);
           }}
         >
           Claim Your Username
@@ -249,10 +249,36 @@ function MintLemonHead({
   const { account: myAccount } = useAccount();
   const { username, isLoading } = useLemonadeUsername(myAccount);
   const formValues = form.watch();
-  console.log(formValues);
+  
+  const handleMint = async () => {
+    try {
+      // const traits = convertFormValuesToTraits(formValues);
+      // console.log('Converted traits:', traits);
+      
+      // if (!myAccount?.owner) {
+      //   console.error('No wallet address found');
+      //   return;
+      // }
 
-  // TODO: replace value here
-  const value = '0.01337 ETH';
+      // const response = await fetch('/api/lemonhead', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({
+      //     wallet: myAccount.owner,
+      //     traits: traits,
+      //   }),
+      // });
+
+      // const mintData = await response.json();
+      // console.log('Mint data:', mintData);
+      
+      onHandleStep?.(3);
+    } catch (error) {
+      console.error('Error minting LemonHead:', error);
+    }
+  };
 
   if (!myAccount || !username) return null;
 
@@ -262,13 +288,9 @@ function MintLemonHead({
     <div>
       <Button
         variant="secondary"
-        className="hover:bg-[var(--btn-tertiary)]!"
-        onClick={() => {
-          // FIXME: handle mint lemonhead here
-          onHandleStep?.(3);
-        }}
+        onClick={handleMint}
       >
-        Mint ‣ {value}
+        Mint
       </Button>
     </div>
   );

@@ -54,8 +54,10 @@ export function SelectProfileModal() {
       }
     };
 
-    fetchAccounts();
-  }, []);
+    if (address) {
+      fetchAccounts();
+    }
+  }, [address]);
 
   const handleSignIn = async () => {
     if (!signer) return;
