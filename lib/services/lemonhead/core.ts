@@ -10,6 +10,8 @@ export enum TraitType {
   mouth = 'mouth',
   facial_hair = 'facial_hair',
   hair = 'hair',
+  necklace = 'necklace',
+  bowtie = 'bowtie',
   earrings = 'earrings',
   headgear = 'headgear',
   mouthgear = 'mouthgear',
@@ -25,6 +27,7 @@ export enum FilterType {
   skin_tone = 'skin_tone',
   size = 'size',
   color = 'color',
+  art_style = 'art_style',
 }
 
 export const requiredTraits = [
@@ -48,7 +51,7 @@ export interface Trait {
 }
 
 export const layerings: Record<TraitType, { order: number[]; filterTypes: FilterType[] }> = {
-  [TraitType.background]: { order: [10], filterTypes: [] },
+  [TraitType.background]: { order: [10], filterTypes: [FilterType.art_style] },
   [TraitType.body]: { order: [20], filterTypes: [FilterType.race, FilterType.gender, FilterType.skin_tone] },
   [TraitType.footwear]: { order: [30], filterTypes: [FilterType.gender, FilterType.size] },
   [TraitType.bottom]: { order: [40], filterTypes: [FilterType.gender, FilterType.size] },
@@ -57,11 +60,13 @@ export const layerings: Record<TraitType, { order: number[]; filterTypes: Filter
   [TraitType.mouth]: { order: [60], filterTypes: [FilterType.size] },
   [TraitType.facial_hair]: { order: [70], filterTypes: [FilterType.gender, FilterType.size] }, //-- optional
   [TraitType.hair]: { order: [80], filterTypes: [FilterType.gender, FilterType.size] },
+  [TraitType.necklace]: { order: [85], filterTypes: [FilterType.size, FilterType.color] },
+  [TraitType.bowtie]: { order: [85], filterTypes: [] },
   [TraitType.earrings]: { order: [90], filterTypes: [FilterType.gender, FilterType.size] }, //-- optional
   [TraitType.headgear]: { order: [100], filterTypes: [FilterType.gender, FilterType.size] }, //-- optional
   [TraitType.mouthgear]: { order: [120], filterTypes: [FilterType.size] }, //-- optional
   [TraitType.eyes]: { order: [130], filterTypes: [FilterType.size] },
-  [TraitType.eyewear]: { order: [140], filterTypes: [FilterType.size] }, //-- optional
+  [TraitType.eyewear]: { order: [140], filterTypes: [FilterType.size, FilterType.color] }, //-- optional
   [TraitType.pet]: { order: [150], filterTypes: [FilterType.race, FilterType.color] }, //-- optional
   [TraitType.instrument]: { order: [160], filterTypes: [] }, //-- optional
 };
