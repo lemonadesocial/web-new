@@ -1,5 +1,5 @@
 import * as ethers from 'ethers';
-import _ from "lodash";
+import _ from 'lodash';
 
 export enum TraitType {
   background = 'background',
@@ -121,7 +121,7 @@ export function validateTraits(traits: Trait[]) {
     const filters = trait.filters?.map((filter) => filter.type).sort() || [];
 
     for (let i = 0; i < filters.length - 1; i++) {
-      if (layers[i] === layers[i + 1]) {
+      if (filters[i] === filters[i + 1]) {
         throw new Error('Duplicated filter detected');
       }
     }
