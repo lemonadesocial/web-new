@@ -294,11 +294,11 @@ function MintLemonHead({
 
       const filterOpts: any = [];
       if (formValues[k]?.filters) {
-        Object.entries(formValues[k].filters).map(([key, value]) => filterOpts.push({ key, value }));
+        Object.entries(formValues[k].filters).map(([key, value]) => filterOpts.push({ type: key, value }));
       }
 
       // @ts-expect-error check wrong types
-      if (value) traits.push({ type: k, value: value, filters: filterOpts });
+      if (value) traits.push({ type: k, value: value, filters: filterOpts.length ? filterOpts : undefined });
     });
 
     return traits;

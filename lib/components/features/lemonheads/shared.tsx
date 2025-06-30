@@ -69,7 +69,8 @@ export function TabsSubContent({
   );
 }
 
-function Loading({ className }: { className?: string }) {
+function Loading({ className, loadMore }: { className?: string; loadMore?: boolean }) {
+  if (loadMore) return <p className="text-center">Loading...</p>;
   return (
     <div className={twMerge('flex md:grid grid-cols-3 gap-3 overflow-auto no-scrollbar', className)}>
       {Array.from({ length: 15 }).map((_, idx) => (
@@ -163,7 +164,7 @@ export function SubContent({
         ))}
         {/* {loading && isMobile && <Loading />} */}
       </div>
-      {loading && ((isMobile && !list.length) || !isMobile) && <Loading />}
+      {loading && ((isMobile && !list.length) || !isMobile) && <Loading loadMore={!!list.length} />}
     </div>
   );
 }
