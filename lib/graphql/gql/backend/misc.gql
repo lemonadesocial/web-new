@@ -40,6 +40,7 @@ query listChains {
     aragon_network
     axelar_chain_name
     donation_registry_contract
+    lemonhead_contract_address
   }
 }
 
