@@ -90,8 +90,13 @@ export function findConflictTraits(existingTraits: Trait[], newTrait: Trait) {
 export function validateTraits(traits: Trait[]) {
   //-- make sure:
 
+  //-- 0. trait types are valid
+  if (traits.some((trait) => !layerings[trait.type])) {
+    throw new Error('Invalid trait type');
+  }
+
   //-- 1. no layer conflict
-  const layers = traits.flatMap((trait) => layerings[trait.type]?.order || []).sort();
+  const layers = traits.flatMap((trait) => layerings[trait.type].order).sort();
 
   for (let i = 0; i < layers.length - 1; i++) {
     if (layers[i] === layers[i + 1]) {
@@ -157,10 +162,14 @@ export function getFinalTraits(traits: Trait[]) {
     })
     .map((trait) => ({
       ...trait,
-      filter: layerings[trait.type].filterTypes.flatMap((filterType) => {
-        const filter = trait.filters?.find((filter) => filter.type === filterType);
-        return filter ? [filter] : [];
-      }),
+      filter: layerings[trait.type].filterTypes
+        //-- only include filters that are in the trait type's filterTypes
+        .flatMap((filterType) => {
+          const filter = trait.filters?.find((filter) => filter.type === filterType);
+          return filter ? [filter] : [];
+        })
+        //-- sort the filters by type alphabetically
+        .sort((a, b) => a.type.localeCompare(b.type)),
     }));
 }
 
