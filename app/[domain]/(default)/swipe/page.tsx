@@ -1,6 +1,14 @@
+'use client';
+import { useRouter } from 'next/navigation';
+
+import { Button } from '$lib/components/core/button';
+import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 
 export default function SwipePage() {
+  const { hasLemonhead } = useLemonhead();
+  const router = useRouter();
+
   return (
     <div className="max-w-[794] mx-auto pt-11 flex flex-col items-center">
       <div
@@ -40,9 +48,25 @@ export default function SwipePage() {
         </div>
       </div>
 
-      <div className="mt-14 py-2.5 px-4 rounded-full border-2 border-dashed border-tertiary">
-        <p className="text-lg text-tertiary">Coming Soon!</p>
-      </div>
+      {
+        hasLemonhead ? (
+          <div className="mt-14 space-y-4">
+            <p className="text-tertiary text-center">Download the Lemonade app & start swiping!</p>
+            <div className="flex items-center justify-center gap-2">
+              <a href="https://apps.apple.com/us/app/lemonade-social/id6450694884" target="_blank">
+                <img src={`${ASSET_PREFIX}/assets/images/app-store-badge.png`} alt="App Store" className="h-12" />
+              </a>
+              <a href="https://play.google.com/store/apps/details?id=social.lemonade.app" target="_blank">
+                <img src={`${ASSET_PREFIX}/assets/images/google-play-badge.png`} alt="Google Play" className="h-12" />
+              </a>
+            </div>
+          </div>
+        ) : (
+          <Button variant="secondary" className="rounded-full mt-14" onClick={() => router.push('/lemonheads')}>
+            Claim Lemonhead to Unlock
+          </Button>
+        )
+      }
     </div>
   );
 }
