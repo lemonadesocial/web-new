@@ -9,11 +9,9 @@ import Header from '../header';
 import LoadMoreWrapper from './loadMoreWrapper';
 import Sidebar from './sidebar';
 import { Footer } from './footer';
-import { useResumeSession } from '$lib/hooks/useLens';
 
 export function CommunityContainer({ space, children }: React.PropsWithChildren & { space: Space }) {
   const [state] = useCommunityTheme();
-  useResumeSession();
 
   return (
     <main
