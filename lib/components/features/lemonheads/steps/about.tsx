@@ -2,12 +2,11 @@
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
-import { Image } from '$lib/components/core/image';
 import { LemonHeadAccessory, LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
+import { transformPreselect } from '$lib/trpc/lemonheads/preselect';
 
 import { LemonHeadValues } from '../types';
 import { SquareButton } from '../shared';
-import { transformPreselect } from '$lib/trpc/lemonheads/preselect';
 import { LemonHeadPreview } from '../preview';
 
 const BodyTypeMapping = { medium: 'Regular', small: 'Skinny', large: 'Toned', extra_large: 'Large' };

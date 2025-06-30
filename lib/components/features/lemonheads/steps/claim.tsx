@@ -7,7 +7,7 @@ import { useDisconnect } from '@reown/appkit/react';
 import { UseFormReturn } from 'react-hook-form';
 
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
-import { Button, drawer, Menu, MenuItem, modal, Skeleton, toast } from '$lib/components/core';
+import { Button, drawer, Menu, MenuItem, modal, Skeleton } from '$lib/components/core';
 import { useConnectWallet } from '$lib/hooks/useConnectWallet';
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { ASSET_PREFIX } from '$lib/utils/constants';
@@ -17,6 +17,7 @@ import { trpc } from '$lib/trpc/client';
 import { Trait, TraitType } from '$lib/services/lemonhead/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
+import { truncateStr } from '$lib/utils/string';
 
 import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
 import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
@@ -24,8 +25,6 @@ import { ProfileMenu } from '../../lens-account/ProfileMenu';
 import { ProfilePane } from '../../pane';
 import { mintAtom } from '../store';
 import { LemonHeadValues } from '../types';
-import { truncateStr } from '$lib/utils/string';
-import { isArray } from 'lodash';
 
 const steps = [
   {

@@ -1,9 +1,8 @@
 import { z } from 'zod';
+import { getMintNftData } from '$lib/services/lemonhead';
 
 import { publicProcedure, router } from './trpc';
 import lemonheads from './lemonheads';
-import { getPreSelect } from './lemonheads/preselect';
-import { getMintNftData } from '$lib/services/lemonhead';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -51,11 +50,9 @@ export const appRouter = router({
 
       return data;
     }),
-  preselect: publicProcedure.input(z.object({ gender: z.string(), size: z.string() })).query(async ({ input }) => {
+  preselect: publicProcedure.query(async () => {
     const { data: dataPreSelect } = await lemonheads.getAccessories({ viewId: 'vwziaxm5nfh9652q', limit: 100 });
     return dataPreSelect.list;
-    // const preselect = dataPreSelect.list;
-    // return getPreSelect({ preselect, ...input });
   }),
   mintNft: publicProcedure
     .input(z.object({ wallet: z.string(), traits: z.any(), sponsor: z.string().optional() }))

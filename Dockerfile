@@ -10,6 +10,12 @@ FROM public.ecr.aws/docker/library/node:20-alpine AS builder
 WORKDIR /app
 
 RUN apk add --no-cache git
+RUN apk add --no-cache pkgconfig python3 py3-pip make g++ cairo-dev pango-dev \
+    && ln -sf python3 /usr/bin/python \
+    && ln -sf pip3 /usr/bin/pip
+
+ENV PYTHON=/usr/bin/python3
+
 COPY --from=manifest /tmp/package.json /tmp/yarn.lock ./
 RUN --mount=type=secret,id=npmrc,dst=/root/.npmrc \
     yarn install --frozen-lockfile && \

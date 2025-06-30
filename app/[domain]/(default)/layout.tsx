@@ -2,7 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 
 import { getSiteData } from '$lib/utils/fetchers';
-import Header, { RootMenu } from '$lib/components/layouts/header';
+import Header from '$lib/components/layouts/header';
 import Sidebar from '$lib/components/layouts/sidebar';
 
 export async function generateMetadata(props: { params: Promise<{ domain: string }> }): Promise<Metadata | null> {
