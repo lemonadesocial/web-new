@@ -1,4 +1,5 @@
 import * as ethers from 'ethers';
+import _ from "lodash";
 
 export enum TraitType {
   background = 'background',
@@ -47,7 +48,7 @@ export interface Filter {
 export interface Trait {
   type: TraitType;
   value: string;
-  filter?: Filter[];
+  filters?: Filter[];
 }
 
 export const layerings: Record<TraitType, { order: number[]; filterTypes: FilterType[] }> = {
@@ -113,20 +114,29 @@ export function validateTraits(traits: Trait[]) {
     throw new Error('Top and bottom are required if no outfit is present');
   }
 
-  const invalidFilter = traits.some((trait) => {
-    //-- 4.1 filter must not be duplicated
-    const filters = trait.filter?.map((filter) => filter.type).sort() || [];
+  //-- 4. filters validation
+
+  //-- 4.1 filter must not be duplicated
+  for (const trait of traits) {
+    const filters = trait.filters?.map((filter) => filter.type).sort() || [];
 
     for (let i = 0; i < filters.length - 1; i++) {
       if (layers[i] === layers[i + 1]) {
         throw new Error('Duplicated filter detected');
       }
     }
-  });
+  }
 
-  //-- 4. filter validations
-  if (invalidFilter) {
-    throw new Error('Invalid filters');
+  //-- 4.2 gender and size must be consistent between traits
+  for (const filterType of [FilterType.gender, FilterType.size]) {
+    const filterValues = traits
+      .flatMap((trait) => trait.filters || [])
+      .filter((filter) => filter.type === filterType)
+      .map((filter) => filter.value);
+
+    if (_.uniq(filterValues).length > 1) {
+      throw new Error('Gender and size must be consistent between traits');
+    }
   }
 }
 
@@ -148,7 +158,7 @@ export function getFinalTraits(traits: Trait[]) {
     .map((trait) => ({
       ...trait,
       filter: layerings[trait.type].filterTypes.flatMap((filterType) => {
-        const filter = trait.filter?.find((filter) => filter.type === filterType);
+        const filter = trait.filters?.find((filter) => filter.type === filterType);
         return filter ? [filter] : [];
       }),
     }));
@@ -161,7 +171,7 @@ export function calculateLookHash(finalTraits: Trait[]) {
       [
         '--',
         `${formatString(trait.type)}:${formatString(trait.value)}`,
-        ...(trait.filter?.map((filter) => `${formatString(filter.type)}:${formatString(filter.value)}`) || []),
+        ...(trait.filters?.map((filter) => `${formatString(filter.type)}:${formatString(filter.value)}`) || []),
       ].join('\n'),
     )
     .join('\n');
