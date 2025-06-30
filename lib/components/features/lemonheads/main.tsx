@@ -61,7 +61,7 @@ export function LemonHeadMain({
       </div>
       <div className="flex-1 overflow-auto md:overflow-hidden">
         <div className="flex flex-col md:flex md:flex-row-reverse max-w-[1440px] mx-auto gap-5 overflow-auto md:gap-18 p-4 md:p-11 md:max-h-full">
-          <div className={clsx('flex-1', isMobile && currentStep > 1 && 'size-[80px] z-10')}>
+          <div className={clsx('flex-1', isMobile && currentStep > 2 && 'size-[80px] z-10')}>
             <LemonHeadPreview form={formValues} bodyBase={dataBody} />
           </div>
 
