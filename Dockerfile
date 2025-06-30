@@ -54,6 +54,8 @@ RUN aws s3 sync . s3://$ASSET_BUCKET_NAME --size-only
 FROM public.ecr.aws/docker/library/node:20-alpine AS app
 WORKDIR /app
 
+RUN apk add --no-cache cairo pango
+
 COPY --from=build /app/.next/standalone .
 
 ARG SENTRY_RELEASE

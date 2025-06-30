@@ -17,7 +17,7 @@ import { trpc } from '$lib/trpc/client';
 import { Trait, TraitType } from '$lib/services/lemonhead/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
-import { truncateStr } from '$lib/utils/string';
+import { formatWallet } from '$lib/utils/crypto';
 
 import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
 import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
@@ -34,12 +34,12 @@ const steps = [
   },
   {
     title: 'Claim Username',
-    subtitle: 'Secure your Lemonade username—it’ll also be the official name of your LemonHead.',
+    subtitle: `Secure your Lemonade username—it'll also be the official name of your LemonHead.`,
     component: ClaimLemonadeUsername,
   },
   {
     title: 'Mint LemonHead',
-    subtitle: 'You’re ready to mint! Lock in your LemonHead forever for 0.01337 ETH and show it off.',
+    subtitle: `You're ready to mint! Lock in your LemonHead forever for 0.01337 ETH and show it off.`,
     component: MintLemonHead,
   },
   {
@@ -151,8 +151,8 @@ function ConnectAccount({ onHandleStep }: { onHandleStep?: (value: number) => vo
   if (myAccount) {
     return (
       <div className="flex gap-2">
-        <Button iconLeft="icon-wallet" variant="tertiary" className="hover:bg-[var(--btn-tertiary)]!">
-          {truncateStr({ str: myAccount.owner, prefix: 6, subfix: 4 })}
+        <Button iconLeft="icon-lens" variant="tertiary" className="hover:bg-[var(--btn-tertiary)]!">
+          {myAccount.username?.localName || myAccount.metadata?.name || formatWallet(myAccount.owner)}
         </Button>
 
         <ProfileMenu options={{ canView: false, canEdit: false }}>
@@ -330,8 +330,8 @@ function MintSuccess() {
             </h3>
           </div>
           <p className="md:text-xl max-w-xl">
-            You’ve officially joined a bold new world of self-expression and onchain identity. Your LemonHead isn’t just
-            an avatar—it’s your ticket to create, connect, and stand out in style.
+            You&apos;ve officially joined a bold new world of self-expression and onchain identity. Your LemonHead
+            isn&apos;t just an avatar—it&apos;s your ticket to create, connect, and stand out in style.
           </p>
         </div>
 

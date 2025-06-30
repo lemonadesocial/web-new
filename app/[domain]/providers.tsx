@@ -9,12 +9,14 @@ import { useListChains } from '$lib/hooks/useListChains';
 import { SpaceHydraKeys } from '$lib/utils/space';
 import { hydraClientIdAtom } from '$lib/jotai';
 import { defaultClient } from '$lib/graphql/request/instances';
+import { useResumeSession as useLensResumeSession} from '$lib/hooks/useLens';
 
 export default function Providers({ children, space }: { children: React.ReactNode; space?: SpaceHydraKeys | null; }) {
   const oryLoading = useAuth(space?.hydra_client_id);
   const chainsLoading = useListChains();
   const setHydraClientId = useSetAtom(hydraClientIdAtom);
   const [appKitReady, setAppKitReady] = React.useState(false);
+  useLensResumeSession();
 
   React.useEffect(() => {
     if (!chainsLoading) {

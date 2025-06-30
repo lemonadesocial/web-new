@@ -12,7 +12,7 @@ export function HomePageContent() {
 
   return (
     <div className="flex flex-col gap-5 flex-1 w-full">
-      <PageTitle title={`Welcome ${!!account ? `, ${account?.username?.localName}` : ''}`} />
+      <PageTitle title={`Welcome ${!!account ? `, ${account.username?.localName || account.metadata?.name}` : ''}`} />
       <LensFeed feedAddress={LEMONADE_FEED_ADDRESS} onSelectPost={(slug) => router.push(`/posts/${slug}`)} />
     </div>
   );

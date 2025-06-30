@@ -1,4 +1,4 @@
-import { getApproval } from "./admin";
+import { getApproval, getCache, setCache } from './admin';
 import { calculateLookHash, getFinalTraits, formatString, Trait, validateTraits } from './core';
 import { getFinalImage, getImageUrlsFromTraits } from './image';
 import { uploadImage, uploadJSON } from './storage';
@@ -25,14 +25,34 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
 
   const lookHash = calculateLookHash(finalTraits);
 
-  //-- create and upload image
-  const imageUrls = await getImageUrlsFromTraits(finalTraits);
-  const finalImage = await getFinalImage(imageUrls);
-  const imageUrl = await uploadImage(lookHash, finalImage);
+  const cache = await getCache(lookHash);
 
-  //-- create and upload metadata
-  const metadata = createMetadata(imageUrl, finalTraits);
-  const metadataUrl = await uploadJSON(lookHash, metadata);
+  let imageUrl = cache?.image_url;
+
+  if (!imageUrl) {
+    //-- create and upload image
+    const imageUrls = await getImageUrlsFromTraits(finalTraits);
+    const finalImage = await getFinalImage(imageUrls);
+    imageUrl = await uploadImage(lookHash, finalImage);
+  }
+
+  let metadataUrl = cache?.metadata_url;
+
+  if (!metadataUrl) {
+    //-- create and upload metadata
+    const metadata = createMetadata(imageUrl, finalTraits);
+    metadataUrl = await uploadJSON(lookHash, metadata);
+  }
+
+  const imageChanged = imageUrl !== cache?.image_url;
+  const metadataChanged = metadataUrl !== cache?.metadata_url;
+
+  if (imageChanged || metadataChanged) {
+    await setCache(lookHash, {
+      ...(imageChanged && { image_url: imageUrl }),
+      ...(metadataChanged && { metadata_url: metadataUrl }),
+    });
+  }
 
   //-- call backend API and obtain the signature
   const data = await getApproval(wallet, lookHash, sponsor);

@@ -6,7 +6,7 @@ import { type Trait } from './core';
 const baseUrl = 'https://app.nocodb.com/api/v2';
 const apikey = process.env.NOCODB_ACCESS_KEY!;
 
-const tableId = 'm8fys8d596wooeq';
+const tableId = 'mksrfjc38xpo4d1';
 
 const readUrlToBuffer = async (url: string) => {
   const response = await fetch(url);
@@ -15,6 +15,8 @@ const readUrlToBuffer = async (url: string) => {
 };
 
 const getImageUrl = async (url: string) => {
+  console.log('url', url);
+
   const response = await fetch(`${baseUrl}${url}`, {
     headers: {
       accept: 'application/json',
@@ -22,11 +24,26 @@ const getImageUrl = async (url: string) => {
     },
   });
 
-  const data = (await response.json()) as { list: { attachment: { signedUrl: string }[] }[] };
+  const data = (await response.json()) as {
+    list?: { attachment: { signedUrl: string }[] }[];
+    pageInfo?: { totalRows: number };
+  };
 
-  const image = data.list?.[0].attachment[0].signedUrl;
+  const list = data.list;
+
+  if (!data.list || data.list.length === 0 || !data.pageInfo || data.pageInfo.totalRows === 0) {
+    throw new Error(`No image found for ${url}`);
+  }
+
+  if (data.pageInfo.totalRows > 1) {
+    throw new Error(`Multiple images found for ${url}`);
+  }
+
+  const image = list?.[0].attachment[0].signedUrl;
 
   if (!image) {
+    console.log('data', data);
+
     throw new Error(`No image found for ${url}`);
   }
 
@@ -37,7 +54,7 @@ const buildQuery = (trait: Trait) => {
   const query = [
     `(type,eq,${trait.type})`,
     `(name,eq,${trait.value})`,
-    ...(trait.filter?.map((filter) => `(${filter.type},eq,${filter.value})`) || []),
+    ...(trait.filters?.map((filter) => `(${filter.type},eq,${filter.value})`) || []),
   ].join('~and');
 
   const uri = `/tables/${tableId}/records?where=${query}&limit=1&shuffle=0&offset=0`;

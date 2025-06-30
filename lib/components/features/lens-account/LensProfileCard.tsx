@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 
 import { Avatar, Button, modal } from "$lib/components/core";
-import { useAccountStats, useLensAuth, useResumeSession } from "$lib/hooks/useLens";
+import { useAccountStats, useLensAuth } from "$lib/hooks/useLens";
 import { accountAtom, sessionClientAtom } from "$lib/jotai";
 import { getAccountAvatar } from "$lib/utils/lens/utils";
 import { useSigner } from "$lib/hooks/useSigner";
@@ -19,7 +19,6 @@ export function LensProfileCard({ account }: { account: Account }) {
   const myAccount = useAtomValue(accountAtom);
 
   const handleLensAuth = useLensAuth();
-  useResumeSession();
   const signer = useSigner();
 
   const [isFollowing, setIsFollowing] = useState(false);
@@ -103,13 +102,14 @@ export function LensProfileCard({ account }: { account: Account }) {
       </div>
       {
         isOwner ? (
-          <Button variant="tertiary" className="w-full" onClick={() => modal.open(EditProfileModal)}>
+          <Button variant="tertiary" className="w-full" size="sm" onClick={() => modal.open(EditProfileModal)}>
             Edit Profile
           </Button>
         ) : (
           <Button
             variant={isFollowing ? 'tertiary' : 'secondary'}
             className="w-full"
+            size="sm"
             onClick={() => handleLensAuth(handleFollow)}
             loading={isExecuting}
             disabled={isLoadingStatus}

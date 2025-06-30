@@ -4,6 +4,7 @@ import { getSiteData } from '$utils/fetchers';
 
 import { HomePageContent } from './content';
 import { ClaimLemonHeadCard } from '$lib/components/features/lemonheads/ClaimLemonHeadCard';
+import { WhoToFollow } from '$lib/components/features/lens-account/WhoToFollow';
 
 export default async function SiteHomePage({ params }: { params: Promise<{ domain: string }> }) {
   const res = await params;
@@ -19,6 +20,7 @@ export default async function SiteHomePage({ params }: { params: Promise<{ domai
       <HomePageContent />
       <div className="flex flex-col gap-4">
         <ClaimLemonHeadCard />
+        <WhoToFollow /> 
       </div>
     </div>
   );

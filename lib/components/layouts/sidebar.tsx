@@ -2,12 +2,16 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 
-import { useMemo } from 'react';
-import { usePathname } from 'next/navigation';
+import { useMemo } from "react";
+import { usePathname } from "next/navigation";
+import { useMe } from "$lib/hooks/useMe";
+import { useAccount } from "$lib/hooks/useLens";
+import { Avatar } from "../core";
+import { userAvatar } from "$lib/utils/user";
 
 type SidebarItemProps = {
   item: {
-    icon: string;
+    icon: React.ReactNode;
     path: string;
     label: string;
   };
@@ -23,13 +27,14 @@ const SidebarItem = ({ item, isActive }: SidebarItemProps) => {
             <p className="text-md font-medium ">{item?.label}</p>
           </div>
         )}
-        <div
-          className={clsx(
-            'size-16 flex items-center justify-center rounded-md',
-            isActive(item) && 'bg-[var(--btn-secondary)]',
-          )}
-        >
-          <i className={clsx(item.icon, isActive(item) ? 'text-[var(--btn-secondary-content)]' : 'text-tertiary')} />
+        <div className={clsx("size-16 flex items-center justify-center rounded-md", isActive(item) && "bg-[var(--btn-secondary)]")}>
+          {
+            typeof item.icon === 'string' ? (
+              <i className={clsx(item.icon, isActive(item) ? 'text-[var(--btn-secondary-content)]' : 'text-tertiary')} />
+            ) : (
+              item.icon
+            )
+          }
         </div>
       </div>
     </Link>
@@ -38,7 +43,9 @@ const SidebarItem = ({ item, isActive }: SidebarItemProps) => {
 
 const Sidebar = () => {
   const pathname = usePathname();
-
+  const me = useMe();
+  const { account } = useAccount();
+  
   const mainMenu = useMemo(() => {
     const menu = [
       {
@@ -77,6 +84,16 @@ const Sidebar = () => {
       </div>
       <hr className="border-t border" />
       <div className="flex flex-col gap-2 p-3">
+        {
+          (me || account) && (
+            <>
+              <SidebarItem
+                item={{ icon: <Avatar src={account?.metadata?.picture || userAvatar(me)} />, path: '/profile', label: 'Profile' }}
+                isActive={isActive}
+              />
+            </>
+          )
+        }
         {secondaryMenu.map((item) => (
           <SidebarItem key={item.path} item={item} isActive={isActive} />
         ))}
