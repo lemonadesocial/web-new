@@ -37,7 +37,7 @@ const buildQuery = (trait: Trait) => {
   const query = [
     `(type,eq,${trait.type})`,
     `(name,eq,${trait.value})`,
-    ...(trait.filter?.map((filter) => `(${filter.type},eq,${filter.value})`) || []),
+    ...(trait.filters?.map((filter) => `(${filter.type},eq,${filter.value})`) || []),
   ].join('~and');
 
   const uri = `/tables/${tableId}/records?where=${query}&limit=1&shuffle=0&offset=0`;
