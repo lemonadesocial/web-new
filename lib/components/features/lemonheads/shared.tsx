@@ -4,9 +4,10 @@ import { UseFormReturn } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { uniqBy } from 'lodash';
 import { isMobile } from 'react-device-detect';
-import { LemonHeadAccessory } from '$lib/trpc/lemonheads/types';
+import { LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
 import { trpc } from '$lib/trpc/client';
 import { LemonHeadValues } from './types';
+import { Skeleton } from '$lib/components/core';
 
 export function SquareButton({
   className,
@@ -34,38 +35,6 @@ export function SquareButton({
     </div>
   );
 }
-
-// function ListView({
-//   data = [],
-//   title,
-//   onSelect,
-//   selected,
-//   id,
-// }: {
-//   id?: string;
-//   data?: LemonHeadAccessory[];
-//   title?: string;
-//   selected?: number;
-//   onSelect: (item: LemonHeadAccessory) => void;
-// }) {
-//   return (
-//     <div id={id} className="flex flex-col gap-4 md:pb-4">
-//       {title && <p>{title}</p>}
-//       <div className="flex md:grid grid-cols-3 gap-3">
-//         {data.map((i) => (
-//           <div key={i.Id} className="text-center space-y-1 min-w-[80px]">
-//             <SquareButton active={i.Id === selected} className="flex-col items-stretch" onClick={() => onSelect(i)}>
-//               <img src={i.attachment?.[0]?.thumbnails.card_cover.signedUrl} className="rounded-sm" />
-//             </SquareButton>
-//             <p className={clsx('text-sm capitalize truncate', i.Id === selected ? 'text-primary' : 'text-tertiary')}>
-//               {i.name.replaceAll('_', ' ')}
-//             </p>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
 
 export function TabsSubContent({
   tabs = [],
@@ -100,8 +69,14 @@ export function TabsSubContent({
   );
 }
 
-function Loading() {
-  return <p className="text-center text-tertiary">Loading...</p>;
+function Loading({ className }: { className?: string }) {
+  return (
+    <div className={twMerge('flex md:grid grid-cols-3 gap-3 overflow-auto no-scrollbar', className)}>
+      {Array.from({ length: 15 }).map((_, idx) => (
+        <Skeleton key={idx} className="w-full min-w-[80px] aspect-square" animate />
+      ))}
+    </div>
+  );
 }
 
 export function SubContent({
@@ -109,27 +84,29 @@ export function SubContent({
   field,
   where,
   form,
+  filters = {},
 }: {
-  field: keyof LemonHeadValues;
+  field: string;
   limit?: number;
   where: string;
+  filters?: Record<string, string>;
   form: UseFormReturn<LemonHeadValues>;
 }) {
-  const selected = form.watch(field) as Partial<LemonHeadAccessory>;
+  const selected = form.watch(field) as Partial<LemonHeadsLayer>;
   const [offset, setOffSet] = React.useState(0);
-  const { data, isLoading: loading } = trpc.accessories.useQuery({
+  const { data, isLoading: loading } = trpc.lemonheads.layers.useQuery({
     limit: limit,
     offset,
     where,
   });
-  const [list, setList] = React.useState<LemonHeadAccessory[]>([]);
+  const [list, setList] = React.useState<LemonHeadsLayer[]>([]);
 
   const listInnerRef = React.useRef<any>(null);
 
   const onScroll = () => {
     if (listInnerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
-      const isNearBottom = scrollTop + clientHeight >= scrollHeight;
+      const isNearBottom = scrollTop + clientHeight >= scrollHeight - 14;
 
       if (isNearBottom) {
         if (!data?.pageInfo.isLastPage) setOffSet(list.length);
@@ -157,46 +134,50 @@ export function SubContent({
   }, [list.length]);
 
   return (
-    <>
-      <div className="flex flex-col gap-4 md:pb-4 p-4 min-h-[136px]" style={{ height: 'inherit' }}>
-        <div ref={listInnerRef} className="flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar">
-          {list.map((item) => (
-            <div key={item.Id} className="text-center space-y-1 min-w-[80px]">
-              <SquareButton
-                active={item.Id === selected.Id}
-                className="flex-col items-stretch"
-                onClick={() => {
-                  if (item.Id === selected?.Id) form.setValue(field, undefined);
-                  else form.setValue(field, { Id: item.Id, attachment: item.attachment, name: item.name });
-                }}
-              >
-                <img src={item.attachment?.[0]?.thumbnails.card_cover.signedUrl} className="rounded-sm" />
-              </SquareButton>
-              <p
-                className={clsx('text-sm capitalize truncate', item.Id === selected ? 'text-primary' : 'text-tertiary')}
-              >
-                {item.name.replaceAll('_', ' ')}
-              </p>
-            </div>
-          ))}
-          {loading && isMobile && <Loading />}
-        </div>
+    <div className="flex flex-col gap-4 md:pb-4 p-4 min-h-[136px]" style={{ height: 'inherit' }}>
+      <div ref={listInnerRef} className="flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar">
+        {list.map((item) => (
+          <div key={item.Id} className="text-center space-y-1 min-w-[80px]">
+            <SquareButton
+              active={item.Id === selected?.Id}
+              className="flex-col items-stretch"
+              onClick={() => {
+                if (item.Id === selected?.Id) form.setValue(field, undefined);
+                else {
+                  form.setValue(field, {
+                    Id: item.Id,
+                    attachment: item.attachment,
+                    value: item.name,
+                    type: field,
+                    filters,
+                  });
+                }
+              }}
+            >
+              <img src={item.attachment?.[0]?.thumbnails.card_cover.signedUrl} className="rounded-sm" />
+            </SquareButton>
+            <p className={clsx('text-sm capitalize truncate', item.Id === selected ? 'text-primary' : 'text-tertiary')}>
+              {item.name.replaceAll('_', ' ')}
+            </p>
+          </div>
+        ))}
+        {/* {loading && isMobile && <Loading />} */}
       </div>
-      {loading && !isMobile && <Loading />}
-    </>
+      {loading && ((isMobile && !list.length) || !isMobile) && <Loading />}
+    </div>
   );
 }
 
 export function SubContentWithTabs(props: { tabs: any; form: UseFormReturn<LemonHeadValues> }) {
-  const gender = props.form.watch('gender');
+  const body = props.form.watch('body');
   const [tabs, setTabs] = React.useState(props.tabs || []);
   const [currentTab, setCurrentTab] = React.useState(tabs[0].value);
 
   React.useEffect(() => {
-    if (gender === 'female') {
+    if (body.filters.gender === 'female') {
       setTabs((prev: any) => prev.filter((i: any) => i.value !== 'facial_hair'));
     }
-  }, [gender]);
+  }, [body.filters.gender]);
 
   return (
     <>
@@ -207,7 +188,7 @@ export function SubContentWithTabs(props: { tabs: any; form: UseFormReturn<Lemon
           setCurrentTab(tab);
         }}
       />
-      <div className="h-full pb-14">
+      <div className="h-full md:pb-14">
         {tabs.map((item: any) => {
           if (!item.mount) return null;
           const Comp = item.component || null;

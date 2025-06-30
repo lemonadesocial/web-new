@@ -2,8 +2,8 @@
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
-import { LemonHeadAccessory, LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
-import { transformPreselect } from '$lib/trpc/lemonheads/preselect';
+import { LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
+import { transformTrait } from '$lib/trpc/lemonheads/preselect';
 
 import { LemonHeadValues } from '../types';
 import { SquareButton } from '../shared';
@@ -19,31 +19,33 @@ const customOrder = {
 
 export function AboutYou({
   form,
-  bodyBase,
-  accessoriesBase,
+  bodySet,
+  defaultSet = [],
 }: {
   form: UseFormReturn<LemonHeadValues>;
-  bodyBase: LemonHeadBodyType[];
-  accessoriesBase?: LemonHeadAccessory[];
+  bodySet: LemonHeadsLayer[];
+  defaultSet?: LemonHeadsLayer[];
 }) {
-  const [gender, size, body, skin_tone] = form.watch(['gender', 'size', 'body', 'skin_tone']);
+  const body = form.watch('body');
   const formValues = form.watch();
 
-  React.useEffect(() => {
-    if (accessoriesBase?.length) {
-      const data = transformPreselect({ size, gender, data: accessoriesBase });
-      Object.entries(data).forEach(([key, value]) => form.setValue(key as keyof LemonHeadValues, value));
-    }
-  }, [accessoriesBase?.length, size, gender]);
+  const human = bodySet.find(
+    (i) =>
+      i.gender === body.filters.gender &&
+      i.name === 'human' &&
+      i.skin_tone === body.filters.skin_tone &&
+      i.size === (body.filters.gender === 'male' ? 'medium' : 'small'),
+  );
 
-  const assets = bodyBase
-    .filter((i) => i.gender === gender && i.name === body && i.skin_tone === skin_tone.value)
+  const alien = bodySet.find((i) => i.gender === body.filters.gender && i.name === 'alien' && i.size === 'medium');
+
+  const assets = bodySet
+    .filter((i) => i.gender === body.filters.gender && i.name === body.value && i.skin_tone === body.filters.skin_tone)
     .sort((a, b) => {
-      const rankA = customOrder[a.body_type] ?? Infinity;
-      const rankB = customOrder[b.body_type] ?? Infinity;
+      const rankA = customOrder[a.size] ?? Infinity;
+      const rankB = customOrder[b.size] ?? Infinity;
       return rankA - rankB;
     });
-
   return (
     <div className="flex-1 max-w-[588px] flex flex-col gap-8">
       <div className="hidden md:flex flex-col gap-2">
@@ -56,47 +58,68 @@ export function AboutYou({
         <div className="grid grid-cols-5 gap-3">
           <div className="grid grid-rows-2 gap-3">
             <SquareButton
-              active={gender === 'female'}
+              active={body.filters.gender === 'female'}
               onClick={() => {
                 form.reset();
-                form.setValue('gender', 'female');
+                form.reset({
+                  ...transformTrait({ data: defaultSet, gender: 'female', size: 'small' }),
+                  body: { ...body, filters: { ...body.filters, gender: 'female', size: 'small' } },
+                });
               }}
             >
               <i className="icon-lh-female size-10 text-[#F270A4]" />
             </SquareButton>
 
             <SquareButton
-              active={gender === 'male'}
+              active={body.filters.gender === 'male'}
               onClick={() => {
-                form.reset();
-                form.setValue('gender', 'male');
+                form.reset({
+                  ...transformTrait({ data: defaultSet, gender: 'male', size: 'medium' }),
+                  body: { ...body, filters: { ...body.filters, gender: 'male', size: 'medium' } },
+                });
               }}
             >
               <i className="icon-lh-male size-10 text-[#70A4FE]" />
             </SquareButton>
           </div>
-          <SquareButton className="col-span-2" active={body === 'human'} onClick={() => form.setValue('body', 'human')}>
+          <SquareButton
+            className="col-span-2"
+            active={body.value === 'human'}
+            onClick={() => form.setValue('body.value', 'human')}
+          >
             <LemonHeadPreview
               className="w-full rounded-sm"
               form={{
                 ...formValues,
-                ...(transformPreselect({ data: accessoriesBase, gender, size: 'medium' }) || {}),
-                body: 'human',
-                size: 'medium',
+                ...transformTrait({ data: defaultSet, gender: body.filters.gender, size: human?.size }),
+                body: {
+                  ...formValues.body,
+                  value: 'human',
+                  attachment: human?.attachment,
+                  filters: { ...formValues.body.filters, size: human?.size },
+                },
               }}
-              bodyBase={bodyBase}
+              bodySet={bodySet}
             />
           </SquareButton>
-          <SquareButton className="col-span-2" active={body === 'alien'} onClick={() => form.setValue('body', 'alien')}>
+          <SquareButton
+            className="col-span-2"
+            active={body.value === 'alien'}
+            onClick={() => form.setValue('body.value', 'alien')}
+          >
             <LemonHeadPreview
               className="w-full rounded-sm"
               form={{
                 ...formValues,
-                ...(transformPreselect({ data: accessoriesBase, gender, size: 'medium' }) || {}),
-                body: 'alien',
-                size: 'medium',
+                ...transformTrait({ data: defaultSet, gender: body.filters.gender, size: alien?.size }),
+                body: {
+                  ...formValues.body,
+                  value: 'alien',
+                  attachment: alien?.attachment,
+                  filters: { ...formValues.body.filters, size: alien?.size },
+                },
               }}
-              bodyBase={bodyBase}
+              bodySet={bodySet}
             />
           </SquareButton>
         </div>
@@ -109,21 +132,34 @@ export function AboutYou({
             <div key={item.Id} className="flex flex-col gap-1 items-center">
               <SquareButton
                 className="flex-1"
-                onClick={() => form.setValue('size', item.body_type)}
-                active={item.body_type === size}
+                onClick={() => {
+                  form.reset({
+                    ...transformTrait({ data: defaultSet, gender: body.filters.gender, size: item?.size }),
+                    body: {
+                      ...body,
+                      filters: { ...body.filters, size: item.size },
+                      attachment: item.attachment,
+                    },
+                  });
+                  // form.setValue('body', {});
+                }}
+                active={item.size === body.filters.size}
               >
                 <LemonHeadPreview
                   className="w-full rounded-sm"
                   form={{
                     ...formValues,
-                    ...(transformPreselect({ data: accessoriesBase, gender: item.gender, size: item.body_type }) || {}),
-                    size: item.body_type,
+                    ...transformTrait({ data: defaultSet, gender: item.gender, size: item.size }),
+                    body: {
+                      ...formValues.body,
+                      filters: { ...formValues.body.filters, size: item.size },
+                      attachment: item.attachment,
+                    },
                   }}
-                  bodyBase={assets}
+                  bodySet={assets}
                 />
               </SquareButton>
-
-              <p>{BodyTypeMapping[item.body_type]}</p>
+              <p>{BodyTypeMapping[item.size]}</p>
             </div>
           ))}
         </div>

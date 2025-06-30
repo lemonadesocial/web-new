@@ -4,12 +4,19 @@ import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import { UseFormReturn } from 'react-hook-form';
 import { Card } from '$lib/components/core';
-import { LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
+import { LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
 
 import { LemonHeadValues } from '../types';
 import { SquareButton, SubContent, SubContentWithTabs } from '../shared';
 
-export function CreateStep({ form }: { form: UseFormReturn<LemonHeadValues>; bodyBase?: LemonHeadBodyType[] }) {
+const skinToneOpts = [
+  { value: 'light', label: 'Soft', color: '#FDCCA8' },
+  { value: 'tan', label: 'Medium', color: '#E0955F' },
+  { value: 'brown', label: 'Rich', color: '#984F1B' },
+  { value: 'dark', label: 'Bold', color: '#6C350D' },
+];
+
+export function CreateStep({ form, bodySet }: { form: UseFormReturn<LemonHeadValues>; bodySet?: LemonHeadsLayer[] }) {
   const [tabs, setTabs] = React.useState({
     skin: { label: 'Skin Tone', icon: '', component: SkinToneItems, mount: true },
     face: { label: 'Face', icon: 'icon-lh-mood', component: FaceItems, mount: false },
@@ -23,7 +30,7 @@ export function CreateStep({ form }: { form: UseFormReturn<LemonHeadValues>; bod
   });
 
   const [selected, setSelected] = React.useState('skin');
-  const [skin_tone, background] = form.watch(['skin_tone', 'background']);
+  const [body, background] = form.watch(['body', 'background']);
 
   return (
     <div className="flex flex-col md:flex-row-reverse flex-1 w-full md:max-w-[588px] gap-2 overflow-hidden">
@@ -36,7 +43,7 @@ export function CreateStep({ form }: { form: UseFormReturn<LemonHeadValues>; bod
 
             return (
               <div key={key} className={clsx('h-full', selected !== key ? 'hidden' : '')}>
-                <Comp form={form} />
+                <Comp form={form} bodySet={bodySet} />
               </div>
             );
           })}
@@ -60,7 +67,12 @@ export function CreateStep({ form }: { form: UseFormReturn<LemonHeadValues>; bod
                   setTabs(_tabs);
                 }}
               >
-                {key === 'skin' && <div className="size-8 rounded-full" style={{ background: skin_tone.color }} />}
+                {key === 'skin' && (
+                  <div
+                    className="size-8 rounded-full"
+                    style={{ background: skinToneOpts.find((i) => i.value === body.filters.skin_tone)?.color }}
+                  />
+                )}
                 {key === 'background' && (
                   <div
                     className="size-8 aspect-square rounded-sm"
@@ -86,23 +98,25 @@ export function CreateStep({ form }: { form: UseFormReturn<LemonHeadValues>; bod
   );
 }
 
-const skinToneOpts = [
-  { value: 'light', label: 'Soft', color: '#FDCCA8' },
-  { value: 'tan', label: 'Medium', color: '#E0955F' },
-  { value: 'brown', label: 'Rich', color: '#984F1B' },
-  { value: 'dark', label: 'Bold', color: '#6C350D' },
-];
-function SkinToneItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const skin_tone = form.watch('skin_tone');
+function SkinToneItems({ form, bodySet = [] }: { form: UseFormReturn<LemonHeadValues>; bodySet?: LemonHeadsLayer[] }) {
+  const body = form.watch('body');
+
   return (
     <div className="flex md:grid grid-cols-2 text-center gap-3 p-4 overflow-x-auto no-scrollbar">
       {skinToneOpts.map((item) => (
         <div
           key={item.value}
           className="flex flex-col gap-1 min-w-[80px]"
-          onClick={() => form.setValue('skin_tone', { value: item.value, color: item.color })}
+          onClick={() => {
+            const attachment = bodySet.find(
+              (i) => i.skin_tone === item.value && i.name === body.value && i.size === body.filters.size,
+            )?.attachment;
+
+            form.setValue('body.filters.skin_tone', item.value);
+            form.setValue('body.attachment', attachment || []);
+          }}
         >
-          <SquareButton active={skin_tone.value === item.value}>
+          <SquareButton active={body.filters.skin_tone === item.value}>
             <div className="w-full h-full rounded-sm" style={{ background: item.color }} />
           </SquareButton>
           <p>{item.label}</p>
@@ -126,63 +140,106 @@ function FaceItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
 }
 
 function FaceEyes({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const size = form.watch('size');
+  const body = form.watch('body');
   if (!active) return null;
 
-  return <SubContent field="eyes" form={form} where={`(type,eq,eyes)~and(body_type,eq,${size})`} />;
+  return (
+    <SubContent
+      field="eyes"
+      form={form}
+      where={`(type,eq,eyes)~and(size,eq,${body.filters.size})`}
+      filters={{ size: body.filters.size }}
+    />
+  );
 }
 
 function FaceMouth({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const size = form.watch('size');
+  const body = form.watch('body');
+
   if (!active) return null;
 
-  return <SubContent field="mouth" form={form} where={`(type,eq,mouth)~and(body_type,eq,${size})`} />;
+  return (
+    <SubContent
+      field="mouth"
+      form={form}
+      where={`(type,eq,mouth)~and(size,eq,${body.filters.size})`}
+      filters={{ size: body.filters.size }}
+    />
+  );
 }
 
+// FIXME: UPDATE COLOR HERE
 function FaceHair({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const size = form.watch('size');
+  const body = form.watch('body');
   if (!active) return null;
 
-  return <SubContent field="hair" form={form} where={`(type,eq,hair)~and(body_type,eq,${size})`} />;
+  return (
+    <SubContent
+      field="hair"
+      form={form}
+      where={`(type,eq,hair)~and(size,eq,${body.filters.size})~and(gender,eq,${body.filters.gender})`}
+      filters={{
+        size: body.filters.size,
+        gender: body.filters.gender,
+        color: 'black',
+      }}
+    />
+  );
 }
 
 function FaceFacialHair({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const size = form.watch('size');
+  const body = form.watch('body');
   if (!active) return null;
 
-  return <SubContent field="facial_hair" form={form} where={`(type,eq,facial_hair)~and(body_type,eq,${size})`} />;
+  return (
+    <SubContent field="facial_hair" form={form} where={`(type,eq,facial_hair)~and(size,eq,${body.filters.size})`} />
+  );
 }
 
 // ---- END FACE ----
 
 function TopItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const [gender, size] = form.watch(['gender', 'size']);
+  const body = form.watch('body');
 
   return (
-    <SubContent field="top" form={form} where={`(type,eq,top)~and(gender,eq,${gender})~and(body_type,eq,${size})`} />
+    <SubContent
+      field="top"
+      form={form}
+      where={`(type,eq,top)~and(gender,eq,${body.filters.gender})~and(size,eq,${body.filters.size})`}
+      filters={{
+        gender: body.filters.gender,
+        size: body.filters.size,
+        color: 'blue',
+      }}
+    />
   );
 }
 
 function BottomItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const [gender, size] = form.watch(['gender', 'size']);
+  const body = form.watch('body');
 
   return (
     <SubContent
       field="bottom"
       form={form}
-      where={`(type,eq,bottom)~and(gender,eq,${gender})~and(body_type,eq,${size})`}
+      where={`(type,eq,bottom)~and(gender,eq,${body.filters.gender})~and(size,eq,${body.filters.size})`}
+      filters={{
+        gender: 'male',
+        color: 'yellow',
+        size: 'small',
+      }}
     />
   );
 }
 
 function OutfitItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const [gender, size] = form.watch(['gender', 'size']);
+  const body = form.watch('body');
 
   return (
     <SubContent
       field="outfit"
       form={form}
-      where={`(type,eq,outfit)~and(gender,eq,${gender})~and(body_type,eq,${size})`}
+      where={`(type,eq,outfit)~and(gender,eq,${body.filters.gender})~and(size,eq,${body.filters.size})`}
     />
   );
 }
@@ -190,24 +247,27 @@ function OutfitItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
 // ---- START ACCESSORIES ----
 
 function AccessoriesEyeWear({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const size = form.watch('size');
+  const body = form.watch('body');
+
   if (!active) return null;
 
-  return <SubContent field="eyewear" form={form} where={`(type,eq,eyewear)~and(body_type,eq,${size})`} />;
+  return <SubContent field="eyewear" form={form} where={`(type,eq,eyewear)~and(size,eq,${body.filters.size})`} />;
 }
 
 function AccessoriesMouthGear({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const size = form.watch('size');
+  const body = form.watch('body');
+
   if (!active) return null;
 
-  return <SubContent field="mouthgear" form={form} where={`(type,eq,mouthgear)~and(body_type,eq,${size})`} />;
+  return <SubContent field="mouthgear" form={form} where={`(type,eq,mouthgear)~and(size,eq,${body.filters.size})`} />;
 }
 
 function AccessoriesHeadGear({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const size = form.watch('size');
+  const body = form.watch('body');
+
   if (!active) return null;
 
-  return <SubContent field="headgear" form={form} where={`(type,eq,headgear)~and(body_type,eq,${size})`} />;
+  return <SubContent field="headgear" form={form} where={`(type,eq,headgear)~and(size,eq,${body.filters.size})`} />;
 }
 
 function AccessoryItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
@@ -223,8 +283,9 @@ function AccessoryItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
 // ---- END ACCESSORIES ----
 
 function FootwearItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const size = form.watch('size');
-  return <SubContent field="footwear" form={form} where={`(type,eq,footwear)~and(body_type,eq,${size})`} />;
+  const body = form.watch('body');
+
+  return <SubContent field="footwear" form={form} where={`(type,eq,footwear)~and(size,eq,${body.filters.size})`} />;
 }
 
 function BackgroundItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {

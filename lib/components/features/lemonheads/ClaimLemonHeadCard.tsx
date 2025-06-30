@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 import { Button } from '$lib/components/core';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { ASSET_PREFIX } from '$lib/utils/constants';
@@ -6,6 +7,7 @@ import { useRouter } from 'next/navigation';
 
 export function ClaimLemonHeadCard() {
   const router = useRouter();
+  const [pending, setPending] = React.useState(false);
   const { hasLemonhead, loading } = useLemonhead();
 
   if (loading || hasLemonhead) return null;
@@ -30,7 +32,15 @@ export function ClaimLemonHeadCard() {
         <p className="text-lg">Become a Member</p>
         <p className="text-sm text-secondary">Claim your LemonHead to access exclusive features & rewards!</p>
       </div>
-      <Button variant="secondary" className="w-full" onClick={() => router.push('/lemonheads')}>
+      <Button
+        variant="secondary"
+        className="w-full"
+        loading={pending}
+        onClick={() => {
+          setPending(true);
+          router.push('/lemonheads');
+        }}
+      >
         Claim LemonHead
       </Button>
     </div>

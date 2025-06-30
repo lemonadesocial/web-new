@@ -1,50 +1,61 @@
-import { LemonHeadValues } from '$lib/components/features/lemonheads/types';
-import { LemonHeadAccessory } from './types';
+import { Trait } from '$lib/services/lemonhead/core';
+import { BodySize, LemonHeadsAttachment, LemonHeadsLayer } from './types';
 
 const mapping: Record<string, any> = {
   male: {
     eyes: 'focus',
     mouth: 'smile',
     hair: 'funky',
-    top: 'white_polo_tee',
-    bottom: 'red_shorts',
+    top: 'polo_tee',
+    bottom: 'shorts',
     background: 'regular_03',
   },
   female: {
     eyes: 'focus',
     mouth: 'happy',
     hair: 'fringe',
-    top: 'yellow_bralette',
-    bottom: 'yellow_shorts',
+    top: 'bralette',
+    bottom: 'shorts',
     background: 'regular_10',
   },
 };
 
-export function transformPreselect({
+// FIXME: UPDATE COLOR HERE
+function getFilters({ key, size, gender }: { key: string; gender: 'male' | 'female'; size: BodySize }) {
+  if (key === 'background') return {};
+  if (key === 'eyes') return { size };
+  if (key === 'mouth') return { size };
+  if (key === 'hair') return { size, gender, color: 'black' };
+  if (key === 'top') return { size, gender, color: 'blue' };
+  if (key === 'bottom') return { size, gender, color: 'yellow' };
+}
+
+export function transformTrait({
+  data,
   gender,
   size,
-  data = [],
 }: {
-  gender: string;
-  size: string;
-  data?: LemonHeadAccessory[];
+  data: LemonHeadsLayer[];
+  gender: 'male' | 'female';
+  size: BodySize;
 }) {
-  let result: Partial<LemonHeadValues> = {};
-  const ds = data.filter((i) => {
-    let condition = false;
-    if (i.body_type && i.body_type === size) condition = i.body_type === size;
-    return condition;
-  });
+  const acc = {} as Record<string, Trait & { Id: string; attachment: LemonHeadsAttachment[] }>;
 
   Object.entries(mapping[gender]).forEach(([key, value]) => {
-    result = {
-      ...result,
-      [key]: ds.find((i) => i.type === key && i.name === value),
+    let obj = (data.find(
+      (i) => (!i.gender || i.gender === gender) && i.name === value && (!i.size || i.size === size),
+    ) || {}) as any;
+
+    if (key === 'background') obj = (data.find((i) => i.name === value) || {}) as any;
+
+    acc[obj.type] = {
+      Id: obj.Id,
+      type: obj.type,
+      value: obj.name,
+      attachment: obj.attachment,
+      filters: getFilters({ size, gender, key: obj.type }),
     };
   });
 
-  if (gender === 'male') result.background = data.find((i) => i.name === 'regular_03');
-  if (gender === 'female') result.background = data.find((i) => i.name === 'regular_10');
-
-  return result;
+  return acc;
 }
