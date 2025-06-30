@@ -7,7 +7,7 @@ import { useDisconnect } from '@reown/appkit/react';
 import { UseFormReturn } from 'react-hook-form';
 
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
-import { Button, drawer, Menu, MenuItem, modal, Skeleton } from '$lib/components/core';
+import { Button, drawer, Menu, MenuItem, modal, Skeleton, toast } from '$lib/components/core';
 import { useConnectWallet } from '$lib/hooks/useConnectWallet';
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { ASSET_PREFIX } from '$lib/utils/constants';
@@ -65,7 +65,7 @@ export function ClaimStep({ form }: { form: UseFormReturn<LemonHeadValues> }) {
   }
 
   return (
-    <div className="flex flex-col gap-5 md:gap-8">
+    <div className="flex flex-col gap-5 md:gap-8 max-w-588px">
       <div className="flex flex-col gap-5 md:gap-2">
         <h3 className="text-2xl md:text-3xl font-semibold">Claim LemonHead</h3>
         <p className="text-tertiary">
@@ -263,7 +263,7 @@ function MintLemonHead({
       if (typeof formValues[k] === 'string') value = formValues[k];
       if (typeof formValues[k] === 'object') value = formValues[k].value;
 
-      const filterOpts = [];
+      const filterOpts: any = [];
       if (formValues[k]?.filters) {
         Object.entries(formValues[k].filters).map(([key, value]) => filterOpts.push({ key, value }));
       }
@@ -289,8 +289,9 @@ function MintLemonHead({
       const mintData = await mutation.mutateAsync({ wallet: myAccount.owner, traits });
       console.log('Mint data:', mintData);
 
-      // onHandleStep?.(3);
-    } catch (error) {
+      onHandleStep?.(3);
+    } catch (error: any) {
+      toast.error(error.message);
       console.error('Error minting LemonHead:', error);
     } finally {
       setIsMinting(false);
