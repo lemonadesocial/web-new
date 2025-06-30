@@ -27,6 +27,8 @@ const getImageUrl = async (url: string) => {
   const image = data.list?.[0].attachment[0].signedUrl;
 
   if (!image) {
+    console.log("data", data);
+    
     throw new Error(`No image found for ${url}`);
   }
 
