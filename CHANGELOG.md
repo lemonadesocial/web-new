@@ -1,5 +1,44 @@
 # Changelog
 
+## [1.55.0](https://github.com/lemonadesocial/web-new/compare/v1.54.0...v1.55.0) (2025-06-30)
+
+
+### Features
+
+* add core logic & unit tests ([a716080](https://github.com/lemonadesocial/web-new/commit/a7160804d4f6b2d620e746509e51e527197683d5))
+* citizen check ([56c6628](https://github.com/lemonadesocial/web-new/commit/56c6628108889bc81cb972131adcf74096a07150))
+* home restructure ([bf9dc9a](https://github.com/lemonadesocial/web-new/commit/bf9dc9aefe4c521e93b37bab9570ec0c5268ad5c))
+* implement image & metadata generation ([33661c9](https://github.com/lemonadesocial/web-new/commit/33661c96069967a559b9d22ff9e5c92f006dce92))
+* lint ([ef17643](https://github.com/lemonadesocial/web-new/commit/ef176438011601711266f90e9fb2246249ac9b06))
+* mute video by default ([934e6ec](https://github.com/lemonadesocial/web-new/commit/934e6ecbc8dd8e5e19926947a852fdc8de0ff7db))
+* optimize preselec ([f0ede4a](https://github.com/lemonadesocial/web-new/commit/f0ede4a8b01b164e6dbbce2c70ecd8949bb01a15))
+* profile page ([f9d8225](https://github.com/lemonadesocial/web-new/commit/f9d82251d5794caa09ad5fee9ff24ae57906b633))
+* revert ([01f5f44](https://github.com/lemonadesocial/web-new/commit/01f5f4490950c56fa6abe09e323cd7fcbb781473))
+* update core logic ([4765173](https://github.com/lemonadesocial/web-new/commit/47651734418db5d3bd40326a5e079708fc738a18))
+* update get started screen ([549df54](https://github.com/lemonadesocial/web-new/commit/549df54bcb2faf97121e4e5f790479523b02fb67))
+* update layout mobile ([984e63a](https://github.com/lemonadesocial/web-new/commit/984e63aa2511887fb19aee6dae8d44a55c24d1e9))
+* update mint api ([6e6b4ff](https://github.com/lemonadesocial/web-new/commit/6e6b4ff280805f2a106fceebe3e25e92f3dd5032))
+* update mint state ui ([c730c38](https://github.com/lemonadesocial/web-new/commit/c730c38d474d204d8422c3aecc62c5b00462de9a))
+* update mint success ui ([9ab9d03](https://github.com/lemonadesocial/web-new/commit/9ab9d036417f5c05758f6234ed482c3758790190))
+* update ui claim ([40dbbb5](https://github.com/lemonadesocial/web-new/commit/40dbbb5f693475580e139052de5eae2c6db828b2))
+* update video control web ([f841410](https://github.com/lemonadesocial/web-new/commit/f841410fbf9e8857fbf33c38190189b6504baaa5))
+
+
+### Bug Fixes
+
+* build ([9280e84](https://github.com/lemonadesocial/web-new/commit/9280e846d6dc01ac886a3dbbc65a766d297cb1e8))
+* check from node ([818cb51](https://github.com/lemonadesocial/web-new/commit/818cb51caa635e424411faee165be2f693e8a299))
+* check python build ([be33898](https://github.com/lemonadesocial/web-new/commit/be338981f6accea31f4a90d4346bcab6e3a679ec))
+* checking build ([e8d3466](https://github.com/lemonadesocial/web-new/commit/e8d34664bfb88ea597cf4733c05ba07a9b7c2c4a))
+* checking canvas lib ([91abb3a](https://github.com/lemonadesocial/web-new/commit/91abb3a24a7c9a5bc46ede017a02e217cd7cfe7f))
+* clean refetch ([95c7511](https://github.com/lemonadesocial/web-new/commit/95c75110e5ff388ae6e46f254630bbff7bfad447))
+* display identity ([4c168f1](https://github.com/lemonadesocial/web-new/commit/4c168f1b676aaa013e58e3801c8f404268a4e836))
+* fallback account display ([ebc86f7](https://github.com/lemonadesocial/web-new/commit/ebc86f79f6da89e42124c93665fbf52f731521cf))
+* lint code ([b101ad2](https://github.com/lemonadesocial/web-new/commit/b101ad2ebc1f55a5c1f92d4c448ace7dfb552b07))
+* missing env ([3318a63](https://github.com/lemonadesocial/web-new/commit/3318a639606d47f0e011ad184a0d54855772013d))
+* missing form values claim steps ([5b9892a](https://github.com/lemonadesocial/web-new/commit/5b9892aebbc50f6d675d6761026bbf217c0d16c0))
+* optimize preselect image ([bf2ad6d](https://github.com/lemonadesocial/web-new/commit/bf2ad6d8d06dc48e1fc8b30208249bb9d30f8221))
+
 ## [1.54.0](https://github.com/lemonadesocial/web-new/compare/v1.53.3...v1.54.0) (2025-06-27)
 
 
