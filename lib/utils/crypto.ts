@@ -6,12 +6,14 @@ import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
 import ERC20 from '$lib/abis/ERC20.json';
 import LemonadeRelayPayment from '$lib/abis/LemonadeRelayPayment.json';
 import LemonadeStakePayment from '$lib/abis/LemonadeStakePayment.json';
-import ERC721 from '$lib/abis/ERC721.json';
+import ERC721 from '$lib/abis/ERC721.json'; 
+import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 
 export const ERC20Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC20));
 export const ERC721Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC721));
 export const LemonadeRelayPaymentContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonadeRelayPayment.abi));
 export const LemonadeStakePaymentContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonadeStakePayment.abi));
+export const LemonheadNFTContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonheadNFT.abi));
 
 export function getListChains() {
   return getDefaultStore().get(listChainsAtom);
