@@ -11,13 +11,3 @@ export function formatCurrency(amount = 0, currency?: string, attemptedDecimals 
       })
     : 'Free';
 }
-
-export function truncateStr(params: { str?: string; prefix: number; subfix?: number }) {
-  if (!params.str || params.str?.length <= params.prefix) return params.str;
-
-  const ellipsis = '...';
-  const frontChars = params.prefix;
-  const backChars = params.subfix || params.str.length;
-
-  return params.str.substring(0, frontChars) + ellipsis + params.str.substring(params.str.length - backChars);
-}
