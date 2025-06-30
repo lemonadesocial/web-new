@@ -8,7 +8,6 @@ import { LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
 
 import { LemonHeadValues } from '../types';
 import { SquareButton, SubContent, SubContentWithTabs } from '../shared';
-import { type } from 'os';
 
 const skinToneOpts = [
   { value: 'light', label: 'Soft', color: '#FDCCA8' },

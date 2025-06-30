@@ -1,10 +1,10 @@
 'use client';
 
-import { Avatar, Button, drawer, modal } from "$lib/components/core";
+import { Avatar, Button, drawer } from '$lib/components/core';
 
-import { useMe } from "$lib/hooks/useMe";
-import { userAvatar } from "$lib/utils/user";
-import { ProfilePane } from "../pane";
+import { useMe } from '$lib/hooks/useMe';
+import { userAvatar } from '$lib/utils/user';
+import { ProfilePane } from '../pane';
 
 export function LemonadeProfileCard() {
   const me = useMe();
@@ -19,7 +19,12 @@ export function LemonadeProfileCard() {
           <p className="text-lg">{me.display_name}</p>
         </div>
       </div>
-      <Button variant="tertiary" className="w-full" size="sm" onClick={() => drawer.open(ProfilePane, { dismissible: false })}>
+      <Button
+        variant="tertiary"
+        className="w-full"
+        size="sm"
+        onClick={() => drawer.open(ProfilePane, { dismissible: false })}
+      >
         Edit Profile
       </Button>
     </div>

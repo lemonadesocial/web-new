@@ -8,7 +8,6 @@ import { transformTrait } from '$lib/trpc/lemonheads/preselect';
 import { LemonHeadValues } from '../types';
 import { SquareButton } from '../shared';
 import { LemonHeadPreview } from '../preview';
-import { size } from 'lodash';
 
 const BodyTypeMapping = { medium: 'Regular', small: 'Skinny', large: 'Toned', extra_large: 'Large' };
 const customOrder = {

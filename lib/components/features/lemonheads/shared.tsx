@@ -8,8 +8,6 @@ import { LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
 import { trpc } from '$lib/trpc/client';
 import { LemonHeadValues } from './types';
 import { Skeleton } from '$lib/components/core';
-import { unknown } from 'zod';
-import { FilterType } from '$lib/services/lemonhead/core';
 
 export function SquareButton({
   className,
