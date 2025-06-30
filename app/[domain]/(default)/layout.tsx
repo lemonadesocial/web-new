@@ -19,7 +19,7 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
 
 export default async function SiteLayout(props: { params: Promise<{ domain: string }>; children: React.ReactNode }) {
   return (
-    <main className="flex flex-col h-dvh w-full">
+    <main className="flex flex-col min-h-dvh w-full">
       <Header hideLogo />
 
       <Sidebar />
