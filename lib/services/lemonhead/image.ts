@@ -6,7 +6,7 @@ import { type Trait } from './core';
 const baseUrl = 'https://app.nocodb.com/api/v2';
 const apikey = process.env.NOCODB_ACCESS_KEY!;
 
-const tableId = 'm8fys8d596wooeq';
+const tableId = 'mksrfjc38xpo4d1';
 
 const readUrlToBuffer = async (url: string) => {
   const response = await fetch(url);
