@@ -260,13 +260,16 @@ function MintLemonHead({
     Object.keys(TraitType).forEach((k) => {
       let value = '';
 
-      // @ts-expect-error check wrong types
       if (typeof formValues[k] === 'string') value = formValues[k];
-      // @ts-expect-error check wrong types
-      if (typeof formValues[k] === 'object') value = formValues[k].name;
+      if (typeof formValues[k] === 'object') value = formValues[k].value;
+
+      const filterOpts = [];
+      if (formValues[k]?.filters) {
+        Object.entries(formValues[k].filters).map(([key, value]) => filterOpts.push({ key, value }));
+      }
 
       // @ts-expect-error check wrong types
-      if (value) traits.push({ type: k, value: value });
+      if (value) traits.push({ type: k, value: value, filters: filterOpts });
     });
 
     return traits;
@@ -286,7 +289,7 @@ function MintLemonHead({
       const mintData = await mutation.mutateAsync({ wallet: myAccount.owner, traits });
       console.log('Mint data:', mintData);
 
-      onHandleStep?.(3);
+      // onHandleStep?.(3);
     } catch (error) {
       console.error('Error minting LemonHead:', error);
     } finally {

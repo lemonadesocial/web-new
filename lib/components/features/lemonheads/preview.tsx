@@ -1,34 +1,35 @@
 import { Card } from '$lib/components/core';
-import { LemonHeadAttachment, LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
+import { LemonHeadsAttachment, LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
 import { LemonHeadValues } from './types';
 
 export function LemonHeadPreview({
   form: formValues,
-  bodyBase,
   className,
+  bodySet,
 }: {
   form: LemonHeadValues;
-  bodyBase: LemonHeadBodyType[];
+  bodySet: LemonHeadsLayer[];
   className?: string;
 }) {
-  const data = bodyBase.find(
-    (i) =>
-      i.gender === formValues.gender &&
-      i.body_type === formValues.size &&
-      i.skin_tone === formValues.skin_tone.value &&
-      i.name === formValues.body,
-  );
-
-  const getSource = (value: LemonHeadAttachment[] = []) => {
+  const getSource = (value: LemonHeadsAttachment[] = []) => {
     return value[0]?.signedUrl;
   };
+
+  const dataBody = formValues.body;
+  const body = bodySet.find(
+    (i) =>
+      i.gender === dataBody.filters.gender &&
+      i.size === dataBody.filters.size &&
+      i.name === dataBody.value &&
+      i.skin_tone === dataBody.filters.skin_tone,
+  );
 
   return (
     <Card.Root className={className}>
       <Card.Content className="p-0 max-w-[692px] aspect-square relative">
         {formValues.background && <PreviewImageItem src={getSource(formValues.background.attachment)} />}
 
-        <img src={data?.attachment?.[0].thumbnails.card_cover.signedUrl} className="w-full h-full absolute top-0" />
+        <img src={getSource(body?.attachment)} className="w-full h-full absolute top-0" />
         {formValues.hair && <PreviewImageItem src={getSource(formValues.hair.attachment)} />}
         {formValues.headgear && <PreviewImageItem src={getSource(formValues.headgear.attachment)} />}
 

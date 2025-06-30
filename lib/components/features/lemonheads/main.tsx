@@ -9,8 +9,8 @@ import clsx from 'clsx';
 
 import { Button } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
-import { LemonHeadAccessory, LemonHeadBodyType } from '$lib/trpc/lemonheads/types';
-import { transformPreselect } from '$lib/trpc/lemonheads/preselect';
+import { LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
+import { transformTrait } from '$lib/trpc/lemonheads/preselect';
 
 import { AboutYou } from './steps/about';
 import { LemonHeadValues } from './types';
@@ -21,6 +21,7 @@ import { mintAtom } from './store';
 // import { Collaborate } from './steps/collaborate';
 // import { Celebrate } from './steps/celebrate';
 import { LemonHeadGetStarted } from './steps/get-started';
+import { TraitType } from '$lib/services/lemonhead/core';
 
 const steps = [
   { key: 'getstarted', label: '', component: LemonHeadGetStarted, btnText: 'Get Started' },
@@ -31,24 +32,29 @@ const steps = [
   // { key: 'celebrate', label: 'Celebrate', componenent: Celebrate, btnText: 'Continue' },
 ];
 
-export function LemonHeadMain({
-  dataBody,
-  dataPreSelect,
-}: {
-  dataBody: LemonHeadBodyType[];
-  dataPreSelect: LemonHeadAccessory[];
-}) {
+export function LemonHeadMain({ bodySet, defaultSet }: { bodySet: LemonHeadsLayer[]; defaultSet: LemonHeadsLayer[] }) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = React.useState(0);
   const Comp = steps[currentStep].component as any;
 
+  const bodyAttatchment = bodySet.find(
+    (i) => i.name === 'human' && i.skin_tone === 'tan' && i.gender === 'female' && i.size === 'small',
+  )?.attachment;
+
   const form = useForm<LemonHeadValues>({
     defaultValues: {
-      ...(transformPreselect({ data: dataPreSelect, gender: 'female', size: 'small' }) || {}),
-      gender: 'female',
-      body: 'human',
-      size: 'small',
-      skin_tone: { value: 'light', color: '#FDCCA8' },
+      ...transformTrait({ data: defaultSet, gender: 'female', size: 'small' }),
+      body: {
+        type: TraitType.body,
+        value: 'human',
+        filters: {
+          skin_tone: 'tan',
+          size: 'small',
+          gender: 'female',
+          race: 'human',
+        },
+        attachment: bodyAttatchment,
+      },
     },
   });
 
@@ -62,10 +68,10 @@ export function LemonHeadMain({
       <div className="flex-1 overflow-auto md:overflow-hidden">
         <div className="flex flex-col md:flex md:flex-row-reverse max-w-[1440px] mx-auto gap-5 overflow-auto md:gap-18 p-4 md:p-11 md:max-h-full">
           <div className={clsx('flex-1', isMobile && currentStep > 2 && 'size-[80px] z-10')}>
-            <LemonHeadPreview form={formValues} bodyBase={dataBody} />
+            <LemonHeadPreview form={formValues} bodySet={bodySet} />
           </div>
 
-          <Comp form={form} bodyBase={dataBody} accessoriesBase={dataPreSelect} />
+          <Comp form={form} bodySet={bodySet} defaultSet={defaultSet} />
         </div>
       </div>
       <Footer

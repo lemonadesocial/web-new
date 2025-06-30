@@ -1,4 +1,6 @@
-export type LemonHeadPageInfo = {
+import { TraitType } from '$lib/services/lemonhead/core';
+
+export type LemonHeadsPageInfo = {
   isFirstPage: boolean;
   isLastPage: boolean;
   page: number;
@@ -6,7 +8,24 @@ export type LemonHeadPageInfo = {
   totalRows: number;
 };
 
-export type LemonHeadThumnail = {
+type Gender = 'male' | 'female';
+export type BodySize = 'small' | 'medium' | 'large' | 'extra_large';
+type Race = 'human' | 'alien';
+
+export type LemonHeadsLayer = {
+  Id: number;
+  name: string;
+  type: TraitType;
+  art_style?: string | null;
+  skin_tone: 'brown' | 'tan' | 'light' | 'dark';
+  gender: Gender;
+  size: BodySize;
+  race: Race;
+  color: any | null;
+  attachment: LemonHeadsAttachment[];
+};
+
+export type LemonHeadsThumnail = {
   card_cover: {
     signedUrl: string;
   };
@@ -18,7 +37,7 @@ export type LemonHeadThumnail = {
   };
 };
 
-export type LemonHeadAttachment = {
+export type LemonHeadsAttachment = {
   url: string;
   height: number;
   id: string;
@@ -27,43 +46,5 @@ export type LemonHeadAttachment = {
   size: number;
   title: 'alien.png';
   width: number;
-  thumbnails: LemonHeadThumnail;
-};
-
-type GenderType = 'male' | 'female';
-type BodyType = 'small' | 'medium' | 'large' | 'extra_large';
-
-export type LemonHeadBodyType = {
-  Id: number;
-  name: string;
-  skin_tone: string;
-  gender: GenderType;
-  body_type: BodyType;
-  attachment: LemonHeadAttachment[];
-  origin: 'alien' | 'human';
-  CreatedAt: string;
-};
-
-export type LemonHeadAccessory = {
-  Id: number;
-  name: string;
-  skin_tone?: string | null;
-  gender: GenderType;
-  body_type: BodyType;
-  attachment: LemonHeadAttachment[];
-  type:
-    | 'top'
-    | 'bottom'
-    | 'background'
-    | 'earings'
-    | 'eyes'
-    | 'eyewear'
-    | 'facial_hair'
-    | 'footwear'
-    | 'hair'
-    | 'headgear'
-    | 'mouth'
-    | 'mouthgear'
-    | 'outfit'
-    | 'outfits';
+  thumbnails: LemonHeadsThumnail;
 };

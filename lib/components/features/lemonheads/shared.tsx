@@ -4,10 +4,12 @@ import { UseFormReturn } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { uniqBy } from 'lodash';
 import { isMobile } from 'react-device-detect';
-import { LemonHeadAccessory } from '$lib/trpc/lemonheads/types';
+import { LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
 import { trpc } from '$lib/trpc/client';
 import { LemonHeadValues } from './types';
 import { Skeleton } from '$lib/components/core';
+import { unknown } from 'zod';
+import { FilterType } from '$lib/services/lemonhead/core';
 
 export function SquareButton({
   className,
@@ -69,9 +71,9 @@ export function TabsSubContent({
   );
 }
 
-function Loading() {
+function Loading({ className }: { className?: string }) {
   return (
-    <div className="flex md:grid grid-cols-3 gap-3 overflow-auto no-scrollbar">
+    <div className={twMerge('flex md:grid grid-cols-3 gap-3 overflow-auto no-scrollbar', className)}>
       {Array.from({ length: 15 }).map((_, idx) => (
         <Skeleton key={idx} className="w-full min-w-[80px] aspect-square" animate />
       ))}
@@ -84,27 +86,29 @@ export function SubContent({
   field,
   where,
   form,
+  filters = {},
 }: {
-  field: keyof LemonHeadValues;
+  field: string;
   limit?: number;
   where: string;
+  filters?: Record<string, string>;
   form: UseFormReturn<LemonHeadValues>;
 }) {
-  const selected = form.watch(field) as Partial<LemonHeadAccessory>;
+  const selected = form.watch(field) as Partial<LemonHeadsLayer>;
   const [offset, setOffSet] = React.useState(0);
-  const { data, isLoading: loading } = trpc.accessories.useQuery({
+  const { data, isLoading: loading } = trpc.lemonheads.layers.useQuery({
     limit: limit,
     offset,
     where,
   });
-  const [list, setList] = React.useState<LemonHeadAccessory[]>([]);
+  const [list, setList] = React.useState<LemonHeadsLayer[]>([]);
 
   const listInnerRef = React.useRef<any>(null);
 
   const onScroll = () => {
     if (listInnerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
-      const isNearBottom = scrollTop + clientHeight >= scrollHeight;
+      const isNearBottom = scrollTop + clientHeight >= scrollHeight - 14;
 
       if (isNearBottom) {
         if (!data?.pageInfo.isLastPage) setOffSet(list.length);
@@ -141,7 +145,15 @@ export function SubContent({
               className="flex-col items-stretch"
               onClick={() => {
                 if (item.Id === selected?.Id) form.setValue(field, undefined);
-                else form.setValue(field, { Id: item.Id, attachment: item.attachment, name: item.name });
+                else {
+                  form.setValue(field, {
+                    Id: item.Id,
+                    attachment: item.attachment,
+                    value: item.name,
+                    type: field,
+                    filters,
+                  });
+                }
               }}
             >
               <img src={item.attachment?.[0]?.thumbnails.card_cover.signedUrl} className="rounded-sm" />
@@ -159,15 +171,15 @@ export function SubContent({
 }
 
 export function SubContentWithTabs(props: { tabs: any; form: UseFormReturn<LemonHeadValues> }) {
-  const gender = props.form.watch('gender');
+  const body = props.form.watch('body');
   const [tabs, setTabs] = React.useState(props.tabs || []);
   const [currentTab, setCurrentTab] = React.useState(tabs[0].value);
 
   React.useEffect(() => {
-    if (gender === 'female') {
+    if (body.filters.gender === 'female') {
       setTabs((prev: any) => prev.filter((i: any) => i.value !== 'facial_hair'));
     }
-  }, [gender]);
+  }, [body.filters.gender]);
 
   return (
     <>
