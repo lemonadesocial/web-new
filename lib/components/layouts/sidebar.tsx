@@ -2,7 +2,6 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 
-import { Button } from "$lib/components/core/button/button";
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { useMe } from "$lib/hooks/useMe";
