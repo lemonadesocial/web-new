@@ -61,7 +61,10 @@ export function AboutYou({
               active={body.filters.gender === 'female'}
               onClick={() => {
                 form.reset();
-                form.setValue('body.filters.gender', 'female');
+                form.reset({
+                  ...transformTrait({ data: defaultSet, gender: 'female', size: 'small' }),
+                  body: { ...body, filters: { ...body.filters, gender: 'female', size: 'small' } },
+                });
               }}
             >
               <i className="icon-lh-female size-10 text-[#F270A4]" />
@@ -70,8 +73,10 @@ export function AboutYou({
             <SquareButton
               active={body.filters.gender === 'male'}
               onClick={() => {
-                form.reset();
-                form.setValue('body.filters.gender', 'male');
+                form.reset({
+                  ...transformTrait({ data: defaultSet, gender: 'male', size: 'medium' }),
+                  body: { ...body, filters: { ...body.filters, gender: 'male', size: 'medium' } },
+                });
               }}
             >
               <i className="icon-lh-male size-10 text-[#70A4FE]" />
