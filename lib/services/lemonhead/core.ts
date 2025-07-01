@@ -53,7 +53,7 @@ export interface Trait {
 
 export const layerings: Record<TraitType, { order: number[]; filterTypes: FilterType[] }> = {
   [TraitType.background]: { order: [10], filterTypes: [FilterType.art_style] },
-  [TraitType.body]: { order: [20], filterTypes: [FilterType.race, FilterType.gender, FilterType.skin_tone] },
+  [TraitType.body]: { order: [20], filterTypes: [FilterType.race, FilterType.gender, FilterType.skin_tone, FilterType.size] },
   [TraitType.footwear]: { order: [30], filterTypes: [FilterType.gender, FilterType.size, FilterType.color] },
   [TraitType.bottom]: { order: [40], filterTypes: [FilterType.gender, FilterType.size, FilterType.color] },
   [TraitType.top]: { order: [50], filterTypes: [FilterType.gender, FilterType.size, FilterType.color] },
