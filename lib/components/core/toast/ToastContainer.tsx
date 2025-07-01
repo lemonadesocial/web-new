@@ -29,7 +29,9 @@ const Toast: React.FC<{ toast: ToastProps }> = ({ toast }) => {
       style={{ boxShadow: '0px 4px 24px 0px rgba(0, 0, 0, 0.36)' }}
     >
       {Icon}
-      <p className="flex-1 font-medium">{message}</p>
+      <div className="flex-1 wrap-anywhere">
+        <p>{message}</p>
+      </div>
     </div>
   );
 };
