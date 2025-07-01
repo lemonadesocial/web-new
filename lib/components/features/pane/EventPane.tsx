@@ -20,15 +20,17 @@ import { EventDateTimeBlock } from '../event/EventDateTimeBlock';
 import { EventLocationBlock } from '../event/EventLocationBlock';
 import { AttendeesSection } from '../event/AttendeesSection';
 import { EventAccess } from '../event-access';
+import { useMe } from '$lib/hooks/useMe';
 
 export function EventPane({ eventId }: { eventId: string }) {
   const session = useSession();
   const { data, loading } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
   const event = data?.getEvent as Event;
+  const me = useMe();
 
   const hosts = event ? getEventCohosts(event) : [];
 
-  const canManage = session?.user && event && hosting(event, session.user);
+  const canManage = me?._id && event && hosting(event, me._id);
 
   return (
     <div>

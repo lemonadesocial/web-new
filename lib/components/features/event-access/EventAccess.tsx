@@ -43,9 +43,9 @@ export function EventAccess({ event }: { event: Event }) {
   });
 
   useEffect(() => {
-    if (isAttending || !ticketsData?.getMyTickets.tickets.length || !session?.user || loadingAssignTickets || ticketsLoading) return;
+    if (isAttending || !ticketsData?.getMyTickets.tickets.length || !me?._id || loadingAssignTickets || ticketsLoading) return;
 
-    const assignedTicket = getAssignedTicket(ticketsData.getMyTickets.tickets as Ticket[], session.user, me?.email as string);
+    const assignedTicket = getAssignedTicket(ticketsData.getMyTickets.tickets as Ticket[], me._id, me?.email as string);
 
     if (assignedTicket) {
       joinEvent();
@@ -60,7 +60,7 @@ export function EventAccess({ event }: { event: Event }) {
         variables: {
           input: {
             event: event._id,
-            assignees: [{ ticket: ticketsData.getMyTickets.tickets[0]._id, user: session.user }]
+            assignees: [{ ticket: ticketsData.getMyTickets.tickets[0]._id, user: me._id }]
           }
         }
       });
@@ -78,7 +78,7 @@ export function EventAccess({ event }: { event: Event }) {
       data: {
         getEvent: {
           ...event,
-          accepted: [...(event.accepted || []), session.user],
+          accepted: [...(event.accepted || []), me?._id],
         },
       },
     });
