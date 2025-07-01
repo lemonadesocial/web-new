@@ -196,7 +196,7 @@ export function SubContent({
                 onClick={() => {
                   if (item.Id === selected?.Id) form.setValue(field, undefined);
                   else {
-                    if (field === 'outfit') {
+                    if (field === 'outfit' && (formValues.top || formValues.bottom)) {
                       modal.open(ConfirmModal, {
                         props: {
                           title: 'Remove Bottom and Top?',

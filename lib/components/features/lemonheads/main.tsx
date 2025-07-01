@@ -38,19 +38,18 @@ export function LemonHeadMain({ bodySet, defaultSet }: { bodySet: LemonHeadsLaye
   const [currentStep, setCurrentStep] = React.useState(0);
   const Comp = steps[currentStep].component as any;
 
-  const bodyAttatchment = bodySet.find(
-    (i) => i.name === 'human' && i.skin_tone === 'tan' && i.gender === 'female' && i.size === 'small',
-  )?.attachment;
+  const bodyAttatchment = bodySet.find((i) => i.name === 'human' && i.skin_tone === 'tan')?.attachment;
 
   const form = useForm<LemonHeadValues>({
     defaultValues: {
-      ...transformTrait({ data: defaultSet, gender: 'female', size: 'small' }),
+      ...transformTrait({ data: defaultSet, gender: 'female', size: 'medium' }),
       body: {
         type: TraitType.body,
         value: 'human',
+        race: 'human',
         filters: {
           skin_tone: 'tan',
-          size: 'small',
+          size: 'medium',
           gender: 'female',
           race: 'human',
         },
