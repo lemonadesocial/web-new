@@ -215,7 +215,18 @@ function FaceFacialHair({ form, active = false }: { form: UseFormReturn<LemonHea
     ],
   };
 
-  return <SubContent field="facial_hair" form={form} where={lemonheads.buildQuery(trait)} />;
+  return (
+    <SubContent
+      field="facial_hair"
+      form={form}
+      where={lemonheads.buildQuery(trait)}
+      filters={{
+        size: body?.filters?.size,
+        gender: body?.filters?.gender,
+        color: facial_hair?.color,
+      }}
+    />
+  );
 }
 
 // ---- END FACE ----
@@ -283,7 +294,17 @@ function OutfitItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
     ],
   };
 
-  return <SubContent field="outfit" form={form} where={lemonheads.buildQuery(trait)} />;
+  return (
+    <SubContent
+      field="outfit"
+      form={form}
+      where={lemonheads.buildQuery(trait)}
+      filters={{
+        gender: body?.filters.gender,
+        size: body?.filters.size,
+      }}
+    />
+  );
 }
 
 // ---- START ACCESSORIES ----
@@ -301,7 +322,17 @@ function AccessoriesEyeWear({ form, active = false }: { form: UseFormReturn<Lemo
     ],
   };
 
-  return <SubContent field="eyewear" form={form} where={lemonheads.buildQuery(trait)} />;
+  return (
+    <SubContent
+      field="eyewear"
+      form={form}
+      where={lemonheads.buildQuery(trait)}
+      filters={{
+        color: eyewear?.color,
+        size: body?.filters.size,
+      }}
+    />
+  );
 }
 
 function AccessoriesMouthGear({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
@@ -314,7 +345,14 @@ function AccessoriesMouthGear({ form, active = false }: { form: UseFormReturn<Le
     filters: [{ type: FilterType.size, value: body?.filters.size }],
   };
 
-  return <SubContent field="mouthgear" form={form} where={lemonheads.buildQuery(trait)} />;
+  return (
+    <SubContent
+      field="mouthgear"
+      form={form}
+      where={lemonheads.buildQuery(trait)}
+      filters={{ size: body?.filters.size }}
+    />
+  );
 }
 
 function AccessoriesHeadGear({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
@@ -331,7 +369,14 @@ function AccessoriesHeadGear({ form, active = false }: { form: UseFormReturn<Lem
     ],
   };
 
-  return <SubContent field="headgear" form={form} where={lemonheads.buildQuery(trait)} />;
+  return (
+    <SubContent
+      field="headgear"
+      form={form}
+      where={lemonheads.buildQuery(trait)}
+      filters={{ size: body?.filters.size, gender: body?.filters.gender, color: headgear?.color }}
+    />
+  );
 }
 
 function AccessoryItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
@@ -358,7 +403,14 @@ function FootwearItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
     ],
   };
 
-  return <SubContent field="footwear" form={form} where={lemonheads.buildQuery(trait)} />;
+  return (
+    <SubContent
+      field="footwear"
+      form={form}
+      where={lemonheads.buildQuery(trait)}
+      filters={{ size: body?.filters.size, gender: body?.filters.gender, color: footwear?.color }}
+    />
+  );
 }
 
 function BackgroundItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
@@ -375,5 +427,12 @@ function PetItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
     ],
   };
 
-  return <SubContent field="pet" form={form} where={lemonheads.buildQuery(trait)} />;
+  return (
+    <SubContent
+      field="pet"
+      form={form}
+      where={lemonheads.buildQuery(trait)}
+      filters={{ race: pet?.race, color: pet?.color }}
+    />
+  );
 }

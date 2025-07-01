@@ -99,7 +99,7 @@ export function SubContent({
   field: string;
   limit?: number;
   where: string;
-  filters?: Record<string, string>;
+  filters?: Record<string, string | undefined>;
   form: UseFormReturn<LemonHeadValues>;
 }) {
   const selected = form.watch(field) as Partial<LemonHeadsLayer>;
@@ -161,6 +161,7 @@ export function SubContent({
                     value: item.name,
                     type: field as TraitType,
                     color: item.color,
+                    race: item.race,
                     filters,
                   });
                 }

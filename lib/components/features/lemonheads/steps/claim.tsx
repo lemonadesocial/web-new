@@ -9,7 +9,6 @@ import { Eip1193Provider } from 'ethers';
 
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { Button, drawer, Menu, MenuItem, modal, Skeleton, toast } from '$lib/components/core';
-import { useConnectWallet } from '$lib/hooks/useConnectWallet';
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { chainsMapAtom, sessionClientAtom } from '$lib/jotai';
@@ -323,20 +322,12 @@ function MintLemonHead({
     try {
       setIsMinting(true);
       const traits = convertFormValuesToTraits(formValues);
-      // console.log('Converted traits:', traits);
+      console.log('Converted traits:', traits);
 
       if (!myAccount?.owner) throw new Error('No wallet address found');
 
       const mintData = await mutation.mutateAsync({ wallet: myAccount.owner, traits });
       console.log('Mint data:', mintData);
-
-      // Hardcoded mint data
-      // const mintData = {
-      //   look: '0xaeb40cc1a7c1efd688877bf8229bc0f8aa4199b94ee80b259be95d8baa481eef',
-      //   signature:
-      //     '0xfc02c75ec34cc36d2c853337e4b04bc3fbbb527a09dce1f6d8e815a1abcae766105a3f27d57f36baeb72a0efed534b91a565046207b85d1abcdff7906f6ce07a1c',
-      //   metadata: '5acde2fa53fd8e6a2a188753acb76307c090ba6d201a52caad0071a36b6fca52',
-      // };
 
       if (!contractAddress) throw new Error('LemonheadNFT contract address not set');
       if (!walletProvider) throw new Error('No wallet provider found');
