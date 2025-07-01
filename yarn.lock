@@ -1203,34 +1203,34 @@
   resolved "https://registry.yarnpkg.com/@lens-chain/storage-client/-/storage-client-1.0.4.tgz#2e8b9dca74565da41c74003a7a25756f346dd0ab"
   integrity sha512-dORCTVwSWP7MWoJ257oriH7EV8g6YU3Pxgligy28XOglLEO0PBb/D4b6fuSSqWZjvfOjr4KCC4UgqU1z66VckQ==
 
-"@lens-protocol/client@^0.0.0-canary-20250624084811":
-  version "0.0.0-canary-20250624084811"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/client/-/client-0.0.0-canary-20250624084811.tgz#51ae920e4fb63526516f4759626f5c976223c119"
-  integrity sha512-Pec85KF/BvCTYjEKu3VJun9NaUV/5rB+0Idt4n/tqNYDZcnOnaY87E9cfLf2gCV1qXdy5I5wojSQa7XO8BVqyg==
+"@lens-protocol/client@^0.0.0-canary-20250627120829":
+  version "0.0.0-canary-20250627120829"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/client/-/client-0.0.0-canary-20250627120829.tgz#bbd5999bce5368b0db4f10f538ef6bb17b5f4638"
+  integrity sha512-xV82WPWpMKAs7ox7dnMjw35HlRZXtif3iXfFySYNoxxh0hy3D8E7LiOIFAbsat6GWwNkKUXRJTGau/qkluygig==
   dependencies:
     "@lens-chain/sdk" "^1.0.0"
-    "@lens-protocol/env" "0.0.0-canary-20250624084811"
-    "@lens-protocol/graphql" "0.0.0-canary-20250624084811"
-    "@lens-protocol/storage" "0.0.0-canary-20250624084811"
-    "@lens-protocol/types" "0.0.0-canary-20250624084811"
+    "@lens-protocol/env" "0.0.0-canary-20250627120829"
+    "@lens-protocol/graphql" "0.0.0-canary-20250627120829"
+    "@lens-protocol/storage" "0.0.0-canary-20250627120829"
+    "@lens-protocol/types" "0.0.0-canary-20250627120829"
     "@urql/core" "^5.0.8"
     "@urql/exchange-auth" "^2.2.0"
     graphql "^16.9.0"
     jwt-decode "^4.0.0"
 
-"@lens-protocol/env@0.0.0-canary-20250624084811":
-  version "0.0.0-canary-20250624084811"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/env/-/env-0.0.0-canary-20250624084811.tgz#96ce4e884cb5b9bc09be436bf500bec9bd97578c"
-  integrity sha512-+0usA3PVUlfG4HdGvD3kdx5AY+jdG6ohEKPDw/dNaIssFDvjymcubFVnpsIjb3P/Ib8VxCTEoSPVJXjtIHy2Tw==
+"@lens-protocol/env@0.0.0-canary-20250627120829":
+  version "0.0.0-canary-20250627120829"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/env/-/env-0.0.0-canary-20250627120829.tgz#93f5ae520c0c82a5b4dfb8ec6f7f563c4c924073"
+  integrity sha512-40P6+PY34Gyz2QzeBIJ8W0PZLL4K/G6URPZAC+hiHWvX936LcGvO8SE4kxnfjBtg6pDxR/2y6YCTtPzUvWLvAA==
   dependencies:
-    "@lens-protocol/types" "0.0.0-canary-20250624084811"
+    "@lens-protocol/types" "0.0.0-canary-20250627120829"
 
-"@lens-protocol/graphql@0.0.0-canary-20250624084811":
-  version "0.0.0-canary-20250624084811"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/graphql/-/graphql-0.0.0-canary-20250624084811.tgz#9a46c25dc9920d2fa1246f020826872008e178b5"
-  integrity sha512-c52KeRyxcy8Nxw9a48BQzPIc3nWl9IIQel1DqNO8JfD68+4FfSeKYk6SSyNYmXsbCfgsVnbR/TN7gttomEqPvA==
+"@lens-protocol/graphql@0.0.0-canary-20250627120829":
+  version "0.0.0-canary-20250627120829"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/graphql/-/graphql-0.0.0-canary-20250627120829.tgz#1dbd6b5bac8749940c1922e3e84cbd1f47fd7db1"
+  integrity sha512-qiE2h79Jnhk4sgRJGbX5GFdlHCqdOKNolAdOrc88wM40vdmKXH/m+W0yKdU8i2WmQ/mGCys60DCaEHVpanC7GQ==
   dependencies:
-    "@lens-protocol/types" "0.0.0-canary-20250624084811"
+    "@lens-protocol/types" "0.0.0-canary-20250627120829"
     gql.tada "^1.8.10"
     graphql "^16.9.0"
     type-fest "^4.26.1"
@@ -1244,18 +1244,18 @@
     json-stable-stringify "^1.1.1"
     uuid "^9.0.1"
 
-"@lens-protocol/storage@0.0.0-canary-20250624084811":
-  version "0.0.0-canary-20250624084811"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/storage/-/storage-0.0.0-canary-20250624084811.tgz#a6ad2e7306484fc30f72dd5dc9f6cbbd51cb7b46"
-  integrity sha512-NRF94UODsTZEIoEHwU92Sk+m2K8xvfNmZfXS2HrX9F8x2zQfw6JoBjYpEmZX/dEZcMTeTAuz7A1hlavkJ1n7nA==
+"@lens-protocol/storage@0.0.0-canary-20250627120829":
+  version "0.0.0-canary-20250627120829"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/storage/-/storage-0.0.0-canary-20250627120829.tgz#f1342d12ff243c8a369dd1202ad7a37b8bbc6452"
+  integrity sha512-FQ7HPsC2vqGN3SJodVkNUZ4WnLn0kxL0maiJ+t8FtaRaXBCU9AWMlsS1OwTL82wbZOKpLsm2cTA6H/dzz4FgbQ==
   dependencies:
-    "@lens-protocol/types" "0.0.0-canary-20250624084811"
+    "@lens-protocol/types" "0.0.0-canary-20250627120829"
     zod "^3.23.8"
 
-"@lens-protocol/types@0.0.0-canary-20250624084811":
-  version "0.0.0-canary-20250624084811"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/types/-/types-0.0.0-canary-20250624084811.tgz#9feb7d38f36380cb680d9798d9dae08443cfc948"
-  integrity sha512-T0Cd9MdSZQqRnQQzCc3ol4dptLYiKdZgQo+JSYN13hRWPOjst25bzH0nRDOhLM7ayeXWSR/4HALDX+iWSfcfjA==
+"@lens-protocol/types@0.0.0-canary-20250627120829":
+  version "0.0.0-canary-20250627120829"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/types/-/types-0.0.0-canary-20250627120829.tgz#becb0355227c592d8d01c94b9805497e748cc109"
+  integrity sha512-xedscq6PVAPilOljY3c6ZIVBQe/k0+Mppbypjf+nMx4a5i4hKKMMQihd6Mk+BIKUKQAuBp4oKRosmW2AOLAKpA==
   dependencies:
     neverthrow "^8.0.0"
     type-fest "^4.26.1"
