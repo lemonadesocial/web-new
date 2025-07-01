@@ -3,14 +3,20 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { isMobile } from 'react-device-detect';
 import clsx from 'clsx';
+import { ethers } from 'ethers';
 
-import { Button } from '$lib/components/core';
+import { Button, toast } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
 import { LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
 import { transformTrait } from '$lib/trpc/lemonheads/preselect';
+import { LemonheadNFTContract } from '$lib/utils/crypto';
+import { chainsMapAtom } from '$lib/jotai';
+import { trpc } from '$lib/trpc/client';
+import { TraitType } from '$lib/services/lemonhead/core';
+import { ASSET_PREFIX } from '$lib/utils/constants';
 
 import { AboutYou } from './steps/about';
 import { LemonHeadValues } from './types';
@@ -21,8 +27,8 @@ import { mintAtom } from './store';
 // import { Collaborate } from './steps/collaborate';
 // import { Celebrate } from './steps/celebrate';
 import { LemonHeadGetStarted } from './steps/get-started';
-import { TraitType } from '$lib/services/lemonhead/core';
-import { ASSET_PREFIX } from '$lib/utils/constants';
+
+import { convertFormValuesToTraits, LEMONHEAD_CHAIN_ID } from './utils';
 
 const steps = [
   { key: 'getstarted', label: '', component: LemonHeadGetStarted, btnText: 'Get Started' },
@@ -60,6 +66,36 @@ export function LemonHeadMain({ bodySet, defaultSet }: { bodySet: LemonHeadsLaye
 
   const formValues = form.watch();
 
+  const validateNft = trpc.validateNft.useMutation();
+  const chainsMap = useAtomValue(chainsMapAtom);
+  const chain = chainsMap[LEMONHEAD_CHAIN_ID];
+  const contractAddress = chain?.lemonhead_contract_address;
+
+  const checkMinted = async () => {
+    let isValid = true;
+
+    try {
+      const traits = convertFormValuesToTraits(formValues);
+      if (!traits.length || !contractAddress) return;
+
+      const { lookHash } = await validateNft.mutateAsync({ traits });
+
+      const provider = new ethers.JsonRpcProvider(chain.rpc_url);
+      const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
+
+      const owner = await contract.getFunction('uniqueLooks')(lookHash);
+      if (owner && owner !== ethers.ZeroAddress) {
+        toast.error('This LemonHead look has already been minted');
+        isValid = false;
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
   return (
     <main className="flex flex-col h-screen w-full divide-y divide-[var(--color-divider)]">
       <div className="bg-background/80 backdrop-blur-md z-10">
@@ -83,8 +119,15 @@ export function LemonHeadMain({ bodySet, defaultSet }: { bodySet: LemonHeadsLaye
       </div>
       <Footer
         step={currentStep}
-        onNext={() => {
-          if (currentStep < steps.length - 1) setCurrentStep((prev) => prev + 1);
+        onNext={async () => {
+          if (currentStep < steps.length - 1) {
+            // check valid traits before move next
+            if (currentStep === 2) {
+              const valid = await checkMinted();
+              if (!valid) return;
+            }
+            setCurrentStep((prev) => prev + 1);
+          }
 
           // FIXME: it's last step for now. should update logic here when implement 2 more steps
           if (steps[currentStep].key === 'claim') {

@@ -135,8 +135,9 @@ export function AboutYou({
                 ...transformTrait({ data: defaultSet, gender: body.filters.gender, size: alien?.size, race: 'alien' }),
                 body: {
                   ...formValues.body,
+                  value: 'alien',
                   attachment: alien?.attachment,
-                  filters: { ...formValues.body.filters, size: alien?.size },
+                  filters: { ...formValues.body.filters, size: alien?.size, race: 'alien' },
                 },
               }}
               bodySet={bodySet}
