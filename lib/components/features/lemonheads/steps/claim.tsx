@@ -370,7 +370,8 @@ function MintLemonHead({
     }
   };
 
-  if (!myAccount || !username) return null;
+  // FIXME: open this when go live
+  // if (!myAccount || !username) return null;
 
   if (isLoading) return <Skeleton animate className="h-8 w-1/2 rounded" />;
 
