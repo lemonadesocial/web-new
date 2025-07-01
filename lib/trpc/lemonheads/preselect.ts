@@ -5,22 +5,21 @@ const mapping: Record<string, any> = {
   male: {
     eyes: 'focus',
     mouth: 'smile',
-    hair: 'funky',
+    hair: 'black_funky',
     top: 'polo_tee',
-    bottom: 'shorts',
-    background: 'regular_03',
+    bottom: 'red_shorts',
+    background: 'sky',
   },
   female: {
     eyes: 'focus',
     mouth: 'happy',
-    hair: 'fringe',
+    hair: 'black_fringe',
     top: 'bralette',
-    bottom: 'shorts',
-    background: 'regular_10',
+    bottom: 'yellow_shorts',
+    background: 'red',
   },
 };
 
-// FIXME: UPDATE COLOR HERE
 function getFilters({
   key,
   size,
