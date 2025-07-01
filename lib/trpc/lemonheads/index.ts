@@ -1,6 +1,6 @@
 import axios, { Axios } from 'axios';
 import { FilterType, TraitType } from '$lib/services/lemonhead/core';
-import { LemonHeadsLayer, LemonHeadsPageInfo } from './types';
+import { LemonHeadsColor, LemonHeadsLayer, LemonHeadsPageInfo } from './types';
 
 type PARAMS = {
   offset?: number;
@@ -108,6 +108,19 @@ class LemonHead {
       url: '/tables/mksrfjc38xpo4d1/records',
       params: {
         where,
+        limit: 100,
+      },
+    });
+  }
+
+  getColorSet() {
+    return this.instance.request<{
+      list: LemonHeadsColor[];
+      pageInfo: LemonHeadsPageInfo;
+    }>({
+      method: 'get',
+      url: '/tables/mgdpc3xfu1xmgzm/records',
+      params: {
         limit: 100,
       },
     });

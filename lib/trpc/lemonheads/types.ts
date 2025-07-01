@@ -48,3 +48,5 @@ export type LemonHeadsAttachment = {
   width: number;
   thumbnails: LemonHeadsThumnail;
 };
+
+export type LemonHeadsColor = { name: string; value: { key: string; value: string }[] };

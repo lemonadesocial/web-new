@@ -32,6 +32,10 @@ export const appRouter = router({
       const { data } = await lemonheads.getDefaultSet();
       return data;
     }),
+    colorSet: publicProcedure.query(async () => {
+      const { data } = await lemonheads.getColorSet();
+      return data;
+    }),
   },
   mintNft: publicProcedure
     .input(z.object({ wallet: z.string(), traits: z.any(), sponsor: z.string().optional() }))
