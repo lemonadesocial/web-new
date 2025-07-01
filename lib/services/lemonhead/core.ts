@@ -79,11 +79,11 @@ export function findConflictTraits(existingTraits: Trait[], newTrait: Trait) {
     if (trait.type === newTrait.type) return true;
 
     // Check if the layers conflict between renderable traits
-    const traitLayers = layerings[trait.type] || [];
-    const newTraitLayers = layerings[newTrait.type] || [];
+    const traitLayers = layerings[trait.type].order;
+    const newTraitLayers = layerings[newTrait.type].order;
 
     // If any layer overlaps, there's a conflict
-    return traitLayers.order.some((layer) => newTraitLayers.order.includes(layer));
+    return traitLayers.some((layer) => newTraitLayers.includes(layer));
   });
 }
 
@@ -117,6 +117,14 @@ export function validateTraits(traits: Trait[]) {
     [TraitType.top, TraitType.bottom].some((trait) => !traits.some((t) => t.type === trait))
   ) {
     throw new Error('Top and bottom are required if no outfit is present');
+  }
+
+  //-- alien cannot have eyes, mouth, or hair
+  const bodyTrait = traits.find((trait) => trait.type === TraitType.body);
+  if (bodyTrait?.value === 'alien' && bodyTrait.filters?.some((filter) => filter.type === FilterType.race && filter.value === 'alien')) {
+    if (traits.some((trait) => [TraitType.eyes, TraitType.mouth, TraitType.hair].includes(trait.type))) {
+      throw new Error('Alien cannot have eyes, mouth, or hair');
+    }
   }
 
   //-- 4. filters validation
@@ -162,11 +170,11 @@ export function getFinalTraits(traits: Trait[]) {
     })
     .map((trait) => ({
       ...trait,
-      filter: layerings[trait.type].filterTypes
+      filters: layerings[trait.type].filterTypes
         //-- only include filters that are in the trait type's filterTypes
         .flatMap((filterType) => {
           const filter = trait.filters?.find((filter) => filter.type === filterType);
-          return filter ? [filter] : [];
+          return filter?.value ? [filter] : [];
         })
         //-- sort the filters by type alphabetically
         .sort((a, b) => a.type.localeCompare(b.type)),

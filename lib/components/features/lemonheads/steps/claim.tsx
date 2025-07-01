@@ -14,7 +14,6 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { chainsMapAtom, sessionClientAtom } from '$lib/jotai';
 import { useClient } from '$lib/graphql/request';
 import { trpc } from '$lib/trpc/client';
-import { Trait, TraitType } from '$lib/services/lemonhead/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { formatWallet, LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
@@ -26,6 +25,7 @@ import { ProfilePane } from '../../pane';
 import { mintAtom } from '../store';
 import { LemonHeadValues } from '../types';
 import { ConnectWallet } from '../../modals/ConnectWallet';
+import { convertFormValuesToTraits, LEMONHEAD_CHAIN_ID } from '../utils';
 
 const steps = [
   {
@@ -281,28 +281,8 @@ function MintLemonHead({
   const { walletProvider } = useAppKitProvider('eip155');
   const chainsMap = useAtomValue(chainsMapAtom);
 
-  const chain = chainsMap[process.env.NEXT_PUBLIC_APP_ENV === 'production' ? '1' : '11155111'];
+  const chain = chainsMap[LEMONHEAD_CHAIN_ID];
   const contractAddress = chain?.lemonhead_contract_address;
-
-  const convertFormValuesToTraits = (formValues: LemonHeadValues) => {
-    const traits = [] as Trait[];
-    Object.keys(TraitType).forEach((k) => {
-      let value = '';
-
-      if (typeof formValues[k] === 'string') value = formValues[k];
-      if (typeof formValues[k] === 'object') value = formValues[k].value;
-
-      const filterOpts: any = [];
-      if (formValues[k]?.filters) {
-        Object.entries(formValues[k].filters).map(([key, value]) => filterOpts.push({ type: key, value }));
-      }
-
-      // @ts-expect-error check wrong types
-      if (value) traits.push({ type: k, value: value, filters: filterOpts.length ? filterOpts : undefined });
-    });
-
-    return traits;
-  };
 
   React.useEffect(() => {
     const fetchMintPrice = async () => {
@@ -364,7 +344,6 @@ function MintLemonHead({
       onHandleStep?.(3);
     } catch (error: any) {
       toast.error(error.message);
-      console.error('Error minting LemonHead:', error);
     } finally {
       setIsMinting(false);
     }

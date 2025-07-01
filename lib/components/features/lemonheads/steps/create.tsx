@@ -3,13 +3,21 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import { UseFormReturn } from 'react-hook-form';
+import { useAtomValue } from 'jotai';
+import { ethers } from 'ethers';
+
 import { Card } from '$lib/components/core';
 import { LemonHeadsColor, LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
 import { FilterType, TraitType } from '$lib/services/lemonhead/core';
 import lemonheads, { BuildQueryParams } from '$lib/trpc/lemonheads';
+import { toast } from '$lib/components/core';
+import { LemonheadNFTContract } from '$lib/utils/crypto';
+import { trpc } from '$lib/trpc/client';
+import { chainsMapAtom } from '$lib/jotai';
+import { convertFormValuesToTraits, LEMONHEAD_CHAIN_ID } from '../utils';
+
 import { LemonHeadValues } from '../types';
 import { SquareButton, SubContent, SubContentWithTabs } from '../shared';
-import { trpc } from '$lib/trpc/client';
 
 const skinToneOpts = [
   { value: 'light', label: 'Soft', color: '#FDCCA8' },
@@ -36,6 +44,38 @@ export function CreateStep({ form, bodySet }: { form: UseFormReturn<LemonHeadVal
 
   const [selected, setSelected] = React.useState('skin');
   const [body, background] = form.watch(['body', 'background']);
+
+  const validateNft = trpc.validateNft.useMutation();
+  const chainsMap = useAtomValue(chainsMapAtom);
+  const chain = chainsMap[LEMONHEAD_CHAIN_ID];
+  const contractAddress = chain?.lemonhead_contract_address;
+
+  React.useEffect(() => {
+    const subscription = form.watch((values: any) => {
+      checkMinted(values);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const checkMinted = async (formValues: LemonHeadValues) => {
+    try {
+      const traits = convertFormValuesToTraits(formValues);
+      if (!traits.length || !contractAddress) return;
+
+      const { lookHash } = await validateNft.mutateAsync({ traits });
+
+      const provider = new ethers.JsonRpcProvider(chain.rpc_url);
+      const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
+
+      const owner = await contract.getFunction('uniqueLooks')(lookHash);
+      if (owner && owner !== ethers.ZeroAddress) {
+        toast.error('This LemonHead look has already been minted');
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
 
   return (
     <div className="flex flex-col md:flex-row-reverse flex-1 w-full md:max-w-[588px] gap-2 overflow-hidden">
