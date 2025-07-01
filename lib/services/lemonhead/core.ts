@@ -79,11 +79,11 @@ export function findConflictTraits(existingTraits: Trait[], newTrait: Trait) {
     if (trait.type === newTrait.type) return true;
 
     // Check if the layers conflict between renderable traits
-    const traitLayers = layerings[trait.type] || [];
-    const newTraitLayers = layerings[newTrait.type] || [];
+    const traitLayers = layerings[trait.type].order;
+    const newTraitLayers = layerings[newTrait.type].order;
 
     // If any layer overlaps, there's a conflict
-    return traitLayers.order.some((layer) => newTraitLayers.order.includes(layer));
+    return traitLayers.some((layer) => newTraitLayers.includes(layer));
   });
 }
 
@@ -162,11 +162,11 @@ export function getFinalTraits(traits: Trait[]) {
     })
     .map((trait) => ({
       ...trait,
-      filter: layerings[trait.type].filterTypes
+      filters: layerings[trait.type].filterTypes
         //-- only include filters that are in the trait type's filterTypes
         .flatMap((filterType) => {
           const filter = trait.filters?.find((filter) => filter.type === filterType);
-          return filter ? [filter] : [];
+          return filter?.value ? [filter] : [];
         })
         //-- sort the filters by type alphabetically
         .sort((a, b) => a.type.localeCompare(b.type)),

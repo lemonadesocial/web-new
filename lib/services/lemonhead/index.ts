@@ -57,6 +57,10 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
   //-- call backend API and obtain the signature
   const data = await getApproval(wallet, lookHash, sponsor);
 
+  if (!data) {
+    throw new Error('Failed to get minting approval');
+  }
+
   return {
     //-- use these to call the contract minting function
     look: lookHash,
