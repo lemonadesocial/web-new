@@ -60,6 +60,8 @@ export function transformTrait({
       (i) => (!i.gender || i.gender === gender) && i.name === value && (!i.size || i.size === size),
     ) || {}) as any;
 
+    if (!obj.type) return;
+
     if (key === 'background') obj = (data.find((i) => i.name === value) || {}) as any;
 
     acc[obj.type] = {
