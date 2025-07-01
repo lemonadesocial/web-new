@@ -1,4 +1,6 @@
 const request = async <T>(uri: string, method: 'POST' | 'GET', body?: Record<string, unknown>) => {
+  if (!process.env.BACKEND_ADMIN_URL) return;
+
   const response = await fetch(`${process.env.BACKEND_ADMIN_URL}${uri}`, {
     method,
     headers: {

@@ -29,7 +29,6 @@ async function fetchLemonheadBalance(address: string, chainsMap: Record<string, 
 }
 
 export function useLemonhead() {
-  console.log('useLemonhead');
   const { address } = useAppKitAccount();
   const chainsMap = useAtomValue(chainsMapAtom);
 
