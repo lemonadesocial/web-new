@@ -1,6 +1,6 @@
 import axios, { Axios } from 'axios';
-import { LemonHeadsLayer, LemonHeadsPageInfo } from './types';
-import { TraitType } from '$lib/services/lemonhead/core';
+import { FilterType, TraitType } from '$lib/services/lemonhead/core';
+import { LemonHeadsColor, LemonHeadsLayer, LemonHeadsPageInfo } from './types';
 
 type PARAMS = {
   offset?: number;
@@ -9,11 +9,11 @@ type PARAMS = {
   viewId?: string;
 };
 
-type BuildQueryParams = {
+export type BuildQueryParams = {
   type: TraitType;
-  ops: 'anyof' | 'eq';
-  value: string;
-  filters: { type: TraitType; value: string }[];
+  ops?: 'anyof' | 'eq';
+  value?: string;
+  filters: { type: FilterType; value?: string }[];
 };
 
 class LemonHead {
@@ -113,13 +113,28 @@ class LemonHead {
     });
   }
 
+  getColorSet() {
+    return this.instance.request<{
+      list: LemonHeadsColor[];
+      pageInfo: LemonHeadsPageInfo;
+    }>({
+      method: 'get',
+      url: '/tables/mgdpc3xfu1xmgzm/records',
+      params: {
+        limit: 100,
+      },
+    });
+  }
+
   buildQuery(params: BuildQueryParams) {
     const { type, value, ops = 'eq', filters } = params;
-    return [
-      `(type,${ops},${type})`,
-      `(name,${ops},${value})`,
-      ...(filters?.map((f) => `(${f.type},eq,${f.value})`) || []),
-    ].join('~and');
+    let arr = [`(type,${ops},${type})`];
+    if (value) arr.push(`(name,${ops},${value})`);
+    if (filters?.length) {
+      arr = [...arr, ...filters.filter((i) => i.value).map((f) => `(${f.type},eq,${f.value})`)];
+    }
+
+    return arr.join('~and');
   }
 }
 

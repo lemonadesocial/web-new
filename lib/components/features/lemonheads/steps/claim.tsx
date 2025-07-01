@@ -290,7 +290,7 @@ function MintLemonHead({
 
       const provider = new ethers.JsonRpcProvider(chain.rpc_url);
       const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
-      
+
       try {
         const price = await contract.getFunction('mintPrice')();
         setMintPrice(price);
@@ -321,10 +321,12 @@ function MintLemonHead({
     try {
       setIsMinting(true);
       const traits = convertFormValuesToTraits(formValues);
+      console.log('Converted traits:', traits);
 
       if (!myAccount?.owner) throw new Error('No wallet address found');
 
       const mintData = await mutation.mutateAsync({ wallet: myAccount.owner, traits });
+      console.log('Mint data:', mintData);
 
       if (!contractAddress) throw new Error('LemonheadNFT contract address not set');
       if (!walletProvider) throw new Error('No wallet provider found');
@@ -347,7 +349,8 @@ function MintLemonHead({
     }
   };
 
-  if (!myAccount || !username) return null;
+  // FIXME: open this when go live
+  // if (!myAccount || !username) return null;
 
   if (isLoading) return <Skeleton animate className="h-8 w-1/2 rounded" />;
 

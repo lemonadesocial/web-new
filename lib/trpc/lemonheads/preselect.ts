@@ -53,6 +53,8 @@ export function transformTrait({
       type: obj.type,
       value: obj.name,
       attachment: obj.attachment,
+      color: obj.color,
+      race: obj.race,
       filters: getFilters({ size, gender, key: obj.type }),
     };
   });

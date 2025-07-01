@@ -22,6 +22,7 @@ import { mintAtom } from './store';
 // import { Celebrate } from './steps/celebrate';
 import { LemonHeadGetStarted } from './steps/get-started';
 import { TraitType } from '$lib/services/lemonhead/core';
+import { ASSET_PREFIX } from '$lib/utils/constants';
 
 const steps = [
   { key: 'getstarted', label: '', component: LemonHeadGetStarted, btnText: 'Get Started' },
@@ -68,7 +69,14 @@ export function LemonHeadMain({ bodySet, defaultSet }: { bodySet: LemonHeadsLaye
       <div className="flex-1 overflow-auto md:overflow-hidden">
         <div className="flex flex-col md:flex md:flex-row-reverse max-w-[1440px] mx-auto gap-5 overflow-auto md:gap-18 p-4 md:p-11 md:max-h-full">
           <div className={clsx('flex-1', isMobile && currentStep > 2 && 'size-[80px] z-10')}>
-            <LemonHeadPreview form={formValues} bodySet={bodySet} />
+            {currentStep === 0 ? (
+              <img
+                src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
+                className="rounded-sm w-full h-full"
+              />
+            ) : (
+              <LemonHeadPreview form={formValues} bodySet={bodySet} />
+            )}
           </div>
 
           <Comp form={form} bodySet={bodySet} defaultSet={defaultSet} />

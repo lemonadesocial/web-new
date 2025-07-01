@@ -33,6 +33,10 @@ export const appRouter = router({
       const { data } = await lemonheads.getDefaultSet();
       return data;
     }),
+    colorSet: publicProcedure.query(async () => {
+      const { data } = await lemonheads.getColorSet();
+      return data;
+    }),
   },
   validateNft: publicProcedure
     .input(z.object({ traits: z.any() }))
