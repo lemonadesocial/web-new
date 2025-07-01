@@ -5,7 +5,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { isMobile } from 'react-device-detect';
 import { useDisconnect, useAppKitProvider, useAppKitAccount } from '@reown/appkit/react';
 import { UseFormReturn } from 'react-hook-form';
-import { Eip1193Provider } from 'ethers';
+import { Eip1193Provider, ethers } from 'ethers';
 
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { Button, drawer, Menu, MenuItem, modal, Skeleton, toast } from '$lib/components/core';
@@ -40,7 +40,7 @@ const steps = [
   },
   {
     title: 'Mint LemonHead',
-    subtitle: `You're ready to mint! Lock in your LemonHead forever for 0.01337 ETH and show it off.`,
+    subtitle: `You're ready to mint! Lock in your LemonHead forever and show it off.`,
     component: MintLemonHead,
   },
   {
@@ -273,6 +273,7 @@ function MintLemonHead({
   onHandleStep?: (value: number) => void;
 }) {
   const [isMinting, setIsMinting] = React.useState(false);
+  const [mintPrice, setMintPrice] = React.useState<bigint | null>(null);
   const { account: myAccount } = useAccount();
   const { username, isLoading } = useLemonadeUsername(myAccount);
   const formValues = form.watch();
@@ -303,6 +304,24 @@ function MintLemonHead({
     return traits;
   };
 
+  React.useEffect(() => {
+    const fetchMintPrice = async () => {
+      if (!contractAddress) return;
+
+      const provider = new ethers.JsonRpcProvider(chain.rpc_url);
+      const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
+
+      try {
+        const price = await contract.getFunction('mintPrice')();
+        setMintPrice(price);
+      } catch (error) {
+        console.error('Error fetching mint price:', error);
+      }
+    };
+
+    fetchMintPrice();
+  }, [contractAddress, chain.rpc_url]);
+
   const onClickClaim = () => {
     modal.open(ConnectWallet, {
       props: {
@@ -331,16 +350,7 @@ function MintLemonHead({
 
       if (!contractAddress) throw new Error('LemonheadNFT contract address not set');
       if (!walletProvider) throw new Error('No wallet provider found');
-
-      const price = await writeContract(
-        LemonheadNFTContract,
-        contractAddress,
-        walletProvider as Eip1193Provider,
-        'mintPrice',
-        [],
-      );
-
-      console.log('price', price);
+      if (!mintPrice) throw new Error('Mint price not set');
 
       const tx = await writeContract(
         LemonheadNFTContract,
@@ -348,7 +358,7 @@ function MintLemonHead({
         walletProvider as Eip1193Provider,
         'mint',
         [mintData.look, mintData.metadata, mintData.signature],
-        { value: price },
+        { value: mintPrice },
       );
       await tx.wait();
       onHandleStep?.(3);
@@ -367,7 +377,7 @@ function MintLemonHead({
   return (
     <div>
       <Button variant="secondary" onClick={onClickClaim} loading={isMinting}>
-        Mint
+        Mint {mintPrice && `‣ ${ethers.formatEther(mintPrice)} ETH`}
       </Button>
     </div>
   );

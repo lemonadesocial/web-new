@@ -24,9 +24,8 @@ export function useAuth(hydraClientId?: string) {
       .toSession()
       .then(({ data }) => {
         const id = data.identity?.id;
-        const user = data.identity?.metadata_public as { user: string } | null;
 
-        if (id && user?.user) setSession({ _id: id, user: user.user });
+        if (id) setSession({ _id: id });
       })
       .catch((error) => {
         if (error.response?.status === 401) {
