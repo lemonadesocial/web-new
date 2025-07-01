@@ -51,6 +51,7 @@ export function ClaimAccountModal() {
       metadataUri: uri,
     })
       .andThen(handleOperationWith(signer))
+      .andThen(sessionClient.waitForTransaction)
       .andThen((txHash) => fetchAccount(sessionClient, { txHash }).map(nonNullable))
       .andThen((account) => {
         setAccount(account);
