@@ -134,7 +134,7 @@ export function SubContent({
   const formValues = form.watch();
 
   const [condition, setCondition] = React.useState(where);
-  const [selectedColor, setSelectedColor] = React.useState(formValues[field].color);
+  const [selectedColor, setSelectedColor] = React.useState(formValues[field]?.color);
 
   const {
     data,
