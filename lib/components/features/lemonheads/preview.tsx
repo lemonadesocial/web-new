@@ -40,10 +40,11 @@ export function LemonHeadPreview({
         {formValues.mouthgear && <PreviewImageItem src={getSource(formValues.mouthgear.attachment)} />}
 
         {formValues.facial_hair && <PreviewImageItem src={getSource(formValues.facial_hair.attachment)} />}
+        {formValues.footwear && <PreviewImageItem src={getSource(formValues.footwear.attachment)} />}
         {formValues.bottom && <PreviewImageItem src={getSource(formValues.bottom.attachment)} />}
         {formValues.top && <PreviewImageItem src={getSource(formValues.top.attachment)} />}
         {formValues.outfit && <PreviewImageItem src={getSource(formValues.outfit.attachment)} />}
-        {formValues.footwear && <PreviewImageItem src={getSource(formValues.footwear.attachment)} />}
+        {formValues.pet && <PreviewImageItem src={getSource(formValues.pet.attachment)} />}
       </Card.Content>
     </Card.Root>
   );

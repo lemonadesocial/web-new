@@ -7,7 +7,8 @@ import { isMobile } from 'react-device-detect';
 import { LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
 import { trpc } from '$lib/trpc/client';
 import { LemonHeadValues } from './types';
-import { Skeleton } from '$lib/components/core';
+import { Card, CardRoot, Skeleton } from '$lib/components/core';
+import { layerings, TraitType } from '$lib/services/lemonhead/core';
 
 export function SquareButton({
   className,
@@ -80,6 +81,14 @@ function Loading({ className, loadMore }: { className?: string; loadMore?: boole
   );
 }
 
+export function ColorTool() {
+  return (
+    <Card.Root>
+      <Card.Content>asdasd</Card.Content>
+    </Card.Root>
+  );
+}
+
 export function SubContent({
   limit = 27,
   field,
@@ -95,6 +104,7 @@ export function SubContent({
 }) {
   const selected = form.watch(field) as Partial<LemonHeadsLayer>;
   const [offset, setOffSet] = React.useState(0);
+
   const { data, isLoading: loading } = trpc.lemonheads.layers.useQuery({
     limit: limit,
     offset,
@@ -149,7 +159,8 @@ export function SubContent({
                     Id: item.Id,
                     attachment: item.attachment,
                     value: item.name,
-                    type: field,
+                    type: field as TraitType,
+                    color: item.color,
                     filters,
                   });
                 }

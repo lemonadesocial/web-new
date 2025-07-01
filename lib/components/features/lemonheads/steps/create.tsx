@@ -7,7 +7,10 @@ import { Card } from '$lib/components/core';
 import { LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
 
 import { LemonHeadValues } from '../types';
-import { SquareButton, SubContent, SubContentWithTabs } from '../shared';
+import { ColorTool, SquareButton, SubContent, SubContentWithTabs } from '../shared';
+import { FilterType, Trait, TraitType } from '$lib/services/lemonhead/core';
+import { type } from 'os';
+import lemonheads, { BuildQueryParams } from '$lib/trpc/lemonheads';
 
 const skinToneOpts = [
   { value: 'light', label: 'Soft', color: '#FDCCA8' },
@@ -143,13 +146,13 @@ function FaceEyes({ form, active = false }: { form: UseFormReturn<LemonHeadValue
   const body = form.watch('body');
   if (!active) return null;
 
+  const trait: BuildQueryParams = {
+    type: TraitType.eyes,
+    filters: [{ type: FilterType.size, value: body?.filters.size }],
+  };
+
   return (
-    <SubContent
-      field="eyes"
-      form={form}
-      where={`(type,eq,eyes)~and(size,eq,${body.filters.size})`}
-      filters={{ size: body.filters.size }}
-    />
+    <SubContent field="eyes" form={form} where={lemonheads.buildQuery(trait)} filters={{ size: body.filters.size }} />
   );
 }
 
@@ -158,75 +161,112 @@ function FaceMouth({ form, active = false }: { form: UseFormReturn<LemonHeadValu
 
   if (!active) return null;
 
+  const trait: BuildQueryParams = {
+    type: TraitType.mouth,
+    filters: [{ type: FilterType.size, value: body?.filters.size }],
+  };
+
   return (
-    <SubContent
-      field="mouth"
-      form={form}
-      where={`(type,eq,mouth)~and(size,eq,${body.filters.size})`}
-      filters={{ size: body.filters.size }}
-    />
+    <SubContent field="mouth" form={form} where={lemonheads.buildQuery(trait)} filters={{ size: body.filters.size }} />
   );
 }
 
 // FIXME: UPDATE COLOR HERE
 function FaceHair({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const body = form.watch('body');
+  const [body, hair] = form.watch(['body', 'hair']);
   if (!active) return null;
 
+  const trait: BuildQueryParams = {
+    type: TraitType.hair,
+    filters: [
+      { type: FilterType.size, value: body?.filters.size },
+      { type: FilterType.gender, value: body?.filters.gender },
+      { type: FilterType.color, value: hair?.color },
+    ],
+  };
+
   return (
-    <SubContent
-      field="hair"
-      form={form}
-      where={`(type,eq,hair)~and(size,eq,${body.filters.size})~and(gender,eq,${body.filters.gender})`}
-      filters={{
-        size: body.filters.size,
-        gender: body.filters.gender,
-        color: 'black',
-      }}
-    />
+    <>
+      <SubContent
+        field="hair"
+        form={form}
+        where={lemonheads.buildQuery(trait)}
+        filters={{
+          size: body?.filters?.size,
+          gender: body?.filters?.gender,
+          color: hair?.color,
+        }}
+      />
+      <ColorTool />
+    </>
   );
 }
 
 function FaceFacialHair({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const body = form.watch('body');
+  const [body, facial_hair] = form.watch(['body', 'facial_hair']);
   if (!active) return null;
 
-  return (
-    <SubContent field="facial_hair" form={form} where={`(type,eq,facial_hair)~and(size,eq,${body.filters.size})`} />
-  );
+  const trait: BuildQueryParams = {
+    type: TraitType.facial_hair,
+    filters: [
+      { type: FilterType.size, value: body?.filters.size },
+      { type: FilterType.gender, value: body?.filters.gender },
+      { type: FilterType.color, value: facial_hair?.color },
+    ],
+  };
+
+  return <SubContent field="facial_hair" form={form} where={lemonheads.buildQuery(trait)} />;
 }
 
 // ---- END FACE ----
 
 function TopItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const body = form.watch('body');
+  const [body, top] = form.watch(['body', 'top']);
+
+  const trait: BuildQueryParams = {
+    type: TraitType.top,
+    filters: [
+      { type: FilterType.size, value: body?.filters.size },
+      { type: FilterType.gender, value: body?.filters.gender },
+      { type: FilterType.color, value: top?.color },
+    ],
+  };
 
   return (
     <SubContent
       field="top"
       form={form}
-      where={`(type,eq,top)~and(gender,eq,${body.filters.gender})~and(size,eq,${body.filters.size})`}
+      where={lemonheads.buildQuery(trait)}
       filters={{
-        gender: body.filters.gender,
-        size: body.filters.size,
-        color: 'blue',
+        gender: body?.filters.gender,
+        size: body?.filters.size,
+        color: top?.color,
       }}
     />
   );
 }
 
 function BottomItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const body = form.watch('body');
+  const [body, bottom] = form.watch(['body', 'bottom']);
+
+  const trait: BuildQueryParams = {
+    type: TraitType.bottom,
+    filters: [
+      { type: FilterType.size, value: body?.filters.size },
+      { type: FilterType.gender, value: body?.filters.gender },
+      { type: FilterType.color, value: bottom?.color },
+    ],
+  };
 
   return (
     <SubContent
       field="bottom"
       form={form}
-      where={`(type,eq,bottom)~and(gender,eq,${body.filters.gender})~and(size,eq,${body.filters.size})`}
+      where={lemonheads.buildQuery(trait)}
       filters={{
-        gender: 'male',
-        color: 'yellow',
-        size: 'small',
+        gender: body?.filters.gender,
+        color: bottom?.color,
+        size: body?.filters.size,
       }}
     />
   );
@@ -235,23 +275,33 @@ function BottomItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
 function OutfitItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
   const body = form.watch('body');
 
-  return (
-    <SubContent
-      field="outfit"
-      form={form}
-      where={`(type,eq,outfit)~and(gender,eq,${body.filters.gender})~and(size,eq,${body.filters.size})`}
-    />
-  );
+  const trait: BuildQueryParams = {
+    type: TraitType.outfit,
+    filters: [
+      { type: FilterType.size, value: body?.filters.size },
+      { type: FilterType.gender, value: body?.filters.gender },
+    ],
+  };
+
+  return <SubContent field="outfit" form={form} where={lemonheads.buildQuery(trait)} />;
 }
 
 // ---- START ACCESSORIES ----
 
 function AccessoriesEyeWear({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const body = form.watch('body');
+  const [body, eyewear] = form.watch(['body', 'eyewear']);
 
   if (!active) return null;
 
-  return <SubContent field="eyewear" form={form} where={`(type,eq,eyewear)~and(size,eq,${body.filters.size})`} />;
+  const trait: BuildQueryParams = {
+    type: TraitType.eyewear,
+    filters: [
+      { type: FilterType.size, value: body?.filters.size },
+      { type: FilterType.color, value: eyewear?.color },
+    ],
+  };
+
+  return <SubContent field="eyewear" form={form} where={lemonheads.buildQuery(trait)} />;
 }
 
 function AccessoriesMouthGear({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
@@ -259,15 +309,29 @@ function AccessoriesMouthGear({ form, active = false }: { form: UseFormReturn<Le
 
   if (!active) return null;
 
-  return <SubContent field="mouthgear" form={form} where={`(type,eq,mouthgear)~and(size,eq,${body.filters.size})`} />;
+  const trait: BuildQueryParams = {
+    type: TraitType.mouthgear,
+    filters: [{ type: FilterType.size, value: body?.filters.size }],
+  };
+
+  return <SubContent field="mouthgear" form={form} where={lemonheads.buildQuery(trait)} />;
 }
 
 function AccessoriesHeadGear({ form, active = false }: { form: UseFormReturn<LemonHeadValues>; active?: boolean }) {
-  const body = form.watch('body');
+  const [body, headgear] = form.watch(['body', 'headgear']);
 
   if (!active) return null;
 
-  return <SubContent field="headgear" form={form} where={`(type,eq,headgear)~and(size,eq,${body.filters.size})`} />;
+  const trait: BuildQueryParams = {
+    type: TraitType.headgear,
+    filters: [
+      { type: FilterType.size, value: body?.filters.size },
+      { type: FilterType.gender, value: body?.filters.gender },
+      { type: FilterType.color, value: headgear?.color },
+    ],
+  };
+
+  return <SubContent field="headgear" form={form} where={lemonheads.buildQuery(trait)} />;
 }
 
 function AccessoryItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
@@ -283,15 +347,33 @@ function AccessoryItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
 // ---- END ACCESSORIES ----
 
 function FootwearItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  const body = form.watch('body');
+  const [body, footwear] = form.watch(['body', 'footwear']);
 
-  return <SubContent field="footwear" form={form} where={`(type,eq,footwear)~and(size,eq,${body.filters.size})`} />;
+  const trait: BuildQueryParams = {
+    type: TraitType.footwear,
+    filters: [
+      { type: FilterType.size, value: body?.filters.size },
+      { type: FilterType.gender, value: body?.filters.gender },
+      { type: FilterType.color, value: footwear?.color },
+    ],
+  };
+
+  return <SubContent field="footwear" form={form} where={lemonheads.buildQuery(trait)} />;
 }
 
 function BackgroundItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
   return <SubContent field="background" form={form} where={`(type,eq,background)`} />;
 }
 
-function PetItems() {
-  return <div className="flex items-center justify-center min-h-[692px]">Coming Soon</div>;
+function PetItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
+  const pet = form.watch('pet');
+  const trait: BuildQueryParams = {
+    type: TraitType.pet,
+    filters: [
+      { type: FilterType.race, value: pet?.race },
+      { type: FilterType.color, value: pet?.color },
+    ],
+  };
+
+  return <SubContent field="pet" form={form} where={lemonheads.buildQuery(trait)} />;
 }
