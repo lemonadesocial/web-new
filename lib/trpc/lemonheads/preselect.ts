@@ -21,27 +21,41 @@ const mapping: Record<string, any> = {
 };
 
 // FIXME: UPDATE COLOR HERE
-function getFilters({ key, size, gender }: { key: string; gender: 'male' | 'female'; size: BodySize }) {
+function getFilters({
+  key,
+  size,
+  gender,
+  color,
+}: {
+  key: string;
+  gender: 'male' | 'female';
+  size: BodySize;
+  color?: string;
+}) {
   if (key === 'background') return {};
   if (key === 'eyes') return { size };
   if (key === 'mouth') return { size };
-  if (key === 'hair') return { size, gender, color: 'black' };
-  if (key === 'top') return { size, gender, color: 'blue' };
-  if (key === 'bottom') return { size, gender, color: 'yellow' };
+  if (key === 'hair') return { size, gender, color };
+  if (key === 'top') return { size, gender, color };
+  if (key === 'bottom') return { size, gender, color };
 }
 
 export function transformTrait({
   data,
   gender,
   size,
+  race = 'human',
 }: {
   data: LemonHeadsLayer[];
   gender: 'male' | 'female';
   size: BodySize;
+  race?: 'alien' | 'human';
 }) {
   const acc = {} as Record<string, Trait & { Id: string; attachment: LemonHeadsAttachment[] }>;
 
   Object.entries(mapping[gender]).forEach(([key, value]) => {
+    if (race === 'alien' && ['hair', 'mouth', 'eyes'].includes(key)) return;
+
     let obj = (data.find(
       (i) => (!i.gender || i.gender === gender) && i.name === value && (!i.size || i.size === size),
     ) || {}) as any;
@@ -55,7 +69,7 @@ export function transformTrait({
       attachment: obj.attachment,
       color: obj.color,
       race: obj.race,
-      filters: getFilters({ size, gender, key: obj.type }),
+      filters: getFilters({ size, gender, key: obj.type, color: obj.color }),
     };
   });
 

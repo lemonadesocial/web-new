@@ -98,6 +98,7 @@ export function CreateStep({ form, bodySet }: { form: UseFormReturn<LemonHeadVal
       <Card.Root className="w-full md:w-[96px] overflow-auto max-h-fit no-scrollbar">
         <Card.Content className="flex md:flex-col gap-1 p-2">
           {Object.entries(tabs).map(([key, item]) => {
+            if (body?.race === 'alien' && key === 'face') return;
             return (
               <div
                 key={key}

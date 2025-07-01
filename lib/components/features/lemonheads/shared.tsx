@@ -196,7 +196,7 @@ export function SubContent({
                 onClick={() => {
                   if (item.Id === selected?.Id) form.setValue(field, undefined);
                   else {
-                    if (field === 'outfit') {
+                    if (field === 'outfit' && (formValues.top || formValues.bottom)) {
                       modal.open(ConfirmModal, {
                         props: {
                           title: 'Remove Bottom and Top?',
@@ -278,8 +278,17 @@ export function SubContent({
           colorset={colorset}
           onSelect={(params) => {
             setList([]);
-            setSelectedColor(params.key);
-            setCondition((prev) => prev.replace(`~and(color,eq,${selectedColor})`, `~and(color,eq,${params.key})`));
+            if (params.key !== selectedColor) {
+              setSelectedColor(params.key);
+              if (condition.includes(`~and(color,eq,${selectedColor})`)) {
+                setCondition((prev) => prev.replace(`~and(color,eq,${selectedColor})`, `~and(color,eq,${params.key})`));
+              } else {
+                setCondition((prev) => (prev += `~and(color,eq,${params.key})`));
+              }
+            } else {
+              setSelectedColor(undefined);
+              setCondition((prev) => prev.replace(`~and(color,eq,${params.key})`, ''));
+            }
             refetch();
           }}
         />

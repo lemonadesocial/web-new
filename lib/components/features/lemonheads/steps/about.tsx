@@ -46,6 +46,7 @@ export function AboutYou({
       const rankB = customOrder[b.size] ?? Infinity;
       return rankA - rankB;
     });
+
   return (
     <div className="flex-1 max-w-[588px] flex flex-col gap-8">
       <div className="hidden md:flex flex-col gap-2">
@@ -62,8 +63,12 @@ export function AboutYou({
               onClick={() => {
                 form.reset();
                 form.reset({
-                  ...transformTrait({ data: defaultSet, gender: 'female', size: 'small' }),
-                  body: { ...body, filters: { ...body.filters, gender: 'female', size: 'small' } },
+                  ...transformTrait({ data: defaultSet, gender: 'female', size: 'medium' }),
+                  body: {
+                    ...body,
+                    race: 'human',
+                    filters: { ...body.filters, gender: 'female', size: 'medium', race: 'human' },
+                  },
                 });
               }}
             >
@@ -75,7 +80,11 @@ export function AboutYou({
               onClick={() => {
                 form.reset({
                   ...transformTrait({ data: defaultSet, gender: 'male', size: 'medium' }),
-                  body: { ...body, filters: { ...body.filters, gender: 'male', size: 'medium' } },
+                  body: {
+                    ...body,
+                    race: 'human',
+                    filters: { ...body.filters, gender: 'male', size: 'medium', race: 'human' },
+                  },
                 });
               }}
             >
@@ -85,18 +94,21 @@ export function AboutYou({
           <SquareButton
             className="col-span-2"
             active={body.value === 'human'}
-            onClick={() => form.setValue('body.value', 'human')}
+            onClick={() => {
+              form.reset();
+              form.setValue('body.value', 'human');
+            }}
           >
             <LemonHeadPreview
               className="w-full rounded-sm"
               form={{
-                ...formValues,
                 ...transformTrait({ data: defaultSet, gender: body.filters.gender, size: human?.size }),
                 body: {
                   ...formValues.body,
                   value: 'human',
+                  race: 'human',
                   attachment: human?.attachment,
-                  filters: { ...formValues.body.filters, size: human?.size },
+                  filters: { ...formValues.body.filters, size: human?.size, race: 'human' },
                 },
               }}
               bodySet={bodySet}
@@ -105,16 +117,24 @@ export function AboutYou({
           <SquareButton
             className="col-span-2"
             active={body.value === 'alien'}
-            onClick={() => form.setValue('body.value', 'alien')}
+            onClick={() => {
+              form.setValue('eyes', undefined);
+              form.setValue('hair', undefined);
+              form.setValue('mouth', undefined);
+              form.setValue('body', {
+                ...body,
+                race: 'alien',
+                value: 'alien',
+                filters: { ...body.filters, race: 'alien' },
+              });
+            }}
           >
             <LemonHeadPreview
               className="w-full rounded-sm"
               form={{
-                ...formValues,
-                ...transformTrait({ data: defaultSet, gender: body.filters.gender, size: alien?.size }),
+                ...transformTrait({ data: defaultSet, gender: body.filters.gender, size: alien?.size, race: 'alien' }),
                 body: {
                   ...formValues.body,
-                  value: 'alien',
                   attachment: alien?.attachment,
                   filters: { ...formValues.body.filters, size: alien?.size },
                 },
@@ -134,22 +154,26 @@ export function AboutYou({
                 className="flex-1"
                 onClick={() => {
                   form.reset({
-                    ...transformTrait({ data: defaultSet, gender: body.filters.gender, size: item?.size }),
+                    ...transformTrait({
+                      data: defaultSet,
+                      gender: body.filters.gender,
+                      size: item?.size,
+                      race: item.race,
+                    }),
                     body: {
                       ...body,
-                      filters: { ...body.filters, size: item.size },
+                      race: item.race,
+                      filters: { ...body.filters, size: item.size, race: item.race },
                       attachment: item.attachment,
                     },
                   });
-                  // form.setValue('body', {});
                 }}
                 active={item.size === body.filters.size}
               >
                 <LemonHeadPreview
                   className="w-full rounded-sm"
                   form={{
-                    ...formValues,
-                    ...transformTrait({ data: defaultSet, gender: item.gender, size: item.size }),
+                    ...transformTrait({ data: defaultSet, gender: item.gender, size: item.size, race: item.race }),
                     body: {
                       ...formValues.body,
                       filters: { ...formValues.body.filters, size: item.size },
