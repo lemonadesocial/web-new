@@ -119,6 +119,14 @@ export function validateTraits(traits: Trait[]) {
     throw new Error('Top and bottom are required if no outfit is present');
   }
 
+  //-- alien cannot have eyes, mouth, or hair
+  const bodyTrait = traits.find((trait) => trait.type === TraitType.body);
+  if (bodyTrait?.value === 'alien' && bodyTrait.filters?.some((filter) => filter.type === FilterType.race && filter.value === 'alien')) {
+    if (traits.some((trait) => [TraitType.eyes, TraitType.mouth, TraitType.hair].includes(trait.type))) {
+      throw new Error('Alien cannot have eyes, mouth, or hair');
+    }
+  }
+
   //-- 4. filters validation
 
   //-- 4.1 filter must not be duplicated
