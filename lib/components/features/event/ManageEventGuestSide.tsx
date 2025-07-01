@@ -26,6 +26,7 @@ import { EventLocationBlock } from './EventLocationBlock';
 import { AttendeesSection } from './AttendeesSection';
 import { EventCollectibles } from '../event-collectibles';
 import { PendingCohostRequest } from './PendingCohostRequest';
+import { useMe } from '$lib/hooks/useMe';
 
 export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
   const [state] = useEventTheme();
@@ -36,11 +37,12 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
   });
 
   const session = useSession();
+  const me = useMe();
 
   const event = data?.getEvent as Event;
 
-  const isHost = session?.user && event && hosting(event, session.user);
-  const attending = session?.user ? isAttending(event, session?.user) : false;
+  const isHost = me?._id && event && hosting(event, me._id);
+  const attending = me?._id ? isAttending(event, me._id) : false;
   const hosts = getEventCohosts(event);
 
   return (
