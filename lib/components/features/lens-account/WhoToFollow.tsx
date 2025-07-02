@@ -9,6 +9,7 @@ import { sessionClientAtom, accountAtom } from '$lib/jotai';
 import { client } from '$lib/utils/lens/client';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { useSigner } from '$lib/hooks/useSigner';
+import { useLensAuth } from '$lib/hooks/useLens';
 
 const SUGGESTED_USERNAMES = [
   'vitalik',
@@ -71,10 +72,10 @@ export function WhoToFollow() {
   const [displayedAccounts, setDisplayedAccounts] = useState<Account[]>([]);
   const [followLoading, setFollowLoading] = useState<string | null>(null);
 
+  const handleLensAuth = useLensAuth();
+
   useEffect(() => {
-    const fetchAccounts = async () => {
-      if (!myAccount) return;
-      
+    const fetchAccounts = async () => {      
       try {
         const result = await fetchAccountsBulk(client, {
           usernames: SUGGESTED_USERNAMES.map(username => ({ localName: username }))
@@ -154,7 +155,7 @@ export function WhoToFollow() {
               variant="tertiary"
               size="sm"
               className="rounded-full"
-              onClick={() => handleFollow(account)}
+              onClick={() => handleLensAuth(() => handleFollow(account))}
               loading={followLoading === account.address}
               disabled={followLoading === account.address}
             >
