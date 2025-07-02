@@ -153,7 +153,18 @@ const useHandleEmail = ({ onSuccess }: { onSuccess: () => void }) => {
 const useHandleOidc = () => {
   const [flow, setFlow] = useState<LoginFlow | RegistrationFlow>();
 
-  return { processOidc: () => {} };
+  const tryLogin = async (provider: string) => {
+    if (!ory) return;
+
+    const flow = await ory.createBrowserLoginFlow({}).then((res) => res.data);
+
+    const updateResult = await ory.updateLoginFlow({
+      flow: flow.id,
+      updateLoginFlowBody: { method: 'oidc', provider },
+    });
+  };
+
+  return { processOidc: tryLogin };
 };
 
 function CodeVerification({
@@ -195,16 +206,20 @@ function EmailAndOidcs({ onSubmitEmail }: { onSubmitEmail: (email: string) => vo
 
 const providers = ['google', 'apple'];
 
-function OidcButtons() {
+function OidcButtons({ onSelect }: { onSelect: (provider: string) => void }) {
   return (
     <div style={{ display: 'flex', gap: 13, alignItems: 'center', justifyContent: 'space-between' }}>
       {providers.map((provider) => (
         <Button key={provider} style={{ flex: 1 }}>
-          {provider}
+          <span style={{ textTransform: 'capitalize' }}>{provider}</span>
         </Button>
       ))}
     </div>
   );
+}
+
+function WalletButton() {
+  return <Button>Wallet</Button>;
 }
 
 function UnifiedLoginSignupModal() {
@@ -234,7 +249,18 @@ function UnifiedLoginSignupModal() {
               processEmail(email);
             }}
           />
-          <OidcButtons />
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: 13,
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <OidcButtons onSelect={processOidc} />
+            <WalletButton />
+          </div>
         </>
       )}
       {showCode && <CodeVerification error={error} email={email} onSubmit={(code) => processCode(email, code)} />}
