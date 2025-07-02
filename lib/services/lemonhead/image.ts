@@ -8,6 +8,8 @@ const apikey = process.env.NOCODB_ACCESS_KEY!;
 
 const tableId = 'mksrfjc38xpo4d1';
 
+const outputSize = 3000;
+
 const readUrlToBuffer = async (url: string) => {
   const response = await fetch(url);
   const buffer = await response.arrayBuffer();
@@ -15,8 +17,6 @@ const readUrlToBuffer = async (url: string) => {
 };
 
 const getImageUrl = async (url: string) => {
-  console.log('url', url);
-
   const response = await fetch(`${baseUrl}${url}`, {
     headers: {
       accept: 'application/json',
@@ -79,16 +79,11 @@ export const getImageUrlsFromTraits = async (finalTraits: Trait[]) => {
   return imageUrls;
 };
 
-const outputWith = 1024;
-const outputHeight = 1024;
-
 export const getFinalImage = async (imageUrls: string[]) => {
   const buffers = await Promise.all(imageUrls.map(readUrlToBuffer));
 
   //-- this is run in nodejs, please use a library to create a canvas
-  const canvas = new Canvas(outputWith, outputHeight);
-  canvas.width = outputWith;
-  canvas.height = outputHeight;
+  const canvas = new Canvas(outputSize, outputSize);
 
   //-- merge all images into a single image
   const ctx = canvas.getContext('2d');
@@ -100,7 +95,7 @@ export const getFinalImage = async (imageUrls: string[]) => {
     await new Promise<void>((resolve, reject) => {
       img.onload = () => {
         // Scale the image to fit the canvas dimensions
-        ctx.drawImage(img, 0, 0, outputWith, outputHeight);
+        ctx.drawImage(img, 0, 0, outputSize, outputSize);
         resolve();
       };
       img.onerror = () => reject(new Error('Failed to load image'));

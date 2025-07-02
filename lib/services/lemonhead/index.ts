@@ -4,7 +4,11 @@ import { getFinalImage, getImageUrlsFromTraits } from './image';
 import { uploadImage, uploadJSON } from './storage';
 
 const gatewayPrefix = 'https://api.grove.storage/';
-const DESCRIPTION = 'LemonHead is a collection of Lemonade avatars';
+const DESCRIPTION = [
+  'LemonHeads are Citizens of the United Stands of Lemonade.',
+  'Create. Collaborate. Celebrate. We #makelemonade onchain!',
+  'https://lemonheads.xyz || https://lemonade.social || https://lemonade.foundation',
+].join('\n');
 
 const createMetadata = (image: string, traits: Trait[]) => {
   return {
