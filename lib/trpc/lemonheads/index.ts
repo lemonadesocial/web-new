@@ -48,8 +48,8 @@ class LemonHead {
 
   getDefaultSet() {
     const traitSets: any = [
-      { type: TraitType.background, value: 'sky,red', ops: 'anyof' },
-      { type: TraitType.eyes, value: 'focus' },
+      { type: TraitType.background, value: 'lemon', ops: 'anyof' },
+      { type: TraitType.eyes, value: 'black' },
       { type: TraitType.mouth, value: 'happy,smile', ops: 'anyof' },
       {
         type: TraitType.hair,
@@ -69,7 +69,7 @@ class LemonHead {
       },
       {
         type: TraitType.top,
-        value: 'polo_tee',
+        value: 'white_polo_tee',
         filters: [
           { type: 'color', value: 'white' },
           { type: 'gender', value: 'male' },
@@ -85,7 +85,7 @@ class LemonHead {
       },
       {
         type: TraitType.top,
-        value: 'bralette',
+        value: 'yellow_bralette',
         filters: [
           { type: 'color', value: 'yellow' },
           { type: 'gender', value: 'female' },

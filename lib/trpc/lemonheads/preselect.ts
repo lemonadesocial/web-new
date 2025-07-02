@@ -3,20 +3,20 @@ import { BodySize, LemonHeadsAttachment, LemonHeadsLayer } from './types';
 
 const mapping: Record<string, any> = {
   male: {
-    eyes: 'focus',
+    eyes: 'black',
     mouth: 'smile',
     hair: 'black_funky',
-    top: 'polo_tee',
+    top: 'white_polo_tee',
     bottom: 'red_shorts',
-    background: 'sky',
+    background: 'lemon',
   },
   female: {
-    eyes: 'focus',
+    eyes: 'black',
     mouth: 'happy',
     hair: 'black_fringe',
-    top: 'bralette',
+    top: 'yellow_bralette',
     bottom: 'yellow_shorts',
-    background: 'red',
+    background: 'lemon',
   },
 };
 
