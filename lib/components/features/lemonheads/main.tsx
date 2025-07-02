@@ -102,8 +102,8 @@ export function LemonHeadMain({ bodySet, defaultSet }: { bodySet: LemonHeadsLaye
         <Header />
       </div>
       <div className="flex-1 overflow-auto md:overflow-hidden">
-        <div className="flex flex-col md:flex md:flex-row-reverse max-w-[1440px] mx-auto gap-5 overflow-auto md:gap-18 p-4 md:p-11 md:max-h-full">
-          <div className={clsx('flex-1', isMobile && currentStep > 2 && 'size-[80px] z-10')}>
+        <div className="flex flex-col md:flex md:flex-row-reverse max-w-[1440px] mx-auto gap-5 overflow-auto md:gap-18 p-4 md:p-11 md:max-h-full no-scrollbar">
+          <div className={clsx('flex-1 z-10', isMobile && currentStep > 2 && 'size-[80px]')}>
             {currentStep === 0 ? (
               <img
                 src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
@@ -163,9 +163,11 @@ function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; o
   return (
     <div className="flex justify-between items-center min-h-[64px] px-4 bg-background/80 backdrop-blur-md">
       <div className="flex-1">
-        <Button variant="tertiary" size="sm" onClick={onPrev} iconLeft={step > 0 ? 'icon-chevron-left' : undefined}>
-          {step === 0 ? 'Exit' : 'Back'}
-        </Button>
+        {step < 3 && (
+          <Button variant="tertiary" size="sm" onClick={onPrev} iconLeft={step > 0 ? 'icon-chevron-left' : undefined}>
+            {step === 0 ? 'Exit' : 'Back'}
+          </Button>
+        )}
       </div>
 
       {step > 0 && (
