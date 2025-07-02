@@ -475,10 +475,43 @@ function AccessoriesInstrument({
   return <SubContent field="instrument" form={form} where={lemonheads.buildQuery(trait)} colors={colors} />;
 }
 
+function AccessoriesNecklace({
+  form,
+  active = false,
+  colors,
+}: {
+  form: UseFormReturn<LemonHeadValues>;
+  active?: boolean;
+  colors?: LemonHeadsColor[];
+}) {
+  const [body, necklace] = form.watch(['body', 'necklace']);
+
+  if (!active) return null;
+
+  const trait: BuildQueryParams = {
+    type: TraitType.necklace,
+    filters: [
+      { type: FilterType.size, value: body?.filters.size },
+      { type: FilterType.color, value: necklace?.color },
+    ],
+  };
+
+  return (
+    <SubContent
+      field="necklace"
+      form={form}
+      where={lemonheads.buildQuery(trait)}
+      colors={colors}
+      filters={{ size: body?.filters.size, color: necklace?.color }}
+    />
+  );
+}
+
 function AccessoryItems({ form, colors }: { form: UseFormReturn<LemonHeadValues>; colors?: LemonHeadsColor[] }) {
   const [tabs] = React.useState([
     { value: 'eyewear', label: 'Eyewear', mount: true, component: AccessoriesEyeWear },
     { value: 'mouthgear', label: 'Mouthgear', mount: true, component: AccessoriesMouthGear },
+    { value: 'necklace', label: 'Necklace', mount: true, component: AccessoriesNecklace },
     { value: 'headgear', label: 'Headgear', mount: true, component: AccessoriesHeadGear },
     { value: 'instrument', label: 'Instrument', mount: true, component: AccessoriesInstrument },
   ]);
