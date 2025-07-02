@@ -163,7 +163,7 @@ function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; o
   return (
     <div className="flex justify-between items-center min-h-[64px] px-4 bg-background/80 backdrop-blur-md">
       <div className="flex-1">
-        {step < 3 && (
+        {step <= 3 && !mint.minted && (
           <Button variant="tertiary" size="sm" onClick={onPrev} iconLeft={step > 0 ? 'icon-chevron-left' : undefined}>
             {step === 0 ? 'Exit' : 'Back'}
           </Button>
