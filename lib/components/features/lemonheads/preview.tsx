@@ -45,6 +45,7 @@ export function LemonHeadPreview({
         {formValues.top && <PreviewImageItem src={getSource(formValues.top.attachment)} />}
         {formValues.outfit && <PreviewImageItem src={getSource(formValues.outfit.attachment)} />}
         {formValues.pet && <PreviewImageItem src={getSource(formValues.pet.attachment)} />}
+        {formValues.instrument && <PreviewImageItem src={getSource(formValues.instrument.attachment)} />}
       </Card.Content>
     </Card.Root>
   );
