@@ -9,6 +9,7 @@ fragment Space on Space {
   is_ambassador
   followed
   followers
+  followers_count
   image_avatar
   image_avatar_expanded {
     _id
