@@ -1,13 +1,13 @@
 'use client';
 import clsx from 'clsx';
 import Link from 'next/link';
-
+import { usePathname, useRouter } from "next/navigation";
 import { useMemo } from "react";
-import { usePathname } from "next/navigation";
+
 import { useMe } from "$lib/hooks/useMe";
 import { useAccount } from "$lib/hooks/useLens";
-import { Avatar } from "../core";
 import { userAvatar } from "$lib/utils/user";
+import { Avatar } from "../core";
 
 type SidebarItemProps = {
   item: {
@@ -43,6 +43,8 @@ const SidebarItem = ({ item, isActive }: SidebarItemProps) => {
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const router = useRouter();
+
   const me = useMe();
   const { account } = useAccount();
   
@@ -59,7 +61,7 @@ const Sidebar = () => {
     ];
 
     return menu;
-  }, [pathname]);
+  }, []);
 
   const secondaryMenu = useMemo(() => {
     const menu = [
@@ -68,14 +70,14 @@ const Sidebar = () => {
     ];
 
     return menu;
-  }, [pathname]);
+  }, []);
 
   const isActive = (item: { path: string }) => pathname === item.path;
 
   return (
-    <div className="hidden lg:block fixed left-0 h-screen border-r z-[9]">
+    <div className="hidden lg:block fixed left-0 h-screen border-r z-10">
       <div className="flex flex-col gap-2 p-3">
-        <div className="flex items-center justify-center h-12">
+        <div className="flex items-center justify-center h-12 cursor-pointer" onClick={() => router.push('/')}>
           <i className="icon-lemonade-logo text-[#FDE047]" />
         </div>
         {mainMenu.map((item) => (

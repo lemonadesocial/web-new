@@ -2,8 +2,8 @@
 import { useRouter, usePathname } from 'next/navigation'
 
 const tabData = [
-  { label: 'Events', path: 'events', icon: 'icon-ticket' },
   { label: 'Feed', path: 'feed', icon: 'icon-newspaper' },
+  { label: 'Events', path: 'events', icon: 'icon-ticket' },
   { label: 'Communities', path: 'communities', icon: 'icon-community' },
 ]
 
