@@ -6,11 +6,12 @@ import { isMobile } from 'react-device-detect';
 import { useDisconnect, useAppKitProvider, useAppKitAccount } from '@reown/appkit/react';
 import { UseFormReturn } from 'react-hook-form';
 import { Eip1193Provider, ethers } from 'ethers';
+import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
 
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { Button, drawer, Menu, MenuItem, modal, Skeleton, toast } from '$lib/components/core';
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
-import { ASSET_PREFIX } from '$lib/utils/constants';
 import { chainsMapAtom, sessionClientAtom } from '$lib/jotai';
 import { useClient } from '$lib/graphql/request';
 import { trpc } from '$lib/trpc/client';
@@ -26,6 +27,7 @@ import { mintAtom } from '../store';
 import { LemonHeadValues } from '../types';
 import { ConnectWallet } from '../../modals/ConnectWallet';
 import { convertFormValuesToTraits, LEMONHEAD_CHAIN_ID } from '../utils';
+import Player from 'video.js/dist/types/player';
 
 const steps = [
   {
@@ -349,8 +351,7 @@ function MintLemonHead({
     }
   };
 
-  // FIXME: open this when go live
-  // if (!myAccount || !username) return null;
+  if (!myAccount || !username) return null;
 
   if (isLoading) return <Skeleton animate className="h-8 w-1/2 rounded" />;
 
@@ -368,9 +369,30 @@ function MintSuccess() {
   const me = useMe();
   const signIn = useSignIn();
 
+  const videoRef = React.useRef(null);
+  const playerRef = React.useRef<Player>(null);
+
   React.useEffect(() => {
     setValue({ ...value, video: true, minted: true });
   }, []);
+
+  React.useEffect(() => {
+    if (videoRef.current && !playerRef.current) {
+      const srcPath = isMobile ? 'lemonhead_mint_mobile' : 'lemonhead_mint_web';
+      playerRef.current = videojs(videoRef.current, {
+        fill: true,
+        loop: true,
+        controls: false,
+        autoplay: true,
+        sources: [
+          {
+            src: `${process.env.NEXT_PUBLIC_LMD_VIDEO}/${srcPath}/video.m3u8`,
+            type: 'application/x-mpegURL',
+          },
+        ],
+      });
+    }
+  }, [isMobile]);
 
   return (
     <>
@@ -411,15 +433,15 @@ function MintSuccess() {
       </div>
       <div className="fixed inset-0 z-0">
         <div className="fixed inset-0 bg-background/56 z-0" />
-        {isMobile ? (
-          <video autoPlay loop playsInline muted={value.mute} className="min-w-full min-h-full">
-            <source src={`${ASSET_PREFIX}/assets/video/mint_mobile.mov`} />
-          </video>
-        ) : (
-          <video autoPlay loop playsInline muted={value.mute} className="min-w-full min-h-full">
-            <source src={`${ASSET_PREFIX}/assets/video/mint_web.mov`} />
-          </video>
-        )}
+
+        <video
+          autoPlay
+          loop
+          ref={videoRef}
+          muted={value.mute}
+          playsInline
+          style={{ width: '100%', height: '100%', objectFit: 'fill' }}
+        ></video>
       </div>
     </>
   );
