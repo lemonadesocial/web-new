@@ -2,6 +2,8 @@ import { Card } from '$lib/components/core';
 import { LemonHeadsAttachment, LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
 import { LemonHeadValues } from './types';
 
+import { TraitOrders, TraitType } from '../../../services/lemonhead/core';
+
 export function LemonHeadPreview({
   form: formValues,
   className,
@@ -24,28 +26,18 @@ export function LemonHeadPreview({
       i.skin_tone === dataBody.filters.skin_tone,
   );
 
+  const layers: { [k in TraitType]?: LemonHeadsLayer } = { ...formValues, body };
+
   return (
     <Card.Root className={className}>
       <Card.Content className="p-0 max-w-[692px] aspect-square relative">
-        {formValues.background && <PreviewImageItem src={getSource(formValues.background.attachment)} />}
+        {TraitOrders.map((traitType) => {
+          const source = getSource(layers[traitType]?.attachment);
 
-        <img src={getSource(body?.attachment)} className="w-full h-full absolute top-0" />
-        {formValues.hair && <PreviewImageItem src={getSource(formValues.hair.attachment)} />}
-        {formValues.headgear && <PreviewImageItem src={getSource(formValues.headgear.attachment)} />}
+          if (!source) return null;
 
-        {formValues.eyes && <PreviewImageItem src={getSource(formValues.eyes.attachment)} />}
-        {formValues.eyewear && <PreviewImageItem src={getSource(formValues.eyewear.attachment)} />}
-
-        {formValues.mouth && <PreviewImageItem src={getSource(formValues.mouth.attachment)} />}
-        {formValues.mouthgear && <PreviewImageItem src={getSource(formValues.mouthgear.attachment)} />}
-
-        {formValues.facial_hair && <PreviewImageItem src={getSource(formValues.facial_hair.attachment)} />}
-        {formValues.footwear && <PreviewImageItem src={getSource(formValues.footwear.attachment)} />}
-        {formValues.bottom && <PreviewImageItem src={getSource(formValues.bottom.attachment)} />}
-        {formValues.top && <PreviewImageItem src={getSource(formValues.top.attachment)} />}
-        {formValues.outfit && <PreviewImageItem src={getSource(formValues.outfit.attachment)} />}
-        {formValues.pet && <PreviewImageItem src={getSource(formValues.pet.attachment)} />}
-        {formValues.instrument && <PreviewImageItem src={getSource(formValues.instrument.attachment)} />}
+          return <PreviewImageItem key={traitType} src={source} style={{ zIndex: TraitOrders.indexOf(traitType) }} />;
+        })}
       </Card.Content>
     </Card.Root>
   );
