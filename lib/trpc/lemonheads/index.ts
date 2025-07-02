@@ -138,4 +138,5 @@ class LemonHead {
   }
 }
 
-export default new LemonHead();
+const lemonHead = new LemonHead();
+export default lemonHead;

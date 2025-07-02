@@ -6,7 +6,6 @@ import { useQuery } from '$lib/graphql/request';
 import { Badge, Button, Spacer } from '$lib/components/core';
 import { EDIT_KEY, generateUrl } from '$lib/utils/cnd';
 import { getEventCohosts, hosting, isAttending } from '$lib/utils/event';
-import { useSession } from '$lib/hooks/useSession';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useEventTheme } from '$lib/components/features/theme-builder/provider';
 
@@ -36,7 +35,6 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
     initData: { getEvent: eventDetail } as unknown as GetEventQuery,
   });
 
-  const session = useSession();
   const me = useMe();
 
   const event = data?.getEvent as Event;

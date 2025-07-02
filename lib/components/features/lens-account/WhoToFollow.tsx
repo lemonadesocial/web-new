@@ -69,14 +69,12 @@ export function WhoToFollow() {
   
   const [allAccounts, setAllAccounts] = useState<Account[]>([]);
   const [displayedAccounts, setDisplayedAccounts] = useState<Account[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [followLoading, setFollowLoading] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAccounts = async () => {
       if (!myAccount) return;
       
-      setIsLoading(true);
       try {
         const result = await fetchAccountsBulk(client, {
           usernames: SUGGESTED_USERNAMES.map(username => ({ localName: username }))
@@ -92,8 +90,6 @@ export function WhoToFollow() {
         setDisplayedAccounts(unfollowedAccounts.slice(0, 5));
       } catch (error) {
         toast.error('Failed to fetch accounts');
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -131,8 +127,8 @@ export function WhoToFollow() {
           setDisplayedAccounts([...currentDisplayed, nextAccount]);
         }
       }
-    } catch (error) {
-      toast.error('Failed to follow user');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to follow user');
     } finally {
       setFollowLoading(null);
     }

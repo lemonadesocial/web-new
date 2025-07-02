@@ -4,12 +4,12 @@ import { UseFormReturn } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { uniqBy } from 'lodash';
 import { isMobile } from 'react-device-detect';
+
 import { LemonHeadsColor, LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
 import { trpc } from '$lib/trpc/client';
 import { LemonHeadValues } from './types';
 import { Button, Card, modal, Skeleton } from '$lib/components/core';
 import { TraitType } from '$lib/services/lemonhead/core';
-import { refresh } from '@lens-protocol/client/actions';
 
 export function SquareButton({
   className,

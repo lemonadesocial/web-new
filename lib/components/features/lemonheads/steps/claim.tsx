@@ -70,7 +70,7 @@ export function ClaimStep({ form }: { form: UseFormReturn<LemonHeadValues> }) {
       <div className="flex flex-col gap-5 md:gap-2">
         <h3 className="text-2xl md:text-3xl font-semibold">Claim LemonHead</h3>
         <p className="text-tertiary">
-          Let's bring your avatar to life. Just follow these quick steps to mint your one-of-a-kind LemonHead.
+          Let&apos;s bring your avatar to life. Just follow these quick steps to mint your one-of-a-kind LemonHead.
         </p>
       </div>
 

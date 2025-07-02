@@ -7,7 +7,6 @@ import { useQuery } from '$lib/graphql/request';
 import { userAvatar } from '$lib/utils/user';
 import { copy } from '$lib/utils/helpers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
-import { useSession } from '$lib/hooks/useSession';
 import { getEventCohosts, hosting } from '$lib/utils/event';
 
 import { AboutSection } from '../event/AboutSection';
@@ -23,7 +22,6 @@ import { EventAccess } from '../event-access';
 import { useMe } from '$lib/hooks/useMe';
 
 export function EventPane({ eventId }: { eventId: string }) {
-  const session = useSession();
   const { data, loading } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
   const event = data?.getEvent as Event;
   const me = useMe();
