@@ -213,7 +213,7 @@ export function SubContent({
                               type: field as TraitType,
                               color: item.color,
                               race: item.race,
-                              filters,
+                              filters: { ...filters, color: item.color, race: item.race },
                             });
                           },
                         },
@@ -237,7 +237,7 @@ export function SubContent({
                               type: field as TraitType,
                               color: item.color,
                               race: item.race,
-                              filters,
+                              filters: { ...filters, color: item.color, race: item.race },
                             });
                           },
                         },
@@ -253,7 +253,7 @@ export function SubContent({
                       type: field as TraitType,
                       color: item.color,
                       race: item.race,
-                      filters,
+                      filters: { ...filters, color: item.color, race: item.race },
                     });
                   }
                 }}
