@@ -138,7 +138,7 @@ export function WhoToFollow() {
   if (displayedAccounts.length === 0) return null;
 
   return (
-    <div className="rounded-md border p-4 space-y-3">
+    <div className="hidden lg:block rounded-md border p-4 space-y-3">
       <p className="text-tertiary">Who to Follow</p>
       {displayedAccounts.map((account) => (
         <div key={account.address} className="flex items-center gap-3">
