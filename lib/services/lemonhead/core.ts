@@ -34,9 +34,9 @@ export enum FilterType {
 export const requiredTraits = [
   TraitType.background,
   TraitType.body,
-  TraitType.mouth,
-  TraitType.hair,
-  TraitType.eyes,
+  //-- alien does not have mouth
+  //-- alien does not have hair
+  //-- alien does not have eyes
   //-- top and bottom are mutually exclusive with outfit so they are not always required
 ];
 
@@ -124,6 +124,12 @@ export function validateTraits(traits: Trait[]) {
   if (bodyTrait?.value === 'alien' && bodyTrait.filters?.some((filter) => filter.type === FilterType.race && filter.value === 'alien')) {
     if (traits.some((trait) => [TraitType.eyes, TraitType.mouth, TraitType.hair].includes(trait.type))) {
       throw new Error('Alien cannot have eyes, mouth, or hair');
+    }
+  }
+  else {
+    //-- must have eyes, mouth, and hair
+    if (!traits.some((trait) => [TraitType.eyes, TraitType.mouth, TraitType.hair].includes(trait.type))) {
+      throw new Error('Eyes, mouth, and hair are required');
     }
   }
 
