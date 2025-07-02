@@ -312,6 +312,12 @@ export function SubContentWithTabs(props: {
     }
   }, [body.filters.gender]);
 
+  React.useEffect(() => {
+    if (body.filters.race === 'alien') {
+      setTabs((prev: any) => prev.filter((i: any) => i.value !== 'mouthgear'));
+    }
+  }, [body.filters.race]);
+
   return (
     <>
       <TabsSubContent

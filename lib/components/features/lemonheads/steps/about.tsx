@@ -95,8 +95,15 @@ export function AboutYou({
             className="col-span-2"
             active={body.value === 'human'}
             onClick={() => {
-              form.reset();
-              form.setValue('body.value', 'human');
+              form.reset({
+                ...transformTrait({ data: defaultSet, gender: body.filters.gender, size: body.filters.size }),
+                body: {
+                  ...body,
+                  value: 'human',
+                  race: 'human',
+                  filters: { ...body.filters, race: 'human' },
+                },
+              });
             }}
           >
             <LemonHeadPreview
