@@ -232,20 +232,40 @@ const useHandleEmail = ({ onSuccess }: { onSuccess: () => void }) => {
 };
 
 const useHandleOidc = () => {
-  const [flow, setFlow] = useState<LoginFlow | RegistrationFlow>();
   const [loading, setLoading] = useState(false);
 
   const tryLogin = async (provider: string) => {
     if (!ory) return;
 
-    const flow = await ory.createBrowserLoginFlow({}).then((res) => res.data);
+    const flow = await ory
+      .createBrowserRegistrationFlow({
+        returnTo: window.location.href,
+      })
+      .then((res) => res.data);
 
-    const updateResult = await ory.updateLoginFlow({
-      flow: flow.id,
-      updateLoginFlowBody: { method: 'oidc', provider },
-    });
+    const updateResult = await ory
+      .updateRegistrationFlow({
+        flow: flow.id,
+        updateRegistrationFlowBody: { method: 'oidc', provider },
+      })
+      .then((res) => ({
+        success: true,
+        response: res.data,
+      }))
+      .catch((err) => ({
+        success: false,
+        response: err.response.data,
+      }));
 
-    console.log('updateResult', updateResult);
+    if (!updateResult.success) {
+      const { redirect_browser_to } = updateResult.response as { redirect_browser_to?: string };
+
+      if (redirect_browser_to) {
+        window.location.href = redirect_browser_to;
+      }
+
+      return;
+    }
   };
 
   return { processOidc: withLoading(tryLogin, setLoading), loading };
@@ -317,11 +337,30 @@ function EmailAndOidcs({
 
 const providers = ['google', 'apple'];
 
-function OidcButtons({ onSelect, disabled }: { onSelect: (provider: string) => void; disabled?: boolean }) {
+function OidcButtons({
+  onSelect,
+  disabled,
+  loading,
+}: {
+  onSelect: (provider: string) => void;
+  disabled?: boolean;
+  loading?: boolean;
+}) {
+  const [currentProvider, setCurrentProvider] = useState<string>();
+
   return (
     <div style={{ display: 'flex', gap: 13, alignItems: 'center', justifyContent: 'space-between' }}>
       {providers.map((provider) => (
-        <Button key={provider} style={{ flex: 1 }} disabled={disabled}>
+        <Button
+          key={provider}
+          style={{ flex: 1 }}
+          disabled={disabled || loading}
+          loading={loading && currentProvider === provider}
+          onClick={() => {
+            setCurrentProvider(provider);
+            onSelect(provider);
+          }}
+        >
           <span style={{ textTransform: 'capitalize' }}>{provider}</span>
         </Button>
       ))}
@@ -380,7 +419,7 @@ function UnifiedLoginSignupModal() {
               justifyContent: 'space-between',
             }}
           >
-            <OidcButtons disabled={loadingEmail} onSelect={processOidc} />
+            <OidcButtons disabled={loadingEmail} loading={loadingOidc} onSelect={processOidc} />
             <WalletButton />
           </div>
         </>
