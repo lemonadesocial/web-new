@@ -5,8 +5,8 @@ import { uploadImage, uploadJSON } from './storage';
 
 const gatewayPrefix = 'https://api.grove.storage/';
 const DESCRIPTION = [
-  'LemonHeads are Citizens of the United Stands of Lemonade.',
-  'Create. Collaborate. Celebrate. We #makelemonade onchain!',
+  'LemonHeads are residents of the United Stands of Lemonade, a digital nation for creators celebrating inclusivity, community and good vibes. Each LemonHead is unique- customized by its creator- no two are alike. All holders get exclusive access to events, experiences, rewards and more.',
+  'LemonHeads create, collaborate, celebrate. When life deals lemons, LemonHeads #makelemonade!',
   'https://lemonheads.xyz || https://lemonade.social || https://lemonade.foundation',
 ].join('\n');
 
