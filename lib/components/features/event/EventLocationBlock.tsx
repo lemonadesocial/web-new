@@ -1,12 +1,12 @@
 import { Skeleton } from '$lib/components/core';
 import { Event } from '$lib/graphql/generated/backend/graphql';
-import { useSession } from '$lib/hooks/useSession';
+import { useMe } from '$lib/hooks/useMe';
 import { isAttending } from '$lib/utils/event';
 
 export function EventLocationBlock({ loading = false, event }: { loading?: boolean; event?: Event }) {
-  const session = useSession();
+  const me = useMe();
 
-  const attending = session?.user && event ? isAttending(event, session?.user) : false;
+  const attending = me?._id && event ? isAttending(event, me?._id) : false;
   
   if (loading) return <EventLocationBlockSkeleton />;
 

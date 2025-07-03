@@ -4,12 +4,14 @@ import { Event, GetMyTicketsDocument, Ticket } from "$lib/graphql/generated/back
 import { metaverseClient } from "$lib/graphql/request/instances";
 import { GraphQLWSProvider } from "$lib/graphql/subscription";
 import { getAssignedTicket } from "$lib/utils/event";
-import { useSession } from "$lib/hooks/useSession";
+import { useMe } from "$lib/hooks/useMe";
 
 import { CollectibleList } from "./CollectibleList";
 import { usePoapOffers } from "./hooks";
+import { useSession } from "$lib/hooks/useSession";
 
 export function EventCollectibles({ event }: { event: Event }) {
+  const me = useMe();
   const session = useSession();
 
   const { data: ticketsData } = useQuery(GetMyTicketsDocument, {
@@ -17,11 +19,11 @@ export function EventCollectibles({ event }: { event: Event }) {
       event: event._id,
       withPaymentInfo: true
     },
-    skip: !session?.user
+    skip: !session
   });
 
   const tickets = ticketsData?.getMyTickets.tickets as Ticket[];
-  const myTicket = getAssignedTicket(tickets, session?.user) || tickets?.[0];
+  const myTicket = getAssignedTicket(tickets, me?._id) || tickets?.[0];
   const ticketType = myTicket?.type;
 
   const offers = usePoapOffers(event, ticketType);

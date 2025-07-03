@@ -19,13 +19,13 @@ export function CardPayment() {
   const session = useSession();
   const setStripePaymentMethod = useSetAtom(stripePaymentMethodAtom);
 
-  const [showCardForm, setShowCardForm] = useState(!session?.user);
+  const [showCardForm, setShowCardForm] = useState(!session);
   const [card, setCard] = useState<StripeCard | null>(null);
 
   const { pay, loading: loadingPay } = useCardPayment();
 
   const { data: stripeCardsData, loading: loadingCards } = useQuery(GetStripeCardsDocument, {
-    skip: !pricingInfo?.payment_accounts?.[0]?._id || !session?.user,
+    skip: !pricingInfo?.payment_accounts?.[0]?._id || !session,
     onComplete(data) {
       const card = data.getStripeCards[0];
       if (!card) {

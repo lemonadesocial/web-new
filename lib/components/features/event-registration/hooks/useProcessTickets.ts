@@ -12,7 +12,7 @@ export function useProcessTickets() {
   const store = useEventRegistrationStore();
 
   return () => {
-    if (session?.user) {
+    if (session) {
       registrationModal.open(TicketsProcessingModal);
       return;
     }

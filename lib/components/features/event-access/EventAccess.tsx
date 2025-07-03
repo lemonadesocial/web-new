@@ -14,15 +14,15 @@ import { ApprovalStatus } from './ApprovalStatus';
 import { EventRegistration } from '../event-registration';
 
 export function EventAccess({ event }: { event: Event }) {
-  const session = useSession();
-  const isAttending = attending(event, session?.user);
   const me = useMe();
+  const session = useSession();
+  const isAttending = attending(event, me?._id);
 
   const { data: requestData, loading: requestLoading } = useQuery(GetMyEventJoinRequestDocument, {
     variables: {
       event: event._id
     },
-    skip: !session?.user || !event.approval_required,
+    skip: !session || !event.approval_required,
   });
 
   const [acceptEvent] = useMutation(AcceptEventDocument);
@@ -37,9 +37,9 @@ export function EventAccess({ event }: { event: Event }) {
   const { data: ticketsData, loading: ticketsLoading, refetch: refetchTickets } = useQuery(GetMyTicketsDocument, {
     variables: {
       event: event?._id,
-      withPaymentInfo: true
+      withPaymentInfo: true,
     },
-    skip: !session?.user || !event?._id,
+    skip: !session || !event?._id,
   });
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export function EventAccess({ event }: { event: Event }) {
   const joinEvent = () => {
     acceptEvent({ variables: { id: event._id } });
 
-    if (!session?.user) return;
+    if (!me?._id) return;
 
     client.writeQuery({
       query: GetEventDocument,
