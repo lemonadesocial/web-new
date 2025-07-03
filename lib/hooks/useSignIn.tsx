@@ -777,7 +777,9 @@ function OptionalWalletConnect({ onFinish }: { onFinish: () => void }) {
       <WalletButton loading={loading} onSignature={processSignature}>
         <span>Connect Wallet</span>
       </WalletButton>
-      <Button onClick={onFinish}>Do It Later</Button>
+      <Button disabled={loading} onClick={onFinish}>
+        Do It Later
+      </Button>
     </div>
   );
 }
@@ -829,6 +831,7 @@ function UnifiedLoginSignupModal() {
   const [showOptionalEmailVerify, setShowOptionalEmailVerify] = useState(false);
   const [showOptionalWalletConnect, setShowOptionalWalletConnect] = useState(false);
 
+  //-- TODO: it is better to be reactive and not to reload the page
   const reloadPage = () => {
     window.location.reload();
   };
@@ -850,7 +853,6 @@ function UnifiedLoginSignupModal() {
 
     modal.close();
 
-    //-- TODO: it is better to be reactive and not to reload the page
     reloadPage();
   };
 
