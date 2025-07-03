@@ -291,11 +291,10 @@ const useHandleOidc = () => {
   return { processOidc: withLoading(tryLogin, setLoading), loading };
 };
 
+function getPassword(address: string) {
+  return address.split('').reverse().join('');
+}
 const useHandleSignature = ({ onSuccess }: { onSuccess: () => void }) => {
-  function getPassword(address: string) {
-    return address.split('').reverse().join('');
-  }
-
   const [loading, setLoading] = useState(false);
 
   const trySignup = async (signature: string, token: string, wallet: string) => {
@@ -494,6 +493,62 @@ const useHandleVerifyEmail = ({ onSuccess }: { onSuccess: () => void }) => {
   };
 };
 
+const useHandleVerifyWallet = ({ onSuccess }: { onSuccess: () => void }) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const processSignature = async (signature: string, token: string, wallet: string) => {
+    if (!ory) return;
+
+    setError('');
+
+    const flow = await ory.createBrowserSettingsFlow({}).then((res) => res.data);
+
+    const result = await ory
+      .updateSettingsFlow({
+        flow: flow.id,
+        updateSettingsFlowBody: {
+          csrf_token: getCsrfTokenFromFlow(flow),
+          method: 'profile',
+          traits: {
+            ...flow.identity?.traits,
+            wallet,
+          },
+          transient_payload: {
+            wallet_signature: signature,
+            wallet_signature_token: token,
+          },
+        },
+      })
+      .then((res) => ({
+        success: true,
+        response: res.data,
+      }))
+      .catch((err) => ({
+        success: false,
+        response: err.response.data,
+      }));
+
+    if (!result.success) {
+      setError((result.response as SettingsFlow).ui.messages?.[0].text ?? 'Unknown error');
+      return;
+    }
+
+    await ory.updateSettingsFlow({
+      flow: flow.id,
+      updateSettingsFlowBody: {
+        csrf_token: getCsrfTokenFromFlow(result.response as SettingsFlow),
+        method: 'password',
+        password: getPassword(wallet),
+      },
+    });
+
+    onSuccess();
+  };
+
+  return { processSignature: withLoading(processSignature, setLoading), loading, error };
+};
+
 //-- EMAI AND CODE COMPONENTS
 
 function CodeVerification({
@@ -602,60 +657,6 @@ const config = createConfig(
   }),
 );
 
-//-- OPTIONAL WALLET CONNECT
-function OptionalWalletConnect({ onConnect, onLater }: { onConnect: () => void; onLater: () => void }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
-      <div>Connect Wallet</div>
-      <div>
-        We’ll find or help you create your Lens account—required to claim your Lemonade username and start posting,
-        commenting, and interacting across the platform.
-      </div>
-      <Button onClick={onConnect}>Connect Wallet</Button>
-      <Button onClick={onLater}>Do It Later</Button>
-    </div>
-  );
-}
-
-//-- OPTIONAL EMAIL VERIFY
-function OptionalEmailVerify({ onFinish }: { onFinish: () => void }) {
-  const { processEmail, processCode, resendCode, showCode, error, codeSent, resending, loading } = useHandleVerifyEmail(
-    {
-      onSuccess: onFinish,
-    },
-  );
-
-  const [email, setEmail] = useState('');
-
-  if (showCode) {
-    return (
-      <CodeVerification
-        email={email}
-        codeSent={codeSent}
-        onResend={() => resendCode(email)}
-        onSubmit={(code) => processCode(email, code)}
-        error={error}
-        loading={loading}
-        resending={resending}
-      />
-    );
-  }
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
-      <div>Verify Your Email</div>
-      <div>If you have attended Lemonade events in the past, enter the same email you used to register.</div>
-      <Input onChange={(e) => setEmail(e.target.value)} placeholder="Email address" />
-      {error && <div style={{ color: 'darkred' }}>{error}</div>}
-      <Button disabled={!email} loading={loading} onClick={() => processEmail(email)}>
-        Continue
-      </Button>
-      <Button disabled={loading} onClick={onFinish}>
-        Do It Later
-      </Button>
-    </div>
-  );
-}
 const queryClient = new QueryClient();
 
 const Web3Provider = ({ children }: { children: React.ReactNode }) => {
@@ -669,10 +670,12 @@ const Web3Provider = ({ children }: { children: React.ReactNode }) => {
 };
 
 function WalletButton({
+  children,
   loading,
   disabled,
   onSignature,
 }: {
+  children: React.ReactNode;
   loading?: boolean;
   disabled?: boolean;
   onSignature: (signature: string, token: string, wallet: string) => Promise<void>;
@@ -749,11 +752,73 @@ function WalletButton({
               show?.();
             }}
           >
-            Wallet
+            {children}
           </Button>
         );
       }}
     </ConnectKitButton.Custom>
+  );
+}
+
+//-- OPTIONAL WALLET CONNECT
+function OptionalWalletConnect({ onFinish }: { onFinish: () => void }) {
+  const { processSignature, loading, error } = useHandleVerifyWallet({
+    onSuccess: onFinish,
+  });
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
+      <div>Connect Wallet</div>
+      <div>
+        We’ll find or help you create your Lens account—required to claim your Lemonade username and start posting,
+        commenting, and interacting across the platform.
+      </div>
+      {error && <div style={{ color: 'darkred' }}>{error}</div>}
+      <WalletButton loading={loading} onSignature={processSignature}>
+        <span>Connect Wallet</span>
+      </WalletButton>
+      <Button onClick={onFinish}>Do It Later</Button>
+    </div>
+  );
+}
+
+//-- OPTIONAL EMAIL VERIFY
+function OptionalEmailVerify({ onFinish }: { onFinish: () => void }) {
+  const { processEmail, processCode, resendCode, showCode, error, codeSent, resending, loading } = useHandleVerifyEmail(
+    {
+      onSuccess: onFinish,
+    },
+  );
+
+  const [email, setEmail] = useState('');
+
+  if (showCode) {
+    return (
+      <CodeVerification
+        email={email}
+        codeSent={codeSent}
+        onResend={() => resendCode(email)}
+        onSubmit={(code) => processCode(email, code)}
+        error={error}
+        loading={loading}
+        resending={resending}
+      />
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
+      <div>Verify Your Email</div>
+      <div>If you have attended Lemonade events in the past, enter the same email you used to register.</div>
+      <Input onChange={(e) => setEmail(e.target.value)} placeholder="Email address" />
+      {error && <div style={{ color: 'darkred' }}>{error}</div>}
+      <Button disabled={!email} loading={loading} onClick={() => processEmail(email)}>
+        Continue
+      </Button>
+      <Button disabled={loading} onClick={onFinish}>
+        Do It Later
+      </Button>
+    </div>
   );
 }
 
@@ -806,9 +871,6 @@ function UnifiedLoginSignupModal() {
     onSuccess: onSignInSuccess,
   });
 
-  console.log('showOptionalEmailVerify', showOptionalEmailVerify);
-  console.log('showOptionalWalletConnect', showOptionalWalletConnect);
-
   const renderChildren = () => {
     if (showOptionalEmailVerify) {
       return (
@@ -824,8 +886,7 @@ function UnifiedLoginSignupModal() {
     if (showOptionalWalletConnect) {
       return (
         <OptionalWalletConnect
-          onConnect={() => {}}
-          onLater={() => {
+          onFinish={() => {
             modal.close();
             reloadPage();
           }}
@@ -867,7 +928,9 @@ function UnifiedLoginSignupModal() {
           }}
         >
           <OidcButtons disabled={loadingEmail || loadingWallet} loading={loadingOidc} onSelect={processOidc} />
-          <WalletButton disabled={loadingEmail || loadingOidc} loading={loadingWallet} onSignature={processSignature} />
+          <WalletButton disabled={loadingEmail || loadingOidc} loading={loadingWallet} onSignature={processSignature}>
+            <span>Wallet</span>
+          </WalletButton>
         </div>
       </>
     );
