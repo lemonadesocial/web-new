@@ -1,4 +1,4 @@
-import { LoginFlow, RegistrationFlow, UiNodeInputAttributes } from '@ory/client';
+import { LoginFlow, RegistrationFlow, SettingsFlow, UiNodeInputAttributes, VerificationFlow } from '@ory/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConnectKitProvider, ConnectKitButton, getDefaultConfig } from 'connectkit';
 import { useAtomValue } from 'jotai';
@@ -30,7 +30,7 @@ export const getUserWalletRequest = (wallet: string) =>
     `${process.env.NEXT_PUBLIC_IDENTITY_URL}/api/wallet?${new URLSearchParams({ wallet })}`,
   );
 
-//-- these functions are properly implemented
+//-- HOOKS
 
 const withLoading =
   <T extends unknown[], K>(fn: (...args: T) => Promise<K>, setLoading: (loading: boolean) => void) =>
@@ -43,7 +43,7 @@ const withLoading =
     }
   };
 
-function getCsrfTokenFromFlow(flow: RegistrationFlow | LoginFlow) {
+function getCsrfTokenFromFlow(flow: RegistrationFlow | LoginFlow | SettingsFlow | VerificationFlow) {
   const csrfNode = flow.ui.nodes.find(
     (node) => node.type === 'input' && 'name' in node.attributes && node.attributes.name === 'csrf_token',
   );
@@ -362,6 +362,138 @@ const useHandleSignature = ({ onSuccess }: { onSuccess: () => void }) => {
   return { processSignature: withLoading(tryLogin, setLoading), loading };
 };
 
+const useHandleVerifyEmail = ({ onSuccess }: { onSuccess: () => void }) => {
+  const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [error, setError] = useState('');
+  const [codeSent, setCodeSent] = useState(false);
+  const [flow, setFlow] = useState<VerificationFlow>();
+
+  const processEmail = async (email: string) => {
+    if (!ory) return;
+
+    setError('');
+
+    const flow = await ory.createBrowserSettingsFlow({}).then((res) => res.data);
+
+    const updateResult = await ory
+      .updateSettingsFlow({
+        flow: flow.id,
+        updateSettingsFlowBody: {
+          csrf_token: getCsrfTokenFromFlow(flow),
+          method: 'profile',
+          traits: {
+            ...flow.identity?.traits,
+            email,
+          },
+        },
+      })
+      .then((res) => ({
+        success: true,
+        response: res.data,
+      }))
+      .catch((err) => ({
+        success: false,
+        response: err.response.data,
+      }));
+
+    if (!updateResult.success) {
+      setError((updateResult.response as SettingsFlow).ui.messages?.[0].text ?? 'Unknown error');
+      return;
+    }
+
+    //-- create a verification flow
+    let verificationFlow = await ory.createBrowserVerificationFlow({}).then((res) => res.data);
+
+    //-- update the verification flow
+    verificationFlow = await ory
+      .updateVerificationFlow({
+        flow: verificationFlow.id,
+        updateVerificationFlowBody: {
+          csrf_token: getCsrfTokenFromFlow(verificationFlow),
+          method: 'code',
+          email,
+        },
+      })
+      .then((res) => res.data);
+
+    const codeSent = verificationFlow.ui.messages?.find((m) => m.id === 1080003);
+
+    if (codeSent) {
+      setFlow(verificationFlow);
+      setCodeSent(true);
+      return;
+    }
+
+    setError(verificationFlow.ui.messages?.[0].text ?? 'Unknown error');
+  };
+
+  const processCode = async (email: string, code: string) => {
+    if (!ory || !flow) return;
+
+    const result = await ory
+      .updateVerificationFlow({
+        flow: flow.id,
+        updateVerificationFlowBody: {
+          csrf_token: getCsrfTokenFromFlow(flow),
+          method: 'code',
+          code,
+          email,
+        },
+      })
+      .then((res) => ({
+        success: true,
+        response: res.data,
+      }))
+      .catch((err) => ({
+        success: false,
+        response: err.response.data,
+      }));
+
+    if (!result.success) {
+      setError((result.response as VerificationFlow).ui.messages?.[0].text ?? 'Unknown error');
+      return;
+    }
+
+    onSuccess();
+  };
+
+  const resendCode = async (email: string) => {
+    if (!ory || !flow) return;
+
+    const result = await ory
+      .updateVerificationFlow({
+        flow: flow.id,
+        updateVerificationFlowBody: {
+          csrf_token: getCsrfTokenFromFlow(flow),
+          method: 'code',
+          email,
+        },
+      })
+      .then((res) => res.data);
+
+    const codeSent = result.ui.messages?.find((m) => m.id === 1080003);
+
+    if (codeSent) {
+      setCodeSent(true);
+      return;
+    }
+
+    setError(result.ui.messages?.[0].text ?? 'Unknown error');
+  };
+
+  return {
+    processEmail: withLoading(processEmail, setLoading),
+    processCode: withLoading(processCode, setLoading),
+    resendCode: withLoading(resendCode, setResending),
+    loading,
+    error,
+    resending,
+    codeSent,
+    showCode: !!flow,
+  };
+};
+
 //-- EMAI AND CODE COMPONENTS
 
 function CodeVerification({
@@ -385,7 +517,7 @@ function CodeVerification({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
       <div>An email had been sent to {email}</div>
-      <Input disabled={loading} placeholder="Input OTP here" onChange={(e) => setCode(e.target.value)} />
+      <Input disabled={loading || resending} placeholder="Input OTP here" onChange={(e) => setCode(e.target.value)} />
       {error && <div style={{ color: 'darkred' }}>{error}</div>}
       {codeSent && <div style={{ color: 'lime' }}>Code sent. Please check your email.</div>}
       <Button loading={resending} disabled={loading} onClick={onResend}>
@@ -470,6 +602,60 @@ const config = createConfig(
   }),
 );
 
+//-- OPTIONAL WALLET CONNECT
+function OptionalWalletConnect({ onConnect, onLater }: { onConnect: () => void; onLater: () => void }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
+      <div>Connect Wallet</div>
+      <div>
+        We’ll find or help you create your Lens account—required to claim your Lemonade username and start posting,
+        commenting, and interacting across the platform.
+      </div>
+      <Button onClick={onConnect}>Connect Wallet</Button>
+      <Button onClick={onLater}>Do It Later</Button>
+    </div>
+  );
+}
+
+//-- OPTIONAL EMAIL VERIFY
+function OptionalEmailVerify({ onFinish }: { onFinish: () => void }) {
+  const { processEmail, processCode, resendCode, showCode, error, codeSent, resending, loading } = useHandleVerifyEmail(
+    {
+      onSuccess: onFinish,
+    },
+  );
+
+  const [email, setEmail] = useState('');
+
+  if (showCode) {
+    return (
+      <CodeVerification
+        email={email}
+        codeSent={codeSent}
+        onResend={() => resendCode(email)}
+        onSubmit={(code) => processCode(email, code)}
+        error={error}
+        loading={loading}
+        resending={resending}
+      />
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
+      <div>Verify Your Email</div>
+      <div>If you have attended Lemonade events in the past, enter the same email you used to register.</div>
+      <Input onChange={(e) => setEmail(e.target.value)} placeholder="Email address" />
+      {error && <div style={{ color: 'darkred' }}>{error}</div>}
+      <Button disabled={!email} loading={loading} onClick={() => processEmail(email)}>
+        Continue
+      </Button>
+      <Button disabled={loading} onClick={onFinish}>
+        Do It Later
+      </Button>
+    </div>
+  );
+}
 const queryClient = new QueryClient();
 
 const Web3Provider = ({ children }: { children: React.ReactNode }) => {
@@ -574,9 +760,33 @@ function WalletButton({
 //-- MODAL COMPONENT
 
 function UnifiedLoginSignupModal() {
-  const onSignInSuccess = () => {
-    modal.close();
+  const [email, setEmail] = useState('');
+  const [showOptionalEmailVerify, setShowOptionalEmailVerify] = useState(false);
+  const [showOptionalWalletConnect, setShowOptionalWalletConnect] = useState(false);
+
+  const reloadPage = () => {
     window.location.reload();
+  };
+
+  const onSignInSuccess = async () => {
+    if (!ory) return;
+
+    const session = await ory.toSession().then((res) => res.data);
+
+    if (!session.identity?.traits?.email) {
+      setShowOptionalEmailVerify(true);
+      return;
+    }
+
+    if (!session.identity?.traits?.wallet) {
+      setShowOptionalWalletConnect(true);
+      return;
+    }
+
+    modal.close();
+
+    //-- TODO: it is better to be reactive and not to reload the page
+    reloadPage();
   };
 
   const {
@@ -596,44 +806,35 @@ function UnifiedLoginSignupModal() {
     onSuccess: onSignInSuccess,
   });
 
-  const [email, setEmail] = useState('');
+  console.log('showOptionalEmailVerify', showOptionalEmailVerify);
+  console.log('showOptionalWalletConnect', showOptionalWalletConnect);
 
-  return (
-    <div style={{ padding: 21, gap: 13, display: 'flex', flexDirection: 'column', width: 400 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 13, alignItems: 'center' }}>
-        <div>Login / Signup</div>
-        <Button onClick={() => modal.close()}>X</Button>
-      </div>
+  const renderChildren = () => {
+    if (showOptionalEmailVerify) {
+      return (
+        <OptionalEmailVerify
+          onFinish={() => {
+            modal.close();
+            reloadPage();
+          }}
+        />
+      );
+    }
 
-      {!showCode && (
-        <>
-          <EmailAndOidcs
-            loading={loadingEmail}
-            disabled={loadingOidc || loadingWallet}
-            onSubmitEmail={(email) => {
-              setEmail(email);
-              processEmail(email);
-            }}
-          />
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 13,
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <OidcButtons disabled={loadingEmail || loadingWallet} loading={loadingOidc} onSelect={processOidc} />
-            <WalletButton
-              disabled={loadingEmail || loadingOidc}
-              loading={loadingWallet}
-              onSignature={processSignature}
-            />
-          </div>
-        </>
-      )}
-      {showCode && (
+    if (showOptionalWalletConnect) {
+      return (
+        <OptionalWalletConnect
+          onConnect={() => {}}
+          onLater={() => {
+            modal.close();
+            reloadPage();
+          }}
+        />
+      );
+    }
+
+    if (showCode) {
+      return (
         <CodeVerification
           resending={resending}
           loading={loadingEmail}
@@ -643,7 +844,43 @@ function UnifiedLoginSignupModal() {
           email={email}
           onSubmit={(code) => processCode(email, code)}
         />
-      )}
+      );
+    }
+
+    return (
+      <>
+        <EmailAndOidcs
+          loading={loadingEmail}
+          disabled={loadingOidc || loadingWallet}
+          onSubmitEmail={(email) => {
+            setEmail(email);
+            processEmail(email);
+          }}
+        />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: 13,
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <OidcButtons disabled={loadingEmail || loadingWallet} loading={loadingOidc} onSelect={processOidc} />
+          <WalletButton disabled={loadingEmail || loadingOidc} loading={loadingWallet} onSignature={processSignature} />
+        </div>
+      </>
+    );
+  };
+
+  return (
+    <div style={{ padding: 21, gap: 13, display: 'flex', flexDirection: 'column', width: 400 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 13, alignItems: 'center' }}>
+        <div>Login / Signup</div>
+        <Button onClick={() => modal.close()}>X</Button>
+      </div>
+
+      {renderChildren()}
     </div>
   );
 }
