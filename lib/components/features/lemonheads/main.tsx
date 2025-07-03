@@ -1,14 +1,14 @@
 'use client';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
-import { useForm } from 'react-hook-form';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { useAtom, useAtomValue } from 'jotai';
 import { isMobile } from 'react-device-detect';
 import clsx from 'clsx';
 import { ethers } from 'ethers';
 
-import { Button, toast } from '$lib/components/core';
+import { Button, Checkbox, modal, ModalContent, toast } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
 import { LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
 import { transformTrait } from '$lib/trpc/lemonheads/preselect';
@@ -29,6 +29,11 @@ import { mintAtom } from './store';
 import { LemonHeadGetStarted } from './steps/get-started';
 
 import { convertFormValuesToTraits, LEMONHEAD_CHAIN_ID } from './utils';
+import { useAppKitAccount } from '@reown/appkit/react';
+import { ConnectWallet } from '../modals/ConnectWallet';
+import { useAccount } from '$lib/hooks/useLens';
+import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
+import Link from 'next/link';
 
 const steps = [
   { key: 'getstarted', label: '', component: LemonHeadGetStarted, btnText: 'Get Started' },
@@ -119,6 +124,8 @@ export function LemonHeadMain({ bodySet, defaultSet }: { bodySet: LemonHeadsLaye
       </div>
       <Footer
         step={currentStep}
+        bodySet={bodySet}
+        form={form}
         onNext={async () => {
           if (currentStep < steps.length - 1) {
             // check valid traits before move next
@@ -145,15 +152,58 @@ export function LemonHeadMain({ bodySet, defaultSet }: { bodySet: LemonHeadsLaye
   );
 }
 
-function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; onPrev?: () => void }) {
+function Footer({
+  step,
+  form,
+  bodySet,
+  onNext,
+  onPrev,
+}: {
+  step: number;
+  onNext?: () => void;
+  onPrev?: () => void;
+  form: UseFormReturn<LemonHeadValues>;
+  bodySet: LemonHeadsLayer[];
+}) {
   const [mint, setMintAtom] = useAtom(mintAtom);
   const disabled = step === 3 && !mint.minted;
+  const currentStep = steps[step];
+
+  const { account: myAccount } = useAccount();
+  const chainsMap = useAtomValue(chainsMapAtom);
+  const { isConnected } = useAppKitAccount();
+
+  const handleNext = () => {
+    if (currentStep.key === 'create') {
+      if (!isConnected) {
+        modal.open(ConnectWallet, {
+          props: {
+            onConnect: () => {
+              modal.close();
+
+              setTimeout(() => {
+                if (!myAccount) {
+                  modal.open(BeforMintModal, { dismissible: true, props: { form: form, bodySet } });
+                  return;
+                }
+              });
+            },
+            chain: chainsMap[LENS_CHAIN_ID],
+          },
+          dismissible: true,
+        });
+
+        return;
+      }
+    }
+    onNext?.();
+  };
 
   if (isMobile) {
     return (
       <div className="flex items-center gap-2 min-h-[64px] px-4">
         <Button icon="icon-logout" onClick={onPrev} variant="tertiary" />
-        <Button variant="secondary" className="w-full" onClick={onNext} disabled={disabled}>
+        <Button variant="secondary" className="w-full" onClick={handleNext} disabled={disabled}>
           {steps[step].btnText}
         </Button>
       </div>
@@ -199,10 +249,71 @@ function Footer({ step, onNext, onPrev }: { step: number; onNext?: () => void; o
             onClick={() => setMintAtom({ ...mint, mute: !mint.mute })}
           />
         )}
-        <Button iconRight="icon-chevron-right" disabled={disabled} variant="secondary" size="sm" onClick={onNext}>
+        <Button iconRight="icon-chevron-right" disabled={disabled} variant="secondary" size="sm" onClick={handleNext}>
           {steps[step].btnText}
         </Button>
       </div>
     </div>
+  );
+}
+
+function BeforMintModal({ form, bodySet }: { form: UseFormReturn<LemonHeadValues>; bodySet: LemonHeadsLayer[] }) {
+  return (
+    <ModalContent icon="icon-signature" onClose={() => modal.close()}>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <p className="text-lg">Before You Mint</p>
+          <p className="text-sm">Please review and agree to the terms.</p>
+          <p className="text-sm">By minting your LemonHead, you agree to our Terms of Use and acknowledge that:</p>
+          <ul className="list-disc pl-5.5 text-sm">
+            <li>Your avatar will be permanently recorded on-chain.</li>
+            <li>It will be publicly visible and tied to your wallet address.</li>
+            <li>You won’t be able to edit the name or artwork after minting. All sales are final.</li>
+          </ul>
+
+          <div className="flex gap-1 items-center">
+            <Link href="" target="_blank" className="text-accent-400 text-sm">
+              View Full Terms of Use
+            </Link>
+            <i className="icon-arrow-outward size-[18px] text-quaternary" />
+          </div>
+        </div>
+
+        <Checkbox containerClass="text-sm items-center [&_i]:size-5" id="term">
+          I’ve read and agree to the Terms of Use.
+        </Checkbox>
+
+        <Button
+          variant="secondary"
+          onClick={() => {
+            modal.close();
+            modal.open(MintModal, { props: { form, bodySet } });
+          }}
+        >
+          Continue
+        </Button>
+      </div>
+    </ModalContent>
+  );
+}
+
+function MintModal({ form, bodySet }: { form: UseFormReturn<LemonHeadValues>; bodySet: LemonHeadsLayer[] }) {
+  const formValues = form.watch();
+  return (
+    <ModalContent
+      icon={<LemonHeadPreview className="size-[80px]" form={formValues} bodySet={bodySet} />}
+      onClose={() => modal.close()}
+    >
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <p className="text-lg">Claim Your LemonHead</p>
+          <p className="text-sm">
+            You’re just one step away from owning your unique & personalized LemonHead. Mint & claim your on-chain
+            identity.
+          </p>
+        </div>
+        <Button variant="secondary">Continue</Button>
+      </div>
+    </ModalContent>
   );
 }

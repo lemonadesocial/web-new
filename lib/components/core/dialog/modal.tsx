@@ -26,14 +26,14 @@ interface Modal {
 }
 
 export function createModal(): Modal {
-  return ({
+  return {
     open: () => {
       throw new Error('Modal not initialized');
     },
     close: () => {
       throw new Error('Modal not initialized');
     },
-  });
+  };
 }
 
 export const modal = createModal();
@@ -43,17 +43,14 @@ export function ModalContainer({ modal }: { modal: Modal }) {
   const nextId = React.useRef(0);
   const modalRefs = React.useRef<Map<number, HTMLDivElement>>(new Map());
 
-  const handleOpen = React.useCallback(<T extends object>(
-    Component: React.ComponentType<T>,
-    opts: Options<T> = {}
-  ): number => {
-    const id = nextId.current++;
-    setModals((prev) => [
-      ...prev,
-      { id, content: <Component {...(opts.props as T)} />, options: opts },
-    ]);
-    return id;
-  }, []);
+  const handleOpen = React.useCallback(
+    <T extends object>(Component: React.ComponentType<T>, opts: Options<T> = {}): number => {
+      const id = nextId.current++;
+      setModals((prev) => [...prev, { id, content: <Component {...(opts.props as T)} />, options: opts }]);
+      return id;
+    },
+    [],
+  );
 
   const handleClose = React.useCallback((id?: number) => {
     if (id !== undefined) {
@@ -74,17 +71,13 @@ export function ModalContainer({ modal }: { modal: Modal }) {
         return;
       }
 
-      if (
-        modalRef &&
-        event.target instanceof Node &&
-        !modalRef.contains(event.target)
-      ) {
+      if (modalRef && event.target instanceof Node && !modalRef.contains(event.target)) {
         if (topModal.options.dismissible) {
           handleClose(topModal.id);
         }
       }
     },
-    [modals, handleClose]
+    [modals, handleClose],
   );
 
   useEffect(() => {
@@ -121,14 +114,16 @@ export function ModalContainer({ modal }: { modal: Modal }) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className={twMerge(
-                  modal.options.skipBaseClassName ? '' : 'bg-overlay-primary border border-card-border rounded-lg overflow-hidden m-4',
-                  modal.options.className
+                  modal.options.skipBaseClassName
+                    ? ''
+                    : 'bg-overlay-primary border border-card-border rounded-lg overflow-hidden m-4',
+                  modal.options.className,
                 )}
               >
                 {modal.content}
               </motion.div>
             </div>,
-            document.body
+            document.body,
           )}
         </React.Fragment>
       ))}
@@ -140,6 +135,7 @@ interface ModalContentProps {
   children: React.ReactNode;
   title?: React.ReactNode;
   icon?: React.ReactNode;
+  iconClass?: string;
   className?: string;
   onClose?: () => void;
   onBack?: () => void;
@@ -147,31 +143,23 @@ interface ModalContentProps {
 
 export function ModalContent({ children, onClose, title, icon, className, onBack }: ModalContentProps) {
   return (
-    <div className={twMerge("p-4 space-y-4 w-[340px] max-w-full", className)}>
-      {
-        (title || icon || onClose || onBack) && (
-          <div className={clsx("flex justify-between", icon ? 'items-start' : 'items-center')}>
-            {onBack && (
-              <Button icon="icon-chevron-left" size='xs' variant="tertiary" className="rounded-full" onClick={onBack} />
-            )}
-            {icon && (
-              <div className="size-[56px] flex justify-center items-center rounded-full bg-primary/8">
-                {
-                  typeof icon === 'string' ? <i className={clsx(icon, 'size-8 text-tertiary')} /> : icon
-                }
-              </div>
-            )}
-            {title && !onBack && <span className='min-w-6' />}
-            <p className='font-medium'>{title}</p>
-            {onClose && (
-              <Button icon="icon-x" size='xs' variant="tertiary" className="rounded-full" onClick={onClose} />
-            )}
-          </div>
-        )
-      }
-      <div>
-        {children}
-      </div>
+    <div className={twMerge('p-4 space-y-4 w-[340px] max-w-full', className)}>
+      {(title || icon || onClose || onBack) && (
+        <div className={clsx('flex justify-between', icon ? 'items-start' : 'items-center')}>
+          {onBack && (
+            <Button icon="icon-chevron-left" size="xs" variant="tertiary" className="rounded-full" onClick={onBack} />
+          )}
+          {icon && (
+            <div className="size-[56px] flex justify-center items-center rounded-full bg-primary/8">
+              {typeof icon === 'string' ? <i className={clsx(icon, 'size-8 text-tertiary')} /> : icon}
+            </div>
+          )}
+          {title && !onBack && <span className="min-w-6" />}
+          <p className="font-medium">{title}</p>
+          {onClose && <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={onClose} />}
+        </div>
+      )}
+      <div>{children}</div>
     </div>
   );
 }
