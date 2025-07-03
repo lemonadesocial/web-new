@@ -1,14 +1,34 @@
-import { useState } from 'react';
-import { useAtomValue } from 'jotai';
 import { LoginFlow, RegistrationFlow, UiNodeInputAttributes } from '@ory/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ConnectKitProvider, ConnectKitButton, getDefaultConfig } from 'connectkit';
+import { useAtomValue } from 'jotai';
+import { useEffect, useState } from 'react';
+import { WagmiProvider, createConfig, useAccount, useDisconnect, useSignMessage } from 'wagmi';
 
 import { hydraClientIdAtom } from '$lib/jotai';
 import { ory } from '$lib/utils/ory';
 
-import { modal } from '../components/core';
-import { Input, Button } from '../components/core';
+import { Button, Input, modal } from '../components/core';
 
 import { useOAuth2 } from './useOAuth2';
+
+//-- utilities
+const request = async <T,>(uri: string): Promise<T> => {
+  const response = await fetch(uri, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return (await response.json()) as T;
+};
+
+//-- the API definitions go here
+export const getUserWalletRequest = (wallet: string) =>
+  request<{ message: string; token: string }>(
+    `${process.env.NEXT_PUBLIC_IDENTITY_URL}/api/wallet?${new URLSearchParams({ wallet })}`,
+  );
 
 //-- these functions are properly implemented
 
@@ -271,7 +291,78 @@ const useHandleOidc = () => {
   return { processOidc: withLoading(tryLogin, setLoading), loading };
 };
 
-//-- please update the UI components below
+const useHandleSignature = ({ onSuccess }: { onSuccess: () => void }) => {
+  function getPassword(address: string) {
+    return address.split('').reverse().join('');
+  }
+
+  const [loading, setLoading] = useState(false);
+
+  const trySignup = async (signature: string, token: string, wallet: string) => {
+    if (!ory) return;
+
+    const flow = await ory.createBrowserRegistrationFlow({}).then((res) => res.data);
+
+    await ory.updateRegistrationFlow({
+      flow: flow.id,
+      updateRegistrationFlowBody: {
+        method: 'password',
+        csrf_token: getCsrfTokenFromFlow(flow),
+        password: getPassword(wallet),
+        traits: {
+          wallet,
+        },
+        transient_payload: {
+          wallet_signature: signature,
+          wallet_signature_token: token,
+        },
+      },
+    });
+
+    onSuccess();
+  };
+
+  const tryLogin = async (signature: string, token: string, wallet: string) => {
+    if (!ory) return;
+
+    const flow = await ory.createBrowserLoginFlow({}).then((res) => res.data);
+
+    const updateResult = await ory
+      .updateLoginFlow({
+        flow: flow.id,
+        updateLoginFlowBody: {
+          method: 'password',
+          csrf_token: getCsrfTokenFromFlow(flow),
+          password: getPassword(wallet),
+          identifier: wallet,
+          transient_payload: {
+            wallet_signature: signature,
+            wallet_signature_token: token,
+          },
+        },
+      })
+      .then((res) => ({ response: res.data, success: true }))
+      .catch((err) => ({ response: err.response.data as LoginFlow, success: false }));
+
+    if (!updateResult.success) {
+      //-- read the error within flow
+      const accountNotExists = (updateResult.response as LoginFlow).ui.messages?.find((m) => m.id === 4000006);
+
+      if (accountNotExists) {
+        //-- handle signup
+        await trySignup(signature, token, wallet);
+      }
+
+      return;
+    }
+
+    onSuccess();
+  };
+
+  return { processSignature: withLoading(tryLogin, setLoading), loading };
+};
+
+//-- EMAI AND CODE COMPONENTS
 
 function CodeVerification({
   loading,
@@ -335,6 +426,8 @@ function EmailAndOidcs({
   );
 }
 
+//-- OIDC COMPONENT
+
 const providers = ['google', 'apple'];
 
 function OidcButtons({
@@ -368,11 +461,124 @@ function OidcButtons({
   );
 }
 
-function WalletButton() {
-  return <Button>Wallet</Button>;
+// -- WALLET COMPONENT
+
+const config = createConfig(
+  getDefaultConfig({
+    walletConnectProjectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '',
+    appName: 'lemonade.social',
+  }),
+);
+
+const queryClient = new QueryClient();
+
+const Web3Provider = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <ConnectKitProvider>{children}</ConnectKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  );
+};
+
+function WalletButton({
+  loading,
+  disabled,
+  onSignature,
+}: {
+  loading?: boolean;
+  disabled?: boolean;
+  onSignature: (signature: string, token: string, wallet: string) => Promise<void>;
+}) {
+  const account = useAccount();
+  const { disconnect } = useDisconnect();
+  const { signMessage } = useSignMessage();
+
+  const [signing, setSigning] = useState(false);
+  const [signature, setSignature] = useState('');
+  const [token, setToken] = useState('');
+
+  const sign = async () => {
+    if (!account.address) {
+      return;
+    }
+
+    setSignature('');
+
+    //-- request payload from backend
+    const data = await getUserWalletRequest(account.address);
+
+    const message = data.message;
+    setToken(data.token);
+
+    signMessage(
+      { message },
+      {
+        onSettled: () => {
+          setSigning(false);
+        },
+        onSuccess: (signature) => {
+          setSignature(signature);
+        },
+        onError: () => {
+          if (account.isConnected) {
+            disconnect();
+          }
+        },
+      },
+    );
+  };
+
+  useEffect(() => {
+    if (signature && account.address && token) {
+      onSignature(signature, token, account.address).finally(() => disconnect());
+    }
+  }, [signature, account.address, token]);
+
+  useEffect(() => {
+    if (account.isDisconnected) {
+      setSignature('');
+    }
+  }, [account.isDisconnected]);
+
+  useEffect(() => {
+    if (account.isConnected && !signing && !signature) {
+      setSigning(true);
+
+      //-- note: ARC browser will show two signature requests in case of metamask,
+      //-- we can set timeout to the sign call if we want to support this browser
+      sign().catch(() => disconnect());
+    }
+  }, [account.isConnected, signing, signature]);
+
+  return (
+    <ConnectKitButton.Custom>
+      {({ show, isConnecting }) => {
+        return (
+          <Button
+            disabled={disabled}
+            loading={loading || signing || isConnecting}
+            onClick={() => {
+              show?.();
+            }}
+          >
+            Wallet
+          </Button>
+        );
+      }}
+    </ConnectKitButton.Custom>
+  );
 }
 
+//-- MODAL COMPONENT
+
 function UnifiedLoginSignupModal() {
+  const onSignInSuccess = () => {
+    modal.close();
+    window.location.reload();
+  };
+
   const {
     processEmail,
     processCode,
@@ -383,13 +589,12 @@ function UnifiedLoginSignupModal() {
     error,
     codeSent,
   } = useHandleEmail({
-    onSuccess: () => {
-      modal.close();
-      window.location.reload();
-    },
+    onSuccess: onSignInSuccess,
   });
-
   const { processOidc, loading: loadingOidc } = useHandleOidc();
+  const { processSignature, loading: loadingWallet } = useHandleSignature({
+    onSuccess: onSignInSuccess,
+  });
 
   const [email, setEmail] = useState('');
 
@@ -404,7 +609,7 @@ function UnifiedLoginSignupModal() {
         <>
           <EmailAndOidcs
             loading={loadingEmail}
-            disabled={loadingOidc}
+            disabled={loadingOidc || loadingWallet}
             onSubmitEmail={(email) => {
               setEmail(email);
               processEmail(email);
@@ -419,8 +624,12 @@ function UnifiedLoginSignupModal() {
               justifyContent: 'space-between',
             }}
           >
-            <OidcButtons disabled={loadingEmail} loading={loadingOidc} onSelect={processOidc} />
-            <WalletButton />
+            <OidcButtons disabled={loadingEmail || loadingWallet} loading={loadingOidc} onSelect={processOidc} />
+            <WalletButton
+              disabled={loadingEmail || loadingOidc}
+              loading={loadingWallet}
+              onSignature={processSignature}
+            />
           </div>
         </>
       )}
@@ -439,6 +648,14 @@ function UnifiedLoginSignupModal() {
   );
 }
 
+function LoginSignup() {
+  return (
+    <Web3Provider>
+      <UnifiedLoginSignupModal />
+    </Web3Provider>
+  );
+}
+
 export function useSignIn() {
   const { signIn } = useOAuth2();
   const hydraClientId = useAtomValue(hydraClientIdAtom);
@@ -449,6 +666,6 @@ export function useSignIn() {
       return;
     }
 
-    modal.open(UnifiedLoginSignupModal, {});
+    modal.open(LoginSignup, {});
   };
 }
