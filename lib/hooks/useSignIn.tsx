@@ -10,6 +10,19 @@ import { Input, Button } from '../components/core';
 
 import { useOAuth2 } from './useOAuth2';
 
+//-- these functions are properly implemented
+
+const withLoading =
+  <T extends unknown[], K>(fn: (...args: T) => Promise<K>, setLoading: (loading: boolean) => void) =>
+  async (...args: T) => {
+    try {
+      setLoading(true);
+      await fn(...args);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 function getCsrfTokenFromFlow(flow: RegistrationFlow | LoginFlow) {
   const csrfNode = flow.ui.nodes.find(
     (node) => node.type === 'input' && 'name' in node.attributes && node.attributes.name === 'csrf_token',
@@ -23,7 +36,10 @@ function getCsrfTokenFromFlow(flow: RegistrationFlow | LoginFlow) {
 }
 
 const useHandleEmail = ({ onSuccess }: { onSuccess: () => void }) => {
+  const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
   const [error, setError] = useState('');
+  const [codeSent, setCodeSent] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
   const [flow, setFlow] = useState<LoginFlow | RegistrationFlow>();
 
@@ -73,6 +89,57 @@ const useHandleEmail = ({ onSuccess }: { onSuccess: () => void }) => {
     }
 
     onSuccess();
+  };
+
+  const resendCode = async (email: string) => {
+    if (!ory || !flow) return;
+
+    setError('');
+    setCodeSent(false);
+
+    const payload = {
+      csrf_token: getCsrfTokenFromFlow(flow),
+      method: 'code',
+      resend: 'code',
+    } as const;
+
+    const promise = isSignup
+      ? ory.updateRegistrationFlow({
+          flow: flow.id,
+          updateRegistrationFlowBody: {
+            ...payload,
+            traits: { email },
+          },
+        })
+      : ory.updateLoginFlow({
+          flow: flow.id,
+          updateLoginFlowBody: {
+            ...payload,
+            identifier: email,
+          },
+        });
+
+    //-- this should always throw an error
+    const result = await promise
+      .then(() => ({ success: true, response: flow }))
+      .catch((err) => ({
+        success: false,
+        response: err.response.data as LoginFlow | RegistrationFlow,
+      }));
+
+    if (!result.success) {
+      const codeSent = (result.response as LoginFlow | RegistrationFlow).ui.messages?.find(
+        (m) => m.id === 1010014 || 1040005,
+      );
+
+      if (codeSent) {
+        setCodeSent(true);
+        return;
+      }
+
+      setError((result.response as LoginFlow | RegistrationFlow).ui.messages?.[0].text ?? 'Unknown error');
+      return;
+    }
   };
 
   const trySignup = async (email: string) => {
@@ -147,11 +214,26 @@ const useHandleEmail = ({ onSuccess }: { onSuccess: () => void }) => {
     }
   };
 
-  return { processEmail: tryLogin, showCode: !!flow, processCode: isSignup ? signupWithCode : loginWithCode, error };
+  const processCode = async (email: string, code: string) => {
+    setCodeSent(false);
+    return await (isSignup ? signupWithCode(email, code) : loginWithCode(email, code));
+  };
+
+  return {
+    processEmail: withLoading(tryLogin, setLoading),
+    processCode: withLoading(processCode, setLoading),
+    resendCode: withLoading(resendCode, setResending),
+    showCode: !!flow,
+    codeSent,
+    resending,
+    loading,
+    error,
+  };
 };
 
 const useHandleOidc = () => {
   const [flow, setFlow] = useState<LoginFlow | RegistrationFlow>();
+  const [loading, setLoading] = useState(false);
 
   const tryLogin = async (provider: string) => {
     if (!ory) return;
@@ -162,41 +244,70 @@ const useHandleOidc = () => {
       flow: flow.id,
       updateLoginFlowBody: { method: 'oidc', provider },
     });
+
+    console.log('updateResult', updateResult);
   };
 
-  return { processOidc: tryLogin };
+  return { processOidc: withLoading(tryLogin, setLoading), loading };
 };
 
+//-- please update the UI components below
+
 function CodeVerification({
+  loading,
+  resending,
   error,
   email,
+  codeSent,
+  onResend,
   onSubmit,
 }: {
+  loading?: boolean;
+  resending?: boolean;
   error?: string;
   email: string;
+  codeSent: boolean;
+  onResend: () => void;
   onSubmit: (code: string) => void;
 }) {
   const [code, setCode] = useState('');
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
       <div>An email had been sent to {email}</div>
-      <Input onChange={(e) => setCode(e.target.value)} />
+      <Input disabled={loading} placeholder="Input OTP here" onChange={(e) => setCode(e.target.value)} />
       {error && <div style={{ color: 'darkred' }}>{error}</div>}
-      <Button disabled={!code} onClick={() => onSubmit(code)}>
+      {codeSent && <div style={{ color: 'lime' }}>Code sent. Please check your email.</div>}
+      <Button loading={resending} disabled={loading} onClick={onResend}>
+        Resend Code
+      </Button>
+      <Button disabled={!code || resending} loading={loading} onClick={() => onSubmit(code)}>
         Continue
       </Button>
     </div>
   );
 }
 
-function EmailAndOidcs({ onSubmitEmail }: { onSubmitEmail: (email: string) => void }) {
+function EmailAndOidcs({
+  onSubmitEmail,
+  loading,
+  disabled,
+}: {
+  onSubmitEmail: (email: string) => void;
+  loading?: boolean;
+  disabled?: boolean;
+}) {
   const [email, setEmail] = useState('');
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
-        <Input placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <Button disabled={!email} onClick={() => onSubmitEmail(email)}>
+        <Input
+          disabled={loading || disabled}
+          placeholder="Email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <Button disabled={!email || disabled} loading={loading} onClick={() => onSubmitEmail(email)}>
           Continue with Email
         </Button>
       </div>
@@ -206,11 +317,11 @@ function EmailAndOidcs({ onSubmitEmail }: { onSubmitEmail: (email: string) => vo
 
 const providers = ['google', 'apple'];
 
-function OidcButtons({ onSelect }: { onSelect: (provider: string) => void }) {
+function OidcButtons({ onSelect, disabled }: { onSelect: (provider: string) => void; disabled?: boolean }) {
   return (
     <div style={{ display: 'flex', gap: 13, alignItems: 'center', justifyContent: 'space-between' }}>
       {providers.map((provider) => (
-        <Button key={provider} style={{ flex: 1 }}>
+        <Button key={provider} style={{ flex: 1 }} disabled={disabled}>
           <span style={{ textTransform: 'capitalize' }}>{provider}</span>
         </Button>
       ))}
@@ -223,19 +334,28 @@ function WalletButton() {
 }
 
 function UnifiedLoginSignupModal() {
-  const { processEmail, processCode, showCode, error } = useHandleEmail({
+  const {
+    processEmail,
+    processCode,
+    resendCode,
+    resending,
+    loading: loadingEmail,
+    showCode,
+    error,
+    codeSent,
+  } = useHandleEmail({
     onSuccess: () => {
       modal.close();
       window.location.reload();
     },
   });
 
-  const { processOidc } = useHandleOidc();
+  const { processOidc, loading: loadingOidc } = useHandleOidc();
 
   const [email, setEmail] = useState('');
 
   return (
-    <div style={{ padding: 21, gap: 13, display: 'flex', flexDirection: 'column' }}>
+    <div style={{ padding: 21, gap: 13, display: 'flex', flexDirection: 'column', width: 400 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 13, alignItems: 'center' }}>
         <div>Login / Signup</div>
         <Button onClick={() => modal.close()}>X</Button>
@@ -244,6 +364,8 @@ function UnifiedLoginSignupModal() {
       {!showCode && (
         <>
           <EmailAndOidcs
+            loading={loadingEmail}
+            disabled={loadingOidc}
             onSubmitEmail={(email) => {
               setEmail(email);
               processEmail(email);
@@ -258,18 +380,24 @@ function UnifiedLoginSignupModal() {
               justifyContent: 'space-between',
             }}
           >
-            <OidcButtons onSelect={processOidc} />
+            <OidcButtons disabled={loadingEmail} onSelect={processOidc} />
             <WalletButton />
           </div>
         </>
       )}
-      {showCode && <CodeVerification error={error} email={email} onSubmit={(code) => processCode(email, code)} />}
+      {showCode && (
+        <CodeVerification
+          resending={resending}
+          loading={loadingEmail}
+          codeSent={codeSent}
+          onResend={() => resendCode(email)}
+          error={error}
+          email={email}
+          onSubmit={(code) => processCode(email, code)}
+        />
+      )}
     </div>
   );
-}
-
-function handleSignIn() {
-  modal.open(UnifiedLoginSignupModal, {});
 }
 
 export function useSignIn() {
@@ -282,6 +410,6 @@ export function useSignIn() {
       return;
     }
 
-    handleSignIn();
+    modal.open(UnifiedLoginSignupModal, {});
   };
 }
