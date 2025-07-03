@@ -16,7 +16,7 @@ export function useJoinRequest() {
   return () => {
     modal.open(RequestSentModal, { dismissible: true });
 
-    if (session?.user) {
+    if (session) {
       client.refetchQuery({
         query: GetMyEventJoinRequestDocument,
         variables: { event: event._id },

@@ -3,15 +3,15 @@ import React from 'react';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { Divider, Map, Skeleton } from '$lib/components/core';
 import { getEventAddress, isAttending } from '$lib/utils/event';
-import { useSession } from '$lib/hooks/useSession';
+import { useMe } from '$lib/hooks/useMe';
 
 export function LocationSection({ event, loading = false }: { event?: Event; loading?: boolean }) {
-  const session = useSession();
+  const me = useMe();
 
   if (loading) return <LocationSectionSkeleton />;
   if (!event?.address) return null;
 
-  const attending = session?.user ? isAttending(event, session?.user) : false;
+  const attending = me?._id ? isAttending(event, me._id) : false;
 
   const markers = event.address.latitude && event.address.longitude
       ? [{ lat: event.address.latitude, lng: event.address.longitude }]

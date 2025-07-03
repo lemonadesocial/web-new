@@ -15,7 +15,7 @@ export function TicketsProcessingModal() {
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    if (!session?.user || !event?._id) return;
+    if (!session || !event?._id) return;
 
     const checkForTickets = async () => {
       try {
@@ -30,7 +30,7 @@ export function TicketsProcessingModal() {
 
         const hasTickets = !!data?.getMyTickets?.tickets?.length;
 
-        if (hasTickets) {
+        if (hasTickets) { 
           registrationModal.close();
           return true;
         }
