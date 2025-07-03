@@ -66,6 +66,7 @@ jobs:
           echo "NEXT_PUBLIC_LEMONADE_FEED_ADDRESS=${{ vars.STAGING_NEXT_PUBLIC_LEMONADE_FEED_ADDRESS }}" >> .env
           echo "NEXT_PUBLIC_LENS_NAMESPACE=${{ vars.STAGING_NEXT_PUBLIC_LENS_NAMESPACE }}" >> .env
           echo "NEXT_PUBLIC_LMD_VIDEO=${{ vars.STAGING_NEXT_PUBLIC_LMD_VIDEO }}" >> .env
+          echo "NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=${{ vars.STAGING_NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}" >> .env
 
       - name: Configure environment
         run: |
