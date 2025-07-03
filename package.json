@@ -15,6 +15,9 @@
     "codegen": "graphql-codegen"
   },
   "dependencies": {
+    "viem": "2.x",
+    "wagmi": "^2.15.6",
+    "connectkit": "^1.9.0",
     "@date-fns/tz": "^1.2.0",
     "@dicebear/core": "^9.2.2",
     "@dicebear/glass": "^9.2.2",
