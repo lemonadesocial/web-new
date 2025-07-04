@@ -2,6 +2,7 @@ import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { isMobile } from 'react-device-detect';
 import { useAtom } from 'jotai';
+import { twMerge } from 'tailwind-merge';
 
 import videojs from 'video.js';
 import Player from 'video.js/dist/types/player';
@@ -43,6 +44,14 @@ export function ClaimStep({ form }: { form: UseFormReturn<LemonHeadValues> }) {
 
   const image = 'https://i.seadn.io/s/raw/files/5faf4f74c7f11fcb939cfcb9e738fbae.png?auto=format&dpr=1&w=1000';
 
+  const getSrc = () => {
+    let src = `/api/og/lemonheads?image=${image}`;
+    if (myAccount?.username) src += `&username=${myAccount?.username.value.replace('lens/', '')}`;
+    if (myAccount?.metadata?.bio) src += `&bio=${myAccount?.metadata.bio}`;
+
+    return src;
+  };
+
   return (
     <div className="px-11 pb-11 pt-7 w-full max-w-[1440px]">
       <div className="relative z-10 flex flex-col items-center gap-11 text-center">
@@ -50,10 +59,7 @@ export function ClaimStep({ form }: { form: UseFormReturn<LemonHeadValues> }) {
           <p className="text-secondary md:text-xl">Welcome to</p>
           <p className="font-title text-2xl md:text-3xl font-semibold!">United Stands of Lemonade</p>
         </div>
-        <img
-          src={`/api/og/lemonheads?image=${image}&username=${myAccount?.username}&bio=${myAccount?.metadata?.bio}`}
-          className="rounded-md border border-primary"
-        />
+        <img src={getSrc()} className="rounded-md border border-primary" />
 
         <div className="flex w-full max-w-[1200px] justify-between">
           <Button variant="secondary" iconLeft="icon-passport">
@@ -97,7 +103,7 @@ export function ClaimStep({ form }: { form: UseFormReturn<LemonHeadValues> }) {
 
 function RightPane({ image }: { image: string }) {
   const { account: myAccount } = useAccount();
-  const { username, isLoading } = useLemonadeUsername(myAccount);
+  const { username } = useLemonadeUsername(myAccount);
 
   const handleUpdateProfile = () => {
     if (!myAccount) {
@@ -107,6 +113,54 @@ function RightPane({ image }: { image: string }) {
       else modal.open(EditProfileModal, { dismissible: true });
     }
   };
+
+  const getSrc = () => {
+    let src = `/api/og/lemonheads?image=${image}`;
+    if (myAccount?.username) src += `&username=${myAccount?.username.value.replace('lens/', '')}`;
+    if (myAccount?.metadata?.bio) src += `&bio=${myAccount?.metadata.bio}`;
+
+    return src;
+  };
+
+  let shareUrl = '';
+  let shareText = '';
+  const handleShare = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const shareOptions = [
+    {
+      name: 'Tweet',
+      icon: 'icon-twitter',
+      onClick: () =>
+        handleShare(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${shareText}`),
+    },
+    {
+      name: 'Cast',
+      icon: 'icon-farcaster',
+      onClick: () =>
+        handleShare(
+          `https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}&embeds[]=${encodeURIComponent(shareUrl)}`,
+        ),
+    },
+    {
+      name: 'Post',
+      icon: 'icon-lemonade',
+      onClick: () => alert('Comming soon'),
+      // onClick: () => handleShare(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`),
+    },
+    {
+      name: 'Share',
+      icon: 'icon-instagram',
+      onClick: () => alert('Comming soon'),
+      // onClick: () => handleShare(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`),
+    },
+    {
+      name: 'Post',
+      icon: 'icon-linkedin',
+      onClick: () => handleShare(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`),
+    },
+  ];
 
   return (
     <Pane.Root>
@@ -121,10 +175,7 @@ function RightPane({ image }: { image: string }) {
               Your personalized LemonHead card is ready! Update your profile info to make it truly yours.
             </p>
           </div>
-          <img
-            src={`/api/og/lemonheads?image=${image}&username=${myAccount?.username}&bio=${myAccount?.bio}`}
-            className="rounded-md"
-          />
+          <img src={getSrc()} className="rounded-md" />
         </div>
         <Alert className="justify-start">
           <div className="flex flex-col gap-3">
@@ -139,16 +190,29 @@ function RightPane({ image }: { image: string }) {
               <Button size="sm" iconLeft="icon-user-edit-outline" variant="tertiary" onClick={handleUpdateProfile}>
                 Update Profile
               </Button>
-              <Button size="sm" iconLeft="icon-vertical-align-top rotate-180" variant="secondary">
-                Download
-              </Button>
+              <a href={getSrc()} download>
+                <Button size="sm" iconLeft="icon-vertical-align-top rotate-180" variant="secondary">
+                  Download
+                </Button>
+              </a>
             </div>
           </div>
         </Alert>
 
         <div className="py-5 flex flex-col px-4 gap-4">
           <p className="text-lg">Share LemonHeads</p>
-          <div>social button here</div>
+          <div className="grid grid-cols-5 gap-2">
+            {shareOptions.map((item, idx) => (
+              <div
+                key={idx}
+                onClick={item.onClick}
+                className="flex flex-col items-center gap-3 pt-4 pb-2 px-1 bg-(--btn-tertiary) text-tertiary hover:(--btn-tertiary-hover) hover:text-primary rounded-sm cursor-pointer"
+              >
+                <i className={twMerge('size-8', item.icon)} />
+                <p>{item.name}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </Pane.Content>
     </Pane.Root>

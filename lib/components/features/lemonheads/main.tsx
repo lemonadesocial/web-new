@@ -347,6 +347,9 @@ function MintModal({
   const chain = chainsMap[LEMONHEAD_CHAIN_ID];
   const contractAddress = chain?.lemonhead_contract_address;
   const { walletProvider } = useAppKitProvider('eip155');
+  const [txn, setTxn] = React.useState('');
+  const [done, setDone] = React.useState(false);
+  const [count, setCount] = React.useState(10);
 
   React.useEffect(() => {
     const fetchMintPrice = async () => {
@@ -366,12 +369,15 @@ function MintModal({
     if (!sponsor) fetchMintPrice();
   }, [contractAddress, chain.rpc_url, sponsor]);
 
+  React.useEffect(() => {
+    if (count === 0) {
+      modal.close();
+      setMintAtom((prev) => ({ ...prev, minted: true, video: true }));
+      onComplete();
+    }
+  }, [count]);
+
   const handleMint = async () => {
-    // NOTE: testing
-    setMintAtom((prev) => ({ ...prev, minted: true, video: true }));
-    onComplete();
-    modal.close();
-    return;
     try {
       setIsMinting(true);
       const traits = convertFormValuesToTraits(formValues);
@@ -394,16 +400,56 @@ function MintModal({
         [mintData.look, mintData.metadata, mintData.signature],
         { value: mintPrice },
       );
+      setTxn(tx);
       await tx.wait();
-      setMintAtom((prev) => ({ ...prev, minted: true, video: true }));
-      onComplete();
+      setDone(true);
+      setInterval(() => {
+        setCount((prev) => prev - 1);
+        if (count === 0) {
+          setMintAtom((prev) => ({ ...prev, minted: true, video: true }));
+          onComplete();
+        }
+      }, 1000);
     } catch (error: any) {
       toast.error(error.message);
     } finally {
       setIsMinting(false);
-      modal.close();
     }
   };
+
+  if (txn) {
+    return (
+      <ModalContent
+        icon={
+          <div className="size-[56px] flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
+            {done ? <p>{count}</p> : <i className="icon-loader animate-spin" />}
+          </div>
+        }
+        title={
+          <Button
+            size="sm"
+            iconRight="icon-arrow-outward"
+            className="rounded-full"
+            variant="tertiary-alt"
+            onClick={() => {}}
+          >
+            View txn.
+          </Button>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <p className="text-lg">{done ? 'Verifying Transaction' : 'Processing Payment'}</p>
+            <p className="text-sm">
+              {done
+                ? 'Almost there! We’re confirming your transaction and preparing your custom LemonHead. Thanks for your patience!'
+                : `We’re securing your payment and locking in your LemonHead. This won’t take long — hang tight while we get things ready.`}
+            </p>
+          </div>
+        </div>
+      </ModalContent>
+    );
+  }
 
   return (
     <ModalContent
