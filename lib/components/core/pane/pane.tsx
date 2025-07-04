@@ -20,7 +20,7 @@ const useChildrenByComponent = <T extends ComponentType>(
 };
 
 function PaneRoot({ children }: React.PropsWithChildren) {
-  return <div className="flex flex-col flex-1 bg-overlay-primary">{children}</div>;
+  return <div className="flex flex-col flex-1 bg-overlay-primary h-full">{children}</div>;
 }
 
 function PaneHeaderRoot({ children }: React.PropsWithChildren) {

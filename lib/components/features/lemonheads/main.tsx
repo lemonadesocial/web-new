@@ -3,16 +3,16 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { isMobile } from 'react-device-detect';
 import clsx from 'clsx';
-import { ethers } from 'ethers';
+import { Eip1193Provider, ethers } from 'ethers';
 
 import { Button, Checkbox, modal, ModalContent, toast } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
 import { LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
 import { transformTrait } from '$lib/trpc/lemonheads/preselect';
-import { LemonheadNFTContract } from '$lib/utils/crypto';
+import { LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
 import { chainsMapAtom } from '$lib/jotai';
 import { trpc } from '$lib/trpc/client';
 import { TraitType } from '$lib/services/lemonhead/core';
@@ -29,17 +29,19 @@ import { mintAtom } from './store';
 import { LemonHeadGetStarted } from './steps/get-started';
 
 import { convertFormValuesToTraits, LEMONHEAD_CHAIN_ID } from './utils';
-import { useAppKitAccount } from '@reown/appkit/react';
+import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react';
 import { ConnectWallet } from '../modals/ConnectWallet';
 import { useAccount } from '$lib/hooks/useLens';
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import Link from 'next/link';
+import { useQuery } from '$lib/graphql/request';
+import { GetListLemonheadSponsorsDocument } from '$lib/graphql/generated/backend/graphql';
 
 const steps = [
   { key: 'getstarted', label: '', component: LemonHeadGetStarted, btnText: 'Get Started' },
   { key: 'about', label: 'About You', component: AboutYou, btnText: 'Enter Customizer' },
   { key: 'create', label: 'Create', component: CreateStep, btnText: 'Claim' },
-  { key: 'claim', label: 'Claim', component: ClaimStep, btnText: 'Continue' },
+  { key: 'claim', label: 'Claim', component: ClaimStep, btnText: 'Continue', hidePreview: true },
   // { key: 'collaborate', label: 'Collaborate', component: Collaborate, btnText: 'Continue' },
   // { key: 'celebrate', label: 'Celebrate', componenent: Celebrate, btnText: 'Continue' },
 ];
@@ -108,16 +110,18 @@ export function LemonHeadMain({ bodySet, defaultSet }: { bodySet: LemonHeadsLaye
       </div>
       <div className="flex-1 overflow-auto md:overflow-hidden">
         <div className="flex flex-col md:flex md:flex-row-reverse max-w-[1440px] mx-auto gap-5 overflow-auto md:gap-18 p-4 md:p-11 md:max-h-full no-scrollbar">
-          <div className={clsx('flex-1 z-10', isMobile && currentStep > 2 && 'size-[80px]')}>
-            {currentStep === 0 ? (
-              <img
-                src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
-                className="rounded-sm w-full h-full"
-              />
-            ) : (
-              <LemonHeadPreview form={formValues} bodySet={bodySet} />
-            )}
-          </div>
+          {!steps[currentStep].hidePreview && (
+            <div className={clsx('flex-1 z-10', isMobile && currentStep > 2 && 'size-[80px]')}>
+              {currentStep === 0 ? (
+                <img
+                  src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
+                  className="rounded-sm w-full h-full"
+                />
+              ) : (
+                <LemonHeadPreview form={formValues} bodySet={bodySet} />
+              )}
+            </div>
+          )}
 
           <Comp form={form} bodySet={bodySet} defaultSet={defaultSet} />
         </div>
@@ -165,7 +169,7 @@ function Footer({
   form: UseFormReturn<LemonHeadValues>;
   bodySet: LemonHeadsLayer[];
 }) {
-  const [mint, setMintAtom] = useAtom(mintAtom);
+  const [mint] = useAtom(mintAtom);
   const disabled = step === 3 && !mint.minted;
   const currentStep = steps[step];
 
@@ -183,17 +187,33 @@ function Footer({
 
               setTimeout(() => {
                 if (!myAccount) {
-                  modal.open(BeforMintModal, { dismissible: true, props: { form: form, bodySet } });
+                  modal.open(BeforMintModal, {
+                    dismissible: true,
+                    props: {
+                      onContinue: () =>
+                        modal.open(MintModal, {
+                          props: {
+                            form,
+                            bodySet,
+                            onComplete: () => onNext?.(),
+                          },
+                        }),
+                    },
+                  });
                   return;
                 }
               });
             },
             chain: chainsMap[LENS_CHAIN_ID],
           },
-          dismissible: true,
         });
 
         return;
+      } else {
+        if (!mint.minted) {
+          modal.open(MintModal, { props: { form: form, bodySet, onComplete: () => onNext?.() } });
+          return;
+        }
       }
     }
     onNext?.();
@@ -241,14 +261,6 @@ function Footer({
         </ul>
       )}
       <div className="flex gap-2 flex-1 justify-end">
-        {mint.video && (
-          <Button
-            size="sm"
-            variant="tertiary-alt"
-            icon={mint.mute ? 'icon-speaker-wave' : 'icon-speaker-x-mark'}
-            onClick={() => setMintAtom({ ...mint, mute: !mint.mute })}
-          />
-        )}
         <Button iconRight="icon-chevron-right" disabled={disabled} variant="secondary" size="sm" onClick={handleNext}>
           {steps[step].btnText}
         </Button>
@@ -257,7 +269,7 @@ function Footer({
   );
 }
 
-function BeforMintModal({ form, bodySet }: { form: UseFormReturn<LemonHeadValues>; bodySet: LemonHeadsLayer[] }) {
+function BeforMintModal({ onContinue }: { onContinue: () => void }) {
   return (
     <ModalContent icon="icon-signature" onClose={() => modal.close()}>
       <div className="flex flex-col gap-4">
@@ -287,7 +299,7 @@ function BeforMintModal({ form, bodySet }: { form: UseFormReturn<LemonHeadValues
           variant="secondary"
           onClick={() => {
             modal.close();
-            modal.open(MintModal, { props: { form, bodySet } });
+            onContinue();
           }}
         >
           Continue
@@ -297,12 +309,107 @@ function BeforMintModal({ form, bodySet }: { form: UseFormReturn<LemonHeadValues
   );
 }
 
-function MintModal({ form, bodySet }: { form: UseFormReturn<LemonHeadValues>; bodySet: LemonHeadsLayer[] }) {
+function MintModal({
+  form,
+  bodySet,
+  onComplete,
+}: {
+  form: UseFormReturn<LemonHeadValues>;
+  bodySet: LemonHeadsLayer[];
+  onComplete: () => void;
+}) {
+  const setMintAtom = useSetAtom(mintAtom);
+
   const formValues = form.watch();
+  const { address } = useAppKitAccount();
+
+  const [isMinting, setIsMinting] = React.useState(false);
+  const [mintPrice, setMintPrice] = React.useState<bigint | null>(null);
+
+  const mutation = trpc.mintNft.useMutation();
+
+  const { data } = useQuery(GetListLemonheadSponsorsDocument, {
+    variables: { wallet: address! },
+    skip: !address,
+  });
+
+  // NOTE: only pick one can get free
+  const sponsor = data?.listLemonheadSponsors.sponsors.find((s) => (s.remaining || 0) < s.limit)?.sponsor;
+  // {
+  //   _id: 1,
+  //   image_url: '',
+  //   name: 'SheFi',
+  //   message:
+  //     'Hi! You’ve been sponsored by the SheFi community—a collective empowering women and non-binary individuals to explore, learn, and lead in Web3. Your LemonHeads journey starts here. Make it bold, make it yours.',
+  // };
+
+  const chainsMap = useAtomValue(chainsMapAtom);
+  const chain = chainsMap[LEMONHEAD_CHAIN_ID];
+  const contractAddress = chain?.lemonhead_contract_address;
+  const { walletProvider } = useAppKitProvider('eip155');
+
+  React.useEffect(() => {
+    const fetchMintPrice = async () => {
+      if (!contractAddress) return;
+
+      const provider = new ethers.JsonRpcProvider(chain.rpc_url);
+      const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
+
+      try {
+        const price = await contract.getFunction('mintPrice')();
+        setMintPrice(price);
+      } catch (error) {
+        console.error('Error fetching mint price:', error);
+      }
+    };
+
+    if (!sponsor) fetchMintPrice();
+  }, [contractAddress, chain.rpc_url, sponsor]);
+
+  const handleMint = async () => {
+    // NOTE: testing
+    setMintAtom((prev) => ({ ...prev, minted: true, video: true }));
+    onComplete();
+    modal.close();
+    return;
+    try {
+      setIsMinting(true);
+      const traits = convertFormValuesToTraits(formValues);
+      console.log('Converted traits:', traits);
+
+      if (!address) throw new Error('No wallet address found');
+
+      const mintData = await mutation.mutateAsync({ wallet: address, traits });
+      console.log('Mint data:', mintData);
+
+      if (!contractAddress) throw new Error('LemonheadNFT contract address not set');
+      if (!walletProvider) throw new Error('No wallet provider found');
+      if (!mintPrice) throw new Error('Mint price not set');
+
+      const tx = await writeContract(
+        LemonheadNFTContract,
+        contractAddress,
+        walletProvider as Eip1193Provider,
+        'mint',
+        [mintData.look, mintData.metadata, mintData.signature],
+        { value: mintPrice },
+      );
+      await tx.wait();
+      setMintAtom((prev) => ({ ...prev, minted: true, video: true }));
+      onComplete();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsMinting(false);
+      modal.close();
+    }
+  };
+
   return (
     <ModalContent
-      icon={<LemonHeadPreview className="size-[80px]" form={formValues} bodySet={bodySet} />}
+      icon={<LemonHeadPreview className="size-[56px]" form={formValues} bodySet={bodySet} />}
       onClose={() => modal.close()}
+      className="**:data-icon:rounded-md"
     >
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
@@ -312,7 +419,29 @@ function MintModal({ form, bodySet }: { form: UseFormReturn<LemonHeadValues>; bo
             identity.
           </p>
         </div>
-        <Button variant="secondary">Continue</Button>
+
+        {sponsor && (
+          <div className="border-t">
+            <div key={sponsor._id} className="flex flex-col gap-3 py-3.5">
+              <div className="flex gap-2.5">
+                <img src={sponsor.image_url} className="rounded-sm w-[34px] aspect-square" />
+                <div>
+                  <p>You’ve unlocked a free mint!</p>
+                  <p className="text-tertiary text-xs">Supported by {sponsor.name}</p>
+                </div>
+              </div>
+
+              <div className="relative">
+                <div className="w-0 h-0 border-solid border-t-0 border-l-[6px] border-r-[6px] border-b-[6px] border-t-transparent border-r-transparent border-l-transparent border-b-(--btn-tertiary) absolute left-[10px] -top-[6px]" />
+                <div className="px-3 py-2 text-sm bg-(--btn-tertiary) rounded-sm">{sponsor.message}</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <Button variant="secondary" onClick={handleMint} loading={isMinting}>
+          Mint {mintPrice && `‣ ${ethers.formatEther(mintPrice)} ETH`}
+        </Button>
       </div>
     </ModalContent>
   );

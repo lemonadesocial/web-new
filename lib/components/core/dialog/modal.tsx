@@ -135,7 +135,6 @@ interface ModalContentProps {
   children: React.ReactNode;
   title?: React.ReactNode;
   icon?: React.ReactNode;
-  iconClass?: string;
   className?: string;
   onClose?: () => void;
   onBack?: () => void;
@@ -150,7 +149,7 @@ export function ModalContent({ children, onClose, title, icon, className, onBack
             <Button icon="icon-chevron-left" size="xs" variant="tertiary" className="rounded-full" onClick={onBack} />
           )}
           {icon && (
-            <div className="size-[56px] flex justify-center items-center rounded-full bg-primary/8">
+            <div className="size-[56px] flex justify-center items-center rounded-full bg-primary/8" data-icon>
               {typeof icon === 'string' ? <i className={clsx(icon, 'size-8 text-tertiary')} /> : icon}
             </div>
           )}
