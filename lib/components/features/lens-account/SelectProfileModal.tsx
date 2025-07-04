@@ -155,7 +155,7 @@ export function SelectProfileModal() {
       <SignTransactionModal
         title="Verify Wallet"
         onClose={() => modal.close()}
-        description="Please sign a message to verify your ownership of the wallet. This will not incur any cost."
+        description="Please sign a message to onboard your Lens account. This will not incur any cost."
         onSign={handleSignIn}
         loading={isLoadingSignIn}
       />

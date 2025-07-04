@@ -5,7 +5,7 @@ import { useAppKitAccount } from "$lib/utils/appkit";
 import { formatWallet } from "$lib/utils/crypto";
 
 import { registrationModal } from "../store";
-import { useSignWallet } from "../hooks/useSignWallet";
+import { useSignWallet } from "$lib/hooks/useSignWallet";
 
 export function VerifyWalletModal({ onSuccess }: { onSuccess: (signature: string, token: string) => void; }) {
   const { address } = useAppKitAccount();

@@ -3,21 +3,21 @@ import React, { ReactElement } from 'react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useAtom } from 'jotai';
+import { usePathname } from 'next/navigation';
 import NextLink from 'next/link';
 
 import { sessionAtom } from '$lib/jotai';
-import { IDENTITY_URL, LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useMe } from '$lib/hooks/useMe';
 import { useLogOut } from '$lib/hooks/useLogout';
-import { Divider, Menu, MenuItem, Button, Avatar, drawer } from '$lib/components/core';
+import { Divider, Menu, MenuItem, Button, Avatar, drawer, modal } from '$lib/components/core';
 import { userAvatar } from '$lib/utils/user';
 
-import { useSignIn } from '$lib/hooks/useSignIn';
-import { usePathname } from 'next/navigation';
-import { ProfilePane } from '../features/pane';
 import { useAccount } from '$lib/hooks/useLens';
+import { useSignIn } from '$lib/hooks/useSignIn';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
+import { ProfilePane } from '../features/pane';
 
 type Props = {
   title?: string;
@@ -81,9 +81,10 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
 
         {session && me ? (
           <div className="flex gap-2 items-center">
-            {!me.email_verified && (
+            {/* FIXME: add email verification */}
+            {/* {!me.email_verified && (
               <Button
-                onClick={() => window.open(`${IDENTITY_URL}/verification?return_to=${window.location.origin}`)}
+                onClick={() => modal.open(VerifyEmailModal, { dismissible: true })}
                 size="sm"
                 className="rounded-full"
                 variant="warning"
@@ -92,7 +93,7 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
               >
                 Verify Email
               </Button>
-            )}
+            )} */}
             {
               hasLemonhead ? (
                 <div className="px-2.5 py-1.5 h-8 rounded-sm flex gap-1.5 items-center bg-accent-400/16">
