@@ -403,6 +403,7 @@ function MintModal({
       console.log(tx);
       setTxn(tx);
       await tx.wait();
+      setMintAtom((prev) => ({ ...prev, image: mintData.image }));
       setDone(true);
       setInterval(() => {
         setCount((prev) => prev - 1);

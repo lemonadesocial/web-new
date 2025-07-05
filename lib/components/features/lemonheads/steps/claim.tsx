@@ -10,12 +10,13 @@ import 'video.js/dist/video-js.css';
 
 import { LemonHeadValues } from '../types';
 import { mintAtom } from '../store';
-import { Alert, Button, drawer, modal } from '$lib/components/core';
+import { Alert, Button, drawer, modal, Skeleton } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
 import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
 import { EditProfileModal } from '../../lens-account/EditProfileModal';
+import { ASSET_PREFIX } from '$lib/utils/constants';
 
 export function ClaimStep({ form }: { form: UseFormReturn<LemonHeadValues> }) {
   const [mint, setMint] = useAtom(mintAtom);
@@ -42,10 +43,8 @@ export function ClaimStep({ form }: { form: UseFormReturn<LemonHeadValues> }) {
     }
   }, [isMobile]);
 
-  const image = 'https://i.seadn.io/s/raw/files/5faf4f74c7f11fcb939cfcb9e738fbae.png?auto=format&dpr=1&w=1000';
-
   const getSrc = () => {
-    let src = `/api/og/lemonheads?image=${image}`;
+    let src = `/api/og/lemonheads?image=${mint.image}`;
     if (myAccount?.username) src += `&username=${myAccount?.username.value.replace('lens/', '')}`;
     if (myAccount?.metadata?.bio) src += `&bio=${myAccount?.metadata.bio}`;
 
@@ -59,7 +58,8 @@ export function ClaimStep({ form }: { form: UseFormReturn<LemonHeadValues> }) {
           <p className="text-secondary md:text-xl">Welcome to</p>
           <p className="font-title text-2xl md:text-3xl font-semibold!">United Stands of Lemonade</p>
         </div>
-        <img src={getSrc()} className="rounded-md border border-primary" />
+        <ImageLazyLoad src={getSrc()} className="border border-primary w-[1200px]" />
+        {/* <img src={getSrc()} className="rounded-md border border-primary" /> */}
 
         <div className="flex w-full max-w-[1200px] justify-between">
           <Button variant="secondary" iconLeft="icon-passport">
@@ -78,7 +78,7 @@ export function ClaimStep({ form }: { form: UseFormReturn<LemonHeadValues> }) {
             <Button
               iconLeft="icon-share"
               variant="tertiary-alt"
-              onClick={() => drawer.open(RightPane, { props: { image } })}
+              onClick={() => drawer.open(RightPane, { props: { image: mint.image } })}
             >
               Share
             </Button>
@@ -175,7 +175,9 @@ function RightPane({ image }: { image: string }) {
               Your personalized LemonHead card is ready! Update your profile info to make it truly yours.
             </p>
           </div>
-          <img src={getSrc()} className="rounded-md" />
+          <ImageLazyLoad src={getSrc()} />
+
+          {/* <img src={getSrc()} className="rounded-md" /> */}
         </div>
         <Alert className="justify-start">
           <div className="flex flex-col gap-3">
@@ -216,5 +218,34 @@ function RightPane({ image }: { image: string }) {
         </div>
       </Pane.Content>
     </Pane.Root>
+  );
+}
+
+function ImageLazyLoad({ src = '', className }: { src?: string; className?: string }) {
+  const [imageLoaded, setImageLoaded] = React.useState(false);
+  const [imageError, setImageError] = React.useState(false);
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
+  return (
+    <>
+      {imageLoaded && (
+        <div
+          style={{ background: `url(${ASSET_PREFIX}/assets/images/mint-cover.png)`, backgroundSize: 'contain' }}
+          className="w-full max-w-[1200px] aspect-[40/21] rounded-md"
+        >
+          <div className="flex-1 items-center justify-center flex w-[52.3%] h-full">
+            <Skeleton className="w-[456px] aspect-square animte rounded-none rounded-md" animate />
+          </div>
+        </div>
+      )}
+      <img src={src} className={twMerge('rounded-md', className)} />
+    </>
   );
 }
