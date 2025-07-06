@@ -18,7 +18,7 @@ import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUser
 import { EditProfileModal } from '../../lens-account/EditProfileModal';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 
-export function ClaimStep({ form }: { form: UseFormReturn<LemonHeadValues> }) {
+export function ClaimStep(_: { form: UseFormReturn<LemonHeadValues> }) {
   const [mint, setMint] = useAtom(mintAtom);
   const { account: myAccount } = useAccount();
 
@@ -176,8 +176,6 @@ function RightPane({ image }: { image: string }) {
             </p>
           </div>
           <ImageLazyLoad src={getSrc()} />
-
-          {/* <img src={getSrc()} className="rounded-md" /> */}
         </div>
         <Alert className="justify-start">
           <div className="flex flex-col gap-3">
@@ -223,16 +221,10 @@ function RightPane({ image }: { image: string }) {
 
 function ImageLazyLoad({ src = '', className }: { src?: string; className?: string }) {
   const [imageLoaded, setImageLoaded] = React.useState(false);
-  const [imageError, setImageError] = React.useState(false);
 
   const handleImageLoad = () => {
     setImageLoaded(true);
   };
-
-  const handleImageError = () => {
-    setImageError(true);
-  };
-
   return (
     <>
       {imageLoaded && (
@@ -245,7 +237,7 @@ function ImageLazyLoad({ src = '', className }: { src?: string; className?: stri
           </div>
         </div>
       )}
-      <img src={src} className={twMerge('rounded-md', className)} />
+      <img src={src} onLoad={handleImageLoad} className={twMerge('rounded-md', className)} />
     </>
   );
 }

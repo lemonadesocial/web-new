@@ -3,7 +3,7 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { isMobile } from 'react-device-detect';
 import clsx from 'clsx';
 import { Eip1193Provider, ethers } from 'ethers';
@@ -16,7 +16,7 @@ import { LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
 import { chainsMapAtom } from '$lib/jotai';
 import { trpc } from '$lib/trpc/client';
 import { TraitType } from '$lib/services/lemonhead/core';
-import { ASSET_PREFIX } from '$lib/utils/constants';
+import { ASSET_PREFIX, SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
 
 import { AboutYou } from './steps/about';
 import { LemonHeadValues } from './types';
@@ -318,7 +318,7 @@ function MintModal({
   bodySet: LemonHeadsLayer[];
   onComplete: () => void;
 }) {
-  const setMintAtom = useSetAtom(mintAtom);
+  const [mint, setMintAtom] = useAtom(mintAtom);
 
   const formValues = form.watch();
   const { address } = useAppKitAccount();
@@ -347,7 +347,6 @@ function MintModal({
   const chain = chainsMap[LEMONHEAD_CHAIN_ID];
   const contractAddress = chain?.lemonhead_contract_address;
   const { walletProvider } = useAppKitProvider('eip155');
-  const [txn, setTxn] = React.useState('');
   const [done, setDone] = React.useState(false);
   const [count, setCount] = React.useState(10);
 
@@ -400,8 +399,7 @@ function MintModal({
         [mintData.look, mintData.metadata, mintData.signature],
         { value: mintPrice },
       );
-      console.log(tx);
-      setTxn(tx);
+      setMintAtom((prev) => ({ ...prev, tx: tx?.hash }));
       await tx.wait();
       setMintAtom((prev) => ({ ...prev, image: mintData.image }));
       setDone(true);
@@ -419,7 +417,7 @@ function MintModal({
     }
   };
 
-  if (txn) {
+  if (mint.txHash) {
     return (
       <ModalContent
         icon={
@@ -433,7 +431,7 @@ function MintModal({
             iconRight="icon-arrow-outward"
             className="rounded-full"
             variant="tertiary-alt"
-            onClick={() => {}}
+            onClick={() => window.open(`${SEPOLIA_ETHERSCAN}/tx/${mint.txHash}`)}
           >
             View txn.
           </Button>
