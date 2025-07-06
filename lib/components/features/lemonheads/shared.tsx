@@ -331,7 +331,15 @@ export function SubContentWithTabs(props: {
         {tabs.map((item: any) => {
           if (!item.mount) return null;
           const Comp = item.component || null;
-          return <Comp active={item.value === currentTab} key={item.value} form={props.form} colors={props.colors} />;
+          return (
+            <Comp
+              active={item.value === currentTab}
+              key={item.value}
+              value={item.value}
+              form={props.form}
+              colors={props.colors}
+            />
+          );
         })}
       </div>
     </>
