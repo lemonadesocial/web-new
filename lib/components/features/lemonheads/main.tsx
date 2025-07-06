@@ -111,7 +111,7 @@ export function LemonHeadMain({ bodySet, defaultSet }: { bodySet: LemonHeadsLaye
       <div className="flex-1 overflow-auto md:overflow-hidden">
         <div className="flex flex-col md:flex md:flex-row-reverse max-w-[1440px] mx-auto gap-5 overflow-auto md:gap-18 p-4 md:p-11 md:max-h-full no-scrollbar">
           {!steps[currentStep].hidePreview && (
-            <div className={clsx('flex-1 z-10', isMobile && currentStep > 2 && 'size-[80px]')}>
+            <div className={clsx('flex-1 z-0', isMobile && currentStep > 2 && 'size-[80px]')}>
               {currentStep === 0 ? (
                 <img
                   src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
@@ -270,6 +270,7 @@ function Footer({
 }
 
 function BeforMintModal({ onContinue }: { onContinue: () => void }) {
+  const [agree, setAgree] = React.useState(false);
   return (
     <ModalContent icon="icon-signature" onClose={() => modal.close()}>
       <div className="flex flex-col gap-4">
@@ -291,12 +292,18 @@ function BeforMintModal({ onContinue }: { onContinue: () => void }) {
           </div>
         </div>
 
-        <Checkbox containerClass="text-sm items-center [&_i]:size-5" id="term">
+        <Checkbox
+          containerClass="text-sm items-center [&_i]:size-5"
+          id="term"
+          value={agree}
+          onChange={() => setAgree(!agree)}
+        >
           I’ve read and agree to the Terms of Use.
         </Checkbox>
 
         <Button
           variant="secondary"
+          disabled={agree}
           onClick={() => {
             modal.close();
             onContinue();
@@ -399,9 +406,7 @@ function MintModal({
         [mintData.look, mintData.metadata, mintData.signature],
         { value: mintPrice },
       );
-      setMintAtom((prev) => ({ ...prev, tx: tx?.hash }));
-      await tx.wait();
-      setMintAtom((prev) => ({ ...prev, image: mintData.image }));
+      setMintAtom((prev) => ({ ...prev, image: mintData.image, tx: tx?.hash }));
       setDone(true);
       setInterval(() => {
         setCount((prev) => prev - 1);
@@ -410,6 +415,7 @@ function MintModal({
           onComplete();
         }
       }, 1000);
+      await tx.wait();
     } catch (error: any) {
       toast.error(error.message);
     } finally {

@@ -222,22 +222,24 @@ function RightPane({ image }: { image: string }) {
 function ImageLazyLoad({ src = '', className }: { src?: string; className?: string }) {
   const [imageLoaded, setImageLoaded] = React.useState(false);
 
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-  };
   return (
     <>
-      {imageLoaded && (
+      {!imageLoaded && (
         <div
           style={{ background: `url(${ASSET_PREFIX}/assets/images/mint-cover.png)`, backgroundSize: 'contain' }}
-          className="w-full max-w-[1200px] aspect-[40/21] rounded-md"
+          className={twMerge('w-full max-w-[1200px] aspect-[40/21] rounded-md', className)}
         >
           <div className="flex-1 items-center justify-center flex w-[52.3%] h-full">
-            <Skeleton className="w-[456px] aspect-square animte rounded-none rounded-md" animate />
+            <Skeleton className="w-3/4 max-w-[456px] aspect-square animte rounded-none rounded-md" animate />
           </div>
         </div>
       )}
-      <img src={src} onLoad={handleImageLoad} className={twMerge('rounded-md', className)} />
+      <img
+        src={src}
+        onLoad={() => setImageLoaded(true)}
+        loading="lazy"
+        className={twMerge('rounded-md', className, !imageLoaded ? 'invisible' : 'visible')}
+      />
     </>
   );
 }
