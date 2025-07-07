@@ -61,7 +61,6 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
   const me = useMe();
   const { account } = useAccount();
   const logOut = useLogOut();
-  const { logOut } = useLogOut();
   const signIn = useSignIn();
   const { hasLemonhead } = useLemonhead();
 
