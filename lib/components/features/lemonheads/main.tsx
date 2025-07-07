@@ -74,36 +74,6 @@ export function LemonHeadMain({ bodySet, defaultSet }: { bodySet: LemonHeadsLaye
 
   const formValues = form.watch();
 
-  const validateNft = trpc.validateNft.useMutation();
-  const chainsMap = useAtomValue(chainsMapAtom);
-  const chain = chainsMap[LEMONHEAD_CHAIN_ID];
-  const contractAddress = chain?.lemonhead_contract_address;
-
-  const checkMinted = async () => {
-    let isValid = true;
-
-    try {
-      const traits = convertFormValuesToTraits(formValues);
-      if (!traits.length || !contractAddress) return;
-
-      const { lookHash } = await validateNft.mutateAsync({ traits });
-
-      const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-      const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
-
-      const owner = await contract.getFunction('uniqueLooks')(lookHash);
-      if (owner && owner !== ethers.ZeroAddress) {
-        toast.error('This LemonHead look has already been minted');
-        isValid = false;
-      }
-    } catch (error: any) {
-      toast.error(error.message);
-      isValid = false;
-    }
-
-    return isValid;
-  };
-
   return (
     <main className="flex flex-col h-screen w-full divide-y divide-[var(--color-divider)]">
       <div className="bg-background/80 backdrop-blur-md z-10">
@@ -133,11 +103,6 @@ export function LemonHeadMain({ bodySet, defaultSet }: { bodySet: LemonHeadsLaye
         form={form}
         onNext={async () => {
           if (currentStep < steps.length - 1) {
-            // check valid traits before move next
-            if (currentStep === 2) {
-              const valid = await checkMinted();
-              if (!valid) return;
-            }
             setCurrentStep((prev) => prev + 1);
           }
 
@@ -178,8 +143,42 @@ function Footer({
   const chainsMap = useAtomValue(chainsMapAtom);
   const { isConnected } = useAppKitAccount();
 
-  const handleNext = () => {
+  const formValues = form.watch();
+  const validateNft = trpc.validateNft.useMutation();
+  const chain = chainsMap[LEMONHEAD_CHAIN_ID];
+  const contractAddress = chain?.lemonhead_contract_address;
+
+  const checkMinted = async () => {
+    let isValid = true;
+
+    try {
+      const traits = convertFormValuesToTraits(formValues);
+      if (!traits.length || !contractAddress) return;
+
+      const { lookHash } = await validateNft.mutateAsync({ traits });
+
+      const provider = new ethers.JsonRpcProvider(chain.rpc_url);
+      const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
+
+      const owner = await contract.getFunction('uniqueLooks')(lookHash);
+
+      if (owner && owner !== ethers.ZeroAddress) {
+        toast.error('This LemonHead look has already been minted');
+        isValid = false;
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
+  const handleNext = async () => {
     if (currentStep.key === 'create') {
+      const valid = await checkMinted();
+      if (!valid) return;
+
       if (!isConnected) {
         modal.open(ConnectWallet, {
           props: {
