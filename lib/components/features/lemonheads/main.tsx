@@ -303,7 +303,7 @@ function BeforMintModal({ onContinue }: { onContinue: () => void }) {
 
         <Button
           variant="secondary"
-          disabled={agree}
+          disabled={!agree}
           onClick={() => {
             modal.close();
             onContinue();
