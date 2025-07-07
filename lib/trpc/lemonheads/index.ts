@@ -24,8 +24,8 @@ class LemonHead {
     this.instance = axios.create({
       baseURL: 'https://app.nocodb.com/api/v2',
       headers: { 'xc-token': token },
-      adapter: 'fetch',
-      fetchOptions: { cache: 'force-cache' },
+      // adapter: 'fetch',
+      // fetchOptions: { cache: 'force-cache' },
     });
   }
 
