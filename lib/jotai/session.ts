@@ -8,6 +8,9 @@ export interface Session {
   returnTo?: string;
   /** @description it's using for detect user profile with lens account */
   lens_address?: string;
+
+  email?: string;
+  wallet?: string;
 }
 
 export const sessionAtom = atom<Session | null>(null);

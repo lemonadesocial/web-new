@@ -2,22 +2,24 @@
 import React, { ReactElement } from 'react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
+import { usePathname } from 'next/navigation';
 import NextLink from 'next/link';
 
 import { sessionAtom } from '$lib/jotai';
-import { IDENTITY_URL, LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useMe } from '$lib/hooks/useMe';
 import { useLogOut } from '$lib/hooks/useLogout';
-import { Divider, Menu, MenuItem, Button, Avatar, drawer } from '$lib/components/core';
+import { Divider, Menu, MenuItem, Button, Avatar, drawer, modal } from '$lib/components/core';
 import { userAvatar } from '$lib/utils/user';
 
-import { useSignIn } from '$lib/hooks/useSignIn';
-import { usePathname } from 'next/navigation';
-import { ProfilePane } from '../features/pane';
 import { useAccount } from '$lib/hooks/useLens';
+import { useSignIn } from '$lib/hooks/useSignIn';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
+import { ProfilePane } from '../features/pane';
+import { VerifyEmailModal } from '../features/auth/VerifyEmailModal';
+import { ConnectWalletModal } from '../features/auth/ConnectWalletModal';
 
 type Props = {
   title?: string;
@@ -34,6 +36,7 @@ const menu = [
 
 export function RootMenu() {
   const pathName = usePathname();
+  const session = useAtomValue(sessionAtom);
 
   return (
     <nav className="flex md:flex-3_1_auto w-[1080px]">
@@ -59,6 +62,8 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
   const signIn = useSignIn();
   const { hasLemonhead } = useLemonhead();
 
+  console.log(session);
+
   return (
     <div className="py-3 px-4 h-[56px] flex justify-between items-center z-10 gap-4">
       <div className="flex items-center gap-3 flex-1">
@@ -81,9 +86,9 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
 
         {session && me ? (
           <div className="flex gap-2 items-center">
-            {!me.email_verified && (
+            {(session && !session.email) && (
               <Button
-                onClick={() => window.open(`${IDENTITY_URL}/verification?return_to=${window.location.origin}`)}
+                onClick={() => modal.open(VerifyEmailModal, { dismissible: true })}
                 size="sm"
                 className="rounded-full"
                 variant="warning"
@@ -93,6 +98,19 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
                 Verify Email
               </Button>
             )}
+            {(session && !session.wallet) && (
+              <Button
+                onClick={() => modal.open(ConnectWalletModal, { dismissible: true, props: { verifyRequired: true } })}
+                size="sm"
+                className="rounded-full"
+                variant="warning"
+                iconLeft="icon-error"
+                outlined
+              >
+                Claim Username
+              </Button>
+            )}
+
             {
               hasLemonhead ? (
                 <div className="px-2.5 py-1.5 h-8 rounded-sm flex gap-1.5 items-center bg-accent-400/16">
