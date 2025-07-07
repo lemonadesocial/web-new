@@ -1,0 +1,14 @@
+query GetListLemonheadSponsors($wallet: String!) {
+  listLemonheadSponsors(wallet: $wallet) {
+    sponsors {
+      limit
+      sponsor {
+        _id
+        name
+        image_url
+        message
+      }
+      remaining
+    }
+  }
+}

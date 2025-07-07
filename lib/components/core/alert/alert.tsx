@@ -2,8 +2,9 @@ import React, { PropsWithChildren } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface AlertProps extends PropsWithChildren {
-  message: string;
+  message?: string;
   variant?: 'primary';
+  className?: string;
 }
 
 const classes = {
@@ -13,10 +14,10 @@ const classes = {
   },
 };
 
-export function Alert({ message, variant = 'primary', children }: AlertProps) {
+export function Alert({ message, variant = 'primary', children, className }: AlertProps) {
   return (
-    <div className={twMerge(classes.base, classes.variants[variant].bg)}>
-      <span className={twMerge('flex-1 font-medium', classes.variants[variant].fg)}>{message}</span>
+    <div className={twMerge(classes.base, classes.variants[variant].bg, className)}>
+      {message && <span className={twMerge('flex-1 font-medium', classes.variants[variant].fg)}>{message}</span>}
       {children}
     </div>
   );

@@ -544,8 +544,30 @@ function FootwearItems({ form, colors }: { form: UseFormReturn<LemonHeadValues>;
   );
 }
 
+function BackgroundItem({
+  value: artStyle,
+  active = false,
+  form,
+}: {
+  active?: boolean;
+  value?: string;
+  form: UseFormReturn<LemonHeadValues>;
+}) {
+  if (!active) return null;
+  return <SubContent field="background" form={form} where={`(type,eq,background)~and(art_style,eq,${artStyle})`} />;
+}
+
 function BackgroundItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
-  return <SubContent field="background" form={form} where={`(type,eq,background)`} />;
+  const [tabs] = React.useState([
+    { value: 'cosmic', label: 'Cosmic', mount: true, component: BackgroundItem },
+    { value: 'psychedelic', label: 'Psychedelic', mount: false, component: BackgroundItem },
+    { value: 'regular', label: 'Regular', mount: false, component: BackgroundItem },
+    { value: 'megaETH', label: 'megaETH', mount: false, component: BackgroundItem },
+  ]);
+
+  return <SubContentWithTabs tabs={tabs} form={form} />;
+
+  // return <SubContent field="background" form={form} where={`(type,eq,background)`} />;
 }
 
 function PetItems({ form, colors }: { form: UseFormReturn<LemonHeadValues>; colors?: LemonHeadsColor[] }) {
