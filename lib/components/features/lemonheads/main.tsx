@@ -98,7 +98,7 @@ export function LemonHeadMain({ bodySet, defaultSet }: { bodySet: LemonHeadsLaye
 
   return (
     <main className="flex flex-col h-screen w-full divide-y divide-[var(--color-divider)]">
-      <div className="bg-background/80 backdrop-blur-md z-10">
+      <div className="bg-background/80 backdrop-blur-md z-20">
         <Header />
       </div>
       <div className="flex-1 overflow-auto md:overflow-hidden">

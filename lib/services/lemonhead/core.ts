@@ -47,7 +47,7 @@ export const layerings: Record<
   TraitType,
   { mutualExclusive?: TraitType[]; filterTypes: FilterType[]; required?: boolean }
 > = {
-  [TraitType.background]: { filterTypes: [FilterType.art_style], required: true },
+  [TraitType.background]: { filterTypes: [FilterType.art_style], required: false },
   [TraitType.body]: {
     filterTypes: [FilterType.race, FilterType.gender, FilterType.skin_tone, FilterType.size],
     required: true,

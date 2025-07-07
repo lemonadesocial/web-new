@@ -351,7 +351,8 @@ function MintLemonHead({
     }
   };
 
-  if (!myAccount || !username) return null;
+  // FIXME: bypass for testing staging
+  // if (!myAccount || !username) return null;
 
   if (isLoading) return <Skeleton animate className="h-8 w-1/2 rounded" />;
 
