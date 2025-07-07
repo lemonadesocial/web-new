@@ -25,7 +25,11 @@ export function useAuth(hydraClientId?: string) {
       .then(({ data }) => {
         const id = data.identity?.id;
 
-        if (id) setSession({ _id: id });
+        if (id) setSession({
+          _id: id,
+          email: data.identity?.traits?.email,
+          wallet: data.identity?.traits?.wallet,
+        });
       })
       .catch((error) => {
         if (error.response?.status === 401) {

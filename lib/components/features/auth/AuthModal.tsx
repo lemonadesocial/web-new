@@ -9,10 +9,10 @@ import { sessionAtom } from "$lib/jotai";
 import { appKit } from '$lib/utils/appkit';
 import { useSignWallet } from "$lib/hooks/useSignWallet";
 
-import { ConnectWallet } from "../modals/ConnectWallet";
 import { CodeVerification } from "./CodeVerification";
 import { VerifyEmailModal } from "./VerifyEmailModal";
 import { ConnectWalletModal } from "./ConnectWalletModal";
+import { ConnectWalletButton } from "./ConnectWalletButton";
 
 export function AuthModal() {
   const signWallet = useSignWallet();
@@ -27,7 +27,11 @@ export function AuthModal() {
     const session = await ory.toSession().then((res) => res.data);
 
     if (session.identity?.id) {
-      setSession({ _id: session.identity.id });
+      setSession({
+        _id: session.identity.id,
+        email: session.identity?.traits?.email,
+        wallet: session.identity?.traits?.wallet,
+      });
     }
 
     modal.close();
@@ -36,14 +40,18 @@ export function AuthModal() {
       modal.open(VerifyEmailModal, {
         dismissible: true,
       });
+
+      return;
     }
 
-    modal.open(ConnectWalletModal, {
-      dismissible: true,
-      props: {
-        verifyRequired: !session.identity?.traits?.wallet
-      },
-    });
+    if (!session.identity?.traits?.wallet) {
+      modal.open(ConnectWalletModal, {
+        dismissible: true,
+        props: {
+          verifyRequired: true
+        },
+      });
+    }
   };
 
   const {
@@ -65,25 +73,18 @@ export function AuthModal() {
     onSuccess: onSignInSuccess,
   });
 
-  const handleWalletConnect = async () => {
-    modal.open(ConnectWallet, {
-      dismissible: true,
-      props: {
-        onConnect: () => {
-          const address = appKit.getAddress();
+  const onConnect = () => {
+    const address = appKit.getAddress();
 
-          if (!address) {
-            toast.error('Could not find wallet address. Please try again.');
-            return;
-          }
+    if (!address) {
+      toast.error('Could not find wallet address. Please try again.');
+      return;
+    }
 
-          signWallet().then(({ signature, token }) => {
-            processSignature(signature, token, address);
-          }).catch((err) => {
-            toast.error(err.message);
-          });
-        },
-      },
+    signWallet().then(({ signature, token }) => {
+      processSignature(signature, token, address);
+    }).catch((err) => {
+      toast.error(err.message);
     });
   };
 
@@ -163,14 +164,18 @@ export function AuthModal() {
               processOidc('apple');
             }}
           />
-          <Button
-            className="flex-1"
-            variant="tertiary"
-            icon="icon-wallet"
-            disabled={loadingOidcOrWallet}
-            loading={loadingWallet}
-            onClick={handleWalletConnect}
-          />
+          <ConnectWalletButton onConnect={onConnect}>
+            {(open) => (
+              <Button
+                className="flex-1"
+                variant="tertiary"
+                icon="icon-wallet"
+                disabled={loadingOidcOrWallet}
+                loading={loadingWallet}
+                onClick={open}
+              />
+            )}
+          </ConnectWalletButton>
         </div>
 
         {errorWallet && <ErrorText message={errorWallet} />}

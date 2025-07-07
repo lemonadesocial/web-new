@@ -29,7 +29,7 @@ const Toast: React.FC<{ toast: ToastProps }> = ({ toast }) => {
       style={{ boxShadow: '0px 4px 24px 0px rgba(0, 0, 0, 0.36)' }}
     >
       {Icon}
-      <div className="flex-1 wrap-anywhere">
+      <div className="flex-1" style={{ overflowWrap: 'anywhere' }}>
         <p>{message}</p>
       </div>
     </div>
