@@ -12,6 +12,7 @@ import { useMe } from '$lib/hooks/useMe';
 import { useLogOut } from '$lib/hooks/useLogout';
 import { Divider, Menu, MenuItem, Button, Avatar, drawer, modal } from '$lib/components/core';
 import { userAvatar } from '$lib/utils/user';
+import { useLogOut as useLensLogOut } from '$lib/hooks/useLens';
 
 import { useAccount } from '$lib/hooks/useLens';
 import { useSignIn } from '$lib/hooks/useSignIn';
@@ -20,6 +21,7 @@ import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { ProfilePane } from '../features/pane';
 import { VerifyEmailModal } from '../features/auth/VerifyEmailModal';
 import { ConnectWalletModal } from '../features/auth/ConnectWalletModal';
+import { SelectProfileModal } from '../features/lens-account/SelectProfileModal';
 
 type Props = {
   title?: string;
@@ -59,6 +61,7 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
   const me = useMe();
   const { account } = useAccount();
   const logOut = useLogOut();
+  const { logOut } = useLogOut();
   const signIn = useSignIn();
   const { hasLemonhead } = useLemonhead();
 
@@ -152,6 +155,24 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
                     <div className="p-1">
                       <MenuItem title="Edit Profile" onClick={() => drawer.open(ProfilePane, { dismissible: false })} />
                       <MenuItem title="Settings" onClick={() => window.open(`${LEMONADE_DOMAIN}/settings`, '_blank')} />
+                      {
+                        account && <>
+                          <MenuItem
+                            title="Switch Profile"
+                            onClick={() => {
+                              toggle();
+                              modal.open(SelectProfileModal, { dismissible: true });
+                            }}
+                          />
+                          <MenuItem
+                            title="Disconnect"
+                            onClick={() => {
+                              toggle();
+                              useLensLogOut();
+                            }}
+                          />
+                        </>
+                      }
                       <MenuItem
                         title="Sign Out"
                         onClick={async () => {
