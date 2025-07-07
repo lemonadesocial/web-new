@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 
-import { Button, modal, ModalContent, toast } from "$lib/components/core";
+import { Button, ErrorText, modal, ModalContent, toast } from "$lib/components/core";
 import { getAppKitNetwork, useAppKit, useAppKitAccount, useAppKitNetwork } from "$lib/utils/appkit";
 import { LENS_CHAIN_ID } from "$lib/utils/lens/constants";
 import { chainsMapAtom } from "$lib/jotai";
@@ -23,7 +23,18 @@ export function ConnectWalletModal({ verifyRequired }: { verifyRequired: boolean
   const chain = chainsMap[LENS_CHAIN_ID];
   const signWallet = useSignWallet();
 
-  const { processSignature, loading: loadingVerify } = useHandleVerifyWallet({
+  const isChainValid = chainId?.toString() === LENS_CHAIN_ID && chain;
+
+  useEffect(() => {
+    if (verified && isConnected && isChainValid) {
+      modal.close();
+      setTimeout(() => {
+        modal.open(SelectProfileModal, { dismissible: true });
+      });
+    }
+  }, [isConnected, isChainValid, verified]);
+
+  const { processSignature, loading: loadingVerify, error: errorVerify } = useHandleVerifyWallet({
     onSuccess: () => {
       setVerified(true);
     },
@@ -49,7 +60,7 @@ export function ConnectWalletModal({ verifyRequired }: { verifyRequired: boolean
     )
   }
 
-  if (chainId?.toString() !== LENS_CHAIN_ID && chain) {
+  if (!isChainValid) {
     return (
       <ConnectWalletModalContainer subtitle={`Please switch to ${chain.name} in your wallet to continue.`}>
         <Button variant="secondary" className="w-full" onClick={() => switchNetwork(getAppKitNetwork(chain))}>
@@ -61,7 +72,7 @@ export function ConnectWalletModal({ verifyRequired }: { verifyRequired: boolean
 
   if (!verified) {
     return (
-      <ConnectWalletModalContainer subtitle="Please sign a message to verify your ownership of the wallet. This will not incur any cost.">
+      <ConnectWalletModalContainer subtitle="Please sign a message to verify your ownership of the wallet. This will not incur any cost." errorMessage={errorVerify}>
         <Button variant="secondary" className="w-full" onClick={handleVerify} loading={loadingVerify}>
           Sign Message
         </Button>
@@ -87,7 +98,7 @@ export function ConnectWalletModal({ verifyRequired }: { verifyRequired: boolean
   );
 }
 
-export function ConnectWalletModalContainer({ children, subtitle }: { children: React.ReactNode; subtitle?: string }) {
+export function ConnectWalletModalContainer({ children, subtitle, errorMessage }: { children: React.ReactNode; subtitle?: string; errorMessage?: string }) {
   return (
     <ModalContent icon="icon-wallet">
       <div className="space-y-4">
@@ -97,6 +108,7 @@ export function ConnectWalletModalContainer({ children, subtitle }: { children: 
             {subtitle || 'Secure your account with your wallet and claim your Lemonade username.'}
           </p>
         </div>
+        {errorMessage && <ErrorText message={errorMessage} />}
         {children}
         <p
           className="w-full text-tertiary text-center cursor-pointer"

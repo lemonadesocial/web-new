@@ -25,11 +25,11 @@ export default function Providers({ children, space }: { children: React.ReactNo
     }
   }, [chainsLoading]);
 
-  React.useEffect(() => {
-    if (space?.hydra_client_id) {
-      setHydraClientId(space.hydra_client_id);
-    }
-  }, [space]);
+  // React.useEffect(() => {
+  //   if (space?.hydra_client_id) {
+  //     setHydraClientId(space.hydra_client_id);
+  //   }
+  // }, [space]);
 
   if (oryLoading || chainsLoading || !appKitReady) return null;
 

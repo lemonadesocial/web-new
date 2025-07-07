@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ory } from '$lib/utils/ory';
 import { useSetAtom } from "jotai";
 
-import { Button, Input, LabeledInput, modal, ModalContent, toast } from "$lib/components/core";
+import { Button, ErrorText, Input, LabeledInput, modal, ModalContent, toast } from "$lib/components/core";
 import { useHandleEmail, useHandleOidc, useHandleSignature } from "$lib/hooks/useSignIn";
 import { EMAIL_REGEX } from "$lib/utils/regex";
 import { sessionAtom } from "$lib/jotai";
@@ -16,7 +16,7 @@ import { ConnectWalletModal } from "./ConnectWalletModal";
 
 export function AuthModal() {
   const signWallet = useSignWallet();
-  
+
   const [email, setEmail] = useState('');
   const [currentProvider, setCurrentProvider] = useState<string>();
   const setSession = useSetAtom(sessionAtom);
@@ -61,7 +61,7 @@ export function AuthModal() {
   });
 
   const { processOidc, loading: loadingOidc } = useHandleOidc();
-  const { processSignature, loading: loadingWallet } = useHandleSignature({
+  const { processSignature, loading: loadingWallet, error: errorWallet } = useHandleSignature({
     onSuccess: onSignInSuccess,
   });
 
@@ -163,7 +163,7 @@ export function AuthModal() {
               processOidc('apple');
             }}
           />
-           <Button
+          <Button
             className="flex-1"
             variant="tertiary"
             icon="icon-wallet"
@@ -172,6 +172,8 @@ export function AuthModal() {
             onClick={handleWalletConnect}
           />
         </div>
+
+        {errorWallet && <ErrorText message={errorWallet} />}
       </div>
     </ModalContent>
   );
