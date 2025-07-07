@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
                       fontFamily: 'SpaceGrotesk-Bold',
                     }}
                   >
-                    #18372
+                    #{tokenId}
                   </p>
                 </div>
               </div>

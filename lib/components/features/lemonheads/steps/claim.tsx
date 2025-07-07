@@ -44,7 +44,9 @@ export function ClaimStep(_: { form: UseFormReturn<LemonHeadValues> }) {
   }, [isMobile]);
 
   const getSrc = () => {
-    let src = `/api/og/lemonheads?image=${mint.image}&tokenId=${mint.tokenId}`;
+    let image =
+      'https://staging.lemonade.social/api/og/lemonheads?image=https://api.grove.storage/e8b391143ac0b87df1f107ec2ea7f8f40e915c2e5a1bd4b98d3266d471bc6419&username=chris&bio=123asdasd%20n1231233';
+    let src = `/api/og/lemonheads?image=${image}&tokenId=${'123'}`;
     if (myAccount?.username) src += `&username=${myAccount?.username.value.replace('lens/', '')}`;
     if (myAccount?.metadata?.bio) src += `&bio=${myAccount?.metadata.bio}`;
 
@@ -59,7 +61,6 @@ export function ClaimStep(_: { form: UseFormReturn<LemonHeadValues> }) {
           <p className="font-title text-2xl md:text-3xl font-semibold!">United Stands of Lemonade</p>
         </div>
         <ImageLazyLoad src={getSrc()} className="border border-primary w-[1200px]" />
-        {/* <img src={getSrc()} className="rounded-md border border-primary" /> */}
 
         <div className="flex w-full max-w-[1200px] justify-between">
           <Button variant="secondary" iconLeft="icon-passport">
@@ -238,7 +239,7 @@ function ImageLazyLoad({ src = '', className }: { src?: string; className?: stri
         src={src}
         onLoad={() => setImageLoaded(true)}
         loading="lazy"
-        className={twMerge('rounded-md', className, !imageLoaded ? 'invisible' : 'visible')}
+        className={twMerge('rounded-md', className, !imageLoaded ? 'invisible absolute' : 'visible')}
       />
     </>
   );
