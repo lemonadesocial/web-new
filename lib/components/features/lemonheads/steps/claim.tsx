@@ -44,9 +44,7 @@ export function ClaimStep(_: { form: UseFormReturn<LemonHeadValues> }) {
   }, [isMobile]);
 
   const getSrc = () => {
-    let image =
-      'https://staging.lemonade.social/api/og/lemonheads?image=https://api.grove.storage/e8b391143ac0b87df1f107ec2ea7f8f40e915c2e5a1bd4b98d3266d471bc6419&username=chris&bio=123asdasd%20n1231233';
-    let src = `/api/og/lemonheads?image=${image}&tokenId=${'123'}`;
+    let src = `/api/og/lemonheads?image=${mint.image}&tokenId=${mint.tokenId}`;
     if (myAccount?.username) src += `&username=${myAccount?.username.value.replace('lens/', '')}`;
     if (myAccount?.metadata?.bio) src += `&bio=${myAccount?.metadata.bio}`;
 
