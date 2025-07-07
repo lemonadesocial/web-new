@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.56.0](https://github.com/lemonadesocial/web-new/compare/v1.55.0...v1.56.0) (2025-07-07)
+
+
+### Features
+
+* add switch account and disconnect ([9182f11](https://github.com/lemonadesocial/web-new/commit/9182f11cebdcdab0d25c72a1183793f2269afafb))
+* feature family wallet ([e94e861](https://github.com/lemonadesocial/web-new/commit/e94e8619ee715429d2d0a4d0c4648f66d138ae85))
+
 ## [1.55.0](https://github.com/lemonadesocial/web-new/compare/v1.54.0...v1.55.0) (2025-07-07)
 
 
