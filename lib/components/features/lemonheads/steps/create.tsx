@@ -553,8 +553,6 @@ function BackgroundItem({
   value?: string;
   form: UseFormReturn<LemonHeadValues>;
 }) {
-  const background = form.watch('background');
-
   if (!active) return null;
 
   const trait: BuildQueryParams = {
