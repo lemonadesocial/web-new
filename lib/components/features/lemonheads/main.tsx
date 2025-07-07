@@ -407,15 +407,7 @@ function MintModal({
         [mintData.look, mintData.metadata, mintData.signature],
         { value: mintPrice },
       );
-      setMintAtom((prev) => ({ ...prev, tx: tx?.hash }));
-
-      setInterval(() => {
-        setCount((prev) => prev - 1);
-        if (count === 0) {
-          setMintAtom((prev) => ({ ...prev, minted: true, video: true }));
-          onComplete();
-        }
-      }, 1000);
+      setMintAtom((prev) => ({ ...prev, txHash: tx?.hash }));
 
       const receipt = await tx.wait();
       const iface = new ethers.Interface(LemonheadNFT.abi);
@@ -441,6 +433,10 @@ function MintModal({
         const tokenId = parsedTransferLog.args?.tokenId?.toString();
         setMintAtom((prev) => ({ ...prev, image: mintData.image, txHash: tx?.hash, tokenId }));
         setDone(true);
+
+        setInterval(() => {
+          setCount((prev) => prev - 1);
+        }, 1000);
         console.log('Token ID:', tokenId);
       }
     } catch (error: any) {
