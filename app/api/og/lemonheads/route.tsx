@@ -9,6 +9,7 @@ const fetchFont = (url: string) => {
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const image = searchParams.get('image') || '';
+  const tokenId = searchParams.get('tokenId') || '';
   const username = searchParams.get('username');
   const bio = searchParams.get('bio');
 
@@ -40,7 +41,7 @@ export async function GET(request: NextRequest) {
                     fontFamily: 'SpaceGrotesk-Bold',
                   }}
                 >
-                  #18372
+                  #{tokenId}
                 </p>
               </div>
             ) : (

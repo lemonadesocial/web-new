@@ -304,7 +304,7 @@ function BeforMintModal({ onContinue }: { onContinue: () => void }) {
 
         <Button
           variant="secondary"
-          disabled={agree}
+          disabled={!agree}
           onClick={() => {
             modal.close();
             onContinue();
@@ -407,8 +407,8 @@ function MintModal({
         [mintData.look, mintData.metadata, mintData.signature],
         { value: mintPrice },
       );
-      setMintAtom((prev) => ({ ...prev, image: mintData.image, tx: tx?.hash }));
-      setDone(true);
+      setMintAtom((prev) => ({ ...prev, tx: tx?.hash }));
+
       setInterval(() => {
         setCount((prev) => prev - 1);
         if (count === 0) {
@@ -421,7 +421,7 @@ function MintModal({
       const iface = new ethers.Interface(LemonheadNFT.abi);
 
       let parsedTransferLog: any = null;
-      
+
       receipt.logs.some((log: any) => {
         try {
           const parsedLog = iface.parseLog(log);
@@ -436,9 +436,11 @@ function MintModal({
           return false;
         }
       });
-      
+
       if (parsedTransferLog) {
         const tokenId = parsedTransferLog.args?.tokenId?.toString();
+        setMintAtom((prev) => ({ ...prev, image: mintData.image, txHash: tx?.hash, tokenId }));
+        setDone(true);
         console.log('Token ID:', tokenId);
       }
     } catch (error: any) {

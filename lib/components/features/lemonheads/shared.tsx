@@ -245,6 +245,7 @@ export function SubContent({
 
                       return;
                     }
+                    console.log(item);
 
                     form.setValue(field, {
                       Id: item.Id,
@@ -253,7 +254,8 @@ export function SubContent({
                       type: field as TraitType,
                       color: item.color,
                       race: item.race,
-                      filters: { ...filters, color: item.color, race: item.race },
+                      art_style: item.art_style,
+                      filters: { ...filters, color: item.color, race: item.race, art_style: item.art_style as string },
                     });
                   }
                 }}

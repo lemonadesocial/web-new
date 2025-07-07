@@ -554,7 +554,15 @@ function BackgroundItem({
   form: UseFormReturn<LemonHeadValues>;
 }) {
   if (!active) return null;
-  return <SubContent field="background" form={form} where={`(type,eq,background)~and(art_style,eq,${artStyle})`} />;
+
+  const trait: BuildQueryParams = {
+    type: TraitType.background,
+    filters: [{ type: FilterType.art_style, value: artStyle }],
+  };
+
+  return (
+    <SubContent field="background" form={form} where={lemonheads.buildQuery(trait)} filters={{ art_style: artStyle }} />
+  );
 }
 
 function BackgroundItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
@@ -566,8 +574,6 @@ function BackgroundItems({ form }: { form: UseFormReturn<LemonHeadValues> }) {
   ]);
 
   return <SubContentWithTabs tabs={tabs} form={form} />;
-
-  // return <SubContent field="background" form={form} where={`(type,eq,background)`} />;
 }
 
 function PetItems({ form, colors }: { form: UseFormReturn<LemonHeadValues>; colors?: LemonHeadsColor[] }) {

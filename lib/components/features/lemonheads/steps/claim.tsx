@@ -44,7 +44,7 @@ export function ClaimStep(_: { form: UseFormReturn<LemonHeadValues> }) {
   }, [isMobile]);
 
   const getSrc = () => {
-    let src = `/api/og/lemonheads?image=${mint.image}`;
+    let src = `/api/og/lemonheads?image=${mint.image}&tokenId=${mint.tokenId}`;
     if (myAccount?.username) src += `&username=${myAccount?.username.value.replace('lens/', '')}`;
     if (myAccount?.metadata?.bio) src += `&bio=${myAccount?.metadata.bio}`;
 
