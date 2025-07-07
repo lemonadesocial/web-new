@@ -31,7 +31,7 @@ function getFilters({
   size: BodySize;
   color?: string;
 }) {
-  if (key === 'background') return {};
+  if (key === 'background') return { art_style: 'regular' };
   if (key === 'eyes') return { size };
   if (key === 'mouth') return { size };
   if (key === 'hair') return { size, gender, color };
@@ -70,6 +70,7 @@ export function transformTrait({
       attachment: obj.attachment,
       color: obj.color,
       race: obj.race,
+      art_style: obj.art_style,
       filters: getFilters({ size, gender, key: obj.type, color: obj.color }),
     };
   });
