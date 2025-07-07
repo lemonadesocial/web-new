@@ -17,6 +17,7 @@ import { chainsMapAtom } from '$lib/jotai';
 import { trpc } from '$lib/trpc/client';
 import { TraitType } from '$lib/services/lemonhead/core';
 import { ASSET_PREFIX, SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
+import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 
 import { AboutYou } from './steps/about';
 import { LemonHeadValues } from './types';
@@ -415,7 +416,31 @@ function MintModal({
           onComplete();
         }
       }, 1000);
-      await tx.wait();
+
+      const receipt = await tx.wait();
+      const iface = new ethers.Interface(LemonheadNFT.abi);
+
+      let parsedTransferLog: any = null;
+      
+      receipt.logs.some((log: any) => {
+        try {
+          const parsedLog = iface.parseLog(log);
+          if (parsedLog?.name === 'Transfer') {
+            parsedTransferLog = parsedLog;
+            return true;
+          }
+
+          return false;
+        } catch (error) {
+          console.error('Error parsing log:', error);
+          return false;
+        }
+      });
+      
+      if (parsedTransferLog) {
+        const tokenId = parsedTransferLog.args?.tokenId?.toString();
+        console.log('Token ID:', tokenId);
+      }
     } catch (error: any) {
       toast.error(error.message);
     } finally {
