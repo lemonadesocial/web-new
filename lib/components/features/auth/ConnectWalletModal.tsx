@@ -11,7 +11,7 @@ import { useSignWallet } from "$lib/hooks/useSignWallet";
 import { completeProfile } from "./utils";
 import { SelectProfileModal } from "../lens-account/SelectProfileModal";
 
-export function ConnectWalletModal({ verifyRequired }: { verifyRequired: boolean }) {
+export function ConnectWalletModal({ verifyRequired, skipSelectProfile }: { verifyRequired: boolean; skipSelectProfile?: boolean }) {
   const { isConnected } = useAppKitAccount();
   const { open } = useAppKit();
   const { chainId, switchNetwork } = useAppKitNetwork();
@@ -26,7 +26,7 @@ export function ConnectWalletModal({ verifyRequired }: { verifyRequired: boolean
   const isChainValid = chainId?.toString() === LENS_CHAIN_ID && chain;
 
   useEffect(() => {
-    if (verified && isConnected && isChainValid) {
+    if (verified && isConnected && isChainValid && !skipSelectProfile) {
       modal.close();
       setTimeout(() => {
         modal.open(SelectProfileModal, { dismissible: true });
@@ -36,6 +36,11 @@ export function ConnectWalletModal({ verifyRequired }: { verifyRequired: boolean
 
   const { processSignature, loading: loadingVerify, error: errorVerify } = useHandleVerifyWallet({
     onSuccess: () => {
+      if (skipSelectProfile) {
+        modal.close();
+        return;
+      }
+
       setVerified(true);
     },
   });

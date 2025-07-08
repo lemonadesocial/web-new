@@ -84,7 +84,7 @@ export function Events() {
 
   return (
     <div className="flex flex-col gap-5 flex-1 w-full">
-      <div className="flex gap-2 items-center justify-between w-full md:w-fit">
+      <div className="flex gap-2 items-center justify-between w-full">
         <Segment
           size="sm"
           selected={filter.type}

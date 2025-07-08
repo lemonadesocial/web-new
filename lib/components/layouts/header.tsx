@@ -61,10 +61,9 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
   const me = useMe();
   const { account } = useAccount();
   const logOut = useLogOut();
+  const { logOut: lensLogOut } = useLensLogOut();
   const signIn = useSignIn();
   const { hasLemonhead } = useLemonhead();
-
-  console.log(session);
 
   return (
     <div className="py-3 px-4 h-[56px] flex justify-between items-center z-10 gap-4">
@@ -100,18 +99,8 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
                 Verify Email
               </Button>
             )}
-            {(session && !session.wallet) && (
-              <Button
-                onClick={() => modal.open(ConnectWalletModal, { dismissible: true, props: { verifyRequired: true } })}
-                size="sm"
-                className="rounded-full"
-                variant="warning"
-                iconLeft="icon-error"
-                outlined
-              >
-                Claim Username
-              </Button>
-            )}
+
+            <ConnectLens />
 
             {
               hasLemonhead ? (
@@ -167,7 +156,7 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
                             title="Disconnect"
                             onClick={() => {
                               toggle();
-                              useLensLogOut();
+                              lensLogOut();
                             }}
                           />
                         </>
@@ -197,4 +186,52 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
       </div>
     </div>
   );
+}
+
+function ConnectLens() {
+  const { account } = useAccount();
+  const [session] = useAtom(sessionAtom);
+
+  const walletVerified = session?.wallet;
+
+  if (!walletVerified && !account) return (
+    <Button
+      onClick={() => modal.open(ConnectWalletModal, { dismissible: true, props: { verifyRequired: true } })}
+      size="sm"
+      className="rounded-full"
+      variant="warning"
+      iconLeft="icon-error"
+      outlined
+    >
+      Claim Username
+    </Button>
+  );
+
+  if (!account) return (
+    <Button
+      onClick={() => modal.open(SelectProfileModal, { dismissible: true })}
+      size="sm"
+      className="rounded-full"
+      variant="warning"
+      iconLeft="icon-error"
+      outlined
+    >
+      Claim Username
+    </Button>
+  );
+
+  if (!walletVerified) return (
+    <Button
+    onClick={() => modal.open(ConnectWalletModal, { dismissible: true, props: { verifyRequired: true } })}
+      size="sm"
+      className="rounded-full"
+      variant="warning"
+      iconLeft="icon-error"
+      outlined
+    >
+      Verify Wallet
+    </Button>
+  );
+
+  return null;
 }
