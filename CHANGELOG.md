@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.57.1](https://github.com/lemonadesocial/web-new/compare/v1.57.0...v1.57.1) (2025-07-08)
+
+
+### Bug Fixes
+
+* **login:** fix wallet login with lowercase ([398abb8](https://github.com/lemonadesocial/web-new/commit/398abb804d83ea110d8e1e2f2e67f438b20837ba))
+
 ## [1.57.0](https://github.com/lemonadesocial/web-new/compare/v1.56.1...v1.57.0) (2025-07-08)
 
 
