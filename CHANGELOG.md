@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.57.0](https://github.com/lemonadesocial/web-new/compare/v1.56.1...v1.57.0) (2025-07-08)
+
+
+### Features
+
+* update header item ([03e2f16](https://github.com/lemonadesocial/web-new/commit/03e2f16ffe9c3577fe33e8d906528a8b73550cf5))
+
 ## [1.56.1](https://github.com/lemonadesocial/web-new/compare/v1.56.0...v1.56.1) (2025-07-07)
 
 
