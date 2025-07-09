@@ -40,8 +40,7 @@ const menu = [
 
 export function RootMenu() {
   const pathName = usePathname();
-  const session = useAtomValue(sessionAtom);
-
+  
   return (
     <nav className="flex md:flex-3_1_auto w-[1080px]">
       <ul className="flex flex-1 gap-5">

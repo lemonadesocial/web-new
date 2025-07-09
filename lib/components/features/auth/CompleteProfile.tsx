@@ -45,7 +45,7 @@ export function CompleteProfile() {
 
       toast.success('Profile completed successfully');
       modal.close();
-    } catch (err) {
+    } catch {
       toast.error('Failed to update profile');
     } finally {
       setIsSubmitting(false);
@@ -101,7 +101,7 @@ export function CompleteProfile() {
           loading={isSubmitting}
           disabled={!displayName.trim()}
         >
-          Let's Go
+          Let&aspos;s Go
         </Button>
       </div>
     </ModalContent>
