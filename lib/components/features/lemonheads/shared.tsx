@@ -54,7 +54,7 @@ export function SquareButton({
         {children}
       </div>
       {label && (
-        <p className={clsx('text-sm capitalize truncate', active ? 'text-primary' : 'text-tertiary')}>
+        <p className={clsx('text-sm capitalize line-clamp-1 text-center', active ? 'text-primary' : 'text-tertiary')}>
           {label.replaceAll('_', ' ')}
         </p>
       )}
