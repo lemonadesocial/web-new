@@ -38,7 +38,7 @@ const EDIT_MAP: Record<string, EditProps> = {
   },
 };
 
-export function generateUrl(file?: File | null, edits?: keyof typeof EDIT_KEY | EditProps) {
+export function generateUrl(file?: Pick<File, 'bucket' | 'key' | 'type' | 'url'> | null, edits?: keyof typeof EDIT_KEY | EditProps) {
   if (!file || !file.bucket || !file.key) return '';
 
   if (file.type === 'image/gif') {
