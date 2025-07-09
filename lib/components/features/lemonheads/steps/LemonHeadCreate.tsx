@@ -1,15 +1,17 @@
 import React from 'react';
-import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from '../provider';
-import { Card, modal, Skeleton } from '$lib/components/core';
+import { isMobile } from 'react-device-detect';
+import { uniqBy } from 'lodash';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
+
+import { Card, modal, Skeleton } from '$lib/components/core';
 import { findConflictTraits, TraitType } from '$lib/services/lemonhead/core';
 import { trpc } from '$lib/trpc/client';
 import lemonHead from '$lib/trpc/lemonheads';
 import { BodyRace, BodySize, Gender, TraitExtends } from '$lib/trpc/lemonheads/types';
+
 import { CanvasImageRenderer, ColorTool, ConfirmModal, SquareButton } from '../shared';
-import { isMobile } from 'react-device-detect';
-import { uniqBy } from 'lodash';
+import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from '../provider';
 
 export function LemonHeadCreate() {
   const [{ currentStep }] = useLemonHeadContext();
@@ -243,7 +245,10 @@ function SubContent({ layerKey }: { layerKey: TraitType }) {
       {!!list.length && (
         <div
           ref={listInnerRef}
-          className={clsx('flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar', colors && 'pb-20')}
+          className={clsx(
+            'flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar',
+            !isMobile && colors && 'pb-20',
+          )}
         >
           {list.map((item) => {
             const dt = lemonHead.trait.tranformTrait(item);
