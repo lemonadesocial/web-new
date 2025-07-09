@@ -6,7 +6,7 @@ import { useAtom, useAtomValue } from 'jotai';
 import { usePathname } from 'next/navigation';
 import NextLink from 'next/link';
 
-import { sessionAtom } from '$lib/jotai';
+import { chainsMapAtom, sessionAtom } from '$lib/jotai';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useMe } from '$lib/hooks/useMe';
 import { useLogOut } from '$lib/hooks/useLogout';
@@ -22,6 +22,8 @@ import { ProfilePane } from '../features/pane';
 import { VerifyEmailModal } from '../features/auth/VerifyEmailModal';
 import { ConnectWalletModal } from '../features/auth/ConnectWalletModal';
 import { SelectProfileModal } from '../features/lens-account/SelectProfileModal';
+import { ConnectWallet } from '../features/modals/ConnectWallet';
+import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 
 type Props = {
   title?: string;
@@ -193,6 +195,22 @@ function ConnectLens() {
   const [session] = useAtom(sessionAtom);
 
   const walletVerified = session?.wallet;
+  const chainsMap = useAtomValue(chainsMapAtom);
+
+  const handleSelectWallet = () => {
+    modal.open(ConnectWallet, {
+      dismissible: true,
+      props: {
+        onConnect: () => {
+          modal.close();
+          setTimeout(() => {
+            modal.open(SelectProfileModal, { dismissible: true });
+          });
+        },
+        chain: chainsMap[LENS_CHAIN_ID]
+      }
+    });
+  }
 
   if (!walletVerified && !account) return (
     <Button
@@ -209,7 +227,7 @@ function ConnectLens() {
 
   if (!account) return (
     <Button
-      onClick={() => modal.open(SelectProfileModal, { dismissible: true })}
+      onClick={handleSelectWallet}
       size="sm"
       className="rounded-full"
       variant="warning"

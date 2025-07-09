@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 
 import { Button, ErrorText, modal, ModalContent, toast } from "$lib/components/core";
 import { getAppKitNetwork, useAppKit, useAppKitAccount, useAppKitNetwork } from "$lib/utils/appkit";
 import { LENS_CHAIN_ID } from "$lib/utils/lens/constants";
-import { chainsMapAtom } from "$lib/jotai";
+import { chainsMapAtom, sessionAtom } from "$lib/jotai";
 import { useHandleVerifyWallet } from "$lib/hooks/useSignIn";
 import { useSignWallet } from "$lib/hooks/useSignWallet";
 
@@ -17,6 +17,7 @@ export function ConnectWalletModal({ verifyRequired, skipSelectProfile }: { veri
   const { open } = useAppKit();
   const { chainId, switchNetwork } = useAppKitNetwork();
   const { address } = useAppKitAccount();
+  const [session, setSession] = useAtom(sessionAtom);
 
   const [verified, setVerified] = useState(!verifyRequired);
 
@@ -37,6 +38,10 @@ export function ConnectWalletModal({ verifyRequired, skipSelectProfile }: { veri
 
   const { processSignature, loading: loadingVerify, error: errorVerify } = useHandleVerifyWallet({
     onSuccess: () => {
+      if (address && session) {
+        setSession({ ...session, wallet: address });
+      }
+
       if (skipSelectProfile) {
         modal.close();
         return;
