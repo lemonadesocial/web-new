@@ -5,16 +5,17 @@ import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 import { Card, modal, Skeleton } from '$lib/components/core';
-import { findConflictTraits, TraitType } from '$lib/services/lemonhead/core';
+import { FilterType, findConflictTraits, TraitType } from '$lib/services/lemonhead/core';
 import { trpc } from '$lib/trpc/client';
 import lemonHead from '$lib/trpc/lemonheads';
 import { BodyRace, BodySize, Gender, TraitExtends } from '$lib/trpc/lemonheads/types';
 
 import { CanvasImageRenderer, ColorTool, ConfirmModal, SquareButton } from '../shared';
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from '../provider';
+import { stratis } from '@reown/appkit/networks';
 
 export function LemonHeadCreate() {
-  const [{ currentStep }] = useLemonHeadContext();
+  const [{ currentStep, traits }] = useLemonHeadContext();
 
   const [selected, setSelected] = React.useState('face');
 
@@ -46,11 +47,24 @@ export function LemonHeadCreate() {
       ],
     },
     footwear: { label: 'Footwear', icon: 'icon-lh-footprint', mount: false },
-    background: { label: 'Background', icon: '', mount: false },
+    background: {
+      label: 'Background',
+      icon: '',
+      mount: false,
+      tabs: [
+        { value: 'cosmic', label: 'Cosmic', mount: true },
+        { value: 'psychedelic', label: 'Psychedelic', mount: false },
+        { value: 'regular', label: 'Regular', mount: false },
+        { value: 'megaETH', label: 'MegaETH', mount: false },
+      ],
+    },
     pet: { label: 'Pets', icon: 'icon-lh-pets', mount: false },
   });
 
   if (currentStep !== LemonHeadStep.create) return null;
+
+  const body = traits.find((i) => i.type === TraitType.body);
+  const background = traits.find((i) => i.type === TraitType.background);
 
   return (
     <div className="flex flex-col md:flex-row-reverse flex-1 w-full md:max-w-[588px] gap-2 overflow-hidden">
@@ -71,9 +85,8 @@ export function LemonHeadCreate() {
       <Card.Root className="w-full md:w-[96px] overflow-auto max-h-fit no-scrollbar">
         <Card.Content className="flex md:flex-col gap-1 p-2">
           {Object.entries(tabs).map(([key, item]) => {
-            {
-              /* if (body?.race === 'alien' && key === 'face') return; */
-            }
+            if (body?.value === 'alien' && key === 'face') return;
+
             return (
               <div
                 key={key}
@@ -88,12 +101,6 @@ export function LemonHeadCreate() {
                   setTabs(_tabs);
                 }}
               >
-                {key === 'skin' && (
-                  <div
-                    className="size-8 rounded-full"
-                    // style={{ background: skinToneOpts.find((i) => i.value === body?.filters.skin_tone)?.color }}
-                  />
-                )}
                 {key === 'background' && (
                   <div
                     className="size-8 aspect-square rounded-sm"
@@ -101,10 +108,7 @@ export function LemonHeadCreate() {
                       backgroundRepeat: 'no-repeat',
                       backgroundSize: 'cover',
                       backgroundColor: 'var(--color-card-hover)',
-                      // backgroundImage:
-                      //   background && background.attachment?.length
-                      //     ? `url(${background?.attachment[0].thumbnails.tiny.signedUrl})`
-                      //     : '',
+                      backgroundImage: background && background.image ? `url(${background.image})` : '',
                     }}
                   />
                 )}
@@ -121,6 +125,7 @@ export function LemonHeadCreate() {
 
 function Content({ tabs: tabList = [], layerKey }: { tabs?: Array<any>; layerKey: TraitType }) {
   const [tabs, setTabs] = React.useState(tabList);
+
   const [selected, setSelected] = React.useState(tabs[0]?.value || layerKey);
 
   return (
@@ -154,7 +159,12 @@ function Content({ tabs: tabList = [], layerKey }: { tabs?: Array<any>; layerKey
 
             return (
               <div key={item.value} className={clsx(selected !== item.value && 'hidden')}>
-                <SubContent layerKey={selected} />
+                <SubContent
+                  layerKey={
+                    ['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? 'background' : selected
+                  }
+                  art_style={['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? selected : undefined}
+                />
               </div>
             );
           })}
@@ -177,7 +187,7 @@ function Loading({ className, loadMore }: { className?: string; loadMore?: boole
   );
 }
 
-function SubContent({ layerKey }: { layerKey: TraitType }) {
+function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: string }) {
   const [offset, setOffSet] = React.useState(0);
   const [list, setList] = React.useState<TraitExtends[]>([]);
 
@@ -199,6 +209,7 @@ function SubContent({ layerKey }: { layerKey: TraitType }) {
     race: layerKey !== 'pet' ? (bodyRace as BodyRace) : undefined,
     gender: bodyGender as Gender,
     color: selectedColor,
+    art_style,
   });
 
   const [condition, setCondition] = React.useState(lemonHead.buildQuery(traitFilter));
