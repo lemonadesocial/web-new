@@ -1,6 +1,7 @@
 import axios, { Axios } from 'axios';
 import { FilterType, TraitType } from '$lib/services/lemonhead/core';
-import { LemonHeadsColor, LemonHeadsLayer, LemonHeadsPageInfo } from './types';
+import { BodySize, LemonHeadsColor, LemonHeadsLayer, LemonHeadsPageInfo } from './types';
+import Trait from './trait';
 
 type PARAMS = {
   offset?: number;
@@ -18,6 +19,7 @@ export type BuildQueryParams = {
 
 class LemonHead {
   private instance: Axios;
+  trait: Trait = new Trait();
 
   constructor() {
     const token = process.env.NOCODB_ACCESS_KEY;

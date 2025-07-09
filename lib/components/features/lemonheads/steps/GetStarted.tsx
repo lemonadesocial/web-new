@@ -1,5 +1,6 @@
 import { Card, Segment } from '$lib/components/core';
 import { twMerge } from 'tailwind-merge';
+import { LemonHeadStep, useLemonHeadContext } from '../provider';
 
 const staticCards = [
   {
@@ -35,6 +36,10 @@ const staticCards = [
 ];
 
 export function LemonHeadGetStarted() {
+  const [state] = useLemonHeadContext();
+
+  if (state.currentStep !== LemonHeadStep.getstarted) return null;
+
   return (
     <div className="flex-1 max-w-[588px] flex flex-col gap-8">
       <div className="hidden md:flex flex-col gap-2">

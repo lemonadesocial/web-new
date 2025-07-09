@@ -1,5 +1,4 @@
 import React from 'react';
-import { UseFormReturn } from 'react-hook-form';
 import { isMobile } from 'react-device-detect';
 import { useAtom } from 'jotai';
 import { twMerge } from 'tailwind-merge';
@@ -8,7 +7,6 @@ import videojs from 'video.js';
 import Player from 'video.js/dist/types/player';
 import 'video.js/dist/video-js.css';
 
-import { LemonHeadValues } from '../types';
 import { mintAtom } from '../store';
 import { Alert, Button, drawer, modal, Skeleton } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
@@ -18,7 +16,7 @@ import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUser
 import { EditProfileModal } from '../../lens-account/EditProfileModal';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 
-export function ClaimStep(_: { form: UseFormReturn<LemonHeadValues> }) {
+export function ClaimLemonHead() {
   const [mint, setMint] = useAtom(mintAtom);
   const { account: myAccount } = useAccount();
 
