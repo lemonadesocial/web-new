@@ -10,6 +10,7 @@ import { useSignWallet } from "$lib/hooks/useSignWallet";
 
 import { completeProfile } from "./utils";
 import { SelectProfileModal } from "../lens-account/SelectProfileModal";
+import { formatError } from "$lib/utils/crypto";
 
 export function ConnectWalletModal({ verifyRequired, skipSelectProfile }: { verifyRequired: boolean; skipSelectProfile?: boolean }) {
   const { isConnected } = useAppKitAccount();
@@ -51,7 +52,7 @@ export function ConnectWalletModal({ verifyRequired, skipSelectProfile }: { veri
     signWallet().then(async ({ signature, token }) => {
       processSignature(signature, token, address);
     }).catch((err) => {
-      toast.error(err.message);
+      toast.error(formatError(err));
     });
   };
 

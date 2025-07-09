@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@0no-co/graphql.web@^1.0.5":
+"@0no-co/graphql.web@^1.0.13", "@0no-co/graphql.web@^1.0.5":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@0no-co/graphql.web/-/graphql.web-1.1.2.tgz#9af8deaf3f236c1c6ee99cc5349051475e5dcc83"
   integrity sha512-N2NGsU5FLBhT8NZ+3l2YrzZSHITjNXNuDhC4iDiikv0IujaJ0Xc6xIxQZ/Ek3Cb+rgPjnLHYyJm11tInuJn+cw==
@@ -1208,34 +1208,35 @@
   resolved "https://registry.yarnpkg.com/@lens-chain/storage-client/-/storage-client-1.0.4.tgz#2e8b9dca74565da41c74003a7a25756f346dd0ab"
   integrity sha512-dORCTVwSWP7MWoJ257oriH7EV8g6YU3Pxgligy28XOglLEO0PBb/D4b6fuSSqWZjvfOjr4KCC4UgqU1z66VckQ==
 
-"@lens-protocol/client@^0.0.0-canary-20250627120829":
-  version "0.0.0-canary-20250627120829"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/client/-/client-0.0.0-canary-20250627120829.tgz#bbd5999bce5368b0db4f10f538ef6bb17b5f4638"
-  integrity sha512-xV82WPWpMKAs7ox7dnMjw35HlRZXtif3iXfFySYNoxxh0hy3D8E7LiOIFAbsat6GWwNkKUXRJTGau/qkluygig==
+"@lens-protocol/client@^0.0.0-canary-20250708191841":
+  version "0.0.0-canary-20250708191841"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/client/-/client-0.0.0-canary-20250708191841.tgz#42ecc1f3ffdf5cd57ec6e4c6f70ac1024a61f0af"
+  integrity sha512-ZocJ85xYfGS+umwwaHOXoufozB13FWi0Cu2RcjuM9bBwa602OyXg5sUDZD/XH0QhHL80FaSsRGpYrbOQzFddBg==
   dependencies:
     "@lens-chain/sdk" "^1.0.0"
-    "@lens-protocol/env" "0.0.0-canary-20250627120829"
-    "@lens-protocol/graphql" "0.0.0-canary-20250627120829"
-    "@lens-protocol/storage" "0.0.0-canary-20250627120829"
-    "@lens-protocol/types" "0.0.0-canary-20250627120829"
+    "@lens-protocol/env" "0.0.0-canary-20250708191841"
+    "@lens-protocol/graphql" "0.0.0-canary-20250708191841"
+    "@lens-protocol/storage" "0.0.0-canary-20250708191841"
+    "@lens-protocol/types" "0.0.0-canary-20250708191841"
     "@urql/core" "^5.0.8"
     "@urql/exchange-auth" "^2.2.0"
+    "@urql/exchange-graphcache" "^7.2.4"
     graphql "^16.9.0"
     jwt-decode "^4.0.0"
 
-"@lens-protocol/env@0.0.0-canary-20250627120829":
-  version "0.0.0-canary-20250627120829"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/env/-/env-0.0.0-canary-20250627120829.tgz#93f5ae520c0c82a5b4dfb8ec6f7f563c4c924073"
-  integrity sha512-40P6+PY34Gyz2QzeBIJ8W0PZLL4K/G6URPZAC+hiHWvX936LcGvO8SE4kxnfjBtg6pDxR/2y6YCTtPzUvWLvAA==
+"@lens-protocol/env@0.0.0-canary-20250708191841":
+  version "0.0.0-canary-20250708191841"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/env/-/env-0.0.0-canary-20250708191841.tgz#33ed7d8b2a4f3bcd5091484097204a9886fc2598"
+  integrity sha512-6lWn4bqWh/tSgAy0TRPCaawbmHjyhucDTX/krCNdyB2fkgVqc+8J6IRnTswE/LF2qevbCR+9jgSxHAEzcnhnlQ==
   dependencies:
-    "@lens-protocol/types" "0.0.0-canary-20250627120829"
+    "@lens-protocol/types" "0.0.0-canary-20250708191841"
 
-"@lens-protocol/graphql@0.0.0-canary-20250627120829":
-  version "0.0.0-canary-20250627120829"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/graphql/-/graphql-0.0.0-canary-20250627120829.tgz#1dbd6b5bac8749940c1922e3e84cbd1f47fd7db1"
-  integrity sha512-qiE2h79Jnhk4sgRJGbX5GFdlHCqdOKNolAdOrc88wM40vdmKXH/m+W0yKdU8i2WmQ/mGCys60DCaEHVpanC7GQ==
+"@lens-protocol/graphql@0.0.0-canary-20250708191841":
+  version "0.0.0-canary-20250708191841"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/graphql/-/graphql-0.0.0-canary-20250708191841.tgz#f00ac55a459f63670dcbaf7b08ddf044e758fa32"
+  integrity sha512-6bLWq1ohvHjK7aFm+p9h73FkrcMYBPtk3rVljII+TNWkVAsRU0bYgcrQz4Qlg8Ag4zM+JuD4/kCkqv8ynMrsQw==
   dependencies:
-    "@lens-protocol/types" "0.0.0-canary-20250627120829"
+    "@lens-protocol/types" "0.0.0-canary-20250708191841"
     gql.tada "^1.8.10"
     graphql "^16.9.0"
     type-fest "^4.26.1"
@@ -1249,18 +1250,18 @@
     json-stable-stringify "^1.1.1"
     uuid "^9.0.1"
 
-"@lens-protocol/storage@0.0.0-canary-20250627120829":
-  version "0.0.0-canary-20250627120829"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/storage/-/storage-0.0.0-canary-20250627120829.tgz#f1342d12ff243c8a369dd1202ad7a37b8bbc6452"
-  integrity sha512-FQ7HPsC2vqGN3SJodVkNUZ4WnLn0kxL0maiJ+t8FtaRaXBCU9AWMlsS1OwTL82wbZOKpLsm2cTA6H/dzz4FgbQ==
+"@lens-protocol/storage@0.0.0-canary-20250708191841":
+  version "0.0.0-canary-20250708191841"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/storage/-/storage-0.0.0-canary-20250708191841.tgz#1beab9d2f9a781a8825ed7674f4348c620f1c6e6"
+  integrity sha512-VPa9N25gY9cXz6E0JSFpQHNby489Ov8ithxjKTHzuqmjpIAJ1C+mI9FEwtO+ZKwiVFzgx8QTq42LycVeIDyAlw==
   dependencies:
-    "@lens-protocol/types" "0.0.0-canary-20250627120829"
+    "@lens-protocol/types" "0.0.0-canary-20250708191841"
     zod "^3.23.8"
 
-"@lens-protocol/types@0.0.0-canary-20250627120829":
-  version "0.0.0-canary-20250627120829"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/types/-/types-0.0.0-canary-20250627120829.tgz#becb0355227c592d8d01c94b9805497e748cc109"
-  integrity sha512-xedscq6PVAPilOljY3c6ZIVBQe/k0+Mppbypjf+nMx4a5i4hKKMMQihd6Mk+BIKUKQAuBp4oKRosmW2AOLAKpA==
+"@lens-protocol/types@0.0.0-canary-20250708191841":
+  version "0.0.0-canary-20250708191841"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/types/-/types-0.0.0-canary-20250708191841.tgz#914b4646a24dbc3edce76991753cd90b1cb024cd"
+  integrity sha512-7WOlZm2mFLpS3v8bBhAGh9gCLtaLAmJfP3dmGndXJT/bpxB5U32xLVx5jM72L+xST5t9dAJQxaqtBxpyC6MqJA==
   dependencies:
     neverthrow "^8.0.0"
     type-fest "^4.26.1"
@@ -2540,12 +2541,29 @@
     "@0no-co/graphql.web" "^1.0.5"
     wonka "^6.3.2"
 
+"@urql/core@^5.1.2":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@urql/core/-/core-5.2.0.tgz#77ee41e192e261fea30c2ca6c2f340410b45d214"
+  integrity sha512-/n0ieD0mvvDnVAXEQgX/7qJiVcvYvNkOHeBvkwtylfjydar123caCXcl58PXFY11oU1oquJocVXHxLAbtv4x1A==
+  dependencies:
+    "@0no-co/graphql.web" "^1.0.13"
+    wonka "^6.3.2"
+
 "@urql/exchange-auth@^2.2.0":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@urql/exchange-auth/-/exchange-auth-2.2.1.tgz#2e6f7b4ff008f0a3f6e5a1c80f0659d1d0856321"
   integrity sha512-n4xUxxjvY36GJh539sLaPFyvFzreADOv8EFQdTiXOCIRVoXXhWVVI7DjY/HNtLICfbg1+UlbvQ7sNkwaBouDHg==
   dependencies:
     "@urql/core" "^5.1.1"
+    wonka "^6.3.2"
+
+"@urql/exchange-graphcache@^7.2.4":
+  version "7.2.4"
+  resolved "https://registry.yarnpkg.com/@urql/exchange-graphcache/-/exchange-graphcache-7.2.4.tgz#c2e8d2a634906b2535d77b2e1c5c8717fa2e30fd"
+  integrity sha512-kiKbT0ZrtyQmmgNLYR0qkZAJjWHQOtrd+6Dt9JMtm3L/A8r3D6ptcJn668BADP6J+vkxcfNFtdI+0OdmBBkRgw==
+  dependencies:
+    "@0no-co/graphql.web" "^1.0.13"
+    "@urql/core" "^5.1.2"
     wonka "^6.3.2"
 
 "@videojs/http-streaming@^3.17.0":
