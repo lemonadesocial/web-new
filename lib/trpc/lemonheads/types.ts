@@ -1,4 +1,4 @@
-import { TraitType } from '$lib/services/lemonhead/core';
+import { Trait, TraitType } from '$lib/services/lemonhead/core';
 
 export type LemonHeadsPageInfo = {
   isFirstPage: boolean;
@@ -8,19 +8,23 @@ export type LemonHeadsPageInfo = {
   totalRows: number;
 };
 
-type Gender = 'male' | 'female';
+/**
+ * @description data layer from nocodb
+ * */
+export type SkinTone = 'brown' | 'tan' | 'light' | 'dark';
+export type Gender = 'male' | 'female';
+export type BodyRace = 'human' | 'alien';
 export type BodySize = 'small' | 'medium' | 'large' | 'extra_large';
-type Race = 'human' | 'alien';
 
 export type LemonHeadsLayer = {
   Id: number;
   name: string;
   type: TraitType;
   art_style?: string | null;
-  skin_tone: 'brown' | 'tan' | 'light' | 'dark';
+  skin_tone: SkinTone;
   gender: Gender;
   size: BodySize;
-  race: Race;
+  race: BodyRace;
   color: any | null;
   attachment: LemonHeadsAttachment[];
 };
@@ -50,3 +54,5 @@ export type LemonHeadsAttachment = {
 };
 
 export type LemonHeadsColor = { name: string; value: { key: string; value: string }[] };
+
+export type TraitExtends = Trait & { Id?: string | number; image?: string };
