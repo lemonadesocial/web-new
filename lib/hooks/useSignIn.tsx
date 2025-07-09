@@ -389,7 +389,8 @@ export const useHandleVerifyEmail = ({ onSuccess }: { onSuccess: () => void }) =
       }));
 
     if (!updateResult.success) {
-      setError((updateResult.response as SettingsFlow).ui.messages?.[0].text ?? 'Unknown error');
+      const errMessage = (updateResult.response as SettingsFlow).ui?.messages?.[0].text || updateResult.response.error.reason;
+      setError(errMessage ?? 'Unknown error');
       return;
     }
 
@@ -531,7 +532,8 @@ export const useHandleVerifyWallet = ({ onSuccess }: { onSuccess: () => void }) 
       }));
 
     if (!result.success) {
-      setError((result.response as SettingsFlow).ui.messages?.[0].text ?? 'Unknown error');
+      const errMessage = (result.response as SettingsFlow).ui?.messages?.[0].text || result.response.error.reason;
+      setError(errMessage ?? 'Unknown error');
       return;
     }
 
