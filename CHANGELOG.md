@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.59.0](https://github.com/lemonadesocial/web-new/compare/v1.58.0...v1.59.0) (2025-07-09)
+
+
+### Features
+
+* revert upgreade lens ([1d1652f](https://github.com/lemonadesocial/web-new/commit/1d1652f1890d64231a281326ff444593b87ff1c8))
+
+
+### Bug Fixes
+
+* claim username without wallet ([b455d5e](https://github.com/lemonadesocial/web-new/commit/b455d5e548f289fc69e491b9064c96ea70815632))
+* lint ([90fbab0](https://github.com/lemonadesocial/web-new/commit/90fbab0dabb8a707210c7adec09c5b5c7000fb82))
+
 ## [1.58.0](https://github.com/lemonadesocial/web-new/compare/v1.57.1...v1.58.0) (2025-07-09)
 
 
