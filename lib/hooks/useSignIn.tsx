@@ -91,19 +91,19 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: () => void }) => {
 
     const promise = isSignup
       ? ory.updateRegistrationFlow({
-          flow: flow.id,
-          updateRegistrationFlowBody: {
-            ...payload,
-            traits: { email },
-          },
-        })
+        flow: flow.id,
+        updateRegistrationFlowBody: {
+          ...payload,
+          traits: { email },
+        },
+      })
       : ory.updateLoginFlow({
-          flow: flow.id,
-          updateLoginFlowBody: {
-            ...payload,
-            identifier: email,
-          },
-        });
+        flow: flow.id,
+        updateLoginFlowBody: {
+          ...payload,
+          identifier: email,
+        },
+      });
 
     //-- this should always throw an error
     const result = await promise
@@ -272,6 +272,8 @@ export const useHandleSignature = ({ onSuccess }: { onSuccess: () => void }) => 
   const trySignup = async (signature: string, token: string, wallet: string) => {
     if (!ory) return;
 
+    const lowercaseWallet = wallet.toLowerCase();
+
     const flow = await ory.createBrowserRegistrationFlow({}).then((res) => res.data);
 
     const updateResult = await ory.updateRegistrationFlow({
@@ -279,23 +281,24 @@ export const useHandleSignature = ({ onSuccess }: { onSuccess: () => void }) => 
       updateRegistrationFlowBody: {
         method: 'password',
         csrf_token: getCsrfTokenFromFlow(flow),
-        password: getPassword(wallet),
+        password: getPassword(lowercaseWallet),
         traits: {
-          wallet,
+          wallet: lowercaseWallet,
         },
         transient_payload: {
           wallet_signature: signature,
           wallet_signature_token: token,
         },
       },
-    }).then((res) => ({
-      success: true,
-      response: res.data,
-    }))
-    .catch((err) => ({
-      success: false,
-      response: err.response.data,
-    }));;
+    })
+      .then((res) => ({
+        success: true,
+        response: res.data,
+      }))
+      .catch((err) => ({
+        success: false,
+        response: err.response.data,
+      }));;
 
     if (!updateResult.success) {
       setError((updateResult.response as RegistrationFlow).ui.messages?.[0].text ?? 'Unknown error');
@@ -310,6 +313,7 @@ export const useHandleSignature = ({ onSuccess }: { onSuccess: () => void }) => 
 
     if (!ory) return;
 
+    const lowercaseWallet = wallet.toLowerCase();
     const flow = await ory.createBrowserLoginFlow({}).then((res) => res.data);
 
     const updateResult = await ory
@@ -318,8 +322,8 @@ export const useHandleSignature = ({ onSuccess }: { onSuccess: () => void }) => 
         updateLoginFlowBody: {
           method: 'password',
           csrf_token: getCsrfTokenFromFlow(flow),
-          password: getPassword(wallet),
-          identifier: wallet,
+          password: getPassword(lowercaseWallet),
+          identifier: lowercaseWallet,
           transient_payload: {
             wallet_signature: signature,
             wallet_signature_token: token,
@@ -335,7 +339,7 @@ export const useHandleSignature = ({ onSuccess }: { onSuccess: () => void }) => 
 
       if (accountNotExists) {
         //-- handle signup
-        await trySignup(signature, token, wallet);
+        await trySignup(signature, token, lowercaseWallet);
         return;
       }
 
@@ -385,7 +389,8 @@ export const useHandleVerifyEmail = ({ onSuccess }: { onSuccess: () => void }) =
       }));
 
     if (!updateResult.success) {
-      setError((updateResult.response as SettingsFlow).ui.messages?.[0].text ?? 'Unknown error');
+      const errMessage = (updateResult.response as SettingsFlow).ui?.messages?.[0].text || updateResult.response.error.reason;
+      setError(errMessage ?? 'Unknown error');
       return;
     }
 
@@ -497,6 +502,8 @@ export const useHandleVerifyWallet = ({ onSuccess }: { onSuccess: () => void }) 
 
     setError('');
 
+    const lowercaseWallet = wallet.toLowerCase();
+
     const flow = await ory.createBrowserSettingsFlow({}).then((res) => res.data);
 
     const result = await ory
@@ -507,7 +514,7 @@ export const useHandleVerifyWallet = ({ onSuccess }: { onSuccess: () => void }) 
           method: 'profile',
           traits: {
             ...flow.identity?.traits,
-            wallet,
+            wallet: lowercaseWallet,
           },
           transient_payload: {
             wallet_signature: signature,
@@ -525,7 +532,8 @@ export const useHandleVerifyWallet = ({ onSuccess }: { onSuccess: () => void }) 
       }));
 
     if (!result.success) {
-      setError((result.response as SettingsFlow).ui.messages?.[0].text ?? 'Unknown error');
+      const errMessage = (result.response as SettingsFlow).ui?.messages?.[0].text || result.response.error.reason;
+      setError(errMessage ?? 'Unknown error');
       return;
     }
 
@@ -534,7 +542,7 @@ export const useHandleVerifyWallet = ({ onSuccess }: { onSuccess: () => void }) 
       updateSettingsFlowBody: {
         csrf_token: getCsrfTokenFromFlow(result.response as SettingsFlow),
         method: 'password',
-        password: getPassword(wallet),
+        password: getPassword(lowercaseWallet),
       },
     });
 
@@ -562,11 +570,11 @@ function getPassword(address: string) {
 
 const withLoading =
   <T extends unknown[], K>(fn: (...args: T) => Promise<K>, setLoading: (loading: boolean) => void) =>
-  async (...args: T) => {
-    try {
-      setLoading(true);
-      await fn(...args);
-    } finally {
-      setLoading(false);
-    }
-  };
+    async (...args: T) => {
+      try {
+        setLoading(true);
+        await fn(...args);
+      } finally {
+        setLoading(false);
+      }
+    };

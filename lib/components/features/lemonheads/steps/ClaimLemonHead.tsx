@@ -119,8 +119,8 @@ function RightPane({ image }: { image: string }) {
     return src;
   };
 
-  let shareUrl = '';
-  let shareText = '';
+  const shareUrl = '';
+  const shareText = '';
   const handleShare = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
