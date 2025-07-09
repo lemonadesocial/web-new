@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.58.0](https://github.com/lemonadesocial/web-new/compare/v1.57.1...v1.58.0) (2025-07-09)
+
+
+### Features
+
+* update error message ([270ee5d](https://github.com/lemonadesocial/web-new/commit/270ee5dba3f4e0f3b0512e07f14ffbb2afc17390))
+* upgreade lens ([b90728a](https://github.com/lemonadesocial/web-new/commit/b90728af12682eeb9968c9976450e104c77a2056))
+
 ## [1.57.1](https://github.com/lemonadesocial/web-new/compare/v1.57.0...v1.57.1) (2025-07-08)
 
 
