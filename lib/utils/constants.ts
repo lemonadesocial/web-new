@@ -8,9 +8,23 @@ export const IDENTITY_URL = process.env.NEXT_PUBLIC_IDENTITY_URL as string;
 export const LEMONADE_FEED_ADDRESS = process.env.NEXT_PUBLIC_LEMONADE_FEED_ADDRESS as string;
 export const LENS_NAMESPACE = process.env.NEXT_PUBLIC_LENS_NAMESPACE as string;
 
-export const SEPOLIA_ETHERSCAN = "https://sepolia.etherscan.io"
+export const SEPOLIA_ETHERSCAN = 'https://sepolia.etherscan.io';
 
-export const ETHNICITIES = ['African American', 'Alaska Native', 'Arab', 'Asian', 'Black', 'Han Chinese', 'Hispanic / Latino', 'Indian', 'Native American', 'Native Hawaiian', 'Pacific Islander', 'White', 'Other'];
+export const ETHNICITIES = [
+  'African American',
+  'Alaska Native',
+  'Arab',
+  'Asian',
+  'Black',
+  'Han Chinese',
+  'Hispanic / Latino',
+  'Indian',
+  'Native American',
+  'Native Hawaiian',
+  'Pacific Islander',
+  'White',
+  'Other',
+];
 
 export const PRONOUNS = ['She', 'He', 'They'];
 
@@ -37,5 +51,14 @@ export const INDUSTRY_OPTIONS = [
   'Sports & Gaming',
   'Technology',
   'Wellness',
-  'Other'
+  'Other',
+];
+
+export const PROFILE_SOCIAL_LINKS = [
+  { icon: 'icon-twitter', name: 'handle_twitter', prefix: 'x.com/', placeholder: 'username' },
+  { icon: 'icon-linkedin', name: 'handle_linkedin', prefix: 'linkedin.com', placeholder: '/us/handle' },
+  { icon: 'icon-farcaster', name: 'handle_farcaster', prefix: 'farcaster.xyz/', placeholder: 'username' },
+  { icon: 'icon-instagram', name: 'handle_instagram', prefix: 'instagram.com/', placeholder: 'username' },
+  { icon: 'icon-github-fill', name: 'handle_github', prefix: 'github.com/', placeholder: 'username' },
+  { icon: 'icon-calendly', name: 'calendly_url', prefix: 'calendly.com/', placeholder: 'username' },
 ];
