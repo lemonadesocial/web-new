@@ -23,9 +23,15 @@ export function Content() {
   const signIn = useSignIn();
   const router = useRouter();
 
+  const [mounted, setMounted] = React.useState(false);
+
   React.useEffect(() => {
-    if (!me && !session) signIn();
-  }, [me, session]);
+    if (!mounted) setMounted(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (!me && !session && mounted) signIn(false);
+  }, [me, session, mounted]);
 
   return (
     <div className="flex flex-col gap-6 py-8">

@@ -108,7 +108,9 @@ const Sidebar = () => {
             ))}
           </div>
 
-          <SidebarItem item={{ icon: 'icon-gears', label: 'Settings', path: '/settings' }} isActive={isActive} />
+          {(me || account) && (
+            <SidebarItem item={{ icon: 'icon-gears', label: 'Settings', path: '/settings' }} isActive={isActive} />
+          )}
         </div>
       </div>
     </div>

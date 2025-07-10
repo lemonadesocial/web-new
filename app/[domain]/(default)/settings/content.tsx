@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 import { useAppKitAccount, useDisconnect } from '@reown/appkit/react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -19,10 +20,13 @@ import { SelectProfileModal } from '$lib/components/features/lens-account/Select
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 import { ClaimLemonadeUsernameModal } from '$lib/components/features/lens-account/ClaimLemonadeUsernameModal';
 import { ProfilePane } from '$lib/components/features/pane';
+import { useSignIn } from '$lib/hooks/useSignIn';
 
 export function Content() {
   const [session] = useAtom(sessionAtom);
   const walletVerified = session?.wallet;
+  const signIn = useSignIn();
+  const [mounted, setMounted] = React.useState(false);
 
   const me = useMe();
   const { account } = useAccount();
@@ -51,6 +55,14 @@ export function Content() {
   const getSocialLink = (name: string) => {
     return account?.metadata?.attributes.find((i) => i.key === name)?.value;
   };
+
+  React.useEffect(() => {
+    if (!mounted) setMounted(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (!me && !session && mounted) signIn(false);
+  }, [me, session, mounted]);
 
   return (
     <Card.Content className="max-w-[532px] bg-card backdrop-blur-lg rounded-lg border border-card-border flex flex-col p-0 divide-y divide-(--color-divider)">

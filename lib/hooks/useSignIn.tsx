@@ -11,13 +11,13 @@ export function useSignIn() {
   const { signIn } = useOAuth2();
   const hydraClientId = useAtomValue(hydraClientIdAtom);
 
-  return () => {
+  return (dismissible = true) => {
     if (hydraClientId) {
       signIn();
       return;
     }
 
-    modal.open(AuthModal, { dismissible: true });
+    modal.open(AuthModal, { dismissible });
   };
 }
 

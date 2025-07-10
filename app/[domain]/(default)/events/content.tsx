@@ -32,6 +32,7 @@ export function EventsContent() {
   const signIn = useSignIn();
   const router = useRouter();
 
+  const [mounted, setMounted] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [filter, setFilter] = React.useState({
     type: 'upcoming',
@@ -76,8 +77,12 @@ export function EventsContent() {
   }, [filter.type, me, filter.by]);
 
   React.useEffect(() => {
-    if (!me && !session) signIn();
-  }, [me, session]);
+    if (!mounted) setMounted(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (!me && !session && mounted) signIn(false);
+  }, [me, session, mounted]);
 
   React.useEffect(() => {
     fetchData();
