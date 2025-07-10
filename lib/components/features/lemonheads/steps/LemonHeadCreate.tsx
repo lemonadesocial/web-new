@@ -12,7 +12,6 @@ import { BodyRace, BodySize, Gender, TraitExtends } from '$lib/trpc/lemonheads/t
 
 import { CanvasImageRenderer, ColorTool, ConfirmModal, SquareButton } from '../shared';
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from '../provider';
-import { stratis } from '@reown/appkit/networks';
 
 export function LemonHeadCreate() {
   const [{ currentStep, traits }] = useLemonHeadContext();
