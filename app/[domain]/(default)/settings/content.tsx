@@ -53,7 +53,7 @@ export function Content() {
   };
 
   return (
-    <Card.Content className="max-w-[532px] bg-card backdrop-blur-lg rounded-lg border border-card-border flex flex-col  p-0 divide-y divide-(--color-divider)">
+    <Card.Content className="max-w-[532px] bg-card backdrop-blur-lg rounded-lg border border-card-border flex flex-col p-0 divide-y divide-(--color-divider)">
       <div className="px-[18px] py-4 flex flex-col gap-4">
         <div className="flex justify-between items-start">
           <div className="size-[60px]">
