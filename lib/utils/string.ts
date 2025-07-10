@@ -11,3 +11,14 @@ export function formatCurrency(amount = 0, currency?: string, attemptedDecimals 
       })
     : 'Free';
 }
+
+export function truncateMiddle(str: string, prefix: number, suffix: number, ellipsis = '...') {
+  if (str.length <= prefix + suffix + ellipsis.length) {
+    return str;
+  }
+
+  const pre = str.substring(0, prefix);
+  const suf = str.substring(str.length - suffix);
+
+  return pre + ellipsis + suf;
+}

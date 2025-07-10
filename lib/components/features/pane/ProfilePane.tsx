@@ -37,6 +37,7 @@ import { useDisconnect } from '$lib/utils/appkit';
 import { SelectProfileModal } from '../lens-account/SelectProfileModal';
 import { ProfileMenu } from '../lens-account/ProfileMenu';
 import { ClaimLemonadeUsernameModal } from '../lens-account/ClaimLemonadeUsernameModal';
+import { PROFILE_SOCIAL_LINKS } from '$lib/utils/constants';
 
 type ProfileValues = {
   name?: string | null;
@@ -54,15 +55,6 @@ type ProfileValues = {
   calendly_url?: string | null;
   new_photos?: string[];
 };
-
-const SOCIAL_LINKS = [
-  { icon: 'icon-twitter', name: 'handle_twitter', prefix: 'x.com/', placeholder: 'username' },
-  { icon: 'icon-linkedin', name: 'handle_linkedin', prefix: 'linkedin.com', placeholder: '/us/handle' },
-  { icon: 'icon-farcaster', name: 'handle_farcaster', prefix: 'farcaster.xyz/', placeholder: 'username' },
-  { icon: 'icon-instagram', name: 'handle_instagram', prefix: 'instagram.com/', placeholder: 'username' },
-  { icon: 'icon-github-fill', name: 'handle_github', prefix: 'github.com/', placeholder: 'username' },
-  { icon: 'icon-calendly', name: 'calendly_url', prefix: 'calendly.com/', placeholder: 'username' },
-];
 
 export function ProfilePane() {
   const me = useMe();
@@ -364,7 +356,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
             <div className="flex flex-col gap-4 pb-5">
               <p>Social Links</p>
               <div className="flex flex-col gap-4">
-                {SOCIAL_LINKS.map((item) => (
+                {PROFILE_SOCIAL_LINKS.map((item) => (
                   <div key={item.name} className="flex items-center gap-4">
                     <i className={twMerge('size-5 text-tertiary', item.icon)} />
                     <div className="flex-1">

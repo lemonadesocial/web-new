@@ -5,14 +5,13 @@ import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 import { Card, modal, Skeleton } from '$lib/components/core';
-import { FilterType, findConflictTraits, TraitType } from '$lib/services/lemonhead/core';
+import { findConflictTraits, TraitType } from '$lib/services/lemonhead/core';
 import { trpc } from '$lib/trpc/client';
 import lemonHead from '$lib/trpc/lemonheads';
 import { BodyRace, BodySize, Gender, TraitExtends } from '$lib/trpc/lemonheads/types';
 
 import { CanvasImageRenderer, ColorTool, ConfirmModal, SquareButton } from '../shared';
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from '../provider';
-import { stratis } from '@reown/appkit/networks';
 
 export function LemonHeadCreate() {
   const [{ currentStep, traits }] = useLemonHeadContext();
