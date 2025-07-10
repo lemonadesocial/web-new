@@ -15,7 +15,7 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { useSession } from '$lib/hooks/useSession';
 import { useSignIn } from '$lib/hooks/useSignIn';
 
-import { PageCardItem, PageCardItemSkeleton, PageSection } from '../shared';
+import { PageCardItem, PageCardItemSkeleton, PageSection, PageTitle } from '../shared';
 
 export function Content() {
   const session = useSession();
@@ -33,23 +33,32 @@ export function Content() {
     if (!me && !session && mounted) signIn(false);
   }, [me, session, mounted]);
 
+  if (!me && !session) return null;
+
   return (
-    <div className="flex flex-col gap-6 py-8">
-      <PageSection
-        title="My Hubs"
-        toolbar={() => (
-          <div className="flex gap-2">
-            <Button size="sm" variant="tertiary" icon="icon-explore" onClick={() => router.push('/explore')} />
-            <Button size="sm" icon="icon-edit-square" onClick={() => (window.location.href = '/create/community')} />
-          </div>
-        )}
-      >
-        <MyHubs />
-      </PageSection>
-      <Divider className="my-2" />
-      <PageSection title="Subscribed Hubs">
-        <SubscribedHubs />
-      </PageSection>
+    <div className="flex flex-col gap-8 mt-6 pb-24 md:my-11">
+      <PageTitle
+        title="Communities"
+        subtitle="Manage your community hubs and stay up-to-date with communities you subscribed to."
+      />
+
+      <div className="flex flex-col gap-6 py-8">
+        <PageSection
+          title="My Hubs"
+          toolbar={() => (
+            <div className="flex gap-2">
+              <Button size="sm" variant="tertiary" icon="icon-explore" onClick={() => router.push('/explore')} />
+              <Button size="sm" icon="icon-edit-square" onClick={() => (window.location.href = '/create/community')} />
+            </div>
+          )}
+        >
+          <MyHubs />
+        </PageSection>
+        <Divider className="my-2" />
+        <PageSection title="Subscribed Hubs">
+          <SubscribedHubs />
+        </PageSection>
+      </div>
     </div>
   );
 }
