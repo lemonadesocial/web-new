@@ -10,7 +10,7 @@ export default function TRPCProvider({ children }: { children: React.ReactNode }
     () =>
       new QueryClient({
         defaultOptions: {
-          queries: { retry: false },
+          queries: { retry: 3 },
         },
       }),
   );
