@@ -80,7 +80,7 @@ export function LemonHeadFooter() {
       const valid = await checkMinted();
       if (!valid) return;
 
-      if (!isConnected) {
+      if (!isConnected || chainId?.toString() !== chainsMap[LENS_CHAIN_ID].chain_id) {
         modal.open(ConnectWallet, {
           props: {
             onConnect: () => {
@@ -111,34 +111,15 @@ export function LemonHeadFooter() {
         return;
       } else {
         if (!mint.minted) {
-          if (chainId?.toString() !== chainsMap[LENS_CHAIN_ID].chain_id) {
-            modal.open(ConnectWallet, {
-              props: {
-                onConnect: () => {
-                  modal.close();
-                  setTimeout(() => {
-                    modal.open(MintModal, {
-                      props: {
-                        traits: state.traits,
-                        onComplete: () => dispatch({ type: LemonHeadActionKind.next_step }),
-                      },
-                    });
-                  });
-                },
-                chain: chainsMap[LENS_CHAIN_ID],
-              },
-            });
-          } else {
-            modal.open(MintModal, {
-              props: {
-                traits: state.traits,
-                onComplete: () => dispatch({ type: LemonHeadActionKind.next_step }),
-              },
-            });
-          }
-
-          return;
+          modal.open(MintModal, {
+            props: {
+              traits: state.traits,
+              onComplete: () => dispatch({ type: LemonHeadActionKind.next_step }),
+            },
+          });
         }
+
+        return;
       }
     }
 
