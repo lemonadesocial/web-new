@@ -21,7 +21,7 @@ export default async function SiteHomePage({ params }: { params: Promise<{ domai
     <div className="flex flex-col-reverse md:grid md:grid-cols-[1fr_336px] gap-5 md:gap-[72px] items-start pb-10 mt-0 md:mt-11">
       <HomePageContent />
       <div className="flex flex-col gap-4">
-        {/* <ClaimLemonHeadCard /> */}
+        <ClaimLemonHeadCard />
         <LemonadeStandCard />
         <UpcommingEventsCard />
         <WhoToFollow />
