@@ -1,4 +1,4 @@
-import { Button, Card, modal, Skeleton } from '$lib/components/core';
+import { Button, Card, modal } from '$lib/components/core';
 import { LemonHeadsColor } from '$lib/trpc/lemonheads/types';
 import clsx from 'clsx';
 import React from 'react';
@@ -14,10 +14,11 @@ export function CanvasImageRenderer({ src, style }: { src: string; style?: React
       const img = new Image();
 
       img.onload = () => {
-        img.width = canvas.width;
-        img.height = canvas.height;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const devicePixelRatio = window.devicePixelRatio || 1;
+        canvas.width = img.width * devicePixelRatio;
+        canvas.height = img.height * devicePixelRatio;
+        ctx.scale(devicePixelRatio, devicePixelRatio);
+        ctx.drawImage(img, 0, 0);
       };
 
       img.src = src;
