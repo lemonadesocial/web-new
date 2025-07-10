@@ -1,6 +1,6 @@
 import axios, { Axios } from 'axios';
 import { FilterType, TraitType } from '$lib/services/lemonhead/core';
-import { BodySize, LemonHeadsColor, LemonHeadsLayer, LemonHeadsPageInfo } from './types';
+import { LemonHeadsColor, LemonHeadsLayer, LemonHeadsPageInfo } from './types';
 import Trait from './trait';
 
 type PARAMS = {
