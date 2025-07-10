@@ -71,7 +71,7 @@ export function PostComposer({ placeholder, onPost }: PostComposerProps) {
         <PostTextarea
           value={value}
           setValue={setValue}
-          placeholder={placeholder || (account ? `What's on your mind, ${account?.username?.localName}?` : `What's on your mind?`)}
+          placeholder={placeholder || `What's on your mind?`}
           onFocus={() => setIsActive(true)}
           className="mt-2"
         />
