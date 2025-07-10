@@ -6,7 +6,7 @@ import { Button, ModalContent } from "$lib/components/core";
 import { EthereumAccount, EthereumRelayAccount, EthereumStakeAccount, UpdatePaymentDocument } from "$lib/graphql/generated/backend/graphql";
 import { useMutation } from "$lib/graphql/request";
 import { useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
-import { approveERC20Spender, formatWallet, isNativeToken, LemonadeRelayPaymentContract, LemonadeStakePaymentContract, transfer, writeContract } from "$lib/utils/crypto";
+import { approveERC20Spender, formatError, formatWallet, isNativeToken, LemonadeRelayPaymentContract, LemonadeStakePaymentContract, transfer, writeContract } from "$lib/utils/crypto";
 import { chainsMapAtom } from "$lib/jotai";
 
 import { eventDataAtom, pricingInfoAtom, registrationModal, selectedPaymentAccountAtom, tokenAddressAtom, useAtomValue } from "../store";
@@ -113,7 +113,7 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
 
       handleConfirm(txHash);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Please try again');
+      setError(formatError(e));
     } finally {
       setLoadingSign(false);
     }
