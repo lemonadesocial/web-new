@@ -22,6 +22,8 @@ import { ClaimLemonadeUsernameModal } from '$lib/components/features/lens-accoun
 import { ProfilePane } from '$lib/components/features/pane';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { PageTitle } from '../shared';
+import { getAccountAvatar } from '$lib/utils/lens/utils';
+import { User } from '$lib/graphql/generated/backend/graphql';
 
 export function Content() {
   const [session] = useAtom(sessionAtom);
@@ -54,7 +56,7 @@ export function Content() {
   };
 
   const getSocialLink = (name: string) => {
-    return account?.metadata?.attributes.find((i) => i.key === name)?.value;
+    return account?.metadata?.attributes.find((i) => i.key === name)?.value || me?.[name as keyof Partial<User>];
   };
 
   React.useEffect(() => {
@@ -75,7 +77,10 @@ export function Content() {
         <div className="px-[18px] py-4 flex flex-col gap-4">
           <div className="flex justify-between items-start">
             <div className="size-[60px]">
-              <Avatar className="w-full h-full" src={account?.metadata?.picture || userAvatar(me)} />
+              <Avatar
+                className="w-full h-full"
+                src={account ? account?.metadata?.picture || getAccountAvatar(account) : userAvatar(me)}
+              />
             </div>
             <Button
               variant="tertiary-alt"
@@ -90,31 +95,39 @@ export function Content() {
             <div className="flex flex-col gap-2">
               <div>
                 <h3
-                  className={clsx('text-xl font-semibold', account?.metadata?.name ? 'text-primary' : 'text-tertiary')}
+                  className={clsx(
+                    'text-xl font-semibold',
+                    account?.metadata?.name || me?.name ? 'text-primary' : 'text-tertiary',
+                  )}
                 >
-                  {account?.metadata?.name || 'No Name Added'}
+                  {account?.metadata?.name || me?.name || 'No Name Added'}
                 </h3>
                 <p className="text-tertiary">{username ? `@${username}` : 'No Username Picked'}</p>
               </div>
-              {account?.metadata?.bio && <p className="text-secondary">{account?.metadata?.bio}</p>}
+              {account?.metadata?.bio ||
+                (me?.description && <p className="text-secondary">{account?.metadata?.bio || me?.description}</p>)}
             </div>
             <div className="flex gap-3">
-              {PROFILE_SOCIAL_LINKS.map((s, idx) => (
-                <div
-                  key={idx}
-                  className="text-tertiary cursor-pointer hover:text-primary tooltip tooltip-top"
-                  onClick={() =>
-                    getSocialLink(s.name) && window.open(`https://${s.prefix}${getSocialLink(s.name)}`, '_blank')
-                  }
-                >
-                  <div className="tooltip-content z-20">
-                    <p className="text-md font-medium capitalize">
-                      {s.name.replace('handle_', '').replace('_url', '')}
-                    </p>
+              {PROFILE_SOCIAL_LINKS.map((s, idx) => {
+                const link = getSocialLink(s.name);
+                if (!link) return null;
+                return (
+                  <div
+                    key={idx}
+                    className="text-tertiary cursor-pointer hover:text-primary tooltip tooltip-top"
+                    onClick={() =>
+                      getSocialLink(s.name) && window.open(`https://${s.prefix}${getSocialLink(s.name)}`, '_blank')
+                    }
+                  >
+                    <div className="tooltip-content z-20">
+                      <p className="text-md font-medium capitalize">
+                        {s.name.replace('handle_', '').replace('_url', '')}
+                      </p>
+                    </div>
+                    <i className={twMerge(s.icon, 'size-5')} />
                   </div>
-                  <i className={twMerge(s.icon, 'size-5')} />
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
