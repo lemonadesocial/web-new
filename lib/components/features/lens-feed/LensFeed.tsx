@@ -25,10 +25,10 @@ export function LensFeed({
     await createPost({ metadata, feedAddress });
   };
 
-  const canPost = authorId ? authorId === account?.address : !!account;
+  const canPost = authorId ? authorId === account?.address : true;
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-5">
       {canPost && <PostComposer onPost={onPost} />}
       <FeedPosts feedAddress={feedAddress} authorId={authorId} showReposts={showReposts} onSelectPost={onSelectPost} />
     </div>

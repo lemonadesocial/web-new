@@ -7,9 +7,10 @@ type PostTextareaProps = {
   setValue: (value: string) => void;
   className?: string;
   onFocus?: () => void;
+  disabled?: boolean;
 };
 
-export const PostTextarea = ({ placeholder, value, setValue, className, onFocus }: PostTextareaProps) => {
+export const PostTextarea = ({ placeholder, value, setValue, className, onFocus, disabled }: PostTextareaProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export const PostTextarea = ({ placeholder, value, setValue, className, onFocus 
       className={twMerge('w-full bg-transparent border-none outline-none font-medium text-lg placeholder-quaternary resize-none overflow-hidden min-h-[24px] max-h-[200px]', className)}
       onFocus={onFocus}
       rows={1}
+      disabled={disabled}
     />
   );
 };
