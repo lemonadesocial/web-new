@@ -132,7 +132,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
     setIsSubmitting(true);
     try {
       const { username: _, new_photos, ...data } = values;
-      let input: any = { data, display_name: data.name };
+      let input: any = { ...data, display_name: data.name };
       if (new_photos?.length) input = { ...input, new_photos };
       const { error } = await updateProfile({ variables: { input } });
       if (error) {
@@ -174,7 +174,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
 
         setTimeout(() => {
           refreshAccount();
-        }, 1000);
+        }, 2000);
       }
 
       toast.success('Profile updated successfully');

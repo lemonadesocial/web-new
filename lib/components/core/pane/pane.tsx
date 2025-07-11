@@ -20,7 +20,7 @@ const useChildrenByComponent = <T extends ComponentType>(
 };
 
 function PaneRoot({ children }: React.PropsWithChildren) {
-  return <div className="flex flex-col flex-1 bg-overlay-primary h-full">{children}</div>;
+  return <div className="flex flex-col flex-1 bg-overlay-primary overflow-auto no-scrollbar h-full">{children}</div>;
 }
 
 function PaneHeaderRoot({ children }: React.PropsWithChildren) {
@@ -55,7 +55,7 @@ function PaneHeaderRight({ children }: React.PropsWithChildren) {
 }
 
 function PaneContent({ children, className }: React.PropsWithChildren & { className?: string }) {
-  return <div className={twMerge('flex flex-1 overflow-auto no-scrollbar', className)}>{children}</div>;
+  return <div className={twMerge('flex flex-1', className)}>{children}</div>;
 }
 
 function PaneFooter({ children, className }: React.PropsWithChildren & { className?: string }) {
