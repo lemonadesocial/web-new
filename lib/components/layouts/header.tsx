@@ -167,6 +167,10 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
                         onClick={async () => {
                           toggle();
                           logOut();
+                          
+                          if (account) {
+                            lensLogOut();
+                          }
                         }}
                       />
                     </div>
