@@ -1,7 +1,7 @@
 import { groupBy } from 'lodash';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
-import { AcceptEventDocument, AssignTicketsDocument, Event, EventJoinRequest, GetEventDocument, GetMyEventJoinRequestDocument, GetMyTicketsDocument, PaymentRefundInfo, Ticket } from '$lib/graphql/generated/backend/graphql';
+import { AcceptEventDocument, AssignTicketsDocument, Event, EventJoinRequest, GetEventDocument, GetMyEventJoinRequestDocument, GetMyTicketsDocument, NewPaymentState, PaymentRefundInfo, Ticket } from '$lib/graphql/generated/backend/graphql';
 
 import { attending, getAssignedTicket } from '$lib/utils/event';
 import { useClient, useMutation, useQuery } from '$lib/graphql/request';
@@ -84,6 +84,11 @@ export function EventAccess({ event }: { event: Event }) {
     });
   };
 
+  const paymentOk = useMemo(() => {
+    if (!requestData?.getMyEventJoinRequest?.payment?._id) return true;
+    return requestData.getMyEventJoinRequest.payment.state === NewPaymentState.Succeeded || requestData.getMyEventJoinRequest.payment.state === NewPaymentState.AwaitCapture;
+  }, [requestData]);
+
   if (requestLoading || ticketsLoading) return <SkeletonCard />;
 
   if (ticketsData?.getMyTickets.tickets.length) return (
@@ -94,7 +99,7 @@ export function EventAccess({ event }: { event: Event }) {
     />
   );
 
-  if (requestData?.getMyEventJoinRequest) return <ApprovalStatus joinRequest={requestData.getMyEventJoinRequest as EventJoinRequest} event={event} />;
+  if (requestData?.getMyEventJoinRequest && paymentOk) return <ApprovalStatus joinRequest={requestData.getMyEventJoinRequest as EventJoinRequest} event={event} />;
 
   return <EventRegistration event={event} />;
 }
