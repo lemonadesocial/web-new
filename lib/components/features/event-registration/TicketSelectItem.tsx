@@ -129,6 +129,9 @@ export function TicketSelectItem({ ticketType, single, compact }: { ticketType: 
           }
         </div>
         <TicketPrices prices={ticketType.prices} groupRegistration={ticketType.limit > 1} active={active} />
+        {
+          ticketType.description && <p className="text-secondary">{ticketType.description}</p>
+        }
       </div>
       <NumberInput
         value={count}
