@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.61.1](https://github.com/lemonadesocial/web-new/compare/v1.61.0...v1.61.1) (2025-07-11)
+
+
+### Bug Fixes
+
+* ticket desc format ([38ffd87](https://github.com/lemonadesocial/web-new/commit/38ffd87cd7620f26567a6ba20bb2227d862f1820))
+
 ## [1.61.0](https://github.com/lemonadesocial/web-new/compare/v1.60.0...v1.61.0) (2025-07-11)
 
 
