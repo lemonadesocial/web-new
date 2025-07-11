@@ -11,7 +11,7 @@ import { getClient } from '$lib/graphql/request';
 import { useSession } from '$lib/hooks/useSession';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { useMe } from '$lib/hooks/useMe';
-import { ClaimLemonHeadCard } from '$lib/components/features/lemonheads/ClaimLemonHeadCard';
+// import { ClaimLemonHeadCard } from '$lib/components/features/lemonheads/ClaimLemonHeadCard';
 
 import { PageTitle } from '../shared';
 
@@ -152,7 +152,7 @@ export function EventsContent() {
         />
       </div>
 
-      <ClaimLemonHeadCard />
+      {/* <ClaimLemonHeadCard /> */}
     </div>
   );
 }
