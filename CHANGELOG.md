@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.61.0](https://github.com/lemonadesocial/web-new/compare/v1.60.0...v1.61.0) (2025-07-11)
+
+
+### Features
+
+* check payment state of event join requests ([da3cd2e](https://github.com/lemonadesocial/web-new/commit/da3cd2ea0ae8daed007419ff9f5663ab50d09cef))
+
+
+### Bug Fixes
+
+* stand url ([3e7ee1d](https://github.com/lemonadesocial/web-new/commit/3e7ee1daef981e4dc22ba1d2a1d7b7619bce9fd1))
+* ticket desc line breaking ([b712050](https://github.com/lemonadesocial/web-new/commit/b71205000071d3b44270542b5b12928c4cab7cb8))
+
 ## [1.60.0](https://github.com/lemonadesocial/web-new/compare/v1.59.0...v1.60.0) (2025-07-11)
 
 
