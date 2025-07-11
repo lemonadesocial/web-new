@@ -9,6 +9,7 @@ import { chainsMapAtom } from "$lib/jotai";
 import { formatPrice, getPaymentAccounts } from "$lib/utils/event";
 import { getPaymentNetworks } from "$lib/utils/payment";
 import { currenciesAtom, currencyAtom, paymentAccountsAtom, purchaseItemsAtom, selectedPaymentAccountAtom, ticketTypesAtom, useAtom, useAtomValue } from "./store";
+import { renderTextWithLinks } from "$lib/utils/render";
 
 export function TicketSelectItem({ ticketType, single, compact }: { ticketType: PurchasableTicketType; single?: boolean; compact?: boolean }) {
   const [purchaseItems, setPurchaseItems] = useAtom(purchaseItemsAtom);
@@ -130,7 +131,9 @@ export function TicketSelectItem({ ticketType, single, compact }: { ticketType: 
         </div>
         <TicketPrices prices={ticketType.prices} groupRegistration={ticketType.limit > 1} active={active} />
         {
-          ticketType.description && <p className="text-secondary whitespace-pre">{ticketType.description}</p>
+          ticketType.description && <p className="text-secondary whitespace-pre" style={{ textWrap: 'wrap' }}>
+            {renderTextWithLinks(ticketType.description)}
+          </p>
         }
       </div>
       <NumberInput

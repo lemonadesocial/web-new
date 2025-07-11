@@ -13,7 +13,7 @@ export function LemonadeStandCard() {
 
   return (
     <div
-      className="hidden lg:block rounded-md border p-4 space-y-4"
+      className="hidden lg:block rounded-md border p-4 space-y-4 cursor-pointer"
       onClick={() => router.push(`/profile`)}
     >
       <div className="flex justify-between">

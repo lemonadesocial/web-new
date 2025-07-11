@@ -6,6 +6,7 @@ import { EventPreview } from "./EventPreview";
 import { UrlPreview } from "./UrlPreview";
 import { GetEventDocument, Event } from "$lib/graphql/generated/backend/graphql";
 import { defaultClient } from "$lib/graphql/request/instances";
+import { renderTextWithLinks } from "$lib/utils/render";
 
 type PostContentProps = {
   post: Post;
@@ -66,26 +67,3 @@ export function PostContent({ post }: PostContentProps) {
     </div>
   );
 }
-
-const renderTextWithLinks = (text: string) => {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  const parts = text.split(urlRegex);
-  
-  return parts.map((part, index) => {
-    if (urlRegex.test(part)) {
-      return (
-        <a
-          key={index}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-accent-500 font-medium hover:underline"
-        >
-          {part}
-        </a>
-      );
-    }
-    
-    return part;
-  });
-};
