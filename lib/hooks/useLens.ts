@@ -11,6 +11,7 @@ import {
   fetchPostReferences,
   fetchAccountGraphStats,
   fetchUsernames,
+  fetchTimeline,
 } from '@lens-protocol/client/actions';
 import { AccountMetadata, account, MetadataAttributeType } from '@lens-protocol/metadata';
 import { setAccountMetadata } from '@lens-protocol/client/actions';
@@ -45,6 +46,8 @@ import { useConnectWallet } from './useConnectWallet';
 import { useMe } from './useMe';
 import { UpdateUserDocument, UpdateUserMutationVariables, User } from '$lib/graphql/generated/backend/graphql';
 import { uploadFiles } from '$lib/utils/file';
+import { formatError } from '$lib/utils/crypto';
+import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 
 export function useResumeSession() {
   const setSessionClient = useSetAtom(sessionClientAtom);
@@ -121,17 +124,17 @@ export function useLogIn() {
         const loginAs =
           items[0].__typename === 'AccountOwned'
             ? {
-                accountOwner: {
-                  owner: address,
-                  account: items[0].account.address,
-                },
-              }
+              accountOwner: {
+                owner: address,
+                account: items[0].account.address,
+              },
+            }
             : {
-                accountManager: {
-                  manager: address,
-                  account: items[0].account.address,
-                },
-              };
+              accountManager: {
+                manager: address,
+                account: items[0].account.address,
+              },
+            };
 
         const loginResult = await client.login({
           ...loginAs,
@@ -296,6 +299,7 @@ export function useFeed(feedId: string) {
 type PostFilter = {
   feedAddress?: string;
   authorId?: string;
+  global?: boolean;
 };
 
 export function useFeedPosts(postFilter: PostFilter) {
@@ -308,6 +312,7 @@ export function useFeedPosts(postFilter: PostFilter) {
   const filter = {
     ...(postFilter.feedAddress && { feeds: [{ feed: postFilter.feedAddress }] }),
     ...(postFilter.authorId && { authors: [postFilter.authorId] }),
+    ...(postFilter.global && { feeds: [{ globalFeed: true as const }] }),
     postTypes: [PostType.Root],
   };
 
@@ -410,7 +415,7 @@ export function usePost() {
 
       const result = await post(sessionClient, {
         contentUri: uri,
-        feed: evmAddress(feedAddress ?? LEMONADE_FEED_ADDRESS),
+        feed: feedAddress ? evmAddress(feedAddress) : undefined,
         ...(commentOn && { commentOn: { post: postId(commentOn) } }),
       })
         .andThen(handleOperationWith(signer))
@@ -427,14 +432,12 @@ export function usePost() {
         });
 
       if (result.isErr()) {
-        throw new Error('Failed to create post');
+        throw result.error;
       }
 
       return result.value;
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create post';
-      toast.error(errorMessage);
-      throw error;
+    } catch (error) {
+      toast.error(formatError(error));
     } finally {
       setIsLoading(false);
     }
@@ -766,6 +769,25 @@ export function useSyncLensAccount() {
   return { triggerSync };
 }
 
+export function useLensConnect () {
+  const chainsMap = useAtomValue(chainsMapAtom);
+
+  return () => {
+    modal.open(ConnectWallet, {
+      dismissible: true,
+      props: {
+        onConnect: () => {
+          modal.close();
+          setTimeout(() => {
+            modal.open(SelectProfileModal, { dismissible: true });
+          });
+        },
+        chain: chainsMap[LENS_CHAIN_ID]
+      }
+    });
+  }
+}
+
 function generateRandomAlphanumeric(length: number = 12) {
   let result = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0987654321';
@@ -774,4 +796,61 @@ function generateRandomAlphanumeric(length: number = 12) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
+}
+
+type TimelineFilter = {
+  account?: string;
+};
+
+export function useTimeline(timelineFilter: TimelineFilter) {
+  const sessionClient = useAtomValue(sessionClientAtom);
+  const [timelineItems, setTimelineItems] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
+  const [cursor, setCursor] = useState<string | undefined>();
+
+  const fetchTimelineData = async (refresh = false) => {
+    if (!sessionClient || !timelineFilter.account) return;
+
+    setIsLoading(true);
+    try {
+      const result = await fetchTimeline(sessionClient, {
+        account: evmAddress(timelineFilter.account),
+        ...(cursor && !refresh ? { cursor } : {}),
+      });
+
+      if (result.isOk()) {
+        const { items, pageInfo } = result.value;
+
+        setHasMore(!!pageInfo.next);
+        if (pageInfo.next) {
+          setCursor(pageInfo.next);
+        }
+
+        const validItems = items.filter((item): item is NonNullable<typeof item> => item !== null);
+
+        if (refresh) {
+          setTimelineItems(validItems);
+        } else {
+          setTimelineItems((prev) => [...prev, ...validItems]);
+        }
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTimelineData(true);
+  }, [sessionClient, timelineFilter.account]);
+
+  return {
+    timelineItems,
+    isLoading,
+    hasMore,
+    loadMore: () => hasMore && !isLoading && fetchTimelineData(),
+    refresh: () => fetchTimelineData(true),
+  };
 }
