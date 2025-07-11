@@ -38,17 +38,15 @@ export const appRouter = router({
       return data;
     }),
   },
-  validateNft: publicProcedure
-    .input(z.object({ traits: z.any() }))
-    .mutation(async ({ input }) => {
-      const { traits } = input;
-      
-      validateTraits(traits as Trait[]);
-      const finalTraits = getFinalTraits(traits as Trait[]);
-      const lookHash = calculateLookHash(finalTraits);
-      
-      return { lookHash };
-    }),
+  validateNft: publicProcedure.input(z.object({ traits: z.any() })).mutation(async ({ input }) => {
+    const { traits } = input;
+
+    validateTraits(traits as Trait[]);
+    const finalTraits = getFinalTraits(traits as Trait[]);
+    const lookHash = calculateLookHash(finalTraits);
+
+    return { lookHash };
+  }),
   mintNft: publicProcedure
     .input(z.object({ wallet: z.string(), traits: z.any(), sponsor: z.string().optional() }))
     .mutation(async ({ input }) => {

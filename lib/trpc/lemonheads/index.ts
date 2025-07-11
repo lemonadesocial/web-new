@@ -1,7 +1,8 @@
 import axios, { Axios } from 'axios';
-import { FilterType, TraitType } from '$lib/services/lemonhead/core';
+import { FilterType, TraitType, Trait as TraitCore } from '$lib/services/lemonhead/core';
 import { LemonHeadsColor, LemonHeadsLayer, LemonHeadsPageInfo } from './types';
 import Trait from './trait';
+import { GRAPHQL_URL } from '$lib/utils/constants';
 
 type PARAMS = {
   offset?: number;
@@ -10,11 +11,18 @@ type PARAMS = {
   viewId?: string;
 };
 
+/**
+ * @description BuildQueryParams
+ *
+ * @param traits - the filters
+ * @param limit  - limit of result per trait filter
+ * @param page   - base-1 page number
+ *
+ */
 export type BuildQueryParams = {
-  type: TraitType;
-  ops?: 'anyof' | 'eq';
-  value?: string;
-  filters: { type: FilterType; value?: string }[];
+  traits: Partial<TraitCore>[];
+  limit?: number;
+  page?: number;
 };
 
 class LemonHead {
@@ -22,33 +30,36 @@ class LemonHead {
   trait: Trait = new Trait();
 
   constructor() {
-    const token = process.env.NOCODB_ACCESS_KEY;
+    const endpoint = (process.env.INTERNAL_GRAPHQL_URL || GRAPHQL_URL)?.replace('/graphql', '');
     this.instance = axios.create({
-      baseURL: 'https://app.nocodb.com/api/v2',
-      headers: { 'xc-token': token },
+      baseURL: `${endpoint}/lemonheads/layers`,
     });
   }
 
   getLayers(params: PARAMS = { limit: 100 }) {
-    return this.instance.request<{ list: LemonHeadsLayer[]; pageInfo: LemonHeadsPageInfo }>({
-      method: 'get',
-      url: '/tables/mksrfjc38xpo4d1/records',
-      params,
-    });
+    return { data: { list: [] } };
+    // return this.instance.request<{ list: LemonHeadsLayer[]; pageInfo: LemonHeadsPageInfo }>({
+    //   method: 'get',
+    //   url: '/tables/mksrfjc38xpo4d1/records',
+    //   params,
+    // });
   }
 
   getBodies() {
+    const params = this.buildQuery({
+      traits: [
+        { type: TraitType.body, value: 'human' },
+        { type: TraitType.body, value: 'alien' },
+      ],
+    });
     return this.instance.request<{ list: LemonHeadsLayer[]; pageInfo: LemonHeadsPageInfo }>({
       method: 'get',
-      url: '/tables/mksrfjc38xpo4d1/records',
-      params: {
-        where: '(name,anyof,human,alien)',
-        limit: 100,
-      },
+      url: `?${params}`,
     });
   }
 
   getDefaultSet() {
+    return { data: { list: [] } };
     const traitSets: any = [
       { type: TraitType.background, value: 'lemon', ops: 'anyof' },
       { type: TraitType.eyes, value: 'black' },
@@ -116,6 +127,7 @@ class LemonHead {
   }
 
   getColorSet() {
+    return { data: { list: [] } };
     return this.instance.request<{
       list: LemonHeadsColor[];
       pageInfo: LemonHeadsPageInfo;
@@ -128,15 +140,18 @@ class LemonHead {
     });
   }
 
-  buildQuery(params: BuildQueryParams) {
-    const { type, value, ops = 'eq', filters } = params;
-    let arr = [`(type,${ops},${type})`];
-    if (value) arr.push(`(name,${ops},${value})`);
-    if (filters?.length) {
-      arr = [...arr, ...filters.filter((i) => i.value).map((f) => `(${f.type},eq,${f.value})`)];
-    }
-
-    return arr.join('~and');
+  buildQuery({ traits, limit, page }: BuildQueryParams) {
+    return new URLSearchParams({
+      traits: JSON.stringify(
+        traits.map((trait) => ({
+          ...Object.fromEntries(trait.filters?.map((filter) => [filter.type, filter.value]) || []),
+          type: trait.type,
+          name: trait.value,
+        })),
+      ),
+      ...(limit !== undefined ? { limit: limit.toString() } : {}),
+      ...(page !== undefined ? { page: page.toString() } : {}),
+    }).toString();
   }
 }
 
