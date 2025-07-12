@@ -53,8 +53,8 @@ export function PostContent({ post }: PostContentProps) {
   const sharingLink = (metadata as LinkMetadata).sharingLink || extractFirstUrl((metadata as TextOnlyMetadata).content);
 
   return (
-    <div className="space-y-2">
-      <p className="text-secondary whitespace-pre-line">
+    <div className="space-y-2" style={{ overflowWrap: 'anywhere' }}>
+      <p className="text-secondary whitespace-pre-line" >
         {renderTextWithLinks((metadata as TextOnlyMetadata).content || '')}
       </p>
       {(metadata as ImageMetadata).attachments?.length > 0 && (
