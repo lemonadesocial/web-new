@@ -5,6 +5,11 @@ import fetch from 'node-fetch';
 import { SystemFile } from '$lib/graphql/generated/backend/graphql';
 import { FilterType, type Trait } from './core';
 
+type Paginated<T> = {
+  total: number;
+  items: T[];
+};
+
 type Layer = { [K in FilterType]?: string } & {
   type: string;
   name: string;
@@ -20,6 +25,14 @@ const readUrlToBuffer = async (url: string) => {
   return Buffer.from(buffer);
 };
 
+const traitToQuery = (trait: Partial<Trait>) => {
+  return {
+    ...Object.fromEntries(trait.filters?.map((filter) => [filter.type, filter.value]) || []),
+    type: trait.type,
+    name: trait.value,
+  } as Partial<Layer>;
+};
+
 export const searchLayers = async (
   serverUrl: string, //-- use the internal graphql url if request from backend, use the public url if request from frontend
   traits: (Partial<Trait>)[], //-- the filters
@@ -27,11 +40,7 @@ export const searchLayers = async (
   page?: number, //-- base-1 page number
 ) => {
   const query = new URLSearchParams({
-    traits: JSON.stringify(traits.map((trait) => ({
-      ...Object.fromEntries(trait.filters?.map((filter) => [filter.type, filter.value]) || []),
-      type: trait.type,
-      name: trait.value,
-    }))),
+    traits: JSON.stringify(traits.map(traitToQuery)),
     ...limit !== undefined ? { limit: limit.toString() } : {},
     ...page !== undefined ? { page: page.toString() } : {},
   }).toString();
@@ -40,16 +49,20 @@ export const searchLayers = async (
 
   const data = await response.json();
 
-  return data as Layer[][];
+  return data as Paginated<Layer>;
 }
 
 //-- this function expects the final traits
 export const getRenderLayersFromTraits = async (finalTraits: Trait[]) => {
-  const layers = await searchLayers(process.env.INTERNAL_GRAPHQL_URL!, finalTraits, 1);
+  const layers = await searchLayers(process.env.INTERNAL_GRAPHQL_URL!, finalTraits);
 
-  assert.ok(layers.length === finalTraits.length && layers.every((layer) => layer.length === 1 && !!layer[0].file));
+  assert.ok(layers.items.length === finalTraits.length && layers.items.every((layer) => !!layer.file));
 
-  return layers.map((layer) => ({ ...layer[0], file: layer[0].file! }));
+  return finalTraits.map((trait) => {
+    const query = traitToQuery(trait);
+
+    return layers.items.find((layer) => Object.entries(query).every(([key, value]) => layer[key as keyof Layer] === value))
+  });
 };
 
 export const getFinalImage = async (imageUrls: string[]) => {

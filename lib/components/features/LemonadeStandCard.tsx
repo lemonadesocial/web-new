@@ -14,7 +14,7 @@ export function LemonadeStandCard() {
   return (
     <div
       className="hidden lg:block rounded-md border p-4 space-y-4"
-      onClick={() => router.push(`/settings`)}
+      onClick={() => router.push(`/profile`)}
     >
       <div className="flex justify-between">
         <div className="size-14 bg-warning-300/16 rounded-full flex items-center justify-center">

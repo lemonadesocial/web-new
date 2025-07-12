@@ -2,7 +2,7 @@
 import { useAtomValue } from 'jotai';
 import { useEffect, useRef, useCallback } from 'react';
 
-import { useFeedPosts } from '$lib/hooks/useLens';
+import { useTimeline } from '$lib/hooks/useLens';
 import { accountAtom } from '$lib/jotai';
 
 import { FeedPost } from './FeedPost';
@@ -10,16 +10,13 @@ import { FeedPostEmpty } from './FeedPostEmpty';
 import { FeedPostLoading } from './FeedPostLoading';
 
 type Props = {
-  feedAddress?: string;
-  authorId?: string;
-  global?: boolean;
-  showReposts?: boolean;
+  account?: string;
   onSelectPost?: (slug: string) => void;
 };
 
-export function FeedPosts({ feedAddress, authorId, global, showReposts, onSelectPost }: Props) {
-  const { posts, isLoading, hasMore, loadMore } = useFeedPosts({ feedAddress, authorId, global });
-  const account = useAtomValue(accountAtom);
+export function Timeline({ account, onSelectPost }: Props) {
+  const { timelineItems, isLoading, hasMore, loadMore } = useTimeline({ account });
+  const currentAccount = useAtomValue(accountAtom);
   const observerRef = useRef<HTMLDivElement>(null);
 
   const handleObserver = useCallback(
@@ -46,20 +43,25 @@ export function FeedPosts({ feedAddress, authorId, global, showReposts, onSelect
     return () => observer.disconnect();
   }, [handleObserver]);
 
-  if (isLoading && posts.length === 0) {
+  if (isLoading && timelineItems.length === 0) {
     return <FeedPostLoading />;
   }
 
-  if (posts.length === 0) {
-    return <FeedPostEmpty account={account} />;
+  if (timelineItems.length === 0) {
+    return <FeedPostEmpty account={currentAccount} />;
   }
 
   return (
     <div className="space-y-4">
-      {posts
-        .filter((item: any) => !item.root)
-        .map((post) => (
-          <FeedPost key={post.slug} post={post} showRepost={showReposts} onSelect={() => onSelectPost?.(post.slug)} />
+      {timelineItems
+        .filter((item: any) => item.primary && !item.primary.root)
+        .map((item) => (
+          <FeedPost 
+            key={item.primary.slug} 
+            post={item.primary} 
+            showRepost={true} 
+            onSelect={() => onSelectPost?.(item.primary.slug)} 
+          />
         ))}
       
       {hasMore && (
@@ -69,4 +71,4 @@ export function FeedPosts({ feedAddress, authorId, global, showReposts, onSelect
       )}
     </div>
   );
-}
+} 

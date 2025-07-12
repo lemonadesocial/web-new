@@ -1,5 +1,47 @@
 # Changelog
 
+## [1.61.0](https://github.com/lemonadesocial/web-new/compare/v1.60.0...v1.61.0) (2025-07-11)
+
+
+### Features
+
+* check payment state of event join requests ([da3cd2e](https://github.com/lemonadesocial/web-new/commit/da3cd2ea0ae8daed007419ff9f5663ab50d09cef))
+
+
+### Bug Fixes
+
+* stand url ([3e7ee1d](https://github.com/lemonadesocial/web-new/commit/3e7ee1daef981e4dc22ba1d2a1d7b7619bce9fd1))
+* ticket desc line breaking ([b712050](https://github.com/lemonadesocial/web-new/commit/b71205000071d3b44270542b5b12928c4cab7cb8))
+
+## [1.60.0](https://github.com/lemonadesocial/web-new/compare/v1.59.0...v1.60.0) (2025-07-11)
+
+
+### Features
+
+* hide lemonheads feature ([8cb0dba](https://github.com/lemonadesocial/web-new/commit/8cb0dbaee5d7f373f12b155a2edee23dfa0337c8))
+* lens log out on signing out ([8b9abb1](https://github.com/lemonadesocial/web-new/commit/8b9abb186701e526c336fe33db90c1eeccd1693c))
+* refactor lemonheads ([727981c](https://github.com/lemonadesocial/web-new/commit/727981c9d05670ca82bcd720afae8fbc550367e1))
+* restructure feed ([16257f6](https://github.com/lemonadesocial/web-new/commit/16257f637b33fb57adc9a8ba11891276f549e1ba))
+* stand card ([f5c8cd0](https://github.com/lemonadesocial/web-new/commit/f5c8cd03c27eea152b340437b8324f13107b74bb))
+* **temp:** hide swipe ([d92ac3d](https://github.com/lemonadesocial/web-new/commit/d92ac3d35d907ec0a3c86d721e4294934cb8281e))
+* ticket desc ([55a8c4d](https://github.com/lemonadesocial/web-new/commit/55a8c4da5514aceb6d9e4e06d9cb1da53fae6ede))
+* upcoming events card ([64a1045](https://github.com/lemonadesocial/web-new/commit/64a1045f51bec28f915b632416e2ed2e5c8e478f))
+* update loading state ([a26b5b2](https://github.com/lemonadesocial/web-new/commit/a26b5b2af43d5ab8999313d9b104e1c59afec834))
+* update settings page ([52a9b27](https://github.com/lemonadesocial/web-new/commit/52a9b277bfae7299746ec974f6d990a4cabac840))
+
+
+### Bug Fixes
+
+* checking issue auth modal ([381d1b8](https://github.com/lemonadesocial/web-new/commit/381d1b8af1a06b04eddefe7860d65c1ecbaf6e45))
+* dont show content when not login ([5c80285](https://github.com/lemonadesocial/web-new/commit/5c80285b3edd6f83b127ad28b833170a18c3be5b))
+* duplicate check ([bee86c4](https://github.com/lemonadesocial/web-new/commit/bee86c43846e8fb0cd8085d12522767315d20392))
+* filter background ([dcd5145](https://github.com/lemonadesocial/web-new/commit/dcd5145ddcb1181e8bdc8adebb73907d0ea40123))
+* high image quality ([63562aa](https://github.com/lemonadesocial/web-new/commit/63562aa976a55e351dff26c31a5e25ebbe96076a))
+* lint code ([504bd29](https://github.com/lemonadesocial/web-new/commit/504bd2967720f2a8674b50d051b94a7620cd371d))
+* mobile view ([2e0f3c5](https://github.com/lemonadesocial/web-new/commit/2e0f3c5567948c4d352fadf002f52736e330f499))
+* text truncate ([a2c9bb0](https://github.com/lemonadesocial/web-new/commit/a2c9bb0ce86e0039da4c678c59be298fa1d65f9c))
+* update settings data profile ([174a585](https://github.com/lemonadesocial/web-new/commit/174a58517f476a9a035c74513d14410b9d01d64f))
+
 ## [1.59.0](https://github.com/lemonadesocial/web-new/compare/v1.58.0...v1.59.0) (2025-07-09)
 
 
