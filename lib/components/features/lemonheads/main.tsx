@@ -37,18 +37,18 @@ function Content() {
 
   React.useEffect(() => {
     const init = async () => {
-      if (dataBodySet?.list && dataDefaultSet) {
-        const body = await Promise.all(dataBodySet.list.map(tranformTrait));
+      if (dataBodySet?.items && dataDefaultSet?.items) {
+        const body = await Promise.all(dataBodySet.items.map(tranformTrait));
         dispatch({ type: LemonHeadActionKind.set_resources, payload: { data: body } });
 
-        const accessories = await Promise.all(dataDefaultSet.list.map(tranformTrait));
+        const accessories = await Promise.all(dataDefaultSet.items.map(tranformTrait));
         dispatch({ type: LemonHeadActionKind.set_resources, payload: { data: accessories } });
         dispatch({
           type: LemonHeadActionKind.set_default_traits,
           payload: { data: { race: 'human', size: 'medium', gender: 'female' } },
         });
 
-        dispatch({ type: LemonHeadActionKind.set_colorset, payload: { data: dataColorSet?.list } });
+        dispatch({ type: LemonHeadActionKind.set_colorset, payload: { data: dataColorSet?.items } });
       }
     };
 
@@ -57,8 +57,8 @@ function Content() {
 
   const showPreview = !state.steps[state.currentStep].hidePreview;
 
-  const body = state.traits.find((i) => i.type === 'body');
-  const skinTone = body?.filters?.find((i) => i.type === FilterType.skin_tone)?.value;
+  const body = state.traits.find((i) => i?.type === 'body');
+  const skinTone = body?.filters?.find((i) => i?.type === FilterType.skin_tone)?.value;
 
   return (
     <main className="h-dvh w-full flex flex-col divide-y divide-[var(--color-divider)]">
@@ -88,7 +88,7 @@ function Content() {
                         active={item.value === skinTone}
                         className="max-w-[44px] aspect-square"
                         onClick={() => {
-                          const data = dataBodySet?.list.find(
+                          const data = dataBodySet?.items.find(
                             (i) =>
                               i.skin_tone === item.value &&
                               i.size === body?.filters?.find((i) => i.type === 'size')?.value &&

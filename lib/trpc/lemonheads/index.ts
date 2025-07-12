@@ -1,15 +1,9 @@
 import axios, { Axios } from 'axios';
-import { FilterType, TraitType, Trait as TraitCore } from '$lib/services/lemonhead/core';
+import { TraitType, Trait as TraitCore } from '$lib/services/lemonhead/core';
+import { GRAPHQL_URL } from '$lib/utils/constants';
 import { LemonHeadsColor, LemonHeadsLayer, LemonHeadsPageInfo } from './types';
 import Trait from './trait';
-import { GRAPHQL_URL } from '$lib/utils/constants';
-
-type PARAMS = {
-  offset?: number;
-  limit?: number;
-  where?: string;
-  viewId?: string;
-};
+import { request, gql } from 'graphql-request';
 
 /**
  * @description BuildQueryParams
@@ -36,34 +30,33 @@ class LemonHead {
     });
   }
 
-  getLayers(params: PARAMS = { limit: 100 }) {
-    return { data: { list: [] } };
-    // return this.instance.request<{ list: LemonHeadsLayer[]; pageInfo: LemonHeadsPageInfo }>({
-    //   method: 'get',
-    //   url: '/tables/mksrfjc38xpo4d1/records',
-    //   params,
-    // });
+  async getLayers(params: BuildQueryParams) {
+    return this.instance.request<{ items: LemonHeadsLayer[]; total: number }>({
+      method: 'get',
+      url: `?${this.buildQuery(params)}`,
+    });
   }
 
-  getBodies() {
+  async getBodies() {
     const params = this.buildQuery({
       traits: [
         { type: TraitType.body, value: 'human' },
         { type: TraitType.body, value: 'alien' },
       ],
     });
-    return this.instance.request<{ list: LemonHeadsLayer[]; pageInfo: LemonHeadsPageInfo }>({
+
+    return this.instance.request<{ items: LemonHeadsLayer[]; total: number }>({
       method: 'get',
       url: `?${params}`,
     });
   }
 
-  getDefaultSet() {
-    return { data: { list: [] } };
-    const traitSets: any = [
-      { type: TraitType.background, value: 'lemon', ops: 'anyof' },
+  async getDefaultSet() {
+    const traits = [
+      { type: TraitType.background, value: 'lemon' },
       { type: TraitType.eyes, value: 'black' },
-      { type: TraitType.mouth, value: 'happy,smile', ops: 'anyof' },
+      { type: TraitType.mouth, value: 'happy' },
+      { type: TraitType.mouth, value: 'smile' },
       {
         type: TraitType.hair,
         value: 'black_funky',
@@ -112,38 +105,45 @@ class LemonHead {
           { type: 'gender', value: 'female' },
         ],
       },
-    ];
+    ] as Partial<TraitCore>[];
 
-    const where = traitSets.map(this.buildQuery).join('~or');
+    const params = this.buildQuery({ traits });
 
-    return this.instance.request<{ list: LemonHeadsLayer[]; pageInfo: LemonHeadsPageInfo }>({
+    return this.instance.request<{ items: LemonHeadsLayer[]; total: number }>({
       method: 'get',
-      url: '/tables/mksrfjc38xpo4d1/records',
-      params: {
-        where,
-        limit: 100,
-      },
+      url: `?${params}`,
     });
   }
 
-  getColorSet() {
-    return { data: { list: [] } };
-    return this.instance.request<{
-      list: LemonHeadsColor[];
-      pageInfo: LemonHeadsPageInfo;
-    }>({
-      method: 'get',
-      url: '/tables/mgdpc3xfu1xmgzm/records',
-      params: {
-        limit: 100,
-      },
-    });
+  async getColorSet() {
+    const document = gql`
+      query {
+        getLemonheadSupportData(type: color) {
+          name
+          value
+        }
+      }
+    `;
+
+    const res = await request<{ getLemonheadSupportData: LemonHeadsColor[] }>(GRAPHQL_URL, document);
+    return { data: { items: (res?.getLemonheadSupportData || []) as LemonHeadsColor[] } };
+    // return { data: { list: [] } };
+    // return this.instance.request<{
+    //   list: LemonHeadsColor[];
+    //   pageInfo: LemonHeadsPageInfo;
+    // }>({
+    //   method: 'get',
+    //   url: '/tables/mgdpc3xfu1xmgzm/records',
+    //   params: {
+    //     limit: 100,
+    //   },
+    // });
   }
 
   buildQuery({ traits, limit, page }: BuildQueryParams) {
     return new URLSearchParams({
       traits: JSON.stringify(
-        traits.map((trait) => ({
+        traits?.map((trait) => ({
           ...Object.fromEntries(trait.filters?.map((filter) => [filter.type, filter.value]) || []),
           type: trait.type,
           name: trait.value,

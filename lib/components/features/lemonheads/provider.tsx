@@ -159,10 +159,10 @@ export async function tranformTrait(data: LemonHeadsLayer) {
   layerings[data.type].filterTypes.forEach((key) => filters.push({ type: key, value: data[key] }));
 
   return {
-    id: data.Id,
+    _id: data._id,
     type: data.type,
     value: data.name,
     filters,
-    image: data.attachment[0].signedUrl,
+    image: data.file,
   } as TraitExtends;
 }

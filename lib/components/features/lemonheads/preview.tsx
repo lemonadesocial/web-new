@@ -13,7 +13,8 @@ export function LemonHeadPreview({ traits = [] }: { traits?: TraitExtends[]; cla
 
           return (
             <CanvasImageRenderer
-              src={trait.image}
+              size={2046}
+              file={trait.image}
               key={traitType}
               style={{ zIndex: TraitOrders.indexOf(traitType), position: 'absolute', top: 0 }}
             />

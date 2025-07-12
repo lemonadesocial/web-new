@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 import { Card, modal, Skeleton } from '$lib/components/core';
-import { findConflictTraits, TraitType } from '$lib/services/lemonhead/core';
+import { FilterType, findConflictTraits, TraitType } from '$lib/services/lemonhead/core';
 import { trpc } from '$lib/trpc/client';
 import lemonHead from '$lib/trpc/lemonheads';
 import { BodyRace, BodySize, Gender, TraitExtends } from '$lib/trpc/lemonheads/types';
@@ -62,8 +62,8 @@ export function LemonHeadCreate() {
 
   if (currentStep !== LemonHeadStep.create) return null;
 
-  const body = traits.find((i) => i.type === TraitType.body);
-  const background = traits.find((i) => i.type === TraitType.background);
+  const body = traits.find((i) => i?.type === TraitType.body);
+  const background = traits.find((i) => i?.type === TraitType.background);
 
   return (
     <div className="flex flex-col md:flex-row-reverse flex-1 w-full md:max-w-[588px] gap-2 overflow-hidden">
@@ -187,19 +187,19 @@ function Loading({ className, loadMore }: { className?: string; loadMore?: boole
 }
 
 function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: string }) {
-  const [offset, setOffSet] = React.useState(0);
+  const [page, setPage] = React.useState(1);
   const [list, setList] = React.useState<TraitExtends[]>([]);
 
   const listInnerRef = React.useRef<any>(null);
 
   const [{ traits, colorset }, dispatch] = useLemonHeadContext();
-  const body = traits.find((i) => i.type === TraitType.body);
-  const bodySize = body?.filters?.find((i) => i.type === 'size')?.value;
-  const bodyRace = body?.filters?.find((i) => i.type === 'race')?.value;
-  const bodyGender = body?.filters?.find((i) => i.type === 'gender')?.value;
+  const body = traits.find((i) => i?.type === TraitType.body);
+  const bodySize = body?.filters?.find((i) => i?.type === 'size')?.value;
+  const bodyRace = body?.filters?.find((i) => i?.type === 'race')?.value;
+  const bodyGender = body?.filters?.find((i) => i?.type === 'gender')?.value;
 
-  const trait = traits.find((i) => i.type === layerKey);
-  const color = trait?.filters?.find((i) => i.type === 'color')?.value;
+  const trait = traits.find((i) => i?.type === layerKey);
+  const color = trait?.filters?.find((i) => i?.type === 'color')?.value;
   const [selectedColor, setSelectedColor] = React.useState(color);
 
   const traitFilter = lemonHead.trait.getTraitFilter({
@@ -211,12 +211,10 @@ function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: 
     art_style,
   });
 
-  const [condition, setCondition] = React.useState(lemonHead.buildQuery(traitFilter));
-
   const { data, isLoading, refetch } = trpc.lemonheads.layers.useQuery({
     limit: 27,
-    offset,
-    where: condition,
+    page,
+    traits: [traitFilter],
   });
 
   const onScroll = () => {
@@ -225,17 +223,17 @@ function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: 
       const isNearBottom = scrollTop + clientHeight >= scrollHeight - 14;
 
       if (isNearBottom) {
-        if (!data?.pageInfo.isLastPage) setOffSet(list.length);
+        if (data?.total && page * 27 < data?.total) setPage((prev) => prev + 1);
       }
     }
   };
 
   React.useEffect(() => {
-    if (data?.list) {
-      const arr = uniqBy([...list, ...data.list], 'Id');
+    if (data?.items) {
+      const arr = uniqBy([...list, ...data.items], '_id');
       setList(arr);
     }
-  }, [data?.list]);
+  }, [data?.items]);
 
   React.useEffect(() => {
     const listInnerElement = listInnerRef.current;
@@ -264,7 +262,7 @@ function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: 
             const dt = lemonHead.trait.tranformTrait(item);
             return (
               <SquareButton
-                key={dt.Id}
+                key={dt._id}
                 label={dt.value}
                 active={dt.value === trait?.value && dt.type === trait?.type}
                 className="min-w-[80px]"
@@ -285,7 +283,7 @@ function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: 
                   }
                 }}
               >
-                {dt.image && <CanvasImageRenderer src={dt.image} style={{ borderRadius: 8 }} />}
+                {dt.image && <CanvasImageRenderer file={dt.image} style={{ borderRadius: 8 }} />}
               </SquareButton>
             );
           })}
@@ -299,17 +297,8 @@ function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: 
           colorset={colors}
           onSelect={(params) => {
             setList([]);
-            if (params.key !== selectedColor) {
-              setSelectedColor(params.key);
-              if (condition.includes(`~and(color,eq,${selectedColor})`)) {
-                setCondition((prev) => prev.replace(`~and(color,eq,${selectedColor})`, `~and(color,eq,${params.key})`));
-              } else {
-                setCondition((prev) => (prev += `~and(color,eq,${params.key})`));
-              }
-            } else {
-              setSelectedColor(undefined);
-              setCondition((prev) => prev.replace(`~and(color,eq,${params.key})`, ''));
-            }
+            const color = params.key !== selectedColor ? params.key : undefined;
+            setSelectedColor(color);
             refetch();
           }}
         />

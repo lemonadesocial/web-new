@@ -1,14 +1,26 @@
 import { Button, Card, modal } from '$lib/components/core';
+import { File } from '$lib/graphql/generated/backend/graphql';
 import { LemonHeadsColor } from '$lib/trpc/lemonheads/types';
+import { generateUrl } from '$lib/utils/cnd';
 import clsx from 'clsx';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
-export function CanvasImageRenderer({ src, style }: { src: string; style?: React.CSSProperties }) {
+export function CanvasImageRenderer({
+  file,
+  style,
+  size = 692,
+}: {
+  file: File;
+  style?: React.CSSProperties;
+  size?: number;
+}) {
   const canvasRef = React.useRef<any>(null);
 
   React.useEffect(() => {
-    if (canvasRef.current) {
+    if (canvasRef.current && file) {
+      const url = generateUrl(file, { resize: { width: size, height: size } });
+
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       const img = new Image();
@@ -21,9 +33,9 @@ export function CanvasImageRenderer({ src, style }: { src: string; style?: React
         ctx.drawImage(img, 0, 0);
       };
 
-      img.src = src;
+      img.src = url;
     }
-  }, [src]);
+  }, [file]);
 
   return <canvas ref={canvasRef} className="w-full h-full aspect-square" style={style} />;
 }

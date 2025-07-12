@@ -3,7 +3,7 @@ import { getMintNftData } from '$lib/services/lemonhead';
 import { calculateLookHash, getFinalTraits, validateTraits, type Trait } from '$lib/services/lemonhead/core';
 
 import { publicProcedure, router } from './trpc';
-import lemonheads from './lemonheads';
+import lemonheads, { BuildQueryParams } from './lemonheads';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -14,15 +14,14 @@ export const appRouter = router({
       .input(
         z
           .object({
-            offset: z.number().optional(),
             limit: z.number().optional(),
-            where: z.string().optional(),
-            viewId: z.string().optional(),
+            page: z.number().optional(),
+            traits: z.any(),
           })
           .optional(),
       )
       .query(async ({ input }) => {
-        const { data } = await lemonheads.getLayers(input);
+        const { data } = await lemonheads.getLayers(input as BuildQueryParams);
         return data;
       }),
     bodies: publicProcedure.query(async () => {
