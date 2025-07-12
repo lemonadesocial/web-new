@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.61.2](https://github.com/lemonadesocial/web-new/compare/v1.61.1...v1.61.2) (2025-07-12)
+
+
+### Bug Fixes
+
+* post content overflow ([cfceafe](https://github.com/lemonadesocial/web-new/commit/cfceafed4cfb646288619e673f6e3619c29f5a9f))
+
 ## [1.61.1](https://github.com/lemonadesocial/web-new/compare/v1.61.0...v1.61.1) (2025-07-11)
 
 
