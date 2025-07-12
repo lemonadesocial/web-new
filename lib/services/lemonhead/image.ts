@@ -1,12 +1,21 @@
 import assert from 'assert';
 import { Canvas, Image } from 'canvas';
+import fetch from 'node-fetch';
 
-import { type Trait } from './core';
+import { SystemFile } from '$lib/graphql/generated/backend/graphql';
+import { FilterType, type Trait } from './core';
 
-const baseUrl = 'https://app.nocodb.com/api/v2';
-const apikey = process.env.NOCODB_ACCESS_KEY!;
+type Paginated<T> = {
+  total: number;
+  items: T[];
+};
 
-const tableId = 'mksrfjc38xpo4d1';
+type Layer = { [K in FilterType]?: string } & {
+  type: string;
+  name: string;
+  order?: string;
+  file?: Pick<SystemFile, 'bucket' | 'key' | 'type' | 'url'>;
+}
 
 const outputSize = 3000;
 
@@ -16,67 +25,44 @@ const readUrlToBuffer = async (url: string) => {
   return Buffer.from(buffer);
 };
 
-const getImageUrl = async (url: string) => {
-  const response = await fetch(`${baseUrl}${url}`, {
-    headers: {
-      accept: 'application/json',
-      'xc-token': apikey,
-    },
-  });
-
-  const data = (await response.json()) as {
-    list?: { attachment: { signedUrl: string }[] }[];
-    pageInfo?: { totalRows: number };
-  };
-
-  const list = data.list;
-
-  if (!data.list || data.list.length === 0 || !data.pageInfo || data.pageInfo.totalRows === 0) {
-    throw new Error(`No image found for ${url}`);
-  }
-
-  if (data.pageInfo.totalRows > 1) {
-    throw new Error(`Multiple images found for ${url}`);
-  }
-
-  const image = list?.[0].attachment[0].signedUrl;
-
-  if (!image) {
-    console.log('data', data);
-
-    throw new Error(`No image found for ${url}`);
-  }
-
-  return image;
+const traitToQuery = (trait: Partial<Trait>) => {
+  return {
+    ...Object.fromEntries(trait.filters?.map((filter) => [filter.type, filter.value]) || []),
+    type: trait.type,
+    name: trait.value,
+  } as Partial<Layer>;
 };
 
-const buildQuery = (trait: Trait) => {
-  const query = [
-    `(type,eq,${trait.type})`,
-    `(name,eq,${trait.value})`,
-    ...(trait.filters?.map((filter) => `(${filter.type},eq,${filter.value})`) || []),
-  ].join('~and');
+export const searchLayers = async (
+  serverUrl: string, //-- use the internal graphql url if request from backend, use the public url if request from frontend
+  traits: (Partial<Trait>)[], //-- the filters
+  limit?: number, //-- limit of result per trait filter
+  page?: number, //-- base-1 page number
+) => {
+  const query = new URLSearchParams({
+    traits: JSON.stringify(traits.map(traitToQuery)),
+    ...limit !== undefined ? { limit: limit.toString() } : {},
+    ...page !== undefined ? { page: page.toString() } : {},
+  }).toString();
 
-  const uri = `/tables/${tableId}/records?where=${query}&limit=1&shuffle=0&offset=0`;
+  const response = await fetch(`${serverUrl}/lemonheads/layers?${query}`);
 
-  return uri;
-};
+  const data = await response.json();
+
+  return data as Paginated<Layer>;
+}
 
 //-- this function expects the final traits
-export const getImageUrlsFromTraits = async (finalTraits: Trait[]) => {
-  const queryUrls = finalTraits.map(buildQuery);
+export const getRenderLayersFromTraits = async (finalTraits: Trait[]) => {
+  const layers = await searchLayers(process.env.INTERNAL_GRAPHQL_URL!, finalTraits);
 
-  //-- nocoDB is throtlting, let's apply it setrially
-  const imageUrls: string[] = [];
+  assert.ok(layers.items.length === finalTraits.length && layers.items.every((layer) => !!layer.file));
 
-  //--TODO: improve this by getting all images at a same time using OR on the nocodb query?
-  for (const url of queryUrls) {
-    const imageUrl = await getImageUrl(url);
-    imageUrls.push(imageUrl);
-    await new Promise((resolve) => setTimeout(resolve, 300));
-  }
+  return finalTraits.map((trait) => {
+    const query = traitToQuery(trait);
 
-  return imageUrls;
+    return layers.items.find((layer) => Object.entries(query).every(([key, value]) => layer[key as keyof Layer] === value))
+  });
 };
 
 export const getFinalImage = async (imageUrls: string[]) => {
