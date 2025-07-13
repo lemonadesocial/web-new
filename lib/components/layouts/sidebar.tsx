@@ -78,8 +78,8 @@ const Sidebar = () => {
   const isActive = (item: { path: string }) => pathname === item.path;
 
   return (
-    <div className="hidden lg:block fixed left-0 h-screen border-r z-10 divide-y divide-(--color-divider)">
-      <div className="flex flex-col h-full">
+    <div className="hidden lg:block fixed left-0 h-screen border-r z-10">
+      <div className="flex flex-col h-full divide-y divide-(--color-divider)">
         <div className="flex flex-col gap-2 p-3">
           <div className="flex items-center justify-center h-12 cursor-pointer" onClick={() => router.push('/')}>
             <i className="icon-lemonade-logo text-[#FDE047]" />
