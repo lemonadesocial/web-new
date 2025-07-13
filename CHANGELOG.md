@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.61.3](https://github.com/lemonadesocial/web-new/compare/v1.61.2...v1.61.3) (2025-07-13)
+
+
+### Bug Fixes
+
+* sidebar divider ([34c4c5a](https://github.com/lemonadesocial/web-new/commit/34c4c5a61f1df0bb660f9a1533fc938c8f0ea4e9))
+
 ## [1.61.2](https://github.com/lemonadesocial/web-new/compare/v1.61.1...v1.61.2) (2025-07-12)
 
 
