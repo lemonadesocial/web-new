@@ -5,10 +5,10 @@ import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 import { Card, modal, Skeleton } from '$lib/components/core';
-import { FilterType, findConflictTraits, TraitType } from '$lib/services/lemonhead/core';
+import { findConflictTraits, TraitType } from '$lib/services/lemonhead/core';
 import { trpc } from '$lib/trpc/client';
 import lemonHead from '$lib/trpc/lemonheads';
-import { BodyRace, BodySize, Gender, TraitExtends } from '$lib/trpc/lemonheads/types';
+import { BodyRace, BodySize, Gender, LemonHeadsLayer, TraitExtends } from '$lib/trpc/lemonheads/types';
 
 import { CanvasImageRenderer, ColorTool, ConfirmModal, SquareButton } from '../shared';
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from '../provider';
@@ -188,7 +188,7 @@ function Loading({ className, loadMore }: { className?: string; loadMore?: boole
 
 function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: string }) {
   const [page, setPage] = React.useState(1);
-  const [list, setList] = React.useState<TraitExtends[]>([]);
+  const [list, setList] = React.useState<LemonHeadsLayer[]>([]);
 
   const listInnerRef = React.useRef<any>(null);
 
@@ -267,14 +267,17 @@ function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: 
                 active={dt.value === trait?.value && dt.type === trait?.type}
                 className="min-w-[80px]"
                 onClick={() => {
-                  const conflicts = findConflictTraits(traits, item);
+                  const conflicts = findConflictTraits(traits.filter(Boolean), dt);
                   if (conflicts.length && conflicts.find((i) => i.type !== item.type)) {
                     modal.open(ConfirmModal, {
                       props: {
-                        title: 'Remove Outfit?',
+                        title: `Remove ${item.type}?`,
                         subtitle: `Selecting a ${conflicts.map((i) => i.type).join(' or ')} will remove any ${item.type} you have selected. Are you sure you want to continue?`,
                         onConfirm: () => {
-                          dispatch({ type: LemonHeadActionKind.set_trait, payload: { data: dt } });
+                          dispatch({
+                            type: LemonHeadActionKind.set_trait,
+                            payload: { data: dt, removeConflict: true },
+                          });
                         },
                       },
                     });

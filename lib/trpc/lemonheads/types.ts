@@ -30,30 +30,6 @@ export type LemonHeadsLayer = {
   file: File;
 };
 
-export type LemonHeadsThumnail = {
-  card_cover: {
-    signedUrl: string;
-  };
-  small: {
-    signedUrl: string;
-  };
-  tiny: {
-    signedUrl: string;
-  };
-};
-
-export type LemonHeadsAttachment = {
-  url: string;
-  height: number;
-  id: string;
-  mimetype: string;
-  signedUrl: string;
-  size: number;
-  title: 'alien.png';
-  width: number;
-  thumbnails: LemonHeadsThumnail;
-};
-
 export type LemonHeadsColor = { name: string; value: { key: string; value: string }[] };
 
-export type TraitExtends = Trait & { _id?: string | number; image?: File };
+export type TraitExtends = Trait & { _id?: string | number; image?: string };

@@ -2,9 +2,9 @@
 import React from 'react';
 import { groupBy, merge } from 'lodash';
 
-import { Filter, findConflictTraits, layerings } from '$lib/services/lemonhead/core';
+import { findConflictTraits } from '$lib/services/lemonhead/core';
 import lemonHead from '$lib/trpc/lemonheads';
-import { LemonHeadsLayer, TraitExtends, LemonHeadsColor, Gender } from '$lib/trpc/lemonheads/types';
+import { TraitExtends, LemonHeadsColor, Gender } from '$lib/trpc/lemonheads/types';
 
 import { LemonHeadGetStarted } from './steps/GetStarted';
 import { LemonHeadAboutYou } from './steps/AboutYou';
@@ -54,6 +54,7 @@ export enum LemonHeadActionKind {
   'set_resources',
   'set_default_traits',
   'set_colorset',
+  'set_skintone',
   'set_trait',
   'remove_traits',
   'next_step',
@@ -86,24 +87,40 @@ function reducers(state: LemonHeadState, action: LemonHeadAction) {
     case LemonHeadActionKind.set_default_traits: {
       const data = action.payload.data;
       const traitSet = lemonHead.trait.getDefaultSet(data)[data.gender as Gender];
-      const traits = Object.entries(traitSet).map(([key, item]) => {
-        const trait = lemonHead.trait.getTraitFilter({ type: key, ...item });
-        return lemonHead.trait.getTrait({ resouces: state.resouces, data: trait });
-      });
+      const traits = Object.entries(traitSet)
+        .map(([key, item]) => {
+          const trait = lemonHead.trait.getTraitFilter({ type: key, ...item });
+          return lemonHead.trait.getTrait({ resouces: state.resouces, data: trait });
+        })
+        .filter(Boolean);
+
+      return { ...state, traits };
+    }
+
+    case LemonHeadActionKind.set_skintone: {
+      const { data } = action.payload;
+      const traits = [...state.traits].filter(Boolean);
+
+      const idx = traits.findIndex((item) => item.type === 'body');
+      if (idx !== -1) traits[idx] = data;
+      else traits.push(data);
 
       return { ...state, traits };
     }
 
     case LemonHeadActionKind.set_trait: {
-      const { data } = action.payload;
-      let traits = [...state.traits];
+      const { data, removeConflict } = action.payload;
+      let traits = [...state.traits].filter(Boolean);
 
-      const conflicts = findConflictTraits(traits, data);
-      if (conflicts.length) traits = traits.filter((i) => !conflicts.map((c) => c.type).includes(i.type));
+      if (removeConflict) {
+        const conflicts = findConflictTraits(traits, data);
+        if (conflicts.length) traits = traits.filter((i) => !conflicts.map((c) => c.type).includes(i.type));
+      }
 
       const idx = traits.findIndex((item) => item.type === data.type);
-      if (idx !== -1) traits[idx] = data;
+      if (idx !== -1) traits[idx] = traits[idx].value === data.value ? undefined : data;
       else traits.push(data);
+
       return { ...state, traits };
     }
 
@@ -152,17 +169,4 @@ function reducers(state: LemonHeadState, action: LemonHeadAction) {
     default:
       return state;
   }
-}
-
-export async function tranformTrait(data: LemonHeadsLayer) {
-  const filters: Filter[] = [];
-  layerings[data.type].filterTypes.forEach((key) => filters.push({ type: key, value: data[key] }));
-
-  return {
-    _id: data._id,
-    type: data.type,
-    value: data.name,
-    filters,
-    image: data.file,
-  } as TraitExtends;
 }

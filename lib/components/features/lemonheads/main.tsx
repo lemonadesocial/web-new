@@ -10,7 +10,7 @@ import { FilterType } from '$lib/services/lemonhead/core';
 import { LemonHeadFooter } from './footer';
 import { LemonHeadPreview } from './preview';
 
-import { LemonHeadActionKind, LemonHeadProvider, LemonHeadStep, tranformTrait, useLemonHeadContext } from './provider';
+import { LemonHeadActionKind, LemonHeadProvider, LemonHeadStep, useLemonHeadContext } from './provider';
 import { SquareButton } from './shared';
 import lemonHead from '$lib/trpc/lemonheads';
 
@@ -38,10 +38,10 @@ function Content() {
   React.useEffect(() => {
     const init = async () => {
       if (dataBodySet?.items && dataDefaultSet?.items) {
-        const body = await Promise.all(dataBodySet.items.map(tranformTrait));
+        const body = await Promise.all(dataBodySet.items.map(lemonHead.trait.tranformTrait));
         dispatch({ type: LemonHeadActionKind.set_resources, payload: { data: body } });
 
-        const accessories = await Promise.all(dataDefaultSet.items.map(tranformTrait));
+        const accessories = await Promise.all(dataDefaultSet.items.map(lemonHead.trait.tranformTrait));
         dispatch({ type: LemonHeadActionKind.set_resources, payload: { data: accessories } });
         dispatch({
           type: LemonHeadActionKind.set_default_traits,
@@ -96,11 +96,12 @@ function Content() {
                               i.race === body?.filters?.find((i) => i.type === 'race')?.value,
                           );
 
-                          if (data)
+                          if (data) {
                             dispatch({
-                              type: LemonHeadActionKind.set_trait,
+                              type: LemonHeadActionKind.set_skintone,
                               payload: { data: lemonHead.trait.tranformTrait(data) },
                             });
+                          }
                         }}
                       >
                         <div className="w-full h-full rounded-sm" style={{ background: item.color }} />

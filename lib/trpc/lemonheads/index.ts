@@ -127,17 +127,6 @@ class LemonHead {
 
     const res = await request<{ getLemonheadSupportData: LemonHeadsColor[] }>(GRAPHQL_URL, document);
     return { data: { items: (res?.getLemonheadSupportData || []) as LemonHeadsColor[] } };
-    // return { data: { list: [] } };
-    // return this.instance.request<{
-    //   list: LemonHeadsColor[];
-    //   pageInfo: LemonHeadsPageInfo;
-    // }>({
-    //   method: 'get',
-    //   url: '/tables/mgdpc3xfu1xmgzm/records',
-    //   params: {
-    //     limit: 100,
-    //   },
-    // });
   }
 
   buildQuery({ traits, limit, page }: BuildQueryParams) {
