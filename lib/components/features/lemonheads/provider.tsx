@@ -34,6 +34,16 @@ export type LemonHeadState = {
     [key: string]: TraitExtends[];
   };
   colorset: LemonHeadsColor[];
+  mint: {
+    /** mint status */
+    minted: boolean;
+    /** show/mute video after minted */
+    video: boolean;
+    mute: boolean;
+    image: '';
+    txHash: '';
+    tokenId: '';
+  };
 };
 
 const defaultState: LemonHeadState = {
@@ -48,6 +58,14 @@ const defaultState: LemonHeadState = {
   currentStep: LemonHeadStep.getstarted,
   traits: [],
   colorset: [],
+  mint: {
+    minted: false,
+    video: false,
+    mute: true,
+    image: '',
+    txHash: '',
+    tokenId: '',
+  },
 };
 
 export enum LemonHeadActionKind {
@@ -59,6 +77,9 @@ export enum LemonHeadActionKind {
   'remove_traits',
   'next_step',
   'prev_step',
+  'set_mint',
+  'reset_mint',
+  'reset',
 }
 
 export type LemonHeadAction = { type: LemonHeadActionKind; payload?: any };
@@ -157,7 +178,7 @@ function reducers(state: LemonHeadState, action: LemonHeadAction) {
       }
       if (state.currentStep === LemonHeadStep.create) {
         const step = { create: { ...obj.steps[LemonHeadStep.create], mounted: false } };
-        obj = { ...obj, steps: merge(state.steps, step), currentStep: LemonHeadStep.getstarted };
+        obj = { ...obj, steps: merge(state.steps, step), currentStep: LemonHeadStep.about };
       }
       if (state.currentStep === LemonHeadStep.claim) {
         const step = { claim: { ...obj.steps[LemonHeadStep.claim], mounted: false } };
@@ -165,6 +186,69 @@ function reducers(state: LemonHeadState, action: LemonHeadAction) {
       }
       return obj;
     }
+
+    case LemonHeadActionKind.set_mint:
+      return { ...state, mint: { ...state.mint, ...action.payload } };
+
+    case LemonHeadActionKind.reset_mint:
+      const body = state.traits.find((i) => i.type === 'body');
+      const gender = body?.filters?.find((i) => i.type === 'gender')?.value;
+      const size = body?.filters?.find((i) => i.type === 'size')?.value;
+      const race = body?.filters?.find((i) => i.type === 'race')?.value;
+
+      const obj = { race, size, gender };
+      const traitSet = lemonHead.trait.getDefaultSet(obj)[obj.gender as Gender];
+      const traits = Object.entries(traitSet)
+        .map(([key, item]) => {
+          const trait = lemonHead.trait.getTraitFilter({ type: key, ...item });
+          return lemonHead.trait.getTrait({ resouces: state.resouces, data: trait });
+        })
+        .filter(Boolean);
+
+      return {
+        ...state,
+        steps: {
+          getstarted: { label: '', component: LemonHeadGetStarted, btnText: 'Get Started', mounted: true },
+          about: { label: 'About You', component: LemonHeadAboutYou, btnText: 'Enter Customizer', mounted: true },
+          create: { label: 'Create', component: LemonHeadCreate, btnText: 'Claim', mounted: false },
+          claim: { label: 'Claim', component: ClaimLemonHead, btnText: 'Continue', mounted: false, hidePreview: true },
+          // { key: 'collaborate', label: 'Collaborate', component: Collaborate, btnText: 'Continue' },
+          // { key: 'celebrate', label: 'Celebrate', componenent: Celebrate, btnText: 'Continue' },
+        },
+        currentStep: LemonHeadStep.about,
+        traits,
+        mint: {
+          minted: false,
+          video: false,
+          mute: true,
+          image: '',
+          txHash: '',
+          tokenId: '',
+        },
+      };
+
+    case LemonHeadActionKind.reset:
+      return {
+        steps: {
+          getstarted: { label: '', component: LemonHeadGetStarted, btnText: 'Get Started', mounted: true },
+          about: { label: 'About You', component: LemonHeadAboutYou, btnText: 'Enter Customizer', mounted: false },
+          create: { label: 'Create', component: LemonHeadCreate, btnText: 'Claim', mounted: false },
+          claim: { label: 'Claim', component: ClaimLemonHead, btnText: 'Continue', mounted: false, hidePreview: true },
+          // { key: 'collaborate', label: 'Collaborate', component: Collaborate, btnText: 'Continue' },
+          // { key: 'celebrate', label: 'Celebrate', componenent: Celebrate, btnText: 'Continue' },
+        },
+        currentStep: LemonHeadStep.getstarted,
+        traits: [],
+        colorset: [],
+        mint: {
+          minted: false,
+          video: false,
+          mute: true,
+          image: '',
+          txHash: '',
+          tokenId: '',
+        },
+      };
 
     default:
       return state;

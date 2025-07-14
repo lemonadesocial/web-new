@@ -15,8 +15,12 @@ import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from '../prov
 
 export function LemonHeadCreate() {
   const [{ currentStep, traits }] = useLemonHeadContext();
+  const body = traits.find((i) => i?.type === TraitType.body);
+  const bodyRace = body?.filters?.find((i) => i.type === 'race')?.value;
+  const gender = body?.filters?.find((i) => i.type === 'gender')?.value;
+  const background = traits.find((i) => i?.type === TraitType.background);
 
-  const [selected, setSelected] = React.useState('face');
+  const [selected, setSelected] = React.useState(bodyRace === 'human' ? 'face' : 'top');
 
   const [tabs, setTabs] = React.useState({
     face: {
@@ -27,10 +31,10 @@ export function LemonHeadCreate() {
         { value: 'eyes', label: 'Eyes', mount: true },
         { value: 'mouth', label: 'Mouth', mount: false },
         { value: 'hair', label: 'Hair', mount: false },
-        { value: 'facial_hair', label: 'Facial Hair', mount: false },
+        gender === 'male' && { value: 'facial_hair', label: 'Facial Hair', mount: false },
       ],
     },
-    top: { label: 'Tops', icon: 'icon-lh-tshirt-crew', mount: false },
+    top: { label: 'Tops', icon: 'icon-lh-tshirt-crew', mount: bodyRace === 'alien' ? true : false },
     bottom: { label: 'Bottoms', icon: 'icon-lh-pants', mount: false },
     outfit: { label: 'Outfits', icon: 'icon-lh-dress', mount: false },
     accessories: {
@@ -62,9 +66,6 @@ export function LemonHeadCreate() {
 
   if (currentStep !== LemonHeadStep.create) return null;
 
-  const body = traits.find((i) => i?.type === TraitType.body);
-  const background = traits.find((i) => i?.type === TraitType.background);
-
   return (
     <div className="flex flex-col md:flex-row-reverse flex-1 w-full md:w-[588px] gap-2 overflow-hidden">
       <Card.Root className="flex-1">
@@ -76,7 +77,7 @@ export function LemonHeadCreate() {
               <Content
                 key={key}
                 className={clsx('h-[692px]', selected !== key ? 'hidden' : '')}
-                tabs={(item as unknown as any).tabs}
+                tabs={(item as unknown as any).tabs?.filter(Boolean)}
                 layerKey={key as TraitType}
               />
             );

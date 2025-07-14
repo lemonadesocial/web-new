@@ -1,27 +1,29 @@
 import React from 'react';
 import { isMobile } from 'react-device-detect';
-import { useAtom } from 'jotai';
 import { twMerge } from 'tailwind-merge';
 
 import videojs from 'video.js';
 import Player from 'video.js/dist/types/player';
 import 'video.js/dist/video-js.css';
 
-import { mintAtom } from '../store';
 import { Alert, Button, drawer, modal, Skeleton } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
+import { ASSET_PREFIX, SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
+
 import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
 import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
 import { EditProfileModal } from '../../lens-account/EditProfileModal';
-import { ASSET_PREFIX } from '$lib/utils/constants';
+import { LemonHeadActionKind, useLemonHeadContext } from '../provider';
 
 export function ClaimLemonHead() {
-  const [mint, setMint] = useAtom(mintAtom);
+  const [state, dispatch] = useLemonHeadContext();
   const { account: myAccount } = useAccount();
 
   const videoRef = React.useRef(null);
   const playerRef = React.useRef<Player>(null);
+
+  React.useEffect(() => dispatch({ type: LemonHeadActionKind.set_mint, payload: { minted: true, video: true } }), []);
 
   React.useEffect(() => {
     if (videoRef.current && !playerRef.current) {
@@ -42,7 +44,7 @@ export function ClaimLemonHead() {
   }, [isMobile]);
 
   const getSrc = () => {
-    let src = `/api/og/lemonheads?image=${mint.image}&tokenId=${mint.tokenId}`;
+    let src = `/api/og/lemonheads?image=${state.mint.image}&tokenId=${state.mint.tokenId}`;
     if (myAccount?.username) src += `&username=${myAccount?.username.value.replace('lens/', '')}`;
     if (myAccount?.metadata?.bio) src += `&bio=${myAccount?.metadata.bio}`;
 
@@ -59,23 +61,31 @@ export function ClaimLemonHead() {
         <ImageLazyLoad src={getSrc()} className="border border-primary w-[1200px]" />
 
         <div className="flex w-full max-w-[1200px] justify-between">
-          <Button variant="secondary" iconLeft="icon-passport">
+          <Button
+            variant="secondary"
+            iconLeft="icon-passport"
+            onClick={() => dispatch({ type: LemonHeadActionKind.reset_mint })}
+          >
             Get Another Look
           </Button>
 
           <div className="flex gap-2">
             <Button
               variant="tertiary-alt"
-              icon={mint.mute ? 'icon-speaker-wave' : 'icon-speaker-x-mark'}
-              onClick={() => setMint({ ...mint, mute: !mint.mute })}
+              icon={state.mint.mute ? 'icon-speaker-wave' : 'icon-speaker-x-mark'}
+              onClick={() => dispatch({ type: LemonHeadActionKind.set_mint, payload: { mute: !state.mint.mute } })}
             />
-            <Button iconRight="icon-arrow-outward" variant="tertiary-alt">
+            <Button
+              iconRight="icon-arrow-outward"
+              variant="tertiary-alt"
+              onClick={() => window.open(`${SEPOLIA_ETHERSCAN}/tx/${state.mint.txHash}`)}
+            >
               View txn.
             </Button>
             <Button
               iconLeft="icon-share"
               variant="tertiary-alt"
-              onClick={() => drawer.open(RightPane, { props: { image: mint.image } })}
+              onClick={() => drawer.open(RightPane, { props: { image: state.mint.image } })}
             >
               Share
             </Button>
@@ -89,7 +99,7 @@ export function ClaimLemonHead() {
           autoPlay
           loop
           ref={videoRef}
-          muted={mint.mute}
+          muted={state.mint.mute}
           playsInline
           style={{ width: '100%', height: '100%', objectFit: 'fill' }}
         ></video>
