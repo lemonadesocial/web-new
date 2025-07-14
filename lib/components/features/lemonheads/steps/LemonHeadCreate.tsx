@@ -8,7 +8,7 @@ import { Card, modal, Skeleton } from '$lib/components/core';
 import { findConflictTraits, TraitType } from '$lib/services/lemonhead/core';
 import { trpc } from '$lib/trpc/client';
 import lemonHead from '$lib/trpc/lemonheads';
-import { BodyRace, BodySize, Gender, LemonHeadsLayer, TraitExtends } from '$lib/trpc/lemonheads/types';
+import { BodyRace, BodySize, Gender, LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
 
 import { CanvasImageRenderer, ColorTool, ConfirmModal, SquareButton } from '../shared';
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from '../provider';
@@ -74,7 +74,7 @@ export function LemonHeadCreate() {
 
             return (
               <div key={key} className={clsx('h-full', selected !== key ? 'hidden' : '')}>
-                <Content tabs={item.tabs} layerKey={key as TraitType} />
+                <Content tabs={(item as unknown as any).tabs} layerKey={key as TraitType} />
               </div>
             );
           })}

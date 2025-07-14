@@ -8,7 +8,7 @@ import { Address, Event, SpaceTag, User } from '$lib/graphql/generated/backend/g
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
 import { getEventCohosts, getEventPrice } from '$lib/utils/event';
-import { convertFromUtcToTimezone } from '$lib/utils/date';
+import { convertFromUtcToTimezone, formatWithTimezone } from '$lib/utils/date';
 
 export function EventList({
   events,
@@ -25,26 +25,32 @@ export function EventList({
 
   return (
     <div className="flex flex-col gap-8">
-      {Object.entries(groupBy(events, ({ start }) => format(new Date(start), 'yyyy-MM-dd'))).map(([date, data]) => (
-        <div key={date}>
-          <p className="text-tertiary font-medium">
-            <span className="text-primary">{format(date, 'MMM dd')}</span> {format(date, 'EEE')}
-          </p>
-          <Divider className="mt-2 mb-3" />
+      {Object.entries(
+        groupBy(events, ({ start, timezone }) => formatWithTimezone(new Date(start), 'yyyy-MM-dd', timezone)),
+      ).map(([date, data]) => {
+        const timezone = data?.[0]?.timezone;
+        return (
+          <div key={date}>
+            <p className="text-tertiary font-medium">
+              <span className="text-primary">{formatWithTimezone(new Date(date), 'MMM dd', timezone)}</span>{' '}
+              {formatWithTimezone(new Date(date), 'EEE', timezone)}
+            </p>
+            <Divider className="mt-2 mb-3" />
 
-          {data.map((item) => (
-            <div
-              key={item._id}
-              onClick={() => {
-                if (item.external_url) window.open(item.external_url);
-                else onSelect?.(item);
-              }}
-            >
-              <EventItem item={item} />
-            </div>
-          ))}
-        </div>
-      ))}
+            {data.map((item) => (
+              <div
+                key={item._id}
+                onClick={() => {
+                  if (item.external_url) window.open(item.external_url);
+                  else onSelect?.(item);
+                }}
+              >
+                <EventItem item={item} />
+              </div>
+            ))}
+          </div>
+        );
+      })}
       <Spacer className="h-6" />
     </div>
   );
@@ -137,38 +143,44 @@ export function EventListCard({
   if (!events.length) return <EmptyComp />;
   return (
     <div className="flex flex-col">
-      {Object.entries(groupBy(events, ({ start }) => format(new Date(start), 'yyyy-MM-dd'))).map(([date, data]) => (
-        <div className="flex flex-col relative" key={date}>
-          <div className="border-dashed border-l-2 border-l-[var(--color-divider)] absolute h-full left-1 top-2 z-10">
-            <div className="size-2 backdrop-blur-lg -ml-[5px] absolute">
-              <div className="size-2 rounded-full bg-quaternary" />
+      {Object.entries(
+        groupBy(events, ({ start, timezone }) => formatWithTimezone(new Date(start), 'yyyy-MM-dd', timezone)),
+      ).map(([date, data]) => {
+        const timezone = data?.[0]?.timezone;
+        return (
+          <div className="flex flex-col relative" key={date}>
+            <div className="border-dashed border-l-2 border-l-[var(--color-divider)] absolute h-full left-1 top-2 z-10">
+              <div className="size-2 backdrop-blur-lg -ml-[5px] absolute">
+                <div className="size-2 rounded-full bg-quaternary" />
+              </div>
             </div>
-          </div>
 
-          <div className="ml-5">
-            <p className="text-md text-tertiary font-medium">
-              <span className="text-primary">{format(new Date(date), 'MMM dd ')}</span> {format(new Date(date), 'EEEE')}
-            </p>
-            <Spacer className="h-3" />
+            <div className="ml-5">
+              <p className="text-md text-tertiary font-medium">
+                <span className="text-primary">{formatWithTimezone(new Date(date), 'MMM dd ', timezone)}</span>{' '}
+                {formatWithTimezone(new Date(date), 'EEEE', timezone)}
+              </p>
+              <Spacer className="h-3" />
 
-            <div className="flex flex-col gap-3">
-              {data.map((item) => (
-                <EventCardItem
-                  key={item._id}
-                  item={item}
-                  tags={tags}
-                  onClick={() => {
-                    if (item.external_url) window.open(item.external_url);
-                    else onSelect?.(item);
-                  }}
-                />
-              ))}
+              <div className="flex flex-col gap-3">
+                {data.map((item) => (
+                  <EventCardItem
+                    key={item._id}
+                    item={item}
+                    tags={tags}
+                    onClick={() => {
+                      if (item.external_url) window.open(item.external_url);
+                      else onSelect?.(item);
+                    }}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
 
-          <Spacer className="h-6" />
-        </div>
-      ))}
+            <Spacer className="h-6" />
+          </div>
+        );
+      })}
       {/* <div className="flex flex-col relative"> */}
       {/*   <div className="border-dashed border-l-2 absolute h-full left-1 top-2 z-10"> */}
       {/*     <div className="size-2 bg-background -ml-[5px] absolute"> */}

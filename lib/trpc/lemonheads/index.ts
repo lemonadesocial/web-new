@@ -1,7 +1,7 @@
 import axios, { Axios } from 'axios';
 import { TraitType, Trait as TraitCore } from '$lib/services/lemonhead/core';
 import { GRAPHQL_URL } from '$lib/utils/constants';
-import { LemonHeadsColor, LemonHeadsLayer, LemonHeadsPageInfo } from './types';
+import { LemonHeadsColor, LemonHeadsLayer } from './types';
 import Trait from './trait';
 import { request, gql } from 'graphql-request';
 
