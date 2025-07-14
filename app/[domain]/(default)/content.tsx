@@ -43,7 +43,11 @@ export function HomePageContent() {
         className="bg-transparent"
       />
 
-      <PostComposer onPost={onPost} showFeedOptions />
+      {
+        tab !== 'LemonHeads' && (
+          <PostComposer onPost={onPost} showFeedOptions />
+        )
+      }
 
       {
         tab === 'Following' && (
