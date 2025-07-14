@@ -77,7 +77,7 @@ export function WhoToFollow() {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const result = await fetchAccountsBulk(client, {
+        const result = await fetchAccountsBulk(sessionClient || client, {
           usernames: SUGGESTED_USERNAMES.map((username) => ({ localName: username })),
         });
 
@@ -95,7 +95,7 @@ export function WhoToFollow() {
     };
 
     fetchAccounts();
-  }, [myAccount]);
+  }, [sessionClient]);
 
   const handleFollow = async (account: Account) => {
     if (!sessionClient || !signer) {

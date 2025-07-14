@@ -609,7 +609,7 @@ export function useLensAuth() {
   const { logIn } = useLogIn();
 
   const handleAuth = async (action: () => Promise<void>): Promise<void> => {
-    if (account?.username) {
+    if (account) {
       await action();
       return;
     }
