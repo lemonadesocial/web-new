@@ -12,6 +12,7 @@ import { BodyRace, BodySize, Gender, LemonHeadsLayer } from '$lib/trpc/lemonhead
 
 import { CanvasImageRenderer, ColorTool, ConfirmModal, SquareButton } from '../shared';
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from '../provider';
+import { capitalizeWords } from '$lib/utils/string';
 
 export function LemonHeadCreate() {
   const [{ currentStep, traits }] = useLemonHeadContext();
@@ -290,10 +291,11 @@ function SubContent({
                   onClick={() => {
                     const conflicts = findConflictTraits(traits.filter(Boolean), dt);
                     if (conflicts.length && conflicts.find((i) => i.type !== item.type)) {
+                      const conflictStr = conflicts.map((i) => capitalizeWords(i.type)).join(' or ');
                       modal.open(ConfirmModal, {
                         props: {
-                          title: `Remove ${item.type}?`,
-                          subtitle: `Selecting a ${conflicts.map((i) => i.type).join(' or ')} will remove any ${item.type} you have selected. Are you sure you want to continue?`,
+                          title: `Remove ${conflictStr}?`,
+                          subtitle: `Selecting a ${capitalizeWords(item.type)} will remove any ${conflictStr} you have selected. Are you sure you want to continue?`,
                           onConfirm: () => {
                             dispatch({
                               type: LemonHeadActionKind.set_trait,
