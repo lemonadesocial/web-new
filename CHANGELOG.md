@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.62.0](https://github.com/lemonadesocial/web-new/compare/v1.61.3...v1.62.0) (2025-07-14)
+
+
+### Features
+
+* filter background style ([753d414](https://github.com/lemonadesocial/web-new/commit/753d414f33f773b30ffbfddf7d6135b11c573071))
+* update alien color ([ae656d5](https://github.com/lemonadesocial/web-new/commit/ae656d513c470ea414b65b77722435b187c2f73e))
+* update filter list ([ab2473c](https://github.com/lemonadesocial/web-new/commit/ab2473cc6534a098e73abaeb38da7e9b8de7d198))
+
+
+### Bug Fixes
+
+* format date with timezone ([e4e78e1](https://github.com/lemonadesocial/web-new/commit/e4e78e1919c3526fe279070a03b27ed3f07b9976))
+
 ## [1.61.3](https://github.com/lemonadesocial/web-new/compare/v1.61.2...v1.61.3) (2025-07-13)
 
 
