@@ -22,12 +22,20 @@ export function LemonHeadMain() {
   );
 }
 
-const skinToneOpts = [
-  { value: 'light', label: 'Soft', color: '#FDCCA8' },
-  { value: 'tan', label: 'Medium', color: '#E0955F' },
-  { value: 'brown', label: 'Rich', color: '#984F1B' },
-  { value: 'dark', label: 'Bold', color: '#6C350D' },
-];
+const skinToneOpts: any = {
+  human: [
+    { value: 'light', label: 'Soft', color: '#FDCCA8' },
+    { value: 'tan', label: 'Medium', color: '#E0955F' },
+    { value: 'brown', label: 'Rich', color: '#984F1B' },
+    { value: 'dark', label: 'Bold', color: '#6C350D' },
+  ],
+  alien: [
+    { value: 'light', label: 'Soft', color: '#D4D9DD' },
+    { value: 'tan', label: 'Medium', color: '#A5B3C0' },
+    { value: 'brown', label: 'Rich', color: '#788C9E' },
+    { value: 'dark', label: 'Bold', color: '#485A6A' },
+  ],
+};
 
 function Content() {
   const [state, dispatch] = useLemonHeadContext();
@@ -82,7 +90,7 @@ function Content() {
                   <LemonHeadPreview traits={state.traits} />
 
                   <div className="flex gap-3">
-                    {skinToneOpts.map((item) => (
+                    {skinToneOpts[body?.value || 'human'].map((item) => (
                       <SquareButton
                         key={item.value}
                         active={item.value === skinTone}
