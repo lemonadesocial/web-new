@@ -12,8 +12,7 @@ import { Button, Checkbox, modal, ModalContent, toast } from '$lib/components/co
 import { trpc } from '$lib/trpc/client';
 import { useAccount } from '$lib/hooks/useLens';
 import { chainsMapAtom } from '$lib/jotai';
-import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
-import { LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
+import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
 import { useQuery } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
@@ -63,7 +62,7 @@ export function LemonHeadFooter() {
         isValid = false;
       }
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error(formatError(error.message));
       isValid = false;
     }
 
@@ -330,7 +329,7 @@ function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete:
         console.log('Token ID:', tokenId);
       }
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error(formatError(error.message));
     } finally {
       setIsMinting(false);
     }
