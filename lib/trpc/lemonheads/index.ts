@@ -30,7 +30,7 @@ class LemonHead {
     });
   }
 
-  async getLayers(params: BuildQueryParams) {
+  getLayers(params: BuildQueryParams) {
     return this.instance.request<{ items: LemonHeadsLayer[]; total: number }>({
       method: 'get',
       url: `?${this.buildQuery(params)}`,

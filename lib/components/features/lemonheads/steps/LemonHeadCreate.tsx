@@ -248,6 +248,7 @@ function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: 
   }, [list.length]);
 
   const colors = colorset.find((i) => i.name === layerKey);
+
   return (
     <div className="flex flex-col gap-4 md:pb-4 p-4 min-h-[136px] max-h-[692px] overflow-auto no-scrollbar">
       {!!list.length && (
@@ -258,38 +259,40 @@ function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: 
             !isMobile && colors && 'pb-20',
           )}
         >
-          {list.map((item) => {
-            const dt = lemonHead.trait.tranformTrait(item);
-            return (
-              <SquareButton
-                key={dt._id}
-                label={dt.value}
-                active={dt.value === trait?.value && dt.type === trait?.type}
-                className="min-w-[80px]"
-                onClick={() => {
-                  const conflicts = findConflictTraits(traits.filter(Boolean), dt);
-                  if (conflicts.length && conflicts.find((i) => i.type !== item.type)) {
-                    modal.open(ConfirmModal, {
-                      props: {
-                        title: `Remove ${item.type}?`,
-                        subtitle: `Selecting a ${conflicts.map((i) => i.type).join(' or ')} will remove any ${item.type} you have selected. Are you sure you want to continue?`,
-                        onConfirm: () => {
-                          dispatch({
-                            type: LemonHeadActionKind.set_trait,
-                            payload: { data: dt, removeConflict: true },
-                          });
+          {list
+            .filter((i) => i.type === layerKey)
+            .map((item) => {
+              const dt = lemonHead.trait.tranformTrait(item);
+              return (
+                <SquareButton
+                  key={dt._id}
+                  label={dt.value}
+                  active={dt.value === trait?.value && dt.type === trait?.type}
+                  className="min-w-[80px]"
+                  onClick={() => {
+                    const conflicts = findConflictTraits(traits.filter(Boolean), dt);
+                    if (conflicts.length && conflicts.find((i) => i.type !== item.type)) {
+                      modal.open(ConfirmModal, {
+                        props: {
+                          title: `Remove ${item.type}?`,
+                          subtitle: `Selecting a ${conflicts.map((i) => i.type).join(' or ')} will remove any ${item.type} you have selected. Are you sure you want to continue?`,
+                          onConfirm: () => {
+                            dispatch({
+                              type: LemonHeadActionKind.set_trait,
+                              payload: { data: dt, removeConflict: true },
+                            });
+                          },
                         },
-                      },
-                    });
-                  } else {
-                    dispatch({ type: LemonHeadActionKind.set_trait, payload: { data: dt } });
-                  }
-                }}
-              >
-                {dt.image && <CanvasImageRenderer file={dt.image} style={{ borderRadius: 8 }} />}
-              </SquareButton>
-            );
-          })}
+                      });
+                    } else {
+                      dispatch({ type: LemonHeadActionKind.set_trait, payload: { data: dt } });
+                    }
+                  }}
+                >
+                  {dt.image && <CanvasImageRenderer file={dt.image} style={{ borderRadius: 8 }} />}
+                </SquareButton>
+              );
+            })}
         </div>
       )}
       {isLoading && ((isMobile && !list.length) || !isMobile) && <Loading loadMore={!!list.length} />}
@@ -300,6 +303,7 @@ function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: 
           colorset={colors}
           onSelect={(params) => {
             setList([]);
+            setPage(1);
             const color = params.key !== selectedColor ? params.key : undefined;
             setSelectedColor(color);
             refetch();
