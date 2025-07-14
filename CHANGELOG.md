@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.62.1](https://github.com/lemonadesocial/web-new/compare/v1.62.0...v1.62.1) (2025-07-14)
+
+
+### Bug Fixes
+
+* hide posting for lemonheads ([a81a275](https://github.com/lemonadesocial/web-new/commit/a81a2755658f1d6b025907fdb5ca1fe25bfb72de))
+
 ## [1.62.0](https://github.com/lemonadesocial/web-new/compare/v1.61.3...v1.62.0) (2025-07-14)
 
 
