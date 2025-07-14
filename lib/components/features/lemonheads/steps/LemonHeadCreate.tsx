@@ -260,7 +260,7 @@ function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: 
           )}
         >
           {list
-            .filter((i) => i.type === layerKey)
+            .filter((i) => (i.type === 'background' ? i.art_style === art_style : i.type === layerKey))
             .map((item) => {
               const dt = lemonHead.trait.tranformTrait(item);
               return (
