@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.62.2](https://github.com/lemonadesocial/web-new/compare/v1.62.1...v1.62.2) (2025-07-14)
+
+
+### Bug Fixes
+
+* follow status ([22e44a9](https://github.com/lemonadesocial/web-new/commit/22e44a9203d48d6b8c6184f72f1bb41b0c053baf))
+
 ## [1.62.1](https://github.com/lemonadesocial/web-new/compare/v1.62.0...v1.62.1) (2025-07-14)
 
 
