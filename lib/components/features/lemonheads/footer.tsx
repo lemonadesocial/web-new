@@ -228,7 +228,6 @@ function BeforeMintModal({ onContinue }: { onContinue: () => void }) {
 }
 
 function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete: (mintState: any) => void }) {
-  // const [state, dispatch] = useLemonHeadContext();
   const { address } = useAppKitAccount();
 
   const [isMinting, setIsMinting] = React.useState(false);
@@ -282,7 +281,6 @@ function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete:
   React.useEffect(() => {
     if (count === 0) {
       modal.close();
-      // dispatch({ type: LemonHeadActionKind.set_mint, payload: { minted: true, video: true } });
       onComplete({ mintState, minted: true, video: true });
     }
   }, [count, mintState]);
@@ -319,7 +317,7 @@ function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete:
         [mintData.look, mintData.metadata, mintData.signature],
         { value: mintPrice },
       );
-      setMintState({ txHash: tx?.hash });
+      setMintState((prev) => ({ ...prev, txHash: tx?.hash }));
 
       const receipt = await tx.wait();
       const iface = new ethers.Interface(LemonheadNFT.abi);
@@ -343,7 +341,7 @@ function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete:
 
       if (parsedTransferLog) {
         const tokenId = parsedTransferLog.args?.tokenId?.toString();
-        setMintState({ image: mintData.image, txHash: tx?.hash, tokenId });
+        setMintState((prev) => ({ ...prev, image: mintData.image, txHash: tx?.hash, tokenId }));
         setDone(true);
 
         setInterval(() => {
