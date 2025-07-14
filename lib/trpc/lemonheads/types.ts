@@ -1,3 +1,4 @@
+import { File } from '$lib/graphql/generated/backend/graphql';
 import { Trait, TraitType } from '$lib/services/lemonhead/core';
 
 export type LemonHeadsPageInfo = {
@@ -17,42 +18,18 @@ export type BodyRace = 'human' | 'alien';
 export type BodySize = 'small' | 'medium' | 'large' | 'extra_large';
 
 export type LemonHeadsLayer = {
-  Id: number;
+  _id: number;
   name: string;
   type: TraitType;
   art_style?: string | null;
-  skin_tone: SkinTone;
-  gender: Gender;
-  size: BodySize;
-  race: BodyRace;
-  color: any | null;
-  attachment: LemonHeadsAttachment[];
-};
-
-export type LemonHeadsThumnail = {
-  card_cover: {
-    signedUrl: string;
-  };
-  small: {
-    signedUrl: string;
-  };
-  tiny: {
-    signedUrl: string;
-  };
-};
-
-export type LemonHeadsAttachment = {
-  url: string;
-  height: number;
-  id: string;
-  mimetype: string;
-  signedUrl: string;
-  size: number;
-  title: 'alien.png';
-  width: number;
-  thumbnails: LemonHeadsThumnail;
+  skin_tone?: SkinTone;
+  gender?: Gender;
+  size?: BodySize;
+  race?: BodyRace;
+  color?: any | null;
+  file: File;
 };
 
 export type LemonHeadsColor = { name: string; value: { key: string; value: string }[] };
 
-export type TraitExtends = Trait & { Id?: string | number; image?: string };
+export type TraitExtends = Trait & { _id?: string | number; image?: string };

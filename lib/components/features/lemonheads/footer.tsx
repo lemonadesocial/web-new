@@ -18,6 +18,7 @@ import { useQuery } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
 import { GetListLemonheadSponsorsDocument } from '$lib/graphql/generated/backend/graphql';
+import { TraitExtends } from '$lib/trpc/lemonheads/types';
 
 import { ConnectWallet } from '../modals/ConnectWallet';
 
@@ -25,7 +26,6 @@ import { mintAtom } from './store';
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from './provider';
 import { LEMONHEAD_CHAIN_ID } from './utils';
 import { LemonHeadPreview } from './preview';
-import { TraitExtends } from '$lib/trpc/lemonheads/types';
 
 export function LemonHeadFooter() {
   const router = useRouter();
@@ -51,7 +51,7 @@ export function LemonHeadFooter() {
     try {
       if (!state.traits.length || !contractAddress) return;
 
-      const { lookHash } = await validateNft.mutateAsync({ traits: state.traits });
+      const { lookHash } = await validateNft.mutateAsync({ traits: state.traits.filter(Boolean) });
 
       const provider = new ethers.JsonRpcProvider(chain.rpc_url);
       const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);

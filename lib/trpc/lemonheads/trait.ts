@@ -1,6 +1,7 @@
 import { Filter, layerings, TraitType } from '$lib/services/lemonhead/core';
 import { merge } from 'lodash';
 import { BodyRace, BodySize, Gender, LemonHeadsLayer, SkinTone, TraitExtends } from './types';
+import { generateUrl } from '$lib/utils/cnd';
 
 type FilterType = {
   type: TraitType;
@@ -19,11 +20,11 @@ export default class Trait {
     layerings[data.type].filterTypes.forEach((key) => filters.push({ type: key, value: data[key] }));
 
     return {
-      Id: data.Id,
+      _id: data._id,
       type: data.type,
       value: data.name,
       filters,
-      image: data.attachment?.[0]?.signedUrl,
+      image: generateUrl(data.file, { resize: { width: 1024, height: 1024 } }),
     } as TraitExtends;
   }
 

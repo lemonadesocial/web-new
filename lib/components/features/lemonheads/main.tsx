@@ -10,7 +10,7 @@ import { FilterType } from '$lib/services/lemonhead/core';
 import { LemonHeadFooter } from './footer';
 import { LemonHeadPreview } from './preview';
 
-import { LemonHeadActionKind, LemonHeadProvider, LemonHeadStep, tranformTrait, useLemonHeadContext } from './provider';
+import { LemonHeadActionKind, LemonHeadProvider, LemonHeadStep, useLemonHeadContext } from './provider';
 import { SquareButton } from './shared';
 import lemonHead from '$lib/trpc/lemonheads';
 
@@ -22,12 +22,20 @@ export function LemonHeadMain() {
   );
 }
 
-const skinToneOpts = [
-  { value: 'light', label: 'Soft', color: '#FDCCA8' },
-  { value: 'tan', label: 'Medium', color: '#E0955F' },
-  { value: 'brown', label: 'Rich', color: '#984F1B' },
-  { value: 'dark', label: 'Bold', color: '#6C350D' },
-];
+const skinToneOpts: any = {
+  human: [
+    { value: 'light', label: 'Soft', color: '#FDCCA8' },
+    { value: 'tan', label: 'Medium', color: '#E0955F' },
+    { value: 'brown', label: 'Rich', color: '#984F1B' },
+    { value: 'dark', label: 'Bold', color: '#6C350D' },
+  ],
+  alien: [
+    { value: 'light', label: 'Soft', color: '#D4D9DD' },
+    { value: 'tan', label: 'Medium', color: '#A5B3C0' },
+    { value: 'brown', label: 'Rich', color: '#788C9E' },
+    { value: 'dark', label: 'Bold', color: '#485A6A' },
+  ],
+};
 
 function Content() {
   const [state, dispatch] = useLemonHeadContext();
@@ -37,18 +45,18 @@ function Content() {
 
   React.useEffect(() => {
     const init = async () => {
-      if (dataBodySet?.list && dataDefaultSet) {
-        const body = await Promise.all(dataBodySet.list.map(tranformTrait));
+      if (dataBodySet?.items && dataDefaultSet?.items) {
+        const body = await Promise.all(dataBodySet.items.map(lemonHead.trait.tranformTrait));
         dispatch({ type: LemonHeadActionKind.set_resources, payload: { data: body } });
 
-        const accessories = await Promise.all(dataDefaultSet.list.map(tranformTrait));
+        const accessories = await Promise.all(dataDefaultSet.items.map(lemonHead.trait.tranformTrait));
         dispatch({ type: LemonHeadActionKind.set_resources, payload: { data: accessories } });
         dispatch({
           type: LemonHeadActionKind.set_default_traits,
           payload: { data: { race: 'human', size: 'medium', gender: 'female' } },
         });
 
-        dispatch({ type: LemonHeadActionKind.set_colorset, payload: { data: dataColorSet?.list } });
+        dispatch({ type: LemonHeadActionKind.set_colorset, payload: { data: dataColorSet?.items } });
       }
     };
 
@@ -57,8 +65,8 @@ function Content() {
 
   const showPreview = !state.steps[state.currentStep].hidePreview;
 
-  const body = state.traits.find((i) => i.type === 'body');
-  const skinTone = body?.filters?.find((i) => i.type === FilterType.skin_tone)?.value;
+  const body = state.traits.find((i) => i?.type === 'body');
+  const skinTone = body?.filters?.find((i) => i?.type === FilterType.skin_tone)?.value;
 
   return (
     <main className="h-dvh w-full flex flex-col divide-y divide-[var(--color-divider)]">
@@ -82,13 +90,13 @@ function Content() {
                   <LemonHeadPreview traits={state.traits} />
 
                   <div className="flex gap-3">
-                    {skinToneOpts.map((item) => (
+                    {skinToneOpts[body?.value || 'human'].map((item) => (
                       <SquareButton
                         key={item.value}
                         active={item.value === skinTone}
                         className="max-w-[44px] aspect-square"
                         onClick={() => {
-                          const data = dataBodySet?.list.find(
+                          const data = dataBodySet?.items.find(
                             (i) =>
                               i.skin_tone === item.value &&
                               i.size === body?.filters?.find((i) => i.type === 'size')?.value &&
@@ -96,11 +104,12 @@ function Content() {
                               i.race === body?.filters?.find((i) => i.type === 'race')?.value,
                           );
 
-                          if (data)
+                          if (data) {
                             dispatch({
-                              type: LemonHeadActionKind.set_trait,
+                              type: LemonHeadActionKind.set_skintone,
                               payload: { data: lemonHead.trait.tranformTrait(data) },
                             });
+                          }
                         }}
                       >
                         <div className="w-full h-full rounded-sm" style={{ background: item.color }} />

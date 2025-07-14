@@ -1,14 +1,19 @@
-import { Button, Card, modal } from '$lib/components/core';
-import { LemonHeadsColor } from '$lib/trpc/lemonheads/types';
+'use client';
 import clsx from 'clsx';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
+import { preload } from 'react-dom';
 
-export function CanvasImageRenderer({ src, style }: { src: string; style?: React.CSSProperties }) {
+import { Button, Card, modal } from '$lib/components/core';
+import { LemonHeadsColor } from '$lib/trpc/lemonheads/types';
+
+export function CanvasImageRenderer({ file, style }: { file: string; style?: React.CSSProperties }) {
   const canvasRef = React.useRef<any>(null);
 
   React.useEffect(() => {
-    if (canvasRef.current) {
+    if (canvasRef.current && file) {
+      preload(file, { as: 'image' });
+
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       const img = new Image();
@@ -21,9 +26,9 @@ export function CanvasImageRenderer({ src, style }: { src: string; style?: React
         ctx.drawImage(img, 0, 0);
       };
 
-      img.src = src;
+      img.src = file;
     }
-  }, [src]);
+  }, [file]);
 
   return <canvas ref={canvasRef} className="w-full h-full aspect-square" style={style} />;
 }
