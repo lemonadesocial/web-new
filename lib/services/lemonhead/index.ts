@@ -1,6 +1,7 @@
+import { generateUrl } from '$lib/utils/cnd';
+import { calculateLookHash, formatString, getFinalTraits, Trait, validateTraits } from './core';
 import { getApproval, getCache, setCache } from './admin';
-import { calculateLookHash, getFinalTraits, formatString, Trait, validateTraits } from './core';
-import { getFinalImage, getImageUrlsFromTraits } from './image';
+import { getFinalImage, getRenderLayersFromTraits } from './image';
 import { uploadImage, uploadJSON } from './storage';
 
 const gatewayPrefix = 'https://api.grove.storage/';
@@ -35,8 +36,8 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
 
   if (!imageUrl) {
     //-- create and upload image
-    const imageUrls = await getImageUrlsFromTraits(finalTraits);
-    const finalImage = await getFinalImage(imageUrls);
+    const layers = await getRenderLayersFromTraits(finalTraits);
+    const finalImage = await getFinalImage(layers.flatMap((layer) => layer?.file ? generateUrl(layer.file) : []));
     imageUrl = await uploadImage(lookHash, finalImage);
   }
 
