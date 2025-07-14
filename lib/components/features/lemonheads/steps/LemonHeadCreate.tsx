@@ -66,16 +66,19 @@ export function LemonHeadCreate() {
   const background = traits.find((i) => i?.type === TraitType.background);
 
   return (
-    <div className="flex flex-col md:flex-row-reverse flex-1 w-full md:max-w-[588px] gap-2 overflow-hidden">
+    <div className="flex flex-col md:flex-row-reverse flex-1 w-full md:w-[588px] gap-2 overflow-hidden">
       <Card.Root className="flex-1">
         <Card.Content className="p-0 h-full">
           {Object.entries(tabs).map(([key, item]) => {
             if (!item.mount) return null;
 
             return (
-              <div key={key} className={clsx('h-full', selected !== key ? 'hidden' : '')}>
-                <Content tabs={(item as unknown as any).tabs} layerKey={key as TraitType} />
-              </div>
+              <Content
+                key={key}
+                className={clsx('h-[692px]', selected !== key ? 'hidden' : '')}
+                tabs={(item as unknown as any).tabs}
+                layerKey={key as TraitType}
+              />
             );
           })}
         </Card.Content>
@@ -122,13 +125,21 @@ export function LemonHeadCreate() {
   );
 }
 
-function Content({ tabs: tabList = [], layerKey }: { tabs?: Array<any>; layerKey: TraitType }) {
+function Content({
+  tabs: tabList = [],
+  layerKey,
+  className,
+}: {
+  tabs?: Array<any>;
+  layerKey: TraitType;
+  className?: string;
+}) {
   const [tabs, setTabs] = React.useState(tabList);
 
   const [selected, setSelected] = React.useState(tabs[0]?.value || layerKey);
 
   return (
-    <>
+    <div className={className}>
       {!!tabs.length && (
         <>
           <ul className="flex px-4 py-3 sticky top-0 border-b">
@@ -157,21 +168,19 @@ function Content({ tabs: tabList = [], layerKey }: { tabs?: Array<any>; layerKey
             if (!item.mount) return null;
 
             return (
-              <div key={item.value} className={clsx(selected !== item.value && 'hidden')}>
-                <SubContent
-                  layerKey={
-                    ['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? 'background' : selected
-                  }
-                  art_style={['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? selected : undefined}
-                />
-              </div>
+              <SubContent
+                key={item.value}
+                className={clsx('max-h-[635px]', selected !== item.value && 'hidden')}
+                layerKey={['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? 'background' : selected}
+                art_style={['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? selected : undefined}
+              />
             );
           })}
         </>
       )}
 
-      {!tabs.length && <SubContent layerKey={layerKey} />}
-    </>
+      {!tabs.length && <SubContent className="h-[692px]" layerKey={layerKey} />}
+    </div>
   );
 }
 
@@ -186,7 +195,15 @@ function Loading({ className, loadMore }: { className?: string; loadMore?: boole
   );
 }
 
-function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: string }) {
+function SubContent({
+  layerKey,
+  art_style,
+  className,
+}: {
+  layerKey: TraitType;
+  art_style?: string;
+  className?: string;
+}) {
   const [page, setPage] = React.useState(1);
   const [list, setList] = React.useState<LemonHeadsLayer[]>([]);
 
@@ -245,12 +262,12 @@ function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: 
         listInnerElement.removeEventListener('scroll', onScroll);
       };
     }
-  }, [list.length]);
+  }, [list.length, page]);
 
   const colors = colorset.find((i) => i.name === layerKey);
 
   return (
-    <div className="flex flex-col gap-4 md:pb-4 p-4 min-h-[136px] max-h-[692px] overflow-auto no-scrollbar">
+    <div className={twMerge('flex flex-col gap-4 md:pb-4 p-4 overflow-auto no-scrollbar', className)}>
       {!!list.length && (
         <div
           ref={listInnerRef}

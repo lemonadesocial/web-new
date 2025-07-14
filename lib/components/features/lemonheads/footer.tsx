@@ -80,7 +80,7 @@ export function LemonHeadFooter() {
       const valid = await checkMinted();
       if (!valid) return;
 
-      if (!isConnected || chainId?.toString() !== chainsMap[LENS_CHAIN_ID].chain_id) {
+      if (!isConnected || chainId?.toString() !== chainsMap[LEMONHEAD_CHAIN_ID].chain_id) {
         modal.open(ConnectWallet, {
           props: {
             onConnect: () => {
@@ -104,7 +104,7 @@ export function LemonHeadFooter() {
                 }
               });
             },
-            chain: chainsMap[LENS_CHAIN_ID],
+            chain: chainsMap[LEMONHEAD_CHAIN_ID],
           },
         });
 
