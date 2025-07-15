@@ -12,11 +12,16 @@ import { BodyRace, BodySize, Gender, LemonHeadsLayer } from '$lib/trpc/lemonhead
 
 import { CanvasImageRenderer, ColorTool, ConfirmModal, SquareButton } from '../shared';
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from '../provider';
+import { capitalizeWords } from '$lib/utils/string';
 
 export function LemonHeadCreate() {
   const [{ currentStep, traits }] = useLemonHeadContext();
+  const body = traits.find((i) => i?.type === TraitType.body);
+  const bodyRace = body?.filters?.find((i) => i.type === 'race')?.value;
+  const gender = body?.filters?.find((i) => i.type === 'gender')?.value;
+  const background = traits.find((i) => i?.type === TraitType.background);
 
-  const [selected, setSelected] = React.useState('face');
+  const [selected, setSelected] = React.useState(bodyRace === 'human' ? 'face' : 'top');
 
   const [tabs, setTabs] = React.useState({
     face: {
@@ -27,10 +32,10 @@ export function LemonHeadCreate() {
         { value: 'eyes', label: 'Eyes', mount: true },
         { value: 'mouth', label: 'Mouth', mount: false },
         { value: 'hair', label: 'Hair', mount: false },
-        { value: 'facial_hair', label: 'Facial Hair', mount: false },
+        gender === 'male' && { value: 'facial_hair', label: 'Facial Hair', mount: false },
       ],
     },
-    top: { label: 'Tops', icon: 'icon-lh-tshirt-crew', mount: false },
+    top: { label: 'Tops', icon: 'icon-lh-tshirt-crew', mount: bodyRace === 'alien' ? true : false },
     bottom: { label: 'Bottoms', icon: 'icon-lh-pants', mount: false },
     outfit: { label: 'Outfits', icon: 'icon-lh-dress', mount: false },
     accessories: {
@@ -62,20 +67,20 @@ export function LemonHeadCreate() {
 
   if (currentStep !== LemonHeadStep.create) return null;
 
-  const body = traits.find((i) => i?.type === TraitType.body);
-  const background = traits.find((i) => i?.type === TraitType.background);
-
   return (
-    <div className="flex flex-col md:flex-row-reverse flex-1 w-full md:max-w-[588px] gap-2 overflow-hidden">
+    <div className="flex flex-col md:flex-row-reverse flex-1 w-full md:w-[588px] gap-2 overflow-hidden">
       <Card.Root className="flex-1">
         <Card.Content className="p-0 h-full">
           {Object.entries(tabs).map(([key, item]) => {
             if (!item.mount) return null;
 
             return (
-              <div key={key} className={clsx('h-full', selected !== key ? 'hidden' : '')}>
-                <Content tabs={(item as unknown as any).tabs} layerKey={key as TraitType} />
-              </div>
+              <Content
+                key={key}
+                className={clsx('h-[692px]', selected !== key ? 'hidden' : '')}
+                tabs={(item as unknown as any).tabs?.filter(Boolean)}
+                layerKey={key as TraitType}
+              />
             );
           })}
         </Card.Content>
@@ -122,13 +127,21 @@ export function LemonHeadCreate() {
   );
 }
 
-function Content({ tabs: tabList = [], layerKey }: { tabs?: Array<any>; layerKey: TraitType }) {
+function Content({
+  tabs: tabList = [],
+  layerKey,
+  className,
+}: {
+  tabs?: Array<any>;
+  layerKey: TraitType;
+  className?: string;
+}) {
   const [tabs, setTabs] = React.useState(tabList);
 
   const [selected, setSelected] = React.useState(tabs[0]?.value || layerKey);
 
   return (
-    <>
+    <div className={className}>
       {!!tabs.length && (
         <>
           <ul className="flex px-4 py-3 sticky top-0 border-b">
@@ -157,21 +170,19 @@ function Content({ tabs: tabList = [], layerKey }: { tabs?: Array<any>; layerKey
             if (!item.mount) return null;
 
             return (
-              <div key={item.value} className={clsx(selected !== item.value && 'hidden')}>
-                <SubContent
-                  layerKey={
-                    ['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? 'background' : selected
-                  }
-                  art_style={['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? selected : undefined}
-                />
-              </div>
+              <SubContent
+                key={item.value}
+                className={clsx('max-h-[635px]', selected !== item.value && 'hidden')}
+                layerKey={['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? 'background' : selected}
+                art_style={['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? selected : undefined}
+              />
             );
           })}
         </>
       )}
 
-      {!tabs.length && <SubContent layerKey={layerKey} />}
-    </>
+      {!tabs.length && <SubContent className="h-[692px]" layerKey={layerKey} />}
+    </div>
   );
 }
 
@@ -186,7 +197,15 @@ function Loading({ className, loadMore }: { className?: string; loadMore?: boole
   );
 }
 
-function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: string }) {
+function SubContent({
+  layerKey,
+  art_style,
+  className,
+}: {
+  layerKey: TraitType;
+  art_style?: string;
+  className?: string;
+}) {
   const [page, setPage] = React.useState(1);
   const [list, setList] = React.useState<LemonHeadsLayer[]>([]);
 
@@ -245,12 +264,12 @@ function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: 
         listInnerElement.removeEventListener('scroll', onScroll);
       };
     }
-  }, [list.length]);
+  }, [list.length, page]);
 
   const colors = colorset.find((i) => i.name === layerKey);
 
   return (
-    <div className="flex flex-col gap-4 md:pb-4 p-4 min-h-[136px] max-h-[692px] overflow-auto no-scrollbar">
+    <div className={twMerge('flex flex-col gap-4 md:pb-4 p-4 overflow-auto no-scrollbar', className)}>
       {!!list.length && (
         <div
           ref={listInnerRef}
@@ -272,10 +291,11 @@ function SubContent({ layerKey, art_style }: { layerKey: TraitType; art_style?: 
                   onClick={() => {
                     const conflicts = findConflictTraits(traits.filter(Boolean), dt);
                     if (conflicts.length && conflicts.find((i) => i.type !== item.type)) {
+                      const conflictStr = conflicts.map((i) => capitalizeWords(i.type)).join(' or ');
                       modal.open(ConfirmModal, {
                         props: {
-                          title: `Remove ${item.type}?`,
-                          subtitle: `Selecting a ${conflicts.map((i) => i.type).join(' or ')} will remove any ${item.type} you have selected. Are you sure you want to continue?`,
+                          title: `Remove ${conflictStr}?`,
+                          subtitle: `Selecting a ${capitalizeWords(item.type)} will remove any ${conflictStr} you have selected. Are you sure you want to continue?`,
                           onConfirm: () => {
                             dispatch({
                               type: LemonHeadActionKind.set_trait,

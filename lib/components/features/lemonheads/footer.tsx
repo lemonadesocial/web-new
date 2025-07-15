@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import { Eip1193Provider, ethers } from 'ethers';
 import { isMobile } from 'react-device-detect';
 import { useAppKitAccount, useAppKitNetwork, useAppKitProvider } from '@reown/appkit/react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import React from 'react';
 import Link from 'next/link';
 
@@ -12,8 +12,7 @@ import { Button, Checkbox, modal, ModalContent, toast } from '$lib/components/co
 import { trpc } from '$lib/trpc/client';
 import { useAccount } from '$lib/hooks/useLens';
 import { chainsMapAtom } from '$lib/jotai';
-import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
-import { LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
+import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
 import { useQuery } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
@@ -22,7 +21,6 @@ import { TraitExtends } from '$lib/trpc/lemonheads/types';
 
 import { ConnectWallet } from '../modals/ConnectWallet';
 
-import { mintAtom } from './store';
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from './provider';
 import { LEMONHEAD_CHAIN_ID } from './utils';
 import { LemonHeadPreview } from './preview';
@@ -31,10 +29,8 @@ export function LemonHeadFooter() {
   const router = useRouter();
   const [state, dispatch] = useLemonHeadContext();
 
-  const [mint] = useAtom(mintAtom);
-
   const currentStep = state.steps[state.currentStep];
-  const disabled = state.currentStep === LemonHeadStep.claim && !mint.minted;
+  const disabled = state.currentStep === LemonHeadStep.claim && !state.mint.minted;
 
   const { account: myAccount } = useAccount();
   const chainsMap = useAtomValue(chainsMapAtom);
@@ -63,7 +59,7 @@ export function LemonHeadFooter() {
         isValid = false;
       }
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error(formatError(error.message));
       isValid = false;
     }
 
@@ -80,7 +76,7 @@ export function LemonHeadFooter() {
       const valid = await checkMinted();
       if (!valid) return;
 
-      if (!isConnected || chainId?.toString() !== chainsMap[LENS_CHAIN_ID].chain_id) {
+      if (!isConnected || chainId?.toString() !== chainsMap[LEMONHEAD_CHAIN_ID].chain_id) {
         modal.open(ConnectWallet, {
           props: {
             onConnect: () => {
@@ -95,7 +91,10 @@ export function LemonHeadFooter() {
                         modal.open(MintModal, {
                           props: {
                             traits: state.traits,
-                            onComplete: () => dispatch({ type: LemonHeadActionKind.next_step }),
+                            onComplete: (payload) => {
+                              dispatch({ type: LemonHeadActionKind.set_mint, payload });
+                              dispatch({ type: LemonHeadActionKind.next_step });
+                            },
                           },
                         }),
                     },
@@ -104,23 +103,32 @@ export function LemonHeadFooter() {
                 }
               });
             },
-            chain: chainsMap[LENS_CHAIN_ID],
+            chain: chainsMap[LEMONHEAD_CHAIN_ID],
           },
         });
 
         return;
       } else {
-        if (!mint.minted) {
+        if (!state.mint.minted) {
           modal.open(MintModal, {
             props: {
               traits: state.traits,
-              onComplete: () => dispatch({ type: LemonHeadActionKind.next_step }),
+              onComplete: (payload) => {
+                dispatch({ type: LemonHeadActionKind.set_mint, payload });
+                dispatch({ type: LemonHeadActionKind.next_step });
+              },
             },
           });
         }
 
         return;
       }
+    }
+
+    if (state.currentStep === LemonHeadStep.claim && state.mint.minted) {
+      dispatch({ type: LemonHeadActionKind.reset });
+      router.push('/');
+      return;
     }
 
     dispatch({ type: LemonHeadActionKind.next_step });
@@ -219,12 +227,19 @@ function BeforeMintModal({ onContinue }: { onContinue: () => void }) {
   );
 }
 
-function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete: () => void }) {
-  const [mint, setMintAtom] = useAtom(mintAtom);
+function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete: (mintState: any) => void }) {
   const { address } = useAppKitAccount();
 
   const [isMinting, setIsMinting] = React.useState(false);
   const [mintPrice, setMintPrice] = React.useState<bigint | null>(null);
+  const [mintState, setMintState] = React.useState({
+    minted: false,
+    video: false,
+    mute: true,
+    image: '',
+    txHash: '',
+    tokenId: '',
+  });
 
   const mutation = trpc.mintNft.useMutation();
 
@@ -235,13 +250,8 @@ function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete:
 
   // NOTE: only pick one can get free
   const sponsor = data?.listLemonheadSponsors.sponsors.find((s) => (s.remaining || 0) < s.limit)?.sponsor;
-  // {
-  //   _id: 1,
-  //   image_url: '',
-  //   name: 'SheFi',
-  //   message:
-  //     'Hi! You’ve been sponsored by the SheFi community—a collective empowering women and non-binary individuals to explore, learn, and lead in Web3. Your LemonHeads journey starts here. Make it bold, make it yours.',
-  // };
+
+  const { chainId } = useAppKitNetwork();
 
   const chainsMap = useAtomValue(chainsMapAtom);
   const chain = chainsMap[LEMONHEAD_CHAIN_ID];
@@ -271,13 +281,23 @@ function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete:
   React.useEffect(() => {
     if (count === 0) {
       modal.close();
-      setMintAtom((prev) => ({ ...prev, minted: true, video: true }));
-      onComplete();
+      onComplete({ ...mintState, minted: true, video: true });
     }
-  }, [count]);
+  }, [count, mintState]);
 
   const handleMint = async () => {
     try {
+      if (chainId?.toString() !== chainsMap[LEMONHEAD_CHAIN_ID].chain_id) {
+        modal.open(ConnectWallet, {
+          props: {
+            onConnect: () => modal.close(),
+            chain: chainsMap[LEMONHEAD_CHAIN_ID],
+          },
+        });
+
+        return;
+      }
+
       setIsMinting(true);
 
       if (!address) throw new Error('No wallet address found');
@@ -297,7 +317,7 @@ function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete:
         [mintData.look, mintData.metadata, mintData.signature],
         { value: mintPrice },
       );
-      setMintAtom((prev) => ({ ...prev, txHash: tx?.hash }));
+      setMintState((prev) => ({ ...prev, txHash: tx?.hash }));
 
       const receipt = await tx.wait();
       const iface = new ethers.Interface(LemonheadNFT.abi);
@@ -321,7 +341,7 @@ function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete:
 
       if (parsedTransferLog) {
         const tokenId = parsedTransferLog.args?.tokenId?.toString();
-        setMintAtom((prev) => ({ ...prev, image: mintData.image, txHash: tx?.hash, tokenId }));
+        setMintState((prev) => ({ ...prev, image: mintData.image, txHash: tx?.hash, tokenId }));
         setDone(true);
 
         setInterval(() => {
@@ -330,13 +350,13 @@ function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete:
         console.log('Token ID:', tokenId);
       }
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error(formatError(error.message));
     } finally {
       setIsMinting(false);
     }
   };
 
-  if (mint.txHash) {
+  if (mintState.txHash) {
     return (
       <ModalContent
         icon={
@@ -350,7 +370,7 @@ function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete:
             iconRight="icon-arrow-outward"
             className="rounded-full"
             variant="tertiary-alt"
-            onClick={() => window.open(`${SEPOLIA_ETHERSCAN}/tx/${mint.txHash}`)}
+            onClick={() => window.open(`${SEPOLIA_ETHERSCAN}/tx/${mintState.txHash}`)}
           >
             View txn.
           </Button>
