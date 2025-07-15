@@ -14,6 +14,9 @@ import {
   BuyerInfoInput,
   ConnectWalletInput,
   Event,
+  EthereumAccount,
+  EthereumRelayAccount,
+  EthereumStakeAccount,
   NewPaymentAccount,
   PricingInfo,
   PurchasableItem,
@@ -77,6 +80,25 @@ export const requiredProfileFieldsAtom = atom<ApplicationProfileField[]>([]);
 
 export const pricingInfoAtom = atom<PricingInfo | null>(null);
 
+export const tokenAddressAtom = atom<string | null>((get) => {
+  const currency = get(currencyAtom);
+  const selectedPaymentAccount = get(selectedPaymentAccountAtom);
+  const pricingInfo = get(pricingInfoAtom);
+  
+  if (!currency || !pricingInfo) return null;
+  
+  const paymentAccount = selectedPaymentAccount 
+    ? pricingInfo.payment_accounts?.find(account => account._id === selectedPaymentAccount._id) 
+    : pricingInfo.payment_accounts?.[0];
+    
+  if (!paymentAccount?.account_info) return null;
+  
+  const paymentAccountInfo = paymentAccount.account_info as (EthereumAccount | EthereumRelayAccount | EthereumStakeAccount);
+  const network = (paymentAccountInfo as EthereumAccount).network;
+  
+  return paymentAccountInfo.currency_map[currency]?.contracts[network] ?? null;
+});
+
 interface FormInstances {
   [key: string]: UseFormReturn<any>;
 }
@@ -98,3 +120,4 @@ export const stripePaymentMethodAtom = atom<string>('');
 export const discountCodeAtom = atom<string | null>(null);
 
 export const ethereumWalletInputAtom = atom<ConnectWalletInput | null>(null);
+
