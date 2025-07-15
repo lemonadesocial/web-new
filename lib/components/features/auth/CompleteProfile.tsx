@@ -101,7 +101,7 @@ export function CompleteProfile() {
           loading={isSubmitting}
           disabled={!displayName.trim()}
         >
-          Let&aspos;s Go
+          {`Let's Go`}
         </Button>
       </div>
     </ModalContent>
