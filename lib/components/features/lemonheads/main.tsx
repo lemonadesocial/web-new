@@ -79,7 +79,7 @@ function Content() {
           {showPreview && (
             <div className="flex-1">
               {state.currentStep === LemonHeadStep.getstarted ? (
-                <div className="max-w-[692px] aspect-square relative">
+                <div className="max-w-[80px] md:max-w-[692px] aspect-square relative">
                   <img
                     src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
                     className="rounded-sm w-full h-full"
