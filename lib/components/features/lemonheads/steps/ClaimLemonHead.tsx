@@ -23,8 +23,6 @@ export function ClaimLemonHead() {
   const videoRef = React.useRef(null);
   const playerRef = React.useRef<Player>(null);
 
-  React.useEffect(() => dispatch({ type: LemonHeadActionKind.set_mint, payload: { minted: true, video: true } }), []);
-
   React.useEffect(() => {
     if (videoRef.current && !playerRef.current) {
       const srcPath = isMobile ? 'lemonhead_mint_mobile' : 'lemonhead_mint_web';

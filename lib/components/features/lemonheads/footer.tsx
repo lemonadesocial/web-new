@@ -281,7 +281,7 @@ function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete:
   React.useEffect(() => {
     if (count === 0) {
       modal.close();
-      onComplete({ mintState, minted: true, video: true });
+      onComplete({ ...mintState, minted: true, video: true });
     }
   }, [count, mintState]);
 
