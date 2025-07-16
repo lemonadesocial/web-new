@@ -124,7 +124,7 @@ function Content() {
             </>
           )}
 
-          <div className={clsx('md:flex-1', showPreview && 'max-w-[588px]')}>
+          <div className={clsx('md:flex-1', showPreview ? 'max-w-[588px]' : 'h-full')}>
             {Object.entries(state.steps).map(([key, item]) => {
               if (!item.mounted) return null;
               const Comp = item.component || React.Fragment;

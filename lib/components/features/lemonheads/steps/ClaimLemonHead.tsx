@@ -50,43 +50,45 @@ export function ClaimLemonHead() {
   };
 
   return (
-    <div className="px-11 pb-11 pt-7 w-full max-w-[1440px]">
-      <div className="relative z-10 flex flex-col items-center gap-11 text-center">
+    <div className="p-4 md:px-11 md:pb-11 md:pt-7 w-full max-w-[1440px] h-full">
+      <div className="relative z-10 flex flex-col items-center gap-5 md:gap-11 text-center h-full">
         <div>
           <p className="text-secondary md:text-xl">Welcome to</p>
           <p className="font-title text-2xl md:text-3xl font-semibold!">United Stands of Lemonade</p>
         </div>
-        <ImageLazyLoad src={getSrc()} className="border border-primary w-[1200px]" />
+        <div className="flex-1 flex flex-col items-center gap-5 justify-center w-full">
+          <ImageLazyLoad src={getSrc()} className="border border-primary" />
 
-        <div className="flex w-full max-w-[1200px] justify-between">
-          <Button
-            variant="secondary"
-            iconLeft="icon-passport"
-            onClick={() => dispatch({ type: LemonHeadActionKind.reset_mint })}
-          >
-            Get Another Look
-          </Button>
+          <div className="flex flex-wrap gap-5 w-full max-w-[1200px] justify-center md:justify-between">
+            <Button
+              variant="secondary"
+              iconLeft="icon-passport"
+              onClick={() => dispatch({ type: LemonHeadActionKind.reset_mint })}
+            >
+              Get Another Look
+            </Button>
 
-          <div className="flex gap-2">
-            <Button
-              variant="tertiary-alt"
-              icon={state.mint.mute ? 'icon-speaker-wave' : 'icon-speaker-x-mark'}
-              onClick={() => dispatch({ type: LemonHeadActionKind.set_mint, payload: { mute: !state.mint.mute } })}
-            />
-            <Button
-              iconRight="icon-arrow-outward"
-              variant="tertiary-alt"
-              onClick={() => window.open(`${SEPOLIA_ETHERSCAN}/tx/${state.mint.txHash}`)}
-            >
-              View txn.
-            </Button>
-            <Button
-              iconLeft="icon-share"
-              variant="tertiary-alt"
-              onClick={() => drawer.open(RightPane, { props: { image: state.mint.image } })}
-            >
-              Share
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="tertiary-alt"
+                icon={state.mint.mute ? 'icon-speaker-wave' : 'icon-speaker-x-mark'}
+                onClick={() => dispatch({ type: LemonHeadActionKind.set_mint, payload: { mute: !state.mint.mute } })}
+              />
+              <Button
+                iconRight="icon-arrow-outward"
+                variant="tertiary-alt"
+                onClick={() => window.open(`${SEPOLIA_ETHERSCAN}/tx/${state.mint.txHash}`)}
+              >
+                View txn.
+              </Button>
+              <Button
+                iconLeft="icon-share"
+                variant="secondary"
+                onClick={() => drawer.open(RightPane, { props: { image: state.mint.image } })}
+              >
+                Share
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -99,7 +101,7 @@ export function ClaimLemonHead() {
           ref={videoRef}
           muted={state.mint.mute}
           playsInline
-          style={{ width: '100%', height: '100%', objectFit: 'fill' }}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         ></video>
       </div>
     </div>
