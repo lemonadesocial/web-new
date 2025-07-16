@@ -77,7 +77,7 @@ export function LemonHeadCreate() {
             return (
               <Content
                 key={key}
-                className={clsx('max-h-[692px]', selected !== key ? 'hidden' : '')}
+                className={clsx(selected !== key ? 'hidden' : '')}
                 tabs={(item as unknown as any).tabs?.filter(Boolean)}
                 layerKey={key as TraitType}
               />

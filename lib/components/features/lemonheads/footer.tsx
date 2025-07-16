@@ -320,7 +320,7 @@ function MintModal({
 
       if (!contractAddress) throw new Error('LemonheadNFT contract address not set');
       if (!walletProvider) throw new Error('No wallet provider found');
-      if (!mintPrice) throw new Error('Mint price not set');
+      if (!sponsor && !mintPrice) throw new Error('Mint price not set');
 
       const tx = await writeContract(
         LemonheadNFTContract,
