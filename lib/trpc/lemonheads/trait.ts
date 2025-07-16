@@ -2,6 +2,7 @@ import { Filter, layerings, TraitType } from '$lib/services/lemonhead/core';
 import { merge } from 'lodash';
 import { BodyRace, BodySize, Gender, LemonHeadsLayer, SkinTone, TraitExtends } from './types';
 import { generateUrl } from '$lib/utils/cnd';
+import { isMobile } from 'react-device-detect';
 
 type FilterType = {
   type: TraitType;
@@ -24,7 +25,7 @@ export default class Trait {
       type: data.type,
       value: data.name,
       filters,
-      image: generateUrl(data.file, { resize: { width: 1024, height: 1024 } }),
+      image: generateUrl(data.file, { resize: { width: isMobile ? 492 : 692, height: isMobile ? 492 : 692 } }),
     } as TraitExtends;
   }
 

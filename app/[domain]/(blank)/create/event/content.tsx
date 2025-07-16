@@ -22,6 +22,7 @@ import {
   File,
   GetSpacesDocument,
   GetSpacesQuery,
+  PinEventsToSpaceDocument,
   Space,
   SpaceRole,
 } from '$lib/graphql/generated/backend/graphql';
@@ -117,11 +118,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
   const fileInputRef = React.useRef<any>(null);
   const [uploading, setUploading] = React.useState(false);
 
-  const [create, { loading }] = useMutation(CreateEventDocument, {
-    onComplete: (_, data) => {
-      window.location.pathname = `/manage/event/${data?.createEvent?.shortid}`;
-    },
-  });
+  const [create, { loading, client }] = useMutation(CreateEventDocument);
 
   const { control, watch, setValue, handleSubmit } = useForm<EventFormValue>({
     defaultValues: {
@@ -148,8 +145,8 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
 
   const [title, address] = watch(['title', 'address']);
 
-  const onSubmit = (value: EventFormValue) => {
-    create({
+  const onSubmit = async (value: EventFormValue) => {
+    const { data } = await create({
       variables: {
         input: {
           title: value.title,
@@ -169,7 +166,14 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
           ...value.options,
         },
       },
-    });
+    }); 
+
+    if (data?.createEvent?._id && value.space) {
+      const variables = { events: [data?.createEvent?._id], space: value.space };
+      await client.query({ query: PinEventsToSpaceDocument, variables, fetchPolicy: 'network-only' });
+    }
+
+    window.location.pathname = `/manage/event/${data?.createEvent?.shortid}`;
   };
 
   // Function to handle changes in the file input (when a file is selected)

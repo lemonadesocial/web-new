@@ -20,7 +20,7 @@ export function CanvasImageRenderer({ file, style }: { file: string; style?: Rea
       const img = new Image();
 
       img.onload = () => {
-        const devicePixelRatio = window.devicePixelRatio || 1;
+        const devicePixelRatio = 1;
         canvas.width = img.width * devicePixelRatio;
         canvas.height = img.height * devicePixelRatio;
         ctx.scale(devicePixelRatio, devicePixelRatio);
