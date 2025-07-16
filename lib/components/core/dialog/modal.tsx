@@ -12,6 +12,7 @@ interface Options<T> {
   dismissible?: boolean;
   className?: string;
   skipBaseClassName?: boolean;
+  onClose?: () => void;
 }
 
 interface ModalItem {
@@ -74,6 +75,8 @@ export function ModalContainer({ modal }: { modal: Modal }) {
       if (modalRef && event.target instanceof Node && !modalRef.contains(event.target)) {
         if (topModal.options.dismissible) {
           handleClose(topModal.id);
+
+          topModal.options.onClose?.();
         }
       }
     },
