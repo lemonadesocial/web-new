@@ -6,13 +6,13 @@ import Header from '$lib/components/layouts/header';
 import { trpc } from '$lib/trpc/client';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { FilterType } from '$lib/services/lemonhead/core';
+import lemonHead from '$lib/trpc/lemonheads';
 
 import { LemonHeadFooter } from './footer';
 import { LemonHeadPreview } from './preview';
 
 import { LemonHeadActionKind, LemonHeadProvider, LemonHeadStep, useLemonHeadContext } from './provider';
 import { SquareButton } from './shared';
-import lemonHead from '$lib/trpc/lemonheads';
 
 export function LemonHeadMain() {
   return (
@@ -75,20 +75,23 @@ function Content() {
       </div>
 
       <div className="flex-1 overflow-auto md:overflow-hidden">
-        <div className="flex flex-col md:flex-row-reverse max-w-[1440px] mx-auto gap-5 md:gap-18 p-4 md:p-11 md:max-h-full no-scrollbar">
+        <div className="flex flex-col md:flex-row-reverse max-w-[1440px] mx-auto gap-5 md:gap-18 p-4 md:p-11 md:max-h-full no-scrollbar h-full">
           {showPreview && (
-            <div className="flex-1">
+            <>
               {state.currentStep === LemonHeadStep.getstarted ? (
-                <div className="max-w-[80px] md:max-w-[692px] aspect-square relative">
+                <div className="max-w-[80px] md:max-w-[692px] md:max-h-[692px] aspect-square relative">
                   <img
                     src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
                     className="rounded-sm w-full h-full"
                   />
                 </div>
               ) : (
-                <div className="flex flex-col gap-8">
-                  <LemonHeadPreview traits={state.traits} />
-
+                <div className="flex-1 overflow-hidden flex flex-col justify-between gap-8">
+                  <div className="flex-1 h-full overflow-hidden flex justify-center items-center">
+                    <div className="aspect-square h-full md:w-full">
+                      <LemonHeadPreview traits={state.traits} />
+                    </div>
+                  </div>
                   <div className="flex gap-3">
                     {skinToneOpts[body?.value || 'human'].map((item) => (
                       <SquareButton
@@ -118,9 +121,10 @@ function Content() {
                   </div>
                 </div>
               )}
-            </div>
+            </>
           )}
-          <div className={clsx('flex-1', showPreview && 'max-w-[588px]')}>
+
+          <div className={clsx('md:flex-1', showPreview && 'max-w-[588px]')}>
             {Object.entries(state.steps).map(([key, item]) => {
               if (!item.mounted) return null;
               const Comp = item.component || React.Fragment;

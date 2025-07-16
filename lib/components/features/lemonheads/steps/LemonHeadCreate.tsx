@@ -77,7 +77,7 @@ export function LemonHeadCreate() {
             return (
               <Content
                 key={key}
-                className={clsx('h-[692px]', selected !== key ? 'hidden' : '')}
+                className={clsx('md:h-[692px]', selected !== key ? 'hidden' : '')}
                 tabs={(item as unknown as any).tabs?.filter(Boolean)}
                 layerKey={key as TraitType}
               />
@@ -181,7 +181,7 @@ function Content({
         </>
       )}
 
-      {!tabs.length && <SubContent className="h-[692px]" layerKey={layerKey} />}
+      {!tabs.length && <SubContent className="md:h-[692px]" layerKey={layerKey} />}
     </div>
   );
 }
@@ -189,9 +189,12 @@ function Content({
 function Loading({ className, loadMore }: { className?: string; loadMore?: boolean }) {
   if (loadMore) return <p className="text-center">Loading...</p>;
   return (
-    <div className={twMerge('flex md:grid grid-cols-3 gap-3 overflow-auto no-scrollbar', className)}>
+    <div className={twMerge('flex md:grid grid-cols-3 gap-3 overflow-auto no-scrollbar p-4', className)}>
       {Array.from({ length: 15 }).map((_, idx) => (
-        <Skeleton key={idx} className="w-full min-w-[80px] aspect-square" animate />
+        <div key={idx} className="flex flex-col gap-2">
+          <Skeleton className="w-full min-w-[80px] aspect-square" animate />
+          <Skeleton className="w-full min-w-[80px] h-4 rounded-xs" animate />
+        </div>
       ))}
     </div>
   );
@@ -269,12 +272,12 @@ function SubContent({
   const colors = colorset.find((i) => i.name === layerKey);
 
   return (
-    <div className={twMerge('flex flex-col gap-4 md:pb-4 p-4 overflow-auto no-scrollbar', className)}>
+    <div className={twMerge('flex flex-col gap-4 overflow-auto no-scrollbar', className)}>
       {!!list.length && (
         <div
           ref={listInnerRef}
           className={clsx(
-            'flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar',
+            'flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar p-4',
             !isMobile && colors && 'pb-20',
           )}
         >
@@ -315,9 +318,10 @@ function SubContent({
             })}
         </div>
       )}
+
       {isLoading && ((isMobile && !list.length) || !isMobile) && <Loading loadMore={!!list.length} />}
 
-      {colors && !isMobile && (
+      {colors && (
         <ColorTool
           selected={selectedColor}
           colorset={colors}
