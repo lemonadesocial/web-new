@@ -363,6 +363,7 @@ function MintModal({
         console.log('Token ID:', tokenId);
       }
     } catch (error: any) {
+      console.log(error);
       toast.error(formatError(error.message));
     } finally {
       setIsMinting(false);
