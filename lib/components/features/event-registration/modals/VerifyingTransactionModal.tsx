@@ -91,7 +91,8 @@ export function VerifyingTransactionModal({
         paymentId,
         paymentSecret,
         hasJoinRequest
-      }
+      },
+      dismissible: false
     });
   };
 

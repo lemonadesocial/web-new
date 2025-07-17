@@ -24,7 +24,7 @@ export function ProfileMenu({
         {({ toggle }) => (
           <>
             {account && options.canEdit && (
-              <MenuItem onClick={async () => modal.open(EditProfileModal, { dismissible: true })}>
+              <MenuItem onClick={async () => modal.open(EditProfileModal)}>
                 <div className="flex items-center gap-2.5">
                   <i className="icon-person-edit size-4 text-secondary" />
                   <p className="text-sm text-secondary">Edit Profile</p>
@@ -43,7 +43,7 @@ export function ProfileMenu({
 
             <MenuItem
               onClick={async () => {
-                modal.open(SelectProfileModal, { dismissible: true });
+                modal.open(SelectProfileModal);
                 toggle();
               }}
             >

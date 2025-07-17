@@ -69,7 +69,7 @@ export function ClaimAccountModal() {
     }
 
     modal.close();
-    modal.open(ClaimLemonadeUsernameModal, { dismissible: true});
+    modal.open(ClaimLemonadeUsernameModal);
   }
 
   return (

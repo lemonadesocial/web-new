@@ -145,7 +145,6 @@ export function PostComposer({ placeholder, onPost, showFeedOptions = true }: Po
                       props: {
                         onConfirm: setEvent,
                       },
-                      dismissible: true
                     });
                   }}
                 />

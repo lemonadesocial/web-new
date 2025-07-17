@@ -42,7 +42,6 @@ export function MyTicketsPane({ tickets, event }: { tickets: Ticket[]; event: Ev
                     props: {
                       event
                     },
-                    dismissible: true
                   })}
                 >
                   Add to Calendar

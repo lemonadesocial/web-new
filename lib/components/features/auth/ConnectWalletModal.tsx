@@ -31,7 +31,7 @@ export function ConnectWalletModal({ verifyRequired, skipSelectProfile }: { veri
     if (verified && isConnected && isChainValid && !skipSelectProfile) {
       modal.close();
       setTimeout(() => {
-        modal.open(SelectProfileModal, { dismissible: true });
+        modal.open(SelectProfileModal);
       });
     }
   }, [isConnected, isChainValid, verified]);
@@ -99,7 +99,7 @@ export function ConnectWalletModal({ verifyRequired, skipSelectProfile }: { veri
         onClick={() => {
           modal.close();
           setTimeout(() => {
-            modal.open(SelectProfileModal, { dismissible: true });
+            modal.open(SelectProfileModal);
           });
         }}
       >

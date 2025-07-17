@@ -112,10 +112,10 @@ function RightPane({ image }: { image: string }) {
 
   const handleUpdateProfile = () => {
     if (!myAccount) {
-      modal.open(SelectProfileModal, { dismissible: true });
+      modal.open(SelectProfileModal);
     } else {
       if (!username) modal.open(ClaimLemonadeUsernameModal);
-      else modal.open(EditProfileModal, { dismissible: true });
+      else modal.open(EditProfileModal);
     }
   };
 

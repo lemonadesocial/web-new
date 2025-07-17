@@ -25,7 +25,6 @@ export function PostComment({ post }: PostCommentProps) {
         post,
         onSuccess: () => setCommentCount(commentCount + 1),
       },
-      dismissible: true,
     });
   };
 

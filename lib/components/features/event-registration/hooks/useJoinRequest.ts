@@ -14,7 +14,7 @@ export function useJoinRequest() {
   const setNonLoggedInStatus = useSetAtom(nonLoggedInStatusAtom);
 
   return () => {
-    modal.open(RequestSentModal, { dismissible: true });
+    modal.open(RequestSentModal);
 
     if (session) {
       client.refetchQuery({

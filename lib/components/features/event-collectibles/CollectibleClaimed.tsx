@@ -25,6 +25,7 @@ export function CollectibleClaimed({ token, claim }: { token?: TokenComplex; cla
               modal.open(
                 TransferCollectible,
                 {
+                  dismissible: false,
                   props: {
                     claim,
                     token

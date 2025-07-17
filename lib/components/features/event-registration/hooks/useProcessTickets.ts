@@ -13,7 +13,7 @@ export function useProcessTickets() {
 
   return () => {
     if (session) {
-      registrationModal.open(TicketsProcessingModal);
+      registrationModal.open(TicketsProcessingModal, { dismissible: false });
       return;
     }
 

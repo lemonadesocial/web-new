@@ -615,7 +615,7 @@ export function useLensAuth() {
     }
 
     if (sessionClient) {
-      modal.open(SelectProfileModal, { dismissible: true });
+      modal.open(SelectProfileModal);
       return;
     }
 
@@ -779,7 +779,7 @@ export function useLensConnect () {
         onConnect: () => {
           modal.close();
           setTimeout(() => {
-            modal.open(SelectProfileModal, { dismissible: true });
+            modal.open(SelectProfileModal);
           });
         },
         chain: chainsMap[LENS_CHAIN_ID]

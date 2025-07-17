@@ -140,7 +140,8 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
         paymentSecret,
         txHash,
         hasJoinRequest
-      }
+      },
+      dismissible: false
     });
   };
 

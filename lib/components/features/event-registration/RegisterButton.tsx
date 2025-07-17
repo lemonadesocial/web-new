@@ -25,7 +25,7 @@ export function RegisterButton() {
   const isFree = pricingInfo?.total === '0';
 
   const openRegistrationModal = () => {
-    registrationModal.open(RegistrationModal, { skipBaseClassName: true });
+    registrationModal.open(RegistrationModal, { dismissible: false, skipBaseClassName: true });
   };
 
   if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session) return (

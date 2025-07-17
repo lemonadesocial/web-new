@@ -108,7 +108,6 @@ export function AddCommentModal({ post, onSuccess }: AddCommentModalProps) {
                     props: {
                       onConfirm: link => setSharingLink(link),
                     },
-                    dismissible: true
                   });
                 }}
               />

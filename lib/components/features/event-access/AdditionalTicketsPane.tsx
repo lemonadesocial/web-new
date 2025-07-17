@@ -47,7 +47,7 @@ export function AdditionalTicketsPane({ tickets }: { tickets: Ticket[] }) {
                     variant="tertiary"
                     size="sm"
                     iconLeft="icon-qr"
-                    onClick={() => modal.open(ViewQRModal, { props: { ticket }, dismissible: true })}
+                    onClick={() => modal.open(ViewQRModal, { props: { ticket } })}
                   >
                     View QR
                   </Button>
@@ -59,7 +59,7 @@ export function AdditionalTicketsPane({ tickets }: { tickets: Ticket[] }) {
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => modal.open(AssignTicketModal, { props: { ticket } })}
+                    onClick={() => modal.open(AssignTicketModal, { dismissible: false, props: { ticket } })}
                   >
                     Assign
                   </Button>

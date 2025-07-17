@@ -79,6 +79,7 @@ function CommunityThemeBuilderPane({
             dispatch({ type: ThemeBuilderActionKind.reset, payload: initial });
           },
         },
+        dismissible: false
       });
       sheetRef.current?.snapTo(0);
     } else {
