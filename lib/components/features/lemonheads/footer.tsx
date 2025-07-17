@@ -16,7 +16,7 @@ import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/cry
 import { useQuery } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
-import { GetListLemonheadSponsorsDocument } from '$lib/graphql/generated/backend/graphql';
+import { GetListLemonheadSponsorsDocument, LemonheadSponsor } from '$lib/graphql/generated/backend/graphql';
 import { TraitExtends } from '$lib/trpc/lemonheads/types';
 
 import { ConnectWallet } from '../modals/ConnectWallet';
@@ -41,6 +41,17 @@ export function LemonHeadFooter() {
   const chain = chainsMap[LEMONHEAD_CHAIN_ID];
   const contractAddress = chain?.lemonhead_contract_address;
 
+  const { address } = useAppKitAccount();
+  const { data } = useQuery(GetListLemonheadSponsorsDocument, {
+    variables: { wallet: address! },
+    skip: !address,
+    fetchPolicy: 'network-only',
+  });
+  // NOTE: only pick one can get free
+  const sponsor = data?.listLemonheadSponsors.sponsors.find(
+    (s) => s.remaining && s.remaining > 0 && s.remaining <= s.limit,
+  )?.sponsor;
+
   const checkMinted = async () => {
     let isValid = true;
 
@@ -59,7 +70,7 @@ export function LemonHeadFooter() {
         isValid = false;
       }
     } catch (error: any) {
-      toast.error(formatError(error.message));
+      toast.error(formatError(error));
       isValid = false;
     }
 
@@ -90,6 +101,7 @@ export function LemonHeadFooter() {
                         modal.open(MintModal, {
                           props: {
                             traits: state.traits,
+                            sponsor,
                             onComplete: (payload) => {
                               dispatch({ type: LemonHeadActionKind.set_mint, payload });
                               dispatch({ type: LemonHeadActionKind.next_step });
@@ -114,6 +126,7 @@ export function LemonHeadFooter() {
           modal.open(MintModal, {
             props: {
               traits: state.traits,
+              sponsor,
               onComplete: (payload) => {
                 dispatch({ type: LemonHeadActionKind.set_mint, payload });
                 dispatch({ type: LemonHeadActionKind.next_step });
@@ -138,7 +151,7 @@ export function LemonHeadFooter() {
 
   if (isMobile) {
     return (
-      <div className="flex items-center gap-2 min-h-[64px] px-4">
+      <div className="flex items-center gap-2 min-h-[64px] px-4 z-10">
         <Button icon="icon-logout" onClick={handlePrev} variant="tertiary" />
         <Button variant="secondary" className="w-full" onClick={handleNext} disabled={disabled}>
           {currentStep?.btnText}
@@ -229,7 +242,15 @@ function BeforeMintModal({ onContinue }: { onContinue: () => void }) {
   );
 }
 
-function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete: (mintState: any) => void }) {
+function MintModal({
+  traits,
+  onComplete,
+  sponsor,
+}: {
+  traits: TraitExtends[];
+  onComplete: (mintState: any) => void;
+  sponsor?: LemonheadSponsor;
+}) {
   const { address } = useAppKitAccount();
 
   const [isMinting, setIsMinting] = React.useState(false);
@@ -244,14 +265,6 @@ function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete:
   });
 
   const mutation = trpc.mintNft.useMutation();
-
-  const { data } = useQuery(GetListLemonheadSponsorsDocument, {
-    variables: { wallet: address! },
-    skip: !address,
-  });
-
-  // NOTE: only pick one can get free
-  const sponsor = data?.listLemonheadSponsors.sponsors.find((s) => (s.remaining || 0) < s.limit)?.sponsor;
 
   const { chainId } = useAppKitNetwork();
 
@@ -310,15 +323,15 @@ function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete:
 
       if (!contractAddress) throw new Error('LemonheadNFT contract address not set');
       if (!walletProvider) throw new Error('No wallet provider found');
-      if (!mintPrice) throw new Error('Mint price not set');
+      if (!sponsor && !mintPrice) throw new Error('Mint price not set');
 
       const tx = await writeContract(
         LemonheadNFTContract,
         contractAddress,
         walletProvider as Eip1193Provider,
-        'mint',
+        sponsor ? 'mintFree' : 'mint',
         [mintData.look, mintData.metadata, mintData.signature],
-        { value: mintPrice },
+        { value: sponsor ? 0 : mintPrice },
       );
       setMintState((prev) => ({ ...prev, txHash: tx?.hash }));
 
@@ -353,7 +366,8 @@ function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete:
         console.log('Token ID:', tokenId);
       }
     } catch (error: any) {
-      toast.error(formatError(error.message));
+      console.log(error);
+      toast.error(formatError(error));
     } finally {
       setIsMinting(false);
     }

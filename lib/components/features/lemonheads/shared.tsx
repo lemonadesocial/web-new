@@ -6,6 +6,7 @@ import { preload } from 'react-dom';
 
 import { Button, Card, modal } from '$lib/components/core';
 import { LemonHeadsColor } from '$lib/trpc/lemonheads/types';
+import { isMobile } from 'react-device-detect';
 
 export function CanvasImageRenderer({ file, style }: { file: string; style?: React.CSSProperties }) {
   const canvasRef = React.useRef<any>(null);
@@ -19,7 +20,7 @@ export function CanvasImageRenderer({ file, style }: { file: string; style?: Rea
       const img = new Image();
 
       img.onload = () => {
-        const devicePixelRatio = window.devicePixelRatio || 1;
+        const devicePixelRatio = 1;
         canvas.width = img.width * devicePixelRatio;
         canvas.height = img.height * devicePixelRatio;
         ctx.scale(devicePixelRatio, devicePixelRatio);
@@ -48,12 +49,12 @@ export function SquareButton({
   style?: React.CSSProperties;
 }) {
   return (
-    <div className={clsx('flex flex-col gap-1 items-center w-full ', className)}>
+    <div className={clsx('flex flex-col gap-1 items-center w-full', className)}>
       <div
         onClick={onClick}
         style={style}
         className={twMerge(
-          'border-2 p-1 cursor-pointer rounded-md min-w-full aspect-square flex justify-center items-center hover:border-quaternary',
+          'border-2 p-1 cursor-pointer rounded-md w-full h-full aspect-square flex justify-center items-center hover:border-quaternary',
           active && 'border-primary!',
         )}
       >
@@ -78,6 +79,25 @@ export function ColorTool({
   onSelect: (params: { key: string; value: string }) => void;
 }) {
   const colors = colorset?.value || [];
+
+  if (isMobile) {
+    return (
+      <div className="flex gap-1 border-t p-4">
+        {colors.map((c) => (
+          <div
+            key={c.value}
+            onClick={() => onSelect(c)}
+            className={clsx(
+              'w-[28px] h-[28px] aspect-square flex items-center justify-center rounded-full border-2 cursor-pointer hover:bg-(--btn-tertiary)',
+              selected === c.key ? 'border-primary' : 'border-transparent',
+            )}
+          >
+            <div className="w-[20px] h-[20px] rounded-full aspect-square" style={{ background: c.value }} />
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <Card.Root className="absolute left-4 bottom-4 max-h-[52px] rounded-full p-3 bg-overlay-secondary">

@@ -21,7 +21,7 @@ export function LemonHeadCreate() {
   const gender = body?.filters?.find((i) => i.type === 'gender')?.value;
   const background = traits.find((i) => i?.type === TraitType.background);
 
-  const [selected, setSelected] = React.useState(bodyRace === 'human' ? 'face' : 'top');
+  const [selected, setSelected] = React.useState(bodyRace === 'alien' ? 'top' : 'face');
 
   const [tabs, setTabs] = React.useState({
     face: {
@@ -68,7 +68,7 @@ export function LemonHeadCreate() {
   if (currentStep !== LemonHeadStep.create) return null;
 
   return (
-    <div className="flex flex-col md:flex-row-reverse flex-1 w-full md:w-[588px] gap-2 overflow-hidden">
+    <div className="flex flex-col h-full md:flex-row-reverse flex-1 w-full md:w-[588px] gap-2 overflow-hidden">
       <Card.Root className="flex-1">
         <Card.Content className="p-0 h-full">
           {Object.entries(tabs).map(([key, item]) => {
@@ -77,7 +77,7 @@ export function LemonHeadCreate() {
             return (
               <Content
                 key={key}
-                className={clsx('h-[692px]', selected !== key ? 'hidden' : '')}
+                className={clsx(selected !== key ? 'hidden' : '')}
                 tabs={(item as unknown as any).tabs?.filter(Boolean)}
                 layerKey={key as TraitType}
               />
@@ -86,7 +86,7 @@ export function LemonHeadCreate() {
         </Card.Content>
       </Card.Root>
 
-      <Card.Root className="w-full md:w-[96px] overflow-auto max-h-fit no-scrollbar">
+      <Card.Root className="w-full max-h-fit md:w-[96px] overflow-auto no-scrollbar">
         <Card.Content className="flex md:flex-col gap-1 p-2">
           {Object.entries(tabs).map(([key, item]) => {
             if (body?.value === 'alien' && key === 'face') return;
@@ -141,7 +141,7 @@ function Content({
   const [selected, setSelected] = React.useState(tabs[0]?.value || layerKey);
 
   return (
-    <div className={className}>
+    <div className={clsx('flex flex-col', className)} style={{ height: 'inherit' }}>
       {!!tabs.length && (
         <>
           <ul className="flex px-4 py-3 sticky top-0 border-b">
@@ -172,7 +172,7 @@ function Content({
             return (
               <SubContent
                 key={item.value}
-                className={clsx('max-h-[635px]', selected !== item.value && 'hidden')}
+                className={clsx('h-full', selected !== item.value && 'hidden')}
                 layerKey={['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? 'background' : selected}
                 art_style={['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? selected : undefined}
               />
@@ -181,7 +181,7 @@ function Content({
         </>
       )}
 
-      {!tabs.length && <SubContent className="h-[692px]" layerKey={layerKey} />}
+      {!tabs.length && <SubContent className="" layerKey={layerKey} />}
     </div>
   );
 }
@@ -189,9 +189,12 @@ function Content({
 function Loading({ className, loadMore }: { className?: string; loadMore?: boolean }) {
   if (loadMore) return <p className="text-center">Loading...</p>;
   return (
-    <div className={twMerge('flex md:grid grid-cols-3 gap-3 overflow-auto no-scrollbar', className)}>
+    <div className={twMerge('flex md:grid grid-cols-3 gap-3 overflow-auto no-scrollbar p-4', className)}>
       {Array.from({ length: 15 }).map((_, idx) => (
-        <Skeleton key={idx} className="w-full min-w-[80px] aspect-square" animate />
+        <div key={idx} className="flex flex-col gap-2">
+          <Skeleton className="w-full min-w-[80px] aspect-square" animate />
+          <Skeleton className="w-full min-w-[80px] h-4 rounded-xs" animate />
+        </div>
       ))}
     </div>
   );
@@ -269,12 +272,12 @@ function SubContent({
   const colors = colorset.find((i) => i.name === layerKey);
 
   return (
-    <div className={twMerge('flex flex-col gap-4 md:pb-4 p-4 overflow-auto no-scrollbar', className)}>
-      {!!list.length && (
+    <div className={twMerge('flex-1 flex flex-col gap-4 overflow-auto no-scrollbar', className)}>
+      {!isLoading && (
         <div
           ref={listInnerRef}
           className={clsx(
-            'flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar',
+            'flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar p-4 min-h-[136px]',
             !isMobile && colors && 'pb-20',
           )}
         >
@@ -287,7 +290,7 @@ function SubContent({
                   key={dt._id}
                   label={dt.value}
                   active={dt.value === trait?.value && dt.type === trait?.type}
-                  className="min-w-[80px]"
+                  className="min-w-[80px] max-w-[80px] md:max-w-full"
                   onClick={() => {
                     const conflicts = findConflictTraits(traits.filter(Boolean), dt);
                     if (conflicts.length && conflicts.find((i) => i.type !== item.type)) {
@@ -316,9 +319,10 @@ function SubContent({
             })}
         </div>
       )}
+
       {isLoading && ((isMobile && !list.length) || !isMobile) && <Loading loadMore={!!list.length} />}
 
-      {colors && !isMobile && (
+      {colors && (
         <ColorTool
           selected={selectedColor}
           colorset={colors}
