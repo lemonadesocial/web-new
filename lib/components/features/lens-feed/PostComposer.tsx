@@ -211,7 +211,7 @@ export function PostComposer({ placeholder, onPost, showFeedOptions = true }: Po
 
       {
         !account && (
-          <div className="px-4 py-3 gap-3 flex items-center bg-card">
+          <div className="px-4 py-3 gap-3 flex items-center bg-card rounded-b-md">
             <div className="flex items-center justify-center bg-error/16 size-9 rounded-full">
               <i className="icon-lock size-5 text-error" />
             </div>
