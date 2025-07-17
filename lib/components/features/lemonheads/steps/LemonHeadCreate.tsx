@@ -273,11 +273,11 @@ function SubContent({
 
   return (
     <div className={twMerge('flex-1 flex flex-col gap-4 overflow-auto no-scrollbar', className)}>
-      {!!list.length && (
+      {!isLoading && (
         <div
           ref={listInnerRef}
           className={clsx(
-            'flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar p-4',
+            'flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar p-4 min-h-[136px]',
             !isMobile && colors && 'pb-20',
           )}
         >
