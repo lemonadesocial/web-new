@@ -70,7 +70,7 @@ export function LemonHeadFooter() {
         isValid = false;
       }
     } catch (error: any) {
-      toast.error(formatError(error.message));
+      toast.error(formatError(error));
       isValid = false;
     }
 
@@ -364,7 +364,7 @@ function MintModal({
       }
     } catch (error: any) {
       console.log(error);
-      toast.error(formatError(error.message));
+      toast.error(formatError(error));
     } finally {
       setIsMinting(false);
     }

@@ -20,6 +20,7 @@ import {
   Address,
   CreateEventDocument,
   File,
+  GetSpaceDocument,
   GetSpacesDocument,
   GetSpacesQuery,
   PinEventsToSpaceDocument,
@@ -54,13 +55,16 @@ export function Content({ initData }: { initData: { spaces: Space[] } }) {
   const spaces = (dataGetMySpace?.listSpaces || []) as Space[];
   const personalSpace = spaces.find((item) => item._id === spaceId || item.personal);
 
+  const { data: dataListToSpace } = useQuery(GetSpaceDocument, { variables: { id: spaceId }, skip: !spaceId });
+  const space = dataListToSpace?.getSpace;
+
   React.useEffect(() => {
     if (!session && !me) signIn();
   }, [me, session]);
 
   return (
     <div className="pt-4">
-      <FormContent spaces={spaces} space={personalSpace} />
+      <FormContent spaces={spaces} space={space || personalSpace} listToSpace={space} />
     </div>
   );
 }
@@ -108,9 +112,10 @@ type EventFormValue = {
   virtual_url: string;
   cover?: File;
   space?: string;
+  listToSpace?: string;
 };
 
-function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
+function FormContent({ spaces, space, listToSpace }: { space?: Space; spaces: Space[]; listToSpace?: Space }) {
   const [state] = useEventTheme();
   const [timezone, setTimeZone] = React.useState(getUserTimezoneOption());
   const startDate = roundToNext30Minutes(new Date());
@@ -140,8 +145,16 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
         end: roundToNext30Minutes(startDate).toString(),
         timezone: getUserTimezoneOption()?.value,
       },
+      listToSpace: listToSpace?._id,
     },
   });
+
+  React.useEffect(() => {
+    if (listToSpace) {
+      const existing = spaces.findIndex((i) => i._id === listToSpace._id);
+      if (existing <= -1) setValue('listToSpace', listToSpace?._id);
+    }
+  }, [listToSpace]);
 
   const [title, address] = watch(['title', 'address']);
 
@@ -166,11 +179,18 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
           ...value.options,
         },
       },
-    }); 
+    });
 
-    if (data?.createEvent?._id && value.space) {
-      const variables = { events: [data?.createEvent?._id], space: value.space };
-      await client.query({ query: PinEventsToSpaceDocument, variables, fetchPolicy: 'network-only' });
+    if (data?.createEvent?._id) {
+      if (value.space) {
+        const variables = { events: [data?.createEvent?._id], space: value.space };
+        await client.query({ query: PinEventsToSpaceDocument, variables, fetchPolicy: 'network-only' });
+      }
+
+      if (value?.listToSpace) {
+        const variables = { events: [data?.createEvent?._id], space: value?.listToSpace };
+        await client.query({ query: PinEventsToSpaceDocument, variables, fetchPolicy: 'network-only' });
+      }
     }
 
     window.location.pathname = `/manage/event/${data?.createEvent?.shortid}`;
@@ -590,6 +610,35 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
           }}
         />
 
+        <Controller
+          control={control}
+          name="listToSpace"
+          render={({ field }) => {
+            if (!field.value) return null;
+
+            return (
+              <Card.Root>
+                <Card.Content className="flex justify-between items-center gap-2.5">
+                  {listToSpace?.image_avatar_expanded && (
+                    <img src={generateUrl(space.image_avatar_expanded)} className="size-8 border rounded-sm" />
+                  )}
+                  <div className="flex flex-col flex-1">
+                    <p className="text-xs text-secondary">Submitting to</p>
+                    <p>{space.title}</p>
+                  </div>
+
+                  <Button
+                    variant="flat"
+                    icon="icon-x text-tertiary hover:text-primary"
+                    onClick={() => setValue('listToSpace', undefined)}
+                    className="p-0"
+                  />
+                </Card.Content>
+              </Card.Root>
+            );
+          }}
+        />
+
         <Button loading={loading} disabled={!title} className="w-full" variant="secondary" type="submit">
           Create Event
         </Button>
@@ -784,6 +833,8 @@ function getLocation(address: Address) {
 }
 
 function isValidUrl(url?: string) {
+  if (!url) return false;
+
   const pattern = new RegExp(
     '^(https?:\\/\\/)?' + // protocol
       '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
