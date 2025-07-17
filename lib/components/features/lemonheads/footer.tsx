@@ -326,7 +326,7 @@ function MintModal({
         LemonheadNFTContract,
         contractAddress,
         walletProvider as Eip1193Provider,
-        'mint',
+        sponsor ? 'mintFree' : 'mint',
         [mintData.look, mintData.metadata, mintData.signature],
         { value: sponsor ? 0 : mintPrice },
       );
