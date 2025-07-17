@@ -1,5 +1,38 @@
 # Changelog
 
+## [1.63.0](https://github.com/lemonadesocial/web-new/compare/v1.62.2...v1.63.0) (2025-07-17)
+
+
+### Features
+
+* check balance ([6c34587](https://github.com/lemonadesocial/web-new/commit/6c34587a45d9dbd16b4956c8fb0710cd2902591a))
+* check mweb ([6a65bb7](https://github.com/lemonadesocial/web-new/commit/6a65bb7451123a21e6118e536fb97e537c644f74))
+* completed mweb ([b0246dd](https://github.com/lemonadesocial/web-new/commit/b0246dd1c9cdb10a26829f1f0f4f91e06d8ef21c))
+* fix style mweb ([8a98421](https://github.com/lemonadesocial/web-new/commit/8a984214ab55c2ccd57a612f171fd195cfa1fb96))
+* format error message ([14c99d2](https://github.com/lemonadesocial/web-new/commit/14c99d2a6a9e80cf2f7f67f9249ed418067e4e4c))
+* resolve loading height content ([1812f1e](https://github.com/lemonadesocial/web-new/commit/1812f1eae624b87c2b1dd34bd081b98ff81c2380))
+* resolve small desktop view ([b2b4444](https://github.com/lemonadesocial/web-new/commit/b2b4444da485d7e706bf63b80f420999f9d2fd09))
+* update color - preview mweb ([f4a915c](https://github.com/lemonadesocial/web-new/commit/f4a915c8f96e43bd8fc81505f2380d6daf9fa290))
+* update error message ([7e962c9](https://github.com/lemonadesocial/web-new/commit/7e962c9aee297e608cba28028ede61df27064b98))
+* update format message - list external space ([512a25d](https://github.com/lemonadesocial/web-new/commit/512a25d58288422570a5696f8e7226c575f2e1b7))
+* update layout claim success ([c797121](https://github.com/lemonadesocial/web-new/commit/c79712195011f95e4c1ad9c6d9321cf002bc2a4d))
+* update mobile view ([75b9104](https://github.com/lemonadesocial/web-new/commit/75b91040aa19e2e238c778f73c7519e12ba1b531))
+* update reset action - handle mint state ([9aebc8a](https://github.com/lemonadesocial/web-new/commit/9aebc8a70793bac1a3839e77d34da8a5bced0d07))
+* update style mobile color pick ([0b40864](https://github.com/lemonadesocial/web-new/commit/0b4086481e7675d2826d765371c6865a2140e738))
+
+
+### Bug Fixes
+
+* check mintPrice with sponsor ([bfdffeb](https://github.com/lemonadesocial/web-new/commit/bfdffebd9d6258707d2c86d5413a9ff710467a0a))
+* increase rounded card ([1c63928](https://github.com/lemonadesocial/web-new/commit/1c63928dc81a0667bb1839f0da847de9c707021a))
+* layout home content ([ac7e414](https://github.com/lemonadesocial/web-new/commit/ac7e41448504fe96e1abdda9e1988472ef923f34))
+* lint code ([012e992](https://github.com/lemonadesocial/web-new/commit/012e992fe736eb862d40fa5da95af4f83dbc8f29))
+* lint code ([c8318f7](https://github.com/lemonadesocial/web-new/commit/c8318f77abf9fcf64759b49b1eb033d65e60dcaf))
+* remove testing ([5b4018a](https://github.com/lemonadesocial/web-new/commit/5b4018a06aad5e163ea8b26bdff4235fa60ddc6c))
+* text ([7f811dd](https://github.com/lemonadesocial/web-new/commit/7f811ddd3cc1cdc21b3e4f51a7569f0698703235))
+* update buttons action profile page ([a8e4899](https://github.com/lemonadesocial/web-new/commit/a8e489968feae8d149e55ace640a33a2e51ed6ca))
+* wrong conflicts type ([24c80a7](https://github.com/lemonadesocial/web-new/commit/24c80a799f9b65f5d4c45bc1a8ea011c481da061))
+
 ## [1.62.2](https://github.com/lemonadesocial/web-new/compare/v1.62.1...v1.62.2) (2025-07-14)
 
 
