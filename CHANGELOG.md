@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.63.1](https://github.com/lemonadesocial/web-new/compare/v1.63.0...v1.63.1) (2025-07-17)
+
+
+### Bug Fixes
+
+* fallback to name ([2acf167](https://github.com/lemonadesocial/web-new/commit/2acf167df5d0aef7a4e4495c31641697feca49dc))
+
 ## [1.63.0](https://github.com/lemonadesocial/web-new/compare/v1.62.2...v1.63.0) (2025-07-17)
 
 
