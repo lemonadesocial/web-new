@@ -17,7 +17,7 @@ import { useLogOut as useLensLogOut } from '$lib/hooks/useLens';
 import { useAccount } from '$lib/hooks/useLens';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
-import { useLemonhead } from '$lib/hooks/useLemonhead';
+// import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { ProfilePane } from '../features/pane';
 import { VerifyEmailModal } from '../features/auth/VerifyEmailModal';
 import { ConnectWalletModal } from '../features/auth/ConnectWalletModal';
@@ -64,7 +64,7 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
   const logOut = useLogOut();
   const { logOut: lensLogOut } = useLensLogOut();
   const signIn = useSignIn();
-  const { hasLemonhead } = useLemonhead();
+  // const { hasLemonhead } = useLemonhead();
 
   return (
     <div className="py-3 px-4 h-[56px] flex justify-between items-center z-10 gap-4">
@@ -103,18 +103,18 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
 
             <ConnectLens />
 
-            {
-              hasLemonhead ? (
-                <div className="px-2.5 py-1.5 h-8 rounded-sm flex gap-1.5 items-center bg-accent-400/16">
-                  <i className="icon-passport size-5 text-accent-400" />
-                  <p className="text-sm text-accent-400">Citizen</p>
-                </div>
-              ) : (
-                <div className="px-2.5 py-1.5 h-8 rounded-sm bg-primary/8">
-                  <p className="text-sm text-tertiary">Visitor</p>
-                </div>
-              )
-            }
+            {/* { */}
+            {/*   hasLemonhead ? ( */}
+            {/*     <div className="px-2.5 py-1.5 h-8 rounded-sm flex gap-1.5 items-center bg-accent-400/16"> */}
+            {/*       <i className="icon-passport size-5 text-accent-400" /> */}
+            {/*       <p className="text-sm text-accent-400">Citizen</p> */}
+            {/*     </div> */}
+            {/*   ) : ( */}
+            {/*     <div className="px-2.5 py-1.5 h-8 rounded-sm bg-primary/8"> */}
+            {/*       <p className="text-sm text-tertiary">Visitor</p> */}
+            {/*     </div> */}
+            {/*   ) */}
+            {/* } */}
             <Menu.Root>
               <Menu.Trigger>
                 {({ isOpen }) => (

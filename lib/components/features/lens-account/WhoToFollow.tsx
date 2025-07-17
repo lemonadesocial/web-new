@@ -5,7 +5,7 @@ import { fetchAccountsBulk, follow } from '@lens-protocol/client/actions';
 import { Account } from '@lens-protocol/client';
 
 import { Avatar, Button, toast } from '$lib/components/core';
-import { sessionClientAtom, accountAtom } from '$lib/jotai';
+import { sessionClientAtom } from '$lib/jotai';
 import { client } from '$lib/utils/lens/client';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { useSigner } from '$lib/hooks/useSigner';
@@ -65,7 +65,7 @@ const SUGGESTED_USERNAMES = [
 
 export function WhoToFollow() {
   const sessionClient = useAtomValue(sessionClientAtom);
-  const myAccount = useAtomValue(accountAtom);
+  // const myAccount = useAtomValue(accountAtom);
   const signer = useSigner();
 
   const [allAccounts, setAllAccounts] = useState<Account[]>([]);

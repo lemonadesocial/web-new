@@ -11,7 +11,7 @@ import { useLensConnect } from "$lib/hooks/useLens";
 import { useMediaQuery } from "$lib/hooks/useMediaQuery";
 import { Event } from "$lib/graphql/generated/backend/graphql";
 import { LEMONADE_FEED_ADDRESS } from "$lib/utils/constants";
-import { chainsMapAtom } from "$lib/jotai";
+// import { chainsMapAtom } from "$lib/jotai";
 
 import { ImageInput } from "./ImageInput";
 import { AddEventModal } from "./AddEventModal";

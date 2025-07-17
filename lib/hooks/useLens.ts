@@ -37,7 +37,7 @@ import { useAppKitAccount } from '$lib/utils/appkit';
 import { client, storageClient } from '$lib/utils/lens/client';
 import { ATTRIBUTES_SAFE_KEYS, LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { modal } from '$lib/components/core';
-import { LENS_NAMESPACE, LEMONADE_FEED_ADDRESS } from '$lib/utils/constants';
+import { LENS_NAMESPACE } from '$lib/utils/constants';
 import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
 import { useClient } from '$lib/graphql/request';
 
