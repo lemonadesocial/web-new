@@ -26,7 +26,7 @@ export function PostHeader({ post }: PostHeaderProps) {
       />
       <div className="flex-1">
         <p>
-          {author.username?.localName}
+          {author.username?.localName || author.metadata?.name}
         </p>
         <p className="text-sm text-tertiary">
           {formatDistanceToNow(new Date(timestamp), { addSuffix: true })}
