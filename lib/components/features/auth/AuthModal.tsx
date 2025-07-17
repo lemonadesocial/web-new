@@ -37,16 +37,13 @@ export function AuthModal() {
     modal.close();
 
     if (!session.identity?.traits?.email) {
-      modal.open(VerifyEmailModal, {
-        dismissible: true,
-      });
+      modal.open(VerifyEmailModal);
 
       return;
     }
 
     if (!session.identity?.traits?.wallet) {
       modal.open(ConnectWalletModal, {
-        dismissible: true,
         props: {
           verifyRequired: true
         },

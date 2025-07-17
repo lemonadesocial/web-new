@@ -23,7 +23,6 @@ export function CryptoPayment({ accounts }: { accounts: NewPaymentAccount[] }) {
         onConnect: pay,
         chain
       },
-      dismissible: true
     });
   };
 

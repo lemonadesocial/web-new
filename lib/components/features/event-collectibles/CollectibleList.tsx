@@ -30,7 +30,6 @@ export function CollectibleList({ tokens, offers }: { tokens: TokenComplex[]; of
             description="Your collectible is being processed. Please wait while we complete this process."
           />,
           {
-            dismissible: true
           }
         );
         return;
@@ -51,7 +50,6 @@ export function CollectibleList({ tokens, offers }: { tokens: TokenComplex[]; of
             description="Please hold on while we process your transfer. This may take a few seconds to complete on the blockchain."
           />,
           {
-            dismissible: true
           }
         );
         return;
@@ -65,7 +63,6 @@ export function CollectibleList({ tokens, offers }: { tokens: TokenComplex[]; of
             description={`The collectible has been successfully transferred. It may take a moment to reflect in the recipient's wallet.`}
           />,
           {
-            dismissible: true
           }
         );
       }
@@ -105,7 +102,6 @@ export function CollectibleList({ tokens, offers }: { tokens: TokenComplex[]; of
           claim,
           token: data?.tokens?.[0]
         },
-        dismissible: true
       }
     );
   }

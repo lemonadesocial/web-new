@@ -46,7 +46,7 @@ export function ModalContainer({ modal }: { modal: Modal }) {
   const handleOpen = React.useCallback(
     <T extends object>(Component: React.ComponentType<T>, opts: Options<T> = {}): number => {
       const id = nextId.current++;
-      setModals((prev) => [...prev, { id, content: <Component {...(opts.props as T)} />, options: opts }]);
+      setModals((prev) => [...prev, { id, content: <Component {...(opts.props as T)} />, options: { dismissible: true, ...opts } }]);
       return id;
     },
     [],

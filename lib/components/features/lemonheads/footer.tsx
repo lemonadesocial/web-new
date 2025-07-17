@@ -85,7 +85,6 @@ export function LemonHeadFooter() {
               setTimeout(() => {
                 if (!myAccount) {
                   modal.open(BeforeMintModal, {
-                    dismissible: true,
                     props: {
                       onContinue: () =>
                         modal.open(MintModal, {
@@ -96,6 +95,7 @@ export function LemonHeadFooter() {
                               dispatch({ type: LemonHeadActionKind.next_step });
                             },
                           },
+                          dismissible: false
                         }),
                     },
                   });
@@ -105,6 +105,7 @@ export function LemonHeadFooter() {
             },
             chain: chainsMap[LEMONHEAD_CHAIN_ID],
           },
+          dismissible: false
         });
 
         return;
@@ -118,6 +119,7 @@ export function LemonHeadFooter() {
                 dispatch({ type: LemonHeadActionKind.next_step });
               },
             },
+            dismissible: false
           });
         }
 
@@ -293,6 +295,7 @@ function MintModal({ traits, onComplete }: { traits: TraitExtends[]; onComplete:
             onConnect: () => modal.close(),
             chain: chainsMap[LEMONHEAD_CHAIN_ID],
           },
+          dismissible: false
         });
 
         return;

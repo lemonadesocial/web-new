@@ -36,7 +36,6 @@ export function SignedOutWalletForm({ required }: { required: boolean }) {
       props: {
         onConnect: verifyWallet,
       },
-      dismissible: true
     });
   };
 
@@ -55,6 +54,7 @@ export function SignedOutWalletForm({ required }: { required: boolean }) {
           registrationModal.close();
         },
       },
+      dismissible: false
     });
   };
 

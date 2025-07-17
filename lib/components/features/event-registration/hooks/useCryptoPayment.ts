@@ -20,7 +20,6 @@ export function useCryptoPayment() {
         paymentSecret: data.buyTickets.payment.transfer_metadata.payment_secret,
         hasJoinRequest: data.buyTickets.join_request?.state === 'pending'
       },
-      dismissible: true
     });
   });
 

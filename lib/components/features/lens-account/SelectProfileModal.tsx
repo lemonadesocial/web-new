@@ -82,7 +82,7 @@ export function SelectProfileModal() {
     }
 
     setSessionClient(onboardingResult.value);
-    modal.open(ClaimAccountModal);
+    modal.open(ClaimAccountModal, { dismissible: false });
   };
 
   const handleSelectProfile = async (item: AccountManaged) => {
@@ -139,7 +139,7 @@ export function SelectProfileModal() {
 
     if (lemonadeUsernames.length) return;
 
-    modal.open(ClaimLemonadeUsernameModal);
+    modal.open(ClaimLemonadeUsernameModal, { dismissible: false });
   };
 
   if (isLoadingAccounts)

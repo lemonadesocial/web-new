@@ -42,12 +42,11 @@ export function Content() {
 
   const handleSelectWallet = () => {
     modal.open(ConnectWallet, {
-      dismissible: true,
       props: {
         onConnect: () => {
           modal.close();
           setTimeout(() => {
-            modal.open(SelectProfileModal, { dismissible: true });
+            modal.open(SelectProfileModal);
           });
         },
         chain: chainsMap[LENS_CHAIN_ID],
@@ -136,7 +135,7 @@ export function Content() {
           <ListItem icon="icon-email" title="Email" placeholder={!me?.email} subtile={me?.email || 'No Email Added'}>
             {session && !session.email && (
               <Button
-                onClick={() => modal.open(VerifyEmailModal, { dismissible: true })}
+                onClick={() => modal.open(VerifyEmailModal)}
                 size="sm"
                 className="rounded-full"
                 variant="warning"
@@ -157,7 +156,7 @@ export function Content() {
             {isReady ? (
               !walletVerified ? (
                 <Button
-                  onClick={() => modal.open(ConnectWalletModal, { dismissible: true, props: { verifyRequired: true } })}
+                  onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
                   size="sm"
                   variant="warning"
                   iconLeft="icon-error"
@@ -189,7 +188,7 @@ export function Content() {
               size="sm"
               onClick={() => {
                 if (account) {
-                  modal.open(SelectProfileModal, { dismissible: true });
+                  modal.open(SelectProfileModal);
                 } else {
                   handleSelectWallet();
                 }
@@ -214,7 +213,7 @@ export function Content() {
                   if (!account) {
                     handleSelectWallet();
                   } else {
-                    modal.open(ClaimLemonadeUsernameModal);
+                    modal.open(ClaimLemonadeUsernameModal, { dismissible: false });
                   }
                 }}
               >

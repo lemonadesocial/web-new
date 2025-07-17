@@ -37,7 +37,6 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
       props: {
         onConnect: verifyWallet,
       },
-      dismissible: true
     });
   };
 
@@ -73,6 +72,7 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
           }
         },
       },
+      dismissible: false
     });
   };
 

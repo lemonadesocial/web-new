@@ -235,7 +235,7 @@ export function Community({ initData }: Props) {
                           iconLeft="icon-celebration-outline"
                           onClick={() => {
                             toggle();
-                            if (space?._id) modal.open(ListingEvent, { props: { spaceId: space._id } });
+                            if (space?._id) modal.open(ListingEvent, { dismissible: false, props: { spaceId: space._id } });
                           }}
                         />
                         <MenuItem
@@ -243,7 +243,7 @@ export function Community({ initData }: Props) {
                           iconLeft="icon-globe"
                           onClick={() => {
                             toggle();
-                            if (space?._id) modal.open(ListingExternalEvent, { props: { spaceId: space._id } });
+                            if (space?._id) modal.open(ListingExternalEvent, { dismissible: false, props: { spaceId: space._id } });
                           }}
                         />
                       </>
@@ -331,7 +331,7 @@ export function Community({ initData }: Props) {
                         iconLeft="icon-celebration-outline"
                         onClick={() => {
                           toggle();
-                          if (space?._id) modal.open(ListingEvent, { props: { spaceId: space._id } });
+                          if (space?._id) modal.open(ListingEvent, { dismissible: false, props: { spaceId: space._id } });
                         }}
                       />
                       <MenuItem
@@ -339,7 +339,7 @@ export function Community({ initData }: Props) {
                         iconLeft="icon-globe"
                         onClick={() => {
                           toggle();
-                          if (space?._id) modal.open(ListingExternalEvent, { props: { spaceId: space._id } });
+                          if (space?._id) modal.open(ListingExternalEvent, { dismissible: false, props: { spaceId: space._id } });
                         }}
                       />
                     </>

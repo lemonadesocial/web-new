@@ -303,6 +303,7 @@ function SubContent({
                             });
                           },
                         },
+                        dismissible: false
                       });
                     } else {
                       dispatch({ type: LemonHeadActionKind.set_trait, payload: { data: dt } });

@@ -37,13 +37,11 @@ export function StakeRefundItem({ payment }: { payment: PaymentRefundInfo; }) {
           setTimeout(() => {
             modal.open(ClaimStakeModal, {
               props: { payment },
-              dismissible: true
             });
           });
         },
         chain
       },
-      dismissible: true
     });
   };
 
@@ -110,7 +108,6 @@ function ClaimStakeModal({ payment }: { payment: PaymentRefundInfo; }) {
 
       modal.open(SignClaimStakeTransactionModal, {
         props: { signature: data.getPaymentRefundSignature, payment },
-        dismissible: true
       });
     } catch (error: any) {
       toast.error(error.message);

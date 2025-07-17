@@ -90,7 +90,7 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
           <div className="flex gap-2 items-center">
             {(session && !session.email) && (
               <Button
-                onClick={() => modal.open(VerifyEmailModal, { dismissible: true })}
+                onClick={() => modal.open(VerifyEmailModal)}
                 size="sm"
                 className="rounded-full"
                 variant="warning"
@@ -150,7 +150,7 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
                             title="Switch Profile"
                             onClick={() => {
                               toggle();
-                              modal.open(SelectProfileModal, { dismissible: true });
+                              modal.open(SelectProfileModal);
                             }}
                           />
                           <MenuItem
@@ -202,12 +202,11 @@ function ConnectLens() {
 
   const handleSelectWallet = () => {
     modal.open(ConnectWallet, {
-      dismissible: true,
       props: {
         onConnect: () => {
           modal.close();
           setTimeout(() => {
-            modal.open(SelectProfileModal, { dismissible: true });
+            modal.open(SelectProfileModal);
           });
         },
         chain: chainsMap[LENS_CHAIN_ID]
@@ -217,7 +216,7 @@ function ConnectLens() {
 
   if (!walletVerified && !account) return (
     <Button
-      onClick={() => modal.open(ConnectWalletModal, { dismissible: true, props: { verifyRequired: true } })}
+      onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
       size="sm"
       className="rounded-full"
       variant="warning"
@@ -243,7 +242,7 @@ function ConnectLens() {
 
   if (!walletVerified) return (
     <Button
-    onClick={() => modal.open(ConnectWalletModal, { dismissible: true, props: { verifyRequired: true } })}
+    onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
       size="sm"
       className="rounded-full"
       variant="warning"

@@ -454,6 +454,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
                   className="flex-1"
                   onClick={() =>
                     modal.open(VirtualModal, {
+                      dismissible: false,
                       props: {
                         onConfirm: (value) => {
                           let _url = value;
@@ -551,6 +552,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
                         className="px-0 text-tertiary! hover:text-primary!"
                         onClick={() =>
                           modal.open(CapacityModal, {
+                            dismissible: false,
                             props: {
                               value: options.guest_limit,
                               onSetLimit: (value) => setValue('options.guest_limit', !!value ? value : undefined),
@@ -569,6 +571,7 @@ function FormContent({ spaces, space }: { space?: Space; spaces: Space[] }) {
                         className="px-0 text-tertiary! hover:text-primary!"
                         onClick={() =>
                           modal.open(InviteByGuestModal, {
+                            dismissible: false,
                             props: {
                               value: options.guest_limit_per,
                               onSetLimit: (value) => setValue('options.guest_limit_per', value),

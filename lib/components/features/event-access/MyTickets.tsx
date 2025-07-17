@@ -69,7 +69,6 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
                   props: {
                     event
                   },
-                  dismissible: true
                 })}
               >
                 Add to Calendar
@@ -166,7 +165,6 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
               props: {
                 event
               },
-              dismissible: true
             })}
           >
             Invite a Friend

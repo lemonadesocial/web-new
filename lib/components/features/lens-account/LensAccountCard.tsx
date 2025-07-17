@@ -18,7 +18,7 @@ export function LensAccountCard() {
   const { username, isLoading: isLoadingUsername } = useLemonadeUsername(account);
 
   const selectProfile = () => {
-    modal.open(SelectProfileModal, { dismissible: true });
+    modal.open(SelectProfileModal);
   }
 
   if (loadingSession || isLoadingUsername) return (
@@ -68,7 +68,7 @@ export function LensAccountCard() {
       </div>
       {
         !username && (
-          <Button variant="secondary" className="w-full" onClick={() => modal.open(ClaimLemonadeUsernameModal, { dismissible: true })}>
+          <Button variant="secondary" className="w-full" onClick={() => modal.open(ClaimLemonadeUsernameModal)}>
             Claim Username
           </Button>
         )

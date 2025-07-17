@@ -283,8 +283,8 @@ export function ProfilePaneContent({ me }: { me: User }) {
                         className="w-full"
                         onClick={() => {
                           if (!isReady) connect();
-                          if (!myAccount) modal.open(SelectProfileModal, { dismissible: true });
-                          else modal.open(ClaimLemonadeUsernameModal, { dismissible: true });
+                          if (!myAccount) modal.open(SelectProfileModal);
+                          else modal.open(ClaimLemonadeUsernameModal);
                         }}
                       >
                         {isReady

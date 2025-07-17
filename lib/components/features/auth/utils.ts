@@ -16,7 +16,7 @@ export async function completeProfile() {
     }
 
     if (!user.display_name) {
-      modal.open(CompleteProfile, { dismissible: true });
+      modal.open(CompleteProfile);
     }
   } catch (error) {
     console.error('Failed to fetch user data:', error);

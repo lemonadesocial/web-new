@@ -67,7 +67,8 @@ export function useCardPayment() {
           paymentId: updatePaymentData?.updatePayment?._id,
           paymentSecret: updatePaymentData?.updatePayment?.transfer_metadata?.payment_secret,
           hasJoinRequest: data?.buyTickets?.join_request?.state === 'pending'
-        }
+        },
+        dismissible: false
       });
     } catch (error: any) {
       toast.error(error.message);
