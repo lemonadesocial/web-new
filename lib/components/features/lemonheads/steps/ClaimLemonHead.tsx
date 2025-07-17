@@ -31,6 +31,7 @@ export function ClaimLemonHead() {
         loop: true,
         controls: false,
         autoplay: true,
+        muted: true,
         sources: [
           {
             src: `${process.env.NEXT_PUBLIC_LMD_VIDEO}/${srcPath}/video.m3u8`,
@@ -39,7 +40,7 @@ export function ClaimLemonHead() {
         ],
       });
     }
-  }, [isMobile]);
+  }, [videoRef.current, isMobile]);
 
   const getSrc = () => {
     let src = `/api/og/lemonheads?image=${state.mint.image}&tokenId=${state.mint.tokenId}`;
@@ -84,7 +85,9 @@ export function ClaimLemonHead() {
               <Button
                 iconLeft="icon-share"
                 variant="secondary"
-                onClick={() => drawer.open(RightPane, { props: { image: state.mint.image } })}
+                onClick={() =>
+                  drawer.open(RightPane, { props: { image: state.mint.image, tokenId: state.mint.tokenId } })
+                }
               >
                 Share
               </Button>
@@ -108,7 +111,7 @@ export function ClaimLemonHead() {
   );
 }
 
-function RightPane({ image }: { image: string }) {
+function RightPane({ image, tokenId }: { image: string; tokenId?: string }) {
   const { account: myAccount } = useAccount();
   const { username } = useLemonadeUsername(myAccount);
 
@@ -122,7 +125,7 @@ function RightPane({ image }: { image: string }) {
   };
 
   const getSrc = () => {
-    let src = `/api/og/lemonheads?image=${image}`;
+    let src = `/api/og/lemonheads?image=${image}&tokenId=${tokenId}`;
     if (myAccount?.username) src += `&username=${myAccount?.username.value.replace('lens/', '')}`;
     if (myAccount?.metadata?.bio) src += `&bio=${myAccount?.metadata.bio}`;
 

@@ -21,7 +21,7 @@ export function LemonHeadCreate() {
   const gender = body?.filters?.find((i) => i.type === 'gender')?.value;
   const background = traits.find((i) => i?.type === TraitType.background);
 
-  const [selected, setSelected] = React.useState(bodyRace === 'human' ? 'face' : 'top');
+  const [selected, setSelected] = React.useState(bodyRace === 'alien' ? 'top' : 'face');
 
   const [tabs, setTabs] = React.useState({
     face: {

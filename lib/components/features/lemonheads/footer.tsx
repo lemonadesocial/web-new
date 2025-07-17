@@ -149,7 +149,7 @@ export function LemonHeadFooter() {
 
   if (isMobile) {
     return (
-      <div className="flex items-center gap-2 min-h-[64px] px-4">
+      <div className="flex items-center gap-2 min-h-[64px] px-4 z-10">
         <Button icon="icon-logout" onClick={handlePrev} variant="tertiary" />
         <Button variant="secondary" className="w-full" onClick={handleNext} disabled={disabled}>
           {currentStep?.btnText}
