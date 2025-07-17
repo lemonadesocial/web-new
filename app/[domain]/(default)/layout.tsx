@@ -24,10 +24,9 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
       <Header hideLogo />
 
       <Sidebar />
-      <div className="w-full h-full px-4">
-        <div className="mx-auto max-w-[1080px]">{props.children}</div>
+      <div className="md:ml-[88px] px-4">
+        <div className="max-w-[1080px] mx-auto">{props.children}</div>
       </div>
-      
       <BottomBar />
     </main>
   );
