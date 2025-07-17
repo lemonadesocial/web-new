@@ -75,15 +75,13 @@ function Content() {
       </div>
 
       <div className="flex-1 h-full overflow-auto no-scrollbar">
-        <div className="flex-1 flex flex-col h-full md:h-auto md:flex-row-reverse max-w-[1440px] overflow-auto mx-auto gap-5 md:gap-18 p-4 md:p-11">
+        <div className="flex-1 flex flex-col h-full pb-4 md:flex-row-reverse max-w-[1440px] overflow-auto mx-auto gap-5 md:gap-18 p-4 md:p-11 no-scrollbar">
           {showPreview && state.currentStep === LemonHeadStep.getstarted ? (
-            <div className="flex-1">
-              <div className="max-w-[80px] md:max-w-[692px] md:max-h-[692px] aspect-square">
-                <img
-                  src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
-                  className="rounded-sm w-full h-full"
-                />
-              </div>
+            <div className="max-w-[80px] md:max-w-[692px] md:max-h-[692px] aspect-square">
+              <img
+                src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
+                className="rounded-sm w-full h-full"
+              />
             </div>
           ) : (
             <div className="flex-1">
@@ -123,7 +121,7 @@ function Content() {
             </div>
           )}
 
-          <div className="md:w-[588px]">
+          <div className={clsx(showPreview && 'md:flex-1 md:w-[588px]')}>
             {Object.entries(state.steps).map(([key, item]) => {
               if (!item.mounted) return null;
               const Comp = item.component || React.Fragment;

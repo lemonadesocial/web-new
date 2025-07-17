@@ -290,7 +290,7 @@ function SubContent({
                   key={dt._id}
                   label={dt.value}
                   active={dt.value === trait?.value && dt.type === trait?.type}
-                  className="min-w-[80px]"
+                  className="min-w-[80px] max-w-[80px] md:max-w-full"
                   onClick={() => {
                     const conflicts = findConflictTraits(traits.filter(Boolean), dt);
                     if (conflicts.length && conflicts.find((i) => i.type !== item.type)) {
