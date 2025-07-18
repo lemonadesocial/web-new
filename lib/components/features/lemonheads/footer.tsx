@@ -47,6 +47,7 @@ export function LemonHeadFooter() {
     skip: !address,
     fetchPolicy: 'network-only',
   });
+
   // NOTE: only pick one can get free
   const sponsor = data?.listLemonheadSponsors.sponsors.find(
     (s) => s.remaining && s.remaining > 0 && s.remaining <= s.limit,
@@ -107,7 +108,7 @@ export function LemonHeadFooter() {
                               dispatch({ type: LemonHeadActionKind.next_step });
                             },
                           },
-                          dismissible: false
+                          dismissible: false,
                         }),
                     },
                   });
@@ -117,7 +118,7 @@ export function LemonHeadFooter() {
             },
             chain: chainsMap[LEMONHEAD_CHAIN_ID],
           },
-          dismissible: false
+          dismissible: false,
         });
 
         return;
@@ -132,7 +133,7 @@ export function LemonHeadFooter() {
                 dispatch({ type: LemonHeadActionKind.next_step });
               },
             },
-            dismissible: false
+            dismissible: false,
           });
         }
 
@@ -259,9 +260,9 @@ function MintModal({
     minted: false,
     video: false,
     mute: true,
-    image: '',
     txHash: '',
     tokenId: '',
+    contract: '',
   });
 
   const mutation = trpc.mintNft.useMutation();
@@ -308,7 +309,7 @@ function MintModal({
             onConnect: () => modal.close(),
             chain: chainsMap[LEMONHEAD_CHAIN_ID],
           },
-          dismissible: false
+          dismissible: false,
         });
 
         return;
@@ -357,7 +358,7 @@ function MintModal({
 
       if (parsedTransferLog) {
         const tokenId = parsedTransferLog.args?.tokenId?.toString();
-        setMintState((prev) => ({ ...prev, image: mintData.image, txHash: tx?.hash, tokenId }));
+        setMintState((prev) => ({ ...prev, tokenId }));
         setDone(true);
 
         setInterval(() => {
