@@ -107,7 +107,7 @@ export function LemonHeadFooter() {
                               dispatch({ type: LemonHeadActionKind.next_step });
                             },
                           },
-                          dismissible: false
+                          dismissible: false,
                         }),
                     },
                   });
@@ -117,7 +117,7 @@ export function LemonHeadFooter() {
             },
             chain: chainsMap[LEMONHEAD_CHAIN_ID],
           },
-          dismissible: false
+          dismissible: false,
         });
 
         return;
@@ -132,7 +132,7 @@ export function LemonHeadFooter() {
                 dispatch({ type: LemonHeadActionKind.next_step });
               },
             },
-            dismissible: false
+            dismissible: false,
           });
         }
 
@@ -259,9 +259,9 @@ function MintModal({
     minted: false,
     video: false,
     mute: true,
-    image: '',
     txHash: '',
     tokenId: '',
+    contract: '',
   });
 
   const mutation = trpc.mintNft.useMutation();
@@ -308,7 +308,7 @@ function MintModal({
             onConnect: () => modal.close(),
             chain: chainsMap[LEMONHEAD_CHAIN_ID],
           },
-          dismissible: false
+          dismissible: false,
         });
 
         return;
@@ -333,7 +333,7 @@ function MintModal({
         [mintData.look, mintData.metadata, mintData.signature],
         { value: sponsor ? 0 : mintPrice },
       );
-      setMintState((prev) => ({ ...prev, txHash: tx?.hash }));
+      setMintState((prev) => ({ ...prev, txHash: tx?.hash, contract: contractAddress }));
 
       const receipt = await tx.wait();
       const iface = new ethers.Interface(LemonheadNFT.abi);
@@ -357,7 +357,7 @@ function MintModal({
 
       if (parsedTransferLog) {
         const tokenId = parsedTransferLog.args?.tokenId?.toString();
-        setMintState((prev) => ({ ...prev, image: mintData.image, txHash: tx?.hash, tokenId }));
+        setMintState((prev) => ({ ...prev, tokenId }));
         setDone(true);
 
         setInterval(() => {

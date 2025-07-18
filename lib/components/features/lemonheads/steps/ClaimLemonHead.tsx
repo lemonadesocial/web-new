@@ -42,11 +42,8 @@ export function ClaimLemonHead() {
     }
   }, [videoRef.current, isMobile]);
 
-  const getSrc = () => {
-    let src = `/api/og/lemonheads?image=${state.mint.image}&tokenId=${state.mint.tokenId}`;
-    if (myAccount?.username) src += `&username=${myAccount?.username.value.replace('lens/', '')}`;
-    if (myAccount?.metadata?.bio) src += `&bio=${myAccount?.metadata.bio}`;
-
+  const getImage = () => {
+    let src = `/api/og/lemonheads?address=${myAccount?.address}&tokenId=${state.mint.tokenId}&contract=${state.mint.contract}`;
     return src;
   };
 
@@ -58,7 +55,7 @@ export function ClaimLemonHead() {
           <p className="font-title text-2xl md:text-3xl font-semibold!">United Stands of Lemonade</p>
         </div>
         <div className="flex-1 flex flex-col items-center gap-5 justify-center w-full">
-          <ImageLazyLoad src={getSrc()} className="border border-primary" />
+          <ImageLazyLoad src={getImage()} className="border border-primary" />
 
           <div className="flex flex-wrap gap-5 w-full max-w-[1200px] justify-center md:justify-between">
             <Button
@@ -85,9 +82,7 @@ export function ClaimLemonHead() {
               <Button
                 iconLeft="icon-share"
                 variant="secondary"
-                onClick={() =>
-                  drawer.open(RightPane, { props: { image: state.mint.image, tokenId: state.mint.tokenId } })
-                }
+                onClick={() => drawer.open(RightPane, { props: { image: getImage() } })}
               >
                 Share
               </Button>
@@ -111,7 +106,7 @@ export function ClaimLemonHead() {
   );
 }
 
-function RightPane({ image, tokenId }: { image: string; tokenId?: string }) {
+function RightPane({ image }: { image: string }) {
   const { account: myAccount } = useAccount();
   const { username } = useLemonadeUsername(myAccount);
 
@@ -122,14 +117,6 @@ function RightPane({ image, tokenId }: { image: string; tokenId?: string }) {
       if (!username) modal.open(ClaimLemonadeUsernameModal);
       else modal.open(EditProfileModal);
     }
-  };
-
-  const getSrc = () => {
-    let src = `/api/og/lemonheads?image=${image}&tokenId=${tokenId}`;
-    if (myAccount?.username) src += `&username=${myAccount?.username.value.replace('lens/', '')}`;
-    if (myAccount?.metadata?.bio) src += `&bio=${myAccount?.metadata.bio}`;
-
-    return src;
   };
 
   const shareUrl = '';
@@ -185,7 +172,7 @@ function RightPane({ image, tokenId }: { image: string; tokenId?: string }) {
               Your personalized LemonHead card is ready! Update your profile info to make it truly yours.
             </p>
           </div>
-          <ImageLazyLoad src={getSrc()} />
+          <ImageLazyLoad src={image} />
         </div>
         <Alert className="justify-start">
           <div className="flex flex-col gap-3">
@@ -200,7 +187,7 @@ function RightPane({ image, tokenId }: { image: string; tokenId?: string }) {
               <Button size="sm" iconLeft="icon-user-edit-outline" variant="tertiary" onClick={handleUpdateProfile}>
                 Update Profile
               </Button>
-              <a href={getSrc()} download>
+              <a href={image} download>
                 <Button size="sm" iconLeft="icon-vertical-align-top rotate-180" variant="secondary">
                   Download
                 </Button>

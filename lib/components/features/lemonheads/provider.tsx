@@ -40,9 +40,10 @@ export type LemonHeadState = {
     /** show/mute video after minted */
     video: boolean;
     mute: boolean;
-    image: '';
-    txHash: '';
-    tokenId: '';
+    txHash: string;
+    tokenId: string;
+    /** NOTE: LemonheadNFT contract address */
+    contract: string;
   };
 };
 
@@ -62,9 +63,9 @@ const defaultState: LemonHeadState = {
     minted: false,
     video: false,
     mute: true,
-    image: '',
     txHash: '',
     tokenId: '',
+    contract: '',
   },
 };
 
