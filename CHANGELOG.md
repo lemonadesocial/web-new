@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.63.3](https://github.com/lemonadesocial/web-new/compare/v1.63.2...v1.63.3) (2025-07-18)
+
+
+### Bug Fixes
+
+* remove divider desktop view ([4a29d55](https://github.com/lemonadesocial/web-new/commit/4a29d55b3bc9edc20eadef219d86ea85965a77ba))
+
 ## [1.63.2](https://github.com/lemonadesocial/web-new/compare/v1.63.1...v1.63.2) (2025-07-18)
 
 
