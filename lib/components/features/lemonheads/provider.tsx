@@ -42,8 +42,6 @@ export type LemonHeadState = {
     mute: boolean;
     txHash: string;
     tokenId: string;
-    /** NOTE: LemonheadNFT contract address */
-    contract: string;
   };
 };
 
@@ -65,7 +63,6 @@ const defaultState: LemonHeadState = {
     mute: true,
     txHash: '',
     tokenId: '',
-    contract: '',
   },
 };
 

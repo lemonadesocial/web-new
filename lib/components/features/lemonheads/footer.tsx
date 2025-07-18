@@ -47,6 +47,7 @@ export function LemonHeadFooter() {
     skip: !address,
     fetchPolicy: 'network-only',
   });
+
   // NOTE: only pick one can get free
   const sponsor = data?.listLemonheadSponsors.sponsors.find(
     (s) => s.remaining && s.remaining > 0 && s.remaining <= s.limit,
@@ -333,7 +334,7 @@ function MintModal({
         [mintData.look, mintData.metadata, mintData.signature],
         { value: sponsor ? 0 : mintPrice },
       );
-      setMintState((prev) => ({ ...prev, txHash: tx?.hash, contract: contractAddress }));
+      setMintState((prev) => ({ ...prev, txHash: tx?.hash }));
 
       const receipt = await tx.wait();
       const iface = new ethers.Interface(LemonheadNFT.abi);

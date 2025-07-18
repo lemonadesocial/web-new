@@ -43,7 +43,7 @@ export function ClaimLemonHead() {
   }, [videoRef.current, isMobile]);
 
   const getImage = () => {
-    let src = `/api/og/lemonheads?address=${myAccount?.address}&tokenId=${state.mint.tokenId}&contract=${state.mint.contract}`;
+    let src = `/api/og/lemonheads?address=${myAccount?.address}&tokenId=${state.mint.tokenId}`;
     return src;
   };
 

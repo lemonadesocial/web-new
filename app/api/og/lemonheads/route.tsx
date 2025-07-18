@@ -38,11 +38,10 @@ export async function GET(req: NextRequest) {
   console.log(process.env.APP_ENV);
 
   const searchParams = req.nextUrl.searchParams;
-  const contractAddress = searchParams.get('contract') || '';
   const tokenId = searchParams.get('tokenId') || '';
   const address = searchParams.get('address') || '';
 
-  if (!contractAddress || !tokenId || !address) {
+  if (!!tokenId || !address) {
     return new Response(`Error: Bad Request!`, { status: 400 });
   }
 
@@ -55,6 +54,12 @@ export async function GET(req: NextRequest) {
   let username, bio, image;
 
   try {
+    const contractAddress = chain.lemonhead_contract_address;
+
+    if (!contractAddress) {
+      return new Response('LemonheadNFT contract address not set', { status: 400 });
+    }
+
     const provider = new ethers.JsonRpcProvider(chain.rpc_url);
     const contract = ERC721Contract.attach(contractAddress).connect(provider);
 
