@@ -42,10 +42,7 @@ export function ClaimLemonHead() {
     }
   }, [videoRef.current, isMobile]);
 
-  const getImage = () => {
-    let src = `/api/og/lemonheads?address=${myAccount?.address}&tokenId=${state.mint.tokenId}`;
-    return src;
-  };
+  const getImage = () => `/api/og/lemonheads?address=${myAccount?.address}&tokenId=${state.mint.tokenId}`;
 
   return (
     <div className="p-4 md:px-11 md:pb-11 md:pt-7 w-full max-w-[1440px] h-full">

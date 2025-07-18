@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
 import { fetchAccount } from '@lens-protocol/client/actions';
-import { Eip1193Provider, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { PublicClient, evmAddress, mainnet, testnet } from '@lens-protocol/client';
 import request from 'graphql-request';
 
