@@ -21,7 +21,7 @@ export function PostHeader({ post }: PostHeaderProps) {
         rounded="full"
         onClick={(e) => {
           e.stopPropagation();
-          router.push(`/l/${author.username?.localName}`);
+          router.push(`/l/${author.username?.localName || author.address}`);
         }}
       />
       <div className="flex-1">

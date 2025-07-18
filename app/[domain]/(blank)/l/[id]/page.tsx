@@ -5,15 +5,14 @@ import { LensProfileCard } from "$lib/components/features/lens-account/LensProfi
 import { client } from "$lib/utils/lens/client";
 
 import { UserFeed } from "./feed";
+import { isAddress } from "ethers";
 
-export default async function Page({ params }: { params: Promise<{ username: string }> }) {
-  const username = (await params).username;
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const id = (await params).id;
 
-  const result = await fetchAccount(client, {
-    username: {
-      localName: username,
-    },
-  });
+  const result = await fetchAccount(client, isAddress(id) ? { address: id } : { username: { localName: id } });
+
+  console.log(result)
 
   if (result.isErr() || !result.value) return notFound();
 
