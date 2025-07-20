@@ -17,7 +17,7 @@ import { useLogOut as useLensLogOut } from '$lib/hooks/useLens';
 import { useAccount } from '$lib/hooks/useLens';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
-// import { useLemonhead } from '$lib/hooks/useLemonhead';
+import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { ProfilePane } from '../features/pane';
 import { VerifyEmailModal } from '../features/auth/VerifyEmailModal';
 import { ConnectWalletModal } from '../features/auth/ConnectWalletModal';
@@ -42,7 +42,7 @@ export function RootMenu() {
   const pathName = usePathname();
   
   return (
-    <nav className="flex md:flex-3_1_auto w-[1080px]">
+    <nav className="hidden md:flex md:flex-3_1_auto w-[1080px]">
       <ul className="flex flex-1 gap-5">
         {menu.map((item, idx) => (
           <li key={idx} className="inline-flex items-center">
