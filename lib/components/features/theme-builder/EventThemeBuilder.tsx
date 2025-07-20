@@ -206,7 +206,12 @@ function EventBuilderPaneOptions() {
             disabled={presets[themeName]?.ui?.disabled?.style}
             onClick={() => setState('style')}
           >
-            <div className={clsx('size-[32px] bg-quaternary rounded-full', data.theme === 'image' && 'w-[43px]')}>
+            <div
+              className={clsx(
+                'size-[32px] bg-quaternary rounded-full',
+                data.theme === 'image' && 'w-[43px] rounded-xs',
+              )}
+            >
               <div
                 className={clsx(
                   'w-full h-full',
@@ -573,7 +578,7 @@ function ThemeImage() {
                 height={54}
               />
             </Card.Root>
-            <p className="text-xs">{state.config?.image?.name}</p>
+            <p className="text-xs">{item?.name}</p>
           </div>
         );
       })}
