@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAtomValue } from 'jotai';
 import clsx from 'clsx';
 
-import { Avatar, Button, modal, toast, Menu, MenuItem } from '$lib/components/core';
+import { Avatar, Button, modal, toast, Menu, MenuItem, Divider } from '$lib/components/core';
 import { MediaFile, uploadFiles } from '$lib/utils/file';
 import { generatePostMetadata, getAccountAvatar } from '$lib/utils/lens/utils';
 import { accountAtom } from '$lib/jotai';
@@ -114,6 +114,8 @@ export function PostComposer({
             className="mt-2"
             disabled={!account}
           />
+
+          <Divider className="h-1" />
 
           {files.length > 0 && <ImageInput value={files} onChange={setFiles} />}
 
