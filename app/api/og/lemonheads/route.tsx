@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
   const tokenId = searchParams.get('tokenId') || '';
   const address = searchParams.get('address') || '';
 
-  if (!!tokenId || !address) {
+  if (!tokenId || !address) {
     return new Response(`Error: Bad Request!`, { status: 400 });
   }
 
@@ -64,6 +64,7 @@ export async function GET(req: NextRequest) {
     const contract = ERC721Contract.attach(contractAddress).connect(provider);
 
     const tokenUri = await contract.getFunction('tokenURI')(tokenId);
+    console.log(tokenId);
     const res = await fetch(tokenUri);
     const data = await res.json();
     image = data.image;
