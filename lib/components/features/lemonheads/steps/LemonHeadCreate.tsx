@@ -273,11 +273,11 @@ function SubContent({
 
   return (
     <div className={twMerge('flex-1 flex flex-col gap-4 overflow-auto no-scrollbar', className)}>
-      {!isLoading && (
+      {!isLoading && !!list.length && (
         <div
           ref={listInnerRef}
           className={clsx(
-            'flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar p-4 min-h-[136px]',
+            'flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar p-4',
             !isMobile && colors && 'pb-20',
           )}
         >
@@ -322,19 +322,18 @@ function SubContent({
 
       {isLoading && ((isMobile && !list.length) || !isMobile) && <Loading loadMore={!!list.length} />}
 
-      {colors && (
-        <ColorTool
-          selected={selectedColor}
-          colorset={colors}
-          onSelect={(params) => {
-            setList([]);
-            setPage(1);
-            const color = params.key !== selectedColor ? params.key : undefined;
-            setSelectedColor(color);
-            refetch();
-          }}
-        />
-      )}
+      <ColorTool
+        selected={selectedColor}
+        colorset={colors}
+        onDelete={() => dispatch({ type: LemonHeadActionKind.remove_traits, payload: { data: trait } })}
+        onSelect={(params) => {
+          setList([]);
+          setPage(1);
+          const color = params.key !== selectedColor ? params.key : undefined;
+          setSelectedColor(color);
+          refetch();
+        }}
+      />
     </div>
   );
 }

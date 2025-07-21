@@ -6,14 +6,15 @@ import videojs from 'video.js';
 import Player from 'video.js/dist/types/player';
 import 'video.js/dist/video-js.css';
 
-import { Alert, Button, drawer, modal, Skeleton } from '$lib/components/core';
+import { Alert, Button, Card, drawer, modal, Skeleton } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
-import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
+import { useAccount, useLemonadeUsername, usePost } from '$lib/hooks/useLens';
 import { ASSET_PREFIX, SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
 
 import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
 import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
 import { EditProfileModal } from '../../lens-account/EditProfileModal';
+import { PostComposer } from '../../lens-feed/PostComposer';
 import { LemonHeadActionKind, useLemonHeadContext } from '../provider';
 
 export function ClaimLemonHead() {
@@ -103,6 +104,9 @@ export function ClaimLemonHead() {
   );
 }
 
+const shareUrl = 'https://lemonade.social/lemonheads';
+const shareText = 'Just claimed my LemonHead 🍋 Fully onchain, totally me. Yours is waiting—go mint it now → ';
+
 function RightPane({ image }: { image: string }) {
   const { account: myAccount } = useAccount();
   const { username } = useLemonadeUsername(myAccount);
@@ -116,8 +120,6 @@ function RightPane({ image }: { image: string }) {
     }
   };
 
-  const shareUrl = '';
-  const shareText = '';
   const handleShare = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
@@ -140,14 +142,12 @@ function RightPane({ image }: { image: string }) {
     {
       name: 'Post',
       icon: 'icon-lemonade',
-      onClick: () => alert('Comming soon'),
-      // onClick: () => handleShare(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`),
+      onClick: () => modal.open(ShareModal, { dismissible: true }),
     },
     {
       name: 'Share',
       icon: 'icon-instagram',
       onClick: () => alert('Comming soon'),
-      // onClick: () => handleShare(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`),
     },
     {
       name: 'Post',
@@ -200,10 +200,10 @@ function RightPane({ image }: { image: string }) {
               <div
                 key={idx}
                 onClick={item.onClick}
-                className="flex flex-col items-center gap-3 pt-4 pb-2 px-1 bg-(--btn-tertiary) text-tertiary hover:(--btn-tertiary-hover) hover:text-primary rounded-sm cursor-pointer"
+                className="flex flex-col items-center gap-1 md:gap-3 pt-4 pb-2 px-1 bg-(--btn-tertiary) text-tertiary hover:(--btn-tertiary-hover) hover:text-primary rounded-sm cursor-pointer"
               >
-                <i className={twMerge('size-8', item.icon)} />
-                <p>{item.name}</p>
+                <i className={twMerge('size-5 md:size-8', item.icon)} />
+                <p className="text-xs md:text-base">{item.name}</p>
               </div>
             ))}
           </div>
@@ -235,5 +235,26 @@ function ImageLazyLoad({ src = '', className }: { src?: string; className?: stri
         className={twMerge('rounded-md', className, !imageLoaded ? 'invisible absolute' : 'visible')}
       />
     </>
+  );
+}
+
+function ShareModal() {
+  const { createPost } = usePost();
+
+  const onPost = async (metadata: unknown, feedAddress?: string) => {
+    createPost({ metadata, feedAddress });
+  };
+
+  return (
+    <Card.Root className="w-xl bg-transparent">
+      <Card.Content className="p-0">
+        <PostComposer
+          onPost={onPost}
+          showFeedOptions
+          autoFocus
+          defaultValue="Just claimed my LemonHead 🍋 Fully onchain, totally me. Yours is waiting—go mint it now → https://lemonade.social/lemonheads"
+        />
+      </Card.Content>
+    </Card.Root>
   );
 }
