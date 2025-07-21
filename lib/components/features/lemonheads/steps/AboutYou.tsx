@@ -4,8 +4,9 @@ import React from 'react';
 import { LemonHeadPreview } from '../preview';
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from '../provider';
 import { SquareButton } from '../shared';
+import { capitalize } from 'lodash';
 
-const mapping = { medium: 'Regular', small: 'Skinny', large: 'Toned', extra_large: 'Large' };
+const mapping = ['regular', 'skinny', 'toned', 'large'];
 
 export function LemonHeadAboutYou() {
   const [{ resouces, currentStep }, dispatch] = useLemonHeadContext();
@@ -13,7 +14,7 @@ export function LemonHeadAboutYou() {
   const [state, setState] = React.useState<{ race: BodyRace; size: BodySize; gender: Gender }>({
     race: 'human',
     gender: 'female',
-    size: 'medium',
+    size: 'regular',
   });
 
   const getTraitData = (race: BodyRace, size: BodySize, gender: Gender) => {
@@ -58,14 +59,14 @@ export function LemonHeadAboutYou() {
             active={state.race === 'human'}
             onClick={() => handleChange({ ...state, race: 'human' })}
           >
-            <LemonHeadPreview traits={getTraitData('human', 'medium', state.gender)} />
+            <LemonHeadPreview traits={getTraitData('human', 'regular', state.gender)} />
           </SquareButton>
           <SquareButton
             className="col-span-2"
             active={state.race === 'alien'}
             onClick={() => handleChange({ ...state, race: 'alien' })}
           >
-            <LemonHeadPreview traits={getTraitData('alien', 'medium', state.gender)} />
+            <LemonHeadPreview traits={getTraitData('alien', 'regular', state.gender)} />
           </SquareButton>
         </div>
       </div>
@@ -73,14 +74,14 @@ export function LemonHeadAboutYou() {
       <div className="flex flex-col gap-3">
         <p>Choose your frame</p>
         <div className="grid grid-cols-4 gap-3">
-          {Object.entries(mapping).map(([key, item]) => (
+          {mapping.map((item) => (
             <SquareButton
-              key={key}
-              label={item}
-              active={state.size === key}
-              onClick={() => handleChange({ ...state, size: key as BodySize })}
+              key={item}
+              label={capitalize(item)}
+              active={state.size === item}
+              onClick={() => handleChange({ ...state, size: item as BodySize })}
             >
-              <LemonHeadPreview traits={getTraitData(state.race, key as BodySize, state.gender)} />
+              <LemonHeadPreview traits={getTraitData(state.race, item as BodySize, state.gender)} />
             </SquareButton>
           ))}
         </div>

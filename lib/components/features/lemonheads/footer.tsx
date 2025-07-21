@@ -16,7 +16,11 @@ import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/cry
 import { useQuery } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
-import { GetListLemonheadSponsorsDocument, LemonheadSponsor } from '$lib/graphql/generated/backend/graphql';
+import {
+  CanMintLemonheadDocument,
+  GetListLemonheadSponsorsDocument,
+  LemonheadSponsor,
+} from '$lib/graphql/generated/backend/graphql';
 import { TraitExtends } from '$lib/trpc/lemonheads/types';
 
 import { ConnectWallet } from '../modals/ConnectWallet';
@@ -48,6 +52,13 @@ export function LemonHeadFooter() {
     fetchPolicy: 'network-only',
   });
 
+  const { data: dataCanMint } = useQuery(CanMintLemonheadDocument, {
+    variables: { wallet: address! },
+    skip: !address,
+    fetchPolicy: 'network-only',
+  });
+  const canMint = dataCanMint?.canMintLemonhead;
+
   // NOTE: only pick one can get free
   const sponsor = data?.listLemonheadSponsors.sponsors.find(
     (s) => s.remaining && s.remaining > 0 && s.remaining <= s.limit,
@@ -55,6 +66,11 @@ export function LemonHeadFooter() {
 
   const checkMinted = async () => {
     let isValid = true;
+
+    if (!canMint) {
+      toast.error('Not able to mint!');
+      return false;
+    }
 
     try {
       if (!state.traits.length || !contractAddress) return;

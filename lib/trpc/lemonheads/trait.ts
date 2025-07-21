@@ -58,13 +58,13 @@ export default class Trait {
     let ds = {
       female: {
         background: { name: 'lemon', art_style: 'regular' },
-        body: { name: race, skin_tone: 'brown', race, gender, size },
+        body: { name: race, skin_tone: 'rich', race, gender, size },
         top: { name: 'yellow_bralette', gender, size, color: 'yellow' },
         bottom: { name: 'yellow_shorts', gender, size, color: 'yellow' },
       },
       male: {
         background: { name: 'lemon', art_style: 'regular' },
-        body: { name: race, skin_tone: 'brown', race, gender, size },
+        body: { name: race, skin_tone: 'rich', race, gender, size },
         top: { name: 'white_polo_tee', gender, size, color: 'white' },
         bottom: { name: 'red_shorts', gender, size, color: 'red' },
       },
