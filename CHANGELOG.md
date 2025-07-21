@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.63.4](https://github.com/lemonadesocial/web-new/compare/v1.63.3...v1.63.4) (2025-07-20)
+
+
+### Bug Fixes
+
+* hide menu on mweb ([6a10745](https://github.com/lemonadesocial/web-new/commit/6a10745d2073f4e76f1a6317b72c39aea18fb267))
+* wrong image name ([e122d1a](https://github.com/lemonadesocial/web-new/commit/e122d1ae7c488cef2d509098ee599ef0e077ccaf))
+
+## [1.63.3](https://github.com/lemonadesocial/web-new/compare/v1.63.2...v1.63.3) (2025-07-18)
+
+
+### Bug Fixes
+
+* remove divider desktop view ([4a29d55](https://github.com/lemonadesocial/web-new/commit/4a29d55b3bc9edc20eadef219d86ea85965a77ba))
+
 ## [1.63.2](https://github.com/lemonadesocial/web-new/compare/v1.63.1...v1.63.2) (2025-07-18)
 
 
