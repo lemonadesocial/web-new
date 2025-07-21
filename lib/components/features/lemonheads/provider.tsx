@@ -144,7 +144,7 @@ function reducers(state: LemonHeadState, action: LemonHeadAction) {
     }
 
     case LemonHeadActionKind.remove_traits: {
-      const traits = state.traits.filter((item) => !action.payload.data?.includes(item.type));
+      const traits = state.traits.filter((item) => action.payload?.data?.type !== item.type);
       return { ...state, traits };
     }
 

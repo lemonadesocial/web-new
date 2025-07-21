@@ -166,48 +166,48 @@ export function LemonHeadFooter() {
     dispatch({ type: LemonHeadActionKind.next_step });
   };
 
-  if (isMobile) {
-    return (
-      <div className="flex items-center gap-2 min-h-[64px] px-4 z-10">
+  return (
+    <>
+      <div className="md:hidden flex items-center gap-2 min-h-[64px] px-4 z-10">
         <Button icon="icon-logout" onClick={handlePrev} variant="tertiary" />
         <Button variant="secondary" className="w-full" onClick={handleNext} disabled={disabled}>
           {currentStep?.btnText}
         </Button>
       </div>
-    );
-  }
 
-  return (
-    <div className="flex justify-between items-center min-h-[64px] px-4 bg-background/80 backdrop-blur-md">
-      <div className="flex-1">
-        <Button variant="tertiary" size="sm" onClick={handlePrev}>
-          {state.currentStep === LemonHeadStep.getstarted ? 'Exit' : 'Back'}
-        </Button>
+      <div className="hidden md:flex justify-between items-center min-h-[64px] px-4 bg-background/80 backdrop-blur-md">
+        <div className="flex-1">
+          <Button variant="tertiary" size="sm" onClick={handlePrev}>
+            {state.currentStep === LemonHeadStep.getstarted ? 'Exit' : 'Back'}
+          </Button>
+        </div>
+
+        {LemonHeadStep.getstarted !== state.currentStep && (
+          <ul className="flex items-center justify-center flex-2 gap-1.5">
+            {Object.entries(state.steps).map(([key, item]) => {
+              return (
+                <li key={key} className="flex items-center gap-1.5">
+                  {item.label && (
+                    <p className={twMerge('text-quaternary', item.mounted && 'text-primary')}>{item.label}</p>
+                  )}
+                  {item.label && (
+                    <i
+                      className={twMerge('icon-chevron-right size-5 text-quaternary', item.mounted && 'text-primary')}
+                    />
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        <div className="flex flex-1 justify-end">
+          <Button iconRight="icon-chevron-right" variant="secondary" size="sm" onClick={handleNext}>
+            {currentStep?.btnText}
+          </Button>
+        </div>
       </div>
-
-      {LemonHeadStep.getstarted !== state.currentStep && (
-        <ul className="flex items-center justify-center flex-1 gap-1.5">
-          {Object.entries(state.steps).map(([key, item]) => {
-            return (
-              <li key={key} className="flex items-center gap-1.5">
-                {item.label && (
-                  <p className={twMerge('text-quaternary', item.mounted && 'text-primary')}>{item.label}</p>
-                )}
-                {item.label && (
-                  <i className={twMerge('icon-chevron-right size-5 text-quaternary', item.mounted && 'text-primary')} />
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      )}
-
-      <div className="flex flex-1 justify-end">
-        <Button iconRight="icon-chevron-right" variant="secondary" size="sm" onClick={handleNext}>
-          {currentStep?.btnText}
-        </Button>
-      </div>
-    </div>
+    </>
   );
 }
 

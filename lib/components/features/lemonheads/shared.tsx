@@ -6,7 +6,6 @@ import { preload } from 'react-dom';
 
 import { Button, Card, modal } from '$lib/components/core';
 import { LemonHeadsColor } from '$lib/trpc/lemonheads/types';
-import { isMobile } from 'react-device-detect';
 
 export function CanvasImageRenderer({ file, style }: { file: string; style?: React.CSSProperties }) {
   const canvasRef = React.useRef<any>(null);
@@ -78,49 +77,64 @@ export function ColorTool({
   selected,
   colorset,
   onSelect,
+  onDelete,
 }: {
   selected?: string;
   colorset?: LemonHeadsColor;
   onSelect: (params: { key: string; value: string }) => void;
+  onDelete: () => void;
 }) {
   const colors = colorset?.value || [];
 
-  if (isMobile) {
-    return (
-      <div className="flex gap-1 border-t p-4">
-        {colors.map((c) => (
-          <div
-            key={c.value}
-            onClick={() => onSelect(c)}
-            className={clsx(
-              'w-[28px] h-[28px] aspect-square flex items-center justify-center rounded-full border-2 cursor-pointer hover:bg-(--btn-tertiary)',
-              selected === c.key ? 'border-primary' : 'border-transparent',
-            )}
-          >
-            <div className="w-[20px] h-[20px] rounded-full aspect-square" style={{ background: c.value }} />
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   return (
-    <Card.Root className="absolute left-4 bottom-4 max-h-[52px] rounded-full p-3 bg-overlay-secondary">
-      <Card.Content className="p-0 flex gap-1 rounded-full">
-        {colors.map((c) => (
-          <div
-            key={c.value}
-            onClick={() => onSelect(c)}
-            className={clsx(
-              'w-[28px] h-[28px] aspect-square flex items-center justify-center rounded-full border-2 cursor-pointer hover:bg-(--btn-tertiary)',
-              selected === c.key ? 'border-primary' : 'border-transparent',
-            )}
-          >
-            <div className="w-[20px] h-[20px] rounded-full aspect-square" style={{ background: c.value }} />
+    <>
+      <div className="flex md:hidden items-center justify-between border-t p-4 gap-3.5">
+        {!!colors.length ? (
+          <div className="flex gap-1 flex-1 overflow-x-auto no-scrollbar">
+            {colors.map((c) => (
+              <div
+                key={c.value}
+                onClick={() => onSelect(c)}
+                className={clsx(
+                  'w-[28px] h-[28px] aspect-square flex items-center justify-center rounded-full border-2 cursor-pointer hover:bg-(--btn-tertiary)',
+                  selected === c.key ? 'border-primary' : 'border-transparent',
+                )}
+              >
+                <div className="w-[20px] h-[20px] rounded-full aspect-square" style={{ background: c.value }} />
+              </div>
+            ))}
           </div>
-        ))}
-      </Card.Content>
-    </Card.Root>
+        ) : (
+          <div className="flex-1" />
+        )}
+        <Button icon="icon-richtext-trash" className="rounded-full" size="sm" variant="danger" onClick={onDelete} />
+      </div>
+      <div className="hidden md:flex absolute bottom-0 left-0 right-0 flex items-center justify-between p-4 bg-transparent">
+        {!!colors.length ? (
+          <Card.Root className="max-h-[52px] rounded-full p-3 bg-overlay-secondary">
+            <Card.Content className="p-0">
+              <div className="flex gap-1 rounded-full w-full overflow-x-auto no-scrollbar">
+                {colors.map((c) => (
+                  <div
+                    key={c.value}
+                    onClick={() => onSelect(c)}
+                    className={clsx(
+                      'w-[28px] h-[28px] aspect-square flex items-center justify-center rounded-full border-2 cursor-pointer hover:bg-(--btn-tertiary)',
+                      selected === c.key ? 'border-primary' : 'border-transparent',
+                    )}
+                  >
+                    <div className="w-[20px] h-[20px] rounded-full aspect-square" style={{ background: c.value }} />
+                  </div>
+                ))}
+              </div>
+            </Card.Content>
+          </Card.Root>
+        ) : (
+          <div />
+        )}
+        <Button icon="icon-richtext-trash" className="rounded-full" size="sm" variant="danger" onClick={onDelete} />
+      </div>
+    </>
   );
 }
 
