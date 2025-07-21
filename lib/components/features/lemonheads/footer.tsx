@@ -335,7 +335,11 @@ function MintModal({
 
       if (!address) throw new Error('No wallet address found');
 
-      const mintData = await mutation.mutateAsync({ wallet: address, traits, sponsor: sponsor?._id });
+      const mintData = await mutation.mutateAsync({
+        wallet: address,
+        traits: traits.map(({ _id, image, ...rest }) => rest),
+        sponsor: sponsor?._id,
+      });
       console.log('Mint data:', mintData);
 
       if (!contractAddress) throw new Error('LemonheadNFT contract address not set');
