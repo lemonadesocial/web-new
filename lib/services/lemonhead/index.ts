@@ -37,7 +37,12 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
   if (!imageUrl) {
     //-- create and upload image
     const layers = await getRenderLayersFromTraits(finalTraits);
-    const finalImage = await getFinalImage(layers.flatMap((layer) => layer?.file ? generateUrl(layer.file) : []));
+
+    //-- when there is at least one jpeg layer, use jpeg, otherwise use png
+    const outputFormat = layers.find((layer) => layer?.file?.type === 'image/jpeg') ? 'jpeg' : 'png';
+
+    const finalImage = await getFinalImage(layers.flatMap((layer) => layer?.file ? generateUrl(layer.file) : []), outputFormat);
+
     imageUrl = await uploadImage(lookHash, finalImage);
   }
 
