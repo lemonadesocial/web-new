@@ -19,6 +19,7 @@ import { EventPreview } from './EventPreview';
 import { PostTextarea } from './PostTextarea';
 import { FileInput } from '../../core/file-input/file-input';
 import { ProfileMenu } from '../lens-account/ProfileMenu';
+import { LinkPreview } from '$lib/components/core/link';
 
 type PostComposerProps = {
   onPost: (metadata: unknown, feedAddress?: string) => Promise<void>;
@@ -97,8 +98,30 @@ export function PostComposer({
     }
   };
 
+  const extractLinks = (text: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
+    const matches = text.match(urlRegex);
+    return matches
+      ? Array.from(
+          new Set(
+            matches.map((link) => {
+              if (link.startsWith('www.') && !link.startsWith('http')) {
+                return `http://${link}`;
+              }
+              return link;
+            }),
+          ),
+        )
+      : [];
+  };
+
   return (
-    <div className={clsx('border border-card-border rounded-md', account && 'bg-card')}>
+    <div
+      className={clsx(
+        'border border-card-border rounded-md max-h-[calc(100dvh-300px)] overflow-auto',
+        account && 'bg-card',
+      )}
+    >
       <div className="px-4 py-3 flex gap-3">
         <div>
           <Avatar src={account ? getAccountAvatar(account) : randomUserImage()} size="xl" rounded="full" />
@@ -114,6 +137,10 @@ export function PostComposer({
             className="mt-2"
             disabled={!account}
           />
+
+          {extractLinks(value).map((url, idx) => {
+            return <LinkPreview key={idx} url={url} />;
+          })}
 
           <Divider className="h-1" />
 

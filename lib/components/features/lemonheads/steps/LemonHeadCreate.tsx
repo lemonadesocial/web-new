@@ -61,7 +61,7 @@ export function LemonHeadCreate() {
         { value: 'cosmic', label: 'Cosmic', mount: true },
         { value: 'psychedelic', label: 'Psychedelic', mount: false },
         { value: 'regular', label: 'Regular', mount: false },
-        { value: 'megaETH', label: 'MegaETH', mount: false },
+        { value: 'brand_drops', label: 'Brand Drops', mount: false },
       ],
     },
     pet: { label: 'Pets', icon: 'icon-lh-pets', mount: false },
