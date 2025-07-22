@@ -47,7 +47,9 @@ export function LemonHeadCreate() {
         { value: 'mouthgear', label: 'Mouthgear', mount: false },
         { value: 'necklace', label: 'Necklace', mount: false },
         { value: 'headgear', label: 'Headgear', mount: false },
-        { value: 'instrument', label: 'Instrument', mount: false },
+        { value: 'tie', label: 'Tie', mount: false },
+        { value: 'bag', label: 'Bag', mount: false },
+        { value: 'earrings', label: 'Earrings', mount: false },
       ],
     },
     footwear: { label: 'Footwear', icon: 'icon-lh-footprint', mount: false },
@@ -144,7 +146,7 @@ function Content({
     <div className={clsx('flex flex-col', className)} style={{ height: 'inherit' }}>
       {!!tabs.length && (
         <>
-          <ul className="flex px-4 py-3 sticky top-0 border-b">
+          <ul className="flex px-4 py-3 sticky top-0 border-b overflow-auto no-scrollbar">
             {tabs.map((item) => (
               <li
                 key={item.value}

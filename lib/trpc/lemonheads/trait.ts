@@ -18,7 +18,7 @@ type FilterType = {
 export default class Trait {
   tranformTrait(data: LemonHeadsLayer) {
     const filters: Filter[] = [];
-    layerings[data.type].filterTypes.forEach((key) => filters.push({ type: key, value: data[key] }));
+    layerings[data.type]?.filterTypes?.forEach((key) => filters.push({ type: key, value: data[key] }));
 
     return {
       _id: data._id,
