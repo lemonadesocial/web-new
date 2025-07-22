@@ -53,13 +53,19 @@ export function ModalContainer({ modal }: { modal: Modal }) {
     [],
   );
 
-  const handleClose = React.useCallback((id?: number) => {
+  const handleClose = (id?: number) => {
+    const modal = modals.find((modal) => modal.id === id) || modals[modals.length - 1];
+
+    if (modal?.options?.onClose) {
+      modal.options.onClose();
+    }
+
     if (id !== undefined) {
       setModals((prev) => prev.filter((modal) => modal.id !== id));
     } else {
       setModals((prev) => prev.slice(0, -1));
     }
-  }, []);
+  };
 
   const handleOutsideClick = React.useCallback(
     (event: MouseEvent) => {
@@ -75,8 +81,6 @@ export function ModalContainer({ modal }: { modal: Modal }) {
       if (modalRef && event.target instanceof Node && !modalRef.contains(event.target)) {
         if (topModal.options.dismissible) {
           handleClose(topModal.id);
-
-          topModal.options.onClose?.();
         }
       }
     },
