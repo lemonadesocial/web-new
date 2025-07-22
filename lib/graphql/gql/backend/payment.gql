@@ -63,3 +63,7 @@ query getPaymentRefundSignature($id: MongoID!) {
     signature
   }
 }
+
+mutation CancelPayment($input: CancelPaymentInput!) {
+  cancelPayment(input: $input)
+}
