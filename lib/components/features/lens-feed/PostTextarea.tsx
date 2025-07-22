@@ -34,7 +34,7 @@ export const PostTextarea = ({
     const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
 
     return text.replace(urlRegex, (match) => {
-      return `<span class="text-accent-400 hover:underline cursor-pointer break-all">${match}</span>`;
+      return `<span class="text-accent-400 hover:underline cursor-pointer">${match}</span>`;
     });
   };
 
@@ -53,7 +53,7 @@ export const PostTextarea = ({
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
         className={twMerge(
-          'absolute inset-0 w-full h-full resize-none outline-none font-medium text-lg placeholder-quaternary bg-transparent text-transparent overflow-auto whitespace-pre-wrap break-words',
+          'absolute inset-0 w-full h-full resize-none outline-none font-medium text-lg placeholder-quaternary bg-transparent text-transparent overflow-auto whitespace-pre-wrap break-words bg-transparent text-transparent caret-primary min-h-[24px]',
           className,
         )}
         onFocus={onFocus}
@@ -65,7 +65,10 @@ export const PostTextarea = ({
 
       <div
         ref={highlightRef}
-        className="top-0 inset-0 resize-none outline-none font-medium text-lg placeholder-quaternary bg-transparent overflow-y-auto whitespace-pre-wrap break-words"
+        className={twMerge(
+          'top-0 inset-0 resize-none outline-none font-medium text-lg placeholder-quaternary bg-transparent overflow-y-auto whitespace-pre-wrap break-words min-h-[24px]',
+          className,
+        )}
         aria-hidden="true"
         dangerouslySetInnerHTML={{ __html: highlightLinks(value) }}
       />

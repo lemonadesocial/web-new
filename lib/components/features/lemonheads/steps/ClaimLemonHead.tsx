@@ -52,7 +52,7 @@ export function ClaimLemonHead() {
           <p className="text-secondary md:text-xl">Welcome to</p>
           <p className="font-title text-2xl md:text-3xl font-semibold!">United Stands of Lemonade</p>
         </div>
-        <div className="flex-1 flex flex-col items-center gap-5 justify-center w-full">
+        <div className="flex-1 flex flex-col items-center gap-5 justify-center w-[70%]">
           <ImageLazyLoad src={getImage()} className="border border-primary" />
 
           <div className="flex flex-wrap gap-5 w-full max-w-[1200px] justify-center md:justify-between">
