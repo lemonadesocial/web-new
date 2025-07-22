@@ -6,7 +6,9 @@ export async function GET(req: NextRequest) {
 
   if (!url) return NextResponse.json({ message: 'Bad Request' }, { status: 400 });
 
-  const { error, result, html } = await orgs({ url });
+  const userAgent =
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36';
+  const { error, result, html } = await orgs({ url, fetchOptions: { headers: { 'user-agent': userAgent } } });
 
   if (error) return NextResponse.json({ message: 'Not found' }, { status: 404 });
 
