@@ -242,7 +242,8 @@ function ShareModal() {
   const { createPost } = usePost();
 
   const onPost = async (metadata: unknown, feedAddress?: string) => {
-    createPost({ metadata, feedAddress });
+    await createPost({ metadata, feedAddress });
+    modal.close()
   };
 
   return (
