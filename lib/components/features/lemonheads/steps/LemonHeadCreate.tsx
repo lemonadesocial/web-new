@@ -175,8 +175,12 @@ function Content({
               <SubContent
                 key={item.value}
                 className={clsx('h-full', selected !== item.value && 'hidden')}
-                layerKey={['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? 'background' : selected}
-                art_style={['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? selected : undefined}
+                layerKey={
+                  ['cosmic', 'psychedelic', 'regular', 'brand_drops'].includes(selected) ? 'background' : selected
+                }
+                art_style={
+                  ['cosmic', 'psychedelic', 'regular', 'brand_drops'].includes(selected) ? selected : undefined
+                }
               />
             );
           })}
