@@ -47,6 +47,7 @@ export function LemonHeadCreate() {
         { value: 'mouthgear', label: 'Mouthgear', mount: false },
         { value: 'necklace', label: 'Necklace', mount: false },
         { value: 'headgear', label: 'Headgear', mount: false },
+        { value: 'instrument', label: 'Instrument', mount: false },
         { value: 'tie', label: 'Tie', mount: false },
         { value: 'bag', label: 'Bag', mount: false },
         { value: 'earrings', label: 'Earrings', mount: false },
