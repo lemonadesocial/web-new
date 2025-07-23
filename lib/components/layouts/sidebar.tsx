@@ -9,6 +9,7 @@ import { useAccount } from '$lib/hooks/useLens';
 import { userAvatar } from '$lib/utils/user';
 import { Avatar, Button, Card, modal } from '../core';
 import { twMerge } from 'tailwind-merge';
+import { ShareModal } from '../features/lemonheads/steps/ClaimLemonHead';
 
 type SidebarItemProps = {
   item: {
@@ -125,13 +126,30 @@ const Sidebar = () => {
 };
 
 const actions = {
-  event: { icon: 'icon-ticket text-accent-400', title: 'Event', subtitle: 'Virtual & IRL' },
+  experience: { icon: 'icon-ticket text-accent-400', title: 'Event', subtitle: 'Virtual & IRL' },
   community: { icon: 'icon-community text-alert-400', title: 'Community', subtitle: 'Build your space' },
   post: { icon: 'icon-edit-square text-[#2DD4BF]!', title: 'Post', subtitle: 'Share updates' },
 };
 
 function CreatingModal() {
-  const handleClick = (key: string) => {};
+  const router = useRouter();
+
+  const handleClick = (key: string) => {
+    switch (key) {
+      case 'post':
+        modal.close();
+        modal.open(ShareModal, { dismissible: true });
+        break;
+
+      case 'community':
+      case 'experience':
+        router.push(`/create/${key}`);
+        break;
+
+      default:
+        break;
+    }
+  };
 
   return (
     <Card.Root className="md:w-[480px]">

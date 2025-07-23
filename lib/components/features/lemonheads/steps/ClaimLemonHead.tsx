@@ -142,7 +142,7 @@ function RightPane({ image }: { image: string }) {
     {
       name: 'Post',
       icon: 'icon-lemonade',
-      onClick: () => modal.open(ShareModal, { dismissible: true }),
+      onClick: () => modal.open(ShareModal, { dismissible: true, props: { content: shareText + shareUrl } }),
     },
     {
       name: 'Share',
@@ -238,7 +238,7 @@ function ImageLazyLoad({ src = '', className }: { src?: string; className?: stri
   );
 }
 
-function ShareModal() {
+export function ShareModal({ content }: { content?: string }) {
   const { createPost } = usePost();
 
   const onPost = async (metadata: unknown, feedAddress?: string) => {
@@ -249,12 +249,7 @@ function ShareModal() {
   return (
     <Card.Root className="w-xl bg-transparent">
       <Card.Content className="p-0">
-        <PostComposer
-          onPost={onPost}
-          showFeedOptions
-          autoFocus
-          defaultValue="Just claimed my LemonHead 🍋 Fully onchain, totally me. Yours is waiting—go mint it now → https://lemonade.social/lemonheads"
-        />
+        <PostComposer onPost={onPost} showFeedOptions autoFocus defaultValue={content} />
       </Card.Content>
     </Card.Root>
   );
