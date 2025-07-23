@@ -33,3 +33,20 @@ export function capitalizeWords(str: string) {
   });
   return capitalizedWords.join(' ');
 }
+
+export function extractLinks(text: string) {
+  const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
+  const matches = text.match(urlRegex);
+  return matches
+    ? Array.from(
+        new Set(
+          matches.map((link) => {
+            if (link.startsWith('www.') && !link.startsWith('http')) {
+              return `http://${link}`;
+            }
+            return link;
+          }),
+        ),
+      )
+    : [];
+}

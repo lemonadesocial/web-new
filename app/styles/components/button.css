@@ -17,6 +17,11 @@
     &:hover {
       background-color: var(--btn-bg-hover);
       color: var(--btn-content-hover);
+
+      &:disabled {
+        background-color: var(--btn-bg);
+        cursor: not-allowed;
+      }
     }
   }
 

@@ -65,7 +65,7 @@ export const getRenderLayersFromTraits = async (finalTraits: Trait[]) => {
   });
 };
 
-export const getFinalImage = async (imageUrls: string[]) => {
+export const getFinalImage = async (imageUrls: string[], outputFormat: 'png' | 'jpeg') => {
   const buffers = await Promise.all(imageUrls.map(readUrlToBuffer));
 
   //-- this is run in nodejs, please use a library to create a canvas
@@ -90,5 +90,10 @@ export const getFinalImage = async (imageUrls: string[]) => {
   }
 
   // Return the final merged image as buffer
-  return canvas.toBuffer('image/png');
+  if (outputFormat === 'png') {
+    return canvas.toBuffer('image/png');
+  }
+  else {
+    return canvas.toBuffer('image/jpeg');
+  }
 };

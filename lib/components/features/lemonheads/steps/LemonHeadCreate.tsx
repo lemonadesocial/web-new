@@ -48,6 +48,9 @@ export function LemonHeadCreate() {
         { value: 'necklace', label: 'Necklace', mount: false },
         { value: 'headgear', label: 'Headgear', mount: false },
         { value: 'instrument', label: 'Instrument', mount: false },
+        { value: 'tie', label: 'Tie', mount: false },
+        { value: 'bag', label: 'Bag', mount: false },
+        { value: 'earrings', label: 'Earrings', mount: false },
       ],
     },
     footwear: { label: 'Footwear', icon: 'icon-lh-footprint', mount: false },
@@ -59,7 +62,7 @@ export function LemonHeadCreate() {
         { value: 'cosmic', label: 'Cosmic', mount: true },
         { value: 'psychedelic', label: 'Psychedelic', mount: false },
         { value: 'regular', label: 'Regular', mount: false },
-        { value: 'megaETH', label: 'MegaETH', mount: false },
+        { value: 'brand_drops', label: 'Brand Drops', mount: false },
       ],
     },
     pet: { label: 'Pets', icon: 'icon-lh-pets', mount: false },
@@ -144,7 +147,7 @@ function Content({
     <div className={clsx('flex flex-col', className)} style={{ height: 'inherit' }}>
       {!!tabs.length && (
         <>
-          <ul className="flex px-4 py-3 sticky top-0 border-b">
+          <ul className="flex px-4 py-3 sticky top-0 border-b overflow-auto no-scrollbar">
             {tabs.map((item) => (
               <li
                 key={item.value}
@@ -173,8 +176,12 @@ function Content({
               <SubContent
                 key={item.value}
                 className={clsx('h-full', selected !== item.value && 'hidden')}
-                layerKey={['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? 'background' : selected}
-                art_style={['cosmic', 'psychedelic', 'regular', 'megaETH'].includes(selected) ? selected : undefined}
+                layerKey={
+                  ['cosmic', 'psychedelic', 'regular', 'brand_drops'].includes(selected) ? 'background' : selected
+                }
+                art_style={
+                  ['cosmic', 'psychedelic', 'regular', 'brand_drops'].includes(selected) ? selected : undefined
+                }
               />
             );
           })}
@@ -273,11 +280,11 @@ function SubContent({
 
   return (
     <div className={twMerge('flex-1 flex flex-col gap-4 overflow-auto no-scrollbar', className)}>
-      {!isLoading && (
+      {!isLoading && !!list.length && (
         <div
           ref={listInnerRef}
           className={clsx(
-            'flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar p-4 min-h-[136px]',
+            'flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar p-4',
             !isMobile && colors && 'pb-20',
           )}
         >
@@ -306,7 +313,7 @@ function SubContent({
                             });
                           },
                         },
-                        dismissible: false
+                        dismissible: false,
                       });
                     } else {
                       dispatch({ type: LemonHeadActionKind.set_trait, payload: { data: dt } });
@@ -322,19 +329,18 @@ function SubContent({
 
       {isLoading && ((isMobile && !list.length) || !isMobile) && <Loading loadMore={!!list.length} />}
 
-      {colors && (
-        <ColorTool
-          selected={selectedColor}
-          colorset={colors}
-          onSelect={(params) => {
-            setList([]);
-            setPage(1);
-            const color = params.key !== selectedColor ? params.key : undefined;
-            setSelectedColor(color);
-            refetch();
-          }}
-        />
-      )}
+      <ColorTool
+        selected={selectedColor}
+        colorset={colors}
+        onDelete={() => dispatch({ type: LemonHeadActionKind.remove_traits, payload: { data: trait } })}
+        onSelect={(params) => {
+          setList([]);
+          setPage(1);
+          const color = params.key !== selectedColor ? params.key : undefined;
+          setSelectedColor(color);
+          refetch();
+        }}
+      />
     </div>
   );
 }

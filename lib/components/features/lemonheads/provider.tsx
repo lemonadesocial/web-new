@@ -40,9 +40,8 @@ export type LemonHeadState = {
     /** show/mute video after minted */
     video: boolean;
     mute: boolean;
-    image: '';
-    txHash: '';
-    tokenId: '';
+    txHash: string;
+    tokenId: string;
   };
 };
 
@@ -62,7 +61,6 @@ const defaultState: LemonHeadState = {
     minted: false,
     video: false,
     mute: true,
-    image: '',
     txHash: '',
     tokenId: '',
   },
@@ -146,7 +144,7 @@ function reducers(state: LemonHeadState, action: LemonHeadAction) {
     }
 
     case LemonHeadActionKind.remove_traits: {
-      const traits = state.traits.filter((item) => !action.payload.data?.includes(item.type));
+      const traits = state.traits.filter((item) => action.payload?.data?.type !== item.type);
       return { ...state, traits };
     }
 
