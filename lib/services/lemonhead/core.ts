@@ -76,7 +76,7 @@ export const layerings: Record<
   [TraitType.mouthgear]: { filterTypes: [FilterType.size] },
   [TraitType.eyes]: { filterTypes: [FilterType.size] },
   [TraitType.eyewear]: { filterTypes: [FilterType.size, FilterType.color] },
-  [TraitType.bag]: { filterTypes: [] },
+  [TraitType.bag]: { filterTypes: [FilterType.gender, FilterType.size] },
   [TraitType.instrument]: { filterTypes: [] },
   [TraitType.pet]: { filterTypes: [FilterType.race, FilterType.color] },
 };
