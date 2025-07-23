@@ -168,11 +168,11 @@ export function CreatingModal() {
           <p className="text-secondary text-sm">What are we creating today?</p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-col md:flex-row gap-2">
           {Object.entries(actions).map(([key, item]) => (
             <Card.Root key={key} className="flex-1" onClick={() => handleClick(key)}>
-              <Card.Content className="py-3.5 px-4 flex flex-col gap-3">
-                <i className={twMerge('size-8', item.icon)} />
+              <Card.Content className="py-1.5 px-3 md:py-3.5 md:px-4 flex items-center md:flex-col gap-3">
+                <i className={twMerge('size-5 md:size-8', item.icon)} />
                 <div>
                   <p className="text-primary">{item.title}</p>
                   <p className="text-sm text-tertiary">{item.subtitle}</p>

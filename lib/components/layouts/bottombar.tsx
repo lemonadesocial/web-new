@@ -26,7 +26,9 @@ export function BottomBar() {
           <Button
             className="rounded-full"
             icon="icon-plus"
-            onClick={() => modal.open(CreatingModal, { dismissible: false })}
+            onClick={() =>
+              modal.open(CreatingModal, { dismissible: false, className: 'm-0!  w-full', position: 'bottom' })
+            }
           />
         ),
         custom: true,

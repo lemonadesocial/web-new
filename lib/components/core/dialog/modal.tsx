@@ -13,6 +13,7 @@ interface Options<T> {
   className?: string;
   skipBaseClassName?: boolean;
   onClose?: () => void;
+  position?: 'center' | 'bottom';
 }
 
 interface ModalItem {
@@ -47,7 +48,14 @@ export function ModalContainer({ modal }: { modal: Modal }) {
   const handleOpen = React.useCallback(
     <T extends object>(Component: React.ComponentType<T>, opts: Options<T> = {}): number => {
       const id = nextId.current++;
-      setModals((prev) => [...prev, { id, content: <Component {...(opts.props as T)} />, options: { dismissible: true, ...opts } }]);
+      setModals((prev) => [
+        ...prev,
+        {
+          id,
+          content: <Component {...(opts.props as T)} />,
+          options: { dismissible: true, position: 'center', ...opts },
+        },
+      ]);
       return id;
     },
     [],
@@ -105,7 +113,11 @@ export function ModalContainer({ modal }: { modal: Modal }) {
         <React.Fragment key={modal.id}>
           {createPortal(
             <div
-              className="fixed inset-0 bg-overlay-backdrop flex w-full h-full items-center justify-center"
+              className={clsx(
+                'fixed inset-0 bg-overlay-backdrop flex w-full h-full',
+                modal.options.position === 'bottom' && 'items-end',
+                modal.options.position === 'center' && 'items-center justify-center',
+              )}
               style={{ zIndex: 10000 + index }}
               role="modal"
             >
