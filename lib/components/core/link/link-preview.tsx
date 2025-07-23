@@ -1,5 +1,5 @@
-import axios from 'axios';
 import React from 'react';
+import { trpc } from '$lib/trpc/client';
 import { Skeleton } from '../skeleton';
 
 type PreviewData = {
@@ -12,7 +12,11 @@ type PreviewData = {
 
 export function LinkPreview({ url }: { url: string }) {
   const [data, setData] = React.useState<PreviewData | null>(null);
-  const [loading, setLoading] = React.useState(true);
+
+  function isValidUrl(str: string) {
+    const reg = /^(http|https):\/\/([a-z]*\.)?[a-z]*\.[a-z]{2,}(\/)?$/;
+    return reg.test(str);
+  }
 
   const isYouTubeURL = (url: string) => {
     return url.includes('youtube.com') || url.includes('youtu.be');
@@ -28,48 +32,37 @@ export function LinkPreview({ url }: { url: string }) {
     window.open(url, '_blank');
   };
 
+  const { data: extractUrlData, isLoading } = trpc.openGraph.extractUrl.useQuery({ url });
+
   React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get('/api/og/extractor', {
-          params: { url },
-        });
-        const data = res.data?.html;
+    if (extractUrlData?.html && url) {
+      const content = extractUrlData.html;
 
-        const isYouTubeVideo = isYouTubeURL(url);
-        if (isYouTubeVideo) {
-          const videoId = extractYouTubeVideoId(url);
-          const videoThumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+      const isYouTubeVideo = isYouTubeURL(url);
+      if (isYouTubeVideo) {
+        const videoId = extractYouTubeVideoId(url);
+        const videoThumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 
-          setData({
-            videoId,
-            videoThumbnail,
-          });
-          setLoading(false);
-        } else {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(data, 'text/html');
-          const title = doc.querySelector('title')?.textContent || '';
-          const description = doc.querySelector('meta[name="description"]')?.getAttribute('content') || '';
-          const image = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || '';
+        setData({ videoId, videoThumbnail });
+      } else {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(content, 'text/html');
+        const title = doc.querySelector('title')?.textContent || '';
+        const description = doc.querySelector('meta[name="description"]')?.getAttribute('content') || '';
+        const image = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || '';
 
-          setData({
-            title,
-            description,
-            image,
-          });
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error(error);
-        setLoading(false);
+        setData({ title, description, image });
       }
-    };
+    }
+  }, [extractUrlData, url]);
 
-    fetchData();
-  }, [url]);
+  React.useEffect(() => {
+    if (isLoading) {
+      setData(null);
+    }
+  }, [isLoading]);
 
-  if (loading) {
+  if (isLoading && isValidUrl(url)) {
     return <Skeleton className="h-16 w-full" animate />;
   }
 
