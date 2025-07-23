@@ -131,7 +131,7 @@ const actions = {
   post: { icon: 'icon-edit-square text-[#2DD4BF]!', title: 'Post', subtitle: 'Share updates' },
 };
 
-function CreatingModal() {
+export function CreatingModal() {
   const router = useRouter();
 
   const handleClick = (key: string) => {
