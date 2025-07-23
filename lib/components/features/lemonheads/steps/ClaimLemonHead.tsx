@@ -224,7 +224,7 @@ function ImageLazyLoad({ src = '', className }: { src?: string; className?: stri
           className={twMerge('w-full max-w-[1200px] aspect-[40/21] rounded-md', className)}
         >
           <div className="flex-1 items-center justify-center flex w-[52.3%] h-full">
-            <Skeleton className="w-3/4 max-w-[456px] aspect-square animte rounded-none rounded-md" animate />
+            <Skeleton className="w-3/4 max-w-[456px] aspect-square animte rounded-md" animate />
           </div>
         </div>
       )}
