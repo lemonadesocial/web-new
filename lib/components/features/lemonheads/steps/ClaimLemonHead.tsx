@@ -6,14 +6,15 @@ import videojs from 'video.js';
 import Player from 'video.js/dist/types/player';
 import 'video.js/dist/video-js.css';
 
-import { Alert, Button, drawer, modal, Skeleton } from '$lib/components/core';
+import { Alert, Button, Card, drawer, modal, Skeleton } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
-import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
+import { useAccount, useLemonadeUsername, usePost } from '$lib/hooks/useLens';
 import { ASSET_PREFIX, SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
 
 import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
 import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
 import { EditProfileModal } from '../../lens-account/EditProfileModal';
+import { PostComposer } from '../../lens-feed/PostComposer';
 import { LemonHeadActionKind, useLemonHeadContext } from '../provider';
 
 export function ClaimLemonHead() {
@@ -42,13 +43,7 @@ export function ClaimLemonHead() {
     }
   }, [videoRef.current, isMobile]);
 
-  const getSrc = () => {
-    let src = `/api/og/lemonheads?image=${state.mint.image}&tokenId=${state.mint.tokenId}`;
-    if (myAccount?.username) src += `&username=${myAccount?.username.value.replace('lens/', '')}`;
-    if (myAccount?.metadata?.bio) src += `&bio=${myAccount?.metadata.bio}`;
-
-    return src;
-  };
+  const getImage = () => `/api/og/lemonheads?address=${myAccount?.address}&tokenId=${state.mint.tokenId}`;
 
   return (
     <div className="p-4 md:px-11 md:pb-11 md:pt-7 w-full max-w-[1440px] h-full">
@@ -57,8 +52,8 @@ export function ClaimLemonHead() {
           <p className="text-secondary md:text-xl">Welcome to</p>
           <p className="font-title text-2xl md:text-3xl font-semibold!">United Stands of Lemonade</p>
         </div>
-        <div className="flex-1 flex flex-col items-center gap-5 justify-center w-full">
-          <ImageLazyLoad src={getSrc()} className="border border-primary" />
+        <div className="flex-1 flex flex-col items-center gap-5 justify-center w-[70%]">
+          <ImageLazyLoad src={getImage()} className="border border-primary" />
 
           <div className="flex flex-wrap gap-5 w-full max-w-[1200px] justify-center md:justify-between">
             <Button
@@ -85,9 +80,7 @@ export function ClaimLemonHead() {
               <Button
                 iconLeft="icon-share"
                 variant="secondary"
-                onClick={() =>
-                  drawer.open(RightPane, { props: { image: state.mint.image, tokenId: state.mint.tokenId } })
-                }
+                onClick={() => drawer.open(RightPane, { props: { image: getImage() } })}
               >
                 Share
               </Button>
@@ -111,7 +104,10 @@ export function ClaimLemonHead() {
   );
 }
 
-function RightPane({ image, tokenId }: { image: string; tokenId?: string }) {
+const shareUrl = 'https://lemonade.social/lemonheads';
+const shareText = 'Just claimed my LemonHead 🍋 Fully onchain, totally me. Yours is waiting—go mint it now → ';
+
+function RightPane({ image }: { image: string }) {
   const { account: myAccount } = useAccount();
   const { username } = useLemonadeUsername(myAccount);
 
@@ -124,16 +120,6 @@ function RightPane({ image, tokenId }: { image: string; tokenId?: string }) {
     }
   };
 
-  const getSrc = () => {
-    let src = `/api/og/lemonheads?image=${image}&tokenId=${tokenId}`;
-    if (myAccount?.username) src += `&username=${myAccount?.username.value.replace('lens/', '')}`;
-    if (myAccount?.metadata?.bio) src += `&bio=${myAccount?.metadata.bio}`;
-
-    return src;
-  };
-
-  const shareUrl = '';
-  const shareText = '';
   const handleShare = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
@@ -156,14 +142,12 @@ function RightPane({ image, tokenId }: { image: string; tokenId?: string }) {
     {
       name: 'Post',
       icon: 'icon-lemonade',
-      onClick: () => alert('Comming soon'),
-      // onClick: () => handleShare(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`),
+      onClick: () => modal.open(ShareModal, { dismissible: true }),
     },
     {
       name: 'Share',
       icon: 'icon-instagram',
       onClick: () => alert('Comming soon'),
-      // onClick: () => handleShare(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`),
     },
     {
       name: 'Post',
@@ -185,7 +169,7 @@ function RightPane({ image, tokenId }: { image: string; tokenId?: string }) {
               Your personalized LemonHead card is ready! Update your profile info to make it truly yours.
             </p>
           </div>
-          <ImageLazyLoad src={getSrc()} />
+          <ImageLazyLoad src={image} />
         </div>
         <Alert className="justify-start">
           <div className="flex flex-col gap-3">
@@ -200,7 +184,7 @@ function RightPane({ image, tokenId }: { image: string; tokenId?: string }) {
               <Button size="sm" iconLeft="icon-user-edit-outline" variant="tertiary" onClick={handleUpdateProfile}>
                 Update Profile
               </Button>
-              <a href={getSrc()} download>
+              <a href={image} download>
                 <Button size="sm" iconLeft="icon-vertical-align-top rotate-180" variant="secondary">
                   Download
                 </Button>
@@ -216,10 +200,10 @@ function RightPane({ image, tokenId }: { image: string; tokenId?: string }) {
               <div
                 key={idx}
                 onClick={item.onClick}
-                className="flex flex-col items-center gap-3 pt-4 pb-2 px-1 bg-(--btn-tertiary) text-tertiary hover:(--btn-tertiary-hover) hover:text-primary rounded-sm cursor-pointer"
+                className="flex flex-col items-center gap-1 md:gap-3 pt-4 pb-2 px-1 bg-(--btn-tertiary) text-tertiary hover:(--btn-tertiary-hover) hover:text-primary rounded-sm cursor-pointer"
               >
-                <i className={twMerge('size-8', item.icon)} />
-                <p>{item.name}</p>
+                <i className={twMerge('size-5 md:size-8', item.icon)} />
+                <p className="text-xs md:text-base">{item.name}</p>
               </div>
             ))}
           </div>
@@ -240,7 +224,7 @@ function ImageLazyLoad({ src = '', className }: { src?: string; className?: stri
           className={twMerge('w-full max-w-[1200px] aspect-[40/21] rounded-md', className)}
         >
           <div className="flex-1 items-center justify-center flex w-[52.3%] h-full">
-            <Skeleton className="w-3/4 max-w-[456px] aspect-square animte rounded-none rounded-md" animate />
+            <Skeleton className="w-3/4 max-w-[456px] aspect-square animte rounded-md" animate />
           </div>
         </div>
       )}
@@ -251,5 +235,27 @@ function ImageLazyLoad({ src = '', className }: { src?: string; className?: stri
         className={twMerge('rounded-md', className, !imageLoaded ? 'invisible absolute' : 'visible')}
       />
     </>
+  );
+}
+
+function ShareModal() {
+  const { createPost } = usePost();
+
+  const onPost = async (metadata: unknown, feedAddress?: string) => {
+    await createPost({ metadata, feedAddress });
+    modal.close();
+  };
+
+  return (
+    <Card.Root className="w-xl bg-transparent">
+      <Card.Content className="p-0">
+        <PostComposer
+          onPost={onPost}
+          showFeedOptions
+          autoFocus
+          defaultValue="Just claimed my LemonHead 🍋 Fully onchain, totally me. Yours is waiting—go mint it now → https://lemonade.social/lemonheads"
+        />
+      </Card.Content>
+    </Card.Root>
   );
 }

@@ -24,16 +24,16 @@ export function LemonHeadMain() {
 
 const skinToneOpts: any = {
   human: [
-    { value: 'light', label: 'Soft', color: '#FDCCA8' },
-    { value: 'tan', label: 'Medium', color: '#E0955F' },
-    { value: 'brown', label: 'Rich', color: '#984F1B' },
-    { value: 'dark', label: 'Bold', color: '#6C350D' },
+    { value: 'soft', label: 'Soft', color: '#FDCCA8' },
+    { value: 'medium', label: 'Medium', color: '#E0955F' },
+    { value: 'rich', label: 'Rich', color: '#984F1B' },
+    { value: 'bold', label: 'Bold', color: '#6C350D' },
   ],
   alien: [
-    { value: 'light', label: 'Soft', color: '#D4D9DD' },
-    { value: 'tan', label: 'Medium', color: '#A5B3C0' },
-    { value: 'brown', label: 'Rich', color: '#788C9E' },
-    { value: 'dark', label: 'Bold', color: '#485A6A' },
+    { value: 'soft', label: 'Soft', color: '#D4D9DD' },
+    { value: 'medium', label: 'Medium', color: '#A5B3C0' },
+    { value: 'rich', label: 'Rich', color: '#788C9E' },
+    { value: 'bold', label: 'Bold', color: '#485A6A' },
   ],
 };
 
@@ -53,7 +53,7 @@ function Content() {
         dispatch({ type: LemonHeadActionKind.set_resources, payload: { data: accessories } });
         dispatch({
           type: LemonHeadActionKind.set_default_traits,
-          payload: { data: { race: 'human', size: 'medium', gender: 'female' } },
+          payload: { data: { race: 'human', size: 'regular', gender: 'female' } },
         });
 
         dispatch({ type: LemonHeadActionKind.set_colorset, payload: { data: dataColorSet?.items } });
@@ -78,10 +78,10 @@ function Content() {
         <div className="flex-1 flex flex-col h-full pb-4 md:flex-row-reverse max-w-[1440px] overflow-auto mx-auto gap-5 md:gap-18 p-4 md:p-11 no-scrollbar">
           {showPreview ? (
             state.currentStep === LemonHeadStep.getstarted ? (
-              <div className="max-w-[80px] md:max-w-[692px] md:max-h-[692px] aspect-square">
+              <div className="max-w-[80px] md:max-w-[692px] md:max-h-[692px]">
                 <img
                   src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
-                  className="rounded-sm w-full h-full"
+                  className="rounded-sm w-full h-auto aspect-square"
                 />
               </div>
             ) : (

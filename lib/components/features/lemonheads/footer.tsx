@@ -2,7 +2,6 @@
 import { useRouter } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 import { Eip1193Provider, ethers } from 'ethers';
-import { isMobile } from 'react-device-detect';
 import { useAppKitAccount, useAppKitNetwork, useAppKitProvider } from '@reown/appkit/react';
 import { useAtomValue } from 'jotai';
 import React from 'react';
@@ -16,7 +15,11 @@ import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/cry
 import { useQuery } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
-import { GetListLemonheadSponsorsDocument, LemonheadSponsor } from '$lib/graphql/generated/backend/graphql';
+import {
+  CanMintLemonheadDocument,
+  GetListLemonheadSponsorsDocument,
+  LemonheadSponsor,
+} from '$lib/graphql/generated/backend/graphql';
 import { TraitExtends } from '$lib/trpc/lemonheads/types';
 
 import { ConnectWallet } from '../modals/ConnectWallet';
@@ -47,6 +50,14 @@ export function LemonHeadFooter() {
     skip: !address,
     fetchPolicy: 'network-only',
   });
+
+  const { data: dataCanMint } = useQuery(CanMintLemonheadDocument, {
+    variables: { wallet: address! },
+    skip: !address,
+    fetchPolicy: 'network-only',
+  });
+  const canMint = dataCanMint?.canMintLemonhead;
+
   // NOTE: only pick one can get free
   const sponsor = data?.listLemonheadSponsors.sponsors.find(
     (s) => s.remaining && s.remaining > 0 && s.remaining <= s.limit,
@@ -54,6 +65,11 @@ export function LemonHeadFooter() {
 
   const checkMinted = async () => {
     let isValid = true;
+
+    if (!canMint) {
+      toast.error('Not able to mint!');
+      return false;
+    }
 
     try {
       if (!state.traits.length || !contractAddress) return;
@@ -107,7 +123,7 @@ export function LemonHeadFooter() {
                               dispatch({ type: LemonHeadActionKind.next_step });
                             },
                           },
-                          dismissible: false
+                          dismissible: false,
                         }),
                     },
                   });
@@ -117,7 +133,7 @@ export function LemonHeadFooter() {
             },
             chain: chainsMap[LEMONHEAD_CHAIN_ID],
           },
-          dismissible: false
+          dismissible: false,
         });
 
         return;
@@ -132,7 +148,7 @@ export function LemonHeadFooter() {
                 dispatch({ type: LemonHeadActionKind.next_step });
               },
             },
-            dismissible: false
+            dismissible: false,
           });
         }
 
@@ -149,48 +165,48 @@ export function LemonHeadFooter() {
     dispatch({ type: LemonHeadActionKind.next_step });
   };
 
-  if (isMobile) {
-    return (
-      <div className="flex items-center gap-2 min-h-[64px] px-4 z-10">
+  return (
+    <>
+      <div className="md:hidden flex items-center gap-2 min-h-[64px] px-4 z-10">
         <Button icon="icon-logout" onClick={handlePrev} variant="tertiary" />
         <Button variant="secondary" className="w-full" onClick={handleNext} disabled={disabled}>
           {currentStep?.btnText}
         </Button>
       </div>
-    );
-  }
 
-  return (
-    <div className="flex justify-between items-center min-h-[64px] px-4 bg-background/80 backdrop-blur-md">
-      <div className="flex-1">
-        <Button variant="tertiary" size="sm" onClick={handlePrev}>
-          {state.currentStep === LemonHeadStep.getstarted ? 'Exit' : 'Back'}
-        </Button>
+      <div className="hidden md:flex justify-between items-center min-h-[64px] px-4 bg-background/80 backdrop-blur-md">
+        <div className="flex-1">
+          <Button variant="tertiary" size="sm" onClick={handlePrev}>
+            {state.currentStep === LemonHeadStep.getstarted ? 'Exit' : 'Back'}
+          </Button>
+        </div>
+
+        {LemonHeadStep.getstarted !== state.currentStep && (
+          <ul className="flex items-center justify-center flex-2 gap-1.5">
+            {Object.entries(state.steps).map(([key, item]) => {
+              return (
+                <li key={key} className="flex items-center gap-1.5">
+                  {item.label && (
+                    <p className={twMerge('text-quaternary', item.mounted && 'text-primary')}>{item.label}</p>
+                  )}
+                  {item.label && (
+                    <i
+                      className={twMerge('icon-chevron-right size-5 text-quaternary', item.mounted && 'text-primary')}
+                    />
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        <div className="flex flex-1 justify-end">
+          <Button iconRight="icon-chevron-right" variant="secondary" size="sm" onClick={handleNext}>
+            {currentStep?.btnText}
+          </Button>
+        </div>
       </div>
-
-      {LemonHeadStep.getstarted !== state.currentStep && (
-        <ul className="flex items-center justify-center flex-1 gap-1.5">
-          {Object.entries(state.steps).map(([key, item]) => {
-            return (
-              <li key={key} className="flex items-center gap-1.5">
-                {item.label && (
-                  <p className={twMerge('text-quaternary', item.mounted && 'text-primary')}>{item.label}</p>
-                )}
-                {item.label && (
-                  <i className={twMerge('icon-chevron-right size-5 text-quaternary', item.mounted && 'text-primary')} />
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      )}
-
-      <div className="flex flex-1 justify-end">
-        <Button iconRight="icon-chevron-right" variant="secondary" size="sm" onClick={handleNext}>
-          {currentStep?.btnText}
-        </Button>
-      </div>
-    </div>
+    </>
   );
 }
 
@@ -259,9 +275,9 @@ function MintModal({
     minted: false,
     video: false,
     mute: true,
-    image: '',
     txHash: '',
     tokenId: '',
+    contract: '',
   });
 
   const mutation = trpc.mintNft.useMutation();
@@ -308,7 +324,7 @@ function MintModal({
             onConnect: () => modal.close(),
             chain: chainsMap[LEMONHEAD_CHAIN_ID],
           },
-          dismissible: false
+          dismissible: false,
         });
 
         return;
@@ -318,7 +334,11 @@ function MintModal({
 
       if (!address) throw new Error('No wallet address found');
 
-      const mintData = await mutation.mutateAsync({ wallet: address, traits, sponsor: sponsor?._id });
+      const mintData = await mutation.mutateAsync({
+        wallet: address,
+        traits: traits.map(({ _id, image, ...rest }) => rest),
+        sponsor: sponsor?._id,
+      });
       console.log('Mint data:', mintData);
 
       if (!contractAddress) throw new Error('LemonheadNFT contract address not set');
@@ -357,7 +377,7 @@ function MintModal({
 
       if (parsedTransferLog) {
         const tokenId = parsedTransferLog.args?.tokenId?.toString();
-        setMintState((prev) => ({ ...prev, image: mintData.image, txHash: tx?.hash, tokenId }));
+        setMintState((prev) => ({ ...prev, tokenId }));
         setDone(true);
 
         setInterval(() => {

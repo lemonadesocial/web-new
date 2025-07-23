@@ -1,21 +1,10 @@
 import { File } from '$lib/graphql/generated/backend/graphql';
 import { Trait, TraitType } from '$lib/services/lemonhead/core';
 
-export type LemonHeadsPageInfo = {
-  isFirstPage: boolean;
-  isLastPage: boolean;
-  page: number;
-  pageSize: number;
-  totalRows: number;
-};
-
-/**
- * @description data layer from nocodb
- * */
-export type SkinTone = 'brown' | 'tan' | 'light' | 'dark';
+export type SkinTone = 'soft' | 'medium' | 'rich' | 'bold';
 export type Gender = 'male' | 'female';
 export type BodyRace = 'human' | 'alien';
-export type BodySize = 'small' | 'medium' | 'large' | 'extra_large';
+export type BodySize = 'regular' | 'skinny' | 'toned' | 'large';
 
 export type LemonHeadsLayer = {
   _id: number;

@@ -20,6 +20,7 @@ import { useClient } from '$lib/graphql/request';
 import { PlaceAutoComplete } from '$lib/components/core/map/place-autocomplete';
 
 import { AddTags } from './ListingEvent';
+import { trpc } from '$lib/trpc/client';
 
 type FormValues = {
   external_url?: string;
@@ -239,39 +240,35 @@ function InputFieldCustom({
   onChange?: (data: any) => void;
 }) {
   const [value, setValue] = React.useState('');
-  const [extracting, setExtracting] = React.useState(false);
+
+  const { data, isLoading } = trpc.openGraph.extractUrl.useQuery({ url: value });
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
     setValue(text);
 
-    if (text) {
-      handleExtractUrl(text);
-    }
+    if (text) onStartExtract?.();
   };
 
-  const handleExtractUrl = async (url: string) => {
-    setExtracting(true);
-    onStartExtract?.();
-    try {
-      setExtracting(true);
-      const res = await fetch('/api/og/extractor', {
-        method: 'POST',
-        body: JSON.stringify({ url }),
-      });
+  React.useEffect(() => {
+    if (data?.error) {
+      toast.error('Cannot extract url');
+      return;
+    }
 
-      const data = await res.json();
-      let startDate = isDate(data.articlePublishedTime) ? data.articlePublishedTime : new Date();
-      let endDate = isDate(data.articleExpirationTime) ? data.articleExpirationTime : new Date();
+    if (data?.result && value) {
+      const result = data.result;
+      let startDate = isDate(result.articlePublishedTime) ? result.articlePublishedTime : new Date();
+      let endDate = isDate(result.articleExpirationTime) ? result.articleExpirationTime : new Date();
       let host = '';
       let location = {};
 
-      if ('jsonLD' in data && data.jsonLD.length) {
-        startDate = data.jsonLD.find((item: any) => item.startDate)?.startDate || null;
-        endDate = data.jsonLD.find((item: any) => item.endDate)?.endDate || null;
-        host = data.jsonLD.find((item: any) => item.organizer)?.organizer?.name || null;
+      if ('jsonLD' in result && result.jsonLD?.length) {
+        startDate = result.jsonLD.find((item: any) => item.startDate)?.startDate || null;
+        endDate = result.jsonLD.find((item: any) => item.endDate)?.endDate || null;
+        host = result.jsonLD.find((item: any) => item.organizer)?.organizer?.name || null;
 
-        const _location = data.jsonLD.find((item: any) => item.location)?.location || null;
+        const _location = result.jsonLD.find((item: any) => item.location)?.location || null;
         location = {
           address: {
             street_1: _location?.address?.streetAddress,
@@ -285,19 +282,15 @@ function InputFieldCustom({
       }
 
       onChange?.({
-        title: data.ogTitle,
+        title: result.ogTitle,
         startDate,
         endDate,
         host,
-        external_url: url,
+        external_url: value,
         location,
       });
-    } catch (_err) {
-      toast.error('Cannot extract url');
-    } finally {
-      setExtracting(false);
     }
-  };
+  }, [data, value]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -306,7 +299,7 @@ function InputFieldCustom({
         <div
           className={twMerge(
             'transition opacity-0 text-tertiary flex items-center gap-1.5',
-            clsx(extracting && 'opacity-100'),
+            clsx(isLoading && 'opacity-100'),
           )}
         >
           <svg className="animate-spin size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -438,150 +431,3 @@ function DateTimeWithTimeZone({
     </div>
   );
 }
-
-// function DateTimeGroup({ value = '', onSelect }: { value?: string; onSelect: (datetime: string) => void }) {
-//   const times = React.useMemo(() => {
-//     const formatTime = (hour: number, minutes: number) => {
-//       const period = hour < 12 ? 'AM' : 'PM';
-//       const formattedHour = (hour % 12 === 0 ? 12 : hour % 12).toString().padStart(2, '0');
-//       const formattedMinutes = minutes.toString().padStart(2, '0');
-//       return {
-//         value: `${hour.toString().padStart(2, '0')}:${formattedMinutes}`,
-//         label: `${formattedHour}:${formattedMinutes} ${period}`,
-//       };
-//     };
-//
-//     const hours = Array.from({ length: 24 }, (_, i) => i);
-//     const minutes = Array.from({ length: 2 }, (_, i) => i * 30);
-//
-//     return hours.flatMap((hour) => minutes.map((minute) => formatTime(hour, minute)));
-//   }, []);
-//
-//   const handleSelect = (args: { value: Date; timezone?: string }) => {
-//     onSelect(args.value.toISOString());
-//   };
-//
-//   return (
-//     <div className="flex gap-0.5">
-//       <Menu.Root strategy="fixed" placement="top">
-//         <Menu.Trigger>
-//           <Button variant="tertiary" size="sm" className="rounded-e-none! min-w-[110px]!">
-//             {format(value ? new Date(value) : new Date(), 'EEE, dd MMM')}
-//           </Button>
-//         </Menu.Trigger>
-//         <FloatingPortal>
-//           <Menu.Content className="w-[296px] p-0 rounded-lg">
-//             {({ toggle }) => (
-//               <Calendar
-//                 onSelectDate={(date = new Date()) => {
-//                   const datetime = value ? new Date(value) : new Date();
-//                   datetime.setFullYear(date.getFullYear());
-//                   datetime.setMonth(date.getMonth());
-//                   datetime.setDate(date.getDate());
-//                   handleSelect({ value: datetime });
-//                   toggle();
-//                 }}
-//               />
-//             )}
-//           </Menu.Content>
-//         </FloatingPortal>
-//       </Menu.Root>
-//       <Menu.Root placement="top-end">
-//         <Menu.Trigger>
-//           <Button variant="tertiary" size="sm" className="rounded-s-none! min-w-[84px]">
-//             {format(value ? new Date(value) : new Date(), 'hh:mm a')}
-//           </Button>
-//         </Menu.Trigger>
-//         <Menu.Content className="w-fit no-scrollbar rounded-lg overflow-auto h-[200px] p-2">
-//           {({ toggle }) => {
-//             return (
-//               <div>
-//                 {times.map((t, i) => (
-//                   <Button
-//                     key={i}
-//                     variant="flat"
-//                     className="hover:bg-quaternary! w-full whitespace-nowrap"
-//                     onClick={() => {
-//                       const [hours, minutes] = t.value.split(':').map(Number);
-//                       const datetime = value ? new Date(value) : new Date();
-//                       datetime.setHours(hours);
-//                       datetime.setMinutes(minutes);
-//                       handleSelect({ value: datetime });
-//                       toggle();
-//                     }}
-//                   >
-//                     {t.label}
-//                   </Button>
-//                 ))}
-//               </div>
-//             );
-//           }}
-//         </Menu.Content>
-//       </Menu.Root>
-//     </div>
-//   );
-// }
-//
-// function Timezone({ value, onSelect }: { value?: TimezoneOption; onSelect: (zone: TimezoneOption) => void }) {
-//   const [zones, setZone] = React.useState(timezoneOptions);
-//   const [query, setQuery] = React.useState('');
-//
-//   return (
-//     <Menu.Root strategy="fixed" placement="top">
-//       <Menu.Trigger>
-//         <button
-//           type="button"
-//           className="btn btn-tertiary inline-flex items-center w-full rounded-sm h-[40px] pl-3.5 pr-2.5"
-//         >
-//           <div className="flex flex-1 w-3xs md:w-auto items-center gap-2.5">
-//             <i className="icon-globe size-[20px]" />
-//             <span className="truncate w-fit">{value?.text}</span>
-//           </div>
-//           <i className="icon-chevron-down size-[20px]" />
-//         </button>
-//       </Menu.Trigger>
-//       <Menu.Content className="p-0 border-0">
-//         {({ toggle }) => (
-//           <Card.Root>
-//             <Card.Header className="p-0">
-//               <Input
-//                 className="rounded-none border-none"
-//                 value={query}
-//                 autoFocus
-//                 onChange={(e) => {
-//                   const text = e.target.value;
-//                   setQuery(text);
-//                   if (!text) setZone(timezoneOptions);
-//                   else setZone(timezoneOptions.filter((p) => p.value.toLowerCase().includes(text.toLowerCase())));
-//                 }}
-//               />
-//             </Card.Header>
-//             <Card.Content className="p-0  md:w-[446px]">
-//               <div className="p-1 overflow-auto h-[170px]">
-//                 {zones.map((zone, i) => {
-//                   return (
-//                     <div
-//                       key={i}
-//                       className={clsx(
-//                         'flex justify-between items-center text-sm px-2 py-1.5 cursor-pointer hover:bg-[var(--btn-tertiary)]',
-//                         value?.value === zone.value,
-//                       )}
-//                       onClick={() => {
-//                         onSelect(zone);
-//                         setQuery('');
-//                         toggle();
-//                       }}
-//                     >
-//                       <p>{zone.value}</p>
-//                       <p>{zone.short}</p>
-//                     </div>
-//                   );
-//                 })}
-//               </div>
-//             </Card.Content>
-//           </Card.Root>
-//         )}
-//       </Menu.Content>
-//     </Menu.Root>
-//   );
-// }

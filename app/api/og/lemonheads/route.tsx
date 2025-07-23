@@ -1,17 +1,91 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
+import { fetchAccount } from '@lens-protocol/client/actions';
+import { ethers } from 'ethers';
+import { PublicClient, evmAddress, mainnet, testnet } from '@lens-protocol/client';
+import request from 'graphql-request';
+
 import { ASSET_PREFIX } from '$lib/utils/constants';
+import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
+import { LEMONHEAD_CHAIN_ID } from '$lib/components/features/lemonheads/utils';
+import { ERC721Contract } from '$lib/utils/crypto';
 
 const fetchFont = (url: string) => {
   return fetch(new URL(url)).then((res) => res.arrayBuffer());
 };
 
-export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
-  const image = searchParams.get('image') || '';
+const APP_ENV = process.env.APP_ENV;
+const url =
+  APP_ENV === 'production'
+    ? 'https://backend.lemonade.social/graphql'
+    : 'https://backend.staging.lemonade.social/graphql';
+const fetchChain = async () => {
+  const res = await request({ url, document: ListChainsDocument });
+  return res.listChains?.find((i) => i.chain_id === LEMONHEAD_CHAIN_ID);
+};
+
+/**
+ * WARN: all params are required
+ * @description api support generate image after mint
+ *
+ * 1. fetch and find chain
+ * 2. fetch contract address - extract image data from uri
+ * 3. fetch lens account - username, bio, etc.
+ * 4. generate final image
+ *
+ */
+export async function GET(req: NextRequest) {
+  console.log(process.env.APP_ENV);
+
+  const searchParams = req.nextUrl.searchParams;
   const tokenId = searchParams.get('tokenId') || '';
-  const username = searchParams.get('username');
-  const bio = searchParams.get('bio');
+  const address = searchParams.get('address') || '';
+
+  if (!tokenId || !address) {
+    return new Response(`Error: Bad Request!`, { status: 400 });
+  }
+
+  const chain = await fetchChain();
+
+  if (!chain) {
+    return new Response(`Error: Chain does not support!`, { status: 400 });
+  }
+
+  let username, bio, image;
+
+  try {
+    const contractAddress = chain.lemonhead_contract_address;
+
+    if (!contractAddress) {
+      return new Response('LemonheadNFT contract address not set', { status: 400 });
+    }
+
+    const provider = new ethers.JsonRpcProvider(chain.rpc_url);
+    const contract = ERC721Contract.attach(contractAddress).connect(provider);
+
+    const tokenUri = await contract.getFunction('tokenURI')(tokenId);
+    console.log(tokenId);
+    const res = await fetch(tokenUri);
+    const data = await res.json();
+    image = data.image;
+
+    const client = PublicClient.create({
+      environment: process.env.APP_ENV === 'production' ? mainnet : testnet,
+    });
+
+    const result = await fetchAccount(client, { address: evmAddress(address) });
+
+    if (result.isErr()) {
+      return new Response(`Error: Not found!`, { status: 404 });
+    }
+
+    const account = result.value;
+    username = account?.username?.localName;
+    bio = account?.metadata?.bio;
+  } catch (err) {
+    console.log(err);
+    return new Response(`Error: Something went wrong!`, { status: 500 });
+  }
 
   return new ImageResponse(
     (
@@ -26,7 +100,11 @@ export async function GET(request: NextRequest) {
         <img src={`${ASSET_PREFIX}/assets/images/mint-cover.png`} style={{ position: 'absolute', inset: 0 }} />
 
         <div style={{ display: 'flex', flex: 1, justifyContent: 'center', gap: 105, paddingTop: 88 }}>
-          <img src={image} style={{ width: 454, height: 454 }} />
+          {image ? (
+            <img src={image} style={{ width: 454, height: 454 }} />
+          ) : (
+            <div style={{ width: 454, height: 454 }} />
+          )}
 
           <div style={{ display: 'flex', flexDirection: 'column', flex: 1, color: 'white', maxWidth: 466 }}>
             {!username ? (

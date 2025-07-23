@@ -12,3 +12,7 @@ query GetListLemonheadSponsors($wallet: String!) {
     }
   }
 }
+
+query CanMintLemonhead($wallet: String!) {
+  canMintLemonhead(wallet: $wallet)
+}

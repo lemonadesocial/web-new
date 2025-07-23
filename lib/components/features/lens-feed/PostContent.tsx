@@ -1,12 +1,13 @@
-import { EventMetadata, ImageMetadata, LinkMetadata, Post, TextOnlyMetadata } from "@lens-protocol/client";
-import { useState, useEffect } from "react";
+import { EventMetadata, ImageMetadata, LinkMetadata, Post, TextOnlyMetadata } from '@lens-protocol/client';
+import { useState, useEffect } from 'react';
 
-import { FeedPostGallery } from "./FeedPostGallery";
-import { EventPreview } from "./EventPreview";
-import { UrlPreview } from "./UrlPreview";
-import { GetEventDocument, Event } from "$lib/graphql/generated/backend/graphql";
-import { defaultClient } from "$lib/graphql/request/instances";
-import { renderTextWithLinks } from "$lib/utils/render";
+import { FeedPostGallery } from './FeedPostGallery';
+import { EventPreview } from './EventPreview';
+// import { UrlPreview } from './UrlPreview';
+import { GetEventDocument, Event } from '$lib/graphql/generated/backend/graphql';
+import { defaultClient } from '$lib/graphql/request/instances';
+import { renderTextWithLinks } from '$lib/utils/render';
+import { LinkPreview } from '$lib/components/core/link';
 
 type PostContentProps = {
   post: Post;
@@ -24,7 +25,11 @@ export function PostContent({ post }: PostContentProps) {
         const eventMetadata = metadata as EventMetadata;
         if (typeof eventMetadata.location === 'string') {
           shortid = eventMetadata.location;
-        } else if (eventMetadata.location && typeof eventMetadata.location === 'object' && 'physical' in eventMetadata.location) {
+        } else if (
+          eventMetadata.location &&
+          typeof eventMetadata.location === 'object' &&
+          'physical' in eventMetadata.location
+        ) {
           shortid = eventMetadata.location.physical;
         }
       }
@@ -33,7 +38,7 @@ export function PostContent({ post }: PostContentProps) {
         const { data } = await defaultClient.query({
           query: GetEventDocument,
           variables: { shortid },
-          fetchPolicy: 'network-only'
+          fetchPolicy: 'network-only',
         });
         if (data?.getEvent) {
           setEvent(data.getEvent as Event);
@@ -43,7 +48,7 @@ export function PostContent({ post }: PostContentProps) {
 
     fetchEvent();
   }, [metadata]);
-  
+
   const extractFirstUrl = (content?: string): string | null => {
     const urlRegex = /https?:\/\/[^\s]+/g;
     const matches = content?.match(urlRegex);
@@ -54,16 +59,15 @@ export function PostContent({ post }: PostContentProps) {
 
   return (
     <div className="space-y-2" style={{ overflowWrap: 'anywhere' }}>
-      <p className="text-secondary whitespace-pre-line" >
+      <p className="text-secondary whitespace-pre-line">
         {renderTextWithLinks((metadata as TextOnlyMetadata).content || '')}
       </p>
       {(metadata as ImageMetadata).attachments?.length > 0 && (
         <FeedPostGallery attachments={(metadata as ImageMetadata).attachments.map(({ item }) => item)} />
       )}
-      {event && (
-        <EventPreview event={event} />
-      )}
-      {sharingLink && <UrlPreview url={sharingLink} />}
+      {event && <EventPreview event={event} />}
+      {/* {sharingLink && <UrlPreview url={sharingLink} />} */}
+      {sharingLink && <LinkPreview url={sharingLink} />}
     </div>
   );
 }

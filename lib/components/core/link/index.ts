@@ -1,2 +1,3 @@
 import { Link } from './link';
-export { Link };
+import { LinkPreview } from './link-preview';
+export { Link, LinkPreview };
