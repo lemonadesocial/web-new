@@ -17,7 +17,7 @@ import { useLogOut as useLensLogOut } from '$lib/hooks/useLens';
 import { useAccount } from '$lib/hooks/useLens';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
-import { useLemonhead } from '$lib/hooks/useLemonhead';
+// import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { ProfilePane } from '../features/pane';
 import { VerifyEmailModal } from '../features/auth/VerifyEmailModal';
 import { ConnectWalletModal } from '../features/auth/ConnectWalletModal';
@@ -40,7 +40,7 @@ const menu = [
 
 export function RootMenu() {
   const pathName = usePathname();
-  
+
   return (
     <nav className="hidden md:flex md:flex-3_1_auto w-[1080px]">
       <ul className="flex flex-1 gap-5">
@@ -88,7 +88,7 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
 
         {session && me ? (
           <div className="flex gap-2 items-center">
-            {(session && !session.email) && (
+            {session && !session.email && (
               <Button
                 onClick={() => modal.open(VerifyEmailModal)}
                 size="sm"
@@ -144,8 +144,8 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
                     <div className="p-1">
                       <MenuItem title="Edit Profile" onClick={() => drawer.open(ProfilePane, { dismissible: false })} />
                       <MenuItem title="Settings" onClick={() => window.open(`${LEMONADE_DOMAIN}/settings`, '_blank')} />
-                      {
-                        account && <>
+                      {account && (
+                        <>
                           <MenuItem
                             title="Switch Profile"
                             onClick={() => {
@@ -161,13 +161,13 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
                             }}
                           />
                         </>
-                      }
+                      )}
                       <MenuItem
                         title="Sign Out"
                         onClick={async () => {
                           toggle();
                           logOut();
-                          
+
                           if (account) {
                             lensLogOut();
                           }
@@ -209,49 +209,52 @@ function ConnectLens() {
             modal.open(SelectProfileModal);
           });
         },
-        chain: chainsMap[LENS_CHAIN_ID]
-      }
+        chain: chainsMap[LENS_CHAIN_ID],
+      },
     });
-  }
+  };
 
-  if (!walletVerified && !account) return (
-    <Button
-      onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
-      size="sm"
-      className="rounded-full"
-      variant="warning"
-      iconLeft="icon-error"
-      outlined
-    >
-      Claim Username
-    </Button>
-  );
+  if (!walletVerified && !account)
+    return (
+      <Button
+        onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
+        size="sm"
+        className="rounded-full"
+        variant="warning"
+        iconLeft="icon-error"
+        outlined
+      >
+        Claim Username
+      </Button>
+    );
 
-  if (!account) return (
-    <Button
-      onClick={handleSelectWallet}
-      size="sm"
-      className="rounded-full"
-      variant="warning"
-      iconLeft="icon-error"
-      outlined
-    >
-      Claim Username
-    </Button>
-  );
+  if (!account)
+    return (
+      <Button
+        onClick={handleSelectWallet}
+        size="sm"
+        className="rounded-full"
+        variant="warning"
+        iconLeft="icon-error"
+        outlined
+      >
+        Claim Username
+      </Button>
+    );
 
-  if (!walletVerified) return (
-    <Button
-    onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
-      size="sm"
-      className="rounded-full"
-      variant="warning"
-      iconLeft="icon-error"
-      outlined
-    >
-      Verify Wallet
-    </Button>
-  );
+  if (!walletVerified)
+    return (
+      <Button
+        onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
+        size="sm"
+        className="rounded-full"
+        variant="warning"
+        iconLeft="icon-error"
+        outlined
+      >
+        Verify Wallet
+      </Button>
+    );
 
   return null;
 }
