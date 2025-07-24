@@ -139,6 +139,7 @@ export function CreatingModal() {
 
       case 'community':
       case 'event':
+        modal.close();
         router.push(`/create/${key}`);
         break;
 
