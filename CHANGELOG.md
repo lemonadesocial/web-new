@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.64.0](https://github.com/lemonadesocial/web-new/compare/v1.63.4...v1.64.0) (2025-07-24)
+
+
+### Features
+
+* add intrusment layer ([bd94234](https://github.com/lemonadesocial/web-new/commit/bd94234500c0aeb2678ed279456a98ac3d5754d8))
+* allow dismiss modal ([5a60416](https://github.com/lemonadesocial/web-new/commit/5a60416efb6cffc375bdb95b1535ef935240e041))
+* break works on post modal ([ba07e7b](https://github.com/lemonadesocial/web-new/commit/ba07e7b3f9e03eb05858d291391343fe3ff61eef))
+* cancel payment ([c56ba4c](https://github.com/lemonadesocial/web-new/commit/c56ba4ce0742efdb4d2e7e5e384a4aff3f607bfb))
+* close modal after share post ([2eee8af](https://github.com/lemonadesocial/web-new/commit/2eee8afedda3045301b6a507400938d0cff2372c))
+* complete share actions ([ed18d7b](https://github.com/lemonadesocial/web-new/commit/ed18d7bb46a486cb1c26e3a935eddafefbb85ffe))
+* complete web view ([14e7f40](https://github.com/lemonadesocial/web-new/commit/14e7f40afeda309b88d700622a5017326f840704))
+* determine nft output image format ([019f313](https://github.com/lemonadesocial/web-new/commit/019f3130c08f5aaebd97ff4dab8d3080883fccc9))
+* extract metadata ([6ed38de](https://github.com/lemonadesocial/web-new/commit/6ed38de957ad3d545460f8159de8d0ea25191fd2))
+* rm unused ([4fd23e0](https://github.com/lemonadesocial/web-new/commit/4fd23e0f44f2a0443bc407afcadea53b44b3785f))
+* update data changed ([22bfb64](https://github.com/lemonadesocial/web-new/commit/22bfb645588469192c6ab779f599accae66dc6dc))
+* update divider post composer ([30ce704](https://github.com/lemonadesocial/web-new/commit/30ce70431a6fc842f09a4a3a92e15ec04ee1b670))
+* update filter background ([2d72537](https://github.com/lemonadesocial/web-new/commit/2d725379212249e1a5c781ed9c0280a96764e07b))
+* update filter bag ([8de5c17](https://github.com/lemonadesocial/web-new/commit/8de5c179a4c87b867f85f42cd110eed90eb05fff))
+* update link preview ([e5b9190](https://github.com/lemonadesocial/web-new/commit/e5b919099ba10782f9539460ba8e7cb12e7164b4))
+* update link preview post content ([2f4ee5c](https://github.com/lemonadesocial/web-new/commit/2f4ee5c07da434eefed5ec68e1ac7a1b268f458e))
+* update link-preview ([8bdcc91](https://github.com/lemonadesocial/web-new/commit/8bdcc912fbb3dc495ff3d47135c34f30a8636813))
+* update metadata ([1deae6b](https://github.com/lemonadesocial/web-new/commit/1deae6b90f4cd7157856c32bd7d7cfff61558214))
+* update mobile view ([ed2a2de](https://github.com/lemonadesocial/web-new/commit/ed2a2deb173091681cb8e1e5ec84eb621b1bb980))
+* update modal mobile view ([54c9efd](https://github.com/lemonadesocial/web-new/commit/54c9efd1ff5a4bc2a89c403e14c4be73c74024cb))
+* update modal style ([bb2e85b](https://github.com/lemonadesocial/web-new/commit/bb2e85b330642e4d2d27015e3f57c49b3e2f1d39))
+* update new trait - bag, earings, tie ([7c0c19a](https://github.com/lemonadesocial/web-new/commit/7c0c19a890e709d0b478b41a4db09ef940f7de23))
+* update sidebar ([db45e32](https://github.com/lemonadesocial/web-new/commit/db45e32a938ca83b58388f61e773a8c11d8787a5))
+* update string utils ([401b78f](https://github.com/lemonadesocial/web-new/commit/401b78f8e61d936e5ea0df829b53798677c3708a))
+* update styling modal ([0195b64](https://github.com/lemonadesocial/web-new/commit/0195b64ed1f1848f015b6fa23ae38a48ad192f59))
+
+
+### Bug Fixes
+
+* lint code ([faaf11b](https://github.com/lemonadesocial/web-new/commit/faaf11bddca6be0e63c06fc4e02899f511273fc8))
+* mobile view - add delete button ([c75e061](https://github.com/lemonadesocial/web-new/commit/c75e06135a918eb555892be338baa2a9a62af12e))
+* modal close function ([ba4bae5](https://github.com/lemonadesocial/web-new/commit/ba4bae50432fa2fc10940077707691eecb9f119d))
+* tabs control home page ([489418f](https://github.com/lemonadesocial/web-new/commit/489418f82eb6e38a1627183f838bc167891d4699))
+* wrong condition ([4603fd9](https://github.com/lemonadesocial/web-new/commit/4603fd9a9cc482455433850ec477ffead2a75c35))
+
 ## [1.63.4](https://github.com/lemonadesocial/web-new/compare/v1.63.3...v1.63.4) (2025-07-20)
 
 
