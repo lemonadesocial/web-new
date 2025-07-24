@@ -1,7 +1,7 @@
 'use client';
 import { usePathname, useRouter } from 'next/navigation';
 import clsx from 'clsx';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { useAccount } from '$lib/hooks/useLens';
 import { useMe } from '$lib/hooks/useMe';
@@ -27,7 +27,11 @@ export function BottomBar() {
             className="rounded-full"
             icon="icon-plus"
             onClick={() =>
-              modal.open(CreatingModal, { dismissible: false, className: 'm-0!  w-full', position: 'bottom' })
+              modal.open(CreatingModal, {
+                dismissible: false,
+                className: 'm-0! rounded-b-none w-full',
+                position: 'bottom',
+              })
             }
           />
         ),
@@ -43,8 +47,8 @@ export function BottomBar() {
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 w-full p-4 flex justify-center">
       <div className="flex items-center gap-2 p-2 rounded-full border bg-overlay-secondary [backdrop-filter:var(--backdrop-filter)]">
-        {menu.map((item) => {
-          if (item.custom) return item.icon;
+        {menu.map((item, idx) => {
+          if (item.custom) return <React.Fragment key={idx}>{item.icon}</React.Fragment>;
 
           return (
             <div
