@@ -28,7 +28,6 @@ export function BottomBar() {
             icon="icon-plus"
             onClick={() =>
               modal.open(CreatingModal, {
-                dismissible: false,
                 className: 'm-0! rounded-b-none w-full bg-[#202022]',
                 position: 'bottom',
               })

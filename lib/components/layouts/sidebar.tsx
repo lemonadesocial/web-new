@@ -110,11 +110,7 @@ const Sidebar = () => {
             ))}
           </div>
 
-          <Button
-            icon="icon-plus"
-            className="rounded-full mx-auto"
-            onClick={() => modal.open(CreatingModal, { dismissible: false })}
-          />
+          <Button icon="icon-plus" className="rounded-full mx-auto" onClick={() => modal.open(CreatingModal)} />
 
           {(me || account) && (
             <SidebarItem item={{ icon: 'icon-gears', label: 'Settings', path: '/settings' }} isActive={isActive} />
