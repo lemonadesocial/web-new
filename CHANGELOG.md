@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.64.1](https://github.com/lemonadesocial/web-new/compare/v1.64.0...v1.64.1) (2025-07-24)
+
+
+### Bug Fixes
+
+* wrong event path ([3b65f90](https://github.com/lemonadesocial/web-new/commit/3b65f908b518d14bb1ae531007eeeb6b4aceb9bf))
+
 ## [1.64.0](https://github.com/lemonadesocial/web-new/compare/v1.63.4...v1.64.0) (2025-07-24)
 
 
