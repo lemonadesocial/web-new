@@ -29,7 +29,7 @@ export function BottomBar() {
             onClick={() =>
               modal.open(CreatingModal, {
                 dismissible: false,
-                className: 'm-0! rounded-b-none w-full',
+                className: 'm-0! rounded-b-none w-full bg-[#202022]',
                 position: 'bottom',
               })
             }

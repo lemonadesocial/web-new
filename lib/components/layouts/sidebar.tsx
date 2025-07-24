@@ -152,7 +152,7 @@ export function CreatingModal() {
   };
 
   return (
-    <Card.Root className="md:w-[480px] bg-transparent border-none">
+    <Card.Root className="w-full lg:w-[480px] border-none bg-[#202022]">
       <Card.Header className="bg-transparent justify-between w-full flex items-start py-4">
         <Button
           icon="icon-plus size-8"
