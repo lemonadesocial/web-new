@@ -122,7 +122,7 @@ const Sidebar = () => {
 };
 
 const actions = {
-  experience: { icon: 'icon-ticket text-accent-400', title: 'Event', subtitle: 'Virtual & IRL' },
+  event: { icon: 'icon-ticket text-accent-400', title: 'Event', subtitle: 'Virtual & IRL' },
   community: { icon: 'icon-community text-alert-400', title: 'Community', subtitle: 'Build your space' },
   post: { icon: 'icon-edit-square text-[#2DD4BF]!', title: 'Post', subtitle: 'Share updates' },
 };
@@ -138,7 +138,7 @@ export function CreatingModal() {
         break;
 
       case 'community':
-      case 'experience':
+      case 'event':
         router.push(`/create/${key}`);
         break;
 
