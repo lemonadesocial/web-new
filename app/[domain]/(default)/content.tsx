@@ -40,7 +40,7 @@ export function HomePageContent() {
         selected={tab}
         onSelect={(item) => setTab(item.value as Tab)}
         items={segmentItems}
-        className="bg-transparent w-full overflow-auto no-scrollbar"
+        className="bg-transparent w-full md:w-fit overflow-auto no-scrollbar"
       />
 
       {tab !== 'LemonHeads' && <PostComposer onPost={onPost} showFeedOptions />}

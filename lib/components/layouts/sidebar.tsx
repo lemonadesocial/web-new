@@ -7,7 +7,9 @@ import { useMemo } from 'react';
 import { useMe } from '$lib/hooks/useMe';
 import { useAccount } from '$lib/hooks/useLens';
 import { userAvatar } from '$lib/utils/user';
-import { Avatar } from '../core';
+import { Avatar, Button, Card, modal } from '../core';
+import { twMerge } from 'tailwind-merge';
+import { ShareModal } from '../features/lemonheads/steps/ClaimLemonHead';
 
 type SidebarItemProps = {
   item: {
@@ -108,6 +110,8 @@ const Sidebar = () => {
             ))}
           </div>
 
+          <Button icon="icon-plus" className="rounded-full mx-auto" onClick={() => modal.open(CreatingModal)} />
+
           {(me || account) && (
             <SidebarItem item={{ icon: 'icon-gears', label: 'Settings', path: '/settings' }} isActive={isActive} />
           )}
@@ -116,5 +120,66 @@ const Sidebar = () => {
     </div>
   );
 };
+
+const actions = {
+  experience: { icon: 'icon-ticket text-accent-400', title: 'Event', subtitle: 'Virtual & IRL' },
+  community: { icon: 'icon-community text-alert-400', title: 'Community', subtitle: 'Build your space' },
+  post: { icon: 'icon-edit-square text-[#2DD4BF]!', title: 'Post', subtitle: 'Share updates' },
+};
+
+export function CreatingModal() {
+  const router = useRouter();
+
+  const handleClick = (key: string) => {
+    switch (key) {
+      case 'post':
+        modal.close();
+        modal.open(ShareModal, { dismissible: true });
+        break;
+
+      case 'community':
+      case 'experience':
+        router.push(`/create/${key}`);
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  return (
+    <Card.Root className="w-full lg:w-[480px] border-none bg-[#202022]">
+      <Card.Header className="bg-transparent justify-between w-full flex items-start py-4">
+        <Button
+          icon="icon-plus size-8"
+          size="lg"
+          className="rounded-full hover:bg-(--btn-tertiary)! [*]:text-tertiary! max-h-fit! size-[56px]"
+          variant="tertiary"
+        />
+        <Button icon="icon-x" size="xs" className="rounded-full" variant="tertiary" onClick={() => modal.close()} />
+      </Card.Header>
+      <Card.Content className="flex flex-col gap-4 pt-0">
+        <div className="flex flex-col gap-2">
+          <p className="text-primary text-lg">Create</p>
+          <p className="text-secondary text-sm">What are we creating today?</p>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-2">
+          {Object.entries(actions).map(([key, item]) => (
+            <Card.Root key={key} className="flex-1" onClick={() => handleClick(key)}>
+              <Card.Content className="py-1.5 px-3 md:py-3.5 md:px-4 flex items-center md:items-start md:flex-col gap-3">
+                <i className={twMerge('size-5 md:size-8', item.icon)} />
+                <div>
+                  <p className="text-primary">{item.title}</p>
+                  <p className="text-sm text-tertiary">{item.subtitle}</p>
+                </div>
+              </Card.Content>
+            </Card.Root>
+          ))}
+        </div>
+      </Card.Content>
+    </Card.Root>
+  );
+}
 
 export default Sidebar;
