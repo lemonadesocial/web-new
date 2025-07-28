@@ -72,7 +72,7 @@ export function LemonHeadAboutYou() {
       </div>
 
       <div className="flex flex-col gap-3">
-        <p>Choose your frame</p>
+        <p>Choose your body type</p>
         <div className="grid grid-cols-4 gap-3">
           {mapping.map((item) => (
             <SquareButton
