@@ -74,29 +74,31 @@ function Content() {
         <Header />
       </div>
 
-      <div className="flex-1 h-full overflow-auto no-scrollbar">
-        <div className="flex-1 flex flex-col h-full pb-4 md:flex-row-reverse max-w-[1440px] overflow-auto mx-auto gap-5 md:gap-18 p-4 md:p-11 no-scrollbar">
-          {showPreview ? (
-            state.currentStep === LemonHeadStep.getstarted ? (
-              <div className="max-w-[80px] md:max-w-[692px] md:max-h-[692px]">
-                <img
-                  src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
-                  className="rounded-sm w-full h-auto aspect-square"
-                />
-              </div>
-            ) : (
-              <div className="flex-1">
-                <div className="h-full md:h-auto flex flex-col overflow-hidden gap-8">
-                  <div className="flex flex-1 md:flex-none items-center justify-center md:max-h-[692px] md:max-w-[692px] md:aspect-square">
-                    <LemonHeadPreview traits={state.traits} className="h-full w-fit md:w-full aspect-square" />
+      <div className="flex-1 overflow-auto h-full">
+        <div className="flex flex-col md:flex-row-reverse mx-auto gap-5 md:gap-8 w-full h-full md:max-w-[1440px] p-4 overflow-auto no-scrollbar">
+          <div className="flex-1">
+            {showPreview ? (
+              state.currentStep === LemonHeadStep.getstarted ? (
+                <div className="max-w-[80px] md:max-w-full">
+                  <img
+                    src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
+                    className="rounded-sm w-full h-auto aspect-square"
+                  />
+                </div>
+              ) : (
+                <div className="h-full w-full flex md:flex-col gap-5">
+                  <div className="w-[30px]" />
+
+                  <div className="flex-1 md:flex-0">
+                    <LemonHeadPreview className="max-h-full" traits={state.traits} />
                   </div>
 
-                  <div className="flex gap-3">
+                  <div className="flex flex-col md:flex-row gap-2">
                     {skinToneOpts[body?.value || 'human'].map((item) => (
                       <SquareButton
                         key={item.value}
                         active={item.value === skinTone}
-                        className="max-w-[44px] aspect-square"
+                        className="size-[30px] md:size-[50px] aspect-square"
                         onClick={() => {
                           const data = dataBodySet?.items.find(
                             (i) =>
@@ -114,21 +116,16 @@ function Content() {
                           }
                         }}
                       >
-                        <div className="w-full h-full rounded-sm" style={{ background: item.color }} />
+                        <div className="w-full h-full rounded-xs" style={{ background: item.color }} />
                       </SquareButton>
                     ))}
                   </div>
                 </div>
-              </div>
-            )
-          ) : null}
+              )
+            ) : null}
+          </div>
 
-          <div
-            className={clsx(
-              showPreview && 'md:flex-1 md:w-[588px]',
-              state.currentStep === LemonHeadStep.claim && 'w-full h-full',
-            )}
-          >
+          <div className="md:flex-1">
             {Object.entries(state.steps).map(([key, item]) => {
               if (!item.mounted) return null;
               const Comp = item.component || React.Fragment;
@@ -142,3 +139,95 @@ function Content() {
     </main>
   );
 }
+
+// <div className="flex-1 h-full overflow-auto no-scrollbar">
+//   <div className="flex-1 flex flex-col h-full pb-4 md:flex-row-reverse max-w-[1440px] overflow-auto mx-auto gap-5 md:gap-18 p-4 md:p-11 no-scrollbar">
+//     {showPreview ? (
+//       state.currentStep === LemonHeadStep.getstarted ? (
+//         <div className="max-w-[80px] md:max-w-[692px] md:max-h-[692px]">
+//           <img
+//             src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
+//             className="rounded-sm w-full h-auto aspect-square"
+//           />
+//         </div>
+//       ) : (
+//         <div className="flex-1">
+//           <div className="h-full md:h-auto flex flex-row md:flex-col overflow-hidden gap-8">
+//             <div className="flex flex-1 md:flex-none items-center justify-center md:max-h-[692px] md:max-w-[692px] md:aspect-square">
+//               <LemonHeadPreview traits={state.traits} className="h-full w-fit md:w-full aspect-square" />
+//             </div>
+//
+//             <div className="flex flex-col ap-3">
+//               {skinToneOpts[body?.value || 'human'].map((item) => (
+//                 <SquareButton
+//                   key={item.value}
+//                   active={item.value === skinTone}
+//                   className="size-[30px] aspect-square"
+//                   onClick={() => {
+//                     const data = dataBodySet?.items.find(
+//                       (i) =>
+//                         i.skin_tone === item.value &&
+//                         i.size === body?.filters?.find((i) => i.type === 'size')?.value &&
+//                         i.gender === body?.filters?.find((i) => i.type === 'gender')?.value &&
+//                         i.race === body?.filters?.find((i) => i.type === 'race')?.value,
+//                     );
+//
+//                     if (data) {
+//                       dispatch({
+//                         type: LemonHeadActionKind.set_skintone,
+//                         payload: { data: lemonHead.trait.tranformTrait(data) },
+//                       });
+//                     }
+//                   }}
+//                 >
+//                   <div className="w-full h-full rounded-xs" style={{ background: item.color }} />
+//                 </SquareButton>
+//               ))}
+//             </div>
+//
+//             <div className="hidden md:flex gap-3">
+//               {skinToneOpts[body?.value || 'human'].map((item) => (
+//                 <SquareButton
+//                   key={item.value}
+//                   active={item.value === skinTone}
+//                   className="max-w-[44px] aspect-square"
+//                   onClick={() => {
+//                     const data = dataBodySet?.items.find(
+//                       (i) =>
+//                         i.skin_tone === item.value &&
+//                         i.size === body?.filters?.find((i) => i.type === 'size')?.value &&
+//                         i.gender === body?.filters?.find((i) => i.type === 'gender')?.value &&
+//                         i.race === body?.filters?.find((i) => i.type === 'race')?.value,
+//                     );
+//
+//                     if (data) {
+//                       dispatch({
+//                         type: LemonHeadActionKind.set_skintone,
+//                         payload: { data: lemonHead.trait.tranformTrait(data) },
+//                       });
+//                     }
+//                   }}
+//                 >
+//                   <div className="w-full h-full rounded-sm" style={{ background: item.color }} />
+//                 </SquareButton>
+//               ))}
+//             </div>
+//           </div>
+//         </div>
+//       )
+//     ) : null}
+//
+//     <div
+//       className={clsx(
+//         showPreview && 'md:flex-1 md:w-[588px]',
+//         state.currentStep === LemonHeadStep.claim && 'w-full h-full',
+//       )}
+//     >
+//       {Object.entries(state.steps).map(([key, item]) => {
+//         if (!item.mounted) return null;
+//         const Comp = item.component || React.Fragment;
+//         return <Comp key={key} />;
+//       })}
+//     </div>
+//   </div>
+// </div>

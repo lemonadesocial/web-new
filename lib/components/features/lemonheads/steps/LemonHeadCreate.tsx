@@ -90,7 +90,7 @@ export function LemonHeadCreate() {
       </Card.Root>
 
       <Card.Root className="w-full max-h-fit md:w-[96px] overflow-auto no-scrollbar">
-        <Card.Content className="flex md:flex-col gap-1 p-2">
+        <Card.Content className="flex md:flex-col gap-1 p-1 md:p-2">
           {Object.entries(tabs).map(([key, item]) => {
             if (body?.value === 'alien' && key === 'face') return;
 
@@ -98,7 +98,7 @@ export function LemonHeadCreate() {
               <div
                 key={key}
                 className={clsx(
-                  'flex flex-col items-center justify-center gap-2 pt-3 px-2 pb-2 hover:bg-card-hover rounded-md cursor-pointer min-w-[72px]',
+                  'flex md:flex-col items-center justify-center gap-2 p-2 md:pt-3 hover:bg-card-hover rounded-sm md:rounded-md cursor-pointer min-w-fit md:min-w-[72px]',
                   key === selected && 'bg-card-hover',
                 )}
                 onClick={() => {
@@ -110,7 +110,7 @@ export function LemonHeadCreate() {
               >
                 {key === 'background' && (
                   <div
-                    className="size-8 aspect-square rounded-sm"
+                    className="size-6 md:size-8 aspect-square rounded-sm"
                     style={{
                       backgroundRepeat: 'no-repeat',
                       backgroundSize: 'cover',
@@ -119,7 +119,11 @@ export function LemonHeadCreate() {
                     }}
                   />
                 )}
-                {!['skin', 'background'].includes(key) && <i className={twMerge('size-8', item.icon)} />}
+                {!['skin', 'background'].includes(key) && (
+                  <div className="size-6 md:size-8">
+                    <i className={twMerge('', item.icon)} />
+                  </div>
+                )}
                 <p className="text-xs">{item.label}</p>
               </div>
             );
