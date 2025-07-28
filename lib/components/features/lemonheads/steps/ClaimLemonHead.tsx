@@ -247,7 +247,7 @@ export function ShareModal({ content }: { content?: string }) {
   };
 
   return (
-    <Card.Root className="w-xl bg-transparent">
+    <Card.Root className="w-xl bg-transparent border-none">
       <Card.Content className="p-0">
         <PostComposer onPost={onPost} showFeedOptions autoFocus defaultValue={content} />
       </Card.Content>

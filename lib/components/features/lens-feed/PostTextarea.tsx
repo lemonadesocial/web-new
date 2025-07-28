@@ -46,7 +46,7 @@ export const PostTextarea = ({
   };
 
   return (
-    <div className="relative min-h-[24px] max-h-[200px] overflow-y-auto no-scrollbar">
+    <div className={twMerge('relative min-h-[24px] max-h-[200px] overflow-y-auto no-scrollbar', className)}>
       <textarea
         ref={textareaRef}
         value={value}
@@ -54,7 +54,6 @@ export const PostTextarea = ({
         placeholder={placeholder}
         className={twMerge(
           'absolute inset-0 w-full h-full resize-none outline-none font-medium text-lg placeholder-quaternary bg-transparent text-transparent overflow-auto whitespace-pre-wrap break-words bg-transparent text-transparent caret-primary min-h-[24px]',
-          className,
         )}
         onFocus={onFocus}
         autoFocus={autoFocus}
@@ -67,7 +66,6 @@ export const PostTextarea = ({
         ref={highlightRef}
         className={twMerge(
           'top-0 inset-0 resize-none outline-none font-medium text-lg placeholder-quaternary bg-transparent overflow-y-auto whitespace-pre-wrap break-words min-h-[24px]',
-          className,
         )}
         aria-hidden="true"
         dangerouslySetInnerHTML={{ __html: highlightLinks(value) }}

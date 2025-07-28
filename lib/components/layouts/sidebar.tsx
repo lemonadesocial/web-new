@@ -10,6 +10,8 @@ import { userAvatar } from '$lib/utils/user';
 import { Avatar, Button, Card, modal } from '../core';
 import { twMerge } from 'tailwind-merge';
 import { ShareModal } from '../features/lemonheads/steps/ClaimLemonHead';
+import { PostComposerModal } from '../features/lens-feed/PostComposerModal';
+import { isMobile } from 'react-device-detect';
 
 type SidebarItemProps = {
   item: {
@@ -133,14 +135,15 @@ export function CreatingModal() {
   const handleClick = (key: string) => {
     switch (key) {
       case 'post':
+        console.log(isMobile);
         modal.close();
-        modal.open(ShareModal, { dismissible: true });
+        modal.open(PostComposerModal, { dismissible: true, fullscreen: isMobile, props: { autoFocus: true } });
         break;
 
       case 'community':
       case 'event':
-        modal.close();
         router.push(`/create/${key}`);
+        modal.close();
         break;
 
       default:

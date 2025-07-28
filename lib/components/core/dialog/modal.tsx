@@ -13,6 +13,7 @@ interface Options<T> {
   className?: string;
   skipBaseClassName?: boolean;
   onClose?: () => void;
+  fullscreen?: boolean;
   position?: 'center' | 'bottom';
 }
 
@@ -115,8 +116,8 @@ export function ModalContainer({ modal }: { modal: Modal }) {
             <div
               className={clsx(
                 'fixed inset-0 bg-overlay-backdrop flex w-full h-full',
-                modal.options.position === 'bottom' && 'items-end',
-                modal.options.position === 'center' && 'items-center justify-center',
+                !modal.options.fullscreen && modal.options.position === 'bottom' && 'items-end',
+                !modal.options.fullscreen && modal.options.position === 'center' && 'items-center justify-center',
               )}
               style={{ zIndex: 10000 + index }}
               role="modal"
@@ -130,12 +131,17 @@ export function ModalContainer({ modal }: { modal: Modal }) {
                   }
                 }}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                animate={{
+                  opacity: 1,
+                  y: modal.options.fullscreen ? ['100%', 0] : undefined,
+                  transition: { ease: ['easeIn', 'easeOut'] },
+                }}
+                exit={{ opacity: 0, y: modal.options.fullscreen ? [0, '100%'] : undefined }}
                 className={twMerge(
                   modal.options.skipBaseClassName
                     ? ''
                     : 'bg-overlay-primary border border-card-border rounded-lg overflow-hidden m-4',
+                  modal.options.fullscreen && 'm-0 rounded-bl-none! rounded-br-none! w-full',
                   modal.options.className,
                 )}
               >
