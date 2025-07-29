@@ -75,6 +75,8 @@ function Content() {
         const offsetWidth = previewRef.current.clientWidth;
         const offsetHeight = previewRef.current.clientHeight;
         const value = offsetWidth > offsetHeight ? offsetHeight : offsetWidth;
+        console.log(offsetWidth, offsetHeight);
+
         setWidth(value);
         setHeight(value);
       }
@@ -101,26 +103,24 @@ function Content() {
         <Header />
       </div>
 
-      <div className="flex-1 flex overflow-auto h-full">
-        <div className="max-w-[1440px] w-full p-4 md:p-11 flex flex-col md:flex-row-reverse gap-5 md:gap-8">
-          {showPreview ? (
-            state.currentStep === LemonHeadStep.getstarted ? (
-              <div className="w-[80px] aspect-square md:max-h-[688px]">
-                <img
-                  src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
-                  className="rounded-sm w-full h-full"
-                />
-              </div>
-            ) : (
-              <div className="grow flex justify-center gap-5">
-                <div className="flex-1 w-[30px]" />
-
-                <div className="flex justify-center items-center h-full aspect-square">
-                  <LemonHeadPreview className="w-full h-full" traits={state.traits} />
+      <div className="flex-1 flex flex-col overflow-auto">
+        <div className="w-full max-w-[1440px] mx-auto p-4 flex flex-col flex-1 md:h-full">
+          <div className="flex flex-col md:flex-row-reverse gap-5 md:gap-8 flex-1 md:h-full">
+            {showPreview ? (
+              state.currentStep === LemonHeadStep.getstarted ? (
+                <div className="w-[80px] aspect-square md:max-h-[688px] max-md:w-full max-md:h-auto md:w-auto">
+                  <img
+                    src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
+                    className="rounded-sm w-full h-full"
+                  />
                 </div>
-
-                <div className="flex-1 flex flex-col items-end md:flex-row gap-2">
-                  <div className="w-[30px]">
+              ) : (
+                <div className="h-full md:flex-1 md:w-full max-h-[692px] flex md:flex-col gap-5">
+                  <div className="w-[30px] md:hidden" />
+                  <div className="grow flex">
+                    <LemonHeadPreview className="w-full max-h-fit" traits={state.traits} />
+                  </div>
+                  <div className="w-[30px] md:w-full flex flex-col md:flex-row gap-2">
                     {skinToneOpts[body?.value || 'human'].map((item) => (
                       <SquareButton
                         key={item.value}
@@ -148,16 +148,16 @@ function Content() {
                     ))}
                   </div>
                 </div>
-              </div>
-            )
-          ) : null}
+              )
+            ) : null}
 
-          <div>
-            {Object.entries(state.steps).map(([key, item]) => {
-              if (!item.mounted) return null;
-              const Comp = item.component || React.Fragment;
-              return <Comp key={key} />;
-            })}
+            <div className="flex-1 md:min-w-[588px]">
+              {Object.entries(state.steps).map(([key, item]) => {
+                if (!item.mounted) return null;
+                const Comp = item.component || React.Fragment;
+                return <Comp key={key} />;
+              })}
+            </div>
           </div>
         </div>
       </div>
@@ -166,6 +166,67 @@ function Content() {
     </main>
   );
 }
+
+// <div className="flex-1 flex overflow-auto h-full">
+//   <div className="max-w-[1440px] w-full p-4 md:p-11 flex flex-col md:flex-row-reverse gap-5 md:gap-8">
+//     {showPreview ? (
+//       state.currentStep === LemonHeadStep.getstarted ? (
+//         <div className="w-[80px] aspect-square md:max-h-[688px]">
+//           <img
+//             src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
+//             className="rounded-sm w-full h-full"
+//           />
+//         </div>
+//       ) : (
+//         <div className="grow flex justify-center gap-5">
+//           <div className="flex-1 w-[30px]" />
+//
+//           <div className="flex justify-center items-center h-full aspect-square">
+//             <LemonHeadPreview className="w-full h-full" traits={state.traits} />
+//           </div>
+//
+//           <div className="flex-1 flex flex-col items-end md:flex-row gap-2">
+//             <div className="w-[30px]">
+//               {skinToneOpts[body?.value || 'human'].map((item) => (
+//                 <SquareButton
+//                   key={item.value}
+//                   active={item.value === skinTone}
+//                   className="size-[30px] md:size-[50px] aspect-square"
+//                   onClick={() => {
+//                     const data = dataBodySet?.items.find(
+//                       (i) =>
+//                         i.skin_tone === item.value &&
+//                         i.size === body?.filters?.find((i) => i.type === 'size')?.value &&
+//                         i.gender === body?.filters?.find((i) => i.type === 'gender')?.value &&
+//                         i.race === body?.filters?.find((i) => i.type === 'race')?.value,
+//                     );
+//
+//                     if (data) {
+//                       dispatch({
+//                         type: LemonHeadActionKind.set_skintone,
+//                         payload: { data: lemonHead.trait.tranformTrait(data) },
+//                       });
+//                     }
+//                   }}
+//                 >
+//                   <div className="w-full h-full rounded-xs" style={{ background: item.color }} />
+//                 </SquareButton>
+//               ))}
+//             </div>
+//           </div>
+//         </div>
+//       )
+//     ) : null}
+//
+//     <div>
+//       {Object.entries(state.steps).map(([key, item]) => {
+//         if (!item.mounted) return null;
+//         const Comp = item.component || React.Fragment;
+//         return <Comp key={key} />;
+//       })}
+//     </div>
+//   </div>
+// </div>
 
 // <div className="flex-1 overflow-auto h-full">
 //   <div className="flex flex-col md:flex-row-reverse mx-auto gap-5 md:gap-8 w-full h-full md:max-w-[1440px] p-4 overflow-auto no-scrollbar">

@@ -150,7 +150,7 @@ function Content({
     <div className={clsx('flex flex-col', className)} style={{ height: 'inherit' }}>
       {!!tabs.length && (
         <>
-          <ul className="flex px-3 pt-3 md:px-4 md:py-3 sticky top-0 md:border-b overflow-auto no-scrollbar">
+          <ul className="flex px-3 pt-3 md:px-4 md:py-3 sticky top-0 md:border-b border-[var(--color-divider)]  overflow-auto no-scrollbar">
             {tabs.map((item) => (
               <li
                 key={item.value}
