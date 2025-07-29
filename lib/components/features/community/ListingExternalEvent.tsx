@@ -163,8 +163,8 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
                     value={field.value?.address?.title}
                     placeholder="What’s the address?"
                     onSelect={(address) => {
-                      if (address.latitude) setValue('location.latitude', address.latitude);
-                      if (address.longitude) setValue('location.longitude', address.longitude);
+                      if (address?.latitude) setValue('location.latitude', address.latitude);
+                      if (address?.longitude) setValue('location.longitude', address.longitude);
                       setValue('location.address', address);
                     }}
                   />
