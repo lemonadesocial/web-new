@@ -13,7 +13,15 @@ query GetEvent($id: MongoID, $shortid: String) {
       ...User
     }
     visible_cohosts_expanded {
-      ...User
+      _id
+      name
+      display_name
+      email
+      new_photos_expanded(limit: 1) {
+        _id
+        key
+        bucket
+      }
     }
     accepted
     new_new_photos_expanded {
