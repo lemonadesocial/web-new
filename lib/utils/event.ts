@@ -42,9 +42,8 @@ export function formatFiatPrice(price: EventTicketPrice) {
   return formatCurrency(Number(cost), currency, decimals, false);
 }
 
-export function formatPrice(price: EventTicketPrice) {
-  // if (!price.payment_accounts_expanded?.[0]) return 'Free';
-  if (!price.payment_accounts_expanded?.[0]) return '';
+export function formatPrice(price: EventTicketPrice, showFree?: boolean) {
+  if (!price.payment_accounts_expanded?.[0]) return showFree ? 'Free' : '';
 
   const isStripe = price.payment_accounts_expanded[0].provider === 'stripe';
 
@@ -57,7 +56,7 @@ export function getEventPrice(event: Event) {
 
   if (!defaultPrice) return '';
 
-  return formatPrice(defaultPrice);
+  return formatPrice(defaultPrice, true);
 }
 
 export function getEventAddress(address?: Address | undefined, short?: boolean) {

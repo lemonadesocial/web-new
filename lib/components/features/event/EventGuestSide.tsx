@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 import clsx from 'clsx';
 
 import { Event, GetEventDocument, GetEventQuery } from '$lib/graphql/generated/backend/graphql';
@@ -27,7 +28,7 @@ import { EventCollectibles } from '../event-collectibles';
 import { PendingCohostRequest } from './PendingCohostRequest';
 import { useMe } from '$lib/hooks/useMe';
 
-export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
+export default function EventGuestSide({ event: eventDetail }: { event: Event }) {
   const [state] = useEventTheme();
   const { data, loading } = useQuery(GetEventDocument, {
     variables: { id: eventDetail._id },
@@ -44,7 +45,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
   const hosts = getEventCohosts(event);
 
   return (
-    <div className={clsx('flex gap-[72px]', state.theme && state.config.color)}>
+    <div className={clsx('flex gap-[72px] mt-7 md:mt-11', state.theme && state.config.color)}>
       <div className="hidden md:flex w-[296px] flex-col gap-6">
         <div className="flex flex-col gap-4">
           {event.new_new_photos_expanded?.[0] ? (
