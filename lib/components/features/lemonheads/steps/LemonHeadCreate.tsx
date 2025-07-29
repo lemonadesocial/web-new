@@ -43,8 +43,8 @@ export function LemonHeadCreate() {
       icon: 'icon-lh-glasses-fill',
       mount: false,
       tabs: [
-        { value: 'headgear', label: 'Head', mount: false },
-        { value: 'eyewear', label: 'Eyes', mount: true },
+        { value: 'headgear', label: 'Head', mount: true },
+        { value: 'eyewear', label: 'Eyes', mount: false },
         { value: 'earrings', label: 'Ears', mount: false },
         { value: 'mouthgear', label: 'Mouth', mount: false },
         { value: 'neckwear', label: 'Neck', mount: false },
@@ -97,7 +97,7 @@ export function LemonHeadCreate() {
               <div
                 key={key}
                 className={clsx(
-                  'flex md:flex-col items-center justify-center gap-2 p-2 md:pt-3 hover:bg-card-hover rounded-sm md:rounded-md cursor-pointer min-w-fit md:min-w-[72px]',
+                  'flex md:flex-col items-center justify-center text-center gap-2 p-2 md:pt-3 hover:bg-card-hover rounded-sm md:rounded-md cursor-pointer min-w-fit md:min-w-[72px]',
                   key === selected && 'bg-card-hover',
                 )}
                 onClick={() => {
@@ -282,51 +282,52 @@ function SubContent({
 
   return (
     <div className={twMerge('flex-1 flex flex-col md:gap-4 overflow-auto no-scrollbar', className)}>
-      <div
-        ref={listInnerRef}
-        className={clsx(
-          'flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar p-4',
-          !isMobile && colors && 'pb-20',
-          isLoading && !list.length && 'hidden',
-        )}
-      >
-        {list
-          .filter((i) => (i.type === 'background' ? i.art_style === art_style : i.type === layerKey))
-          .map((item) => {
-            const dt = lemonHead.trait.tranformTrait(item);
-            return (
-              <SquareButton
-                key={dt._id}
-                label={dt.value}
-                active={dt.value === trait?.value && dt.type === trait?.type}
-                className="min-w-[80px] max-w-[80px] md:max-w-full"
-                onClick={() => {
-                  const conflicts = findConflictTraits(traits.filter(Boolean), dt);
-                  if (conflicts.length && conflicts.find((i) => i.type !== item.type)) {
-                    const conflictStr = conflicts.map((i) => capitalizeWords(i.type)).join(' or ');
-                    modal.open(ConfirmModal, {
-                      props: {
-                        title: `Remove ${conflictStr}?`,
-                        subtitle: `Selecting a ${capitalizeWords(item.type)} will remove any ${conflictStr} you have selected. Are you sure you want to continue?`,
-                        onConfirm: () => {
-                          dispatch({
-                            type: LemonHeadActionKind.set_trait,
-                            payload: { data: dt, removeConflict: true },
-                          });
+      {!!list.length && (
+        <div
+          ref={listInnerRef}
+          className={clsx(
+            'flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar p-4',
+            !isMobile && colors && 'pb-20',
+          )}
+        >
+          {list
+            .filter((i) => (i.type === 'background' ? i.art_style === art_style : i.type === layerKey))
+            .map((item) => {
+              const dt = lemonHead.trait.tranformTrait(item);
+              return (
+                <SquareButton
+                  key={dt._id}
+                  label={dt.value}
+                  active={dt.value === trait?.value && dt.type === trait?.type}
+                  className="min-w-[80px] max-w-[80px] md:max-w-full"
+                  onClick={() => {
+                    const conflicts = findConflictTraits(traits.filter(Boolean), dt);
+                    if (conflicts.length && conflicts.find((i) => i.type !== item.type)) {
+                      const conflictStr = conflicts.map((i) => capitalizeWords(i.type)).join(' or ');
+                      modal.open(ConfirmModal, {
+                        props: {
+                          title: `Remove ${conflictStr}?`,
+                          subtitle: `Selecting a ${capitalizeWords(item.type)} will remove any ${conflictStr} you have selected. Are you sure you want to continue?`,
+                          onConfirm: () => {
+                            dispatch({
+                              type: LemonHeadActionKind.set_trait,
+                              payload: { data: dt, removeConflict: true },
+                            });
+                          },
                         },
-                      },
-                      dismissible: false,
-                    });
-                  } else {
-                    dispatch({ type: LemonHeadActionKind.set_trait, payload: { data: dt } });
-                  }
-                }}
-              >
-                {dt.image && <CanvasImageRenderer file={dt.image} style={{ borderRadius: 8 }} />}
-              </SquareButton>
-            );
-          })}
-      </div>
+                        dismissible: false,
+                      });
+                    } else {
+                      dispatch({ type: LemonHeadActionKind.set_trait, payload: { data: dt } });
+                    }
+                  }}
+                >
+                  {dt.image && <CanvasImageRenderer file={dt.image} style={{ borderRadius: 8 }} />}
+                </SquareButton>
+              );
+            })}
+        </div>
+      )}
 
       {isLoading && ((isMobile && !list.length) || !isMobile) && <Loading loadMore={!!list.length} />}
 
