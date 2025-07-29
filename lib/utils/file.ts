@@ -1,5 +1,6 @@
 import { defaultClient } from '$lib/graphql/request/instances';
 import { ConfirmFileUploadsDocument, CreateFileUploadsDocument } from '$lib/graphql/generated/backend/graphql';
+import { toast } from '$lib/components/core/toast';
 
 export type FileDirectory = 'event' | 'place' | 'store' | 'store_product' | 'user' | 'post' | 'email' | 'community';
 
@@ -60,3 +61,26 @@ export async function uploadFiles(files: File[], directory: FileDirectory): Prom
 
   return Promise.all(uploadPromises);
 }
+
+export const downloadCSVFile = async (endpoint: string, title: string) => {
+  toast.success(`Downloading ${title}...`, 1000);
+
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_LMD_BE}${endpoint}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+
+    const blob = await response.blob();
+    const file = window.URL.createObjectURL(blob);
+    const fileName = `${title}.csv`;
+    const link = document.createElement('a');
+    link.href = file;
+    link.download = fileName;
+    link.click();
+    window.URL.revokeObjectURL(file);
+    toast.success(`Downloaded ${title}.`);
+  } catch {
+    toast.error('Something went wrong when exporting CSV. Please try again.');
+  }
+};

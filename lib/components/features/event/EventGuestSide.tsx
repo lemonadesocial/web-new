@@ -1,12 +1,13 @@
 'use client';
+import React from 'react';
 import clsx from 'clsx';
+import { useRouter } from 'next/navigation';
 
 import { Event, GetEventDocument, GetEventQuery } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { Badge, Button, Spacer } from '$lib/components/core';
 import { EDIT_KEY, generateUrl } from '$lib/utils/cnd';
 import { getEventCohosts, hosting, isAttending } from '$lib/utils/event';
-import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useEventTheme } from '$lib/components/features/theme-builder/provider';
 
 import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
@@ -27,21 +28,25 @@ import { EventCollectibles } from '../event-collectibles';
 import { PendingCohostRequest } from './PendingCohostRequest';
 import { useMe } from '$lib/hooks/useMe';
 
-export default function ManageEventGuestSide({ event: eventDetail }: { event: Event }) {
-  const [state] = useEventTheme();
-  const { data, loading } = useQuery(GetEventDocument, {
-    variables: { id: eventDetail._id },
-    skip: !eventDetail._id,
-    initData: { getEvent: eventDetail } as unknown as GetEventQuery,
+export function EventGuestSide({ event: initEvent }: { event: Event }) {
+  const { data } = useQuery(GetEventDocument, {
+    variables: { id: initEvent._id },
+    initData: { getEvent: initEvent } as unknown as GetEventQuery,
   });
 
-  const me = useMe();
+  return <EventGuestSideContent event={data?.getEvent as Event || initEvent} />;
+}
 
-  const event = data?.getEvent as Event;
+export function EventGuestSideContent({ event }: { event: Event }) {
+  const [state] = useEventTheme();
+
+  const me = useMe();
 
   const isHost = me?._id && event && hosting(event, me._id);
   const attending = me?._id ? isAttending(event, me._id) : false;
   const hosts = getEventCohosts(event);
+
+  const router = useRouter();
 
   return (
     <div className={clsx('flex gap-[72px]', state.theme && state.config.color)}>
@@ -68,7 +73,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
                   size="sm"
                   iconRight="icon-arrow-outward"
                   className="rounded-full"
-                  onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event.shortid}/`, '_blank')}
+                  onClick={() => router.push(`/e/manage/${event.shortid}`)}
                 >
                   Manage
                 </Button>
@@ -77,7 +82,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           )}
         </div>
 
-        {event && <PendingCohostRequest event={event} />}
+        <PendingCohostRequest event={event} />
         <CommunitySection event={event} />
         <HostedBySection event={event} />
         <AttendeesSection eventId={event._id} />
@@ -108,7 +113,7 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
                     size="sm"
                     iconRight="icon-arrow-outward"
                     className="rounded-full"
-                    onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event.shortid}/`, '_blank')}
+                    onClick={() => router.push(`/e/manage/${event.shortid}`)}
                   >
                     Manage
                   </Button>
@@ -147,10 +152,10 @@ export default function ManageEventGuestSide({ event: eventDetail }: { event: Ev
           <EventLocationBlock event={event} />
         </div>
         {event && <EventAccess event={event} />}
-        <AboutSection event={event} loading={loading} />
-        <LocationSection event={event} loading={loading} />
+        <AboutSection event={event} />
+        <LocationSection event={event} />
         <SubEventSection event={event} />
-        <GallerySection event={event} loading={loading} />
+        <GallerySection event={event} />
         {attending && <EventCollectibles event={event} />}
         <div className="flex flex-col gap-6 md:hidden">
           <CommunitySection event={event} />

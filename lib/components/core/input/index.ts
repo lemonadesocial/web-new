@@ -6,3 +6,4 @@ export * from './select';
 export * from './multi-select';
 export * from './radiobox';
 export * from './textarea';
+export * from './options-input';

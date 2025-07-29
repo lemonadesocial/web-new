@@ -1,7 +1,7 @@
-import { useForm, UseFormRegister, FieldErrors, Control } from 'react-hook-form';
+import { useForm, UseFormRegister, FieldErrors, Control, FieldError } from 'react-hook-form';
 import * as React from 'react';
 
-import { UserInput } from '$lib/graphql/generated/backend/graphql';
+import { UserInput, ApplicationProfileField } from '$lib/graphql/generated/backend/graphql';
 import { Input, LabeledInput, SelectController } from '$lib/components/core';
 import { formInstancesAtom, requiredProfileFieldsAtom, submitHandlersAtom, useAtomValue, userInfoAtom, useSetAtom } from '../store';
 import { useMe } from '$lib/hooks/useMe';
@@ -24,6 +24,7 @@ export function UserForm() {
       description: me?.description,
       date_of_birth: me?.date_of_birth,
       email: me?.email,
+      website: me?.website,
       handle_twitter: me?.handle_twitter,
       handle_linkedin: me?.handle_linkedin,
       handle_instagram: me?.handle_instagram,
@@ -51,14 +52,15 @@ export function UserForm() {
 
   return (
     <>
-      {requiredProfileFields.map(({ field, required }) => (
+      {requiredProfileFields.map((profileField) => (
         <ProfileField
-          key={field}
-          name={field as keyof UserInput}
+          key={profileField.field}
+          profileField={profileField}
+          name={profileField.field as keyof UserInput}
           register={register}
           errors={errors}
           control={control}
-          required={!!required}
+          required={!!profileField.required}
         />
       ))}
     </>
@@ -66,166 +68,84 @@ export function UserForm() {
 }
 
 function ProfileField({
+  profileField,
   name,
   register,
   errors,
   control,
   required
 }: {
+  profileField: ApplicationProfileField;
   name: keyof UserInput;
   register: UseFormRegister<UserInput>;
   errors: FieldErrors<UserInput>;
   control: Control<UserInput>;
   required?: boolean;
 }) {
-  const getFieldInfo = () => {
-    switch (name) {
-      case 'display_name':
-        return {
-          label: 'Name',
-          placeholder: 'Enter your name'
-        };
+  const getFieldLabel = (fieldName: string) => {
+    const labels: Record<string, string> = {
+      display_name: 'Name',
+      pronoun: 'Pronoun',
+      description: 'Biography',
+      website: 'Website',
+      handle_twitter: 'Twitter username',
+      handle_linkedin: 'LinkedIn username',
+      handle_instagram: 'Instagram username',
+      handle_facebook: 'Facebook username',
+      handle_farcaster: 'Farcaster username',
+      handle_lens: 'Lens handle',
+      handle_mirror: 'Mirror username',
+      handle_github: 'Github username',
+      calendly_url: 'Calendly handle',
+      job_title: 'Job title',
+      company_name: 'Organization',
+      education_title: 'Education',
+      ethnicity: 'Ethnicity / Race',
+      industry: 'Industry',
+      date_of_birth: 'Date of Birth'
+    };
+    
+    return labels[fieldName] || fieldName;
+  };
+
+  const getFieldOptions = (fieldName: string) => {
+    switch (fieldName) {
       case 'pronoun':
-        return {
-          label: 'Pronoun',
-          placeholder: 'Enter your pronoun'
-        };
-      case 'description':
-        return {
-          label: 'Biography',
-          placeholder: 'Enter your biography'
-        };
-      case 'handle_twitter':
-        return {
-          label: 'Twitter username',
-          placeholder: 'Enter your Twitter username'
-        };
-      case 'handle_linkedin':
-        return {
-          label: 'LinkedIn username',
-          placeholder: 'Enter your LinkedIn username'
-        };
-      case 'handle_instagram':
-        return {
-          label: 'Instagram username',
-          placeholder: 'Enter your Instagram username'
-        };
-      case 'handle_facebook':
-        return {
-          label: 'Facebook username',
-          placeholder: 'Enter your Facebook username'
-        };
-      case 'handle_farcaster':
-        return {
-          label: 'Farcaster username',
-          placeholder: 'Enter your Farcaster username'
-        };
-      case 'handle_lens':
-        return {
-          label: 'Lens handle',
-          placeholder: 'Enter your Lens handle'
-        };
-      case 'handle_mirror':
-        return {
-          label: 'Mirror username',
-          placeholder: 'Enter your Mirror username'
-        };
-      case 'handle_github':
-        return {
-          label: 'Github username',
-          placeholder: 'Enter your Github username'
-        };
-      case 'calendly_url':
-        return {
-          label: 'Calendly handle',
-          placeholder: 'Enter your Calendly handle'
-        };
-      case 'job_title':
-        return {
-          label: 'Job title',
-          placeholder: 'Enter your job title'
-        };
-      case 'company_name':
-        return {
-          label: 'Organization',
-          placeholder: 'Enter your organization'
-        };
-      case 'education_title':
-        return {
-          label: 'Education',
-          placeholder: 'Enter your education'
-        };
+        return PRONOUNS;
       case 'ethnicity':
-        return {
-          label: 'Ethnicity / Race',
-          placeholder: 'Select your ethnicity'
-        };
+        return ETHNICITIES;
       case 'industry':
-        return {
-          label: 'Industry',
-          placeholder: 'Select your industry'
-        };
-      case 'date_of_birth':
-        return {
-          label: 'Date of Birth',
-          placeholder: 'MM / DD / YYYY'
-        };
+        return INDUSTRY_OPTIONS;
       default:
-        return {
-          label: String(name),
-          placeholder: `Enter your ${String(name)}`
-        };
+        return null;
     }
   };
 
-  const { label, placeholder } = getFieldInfo();
+  const label = getFieldLabel(name);
+  const placeholder = profileField.question || '';
+  const options = getFieldOptions(name);
 
   const renderField = () => {
-    switch (name) {
-      case 'pronoun':
-        return (
-          <SelectController
-            name={name}
-            control={control}
-            options={PRONOUNS}
-            placeholder={placeholder}
-            error={errors[name]}
-            required={required}
-          />
-        );
-      case 'ethnicity':
-        return (
-          <SelectController
-            name={name}
-            control={control}
-            options={ETHNICITIES}
-            placeholder={placeholder}
-            error={errors[name]}
-            required={required}
-          />
-        );
-
-      case 'industry':
-        return (
-          <SelectController
-            name={name}
-            control={control}
-            options={INDUSTRY_OPTIONS}
-            placeholder={placeholder}
-            error={errors[name]}
-            required={required}
-          />
-        );
-
-      default:
-        return (
-          <Input
-            {...register(name, { required })}
-            placeholder={placeholder}
-            error={!!errors[name]}
-          />
-        );
+    if (options) {
+      return (
+        <SelectController
+          name={name}
+          control={control}
+          options={options}
+          placeholder={placeholder}
+          error={errors[name] as FieldError | undefined}
+          required={required}
+        />
+      );
     }
+
+    return (
+      <Input
+        {...register(name, { required })}
+        placeholder={placeholder}
+        error={!!errors[name]}
+      />
+    );
   };
 
   return (

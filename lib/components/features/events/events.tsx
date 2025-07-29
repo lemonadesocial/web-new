@@ -136,7 +136,7 @@ export function Events() {
       <EventListCard
         loading={loading}
         events={filter.data}
-        onSelect={(event) => drawer.open(EventPane, { props: { eventId: event._id } })}
+        onSelect={(event) => drawer.open(EventPane, { props: { eventId: event._id }, contentClass: 'bg-background' })}
       />
     </div>
   );

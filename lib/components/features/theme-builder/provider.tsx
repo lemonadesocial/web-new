@@ -19,21 +19,25 @@ export function useEventTheme(): [state: ThemeValues, dispatch: React.Dispatch<T
   return context;
 }
 
-// Community builder context
-export const CommunityThemeContext = React.createContext(null);
+export const ThemeContext = React.createContext(null);
 
-export function CommunityThemeProvider({ themeData, children }: React.PropsWithChildren & { themeData?: ThemeValues }) {
+export function ThemeProvider({ themeData, children }: React.PropsWithChildren & { themeData?: ThemeValues }) {
   const [state, dispatch] = React.useReducer(reducers, themeData || defaultTheme);
   const value: any = React.useMemo(() => [state, dispatch], [state]);
 
-  return <CommunityThemeContext.Provider value={value}>{children}</CommunityThemeContext.Provider>;
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
-export function useCommunityTheme(): [state: ThemeValues, dispatch: React.Dispatch<ThemeBuilderAction>] {
-  const context = React.useContext(CommunityThemeContext);
-  if (!context) throw new Error('useCommunityTheme must be used within a EventThemeProvider');
+export function useTheme(): [state: ThemeValues, dispatch: React.Dispatch<ThemeBuilderAction>] {
+  const context = React.useContext(ThemeContext);
+  if (!context) throw new Error('useTheme must be used within a ThemeProvider');
 
   return context;
+}
+
+export function useThemeName() {
+  const [state] = useTheme();
+  return !state.theme || state.theme === 'default' ? 'minimal' : state.theme;
 }
 
 export enum ThemeBuilderActionKind {

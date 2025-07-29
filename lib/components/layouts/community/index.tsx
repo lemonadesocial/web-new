@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { isObjectId } from '$lib/utils/helpers';
 
-import { CommunityThemeProvider } from '$lib/components/features/theme-builder/provider';
+import { ThemeProvider } from '$lib/components/features/theme-builder/provider';
 import { defaultTheme } from '$lib/components/features/theme-builder/store';
 import { getClient } from '$lib/graphql/request';
 import { GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
@@ -52,8 +52,8 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
   }
 
   return (
-    <CommunityThemeProvider themeData={!space.theme_data ? space.theme_data : themeData}>
+    <ThemeProvider themeData={!space.theme_data ? space.theme_data : themeData}>
       <CommunityContainer space={space}>{children}</CommunityContainer>
-    </CommunityThemeProvider>
+    </ThemeProvider>
   );
 }

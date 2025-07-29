@@ -18,11 +18,12 @@ type Props = {
   error?: boolean;
   hint?: string;
   autoFocus?: boolean;
+  handleClear?: () => void;
 };
 
 export function InputField(props: Props) {
   return (
-    <fieldset className="input-field">
+    <fieldset className="input-field relative">
       {props.label && <label className="text-secondary text-sm font-medium">{props.label}</label>}
       <div className={clsx('control', props.error && 'border-danger-500!')}>
         {props.prefix && <div className="prefix text-base font-medium text-secondary">{props.prefix}</div>}

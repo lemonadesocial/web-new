@@ -412,14 +412,14 @@ function EventsWithMode({
           events={events}
           loading={loading}
           tags={tags}
-          onSelect={(event) => drawer.open(EventPane, { props: { eventId: event._id } })}
+          onSelect={(event) => drawer.open(EventPane, { props: { eventId: event._id }, contentClass: 'bg-background' })}
         />
       ) : (
         <EventList
           events={events}
           loading={loading}
           tags={tags}
-          onSelect={(event) => drawer.open(EventPane, { props: { eventId: event._id } })}
+          onSelect={(event) => drawer.open(EventPane, { props: { eventId: event._id }, contentClass: 'bg-background' })}
         />
       )}
     </>
