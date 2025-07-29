@@ -150,7 +150,7 @@ function Content({
     <div className={clsx('flex flex-col', className)} style={{ height: 'inherit' }}>
       {!!tabs.length && (
         <>
-          <ul className="flex px-4 py-3 sticky top-0 border-b overflow-auto no-scrollbar">
+          <ul className="flex px-3 pt-3 md:px-4 md:py-3 sticky top-0 md:border-b overflow-auto no-scrollbar">
             {tabs.map((item) => (
               <li
                 key={item.value}
@@ -231,8 +231,7 @@ function SubContent({
   const bodyGender = body?.filters?.find((i) => i?.type === 'gender')?.value;
 
   const trait = traits.find((i) => i?.type === layerKey);
-  const color = trait?.filters?.find((i) => i?.type === 'color')?.value;
-  const [selectedColor, setSelectedColor] = React.useState(color);
+  const [selectedColor, setSelectedColor] = React.useState<string>();
 
   const traitFilter = lemonHead.trait.getTraitFilter({
     type: layerKey,
@@ -282,68 +281,69 @@ function SubContent({
   const colors = colorset.find((i) => i.name === layerKey);
 
   return (
-    <div className={twMerge('flex-1 flex flex-col gap-4 overflow-auto no-scrollbar', className)}>
-      {!isLoading && !!list.length && (
-        <div
-          ref={listInnerRef}
-          className={clsx(
-            'flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar p-4',
-            !isMobile && colors && 'pb-20',
-          )}
-        >
-          {list
-            .filter((i) => (i.type === 'background' ? i.art_style === art_style : i.type === layerKey))
-            .map((item) => {
-              const dt = lemonHead.trait.tranformTrait(item);
-              return (
-                <SquareButton
-                  key={dt._id}
-                  label={dt.value}
-                  active={dt.value === trait?.value && dt.type === trait?.type}
-                  className="min-w-[80px] max-w-[80px] md:max-w-full"
-                  onClick={() => {
-                    const conflicts = findConflictTraits(traits.filter(Boolean), dt);
-                    if (conflicts.length && conflicts.find((i) => i.type !== item.type)) {
-                      const conflictStr = conflicts.map((i) => capitalizeWords(i.type)).join(' or ');
-                      modal.open(ConfirmModal, {
-                        props: {
-                          title: `Remove ${conflictStr}?`,
-                          subtitle: `Selecting a ${capitalizeWords(item.type)} will remove any ${conflictStr} you have selected. Are you sure you want to continue?`,
-                          onConfirm: () => {
-                            dispatch({
-                              type: LemonHeadActionKind.set_trait,
-                              payload: { data: dt, removeConflict: true },
-                            });
-                          },
+    <div className={twMerge('flex-1 flex flex-col md:gap-4 overflow-auto no-scrollbar', className)}>
+      <div
+        ref={listInnerRef}
+        className={clsx(
+          'flex md:grid grid-cols-3 gap-3 overflow-x-auto no-scrollbar p-4',
+          !isMobile && colors && 'pb-20',
+          isLoading && !list.length && 'hidden',
+        )}
+      >
+        {list
+          .filter((i) => (i.type === 'background' ? i.art_style === art_style : i.type === layerKey))
+          .map((item) => {
+            const dt = lemonHead.trait.tranformTrait(item);
+            return (
+              <SquareButton
+                key={dt._id}
+                label={dt.value}
+                active={dt.value === trait?.value && dt.type === trait?.type}
+                className="min-w-[80px] max-w-[80px] md:max-w-full"
+                onClick={() => {
+                  const conflicts = findConflictTraits(traits.filter(Boolean), dt);
+                  if (conflicts.length && conflicts.find((i) => i.type !== item.type)) {
+                    const conflictStr = conflicts.map((i) => capitalizeWords(i.type)).join(' or ');
+                    modal.open(ConfirmModal, {
+                      props: {
+                        title: `Remove ${conflictStr}?`,
+                        subtitle: `Selecting a ${capitalizeWords(item.type)} will remove any ${conflictStr} you have selected. Are you sure you want to continue?`,
+                        onConfirm: () => {
+                          dispatch({
+                            type: LemonHeadActionKind.set_trait,
+                            payload: { data: dt, removeConflict: true },
+                          });
                         },
-                        dismissible: false,
-                      });
-                    } else {
-                      dispatch({ type: LemonHeadActionKind.set_trait, payload: { data: dt } });
-                    }
-                  }}
-                >
-                  {dt.image && <CanvasImageRenderer file={dt.image} style={{ borderRadius: 8 }} />}
-                </SquareButton>
-              );
-            })}
-        </div>
-      )}
+                      },
+                      dismissible: false,
+                    });
+                  } else {
+                    dispatch({ type: LemonHeadActionKind.set_trait, payload: { data: dt } });
+                  }
+                }}
+              >
+                {dt.image && <CanvasImageRenderer file={dt.image} style={{ borderRadius: 8 }} />}
+              </SquareButton>
+            );
+          })}
+      </div>
 
       {isLoading && ((isMobile && !list.length) || !isMobile) && <Loading loadMore={!!list.length} />}
 
-      <ColorTool
-        selected={selectedColor}
-        colorset={colors}
-        onDelete={() => dispatch({ type: LemonHeadActionKind.remove_traits, payload: { data: trait } })}
-        onSelect={(params) => {
-          setList([]);
-          setPage(1);
-          const color = params.key !== selectedColor ? params.key : undefined;
-          setSelectedColor(color);
-          refetch();
-        }}
-      />
+      {!!colors?.value.length && (
+        <ColorTool
+          selected={selectedColor}
+          colorset={colors}
+          onDelete={() => dispatch({ type: LemonHeadActionKind.remove_traits, payload: { data: trait } })}
+          onSelect={(params) => {
+            setList([]);
+            setPage(1);
+            const color = params.key !== selectedColor ? params.key : undefined;
+            setSelectedColor(color);
+            refetch();
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -61,7 +61,7 @@ export const layerings: Record<
     mutualExclusive: [TraitType.outfit],
     filterTypes: [FilterType.gender, FilterType.size, FilterType.color],
   },
-  [TraitType.mouth]: { filterTypes: [FilterType.size] },
+  [TraitType.mouth]: { filterTypes: [FilterType.size, FilterType.color] },
   [TraitType.facial_hair]: { filterTypes: [FilterType.gender, FilterType.size, FilterType.color] },
   [TraitType.hair]: { filterTypes: [FilterType.gender, FilterType.size, FilterType.color] },
   [TraitType.earrings]: { filterTypes: [FilterType.gender, FilterType.size] },
@@ -74,8 +74,8 @@ export const layerings: Record<
   [TraitType.mouthgear]: { filterTypes: [FilterType.size] },
   [TraitType.eyes]: { filterTypes: [FilterType.size] },
   [TraitType.eyewear]: { filterTypes: [FilterType.size, FilterType.color] },
-  [TraitType.bag]: { filterTypes: [FilterType.gender, FilterType.size] },
-  [TraitType.instrument]: { filterTypes: [] },
+  [TraitType.bag]: { filterTypes: [FilterType.gender, FilterType.size, FilterType.color] },
+  [TraitType.instrument]: { filterTypes: [FilterType.gender, FilterType.size, FilterType.color] },
   [TraitType.pet]: { filterTypes: [FilterType.race, FilterType.color] },
 };
 
