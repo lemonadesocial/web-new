@@ -104,7 +104,7 @@ function Content() {
       </div>
 
       <div className="flex-1 flex flex-col overflow-auto">
-        <div className="w-full max-w-[1440px] mx-auto p-4 flex flex-col flex-1 md:h-full">
+        <div className="w-full max-w-[1440px] mx-auto p-4 md:p-11 flex flex-col flex-1 md:h-full">
           <div className="flex flex-col md:flex-row-reverse gap-5 md:gap-8 flex-1 md:h-full">
             {showPreview ? (
               state.currentStep === LemonHeadStep.getstarted ? (
@@ -118,7 +118,10 @@ function Content() {
                 <div className="h-full md:flex-1 md:w-full max-h-[692px] flex md:flex-col gap-5">
                   <div className="w-[30px] md:hidden" />
                   <div className="grow flex">
-                    <LemonHeadPreview className="w-full max-h-fit" traits={state.traits} />
+                    <LemonHeadPreview
+                      className="sm:w-full max-h-fit md:max-h-[688px] max-md:w-full max-md:h-auto md:w-auto md:aspect-square"
+                      traits={state.traits}
+                    />
                   </div>
                   <div className="w-[30px] md:w-full flex flex-col md:flex-row gap-2">
                     {skinToneOpts[body?.value || 'human'].map((item) => (
