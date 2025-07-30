@@ -1,11 +1,13 @@
-import { useAtomValue } from "jotai";
-import { useOAuth2 } from "./useOAuth2";
-import { hydraClientIdAtom } from "$lib/jotai";
-import { modal } from "$lib/components/core";
-import { AuthModal } from "$lib/components/features/auth/AuthModal";
-import { useState } from "react";
-import { LoginFlow, RegistrationFlow, SettingsFlow, UiNodeInputAttributes, VerificationFlow } from "@ory/client";
-import { ory } from "$lib/utils/ory";
+import { useAtomValue } from 'jotai';
+import { useOAuth2 } from './useOAuth2';
+import { hydraClientIdAtom } from '$lib/jotai';
+import { modal } from '$lib/components/core';
+import { AuthModal } from '$lib/components/features/auth/AuthModal';
+import { useState } from 'react';
+import { LoginFlow, RegistrationFlow, SettingsFlow, UiNodeInputAttributes, VerificationFlow } from '@ory/client';
+import { ory } from '$lib/utils/ory';
+
+const dummyWalletPassword = '!!dummy-WALLET-password@@';
 
 export function useSignIn() {
   const { signIn } = useOAuth2();
@@ -91,19 +93,19 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: () => void }) => {
 
     const promise = isSignup
       ? ory.updateRegistrationFlow({
-        flow: flow.id,
-        updateRegistrationFlowBody: {
-          ...payload,
-          traits: { email },
-        },
-      })
+          flow: flow.id,
+          updateRegistrationFlowBody: {
+            ...payload,
+            traits: { email },
+          },
+        })
       : ory.updateLoginFlow({
-        flow: flow.id,
-        updateLoginFlowBody: {
-          ...payload,
-          identifier: email,
-        },
-      });
+          flow: flow.id,
+          updateLoginFlowBody: {
+            ...payload,
+            identifier: email,
+          },
+        });
 
     //-- this should always throw an error
     const result = await promise
@@ -276,21 +278,22 @@ export const useHandleSignature = ({ onSuccess }: { onSuccess: () => void }) => 
 
     const flow = await ory.createBrowserRegistrationFlow({}).then((res) => res.data);
 
-    const updateResult = await ory.updateRegistrationFlow({
-      flow: flow.id,
-      updateRegistrationFlowBody: {
-        method: 'password',
-        csrf_token: getCsrfTokenFromFlow(flow),
-        password: getPassword(lowercaseWallet),
-        traits: {
-          wallet: lowercaseWallet,
+    const updateResult = await ory
+      .updateRegistrationFlow({
+        flow: flow.id,
+        updateRegistrationFlowBody: {
+          method: 'password',
+          csrf_token: getCsrfTokenFromFlow(flow),
+          password: dummyWalletPassword,
+          traits: {
+            wallet: lowercaseWallet,
+          },
+          transient_payload: {
+            wallet_signature: signature,
+            wallet_signature_token: token,
+          },
         },
-        transient_payload: {
-          wallet_signature: signature,
-          wallet_signature_token: token,
-        },
-      },
-    })
+      })
       .then((res) => ({
         success: true,
         response: res.data,
@@ -298,7 +301,7 @@ export const useHandleSignature = ({ onSuccess }: { onSuccess: () => void }) => 
       .catch((err) => ({
         success: false,
         response: err.response.data,
-      }));;
+      }));
 
     if (!updateResult.success) {
       setError((updateResult.response as RegistrationFlow).ui.messages?.[0].text ?? 'Unknown error');
@@ -322,7 +325,7 @@ export const useHandleSignature = ({ onSuccess }: { onSuccess: () => void }) => 
         updateLoginFlowBody: {
           method: 'password',
           csrf_token: getCsrfTokenFromFlow(flow),
-          password: getPassword(lowercaseWallet),
+          password: dummyWalletPassword,
           identifier: lowercaseWallet,
           transient_payload: {
             wallet_signature: signature,
@@ -389,7 +392,8 @@ export const useHandleVerifyEmail = ({ onSuccess }: { onSuccess: () => void }) =
       }));
 
     if (!updateResult.success) {
-      const errMessage = (updateResult.response as SettingsFlow).ui?.messages?.[0].text || updateResult.response.error.reason;
+      const errMessage =
+        (updateResult.response as SettingsFlow).ui?.messages?.[0].text || updateResult.response.error.reason;
       setError(errMessage ?? 'Unknown error');
       return;
     }
@@ -537,15 +541,6 @@ export const useHandleVerifyWallet = ({ onSuccess }: { onSuccess: () => void }) 
       return;
     }
 
-    await ory.updateSettingsFlow({
-      flow: flow.id,
-      updateSettingsFlowBody: {
-        csrf_token: getCsrfTokenFromFlow(result.response as SettingsFlow),
-        method: 'password',
-        password: getPassword(lowercaseWallet),
-      },
-    });
-
     onSuccess();
   };
 
@@ -564,17 +559,13 @@ function getCsrfTokenFromFlow(flow: RegistrationFlow | LoginFlow | SettingsFlow 
   return (csrfNode.attributes as UiNodeInputAttributes).value;
 }
 
-function getPassword(address: string) {
-  return address.split('').reverse().join('');
-}
-
 const withLoading =
   <T extends unknown[], K>(fn: (...args: T) => Promise<K>, setLoading: (loading: boolean) => void) =>
-    async (...args: T) => {
-      try {
-        setLoading(true);
-        await fn(...args);
-      } finally {
-        setLoading(false);
-      }
-    };
+  async (...args: T) => {
+    try {
+      setLoading(true);
+      await fn(...args);
+    } finally {
+      setLoading(false);
+    }
+  };
