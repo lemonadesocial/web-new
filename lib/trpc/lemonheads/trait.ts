@@ -75,12 +75,12 @@ export default class Trait {
         female: {
           hair: { name: 'black_fringe', color: 'black', gender, size },
           eyes: { name: 'black', size },
-          mouth: { name: 'happy', size },
+          mouth: { name: 'happy', size, color: 'black' },
         },
         male: {
           hair: { name: 'black_funky', color: 'black', gender, size },
           eyes: { name: 'black', size },
-          mouth: { name: 'happy', size },
+          mouth: { name: 'happy', size, color: 'black' },
         },
       });
     }

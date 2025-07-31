@@ -41,7 +41,34 @@ export function LemonHeadAboutYou() {
 
       <div className="flex flex-col gap-3">
         <p>Pick your persona</p>
-        <div className="grid grid-cols-5 gap-3">
+
+        <div className="flex gap-3">
+          <div className="flex md:hidden justify-between w-full gap-3">
+            <SquareButton
+              active={state.gender === 'female'}
+              onClick={() => handleChange({ ...state, gender: 'female' })}
+            >
+              <i className="icon-lh-female size-8 text-[#F270A4]" />
+            </SquareButton>
+
+            <SquareButton active={state.gender === 'male'} onClick={() => handleChange({ ...state, gender: 'male' })}>
+              <i className="icon-lh-male size-8 text-[#70A4FE]" />
+            </SquareButton>
+
+            <div className="flex justify-center items-center">
+              <i className="icon-dot text-tertiary size-4" />
+            </div>
+
+            <SquareButton active={state.race === 'human'} onClick={() => handleChange({ ...state, race: 'human' })}>
+              <LemonHeadPreview className="rounded-sm" traits={getTraitData('human', 'regular', state.gender)} />
+            </SquareButton>
+            <SquareButton active={state.race === 'alien'} onClick={() => handleChange({ ...state, race: 'alien' })}>
+              <LemonHeadPreview className="rounded-sm" traits={getTraitData('alien', 'regular', state.gender)} />
+            </SquareButton>
+          </div>
+        </div>
+
+        <div className="hidden md:grid grid-cols-5 gap-3">
           <div className="grid grid-rows-2 gap-3">
             <SquareButton
               active={state.gender === 'female'}
@@ -54,6 +81,7 @@ export function LemonHeadAboutYou() {
               <i className="icon-lh-male size-10 text-[#70A4FE]" />
             </SquareButton>
           </div>
+
           <SquareButton
             className="col-span-2"
             active={state.race === 'human'}
@@ -72,7 +100,7 @@ export function LemonHeadAboutYou() {
       </div>
 
       <div className="flex flex-col gap-3">
-        <p>Choose your frame</p>
+        <p>Choose your body type</p>
         <div className="grid grid-cols-4 gap-3">
           {mapping.map((item) => (
             <SquareButton

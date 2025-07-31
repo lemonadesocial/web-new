@@ -13,6 +13,7 @@ import { LemonHeadPreview } from './preview';
 
 import { LemonHeadActionKind, LemonHeadProvider, LemonHeadStep, useLemonHeadContext } from './provider';
 import { SquareButton } from './shared';
+import { setWith } from 'lodash';
 
 export function LemonHeadMain() {
   return (
@@ -43,6 +44,11 @@ function Content() {
   const { data: dataDefaultSet } = trpc.lemonheads.defaultSet.useQuery();
   const { data: dataColorSet } = trpc.lemonheads.colorSet.useQuery();
 
+  const previewRef = React.useRef(null);
+
+  const [width, setWidth] = React.useState('100%');
+  const [height, setHeight] = React.useState('100%');
+
   React.useEffect(() => {
     const init = async () => {
       if (dataBodySet?.items && dataDefaultSet?.items) {
@@ -63,6 +69,29 @@ function Content() {
     init();
   }, [dataBodySet, dataDefaultSet, dataColorSet]);
 
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (previewRef.current) {
+        const offsetWidth = previewRef.current.clientWidth;
+        const offsetHeight = previewRef.current.clientHeight;
+        const value = offsetWidth > offsetHeight ? offsetHeight : offsetWidth;
+        console.log(offsetWidth, offsetHeight);
+
+        setWidth(value);
+        setHeight(value);
+      }
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup function to remove the event listener
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [state.currentStep]);
+
   const showPreview = !state.steps[state.currentStep].hidePreview;
 
   const body = state.traits.find((i) => i?.type === 'body');
@@ -74,29 +103,32 @@ function Content() {
         <Header />
       </div>
 
-      <div className="flex-1 h-full overflow-auto no-scrollbar">
-        <div className="flex-1 flex flex-col h-full pb-4 md:flex-row-reverse max-w-[1440px] overflow-auto mx-auto gap-5 md:gap-18 p-4 md:p-11 no-scrollbar">
-          {showPreview ? (
-            state.currentStep === LemonHeadStep.getstarted ? (
-              <div className="max-w-[80px] md:max-w-[692px] md:max-h-[692px]">
-                <img
-                  src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
-                  className="rounded-sm w-full h-auto aspect-square"
-                />
-              </div>
-            ) : (
-              <div className="flex-1">
-                <div className="h-full md:h-auto flex flex-col overflow-hidden gap-8">
-                  <div className="flex flex-1 md:flex-none items-center justify-center md:max-h-[692px] md:max-w-[692px] md:aspect-square">
-                    <LemonHeadPreview traits={state.traits} className="h-full w-fit md:w-full aspect-square" />
+      <div className="flex-1 flex flex-col overflow-auto">
+        <div className="w-full max-w-[1440px] mx-auto p-4 md:p-11 flex flex-col flex-1 md:h-full">
+          <div className="flex flex-col md:flex-row-reverse gap-5 md:gap-8 flex-1 md:h-full">
+            {showPreview ? (
+              state.currentStep === LemonHeadStep.getstarted ? (
+                <div className="max-sm:w-[80px] aspect-square md:max-h-[688px] max-md:w-full max-md:h-auto md:w-auto">
+                  <img
+                    src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
+                    className="rounded-sm w-full h-full"
+                  />
+                </div>
+              ) : (
+                <div className="h-full md:flex-1 md:w-full max-h-[692px] flex md:flex-col gap-5">
+                  <div className="w-[30px] md:hidden" />
+                  <div className="grow flex">
+                    <LemonHeadPreview
+                      className="sm:w-full max-h-fit md:max-h-[688px] max-md:w-full max-md:h-auto md:w-auto md:aspect-square"
+                      traits={state.traits}
+                    />
                   </div>
-
-                  <div className="flex gap-3">
+                  <div className="w-[30px] md:w-full flex flex-col md:flex-row gap-2">
                     {skinToneOpts[body?.value || 'human'].map((item) => (
                       <SquareButton
                         key={item.value}
                         active={item.value === skinTone}
-                        className="max-w-[44px] aspect-square"
+                        className="size-[30px] md:size-[50px] aspect-square"
                         onClick={() => {
                           const data = dataBodySet?.items.find(
                             (i) =>
@@ -114,26 +146,21 @@ function Content() {
                           }
                         }}
                       >
-                        <div className="w-full h-full rounded-sm" style={{ background: item.color }} />
+                        <div className="w-full h-full rounded-xs" style={{ background: item.color }} />
                       </SquareButton>
                     ))}
                   </div>
                 </div>
-              </div>
-            )
-          ) : null}
+              )
+            ) : null}
 
-          <div
-            className={clsx(
-              showPreview && 'md:flex-1 md:w-[588px]',
-              state.currentStep === LemonHeadStep.claim && 'w-full h-full',
-            )}
-          >
-            {Object.entries(state.steps).map(([key, item]) => {
-              if (!item.mounted) return null;
-              const Comp = item.component || React.Fragment;
-              return <Comp key={key} />;
-            })}
+            <div className="flex-1 md:min-w-[588px]">
+              {Object.entries(state.steps).map(([key, item]) => {
+                if (!item.mounted) return null;
+                const Comp = item.component || React.Fragment;
+                return <Comp key={key} />;
+              })}
+            </div>
           </div>
         </div>
       </div>

@@ -27,10 +27,13 @@ import { ConnectWallet } from '../modals/ConnectWallet';
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from './provider';
 import { LEMONHEAD_CHAIN_ID } from './utils';
 import { LemonHeadPreview } from './preview';
+import { SelectProfileModal } from '../lens-account/SelectProfileModal';
 
 export function LemonHeadFooter() {
   const router = useRouter();
   const [state, dispatch] = useLemonHeadContext();
+
+  const [minting, setMinting] = React.useState(false);
 
   const currentStep = state.steps[state.currentStep];
   const disabled = state.currentStep === LemonHeadStep.claim && !state.mint.minted;
@@ -93,6 +96,41 @@ export function LemonHeadFooter() {
     return isValid;
   };
 
+  const handleMintProcess = (cb: () => void) => {
+    if (!isConnected || chainId?.toString() !== chainsMap[LEMONHEAD_CHAIN_ID].chain_id) {
+      modal.open(ConnectWallet, {
+        props: {
+          onConnect: () => {
+            modal.close();
+            setTimeout(() => {
+              if (!myAccount) {
+                modal.open(SelectProfileModal, { onClose: () => setTimeout(cb) });
+              } else {
+                cb();
+              }
+            });
+          },
+          chain: chainsMap[LEMONHEAD_CHAIN_ID],
+        },
+        dismissible: false,
+      });
+    } else if (!myAccount) {
+      modal.open(SelectProfileModal, {
+        onClose: () => {
+          setTimeout(() => {
+            if (!myAccount) {
+              modal.open(SelectProfileModal, { onClose: cb });
+            } else {
+              cb();
+            }
+          });
+        },
+      });
+    } else {
+      cb();
+    }
+  };
+
   const handlePrev = () => {
     if (state.currentStep === LemonHeadStep.getstarted) router.back();
     else dispatch({ type: LemonHeadActionKind.prev_step });
@@ -100,60 +138,33 @@ export function LemonHeadFooter() {
 
   const handleNext = async () => {
     if (state.currentStep === LemonHeadStep.create) {
+      setMinting(true);
+
       const valid = await checkMinted();
       if (!valid) return;
 
-      if (!isConnected || chainId?.toString() !== chainsMap[LEMONHEAD_CHAIN_ID].chain_id) {
-        modal.open(ConnectWallet, {
-          props: {
-            onConnect: () => {
-              modal.close();
-
-              setTimeout(() => {
-                if (!myAccount) {
-                  modal.open(BeforeMintModal, {
-                    props: {
-                      onContinue: () =>
-                        modal.open(MintModal, {
-                          props: {
-                            traits: state.traits,
-                            sponsor,
-                            onComplete: (payload) => {
-                              dispatch({ type: LemonHeadActionKind.set_mint, payload });
-                              dispatch({ type: LemonHeadActionKind.next_step });
-                            },
-                          },
-                          dismissible: false,
-                        }),
-                    },
-                  });
-                  return;
-                }
-              });
-            },
-            chain: chainsMap[LEMONHEAD_CHAIN_ID],
-          },
-          dismissible: false,
-        });
-
-        return;
-      } else {
-        if (!state.mint.minted) {
-          modal.open(MintModal, {
+      handleMintProcess(() => {
+        setTimeout(() => {
+          modal.open(BeforeMintModal, {
             props: {
-              traits: state.traits,
-              sponsor,
-              onComplete: (payload) => {
-                dispatch({ type: LemonHeadActionKind.set_mint, payload });
-                dispatch({ type: LemonHeadActionKind.next_step });
-              },
+              onContinue: () =>
+                modal.open(MintModal, {
+                  props: {
+                    traits: state.traits,
+                    sponsor,
+                    onComplete: (payload) => {
+                      dispatch({ type: LemonHeadActionKind.set_mint, payload });
+                      dispatch({ type: LemonHeadActionKind.next_step });
+                    },
+                  },
+                  dismissible: false,
+                }),
             },
-            dismissible: false,
           });
-        }
-
-        return;
-      }
+        }, 200);
+      });
+      setMinting(false);
+      return;
     }
 
     if (state.currentStep === LemonHeadStep.claim && state.mint.minted) {
@@ -201,7 +212,7 @@ export function LemonHeadFooter() {
         )}
 
         <div className="flex flex-1 justify-end">
-          <Button iconRight="icon-chevron-right" variant="secondary" size="sm" onClick={handleNext}>
+          <Button iconRight="icon-chevron-right" loading={minting} variant="secondary" size="sm" onClick={handleNext}>
             {currentStep?.btnText}
           </Button>
         </div>
