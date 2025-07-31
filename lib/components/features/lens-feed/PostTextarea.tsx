@@ -53,7 +53,7 @@ export const PostTextarea = ({
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
         className={twMerge(
-          'absolute inset-0 w-full h-full resize-none outline-none font-medium text-lg placeholder-quaternary bg-transparent text-transparent overflow-auto whitespace-pre-wrap break-words bg-transparent text-transparent caret-primary min-h-[24px]',
+          'absolute inset-0 w-full h-auto resize-none outline-none font-medium text-lg placeholder-quaternary bg-transparent text-transparent overflow-auto whitespace-pre-wrap break-words bg-transparent text-transparent caret-primary min-h-[24px]',
         )}
         onFocus={onFocus}
         autoFocus={autoFocus}

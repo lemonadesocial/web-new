@@ -1,16 +1,20 @@
 import React from 'react';
 import { useAtomValue } from 'jotai';
 
-import { Avatar, Button, Card, Menu, MenuItem, modal } from '$lib/components/core';
+import { Avatar, Button, Card, FileInput, Menu, MenuItem, modal } from '$lib/components/core';
 import { accountAtom } from '$lib/jotai';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 
 import { LEMONADE_FEED_ADDRESS } from '$lib/utils/constants';
 import { randomUserImage } from '$lib/utils/user';
-
-import { PostTextarea } from './PostTextarea';
 import { extractLinks } from '$lib/utils/string';
 import { LinkPreview } from '$lib/components/core/link';
+
+import { PostTextarea } from './PostTextarea';
+import { ImageInput } from './ImageInput';
+import { EventPreview } from './EventPreview';
+import { Event } from '$lib/graphql/generated/backend/graphql';
+import { AddEventModal } from './AddEventModal';
 
 type FeedOptionType = {
   label: string;
@@ -62,22 +66,27 @@ export function PostComposerModal({
           </Button>
         </div>
       </Card.Header>
-      <Card.Content className="flex-1 py-0 md:py-4 px-4 w-full h-full flex gap-3">
-        <div>
-          <Avatar src={account ? getAccountAvatar(account) : randomUserImage()} size="xl" rounded="full" />
+      <Card.Content className="flex-1 p-0 flex flex-col">
+        <div className="flex-1 py-0 md:py-4 px-4 w-full h-full flex gap-3 ">
+          <div>
+            <Avatar src={account ? getAccountAvatar(account) : randomUserImage()} size="xl" rounded="full" />
+          </div>
+          <div className="flex-1 break-all">
+            <PostTextarea
+              value={value}
+              autoFocus={autoFocus}
+              setValue={setValue}
+              placeholder={placeholder}
+              className="mt-2 min-h-full!"
+              disabled={!account}
+            />
+            {links.length > 0 && <LinkPreview url={links[0]} />}
+          </div>
         </div>
-        <div className="flex-1 break-all">
-          <PostTextarea
-            value={value}
-            autoFocus={autoFocus}
-            setValue={setValue}
-            placeholder={placeholder}
-            className="mt-2 min-h-full!"
-            disabled={!account}
-          />
-          {links.length > 0 && <LinkPreview url={links[0]} />}
+
+        <div className="p-4 border-t border-(--color-divide)">
+          <Toolbar />
         </div>
-        <div></div>
       </Card.Content>
     </Card.Root>
   );
@@ -126,5 +135,44 @@ export function FeedOptions({
 }
 
 export function Toolbar() {
-  return;
+  const [files, setFiles] = React.useState<File[]>([]);
+  const [isUploading, setIsUploading] = React.useState(false);
+  const [event, setEvent] = React.useState<Event | undefined>(undefined);
+
+  return (
+    <>
+      {files.length > 0 && <ImageInput value={files} onChange={setFiles} />}
+
+      {event && (
+        <div className="relative">
+          <EventPreview event={event} />
+          <Button
+            icon="icon-x size-[14]"
+            variant="tertiary"
+            className="rounded-full absolute top-3 right-3"
+            size="xs"
+            onClick={() => setEvent(undefined)}
+          />
+        </div>
+      )}
+
+      <div className="flex items-center justify-between">
+        <div className="flex gap-4 items-center">
+          <FileInput onChange={setFiles} accept="image/*" multiple>
+            {(open) => <i className="icon-image size-5 text-[#60A5FA] cursor-pointer" onClick={open} />}
+          </FileInput>
+          <i
+            className="icon-ticket size-5 text-[#A78BFA] cursor-pointer"
+            onClick={() => {
+              modal.open(AddEventModal, {
+                props: {
+                  onConfirm: setEvent,
+                },
+              });
+            }}
+          />
+        </div>
+      </div>
+    </>
+  );
 }
