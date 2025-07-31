@@ -165,58 +165,6 @@ export function LemonHeadFooter() {
       });
       setMinting(false);
       return;
-
-      // if (!isConnected || chainId?.toString() !== chainsMap[LEMONHEAD_CHAIN_ID].chain_id) {
-      //   modal.open(ConnectWallet, {
-      //     props: {
-      //       onConnect: () => {
-      //         modal.close();
-      //
-      //         setTimeout(() => {
-      //           if (!myAccount) {
-      //             modal.open(BeforeMintModal, {
-      //               props: {
-      //                 onContinue: () =>
-      //                   modal.open(MintModal, {
-      //                     props: {
-      //                       traits: state.traits,
-      //                       sponsor,
-      //                       onComplete: (payload) => {
-      //                         dispatch({ type: LemonHeadActionKind.set_mint, payload });
-      //                         dispatch({ type: LemonHeadActionKind.next_step });
-      //                       },
-      //                     },
-      //                     dismissible: false,
-      //                   }),
-      //               },
-      //             });
-      //             return;
-      //           }
-      //         });
-      //       },
-      //       chain: chainsMap[LEMONHEAD_CHAIN_ID],
-      //     },
-      //     dismissible: false,
-      //   });
-      //
-      //   return;
-      // } else {
-      //   if (!state.mint.minted) {
-      //     modal.open(MintModal, {
-      //       props: {
-      //         traits: state.traits,
-      //         sponsor,
-      //         onComplete: (payload) => {
-      //           dispatch({ type: LemonHeadActionKind.set_mint, payload });
-      //           dispatch({ type: LemonHeadActionKind.next_step });
-      //         },
-      //       },
-      //       dismissible: false,
-      //     });
-      //   }
-      //
-      //   return;
-      // }
     }
 
     if (state.currentStep === LemonHeadStep.claim && state.mint.minted) {
