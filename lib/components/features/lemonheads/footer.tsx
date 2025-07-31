@@ -12,7 +12,7 @@ import { trpc } from '$lib/trpc/client';
 import { useAccount } from '$lib/hooks/useLens';
 import { chainsMapAtom } from '$lib/jotai';
 import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
-import { useQuery } from '$lib/graphql/request';
+import { useClient, useQuery } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
 import {
@@ -28,6 +28,7 @@ import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from './provi
 import { LEMONHEAD_CHAIN_ID } from './utils';
 import { LemonHeadPreview } from './preview';
 import { SelectProfileModal } from '../lens-account/SelectProfileModal';
+import { appKit } from '$lib/utils/appkit';
 
 export function LemonHeadFooter() {
   const router = useRouter();
@@ -48,26 +49,18 @@ export function LemonHeadFooter() {
   const contractAddress = chain?.lemonhead_contract_address;
 
   const { address } = useAppKitAccount();
-  const { data } = useQuery(GetListLemonheadSponsorsDocument, {
-    variables: { wallet: address! },
-    skip: !address,
-    fetchPolicy: 'network-only',
-  });
 
-  const { data: dataCanMint } = useQuery(CanMintLemonheadDocument, {
-    variables: { wallet: address! },
-    skip: !address,
-    fetchPolicy: 'network-only',
-  });
-  const canMint = dataCanMint?.canMintLemonhead;
-
-  // NOTE: only pick one can get free
-  const sponsor = data?.listLemonheadSponsors.sponsors.find(
-    (s) => s.remaining && s.remaining > 0 && s.remaining <= s.limit,
-  )?.sponsor;
+  const { client } = useClient();
 
   const checkMinted = async () => {
     let isValid = true;
+
+    const address = appKit.getAddress();
+    const { data: dataCanMint } = await client.query({
+      query: CanMintLemonheadDocument,
+      variables: { wallet: address },
+    });
+    const canMint = dataCanMint?.canMintLemonhead;
 
     if (!canMint) {
       toast.error('Not able to mint!');
@@ -100,8 +93,11 @@ export function LemonHeadFooter() {
     if (!isConnected || chainId?.toString() !== chainsMap[LEMONHEAD_CHAIN_ID].chain_id) {
       modal.open(ConnectWallet, {
         props: {
-          onConnect: () => {
+          onConnect: async () => {
+            const canmint = await checkMinted();
             modal.close();
+            if (!canmint) return;
+
             setTimeout(() => {
               if (!myAccount) {
                 modal.open(SelectProfileModal, { onClose: () => setTimeout(cb) });
@@ -140,14 +136,23 @@ export function LemonHeadFooter() {
     if (state.currentStep === LemonHeadStep.create) {
       setMinting(true);
 
-      const valid = await checkMinted();
-      if (!valid) return;
-
       handleMintProcess(() => {
-        setTimeout(() => {
+        setTimeout(async () => {
           modal.open(BeforeMintModal, {
             props: {
-              onContinue: () =>
+              onContinue: async () => {
+                const address = appKit.getAddress();
+
+                const { data } = await client.query({
+                  query: GetListLemonheadSponsorsDocument,
+                  variables: { wallet: address! },
+                });
+
+                // NOTE: only pick one can get free
+                const sponsor = data?.listLemonheadSponsors.sponsors.find(
+                  (s) => s.remaining && s.remaining > 0 && s.remaining <= s.limit,
+                )?.sponsor;
+
                 modal.open(MintModal, {
                   props: {
                     traits: state.traits,
@@ -158,7 +163,8 @@ export function LemonHeadFooter() {
                     },
                   },
                   dismissible: false,
-                }),
+                });
+              },
             },
           });
         }, 200);
