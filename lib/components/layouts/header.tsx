@@ -17,6 +17,7 @@ import { useLogOut as useLensLogOut } from '$lib/hooks/useLens';
 import { useAccount } from '$lib/hooks/useLens';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
+import { useConnectUnicornWallet } from '$lib/hooks/useConnectUnicornWallet';
 // import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { ProfilePane } from '../features/pane';
 import { VerifyEmailModal } from '../features/auth/VerifyEmailModal';
@@ -65,6 +66,7 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
   const { logOut: lensLogOut } = useLensLogOut();
   const signIn = useSignIn();
   // const { hasLemonhead } = useLemonhead();
+  useConnectUnicornWallet();
 
   return (
     <div className="py-3 px-4 h-[56px] flex justify-between items-center z-10 gap-4">

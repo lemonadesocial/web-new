@@ -6,8 +6,7 @@ import { AuthModal } from '$lib/components/features/auth/AuthModal';
 import { useState } from 'react';
 import { LoginFlow, RegistrationFlow, SettingsFlow, UiNodeInputAttributes, VerificationFlow } from '@ory/client';
 import { ory } from '$lib/utils/ory';
-
-const dummyWalletPassword = '!!dummy-WALLET-password@@';
+import { dummyWalletPassword } from '../services/ory';
 
 export function useSignIn() {
   const { signIn } = useOAuth2();

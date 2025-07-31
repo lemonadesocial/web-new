@@ -25,10 +25,12 @@ interface ModalItem {
 interface Modal {
   open: <T extends object>(component: React.ComponentType<T>, options?: Options<T>) => number;
   close: (id?: number) => void;
+  ready?: boolean;
 }
 
 export function createModal(): Modal {
   return {
+    ready: false,
     open: () => {
       throw new Error('Modal not initialized');
     },
@@ -98,6 +100,7 @@ export function ModalContainer({ modal }: { modal: Modal }) {
   useEffect(() => {
     modal.open = handleOpen;
     modal.close = handleClose;
+    modal.ready = true;
 
     if (modals.length > 0) {
       document.addEventListener('mousedown', handleOutsideClick);
