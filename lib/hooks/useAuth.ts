@@ -32,6 +32,7 @@ export function useAuth() {
           _id: id,
           email: data.identity?.traits?.email,
           wallet: data.identity?.traits?.wallet,
+          unicorn_wallet: data.identity?.traits?.unicorn_wallet,
         });
       })
       .catch((error) => {

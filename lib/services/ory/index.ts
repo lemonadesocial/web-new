@@ -8,6 +8,7 @@ import {
   UiNodeInputAttributes,
   UpdateLoginFlowWithPasswordMethod,
   UpdateRegistrationFlowWithPasswordMethod,
+  UpdateSettingsFlowWithProfileMethod,
 } from "@ory/client";
 
 import { ory as frontendApi } from "../../utils/ory";
@@ -94,6 +95,39 @@ export async function handlePasswordLogin(
     .catch((err) => {
       frontendApi!
         .getLoginFlow({ id: flow.id })
+        .then((response) => onError?.(response.data, err));
+    });
+}
+
+export async function handleUpdateFlowProfile(
+  {
+    flow,
+    payload,
+  }: {
+    flow: SettingsFlow;
+    payload: Pick<UpdateSettingsFlowWithProfileMethod, "traits" | "transient_payload">;
+  },
+  onError?: (flow: SettingsFlow, err: unknown) => void,
+  onSuccess?: () => void,
+) {
+  return frontendApi!
+    .updateSettingsFlow(
+      {
+        //-- first we need to update the flow with the new wallet address
+        flow: flow.id,
+        updateSettingsFlowBody: {
+          method: "profile",
+          csrf_token: getCsrfToken(flow),
+          ...payload,
+        },
+      },
+    )
+    .then(() => {
+      onSuccess?.();
+    })
+    .catch((err) => {
+      frontendApi!
+        .getSettingsFlow({ id: flow.id })
         .then((response) => onError?.(response.data, err));
     });
 }

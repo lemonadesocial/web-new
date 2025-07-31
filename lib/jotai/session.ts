@@ -11,6 +11,7 @@ export interface Session {
 
   email?: string;
   wallet?: string;
+  unicorn_wallet?: string;
 }
 
 export const sessionAtom = atom<Session | null>(null);
