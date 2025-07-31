@@ -94,10 +94,7 @@ export function LemonHeadFooter() {
       modal.open(ConnectWallet, {
         props: {
           onConnect: async () => {
-            const canmint = await checkMinted();
             modal.close();
-            if (!canmint) return;
-
             setTimeout(() => {
               if (!myAccount) {
                 modal.open(SelectProfileModal, { onClose: () => setTimeout(cb) });
@@ -136,7 +133,10 @@ export function LemonHeadFooter() {
     if (state.currentStep === LemonHeadStep.create) {
       setMinting(true);
 
-      handleMintProcess(() => {
+      handleMintProcess(async () => {
+        const canMint = await checkMinted();
+        if (!canMint) return;
+
         setTimeout(async () => {
           modal.open(BeforeMintModal, {
             props: {
