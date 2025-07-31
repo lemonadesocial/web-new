@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.0](https://github.com/lemonadesocial/web-new/compare/v2.0.0...v2.1.0) (2025-07-31)
+
+
+### Features
+
+* check can mint after connect wallet ([311d78d](https://github.com/lemonadesocial/web-new/commit/311d78d764bd7eb3314e48e3a4fc20b2e9d344a9))
+* check mint process ([000c9e7](https://github.com/lemonadesocial/web-new/commit/000c9e7f9cbbc9766e002aa24afa823c4407e19f))
+* missing connected but still cannot mint ([5e44dcd](https://github.com/lemonadesocial/web-new/commit/5e44dcd95bb9c3d01a483fc736fefbcff73f46a3))
+* remove unused ([322e495](https://github.com/lemonadesocial/web-new/commit/322e495183e6dd0937328369173659731b795ed2))
+* remove unused ([aba544b](https://github.com/lemonadesocial/web-new/commit/aba544b71af92e5cb729f9d267e69ef5533c18d8))
+* update wallet login password ([894e2fd](https://github.com/lemonadesocial/web-new/commit/894e2fd5b62cce4aff07cecb0d573955b530fc54))
+
 ## [2.0.0](https://github.com/lemonadesocial/web-new/compare/v1.64.1...v2.0.0) (2025-07-29)
 
 
