@@ -93,7 +93,7 @@ export function LemonHeadFooter() {
     if (!isConnected || chainId?.toString() !== chainsMap[LEMONHEAD_CHAIN_ID].chain_id) {
       modal.open(ConnectWallet, {
         props: {
-          onConnect: async () => {
+          onConnect: () => {
             modal.close();
             setTimeout(() => {
               if (!myAccount) {
