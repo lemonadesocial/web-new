@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
 import { createPortal } from 'react-dom';
@@ -26,12 +26,10 @@ interface ModalItem {
 interface Modal {
   open: <T extends object>(component: React.ComponentType<T>, options?: Options<T>) => number;
   close: (id?: number) => void;
-  ready?: boolean;
 }
 
 export function createModal(): Modal {
   return {
-    ready: false,
     open: () => {
       throw new Error('Modal not initialized');
     },
@@ -43,7 +41,9 @@ export function createModal(): Modal {
 
 export const modal = createModal();
 
-export function ModalContainer({ modal }: { modal: Modal }) {
+export function ModalContainer({ onModalReady, ...props }: { modal?: Modal, onModalReady?: (modal: Modal) => void }) {
+  const currentModal = useRef(props.modal || modal).current;
+
   const [modals, setModals] = React.useState<ModalItem[]>([]);
   const nextId = React.useRef(0);
   const modalRefs = React.useRef<Map<number, HTMLDivElement>>(new Map());
@@ -99,9 +99,9 @@ export function ModalContainer({ modal }: { modal: Modal }) {
   );
 
   useEffect(() => {
-    modal.open = handleOpen;
-    modal.close = handleClose;
-    modal.ready = true;
+    currentModal.open = handleOpen;
+    currentModal.close = handleClose;
+    onModalReady?.(currentModal);
 
     if (modals.length > 0) {
       document.addEventListener('mousedown', handleOutsideClick);
@@ -190,3 +190,20 @@ export function ModalContent({ children, onClose, title, icon, className, onBack
     </div>
   );
 }
+
+export const ModalContext = createContext<Modal | undefined>(undefined);
+
+export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
+  const [modal, setModal] = useState<Modal | undefined>();
+
+  return <ModalContext.Provider value={modal}>{
+    <>
+      {children}
+      <ModalContainer onModalReady={setModal} />
+    </>
+  }</ModalContext.Provider>;
+};
+
+export const useModal = () => {
+  return useContext(ModalContext);
+};
