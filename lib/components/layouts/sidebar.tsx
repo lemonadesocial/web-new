@@ -3,15 +3,14 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
+import { isMobile } from 'react-device-detect';
+import { twMerge } from 'tailwind-merge';
 
 import { useMe } from '$lib/hooks/useMe';
 import { useAccount } from '$lib/hooks/useLens';
 import { userAvatar } from '$lib/utils/user';
 import { Avatar, Button, Card, modal } from '../core';
-import { twMerge } from 'tailwind-merge';
-import { ShareModal } from '../features/lemonheads/steps/ClaimLemonHead';
 import { PostComposerModal } from '../features/lens-feed/PostComposerModal';
-import { isMobile } from 'react-device-detect';
 
 type SidebarItemProps = {
   item: {
@@ -135,9 +134,8 @@ export function CreatingModal() {
   const handleClick = (key: string) => {
     switch (key) {
       case 'post':
-        console.log(isMobile);
         modal.close();
-        modal.open(PostComposerModal, { dismissible: true, fullscreen: isMobile, props: { autoFocus: true } });
+        modal.open(PostComposerModal, { dismissible: true, fullscreen: isMobile });
         break;
 
       case 'community':

@@ -1,19 +1,22 @@
 import React from 'react';
 import { useAtomValue } from 'jotai';
 
-import { Avatar, Button, Card, FileInput, Menu, MenuItem, modal } from '$lib/components/core';
+import { Avatar, Button, Card, FileInput, Menu, MenuItem, modal, toast } from '$lib/components/core';
 import { accountAtom } from '$lib/jotai';
-import { getAccountAvatar } from '$lib/utils/lens/utils';
+import { generatePostMetadata, getAccountAvatar } from '$lib/utils/lens/utils';
 
 import { LEMONADE_FEED_ADDRESS } from '$lib/utils/constants';
 import { randomUserImage } from '$lib/utils/user';
 import { extractLinks } from '$lib/utils/string';
 import { LinkPreview } from '$lib/components/core/link';
 
+import { Event } from '$lib/graphql/generated/backend/graphql';
+import { MediaFile, uploadFiles } from '$lib/utils/file';
+import { useLensConnect, usePost } from '$lib/hooks/useLens';
+
 import { PostTextarea } from './PostTextarea';
 import { ImageInput } from './ImageInput';
 import { EventPreview } from './EventPreview';
-import { Event } from '$lib/graphql/generated/backend/graphql';
 import { AddEventModal } from './AddEventModal';
 
 type FeedOptionType = {
@@ -36,6 +39,7 @@ type PostComposerModalProps = {
   defaultValue?: string;
   autoFocus?: boolean;
   placeholder?: string;
+  onPost: (metadata: unknown, feedAddress?: string) => Promise<void>;
 };
 
 export function PostComposerModal({
@@ -44,12 +48,47 @@ export function PostComposerModal({
   placeholder = `What's on your mind?`,
 }: PostComposerModalProps) {
   const account = useAtomValue(accountAtom);
+  const handleLensConnect = useLensConnect();
+  const { createPost } = usePost();
 
   const [value, setValue] = React.useState(defaultValue);
+  const [selectedFeed, setSelectedFeed] = React.useState<keyof FeedOptionsType>('lemonade');
+  const [files, setFiles] = React.useState<File[]>([]);
+  const [isUploading, setIsUploading] = React.useState(false);
+  const [event, setEvent] = React.useState<Event | undefined>(undefined);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
   const links = extractLinks(value);
 
+  const handlePost = async () => {
+    const content = value.trim();
+    let images: MediaFile[] = [];
+
+    if (files.length > 0) {
+      setIsUploading(true);
+      images = await uploadFiles(files, 'post');
+      setIsUploading(false);
+    }
+
+    try {
+      setIsSubmitting(true);
+      await createPost({
+        metadata: generatePostMetadata({ content, images, event }),
+        feedAddress: FEED_OPTIONS[selectedFeed].address,
+      });
+      setValue('');
+      setFiles([]);
+      setEvent(undefined);
+      modal.close();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to post');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <Card.Root className="w-full h-screen md:max-h-[453px] md:w-[640px] flex flex-col">
+    <Card.Root className="w-full h-screen md:h-auto md:w-[640px] flex flex-col">
       <Card.Header className="bg-transparent flex justify-between items-center w-full px-4 py-3 md:hidden">
         <Button
           icon="icon-chevron-left"
@@ -60,8 +99,8 @@ export function PostComposerModal({
         />
 
         <div className="flex items-center gap-2">
-          <FeedOptions onSelect={() => {}} />
-          <Button size="sm" className="rounded-full">
+          <FeedOptions selected={selectedFeed} onSelect={(opt) => setSelectedFeed(opt)} />
+          <Button size="sm" className="rounded-full" loading={isUploading || isSubmitting} onClick={handlePost}>
             Post
           </Button>
         </div>
@@ -84,9 +123,41 @@ export function PostComposerModal({
           </div>
         </div>
 
-        <div className="p-4 border-t border-(--color-divide)">
-          <Toolbar />
-        </div>
+        {account ? (
+          <div className="p-4 border-t border-(--color-divider) space-y-4">
+            {files.length > 0 && <ImageInput value={files} onChange={setFiles} />}
+
+            <div className="flex justify-between ">
+              <Toolbar event={event} onAddEvent={(event) => setEvent(event)} onSelectFile={setFiles} />
+
+              <div className="flex items-center gap-28 hidden md:block">
+                <FeedOptions selected={selectedFeed} onSelect={(opt) => setSelectedFeed(opt)} />
+                <Button
+                  size="sm"
+                  className="rounded-full"
+                  disabled={!value.trim()}
+                  loading={isUploading || isSubmitting}
+                  onClick={handlePost}
+                >
+                  Post
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="px-4 py-3 gap-3 flex items-center bg-card rounded-b-md">
+            <div className="flex items-center justify-center bg-error/16 size-9 rounded-full">
+              <i className="icon-lock size-5 text-error" />
+            </div>
+            <div className="flex-1">
+              <p>Posting is Locked</p>
+              <p className="text-tertiary text-sm">Connect wallet to start posting on Lemonade.</p>
+            </div>
+            <Button variant="secondary" className="rounded-full" onClick={handleLensConnect} size="sm">
+              Connect Wallet
+            </Button>
+          </div>
+        )}
       </Card.Content>
     </Card.Root>
   );
@@ -134,15 +205,17 @@ export function FeedOptions({
   );
 }
 
-export function Toolbar() {
-  const [files, setFiles] = React.useState<File[]>([]);
-  const [isUploading, setIsUploading] = React.useState(false);
-  const [event, setEvent] = React.useState<Event | undefined>(undefined);
-
+export function Toolbar({
+  event,
+  onSelectFile,
+  onAddEvent,
+}: {
+  event?: Event;
+  onAddEvent: (event?: Event) => void;
+  onSelectFile: (file: File[]) => void;
+}) {
   return (
     <>
-      {files.length > 0 && <ImageInput value={files} onChange={setFiles} />}
-
       {event && (
         <div className="relative">
           <EventPreview event={event} />
@@ -151,14 +224,16 @@ export function Toolbar() {
             variant="tertiary"
             className="rounded-full absolute top-3 right-3"
             size="xs"
-            onClick={() => setEvent(undefined)}
+            onClick={() => {
+              onAddEvent(undefined);
+            }}
           />
         </div>
       )}
 
       <div className="flex items-center justify-between">
         <div className="flex gap-4 items-center">
-          <FileInput onChange={setFiles} accept="image/*" multiple>
+          <FileInput onChange={onSelectFile} accept="image/*" multiple>
             {(open) => <i className="icon-image size-5 text-[#60A5FA] cursor-pointer" onClick={open} />}
           </FileInput>
           <i
@@ -166,7 +241,7 @@ export function Toolbar() {
             onClick={() => {
               modal.open(AddEventModal, {
                 props: {
-                  onConfirm: setEvent,
+                  onConfirm: onAddEvent,
                 },
               });
             }}
