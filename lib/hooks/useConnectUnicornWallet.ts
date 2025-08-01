@@ -19,7 +19,6 @@ export const useConnectUnicornWallet = () => {
         modal.close(modalId.current);
       }
 
-      console.log("opening UnicornAuth modal");
       modalId.current = modal.open(UnicornAuth, {
         dismissible: false,
         props: {
