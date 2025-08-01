@@ -1,23 +1,20 @@
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
-import { modal } from "../components/core";
 import { UnicornAuth } from "../components/features/auth/unicorn";
+import { useModal } from "../components/core";
 
 import { useAuth } from "./useAuth";
 
 export const useConnectUnicornWallet = () => {
-  console.log("useConnectUnicornWallet");
-
+  const modal = useModal();
   const { reload } = useAuth();
   const params = useSearchParams();
   const authCookie = params.get('authCookie');
   const modalId = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    console.log("useEffect", !!authCookie, !!modal.ready);
-
-    if (authCookie && modal.ready) {
+    if (authCookie && modal) {
       if (modalId?.current !== undefined) {
         modal.close(modalId.current);
       }
@@ -41,7 +38,7 @@ export const useConnectUnicornWallet = () => {
     }
 
     return () => {
-      modal.close(modalId.current);
+      modal?.close(modalId.current);
     }
-  }, [authCookie, modal.ready]);
+  }, [authCookie, modal]);
 };
