@@ -23,6 +23,8 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
   const [linking, setLinking] = useState(false);
   const [showLinkOptions, setShowLinkOptions] = useState(false);
 
+  console.log("useHandleUnicornCookie", cookie, authCookie);
+
   const handleLogin = async (identifier: string, cookie: string) => {
     const loginFlow = await ory!.createBrowserLoginFlow().then((response) => response.data);
 
@@ -42,6 +44,8 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
   }
 
   const processCookie = async (cookie: string) => {
+    console.log("processCookie", cookie);
+
     try {
       setProcessing(true);
       const response = await getUnicornCanLink(cookie);
@@ -95,6 +99,8 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
   }
 
   useEffect(() => {
+    console.log("useEffect useHandleUnicornCookie", !!cookie);
+
     if (cookie) {
       processCookie(cookie);
     }

@@ -59,6 +59,8 @@ export function RootMenu() {
 }
 
 export default function Header({ title, mainMenu, hideLogo }: Props) {
+  console.log("Header render");
+
   const [session] = useAtom(sessionAtom);
   const me = useMe();
   const { account } = useAccount();
