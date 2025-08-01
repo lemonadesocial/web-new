@@ -16,6 +16,7 @@ import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUser
 import { EditProfileModal } from '../../lens-account/EditProfileModal';
 import { PostComposer } from '../../lens-feed/PostComposer';
 import { LemonHeadActionKind, useLemonHeadContext } from '../provider';
+import { PostComposerModal } from '../../lens-feed/PostComposerModal';
 
 export function ClaimLemonHead() {
   const [state, dispatch] = useLemonHeadContext();
@@ -142,7 +143,12 @@ function RightPane({ image }: { image: string }) {
     {
       name: 'Post',
       icon: 'icon-lemonade',
-      onClick: () => modal.open(ShareModal, { dismissible: true, props: { content: shareText + shareUrl } }),
+      onClick: () =>
+        modal.open(PostComposerModal, {
+          dismissible: true,
+          fullscreen: isMobile,
+          props: { defaultValue: shareText + shareUrl },
+        }),
     },
     {
       name: 'Share',

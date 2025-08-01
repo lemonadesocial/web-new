@@ -18,6 +18,8 @@ import { PostTextarea } from './PostTextarea';
 import { ImageInput } from './ImageInput';
 import { EventPreview } from './EventPreview';
 import { AddEventModal } from './AddEventModal';
+import clsx from 'clsx';
+import { isMobile } from 'react-device-detect';
 
 type FeedOptionType = {
   label: string;
@@ -39,7 +41,6 @@ type PostComposerModalProps = {
   defaultValue?: string;
   autoFocus?: boolean;
   placeholder?: string;
-  onPost: (metadata: unknown, feedAddress?: string) => Promise<void>;
 };
 
 export function PostComposerModal({
@@ -110,13 +111,13 @@ export function PostComposerModal({
           <div>
             <Avatar src={account ? getAccountAvatar(account) : randomUserImage()} size="xl" rounded="full" />
           </div>
-          <div className="flex-1 break-all">
+          <div className="flex-1 break-all flex flex-col gap-5 overflow-auto no-scrollbar">
             <PostTextarea
               value={value}
               autoFocus={autoFocus}
               setValue={setValue}
               placeholder={placeholder}
-              className="mt-2 min-h-full!"
+              className={clsx('mt-2', isMobile && 'max-h-2/3!')}
               disabled={!account}
             />
             {links.length > 0 && <LinkPreview url={links[0]} />}
@@ -130,7 +131,7 @@ export function PostComposerModal({
             <div className="flex justify-between ">
               <Toolbar event={event} onAddEvent={(event) => setEvent(event)} onSelectFile={setFiles} />
 
-              <div className="flex items-center gap-28 hidden md:block">
+              <div className="items-center gap-2 hidden md:flex">
                 <FeedOptions selected={selectedFeed} onSelect={(opt) => setSelectedFeed(opt)} />
                 <Button
                   size="sm"
