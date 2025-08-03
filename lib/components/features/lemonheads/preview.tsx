@@ -4,7 +4,15 @@ import { TraitExtends } from '$lib/trpc/lemonheads/types';
 import { twMerge } from 'tailwind-merge';
 import { CanvasImageRenderer } from './shared';
 
-export function LemonHeadPreview({ traits = [], className }: { traits?: TraitExtends[]; className?: string }) {
+export function LemonHeadPreview({
+  traits = [],
+  className,
+  style = {},
+}: {
+  traits?: TraitExtends[];
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   return (
     <Card.Root className={twMerge('w-full', className)}>
       <Card.Content className="p-0 max-w-[692px] aspect-square relative">
@@ -16,7 +24,7 @@ export function LemonHeadPreview({ traits = [], className }: { traits?: TraitExt
             <CanvasImageRenderer
               file={trait.image}
               key={traitType}
-              style={{ zIndex: TraitOrders.indexOf(traitType), position: 'absolute', top: 0 }}
+              style={{ zIndex: TraitOrders.indexOf(traitType), position: 'absolute', top: 0, ...style }}
             />
           );
         })}

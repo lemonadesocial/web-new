@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/lemonadesocial/web-new/compare/v1.64.1...v2.0.0) (2025-07-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* update event visible cohosts fragments
+
+### Features
+
+* update event visible cohosts fragments ([d091cae](https://github.com/lemonadesocial/web-new/commit/d091cae34a61027d430c603f24c2a1dd094c34dd))
+
 ## [1.64.1](https://github.com/lemonadesocial/web-new/compare/v1.64.0...v1.64.1) (2025-07-24)
 
 

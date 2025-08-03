@@ -43,14 +43,13 @@ export function LemonHeadCreate() {
       icon: 'icon-lh-glasses-fill',
       mount: false,
       tabs: [
-        { value: 'eyewear', label: 'Eyewear', mount: true },
-        { value: 'mouthgear', label: 'Mouthgear', mount: false },
-        { value: 'necklace', label: 'Necklace', mount: false },
-        { value: 'headgear', label: 'Headgear', mount: false },
-        { value: 'instrument', label: 'Instrument', mount: false },
-        { value: 'tie', label: 'Tie', mount: false },
+        { value: 'headgear', label: 'Head', mount: true },
+        { value: 'eyewear', label: 'Eyes', mount: false },
+        { value: 'earrings', label: 'Ears', mount: false },
+        { value: 'mouthgear', label: 'Mouth', mount: false },
+        { value: 'neckwear', label: 'Neck', mount: false },
         { value: 'bag', label: 'Bag', mount: false },
-        { value: 'earrings', label: 'Earrings', mount: false },
+        { value: 'instrument', label: 'Instrument', mount: false },
       ],
     },
     footwear: { label: 'Footwear', icon: 'icon-lh-footprint', mount: false },
@@ -90,7 +89,7 @@ export function LemonHeadCreate() {
       </Card.Root>
 
       <Card.Root className="w-full max-h-fit md:w-[96px] overflow-auto no-scrollbar">
-        <Card.Content className="flex md:flex-col gap-1 p-2">
+        <Card.Content className="flex md:flex-col gap-1 p-1 md:p-2">
           {Object.entries(tabs).map(([key, item]) => {
             if (body?.value === 'alien' && key === 'face') return;
 
@@ -98,7 +97,7 @@ export function LemonHeadCreate() {
               <div
                 key={key}
                 className={clsx(
-                  'flex flex-col items-center justify-center gap-2 pt-3 px-2 pb-2 hover:bg-card-hover rounded-md cursor-pointer min-w-[72px]',
+                  'flex md:flex-col items-center justify-center text-center gap-2 p-2 md:pt-3 hover:bg-card-hover rounded-sm md:rounded-md cursor-pointer min-w-fit md:min-w-[72px]',
                   key === selected && 'bg-card-hover',
                 )}
                 onClick={() => {
@@ -110,7 +109,7 @@ export function LemonHeadCreate() {
               >
                 {key === 'background' && (
                   <div
-                    className="size-8 aspect-square rounded-sm"
+                    className="size-6 md:size-8 aspect-square rounded-sm"
                     style={{
                       backgroundRepeat: 'no-repeat',
                       backgroundSize: 'cover',
@@ -119,7 +118,11 @@ export function LemonHeadCreate() {
                     }}
                   />
                 )}
-                {!['skin', 'background'].includes(key) && <i className={twMerge('size-8', item.icon)} />}
+                {!['skin', 'background'].includes(key) && (
+                  <div className="size-6 md:size-8">
+                    <i className={twMerge('', item.icon)} />
+                  </div>
+                )}
                 <p className="text-xs">{item.label}</p>
               </div>
             );
@@ -147,7 +150,7 @@ function Content({
     <div className={clsx('flex flex-col', className)} style={{ height: 'inherit' }}>
       {!!tabs.length && (
         <>
-          <ul className="flex px-4 py-3 sticky top-0 border-b overflow-auto no-scrollbar">
+          <ul className="flex px-3 pt-3 md:px-4 md:py-3 sticky top-0 md:border-b border-[var(--color-divider)]  overflow-auto no-scrollbar">
             {tabs.map((item) => (
               <li
                 key={item.value}
@@ -228,8 +231,7 @@ function SubContent({
   const bodyGender = body?.filters?.find((i) => i?.type === 'gender')?.value;
 
   const trait = traits.find((i) => i?.type === layerKey);
-  const color = trait?.filters?.find((i) => i?.type === 'color')?.value;
-  const [selectedColor, setSelectedColor] = React.useState(color);
+  const [selectedColor, setSelectedColor] = React.useState<string>();
 
   const traitFilter = lemonHead.trait.getTraitFilter({
     type: layerKey,
@@ -279,8 +281,8 @@ function SubContent({
   const colors = colorset.find((i) => i.name === layerKey);
 
   return (
-    <div className={twMerge('flex-1 flex flex-col gap-4 overflow-auto no-scrollbar', className)}>
-      {!isLoading && !!list.length && (
+    <div className={twMerge('flex-1 flex flex-col md:gap-4 overflow-auto no-scrollbar', className)}>
+      {!!list.length && (
         <div
           ref={listInnerRef}
           className={clsx(
@@ -329,18 +331,20 @@ function SubContent({
 
       {isLoading && ((isMobile && !list.length) || !isMobile) && <Loading loadMore={!!list.length} />}
 
-      <ColorTool
-        selected={selectedColor}
-        colorset={colors}
-        onDelete={() => dispatch({ type: LemonHeadActionKind.remove_traits, payload: { data: trait } })}
-        onSelect={(params) => {
-          setList([]);
-          setPage(1);
-          const color = params.key !== selectedColor ? params.key : undefined;
-          setSelectedColor(color);
-          refetch();
-        }}
-      />
+      {!!colors?.value.length && (
+        <ColorTool
+          selected={selectedColor}
+          colorset={colors}
+          onDelete={() => dispatch({ type: LemonHeadActionKind.remove_traits, payload: { data: trait } })}
+          onSelect={(params) => {
+            setList([]);
+            setPage(1);
+            const color = params.key !== selectedColor ? params.key : undefined;
+            setSelectedColor(color);
+            refetch();
+          }}
+        />
+      )}
     </div>
   );
 }

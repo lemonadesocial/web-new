@@ -12,7 +12,7 @@ import { trpc } from '$lib/trpc/client';
 import { useAccount } from '$lib/hooks/useLens';
 import { chainsMapAtom } from '$lib/jotai';
 import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
-import { useQuery } from '$lib/graphql/request';
+import { useClient, useQuery } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
 import {
@@ -27,10 +27,14 @@ import { ConnectWallet } from '../modals/ConnectWallet';
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from './provider';
 import { LEMONHEAD_CHAIN_ID } from './utils';
 import { LemonHeadPreview } from './preview';
+import { SelectProfileModal } from '../lens-account/SelectProfileModal';
+import { appKit } from '$lib/utils/appkit';
 
 export function LemonHeadFooter() {
   const router = useRouter();
   const [state, dispatch] = useLemonHeadContext();
+
+  const [minting, setMinting] = React.useState(false);
 
   const currentStep = state.steps[state.currentStep];
   const disabled = state.currentStep === LemonHeadStep.claim && !state.mint.minted;
@@ -45,26 +49,18 @@ export function LemonHeadFooter() {
   const contractAddress = chain?.lemonhead_contract_address;
 
   const { address } = useAppKitAccount();
-  const { data } = useQuery(GetListLemonheadSponsorsDocument, {
-    variables: { wallet: address! },
-    skip: !address,
-    fetchPolicy: 'network-only',
-  });
 
-  const { data: dataCanMint } = useQuery(CanMintLemonheadDocument, {
-    variables: { wallet: address! },
-    skip: !address,
-    fetchPolicy: 'network-only',
-  });
-  const canMint = dataCanMint?.canMintLemonhead;
-
-  // NOTE: only pick one can get free
-  const sponsor = data?.listLemonheadSponsors.sponsors.find(
-    (s) => s.remaining && s.remaining > 0 && s.remaining <= s.limit,
-  )?.sponsor;
+  const { client } = useClient();
 
   const checkMinted = async () => {
     let isValid = true;
+
+    const address = appKit.getAddress();
+    const { data: dataCanMint } = await client.query({
+      query: CanMintLemonheadDocument,
+      variables: { wallet: address },
+    });
+    const canMint = dataCanMint?.canMintLemonhead;
 
     if (!canMint) {
       toast.error('Not able to mint!');
@@ -93,6 +89,41 @@ export function LemonHeadFooter() {
     return isValid;
   };
 
+  const handleMintProcess = (cb: () => void) => {
+    if (!isConnected || chainId?.toString() !== chainsMap[LEMONHEAD_CHAIN_ID].chain_id) {
+      modal.open(ConnectWallet, {
+        props: {
+          onConnect: () => {
+            modal.close();
+            setTimeout(() => {
+              if (!myAccount) {
+                modal.open(SelectProfileModal, { onClose: () => setTimeout(cb) });
+              } else {
+                cb();
+              }
+            });
+          },
+          chain: chainsMap[LEMONHEAD_CHAIN_ID],
+        },
+        dismissible: false,
+      });
+    } else if (!myAccount) {
+      modal.open(SelectProfileModal, {
+        onClose: () => {
+          setTimeout(() => {
+            if (!myAccount) {
+              modal.open(SelectProfileModal, { onClose: cb });
+            } else {
+              cb();
+            }
+          });
+        },
+      });
+    } else {
+      cb();
+    }
+  };
+
   const handlePrev = () => {
     if (state.currentStep === LemonHeadStep.getstarted) router.back();
     else dispatch({ type: LemonHeadActionKind.prev_step });
@@ -100,60 +131,46 @@ export function LemonHeadFooter() {
 
   const handleNext = async () => {
     if (state.currentStep === LemonHeadStep.create) {
-      const valid = await checkMinted();
-      if (!valid) return;
+      setMinting(true);
 
-      if (!isConnected || chainId?.toString() !== chainsMap[LEMONHEAD_CHAIN_ID].chain_id) {
-        modal.open(ConnectWallet, {
-          props: {
-            onConnect: () => {
-              modal.close();
+      handleMintProcess(async () => {
+        const canMint = await checkMinted();
+        if (!canMint) return;
 
-              setTimeout(() => {
-                if (!myAccount) {
-                  modal.open(BeforeMintModal, {
-                    props: {
-                      onContinue: () =>
-                        modal.open(MintModal, {
-                          props: {
-                            traits: state.traits,
-                            sponsor,
-                            onComplete: (payload) => {
-                              dispatch({ type: LemonHeadActionKind.set_mint, payload });
-                              dispatch({ type: LemonHeadActionKind.next_step });
-                            },
-                          },
-                          dismissible: false,
-                        }),
-                    },
-                  });
-                  return;
-                }
-              });
-            },
-            chain: chainsMap[LEMONHEAD_CHAIN_ID],
-          },
-          dismissible: false,
-        });
-
-        return;
-      } else {
-        if (!state.mint.minted) {
-          modal.open(MintModal, {
+        setTimeout(async () => {
+          modal.open(BeforeMintModal, {
             props: {
-              traits: state.traits,
-              sponsor,
-              onComplete: (payload) => {
-                dispatch({ type: LemonHeadActionKind.set_mint, payload });
-                dispatch({ type: LemonHeadActionKind.next_step });
+              onContinue: async () => {
+                const address = appKit.getAddress();
+
+                const { data } = await client.query({
+                  query: GetListLemonheadSponsorsDocument,
+                  variables: { wallet: address! },
+                });
+
+                // NOTE: only pick one can get free
+                const sponsor = data?.listLemonheadSponsors.sponsors.find(
+                  (s) => s.remaining && s.remaining > 0 && s.remaining <= s.limit,
+                )?.sponsor;
+
+                modal.open(MintModal, {
+                  props: {
+                    traits: state.traits,
+                    sponsor,
+                    onComplete: (payload) => {
+                      dispatch({ type: LemonHeadActionKind.set_mint, payload });
+                      dispatch({ type: LemonHeadActionKind.next_step });
+                    },
+                  },
+                  dismissible: false,
+                });
               },
             },
-            dismissible: false,
           });
-        }
-
-        return;
-      }
+        }, 200);
+      });
+      setMinting(false);
+      return;
     }
 
     if (state.currentStep === LemonHeadStep.claim && state.mint.minted) {
@@ -201,7 +218,7 @@ export function LemonHeadFooter() {
         )}
 
         <div className="flex flex-1 justify-end">
-          <Button iconRight="icon-chevron-right" variant="secondary" size="sm" onClick={handleNext}>
+          <Button iconRight="icon-chevron-right" loading={minting} variant="secondary" size="sm" onClick={handleNext}>
             {currentStep?.btnText}
           </Button>
         </div>
