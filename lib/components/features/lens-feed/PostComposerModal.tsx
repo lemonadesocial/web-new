@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAtomValue } from 'jotai';
+import useMeasure from 'react-use-measure';
 
 import { Avatar, Button, Card, FileInput, Menu, MenuItem, modal, toast } from '$lib/components/core';
 import { accountAtom } from '$lib/jotai';
@@ -19,7 +20,8 @@ import { ImageInput } from './ImageInput';
 import { EventPreview } from './EventPreview';
 import { AddEventModal } from './AddEventModal';
 import clsx from 'clsx';
-import { isMobile } from 'react-device-detect';
+import { isMobile, isMobileOnly } from 'react-device-detect';
+import { AnimatePresence, motion } from 'framer-motion';
 
 type FeedOptionType = {
   label: string;
@@ -52,12 +54,15 @@ export function PostComposerModal({
   const handleLensConnect = useLensConnect();
   const { createPost } = usePost();
 
+  const [ref, { height }] = useMeasure();
+
   const [value, setValue] = React.useState(defaultValue);
   const [selectedFeed, setSelectedFeed] = React.useState<keyof FeedOptionsType>('lemonade');
   const [files, setFiles] = React.useState<File[]>([]);
   const [isUploading, setIsUploading] = React.useState(false);
   const [event, setEvent] = React.useState<Event | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isFocus, setIsFocus] = React.useState(false);
 
   const links = extractLinks(value);
 
@@ -89,78 +94,87 @@ export function PostComposerModal({
   };
 
   return (
-    <Card.Root className="w-full h-screen md:h-auto md:w-[640px] flex flex-col">
-      <Card.Header className="bg-transparent flex justify-between items-center w-full px-4 py-3 md:hidden">
-        <Button
-          icon="icon-chevron-left"
-          className="rounded-full"
-          variant="tertiary-alt"
-          size="sm"
-          onClick={() => modal.close()}
-        />
-
-        <div className="flex items-center gap-2">
-          <FeedOptions selected={selectedFeed} onSelect={(opt) => setSelectedFeed(opt)} />
-          <Button size="sm" className="rounded-full" loading={isUploading || isSubmitting} onClick={handlePost}>
-            Post
-          </Button>
-        </div>
-      </Card.Header>
-      <Card.Content className="flex-1 p-0 flex flex-col">
-        <div className="flex-1 py-0 md:py-4 px-4 w-full h-full flex gap-3 ">
-          <div>
-            <Avatar src={account ? getAccountAvatar(account) : randomUserImage()} size="xl" rounded="full" />
-          </div>
-          <div className="flex-1 break-all flex flex-col gap-5 overflow-auto no-scrollbar">
-            <PostTextarea
-              value={value}
-              autoFocus={autoFocus}
-              setValue={setValue}
-              placeholder={placeholder}
-              className={clsx('mt-2', isMobile && 'max-h-2/3!')}
-              disabled={!account}
+    <AnimatePresence>
+      <motion.div
+        ref={ref}
+        initial={{ height: '100%' }}
+        animate={{ height: isMobileOnly && isFocus ? `calc(100dvh - ${height - 140}px)` : '100%' }}
+      >
+        <Card.Root className="w-full h-full md:h-auto md:w-[640px] flex flex-col">
+          <Card.Header className="bg-transparent flex justify-between items-center w-full px-4 py-3 md:hidden">
+            <Button
+              icon="icon-chevron-left"
+              className="rounded-full"
+              variant="tertiary-alt"
+              size="sm"
+              onClick={() => modal.close()}
             />
-            {links.length > 0 && <LinkPreview url={links[0]} />}
-          </div>
-        </div>
 
-        {account ? (
-          <div className="p-4 border-t border-(--color-divider) space-y-4">
-            {files.length > 0 && <ImageInput value={files} onChange={setFiles} />}
-
-            <div className="flex justify-between ">
-              <Toolbar event={event} onAddEvent={(event) => setEvent(event)} onSelectFile={setFiles} />
-
-              <div className="items-center gap-2 hidden md:flex">
-                <FeedOptions selected={selectedFeed} onSelect={(opt) => setSelectedFeed(opt)} />
-                <Button
-                  size="sm"
-                  className="rounded-full"
-                  disabled={!value.trim()}
-                  loading={isUploading || isSubmitting}
-                  onClick={handlePost}
-                >
-                  Post
-                </Button>
+            <div className="flex items-center gap-2">
+              <FeedOptions selected={selectedFeed} onSelect={(opt) => setSelectedFeed(opt)} />
+              <Button size="sm" className="rounded-full" loading={isUploading || isSubmitting} onClick={handlePost}>
+                Post
+              </Button>
+            </div>
+          </Card.Header>
+          <Card.Content className="flex-1 p-0 h-auto flex flex-col">
+            <div className="flex-1 py-0 md:py-4 px-4 w-full h-full flex gap-3 ">
+              <div>
+                <Avatar src={account ? getAccountAvatar(account) : randomUserImage()} size="xl" rounded="full" />
+              </div>
+              <div className="flex-1 break-all flex flex-col gap-5 overflow-auto no-scrollbar">
+                <PostTextarea
+                  value={value}
+                  autoFocus={autoFocus}
+                  onBlur={() => setIsFocus(false)}
+                  onFocus={() => setIsFocus(true)}
+                  setValue={setValue}
+                  placeholder={placeholder}
+                  className={clsx('mt-2', isMobile && 'max-h-2/3!')}
+                  disabled={!account}
+                />
+                {links.length > 0 && <LinkPreview url={links[0]} />}
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="px-4 py-3 gap-3 flex items-center bg-card rounded-b-md">
-            <div className="flex items-center justify-center bg-error/16 size-9 rounded-full">
-              <i className="icon-lock size-5 text-error" />
-            </div>
-            <div className="flex-1">
-              <p>Posting is Locked</p>
-              <p className="text-tertiary text-sm">Connect wallet to start posting on Lemonade.</p>
-            </div>
-            <Button variant="secondary" className="rounded-full" onClick={handleLensConnect} size="sm">
-              Connect Wallet
-            </Button>
-          </div>
-        )}
-      </Card.Content>
-    </Card.Root>
+            {account ? (
+              <div className="p-4 border-t border-(--color-divider) space-y-4">
+                {files.length > 0 && <ImageInput value={files} onChange={setFiles} />}
+
+                <div className="flex justify-between ">
+                  <Toolbar event={event} onAddEvent={(event) => setEvent(event)} onSelectFile={setFiles} />
+
+                  <div className="items-center gap-2 hidden md:flex">
+                    <FeedOptions selected={selectedFeed} onSelect={(opt) => setSelectedFeed(opt)} />
+                    <Button
+                      size="sm"
+                      className="rounded-full"
+                      disabled={!value.trim()}
+                      loading={isUploading || isSubmitting}
+                      onClick={handlePost}
+                    >
+                      Post
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="px-4 py-3 gap-3 flex items-center bg-card rounded-b-md">
+                <div className="flex items-center justify-center bg-error/16 size-9 rounded-full">
+                  <i className="icon-lock size-5 text-error" />
+                </div>
+                <div className="flex-1">
+                  <p>Posting is Locked</p>
+                  <p className="text-tertiary text-sm">Connect wallet to start posting on Lemonade.</p>
+                </div>
+                <Button variant="secondary" className="rounded-full" onClick={handleLensConnect} size="sm">
+                  Connect Wallet
+                </Button>
+              </div>
+            )}
+          </Card.Content>
+        </Card.Root>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 

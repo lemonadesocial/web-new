@@ -7,6 +7,7 @@ type PostTextareaProps = {
   setValue: (value: string) => void;
   className?: string;
   onFocus?: () => void;
+  onBlur?: () => void;
   disabled?: boolean;
   autoFocus?: boolean;
 };
@@ -17,6 +18,7 @@ export const PostTextarea = ({
   setValue,
   className,
   onFocus,
+  onBlur,
   disabled,
   autoFocus,
 }: PostTextareaProps) => {
@@ -56,6 +58,7 @@ export const PostTextarea = ({
           'absolute inset-0 w-full h-auto resize-none outline-none font-medium text-lg placeholder-quaternary bg-transparent text-transparent overflow-auto whitespace-pre-wrap break-words bg-transparent text-transparent caret-primary min-h-[24px]',
         )}
         onFocus={onFocus}
+        onBlur={onBlur}
         autoFocus={autoFocus}
         rows={1}
         disabled={disabled}

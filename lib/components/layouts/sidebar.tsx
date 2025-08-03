@@ -135,7 +135,7 @@ export function CreatingModal() {
     switch (key) {
       case 'post':
         modal.close();
-        modal.open(PostComposerModal, { dismissible: true, fullscreen: isMobile });
+        modal.open(PostComposerModal, { dismissible: true, fullscreen: isMobile, props: { autoFocus: true } });
         break;
 
       case 'community':
