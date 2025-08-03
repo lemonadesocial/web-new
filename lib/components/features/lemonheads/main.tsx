@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import clsx from 'clsx';
 
 import Header from '$lib/components/layouts/header';
 import { trpc } from '$lib/trpc/client';
@@ -13,7 +12,6 @@ import { LemonHeadPreview } from './preview';
 
 import { LemonHeadActionKind, LemonHeadProvider, LemonHeadStep, useLemonHeadContext } from './provider';
 import { SquareButton } from './shared';
-import { setWith } from 'lodash';
 
 export function LemonHeadMain() {
   return (
@@ -44,11 +42,6 @@ function Content() {
   const { data: dataDefaultSet } = trpc.lemonheads.defaultSet.useQuery();
   const { data: dataColorSet } = trpc.lemonheads.colorSet.useQuery();
 
-  const previewRef = React.useRef(null);
-
-  const [width, setWidth] = React.useState('100%');
-  const [height, setHeight] = React.useState('100%');
-
   React.useEffect(() => {
     const init = async () => {
       if (dataBodySet?.items && dataDefaultSet?.items) {
@@ -68,29 +61,6 @@ function Content() {
 
     init();
   }, [dataBodySet, dataDefaultSet, dataColorSet]);
-
-  React.useEffect(() => {
-    const handleResize = () => {
-      if (previewRef.current) {
-        const offsetWidth = previewRef.current.clientWidth;
-        const offsetHeight = previewRef.current.clientHeight;
-        const value = offsetWidth > offsetHeight ? offsetHeight : offsetWidth;
-        console.log(offsetWidth, offsetHeight);
-
-        setWidth(value);
-        setHeight(value);
-      }
-    };
-
-    handleResize();
-
-    window.addEventListener('resize', handleResize);
-
-    // Cleanup function to remove the event listener
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [state.currentStep]);
 
   const showPreview = !state.steps[state.currentStep].hidePreview;
 
