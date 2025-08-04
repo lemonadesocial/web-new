@@ -48,7 +48,10 @@ export const PostTextarea = ({
   };
 
   return (
-    <div className={twMerge('relative min-h-[24px] max-h-[200px] overflow-y-auto no-scrollbar', className)}>
+    <div
+      className={twMerge('relative min-h-[24px] max-h-[200px] overflow-y-auto no-scrollbar', className)}
+      style={{ height: textareaRef.current?.scrollHeight }}
+    >
       <textarea
         ref={textareaRef}
         value={value}

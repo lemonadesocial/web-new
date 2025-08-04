@@ -64,7 +64,6 @@ export async function GET(req: NextRequest) {
     const contract = ERC721Contract.attach(contractAddress).connect(provider);
 
     const tokenUri = await contract.getFunction('tokenURI')(tokenId);
-    console.log(tokenId);
     const res = await fetch(tokenUri);
     const data = await res.json();
     image = data.image;
