@@ -286,6 +286,10 @@ query GetListGeoRegions {
   }
 }
 
+query CheckSpaceSlug($slug: String!) {
+  canUseSpaceSlug(slug: $slug)
+}
+
 #### Mutations
 
 mutation FollowSpace($space: MongoID!) {
@@ -314,5 +318,11 @@ mutation PinEventsToSpace($space: MongoID!, $events: [MongoID!]!, $tags: [MongoI
 mutation CreateExternalEvent($input: EventInput!) {
   createEvent(input: $input) {
     _id
+  }
+}
+
+mutation CreateSpace($input: SpaceInput!) {
+  createSpace(input: $input) {
+    ...Space
   }
 }

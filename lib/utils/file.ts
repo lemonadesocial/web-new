@@ -1,7 +1,7 @@
 import { defaultClient } from '$lib/graphql/request/instances';
 import { ConfirmFileUploadsDocument, CreateFileUploadsDocument } from '$lib/graphql/generated/backend/graphql';
 
-export type FileDirectory = 'event' | 'place' | 'store' | 'store_product' | 'user' | 'post' | 'email';
+export type FileDirectory = 'event' | 'place' | 'store' | 'store_product' | 'user' | 'post' | 'email' | 'community';
 
 export type MediaFile = {
   url: string;
