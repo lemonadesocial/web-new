@@ -1,5 +1,6 @@
 'use client';
 
+import clsx from 'clsx';
 import React from 'react';
 
 type Props = {
@@ -9,13 +10,14 @@ type Props = {
   placeholder?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onChangeText?: (value: string) => void;
+  className?: string;
 };
 
 export function TextAreaField(props: Props) {
   return (
     <fieldset className="input-field">
       {props.label && <label className="text-secondary text-sm font-medium">{props.label}</label>}
-      <div className="control">
+      <div className={clsx('control', props.className)}>
         <textarea
           rows={props.rows}
           value={props.value || ''}

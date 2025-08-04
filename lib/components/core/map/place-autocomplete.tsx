@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import { Address } from '$lib/graphql/generated/backend/graphql';
 import { GoogleAddressParser } from './parser';
+import { InputField } from '../input';
 
 export function PlaceAutoComplete({
   label,
@@ -72,22 +73,17 @@ export function PlaceAutoComplete({
 
   return (
     <div className="relative">
-      <div className="flex flex-col gap-2">
-        <label className="text-sm text-secondary font-medium">{label}</label>
-        <div className="bg-background/64 border flex py-1 px-3.5 rounded-sm items-center h-[44px] left-0 right-0 focus-within:border-primary px-3.5 gap-2.5">
-          <i className="icon-location-outline text-tertiary" />
-          <input
-            autoFocus={autoFocus}
-            className="flex-1 outline-none"
-            value={query}
-            placeholder={placeholder}
-            onChange={(e) => {
-              setQuery(e.currentTarget.value);
-              setToggle(true);
-            }}
-          />
-        </div>
-      </div>
+      <InputField
+        label={label}
+        autoFocus={autoFocus}
+        iconLeft="icon-location-outline text-tertiary"
+        value={query}
+        placeholder={placeholder}
+        onChange={(e) => {
+          setQuery(e.currentTarget.value);
+          setToggle(true);
+        }}
+      />
 
       <AnimatePresence>
         {!!predictions?.length && toggle && (

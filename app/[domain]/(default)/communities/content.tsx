@@ -48,7 +48,7 @@ export function Content() {
           toolbar={() => (
             <div className="flex gap-2">
               <Button size="sm" variant="tertiary" icon="icon-explore" onClick={() => router.push('/explore')} />
-              <Button size="sm" icon="icon-edit-square" onClick={() => (window.location.href = '/create/community')} />
+              <Button size="sm" icon="icon-edit-square" onClick={() => router.push('/create/community')} />
             </div>
           )}
         >
