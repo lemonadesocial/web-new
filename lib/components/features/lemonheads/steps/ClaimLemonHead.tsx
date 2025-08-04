@@ -16,6 +16,7 @@ import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUser
 import { EditProfileModal } from '../../lens-account/EditProfileModal';
 import { PostComposer } from '../../lens-feed/PostComposer';
 import { LemonHeadActionKind, useLemonHeadContext } from '../provider';
+import { PostComposerModal } from '../../lens-feed/PostComposerModal';
 
 export function ClaimLemonHead() {
   const [state, dispatch] = useLemonHeadContext();
@@ -142,7 +143,12 @@ function RightPane({ image }: { image: string }) {
     {
       name: 'Post',
       icon: 'icon-lemonade',
-      onClick: () => modal.open(ShareModal, { dismissible: true, props: { content: shareText + shareUrl } }),
+      onClick: () =>
+        modal.open(PostComposerModal, {
+          dismissible: true,
+          fullscreen: isMobile,
+          props: { defaultValue: shareText + shareUrl },
+        }),
     },
     {
       name: 'Share',
@@ -247,7 +253,7 @@ export function ShareModal({ content }: { content?: string }) {
   };
 
   return (
-    <Card.Root className="w-xl bg-transparent">
+    <Card.Root className="w-xl bg-transparent border-none">
       <Card.Content className="p-0">
         <PostComposer onPost={onPost} showFeedOptions autoFocus defaultValue={content} />
       </Card.Content>

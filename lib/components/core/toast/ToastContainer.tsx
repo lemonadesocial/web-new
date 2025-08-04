@@ -11,12 +11,12 @@ interface ToastTypeConfig {
 const TOAST_TYPES: Record<ToastType, ToastTypeConfig> = {
   success: {
     bgColor: 'bg-success-500',
-    Icon: <i className="icon-check" />
+    Icon: <i className="icon-check" />,
   },
   error: {
     bgColor: 'bg-danger-500',
-    Icon: <i className="icon-error" />
-  }
+    Icon: <i className="icon-error" />,
+  },
 };
 
 const Toast: React.FC<{ toast: ToastProps }> = ({ toast }) => {
@@ -25,7 +25,7 @@ const Toast: React.FC<{ toast: ToastProps }> = ({ toast }) => {
 
   return (
     <div
-      className={`max-w-md w-full rounded-sm ${bgColor} text-white p-3 shadow-lg flex items-center gap-3.5 animate-fade-in`}
+      className={`max-w-md w-sm md:w-full rounded-sm ${bgColor} text-white p-3 shadow-lg flex items-center gap-3.5 animate-fade-in`}
       style={{ boxShadow: '0px 4px 24px 0px rgba(0, 0, 0, 0.36)' }}
     >
       {Icon}

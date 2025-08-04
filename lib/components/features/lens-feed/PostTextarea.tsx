@@ -7,6 +7,7 @@ type PostTextareaProps = {
   setValue: (value: string) => void;
   className?: string;
   onFocus?: () => void;
+  onBlur?: () => void;
   disabled?: boolean;
   autoFocus?: boolean;
 };
@@ -17,6 +18,7 @@ export const PostTextarea = ({
   setValue,
   className,
   onFocus,
+  onBlur,
   disabled,
   autoFocus,
 }: PostTextareaProps) => {
@@ -46,17 +48,20 @@ export const PostTextarea = ({
   };
 
   return (
-    <div className="relative min-h-[24px] max-h-[200px] overflow-y-auto no-scrollbar">
+    <div
+      className={twMerge('relative min-h-[24px] max-h-[200px] overflow-y-auto no-scrollbar', className)}
+      style={{ height: textareaRef.current?.scrollHeight }}
+    >
       <textarea
         ref={textareaRef}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
         className={twMerge(
-          'absolute inset-0 w-full h-full resize-none outline-none font-medium text-lg placeholder-quaternary bg-transparent text-transparent overflow-auto whitespace-pre-wrap break-words bg-transparent text-transparent caret-primary min-h-[24px]',
-          className,
+          'absolute inset-0 w-full h-auto resize-none outline-none font-medium text-lg placeholder-quaternary bg-transparent text-transparent overflow-auto whitespace-pre-wrap break-words bg-transparent text-transparent caret-primary min-h-[24px]',
         )}
         onFocus={onFocus}
+        onBlur={onBlur}
         autoFocus={autoFocus}
         rows={1}
         disabled={disabled}
@@ -67,7 +72,6 @@ export const PostTextarea = ({
         ref={highlightRef}
         className={twMerge(
           'top-0 inset-0 resize-none outline-none font-medium text-lg placeholder-quaternary bg-transparent overflow-y-auto whitespace-pre-wrap break-words min-h-[24px]',
-          className,
         )}
         aria-hidden="true"
         dangerouslySetInnerHTML={{ __html: highlightLinks(value) }}

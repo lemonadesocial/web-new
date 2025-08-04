@@ -12,7 +12,7 @@ import { trpc } from '$lib/trpc/client';
 import { useAccount } from '$lib/hooks/useLens';
 import { chainsMapAtom } from '$lib/jotai';
 import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
-import { useClient, useQuery } from '$lib/graphql/request';
+import { useClient } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
 import {
@@ -47,8 +47,6 @@ export function LemonHeadFooter() {
   const validateNft = trpc.validateNft.useMutation();
   const chain = chainsMap[LEMONHEAD_CHAIN_ID];
   const contractAddress = chain?.lemonhead_contract_address;
-
-  const { address } = useAppKitAccount();
 
   const { client } = useClient();
 
