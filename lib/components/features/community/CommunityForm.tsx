@@ -198,7 +198,7 @@ export function CommunityForm() {
             <Controller
               control={control}
               name="slug"
-              render={({ field }) => (
+              render={() => (
                 <InputField
                   label="Public URL"
                   prefix="lemonade.social/s/"
