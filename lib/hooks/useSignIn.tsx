@@ -6,20 +6,19 @@ import { AuthModal } from '$lib/components/features/auth/AuthModal';
 import { useState } from 'react';
 import { LoginFlow, RegistrationFlow, SettingsFlow, UiNodeInputAttributes, VerificationFlow } from '@ory/client';
 import { ory } from '$lib/utils/ory';
-
-const dummyWalletPassword = '!!dummy-WALLET-password@@';
+import { dummyWalletPassword } from '../services/ory';
 
 export function useSignIn() {
   const { signIn } = useOAuth2();
   const hydraClientId = useAtomValue(hydraClientIdAtom);
 
-  return (dismissible = true) => {
+  return (dismissible = true, props?: any) => {
     if (hydraClientId) {
       signIn();
       return;
     }
 
-    modal.open(AuthModal, { dismissible });
+    modal.open(AuthModal, { dismissible, props });
   };
 }
 
@@ -93,19 +92,19 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: () => void }) => {
 
     const promise = isSignup
       ? ory.updateRegistrationFlow({
-          flow: flow.id,
-          updateRegistrationFlowBody: {
-            ...payload,
-            traits: { email },
-          },
-        })
+        flow: flow.id,
+        updateRegistrationFlowBody: {
+          ...payload,
+          traits: { email },
+        },
+      })
       : ory.updateLoginFlow({
-          flow: flow.id,
-          updateLoginFlowBody: {
-            ...payload,
-            identifier: email,
-          },
-        });
+        flow: flow.id,
+        updateLoginFlowBody: {
+          ...payload,
+          identifier: email,
+        },
+      });
 
     //-- this should always throw an error
     const result = await promise
@@ -561,11 +560,11 @@ function getCsrfTokenFromFlow(flow: RegistrationFlow | LoginFlow | SettingsFlow 
 
 const withLoading =
   <T extends unknown[], K>(fn: (...args: T) => Promise<K>, setLoading: (loading: boolean) => void) =>
-  async (...args: T) => {
-    try {
-      setLoading(true);
-      await fn(...args);
-    } finally {
-      setLoading(false);
-    }
-  };
+    async (...args: T) => {
+      try {
+        setLoading(true);
+        await fn(...args);
+      } finally {
+        setLoading(false);
+      }
+    };
