@@ -1,5 +1,33 @@
 # Changelog
 
+## [2.1.0](https://github.com/lemonadesocial/web-new/compare/v2.0.0...v2.1.0) (2025-08-05)
+
+
+### Features
+
+* add log ([51b7db0](https://github.com/lemonadesocial/web-new/commit/51b7db0cd3947b99224db818b2666154eddbbe9f))
+* check can mint after connect wallet ([311d78d](https://github.com/lemonadesocial/web-new/commit/311d78d764bd7eb3314e48e3a4fc20b2e9d344a9))
+* check mint process ([000c9e7](https://github.com/lemonadesocial/web-new/commit/000c9e7f9cbbc9766e002aa24afa823c4407e19f))
+* checking post composer modal ([5107913](https://github.com/lemonadesocial/web-new/commit/5107913d71f93383fc58d1c38299e13f03a5b277))
+* complete mweb post ([2c697da](https://github.com/lemonadesocial/web-new/commit/2c697da4187557722030536276c96f4dd0645290))
+* handle link unicorn wallet ([b77613f](https://github.com/lemonadesocial/web-new/commit/b77613f2db8c80016ccb5bec9f8514300bcc40be))
+* handle unicorn login with session ([b7efe50](https://github.com/lemonadesocial/web-new/commit/b7efe50e274d9b26a005be2a5daa9626a201cf5a))
+* implement create community ([7608d59](https://github.com/lemonadesocial/web-new/commit/7608d59cfa3346cf76d7c3281bfe3c43089fcac1))
+* improve modal ([affda30](https://github.com/lemonadesocial/web-new/commit/affda302667e0859b59ad1c776447f5f10af8f00))
+* lint code ([a39a2ec](https://github.com/lemonadesocial/web-new/commit/a39a2ecea2d4bfdaf83518965575d3fdda392572))
+* lint code ([9d0fb3a](https://github.com/lemonadesocial/web-new/commit/9d0fb3a010849bb0ecc96166a4f2e1ef1a26058e))
+* missing connected but still cannot mint ([5e44dcd](https://github.com/lemonadesocial/web-new/commit/5e44dcd95bb9c3d01a483fc736fefbcff73f46a3))
+* **nginx:** increase proxy buffer ([18397e7](https://github.com/lemonadesocial/web-new/commit/18397e74ce97e99403666810507e94853a456bc6))
+* remove unused ([322e495](https://github.com/lemonadesocial/web-new/commit/322e495183e6dd0937328369173659731b795ed2))
+* remove unused ([aba544b](https://github.com/lemonadesocial/web-new/commit/aba544b71af92e5cb729f9d267e69ef5533c18d8))
+* update bot ([2824d8f](https://github.com/lemonadesocial/web-new/commit/2824d8f8d86046894c63509029ec346b11b64000))
+* update image lemonheads link preview ([76543d9](https://github.com/lemonadesocial/web-new/commit/76543d9aa8e0c8b64939b234363bfa7681e2b2c2))
+* update keyboard avoid modal ([18c448e](https://github.com/lemonadesocial/web-new/commit/18c448edd6a2387d7257ce643a0431ab3e8c273c))
+* update router ([57db427](https://github.com/lemonadesocial/web-new/commit/57db427df72971450c6771c30a5e37bcf81334f9))
+* update scroll height textarea ([9a26bbd](https://github.com/lemonadesocial/web-new/commit/9a26bbdf2d9ee1d1436cc0029ec6dc65a5dc1582))
+* update share post lemonheads ([180eae8](https://github.com/lemonadesocial/web-new/commit/180eae89a00a3a176f97e6c04508ca9014e0367c))
+* update wallet login password ([894e2fd](https://github.com/lemonadesocial/web-new/commit/894e2fd5b62cce4aff07cecb0d573955b530fc54))
+
 ## [2.0.0](https://github.com/lemonadesocial/web-new/compare/v1.64.1...v2.0.0) (2025-07-29)
 
 
