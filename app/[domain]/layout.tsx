@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 
-import { BottomSheetContainer, DrawerContainer, ModalProvider } from '$lib/components/core/dialog';
+import { BottomSheetContainer, DrawerContainer, modal, ModalContainer } from '$lib/components/core/dialog';
 import { ToastContainer } from '$lib/components/core/toast';
 import { getSpaceHydraKeys } from '$lib/utils/space';
 import TRPCProvider from '$lib/trpc/provider';
@@ -33,13 +33,12 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
   return (
     <Providers space={space}>
       <TRPCProvider>
-        <ModalProvider>
-          <StyleVariables theme={data.theme.styles} />
-          {props.children}
-          <DrawerContainer />
-          <BottomSheetContainer />
-          <ToastContainer />
-        </ModalProvider>
+        <StyleVariables theme={data.theme.styles} />
+        {props.children}
+        <ModalContainer modal={modal} />
+        <DrawerContainer />
+        <BottomSheetContainer />
+        <ToastContainer />
       </TRPCProvider>
     </Providers>
   );

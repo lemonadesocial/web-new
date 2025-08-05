@@ -14,10 +14,7 @@ import { VerifyEmailModal } from "./VerifyEmailModal";
 import { ConnectWalletModal } from "./ConnectWalletModal";
 import { ConnectWalletButton } from "./ConnectWalletButton";
 
-interface Props {
-  onSuccess?: () => void;
-}
-export function AuthModal({ onSuccess }: Props) {
+export function AuthModal() {
   const signWallet = useSignWallet();
 
   const [email, setEmail] = useState('');
@@ -25,11 +22,6 @@ export function AuthModal({ onSuccess }: Props) {
   const setSession = useSetAtom(sessionAtom);
 
   const onSignInSuccess = async () => {
-    if (onSuccess) {
-      onSuccess();
-      return;
-    }
-
     if (!ory) return;
 
     const session = await ory.toSession().then((res) => res.data);

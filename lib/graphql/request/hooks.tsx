@@ -76,12 +76,12 @@ export function useMutation<T, V extends object>(
   options?: MutationOptions<T, V>,
   client: GraphqlClient = defaultClient,
 ): [
-    (
-      opts: MutationOptions<T, V>,
-    ) => Promise<{ data?: T | null; error: unknown; loading: boolean; client: GraphqlClient }>,
-    { data?: T | null; error: unknown; loading: boolean; client: GraphqlClient },
-    client: GraphqlClient,
-  ] {
+  (
+    opts: MutationOptions<T, V>,
+  ) => Promise<{ data?: T | null; error: unknown; loading: boolean; client: GraphqlClient }>,
+  { data?: T | null; error: unknown; loading: boolean; client: GraphqlClient },
+  client: GraphqlClient,
+] {
   const [data, setData] = React.useState<T | null>();
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<unknown>(null);
