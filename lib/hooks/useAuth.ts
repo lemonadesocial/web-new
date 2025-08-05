@@ -1,18 +1,15 @@
-'use client';
-
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom } from 'jotai';
 import React from 'react';
 
 import { ory } from '$lib/utils/ory';
-import { hydraClientIdAtom, Session, sessionAtom } from '$lib/jotai';
+import { Session, sessionAtom } from '$lib/jotai';
 import { useLogOut } from '$lib/hooks/useLogout';
 import { oidc } from '$lib/utils/oidc';
 import { toast } from '$lib/components/core';
 import { HYDRA_PUBLIC_URL } from '$lib/utils/constants';
 import { useAccount } from './useLens';
 
-export function useAuth() {
-  const hydraClientId = useAtomValue(hydraClientIdAtom);
+export function useAuth(hydraClientId?: string) {
   const [session, setSession] = useAtom(sessionAtom);
   const [loading, setLoading] = React.useState(true);
   const logOut = useLogOut();
@@ -32,7 +29,6 @@ export function useAuth() {
           _id: id,
           email: data.identity?.traits?.email,
           wallet: data.identity?.traits?.wallet,
-          unicorn_wallet: data.identity?.traits?.unicorn_wallet,
         });
       })
       .catch((error) => {
@@ -93,18 +89,14 @@ export function useAuth() {
     }
   };
 
-  const reload = () => {
+  React.useEffect(() => {
     if (hydraClientId) {
       handleHydraAuth();
       return;
     }
 
     handleOryAuth();
-  }
-
-  React.useEffect(() => {
-    reload();
-  }, [hydraClientId]);
+  }, []);
 
   React.useEffect(() => {
     if (account && session) {
@@ -112,5 +104,5 @@ export function useAuth() {
     }
   }, [account]);
 
-  return { loading, reload };
+  return loading;
 }
