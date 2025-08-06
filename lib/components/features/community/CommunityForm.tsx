@@ -13,10 +13,13 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { uploadFiles } from '$lib/utils/file';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
+import { error } from 'console';
 
 const validationSchema = object().shape({
   title: string().required(),
-  slug: string().min(3).required(),
+  slug: string()
+    .min(3, 'URLs must be at least 3 characters and contain only letters, numbers or dashes.')
+    .required('URLs must be at least 3 characters and contain only letters, numbers or dashes.'),
 });
 
 type FormValues = {
@@ -88,10 +91,14 @@ export function CommunityForm() {
 
   const debouncedFetchData = React.useCallback(
     debounce(async (query) => {
-      setChecking(true);
-      const { data } = await client.query({ query: CheckSpaceSlugDocument, variables: { slug: query } });
-      setCanUseSpaceSlug(!!data?.canUseSpaceSlug);
-      setChecking(false);
+      try {
+        const { data } = await client.query({ query: CheckSpaceSlugDocument, variables: { slug: query } });
+        setCanUseSpaceSlug(!!data?.canUseSpaceSlug);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setChecking(false);
+      }
     }, 500),
     [],
   );
@@ -119,7 +126,18 @@ export function CommunityForm() {
     }
   };
 
-  console.log(isValid);
+  const getIconSlugField = () => {
+    if (slug.length < 3) return '';
+
+    if (checking) return 'icon-spin animate-spin align-items-center text-warning-400 flex h-full mx-2';
+    if (canUseSpaceSlug) {
+      return 'icon-richtext-check text-success-400 align-items-center flex h-full mx-2';
+    } else {
+      return 'icon-x text-danger-400 align-items-center flex h-full mx-2';
+    }
+
+    return '';
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -222,22 +240,18 @@ export function CommunityForm() {
                   onChangeText={(value) => {
                     setSlug(value);
                     setValue('slug', value, { shouldDirty: true, shouldValidate: true });
-                    if (value.length > 2) debouncedFetchData(value);
+                    if (value.length > 2) {
+                      setChecking(true);
+                      debouncedFetchData(value);
+                    }
                   }}
                   right={{
-                    icon:
-                      slug.length > 2
-                        ? checking
-                          ? 'icon-spin animate-spin align-items-center text-warning-400 flex h-full mx-2'
-                          : canUseSpaceSlug
-                            ? 'icon-richtext-check text-success-400 align-items-center flex h-full mx-2'
-                            : 'icon-x text-danger-400 align-items-center flex h-full mx-2'
-                        : '',
+                    icon: getIconSlugField(),
                   }}
                   error={dirtyFields.slug && (!!errors.slug?.message || !canUseSpaceSlug)}
                   hint={
                     dirtyFields.slug && (!!errors.slug?.message || !canUseSpaceSlug)
-                      ? '* URLs must be at least 3 characters and contain only letters, numbers or dashes.'
+                      ? errors.slug?.message || 'This URL is already taken.'
                       : ''
                   }
                 />
