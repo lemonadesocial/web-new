@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.2.0](https://github.com/lemonadesocial/web-new/compare/v2.1.0...v2.2.0) (2025-08-06)
+
+
+### Features
+
+* check auth ([7dd9255](https://github.com/lemonadesocial/web-new/commit/7dd9255f7175efdfaa15a7aeb328ce2e4e18cf05))
+* update message error ([4dbb018](https://github.com/lemonadesocial/web-new/commit/4dbb0182b54f3636756f190d8554a67a5336149f))
+* update mweb ui ([04b40a4](https://github.com/lemonadesocial/web-new/commit/04b40a4a24c6f28de46d5a8549361c5efe194274))
+* update ui ([9b5e2b2](https://github.com/lemonadesocial/web-new/commit/9b5e2b2ea34e97342815b76a82a55d9b22ed2629))
+
 ## [2.1.0](https://github.com/lemonadesocial/web-new/compare/v2.0.0...v2.1.0) (2025-08-05)
 
 
