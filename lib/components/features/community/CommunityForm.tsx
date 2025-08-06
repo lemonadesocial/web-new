@@ -14,6 +14,9 @@ import { uploadFiles } from '$lib/utils/file';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { error } from 'console';
+import { useMe } from '$lib/hooks/useMe';
+import { useSignIn } from '$lib/hooks/useSignIn';
+import { useSession } from '$lib/hooks/useSession';
 
 const validationSchema = object().shape({
   title: string().required(),
@@ -33,7 +36,11 @@ type FormValues = {
 
 export function CommunityForm() {
   const router = useRouter();
+  const session = useSession();
+  const me = useMe();
+  const signIn = useSignIn();
 
+  const [mounted, setMounted] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [uploadingCover, setUploadingCover] = React.useState(false);
   const [cover, setCover] = React.useState('');
@@ -64,6 +71,14 @@ export function CommunityForm() {
     },
     resolver: yupResolver(validationSchema),
   });
+
+  React.useEffect(() => {
+    if (!mounted) setMounted(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (!me && !session && mounted) signIn(false);
+  }, [me, session, mounted]);
 
   const handleUpload = async (files: globalThis.File[], type: 'cover' | 'dp') => {
     try {
@@ -152,7 +167,7 @@ export function CommunityForm() {
                       backgroundImage: `url(${cover})`,
                       backgroundColor: 'var(--btn-tertiary)',
                     }}
-                    className="aspect-[7/2] w-full bg-cover bg-no-repeat"
+                    className="aspect-[7/2] w-full bg-contain bg-center bg-no-repeat"
                   />
 
                   <Button
