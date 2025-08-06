@@ -7,16 +7,26 @@ import { object, string } from 'yup';
 
 import { Button, Card, FileInput, InputField, Map, Segment, TextAreaField, toast } from '$lib/components/core';
 import { PlaceAutoComplete } from '$lib/components/core/map/place-autocomplete';
-import { CheckSpaceSlugDocument, CreateSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
+import { Address, CheckSpaceSlugDocument, CreateSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
 import { useClient, useMutation } from '$lib/graphql/request';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { uploadFiles } from '$lib/utils/file';
 import { useRouter } from 'next/navigation';
+import clsx from 'clsx';
 
 const validationSchema = object().shape({
   title: string().required(),
-  slug: string().required(),
+  slug: string().min(3).required(),
 });
+
+type FormValues = {
+  title: string;
+  description?: string;
+  slug: string;
+  image_avatar?: string;
+  image_cover?: string;
+  address?: Address;
+};
 
 export function CommunityForm() {
   const router = useRouter();
@@ -39,8 +49,8 @@ export function CommunityForm() {
     handleSubmit,
     setValue,
     control,
-    formState: { isValid },
-  } = useForm({
+    formState: { isValid, errors, dirtyFields },
+  } = useForm<FormValues>({
     defaultValues: {
       title: '',
       description: undefined,
@@ -82,12 +92,11 @@ export function CommunityForm() {
       const { data } = await client.query({ query: CheckSpaceSlugDocument, variables: { slug: query } });
       setCanUseSpaceSlug(!!data?.canUseSpaceSlug);
       setChecking(false);
-      if (data?.canUseSpaceSlug) setValue('slug', query);
     }, 500),
     [],
   );
 
-  const onSubmit = async (values) => {
+  const onSubmit = async (values: FormValues) => {
     try {
       setIsSubmitting(true);
       const siteInfo = values.slug ? { slug: kebabCase(values.slug) } : {};
@@ -103,12 +112,14 @@ export function CommunityForm() {
         router.push(`/manage/community/${space.slug || space._id}`);
       }
       create({ variables: { input: values } });
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err.message);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  console.log(isValid);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -166,7 +177,11 @@ export function CommunityForm() {
                   control={control}
                   render={({ field }) => (
                     <input
-                      className="font-medium text-xl outline-none border-b border-(--color-divider) pb-2"
+                      className={clsx(
+                        'font-medium text-xl outline-none border-b border-(--color-divider) pb-2',
+                        errors.title?.message && 'border-danger-500',
+                      )}
+                      placeholder="Community Name"
                       value={field.value}
                       onChange={field.onChange}
                     />
@@ -178,8 +193,9 @@ export function CommunityForm() {
                   control={control}
                   render={({ field }) => (
                     <TextAreaField
-                      className="px-0! border-none! bg-transparent! hover:border-none!"
+                      className="px-0! border-none! bg-transparent! hover:border-none! *:field-sizing-content!"
                       value={field.value}
+                      placeholder="Add a short description"
                       onChange={field.onChange}
                     />
                   )}
@@ -205,19 +221,25 @@ export function CommunityForm() {
                   value={slug}
                   onChangeText={(value) => {
                     setSlug(value);
-                    debouncedFetchData(value);
+                    setValue('slug', value, { shouldDirty: true, shouldValidate: true });
+                    if (value.length > 2) debouncedFetchData(value);
                   }}
                   right={{
-                    icon: slug
-                      ? checking
-                        ? 'icon-spin animate-spin align-items-center flex h-full mx-2'
-                        : canUseSpaceSlug
-                          ? 'icon-richtext-check text-success-400 align-items-center flex h-full mx-2'
-                          : 'icon-x text-danger-400 align-items-center flex h-full mx-2'
-                      : '',
+                    icon:
+                      slug.length > 2
+                        ? checking
+                          ? 'icon-spin animate-spin align-items-center text-warning-400 flex h-full mx-2'
+                          : canUseSpaceSlug
+                            ? 'icon-richtext-check text-success-400 align-items-center flex h-full mx-2'
+                            : 'icon-x text-danger-400 align-items-center flex h-full mx-2'
+                        : '',
                   }}
-                  error={!!slug && !canUseSpaceSlug}
-                  hint={slug && !canUseSpaceSlug ? '* Public url is existing. Please try another name.' : ''}
+                  error={dirtyFields.slug && (!!errors.slug?.message || !canUseSpaceSlug)}
+                  hint={
+                    dirtyFields.slug && (!!errors.slug?.message || !canUseSpaceSlug)
+                      ? '* URLs must be at least 3 characters and contain only letters, numbers or dashes.'
+                      : ''
+                  }
                 />
               )}
             />
@@ -229,12 +251,13 @@ export function CommunityForm() {
             <p className="text-lg">Location</p>
             <div className="relative">
               <div className="h-[192px] rounded-md overflow-hidden">
-                <Map />
+                <Map customMap />
               </div>
 
               <Segment
                 size="sm"
                 className="absolute top-2 left-2"
+                selected="city"
                 items={[
                   { value: 'city', label: 'City' },
                   { value: 'global', label: 'Global' },
@@ -249,7 +272,7 @@ export function CommunityForm() {
       </div>
 
       <div>
-        <Button type="submit" loading={isSubmitting} variant="secondary" disabled={isValid}>
+        <Button type="submit" loading={isSubmitting} variant="secondary" disabled={!isValid || !canUseSpaceSlug}>
           Create Community
         </Button>
       </div>
