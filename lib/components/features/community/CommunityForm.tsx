@@ -224,7 +224,7 @@ export function CommunityForm() {
         </Card.Content>
       </Card.Root>
 
-      <div className="flex gap-6 justify-between">
+      <div className="flex flex-col md:flex-row gap-6 justify-between">
         <Card.Root className="flex-1">
           <Card.Content className="space-y-4">
             <p className="text-lg">Customization</p>
