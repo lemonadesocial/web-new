@@ -14,6 +14,7 @@ interface MapProps {
   defaultZoom?: number;
   marker?: 'marker' | 'advanced';
   gestureHandling?: 'none' | 'cooperative' | 'greedy';
+  customMap?: boolean;
 }
 
 // TODO: need to create MapId and MapStyles to use with AdvancedMarker
@@ -25,6 +26,7 @@ export function Map({
   defaultZoom = 2,
   marker = 'marker',
   gestureHandling = 'none',
+  customMap,
 }: MapProps) {
   if (!GOOGLE_MAP_KEY) {
     log.warn({ message: 'Missing GOOGLE_MAP_KEY.' });
@@ -34,7 +36,7 @@ export function Map({
   return (
     <APIProvider apiKey={GOOGLE_MAP_KEY}>
       <GoogleMap
-        mapId="DEMO_MAP_ID"
+        mapId={customMap ? null : 'DEMO_MAP_ID'}
         className={twMerge('map h-full w-full outline-none', className)}
         defaultCenter={{ lat: markers?.[0]?.lat || 0, lng: markers?.[0]?.lng || 0 }}
         center={center}
