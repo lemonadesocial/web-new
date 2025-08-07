@@ -167,7 +167,7 @@ export function CommunityForm() {
                       backgroundImage: `url(${cover})`,
                       backgroundColor: 'var(--btn-tertiary)',
                     }}
-                    className="aspect-[7/2] w-full bg-contain bg-center bg-no-repeat"
+                    className="aspect-[7/2] w-full bg-cover bg-center bg-no-repeat"
                   />
 
                   <Button
