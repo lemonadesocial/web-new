@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/lemonadesocial/web-new/compare/v2.2.0...v2.2.1) (2025-08-07)
+
+
+### Bug Fixes
+
+* update image cover create community ([b2c2c4f](https://github.com/lemonadesocial/web-new/commit/b2c2c4f6e120b858aedb13813cdead31c81f4486))
+
 ## [2.2.0](https://github.com/lemonadesocial/web-new/compare/v2.1.0...v2.2.0) (2025-08-06)
 
 
