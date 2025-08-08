@@ -15,7 +15,7 @@ export function PlaceAutoComplete({
   label?: string;
   placeholder?: string;
   value?: string;
-  onSelect?: (address: Address) => void;
+  onSelect?: (address: Address | undefined) => void;
   autoFocus?: boolean;
 }) {
   const [toggle, setToggle] = React.useState(false);
@@ -71,12 +71,20 @@ export function PlaceAutoComplete({
     });
   };
 
+  const handleClear = () => {
+    setQuery('');
+    setPredictions([]);
+    setToggle(false);
+    onSelect?.(undefined);
+  };
+
   return (
     <div className="relative">
       <InputField
         label={label}
         autoFocus={autoFocus}
         iconLeft="icon-location-outline text-tertiary"
+        right={{ icon: 'icon-cancel text-tertiary size-5 cursor-pointer', onClick: handleClear }}
         value={query}
         placeholder={placeholder}
         onChange={(e) => {

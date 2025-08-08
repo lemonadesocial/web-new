@@ -24,6 +24,7 @@ export function UserForm() {
       description: me?.description,
       date_of_birth: me?.date_of_birth,
       email: me?.email,
+      website: me?.website,
       handle_twitter: me?.handle_twitter,
       handle_linkedin: me?.handle_linkedin,
       handle_instagram: me?.handle_instagram,
@@ -94,6 +95,11 @@ function ProfileField({
         return {
           label: 'Biography',
           placeholder: 'Enter your biography'
+        };
+      case 'website':
+        return {
+          label: 'Website',
+          placeholder: 'Enter your website URL'
         };
       case 'handle_twitter':
         return {

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { useAtom as useJotaiAtom } from 'jotai';
 import { format } from 'date-fns';
 
-import { CalculateTicketsPricingDocument, EthereumStakeAccount, Event, GetEventInvitationDocument, GetEventTicketTypesDocument, NewPaymentAccount, PurchasableTicketType } from '$lib/graphql/generated/backend/graphql';
+import { CalculateTicketsPricingDocument, EthereumStakeAccount, Event, GetEventInvitationDocument, GetEventTicketTypesDocument, ListEventTokenGatesDocument, NewPaymentAccount, PurchasableTicketType } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { sessionAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
@@ -17,13 +17,13 @@ import {
   discountCodeAtom,
   eventAtom,
   eventDataAtom,
+  eventTokenGatesAtom,
   hasSingleFreeTicketAtom,
   nonLoggedInStatusAtom,
   pricingInfoAtom,
   purchaseItemsAtom,
   registrationModal,
-  requiredProfileFieldsAtom,
-  selectedPaymentAccountAtom,
+  requiredProfileFieldsAtom, selectedPaymentAccountAtom,
   ticketLimitAtom,
   ticketTypesAtom,
   useAtom,
@@ -76,7 +76,7 @@ const EventRegistrationContent: React.FC = () => {
             <i className='icon-login size-5 text-black' />
           </div>
           <p>Please sign in to manage your registration and see more event details.</p>
-          <Button size='sm' variant='tertiary' iconRight='icon-chevron-right' onClick={signIn}>Sign In</Button>
+          <Button size='sm' variant='tertiary' iconRight='icon-chevron-right' onClick={() => signIn()}>Sign In</Button>
         </div>
       </AccessCard>
     );
@@ -162,6 +162,7 @@ const BaseEventRegistration: React.FC<{ event: Event; }> = ({ event: initialEven
   const setPricingInfo = useSetAtom(pricingInfoAtom);
   const setSelectedPaymentAccount = useSetAtom(selectedPaymentAccountAtom);
   const discountCode = useAtomValue(discountCodeAtom);
+  const setEventTokenGates = useSetAtom(eventTokenGatesAtom);
 
   const [session] = useJotaiAtom(sessionAtom);
   const me = useMe();
@@ -206,6 +207,14 @@ const BaseEventRegistration: React.FC<{ event: Event; }> = ({ event: initialEven
     skip: !purchaseItems.length,
     onComplete(data) {
       setPricingInfo(data.calculateTicketsPricing);
+    },
+  });
+
+
+  useQuery(ListEventTokenGatesDocument, {
+    variables: { event: initialEvent._id },
+    onComplete(data) {
+      setEventTokenGates(data.listEventTokenGates);
     },
   });
 

@@ -15,10 +15,12 @@ export interface SelectProps {
   className?: string;
   variant?: 'default' | 'outlined';
   inputSize?: 's' | 'm';
+  removeable?: boolean;
+  disabled?: boolean;
 }
 
 export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
-  ({ value, onChange, options, placeholder, error, className, variant = 'default', inputSize = 'm' }, ref) => {
+  ({ value, onChange, options, placeholder, error, className, variant = 'default', inputSize = 'm', removeable = true, disabled = false }, ref) => {
     const baseClasses = 'w-full rounded-sm focus:outline-none border border-transparent placeholder-quaternary px-2.5 hover:border hover:border-tertiary h-10 flex justify-between items-center gap-1.5 font-medium';
 
     const triggerClassName = twMerge(
@@ -33,41 +35,51 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
           'text-base': inputSize === 'm',
         },
         error && 'border border-error',
+        disabled && 'opacity-50 cursor-not-allowed hover:border-transparent',
         className
       )
     );
 
     return (
       <div className="relative w-full" ref={ref}>
-        <Menu.Root placement="bottom-start" className="w-full">
+        <Menu.Root placement="bottom-start" className="w-full" disabled={disabled}>
           <Menu.Trigger className={triggerClassName}>
             <span className={clsx("truncate flex-1", !value && "text-quaternary")}>
               {value || placeholder}
             </span>
-            <i
-              className="icon-cancel size-5 text-quaternary cursor-pointer"
-              onClick={() => onChange(undefined)}
-            />
+            {
+              removeable && !disabled && (
+                <i
+                  className="icon-cancel size-5 text-quaternary cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onChange(undefined);
+                  }}
+                />
+              )
+            }
             <i className="icon-arrow-down size-5 text-quaternary" />
           </Menu.Trigger>
 
-          <Menu.Content className="w-full max-h-60 overflow-auto p-1">
-            {({ toggle }) => (
-              <>
-                {options.map(option => (
-                  <MenuItem
-                    key={option}
-                    title={option}
-                    onClick={() => {
-                      onChange(option);
-                      toggle();
-                    }}
-                    iconRight={option === value ? <i className="icon-done size-4" /> : undefined}
-                  />
-                ))}
-              </>
-            )}
-          </Menu.Content>
+          {!disabled && (
+            <Menu.Content className="w-full max-h-60 overflow-auto p-1">
+              {({ toggle }) => (
+                <>
+                  {options.map(option => (
+                    <MenuItem
+                      key={option}
+                      title={option}
+                      onClick={() => {
+                        onChange(option);
+                        toggle();
+                      }}
+                      iconRight={option === value ? <i className="icon-done size-4" /> : undefined}
+                    />
+                  ))}
+                </>
+              )}
+            </Menu.Content>
+          )}
         </Menu.Root>
       </div>
     );

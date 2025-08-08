@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ethers, formatUnits } from 'ethers';
 import { format, isSameDay, isSameYear, isToday, isTomorrow } from 'date-fns';
 
 import {
@@ -6,6 +6,7 @@ import {
   Event,
   EventTicketCategory,
   EventTicketPrice,
+  EventTokenGate,
   PaymentAccountInfo,
   PurchasableTicketType,
   Ticket,
@@ -42,9 +43,8 @@ export function formatFiatPrice(price: EventTicketPrice) {
   return formatCurrency(Number(cost), currency, decimals, false);
 }
 
-export function formatPrice(price: EventTicketPrice) {
-  // if (!price.payment_accounts_expanded?.[0]) return 'Free';
-  if (!price.payment_accounts_expanded?.[0]) return '';
+export function formatPrice(price: EventTicketPrice, showFree?: boolean) {
+  if (!price.payment_accounts_expanded?.[0]) return showFree ? 'Free' : '';
 
   const isStripe = price.payment_accounts_expanded[0].provider === 'stripe';
 
@@ -57,7 +57,7 @@ export function getEventPrice(event: Event) {
 
   if (!defaultPrice) return '';
 
-  return formatPrice(defaultPrice);
+  return formatPrice(defaultPrice, true);
 }
 
 export function getEventAddress(address?: Address | undefined, short?: boolean) {
@@ -181,4 +181,18 @@ export function getEventCohosts(event: Event) {
   const visibleCohosts = event.visible_cohosts_expanded?.length ? event.visible_cohosts_expanded : [event.host_expanded, ...(event.cohosts_expanded || [])];
 
   return visibleCohosts.filter((u) => u?._id) as User[];
+}
+
+export function formatTokenGateRange(tokenGate: EventTokenGate) { 
+  const { is_nft, min_value, max_value, decimals } = tokenGate;
+
+  if (is_nft) {
+    if (min_value && max_value) return `(${min_value} - ${max_value})`;
+    if (min_value) return `> ${max_value}`;
+    if (max_value) return `< ${max_value}`;
+  }
+
+  if (min_value && decimals) return `> ${formatUnits(min_value, decimals)}`;
+
+  return `> 0`;
 }

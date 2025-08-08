@@ -23,6 +23,19 @@ query GetEvent($id: MongoID, $shortid: String) {
         bucket
       }
     }
+    cohosts_expanded {
+      ...User
+    }
+    visible_cohosts_expanded {
+      _id
+      name
+      display_name
+      new_photos_expanded(limit: 1) {
+        _id
+        key
+        bucket
+      }
+    }
     accepted
     new_new_photos_expanded {
       _id
@@ -78,6 +91,7 @@ query GetEvent($id: MongoID, $shortid: String) {
     application_profile_fields {
       field
       required
+      question
     }
     rsvp_wallet_platforms {
       platform
@@ -97,6 +111,7 @@ query GetEvent($id: MongoID, $shortid: String) {
     }
     event_ticket_types {
       _id
+      title
       offers {
         _id
         provider_network
@@ -113,6 +128,12 @@ query GetEvent($id: MongoID, $shortid: String) {
     url_go
     external_url
     external_hostname
+    published
+
+    payment_accounts_new
+    payment_accounts_expanded {
+      ...PaymentAccount
+    }
   }
 }
 
@@ -183,6 +204,7 @@ query GetEvents(
     timezone
     event_ticket_types {
       _id
+      title
       prices {
         cost
         currency
@@ -477,7 +499,7 @@ query GetEventCohostInvites($input: GetEventCohostRequestsInput!) {
   getEventCohostInvites(input: $input) {
     event
     from_expanded {
-      _id
+      _id 
       name
     }
   }
@@ -491,5 +513,353 @@ mutation createEvent($input: EventInput!) {
   createEvent(input: $input) {
     _id
     shortid
+  }
+}
+
+mutation PublishEvent($event: MongoID!) {
+  updateEvent(
+    _id: $event,
+    input: {
+      published: true,
+    }
+  ) {
+    _id
+    published
+  }
+}
+
+mutation UpdateEventSettings($id: MongoID!, $input: EventInput!) {
+  updateEvent(_id: $id, input: $input) {
+    _id
+    title
+    description
+    theme_data
+    address {
+      street_1
+      city
+      title
+      region
+      country
+      additional_directions
+      latitude
+      longitude
+    }
+    longitude
+    latitude
+    virtual_url
+    registration_disabled
+    guest_limit
+    terms_text
+    terms_link
+  }
+}
+
+mutation UpdateEventPhotos($id: MongoID!,$new_new_photos: [MongoID!]) {
+  updateEvent(
+    _id: $id,
+    input: { new_new_photos: $new_new_photos },
+) {
+    new_new_photos
+    new_new_photos_expanded(limit: 50) {
+      _id,
+      key,
+      bucket,
+    },
+  }
+}
+
+mutation inviteEvent($event: MongoID!, $users: [MongoID!], $emails: [String!]) {
+  inviteEvent(input: { _id: $event, users: $users, emails: $emails }) {
+    _id,
+    invited
+  }
+}
+
+mutation AssignTickets($input: AssignTicketsInput!) {
+  assignTickets(input: $input)
+}
+
+query GetEventTicketSales($event: MongoID!) {
+  getEventTicketSales(event: $event) {
+    sales {
+      amount
+      currency
+      decimals
+    }
+    last_update
+  }
+}
+
+query listEventTicketTypes($event: MongoID!) {
+  listEventTicketTypes(event: $event) {
+    limited_whitelist_users {
+      _id
+      email
+    }
+    _id
+    active
+    address_required
+    default
+    description
+    description_line
+    event
+    external_ids
+    limited
+    offers {
+      _id
+      auto
+      broadcast_rooms
+      position
+      provider
+      provider_id
+      provider_network
+    }
+    photos
+    photos_expanded {
+      _id
+      bucket
+      key
+    }
+    prices {
+      cost
+      currency
+      default
+      payment_accounts
+      payment_accounts_expanded {
+        ...PaymentAccount
+      }
+    }
+    private
+    ticket_count
+    ticket_limit
+    title
+    ticket_limit_per
+    category
+    category_expanded {
+      _id
+      description
+      title
+      position
+    }
+    position
+  }
+}
+
+query ListEventTokenGates($event: MongoID!, $ticketTypes: [MongoID!]) {
+  listEventTokenGates(event: $event, ticket_types: $ticketTypes) {
+    _id
+    decimals
+    event
+    gated_ticket_types
+    is_nft
+    max_value
+    min_value
+    name
+    network
+    token_address
+  }
+}
+
+mutation CreateEventTokenGate($input: EventTokenGateInput!) {
+  createEventTokenGate(input: $input) {
+    _id
+  }
+}
+
+mutation UpdateEventTokenGate($input: EventTokenGateInput!) {
+  updateEventTokenGate(input: $input) {
+    _id
+  }
+}
+
+mutation ManageEventCohostRequests($input: ManageEventCohostRequestsInput!) {
+  manageEventCohostRequests(input: $input)
+}
+
+query GetEventInvitedStatistics($id: MongoID!, $statuses: [InvitationResponse!], $limit: Float) {
+  getEventInvitedStatistics(_id: $id, statuses: $statuses, limit: $limit) {
+    emails_opened
+    guests {
+      user
+      pending
+      joined
+      email
+      declined
+      user_expanded {
+        _id
+      }
+    }
+    total
+    total_declined
+    total_joined
+  }
+}
+
+mutation UpdateEventRegistrationForm($id: MongoID!, $input: EventInput!) {
+  updateEvent(_id: $id, input: $input) {
+    rsvp_wallet_platforms {
+      platform
+      required
+    }
+  }
+}
+
+
+query ListEventGuests($event: MongoID!, $skip: Int, $limit: Int, $search: String) {
+  listEventGuests(event: $event, skip: $skip, limit: $limit, search: $search) {
+    items {
+      join_request {
+        _id
+        state
+      }
+      ticket {
+        _id
+        created_at
+        type_expanded {
+          _id
+          title
+        }
+      }
+      user {
+        _id
+        display_name
+        email
+        image_avatar
+        name
+      }
+    }
+    total
+  }
+}
+
+query GetEventGuestDetailedInfo($event: MongoID!, $email: String) {
+  getEventGuestDetailedInfo(event: $event, email: $email) {
+    checkin_count
+    purchased_tickets {
+      _id
+      type_expanded {
+        _id
+        title
+      }
+    }
+    ticket {
+      _id
+      created_at
+      type
+      type_expanded {
+        _id
+        title
+      }
+    }
+    user {
+      _id
+      description
+      display_name
+      email
+      first_name
+      image_avatar
+      last_name
+      name
+    }
+    payments {
+      _id
+      account_expanded {
+        ...PaymentAccount
+      }
+      amount
+      currency
+      crypto_payment_info {
+        network
+        tx_hash
+      }
+      stripe_payment_info {
+        card {
+          brand
+          last4
+        }
+        payment_intent
+      }
+      transfer_params
+      formatted_total_amount
+    }
+    join_request {
+      _id
+      state
+    }
+    application {
+      answer
+      answers
+      question
+    }
+  }
+}
+
+mutation submitEventApplicationQuestions($event: MongoID!, $questions: [QuestionInput!]!) {
+  submitEventApplicationQuestions(event: $event, questions: $questions) {
+    _id
+    question
+    required
+    position
+    type
+    options
+    select_type
+  }
+}
+
+mutation updateEventApplicationProfiles($fields: [ApplicationProfileFieldInput!], $id: MongoID!) {
+  updateEvent(input: {application_profile_fields: $fields}, _id: $id) {
+    application_profile_fields {
+      field
+      required
+      question
+    }
+  }
+}
+
+mutation decideUserJoinRequests(
+  $decision: EventJoinRequestState!
+  $event: MongoID!
+  $requests: [MongoID!]!
+) {
+  decideUserJoinRequests(
+    input: { decision: $decision, event: $event, requests: $requests }
+  ) {
+    _id
+    processed
+  }
+}
+
+query getEventJoinRequests($event: MongoID!, $skip: Int!, $limit: Int!, $state: EventJoinRequestState) {
+  getEventJoinRequests(
+    event: $event
+    skip: $skip
+    limit: $limit
+    state: $state
+  ) {
+    total
+    records {
+      _id
+      state
+      created_at
+      email
+      user
+      user_expanded {
+        _id
+        name
+        display_name
+        new_photos_expanded(limit: 1) {
+          _id
+          key
+          bucket
+        }
+      }
+      non_login_user {
+        _id
+        name
+        email
+        display_name
+        username
+      }
+    }
   }
 }

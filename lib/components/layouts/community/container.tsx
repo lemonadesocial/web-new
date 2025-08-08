@@ -3,7 +3,7 @@ import React from 'react';
 import clsx from 'clsx';
 
 import { ThemeGenerator } from '$lib/components/features/theme-builder/generator';
-import { useCommunityTheme } from '$lib/components/features/theme-builder/provider';
+import { useTheme } from '$lib/components/features/theme-builder/provider';
 import { Space } from '$lib/graphql/generated/backend/graphql';
 import Header from '../header';
 import LoadMoreWrapper from './loadMoreWrapper';
@@ -11,8 +11,7 @@ import Sidebar from './sidebar';
 import { Footer } from './footer';
 
 export function CommunityContainer({ space, children }: React.PropsWithChildren & { space: Space }) {
-  const [state] = useCommunityTheme();
-
+  const [state] = useTheme();
   return (
     <main
       id={space._id}

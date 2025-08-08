@@ -223,3 +223,7 @@ export function getRandomColor() {
   const randomIndex = Math.floor(Math.random() * colors.length);
   return colors[randomIndex];
 }
+
+export function getThemeName(theme: ThemeValues) {
+  return !theme.theme || theme.theme === 'default' ? 'minimal' : theme.theme;
+}
