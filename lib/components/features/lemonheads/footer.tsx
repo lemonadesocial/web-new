@@ -354,7 +354,6 @@ function MintModal({
         traits: traits.map(({ _id, image, ...rest }) => rest),
         sponsor: sponsor?._id,
       });
-      console.log('Mint data:', mintData);
 
       if (!contractAddress) throw new Error('LemonheadNFT contract address not set');
       if (!walletProvider) throw new Error('No wallet provider found');
@@ -364,8 +363,8 @@ function MintModal({
         LemonheadNFTContract,
         contractAddress,
         walletProvider as Eip1193Provider,
-        sponsor ? 'mintFree' : 'mint',
-        [mintData.look, mintData.metadata, mintData.signature],
+        'mint',
+        [mintData.look, mintData.metadata, mintData.price, mintData.signature],
         { value: sponsor ? 0 : mintPrice },
       );
       setMintState((prev) => ({ ...prev, txHash: tx?.hash }));
