@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { pick, omit } from "lodash";
 import { useState } from "react";
 
-import { Button, drawer, Input, LabeledInput, ErrorText, Spacer, Textarea, Segment, toast, modal } from "$lib/components/core";
+import { Button, drawer, Input, LabeledInput, ErrorText, Spacer, Textarea, Segment, toast, modal, Toggle } from "$lib/components/core";
 import { EventTicketType, NewPaymentProvider, EventTicketPrice, CreateEventTicketTypeDocument, ListEventTicketTypesDocument, EventTicketTypeInput, UpdateEventTicketTypeDocument, ListEventTokenGatesDocument } from "$lib/graphql/generated/backend/graphql";
 import { useMutation, useQuery } from "$lib/graphql/request";
 import { UpdateFiatPriceModal } from "./UpdateFiatPriceModal";
@@ -360,6 +360,24 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                   </div>    
                 )
               }
+            </div>
+          </div>
+
+          <div>
+            <p className="text-sm text-secondary mb-1.5">Visibility</p>
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p>Activate Ticket</p>
+                <p className="text-tertiary text-sm">If disabled, guests won&aspos;t be able to buy or receive this ticket.</p>
+              </div>
+              <Toggle id='active' checked={!!form.watch('active')} onChange={(value) => form.setValue('active', value)} />
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p>Hide on Event Page</p>
+                <p className="text-tertiary text-sm">Hidden tickets stay private and must be assigned by hosts.</p>
+              </div>
+              <Toggle id='private' checked={form.watch('private')} onChange={(value) => form.setValue('private', value)} />
             </div>
           </div>
         </div>
