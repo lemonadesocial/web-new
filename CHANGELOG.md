@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.0.0](https://github.com/lemonadesocial/web-new/compare/v2.2.1...v3.0.0) (2025-08-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* manage event
+
+### Features
+
+* manage event ([69f9865](https://github.com/lemonadesocial/web-new/commit/69f9865d2e1522a278906c955e39b04cb9b657a1))
+* ticket visibility ([8a2a1df](https://github.com/lemonadesocial/web-new/commit/8a2a1dff4509f90e5ff0d33dcdc8eb19be7cd3f3))
+
+
+### Bug Fixes
+
+* pending approval title ([dbe7b74](https://github.com/lemonadesocial/web-new/commit/dbe7b7400b9a72110303b96ba56b5ea9881348b0))
+
 ## [2.2.1](https://github.com/lemonadesocial/web-new/compare/v2.2.0...v2.2.1) (2025-08-07)
 
 
