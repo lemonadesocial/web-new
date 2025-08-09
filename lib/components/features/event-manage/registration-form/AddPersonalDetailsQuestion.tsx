@@ -10,7 +10,7 @@ const INFO_OPTIONS = ['Bio', 'Location', 'Pronouns'];
 
 const FIELD_CONFIG: Record<string, { field: string; defaultQuestion: string }> = {
   'Bio': { field: 'description', defaultQuestion: 'Tell us about yourself' },
-  'Location': { field: 'location_line', defaultQuestion: 'Where are you based?' },
+  // 'Location': { field: 'location_line', defaultQuestion: 'Where are you based?' },
   'Pronouns': { field: 'pronoun', defaultQuestion: 'What are your pronouns?' }
 };
 

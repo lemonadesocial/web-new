@@ -25,7 +25,7 @@ export function SubEventSection({ event }: { event?: Event; }) {
         </div> */}
       </div>
       <Divider className="h-1 w-full mb-2" />
-      <EventListCard events={events} onSelect={(event) => drawer.open(EventPane, { props: { eventId: event._id } })} />
+      <EventListCard events={events} onSelect={(event) => drawer.open(EventPane, { props: { eventId: event._id }, contentClass: 'bg-background' })} />
     </div>
   );
 }

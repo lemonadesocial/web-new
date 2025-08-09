@@ -16,7 +16,10 @@ type ConfigureHostModalProps = {
 
 export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModalProps) {
   const [showOnEventPage, setShowOnEventPage] = useState(isVisible);
-  const [name, setName] = useState(user.display_name || user.name || '');
+
+  const userName = user.display_name || user.name || '';
+
+  const [name, setName] = useState(userName);
   const [file, setFile] = useState<File | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -126,7 +129,7 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
           }
 
           {
-            !user.display_name && <>
+            !userName && <>
               <p className="text-sm text-tertiary">Help them set up their Lemonade profile so they show up nicely on the event page.</p>
               <div className="flex gap-3 items-center">
                 <div className="relative">

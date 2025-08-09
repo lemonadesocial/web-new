@@ -23,13 +23,14 @@ type TokenDetailsModalProps = {
   ticketType: string;
   tokenGate?: EventTokenGate;
   onCreate?: () => void;
+  onUpdate?: () => void;
 }
 
-export function TokenDetailsModal({ event, ticketType, tokenGate, onCreate }: TokenDetailsModalProps) {
+export function TokenDetailsModal({ event, ticketType, tokenGate, onCreate, onUpdate }: TokenDetailsModalProps) {
   const listChains = useAtomValue(listChainsAtom);
   const [type, setType] = useState<ContractType | null>(null);
   const [loading, setLoading] = useState(false);
-  const [showRestrictions, setShowRestrictions] = useState(tokenGate?.min_value || tokenGate?.max_value);
+  const [showRestrictions, setShowRestrictions] = useState<boolean>(Boolean(tokenGate?.min_value || tokenGate?.max_value));
 
   const { watch, setValue, register, handleSubmit, formState: { errors } } = useForm<TokenDetailsForm>({
     defaultValues: tokenGate ? {
@@ -65,15 +66,8 @@ export function TokenDetailsModal({ event, ticketType, tokenGate, onCreate }: To
   });
 
   const [update, { loading: loadingUpdate}] = useMutation(UpdateEventTokenGateDocument, {
-    onComplete(client) {
-      client.refetchQuery({
-        query: ListEventTokenGatesDocument,
-        variables: {
-          event: event,
-          ticketTypes: [ticketType]
-        }
-      });
-
+    onComplete() {
+      onUpdate?.();
       modal.close();
     },
     onError(error) {
@@ -155,7 +149,7 @@ export function TokenDetailsModal({ event, ticketType, tokenGate, onCreate }: To
               </div>
             </Menu.Trigger>
 
-            <Menu.Content className="p-1 w-full">
+            <Menu.Content className="p-1 w-full max-h-[180px] overflow-y-auto no-scrollbar">
               {({ toggle }) => listChains.map((chain) => (
                 <MenuItem
                   key={chain.chain_id}

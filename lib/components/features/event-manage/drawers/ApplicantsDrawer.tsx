@@ -21,7 +21,7 @@ export function ApplicantsDrawer({ event }: ApplicantsDrawerProps) {
       <div className="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4">
         <div>
           <h1 className="text-xl font-semibold">Pending Approval</h1>
-          <p className="text-secondary">Review and manage guest requests to join IDSA International Design Conference.</p>
+          <p className="text-secondary">Review and manage guest requests to join {event.title}.</p>
         </div>
         <PendingApprovalList event={event} />
       </div>

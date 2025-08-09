@@ -9,7 +9,7 @@ import { TokenDetailsModal } from "./TokenDetailsModal";
 export function TokenGatingDrawer({ ticketType }: { ticketType: string }) {
   const event = useEvent();
 
-  const { data } = useQuery(ListEventTokenGatesDocument, {
+  const { data, refetch } = useQuery(ListEventTokenGatesDocument, {
     variables: { event: event?._id, ticketTypes: [ticketType] },
     skip: !event
   });
@@ -37,6 +37,7 @@ export function TokenGatingDrawer({ ticketType }: { ticketType: string }) {
                       ticketType: ticketType,
                       tokenGate,
                       event: event?._id,
+                      onUpdate: refetch
                     }
                   });
                 }}
@@ -66,7 +67,7 @@ export function TokenGatingDrawer({ ticketType }: { ticketType: string }) {
             className: 'overflow-visible',
             props: {
               event: event?._id,
-              ticketType
+              ticketType,
             }
           })}
         >

@@ -193,7 +193,7 @@ function FormContent({ spaces, space, listToSpace }: { space?: Space; spaces: Sp
       }
     }
 
-    window.location.pathname = `/manage/event/${data?.createEvent?.shortid}`;
+    window.location.pathname = `/e/manage/${data?.createEvent?.shortid}`;
   };
 
   // Function to handle changes in the file input (when a file is selected)

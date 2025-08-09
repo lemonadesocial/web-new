@@ -1,13 +1,13 @@
 'use client';
 import React from 'react';
 import clsx from 'clsx';
+import { useRouter } from 'next/navigation';
 
 import { Event, GetEventDocument, GetEventQuery } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { Badge, Button, Spacer } from '$lib/components/core';
 import { EDIT_KEY, generateUrl } from '$lib/utils/cnd';
 import { getEventCohosts, hosting, isAttending } from '$lib/utils/event';
-import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useEventTheme } from '$lib/components/features/theme-builder/provider';
 
 import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
@@ -46,6 +46,8 @@ export function EventGuestSideContent({ event }: { event: Event }) {
   const attending = me?._id ? isAttending(event, me._id) : false;
   const hosts = getEventCohosts(event);
 
+  const router = useRouter();
+
   return (
     <div className={clsx('flex gap-[72px]', state.theme && state.config.color)}>
       <div className="hidden md:flex w-[296px] flex-col gap-6">
@@ -71,7 +73,7 @@ export function EventGuestSideContent({ event }: { event: Event }) {
                   size="sm"
                   iconRight="icon-arrow-outward"
                   className="rounded-full"
-                  onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event.shortid}/`, '_blank')}
+                  onClick={() => router.push(`/e/manage/${event.shortid}`)}
                 >
                   Manage
                 </Button>
@@ -111,7 +113,7 @@ export function EventGuestSideContent({ event }: { event: Event }) {
                     size="sm"
                     iconRight="icon-arrow-outward"
                     className="rounded-full"
-                    onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event.shortid}/`, '_blank')}
+                    onClick={() => router.push(`/e/manage/${event.shortid}`)}
                   >
                     Manage
                   </Button>

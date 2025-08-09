@@ -136,7 +136,7 @@ function EditEventDrawerContent({ event }: { event: Event }) {
             />
           </div>
         </div>
-        <hr className="border" />
+        <hr className="border-t border-t-divider" />
         <div className="space-y-4">
           <p className="text-lg">Appearance</p>
           <ThemeSettings />

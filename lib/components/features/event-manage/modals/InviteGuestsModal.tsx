@@ -132,7 +132,7 @@ export function InviteGuestsModal({ event }: { event: Event }) {
             </FileInput>
             <div className="mt-4">
               <a
-                href={`${ASSET_PREFIX}/templates/invite-guests-template.csv`}
+                href={`${ASSET_PREFIX}/assets/templates/invite-guests-template.csv`}
                 className="text-sm text-tertiary flex items-center gap-1 hover:underline"
                 download="invite-guests-template.csv"
               >
