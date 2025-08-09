@@ -499,7 +499,7 @@ query GetEventCohostInvites($input: GetEventCohostRequestsInput!) {
   getEventCohostInvites(input: $input) {
     event
     from_expanded {
-      _id 
+      _id
       name
     }
   }
@@ -517,12 +517,7 @@ mutation createEvent($input: EventInput!) {
 }
 
 mutation PublishEvent($event: MongoID!) {
-  updateEvent(
-    _id: $event,
-    input: {
-      published: true,
-    }
-  ) {
+  updateEvent(_id: $event, input: { published: true }) {
     _id
     published
   }
@@ -555,23 +550,20 @@ mutation UpdateEventSettings($id: MongoID!, $input: EventInput!) {
   }
 }
 
-mutation UpdateEventPhotos($id: MongoID!,$new_new_photos: [MongoID!]) {
-  updateEvent(
-    _id: $id,
-    input: { new_new_photos: $new_new_photos },
-) {
+mutation UpdateEventPhotos($id: MongoID!, $new_new_photos: [MongoID!]) {
+  updateEvent(_id: $id, input: { new_new_photos: $new_new_photos }) {
     new_new_photos
     new_new_photos_expanded(limit: 50) {
-      _id,
-      key,
-      bucket,
-    },
+      _id
+      key
+      bucket
+    }
   }
 }
 
 mutation inviteEvent($event: MongoID!, $users: [MongoID!], $emails: [String!]) {
   inviteEvent(input: { _id: $event, users: $users, emails: $emails }) {
-    _id,
+    _id
     invited
   }
 }
@@ -705,7 +697,6 @@ mutation UpdateEventRegistrationForm($id: MongoID!, $input: EventInput!) {
   }
 }
 
-
 query ListEventGuests($event: MongoID!, $skip: Int, $limit: Int, $search: String) {
   listEventGuests(event: $event, skip: $skip, limit: $limit, search: $search) {
     items {
@@ -808,7 +799,7 @@ mutation submitEventApplicationQuestions($event: MongoID!, $questions: [Question
 }
 
 mutation updateEventApplicationProfiles($fields: [ApplicationProfileFieldInput!], $id: MongoID!) {
-  updateEvent(input: {application_profile_fields: $fields}, _id: $id) {
+  updateEvent(input: { application_profile_fields: $fields }, _id: $id) {
     application_profile_fields {
       field
       required
@@ -817,26 +808,15 @@ mutation updateEventApplicationProfiles($fields: [ApplicationProfileFieldInput!]
   }
 }
 
-mutation decideUserJoinRequests(
-  $decision: EventJoinRequestState!
-  $event: MongoID!
-  $requests: [MongoID!]!
-) {
-  decideUserJoinRequests(
-    input: { decision: $decision, event: $event, requests: $requests }
-  ) {
+mutation decideUserJoinRequests($decision: EventJoinRequestState!, $event: MongoID!, $requests: [MongoID!]!) {
+  decideUserJoinRequests(input: { decision: $decision, event: $event, requests: $requests }) {
     _id
     processed
   }
 }
 
 query getEventJoinRequests($event: MongoID!, $skip: Int!, $limit: Int!, $state: EventJoinRequestState) {
-  getEventJoinRequests(
-    event: $event
-    skip: $skip
-    limit: $limit
-    state: $state
-  ) {
+  getEventJoinRequests(event: $event, skip: $skip, limit: $limit, state: $state) {
     total
     records {
       _id
@@ -863,4 +843,100 @@ query getEventJoinRequests($event: MongoID!, $skip: Int!, $limit: Int!, $state: 
       }
     }
   }
+}
+
+query GetListEventEmailSettings($event: MongoID!, $system: Boolean, $sent: Boolean, $scheduled: Boolean) {
+  listEventEmailSettings(event: $event, system: $system, sent: $sent, scheduled: $scheduled) {
+    body_preview
+    _id
+    disabled
+    is_system_email
+    recipient_types
+    recipients
+    recipients_details {
+      email
+      image_avatar
+    }
+    recipient_filters {
+      join_request_states
+      ticket_types
+    }
+    scheduled_at
+    sent_at
+    subject_preview
+    type
+    custom_body_html
+    custom_subject_html
+    opened {
+      email
+      stamp
+    }
+  }
+}
+
+mutation UpdateEventEmailSetting($input: UpdateEventEmailSettingInput!) {
+  updateEventEmailSetting(input: $input) {
+    _id
+    body_preview
+    is_system_email
+    disabled
+    recipient_types
+    recipients
+    recipients_details {
+      email
+      image_avatar
+    }
+    recipient_filters {
+      join_request_states
+      ticket_types
+    }
+    scheduled_at
+    sent_at
+    subject_preview
+    type
+    custom_body_html
+    custom_subject_html
+    template
+  }
+}
+
+mutation CreateEventEmailSetting($input: CreateEventEmailSettingInput!) {
+  createEventEmailSetting(input: $input) {
+    _id
+    body_preview
+    cc
+    custom_body_html
+    context
+    custom_subject_html
+    disabled
+    is_system_email
+    recipient_types
+    recipients
+    recipients_details {
+      email
+      image_avatar
+    }
+    recipient_filters {
+      join_request_states
+      ticket_types
+    }
+    scheduled_at
+    sendgrid_template_id
+    sent_at
+    subject_preview
+    template
+    type
+    opened {
+      email
+      stamp
+    }
+  }
+}
+
+mutation DeleteEventEmailSetting($id: MongoID!) {
+  deleteEventEmailSetting(_id: $id)
+}
+
+mutation SendEventEmailSettingTestEmails($input: SendEventEmailSettingTestEmailsInput!) {
+  sendEventEmailSettingTestEmails(input: $input)
 }

@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
-
+import { merge } from 'lodash';
 import {
   Button,
   Card,
@@ -12,7 +12,6 @@ import {
   InputField,
   modal,
   Spacer,
-  TextAreaField,
   TextEditor,
   toast,
   Toggle,
@@ -31,7 +30,6 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { useEvent } from './store';
 import { useMutation } from '$lib/graphql/request';
-import { merge } from 'lodash';
 
 export function EventBlasts() {
   const event = useEvent();
@@ -179,10 +177,9 @@ function ModalHeader({ icon }: { icon: string }) {
 }
 
 function BlastAdvancedModal({ event, message }: { event: Event; message: string }) {
-  const [selectReceipts, setSelectedReceipts] = React.useState<Record<string, string>[]>([]);
   const me = useMe();
-
   const [recipients, setRecipients] = React.useState<{ key: string; value: string }[]>([]);
+  const [selectReceipts, setSelectedReceipts] = React.useState<Record<string, string>[]>([]);
 
   const defaultSubject = `New message in ${event.title}`;
   const [subject, setSubject] = React.useState('');
@@ -216,10 +213,20 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
   };
 
   const handleSendEmail = () => {
-    const join_request_states = recipients.filter((i) => i.key in EventJoinRequestState);
-    const recipient_types = recipients.filter((i) => i.key in EmailRecipientType);
+    const join_request_states = selectReceipts
+      .filter((i) => i.key in EventJoinRequestState)
+      .map((i) => i.key) as EventJoinRequestState[];
+    const recipient_types = selectReceipts
+      .filter((i) => i.key in EmailRecipientType)
+      .map((i) => i.key) as EmailRecipientType[];
 
-    const ticket_types = recipients.filter((i) => !(i.key in EmailRecipientType && i.key in EmailRecipientType));
+    let ticket_types = selectReceipts
+      .filter((i) => !(i.key in EmailRecipientType && i.key in EmailRecipientType))
+      .map((i) => i.key) as string[];
+
+    if (ticket_types.includes('all_tickets')) {
+      ticket_types = event.event_ticket_types?.map((i) => i._id) as string[];
+    }
 
     createEmail({
       variables: {
@@ -242,7 +249,7 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
   React.useEffect(() => {
     if (event) {
       let list = [{ key: 'all_tickets', value: 'Going All' }];
-      event?.event_ticket_types?.map((item) => list.push({ key: item._id, value: `Going - ${item.title}` }));
+      event.event_ticket_types?.map((item) => list.push({ key: item._id, value: `Going - ${item.title}` }));
       list = merge(list, [
         { key: EventJoinRequestState.Pending, value: 'Pending' },
         { key: EmailRecipientType.Invited, value: 'Invited' },
@@ -276,6 +283,8 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
           onChange={(content) => setBody(content)}
           placeholder="Share a message with your guests..."
         />
+
+        <DateTimePicker minDate={new Date()} onSelect={(datetime) => setScheduleAt(datetime)} placement="bottom" />
 
         <div className="flex justify-between items-center">
           <Button
@@ -355,7 +364,53 @@ function EventReminderModal({ event }: { event: Event }) {
 }
 
 function ScheduleFeedbackModal({ event }: { event: Event }) {
-  const [rate, setRate] = React.useState(0);
+  const me = useMe();
+
+  const defaultSubject = `New message in ${event.title}`;
+  const [subject, setSubject] = React.useState('');
+  const [body, setBody] = React.useState();
+  const [scheduleAt, setScheduleAt] = React.useState<string>();
+
+  const [createEmail, { loading: sendingEmail }] = useMutation(CreateEventEmailSettingDocument, {
+    onComplete: () => {
+      toast.success('Email created successfully');
+    },
+  });
+
+  const [sendTest, { loading: sendingTest }] = useMutation(SendEventEmailSettingTestEmailsDocument, {
+    onComplete: () => {
+      toast.success('Email send successfully');
+    },
+  });
+
+  const handleSendPreview = () => {
+    sendTest({
+      variables: {
+        input: {
+          event: event._id,
+          custom_body_html: body,
+          custom_subject_html: subject || defaultSubject,
+          type: EmailTemplateType.Feedback,
+          test_recipients: [me?.email!],
+        },
+      },
+    });
+  };
+
+  const handleSendEmail = () => {
+    createEmail({
+      variables: {
+        input: {
+          event: event._id,
+          custom_body_html: body,
+          custom_subject_html: subject,
+          recipient_types: [EmailRecipientType.Registration],
+          type: EmailTemplateType.Feedback,
+          scheduled_at: scheduleAt,
+        },
+      },
+    });
+  };
 
   return (
     <Card.Root className="w-[480px] *:bg-overlay-primary border-none">
@@ -365,37 +420,39 @@ function ScheduleFeedbackModal({ event }: { event: Event }) {
         <div>
           <p className="text-secondary text-sm">When should the feedback email be sent?</p>
           <Spacer className="h-1.5" />
-          <DateTimePicker onSelect={() => {}} placement="bottom" />
+          <DateTimePicker minDate={new Date()} onSelect={(datetime) => setScheduleAt(datetime)} placement="bottom" />
           <Spacer className="h-2" />
           <p className="text-secondary text-sm">Immediately after the event ends</p>
         </div>
 
-        <InputField label="Subject" />
-        <TextAreaField label="Message" />
+        <InputField label="Subject" value={subject} onChangeText={(value) => setSubject(value)} />
+        <TextEditor label="Message" content={subject} onChange={(content) => setBody(content)} />
 
         <div className="flex flex-col gap-1.5">
-          <p className="text-secondary text-sm">What did you think of IDSA International Design Conference?</p>
+          <p className="text-secondary text-sm">What did you think of {event.title}?</p>
 
           <div className="flex gap-2">
             {Array.from({ length: 5 }, (_, i) => i + 1)
               .reverse()
               .map((i) => (
-                <Button
-                  variant="tertiary"
-                  className={clsx('size-9 aspect-square p-0', rate === i && 'bg-(--btn-tertiary-hover)!')}
-                  onClick={() => setRate((prev) => (prev === i ? 0 : i))}
-                >
+                <div className="bg-(--btn-tertiary) size-9 aspect-square flex items-center justify-center">
                   <img src={`${ASSET_PREFIX}/assets/images/rate-${i}.png`} width={20} height={20} />
-                </Button>
+                </div>
               ))}
           </div>
         </div>
 
         <div className="flex justify-between items-center">
-          <Button className="px-0 text-tertiary! hover:text-primary!" variant="flat" size="sm">
+          <Button
+            className="px-0 text-tertiary! hover:text-primary!"
+            variant="flat"
+            size="sm"
+            loading={sendingTest}
+            onClick={handleSendPreview}
+          >
             Send Preview
           </Button>
-          <Button variant="secondary" iconLeft="icon-clock" size="sm">
+          <Button variant="secondary" iconLeft="icon-clock" size="sm" loading={sendingEmail} onClick={handleSendEmail}>
             Schedule Feedback Email
           </Button>
         </div>
