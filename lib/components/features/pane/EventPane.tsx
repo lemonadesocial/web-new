@@ -1,4 +1,5 @@
 'use client';
+import { useRouter } from 'next/navigation';
 
 import { Alert, Avatar, Button, drawer, toast } from '$lib/components/core';
 import { Event, GetEventDocument, User } from '$lib/graphql/generated/backend/graphql';
@@ -30,6 +31,8 @@ export function EventPane({ eventId }: { eventId: string }) {
 
   const canManage = me?._id && event && hosting(event, me._id);
 
+  const router = useRouter();
+
   return (
     <div>
       <EventPaneHeader eventShortId={event?.shortid} />
@@ -39,7 +42,7 @@ export function EventPane({ eventId }: { eventId: string }) {
           <Button
             iconRight="icon-arrow-outward"
             className="rounded-full"
-            onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event?.shortid}`)}
+            onClick={() => router.push(`/e/manage/t/${event?.shortid}`)}
           >
             Manage
           </Button>

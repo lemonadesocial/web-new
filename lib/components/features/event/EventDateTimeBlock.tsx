@@ -14,7 +14,7 @@ export function EventDateTimeBlock({ event }: Props) {
   if (!event) return <EventDateTimeBlockSkeleton />;
 
   return (
-    <div className="flex gap-4 flex-1 w-full text-nowrap">
+    <div className="flex gap-4 w-full text-nowrap">
       <div className="border rounded-sm size-12 min-w-12 text-secondary flex flex-col justify-center items-center font-medium">
         <span className="py-0.5 text-xs">
           {format(convertFromUtcToTimezone(event.start, event.timezone as string), 'MMM')}

@@ -8,7 +8,7 @@ import { ShaderGradient } from './shader';
 import { ThemeValues } from './store';
 import { EmojiAnimate } from './emoji';
 
-export function ThemeGenerator({ data }: { data: ThemeValues }) {
+export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: React.CSSProperties }) {
   const [mode, setMode] = React.useState(data.config.mode);
   const videoMobRef = React.useRef<HTMLVideoElement>(null);
   const videoWebRef = React.useRef<HTMLVideoElement>(null);
@@ -83,6 +83,7 @@ export function ThemeGenerator({ data }: { data: ThemeValues }) {
             data?.config?.class,
             mode,
           )}
+          style={style}
         >
           {data.theme === 'shader' && <ShaderGradient mode={mode} />}
 

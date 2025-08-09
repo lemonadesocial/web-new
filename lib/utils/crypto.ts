@@ -172,3 +172,70 @@ export function formatError(error: any): string {
 
   return 'An unexpected error occurred. Please try again';
 }
+
+
+export enum ContractType {
+  ERC20 = 'ERC-20',
+  ERC721 = 'ERC-721',
+  UNKNOWN = 'UNKNOWN'
+}
+
+const ERC165_ABI = [
+  'function supportsInterface(bytes4 interfaceId) view returns (bool)'
+];
+
+export async function getContractType(
+  contractAddress: string,
+  rpcUrl: string
+): Promise<{ type: ContractType; symbol?: string; decimals?: number; }> {
+  const provider = new ethers.JsonRpcProvider(rpcUrl);
+
+  try {
+    const erc165Contract = new ethers.Contract(contractAddress, ERC165_ABI, provider);
+    const ERC721_INTERFACE_ID = '0x80ac58cd';
+    const isERC721 = await erc165Contract.supportsInterface(ERC721_INTERFACE_ID);
+
+    if (isERC721) {
+      const erc721Contract = new ethers.Contract(contractAddress, ERC721, provider);
+      try {
+        const symbol = await erc721Contract.symbol();
+
+        return { type: ContractType.ERC721, symbol };
+      } catch {
+        return { type: ContractType.ERC721 };
+      }
+    }
+  } catch {
+  }
+
+  try {
+    const erc20Contract = new ethers.Contract(contractAddress, ERC20, provider);
+
+    await Promise.all([
+      erc20Contract.totalSupply().catch(() => { throw new Error('Not ERC20: totalSupply failed'); }),
+      erc20Contract.balanceOf(ethers.ZeroAddress).catch(() => { throw new Error('Not ERC20: balanceOf failed'); })
+    ]);
+
+    const [symbol, decimals] = await Promise.all([
+      erc20Contract.symbol(),
+      erc20Contract.decimals()
+    ]);
+
+    return { type: ContractType.ERC20, symbol, decimals: Number(decimals) };
+  } catch {
+    return { type: ContractType.UNKNOWN };
+  }
+}
+
+export function multiplyByPowerOf10(amount: string, power: number) {
+  const [integerPart, decimalPart = ''] = amount.split('.');
+
+  const combined = integerPart + decimalPart;
+  const decimalLength = decimalPart.length;
+
+  const totalPower = power - decimalLength;
+
+  const result = BigInt(combined) * (BigInt(10) ** BigInt(totalPower));
+
+  return result.toString();
+}
