@@ -23,8 +23,10 @@ import { DateTimePicker } from '$lib/components/core/calendar';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import {
   CreateEventEmailSettingDocument,
+  EmailRecipientType,
   EmailTemplateType,
   Event,
+  EventJoinRequestState,
   SendEventEmailSettingTestEmailsDocument,
 } from '$lib/graphql/generated/backend/graphql';
 import { useEvent } from './store';
@@ -181,32 +183,15 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
   const me = useMe();
 
   const [recipients, setRecipients] = React.useState<{ key: string; value: string }[]>([]);
+
   const defaultSubject = `New message in ${event.title}`;
   const [subject, setSubject] = React.useState('');
   const [body, setBody] = React.useState(message);
+  const [scheduleAt, setScheduleAt] = React.useState<string>();
 
-  const [creatEmail] = useMutation(CreateEventEmailSettingDocument, {
+  const [createEmail, { loading: sendingEmail }] = useMutation(CreateEventEmailSettingDocument, {
     onComplete: () => {
-      toast('Email created successfully', { type: 'success' });
-    },
-    update: (cache, result) => {
-      const newEmail = result.data?.createEventEmailSetting;
-
-      cache.updateQuery(
-        {
-          query: listEventEmailSettings,
-          variables: {
-            event: event._id,
-            system: true,
-            scheduled: true,
-            sent: true,
-          },
-        },
-        (data) => ({
-          ...data,
-          listEventEmailSettings: [...(data?.listEventEmailSettings || []), newEmail],
-        }),
-      );
+      toast.success('Email created successfully');
     },
   });
 
@@ -230,15 +215,39 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
     });
   };
 
+  const handleSendEmail = () => {
+    const join_request_states = recipients.filter((i) => i.key in EventJoinRequestState);
+    const recipient_types = recipients.filter((i) => i.key in EmailRecipientType);
+
+    const ticket_types = recipients.filter((i) => !(i.key in EmailRecipientType && i.key in EmailRecipientType));
+
+    createEmail({
+      variables: {
+        input: {
+          event: event._id,
+          custom_body_html: body,
+          custom_subject_html: subject,
+          recipient_types,
+          type: EmailTemplateType.Custom,
+          scheduled_at: scheduleAt,
+          recipient_filters: {
+            join_request_states,
+            ticket_types,
+          },
+        },
+      },
+    });
+  };
+
   React.useEffect(() => {
     if (event) {
       let list = [{ key: 'all_tickets', value: 'Going All' }];
       event?.event_ticket_types?.map((item) => list.push({ key: item._id, value: `Going - ${item.title}` }));
       list = merge(list, [
-        { key: 'pending', value: 'Pending' },
-        { key: 'invited', value: 'Invited' },
-        { key: 'issued', value: 'Issued' },
-        { key: 'cancel', value: 'Cancel' },
+        { key: EventJoinRequestState.Pending, value: 'Pending' },
+        { key: EmailRecipientType.Invited, value: 'Invited' },
+        { key: EmailRecipientType.TicketIssued, value: 'Issued' },
+        { key: EmailRecipientType.TicketCancelled, value: 'Cancel' },
       ]);
       setRecipients(list);
     }
@@ -283,7 +292,7 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
             <Button variant="tertiary-alt" size="sm">
               Schedule
             </Button>
-            <Button variant="secondary" size="sm">
+            <Button variant="secondary" size="sm" loading={sendingEmail} onClick={handleSendEmail}>
               Send
             </Button>
           </div>
