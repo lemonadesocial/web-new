@@ -17,6 +17,7 @@ import TextEditorFloatingMenu from './floating-menu';
 import { ImageResize } from './resize-image';
 
 type TextEditorProps = {
+  label?: string;
   content?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
@@ -25,6 +26,8 @@ type TextEditorProps = {
   /** directory prop is using for upload file */
   directory?: FileDirectory;
   readOnly?: boolean;
+  onFocus?: React.FocusEventHandler<HTMLDivElement>;
+  onBlur?: React.FocusEventHandler<HTMLDivElement>;
 };
 
 const defaulToolBar = {
@@ -61,6 +64,9 @@ export default function TextEditor({
   toolbar = defaulToolBar,
   directory = 'event',
   readOnly = false,
+  onFocus,
+  onBlur,
+  label,
 }: TextEditorProps) {
   const editor = useEditor({
     immediatelyRender: false,
@@ -106,7 +112,10 @@ export default function TextEditor({
     <>
       <TextEditorBubbleMenu editor={editor} toolbar={toolbar.bubble} />
       <TextEditorFloatingMenu editor={editor} toolbar={toolbar.float} directory={directory} />
-      <EditorContent editor={editor} />
+      <div className="flex flex-col gap-[6px]">
+        {label && <label className="text-secondary text-sm font-medium">{label}</label>}
+        <EditorContent editor={editor} onFocus={onFocus} onBlur={onBlur} />
+      </div>
     </>
   );
 }

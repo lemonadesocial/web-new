@@ -11,7 +11,7 @@ export function Badge({
   title?: string;
   color?: string;
   className?: string;
-  onClose?: () => void;
+  onClose?: React.MouseEventHandler<HTMLButtonElement>;
 }) {
   return (
     <div
