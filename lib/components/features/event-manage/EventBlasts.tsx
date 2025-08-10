@@ -64,7 +64,12 @@ export function EventBlasts() {
               icon="icon-star-outline"
               title="Post-Event Feedback"
               subtitle="Schedule a feedback email to go out after the event."
-              actions={[{ text: 'Schedule', onClick: () => modal.open(ScheduleFeedbackModal, { props: { event } }) }]}
+              actions={[
+                {
+                  text: 'Schedule',
+                  onClick: () => modal.open(ScheduleFeedbackModal, { props: { event }, dismissible: false }),
+                },
+              ]}
             />
           </Card.Content>
         </Card.Root>
@@ -109,7 +114,7 @@ function BlastsInput({ event }: { event: Event }) {
                 iconLeft="icon-chevrons-up-down rotate-45"
                 variant="flat"
                 className="text-tertiary! hover:text-primary! px-0"
-                onClick={() => modal.open(BlastAdvancedModal, { props: { event, message } })}
+                onClick={() => modal.open(BlastAdvancedModal, { dismissible: false, props: { event, message } })}
               >
                 Advanced
               </Button>
