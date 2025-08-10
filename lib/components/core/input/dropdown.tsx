@@ -76,11 +76,7 @@ interface DropdownTagsProps {
 export function DropdownTags(props: DropdownTagsProps) {
   const [query, setQuery] = React.useState('');
   const [selected, setSelected] = React.useState<Option[]>(props.value || []);
-  const keys = selected.map((i) => i.key);
-
-  React.useEffect(() => {
-    if (props.value) setSelected(props.value);
-  }, [props.value]);
+  const keys = selected.map((i) => i?.key);
 
   const handleRemove = (item: Option) => {
     setSelected((prev) => prev?.filter((o) => o.key !== item.key));
@@ -97,7 +93,7 @@ export function DropdownTags(props: DropdownTagsProps) {
                 <Badge
                   key={item.key}
                   title={item.value}
-                  className="btn btn-tertiary text-sm rounded py-0.5!"
+                  className="btn btn-tertiary text-primary! text-sm rounded py-0.5!"
                   onClose={(e) => {
                     e.stopPropagation();
                     handleRemove(item);

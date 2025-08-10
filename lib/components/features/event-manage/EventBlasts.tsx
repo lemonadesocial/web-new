@@ -416,11 +416,14 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
           <p className="text-sm">Guests will receive the blast via email.</p>
         </div>
 
-        <DropdownTags
-          label="Recipients"
-          options={recipients}
-          onSelect={(values) => setSelectedReceipts(values as Record<string, string>[])}
-        />
+        {!!recipients.length && (
+          <DropdownTags
+            label="Recipients"
+            value={[recipients[0]]}
+            options={recipients}
+            onSelect={(values) => setSelectedReceipts(values as Record<string, string>[])}
+          />
+        )}
 
         <InputField label="Subject (Optional)" placeholder={defaultSubject} value={subject} onChangeText={setSubject} />
 
