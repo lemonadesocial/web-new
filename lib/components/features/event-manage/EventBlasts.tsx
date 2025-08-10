@@ -498,7 +498,7 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
 function EventReminderModal({ event }: { event: Event }) {
   const [autoSend, setAutoSend] = React.useState(true);
   return (
-    <Card.Root className="w-[480px] *:bg-overlay-primary border-none">
+    <Card.Root className="w-sm max-w-full md:w-[480px] *:bg-overlay-primary border-none">
       <ModalHeader icon="icon-bell" />
       <Card.Content className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
@@ -614,7 +614,7 @@ function ScheduleFeedbackModal({ event }: { event: Event }) {
   };
 
   return (
-    <Card.Root className="w-[480px] *:bg-overlay-primary border-none">
+    <Card.Root className="w-sm max-w-full md:w-[480px] *:bg-overlay-primary border-none">
       <ModalHeader icon="icon-star-outline" />
       <Card.Content className="flex flex-col gap-4">
         <p className="text-lg">Event Reminders</p>
