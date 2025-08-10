@@ -189,6 +189,7 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
   const defaultSubject = `New message in ${event.title}`;
   const [subject, setSubject] = React.useState('');
   const [body, setBody] = React.useState(message);
+  const [showSchedule, setShowSchedule] = React.useState(false);
   const [scheduleAt, setScheduleAt] = React.useState<string>();
 
   const [createEmail, { loading: sendingEmail }] = useMutation(CreateEventEmailSettingDocument, {
@@ -289,7 +290,12 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
           placeholder="Share a message with your guests..."
         />
 
-        <DateTimePicker minDate={new Date()} onSelect={(datetime) => setScheduleAt(datetime)} placement="bottom" />
+        {showSchedule && (
+          <div className="flex justify-between items-center">
+            <DateTimePicker minDate={new Date()} onSelect={(datetime) => setScheduleAt(datetime)} placement="bottom" />
+            <Button icon="icon-x" size="sm" variant="flat" onClick={() => setShowSchedule(false)} />
+          </div>
+        )}
 
         <div className="flex justify-between items-center">
           <Button
@@ -303,9 +309,11 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
           </Button>
 
           <div className="flex gap-2">
-            <Button variant="tertiary-alt" size="sm">
-              Schedule
-            </Button>
+            {!showSchedule && (
+              <Button variant="tertiary-alt" size="sm">
+                Schedule
+              </Button>
+            )}
             <Button variant="secondary" size="sm" loading={sendingEmail} onClick={handleSendEmail}>
               Send
             </Button>
