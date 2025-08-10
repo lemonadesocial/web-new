@@ -23,28 +23,105 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import {
   CreateEventEmailSettingDocument,
   EmailRecipientType,
+  EmailSetting,
   EmailTemplateType,
   Event,
   EventJoinRequestState,
+  GetListEventEmailSettingsDocument,
   SendEventEmailSettingTestEmailsDocument,
 } from '$lib/graphql/generated/backend/graphql';
 import { useEvent } from './store';
-import { useMutation } from '$lib/graphql/request';
+import { useMutation, useQuery } from '$lib/graphql/request';
+import { isMobile } from 'react-device-detect';
+import { JOIN_REQUEST_STATE_MAP, RECIPIENT_TYPE_MAP } from '$lib/utils/email';
+import { format } from 'date-fns';
 
 export function EventBlasts() {
   const event = useEvent();
 
   if (!event) return null;
 
+  const { data } = useQuery(GetListEventEmailSettingsDocument, {
+    variables: {
+      event: event._id,
+      scheduled: true,
+      sent: true,
+    },
+    skip: !event?._id,
+    fetchPolicy: 'cache-and-network',
+  });
+
+  const emailScheduled = data?.listEventEmailSettings.filter((i) => !i.sent_at) as EmailSetting[];
+  const emailSent = data?.listEventEmailSettings.filter((i) => i.sent_at) as EmailSetting[];
+
+  const getRecipients = (item: EmailSetting) => {
+    const list = item.recipient_types?.map((type) => RECIPIENT_TYPE_MAP.get(type)) || [];
+    if (item.recipient_filters?.ticket_types?.length) list.push('Going');
+    if (item.recipient_filters?.join_request_states) {
+      const arr = item.recipient_filters?.join_request_states.map((state) => JOIN_REQUEST_STATE_MAP.get(state));
+    }
+
+    return list.join(', ');
+  };
+
   return (
     <>
       <BlastsInput event={event} />
-
       <Spacer className="h-6" />
 
-      <div className="border-2 border-dashed rounded-md *:text-tertiary!">
-        <ListItem icon="icon-email" title="Send Blasts" subtitle="Share updates with your guests via email." />
-      </div>
+      {!!emailScheduled?.length && (
+        <div>
+          <p className="text-sm text-tertiary">Scheduled</p>
+          <Spacer className="h-2" />
+          <div className="flex flex-col gap-3">
+            {emailScheduled.map((item) => (
+              <Card.Root key={item._id}>
+                <Card.Content className="flex items-center justify-between">
+                  <div>
+                    <p>{item.subject_preview}</p>
+                    <p className="text-sm text-tertiary">Sending to: {getRecipients(item)}</p>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 text-warning-400">
+                    <i className="icon-clock size-4" />
+                    <p className="text-sm">{format(item.scheduled_at, 'MMM dd, h:mm a')}</p>
+                  </div>
+                </Card.Content>
+              </Card.Root>
+            ))}
+          </div>
+          <Spacer className="h-6" />
+        </div>
+      )}
+
+      {!!emailSent?.length && (
+        <div>
+          <p className="text-sm text-tertiary">Sent</p>
+          <Spacer className="h-2" />
+          <div className="flex flex-col gap-3">
+            {emailSent.map((item) => (
+              <Card.Root key={item._id}>
+                <Card.Content className="flex items-center justify-between">
+                  <div>
+                    <p>{item.subject_preview}</p>
+                    <p className="text-sm text-tertiary">Sent: {getRecipients(item)}</p>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-sm text-tertiary">{format(item.sent_at, 'MMM dd, h:mm a')}</p>
+                  </div>
+                </Card.Content>
+              </Card.Root>
+            ))}
+          </div>
+          <Spacer className="h-6" />
+        </div>
+      )}
+      {!data?.listEventEmailSettings.length && (
+        <div className="border-2 border-dashed rounded-md *:text-tertiary!">
+          <ListItem icon="icon-email" title="Send Blasts" subtitle="Share updates with your guests via email." />
+        </div>
+      )}
 
       <Divider orientation="horizontal" className="my-8" />
 
@@ -81,10 +158,51 @@ export function EventBlasts() {
 function BlastsInput({ event }: { event: Event }) {
   const me = useMe();
 
+  const defaultSubject = `New message in ${event.title}`;
   const [isFocus, setIsFocus] = React.useState(false);
   const [message, setMessage] = React.useState('');
 
   const toggleFocus = () => setIsFocus((prev) => !prev);
+
+  const [createEmail, { loading: sendingEmail }] = useMutation(CreateEventEmailSettingDocument, {
+    onComplete: (client, res) => {
+      toast.success('Email created successfully');
+      const variables = {
+        event: event._id,
+        scheduled: true,
+        sent: true,
+      };
+      const data = client.readQuery(GetListEventEmailSettingsDocument, variables);
+      const list = data?.listEventEmailSettings as EmailSetting[];
+      const email = res.createEventEmailSetting as EmailSetting;
+      client.writeQuery<any, any>({
+        query: GetListEventEmailSettingsDocument,
+        variables,
+        data: {
+          listEventEmailSettings: [...list, email],
+        },
+      });
+    },
+  });
+
+  const handleSendEmail = () => {
+    const ticket_types = event.event_ticket_types?.map((item) => item._id);
+
+    createEmail({
+      variables: {
+        input: {
+          event: event._id,
+          custom_body_html: message,
+          custom_subject_html: defaultSubject,
+          type: EmailTemplateType.Custom,
+          recipient_types: [EmailRecipientType.Registration],
+          recipient_filters: {
+            ticket_types,
+          },
+        },
+      },
+    });
+  };
 
   return (
     <div className="transition-all flex border border-(--color-card-border) hover:border-card-hover focus-within:border-card-hover bg-(--color-card) rounded-sm px-4 py-3 gap-3">
@@ -119,7 +237,13 @@ function BlastsInput({ event }: { event: Event }) {
                 Advanced
               </Button>
 
-              <Button variant="secondary" size="sm" disabled={!message}>
+              <Button
+                variant="secondary"
+                size="sm"
+                disabled={!message}
+                loading={sendingEmail}
+                onClick={handleSendEmail}
+              >
                 Send
               </Button>
             </motion.div>
@@ -193,8 +317,24 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
   const [scheduleAt, setScheduleAt] = React.useState<string>();
 
   const [createEmail, { loading: sendingEmail }] = useMutation(CreateEventEmailSettingDocument, {
-    onComplete: () => {
+    onComplete: (client, res) => {
       toast.success('Email created successfully');
+      const variables = {
+        event: event._id,
+        scheduled: true,
+        sent: true,
+      };
+      const data = client.readQuery(GetListEventEmailSettingsDocument, variables);
+      const list = data?.listEventEmailSettings as EmailSetting[];
+      const email = res.createEventEmailSetting as EmailSetting;
+      client.writeQuery<any, any>({
+        query: GetListEventEmailSettingsDocument,
+        variables,
+        data: {
+          listEventEmailSettings: [...list, email],
+        },
+      });
+      modal.close();
     },
   });
 
@@ -256,18 +396,19 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
     if (event) {
       let list = [{ key: 'all_tickets', value: 'Going All' }];
       event.event_ticket_types?.map((item) => list.push({ key: item._id, value: `Going - ${item.title}` }));
-      list = merge(list, [
+      list = [
+        ...list,
         { key: EventJoinRequestState.Pending, value: 'Pending' },
         { key: EmailRecipientType.Invited, value: 'Invited' },
         { key: EmailRecipientType.TicketIssued, value: 'Issued' },
         { key: EmailRecipientType.TicketCancelled, value: 'Cancel' },
-      ]);
+      ];
       setRecipients(list);
     }
   }, [event]);
 
   return (
-    <Card.Root className="w-[480px] *:bg-overlay-primary border-none">
+    <Card.Root className="w-sm max-w-full md:w-[480px] *:bg-overlay-primary border-none">
       <ModalHeader icon="icon-email" />
       <Card.Content className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
@@ -287,13 +428,26 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
           label="Message"
           content={body}
           onChange={(content) => setBody(content)}
+          containerClass="bg-background/64"
           placeholder="Share a message with your guests..."
         />
 
         {showSchedule && (
           <div className="flex justify-between items-center">
-            <DateTimePicker minDate={new Date()} onSelect={(datetime) => setScheduleAt(datetime)} placement="bottom" />
-            <Button icon="icon-x" size="sm" variant="flat" onClick={() => setShowSchedule(false)} />
+            <DateTimePicker
+              minDate={new Date()}
+              onSelect={(datetime) => setScheduleAt(datetime)}
+              placement="top-start"
+            />
+            <Button
+              icon="icon-x"
+              size="sm"
+              variant="flat"
+              onClick={() => {
+                setScheduleAt(undefined);
+                setShowSchedule(false);
+              }}
+            />
           </div>
         )}
 
@@ -310,12 +464,26 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
 
           <div className="flex gap-2">
             {!showSchedule && (
-              <Button variant="tertiary-alt" size="sm">
+              <Button
+                variant="tertiary-alt"
+                size="sm"
+                onClick={() => {
+                  setScheduleAt(new Date().toISOString());
+                  setShowSchedule(true);
+                }}
+              >
                 Schedule
               </Button>
             )}
-            <Button variant="secondary" size="sm" loading={sendingEmail} onClick={handleSendEmail}>
-              Send
+
+            <Button
+              variant="secondary"
+              iconLeft={showSchedule ? 'icon-clock' : ''}
+              size="sm"
+              loading={sendingEmail}
+              onClick={handleSendEmail}
+            >
+              {showSchedule ? 'Schedule' : 'Send'}
             </Button>
           </div>
         </div>
@@ -380,13 +548,30 @@ function ScheduleFeedbackModal({ event }: { event: Event }) {
   const me = useMe();
 
   const defaultSubject = `New message in ${event.title}`;
-  const [subject, setSubject] = React.useState('');
-  const [body, setBody] = React.useState();
+  const [subject, setSubject] = React.useState<string>();
+  const [body, setBody] = React.useState<string>();
   const [scheduleAt, setScheduleAt] = React.useState<string>();
 
   const [createEmail, { loading: sendingEmail }] = useMutation(CreateEventEmailSettingDocument, {
-    onComplete: () => {
+    onComplete: (client, res) => {
       toast.success('Email created successfully');
+      const variables = {
+        event: event._id,
+        scheduled: true,
+        sent: true,
+      };
+      const data = client.readQuery(GetListEventEmailSettingsDocument, variables);
+      const list = data?.listEventEmailSettings as EmailSetting[];
+      const email = res.createEventEmailSetting as EmailSetting;
+      client.writeQuery<any, any>({
+        query: GetListEventEmailSettingsDocument,
+        variables,
+        data: {
+          listEventEmailSettings: [...list, email],
+        },
+      });
+
+      modal.close();
     },
   });
 
@@ -433,13 +618,22 @@ function ScheduleFeedbackModal({ event }: { event: Event }) {
         <div>
           <p className="text-secondary text-sm">When should the feedback email be sent?</p>
           <Spacer className="h-1.5" />
-          <DateTimePicker minDate={new Date()} onSelect={(datetime) => setScheduleAt(datetime)} placement="bottom" />
+          <DateTimePicker
+            minDate={new Date()}
+            onSelect={(datetime) => setScheduleAt(datetime)}
+            placement="bottom-start"
+          />
           <Spacer className="h-2" />
           <p className="text-secondary text-sm">Immediately after the event ends</p>
         </div>
 
         <InputField label="Subject" value={subject} onChangeText={(value) => setSubject(value)} />
-        <TextEditor label="Message" content={subject} onChange={(content) => setBody(content)} />
+        <TextEditor
+          label="Message"
+          content={subject}
+          containerClass="bg-background/64"
+          onChange={(content) => setBody(content)}
+        />
 
         <div className="flex flex-col gap-1.5">
           <p className="text-secondary text-sm">What did you think of {event.title}?</p>
@@ -448,7 +642,10 @@ function ScheduleFeedbackModal({ event }: { event: Event }) {
             {Array.from({ length: 5 }, (_, i) => i + 1)
               .reverse()
               .map((i) => (
-                <div className="bg-(--btn-tertiary) size-9 aspect-square flex items-center justify-center">
+                <div
+                  key={i}
+                  className="bg-(--btn-tertiary) rounded-sm size-9 aspect-square flex items-center justify-center"
+                >
                   <img src={`${ASSET_PREFIX}/assets/images/rate-${i}.png`} width={20} height={20} />
                 </div>
               ))}

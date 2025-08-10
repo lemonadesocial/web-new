@@ -83,7 +83,7 @@ export default function TextEditor({
     editorProps: {
       attributes: {
         class: twMerge(
-          'tiptap border hover:border-primary focus:border-primary px-3 py-2.5 min-h-[110px] rounded-sm outline-none',
+          'tiptap border hover:border-quaternary focus:border-primary px-3 py-2.5 min-h-[110px] rounded-sm outline-none',
           containerClass,
         ),
       },

@@ -122,7 +122,7 @@ export function DropdownTags(props: DropdownTagsProps) {
                 />
               </div>
             </fieldset>
-            <div className="p-2">
+            <div className="p-2 max-h-[200px] overflow-auto no-scrollbar">
               {props.options
                 .filter((item) => !query || item.value.includes(query.toLowerCase()))
                 .map((item) => (
