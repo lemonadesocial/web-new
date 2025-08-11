@@ -46,51 +46,6 @@ export function AddHostModal({ event }: { event: Event }) {
     setSearchTerm(value);
   };
 
-  const renderUserSuggestions = () => {
-    if (usersLoading) {
-      return (
-        <div className="w-[216px] self-center flex flex-col justify-center h-full">
-          <p className="text-tertiary text-center">Searching...</p>
-        </div>
-      );
-    }
-
-    if (users.length === 0 && !isValidEmail) {
-      return (
-        <div className="w-[216px] self-center flex flex-col justify-center h-full">
-          <p className="text-tertiary text-center">No Suggestions Found</p>
-          <p className="text-sm text-tertiary text-center">You can invite hosts by entering their email address.</p>
-        </div>
-      );
-    }
-
-    return (
-      <div className="space-y-2">
-        {users.map((user) => (
-          <div
-            key={user._id}
-            className="flex items-center gap-3 py-2 px-3 bg-primary/8 rounded-sm cursor-pointer"
-            onClick={() => {
-              setSelectedUser(user as any);
-              setShowConfigureHostModal(true);
-            }}
-          >
-            <Avatar
-              src={userAvatar(user as any)}
-              size="lg"
-            />
-            <div>
-              <p>{user.display_name || user.name}</p>
-              <p className="text-sm text-tertiary">
-                {user.email}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
   if (showConfigureHostModal) {
     return (
       <ConfigureHostModal
@@ -121,7 +76,7 @@ export function AddHostModal({ event }: { event: Event }) {
       <Spacer className="h-2" />
       <div className="h-[140px] overflow-auto no-scrollbar flex flex-col">
         {
-          isValidEmail && (
+          (isValidEmail && users.length === 0) && (
             <div
               className="flex items-center gap-3 py-2 px-3 bg-primary/8 rounded-sm cursor-pointer mb-2"
               onClick={() => setShowConfigureHostModal(true)}
@@ -140,7 +95,40 @@ export function AddHostModal({ event }: { event: Event }) {
             </div>
           )
         }
-        {renderUserSuggestions()}
+        {usersLoading ? (
+          <div className="w-[216px] self-center flex flex-col justify-center h-full">
+            <p className="text-tertiary text-center">Searching...</p>
+          </div>
+        ) : users.length === 0 && !isValidEmail ? (
+          <div className="w-[216px] self-center flex flex-col justify-center h-full">
+            <p className="text-tertiary text-center">No Suggestions Found</p>
+            <p className="text-sm text-tertiary text-center">You can invite hosts by entering their email address.</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {users.map((user) => (
+              <div
+                key={user._id}
+                className="flex items-center gap-3 py-2 px-3 bg-primary/8 rounded-sm cursor-pointer"
+                onClick={() => {
+                  setSelectedUser(user as any);
+                  setShowConfigureHostModal(true);
+                }}
+              >
+                <Avatar
+                  src={userAvatar(user as any)}
+                  size="lg"
+                />
+                <div>
+                  <p>{user.display_name || user.name}</p>
+                  <p className="text-sm text-tertiary">
+                    {user.email}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </ModalContent>
   );
