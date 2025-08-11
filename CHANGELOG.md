@@ -1,5 +1,43 @@
 # Changelog
 
+## [3.0.0](https://github.com/lemonadesocial/web-new/compare/v2.2.1...v3.0.0) (2025-08-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* manage event
+
+### Features
+
+* add feedback - advanced send email ([aa9670a](https://github.com/lemonadesocial/web-new/commit/aa9670ae37f30c46af786cfd59b494d6834a4630))
+* guests overview ([fb6e2cd](https://github.com/lemonadesocial/web-new/commit/fb6e2cda3aa1d15d6adf2a6546662aa5410aa335))
+* implement blasts ([de9c587](https://github.com/lemonadesocial/web-new/commit/de9c587b11afe4414d0098adeb27fe28ae7255e2))
+* manage event ([69f9865](https://github.com/lemonadesocial/web-new/commit/69f9865d2e1522a278906c955e39b04cb9b657a1))
+* manage event ([29fe643](https://github.com/lemonadesocial/web-new/commit/29fe6431f38a55a086168f7370affd010110a5b6))
+* missing value schedule datetime ([fe2416c](https://github.com/lemonadesocial/web-new/commit/fe2416cf567f86d2b3640e6c45d714453fd6b694))
+* prevent dismiss modal ([cb5dac2](https://github.com/lemonadesocial/web-new/commit/cb5dac2c4e18f11bc30956bb29699a879c9d9197))
+* remove blur toggle blasts input ([17d540c](https://github.com/lemonadesocial/web-new/commit/17d540cba76eda720f40f7077234a72999f34aff))
+* ticket visibility ([8a2a1df](https://github.com/lemonadesocial/web-new/commit/8a2a1dff4509f90e5ff0d33dcdc8eb19be7cd3f3))
+* update default blasts advance ([d4fee6f](https://github.com/lemonadesocial/web-new/commit/d4fee6fe34a251dad0be882fb6ddfe729e8bb006))
+* update display schedule date blasts advanced ([847c2f5](https://github.com/lemonadesocial/web-new/commit/847c2f5a6705361287babbdb99c3df3be7a08509))
+* update graphql ([ab8f751](https://github.com/lemonadesocial/web-new/commit/ab8f751184d0a8f19c54808dff3f95b16278f10c))
+* update layout ([a0b4767](https://github.com/lemonadesocial/web-new/commit/a0b4767898ae220c8a23b5e4916cf1f2d7559017))
+* update mbweb ([f927606](https://github.com/lemonadesocial/web-new/commit/f927606430115faf0c41ef816270197d17ca9655))
+* update new api ([f3091d7](https://github.com/lemonadesocial/web-new/commit/f3091d77ca6de6cd6965ca50d3bda3d90f073cea))
+* update send email - test email ([9f8301c](https://github.com/lemonadesocial/web-new/commit/9f8301cd225ac518ccb9b96043187fa3fe4c1197))
+* update test ([64c18fd](https://github.com/lemonadesocial/web-new/commit/64c18fdd3bb59c38e241f747143a47c19801443d))
+
+
+### Bug Fixes
+
+* email suggestion ([f0ec964](https://github.com/lemonadesocial/web-new/commit/f0ec9646f36caca74b676e27fa5741bb5799d2a7))
+* fix terms link ([2f6873d](https://github.com/lemonadesocial/web-new/commit/2f6873d96ba7a9be0d950b25594731e998013953))
+* import ([5e3a98b](https://github.com/lemonadesocial/web-new/commit/5e3a98bc08820565851fa4b73f5394ea8826feeb))
+* invite display name ([7544325](https://github.com/lemonadesocial/web-new/commit/7544325dd3d6d227e06f3898052c01302a6c5cdc))
+* open check in ([c34e570](https://github.com/lemonadesocial/web-new/commit/c34e570bad893f51694bf7817e170bc0fafefd46))
+* pending approval title ([dbe7b74](https://github.com/lemonadesocial/web-new/commit/dbe7b7400b9a72110303b96ba56b5ea9881348b0))
+* user avatar on registraion ([14911f7](https://github.com/lemonadesocial/web-new/commit/14911f778b2e06d963220a4e67a081183fc312af))
+
 ## [2.2.1](https://github.com/lemonadesocial/web-new/compare/v2.2.0...v2.2.1) (2025-08-07)
 
 
