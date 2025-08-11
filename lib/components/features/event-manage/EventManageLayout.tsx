@@ -55,14 +55,12 @@ export function EventManageLayout({ children, event: initEvent }: React.PropsWit
         requestAnimationFrame(setupObserver);
         return;
       }
-      
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            setIsScrolled(!entry.isIntersecting);
-          });
-        }
-      );
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          setIsScrolled(!entry.isIntersecting);
+        });
+      });
 
       observer.observe(sentinelRef.current);
 
@@ -80,11 +78,11 @@ export function EventManageLayout({ children, event: initEvent }: React.PropsWit
 
   const handlePublish = () => {
     if (!event?._id) return;
-    
+
     publishEvent({
       variables: {
-        event: event._id
-      }
+        event: event._id,
+      },
     });
   };
 
@@ -92,13 +90,13 @@ export function EventManageLayout({ children, event: initEvent }: React.PropsWit
 
   return (
     <div>
-      <div ref={sentinelRef}  />
+      <div ref={sentinelRef} />
       {/* <div className={clsx("sticky top-0 backdrop-blur-md transition-all duration-300 z-1", isScrolled ? "pt-2" : "pt-7")}> */}
-      <div className={clsx("sticky top-0 backdrop-blur-md transition-all duration-300 z-1 pt-7")}>
+      <div className={clsx('sticky top-0 backdrop-blur-md transition-all duration-300 z-1 pt-7')}>
         <div className="page mx-auto px-4 md:px-0">
           <div className="flex justify-between items-center">
             {/* <h1 className={clsx("font-semibold transition-all duration-300", isScrolled ? "text-lg font-body" : "text-2xl")}>{event.title}</h1> */}
-            <h1 className={clsx("font-semibold transition-all duration-300 text-2xl")}>{event.title}</h1>
+            <h1 className={clsx('font-semibold transition-all duration-300 text-2xl')}>{event.title}</h1>
             <div className="flex gap-2">
               {event.published ? (
                 <Button
@@ -110,12 +108,7 @@ export function EventManageLayout({ children, event: initEvent }: React.PropsWit
                   Published
                 </Button>
               ) : (
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={handlePublish}
-                  loading={publishing}
-                >
+                <Button variant="primary" size="sm" onClick={handlePublish} loading={publishing}>
                   Publish
                 </Button>
               )}
@@ -129,8 +122,8 @@ export function EventManageLayout({ children, event: initEvent }: React.PropsWit
               </Button>
             </div>
           </div>
-          <nav className="flex gap-4 pt-1">
-            {eventManageMenu.map(item => {
+          <nav className="flex gap-4 pt-1 overflow-auto no-scrollbar">
+            {eventManageMenu.map((item) => {
               const url = `/e/manage/${shortid}/${item.page}`;
               const isActive = pathname === url;
 
@@ -140,18 +133,15 @@ export function EventManageLayout({ children, event: initEvent }: React.PropsWit
                   key={item.page}
                   className={clsx(isActive && 'border-b-2 border-b-primary', 'pb-2.5')}
                 >
-                  <span className={clsx(isActive ? 'text-primary' : 'text-tertiary', 'font-medium')}>
-                    {item.name}
-                  </span>
+                  <span className={clsx(isActive ? 'text-primary' : 'text-tertiary', 'font-medium')}>{item.name}</span>
                 </NextLink>
-              )
+              );
             })}
           </nav>
         </div>
         <hr className="w-screen -mx-[50vw] ml-[calc(-50vw+50%)] border-t border-t-divider" />
       </div>
-      <div className="page mx-auto py-7 px-4 md:px-0">
-        {children}
-      </div>
-    </div>);
+      <div className="page mx-auto py-7 px-4 md:px-0">{children}</div>
+    </div>
+  );
 }

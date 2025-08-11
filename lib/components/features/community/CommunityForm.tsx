@@ -13,7 +13,6 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { uploadFiles } from '$lib/utils/file';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
-import { error } from 'console';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { useSession } from '$lib/hooks/useSession';

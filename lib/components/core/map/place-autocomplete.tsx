@@ -84,6 +84,7 @@ export function PlaceAutoComplete({
         label={label}
         autoFocus={autoFocus}
         iconLeft="icon-location-outline text-tertiary"
+        right={{ icon: 'icon-cancel text-tertiary size-5 cursor-pointer', onClick: handleClear }}
         value={query}
         placeholder={placeholder}
         onChange={(e) => {

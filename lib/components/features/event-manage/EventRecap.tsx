@@ -24,7 +24,7 @@ export function EventRecap({ event }: { event: Event }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="flex flex-col md:grid md:grid-cols-2 gap-4">
         <div className="space-y-3 py-3 px-4 rounded-md border border-card-border bg-card">
           <p className="text-xs text-tertiary">EVENT RECAP</p>
           <div className="space-y-1.5">

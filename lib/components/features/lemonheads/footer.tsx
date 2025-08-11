@@ -58,7 +58,7 @@ export function LemonHeadFooter() {
       query: CanMintLemonheadDocument,
       variables: { wallet: address },
     });
-    const canMint = dataCanMint?.canMintLemonhead;
+    const canMint = dataCanMint?.canMintLemonhead.can_mint;
 
     if (!canMint) {
       toast.error('Not able to mint!');
