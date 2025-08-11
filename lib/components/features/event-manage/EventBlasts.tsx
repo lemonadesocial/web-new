@@ -51,8 +51,8 @@ export function EventBlasts() {
     fetchPolicy: 'cache-and-network',
   });
 
-  const emailScheduled = data?.listEventEmailSettings.filter((i) => !i.sent_at) as EmailSetting[];
-  const emailSent = data?.listEventEmailSettings.filter((i) => i.sent_at) as EmailSetting[];
+  const emailScheduled = data?.listEventEmailSettings.filter((i) => !i.sent_at && !i.disabled) as EmailSetting[];
+  const emailSent = data?.listEventEmailSettings.filter((i) => i.sent_at && !i.disabled) as EmailSetting[];
 
   const getRecipients = (item: EmailSetting) => {
     let list = item.recipient_types?.map((type) => RECIPIENT_TYPE_MAP.get(type)).filter(Boolean) || [];
@@ -170,7 +170,7 @@ function BlastsInput({ event }: { event: Event }) {
 
   const [createEmail, { loading: sendingEmail }] = useMutation(CreateEventEmailSettingDocument, {
     onComplete: (client, res) => {
-      setMessage('')
+      setMessage('');
       toast.success('Email created successfully');
       const variables = {
         event: event._id,
