@@ -21,6 +21,7 @@ import { useUpdateEvent } from "./store";
 import { convertFromUtcToTimezone } from "$lib/utils/date";
 import { getEventDateBlockRange, getEventDateBlockStart } from "$lib/utils/event";
 import { UpdateEventLinkModal } from "./modals/UpdateEventLinkModal";
+import { LEMONADE_DOMAIN } from "$lib/utils/constants";
 
 export function EventAccessInfo({ event }: { event: Event }) {
   const [uploading, setUploading] = useState(false);
@@ -177,7 +178,7 @@ export function EventAccessInfo({ event }: { event: Event }) {
             variant="tertiary"
             size="sm"
             iconLeft="icon-qr"
-            onClick={() => router.push(`/e/manage/${event.shortid}`)}
+            onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event.shortid}/check-in`, '_blank')}
             className="w-full"
           >
               Check In Guests
