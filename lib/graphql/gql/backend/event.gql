@@ -709,6 +709,20 @@ query ListEventGuests($event: MongoID!, $skip: Int, $limit: Int, $search: String
       join_request {
         _id
         state
+        non_login_user {
+          _id
+          display_name
+          email
+          image_avatar
+          name
+        }
+        user_expanded {
+          _id
+          display_name
+          email
+          image_avatar
+          name
+        }
       }
       ticket {
         _id

@@ -2,9 +2,9 @@ import { Avatar, Button, drawer, modal } from "$lib/components/core";
 import { Event, GetEventInvitedStatisticsDocument, InvitationResponse, User } from "$lib/graphql/generated/backend/graphql";
 import { useQuery } from "$lib/graphql/request";
 import { userAvatar } from "$lib/utils/user";
-import { EventInvitesDrawer } from "./drawers/EventInvitesDrawer";
+import { EventInvitesDrawer } from "../drawers/EventInvitesDrawer";
 
-import { InviteGuestsModal } from "./modals/InviteGuestsModal";
+import { InviteGuestsModal } from "../modals/InviteGuestsModal";
 
 export function EventInvites({ event }: { event: Event }) {
   const { data } = useQuery(GetEventInvitedStatisticsDocument, {

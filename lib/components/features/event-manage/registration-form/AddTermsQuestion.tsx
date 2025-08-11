@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { Button, Input, ModalContent, modal, Toggle, TextEditor, toast, Segment } from "$lib/components/core";
-import { Event, UpdateEventSettingsDocument } from "$lib/graphql/generated/backend/graphql";
+import { UpdateEventSettingsDocument } from "$lib/graphql/generated/backend/graphql";
 import { useMutation } from "$lib/graphql/request";
 
 import { AddQuestionModal } from "./AddQuestionModal";
@@ -10,7 +10,7 @@ import { useEvent, useUpdateEvent } from "../store";
 export function AddTermsQuestion() {
   const currentEvent = useEvent();
   const updateEvent = useUpdateEvent();
-  
+
   const [contentType, setContentType] = useState<'text' | 'link'>('text');
   const [termsText, setTermsText] = useState(currentEvent?.terms_text || '');
   const [termsLink, setTermsLink] = useState(currentEvent?.terms_link || '');
@@ -69,9 +69,9 @@ export function AddTermsQuestion() {
             <p className="text-xs text-secondary">Collect consent to terms and conditions</p>
           </div>
         </div>
-        
+
         <hr className="border-t border-t-divider -mx-4" />
-        
+
         <div className="space-y-2">
           <p className="text-sm font-medium">Content Type</p>
           <Segment
@@ -86,30 +86,24 @@ export function AddTermsQuestion() {
           />
         </div>
 
-        <div className="space-y-2">
-          {contentType === 'text' && (
-            <>
-              <p className="text-sm font-medium">Terms Content</p>
-              <TextEditor
-                content={termsText}
-                onChange={setTermsText}
-                placeholder="Enter terms and conditions text here..."
-              />
-            </>
-          )}
-          
-          {contentType === 'link' && (
-            <>
-              <p className="text-sm font-medium">Terms Link</p>
-              <Input
-                type="url"
-                value={termsLink}
-                onChange={(e) => setTermsLink(e.target.value)}
-                placeholder="Enter terms and conditions link here..."
-                variant="outlined"
-              />
-            </>
-          )}
+        <div className={`${contentType === 'text' ? 'block space-y-2' : 'hidden'}`}>
+          <p className="text-sm font-medium">Terms Content</p>
+          <TextEditor
+            content={termsText}
+            onChange={setTermsText}
+            placeholder="Enter terms and conditions text here..."
+          />
+        </div>
+
+        <div className={`${contentType === 'link' ? 'block space-y-2' : 'hidden'}`}>
+          <p className="text-sm font-medium">Terms Link</p>
+          <Input
+            type="url"
+            value={termsLink}
+            onChange={(e) => setTermsLink(e.target.value)}
+            placeholder="Enter terms and conditions link here..."
+            variant="outlined"
+          />
         </div>
 
         <div className="flex items-center justify-between">
