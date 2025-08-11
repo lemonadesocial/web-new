@@ -2,8 +2,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
-import clsx from 'clsx';
-import { merge } from 'lodash';
 import {
   Button,
   Card,
@@ -29,19 +27,32 @@ import {
   EventJoinRequestState,
   GetListEventEmailSettingsDocument,
   SendEventEmailSettingTestEmailsDocument,
+  UpdateEventEmailSettingDocument,
 } from '$lib/graphql/generated/backend/graphql';
 import { useEvent } from './store';
 import { useMutation, useQuery } from '$lib/graphql/request';
-import { isMobile } from 'react-device-detect';
 import { JOIN_REQUEST_STATE_MAP, RECIPIENT_TYPE_MAP } from '$lib/utils/email';
-import { format } from 'date-fns';
+import { format, formatDistance } from 'date-fns';
+
+function getRecipients(item: EmailSetting) {
+  let list = item.recipient_types?.map((type) => RECIPIENT_TYPE_MAP.get(type)).filter(Boolean) || [];
+  if (item.recipient_filters?.ticket_types?.length) list.push('Going');
+  if (item.recipient_filters?.join_request_states) {
+    const arr =
+      item.recipient_filters?.join_request_states?.map((state) => JOIN_REQUEST_STATE_MAP.get(state)).filter(Boolean) ||
+      [];
+    list = [...list, ...arr];
+  }
+
+  return list.join(', ');
+}
 
 export function EventBlasts() {
   const event = useEvent();
 
   if (!event) return null;
 
-  const { data } = useQuery(GetListEventEmailSettingsDocument, {
+  const { data, loading } = useQuery(GetListEventEmailSettingsDocument, {
     variables: {
       event: event._id,
       scheduled: true,
@@ -53,20 +64,9 @@ export function EventBlasts() {
 
   const emailScheduled = data?.listEventEmailSettings.filter((i) => !i.sent_at && !i.disabled) as EmailSetting[];
   const emailSent = data?.listEventEmailSettings.filter((i) => i.sent_at && !i.disabled) as EmailSetting[];
-
-  const getRecipients = (item: EmailSetting) => {
-    let list = item.recipient_types?.map((type) => RECIPIENT_TYPE_MAP.get(type)).filter(Boolean) || [];
-    if (item.recipient_filters?.ticket_types?.length) list.push('Going');
-    if (item.recipient_filters?.join_request_states) {
-      const arr =
-        item.recipient_filters?.join_request_states
-          ?.map((state) => JOIN_REQUEST_STATE_MAP.get(state))
-          .filter(Boolean) || [];
-      list = [...list, ...arr];
-    }
-
-    return list.join(', ');
-  };
+  const reminderEmails = data?.listEventEmailSettings.filter(
+    (i) => i.type === EmailTemplateType.Reminder,
+  ) as EmailSetting[];
 
   return (
     <>
@@ -138,7 +138,20 @@ export function EventBlasts() {
               icon="icon-alarm"
               title="Event Reminders"
               subtitle="Reminders are sent automatically via email 1 day and 2h before the event."
-              actions={[{ text: 'Manage', onClick: () => modal.open(EventReminderModal, { props: { event } }) }]}
+              actions={[
+                !!reminderEmails?.length
+                  ? {
+                      text: 'Manage',
+                      onClick: () =>
+                        modal.open(EventReminderModal, {
+                          props: {
+                            event,
+                            reminderEmails,
+                          },
+                        }),
+                    }
+                  : undefined,
+              ]}
             />
 
             <ListItem
@@ -267,7 +280,7 @@ function ListItem({
   icon: string;
   title: string;
   subtitle: string;
-  actions?: { text: string; onClick?: React.MouseEventHandler<HTMLButtonElement> }[];
+  actions?: Array<{ text: string; onClick?: React.MouseEventHandler<HTMLButtonElement> } | undefined>;
 }) {
   return (
     <div className="flex gap-3 px-4 py-3 items-center">
@@ -281,11 +294,14 @@ function ListItem({
           <p className="text-tertiary text-sm">{subtitle}</p>
         </div>
         <div className="flex gap-2">
-          {actions.map((item, idx) => (
-            <Button size="sm" variant="tertiary-alt" onClick={item.onClick} key={idx}>
-              {item.text}
-            </Button>
-          ))}
+          {actions.map((item, idx) => {
+            if (!item) return null;
+            return (
+              <Button size="sm" variant="tertiary-alt" onClick={item.onClick} key={idx}>
+                {item.text}
+              </Button>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -441,11 +457,7 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
 
         {showSchedule && (
           <div className="flex justify-between items-center">
-            <DateTimePicker
-              minDate={new Date()}
-              onSelect={(datetime) => setScheduleAt(datetime)}
-              placement="top-start"
-            />
+            <DateTimePicker value={scheduleAt} onSelect={(datetime) => setScheduleAt(datetime)} placement="top-start" />
             <Button
               icon="icon-x"
               size="sm"
@@ -499,8 +511,31 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
   );
 }
 
-function EventReminderModal({ event }: { event: Event }) {
-  const [autoSend, setAutoSend] = React.useState(true);
+function EventReminderModal({ event, reminderEmails = [] }: { event: Event; reminderEmails?: EmailSetting[] }) {
+  const [autoSend, setAutoSend] = React.useState(!reminderEmails[0]?.disabled);
+
+  const [updateEmail, { client }] = useMutation(UpdateEventEmailSettingDocument);
+
+  const handleToggleReminder = async (toggle: boolean) => {
+    try {
+      const promises: any = [];
+      reminderEmails
+        .map((i) => i._id)
+        .forEach((_id) => promises.push(updateEmail({ variables: { input: { _id, disabled: toggle } } })));
+
+      await Promise.all(promises);
+      reminderEmails.forEach((item) =>
+        client.writeFragment({ id: `EmailSetting:${item._id}`, data: { ...item, disabled: toggle } }),
+      );
+
+      toast.success(`${toggle ? 'Enabled' : 'Disabled'} emails.`);
+    } catch (error) {
+      toast.error('Cannot toggle reminder emails!');
+    }
+  };
+
+  const availabled = reminderEmails.filter((item) => !item.sent_at).length > 0;
+
   return (
     <Card.Root className="w-sm max-w-full md:w-[480px] *:bg-overlay-primary border-none">
       <ModalHeader icon="icon-bell" />
@@ -514,38 +549,43 @@ function EventReminderModal({ event }: { event: Event }) {
           <p>Send Automatic Reminders</p>
           <Toggle
             id="event_reminder_toggle"
-            checked={autoSend}
+            disabled={!availabled}
+            checked={!!autoSend}
             onChange={(value) => {
-              // FIXME: should call BE to update event reminders
               setAutoSend(value);
+              handleToggleReminder(!value);
             }}
           />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <p className="text-sm text-tertiary">The following reminders are set up for this event:</p>
-          <Card.Root>
-            <Card.Content className="p-0">
-              <div className="px-4 py-3">
-                <p>{event.title} is starting tomorrow</p>
-                <div className="flex gap-1.5 items-center">
-                  <span>To: Going</span>
-                  <div className="size-0.5 rounded-full bg-(--color-primary)" />
-                  <span>Not Sent</span>
-                </div>
-              </div>
-              <Divider />
-              <div className="px-4 py-3">
-                <p>{event.title} is starting tomorrow</p>
-                <div className="flex gap-1.5 items-center">
-                  <span>To: Going</span>
-                  <div className="size-0.5 rounded-full bg-(--color-primary)" />
-                  <span>Not Sent</span>
-                </div>
-              </div>
-            </Card.Content>
-          </Card.Root>
-        </div>
+        {availabled && (
+          <div className="flex flex-col gap-2">
+            <p className="text-sm text-tertiary">The following reminders are set up for this event:</p>
+            <Card.Root>
+              <Card.Content className="p-0">
+                {reminderEmails.map((item) => {
+                  if (item.sent_at) return null;
+
+                  return (
+                    <React.Fragment key={item._id}>
+                      <div className="px-4 py-3">
+                        <p>
+                          {event.title} is starting {formatDistance(new Date(), item.scheduled_at)}
+                        </p>
+                        <div className="flex gap-1.5 items-center">
+                          <span>To: {getRecipients(item)}</span>
+                          <div className="size-0.5 rounded-full bg-(--color-primary)" />
+                          <span>{item.sent_at ? 'Sent' : 'Not Sent'}</span>
+                        </div>
+                      </div>
+                      <Divider />
+                    </React.Fragment>
+                  );
+                })}
+              </Card.Content>
+            </Card.Root>
+          </div>
+        )}
       </Card.Content>
     </Card.Root>
   );
@@ -626,7 +666,7 @@ function ScheduleFeedbackModal({ event }: { event: Event }) {
           <p className="text-secondary text-sm">When should the feedback email be sent?</p>
           <Spacer className="h-1.5" />
           <DateTimePicker
-            minDate={new Date()}
+            value={scheduleAt}
             onSelect={(datetime) => setScheduleAt(datetime)}
             placement="bottom-start"
           />
