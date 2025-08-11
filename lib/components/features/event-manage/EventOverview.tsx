@@ -10,6 +10,7 @@ import { ManageHost } from "./ManageHost";
 import { PaymentOverview } from "./PaymentOverview";
 import { EventRecap } from "./EventRecap";
 import { EventInvites } from "./EventInvites";
+import { GuestsOverview } from "./GuestsOverview";
 
 export function EventOverview() {
   const event = useEvent();
@@ -59,6 +60,10 @@ export function EventOverview() {
       }
 
       <EventInvites event={event} />
+
+      <hr className="border-t" />
+
+      <GuestsOverview event={event} />
 
       <hr className="border-t" />
 

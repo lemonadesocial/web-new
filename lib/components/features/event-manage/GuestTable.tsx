@@ -1,0 +1,114 @@
+import { formatDistanceToNow } from 'date-fns';
+import { Avatar, Chip, Skeleton } from '$lib/components/core';
+import { Event, EventJoinRequestState } from '$lib/graphql/generated/backend/graphql';
+import { randomUserImage } from '$lib/utils/user';
+import { GuestDetailsDrawer } from './drawers/GuestDetailsDrawer';
+import { drawer } from '$lib/components/core';
+
+interface GuestTableProps {
+  event: Event;
+  guests: any[];
+  loading?: boolean;
+  pageSize?: number;
+  onGuestClick?: (guest: any) => void;
+}
+
+export function GuestTable({ event, guests, loading = false, pageSize = 10, onGuestClick }: GuestTableProps) {
+  const handleGuestClick = (guest: any) => {
+    if (onGuestClick) {
+      onGuestClick(guest);
+    } else {
+      drawer.open(GuestDetailsDrawer, { props: { email: guest.user.email, event: event._id } });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="rounded-md border border-card-border bg-card">
+        <div className="divide-y divide-(--color-divider)">
+          {Array.from({ length: pageSize }).map((_, index) => (
+            <div key={index} className="flex items-center justify-between px-4 py-3">
+              <div className="flex items-center gap-3 flex-1">
+                <Skeleton className="w-5 h-5 rounded-full" animate />
+                <div className="flex-1 flex gap-2 items-center">
+                  <Skeleton className="h-4 w-24" animate />
+                  <Skeleton className="h-4 w-32" animate />
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-5 w-16 rounded-full" animate />
+                <Skeleton className="h-4 w-20" animate />
+                <Skeleton className="h-5 w-12 rounded-full" animate />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (guests.length === 0) {
+    return (
+      <div className="rounded-md border border-card-border bg-card">
+        <div className="text-center py-12">
+          <p className="text-tertiary">No guests found</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-md border border-card-border bg-card">
+      <div className="divide-y divide-(--color-divider)">
+        {guests.map((guest, index) => {
+          console.log(guest)
+          return (
+            <div
+              key={index}
+              className="flex items-center justify-between px-4 py-3 hover:bg-card-hover cursor-pointer"
+              onClick={() => handleGuestClick(guest)}
+            >
+              <div className="flex items-center gap-3 flex-1">
+                <Avatar
+                  src={guest.user.image_avatar || randomUserImage(guest.user.email?.toString())}
+                  className="size-5"
+                />
+                <div className="flex-1 flex gap-2 items-center">
+                  <p className="truncate">{guest.user.display_name || guest.user.name || 'Anonymous'}</p>
+                  <p className="text-tertiary truncate">{guest.user.email}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                {guest.ticket && (
+                  <>
+                    <Chip variant="secondary" size="xxs" className="rounded-full" leftIcon="icon-ticket size-3">
+                      {guest.ticket?.type_expanded?.title}
+                    </Chip>
+                    <span className="text-sm text-tertiary whitespace-nowrap">
+                      {formatDistanceToNow(new Date(guest.ticket?.created_at), { addSuffix: true })}
+                    </span>
+                  </>
+                )}
+                {(!guest.join_request || guest.join_request.state === EventJoinRequestState.Approved) && (
+                  <Chip variant="success" size="xxs" className="rounded-full">
+                    Going
+                  </Chip>
+                )}
+                {guest.join_request?.state === EventJoinRequestState.Pending && (
+                  <Chip variant="warning" size="xxs" className="rounded-full">
+                    Pending
+                  </Chip>
+                )}
+                {guest.join_request?.state === EventJoinRequestState.Declined && (
+                  <Chip variant="error" size="xxs" className="rounded-full">
+                    Declined
+                  </Chip>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

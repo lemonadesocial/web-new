@@ -8,8 +8,6 @@ import { ConfigureHostModal } from "./modals/ConfigureHostModal";
 export function ManageHost({ event }: { event: Event }) {
   if (!event.host_expanded) return;
 
-  console.log(event.visible_cohosts_expanded)
-
   const isVisible = (user: string) => {
     return event.visible_cohosts_expanded?.some(c => c?._id === user);
   }
