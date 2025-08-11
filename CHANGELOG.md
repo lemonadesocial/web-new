@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/lemonadesocial/web-new/compare/v3.0.0...v3.1.0) (2025-08-11)
+
+
+### Features
+
+* update event visibility ([44d3dc6](https://github.com/lemonadesocial/web-new/commit/44d3dc6fc71043a2c2274a37a39e08fc43d6c65d))
+
 ## [3.0.0](https://github.com/lemonadesocial/web-new/compare/v2.2.1...v3.0.0) (2025-08-11)
 
 
