@@ -688,6 +688,12 @@ query GetEventInvitedStatistics($id: MongoID!, $statuses: [InvitationResponse!],
       declined
       user_expanded {
         _id
+        display_name
+        new_photos_expanded(limit: 1) {
+          _id
+          key
+          bucket
+        }
       }
     }
     total

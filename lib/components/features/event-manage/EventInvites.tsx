@@ -70,9 +70,9 @@ export function EventInvites({ event }: { event: Event }) {
                 {stats.guests
                   .map((guest, index) => (
                     <div key={index} className="flex items-center gap-3 py-2.5 px-4">
-                      <Avatar src={userAvatar(guest)} className="size-5" />
+                      <Avatar src={userAvatar(guest.user_expanded)} className="size-5" />
                       <div className="flex items-center gap-2">
-                        <p>{guest.user?.display_name || 'Anonymous'}</p>
+                        <p>{guest.user_expanded?.display_name || 'Anonymous'}</p>
                         <p className="text-tertiary">{guest.email}</p>
                       </div>
                     </div>
