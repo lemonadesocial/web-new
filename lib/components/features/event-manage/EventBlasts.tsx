@@ -55,10 +55,14 @@ export function EventBlasts() {
   const emailSent = data?.listEventEmailSettings.filter((i) => i.sent_at) as EmailSetting[];
 
   const getRecipients = (item: EmailSetting) => {
-    const list = item.recipient_types?.map((type) => RECIPIENT_TYPE_MAP.get(type)) || [];
+    let list = item.recipient_types?.map((type) => RECIPIENT_TYPE_MAP.get(type)).filter(Boolean) || [];
     if (item.recipient_filters?.ticket_types?.length) list.push('Going');
     if (item.recipient_filters?.join_request_states) {
-      const arr = item.recipient_filters?.join_request_states.map((state) => JOIN_REQUEST_STATE_MAP.get(state));
+      const arr =
+        item.recipient_filters?.join_request_states
+          ?.map((state) => JOIN_REQUEST_STATE_MAP.get(state))
+          .filter(Boolean) || [];
+      list = [...list, ...arr];
     }
 
     return list.join(', ');
@@ -166,6 +170,7 @@ function BlastsInput({ event }: { event: Event }) {
 
   const [createEmail, { loading: sendingEmail }] = useMutation(CreateEventEmailSettingDocument, {
     onComplete: (client, res) => {
+      setMessage('')
       toast.success('Email created successfully');
       const variables = {
         event: event._id,
@@ -271,7 +276,7 @@ function ListItem({
         <i className={twMerge('text-tertiary size-4', icon)} />
       </div>
 
-      <div className="flex items-center flex-1">
+      <div className="flex items-center flex-1 gap-3">
         <div className="flex-1">
           <p>{title}</p>
           <p className="text-tertiary text-sm">{subtitle}</p>
