@@ -60,9 +60,7 @@ export function GuestTable({ event, guests, loading = false, pageSize = 10, onGu
   return (
     <div className="rounded-md border border-card-border bg-card">
       <div className="divide-y divide-(--color-divider)">
-        {guests.map((guest, index) => {
-          console.log(guest)
-          return (
+        {guests.map((guest, index) => (
             <div
               key={index}
               className="flex items-center justify-between px-4 py-3 hover:bg-card-hover cursor-pointer"
@@ -106,8 +104,7 @@ export function GuestTable({ event, guests, loading = false, pageSize = 10, onGu
                 )}
               </div>
             </div>
-          );
-        })}
+          ))}
       </div>
     </div>
   );

@@ -42,7 +42,10 @@ export function EventPane({ eventId }: { eventId: string }) {
           <Button
             iconRight="icon-arrow-outward"
             className="rounded-full"
-            onClick={() => router.push(`/e/manage/${event?.shortid}`)}
+            onClick={() => {
+              router.push(`/e/manage/${event?.shortid}`);
+              drawer.close();
+            }}
           >
             Manage
           </Button>

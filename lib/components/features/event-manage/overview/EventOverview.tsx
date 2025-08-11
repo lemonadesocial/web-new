@@ -11,6 +11,7 @@ import { PaymentOverview } from "./PaymentOverview";
 import { EventRecap } from "./EventRecap";
 import { EventInvites } from "./EventInvites";
 import { GuestsOverview } from "./GuestsOverview";
+import { VisibilityDiscovery } from "./VisibilityDiscovery";
 
 export function EventOverview() {
   const event = useEvent();
@@ -69,9 +70,11 @@ export function EventOverview() {
 
       <ManageHost event={event} />
 
-      <hr className="border-t" />
-
       <PaymentOverview event={event} />
+
+      <hr className="border-t" />
+      
+      <VisibilityDiscovery event={event} />
     </div>
   );
 }

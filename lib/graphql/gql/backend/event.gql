@@ -78,6 +78,18 @@ query GetEvent($id: MongoID, $shortid: String) {
       }
     }
     space
+    space_expanded {
+      _id
+      title
+      image_avatar
+      image_avatar_expanded {
+        _id
+        bucket
+        url
+        type
+        key
+      }
+    }
     timezone
     application_questions {
       _id
@@ -547,6 +559,7 @@ mutation UpdateEventSettings($id: MongoID!, $input: EventInput!) {
     terms_text
     terms_link
     shortid
+    private
   }
 }
 
