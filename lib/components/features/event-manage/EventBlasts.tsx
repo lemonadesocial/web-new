@@ -216,7 +216,6 @@ function BlastsInput({ event }: { event: Event }) {
         <div className="max-h-[150px] overflow-auto">
           <TextEditor
             onFocus={toggleFocus}
-            onBlur={toggleFocus}
             content={message}
             onChange={(content) => setMessage(content)}
             containerClass="border-none pt-0 min-h-0"
