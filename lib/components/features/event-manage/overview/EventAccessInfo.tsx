@@ -11,16 +11,16 @@ import { useMutation } from "$lib/graphql/request";
 import { UpdateEventPhotosDocument } from "$lib/graphql/generated/backend/graphql";
 import { Button, drawer, modal, toast } from "$lib/components/core";
 
-import { EventThemeProvider } from "../theme-builder/provider";
-import { EventGuestSideContent } from "../event/EventGuestSide";
-import { EventThemeLayout } from "./EventThemeLayout";
-import { EditEventDrawer } from "./drawers/EditEventDrawer";
-import { InviteFriendModal } from "../modals/InviteFriendModal";
+import { EventThemeProvider } from "../../theme-builder/provider";
+import { EventGuestSideContent } from "../../event/EventGuestSide";
+import { EventThemeLayout } from "../EventThemeLayout";
+import { EditEventDrawer } from "../drawers/EditEventDrawer";
+import { InviteFriendModal } from "../../modals/InviteFriendModal";
 
-import { useUpdateEvent } from "./store";
+import { useUpdateEvent } from "../store";
 import { convertFromUtcToTimezone } from "$lib/utils/date";
 import { getEventDateBlockRange, getEventDateBlockStart } from "$lib/utils/event";
-import { UpdateEventLinkModal } from "./modals/UpdateEventLinkModal";
+import { UpdateEventLinkModal } from "../modals/UpdateEventLinkModal";
 import { LEMONADE_DOMAIN } from "$lib/utils/constants";
 
 export function EventAccessInfo({ event }: { event: Event }) {

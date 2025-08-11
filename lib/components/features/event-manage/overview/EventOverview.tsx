@@ -2,12 +2,12 @@
 import { modal } from "$lib/components/core";
 import { LEMONADE_DOMAIN } from "$lib/utils/constants";
 
-import { useEvent } from "./store";
-import { InviteGuestsModal } from "./modals/InviteGuestsModal";
-import { InviteFriendModal } from "../modals/InviteFriendModal";
+import { useEvent } from "../store";
+import { InviteGuestsModal } from "../modals/InviteGuestsModal";
+import { InviteFriendModal } from "../../modals/InviteFriendModal";
 import { EventAccessInfo } from "./EventAccessInfo";
 import { ManageHost } from "./ManageHost";
-import { PaymentOverview } from "./PaymentOverview";
+import { PaymentOverview } from "../PaymentOverview";
 import { EventRecap } from "./EventRecap";
 import { EventInvites } from "./EventInvites";
 import { GuestsOverview } from "./GuestsOverview";

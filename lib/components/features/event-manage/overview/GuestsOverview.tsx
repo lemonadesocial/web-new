@@ -1,6 +1,6 @@
 import { Event } from "$lib/graphql/generated/backend/graphql";
-import { PendingApprovalsOverview } from "./PendingApprovalsOverview";
-import { RecentRegistrations } from "./RecentRegistrations";
+import { PendingApprovalsOverview } from "../PendingApprovalsOverview";
+import { RecentRegistrations } from "../RecentRegistrations";
 
 export function GuestsOverview({ event }: { event: Event }) {
   return (

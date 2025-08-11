@@ -2,8 +2,8 @@ import { Avatar, Button, Chip, modal } from "$lib/components/core";
 import { User } from "$lib/graphql/generated/backend/graphql";
 import { userAvatar } from "$lib/utils/user";
 import { Event } from "$lib/graphql/generated/backend/graphql";
-import { AddHostModal } from "./modals/AddHostModal";
-import { ConfigureHostModal } from "./modals/ConfigureHostModal";
+import { AddHostModal } from "../modals/AddHostModal";
+import { ConfigureHostModal } from "../modals/ConfigureHostModal";
 
 export function ManageHost({ event }: { event: Event }) {
   if (!event.host_expanded) return;
