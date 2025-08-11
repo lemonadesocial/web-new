@@ -35,7 +35,7 @@ export function EventOverview() {
               </div>
               <div
                 className="py-2 px-3 items-center flex gap-3 rounded-md border border-card-border bg-card cursor-pointer"
-                onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event._id}/check-in`, '_blank')}
+                onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event.shortid}/check-in`, '_blank')}
               >
                 <div className="size-[38px] rounded-sm bg-success-500/16 flex items-center justify-center">
                   <i className="icon-qr size-5 text-success-500" />
