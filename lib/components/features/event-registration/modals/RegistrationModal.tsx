@@ -1,7 +1,7 @@
 import { intersection, partition } from "lodash";
 import { useMe } from "$lib/hooks/useMe";
-import { communityAvatar } from "$lib/utils/community";
 import { useSession } from "$lib/hooks/useSession";
+import { userAvatar } from "$lib/utils/user";
 
 import { Avatar, Button, Segment } from "$lib/components/core";
 import {
@@ -82,7 +82,7 @@ export function RegistrationModal() {
             {
               me && (
                 <div className='flex gap-3'>
-                  <Avatar src={communityAvatar(me)} size="xl" />
+                  <Avatar src={userAvatar(me)} size="xl" />
                   <div>
                     <p className='font-medium'>{me.name}</p>
                     <p className='text-secondary text-[14px]'>{me.email}</p>
