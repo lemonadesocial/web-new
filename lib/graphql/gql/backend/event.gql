@@ -863,6 +863,15 @@ query GetListEventEmailSettings($event: MongoID!, $system: Boolean, $sent: Boole
       email
       image_avatar
     }
+    owner_expanded {
+      _id
+      image_avatar
+      new_photos_expanded(limit: 1) {
+        _id
+        key
+        bucket
+      }
+    }
     recipient_filters {
       join_request_states
       ticket_types
@@ -896,6 +905,9 @@ mutation UpdateEventEmailSetting($input: UpdateEventEmailSettingInput!) {
       join_request_states
       ticket_types
     }
+    owner_expanded {
+      image_avatar
+    }
     scheduled_at
     sent_at
     subject_preview
@@ -926,6 +938,9 @@ mutation CreateEventEmailSetting($input: CreateEventEmailSettingInput!) {
       join_request_states
       ticket_types
     }
+    owner_expanded {
+      image_avatar
+    }
     scheduled_at
     sendgrid_template_id
     sent_at
@@ -945,4 +960,8 @@ mutation DeleteEventEmailSetting($id: MongoID!) {
 
 mutation SendEventEmailSettingTestEmails($input: SendEventEmailSettingTestEmailsInput!) {
   sendEventEmailSettingTestEmails(input: $input)
+}
+
+mutation ToggleEventEmailSettings($disabled: Boolean!, $ids: [MongoID!]!, $event: MongoID!) {
+  toggleEventEmailSettings(disabled: $disabled, ids: $ids, event: $event)
 }

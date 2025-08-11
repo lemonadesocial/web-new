@@ -27,7 +27,7 @@ import {
   EventJoinRequestState,
   GetListEventEmailSettingsDocument,
   SendEventEmailSettingTestEmailsDocument,
-  UpdateEventEmailSettingDocument,
+  ToggleEventEmailSettingsDocument,
 } from '$lib/graphql/generated/backend/graphql';
 import { useEvent } from './store';
 import { useMutation, useQuery } from '$lib/graphql/request';
@@ -52,7 +52,7 @@ export function EventBlasts() {
 
   if (!event) return null;
 
-  const { data, loading } = useQuery(GetListEventEmailSettingsDocument, {
+  const { data } = useQuery(GetListEventEmailSettingsDocument, {
     variables: {
       event: event._id,
       scheduled: true,
@@ -80,15 +80,18 @@ export function EventBlasts() {
           <div className="flex flex-col gap-3">
             {emailScheduled.map((item) => (
               <Card.Root key={item._id}>
-                <Card.Content className="flex items-center justify-between">
-                  <div>
-                    <p>{item.subject_preview}</p>
-                    <p className="text-sm text-tertiary">Sending to: {getRecipients(item)}</p>
-                  </div>
+                <Card.Content className="flex items-center gap-3">
+                  <img src={userAvatar(item.owner_expanded)} className="size-7 aspect-square rounded-full" />
+                  <div className="flex items-center justify-between w-full">
+                    <div>
+                      <p>{item.subject_preview}</p>
+                      <p className="text-sm text-tertiary">Sending to: {getRecipients(item)}</p>
+                    </div>
 
-                  <div className="flex items-center gap-1.5 text-warning-400">
-                    <i className="icon-clock size-4" />
-                    <p className="text-sm">{format(item.scheduled_at, 'MMM dd, h:mm a')}</p>
+                    <div className="flex items-center gap-1.5 text-warning-400">
+                      <i className="icon-clock size-4" />
+                      <p className="text-sm">{format(item.scheduled_at, 'MMM dd, h:mm a')}</p>
+                    </div>
                   </div>
                 </Card.Content>
               </Card.Root>
@@ -105,14 +108,18 @@ export function EventBlasts() {
           <div className="flex flex-col gap-3">
             {emailSent.map((item) => (
               <Card.Root key={item._id}>
-                <Card.Content className="flex items-center justify-between">
-                  <div>
-                    <p>{item.subject_preview}</p>
-                    <p className="text-sm text-tertiary">Sent: {getRecipients(item)}</p>
-                  </div>
+                <Card.Content className="flex items-center gap-3">
+                  <img src={userAvatar(item.owner_expanded)} className="size-7 aspect-square rounded-full" />
 
-                  <div className="flex items-center gap-1.5">
-                    <p className="text-sm text-tertiary">{format(item.sent_at, 'MMM dd, h:mm a')}</p>
+                  <div className="flex items-center justify-between w-full">
+                    <div>
+                      <p>{item.subject_preview}</p>
+                      <p className="text-sm text-tertiary">Sent: {getRecipients(item)}</p>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-sm text-tertiary">{format(item.sent_at, 'MMM dd, h:mm a')}</p>
+                    </div>
                   </div>
                 </Card.Content>
               </Card.Root>
@@ -514,21 +521,26 @@ function BlastAdvancedModal({ event, message }: { event: Event; message: string 
 function EventReminderModal({ event, reminderEmails = [] }: { event: Event; reminderEmails?: EmailSetting[] }) {
   const [autoSend, setAutoSend] = React.useState(!reminderEmails[0]?.disabled);
 
-  const [updateEmail, { client }] = useMutation(UpdateEventEmailSettingDocument);
+  const [toggleEmailSettings, { client }] = useMutation(ToggleEventEmailSettingsDocument);
 
   const handleToggleReminder = async (toggle: boolean) => {
     try {
-      const promises: any = [];
-      reminderEmails
-        .map((i) => i._id)
-        .forEach((_id) => promises.push(updateEmail({ variables: { input: { _id, disabled: toggle } } })));
+      const ids = reminderEmails.map((i) => i._id);
 
-      await Promise.all(promises);
-      reminderEmails.forEach((item) =>
-        client.writeFragment({ id: `EmailSetting:${item._id}`, data: { ...item, disabled: toggle } }),
-      );
+      const { data, error } = await toggleEmailSettings({ variables: { event: event._id, ids, disabled: toggle } });
 
-      toast.success(`${toggle ? 'Enabled' : 'Disabled'} emails.`);
+      if (error) {
+        toast.error('Cannot toggle reminder emails!');
+        return;
+      }
+
+      if (data?.toggleEventEmailSettings) {
+        reminderEmails.forEach((item) =>
+          client.writeFragment({ id: `EmailSetting:${item._id}`, data: { ...item, disabled: toggle } }),
+        );
+
+        toast.success(`${toggle ? 'Enabled' : 'Disabled'} emails.`);
+      }
     } catch (error) {
       toast.error('Cannot toggle reminder emails!');
     }
