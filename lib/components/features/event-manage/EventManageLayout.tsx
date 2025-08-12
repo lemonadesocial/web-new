@@ -1,7 +1,7 @@
 'use client';
 
 import NextLink from 'next/link';
-import { usePathname, useParams } from 'next/navigation';
+import { usePathname, useParams, useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { useAtom } from 'jotai';
 import { useEffect, useState, useRef } from 'react';
@@ -29,6 +29,7 @@ export function EventManageLayout({ children, event: initEvent }: React.PropsWit
   const shortid = params.shortid;
   const [isScrolled, setIsScrolled] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const [event, setEvent] = useAtom(eventAtom);
   const updateEvent = useUpdateEvent();
@@ -94,6 +95,15 @@ export function EventManageLayout({ children, event: initEvent }: React.PropsWit
       {/* <div className={clsx("sticky top-0 backdrop-blur-md transition-all duration-300 z-1", isScrolled ? "pt-2" : "pt-7")}> */}
       <div className={clsx('sticky top-0 backdrop-blur-md transition-all duration-300 z-1 pt-7')}>
         <div className="page mx-auto px-4 md:px-0">
+          {event.space_expanded && (
+            <div
+              className="text-sm text-tertiary flex items-center gap-0.5 group cursor-pointer"
+              onClick={() => router.push(`/s/${event.space_expanded?.slug || event.space}`)}
+            >
+              <p className="group-hover:text-primary">{event.space_expanded?.title}</p>
+              <i className="icon-chevron-right size-4.5 text-quaternary transition group-hover:translate-x-0.5" />
+            </div>
+          )}
           <div className="flex justify-between items-center">
             {/* <h1 className={clsx("font-semibold transition-all duration-300", isScrolled ? "text-lg font-body" : "text-2xl")}>{event.title}</h1> */}
             <h1 className={clsx('font-semibold transition-all duration-300 text-2xl')}>{event.title}</h1>
@@ -101,6 +111,7 @@ export function EventManageLayout({ children, event: initEvent }: React.PropsWit
               {event.published ? (
                 <Button
                   variant="tertiary-alt"
+                  className="hidden md:block"
                   size="sm"
                   onClick={() => drawer.open(EditEventDrawer, { props: { event }, dismissible: false })}
                   iconRight="icon-edit-sharp"
@@ -108,7 +119,13 @@ export function EventManageLayout({ children, event: initEvent }: React.PropsWit
                   Published
                 </Button>
               ) : (
-                <Button variant="primary" size="sm" onClick={handlePublish} loading={publishing}>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={handlePublish}
+                  loading={publishing}
+                  className="hidden md:block"
+                >
                   Publish
                 </Button>
               )}
@@ -116,18 +133,25 @@ export function EventManageLayout({ children, event: initEvent }: React.PropsWit
                 iconRight="icon-arrow-outward"
                 variant="tertiary-alt"
                 size="sm"
+                className="hidden md:block"
                 onClick={() => window.open(`/e/${shortid}`, '_blank')}
               >
                 Event Page
               </Button>
+              <Button
+                icon="icon-arrow-outward"
+                className="md:hidden"
+                variant="tertiary-alt"
+                size="sm"
+                onClick={() => window.open(`/e/${shortid}`, '_blank')}
+              ></Button>
             </div>
           </div>
           <nav className="flex gap-4 pt-1 overflow-auto no-scrollbar">
             {eventManageMenu.map((item) => {
               const url = `/e/manage/${shortid}/${item.page}`;
-              const isActive = item.page === 'overview' 
-                ? pathname === `/e/manage/${shortid}` || pathname === url
-                : pathname === url;
+              const isActive =
+                item.page === 'overview' ? pathname === `/e/manage/${shortid}` || pathname === url : pathname === url;
 
               return (
                 <NextLink

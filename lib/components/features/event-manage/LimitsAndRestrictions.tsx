@@ -1,21 +1,21 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { Button, Input, LabeledInput, modal, ModalContent, Toggle } from "$lib/components/core";
-import { Event, UpdateEventSettingsDocument } from "$lib/graphql/generated/backend/graphql";
-import { useMutation } from "$lib/graphql/request";
-import { useUpdateEvent } from "./store";
+import { Button, Input, LabeledInput, modal, ModalContent, Toggle } from '$lib/components/core';
+import { Event, UpdateEventSettingsDocument } from '$lib/graphql/generated/backend/graphql';
+import { useMutation } from '$lib/graphql/request';
+import { useUpdateEvent } from './store';
 
 export function LimitsAndRestrictions({ event }: { event: Event }) {
   return (
-    <div className="grid grid-cols-4 gap-2">
+    <div className="flex md:grid grid-cols-4 gap-2 overflow-auto no-scrollbar">
       <div
-        className="flex items-center py-2 px-3 gap-3 rounded-md border border-card-border bg-card cursor-pointer"
+        className="flex items-center py-2 px-3 gap-3 rounded-md border border-card-border bg-card cursor-pointer min-w-fit"
         onClick={() => {
           modal.open(RegistrationModal, {
             props: {
-              event
-            }
-          })
+              event,
+            },
+          });
         }}
       >
         <div className="size-[38px] flex items-center justify-center rounded-sm bg-success-500/16">
@@ -28,13 +28,13 @@ export function LimitsAndRestrictions({ event }: { event: Event }) {
       </div>
 
       <div
-        className="flex items-center py-2 px-3 gap-3 rounded-md border border-card-border bg-card cursor-pointer"
+        className="flex items-center py-2 px-3 gap-3 rounded-md border border-card-border bg-card cursor-pointer min-w-fit"
         onClick={() => {
           modal.open(ApprovalModal, {
             props: {
-              event
-            }
-          })
+              event,
+            },
+          });
         }}
       >
         <div className="size-[38px] flex items-center justify-center rounded-sm bg-warning-300/16">
@@ -47,13 +47,13 @@ export function LimitsAndRestrictions({ event }: { event: Event }) {
       </div>
 
       <div
-        className="flex items-center py-2 px-3 gap-3 rounded-md border border-card-border bg-card cursor-pointer"
+        className="flex items-center py-2 px-3 gap-3 rounded-md border border-card-border bg-card cursor-pointer min-w-fit"
         onClick={() => {
           modal.open(CapacityModal, {
             props: {
-              event
-            }
-          })
+              event,
+            },
+          });
         }}
       >
         <div className="size-[38px] flex items-center justify-center rounded-sm bg-[#FB923C]/16">
@@ -78,7 +78,7 @@ function RegistrationModal({ event }: { event: Event }) {
       updateEvent({
         registration_disabled: !acceptRegistration,
       });
-    }
+    },
   });
 
   const handleConfirm = async () => {
@@ -89,16 +89,20 @@ function RegistrationModal({ event }: { event: Event }) {
           registration_disabled: !acceptRegistration,
         },
       },
-    })
-  }
+    });
+  };
 
   return (
     <ModalContent icon="icon-ticket" onClose={() => modal.close()}>
       <div className="space-y-4">
         <div className="space-y-2">
           <p>Registration</p>
-          <p className="text-sm text-secondary">Close registration to stop accepting new guests, including anyone who may have been invited.</p>
-          <p className="text-sm text-secondary">Please note that capacity and availability settings apply when registration is open.</p>
+          <p className="text-sm text-secondary">
+            Close registration to stop accepting new guests, including anyone who may have been invited.
+          </p>
+          <p className="text-sm text-secondary">
+            Please note that capacity and availability settings apply when registration is open.
+          </p>
         </div>
 
         <div className="flex items-center justify-between">
@@ -110,12 +114,7 @@ function RegistrationModal({ event }: { event: Event }) {
           />
         </div>
 
-        <Button
-          variant="secondary"
-          className="w-full"
-          onClick={handleConfirm}
-          loading={loading}
-        >
+        <Button variant="secondary" className="w-full" onClick={handleConfirm} loading={loading}>
           Confirm
         </Button>
       </div>
@@ -133,7 +132,7 @@ function ApprovalModal({ event }: { event: Event }) {
       updateEvent({
         approval_required: requireApproval,
       });
-    }
+    },
   });
 
   const handleConfirm = async () => {
@@ -144,15 +143,17 @@ function ApprovalModal({ event }: { event: Event }) {
           approval_required: requireApproval,
         },
       },
-    })
-  }
+    });
+  };
 
   return (
     <ModalContent icon="icon-list-check" onClose={() => modal.close()}>
       <div className="space-y-4">
         <div className="space-y-2">
           <p>Require Approval</p>
-          <p className="text-sm text-secondary">Manually review and approve each guest before they can join your event. Great for curating your audience.</p>
+          <p className="text-sm text-secondary">
+            Manually review and approve each guest before they can join your event. Great for curating your audience.
+          </p>
         </div>
 
         <div className="flex items-center justify-between">
@@ -164,12 +165,7 @@ function ApprovalModal({ event }: { event: Event }) {
           />
         </div>
 
-        <Button
-          variant="secondary"
-          className="w-full"
-          onClick={handleConfirm}
-          loading={loading}
-        >
+        <Button variant="secondary" className="w-full" onClick={handleConfirm} loading={loading}>
           Confirm
         </Button>
       </div>
@@ -187,7 +183,7 @@ function CapacityModal({ event }: { event: Event }) {
       updateEvent({
         guest_limit: res.updateEvent?.guest_limit,
       });
-    }
+    },
   });
 
   const handleConfirm = async () => {
@@ -198,24 +194,21 @@ function CapacityModal({ event }: { event: Event }) {
           guest_limit: limit,
         },
       },
-    })
-  }
+    });
+  };
 
   return (
     <ModalContent icon="icon-vertical-align-top" onClose={() => modal.close()}>
       <div className="space-y-4">
         <div className="space-y-2">
           <p>Max Capacity</p>
-          <p className="text-sm text-secondary">Auto-close registration when the capacity is reached. Only approved guests count toward the cap.</p>
+          <p className="text-sm text-secondary">
+            Auto-close registration when the capacity is reached. Only approved guests count toward the cap.
+          </p>
         </div>
 
         <LabeledInput label="Capacity">
-          <Input
-            type="number"
-            value={limit}
-            onChange={(e) => setLimit(e.target.valueAsNumber)}
-            variant="outlined"
-          />
+          <Input type="number" value={limit} onChange={(e) => setLimit(e.target.valueAsNumber)} variant="outlined" />
         </LabeledInput>
 
         <div className="flex gap-2">
@@ -231,7 +224,7 @@ function CapacityModal({ event }: { event: Event }) {
                     guest_limit: null,
                   },
                 },
-              })
+              });
             }}
             loading={loading && !limit}
             disabled={loading}
