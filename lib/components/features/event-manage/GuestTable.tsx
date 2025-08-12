@@ -1,6 +1,6 @@
 import { formatDistanceToNow } from 'date-fns';
 import { Avatar, Chip, Skeleton } from '$lib/components/core';
-import { Event, EventJoinRequestState } from '$lib/graphql/generated/backend/graphql';
+import { Event, EventGuestDetail, EventJoinRequestState } from '$lib/graphql/generated/backend/graphql';
 import { randomUserImage } from '$lib/utils/user';
 import { GuestDetailsDrawer } from './drawers/GuestDetailsDrawer';
 import { drawer } from '$lib/components/core';
@@ -60,7 +60,7 @@ export function GuestTable({ event, guests, loading = false, pageSize = 10, onGu
   return (
     <div className="rounded-md border border-card-border bg-card">
       <div className="divide-y divide-(--color-divider)">
-        {guests.map((guest, index) => (
+        {guests.map((guest: EventGuestDetail, index) => (
             <div
               key={index}
               className="flex items-center justify-between px-4 py-3 hover:bg-card-hover cursor-pointer"
@@ -72,7 +72,7 @@ export function GuestTable({ event, guests, loading = false, pageSize = 10, onGu
                   className="size-5"
                 />
                 <div className="flex-1 flex gap-2 items-center">
-                  <p className="truncate">{guest.user.display_name || guest.user.name || 'Anonymous'}</p>
+                  <p className="truncate">{guest.user.display_name || guest.user.name || guest.ticket?.metadata?.buyer_name || guest.join_request?.metadata?.buyer_name || 'Anonymous'}</p>
                   <p className="text-tertiary truncate">{guest.user.email}</p>
                 </div>
               </div>
