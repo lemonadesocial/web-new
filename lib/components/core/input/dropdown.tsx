@@ -6,7 +6,7 @@ import { extend } from 'lodash';
 import { Badge } from '../badge';
 import { Button } from '../button';
 
-type Option = {
+export type Option = {
   icon?: string;
   key: string | number;
   value: string;
