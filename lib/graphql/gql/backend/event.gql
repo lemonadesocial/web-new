@@ -141,6 +141,7 @@ query GetEvent($id: MongoID, $shortid: String) {
     external_url
     external_hostname
     published
+    private
 
     payment_accounts_new
     payment_accounts_expanded {

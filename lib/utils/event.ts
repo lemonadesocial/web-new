@@ -3,6 +3,7 @@ import { format, isSameDay, isSameYear, isToday, isTomorrow } from 'date-fns';
 
 import {
   Address,
+  EmailSetting,
   Event,
   EventTicketCategory,
   EventTicketPrice,
@@ -18,6 +19,7 @@ import { formatCurrency } from './string';
 import { convertFromUtcToTimezone, formatWithTimezone } from './date';
 import { getListChains } from './crypto';
 import { groupBy } from 'lodash';
+import { JOIN_REQUEST_STATE_MAP, RECIPIENT_TYPE_MAP } from './email';
 
 export function formatCryptoPrice(price: EventTicketPrice, skipCurrency: boolean = false) {
   const { cost, currency } = price;
@@ -178,12 +180,14 @@ export function extractShortId(url: string): string | null {
 }
 
 export function getEventCohosts(event: Event) {
-  const visibleCohosts = event.visible_cohosts_expanded?.length ? event.visible_cohosts_expanded : [event.host_expanded, ...(event.cohosts_expanded || [])];
+  const visibleCohosts = event.visible_cohosts_expanded?.length
+    ? event.visible_cohosts_expanded
+    : [event.host_expanded, ...(event.cohosts_expanded || [])];
 
   return visibleCohosts.filter((u) => u?._id) as User[];
 }
 
-export function formatTokenGateRange(tokenGate: EventTokenGate) { 
+export function formatTokenGateRange(tokenGate: EventTokenGate) {
   const { is_nft, min_value, max_value, decimals } = tokenGate;
 
   if (is_nft) {
@@ -195,4 +199,17 @@ export function formatTokenGateRange(tokenGate: EventTokenGate) {
   if (min_value && decimals) return `> ${formatUnits(min_value, decimals)}`;
 
   return `> 0`;
+}
+
+export function getEmailBlastsRecipients(item: EmailSetting) {
+  let list = item.recipient_types?.map((type) => RECIPIENT_TYPE_MAP.get(type)).filter(Boolean) || [];
+  if (item.recipient_filters?.ticket_types?.length) list.push('Going');
+  if (item.recipient_filters?.join_request_states) {
+    const arr =
+      item.recipient_filters?.join_request_states?.map((state) => JOIN_REQUEST_STATE_MAP.get(state)).filter(Boolean) ||
+      [];
+    list = [...list, ...arr];
+  }
+
+  return list.join(', ');
 }
