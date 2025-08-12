@@ -125,7 +125,9 @@ export function EventManageLayout({ children, event: initEvent }: React.PropsWit
           <nav className="flex gap-4 pt-1 overflow-auto no-scrollbar">
             {eventManageMenu.map((item) => {
               const url = `/e/manage/${shortid}/${item.page}`;
-              const isActive = pathname === url;
+              const isActive = item.page === 'overview' 
+                ? pathname === `/e/manage/${shortid}` || pathname === url
+                : pathname === url;
 
               return (
                 <NextLink
