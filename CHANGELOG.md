@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.1.0](https://github.com/lemonadesocial/web-new/compare/v3.0.0...v3.1.0) (2025-08-12)
+
+
+### Features
+
+* hide tabs ([c9dca71](https://github.com/lemonadesocial/web-new/commit/c9dca71d35dcb05c75c3121c0ddeac9dd8e508ce))
+* update event visibility ([44d3dc6](https://github.com/lemonadesocial/web-new/commit/44d3dc6fc71043a2c2274a37a39e08fc43d6c65d))
+
+
+### Bug Fixes
+
+* active overview ([515d506](https://github.com/lemonadesocial/web-new/commit/515d506ccfbea1991de8e4086f1655b4ad3bd3b9))
+* missing field - ui send blasts overview manage event ([c75f71e](https://github.com/lemonadesocial/web-new/commit/c75f71ed8ced0c75ee5111cb2d351aedc20c273c))
+
 ## [3.0.0](https://github.com/lemonadesocial/web-new/compare/v2.2.1...v3.0.0) (2025-08-11)
 
 
