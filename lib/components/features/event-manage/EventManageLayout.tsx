@@ -18,9 +18,9 @@ const eventManageMenu = [
   { name: 'Guests', page: 'guests' },
   { name: 'Registration', page: 'registration' },
   { name: 'Blasts', page: 'blasts' },
-  { name: 'Program', page: 'program' },
-  { name: 'Insights', page: 'insights' },
-  { name: 'More', page: 'more' },
+  // { name: 'Program', page: 'program' },
+  // { name: 'Insights', page: 'insights' },
+  // { name: 'More', page: 'more' },
 ];
 
 export function EventManageLayout({ children, event: initEvent }: React.PropsWithChildren & { event: Event }) {
