@@ -703,6 +703,15 @@ export type CreateNewPaymentAccountInput = {
   type: PaymentAccountType;
 };
 
+export type CreatePoapInput = {
+  amount: Scalars['Float']['input'];
+  description: Scalars['String']['input'];
+  event: Scalars['MongoID']['input'];
+  image: Scalars['MongoID']['input'];
+  name: Scalars['String']['input'];
+  private?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type CreateSiteInput = {
   access_pass?: InputMaybe<AccessPassInput>;
   ai_config?: InputMaybe<Scalars['MongoID']['input']>;
@@ -2428,6 +2437,7 @@ export enum FeatureCode {
   ManageSpaceNewsletter = 'ManageSpaceNewsletter',
   ManageSpaceTag = 'ManageSpaceTag',
   ManageSpaceTokenGate = 'ManageSpaceTokenGate',
+  Poap = 'Poap',
   PromotionCodes = 'PromotionCodes',
   SpaceStatistic = 'SpaceStatistic',
   TicketingSettings = 'TicketingSettings',
@@ -3098,6 +3108,7 @@ export type Mutation = {
   cancelTickets: Scalars['Boolean']['output'];
   castVote: Scalars['Boolean']['output'];
   checkinUser: EventRsvp;
+  claimPoap: Scalars['Boolean']['output'];
   cloneEvent: Array<Scalars['MongoID']['output']>;
   confirmFileUploads: Scalars['Boolean']['output'];
   createBadge: Badge;
@@ -3127,6 +3138,7 @@ export type Mutation = {
   createGuildRoom: GuildRoom;
   createNewPaymentAccount: NewPaymentAccount;
   createOauth2Client: OAuth2Client;
+  createPoapDrop: PoapDrop;
   createPost: Post;
   createRegistration: Scalars['Boolean']['output'];
   createRewardVault: TokenRewardVault;
@@ -3393,6 +3405,12 @@ export type MutationCheckinUserArgs = {
 };
 
 
+export type MutationClaimPoapArgs = {
+  drop: Scalars['MongoID']['input'];
+  wallet: Scalars['String']['input'];
+};
+
+
 export type MutationCloneEventArgs = {
   input: CloneEventInput;
 };
@@ -3543,6 +3561,11 @@ export type MutationCreateNewPaymentAccountArgs = {
 
 export type MutationCreateOauth2ClientArgs = {
   input: Oauth2ClientInput;
+};
+
+
+export type MutationCreatePoapDropArgs = {
+  input: CreatePoapInput;
 };
 
 
@@ -4843,6 +4866,26 @@ export type PinEventsToSpaceResponse = {
   requests?: Maybe<Array<SpaceEventRequest>>;
 };
 
+export type PoapClaim = {
+  __typename?: 'PoapClaim';
+  beneficiary?: Maybe<Scalars['String']['output']>;
+  claimed_date?: Maybe<Scalars['DateTimeISO']['output']>;
+  drop: PoapDrop;
+};
+
+export type PoapDrop = {
+  __typename?: 'PoapDrop';
+  _id: Scalars['MongoID']['output'];
+  amount: Scalars['Float']['output'];
+  description: Scalars['String']['output'];
+  event: Scalars['MongoID']['output'];
+  image: Scalars['MongoID']['output'];
+  image_expanded?: Maybe<File>;
+  name: Scalars['String']['output'];
+  private?: Maybe<Scalars['Boolean']['output']>;
+  ready?: Maybe<Scalars['Boolean']['output']>;
+};
+
 export type Point = {
   __typename?: 'Point';
   coordinates: Array<Scalars['Float']['output']>;
@@ -5178,9 +5221,11 @@ export type Query = {
   listFiatCurrencies: Array<FiatCurrency>;
   listGeoRegions: Array<GeoRegion>;
   listLemonheadSponsors: ListLemonheadSponsorsResponse;
+  listMyPoapClaims: Array<PoapClaim>;
   listNewPaymentAccounts: Array<NewPaymentAccount>;
   listNewPayments: Array<NewPayment>;
   listOauth2Clients: Array<OAuth2Client>;
+  listPoapDrops: Array<PoapDrop>;
   listRewardVaults: Array<TokenRewardVault>;
   listSpaceCategories: Array<SpaceCategory>;
   listSpaceMembers: ListSpaceMembersResponse;
@@ -6138,6 +6183,11 @@ export type QueryListLemonheadSponsorsArgs = {
 };
 
 
+export type QueryListMyPoapClaimsArgs = {
+  event?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
 export type QueryListNewPaymentAccountsArgs = {
   _id?: InputMaybe<Array<Scalars['MongoID']['input']>>;
   limit?: Scalars['Int']['input'];
@@ -6158,6 +6208,11 @@ export type QueryListNewPaymentsArgs = {
 
 export type QueryListOauth2ClientsArgs = {
   ids?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+
+export type QueryListPoapDropsArgs = {
+  event: Scalars['MongoID']['input'];
 };
 
 
