@@ -981,3 +981,10 @@ mutation SendEventEmailSettingTestEmails($input: SendEventEmailSettingTestEmails
 mutation ToggleEventEmailSettings($disabled: Boolean!, $ids: [MongoID!]!, $event: MongoID!) {
   toggleEventEmailSettings(disabled: $disabled, ids: $ids, event: $event)
 }
+
+mutation UpdateEventToggleAttending($id: MongoID!, $input: EventInput!) {
+  updateEvent(_id: $id, input: $input) {
+    _id
+    hide_attending
+  }
+}
