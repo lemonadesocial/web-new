@@ -1,5 +1,6 @@
+'use client';
 import React from 'react';
-import { formatDistance } from 'date-fns';
+import { formatDistance, formatDistanceStrict, isBefore, isEqual } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 
 import { useMe } from '$lib/hooks/useMe';
@@ -31,7 +32,7 @@ import {
 import { DateTimePicker } from '$lib/components/core/calendar';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { getEmailBlastsRecipients } from '$lib/utils/event';
-import { convertFromUtcToTimezone, formatWithTimezone } from '$lib/utils/date';
+import { convertFromUtcToTimezone } from '$lib/utils/date';
 
 function ModalHeader({ icon }: { icon: string }) {
   return (
@@ -324,13 +325,12 @@ export function EventReminderModal({ event, reminderEmails = [] }: { event: Even
 
 export function ScheduleFeedbackModal({ event }: { event: Event }) {
   const me = useMe();
+  const eventEndDate = convertFromUtcToTimezone(event.end, event.timezone).toISOString();
 
   const defaultSubject = `New message in ${event.title}`;
   const [subject, setSubject] = React.useState<string>(`Thanks for joining ${event.title}`);
   const [body, setBody] = React.useState<string>();
-  const [scheduleAt, setScheduleAt] = React.useState<string>(
-    convertFromUtcToTimezone(event.end, event.timezone).toISOString(),
-  );
+  const [scheduleAt, setScheduleAt] = React.useState<string>(eventEndDate);
 
   const [createEmail, { loading: sendingEmail }] = useMutation(CreateEventEmailSettingDocument, {
     onComplete: (client, res) => {
@@ -390,6 +390,11 @@ export function ScheduleFeedbackModal({ event }: { event: Event }) {
     });
   };
 
+  const getFormatTime = (date) => {
+    if (isBefore(eventEndDate, date) || isEqual(eventEndDate, date)) return '';
+    return formatDistanceStrict(eventEndDate, date);
+  };
+
   return (
     <Card.Root className="w-sm max-w-full md:w-[480px] *:bg-overlay-primary border-none">
       <ModalHeader icon="icon-star-outline" />
@@ -400,11 +405,12 @@ export function ScheduleFeedbackModal({ event }: { event: Event }) {
           <Spacer className="h-1.5" />
           <DateTimePicker
             value={scheduleAt}
+            minDate={new Date(eventEndDate)}
             onSelect={(datetime) => setScheduleAt(datetime)}
             placement="bottom-start"
           />
           <Spacer className="h-2" />
-          <p className="text-secondary text-sm">Immediately after the event ends</p>
+          <p className="text-secondary text-sm">Immediately {getFormatTime(scheduleAt)} after the event ends</p>
         </div>
 
         <InputField label="Subject" value={subject} onChangeText={(value) => setSubject(value)} />
