@@ -66,7 +66,11 @@ export function initializeAppKit() {
     coinbasePreference: 'smartWalletOnly',
     featuredWalletIds: [
       '445ced0f482742632dfa6684f802eb1a2bb3cb97531bd06e02fb297c6ad21de1' // Family
-    ]
+    ],
+    features: {
+      email: false,
+      socials: false
+    }
   });
 }
 

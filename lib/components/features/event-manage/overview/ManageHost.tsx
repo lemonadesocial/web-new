@@ -52,8 +52,8 @@ export function ManageHost({ event }: { event: Event }) {
           />
         </div>
         {
-          event.cohosts_expanded?.map((host) => (
-            <div className="flex justify-between items-center px-4 py-3" key={host?._id}>
+          event.cohosts_expanded?.map((host, index) => (
+            <div className="flex justify-between items-center px-4 py-3" key={index}>
             <div className="flex gap-2">
               <HostInfo host={host as User} />
               <Chip variant="primary" size="xxs" className="rounded-full">Manager</Chip>
@@ -82,7 +82,8 @@ function HostInfo({ host }: { host: User }) {
     <div className="flex gap-3 items-center">
       <Avatar src={userAvatar(host)} className="size-5" />
       <div className="flex gap-2 items-center">
-        <p>{host.display_name}</p>
+        <p>{host.display_name || host.name || 'Anonymous'}</p>
+        <p className="text-tertiary">{host.email}</p>
       </div>
     </div>
   )

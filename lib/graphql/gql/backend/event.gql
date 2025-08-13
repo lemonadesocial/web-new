@@ -10,31 +10,25 @@ query GetEvent($id: MongoID, $shortid: String) {
     host
     cohosts
     host_expanded {
-      ...User
+      _id
+      name
+      display_name
+      email
+      image_avatar
     }
     visible_cohosts_expanded {
       _id
       name
       display_name
       email
-      new_photos_expanded(limit: 1) {
-        _id
-        key
-        bucket
-      }
+      image_avatar
     }
     cohosts_expanded {
-      ...User
-    }
-    visible_cohosts_expanded {
       _id
       name
       display_name
-      new_photos_expanded(limit: 1) {
-        _id
-        key
-        bucket
-      }
+      email
+      image_avatar
     }
     accepted
     new_new_photos_expanded {
@@ -189,21 +183,13 @@ query GetEvents(
     host_expanded {
       _id
       name
-      new_photos_expanded(limit: 1) {
-        _id
-        key
-        bucket
-      }
+      image_avatar
     }
     cohosts
     cohosts_expanded {
       _id
       name
-      new_photos_expanded(limit: 1) {
-        _id
-        key
-        bucket
-      }
+      image_avatar
     }
     new_new_photos_expanded(limit: 1) {
       _id
@@ -737,6 +723,7 @@ query ListEventGuests($event: MongoID!, $skip: Int, $limit: Int, $search: String
           image_avatar
           name
         }
+        metadata
       }
       ticket {
         _id
@@ -745,6 +732,7 @@ query ListEventGuests($event: MongoID!, $skip: Int, $limit: Int, $search: String
           _id
           title
         }
+        metadata
       }
       user {
         _id
