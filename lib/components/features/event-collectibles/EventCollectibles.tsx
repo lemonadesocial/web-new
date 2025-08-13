@@ -1,53 +1,30 @@
-import { TokenComplex, TokensDocument } from "$lib/graphql/generated/metaverse/graphql";
+import { Event, PoapDrop } from "$lib/graphql/generated/backend/graphql";
 import { useQuery } from "$lib/graphql/request";
-import { Event, GetMyTicketsDocument, Ticket } from "$lib/graphql/generated/backend/graphql";
-import { metaverseClient } from "$lib/graphql/request/instances";
-import { GraphQLWSProvider } from "$lib/graphql/subscription";
-import { getAssignedTicket } from "$lib/utils/event";
-import { useMe } from "$lib/hooks/useMe";
+import { ListPoapDropsDocument } from "$lib/graphql/generated/backend/graphql";
 
-import { CollectibleList } from "./CollectibleList";
-import { usePoapOffers } from "./hooks";
-import { useSession } from "$lib/hooks/useSession";
+import { CollectibleCard } from "./CollectibleCard";
 
 export function EventCollectibles({ event }: { event: Event }) {
-  const me = useMe();
-  const session = useSession();
-
-  const { data: ticketsData } = useQuery(GetMyTicketsDocument, {
-    variables: {
-      event: event._id,
-      withPaymentInfo: true
-    },
-    skip: !session
+  const { data: poapDropsData } = useQuery(ListPoapDropsDocument, {
+    variables: { event: event._id }
   });
 
-  const tickets = ticketsData?.getMyTickets.tickets as Ticket[];
-  const myTicket = getAssignedTicket(tickets, me?._id) || tickets?.[0];
-  const ticketType = myTicket?.type;
-
-  const offers = usePoapOffers(event, ticketType);
-
-  const { data } = useQuery(
-    TokensDocument,
-    {
-      variables: {
-        where: {
-          network_in: offers?.map(offer => offer.provider_network as string),
-          contract_in: offers?.map(offer => offer.provider_id?.toLowerCase() as string),
-          tokenId_eq: '0',
-        },
-      },
-      skip: !offers?.length,
-    },
-    metaverseClient
-  );
-
-  if (!data?.tokens.length || !offers?.length) return null;
+  const poapDrops = poapDropsData?.listPoapDrops || [];
+  const gridCols = poapDrops.length <= 2 ? 'grid-cols-2' : 'grid-cols-3';
 
   return (
-    <GraphQLWSProvider url={process.env.NEXT_PUBLIC_WALLET_WSS_URL as string}>
-      <CollectibleList tokens={data.tokens as TokenComplex[]} offers={offers} />
-    </GraphQLWSProvider>
+    <div className="flex flex-col gap-2 w-full">
+      <p className="font-medium text-sm">Collectibles</p>
+      <hr className="border-t border-divider" />
+      <div className={`grid ${gridCols} gap-3`}>
+        {poapDrops.map((poapDrop) => (
+          <CollectibleCard
+            key={poapDrop._id}
+            poapDrop={poapDrop}
+            eventId={event._id}
+          />
+        ))}
+      </div>
+    </div>
   );
 }
