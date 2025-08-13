@@ -38,7 +38,7 @@ import { uploadFiles } from '$lib/utils/file';
 import { TextEditor } from '$lib/components/core/text-editor';
 import { Map } from '$lib/components/core';
 
-export function Content({ initData }: { initData: { spaces: Space[] } }) {
+export function Content() {
   const signIn = useSignIn();
   const session = useSession();
   const me = useMe();
@@ -50,7 +50,6 @@ export function Content({ initData }: { initData: { spaces: Space[] } }) {
       with_my_spaces: true,
       roles: [SpaceRole.Admin, SpaceRole.Creator, SpaceRole.Ambassador],
     },
-    initData: { listSpaces: initData.spaces } as unknown as GetSpacesQuery,
   });
   const spaces = (dataGetMySpace?.listSpaces || []) as Space[];
   const personalSpace = spaces.find((item) => item._id === spaceId || item.personal);
@@ -64,7 +63,7 @@ export function Content({ initData }: { initData: { spaces: Space[] } }) {
 
   return (
     <div className="pt-4">
-      <FormContent spaces={spaces} space={space || personalSpace} listToSpace={space} />
+      <FormContent spaces={spaces} space={personalSpace} listToSpace={space} />
     </div>
   );
 }
@@ -154,7 +153,13 @@ function FormContent({ spaces, space, listToSpace }: { space?: Space; spaces: Sp
       const existing = spaces.findIndex((i) => i._id === listToSpace._id);
       if (existing <= -1) setValue('listToSpace', listToSpace?._id);
     }
-  }, [listToSpace]);
+  }, [listToSpace, spaces.length]);
+
+  React.useEffect(() => {
+    if (space) {
+      setValue('space', space._id);
+    }
+  }, [space]);
 
   const [title, address] = watch(['title', 'address']);
 
@@ -623,11 +628,11 @@ function FormContent({ spaces, space, listToSpace }: { space?: Space; spaces: Sp
               <Card.Root>
                 <Card.Content className="flex justify-between items-center gap-2.5">
                   {listToSpace?.image_avatar_expanded && (
-                    <img src={generateUrl(space.image_avatar_expanded)} className="size-8 border rounded-sm" />
+                    <img src={generateUrl(listToSpace.image_avatar_expanded)} className="size-8 border rounded-sm" />
                   )}
                   <div className="flex flex-col flex-1">
                     <p className="text-xs text-secondary">Submitting to</p>
-                    <p>{space.title}</p>
+                    <p>{listToSpace.title}</p>
                   </div>
 
                   <Button
