@@ -5,8 +5,6 @@ import { htmlToText } from 'html-to-text';
 import { Event, GetEventDocument } from '$lib/graphql/generated/backend/graphql';
 import { getClient } from '$lib/graphql/request';
 import { EventGuestSide } from '$lib/components/features/event/EventGuestSide';
-import { EventThemeProvider } from '$lib/components/features/theme-builder/provider';
-import { MainEventLayout } from './main';
 
 export async function generateMetadata({ params }: { params: Promise<{ shortid: string }> }) {
   const shortid = (await params).shortid;
@@ -47,11 +45,5 @@ export default async function Page({ params }: { params: Promise<{ shortid: stri
 
   if (event.external_url) redirect(event.external_url);
 
-  return (
-    <EventThemeProvider themeData={event.theme_data}>
-      <MainEventLayout>
-        <EventGuestSide event={event} />
-      </MainEventLayout>
-    </EventThemeProvider>
-  );
+  return <EventGuestSide event={event} />;
 }

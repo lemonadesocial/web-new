@@ -10,7 +10,7 @@ export const renderTextWithLinks = (text: string) => {
           href={part}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-accent-500 font-medium hover:underline"
+          className="text-accent-500 font-medium hover:underline break-all"
         >
           {part}
         </a>
