@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.0.1](https://github.com/lemonadesocial/web-new/compare/v4.0.0...v4.0.1) (2025-08-13)
+
+
+### Bug Fixes
+
+* event ticket description overflow ([9f9ee1c](https://github.com/lemonadesocial/web-new/commit/9f9ee1ce7a5a72ad3257aa7327f25c0070411ac0))
+* hide email and socials in wallet connect ([5c09883](https://github.com/lemonadesocial/web-new/commit/5c09883eee2c60780f23bfc71fc886526bcf8f57))
+
 ## [4.0.0](https://github.com/lemonadesocial/web-new/compare/v3.1.0...v4.0.0) (2025-08-12)
 
 
