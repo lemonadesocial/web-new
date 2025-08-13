@@ -981,3 +981,111 @@ mutation SendEventEmailSettingTestEmails($input: SendEventEmailSettingTestEmails
 mutation ToggleEventEmailSettings($disabled: Boolean!, $ids: [MongoID!]!, $event: MongoID!) {
   toggleEventEmailSettings(disabled: $disabled, ids: $ids, event: $event)
 }
+
+mutation CreatePoapDrop($input: CreatePoapInput!) {
+  createPoapDrop(input: $input) {
+    _id
+    amount
+    claim_count
+    claim_mode
+    description
+    event
+    image
+    image_expanded {
+      _id
+      stamp
+      type
+      url
+      size
+      bucket
+      key
+    }
+    image_url
+    name
+    private
+    status
+    ticket_types
+    ticket_types_expanded {
+      _id
+      title
+    }
+  }
+}
+
+query ListPoapDrops($event: MongoID!) {
+  listPoapDrops(event: $event) {
+    _id
+    amount
+    claim_count
+    claim_mode
+    description
+    event
+    image
+    image_expanded {
+      _id
+      stamp
+      type
+      url
+      size
+      bucket
+      key
+    }
+    image_url
+    name
+    private
+    status
+    ticket_types
+    ticket_types_expanded {
+      _id
+      title
+    }
+  }
+}
+
+query ListMyPoapClaims($event: MongoID) {
+  listMyPoapClaims(event: $event) {
+    drop {
+      _id
+    }
+  }
+}
+
+query getEventCheckInState($id: MongoID) {
+  getEvent(_id: $id) {
+    checkedin
+  }
+}
+
+mutation ClaimPoap($wallet: String!, $drop: MongoID!) {
+  claimPoap(wallet: $wallet, drop: $drop)
+}
+
+mutation UpdatePoapDrop($input: UpdatePoapInput!, $drop: MongoID!) {
+  updatePoapDrop(input: $input, drop: $drop) {
+    _id
+    amount
+    claim_count
+    claim_mode
+    description
+    event
+    image
+    image_expanded {
+      _id
+      stamp
+      type
+      url
+      size
+      bucket
+      key
+    }
+    image_url
+    name
+    private
+    status
+    ticket_types
+    ticket_types_expanded {
+      _id
+      title
+    }
+  }
+}

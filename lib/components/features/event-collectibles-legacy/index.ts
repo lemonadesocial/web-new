@@ -1,2 +1,1 @@
 export * from './EventCollectibles';
-export * from './CollectibleCard';

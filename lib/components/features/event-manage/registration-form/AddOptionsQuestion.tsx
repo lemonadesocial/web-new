@@ -10,28 +10,9 @@ export function AddOptionsQuestion({ applicationQuestion }: { applicationQuestio
   const [question, setQuestion] = useState<string>(applicationQuestion?.question || '');
   const [required, setRequired] = useState<boolean>(applicationQuestion?.required || false);
   const [options, setOptions] = useState<string[]>(applicationQuestion?.options || []);
-  const [currentOption, setCurrentOption] = useState<string>('');
   const [selectType, setSelectType] = useState<SelectType>(applicationQuestion?.select_type || SelectType.Single);
   const { handleSave, loading } = useSaveQuestion(applicationQuestion);
   
-  const handleAddOption = () => {
-    if (currentOption.trim() && !options.includes(currentOption.trim())) {
-      setOptions([...options, currentOption.trim()]);
-      setCurrentOption('');
-    }
-  };
-
-  const handleRemoveOption = (optionToRemove: string) => {
-    setOptions(options.filter(option => option !== optionToRemove));
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === 'Tab') {
-      e.preventDefault();
-      handleAddOption();
-    }
-  };
-
   const isFormValid = question.trim() && options.length > 0;
   
   return (

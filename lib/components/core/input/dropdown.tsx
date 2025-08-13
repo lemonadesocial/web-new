@@ -87,7 +87,7 @@ export function DropdownTags(props: DropdownTagsProps) {
       <Menu.Trigger>
         <fieldset className="input-field">
           {props.label && <label className="text-secondary text-sm font-medium">{props.label}</label>}
-          <div className="control px-1.5! py-1! flex items-center min-h-[40px] h-auto!">
+          <div className="control px-1.5! py-1! flex items-center min-h-[40px] h-auto! w-full">
             <div className="flex-1 w-full flex flex-wrap gap-1">
               {selected?.map((item) => (
                 <Badge

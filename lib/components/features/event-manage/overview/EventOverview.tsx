@@ -7,6 +7,7 @@ import { InviteGuestsModal } from '../modals/InviteGuestsModal';
 import { InviteFriendModal } from '../../modals/InviteFriendModal';
 import { EventAccessInfo } from './EventAccessInfo';
 import { ManageHost } from './ManageHost';
+import { Collectibles } from './Collectibles';
 import { PaymentOverview } from './PaymentOverview';
 import { EventRecap } from './EventRecap';
 import { EventInvites } from './EventInvites';
@@ -82,6 +83,10 @@ export function EventOverview() {
       <hr className="border-t" />
 
       <ManageHost event={event} />
+
+      <hr className="border-t" />
+
+      <Collectibles event={event} />
 
       <PaymentOverview event={event} />
 

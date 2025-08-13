@@ -24,9 +24,9 @@ import { EventAccess } from '../event-access';
 import { EventDateTimeBlock } from './EventDateTimeBlock';
 import { EventLocationBlock } from './EventLocationBlock';
 import { AttendeesSection } from './AttendeesSection';
-import { EventCollectibles } from '../event-collectibles';
 import { PendingCohostRequest } from './PendingCohostRequest';
 import { useMe } from '$lib/hooks/useMe';
+import { EventCollectibles } from '../event-collectibles';
 
 export function EventGuestSide({ event: initEvent }: { event: Event }) {
   const { data } = useQuery(GetEventDocument, {
@@ -153,10 +153,10 @@ export function EventGuestSideContent({ event }: { event: Event }) {
         </div>
         {event && <EventAccess event={event} />}
         <AboutSection event={event} />
+        {attending && <EventCollectibles event={event} />}
         <LocationSection event={event} />
         <SubEventSection event={event} />
         <GallerySection event={event} />
-        {attending && <EventCollectibles event={event} />}
         <div className="flex flex-col gap-6 md:hidden">
           <CommunitySection event={event} />
           <AttendeesSection eventId={event._id} />
