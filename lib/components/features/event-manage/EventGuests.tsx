@@ -3,10 +3,8 @@
 import { GuestList } from './GuestList';
 import { useEvent } from './store';
 import { PendingApprovalsOverview } from './PendingApprovalsOverview';
-import { Card, modal, Spacer } from '$lib/components/core';
+import { Card, modal } from '$lib/components/core';
 import { PublicGuestListModal } from './modals/PublicGuestListModal';
-import { AddGuestsModal } from './modals/AddGuestsModal';
-import { AddInvitesModal } from './modals/AddInvitesModal';
 import { InviteGuestsModal } from './modals/InviteGuestsModal';
 
 export function EventGuests() {

@@ -24,7 +24,11 @@ export function PendingApprovalList({ event, limit = 3 }: PendingApprovalListPro
     },
   });
 
-  const { approve, decline, loading: requestLoading } = useEventRequest(event._id, () => {
+  const {
+    approve,
+    decline,
+    loading: requestLoading,
+  } = useEventRequest(event._id, () => {
     refetch();
   });
 
@@ -42,6 +46,15 @@ export function PendingApprovalList({ event, limit = 3 }: PendingApprovalListPro
 
   if (!pendingRequests.length) return;
 
+  const handleGuestDetail = (email: string) => {
+    drawer.open(GuestDetailsDrawer, {
+      props: {
+        email,
+        event: event._id,
+      },
+    });
+  };
+
   return (
     <div className="rounded-md border border-card-border bg-card">
       <div className="divide-y divide-(--color-divider)">
@@ -51,38 +64,72 @@ export function PendingApprovalList({ event, limit = 3 }: PendingApprovalListPro
           const email = request.email || (user as any)?.email;
 
           return (
-            <div
-              key={request._id}
-              className="flex items-center justify-between px-4 py-3"
-            >
-              <div className="flex items-center gap-3 flex-1">
-                <Avatar
-                  src={userAvatar(user as any)}
-                  className="size-5"
-                />
-                <div className="flex-1 flex gap-2 items-center">
-                  <p className="truncate">{name}</p>
-                  <p className="text-tertiary truncate">{email}</p>
+            <div key={request._id} className="flex items-center justify-between px-4 py-3">
+              <div className="flex md:items-center gap-3 flex-1">
+                <Avatar src={userAvatar(user as any)} className="size-7 md:size-5" />
+                <div className="flex flex-col flex-1 gap-2">
+                  <div className="flex justify-between w-full">
+                    <div className="flex-1 flex flex-col md:flex-row md:gap-2 md:items-center">
+                      <p className="truncate">{name}</p>
+                      <p className="text-tertiary truncate">{email}</p>
+                    </div>
+
+                    <span className="block md:hidden text-sm text-tertiary whitespace-nowrap">
+                      {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
+                    </span>
+                  </div>
+                  <div className="flex md:hidden gap-2">
+                    <Button
+                      variant="tertiary"
+                      size="xs"
+                      icon="icon-contract"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleGuestDetail(email);
+                      }}
+                    />
+                    <Button
+                      variant="danger"
+                      size="xs"
+                      iconLeft="icon-x"
+                      className="w-full"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDecline(request._id);
+                      }}
+                      disabled={requestLoading}
+                    >
+                      Decline
+                    </Button>
+                    <Button
+                      variant="success"
+                      size="xs"
+                      className="w-full"
+                      iconLeft="icon-done"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleApprove(request._id);
+                      }}
+                      disabled={requestLoading}
+                    >
+                      Approve
+                    </Button>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="hidden md:flex items-center gap-3">
                 <span className="text-sm text-tertiary whitespace-nowrap">
                   {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
                 </span>
 
-                <div className="flex gap-1">
+                <div className="flex items-center gap-2">
                   <Button
                     variant="tertiary"
                     size="xs"
                     icon="icon-contract"
                     onClick={(e) => {
                       e.stopPropagation();
-                      drawer.open(GuestDetailsDrawer, {
-                        props: {
-                          email,
-                          event: event._id,
-                        },
-                      });
+                      handleGuestDetail(email);
                     }}
                   />
                   <Button

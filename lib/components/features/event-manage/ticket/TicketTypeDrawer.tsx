@@ -368,7 +368,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
             <div className="flex items-center justify-between mb-3">
               <div>
                 <p>Activate Ticket</p>
-                <p className="text-tertiary text-sm">If disabled, guests won&aspos;t be able to buy or receive this ticket.</p>
+                <p className="text-tertiary text-sm">If disabled, guests won&apos;t be able to buy or receive this ticket.</p>
               </div>
               <Toggle id='active' checked={!!form.watch('active')} onChange={(value) => form.setValue('active', value)} />
             </div>

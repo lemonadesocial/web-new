@@ -90,7 +90,7 @@ export function GuestTable({ event, guests, loading = false, pageSize = 10, onGu
                       {guest.ticket?.type_expanded?.title}
                     </Chip>
                     <span className="hidden md:block text-sm text-tertiary whitespace-nowrap">
-                      {formatDistanceToNow(new Date(guest.ticket?.created_at), { addSuffix: true })}
+                      {guest.ticket?.created_at ? formatDistanceToNow(new Date(guest.ticket?.created_at), { addSuffix: true }) : ''}
                     </span>
                   </>
                 )}
@@ -112,7 +112,7 @@ export function GuestTable({ event, guests, loading = false, pageSize = 10, onGu
               </div>
 
               <span className="block md:hidden text-xs text-tertiary whitespace-nowrap">
-                {formatDistanceToNow(new Date(guest.ticket?.created_at), { addSuffix: true })}
+                {guest.ticket?.created_at ? formatDistanceToNow(new Date(guest.ticket?.created_at), { addSuffix: true }) : ''}
               </span>
             </div>
           </div>
