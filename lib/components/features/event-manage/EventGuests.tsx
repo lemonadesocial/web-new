@@ -5,6 +5,9 @@ import { useEvent } from './store';
 import { PendingApprovalsOverview } from './PendingApprovalsOverview';
 import { Card, modal, Spacer } from '$lib/components/core';
 import { PublicGuestListModal } from './modals/PublicGuestListModal';
+import { AddGuestsModal } from './modals/AddGuestsModal';
+import { AddInvitesModal } from './modals/AddInvitesModal';
+import { InviteGuestsModal } from './modals/InviteGuestsModal';
 
 export function EventGuests() {
   const event = useEvent();
@@ -14,7 +17,7 @@ export function EventGuests() {
   return (
     <div className="space-y-8">
       <div className="flex gap-2 overflow-auto no-scrollbar">
-        <Card.Root className="flex-1 min-w-fit">
+        <Card.Root className="flex-1 min-w-fit" onClick={() => modal.open(InviteGuestsModal, { props: { event } })}>
           <Card.Content className="flex gap-3 p-2 items-center pr-3">
             <div className="flex items-center justify-center rounded-sm p-2 bg-alert-400/[0.16] w-[38px] aspect-square">
               <i className="icon-user-plus size-[22px] text-alert-400" />
@@ -23,7 +26,10 @@ export function EventGuests() {
           </Card.Content>
         </Card.Root>
 
-        <Card.Root className="flex-1 min-w-fit">
+        <Card.Root
+          className="flex-1 min-w-fit"
+          onClick={() => modal.open(InviteGuestsModal, { props: { event, title: 'Add Guests', mode: 'guests' } })}
+        >
           <Card.Content className="flex gap-3 p-2 items-center pr-3">
             <div className="flex items-center justify-center rounded-sm p-2 bg-accent-400/[0.16] w-[38px] aspect-square">
               <i className="icon-ticket-assign size-[22px] text-accent-400" />
