@@ -1,27 +1,22 @@
 import assert from 'assert';
 import { useEffect, useMemo, useState } from 'react';
 
-import { useSession } from '../../../hooks/useSession';
-import { useRawLogout } from "../../../hooks/useLogout";
-import { useSignIn } from "../../../hooks/useSignIn";
+import { useSession } from '$lib/hooks/useSession';
+import { useRawLogout } from "$lib/hooks/useLogout";
 
-import { ory } from '../../../utils/ory';
+import { ory } from '$lib/utils/ory';
 
-import { dummyWalletPassword, handlePasswordLogin, handlePasswordRegistration, handleUpdateFlowProfile } from '../../../services/ory';
-import { decodeAuthCookie } from '../../../services/unicorn/common';
-import { getUnicornCanLink, linkUnicornWallet } from "../../../services/unicorn/api";
-
-import { Button } from '../../core/button';
-import { modal } from "../../core";
+import { dummyWalletPassword, handlePasswordLogin, handlePasswordRegistration, handleUpdateFlowProfile } from '$lib/services/ory';
+import { decodeAuthCookie } from '$lib/services/unicorn/common';
+import { getUnicornCanLink, linkUnicornWallet } from "$lib/services/unicorn/api";
+import { toast } from '$lib/components/core';
 
 export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: boolean) => void) => {
   const session = useSession();
   const logOut = useRawLogout();
   const authCookie = useMemo(() => decodeAuthCookie(cookie), [cookie]);
 
-  const [processing, setProcessing] = useState(false);
-  const [linking, setLinking] = useState(false);
-  const [showLinkOptions, setShowLinkOptions] = useState(false);
+  const [status, setStatus] = useState<'processing' | 'linking' | 'link-options' | 'creating' | 'linked' | 'processed'>('processing');
 
   const handleLogin = async (identifier: string, cookie: string) => {
     const loginFlow = await ory!.createBrowserLoginFlow().then((response) => response.data);
@@ -41,131 +36,31 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
     });
   }
 
-  const processCookie = async (cookie: string) => {
-    try {
-      setProcessing(true);
-      const response = await getUnicornCanLink(cookie);
-
-      if (response.identityId) {
-        //-- perform login
-        if (session && session._id === response.identityId) {
-          //-- do nothing, this is the same user
-          onSuccess?.(false);
-        }
-        else {
-          if (session) {
-            //-- raw logout, do not reload page
-            await logOut();
-          }
-
-          //-- then login with wallet
-
-          const identifier = authCookie?.storedToken.authDetails.walletAddress?.toLowerCase();
-
-          assert.ok(identifier, 'No wallet address in Unicorn auth cookie');
-
-          await handleLogin(identifier, cookie);
-        }
-      }
-      else {
-        if (!response.canLink) {
-          setShowLinkOptions(true);
-        }
-        else {
-          try {
-            setLinking(true);
-            const identifier = response.email || response.wallet;
-
-            assert.ok(identifier, 'No identifier in Unicorn auth cookie');
-
-            await linkUnicornWallet(identifier, cookie);
-
-            //-- link success, perform login
-            await handleLogin(identifier, cookie);
-          }
-          finally {
-            setLinking(false);
-          }
-        }
-      }
-    }
-    finally {
-      setProcessing(false);
-    }
-  }
-
-  useEffect(() => {
-    if (cookie) {
-      processCookie(cookie);
-    }
-  }, [cookie]);
-
-  return { processing, linking, showLinkOptions };
-}
-
-interface Props {
-  cookie: string;
-  onSuccess: (reload?: boolean, keepModalOpen?: boolean) => void;
-}
-export function UnicornAuth({ cookie, onSuccess }: Props) {
-  const logOut = useRawLogout();
-  const session = useSession();
-  const signIn = useSignIn();
-  const authCookie = useMemo(() => decodeAuthCookie(cookie), [cookie]);
-  const [showLinkSuccess, setShowLinkSuccess] = useState(false);
-
-  const { processing, linking, showLinkOptions } = useHandleUnicornCookie(cookie, onSuccess);
-  const [linkToAccount, setLinkToAccount] = useState(false);
-
   const handleLinkWithAccount = async () => {
-    try {
-      setLinkToAccount(true);
-      const wallet = authCookie?.storedToken.authDetails.walletAddress?.toLowerCase();
+    setStatus('linking');
+    const wallet = authCookie?.storedToken.authDetails.walletAddress?.toLowerCase();
 
-      const settingFlow = await ory!.createBrowserSettingsFlow().then((response) => response.data);
+    const settingFlow = await ory!.createBrowserSettingsFlow().then((response) => response.data);
 
-      await handleUpdateFlowProfile({
-        flow: settingFlow,
-        payload: {
-          traits: {
-            ...settingFlow.identity.traits,
-            unicorn_wallet: wallet,
-          },
-          transient_payload: {
-            unicorn_auth_cookie: cookie,
-          },
+    await handleUpdateFlowProfile({
+      flow: settingFlow,
+      payload: {
+        traits: {
+          ...settingFlow.identity.traits,
+          unicorn_wallet: wallet,
         },
-      });
-    }
-    finally {
-      setLinkToAccount(false);
-    }
+        transient_payload: {
+          unicorn_auth_cookie: cookie,
+        },
+      },
+    });
+
+    setStatus('linked');
+    onSuccess?.(true);
   }
 
-  const onLinkCurrentAccount = async () => {
-    await handleLinkWithAccount();
-    //-- reload auth and keep modal open
-    onSuccess(true, true);
-
-    setShowLinkSuccess(true);
-  };
-
-  const onLinkOtherAccount = async () => {
-    if (session) {
-      await logOut();
-    }
-
-    signIn(false, {
-      onSuccess: () => {
-        //-- close current login modal
-        modal.close();
-
-        onLinkCurrentAccount();
-      }
-    });
-  };
-
-  const onCreateNewAccount = async () => {
+  const createNewAccount = async () => {
+    setStatus('creating');
     const wallet = authCookie?.storedToken.authDetails.walletAddress?.toLowerCase();
 
     assert.ok(wallet, 'No wallet address in Unicorn auth cookie');
@@ -185,41 +80,72 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
       },
       onSuccess: () => {
         onSuccess?.(true);
+        setStatus('linked');
       },
     });
   };
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', padding: 21 }}>
-      {
-        showLinkSuccess ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
-            <div>{'You have linked your Unicorn wallet to your account'}</div>
-            <Button onClick={() => {
-              modal.close();
-            }}>OK</Button>
-          </div>
-        ) :
-          (linking || linkToAccount) ? (
-            <div>{'Linking with Unicorn...'}</div>
-          ) : showLinkOptions ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
-              <div>{'Unicorn linking options'}</div>
-              {session && (
-                <Button disabled={linking || !!session.unicorn_wallet} onClick={onLinkCurrentAccount}>
-                  {!session.unicorn_wallet ? 'Link to current account' : 'Cannot link to current account'}
-                </Button>
-              )}
-              <Button disabled={linking} onClick={onLinkOtherAccount}>
-                {'Link to other account'}
-              </Button>
-              <Button disabled={linking} onClick={onCreateNewAccount}>
-                {'Create new account'}
-              </Button>
-            </div>
-          ) : processing ? (
-            <div>{'Authenticating with Unicorn...'}</div>
-          ) : null}
-    </div>
-  );
+  const processCookie = async (cookie: string) => {
+    try {
+      const response = await getUnicornCanLink(cookie);
+
+      if (response.identityId) {
+        //-- perform login
+        if (session && session._id === response.identityId) {
+          //-- do nothing, this is the same user
+          onSuccess?.(false);
+          setStatus('processed');
+          return;
+        }
+
+        if (session) {
+          //-- raw logout, do not reload page
+          await logOut();
+        }
+
+        //-- then login with wallet
+
+        const identifier = authCookie?.storedToken.authDetails.walletAddress?.toLowerCase();
+
+        assert.ok(identifier, 'No wallet address in Unicorn auth cookie');
+
+        await handleLogin(identifier, cookie);
+
+        setStatus('processed');
+        return; 
+      }
+    
+      if (!response.canLink) {
+        if (session && !session.unicorn_wallet) {
+          await handleLinkWithAccount();
+          return; 
+        }
+
+        setStatus('link-options');
+        return; 
+      }
+
+      const identifier = response.email || response.wallet;
+
+      assert.ok(identifier, 'No identifier in Unicorn auth cookie');
+
+      await linkUnicornWallet(identifier, cookie);
+
+      //-- link success, perform login
+      await handleLogin(identifier, cookie);
+
+      setStatus('processed');
+    }
+    catch (e: any) {
+      toast.error(e.message);
+    }
+  }
+
+  useEffect(() => {
+    if (cookie) {
+      processCookie(cookie);
+    }
+  }, [cookie]);
+
+  return { status, handleLinkWithAccount, createNewAccount };
 }

@@ -4,10 +4,12 @@ export function SuccessModal({
   title,
   description,
   onClose,
+  buttonText = 'Done',
 }: {
   title: string;
   description: string;
   onClose?: () => void;
+  buttonText?: string;
 }) {
   return (
     <div className="p-4 space-y-4 w-[340px]">
@@ -26,7 +28,7 @@ export function SuccessModal({
         }}
         className="w-full"
       >
-        Done
+        {buttonText}
       </Button>
     </div>
   );
