@@ -1,10 +1,10 @@
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
-import { UnicornAuth } from "../components/features/auth/unicorn";
 import { useModal } from "../components/core";
 
 import { useAuth } from "./useAuth";
+import { UnicornAuth } from '$lib/components/features/auth/UnicornAuthModal';
 
 export const useConnectUnicornWallet = () => {
   const modal = useModal();
@@ -23,11 +23,7 @@ export const useConnectUnicornWallet = () => {
         dismissible: false,
         props: {
           cookie: authCookie,
-          onSuccess: (reloadAuth, keepModalOpen) => {
-            if (!keepModalOpen) {
-              modal.close(modalId.current);
-            }
-
+          onSuccess: (reloadAuth) => {
             if (reloadAuth) {
               reload();
             }
