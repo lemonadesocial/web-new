@@ -24,11 +24,9 @@ import { BlastAdvancedModal, EventReminderModal, ScheduleFeedbackModal } from '.
 export function EventBlasts() {
   const event = useEvent();
 
-  if (!event) return null;
-
   const { data } = useQuery(GetListEventEmailSettingsDocument, {
     variables: {
-      event: event._id,
+      event: event?._id,
       scheduled: true,
       sent: true,
     },
@@ -41,6 +39,8 @@ export function EventBlasts() {
   const reminderEmails = data?.listEventEmailSettings.filter(
     (i) => i.type === EmailTemplateType.Reminder,
   ) as EmailSetting[];
+
+  if (!event) return null;
 
   return (
     <>
