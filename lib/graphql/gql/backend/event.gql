@@ -561,8 +561,8 @@ mutation UpdateEventPhotos($id: MongoID!, $new_new_photos: [MongoID!]) {
   }
 }
 
-mutation inviteEvent($event: MongoID!, $users: [MongoID!], $emails: [String!]) {
-  inviteEvent(input: { _id: $event, users: $users, emails: $emails }) {
+mutation inviteEvent($event: MongoID!, $users: [MongoID!], $emails: [String!], $custom_body_html: String) {
+  inviteEvent(input: { _id: $event, users: $users, emails: $emails, custom_body_html: $custom_body_html }) {
     _id
     invited
   }

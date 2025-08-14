@@ -6,6 +6,7 @@ import { InviteEventDocument } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
 
 import { AddGuestsModal } from './AddGuestsModal';
+import { useMe } from '$lib/hooks/useMe';
 
 export function AddInvitesModal({
   emails,
@@ -20,8 +21,10 @@ export function AddInvitesModal({
   show?: 'invites' | 'guests';
   title?: string;
 }) {
+  const me = useMe();
   const [inviteEvent, { loading }] = useMutation(InviteEventDocument);
   const [tab, setTab] = useState<'invites' | 'guests'>(show);
+  const [message, setMessage] = useState('');
 
   const handleSendInvites = async () => {
     try {
@@ -29,6 +32,7 @@ export function AddInvitesModal({
         variables: {
           event: event._id,
           emails,
+          custom_body_html: message,
         },
       });
       toast.success('Invites sent successfully!');
@@ -57,11 +61,15 @@ export function AddInvitesModal({
 
         <div className="rounded-sm border bg-card">
           <div className="py-2.5 px-3.5 border-b">
-            <p>Hi, John Doe invites you to join IDSA International Design Conference.</p>
+            <p>
+              Hi, {me?.name} invites you to join {event.title}.
+            </p>
           </div>
           <textarea
+            value={message}
             className="w-full min-h-[80px] border-none outline-none font-medium placeholder:text-tertiary resize-none px-3.5 py-2.5 bg-white/8 block"
             placeholder="Add a custom message here..."
+            onChange={(e) => setMessage(e.target.value)}
           />
           <p className="py-2.5 px-3.5">RSVP: lemonade.social/e/{event.shortid}</p>
         </div>
