@@ -89,6 +89,21 @@ query listNewPaymentAccounts($id: [MongoID!], $type: PaymentAccountType, $provid
   }
 }
 
+mutation createNewPaymentAccount($type: PaymentAccountType!, $provider: NewPaymentProvider, $account_info: JSON) {
+  createNewPaymentAccount(input: { type: $type, provider: $provider, account_info: $account_info }) {
+    _id
+    account_info {
+      ...AccountInfoFragment
+    }
+    active
+    provider
+    created_at
+    type
+    user
+    title
+  }
+}
+
 mutation updateEventPaymentAccounts(
   $id: MongoID!
   $payment_accounts_new: [MongoID!]
