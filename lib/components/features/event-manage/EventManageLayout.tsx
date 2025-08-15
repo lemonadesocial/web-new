@@ -202,7 +202,7 @@ export function EventManageLayout({ children }: React.PropsWithChildren) {
               {event.published ? (
                 <Button
                   variant="tertiary-alt"
-                  className="hidden md:block hover:bg(--btn-tertiary)"
+                  className="hidden md:block hover:bg-(--btn-tertiary)! hover:text-tertiary! cursor-default!"
                   size="sm"
                   // onClick={() => drawer.open(EditEventDrawer, { props: { event }, dismissible: false })}
                   // iconRight="icon-edit-sharp"
