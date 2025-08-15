@@ -10,7 +10,7 @@ import { Event, PublishEventDocument, GetEventDocument } from '$lib/graphql/gene
 import { Button, drawer, toast, Skeleton } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
 
-import { eventAtom, useUpdateEvent } from './store';
+import { eventAtom, useEvent, useUpdateEvent } from './store';
 import { EditEventDrawer } from './drawers/EditEventDrawer';
 import { useMe } from '$lib/hooks/useMe';
 import { hosting } from '$lib/utils/event';
@@ -35,9 +35,10 @@ export function EventManageLayout({ children }: React.PropsWithChildren) {
   const router = useRouter();
   const me = useMe();
 
-  const { data, loading, error } = useQuery(GetEventDocument, { variables: { shortid } });
-  const event = data?.getEvent as Event;
+  const { data, loading } = useQuery(GetEventDocument, { variables: { shortid } });
+  const eventData = data?.getEvent as Event;
 
+  const event = useEvent();
   const setEventState = useSetAtom(eventAtom);
   const updateEvent = useUpdateEvent();
 
@@ -54,10 +55,10 @@ export function EventManageLayout({ children }: React.PropsWithChildren) {
   });
 
   useEffect(() => {
-    if (event) {
-      setEventState(event);
+    if (eventData) {
+      setEventState(eventData);
     }
-  }, [event, setEventState]);
+  }, [eventData, setEventState]);
 
   useEffect(() => {
     const setupObserver = () => {
@@ -201,10 +202,10 @@ export function EventManageLayout({ children }: React.PropsWithChildren) {
               {event.published ? (
                 <Button
                   variant="tertiary-alt"
-                  className="hidden md:block"
+                  className="hidden md:block hover:bg(--btn-tertiary)"
                   size="sm"
-                  onClick={() => drawer.open(EditEventDrawer, { props: { event }, dismissible: false })}
-                  iconRight="icon-edit-sharp"
+                  // onClick={() => drawer.open(EditEventDrawer, { props: { event }, dismissible: false })}
+                  // iconRight="icon-edit-sharp"
                 >
                   Published
                 </Button>
