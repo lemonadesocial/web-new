@@ -4,13 +4,15 @@ import Decimal from 'decimal.js';
 import { useMutation, useQuery } from "$lib/graphql/request";
 import { useStripeSetup } from "$lib/hooks/useStripeSetup";
 import { Button, Input, modal, ModalContent, Select, Skeleton, toast } from "$lib/components/core";
-import { DigitalAccount, EventTicketPrice, ListNewPaymentAccountsDocument, NewPaymentProvider, UpdateEventPaymentAccountsDocument, type Event } from "$lib/graphql/generated/backend/graphql";
+import { CreateNewPaymentAccountDocument, DigitalAccount, EventTicketPrice, ListNewPaymentAccountsDocument, NewPaymentProvider, PaymentAccountType, UpdateEventPaymentAccountsDocument, type Event } from "$lib/graphql/generated/backend/graphql";
 
 import { useEvent, useUpdateEvent } from "../store";
+import { useMe } from "$lib/hooks/useMe";
 
 export function UpdateFiatPriceModal({ price, onChange }: { price?: EventTicketPrice; onChange: (price: EventTicketPrice) => void }) {
   const event = useEvent();
   const updateEvent = useUpdateEvent();
+  const me = useMe();
 
   const handleStripeSetup = useStripeSetup();
   const stripeAccount = event?.payment_accounts_expanded?.find(account => account?.provider === 'stripe');
@@ -30,6 +32,19 @@ export function UpdateFiatPriceModal({ price, onChange }: { price?: EventTicketP
     },
   });
 
+  const [createPaymentAccount, { loading: loadingCreatePaymentAccount }] = useMutation(CreateNewPaymentAccountDocument, {
+    onComplete(_, res) {
+      if (res?.createNewPaymentAccount._id) {
+        updatePaymentAccount({
+          variables: {
+            id: event!._id,
+            payment_accounts_new: [...(event!.payment_accounts_new || []), res.createNewPaymentAccount._id]
+          }
+        });
+      }
+    }
+  });
+
   const { loading: loadingAccounts } = useQuery(ListNewPaymentAccountsDocument, {
     variables: {
       provider: NewPaymentProvider.Stripe
@@ -44,6 +59,17 @@ export function UpdateFiatPriceModal({ price, onChange }: { price?: EventTicketP
           variables: {
             id: event!._id,
             payment_accounts_new: [...(event!.payment_accounts_new || []), userAccount._id]
+          }
+        });
+        
+        return;
+      }
+
+      if (me?.stripe_connected_account?.connected) {
+        createPaymentAccount({
+          variables: {
+            type: PaymentAccountType.Digital,
+            provider: NewPaymentProvider.Stripe,
           }
         });
       }
@@ -61,7 +87,7 @@ export function UpdateFiatPriceModal({ price, onChange }: { price?: EventTicketP
   };
 
 
-  if (loadingAccounts || loadingUpdatePaymentAccount) return (
+  if (loadingAccounts || loadingUpdatePaymentAccount || loadingCreatePaymentAccount) return (
     <ModalContent icon="icon-stripe">
       <div className="space-y-4">
         <Skeleton animate className="w-full min-h-[60px]" />

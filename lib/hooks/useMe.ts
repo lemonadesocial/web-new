@@ -1,14 +1,28 @@
-import { useQuery } from '$lib/graphql/request';
-import { GetMeDocument, User } from '$lib/graphql/generated/backend/graphql';
+import { useEffect } from 'react';
+import { useAtom } from 'jotai';
+
 import { useSession } from './useSession';
+import { defaultClient } from '$lib/graphql/request/instances';
+import { GetMeDocument, User } from '$lib/graphql/generated/backend/graphql';
+import { userAtom } from '$lib/jotai';
 
 export function useMe(): User | null {
   const session = useSession();
+  const [user, setUser] = useAtom(userAtom);
 
-  const { data: dataGetMe } = useQuery(GetMeDocument, {
-    skip: !session,
-  });
+  useEffect(() => {
+    if (session) {
+      defaultClient.query({
+        query: GetMeDocument,
+      }).then(({ data }) => {
+        if (data?.getMe) {
+          setUser(data.getMe as User);
+        }
+      });
+    } else {
+      setUser(null);
+    }
+  }, [session, setUser]);
 
-  if (!dataGetMe?.getMe) return null;
-  return dataGetMe?.getMe as User;
+  return user;
 }

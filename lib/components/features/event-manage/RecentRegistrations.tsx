@@ -1,7 +1,8 @@
-import { Button, drawer } from '$lib/components/core';
+import { useRouter } from 'next/navigation';
+
+import { Button } from '$lib/components/core';
 import { Event, ListEventGuestsDocument } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
-import { GuestDetailsDrawer } from './drawers/GuestDetailsDrawer';
 import { GuestTable } from './GuestTable';
 
 interface RecentRegistrationsProps {
@@ -10,6 +11,7 @@ interface RecentRegistrationsProps {
 }
 
 export function RecentRegistrations({ event, titleClassName }: RecentRegistrationsProps) {
+  const router = useRouter();
   const { data, loading } = useQuery(ListEventGuestsDocument, {
     variables: {
       event: event._id,
@@ -44,7 +46,7 @@ export function RecentRegistrations({ event, titleClassName }: RecentRegistratio
           variant="tertiary"
           iconRight="icon-chevron-right"
           size="sm"
-          onClick={() => drawer.open(GuestDetailsDrawer, { props: { email: '', event: event._id }, contentClass: "max-w-[784px]" })}
+          onClick={() => router.push(`/e/manage/${event.shortid}/guests`)}
         >
           All Guests
         </Button>
