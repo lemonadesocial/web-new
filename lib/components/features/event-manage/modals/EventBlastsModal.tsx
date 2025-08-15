@@ -411,7 +411,7 @@ export function ScheduleFeedbackModal({ event }: { event: Event }) {
           />
           <Spacer className="h-2" />
           <p className="text-secondary text-sm">
-            Immediately {getFormatTime(new Date(scheduleAt))} after the event ends
+            {getFormatTime(new Date(scheduleAt)) || 'Immediately'} after the event ends
           </p>
         </div>
 
