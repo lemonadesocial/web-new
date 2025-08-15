@@ -8927,6 +8927,7 @@ export type UserInput = {
   handle_mirror?: InputMaybe<Scalars['String']['input']>;
   handle_twitter?: InputMaybe<Scalars['String']['input']>;
   icebreakers?: InputMaybe<Array<UserIcebreakerInput>>;
+  image_avatar?: InputMaybe<Scalars['String']['input']>;
   industry?: InputMaybe<Scalars['String']['input']>;
   interests?: InputMaybe<Array<Scalars['String']['input']>>;
   job_title?: InputMaybe<Scalars['String']['input']>;
