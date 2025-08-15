@@ -18,7 +18,7 @@ export default function Providers({ children, space }: { children: React.ReactNo
   const setHydraClientId = useSetAtom(hydraClientIdAtom);
   const [appKitReady, setAppKitReady] = useState(false);
   useLensResumeSession();
-  const { loading: loadingAuth } = useAuth(true);
+  const { reload, loading: loadingAuth } = useAuth();
 
   useEffect(() => {
     if (!chainsLoading) {
@@ -35,6 +35,10 @@ export default function Providers({ children, space }: { children: React.ReactNo
 
   useEffect(() => {
     sdk.actions.ready().then(() => setMiniAppReady(true));
+  }, []);
+
+  useEffect(() => {
+    reload();
   }, []);
 
   if (chainsLoading || !appKitReady || !miniAppReady || loadingAuth) return null;

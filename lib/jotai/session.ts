@@ -15,3 +15,4 @@ export interface Session {
 }
 
 export const sessionAtom = atom<Session | null>(null);
+export const sessionLoadingAtom = atom<boolean>(true);

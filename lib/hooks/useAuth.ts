@@ -4,17 +4,17 @@ import { useAtom, useAtomValue } from 'jotai';
 import React from 'react';
 
 import { ory } from '$lib/utils/ory';
-import { hydraClientIdAtom, Session, sessionAtom } from '$lib/jotai';
+import { hydraClientIdAtom, Session, sessionAtom, sessionLoadingAtom } from '$lib/jotai';
 import { useLogOut } from '$lib/hooks/useLogout';
 import { oidc } from '$lib/utils/oidc';
 import { toast } from '$lib/components/core';
 import { HYDRA_PUBLIC_URL } from '$lib/utils/constants';
 import { useAccount } from './useLens';
 
-export function useAuth(initialReload: boolean = false) {
+export function useAuth() {
   const hydraClientId = useAtomValue(hydraClientIdAtom);
   const [session, setSession] = useAtom(sessionAtom);
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = useAtom(sessionLoadingAtom);
   const logOut = useLogOut();
   const { account } = useAccount();
 
@@ -101,12 +101,6 @@ export function useAuth(initialReload: boolean = false) {
 
     await handleOryAuth();
   }
-
-  React.useEffect(() => {
-    if (initialReload) {
-      reload();
-    }
-  }, [initialReload]);
 
   React.useEffect(() => {
     if (account && session) {

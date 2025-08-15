@@ -11,17 +11,10 @@ import { useAuth } from "./useAuth";
 import { useMutation } from "../graphql/request";
 import { UpdateUserDocument } from "../graphql/generated/backend/graphql";
 
-import { useModal } from "../components/core";
-
-const Modal = (props: { data: any }) => {
-  return <div style={{ "whiteSpace": "wrap" }}>{JSON.stringify(props.data)}</div>;
-}
-
 //-- please do not update this function
 const getFarcasterIdentifier = (fid: number) => `farcaster:${fid}`;
 
 export const useConnectFarcaster = () => {
-  const modal = useModal();
   const [updateUser] = useMutation(UpdateUserDocument);
   const { reload, loading, session } = useAuth();
 
@@ -29,7 +22,7 @@ export const useConnectFarcaster = () => {
 
   const updateUserInfo = async () => {
     const context = await sdk.context;
-    modal?.open(Modal, { props: { data: { user: context.user } } });
+
     await updateUser({
       variables: {
         input: {
@@ -59,7 +52,7 @@ export const useConnectFarcaster = () => {
         reload().then(() => updateUserInfo());
       },
       onError: (_registrationFlow, err) => {
-        //-- TODO: handle error here
+        //-- TODO: handle error here, toast or modal
         console.log(err);
       }
     });
@@ -79,19 +72,19 @@ export const useConnectFarcaster = () => {
         }
       },
       onSuccess: () => {
-        reload().then(() => updateUserInfo());
+        reload();
       },
       onError: (loginFlow, err) => {
+        //-- if idenitifier not exists (4000006) then register
         const invalidLoginCredentials = loginFlow.ui.messages?.find((message) => message.id === 4000006);
 
         if (invalidLoginCredentials) {
-          //-- if idenitifier not exists then register
           handleRegister(fid, jwt);
 
           return;
         }
 
-        //-- TODO: handle error here
+        //-- TODO: handle error here, toast or modal
         console.log(err);
       }
     });
@@ -110,8 +103,8 @@ export const useConnectFarcaster = () => {
   }, [loading, session]);
 
   useEffect(() => {
-    if (token && modal) {
+    if (token) {
       authenWithToken(token);
     }
-  }, [token, modal]);
+  }, [token]);
 };
