@@ -114,5 +114,5 @@ export function useAuth(initialReload: boolean = false) {
     }
   }, [account]);
 
-  return { loading, reload };
+  return { loading, session, reload };
 }

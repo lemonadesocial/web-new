@@ -8,6 +8,9 @@ import { dummyWalletPassword, handlePasswordLogin, handlePasswordRegistration } 
 
 import { useAuth } from "./useAuth";
 
+import { useMutation } from "../graphql/request";
+import { UpdateUserDocument } from "../graphql/generated/backend/graphql";
+
 import { useModal } from "../components/core";
 
 const Modal = (props: { data: any }) => {
@@ -19,13 +22,22 @@ const getFarcasterIdentifier = (fid: number) => `farcaster:${fid}`;
 
 export const useConnectFarcaster = () => {
   const modal = useModal();
-  const { reload } = useAuth();
+  const [updateUser] = useMutation(UpdateUserDocument);
+  const { reload, loading, session } = useAuth();
 
   const [token, setToken] = useState<string>();
 
   const updateUserInfo = async () => {
     const context = await sdk.context;
     modal?.open(Modal, { props: { data: { user: context.user } } });
+    await updateUser({
+      variables: {
+        input: {
+          display_name: context.user.displayName,
+          image_avatar: context.user.pfpUrl,
+        }
+      }
+    })
   }
 
   const handleRegister = async (fid: number, jwt: string) => {
@@ -92,8 +104,10 @@ export const useConnectFarcaster = () => {
   };
 
   useEffect(() => {
-    sdk.quickAuth.getToken().then(({ token }) => setToken(token));
-  }, []);
+    if (!loading && !session) {
+      sdk.quickAuth.getToken().then(({ token }) => setToken(token));
+    }
+  }, [loading, session]);
 
   useEffect(() => {
     if (token && modal) {
