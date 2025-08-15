@@ -52,11 +52,9 @@ export function UpdateFiatPriceModal({ price, onChange }: { price?: EventTicketP
     fetchPolicy: 'network-only',
     skip: !!stripeAccount,
     onComplete: (data) => {
-      console.log(data)
       const userAccount = data?.listNewPaymentAccounts[0];
 
       if (userAccount) {
-        console.log('userAccount', userAccount)
         updatePaymentAccount({
           variables: {
             id: event!._id,
@@ -67,7 +65,6 @@ export function UpdateFiatPriceModal({ price, onChange }: { price?: EventTicketP
         return;
       }
 
-      console.log('me', me)
       if (me?.stripe_connected_account?.connected) {
         createPaymentAccount({
           variables: {

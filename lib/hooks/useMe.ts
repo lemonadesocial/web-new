@@ -1,11 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useAtom } from 'jotai';
+
 import { useSession } from './useSession';
 import { defaultClient } from '$lib/graphql/request/instances';
 import { GetMeDocument, User } from '$lib/graphql/generated/backend/graphql';
+import { userAtom } from '$lib/jotai';
 
 export function useMe(): User | null {
   const session = useSession();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useAtom(userAtom);
 
   useEffect(() => {
     if (session) {
@@ -19,7 +22,7 @@ export function useMe(): User | null {
     } else {
       setUser(null);
     }
-  }, [session]);
+  }, [session, setUser]);
 
   return user;
 }
