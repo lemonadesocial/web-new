@@ -12,7 +12,7 @@ import { useResumeSession as useLensResumeSession } from '$lib/hooks/useLens';
 import { useAuth } from "../../lib/hooks/useAuth";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { loading } = useAuth();
+  const { loading } = useAuth(true);
 
   if (loading) return null;
 

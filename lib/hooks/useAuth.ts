@@ -11,7 +11,7 @@ import { toast } from '$lib/components/core';
 import { HYDRA_PUBLIC_URL } from '$lib/utils/constants';
 import { useAccount } from './useLens';
 
-export function useAuth() {
+export function useAuth(initialReload: boolean = false) {
   const hydraClientId = useAtomValue(hydraClientIdAtom);
   const [session, setSession] = useAtom(sessionAtom);
   const [loading, setLoading] = React.useState(true);
@@ -103,8 +103,10 @@ export function useAuth() {
   }
 
   React.useEffect(() => {
-    reload();
-  }, [hydraClientId]);
+    if (initialReload) {
+      reload();
+    }
+  }, []);
 
   React.useEffect(() => {
     if (account && session) {
