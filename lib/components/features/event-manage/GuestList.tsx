@@ -1,20 +1,23 @@
-import { useState } from "react";
-import { format } from "date-fns";
-import { snakeCase } from "lodash";
+'use client';
+import React, { useState } from 'react';
+import { format } from 'date-fns';
+import { snakeCase } from 'lodash';
 
-import { Button, Input } from "$lib/components/core";
-import { downloadCSVFile } from "$lib/utils/file";
-import { useQuery } from "$lib/graphql/request";
-import { Event, ListEventGuestsDocument } from "$lib/graphql/generated/backend/graphql";
+import { Button, Input } from '$lib/components/core';
+import { downloadCSVFile } from '$lib/utils/file';
+import { useQuery } from '$lib/graphql/request';
+import { Event, ListEventGuestsDocument } from '$lib/graphql/generated/backend/graphql';
 
-import { GuestTable } from "./GuestTable";
+import { GuestTable } from './GuestTable';
 
 export function GuestList({ event }: { event: Event }) {
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
+  const pageSize = 100;
 
-  const { data, loading, error } = useQuery(ListEventGuestsDocument, {
+  const [mounted, setMounted] = React.useState(false);
+
+  const { data, loading, error, refetch } = useQuery(ListEventGuestsDocument, {
     variables: {
       event: event._id,
       search: searchText || undefined,
@@ -28,7 +31,10 @@ export function GuestList({ event }: { event: Event }) {
   const totalPages = Math.ceil(totalCount / pageSize);
 
   const exportGuestsCSV = () => {
-    downloadCSVFile(`/event/${event?._id}/export/guests`, snakeCase(`${event.title} Guests ${format(new Date(event.start), 'dd_MM_yyyy')}`));
+    downloadCSVFile(
+      `/event/${event?._id}/export/guests`,
+      snakeCase(`${event.title} Guests ${format(new Date(event.start), 'dd_MM_yyyy')}`),
+    );
   };
 
   const handleSearch = (value: string) => {
@@ -39,6 +45,21 @@ export function GuestList({ event }: { event: Event }) {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+
+  const handleRefetch = () => {
+    refetch();
+  };
+
+  React.useEffect(() => {
+    window.addEventListener('refetch_guest_list', handleRefetch);
+    if (!mounted) {
+      setMounted(true);
+    }
+
+    return () => {
+      window.removeEventListener('refetch_guest_list', handleRefetch);
+    };
+  }, []);
 
   if (error) {
     return (
@@ -62,11 +83,11 @@ export function GuestList({ event }: { event: Event }) {
         variant="outlined"
       />
 
-      <GuestTable 
-        event={event} 
-        guests={guests} 
-        loading={loading} 
-        pageSize={pageSize} 
+      <GuestTable
+        event={event}
+        guests={guests}
+        loading={(!mounted || (mounted && currentPage > 1)) && loading}
+        pageSize={pageSize}
       />
 
       {totalPages > 1 && (

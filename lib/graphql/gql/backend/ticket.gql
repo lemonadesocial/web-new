@@ -344,3 +344,15 @@ query exportEventTickets(
     }
   }
 }
+
+mutation CreateTickets(
+  $ticketType: MongoID!
+  $ticketAssignments: [TicketAssignment!]!
+) {
+  createTickets(
+    ticket_type: $ticketType
+    ticket_assignments: $ticketAssignments
+  ) {
+    _id
+  }
+}

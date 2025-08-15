@@ -61,29 +61,36 @@ export function GuestTable({ event, guests, loading = false, pageSize = 10, onGu
     <div className="rounded-md border border-card-border bg-card">
       <div className="divide-y divide-(--color-divider)">
         {guests.map((guest: EventGuestDetail, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between px-4 py-3 hover:bg-card-hover cursor-pointer"
-              onClick={() => handleGuestClick(guest)}
-            >
-              <div className="flex items-center gap-3 flex-1">
-                <Avatar
-                  src={guest.user.image_avatar || randomUserImage(guest.user.email?.toString())}
-                  className="size-5"
-                />
-                <div className="flex-1 flex gap-2 items-center">
-                  <p className="truncate">{guest.user.display_name || guest.user.name || guest.ticket?.metadata?.buyer_name || guest.join_request?.metadata?.buyer_name || 'Anonymous'}</p>
-                  <p className="text-tertiary truncate">{guest.user.email}</p>
-                </div>
+          <div
+            key={index}
+            className="flex items-center justify-between px-4 py-3 hover:bg-card-hover cursor-pointer"
+            onClick={() => handleGuestClick(guest)}
+          >
+            <div className="flex items-center gap-3 flex-1">
+              <Avatar
+                src={guest.user.image_avatar || randomUserImage(guest.user.email?.toString())}
+                className="size-5"
+              />
+              <div className="flex-1 flex flex-col md:flex-row md:gap-2 md:items-center">
+                <p className="truncate">
+                  {guest.user.display_name ||
+                    guest.user.name ||
+                    guest.ticket?.metadata?.buyer_name ||
+                    guest.join_request?.metadata?.buyer_name ||
+                    'Anonymous'}
+                </p>
+                <p className="text-tertiary truncate text-xs md:text-base">{guest.user.email}</p>
               </div>
-              <div className="flex items-center gap-3">
+            </div>
+            <div className="flex flex-col items-end md:flex-row gap-0.5">
+              <div className="flex items-center gap-1 md:gap-3">
                 {guest.ticket && (
                   <>
                     <Chip variant="secondary" size="xxs" className="rounded-full" leftIcon="icon-ticket size-3">
                       {guest.ticket?.type_expanded?.title}
                     </Chip>
-                    <span className="text-sm text-tertiary whitespace-nowrap">
-                      {formatDistanceToNow(new Date(guest.ticket?.created_at), { addSuffix: true })}
+                    <span className="hidden md:block text-sm text-tertiary whitespace-nowrap">
+                      {guest.ticket?.created_at ? formatDistanceToNow(new Date(guest.ticket?.created_at), { addSuffix: true }) : ''}
                     </span>
                   </>
                 )}
@@ -103,8 +110,13 @@ export function GuestTable({ event, guests, loading = false, pageSize = 10, onGu
                   </Chip>
                 )}
               </div>
+
+              <span className="block md:hidden text-xs text-tertiary whitespace-nowrap">
+                {guest.ticket?.created_at ? formatDistanceToNow(new Date(guest.ticket?.created_at), { addSuffix: true }) : ''}
+              </span>
             </div>
-          ))}
+          </div>
+        ))}
       </div>
     </div>
   );

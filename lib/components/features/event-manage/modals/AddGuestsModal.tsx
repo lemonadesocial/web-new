@@ -1,19 +1,26 @@
 import { useState } from 'react';
 
 import { modal, Button, toast, Menu, MenuItem } from '$lib/components/core';
-import {
-  Event,
-  EventTicketType,
-  AssignTicketsDocument,
-  AssignTicketsInput,
-} from '$lib/graphql/generated/backend/graphql';
-import { useMutation } from '$lib/graphql/request';
+import { Event as EventType, EventTicketType, CreateTicketsDocument } from '$lib/graphql/generated/backend/graphql';
+import { useMutation, useQuery } from '$lib/graphql/request';
+import { useMe } from '$lib/hooks/useMe';
 
-export function AddGuestsModal({ emails, event, onBack }: { emails: string[]; event: Event; onBack: () => void }) {
-  const [assignTickets, { loading }] = useMutation(AssignTicketsDocument);
+export function AddGuestsModal({
+  emails,
+  event,
+  onBack,
+  title = 'Invite Guests',
+}: {
+  emails: string[];
+  event: EventType;
+  onBack: () => void;
+  title?: string;
+}) {
   const [selectedTicketType, setSelectedTicketType] = useState<EventTicketType | undefined>(
     event.event_ticket_types?.[0],
   );
+
+  const [createTickets, { loading }] = useMutation(CreateTicketsDocument);
 
   const handleSendInvites = async () => {
     if (!selectedTicketType) {
@@ -22,19 +29,17 @@ export function AddGuestsModal({ emails, event, onBack }: { emails: string[]; ev
     }
 
     try {
-      const input: AssignTicketsInput = {
-        event: event._id,
-        assignees: emails.map((email) => ({
-          email,
-          ticket: selectedTicketType._id,
-        })),
-      };
-      await assignTickets({
+      const { data } = await createTickets({
         variables: {
-          input,
+          ticketType: selectedTicketType._id,
+          ticketAssignments: emails.map((email) => ({
+            email,
+            count: 1,
+          })),
         },
       });
       toast.success('Guests added successfully!');
+      window.dispatchEvent(new Event('refetch_guest_list'));
       modal.close();
     } catch (error: any) {
       toast.error(error.message || 'Failed to add guests');
@@ -42,14 +47,16 @@ export function AddGuestsModal({ emails, event, onBack }: { emails: string[]; ev
   };
 
   return (
-    <div className="w-[448px]">
+    <div className="w-full max-w-[448px]">
       <div className="flex justify-between py-3 px-4 border-b">
-        <p className="text-lg">Invite Guests</p>
-        <Button icon="icon-x" size='xs' variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
+        <p className="text-lg">{title}</p>
+        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
       </div>
       <div className="p-4 space-y-4">
         <div className="py-2.5 px-3.5 rounded-sm border bg-card">
-          <p className="text-sm text-tertiary">Inviting {emails.length} {emails.length === 1 ? 'guest' : 'guests'}</p>
+          <p className="text-sm text-tertiary">
+            Inviting {emails.length} {emails.length === 1 ? 'guest' : 'guests'}
+          </p>
           <p className="truncate">{emails.join(', ')}</p>
         </div>
 
@@ -73,9 +80,7 @@ export function AddGuestsModal({ emails, event, onBack }: { emails: string[]; ev
           <div className="flex items-center justify-center size-[34px] rounded-sm bg-success-500/16">
             <i className="icon-person-add text-success-500 size-4.5" />
           </div>
-          <p className="flex-1 text-sm">
-            Guests will be added to the guest list, bypassing registration and payment.
-          </p>
+          <p className="flex-1 text-sm">Guests will be added to the guest list, bypassing registration and payment.</p>
         </div>
 
         <div className="space-y-2">
@@ -106,27 +111,21 @@ export function AddGuestsModal({ emails, event, onBack }: { emails: string[]; ev
 
         <div>
           <p className="text-sm text-tertiary">
-            If you&apos;d like guests to register, send them an invite. {' '}
-            <span className="text-accent-500 cursor-pointer" onClick={onBack}>Invite Guests</span>
+            If you&apos;d like guests to register, send them an invite.{' '}
+            <span className="text-accent-500 cursor-pointer" onClick={onBack}>
+              Invite Guests
+            </span>
           </p>
-          <p className="text-sm text-tertiary">Please only add guests who have already consented to joining this event.</p>
+          <p className="text-sm text-tertiary">
+            Please only add guests who have already consented to joining this event.
+          </p>
         </div>
       </div>
       <div className="flex justify-between py-3 px-4 border-t items-center">
-        <Button
-          iconLeft="icon-chevron-left"
-          variant="tertiary"
-          onClick={onBack}
-          disabled={loading}
-        >
+        <Button iconLeft="icon-chevron-left" variant="tertiary" onClick={onBack} disabled={loading}>
           Back
         </Button>
-        <Button
-          iconLeft="icon-person-add"
-          variant="secondary"
-          onClick={handleSendInvites}
-          loading={loading}
-        >
+        <Button iconLeft="icon-person-add" variant="secondary" onClick={handleSendInvites} loading={loading}>
           Add to Guest List
         </Button>
       </div>
