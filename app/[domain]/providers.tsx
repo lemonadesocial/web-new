@@ -11,19 +11,12 @@ import { defaultClient } from '$lib/graphql/request/instances';
 import { useResumeSession as useLensResumeSession } from '$lib/hooks/useLens';
 import { useAuth } from "../../lib/hooks/useAuth";
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { loading } = useAuth(true);
-
-  if (loading) return null;
-
-  return children;
-}
-
 export default function Providers({ children, space }: { children: React.ReactNode; space?: SpaceHydraKeys | null; }) {
   const chainsLoading = useListChains();
   const setHydraClientId = useSetAtom(hydraClientIdAtom);
   const [appKitReady, setAppKitReady] = React.useState(false);
   useLensResumeSession();
+  const { loading: loadingAuth } = useAuth(true);
 
   React.useEffect(() => {
     if (!chainsLoading) {
@@ -38,13 +31,11 @@ export default function Providers({ children, space }: { children: React.ReactNo
     }
   }, [space]);
 
-  if (chainsLoading || !appKitReady) return null;
+  if (chainsLoading || !appKitReady || loadingAuth) return null;
 
   return (
     <GraphqlClientProvider client={defaultClient}>
-      <AuthProvider>
-        {children}
-      </AuthProvider>
+      {children}
     </GraphqlClientProvider>
   );
 }

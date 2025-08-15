@@ -106,7 +106,7 @@ export function useAuth(initialReload: boolean = false) {
     if (initialReload) {
       reload();
     }
-  }, []);
+  }, [initialReload]);
 
   React.useEffect(() => {
     if (account && session) {
