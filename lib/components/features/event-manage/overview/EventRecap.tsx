@@ -60,7 +60,7 @@ export function EventRecap({ event }: { event: Event }) {
             </div>
             <p
               className="text-accent-400 text-sm cursor-pointer"
-              onClick={() => modal.open(ScheduleFeedbackModal, { props: { event } })}
+              onClick={() => modal.open(ScheduleFeedbackModal, { props: { event }, dismissible: false })}
             >
               Schedule Feedback Email
             </p>

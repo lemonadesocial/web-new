@@ -142,7 +142,7 @@ export function EventBlasts() {
               actions={[
                 {
                   text: 'Schedule',
-                  onClick: () => modal.open(ScheduleFeedbackModal, { props: { event } }),
+                  onClick: () => modal.open(ScheduleFeedbackModal, { props: { event }, dismissible: false }),
                 },
               ]}
             />

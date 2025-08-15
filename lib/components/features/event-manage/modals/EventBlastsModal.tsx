@@ -239,7 +239,7 @@ export function BlastAdvancedModal({ event, message }: { event: Event; message: 
 }
 
 export function EventReminderModal({ event, reminderEmails = [] }: { event: Event; reminderEmails?: EmailSetting[] }) {
-  const [autoSend, setAutoSend] = React.useState(!reminderEmails[0]?.disabled);
+  const [autoSend, setAutoSend] = React.useState(reminderEmails[0]?.disabled);
 
   const [toggleEmailSettings, { client }] = useMutation(ToggleEventEmailSettingsDocument);
 

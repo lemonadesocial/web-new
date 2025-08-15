@@ -13,7 +13,7 @@ import { GuestTable } from './GuestTable';
 export function GuestList({ event }: { event: Event }) {
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
+  const pageSize = 100;
 
   const [mounted, setMounted] = React.useState(false);
 
