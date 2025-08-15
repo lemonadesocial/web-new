@@ -1,5 +1,40 @@
 # Changelog
 
+## [4.1.0](https://github.com/lemonadesocial/web-new/compare/v4.0.1...v4.1.0) (2025-08-15)
+
+
+### Features
+
+* disabled dismiss modal ([66bd583](https://github.com/lemonadesocial/web-new/commit/66bd583698fd5cd839df005f0268842bdd5ab3f3))
+* hooks error ([a8e95f5](https://github.com/lemonadesocial/web-new/commit/a8e95f5f2b8afb88ec043173d4830b1959a4a1c0))
+* remove auth cookie param after logging in ([7c2d106](https://github.com/lemonadesocial/web-new/commit/7c2d106e785894d9f5d523c68ec5d4fa66f5571e))
+* unicor login ([d8164e5](https://github.com/lemonadesocial/web-new/commit/d8164e5433a87d168e585d19e667f8ed12234cee))
+* update add guest to list ([3e63d19](https://github.com/lemonadesocial/web-new/commit/3e63d19eceba179959690d00c924bf0d3b294108))
+* update btn style ([99da37d](https://github.com/lemonadesocial/web-new/commit/99da37daa36dabeb2b12a3a718e310526c25c09f))
+* update custom message invite email ([1ddd882](https://github.com/lemonadesocial/web-new/commit/1ddd8829f4f98fc1fd1ca83148f99375fa311a5b))
+* update filter invite emails ([7f13a7c](https://github.com/lemonadesocial/web-new/commit/7f13a7cb8872996db52913fcdc3dd75c8f48cd29))
+* update guests view ui manage event ([3eaa1fb](https://github.com/lemonadesocial/web-new/commit/3eaa1fbf325458881ec7bfc420d16f791a9742df))
+* update human timing schedule email ([ffdde9c](https://github.com/lemonadesocial/web-new/commit/ffdde9c7c0747f90f24db844ea26e1177d097e87))
+* update invite guest modal ([746cb51](https://github.com/lemonadesocial/web-new/commit/746cb51f91b7dfbd90b23d482465286d8444d8a6))
+* update message schedule email ([f1b3781](https://github.com/lemonadesocial/web-new/commit/f1b3781b1c03813b14c7b6c53c56cf8899082593))
+* update mweb pending approval list ([4a58eed](https://github.com/lemonadesocial/web-new/commit/4a58eed5b9ea1055b207ef890c404f8320727b08))
+* update table mweb ([87ac0ba](https://github.com/lemonadesocial/web-new/commit/87ac0babb88bc0584535e3387cc0e673699337ce))
+* update ui overview manage event ([5b9cf39](https://github.com/lemonadesocial/web-new/commit/5b9cf3958a8fbf71f07cfc44888caf783711fb5f))
+
+
+### Bug Fixes
+
+* allow dismiss modal ([900c598](https://github.com/lemonadesocial/web-new/commit/900c59807dd5286b416e3675be7b23bc737f5cd5))
+* checking modal event blasts ([602725c](https://github.com/lemonadesocial/web-new/commit/602725c18adc8feec7e8528929c1bd6926ca1650))
+* getMe called mul times ([86ee628](https://github.com/lemonadesocial/web-new/commit/86ee6281eded23948c0c6ca34606ccec9c9a85d9))
+* me is null ([822c2ea](https://github.com/lemonadesocial/web-new/commit/822c2eaf44cd80820239a648791ff508938a56ca))
+* navigate perf ([5dce0e2](https://github.com/lemonadesocial/web-new/commit/5dce0e28b5201ca08eea84f6b3253a353f4be553))
+* stripe account ([656e1f3](https://github.com/lemonadesocial/web-new/commit/656e1f32851ed15a3b2c461af918e4f452209d19))
+* whoami called mul times ([42cc0c5](https://github.com/lemonadesocial/web-new/commit/42cc0c5f299b7a73cb31cdce0446ccd23b712dae))
+* whoami get called multiple times ([3e50f27](https://github.com/lemonadesocial/web-new/commit/3e50f27129cc10e6de8fde82e03f0015d14d1bd0))
+* wrong all guests actio ([ab19501](https://github.com/lemonadesocial/web-new/commit/ab19501d7e9822705d729ea44d27ab42881d5129))
+* wrong message ([ef13c05](https://github.com/lemonadesocial/web-new/commit/ef13c05a62f4503cff77ea6310e2f7e2ebb8ed73))
+
 ## [4.0.1](https://github.com/lemonadesocial/web-new/compare/v4.0.0...v4.0.1) (2025-08-13)
 
 
