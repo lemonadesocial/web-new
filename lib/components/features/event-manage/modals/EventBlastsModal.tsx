@@ -259,7 +259,7 @@ export function EventReminderModal({ event, reminderEmails = [] }: { event: Even
           client.writeFragment({ id: `EmailSetting:${item._id}`, data: { ...item, disabled: toggle } }),
         );
 
-        toast.success(`${toggle ? 'Enabled' : 'Disabled'} emails.`);
+        toast.success(`${!toggle ? 'Enabled' : 'Disabled'} send event reminder emails.`);
       }
     } catch (error) {
       toast.error('Cannot toggle reminder emails!');
@@ -390,7 +390,7 @@ export function ScheduleFeedbackModal({ event }: { event: Event }) {
     });
   };
 
-  const getFormatTime = (date) => {
+  const getFormatTime = (date: Date) => {
     if (isBefore(eventEndDate, date) || isEqual(eventEndDate, date)) return '';
     return formatDistanceStrict(eventEndDate, date);
   };
@@ -410,13 +410,15 @@ export function ScheduleFeedbackModal({ event }: { event: Event }) {
             placement="bottom-start"
           />
           <Spacer className="h-2" />
-          <p className="text-secondary text-sm">Immediately {getFormatTime(scheduleAt)} after the event ends</p>
+          <p className="text-secondary text-sm">
+            Immediately {getFormatTime(new Date(scheduleAt))} after the event ends
+          </p>
         </div>
 
         <InputField label="Subject" value={subject} onChangeText={(value) => setSubject(value)} />
         <TextEditor
           label="Message"
-          content={subject}
+          content={body}
           containerClass="bg-background/64"
           onChange={(content) => setBody(content)}
         />
