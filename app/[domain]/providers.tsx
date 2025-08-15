@@ -12,14 +12,6 @@ import { defaultClient } from '$lib/graphql/request/instances';
 import { useResumeSession as useLensResumeSession } from '$lib/hooks/useLens';
 import { useAuth } from '../../lib/hooks/useAuth';
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { loading } = useAuth(true);
-
-  if (loading) return null;
-
-  return children;
-}
-
 export default function Providers({ children, space }: { children: React.ReactNode; space?: SpaceHydraKeys | null }) {
   const [miniAppReady, setMiniAppReady] = useState(false);
   const chainsLoading = useListChains();
@@ -49,7 +41,7 @@ export default function Providers({ children, space }: { children: React.ReactNo
 
   return (
     <GraphqlClientProvider client={defaultClient}>
-      <AuthProvider>{children}</AuthProvider>
+      {children}
     </GraphqlClientProvider>
   );
 }
