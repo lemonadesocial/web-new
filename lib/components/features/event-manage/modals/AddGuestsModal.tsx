@@ -1,13 +1,9 @@
 import { useState } from 'react';
 
 import { modal, Button, toast, Menu, MenuItem } from '$lib/components/core';
-import {
-  Event,
-  EventTicketType,
-  AssignTicketsDocument,
-  AssignTicketsInput,
-} from '$lib/graphql/generated/backend/graphql';
-import { useMutation } from '$lib/graphql/request';
+import { Event as EventType, EventTicketType, CreateTicketsDocument } from '$lib/graphql/generated/backend/graphql';
+import { useMutation, useQuery } from '$lib/graphql/request';
+import { useMe } from '$lib/hooks/useMe';
 
 export function AddGuestsModal({
   emails,
@@ -16,14 +12,15 @@ export function AddGuestsModal({
   title = 'Invite Guests',
 }: {
   emails: string[];
-  event: Event;
+  event: EventType;
   onBack: () => void;
   title?: string;
 }) {
-  const [assignTickets, { loading }] = useMutation(AssignTicketsDocument);
   const [selectedTicketType, setSelectedTicketType] = useState<EventTicketType | undefined>(
     event.event_ticket_types?.[0],
   );
+
+  const [createTickets, { loading }] = useMutation(CreateTicketsDocument);
 
   const handleSendInvites = async () => {
     if (!selectedTicketType) {
@@ -32,19 +29,17 @@ export function AddGuestsModal({
     }
 
     try {
-      const input: AssignTicketsInput = {
-        event: event._id,
-        assignees: emails.map((email) => ({
-          email,
-          ticket: selectedTicketType._id,
-        })),
-      };
-      await assignTickets({
+      const { data } = await createTickets({
         variables: {
-          input,
+          ticketType: selectedTicketType._id,
+          ticketAssignments: emails.map((email) => ({
+            email,
+            count: 1,
+          })),
         },
       });
       toast.success('Guests added successfully!');
+      window.dispatchEvent(new Event('refetch_guest_list'));
       modal.close();
     } catch (error: any) {
       toast.error(error.message || 'Failed to add guests');

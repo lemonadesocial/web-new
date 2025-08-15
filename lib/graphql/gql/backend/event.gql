@@ -988,3 +988,35 @@ mutation UpdateEventToggleAttending($id: MongoID!, $input: EventInput!) {
     hide_attending
   }
 }
+
+query GetTickets(
+  $event: MongoID
+  $user: MongoID
+  $ticket_types: [MongoID!]
+  $email: String
+) {
+  getTickets(
+    event: $event
+    user: $user
+    ticket_types: $ticket_types
+    email: $email
+  ) {
+    _id
+    accepted
+    assigned_email
+    assigned_to
+    assigned_to_expanded {
+      _id
+      name
+      new_photos_expanded(limit: 1) {
+        _id
+        key
+        bucket
+      }
+    }
+    event
+    invited_by
+    type
+    shortid
+  }
+}
