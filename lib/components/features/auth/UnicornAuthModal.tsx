@@ -46,7 +46,7 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
         </div>
         <div className='space-y-1'>
           <p className='text-lg'>Authenticating With Unicorn</p>
-          <p className='text-sm text-secondary'>We&aspos;re securely verifying your Unicorn account details and preparing to connect them to Lemonade. This should only take a moment.</p>
+          <p className='text-sm text-secondary'>We're securely verifying your Unicorn account details and preparing to connect them to Lemonade. This should only take a moment.</p>
         </div>
       </div>
     </ModalContent>
@@ -75,8 +75,8 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
           <img src={`${ASSET_PREFIX}/assets/images/wallet-unicorn.png`} alt='Unicorn Logo' className='w-[26px] relative z-10' />
         </div>
         <div className='space-y-1'>
-          <p className='text-lg'>Let&apos;s Get You Started</p>
-          <p className='text-sm text-secondary'>We couldn&apos;t find a Lemonade account for your Unicorn email. Create one now or link an existing account.</p>
+          <p className='text-lg'>Let's Get You Started</p>
+          <p className='text-sm text-secondary'>We couldn't find a Lemonade account for your Unicorn email. Create one now or link an existing account.</p>
         </div>
         <div className='space-y-3'>
           <Button
@@ -97,7 +97,7 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
   if (status === 'creating') return (
     <ConfirmTransaction
       title='Creating Your Account'
-      description='We&apos;re setting up your brand-new Lemonade account using your Unicorn email and wallet. Almost there…'
+      description="We're setting up your brand-new Lemonade account using your Unicorn email and wallet. Almost there…"
     />
   );
 

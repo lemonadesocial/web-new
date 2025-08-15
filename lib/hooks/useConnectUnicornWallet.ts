@@ -1,4 +1,4 @@
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
 import { useModal } from "../components/core";
@@ -10,6 +10,7 @@ export const useConnectUnicornWallet = () => {
   const modal = useModal();
   const { reload } = useAuth();
   const params = useSearchParams();
+  const router = useRouter();
   const authCookie = params.get('authCookie');
   const modalId = useRef<number | undefined>(undefined);
 
@@ -27,6 +28,11 @@ export const useConnectUnicornWallet = () => {
             if (reloadAuth) {
               reload();
             }
+            
+            const newParams = new URLSearchParams(params);
+            newParams.delete('authCookie');
+            const newUrl = window.location.pathname + (newParams.toString() ? `?${newParams.toString()}` : '');
+            router.replace(newUrl);
           }
         }
       });
