@@ -20,6 +20,7 @@
     "@dicebear/glass": "^9.2.2",
     "@dicebear/identicon": "^9.2.2",
     "@dicebear/thumbs": "^9.2.2",
+    "@farcaster/miniapp-sdk": "^0.1.8",
     "@floating-ui/react": "^0.27.5",
     "@hookform/resolvers": "^5.0.1",
     "@lens-chain/sdk": "^1.0.3",
