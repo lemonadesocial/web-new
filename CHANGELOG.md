@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.2.0](https://github.com/lemonadesocial/web-new/compare/v4.1.0...v4.2.0) (2025-08-15)
+
+
+### Features
+
+* handle Farcaster login jwt ([3e3351a](https://github.com/lemonadesocial/web-new/commit/3e3351a85164d5c5ed11d959aa89c7cc74cdf93e))
+* set mini app ready ([2dccfbc](https://github.com/lemonadesocial/web-new/commit/2dccfbcc7e7262f4855d88bbbe14ae95a7edb39b))
+* update user ([a724089](https://github.com/lemonadesocial/web-new/commit/a72408905821966e2f4994de457efbe27a768a32))
+
+
+### Bug Fixes
+
+* fix loading using atom is useAuth ([41fc7f8](https://github.com/lemonadesocial/web-new/commit/41fc7f8e07bbe1def64d7e3e57b707e91d3b2fc0))
+
 ## [4.1.0](https://github.com/lemonadesocial/web-new/compare/v4.0.1...v4.1.0) (2025-08-15)
 
 
