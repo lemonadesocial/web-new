@@ -23,7 +23,7 @@ export function useAuth(initialReload: boolean = false) {
       throw new Error('Ory is not initialized');
     }
 
-    ory
+    await ory
       .toSession()
       .then(({ data }) => {
         const id = data.identity?.id;
@@ -93,13 +93,13 @@ export function useAuth(initialReload: boolean = false) {
     }
   };
 
-  const reload = () => {
+  const reload = async () => {
     if (hydraClientId) {
-      handleHydraAuth();
+      await handleHydraAuth();
       return;
     }
 
-    handleOryAuth();
+    await handleOryAuth();
   }
 
   React.useEffect(() => {
