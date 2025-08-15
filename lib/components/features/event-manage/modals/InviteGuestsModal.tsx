@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import clsx from 'clsx';
+import * as _ from 'lodash';
 
-import { modal, Avatar, FileInput, Button, Input } from '$lib/components/core';
+import { modal, Avatar, FileInput, Button, Input, InputField } from '$lib/components/core';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { randomUserImage } from '$lib/utils/user';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 
 import { AddInvitesModal } from './AddInvitesModal';
+import { boolean } from 'zod';
 
 export function InviteGuestsModal({
   event,
@@ -18,20 +20,28 @@ export function InviteGuestsModal({
   mode?: 'invites' | 'guests';
 }) {
   const [emails, setEmails] = useState('');
-  const [addedEmails, setAddedEmails] = useState<string[]>([]);
+  const [addedEmails, setAddedEmails] = useState<{ email: string; selected: boolean }[]>([]);
   const [selectedTab, setSelectedTab] = useState<'emails' | 'invites'>('emails');
+  const [showFiter, setShowFilter] = useState(false);
+  const [query, setQuery] = useState('');
 
   const extractValidEmails = (text: string) => {
     const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
     return (text.match(emailRegex) || [])
       .map((e) => e.trim().toLowerCase())
-      .filter((e, i, arr) => arr.indexOf(e) === i && !addedEmails.includes(e));
+      .filter((e, i, arr) => arr.indexOf(e) === i && !addedEmails.map((item) => item.email).includes(e))
+      .map((item) => ({ email: item, selected: true }));
   };
+
+  const mergedUnique = (arr1: Array<{email: string, selected: boolean}>, arr2: Array<{email: string, selected: boolean}>) => {
+    const merged = _.merge(_.keyBy(arr1, 'email'), _.keyBy(arr2, 'email'))
+    return _.values(merged)
+  }
 
   const handleAddEmails = () => {
     const newEmails = extractValidEmails(emails);
     if (newEmails.length === 0) return;
-    setAddedEmails((prev) => [...prev, ...newEmails]);
+    setAddedEmails(mergedUnique(addedEmails, newEmails));
     setEmails('');
   };
 
@@ -51,31 +61,35 @@ export function InviteGuestsModal({
     const valid = extractValidEmails(pasted);
     if (valid.length === 0) return;
     e.preventDefault();
-    setAddedEmails((prev) => [...prev, ...valid]);
+    setAddedEmails((prev) => mergedUnique(prev, valid))
     setEmails('');
   };
 
-  const handleRemoveEmail = (email: string) => {
-    setAddedEmails((prev) => prev.filter((e) => e !== email));
+  const handleToggleEmail = (email: string) => {
+    setAddedEmails((prev) => prev.map((e) => {
+      if(e.email === email) return {email: e.email, selected: !e.selected}
+      return e
+    }));
   };
 
   const handleCsvChange = (files: File[]) => {
     if (files.length === 0) return;
     const file = files[0];
     parseEmailsFromCsv(file, (emails) => {
-      setAddedEmails((prev) => [...prev, ...emails.filter((e) => !prev.includes(e))]);
+      const arr = emails.map(item => ({email: item, selected: true}))
+      setAddedEmails((prev) => mergedUnique(prev, arr));
     });
   };
 
   const canAdd = extractValidEmails(emails).length > 0;
-  const checkedCount = addedEmails.length;
+  const checkedCount = addedEmails.filter(item => item.selected).length;
 
   if (selectedTab === 'invites') {
     return (
       <AddInvitesModal
         event={event}
         title={title}
-        emails={addedEmails}
+        emails={addedEmails.filter(item => item.selected).map(item => item.email)}
         show={mode}
         onBack={() => setSelectedTab('emails')}
       />
@@ -88,34 +102,47 @@ export function InviteGuestsModal({
         <p className="text-lg">{title}</p>
         <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
       </div>
-      <div className="pt-4 px-4 space-y-1.5">
-        <p className="text-sm">Add Emails</p>
-        <div className="flex gap-2">
-          <Input
-            placeholder="Paste or enter emails here"
-            value={emails}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            onPaste={handlePaste}
-            className="flex-1"
-            variant="outlined"
-          />
-          <Button variant="tertiary" onClick={handleAddEmails} disabled={!canAdd}>
-            Add
-          </Button>
+
+      {!showFiter ? (
+        <div className="pt-4 px-4 space-y-1.5">
+          <p className="text-sm">Add Emails</p>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Paste or enter emails here"
+              value={emails}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
+              className="flex-1"
+              variant="outlined"
+            />
+            <Button variant="tertiary" onClick={handleAddEmails} disabled={!canAdd}>
+              Add
+            </Button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="pt-4 px-4 [&_.control]:bg-(--btn-tertiary)! [&_.control]:border-none!">
+          <InputField
+            placeholder="Search Selected"
+            iconLeft="icon-search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
+      )}
+
       {addedEmails.length > 0 && (
         <div className="flex flex-col pt-2 px-4 pb-4 max-h-[378px] overflow-y-auto no-scrollbar">
-          {addedEmails.map((email) => (
+          {addedEmails.filter(item => query ? item.email.includes(query.toLowerCase()) : true).map(({email, selected}) => (
             <div
               key={email}
               className="flex items-center justify-between p-2 gap-3 cursor-pointer hover:bg-card-hover rounded-sm"
-              onClick={() => handleRemoveEmail(email)}
+              onClick={() => handleToggleEmail(email)}
             >
               <Avatar size="lg" src={randomUserImage(email)} />
               <p className="truncate flex-1">{email}</p>
-              <i className="icon-check-filled size-5" />
+              <i className={clsx("size-5", selected ? 'icon-check-filled' : 'icon-circle-outline text-quaternary')} />
             </div>
           ))}
         </div>
@@ -153,7 +180,19 @@ export function InviteGuestsModal({
         </div>
       )}
       <div className="flex justify-between py-3 px-4 border-t items-center">
-        {checkedCount > 0 ? <p className="text-tertiary">{checkedCount} selected</p> : <div />}
+        {checkedCount > 0 ? (
+          <p
+            className="text-tertiary hover:text-accent-400 cursor-pointer"
+            onClick={() => {
+              setQuery('')
+              setShowFilter((prev) => !prev);
+            }}
+          >
+            {checkedCount} selected
+          </p>
+        ) : (
+          <div />
+        )}
         <Button
           iconRight="icon-chevron-right"
           variant="secondary"
