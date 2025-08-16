@@ -1,16 +1,16 @@
-import { Avatar, Button, Chip, modal } from "$lib/components/core";
-import { User } from "$lib/graphql/generated/backend/graphql";
-import { userAvatar } from "$lib/utils/user";
-import { Event } from "$lib/graphql/generated/backend/graphql";
-import { AddHostModal } from "../modals/AddHostModal";
-import { ConfigureHostModal } from "../modals/ConfigureHostModal";
+import { Avatar, Button, Chip, modal } from '$lib/components/core';
+import { User } from '$lib/graphql/generated/backend/graphql';
+import { userAvatar } from '$lib/utils/user';
+import { Event } from '$lib/graphql/generated/backend/graphql';
+import { AddHostModal } from '../modals/AddHostModal';
+import { ConfigureHostModal } from '../modals/ConfigureHostModal';
 
 export function ManageHost({ event }: { event: Event }) {
   if (!event.host_expanded) return;
 
   const isVisible = (user: string) => {
-    return event.visible_cohosts_expanded?.some(c => c?._id === user);
-  }
+    return event.visible_cohosts_expanded?.some((c) => c?._id === user);
+  };
 
   return (
     <div className="space-y-5">
@@ -21,12 +21,14 @@ export function ManageHost({ event }: { event: Event }) {
             variant="tertiary"
             size="sm"
             iconLeft="icon-plus"
-            onClick={() => modal.open(AddHostModal, {
-              dismissible: true,
-              props: {
-                event
-              }
-            })}
+            onClick={() =>
+              modal.open(AddHostModal, {
+                dismissible: true,
+                props: {
+                  event,
+                },
+              })
+            }
           >
             Add Host
           </Button>
@@ -37,41 +39,47 @@ export function ManageHost({ event }: { event: Event }) {
         <div className="flex justify-between items-center px-4 py-3">
           <div className="flex gap-2">
             <HostInfo host={event.host_expanded} />
-            <Chip variant="success" size="xxs" className="rounded-full">Creator</Chip>
+            <Chip variant="success" size="xxs" className="rounded-full">
+              Creator
+            </Chip>
           </div>
           <i
             className="icon-edit-sharp text-tertiary size-5 cursor-pointer"
-            onClick={() => modal.open(ConfigureHostModal, {
-              dismissible: true,
-              props: {
-                event,
-                user: event.host_expanded as User,
-                isVisible: isVisible(event.host_expanded?._id)
-              }
-            })}
+            onClick={() =>
+              modal.open(ConfigureHostModal, {
+                dismissible: true,
+                props: {
+                  event,
+                  user: event.host_expanded as User,
+                  isVisible: isVisible(event.host_expanded?._id),
+                },
+              })
+            }
           />
         </div>
-        {
-          event.cohosts_expanded?.map((host, index) => (
-            <div className="flex justify-between items-center px-4 py-3" key={index}>
+        {event.cohosts_expanded?.map((host, index) => (
+          <div className="flex justify-between items-center px-4 py-3" key={index}>
             <div className="flex gap-2">
               <HostInfo host={host as User} />
-              <Chip variant="primary" size="xxs" className="rounded-full">Manager</Chip>
+              <Chip variant="primary" size="xxs" className="rounded-full">
+                Manager
+              </Chip>
             </div>
             <i
-            className="icon-edit-sharp text-tertiary size-5 cursor-pointer"
-            onClick={() => modal.open(ConfigureHostModal, {
-              dismissible: true,
-              props: {
-                event,
-                user: host as User,
-                isVisible: isVisible(host?._id)
+              className="icon-edit-sharp text-tertiary size-5 cursor-pointer"
+              onClick={() =>
+                modal.open(ConfigureHostModal, {
+                  dismissible: true,
+                  props: {
+                    event,
+                    user: host as User,
+                    isVisible: isVisible(host?._id),
+                  },
+                })
               }
-            })}
-          />
+            />
           </div>
-          ))
-        }
+        ))}
       </div>
     </div>
   );
@@ -83,8 +91,8 @@ function HostInfo({ host }: { host: User }) {
       <Avatar src={userAvatar(host)} className="size-5" />
       <div className="flex gap-2 items-center">
         <p>{host.display_name || host.name || 'Anonymous'}</p>
-        <p className="text-tertiary">{host.email}</p>
+        <p className="text-tertiary hidden md:block">{host.email}</p>
       </div>
     </div>
-  )
+  );
 }
