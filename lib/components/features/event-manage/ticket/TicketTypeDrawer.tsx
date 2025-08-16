@@ -25,6 +25,7 @@ import {
   UpdateEventTicketTypeDocument,
   ListEventTokenGatesDocument,
   ListEventGuestsDocument,
+  ExportEventTicketsDocument,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { UpdateFiatPriceModal } from './UpdateFiatPriceModal';
@@ -115,12 +116,16 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
   const [showDescription, setShowDescription] = useState(!!initialTicketType?.description);
   const [paymentType, setPaymentType] = useState<PaymentType>(defaultValues.fiatPrice ? 'direct' : 'free');
 
-  const { data: dataEventGuest } = useQuery(ListEventGuestsDocument, {
+  const { data: dataExportEventTickets } = useQuery(ExportEventTicketsDocument, {
     variables: {
-      event: event?._id,
-      skip: 1,
-      limit: 1,
+      id: event?._id,
+      ticketTypeIds: [initialTicketType?._id],
+      pagination: {
+        skip: 0,
+        limit: 1,
+      },
     },
+    skip: !initialTicketType?._id,
   });
 
   const { data, loading: loadingTokenGates } = useQuery(ListEventTokenGatesDocument, {
@@ -403,7 +408,9 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                   </div>
 
                   <div className="text-tertiary flex gap-2 items-center">
-                    <p>{dataEventGuest?.listEventGuests.total} emails</p>
+                    {!!dataExportEventTickets?.exportEventTickets.count && (
+                      <p>{dataExportEventTickets?.exportEventTickets.count} emails</p>
+                    )}
                     <i className="icon-chevron-right size-5 text-tertiary" />
                   </div>
                 </div>
