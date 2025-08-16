@@ -1,18 +1,42 @@
-import { useForm } from "react-hook-form";
-import { pick, omit } from "lodash";
-import { useState } from "react";
+import { useForm } from 'react-hook-form';
+import { pick, omit } from 'lodash';
+import { useState } from 'react';
 
-import { Button, drawer, Input, LabeledInput, ErrorText, Spacer, Textarea, Segment, toast, modal, Toggle } from "$lib/components/core";
-import { EventTicketType, NewPaymentProvider, EventTicketPrice, CreateEventTicketTypeDocument, ListEventTicketTypesDocument, EventTicketTypeInput, UpdateEventTicketTypeDocument, ListEventTokenGatesDocument } from "$lib/graphql/generated/backend/graphql";
-import { useMutation, useQuery } from "$lib/graphql/request";
-import { UpdateFiatPriceModal } from "./UpdateFiatPriceModal";
-import { formatFiatPrice } from "$lib/utils/event";
+import {
+  Button,
+  drawer,
+  Input,
+  LabeledInput,
+  ErrorText,
+  Spacer,
+  Textarea,
+  Segment,
+  toast,
+  modal,
+  Toggle,
+} from '$lib/components/core';
+import {
+  EventTicketType,
+  NewPaymentProvider,
+  EventTicketPrice,
+  CreateEventTicketTypeDocument,
+  ListEventTicketTypesDocument,
+  EventTicketTypeInput,
+  UpdateEventTicketTypeDocument,
+  ListEventTokenGatesDocument,
+  ListEventGuestsDocument,
+  ExportEventTicketsDocument,
+} from '$lib/graphql/generated/backend/graphql';
+import { useMutation, useQuery } from '$lib/graphql/request';
+import { UpdateFiatPriceModal } from './UpdateFiatPriceModal';
+import { formatFiatPrice } from '$lib/utils/event';
 
-import { TicketCapacityModal } from "./TicketCapacityModal";
-import { AdditionalTicketsModal } from "./AdditionalTicketsModal";
-import { TokenGatingDrawer } from "./TokenGatingDrawer";
-import { TokenDetailsModal } from "./TokenDetailsModal";
-import { useEvent } from "../store";
+import { TicketCapacityModal } from './TicketCapacityModal';
+import { AdditionalTicketsModal } from './AdditionalTicketsModal';
+import { TokenGatingDrawer } from './TokenGatingDrawer';
+import { TokenDetailsModal } from './TokenDetailsModal';
+import { useEvent } from '../store';
+import { EmailListDrawer } from './EmailListDrawer';
 
 type TicketFormState = {
   title: string;
@@ -41,15 +65,28 @@ const getInitialValues = (initialTicketType?: EventTicketType): TicketFormState 
       limited: false,
       fiatPrice: undefined,
       cryptoPrice: undefined,
-      category: undefined
+      category: undefined,
     };
   }
 
   const ticket = initialTicketType;
-  const formTicket = pick(ticket, ['title', 'description', 'ticket_limit_per', 'ticket_limit', 'active', 'private', 'limited']) as TicketFormState;
+  const formTicket = pick(ticket, [
+    'title',
+    'description',
+    'ticket_limit_per',
+    'ticket_limit',
+    'active',
+    'private',
+    'limited',
+  ]) as TicketFormState;
 
-  const fiatPrice = ticket.prices.find(price => price.payment_accounts_expanded?.[0]?.provider === NewPaymentProvider.Stripe);
-  const cryptoPrice = ticket.prices.find(price => price.payment_accounts_expanded && price.payment_accounts_expanded[0].provider !== NewPaymentProvider.Stripe);
+  const fiatPrice = ticket.prices.find(
+    (price) => price.payment_accounts_expanded?.[0]?.provider === NewPaymentProvider.Stripe,
+  );
+  const cryptoPrice = ticket.prices.find(
+    (price) =>
+      price.payment_accounts_expanded && price.payment_accounts_expanded[0].provider !== NewPaymentProvider.Stripe,
+  );
 
   formTicket.fiatPrice = fiatPrice && omit(fiatPrice, ['__typename']);
   formTicket.cryptoPrice = cryptoPrice && omit(cryptoPrice, ['__typename']);
@@ -63,10 +100,14 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
   const event = useEvent();
   const defaultValues = getInitialValues(initialTicketType);
   const form = useForm<TicketFormState>({
-    defaultValues
+    defaultValues,
   });
 
-  const { handleSubmit, formState: { errors }, setValue } = form;
+  const {
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = form;
   const paymnentTypes = [
     { value: 'free' as PaymentType, label: 'Free' },
     { value: 'direct' as PaymentType, label: 'Direct' },
@@ -75,9 +116,21 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
   const [showDescription, setShowDescription] = useState(!!initialTicketType?.description);
   const [paymentType, setPaymentType] = useState<PaymentType>(defaultValues.fiatPrice ? 'direct' : 'free');
 
+  const { data: dataExportEventTickets } = useQuery(ExportEventTicketsDocument, {
+    variables: {
+      id: event?._id,
+      ticketTypeIds: [initialTicketType?._id],
+      pagination: {
+        skip: 0,
+        limit: 1,
+      },
+    },
+    skip: !initialTicketType?._id,
+  });
+
   const { data, loading: loadingTokenGates } = useQuery(ListEventTokenGatesDocument, {
     variables: { event: event?._id, ticketTypes: [initialTicketType?._id] },
-    skip: !event || !initialTicketType?._id
+    skip: !event || !initialTicketType?._id,
   });
 
   const tokenGates = data?.listEventTokenGates;
@@ -87,8 +140,8 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
       client.refetchQuery({
         query: ListEventTicketTypesDocument,
         variables: {
-          event: event!._id
-        }
+          event: event!._id,
+        },
       });
 
       drawer.close();
@@ -104,8 +157,8 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
       client.refetchQuery({
         query: ListEventTicketTypesDocument,
         variables: {
-          event: event!._id
-        }
+          event: event!._id,
+        },
       });
 
       drawer.close();
@@ -113,7 +166,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
     },
     onError(error) {
       toast.error(error.message);
-    }
+    },
   });
 
   const onSubmit = (values: TicketFormState) => {
@@ -129,15 +182,26 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
     const newTicket = {
       event: event!._id,
       category: category?._id,
-      prices: prices.length ? prices.map(price => pick(price, ['cost', 'currency', 'payment_accounts'])) : [{ cost: '0', currency: 'USD' }],
-      ...pick(ticket, ['title', 'description', 'ticket_limit_per', 'ticket_limit', 'photos', 'active', 'private', 'limited'])
+      prices: prices.length
+        ? prices.map((price) => pick(price, ['cost', 'currency', 'payment_accounts']))
+        : [{ cost: '0', currency: 'USD' }],
+      ...pick(ticket, [
+        'title',
+        'description',
+        'ticket_limit_per',
+        'ticket_limit',
+        'photos',
+        'active',
+        'private',
+        'limited',
+      ]),
     } as EventTicketTypeInput;
 
     if (!initialTicketType) {
       createTicket({
         variables: {
-          input: newTicket
-        }
+          input: newTicket,
+        },
       });
 
       return;
@@ -146,10 +210,9 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
     updateTicket({
       variables: {
         id: initialTicketType._id,
-        input: newTicket
-      }
+        input: newTicket,
+      },
     });
-
   };
 
   const handleOpenTokenGating = () => {
@@ -158,8 +221,8 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
     if (tokenGates?.length) {
       drawer.open(TokenGatingDrawer, {
         props: {
-          ticketType: initialTicketType._id
-        }
+          ticketType: initialTicketType._id,
+        },
       });
 
       return;
@@ -173,13 +236,13 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
         onCreate() {
           drawer.open(TokenGatingDrawer, {
             props: {
-              ticketType: initialTicketType._id
-            }
+              ticketType: initialTicketType._id,
+            },
           });
         },
-      }
+      },
     });
-  }
+  };
 
   const { fiatPrice, cryptoPrice, ticket_limit, ticket_limit_per } = form.watch();
 
@@ -201,27 +264,22 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
             {errors.title?.message && <ErrorText message={errors.title.message} />}
           </LabeledInput>
           <Spacer className="h-4" />
-          {
-            showDescription ? (
-              <LabeledInput label="Description">
-                <Textarea
-                  {...form.register('description')}
-                  placeholder="Access all IRL zones, and a free craft beer box!"
-                  variant="outlined"
-                  rows={1}
-                />
-                {errors.description?.message && <ErrorText message={errors.description.message} />}
-              </LabeledInput>
-            ) : (
-              <div
-                className="flex items-center gap-1.5 cursor-pointer"
-                onClick={() => setShowDescription(true)}
-              >
-                <i className="icon-plus size-5 text-tertiary" />
-                <p className="text-tertiary text-sm">Add Description</p>
-              </div>
-            )
-          }
+          {showDescription ? (
+            <LabeledInput label="Description">
+              <Textarea
+                {...form.register('description')}
+                placeholder="Access all IRL zones, and a free craft beer box!"
+                variant="outlined"
+                rows={1}
+              />
+              {errors.description?.message && <ErrorText message={errors.description.message} />}
+            </LabeledInput>
+          ) : (
+            <div className="flex items-center gap-1.5 cursor-pointer" onClick={() => setShowDescription(true)}>
+              <i className="icon-plus size-5 text-tertiary" />
+              <p className="text-tertiary text-sm">Add Description</p>
+            </div>
+          )}
         </div>
 
         <hr className="border-t border-t-divider" />
@@ -238,35 +296,39 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
             items={paymnentTypes}
             className="w-full"
           />
-          {
-            paymentType === 'direct' && <>
+          {paymentType === 'direct' && (
+            <>
               <p className="mt-2 text-tertiary text-sm">
-                Guests pay upfront using crypto or card. For approval-based events, they&apos;ll only be charged once their registration is accepted.
+                Guests pay upfront using crypto or card. For approval-based events, they&apos;ll only be charged once
+                their registration is accepted.
               </p>
               <div className="rounded-sm bg-primary/8 mt-4">
                 <div
                   className="flex py-2.5 px-3 items-center gap-2 cursor-pointer"
-                  onClick={() => modal.open(UpdateFiatPriceModal, {
-                    props: {
-                      price: fiatPrice,
-                      onChange: (price) => form.setValue('fiatPrice', price)
-                    },
-                    className: 'overflow-visible'
-                  })}
+                  onClick={() =>
+                    modal.open(UpdateFiatPriceModal, {
+                      props: {
+                        price: fiatPrice,
+                        onChange: (price) => form.setValue('fiatPrice', price),
+                      },
+                      className: 'overflow-visible',
+                    })
+                  }
                 >
                   <i className="icon-credit-card size-5 text-tertiary" />
                   <p className="flex-1">Price for Card</p>
-                  {
-                    fiatPrice ? (
-                      <div className="flex items-center gap-2">
-                        <p className="text-tertiary">{formatFiatPrice(fiatPrice)}</p>
-                        <i className="icon-edit-sharp size-5 text-tertiary" />
-                      </div>
-                    ) : <i className="icon-chevron-right size-5 text-tertiary" />
-                  }
+                  {fiatPrice ? (
+                    <div className="flex items-center gap-2">
+                      <p className="text-tertiary">{formatFiatPrice(fiatPrice)}</p>
+                      <i className="icon-edit-sharp size-5 text-tertiary" />
+                    </div>
+                  ) : (
+                    <i className="icon-chevron-right size-5 text-tertiary" />
+                  )}
                 </div>
                 <hr className="border-t border-t-divider" />
                 <div
+                  classNametext-tertiary
                   className="flex py-2.5 px-3 items-center gap-2 cursor-pointer"
                   onClick={() => toast.success('Coming soon')}
                 >
@@ -276,7 +338,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                 </div>
               </div>
             </>
-          }
+          )}
         </div>
 
         <hr className="border-t border-t-divider" />
@@ -285,33 +347,35 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
           <div className="rounded-sm bg-primary/8 mt-4">
             <div
               className="flex py-2.5 px-3 items-center cursor-pointer"
-              onClick={() => modal.open(TicketCapacityModal, {
-                props: {
-                  ticketLimit: ticket_limit,
-                  onChange: (limit) => form.setValue('ticket_limit', limit)
-                }
-              })}
+              onClick={() =>
+                modal.open(TicketCapacityModal, {
+                  props: {
+                    ticketLimit: ticket_limit,
+                    onChange: (limit) => form.setValue('ticket_limit', limit),
+                  },
+                })
+              }
             >
               <div className="flex items-center gap-2 flex-1">
                 <i className="icon-vertical-align-top size-5 text-tertiary" />
                 <p>Ticket Capacity</p>
               </div>
               <div className="flex items-center gap-2">
-                <p className="text-tertiary">
-                  {ticket_limit || 'Unlimited'}
-                </p>
+                <p className="text-tertiary">{ticket_limit || 'Unlimited'}</p>
                 <i className="icon-edit-sharp size-5 text-tertiary" />
               </div>
             </div>
             <hr className="border-t border-t-divider" />
             <div
               className="flex py-2.5 px-3 items-center cursor-pointer"
-              onClick={() => modal.open(AdditionalTicketsModal, {
-                props: {
-                  ticketLimitPer: ticket_limit_per,
-                  onChange: (limit) => form.setValue('ticket_limit_per', limit)
-                }
-              })}
+              onClick={() =>
+                modal.open(AdditionalTicketsModal, {
+                  props: {
+                    ticketLimitPer: ticket_limit_per,
+                    onChange: (limit) => form.setValue('ticket_limit_per', limit),
+                  },
+                })
+              }
             >
               <div className="flex items-center gap-2 flex-1">
                 <i className="icon-ticket-plus size-5 text-tertiary" />
@@ -319,65 +383,78 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
               </div>
               <div className="flex items-center gap-2">
                 <p className="text-tertiary">
-                  {
-                    ticket_limit_per === undefined ? 'Unlimited' : ticket_limit_per === 1 ? 'Off' : `${ticket_limit_per} per guest`
-                  }
+                  {ticket_limit_per === undefined
+                    ? 'Unlimited'
+                    : ticket_limit_per === 1
+                      ? 'Off'
+                      : `${ticket_limit_per} per guest`}
                 </p>
                 <i className="icon-edit-sharp size-5 text-tertiary" />
               </div>
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <p className="text-sm text-secondary">Restrict Access</p>
-            <div className="rounded-sm bg-primary/8 divide-y divide-(--color-divider)">
-              <div
-                className="flex py-2.5 px-3 items-center cursor-pointer"
-                onClick={() => toast.success('Comming soon!')}
-              >
-                <div className="flex items-center gap-2 flex-1">
-                  <i className="icon-email size-5 text-tertiary" />
-                  <p>Email List</p>
+          {initialTicketType && (
+            <div className="space-y-1.5">
+              <p className="text-sm text-secondary">Restrict Access</p>
+              <div className="rounded-sm bg-primary/8 divide-y divide-(--color-divider)">
+                <div
+                  className="flex py-2.5 px-3 items-center cursor-pointer"
+                  onClick={() => drawer.open(EmailListDrawer, { props: { ticketType: initialTicketType } })}
+                >
+                  <div className="flex items-center gap-2 flex-1">
+                    <i className="icon-email size-5 text-tertiary" />
+                    <p>Email List</p>
+                  </div>
+
+                  <div className="text-tertiary flex gap-2 items-center">
+                    {!!dataExportEventTickets?.exportEventTickets.count && (
+                      <p>{dataExportEventTickets?.exportEventTickets.count} emails</p>
+                    )}
+                    <i className="icon-chevron-right size-5 text-tertiary" />
+                  </div>
                 </div>
-                <i className="icon-chevron-right size-5 text-tertiary" />
-              </div>
-              {
-                (initialTicketType?._id && !loadingTokenGates) && (
-                  <div
-                    className="flex py-2.5 px-3 items-center cursor-pointer"
-                    onClick={handleOpenTokenGating}
-                  >
+                {initialTicketType?._id && !loadingTokenGates && (
+                  <div className="flex py-2.5 px-3 items-center cursor-pointer" onClick={handleOpenTokenGating}>
                     <div className="flex items-center gap-2 flex-1">
                       <i className="icon-token size-5 text-tertiary" />
                       <p>Token Gating</p>
                     </div>
                     <div className="flex gap-2 items-center">
-                      {
-                        !!tokenGates?.length && <p className="text-tertiary">{tokenGates.length}</p>
-                      }
+                      {!!tokenGates?.length && <p className="text-tertiary">{tokenGates.length}</p>}
                       <i className="icon-chevron-right size-5 text-tertiary" />
                     </div>
-                  </div>    
-                )
-              }
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           <div>
             <p className="text-sm text-secondary mb-1.5">Visibility</p>
             <div className="flex items-center justify-between mb-3">
               <div>
                 <p>Activate Ticket</p>
-                <p className="text-tertiary text-sm">If disabled, guests won&apos;t be able to buy or receive this ticket.</p>
+                <p className="text-tertiary text-sm">
+                  If disabled, guests won&apos;t be able to buy or receive this ticket.
+                </p>
               </div>
-              <Toggle id='active' checked={!!form.watch('active')} onChange={(value) => form.setValue('active', value)} />
+              <Toggle
+                id="active"
+                checked={!!form.watch('active')}
+                onChange={(value) => form.setValue('active', value)}
+              />
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <p>Hide on Event Page</p>
                 <p className="text-tertiary text-sm">Hidden tickets stay private and must be assigned by hosts.</p>
               </div>
-              <Toggle id='private' checked={form.watch('private')} onChange={(value) => form.setValue('private', value)} />
+              <Toggle
+                id="private"
+                checked={form.watch('private')}
+                onChange={(value) => form.setValue('private', value)}
+              />
             </div>
           </div>
         </div>
