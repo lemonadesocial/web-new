@@ -1,6 +1,6 @@
 {
   "name": "web-new",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 8000 --experimental-https -H localhost.staging.lemonade.social",
@@ -20,6 +20,7 @@
     "@dicebear/glass": "^9.2.2",
     "@dicebear/identicon": "^9.2.2",
     "@dicebear/thumbs": "^9.2.2",
+    "@farcaster/miniapp-sdk": "^0.1.8",
     "@floating-ui/react": "^0.27.5",
     "@hookform/resolvers": "^5.0.1",
     "@lens-chain/sdk": "^1.0.3",
