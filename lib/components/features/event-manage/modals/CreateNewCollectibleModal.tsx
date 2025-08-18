@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import clsx from 'clsx';
 
-import { ModalContent, modal, Button, Input, FileInput, LabeledInput, Textarea, Segment, DropdownTags } from '$lib/components/core';
+import { ModalContent, modal, Button, Input, FileInput, LabeledInput, Textarea, Segment } from '$lib/components/core';
 import { Event, PoapClaimMode } from '$lib/graphql/generated/backend/graphql';
-import type { Option } from '$lib/components/core/input/dropdown';
 import { useMutation } from '$lib/graphql/request';
 import { CreatePoapDropDocument } from '$lib/graphql/generated/backend/graphql';
 import { uploadFiles } from '$lib/utils/file';
 import { toast } from '$lib/components/core/toast';
 import { ListPoapDropsDocument } from '$lib/graphql/generated/backend/graphql';
+import { TicketTypeSelector } from '../overview/TicketTypeSelector';
 
 interface CreateNewCollectibleModalProps {
   event: Event;
@@ -21,7 +21,7 @@ interface FormData {
   image: File | null;
   totalQuantity: number | undefined;
   claimableOn: 'registration' | 'checkin';
-  selectedTicketTypes: Option[];
+  selectedTicketTypes: string[];
 }
 
 export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalProps) {
@@ -94,7 +94,7 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
     }
 
     const claimMode = data.claimableOn === 'registration' ? PoapClaimMode.Registration : PoapClaimMode.CheckIn;
-    const ticketTypeIds = data.selectedTicketTypes.map(option => option.key);
+    const ticketTypeIds = data.selectedTicketTypes;
     const isProd = process.env.APP_ENV === 'production';
 
     createPoapDrop({
@@ -113,15 +113,9 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
     });
   };
 
-  const handleTicketTypesChange = (options: Option[]) => {
-    setValue('selectedTicketTypes', options);
+  const handleTicketTypesChange = (ticketIds: string[]) => {
+    setValue('selectedTicketTypes', ticketIds);
   };
-
-  const ticketTypeOptions: Option[] = event.event_ticket_types?.map(ticketType => ({
-    key: ticketType._id,
-    value: ticketType.title,
-    icon: undefined
-  })) || [];
 
   if (showClaimSettings) {
     return (
@@ -158,18 +152,20 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
             />
           </div>
  
-          <Controller
-            name="selectedTicketTypes"
-            control={control}
-            render={({ field }) => (
-              <DropdownTags
-                label="Eligible Ticket Types"
-                options={ticketTypeOptions}
-                value={field.value}
-                onSelect={handleTicketTypesChange}
-              />
-            )}
-          />
+          <div className="flex flex-col gap-1.5">
+            <p className="text-sm text-secondary">Eligible Ticket Types</p>
+            <Controller
+              name="selectedTicketTypes"
+              control={control}
+              render={({ field }) => (
+                <TicketTypeSelector
+                  value={field.value || []}
+                  onChange={handleTicketTypesChange}
+                  ticketTypes={event.event_ticket_types || []}
+                />
+              )}
+            />
+          </div>
 
           <div className="space-y-1.5">
             <p className="text-sm text-secondary">Claimable On</p>

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { OTPInput, SlotProps } from 'input-otp';
 import clsx from "clsx";
-import { ModalContent, modal, Button, Input, LabeledInput, toast, DropdownTags, Segment } from "$lib/components/core";
-import type { Option } from "$lib/components/core/input/dropdown";
+import { ModalContent, modal, Button, Input, LabeledInput, toast, Segment } from "$lib/components/core";
 import { Event, GetPoapDropInfoByIdDocument, CheckPoapDropEditCodeDocument, ImportPoapDropDocument, PoapClaimMode, ListPoapDropsDocument } from "$lib/graphql/generated/backend/graphql";
 import { useQuery, useMutation } from "$lib/graphql/request";
+import { TicketTypeSelector } from "../overview/TicketTypeSelector";
 
 interface ImportCollectibleModalProps {
   event: Event;
@@ -18,7 +18,7 @@ export function ImportCollectibleModal({ event }: ImportCollectibleModalProps) {
   const [showClaimSettings, setShowClaimSettings] = useState(false);
   const [totalQuantity, setTotalQuantity] = useState<number | undefined>(undefined);
   const [claimableOn, setClaimableOn] = useState<'registration' | 'checkin'>('registration');
-  const [selectedTicketTypes, setSelectedTicketTypes] = useState<Option[]>([]);
+  const [selectedTicketTypes, setSelectedTicketTypes] = useState<string[]>([]);
 
   const { data: poapInfo, loading: loadingPoapInfo, error: poapError } = useQuery(GetPoapDropInfoByIdDocument, {
     variables: { getPoapDropInfoByIdId: poapId! },
@@ -94,7 +94,7 @@ export function ImportCollectibleModal({ event }: ImportCollectibleModalProps) {
     }
 
     const claimMode = claimableOn === 'registration' ? PoapClaimMode.Registration : PoapClaimMode.CheckIn;
-    const ticketTypeIds = selectedTicketTypes.map(option => option.key);
+    const ticketTypeIds = selectedTicketTypes;
 
     await importPoapDrop({
       variables: {
@@ -112,11 +112,7 @@ export function ImportCollectibleModal({ event }: ImportCollectibleModalProps) {
 
   const isFormValid = poapIdValid && editCodeValid;
 
-  const ticketTypeOptions: Option[] = event.event_ticket_types?.map(ticketType => ({
-    key: ticketType._id,
-    value: ticketType.title,
-    icon: undefined
-  })) || [];
+
 
   const handleNext = () => {
     setShowClaimSettings(true);
@@ -163,12 +159,14 @@ export function ImportCollectibleModal({ event }: ImportCollectibleModalProps) {
             />
           </div>
 
-          <DropdownTags
-            label="Eligible Ticket Types"
-            options={ticketTypeOptions}
-            value={selectedTicketTypes}
-            onSelect={setSelectedTicketTypes}
-          />
+          <div className="flex flex-col gap-1.5">
+            <p className="text-sm text-secondary">Eligible Ticket Types</p>
+            <TicketTypeSelector
+              value={selectedTicketTypes}
+              onChange={setSelectedTicketTypes}
+              ticketTypes={event.event_ticket_types || []}
+            />
+          </div>
 
           <div className="space-y-1.5">
             <p className="text-sm text-secondary">Claimable On</p>
