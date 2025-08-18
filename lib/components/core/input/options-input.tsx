@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef } from "react";
+import { useState, useRef } from 'react';
 
 interface OptionsInputProps {
   value: string[];
@@ -8,11 +8,11 @@ interface OptionsInputProps {
   hint?: string;
 }
 
-export function OptionsInput({ 
-  value, 
-  onChange, 
-  placeholder = "Add options",
-  hint = "Press Enter or Tab key to add a new option"
+export function OptionsInput({
+  value,
+  onChange,
+  placeholder = 'Add options',
+  hint = 'Press Enter or Tab key to add a new option',
 }: OptionsInputProps) {
   const [currentOption, setCurrentOption] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -25,7 +25,7 @@ export function OptionsInput({
   };
 
   const handleRemoveOption = (optionToRemove: string) => {
-    onChange(value.filter(option => option !== optionToRemove));
+    onChange(value.filter((option) => option !== optionToRemove));
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -47,15 +47,12 @@ export function OptionsInput({
 
   return (
     <div className="space-y-2">
-      <div 
-        className="flex flex-wrap items-center w-full rounded-sm bg-background/64 border-primary/8 hover:border-primary focus:border-primary placeholder-quaternary px-1 h-10 font-medium gap-0.5"
+      <div
+        className="flex flex-wrap items-center w-full rounded-sm bg-background/64 border-primary/8 hover:border-primary focus:border-primary placeholder-quaternary px-1 h-10 font-medium gap-0.5 h-auto py-1.5 min-h-[40px]"
         onClick={handleContainerClick}
       >
         {value.map((option, index) => (
-          <div
-            key={index}
-            className="flex items-center gap-1.5 px-2.5 h-6.5 bg-primary/8 rounded-sm"
-          >
+          <div key={index} className="flex items-center gap-1.5 px-2.5 h-6.5 bg-primary/8 rounded-sm">
             <span className="text-sm">{option}</span>
             <button
               onClick={(e) => {
@@ -74,7 +71,7 @@ export function OptionsInput({
           value={currentOption}
           onChange={(e) => setCurrentOption(e.target.value)}
           onKeyDown={handleKeyPress}
-          placeholder={value.length === 0 ? placeholder : ""}
+          placeholder={value.length === 0 ? placeholder : ''}
           className="flex-1 min-w-0 bg-transparent border-none outline-none text-sm placeholder:text-quaternary ml-2.5"
         />
       </div>

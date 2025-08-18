@@ -43,7 +43,15 @@ export function AddInvitesModal({
   };
 
   if (tab === 'guests')
-    return <AddGuestsModal title={title} emails={emails} event={event} onBack={() => setTab('invites')} />;
+    return (
+      <AddGuestsModal
+        title={title}
+        emails={emails}
+        event={event}
+        onBack={onBack}
+        onSelectInvite={() => setTab('invites')}
+      />
+    );
 
   return (
     <div className="w-full max-w-[448px]">

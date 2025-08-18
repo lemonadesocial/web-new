@@ -28,7 +28,7 @@ export function EventOverview() {
         <EventRecap event={event} />
       ) : (
         <>
-          <div className="flex md:grid md:grid-cols-4 gap-2 overflow-auto no-scrollbar">
+          <div className="flex md:grid md:grid-cols-4 gap-2 overflow-auto no-scrollbar font-default">
             <div
               className="py-2 px-3 items-center flex gap-3 rounded-md border border-card-border bg-card cursor-pointer min-w-fit"
               onClick={() => modal.open(InviteGuestsModal, { props: { event }, dismissible: true })}
@@ -74,15 +74,16 @@ export function EventOverview() {
         </>
       )}
 
-      <EventInvites event={event} />
+      <div className="space-y-8 font-default">
+        <EventInvites event={event} />
 
-      <hr className="border-t" />
+        <hr className="border-t" />
 
-      <GuestsOverview event={event} />
+        <GuestsOverview event={event} />
 
-      <hr className="border-t" />
+        <hr className="border-t" />
 
-      <ManageHost event={event} />
+        <ManageHost event={event} />
 
       <hr className="border-t" />
 
@@ -90,9 +91,10 @@ export function EventOverview() {
 
       <PaymentOverview event={event} />
 
-      <hr className="border-t" />
+        <hr className="border-t" />
 
-      <VisibilityDiscovery event={event} />
+        <VisibilityDiscovery event={event} />
+      </div>
     </div>
   );
 }

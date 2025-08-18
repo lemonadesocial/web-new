@@ -2,19 +2,20 @@ import { useState } from 'react';
 
 import { modal, Button, toast, Menu, MenuItem } from '$lib/components/core';
 import { Event as EventType, EventTicketType, CreateTicketsDocument } from '$lib/graphql/generated/backend/graphql';
-import { useMutation, useQuery } from '$lib/graphql/request';
-import { useMe } from '$lib/hooks/useMe';
+import { useMutation } from '$lib/graphql/request';
 
 export function AddGuestsModal({
   emails,
   event,
   onBack,
   title = 'Invite Guests',
+  onSelectInvite,
 }: {
   emails: string[];
   event: EventType;
   onBack: () => void;
   title?: string;
+  onSelectInvite?: () => void;
 }) {
   const [selectedTicketType, setSelectedTicketType] = useState<EventTicketType | undefined>(
     event.event_ticket_types?.[0],
@@ -29,7 +30,7 @@ export function AddGuestsModal({
     }
 
     try {
-      const { data } = await createTickets({
+      await createTickets({
         variables: {
           ticketType: selectedTicketType._id,
           ticketAssignments: emails.map((email) => ({
@@ -87,10 +88,10 @@ export function AddGuestsModal({
           <p className="text-sm">Ticket Type</p>
           <Menu.Root className="w-full">
             <Menu.Trigger className="flex items-center justify-between rounded-sm border bg-background/64 px-2.5 py-2 w-full">
-              <p>{selectedTicketType?.title || 'Select a ticket type'}</p>
+              <p className="truncate">{selectedTicketType?.title || 'Select a ticket type'}</p>
               <i className="text-quaternary icon-chevron-down size-5" />
             </Menu.Trigger>
-            <Menu.Content className="w-[272px] p-1">
+            <Menu.Content className="w-full p-1">
               {({ toggle }) => (
                 <div className="space-y-1">
                   {event.event_ticket_types?.map((ticket) => (
@@ -112,7 +113,7 @@ export function AddGuestsModal({
         <div>
           <p className="text-sm text-tertiary">
             If you&apos;d like guests to register, send them an invite.{' '}
-            <span className="text-accent-500 cursor-pointer" onClick={onBack}>
+            <span className="text-accent-500 cursor-pointer" onClick={onSelectInvite}>
               Invite Guests
             </span>
           </p>

@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { Button } from '../button';
 import { Input } from '../input';
 import { Card } from '../card';
+import { twMerge } from 'tailwind-merge';
 
 export const icons: Record<string, string> = {
   h1: 'icon-richtext-h1',
@@ -94,15 +95,28 @@ type FloatingMenuItem = ToggleButtonProps & { label: string; busy?: boolean };
 
 export function FloatingMenuItem({ icon, busy, label, onClick, active }: FloatingMenuItem) {
   return (
-    <Button
-      variant="flat"
-      className={clsx('justify-start hover:bg-[var(--btn-tertiary)]!', active && 'bg-[var(--btn-tertiary)]')}
-      disabled={busy}
-      onClick={onClick}
-      size="sm"
-      iconLeft={icons[icon]}
+    <div
+      className="px-2.5 py-1.5 cursor-pointer hover:bg-(--btn-tertiary) flex justify-between items-center w-44 rounded-xs"
+      onClick={() => {
+        if (busy) return;
+        onClick?.();
+      }}
     >
-      {label}
-    </Button>
+      <div className="flex gap-1.5 text-sm items-center">
+        <i className={twMerge('size-4', icons[icon])} />
+        <p className="text-nowrap">{label}</p>
+      </div>
+
+      {busy && (
+        <svg className="animate-spin size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+      )}
+    </div>
   );
 }

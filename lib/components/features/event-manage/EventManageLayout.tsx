@@ -99,7 +99,7 @@ export function EventManageLayout({ children }: React.PropsWithChildren) {
 
   if (loading) {
     return (
-      <div>
+      <div className="font-default">
         <div className="sticky top-0 backdrop-blur-md transition-all duration-300 z-1 pt-7">
           <div className="page mx-auto px-4 md:px-0">
             <div className="flex justify-between items-center">
@@ -138,7 +138,7 @@ export function EventManageLayout({ children }: React.PropsWithChildren) {
 
   if (!event) {
     return (
-      <div className="page mx-auto py-7 px-4 md:px-0">
+      <div className="page mx-auto py-7 px-4 md:px-0 font-default">
         <div className="flex flex-col items-center justify-center min-h-[400px] text-center space-y-6">
           <div className="w-16 h-16 bg-warning-500/16 rounded-full flex items-center justify-center">
             <i className="icon-alert-outline size-8 text-warning-500" />
@@ -159,7 +159,7 @@ export function EventManageLayout({ children }: React.PropsWithChildren) {
 
   if (!isHost) {
     return (
-      <div className="page mx-auto py-7 px-4 md:px-0">
+      <div className="page mx-auto py-7 px-4 md:px-0 font-default">
         <div className="flex flex-col items-center justify-center min-h-[400px] text-center space-y-6">
           <div className="w-16 h-16 bg-warning-500/16 rounded-full flex items-center justify-center">
             <i className="icon-lock size-8 text-warning-500" />
@@ -184,7 +184,7 @@ export function EventManageLayout({ children }: React.PropsWithChildren) {
     <div>
       <div ref={sentinelRef} />
       {/* <div className={clsx("sticky top-0 backdrop-blur-md transition-all duration-300 z-1", isScrolled ? "pt-2" : "pt-7")}> */}
-      <div className={clsx('sticky top-0 backdrop-blur-md transition-all duration-300 z-1 pt-7')}>
+      <div className={clsx('sticky top-0 backdrop-blur-md transition-all duration-300 z-1 pt-7 font-default')}>
         <div className="page mx-auto px-4 md:px-0">
           {event.space_expanded && (
             <div

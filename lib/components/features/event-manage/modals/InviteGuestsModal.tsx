@@ -33,10 +33,13 @@ export function InviteGuestsModal({
       .map((item) => ({ email: item, selected: true }));
   };
 
-  const mergedUnique = (arr1: Array<{email: string, selected: boolean}>, arr2: Array<{email: string, selected: boolean}>) => {
-    const merged = _.merge(_.keyBy(arr1, 'email'), _.keyBy(arr2, 'email'))
-    return _.values(merged)
-  }
+  const mergedUnique = (
+    arr1: Array<{ email: string; selected: boolean }>,
+    arr2: Array<{ email: string; selected: boolean }>,
+  ) => {
+    const merged = _.merge(_.keyBy(arr1, 'email'), _.keyBy(arr2, 'email'));
+    return _.values(merged);
+  };
 
   const handleAddEmails = () => {
     const newEmails = extractValidEmails(emails);
@@ -61,35 +64,37 @@ export function InviteGuestsModal({
     const valid = extractValidEmails(pasted);
     if (valid.length === 0) return;
     e.preventDefault();
-    setAddedEmails((prev) => mergedUnique(prev, valid))
+    setAddedEmails((prev) => mergedUnique(prev, valid));
     setEmails('');
   };
 
   const handleToggleEmail = (email: string) => {
-    setAddedEmails((prev) => prev.map((e) => {
-      if(e.email === email) return {email: e.email, selected: !e.selected}
-      return e
-    }));
+    setAddedEmails((prev) =>
+      prev.map((e) => {
+        if (e.email === email) return { email: e.email, selected: !e.selected };
+        return e;
+      }),
+    );
   };
 
   const handleCsvChange = (files: File[]) => {
     if (files.length === 0) return;
     const file = files[0];
     parseEmailsFromCsv(file, (emails) => {
-      const arr = emails.map(item => ({email: item, selected: true}))
+      const arr = emails.map((item) => ({ email: item, selected: true }));
       setAddedEmails((prev) => mergedUnique(prev, arr));
     });
   };
 
   const canAdd = extractValidEmails(emails).length > 0;
-  const checkedCount = addedEmails.filter(item => item.selected).length;
+  const checkedCount = addedEmails.filter((item) => item.selected).length;
 
   if (selectedTab === 'invites') {
     return (
       <AddInvitesModal
         event={event}
         title={title}
-        emails={addedEmails.filter(item => item.selected).map(item => item.email)}
+        emails={addedEmails.filter((item) => item.selected).map((item) => item.email)}
         show={mode}
         onBack={() => setSelectedTab('emails')}
       />
@@ -134,17 +139,19 @@ export function InviteGuestsModal({
 
       {addedEmails.length > 0 && (
         <div className="flex flex-col pt-2 px-4 pb-4 max-h-[378px] overflow-y-auto no-scrollbar">
-          {addedEmails.filter(item => query ? item.email.includes(query.toLowerCase()) : true).map(({email, selected}) => (
-            <div
-              key={email}
-              className="flex items-center justify-between p-2 gap-3 cursor-pointer hover:bg-card-hover rounded-sm"
-              onClick={() => handleToggleEmail(email)}
-            >
-              <Avatar size="lg" src={randomUserImage(email)} />
-              <p className="truncate flex-1">{email}</p>
-              <i className={clsx("size-5", selected ? 'icon-check-filled' : 'icon-circle-outline text-quaternary')} />
-            </div>
-          ))}
+          {addedEmails
+            .filter((item) => (query ? item.email.includes(query.toLowerCase()) : true))
+            .map(({ email, selected }) => (
+              <div
+                key={email}
+                className="flex items-center justify-between p-2 gap-3 cursor-pointer hover:bg-card-hover rounded-sm"
+                onClick={() => handleToggleEmail(email)}
+              >
+                <Avatar size="lg" src={randomUserImage(email)} />
+                <p className="truncate flex-1">{email}</p>
+                <i className={clsx('size-5', selected ? 'icon-check-filled' : 'icon-circle-outline text-quaternary')} />
+              </div>
+            ))}
         </div>
       )}
       {!addedEmails.length && (
@@ -184,7 +191,7 @@ export function InviteGuestsModal({
           <p
             className="text-tertiary hover:text-accent-400 cursor-pointer"
             onClick={() => {
-              setQuery('')
+              setQuery('');
               setShowFilter((prev) => !prev);
             }}
           >
