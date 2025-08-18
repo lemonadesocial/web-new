@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.4.0](https://github.com/lemonadesocial/web-new/compare/v4.3.0...v4.4.0) (2025-08-18)
+
+
+### Features
+
+* update default font ([e5ded41](https://github.com/lemonadesocial/web-new/commit/e5ded41e2aa3045f58619a89a1df147080d882b3))
+
 ## [4.3.0](https://github.com/lemonadesocial/web-new/compare/v4.2.0...v4.3.0) (2025-08-18)
 
 
