@@ -2,19 +2,20 @@ import { useState } from 'react';
 
 import { modal, Button, toast, Menu, MenuItem } from '$lib/components/core';
 import { Event as EventType, EventTicketType, CreateTicketsDocument } from '$lib/graphql/generated/backend/graphql';
-import { useMutation, useQuery } from '$lib/graphql/request';
-import { useMe } from '$lib/hooks/useMe';
+import { useMutation } from '$lib/graphql/request';
 
 export function AddGuestsModal({
   emails,
   event,
   onBack,
   title = 'Invite Guests',
+  onSelectInvite,
 }: {
   emails: string[];
   event: EventType;
   onBack: () => void;
   title?: string;
+  onSelectInvite?: () => void;
 }) {
   const [selectedTicketType, setSelectedTicketType] = useState<EventTicketType | undefined>(
     event.event_ticket_types?.[0],
@@ -112,7 +113,7 @@ export function AddGuestsModal({
         <div>
           <p className="text-sm text-tertiary">
             If you&apos;d like guests to register, send them an invite.{' '}
-            <span className="text-accent-500 cursor-pointer" onClick={onBack}>
+            <span className="text-accent-500 cursor-pointer" onClick={onSelectInvite}>
               Invite Guests
             </span>
           </p>
