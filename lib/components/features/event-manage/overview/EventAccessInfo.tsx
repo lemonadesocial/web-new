@@ -72,7 +72,7 @@ export function EventAccessInfo({ event }: { event: Event }) {
             </EventThemeProvider>
           </div>
         </div>
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center justify-between gap-4 font-default">
           <p className="text-sm text-secondary truncate">{`${window.location.host}/e/${event.shortid}`}</p>
           <div className="flex items-center gap-4">
             <i
@@ -87,7 +87,7 @@ export function EventAccessInfo({ event }: { event: Event }) {
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 font-default">
         <p className="text-lg">When & Where</p>
 
         <div className="space-y-4 flex-1">

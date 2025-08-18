@@ -1,8 +1,9 @@
 import { format } from 'date-fns';
 import { convertFromUtcToTimezone, formatWithTimezone } from '$lib/utils/date';
 import { Event } from '$lib/graphql/generated/backend/graphql';
-import { modal, toast } from '$lib/components/core';
+import { Button, drawer, modal, toast } from '$lib/components/core';
 import { ScheduleFeedbackModal } from '../modals/EventBlastsModal';
+import { EditEventDrawer } from '../drawers/EditEventDrawer';
 
 export function EventRecap({ event }: { event: Event }) {
   const formatEventDate = (dateString: string, timezone?: string) => {
@@ -25,7 +26,16 @@ export function EventRecap({ event }: { event: Event }) {
 
       <div className="flex flex-col md:grid md:grid-cols-2 gap-4">
         <div className="space-y-3 py-3 px-4 rounded-md border border-card-border bg-card">
-          <p className="text-xs text-tertiary">EVENT RECAP</p>
+          <div className="flex justify-between items-center">
+            <p className="text-xs text-tertiary">EVENT RECAP</p>
+            <Button
+              variant="flat"
+              size="sm"
+              className="p-0"
+              onClick={() => drawer.open(EditEventDrawer, { props: { event }, dismissible: false })}
+              icon="icon-edit-sharp"
+            ></Button>
+          </div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-3">
               <i className="icon-calendar size-5 text-tertiary" />

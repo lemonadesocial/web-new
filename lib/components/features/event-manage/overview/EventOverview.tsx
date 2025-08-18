@@ -85,11 +85,11 @@ export function EventOverview() {
 
         <ManageHost event={event} />
 
-      <hr className="border-t" />
+        <hr className="border-t" />
 
-      <Collectibles event={event} />
+        <Collectibles event={event} />
 
-      <PaymentOverview event={event} />
+        <PaymentOverview event={event} />
 
         <hr className="border-t" />
 

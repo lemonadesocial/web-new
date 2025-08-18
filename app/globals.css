@@ -482,6 +482,7 @@ body {
 body .font-default {
   --font-title: var(--font-class-display);
   --font-body: var(--font-general-sans);
+  font-family: var(--font-general-sans);
 }
 
 main {
