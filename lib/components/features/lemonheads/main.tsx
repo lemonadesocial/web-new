@@ -78,18 +78,18 @@ function Content() {
           <div className="flex flex-col md:flex-row-reverse gap-5 md:gap-8 flex-1 md:h-full">
             {showPreview ? (
               state.currentStep === LemonHeadStep.getstarted ? (
-                <div className="max-sm:w-[80px] aspect-square md:max-h-[688px] max-md:w-full max-md:h-auto md:w-auto">
+                <div className="md:flex-1">
                   <img
                     src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`}
-                    className="rounded-sm w-full h-full"
+                    className="max-sm:w-[80px] max-md:h-auto rounded-sm aspect-square"
                   />
                 </div>
               ) : (
-                <div className="h-full md:flex-1 md:w-full max-h-[692px] flex md:flex-col gap-5">
+                <div className="md:flex-1 md:w-full max-h-[692px] flex md:flex-col gap-5">
                   <div className="w-[30px] md:hidden" />
-                  <div className="grow flex">
+                  <div className="grow flex max-h-fit">
                     <LemonHeadPreview
-                      className="sm:w-full max-h-fit md:max-h-[688px] max-md:w-full max-md:h-auto md:w-auto md:aspect-square"
+                      className="sm:w-full max-h-fit md:max-h-[688px] max-md:w-full max-md:h-auto md:aspect-square"
                       traits={state.traits}
                     />
                   </div>
@@ -124,7 +124,7 @@ function Content() {
               )
             ) : null}
 
-            <div className="flex-1 md:min-w-[588px]">
+            <div className="flex-1 md:min-w-[588px] md:overflow-auto no-scollbar">
               {Object.entries(state.steps).map(([key, item]) => {
                 if (!item.mounted) return null;
                 const Comp = item.component || React.Fragment;

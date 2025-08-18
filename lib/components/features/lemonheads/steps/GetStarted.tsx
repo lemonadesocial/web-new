@@ -198,7 +198,7 @@ export function LemonHeadGetStarted() {
                 animate={{ opacity: 1, transition: { duration: 0.3 } }}
                 exit={{ opacity: 0, transition: { duration: 0.3 } }}
               >
-                <div className="">{item.component()}</div>
+                <div>{item.component()}</div>
               </motion.div>
             );
         })}

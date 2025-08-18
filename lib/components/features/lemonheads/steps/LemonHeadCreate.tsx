@@ -70,8 +70,8 @@ export function LemonHeadCreate() {
   if (currentStep !== LemonHeadStep.create) return null;
 
   return (
-    <div className="flex flex-col h-full md:flex-row-reverse flex-1 w-full md:w-[588px] gap-2 overflow-hidden">
-      <Card.Root className="flex-1">
+    <div className="flex flex-col h-full md:flex-row-reverse flex-1 w-full md:w-[588px] gap-2 overflow-hidden max-sm:justify-end">
+      <Card.Root className="md:flex-1">
         <Card.Content className="p-0 h-full">
           {Object.entries(tabs).map(([key, item]) => {
             if (!item.mount) return null;
