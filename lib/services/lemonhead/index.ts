@@ -75,6 +75,7 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
     //-- use these to call the contract minting function
     look: lookHash,
     signature: data.signature,
+    price: data.price,
 
     //-- for display purposes
     image: imageUrl,
