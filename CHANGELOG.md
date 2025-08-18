@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.3.0](https://github.com/lemonadesocial/web-new/compare/v4.2.0...v4.3.0) (2025-08-18)
+
+
+### Features
+
+* poap itegration ([92d664e](https://github.com/lemonadesocial/web-new/commit/92d664e540266d3aa72645649d9684f983835705))
+
 ## [4.2.0](https://github.com/lemonadesocial/web-new/compare/v4.1.0...v4.2.0) (2025-08-18)
 
 

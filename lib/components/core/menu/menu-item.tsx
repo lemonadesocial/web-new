@@ -20,8 +20,8 @@ export function MenuItem({ iconLeft, iconRight, title, onClick, children }: Menu
       onClick={onClick}
     >
       {iconLeft &&
-        (typeof iconLeft === 'string' ? <i className={twMerge(iconLeft, 'text-tertiary size-4')} /> : iconLeft)}
-      {title && <p className="font-medium text-sm font-default-body text-secondary flex-1 text-wrap">{title}</p>}
+        (typeof iconLeft === 'string' ? <i className={twMerge('text-tertiary size-4', iconLeft)} /> : iconLeft)}
+      {title && <p className="font-medium text-sm font-default-body text-secondary flex-1">{title}</p>}
       {children}
       {iconRight &&
         (typeof iconRight === 'string' ? <i className={twMerge(iconRight, 'text-tertiary size-4')} /> : iconRight)}
