@@ -1,5 +1,23 @@
 # Changelog
 
+## [4.2.0](https://github.com/lemonadesocial/web-new/compare/v4.1.0...v4.2.0) (2025-08-18)
+
+
+### Features
+
+* add email list ([aa49c43](https://github.com/lemonadesocial/web-new/commit/aa49c43e736759e1d1d40b9494582c688071b00d))
+* filter ticket type ([e2cce7e](https://github.com/lemonadesocial/web-new/commit/e2cce7e90de471b5b193894353946a75e96d024c))
+* handle Farcaster login jwt ([3e3351a](https://github.com/lemonadesocial/web-new/commit/3e3351a85164d5c5ed11d959aa89c7cc74cdf93e))
+* set mini app ready ([2dccfbc](https://github.com/lemonadesocial/web-new/commit/2dccfbcc7e7262f4855d88bbbe14ae95a7edb39b))
+* update user ([a724089](https://github.com/lemonadesocial/web-new/commit/a72408905821966e2f4994de457efbe27a768a32))
+
+
+### Bug Fixes
+
+* display issue on safari ([07ef194](https://github.com/lemonadesocial/web-new/commit/07ef194cf5475ddde150ac18cb2fd5973c563654))
+* fix loading using atom is useAuth ([41fc7f8](https://github.com/lemonadesocial/web-new/commit/41fc7f8e07bbe1def64d7e3e57b707e91d3b2fc0))
+* refetch me ([577981a](https://github.com/lemonadesocial/web-new/commit/577981a1d851fee796a93d9bca7a0a0f335ff1f3))
+
 ## [4.1.0](https://github.com/lemonadesocial/web-new/compare/v4.0.1...v4.1.0) (2025-08-15)
 
 
