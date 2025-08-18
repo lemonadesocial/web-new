@@ -479,6 +479,11 @@ body {
   font-family: var(--font-general-sans);
 }
 
+body .font-default {
+  --font-title: var(--font-class-display);
+  --font-body: var(--font-general-sans);
+}
+
 main {
   background: var(--color-background);
   color: var(--color-primary);
@@ -523,7 +528,8 @@ main {
   }
 }
 
-p, span {
+p,
+span {
   font-weight: var(--font-weight-medium);
 }
 
