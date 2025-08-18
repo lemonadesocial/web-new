@@ -33,7 +33,7 @@ export function LemonHeadAboutYou() {
   };
 
   return (
-    <div className="flex-1 flex flex-col gap-8">
+    <div className="flex-1 flex flex-col gap-8 max-sm:justify-end max-sm:h-full">
       <div className="hidden md:flex flex-col gap-2">
         <h3 className="text-3xl font-semibold">Build Your Base</h3>
         <p className="text-tertiary">Choose your gender, species & body type.</p>
