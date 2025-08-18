@@ -29,7 +29,7 @@ export function AddGuestsModal({
     }
 
     try {
-      const { data } = await createTickets({
+      await createTickets({
         variables: {
           ticketType: selectedTicketType._id,
           ticketAssignments: emails.map((email) => ({
@@ -87,10 +87,10 @@ export function AddGuestsModal({
           <p className="text-sm">Ticket Type</p>
           <Menu.Root className="w-full">
             <Menu.Trigger className="flex items-center justify-between rounded-sm border bg-background/64 px-2.5 py-2 w-full">
-              <p>{selectedTicketType?.title || 'Select a ticket type'}</p>
+              <p className="truncate">{selectedTicketType?.title || 'Select a ticket type'}</p>
               <i className="text-quaternary icon-chevron-down size-5" />
             </Menu.Trigger>
-            <Menu.Content className="w-[272px] p-1">
+            <Menu.Content className="w-full p-1">
               {({ toggle }) => (
                 <div className="space-y-1">
                   {event.event_ticket_types?.map((ticket) => (

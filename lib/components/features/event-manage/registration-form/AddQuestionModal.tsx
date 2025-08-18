@@ -1,20 +1,16 @@
-import { Button, ModalContent, modal } from "$lib/components/core";
-import { AddTextQuestion } from "./AddTextQuestion";
-import { AddOptionsQuestion } from "./AddOptionsQuestion";
-import { AddPersonalDetailsQuestion } from "./AddPersonalDetailsQuestion";
-import { AddSocialProfileQuestion } from "./AddSocialProfileQuestion";
-import { AddJobTitleQuestion } from "./AddJobTitleQuestion";
-import { AddOrganizationQuestion } from "./AddOrganizationQuestion";
-import { AddWebsiteQuestion } from "./AddWebsiteQuestion";
-import { AddTermsQuestion } from "./AddTermsQuestion";
+import { Button, ModalContent, modal } from '$lib/components/core';
+import { AddTextQuestion } from './AddTextQuestion';
+import { AddOptionsQuestion } from './AddOptionsQuestion';
+import { AddPersonalDetailsQuestion } from './AddPersonalDetailsQuestion';
+import { AddSocialProfileQuestion } from './AddSocialProfileQuestion';
+import { AddJobTitleQuestion } from './AddJobTitleQuestion';
+import { AddOrganizationQuestion } from './AddOrganizationQuestion';
+import { AddWebsiteQuestion } from './AddWebsiteQuestion';
+import { AddTermsQuestion } from './AddTermsQuestion';
 
 export function AddQuestionModal() {
   return (
-    <ModalContent
-      icon="icon-question"
-      className="w-[480px] max-w-full"
-      onClose={() => modal.close()}
-    >
+    <ModalContent icon="icon-question" className="w-[480px] max-w-full" onClose={() => modal.close()}>
       <div className="space-y-4">
         <div className="space-y-1">
           <p className="text-lg">Add Question</p>
