@@ -1,5 +1,5 @@
 import { ethers, formatUnits } from 'ethers';
-import { format, isSameDay, isSameYear, isToday, isTomorrow } from 'date-fns';
+import { format, formatDistance, isSameDay, isSameYear, isToday, isTomorrow } from 'date-fns';
 
 import {
   Address,
@@ -83,10 +83,17 @@ export function getEventAddress(address?: Address | undefined, short?: boolean) 
 
 export function getEventDateBlockStart(event: Event) {
   const startTime = convertFromUtcToTimezone(event.start, event.timezone as string);
+  const endTime = convertFromUtcToTimezone(event.end, event.timezone as string);
 
-  if (isSameYear(startTime, new Date())) return `${format(startTime, 'EEEE, dd MMMM')}`;
+  if (isSameDay(startTime, endTime)) {
+    return `${format(startTime, 'EEEE, MMM dd')}`;
+  }
 
-  return `${format(startTime, 'EEEE, dd MMMM yyyy')}`;
+  if (isSameYear(startTime, new Date())) {
+    return `${format(startTime, 'EEEE, MMM dd')} &middot; ${formatDistance(event.start, event.end)}`;
+  }
+
+  return `${format(startTime, 'EEEE, dd MMMM yyyy')} `;
 }
 
 export const getEventDateBlockRange = (event: Event) => {
@@ -97,7 +104,7 @@ export const getEventDateBlockRange = (event: Event) => {
     return `${format(startTime, 'hh:mm a')} - ${formatWithTimezone(endTime, 'hh:mm a OOO', event.timezone as string)}`;
   }
 
-  return `${format(startTime, 'hh:mm a')} - ${formatWithTimezone(endTime, 'dd MMM, hh:mm a OOO', event.timezone as string)}`;
+  return `${format(startTime, 'hh:mm a')} - ${formatWithTimezone(endTime, 'eee, MMM dd, hh:mm a OOO', event.timezone as string)}`;
 };
 
 export interface GroupedTicketTypes {
