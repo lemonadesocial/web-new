@@ -10,41 +10,50 @@ interface TicketTypeSelectorProps {
   ticketTypes: EventTicketType[];
 }
 
-export function TicketTypeSelector({ 
-  value, 
-  onChange, 
+export function TicketTypeSelector({
+  value,
+  onChange,
   ticketTypes
 }: TicketTypeSelectorProps) {
-  const [selected, setSelected] = React.useState<string[]>(value || []);
+  const [selected, setSelected] = React.useState<string[]>(value.length ? value : ticketTypes.map(type => type._id));
 
-  React.useEffect(() => {
-    setSelected(value || []);
-  }, [value]);
+  const isAllSelected = selected.length === ticketTypes.length;
 
-  const handleToggle = (ticketId: string) => {
+  const handleAllTicketsToggle = () => {
+    if (isAllSelected) {
+      setSelected([]);
+      onChange([]);
+      return;
+    }
+
+    const allTickets = ticketTypes.map(t => t._id);
+    setSelected(allTickets);
+    onChange(allTickets);
+  };
+
+  const handleTicketToggle = (ticketId: string) => {
+    if (isAllSelected) {
+      const newSelected = ticketTypes
+        .map(t => t._id)
+        .filter(id => id !== ticketId);
+      setSelected(newSelected);
+      onChange(newSelected);
+      return;
+    }
+
     const newSelected = selected.includes(ticketId)
       ? selected.filter(id => id !== ticketId)
       : [...selected, ticketId];
-    
+
     setSelected(newSelected);
     onChange(newSelected);
   };
 
-  const handleRemove = (ticketId: string) => {
+  const handleRemoveTicket = (ticketId: string) => {
     const newSelected = selected.filter(id => id !== ticketId);
     setSelected(newSelected);
     onChange(newSelected);
   };
-
-  const handleAllTicketsToggle = () => {
-    const newSelected = selected.length === 0 ? ticketTypes.map(type => type._id) : [];
-    setSelected(newSelected);
-    onChange(newSelected);
-  };
-
-  const selectedTicketTypes = ticketTypes.filter(ticketType => 
-    selected.includes(ticketType._id)
-  );
 
   return (
     <Menu.Root>
@@ -52,7 +61,7 @@ export function TicketTypeSelector({
         <fieldset className="input-field">
           <div className="control px-1.5! py-1! flex items-center min-h-[40px] h-auto! w-full">
             <div className="flex-1 w-full flex flex-wrap gap-1">
-              {selected.length === 0 ? (
+              {isAllSelected ? (
                 <Badge
                   title="All Tickets"
                   className="btn btn-tertiary text-primary! text-sm rounded py-0.5!"
@@ -62,17 +71,22 @@ export function TicketTypeSelector({
                   }}
                 />
               ) : (
-                selectedTicketTypes.map((ticketType) => (
-                  <Badge
-                    key={ticketType._id}
-                    title={ticketType.title}
-                    className="btn btn-tertiary text-primary! text-sm rounded py-0.5! max-w-30"
-                    onClose={(e) => {
-                      e.stopPropagation();
-                      handleRemove(ticketType._id);
-                    }}
-                  />
-                ))
+                selected.map((ticketId) => {
+                  const ticketType = ticketTypes.find(t => t._id === ticketId);
+                  if (!ticketType) return null;
+
+                  return (
+                    <Badge
+                      key={ticketId}
+                      title={ticketType.title}
+                      className="btn btn-tertiary text-primary! text-sm rounded py-0.5! max-w-30"
+                      onClose={(e) => {
+                        e.stopPropagation();
+                        handleRemoveTicket(ticketId);
+                      }}
+                    />
+                  );
+                })
               )}
             </div>
             <i className="icon-chevron-down size-5" />
@@ -85,7 +99,7 @@ export function TicketTypeSelector({
             <div className="p-1 max-h-[200px] overflow-auto no-scrollbar">
               <MenuItem
                 title="All Tickets"
-                iconRight={selected.length === 0 ? 'text-primary! icon-check-filled' : 'icon-circle-outline'}
+                iconRight={isAllSelected ? 'text-primary! icon-check-filled' : 'icon-circle-outline'}
                 onClick={() => {
                   handleAllTicketsToggle();
                   toggle();
@@ -98,7 +112,7 @@ export function TicketTypeSelector({
                   iconLeft="icon-ticket"
                   iconRight={selected.includes(ticketType._id) ? 'text-primary! icon-check-filled' : 'icon-circle-outline'}
                   onClick={() => {
-                    handleToggle(ticketType._id);
+                    handleTicketToggle(ticketType._id);
                     toggle();
                   }}
                 >
