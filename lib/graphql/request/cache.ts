@@ -290,8 +290,9 @@ export class InMemoryCache {
   subscribe(queryKey: string, callback: () => void): () => void {
     if (!this.listeners[queryKey]) {
       this.listeners[queryKey] = new Set();
-      this.listeners[queryKey].add(callback);
     }
+
+    this.listeners[queryKey].add(callback);
 
     return () => {
       this.listeners[queryKey]?.delete(callback);
