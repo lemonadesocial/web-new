@@ -118,7 +118,7 @@ export function CollectibleCard({ poapDrop, eventId }: CollectibleCardProps) {
     <div className="bg-card-background border border-card-border rounded-md p-4 space-y-4">
       <div className="flex items-center justify-center aspect-square">
         <img
-          src={generateUrl(poapDrop.image_expanded)}
+          src={poapDrop.image_url || generateUrl(poapDrop.image_expanded)}
           alt={poapDrop.name}
           className="border border-card-border rounded-sm max-h-full object-cover"
         />

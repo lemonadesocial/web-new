@@ -66,7 +66,7 @@ export function TicketTypeSelector({
                   <Badge
                     key={ticketType._id}
                     title={ticketType.title}
-                    className="btn btn-tertiary text-primary! text-sm rounded py-0.5!"
+                    className="btn btn-tertiary text-primary! text-sm rounded py-0.5! max-w-30"
                     onClose={(e) => {
                       e.stopPropagation();
                       handleRemove(ticketType._id);
@@ -95,14 +95,15 @@ export function TicketTypeSelector({
               {ticketTypes.map((ticketType) => (
                 <MenuItem
                   key={ticketType._id}
-                  title={ticketType.title}
                   iconLeft="icon-ticket"
                   iconRight={selected.includes(ticketType._id) ? 'text-primary! icon-check-filled' : 'icon-circle-outline'}
                   onClick={() => {
                     handleToggle(ticketType._id);
                     toggle();
                   }}
-                />
+                >
+                  <p className="text-sm text-secondary flex-1 truncate">{ticketType.title}</p>
+                </MenuItem>
               ))}
             </div>
           </>
