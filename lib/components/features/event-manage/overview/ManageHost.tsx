@@ -6,10 +6,10 @@ import { AddHostModal } from '../modals/AddHostModal';
 import { ConfigureHostModal } from '../modals/ConfigureHostModal';
 
 export function ManageHost({ event }: { event: Event }) {
-  if (!event.host_expanded) return;
+  if (!event.host_expanded_new) return;
 
   const isVisible = (user: string) => {
-    return event.visible_cohosts_expanded?.some((c) => c?._id === user);
+    return event.visible_cohosts_expanded_new?.some((c) => c?._id === user);
   };
 
   return (
@@ -38,7 +38,7 @@ export function ManageHost({ event }: { event: Event }) {
       <div className="rounded-md border-card-border bg-card divide-y divide-(--color-divider)">
         <div className="flex justify-between items-center px-4 py-3">
           <div className="flex gap-2">
-            <HostInfo host={event.host_expanded} />
+            <HostInfo host={event.host_expanded_new} />
             <Chip variant="success" size="xxs" className="rounded-full">
               Creator
             </Chip>
@@ -50,14 +50,14 @@ export function ManageHost({ event }: { event: Event }) {
                 dismissible: true,
                 props: {
                   event,
-                  user: event.host_expanded as User,
-                  isVisible: isVisible(event.host_expanded?._id),
+                  user: event.host_expanded_new as User,
+                  isVisible: isVisible(event.host_expanded_new?._id),
                 },
               })
             }
           />
         </div>
-        {event.cohosts_expanded?.map((host, index) => (
+        {event.cohosts_expanded_new?.map((host, index) => (
           <div className="flex justify-between items-center px-4 py-3" key={index}>
             <div className="flex gap-2">
               <HostInfo host={host as User} />

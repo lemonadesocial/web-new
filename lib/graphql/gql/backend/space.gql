@@ -121,12 +121,12 @@ query GetSpaceEvents(
     _id
     shortid
     title
-    host_expanded {
+    host_expanded_new {
       _id
       image_avatar
       name
     }
-    visible_cohosts_expanded {
+    visible_cohosts_expanded_new {
       _id
       image_avatar
       name
@@ -162,11 +162,11 @@ query GetSpaceEvents(
         }
       }
     }
-    host_expanded {
+    host_expanded_new {
       _id
       image_avatar
     }
-    visible_cohosts_expanded {
+    visible_cohosts_expanded_new {
       _id
       image_avatar
     }

@@ -9,21 +9,21 @@ query GetEvent($id: MongoID, $shortid: String) {
     shortid
     host
     cohosts
-    host_expanded {
+    host_expanded_new {
       _id
       name
       display_name
       email
       image_avatar
     }
-    visible_cohosts_expanded {
+    visible_cohosts_expanded_new {
       _id
       name
       display_name
       email
       image_avatar
     }
-    cohosts_expanded {
+    cohosts_expanded_new {
       _id
       name
       display_name
@@ -180,13 +180,13 @@ query GetEvents(
     shortid
     title
     host
-    host_expanded {
+    host_expanded_new {
       _id
       name
       image_avatar
     }
     cohosts
-    cohosts_expanded {
+    cohosts_expanded_new {
       _id
       name
       image_avatar
@@ -288,7 +288,7 @@ query GetUpcomingEvents(
     title
     slug
     host
-    host_expanded {
+    host_expanded_new {
       _id
       name
       new_photos_expanded {
@@ -351,7 +351,7 @@ query GetPastEvents(
     title
     slug
     host
-    host_expanded {
+    host_expanded_new {
       _id
       name
       new_photos_expanded {
