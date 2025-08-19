@@ -191,6 +191,9 @@ export class InMemoryCache {
       if (selection.kind !== 'Field') return;
 
       const fieldName = selection.name.value as keyof T;
+
+      if (fieldName === '__typename') return;
+
       const args = this.extractArguments(selection, variables);
       const fieldKey = this.generateFieldCacheKey(fieldName as string, args);
       const resultData = data[fieldName];

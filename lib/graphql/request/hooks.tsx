@@ -57,16 +57,21 @@ export function useQuery<T, V extends object>(
     }
   }, [skip, variablesKey]);
 
+  const subscriptionVariables = React.useMemo(() => ({ query, variables }), [query, variablesKey]);
+
   React.useEffect(() => {
-    client.subscribe({
-      query,
-      variables,
+    if (skip) return;
+
+    const unsubscribe = client.subscribe({
+      ...subscriptionVariables,
       callback: () => {
-        const res = client.readQuery(query, variables);
-        setData(res as T);
+        const res = client.readQuery(subscriptionVariables.query, subscriptionVariables.variables);
+        setData(() => (res ? ({ ...res } as T) : (res as T)));
       },
     });
-  }, []);
+
+    return unsubscribe;
+  }, [skip, subscriptionVariables]);
 
   return { data, loading, error, fetchMore, client, refetch: () => fetchData('network-only') };
 }
@@ -76,12 +81,12 @@ export function useMutation<T, V extends object>(
   options?: MutationOptions<T, V>,
   client: GraphqlClient = defaultClient,
 ): [
-    (
-      opts: MutationOptions<T, V>,
-    ) => Promise<{ data?: T | null; error: unknown; loading: boolean; client: GraphqlClient }>,
-    { data?: T | null; error: unknown; loading: boolean; client: GraphqlClient },
-    client: GraphqlClient,
-  ] {
+  (
+    opts: MutationOptions<T, V>,
+  ) => Promise<{ data?: T | null; error: unknown; loading: boolean; client: GraphqlClient }>,
+  { data?: T | null; error: unknown; loading: boolean; client: GraphqlClient },
+  client: GraphqlClient,
+] {
   const [data, setData] = React.useState<T | null>();
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<unknown>(null);
