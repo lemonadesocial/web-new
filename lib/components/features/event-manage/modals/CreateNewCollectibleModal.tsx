@@ -26,6 +26,7 @@ interface FormData {
 
 export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalProps) {
   const [showClaimSettings, setShowClaimSettings] = useState(false);
+  const [imageUploadLoading, setImageUploadLoading] = useState(false);
 
   const [createPoapDrop, { loading: createPoapLoading }] = useMutation(CreatePoapDropDocument, {
     onComplete: (client, response) => {
@@ -85,32 +86,39 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
       return;
     }
 
-    const uploadedFiles = await uploadFiles([data.image!], 'event');
-    const imageId = uploadedFiles[0]?._id;
+    setImageUploadLoading(true);
+    try {
+      const uploadedFiles = await uploadFiles([data.image!], 'event');
+      const imageId = uploadedFiles[0]?._id;
 
-    if (!imageId) {
-      toast.error('Failed to upload image');
-      return;
-    }
-
-    const claimMode = data.claimableOn === 'registration' ? PoapClaimMode.Registration : PoapClaimMode.CheckIn;
-    const ticketTypeIds = data.selectedTicketTypes;
-    const isProd = process.env.APP_ENV === 'production';
-
-    createPoapDrop({
-      variables: {
-        input: {
-          name: isProd ? data.name.trim() : `TEST ${data.name.trim()}`,
-          description: data.description.trim(),
-          image: imageId,
-          event: event._id,
-          amount: data.totalQuantity,
-          claim_mode: claimMode,
-          ticket_types: ticketTypeIds.length > 0 ? ticketTypeIds : undefined,
-          private: isProd ? false : true
-        }
+      if (!imageId) {
+        toast.error('Failed to upload image');
+        return;
       }
-    });
+
+      const claimMode = data.claimableOn === 'registration' ? PoapClaimMode.Registration : PoapClaimMode.CheckIn;
+      const ticketTypeIds = data.selectedTicketTypes;
+      const isProd = process.env.APP_ENV === 'production';
+
+      createPoapDrop({
+        variables: {
+          input: {
+            name: isProd ? data.name.trim() : `TEST ${data.name.trim()}`,
+            description: data.description.trim(),
+            image: imageId,
+            event: event._id,
+            amount: data.totalQuantity,
+            claim_mode: claimMode,
+            ticket_types: ticketTypeIds.length > 0 ? ticketTypeIds : undefined,
+            private: isProd ? false : true
+          }
+        }
+      });
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setImageUploadLoading(false);
+    }
   };
 
   const handleTicketTypesChange = (ticketIds: string[]) => {
@@ -151,7 +159,7 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
               )}
             />
           </div>
- 
+
           <div className="flex flex-col gap-1.5">
             <p className="text-sm text-secondary">Eligible Ticket Types</p>
             <Controller
@@ -190,7 +198,7 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
             type="submit"
             className="w-full"
             variant="secondary"
-            loading={createPoapLoading}
+            loading={createPoapLoading || imageUploadLoading}
           >
             Save
           </Button>
@@ -244,6 +252,7 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
                       variant="secondary"
                       className="rounded-full absolute right-0 bottom-0"
                       onClick={open}
+                      disabled={imageUploadLoading}
                     />
                   </div>
                 )}
