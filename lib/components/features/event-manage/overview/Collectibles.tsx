@@ -41,7 +41,7 @@ export function Collectibles({ event }: { event: Event; }) {
                     iconLeft="icon-diamond"
                     title="Create New Collectible"
                     onClick={() => {
-                      modal.open(CreateNewCollectibleModal, { props: { event } });
+                      modal.open(CreateNewCollectibleModal, { props: { event }, className: 'overflow-visible' });
                       toggle();
                     }}
                   />
@@ -49,7 +49,7 @@ export function Collectibles({ event }: { event: Event; }) {
                     iconLeft="icon-download"
                     title="Import Collectible"
                     onClick={() => {
-                      modal.open(ImportCollectibleModal, { props: { event } });
+                      modal.open(ImportCollectibleModal, { props: { event }, className: 'overflow-visible' });
                       toggle();
                     }}
                   />
@@ -153,7 +153,7 @@ function CollectibleItem({ poapDrop, event }: { poapDrop: PoapDrop; event: Event
           {({ toggle }) => (
             <>
               <MenuItem iconLeft="icon-settings" title="Claim Settings" onClick={() => {
-                modal.open(EditCollectibleModal, { props: { poapDrop, event } });
+                modal.open(EditCollectibleModal, { props: { poapDrop, event }, className: 'overflow-visible' });
                 toggle();
               }} />
               <MenuItem

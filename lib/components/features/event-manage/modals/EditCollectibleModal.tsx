@@ -1,13 +1,13 @@
 import { useForm, Controller } from 'react-hook-form';
 
-import { ModalContent, Button, Input, Segment, DropdownTags, modal } from '$lib/components/core';
+import { ModalContent, Button, Input, Segment, modal } from '$lib/components/core';
 import { PoapDrop, UpdatePoapDropDocument, PoapClaimMode } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
 import { toast } from '$lib/components/core';
 
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
-import type { Option } from '$lib/components/core/input/dropdown';
+import { TicketTypeSelector } from '../overview/TicketTypeSelector';
 
 interface EditCollectibleModalProps {
   poapDrop: PoapDrop;
@@ -16,7 +16,7 @@ interface EditCollectibleModalProps {
 
 interface FormData {
   totalQuantity: number;
-  selectedTicketTypes: Option[];
+  selectedTicketTypes: string[];
   claimableOn: 'registration' | 'check_in';
 }
 
@@ -35,21 +35,13 @@ export function EditCollectibleModal({ poapDrop, event }: EditCollectibleModalPr
   const { control, handleSubmit, setValue, formState: { errors } } = useForm<FormData>({
     defaultValues: {
       totalQuantity: poapDrop.amount,
-      selectedTicketTypes: poapDrop.ticket_types?.map(id => ({
-        key: id,
-        value: event.event_ticket_types?.find(type => type._id === id)?.title || ''
-      })) || [],
+      selectedTicketTypes: poapDrop.ticket_types || [],
       claimableOn: poapDrop.claim_mode === 'registration' ? 'registration' : 'check_in'
     }
   });
 
-  const ticketTypeOptions: Option[] = event.event_ticket_types?.map(type => ({
-    key: type._id,
-    value: type.title,
-  })) || [];
-
-  const handleTicketTypesChange = (options: Option[]) => {
-    setValue('selectedTicketTypes', options);
+  const handleTicketTypesChange = (ticketIds: string[]) => {
+    setValue('selectedTicketTypes', ticketIds);
   };
 
   const onSubmit = async (data: FormData) => {
@@ -58,7 +50,7 @@ export function EditCollectibleModal({ poapDrop, event }: EditCollectibleModalPr
         drop: poapDrop._id,
         input: {
           amount: data.totalQuantity,
-          ticket_types: data.selectedTicketTypes.map(option => option.key), 
+          ticket_types: data.selectedTicketTypes, 
           claim_mode: data.claimableOn === 'registration' ? PoapClaimMode.Registration : PoapClaimMode.CheckIn
         }
       }
@@ -73,7 +65,7 @@ export function EditCollectibleModal({ poapDrop, event }: EditCollectibleModalPr
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div className="flex items-center gap-3">
           <img 
-            src={generateUrl(poapDrop.image_expanded, 'PROFILE')} 
+            src={poapDrop.image_url || generateUrl(poapDrop.image_expanded, 'PROFILE')} 
             alt="Preview" 
             className="size-[34px] rounded-sm object-cover" 
           />
@@ -101,19 +93,21 @@ export function EditCollectibleModal({ poapDrop, event }: EditCollectibleModalPr
             )}
           />
         </div>
- 
-        <Controller
-          name="selectedTicketTypes"
-          control={control}
-          render={({ field }) => (
-            <DropdownTags
-              label="Eligible Ticket Types"
-              options={ticketTypeOptions}
-              value={field.value}
-              onSelect={handleTicketTypesChange}
-            />
-          )}
-        />
+
+        <div className="flex flex-col gap-1.5">
+          <p className="text-sm text-secondary">Eligible Ticket Types</p>
+          <Controller
+            name="selectedTicketTypes"
+            control={control}
+            render={({ field }) => (
+              <TicketTypeSelector
+                value={field.value || []}
+                onChange={handleTicketTypesChange}
+                ticketTypes={event.event_ticket_types || []}
+              />
+            )}
+          />
+        </div>
 
         <div className="space-y-1.5">
           <p className="text-sm text-secondary">Claimable On</p>
