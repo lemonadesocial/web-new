@@ -39,7 +39,7 @@ export function CollectibleCard({ poapDrop, eventId }: CollectibleCardProps) {
   );
 
   const hasClaimed = localHasClaimed || claimsData?.listMyPoapClaims?.some(
-    claim => claim.drop._id === poapDrop._id
+    claim => claim.drop._id === poapDrop._id && claim.claimed_date
   ) || false;
 
   const outOfStock = localClaimCount === poapDrop.amount;

@@ -1086,6 +1086,7 @@ query ListMyPoapClaims($event: MongoID) {
     drop {
       _id
     }
+    claimed_date
   }
 }
 
