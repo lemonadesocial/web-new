@@ -12,6 +12,8 @@ export function EventCollectibles({ event }: { event: Event }) {
   const poapDrops = poapDropsData?.listPoapDrops || [];
   const gridCols = poapDrops.length <= 2 ? 'grid-cols-2' : 'grid-cols-3';
 
+  if (!poapDrops.length) return null;
+
   return (
     <div className="flex flex-col gap-2 w-full">
       <p className="font-medium text-sm">Collectibles</p>
@@ -20,7 +22,7 @@ export function EventCollectibles({ event }: { event: Event }) {
         {poapDrops.map((poapDrop) => (
           <CollectibleCard
             key={poapDrop._id}
-            poapDrop={poapDrop}
+            poapDrop={poapDrop as PoapDrop}
             eventId={event._id}
           />
         ))}
