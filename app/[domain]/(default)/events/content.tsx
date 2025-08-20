@@ -53,7 +53,6 @@ export function EventsContent() {
     if (Number(filter.by) === FilterItem.Attending) showHost = false;
 
     let unpublished = Number(filter.by) === FilterItem.Drafts ? true : undefined;
-    if (showHost) unpublished = false;
 
     const variables = {
       limit: 100,
