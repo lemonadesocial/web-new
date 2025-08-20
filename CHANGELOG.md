@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.0.3](https://github.com/lemonadesocial/web-new/compare/v5.0.2...v5.0.3) (2025-08-20)
+
+
+### Bug Fixes
+
+* missing update whitelabel ([c6069d0](https://github.com/lemonadesocial/web-new/commit/c6069d07888942cad135efac89cef763a19a2a1a))
+* update sub path ([41665a3](https://github.com/lemonadesocial/web-new/commit/41665a33abef7e0ab7db34c5886a4543afaf6aa7))
+
 ## [5.0.2](https://github.com/lemonadesocial/web-new/compare/v5.0.1...v5.0.2) (2025-08-20)
 
 
