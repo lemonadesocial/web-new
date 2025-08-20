@@ -138,13 +138,16 @@ export function EventGuestSideContent({ event }: { event: Event }) {
         <div className="space-y-2">
           <h3 className="text-xl md:text-3xl font-bold">{event.title}</h3>
 
-          <p className="md:hidden text-secondary text-sm">
-            Hosted By{' '}
-            {hosts
-              .map((p) => p.display_name || p.name)
-              .join(', ')
-              .replace(/,(?=[^,]*$)/, ' & ')}
-          </p>
+          {!!hosts.length && (
+            <p className="md:hidden text-secondary text-sm">
+              Hosted By{' '}
+              {hosts
+                .map((p) => p.display_name || p.name)
+                  .join(', ')
+                  .replace(/,(?=[^,]*$)/, ' & ')}
+              </p>
+            )
+          }
         </div>
 
         <div className="flex flex-col gap-4">

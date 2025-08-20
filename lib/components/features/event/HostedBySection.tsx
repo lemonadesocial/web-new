@@ -13,6 +13,8 @@ export function HostedBySection({ event }: { event: Event }) {
 
   const hosts = getEventCohosts(event);
 
+  if (!hosts.length) return null;
+
   return (
     <div className="flex flex-col gap-2 w-full">
       <p className="text-secondary text-sm">Hosted by</p>
