@@ -1,5 +1,29 @@
 # Changelog
 
+## [5.0.0](https://github.com/lemonadesocial/web-new/compare/v4.4.0...v5.0.0) (2025-08-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* update host event types
+
+### Features
+
+* add token gate label ([273fe4e](https://github.com/lemonadesocial/web-new/commit/273fe4ec7c3c0059fa994412e485345e79b7c407))
+* poap creation loading ([df5af4a](https://github.com/lemonadesocial/web-new/commit/df5af4aa15ebe9bb32449cbb39d7d7ce480b8af7))
+* update format date event guest view ([5e8bac0](https://github.com/lemonadesocial/web-new/commit/5e8bac0b45a8517856fb68330fb5da27217b655a))
+* update host event types ([de99389](https://github.com/lemonadesocial/web-new/commit/de993893498bfabc991c450ebcf61a842eb91fc8))
+
+
+### Bug Fixes
+
+* check claimed date ([3d5e7c7](https://github.com/lemonadesocial/web-new/commit/3d5e7c70db34a1c50e7ff3aa1a97b7f5ea865b6d))
+* checking caching ([5fed743](https://github.com/lemonadesocial/web-new/commit/5fed7439678aeeac77a7dfdad9ec6200f8a77fe5))
+* it could be same query from some place ([b0548cb](https://github.com/lemonadesocial/web-new/commit/b0548cb6024c14181db7155a3f956a03b82120b6))
+* no collectibles ([66da46c](https://github.com/lemonadesocial/web-new/commit/66da46c0ea68293996b7412c21f66d73b42f115a))
+* type selector behavior ([6a99575](https://github.com/lemonadesocial/web-new/commit/6a99575e5b70e9cb187298106b7a75247c2ad8c5))
+* type selector style ([e5d0403](https://github.com/lemonadesocial/web-new/commit/e5d04031f144a944ed9f097a7a73208ace1725e5))
+
 ## [4.4.0](https://github.com/lemonadesocial/web-new/compare/v4.3.0...v4.4.0) (2025-08-18)
 
 
