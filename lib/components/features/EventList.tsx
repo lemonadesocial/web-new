@@ -214,6 +214,7 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
               )}
 
               <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), 'hh:mm a')}</p>
+              {!item.published && <Badge title="Draft" color="var(--color-warning-400)" />}
             </div>
             <p className="font-title text-lg md:text-xl font-semibold text-primary">{item.title}</p>
 
