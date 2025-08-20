@@ -145,6 +145,7 @@ query GetSpaceEvents(
       type
       url
     }
+    published
     start
     end
     timezone
