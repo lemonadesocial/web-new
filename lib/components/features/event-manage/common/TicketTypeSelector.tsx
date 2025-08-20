@@ -8,12 +8,14 @@ interface TicketTypeSelectorProps {
   value: string[];
   onChange: (ticketIds: string[]) => void;
   ticketTypes: EventTicketType[];
+  className?: string;
 }
 
 export function TicketTypeSelector({
   value,
   onChange,
-  ticketTypes
+  ticketTypes,
+  className
 }: TicketTypeSelectorProps) {
   const [selected, setSelected] = React.useState<string[]>(value.length ? value : ticketTypes.map(type => type._id));
 
@@ -56,7 +58,7 @@ export function TicketTypeSelector({
   };
 
   return (
-    <Menu.Root>
+    <Menu.Root className={className}>
       <Menu.Trigger>
         <fieldset className="input-field">
           <div className="control px-1.5! py-1! flex items-center min-h-[40px] h-auto! w-full">

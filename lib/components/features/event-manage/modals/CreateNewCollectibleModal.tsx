@@ -10,8 +10,9 @@ import { CreatePoapDropDocument } from '$lib/graphql/generated/backend/graphql';
 import { uploadFiles } from '$lib/utils/file';
 import { toast } from '$lib/components/core/toast';
 import { ListPoapDropsDocument } from '$lib/graphql/generated/backend/graphql';
-import { TicketTypeSelector } from '../overview/TicketTypeSelector';
 import { listChainsAtom } from '$lib/jotai';
+
+import { TicketTypeSelector } from '../common/TicketTypeSelector';
 
 interface CreateNewCollectibleModalProps {
   event: Event;
