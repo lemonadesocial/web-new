@@ -103,7 +103,7 @@ export function EventAccessInfo({ event }: { event: Event }) {
               </p>
             </div>
             <div className="flex flex-col truncate">
-              <p>{getEventDateBlockStart(event)}</p>
+              <p dangerouslySetInnerHTML={{ __html: getEventDateBlockStart(event) }} />
               <span className="text-sm text-secondary">{getEventDateBlockRange(event)}</span>
             </div>
           </div>

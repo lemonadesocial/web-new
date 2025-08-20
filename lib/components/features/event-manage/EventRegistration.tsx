@@ -15,8 +15,6 @@ export function EventRegistration() {
       <TicketList event={event} />
       <hr className="border-t border-t-divider" />
       <RegistrationForm />
-      <hr className="border-t border-t-divider" />
-      <RegistrationForm />
     </div>
   );
 }
