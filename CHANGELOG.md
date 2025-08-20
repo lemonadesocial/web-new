@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.0.2](https://github.com/lemonadesocial/web-new/compare/v5.0.1...v5.0.2) (2025-08-20)
+
+
+### Bug Fixes
+
+* format short date ([78b3959](https://github.com/lemonadesocial/web-new/commit/78b395943633aa99edf22bb36f85d2925c11552d))
+* missing auth ([61eb000](https://github.com/lemonadesocial/web-new/commit/61eb000a1f70199cc2e7c13bb11becb52f225e58))
+
 ## [5.0.1](https://github.com/lemonadesocial/web-new/compare/v5.0.0...v5.0.1) (2025-08-20)
 
 
