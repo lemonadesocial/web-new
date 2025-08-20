@@ -1,5 +1,5 @@
-import { Button, drawer } from "$lib/components/core";
-import { Event, EventTicketType, ListEventTicketTypesDocument } from "$lib/graphql/generated/backend/graphql";
+import { Button, Chip, drawer } from "$lib/components/core";
+import { Event, EventTicketType, ListEventTicketTypesDocument, ListEventTokenGatesDocument } from "$lib/graphql/generated/backend/graphql";
 import { useQuery } from "$lib/graphql/request";
 import { formatPrice } from "$lib/utils/event";
 import { TicketTypeDrawer } from "./ticket/TicketTypeDrawer";
@@ -35,6 +35,11 @@ export function TicketList({ event }: { event: Event }) {
 }
 
 function TicketItem({ ticket }: { ticket: EventTicketType }) {
+
+  const { data: tokenGatesData } = useQuery(ListEventTokenGatesDocument, {
+    variables: { event: ticket.event, ticketTypes: [ticket._id] },
+  });
+
   return (
     <div
       className="flex justify-between items-center px-4 py-3 cursor-pointer"
@@ -49,6 +54,9 @@ function TicketItem({ ticket }: { ticket: EventTicketType }) {
         <p className="text-tertiary">
           {formatPrice(ticket.prices[0], true)}
         </p>
+        {
+          !!tokenGatesData?.listEventTokenGates.length && <Chip variant="primary" size="xxs" className="rounded-full">Token Exclusive</Chip>
+        }
       </div>
 
       <div className="flex gap-1.5 items-center">
