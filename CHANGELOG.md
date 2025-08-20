@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.1.3](https://github.com/lemonadesocial/web-new/compare/v5.1.2...v5.1.3) (2025-08-20)
+
+
+### Bug Fixes
+
+* remove filter on id ([b4aedaf](https://github.com/lemonadesocial/web-new/commit/b4aedaf3d578489551dfef9e17f73ffeee98d2ca))
+* update missing fields ([ca94a9c](https://github.com/lemonadesocial/web-new/commit/ca94a9c10c468711d841b02af03907008dc88731))
+
 ## [5.1.2](https://github.com/lemonadesocial/web-new/compare/v5.1.1...v5.1.2) (2025-08-20)
 
 
