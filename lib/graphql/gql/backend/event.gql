@@ -262,6 +262,13 @@ query GetEvents(
         ticket_required_for_purchase
       }
     }
+    visible_cohosts_expanded_new {
+      _id
+      name
+      display_name
+      email
+      image_avatar
+    }
   }
 }
 
@@ -325,6 +332,14 @@ query GetUpcomingEvents(
     }
     me_awaiting_approval
     published
+
+    visible_cohosts_expanded_new {
+      _id
+      name
+      display_name
+      email
+      image_avatar
+    }
   }
 }
 
@@ -388,6 +403,14 @@ query GetPastEvents(
     }
     me_awaiting_approval
     published
+
+    visible_cohosts_expanded_new {
+      _id
+      name
+      display_name
+      email
+      image_avatar
+    }
   }
 }
 
@@ -989,18 +1012,8 @@ mutation UpdateEventToggleAttending($id: MongoID!, $input: EventInput!) {
   }
 }
 
-query GetTickets(
-  $event: MongoID
-  $user: MongoID
-  $ticket_types: [MongoID!]
-  $email: String
-) {
-  getTickets(
-    event: $event
-    user: $user
-    ticket_types: $ticket_types
-    email: $email
-  ) {
+query GetTickets($event: MongoID, $user: MongoID, $ticket_types: [MongoID!], $email: String) {
+  getTickets(event: $event, user: $user, ticket_types: $ticket_types, email: $email) {
     _id
     accepted
     assigned_email
