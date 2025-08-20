@@ -86,14 +86,14 @@ export function getEventDateBlockStart(event: Event) {
   const endTime = convertFromUtcToTimezone(event.end, event.timezone as string);
 
   if (isSameDay(startTime, endTime)) {
-    return `${format(startTime, 'EEEE, MMM dd')}`;
+    return `${format(startTime, 'EEE, MMM dd')}`;
   }
 
   if (isSameYear(startTime, new Date())) {
-    return `${format(startTime, 'EEEE, MMM dd')} &middot; ${formatDistance(event.start, event.end)}`;
+    return `${format(startTime, 'EEE, MMM dd')} &middot; ${formatDistance(event.start, event.end)}`;
   }
 
-  return `${format(startTime, 'EEEE, dd MMMM yyyy')} `;
+  return `${format(startTime, 'EEE, dd MMMM yyyy')} `;
 }
 
 export const getEventDateBlockRange = (event: Event) => {
@@ -104,7 +104,7 @@ export const getEventDateBlockRange = (event: Event) => {
     return `${format(startTime, 'hh:mm a')} - ${formatWithTimezone(endTime, 'hh:mm a OOO', event.timezone as string)}`;
   }
 
-  return `${format(startTime, 'hh:mm a')} - ${formatWithTimezone(endTime, 'eee, MMM dd, hh:mm a OOO', event.timezone as string)}`;
+  return `${format(startTime, 'hh:mm a')} - ${formatWithTimezone(endTime, 'EEE, MMM dd, hh:mm a OOO', event.timezone as string)}`;
 };
 
 export interface GroupedTicketTypes {
