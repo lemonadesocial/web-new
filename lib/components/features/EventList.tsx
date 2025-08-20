@@ -68,7 +68,7 @@ function EventItem({ item }: { item: Event }) {
           {item.external_url && item.external_hostname ? (
             <p className="font-medium text-sm md:text-base text-tertiary">{`By ${item.external_hostname}`}</p>
           ) : (
-            <>
+            !!users.length && <>
               <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
                 {users.map((p) => (
                   <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="outline outline-background" />
@@ -224,7 +224,7 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
                   {`By ${item.external_hostname}`}
                 </p>
               ) : (
-                <>
+                !!users.length && <>
                   <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
                     {users.map((p) => (
                       <Avatar
