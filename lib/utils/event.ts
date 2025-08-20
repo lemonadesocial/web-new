@@ -189,7 +189,7 @@ export function extractShortId(url: string): string | null {
 export function getEventCohosts(event: Event) {
   const visibleCohosts = event.visible_cohosts_expanded_new || [];
 
-  return visibleCohosts.filter((u) => u?._id) as User[];
+  return visibleCohosts.filter(Boolean) as User[];
 }
 
 export function formatTokenGateRange(tokenGate: EventTokenGate) {
