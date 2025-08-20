@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '$lib/components/core';
 import { Event, ListEventGuestsDocument } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
-import { GuestTable } from './GuestTable';
+import { GuestTable } from '../common/GuestTable';
 import { Skeleton } from '$lib/components/core/skeleton';
 
 interface RecentRegistrationsProps {

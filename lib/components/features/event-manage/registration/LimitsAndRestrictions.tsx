@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button, Input, LabeledInput, modal, ModalContent, Toggle } from '$lib/components/core';
 import { Event, UpdateEventSettingsDocument } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
-import { useUpdateEvent } from './store';
+import { useUpdateEvent } from '../store';
 
 export function LimitsAndRestrictions({ event }: { event: Event }) {
   return (

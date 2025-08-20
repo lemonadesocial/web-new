@@ -8,7 +8,7 @@ import { downloadCSVFile } from '$lib/utils/file';
 import { useQuery } from '$lib/graphql/request';
 import { Event, ListEventGuestsDocument } from '$lib/graphql/generated/backend/graphql';
 
-import { GuestTable } from './GuestTable';
+import { GuestTable } from './common/GuestTable';
 
 export function GuestList({ event }: { event: Event }) {
   const [searchText, setSearchText] = useState('');

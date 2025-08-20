@@ -2,7 +2,7 @@ import { Button, Chip, drawer } from "$lib/components/core";
 import { Event, EventTicketType, ListEventTicketTypesDocument, ListEventTokenGatesDocument } from "$lib/graphql/generated/backend/graphql";
 import { useQuery } from "$lib/graphql/request";
 import { formatPrice } from "$lib/utils/event";
-import { TicketTypeDrawer } from "./ticket/TicketTypeDrawer";
+import { TicketTypeDrawer } from "../ticket/TicketTypeDrawer";
 
 export function TicketList({ event }: { event: Event }) {
   const { data } = useQuery(ListEventTicketTypesDocument, {

@@ -2,10 +2,11 @@
 
 import { GuestList } from './GuestList';
 import { useEvent } from './store';
-import { PendingApprovalsOverview } from './PendingApprovalsOverview';
+
 import { Card, modal } from '$lib/components/core';
 import { PublicGuestListModal } from './modals/PublicGuestListModal';
 import { InviteGuestsModal } from './modals/InviteGuestsModal';
+import { PendingApprovalsOverview } from './common/PendingApprovalsOverview';
 
 export function EventGuests() {
   const event = useEvent();

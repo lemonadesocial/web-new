@@ -2,10 +2,11 @@
 import { Button, drawer } from '$lib/components/core';
 import { Event, EventJoinRequestState, GetEventJoinRequestsDocument } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
-import { ApplicantsDrawer } from './drawers/ApplicantsDrawer';
-import { PendingApprovalList } from './PendingApprovalList';
+
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { ApplicantsDrawer } from '../drawers/ApplicantsDrawer';
+import { PendingApprovalList } from './PendingApprovalList';
 
 interface PendingApprovalsOverviewProps {
   event: Event;

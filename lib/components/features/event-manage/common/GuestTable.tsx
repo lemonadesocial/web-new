@@ -2,7 +2,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { Avatar, Chip, Skeleton } from '$lib/components/core';
 import { Event, EventGuestDetail, EventJoinRequestState } from '$lib/graphql/generated/backend/graphql';
 import { randomUserImage } from '$lib/utils/user';
-import { GuestDetailsDrawer } from './drawers/GuestDetailsDrawer';
+import { GuestDetailsDrawer } from '../drawers/GuestDetailsDrawer';
 import { drawer } from '$lib/components/core';
 
 interface GuestTableProps {

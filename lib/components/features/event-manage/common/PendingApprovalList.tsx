@@ -6,8 +6,8 @@ import { Event, EventJoinRequestState, GetEventJoinRequestsDocument } from '$lib
 import { useQuery } from '$lib/graphql/request';
 import { userAvatar } from '$lib/utils/user';
 
-import { useEventRequest } from './hooks';
-import { GuestDetailsDrawer } from './drawers/GuestDetailsDrawer';
+import { useEventRequest } from '../hooks';
+import { GuestDetailsDrawer } from '../drawers/GuestDetailsDrawer';
 
 interface PendingApprovalListProps {
   event: Event;

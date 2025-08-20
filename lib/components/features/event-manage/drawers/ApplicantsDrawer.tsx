@@ -1,7 +1,7 @@
 import { Button, drawer } from '$lib/components/core';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 
-import { PendingApprovalList } from '../PendingApprovalList';
+import { PendingApprovalList } from '../common/PendingApprovalList';
 
 interface ApplicantsDrawerProps {
   event: Event;
