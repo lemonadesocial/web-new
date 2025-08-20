@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.1.0](https://github.com/lemonadesocial/web-new/compare/v5.0.3...v5.1.0) (2025-08-20)
+
+
+### Features
+
+* missing hydra client id ([0da9ad0](https://github.com/lemonadesocial/web-new/commit/0da9ad0c02d8624a496ba9632743675a4a51d12b))
+* update draft bagde ([dc3a718](https://github.com/lemonadesocial/web-new/commit/dc3a71837bca8435c080756df254f2feac6a9e52))
+
+
+### Bug Fixes
+
+* remove visible cohosts fallback ([61f2327](https://github.com/lemonadesocial/web-new/commit/61f23271edcdd441699736a520e3aa4e957d25a6))
+
 ## [5.0.3](https://github.com/lemonadesocial/web-new/compare/v5.0.2...v5.0.3) (2025-08-20)
 
 

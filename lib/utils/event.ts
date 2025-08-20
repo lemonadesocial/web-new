@@ -187,9 +187,7 @@ export function extractShortId(url: string): string | null {
 }
 
 export function getEventCohosts(event: Event) {
-  const visibleCohosts = event.visible_cohosts_expanded_new?.length
-    ? event.visible_cohosts_expanded_new
-    : [event.host_expanded_new, ...(event.cohosts_expanded_new || [])];
+  const visibleCohosts = event.visible_cohosts_expanded_new || [];
 
   return visibleCohosts.filter((u) => u?._id) as User[];
 }

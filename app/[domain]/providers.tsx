@@ -19,7 +19,7 @@ export default function Providers({ children, space }: { children: React.ReactNo
   const setHydraClientId = useSetAtom(hydraClientIdAtom);
   const [appKitReady, setAppKitReady] = useState(false);
   useLensResumeSession();
-  const { reload, loading: loadingAuth } = useAuth();
+  const { reload, loading: loadingAuth } = useAuth(space?.hydra_client_id);
   const session = useAtomValue(sessionAtom);
   const setUser = useSetAtom(userAtom);
 

@@ -11,8 +11,10 @@ import { toast } from '$lib/components/core';
 import { HYDRA_PUBLIC_URL } from '$lib/utils/constants';
 import { useAccount } from './useLens';
 
-export function useAuth() {
-  const hydraClientId = useAtomValue(hydraClientIdAtom);
+export function useAuth(spaceHydraClientId?: string) {
+  const hydraClientAtomId = useAtomValue(hydraClientIdAtom);
+  const hydraClientId = spaceHydraClientId || hydraClientAtomId;
+
   const [session, setSession] = useAtom(sessionAtom);
   const [loading, setLoading] = useAtom(sessionLoadingAtom);
   const logOut = useLogOut();

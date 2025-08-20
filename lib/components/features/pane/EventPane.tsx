@@ -89,13 +89,16 @@ export function EventPane({ eventId }: { eventId: string }) {
               </div>
             )}
 
-            <p className="font-medium text-secondary">
-              Hosted By{' '}
-              {hosts
-                .map((p) => p.display_name || p.name)
-                .join(', ')
-                .replace(/,(?=[^,]*$)/, ' & ')}
-            </p>
+            {!!hosts.length && (
+              <p className="font-medium text-secondary">
+                Hosted By{' '}
+                {hosts
+                  .map((p) => p.display_name || p.name)
+                    .join(', ')
+                    .replace(/,(?=[^,]*$)/, ' & ')}
+                </p>
+              )
+            }
           </div>
         </div>
 

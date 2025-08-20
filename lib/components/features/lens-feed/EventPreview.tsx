@@ -7,6 +7,8 @@ export function EventPreview({ event }: { event: Event }) {
 
   const hosts = getEventCohosts(event);
 
+  if (!hosts.length) return null;
+
   return (
     <div className="flex flex-col gap-3">
       <img
