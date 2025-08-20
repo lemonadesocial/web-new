@@ -1,5 +1,5 @@
 import { Avatar, Button, Chip, modal } from '$lib/components/core';
-import { User } from '$lib/graphql/generated/backend/graphql';
+import { UserWithEmail, User } from '$lib/graphql/generated/backend/graphql';
 import { userAvatar } from '$lib/utils/user';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { AddHostModal } from '../modals/AddHostModal';
@@ -8,8 +8,8 @@ import { ConfigureHostModal } from '../modals/ConfigureHostModal';
 export function ManageHost({ event }: { event: Event }) {
   if (!event.host_expanded_new) return;
 
-  const isVisible = (user: string) => {
-    return event.visible_cohosts_expanded_new?.some((c) => c?._id === user);
+  const isVisible = (user: UserWithEmail) => {
+    return event.visible_cohosts_expanded_new?.some((c) => c?._id === user?._id || c?.email === user?.email);
   };
 
   return (
@@ -51,7 +51,7 @@ export function ManageHost({ event }: { event: Event }) {
                 props: {
                   event,
                   user: event.host_expanded_new as User,
-                  isVisible: isVisible(event.host_expanded_new?._id),
+                  isVisible: isVisible(event.host_expanded_new as UserWithEmail),
                 },
               })
             }
@@ -73,7 +73,7 @@ export function ManageHost({ event }: { event: Event }) {
                   props: {
                     event,
                     user: host as User,
-                    isVisible: isVisible(host?._id),
+                    isVisible: isVisible(host as UserWithEmail),
                   },
                 })
               }
