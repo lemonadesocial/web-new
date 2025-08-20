@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.0.1](https://github.com/lemonadesocial/web-new/compare/v5.0.0...v5.0.1) (2025-08-20)
+
+
+### Bug Fixes
+
+* middot render ([ab4fdeb](https://github.com/lemonadesocial/web-new/commit/ab4fdeb1b4551741f18ac48040e767dbb9f8359b))
+
 ## [5.0.0](https://github.com/lemonadesocial/web-new/compare/v4.4.0...v5.0.0) (2025-08-20)
 
 
