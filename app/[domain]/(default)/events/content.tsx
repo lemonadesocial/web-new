@@ -52,12 +52,15 @@ export function EventsContent() {
     if (Number(filter.by) === FilterItem.Hosting) showHost = true;
     if (Number(filter.by) === FilterItem.Attending) showHost = false;
 
+    let unpublished = Number(filter.by) === FilterItem.Drafts ? true : undefined;
+    if (showHost) unpublished = false;
+
     const variables = {
       limit: 100,
       skip: 0,
       user: me._id,
       host: showHost,
-      unpublished: Number(filter.by) === FilterItem.Drafts ? true : undefined,
+      unpublished,
     };
     setLoading(true);
     if (filter.type === 'upcoming') {
