@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.2](https://github.com/lemonadesocial/web-new/compare/v5.1.1...v5.1.2) (2025-08-20)
+
+
+### Bug Fixes
+
+* revert filter ([72679c5](https://github.com/lemonadesocial/web-new/commit/72679c572073733d3d8faca7656872af2da2211e))
+
 ## [5.1.1](https://github.com/lemonadesocial/web-new/compare/v5.1.0...v5.1.1) (2025-08-20)
 
 
