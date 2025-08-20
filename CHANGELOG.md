@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.1.1](https://github.com/lemonadesocial/web-new/compare/v5.1.0...v5.1.1) (2025-08-20)
+
+
+### Bug Fixes
+
+* email fallback for cohost ([e40af70](https://github.com/lemonadesocial/web-new/commit/e40af70d92f185b3c12c0b5b9c68fe4ef10f9528))
+* filter draft when select hosting ([2e234ce](https://github.com/lemonadesocial/web-new/commit/2e234cefc97c387cffca11cf0676cbf7ee1878d4))
+* hosts display on event list ([fc4f0a2](https://github.com/lemonadesocial/web-new/commit/fc4f0a280cfdb7c47c34fc86c1f2e0b2b1a91440))
+
 ## [5.1.0](https://github.com/lemonadesocial/web-new/compare/v5.0.3...v5.1.0) (2025-08-20)
 
 
