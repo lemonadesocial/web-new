@@ -9,7 +9,7 @@ export function ManageHost({ event }: { event: Event }) {
   if (!event.host_expanded_new) return;
 
   const isVisible = (user: UserWithEmail) => {
-    return event.visible_cohosts_expanded_new?.some((c) => c?._id === user?._id || c?.email === user?.email);
+    return event.visible_cohosts_expanded_new?.some((c) => c?.email === user?.email);
   };
 
   return (
