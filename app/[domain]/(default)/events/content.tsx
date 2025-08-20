@@ -7,7 +7,7 @@ import { Button, drawer, Menu, MenuItem, Segment } from '$lib/components/core';
 import { EventListCard } from '$lib/components/features/EventList';
 import { EventPane } from '$lib/components/features/pane';
 import { Event, GetPastEventsDocument, GetUpcomingEventsDocument } from '$lib/graphql/generated/backend/graphql';
-import { getClient } from '$lib/graphql/request';
+import { useClient } from '$lib/graphql/request';
 import { useSession } from '$lib/hooks/useSession';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { useMe } from '$lib/hooks/useMe';
@@ -42,7 +42,7 @@ export function EventsContent() {
     data: [] as Event[],
   });
 
-  const client = getClient();
+  const { client } = useClient();
 
   const fetchData = React.useCallback(async () => {
     if (!me) return;
