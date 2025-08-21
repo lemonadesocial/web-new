@@ -141,6 +141,10 @@ query GetEvent($id: MongoID, $shortid: String) {
     payment_accounts_expanded {
       ...PaymentAccount
     }
+    layout_sections {
+      id
+      hidden
+    }
   }
 }
 
@@ -570,6 +574,10 @@ mutation UpdateEventSettings($id: MongoID!, $input: EventInput!) {
     terms_link
     shortid
     private
+    layout_sections {
+      id
+      hidden
+    }
   }
 }
 

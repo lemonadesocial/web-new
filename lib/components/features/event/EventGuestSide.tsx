@@ -27,6 +27,7 @@ import { AttendeesSection } from './AttendeesSection';
 import { PendingCohostRequest } from './PendingCohostRequest';
 import { useMe } from '$lib/hooks/useMe';
 import { EventCollectibles } from '../event-collectibles';
+import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 
 export function EventGuestSide({ event: initEvent }: { event: Event }) {
   const { data } = useQuery(GetEventDocument, {
@@ -34,7 +35,7 @@ export function EventGuestSide({ event: initEvent }: { event: Event }) {
     initData: { getEvent: initEvent } as unknown as GetEventQuery,
   });
 
-  return <EventGuestSideContent event={data?.getEvent as Event || initEvent} />;
+  return <EventGuestSideContent event={(data?.getEvent as Event) || initEvent} />;
 }
 
 export function EventGuestSideContent({ event }: { event: Event }) {
@@ -143,21 +144,32 @@ export function EventGuestSideContent({ event }: { event: Event }) {
               Hosted By{' '}
               {hosts
                 .map((p) => p.display_name || p.name)
-                  .join(', ')
-                  .replace(/,(?=[^,]*$)/, ' & ')}
-              </p>
-            )
-          }
+                .join(', ')
+                .replace(/,(?=[^,]*$)/, ' & ')}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col gap-4">
           <EventDateTimeBlock event={event} />
           <EventLocationBlock event={event} />
         </div>
-        {event && <EventAccess event={event} />}
-        <AboutSection event={event} />
-        {attending && <EventCollectibles event={event} />}
-        <LocationSection event={event} />
+        {(event.layout_sections || DEFAULT_LAYOUT_SECTIONS)?.map((item) => {
+          switch (item.id) {
+            case 'registration':
+              return event ? <EventAccess event={event} /> : null;
+            case 'about':
+              return <AboutSection event={event} />;
+            case 'collectibles':
+              return attending ? <EventCollectibles event={event} /> : null;
+            case 'location':
+              return <LocationSection event={event} />;
+
+            default:
+              break;
+          }
+        })}
+
         <SubEventSection event={event} />
         <GallerySection event={event} />
         <div className="flex flex-col gap-6 md:hidden">
