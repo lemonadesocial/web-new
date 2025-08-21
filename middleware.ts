@@ -25,7 +25,7 @@ export default async function middleware(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams.toString();
   const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ''}`;
 
-  if (['/s/', '/e/', '/l/', '/lemonheads'].some((subpath) => path.includes(subpath))) {
+  if (['/s/', '/e/', '/l/', '/lemonheads', '/create/'].some((subpath) => path.includes(subpath))) {
     return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
   }
 
