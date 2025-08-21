@@ -133,7 +133,7 @@ export function Content() {
 
         <div>
           <ListItem icon="icon-email" title="Email" placeholder={!me?.email} subtile={me?.email || 'No Email Added'}>
-            {session && !session.email && (
+            {!me?.email_verified && (
               <Button
                 onClick={() => modal.open(VerifyEmailModal)}
                 size="sm"

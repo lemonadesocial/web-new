@@ -1,36 +1,59 @@
+import { useState } from 'react';
+
 import { useAtomValue } from 'jotai';
-import { useOAuth2 } from './useOAuth2';
 import { hydraClientIdAtom } from '$lib/jotai';
 import { modal } from '$lib/components/core';
 import { AuthModal } from '$lib/components/features/auth/AuthModal';
-import { useState } from 'react';
 import { LoginFlow, RegistrationFlow, SettingsFlow, UiNodeInputAttributes, VerificationFlow } from '@ory/client';
 import { ory } from '$lib/utils/ory';
 import { dummyWalletPassword } from '../services/ory';
+import { identityApi } from '../services/identity';
 
-export function useSignIn() {
-  const { signIn } = useOAuth2();
-  const hydraClientId = useAtomValue(hydraClientIdAtom);
-
+export function useSignIn() {  
   return (dismissible = true, props?: any) => {
-    if (hydraClientId) {
-      signIn();
-      return;
-    }
-
     modal.open(AuthModal, { dismissible, props });
   };
 }
 
-export const useHandleEmail = ({ onSuccess }: { onSuccess: () => void }) => {
+export const useHandleEmail = ({ onSuccess }: { onSuccess: (token?: string) => void }) => {
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
   const [error, setError] = useState('');
   const [codeSent, setCodeSent] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
   const [flow, setFlow] = useState<LoginFlow | RegistrationFlow>();
+  const [identityFlowId, setIdentityFlowId] = useState<string>('');
+  const hydraClientId = useAtomValue(hydraClientIdAtom);
+
+  console.log(hydraClientId)
 
   const signupWithCode = async (email: string, code: string) => {
+    if (hydraClientId) {
+      try {
+        const data = await identityApi.signupWithCode({
+          method: 'code',
+          traits: { email },
+          flow_id: identityFlowId,
+          code: code,
+        });
+
+        if (data.error) {
+          setError(data.error[0]?.text || 'Unknown error');
+          return;
+        }
+
+        if (data.session?.token) {
+          onSuccess(data.session.token);
+          return;
+        }
+
+        setError('Unexpected response format');
+      } catch (err) {
+        setError('Network error occurred');
+      }
+      return;
+    }
+
     if (!ory || !flow) return;
 
     const response = await ory
@@ -55,6 +78,32 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: () => void }) => {
   };
 
   const loginWithCode = async (email: string, code: string) => {
+    if (hydraClientId) {
+      try {
+        const data = await identityApi.loginWithCode({
+          method: 'code',
+          identifier: email,
+          flow_id: identityFlowId,
+          code: code,
+        });
+
+        if (data.error) {
+          setError(data.error[0]?.text || 'Unknown error');
+          return;
+        }
+
+        if (data.session?.token) {
+          onSuccess(data.session.token);
+          return;
+        }
+
+        setError('Unexpected response format');
+      } catch (err) {
+        setError('Network error occurred');
+      }
+      return;
+    }
+
     if (!ory || !flow) return;
 
     const response = await ory
@@ -79,6 +128,69 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: () => void }) => {
   };
 
   const resendCode = async (email: string) => {
+    if (hydraClientId) {
+      setError('');
+      setCodeSent(false);
+
+      try {
+        if (isSignup) {
+          const data = await identityApi.signupWithCode({
+            method: 'code',
+            traits: { email },
+            flow_id: identityFlowId,
+            resend: true,
+          });
+
+          if (data.error) {
+            const codeSent = data.error.find((err: any) => err.id === 1040005);
+            
+            if (codeSent) {
+              setCodeSent(true);
+              return;
+            }
+
+            setError(data.error[0]?.text || 'Unknown error');
+            return;
+          }
+
+          if (data.flow_id) {
+            setCodeSent(true);
+            return;
+          }
+        } else {
+          const data = await identityApi.loginWithCode({
+            method: 'code',
+            identifier: email,
+            flow_id: identityFlowId,
+            resend: true,
+          });
+
+          if (data.error) {
+            const accountNotExists = data.error.find((err: any) => err.id === 4000035);
+            
+            if (accountNotExists) {
+              setIsSignup(true);
+              await trySignup(email);
+              return;
+            }
+
+            setError(data.error[0]?.text || 'Unknown error');
+            return;
+          }
+
+          if (data.flow_id) {
+            setCodeSent(true);
+            return;
+          }
+        }
+
+        setError('Unexpected response format');
+      } catch (err) {
+        setError('Network error occurred');
+      }
+      return;
+    }
+
     if (!ory || !flow) return;
 
     setError('');
@@ -98,7 +210,7 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: () => void }) => {
           traits: { email },
         },
       })
-      : ory.updateLoginFlow({
+              : ory.updateLoginFlow({
         flow: flow.id,
         updateLoginFlowBody: {
           ...payload,
@@ -130,6 +242,39 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: () => void }) => {
   };
 
   const trySignup = async (email: string) => {
+    if (hydraClientId) {
+      try {
+        const data = await identityApi.signupWithCode({
+          method: 'code',
+          traits: { email },
+        });
+
+        if (data.error) {
+          const codeSent = data.error.find((err: any) => err.id === 1040005);
+          
+          if (codeSent && data.flow_id) {
+            setIdentityFlowId(data.flow_id);
+            setCodeSent(true);
+            return;
+          }
+
+          setError(data.error[0]?.text || 'Unknown error');
+          return;
+        }
+
+        if (data.flow_id) {
+          setIdentityFlowId(data.flow_id);
+          setCodeSent(true);
+          return;
+        }
+
+        setError('Unexpected response format');
+      } catch (err) {
+        setError('Network error occurred');
+      }
+      return;
+    }
+
     if (!ory) return;
 
     const flow = await ory.createBrowserRegistrationFlow({}).then((res) => res.data);
@@ -161,6 +306,47 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: () => void }) => {
   };
 
   const tryLogin = async (email: string) => {
+    if (hydraClientId) {
+      try {
+        const data = await identityApi.loginWithCode({
+          method: 'code',
+          identifier: email,
+        });
+
+        if (data.error) {
+          const accountNotExists = data.error.find((err: any) => err.id === 4000035);
+          
+          if (accountNotExists) {
+            setIsSignup(true);
+            await trySignup(email);
+            return;
+          }
+
+          const codeSent = data.error.find((err: any) => err.id === 1010014);
+          
+          if (codeSent && data.flow_id) {
+            setIdentityFlowId(data.flow_id);
+            setCodeSent(true);
+            return;
+          }
+
+          setError(data.error[0]?.text || 'Unknown error');
+          return;
+        }
+
+        if (data.flow_id) {
+          setIdentityFlowId(data.flow_id);
+          setCodeSent(true);
+          return;
+        }
+
+        setError('Unexpected response format');
+      } catch (err) {
+        setError('Network error occurred');
+      }
+      return;
+    }
+
     if (!ory) return;
 
     const flow = await ory.createBrowserLoginFlow({}).then((res) => res.data);
@@ -211,13 +397,14 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: () => void }) => {
     setError('');
     setCodeSent(false);
     setIsSignup(false);
+    setIdentityFlowId('');
   };
 
   return {
     processEmail: withLoading(tryLogin, setLoading),
     processCode: withLoading(processCode, setLoading),
     resendCode: withLoading(resendCode, setResending),
-    showCode: !!flow,
+    showCode: hydraClientId ? !!identityFlowId : !!flow,
     codeSent,
     resending,
     loading,
@@ -266,11 +453,38 @@ export const useHandleOidc = () => {
   return { processOidc: withLoading(tryLogin, setLoading), loading };
 };
 
-export const useHandleSignature = ({ onSuccess }: { onSuccess: () => void }) => {
+export const useHandleSignature = ({ onSuccess }: { onSuccess: (token?: string) => void }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const hydraClientId = useAtomValue(hydraClientIdAtom);
 
   const trySignup = async (signature: string, token: string, wallet: string) => {
+    if (hydraClientId) {
+      try {
+        const data = await identityApi.signupWithWallet({
+          traits: { wallet: wallet.toLowerCase() },
+          password: dummyWalletPassword,
+          transient_payload: {
+            wallet_signature: signature,
+            wallet_signature_token: token,
+          },
+        });
+        if (data.error) {
+          setError(data.error[0]?.text || 'Signup failed');
+          return;
+        }
+        if (data.session?.token) {
+          onSuccess(data.session.token);
+          return;
+        }
+        setError('Unexpected response format');
+        return;
+      } catch (err) {
+        setError('Network error occurred');
+        return;
+      }
+    }
+
     if (!ory) return;
 
     const lowercaseWallet = wallet.toLowerCase();
@@ -313,6 +527,37 @@ export const useHandleSignature = ({ onSuccess }: { onSuccess: () => void }) => 
   const tryLogin = async (signature: string, token: string, wallet: string) => {
     setError('');
 
+    if (hydraClientId) {
+      try {
+        const data = await identityApi.loginWithWallet({
+          identifier: wallet.toLowerCase(),
+          password: dummyWalletPassword,
+          transient_payload: {
+            wallet_signature: signature,
+            wallet_signature_token: token,
+          },
+        });
+        if (data.error) {
+          const accountNotExists = data.error.find((m) => m.id === 4000006);
+          if (accountNotExists) {
+            await trySignup(signature, token, wallet);
+            return;
+          }
+          setError(data.error[0]?.text || 'Login failed');
+          return;
+        }
+        if (data.session?.token) {
+          onSuccess(data.session.token);
+          return;
+        }
+        setError('Unexpected response format');
+        return;
+      } catch (err) {
+        setError('Network error occurred');
+        return;
+      }
+    }
+
     if (!ory) return;
 
     const lowercaseWallet = wallet.toLowerCase();
@@ -336,11 +581,9 @@ export const useHandleSignature = ({ onSuccess }: { onSuccess: () => void }) => 
       .catch((err) => ({ response: err.response.data as LoginFlow, success: false }));
 
     if (!updateResult.success) {
-      //-- read the error within flow
       const accountNotExists = (updateResult.response as LoginFlow).ui.messages?.find((m) => m.id === 4000006);
 
       if (accountNotExists) {
-        //-- handle signup
         await trySignup(signature, token, lowercaseWallet);
         return;
       }

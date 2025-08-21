@@ -69,3 +69,5 @@ export const DEFAULT_LAYOUT_SECTIONS = [
   { id: 'collectibles', hidden: false },
   { id: 'location', hidden: false },
 ];
+
+export const IDENTITY_TOKEN_KEY = 'identity_token';

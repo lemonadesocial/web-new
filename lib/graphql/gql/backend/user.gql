@@ -3,13 +3,14 @@ query GetMe {
   getMe {
     ...User
     email
+    email_verified
     wallets_new
     wallet_custodial
-    email_verified
     stripe_connected_account {
       account_id
       connected
     }
+    kratos_wallet_address
   }
 }
 

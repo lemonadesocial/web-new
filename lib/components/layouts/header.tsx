@@ -92,7 +92,7 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
 
         {session && me ? (
           <div className="flex gap-2 items-center">
-            {session && !session.email && (
+            {!me.email_verified && (
               <Button
                 onClick={() => modal.open(VerifyEmailModal)}
                 size="sm"
@@ -199,9 +199,10 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
 
 function ConnectLens() {
   const { account } = useAccount();
+  const me = useMe();
   const [session] = useAtom(sessionAtom);
 
-  const walletVerified = session?.wallet;
+  const walletVerified = me?.kratos_wallet_address;
   const chainsMap = useAtomValue(chainsMapAtom);
 
   const handleSelectWallet = () => {
