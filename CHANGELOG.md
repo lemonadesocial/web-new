@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.2.0](https://github.com/lemonadesocial/web-new/compare/v5.1.4...v5.2.0) (2025-08-21)
+
+
+### Features
+
+* implement re-order ([6a3ad71](https://github.com/lemonadesocial/web-new/commit/6a3ad71f481d68d3208a8375ac0c525f2bc3686b))
+* udpate default layout sections value ([e241a2b](https://github.com/lemonadesocial/web-new/commit/e241a2b283a7b65a41f9434f5d6d40990db514d3))
+* whitelabel direct login ([7f36593](https://github.com/lemonadesocial/web-new/commit/7f3659393d51ddfd5655ecdf0cf9cc2b3086a6fb))
+
 ## [5.1.4](https://github.com/lemonadesocial/web-new/compare/v5.1.3...v5.1.4) (2025-08-20)
 
 
