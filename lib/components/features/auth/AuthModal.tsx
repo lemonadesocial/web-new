@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { ory } from '$lib/utils/ory';
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 
 import { Button, ErrorText, Input, LabeledInput, modal, ModalContent, toast } from "$lib/components/core";
 import { useHandleEmail, useHandleOidc, useHandleSignature } from "$lib/hooks/useSignIn";
 import { EMAIL_REGEX } from "$lib/utils/regex";
-import { sessionAtom } from "$lib/jotai";
+import { hydraClientIdAtom, Session, sessionAtom } from "$lib/jotai";
 import { appKit } from '$lib/utils/appkit';
+import { IDENTITY_TOKEN_KEY } from "$lib/utils/constants";
 import { useSignWallet } from "$lib/hooks/useSignWallet";
 
 import { CodeVerification } from "./CodeVerification";
 import { VerifyEmailModal } from "./VerifyEmailModal";
 import { ConnectWalletModal } from "./ConnectWalletModal";
 import { ConnectWalletButton } from "./ConnectWalletButton";
+import { formatError } from "$lib/utils/crypto";
 
 interface Props {
   onSuccess?: () => void;
@@ -23,10 +25,18 @@ export function AuthModal({ onSuccess }: Props) {
   const [email, setEmail] = useState('');
   const [currentProvider, setCurrentProvider] = useState<string>();
   const setSession = useSetAtom(sessionAtom);
+  const hydraClientId = useAtomValue(hydraClientIdAtom);
 
-  const onSignInSuccess = async () => {
+  const onSignInSuccess = async (token?: string) => {
     if (onSuccess) {
       onSuccess();
+      return;
+    }
+
+    if (token) {
+      localStorage.setItem(IDENTITY_TOKEN_KEY, token);
+      setSession({ token } as Session);
+      modal.close();
       return;
     }
 
@@ -89,7 +99,7 @@ export function AuthModal({ onSuccess }: Props) {
     signWallet().then(({ signature, token }) => {
       processSignature(signature, token, address);
     }).catch((err) => {
-      toast.error(err.message);
+      toast.error(formatError(err.message));
     });
   };
 
@@ -144,41 +154,49 @@ export function AuthModal({ onSuccess }: Props) {
           Continue with Email
         </Button>
 
-        <hr className="border-t -mx-4" />
-
+        {
+          !hydraClientId && <hr className="border-t -mx-4" />
+        }
+        
         <div className="flex gap-2">
-          <Button
-            className="flex-1"
-            variant="tertiary"
-            icon="icon-google"
-            disabled={loadingOidcOrWallet}
-            loading={loadingOidc && currentProvider === 'google'}
-            onClick={() => {
-              setCurrentProvider('google');
-              processOidc('google');
-            }}
-          />
-          <Button
-            className="flex-1"
-            variant="tertiary"
-            icon="icon-apple"
-            disabled={loadingOidcOrWallet}
-            loading={loadingOidc && currentProvider === 'apple'}
-            onClick={() => {
-              setCurrentProvider('apple');
-              processOidc('apple');
-            }}
-          />
+          {
+            !hydraClientId && <>
+              <Button
+                className="flex-1"
+                variant="tertiary"
+                icon="icon-google"
+                disabled={loadingOidcOrWallet}
+                loading={loadingOidc && currentProvider === 'google'}
+                onClick={() => {
+                  setCurrentProvider('google');
+                  processOidc('google');
+                }}
+              />
+              <Button
+                className="flex-1"
+                variant="tertiary"
+                icon="icon-apple"
+                disabled={loadingOidcOrWallet}
+                loading={loadingOidc && currentProvider === 'apple'}
+                onClick={() => {
+                  setCurrentProvider('apple');
+                  processOidc('apple');
+                }}
+              />
+            </>
+          }
           <ConnectWalletButton onConnect={onConnect}>
             {(open) => (
               <Button
                 className="flex-1"
                 variant="tertiary"
-                icon="icon-wallet"
+                icon={!hydraClientId ? 'icon-wallet' : undefined}
                 disabled={loadingOidcOrWallet}
                 loading={loadingWallet}
                 onClick={open}
-              />
+              >
+                {hydraClientId ? 'Continue With Wallet' : undefined}
+              </Button>
             )}
           </ConnectWalletButton>
         </div>

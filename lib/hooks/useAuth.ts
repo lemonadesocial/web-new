@@ -6,10 +6,10 @@ import React from 'react';
 import { ory } from '$lib/utils/ory';
 import { hydraClientIdAtom, Session, sessionAtom, sessionLoadingAtom } from '$lib/jotai';
 import { useLogOut } from '$lib/hooks/useLogout';
-import { oidc } from '$lib/utils/oidc';
 import { toast } from '$lib/components/core';
-import { HYDRA_PUBLIC_URL } from '$lib/utils/constants';
+import { IDENTITY_TOKEN_KEY } from '$lib/utils/constants';
 import { useAccount } from './useLens';
+import { identityApi } from '$lib/services/identity';
 
 export function useAuth(spaceHydraClientId?: string) {
   const hydraClientAtomId = useAtomValue(hydraClientIdAtom);
@@ -24,7 +24,7 @@ export function useAuth(spaceHydraClientId?: string) {
     if (!ory) {
       throw new Error('Ory is not initialized');
     }
-
+    
     await ory
       .toSession()
       .then(({ data }) => {
@@ -50,44 +50,28 @@ export function useAuth(spaceHydraClientId?: string) {
       });
   };
 
-  const getSessionStorageKey = (clientId: string) => {
-    return `oidc.user:${HYDRA_PUBLIC_URL}:${clientId}`;
-  };
-
-  const setupTokenRefresh = (userManager: any) => {
-    userManager.events.addAccessTokenExpiring(async () => {
-      const newSession = await userManager.signinSilent();
-      setSession({
-        ...session,
-        oidcUser: newSession?.toStorageString(),
-      } as Session);
-    });
-  };
-
   const handleHydraAuth = async () => {
     try {
       if (!hydraClientId) throw new Error('Hydra client ID is required');
 
-      const userManager = oidc.setUserManager(hydraClientId);
-      setupTokenRefresh(userManager);
+      const token = localStorage.getItem(IDENTITY_TOKEN_KEY);
 
-      const storageKey = getSessionStorageKey(hydraClientId);
-      const storedSession = sessionStorage.getItem(storageKey);
-
-      if (!storedSession) {
+      if (!token) {
         setLoading(false);
         return;
       }
 
-      const user = await oidc.restoreUser(storedSession);
-      if (!user) throw new Error('Cannot restore oidc user.');
-
-      setSession({
-        _id: user.profile.sid,
-        user: user.profile.user,
-        token: user.access_token,
-        oidcUser: user.toStorageString(),
-      } as Session);
+      try {
+        const refreshResult = await identityApi.refreshSession(token);
+        setSession({ 
+          token: refreshResult.session.token,
+          expires_at: refreshResult.session.expires_at 
+        } as Session);
+      } catch (refreshError) {
+        localStorage.removeItem(IDENTITY_TOKEN_KEY);
+        setLoading(false);
+        return;
+      }
     } catch (error: any) {
       toast.error(error.message);
     } finally {
