@@ -1,17 +1,30 @@
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from 'react-hook-form';
 import React from 'react';
 import { startOfDay } from 'date-fns';
 
-import { Button, drawer, ErrorText, Input, toast, Card, Map, PlaceAutoComplete, TextEditor } from "$lib/components/core";
-import { Event, UpdateEventSettingsDocument, Address } from "$lib/graphql/generated/backend/graphql";
-import { useMutation } from "$lib/graphql/request";
-import { ThemeValues } from "$lib/components/features/theme-builder/store";
-import { DateTimeGroup, Timezone } from "$lib/components/core/calendar";
-import { getUserTimezoneOption } from "$lib/utils/timezone";
+import {
+  Button,
+  drawer,
+  ErrorText,
+  Input,
+  toast,
+  Card,
+  Map,
+  PlaceAutoComplete,
+  TextEditor,
+  modal,
+} from '$lib/components/core';
+import { Event, UpdateEventSettingsDocument, Address, LayoutSection } from '$lib/graphql/generated/backend/graphql';
+import { useMutation } from '$lib/graphql/request';
+import { ThemeValues } from '$lib/components/features/theme-builder/store';
+import { DateTimeGroup, Timezone } from '$lib/components/core/calendar';
+import { getUserTimezoneOption } from '$lib/utils/timezone';
 
-import { useUpdateEvent } from "../store";
-import { ThemeSettings } from "./ThemeSettings";
-import { ThemeProvider, useTheme } from "../../theme-builder/provider";
+import { useUpdateEvent } from '../store';
+import { ThemeSettings } from './ThemeSettings';
+import { ThemeProvider, useTheme } from '../../theme-builder/provider';
+import { ReoderSectionsModal } from '../modals/ReoderSectionsModal';
+import { indexOf, sortBy } from 'lodash';
 
 type FormValues = {
   title: string;
@@ -28,6 +41,7 @@ type FormValues = {
     longitude?: number | null;
   };
   virtual_url?: string;
+  layout_sections?: LayoutSection[];
 };
 
 export function EditEventDrawer({ event }: { event: Event }) {
@@ -37,6 +51,8 @@ export function EditEventDrawer({ event }: { event: Event }) {
     </ThemeProvider>
   );
 }
+
+const defaultReorder = ['registration', 'about', 'collectibles', 'location'];
 
 function EditEventDrawerContent({ event }: { event: Event }) {
   const [timezone, setTimeZone] = React.useState(getUserTimezoneOption());
@@ -63,6 +79,9 @@ function EditEventDrawerContent({ event }: { event: Event }) {
         longitude: event.longitude ?? undefined,
       },
       virtual_url: event.virtual_url || undefined,
+      layout_sections:
+        event.layout_sections?.map(({ __typename, ...rest }) => rest) ||
+        defaultReorder.map((item) => ({ id: item, hidden: false })),
     },
   });
 
@@ -71,6 +90,7 @@ function EditEventDrawerContent({ event }: { event: Event }) {
   const description = watch('description');
   const date = watch('date');
   const address = watch('address');
+  const layoutSections = watch('layout_sections');
 
   const updateEvent = useUpdateEvent();
 
@@ -104,6 +124,7 @@ function EditEventDrawerContent({ event }: { event: Event }) {
           latitude: values.address?.latitude,
           longitude: values.address?.longitude,
           virtual_url: values.virtual_url,
+          layout_sections: values.layout_sections,
         },
       },
     });
@@ -120,7 +141,7 @@ function EditEventDrawerContent({ event }: { event: Event }) {
           <p className="text-lg">Basic Info</p>
           <div className="space-y-2">
             <Input
-              {...register("title", { required: "Title is required" })}
+              {...register('title', { required: 'Title is required' })}
               placeholder="Event Title"
               className="w-full"
               variant="outlined"
@@ -201,15 +222,45 @@ function EditEventDrawerContent({ event }: { event: Event }) {
           <div className="space-y-1.5">
             <p className="text-lg">Join URL</p>
             <div className="relative">
-              <Input
-                {...register('virtual_url')}
-                placeholder="https://example.com/join"
-                variant="outlined"
-              />
+              <Input {...register('virtual_url')} placeholder="https://example.com/join" variant="outlined" />
               {watch('virtual_url') && (
-                <i className="icon-cancel size-5 text-tertiary absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer" onClick={() => setValue('virtual_url', undefined)} />
+                <i
+                  className="icon-cancel size-5 text-tertiary absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer"
+                  onClick={() => setValue('virtual_url', undefined)}
+                />
               )}
             </div>
+          </div>
+
+          <hr className="border" />
+          <div className="space-y-4">
+            <div className="space-y-1">
+              <p className="text-lg">Event Page Layout</p>
+              <p className="text-sm text-secondary">
+                Choose the order in which sections appear on your event page for guests.
+              </p>
+            </div>
+
+            <Button
+              variant="tertiary-alt"
+              size="sm"
+              iconLeft="icon-arrow-up-down-line"
+              onClick={() =>
+                modal.open(ReoderSectionsModal, {
+                  props: {
+                    list: layoutSections?.map((item) => item.id as string),
+                    onChange: (list) => {
+                      const sorted = sortBy(layoutSections, (item) => {
+                        return indexOf(list, item.id);
+                      });
+                      setValue('layout_sections', sorted);
+                    },
+                  },
+                })
+              }
+            >
+              Reorder Sections
+            </Button>
           </div>
         </div>
       </div>

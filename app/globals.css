@@ -538,3 +538,12 @@ a[title='Open this area in Google Maps (opens a new window)'],
 .gm-style-cc {
   display: none !important;
 }
+
+/* Sortable */
+
+.sortable-drag {
+  opacity: 1;
+  background-color: var(--btn-tertiary);
+  filter: blur(var(--blur-lg));
+  border: 1px solid var(--color-primary);
+}
