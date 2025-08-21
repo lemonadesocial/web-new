@@ -62,3 +62,10 @@ export const PROFILE_SOCIAL_LINKS = [
   { icon: 'icon-github-fill', name: 'handle_github', prefix: 'github.com/', placeholder: 'username' },
   { icon: 'icon-calendly', name: 'calendly_url', prefix: 'calendly.com/', placeholder: 'username' },
 ];
+
+export const DEFAULT_LAYOUT_SECTIONS = [
+  { id: 'registration', hidden: false },
+  { id: 'about', hidden: false },
+  { id: 'collectibles', hidden: false },
+  { id: 'location', hidden: false },
+];

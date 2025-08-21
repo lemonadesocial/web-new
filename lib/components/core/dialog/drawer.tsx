@@ -57,18 +57,21 @@ export function DrawerContainer() {
   const nextId = React.useRef(0);
   const drawerRefs = React.useRef<Map<number, HTMLDivElement>>(new Map());
 
-  const handleOpen = React.useCallback(<T extends object>(Component: React.ComponentType<T>, opts: Options<T> = {}): number => {
-    const id = nextId.current++;
-    setDrawers((prev) => [
-      ...prev,
-      {
-        id,
-        content: <Component {...(opts.props as T)} />,
-        options: { duration: 0.3, position: 'right', dismissible: true, ...opts },
-      },
-    ]);
-    return id;
-  }, []);
+  const handleOpen = React.useCallback(
+    <T extends object>(Component: React.ComponentType<T>, opts: Options<T> = {}): number => {
+      const id = nextId.current++;
+      setDrawers((prev) => [
+        ...prev,
+        {
+          id,
+          content: <Component {...(opts.props as T)} />,
+          options: { duration: 0.3, position: 'right', dismissible: true, ...opts },
+        },
+      ]);
+      return id;
+    },
+    [],
+  );
 
   const handleClose = React.useCallback((id?: number) => {
     if (id !== undefined) {
@@ -124,13 +127,12 @@ export function DrawerContainer() {
     <AnimatePresence>
       {drawers.map((drawer, index) => (
         <React.Fragment key={drawer.id}>
-          <div
-            className="fixed inset-0"
-            style={{ zIndex: 10000 + index }}
-          >
+          <div className="fixed inset-0" style={{ zIndex: 10000 + index }}>
             <div className="h-full w-full p-2">
               <div className="bg-overlay-backdrop fixed inset-0 z-0" />
-              <div className={clsx('flex h-full', drawer.options.position === 'right' ? 'justify-end' : 'justify-start')}>
+              <div
+                className={clsx('flex h-full', drawer.options.position === 'right' ? 'justify-end' : 'justify-start')}
+              >
                 <motion.div
                   initial={{ x: drawer.options.position === 'right' ? '100%' : '-100%' }}
                   animate={{ x: 0 }}
@@ -144,7 +146,7 @@ export function DrawerContainer() {
                     }
                   }}
                   className={twMerge(
-                    'bg-overlay-primary backdrop-blur-md rounded-sm flex-1 max-w-[528px] overflow-auto no-scrollbar z-10',
+                    'bg-overlay-primary backdrop-blur-md rounded-sm flex-1 max-w-[528px] z-10',
                     drawer.options.contentClass,
                   )}
                   style={{

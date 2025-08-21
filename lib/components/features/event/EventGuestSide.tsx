@@ -27,6 +27,7 @@ import { AttendeesSection } from './AttendeesSection';
 import { PendingCohostRequest } from './PendingCohostRequest';
 import { useMe } from '$lib/hooks/useMe';
 import { EventCollectibles } from '../event-collectibles';
+import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 
 export function EventGuestSide({ event: initEvent }: { event: Event }) {
   const { data } = useQuery(GetEventDocument, {
@@ -153,7 +154,7 @@ export function EventGuestSideContent({ event }: { event: Event }) {
           <EventDateTimeBlock event={event} />
           <EventLocationBlock event={event} />
         </div>
-        {event.layout_sections?.map((item) => {
+        {(event.layout_sections || DEFAULT_LAYOUT_SECTIONS)?.map((item) => {
           switch (item.id) {
             case 'registration':
               return event ? <EventAccess event={event} /> : null;

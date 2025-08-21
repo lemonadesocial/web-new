@@ -1,12 +1,9 @@
 'use client';
 
 import React from 'react';
-import { ReactSortable } from 'react-sortablejs';
-import { Button, Card, modal } from '$lib/components/core';
-import { Event } from '$lib/graphql/generated/backend/graphql';
-
 import Sortable from 'sortablejs';
 import { arrayMoveImmutable } from 'array-move';
+import { Button, Card, modal } from '$lib/components/core';
 
 export function ReoderSectionsModal({ list = [], onChange }: { list?: string[]; onChange: (list: string[]) => void }) {
   const sortableContainerRef = React.useRef(null);

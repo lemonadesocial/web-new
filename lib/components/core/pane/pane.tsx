@@ -37,12 +37,17 @@ function PaneHeaderRoot({ children }: React.PropsWithChildren) {
   );
 }
 
-function PaneHeaderLeft({ showBackButton = true }: { showBackButton?: boolean }) {
+function PaneHeaderLeft({
+  showBackButton = true,
+  className,
+  children,
+}: { showBackButton?: boolean; className?: string } & React.PropsWithChildren) {
   return (
-    <div className="flex-1 w-fit">
+    <div className={twMerge('flex-1 w-fit', className)}>
       {showBackButton && (
         <Button icon="icon-chevron-double-right" variant="tertiary-alt" size="sm" onClick={() => drawer.close()} />
       )}
+      {children}
     </div>
   );
 }
