@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.2.3](https://github.com/lemonadesocial/web-new/compare/v5.2.2...v5.2.3) (2025-08-22)
+
+
+### Bug Fixes
+
+* missing flexbox ([5ec3d40](https://github.com/lemonadesocial/web-new/commit/5ec3d407520b778c12f9581286f4b43c141cb217))
+
 ## [5.2.2](https://github.com/lemonadesocial/web-new/compare/v5.2.1...v5.2.2) (2025-08-22)
 
 
