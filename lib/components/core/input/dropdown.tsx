@@ -14,6 +14,7 @@ export type Option = {
 
 interface DropdownProps {
   iconLeft?: string;
+  disabeld?: boolean;
   label?: string;
   value?: Option;
   placeholder?: string;
@@ -29,7 +30,7 @@ export function Dropdown(props: DropdownProps) {
   }, [props.value]);
 
   return (
-    <Menu.Root>
+    <Menu.Root disabled={props.disabeld}>
       <Menu.Trigger>
         <InputField
           label={props.label}

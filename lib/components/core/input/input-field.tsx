@@ -11,6 +11,7 @@ type Props = {
   iconLeft?: string;
   right?: { icon: string; onClick?: () => void };
   prefix?: string;
+  subfix?: string;
   name?: string;
   readOnly?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -19,6 +20,7 @@ type Props = {
   hint?: string;
   autoFocus?: boolean;
   handleClear?: () => void;
+  type?: string;
 };
 
 export function InputField(props: Props) {
@@ -30,7 +32,7 @@ export function InputField(props: Props) {
         {props.iconLeft && <i className={twMerge('size-5 text-tertiary', props.iconLeft)} />}
         <input
           value={props.value || ''}
-          type="text"
+          type={props.type || 'text'}
           name={props.name}
           readOnly={props.readOnly}
           autoFocus={props.autoFocus}
@@ -43,6 +45,7 @@ export function InputField(props: Props) {
         {props.right && (
           <i className={twMerge('size-5 text-tertiary', props.right.icon)} onClick={props.right.onClick} />
         )}
+        {props.subfix && <div className="subfix text-base font-medium text-secondary">{props.subfix}</div>}
       </div>
       {props.hint && <p className={clsx('text-xs', props.error && 'text-danger-400')}>{props.hint}</p>}
     </fieldset>

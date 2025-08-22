@@ -41,7 +41,7 @@ export function createModal(): Modal {
 
 export const modal = createModal();
 
-export function ModalContainer({ onModalReady, ...props }: { modal?: Modal, onModalReady?: (modal: Modal) => void }) {
+export function ModalContainer({ onModalReady, ...props }: { modal?: Modal; onModalReady?: (modal: Modal) => void }) {
   const currentModal = useRef(props.modal || modal).current;
 
   const [modals, setModals] = React.useState<ModalItem[]>([]);
@@ -196,12 +196,16 @@ export const ModalContext = createContext<Modal | undefined>(undefined);
 export const ModalProvider = ({ children }: { children: React.ReactNode }) => {
   const [modal, setModal] = useState<Modal | undefined>();
 
-  return <ModalContext.Provider value={modal}>{
-    <>
-      {children}
-      <ModalContainer onModalReady={setModal} />
-    </>
-  }</ModalContext.Provider>;
+  return (
+    <ModalContext.Provider value={modal}>
+      {
+        <>
+          {children}
+          <ModalContainer onModalReady={setModal} />
+        </>
+      }
+    </ModalContext.Provider>
+  );
 };
 
 export const useModal = () => {

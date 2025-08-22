@@ -1,11 +1,11 @@
 'use client';
-import { useState } from "react";
+import { useState } from 'react';
 
-import { Event, UpdateEventSettingsDocument } from "$lib/graphql/generated/backend/graphql";
-import { useMutation } from "$lib/graphql/request";
-import { Button, modal, toast, Input, ModalContent } from "$lib/components/core";
+import { Event, UpdateEventSettingsDocument } from '$lib/graphql/generated/backend/graphql';
+import { useMutation } from '$lib/graphql/request';
+import { Button, modal, toast, Input, ModalContent, InputField } from '$lib/components/core';
 
-import { useUpdateEvent } from "../store";
+import { useUpdateEvent } from '../store';
 
 export function UpdateEventLinkModal({ event }: { event: Event }) {
   const [shortid, setShortid] = useState(event.shortid || '');
@@ -18,13 +18,13 @@ export function UpdateEventLinkModal({ event }: { event: Event }) {
         updateEvent(data.updateEvent);
         toast.success('Event link updated successfully!');
         modal.close();
-        
+
         const newUrl = `${window.location.origin}/e/manage/${shortid}`;
         window.location.href = newUrl;
       }
     },
     onError: (error) => {
-      toast.error(error.message || 'Failed to update event link');  
+      toast.error(error.message || 'Failed to update event link');
     },
   });
 
@@ -55,16 +55,13 @@ export function UpdateEventLinkModal({ event }: { event: Event }) {
   };
 
   return (
-    <ModalContent 
-      icon="icon-link"
-      onClose={() => modal.close()}
-      className="min-w-[480px]"
-    >
+    <ModalContent icon="icon-link" onClose={() => modal.close()} className="min-w-[480px]">
       <div className="space-y-4">
         <div className="space-y-2">
           <p>Event Link</p>
           <p className="text-sm text-secondary">
-            When you choose a new URL, the current one will no longer work. Do not change your URL if you have already shared the event.
+            When you choose a new URL, the current one will no longer work. Do not change your URL if you have already
+            shared the event.
           </p>
         </div>
 
