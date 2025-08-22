@@ -1,5 +1,20 @@
 # Changelog
 
+## [5.2.2](https://github.com/lemonadesocial/web-new/compare/v5.2.1...v5.2.2) (2025-08-22)
+
+
+### Bug Fixes
+
+* ui pane break ([02e9a49](https://github.com/lemonadesocial/web-new/commit/02e9a49a2978ec020abbcfa004311e33d5fa2056))
+
+## [5.2.1](https://github.com/lemonadesocial/web-new/compare/v5.2.0...v5.2.1) (2025-08-21)
+
+
+### Bug Fixes
+
+* missing route whitelabel ([f06b2cb](https://github.com/lemonadesocial/web-new/commit/f06b2cbaa5112a2d734bd3d54fcbfdc91b14d7c8))
+* only allow create event ([402dee1](https://github.com/lemonadesocial/web-new/commit/402dee1f0072bad2916f62a7ae116896150c29f2))
+
 ## [5.2.0](https://github.com/lemonadesocial/web-new/compare/v5.1.4...v5.2.0) (2025-08-21)
 
 
