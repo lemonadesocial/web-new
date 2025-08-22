@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.2.4](https://github.com/lemonadesocial/web-new/compare/v5.2.3...v5.2.4) (2025-08-22)
+
+
+### Bug Fixes
+
+* missing mobile view ([dc795b1](https://github.com/lemonadesocial/web-new/commit/dc795b1524d01ac2a610158af7b9a7356f52d5ca))
+
 ## [5.2.3](https://github.com/lemonadesocial/web-new/compare/v5.2.2...v5.2.3) (2025-08-22)
 
 
