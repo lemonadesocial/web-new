@@ -15,6 +15,7 @@ export function useRawLogout() {
 
     setSession(null);
     localStorage.clear();
+    sessionStorage.clear();
   };
 }
 
