@@ -27,6 +27,29 @@ export interface RefreshError {
   error: string;
 }
 
+export interface UpdateSettingsRequest {
+  flow_id?: string;
+  traits?: any;
+  session_token?: string;
+  transient_payload?: TransientPayload;
+}
+
+export interface UpdateSettingsResponse {
+  flow_id: string;
+  error?: IdentityError[];
+}
+
+export interface VerificationRequest {
+  flow_id?: string;
+  code?: string;
+  email?: string;
+}
+
+export interface VerificationResponse {
+  flow_id: string;
+  error?: IdentityError[];
+}
+
 export interface LoginCodeRequest {
   method: 'code';
   identifier: string;
@@ -82,6 +105,30 @@ export const identityApi = {
 
   async signupWithCode(request: SignupCodeRequest): Promise<IdentityResponse> {
     const response = await fetch(`${IDENTITY_URL}/api/oauth2/signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+    });
+
+    return response.json();
+  },
+
+  async updateSettings(request: UpdateSettingsRequest): Promise<UpdateSettingsResponse> {
+    const response = await fetch(`${IDENTITY_URL}/api/oauth2/setting`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+    });
+
+    return response.json();
+  },
+
+  async verify(request: VerificationRequest): Promise<VerificationResponse> {
+    const response = await fetch(`${IDENTITY_URL}/api/oauth2/verification`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -4,7 +4,7 @@ import { HYDRA_PUBLIC_URL } from "$lib/utils/constants";
 import { getSpaceHydraKeys } from "$lib/utils/space";
 
 export async function POST(request: NextRequest) {
-	const formData = await request.formData();
+	const body = await request.formData();
 	const hostname = request.headers.get('x-forwarded-host');
 
 	if (!hostname) {
@@ -17,18 +17,14 @@ export async function POST(request: NextRequest) {
 		return new Response('Unauthorized', { status: 401 });
 	}
 
+	const formData = new URLSearchParams(body as any);
+	formData.append('client_secret', space.hydra_client_secret);
+
 	return await fetch(`${HYDRA_PUBLIC_URL}/oauth2/token`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Authorization": "Basic " + btoa(`${space.hydra_client_id}:${space.hydra_client_secret}`),
-    },
-    body: new URLSearchParams({
-      grant_type: "urn:ietf:params:oauth:grant-type:token-exchange",
-      subject_token: formData.get('session_token')?.toString() || '', // from Kratos session
-      subject_token_type: "urn:ory:token-type:session",
-      scope: "openid offline",
-    }),
-    credentials: "include",
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: formData
 	});
 }

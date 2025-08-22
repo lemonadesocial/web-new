@@ -25,7 +25,6 @@ export function AuthModal({ onSuccess }: Props) {
   const [email, setEmail] = useState('');
   const [currentProvider, setCurrentProvider] = useState<string>();
   const setSession = useSetAtom(sessionAtom);
-  const hydraClientId = useAtomValue(hydraClientIdAtom);
 
   const onSignInSuccess = async (token?: string) => {
     if (onSuccess) {
@@ -154,49 +153,41 @@ export function AuthModal({ onSuccess }: Props) {
           Continue with Email
         </Button>
 
-        {
-          !hydraClientId && <hr className="border-t -mx-4" />
-        }
-        
+        <hr className="border-t -mx-4" />
+
         <div className="flex gap-2">
-          {
-            !hydraClientId && <>
-              <Button
-                className="flex-1"
-                variant="tertiary"
-                icon="icon-google"
-                disabled={loadingOidcOrWallet}
-                loading={loadingOidc && currentProvider === 'google'}
-                onClick={() => {
-                  setCurrentProvider('google');
-                  processOidc('google');
-                }}
-              />
-              <Button
-                className="flex-1"
-                variant="tertiary"
-                icon="icon-apple"
-                disabled={loadingOidcOrWallet}
-                loading={loadingOidc && currentProvider === 'apple'}
-                onClick={() => {
-                  setCurrentProvider('apple');
-                  processOidc('apple');
-                }}
-              />
-            </>
-          }
+          <Button
+            className="flex-1"
+            variant="tertiary"
+            icon="icon-google"
+            disabled={loadingOidcOrWallet}
+            loading={loadingOidc && currentProvider === 'google'}
+            onClick={() => {
+              setCurrentProvider('google');
+              processOidc('google');
+            }}
+          />
+          <Button
+            className="flex-1"
+            variant="tertiary"
+            icon="icon-apple"
+            disabled={loadingOidcOrWallet}
+            loading={loadingOidc && currentProvider === 'apple'}
+            onClick={() => {
+              setCurrentProvider('apple');
+              processOidc('apple');
+            }}
+          />
           <ConnectWalletButton onConnect={onConnect}>
             {(open) => (
               <Button
                 className="flex-1"
                 variant="tertiary"
-                icon={!hydraClientId ? 'icon-wallet' : undefined}
+                icon="icon-wallet"
                 disabled={loadingOidcOrWallet}
                 loading={loadingWallet}
                 onClick={open}
-              >
-                {hydraClientId ? 'Continue With Wallet' : undefined}
-              </Button>
+              />
             )}
           </ConnectWalletButton>
         </div>

@@ -1,13 +1,14 @@
 import { useState } from 'react';
 
 import { useAtomValue } from 'jotai';
-import { hydraClientIdAtom } from '$lib/jotai';
+import { hydraClientIdAtom, sessionAtom } from '$lib/jotai';
 import { modal } from '$lib/components/core';
 import { AuthModal } from '$lib/components/features/auth/AuthModal';
 import { LoginFlow, RegistrationFlow, SettingsFlow, UiNodeInputAttributes, VerificationFlow } from '@ory/client';
 import { ory } from '$lib/utils/ory';
 import { dummyWalletPassword } from '../services/ory';
 import { identityApi } from '../services/identity';
+import { useOAuth2 } from './useOAuth2';
 
 export function useSignIn() {  
   return (dismissible = true, props?: any) => {
@@ -24,8 +25,6 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: (token?: string) => v
   const [flow, setFlow] = useState<LoginFlow | RegistrationFlow>();
   const [identityFlowId, setIdentityFlowId] = useState<string>('');
   const hydraClientId = useAtomValue(hydraClientIdAtom);
-
-  console.log(hydraClientId)
 
   const signupWithCode = async (email: string, code: string) => {
     if (hydraClientId) {
@@ -415,8 +414,15 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: (token?: string) => v
 
 export const useHandleOidc = () => {
   const [loading, setLoading] = useState(false);
+  const { signIn } = useOAuth2();
+  const hydraClientId = useAtomValue(hydraClientIdAtom);
 
   const tryLogin = async (provider: string) => {
+    if (hydraClientId) {
+      await signIn(provider);
+      return;
+    }
+
     if (!ory) return;
 
     const flow = await ory
@@ -604,11 +610,47 @@ export const useHandleVerifyEmail = ({ onSuccess }: { onSuccess: () => void }) =
   const [error, setError] = useState('');
   const [codeSent, setCodeSent] = useState(false);
   const [flow, setFlow] = useState<VerificationFlow>();
+  const [flowId, setFlowId] = useState<string>('');
+  const hydraClientId = useAtomValue(hydraClientIdAtom);
+  const session = useAtomValue(sessionAtom);
 
   const processEmail = async (email: string) => {
-    if (!ory) return;
-
     setError('');
+
+    if (hydraClientId) {
+      try {
+        const data = await identityApi.updateSettings({
+          traits: { email },
+          session_token: session?.token,
+        });
+
+        if (data.error && !data.error.some((err: any) => err.id === 1050001)) {
+          setError(data.error[0]?.text || 'Unknown error');
+          return;
+        }
+
+        const verificationData = await identityApi.verify({
+          email,
+        });
+
+        if (verificationData.error) {
+          const codeSent = verificationData.error.some((err: any) => err.id === 1080003);
+          
+          if (codeSent) {
+            setFlowId(verificationData.flow_id);
+            setCodeSent(true);
+            return;
+          }
+          
+          setError(verificationData.error[0]?.text || 'Unknown error');
+        }
+      } catch (err) {
+        setError('Network error occurred');
+      }
+      return;
+    }
+
+    if (!ory) return;
 
     const flow = await ory.createBrowserSettingsFlow({}).then((res) => res.data);
 
@@ -667,6 +709,34 @@ export const useHandleVerifyEmail = ({ onSuccess }: { onSuccess: () => void }) =
   };
 
   const processCode = async (email: string, code: string) => {
+    if (hydraClientId) {
+      try {
+        const data = await identityApi.verify({
+          flow_id: flowId,
+          email,
+          code,
+        });
+
+        if (data.error) {
+          const success = data.error.some((err: any) => err.id === 1080002);
+          
+          if (success) {
+            onSuccess();
+            return;
+          }
+          
+          setError(data.error[0]?.text || 'Unknown error');
+          return;
+        }
+
+        onSuccess();
+        return;
+      } catch (err) {
+        setError('Network error occurred');
+      }
+      return;
+    }
+
     if (!ory || !flow) return;
 
     const result = await ory
@@ -697,6 +767,44 @@ export const useHandleVerifyEmail = ({ onSuccess }: { onSuccess: () => void }) =
   };
 
   const resendCode = async (email: string) => {
+    if (hydraClientId) {
+      try {
+        const data = await identityApi.updateSettings({
+          traits: { email },
+          session_token: session?.token,
+        });
+
+        if (data.error) {
+          setError(data.error[0]?.text || 'Unknown error');
+          return;
+        }
+        
+        const verificationData = await identityApi.verify({
+          email,
+        });
+
+        if (verificationData.error) {
+          const codeSent = verificationData.error.some((err: any) => err.id === 1080003);
+          
+          if (codeSent) {
+            setFlowId(verificationData.flow_id);
+            setCodeSent(true);
+            return;
+          }
+          
+          setError(verificationData.error[0]?.text || 'Unknown error');
+          return;
+        }
+
+        setFlowId(verificationData.flow_id);
+        setCodeSent(true);
+        return;
+      } catch (err) {
+        setError('Network error occurred');
+      }
+      return;
+    }
+
     if (!ory || !flow) return;
 
     const result = await ory
@@ -722,6 +830,7 @@ export const useHandleVerifyEmail = ({ onSuccess }: { onSuccess: () => void }) =
 
   const reset = () => {
     setFlow(undefined);
+    setFlowId('');
     setError('');
     setCodeSent(false);
   };
@@ -734,7 +843,7 @@ export const useHandleVerifyEmail = ({ onSuccess }: { onSuccess: () => void }) =
     error,
     resending,
     codeSent,
-    showCode: !!flow,
+    showCode: !!flow || (hydraClientId && codeSent),
     reset,
   };
 };
@@ -742,8 +851,38 @@ export const useHandleVerifyEmail = ({ onSuccess }: { onSuccess: () => void }) =
 export const useHandleVerifyWallet = ({ onSuccess }: { onSuccess: () => void }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const hydraClientId = useAtomValue(hydraClientIdAtom);
+  const session = useAtomValue(sessionAtom);
 
   const processSignature = async (signature: string, token: string, wallet: string) => {
+    if (hydraClientId) {
+      try {
+        setError('');
+
+        const lowercaseWallet = wallet.toLowerCase();
+
+        const data = await identityApi.updateSettings({
+          traits: { wallet: lowercaseWallet },
+          session_token: session?.token,
+          transient_payload: {
+            wallet_signature: signature,
+            wallet_signature_token: token,
+          },
+        });
+
+        if (data.error) {
+          setError(data.error[0]?.text || 'Unknown error');
+          return;
+        }
+
+        onSuccess();
+        return;
+      } catch (err) {
+        setError('Network error occurred');
+      }
+      return;
+    }
+
     if (!ory) return;
 
     setError('');
