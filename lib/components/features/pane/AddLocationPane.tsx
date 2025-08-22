@@ -1,6 +1,7 @@
 'use client';
 import { Accordion, Button, Checkbox, Divider, drawer, Map, Radiobox } from '$lib/components/core';
 import { PlaceAutoComplete } from '$lib/components/core/map/place-autocomplete';
+import { Pane } from '$lib/components/core/pane/pane';
 import { Address, UpdateUserDocument } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
 import { useMe } from '$lib/hooks/useMe';
@@ -21,10 +22,11 @@ export function AddLocationPane({
   const [updateUserAddresses, { loading }] = useMutation(UpdateUserDocument);
 
   return (
-    <div className="flex flex-col h-full">
-      <PaneHeader />
-
-      <div className="flex-1 overflow-auto no-scrollbar">
+    <Pane.Root>
+      <Pane.Header.Root>
+        <Pane.Header.Left />
+      </Pane.Header.Root>
+      <Pane.Content>
         <div className="flex flex-col gap-4 px-4 pt-4 pb-6!">
           <div className="flex flex-col gap-1">
             <h3 className="text-xl font-semibold">Add Location</h3>
@@ -80,7 +82,7 @@ export function AddLocationPane({
           <Divider />
         </div>
 
-        {me?.addresses?.length && (
+        {!!me?.addresses?.length && (
           <div className="flex flex-col gap-4 px-4 py-6">
             <p className="text-lg">Saved Locations</p>
 
@@ -143,9 +145,8 @@ export function AddLocationPane({
             </div>
           </div>
         )}
-      </div>
-
-      <div className="py-3 px-4 border-t">
+      </Pane.Content>
+      <Pane.Footer className="py-3 px-4 border-t">
         <Button
           variant="secondary"
           disabled={!selected.address}
@@ -164,15 +165,7 @@ export function AddLocationPane({
         >
           Confirm
         </Button>
-      </div>
-    </div>
-  );
-}
-
-function PaneHeader() {
-  return (
-    <div className="px-3 py-2 flex gap-3 border-b sticky top-0 z-50 backdrop-blur-xl">
-      <Button icon="icon-chevron-double-right" variant="tertiary-alt" size="sm" onClick={() => drawer.close()} />
-    </div>
+      </Pane.Footer>
+    </Pane.Root>
   );
 }

@@ -64,7 +64,7 @@ function PaneHeaderRight({ children }: React.PropsWithChildren) {
 }
 
 function PaneContent({ children, className }: React.PropsWithChildren & { className?: string }) {
-  return <div className={twMerge('flex flex-1', className)}>{children}</div>;
+  return <div className={twMerge('flex flex-1 flex-col w-full', className)}>{children}</div>;
 }
 
 function PaneFooter({ children, className }: React.PropsWithChildren & { className?: string }) {
