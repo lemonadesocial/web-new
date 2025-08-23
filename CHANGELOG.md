@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.4.0](https://github.com/lemonadesocial/web-new/compare/v5.3.0...v5.4.0) (2025-08-23)
+
+
+### Features
+
+* open event new tab on mobile from community ([4a3e133](https://github.com/lemonadesocial/web-new/commit/4a3e1331d0f18e398b7c7dc5ef416d9a29942a3c))
+
 ## [5.3.0](https://github.com/lemonadesocial/web-new/compare/v5.2.4...v5.3.0) (2025-08-22)
 
 
