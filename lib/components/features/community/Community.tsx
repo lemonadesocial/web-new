@@ -37,6 +37,7 @@ import { MyEventRequests } from './MyEventRequests';
 import CommunityCard from './CommunityCard';
 import { ListingExternalEvent } from './ListingExternalEvent';
 import { useRouter } from 'next/navigation';
+import { isMobile } from 'react-device-detect';
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
@@ -235,7 +236,8 @@ export function Community({ initData }: Props) {
                           iconLeft="icon-celebration-outline"
                           onClick={() => {
                             toggle();
-                            if (space?._id) modal.open(ListingEvent, { dismissible: false, props: { spaceId: space._id } });
+                            if (space?._id)
+                              modal.open(ListingEvent, { dismissible: false, props: { spaceId: space._id } });
                           }}
                         />
                         <MenuItem
@@ -243,7 +245,8 @@ export function Community({ initData }: Props) {
                           iconLeft="icon-globe"
                           onClick={() => {
                             toggle();
-                            if (space?._id) modal.open(ListingExternalEvent, { dismissible: false, props: { spaceId: space._id } });
+                            if (space?._id)
+                              modal.open(ListingExternalEvent, { dismissible: false, props: { spaceId: space._id } });
                           }}
                         />
                       </>
@@ -331,7 +334,8 @@ export function Community({ initData }: Props) {
                         iconLeft="icon-celebration-outline"
                         onClick={() => {
                           toggle();
-                          if (space?._id) modal.open(ListingEvent, { dismissible: false, props: { spaceId: space._id } });
+                          if (space?._id)
+                            modal.open(ListingEvent, { dismissible: false, props: { spaceId: space._id } });
                         }}
                       />
                       <MenuItem
@@ -339,7 +343,8 @@ export function Community({ initData }: Props) {
                         iconLeft="icon-globe"
                         onClick={() => {
                           toggle();
-                          if (space?._id) modal.open(ListingExternalEvent, { dismissible: false, props: { spaceId: space._id } });
+                          if (space?._id)
+                            modal.open(ListingExternalEvent, { dismissible: false, props: { spaceId: space._id } });
                         }}
                       />
                     </>
@@ -405,22 +410,19 @@ function EventsWithMode({
   loading?: boolean;
   tags?: SpaceTag[];
 }) {
+  const handleSelect = (event: Event) => {
+    if (isMobile) {
+      window.open(`/e/${event.shortid}`, '_blank');
+    } else {
+      drawer.open(EventPane, { props: { eventId: event._id }, contentClass: 'bg-background' });
+    }
+  };
   return (
     <>
       {mode === 'card' ? (
-        <EventListCard
-          events={events}
-          loading={loading}
-          tags={tags}
-          onSelect={(event) => drawer.open(EventPane, { props: { eventId: event._id }, contentClass: 'bg-background' })}
-        />
+        <EventListCard events={events} loading={loading} tags={tags} onSelect={handleSelect} />
       ) : (
-        <EventList
-          events={events}
-          loading={loading}
-          tags={tags}
-          onSelect={(event) => drawer.open(EventPane, { props: { eventId: event._id }, contentClass: 'bg-background' })}
-        />
+        <EventList events={events} loading={loading} tags={tags} onSelect={handleSelect} />
       )}
     </>
   );
