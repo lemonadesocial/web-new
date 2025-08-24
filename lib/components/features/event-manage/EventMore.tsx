@@ -13,7 +13,7 @@ import { useMutation, useQuery } from '$lib/graphql/request';
 import { useRouter } from 'next/navigation';
 import { useEvent, useUpdateEvent } from './store';
 import { ConfirmModal } from '../modals/ConfirmModal';
-import { CloneEventModal } from './modals/CloneEventModal';
+import { CancelEventModal, CloneEventModal } from './modals/CloneEventModal';
 
 export function EventMore() {
   const router = useRouter();
@@ -104,7 +104,7 @@ export function EventMore() {
             onChangeText={(text) => setShortid(text)}
             prefix="lemonade.social/e/"
           />
-          <Button variant="secondary" disabled={!shortid} loading={loading} onClick={handleUpdate}>
+          <Button variant="secondary" disabled={shortid === event.shortid} loading={loading} onClick={handleUpdate}>
             Update
           </Button>
         </div>
@@ -121,10 +121,10 @@ export function EventMore() {
             iconLeft="icon-cancel"
             variant="danger"
             onClick={() =>
-              modal.open(ConfirmModal, {
+              modal.open(CancelEventModal, {
                 props: {
                   title: 'Cancel Event',
-                  subtitle: 'The following actions will be taken immediately after cancellation.',
+                  subtitle: 'If you aren’t able to host your event, you can cancel and we’ll notify your guests.',
                   onConfirm: async () => {
                     await deleteEvent({ variables: { event: event._id } });
                   },

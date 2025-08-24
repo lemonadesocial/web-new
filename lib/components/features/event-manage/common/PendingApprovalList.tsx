@@ -68,13 +68,13 @@ export function PendingApprovalList({ event, limit = 3 }: PendingApprovalListPro
               <div className="flex md:items-center gap-3 flex-1">
                 <Avatar src={userAvatar(user as any)} className="size-7 md:size-5" />
                 <div className="flex flex-col flex-1 gap-2">
-                  <div className="flex justify-between w-full">
-                    <div className="flex-1 flex flex-col md:flex-row md:gap-2 md:items-center">
+                  <div className="flex justify-between w-full relative">
+                    <div className="flex-1 flex flex-col md:flex-row md:gap-2 md:items-center truncate">
                       <p className="truncate">{name}</p>
                       <p className="text-tertiary truncate">{email}</p>
                     </div>
 
-                    <span className="block md:hidden text-sm text-tertiary whitespace-nowrap">
+                    <span className="block md:hidden text-sm text-tertiary whitespace-nowrap absolute right-0 truncate">
                       {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
                     </span>
                   </div>

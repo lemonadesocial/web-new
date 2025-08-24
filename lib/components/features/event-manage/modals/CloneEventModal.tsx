@@ -3,7 +3,19 @@ import { addDays, format, startOfWeek } from 'date-fns';
 import { Controller, useForm } from 'react-hook-form';
 import { getTimezoneOffset } from 'date-fns-tz';
 
-import { Button, Card, Dropdown, InputField, modal, Segment, Skeleton, Spacer, toast } from '$lib/components/core';
+import {
+  Button,
+  Card,
+  Dropdown,
+  Menu,
+  InputField,
+  modal,
+  Segment,
+  Skeleton,
+  Spacer,
+  toast,
+  MenuItem,
+} from '$lib/components/core';
 import { DateTimePicker, Timezone } from '$lib/components/core/calendar';
 import {
   CloneEventDocument,
@@ -15,10 +27,12 @@ import {
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { roundDateToHalfHour } from '$lib/utils/date';
 import { getTimezoneOption } from '$lib/utils/timezone';
+import { ASSET_PREFIX } from '$lib/utils/constants';
+import { communityAvatar } from '$lib/utils/community';
 
 const STATE_OPTS = [
-  { key: 'public', value: 'Public', icon: 'icon-globe' },
-  { key: 'private', value: 'Private', icon: 'icon-sparkles' },
+  { key: false, value: 'Public', icon: 'icon-globe' },
+  { key: true, value: 'Private', icon: 'icon-sparkles' },
 ];
 
 type FormValues = {
@@ -30,7 +44,11 @@ type FormValues = {
 
 export function CloneEventModal({ event, communities }: { event: Event; communities: Space[] }) {
   const today = new Date();
-  const communityOpts = communities.map((item) => ({ key: item._id, value: item.title }));
+  const communityOpts = communities.map((item) => ({
+    key: item._id,
+    value: item.title,
+    image_avatar_expanded: item.image_avatar_expanded,
+  }));
 
   const [isRecurrence, setIsRecurrence] = React.useState(false);
 
@@ -85,9 +103,9 @@ export function CloneEventModal({ event, communities }: { event: Event; communit
       </Card.Header>
       <Card.Content className="flex flex-col gap-4">
         <div>
-          <p className="text-lg">Clone {event.title}</p>
+          <p className="text-lg">Clone Event</p>
           <Spacer className="h-1" />
-          <p className="text-lg text-tertiary">IDSA International Design Conference</p>
+          <p className="text-lg text-tertiary">{event.title}</p>
           <Spacer className="h-2" />
           <p className="text-sm text-secondary">
             Everything except the guest list and event blasts will be copied over.
@@ -100,17 +118,69 @@ export function CloneEventModal({ event, communities }: { event: Event; communit
               control={control}
               name="community"
               render={({ field }) => {
-                const opt = communityOpts.find((item) => item.key === field.value);
+                const opt = communities.find((item) => item._id === field.value);
                 return (
-                  <div className="w-3/5">
-                    <Dropdown
-                      iconLeft="icon-user-group-outline"
-                      label="Community"
-                      disabeld={event.subevent_parent}
-                      value={opt}
-                      options={communityOpts}
-                    />
-                  </div>
+                  <Menu.Root disabled={event.subevent_parent} className="flex-1 w-full">
+                    <Menu.Trigger>
+                      <InputField
+                        iconLeft={
+                          <div className="size-5 rounded-xs overflow-hidden relative">
+                            <img
+                              className="w-full h-full outline outline-tertiary/4 rounded-xs"
+                              src={communityAvatar(opt)}
+                              alt={opt?.title}
+                              loading="lazy"
+                            />
+
+                            {!opt?.image_avatar_expanded && (
+                              <img
+                                src={`${ASSET_PREFIX}/assets/images/blank-avatar.svg`}
+                                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[62%] h-[62%]"
+                              />
+                            )}
+                          </div>
+                        }
+                        label="Community"
+                        value={opt?.title}
+                        readOnly
+                        right={{ icon: 'icon-chevron-down' }}
+                      />
+                    </Menu.Trigger>
+
+                    <Menu.Content className="w-full p-2">
+                      {({ toggle }) =>
+                        communities.map((item) => {
+                          return (
+                            <MenuItem
+                              iconRight={item._id === field.value ? 'text-primary! icon-richtext-check' : undefined}
+                              onClick={() => {
+                                setValue('community', item._id);
+                                toggle();
+                              }}
+                              iconLeft={
+                                <div className="size-5 rounded-xs overflow-hidden relative">
+                                  <img
+                                    className="w-full h-full outline outline-tertiary/4 rounded-xs"
+                                    src={communityAvatar(item)}
+                                    alt={item?.title}
+                                    loading="lazy"
+                                  />
+
+                                  {!item?.image_avatar_expanded && (
+                                    <img
+                                      src={`${ASSET_PREFIX}/assets/images/blank-avatar.svg`}
+                                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[62%] h-[62%]"
+                                    />
+                                  )}
+                                </div>
+                              }
+                              title={item.title}
+                            />
+                          );
+                        })
+                      }
+                    </Menu.Content>
+                  </Menu.Root>
                 );
               }}
             />
@@ -119,11 +189,26 @@ export function CloneEventModal({ event, communities }: { event: Event; communit
               control={control}
               name="private"
               render={({ field }) => {
-                const opt = STATE_OPTS.find((item) => (!field.value ? item.key === 'public' : item.key === 'private'));
+                const opt = STATE_OPTS.find((item) => field.value === item.key);
                 return (
-                  <div className="w-2/5">
-                    <Dropdown iconLeft={opt?.icon} value={opt} options={STATE_OPTS} />
-                  </div>
+                  <Menu.Root disabled={event.subevent_parent} className="w-24">
+                    <Menu.Trigger>
+                      <InputField iconLeft={opt?.icon} readOnly right={{ icon: 'icon-chevron-down' }} />
+                    </Menu.Trigger>
+                    <Menu.Content>
+                      {({ toggle }) =>
+                        STATE_OPTS.map((item) => (
+                          <MenuItem
+                            key={item.value}
+                            iconLeft={item.icon}
+                            title={item.value}
+                            iconRight={field.value === item.key ? 'text-primary! icon-richtext-check' : ''}
+                            onClick={() => setValue('private', item.key)}
+                          />
+                        ))
+                      }
+                    </Menu.Content>
+                  </Menu.Root>
                 );
               }}
             />
@@ -321,7 +406,7 @@ function Recurrence({
           render={({ field }) => {
             return (
               <div className="flex flex-col gap-1.5">
-                <label className="text-secondary text-sm font-medium">New Time</label>
+                <label className="text-secondary text-sm font-medium">Starting on </label>
                 <DateTimePicker
                   className="flex w-full [&_.trigger-date]:flex-1 [&_button]:w-full [&_button]:justify-start"
                   minDate={new Date()}
@@ -352,24 +437,30 @@ function Recurrence({
           }}
         />
 
-        <Controller
-          control={control}
-          name="dayOfWeeks"
-          render={({ field }) => (
-            <div className="flex justify-between gap-1">
-              {weekDays.map((item) => (
-                <Button
-                  className="rounded-full w-[40px]"
-                  key={item.getDay()}
-                  onClick={() => toggleDay(item.getDay())}
-                  variant={field.value.includes(item.getDay()) ? 'primary' : 'tertiary'}
-                >
-                  {format(item, 'EEEEE')}
-                </Button>
-              ))}
-            </div>
-          )}
-        />
+        {frequency === RecurringRepeat.Weekly && (
+          <Controller
+            control={control}
+            name="dayOfWeeks"
+            render={({ field }) => (
+              <div className="flex flex-col gap-1.5">
+                <label className="text-secondary text-sm font-medium">Days of the week</label>
+
+                <div className="flex justify-between gap-1">
+                  {weekDays.map((item) => (
+                    <Button
+                      className="rounded-full w-[40px]"
+                      key={item.getDay()}
+                      onClick={() => toggleDay(item.getDay())}
+                      variant={field.value.includes(item.getDay()) ? 'primary' : 'tertiary'}
+                    >
+                      {format(item, 'EEEEE')}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
+          />
+        )}
 
         <div className="flex items-center justify-between gap-2">
           <Segment
@@ -398,8 +489,10 @@ function Recurrence({
               <InputField
                 type="number"
                 value={count.toString()}
-                subfix="weeks"
-                onChangeText={(val) => setCount(Number(val))}
+                subfix={frequency.replace('ily', 'ys').replace('ly', 's')}
+                onChangeText={(val) => {
+                  if (Number(val) >= 1) setCount(Number(val));
+                }}
               />
             </div>
           )}
@@ -436,6 +529,9 @@ function RecurrenceDates({ dates }: { dates?: Date[] }) {
         {dates.map((date, idx) => (
           <DateBlock key={idx} date={date} />
         ))}
+        {Array.from({ length: 5 - dates.length }).map((_, idx) => (
+          <div key={idx} className="flex-1" />
+        ))}
       </>
     );
 
@@ -460,6 +556,46 @@ function DateBlock({ date }: { date: Date }) {
       <p className="text-secondary text-xs">{format(date, 'MMM')}</p>
       <p>{format(date, 'dd')}</p>
       <p className="text-tertiary text-xs">{format(date, 'EEE')}</p>
+    </div>
+  );
+}
+
+export function CancelEventModal({
+  title,
+  subtitle,
+  onConfirm,
+}: {
+  onConfirm: () => Promise<void> | void;
+  title: string;
+  subtitle: string;
+}) {
+  const [loading, setLoading] = React.useState(false);
+  return (
+    <div className="p-4 flex flex-col gap-4 max-w-[448px]">
+      <div className="p-3 rounded-full bg-danger-400/16 w-fit">
+        <i className="icon-ticket text-danger-400" />
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-lg font-medium">{title}</p>
+        <p className="text-sm font-medium text-secondary">{subtitle}</p>
+      </div>
+      <div className="flex flex-col items-center gap-3">
+        <Button
+          variant="danger"
+          className="flex-1 w-full"
+          loading={loading}
+          onClick={async () => {
+            setLoading(true);
+            await onConfirm();
+            setLoading(false);
+            modal.close();
+          }}
+        >
+          Cancel Event
+        </Button>
+
+        <p className="text-danger-400 text-sm">The event will be permanently deleted</p>
+      </div>
     </div>
   );
 }

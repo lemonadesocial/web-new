@@ -132,7 +132,7 @@ function EditEventDrawerContent({ event }: { event: Event }) {
     <Pane.Root>
       <Pane.Header.Root>
         <Pane.Header.Left className="flex items-center gap-3">
-          <p>Edit Event</p>
+          <p className="whitespace-nowrap">Edit Event</p>
         </Pane.Header.Left>
       </Pane.Header.Root>
 
