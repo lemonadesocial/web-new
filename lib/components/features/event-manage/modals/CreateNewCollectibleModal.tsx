@@ -1,16 +1,14 @@
 import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import clsx from 'clsx';
-import { useAtomValue } from 'jotai';
 
-import { ModalContent, modal, Button, Input, FileInput, LabeledInput, Textarea, Segment, Menu, MenuItem } from '$lib/components/core';
-import { Event, PoapClaimMode, Chain } from '$lib/graphql/generated/backend/graphql';
+import { ModalContent, modal, Button, Input, FileInput, LabeledInput, Textarea, Segment } from '$lib/components/core';
+import { Event, PoapClaimMode } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
 import { CreatePoapDropDocument } from '$lib/graphql/generated/backend/graphql';
 import { uploadFiles } from '$lib/utils/file';
 import { toast } from '$lib/components/core/toast';
 import { ListPoapDropsDocument } from '$lib/graphql/generated/backend/graphql';
-import { listChainsAtom } from '$lib/jotai';
 
 import { TicketTypeSelector } from '../common/TicketTypeSelector';
 
@@ -25,14 +23,11 @@ interface FormData {
   totalQuantity: number | undefined;
   claimableOn: 'registration' | 'checkin';
   selectedTicketTypes: string[];
-  network: string;
 }
 
 export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalProps) {
   const [showClaimSettings, setShowClaimSettings] = useState(false);
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
-  const listChains = useAtomValue(listChainsAtom);
-  const poapEnabledChains = listChains.filter(chain => chain.poap_enabled);
 
   const [createPoapDrop, { loading: createPoapLoading }] = useMutation(CreatePoapDropDocument, {
     onComplete: (client, response) => {
@@ -71,8 +66,7 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
       image: null,
       totalQuantity: undefined,
       claimableOn: 'registration',
-      selectedTicketTypes: [],
-      network: poapEnabledChains[0]?.chain_id || ''
+      selectedTicketTypes: []
     },
     mode: 'onChange'
   });
@@ -116,7 +110,6 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
             amount: data.totalQuantity,
             claim_mode: claimMode,
             ticket_types: ticketTypeIds.length > 0 ? ticketTypeIds : undefined,
-            minting_network: data.network
           }
         }
       });
@@ -227,42 +220,6 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
             <i className="icon-poap size-4.5" />
           </div>
         </div>
-
-        <LabeledInput label="Network">
-          <Controller
-            name="network"
-            control={control}
-            rules={{ required: 'Network is required' }}
-            render={({ field }) => {
-              const selectedChain = poapEnabledChains.find(chain => chain.chain_id === field.value);
-              return (
-                <Menu.Root>
-                  <Menu.Trigger>
-                    <div className="flex rounded-sm bg-primary/8 py-2 px-3.5 gap-2.5 items-center">
-                      {selectedChain?.logo_url && <img src={selectedChain.logo_url} className="size-5" />}
-                      <p className="flex-1">{selectedChain?.name || 'Select a network'}</p>
-                      <i className="icon-chevron-down size-5 text-quaternary" />
-                    </div>
-                  </Menu.Trigger>
-
-                  <Menu.Content className="p-1 w-full max-h-[180px] overflow-y-auto no-scrollbar">
-                    {({ toggle }) => poapEnabledChains.map((chain) => (
-                      <MenuItem
-                        key={chain.chain_id}
-                        title={chain.name}
-                        iconLeft={chain.logo_url ? <img src={chain.logo_url} className="size-5" /> : undefined}
-                        onClick={() => {
-                          field.onChange(chain.chain_id);
-                          toggle();
-                        }}
-                      />
-                    ))}
-                  </Menu.Content>
-                </Menu.Root>
-              );
-            }}
-          />
-        </LabeledInput>
 
         <div className="flex gap-3">
           <Controller
