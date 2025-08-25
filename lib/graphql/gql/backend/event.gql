@@ -145,6 +145,14 @@ query GetEvent($id: MongoID, $shortid: String) {
       id
       hidden
     }
+    payment_ticket_discounts {
+      code
+      ratio
+      use_limit
+      use_count
+      active
+      ticket_types
+    }
   }
 }
 
@@ -1205,4 +1213,18 @@ mutation cloneEvent($input: CloneEventInput!) {
 
 query GenerateRecurringDates($input: GenerateRecurringDatesInput!) {
   generateRecurringDates(input: $input)
+}
+
+mutation CreateEventTicketDiscounts($event: MongoID!, $inputs: [EventPaymentTicketDiscountInput!]!) {
+  createEventTicketDiscounts(event: $event, inputs: $inputs) {
+    _id
+    payment_ticket_discounts {
+      code
+      ratio
+      use_limit
+      use_count
+      active
+      ticket_types
+    }
+  }
 }

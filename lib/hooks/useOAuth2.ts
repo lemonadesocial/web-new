@@ -19,13 +19,13 @@ export function useOAuth2() {
 		return userManager;
 	};
 
-	const signIn = async (email?: string) => {
+	const signIn = async (provider?: string) => {
 		const userManager = getUserManager();
 
 		await userManager.signinRedirect({
 			scope: 'openid offline_access',
 			state: encodeURI(window.location.href),
-			...email && { extraQueryParams: { email } },
+			...provider && { extraQueryParams: { provider } },
 		});
 	};
 

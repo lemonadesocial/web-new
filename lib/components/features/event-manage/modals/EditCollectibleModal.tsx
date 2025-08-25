@@ -7,7 +7,7 @@ import { toast } from '$lib/components/core';
 
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
-import { TicketTypeSelector } from '../overview/TicketTypeSelector';
+import { TicketTypeSelector } from '../common/TicketTypeSelector';
 
 interface EditCollectibleModalProps {
   poapDrop: PoapDrop;

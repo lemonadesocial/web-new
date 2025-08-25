@@ -192,7 +192,7 @@ function TicketPrices({ prices, single, groupRegistration, active }: TicketPrice
   return (
     <div className="flex gap-1.5 items-baseline">
       <p className={clsx(single ? 'text-xl font-semibold' : 'text-medium font-medium', active || single ? 'text-accent' : 'text-secondary')}>
-        {formatPrice(firstPrice)}
+        {formatPrice(firstPrice, true)}
       </p>
       {(groupRegistration && single) && <p className="text-sm font-medium text-secondary">per ticket</p>}
       <PaymentNetworks paymentAccounts={firstPrice.payment_accounts_expanded || []} />

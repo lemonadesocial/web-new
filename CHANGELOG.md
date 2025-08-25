@@ -1,5 +1,25 @@
 # Changelog
 
+## [5.4.0](https://github.com/lemonadesocial/web-new/compare/v5.3.0...v5.4.0) (2025-08-23)
+
+
+### Features
+
+* open event new tab on mobile from community ([4a3e133](https://github.com/lemonadesocial/web-new/commit/4a3e1331d0f18e398b7c7dc5ef416d9a29942a3c))
+
+## [5.3.0](https://github.com/lemonadesocial/web-new/compare/v5.2.4...v5.3.0) (2025-08-22)
+
+
+### Features
+
+* oauth2 updates ([b357546](https://github.com/lemonadesocial/web-new/commit/b357546dc32ae3775e3225dd6cab901a904083c2))
+
+
+### Bug Fixes
+
+* drawer issues ([35f7292](https://github.com/lemonadesocial/web-new/commit/35f7292c12fcecd255cce01f2da115abe24bbc53))
+* free ticket doesn't show as free ([5689544](https://github.com/lemonadesocial/web-new/commit/5689544865582345f16773a7b8ccdb31de3f0aa8))
+
 ## [5.2.4](https://github.com/lemonadesocial/web-new/compare/v5.2.3...v5.2.4) (2025-08-22)
 
 

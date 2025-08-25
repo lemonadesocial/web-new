@@ -63,6 +63,7 @@ export function VerifyEmailModal() {
             }
             processEmail(email);
           }}
+          loading={loading}
         >
           Continue
         </Button>

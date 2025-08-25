@@ -58,6 +58,12 @@
   .btn-danger {
     --btn-bg: var(--color-danger-500);
     --btn-bg-hover: var(--color-danger-700);
+
+    &.btn-outlined {
+      --btn-bg: transparent;
+      --btn-border-color: var(--color-danger-500);
+      --btn-content: var(--color-danger-500);
+    }
   }
 
   .btn-secondary {

@@ -7,9 +7,10 @@ import { ory } from '$lib/utils/ory';
 import { hydraClientIdAtom, Session, sessionAtom, sessionLoadingAtom } from '$lib/jotai';
 import { useLogOut } from '$lib/hooks/useLogout';
 import { toast } from '$lib/components/core';
-import { IDENTITY_TOKEN_KEY } from '$lib/utils/constants';
+import { HYDRA_PUBLIC_URL, IDENTITY_TOKEN_KEY } from '$lib/utils/constants';
 import { useAccount } from './useLens';
 import { identityApi } from '$lib/services/identity';
+import { oidc } from '$lib/utils/oidc';
 
 export function useAuth(spaceHydraClientId?: string) {
   const hydraClientAtomId = useAtomValue(hydraClientIdAtom);
@@ -19,6 +20,20 @@ export function useAuth(spaceHydraClientId?: string) {
   const [loading, setLoading] = useAtom(sessionLoadingAtom);
   const logOut = useLogOut();
   const { account } = useAccount();
+
+  const getSessionStorageKey = (clientId: string) => {
+    return `oidc.user:${HYDRA_PUBLIC_URL}:${clientId}`;
+  };
+
+  const setupTokenRefresh = (userManager: any) => {
+    userManager.events.addAccessTokenExpiring(async () => {
+      const newSession = await userManager.signinSilent();
+      setSession({
+        ...session,
+        oidcUser: newSession?.toStorageString(),
+      } as Session);
+    });
+  };
 
   const handleOryAuth = async () => {
     if (!ory) {
@@ -53,6 +68,28 @@ export function useAuth(spaceHydraClientId?: string) {
   const handleHydraAuth = async () => {
     try {
       if (!hydraClientId) throw new Error('Hydra client ID is required');
+
+      const storageKey = getSessionStorageKey(hydraClientId);
+      const storedSession = sessionStorage.getItem(storageKey);
+
+      if (storedSession) {
+        const userManager = oidc.setUserManager(hydraClientId);
+        setupTokenRefresh(userManager);
+
+        const user = await oidc.restoreUser(storedSession);
+
+        if (!user) throw new Error('Cannot restore oidc user.');
+
+        setSession({
+          _id: user.profile.sid,
+          user: user.profile.user,
+          token: user.access_token,
+          oidcUser: user.toStorageString(),
+        } as Session);
+        
+        setLoading(false);
+        return;
+      }
 
       const token = localStorage.getItem(IDENTITY_TOKEN_KEY);
 
