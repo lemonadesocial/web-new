@@ -51,28 +51,16 @@ export function CloneEventModal({ event }: { event: Event }) {
   const communities = (dataCommunity?.listSpaces as Space[])?.slice().sort((a, _) => (a.personal ? -1 : 1)) || [];
 
   const today = new Date();
-  const communityOpts = communities.map((item) => ({
-    key: item._id,
-    value: item.title,
-    image_avatar_expanded: item.image_avatar_expanded,
-  }));
-
   const [isRecurrence, setIsRecurrence] = React.useState(false);
 
   const { control, setValue, handleSubmit } = useForm<FormValues>({
     defaultValues: {
       dates: [roundDateToHalfHour(addDays(today, 1)).toISOString()],
       timezone: event.timezone,
-      community: '',
+      community: event.space,
       private: false,
     },
   });
-
-  React.useEffect(() => {
-    if (communityOpts.length) {
-      setValue('community', communityOpts[0].key);
-    }
-  }, [communities.length]);
 
   const [cloneEvent, { loading }] = useMutation(CloneEventDocument, {
     onComplete: () => {
