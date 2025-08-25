@@ -145,6 +145,14 @@ query GetEvent($id: MongoID, $shortid: String) {
       id
       hidden
     }
+    payment_ticket_discounts {
+      code
+      ratio
+      use_limit
+      use_count
+      active
+      ticket_types
+    }
   }
 }
 
@@ -1189,6 +1197,20 @@ mutation ImportPoapDrop($input: ImportPoapInput!, $code: String!, $importPoapDro
     ticket_types_expanded {
       _id
       title
+    }
+  }
+}
+
+mutation CreateEventTicketDiscounts($event: MongoID!, $inputs: [EventPaymentTicketDiscountInput!]!) {
+  createEventTicketDiscounts(event: $event, inputs: $inputs) {
+    _id
+    payment_ticket_discounts {
+      code
+      ratio
+      use_limit
+      use_count
+      active
+      ticket_types
     }
   }
 }

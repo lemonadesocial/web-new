@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { ModalContent, modal, Button, Input, LabeledInput, toast, Segment } from "$lib/components/core";
 import { Event, GetPoapDropInfoByIdDocument, CheckPoapDropEditCodeDocument, ImportPoapDropDocument, PoapClaimMode, ListPoapDropsDocument } from "$lib/graphql/generated/backend/graphql";
 import { useQuery, useMutation } from "$lib/graphql/request";
-import { TicketTypeSelector } from "../overview/TicketTypeSelector";
+import { TicketTypeSelector } from "../common/TicketTypeSelector";
 
 interface ImportCollectibleModalProps {
   event: Event;
