@@ -1201,6 +1201,20 @@ mutation ImportPoapDrop($input: ImportPoapInput!, $code: String!, $importPoapDro
   }
 }
 
+mutation CancelEvent($event: MongoID!) {
+  cancelEvent(_id: $event) {
+    _id
+  }
+}
+
+mutation cloneEvent($input: CloneEventInput!) {
+  cloneEvent(input: $input)
+}
+
+query GenerateRecurringDates($input: GenerateRecurringDatesInput!) {
+  generateRecurringDates(input: $input)
+}
+
 mutation CreateEventTicketDiscounts($event: MongoID!, $inputs: [EventPaymentTicketDiscountInput!]!) {
   createEventTicketDiscounts(event: $event, inputs: $inputs) {
     _id

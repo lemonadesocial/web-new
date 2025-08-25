@@ -41,8 +41,24 @@
         align-items: center;
         border-start-start-radius: 8px;
         border-end-start-radius: 8px;
-        padding-inline: 14px;
+        padding-inline: 12px;
         background: var(--btn-tertiary);
+      }
+    }
+
+    &:has(.subfix) {
+      --input-size: 0px 0px;
+      .subfix {
+        display: flex;
+        align-items: center;
+        border-start-end-radius: 8px;
+        border-end-end-radius: 8px;
+        padding-inline: 12px;
+        background: var(--btn-tertiary);
+      }
+
+      input {
+        padding-left: 10px;
       }
     }
 

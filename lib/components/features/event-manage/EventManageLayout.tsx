@@ -22,7 +22,7 @@ const eventManageMenu = [
   { name: 'Blasts', page: 'blasts' },
   // { name: 'Program', page: 'program' },
   // { name: 'Insights', page: 'insights' },
-  // { name: 'More', page: 'more' },
+  { name: 'More', page: 'more' },
 ];
 
 export function EventManageLayout({ children }: React.PropsWithChildren) {

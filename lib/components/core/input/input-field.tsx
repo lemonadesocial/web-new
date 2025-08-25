@@ -8,9 +8,10 @@ type Props = {
   label?: string;
   value?: string | null;
   placeholder?: string;
-  iconLeft?: string;
+  iconLeft?: string | React.ReactElement;
   right?: { icon: string; onClick?: () => void };
   prefix?: string;
+  subfix?: string;
   name?: string;
   readOnly?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -19,6 +20,7 @@ type Props = {
   hint?: string;
   autoFocus?: boolean;
   handleClear?: () => void;
+  type?: string;
 };
 
 export function InputField(props: Props) {
@@ -27,10 +29,14 @@ export function InputField(props: Props) {
       {props.label && <label className="text-secondary text-sm font-medium">{props.label}</label>}
       <div className={clsx('control', props.error && 'border-danger-500!')}>
         {props.prefix && <div className="prefix text-base font-medium text-secondary">{props.prefix}</div>}
-        {props.iconLeft && <i className={twMerge('size-5 text-tertiary', props.iconLeft)} />}
+        {typeof props.iconLeft === 'string' ? (
+          <i className={twMerge('size-5 text-tertiary', props.iconLeft)} />
+        ) : (
+          props.iconLeft
+        )}
         <input
           value={props.value || ''}
-          type="text"
+          type={props.type || 'text'}
           name={props.name}
           readOnly={props.readOnly}
           autoFocus={props.autoFocus}
@@ -43,6 +49,7 @@ export function InputField(props: Props) {
         {props.right && (
           <i className={twMerge('size-5 text-tertiary', props.right.icon)} onClick={props.right.onClick} />
         )}
+        {props.subfix && <div className="subfix text-base font-medium text-secondary">{props.subfix}</div>}
       </div>
       {props.hint && <p className={clsx('text-xs', props.error && 'text-danger-400')}>{props.hint}</p>}
     </fieldset>

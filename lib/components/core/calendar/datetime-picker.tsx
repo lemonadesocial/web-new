@@ -11,6 +11,7 @@ import { Calendar } from './calendar';
 import { Card } from '../card';
 import { Spacer } from '../spacer';
 import { Input } from '../input';
+import { twMerge } from 'tailwind-merge';
 
 export function DateTimeGroup({
   start,
@@ -94,11 +95,15 @@ export function DateTimePicker({
   onSelect,
   placement = 'top',
   minDate,
+  className,
+  showTime = true,
 }: {
   value?: string;
   onSelect: (datetime: string) => void;
   placement?: Placement;
   minDate?: Date;
+  className?: string;
+  showTime?: boolean;
 }) {
   const times = React.useMemo(() => {
     const formatTime = (hour: number, minutes: number) => {
@@ -122,13 +127,13 @@ export function DateTimePicker({
   };
 
   return (
-    <div className="flex gap-0.5">
-      <Menu.Root placement={placement}>
+    <div className={twMerge('flex gap-0.5', className)}>
+      <Menu.Root className="trigger-date" placement={placement}>
         <Menu.Trigger>
           <Button
             variant="tertiary"
             size="sm"
-            className="rounded-e-none! min-w-[110px]! text-primary! min-h-[36px]! text-base"
+            className={clsx('min-w-[110px]! text-primary! min-h-[36px]! text-base', showTime && 'rounded-e-none!')}
           >
             {format(value ? new Date(value) : new Date(), 'EEE, dd MMM')}
           </Button>
@@ -152,44 +157,46 @@ export function DateTimePicker({
           </Menu.Content>
         </FloatingPortal>
       </Menu.Root>
-      <Menu.Root placement={placement}>
-        <Menu.Trigger>
-          <Button
-            variant="tertiary"
-            size="sm"
-            className="rounded-s-none! min-w-[84px] text-primary! min-h-[36px]! text-base"
-          >
-            {format(value ? new Date(value) : new Date(), 'hh:mm a')}
-          </Button>
-        </Menu.Trigger>
-        <FloatingPortal>
-          <Menu.Content className="w-[100px] no-scrollbar rounded-lg overflow-auto h-[200px] p-2">
-            {({ toggle }) => {
-              return (
-                <div>
-                  {times.map((t, i) => (
-                    <Button
-                      key={i}
-                      variant="flat"
-                      className="hover:bg-quaternary! w-full whitespace-nowrap"
-                      onClick={() => {
-                        const [hours, minutes] = t.value.split(':').map(Number);
-                        const datetime = value ? new Date(value) : new Date();
-                        datetime.setHours(hours);
-                        datetime.setMinutes(minutes);
-                        handleSelect({ value: datetime });
-                        toggle();
-                      }}
-                    >
-                      {t.label}
-                    </Button>
-                  ))}
-                </div>
-              );
-            }}
-          </Menu.Content>
-        </FloatingPortal>
-      </Menu.Root>
+      {showTime && (
+        <Menu.Root className="trigger-time" placement={placement}>
+          <Menu.Trigger>
+            <Button
+              variant="tertiary"
+              size="sm"
+              className="rounded-s-none! min-w-[84px] text-primary! min-h-[36px]! text-base"
+            >
+              {format(value ? new Date(value) : new Date(), 'hh:mm a')}
+            </Button>
+          </Menu.Trigger>
+          <FloatingPortal>
+            <Menu.Content className="w-[100px] no-scrollbar rounded-lg overflow-auto h-[200px] p-2">
+              {({ toggle }) => {
+                return (
+                  <div>
+                    {times.map((t, i) => (
+                      <Button
+                        key={i}
+                        variant="flat"
+                        className="hover:bg-quaternary! w-full whitespace-nowrap"
+                        onClick={() => {
+                          const [hours, minutes] = t.value.split(':').map(Number);
+                          const datetime = value ? new Date(value) : new Date();
+                          datetime.setHours(hours);
+                          datetime.setMinutes(minutes);
+                          handleSelect({ value: datetime });
+                          toggle();
+                        }}
+                      >
+                        {t.label}
+                      </Button>
+                    ))}
+                  </div>
+                );
+              }}
+            </Menu.Content>
+          </FloatingPortal>
+        </Menu.Root>
+      )}
     </div>
   );
 }
