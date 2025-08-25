@@ -21,6 +21,7 @@ import {
   CloneEventDocument,
   Event,
   GenerateRecurringDatesDocument,
+  GetEventDocument,
   GetSpacesDocument,
   RecurringRepeat,
   Space,
@@ -31,6 +32,7 @@ import { roundDateToHalfHour } from '$lib/utils/date';
 import { getTimezoneOption } from '$lib/utils/timezone';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { communityAvatar } from '$lib/utils/community';
+import { CloneEventSuccessModal } from './CloneEventSuccessModal';
 
 const STATE_OPTS = [
   { key: false, value: 'Public', icon: 'icon-globe' },
@@ -52,6 +54,7 @@ export function CloneEventModal({ event }: { event: Event }) {
 
   const today = new Date();
   const [isRecurrence, setIsRecurrence] = React.useState(false);
+  const [fetching, setFetching] = React.useState(false);
 
   const { control, setValue, handleSubmit } = useForm<FormValues>({
     defaultValues: {
@@ -63,9 +66,15 @@ export function CloneEventModal({ event }: { event: Event }) {
   });
 
   const [cloneEvent, { loading }] = useMutation(CloneEventDocument, {
-    onComplete: () => {
-      toast.success('Clone event success.');
+    onComplete: async (client, data) => {
+      setFetching(true);
+      const promises: Promise<any>[] = [];
+      data.cloneEvent.map((id) => promises.push(client.query({ query: GetEventDocument, variables: { id } })));
+
+      const list = await Promise.all(promises);
+      const events = list.map((i) => i.data.getEvent);
       modal.close();
+      setTimeout(() => modal.open(CloneEventSuccessModal, { props: { events }, dismissible: false }));
     },
   });
 
@@ -313,7 +322,7 @@ export function CloneEventModal({ event }: { event: Event }) {
             }}
           />
 
-          <Button type="submit" variant="secondary" loading={loading}>
+          <Button type="submit" variant="secondary" loading={loading || fetching}>
             Create Event
           </Button>
         </form>
