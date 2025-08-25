@@ -21,8 +21,10 @@ import {
   CloneEventDocument,
   Event,
   GenerateRecurringDatesDocument,
+  GetSpacesDocument,
   RecurringRepeat,
   Space,
+  SpaceRole,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { roundDateToHalfHour } from '$lib/utils/date';
@@ -42,7 +44,12 @@ type FormValues = {
   private: boolean;
 };
 
-export function CloneEventModal({ event, communities }: { event: Event; communities: Space[] }) {
+export function CloneEventModal({ event }: { event: Event }) {
+  const { data: dataCommunity } = useQuery(GetSpacesDocument, {
+    variables: { with_my_spaces: true, roles: [SpaceRole.Admin, SpaceRole.Creator] },
+  });
+  const communities = (dataCommunity?.listSpaces as Space[])?.slice().sort((a, _) => (a.personal ? -1 : 1)) || [];
+
   const today = new Date();
   const communityOpts = communities.map((item) => ({
     key: item._id,
@@ -56,10 +63,16 @@ export function CloneEventModal({ event, communities }: { event: Event; communit
     defaultValues: {
       dates: [roundDateToHalfHour(today).toISOString()],
       timezone: event.timezone,
-      community: communityOpts[0].key,
+      community: '',
       private: false,
     },
   });
+
+  React.useEffect(() => {
+    if (communityOpts.length) {
+      setValue('community', communityOpts[0].key);
+    }
+  }, [communities.length]);
 
   const [cloneEvent, { loading }] = useMutation(CloneEventDocument, {
     onComplete: () => {
@@ -94,7 +107,7 @@ export function CloneEventModal({ event, communities }: { event: Event; communit
     );
 
   return (
-    <Card.Root className="w-full md:w-[350px] overflow-visible bg-transparent">
+    <Card.Root className="w-full md:w-[350px] overflow-visible bg-none">
       <Card.Header className="bg-transparent flex justify-between items-start">
         <div className="size-[56px] rounded-full flex items-center justify-center bg-(--btn-tertiary)">
           <i className="icon-duplicate " />

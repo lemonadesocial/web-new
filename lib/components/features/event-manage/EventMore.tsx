@@ -2,17 +2,10 @@
 import React from 'react';
 
 import { Button, Divider, InputField, modal, toast } from '$lib/components/core';
-import {
-  CancelEventDocument,
-  GetSpacesDocument,
-  Space,
-  SpaceRole,
-  UpdateEventSettingsDocument,
-} from '$lib/graphql/generated/backend/graphql';
-import { useMutation, useQuery } from '$lib/graphql/request';
+import { CancelEventDocument, UpdateEventSettingsDocument } from '$lib/graphql/generated/backend/graphql';
+import { useMutation } from '$lib/graphql/request';
 import { useRouter } from 'next/navigation';
 import { useEvent, useUpdateEvent } from './store';
-import { ConfirmModal } from '../modals/ConfirmModal';
 import { CancelEventModal, CloneEventModal } from './modals/CloneEventModal';
 
 export function EventMore() {
@@ -45,12 +38,7 @@ export function EventMore() {
     },
   });
 
-  const { data: dataCommunity, loading: loadingCommunities } = useQuery(GetSpacesDocument, {
-    variables: { with_my_spaces: true, roles: [SpaceRole.Admin, SpaceRole.Creator] },
-  });
-  const communities = (dataCommunity?.listSpaces as Space[])?.slice().sort((a, _) => (a.personal ? -1 : 1)) || [];
-
-  if (!event || loadingCommunities) return null;
+  if (!event) return null;
 
   const handleUpdate = async () => {
     if (!shortid.trim()) {
@@ -81,7 +69,7 @@ export function EventMore() {
             onClick={() =>
               modal.open(CloneEventModal, {
                 className: 'overflow-visible',
-                props: { event, communities },
+                props: { event },
                 dismissible: false,
               })
             }
