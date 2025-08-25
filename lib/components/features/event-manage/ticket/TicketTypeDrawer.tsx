@@ -400,7 +400,8 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
               <div className="rounded-sm bg-primary/8 divide-y divide-(--color-divider)">
                 <div
                   className="flex py-2.5 px-3 items-center cursor-pointer"
-                  onClick={() => drawer.open(EmailListDrawer, { props: { ticketType: initialTicketType } })}
+                  // onClick={() => drawer.open(EmailListDrawer, { props: { ticketType: initialTicketType } })}
+                  onClick={() => toast.success('Coming soon')}
                 >
                   <div className="flex items-center gap-2 flex-1">
                     <i className="icon-email size-5 text-tertiary" />
@@ -414,7 +415,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                     <i className="icon-chevron-right size-5 text-tertiary" />
                   </div>
                 </div>
-                {initialTicketType?._id && !loadingTokenGates && (
+                {!loadingTokenGates && (
                   <div className="flex py-2.5 px-3 items-center cursor-pointer" onClick={handleOpenTokenGating}>
                     <div className="flex items-center gap-2 flex-1">
                       <i className="icon-token size-5 text-tertiary" />
