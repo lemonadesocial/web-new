@@ -1799,6 +1799,7 @@ export type EventGuestUser = {
   last_name?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   username?: Maybe<Scalars['String']['output']>;
+  wallets_new?: Maybe<Scalars['JSON']['output']>;
 };
 
 export type EventHost = {

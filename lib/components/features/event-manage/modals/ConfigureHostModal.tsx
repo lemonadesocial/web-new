@@ -66,6 +66,7 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
             decision: true,
             event: event._id,
             to_email: user.email,
+            to: user._id,
             profile_name: name,
             profile_image_avatar: profileImageAvatar,
             visible: showOnEventPage,
@@ -89,6 +90,7 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
             decision: false,
             event: event._id,
             to_email: user.email,
+            to: user._id,
           }
         }
       });
