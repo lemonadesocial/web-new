@@ -20,7 +20,7 @@ export function CloneEventSuccessModal({ events }: { events: Event[] }) {
   };
 
   return (
-    <Card.Root className="w-[340px]">
+    <Card.Root className="w-[360px]">
       <Card.Header className="flex justify-between items-start bg-transparent">
         <div className="p-3 w-[56px] aspect-square rounded-full bg-success-400/16 flex items-center justify-center">
           <i className="icon-richtext-check text-success-400 size-8" />
@@ -66,7 +66,7 @@ export function CloneEventSuccessModal({ events }: { events: Event[] }) {
           </Card.Root>
         )}
 
-        {events.length > 2 && (
+        {events.length > 1 && (
           <div className="flex flex-col gap-1.5 max-h-[300px] overflow-auto no-scrollbar">
             <Card.Root className="overflow-visible">
               <Card.Content className="flex gap-3 px-3 py-2 items-center">
