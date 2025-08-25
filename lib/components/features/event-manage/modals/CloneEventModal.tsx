@@ -61,7 +61,7 @@ export function CloneEventModal({ event }: { event: Event }) {
 
   const { control, setValue, handleSubmit } = useForm<FormValues>({
     defaultValues: {
-      dates: [roundDateToHalfHour(today).toISOString()],
+      dates: [roundDateToHalfHour(addDays(today, 1)).toISOString()],
       timezone: event.timezone,
       community: '',
       private: false,
@@ -216,7 +216,10 @@ export function CloneEventModal({ event }: { event: Event }) {
                             iconLeft={item.icon}
                             title={item.value}
                             iconRight={field.value === item.key ? 'text-primary! icon-richtext-check' : ''}
-                            onClick={() => setValue('private', item.key)}
+                            onClick={() => {
+                              setValue('private', item.key);
+                              toggle();
+                            }}
                           />
                         ))
                       }
@@ -236,7 +239,7 @@ export function CloneEventModal({ event }: { event: Event }) {
                   <div className="flex flex-col gap-1.5">
                     <label className="text-secondary text-sm font-medium">New Time</label>
                     <div className="flex flex-col gap-2 max-h-56 overflow-auto no-scrollbar">
-                      {field.value.map((d, idx) => (
+                      {field.value.map((d) => (
                         <div key={d} className="flex items-center justify-between gap-3">
                           <DateTimePicker
                             className="flex w-full [&_.trigger-date]:flex-1 [&_button]:w-full [&_button]:justify-start"
@@ -309,7 +312,7 @@ export function CloneEventModal({ event }: { event: Event }) {
                     >
                       <div className="flex flex-1 w-3xs md:w-auto items-center gap-2.5 truncate">
                         <i className="icon-globe size-[20px]" />
-                        <span className="truncate w-fit truncate">{zone?.text}</span>
+                        <span className="truncate w-fit">{zone?.text}</span>
                       </div>
                       <i className="icon-chevron-down size-[20px]" />
                     </button>

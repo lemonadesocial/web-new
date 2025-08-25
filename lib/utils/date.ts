@@ -25,7 +25,7 @@ export function roundDateToHalfHour(date: Date) {
   const newDate = new Date(date.getTime());
 
   const minutes = newDate.getMinutes();
-  const roundedMinutes = Math.round(minutes / 30) * 30;
+  const roundedMinutes = Math.ceil(minutes / 30) * 30;
 
   // Set minutes and reset seconds/milliseconds.
   // The Date object automatically handles hour overflow if roundedMinutes is 60.
