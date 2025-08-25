@@ -1,5 +1,29 @@
 # Changelog
 
+## [5.5.0](https://github.com/lemonadesocial/web-new/compare/v5.4.0...v5.5.0) (2025-08-25)
+
+
+### Features
+
+* add community when clone event ([d85ceaf](https://github.com/lemonadesocial/web-new/commit/d85ceafe89f8e53c321f840294e68b1b003ede16))
+* event coupon ([de0728b](https://github.com/lemonadesocial/web-new/commit/de0728bcc1919679e339bebd1c346a28b475fdfc))
+* manage host - fallback to user id ([0a55843](https://github.com/lemonadesocial/web-new/commit/0a5584368ecede89b671eef703e1f5910ae12bd0))
+* missing iamge input dropdown ([0ece341](https://github.com/lemonadesocial/web-new/commit/0ece3412881896b1fc07b7a552abf72ef3160b8e))
+* poap network ([b877469](https://github.com/lemonadesocial/web-new/commit/b877469dc02b482c7de593b1de93edcd8729b4e8))
+* remove cohost ([422073c](https://github.com/lemonadesocial/web-new/commit/422073c1c1dd916973f35ce00bab31dc82b0d6dc))
+* revert ([116cc23](https://github.com/lemonadesocial/web-new/commit/116cc2331a5763a5482e22e9039945e736ad1815))
+* update start date ([be6c12a](https://github.com/lemonadesocial/web-new/commit/be6c12a0be476c1759b3e832d910c22d327a2898))
+* upgrade sentry ([83e8cb9](https://github.com/lemonadesocial/web-new/commit/83e8cb9b364aa1b3e369731fa5500ec5cbbb000b))
+
+
+### Bug Fixes
+
+* long ticket desc ([6a340f6](https://github.com/lemonadesocial/web-new/commit/6a340f6130ebb739cdc993dd1a8dc89410580b99))
+* missing load private from event ([95cbf8b](https://github.com/lemonadesocial/web-new/commit/95cbf8b928fc7ed9e0b4b81154950e250983936f))
+* remove test prefix ([959c9cb](https://github.com/lemonadesocial/web-new/commit/959c9cb5609628a19f49e73157c090fb81b38785))
+* update ui ([67bf99f](https://github.com/lemonadesocial/web-new/commit/67bf99ffa353860985b928f6d6e6cfaa2e346e15))
+* update ui recurring ([3320b8b](https://github.com/lemonadesocial/web-new/commit/3320b8b6981b82b7f9282ee2aa547c7e11ad806d))
+
 ## [5.4.0](https://github.com/lemonadesocial/web-new/compare/v5.3.0...v5.4.0) (2025-08-23)
 
 
