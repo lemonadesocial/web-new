@@ -98,19 +98,17 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
 
       const claimMode = data.claimableOn === 'registration' ? PoapClaimMode.Registration : PoapClaimMode.CheckIn;
       const ticketTypeIds = data.selectedTicketTypes;
-      const isProd = process.env.APP_ENV === 'production';
 
       createPoapDrop({
         variables: {
           input: {
-            name: isProd ? data.name.trim() : `TEST ${data.name.trim()}`,
+            name: data.name.trim(),
             description: data.description.trim(),
             image: imageId,
             event: event._id,
             amount: data.totalQuantity,
             claim_mode: claimMode,
             ticket_types: ticketTypeIds.length > 0 ? ticketTypeIds : undefined,
-            private: isProd ? false : true
           }
         }
       });
