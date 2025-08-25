@@ -90,20 +90,18 @@ export function CloneEventSuccessModal({ events }: { events: Event[] }) {
 
             {events.map((event) => {
               return (
-                <>
-                  <Card.Root key={event._id} className="overflow-visible" onClick={() => handleOpen(event.shortid)}>
-                    <Card.Content className="px-3 py-2 flex gap-3">
-                      <div className="flex gap-2 flex-1">
-                        <p>{formatWithTimezone(event.start, 'MMM dd, yyyy', event.timezone)}</p>
-                        <p className="text-tertiary">{formatWithTimezone(event.start, 'EEEE', event.timezone)}</p>
-                      </div>
-                      <div className="flex gap-1 items-center">
-                        <p className="text-tertiary">{formatWithTimezone(event.start, 'hh:mm a', event.timezone)}</p>
-                        <i className="text-quaternary icon-arrow-outward size-5" />
-                      </div>
-                    </Card.Content>
-                  </Card.Root>
-                </>
+                <Card.Root key={event._id} className="overflow-visible" onClick={() => handleOpen(event.shortid)}>
+                  <Card.Content className="px-3 py-2 flex gap-3">
+                    <div className="flex gap-2 flex-1">
+                      <p>{formatWithTimezone(event.start, 'MMM dd, yyyy', event.timezone)}</p>
+                      <p className="text-tertiary">{formatWithTimezone(event.start, 'EEEE', event.timezone)}</p>
+                    </div>
+                    <div className="flex gap-1 items-center">
+                      <p className="text-tertiary">{formatWithTimezone(event.start, 'hh:mm a', event.timezone)}</p>
+                      <i className="text-quaternary icon-arrow-outward size-5" />
+                    </div>
+                  </Card.Content>
+                </Card.Root>
               );
             })}
           </div>

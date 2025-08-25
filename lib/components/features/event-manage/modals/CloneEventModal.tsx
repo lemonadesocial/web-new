@@ -2,6 +2,7 @@ import React from 'react';
 import { addDays, format, startOfWeek } from 'date-fns';
 import { Controller, useForm } from 'react-hook-form';
 import { getTimezoneOffset } from 'date-fns-tz';
+import { getTimezone } from 'countries-and-timezones';
 
 import {
   Button,
@@ -13,7 +14,6 @@ import {
   Segment,
   Skeleton,
   Spacer,
-  toast,
   MenuItem,
 } from '$lib/components/core';
 import { DateTimePicker, Timezone } from '$lib/components/core/calendar';
@@ -28,7 +28,7 @@ import {
   SpaceRole,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
-import { roundDateToHalfHour } from '$lib/utils/date';
+import { reformatISOWithNewOffset, roundDateToHalfHour } from '$lib/utils/date';
 import { getTimezoneOption } from '$lib/utils/timezone';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { communityAvatar } from '$lib/utils/community';
@@ -79,11 +79,19 @@ export function CloneEventModal({ event }: { event: Event }) {
   });
 
   const onSubmit = (values: FormValues) => {
+    let dates = values.dates;
+    const offsetFromTimeZone = getTimezone(values.timezone!)?.utcOffsetStr;
+    if (offsetFromTimeZone) {
+      dates = values.dates.map((date) =>
+        new Date(reformatISOWithNewOffset(new Date(date), offsetFromTimeZone!)).toISOString(),
+      );
+    }
+
     cloneEvent({
       variables: {
         input: {
           event: event._id,
-          dates: values.dates,
+          dates,
           overrides: {
             timezone: values.timezone,
             private: values.private,
