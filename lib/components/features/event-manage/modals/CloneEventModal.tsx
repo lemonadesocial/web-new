@@ -148,7 +148,7 @@ export function CloneEventModal({ event }: { event: Event }) {
                       />
                     </Menu.Trigger>
 
-                    <Menu.Content className="w-full p-2">
+                    <Menu.Content className="w-full p-2 max-h-[200px] overflow-auto">
                       {({ toggle }) =>
                         communities.map((item) => {
                           return (
