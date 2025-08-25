@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.5.2](https://github.com/lemonadesocial/web-new/compare/v5.5.1...v5.5.2) (2025-08-25)
+
+
+### Bug Fixes
+
+* complete profile popup on whitelabel ([226686e](https://github.com/lemonadesocial/web-new/commit/226686e530f778896300bc8df574f05be99461ad))
+
 ## [5.5.1](https://github.com/lemonadesocial/web-new/compare/v5.5.0...v5.5.1) (2025-08-25)
 
 
