@@ -21,7 +21,8 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
 
   const [name, setName] = useState(userName);
   const [file, setFile] = useState<File | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const { client } = useClient();
   const updateEvent = useUpdateEvent();
@@ -29,21 +30,17 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
   const [manageEventCohostRequests] = useMutation(ManageEventCohostRequestsDocument, {
     onComplete: async () => {
       toast.success('Host updated successfully');
-      
+      modal.close();
+
       const { data } = await client.query({
         query: GetEventDocument,
         variables: { id: event._id },
         fetchPolicy: 'network-only'
       });
-      
+
       if (data?.getEvent) {
         updateEvent(data.getEvent as Event);
       }
-      
-      modal.close();
-    },
-    onError: (error) => {
-      toast.error(error.message);
     }
   });
 
@@ -53,7 +50,7 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
       return;
     }
 
-    setIsLoading(true);
+    setIsUpdating(true);
 
     try {
       let profileImageAvatar: string | undefined;
@@ -78,7 +75,27 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
     } catch (error: any) {
       toast.error(error.message)
     } finally {
-      setIsLoading(false);
+      setIsUpdating(false);
+    }
+  };
+
+  const handleRemoveHost = async () => {
+    setIsRemoving(true);
+
+    try {
+      await manageEventCohostRequests({
+        variables: {
+          input: {
+            decision: false,
+            event: event._id,
+            to_email: user.email,
+          }
+        }
+      });
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsRemoving(false);
     }
   };
 
@@ -121,14 +138,6 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
           </div>
 
           {
-            user._id === event.host && (
-              <p className="text-tertiary text-sm">
-                If you&apos;d like to hide the creator of this event, please transfer the event to a different community.
-              </p>
-            )
-          }
-
-          {
             !userName && <>
               <p className="text-sm text-tertiary">Help them set up their Lemonade profile so they show up nicely on the event page.</p>
               <div className="flex gap-3 items-center">
@@ -161,14 +170,31 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
           }
         </div>
 
-        <Button
-          variant="secondary"
-          className="w-full"
-          onClick={handleSendInvite}
-          loading={isLoading}
-        >
-          Update
-        </Button>
+        <div className="flex gap-2">
+          {
+            user._id !== event.host && (
+              <Button
+                variant="danger"
+                outlined
+                className="w-full"
+                onClick={handleRemoveHost}
+                disabled={isUpdating || isRemoving}
+                loading={isRemoving}
+              >
+                Remove
+              </Button>
+            )
+          }
+          <Button
+            variant="secondary"
+            className="w-full"
+            onClick={handleSendInvite}
+            disabled={isUpdating || isRemoving}
+            loading={isUpdating}
+          >
+            Update
+          </Button>
+        </div>
       </div>
     </ModalContent>
   );
