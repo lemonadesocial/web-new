@@ -15,16 +15,20 @@ import { VerifyEmailModal } from "./VerifyEmailModal";
 import { ConnectWalletModal } from "./ConnectWalletModal";
 import { ConnectWalletButton } from "./ConnectWalletButton";
 import { formatError } from "$lib/utils/crypto";
+import { useClient } from "$lib/graphql/request";
+import { GetMeDocument } from "$lib/graphql/generated/backend/graphql";
 
 interface Props {
   onSuccess?: () => void;
 }
 export function AuthModal({ onSuccess }: Props) {
   const signWallet = useSignWallet();
+  const { client } = useClient();
 
   const [email, setEmail] = useState('');
   const [currentProvider, setCurrentProvider] = useState<string>();
   const setSession = useSetAtom(sessionAtom);
+  const hydraClientId = useAtomValue(hydraClientIdAtom);
 
   const onSignInSuccess = async (token?: string) => {
     if (onSuccess) {
@@ -37,6 +41,25 @@ export function AuthModal({ onSuccess }: Props) {
       setSession({ token } as Session);
       modal.close();
       return;
+    }
+
+    if (hydraClientId) {
+      const meData = await client.query({ query: GetMeDocument, fetchPolicy: 'network-only' });
+
+      if (!meData.data?.getMe) return;
+
+      if (!meData.data.getMe.email_verified) {
+        modal.open(VerifyEmailModal);
+        return;
+      }
+  
+      if (!meData.data.getMe.kratos_wallet_address) {
+        modal.open(ConnectWalletModal, {
+          props: {
+            verifyRequired: true
+          },
+        });
+      }
     }
 
     if (!ory) return;
