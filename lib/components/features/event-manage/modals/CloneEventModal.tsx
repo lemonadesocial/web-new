@@ -58,7 +58,7 @@ export function CloneEventModal({ event }: { event: Event }) {
       dates: [roundDateToHalfHour(addDays(today, 1)).toISOString()],
       timezone: event.timezone,
       community: event.space,
-      private: false,
+      private: event.private as boolean,
     },
   });
 
