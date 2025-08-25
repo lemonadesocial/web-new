@@ -323,7 +323,7 @@ export function CloneEventModal({ event }: { event: Event }) {
           />
 
           <Button type="submit" variant="secondary" loading={loading || fetching}>
-            Create Event
+            Clone Event
           </Button>
         </form>
       </Card.Content>
