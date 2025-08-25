@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.5.1](https://github.com/lemonadesocial/web-new/compare/v5.5.0...v5.5.1) (2025-08-25)
+
+
+### Bug Fixes
+
+* menu content community ([dbfcf59](https://github.com/lemonadesocial/web-new/commit/dbfcf598a2293ee0e6e0d7e84a76ba3f55229adc))
+
+
+### Reverts
+
+* poap network ([24b9293](https://github.com/lemonadesocial/web-new/commit/24b929328b12be23df283ab5297fe2c403719440))
+
 ## [5.5.0](https://github.com/lemonadesocial/web-new/compare/v5.4.0...v5.5.0) (2025-08-25)
 
 
