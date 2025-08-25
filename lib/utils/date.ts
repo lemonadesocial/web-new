@@ -21,6 +21,14 @@ export function roundToNext30Minutes(date: Date) {
   return roundedDate;
 }
 
+/**
+ * Creates a new ISO-like string from a Date object,
+ * preserving the date/time values while applying a new timezone offset.
+ *
+ * @param {Date} date - The original date object.
+ * @param {string} offset - The new timezone offset (e.g., "+08:00" or "-05:00").
+ * @returns {string} The formatted date string with the new offset.
+ */
 export function roundDateToHalfHour(date: Date) {
   const newDate = new Date(date.getTime());
 
@@ -32,4 +40,17 @@ export function roundDateToHalfHour(date: Date) {
   newDate.setMinutes(roundedMinutes, 0, 0);
 
   return newDate;
+}
+
+export function reformatISOWithNewOffset(date: Date, offsetString: string) {
+  const pad = (num: number) => String(num).padStart(2, '0');
+
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${offsetString}`;
 }
