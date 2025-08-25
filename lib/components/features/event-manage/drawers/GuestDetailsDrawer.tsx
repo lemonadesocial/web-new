@@ -151,8 +151,8 @@ export function GuestDetailsDrawer({ email, event }: { email: string; event: str
               <p className="text-lg">{guestInfo.purchased_tickets.length} {guestInfo.purchased_tickets.length === 1 ? 'Ticket' : 'Tickets'}</p>
               <div>
                 {Object.values(ticketGroups).map((group, index) => (
-                  <div key={index} className="flex items-center gap-1.5">
-                    <p className="text-tertiary">{group.count} x</p>
+                  <div key={index} className="flex items-start gap-1.5">
+                    <p className="text-tertiary flex-1 whitespace-pre">{group.count} x</p>
                     <p>{group.title}</p>
                   </div>
                 ))}
