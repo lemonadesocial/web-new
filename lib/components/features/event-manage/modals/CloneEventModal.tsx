@@ -504,7 +504,7 @@ function Recurrence({
                 value={count.toString()}
                 subfix={frequency.replace('ily', 'ys').replace('ly', 's')}
                 onChangeText={(val) => {
-                  if (Number(val) >= 1) setCount(Number(val));
+                  setCount(Number(val));
                 }}
               />
             </div>
@@ -519,8 +519,12 @@ function Recurrence({
           )}
         </div>
 
+        {count < 1 && <p className="text-warning-400">Value must be greater than or equal to 1.</p>}
+        {count > 29 && <p className="text-warning-400">Value must be less than or equal to 29.</p>}
+
         <Button
           variant="secondary"
+          disabled={count < 1 || count > 29}
           onClick={() => {
             onAdd(data?.generateRecurringDates as string[]);
             onBack();
