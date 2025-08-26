@@ -1,7 +1,7 @@
 'use client';
 import { twMerge } from 'tailwind-merge';
 
-import { Accordion, Button, Card, Checkbox, Divider, drawer, toast } from '$lib/components/core';
+import { Accordion, Button, Card, Divider, drawer, toast } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { ASSET_PREFIX } from '$lib/utils/constants';
@@ -29,7 +29,7 @@ export function Content() {
   return (
     <div>
       <div className="space-y-1">
-        <h3 className="text-lg font-medium">Welcom, {me.name}</h3>
+        <h3 className="text-lg font-medium">Welcome, {me.name || me.display_name}</h3>
         <p className="text-sm text-secondary">Quickly catch up, access your events, communities & feeds.</p>
       </div>
 
@@ -349,7 +349,7 @@ function NonLoginContent() {
   const signIn = useSignIn();
 
   return (
-    <div className="flex flex-col gap-2 mb-20 md:my-14">
+    <div className="flex flex-col gap-2 mb-20">
       <div className="rounded-md outline-2 outline-card-border overflow-hidden">
         <div
           className="w-full aspect-video max-h-[548px] p-5 md:p-16 flex flex-col justify-between"
