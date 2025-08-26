@@ -7,7 +7,6 @@ import { twMerge } from 'tailwind-merge';
 import { isNumber } from 'lodash';
 import { useSearchParams } from 'next/navigation';
 import { startOfDay } from 'date-fns';
-import { getTimezone } from 'countries-and-timezones';
 
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
@@ -23,7 +22,6 @@ import {
   File,
   GetSpaceDocument,
   GetSpacesDocument,
-  GetSpacesQuery,
   PinEventsToSpaceDocument,
   Space,
   SpaceRole,
@@ -166,7 +164,6 @@ function FormContent({ spaces, space, listToSpace }: { space?: Space; spaces: Sp
   const [title, address] = watch(['title', 'address']);
 
   const onSubmit = async (value: EventFormValue) => {
-    const offsetFromTimeZone = getTimezone(value.date.timezone!)?.utcOffsetStr;
     const startDate = combineDateAndTimeWithTimezone(new Date(value.date.start), value.date.timezone);
     const endDate = combineDateAndTimeWithTimezone(new Date(value.date.end), value.date.timezone);
 
