@@ -8,6 +8,8 @@ import { generateUrl } from "$lib/utils/cnd";
 import { EditCollectibleModal } from "../modals/EditCollectibleModal";
 import { CreateNewCollectibleModal } from "../modals/CreateNewCollectibleModal";
 import { ImportCollectibleModal } from "../modals/ImportCollectibleModal";
+import { chainsMapAtom } from "$lib/jotai";
+import { useAtomValue } from "jotai";
 
 export function Collectibles({ event }: { event: Event; }) {
   const { data: poapDropsData, loading } = useQuery(ListPoapDropsDocument, {
@@ -83,6 +85,9 @@ export function Collectibles({ event }: { event: Event; }) {
 }
 
 function CollectibleItem({ poapDrop, event }: { poapDrop: PoapDrop; event: Event }) {
+  const chains = useAtomValue(chainsMapAtom);
+  const network = chains[poapDrop.minting_network];
+
   const [updatePoapDrop] = useMutation(UpdatePoapDropDocument, {
     onError(error) {
       toast.error(error.message);
@@ -144,6 +149,9 @@ function CollectibleItem({ poapDrop, event }: { poapDrop: PoapDrop; event: Event
       }
       {
         poapDrop.status === 'failed' && <Chip size="xxs" variant="error" className="rounded-full">Failed</Chip>
+      }
+      {
+        network?.logo_url && <img src={network.logo_url} alt={network.name} className="size-4 rounded-full object-cover" />
       }
       <Menu.Root>
         <Menu.Trigger>

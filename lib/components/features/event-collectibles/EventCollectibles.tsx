@@ -1,4 +1,4 @@
-import { Event, PoapDrop } from "$lib/graphql/generated/backend/graphql";
+import { Event, PoapDrop, PoapDropStatus } from "$lib/graphql/generated/backend/graphql";
 import { useQuery } from "$lib/graphql/request";
 import { ListPoapDropsDocument } from "$lib/graphql/generated/backend/graphql";
 
@@ -9,7 +9,7 @@ export function EventCollectibles({ event }: { event: Event }) {
     variables: { event: event._id }
   });
 
-  const poapDrops = poapDropsData?.listPoapDrops || [];
+  const poapDrops = poapDropsData?.listPoapDrops.filter(poapDrop => poapDrop.status === PoapDropStatus.Ready) || [];
   const gridCols = poapDrops.length <= 2 ? 'grid-cols-2' : 'grid-cols-3';
 
   if (!poapDrops.length) return null;
