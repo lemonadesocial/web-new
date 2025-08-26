@@ -7,7 +7,7 @@ import { useSignIn } from '$lib/hooks/useSignIn';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
-import { EventCardItem, EventList, EventListCard } from '$lib/components/features/EventList';
+import { EventCardItem, EventList } from '$lib/components/features/EventList';
 import { useQuery } from '$lib/graphql/request';
 import {
   Event,
