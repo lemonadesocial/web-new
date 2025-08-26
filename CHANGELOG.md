@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.7.0](https://github.com/lemonadesocial/web-new/compare/v5.6.0...v5.7.0) (2025-08-26)
+
+
+### Features
+
+* show poap minting network ([cb5c040](https://github.com/lemonadesocial/web-new/commit/cb5c040d9b17dc06037758d9912fe03fbb81900a))
+
+
+### Bug Fixes
+
+* only show ready poaps for guests ([da2be04](https://github.com/lemonadesocial/web-new/commit/da2be04de042d0101b837fc872609a021b5548de))
+
 ## [5.6.0](https://github.com/lemonadesocial/web-new/compare/v5.5.1...v5.6.0) (2025-08-26)
 
 
