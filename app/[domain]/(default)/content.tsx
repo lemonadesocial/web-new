@@ -1,13 +1,13 @@
 'use client';
 import { twMerge } from 'tailwind-merge';
 
-import { Accordion, Button, Card, Divider, drawer } from '$lib/components/core';
+import { Accordion, Button, Card, Checkbox, Divider, drawer, toast } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
-import { EventCardItem, EventList } from '$lib/components/features/EventList';
+import { EventCardItem } from '$lib/components/features/EventList';
 import { useQuery } from '$lib/graphql/request';
 import {
   Event,
@@ -24,6 +24,8 @@ export function Content() {
 
   if (!me) return <NonLoginContent />;
 
+  const comingSoon = () => toast.success('Coming Soon!');
+
   return (
     <div>
       <div className="space-y-1">
@@ -38,7 +40,54 @@ export function Content() {
           <CommunitySection />
         </div>
 
-        <div></div>
+        <div className="hidden md:flex flex-col gap-4 min-w-[264px]">
+          <CardItem
+            onClick={() => comingSoon()}
+            className="bg-transparent"
+            image={
+              <div className="bg-accent-400/16 size-[38px] flex items-center justify-center rounded-sm">
+                <i className="icon-verified-outline text-accent-400" />
+              </div>
+            }
+            title="Get Verified"
+            subtitle={
+              <div className="flex gap-1 items-center text-tertiary">
+                <p>Powered by</p>
+                <i className="icon-self size-3.5" />
+                <p>Self</p>
+              </div>
+            }
+            rightContent={<i className="icon-chevron-right text-tertiary" />}
+          />
+
+          <CompleteYourProfile />
+
+          <CardItem
+            onClick={() => comingSoon()}
+            className="bg-transparent"
+            image={
+              <div className="bg-alert-400/16 size-[38px] flex items-center justify-center rounded-sm">
+                <i className="icon-user-group-outline text-alert-400" />
+              </div>
+            }
+            title="Team"
+            subtitle="Add people you collab with."
+            rightContent={<i className="icon-chevron-right text-tertiary" />}
+          />
+
+          <CardItem
+            onClick={() => comingSoon()}
+            className="bg-transparent"
+            image={
+              <div className="bg-success-400/16 size-[38px] flex items-center justify-center rounded-sm">
+                <i className="icon-government text-success-400" />
+              </div>
+            }
+            title="Vaults"
+            subtitle="Collect payments easily."
+            rightContent={<i className="icon-chevron-right text-tertiary" />}
+          />
+        </div>
       </div>
     </div>
   );
@@ -356,20 +405,60 @@ function CardItem({
   title,
   subtitle,
   onClick,
+  rightContent,
+  className,
 }: {
-  image: string;
+  image: string | React.ReactElement;
   title: string;
-  subtitle: string;
+  subtitle: string | React.ReactElement;
   rightContent?: React.ReactElement;
   onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
+  className?: string;
 }) {
   return (
-    <Card.Root onClick={onClick}>
-      <Card.Content className="flex gap-3">
-        <img src={image} className="size-[38px] aspect-square" />
-        <div className="space-y-0.5">
+    <Card.Root onClick={onClick} className={className}>
+      <Card.Content className="flex gap-3 items-center">
+        {typeof image === 'string' ? <img src={image} className="size-[38px] aspect-square" /> : image}
+        <div className="space-y-0.5 flex-1">
           <p className="text-lg">{title}</p>
           <p className="text-sm text-tertiary">{subtitle}</p>
+        </div>
+        {rightContent}
+      </Card.Content>
+    </Card.Root>
+  );
+}
+
+const tasks = [
+  { label: 'Verify Email', completed: true },
+  { label: 'Add Profile Photo', completed: false },
+  { label: 'Claim Username', completed: false },
+  { label: 'Connect Farcaster', completed: false },
+];
+
+function CompleteYourProfile() {
+  return (
+    <Card.Root className="bg-transparent">
+      <Card.Content className="px-4 py-3 flex flex-col gap-3">
+        <div className="flex justify-between items-center">
+          <p>Complete Your Profile</p>
+          <i className="icon-arrow-outward text-quaternary size-5 aspect-square cursor-pointer hover:text-primary" />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          {tasks.map((item, idx) => {
+            return (
+              <div key={idx} className="text-tertiary hover:text-primary flex items-center gap-2 cursor-pointer">
+                <i
+                  className={clsx(
+                    'size-4',
+                    item.completed ? 'icon-check-filled text-accent-400' : 'icon-circle-outline text-tertiary',
+                  )}
+                />
+                <p className={clsx('text-sm', item.completed && 'text-accent-400')}>{item.label}</p>
+              </div>
+            );
+          })}
         </div>
       </Card.Content>
     </Card.Root>
