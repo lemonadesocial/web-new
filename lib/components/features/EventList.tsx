@@ -68,21 +68,23 @@ function EventItem({ item }: { item: Event }) {
           {item.external_url && item.external_hostname ? (
             <p className="font-medium text-sm md:text-base text-tertiary">{`By ${item.external_hostname}`}</p>
           ) : (
-            !!users.length && <>
-              <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
-                {users.map((p) => (
-                  <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="outline outline-background" />
-                ))}
-              </div>
+            !!users.length && (
+              <>
+                <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
+                  {users.map((p) => (
+                    <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="outline outline-background" />
+                  ))}
+                </div>
 
-              <p className="font-medium text-sm md:text-base text-tertiary">
-                By{' '}
-                {users
-                  .map((p) => p?.name)
-                  .join(', ')
-                  .replace(/,(?=[^,]*$)/, ' & ')}
-              </p>
-            </>
+                <p className="font-medium text-sm md:text-base text-tertiary">
+                  By{' '}
+                  {users
+                    .map((p) => p?.name)
+                    .join(', ')
+                    .replace(/,(?=[^,]*$)/, ' & ')}
+                </p>
+              </>
+            )
           )}
         </div>
       </div>
@@ -196,7 +198,7 @@ export function EventListCard({
   );
 }
 
-function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: SpaceTag[]; onClick?: () => void }) {
+export function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: SpaceTag[]; onClick?: () => void }) {
   const users = getEventCohosts(item);
 
   return (
@@ -213,7 +215,7 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
                 </div>
               )}
 
-              <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), 'hh:mm a')}</p>
+              <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), "MMM dd 'at' hh:mm a")}</p>
               {!item.published && <Badge title="Draft" color="var(--color-warning-400)" />}
             </div>
             <p className="font-title text-lg md:text-xl font-semibold text-primary">{item.title}</p>
@@ -224,26 +226,28 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
                   {`By ${item.external_hostname}`}
                 </p>
               ) : (
-                !!users.length && <>
-                  <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
-                    {users.map((p) => (
-                      <Avatar
-                        key={p?._id}
-                        src={userAvatar(p as User)}
-                        size="sm"
-                        className="outline outline-background"
-                      />
-                    ))}
-                  </div>
+                !!users.length && (
+                  <>
+                    <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
+                      {users.map((p) => (
+                        <Avatar
+                          key={p?._id}
+                          src={userAvatar(p as User)}
+                          size="sm"
+                          className="outline outline-background"
+                        />
+                      ))}
+                    </div>
 
-                  <p className="font-medium text-tertiary text-sm md:text-base truncate">
-                    By{' '}
-                    {users
-                      .map((p) => p.display_name || p.name)
-                      .join(', ')
-                      .replace(/,(?=[^,]*$)/, ' & ')}
-                  </p>
-                </>
+                    <p className="font-medium text-tertiary text-sm md:text-base truncate">
+                      By{' '}
+                      {users
+                        .map((p) => p.display_name || p.name)
+                        .join(', ')
+                        .replace(/,(?=[^,]*$)/, ' & ')}
+                    </p>
+                  </>
+                )
               )}
             </div>
           </div>
