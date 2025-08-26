@@ -1,79 +1,112 @@
 'use client';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
-import { ASSET_PREFIX, LEMONADE_FEED_ADDRESS } from '$lib/utils/constants';
-import { Segment } from '$lib/components/core';
-import { FeedPosts } from '$lib/components/features/lens-feed/FeedPosts';
-import { PostComposer } from '$lib/components/features/lens-feed/PostComposer';
-import { useAccount, usePost } from '$lib/hooks/useLens';
-import { Timeline } from '$lib/components/features/lens-feed/Timeline';
+import { Button, Card } from '$lib/components/core';
+import { useMe } from '$lib/hooks/useMe';
+import { useSignIn } from '$lib/hooks/useSignIn';
+import { ASSET_PREFIX } from '$lib/utils/constants';
 
-type Tab = 'Following' | 'Lemonade' | 'LemonHeads' | 'Global';
+const cards = [
+  {
+    icon: 'icon-ticket',
+    color: 'bg-alert-500',
+    title: () => (
+      <p>
+        Run <span className="text-alert-400!">events</span> that power your community.
+      </p>
+    ),
+    subtitle: 'Create & manage events that your community won’t forget.',
+  },
+  {
+    icon: 'icon-community',
+    color: 'bg-warning-500',
+    title: () => (
+      <p>
+        Create <span className="text-warning-400!">hubs</span> where people come together.
+      </p>
+    ),
+    subtitle: 'Bring members together in spaces that grow with you.',
+  },
+  {
+    icon: 'icon-farcaster',
+    color: 'bg-accent-500',
+    title: () => (
+      <p>
+        Bring your Farcaster <span className="text-accent-400">channels</span> to life.
+      </p>
+    ),
+    subtitle: 'Import them, link to your hubs, and host events seamlessly.',
+  },
+  {
+    icon: 'icon-lens',
+    color: 'bg-success-500',
+    title: () => (
+      <p>
+        Deploy Lens <span className="text-success-400">feeds</span> for your hubs.
+      </p>
+    ),
+    subtitle: 'Give your community a live social layer that keeps them connected.',
+  },
+];
 
-export function HomePageContent() {
-  const router = useRouter();
-  const { createPost } = usePost();
-  const { account } = useAccount();
+export function Content() {
+  const me = useMe();
+  const signIn = useSignIn();
 
-  const [tab, setTab] = useState<Tab>('Lemonade');
-
-  const onSelectPost = (slug: string) => {
-    router.push(`/posts/${slug}`);
-  };
-
-  const onPost = async (metadata: unknown, feedAddress?: string) => {
-    createPost({ metadata, feedAddress });
-  };
-
-  const segmentItems = [
-    ...(account ? [{ value: 'Following', label: 'Following', iconLeft: 'icon-person-check' }] : []),
-    { value: 'Lemonade', label: 'Lemonade', iconLeft: 'icon-sparkles' },
-    { value: 'LemonHeads', label: 'LemonHeads', iconLeft: 'icon-passport' },
-    { value: 'Global', label: 'Global', iconLeft: 'icon-globe' },
-  ];
-
-  return (
-    <div className="space-y-5 w-full">
-      <Segment
-        size="sm"
-        selected={tab}
-        onSelect={(item) => setTab(item.value as Tab)}
-        items={segmentItems}
-        className="bg-transparent w-full md:w-fit overflow-auto no-scrollbar"
-      />
-
-      {tab !== 'LemonHeads' && <PostComposer onPost={onPost} showFeedOptions />}
-
-      {tab === 'Following' && <Timeline account={account?.address} onSelectPost={onSelectPost} />}
-
-      {tab === 'Lemonade' && <FeedPosts feedAddress={LEMONADE_FEED_ADDRESS} onSelectPost={onSelectPost} />}
-
-      {tab === 'LemonHeads' && (
-        <div className="flex gap-6 items-center flex-col mt-[108px]">
+  if (!me) {
+    return (
+      <div className="flex flex-col gap-2 mb-20 md:my-14">
+        <div className="rounded-md outline-2 outline-card-border overflow-hidden">
           <div
-            className="size-[184px] p-2 rounded-lg"
-            style={{
-              background: `url(${ASSET_PREFIX}/assets/images/lemonheads-bg.png)`,
-            }}
+            className="w-full aspect-video max-h-[548px] p-5 md:p-16 flex flex-col justify-between"
+            style={{ background: `url(${ASSET_PREFIX}/assets/images/home-bg.png) lightgray 50% / cover no-repeat` }}
           >
-            <img src={`${ASSET_PREFIX}/assets/images/lemonheads.gif`} alt="LemonHeads" className="rounded-md" />
-          </div>
-
-          <div className="space-y-2">
-            <h1 className="text-xl font-semibold text-center">LemonHeads Social Feed</h1>
-            <p className="text-accent-400 text-center">Coming Soon!</p>
-            <div>
-              <p className="text-secondary text-center">
-                An exclusive space for LemonHeads to post, connect & socialize.
+            <div className="flex flex-col gap-2 md:gap-4">
+              <h3 className="text-xl md:text-[60px] font-semibold md:leading-[72px] max-w-2/3">
+                Create your Lemonade Stand
+              </h3>
+              <p className="text-sm md:text-[24px] md:leading-9 text-secondary max-w-5/6 md:max-w-1/2">
+                Your space for events, communities, and everything in between.
               </p>
-              <p className="text-secondary text-center">Only LemonHead owners get access.</p>
+            </div>
+
+            <div className="hidden md:flex justify-between items-end">
+              <Button size="lg" onClick={() => signIn()}>
+                Get Started
+              </Button>
+              <img src={`${ASSET_PREFIX}/assets/images/waving-hand.svg`} className="size-24 aspect-square" />
+            </div>
+
+            <div className="flex md:hidden justify-between items-end">
+              <Button size="sm" onClick={() => signIn()}>
+                Get Started
+              </Button>
+              <img src={`${ASSET_PREFIX}/assets/images/waving-hand.svg`} className="size-12 aspect-square" />
             </div>
           </div>
         </div>
-      )}
 
-      {tab === 'Global' && <FeedPosts global={true} onSelectPost={onSelectPost} />}
-    </div>
-  );
+        <div className="flex flex-col md:flex-row gap-4 py-2">
+          {cards.map((item, idx) => (
+            <Card.Root key={idx}>
+              <Card.Content className="p-5 flex flex-row md:flex-col gap-4">
+                <div
+                  className={twMerge('size-14 aspect-square flex items-center justify-center rounded-sm', item.color)}
+                >
+                  <i className={twMerge('size-8', item.icon)} />
+                </div>
+
+                <div>
+                  {item.title()}
+                  <p className="text-sm text-tertiary">{item.subtitle}</p>
+                </div>
+              </Card.Content>
+            </Card.Root>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return <div></div>;
 }
