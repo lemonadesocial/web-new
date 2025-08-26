@@ -24,7 +24,7 @@ type SidebarItemProps = {
 const SidebarItem = ({ item, isActive }: SidebarItemProps) => {
   return (
     <Link href={item.path} key={item.path}>
-      <div className={clsx(' w-full', item?.label && 'tooltip tooltip-right')}>
+      <div className={clsx('w-full', item?.label && 'tooltip tooltip-right')}>
         {item?.label && (
           <div className="tooltip-content">
             <p className="text-md font-medium ">{item?.label}</p>

@@ -11,7 +11,7 @@ const cards = [
     icon: 'icon-ticket',
     color: 'bg-alert-500',
     title: () => (
-      <p>
+      <p className="md:text-lg">
         Run <span className="text-alert-400!">events</span> that power your community.
       </p>
     ),
@@ -19,10 +19,10 @@ const cards = [
   },
   {
     icon: 'icon-community',
-    color: 'bg-warning-500',
+    color: 'bg-warning-600',
     title: () => (
-      <p>
-        Create <span className="text-warning-400!">hubs</span> where people come together.
+      <p className="md:text-lg">
+        Create <span className="text-warning-400">hubs</span> where people come together.
       </p>
     ),
     subtitle: 'Bring members together in spaces that grow with you.',
@@ -31,7 +31,7 @@ const cards = [
     icon: 'icon-farcaster',
     color: 'bg-accent-500',
     title: () => (
-      <p>
+      <p className="md:text-lg">
         Bring your Farcaster <span className="text-accent-400">channels</span> to life.
       </p>
     ),
@@ -39,9 +39,9 @@ const cards = [
   },
   {
     icon: 'icon-lens',
-    color: 'bg-success-500',
+    color: 'bg-success-600',
     title: () => (
-      <p>
+      <p className="md:text-lg">
         Deploy Lens <span className="text-success-400">feeds</span> for your hubs.
       </p>
     ),
@@ -96,7 +96,7 @@ export function Content() {
                   <i className={twMerge('size-8', item.icon)} />
                 </div>
 
-                <div>
+                <div className="flex flex-col gap-1">
                   {item.title()}
                   <p className="text-sm text-tertiary">{item.subtitle}</p>
                 </div>
