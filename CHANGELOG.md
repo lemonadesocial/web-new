@@ -1,5 +1,23 @@
 # Changelog
 
+## [5.6.0](https://github.com/lemonadesocial/web-new/compare/v5.5.1...v5.6.0) (2025-08-26)
+
+
+### Features
+
+* remove unused ([dc33fb6](https://github.com/lemonadesocial/web-new/commit/dc33fb65389ee2644e8cfa0f937c1164615aed1f))
+* update combine date with timezone ([f7baac4](https://github.com/lemonadesocial/web-new/commit/f7baac4492176e5f9ac796ae0946c71de8e73cd4))
+* update min max count between 1 and 29 ([8626f36](https://github.com/lemonadesocial/web-new/commit/8626f367031d2f3b99417603df7ccbc99c54fa90))
+* update success modal clone event ([27fd1b5](https://github.com/lemonadesocial/web-new/commit/27fd1b5e935befd42cca664ddb87f00f14b169f5))
+* update ui clone success modal ([470e9f0](https://github.com/lemonadesocial/web-new/commit/470e9f050be75d04ec4272f71450257bf8c5a55f))
+
+
+### Bug Fixes
+
+* complete profile popup on whitelabel ([226686e](https://github.com/lemonadesocial/web-new/commit/226686e530f778896300bc8df574f05be99461ad))
+* update timezone ([70e65b7](https://github.com/lemonadesocial/web-new/commit/70e65b781a88f0a4b90a1dcb3f9a42999f25f244))
+* wrong condition ([ee3eaa1](https://github.com/lemonadesocial/web-new/commit/ee3eaa1c657d4598ffe31b9e2d06f50ee0545072))
+
 ## [5.5.1](https://github.com/lemonadesocial/web-new/compare/v5.5.0...v5.5.1) (2025-08-25)
 
 
