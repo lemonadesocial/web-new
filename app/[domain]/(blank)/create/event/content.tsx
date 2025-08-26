@@ -38,7 +38,7 @@ import { AddLocationPane } from '$lib/components/features/pane';
 import { uploadFiles } from '$lib/utils/file';
 import { TextEditor } from '$lib/components/core/text-editor';
 import { Map } from '$lib/components/core';
-import { reformatISOWithNewOffset } from '$lib/utils/date';
+import { combineDateAndTimeWithTimezone } from '$lib/utils/date';
 
 export function Content() {
   const signIn = useSignIn();
@@ -167,8 +167,8 @@ function FormContent({ spaces, space, listToSpace }: { space?: Space; spaces: Sp
 
   const onSubmit = async (value: EventFormValue) => {
     const offsetFromTimeZone = getTimezone(value.date.timezone!)?.utcOffsetStr;
-    const startDate = reformatISOWithNewOffset(new Date(value.date.start), offsetFromTimeZone!);
-    const endDate = reformatISOWithNewOffset(new Date(value.date.end), offsetFromTimeZone!);
+    const startDate = combineDateAndTimeWithTimezone(new Date(value.date.start), value.date.timezone);
+    const endDate = combineDateAndTimeWithTimezone(new Date(value.date.end), value.date.timezone);
 
     const { data } = await create({
       variables: {

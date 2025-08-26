@@ -28,7 +28,7 @@ import {
   SpaceRole,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
-import { reformatISOWithNewOffset, roundDateToHalfHour } from '$lib/utils/date';
+import { combineDateAndTimeWithTimezone, roundDateToHalfHour } from '$lib/utils/date';
 import { getTimezoneOption } from '$lib/utils/timezone';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { communityAvatar } from '$lib/utils/community';
@@ -79,13 +79,9 @@ export function CloneEventModal({ event }: { event: Event }) {
   });
 
   const onSubmit = (values: FormValues) => {
-    let dates = values.dates;
-    const offsetFromTimeZone = getTimezone(values.timezone!)?.utcOffsetStr;
-    if (offsetFromTimeZone) {
-      dates = values.dates.map((date) =>
-        new Date(reformatISOWithNewOffset(new Date(date), offsetFromTimeZone!)).toISOString(),
-      );
-    }
+    const dates = values.dates.map((date) =>
+      new Date(combineDateAndTimeWithTimezone(new Date(date), values.timezone)).toISOString(),
+    );
 
     cloneEvent({
       variables: {
