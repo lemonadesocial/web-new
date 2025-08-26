@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import { TZDate, tz } from '@date-fns/tz';
 
 import { Maybe } from 'graphql/jsutils/Maybe';
+import { toDate } from 'date-fns-tz';
 
 export function convertFromUtcToTimezone(date: string, timezone?: Maybe<string>) {
   return timezone ? new TZDate(date, timezone) : new Date(date);
@@ -21,6 +22,14 @@ export function roundToNext30Minutes(date: Date) {
   return roundedDate;
 }
 
+/**
+ * Creates a new ISO-like string from a Date object,
+ * preserving the date/time values while applying a new timezone offset.
+ *
+ * @param {Date} date - The original date object.
+ * @param {string} offset - The new timezone offset (e.g., "+08:00" or "-05:00").
+ * @returns {string} The formatted date string with the new offset.
+ */
 export function roundDateToHalfHour(date: Date) {
   const newDate = new Date(date.getTime());
 
@@ -32,4 +41,10 @@ export function roundDateToHalfHour(date: Date) {
   newDate.setMinutes(roundedMinutes, 0, 0);
 
   return newDate;
+}
+
+export function combineDateAndTimeWithTimezone(date: Date, timeZone?: string) {
+  if (!timeZone) return date;
+  const dateWithoutTz = format(date, "yyyy-MM-dd'T'HH:mm:ss");
+  return toDate(dateWithoutTz, { timeZone });
 }

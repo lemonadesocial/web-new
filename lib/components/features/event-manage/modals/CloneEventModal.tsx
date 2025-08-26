@@ -2,6 +2,7 @@ import React from 'react';
 import { addDays, format, startOfWeek } from 'date-fns';
 import { Controller, useForm } from 'react-hook-form';
 import { getTimezoneOffset } from 'date-fns-tz';
+import { getTimezone } from 'countries-and-timezones';
 
 import {
   Button,
@@ -13,7 +14,6 @@ import {
   Segment,
   Skeleton,
   Spacer,
-  toast,
   MenuItem,
 } from '$lib/components/core';
 import { DateTimePicker, Timezone } from '$lib/components/core/calendar';
@@ -21,16 +21,18 @@ import {
   CloneEventDocument,
   Event,
   GenerateRecurringDatesDocument,
+  GetEventDocument,
   GetSpacesDocument,
   RecurringRepeat,
   Space,
   SpaceRole,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
-import { roundDateToHalfHour } from '$lib/utils/date';
+import { combineDateAndTimeWithTimezone, roundDateToHalfHour } from '$lib/utils/date';
 import { getTimezoneOption } from '$lib/utils/timezone';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { communityAvatar } from '$lib/utils/community';
+import { CloneEventSuccessModal } from './CloneEventSuccessModal';
 
 const STATE_OPTS = [
   { key: false, value: 'Public', icon: 'icon-globe' },
@@ -52,6 +54,7 @@ export function CloneEventModal({ event }: { event: Event }) {
 
   const today = new Date();
   const [isRecurrence, setIsRecurrence] = React.useState(false);
+  const [fetching, setFetching] = React.useState(false);
 
   const { control, setValue, handleSubmit } = useForm<FormValues>({
     defaultValues: {
@@ -63,18 +66,28 @@ export function CloneEventModal({ event }: { event: Event }) {
   });
 
   const [cloneEvent, { loading }] = useMutation(CloneEventDocument, {
-    onComplete: () => {
-      toast.success('Clone event success.');
+    onComplete: async (client, data) => {
+      setFetching(true);
+      const promises: Promise<any>[] = [];
+      data.cloneEvent.map((id) => promises.push(client.query({ query: GetEventDocument, variables: { id } })));
+
+      const list = await Promise.all(promises);
+      const events = list.map((i) => i.data.getEvent);
       modal.close();
+      setTimeout(() => modal.open(CloneEventSuccessModal, { props: { events }, dismissible: false }));
     },
   });
 
   const onSubmit = (values: FormValues) => {
+    const dates = values.dates.map((date) =>
+      new Date(combineDateAndTimeWithTimezone(new Date(date), values.timezone)).toISOString(),
+    );
+
     cloneEvent({
       variables: {
         input: {
           event: event._id,
-          dates: values.dates,
+          dates,
           overrides: {
             timezone: values.timezone,
             private: values.private,
@@ -313,8 +326,8 @@ export function CloneEventModal({ event }: { event: Event }) {
             }}
           />
 
-          <Button type="submit" variant="secondary" loading={loading}>
-            Create Event
+          <Button type="submit" variant="secondary" loading={loading || fetching}>
+            Clone Event
           </Button>
         </form>
       </Card.Content>
@@ -495,7 +508,7 @@ function Recurrence({
                 value={count.toString()}
                 subfix={frequency.replace('ily', 'ys').replace('ly', 's')}
                 onChangeText={(val) => {
-                  if (Number(val) >= 1) setCount(Number(val));
+                  setCount(Number(val));
                 }}
               />
             </div>
@@ -510,8 +523,12 @@ function Recurrence({
           )}
         </div>
 
+        {count < 1 && <p className="text-warning-400">Value must be greater than or equal to 1.</p>}
+        {count > 29 && <p className="text-warning-400">Value must be less than or equal to 29.</p>}
+
         <Button
           variant="secondary"
+          disabled={count < 1 || count > 29}
           onClick={() => {
             onAdd(data?.generateRecurringDates as string[]);
             onBack();

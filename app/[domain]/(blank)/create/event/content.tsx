@@ -22,7 +22,6 @@ import {
   File,
   GetSpaceDocument,
   GetSpacesDocument,
-  GetSpacesQuery,
   PinEventsToSpaceDocument,
   Space,
   SpaceRole,
@@ -37,6 +36,7 @@ import { AddLocationPane } from '$lib/components/features/pane';
 import { uploadFiles } from '$lib/utils/file';
 import { TextEditor } from '$lib/components/core/text-editor';
 import { Map } from '$lib/components/core';
+import { combineDateAndTimeWithTimezone } from '$lib/utils/date';
 
 export function Content() {
   const signIn = useSignIn();
@@ -164,6 +164,9 @@ function FormContent({ spaces, space, listToSpace }: { space?: Space; spaces: Sp
   const [title, address] = watch(['title', 'address']);
 
   const onSubmit = async (value: EventFormValue) => {
+    const startDate = combineDateAndTimeWithTimezone(new Date(value.date.start), value.date.timezone);
+    const endDate = combineDateAndTimeWithTimezone(new Date(value.date.end), value.date.timezone);
+
     const { data } = await create({
       variables: {
         input: {
@@ -176,8 +179,8 @@ function FormContent({ spaces, space, listToSpace }: { space?: Space; spaces: Sp
           virtual_url: value.virtual_url,
           new_new_photos: value.cover?._id ? [value.cover?._id] : undefined,
           space: value.space,
-          start: new Date(value.date.start).toISOString(),
-          end: new Date(value.date.end).toISOString(),
+          start: new Date(startDate).toISOString(),
+          end: new Date(endDate).toISOString(),
           timezone: value.date.timezone,
           theme_data: state,
           ...value.address,
