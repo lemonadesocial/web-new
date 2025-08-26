@@ -1107,6 +1107,7 @@ query ListPoapDrops($event: MongoID!) {
       _id
       title
     }
+    minting_network
   }
 }
 

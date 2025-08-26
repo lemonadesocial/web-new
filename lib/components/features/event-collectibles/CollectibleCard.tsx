@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAtomValue } from "jotai";
 
 import { PoapDrop } from "$lib/graphql/generated/backend/graphql";
 import { useQuery } from "$lib/graphql/request";
@@ -10,6 +11,7 @@ import { useMutation } from "$lib/graphql/request";
 import { useMe } from "$lib/hooks/useMe";
 import { appKit } from "$lib/utils/appkit";
 import { ConnectWallet } from "$lib/components/features/modals/ConnectWallet";
+import { chainsMapAtom } from "$lib/jotai";
 
 interface CollectibleCardProps {
   poapDrop: PoapDrop;
@@ -20,6 +22,9 @@ export function CollectibleCard({ poapDrop, eventId }: CollectibleCardProps) {
   const me = useMe();
   const [localClaimCount, setLocalClaimCount] = useState(poapDrop.claim_count || 0);
   const [localHasClaimed, setLocalHasClaimed] = useState(false);
+
+  const chains = useAtomValue(chainsMapAtom);
+  const network = chains[poapDrop.minting_network];
 
   const { data: claimsData, loading: loadingClaims } = useQuery(ListMyPoapClaimsDocument, {
     variables: { event: eventId }
@@ -51,7 +56,8 @@ export function CollectibleCard({ poapDrop, eventId }: CollectibleCardProps) {
 
   const { data: checkInData } = useQuery(GetEventCheckInStateDocument, {
     variables: { id: eventId },
-    skip: poapDrop.claim_mode !== 'check_in' || hasClaimed || outOfStock || loadingClaims
+    skip: poapDrop.claim_mode !== 'check_in' || hasClaimed || outOfStock || loadingClaims,
+    fetchPolicy: 'network-only'
   });
 
   const isEligibleForRegistration = () => {
@@ -125,7 +131,9 @@ export function CollectibleCard({ poapDrop, eventId }: CollectibleCardProps) {
       </div>
       <div className="flex items-center justify-between">
         <p className="font-lg truncate">{poapDrop.name}</p>
-        <div className="w-4 h-4" />
+        {
+          network?.logo_url && <img src={network.logo_url} alt={network.name} className="size-4 rounded-full object-cover" />
+        }
       </div>
       <div>
         <CollectibleProgressBar progress={progress} />
