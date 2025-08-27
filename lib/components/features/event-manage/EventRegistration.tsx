@@ -4,6 +4,7 @@ import { RegistrationForm } from "./registration-form/RegistrationForm";
 import { useEvent } from "./store";
 import { TicketList } from "./registration/TicketList";
 import { CouponList } from "./registration/CouponList";
+import { RegistrationEmails } from "./registration/RegistrationEmails";
 
 export function EventRegistration() {
   const event = useEvent();
@@ -16,6 +17,8 @@ export function EventRegistration() {
       <TicketList event={event} />
       <hr className="border-t border-t-divider" />
       <CouponList event={event} />
+      <hr className="border-t border-t-divider" />
+      <RegistrationEmails event={event} />
       <hr className="border-t border-t-divider" />
       <RegistrationForm />
     </div>
