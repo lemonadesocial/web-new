@@ -15,6 +15,7 @@ export function CreateCouponModal({ event }: CreateCouponModalProps) {
   const [selectedTicketTypes, setSelectedTicketTypes] = useState<string[]>([]);
   const [limitedUses, setLimitedUses] = useState(false);
   const [totalUses, setTotalUses] = useState<number | undefined>(undefined);
+  const [usesPerGuest, setUsesPerGuest] = useState<number | undefined>(undefined);
   const [percentOff, setPercentOff] = useState(50);
 
   const ticketTypes = event.event_ticket_types || [];
@@ -24,11 +25,11 @@ export function CreateCouponModal({ event }: CreateCouponModalProps) {
     onComplete: (_, data) => {
       if (data?.createEventTicketDiscounts?.payment_ticket_discounts) {
         const newDiscounts = data.createEventTicketDiscounts.payment_ticket_discounts;
-        
+
         updateEvent({
           payment_ticket_discounts: newDiscounts as any
         });
-        
+
         toast.success('Coupon created successfully');
         modal.close();
       }
@@ -44,12 +45,13 @@ export function CreateCouponModal({ event }: CreateCouponModalProps) {
       return;
     }
 
-    const ratio = (100 - percentOff) / 100;
+    const ratio = percentOff / 100;
     const discountInput = {
       code: couponCode.trim(),
       ratio,
       ticket_types: selectedTicketTypes.length > 0 ? selectedTicketTypes : undefined,
-      use_limit: limitedUses && totalUses ? totalUses : undefined
+      use_limit: limitedUses && totalUses ? totalUses : undefined,
+      use_limit_per: limitedUses && usesPerGuest ? usesPerGuest : undefined
     };
 
     createDiscount({
@@ -91,12 +93,15 @@ export function CreateCouponModal({ event }: CreateCouponModalProps) {
           <Toggle
             id="limited-uses"
             checked={limitedUses}
-            onChange={setLimitedUses}
+            onChange={checked => {
+              setLimitedUses(checked);
+              setTotalUses(checked ? 2 : undefined);
+            }}
           />
         </div>
 
         {
-          limitedUses && (
+          limitedUses && <>
             <div className="flex items-center justify-between">
               <p className="text-secondary text-sm">Total Uses</p>
               <Input
@@ -106,9 +111,22 @@ export function CreateCouponModal({ event }: CreateCouponModalProps) {
                 type="number"
                 min={0}
                 className="w-[152px]"
+                placeholder="Unlimited"
               />
             </div>
-          )
+            <div className="flex items-center justify-between">
+              <p className="text-secondary text-sm">Uses Per Guest</p>
+              <Input
+                value={usesPerGuest}
+                onChange={(e) => setUsesPerGuest(e.target.valueAsNumber)}
+                variant="outlined"
+                type="number"
+                min={0}
+                className="w-[152px]"
+                placeholder="Unlimited"
+              />
+            </div>
+          </>
         }
 
         <div className="flex items-center justify-between">
