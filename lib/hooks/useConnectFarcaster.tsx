@@ -1,3 +1,4 @@
+import { useSignIn, QRCode } from "@farcaster/auth-kit";
 import { sdk } from "@farcaster/miniapp-sdk";
 import { useEffect, useState } from "react";
 
@@ -8,8 +9,10 @@ import { dummyWalletPassword, handlePasswordLogin, handlePasswordRegistration } 
 
 import { useAuth } from "./useAuth";
 
-import { useMutation } from "../graphql/request";
 import { UpdateUserDocument } from "../graphql/generated/backend/graphql";
+import { useMutation } from "../graphql/request";
+
+import { Button, modal } from "../components/core";
 
 //-- please do not update this function
 const getFarcasterIdentifier = (fid: number) => `farcaster:${fid}`;
@@ -108,3 +111,71 @@ export const useConnectFarcaster = () => {
     }
   }, [token]);
 };
+
+const QrCodeModal = (props: { url: string }) => {
+  return (
+    <div style={{
+      padding: 21,
+      backgroundColor: "white",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: 13,
+    }}>
+      <QRCode uri={props.url} />
+      <div style={{ color: "black" }}>Scan this QR code to connect Farcaster account</div>
+    </div>
+  )
+}
+
+interface SignInData {
+  //-- user data
+  fid: number;
+  displayName: string;
+  username: string;
+  bio: string;
+
+  //-- signature data
+  pfpUrl: string;
+  nonce: string;
+  signature: string;
+  message: string;
+}
+
+interface Props {
+  disabled?: boolean;
+}
+export const FarcasterConnectButton = ({ disabled }: Props) => {
+  const [data, setData] = useState<SignInData>();
+
+  const { signIn, connect, url } = useSignIn({
+    onStatusResponse: (args: { state: 'completed' | 'pending' }) => {
+      if (args.state === 'completed') {
+        setData(args as unknown as SignInData);
+      }
+    },
+  });
+
+  useEffect(() => {
+    console.log("data", data)
+  }, [data])
+
+  useEffect(() => {
+    if (url) {
+      modal.open(QrCodeModal, { props: { url } });
+      signIn();
+    }
+  }, [url])
+
+  return (
+    <Button
+      className="flex-1"
+      variant="tertiary"
+      icon="icon-farcaster"
+      disabled={disabled}
+      onClick={() => {
+        connect();
+      }}
+    />
+  )
+}

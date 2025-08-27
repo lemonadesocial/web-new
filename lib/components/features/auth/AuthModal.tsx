@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ory } from '$lib/utils/ory';
 import { useAtomValue, useSetAtom } from "jotai";
+import '@farcaster/auth-kit/styles.css';
+import { AuthKitProvider, SignInButton } from '@farcaster/auth-kit';
 
 import { Button, ErrorText, Input, LabeledInput, modal, ModalContent, toast } from "$lib/components/core";
 import { useHandleEmail, useHandleOidc, useHandleSignature } from "$lib/hooks/useSignIn";
@@ -9,6 +11,7 @@ import { hydraClientIdAtom, Session, sessionAtom } from "$lib/jotai";
 import { appKit } from '$lib/utils/appkit';
 import { IDENTITY_TOKEN_KEY } from "$lib/utils/constants";
 import { useSignWallet } from "$lib/hooks/useSignWallet";
+import { FarcasterConnectButton } from "$lib/hooks/useConnectFarcaster";
 
 import { CodeVerification } from "./CodeVerification";
 import { VerifyEmailModal } from "./VerifyEmailModal";
@@ -55,7 +58,7 @@ export function AuthModal({ onSuccess }: Props) {
         modal.open(VerifyEmailModal);
         return;
       }
-  
+
       if (!meData.data.getMe.kratos_wallet_address) {
         modal.open(ConnectWalletModal, {
           props: {
@@ -63,7 +66,7 @@ export function AuthModal({ onSuccess }: Props) {
           },
         });
       }
-      
+
       return;
     }
 
@@ -184,6 +187,11 @@ export function AuthModal({ onSuccess }: Props) {
         <hr className="border-t -mx-4" />
 
         <div className="flex gap-2">
+          <AuthKitProvider config={{}}>
+            <FarcasterConnectButton />
+            {/* <SignInButton /> */}
+          </AuthKitProvider>
+
           <Button
             className="flex-1"
             variant="tertiary"
