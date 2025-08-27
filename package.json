@@ -1,6 +1,6 @@
 {
   "name": "web-new",
-  "version": "5.7.0",
+  "version": "6.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 8000 --experimental-https -H localhost.staging.lemonade.social",

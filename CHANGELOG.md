@@ -1,5 +1,23 @@
 # Changelog
 
+## [6.0.0](https://github.com/lemonadesocial/web-new/compare/v5.7.0...v6.0.0) (2025-08-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* edit coupon
+
+### Features
+
+* customize rsvp email ([95b45c4](https://github.com/lemonadesocial/web-new/commit/95b45c42085ca747f59967297c4eddb9b2de1ef6))
+* edit coupon ([ed20f20](https://github.com/lemonadesocial/web-new/commit/ed20f202550a3860681b7f84c050fd5f74876cdc))
+
+
+### Bug Fixes
+
+* pending limit ([3485853](https://github.com/lemonadesocial/web-new/commit/3485853d5f394108db070a56768b0929bf1ad9d8))
+* whitelabel post login popup ([43cd9f4](https://github.com/lemonadesocial/web-new/commit/43cd9f45d3e6aca9679cf35e69457c224db1cadb))
+
 ## [5.7.0](https://github.com/lemonadesocial/web-new/compare/v5.6.0...v5.7.0) (2025-08-26)
 
 
