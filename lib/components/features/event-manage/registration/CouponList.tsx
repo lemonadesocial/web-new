@@ -2,6 +2,7 @@ import { Button } from "$lib/components/core";
 import { Event } from "$lib/graphql/generated/backend/graphql";
 import { CreateCouponModal } from "../modals/CreateCouponModal";
 import { modal } from "$lib/components/core";
+import { EditCouponModal } from "../modals/EditCouponModal";
 
 export function CouponList({ event }: { event: Event }) {
   const discounts = event.payment_ticket_discounts || [];
@@ -50,9 +51,10 @@ export function CouponList({ event }: { event: Event }) {
                     </>
                   }
                 </div>
-                {/* <div className="flex gap-3 items-center">
-                  <i className="icon-edit-sharp size-5 text-tertiary cursor-pointer" />
-                </div> */}
+                <i
+                  className="icon-edit-sharp size-5 text-tertiary cursor-pointer"
+                  onClick={() => modal.open(EditCouponModal, { props: { event, coupon: discount } })}
+                />
               </div>
             ))}
         </div>
