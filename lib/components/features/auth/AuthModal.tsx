@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { ory } from '$lib/utils/ory';
-import { useAtomValue, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import '@farcaster/auth-kit/styles.css';
-import { AuthKitProvider } from '@farcaster/auth-kit';
 
 import { Button, ErrorText, Input, LabeledInput, modal, ModalContent, toast } from "$lib/components/core";
 import { useHandleEmail, useHandleOidc, useHandleSignature } from "$lib/hooks/useSignIn";
 import { EMAIL_REGEX } from "$lib/utils/regex";
-import { hydraClientIdAtom, Session, sessionAtom } from "$lib/jotai";
+import { Session, sessionAtom } from "$lib/jotai";
 import { appKit } from '$lib/utils/appkit';
 import { IDENTITY_TOKEN_KEY } from "$lib/utils/constants";
 import { useSignWallet } from "$lib/hooks/useSignWallet";
-import { FarcasterConnectButton } from "$lib/hooks/useConnectFarcaster";
+import { FarcasterConnectButton, useHandleFarcaster } from "$lib/hooks/useConnectFarcaster";
 
 import { CodeVerification } from "./CodeVerification";
 import { VerifyEmailModal } from "./VerifyEmailModal";
@@ -26,12 +25,12 @@ interface Props {
 }
 export function AuthModal({ onSuccess }: Props) {
   const signWallet = useSignWallet();
+  const { processFarcaster } = useHandleFarcaster();
   const { client } = useClient();
 
   const [email, setEmail] = useState('');
   const [currentProvider, setCurrentProvider] = useState<string>();
   const setSession = useSetAtom(sessionAtom);
-  const hydraClientId = useAtomValue(hydraClientIdAtom);
 
   const onSignInSuccess = async (token?: string) => {
     if (onSuccess) {
@@ -188,7 +187,8 @@ export function AuthModal({ onSuccess }: Props) {
 
         <div className="flex gap-2">
           <FarcasterConnectButton onSuccess={(data, signedNonce) => {
-            console.log("farcaster success", data, signedNonce);
+            modal.close();
+            processFarcaster(data, signedNonce, onSignInSuccess);
           }} />
 
           <Button

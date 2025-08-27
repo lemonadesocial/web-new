@@ -12,6 +12,7 @@ export interface Session {
   email?: string;
   wallet?: string;
   unicorn_wallet?: string;
+  farcaster_fid?: string;
   expires_at?: string;
 }
 
