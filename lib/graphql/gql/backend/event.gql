@@ -346,6 +346,7 @@ query GetUpcomingEvents(
     }
     me_awaiting_approval
     published
+    private
 
     visible_cohosts_expanded_new {
       _id
