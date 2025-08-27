@@ -149,6 +149,7 @@ query GetEvent($id: MongoID, $shortid: String) {
       code
       ratio
       use_limit
+      use_limit_per
       use_count
       active
       ticket_types
@@ -1224,6 +1225,37 @@ mutation CreateEventTicketDiscounts($event: MongoID!, $inputs: [EventPaymentTick
       code
       ratio
       use_limit
+      use_limit_per
+      use_count
+      active
+      ticket_types
+    }
+  }
+}
+
+mutation UpdateEventTicketDiscount($event: MongoID!, $input: UpdateEventTicketDiscountInput!) {
+  updateEventTicketDiscount(event: $event, input: $input) {
+    _id
+    payment_ticket_discounts {
+      code
+      ratio
+      use_limit
+      use_limit_per
+      use_count
+      active
+      ticket_types
+    }
+  }
+}
+
+mutation DeleteEventTicketDiscounts($event: MongoID!, $discounts: [String!]!) {
+  deleteEventTicketDiscounts(event: $event, discounts: $discounts) {
+    _id
+    payment_ticket_discounts {
+      code
+      ratio
+      use_limit
+      use_limit_per
       use_count
       active
       ticket_types
