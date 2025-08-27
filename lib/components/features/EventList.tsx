@@ -3,12 +3,13 @@ import { format, isAfter, isBefore } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 
-import { Avatar, Badge, Card, Divider, Spacer } from '$lib/components/core';
+import { Avatar, Badge, Button, Card, Divider, Spacer } from '$lib/components/core';
 import { Address, Event, SpaceTag, User } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
 import { getEventCohosts, getEventPrice } from '$lib/utils/event';
 import { convertFromUtcToTimezone, formatWithTimezone } from '$lib/utils/date';
+import { useRouter } from 'next/navigation';
 
 export function EventList({
   events,
@@ -198,7 +199,17 @@ export function EventListCard({
   );
 }
 
-export function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: SpaceTag[]; onClick?: () => void }) {
+export function EventCardItem({
+  item,
+  tags = [],
+  onClick,
+  onManage,
+}: {
+  item: Event;
+  tags?: SpaceTag[];
+  onClick?: () => void;
+  onManage?: React.MouseEventHandler<HTMLButtonElement>;
+}) {
   const users = getEventCohosts(item);
 
   return (
@@ -218,7 +229,15 @@ export function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?
               <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), "MMM dd 'at' hh:mm a")}</p>
               {!item.published && <Badge title="Draft" color="var(--color-warning-400)" />}
             </div>
-            <p className="font-title text-lg md:text-xl font-semibold text-primary">{item.title}</p>
+
+            <div className="flex gap-1.5 items-center">
+              {item.private && (
+                <div className="size-5 aspect-square bg-accent-400/16 rounded-full flex items-center justify-center">
+                  <i className="icon-sparkles text-accent-400 size-3" />
+                </div>
+              )}
+              <p className="font-title text-lg md:text-xl font-semibold text-primary">{item.title}</p>
+            </div>
 
             <div className="flex gap-2 item-center">
               {item.external_url && item.external_hostname ? (
@@ -261,6 +280,15 @@ export function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?
             </div>
           )}
 
+          {!!item.guests && (
+            <div className="flex flex-col gap-1">
+              <div className="inline-flex items-center gap-2">
+                <i className="icon-user-group-outline size-4" />
+                <span className="text-sm md:text-md truncate">{item.guests} guests</span>
+              </div>
+            </div>
+          )}
+
           {item.external_url && <Badge className="bg-quaternary text-tertiary" title="External" />}
 
           {!!tags.length && (
@@ -275,6 +303,14 @@ export function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?
 
           {getEventPrice(item) && (
             <Badge title={getEventPrice(item)} className="bg-success-500/[0.16] text-success-500" />
+          )}
+
+          {typeof onManage === 'function' && (
+            <div>
+              <Button variant="tertiary" size="xs" iconLeft="icon-gears" onClick={onManage}>
+                Manage
+              </Button>
+            </div>
           )}
         </div>
 

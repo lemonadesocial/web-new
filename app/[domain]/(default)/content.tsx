@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Accordion, Button, Card, Divider, drawer, toast } from '$lib/components/core';
@@ -22,6 +23,8 @@ import { EventPane } from '$lib/components/features/pane';
 export function Content() {
   const me = useMe();
 
+  const [checklist, setChecklist] = React.useState({});
+
   if (!me) return <NonLoginContent />;
 
   const comingSoon = () => toast.success('Coming Soon!');
@@ -43,7 +46,7 @@ export function Content() {
         <div className="hidden md:flex flex-col gap-4 min-w-[264px]">
           <CardItem
             onClick={() => comingSoon()}
-            className="bg-transparent"
+            className="bg-transparent [&_.title]:text-sm"
             image={
               <div className="bg-accent-400/16 size-[38px] flex items-center justify-center rounded-sm">
                 <i className="icon-verified-outline text-accent-400" />
@@ -64,7 +67,7 @@ export function Content() {
 
           <CardItem
             onClick={() => comingSoon()}
-            className="bg-transparent"
+            className="bg-transparent [&_.title]:text-sm"
             image={
               <div className="bg-alert-400/16 size-[38px] flex items-center justify-center rounded-sm">
                 <i className="icon-user-group-outline text-alert-400" />
@@ -77,7 +80,7 @@ export function Content() {
 
           <CardItem
             onClick={() => comingSoon()}
-            className="bg-transparent"
+            className="bg-transparent [&_.title]:text-sm"
             image={
               <div className="bg-success-400/16 size-[38px] flex items-center justify-center rounded-sm">
                 <i className="icon-government text-success-400" />
@@ -169,6 +172,14 @@ function UpcomingEventSection() {
             item={item as Event}
             key={item._id}
             onClick={() => drawer.open(EventPane, { props: { eventId: item._id } })}
+            onManage={
+              [item.host, ...(item.cohosts || [])].includes(me?._id)
+                ? (e) => {
+                    e.stopPropagation();
+                    router.push(`/e/manage/${item.shortid}`);
+                  }
+                : undefined
+            }
           />
         ))}
 
@@ -420,7 +431,7 @@ function CardItem({
       <Card.Content className="flex gap-3 items-center">
         {typeof image === 'string' ? <img src={image} className="size-[38px] aspect-square" /> : image}
         <div className="space-y-0.5 flex-1">
-          <p className="text-lg">{title}</p>
+          <p className="title text-lg">{title}</p>
           <p className="text-sm text-tertiary">{subtitle}</p>
         </div>
         {rightContent}

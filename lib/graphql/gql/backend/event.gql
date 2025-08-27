@@ -281,6 +281,7 @@ query GetEvents(
       email
       image_avatar
     }
+    guests
   }
 }
 
