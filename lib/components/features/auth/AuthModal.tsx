@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ory } from '$lib/utils/ory';
 import { useAtomValue, useSetAtom } from "jotai";
 import '@farcaster/auth-kit/styles.css';
-import { AuthKitProvider, SignInButton } from '@farcaster/auth-kit';
+import { AuthKitProvider } from '@farcaster/auth-kit';
 
 import { Button, ErrorText, Input, LabeledInput, modal, ModalContent, toast } from "$lib/components/core";
 import { useHandleEmail, useHandleOidc, useHandleSignature } from "$lib/hooks/useSignIn";
@@ -188,8 +188,9 @@ export function AuthModal({ onSuccess }: Props) {
 
         <div className="flex gap-2">
           <AuthKitProvider config={{}}>
-            <FarcasterConnectButton />
-            {/* <SignInButton /> */}
+            <FarcasterConnectButton onSuccess={(data, signedNonce) => {
+              console.log("farcaster success", data, signedNonce);
+            }} />
           </AuthKitProvider>
 
           <Button

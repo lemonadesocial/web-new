@@ -1,6 +1,8 @@
 import { useSignIn, QRCode } from "@farcaster/auth-kit";
 import { sdk } from "@farcaster/miniapp-sdk";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+import { request } from '$lib/utils/request';
 
 import { decodeJwt } from "../utils/jwt";
 import { ory } from "../utils/ory";
@@ -12,7 +14,7 @@ import { useAuth } from "./useAuth";
 import { UpdateUserDocument } from "../graphql/generated/backend/graphql";
 import { useMutation } from "../graphql/request";
 
-import { Button, modal } from "../components/core";
+import { Button, useModal } from "../components/core";
 
 //-- please do not update this function
 const getFarcasterIdentifier = (fid: number) => `farcaster:${fid}`;
@@ -128,7 +130,7 @@ const QrCodeModal = (props: { url: string }) => {
   )
 }
 
-interface SignInData {
+export interface SignInData {
   //-- user data
   fid: number;
   displayName: string;
@@ -142,13 +144,32 @@ interface SignInData {
   message: string;
 }
 
+export interface SignedNonce {
+  nonce: string;
+  token: string;
+}
+
+const getSignedNonce = async () => {
+  return await request<SignedNonce>(
+    `${process.env.NEXT_PUBLIC_IDENTITY_URL}/api/siwe/nonce`,
+  );
+}
+
 interface Props {
   disabled?: boolean;
+  onSuccess?: (data: SignInData, signedNonce: SignedNonce) => void;
 }
-export const FarcasterConnectButton = ({ disabled }: Props) => {
+export const FarcasterConnectButton = ({ disabled, onSuccess }: Props) => {
+  const modal = useModal();
   const [data, setData] = useState<SignInData>();
+  const signedNonce = useRef<SignedNonce>(null);
 
   const { signIn, connect, url } = useSignIn({
+    nonce: async () => {
+      const nonce = await getSignedNonce();
+      signedNonce.current = nonce;
+      return nonce.nonce;
+    },
     onStatusResponse: (args: { state: 'completed' | 'pending' }) => {
       if (args.state === 'completed') {
         setData(args as unknown as SignInData);
@@ -157,15 +178,17 @@ export const FarcasterConnectButton = ({ disabled }: Props) => {
   });
 
   useEffect(() => {
-    console.log("data", data)
+    if (data && signedNonce.current) {
+      onSuccess?.(data, signedNonce.current);
+    }
   }, [data])
 
   useEffect(() => {
-    if (url) {
+    if (url && modal) {
       modal.open(QrCodeModal, { props: { url } });
       signIn();
     }
-  }, [url])
+  }, [url, modal])
 
   return (
     <Button
