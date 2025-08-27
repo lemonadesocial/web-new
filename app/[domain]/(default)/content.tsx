@@ -16,14 +16,15 @@ import {
   GetUpcomingEventsDocument,
   Space,
   SpaceRole,
+  User,
 } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { EventPane } from '$lib/components/features/pane';
+import { useAccount } from '$lib/hooks/useLens';
+import { CompleteProfilePane } from '$lib/components/features/pane/CompleteProfilePane';
 
 export function Content() {
   const me = useMe();
-
-  const [checklist, setChecklist] = React.useState({});
 
   if (!me) return <NonLoginContent />;
 
@@ -66,31 +67,31 @@ export function Content() {
 
             <CompleteYourProfile />
 
-            <CardItem
-              onClick={() => comingSoon()}
-              className="bg-transparent [&_.title]:text-sm"
-              image={
-                <div className="bg-alert-400/16 size-[38px] flex items-center justify-center rounded-sm">
-                  <i className="icon-user-group-outline text-alert-400" />
-                </div>
-              }
-              title="Team"
-              subtitle="Add people you collab with."
-              rightContent={<i className="icon-chevron-right text-tertiary" />}
-            />
+            {/* <CardItem */}
+            {/*   onClick={() => comingSoon()} */}
+            {/*   className="bg-transparent [&_.title]:text-sm" */}
+            {/*   image={ */}
+            {/*     <div className="bg-alert-400/16 size-[38px] flex items-center justify-center rounded-sm"> */}
+            {/*       <i className="icon-user-group-outline text-alert-400" /> */}
+            {/*     </div> */}
+            {/*   } */}
+            {/*   title="Team" */}
+            {/*   subtitle="Add people you collab with." */}
+            {/*   rightContent={<i className="icon-chevron-right text-tertiary" />} */}
+            {/* /> */}
 
-            <CardItem
-              onClick={() => comingSoon()}
-              className="bg-transparent [&_.title]:text-sm"
-              image={
-                <div className="bg-success-400/16 size-[38px] flex items-center justify-center rounded-sm">
-                  <i className="icon-government text-success-400" />
-                </div>
-              }
-              title="Vaults"
-              subtitle="Collect payments easily."
-              rightContent={<i className="icon-chevron-right text-tertiary" />}
-            />
+            {/* <CardItem */}
+            {/*   onClick={() => comingSoon()} */}
+            {/*   className="bg-transparent [&_.title]:text-sm" */}
+            {/*   image={ */}
+            {/*     <div className="bg-success-400/16 size-[38px] flex items-center justify-center rounded-sm"> */}
+            {/*       <i className="icon-government text-success-400" /> */}
+            {/*     </div> */}
+            {/*   } */}
+            {/*   title="Vaults" */}
+            {/*   subtitle="Collect payments easily." */}
+            {/*   rightContent={<i className="icon-chevron-right text-tertiary" />} */}
+            {/* /> */}
           </div>
         </div>
       </div>
@@ -442,36 +443,69 @@ function CardItem({
   );
 }
 
-const tasks = [
-  { label: 'Verify Email', completed: true },
-  { label: 'Add Profile Photo', completed: false },
-  { label: 'Claim Username', completed: false },
-  { label: 'Connect Farcaster', completed: false },
-];
-
 function CompleteYourProfile() {
+  const router = useRouter();
+  const me = useMe();
+  const { account } = useAccount();
+
+  const walletVerified = me?.kratos_wallet_address;
+
+  const [tasks] = React.useState([
+    { label: 'Verify Email', completed: !!me?.email, show: true },
+    { label: 'Add Profile Photo', completed: !!me?.new_photos_expanded?.length, show: true },
+    { label: 'Add display name', completed: !!me?.name || !!me?.display_name },
+    { label: 'Add bio', completed: !!me?.description },
+    { label: 'Claim Username', completed: !!account && !!me?.kratos_wallet_address, show: true },
+    // { label: 'Download Lemonade app', completed: false },
+    { label: 'Connect wallet', completed: false },
+    { label: 'Connect Farcaster', completed: false, show: true },
+    // { label: 'Connect Stripe', completed: false },
+    // { label: 'Connect Eventbrite', completed: false },
+  ]);
+
   return (
     <Card.Root className="bg-transparent">
       <Card.Content className="px-4 py-3 flex flex-col gap-3">
         <div className="flex justify-between items-center">
           <p>Complete Your Profile</p>
-          <i className="icon-arrow-outward text-quaternary size-5 aspect-square cursor-pointer hover:text-primary" />
+          <i
+            className="icon-arrow-outward text-quaternary size-5 aspect-square cursor-pointer hover:text-primary"
+            onClick={() => drawer.open(CompleteProfilePane, { props: { tasks } })}
+          />
         </div>
 
         <div className="flex flex-col gap-2">
-          {tasks.map((item, idx) => {
-            return (
-              <div key={idx} className="text-tertiary hover:text-primary flex items-center gap-2 cursor-pointer">
-                <i
-                  className={clsx(
-                    'size-4',
-                    item.completed ? 'icon-check-filled text-accent-400' : 'icon-circle-outline text-tertiary',
-                  )}
-                />
-                <p className={clsx('text-sm', item.completed && 'text-accent-400')}>{item.label}</p>
-              </div>
-            );
-          })}
+          {tasks
+            .filter((item) => item.show)
+            .map((item, idx) => {
+              return (
+                <div
+                  key={idx}
+                  className="text-tertiary hover:text-primary flex items-center gap-2 cursor-pointer"
+                  onClick={() => router.push('/settings')}
+                >
+                  <i
+                    className={clsx(
+                      'size-4',
+                      item.completed ? 'icon-check-filled text-accent-400' : 'icon-circle-outline text-tertiary',
+                    )}
+                  />
+                  <p className="text-sm text-primary">{item.label}</p>
+                </div>
+              );
+            })}
+        </div>
+
+        <div className="flex gap-0.5">
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <div
+              key={idx}
+              className={clsx(
+                'h-2 flex-1 first:rounded-l-full last:rounded-r-full',
+                idx < tasks.filter((item) => item.show && item.completed).length ? 'bg-accent-400' : 'bg-quaternary',
+              )}
+            />
+          ))}
         </div>
       </Card.Content>
     </Card.Root>

@@ -7,9 +7,10 @@ import { Avatar, Badge, Button, Card, Divider, Spacer } from '$lib/components/co
 import { Address, Event, SpaceTag, User } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
-import { getEventCohosts, getEventPrice } from '$lib/utils/event';
+import { getEventCohosts, getEventPrice, isAttending } from '$lib/utils/event';
 import { convertFromUtcToTimezone, formatWithTimezone } from '$lib/utils/date';
 import { useRouter } from 'next/navigation';
+import { useMe } from '$lib/hooks/useMe';
 
 export function EventList({
   events,
@@ -271,11 +272,11 @@ export function EventCardItem({
             </div>
           </div>
 
-          {!!getLocation(item.address) && (
+          {!!getLocation(item) && (
             <div className="flex flex-col gap-1">
               <div className="inline-flex items-center gap-2">
                 <i className="icon-location-outline size-4" />
-                <span className="text-sm md:text-md truncate">{getLocation(item.address)}</span>
+                <span className="text-sm md:text-md truncate">{getLocation(item)}</span>
               </div>
             </div>
           )}
@@ -395,12 +396,19 @@ function SkeletonLine({ className, animate = false }: { className?: string; anim
   );
 }
 
-function getLocation(address?: Address | null) {
-  const location = [];
-  if (address?.city) location.push(address.city);
-  if (address?.country) location.push(address.country);
+function getLocation(event?: Event | null) {
+  const me = useMe();
+  const attending = me?._id && event ? isAttending(event, me?._id) : false;
 
-  return location.join(', ');
+  if (event?.address) {
+    return attending
+      ? event.address.title
+      : [event.address?.city || event.address?.region, event.address?.country].filter(Boolean).join(', ');
+  }
+
+  if (event?.virtual_url) return 'Virtual';
+
+  return '';
 }
 
 function EmptyComp() {
