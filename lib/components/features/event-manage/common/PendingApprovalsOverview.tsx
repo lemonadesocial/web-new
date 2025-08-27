@@ -41,7 +41,7 @@ export function PendingApprovalsOverview({ event, titleClassName }: PendingAppro
         </Button>
       </div>
       
-      <PendingApprovalList event={event} />
+      <PendingApprovalList event={event} limit={3} />
     </div>
   );
 }

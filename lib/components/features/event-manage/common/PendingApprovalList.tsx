@@ -14,7 +14,7 @@ interface PendingApprovalListProps {
   limit?: number;
 }
 
-export function PendingApprovalList({ event, limit = 3 }: PendingApprovalListProps) {
+export function PendingApprovalList({ event, limit = 25 }: PendingApprovalListProps) {
   const { data, refetch } = useQuery(GetEventJoinRequestsDocument, {
     variables: {
       event: event._id,

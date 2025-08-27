@@ -40,11 +40,14 @@ export function AuthModal({ onSuccess }: Props) {
       localStorage.setItem(IDENTITY_TOKEN_KEY, token);
       setSession({ token } as Session);
       modal.close();
-      return;
-    }
 
-    if (hydraClientId) {
-      const meData = await client.query({ query: GetMeDocument, fetchPolicy: 'network-only' });
+      const meData = await client.query({
+        query: GetMeDocument,
+        fetchPolicy: 'network-only',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
 
       if (!meData.data?.getMe) return;
 
@@ -60,6 +63,8 @@ export function AuthModal({ onSuccess }: Props) {
           },
         });
       }
+      
+      return;
     }
 
     if (!ory) return;
