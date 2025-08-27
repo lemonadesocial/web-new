@@ -11,6 +11,7 @@ import { getEventCohosts, getEventPrice, isAttending } from '$lib/utils/event';
 import { convertFromUtcToTimezone, formatWithTimezone } from '$lib/utils/date';
 import { useRouter } from 'next/navigation';
 import { useMe } from '$lib/hooks/useMe';
+import React from 'react';
 
 export function EventList({
   events,
@@ -213,6 +214,18 @@ export function EventCardItem({
 }) {
   const users = getEventCohosts(item);
 
+  const status = React.useMemo(() => {
+    if (!item) return;
+
+    const startDate = new Date(item.start);
+    const endDate = new Date(item.end);
+    const today = new Date();
+
+    if (isBefore(today, startDate)) return 'upcoming';
+    if (isBefore(today, endDate)) return 'going';
+    return 'ended';
+  }, [item]);
+
   return (
     <Card.Root as="button" onClick={onClick} key={`event_${item.shortid}`} className="flex flex-col gap-3">
       <Card.Content className="flex gap-6">
@@ -305,6 +318,14 @@ export function EventCardItem({
           {getEventPrice(item) && (
             <Badge title={getEventPrice(item)} className="bg-success-500/[0.16] text-success-500" />
           )}
+
+          <div className="flex gap-2 items-center">
+            {status === 'going' && (
+              <div className="bg-[#096] w-fit py-[3px] px-2 rounded-xs backdrop-blur-sm">
+                <p className="text-xs text-primary">Going</p>
+              </div>
+            )}
+          </div>
 
           {typeof onManage === 'function' && (
             <div>
