@@ -1,6 +1,6 @@
-import { useSignIn, QRCode } from "@farcaster/auth-kit";
+import { useSignIn, QRCode, AuthKitProvider } from "@farcaster/auth-kit";
 import { sdk } from "@farcaster/miniapp-sdk";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { request } from '$lib/utils/request';
 
@@ -114,22 +114,6 @@ export const useConnectFarcaster = () => {
   }, [token]);
 };
 
-const QrCodeModal = (props: { url: string }) => {
-  return (
-    <div style={{
-      padding: 21,
-      backgroundColor: "white",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      gap: 13,
-    }}>
-      <QRCode uri={props.url} />
-      <div style={{ color: "black" }}>Scan this QR code to connect Farcaster account</div>
-    </div>
-  )
-}
-
 export interface SignInData {
   //-- user data
   fid: number;
@@ -155,40 +139,63 @@ const getSignedNonce = async () => {
   );
 }
 
+const FarcasterAuthInner = (props: { nonce: string, onSuccess: (data: SignInData) => void }) => {
+  const [connected, setConnected] = useState(false);
+
+  const { signIn, connect, url } = useSignIn({
+    nonce: props.nonce,
+    onStatusResponse: (args: { state: 'completed' | 'pending' }) => {
+      if (args.state === 'completed') {
+        props.onSuccess(args as unknown as SignInData);
+      }
+    },
+  });
+
+  useEffect(() => {
+    connect().then(() => setConnected(true));
+  }, []);
+
+  useEffect(() => {
+    if (connected && url) {
+      signIn();
+    }
+  }, [connected, url])
+
+  return <div style={{ padding: 20, background: "white", display: "flex", flexDirection: "column", alignItems: "center", gap: 13 }}>
+    {url
+      ? <>
+        <QRCode uri={url} />
+        <div style={{ color: "black" }}>Scan this QR code to connect Farcaster account</div>
+      </>
+      : <div style={{ color: "black" }}>Loading</div>}
+  </div>
+}
+
+const FarcasterAuth = (props: { nonce: string, onSuccess: (data: SignInData) => void }) => {
+  return <AuthKitProvider config={{}}>
+    <FarcasterAuthInner {...props} />
+  </AuthKitProvider>
+}
+
 interface Props {
   disabled?: boolean;
   onSuccess?: (data: SignInData, signedNonce: SignedNonce) => void;
 }
 export const FarcasterConnectButton = ({ disabled, onSuccess }: Props) => {
   const modal = useModal();
-  const [data, setData] = useState<SignInData>();
-  const signedNonce = useRef<SignedNonce>(null);
-
-  const { signIn, connect, url } = useSignIn({
-    nonce: async () => {
-      const nonce = await getSignedNonce();
-      signedNonce.current = nonce;
-      return nonce.nonce;
-    },
-    onStatusResponse: (args: { state: 'completed' | 'pending' }) => {
-      if (args.state === 'completed') {
-        setData(args as unknown as SignInData);
-      }
-    },
-  });
+  const [signedNonce, setSignedNonce] = useState<SignedNonce>();
 
   useEffect(() => {
-    if (data && signedNonce.current) {
-      onSuccess?.(data, signedNonce.current);
+    if (signedNonce && modal) {
+      modal.open(FarcasterAuth, {
+        props: {
+          nonce: signedNonce.nonce, onSuccess: (data) => {
+            onSuccess?.(data, signedNonce);
+          }
+        }
+      });
     }
-  }, [data])
-
-  useEffect(() => {
-    if (url && modal) {
-      modal.open(QrCodeModal, { props: { url } });
-      signIn();
-    }
-  }, [url, modal])
+  }, [signedNonce, modal])
 
   return (
     <Button
@@ -197,7 +204,7 @@ export const FarcasterConnectButton = ({ disabled, onSuccess }: Props) => {
       icon="icon-farcaster"
       disabled={disabled}
       onClick={() => {
-        connect();
+        getSignedNonce().then(setSignedNonce);
       }}
     />
   )

@@ -187,11 +187,9 @@ export function AuthModal({ onSuccess }: Props) {
         <hr className="border-t -mx-4" />
 
         <div className="flex gap-2">
-          <AuthKitProvider config={{}}>
-            <FarcasterConnectButton onSuccess={(data, signedNonce) => {
-              console.log("farcaster success", data, signedNonce);
-            }} />
-          </AuthKitProvider>
+          <FarcasterConnectButton onSuccess={(data, signedNonce) => {
+            console.log("farcaster success", data, signedNonce);
+          }} />
 
           <Button
             className="flex-1"
