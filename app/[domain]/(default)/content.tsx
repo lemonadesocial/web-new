@@ -43,53 +43,55 @@ export function Content() {
           <CommunitySection />
         </div>
 
-        <div className="hidden md:flex flex-col gap-4 min-w-[264px]">
-          <CardItem
-            onClick={() => comingSoon()}
-            className="bg-transparent [&_.title]:text-sm"
-            image={
-              <div className="bg-accent-400/16 size-[38px] flex items-center justify-center rounded-sm">
-                <i className="icon-verified-outline text-accent-400" />
-              </div>
-            }
-            title="Get Verified"
-            subtitle={
-              <div className="flex gap-1 items-center text-tertiary">
-                <p>Powered by</p>
-                <i className="icon-self size-3.5" />
-                <p>Self</p>
-              </div>
-            }
-            rightContent={<i className="icon-chevron-right text-tertiary" />}
-          />
+        <div>
+          <div className="hidden md:flex flex-col gap-4 min-w-[264px]  sticky top-12">
+            <CardItem
+              onClick={() => comingSoon()}
+              className="bg-transparent [&_.title]:text-sm"
+              image={
+                <div className="bg-accent-400/16 size-[38px] flex items-center justify-center rounded-sm">
+                  <i className="icon-verified-outline text-accent-400" />
+                </div>
+              }
+              title="Get Verified"
+              subtitle={
+                <div className="flex gap-1 items-center text-tertiary">
+                  <p>Powered by</p>
+                  <i className="icon-self size-3.5" />
+                  <p>Self</p>
+                </div>
+              }
+              rightContent={<i className="icon-chevron-right text-tertiary" />}
+            />
 
-          <CompleteYourProfile />
+            <CompleteYourProfile />
 
-          <CardItem
-            onClick={() => comingSoon()}
-            className="bg-transparent [&_.title]:text-sm"
-            image={
-              <div className="bg-alert-400/16 size-[38px] flex items-center justify-center rounded-sm">
-                <i className="icon-user-group-outline text-alert-400" />
-              </div>
-            }
-            title="Team"
-            subtitle="Add people you collab with."
-            rightContent={<i className="icon-chevron-right text-tertiary" />}
-          />
+            <CardItem
+              onClick={() => comingSoon()}
+              className="bg-transparent [&_.title]:text-sm"
+              image={
+                <div className="bg-alert-400/16 size-[38px] flex items-center justify-center rounded-sm">
+                  <i className="icon-user-group-outline text-alert-400" />
+                </div>
+              }
+              title="Team"
+              subtitle="Add people you collab with."
+              rightContent={<i className="icon-chevron-right text-tertiary" />}
+            />
 
-          <CardItem
-            onClick={() => comingSoon()}
-            className="bg-transparent [&_.title]:text-sm"
-            image={
-              <div className="bg-success-400/16 size-[38px] flex items-center justify-center rounded-sm">
-                <i className="icon-government text-success-400" />
-              </div>
-            }
-            title="Vaults"
-            subtitle="Collect payments easily."
-            rightContent={<i className="icon-chevron-right text-tertiary" />}
-          />
+            <CardItem
+              onClick={() => comingSoon()}
+              className="bg-transparent [&_.title]:text-sm"
+              image={
+                <div className="bg-success-400/16 size-[38px] flex items-center justify-center rounded-sm">
+                  <i className="icon-government text-success-400" />
+                </div>
+              }
+              title="Vaults"
+              subtitle="Collect payments easily."
+              rightContent={<i className="icon-chevron-right text-tertiary" />}
+            />
+          </div>
         </div>
       </div>
     </div>
