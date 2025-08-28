@@ -3,12 +3,15 @@ import { format, isAfter, isBefore } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 
-import { Avatar, Badge, Card, Divider, Spacer } from '$lib/components/core';
+import { Avatar, Badge, Button, Card, Divider, Spacer } from '$lib/components/core';
 import { Address, Event, SpaceTag, User } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
-import { getEventCohosts, getEventPrice } from '$lib/utils/event';
+import { getEventCohosts, getEventPrice, isAttending } from '$lib/utils/event';
 import { convertFromUtcToTimezone, formatWithTimezone } from '$lib/utils/date';
+import { useRouter } from 'next/navigation';
+import { useMe } from '$lib/hooks/useMe';
+import React from 'react';
 
 export function EventList({
   events,
@@ -68,21 +71,23 @@ function EventItem({ item }: { item: Event }) {
           {item.external_url && item.external_hostname ? (
             <p className="font-medium text-sm md:text-base text-tertiary">{`By ${item.external_hostname}`}</p>
           ) : (
-            !!users.length && <>
-              <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
-                {users.map((p) => (
-                  <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="outline outline-background" />
-                ))}
-              </div>
+            !!users.length && (
+              <>
+                <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
+                  {users.map((p) => (
+                    <Avatar key={p?._id} src={userAvatar(p as User)} size="sm" className="outline outline-background" />
+                  ))}
+                </div>
 
-              <p className="font-medium text-sm md:text-base text-tertiary">
-                By{' '}
-                {users
-                  .map((p) => p?.name)
-                  .join(', ')
-                  .replace(/,(?=[^,]*$)/, ' & ')}
-              </p>
-            </>
+                <p className="font-medium text-sm md:text-base text-tertiary">
+                  By{' '}
+                  {users
+                    .map((p) => p?.name)
+                    .join(', ')
+                    .replace(/,(?=[^,]*$)/, ' & ')}
+                </p>
+              </>
+            )
           )}
         </div>
       </div>
@@ -196,8 +201,30 @@ export function EventListCard({
   );
 }
 
-function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: SpaceTag[]; onClick?: () => void }) {
+export function EventCardItem({
+  item,
+  tags = [],
+  onClick,
+  onManage,
+}: {
+  item: Event;
+  tags?: SpaceTag[];
+  onClick?: () => void;
+  onManage?: React.MouseEventHandler<HTMLButtonElement>;
+}) {
   const users = getEventCohosts(item);
+
+  const status = React.useMemo(() => {
+    if (!item) return;
+
+    const startDate = new Date(item.start);
+    const endDate = new Date(item.end);
+    const today = new Date();
+
+    if (isBefore(today, startDate)) return 'upcoming';
+    if (isBefore(today, endDate)) return 'going';
+    return 'ended';
+  }, [item]);
 
   return (
     <Card.Root as="button" onClick={onClick} key={`event_${item.shortid}`} className="flex flex-col gap-3">
@@ -213,10 +240,18 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
                 </div>
               )}
 
-              <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), 'hh:mm a')}</p>
+              <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), "MMM dd 'at' hh:mm a")}</p>
               {!item.published && <Badge title="Draft" color="var(--color-warning-400)" />}
             </div>
-            <p className="font-title text-lg md:text-xl font-semibold text-primary">{item.title}</p>
+
+            <div className="flex gap-1.5 items-center">
+              {item.private && (
+                <div className="size-5 aspect-square bg-accent-400/16 rounded-full flex items-center justify-center">
+                  <i className="icon-sparkles text-accent-400 size-3" />
+                </div>
+              )}
+              <p className="font-title text-lg md:text-xl font-semibold text-primary">{item.title}</p>
+            </div>
 
             <div className="flex gap-2 item-center">
               {item.external_url && item.external_hostname ? (
@@ -224,35 +259,46 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
                   {`By ${item.external_hostname}`}
                 </p>
               ) : (
-                !!users.length && <>
-                  <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
-                    {users.map((p) => (
-                      <Avatar
-                        key={p?._id}
-                        src={userAvatar(p as User)}
-                        size="sm"
-                        className="outline outline-background"
-                      />
-                    ))}
-                  </div>
+                !!users.length && (
+                  <>
+                    <div className="flex -space-x-1 overflow-hidden p-1 min-w-fit">
+                      {users.map((p) => (
+                        <Avatar
+                          key={p?._id}
+                          src={userAvatar(p as User)}
+                          size="sm"
+                          className="outline outline-background"
+                        />
+                      ))}
+                    </div>
 
-                  <p className="font-medium text-tertiary text-sm md:text-base truncate">
-                    By{' '}
-                    {users
-                      .map((p) => p.display_name || p.name)
-                      .join(', ')
-                      .replace(/,(?=[^,]*$)/, ' & ')}
-                  </p>
-                </>
+                    <p className="font-medium text-tertiary text-sm md:text-base truncate">
+                      By{' '}
+                      {users
+                        .map((p) => p.display_name || p.name)
+                        .join(', ')
+                        .replace(/,(?=[^,]*$)/, ' & ')}
+                    </p>
+                  </>
+                )
               )}
             </div>
           </div>
 
-          {!!getLocation(item.address) && (
+          {!!getLocation(item) && (
             <div className="flex flex-col gap-1">
               <div className="inline-flex items-center gap-2">
                 <i className="icon-location-outline size-4" />
-                <span className="text-sm md:text-md truncate">{getLocation(item.address)}</span>
+                <span className="text-sm md:text-md truncate">{getLocation(item)}</span>
+              </div>
+            </div>
+          )}
+
+          {!!item.guests && (
+            <div className="flex flex-col gap-1">
+              <div className="inline-flex items-center gap-2">
+                <i className="icon-user-group-outline size-4" />
+                <span className="text-sm md:text-md truncate">{item.guests} guests</span>
               </div>
             </div>
           )}
@@ -271,6 +317,22 @@ function EventCardItem({ item, tags = [], onClick }: { item: Event; tags?: Space
 
           {getEventPrice(item) && (
             <Badge title={getEventPrice(item)} className="bg-success-500/[0.16] text-success-500" />
+          )}
+
+          <div className="flex gap-2 items-center">
+            {status === 'going' && (
+              <div className="bg-[#096] w-fit py-[3px] px-2 rounded-xs backdrop-blur-sm">
+                <p className="text-xs text-primary">Going</p>
+              </div>
+            )}
+          </div>
+
+          {typeof onManage === 'function' && (
+            <div>
+              <Button variant="tertiary" size="xs" iconLeft="icon-gears" onClick={onManage}>
+                Manage
+              </Button>
+            </div>
           )}
         </div>
 
@@ -355,12 +417,19 @@ function SkeletonLine({ className, animate = false }: { className?: string; anim
   );
 }
 
-function getLocation(address?: Address | null) {
-  const location = [];
-  if (address?.city) location.push(address.city);
-  if (address?.country) location.push(address.country);
+function getLocation(event?: Event | null) {
+  const me = useMe();
+  const attending = me?._id && event ? isAttending(event, me?._id) : false;
 
-  return location.join(', ');
+  if (event?.address) {
+    return attending
+      ? event.address.title
+      : [event.address?.city || event.address?.region, event.address?.country].filter(Boolean).join(', ');
+  }
+
+  if (event?.virtual_url) return 'Virtual';
+
+  return '';
 }
 
 function EmptyComp() {

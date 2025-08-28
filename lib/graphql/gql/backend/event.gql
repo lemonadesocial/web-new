@@ -282,6 +282,7 @@ query GetEvents(
       email
       image_avatar
     }
+    guests
   }
 }
 
@@ -345,6 +346,8 @@ query GetUpcomingEvents(
     }
     me_awaiting_approval
     published
+    private
+    guests
 
     visible_cohosts_expanded_new {
       _id
@@ -416,6 +419,8 @@ query GetPastEvents(
     }
     me_awaiting_approval
     published
+    private
+    guests
 
     visible_cohosts_expanded_new {
       _id
