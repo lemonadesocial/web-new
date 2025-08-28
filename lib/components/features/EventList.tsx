@@ -324,7 +324,7 @@ export function EventCardItem({
             <Badge title={getEventPrice(item)} className="bg-success-500/[0.16] text-success-500" />
           )}
 
-          {isHost && (
+          {!isHost && (
             <div className="flex gap-2 items-center">
               {status === 'going' && (
                 <>
