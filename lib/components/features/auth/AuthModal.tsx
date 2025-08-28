@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { ory } from '$lib/utils/ory';
 import { useSetAtom } from "jotai";
-import '@farcaster/auth-kit/styles.css';
 
 import { Button, ErrorText, Input, LabeledInput, modal, ModalContent, toast } from "$lib/components/core";
 import { useHandleEmail, useHandleOidc, useHandleSignature } from "$lib/hooks/useSignIn";
