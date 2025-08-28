@@ -217,7 +217,7 @@ export function EventCardItem({
   me?: User | null;
 }) {
   const users = getEventCohosts(item);
-  const isHost = users.map((i) => i._id).includes(me?._id);
+  const isHost = item.host === me?._id || users.map((i) => i._id).includes(me?._id);
 
   const status = React.useMemo(() => {
     if (!item) return;
