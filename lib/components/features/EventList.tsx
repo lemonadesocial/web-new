@@ -144,6 +144,7 @@ export function EventListCard({
   tags?: SpaceTag[];
   onSelect?: (event: Event) => void;
 }) {
+  const me = useMe();
   if (loading) return <EventListCardSkeleton />;
   if (!events.length) return <EmptyComp />;
   return (
@@ -173,6 +174,7 @@ export function EventListCard({
                     key={item._id}
                     item={item}
                     tags={tags}
+                    me={me}
                     onClick={() => {
                       if (item.external_url) window.open(item.external_url);
                       else onSelect?.(item);
@@ -206,13 +208,16 @@ export function EventCardItem({
   tags = [],
   onClick,
   onManage,
+  me,
 }: {
   item: Event;
   tags?: SpaceTag[];
   onClick?: () => void;
   onManage?: React.MouseEventHandler<HTMLButtonElement>;
+  me?: User;
 }) {
   const users = getEventCohosts(item);
+  const isHost = users.map((i) => i._id).includes(me?._id);
 
   const status = React.useMemo(() => {
     if (!item) return;
@@ -294,7 +299,7 @@ export function EventCardItem({
             </div>
           )}
 
-          {!!item.guests && (
+          {isHost && !!item.guests && (
             <div className="flex flex-col gap-1">
               <div className="inline-flex items-center gap-2">
                 <i className="icon-user-group-outline size-4" />
@@ -319,13 +324,21 @@ export function EventCardItem({
             <Badge title={getEventPrice(item)} className="bg-success-500/[0.16] text-success-500" />
           )}
 
-          <div className="flex gap-2 items-center">
-            {status === 'going' && (
-              <div className="bg-[#096] w-fit py-[3px] px-2 rounded-xs backdrop-blur-sm">
-                <p className="text-xs text-primary">Going</p>
-              </div>
-            )}
-          </div>
+          {isHost && (
+            <div className="flex gap-2 items-center">
+              {status === 'going' && (
+                <>
+                  <div className="bg-[#096] w-fit py-[3px] px-2 rounded-xs backdrop-blur-sm">
+                    <p className="text-xs text-primary">Going</p>
+                  </div>
+
+                  <div className="text-tertiary bg-(--btn-tertiary) rounded-xs size-6 aspect-square flex items-center justify-center">
+                    <i className="icon-ticket size-3.5" />
+                  </div>
+                </>
+              )}
+            </div>
+          )}
 
           {typeof onManage === 'function' && (
             <div>
