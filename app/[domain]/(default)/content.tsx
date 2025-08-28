@@ -23,7 +23,6 @@ import { EventPane, ProfilePane } from '$lib/components/features/pane';
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { CompleteProfilePane } from '$lib/components/features/pane/CompleteProfilePane';
 import { useAppKitAccount } from '@reown/appkit/react';
-import { EditProfileModal } from '$lib/components/features/lens-account/EditProfileModal';
 import { VerifyEmailModal } from '$lib/components/features/auth/VerifyEmailModal';
 import { ClaimLemonadeUsernameModal } from '$lib/components/features/lens-account/ClaimLemonadeUsernameModal';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
@@ -37,16 +36,14 @@ export function Content() {
 
   if (!me) return <NonLoginContent />;
 
-  const comingSoon = () => toast.success('Coming Soon!');
-
   return (
-    <div>
+    <div className="pt-6 flex flex-col gap-6">
       <div className="space-y-1">
         <h3 className="text-lg font-medium">Welcome, {me.name || me.display_name}</h3>
         <p className="text-sm text-secondary">Quickly catch up, access your events, communities & feeds.</p>
       </div>
 
-      <div className="flex md:gap-14">
+      <div className="flex flex-col-reverse md:flex-row gap-6 md:gap-14">
         <div className="flex-1 flex flex-col gap-4 mb-20">
           <UpcomingEventSection />
           <Divider />
@@ -54,9 +51,9 @@ export function Content() {
         </div>
 
         <div>
-          <div className="hidden md:flex flex-col gap-4 min-w-[264px]  sticky top-12">
+          <div className="flex md:flex-col gap-4 min-w-[264px] sticky top-12 overflow-x-auto no-scrollbar">
             <CardItem
-              onClick={() => comingSoon()}
+              onClick={() => toast.success('Coming Soon!')}
               className="bg-transparent [&_.title]:text-sm"
               image={
                 <div className="bg-accent-400/16 size-[38px] flex items-center justify-center rounded-sm">
@@ -440,8 +437,8 @@ function CardItem({
   className?: string;
 }) {
   return (
-    <Card.Root onClick={onClick} className={className}>
-      <Card.Content className="flex gap-3 items-center">
+    <Card.Root onClick={onClick} className={twMerge('min-w-fit', className)}>
+      <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
         {typeof image === 'string' ? <img src={image} className="size-[38px] aspect-square" /> : image}
         <div className="space-y-0.5 flex-1">
           <p className="title text-lg">{title}</p>
@@ -451,7 +448,7 @@ function CardItem({
             <div className="text-sm text-tertiary">{subtitle}</div>
           )}
         </div>
-        {rightContent}
+        <div className="hidden md:block">{rightContent}</div>
       </Card.Content>
     </Card.Root>
   );
@@ -530,7 +527,13 @@ function CompleteYourProfile() {
           },
         }),
     },
-    { key: 'connect_farcaster', label: 'Connect Farcaster', completed: false, show: true },
+    {
+      key: 'connect_farcaster',
+      label: 'Connect Farcaster',
+      completed: false,
+      show: true,
+      onClick: () => toast.success('Coming Soon!'),
+    },
     // { label: 'Connect Stripe', completed: false },
     // { label: 'Connect Eventbrite', completed: false },
   ]);
@@ -542,50 +545,67 @@ function CompleteYourProfile() {
   }, [username]);
 
   return (
-    <Card.Root className="bg-transparent">
-      <Card.Content className="px-4 py-3 flex flex-col gap-3">
-        <div className="flex justify-between items-center">
-          <p>Complete Your Profile</p>
-          <i
-            className="icon-arrow-outward text-quaternary size-5 aspect-square cursor-pointer hover:text-primary"
-            onClick={() => drawer.open(CompleteProfilePane, { props: { tasks } })}
-          />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          {tasks
-            .filter((item) => item.show)
-            .map((item, idx) => {
-              return (
-                <div
-                  key={idx}
-                  className="text-tertiary hover:text-primary flex items-center gap-2 cursor-pointer"
-                  onClick={!item.completed ? item.onClick : undefined}
-                >
-                  <i
-                    className={clsx(
-                      'size-4',
-                      item.completed ? 'icon-check-filled text-accent-400' : 'icon-circle-outline text-tertiary',
-                    )}
-                  />
-                  <p className="text-sm text-primary">{item.label}</p>
-                </div>
-              );
-            })}
-        </div>
-
-        <div className="flex gap-0.5">
-          {Array.from({ length: 4 }).map((_, idx) => (
-            <div
-              key={idx}
-              className={clsx(
-                'h-2 flex-1 first:rounded-l-full last:rounded-r-full',
-                idx < tasks.filter((item) => item.show && item.completed).length ? 'bg-accent-400' : 'bg-quaternary',
-              )}
+    <>
+      <Card.Root className="bg-transparent hidden md:block">
+        <Card.Content className="flex px-4 py-3 flex-col gap-3">
+          <div className="flex justify-between items-center">
+            <p>Complete Your Profile</p>
+            <i
+              className="icon-arrow-outward text-quaternary size-5 aspect-square cursor-pointer hover:text-primary"
+              onClick={() => drawer.open(CompleteProfilePane, { props: { tasks } })}
             />
-          ))}
-        </div>
-      </Card.Content>
-    </Card.Root>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            {tasks
+              .filter((item) => item.show)
+              .map((item, idx) => {
+                return (
+                  <div
+                    key={idx}
+                    className="text-tertiary hover:text-primary flex items-center gap-2 cursor-pointer"
+                    onClick={!item.completed ? item.onClick : undefined}
+                  >
+                    <i
+                      className={clsx(
+                        'size-4',
+                        item.completed ? 'icon-check-filled text-accent-400' : 'icon-circle-outline text-tertiary',
+                      )}
+                    />
+                    <p className="text-sm text-primary">{item.label}</p>
+                  </div>
+                );
+              })}
+          </div>
+
+          <div className="flex gap-0.5">
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div
+                key={idx}
+                className={clsx(
+                  'h-2 flex-1 first:rounded-l-full last:rounded-r-full',
+                  idx < tasks.filter((item) => item.show && item.completed).length ? 'bg-accent-400' : 'bg-quaternary',
+                )}
+              />
+            ))}
+          </div>
+        </Card.Content>
+
+        <Card.Content className=""></Card.Content>
+      </Card.Root>
+
+      <CardItem
+        onClick={() => drawer.open(CompleteProfilePane, { props: { tasks } })}
+        className="block md:hidden bg-transparent [&_.title]:text-sm"
+        image={
+          <div className="bg-primary/8 size-[38px] flex items-center justify-center rounded-sm">
+            <i className="icon-account text-primary/56" />
+          </div>
+        }
+        title="Complete Your Profile"
+        subtitle={<p className="text-xs text-warning-400">{tasks.filter((item) => !item.completed).length} pending</p>}
+        rightContent={<i className="icon-chevron-right text-tertiary" />}
+      />
+    </>
   );
 }
