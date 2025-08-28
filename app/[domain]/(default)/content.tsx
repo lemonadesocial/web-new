@@ -175,6 +175,7 @@ function UpcomingEventSection() {
             item={item as Event}
             key={item._id}
             onClick={() => drawer.open(EventPane, { props: { eventId: item._id } })}
+            me={me}
             onManage={
               [item.host, ...(item.cohosts || [])].includes(me?._id)
                 ? (e) => {
