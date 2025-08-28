@@ -214,7 +214,7 @@ export function EventCardItem({
   tags?: SpaceTag[];
   onClick?: () => void;
   onManage?: React.MouseEventHandler<HTMLButtonElement>;
-  me?: User;
+  me?: User | null;
 }) {
   const users = getEventCohosts(item);
   const isHost = users.map((i) => i._id).includes(me?._id);
