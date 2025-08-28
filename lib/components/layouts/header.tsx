@@ -13,12 +13,13 @@ import { useLogOut } from '$lib/hooks/useLogout';
 import { Divider, Menu, MenuItem, Button, Avatar, drawer, modal } from '$lib/components/core';
 import { userAvatar } from '$lib/utils/user';
 import { useLogOut as useLensLogOut } from '$lib/hooks/useLens';
+import { useAuth } from "$lib/hooks/useAuth";
 
 import { useAccount } from '$lib/hooks/useLens';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { useConnectUnicornWallet } from '$lib/hooks/useConnectUnicornWallet';
-import { useConnectFarcaster } from '$lib/hooks/useConnectFarcaster';
+import { useHandleFarcasterMiniApp } from '$lib/hooks/useConnectFarcaster';
 // import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { ProfilePane } from '../features/pane';
 import { VerifyEmailModal } from '../features/auth/VerifyEmailModal';
@@ -63,12 +64,13 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
   const { account } = useAccount();
+  const { reload } = useAuth();
   const logOut = useLogOut();
   const { logOut: lensLogOut } = useLensLogOut();
   const signIn = useSignIn();
   // const { hasLemonhead } = useLemonhead();
   useConnectUnicornWallet();
-  useConnectFarcaster();
+  useHandleFarcasterMiniApp(reload);
 
   const router = useRouter();
 
@@ -202,7 +204,6 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
 function ConnectLens() {
   const { account } = useAccount();
   const me = useMe();
-  const [session] = useAtom(sessionAtom);
 
   const walletVerified = me?.kratos_wallet_address;
   const chainsMap = useAtomValue(chainsMapAtom);

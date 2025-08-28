@@ -10,7 +10,7 @@ import { Session, sessionAtom } from "$lib/jotai";
 import { appKit } from '$lib/utils/appkit';
 import { IDENTITY_TOKEN_KEY } from "$lib/utils/constants";
 import { useSignWallet } from "$lib/hooks/useSignWallet";
-import { FarcasterConnectButton, useHandleFarcaster } from "$lib/hooks/useConnectFarcaster";
+import { FarcasterConnectButton, useHandleFarcasterAuthKit } from "$lib/hooks/useConnectFarcaster";
 
 import { CodeVerification } from "./CodeVerification";
 import { VerifyEmailModal } from "./VerifyEmailModal";
@@ -25,7 +25,7 @@ interface Props {
 }
 export function AuthModal({ onSuccess }: Props) {
   const signWallet = useSignWallet();
-  const { processFarcaster } = useHandleFarcaster();
+  const { processAuthKitPayload } = useHandleFarcasterAuthKit();
   const { client } = useClient();
 
   const [email, setEmail] = useState('');
@@ -188,7 +188,7 @@ export function AuthModal({ onSuccess }: Props) {
         <div className="flex gap-2">
           <FarcasterConnectButton onSuccess={(data, signedNonce) => {
             modal.close();
-            processFarcaster(data, signedNonce, onSignInSuccess);
+            processAuthKitPayload(data, signedNonce, onSignInSuccess);
           }} />
 
           <Button
