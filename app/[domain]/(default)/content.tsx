@@ -22,6 +22,7 @@ import { generateUrl } from '$lib/utils/cnd';
 import { EventPane } from '$lib/components/features/pane';
 import { useAccount } from '$lib/hooks/useLens';
 import { CompleteProfilePane } from '$lib/components/features/pane/CompleteProfilePane';
+import { useAppKitAccount } from '@reown/appkit/react';
 
 export function Content() {
   const me = useMe();
@@ -202,7 +203,7 @@ function UpcomingEventSection() {
 function CommunitySection() {
   const router = useRouter();
 
-  const { data, loading } = useQuery(GetSpacesDocument, {
+  const { data } = useQuery(GetSpacesDocument, {
     variables: { roles: [SpaceRole.Admin, SpaceRole.Creator, SpaceRole.Ambassador] },
   });
 
@@ -450,6 +451,7 @@ function CompleteYourProfile() {
   const { account } = useAccount();
 
   const walletVerified = me?.kratos_wallet_address;
+  const { isConnected } = useAppKitAccount();
 
   const [tasks] = React.useState([
     { label: 'Verify Email', completed: !!me?.email, show: true },
@@ -458,7 +460,7 @@ function CompleteYourProfile() {
     { label: 'Add bio', completed: !!me?.description },
     { label: 'Claim Username', completed: !!account && !!me?.kratos_wallet_address, show: true },
     // { label: 'Download Lemonade app', completed: false },
-    { label: 'Connect wallet', completed: false },
+    { label: 'Connect wallet', completed: isConnected },
     { label: 'Connect Farcaster', completed: false, show: true },
     // { label: 'Connect Stripe', completed: false },
     // { label: 'Connect Eventbrite', completed: false },
