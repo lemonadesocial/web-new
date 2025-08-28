@@ -2,7 +2,7 @@
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Accordion, Button, Card, Divider, drawer, toast } from '$lib/components/core';
+import { Accordion, Button, Card, Divider, drawer, modal, toast } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { ASSET_PREFIX } from '$lib/utils/constants';
@@ -19,10 +19,18 @@ import {
   User,
 } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
-import { EventPane } from '$lib/components/features/pane';
-import { useAccount } from '$lib/hooks/useLens';
+import { EventPane, ProfilePane } from '$lib/components/features/pane';
+import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { CompleteProfilePane } from '$lib/components/features/pane/CompleteProfilePane';
 import { useAppKitAccount } from '@reown/appkit/react';
+import { EditProfileModal } from '$lib/components/features/lens-account/EditProfileModal';
+import { VerifyEmailModal } from '$lib/components/features/auth/VerifyEmailModal';
+import { ClaimLemonadeUsernameModal } from '$lib/components/features/lens-account/ClaimLemonadeUsernameModal';
+import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
+import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
+import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
+import { useAtomValue } from 'jotai';
+import { chainsMapAtom } from '$lib/jotai';
 
 export function Content() {
   const me = useMe();
@@ -437,7 +445,11 @@ function CardItem({
         {typeof image === 'string' ? <img src={image} className="size-[38px] aspect-square" /> : image}
         <div className="space-y-0.5 flex-1">
           <p className="title text-lg">{title}</p>
-          <p className="text-sm text-tertiary">{subtitle}</p>
+          {typeof subtitle === 'string' ? (
+            <p className="text-sm text-tertiary">{subtitle}</p>
+          ) : (
+            <div className="text-sm text-tertiary">{subtitle}</div>
+          )}
         </div>
         {rightContent}
       </Card.Content>
@@ -446,25 +458,88 @@ function CardItem({
 }
 
 function CompleteYourProfile() {
-  const router = useRouter();
   const me = useMe();
   const { account } = useAccount();
+  const { username } = useLemonadeUsername(account);
+
+  const chainsMap = useAtomValue(chainsMapAtom);
 
   const walletVerified = me?.kratos_wallet_address;
   const { isConnected } = useAppKitAccount();
 
-  const [tasks] = React.useState([
-    { label: 'Verify Email', completed: !!me?.email, show: true },
-    { label: 'Add Profile Photo', completed: !!me?.new_photos_expanded?.length, show: true },
-    { label: 'Add display name', completed: !!me?.name || !!me?.display_name },
-    { label: 'Add bio', completed: !!me?.description },
-    { label: 'Claim Username', completed: !!account && !!me?.kratos_wallet_address, show: true },
-    // { label: 'Download Lemonade app', completed: false },
-    { label: 'Connect wallet', completed: isConnected },
-    { label: 'Connect Farcaster', completed: false, show: true },
+  const openEditProfilePane = () => drawer.open(ProfilePane);
+
+  const [tasks, setTasks] = React.useState([
+    {
+      key: 'verify_email',
+      label: 'Verify Email',
+      completed: !!me?.email_verified,
+      show: true,
+      onClick: () => modal.open(VerifyEmailModal),
+    },
+    {
+      key: 'add_photo',
+      label: 'Add Profile Photo',
+      completed: !!me?.new_photos_expanded?.length,
+      show: true,
+      onClick: openEditProfilePane,
+    },
+    {
+      key: 'add_display_name',
+      label: 'Add display name',
+      completed: !!me?.name || !!me?.display_name,
+      onClick: openEditProfilePane,
+    },
+    { key: 'add_bio', label: 'Add bio', completed: !!me?.description, onClick: openEditProfilePane },
+    {
+      key: 'claim_username',
+      label: 'Claim Username',
+      completed: !!username,
+      show: true,
+      onClick: () => {
+        if (!account) {
+          modal.open(ConnectWallet, {
+            props: {
+              onConnect: () => {
+                modal.close();
+                setTimeout(() => {
+                  modal.open(SelectProfileModal);
+                });
+              },
+              chain: chainsMap[LENS_CHAIN_ID],
+            },
+          });
+        } else {
+          modal.open(ClaimLemonadeUsernameModal, { dismissible: false });
+        }
+      },
+    },
+    // {key: 'verify_email', label: 'Download Lemonade app', completed: false },
+    {
+      key: 'connect_wallet',
+      label: 'Connect wallet',
+      completed: isConnected,
+      onClick: () =>
+        modal.open(ConnectWallet, {
+          props: {
+            onConnect() {
+              setTasks((prev) =>
+                prev.map((item) => (item.key === 'connect_wallet' ? { ...item, completed: true } : item)),
+              );
+            },
+          },
+        }),
+    },
+    { key: 'connect_farcaster', label: 'Connect Farcaster', completed: false, show: true },
     // { label: 'Connect Stripe', completed: false },
     // { label: 'Connect Eventbrite', completed: false },
   ]);
+
+  React.useEffect(() => {
+    if (username) {
+      setTasks((prev) => prev.map((item) => (item.key === 'claim_username' ? { ...item, completed: true } : item)));
+    }
+  }, [username]);
 
   return (
     <Card.Root className="bg-transparent">
@@ -485,7 +560,7 @@ function CompleteYourProfile() {
                 <div
                   key={idx}
                   className="text-tertiary hover:text-primary flex items-center gap-2 cursor-pointer"
-                  onClick={() => router.push('/settings')}
+                  onClick={!item.completed ? item.onClick : undefined}
                 >
                   <i
                     className={clsx(
