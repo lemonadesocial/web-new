@@ -1,5 +1,16 @@
 # Changelog
 
+## [6.1.0](https://github.com/lemonadesocial/web-new/compare/v6.0.0...v6.1.0) (2025-08-28)
+
+
+### Features
+
+* check host display ui ([129b173](https://github.com/lemonadesocial/web-new/commit/129b17344f9f25b5a85a2439a86d8bbe3b599c26))
+* missing host ([1c74e49](https://github.com/lemonadesocial/web-new/commit/1c74e49681042a6f928578adadfd02e489cfa485))
+* revert test ([fdcee9a](https://github.com/lemonadesocial/web-new/commit/fdcee9a81791c1a5d8b7e7dd077e07dc7e4032d7))
+* update connect wallet ([a26fd88](https://github.com/lemonadesocial/web-new/commit/a26fd88b5719914b33a2e469e7383276b4636680))
+* update type ([0d1d4e4](https://github.com/lemonadesocial/web-new/commit/0d1d4e4f2ad19fc446e8b05d36cbbcb7af3ccc50))
+
 ## [6.0.0](https://github.com/lemonadesocial/web-new/compare/v5.7.0...v6.0.0) (2025-08-27)
 
 
