@@ -334,6 +334,10 @@ query GetUpcomingEvents(
       city
       title
       region
+      country
+      additional_directions
+      latitude
+      longitude
     }
     tickets {
       _id
@@ -407,6 +411,10 @@ query GetPastEvents(
       city
       title
       region
+      country
+      additional_directions
+      latitude
+      longitude
     }
     tickets {
       _id
