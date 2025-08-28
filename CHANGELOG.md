@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.1](https://github.com/lemonadesocial/web-new/compare/v6.2.0...v6.2.1) (2025-08-28)
+
+
+### Bug Fixes
+
+* typo ([1b55ce9](https://github.com/lemonadesocial/web-new/commit/1b55ce9a2b1287906027fce6fdd7fd7ebb9bdf56))
+
 ## [6.2.0](https://github.com/lemonadesocial/web-new/compare/v6.1.0...v6.2.0) (2025-08-28)
 
 
