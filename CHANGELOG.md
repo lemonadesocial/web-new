@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.0](https://github.com/lemonadesocial/web-new/compare/v6.1.0...v6.2.0) (2025-08-28)
+
+
+### Features
+
+* update empty message ([ac11789](https://github.com/lemonadesocial/web-new/commit/ac11789323d1c0f21940b528341d269da30029ed))
+
 ## [6.1.0](https://github.com/lemonadesocial/web-new/compare/v6.0.0...v6.1.0) (2025-08-28)
 
 
