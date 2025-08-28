@@ -66,3 +66,21 @@ mutation createFileUploads($uploadInfos: [FileUploadInfo!]!, $directory: String!
     presignedUrl: presigned_url
   }
 }
+
+query GetSelfVerificationStatus($config: SelfVerificationConfigInput!) {
+  getSelfVerificationStatus(config: $config) {
+    disclosures {
+      type
+      verified
+    }
+  }
+}
+
+mutation CreateSelfVerificationRequest($config: SelfVerificationConfigInput!) {
+  createSelfVerificationRequest(config: $config) {
+    endpoint
+    endpoint_type
+    scope
+    uuid
+  }
+}

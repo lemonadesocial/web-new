@@ -5,13 +5,14 @@ import { twMerge } from 'tailwind-merge';
 import { Accordion, Button, Card, Divider, drawer, modal, toast } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
-import { ASSET_PREFIX } from '$lib/utils/constants';
+import { ASSET_PREFIX, SELF_VERIFICATION_CONFIG } from '$lib/utils/constants';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { EventCardItem } from '$lib/components/features/EventList';
 import { useQuery } from '$lib/graphql/request';
 import {
   Event,
+  GetSelfVerificationStatusDocument,
   GetSpacesDocument,
   GetUpcomingEventsDocument,
   Space,
@@ -30,9 +31,17 @@ import { SelectProfileModal } from '$lib/components/features/lens-account/Select
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { useAtomValue } from 'jotai';
 import { chainsMapAtom } from '$lib/jotai';
+import { GetVerifiedModal } from '$lib/components/features/modals/GetVerifiedModal';
 
 export function Content() {
   const me = useMe();
+
+  const { data: selfVerificationStatus } = useQuery(GetSelfVerificationStatusDocument, {
+    variables: {
+      config: SELF_VERIFICATION_CONFIG
+    },
+    skip: !me,
+  });
 
   if (!me) return <NonLoginContent />;
 
@@ -52,24 +61,28 @@ export function Content() {
 
         <div>
           <div className="flex md:flex-col gap-4 min-w-[264px] sticky top-12 overflow-x-auto no-scrollbar">
-            <CardItem
-              onClick={() => toast.success('Coming Soon!')}
-              className="bg-transparent [&_.title]:text-sm"
-              image={
-                <div className="bg-accent-400/16 size-[38px] flex items-center justify-center rounded-sm">
-                  <i className="icon-verified-outline text-accent-400" />
-                </div>
-              }
-              title="Get Verified"
-              subtitle={
-                <div className="flex gap-1 items-center text-tertiary">
-                  <p>Powered by</p>
-                  <i className="icon-self size-3.5" />
-                  <p>Self</p>
-                </div>
-              }
-              rightContent={<i className="icon-chevron-right text-tertiary" />}
-            />
+            {
+              selfVerificationStatus?.getSelfVerificationStatus?.disclosures?.some(item => !item.verified) && (
+                <CardItem
+                  onClick={() => modal.open(GetVerifiedModal)}
+                  className="bg-transparent [&_.title]:text-sm"
+                  image={
+                    <div className="bg-accent-400/16 size-[38px] flex items-center justify-center rounded-sm">
+                      <i className="icon-verified-outline text-accent-400" />
+                    </div>
+                  }
+                  title="Get Verified"
+                  subtitle={
+                    <div className="flex gap-1 items-center text-tertiary">
+                      <p className="title text-lg">Powered by</p>
+                      <i className="icon-self size-3.5" />
+                      <p className="title text-lg">Self</p>
+                    </div>
+                  }
+                  rightContent={<i className="icon-chevron-right text-tertiary" />}
+                />
+              )
+            }
 
             <CompleteYourProfile />
 
@@ -185,9 +198,9 @@ function UpcomingEventSection() {
             onManage={
               [item.host, ...(item.cohosts || [])].includes(me?._id)
                 ? (e) => {
-                    e.stopPropagation();
-                    router.push(`/e/manage/${item.shortid}`);
-                  }
+                  e.stopPropagation();
+                  router.push(`/e/manage/${item.shortid}`);
+                }
                 : undefined
             }
           />
@@ -442,15 +455,17 @@ function CardItem({
         {typeof image === 'string' ? <img src={image} className="size-[38px] aspect-square" /> : image}
         <div className="space-y-0.5 flex-1">
           <p className="title text-lg">{title}</p>
-          {typeof subtitle === 'string' ? (
-            <p className="text-sm text-tertiary">{subtitle}</p>
-          ) : (
-            <div className="text-sm text-tertiary">{subtitle}</div>
-          )}
-        </div>
+          {
+            typeof subtitle === 'string' ? (
+              <p className="text-sm text-tertiary">{subtitle}</p>
+            ) : (
+              subtitle
+            )
+          }
+        </div >
         <div className="hidden md:block">{rightContent}</div>
-      </Card.Content>
-    </Card.Root>
+      </Card.Content >
+    </Card.Root >
   );
 }
 

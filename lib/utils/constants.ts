@@ -71,3 +71,9 @@ export const DEFAULT_LAYOUT_SECTIONS = [
 ];
 
 export const IDENTITY_TOKEN_KEY = 'identity_token';
+
+export const SELF_VERIFICATION_CONFIG = {
+  minimumAge: 13,
+  ofac: true,
+  nationality: true,
+};
