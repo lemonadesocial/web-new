@@ -295,8 +295,8 @@ function CommunitySection() {
         <div className="hidden only:block text-center text-gray-500 py-10">
           <EmptyCard
             icon="icon-confirmation-number"
-            title="No Upcoming Events"
-            subtitle="When you create or join events, they’ll show up here."
+            title="No Communities Yet"
+            subtitle="Communities you create and manage will appear here."
           />
         </div>
       </Accordion.Content>
