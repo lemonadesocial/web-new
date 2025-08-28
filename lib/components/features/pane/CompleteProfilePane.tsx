@@ -3,7 +3,11 @@ import { Pane } from '$lib/components/core/pane/pane';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 
-export function CompleteProfilePane({ tasks }: { tasks: { label: string; completed: boolean }[] }) {
+export function CompleteProfilePane({
+  tasks,
+}: {
+  tasks: { label: string; completed: boolean; onClick: () => void }[];
+}) {
   const router = useRouter();
   return (
     <Pane.Root>
@@ -23,7 +27,7 @@ export function CompleteProfilePane({ tasks }: { tasks: { label: string; complet
               <Card.Root
                 key={idx}
                 className="hover:text-primary flex items-center gap-2 cursor-pointer"
-                onClick={!item.completed ? () => router.push('/settings') : undefined}
+                onClick={!item.completed ? item.onClick : undefined}
               >
                 <Card.Content className="flex w-full justify-between py-3">
                   <div className="flex gap-3 flex-1">
