@@ -3,7 +3,7 @@ import React, { ReactElement } from 'react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useAtom, useAtomValue } from 'jotai';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import NextLink from 'next/link';
 
 import { chainsMapAtom, sessionAtom } from '$lib/jotai';
@@ -69,6 +69,8 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
   // const { hasLemonhead } = useLemonhead();
   useConnectUnicornWallet();
   useConnectFarcaster();
+
+  const router = useRouter();
 
   return (
     <div className="py-3 px-4 h-[56px] flex justify-between items-center z-10 gap-4 font-default">
@@ -147,7 +149,7 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
                     <Divider />
                     <div className="p-1">
                       <MenuItem title="Edit Profile" onClick={() => drawer.open(ProfilePane, { dismissible: false })} />
-                      <MenuItem title="Settings" onClick={() => window.open(`${LEMONADE_DOMAIN}/settings`, '_blank')} />
+                      <MenuItem title="Settings" onClick={() => router.push('/settings')} />
                       {account && (
                         <>
                           <MenuItem
