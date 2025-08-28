@@ -1,5 +1,14 @@
 # Changelog
 
+## [6.3.0](https://github.com/lemonadesocial/web-new/compare/v6.2.1...v6.3.0) (2025-08-28)
+
+
+### Features
+
+* update actions on Complete your profile ([7d93c58](https://github.com/lemonadesocial/web-new/commit/7d93c58beb45ff0ca52b7dc2a25739f361e1ec74))
+* update mweb home page ([0872830](https://github.com/lemonadesocial/web-new/commit/0872830b5196ce916f5d5de8091d96fc741e5ad3))
+* update settings navigation ([30dd442](https://github.com/lemonadesocial/web-new/commit/30dd442d9d62cee926db040d03677f7cf34ac22b))
+
 ## [6.2.1](https://github.com/lemonadesocial/web-new/compare/v6.2.0...v6.2.1) (2025-08-28)
 
 
