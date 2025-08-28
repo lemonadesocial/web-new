@@ -142,7 +142,7 @@ function UpcomingEventSection() {
                     router.push('/events');
                   }}
                 >
-                  All Event
+                  All Events
                 </Button>
               </div>
 
