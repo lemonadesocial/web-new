@@ -5,8 +5,8 @@ import React, { useMemo } from 'react';
 
 import { useAccount } from '$lib/hooks/useLens';
 import { useMe } from '$lib/hooks/useMe';
-import { Avatar } from '$lib/components/core';
-// import { CreatingModal } from './sidebar';
+import { Avatar, Button, modal } from '$lib/components/core';
+import { CreatingModal } from './sidebar';
 import { userAvatar } from '$lib/utils/user';
 
 export function BottomBar() {
@@ -22,24 +22,24 @@ export function BottomBar() {
     const menu: Array<{ icon: string | React.ReactElement; path?: string; custom?: boolean }> = [
       { icon: 'icon-home', path: '/' },
       { icon: 'icon-newspaper', path: '/timelines' },
+      {
+        icon: (
+          <Button
+            className="rounded-full"
+            icon="icon-plus"
+            onClick={() =>
+              modal.open(CreatingModal, {
+                className: 'm-0! rounded-b-none w-full bg-[#202022]',
+                position: 'bottom',
+              })
+            }
+          />
+        ),
+        custom: true,
+      },
       { icon: 'icon-explore', path: '/explore' },
-      // {
-      //   icon: (
-      //     <Button
-      //       className="rounded-full"
-      //       icon="icon-plus"
-      //       onClick={() =>
-      //         modal.open(CreatingModal, {
-      //           className: 'm-0! rounded-b-none w-full bg-[#202022]',
-      //           position: 'bottom',
-      //         })
-      //       }
-      //     />
-      //   ),
-      //   custom: true,
-      // },
-      { icon: 'icon-ticket', path: '/events' },
-      { icon: 'icon-community', path: '/communities' },
+      // { icon: 'icon-ticket', path: '/events' },
+      // { icon: 'icon-community', path: '/communities' },
     ];
 
     if (account || me) {
