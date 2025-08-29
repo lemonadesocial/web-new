@@ -142,7 +142,7 @@ export function GetVerifiedModal() {
         <p className="text-sm text-secondary">You'll be asked to confirm:</p>
         <div className="flex gap-2 items-center">
           <i className="icon-checkbox-sharp size-4" />
-          <p className="text-sm">Age</p>
+          <p className="text-sm">Age [over 18]</p>
         </div>
         <div className="flex gap-2 items-center">
           <i className="icon-checkbox-sharp size-4" />
