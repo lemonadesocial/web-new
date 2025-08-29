@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.4.0](https://github.com/lemonadesocial/web-new/compare/v6.3.0...v6.4.0) (2025-08-29)
+
+
+### Features
+
+* revert bottom bar mobile view ([efd426c](https://github.com/lemonadesocial/web-new/commit/efd426cba624379805dba8f883a115cbb0ba9e6f))
+
 ## [6.3.0](https://github.com/lemonadesocial/web-new/compare/v6.2.1...v6.3.0) (2025-08-28)
 
 
