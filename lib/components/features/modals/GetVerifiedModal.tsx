@@ -9,7 +9,7 @@ import { Button, modal, ModalContent, toast } from "$lib/components/core";
 import { useClient, useMutation } from "$lib/graphql/request";
 import { CreateSelfVerificationRequestDocument, GetSelfVerificationStatusDocument } from "$lib/graphql/generated/backend/graphql";
 
-import { EndpointType } from "@selfxyz/common";
+import { EndpointType, getUniversalLink } from "@selfxyz/common";
 import { SELF_VERIFICATION_CONFIG } from "$lib/utils/constants";
 import { useMe } from "$lib/hooks/useMe";
 import { userAvatar } from "$lib/utils/user";
@@ -105,14 +105,21 @@ export function GetVerifiedModal() {
       onBack={() => setShowCode(false)}
       onClose={() => modal.close()}
     >
-      <p className="text-sm text-secondary mb-4">Open the Self app on your phone and scan the QR code below to confirm your details.</p>
-      <div className="p-4 rounded-sm bg-primary/8">
-        <SelfQRcodeWrapper
-          selfApp={selfApp}
-          onSuccess={handleSuccess}
-          onError={() => setShowError(true)}
-          size={276}
-        />
+      <div className="flex flex-col gap-4">
+        <p className="text-sm text-secondary">Open the Self app on your phone and scan the QR code below to confirm your details.</p>
+        <div className="p-4 rounded-sm bg-primary/8">
+          <SelfQRcodeWrapper
+            selfApp={selfApp}
+            onSuccess={handleSuccess}
+            onError={() => setShowError(true)}
+            size={276}
+          />
+        </div>
+        {
+          universalLink && (
+            <p className="text-sm text-secondary">Already on your phone? <a href={universalLink} target="_blank" rel="noopener noreferrer" className="text-accent-400 cursor-pointer">Open Self</a></p>
+          )
+        }
       </div>
     </ModalContent>
   );
@@ -147,7 +154,7 @@ export function GetVerifiedModal() {
         </div>
       </div>
 
-      <p className="text-sm text-secondary">Please note: you'll need the <a href="https://self.xyz/" target="_blank" className="text-accent-400">Self app</a> on your phone to complete verification.</p>
+      <p className="text-sm text-secondary">Please note: you'll need the Self app on your phone to complete verification. <a href="https://self.xyz/" target="_blank" className="text-accent-400">Learn more</a>.</p>
 
       <Button
         className="w-full"
