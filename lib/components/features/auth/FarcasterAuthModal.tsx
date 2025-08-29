@@ -52,25 +52,6 @@ const FarcasterAuthInner = (props: { nonce: string, onSuccess: (data: SignInData
     );
   }
 
-  if (isMobile) {
-    return (
-      <ModalContent>
-        <div className='space-y-4'>
-          <div className='size-14 flex items-center justify-center rounded-full bg-background/64 relative'>
-            <div className='absolute -inset-1 rounded-full border-2 border-transparent'>
-              <div className='w-full h-full rounded-full border-2 border-tertiary border-t-transparent border-r-transparent animate-spin'></div>
-            </div>
-            <i className="icon-farcaster text-accent-400 size-8" />
-          </div>
-          <div className='space-y-1'>
-            <p className='text-lg'>Confirm in Farcaster</p>
-            <p className='text-sm text-secondary'>We're waiting for you to approve the sign-in on your phone. This should only take a moment.</p>
-          </div>
-        </div>
-      </ModalContent>
-    )
-  }
-
   return (
     <ModalContent
       title="Scan to Sign In"
@@ -84,6 +65,7 @@ const FarcasterAuthInner = (props: { nonce: string, onSuccess: (data: SignInData
             <QRCode uri={url} size={310} />
           </div>
         </div>
+        <p className="text-sm text-secondary">Already on your phone? <a href={url} target="_blank" rel="noopener noreferrer" className="text-accent-400 cursor-pointer">Open Farcaster</a></p>
       </div>
     </ModalContent>
   )
