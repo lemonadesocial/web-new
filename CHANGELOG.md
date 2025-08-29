@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.6.0](https://github.com/lemonadesocial/web-new/compare/v6.5.0...v6.6.0) (2025-08-29)
+
+
+### Features
+
+* update connect farcaster status ([dbff8ec](https://github.com/lemonadesocial/web-new/commit/dbff8ec3d82904bd48ae82c9699f1122c9163a53))
+
 ## [6.5.0](https://github.com/lemonadesocial/web-new/compare/v6.4.0...v6.5.0) (2025-08-29)
 
 
