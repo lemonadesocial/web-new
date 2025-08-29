@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { ory } from '$lib/utils/ory';
-import { useAtomValue, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 
 import { Button, ErrorText, Input, LabeledInput, modal, ModalContent, toast } from "$lib/components/core";
 import { useHandleEmail, useHandleOidc, useHandleSignature } from "$lib/hooks/useSignIn";
 import { EMAIL_REGEX } from "$lib/utils/regex";
-import { hydraClientIdAtom, Session, sessionAtom } from "$lib/jotai";
+import { Session, sessionAtom } from "$lib/jotai";
 import { appKit } from '$lib/utils/appkit';
 import { IDENTITY_TOKEN_KEY } from "$lib/utils/constants";
 import { useSignWallet } from "$lib/hooks/useSignWallet";
+import { useHandleFarcasterAuthKit } from "$lib/hooks/useConnectFarcaster";
 
 import { CodeVerification } from "./CodeVerification";
 import { VerifyEmailModal } from "./VerifyEmailModal";
@@ -17,18 +18,19 @@ import { ConnectWalletButton } from "./ConnectWalletButton";
 import { formatError } from "$lib/utils/crypto";
 import { useClient } from "$lib/graphql/request";
 import { GetMeDocument } from "$lib/graphql/generated/backend/graphql";
+import { FarcasterConnectButton } from "./FarcasterConnectButton";
 
 interface Props {
   onSuccess?: () => void;
 }
 export function AuthModal({ onSuccess }: Props) {
   const signWallet = useSignWallet();
+  const { processAuthKitPayload } = useHandleFarcasterAuthKit();
   const { client } = useClient();
 
   const [email, setEmail] = useState('');
   const [currentProvider, setCurrentProvider] = useState<string>();
   const setSession = useSetAtom(sessionAtom);
-  const hydraClientId = useAtomValue(hydraClientIdAtom);
 
   const onSignInSuccess = async (token?: string) => {
     if (onSuccess) {
@@ -55,7 +57,7 @@ export function AuthModal({ onSuccess }: Props) {
         modal.open(VerifyEmailModal);
         return;
       }
-  
+
       if (!meData.data.getMe.kratos_wallet_address) {
         modal.open(ConnectWalletModal, {
           props: {
@@ -63,7 +65,7 @@ export function AuthModal({ onSuccess }: Props) {
           },
         });
       }
-      
+
       return;
     }
 
@@ -195,6 +197,24 @@ export function AuthModal({ onSuccess }: Props) {
               processOidc('google');
             }}
           />
+          <ConnectWalletButton onConnect={onConnect}>
+            {(open) => (
+              <Button
+                className="flex-1"
+                variant="tertiary"
+                icon="icon-wallet text-blue-400"
+                disabled={loadingOidcOrWallet}
+                loading={loadingWallet}
+                onClick={open}
+              />
+            )}
+          </ConnectWalletButton>
+          <FarcasterConnectButton
+            onSuccess={(data, signedNonce) => {
+              modal.close();
+              processAuthKitPayload(data, signedNonce, onSignInSuccess);
+            }}
+          />
           <Button
             className="flex-1"
             variant="tertiary"
@@ -206,18 +226,6 @@ export function AuthModal({ onSuccess }: Props) {
               processOidc('apple');
             }}
           />
-          <ConnectWalletButton onConnect={onConnect}>
-            {(open) => (
-              <Button
-                className="flex-1"
-                variant="tertiary"
-                icon="icon-wallet"
-                disabled={loadingOidcOrWallet}
-                loading={loadingWallet}
-                onClick={open}
-              />
-            )}
-          </ConnectWalletButton>
         </div>
 
         {errorWallet && <ErrorText message={errorWallet} />}
