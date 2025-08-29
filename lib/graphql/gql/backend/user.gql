@@ -11,6 +11,7 @@ query GetMe {
       connected
     }
     kratos_wallet_address
+    kratos_farcaster_fid
   }
 }
 

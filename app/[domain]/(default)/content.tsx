@@ -545,7 +545,7 @@ function CompleteYourProfile() {
     {
       key: 'connect_farcaster',
       label: 'Connect Farcaster',
-      completed: false,
+      completed: !!me?.kratos_farcaster_fid,
       show: true,
       onClick: () => toast.success('Coming Soon!'),
     },
