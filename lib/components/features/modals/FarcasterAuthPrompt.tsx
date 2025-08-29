@@ -43,6 +43,7 @@ export const FarcasterAuthPrompt = (props: {
             },
           });
 
+          modal?.close();
           setDone(true);
           await props.onSuccess();
         }
@@ -113,7 +114,7 @@ export const FarcasterAuthPrompt = (props: {
       </div>
       <div className='space-y-1'>
         <p className='text-lg'>Let's Get You Started</p>
-        <p className='text-sm text-secondary'>We couldn't find a Lemonade account for your Unicorn email. Create one now or link an existing account.</p>
+        <p className='text-sm text-secondary'>We couldn't find an account connected to this Farcaster profile. Create one now or link an existing account.</p>
       </div>
       <div className='space-y-3'>
         <Button
