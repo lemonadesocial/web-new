@@ -1,5 +1,20 @@
 # Changelog
 
+## [6.5.0](https://github.com/lemonadesocial/web-new/compare/v6.4.0...v6.5.0) (2025-08-29)
+
+
+### Features
+
+* update age constraint ([cc2bd2a](https://github.com/lemonadesocial/web-new/commit/cc2bd2a04f9808651ee20425c57c1449f1d64213))
+* update farcaster mobile ux ([d63d547](https://github.com/lemonadesocial/web-new/commit/d63d547325df243884f6aa7a3a6f495fb18e41bc))
+* update self scan ([e008869](https://github.com/lemonadesocial/web-new/commit/e0088694cac9a06e99df46eb9240f62177dcea08))
+* verify self ([f50d4ab](https://github.com/lemonadesocial/web-new/commit/f50d4ab5addc17f94301ca69652db4e0754290f8))
+
+
+### Bug Fixes
+
+* farcaster dialog ([0037478](https://github.com/lemonadesocial/web-new/commit/00374780cd961d554e003d29dc74ba90df2d196b))
+
 ## [6.4.0](https://github.com/lemonadesocial/web-new/compare/v6.3.0...v6.4.0) (2025-08-29)
 
 
