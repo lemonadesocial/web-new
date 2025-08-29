@@ -9,7 +9,7 @@ import { Session, sessionAtom } from "$lib/jotai";
 import { appKit } from '$lib/utils/appkit';
 import { IDENTITY_TOKEN_KEY } from "$lib/utils/constants";
 import { useSignWallet } from "$lib/hooks/useSignWallet";
-import { FarcasterConnectButton, useHandleFarcasterAuthKit } from "$lib/hooks/useConnectFarcaster";
+import { useHandleFarcasterAuthKit } from "$lib/hooks/useConnectFarcaster";
 
 import { CodeVerification } from "./CodeVerification";
 import { VerifyEmailModal } from "./VerifyEmailModal";
@@ -18,6 +18,7 @@ import { ConnectWalletButton } from "./ConnectWalletButton";
 import { formatError } from "$lib/utils/crypto";
 import { useClient } from "$lib/graphql/request";
 import { GetMeDocument } from "$lib/graphql/generated/backend/graphql";
+import { FarcasterConnectButton } from "./FarcasterConnectButton";
 
 interface Props {
   onSuccess?: () => void;
@@ -185,11 +186,6 @@ export function AuthModal({ onSuccess }: Props) {
         <hr className="border-t -mx-4" />
 
         <div className="flex gap-2">
-          <FarcasterConnectButton onSuccess={(data, signedNonce) => {
-            modal.close();
-            processAuthKitPayload(data, signedNonce, onSignInSuccess);
-          }} />
-
           <Button
             className="flex-1"
             variant="tertiary"
@@ -199,6 +195,24 @@ export function AuthModal({ onSuccess }: Props) {
             onClick={() => {
               setCurrentProvider('google');
               processOidc('google');
+            }}
+          />
+          <ConnectWalletButton onConnect={onConnect}>
+            {(open) => (
+              <Button
+                className="flex-1"
+                variant="tertiary"
+                icon="icon-wallet text-blue-400"
+                disabled={loadingOidcOrWallet}
+                loading={loadingWallet}
+                onClick={open}
+              />
+            )}
+          </ConnectWalletButton>
+          <FarcasterConnectButton
+            onSuccess={(data, signedNonce) => {
+              modal.close();
+              processAuthKitPayload(data, signedNonce, onSignInSuccess);
             }}
           />
           <Button
@@ -212,18 +226,6 @@ export function AuthModal({ onSuccess }: Props) {
               processOidc('apple');
             }}
           />
-          <ConnectWalletButton onConnect={onConnect}>
-            {(open) => (
-              <Button
-                className="flex-1"
-                variant="tertiary"
-                icon="icon-wallet"
-                disabled={loadingOidcOrWallet}
-                loading={loadingWallet}
-                onClick={open}
-              />
-            )}
-          </ConnectWalletButton>
         </div>
 
         {errorWallet && <ErrorText message={errorWallet} />}
