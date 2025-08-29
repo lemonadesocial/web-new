@@ -2291,6 +2291,7 @@ export type EventTicketType = {
   position?: Maybe<Scalars['Int']['output']>;
   prices: Array<EventTicketPrice>;
   private?: Maybe<Scalars['Boolean']['output']>;
+  self_verification?: Maybe<SelfVerification>;
   ticket_count?: Maybe<Scalars['Float']['output']>;
   ticket_limit?: Maybe<Scalars['Float']['output']>;
   ticket_limit_per?: Maybe<Scalars['Float']['output']>;
@@ -2323,6 +2324,7 @@ export type EventTicketTypeInput = {
   prices?: InputMaybe<Array<EventTicketPriceInput>>;
   private?: InputMaybe<Scalars['Boolean']['input']>;
   removed_whitelist_emails?: InputMaybe<Array<Scalars['String']['input']>>;
+  self_verification?: InputMaybe<SelfVerificationInput>;
   ticket_limit?: InputMaybe<Scalars['Float']['input']>;
   ticket_limit_per?: InputMaybe<Scalars['Float']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
@@ -3170,6 +3172,7 @@ export type Mutation = {
   createRegistration: Scalars['Boolean']['output'];
   createRewardVault: TokenRewardVault;
   createRoom: Room;
+  createSelfVerificationRequest: UserSelfRequest;
   createSite: Site;
   createSpace: Space;
   createSpaceNewsletter: EmailSetting;
@@ -3617,6 +3620,11 @@ export type MutationCreateRewardVaultArgs = {
 
 export type MutationCreateRoomArgs = {
   input: RoomInput;
+};
+
+
+export type MutationCreateSelfVerificationRequestArgs = {
+  config: SelfVerificationConfigInput;
 };
 
 
@@ -5130,6 +5138,7 @@ export type PurchasableTicketType = {
   position?: Maybe<Scalars['Int']['output']>;
   prices: Array<EventTicketPrice>;
   private?: Maybe<Scalars['Boolean']['output']>;
+  self_verification?: Maybe<SelfVerification>;
   title: Scalars['String']['output'];
   whitelisted?: Maybe<Scalars['Boolean']['output']>;
 };
@@ -5231,6 +5240,7 @@ export type Query = {
   getRoomCredentials: RoomCredentials;
   getRooms: Array<Room>;
   getSafeFreeLimit: FreeSafeInitInfo;
+  getSelfVerificationStatus: SelfVerificationStatus;
   getSites: Array<Site>;
   getSpace?: Maybe<Space>;
   getSpaceEventLocationsLeaderboard: Array<SpaceEventLocationLeaderboard>;
@@ -5822,6 +5832,11 @@ export type QueryGetRoomsArgs = {
 
 export type QueryGetSafeFreeLimitArgs = {
   network: Scalars['String']['input'];
+};
+
+
+export type QueryGetSelfVerificationStatusArgs = {
+  config: SelfVerificationConfigInput;
 };
 
 
@@ -6898,6 +6913,55 @@ export enum SelectType {
   Multi = 'multi',
   Single = 'single'
 }
+
+export type SelfDisclosureStatus = {
+  __typename?: 'SelfDisclosureStatus';
+  type: Scalars['String']['output'];
+  verified: Scalars['Boolean']['output'];
+};
+
+export type SelfVerification = {
+  __typename?: 'SelfVerification';
+  config?: Maybe<SelfVerificationConfig>;
+  enabled?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type SelfVerificationConfig = {
+  __typename?: 'SelfVerificationConfig';
+  date_of_birth?: Maybe<Scalars['Boolean']['output']>;
+  excludedCountries?: Maybe<Array<Scalars['String']['output']>>;
+  expiry_date?: Maybe<Scalars['Boolean']['output']>;
+  gender?: Maybe<Scalars['Boolean']['output']>;
+  issuing_state?: Maybe<Scalars['Boolean']['output']>;
+  minimumAge?: Maybe<Scalars['Float']['output']>;
+  name?: Maybe<Scalars['Boolean']['output']>;
+  nationality?: Maybe<Scalars['Boolean']['output']>;
+  ofac?: Maybe<Scalars['Boolean']['output']>;
+  passport_number?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type SelfVerificationConfigInput = {
+  date_of_birth?: InputMaybe<Scalars['Boolean']['input']>;
+  excludedCountries?: InputMaybe<Array<Scalars['String']['input']>>;
+  expiry_date?: InputMaybe<Scalars['Boolean']['input']>;
+  gender?: InputMaybe<Scalars['Boolean']['input']>;
+  issuing_state?: InputMaybe<Scalars['Boolean']['input']>;
+  minimumAge?: InputMaybe<Scalars['Float']['input']>;
+  name?: InputMaybe<Scalars['Boolean']['input']>;
+  nationality?: InputMaybe<Scalars['Boolean']['input']>;
+  ofac?: InputMaybe<Scalars['Boolean']['input']>;
+  passport_number?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type SelfVerificationInput = {
+  config?: InputMaybe<SelfVerificationConfigInput>;
+  enabled?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type SelfVerificationStatus = {
+  __typename?: 'SelfVerificationStatus';
+  disclosures: Array<SelfDisclosureStatus>;
+};
 
 export type SendCodeInput = {
   phone_number: Scalars['String']['input'];
@@ -9032,6 +9096,14 @@ export enum UserPaymentVerificationState {
   Pending = 'pending'
 }
 
+export type UserSelfRequest = {
+  __typename?: 'UserSelfRequest';
+  endpoint: Scalars['String']['output'];
+  endpoint_type: Scalars['String']['output'];
+  scope: Scalars['String']['output'];
+  uuid: Scalars['String']['output'];
+};
+
 export type UserServiceOffer = {
   __typename?: 'UserServiceOffer';
   _id: Scalars['MongoID']['output'];
@@ -9766,6 +9838,20 @@ export type GetUserWalletRequestQueryVariables = Exact<{
 
 export type GetUserWalletRequestQuery = { __typename: 'Query', getUserWalletRequest: { __typename: 'UserWalletRequest', message: string, token: string } };
 
+export type GetSelfVerificationStatusQueryVariables = Exact<{
+  config: SelfVerificationConfigInput;
+}>;
+
+
+export type GetSelfVerificationStatusQuery = { __typename: 'Query', getSelfVerificationStatus: { __typename: 'SelfVerificationStatus', disclosures: Array<{ __typename: 'SelfDisclosureStatus', type: string, verified: boolean }> } };
+
+export type CreateSelfVerificationRequestMutationVariables = Exact<{
+  config: SelfVerificationConfigInput;
+}>;
+
+
+export type CreateSelfVerificationRequestMutation = { __typename: 'Mutation', createSelfVerificationRequest: { __typename: 'UserSelfRequest', endpoint: string, endpoint_type: string, scope: string, uuid: string } };
+
 export type CreateStripeCardMutationVariables = Exact<{
   paymentMethod: Scalars['String']['input'];
 }>;
@@ -10245,6 +10331,8 @@ export const GetListLemonheadSponsorsDocument = {"kind":"Document","definitions"
 export const CanMintLemonheadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CanMintLemonhead"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"canMintLemonhead"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"wallet"},"value":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"can_mint"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}}]}}]} as unknown as DocumentNode<CanMintLemonheadQuery, CanMintLemonheadQueryVariables>;
 export const ListChainsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"listChains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listChains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"platform"}},{"kind":"Field","name":{"kind":"Name","value":"chain_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"code_name"}},{"kind":"Field","name":{"kind":"Name","value":"rpc_url"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_url"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_name"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_tx"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_token"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_address"}},{"kind":"Field","name":{"kind":"Name","value":"block_time"}},{"kind":"Field","name":{"kind":"Name","value":"safe_confirmations"}},{"kind":"Field","name":{"kind":"Name","value":"logo_url"}},{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"contract"}},{"kind":"Field","name":{"kind":"Name","value":"logo_url"}},{"kind":"Field","name":{"kind":"Name","value":"is_native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"access_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"poap_contract"}},{"kind":"Field","name":{"kind":"Name","value":"marketplace_contract"}},{"kind":"Field","name":{"kind":"Name","value":"marketplace_version"}},{"kind":"Field","name":{"kind":"Name","value":"biconomy_api_key"}},{"kind":"Field","name":{"kind":"Name","value":"ens_registry"}},{"kind":"Field","name":{"kind":"Name","value":"proxy_admin_contract"}},{"kind":"Field","name":{"kind":"Name","value":"payment_config_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"escrow_manager_contract"}},{"kind":"Field","name":{"kind":"Name","value":"relay_payment_contract"}},{"kind":"Field","name":{"kind":"Name","value":"stake_payment_contract"}},{"kind":"Field","name":{"kind":"Name","value":"reward_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"eas_event_contract"}},{"kind":"Field","name":{"kind":"Name","value":"eas_graphql_url"}},{"kind":"Field","name":{"kind":"Name","value":"aragon_network"}},{"kind":"Field","name":{"kind":"Name","value":"axelar_chain_name"}},{"kind":"Field","name":{"kind":"Name","value":"donation_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"lemonhead_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"poap_enabled"}}]}}]}}]} as unknown as DocumentNode<ListChainsQuery, ListChainsQueryVariables>;
 export const GetUserWalletRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserWalletRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getUserWalletRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"wallet"},"value":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<GetUserWalletRequestQuery, GetUserWalletRequestQueryVariables>;
+export const GetSelfVerificationStatusDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSelfVerificationStatus"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"config"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SelfVerificationConfigInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getSelfVerificationStatus"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"config"},"value":{"kind":"Variable","name":{"kind":"Name","value":"config"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"disclosures"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"verified"}}]}}]}}]}}]} as unknown as DocumentNode<GetSelfVerificationStatusQuery, GetSelfVerificationStatusQueryVariables>;
+export const CreateSelfVerificationRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateSelfVerificationRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"config"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SelfVerificationConfigInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"createSelfVerificationRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"config"},"value":{"kind":"Variable","name":{"kind":"Name","value":"config"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"endpoint"}},{"kind":"Field","name":{"kind":"Name","value":"endpoint_type"}},{"kind":"Field","name":{"kind":"Name","value":"scope"}},{"kind":"Field","name":{"kind":"Name","value":"uuid"}}]}}]}}]} as unknown as DocumentNode<CreateSelfVerificationRequestMutation, CreateSelfVerificationRequestMutationVariables>;
 export const CreateStripeCardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createStripeCard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paymentMethod"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"createStripeCard"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"payment_method"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paymentMethod"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"provider_id"}}]}}]}}]} as unknown as DocumentNode<CreateStripeCardMutation, CreateStripeCardMutationVariables>;
 export const GetStripeCardsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getStripeCards"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getStripeCards"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"brand"}},{"kind":"Field","name":{"kind":"Name","value":"last4"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"provider_id"}},{"kind":"Field","name":{"kind":"Name","value":"stamp"}},{"kind":"Field","name":{"kind":"Name","value":"user"}}]}}]}}]} as unknown as DocumentNode<GetStripeCardsQuery, GetStripeCardsQueryVariables>;
 export const UpdatePaymentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updatePayment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdatePaymentInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"updatePayment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"transfer_metadata"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"failure_reason"}}]}}]}}]} as unknown as DocumentNode<UpdatePaymentMutation, UpdatePaymentMutationVariables>;
