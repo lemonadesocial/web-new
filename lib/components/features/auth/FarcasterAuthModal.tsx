@@ -10,9 +10,9 @@ const FarcasterAuthInner = (props: { nonce: string, onSuccess: (data: SignInData
 
   const { signIn, connect, url } = useFarcasterSignIn({
     nonce: props.nonce,
-    onStatusResponse: (args: { state: 'completed' | 'pending' }) => {
+    onStatusResponse: async (args: { state: 'completed' | 'pending' }) => {
       if (args.state === 'completed') {
-        props.onSuccess(args as unknown as SignInData);
+        await props.onSuccess(args as unknown as SignInData);
       }
     },
   });

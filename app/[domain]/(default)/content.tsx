@@ -32,6 +32,7 @@ import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { useAtomValue } from 'jotai';
 import { chainsMapAtom } from '$lib/jotai';
 import { GetVerifiedModal } from '$lib/components/features/modals/GetVerifiedModal';
+import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
 
 export function Content() {
   const me = useMe();
@@ -481,6 +482,8 @@ function CompleteYourProfile() {
 
   const openEditProfilePane = () => drawer.open(ProfilePane);
 
+  const { handleConnect } = useLinkFarcaster();
+
   const [tasks, setTasks] = React.useState([
     {
       key: 'verify_email',
@@ -547,7 +550,7 @@ function CompleteYourProfile() {
       label: 'Connect Farcaster',
       completed: !!me?.kratos_farcaster_fid,
       show: true,
-      onClick: () => toast.success('Coming Soon!'),
+      onClick: () => handleConnect(),
     },
     // { label: 'Connect Stripe', completed: false },
     // { label: 'Connect Eventbrite', completed: false },

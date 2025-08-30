@@ -24,7 +24,7 @@ export const FarcasterConnectButton = ({ disabled, onSuccess }: Props) => {
         }
       });
     }
-  }, [signedNonce, modal])
+  }, [signedNonce, modal]);
 
   return (
     <Button
