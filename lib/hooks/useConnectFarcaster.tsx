@@ -1,5 +1,6 @@
 import { sdk } from "@farcaster/miniapp-sdk";
 import { useEffect, useState } from "react";
+import { useAtom } from "jotai";
 
 import { request } from '$lib/utils/request';
 
@@ -12,8 +13,11 @@ import { useAuth } from "./useAuth";
 
 import { UserInput } from "../graphql/generated/backend/graphql";
 
-import { useModal } from "../components/core";
+import { toast, useModal } from "../components/core";
 import { FarcasterAuthPrompt } from "$lib/components/features/modals/FarcasterAuthPrompt";
+import { FarcasterAuthModal } from "$lib/components/features/auth/FarcasterAuthModal";
+
+import { userAtom } from "$lib/jotai";
 
 //-- please do not update this function
 export const getFarcasterIdentifier = (fid: number) => `farcaster:${fid}`;
@@ -178,3 +182,49 @@ export const useHandleFarcasterMiniApp = (onSignInSuccess: () => Promise<void>) 
     }
   }, [token]);
 };
+
+export const useLinkFarcaster = () => {
+  const modal = useModal();
+  const [me, setMe] = useAtom(userAtom);
+
+  const handleConnect = async () => {
+    const signedNonce = await getSignedNonce();
+
+    modal?.open(FarcasterAuthModal, {
+      props: {
+        nonce: signedNonce.nonce,
+        onSuccess: async (data) => {
+          const settingFlow = await ory!.createBrowserSettingsFlow().then((response) => response.data);
+
+          handleUpdateFlowProfile({
+            flow: settingFlow,
+            payload: {
+              traits: {
+                ...settingFlow.identity.traits,
+                farcaster_fid: getFarcasterIdentifier(data.fid),
+              },
+              transient_payload: {
+                farcaster_siwe_nonce: signedNonce.nonce,
+                farcaster_size_nonce_token: signedNonce.token,
+                farcaster_siwe_signature: data.signature,
+                farcaster_siwe_message: data.message,
+              },
+            }
+          }, (_, err: any) => {
+            toast.error(err.message || 'Failed to link Farcaster account');
+          }, () => {
+            toast.success('Farcaster account linked successfully');
+            setMe(me ? {
+              ...me,
+              kratos_farcaster_fid: data.fid.toString(),
+            } : null);
+          });
+
+          modal?.close();
+        }
+      }
+    });
+  }
+
+  return { handleConnect };
+}

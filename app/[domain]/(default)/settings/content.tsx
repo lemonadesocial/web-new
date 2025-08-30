@@ -24,6 +24,7 @@ import { useSignIn } from '$lib/hooks/useSignIn';
 import { PageTitle } from '../shared';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { User } from '$lib/graphql/generated/backend/graphql';
+import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
 
 export function Content() {
   const [session] = useAtom(sessionAtom);
@@ -39,6 +40,7 @@ export function Content() {
   const chainsMap = useAtomValue(chainsMapAtom);
   const { connect, isReady } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);
   const { disconnect } = useDisconnect();
+  const { handleConnect } = useLinkFarcaster();
 
   const handleSelectWallet = () => {
     modal.open(ConnectWallet, {
@@ -201,7 +203,6 @@ export function Content() {
           <ListItem
             icon="icon-alternate-email"
             title="Username"
-            divide={false}
             placeholder={!username}
             subtile={username || 'No Username Picked'}
           >
@@ -220,6 +221,26 @@ export function Content() {
                 Claim Username
               </Button>
             )}
+          </ListItem>
+
+          <ListItem
+            icon="icon-farcaster"
+            title="Farcaster"
+            placeholder={!me?.kratos_farcaster_fid}
+            subtile={me?.kratos_farcaster_fid || 'No Account Connected'}
+            divide={false}
+          >
+            {
+              !me?.kratos_farcaster_fid && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => handleConnect()}
+                >
+                  Connect Farcaster
+                </Button>
+              )
+            }
           </ListItem>
         </div>
       </Card.Content>
