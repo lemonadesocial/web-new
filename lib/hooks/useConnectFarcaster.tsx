@@ -216,7 +216,7 @@ export const useLinkFarcaster = () => {
             toast.success('Farcaster account linked successfully');
             setMe(me ? {
               ...me,
-              kratos_farcaster_fid: data.fid.toString(),
+              kratos_farcaster_fid: getFarcasterIdentifier(data.fid),
             } : null);
           });
 
