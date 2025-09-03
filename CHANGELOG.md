@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.8.0](https://github.com/lemonadesocial/web-new/compare/v6.7.0...v6.8.0) (2025-09-03)
+
+
+### Features
+
+* share miniapp ([cf1bf83](https://github.com/lemonadesocial/web-new/commit/cf1bf835fbb176356989224048024fe5d0f68a06))
+
 ## [6.7.0](https://github.com/lemonadesocial/web-new/compare/v6.6.0...v6.7.0) (2025-09-03)
 
 
