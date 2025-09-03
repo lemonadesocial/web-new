@@ -5,9 +5,9 @@ import { useAppKit, useAppKitAccount, useAppKitNetwork } from '@reown/appkit/rea
 import { Button, Card, ErrorText, modal, ModalContent, toast } from '$lib/components/core';
 import {
   CanMintLemonheadDocument,
+  Chain,
   GetListLemonheadSponsorsDocument,
   LemonheadSponsor,
-  LemonheadSponsorDetail,
   User,
 } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
@@ -18,6 +18,7 @@ import { chainsMapAtom, userAtom } from '$lib/jotai';
 import { formatError } from '$lib/utils/crypto';
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { truncateMiddle } from '$lib/utils/string';
+import { getAppKitNetwork } from '$lib/utils/appkit';
 
 export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
   const { isConnected } = useAppKitAccount();
@@ -40,12 +41,17 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
   });
   const canMint = dataCanMint?.canMintLemonhead.can_mint;
 
+  const { chainId } = useAppKitNetwork();
+  const chainsMap = useAtomValue(chainsMapAtom);
+  const chain = chainsMap[LENS_CHAIN_ID];
+  const isChainValid = chainId?.toString() === LENS_CHAIN_ID && chain;
+
   const handleClose = () => {
     modal.close();
   };
 
   const getIcon = () => {
-    if (!isConnected) return 'icon-wallet';
+    if (!isConnected || !isChainValid) return 'icon-wallet';
     if (me?.kratos_wallet_address) {
       return canMint || sponsor ? (
         <div className="size-[56px] flex justify-center items-center rounded-full bg-success-500/16" data-icon>
@@ -63,6 +69,10 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
   const getContent = () => {
     if (!isConnected) {
       return <ConnectWalletContent />;
+    }
+
+    if (!isChainValid) {
+      return <SwitchNetwork chain={chain} />;
     }
 
     if (!me?.kratos_wallet_address) return <VerifyWallet />;
@@ -93,11 +103,6 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
 
 function ConnectWalletContent() {
   const { open } = useAppKit();
-  const { chainId, switchNetwork } = useAppKitNetwork();
-  const chainsMap = useAtomValue(chainsMapAtom);
-  const chain = chainsMap[LENS_CHAIN_ID];
-
-  const isChainValid = chainId?.toString() === LENS_CHAIN_ID && chain;
 
   return (
     <>
@@ -112,7 +117,22 @@ function ConnectWalletContent() {
   );
 }
 
+function SwitchNetwork({ chain }: { chain: Chain }) {
+  const { switchNetwork } = useAppKitNetwork();
+
+  return (
+    <>
+      <p className="text-lg">Connect Wallet</p>
+      <p className="text-secondary mt-2">Please switch to ${chain.name} in your wallet to continue.</p>
+      <Button variant="secondary" className="w-full mt-4" onClick={() => switchNetwork(getAppKitNetwork(chain))}>
+        Switch to {chain.name}
+      </Button>
+    </>
+  );
+}
+
 function VerifyWallet() {
+  const { open } = useAppKit();
   const { address } = useAppKitAccount();
   const signWallet = useSignWallet();
   const [me, setMe] = useAtom(userAtom);
@@ -153,7 +173,7 @@ function VerifyWallet() {
             <p className="text-xs text-tertiary">Connected Wallet</p>
             <div className="flex items-center gap-2">
               <p>{truncateMiddle(address!, 6, 4)}</p>
-              <i className="icon-edit-sharp size-4" />
+              <i className="icon-edit-sharp size-4 text-tertiary hover:text-primary" onClick={() => open()} />
             </div>
           </div>
         </div>
@@ -183,6 +203,8 @@ function MintWhiteList({
   address: string;
   onContinue: () => void;
 }) {
+  const { open } = useAppKit();
+
   if (isWhitelist || sponsor) {
     return (
       <>
@@ -232,7 +254,10 @@ function MintWhiteList({
             <i className="icon-wallet size-5 aspect-square text-tertiary" />
             <p>{truncateMiddle(address, 6, 4)}</p>
           </div>
-          <i className="icon-edit-sharp size-5 aspect-square text-quaternary" />
+          <i
+            className="icon-edit-sharp size-5 aspect-square text-quaternary hover:text-primary"
+            onClick={() => open()}
+          />
         </Card.Content>
       </Card.Root>
 
