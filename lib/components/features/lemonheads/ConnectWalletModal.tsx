@@ -41,17 +41,17 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
   });
   const canMint = dataCanMint?.canMintLemonhead.can_mint;
 
-  const { chainId } = useAppKitNetwork();
-  const chainsMap = useAtomValue(chainsMapAtom);
-  const chain = chainsMap[LENS_CHAIN_ID];
-  const isChainValid = chainId?.toString() === LENS_CHAIN_ID && chain;
+  // const { chainId } = useAppKitNetwork();
+  // const chainsMap = useAtomValue(chainsMapAtom);
+  // const chain = chainsMap[LENS_CHAIN_ID];
+  // const isChainValid = chainId?.toString() === LENS_CHAIN_ID && chain;
 
   const handleClose = () => {
     modal.close();
   };
 
   const getIcon = () => {
-    if (!isConnected || !isChainValid) return 'icon-wallet';
+    if (!isConnected) return 'icon-wallet';
     if (me?.kratos_wallet_address) {
       return canMint || sponsor ? (
         <div className="size-[56px] flex justify-center items-center rounded-full bg-success-500/16" data-icon>
@@ -71,9 +71,9 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
       return <ConnectWalletContent />;
     }
 
-    if (!isChainValid) {
-      return <SwitchNetwork chain={chain} />;
-    }
+    // if (!isChainValid) {
+    //   return <SwitchNetwork chain={chain} />;
+    // }
 
     if (!me?.kratos_wallet_address) return <VerifyWallet />;
 
