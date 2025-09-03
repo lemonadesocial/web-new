@@ -21,14 +21,15 @@ import {
   LemonheadSponsor,
 } from '$lib/graphql/generated/backend/graphql';
 import { TraitExtends } from '$lib/trpc/lemonheads/types';
+import { appKit } from '$lib/utils/appkit';
 
 import { ConnectWallet } from '../modals/ConnectWallet';
+import { SelectProfileModal } from '../lens-account/SelectProfileModal';
 
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from './provider';
 import { LEMONHEAD_CHAIN_ID } from './utils';
 import { LemonHeadPreview } from './preview';
-import { SelectProfileModal } from '../lens-account/SelectProfileModal';
-import { appKit } from '$lib/utils/appkit';
+import { ConnectWalletModal } from './ConnectWalletModal';
 
 export function LemonHeadFooter() {
   const router = useRouter();
@@ -128,6 +129,19 @@ export function LemonHeadFooter() {
   };
 
   const handleNext = async () => {
+    if (state.currentStep === LemonHeadStep.getstarted) {
+      modal.open(ConnectWalletModal, {
+        props: {
+          onContinue: () => {
+            modal.close();
+            dispatch({ type: LemonHeadActionKind.next_step });
+          },
+        },
+      });
+
+      return;
+    }
+
     if (state.currentStep === LemonHeadStep.create) {
       setMinting(true);
 
