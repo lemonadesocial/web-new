@@ -25,6 +25,7 @@ import { PageTitle } from '../shared';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { User } from '$lib/graphql/generated/backend/graphql';
 import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
+import { useFarcasterUserData } from '$lib/hooks/useFarcasterUserData';
 
 export function Content() {
   const [session] = useAtom(sessionAtom);
@@ -41,6 +42,8 @@ export function Content() {
   const { connect, isReady } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);
   const { disconnect } = useDisconnect();
   const { handleConnect } = useLinkFarcaster();
+
+  const { userData } = useFarcasterUserData(me?.kratos_farcaster_fid ? me?.kratos_farcaster_fid.replace('farcaster:', '') : null);
 
   const handleSelectWallet = () => {
     modal.open(ConnectWallet, {
@@ -227,7 +230,7 @@ export function Content() {
             icon="icon-farcaster"
             title="Farcaster"
             placeholder={!me?.kratos_farcaster_fid}
-            subtile={me?.kratos_farcaster_fid || 'No Account Connected'}
+            subtile={userData?.username || 'No Account Connected'}
             divide={false}
           >
             {

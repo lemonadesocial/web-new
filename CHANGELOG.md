@@ -1,5 +1,20 @@
 # Changelog
 
+## [6.8.0](https://github.com/lemonadesocial/web-new/compare/v6.7.0...v6.8.0) (2025-09-03)
+
+
+### Features
+
+* share miniapp ([cf1bf83](https://github.com/lemonadesocial/web-new/commit/cf1bf835fbb176356989224048024fe5d0f68a06))
+
+## [6.7.0](https://github.com/lemonadesocial/web-new/compare/v6.6.0...v6.7.0) (2025-09-03)
+
+
+### Features
+
+* display farcaster username ([89c93ec](https://github.com/lemonadesocial/web-new/commit/89c93ecd0c374a9f0ba090696a66364b9210c5ce))
+* link farcaster ([a197049](https://github.com/lemonadesocial/web-new/commit/a19704968d574896a36396ede13ea9a17b133caf))
+
 ## [6.6.0](https://github.com/lemonadesocial/web-new/compare/v6.5.0...v6.6.0) (2025-08-29)
 
 
