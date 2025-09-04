@@ -6,7 +6,7 @@ import videojs from 'video.js';
 import Player from 'video.js/dist/types/player';
 import 'video.js/dist/video-js.css';
 
-import { Alert, Button, Card, drawer, modal, Skeleton } from '$lib/components/core';
+import { Alert, Button, Card, Divider, drawer, modal, Segment, Skeleton, Spacer } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { useAccount, useLemonadeUsername, usePost } from '$lib/hooks/useLens';
 import { ASSET_PREFIX, SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
@@ -17,10 +17,16 @@ import { EditProfileModal } from '../../lens-account/EditProfileModal';
 import { PostComposer } from '../../lens-feed/PostComposer';
 import { LemonHeadActionKind, useLemonHeadContext } from '../provider';
 import { PostComposerModal } from '../../lens-feed/PostComposerModal';
+import { LEMONHEAD_COLORS } from '../utils';
+import clsx from 'clsx';
+
+const getImage = (args: { address: string; tokenId: string; color: string }) =>
+  `/api/og/lemonheads?address=${args.address}&tokenId=${args.tokenId}&color=${args.color}`;
 
 export function ClaimLemonHead() {
   const [state, dispatch] = useLemonHeadContext();
   const { account: myAccount } = useAccount();
+  const [color, setColor] = React.useState('violet');
 
   const videoRef = React.useRef(null);
   const playerRef = React.useRef<Player>(null);
@@ -44,7 +50,7 @@ export function ClaimLemonHead() {
     }
   }, [videoRef.current, isMobile]);
 
-  const getImage = () => `/api/og/lemonheads?address=${myAccount?.address}&tokenId=${state.mint.tokenId}`;
+  // `/api/og/lemonheads?address=${myAccount?.address}&tokenId=${state.mint.tokenId}`;
 
   return (
     <div className="p-4 md:px-11 md:pb-11 md:pt-7 w-full max-w-[1440px] h-full">
@@ -54,7 +60,10 @@ export function ClaimLemonHead() {
           <p className="font-title text-2xl md:text-3xl font-semibold!">United Stands of Lemonade</p>
         </div>
         <div className="flex-1 flex flex-col items-center gap-5 justify-center w-[70%]">
-          <ImageLazyLoad src={getImage()} className="border border-primary" />
+          <ImageLazyLoad
+            src={getImage({ address: myAccount?.address, tokenId: state.mint.tokenId, color })}
+            className="border border-primary"
+          />
 
           <div className="flex flex-wrap gap-5 w-full max-w-[1200px] justify-center md:justify-between">
             <Button
@@ -81,7 +90,11 @@ export function ClaimLemonHead() {
               <Button
                 iconLeft="icon-share"
                 variant="secondary"
-                onClick={() => drawer.open(RightPane, { props: { image: getImage() } })}
+                onClick={() =>
+                  drawer.open(RightPane, {
+                    props: { tokenId: state.mint.tokenId, onSelectColor: (_color) => setColor(_color) },
+                  })
+                }
               >
                 Share
               </Button>
@@ -108,9 +121,13 @@ export function ClaimLemonHead() {
 const shareUrl = 'https://lemonade.social/lemonheads';
 const shareText = 'Just claimed my LemonHead 🍋 Fully onchain, totally me. Yours is waiting—go mint it now → ';
 
-function RightPane({ image }: { image: string }) {
+function RightPane({ tokenId, onSelectColor }: { tokenId: string; onSelectColor: (color: string) => void }) {
   const { account: myAccount } = useAccount();
   const { username } = useLemonadeUsername(myAccount);
+  const [imageType, setImageType] = React.useState<'body' | 'portrait'>('body');
+  const [color, setColor] = React.useState('violet');
+
+  const image = myAccount?.address ? getImage({ address: myAccount.address!, tokenId, color }) : '';
 
   const handleUpdateProfile = () => {
     if (!myAccount) {
@@ -167,39 +184,54 @@ function RightPane({ image }: { image: string }) {
       <Pane.Header.Root>
         <Pane.Header.Left showBackButton />
       </Pane.Header.Root>
-      <Pane.Content className="flex-col">
-        <div className="flex flex-col p-4 gap-5">
-          <div className="flex flex-col gap-1">
-            <h3 className="text-xl text-primary font-medium">Download Your Card</h3>
-            <p className="text-secondary">
-              Your personalized LemonHead card is ready! Update your profile info to make it truly yours.
-            </p>
-          </div>
-          <ImageLazyLoad src={image} />
+      <Pane.Content className="flex-col p-4 gap-5">
+        <div className="flex flex-col gap-1">
+          <h3 className="text-xl text-primary font-medium">Share Your LemonHead</h3>
+          <p className="text-secondary">
+            Your LemonHead share card is ready to download! Update your profile info to make it truly yours.
+          </p>
         </div>
-        <Alert className="justify-start">
-          <div className="flex flex-col gap-3">
-            <div>
-              <div className="flex items-center gap-2 text-accent-400">
-                <i className="icon-sparkles size-4" />
-                <p>Personalize Share Card</p>
-              </div>
-              <p className="text-sm text-secondary">Claim username & update your bio to personalize your share card!</p>
-            </div>
-            <div className="flex gap-2">
-              <Button size="sm" iconLeft="icon-user-edit-outline" variant="tertiary" onClick={handleUpdateProfile}>
-                Update Profile
-              </Button>
-              <a href={image} download>
-                <Button size="sm" iconLeft="icon-vertical-align-top rotate-180" variant="secondary">
-                  Download
-                </Button>
-              </a>
-            </div>
-          </div>
-        </Alert>
 
-        <div className="py-5 flex flex-col px-4 gap-4">
+        <ImageLazyLoad src={image} />
+
+        <div className="flex flex-col gap-4">
+          <p className="text-lg">Personalize Your Card</p>
+          <Button variant="tertiary-alt" onClick={handleUpdateProfile}>
+            Add Username & Bio
+          </Button>
+
+          <Segment
+            selected={imageType}
+            items={[
+              { iconLeft: 'icon-human', value: 'body', label: 'Full Body' },
+              { iconLeft: 'icon-user-filled', value: 'portrait', label: 'Portrait' },
+            ]}
+          />
+
+          <div className="flex justify-between">
+            {Object.entries(LEMONHEAD_COLORS).map(([key, value]) => (
+              <div
+                className={clsx('p-0.5 cursor-pointer', color === key && 'outline-2 rounded-full')}
+                onClick={() => {
+                  setColor(key);
+                  onSelectColor(key);
+                }}
+              >
+                <div className="rounded-full aspect-square h-[30px]" style={{ backgroundColor: value.fg }} />
+              </div>
+            ))}
+          </div>
+
+          <a href={image} download className="w-full">
+            <Button iconLeft="icon-vertical-align-top rotate-180" className="w-full" variant="secondary">
+              Download
+            </Button>
+          </a>
+        </div>
+
+        <Divider />
+
+        <div className="flex flex-col gap-4">
           <p className="text-lg">Share LemonHeads</p>
           <div className="grid grid-cols-5 gap-2">
             {shareOptions.map((item, idx) => (
@@ -219,28 +251,24 @@ function RightPane({ image }: { image: string }) {
   );
 }
 
-function ImageLazyLoad({ src = '', className }: { src?: string; className?: string }) {
+function ImageLazyLoad({
+  src = '',
+  color = 'violet',
+  className,
+}: {
+  src?: string;
+  className?: string;
+  color?: string;
+}) {
   const [imageLoaded, setImageLoaded] = React.useState(false);
 
   return (
-    <>
-      {!imageLoaded && (
-        <div
-          style={{ background: `url(${ASSET_PREFIX}/assets/images/mint-cover.png)`, backgroundSize: 'contain' }}
-          className={twMerge('w-full max-w-[1200px] aspect-[40/21] rounded-md', className)}
-        >
-          <div className="flex-1 items-center justify-center flex w-[52.3%] h-full">
-            <Skeleton className="w-3/4 max-w-[456px] aspect-square animte rounded-md" animate />
-          </div>
-        </div>
-      )}
-      <img
-        src={src}
-        onLoad={() => setImageLoaded(true)}
-        loading="lazy"
-        className={twMerge('rounded-md', className, !imageLoaded ? 'invisible absolute' : 'visible')}
-      />
-    </>
+    <img
+      src={src}
+      onLoad={() => setImageLoaded(true)}
+      loading="lazy"
+      className={twMerge('rounded-md', className, !imageLoaded ? 'invisible absolute' : 'visible')}
+    />
   );
 }
 
