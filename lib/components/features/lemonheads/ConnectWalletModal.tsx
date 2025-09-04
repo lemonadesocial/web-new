@@ -1,22 +1,15 @@
 import React from 'react';
-import { useAtom, useAtomValue } from 'jotai';
 import { useAppKit, useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
 
-import { Button, Card, ErrorText, modal, ModalContent, toast } from '$lib/components/core';
+import { Button, Card, modal, ModalContent } from '$lib/components/core';
 import {
   CanMintLemonheadDocument,
   Chain,
   GetListLemonheadSponsorsDocument,
   LemonheadSponsor,
-  User,
 } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { useMe } from '$lib/hooks/useMe';
-import { useHandleVerifyWallet } from '$lib/hooks/useSignIn';
-import { useSignWallet } from '$lib/hooks/useSignWallet';
-import { chainsMapAtom, userAtom } from '$lib/jotai';
-import { formatError } from '$lib/utils/crypto';
-import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { truncateMiddle } from '$lib/utils/string';
 import { getAppKitNetwork } from '$lib/utils/appkit';
 
@@ -40,11 +33,6 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
     fetchPolicy: 'network-only',
   });
   const canMint = dataCanMint?.canMintLemonhead.can_mint;
-
-  // const { chainId } = useAppKitNetwork();
-  // const chainsMap = useAtomValue(chainsMapAtom);
-  // const chain = chainsMap[LENS_CHAIN_ID];
-  // const isChainValid = chainId?.toString() === LENS_CHAIN_ID && chain;
 
   const handleClose = () => {
     modal.close();
@@ -70,12 +58,6 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
     if (!isConnected) {
       return <ConnectWalletContent />;
     }
-
-    // if (!isChainValid) {
-    //   return <SwitchNetwork chain={chain} />;
-    // }
-
-    if (!me?.kratos_wallet_address) return <VerifyWallet />;
 
     return (
       <MintWhiteList
@@ -142,76 +124,15 @@ function SwitchNetwork({ chain }: { chain: Chain }) {
   );
 }
 
-function VerifyWallet() {
-  const { open } = useAppKit();
-  const { address } = useAppKitAccount();
-  const signWallet = useSignWallet();
-  const [me, setMe] = useAtom(userAtom);
-
-  const {
-    processSignature,
-    loading: loadingVerify,
-    error: errorVerify,
-  } = useHandleVerifyWallet({
-    onSuccess: async () => {
-      if (me) {
-        setMe({ ...(me as User), kratos_wallet_address: address });
-      }
-    },
-  });
-
-  const handleVerify = () => {
-    if (!address) return;
-
-    signWallet()
-      .then(async ({ signature, token }) => {
-        processSignature(signature, token, address);
-      })
-      .catch((err) => {
-        toast.error(formatError(err));
-      });
-  };
-
-  return (
-    <>
-      <div className="space-y-2">
-        <div className="flex items-center gap-3">
-          <div className="size-[34px] flex justify-center items-center rounded-full bg-primary/8" data-icon>
-            <i className="icon-wallet text-tertiary size-[18px]" />
-          </div>
-
-          <div className="flex flex-col gap-[2px]">
-            <p className="text-xs text-tertiary">Connected Wallet</p>
-            <div className="flex items-center gap-2">
-              <p>{truncateMiddle(address!, 6, 4)}</p>
-              <i className="icon-edit-sharp size-4 text-tertiary hover:text-primary" onClick={() => open()} />
-            </div>
-          </div>
-        </div>
-        <p className="text-secondary">
-          Please sign a message to verify your ownership of the wallet. This will not incur any cost.
-        </p>
-        <p className="text-sm text-tertiary">Make sure the message starts with ‘Lemonade would like you...'.</p>
-
-        {errorVerify && <ErrorText message={errorVerify} />}
-      </div>
-
-      <Button variant="secondary" disabled={loadingVerify} className="w-full mt-4" onClick={handleVerify}>
-        {loadingVerify ? 'Waiting for Signature...' : 'Sign Message'}
-      </Button>
-    </>
-  );
-}
-
 function MintWhiteList({
   sponsor,
   isWhitelist,
-  address,
+  address = '',
   onContinue,
 }: {
   sponsor: LemonheadSponsor;
   isWhitelist?: boolean;
-  address: string;
+  address?: string | null;
   onContinue: () => void;
 }) {
   const { open } = useAppKit();
