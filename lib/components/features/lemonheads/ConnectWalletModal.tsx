@@ -89,8 +89,19 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
 
   if (loadingSponsors || loadingWhitelist)
     return (
-      <ModalContent>
-        <p>Loading...</p>
+      <ModalContent
+        icon={
+          <div className="size-[56px] flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
+            <i className="icon-loader animate-spin" />
+          </div>
+        }
+      >
+        <div className="flex flex-col gap-2">
+          <p className="text-lg">Checking Your Access</p>
+          <p className="text-sm text-secondary">
+            We’re checking if you’re on the LemonHeads whitelist. This may take a moment.
+          </p>
+        </div>
       </ModalContent>
     );
 

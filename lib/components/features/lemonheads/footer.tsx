@@ -24,7 +24,6 @@ import { TraitExtends } from '$lib/trpc/lemonheads/types';
 import { appKit } from '$lib/utils/appkit';
 
 import { ConnectWallet } from '../modals/ConnectWallet';
-import { SelectProfileModal } from '../lens-account/SelectProfileModal';
 
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from './provider';
 import { LEMONHEAD_CHAIN_ID } from './utils';
@@ -94,29 +93,11 @@ export function LemonHeadFooter() {
         props: {
           onConnect: () => {
             modal.close();
-            setTimeout(() => {
-              if (!myAccount) {
-                modal.open(SelectProfileModal, { onClose: () => setTimeout(cb) });
-              } else {
-                cb();
-              }
-            });
+            cb();
           },
           chain: chainsMap[LEMONHEAD_CHAIN_ID],
         },
         dismissible: false,
-      });
-    } else if (!myAccount) {
-      modal.open(SelectProfileModal, {
-        onClose: () => {
-          setTimeout(() => {
-            if (!myAccount) {
-              modal.open(SelectProfileModal, { onClose: cb });
-            } else {
-              cb();
-            }
-          });
-        },
       });
     } else {
       cb();
@@ -144,7 +125,6 @@ export function LemonHeadFooter() {
 
     if (state.currentStep === LemonHeadStep.create) {
       setMinting(true);
-
       handleMintProcess(async () => {
         const canMint = await checkMinted();
         if (!canMint) return;
