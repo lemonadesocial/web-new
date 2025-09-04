@@ -12,7 +12,7 @@ import { trpc } from '$lib/trpc/client';
 import { useAccount } from '$lib/hooks/useLens';
 import { chainsMapAtom } from '$lib/jotai';
 import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
-import { useClient } from '$lib/graphql/request';
+import { useClient, useQuery } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
 import {
@@ -298,8 +298,11 @@ function MintModal({
 }) {
   const { address } = useAppKitAccount();
 
+  const { data: dataCanMint } = useQuery(CanMintLemonheadDocument, { variables: { wallet: address! }, skip: !address });
+  const mintPrice = dataCanMint?.canMintLemonhead.price;
+
   const [isMinting, setIsMinting] = React.useState(false);
-  const [mintPrice, setMintPrice] = React.useState<bigint | null>(null);
+  // const [mintPrice, setMintPrice] = React.useState<bigint | null>(null);
   const [mintState, setMintState] = React.useState({
     minted: false,
     video: false,
@@ -320,23 +323,23 @@ function MintModal({
   const [done, setDone] = React.useState(false);
   const [count, setCount] = React.useState(10);
 
-  React.useEffect(() => {
-    const fetchMintPrice = async () => {
-      if (!contractAddress) return;
-
-      const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-      const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
-
-      try {
-        const price = await contract.getFunction('mintPrice')();
-        setMintPrice(price);
-      } catch (error) {
-        console.error('Error fetching mint price:', error);
-      }
-    };
-
-    if (!sponsor) fetchMintPrice();
-  }, [contractAddress, chain.rpc_url, sponsor]);
+  // React.useEffect(() => {
+  //   const fetchMintPrice = async () => {
+  //     if (!contractAddress) return;
+  //
+  //     const provider = new ethers.JsonRpcProvider(chain.rpc_url);
+  //     const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
+  //
+  //     try {
+  //       const price = await contract.getFunction('mintPrice')();
+  //       setMintPrice(price);
+  //     } catch (error) {
+  //       console.error('Error fetching mint price:', error);
+  //     }
+  //   };
+  //
+  //   if (!sponsor) fetchMintPrice();
+  // }, [contractAddress, chain.rpc_url, sponsor]);
 
   React.useEffect(() => {
     if (count === 0) {
@@ -372,7 +375,7 @@ function MintModal({
 
       if (!contractAddress) throw new Error('LemonheadNFT contract address not set');
       if (!walletProvider) throw new Error('No wallet provider found');
-      if (!sponsor && !mintPrice) throw new Error('Mint price not set');
+      if (!sponsor && !mintData.price) throw new Error('Mint price not set');
 
       const tx = await writeContract(
         LemonheadNFTContract,
@@ -380,7 +383,7 @@ function MintModal({
         walletProvider as Eip1193Provider,
         sponsor ? 'mintFree' : 'mint',
         [mintData.look, mintData.metadata, mintData.signature],
-        { value: sponsor ? 0 : mintPrice },
+        { value: sponsor ? 0 : BigInt(mintData.price) },
       );
       setMintState((prev) => ({ ...prev, txHash: tx?.hash }));
 
