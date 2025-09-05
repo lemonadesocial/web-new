@@ -9,7 +9,6 @@ import Link from 'next/link';
 
 import { Button, Checkbox, modal, ModalContent, toast } from '$lib/components/core';
 import { trpc } from '$lib/trpc/client';
-import { useAccount } from '$lib/hooks/useLens';
 import { chainsMapAtom } from '$lib/jotai';
 import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
 import { useClient, useQuery } from '$lib/graphql/request';
@@ -39,7 +38,6 @@ export function LemonHeadFooter() {
   const currentStep = state.steps[state.currentStep];
   const disabled = state.currentStep === LemonHeadStep.claim && !state.mint.minted;
 
-  const { account: myAccount } = useAccount();
   const chainsMap = useAtomValue(chainsMapAtom);
   const { isConnected } = useAppKitAccount();
   const { chainId } = useAppKitNetwork();

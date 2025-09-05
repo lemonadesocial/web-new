@@ -1,25 +1,35 @@
 import React from 'react';
-import { useAppKit, useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
+import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
 
 import { Button, Card, modal, ModalContent } from '$lib/components/core';
 import {
   CanMintLemonheadDocument,
-  Chain,
   GetListLemonheadSponsorsDocument,
   LemonheadSponsor,
 } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
-import { useMe } from '$lib/hooks/useMe';
 import { truncateMiddle } from '$lib/utils/string';
-import { getAppKitNetwork } from '$lib/utils/appkit';
 
 export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
-  const { isConnected } = useAppKitAccount();
-  const me = useMe();
+  const { isConnected, status, address } = useAppKitAccount();
+
+  const { data: dataCanMint, loading: loadingWhitelist } = useQuery(CanMintLemonheadDocument, {
+    variables: { wallet: address! },
+    skip: !address,
+    fetchPolicy: 'network-only',
+    onComplete: (data) => {
+      if (!data.canMintLemonhead.white_list_enabled) {
+        modal.close();
+        onContinue();
+      }
+    },
+  });
+  const canMint = dataCanMint?.canMintLemonhead.can_mint;
+  const isEnabledWhiteList = dataCanMint?.canMintLemonhead.white_list_enabled;
 
   const { data, loading: loadingSponsors } = useQuery(GetListLemonheadSponsorsDocument, {
-    variables: { wallet: me?.kratos_wallet_address! },
-    skip: !me?.kratos_wallet_address,
+    variables: { wallet: address! },
+    skip: !address || !isEnabledWhiteList,
     fetchPolicy: 'network-only',
   });
 
@@ -27,20 +37,13 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
     (s) => s.remaining && s.remaining > 0 && s.remaining <= s.limit,
   )?.sponsor as LemonheadSponsor;
 
-  const { data: dataCanMint, loading: loadingWhitelist } = useQuery(CanMintLemonheadDocument, {
-    variables: { wallet: me?.kratos_wallet_address! },
-    skip: !me?.kratos_wallet_address,
-    fetchPolicy: 'network-only',
-  });
-  const canMint = dataCanMint?.canMintLemonhead.can_mint;
-
   const handleClose = () => {
     modal.close();
   };
 
   const getIcon = () => {
     if (!isConnected) return 'icon-wallet';
-    if (me?.kratos_wallet_address) {
+    if (address) {
       return canMint || sponsor ? (
         <div className="size-[56px] flex justify-center items-center rounded-full bg-success-500/16" data-icon>
           <i className="icon-done text-success-500 size-8" />
@@ -59,17 +62,10 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
       return <ConnectWalletContent />;
     }
 
-    return (
-      <MintWhiteList
-        sponsor={sponsor}
-        isWhitelist={canMint}
-        address={me.kratos_wallet_address}
-        onContinue={onContinue}
-      />
-    );
+    return <MintWhiteList sponsor={sponsor} isWhitelist={canMint} address={address} onContinue={onContinue} />;
   };
 
-  if (loadingSponsors || loadingWhitelist)
+  if ((isEnabledWhiteList && loadingSponsors) || loadingWhitelist) {
     return (
       <ModalContent
         icon={
@@ -86,9 +82,13 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
         </div>
       </ModalContent>
     );
+  }
+
+  // NOTE: dont show anything if whitelist is disabled
+  if (isConnected && !isEnabledWhiteList) return null;
 
   return (
-    <ModalContent icon={getIcon()} title={!me?.kratos_wallet_address && 'Verify Wallet'} onClose={handleClose}>
+    <ModalContent icon={getIcon()} onClose={handleClose}>
       {getContent()}
     </ModalContent>
   );
@@ -105,20 +105,6 @@ function ConnectWalletContent() {
       </p>
       <Button variant="secondary" className="w-full mt-4" onClick={() => open()}>
         Connect Wallet
-      </Button>
-    </>
-  );
-}
-
-function SwitchNetwork({ chain }: { chain: Chain }) {
-  const { switchNetwork } = useAppKitNetwork();
-
-  return (
-    <>
-      <p className="text-lg">Connect Wallet</p>
-      <p className="text-secondary mt-2">Please switch to ${chain.name} in your wallet to continue.</p>
-      <Button variant="secondary" className="w-full mt-4" onClick={() => switchNetwork(getAppKitNetwork(chain))}>
-        Switch to {chain.name}
       </Button>
     </>
   );
@@ -184,7 +170,7 @@ function MintWhiteList({
         <Card.Content className="justify-between flex items-center py-2 px-3">
           <div className="flex gap-3">
             <i className="icon-wallet size-5 aspect-square text-tertiary" />
-            <p>{truncateMiddle(address, 6, 4)}</p>
+            {address && <p>{truncateMiddle(address, 6, 4)}</p>}
           </div>
           <i
             className="icon-edit-sharp size-5 aspect-square text-quaternary hover:text-primary"
