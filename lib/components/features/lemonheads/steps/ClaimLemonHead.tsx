@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import videojs from 'video.js';
 import Player from 'video.js/dist/types/player';
 import 'video.js/dist/video-js.css';
+import { useAppKitAccount } from '@reown/appkit/react';
 
 import { Button, Card, Divider, drawer, modal, Segment } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
@@ -24,7 +25,7 @@ const getImage = (args: { address: string; tokenId: string; color: string; portr
 
 export function ClaimLemonHead() {
   const [state, dispatch] = useLemonHeadContext();
-  const { account: myAccount } = useAccount();
+  const { address } = useAppKitAccount();
   const [color, setColor] = React.useState('violet');
   const [portrait, setPortrait] = React.useState(false);
 
@@ -58,10 +59,12 @@ export function ClaimLemonHead() {
           <p className="font-title text-2xl md:text-3xl font-semibold!">United Stands of Lemonade</p>
         </div>
         <div className="flex-1 flex flex-col items-center gap-5 justify-center w-[70%]">
-          <ImageLazyLoad
-            src={getImage({ address: myAccount?.address, tokenId: state.mint.tokenId, color, portrait })}
-            className="border border-primary"
-          />
+          {address && (
+            <ImageLazyLoad
+              src={getImage({ address, tokenId: state.mint.tokenId, color, portrait })}
+              className="border border-primary"
+            />
+          )}
 
           <div className="flex flex-wrap gap-5 w-full max-w-[1200px] justify-center md:justify-between">
             <div className="flex items-center gap-2">
@@ -127,14 +130,13 @@ function RightPane({
   onSelectColor: (color: string) => void;
   onSelectPortrait: (value: boolean) => void;
 }) {
+  const { address } = useAppKitAccount();
   const { account: myAccount } = useAccount();
   const { username } = useLemonadeUsername(myAccount);
   const [imageType, setImageType] = React.useState<'body' | 'portrait'>('body');
   const [color, setColor] = React.useState('violet');
 
-  const image = myAccount?.address
-    ? getImage({ address: myAccount.address!, tokenId, color, portrait: imageType === 'portrait' })
-    : '';
+  const image = address ? getImage({ address, tokenId, color, portrait: imageType === 'portrait' }) : '';
 
   const handleUpdateProfile = () => {
     if (!myAccount) {
