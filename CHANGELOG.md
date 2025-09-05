@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.9.0](https://github.com/lemonadesocial/web-new/compare/v6.8.0...v6.9.0) (2025-09-04)
+
+
+### Features
+
+* backward compatibility for sharing miniapp ([3dd0c2d](https://github.com/lemonadesocial/web-new/commit/3dd0c2d1de255ef631c9fa3bad8c0707918944aa))
+
 ## [6.8.0](https://github.com/lemonadesocial/web-new/compare/v6.7.0...v6.8.0) (2025-09-03)
 
 

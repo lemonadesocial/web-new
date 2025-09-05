@@ -16,12 +16,13 @@ export async function generateMetadata({ params }: { params: Promise<{ shortid: 
   const fileId = event.new_new_photos_expanded?.[0] ? event.new_new_photos_expanded?.[0]._id : 'default';
 
   const miniapp = {
-    version: '1',
+    version: 'next',
     imageUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/fc/event/${event.shortid}`,
     button: {
       title: 'Get Tickets',
       action: {
         type: 'launch_miniapp',
+        name: 'Get Tickets',
       }
     }
   }
@@ -44,6 +45,7 @@ export async function generateMetadata({ params }: { params: Promise<{ shortid: 
     },
     other: {
       'fc:miniapp': JSON.stringify(miniapp),
+      'fa:frame': JSON.stringify(miniapp),
     }
   };
 }
