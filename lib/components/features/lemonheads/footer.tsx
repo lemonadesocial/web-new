@@ -355,13 +355,15 @@ function MintModal({
       if (!walletProvider) throw new Error('No wallet provider found');
       if (!sponsor && !mintData.price) throw new Error('Mint price not set');
 
+      const price = BigInt(mintData.price);
+
       const tx = await writeContract(
         LemonheadNFTContract,
         contractAddress,
         walletProvider as Eip1193Provider,
-        sponsor ? 'mintFree' : 'mint',
-        [mintData.look, mintData.metadata, mintData.signature],
-        { value: sponsor ? 0 : BigInt(mintData.price) },
+        'mint',
+        [mintData.look, mintData.metadata, price, mintData.signature],
+        { value: price },
       );
       setMintState((prev) => ({ ...prev, txHash: tx?.hash }));
 
