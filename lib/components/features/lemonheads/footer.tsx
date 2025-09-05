@@ -277,7 +277,7 @@ function MintModal({
   const { address } = useAppKitAccount();
 
   const { data: dataCanMint } = useQuery(CanMintLemonheadDocument, { variables: { wallet: address! }, skip: !address });
-  const mintPrice = dataCanMint?.canMintLemonhead.price;
+  const mintPrice = !sponsor ? dataCanMint?.canMintLemonhead.price : 0;
 
   const [isMinting, setIsMinting] = React.useState(false);
   // const [mintPrice, setMintPrice] = React.useState<bigint | null>(null);
