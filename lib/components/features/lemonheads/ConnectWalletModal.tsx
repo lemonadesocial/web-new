@@ -11,7 +11,7 @@ import { useQuery } from '$lib/graphql/request';
 import { truncateMiddle } from '$lib/utils/string';
 
 export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
-  const { isConnected, status, address } = useAppKitAccount();
+  const { isConnected, address } = useAppKitAccount();
 
   const { data: dataCanMint, loading: loadingWhitelist } = useQuery(CanMintLemonheadDocument, {
     variables: { wallet: address! },

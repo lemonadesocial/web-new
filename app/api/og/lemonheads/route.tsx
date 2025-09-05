@@ -43,6 +43,8 @@ export async function GET(req: NextRequest) {
   const address = searchParams.get('address') || '';
   const color = searchParams.get('color') || 'violet';
   const portrait = searchParams.get('portrait') === 'true' ? true : false;
+  const width = searchParams.get('width') || 1200;
+  const height = searchParams.get('height') || 630;
 
   if (!tokenId || !address) {
     return new Response(`Error: Bad Request!`, { status: 400 });
@@ -113,7 +115,7 @@ export async function GET(req: NextRequest) {
             left: 0,
             height: 164,
             zIndex: 0,
-            backgroundColor: 'rgba(0,0,0,.24)',
+            background: LEMONHEAD_COLORS[color]?.overlay,
             justifyContent: 'flex-end',
             padding: '0px 72px',
           }}
