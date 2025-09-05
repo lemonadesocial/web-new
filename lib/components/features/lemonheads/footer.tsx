@@ -280,7 +280,6 @@ function MintModal({
   const mintPrice = !sponsor ? dataCanMint?.canMintLemonhead.price : 0;
 
   const [isMinting, setIsMinting] = React.useState(false);
-  // const [mintPrice, setMintPrice] = React.useState<bigint | null>(null);
   const [mintState, setMintState] = React.useState({
     minted: false,
     video: false,
@@ -300,24 +299,6 @@ function MintModal({
   const { walletProvider } = useAppKitProvider('eip155');
   const [done, setDone] = React.useState(false);
   const [count, setCount] = React.useState(10);
-
-  // React.useEffect(() => {
-  //   const fetchMintPrice = async () => {
-  //     if (!contractAddress) return;
-  //
-  //     const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-  //     const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
-  //
-  //     try {
-  //       const price = await contract.getFunction('mintPrice')();
-  //       setMintPrice(price);
-  //     } catch (error) {
-  //       console.error('Error fetching mint price:', error);
-  //     }
-  //   };
-  //
-  //   if (!sponsor) fetchMintPrice();
-  // }, [contractAddress, chain.rpc_url, sponsor]);
 
   React.useEffect(() => {
     if (count === 0) {

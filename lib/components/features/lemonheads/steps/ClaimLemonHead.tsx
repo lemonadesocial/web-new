@@ -26,6 +26,7 @@ const getImage = (args: { address: string; tokenId: string; color: string; portr
 export function ClaimLemonHead() {
   const [state, dispatch] = useLemonHeadContext();
   const { address } = useAppKitAccount();
+  const { account: myAccount } = useAccount();
   const [color, setColor] = React.useState('violet');
   const [portrait, setPortrait] = React.useState(false);
 
@@ -59,9 +60,9 @@ export function ClaimLemonHead() {
           <p className="font-title text-2xl md:text-3xl font-semibold!">United Stands of Lemonade</p>
         </div>
         <div className="flex-1 flex flex-col items-center gap-5 justify-center w-[70%]">
-          {address && (
+          {(myAccount?.address || address) && (
             <ImageLazyLoad
-              src={getImage({ address, tokenId: state.mint.tokenId, color, portrait })}
+              src={getImage({ address: myAccount?.address || address, tokenId: state.mint.tokenId, color, portrait })}
               className="border border-primary"
             />
           )}
@@ -136,7 +137,9 @@ function RightPane({
   const [imageType, setImageType] = React.useState<'body' | 'portrait'>('body');
   const [color, setColor] = React.useState('violet');
 
-  const image = address ? getImage({ address, tokenId, color, portrait: imageType === 'portrait' }) : '';
+  const image = address
+    ? getImage({ address: myAccount?.address || address, tokenId, color, portrait: imageType === 'portrait' })
+    : '';
 
   const handleUpdateProfile = () => {
     if (!myAccount) {
