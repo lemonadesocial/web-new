@@ -42,6 +42,7 @@ export async function GET(req: NextRequest) {
   const tokenId = searchParams.get('tokenId') || '';
   const address = searchParams.get('address') || '';
   const color = searchParams.get('color') || 'violet';
+  const portrait = searchParams.get('portrait') === 'true' ? true : false;
 
   if (!tokenId || !address) {
     return new Response(`Error: Bad Request!`, { status: 400 });
@@ -102,9 +103,50 @@ export async function GET(req: NextRequest) {
         }}
       >
         <div style={{ position: 'absolute', inset: 0, zIndex: 0, background: 'rgba(0,0,0,.02)' }} />
+
+        <div
+          style={{
+            display: 'flex',
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
+            left: 0,
+            height: 164,
+            zIndex: 0,
+            backgroundColor: 'rgba(0,0,0,.24)',
+            justifyContent: 'flex-end',
+            padding: '0px 72px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              width: 466,
+              alignItems: 'center',
+              mixBlendMode: 'overlay',
+              justifyContent: 'space-between',
+            }}
+          >
+            <UnitedStandLogo color={LEMONHEAD_COLORS[color]?.fg} />
+            <LemonHeadLogo color={LEMONHEAD_COLORS[color]?.fg} />
+          </div>
+        </div>
+
         <div style={{ display: 'flex', flexDirection: 'row', gap: 96 }}>
           {image ? (
-            <img src={image} style={{ width: 502, height: 502, boxShadow: '-6px 9px 0 #000' }} />
+            <div
+              style={{
+                display: 'flex',
+                backgroundImage: `url(${image})`,
+                backgroundRepeat: 'no-repeat',
+                width: 502,
+                height: 502,
+                boxShadow: '-6px 9px 0 #000',
+                backgroundPosition: portrait ? '-75% -10%' : '',
+                backgroundSize: portrait ? '250% 250%' : '502px 502px',
+              }}
+            ></div>
           ) : (
             <div style={{ width: 502, height: 502, backgroundColor: '#000', boxShadow: '-6px 9px 0 #000' }} />
           )}
@@ -185,36 +227,6 @@ export async function GET(req: NextRequest) {
             >
               {bio || 'A customizable onchain identity made for creators, by creators.'}
             </p>
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: 'flex',
-            position: 'absolute',
-            bottom: 0,
-            right: 0,
-            left: 0,
-            height: 164,
-            zIndex: 1,
-            backgroundColor: 'rgba(0,0,0,.24)',
-            justifyContent: 'flex-end',
-            padding: '0px 72px',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              width: 466,
-              alignItems: 'center',
-              mixBlendMode: 'overlay',
-              justifyContent: 'space-between',
-            }}
-          >
-            <UnitedStandLogo color={LEMONHEAD_COLORS[color]?.fg} />
-
-            <LemonHeadLogo color={LEMONHEAD_COLORS[color]?.fg} />
           </div>
         </div>
       </div>

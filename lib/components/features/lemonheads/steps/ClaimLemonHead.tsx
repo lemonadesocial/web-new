@@ -1,15 +1,15 @@
 import React from 'react';
 import { isMobile } from 'react-device-detect';
 import { twMerge } from 'tailwind-merge';
-
+import clsx from 'clsx';
 import videojs from 'video.js';
 import Player from 'video.js/dist/types/player';
 import 'video.js/dist/video-js.css';
 
-import { Alert, Button, Card, Divider, drawer, modal, Segment, Skeleton, Spacer } from '$lib/components/core';
+import { Button, Card, Divider, drawer, modal, Segment } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { useAccount, useLemonadeUsername, usePost } from '$lib/hooks/useLens';
-import { ASSET_PREFIX, SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
+import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
 
 import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
 import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
@@ -18,15 +18,15 @@ import { PostComposer } from '../../lens-feed/PostComposer';
 import { LemonHeadActionKind, useLemonHeadContext } from '../provider';
 import { PostComposerModal } from '../../lens-feed/PostComposerModal';
 import { LEMONHEAD_COLORS } from '../utils';
-import clsx from 'clsx';
 
-const getImage = (args: { address: string; tokenId: string; color: string }) =>
-  `/api/og/lemonheads?address=${args.address}&tokenId=${args.tokenId}&color=${args.color}`;
+const getImage = (args: { address: string; tokenId: string; color: string; portrait?: boolean }) =>
+  `/api/og/lemonheads?address=${args.address}&tokenId=${args.tokenId}&color=${args.color}&portrait=${args.portrait || false}`;
 
 export function ClaimLemonHead() {
   const [state, dispatch] = useLemonHeadContext();
   const { account: myAccount } = useAccount();
   const [color, setColor] = React.useState('violet');
+  const [portrait, setPortrait] = React.useState(false);
 
   const videoRef = React.useRef(null);
   const playerRef = React.useRef<Player>(null);
@@ -50,8 +50,6 @@ export function ClaimLemonHead() {
     }
   }, [videoRef.current, isMobile]);
 
-  // `/api/og/lemonheads?address=${myAccount?.address}&tokenId=${state.mint.tokenId}`;
-
   return (
     <div className="p-4 md:px-11 md:pb-11 md:pt-7 w-full max-w-[1440px] h-full">
       <div className="relative z-10 flex flex-col items-center gap-5 md:gap-11 text-center h-full">
@@ -61,20 +59,12 @@ export function ClaimLemonHead() {
         </div>
         <div className="flex-1 flex flex-col items-center gap-5 justify-center w-[70%]">
           <ImageLazyLoad
-            src={getImage({ address: myAccount?.address, tokenId: state.mint.tokenId, color })}
+            src={getImage({ address: myAccount?.address, tokenId: state.mint.tokenId, color, portrait })}
             className="border border-primary"
           />
 
           <div className="flex flex-wrap gap-5 w-full max-w-[1200px] justify-center md:justify-between">
-            <Button
-              variant="secondary"
-              iconLeft="icon-passport"
-              onClick={() => dispatch({ type: LemonHeadActionKind.reset_mint })}
-            >
-              Get Another Look
-            </Button>
-
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
               <Button
                 variant="tertiary-alt"
                 icon={state.mint.mute ? 'icon-speaker-wave' : 'icon-speaker-x-mark'}
@@ -87,16 +77,23 @@ export function ClaimLemonHead() {
               >
                 View txn.
               </Button>
+            </div>
+
+            <div className="flex gap-2">
               <Button
                 iconLeft="icon-share"
                 variant="secondary"
                 onClick={() =>
                   drawer.open(RightPane, {
-                    props: { tokenId: state.mint.tokenId, onSelectColor: (_color) => setColor(_color) },
+                    props: {
+                      tokenId: state.mint.tokenId,
+                      onSelectColor: (_color) => setColor(_color),
+                      onSelectPortrait: (value) => setPortrait(value),
+                    },
                   })
                 }
               >
-                Share
+                Share Your LemonHead
               </Button>
             </div>
           </div>
@@ -121,13 +118,23 @@ export function ClaimLemonHead() {
 const shareUrl = 'https://lemonade.social/lemonheads';
 const shareText = 'Just claimed my LemonHead 🍋 Fully onchain, totally me. Yours is waiting—go mint it now → ';
 
-function RightPane({ tokenId, onSelectColor }: { tokenId: string; onSelectColor: (color: string) => void }) {
+function RightPane({
+  tokenId,
+  onSelectColor,
+  onSelectPortrait,
+}: {
+  tokenId: string;
+  onSelectColor: (color: string) => void;
+  onSelectPortrait: (value: boolean) => void;
+}) {
   const { account: myAccount } = useAccount();
   const { username } = useLemonadeUsername(myAccount);
   const [imageType, setImageType] = React.useState<'body' | 'portrait'>('body');
   const [color, setColor] = React.useState('violet');
 
-  const image = myAccount?.address ? getImage({ address: myAccount.address!, tokenId, color }) : '';
+  const image = myAccount?.address
+    ? getImage({ address: myAccount.address!, tokenId, color, portrait: imageType === 'portrait' })
+    : '';
 
   const handleUpdateProfile = () => {
     if (!myAccount) {
@@ -202,6 +209,10 @@ function RightPane({ tokenId, onSelectColor }: { tokenId: string; onSelectColor:
 
           <Segment
             selected={imageType}
+            onSelect={({ value }: { value: 'body' | 'portrait' }) => {
+              setImageType(value);
+              onSelectPortrait(value === 'portrait');
+            }}
             items={[
               { iconLeft: 'icon-human', value: 'body', label: 'Full Body' },
               { iconLeft: 'icon-user-filled', value: 'portrait', label: 'Portrait' },
@@ -251,15 +262,7 @@ function RightPane({ tokenId, onSelectColor }: { tokenId: string; onSelectColor:
   );
 }
 
-function ImageLazyLoad({
-  src = '',
-  color = 'violet',
-  className,
-}: {
-  src?: string;
-  className?: string;
-  color?: string;
-}) {
+function ImageLazyLoad({ src = '', className }: { src?: string; className?: string }) {
   const [imageLoaded, setImageLoaded] = React.useState(false);
 
   return (
