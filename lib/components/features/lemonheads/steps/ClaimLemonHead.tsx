@@ -7,7 +7,7 @@ import Player from 'video.js/dist/types/player';
 import 'video.js/dist/video-js.css';
 import { useAppKitAccount } from '@reown/appkit/react';
 
-import { Button, Card, Divider, drawer, modal, Segment } from '$lib/components/core';
+import { Button, Card, Divider, drawer, modal, Segment, Skeleton, Spacer } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { useAccount, useLemonadeUsername, usePost } from '$lib/hooks/useLens';
 import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
@@ -21,7 +21,7 @@ import { PostComposerModal } from '../../lens-feed/PostComposerModal';
 import { LEMONHEAD_COLORS } from '../utils';
 
 const getImage = (args: { address: string; tokenId: string; color: string; portrait?: boolean }) =>
-  `/api/og/lemonheads?address=${args.address}&tokenId=${args.tokenId}&color=${args.color}&portrait=${args.portrait || false}`;
+  `/api/og/lemonheads?address=${args.address}&tokenId=${args.tokenId || 3}&color=${args.color}&portrait=${args.portrait || false}`;
 
 export function ClaimLemonHead() {
   const [state, dispatch] = useLemonHeadContext();
@@ -90,6 +90,7 @@ export function ClaimLemonHead() {
                 onClick={() =>
                   drawer.open(RightPane, {
                     props: {
+                      color,
                       tokenId: state.mint.tokenId,
                       onSelectColor: (_color) => setColor(_color),
                       onSelectPortrait: (value) => setPortrait(value),
@@ -126,7 +127,9 @@ function RightPane({
   tokenId,
   onSelectColor,
   onSelectPortrait,
+  color: _color = 'violet',
 }: {
+  color?: string;
   tokenId: string;
   onSelectColor: (color: string) => void;
   onSelectPortrait: (value: boolean) => void;
@@ -135,7 +138,7 @@ function RightPane({
   const { account: myAccount } = useAccount();
   const { username } = useLemonadeUsername(myAccount);
   const [imageType, setImageType] = React.useState<'body' | 'portrait'>('body');
-  const [color, setColor] = React.useState('violet');
+  const [color, setColor] = React.useState(_color);
 
   const image = address
     ? getImage({ address: myAccount?.address || address, tokenId, color, portrait: imageType === 'portrait' })
@@ -204,7 +207,7 @@ function RightPane({
           </p>
         </div>
 
-        <ImageLazyLoad src={image} />
+        <ImageLazyLoad src={image} size="small" />
 
         <div className="flex flex-col gap-4">
           <p className="text-lg">Personalize Your Card</p>
@@ -224,7 +227,7 @@ function RightPane({
             ]}
           />
 
-          <div className="flex justify-between">
+          <div className="flex justify-between overflow-auto no-scrollbar h-[40px] gap-1 items-center px-1">
             {Object.entries(LEMONHEAD_COLORS).map(([key, value]) => (
               <div
                 className={clsx('p-0.5 cursor-pointer', color === key && 'outline-2 rounded-full')}
@@ -238,7 +241,7 @@ function RightPane({
             ))}
           </div>
 
-          <a href={image} download className="w-full">
+          <a className="w-full" href={`${image}&download=true`} download>
             <Button iconLeft="icon-vertical-align-top rotate-180" className="w-full" variant="secondary">
               Download
             </Button>
@@ -267,16 +270,75 @@ function RightPane({
   );
 }
 
-function ImageLazyLoad({ src = '', className }: { src?: string; className?: string }) {
+function ImageLazyLoad({
+  src = '',
+  className,
+  size = 'normal',
+}: {
+  src?: string;
+  className?: string;
+  size?: 'small' | 'normal';
+}) {
   const [imageLoaded, setImageLoaded] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    if (imageLoaded) setImageLoaded(false);
+  }, [src]);
 
   return (
-    <img
-      src={src}
-      onLoad={() => setImageLoaded(true)}
-      loading="lazy"
-      className={twMerge('rounded-md', className, !imageLoaded ? 'invisible absolute' : 'visible')}
-    />
+    <div className="relative flex items-center justify-center w-full">
+      {!imageLoaded && mounted && (
+        <div className="absolute size-[56px] aspect-square rounded-full bg-(--input-bg) flex items-center justify-center">
+          <i className="icon-loader animate-spin size-[32px]" />
+        </div>
+      )}
+
+      <div
+        className={twMerge(
+          'max-sm:w-sm w-full flex gap-5 md:gap-10 rounded-md aspect-[16/9] bg-overlay-primary p-4 md:p-12',
+          clsx(size === 'small' && 'p-6! bg-(--btn-tertiary)', mounted && 'hidden'),
+        )}
+      >
+        <div className="flex-1 h-full w-full">
+          <Skeleton className="flex-1 h-full aspect-square w-full rounded-md" animate />
+        </div>
+        <div className="flex-1 flex flex-col">
+          <Skeleton className="h-5 md:h-8 w-full rounded-sm" animate />
+          <Spacer className="h-3" />
+          <Skeleton className="h-5 md:h-8 w-1/2 rounded-sm" animate />
+          <Spacer className="h-3 md:h-7" />
+
+          <div className={twMerge('space-y-3 flex-1', clsx(size === 'small' && 'space-y-2'))}>
+            <Skeleton className={twMerge('h-5 w-11/12 rounded-sm', clsx(size === 'small' && 'h-3'))} animate />
+            <Skeleton className={twMerge('h-5 w-full rounded-sm', clsx(size === 'small' && 'h-3'))} animate />
+            <Skeleton
+              className={twMerge('max-sm:hidden h-5 w-9/12 rounded-sm', clsx(size === 'small' && 'h-3'))}
+              animate
+            />
+            <Skeleton
+              className={twMerge('max-sm:hidden h-5 w-10/12 rounded-sm', clsx(size === 'small' && 'h-3'))}
+              animate
+            />
+          </div>
+
+          <div className="flex justify-between">
+            <Skeleton className="h-7 w-20 rounded-sm" animate />
+            <Skeleton className="h-7 w-7 rounded-sm" animate />
+          </div>
+        </div>
+      </div>
+
+      <img
+        src={src}
+        onLoad={() => {
+          setImageLoaded(true);
+          if (!mounted) setMounted(true);
+        }}
+        loading="lazy"
+        className={twMerge('rounded-md visible', className, clsx(!mounted && 'invisible'))}
+      />
+    </div>
   );
 }
 

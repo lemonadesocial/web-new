@@ -43,8 +43,7 @@ export async function GET(req: NextRequest) {
   const address = searchParams.get('address') || '';
   const color = searchParams.get('color') || 'violet';
   const portrait = searchParams.get('portrait') === 'true' ? true : false;
-  const width = searchParams.get('width') || 1200;
-  const height = searchParams.get('height') || 630;
+  const download = searchParams.get('download') === 'true' ? true : false;
 
   if (!tokenId || !address) {
     return new Response(`Error: Bad Request!`, { status: 400 });
@@ -91,69 +90,71 @@ export async function GET(req: NextRequest) {
     return new Response(`Error: Something went wrong!`, { status: 500 });
   }
 
-  return new ImageResponse(
-    (
+  const props = { color, image, portrait, username, tokenId, bio };
+
+  return new ImageResponse(download ? <DownloadImageLink {...props} /> : <PreviewImageLink {...props} />, {
+    width: download ? 1920 : 1200,
+    height: download ? 1080 : 630,
+    fonts: [
+      {
+        name: 'ClashDisplay-Bold',
+        data: await fetchFont(`${process.env.NEXT_PUBLIC_ASSET_PREFIX}/assets/fonts/ClashDisplay-Bold.ttf`),
+        style: 'normal',
+      },
+      {
+        name: 'GeneralSans-Medium',
+        data: await fetchFont(`${process.env.NEXT_PUBLIC_ASSET_PREFIX}/assets/fonts/GeneralSans-Medium.ttf`),
+        style: 'normal',
+      },
+    ],
+  });
+}
+
+function PreviewImageLink({ color, image, portrait, username, tokenId, bio }: any) {
+  return (
+    <div
+      style={{
+        padding: '64px 72px',
+        display: 'flex',
+        height: '100%',
+        width: '100%',
+        flexDirection: 'column',
+        background: LEMONHEAD_COLORS[color]?.bg,
+        position: 'relative',
+      }}
+    >
       <div
         style={{
-          padding: '64px 72px',
-          display: 'flex',
-          height: '100%',
-          width: '100%',
-          flexDirection: 'column',
-          background: LEMONHEAD_COLORS[color]?.bg,
-          position: 'relative',
+          position: 'absolute',
+          bottom: 0,
+          right: 0,
+          left: 0,
+          height: 164,
+          background: LEMONHEAD_COLORS[color]?.overlay,
         }}
-      >
-        <div style={{ position: 'absolute', inset: 0, zIndex: 0, background: 'rgba(0,0,0,.02)' }} />
+      />
 
-        <div
-          style={{
-            display: 'flex',
-            position: 'absolute',
-            bottom: 0,
-            right: 0,
-            left: 0,
-            height: 164,
-            zIndex: 0,
-            background: LEMONHEAD_COLORS[color]?.overlay,
-            justifyContent: 'flex-end',
-            padding: '0px 72px',
-          }}
-        >
+      <div style={{ display: 'flex', flexDirection: 'row', gap: 96 }}>
+        {image ? (
           <div
             style={{
               display: 'flex',
-              flexDirection: 'row',
-              width: 466,
-              alignItems: 'center',
-              mixBlendMode: 'overlay',
-              justifyContent: 'space-between',
+              backgroundImage: `url(${image})`,
+              backgroundRepeat: 'no-repeat',
+              width: 502,
+              height: 502,
+              border: '2px solid #000',
+              boxShadow: '-6px 9px 0 #000',
+              backgroundPosition: portrait ? '-75% -10%' : '',
+              backgroundSize: portrait ? '250% 250%' : '502px 502px',
             }}
-          >
-            <UnitedStandLogo color={LEMONHEAD_COLORS[color]?.fg} />
-            <LemonHeadLogo color={LEMONHEAD_COLORS[color]?.fg} />
-          </div>
-        </div>
+          ></div>
+        ) : (
+          <div style={{ width: 502, height: 502, backgroundColor: '#000', boxShadow: '-6px 9px 0 #000' }} />
+        )}
 
-        <div style={{ display: 'flex', flexDirection: 'row', gap: 96 }}>
-          {image ? (
-            <div
-              style={{
-                display: 'flex',
-                backgroundImage: `url(${image})`,
-                backgroundRepeat: 'no-repeat',
-                width: 502,
-                height: 502,
-                boxShadow: '-6px 9px 0 #000',
-                backgroundPosition: portrait ? '-75% -10%' : '',
-                backgroundSize: portrait ? '250% 250%' : '502px 502px',
-              }}
-            ></div>
-          ) : (
-            <div style={{ width: 502, height: 502, backgroundColor: '#000', boxShadow: '-6px 9px 0 #000' }} />
-          )}
-
-          <div style={{ display: 'flex', color: 'white', flexDirection: 'column', gap: 32, maxWidth: 466 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', width: 466 }}>
+          <div style={{ display: 'flex', color: 'white', flexDirection: 'column', gap: 32, flex: 1 }}>
             {!username ? (
               <div
                 style={{
@@ -163,8 +164,8 @@ export async function GET(req: NextRequest) {
                   fontSize: 72,
                   textShadow: '-6px 9px 0 #000',
                   fontWeight: 700,
-                  '-webkit-text-stroke-width': 2,
-                  '-webkit-text-stroke-color': '#000',
+                  WebkitTextStrokeColor: '#000',
+                  WebkitTextStrokeWidth: 2,
                   lineHeight: '110%',
                 }}
               >
@@ -184,8 +185,8 @@ export async function GET(req: NextRequest) {
                     fontSize: 72,
                     textShadow: '-6px 9px 0 #000',
                     fontWeight: 700,
-                    '-webkit-text-stroke-width': 2,
-                    '-webkit-text-stroke-color': '#000',
+                    WebkitTextStrokeColor: '#000',
+                    WebkitTextStrokeWidth: 2,
                     lineHeight: '110%',
                   }}
                 >
@@ -223,38 +224,174 @@ export async function GET(req: NextRequest) {
                 display: '-webkit-box',
                 color: '#000',
                 lineClamp: 4,
-                '-webkit-line-clamp': 4,
-                '-webkit-box-orient': 'vertical',
+                WebkitBoxOrient: 'vertical',
+                WebkitLineClamp: 4,
               }}
             >
               {bio || 'A customizable onchain identity made for creators, by creators.'}
             </p>
           </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <UnitedStandLogo color={LEMONHEAD_COLORS[color]?.fg} />
+            <LemonHeadLogo color={LEMONHEAD_COLORS[color]?.fg} />
+          </div>
         </div>
       </div>
-    ),
-    {
-      width: 1200,
-      height: 630,
-      fonts: [
-        {
-          name: 'ClashDisplay-Bold',
-          data: await fetchFont(`${process.env.NEXT_PUBLIC_ASSET_PREFIX}/assets/fonts/ClashDisplay-Bold.ttf`),
-          style: 'normal',
-        },
-        {
-          name: 'GeneralSans-Medium',
-          data: await fetchFont(`${process.env.NEXT_PUBLIC_ASSET_PREFIX}/assets/fonts/GeneralSans-Medium.ttf`),
-          style: 'normal',
-        },
-      ],
-    },
+    </div>
   );
 }
 
-function UnitedStandLogo({ color = 'currentColor' }: { color?: string }) {
+function DownloadImageLink({ color, image, portrait, username, tokenId, bio }: any) {
   return (
-    <svg width="105" height="40" viewBox="0 0 105 40" fill={color} xmlns="http://www.w3.org/2000/svg">
+    <div
+      style={{
+        padding: '120px 120px 130px 120px',
+        display: 'flex',
+        height: '100%',
+        width: '100%',
+        flexDirection: 'column',
+        background: LEMONHEAD_COLORS[color]?.bg,
+        position: 'relative',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          position: 'absolute',
+          bottom: 0,
+          right: 0,
+          left: 0,
+          height: 288,
+          zIndex: 0,
+          background: LEMONHEAD_COLORS[color]?.overlay,
+          justifyContent: 'flex-end',
+          padding: '0px 130px',
+        }}
+      />
+
+      <div style={{ display: 'flex', gap: 132 }}>
+        <div style={{ display: 'flex' }}>
+          {image ? (
+            <div
+              style={{
+                display: 'flex',
+                backgroundImage: `url(${image})`,
+                backgroundRepeat: 'no-repeat',
+                width: 840,
+                height: 840,
+                border: '4px solid #000',
+                boxShadow: '-6px 9px 0 #000',
+                backgroundPosition: portrait ? '-75% -10%' : '',
+                backgroundSize: portrait ? '250% 250%' : '840px 840px',
+              }}
+            ></div>
+          ) : (
+            <div style={{ width: 840, height: 840, backgroundColor: '#000', boxShadow: '-6px 9px 0 #000' }} />
+          )}
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', height: 840, width: 696 }}>
+          <div style={{ display: 'flex', flex: 1, flexDirection: 'column', color: 'white', gap: 52 }}>
+            {!username ? (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignSelf: 'flex-start',
+                  fontFamily: 'ClashDisplay-Variable',
+                  fontSize: 108,
+                  textShadow: '-8px 12px 0 #000',
+                  fontWeight: 700,
+                  WebkitTextStrokeWidth: 4,
+                  WebkitTextStrokeColor: '#000',
+                  lineHeight: '110%',
+                }}
+              >
+                <span>LemonHead</span>
+                <span>#{tokenId}</span>
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <p
+                  style={{
+                    fontFamily: 'ClashDisplay-Variable',
+                    fontSize: 108,
+                    // filter: 'drop-shadow(-8px 12px 0 #000)',
+                    textShadow: '-8px 12px 0 #000',
+                    fontWeight: 700,
+                    WebkitTextStrokeWidth: 4,
+                    WebkitTextStrokeColor: '#000',
+                    lineHeight: '110%',
+                  }}
+                >
+                  {username}
+                </p>
+
+                <div style={{ display: 'flex' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '14px 32px',
+                      backgroundColor: LEMONHEAD_COLORS[color]?.fg,
+                      borderRadius: 9999,
+                      fontFamily: 'GeneralSans-Medium',
+                      fontSize: 36,
+                      fontWeight: 500,
+                    }}
+                  >
+                    LemonHead #{tokenId}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <p
+              style={{
+                fontSize: 52,
+                lineHeight: '140%',
+                fontFamily: 'GeneralSans-Medium',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                display: '-webkit-box',
+                color: '#000',
+                lineClamp: 4,
+                WebkitLineClamp: 4,
+                WebkitBoxOrient: 'vertical',
+              }}
+            >
+              {bio || 'A customizable onchain identity made for creators, by creators.'}
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <UnitedStandLogo color={LEMONHEAD_COLORS[color]?.fg} width="168" height="64" />
+            <LemonHeadLogo color={LEMONHEAD_COLORS[color]?.fg} width="64" height="64" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function UnitedStandLogo({
+  color = 'currentColor',
+  width = '105',
+  height = '40',
+}: {
+  color?: string;
+  width?: string;
+  height?: string;
+}) {
+  return (
+    <svg width={width} height={height} viewBox="0 0 105 40" fill={color} xmlns="http://www.w3.org/2000/svg">
       <path d="M3.48841 13.1152C2.29301 13.1152 1.41275 12.7774 0.847651 12.1019C0.28255 11.4209 0 10.4213 0 9.10318V0.131811H2.78747V9.07023C2.78747 9.31188 2.80105 9.5453 2.82822 9.77047C2.85539 9.99016 2.91788 10.1714 3.01568 10.3142C3.11349 10.457 3.27106 10.5284 3.48841 10.5284C3.71119 10.5284 3.87148 10.4597 3.96929 10.3224C4.0671 10.1796 4.12687 9.99565 4.1486 9.77047C4.17577 9.5453 4.18935 9.31188 4.18935 9.07023V0.131811H6.97682V9.10318C6.97682 10.4213 6.69427 11.4209 6.12917 12.1019C5.56407 12.7774 4.68382 13.1152 3.48841 13.1152Z" />
       <path d="M7.74329 12.9834V0.131811H10.6938L12.1772 7.10131V0.131811H14.7853V12.9834H11.9815L10.3841 6.02211V12.9834H7.74329Z" />
       <path d="M15.5925 12.9834V0.131811H18.3637V12.9834H15.5925Z" />
@@ -281,9 +418,17 @@ function UnitedStandLogo({ color = 'currentColor' }: { color?: string }) {
   );
 }
 
-function LemonHeadLogo({ color = 'currentColor' }: { color?: string }) {
+function LemonHeadLogo({
+  color = 'currentColor',
+  width = '48',
+  height = '48',
+}: {
+  color?: string;
+  width?: string;
+  height?: string;
+}) {
   return (
-    <svg width="48" height="48" viewBox="0 0 48 48" fill={color} xmlns="http://www.w3.org/2000/svg">
+    <svg width={width} height={height} viewBox="0 0 48 48" fill={color} xmlns="http://www.w3.org/2000/svg">
       <path
         fill-rule="evenodd"
         clip-rule="evenodd"
