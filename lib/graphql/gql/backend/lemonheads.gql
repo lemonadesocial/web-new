@@ -17,5 +17,6 @@ query CanMintLemonhead($wallet: String!) {
   canMintLemonhead(wallet: $wallet) {
     can_mint
     price
+    white_list_enabled
   }
 }

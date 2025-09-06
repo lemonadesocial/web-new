@@ -53,6 +53,8 @@
 
   --btn-flat-hover: var(--btn-flat-hover);
 
+  --input-bg: color-mix(in oklab, var(--color-background) 64%, transparent);
+
   --color-woodsmoke-50: #f7f7f8;
   --color-woodsmoke-100: #eeedf1;
   --color-woodsmoke-200: #d9d8df;

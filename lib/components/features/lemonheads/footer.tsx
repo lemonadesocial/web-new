@@ -9,10 +9,9 @@ import Link from 'next/link';
 
 import { Button, Checkbox, modal, ModalContent, toast } from '$lib/components/core';
 import { trpc } from '$lib/trpc/client';
-import { useAccount } from '$lib/hooks/useLens';
 import { chainsMapAtom } from '$lib/jotai';
 import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
-import { useClient } from '$lib/graphql/request';
+import { useClient, useQuery } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
 import {
@@ -21,14 +20,14 @@ import {
   LemonheadSponsor,
 } from '$lib/graphql/generated/backend/graphql';
 import { TraitExtends } from '$lib/trpc/lemonheads/types';
+import { appKit } from '$lib/utils/appkit';
 
 import { ConnectWallet } from '../modals/ConnectWallet';
 
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from './provider';
 import { LEMONHEAD_CHAIN_ID } from './utils';
 import { LemonHeadPreview } from './preview';
-import { SelectProfileModal } from '../lens-account/SelectProfileModal';
-import { appKit } from '$lib/utils/appkit';
+import { ConnectWalletModal } from './ConnectWalletModal';
 
 export function LemonHeadFooter() {
   const router = useRouter();
@@ -39,7 +38,6 @@ export function LemonHeadFooter() {
   const currentStep = state.steps[state.currentStep];
   const disabled = state.currentStep === LemonHeadStep.claim && !state.mint.minted;
 
-  const { account: myAccount } = useAccount();
   const chainsMap = useAtomValue(chainsMapAtom);
   const { isConnected } = useAppKitAccount();
   const { chainId } = useAppKitNetwork();
@@ -93,29 +91,11 @@ export function LemonHeadFooter() {
         props: {
           onConnect: () => {
             modal.close();
-            setTimeout(() => {
-              if (!myAccount) {
-                modal.open(SelectProfileModal, { onClose: () => setTimeout(cb) });
-              } else {
-                cb();
-              }
-            });
+            cb();
           },
           chain: chainsMap[LEMONHEAD_CHAIN_ID],
         },
         dismissible: false,
-      });
-    } else if (!myAccount) {
-      modal.open(SelectProfileModal, {
-        onClose: () => {
-          setTimeout(() => {
-            if (!myAccount) {
-              modal.open(SelectProfileModal, { onClose: cb });
-            } else {
-              cb();
-            }
-          });
-        },
       });
     } else {
       cb();
@@ -128,9 +108,21 @@ export function LemonHeadFooter() {
   };
 
   const handleNext = async () => {
+    if (state.currentStep === LemonHeadStep.getstarted) {
+      modal.open(ConnectWalletModal, {
+        props: {
+          onContinue: () => {
+            modal.close();
+            dispatch({ type: LemonHeadActionKind.next_step });
+          },
+        },
+      });
+
+      return;
+    }
+
     if (state.currentStep === LemonHeadStep.create) {
       setMinting(true);
-
       handleMintProcess(async () => {
         const canMint = await checkMinted();
         if (!canMint) return;
@@ -284,8 +276,10 @@ function MintModal({
 }) {
   const { address } = useAppKitAccount();
 
+  const { data: dataCanMint } = useQuery(CanMintLemonheadDocument, { variables: { wallet: address! }, skip: !address });
+  const mintPrice = !sponsor ? dataCanMint?.canMintLemonhead.price : 0;
+
   const [isMinting, setIsMinting] = React.useState(false);
-  const [mintPrice, setMintPrice] = React.useState<bigint | null>(null);
   const [mintState, setMintState] = React.useState({
     minted: false,
     video: false,
@@ -305,24 +299,6 @@ function MintModal({
   const { walletProvider } = useAppKitProvider('eip155');
   const [done, setDone] = React.useState(false);
   const [count, setCount] = React.useState(10);
-
-  React.useEffect(() => {
-    const fetchMintPrice = async () => {
-      if (!contractAddress) return;
-
-      const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-      const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
-
-      try {
-        const price = await contract.getFunction('mintPrice')();
-        setMintPrice(price);
-      } catch (error) {
-        console.error('Error fetching mint price:', error);
-      }
-    };
-
-    if (!sponsor) fetchMintPrice();
-  }, [contractAddress, chain.rpc_url, sponsor]);
 
   React.useEffect(() => {
     if (count === 0) {
@@ -358,15 +334,17 @@ function MintModal({
 
       if (!contractAddress) throw new Error('LemonheadNFT contract address not set');
       if (!walletProvider) throw new Error('No wallet provider found');
-      if (!sponsor && !mintPrice) throw new Error('Mint price not set');
+      if (!sponsor && !mintData.price) throw new Error('Mint price not set');
+
+      const price = BigInt(mintData.price);
 
       const tx = await writeContract(
         LemonheadNFTContract,
         contractAddress,
         walletProvider as Eip1193Provider,
-        sponsor ? 'mintFree' : 'mint',
-        [mintData.look, mintData.metadata, mintData.signature],
-        { value: sponsor ? 0 : mintPrice },
+        'mint',
+        [mintData.look, mintData.metadata, price, mintData.signature],
+        { value: price },
       );
       setMintState((prev) => ({ ...prev, txHash: tx?.hash }));
 
