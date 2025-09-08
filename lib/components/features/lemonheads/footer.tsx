@@ -70,7 +70,7 @@ export function LemonHeadFooter() {
       const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
 
       const balanceOf = await contract.getFunction('balanceOf')(address);
-      if (balanceOf !== 0) {
+      if (balanceOf != 0) {
         modal.open(InsufficientFundsModal, {
           onClose: () => setMinting(false),
           props: {
