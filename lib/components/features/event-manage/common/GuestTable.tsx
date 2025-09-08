@@ -9,11 +9,10 @@ interface GuestTableProps {
   event: Event;
   guests: any[];
   loading?: boolean;
-  pageSize?: number;
   onGuestClick?: (guest: any) => void;
 }
 
-export function GuestTable({ event, guests, loading = false, pageSize = 10, onGuestClick }: GuestTableProps) {
+export function GuestTable({ event, guests, loading = false, onGuestClick }: GuestTableProps) {
   const handleGuestClick = (guest: any) => {
     if (onGuestClick) {
       onGuestClick(guest);
@@ -26,7 +25,7 @@ export function GuestTable({ event, guests, loading = false, pageSize = 10, onGu
     return (
       <div className="rounded-md border border-card-border bg-card">
         <div className="divide-y divide-(--color-divider)">
-          {Array.from({ length: pageSize }).map((_, index) => (
+          {Array.from({ length: 3 }).map((_, index) => (
             <div key={index} className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center gap-3 flex-1">
                 <Skeleton className="w-5 h-5 rounded-full" animate />

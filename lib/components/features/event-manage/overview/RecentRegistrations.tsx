@@ -71,7 +71,6 @@ export function RecentRegistrations({ event, titleClassName }: RecentRegistratio
         event={event}
         guests={guests}
         loading={loading}
-        pageSize={3}
       />
     </div>
   );

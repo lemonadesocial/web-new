@@ -87,7 +87,6 @@ export function GuestList({ event }: { event: Event }) {
         event={event}
         guests={guests}
         loading={(!mounted || (mounted && currentPage > 1)) && loading}
-        pageSize={pageSize}
       />
 
       {totalPages > 1 && (
