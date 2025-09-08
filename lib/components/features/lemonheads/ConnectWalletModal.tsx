@@ -1,5 +1,7 @@
 import React from 'react';
-import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+import { useAppKit, useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
+import { Eip1193Provider, ethers } from 'ethers';
+import { useAtomValue } from 'jotai';
 
 import { Button, Card, modal, ModalContent } from '$lib/components/core';
 import {
@@ -9,16 +11,37 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { truncateMiddle } from '$lib/utils/string';
+import { LemonheadNFTContract } from '$lib/utils/crypto';
+import { chainsMapAtom } from '$lib/jotai';
+import { LEMONHEAD_CHAIN_ID } from './utils';
 
 export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
+  const [minted, setMinted] = React.useState(false);
   const { isConnected, address } = useAppKitAccount();
+  const chainsMap = useAtomValue(chainsMapAtom);
+
+  const chain = chainsMap[LEMONHEAD_CHAIN_ID];
+  const contractAddress = chain?.lemonhead_contract_address;
 
   const { data: dataCanMint, loading: loadingWhitelist } = useQuery(CanMintLemonheadDocument, {
     variables: { wallet: address! },
     skip: !address,
     fetchPolicy: 'network-only',
-    onComplete: (data) => {
-      if (!data.canMintLemonhead.white_list_enabled) {
+    onComplete: async (data) => {
+      let mintedState = false;
+      try {
+        if (contractAddress) {
+          const provider = new ethers.JsonRpcProvider(chain.rpc_url);
+          const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
+          const balanceOf = await contract.getFunction('balanceOf')(address);
+          mintedState = balanceOf != 0;
+          setMinted(mintedState);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+
+      if (!mintedState && !data.canMintLemonhead.white_list_enabled) {
         modal.close();
         onContinue();
       }
@@ -43,6 +66,12 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
 
   const getIcon = () => {
     if (!isConnected) return 'icon-wallet';
+
+    if (minted) {
+      // TODO: add lemonhead claim image here
+      return '';
+    }
+
     if (address) {
       return canMint || sponsor ? (
         <div className="size-[56px] flex justify-center items-center rounded-full bg-success-500/16" data-icon>
@@ -54,12 +83,17 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
         </div>
       );
     }
+
     return '';
   };
 
   const getContent = () => {
     if (!isConnected) {
       return <ConnectWalletContent />;
+    }
+
+    if (isConnected && minted) {
+      return <MintedContent address={address} />;
     }
 
     return <MintWhiteList sponsor={sponsor} isWhitelist={canMint} address={address} onContinue={onContinue} />;
@@ -85,7 +119,7 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
   }
 
   // NOTE: dont show anything if whitelist is disabled
-  if (isConnected && !isEnabledWhiteList) return null;
+  if (isConnected && !isEnabledWhiteList && !minted) return null;
 
   return (
     <ModalContent icon={getIcon()} onClose={handleClose}>
@@ -181,6 +215,39 @@ function MintWhiteList({
 
       <Button variant="secondary" className="w-full" onClick={() => window.open('/e/REPLACE_EVENT_ID', '_blank')}>
         View Event
+      </Button>
+    </div>
+  );
+}
+
+function MintedContent({ address }: { address?: string | null }) {
+  const { open } = useAppKit();
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <p className="text-lg">You’re already a LemonHead!</p>
+        <p className="text-sm text-secondary">
+          This wallet has its LemonHead locked in. Each wallet can only hold one, so switch wallets if you’d like to
+          mint another.
+        </p>
+      </div>
+
+      <Card.Root className="border-none bg-none">
+        <Card.Content className="justify-between flex items-center py-2 px-3">
+          <div className="flex gap-3">
+            <i className="icon-wallet size-5 aspect-square text-tertiary" />
+            {address && <p>{truncateMiddle(address, 6, 4)}</p>}
+          </div>
+          <i
+            className="icon-edit-sharp size-5 aspect-square text-quaternary hover:text-primary"
+            onClick={() => open()}
+          />
+        </Card.Content>
+      </Card.Root>
+
+      <Button variant="secondary" className="w-full" onClick={() => modal.close()}>
+        Done
       </Button>
     </div>
   );

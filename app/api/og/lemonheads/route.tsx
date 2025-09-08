@@ -5,11 +5,9 @@ import { ethers } from 'ethers';
 import { PublicClient, evmAddress, mainnet, testnet } from '@lens-protocol/client';
 import request from 'graphql-request';
 
-import { ASSET_PREFIX } from '$lib/utils/constants';
 import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
 import { LEMONHEAD_CHAIN_ID, LEMONHEAD_COLORS } from '$lib/components/features/lemonheads/utils';
 import { ERC721Contract } from '$lib/utils/crypto';
-import dynamic from 'next/dynamic';
 
 const fetchFont = (url: string) => {
   return fetch(new URL(url)).then((res) => res.arrayBuffer());
