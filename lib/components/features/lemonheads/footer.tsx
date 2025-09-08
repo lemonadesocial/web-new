@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
-import { Eip1193Provider, ethers } from 'ethers';
+import { Eip1193Provider, ethers, isError } from 'ethers';
 import { useAppKit, useAppKitAccount, useAppKitNetwork, useAppKitProvider } from '@reown/appkit/react';
 import { useAtomValue } from 'jotai';
 import React from 'react';
@@ -27,8 +27,9 @@ import { ConnectWallet } from '../modals/ConnectWallet';
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from './provider';
 import { LEMONHEAD_CHAIN_ID } from './utils';
 import { LemonHeadPreview } from './preview';
-import { ConnectWalletModal } from './ConnectWalletModal';
+import { ConnectWalletModal, MintedContent } from './ConnectWalletModal';
 import { truncateMiddle } from '$lib/utils/string';
+import { add } from 'lodash';
 
 export function LemonHeadFooter() {
   const router = useRouter();
@@ -68,19 +69,15 @@ export function LemonHeadFooter() {
       if (!contractAddress) return false;
       const provider = new ethers.JsonRpcProvider(chain.rpc_url);
       const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
+      const tokenId = await contract.getFunction('bounds')(address);
 
-      const balanceOf = await contract.getFunction('balanceOf')(address);
-      if (balanceOf != 0) {
-        modal.open(InsufficientFundsModal, {
-          onClose: () => setMinting(false),
-          props: {
-            mintPrice: dataCanMint.canMintLemonhead.price,
-            onRetry: () => {
-              modal.close();
-              handleMint();
-            },
-          },
-        });
+      if (tokenId > 0) {
+        // NOTE: fetch nft uri and display when minted
+        const tokenUri = await contract.getFunction('tokenURI')(tokenId);
+        const res = await fetch(tokenUri);
+        const data = await res.json();
+
+        modal.open(MintedModal, { props: { image: data.image }, onClose: () => setMinting(false) });
         return false;
       }
 
@@ -96,6 +93,23 @@ export function LemonHeadFooter() {
         isValid = false;
       }
     } catch (error: any) {
+      let message = '';
+      if (error?.message) message = error.message.toLowerCase();
+
+      if (isError(error, 'INSUFFICIENT_FUNDS') || message.includes('insufficient funds')) {
+        modal.open(InsufficientFundsModal, {
+          onClose: () => setMinting(false),
+          props: {
+            mintPrice: dataCanMint.canMintLemonhead.price,
+            onRetry: () => {
+              modal.close();
+              handleMint();
+            },
+          },
+        });
+
+        return false;
+      }
       toast.error(formatError(error));
       isValid = false;
     }
@@ -130,6 +144,7 @@ export function LemonHeadFooter() {
           onClose: () => setMinting(false),
           props: {
             onContinue: async () => {
+              setMinting(true);
               const address = appKit.getAddress();
 
               const { data } = await client.query({
@@ -529,6 +544,19 @@ function InsufficientFundsModal({ mintPrice, onRetry }: { mintPrice?: string | n
           Try Again
         </Button>
       </div>
+    </ModalContent>
+  );
+}
+
+function MintedModal({ image }: { image: string }) {
+  const { address } = useAppKitAccount();
+
+  return (
+    <ModalContent
+      icon={<img src={image} className="size-[56px] rounded-sm aspect-square" />}
+      onClose={() => modal.close()}
+    >
+      <MintedContent address={address} />
     </ModalContent>
   );
 }

@@ -17,6 +17,8 @@ import { LEMONHEAD_CHAIN_ID } from './utils';
 
 export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
   const [minted, setMinted] = React.useState(false);
+  const [image, setImage] = React.useState('');
+
   const { isConnected, address } = useAppKitAccount();
   const chainsMap = useAtomValue(chainsMapAtom);
 
@@ -33,8 +35,17 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
         if (contractAddress) {
           const provider = new ethers.JsonRpcProvider(chain.rpc_url);
           const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
-          const balanceOf = await contract.getFunction('balanceOf')(address);
-          mintedState = balanceOf != 0;
+          const tokenId = await contract.getFunction('bounds')(address);
+
+          if (tokenId > 0) {
+            // NOTE: fetch nft uri and display when minted
+            const tokenUri = await contract.getFunction('tokenURI')(tokenId);
+            const res = await fetch(tokenUri);
+            const data = await res.json();
+            setImage(data.image);
+          }
+
+          mintedState = tokenId != 0;
           setMinted(mintedState);
         }
       } catch (err) {
@@ -67,9 +78,8 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
   const getIcon = () => {
     if (!isConnected) return 'icon-wallet';
 
-    if (minted) {
-      // TODO: add lemonhead claim image here
-      return '';
+    if (minted && image) {
+      return <img src={image} className="size-[56px] rounded-sm aspect-square" />;
     }
 
     if (address) {
@@ -220,7 +230,7 @@ function MintWhiteList({
   );
 }
 
-function MintedContent({ address }: { address?: string | null }) {
+export function MintedContent({ address }: { address?: string | null }) {
   const { open } = useAppKit();
 
   return (
