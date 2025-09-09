@@ -255,7 +255,7 @@ export function EventCardItem({
                   <i className="icon-sparkles text-accent-400 size-3" />
                 </div>
               )}
-              <p className="font-title text-lg md:text-xl font-semibold text-primary">{item.title}</p>
+              <p className="font-title text-lg md:text-xl font-semibold text-primary truncate">{item.title}</p>
             </div>
 
             <div className="flex gap-2 item-center">

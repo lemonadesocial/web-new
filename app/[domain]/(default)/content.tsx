@@ -35,6 +35,8 @@ import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
 import { LEMONHEAD_CHAIN_ID } from '$lib/components/features/lemonheads/utils';
 import { ethers } from 'ethers';
 import { LemonheadNFTContract } from '$lib/utils/crypto';
+import Page from './communities/page';
+import { useLemonhead } from '$lib/hooks/useLemonhead';
 
 export function Content() {
   const me = useMe();
@@ -625,11 +627,13 @@ function CompleteYourProfile() {
 }
 
 function LemonHeadsZone() {
-  const [minted, setMinted] = React.useState(false);
+  const router = useRouter();
   const [image, setImage] = React.useState('');
   const [tokenId, setTokenId] = React.useState();
   const { address } = useAppKitAccount();
   const chainsMap = useAtomValue(chainsMapAtom);
+
+  const { hasLemonhead, loading } = useLemonhead();
 
   const chain = chainsMap[LEMONHEAD_CHAIN_ID];
   const contractAddress = chain?.lemonhead_contract_address;
@@ -641,10 +645,9 @@ function LemonHeadsZone() {
       contract
         .getFunction('bounds')(address)
         .then(async (_tokenId) => {
-          setMinted(_tokenId > 0);
           setTokenId(_tokenId);
 
-          if (_tokenId > 0) {
+          if (hasLemonhead) {
             const tokenUri = await contract.getFunction('tokenURI')(_tokenId);
             const res = await fetch(tokenUri);
             const data = await res.json();
@@ -652,11 +655,20 @@ function LemonHeadsZone() {
           }
         });
     }
-  }, [address, contractAddress]);
+  }, [address, contractAddress, hasLemonhead]);
 
-  const onClick = () => {};
+  const onClick = () => {
+    if (hasLemonhead) {
+      router.push('/lemonheads-zone');
+    } else {
+      router.push('/lemonheads');
+    }
+  };
 
-  if (minted && image) {
+  // NOTE: prevent click to claim lemonheads. IMPORTANT: MUST WAITING FOR CHECKING
+  if (loading) return null;
+
+  if (hasLemonhead) {
     return (
       <CardItem
         className="bg-transparent [&_.title]:text-sm"
