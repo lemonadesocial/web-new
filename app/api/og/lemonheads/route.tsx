@@ -186,6 +186,10 @@ function PreviewImageLink({ color, image, portrait, username, tokenId, bio }: an
                     WebkitTextStrokeColor: '#000',
                     WebkitTextStrokeWidth: 2,
                     lineHeight: '110%',
+                    width: '100%',
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {username}
@@ -326,6 +330,10 @@ function DownloadImageLink({ color, image, portrait, username, tokenId, bio }: a
                     WebkitTextStrokeWidth: 4,
                     WebkitTextStrokeColor: '#000',
                     lineHeight: '110%',
+                    width: '100%',
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {username}
