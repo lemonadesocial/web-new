@@ -5,8 +5,6 @@ import { useAppKitProvider } from "$lib/utils/appkit";
 import { isNativeToken } from "$lib/utils/crypto";
 import { toast } from "$lib/components/core/toast";
 import ERC20 from "$lib/abis/ERC20.json";
-import { CancelPaymentDocument } from "$lib/graphql/generated/backend/graphql";
-import { useMutation } from "$lib/graphql/request/hooks";
 
 import { pricingInfoAtom, registrationModal, tokenAddressAtom, useEventRegistrationStore } from "../store";
 import { ConfirmCryptoPaymentModal } from "../modals/ConfirmCryptoPaymentModal";
@@ -16,8 +14,6 @@ export function useCryptoPayment() {
   const store = useEventRegistrationStore();
   const { walletProvider } = useAppKitProvider('eip155');
 
-  const [handleCancelPayment] = useMutation(CancelPaymentDocument);
-
   const { pay: handleBuyTickets, loading: buyTicketsLoading } = useBuyTickets(data => {
     registrationModal.open(ConfirmCryptoPaymentModal, {
       props: {
@@ -25,16 +21,6 @@ export function useCryptoPayment() {
         paymentSecret: data.buyTickets.payment.transfer_metadata.payment_secret,
         hasJoinRequest: data.buyTickets.join_request?.state === 'pending'
       },
-      onClose: () => {
-        handleCancelPayment({
-          variables: {
-            input: {
-              _id: data.buyTickets.payment._id,
-              payment_secret: data.buyTickets.payment.transfer_metadata.payment_secret
-            }
-          }
-        });
-      }
     });
   });
 
