@@ -1,8 +1,9 @@
 import { Button, Chip, drawer } from "$lib/components/core";
-import { Event, EventTicketType, ListEventTicketTypesDocument, ListEventTokenGatesDocument } from "$lib/graphql/generated/backend/graphql";
+import { Event, EventTicketType, ListEventTicketTypesDocument, ListEventTokenGatesDocument, NewPaymentProvider } from "$lib/graphql/generated/backend/graphql";
 import { useQuery } from "$lib/graphql/request";
 import { formatPrice } from "$lib/utils/event";
 import { TicketTypeDrawer } from "../ticket/TicketTypeDrawer";
+import { PaymentNetwork } from "../common/PaymentNetwork";
 
 export function TicketList({ event }: { event: Event }) {
   const { data } = useQuery(ListEventTicketTypesDocument, {
@@ -40,6 +41,8 @@ function TicketItem({ ticket }: { ticket: EventTicketType }) {
     variables: { event: ticket.event, ticketTypes: [ticket._id] },
   });
 
+  const cryptoAccounts = ticket.prices[0].payment_accounts_expanded?.filter(account => account.provider !== NewPaymentProvider.Stripe);
+
   return (
     <div
       className="flex justify-between items-center px-4 py-3 cursor-pointer"
@@ -49,11 +52,20 @@ function TicketItem({ ticket }: { ticket: EventTicketType }) {
         }
       })}
     >
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         <p>{ticket.title}</p>
         <p className="text-tertiary">
           {formatPrice(ticket.prices[0], true)}
         </p>
+        {
+          !!cryptoAccounts?.length && (
+            <div className="flex gap-1.5">
+              {cryptoAccounts.map(account => (
+                <PaymentNetwork key={account._id} vault={account} />
+              ))}
+            </div>
+          )
+        }
         {
           !!tokenGatesData?.listEventTokenGates.length && <Chip variant="primary" size="xxs" className="rounded-full">Token Exclusive</Chip>
         }

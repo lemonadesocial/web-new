@@ -275,6 +275,14 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
     modal.open(AcceptWalletPaymentsModal, {
       props: {
         event: event!,
+        onAccept: () => {
+          modal.open(UpdateCryptoPriceModal, {
+            className: 'overflow-visible',
+            props: {
+              onChange: (price) => form.setValue('cryptoPrice', price),
+            },
+          });
+        },
       },
     });
   };

@@ -21,6 +21,7 @@ const eventManageMenu = [
   { name: 'Registration', page: 'registration' },
   { name: 'Blasts', page: 'blasts' },
   // { name: 'Program', page: 'program' },
+  { name: 'Payment', page: 'payment' },
   // { name: 'Insights', page: 'insights' },
   { name: 'More', page: 'more' },
 ];

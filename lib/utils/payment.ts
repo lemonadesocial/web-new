@@ -17,3 +17,21 @@ export function getPaymentNetworks(paymentAccounts?: NewPaymentAccount[] | null)
 
   return Array.from(networks).filter(Boolean);
 }
+
+export function groupPaymentAccounts(paymentAccounts?: NewPaymentAccount[] | null) {
+  if (!paymentAccounts) return {};
+
+  const grouped = paymentAccounts.reduce((acc, account) => {
+    const title = account.title || account._id;
+    
+    if (!acc[title]) {
+      acc[title] = [];
+    }
+    
+    acc[title].push(account);
+    return acc;
+  }, {} as Record<string, NewPaymentAccount[]>);
+
+  return grouped;
+}
+

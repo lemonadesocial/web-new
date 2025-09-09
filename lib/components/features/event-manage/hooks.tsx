@@ -1,4 +1,4 @@
-import { EventApplicationQuestion, QuestionInput, QuestionType, SubmitEventApplicationQuestionsDocument, ApplicationProfileFieldInput, UpdateEventApplicationProfilesDocument, DecideUserJoinRequestsDocument, EventJoinRequestState } from "$lib/graphql/generated/backend/graphql";
+import { EventApplicationQuestion, QuestionInput, QuestionType, SubmitEventApplicationQuestionsDocument, ApplicationProfileFieldInput, UpdateEventApplicationProfilesDocument, DecideUserJoinRequestsDocument, EventJoinRequestState, UpdateEventPaymentAccountsDocument, Event } from "$lib/graphql/generated/backend/graphql";
 import { useMutation } from "$lib/graphql/request";
 import { useEvent, useUpdateEvent } from "./store";
 import { modal, toast } from "$lib/components/core";
@@ -167,4 +167,31 @@ export function useEventRequest(event: string, onCompleted?: () => void) {
   };
 
   return { approve, decline, loading };
+}
+
+export function useUpdateEventPaymentAccounts() {
+  const event = useEvent();
+  const updateEvent = useUpdateEvent();
+
+  const [update, { loading }] = useMutation(UpdateEventPaymentAccountsDocument, {
+    onComplete: (_, data) => {
+      if (data?.updateEvent) {
+        updateEvent(data.updateEvent as Event);
+      }
+    },
+  });
+
+  const addAccount = (newAccount: string) => {
+    update({
+      variables: {
+        id: event!._id,
+        payment_accounts_new: [...(event!.payment_accounts_new || []), newAccount]
+      },
+    });
+  };
+
+  return {
+    addAccount,
+    loading,
+  };
 }

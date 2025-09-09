@@ -1,55 +1,63 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
-import { useMutation } from "$lib/graphql/request";
 import { Button, Input, modal, ModalContent, Select, Menu, MenuItem } from "$lib/components/core";
-import { EventTicketPrice, UpdateEventPaymentAccountsDocument, type Event, NewPaymentAccount } from "$lib/graphql/generated/backend/graphql";
+import { EventTicketPrice, NewPaymentAccount } from "$lib/graphql/generated/backend/graphql";
 
-import { useEvent, useUpdateEvent } from "../store";
-import { useMe } from "$lib/hooks/useMe";
+import { useEvent } from "../store";
 import { CreateDirectVaultModal } from "../../modals/CreateDirectVaultModal";
-import { formatCryptoPrice, getEventDirectPaymentAccounts } from "$lib/utils/event";
+import { getEventDirectPaymentAccounts } from "$lib/utils/event";
 import { multiplyByPowerOf10 } from "$lib/utils/crypto";
 import { ethers } from "ethers";
+import { useUpdateEventPaymentAccounts } from "../hooks";
+import { groupPaymentAccounts } from "$lib/utils/payment";
 
 export function UpdateCryptoPriceModal({ price, onChange }: { price?: EventTicketPrice; onChange: (price: EventTicketPrice) => void }) {
   const event = useEvent();
-  const updateEvent = useUpdateEvent();
-  const me = useMe();
+  const { addAccount } = useUpdateEventPaymentAccounts();
   
   const paymentAccounts = getEventDirectPaymentAccounts(event!);
+  const groupedPaymentAccounts = groupPaymentAccounts(paymentAccounts as NewPaymentAccount[]);
+  const paymentAccountList = Object.values(groupedPaymentAccounts);
 
-  const [selectedPaymentAccount, setSelectedPaymentAccount] = useState<NewPaymentAccount | null>(price?.payment_accounts_expanded?.[0] || paymentAccounts[0]);
+  const [selectedPaymentAccounts, setSelectedPaymentAccounts] = useState<NewPaymentAccount[] | null>(price?.payment_accounts_expanded || paymentAccountList[0]);
 
-  const currencies = selectedPaymentAccount?.account_info.currencies || [];
-  const currencyMap = selectedPaymentAccount?.account_info.currency_map || {};
+  const { currencies, currencyMap } = useMemo(() => {
+    if (!selectedPaymentAccounts) return { currencies: [], currencyMap: {} };
+
+    const currencies = new Set<string>();
+    const currencyMap = {} as Record<string, any>;
+
+    selectedPaymentAccounts.forEach(account => {
+      const accountInfo = account.account_info as any;
+      
+      if (accountInfo.currencies) {
+        accountInfo.currencies.forEach((currency: string) => {
+          currencies.add(currency);
+        });
+      }
+      
+      if (accountInfo.currency_map) {
+        Object.assign(currencyMap, accountInfo.currency_map);
+      }
+    });
+
+    return {
+      currencies: Array.from(currencies),
+      currencyMap
+    };
+  }, [selectedPaymentAccounts]);
 
   const [currency, setCurrency] = useState<string>(price?.currency || currencies[0]);
-  const [cost, setCost] = useState<string>(price?.cost ? ethers.formatUnits(price.cost, currencyMap[currency].decimals) : '');
-
-
-  const [updatePaymentAccount] = useMutation(UpdateEventPaymentAccountsDocument, {
-    onComplete(_, data) {
-      if (data?.updateEvent) {
-        updateEvent(data.updateEvent as Event);
-      }
-    },
-  });
+  const [cost, setCost] = useState<string>(price?.cost ? ethers.formatUnits(price.cost, currencyMap[currency]?.decimals || 18) : '');
 
   const handleCreateVault = () => {
-    modal.close();
     modal.open(CreateDirectVaultModal, {
       props: {
         onCreateVault(paymentAccount: NewPaymentAccount) {
           if (paymentAccount._id && event) {
-            setSelectedPaymentAccount(paymentAccount);
+            setSelectedPaymentAccounts([paymentAccount]);
 
-            updatePaymentAccount({
-              variables: {
-                id: event._id,
-                payment_accounts_new: [...(event.payment_accounts_new || []), paymentAccount._id]
-              }
-            });
-            modal.close();
+            addAccount(paymentAccount._id);
           }
         },
       },
@@ -59,10 +67,10 @@ export function UpdateCryptoPriceModal({ price, onChange }: { price?: EventTicke
 
   const handleUpdatePrice = () => {
     onChange({ 
-      cost: multiplyByPowerOf10(cost, currencyMap[currency].decimals), 
+      cost: multiplyByPowerOf10(cost, currencyMap[currency]?.decimals), 
       currency, 
-      payment_accounts: selectedPaymentAccount ? [selectedPaymentAccount._id] : [], 
-      payment_accounts_expanded: selectedPaymentAccount ? [selectedPaymentAccount] : [] 
+      payment_accounts: selectedPaymentAccounts ? selectedPaymentAccounts.map(account => account._id) : [], 
+      payment_accounts_expanded: selectedPaymentAccounts || [] 
     });
     modal.close();
   };
@@ -81,7 +89,7 @@ export function UpdateCryptoPriceModal({ price, onChange }: { price?: EventTicke
             <Menu.Trigger>
               <div className="flex rounded-sm bg-primary/8 py-2 px-3.5 gap-2.5 items-center w-full">
                 <i className="icon-account-balance size-5 text-secondary" />
-                <p className="flex-1">{selectedPaymentAccount?.title || "Select a vault"}</p>
+                <p className="flex-1">{selectedPaymentAccounts?.[0]?.title || "Select a vault"}</p>
                 <i className="icon-chevron-down size-5 text-quaternary" />
               </div>
             </Menu.Trigger>
@@ -89,17 +97,21 @@ export function UpdateCryptoPriceModal({ price, onChange }: { price?: EventTicke
             <Menu.Content className="p-1 w-full max-h-[180px] overflow-y-auto no-scrollbar">
               {({ toggle }) => (
                 <>
-                  {paymentAccounts.map(account => account && (
-                    <MenuItem
-                      key={account._id}
-                      title={account.title || 'Untitled Vault'}
-                      iconLeft="icon-account-balance"
-                      onClick={() => {
-                        setSelectedPaymentAccount(account as NewPaymentAccount);
-                        toggle();
-                      }}
-                    />
-                  ))}
+                  {paymentAccountList.map(accounts => {
+                    const account = accounts[0];
+
+                    return (
+                      <MenuItem
+                        key={account._id}
+                        title={account.title || 'Untitled Vault'}
+                        iconLeft="icon-account-balance"
+                        onClick={() => {
+                          setSelectedPaymentAccounts(accounts);
+                          toggle();
+                        }}
+                      />
+                    )
+                  })}
                   <div className="border-t border-primary/8 my-1" />
                   <MenuItem
                     title="New Vault"
@@ -130,7 +142,7 @@ export function UpdateCryptoPriceModal({ price, onChange }: { price?: EventTicke
               value={currency}
               onChange={value => setCurrency(value as string)}
               options={currencies}
-              placeholder="Select a currency"
+              placeholder="Token"
               className="rounded-l-none"
               removeable={false}
             />
