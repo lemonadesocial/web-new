@@ -4,32 +4,17 @@ import React from 'react';
 
 import { Button, ModalContent, modal } from '$lib/components/core';
 import { CreateDirectVaultModal } from '$lib/components/features/modals/CreateDirectVaultModal';
-import { Event, NewPaymentAccount, UpdateEventPaymentAccountsDocument } from '$lib/graphql/generated/backend/graphql';
-import { useMutation } from '$lib/graphql/request';
-import { useUpdateEvent } from '../store';
+import { Event, NewPaymentAccount } from '$lib/graphql/generated/backend/graphql';
+
+import { useUpdateEventPaymentAccounts } from '../hooks';
 
 interface AcceptWalletPaymentsModalProps {
   event: Event;
+  onAccept?: () => void;
 }
 
-export function AcceptWalletPaymentsModal({ event }: AcceptWalletPaymentsModalProps) {
-  const updateEvent = useUpdateEvent();
-
-  const [updatePaymentAccount] = useMutation(UpdateEventPaymentAccountsDocument, {
-    onComplete(_, data) {
-      if (data?.updateEvent) {
-        updateEvent(data.updateEvent as Event);
-        modal.close();
-        
-        // modal.open(TokenDetailsModal, {
-        //   props: {
-        //     ticketType: initialTicketType._id,
-        //     event: event?._id,
-        //   },
-        // });
-      }
-    },
-  });
+export function AcceptWalletPaymentsModal({ event, onAccept }: AcceptWalletPaymentsModalProps) {
+  const { addAccount } = useUpdateEventPaymentAccounts();
 
   const handleCreateVault = () => {
     modal.close();
@@ -37,12 +22,9 @@ export function AcceptWalletPaymentsModal({ event }: AcceptWalletPaymentsModalPr
       props: {
         onCreateVault(paymentAccount: NewPaymentAccount) {
           if (paymentAccount._id) {
-            updatePaymentAccount({
-              variables: {
-                id: event._id,
-                payment_accounts_new: [...(event.payment_accounts_new || []), paymentAccount._id]
-              }
-            });
+            addAccount(paymentAccount._id);
+
+            onAccept?.();
           }
         },
       },

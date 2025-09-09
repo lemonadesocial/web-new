@@ -86,10 +86,9 @@ export function CreateDirectVaultModal({ onCreateVault }: CreateDirectVaultModal
           },
         },
       });
-
-      onCreateVault?.(paymentAccountResponse?.data?.createNewPaymentAccount as NewPaymentAccount);
-
+      
       modal.close();
+      onCreateVault?.(paymentAccountResponse?.data?.createNewPaymentAccount as NewPaymentAccount);
     } catch (error) {
       toast.error(formatError(error));
     } finally {
@@ -109,6 +108,23 @@ export function CreateDirectVaultModal({ onCreateVault }: CreateDirectVaultModal
       });
       return;
     }
+
+    setStatus('activating');
+
+    const paymentAccountResponse = await createNewPaymentAccount({
+      variables: {
+        type: PaymentAccountType.Ethereum,
+        title: data.vaultName,
+        account_info: {
+          currencies: data.network.tokens?.map(token => token.symbol),
+          address,
+          network: data.network.chain_id,
+        },
+      },
+    });
+
+    modal.close();
+    onCreateVault?.(paymentAccountResponse?.data?.createNewPaymentAccount as NewPaymentAccount);
   };
 
   if (status === 'activating') {

@@ -1,20 +1,18 @@
 import { useState } from "react";
 
-import { useMutation } from "$lib/graphql/request";
 import { Button, Input, modal, ModalContent, Select, Menu, MenuItem } from "$lib/components/core";
-import { EventTicketPrice, UpdateEventPaymentAccountsDocument, type Event, NewPaymentAccount } from "$lib/graphql/generated/backend/graphql";
+import { EventTicketPrice, NewPaymentAccount } from "$lib/graphql/generated/backend/graphql";
 
-import { useEvent, useUpdateEvent } from "../store";
-import { useMe } from "$lib/hooks/useMe";
+import { useEvent } from "../store";
 import { CreateDirectVaultModal } from "../../modals/CreateDirectVaultModal";
-import { formatCryptoPrice, getEventDirectPaymentAccounts } from "$lib/utils/event";
+import { getEventDirectPaymentAccounts } from "$lib/utils/event";
 import { multiplyByPowerOf10 } from "$lib/utils/crypto";
 import { ethers } from "ethers";
+import { useUpdateEventPaymentAccounts } from "../hooks";
 
 export function UpdateCryptoPriceModal({ price, onChange }: { price?: EventTicketPrice; onChange: (price: EventTicketPrice) => void }) {
   const event = useEvent();
-  const updateEvent = useUpdateEvent();
-  const me = useMe();
+  const { addAccount } = useUpdateEventPaymentAccounts();
   
   const paymentAccounts = getEventDirectPaymentAccounts(event!);
 
@@ -26,30 +24,14 @@ export function UpdateCryptoPriceModal({ price, onChange }: { price?: EventTicke
   const [currency, setCurrency] = useState<string>(price?.currency || currencies[0]);
   const [cost, setCost] = useState<string>(price?.cost ? ethers.formatUnits(price.cost, currencyMap[currency].decimals) : '');
 
-
-  const [updatePaymentAccount] = useMutation(UpdateEventPaymentAccountsDocument, {
-    onComplete(_, data) {
-      if (data?.updateEvent) {
-        updateEvent(data.updateEvent as Event);
-      }
-    },
-  });
-
   const handleCreateVault = () => {
-    modal.close();
     modal.open(CreateDirectVaultModal, {
       props: {
         onCreateVault(paymentAccount: NewPaymentAccount) {
           if (paymentAccount._id && event) {
             setSelectedPaymentAccount(paymentAccount);
 
-            updatePaymentAccount({
-              variables: {
-                id: event._id,
-                payment_accounts_new: [...(event.payment_accounts_new || []), paymentAccount._id]
-              }
-            });
-            modal.close();
+            addAccount(paymentAccount._id);
           }
         },
       },
@@ -130,7 +112,7 @@ export function UpdateCryptoPriceModal({ price, onChange }: { price?: EventTicke
               value={currency}
               onChange={value => setCurrency(value as string)}
               options={currencies}
-              placeholder="Select a currency"
+              placeholder="Token"
               className="rounded-l-none"
               removeable={false}
             />
