@@ -2,35 +2,28 @@
 import React from 'react';
 import { useAtom } from 'jotai';
 import { endOfDay, startOfDay, format } from 'date-fns';
-import clsx from 'clsx';
-import Link from 'next/link';
 
-import { Button, Divider, drawer, Menu, MenuItem, modal, Segment, Tag } from '$lib/components/core';
-import { HeroSection } from '$lib/components/features/community';
+import { Button, drawer, Menu, MenuItem, modal, Segment } from '$lib/components/core';
 import {
   Event,
-  FollowSpaceDocument,
   GetSpaceDocument,
   GetSpaceEventsCalendarDocument,
   GetSpaceEventsDocument,
   GetSpaceQuery,
   GetSpaceTagsDocument,
   GetSpaceTagsQuery,
-  GetSubSpacesDocument,
-  GetSubSpacesQuery,
   PublicSpace,
   SortOrder,
   Space,
   SpaceTag,
   SpaceTagType,
 } from '$lib/graphql/generated/backend/graphql';
-import { useMutation, useQuery } from '$lib/graphql/request';
+import { useQuery } from '$lib/graphql/request';
 import { EventList, EventListCard } from '$lib/components/features/EventList';
 import { Calendar } from '$lib/components/core/calendar';
-import { scrollAtBottomAtom, sessionAtom } from '$lib/jotai';
+import { scrollAtBottomAtom } from '$lib/jotai';
 import { useMe } from '$lib/hooks/useMe';
 
-import { useSignIn } from '$lib/hooks/useSignIn';
 import { useRouter } from 'next/navigation';
 import { isMobile } from 'react-device-detect';
 import { ListingEvent } from '$lib/components/features/community/ListingEvent';
@@ -55,16 +48,8 @@ export function Content({ initData }: Props) {
   const me = useMe();
   const [shouldLoadMore, setShouldLoadMore] = useAtom(scrollAtBottomAtom);
 
-  const [mode, setMode] = React.useState<'card' | 'list'>('card');
   const [eventListType, setEventListType] = React.useState('upcoming');
-  const [selectedTag, setSelectedTag] = React.useState('');
   const [selectedDate, setSelectedDate] = React.useState<Date>();
-
-  const { data: dataGetSpace } = useQuery(GetSpaceDocument, {
-    variables: { id: space?._id },
-    fetchPolicy: 'cache-and-network',
-    initData: { getSpace: space } as GetSpaceQuery,
-  });
 
   const { data: dataGetSpaceTags } = useQuery(GetSpaceTagsDocument, {
     variables: { space: space?._id },
@@ -89,7 +74,7 @@ export function Content({ initData }: Props) {
       limit: LIMIT,
       skip: 0,
       endFrom: FROM_NOW,
-      spaceTags: selectedTag ? [selectedTag] : [],
+      spaceTags: [],
     },
     skip: !space?._id,
   });
@@ -102,7 +87,7 @@ export function Content({ initData }: Props) {
       skip: 0,
       endTo: FROM_NOW,
       sort: { start: SortOrder.Desc },
-      spaceTags: selectedTag ? [selectedTag] : [],
+      spaceTags: [],
     },
     skip: !space?._id,
   });
@@ -115,7 +100,7 @@ export function Content({ initData }: Props) {
       skip: 0,
       startFrom: startOfDay(selectedDate as Date),
       startTo: endOfDay(selectedDate as Date),
-      spaceTags: selectedTag ? [selectedTag] : [],
+      spaceTags: [],
     },
     skip: !space?._id || !selectedDate,
   });
@@ -212,15 +197,11 @@ export function Content({ initData }: Props) {
               </Menu.Content>
             </Menu.Root>
 
-            {!canManage && !upcomingEvents.length && (
-              <NoUpcomingEvents spaceId={space?._id} followed={dataGetSpace?.getSpace?.followed} />
-            )}
-
             {!selectedDate ? (
               <>
                 {!!upcomingEvents.length && eventListType === 'upcoming' && (
                   <EventsWithMode
-                    mode={mode}
+                    mode="card"
                     events={upcomingEvents}
                     loading={resUpcomingEvents.loading}
                     tags={eventTags}
@@ -228,11 +209,11 @@ export function Content({ initData }: Props) {
                 )}
 
                 {(!upcomingEvents.length || eventListType === 'past') && (
-                  <EventsWithMode mode={mode} events={pastEvents} loading={resPastEvents.loading} tags={eventTags} />
+                  <EventsWithMode mode="card" events={pastEvents} loading={resPastEvents.loading} tags={eventTags} />
                 )}
               </>
             ) : (
-              <EventsWithMode mode={mode} events={events} loading={resEventsByDate.loading} tags={eventTags} />
+              <EventsWithMode mode="card" events={events} loading={resEventsByDate.loading} tags={eventTags} />
             )}
           </div>
 
@@ -348,42 +329,5 @@ function EventsWithMode({
         <EventList events={events} loading={loading} tags={tags} onSelect={handleSelect} />
       )}
     </>
-  );
-}
-
-function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; followed?: boolean | null }) {
-  const [session] = useAtom(sessionAtom);
-  const signIn = useSignIn();
-  const [follow, { loading }] = useMutation(FollowSpaceDocument, {
-    onComplete: (client) => {
-      client.writeFragment({ id: `Space:${spaceId}`, data: { followed: true } });
-    },
-  });
-
-  const handleSubscribe = () => {
-    if (!session) {
-      signIn();
-      return;
-    }
-
-    follow({ variables: { space: spaceId } });
-  };
-
-  return (
-    <div className="bg-card rounded-md flex gap-3 px-4 py-3 backdrop-blur-md">
-      <i className="icon-dashboard size-[48px] text-primary/16" />
-      <div className="flex-1">
-        <p className="text-lg text-primary">No Upcoming Events</p>
-        <p className="text-tertiary">Subscribe to the calendar to get notified when new events are posted.</p>
-        {!followed && (
-          <>
-            <Divider className="my-3" />
-            <Button variant="flat" loading={loading} className="text-accent-400!" onClick={handleSubscribe}>
-              Subscribe
-            </Button>
-          </>
-        )}
-      </div>
-    </div>
   );
 }

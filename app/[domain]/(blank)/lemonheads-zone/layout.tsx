@@ -34,7 +34,7 @@ export default function Layout(props: { children: React.ReactNode }) {
       <div className="px-4 pt-2 md:px-0 sticky top-0 bg-background/80 drop-shadow-md z-[1000]">
         <div className="border-b">
           <div className="w-full max-w-[1080px] mx-auto">
-            <ul className="inline-flex gap-4 pb-2.5">
+            <ul className="inline-flex gap-4">
               {tabs.map((item, idx) => (
                 <li key={idx}>
                   <Link href={item.path}>

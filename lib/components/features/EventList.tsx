@@ -245,7 +245,8 @@ export function EventCardItem({
                 </div>
               )}
 
-              <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), "MMM dd 'at' hh:mm a")}</p>
+              {/* <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), "MMM dd 'at' hh:mm a")}</p> */}
+              <p>{formatWithTimezone(item.start, "MMM dd 'at' hh:mm a", item.timezone)}</p>
               {!item.published && <Badge title="Draft" color="var(--color-warning-400)" />}
             </div>
 
