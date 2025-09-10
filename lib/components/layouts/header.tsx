@@ -13,7 +13,7 @@ import { useLogOut } from '$lib/hooks/useLogout';
 import { Divider, Menu, MenuItem, Button, Avatar, drawer, modal } from '$lib/components/core';
 import { userAvatar } from '$lib/utils/user';
 import { useLogOut as useLensLogOut } from '$lib/hooks/useLens';
-import { useAuth } from "$lib/hooks/useAuth";
+import { useAuth } from '$lib/hooks/useAuth';
 
 import { useAccount } from '$lib/hooks/useLens';
 import { useSignIn } from '$lib/hooks/useSignIn';

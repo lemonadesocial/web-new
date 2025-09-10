@@ -8,9 +8,9 @@ import { useRouter } from 'next/navigation';
 export function ClaimLemonHeadCard() {
   const router = useRouter();
   const [pending, setPending] = React.useState(false);
-  const { hasLemonhead, loading } = useLemonhead();
+  const { data, loading } = useLemonhead();
 
-  if (loading || hasLemonhead) return null;
+  if (loading || (data && data.tokenId)) return null;
 
   return (
     <div className="hidden md:block rounded-sm border border-divider space-y-4 p-4">

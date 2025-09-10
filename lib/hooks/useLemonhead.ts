@@ -6,41 +6,44 @@ import ERC721 from '$lib/abis/ERC721.json';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { useAppKitAccount } from '$lib/utils/appkit';
 import { chainsMapAtom } from '$lib/jotai';
+import { LEMONHEAD_CHAIN_ID } from '$lib/components/features/lemonheads/utils';
+import { LemonheadNFTContract } from '$lib/utils/crypto';
 
-async function fetchLemonheadBalance(address: string, chainsMap: Record<string, Chain>) {
-  const ethereumChain = Object.values(chainsMap).find((chain: Chain) => 
-    chain.platform === 'ethereum' && 
-    (process.env.NEXT_PUBLIC_APP_ENV === 'production' ? chain.chain_id === '1' : chain.chain_id === '11155111')
-  );
+async function fetchLemonheadData(address: string, chainsMap: Record<string, Chain>) {
+  let data = { tokenId: 0, image: '' };
+  const chain = chainsMap[LEMONHEAD_CHAIN_ID];
+  const contractAddress = chain?.lemonhead_contract_address;
 
-  if (!ethereumChain?.rpc_url || !ethereumChain?.lemonhead_contract_address) {
-    return false;
+  if (contractAddress) {
+    const provider = new ethers.JsonRpcProvider(chain.rpc_url);
+    const contract = LemonheadNFTContract.attach(contractAddress).connect(provider) as ethers.Contract;
+
+    const tokenId = await contract.getFunction('bounds')(address);
+    data.tokenId = tokenId;
+    if (tokenId > 0) {
+      const tokenUri = await contract.getFunction('tokenURI')(tokenId);
+      const res = await fetch(tokenUri);
+      const jsonData = await res.json();
+      data.image = jsonData.image;
+    }
   }
 
-  const provider = new ethers.JsonRpcProvider(ethereumChain.rpc_url);
-  const contract = new ethers.Contract(
-    ethereumChain.lemonhead_contract_address,
-    ERC721,
-    provider
-  );
-
-  const balanceResult = await contract.balanceOf(address);
-  return balanceResult > 0;
+  return data;
 }
 
 export function useLemonhead() {
   const { address } = useAppKitAccount();
   const chainsMap = useAtomValue(chainsMapAtom);
 
-  const { data: hasLemonhead = false, isLoading: loading, error } = useQuery({
+  const {
+    data,
+    isLoading: loading,
+    error,
+  } = useQuery({
     queryKey: ['lemonhead', address, chainsMap],
-    queryFn: () => fetchLemonheadBalance(address!, chainsMap),
+    queryFn: () => fetchLemonheadData(address!, chainsMap),
     enabled: !!address && !!chainsMap,
   });
 
-  return {
-    hasLemonhead,
-    loading,
-    error,
-  };
+  return { data, loading, error };
 }

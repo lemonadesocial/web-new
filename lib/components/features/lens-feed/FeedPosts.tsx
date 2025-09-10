@@ -29,7 +29,7 @@ export function FeedPosts({ feedAddress, authorId, global, showReposts, onSelect
         loadMore();
       }
     },
-    [hasMore, isLoading, loadMore]
+    [hasMore, isLoading, loadMore],
   );
 
   useEffect(() => {
@@ -61,12 +61,8 @@ export function FeedPosts({ feedAddress, authorId, global, showReposts, onSelect
         .map((post) => (
           <FeedPost key={post.slug} post={post} showRepost={showReposts} onSelect={() => onSelectPost?.(post.slug)} />
         ))}
-      
-      {hasMore && (
-        <div ref={observerRef}>
-          {isLoading && <FeedPostLoading />}
-        </div>
-      )}
+
+      {hasMore && <div ref={observerRef}>{isLoading && <FeedPostLoading />}</div>}
     </div>
   );
 }

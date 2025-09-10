@@ -628,37 +628,10 @@ function CompleteYourProfile() {
 
 function LemonHeadsZone() {
   const router = useRouter();
-  const [image, setImage] = React.useState('');
-  const [tokenId, setTokenId] = React.useState();
-  const { address } = useAppKitAccount();
-  const chainsMap = useAtomValue(chainsMapAtom);
-
-  const { hasLemonhead, loading } = useLemonhead();
-
-  const chain = chainsMap[LEMONHEAD_CHAIN_ID];
-  const contractAddress = chain?.lemonhead_contract_address;
-
-  React.useEffect(() => {
-    if (contractAddress) {
-      const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-      const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
-      contract
-        .getFunction('bounds')(address)
-        .then(async (_tokenId) => {
-          setTokenId(_tokenId);
-
-          if (hasLemonhead) {
-            const tokenUri = await contract.getFunction('tokenURI')(_tokenId);
-            const res = await fetch(tokenUri);
-            const data = await res.json();
-            setImage(data.image);
-          }
-        });
-    }
-  }, [address, contractAddress, hasLemonhead]);
+  const { data, loading } = useLemonhead();
 
   const onClick = () => {
-    if (hasLemonhead) {
+    if (data && data?.tokenId > 0) {
       router.push('/lemonheads-zone');
     } else {
       router.push('/lemonheads');
@@ -668,17 +641,17 @@ function LemonHeadsZone() {
   // NOTE: prevent click to claim lemonheads. IMPORTANT: MUST WAITING FOR CHECKING
   if (loading) return null;
 
-  if (hasLemonhead) {
+  if (data && data.tokenId > 0) {
     return (
       <CardItem
         className="bg-transparent [&_.title]:text-sm"
         image={
           <div className="size-[38px] aspect-square flex items-center justify-center rounded-sm">
-            <img src={image} className="w-full h-full rounded-sm" />
+            <img src={data.image} className="w-full h-full rounded-sm" />
           </div>
         }
         title="LemonHeads Zone"
-        subtitle={`LemonHead #${tokenId}`}
+        subtitle={`LemonHead #${data.tokenId}`}
         rightContent={<i className="icon-chevron-right text-tertiary" />}
         onClick={onClick}
       />

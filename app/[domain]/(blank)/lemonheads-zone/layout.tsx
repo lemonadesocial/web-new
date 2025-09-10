@@ -31,7 +31,7 @@ export default function Layout(props: { children: React.ReactNode }) {
 
       <Spacer className="h-6" />
 
-      <div className="px-4 pt-2 md:px-0 sticky top-0 bg-background/80 drop-shadow-md z-[1000]">
+      <div className="px-4 pt-2 md:px-0 sticky top-0 bg-background/80 backdrop-blur-md z-10">
         <div className="border-b">
           <div className="w-full max-w-[1080px] mx-auto">
             <ul className="inline-flex gap-4">
