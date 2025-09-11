@@ -19,19 +19,17 @@ export default function Layout(props: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <main className="flex flex-col min-h-dvh w-full no-scrollbar">
-      <Header />
-
-      <div className="w-full px-4 md:px-0 max-w-[1080px] mx-auto">
-        <div className="flex flex-col gap-2 pt-6 pb-2">
-          <h3 className="text-3xl font-semibold">LemonHeads Zone</h3>
-          <p className="text-tertiary">Exclusive space — connect, create and collaborate with LemonHeads.</p>
-        </div>
+    <>
+      <div className="flex flex-col gap-2 pt-6 pb-2">
+        <h3 className="text-2xl md:text-3xl font-semibold">LemonHeads Zone</h3>
+        <p className="max-sm:text-sm text-tertiary">
+          Exclusive space — connect, create and collaborate with LemonHeads.
+        </p>
       </div>
 
       <Spacer className="h-6" />
 
-      <div className="px-4 pt-2 md:px-0 sticky top-0 bg-background/80 backdrop-blur-md z-10">
+      <div className="pt-2 md:px-0 sticky top-0 bg-background/80 backdrop-blur-md z-10">
         <div className="border-b">
           <div className="w-full max-w-[1080px] mx-auto">
             <ul className="inline-flex gap-4">
@@ -54,7 +52,7 @@ export default function Layout(props: { children: React.ReactNode }) {
         </div>
       </div>
 
-      <div className="w-full max-w-[1080px] mx-auto pt-6 px-4 md:px-0">{props.children}</div>
-    </main>
+      <div className="w-full max-w-[1080px] mx-auto pt-6">{props.children}</div>
+    </>
   );
 }

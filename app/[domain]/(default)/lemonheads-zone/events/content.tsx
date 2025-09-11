@@ -29,6 +29,8 @@ import { isMobile } from 'react-device-detect';
 import { ListingEvent } from '$lib/components/features/community/ListingEvent';
 import { ListingExternalEvent } from '$lib/components/features/community/ListingExternalEvent';
 import { EventPane } from '$lib/components/features/pane';
+import { useLemonhead } from '$lib/hooks/useLemonhead';
+import { LockFeature } from '../shared';
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
@@ -44,6 +46,7 @@ type Props = {
 export function Content({ initData }: Props) {
   const space = initData.space;
 
+  const { data } = useLemonhead();
   const router = useRouter();
   const me = useMe();
   const [shouldLoadMore, setShouldLoadMore] = useAtom(scrollAtBottomAtom);
@@ -197,7 +200,13 @@ export function Content({ initData }: Props) {
               </Menu.Content>
             </Menu.Root>
 
-            {!selectedDate ? (
+            {data && data.tokenId == 0 ? (
+              <LockFeature
+                title="Events are Locked"
+                subtitle="Claim your LemonHead to unlock access to exclusive events."
+                icon="icon-confirmation-number"
+              />
+            ) : !selectedDate ? (
               <>
                 {!!upcomingEvents.length && eventListType === 'upcoming' && (
                   <EventsWithMode
