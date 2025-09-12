@@ -19,10 +19,10 @@ const tabs = [
 export default function Layout(props: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  const [minted, setMinted] = React.useState(0);
+  const [minted, setMinted] = React.useState(3000);
 
   React.useEffect(() => {
-    const timer = setTimeout(() => setMinted(6000), 1000);
+    const timer = setTimeout(() => setMinted(minted), 1000);
 
     return () => {
       clearTimeout(timer);
@@ -46,7 +46,10 @@ export default function Layout(props: { children: React.ReactNode }) {
             transition={{ duration: 1 }}
             animate={{ width: `calc(${(minted * 100) / 10000}% - 50px)` }}
           />
-          <div className="size-6 border-8 aspect-square rounded-full  border-warning-400"></div>
+
+          <div className="tooltip" data-tooltip={minted}>
+            <div className="size-6 border-8 aspect-square rounded-full  border-warning-400"></div>
+          </div>
 
           <div
             className={clsx(
