@@ -89,7 +89,7 @@ export function Content() {
 
             <CompleteYourProfile />
 
-            <LemonHeadsZone />
+            {/* <LemonHeadsZone /> */}
 
             {/* <CardItem */}
             {/*   onClick={() => comingSoon()} */}
@@ -630,7 +630,7 @@ function LemonHeadsZone() {
 
   const onClick = () => router.push('/lemonheads-zone');
 
-  // NOTE: prevent click to claim lemonheads. IMPORTANT: MUST WAITING FOR CHECKING
+  //NOTE: prevent click to claim lemonheads. IMPORTANT: MUST WAITING FOR CHECKING
   if (loading) return null;
 
   if (data && data.tokenId > 0) {
