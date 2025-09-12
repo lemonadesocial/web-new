@@ -1,13 +1,20 @@
 'use client';
-
-import { Button } from '$lib/components/core';
-import { useLemonhead } from '$lib/hooks/useLemonhead';
-import clsx from 'clsx';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
+import clsx from 'clsx';
+import { motion, AnimatePresence } from 'framer-motion';
+
+import { Avatar, Button, Card, modal, ModalContent } from '$lib/components/core';
+import { useLemonhead } from '$lib/hooks/useLemonhead';
+import { truncateMiddle } from '$lib/utils/string';
+import { userAvatar } from '$lib/utils/user';
+import { Controller, useForm } from 'react-hook-form';
+import { ConfirmModal } from '$lib/components/features/modals/ConfirmModal';
 
 export function LockFeature({ title, subtitle, icon }: { title: string; subtitle: string; icon?: string }) {
   const router = useRouter();
+  const { data } = useLemonhead();
 
   return (
     <div className="flex flex-col h-full w-full items-center justify-center gap-8 pt-10 pb-20">
@@ -24,9 +31,11 @@ export function LockFeature({ title, subtitle, icon }: { title: string; subtitle
         <p>{subtitle}</p>
       </div>
 
-      <Button variant="secondary" onClick={() => router.push('/lemonheads')}>
-        Claim LemonHead
-      </Button>
+      {data && data.tokenId === 0 && (
+        <Button variant="secondary" onClick={() => router.push('/lemonheads')}>
+          Claim LemonHead
+        </Button>
+      )}
     </div>
   );
 }
@@ -41,7 +50,7 @@ export function RightCol({
   return (
     <>
       <div className="md:hidden flex overflow-y-auto no-scrollbar gap-2">
-        {options.nft && (
+        {options.nft && data?.image && (
           <div className="flex gap-2.5 py-2.5 px-3 bg-overlay-secondary backdrop-blur-md rounded-md items-center flex-1 w-full min-w-fit">
             <img src={data?.image} className="rounded-sm size-8 aspect-square" />
 
@@ -117,7 +126,6 @@ export function Treasury() {
 }
 
 export function InviteFriend({ locked }: { locked?: boolean }) {
-  const invited = 2;
   return (
     <>
       <div className="flex w-full min-w-fit items-center md:hidden p-2.5 border rounded-md gap-2.5">
@@ -150,20 +158,178 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
           <p className="text-secondary text-sm">You have 2/5 invites left.</p>
         </div>
 
-        <div className="flex gap-0.5">
-          {Array.from({ length: 5 }).map((_, idx) => (
-            <div
-              key={idx}
-              className={clsx(
-                'h-2 flex-1 first:rounded-l-full last:rounded-r-full',
-                idx < invited ? 'bg-alert-400' : 'bg-quaternary',
-              )}
-            />
-          ))}
-        </div>
+        <InviteProgress invited={2} />
 
-        {!locked && <Button variant="secondary">Invite</Button>}
+        {!locked && (
+          <Button variant="secondary" onClick={() => modal.open(InviteFriendModal)}>
+            Invite
+          </Button>
+        )}
       </div>
     </>
+  );
+}
+
+function InviteProgress({ invited = 0 }: { invited?: number }) {
+  return (
+    <div className="flex gap-0.5">
+      {Array.from({ length: 5 }).map((_, idx) => (
+        <div
+          key={idx}
+          className={clsx(
+            'h-2 flex-1 first:rounded-l-full last:rounded-r-full',
+            idx < invited ? 'bg-alert-400' : 'bg-quaternary',
+          )}
+        />
+      ))}
+    </div>
+  );
+}
+
+function InviteFriendModal() {
+  const [step, setStep] = React.useState<'default' | 'invite_form'>('default');
+
+  const invited = [
+    { image: '', username: 'chris', wallet: '0xy2g798273287g', status: 'minted' },
+    { image: '', username: '', wallet: '0xy2g798273287g', status: 'pending' },
+  ];
+
+  const { control, setValue, watch, handleSubmit } = useForm({
+    defaultValues: {
+      addresses: Array.from({ length: 5 - invited.length }).map(() => ''),
+    },
+  });
+
+  const addresses = watch('addresses');
+
+  const onConfirm = (values: { addresses: string[] }) => {
+    console.log(values);
+  };
+
+  const renderContent = () => {
+    if (step === 'invite_form') {
+      return (
+        <>
+          <p className="text-secondary text-sm">
+            Enter the wallet IDs of the friends you want to invite. Each will get access to mint their own LemonHead.
+          </p>
+
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit(onConfirm)}>
+            <div className="border rounded-sm overflow-hidden">
+              <Controller
+                name="addresses"
+                control={control}
+                render={({ field }) => {
+                  return (
+                    <>
+                      {field.value.map((address, idx) => (
+                        <div key={idx} className="flex bg-(--input-bg) not-first:border-t border-(--color-divider)">
+                          <input
+                            className="px-3.5 py-2 flex-1 outline-none"
+                            value={address}
+                            onChange={(e) => {
+                              field.value[idx] = e.target.value;
+                              setValue('addresses', field.value);
+                            }}
+                          />
+                          <div
+                            className="flex items-center justify-center cursor-pointer text-quaternary hover:text-primary p-2.5 border-l"
+                            onClick={() => {
+                              field.value[idx] = '';
+                              setValue('addresses', field.value);
+                            }}
+                          >
+                            <i className="icon-x size-5" />
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  );
+                }}
+              />
+            </div>
+
+            <Button variant="secondary" type="submit" disabled={!addresses.some((i) => i != '')} className="w-full">
+              Confirm
+            </Button>
+          </form>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <div className="flex flex-col gap-2">
+          <p className="text-lg">LemonHeads Invites</p>
+          <p className="text-secondary text-sm">
+            LemonHeads are currently invite-only. You have unlocked 5 invites with your mint!
+          </p>
+        </div>
+
+        <InviteProgress invited={invited.length} />
+
+        <div className="flex flex-col gap-2">
+          {invited.map((item, idx) => {
+            return (
+              <Card.Root key={idx}>
+                <Card.Content className="flex items-center gap-3 px-3 py-1.5">
+                  <Avatar src={userAvatar()} size="lg" />
+                  <div className="flex-1">
+                    <div className="flex gap-2">
+                      {item.username && <p>{item.username}</p>}
+                      <p className="text-tertiary">{truncateMiddle(item.wallet, 6, 4)}</p>
+                    </div>
+                    <p className="capitalize text-tertiary text-sm">{item.status}</p>
+                  </div>
+                  {item.status === 'pending' && (
+                    <i
+                      className="icon-person-remove text-quaternary size-5 cursor-pointer hover:text-primary"
+                      onClick={() => modal.open(RemoveWalletInvitedModal)}
+                    />
+                  )}
+                </Card.Content>
+              </Card.Root>
+            );
+          })}
+        </div>
+
+        <Button variant="secondary" disabled={invited.length === 5} onClick={() => setStep('invite_form')}>
+          Invite a Friend
+        </Button>
+      </>
+    );
+  };
+
+  return (
+    <ModalContent
+      icon={step === 'default' ? 'icon-user-plus' : ''}
+      title={step === 'invite_form' ? 'Invite a Friend' : ''}
+      onBack={step === 'invite_form' ? () => setStep('default') : undefined}
+      onClose={() => modal.close()}
+      className="w-full max-w-[448px] h-auto transition-all ease-in-out"
+    >
+      <AnimatePresence mode="wait">
+        <motion.div
+          className="flex flex-col gap-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.1 }}
+          layout
+        >
+          {renderContent()}
+        </motion.div>
+      </AnimatePresence>
+    </ModalContent>
+  );
+}
+
+function RemoveWalletInvitedModal() {
+  return (
+    <ConfirmModal
+      title="Remove Wallet?"
+      subtitle="Are you sure you want to remove this wallet from your invite list? They’ll lose the ability to mint a LemonHead."
+      onConfirm={() => {}}
+    />
   );
 }
