@@ -61,7 +61,7 @@ const Sidebar = () => {
       { icon: 'icon-explore', path: '/explore', label: 'Explore' },
       // { icon: 'icon-swipe', path: '/swipe', label: 'Swipe & Match' },  // FIXME: add back when lemonheads  are live
       // { icon: 'icon-trophy', path: '/leaderboard', label: 'Leaderboard' },
-      { icon: 'icon-passport', path: '/lemonheads-zone', label: 'LemonHeads Zone' },
+      // { icon: 'icon-passport', path: '/lemonheads-zone', label: 'LemonHeads Zone' },
     ];
 
     return menu;
