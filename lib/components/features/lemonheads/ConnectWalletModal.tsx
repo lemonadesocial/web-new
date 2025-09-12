@@ -67,9 +67,8 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
     fetchPolicy: 'network-only',
   });
 
-  const sponsor = data?.listLemonheadSponsors.sponsors.find(
-    (s) => s.remaining && s.remaining > 0 && s.remaining <= s.limit,
-  )?.sponsor as LemonheadSponsor;
+  const sponsor = data?.listLemonheadSponsors.sponsors.find((s) => s.remaining && s.remaining > 0)
+    ?.sponsor as LemonheadSponsor;
 
   const handleClose = () => {
     modal.close();

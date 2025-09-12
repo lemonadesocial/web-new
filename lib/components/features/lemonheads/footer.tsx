@@ -155,9 +155,7 @@ export function LemonHeadFooter() {
               });
 
               // NOTE: only pick one can get free
-              const sponsor = data?.listLemonheadSponsors.sponsors.find(
-                (s) => s.remaining && s.remaining > 0 && s.remaining <= s.limit,
-              )?.sponsor;
+              const sponsor = data?.listLemonheadSponsors.sponsors.find((s) => s.remaining && s.remaining > 0)?.sponsor;
 
               modal.open(MintModal, {
                 onClose: () => setMinting(false),
