@@ -21,6 +21,7 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { TraitExtends } from '$lib/trpc/lemonheads/types';
 import { appKit } from '$lib/utils/appkit';
+import { truncateMiddle } from '$lib/utils/string';
 
 import { ConnectWallet } from '../modals/ConnectWallet';
 
@@ -28,8 +29,6 @@ import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from './provi
 import { LEMONHEAD_CHAIN_ID } from './utils';
 import { LemonHeadPreview } from './preview';
 import { ConnectWalletModal, MintedContent } from './ConnectWalletModal';
-import { truncateMiddle } from '$lib/utils/string';
-import { add } from 'lodash';
 
 export function LemonHeadFooter() {
   const router = useRouter();
@@ -112,6 +111,8 @@ export function LemonHeadFooter() {
       }
       toast.error(formatError(error));
       isValid = false;
+    } finally {
+      setMinting(false);
     }
 
     return isValid;
@@ -153,9 +154,7 @@ export function LemonHeadFooter() {
               });
 
               // NOTE: only pick one can get free
-              const sponsor = data?.listLemonheadSponsors.sponsors.find(
-                (s) => s.remaining && s.remaining > 0 && s.remaining <= s.limit,
-              )?.sponsor;
+              const sponsor = data?.listLemonheadSponsors.sponsors.find((s) => s.remaining && s.remaining > 0)?.sponsor;
 
               modal.open(MintModal, {
                 onClose: () => setMinting(false),
@@ -203,7 +202,7 @@ export function LemonHeadFooter() {
 
     if (state.currentStep === LemonHeadStep.claim && state.mint.minted) {
       dispatch({ type: LemonHeadActionKind.reset });
-      router.push('/');
+      router.push('/lemonheads-zone');
       return;
     }
 

@@ -245,7 +245,8 @@ export function EventCardItem({
                 </div>
               )}
 
-              <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), "MMM dd 'at' hh:mm a")}</p>
+              {/* <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), "MMM dd 'at' hh:mm a")}</p> */}
+              <p>{formatWithTimezone(item.start, "MMM dd 'at' hh:mm a", item.timezone)}</p>
               {!item.published && <Badge title="Draft" color="var(--color-warning-400)" />}
             </div>
 
@@ -255,7 +256,7 @@ export function EventCardItem({
                   <i className="icon-sparkles text-accent-400 size-3" />
                 </div>
               )}
-              <p className="font-title text-lg md:text-xl font-semibold text-primary">{item.title}</p>
+              <p className="font-title text-lg md:text-xl font-semibold text-primary truncate">{item.title}</p>
             </div>
 
             <div className="flex gap-2 item-center">

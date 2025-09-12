@@ -2,7 +2,7 @@
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Accordion, Button, Card, Divider, drawer, modal, toast } from '$lib/components/core';
+import { Accordion, Button, Card, Divider, drawer, modal } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { ASSET_PREFIX, SELF_VERIFICATION_CONFIG } from '$lib/utils/constants';
@@ -17,7 +17,6 @@ import {
   GetUpcomingEventsDocument,
   Space,
   SpaceRole,
-  User,
 } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { EventPane, ProfilePane } from '$lib/components/features/pane';
@@ -33,13 +32,18 @@ import { useAtomValue } from 'jotai';
 import { chainsMapAtom } from '$lib/jotai';
 import { GetVerifiedModal } from '$lib/components/features/modals/GetVerifiedModal';
 import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
+import { LEMONHEAD_CHAIN_ID } from '$lib/components/features/lemonheads/utils';
+import { ethers } from 'ethers';
+import { LemonheadNFTContract } from '$lib/utils/crypto';
+import Page from './communities/page';
+import { useLemonhead } from '$lib/hooks/useLemonhead';
 
 export function Content() {
   const me = useMe();
 
   const { data: selfVerificationStatus } = useQuery(GetSelfVerificationStatusDocument, {
     variables: {
-      config: SELF_VERIFICATION_CONFIG
+      config: SELF_VERIFICATION_CONFIG,
     },
     skip: !me,
   });
@@ -62,30 +66,30 @@ export function Content() {
 
         <div>
           <div className="flex md:flex-col gap-4 min-w-[264px] sticky top-12 overflow-x-auto no-scrollbar">
-            {
-              selfVerificationStatus?.getSelfVerificationStatus?.disclosures?.some(item => !item.verified) && (
-                <CardItem
-                  onClick={() => modal.open(GetVerifiedModal)}
-                  className="bg-transparent [&_.title]:text-sm"
-                  image={
-                    <div className="bg-accent-400/16 size-[38px] flex items-center justify-center rounded-sm">
-                      <i className="icon-verified-outline text-accent-400" />
-                    </div>
-                  }
-                  title="Get Verified"
-                  subtitle={
-                    <div className="flex gap-1 items-center text-tertiary">
-                      <p className="title text-lg">Powered by</p>
-                      <i className="icon-self size-3.5" />
-                      <p className="title text-lg">Self</p>
-                    </div>
-                  }
-                  rightContent={<i className="icon-chevron-right text-tertiary" />}
-                />
-              )
-            }
+            {selfVerificationStatus?.getSelfVerificationStatus?.disclosures?.some((item) => !item.verified) && (
+              <CardItem
+                onClick={() => modal.open(GetVerifiedModal)}
+                className="bg-transparent [&_.title]:text-sm"
+                image={
+                  <div className="bg-accent-400/16 size-[38px] flex items-center justify-center rounded-sm">
+                    <i className="icon-verified-outline text-accent-400" />
+                  </div>
+                }
+                title="Get Verified"
+                subtitle={
+                  <div className="flex gap-1 items-center text-tertiary">
+                    <p className="title text-lg">Powered by</p>
+                    <i className="icon-self size-3.5" />
+                    <p className="title text-lg">Self</p>
+                  </div>
+                }
+                rightContent={<i className="icon-chevron-right text-tertiary" />}
+              />
+            )}
 
             <CompleteYourProfile />
+
+            <LemonHeadsZone />
 
             {/* <CardItem */}
             {/*   onClick={() => comingSoon()} */}
@@ -199,9 +203,9 @@ function UpcomingEventSection() {
             onManage={
               [item.host, ...(item.cohosts || [])].includes(me?._id)
                 ? (e) => {
-                  e.stopPropagation();
-                  router.push(`/e/manage/${item.shortid}`);
-                }
+                    e.stopPropagation();
+                    router.push(`/e/manage/${item.shortid}`);
+                  }
                 : undefined
             }
           />
@@ -456,17 +460,11 @@ function CardItem({
         {typeof image === 'string' ? <img src={image} className="size-[38px] aspect-square" /> : image}
         <div className="space-y-0.5 flex-1">
           <p className="title text-lg">{title}</p>
-          {
-            typeof subtitle === 'string' ? (
-              <p className="text-sm text-tertiary">{subtitle}</p>
-            ) : (
-              subtitle
-            )
-          }
-        </div >
+          {typeof subtitle === 'string' ? <p className="text-sm text-tertiary">{subtitle}</p> : subtitle}
+        </div>
         <div className="hidden md:block">{rightContent}</div>
-      </Card.Content >
-    </Card.Root >
+      </Card.Content>
+    </Card.Root>
   );
 }
 
@@ -608,8 +606,6 @@ function CompleteYourProfile() {
             ))}
           </div>
         </Card.Content>
-
-        <Card.Content className=""></Card.Content>
       </Card.Root>
 
       <CardItem
@@ -625,5 +621,47 @@ function CompleteYourProfile() {
         rightContent={<i className="icon-chevron-right text-tertiary" />}
       />
     </>
+  );
+}
+
+function LemonHeadsZone() {
+  const router = useRouter();
+  const { data, loading } = useLemonhead();
+
+  const onClick = () => router.push('/lemonheads-zone');
+
+  // NOTE: prevent click to claim lemonheads. IMPORTANT: MUST WAITING FOR CHECKING
+  if (loading) return null;
+
+  if (data && data.tokenId > 0) {
+    return (
+      <CardItem
+        className="bg-transparent [&_.title]:text-sm"
+        image={
+          <div className="size-[38px] aspect-square flex items-center justify-center rounded-sm">
+            <img src={data.image} className="w-full h-full rounded-sm" />
+          </div>
+        }
+        title="LemonHeads Zone"
+        subtitle={`LemonHead #${data.tokenId}`}
+        rightContent={<i className="icon-chevron-right text-tertiary" />}
+        onClick={onClick}
+      />
+    );
+  }
+
+  return (
+    <CardItem
+      className="bg-transparent [&_.title]:text-sm"
+      image={
+        <div className="bg-[#A3E635]/16 size-[38px] flex items-center justify-center rounded-sm">
+          <i className="icon-lemonade-logo text-[#A3E635]" />
+        </div>
+      }
+      title="LemonHeads Zone"
+      subtitle="Claim your LemonHead"
+      rightContent={<i className="icon-chevron-right text-tertiary" />}
+      onClick={onClick}
+    />
   );
 }

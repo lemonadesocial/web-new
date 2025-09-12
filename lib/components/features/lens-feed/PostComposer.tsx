@@ -59,9 +59,9 @@ export function PostComposer({
       address: LEMONADE_FEED_ADDRESS,
     },
     // {
-    //   key: "lemonheads",
-    //   label: "LemonHeads",
-    //   icon: "icon-passport",
+    //   key: 'lemonheads',
+    //   label: 'LemonHeads',
+    //   icon: 'icon-passport',
     //   address: lemonHeadsAddress,
     // },
     {
