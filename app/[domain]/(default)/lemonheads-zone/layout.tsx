@@ -7,7 +7,6 @@ import { motion } from 'motion/react';
 
 import { Spacer } from '$lib/components/core';
 import { usePathname } from 'next/navigation';
-import { mint } from '@lens-protocol/metadata';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 
 const tabs = [

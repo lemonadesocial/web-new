@@ -77,7 +77,7 @@ const Sidebar = () => {
   }, []);
 
   const isActive = (item: { path: string }) =>
-    pathname === item.path || (item.path !== '/' && pathname.includes(item.path));
+    pathname === item.path || (item.path.startsWith('/lemonheads-zone') && pathname.includes(item.path));
 
   return (
     <div className="hidden lg:block fixed left-0 h-screen border-r z-10">
