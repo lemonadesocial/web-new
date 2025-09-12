@@ -112,6 +112,8 @@ export function LemonHeadFooter() {
       }
       toast.error(formatError(error));
       isValid = false;
+    } finally {
+      setMinting(false);
     }
 
     return isValid;
@@ -203,7 +205,7 @@ export function LemonHeadFooter() {
 
     if (state.currentStep === LemonHeadStep.claim && state.mint.minted) {
       dispatch({ type: LemonHeadActionKind.reset });
-      router.push('/');
+      router.push('/lemonheads-zone');
       return;
     }
 
