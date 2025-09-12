@@ -3,7 +3,7 @@ import { Content } from './content';
 
 async function Page() {
   //NOTE: list events of lemonheads community
-  const space = await getSpace({ slug: '2etqfgvu' });
+  const space = await getSpace({ slug: 'lemonheads' });
 
   return <Content initData={{ space }} />;
 }

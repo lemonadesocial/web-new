@@ -31,7 +31,7 @@ export function LockFeature({ title, subtitle, icon }: { title: string; subtitle
         <p>{subtitle}</p>
       </div>
 
-      {data && data.tokenId === 0 && (
+      {data && data.tokenId == 0 && (
         <Button variant="secondary" onClick={() => router.push('/lemonheads')}>
           Claim LemonHead
         </Button>
@@ -50,7 +50,7 @@ export function RightCol({
   return (
     <>
       <div className="md:hidden flex overflow-y-auto no-scrollbar gap-2">
-        {options.nft && data?.image && (
+        {options.nft && data && data.tokenId > 0 && (
           <div className="flex gap-2.5 py-2.5 px-3 bg-overlay-secondary backdrop-blur-md rounded-md items-center flex-1 w-full min-w-fit">
             <img src={data?.image} className="rounded-sm size-8 aspect-square" />
 
@@ -67,7 +67,7 @@ export function RightCol({
 
       <div className="hidden md:block w-full max-w-[296px]">
         <div className="sticky top-0 flex flex-col gap-4">
-          {options.nft && (
+          {options.nft && data && data.tokenId > 0 && (
             <div className="bg-overlay-secondary backdrop-blur-md p-4 rounded-md space-y-3 border">
               <img src={data?.image} className="rounded-sm" />
               <div className="flex justify-between">
@@ -105,7 +105,7 @@ export function Treasury() {
             <i className="icon-account-balance-outline text-success-500" />
           </div>
 
-          <div className="tooltip">
+          <div className="tooltip tooltip-bottom">
             <div className="tooltip-content backdrop-blur-md border-card text-left! p-3">
               <p>
                 The LemonHeads treasury is building up. Once 5,000 LemonHeads are minted, it will unlock for proposals
@@ -160,11 +160,11 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
 
         <InviteProgress invited={2} />
 
-        {!locked && (
-          <Button variant="secondary" onClick={() => modal.open(InviteFriendModal)}>
-            Invite
-          </Button>
-        )}
+        {/* {!locked && ( */}
+        {/*   <Button variant="secondary" onClick={() => modal.open(InviteFriendModal)}> */}
+        {/*     Invite */}
+        {/*   </Button> */}
+        {/* )} */}
       </div>
     </>
   );
