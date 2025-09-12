@@ -576,6 +576,9 @@ mutation UpdateEventSettings($id: MongoID!, $input: EventInput!) {
     _id
     title
     description
+    start
+    end
+    timezone
     theme_data
     address {
       street_1

@@ -55,7 +55,7 @@ export function EditEventDrawer({ event }: { event: Event }) {
 }
 
 function EditEventDrawerContent({ event }: { event: Event }) {
-  const [timezone, setTimeZone] = React.useState(getUserTimezoneOption());
+  const [timezone, setTimeZone] = React.useState(getUserTimezoneOption(event.timezone || ''));
 
   const {
     register,
