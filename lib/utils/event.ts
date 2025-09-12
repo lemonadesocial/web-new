@@ -9,6 +9,7 @@ import {
   EventTicketPrice,
   EventTokenGate,
   PaymentAccountInfo,
+  PaymentAccountType,
   PurchasableTicketType,
   Ticket,
   User,
@@ -217,4 +218,8 @@ export function getEmailBlastsRecipients(item: EmailSetting) {
   }
 
   return list.join(', ');
+}
+
+export function getEventDirectPaymentAccounts (event: Event) {
+  return event.payment_accounts_expanded?.filter((account) => account?.type === PaymentAccountType.Ethereum || account?.type === PaymentAccountType.EthereumRelay) || [];
 }

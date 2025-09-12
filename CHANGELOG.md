@@ -1,5 +1,50 @@
 # Changelog
 
+## [6.10.0](https://github.com/lemonadesocial/web-new/compare/v6.9.0...v6.10.0) (2025-09-12)
+
+
+### Features
+
+* add overlay ([3655e8d](https://github.com/lemonadesocial/web-new/commit/3655e8d4ed49a892a6f287095fc30dba7b8d3bb2))
+* check address before loading image ([f385b8b](https://github.com/lemonadesocial/web-new/commit/f385b8bacfe7ecc056111c8a97ab2d0d7e199876))
+* dont strict compare ([9200419](https://github.com/lemonadesocial/web-new/commit/9200419d2d977abfaf6e198e68d5fd9b62795d3d))
+* hide select profile last step - update loading state modal ([e4607f1](https://github.com/lemonadesocial/web-new/commit/e4607f12e670872601c9ed5e357c70e46c178497))
+* mint price only show when have at least one sponsor available ([dd491e5](https://github.com/lemonadesocial/web-new/commit/dd491e52c87ef2a73976b8675efdb2e0a42e261a))
+* remove limit sponsor ([8664284](https://github.com/lemonadesocial/web-new/commit/86642844e3c09b3e67c02759633243f8bb0973ec))
+* remove unused ([043382a](https://github.com/lemonadesocial/web-new/commit/043382a4f3abeb53c53e3287ba2efefbd0c9225e))
+* remove unused - regenerate after update select account ([d9ce1f4](https://github.com/lemonadesocial/web-new/commit/d9ce1f46168cb93bf2b5d5563ba11e5ad97623c3))
+* remove verify wallet step ([7a5ff54](https://github.com/lemonadesocial/web-new/commit/7a5ff548e17a4677b53fea41f5040c303aa29984))
+* truncate username ([f411354](https://github.com/lemonadesocial/web-new/commit/f4113549437142388dbb2185ddb2e65c195792e3))
+* update active sidebar ([c6a0d61](https://github.com/lemonadesocial/web-new/commit/c6a0d6198ddc058f318fdc8c99611d6d429862af))
+* update community event lemonheads production ([6a84c05](https://github.com/lemonadesocial/web-new/commit/6a84c05934404377dc86da4c2db297ffd8734b22))
+* update contract ([3fb3edc](https://github.com/lemonadesocial/web-new/commit/3fb3edc6a406d32e0ee0aaf8b1b8939e0d6b77fe))
+* update contract ABI ([12bd0d7](https://github.com/lemonadesocial/web-new/commit/12bd0d7353ec0909f89e6cfeb8cc72d571626dc3))
+* update event layout ([a4f3fe3](https://github.com/lemonadesocial/web-new/commit/a4f3fe30791659c9f8f31f89af3c08ba8a36e2cd))
+* update event lemonheads ([8befecf](https://github.com/lemonadesocial/web-new/commit/8befecf60ff0048a0b73d09906cf598e0dc182be))
+* update events testing ([de747a5](https://github.com/lemonadesocial/web-new/commit/de747a57ea1cc22b44c60c44a5ba151f66c34770))
+* update generate image with color ([9d66e63](https://github.com/lemonadesocial/web-new/commit/9d66e63395146384eaa06b2398a62e6c7f5bba13))
+* update home page ([ba6ded8](https://github.com/lemonadesocial/web-new/commit/ba6ded8dded547eee0db3e755227728e95ac1166))
+* update invite modal ([2051263](https://github.com/lemonadesocial/web-new/commit/2051263125b09b72d1dcfbbe3612cb17ab98747b))
+* update lab profile icon ([aff45a6](https://github.com/lemonadesocial/web-new/commit/aff45a60520deed165d5dd3e1a42332680578c7b))
+* update loading state ([70e399c](https://github.com/lemonadesocial/web-new/commit/70e399c25381a1339caacafed8a3b1b6e83f08d7))
+* update mint function call ([8915caf](https://github.com/lemonadesocial/web-new/commit/8915caf3c3c2ebc8c7bf47b5efd0b78e5e38b4e2))
+* update minted modal ([15a9be6](https://github.com/lemonadesocial/web-new/commit/15a9be6cd6fe1341b41d2f10ac1ce8ce0f2bdbfe))
+* update minted value ([903bd75](https://github.com/lemonadesocial/web-new/commit/903bd75077fb3db2b62ed2ff283244dc89c6d404))
+* update mobile view ([0da9941](https://github.com/lemonadesocial/web-new/commit/0da9941e0e0596db8cee49f67e4b50e5417dddfe))
+* update modal Insufficient Funds ([76a09fa](https://github.com/lemonadesocial/web-new/commit/76a09facb55e728c084e1f7f4467cd5877d4045e))
+* update new mint price flow ([16c5560](https://github.com/lemonadesocial/web-new/commit/16c55606a59f0cc4d5544dd025c6887c88c12f1d))
+* update newsfeed - events ([4518a09](https://github.com/lemonadesocial/web-new/commit/4518a0997352a3852ee3ac3a56d3a055a07c43e1))
+* update progress bar ([7a6d2c4](https://github.com/lemonadesocial/web-new/commit/7a6d2c41e95aab613519b4eab45327cea4ad03f4))
+* update route ([a2e409d](https://github.com/lemonadesocial/web-new/commit/a2e409d23b11a59a52df4a362613e8851eaaef47))
+* update total minted ([c60f66f](https://github.com/lemonadesocial/web-new/commit/c60f66f61426c40be254510d47e72a503372534c))
+* update white list field check can mint ([f7d645f](https://github.com/lemonadesocial/web-new/commit/f7d645f13616e68a0ecc4d39bdd4c10488e40ed6))
+
+
+### Bug Fixes
+
+* guest list page size ([988deae](https://github.com/lemonadesocial/web-new/commit/988deaee167ad399918c939842fb42587624c9ae))
+* **temp:** remove cancel payment ([55033b9](https://github.com/lemonadesocial/web-new/commit/55033b9e7f85a5ca672ab0451d54b9ec8c07f52c))
+
 ## [6.9.0](https://github.com/lemonadesocial/web-new/compare/v6.8.0...v6.9.0) (2025-09-04)
 
 

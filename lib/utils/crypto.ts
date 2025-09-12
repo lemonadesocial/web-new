@@ -1,5 +1,5 @@
 import { getDefaultStore } from 'jotai';
-import { Eip1193Provider, ethers, isError } from 'ethers';
+import { Contract, Eip1193Provider, ethers, isError } from 'ethers';
 
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
 
@@ -238,4 +238,21 @@ export function multiplyByPowerOf10(amount: string, power: number) {
   const result = BigInt(combined) * (BigInt(10) ** BigInt(totalPower));
 
   return result.toString();
+}
+
+export async function waitForEvent(tx: any, contract: Contract, eventName: string) {
+  const receipt = await tx.wait();
+  const iface = contract.interface;
+
+  let parsedEventLog: any = null;
+
+  for (const log of receipt.logs) {
+    const parsedLog = iface.parseLog(log);
+    if (parsedLog?.name === eventName) {
+      parsedEventLog = parsedLog;
+      break;
+    }
+  }
+
+  return parsedEventLog;
 }
