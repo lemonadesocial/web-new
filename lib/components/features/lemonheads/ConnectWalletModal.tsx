@@ -1,6 +1,6 @@
 import React from 'react';
-import { useAppKit, useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react';
-import { Eip1193Provider, ethers } from 'ethers';
+import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+import { ethers } from 'ethers';
 import { useAtomValue } from 'jotai';
 
 import { Button, Card, modal, ModalContent } from '$lib/components/core';
@@ -222,7 +222,7 @@ function MintWhiteList({
         </Card.Content>
       </Card.Root>
 
-      <Button variant="secondary" className="w-full" onClick={() => window.open('/e/REPLACE_EVENT_ID', '_blank')}>
+      <Button variant="secondary" className="w-full" onClick={() => window.open('/e/lemonheadslaunch', '_blank')}>
         View Event
       </Button>
     </div>

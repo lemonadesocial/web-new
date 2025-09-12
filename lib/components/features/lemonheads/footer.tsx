@@ -21,6 +21,7 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { TraitExtends } from '$lib/trpc/lemonheads/types';
 import { appKit } from '$lib/utils/appkit';
+import { truncateMiddle } from '$lib/utils/string';
 
 import { ConnectWallet } from '../modals/ConnectWallet';
 
@@ -28,8 +29,6 @@ import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from './provi
 import { LEMONHEAD_CHAIN_ID } from './utils';
 import { LemonHeadPreview } from './preview';
 import { ConnectWalletModal, MintedContent } from './ConnectWalletModal';
-import { truncateMiddle } from '$lib/utils/string';
-import { add } from 'lodash';
 
 export function LemonHeadFooter() {
   const router = useRouter();
