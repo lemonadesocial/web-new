@@ -8,6 +8,7 @@ import { motion } from 'motion/react';
 import { Spacer } from '$lib/components/core';
 import { usePathname } from 'next/navigation';
 import { mint } from '@lens-protocol/metadata';
+import { useLemonhead } from '$lib/hooks/useLemonhead';
 
 const tabs = [
   { label: 'NewsFeed', path: '/lemonheads-zone' },
@@ -18,16 +19,8 @@ const tabs = [
 
 export default function Layout(props: { children: React.ReactNode }) {
   const pathname = usePathname();
-
-  const [minted, setMinted] = React.useState(3000);
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => setMinted(minted), 1000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+  const { data } = useLemonhead();
+  const totalMint = Number(data?.totalMinted) || 0;
 
   return (
     <>
@@ -44,17 +37,17 @@ export default function Layout(props: { children: React.ReactNode }) {
           <motion.div
             className="h-2 bg-warning-400 rounded-s-full"
             transition={{ duration: 1 }}
-            animate={{ width: `calc(${(minted * 100) / 10000}% - 50px)` }}
+            animate={{ width: `calc(${(totalMint * 100) / 10000}% - 50px)` }}
           />
 
-          <div className="tooltip" data-tooltip={minted}>
+          <div className="">
             <div className="size-6 border-8 aspect-square rounded-full  border-warning-400"></div>
           </div>
 
           <div
             className={clsx(
               'size-8 aspect-square rounded-full flex items-center justify-center absolute left-[45%]',
-              minted >= 5000
+              totalMint >= 5000
                 ? 'bg-primary text-primary-invert'
                 : 'bg-(--btn-tertiary) backdrop-blur-sm  text-(--btn-tertiary-content)',
             )}
@@ -65,7 +58,7 @@ export default function Layout(props: { children: React.ReactNode }) {
           <div
             className={clsx(
               'size-8 aspect-square rounded-full flex items-center justify-center absolute right-5',
-              minted < 10000
+              totalMint < 10000
                 ? 'bg-(--btn-tertiary) backdrop-blur-sm text-(--btn-tertiary-content)'
                 : 'bg-primary text-primary-invert',
             )}

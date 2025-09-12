@@ -227,6 +227,7 @@ function InviteFriendModal() {
                           <input
                             className="px-3.5 py-2 flex-1 outline-none"
                             value={address}
+                            placeholder="Enter ENS or wallet address"
                             onChange={(e) => {
                               field.value[idx] = e.target.value;
                               setValue('addresses', field.value);
@@ -327,6 +328,7 @@ function InviteFriendModal() {
 function RemoveWalletInvitedModal() {
   return (
     <ConfirmModal
+      icon="icon-person-remove"
       title="Remove Wallet?"
       subtitle="Are you sure you want to remove this wallet from your invite list? They’ll lose the ability to mint a LemonHead."
       onConfirm={() => {}}

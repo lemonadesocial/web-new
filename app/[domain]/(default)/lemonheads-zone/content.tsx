@@ -14,8 +14,6 @@ export function Content() {
   const { createPost } = usePost();
   const { data } = useLemonhead();
 
-  const invited = 2;
-
   const onPost = async (metadata: unknown, feedAddress?: string) => {
     createPost({ metadata, feedAddress });
   };
