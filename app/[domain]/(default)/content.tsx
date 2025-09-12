@@ -606,8 +606,6 @@ function CompleteYourProfile() {
             ))}
           </div>
         </Card.Content>
-
-        <Card.Content className=""></Card.Content>
       </Card.Root>
 
       <CardItem
