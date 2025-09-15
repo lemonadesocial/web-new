@@ -35,6 +35,33 @@ query GetListMyLemonheadInvitations {
   }
 }
 
+query GetMyLemonheadInvitationRank {
+  getMyLemonheadInvitationRank {
+    rank
+    user {
+      _id
+      username
+      image_avatar
+    }
+    invitations_count
+  }
+}
+
+query GetLemonheadInvitationRank($skip: Int!, $limit: Int!) {
+  getLemonheadInvitationRank(skip: $skip, limit: $limit) {
+    items {
+      rank
+      user {
+        _id
+        username
+        image_avatar
+      }
+      invitations_count
+    }
+    total
+  }
+}
+
 mutation SetUserWallet($token: String!, $signature: String!) {
   setUserWallet(token: $token, signature: $signature)
 }

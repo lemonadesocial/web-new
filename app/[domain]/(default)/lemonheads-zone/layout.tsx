@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
 import { motion } from 'motion/react';
 
-import { modal, Spacer, toast } from '$lib/components/core';
+import { Spacer } from '$lib/components/core';
 import { usePathname } from 'next/navigation';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { useMe } from '$lib/hooks/useMe';
@@ -15,6 +15,7 @@ const tabs = [
   { label: 'Events', path: '/lemonheads-zone/events' },
   { label: 'Proposals', path: '/lemonheads-zone/proposals' },
   { label: 'Treasury', path: '/lemonheads-zone/treasury' },
+  { label: 'Leaderboard', path: '/lemonheads-zone/leaderboard' },
 ];
 
 export default function Layout(props: { children: React.ReactNode }) {
@@ -80,7 +81,7 @@ export default function Layout(props: { children: React.ReactNode }) {
                     <p
                       className={twMerge(
                         'pb-2.5 text-tertiary hover:text-primary',
-                        clsx(item.path === pathname && 'border-b-2 border-primary'),
+                        clsx(item.path === pathname && 'border-b-2 border-primary text-primary'),
                       )}
                     >
                       {item.label}

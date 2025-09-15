@@ -234,7 +234,7 @@ function InviteProgress({ invited = 0 }: { invited?: number }) {
   );
 }
 
-function InviteFriendModal() {
+export function InviteFriendModal() {
   const { data, refetch } = useQuery(GetListMyLemonheadInvitationsDocument);
   const invitations = data?.listMyLemonheadInvitations.invitations || [];
   const [step, setStep] = React.useState<'default' | 'invite_form'>('default');
