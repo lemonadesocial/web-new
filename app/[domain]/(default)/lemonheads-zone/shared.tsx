@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { Avatar, Button, Card, modal, ModalContent, toast } from '$lib/components/core';
+import { Avatar, Button, Card, modal, ModalContent, Spacer, toast } from '$lib/components/core';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { truncateMiddle } from '$lib/utils/string';
 import { userAvatar } from '$lib/utils/user';
@@ -59,7 +59,7 @@ export function RightCol({
 
   return (
     <>
-      <div className="md:hidden flex overflow-y-auto no-scrollbar gap-2">
+      <div className="md:hidden flex max-w-full overflow-y-auto no-scrollbar gap-2">
         {options.nft && data && data.tokenId > 0 && (
           <div className="flex gap-2.5 py-2.5 px-3 bg-overlay-secondary backdrop-blur-md rounded-md items-center flex-1 w-full min-w-fit">
             <img src={data?.image} className="rounded-sm size-8 aspect-square" />
@@ -167,15 +167,23 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
 
   return (
     <>
-      <div className="flex w-full min-w-fit items-center md:hidden p-2.5 border rounded-md gap-2.5">
-        <div className="flex justify-center items-center rounded-sm bg-alert-400/16 size-8 p-1.5 aspect-square">
-          <i className="icon-user-plus text-alert-400" />
+      <div className="flex w-full min-w-fit items-center md:hidden p-2.5 border rounded-md justify-between gap-4">
+        <div className="flex gap-2.5 flex-1 items-center">
+          <div className="flex justify-center items-center rounded-sm bg-alert-400/16 size-8 p-1.5 aspect-square">
+            <i className="icon-user-plus text-alert-400" />
+          </div>
+
+          <div className="flex flex-col gpa-1.5">
+            <p>Invite</p>
+            <p className="text-secondary text-sm">You have {invitations.length}/5 invites left.</p>
+          </div>
         </div>
 
-        <div className="flex flex-col gpa-1.5">
-          <p>Invite</p>
-          <p className="text-secondary text-sm">You have {invitations.length}/5 invites left.</p>
-        </div>
+        {!locked && (
+          <Button variant="secondary" onClick={handleInvite} size="sm">
+            Invite
+          </Button>
+        )}
       </div>
 
       <div className="hidden md:flex p-4 border rounded-md flex-col gap-3">
@@ -232,7 +240,6 @@ function InviteFriendModal() {
 
   const [update, { loading }] = useMutation(UpdateMyLemonheadInvitationsDocument, {
     onError: (error) => {
-      console.log(error);
       toast.error(error.message);
     },
     onComplete: async (_client, res) => {

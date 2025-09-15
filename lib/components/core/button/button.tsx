@@ -82,7 +82,7 @@ export function Button({
       disabled={disabled || loading}
       type={type}
       className={twMerge(
-        'transition border border-transparent group cursor-pointer inline-flex items-center justify-center font-medium',
+        'transition border border-transparent group cursor-pointer inline-flex items-center justify-center font-medium relative',
         sizes[size],
         gaps[size],
         // outlined ? outlineVariants[variant] : variants[variant],
