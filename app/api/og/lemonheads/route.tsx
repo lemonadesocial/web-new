@@ -8,19 +8,16 @@ import request from 'graphql-request';
 import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
 import { LEMONHEAD_CHAIN_ID, LEMONHEAD_COLORS } from '$lib/components/features/lemonheads/utils';
 import { ERC721Contract } from '$lib/utils/crypto';
+import { getClient } from '$lib/graphql/request';
 
 const fetchFont = (url: string) => {
   return fetch(new URL(url)).then((res) => res.arrayBuffer());
 };
 
-const APP_ENV = process.env.APP_ENV;
-const url =
-  APP_ENV === 'production'
-    ? 'https://backend.lemonade.social/graphql'
-    : 'https://backend.staging.lemonade.social/graphql';
 const fetchChain = async () => {
-  const res = await request({ url, document: ListChainsDocument });
-  return res.listChains?.find((i) => i.chain_id === LEMONHEAD_CHAIN_ID);
+  const client = getClient();
+  const { data } = await client.query({ query: ListChainsDocument });
+  return data?.listChains?.find((i) => i.chain_id === LEMONHEAD_CHAIN_ID);
 };
 
 /**
@@ -34,8 +31,6 @@ const fetchChain = async () => {
  *
  */
 export async function GET(req: NextRequest) {
-  console.log(process.env.APP_ENV);
-
   const searchParams = req.nextUrl.searchParams;
   const tokenId = searchParams.get('tokenId') || '';
   const address = searchParams.get('address') || '';
@@ -71,7 +66,7 @@ export async function GET(req: NextRequest) {
     image = data.image;
 
     const client = PublicClient.create({
-      environment: process.env.APP_ENV === 'production' ? mainnet : testnet,
+      environment: process.env.NEXT_PUBLIC_APP_ENV === 'production' ? mainnet : testnet,
     });
 
     const result = await fetchAccount(client, { address: evmAddress(address) });
