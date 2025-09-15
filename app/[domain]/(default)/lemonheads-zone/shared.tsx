@@ -21,7 +21,7 @@ import {
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { VerifyWalletModal } from '$lib/components/features/event-registration/modals/VerifyWalletModal';
-import { ethers } from 'ethers';
+import { ethers, lock } from 'ethers';
 
 export function LockFeature({ title, subtitle, icon }: { title: string; subtitle: string; icon?: string }) {
   const router = useRouter();
@@ -176,7 +176,9 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
 
           <div className="flex flex-col gpa-1.5">
             <p>Invite</p>
-            <p className="text-secondary text-sm">You have {invitations.length}/5 invites left.</p>
+            <p className="text-secondary text-sm">
+              {!locked ? `You have ${invitations.length}/5 invites left.` : 'Claim your LemonHead to unlock.'}
+            </p>
           </div>
         </div>
 
@@ -203,10 +205,12 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
 
         <div className="flex flex-col gpa-1.5">
           <p>Invite a Friend</p>
-          <p className="text-secondary text-sm">You have {invitations.length}/5 invites left.</p>
+          <p className="text-secondary text-sm">
+            {!locked ? `You have ${invitations.length}/5 invites left.` : 'Claim your LemonHead to unlock.'}
+          </p>
         </div>
 
-        <InviteProgress invited={invitations.length} />
+        {!locked && <InviteProgress invited={invitations.length} />}
 
         {!locked && invitations.length < 5 && (
           <Button variant="secondary" onClick={handleInvite}>
