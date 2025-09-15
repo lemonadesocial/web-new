@@ -225,7 +225,7 @@ function PreviewImageLink({ color, image, portrait, username, tokenId, bio }: an
                 WebkitLineClamp: 4,
               }}
             >
-              {bio || 'A customizable onchain identity made for creators, by creators.'}
+              {bio || 'Citizen of the United Stands of Lemonade - a nation shaped by creators and communities.'}
             </p>
           </div>
 
@@ -368,7 +368,7 @@ function DownloadImageLink({ color, image, portrait, username, tokenId, bio }: a
                 WebkitBoxOrient: 'vertical',
               }}
             >
-              {bio || 'A customizable onchain identity made for creators, by creators.'}
+              {bio || 'Citizen of the United Stands of Lemonade - a nation shaped by creators and communities.'}
             </p>
           </div>
 
