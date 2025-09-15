@@ -1,7 +1,7 @@
 import { generateUrl } from '$lib/utils/cnd';
-import { calculateLookHash, formatString, getFinalTraits, Trait, validateTraits } from './core';
+import { calculateLookHash, Filter, formatString, getFinalTraits, layerings, Trait, TraitType, validateTraits } from './core';
 import { getApproval, getCache, setCache } from './admin';
-import { getFinalImage, getRenderLayersFromTraits } from './image';
+import { getFinalImage, getRandomLayersFromTraits, getRenderLayersFromTraits, Layer, randomUseOutfit } from './image';
 import { uploadImage, uploadJSON } from './storage';
 
 const gatewayPrefix = 'https://api.grove.storage/';
@@ -84,4 +84,47 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
     image: imageUrl,
     metadata: metadataUrl.replace(gatewayPrefix, ''),
   };
+};
+
+//-- caller function must provider 4 required filters: race, gender, skin_tone, size
+export const getRandomLook = async (filters: Filter[]): Promise<Layer[]> => {
+  const traits: Omit<Trait, 'value'>[] = [];
+
+  //-- check if we use outfit or top / bottom
+  const useOutfit = await randomUseOutfit();
+
+  for (const [type, value] of Object.entries(layerings)) {
+    const traitType = type as TraitType;
+
+    if (traitType === TraitType.outfit && useOutfit) {
+      traits.push({
+        type: traitType,
+        filters,
+      });
+
+      continue;
+    }
+
+    const isTopOrBottom = traitType === TraitType.top || traitType === TraitType.bottom;
+
+    if (isTopOrBottom && useOutfit) {
+      continue;
+    }
+
+    //-- other layers that are not mututal exclusive
+    //-- if the layer is required then add it to the traits, otherwise random chance to add it to the traits
+    //-- top and bottom have a higher chance to be added to the traits
+    const toAdd =
+      value.required
+      || (Math.random() < (isTopOrBottom ? 0.75 : 0.5));
+
+    if (toAdd) {
+      traits.push({
+        type: traitType,
+        filters,
+      });
+    }
+  }
+
+  return await getRandomLayersFromTraits(traits);
 };
