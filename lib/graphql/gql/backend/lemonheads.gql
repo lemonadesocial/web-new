@@ -20,3 +20,28 @@ query CanMintLemonhead($wallet: String!) {
     white_list_enabled
   }
 }
+
+query GetListMyLemonheadInvitations {
+  listMyLemonheadInvitations {
+    invitations {
+      invitee_wallet
+      minted_at
+      user {
+        _id
+        username
+      }
+    }
+  }
+}
+
+mutation SetUserWallet($token: String!, $signature: String!) {
+  setUserWallet(token: $token, signature: $signature)
+}
+
+mutation UpdateMyLemonheadInvitations($invitations: [String!]!) {
+  updateMyLemonheadInvitations(invitations: $invitations) {
+    success
+    message
+    wallets
+  }
+}

@@ -5,9 +5,10 @@ import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
 import { motion } from 'motion/react';
 
-import { Spacer } from '$lib/components/core';
+import { modal, Spacer, toast } from '$lib/components/core';
 import { usePathname } from 'next/navigation';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
+import { useMe } from '$lib/hooks/useMe';
 
 const tabs = [
   { label: 'NewsFeed', path: '/lemonheads-zone' },
@@ -20,6 +21,7 @@ export default function Layout(props: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { data } = useLemonhead();
   const totalMint = Number(data?.totalMinted) || 0;
+  const me = useMe();
 
   return (
     <>
