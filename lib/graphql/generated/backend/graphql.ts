@@ -253,6 +253,7 @@ export type BasicUserInfo = {
   display_name?: Maybe<Scalars['String']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
   job_title?: Maybe<Scalars['String']['output']>;
+  kratos_wallet_address?: Maybe<Scalars['String']['output']>;
   matrix_localpart?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   username?: Maybe<Scalars['String']['output']>;
@@ -618,6 +619,7 @@ export type ConfidentialUserInfo = {
   email?: Maybe<Scalars['String']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
   job_title?: Maybe<Scalars['String']['output']>;
+  kratos_wallet_address?: Maybe<Scalars['String']['output']>;
   matrix_localpart?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   username?: Maybe<Scalars['String']['output']>;
@@ -3030,20 +3032,20 @@ export type LemonheadInvitation = {
   created_at?: Maybe<Scalars['DateTimeISO']['output']>;
   invitee_wallet?: Maybe<Scalars['String']['output']>;
   minted_at?: Maybe<Scalars['DateTimeISO']['output']>;
-  user?: Maybe<BasicUserInfo>;
+  user?: Maybe<LemonheadUserInfo>;
 };
 
 export type LemonheadInvitationRank = {
   __typename?: 'LemonheadInvitationRank';
   invitations_count: Scalars['Float']['output'];
   rank: Scalars['Float']['output'];
-  user: BasicUserInfo;
+  user: LemonheadUserInfo;
 };
 
 export type LemonheadMintingInfo = {
   __typename?: 'LemonheadMintingInfo';
   can_mint: Scalars['Boolean']['output'];
-  inviter?: Maybe<BasicUserInfo>;
+  inviter?: Maybe<LemonheadUserInfo>;
   price: Scalars['String']['output'];
   token_gated: Scalars['Boolean']['output'];
   white_list_enabled: Scalars['Boolean']['output'];
@@ -3073,6 +3075,20 @@ export type LemonheadSupportData = {
 export enum LemonheadSupportDataType {
   Color = 'color'
 }
+
+export type LemonheadUserInfo = {
+  __typename?: 'LemonheadUserInfo';
+  _id: Scalars['MongoID']['output'];
+  company_name?: Maybe<Scalars['String']['output']>;
+  display_name?: Maybe<Scalars['String']['output']>;
+  image_avatar?: Maybe<Scalars['String']['output']>;
+  job_title?: Maybe<Scalars['String']['output']>;
+  kratos_wallet_address?: Maybe<Scalars['String']['output']>;
+  lemonhead_inviter_wallet?: Maybe<Scalars['String']['output']>;
+  matrix_localpart?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  username?: Maybe<Scalars['String']['output']>;
+};
 
 export type ListDonationsResponse = {
   __typename?: 'ListDonationsResponse';
@@ -4654,6 +4670,7 @@ export type NonloginUser = {
   lemon_amount?: Maybe<Scalars['Float']['output']>;
   lemon_cap?: Maybe<Scalars['Float']['output']>;
   lemon_refresh_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  lemonhead_inviter_wallet?: Maybe<Scalars['String']['output']>;
   lens_profile_id?: Maybe<Scalars['String']['output']>;
   lens_profile_synced?: Maybe<Scalars['Boolean']['output']>;
   location_line?: Maybe<Scalars['String']['output']>;
@@ -5256,6 +5273,7 @@ export type Query = {
   getMe: User;
   getMyEventJoinRequest?: Maybe<EventJoinRequest>;
   getMyEvents: Array<Event>;
+  /** Return zero if the user has no rank */
   getMyLemonheadInvitationRank: LemonheadInvitationRank;
   getMyPayments: Array<NewPayment>;
   getMyPoints: Array<PointConfigInfo>;
@@ -8835,6 +8853,7 @@ export type User = {
   lemon_amount: Scalars['Float']['output'];
   lemon_cap: Scalars['Float']['output'];
   lemon_refresh_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  lemonhead_inviter_wallet?: Maybe<Scalars['String']['output']>;
   lens_profile_id?: Maybe<Scalars['String']['output']>;
   lens_profile_synced?: Maybe<Scalars['Boolean']['output']>;
   location_line?: Maybe<Scalars['String']['output']>;
@@ -9238,6 +9257,7 @@ export type UserWithEmail = {
   lemon_amount: Scalars['Float']['output'];
   lemon_cap: Scalars['Float']['output'];
   lemon_refresh_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  lemonhead_inviter_wallet?: Maybe<Scalars['String']['output']>;
   lens_profile_id?: Maybe<Scalars['String']['output']>;
   lens_profile_synced?: Maybe<Scalars['Boolean']['output']>;
   location_line?: Maybe<Scalars['String']['output']>;
@@ -9882,12 +9902,12 @@ export type CanMintLemonheadQuery = { __typename: 'Query', canMintLemonhead: { _
 export type GetListMyLemonheadInvitationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetListMyLemonheadInvitationsQuery = { __typename: 'Query', listMyLemonheadInvitations: { __typename: 'ListMyLemonheadInvitationsResponse', invitations: Array<{ __typename: 'LemonheadInvitation', invitee_wallet?: string | null, minted_at?: any | null, user?: { __typename: 'BasicUserInfo', _id: any, username?: string | null, image_avatar?: string | null } | null }> } };
+export type GetListMyLemonheadInvitationsQuery = { __typename: 'Query', listMyLemonheadInvitations: { __typename: 'ListMyLemonheadInvitationsResponse', invitations: Array<{ __typename: 'LemonheadInvitation', invitee_wallet?: string | null, minted_at?: any | null, user?: { __typename: 'LemonheadUserInfo', _id: any, username?: string | null, image_avatar?: string | null } | null }> } };
 
 export type GetMyLemonheadInvitationRankQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMyLemonheadInvitationRankQuery = { __typename: 'Query', getMyLemonheadInvitationRank: { __typename: 'LemonheadInvitationRank', rank: number, invitations_count: number, user: { __typename: 'BasicUserInfo', _id: any, username?: string | null, image_avatar?: string | null } } };
+export type GetMyLemonheadInvitationRankQuery = { __typename: 'Query', getMyLemonheadInvitationRank: { __typename: 'LemonheadInvitationRank', rank: number, invitations_count: number, user: { __typename: 'LemonheadUserInfo', _id: any, username?: string | null, image_avatar?: string | null, lemonhead_inviter_wallet?: string | null, kratos_wallet_address?: string | null } } };
 
 export type GetLemonheadInvitationRankQueryVariables = Exact<{
   skip: Scalars['Int']['input'];
@@ -9895,7 +9915,7 @@ export type GetLemonheadInvitationRankQueryVariables = Exact<{
 }>;
 
 
-export type GetLemonheadInvitationRankQuery = { __typename: 'Query', getLemonheadInvitationRank: { __typename: 'GetMyLemonheadInvitationRankResponse', total: number, items: Array<{ __typename: 'LemonheadInvitationRank', rank: number, invitations_count: number, user: { __typename: 'BasicUserInfo', _id: any, username?: string | null, image_avatar?: string | null } }> } };
+export type GetLemonheadInvitationRankQuery = { __typename: 'Query', getLemonheadInvitationRank: { __typename: 'GetMyLemonheadInvitationRankResponse', total: number, items: Array<{ __typename: 'LemonheadInvitationRank', rank: number, invitations_count: number, user: { __typename: 'LemonheadUserInfo', _id: any, username?: string | null, image_avatar?: string | null, lemonhead_inviter_wallet?: string | null, kratos_wallet_address?: string | null } }> } };
 
 export type SetUserWalletMutationVariables = Exact<{
   token: Scalars['String']['input'];
@@ -10408,8 +10428,8 @@ export const UpdateFileDescriptionMutationDocument = {"kind":"Document","definit
 export const GetListLemonheadSponsorsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetListLemonheadSponsors"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listLemonheadSponsors"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"wallet"},"value":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"sponsors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"sponsor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image_url"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"Field","name":{"kind":"Name","value":"remaining"}}]}}]}}]}}]} as unknown as DocumentNode<GetListLemonheadSponsorsQuery, GetListLemonheadSponsorsQueryVariables>;
 export const CanMintLemonheadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CanMintLemonhead"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"canMintLemonhead"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"wallet"},"value":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"can_mint"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"white_list_enabled"}}]}}]}}]} as unknown as DocumentNode<CanMintLemonheadQuery, CanMintLemonheadQueryVariables>;
 export const GetListMyLemonheadInvitationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetListMyLemonheadInvitations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listMyLemonheadInvitations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"invitations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"invitee_wallet"}},{"kind":"Field","name":{"kind":"Name","value":"minted_at"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetListMyLemonheadInvitationsQuery, GetListMyLemonheadInvitationsQueryVariables>;
-export const GetMyLemonheadInvitationRankDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyLemonheadInvitationRank"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getMyLemonheadInvitationRank"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"invitations_count"}}]}}]}}]} as unknown as DocumentNode<GetMyLemonheadInvitationRankQuery, GetMyLemonheadInvitationRankQueryVariables>;
-export const GetLemonheadInvitationRankDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLemonheadInvitationRank"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getLemonheadInvitationRank"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"invitations_count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"}}]}}]}}]} as unknown as DocumentNode<GetLemonheadInvitationRankQuery, GetLemonheadInvitationRankQueryVariables>;
+export const GetMyLemonheadInvitationRankDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyLemonheadInvitationRank"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getMyLemonheadInvitationRank"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}},{"kind":"Field","name":{"kind":"Name","value":"lemonhead_inviter_wallet"}},{"kind":"Field","name":{"kind":"Name","value":"kratos_wallet_address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"invitations_count"}}]}}]}}]} as unknown as DocumentNode<GetMyLemonheadInvitationRankQuery, GetMyLemonheadInvitationRankQueryVariables>;
+export const GetLemonheadInvitationRankDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLemonheadInvitationRank"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getLemonheadInvitationRank"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}},{"kind":"Field","name":{"kind":"Name","value":"lemonhead_inviter_wallet"}},{"kind":"Field","name":{"kind":"Name","value":"kratos_wallet_address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"invitations_count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"}}]}}]}}]} as unknown as DocumentNode<GetLemonheadInvitationRankQuery, GetLemonheadInvitationRankQueryVariables>;
 export const SetUserWalletDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetUserWallet"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"signature"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"setUserWallet"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}},{"kind":"Argument","name":{"kind":"Name","value":"signature"},"value":{"kind":"Variable","name":{"kind":"Name","value":"signature"}}}]}]}}]} as unknown as DocumentNode<SetUserWalletMutation, SetUserWalletMutationVariables>;
 export const UpdateMyLemonheadInvitationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateMyLemonheadInvitations"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"invitations"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"updateMyLemonheadInvitations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"invitations"},"value":{"kind":"Variable","name":{"kind":"Name","value":"invitations"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"wallets"}}]}}]}}]} as unknown as DocumentNode<UpdateMyLemonheadInvitationsMutation, UpdateMyLemonheadInvitationsMutationVariables>;
 export const ListChainsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"listChains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listChains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"platform"}},{"kind":"Field","name":{"kind":"Name","value":"chain_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"code_name"}},{"kind":"Field","name":{"kind":"Name","value":"rpc_url"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_url"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_name"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_tx"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_token"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_address"}},{"kind":"Field","name":{"kind":"Name","value":"block_time"}},{"kind":"Field","name":{"kind":"Name","value":"safe_confirmations"}},{"kind":"Field","name":{"kind":"Name","value":"logo_url"}},{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"contract"}},{"kind":"Field","name":{"kind":"Name","value":"logo_url"}},{"kind":"Field","name":{"kind":"Name","value":"is_native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"access_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"poap_contract"}},{"kind":"Field","name":{"kind":"Name","value":"marketplace_contract"}},{"kind":"Field","name":{"kind":"Name","value":"marketplace_version"}},{"kind":"Field","name":{"kind":"Name","value":"biconomy_api_key"}},{"kind":"Field","name":{"kind":"Name","value":"ens_registry"}},{"kind":"Field","name":{"kind":"Name","value":"proxy_admin_contract"}},{"kind":"Field","name":{"kind":"Name","value":"payment_config_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"escrow_manager_contract"}},{"kind":"Field","name":{"kind":"Name","value":"relay_payment_contract"}},{"kind":"Field","name":{"kind":"Name","value":"stake_payment_contract"}},{"kind":"Field","name":{"kind":"Name","value":"reward_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"eas_event_contract"}},{"kind":"Field","name":{"kind":"Name","value":"eas_graphql_url"}},{"kind":"Field","name":{"kind":"Name","value":"aragon_network"}},{"kind":"Field","name":{"kind":"Name","value":"axelar_chain_name"}},{"kind":"Field","name":{"kind":"Name","value":"donation_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"lemonhead_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"poap_enabled"}}]}}]}}]} as unknown as DocumentNode<ListChainsQuery, ListChainsQueryVariables>;

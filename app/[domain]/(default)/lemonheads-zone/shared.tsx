@@ -208,7 +208,7 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
 
         <InviteProgress invited={invitations.length} />
 
-        {!locked && (
+        {!locked && invitations.length < 5 && (
           <Button variant="secondary" onClick={handleInvite}>
             Invite
           </Button>

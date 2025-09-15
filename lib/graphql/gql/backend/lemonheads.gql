@@ -42,6 +42,8 @@ query GetMyLemonheadInvitationRank {
       _id
       username
       image_avatar
+      lemonhead_inviter_wallet
+      kratos_wallet_address
     }
     invitations_count
   }
@@ -55,6 +57,8 @@ query GetLemonheadInvitationRank($skip: Int!, $limit: Int!) {
         _id
         username
         image_avatar
+        lemonhead_inviter_wallet
+        kratos_wallet_address
       }
       invitations_count
     }
