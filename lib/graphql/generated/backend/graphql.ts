@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -250,6 +250,7 @@ export type BasicUserInfo = {
   __typename?: 'BasicUserInfo';
   _id: Scalars['MongoID']['output'];
   company_name?: Maybe<Scalars['String']['output']>;
+  display_name?: Maybe<Scalars['String']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
   job_title?: Maybe<Scalars['String']['output']>;
   matrix_localpart?: Maybe<Scalars['String']['output']>;
@@ -611,10 +612,13 @@ export type CommentInput = {
 
 export type ConfidentialUserInfo = {
   __typename?: 'ConfidentialUserInfo';
-  _id?: Maybe<Scalars['MongoID']['output']>;
+  _id: Scalars['MongoID']['output'];
+  company_name?: Maybe<Scalars['String']['output']>;
   display_name?: Maybe<Scalars['String']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
+  job_title?: Maybe<Scalars['String']['output']>;
+  matrix_localpart?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   username?: Maybe<Scalars['String']['output']>;
 };
@@ -2820,6 +2824,12 @@ export type GetInitSafeTransactionInput = {
   threshold: Scalars['Int']['input'];
 };
 
+export type GetMyLemonheadInvitationRankResponse = {
+  __typename?: 'GetMyLemonheadInvitationRankResponse';
+  items: Array<LemonheadInvitationRank>;
+  total: Scalars['Int']['output'];
+};
+
 export type GetMyTicketsResponse = {
   __typename?: 'GetMyTicketsResponse';
   payments?: Maybe<Array<PaymentRefundInfo>>;
@@ -3015,10 +3025,27 @@ export type LayoutSectionInput = {
   id?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type LemonheadInvitation = {
+  __typename?: 'LemonheadInvitation';
+  created_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  invitee_wallet?: Maybe<Scalars['String']['output']>;
+  minted_at?: Maybe<Scalars['DateTimeISO']['output']>;
+  user?: Maybe<BasicUserInfo>;
+};
+
+export type LemonheadInvitationRank = {
+  __typename?: 'LemonheadInvitationRank';
+  invitations_count: Scalars['Float']['output'];
+  rank: Scalars['Float']['output'];
+  user: BasicUserInfo;
+};
+
 export type LemonheadMintingInfo = {
   __typename?: 'LemonheadMintingInfo';
   can_mint: Scalars['Boolean']['output'];
+  inviter?: Maybe<BasicUserInfo>;
   price: Scalars['String']['output'];
+  token_gated: Scalars['Boolean']['output'];
   white_list_enabled: Scalars['Boolean']['output'];
 };
 
@@ -3032,7 +3059,7 @@ export type LemonheadSponsor = {
 
 export type LemonheadSponsorDetail = {
   __typename?: 'LemonheadSponsorDetail';
-  limit: Scalars['Float']['output'];
+  limit?: Maybe<Scalars['Float']['output']>;
   remaining?: Maybe<Scalars['Float']['output']>;
   sponsor: LemonheadSponsor;
 };
@@ -3080,6 +3107,11 @@ export type ListEventStakePaymentsResponse = {
 export type ListLemonheadSponsorsResponse = {
   __typename?: 'ListLemonheadSponsorsResponse';
   sponsors: Array<LemonheadSponsorDetail>;
+};
+
+export type ListMyLemonheadInvitationsResponse = {
+  __typename?: 'ListMyLemonheadInvitationsResponse';
+  invitations: Array<LemonheadInvitation>;
 };
 
 export type ListSpaceMembersResponse = {
@@ -3134,6 +3166,7 @@ export type Mutation = {
   cancelEvent: Event;
   cancelEventInvitations: Scalars['Boolean']['output'];
   cancelMyTicket: Scalars['Boolean']['output'];
+  /** @deprecated Payment cancelling is already handled by backend */
   cancelPayment: Scalars['Boolean']['output'];
   cancelSubscription: Scalars['Boolean']['output'];
   cancelTickets: Scalars['Boolean']['output'];
@@ -3266,8 +3299,6 @@ export type Mutation = {
   reorderTicketTypes: Scalars['Boolean']['output'];
   reportUser: Scalars['Boolean']['output'];
   requestRoomStage: Scalars['Boolean']['output'];
-  /** In case of free mint, the mint of a look could be failed because someone else had taken that look. User should call this API to remove the looks from free mint count if we can confirm that the look is taken by someone else. */
-  resetLemonheadLook: Scalars['Boolean']['output'];
   respondInvitation: Scalars['Boolean']['output'];
   /** @deprecated Use the `respondInvitation` instead. This function will be removed in the next release. */
   responseInvitation: Scalars['Boolean']['output'];
@@ -3322,6 +3353,7 @@ export type Mutation = {
   updateEventTicketType: EventTicketType;
   updateEventTokenGate: EventTokenGate;
   updateFile: File;
+  updateMyLemonheadInvitations: UpdateMyLemonheadInvitationsResponse;
   updateNewPaymentAccount: NewPaymentAccount;
   updateOauth2Client: OAuth2Client;
   updatePayment: NewPayment;
@@ -4117,12 +4149,6 @@ export type MutationRequestRoomStageArgs = {
 };
 
 
-export type MutationResetLemonheadLookArgs = {
-  look: Scalars['String']['input'];
-  wallet: Scalars['String']['input'];
-};
-
-
 export type MutationRespondInvitationArgs = {
   input: RespondInvitationInput;
 };
@@ -4343,6 +4369,11 @@ export type MutationUpdateEventTokenGateArgs = {
 export type MutationUpdateFileArgs = {
   _id: Scalars['MongoID']['input'];
   input: FileInput;
+};
+
+
+export type MutationUpdateMyLemonheadInvitationsArgs = {
+  invitations: Array<Scalars['String']['input']>;
 };
 
 
@@ -5220,10 +5251,12 @@ export type Query = {
   getHomeEvents: Array<Event>;
   getHostingEvents: Array<Event>;
   getInitSafeTransaction: RawTransaction;
+  getLemonheadInvitationRank: GetMyLemonheadInvitationRankResponse;
   getLemonheadSupportData: Array<LemonheadSupportData>;
   getMe: User;
   getMyEventJoinRequest?: Maybe<EventJoinRequest>;
   getMyEvents: Array<Event>;
+  getMyLemonheadInvitationRank: LemonheadInvitationRank;
   getMyPayments: Array<NewPayment>;
   getMyPoints: Array<PointConfigInfo>;
   getMySpaceEventRequests: GetSpaceEventRequestsResponse;
@@ -5318,6 +5351,7 @@ export type Query = {
   listFiatCurrencies: Array<FiatCurrency>;
   listGeoRegions: Array<GeoRegion>;
   listLemonheadSponsors: ListLemonheadSponsorsResponse;
+  listMyLemonheadInvitations: ListMyLemonheadInvitationsResponse;
   listMyPoapClaims: Array<PoapClaim>;
   listNewPaymentAccounts: Array<NewPaymentAccount>;
   listNewPayments: Array<NewPayment>;
@@ -5699,6 +5733,12 @@ export type QueryGetHostingEventsArgs = {
 
 export type QueryGetInitSafeTransactionArgs = {
   input: GetInitSafeTransactionInput;
+};
+
+
+export type QueryGetLemonheadInvitationRankArgs = {
+  limit?: Scalars['Int']['input'];
+  skip?: Scalars['Int']['input'];
 };
 
 
@@ -8612,6 +8652,14 @@ export type UpdateEventTicketDiscountInput = {
   use_limit_per?: InputMaybe<Scalars['Float']['input']>;
 };
 
+export type UpdateMyLemonheadInvitationsResponse = {
+  __typename?: 'UpdateMyLemonheadInvitationsResponse';
+  message?: Maybe<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
+  /** Wallets that are already invited */
+  wallets?: Maybe<Array<Scalars['String']['output']>>;
+};
+
 export type UpdateNewPaymentAccountInput = {
   _id: Scalars['MongoID']['input'];
   account_info: Scalars['JSON']['input'];
@@ -9441,7 +9489,7 @@ export type UpdateEventSettingsMutationVariables = Exact<{
 }>;
 
 
-export type UpdateEventSettingsMutation = { __typename: 'Mutation', updateEvent: { __typename: 'Event', _id?: any | null, title: string, description?: string | null, theme_data?: any | null, longitude?: number | null, latitude?: number | null, virtual_url?: string | null, registration_disabled?: boolean | null, guest_limit?: number | null, terms_text?: string | null, terms_link?: string | null, shortid: string, private?: boolean | null, address?: { __typename: 'Address', street_1?: string | null, city?: string | null, title?: string | null, region?: string | null, country?: string | null, additional_directions?: string | null, latitude?: number | null, longitude?: number | null } | null, layout_sections?: Array<{ __typename: 'LayoutSection', id?: string | null, hidden?: boolean | null }> | null } };
+export type UpdateEventSettingsMutation = { __typename: 'Mutation', updateEvent: { __typename: 'Event', _id?: any | null, title: string, description?: string | null, start: any, end: any, timezone?: string | null, theme_data?: any | null, longitude?: number | null, latitude?: number | null, virtual_url?: string | null, registration_disabled?: boolean | null, guest_limit?: number | null, terms_text?: string | null, terms_link?: string | null, shortid: string, private?: boolean | null, address?: { __typename: 'Address', street_1?: string | null, city?: string | null, title?: string | null, region?: string | null, country?: string | null, additional_directions?: string | null, latitude?: number | null, longitude?: number | null } | null, layout_sections?: Array<{ __typename: 'LayoutSection', id?: string | null, hidden?: boolean | null }> | null } };
 
 export type UpdateEventPhotosMutationVariables = Exact<{
   id: Scalars['MongoID']['input'];
@@ -9822,7 +9870,7 @@ export type GetListLemonheadSponsorsQueryVariables = Exact<{
 }>;
 
 
-export type GetListLemonheadSponsorsQuery = { __typename: 'Query', listLemonheadSponsors: { __typename: 'ListLemonheadSponsorsResponse', sponsors: Array<{ __typename: 'LemonheadSponsorDetail', limit: number, remaining?: number | null, sponsor: { __typename: 'LemonheadSponsor', _id: any, name: string, image_url: string, message: string } }> } };
+export type GetListLemonheadSponsorsQuery = { __typename: 'Query', listLemonheadSponsors: { __typename: 'ListLemonheadSponsorsResponse', sponsors: Array<{ __typename: 'LemonheadSponsorDetail', limit?: number | null, remaining?: number | null, sponsor: { __typename: 'LemonheadSponsor', _id: any, name: string, image_url: string, message: string } }> } };
 
 export type CanMintLemonheadQueryVariables = Exact<{
   wallet: Scalars['String']['input'];
@@ -10287,7 +10335,7 @@ export const GetEventCohostInvitesDocument = {"kind":"Document","definitions":[{
 export const DecideEventCohostRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DecideEventCohostRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DecideEventCohostRequestInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"decideEventCohostRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<DecideEventCohostRequestMutation, DecideEventCohostRequestMutationVariables>;
 export const CreateEventDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createEvent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"EventInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"createEvent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"shortid"}}]}}]}}]} as unknown as DocumentNode<CreateEventMutation, CreateEventMutationVariables>;
 export const PublishEventDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"PublishEvent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"event"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"updateEvent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"event"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"published"},"value":{"kind":"BooleanValue","value":true}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"published"}}]}}]}}]} as unknown as DocumentNode<PublishEventMutation, PublishEventMutationVariables>;
-export const UpdateEventSettingsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateEventSettings"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"EventInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"updateEvent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"theme_data"}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"street_1"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"additional_directions"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}}]}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"virtual_url"}},{"kind":"Field","name":{"kind":"Name","value":"registration_disabled"}},{"kind":"Field","name":{"kind":"Name","value":"guest_limit"}},{"kind":"Field","name":{"kind":"Name","value":"terms_text"}},{"kind":"Field","name":{"kind":"Name","value":"terms_link"}},{"kind":"Field","name":{"kind":"Name","value":"shortid"}},{"kind":"Field","name":{"kind":"Name","value":"private"}},{"kind":"Field","name":{"kind":"Name","value":"layout_sections"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"hidden"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateEventSettingsMutation, UpdateEventSettingsMutationVariables>;
+export const UpdateEventSettingsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateEventSettings"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"EventInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"updateEvent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"start"}},{"kind":"Field","name":{"kind":"Name","value":"end"}},{"kind":"Field","name":{"kind":"Name","value":"timezone"}},{"kind":"Field","name":{"kind":"Name","value":"theme_data"}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"street_1"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"additional_directions"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}}]}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"virtual_url"}},{"kind":"Field","name":{"kind":"Name","value":"registration_disabled"}},{"kind":"Field","name":{"kind":"Name","value":"guest_limit"}},{"kind":"Field","name":{"kind":"Name","value":"terms_text"}},{"kind":"Field","name":{"kind":"Name","value":"terms_link"}},{"kind":"Field","name":{"kind":"Name","value":"shortid"}},{"kind":"Field","name":{"kind":"Name","value":"private"}},{"kind":"Field","name":{"kind":"Name","value":"layout_sections"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"hidden"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateEventSettingsMutation, UpdateEventSettingsMutationVariables>;
 export const UpdateEventPhotosDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateEventPhotos"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"new_new_photos"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"updateEvent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"new_new_photos"},"value":{"kind":"Variable","name":{"kind":"Name","value":"new_new_photos"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"new_new_photos"}},{"kind":"Field","name":{"kind":"Name","value":"new_new_photos_expanded"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"50"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateEventPhotosMutation, UpdateEventPhotosMutationVariables>;
 export const InviteEventDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"inviteEvent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"event"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"users"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"emails"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"custom_body_html"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"inviteEvent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"event"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"users"},"value":{"kind":"Variable","name":{"kind":"Name","value":"users"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"emails"},"value":{"kind":"Variable","name":{"kind":"Name","value":"emails"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"custom_body_html"},"value":{"kind":"Variable","name":{"kind":"Name","value":"custom_body_html"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"invited"}}]}}]}}]} as unknown as DocumentNode<InviteEventMutation, InviteEventMutationVariables>;
 export const AssignTicketsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AssignTickets"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AssignTicketsInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"assignTickets"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<AssignTicketsMutation, AssignTicketsMutationVariables>;

@@ -4,7 +4,7 @@ import { useSession } from "$lib/hooks/useSession";
 import { useClient } from "$lib/graphql/request";
 import { RequestSentModal } from "../modals/RequestSentModal";
 
-import { eventDataAtom, nonLoggedInStatusAtom, useAtomValue, useSetAtom } from "../store";
+import { eventDataAtom, nonLoggedInStatusAtom, registrationModal, useAtomValue, useSetAtom } from "../store";
 
 export function useJoinRequest() {
   const session = useSession();
@@ -25,6 +25,7 @@ export function useJoinRequest() {
       return;
     }
 
+    registrationModal.close();
     setNonLoggedInStatus('pending');
   }
 }

@@ -10,7 +10,7 @@ import { LEMONHEAD_CHAIN_ID } from '$lib/components/features/lemonheads/utils';
 import { LemonheadNFTContract } from '$lib/utils/crypto';
 
 async function fetchLemonheadData(address: string, chainsMap: Record<string, Chain>) {
-  let data = { tokenId: 0, image: '', totalMinted: 0 };
+  const data = { tokenId: 0, image: '', totalMinted: 0 };
   const chain = chainsMap[LEMONHEAD_CHAIN_ID];
   const contractAddress = chain?.lemonhead_contract_address;
 

@@ -214,48 +214,57 @@ function PaymentItem({ payment }: { payment: EventGuestPayment }) {
     <div className="flex items-start justify-between gap-3 px-3.5 py-2.5">
       <div className="space-y-[2px]">
         <p>{payment.formatted_total_amount} {payment.currency}</p>
-        <div className="flex gap-1.5 items-center">
-          {
-            payment.crypto_payment_info
-              ? <i className="icon-wallet size-4 text-tertiary" />
-              : <CardIcon cardBrand={payment.stripe_payment_info?.card?.brand as string} />
-          }
-          <p className="text-tertiary text-sm">
-            {
-              payment.crypto_payment_info ? formatWallet(payment.transfer_params?.from) : `•••• ${payment.stripe_payment_info?.card?.last4}`
-            }
-          </p>
-        </div>
+        {
+          (payment.crypto_payment_info?.tx_hash || payment.stripe_payment_info) && (
+            <div className="flex gap-1.5 items-center">
+              {
+                payment.crypto_payment_info
+                  ? <i className="icon-wallet size-4 text-tertiary" />
+                  : <CardIcon cardBrand={payment.stripe_payment_info?.card?.brand as string} />
+              }
+              {
+                payment.transfer_params?.from && <p className="text-tertiary text-sm">{formatWallet(payment.transfer_params?.from)}</p>
+              }
+              {
+                payment.stripe_payment_info?.card?.last4 && <p className="text-tertiary text-sm">•••• {payment.stripe_payment_info?.card?.last4}</p>
+              }
+            </div>
+          )
+        }
       </div>
 
       {
-        payment.crypto_payment_info ? (
-          <div
-            className="flex items-center gap-1.5 cursor-pointer"
-            onClick={() => {
-              window.open(`${chain.block_explorer_url}/tx/${payment.crypto_payment_info?.tx_hash}`, '_blank');
-            }}
-          >
-            {
-              chain.logo_url && <img src={chain.logo_url} alt={chain.name} className="size-4" />
-            }
-            <p className="text-tertiary text-sm">
-              {
-                payment.crypto_payment_info.tx_hash?.replace(/^(.{7})(.*)(.{4})$/, '$1...$3')
-              }
-            </p>
-            <i className="icon-arrow-outward size-4 text-tertiary" />
-          </div>
-        ) : (
-          <div className="flex items-center gap-1.5">
-            <i className="icon-stripe size-4 text-tertiary" />
-            <p className="text-tertiary text-sm">
-              {
-                payment.stripe_payment_info?.payment_intent?.replace(/^(.{7})(.*)(.{4})$/, '$1...$3')
-              }
-            </p>
-          </div>
-        )
+        (payment.crypto_payment_info?.tx_hash || payment.stripe_payment_info) && <>
+          {
+            payment.crypto_payment_info ? (
+              <div
+                className="flex items-center gap-1.5 cursor-pointer"
+                onClick={() => {
+                  window.open(`${chain.block_explorer_url}/tx/${payment.crypto_payment_info?.tx_hash}`, '_blank');
+                }}
+              >
+                {
+                  chain.logo_url && <img src={chain.logo_url} alt={chain.name} className="size-4" />
+                }
+                <p className="text-tertiary text-sm">
+                  {
+                    payment.crypto_payment_info.tx_hash?.replace(/^(.{7})(.*)(.{4})$/, '$1...$3')
+                  }
+                </p>
+                <i className="icon-arrow-outward size-4 text-tertiary" />
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5">
+                <i className="icon-stripe size-4 text-tertiary" />
+                <p className="text-tertiary text-sm">
+                  {
+                    payment.stripe_payment_info?.payment_intent?.replace(/^(.{7})(.*)(.{4})$/, '$1...$3')
+                  }
+                </p>
+              </div>
+            )
+          }
+        </>
       }
     </div>
   );
