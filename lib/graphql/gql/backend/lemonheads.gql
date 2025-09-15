@@ -29,6 +29,7 @@ query GetListMyLemonheadInvitations {
       user {
         _id
         username
+        image_avatar
       }
     }
   }

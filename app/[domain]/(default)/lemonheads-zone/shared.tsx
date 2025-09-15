@@ -16,6 +16,7 @@ import {
   GetListMyLemonheadInvitationsDocument,
   SetUserWalletDocument,
   UpdateMyLemonheadInvitationsDocument,
+  User,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
@@ -358,7 +359,7 @@ function InviteFriendModal() {
             return (
               <Card.Root key={idx}>
                 <Card.Content className="flex items-center gap-3 px-3 py-1.5">
-                  <Avatar src={userAvatar()} size="lg" />
+                  <Avatar src={userAvatar(item.user as unknown as User)} size="lg" />
                   <div className="flex-1">
                     <div className="flex gap-2">
                       {item.user?.username && <p>{item.user.username}</p>}
