@@ -49,21 +49,11 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
     imageUrl = await uploadImage(lookHash, finalImage);
   }
 
-  let metadataUrl = cache?.metadata_url;
-
-  if (!metadataUrl) {
-    //-- create and upload metadata
-    const metadata = createMetadata(imageUrl, finalTraits);
-    metadataUrl = await uploadJSON(lookHash, metadata);
-  }
-
   const imageChanged = imageUrl !== cache?.image_url;
-  const metadataChanged = metadataUrl !== cache?.metadata_url;
 
-  if (imageChanged || metadataChanged) {
+  if (imageChanged) {
     await setCache(lookHash, {
       ...(imageChanged && { image_url: imageUrl }),
-      ...(metadataChanged && { metadata_url: metadataUrl }),
     });
   }
 
@@ -73,6 +63,10 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
   if (!data) {
     throw new Error('Failed to get minting approval');
   }
+
+  //-- create and upload metadata
+  const metadata = createMetadata(imageUrl, finalTraits);
+  const metadataUrl = await uploadJSON(lookHash, { ...metadata, ...data?.inviter && { inviter: data.inviter } });
 
   return {
     //-- use these to call the contract minting function

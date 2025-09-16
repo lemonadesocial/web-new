@@ -1,5 +1,6 @@
 import { PublicClient, testnet, mainnet } from "@lens-protocol/client";
 import { StorageClient } from '@lens-chain/storage-client';
+
 import { PostMetadataFragment } from "./fragments/posts";
 
 export const client = PublicClient.create({
