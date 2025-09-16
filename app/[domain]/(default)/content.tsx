@@ -89,7 +89,7 @@ export function Content() {
 
             <CompleteYourProfile />
 
-            {/* <LemonHeadsZone /> */}
+            <LemonHeadsZone />
 
             {/* <CardItem */}
             {/*   onClick={() => comingSoon()} */}

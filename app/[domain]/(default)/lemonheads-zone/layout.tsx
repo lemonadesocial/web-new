@@ -14,6 +14,7 @@ const tabs = [
   { label: 'Events', path: '/lemonheads-zone/events' },
   { label: 'Proposals', path: '/lemonheads-zone/proposals' },
   { label: 'Treasury', path: '/lemonheads-zone/treasury' },
+  { label: 'Leaderboard', path: '/lemonheads-zone/leaderboard' },
 ];
 
 export default function Layout(props: { children: React.ReactNode }) {
@@ -71,14 +72,14 @@ export default function Layout(props: { children: React.ReactNode }) {
       <div className="pt-2 md:px-0 sticky top-0 bg-background/80 backdrop-blur-md z-10">
         <div className="border-b">
           <div className="w-full max-w-[1080px] mx-auto">
-            <ul className="inline-flex gap-4">
+            <ul className="inline-flex gap-4 overflow-x-auto no-scrollbar">
               {tabs.map((item, idx) => (
                 <li key={idx}>
                   <Link href={item.path}>
                     <p
                       className={twMerge(
                         'pb-2.5 text-tertiary hover:text-primary',
-                        clsx(item.path === pathname && 'border-b-2 border-primary'),
+                        clsx(item.path === pathname && 'border-b-2 border-primary text-primary'),
                       )}
                     >
                       {item.label}

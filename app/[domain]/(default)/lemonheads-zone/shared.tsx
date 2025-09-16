@@ -5,12 +5,24 @@ import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { Avatar, Button, Card, modal, ModalContent } from '$lib/components/core';
+import { Avatar, Button, Card, modal, ModalContent, Spacer, toast } from '$lib/components/core';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { truncateMiddle } from '$lib/utils/string';
 import { userAvatar } from '$lib/utils/user';
 import { Controller, useForm } from 'react-hook-form';
 import { ConfirmModal } from '$lib/components/features/modals/ConfirmModal';
+import { useMutation, useQuery } from '$lib/graphql/request';
+import {
+  GetListMyLemonheadInvitationsDocument,
+  SetUserWalletDocument,
+  UpdateMyLemonheadInvitationsDocument,
+  User,
+} from '$lib/graphql/generated/backend/graphql';
+import { useMe } from '$lib/hooks/useMe';
+import { useSignIn } from '$lib/hooks/useSignIn';
+import { VerifyWalletModal } from '$lib/components/features/event-registration/modals/VerifyWalletModal';
+import { ethers, lock } from 'ethers';
+import { useAppKitAccount } from '@reown/appkit/react';
 
 export function LockFeature({ title, subtitle, icon }: { title: string; subtitle: string; icon?: string }) {
   const router = useRouter();
@@ -49,7 +61,7 @@ export function RightCol({
 
   return (
     <>
-      <div className="md:hidden flex overflow-y-auto no-scrollbar gap-2">
+      <div className="md:hidden flex max-w-full overflow-y-auto no-scrollbar gap-2">
         {options.nft && data && data.tokenId > 0 && (
           <div className="flex gap-2.5 py-2.5 px-3 bg-overlay-secondary backdrop-blur-md rounded-md items-center flex-1 w-full min-w-fit">
             <img src={data?.image} className="rounded-sm size-8 aspect-square" />
@@ -62,7 +74,7 @@ export function RightCol({
         )}
 
         {options.treasury && <Treasury />}
-        {options.invite && <InviteFriend locked={data && data.tokenId == 0} />}
+        {options.invite && <InviteFriend locked={!data || (data && data.tokenId == 0)} />}
       </div>
 
       <div className="hidden md:block w-full max-w-[296px]">
@@ -78,7 +90,7 @@ export function RightCol({
           )}
 
           {options.treasury && <Treasury />}
-          {options.invite && <InviteFriend locked={data && data.tokenId == 0} />}
+          {options.invite && <InviteFriend locked={!data || (data && data.tokenId == 0)} />}
         </div>
       </div>
     </>
@@ -126,17 +138,57 @@ export function Treasury() {
 }
 
 export function InviteFriend({ locked }: { locked?: boolean }) {
+  const me = useMe();
+  const signIn = useSignIn();
+  const { address } = useAppKitAccount();
+
+  const { data } = useQuery(GetListMyLemonheadInvitationsDocument, { skip: !me });
+  const invitations = data?.listMyLemonheadInvitations.invitations || [];
+
+  const [setUserWallet] = useMutation(SetUserWalletDocument, {
+    onComplete: (_, res) => {
+      if (res.setUserWallet) {
+        modal.close();
+        setTimeout(() => modal.open(InviteFriendModal), 500);
+      } else {
+        toast.error('Verify wallet fail!');
+      }
+    },
+  });
+
+  const handleInvite = () => {
+    if (!me) signIn();
+    else {
+      if (me.wallets_new?.ethereum?.includes(address)) modal.open(InviteFriendModal);
+      else {
+        modal.open(VerifyWalletModal, {
+          props: { onSuccess: (signature, token) => setUserWallet({ variables: { signature, token } }) },
+        });
+      }
+    }
+  };
+
   return (
     <>
-      <div className="flex w-full min-w-fit items-center md:hidden p-2.5 border rounded-md gap-2.5">
-        <div className="flex justify-center items-center rounded-sm bg-alert-400/16 size-8 p-1.5 aspect-square">
-          <i className="icon-user-plus text-alert-400" />
+      <div className="flex w-full min-w-fit items-center md:hidden p-2.5 border rounded-md justify-between gap-4">
+        <div className="flex gap-2.5 flex-1 items-center">
+          <div className="flex justify-center items-center rounded-sm bg-alert-400/16 size-8 p-1.5 aspect-square">
+            <i className="icon-user-plus text-alert-400" />
+          </div>
+
+          <div className="flex flex-col gpa-1.5">
+            <p>Invite</p>
+            <p className="text-secondary text-sm">
+              {!locked ? `You have ${invitations.length}/5 invites left.` : 'Claim your LemonHead to unlock.'}
+            </p>
+          </div>
         </div>
 
-        <div className="flex flex-col gpa-1.5">
-          <p>Treasury</p>
-          <p className="text-secondary text-sm">Unlocks at 5,000 LemonHeads.</p>
-        </div>
+        {!locked && (
+          <Button variant="secondary" onClick={handleInvite} size="sm">
+            Invite
+          </Button>
+        )}
       </div>
 
       <div className="hidden md:flex p-4 border rounded-md flex-col gap-3">
@@ -155,16 +207,18 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
 
         <div className="flex flex-col gpa-1.5">
           <p>Invite a Friend</p>
-          <p className="text-secondary text-sm">You have 2/5 invites left.</p>
+          <p className="text-secondary text-sm">
+            {!locked ? `You have ${invitations.length}/5 invites left.` : 'Claim your LemonHead to unlock.'}
+          </p>
         </div>
 
-        <InviteProgress invited={2} />
+        {!locked && <InviteProgress invited={invitations.length} />}
 
-        {/* {!locked && ( */}
-        {/*   <Button variant="secondary" onClick={() => modal.open(InviteFriendModal)}> */}
-        {/*     Invite */}
-        {/*   </Button> */}
-        {/* )} */}
+        {!locked && invitations.length < 5 && (
+          <Button variant="secondary" onClick={handleInvite}>
+            Invite
+          </Button>
+        )}
       </div>
     </>
   );
@@ -186,24 +240,52 @@ function InviteProgress({ invited = 0 }: { invited?: number }) {
   );
 }
 
-function InviteFriendModal() {
+export function InviteFriendModal() {
+  const { data, refetch } = useQuery(GetListMyLemonheadInvitationsDocument);
+  const invitations = data?.listMyLemonheadInvitations.invitations || [];
   const [step, setStep] = React.useState<'default' | 'invite_form'>('default');
 
-  const invited = [
-    { image: '', username: 'chris', wallet: '0xy2g798273287g', status: 'minted' },
-    { image: '', username: '', wallet: '0xy2g798273287g', status: 'pending' },
-  ];
-
-  const { control, setValue, watch, handleSubmit } = useForm({
+  const { control, setValue, watch, reset, handleSubmit } = useForm({
     defaultValues: {
-      addresses: Array.from({ length: 5 - invited.length }).map(() => ''),
+      addresses: Array.from({ length: 5 - invitations.length }).map(() => ''),
+    },
+  });
+  const addresses = watch('addresses');
+
+  const [update, { loading }] = useMutation(UpdateMyLemonheadInvitationsDocument, {
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onComplete: async (_client, res) => {
+      if (!res.updateMyLemonheadInvitations.success && res.updateMyLemonheadInvitations.message) {
+        toast.error(res.updateMyLemonheadInvitations.message);
+        return;
+      }
+
+      if (res.updateMyLemonheadInvitations.success) {
+        await refetch();
+
+        if (step === 'default') toast.success('Removed success!');
+        else if (step === 'invite_form') {
+          const count = addresses.filter(Boolean).length;
+          toast.success(`Success! ${count} ${count > 1 ? 'wallets' : 'wallet'} have been added to the invite list.`);
+          setStep('default');
+        }
+      }
     },
   });
 
-  const addresses = watch('addresses');
+  React.useEffect(() => {
+    if (data?.listMyLemonheadInvitations.invitations) {
+      reset({
+        addresses: Array.from({ length: 5 - data?.listMyLemonheadInvitations.invitations.length }).map(() => ''),
+      });
+    }
+  }, [data?.listMyLemonheadInvitations.invitations.length]);
 
   const onConfirm = (values: { addresses: string[] }) => {
-    console.log(values);
+    const wallets = values.addresses.filter(Boolean);
+    update({ variables: { invitations: [...invitations.map((i) => i.invitee_wallet as string), ...wallets] } });
   };
 
   const renderContent = () => {
@@ -225,7 +307,10 @@ function InviteFriendModal() {
                       {field.value.map((address, idx) => (
                         <div key={idx} className="flex bg-(--input-bg) not-first:border-t border-(--color-divider)">
                           <input
-                            className="px-3.5 py-2 flex-1 outline-none"
+                            className={clsx(
+                              'px-3.5 py-2 flex-1 outline-none',
+                              address && !ethers.isAddress(address) && 'text-danger-500',
+                            )}
                             value={address}
                             placeholder="Enter ENS or wallet address"
                             onChange={(e) => {
@@ -250,7 +335,13 @@ function InviteFriendModal() {
               />
             </div>
 
-            <Button variant="secondary" type="submit" disabled={!addresses.some((i) => i != '')} className="w-full">
+            <Button
+              variant="secondary"
+              type="submit"
+              loading={loading}
+              disabled={!addresses.some((i) => i != '' && ethers.isAddress(i))}
+              className="w-full"
+            >
               Confirm
             </Button>
           </form>
@@ -267,25 +358,43 @@ function InviteFriendModal() {
           </p>
         </div>
 
-        <InviteProgress invited={invited.length} />
+        <InviteProgress invited={data?.listMyLemonheadInvitations.invitations.length} />
 
         <div className="flex flex-col gap-2">
-          {invited.map((item, idx) => {
+          {data?.listMyLemonheadInvitations.invitations.map((item, idx) => {
             return (
               <Card.Root key={idx}>
                 <Card.Content className="flex items-center gap-3 px-3 py-1.5">
-                  <Avatar src={userAvatar()} size="lg" />
+                  <Avatar src={userAvatar(item.user as unknown as User)} size="lg" />
                   <div className="flex-1">
                     <div className="flex gap-2">
-                      {item.username && <p>{item.username}</p>}
-                      <p className="text-tertiary">{truncateMiddle(item.wallet, 6, 4)}</p>
+                      {item.user?.username && <p>{item.user.username}</p>}
+                      <p className="text-tertiary">{truncateMiddle(item.invitee_wallet!, 6, 4)}</p>
                     </div>
-                    <p className="capitalize text-tertiary text-sm">{item.status}</p>
+                    <p className="capitalize text-tertiary text-sm">{item.minted_at ? 'minted' : 'pending'}</p>
                   </div>
-                  {item.status === 'pending' && (
+                  {!item.minted_at && (
                     <i
                       className="icon-person-remove text-quaternary size-5 cursor-pointer hover:text-primary"
-                      onClick={() => modal.open(RemoveWalletInvitedModal)}
+                      onClick={() =>
+                        modal.open(ConfirmModal, {
+                          props: {
+                            icon: 'icon-person-remove',
+                            title: 'Remove Wallet?',
+                            subtitle:
+                              'Are you sure you want to remove this wallet from your invite list? They’ll lose the ability to mint a LemonHead.',
+                            onConfirm: async () => {
+                              await update({
+                                variables: {
+                                  invitations: invitations
+                                    .filter((i) => i.invitee_wallet !== item.invitee_wallet)
+                                    .map((i) => i.invitee_wallet as string),
+                                },
+                              });
+                            },
+                          },
+                        })
+                      }
                     />
                   )}
                 </Card.Content>
@@ -294,7 +403,11 @@ function InviteFriendModal() {
           })}
         </div>
 
-        <Button variant="secondary" disabled={invited.length === 5} onClick={() => setStep('invite_form')}>
+        <Button
+          variant="secondary"
+          disabled={data?.listMyLemonheadInvitations.invitations.length === 5}
+          onClick={() => setStep('invite_form')}
+        >
           Invite a Friend
         </Button>
       </>
@@ -322,16 +435,5 @@ function InviteFriendModal() {
         </motion.div>
       </AnimatePresence>
     </ModalContent>
-  );
-}
-
-function RemoveWalletInvitedModal() {
-  return (
-    <ConfirmModal
-      icon="icon-person-remove"
-      title="Remove Wallet?"
-      subtitle="Are you sure you want to remove this wallet from your invite list? They’ll lose the ability to mint a LemonHead."
-      onConfirm={() => {}}
-    />
   );
 }
