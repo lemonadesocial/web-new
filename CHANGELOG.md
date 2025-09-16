@@ -1,5 +1,36 @@
 # Changelog
 
+## [6.11.0](https://github.com/lemonadesocial/web-new/compare/v6.10.0...v6.11.0) (2025-09-16)
+
+
+### Features
+
+* check wallets new before set user wallet ([931813f](https://github.com/lemonadesocial/web-new/commit/931813f8166a28e1183d0490c1fb84207895a492))
+* missing hide scrollbar ([fae3909](https://github.com/lemonadesocial/web-new/commit/fae39094626190cf71962ef04acc59b55067190d))
+* missing user avatar ([d745052](https://github.com/lemonadesocial/web-new/commit/d7450521449cef7b809dd743899f1cd9c406632d))
+* revert - update leaderboard ([6dc2b2a](https://github.com/lemonadesocial/web-new/commit/6dc2b2ae85544426994ae8b6cd342e0c1e336231))
+* update content ([6cceed8](https://github.com/lemonadesocial/web-new/commit/6cceed848b15aa12f96bb99934a8ebb646de5b49))
+* update invite wallet ([6a13a18](https://github.com/lemonadesocial/web-new/commit/6a13a18405b45a3db400ab4ee4c2663933148cf2))
+* update leaderboard ([7b12872](https://github.com/lemonadesocial/web-new/commit/7b12872e50cd28866dbd16610902bae54703f7ee))
+* update lemonheads get started page ([9091b33](https://github.com/lemonadesocial/web-new/commit/9091b339b00455eb665386a04c7035b3ba7f9ace))
+* update locked ([f372030](https://github.com/lemonadesocial/web-new/commit/f372030c0fb76920ff352cd8bff5d7030c406d11))
+* update message ([fdb2f59](https://github.com/lemonadesocial/web-new/commit/fdb2f592c62676acee13207675279495b9d47f9a))
+* update mobile view ([75a7a86](https://github.com/lemonadesocial/web-new/commit/75a7a86958bb82f2788363299088ab3b9dbdbf77))
+* update pending list ui ([1b38a43](https://github.com/lemonadesocial/web-new/commit/1b38a4318d8bdca36a0973a278f66d4266dddfbf))
+* update router lemonheads ([5f08c46](https://github.com/lemonadesocial/web-new/commit/5f08c46563279f13e29338a9e684560e13919281))
+* update shared mint url ([9b09c32](https://github.com/lemonadesocial/web-new/commit/9b09c32089b0f373a4fc46d23837286b1870d488))
+
+
+### Bug Fixes
+
+* cannot read APP_ENV ([ad8f4c6](https://github.com/lemonadesocial/web-new/commit/ad8f4c644e2d3e3011c16a87ecf3a240ae42114e))
+* discount payment ([5e27c4f](https://github.com/lemonadesocial/web-new/commit/5e27c4f7e92e1ceb44c3b3f6637b112c2918db8e))
+* lint ([302dd0e](https://github.com/lemonadesocial/web-new/commit/302dd0ecc97ca848e04b9abae52eb02a52dceb03))
+* rsvp doesn't close ([ba03d2f](https://github.com/lemonadesocial/web-new/commit/ba03d2ffca597c57cd56f1e5568f909b8e7a913f))
+* **temp:** remove cancel payment ([475a023](https://github.com/lemonadesocial/web-new/commit/475a023d800a097d09845621919d54d2c62629e2))
+* timezone not reflected ([a114343](https://github.com/lemonadesocial/web-new/commit/a1143437b2325ed538fc78f2dfa7df23bb9c0c34))
+* update content default bio ([fce91e7](https://github.com/lemonadesocial/web-new/commit/fce91e75489fd89593a54eafd30b3339191b1445))
+
 ## [6.10.0](https://github.com/lemonadesocial/web-new/compare/v6.9.0...v6.10.0) (2025-09-12)
 
 
