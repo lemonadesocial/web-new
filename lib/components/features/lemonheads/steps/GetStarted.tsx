@@ -163,6 +163,79 @@ const tabs = [
   },
 ];
 
+const statics = [
+  {
+    icon: 'icon-ticket text-alert-400',
+    title: 'Advanced Event Tools',
+    subtitle: 'Unlock premium event tools and features built for creators.',
+  },
+  {
+    icon: 'icon-crown text-accent-400',
+    title: 'Unlimited Team Seats',
+    subtitle: 'Add unlimited members to your team with no restrictions.',
+  },
+  {
+    icon: 'icon-receipt-outline text-[#38BDF8]',
+    title: 'Advanced Newsletters',
+    subtitle: 'Reach more people with higher send limits for your community updates.',
+  },
+  {
+    icon: 'icon-dark-theme-filled text-[#FB923C]',
+    title: 'Premium Themes',
+    subtitle: 'Access exclusive themes for your events and community hubs.',
+  },
+  {
+    icon: 'icon-insights text-[#94A3B8]',
+    title: 'Insights Dashboard',
+    subtitle: 'Track performance across your events and community hubs.',
+  },
+  {
+    icon: 'icon-globe text-[#A3E635]',
+    title: 'Custom Domain Hosting',
+    subtitle: 'Turn your hub into a full website on your own domain.',
+  },
+  {
+    icon: 'icon-lock text-[#F87171]',
+    title: 'Token-Gated Controls',
+    subtitle: 'Easily set up token/NFT gates for events and community access.',
+  },
+  {
+    icon: 'icon-gift-line text-[#F87171]',
+    title: 'Rewards Manager',
+    subtitle: 'Distribute token rewards permissionlessly to your members.',
+  },
+  {
+    icon: 'icon-newsfeed text-[#60A5FA]',
+    title: 'LemonHeads Feed',
+    subtitle: 'Join an exclusive feed only for LemonHeads.',
+  },
+  {
+    icon: 'icon-swipe text-[#FB923C]',
+    title: 'Swipe & Match',
+    subtitle: 'Meet and connect with fellow LemonHeads through matching.',
+  },
+  {
+    icon: 'icon-celebration text-[#C084FC]',
+    title: 'Exclusive Meetups & Events',
+    subtitle: 'Get access to special experiences only for LemonHeads.',
+  },
+  {
+    icon: 'icon-lemonade text-warning-400',
+    title: 'Lemonade Festival',
+    subtitle: 'Be part of Lemonade’s flagship community celebration.',
+  },
+  {
+    icon: 'icon-lemon-token text-warning-400',
+    title: 'Lemon Tokens',
+    subtitle: 'Early minters earn bonus tokens redeemable across the platform.',
+  },
+  {
+    icon: 'icon-plus text-tertiary',
+    title: 'And More...',
+    subtitle: 'Enjoy new features and perks as LemonHeads keeps growing.',
+  },
+];
+
 export function LemonHeadGetStarted() {
   const [state] = useLemonHeadContext();
   const [selected, setSelected] = React.useState('lemonhead');
@@ -178,31 +251,33 @@ export function LemonHeadGetStarted() {
         </p>
       </div>
 
-      <div className="overflow-x-auto no-scrollbar">
-        <Segment
-          items={tabs.map(({ component, ...rest }) => rest)}
-          selected={selected}
-          onSelect={(item) => setSelected(item.value)}
-          className="bg-transparent"
-          size="sm"
-        />
-      </div>
+      <StaticCards data={statics} />
 
-      <AnimatePresence mode="wait">
-        {tabs.map((item) => {
-          if (item.value === selected)
-            return (
-              <motion.div
-                key={item.value}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1, transition: { duration: 0.3 } }}
-                exit={{ opacity: 0, transition: { duration: 0.3 } }}
-              >
-                <div>{item.component()}</div>
-              </motion.div>
-            );
-        })}
-      </AnimatePresence>
+      {/* <div className="overflow-x-auto no-scrollbar"> */}
+      {/*   <Segment */}
+      {/*     items={tabs.map(({ component, ...rest }) => rest)} */}
+      {/*     selected={selected} */}
+      {/*     onSelect={(item) => setSelected(item.value)} */}
+      {/*     className="bg-transparent" */}
+      {/*     size="sm" */}
+      {/*   /> */}
+      {/* </div> */}
+      {/**/}
+      {/* <AnimatePresence mode="wait"> */}
+      {/*   {tabs.map((item) => { */}
+      {/*     if (item.value === selected) */}
+      {/*       return ( */}
+      {/*         <motion.div */}
+      {/*           key={item.value} */}
+      {/*           initial={{ opacity: 0 }} */}
+      {/*           animate={{ opacity: 1, transition: { duration: 0.3 } }} */}
+      {/*           exit={{ opacity: 0, transition: { duration: 0.3 } }} */}
+      {/*         > */}
+      {/*           <div>{item.component()}</div> */}
+      {/*         </motion.div> */}
+      {/*       ); */}
+      {/*   })} */}
+      {/* </AnimatePresence> */}
     </div>
   );
 }
@@ -212,7 +287,7 @@ function StaticCards({ data }: { data: Array<{ icon: string; title: string; subt
     <div className="grid md:grid-cols-2 gap-3">
       {data.map((item, idx) => (
         <Card.Root key={idx}>
-          <Card.Content className="flex gap-4 items-center">
+          <Card.Content className="flex flex-col gap-3">
             <i className={twMerge('size-8', item.icon)} />
             <div className="flex-1">
               <p>{item.title}</p>
