@@ -22,6 +22,7 @@ import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { VerifyWalletModal } from '$lib/components/features/event-registration/modals/VerifyWalletModal';
 import { ethers, lock } from 'ethers';
+import { useAppKitAccount } from '@reown/appkit/react';
 
 export function LockFeature({ title, subtitle, icon }: { title: string; subtitle: string; icon?: string }) {
   const router = useRouter();
@@ -139,6 +140,7 @@ export function Treasury() {
 export function InviteFriend({ locked }: { locked?: boolean }) {
   const me = useMe();
   const signIn = useSignIn();
+  const { address } = useAppKitAccount();
 
   const { data } = useQuery(GetListMyLemonheadInvitationsDocument, { skip: !me });
   const invitations = data?.listMyLemonheadInvitations.invitations || [];
@@ -157,7 +159,7 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
   const handleInvite = () => {
     if (!me) signIn();
     else {
-      if (me.wallets_new) modal.open(InviteFriendModal);
+      if (me.wallets_new?.ethereum?.includes(address)) modal.open(InviteFriendModal);
       else {
         modal.open(VerifyWalletModal, {
           props: { onSuccess: (signature, token) => setUserWallet({ variables: { signature, token } }) },
