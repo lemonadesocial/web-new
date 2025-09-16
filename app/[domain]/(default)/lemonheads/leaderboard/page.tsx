@@ -1,22 +1,19 @@
 'use client';
 import React from 'react';
 import clsx from 'clsx';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import { Badge, Button, Card, modal } from '$lib/components/core';
 import {
-  BasicUserInfo,
   GetLemonheadInvitationRankDocument,
   GetMyLemonheadInvitationRankDocument,
   LemonheadUserInfo,
   User,
 } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
-import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { userAvatar } from '$lib/utils/user';
-import { InviteFriendModal, RightCol } from '../shared';
-import { ethers } from 'ethers';
-import { truncate } from 'lodash';
 import { truncateMiddle } from '$lib/utils/string';
+import { InviteFriendModal, RightCol } from '../shared';
 
 function FirstMedal() {
   return (
@@ -71,7 +68,7 @@ const limit = 20;
 function Page() {
   const [skip, setSkip] = React.useState(0);
 
-  const { data: dataGetMyRank } = useQuery(GetMyLemonheadInvitationRankDocument);
+  const { data: dataGetMyRank, loading } = useQuery(GetMyLemonheadInvitationRankDocument);
   const myLemonheadRank = dataGetMyRank?.getMyLemonheadInvitationRank;
 
   const { data: dataGetInvitationRank } = useQuery(GetLemonheadInvitationRankDocument, {
@@ -152,45 +149,78 @@ function Page() {
               <div className="hidden md:block w-[62px]" />
             </Card.Header>
 
-            {invitationRank.map((item, idx) => (
-              <Card.Content
-                key={idx}
-                className={clsx('flex gap-4 py-3 items-center', idx % 2 === 0 && 'backdrop-blur-sm')}
-              >
-                {renderMedal(item.rank)}
-                <div className="flex gap-3 items-center flex-1">
-                  <img src={userAvatar(item?.user as unknown as User)} className="size-8 aspect-square rounded-full" />
-                  <p>{getUsernameOrWallet(item.user as LemonheadUserInfo)}</p>
-                </div>
-                <p className="md:w-[96px]">{item?.invitations_count}</p>
-                <div className="w-[62px] hidden md:block">
-                  <Button variant="tertiary-alt" size="sm" className="rounded-full">
-                    Follow
-                  </Button>
-                </div>
-              </Card.Content>
-            ))}
+            <AnimatePresence mode="wait">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0 }}>
+                {loading ? (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.1 }}
+                    className="flex items-center justify-center p-4 aspect-video text-tertiary"
+                  >
+                    <p>Loading...</p>
+                  </motion.div>
+                ) : (
+                  <>
+                    {!invitationRank.length && (
+                      <div className="flex items-center justify-center p-4 aspect-video">
+                        <p className="text-tertiary">No inviters found for this time range</p>
+                      </div>
+                    )}
+
+                    {invitationRank.map((item, idx) => (
+                      <Card.Content key={idx} className={clsx('py-3', idx % 2 === 0 && 'backdrop-blur-sm')}>
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0 }}
+                          className="flex items-center gap-4"
+                        >
+                          {renderMedal(item.rank)}
+                          <div className="flex gap-3 items-center flex-1">
+                            <img
+                              src={userAvatar(item?.user as unknown as User)}
+                              className="size-8 aspect-square rounded-full"
+                            />
+                            <p>{getUsernameOrWallet(item.user as LemonheadUserInfo)}</p>
+                          </div>
+                          <p className="md:w-[96px]">{item?.invitations_count}</p>
+                          <div className="w-[62px] hidden md:block">
+                            <Button variant="tertiary-alt" size="sm" className="rounded-full">
+                              Follow
+                            </Button>
+                          </div>
+                        </motion.div>
+                      </Card.Content>
+                    ))}
+                  </>
+                )}
+              </motion.div>
+            </AnimatePresence>
           </Card.Root>
 
-          <div className="flex justify-between items-center">
-            <Button
-              icon="icon-arrow-back-sharp"
-              size="sm"
-              variant="tertiary-alt"
-              className="rounded-full"
-              disabled={skip === 0}
-              onClick={() => setSkip((prev) => prev - limit)}
-            />
-            <p className="text-sm text-tertiary">Page {skip / limit + 1}</p>
-            <Button
-              icon="icon-arrow-back-sharp rotate-180"
-              size="sm"
-              variant="tertiary-alt"
-              className="rounded-full"
-              disabled={totalInvitations - skip < limit}
-              onClick={() => setSkip((prev) => prev + limit)}
-            />
-          </div>
+          {totalInvitations > limit && (
+            <div className="flex justify-between items-center">
+              <Button
+                icon="icon-arrow-back-sharp"
+                size="sm"
+                variant="tertiary-alt"
+                className="rounded-full"
+                disabled={skip === 0}
+                onClick={() => setSkip((prev) => prev - limit)}
+              />
+              <p className="text-sm text-tertiary">Page {skip / limit + 1}</p>
+              <Button
+                icon="icon-arrow-back-sharp rotate-180"
+                size="sm"
+                variant="tertiary-alt"
+                className="rounded-full"
+                disabled={totalInvitations - skip < limit}
+                onClick={() => setSkip((prev) => prev + limit)}
+              />
+            </div>
+          )}
         </div>
       </div>
 
