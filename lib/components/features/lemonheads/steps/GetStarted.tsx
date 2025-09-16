@@ -88,7 +88,7 @@ export function LemonHeadGetStarted() {
   return (
     <div className="flex-1 max-w-[588px] flex flex-col gap-5 md:gap-8">
       <div className="flex flex-col gap-2">
-        <h3 className="text-2xl md:text-3xl font-semibold">Become a Resident</h3>
+        <h3 className="text-2xl md:text-3xl font-semibold">Lemonheads</h3>
         <p className="text-sm md:text-base text-tertiary">
           Claim your LemonHead to access exclusive features & rewards!
         </p>
