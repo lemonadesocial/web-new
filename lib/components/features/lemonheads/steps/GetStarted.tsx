@@ -5,6 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import { Card } from '$lib/components/core';
 import Image from 'next/image';
 import { ASSET_PREFIX } from '$lib/utils/constants';
+import { LemonHeadStep, useLemonHeadContext } from '../provider';
 
 const statics = [
   {
@@ -80,6 +81,10 @@ const statics = [
 ];
 
 export function LemonHeadGetStarted() {
+  const [state] = useLemonHeadContext();
+
+  if (state.currentStep !== LemonHeadStep.getstarted) return null;
+
   return (
     <div className="flex-1 max-w-[588px] flex flex-col gap-5 md:gap-8">
       <div className="flex flex-col gap-2">
