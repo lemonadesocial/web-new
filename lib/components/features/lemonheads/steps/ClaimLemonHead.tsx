@@ -120,7 +120,7 @@ export function ClaimLemonHead() {
   );
 }
 
-const shareUrl = 'https://lemonade.social/lemonheads';
+const shareUrl = 'https://lemonade.social/lemonheads/mint';
 const shareText = 'Just claimed my LemonHead 🍋 Fully onchain, totally me. Yours is waiting—go mint it now → ';
 
 function RightPane({
