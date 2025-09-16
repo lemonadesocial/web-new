@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.11.1](https://github.com/lemonadesocial/web-new/compare/v6.11.0...v6.11.1) (2025-09-16)
+
+
+### Bug Fixes
+
+* hide content when navigate ([fa22a2b](https://github.com/lemonadesocial/web-new/commit/fa22a2b25fa10c9c73eeaedf0424d3ba0b4305aa))
+
 ## [6.11.0](https://github.com/lemonadesocial/web-new/compare/v6.10.0...v6.11.0) (2025-09-16)
 
 
