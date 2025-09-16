@@ -38,7 +38,7 @@ export function ClaimLemonHeadCard() {
         loading={pending}
         onClick={() => {
           setPending(true);
-          router.push('/lemonheads');
+          router.push('/lemonheads/mint');
         }}
       >
         Claim LemonHead

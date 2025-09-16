@@ -10,11 +10,11 @@ import { usePathname } from 'next/navigation';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 
 const tabs = [
-  { label: 'NewsFeed', path: '/lemonheads-zone' },
-  { label: 'Events', path: '/lemonheads-zone/events' },
-  { label: 'Proposals', path: '/lemonheads-zone/proposals' },
-  { label: 'Treasury', path: '/lemonheads-zone/treasury' },
-  { label: 'Leaderboard', path: '/lemonheads-zone/leaderboard' },
+  { label: 'NewsFeed', path: '/lemonheads' },
+  { label: 'Events', path: '/lemonheads/events' },
+  { label: 'Proposals', path: '/lemonheads/proposals' },
+  { label: 'Treasury', path: '/lemonheads/treasury' },
+  { label: 'Leaderboard', path: '/lemonheads/leaderboard' },
 ];
 
 export default function Layout(props: { children: React.ReactNode }) {

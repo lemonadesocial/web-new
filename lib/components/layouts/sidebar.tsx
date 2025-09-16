@@ -61,7 +61,7 @@ const Sidebar = () => {
       { icon: 'icon-explore', path: '/explore', label: 'Explore' },
       // { icon: 'icon-swipe', path: '/swipe', label: 'Swipe & Match' },  // FIXME: add back when lemonheads  are live
       // { icon: 'icon-trophy', path: '/leaderboard', label: 'Leaderboard' },
-      { icon: 'icon-passport', path: '/lemonheads-zone', label: 'LemonHeads Zone' },
+      { icon: 'icon-passport', path: '/lemonheads', label: 'LemonHeads Zone' },
     ];
 
     return menu;
@@ -77,7 +77,7 @@ const Sidebar = () => {
   }, []);
 
   const isActive = (item: { path: string }) =>
-    pathname === item.path || (item.path.startsWith('/lemonheads-zone') && pathname.includes(item.path));
+    pathname === item.path || (item.path.startsWith('/lemonheads') && pathname.includes(item.path));
 
   return (
     <div className="hidden lg:block fixed left-0 h-screen border-r z-10">

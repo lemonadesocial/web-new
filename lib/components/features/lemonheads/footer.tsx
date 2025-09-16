@@ -202,7 +202,7 @@ export function LemonHeadFooter() {
 
     if (state.currentStep === LemonHeadStep.claim && state.mint.minted) {
       dispatch({ type: LemonHeadActionKind.reset });
-      router.push('/lemonheads-zone');
+      router.push('/lemonheads');
       return;
     }
 
