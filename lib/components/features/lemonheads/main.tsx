@@ -124,7 +124,7 @@ function Content() {
               )
             ) : null}
 
-            <div className="flex-1 md:min-w-[588px] md:overflow-auto no-scollbar">
+            <div className="flex-1 md:min-w-[588px] md:overflow-auto no-scrollbar">
               {Object.entries(state.steps).map(([key, item]) => {
                 if (!item.mounted) return null;
                 const Comp = item.component || React.Fragment;
