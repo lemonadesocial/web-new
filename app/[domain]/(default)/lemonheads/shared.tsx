@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { Avatar, Button, Card, modal, ModalContent, Spacer, toast } from '$lib/components/core';
+import { Avatar, Button, Card, modal, ModalContent, toast } from '$lib/components/core';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { truncateMiddle } from '$lib/utils/string';
 import { userAvatar } from '$lib/utils/user';
