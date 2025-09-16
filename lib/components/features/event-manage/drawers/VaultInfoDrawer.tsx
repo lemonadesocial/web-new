@@ -1,12 +1,13 @@
 'use client';
 import { useAtomValue } from 'jotai';
 
-import { toast, modal } from '$lib/components/core';
+import { toast, modal, Button } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { formatWallet } from '$lib/utils/crypto';
-import { EthereumAccount, NewPaymentAccount } from '$lib/graphql/generated/backend/graphql';
+import { EthereumAccount, NewPaymentAccount, PaymentAccountType } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom } from '$lib/jotai';
 import { AddNetworkModal } from '$lib/components/features/event-manage/modals/AddNetworkModal';
+import { ClaimFundsModal } from '$lib/components/features/event-manage/modals/ClaimFundsModal';
 import { PaymentNetwork } from '$lib/components/features/event-manage/common/PaymentNetwork';
 
 interface VaultInfoDrawerProps {
@@ -43,6 +44,15 @@ export function VaultInfoDrawer({
     });
   };
 
+  const handleClaimFunds = () => {
+    modal.open(ClaimFundsModal, {
+      props: {
+        vaults,
+        onClose: () => modal.close()
+      },
+    });
+  };
+
   return (
     <Pane.Root>
       <Pane.Header.Root>
@@ -63,7 +73,7 @@ export function VaultInfoDrawer({
               {Object.entries(vaultsByAddress).map(([address, addressVaults]) => {
                 const isSingleEntry = addressVaults.length === 1;
                 const networkName = isSingleEntry ? chainsMap[(addressVaults[0].account_info as EthereumAccount).network]?.name : null;
-                
+
                 return (
                   <div key={address} className="flex items-center gap-2">
                     <div className="flex items-center gap-1">
@@ -111,6 +121,16 @@ export function VaultInfoDrawer({
           </div>
         </div>
       </Pane.Content>
+
+       {
+         vault.type === PaymentAccountType.EthereumRelay && (
+           <Pane.Footer className="border-t px-4 py-3">
+             <Button type="button" variant="secondary" onClick={handleClaimFunds}>
+               Claim Funds
+             </Button>
+           </Pane.Footer>
+         )
+       }
     </Pane.Root>
   );
 }
