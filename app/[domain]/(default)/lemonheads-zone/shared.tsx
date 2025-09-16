@@ -73,7 +73,7 @@ export function RightCol({
         )}
 
         {options.treasury && <Treasury />}
-        {options.invite && <InviteFriend locked={data && data.tokenId == 0} />}
+        {options.invite && <InviteFriend locked={!data || (data && data.tokenId == 0)} />}
       </div>
 
       <div className="hidden md:block w-full max-w-[296px]">
@@ -89,7 +89,7 @@ export function RightCol({
           )}
 
           {options.treasury && <Treasury />}
-          {options.invite && <InviteFriend locked={data && data.tokenId == 0} />}
+          {options.invite && <InviteFriend locked={!data || (data && data.tokenId == 0)} />}
         </div>
       </div>
     </>
@@ -243,6 +243,13 @@ export function InviteFriendModal() {
   const invitations = data?.listMyLemonheadInvitations.invitations || [];
   const [step, setStep] = React.useState<'default' | 'invite_form'>('default');
 
+  const { control, setValue, watch, reset, handleSubmit } = useForm({
+    defaultValues: {
+      addresses: Array.from({ length: 5 - invitations.length }).map(() => ''),
+    },
+  });
+  const addresses = watch('addresses');
+
   const [update, { loading }] = useMutation(UpdateMyLemonheadInvitationsDocument, {
     onError: (error) => {
       toast.error(error.message);
@@ -258,16 +265,11 @@ export function InviteFriendModal() {
 
         if (step === 'default') toast.success('Removed success!');
         else if (step === 'invite_form') {
-          toast.success('Invited success!');
+          const count = addresses.filter(Boolean).length;
+          toast.success(`Success! ${count} ${count > 1 ? 'wallets' : 'wallet'} have been added to the invite list.`);
           setStep('default');
         }
       }
-    },
-  });
-
-  const { control, setValue, watch, reset, handleSubmit } = useForm({
-    defaultValues: {
-      addresses: Array.from({ length: 5 - invitations.length }).map(() => ''),
     },
   });
 
@@ -278,8 +280,6 @@ export function InviteFriendModal() {
       });
     }
   }, [data?.listMyLemonheadInvitations.invitations.length]);
-
-  const addresses = watch('addresses');
 
   const onConfirm = (values: { addresses: string[] }) => {
     const wallets = values.addresses.filter(Boolean);
