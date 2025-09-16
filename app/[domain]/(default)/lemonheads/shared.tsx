@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { Avatar, Button, Card, modal, ModalContent, Spacer, toast } from '$lib/components/core';
+import { Avatar, Button, Card, modal, ModalContent, toast } from '$lib/components/core';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { truncateMiddle } from '$lib/utils/string';
 import { userAvatar } from '$lib/utils/user';
@@ -29,7 +29,7 @@ export function LockFeature({ title, subtitle, icon }: { title: string; subtitle
   const { data } = useLemonhead();
 
   return (
-    <div className="flex flex-col h-full w-full items-center justify-center gap-8 pt-10 pb-20">
+    <div className="flex flex-col h-full w-full items-center justify-center gap-8 pt-10 pb-32">
       <div className="flex flex-col justify-center items-center relative">
         {icon && <i className={twMerge('size-[184px] text-quaternary', icon)} />}
 

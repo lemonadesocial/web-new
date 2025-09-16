@@ -72,7 +72,7 @@ export default function Layout(props: { children: React.ReactNode }) {
       <div className="pt-2 md:px-0 sticky top-0 bg-background/80 backdrop-blur-md z-10">
         <div className="border-b">
           <div className="w-full max-w-[1080px] mx-auto">
-            <ul className="inline-flex gap-4 overflow-x-auto no-scrollbar">
+            <ul className="inline-flex gap-4 overflow-x-auto w-full no-scrollbar">
               {tabs.map((item, idx) => (
                 <li key={idx}>
                   <Link href={item.path}>
