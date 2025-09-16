@@ -628,7 +628,7 @@ function LemonHeadsZone() {
   const router = useRouter();
   const { data, loading } = useLemonhead();
 
-  const onClick = () => router.push('/lemonheads-zone');
+  const onClick = () => router.push('/lemonheads');
 
   //NOTE: prevent click to claim lemonheads. IMPORTANT: MUST WAITING FOR CHECKING
   if (loading) return null;

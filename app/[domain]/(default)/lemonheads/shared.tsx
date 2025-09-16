@@ -44,7 +44,7 @@ export function LockFeature({ title, subtitle, icon }: { title: string; subtitle
       </div>
 
       {data && data.tokenId == 0 && (
-        <Button variant="secondary" onClick={() => router.push('/lemonheads')}>
+        <Button variant="secondary" onClick={() => router.push('/lemonheads/mint')}>
           Claim LemonHead
         </Button>
       )}
