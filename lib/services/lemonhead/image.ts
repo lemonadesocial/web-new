@@ -3,14 +3,16 @@ import { Canvas, Image } from 'canvas';
 import fetch from 'node-fetch';
 
 import { SystemFile } from '$lib/graphql/generated/backend/graphql';
-import { FilterType, type Trait } from './core';
+import { getOrSet } from '$lib/utils/cache';
+
+import { FilterType, TraitType, type Trait } from './core';
 
 type Paginated<T> = {
   total: number;
   items: T[];
 };
 
-type Layer = { [K in FilterType]?: string } & {
+export type Layer = { [K in FilterType]?: string } & {
   type: string;
   name: string;
   order?: string;
@@ -51,6 +53,25 @@ export const searchLayers = async (
 
   return data as Paginated<Layer>;
 }
+
+export const randomLayers = async (
+  serverUrl: string, //-- use the internal graphql url if request from backend, use the public url if request from frontend
+  traits: Partial<Trait>[], //-- the filters
+) => {
+  const query = new URLSearchParams({
+    traits: JSON.stringify(traits.map(traitToQuery)),
+  }).toString();
+
+  const response = await fetch(`${serverUrl}/lemonheads/layers/random?${query}`);
+
+  const data = await response.json();
+
+  return data as Layer[];
+}
+
+export const getRandomLayersFromTraits = async (finalTraits: Omit<Trait, 'value'>[]) => {
+  return await randomLayers(process.env.INTERNAL_GRAPHQL_URL!, finalTraits);
+};
 
 //-- this function expects the final traits
 export const getRenderLayersFromTraits = async (finalTraits: Trait[]) => {
@@ -100,4 +121,36 @@ export const getFinalImage = async (imageUrls: string[], outputFormat: 'png' | '
   else {
     return canvas.toBuffer('image/jpeg');
   }
+};
+
+const countLayers = async (serverUrl: string, traits: Omit<Trait, 'value'>[]) => {
+  const query = new URLSearchParams({
+    traits: JSON.stringify(traits.map(traitToQuery)),
+  }).toString();
+
+  const response = await fetch(`${serverUrl}/lemonheads/layers/count?${query}`);
+
+  const data = await response.json();
+
+  return data as { count: number };
+};
+
+export const randomUseOutfit = async () => {
+  //-- cache for a day
+  const [outfitCount, topCount, bottomCount] = await getOrSet('lemonhead_layers_count', async () => {
+    return await Promise.all([
+      [{ type: TraitType.outfit }],
+      [{ type: TraitType.top }],
+      [{ type: TraitType.bottom }],
+    ].map((traits) => countLayers(process.env.INTERNAL_GRAPHQL_URL!, traits).then((count) => count.count)));
+  }, 86400000);
+
+  const top_and_bottom = topCount + bottomCount;
+
+  //-- if there is no top and bottom, then use outfit
+  if (top_and_bottom == 0) {
+    return true;
+  }
+
+  return Math.random() < outfitCount / (outfitCount + top_and_bottom);
 };
