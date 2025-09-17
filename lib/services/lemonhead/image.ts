@@ -87,8 +87,6 @@ export const getFinalImage = async (imageUrls: string[], outputFormat: 'png' | '
         resolve();
       };
       img.onerror = (err) => {
-        console.log('draw image error', err, buffer.length);
-        console.log('draw image error image', imageUrls[i]);
         reject(err);
       };
       img.src = buffer;
