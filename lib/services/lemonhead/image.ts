@@ -76,15 +76,21 @@ export const getFinalImage = async (imageUrls: string[], outputFormat: 'png' | '
   assert.ok(ctx);
 
   // Load and draw all images sequentially
-  for (const buffer of buffers) {
+  for (let i = 0; i < buffers.length; i++) {
+    const buffer = buffers[i];
     const img = new Image();
+
     await new Promise<void>((resolve, reject) => {
       img.onload = () => {
         // Scale the image to fit the canvas dimensions
         ctx.drawImage(img, 0, 0, outputSize, outputSize);
         resolve();
       };
-      img.onerror = () => reject(new Error('Failed to load image'));
+      img.onerror = (err) => {
+        console.log('draw image error', err, buffer.length);
+        console.log('draw image error image', imageUrls[i]);
+        reject(err);
+      };
       img.src = buffer;
     });
   }
