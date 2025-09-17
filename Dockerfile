@@ -10,7 +10,7 @@ FROM public.ecr.aws/docker/library/node:20-alpine AS builder
 WORKDIR /app
 
 RUN apk add --no-cache git
-RUN apk add --no-cache pkgconfig python3 py3-pip make g++ cairo-dev pango-dev \
+RUN apk add --no-cache pkgconfig python3 py3-pip make g++ cairo-dev pango-dev jpeg-dev giflib-dev libpng-dev \
     && ln -sf python3 /usr/bin/python \
     && ln -sf pip3 /usr/bin/pip
 
@@ -54,7 +54,7 @@ RUN aws s3 sync . s3://$ASSET_BUCKET_NAME --size-only
 FROM public.ecr.aws/docker/library/node:20-alpine AS app
 WORKDIR /app
 
-RUN apk add --no-cache cairo pango
+RUN apk add --no-cache cairo pango jpeg giflib libpng
 
 COPY --from=build /app/.next/standalone .
 
