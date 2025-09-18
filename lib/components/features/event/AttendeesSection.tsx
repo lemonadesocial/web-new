@@ -2,22 +2,19 @@ import React, { useMemo } from 'react';
 
 import { useQuery } from '$lib/graphql/request';
 import { Avatar } from '$lib/components/core';
-import { GetEventDocument, PeekEventGuestsDocument, User } from '$lib/graphql/generated/backend/graphql';
+import { Event, GetEventDocument, PeekEventGuestsDocument, User } from '$lib/graphql/generated/backend/graphql';
 import { userAvatar } from '$lib/utils/user';
 
 interface AttendeesSectionProps {
-  eventId: string;
+  event?: Event;
   limit?: number;
 }
 
-export function AttendeesSection({ eventId, limit = 5 }: AttendeesSectionProps) {
+export function AttendeesSection({ event, limit = 5 }: AttendeesSectionProps) {
   const { data } = useQuery(PeekEventGuestsDocument, {
-    variables: { id: eventId, limit },
-    skip: !eventId,
+    variables: { id: event?._id, limit },
+    skip: !event?._id,
   });
-
-  const { data: dataEvent } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
-  const event = dataEvent?.getEvent;
 
   const guests = useMemo(() => data?.peekEventGuests?.items || [], [data]);
   const totalAttendees = useMemo(() => data?.peekEventGuests?.total || 0, [data]);
@@ -28,7 +25,7 @@ export function AttendeesSection({ eventId, limit = 5 }: AttendeesSectionProps) 
 
   const othersCount = totalAttendees - visibleAttendees.length;
 
-  if (!guests.length || dataEvent?.getEvent?.hide_attending === true) return null;
+  if (!guests.length || event?.hide_attending === true) return null;
 
   return (
     <div>

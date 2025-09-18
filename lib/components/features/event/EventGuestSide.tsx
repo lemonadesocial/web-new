@@ -86,7 +86,7 @@ export function EventGuestSideContent({ event }: { event: Event }) {
         <PendingCohostRequest event={event} />
         <CommunitySection event={event} />
         <HostedBySection event={event} />
-        <AttendeesSection eventId={event._id} />
+        <AttendeesSection event={event} />
       </div>
 
       <div className="flex-1 flex flex-col gap-6 w-full">
@@ -174,7 +174,7 @@ export function EventGuestSideContent({ event }: { event: Event }) {
         <GallerySection event={event} />
         <div className="flex flex-col gap-6 md:hidden">
           <CommunitySection event={event} />
-          <AttendeesSection eventId={event._id} />
+          <AttendeesSection event={event} />
         </div>
         <Spacer className="h-8" />
       </div>
