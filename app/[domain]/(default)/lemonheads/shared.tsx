@@ -21,7 +21,7 @@ import {
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { VerifyWalletModal } from '$lib/components/features/event-registration/modals/VerifyWalletModal';
-import { ethers, lock } from 'ethers';
+import { ethers } from 'ethers';
 import { useAppKitAccount } from '@reown/appkit/react';
 
 export function LockFeature({ title, subtitle, icon }: { title: string; subtitle: string; icon?: string }) {
