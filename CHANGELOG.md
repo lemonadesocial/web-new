@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.13.2](https://github.com/lemonadesocial/web-new/compare/v6.13.1...v6.13.2) (2025-09-18)
+
+
+### Bug Fixes
+
+* update text ([e6bb8dc](https://github.com/lemonadesocial/web-new/commit/e6bb8dc5c162c1aa3994168d4515be1d10f61e58))
+
 ## [6.13.1](https://github.com/lemonadesocial/web-new/compare/v6.13.0...v6.13.1) (2025-09-18)
 
 
