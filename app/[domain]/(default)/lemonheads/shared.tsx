@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { Avatar, Button, Card, modal, ModalContent, toast } from '$lib/components/core';
+import { Avatar, Button, Card, drawer, modal, ModalContent, toast } from '$lib/components/core';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { truncateMiddle } from '$lib/utils/string';
 import { userAvatar } from '$lib/utils/user';
@@ -23,6 +23,7 @@ import { useSignIn } from '$lib/hooks/useSignIn';
 import { VerifyWalletModal } from '$lib/components/features/event-registration/modals/VerifyWalletModal';
 import { ethers, lock } from 'ethers';
 import { useAppKitAccount } from '@reown/appkit/react';
+import { SharedLemonheadsPane } from '$lib/components/features/lemonheads/steps/ClaimLemonHead';
 
 export function LockFeature({ title, subtitle, icon }: { title: string; subtitle: string; icon?: string }) {
   const router = useRouter();
@@ -67,7 +68,21 @@ export function RightCol({
             <img src={data?.image} className="rounded-sm size-8 aspect-square" />
 
             <div className="flex flex-col">
-              <p className="text-sm">Share</p>
+              <p
+                className="text-sm"
+                onClick={() =>
+                  drawer.open(SharedLemonheadsPane, {
+                    props: {
+                      // color,
+                      tokenId: data.tokenId?.toString(),
+                      onSelectColor: (_color) => {},
+                      onSelectPortrait: (value) => {},
+                    },
+                  })
+                }
+              >
+                Share
+              </p>
               <p className="text-xs text-quaternary">LemonHead #{data?.tokenId}</p>
             </div>
           </div>
