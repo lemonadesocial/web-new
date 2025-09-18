@@ -154,6 +154,7 @@ query GetEvent($id: MongoID, $shortid: String) {
       active
       ticket_types
     }
+    hide_attending
   }
 }
 
@@ -759,8 +760,34 @@ mutation UpdateEventRegistrationForm($id: MongoID!, $input: EventInput!) {
   }
 }
 
-query ListEventGuests($ticketTypes: [MongoID!], $going: Boolean, $pendingApproval: Boolean, $pendingInvite: Boolean, $declined: Boolean, $checkedIn: Boolean, $sortBy: ListEventGuestsSortBy, $sortOrder: SortOrder, $event: MongoID!, $search: String, $limit: Int, $skip: Int) {
-  listEventGuests(ticket_types: $ticketTypes, going: $going, pending_approval: $pendingApproval, pending_invite: $pendingInvite, declined: $declined, checked_in: $checkedIn, sort_by: $sortBy, sort_order: $sortOrder, event: $event, search: $search, limit: $limit, skip: $skip) {
+query ListEventGuests(
+  $ticketTypes: [MongoID!]
+  $going: Boolean
+  $pendingApproval: Boolean
+  $pendingInvite: Boolean
+  $declined: Boolean
+  $checkedIn: Boolean
+  $sortBy: ListEventGuestsSortBy
+  $sortOrder: SortOrder
+  $event: MongoID!
+  $search: String
+  $limit: Int
+  $skip: Int
+) {
+  listEventGuests(
+    ticket_types: $ticketTypes
+    going: $going
+    pending_approval: $pendingApproval
+    pending_invite: $pendingInvite
+    declined: $declined
+    checked_in: $checkedIn
+    sort_by: $sortBy
+    sort_order: $sortOrder
+    event: $event
+    search: $search
+    limit: $limit
+    skip: $skip
+  ) {
     items {
       join_request {
         _id
