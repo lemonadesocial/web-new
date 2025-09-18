@@ -134,12 +134,16 @@ function Content() {
                       ))}
                     </div>
 
-                    <div className="hidden md:block">
-                      <Button size="lg" icon="icon-shuffle" variant="tertiary-alt" onClick={onShuffle} />
-                    </div>
-                    <div className="md:hidden">
-                      <Button size="sm" icon="icon-shuffle" variant="tertiary-alt" onClick={onShuffle} />
-                    </div>
+                    {state.currentStep === LemonHeadStep.create && (
+                      <>
+                        <div className="hidden md:block">
+                          <Button size="lg" icon="icon-shuffle" variant="tertiary-alt" onClick={onShuffle} />
+                        </div>
+                        <div className="md:hidden">
+                          <Button size="sm" icon="icon-shuffle" variant="tertiary-alt" onClick={onShuffle} />
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               )
