@@ -85,7 +85,7 @@ export function PendingApprovalList({ event, limit = 25 }: PendingApprovalListPr
                   <div className="flex justify-between relative">
                     <div className={clsx('flex-1 flex w-1', isContainerNarrow ? 'flex-col' : 'gap-2 items-center')}>
                       <p className="truncate">{name}</p>
-                      <p className="text-tertiary text-sm w-full truncate">{email}</p>
+                      <p className="text-tertiary text-sm truncate">{email}</p>
                     </div>
                   </div>
                 </div>
