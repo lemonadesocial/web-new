@@ -53,13 +53,14 @@ export function LemonHeadFooter() {
     let isValid = true;
 
     const address = appKit.getAddress();
-    const { data: dataCanMint } = await client.query({
+    const { data: dataCanMint, error } = await client.query({
       query: CanMintLemonheadDocument,
       variables: { wallet: address },
     });
-    const canMint = dataCanMint?.canMintLemonhead.can_mint;
+    const canMint = dataCanMint?.canMintLemonhead?.can_mint;
 
     if (!canMint) {
+      console.log(error);
       toast.error('Not able to mint!');
       return false;
     }
@@ -99,7 +100,7 @@ export function LemonHeadFooter() {
         modal.open(InsufficientFundsModal, {
           onClose: () => setMinting(false),
           props: {
-            mintPrice: dataCanMint.canMintLemonhead.price,
+            mintPrice: dataCanMint?.canMintLemonhead?.price,
             onRetry: () => {
               modal.close();
               handleMint();
@@ -314,7 +315,7 @@ function MintModal({
   const { address } = useAppKitAccount();
 
   const { data: dataCanMint } = useQuery(CanMintLemonheadDocument, { variables: { wallet: address! }, skip: !address });
-  const mintPrice = !sponsor ? dataCanMint?.canMintLemonhead.price : 0;
+  const mintPrice = !sponsor ? dataCanMint?.canMintLemonhead?.price : 0;
 
   const [isMinting, setIsMinting] = React.useState(false);
   const [mintState, setMintState] = React.useState({
