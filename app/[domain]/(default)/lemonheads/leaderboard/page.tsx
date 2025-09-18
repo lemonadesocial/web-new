@@ -3,7 +3,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { Badge, Button, Card, modal } from '$lib/components/core';
+import { Badge, Button, Card, modal, Skeleton } from '$lib/components/core';
 import {
   GetLemonheadInvitationRankDocument,
   GetMyLemonheadInvitationRankDocument,
@@ -13,7 +13,7 @@ import {
 import { useQuery } from '$lib/graphql/request';
 import { userAvatar } from '$lib/utils/user';
 import { truncateMiddle } from '$lib/utils/string';
-import { InviteFriendModal, RightCol } from '../shared';
+import { EmptyLeaderboard, InviteFriendModal, RightCol } from '../shared';
 
 function FirstMedal() {
   return (
@@ -68,10 +68,10 @@ const limit = 20;
 function Page() {
   const [skip, setSkip] = React.useState(0);
 
-  const { data: dataGetMyRank, loading } = useQuery(GetMyLemonheadInvitationRankDocument);
+  const { data: dataGetMyRank } = useQuery(GetMyLemonheadInvitationRankDocument);
   const myLemonheadRank = dataGetMyRank?.getMyLemonheadInvitationRank;
 
-  const { data: dataGetInvitationRank } = useQuery(GetLemonheadInvitationRankDocument, {
+  const { data: dataGetInvitationRank, loading } = useQuery(GetLemonheadInvitationRankDocument, {
     variables: { skip, limit },
   });
   const invitationRank = dataGetInvitationRank?.getLemonheadInvitationRank.items || [];
@@ -142,12 +142,14 @@ function Page() {
 
         <div className="flex flex-col gap-3">
           <Card.Root>
-            <Card.Header className="flex gap-4 bg-transparent">
-              <p className="w-8 text-sm text-tertiary">Rank</p>
-              <p className="flex-1 text-sm text-tertiary">Inviter</p>
-              <p className="md:w-[96px] text-sm text-tertiary">Invites</p>
-              <div className="hidden md:block w-[62px]" />
-            </Card.Header>
+            {(!!invitationRank.length || loading) && (
+              <Card.Header className="flex gap-4 bg-transparent">
+                <p className="w-8 text-sm text-tertiary">Rank</p>
+                <p className="flex-1 text-sm text-tertiary">Inviter</p>
+                <p className="md:w-[96px] text-sm text-tertiary">Invites</p>
+                <div className="hidden md:block w-[62px]" />
+              </Card.Header>
+            )}
 
             <AnimatePresence mode="wait">
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0 }}>
@@ -157,17 +159,39 @@ function Page() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.1 }}
-                    className="flex items-center justify-center p-4 aspect-video text-tertiary"
                   >
-                    <p>Loading...</p>
+                    {Array.from({ length: 7 }).map((_, idx) => (
+                      <Card.Content
+                        key={idx}
+                        className={clsx('py-3', idx % 2 === 0 && 'backdrop-blur-sm', idx > 4 && 'max-sm:hidden')}
+                      >
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0 }}
+                          className="flex items-center gap-4"
+                        >
+                          <Skeleton className="size-8 aspect-square rounded-full" animate />
+
+                          <div className="flex gap-3 items-center flex-1">
+                            <Skeleton className="size-8 aspect-square rounded-full" animate />
+                            <Skeleton className="h-5 w-32" animate />
+                          </div>
+
+                          <Skeleton className="h-5 w-10" animate />
+
+                          <div className="w-[62px] px-[60px] hidden md:block">
+                            <Skeleton className="h-5 w-16 rounded-full" animate />
+                          </div>
+                        </motion.div>
+                      </Card.Content>
+                    ))}
                   </motion.div>
                 ) : (
                   <>
-                    {!invitationRank.length && (
-                      <div className="flex items-center justify-center p-4 aspect-video">
-                        <p className="text-tertiary">No inviters found for this time range</p>
-                      </div>
-                    )}
+                    <div className="hidden only:block ">
+                      <EmptyLeaderboard />
+                    </div>
 
                     {invitationRank.map((item, idx) => (
                       <Card.Content key={idx} className={clsx('py-3', idx % 2 === 0 && 'backdrop-blur-sm')}>
