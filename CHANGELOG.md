@@ -1,5 +1,13 @@
 # Changelog
 
+## [6.12.1](https://github.com/lemonadesocial/web-new/compare/v6.12.0...v6.12.1) (2025-09-18)
+
+
+### Bug Fixes
+
+* fix size avatar on mobile view ([c737208](https://github.com/lemonadesocial/web-new/commit/c737208bf2fd17daebb656264a5fa0637bd807e2))
+* lint ([7c79a0b](https://github.com/lemonadesocial/web-new/commit/7c79a0b2acb255d009ace274b487e5d4c49a84e4))
+
 ## [6.12.0](https://github.com/lemonadesocial/web-new/compare/v6.11.1...v6.12.0) (2025-09-18)
 
 
