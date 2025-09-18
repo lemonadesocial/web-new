@@ -29,7 +29,7 @@ export function ConfirmationEmailModal({ setting, event }: { setting: EmailSetti
           event: event._id,
           custom_body_html: body,
           type: EmailTemplateType.PostRsvp,
-          test_recipients: [me?.email!],
+          test_recipients: me?.email ? [me.email] : [],
         },
       },
     });

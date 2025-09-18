@@ -759,8 +759,8 @@ mutation UpdateEventRegistrationForm($id: MongoID!, $input: EventInput!) {
   }
 }
 
-query ListEventGuests($event: MongoID!, $skip: Int, $limit: Int, $search: String) {
-  listEventGuests(event: $event, skip: $skip, limit: $limit, search: $search) {
+query ListEventGuests($ticketTypes: [MongoID!], $going: Boolean, $pendingApproval: Boolean, $pendingInvite: Boolean, $declined: Boolean, $checkedIn: Boolean, $sortBy: ListEventGuestsSortBy, $sortOrder: SortOrder, $event: MongoID!, $search: String, $limit: Int, $skip: Int) {
+  listEventGuests(ticket_types: $ticketTypes, going: $going, pending_approval: $pendingApproval, pending_invite: $pendingInvite, declined: $declined, checked_in: $checkedIn, sort_by: $sortBy, sort_order: $sortOrder, event: $event, search: $search, limit: $limit, skip: $skip) {
     items {
       join_request {
         _id

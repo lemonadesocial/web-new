@@ -2,7 +2,6 @@ import React from 'react';
 import { addDays, format, startOfWeek } from 'date-fns';
 import { Controller, useForm } from 'react-hook-form';
 import { getTimezoneOffset } from 'date-fns-tz';
-import { getTimezone } from 'countries-and-timezones';
 
 import {
   Button,
@@ -166,6 +165,7 @@ export function CloneEventModal({ event }: { event: Event }) {
                         communities.map((item) => {
                           return (
                             <MenuItem
+                              key={item._id}
                               iconRight={item._id === field.value ? 'text-primary! icon-richtext-check' : undefined}
                               onClick={() => {
                                 setValue('community', item._id);

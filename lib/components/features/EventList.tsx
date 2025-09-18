@@ -291,11 +291,11 @@ export function EventCardItem({
             </div>
           </div>
 
-          {!!getLocation(item) && (
+          {!!getLocation(item, me) && (
             <div className="flex flex-col gap-1">
               <div className="inline-flex items-center gap-2">
                 <i className="icon-location-outline size-4" />
-                <span className="text-sm md:text-md truncate">{getLocation(item)}</span>
+                <span className="text-sm md:text-md truncate">{getLocation(item, me)}</span>
               </div>
             </div>
           )}
@@ -431,8 +431,7 @@ function SkeletonLine({ className, animate = false }: { className?: string; anim
   );
 }
 
-function getLocation(event?: Event | null) {
-  const me = useMe();
+function getLocation(event?: Event | null, me?: User | null) {
   const attending = me?._id && event ? isAttending(event, me?._id) : false;
 
   if (event?.address) {
