@@ -19,7 +19,9 @@ export function ApplicantsDrawer({ event }: ApplicantsDrawerProps) {
           <h1 className="text-xl font-semibold">Pending Approval</h1>
           <p className="text-secondary">Review and manage guest requests to join {event.title}.</p>
         </div>
-        <PendingApprovalList event={event} />
+        <div className="[&_.avatar]:size-8">
+          <PendingApprovalList event={event} />
+        </div>
       </Pane.Content>
     </Pane.Root>
   );
