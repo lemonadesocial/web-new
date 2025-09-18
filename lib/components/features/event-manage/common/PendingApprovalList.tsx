@@ -80,7 +80,7 @@ export function PendingApprovalList({ event, limit = 25 }: PendingApprovalListPr
           return (
             <div key={request._id} className="flex items-center justify-between px-4 py-3 gap-2">
               <div className="flex items-center gap-3 flex-1">
-                <Avatar src={userAvatar(user as any)} className={isContainerNarrow ? 'size-8' : 'size-5'} />
+                <Avatar src={userAvatar(user as any)} className="size-5" />
                 <div className="flex flex-col flex-1 gap-2">
                   <div className="flex justify-between relative">
                     <div className={clsx('flex-1 flex w-1', isContainerNarrow ? 'flex-col' : 'gap-2 items-center')}>
