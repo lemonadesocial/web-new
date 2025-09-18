@@ -2460,7 +2460,6 @@ export enum FeatureCode {
   ManageSpaceEventRequest = 'ManageSpaceEventRequest',
   ManageSpaceMembership = 'ManageSpaceMembership',
   ManageSpaceNewsletter = 'ManageSpaceNewsletter',
-  ManageSpacePayment = 'ManageSpacePayment',
   ManageSpaceTag = 'ManageSpaceTag',
   ManageSpaceTokenGate = 'ManageSpaceTokenGate',
   Poap = 'Poap',
@@ -3194,7 +3193,6 @@ export type Mutation = {
   addSpaceMembers: Scalars['Boolean']['output'];
   addUserFcmToken: Scalars['Boolean']['output'];
   assignTickets: Scalars['Boolean']['output'];
-  attachSpacePaymentAccounts: Scalars['Boolean']['output'];
   attachSubSpaces: Scalars['Boolean']['output'];
   buyTickets: BuyTicketsResponse;
   cancelEvent: Event;
@@ -3306,7 +3304,6 @@ export type Mutation = {
   deleteUserDiscoverySwipe: Scalars['Boolean']['output'];
   deleteUserFollow: Scalars['Boolean']['output'];
   deleteUserFriendship: Scalars['Boolean']['output'];
-  detachSpacePaymentAccounts: Scalars['Boolean']['output'];
   disconnectStripeAccount: Scalars['Boolean']['output'];
   flagEvent: Scalars['Boolean']['output'];
   flagPost: Scalars['Boolean']['output'];
@@ -3453,12 +3450,6 @@ export type MutationAddUserFcmTokenArgs = {
 
 export type MutationAssignTicketsArgs = {
   input: AssignTicketsInput;
-};
-
-
-export type MutationAttachSpacePaymentAccountsArgs = {
-  accounts: Array<Scalars['MongoID']['input']>;
-  space: Scalars['MongoID']['input'];
 };
 
 
@@ -4043,12 +4034,6 @@ export type MutationDeleteUserFollowArgs = {
 
 export type MutationDeleteUserFriendshipArgs = {
   input: DeleteUserFriendshipInput;
-};
-
-
-export type MutationDetachSpacePaymentAccountsArgs = {
-  accounts: Array<Scalars['MongoID']['input']>;
-  space: Scalars['MongoID']['input'];
 };
 
 
@@ -7319,7 +7304,6 @@ export type Space = {
   light_theme_image_expanded?: Maybe<File>;
   /** External events are listed on this space */
   listed_events?: Maybe<Array<Scalars['MongoID']['output']>>;
-  payment_accounts_expanded?: Maybe<Array<NewPaymentAccount>>;
   personal?: Maybe<Scalars['Boolean']['output']>;
   /** Private space requires moderation for membership */
   private?: Maybe<Scalars['Boolean']['output']>;
