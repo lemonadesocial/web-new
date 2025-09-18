@@ -85,7 +85,7 @@ export const getRandomLook = async (filters: Filter[]): Promise<Layer[]> => {
   const newFilters = [...filters];
 
   //-- check if filters include race
-  let raceFilter = filters.find((filter) => filter.type === FilterType.race);
+  let raceFilter = newFilters.find((filter) => filter.type === FilterType.race);
 
   if (!raceFilter) {
     //-- random 50% human / alien
@@ -127,7 +127,8 @@ export const getRandomLook = async (filters: Filter[]): Promise<Layer[]> => {
     if (toAdd) {
       traits.push({
         type: traitType,
-        filters: newFilters,
+        //-- do not apply race filter to pet
+        filters: traitType === TraitType.pet ? newFilters.filter((filter) => filter.type !== FilterType.race) : newFilters,
       });
     }
   }
