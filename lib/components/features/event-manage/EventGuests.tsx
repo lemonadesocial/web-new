@@ -56,7 +56,9 @@ export function EventGuests() {
             </div>
             <div>
               <p>Guest List</p>
-              <p className="text-tertiary text-xs">Shown to guests</p>
+              <p className="text-tertiary text-xs">
+                {event.hide_attending === true ? 'Hide to guests' : 'Shown to guests'}
+              </p>
             </div>
           </Card.Content>
         </Card.Root>
