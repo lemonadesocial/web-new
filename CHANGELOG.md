@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.12.2](https://github.com/lemonadesocial/web-new/compare/v6.12.1...v6.12.2) (2025-09-18)
+
+
+### Bug Fixes
+
+* truncate on desktop view ([07a406e](https://github.com/lemonadesocial/web-new/commit/07a406ef022003021eca8743ef5465af220bd1bf))
+
 ## [6.12.1](https://github.com/lemonadesocial/web-new/compare/v6.12.0...v6.12.1) (2025-09-18)
 
 
