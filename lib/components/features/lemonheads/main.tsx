@@ -12,6 +12,8 @@ import { LemonHeadPreview } from './preview';
 
 import { LemonHeadActionKind, LemonHeadProvider, LemonHeadStep, useLemonHeadContext } from './provider';
 import { SquareButton } from './shared';
+import { Button } from '$lib/components/core';
+import { type } from 'os';
 
 export function LemonHeadMain() {
   return (
@@ -41,6 +43,7 @@ function Content() {
   const { data: dataBodySet } = trpc.lemonheads.bodies.useQuery();
   const { data: dataDefaultSet } = trpc.lemonheads.defaultSet.useQuery();
   const { data: dataColorSet } = trpc.lemonheads.colorSet.useQuery();
+  const mutation = trpc.lemonheads.random.useMutation();
 
   React.useEffect(() => {
     const init = async () => {
@@ -66,6 +69,15 @@ function Content() {
 
   const body = state.traits.find((i) => i?.type === 'body');
   const skinTone = body?.filters?.find((i) => i?.type === FilterType.skin_tone)?.value;
+
+  const onShuffle = async () => {
+    const baseLayers = state.traits.find((item) => item.type === 'body')?.filters;
+    if (baseLayers?.length) {
+      const randomData = await mutation.mutateAsync(baseLayers);
+      const data = randomData.map((item) => lemonHead.trait.tranformTrait(item));
+      dispatch({ type: LemonHeadActionKind.random_traits, payload: { data } });
+    }
+  };
 
   return (
     <main className="h-dvh w-full flex flex-col divide-y divide-[var(--color-divider)]">
@@ -93,32 +105,41 @@ function Content() {
                       traits={state.traits}
                     />
                   </div>
-                  <div className="w-[30px] md:w-full flex flex-col md:flex-row gap-2">
-                    {skinToneOpts[body?.value || 'human'].map((item) => (
-                      <SquareButton
-                        key={item.value}
-                        active={item.value === skinTone}
-                        className="size-[30px] md:size-[50px] aspect-square"
-                        onClick={() => {
-                          const data = dataBodySet?.items.find(
-                            (i) =>
-                              i.skin_tone === item.value &&
-                              i.size === body?.filters?.find((i) => i.type === 'size')?.value &&
-                              i.gender === body?.filters?.find((i) => i.type === 'gender')?.value &&
-                              i.race === body?.filters?.find((i) => i.type === 'race')?.value,
-                          );
+                  <div className="w-[30px] md:w-full flex flex-col md:flex-row gap-2 justify-between">
+                    <div className="flex flex-col md:flex-row gap-2">
+                      {skinToneOpts[body?.value || 'human'].map((item) => (
+                        <SquareButton
+                          key={item.value}
+                          active={item.value === skinTone}
+                          className="size-[30px] md:size-[44px] aspect-square"
+                          onClick={() => {
+                            const data = dataBodySet?.items.find(
+                              (i) =>
+                                i.skin_tone === item.value &&
+                                i.size === body?.filters?.find((i) => i.type === 'size')?.value &&
+                                i.gender === body?.filters?.find((i) => i.type === 'gender')?.value &&
+                                i.race === body?.filters?.find((i) => i.type === 'race')?.value,
+                            );
 
-                          if (data) {
-                            dispatch({
-                              type: LemonHeadActionKind.set_skintone,
-                              payload: { data: lemonHead.trait.tranformTrait(data) },
-                            });
-                          }
-                        }}
-                      >
-                        <div className="w-full h-full rounded-xs" style={{ background: item.color }} />
-                      </SquareButton>
-                    ))}
+                            if (data) {
+                              dispatch({
+                                type: LemonHeadActionKind.set_skintone,
+                                payload: { data: lemonHead.trait.tranformTrait(data) },
+                              });
+                            }
+                          }}
+                        >
+                          <div className="w-full h-full rounded-xs" style={{ background: item.color }} />
+                        </SquareButton>
+                      ))}
+                    </div>
+
+                    <div className="hidden md:block">
+                      <Button size="lg" icon="icon-shuffle" variant="tertiary-alt" onClick={onShuffle} />
+                    </div>
+                    <div className="md:hidden">
+                      <Button size="sm" icon="icon-shuffle" variant="tertiary-alt" onClick={onShuffle} />
+                    </div>
                   </div>
                 </div>
               )
