@@ -1,5 +1,24 @@
 # Changelog
 
+## [6.13.0](https://github.com/lemonadesocial/web-new/compare/v6.12.2...v6.13.0) (2025-09-18)
+
+
+### Features
+
+* display suffle at customize step ([4912eb4](https://github.com/lemonadesocial/web-new/commit/4912eb4fb69ba7c4426ab0bdbbe6be9fca235172))
+* remove console ([975db82](https://github.com/lemonadesocial/web-new/commit/975db8233499c7ea17e34fa2560b459ad61982f5))
+* update loading and empty state on leaderboard lemonheads ([e9ea799](https://github.com/lemonadesocial/web-new/commit/e9ea7997682b1632e8503dc55cf4647638e06437))
+* update shared action on right column lemonheads ([2e45080](https://github.com/lemonadesocial/web-new/commit/2e45080e14d47aa0a9817219d92b451b01281d36))
+
+
+### Bug Fixes
+
+* improve ux ([07ff3d7](https://github.com/lemonadesocial/web-new/commit/07ff3d70d17856562a7feeeba50938da09248c74))
+* **lemonhead:** fix pet race filter when random look ([f605695](https://github.com/lemonadesocial/web-new/commit/f605695e7517c1e154f2a647a6696bb1fc93884c))
+* **lemonhead:** fix random look ([cdb03a0](https://github.com/lemonadesocial/web-new/commit/cdb03a0a3c0582eba724e6e54ce4a153e75e0ba9))
+* missing hide attending event guest page ([03efced](https://github.com/lemonadesocial/web-new/commit/03efced074d2e78ae0d78ba259c3a33b23c29224))
+* remove unused ([5ff1697](https://github.com/lemonadesocial/web-new/commit/5ff1697c0b55fd03e48e4f0b6b1687e712c2feaf))
+
 ## [6.12.2](https://github.com/lemonadesocial/web-new/compare/v6.12.1...v6.12.2) (2025-09-18)
 
 
