@@ -131,8 +131,8 @@ export function SharedLemonheadsPane({
 }: {
   color?: string;
   tokenId: string;
-  onSelectColor: (color: string) => void;
-  onSelectPortrait: (value: boolean) => void;
+  onSelectColor?: (color: string) => void;
+  onSelectPortrait?: (value: boolean) => void;
 }) {
   const { address } = useAppKitAccount();
   const { account: myAccount } = useAccount();
@@ -219,7 +219,7 @@ export function SharedLemonheadsPane({
             selected={imageType}
             onSelect={({ value }: { value: 'body' | 'portrait' }) => {
               setImageType(value);
-              onSelectPortrait(value === 'portrait');
+              onSelectPortrait?.(value === 'portrait');
             }}
             items={[
               { iconLeft: 'icon-human', value: 'body', label: 'Full Body' },
