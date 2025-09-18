@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.13.1](https://github.com/lemonadesocial/web-new/compare/v6.13.0...v6.13.1) (2025-09-18)
+
+
+### Bug Fixes
+
+* update event state hide_attending on manage event ([ed820df](https://github.com/lemonadesocial/web-new/commit/ed820df98ecdfc07b5c4463b06bee3aa7b1fdb71))
+
 ## [6.13.0](https://github.com/lemonadesocial/web-new/compare/v6.12.2...v6.13.0) (2025-09-18)
 
 
