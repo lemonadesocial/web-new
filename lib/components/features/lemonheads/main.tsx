@@ -69,7 +69,6 @@ function Content() {
 
   const body = state.traits.find((i) => i?.type === 'body');
   const skinTone = body?.filters?.find((i) => i?.type === FilterType.skin_tone)?.value;
-  console.log(state.traits);
 
   const onShuffle = async () => {
     const baseLayers = state.traits.find((item) => item.type === 'body')?.filters;
