@@ -1,5 +1,5 @@
 import { generateUrl } from '$lib/utils/cnd';
-import { calculateLookHash, Filter, formatString, getFinalTraits, layerings, Trait, TraitType, validateTraits } from './core';
+import { calculateLookHash, Filter, FilterType, formatString, getFinalTraits, layerings, Trait, TraitType, validateTraits } from './core';
 import { getApproval, getCache, setCache } from './admin';
 import { getFinalImage, getRandomLayersFromTraits, getRenderLayersFromTraits, Layer, randomUseOutfit } from './image';
 import { uploadImage, uploadJSON } from './storage';
@@ -82,6 +82,21 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
 
 //-- caller function must provider 4 required filters: race, gender, skin_tone, size
 export const getRandomLook = async (filters: Filter[]): Promise<Layer[]> => {
+  const newFilters = [...filters];
+
+  //-- check if filters include race
+  let raceFilter = newFilters.find((filter) => filter.type === FilterType.race);
+
+  if (!raceFilter) {
+    //-- random 50% human / alien
+    raceFilter = {
+      type: FilterType.race,
+      value: Math.random() < 0.5 ? 'human' : 'alien',
+    };
+
+    newFilters.push(raceFilter);
+  }
+
   const traits: Omit<Trait, 'value'>[] = [];
 
   //-- check if we use outfit or top / bottom
@@ -90,32 +105,30 @@ export const getRandomLook = async (filters: Filter[]): Promise<Layer[]> => {
   for (const [type, value] of Object.entries(layerings)) {
     const traitType = type as TraitType;
 
-    if (traitType === TraitType.outfit && useOutfit) {
-      traits.push({
-        type: traitType,
-        filters,
-      });
-
-      continue;
-    }
-
     const isTopOrBottom = traitType === TraitType.top || traitType === TraitType.bottom;
+    const isMouthOrEyes = traitType === TraitType.mouth || traitType === TraitType.eyes;
 
-    if (isTopOrBottom && useOutfit) {
-      continue;
+    let toAdd: boolean;
+
+    if (traitType === TraitType.outfit) {
+      toAdd = useOutfit;
+    } else if (isTopOrBottom) {
+      //-- top and bottom has high chance to be included
+      toAdd = !useOutfit && Math.random() < 0.75;
+    } else if (isMouthOrEyes) {
+      //-- if alien then skip mouth & eyes, else (human) add both
+      toAdd = raceFilter.value !== 'alien';
     }
-
-    //-- other layers that are not mututal exclusive
-    //-- if the layer is required then add it to the traits, otherwise random chance to add it to the traits
-    //-- top and bottom have a higher chance to be added to the traits
-    const toAdd =
-      value.required
-      || (Math.random() < (isTopOrBottom ? 0.75 : 0.5));
+    else {
+      //-- other layers if not required have a 50% chance to be included
+      toAdd = value.required || Math.random() < 0.5;
+    }
 
     if (toAdd) {
       traits.push({
         type: traitType,
-        filters,
+        //-- do not apply race filter to pet
+        filters: traitType === TraitType.pet ? newFilters.filter((filter) => filter.type !== FilterType.race) : newFilters,
       });
     }
   }

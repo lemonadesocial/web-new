@@ -88,7 +88,7 @@ export function ClaimLemonHead() {
                 iconLeft="icon-share"
                 variant="secondary"
                 onClick={() =>
-                  drawer.open(RightPane, {
+                  drawer.open(SharedLemonheadsPane, {
                     props: {
                       color,
                       tokenId: state.mint.tokenId,
@@ -123,7 +123,7 @@ export function ClaimLemonHead() {
 const shareUrl = 'https://lemonade.social/lemonheads/mint';
 const shareText = 'Just claimed my LemonHead 🍋 Fully onchain, totally me. Yours is waiting—go mint it now → ';
 
-function RightPane({
+export function SharedLemonheadsPane({
   tokenId,
   onSelectColor,
   onSelectPortrait,
@@ -227,16 +227,17 @@ function RightPane({
             ]}
           />
 
-          <div className="flex justify-between overflow-auto no-scrollbar h-[40px] gap-1 items-center px-1">
+          <div className="flex flex-row justify-between overflow-x-auto no-scrollbar h-[40px] gap-1 items-center px-1">
             {Object.entries(LEMONHEAD_COLORS).map(([key, value]) => (
               <div
+                key={key}
                 className={clsx('p-0.5 cursor-pointer', color === key && 'outline-2 rounded-full')}
                 onClick={() => {
                   setColor(key);
                   onSelectColor(key);
                 }}
               >
-                <div className="rounded-full aspect-square h-[30px]" style={{ backgroundColor: value.fg }} />
+                <div className="rounded-full aspect-square w-[30px]" style={{ backgroundColor: value.fg }} />
               </div>
             ))}
           </div>

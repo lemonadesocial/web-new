@@ -91,7 +91,6 @@ export function PlaceAutoComplete({
           setQuery(e.currentTarget.value);
           setToggle(true);
         }}
-        right={{ icon: 'icon-cancel', onClick: handleClear }}
       />
 
       <AnimatePresence>

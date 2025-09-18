@@ -52,14 +52,14 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
         console.log(err);
       }
 
-      if (!mintedState && !data.canMintLemonhead.white_list_enabled) {
+      if (!mintedState && !data?.canMintLemonhead?.white_list_enabled) {
         modal.close();
         onContinue();
       }
     },
   });
-  const canMint = dataCanMint?.canMintLemonhead.can_mint;
-  const isEnabledWhiteList = dataCanMint?.canMintLemonhead.white_list_enabled;
+  const canMint = dataCanMint?.canMintLemonhead?.can_mint;
+  const isEnabledWhiteList = dataCanMint?.canMintLemonhead?.white_list_enabled;
 
   const { data, loading: loadingSponsors } = useQuery(GetListLemonheadSponsorsDocument, {
     variables: { wallet: address! },
