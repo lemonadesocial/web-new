@@ -230,6 +230,7 @@ function RightPane({
           <div className="flex justify-between overflow-auto no-scrollbar h-[40px] gap-1 items-center px-1">
             {Object.entries(LEMONHEAD_COLORS).map(([key, value]) => (
               <div
+                key={key}
                 className={clsx('p-0.5 cursor-pointer', color === key && 'outline-2 rounded-full')}
                 onClick={() => {
                   setColor(key);

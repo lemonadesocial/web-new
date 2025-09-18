@@ -98,7 +98,7 @@ export function BlastAdvancedModal({ event, message }: { event: Event; message: 
           custom_body_html: body,
           custom_subject_html: subject || defaultSubject,
           type: EmailTemplateType.Custom,
-          test_recipients: [me?.email!],
+          test_recipients: me?.email ? [me.email] : [],
         },
       },
     });
@@ -261,7 +261,7 @@ export function EventReminderModal({ event, reminderEmails = [] }: { event: Even
 
         toast.success(`${!toggle ? 'Enabled' : 'Disabled'} send event reminder emails.`);
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Cannot toggle reminder emails!');
     }
   };
@@ -369,7 +369,7 @@ export function ScheduleFeedbackModal({ event }: { event: Event }) {
           custom_body_html: body,
           custom_subject_html: subject || defaultSubject,
           type: EmailTemplateType.Feedback,
-          test_recipients: [me?.email!],
+          test_recipients: me?.email ? [me.email] : [],
         },
       },
     });
