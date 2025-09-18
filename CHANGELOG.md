@@ -1,5 +1,23 @@
 # Changelog
 
+## [6.12.0](https://github.com/lemonadesocial/web-new/compare/v6.11.1...v6.12.0) (2025-09-18)
+
+
+### Features
+
+* **lemonhead:** include inviter wallet address in nft metadata ([594dd57](https://github.com/lemonadesocial/web-new/commit/594dd57a764cf0e6dc24cbfb6d8c67dbd56fd1e8))
+* remove unused ([38e807e](https://github.com/lemonadesocial/web-new/commit/38e807e12deefdfdec814e0ee1c40b8e5bee010a))
+* update lemonheads title ([706beb1](https://github.com/lemonadesocial/web-new/commit/706beb1e4f5cf16edf3afaaa1c5373bdb0171d49))
+
+
+### Bug Fixes
+
+* add missing lin jpeg when build ([471744c](https://github.com/lemonadesocial/web-new/commit/471744cde32fd9c4f42058a302f347c428987fb6))
+* check canMintLemonhead it could be null for some reason from be ([0a1318a](https://github.com/lemonadesocial/web-new/commit/0a1318a98423876ef6f4e8f2b29c41d024556c29))
+* only fetch pricing when currency is set ([50b48c7](https://github.com/lemonadesocial/web-new/commit/50b48c71f203cfcd3bdd9b13b076a5bd65483526))
+* udpate ui mobile view ([512aca5](https://github.com/lemonadesocial/web-new/commit/512aca54985d2828ba54ec78b17842c92bc33862))
+* update drawer pane ui approval list ([1f29d87](https://github.com/lemonadesocial/web-new/commit/1f29d87035815224e171101089ef3b28a7e4c336))
+
 ## [6.11.1](https://github.com/lemonadesocial/web-new/compare/v6.11.0...v6.11.1) (2025-09-16)
 
 
