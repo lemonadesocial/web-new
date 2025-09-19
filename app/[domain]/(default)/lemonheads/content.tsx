@@ -25,7 +25,7 @@ export function Content() {
   return (
     <div className="flex max-sm:flex-col-reverse max-sm:gap-5 gap-12">
       <div className="space-y-4 w-full">
-        {data && data.tokenId == 0 ? (
+        {!data || (data && data.tokenId == 0) ? (
           <LockFeature
             title="Newsfeed is Locked"
             subtitle="Claim your LemonHead & become a part of an exclusive community."

@@ -73,10 +73,7 @@ export function RightCol({
                 onClick={() =>
                   drawer.open(SharedLemonheadsPane, {
                     props: {
-                      // color,
                       tokenId: data.tokenId?.toString(),
-                      onSelectColor: (_color) => {},
-                      onSelectPortrait: (value) => {},
                     },
                   })
                 }
@@ -99,7 +96,16 @@ export function RightCol({
               <img src={data?.image} className="rounded-sm" />
               <div className="flex justify-between">
                 <p>LemonHead #{data?.tokenId}</p>
-                <i className="icon-share size-5 aspect-square text-quaternary" />
+                <i
+                  className="icon-share size-5 aspect-square text-quaternary hover:text-primary cursor-pointer"
+                  onClick={() =>
+                    drawer.open(SharedLemonheadsPane, {
+                      props: {
+                        tokenId: data.tokenId?.toString(),
+                      },
+                    })
+                  }
+                />
               </div>
             </div>
           )}
