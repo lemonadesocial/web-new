@@ -1,5 +1,18 @@
 # Changelog
 
+## [6.14.0](https://github.com/lemonadesocial/web-new/compare/v6.13.2...v6.14.0) (2025-09-19)
+
+
+### Features
+
+* update gitignore ([dd605fc](https://github.com/lemonadesocial/web-new/commit/dd605fccc3e45b6103c763afdcb92ca8cc07a74f))
+
+
+### Bug Fixes
+
+* reduce size on lemonheads mint flow ([90c8ef2](https://github.com/lemonadesocial/web-new/commit/90c8ef231686ec38739100e07b23a9062f4ed890))
+* update missing shared action ([cd57669](https://github.com/lemonadesocial/web-new/commit/cd57669453950fc5d3d9fa5c8a7be3fbe734dcac))
+
 ## [6.13.2](https://github.com/lemonadesocial/web-new/compare/v6.13.1...v6.13.2) (2025-09-18)
 
 
