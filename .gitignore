@@ -56,5 +56,3 @@ certificates
 .cursor/
 # Sentry Config File
 .env.sentry-build-plugin
-
-middleware.ts
