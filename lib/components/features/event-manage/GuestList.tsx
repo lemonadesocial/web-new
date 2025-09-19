@@ -10,12 +10,6 @@ import { Event, ListEventGuestsDocument, ListEventGuestsSortBy, SortOrder } from
 
 import { GuestTable } from './common/GuestTable';
 
-type FilterOption = {
-  key: string;
-  value: string;
-  count?: number;
-};
-
 type SortOption = {
   key: string;
   value: string;
@@ -40,8 +34,6 @@ export function GuestList({ event }: { event: Event }) {
     { key: 'email', value: 'Email' },
     { key: 'approval_status', value: 'Approval Status' },
   ];
-
-  const [mounted, setMounted] = React.useState(false);
 
   const { data, loading, error, refetch } = useQuery(ListEventGuestsDocument, {
     variables: {
@@ -107,18 +99,11 @@ export function GuestList({ event }: { event: Event }) {
     setCurrentPage(1);
   };
 
-  const handleRefetch = () => {
-    refetch();
-  };
-
   React.useEffect(() => {
-    window.addEventListener('refetch_guest_list', handleRefetch);
-    if (!mounted) {
-      setMounted(true);
-    }
+    window.addEventListener('refetch_guest_list', refetch);
 
     return () => {
-      window.removeEventListener('refetch_guest_list', handleRefetch);
+      window.removeEventListener('refetch_guest_list', refetch);
     };
   }, []);
 
@@ -268,7 +253,7 @@ export function GuestList({ event }: { event: Event }) {
       <GuestTable
         event={event}
         guests={guests}
-        loading={(!mounted || (mounted && currentPage > 1)) && loading}
+        loading={loading}
       />
 
       {totalPages > 1 && (
@@ -279,6 +264,7 @@ export function GuestList({ event }: { event: Event }) {
             icon="icon-chevron-left"
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
+            loading={loading}
             className="rounded-full"
           />
           <p className="text-sm text-tertiary">
@@ -291,6 +277,7 @@ export function GuestList({ event }: { event: Event }) {
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
             className="rounded-full"
+            loading={loading}
           />
         </div>
       )}

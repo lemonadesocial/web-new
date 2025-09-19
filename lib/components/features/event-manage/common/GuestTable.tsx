@@ -21,7 +21,7 @@ export function GuestTable({ event, guests, loading = false, onGuestClick }: Gue
     }
   };
 
-  if (loading) {
+  if (loading && guests.length === 0) {
     return (
       <div className="rounded-md border border-card-border bg-card">
         <div className="divide-y divide-(--color-divider)">
