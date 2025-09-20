@@ -1,0 +1,5 @@
+@utility stroke-* {
+  -webkit-text-stroke-width: --value(integer) px;
+  -webkit-text-stroke-width: --value([ *]); /* Supports arbitrary values like '2px' */
+  -webkit-text-stroke-color: --value(--color- *, [color]); /* Supports arbitrary colors */
+}

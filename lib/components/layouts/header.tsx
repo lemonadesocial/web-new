@@ -32,6 +32,7 @@ type Props = {
   title?: string;
   mainMenu?: () => ReactElement;
   hideLogo?: boolean;
+  className?: string;
 };
 
 const menu = [
@@ -60,7 +61,7 @@ export function RootMenu() {
   );
 }
 
-export default function Header({ title, mainMenu, hideLogo }: Props) {
+export default function Header({ title, mainMenu, hideLogo, className }: Props) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
   const { account } = useAccount();
@@ -75,7 +76,7 @@ export default function Header({ title, mainMenu, hideLogo }: Props) {
   const router = useRouter();
 
   return (
-    <div className="py-3 px-4 h-[56px] flex justify-between items-center z-10 gap-4 font-default">
+    <div className={twMerge('py-3 px-4 h-[56px] flex justify-between items-center z-10 gap-4 font-default', className)}>
       <div className="flex items-center gap-3 flex-1">
         {!hideLogo && (
           <NextLink

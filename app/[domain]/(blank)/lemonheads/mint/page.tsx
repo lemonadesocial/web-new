@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { LemonHeadMain } from '$lib/components/features/lemonheads/main';
+import { LemonHeadMain } from '$lib/components/features/lemonheads/mint/main';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 
 export const metadata: Metadata = {

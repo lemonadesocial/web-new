@@ -1,0 +1,31 @@
+.lemonheads,
+[data-theme='lemonheads'] {
+  --color-primary: #000000;
+  --color-primary-invert: #ffffff;
+  --color-secondary: rgba(0, 0, 0, 0.8);
+  --color-tertiary: rgba(0, 0, 0, 0.56);
+  --color-quaternary: rgba(0, 0, 0, 0.24);
+  --color-background: #ede9fe;
+  --color-sidebar: oklch(0.951 0.026 236.824);
+
+  --color-divider: #000000;
+
+  --color-card: #fffbeb;
+  --color-card-border: #000000;
+  --color-card-border-hover: rgba(0, 0, 0, 0.16);
+  --color-card-hover: #fffbeb;
+
+  --color-lemonheads-progress-bar: #7f22fe;
+
+  /* btn colors */
+
+  --btn-secondary-content: #ffffff;
+  --btn-secondary: #000000;
+  --btn-secondary-hover: #000000;
+
+  --btn-tertiary-content: rgba(0 0, 0, 0.56);
+  --btn-tertiary: rgba(0, 0, 0, 0.08);
+  --btn-tertiary-hover: rgba(0, 0, 0, 0.16);
+
+  --title-shadow: 2px 4px 0 #000;
+}
