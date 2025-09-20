@@ -47,7 +47,6 @@ type PostComposerModalProps = {
 
 export function PostComposerModal({
   defaultValue = '',
-  autoFocus,
   placeholder = `What's on your mind?`,
 }: PostComposerModalProps) {
   const account = useAtomValue(accountAtom);
@@ -125,7 +124,6 @@ export function PostComposerModal({
               <div className="flex-1 break-all flex flex-col gap-5 overflow-auto no-scrollbar">
                 <PostTextarea
                   value={value}
-                  autoFocus={autoFocus}
                   onBlur={() => setIsFocus(false)}
                   onFocus={() => setIsFocus(true)}
                   setValue={setValue}

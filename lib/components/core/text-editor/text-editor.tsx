@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { useEditor, EditorContent } from '@tiptap/react';
@@ -30,6 +30,13 @@ type TextEditorProps = {
   onBlur?: React.FocusEventHandler<HTMLDivElement>;
 };
 
+export interface TextEditorRef {
+  commands: {
+    clearContent: () => void;
+    insertContent: (content: string) => void;
+  };
+}
+
 const defaulToolBar = {
   bubble: {
     heading: [1, 2],
@@ -56,7 +63,7 @@ const defaulToolBar = {
   },
 };
 
-export default function TextEditor({
+const TextEditor = forwardRef<TextEditorRef, TextEditorProps>(({
   content = '',
   placeholder = 'Write something …',
   containerClass = '',
@@ -67,7 +74,7 @@ export default function TextEditor({
   onFocus,
   onBlur,
   label,
-}: TextEditorProps) {
+}, ref) => {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -106,16 +113,31 @@ export default function TextEditor({
     editor.setEditable(!readOnly);
   }, [editor, readOnly]);
 
+  useImperativeHandle(ref, () => ({
+    commands: {
+      clearContent: () => editor?.commands.clearContent(),
+      insertContent: (content: string) => editor?.commands.insertContent(content),
+    },
+  }), [editor]);
+
   if (!editor) return null;
 
   return (
     <>
       <TextEditorBubbleMenu editor={editor} toolbar={toolbar.bubble} />
-      <TextEditorFloatingMenu editor={editor} toolbar={toolbar.float} directory={directory} />
+      {
+        toolbar.float && (
+          <TextEditorFloatingMenu editor={editor} toolbar={toolbar.float} directory={directory} />
+        )
+      }
       <div className="flex flex-col gap-[6px]">
         {label && <label className="text-secondary text-sm font-medium">{label}</label>}
         <EditorContent editor={editor} onFocus={onFocus} onBlur={onBlur} />
       </div>
     </>
   );
-}
+});
+
+TextEditor.displayName = 'TextEditor';
+
+export default TextEditor;

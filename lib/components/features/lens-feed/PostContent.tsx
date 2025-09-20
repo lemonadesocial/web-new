@@ -6,7 +6,6 @@ import { EventPreview } from './EventPreview';
 // import { UrlPreview } from './UrlPreview';
 import { GetEventDocument, Event } from '$lib/graphql/generated/backend/graphql';
 import { defaultClient } from '$lib/graphql/request/instances';
-import { renderTextWithLinks } from '$lib/utils/render';
 import { LinkPreview } from '$lib/components/core/link';
 
 type PostContentProps = {
@@ -59,10 +58,13 @@ export function PostContent({ post }: PostContentProps) {
 
   return (
     <div className="space-y-2" style={{ overflowWrap: 'anywhere' }}>
-      <p className="text-secondary whitespace-pre-line">
-        {renderTextWithLinks((metadata as TextOnlyMetadata).content || '')}
-      </p>
-      {(metadata as ImageMetadata).attachments?.length > 0 && (
+      <p
+        className="text-secondary whitespace-pre-line"
+        dangerouslySetInnerHTML={{
+          __html: (metadata as TextOnlyMetadata).content || ''
+        }}
+      />
+      {(metadata as ImageMetadata).attachments && (metadata as ImageMetadata).attachments.length > 0 && (
         <FeedPostGallery attachments={(metadata as ImageMetadata).attachments.map(({ item }) => item)} />
       )}
       {event && <EventPreview event={event} />}
