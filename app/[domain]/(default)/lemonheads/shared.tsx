@@ -23,7 +23,8 @@ import { useSignIn } from '$lib/hooks/useSignIn';
 import { VerifyWalletModal } from '$lib/components/features/event-registration/modals/VerifyWalletModal';
 import { ethers } from 'ethers';
 import { useAppKitAccount } from '@reown/appkit/react';
-import { SharedLemonheadsPane } from '$lib/components/features/lemonheads/steps/ClaimLemonHead';
+import { SharedLemonheadsPane } from '$lib/components/features/lemonheads/mint/steps/ClaimLemonHead';
+import { LemonHeadsNFTCard } from '$lib/components/features/lemonheads/LemonHeadsNFTCard';
 
 export function LockFeature({ title, subtitle, icon }: { title: string; subtitle: string; icon?: string }) {
   const router = useRouter();
@@ -91,24 +92,7 @@ export function RightCol({
 
       <div className="hidden md:block w-full max-w-[296px]">
         <div className="sticky top-0 flex flex-col gap-4">
-          {options.nft && data && data.tokenId > 0 && (
-            <div className="bg-overlay-secondary backdrop-blur-md p-4 rounded-md space-y-3 border">
-              <img src={data?.image} className="rounded-sm" />
-              <div className="flex justify-between">
-                <p>LemonHead #{data?.tokenId}</p>
-                <i
-                  className="icon-share size-5 aspect-square text-quaternary hover:text-primary cursor-pointer"
-                  onClick={() =>
-                    drawer.open(SharedLemonheadsPane, {
-                      props: {
-                        tokenId: data.tokenId?.toString(),
-                      },
-                    })
-                  }
-                />
-              </div>
-            </div>
-          )}
+          {options.nft && data && data.tokenId > 0 && <LemonHeadsNFTCard />}
 
           {options.treasury && <Treasury />}
           {options.invite && <InviteFriend locked={!data || (data && data.tokenId == 0)} />}

@@ -1,8 +1,9 @@
-import { useRouter } from "next/navigation";
-import clsx from "clsx";
+'use client';
+import { useRouter } from 'next/navigation';
+import clsx from 'clsx';
 
-import { Space } from "$lib/graphql/generated/backend/graphql";
-import { useSpaceMenu } from "./hooks";
+import { Space } from '$lib/graphql/generated/backend/graphql';
+import { useSpaceMenu } from './hooks';
 
 export function Footer({ space }: { space: Space }) {
   const { menu, isActive } = useSpaceMenu({ space });

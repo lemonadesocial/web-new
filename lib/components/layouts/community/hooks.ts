@@ -7,28 +7,40 @@ export function useSpaceMenu({ space }: { space: Space }) {
   const pathname = usePathname();
 
   const menu = useMemo(() => {
-    const menu = [
-      {
-        icon: 'icon-house-party',
-        path: '',
-        label: 'Home',
-      },
-    ];
+    let menu = [];
 
-    if (space.lens_feed_id) {
-      menu.push({
-        icon: 'icon-newsfeed',
-        path: 'timeline',
-        label: 'Timeline',
-      });
-    }
+    if (space.slug === 'lemonheads') {
+      menu = [
+        { icon: 'icon-home', path: '', label: 'Home' },
+        { icon: 'icon-ticket', path: 'events', label: 'Events' },
+        { icon: 'icon-sub-hubs', path: 'featured-hubs', label: 'Featured Hubs' },
+        { icon: 'icon-account-balance-outline', path: 'treasury', label: 'Treasury' },
+        { icon: 'icon-bar-chart', path: 'leader-boards', label: 'Leader Boards' },
+      ];
+    } else {
+      menu = [
+        {
+          icon: 'icon-house-party',
+          path: '',
+          label: 'Home',
+        },
+      ];
 
-    if (space.sub_spaces) {
-      menu.push({
-        icon: 'icon-sub-hubs',
-        path: 'featured-hubs',
-        label: 'Featured Hubs',
-      });
+      if (space.lens_feed_id) {
+        menu.push({
+          icon: 'icon-newsfeed',
+          path: 'timeline',
+          label: 'Timeline',
+        });
+      }
+
+      if (space.sub_spaces) {
+        menu.push({
+          icon: 'icon-sub-hubs',
+          path: 'featured-hubs',
+          label: 'Featured Hubs',
+        });
+      }
     }
 
     return menu;

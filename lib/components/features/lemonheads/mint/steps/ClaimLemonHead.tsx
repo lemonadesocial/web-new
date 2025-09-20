@@ -12,12 +12,12 @@ import { Pane } from '$lib/components/core/pane/pane';
 import { useAccount, useLemonadeUsername, usePost } from '$lib/hooks/useLens';
 import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
 
-import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
-import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
-import { EditProfileModal } from '../../lens-account/EditProfileModal';
-import { PostComposer } from '../../lens-feed/PostComposer';
+import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
+import { ClaimLemonadeUsernameModal } from '$lib/components/features/lens-account/ClaimLemonadeUsernameModal';
+import { EditProfileModal } from '$lib/components/features/lens-account/EditProfileModal';
+import { PostComposer } from '$lib/components/features/lens-feed/PostComposer';
+import { PostComposerModal } from '$lib/components/features/lens-feed/PostComposerModal';
 import { LemonHeadActionKind, useLemonHeadContext } from '../provider';
-import { PostComposerModal } from '../../lens-feed/PostComposerModal';
 import { LEMONHEAD_COLORS } from '../utils';
 
 const getImage = (args: { address: string; tokenId: string; color: string; portrait?: boolean }) =>

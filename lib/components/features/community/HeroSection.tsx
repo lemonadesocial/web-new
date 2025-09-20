@@ -20,9 +20,10 @@ import { CommunityThemeBuilder } from '$lib/components/features/theme-builder/Co
 
 interface HeroSectionProps {
   space?: Space | null;
+  renderTitle?: () => React.ReactElement;
 }
 
-export function HeroSection({ space }: HeroSectionProps) {
+export function HeroSection({ space, renderTitle }: HeroSectionProps) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
   const signIn = useSignIn();
@@ -133,7 +134,7 @@ export function HeroSection({ space }: HeroSectionProps) {
       </div>
       <Spacer className="h-6" />
       <div>
-        <h1 className="text-2xl text-primary md:text-3xl font-semibold">{space?.title}</h1>
+        <h1 className="community-title text-2xl text-primary md:text-3xl font-semibold">{space?.title}</h1>
         <div className="text-sm md:text-md text-secondary font-medium whitespace-pre-wrap">
           {renderTextWithLinks(space?.description || '')}
         </div>

@@ -9,11 +9,11 @@ import { findConflictTraits, TraitType } from '$lib/services/lemonhead/core';
 import { trpc } from '$lib/trpc/client';
 import lemonHead from '$lib/trpc/lemonheads';
 import { BodyRace, BodySize, Gender, LemonHeadsLayer } from '$lib/trpc/lemonheads/types';
+import { ConfirmModal } from '$lib/components/features/modals/ConfirmModal';
+import { capitalizeWords } from '$lib/utils/string';
 
 import { CanvasImageRenderer, ColorTool, SquareButton } from '../shared';
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from '../provider';
-import { capitalizeWords } from '$lib/utils/string';
-import { ConfirmModal } from '../../modals/ConfirmModal';
 
 export function LemonHeadCreate() {
   const [{ currentStep, traits }] = useLemonHeadContext();
