@@ -98,7 +98,9 @@
   }
 
   .btn-flat {
-    --btn-bg-hover: var(--bg-primary);
+    --btn-content: var(--btn-flat-content);
+    /* --btn-bg-hover: var(--bg-primary); */
+    --btn-bg-hover: var(--btn-flat-hover);
   }
 
   .btn-warning {
