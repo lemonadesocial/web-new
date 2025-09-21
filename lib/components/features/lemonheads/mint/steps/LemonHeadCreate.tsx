@@ -163,7 +163,7 @@ function Content({
               >
                 <div
                   className={clsx(
-                    'px-2.5 py-1.5 text-tertiary hover:bg-[var(--btn-tertiary)] rounded-sm font-medium text-sm',
+                    'px-2.5 py-1.5 text-tertiary hover:bg-[var(--btn-tertiary)] rounded-sm font-medium text-sm w-max',
                     selected === item.value && 'text-primary bg-[var(--btn-tertiary)]!',
                   )}
                 >

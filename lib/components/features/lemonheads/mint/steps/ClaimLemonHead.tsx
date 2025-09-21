@@ -59,7 +59,7 @@ export function ClaimLemonHead() {
           <p className="text-secondary md:text-xl">Welcome to</p>
           <p className="font-title text-2xl md:text-3xl font-semibold!">United Stands of Lemonade</p>
         </div>
-        <div className="flex-1 flex flex-col items-center gap-5 justify-center w-[70%]">
+        <div className="flex-1 flex flex-col items-center gap-5 justify-center w-[68%]">
           {(myAccount?.address || address) && (
             <ImageLazyLoad
               src={getImage({ address: myAccount?.address || address, tokenId: state.mint.tokenId, color, portrait })}
@@ -297,7 +297,7 @@ function ImageLazyLoad({
 
       <div
         className={twMerge(
-          'max-sm:w-sm w-full flex gap-5 md:gap-10 rounded-md aspect-[16/9] bg-overlay-primary p-4 md:p-12',
+          'max-sm:w-sm w-full flex gap-5 md:gap-10 rounded-md aspect-auto bg-overlay-primary p-4 md:p-12',
           clsx(size === 'small' && 'p-6! bg-(--btn-tertiary)', mounted && 'hidden'),
         )}
       >

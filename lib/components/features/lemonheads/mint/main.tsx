@@ -86,7 +86,7 @@ function Content() {
       </div>
 
       <div className="flex-1 flex flex-col overflow-auto">
-        <div className="w-full max-w-[1440px] mx-auto p-4 md:p-11 flex flex-col flex-1 md:h-full">
+        <div className="h-full max-w-full min-xl:aspect-video min-2xl:max-w-[1440px] mx-auto p-4 md:p-11 flex flex-col flex-1 md:h-full">
           <div className="flex flex-col md:flex-row-reverse gap-5 md:gap-8 flex-1 md:h-full">
             {showPreview ? (
               state.currentStep === LemonHeadStep.getstarted ? (

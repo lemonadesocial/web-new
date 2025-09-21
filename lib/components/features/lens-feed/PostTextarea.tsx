@@ -1,5 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { twMerge } from 'tailwind-merge';
+
+import TextEditor, { TextEditorRef } from '$lib/components/core/text-editor/text-editor';
 
 type PostTextareaProps = {
   placeholder?: string;
@@ -9,10 +11,13 @@ type PostTextareaProps = {
   onFocus?: () => void;
   onBlur?: () => void;
   disabled?: boolean;
-  autoFocus?: boolean;
 };
 
-export const PostTextarea = ({
+export interface PostTextareaRef {
+  insertEmoji: (emoji: string) => void;
+}
+
+const PostTextarea = forwardRef<PostTextareaRef, PostTextareaProps>(({
   placeholder,
   value,
   setValue,
@@ -20,62 +25,52 @@ export const PostTextarea = ({
   onFocus,
   onBlur,
   disabled,
-  autoFocus,
-}: PostTextareaProps) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const highlightRef = useRef<HTMLDivElement>(null);
+}, ref) => {
+  const editorRef = useRef<TextEditorRef>(null);
+  const simpleToolbar = {
+    bubble: {
+      bold: true,
+      italic: true,
+    },
+    float: null,
+  };
+
+  const handleChange = (html: string) => {
+    setValue(html);
+  };
 
   useEffect(() => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-    textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight}px`;
+    if (value === '' && editorRef.current) {
+      editorRef.current.commands.clearContent();
+    }
   }, [value]);
 
-  const highlightLinks = (text: string) => {
-    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
-
-    return text.replace(urlRegex, (match) => {
-      return `<span class="text-accent-400 hover:underline cursor-pointer">${match}</span>`;
-    });
-  };
-
-  const handleScroll = () => {
-    if (textareaRef.current && highlightRef.current) {
-      highlightRef.current.scrollTop = textareaRef.current.scrollTop;
-      highlightRef.current.scrollLeft = textareaRef.current.scrollLeft;
-    }
-  };
+  useImperativeHandle(ref, () => ({
+    insertEmoji: (emoji: string) => {
+      if (editorRef.current) {
+        editorRef.current.commands.insertContent(emoji);
+      }
+    },
+  }), []);
 
   return (
-    <div
-      className={twMerge('relative min-h-[24px] max-h-[200px] overflow-y-auto no-scrollbar', className)}
-      style={{ height: textareaRef.current?.scrollHeight }}
-    >
-      <textarea
-        ref={textareaRef}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
+    <div className={twMerge('min-h-[24px] max-h-[200px]', className)}>
+      <TextEditor
+        ref={editorRef}
+        directory="post"
+        content={value}
+        onChange={handleChange}
         placeholder={placeholder}
-        className={twMerge(
-          'absolute inset-0 w-full h-auto resize-none outline-none font-medium text-lg placeholder-quaternary bg-transparent text-transparent overflow-auto whitespace-pre-wrap break-words bg-transparent text-transparent caret-primary min-h-[24px]',
-        )}
+        toolbar={simpleToolbar}
+        containerClass="border-none hover:border-none focus:border-none px-0 py-0 min-h-[24px] font-medium text-lg"
+        readOnly={disabled}
         onFocus={onFocus}
         onBlur={onBlur}
-        autoFocus={autoFocus}
-        rows={1}
-        disabled={disabled}
-        onScroll={handleScroll}
-      />
-
-      <div
-        ref={highlightRef}
-        className={twMerge(
-          'top-0 inset-0 resize-none outline-none font-medium text-lg placeholder-quaternary bg-transparent overflow-y-auto whitespace-pre-wrap break-words min-h-[24px]',
-        )}
-        aria-hidden="true"
-        dangerouslySetInnerHTML={{ __html: highlightLinks(value) }}
       />
     </div>
   );
-};
+});
+
+PostTextarea.displayName = 'PostTextarea';
+
+export { PostTextarea };
