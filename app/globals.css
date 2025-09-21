@@ -95,8 +95,8 @@
   --color-card: var(--color-card);
   --color-card-border: var(--color-card-border);
   --color-card-border-hover: var(--color-card-border-hover);
-
   --color-card-hover: var(--color-card-hover);
+  --card-border-width: var(--card-border-width, 1px);
 
   --color-overlay-primary: var(--color-overlay-primary);
   --color-overlay-secondary: var(--color-overlay-secondary);

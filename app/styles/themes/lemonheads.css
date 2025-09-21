@@ -13,7 +13,8 @@
   --color-card: #fffbeb;
   --color-card-border: #000000;
   --color-card-border-hover: rgba(0, 0, 0, 0.16);
-  --color-card-hover: #fffbeb;
+  --color-card-hover: rgb(255, 251, 235, 0.56);
+  --card-border-width: 2px;
 
   --color-lemonheads-progress-bar: #7f22fe;
 
