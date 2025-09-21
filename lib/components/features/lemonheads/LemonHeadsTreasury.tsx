@@ -1,9 +1,9 @@
 'use client';
-import { LemonHeadsLockFeature } from '$lib/components/features/lemonheads/LemonHeadsLockFeature';
-import { LemonHeadsRightCol } from '$lib/components/features/lemonheads/LemonheadsRightCol';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
+import { LemonHeadsLockFeature } from './LemonHeadsLockFeature';
+import { LemonHeadsRightCol } from './LemonheadsRightCol';
 
-function Page() {
+export function LemonHeadsTreasury() {
   const { data } = useLemonhead();
 
   return (
@@ -24,5 +24,3 @@ function Page() {
     </div>
   );
 }
-
-export default Page;

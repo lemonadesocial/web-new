@@ -1,3 +1,4 @@
+'use client';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';

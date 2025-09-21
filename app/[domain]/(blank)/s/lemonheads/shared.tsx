@@ -32,7 +32,7 @@ import { PostComposer } from '$lib/components/features/lens-feed/PostComposer';
 import { FeedPosts } from '$lib/components/features/lens-feed/FeedPosts';
 import { usePost } from '$lib/hooks/useLens';
 import { LemonHeadsProgressBar } from '$lib/components/features/lemonheads/LemonHeadsProgressBar';
-import { LemonHeadsNFTCard } from '$lib/components/features/lemonheads/LemonHeadsNFTCard';
+import { LemonHeadsNFTCard } from '$lib/components/features/lemonheads/cards/LemonHeadsNFTCard';
 import { formatWithTimezone } from '$lib/utils/date';
 import { userAvatar } from '$lib/utils/user';
 import { truncateMiddle } from '$lib/utils/string';
