@@ -15,7 +15,7 @@ export function useSpaceMenu({ space }: { space: Space }) {
         { icon: 'icon-ticket', path: 'events', label: 'Events' },
         { icon: 'icon-sub-hubs', path: 'featured-hubs', label: 'Featured Hubs' },
         { icon: 'icon-account-balance-outline', path: 'treasury', label: 'Treasury' },
-        { icon: 'icon-bar-chart', path: 'leader-boards', label: 'Leader Boards' },
+        { icon: 'icon-bar-chart', path: 'leaderboards', label: 'Leader Boards' },
       ];
     } else {
       menu = [
