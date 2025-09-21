@@ -15,6 +15,7 @@
   --color-card-border: rgba(255, 255, 255, 0.04);
   --color-card-border-hover: rgba(255, 255, 255, 0.16);
   --color-card-hover: rgba(255, 255, 255, 0.08);
+  --card-border-width: 1px;
 
   --color-divider: rgba(255, 255, 255, 0.08);
 

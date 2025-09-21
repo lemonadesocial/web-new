@@ -48,9 +48,11 @@ type Props = {
     subSpaces?: PublicSpace[];
     spaceTags?: SpaceTag[];
   };
+  customTitle?: (title: string) => React.ReactElement;
+  hideHeroSection?: boolean;
 };
 
-export function Community({ initData }: Props) {
+export function Community({ initData, hideHeroSection = false, customTitle }: Props) {
   const space = initData.space;
 
   const router = useRouter();
@@ -185,34 +187,43 @@ export function Community({ initData }: Props) {
   return (
     <>
       <div className="relative">
-        <HeroSection space={dataGetSpace?.getSpace as Space} />
-        <Divider className="my-8" />
-        {subSpaces.length > 0 && (
+        {!hideHeroSection && (
           <>
-            <section className="flex flex-col gap-6">
-              <div className="w-full flex justify-between items-center">
-                <h1 className="text-xl md:text-2xl font-semibold flex-1 text-primary">Hubs</h1>
-                {subSpaces.length > 3 && (
-                  <Link href={`/s/${space?.slug || space?._id}/featured-hubs`}>
-                    <Button variant="tertiary-alt" size="sm">
-                      {`View All (${subSpaces.length})`}
-                    </Button>
-                  </Link>
-                )}
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {subSpaces.slice(0, 3).map((space) => (
-                  <CommunityCard key={space._id} space={space} />
-                ))}
-              </div>
-            </section>
+            <HeroSection space={dataGetSpace?.getSpace as Space} />
             <Divider className="my-8" />
+            {subSpaces.length > 0 && (
+              <>
+                <section className="flex flex-col gap-6">
+                  <div className="w-full flex justify-between items-center">
+                    <h1 className="text-xl md:text-2xl font-semibold flex-1 text-primary">Hubs</h1>
+                    {subSpaces.length > 3 && (
+                      <Link href={`/s/${space?.slug || space?._id}/featured-hubs`}>
+                        <Button variant="tertiary-alt" size="sm">
+                          {`View All (${subSpaces.length})`}
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {subSpaces.slice(0, 3).map((space) => (
+                      <CommunityCard key={space._id} space={space} />
+                    ))}
+                  </div>
+                </section>
+                <Divider className="my-8" />
+              </>
+            )}
           </>
         )}
+
         <div className="flex md:gap-18">
           <div className="flex flex-col flex-1 gap-6 w-full">
             <div className="flex">
-              <h1 className="text-xl md:text-2xl text-primary font-semibold flex-1">Events</h1>
+              {customTitle ? (
+                customTitle(eventListType)
+              ) : (
+                <h1 className="text-xl md:text-2xl text-primary font-semibold flex-1">Events</h1>
+              )}
               <div className="flex gap-2 items-center">
                 <Menu.Root className="md:hidden">
                   <Menu.Trigger>
