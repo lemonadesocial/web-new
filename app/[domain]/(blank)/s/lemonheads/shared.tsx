@@ -110,9 +110,9 @@ export function HeroSection({ space }: { space?: Space }) {
       {/* Subscribe button */}
       <div className="absolute bottom-0 md:bottom-4 right-0">
         <div className="flex items-center gap-3">
-          {[space?.creator, ...(space?.admins?.map((p) => p._id) || [])].includes(me?._id) && (
-            <CommunityThemeBuilder themeData={space?.theme_data} spaceId={space?._id} />
-          )}
+          {/* {[space?.creator, ...(space?.admins?.map((p) => p._id) || [])].includes(me?._id) && ( */}
+          {/*   <CommunityThemeBuilder themeData={space?.theme_data} spaceId={space?._id} /> */}
+          {/* )} */}
           {canManage ? (
             <Link href={`${LEMONADE_DOMAIN}/manage/community/${space?.slug || space?._id}`} target="_blank">
               <Button variant="primary" outlined iconRight="icon-arrow-outward" size="lg">
@@ -174,7 +174,18 @@ export function CommunityInfoSection({ space }: { space: Space }) {
 }
 
 export function TitleSection({ className, children }: React.PropsWithChildren & { className?: string }) {
-  return <h3 className={twMerge('text-2xl font-semibold text-primary-invert!', className)}>{children}</h3>;
+  return (
+    <h3
+      className={twMerge('text-2xl font-semibold text-primary-invert', className)}
+      style={{
+        WebkitTextStroke: '1px var(--color-card-border, #000000)',
+        textShadow: '2px 4px 0 var(--color-troke, #000000)',
+        fontFamily: 'var(--font-class-display-bold)',
+      }}
+    >
+      {children}
+    </h3>
+  );
 }
 
 export function SubTitleSection({ children }: React.PropsWithChildren) {

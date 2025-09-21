@@ -28,5 +28,8 @@
   --btn-tertiary: rgba(0, 0, 0, 0.08);
   --btn-tertiary-hover: rgba(0, 0, 0, 0.16);
 
+  --btn-flat-content: rgba(0, 0, 0, 0.56);
+  --btn-flat-hover: rgba(0, 0, 0, 0.08);
+
   --title-shadow: 2px 4px 0 #000;
 }
