@@ -54,7 +54,7 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
 
   return (
     <>
-      <div className="flex w-full min-w-fit items-center md:hidden p-2.5 border rounded-md justify-between gap-4">
+      <div className="flex w-full min-w-fit items-center md:hidden p-2.5 border-(length:--card-border-width) rounded-md justify-between gap-4">
         <div className="flex gap-2.5 flex-1 items-center">
           <div className="flex justify-center items-center rounded-sm bg-alert-400/16 size-8 p-1.5 aspect-square">
             <i className="icon-user-plus text-alert-400" />
@@ -75,7 +75,7 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
         )}
       </div>
 
-      <div className="hidden md:flex p-4 border rounded-md flex-col gap-3">
+      <div className="hidden md:flex p-4 border-(length:--card-border-width) rounded-md flex-col gap-3">
         <div className="flex justify-between">
           <div className="flex justify-center items-center rounded-full bg-alert-400/16 size-[48px] aspect-square">
             <i className="icon-user-plus text-alert-400" />
