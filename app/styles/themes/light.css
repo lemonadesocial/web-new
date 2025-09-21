@@ -12,7 +12,7 @@
 
   --color-card: rgba(0, 0, 0, 0.04);
   --color-card-border: rgba(0, 0, 0, 0.04);
-
+  --card-border-width: 1px;
   --color-divider: rgba(0, 0, 0, 0.08);
 
   --color-overlay-primary: color-mix(in oklab, var(--color-woodsmoke-50) 80%, transparent);
