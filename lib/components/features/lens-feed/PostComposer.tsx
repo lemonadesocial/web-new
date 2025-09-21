@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAtomValue } from 'jotai';
 import clsx from 'clsx';
 
-import { Avatar, Button, modal, toast, Menu, MenuItem, Divider } from '$lib/components/core';
+import { Avatar, Button, modal, toast, Menu, MenuItem, Divider, EmojiPicker } from '$lib/components/core';
 import { MediaFile, uploadFiles } from '$lib/utils/file';
 import { generatePostMetadata, getAccountAvatar } from '$lib/utils/lens/utils';
 import { accountAtom } from '$lib/jotai';
@@ -16,7 +16,7 @@ import { LEMONADE_FEED_ADDRESS } from '$lib/utils/constants';
 import { ImageInput } from './ImageInput';
 import { AddEventModal } from './AddEventModal';
 import { EventPreview } from './EventPreview';
-import { PostTextarea } from './PostTextarea';
+import { PostTextarea, PostTextareaRef } from './PostTextarea';
 import { FileInput } from '../../core/file-input/file-input';
 import { ProfileMenu } from '../lens-account/ProfileMenu';
 import { LinkPreview } from '$lib/components/core/link';
@@ -50,6 +50,7 @@ export function PostComposer({
   const [event, setEvent] = useState<Event | undefined>(undefined);
 
   const [isLoading, setIsLoading] = useState(false);
+  const textareaRef = useRef<PostTextareaRef>(null);
 
   const FEED_OPTIONS = [
     {
@@ -101,6 +102,10 @@ export function PostComposer({
 
   const links = extractLinks(value);
 
+  function handleEmojiSelect(emoji: string): void {
+    textareaRef.current?.insertEmoji(emoji);
+  }
+
   return (
     <div className={clsx('border border-card-border rounded-md max-h-[calc(100dvh-300px)]', account && 'bg-card')}>
       <div className="px-4 py-3 flex gap-3">
@@ -110,8 +115,8 @@ export function PostComposer({
 
         <div className="space-y-4 flex-1">
           <PostTextarea
+            ref={textareaRef}
             value={value}
-            autoFocus={autoFocus}
             setValue={setValue}
             placeholder={placeholder || `What's on your mind?`}
             onFocus={() => setIsActive(true)}
@@ -141,7 +146,7 @@ export function PostComposer({
           {isActive && (
             <div className="flex items-center justify-between">
               <div className="flex gap-4 items-center">
-                <FileInput onChange={setFiles} accept="image/*" multiple>
+                <FileInput onChange={setFiles} accept="image/*" multiple className="flex">
                   {(open) => <i className="icon-image size-5 text-[#60A5FA] cursor-pointer" onClick={open} />}
                 </FileInput>
                 <i
@@ -154,6 +159,8 @@ export function PostComposer({
                     });
                   }}
                 />
+
+                <EmojiPicker onSelect={handleEmojiSelect} />
               </div>
               <div className="flex items-center gap-2">
                 {showFeedOptions && (
