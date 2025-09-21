@@ -36,6 +36,7 @@ import { LemonHeadsNFTCard } from '$lib/components/features/lemonheads/LemonHead
 import { formatWithTimezone } from '$lib/utils/date';
 import { userAvatar } from '$lib/utils/user';
 import { truncateMiddle } from '$lib/utils/string';
+import { twMerge } from 'tailwind-merge';
 
 export function HeroSection({ space }: { space?: Space }) {
   const me = useMe();
@@ -172,8 +173,12 @@ export function CommunityInfoSection({ space }: { space: Space }) {
   );
 }
 
-function TitleSection({ children }: React.PropsWithChildren) {
-  return <h3 className="text-2xl font-semibold text-primary-invert!">{children}</h3>;
+export function TitleSection({ className, children }: React.PropsWithChildren & { className?: string }) {
+  return <h3 className={twMerge('text-2xl font-semibold text-primary-invert!', className)}>{children}</h3>;
+}
+
+export function SubTitleSection({ children }: React.PropsWithChildren) {
+  return <p className="text-tertiary max-sm:text-sm">{children}</p>;
 }
 
 export function JourneySection() {
@@ -315,7 +320,7 @@ export function NewFeedSection({ spaceId }: { spaceId?: string }) {
         {!!invitationRank.length && (
           <CardGroup title="Upcoming Events" onViewAll={() => router.push(`${pathname}/leaderboards`)}>
             {invitationRank.map((item, idx) => (
-              <div className={idx}>
+              <div key={idx}>
                 <div className="flex gap-3 items-center flex-1">
                   <div className="relative">
                     <img

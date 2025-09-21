@@ -5,7 +5,7 @@ import { SharedLemonheadsPane } from '$lib/components/features/lemonheads/mint/s
 
 export function LemonHeadsNFTCard() {
   const { data } = useLemonhead();
-  if (!data) return null;
+  if (!data || !data?.image) return null;
 
   return (
     <div className="backdrop-blur-md p-4 rounded-md space-y-3 border">

@@ -19,7 +19,7 @@ export function CardRoot({ children, href = '', onClick, as: tag = 'button', cla
         href={href}
         {...rest}
         className={twMerge(
-          'p-4 rounded-md border border-card-border bg-card backdrop-blur-lg hover:bg-primary/8',
+          'p-4 rounded-md border-(length:--card-border-width) border-card-border bg-card backdrop-blur-lg hover:bg-card-hover',
           className,
         )}
       >
@@ -31,7 +31,7 @@ export function CardRoot({ children, href = '', onClick, as: tag = 'button', cla
     <div
       className={twMerge(
         'text-left rounded-md border border-card-border bg-card backdrop-blur-lg overflow-hidden',
-        clsx((typeof onClick === 'function' || !!href) && 'cursor-pointer hover:border-primary/16'),
+        clsx((typeof onClick === 'function' || !!href) && 'cursor-pointer hover:bg-card-hover)'),
         className,
       )}
       onClick={onClick}
