@@ -7,6 +7,7 @@ import {
   fetchPost,
   lastLoggedInAccount,
   post,
+  deletePost,
   fetchPosts as lensFetchPosts,
   fetchPostReferences,
   fetchAccountGraphStats,
@@ -443,9 +444,43 @@ export function usePost() {
     }
   };
 
+  const deletePostAction = async (postIdToDelete: string) => {
+    if (!sessionClient || !signer) return;
+
+    setIsLoading(true);
+    try {
+      const result = await deletePost(sessionClient, {
+        post: postId(postIdToDelete),
+      })
+        .andThen(handleOperationWith(signer))
+        .andThen(sessionClient.waitForTransaction)
+        .mapErr((error) => {
+          throw error;
+        });
+
+      if (result.isErr()) {
+        throw result.error;
+      }
+
+      setPosts((prev) => prev.filter((p) => p.id !== postIdToDelete));
+      
+      if (setCurrentPost) {
+        setCurrentPost(null);
+      }
+
+      toast.success('Post deleted successfully');
+      return result.value;
+    } catch (error) {
+      toast.error(formatError(error));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     getPost,
     createPost,
+    deletePost: deletePostAction,
     selectPost,
     isLoading,
   };
