@@ -52,7 +52,7 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
           </div>
 
           <PostContent post={rootPost} />
-          
+
           <div className="mt-2 flex gap-2">
             <PostReaction post={rootPost} isComment />
           </div>
@@ -65,7 +65,7 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
     <div className="space-y-2">
       <div
         className={twMerge(
-          'bg-card rounded-md border border-card-border px-4 py-3 space-y-3',
+          'bg-card rounded-md border-(length:--card-border-width) border-card-border px-4 py-3 space-y-3',
           clsx(onSelect && 'cursor-pointer hover:boder-card-boder-hover'),
         )}
         onClick={onSelect}
@@ -106,20 +106,18 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
             <PostRepost post={rootPost} />
           </div>
           <div className="flex gap-4 sm:gap-2">
-            {
-              rootPost.metadata.__typename === 'EventMetadata' && (
-                <Button
-                  className="rounded-full hidden sm:block"
-                  variant="secondary"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(`/e/${(rootPost.metadata as EventMetadata).location.physical}`);
-                  }}
-                >
-                  Get Tickets
-                </Button>
-              )
-            }
+            {rootPost.metadata.__typename === 'EventMetadata' && (
+              <Button
+                className="rounded-full hidden sm:block"
+                variant="secondary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(`/e/${(rootPost.metadata as EventMetadata).location.physical}`);
+                }}
+              >
+                Get Tickets
+              </Button>
+            )}
             <PostButton
               icon="icon-share"
               onClick={(e) => {
