@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 
 interface MenuItemProps {
   title?: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
   iconLeft?: React.ReactNode;
   iconRight?: React.ReactNode;
   children?: React.ReactNode;

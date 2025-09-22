@@ -4,8 +4,11 @@ import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useRouter } from 'next/navigation';
 
-import { Avatar, Button, toast } from '$lib/components/core';
+import { Avatar, Button, toast, Menu, MenuItem } from '$lib/components/core';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
+import { usePost } from '$lib/hooks/useLens';
+import { useAtomValue } from 'jotai';
+import { accountAtom } from '$lib/jotai';
 
 import { PostReaction } from './PostReaction';
 import { PostRepost } from './PostRepost';
@@ -24,12 +27,24 @@ type FeedPostProps = {
 export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProps) {
   const { author, timestamp } = post;
   const router = useRouter();
+  const { deletePost } = usePost();
+  const currentAccount = useAtomValue(accountAtom);
 
   const isRepost = post.__typename === 'Repost';
   const rootPost = isRepost ? post.repostOf : post;
 
   // NOTE: it filter on timeline list post - double-check
   // if ((post as Post).commentOn && !isComment) return null;
+
+  const canEditPost = currentAccount?.address === author.address;
+
+  const handleDeletePost = async () => {
+    try {
+      await deletePost(rootPost.id);
+    } catch (error) {
+      console.error('Failed to delete post:', error);
+    }
+  };
 
   if (isRepost && !showRepost) return null;
 
@@ -79,7 +94,7 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
 
         <div className="flex justify-between">
           <PostHeader post={rootPost} />
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-start">
             <PostButton
               icon="icon-upload"
               onClick={(e) => {
@@ -87,13 +102,41 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
                 toast.success('Coming soon');
               }}
             />
-            <PostButton
-              icon="icon-more-vert"
-              onClick={(e) => {
-                e.stopPropagation();
-                toast.success('Coming soon');
-              }}
-            />
+            {
+              canEditPost && (
+                <Menu.Root>
+                  <Menu.Trigger>
+                    <i className="icon-more-vert size-5 text-tertiary hover:text-primary cursor-pointer" />
+                  </Menu.Trigger>
+                  <Menu.Content className="p-1">
+                    {({ toggle }) => (
+                      <>
+                        {/* <MenuItem
+                        title="Edit Post"
+                        iconLeft="icon-edit-sharp"
+                        onClick={() => {
+                          toast.success('Edit functionality coming soon');
+                          toggle();
+                        }}
+                      /> */}
+                        <MenuItem
+                          iconLeft="icon-delete text-error"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeletePost();
+                            toggle();
+                          }}
+                        >
+                          <p className="text-error text-sm">
+                            Delete Post
+                          </p>
+                        </MenuItem>
+                      </>
+                    )}
+                  </Menu.Content>
+                </Menu.Root>
+              )
+            }
           </div>
         </div>
 
