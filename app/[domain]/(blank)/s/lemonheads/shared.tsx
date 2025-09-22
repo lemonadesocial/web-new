@@ -5,7 +5,7 @@ import linkify from 'linkify-it';
 import { usePathname, useRouter } from 'next/navigation';
 import { match } from 'ts-pattern';
 
-import { Button, Card, Divider } from '$lib/components/core';
+import { Avatar, Button, Card, Divider, drawer } from '$lib/components/core';
 import CommunityCard from '$lib/components/features/community/CommunityCard';
 import { CommunityThemeBuilder } from '$lib/components/features/theme-builder/CommunityThemeBuilder';
 
@@ -26,17 +26,19 @@ import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { generateUrl } from '$lib/utils/cnd';
 import { communityAvatar } from '$lib/utils/community';
-import { ASSET_PREFIX, LEMONADE_DOMAIN, LEMONADE_FEED_ADDRESS } from '$lib/utils/constants';
+import { ASSET_PREFIX, LEMONADE_DOMAIN, LEMONADE_FEED_ADDRESS, PROFILE_SOCIAL_LINKS } from '$lib/utils/constants';
 import { COMMUNITY_SOCIAL_LINKS } from '$lib/components/features/community/constants';
 import { PostComposer } from '$lib/components/features/lens-feed/PostComposer';
 import { FeedPosts } from '$lib/components/features/lens-feed/FeedPosts';
-import { usePost } from '$lib/hooks/useLens';
+import { useAccount, usePost } from '$lib/hooks/useLens';
 import { LemonHeadsProgressBar } from '$lib/components/features/lemonheads/LemonHeadsProgressBar';
 import { LemonHeadsNFTCard } from '$lib/components/features/lemonheads/cards/LemonHeadsNFTCard';
 import { formatWithTimezone } from '$lib/utils/date';
 import { userAvatar } from '$lib/utils/user';
 import { truncateMiddle } from '$lib/utils/string';
 import { twMerge } from 'tailwind-merge';
+import { getAccountAvatar } from '$lib/utils/lens/utils';
+import { ProfilePane } from '$lib/components/features/pane';
 
 export function HeroSection({ space }: { space?: Space }) {
   const me = useMe();
@@ -141,6 +143,110 @@ export function HeroSection({ space }: { space?: Space }) {
             )
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+export function HeroSectionProfile({ space }: { space?: Space }) {
+  const { account } = useAccount();
+  const me = useMe();
+  const canManage = [space?.creator, ...(space?.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
+
+  const signIn = useSignIn();
+
+  const onEdit = () => {
+    if (!me) {
+      signIn();
+      return;
+    }
+
+    drawer.open(ProfilePane);
+  };
+
+  return (
+    <div className={clsx('relative w-full overflow-hidden', space?.image_cover ? 'h-[154px] md:h-96' : 'h-24 md:h-36')}>
+      {space?.image_cover ? (
+        <>
+          <img
+            className="md:hidden aspect-[3.5/1] object-cover rounded-md w-full max-h-2/3"
+            alt={space?.title as string}
+            loading="lazy"
+            src={generateUrl(space?.image_cover_expanded, {
+              resize: { width: 480, fit: 'contain' },
+            })}
+          />
+          <img
+            src={generateUrl(space?.image_cover_expanded, {
+              resize: { width: 1080, fit: 'contain' },
+            })}
+            loading="lazy"
+            alt={space?.title as string}
+            className="hidden md:block aspect-[3.5/1] object-cover rounded-md w-full"
+          />
+        </>
+      ) : (
+        <div className="absolute inset-0 top-0 left-0 aspect-[3.5/1] object-cover rounded-md w-full bg-blend-darken"></div>
+      )}
+
+      <div className="absolute bottom-1.5 md:bottom-4 size-20 md:size-28 rounded-full overflow-hidden border">
+        <img
+          className="w-full h-full outline outline-tertiary/4 rounded-md"
+          src={account ? account?.metadata?.picture || getAccountAvatar(account) : userAvatar(me)}
+        />
+      </div>
+
+      <div className="absolute bottom-0 md:bottom-4 right-0">
+        <div className="flex items-center gap-3">
+          <Button iconLeft="icon-edit-sharp" variant="tertiary" size="sm" onClick={onEdit}>
+            Edit Profile
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function ProfileInfoSection() {
+  const me = useMe();
+  return (
+    <div className="flex flex-col gap-3">
+      <div>
+        <TitleSection>{me?.name || me?.display_name}</TitleSection>
+        {me?.username && <SubTitleSection>{me?.username}</SubTitleSection>}
+      </div>
+
+      <p className="text-sm text-secondary">{me?.description}</p>
+
+      <div className="flex gap-3 text-sm">
+        <div className="flex gap-1">
+          <p>{me?.followers || 0}</p>
+          <p>Followers</p>
+        </div>
+        <div className="flex gap-1">
+          <p>{me?.following || 0}</p>
+          <p>Following</p>
+        </div>
+        <div className="flex gap-1">
+          <p>{me?.hosted || 0}</p>
+          <p>Hosted</p>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 mt-1">
+        {PROFILE_SOCIAL_LINKS.filter((item) => me?.[item.name as keyof User]).map((item) => (
+          <div key={item.name} className="tooltip sm:tooltip">
+            <div className="tooltip-content">
+              <div className="text-sm font-medium">
+                <span className="capitalize">{item.name.replace('handle_', '')}</span>: {me?.[item.name as keyof User]}
+              </div>
+            </div>
+            <i
+              className={`${item.icon} tooltip tooltip-open cursor-pointer text-tertiary hover:text-primary`}
+              onClick={() => window.open(`${item.prefix}${me?.[item.name as keyof User]}`, '_blank')}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
