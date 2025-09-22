@@ -23,7 +23,7 @@ export function LemonHeadsLockFeature({ title, subtitle, icon }: { title: string
         <p>{subtitle}</p>
       </div>
 
-      {data && data.tokenId == 0 && (
+      {(!data || (data && data.tokenId == 0)) && (
         <Button variant="secondary" onClick={() => router.push('/lemonheads/mint')}>
           Claim LemonHead
         </Button>

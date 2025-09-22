@@ -50,9 +50,10 @@ type Props = {
   };
   customTitle?: (title: string) => React.ReactElement;
   hideHeroSection?: boolean;
+  locked?: React.ReactElement;
 };
 
-export function Community({ initData, hideHeroSection = false, customTitle }: Props) {
+export function Community({ initData, hideHeroSection = false, customTitle, locked }: Props) {
   const space = initData.space;
 
   const router = useRouter();
@@ -107,7 +108,7 @@ export function Community({ initData, hideHeroSection = false, customTitle }: Pr
       endFrom: FROM_NOW,
       spaceTags: selectedTag ? [selectedTag] : [],
     },
-    skip: !space?._id,
+    skip: !space?._id || !!locked,
   });
   const upcomingEvents = (resUpcomingEvents.data?.getEvents || []) as Event[];
 
@@ -120,7 +121,7 @@ export function Community({ initData, hideHeroSection = false, customTitle }: Pr
       sort: { start: SortOrder.Desc },
       spaceTags: selectedTag ? [selectedTag] : [],
     },
-    skip: !space?._id,
+    skip: !space?._id || !!locked,
   });
   const pastEvents = (resPastEvents.data?.getEvents || []) as Event[];
 
@@ -133,7 +134,7 @@ export function Community({ initData, hideHeroSection = false, customTitle }: Pr
       startTo: endOfDay(selectedDate as Date),
       spaceTags: selectedTag ? [selectedTag] : [],
     },
-    skip: !space?._id || !selectedDate,
+    skip: !space?._id || !selectedDate || !!locked,
   });
   const events = (resEventsByDate.data?.getEvents || []) as Event[];
 
@@ -277,132 +278,138 @@ export function Community({ initData, hideHeroSection = false, customTitle }: Pr
               </div>
             </div>
 
-            {!!eventTags.length && (
-              <div className="flex gap-1.5 overflow-auto md:flex-wrap no-scrollbar">
-                {eventTags.map((item) => (
-                  <Tag
-                    key={item._id}
-                    className={clsx(
-                      'hover:border-primary min-w-fit',
-                      selectedTag === item._id && 'bg-accent-500 hover:border-transparent text-tertiary',
-                    )}
-                    onClick={() => setSelectedTag((prev) => (prev === item._id ? '' : item._id))}
-                  >
-                    <span className="text-sm text-primary">{item.tag}</span>{' '}
-                    <span className="text-tertiary text-sm">{item.targets?.length}</span>
-                  </Tag>
-                ))}
-              </div>
-            )}
-
-            {!canManage && !upcomingEvents.length && (
-              <NoUpcomingEvents spaceId={space?._id} followed={dataGetSpace?.getSpace?.followed} />
-            )}
-
-            <MyEventRequests spaceId={space?._id} />
-
-            {!selectedDate ? (
+            {locked || (
               <>
-                {!!upcomingEvents.length && eventListType === 'upcoming' && (
-                  <EventsWithMode
-                    mode={mode}
-                    events={upcomingEvents}
-                    loading={resUpcomingEvents.loading}
-                    tags={eventTags}
-                  />
+                {!!eventTags.length && (
+                  <div className="flex gap-1.5 overflow-auto md:flex-wrap no-scrollbar">
+                    {eventTags.map((item) => (
+                      <Tag
+                        key={item._id}
+                        className={clsx(
+                          'hover:border-primary min-w-fit',
+                          selectedTag === item._id && 'bg-accent-500 hover:border-transparent text-tertiary',
+                        )}
+                        onClick={() => setSelectedTag((prev) => (prev === item._id ? '' : item._id))}
+                      >
+                        <span className="text-sm text-primary">{item.tag}</span>{' '}
+                        <span className="text-tertiary text-sm">{item.targets?.length}</span>
+                      </Tag>
+                    ))}
+                  </div>
                 )}
 
-                {(!upcomingEvents.length || eventListType === 'past') && (
-                  <EventsWithMode mode={mode} events={pastEvents} loading={resPastEvents.loading} tags={eventTags} />
+                {!canManage && !upcomingEvents.length && (
+                  <NoUpcomingEvents spaceId={space?._id} followed={dataGetSpace?.getSpace?.followed} />
+                )}
+
+                <MyEventRequests spaceId={space?._id} />
+
+                {!selectedDate ? (
+                  <>
+                    {!!upcomingEvents.length && eventListType === 'upcoming' && (
+                      <EventsWithMode
+                        mode={mode}
+                        events={upcomingEvents}
+                        loading={resUpcomingEvents.loading}
+                        tags={eventTags}
+                      />
+                    )}
+
+                    {(!upcomingEvents.length || eventListType === 'past') && (
+                      <EventsWithMode
+                        mode={mode}
+                        events={pastEvents}
+                        loading={resPastEvents.loading}
+                        tags={eventTags}
+                      />
+                    )}
+                  </>
+                ) : (
+                  <EventsWithMode mode={mode} events={events} loading={resEventsByDate.loading} tags={eventTags} />
                 )}
               </>
-            ) : (
-              <EventsWithMode mode={mode} events={events} loading={resEventsByDate.loading} tags={eventTags} />
             )}
           </div>
 
-          <div>
-            <div className="hidden sticky top-7 z-50 flex-col gap-4 md:flex max-w-[296px]">
-              <Menu.Root>
-                <Menu.Trigger>
-                  <Button variant="tertiary-alt" iconLeft="icon-plus" size="sm" className="w-full backdrop-blur-md">
-                    {space?.is_ambassador || canManage ? 'Add Event' : 'Submit Event'}
-                  </Button>
-                </Menu.Trigger>
-                <Menu.Content className="p-1">
-                  {({ toggle }) => (
-                    <>
-                      <MenuItem
-                        title="Create New Event"
-                        iconLeft="icon-edit-square"
-                        onClick={() => {
-                          toggle();
-                          router.push(`/create/event?space=${space?._id}`);
-                        }}
-                      />
-                      <MenuItem
-                        title="Submit Existing Event"
-                        iconLeft="icon-celebration-outline"
-                        onClick={() => {
-                          toggle();
-                          if (space?._id)
-                            modal.open(ListingEvent, { dismissible: false, props: { spaceId: space._id } });
-                        }}
-                      />
-                      <MenuItem
-                        title="Submit External Event"
-                        iconLeft="icon-globe"
-                        onClick={() => {
-                          toggle();
-                          if (space?._id)
-                            modal.open(ListingExternalEvent, { dismissible: false, props: { spaceId: space._id } });
-                        }}
-                      />
-                    </>
-                  )}
-                </Menu.Content>
-              </Menu.Root>
-
-              <Calendar
-                events={spaceEventsCalendar.map((item) => new Date(item.start))}
-                selected={selectedDate}
-                onSelectDate={setSelectedDate}
-                footer={() => {
-                  if (selectedDate) {
-                    return (
-                      <div className="flex justify-between items-center text-primary mt-3">
-                        <time className="font-medium">{format(selectedDate, 'E, dd MMM yyyy')}</time>
-                        <Button
-                          variant="tertiary-alt"
-                          icon="icon-x"
-                          size="xs"
-                          aria-label="close"
-                          onClick={() => setSelectedDate(undefined)}
-                        />
-                      </div>
-                    );
-                  }
-
-                  if (!upcomingEvents.length) return null;
-
-                  return (
-                    <Segment
-                      className="w-full mt-3"
-                      size="sm"
-                      onSelect={(item) => setEventListType(item.value)}
-                      selected={eventListType}
-                      items={[
-                        { label: 'Upcoming', value: 'upcoming' },
-                        { label: 'Past', value: 'past' },
-                      ]}
+          <div className="hidden sticky top-7 z-50 flex-col gap-4 md:flex max-w-[296px]">
+            <Menu.Root>
+              <Menu.Trigger>
+                <Button variant="tertiary-alt" iconLeft="icon-plus" size="sm" className="w-full backdrop-blur-md">
+                  {space?.is_ambassador || canManage ? 'Add Event' : 'Submit Event'}
+                </Button>
+              </Menu.Trigger>
+              <Menu.Content className="p-1">
+                {({ toggle }) => (
+                  <>
+                    <MenuItem
+                      title="Create New Event"
+                      iconLeft="icon-edit-square"
+                      onClick={() => {
+                        toggle();
+                        router.push(`/create/event?space=${space?._id}`);
+                      }}
                     />
+                    <MenuItem
+                      title="Submit Existing Event"
+                      iconLeft="icon-celebration-outline"
+                      onClick={() => {
+                        toggle();
+                        if (space?._id) modal.open(ListingEvent, { dismissible: false, props: { spaceId: space._id } });
+                      }}
+                    />
+                    <MenuItem
+                      title="Submit External Event"
+                      iconLeft="icon-globe"
+                      onClick={() => {
+                        toggle();
+                        if (space?._id)
+                          modal.open(ListingExternalEvent, { dismissible: false, props: { spaceId: space._id } });
+                      }}
+                    />
+                  </>
+                )}
+              </Menu.Content>
+            </Menu.Root>
+
+            <Calendar
+              events={spaceEventsCalendar.map((item) => new Date(item.start))}
+              selected={selectedDate}
+              onSelectDate={setSelectedDate}
+              footer={() => {
+                if (selectedDate) {
+                  return (
+                    <div className="flex justify-between items-center text-primary mt-3">
+                      <time className="font-medium">{format(selectedDate, 'E, dd MMM yyyy')}</time>
+                      <Button
+                        variant="tertiary-alt"
+                        icon="icon-x"
+                        size="xs"
+                        aria-label="close"
+                        onClick={() => setSelectedDate(undefined)}
+                      />
+                    </div>
                   );
-                }}
-              />
-              {/* <div className="aspect-square rounded-lg overflow-hidden"> */}
-              {/*   <Map markers={mappins} marker="advanced" /> */}
-              {/* </div> */}
-            </div>
+                }
+
+                if (!upcomingEvents.length) return null;
+
+                return (
+                  <Segment
+                    className="w-full mt-3"
+                    size="sm"
+                    onSelect={(item) => setEventListType(item.value)}
+                    selected={eventListType}
+                    items={[
+                      { label: 'Upcoming', value: 'upcoming' },
+                      { label: 'Past', value: 'past' },
+                    ]}
+                  />
+                );
+              }}
+            />
+            {/* <div className="aspect-square rounded-lg overflow-hidden"> */}
+            {/*   <Map markers={mappins} marker="advanced" /> */}
+            {/* </div> */}
           </div>
         </div>
       </div>
