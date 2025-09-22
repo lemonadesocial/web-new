@@ -107,7 +107,12 @@ export function PostComposer({
   }
 
   return (
-    <div className={clsx('border border-card-border rounded-md max-h-[calc(100dvh-300px)]', account && 'bg-card')}>
+    <div
+      className={clsx(
+        'border-(length:--card-border-width) border-card-border rounded-md max-h-[calc(100dvh-300px)]',
+        account && 'bg-card',
+      )}
+    >
       <div className="px-4 py-3 flex gap-3">
         <div>
           <Avatar src={account ? getAccountAvatar(account) : randomUserImage()} size="xl" rounded="full" />

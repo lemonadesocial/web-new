@@ -8,7 +8,7 @@ export function LemonHeadsNFTCard() {
   if (!data || !data?.image) return null;
 
   return (
-    <div className="backdrop-blur-md p-4 rounded-md space-y-3 border">
+    <div className="backdrop-blur-md p-4 rounded-md space-y-3 border-(length:--card-border-width)">
       <img src={data.image} className="rounded-sm" />
       <div className="flex justify-between">
         <p>LemonHead #{data.tokenId}</p>
