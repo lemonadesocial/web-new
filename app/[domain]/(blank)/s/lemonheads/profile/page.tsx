@@ -1,27 +1,33 @@
-import { Space } from '$lib/graphql/generated/backend/graphql';
-import { getSpace } from '$lib/utils/getSpace';
-import { notFound } from 'next/navigation';
-import { HeroSectionProfile, ProfileInfoSection } from '../shared';
-import { LemonHeadsNFTCard } from '$lib/components/features/lemonheads/cards/LemonHeadsNFTCard';
-import { UpcommingEventsCard } from '$lib/components/features/event/UpcommingEventsCard';
+'use client';
+import { FeedPosts } from '$lib/components/features/lens-feed/FeedPosts';
+import { PostComposer } from '$lib/components/features/lens-feed/PostComposer';
+import { useAccount, usePost } from '$lib/hooks/useLens';
+import { LEMONADE_FEED_ADDRESS } from '$lib/utils/constants';
+import { useRouter } from 'next/navigation';
+import { match } from 'ts-pattern';
 
-async function Page() {
-  const variables = { slug: 'lemonheads' };
-  const space = (await getSpace(variables)) as Space;
+function Page() {
+  const { account } = useAccount();
 
-  if (!space) return notFound();
+  const router = useRouter();
+  const { createPost } = usePost();
+
+  const onPost = async (metadata: unknown, feedAddress?: string) => {
+    createPost({ metadata, feedAddress });
+  };
+
+  const onSelectPost = (slug: string) => {
+    router.push(`/posts/${slug}`);
+  };
 
   return (
-    <div className="flex gap-12">
-      <div className="flex flex-col gap-5">
-        <HeroSectionProfile space={space} />
-        <ProfileInfoSection />
-      </div>
-
-      <div className="hidden md:block w-full max-w-[296px] space-y-4">
-        <LemonHeadsNFTCard />
-        <UpcommingEventsCard />
-      </div>
+    <div className="flex flex-col gap-5">
+      <PostComposer onPost={onPost} showFeedOptions />
+      {match(account?.address)
+        .with(account?.address, () => <FeedPosts feedAddress={account?.address} onSelectPost={onSelectPost} />)
+        .otherwise(() => (
+          <FeedPosts feedAddress={LEMONADE_FEED_ADDRESS} onSelectPost={onSelectPost} />
+        ))}
     </div>
   );
 }
