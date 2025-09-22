@@ -40,6 +40,9 @@ import { twMerge } from 'tailwind-merge';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { ProfilePane } from '$lib/components/features/pane';
 import exp from 'constants';
+import { useLemonhead } from '$lib/hooks/useLemonhead';
+import { useAppKitAccount } from '@reown/appkit/react';
+import { LemonHeadsLockFeature } from '$lib/components/features/lemonheads/LemonHeadsLockFeature';
 
 export function HeroSection({ space }: { space?: Space }) {
   const me = useMe();
@@ -365,6 +368,9 @@ function CardGroup({ title, onViewAll, children }: { title: string; onViewAll: (
 /** WARN: LEMONADE_FEED_ADDRESS should replace from BE value based on current community  */
 const FROM_NOW = new Date().toISOString();
 export function NewFeedSection({ spaceId }: { spaceId?: string }) {
+  const { address } = useAppKitAccount();
+  const { data } = useLemonhead();
+
   const router = useRouter();
   const { createPost } = usePost();
   const pathname = usePathname();
@@ -400,17 +406,29 @@ export function NewFeedSection({ spaceId }: { spaceId?: string }) {
     else return '';
   };
 
+  const locked = !address || !data || (data && data.tokenId == 0);
+
   return (
     <div className="flex gap-12">
       <div className="flex flex-col gap-5 flex-1">
-        <PostComposer onPost={onPost} showFeedOptions />
-        <FeedPosts feedAddress={LEMONADE_FEED_ADDRESS} onSelectPost={onSelectPost} />
+        {locked ? (
+          <LemonHeadsLockFeature
+            title="Newsfeed is Locked"
+            subtitle="Claim your LemonHead & become a part of an exclusive community."
+            icon="icon-newspaper"
+          />
+        ) : (
+          <>
+            <PostComposer onPost={onPost} showFeedOptions />
+            <FeedPosts feedAddress={LEMONADE_FEED_ADDRESS} onSelectPost={onSelectPost} />
+          </>
+        )}
       </div>
 
-      <div className="hidden md:block w-full max-w-[296px] space-y-4">
+      <div className="hidden md:block w-full max-w-[264px] space-y-4">
         <LemonHeadsNFTCard />
 
-        {!!upcomingEvents.length && (
+        {!locked && !!upcomingEvents.length && (
           <CardGroup title="Upcoming Events" onViewAll={() => router.push(`${pathname}/events`)}>
             {upcomingEvents.map((item) => (
               <div key={item._id} className="flex items-center gap-3 group">
@@ -445,7 +463,7 @@ export function NewFeedSection({ spaceId }: { spaceId?: string }) {
         )}
 
         {!!invitationRank.length && (
-          <CardGroup title="Upcoming Events" onViewAll={() => router.push(`${pathname}/leaderboards`)}>
+          <CardGroup title="Leaderboard" onViewAll={() => router.push(`${pathname}/leaderboards`)}>
             {invitationRank.map((item, idx) => (
               <div key={idx}>
                 <div className="flex gap-3 items-center flex-1">
