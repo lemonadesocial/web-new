@@ -4,6 +4,7 @@ import { Space } from '$lib/graphql/generated/backend/graphql';
 import { getSpace } from '$lib/utils/getSpace';
 import { Divider } from '$lib/components/core';
 import { FeatureHubSection, HeroSection, CommunityInfoSection, NewFeedSection, JourneySection } from './shared';
+import { LemonheadsGallery } from '$lib/components/features/lemonheads/LemonheadsGallery';
 
 async function Page() {
   const variables = { slug: 'lemonheads' };
@@ -18,6 +19,7 @@ async function Page() {
         <CommunityInfoSection space={space} />
       </div>
       <JourneySection />
+      <LemonheadsGallery />
       <FeatureHubSection spaceId={space._id} />
       <>
         <Divider className="h-2" />
