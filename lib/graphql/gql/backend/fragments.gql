@@ -47,6 +47,10 @@ fragment User on User {
   url
   url_go
   lens_profile_synced
+
+  followers
+  following
+  hosted
 }
 
 fragment PaymentAccount on NewPaymentAccount {
