@@ -5,7 +5,7 @@ import linkify from 'linkify-it';
 import { usePathname, useRouter } from 'next/navigation';
 import { match } from 'ts-pattern';
 
-import { Avatar, Button, Card, Divider, drawer } from '$lib/components/core';
+import { Button, Card, Divider, drawer } from '$lib/components/core';
 import CommunityCard from '$lib/components/features/community/CommunityCard';
 import { CommunityThemeBuilder } from '$lib/components/features/theme-builder/CommunityThemeBuilder';
 
@@ -34,11 +34,12 @@ import { useAccount, usePost } from '$lib/hooks/useLens';
 import { LemonHeadsProgressBar } from '$lib/components/features/lemonheads/LemonHeadsProgressBar';
 import { LemonHeadsNFTCard } from '$lib/components/features/lemonheads/cards/LemonHeadsNFTCard';
 import { formatWithTimezone } from '$lib/utils/date';
-import { userAvatar } from '$lib/utils/user';
+import { randomEventDP, userAvatar } from '$lib/utils/user';
 import { truncateMiddle } from '$lib/utils/string';
 import { twMerge } from 'tailwind-merge';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { ProfilePane } from '$lib/components/features/pane';
+import exp from 'constants';
 
 export function HeroSection({ space }: { space?: Space }) {
   const me = useMe();
@@ -151,8 +152,6 @@ export function HeroSection({ space }: { space?: Space }) {
 export function HeroSectionProfile({ space }: { space?: Space }) {
   const { account } = useAccount();
   const me = useMe();
-  const canManage = [space?.creator, ...(space?.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
-
   const signIn = useSignIn();
 
   const onEdit = () => {
@@ -165,7 +164,12 @@ export function HeroSectionProfile({ space }: { space?: Space }) {
   };
 
   return (
-    <div className={clsx('relative w-full overflow-hidden', space?.image_cover ? 'h-[154px] md:h-96' : 'h-24 md:h-36')}>
+    <div
+      className={clsx(
+        'relative w-full overflow-hidden',
+        space?.image_cover ? 'h-[154px] md:h-[280px]' : 'h-24 md:h-36',
+      )}
+    >
       {space?.image_cover ? (
         <>
           <img
@@ -352,7 +356,10 @@ function CardGroup({ title, onViewAll, children }: { title: string; onViewAll: (
       <Card.Content className="flex flex-col gap-3">
         <div className="flex justify-between items-center text-tertiary">
           <p>{title}</p>
-          <i className="icon-arrow-outward size-6 hover:text-primary cursor-pointer" onClick={onViewAll} />
+          <i
+            className="icon-arrow-outward text-quaternary size-6 hover:text-primary cursor-pointer"
+            onClick={onViewAll}
+          />
         </div>
         {children}
       </Card.Content>
@@ -381,7 +388,6 @@ export function NewFeedSection({ spaceId }: { spaceId?: string }) {
       limit: 3,
       skip: 0,
       endFrom: FROM_NOW,
-      spaceTags: [],
     },
     skip: !spaceId,
   });
@@ -412,19 +418,28 @@ export function NewFeedSection({ spaceId }: { spaceId?: string }) {
         {!!upcomingEvents.length && (
           <CardGroup title="Upcoming Events" onViewAll={() => router.push(`${pathname}/events`)}>
             {upcomingEvents.map((item) => (
-              <div key={item._id} className="flex items-center gap-3">
+              <div key={item._id} className="flex items-center gap-3 group">
                 {!!item?.new_new_photos_expanded?.[0] && (
                   <img
                     className="aspect-square object-contain rounded-sm size-8 border border-(--color-card-border)"
-                    src={generateUrl(item?.new_new_photos_expanded[0], {
-                      resize: { height: 32, width: 32, fit: 'cover' },
-                    })}
+                    src={
+                      item.new_new_photos_expanded?.[0]
+                        ? generateUrl(item.new_new_photos_expanded[0], {
+                            resize: { height: 32, width: 32, fit: 'cover' },
+                          })
+                        : randomEventDP()
+                    }
                     loading="lazy"
                     alt={item.title}
                   />
                 )}
                 <div>
-                  <p className="line-clamp-1">{item.title} asdaskldjalsd asdjlkasd</p>
+                  <p
+                    className="group-hover:underline line-clamp-1 cursor-pointer"
+                    onClick={() => router.push(`/e/${item.shortid}`)}
+                  >
+                    {item.title}
+                  </p>
                   <p className="text-tertiary text-sm">
                     {formatWithTimezone(item.start, `EEE, MMM dd 'at' hh:mm a`, item.timezone)}
                   </p>
@@ -530,4 +545,55 @@ function renderTextWithLinks(text?: string) {
   }
 
   return elements;
+}
+
+export function UpcomingEventsCard() {
+  const me = useMe();
+  const router = useRouter();
+
+  const { data: dataGetUpcomingEvents } = useQuery(GetSpaceEventsDocument, {
+    variables: {
+      limit: 3,
+      skip: 0,
+      endFrom: FROM_NOW,
+    },
+    skip: !me?._id,
+  });
+  const upcomingEvents = (dataGetUpcomingEvents?.getEvents || []) as Event[];
+
+  if (!upcomingEvents.length) return null;
+
+  return (
+    <CardGroup title="Upcoming Events" onViewAll={() => router.push(`/events`)}>
+      {upcomingEvents.map((item) => (
+        <div key={item._id} className="flex items-center gap-3">
+          {!!item?.new_new_photos_expanded?.[0] && (
+            <img
+              className="aspect-square object-contain rounded-sm size-8 border border-(--color-card-border)"
+              src={
+                item.new_new_photos_expanded?.[0]
+                  ? generateUrl(item.new_new_photos_expanded[0], {
+                      resize: { height: 32, width: 32, fit: 'cover' },
+                    })
+                  : randomEventDP()
+              }
+              loading="lazy"
+              alt={item.title}
+            />
+          )}
+          <div>
+            <p
+              className="line-clamp-1 cursor-pointer hover:underline"
+              onClick={() => router.push(`/e/${item.shortid}`)}
+            >
+              {item.title}
+            </p>
+            <p className="text-tertiary text-sm">
+              {formatWithTimezone(item.start, `EEE, MMM dd 'at' hh:mm a`, item.timezone)}
+            </p>
+          </div>
+        </div>
+      ))}
+    </CardGroup>
+  );
 }
