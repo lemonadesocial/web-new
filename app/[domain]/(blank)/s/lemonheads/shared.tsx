@@ -95,13 +95,8 @@ export function HeroSection({ space }: { space?: Space }) {
         <div className="absolute inset-0 top-0 left-0 aspect-[3.5/1] object-cover rounded-md w-full bg-blend-darken"></div>
       )}
 
-      <div className="absolute bottom-1.5 md:bottom-4 size-20 md:size-32 rounded-md overflow-hidden">
-        <img
-          className="w-full h-full outline outline-tertiary/4 rounded-md"
-          src={communityAvatar(space)}
-          alt={space?.title}
-          loading="lazy"
-        />
+      <div className="absolute bottom-1.5 md:bottom-4 size-20 md:size-32 rounded-md overflow-hidden border-2">
+        <img className="w-full h-full rounded-md" src={communityAvatar(space)} alt={space?.title} loading="lazy" />
         {!space?.image_avatar_expanded && (
           <img
             src={`${ASSET_PREFIX}/assets/images/blank-avatar.svg`}
@@ -259,7 +254,7 @@ export function ProfileInfoSection() {
 export function CommunityInfoSection({ space }: { space: Space }) {
   return (
     <div className="fle flex-col gap-2">
-      <h1 className="community-title text-2xl text-primary-invert! md:text-3xl font-semibold">{space?.title}</h1>
+      <TitleSection className="md:text-3xl">{space.title}</TitleSection>
       <div className="text-sm md:text-md text-secondary font-medium whitespace-pre-wrap">
         {renderTextWithLinks(space?.description || '')}
       </div>
