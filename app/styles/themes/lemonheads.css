@@ -7,6 +7,10 @@
   --color-quaternary: rgba(0, 0, 0, 0.24);
   --color-background: #ede9fe;
   --color-page-background-overlay: rgba(237, 233, 254, 0.8);
+  --color-overlay-primary: rgba(255, 255, 255, 1);
+  --color-overlay-secondary: rgba(255, 255, 255, 0.8);
+  --color-overlay-backdrop: rgba(256, 256, 256, 0.56);
+
   --color-sidebar: oklch(0.951 0.026 236.824);
 
   --color-divider: #000000;

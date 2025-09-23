@@ -13,6 +13,7 @@ import {
   Event,
   FollowSpaceDocument,
   GetLemonheadInvitationRankDocument,
+  GetSpaceDocument,
   GetSpaceEventsDocument,
   GetSubSpacesDocument,
   LemonheadUserInfo,
@@ -44,8 +45,13 @@ import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { LemonHeadsLockFeature } from '$lib/components/features/lemonheads/LemonHeadsLockFeature';
 
-export function HeroSection({ space }: { space?: Space }) {
+export function HeroSection(props: { space?: Space }) {
   const me = useMe();
+  const { data: dataSpace } = useQuery(GetSpaceDocument, {
+    variables: { id: props.space?._id! },
+    skip: !props.space?._id,
+  });
+  const space = (dataSpace?.getSpace || props.space) as Space;
   const canManage = [space?.creator, ...(space?.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
 
   const signIn = useSignIn();
@@ -303,10 +309,10 @@ export function SubTitleSection({ children }: React.PropsWithChildren) {
 export function JourneySection() {
   return (
     <>
-      <Divider className="h-2" />
+      {/* <Divider className="h-2" /> */}
       <div className="flex flex-col gap-6">
         <div className="flex justify-between items-center">
-          <TitleSection>Featured Hubs</TitleSection>
+          {/* <TitleSection>Featured Hubs</TitleSection> */}
           {/* <Button variant="tertiary-alt" size="sm" iconLeft="icon-user-plus"> */}
           {/*   Invite */}
           {/* </Button> */}
@@ -318,6 +324,7 @@ export function JourneySection() {
 }
 
 export function FeatureHubSection({ spaceId }: { spaceId?: string }) {
+  const router = useRouter();
   const { data: subSpacesData, loading } = useQuery(GetSubSpacesDocument, {
     variables: { id: spaceId },
     skip: !spaceId,
@@ -333,7 +340,14 @@ export function FeatureHubSection({ spaceId }: { spaceId?: string }) {
       <div className="flex flex-col gap-6">
         <div className="flex justify-between items-center">
           <TitleSection>Featured Hubs</TitleSection>
-          <Button variant="tertiary-alt" size="sm">
+          <Button
+            variant="tertiary-alt"
+            size="sm"
+            onClick={() => {
+              //TODO: should replace lemonheads with uid instead of after launched
+              router.push('/s/lemonheads/featured-hubs');
+            }}
+          >
             View All ({list.length})
           </Button>
         </div>
