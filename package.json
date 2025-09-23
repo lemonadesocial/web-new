@@ -23,6 +23,7 @@
     "@farcaster/auth-kit": "^0.8.1",
     "@farcaster/miniapp-sdk": "^0.1.8",
     "@floating-ui/react": "^0.27.5",
+    "@giphy/js-fetch-api": "^5.7.0",
     "@hookform/resolvers": "^5.0.1",
     "@lens-chain/sdk": "^1.0.3",
     "@lens-chain/storage-client": "^1.0.4",

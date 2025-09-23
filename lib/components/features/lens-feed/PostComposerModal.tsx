@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { useAtomValue } from 'jotai';
 import useMeasure from 'react-use-measure';
 
-import { Avatar, Button, Card, EmojiPicker, FileInput, Menu, MenuItem, modal, toast } from '$lib/components/core';
+import { Avatar, Button, Card, Menu, MenuItem, modal, toast } from '$lib/components/core';
 import { accountAtom } from '$lib/jotai';
 import { generatePostMetadata, getAccountAvatar } from '$lib/utils/lens/utils';
 
@@ -19,10 +19,10 @@ import { defaultClient } from '$lib/graphql/request/instances';
 import { PostTextarea, PostTextareaRef } from './PostTextarea';
 import { ImageInput } from './ImageInput';
 import { EventPreview } from './EventPreview';
-import { AddEventModal } from './AddEventModal';
 import clsx from 'clsx';
 import { isMobile, isMobileOnly } from 'react-device-detect';
 import { AnimatePresence, motion } from 'framer-motion';
+import { PostToolbar } from './PostToolbar';
 
 type FeedOptionType = {
   label: string;
@@ -73,6 +73,9 @@ export function PostComposerModal({
   const [event, setEvent] = React.useState<Event | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isFocus, setIsFocus] = React.useState(false);
+  const [gif, setGif] = React.useState<string | undefined>(undefined);
+  const [isBoldActive, setIsBoldActive] = React.useState(false);
+  const [isItalicActive, setIsItalicActive] = React.useState(false);
 
   const isEditing = !!post;
   const links = extractLinks(value);
@@ -159,10 +162,10 @@ export function PostComposerModal({
       setIsSubmitting(true);
 
       if (isEditing && post) {
-        await updatePost(post.id, generatePostMetadata({ content, images, event }));
+        await updatePost(post.id, generatePostMetadata({ content, images, event, gif }));
       } else {
         await createPost({
-          metadata: generatePostMetadata({ content, images, event }),
+          metadata: generatePostMetadata({ content, images, event, gif }),
           feedAddress: FEED_OPTIONS[selectedFeed].address,
         });
       }
@@ -170,6 +173,7 @@ export function PostComposerModal({
       setValue('');
       setFiles([]);
       setEvent(undefined);
+      setGif(undefined);
       modal.close();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : `Failed to ${isEditing ? 'update' : 'post'}`);
@@ -180,6 +184,25 @@ export function PostComposerModal({
 
   function handleEmojiSelect(emoji: string): void {
     textareaRef.current?.insertEmoji(emoji);
+  }
+
+  function handleGifSelect(gifUrl: string): void {
+    setGif(gifUrl);
+  }
+
+  function updateFormatStates(): void {
+    setIsBoldActive(textareaRef.current?.isBoldActive() ?? false);
+    setIsItalicActive(textareaRef.current?.isItalicActive() ?? false);
+  }
+
+  function handleBoldSelect(): void {
+    textareaRef.current?.toggleBold();
+    setTimeout(updateFormatStates, 0);
+  }
+
+  function handleItalicSelect(): void {
+    textareaRef.current?.toggleItalic();
+    setTimeout(updateFormatStates, 0);
   }
 
   return (
@@ -217,6 +240,7 @@ export function PostComposerModal({
                   value={value}
                   onBlur={() => setIsFocus(false)}
                   onFocus={() => setIsFocus(true)}
+                  onSelectionChange={updateFormatStates}
                   setValue={setValue}
                   placeholder={placeholder}
                   className={clsx('mt-2', isMobile && 'max-h-2/3!')}
@@ -227,7 +251,29 @@ export function PostComposerModal({
             </div>
             {account ? (
               <div className="p-4 border-t border-(--color-divider) space-y-4">
-                {files.length > 0 && <ImageInput value={files} onChange={setFiles} />}
+                {
+                  !!(gif || files.length > 0) && (
+                    <div className="flex gap-2">
+                      {
+                        gif && (
+                          <div className="relative group w-35 h-35 ">
+                            <img src={gif} className="w-full h-full object-cover rounded-sm border border-card-border" />
+                            <button
+                              type="button"
+                              className="absolute top-3 right-3 bg-overlay-secondary rounded-full w-6 h-6 flex items-center justify-center"
+                              onClick={() => setGif(undefined)}
+                            >
+                              <i className="icon-x text-tertiary size-[14px]" />
+                            </button>
+                          </div>
+                        )
+                      }
+
+                      {files.length > 0 && <ImageInput value={files} onChange={setFiles} />}
+                    </div>
+                  )
+                }
+
 
                 {event && (
                   <div className="relative">
@@ -243,10 +289,15 @@ export function PostComposerModal({
                 )}
 
                 <div className="flex justify-between">
-                  <Toolbar
+                  <PostToolbar
                     onAddEvent={(event) => setEvent(event)}
-                    onSelectFile={setFiles}
+                    onSelectFiles={setFiles}
                     onSelectEmoji={handleEmojiSelect}
+                    onSelectGif={handleGifSelect}
+                    onSelectBold={handleBoldSelect}
+                    onSelectItalic={handleItalicSelect}
+                    isBoldActive={isBoldActive}
+                    isItalicActive={isItalicActive}
                   />
 
                   <div className="items-center gap-2 hidden md:flex">
@@ -324,37 +375,5 @@ export function FeedOptions({
         )}
       </Menu.Content>
     </Menu.Root>
-  );
-}
-
-export function Toolbar({
-  onSelectFile,
-  onAddEvent,
-  onSelectEmoji
-}: {
-  onAddEvent: (event?: Event) => void;
-  onSelectFile: (file: File[]) => void;
-  onSelectEmoji: (emoji: string) => void;
-}) {
-  return (
-    <div className="flex items-center justify-between">
-      <div className="flex gap-4 items-center">
-        <FileInput onChange={onSelectFile} accept="image/*" multiple className="flex">
-          {(open) => <i className="icon-image size-5 text-[#60A5FA] cursor-pointer" onClick={open} />}
-        </FileInput>
-        <i
-          className="icon-ticket size-5 text-[#A78BFA] cursor-pointer"
-          onClick={() => {
-            modal.open(AddEventModal, {
-              props: {
-                onConfirm: onAddEvent,
-              },
-            });
-          }}
-        />
-        
-        <EmojiPicker onSelect={onSelectEmoji} />
-      </div>
-    </div>
   );
 }
