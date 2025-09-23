@@ -6,7 +6,7 @@ import { Event } from '$lib/graphql/generated/backend/graphql';
 import { MediaFile } from "../file";
 import { randomUserImage } from "../user";
 
-export function generatePostMetadata({ content, images, event }: { content: string, images?: MediaFile[]; event?: Event; }) {
+export function generatePostMetadata({ content, images, event, gif }: { content: string, images?: MediaFile[]; event?: Event; gif?: string }) {
   if (event) {
     return eventMetadata({
       location: event.shortid,
@@ -15,6 +15,29 @@ export function generatePostMetadata({ content, images, event }: { content: stri
       endsAt: event.end,
       links: [event.url || ''],
       content,
+    });
+  }
+
+  if (gif) {
+    const attachments = [{
+      item: gif,
+      type: MediaImageMimeType.GIF,
+    }];
+
+    if (images?.length) {
+      attachments.push(...images.map(image => ({
+        item: image.url,
+        type: image.type as MediaImageMimeType,
+      })));
+    }
+
+    return image({
+      content,
+      image: {
+        item: gif,
+        type: MediaImageMimeType.GIF,
+      },
+      attachments
     });
   }
 

@@ -411,7 +411,7 @@ export function NewFeedSection({ spaceId }: { spaceId?: string }) {
   return (
     <div className="flex gap-12">
       <div className="flex flex-col gap-5 flex-1">
-        {!locked ? (
+        {locked ? (
           <LemonHeadsLockFeature
             title="Newsfeed is Locked"
             subtitle="Claim your LemonHead & become a part of an exclusive community."
