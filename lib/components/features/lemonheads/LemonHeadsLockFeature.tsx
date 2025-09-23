@@ -40,7 +40,7 @@ export function LemonHeadsLockFeature({ title, subtitle, icon }: { title: string
 }
 
 const ConnectWalletButton = () => (
-  <Button variant="secondary" onClick={() => modal.open(ConnectWallet)}>
+  <Button variant="secondary" onClick={() => modal.open(ConnectWallet, { props: { onConnect: () => {} } })}>
     Connect Wallet
   </Button>
 );

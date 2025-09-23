@@ -82,8 +82,8 @@ export function LemonHeadsLeaderboard() {
               <Card.Header className="flex gap-4 bg-transparent">
                 <p className="w-8 text-sm text-tertiary">Rank</p>
                 <p className="flex-1 text-sm text-tertiary">Inviter</p>
-                <p className="md:w-[96px] text-sm text-tertiary">Invites</p>
-                <div className="hidden md:block w-[62px]" />
+                <p className="text-sm text-tertiary">Invites</p>
+                {/* <div className="hidden md:block w-[62px]" /> */}
               </Card.Header>
             )}
 
@@ -116,9 +116,9 @@ export function LemonHeadsLeaderboard() {
 
                           <Skeleton className="h-5 w-10" animate />
 
-                          <div className="w-[62px] px-[60px] hidden md:block">
-                            <Skeleton className="h-5 w-16 rounded-full" animate />
-                          </div>
+                          {/* <div className="w-[62px] px-[60px] hidden md:block"> */}
+                          {/*   <Skeleton className="h-5 w-16 rounded-full" animate /> */}
+                          {/* </div> */}
                         </motion.div>
                       </Card.Content>
                     ))}
@@ -145,12 +145,12 @@ export function LemonHeadsLeaderboard() {
                             />
                             <p>{getUsernameOrWallet(item.user as LemonheadUserInfo)}</p>
                           </div>
-                          <p className="md:w-[96px]">{item?.invitations_count}</p>
-                          <div className="w-[62px] hidden md:block">
-                            <Button variant="tertiary-alt" size="sm" className="rounded-full">
-                              Follow
-                            </Button>
-                          </div>
+                          <p className="">{item?.invitations_count}</p>
+                          {/* <div className="w-[62px] hidden md:block"> */}
+                          {/*   <Button variant="tertiary-alt" size="sm" className="rounded-full"> */}
+                          {/*     Follow */}
+                          {/*   </Button> */}
+                          {/* </div> */}
                         </motion.div>
                       </Card.Content>
                     ))}
