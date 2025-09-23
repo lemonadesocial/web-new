@@ -389,8 +389,8 @@ export function NewFeedSection({ spaceId }: { spaceId?: string }) {
   const { createPost } = usePost();
   const pathname = usePathname();
 
-  const onPost = async (metadata: unknown, feedAddress?: string) => {
-    createPost({ metadata, feedAddress });
+  const onPost = async (metadata: unknown) => {
+    createPost({ metadata, feedAddress: LEMONADE_FEED_ADDRESS });
   };
 
   const onSelectPost = (slug: string) => {
@@ -415,9 +415,9 @@ export function NewFeedSection({ spaceId }: { spaceId?: string }) {
 
   const getUsernameOrWallet = (user: LemonheadUserInfo) => {
     if (user.username) return user.username;
-    else if (user.lemonhead_inviter_wallet) return truncateMiddle(user.lemonhead_inviter_wallet, 6, 4);
-    else if (user.kratos_wallet_address) return truncateMiddle(user.kratos_wallet_address, 6, 4);
-    else return '';
+    if (user.lemonhead_inviter_wallet) return truncateMiddle(user.lemonhead_inviter_wallet, 6, 4);
+    if (user.kratos_wallet_address) return truncateMiddle(user.kratos_wallet_address, 6, 4);
+    return '';
   };
 
   const locked = !address || !data || (data && data.tokenId == 0);
@@ -433,7 +433,7 @@ export function NewFeedSection({ spaceId }: { spaceId?: string }) {
           />
         ) : (
           <>
-            <PostComposer onPost={onPost} showFeedOptions />
+            <PostComposer onPost={onPost} showFeedOptions={false} />
             <FeedPosts feedAddress={LEMONADE_FEED_ADDRESS} onSelectPost={onSelectPost} />
           </>
         )}

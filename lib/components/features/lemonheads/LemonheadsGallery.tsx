@@ -53,7 +53,7 @@ export function LemonheadsGallery() {
     return (
       <div className="flex overflow-x-auto no-scrollbar gap-0 rounded-md overflow-hidden border-2 border-card-border divide-card-border divide-x-2">
         {Array.from({ length: 20 }).map((_, index) => (
-          <Skeleton key={index} className="min-w-60 h-60" />
+          <Skeleton key={index} className="min-w-60 h-60 rounded-none" />
         ))}
       </div>
     );

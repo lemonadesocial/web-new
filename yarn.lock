@@ -751,6 +751,27 @@
   resolved "https://registry.npmjs.org/@floating-ui/utils/-/utils-0.2.9.tgz"
   integrity sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==
 
+"@giphy/js-fetch-api@^5.7.0":
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/@giphy/js-fetch-api/-/js-fetch-api-5.7.0.tgz#933e2c3147b25551c40baa3905c93fb7a18c6d18"
+  integrity sha512-5W8j7QUEnWRhW2KKlRhwHNCz0HwUeW0SlFryKFrqzE5XB8kjoAwZ2GvwtLNnkpjN0cniLE+bSGAzMKcL5Bt5Vg==
+  dependencies:
+    "@giphy/js-types" "*"
+    "@giphy/js-util" "*"
+
+"@giphy/js-types@*":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@giphy/js-types/-/js-types-5.1.0.tgz#af7c7d3b8190bf89e25da0e693935871b2c53b0b"
+  integrity sha512-BZYCDtYNRR7cUWkbDLB4wmm3qmWMsVCQdUiBNOfmZ3yAazCgygKJoDI/5Rq4CK5MBaOc5LVdF8viC2WtoBdaPA==
+
+"@giphy/js-util@*":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@giphy/js-util/-/js-util-5.2.0.tgz#864b8495daa1e5cef773bf6bb80488558c4e04fe"
+  integrity sha512-Qt7pGh2cqiNmXLeWAgb459wK8+BuMLtIxTfg4ZksnPHPsLthiHT9hhzs2QhqUh7Pp/HOq+Cbv2etGDfnq+xiKA==
+  dependencies:
+    "@giphy/js-types" "*"
+    uuid "^9.0.0"
+
 "@gql.tada/cli-utils@1.6.3":
   version "1.6.3"
   resolved "https://registry.yarnpkg.com/@gql.tada/cli-utils/-/cli-utils-1.6.3.tgz#b893cec74908da4df0602691e2e0b1497fda8cda"

@@ -65,7 +65,7 @@ export function TokenCard({ tokenId }: TokenCardProps) {
   }, [tokenId, chainsMap]);
 
   if (isLoading) {
-    return <Skeleton className="min-w-60 h-60 rounded-lg animate-skeleton" />;
+    return <Skeleton className="min-w-60 h-60 rounded-none animate-skeleton" />;
   }
 
   if (!data?.image) {

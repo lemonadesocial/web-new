@@ -58,6 +58,7 @@ jobs:
           echo "NEXT_PUBLIC_LENS_NAMESPACE=${{ vars.PRODUCTION_NEXT_PUBLIC_LENS_NAMESPACE }}" >> .env
           echo "NEXT_PUBLIC_LMD_VIDEO=${{ vars.PRODUCTION_NEXT_PUBLIC_LMD_VIDEO }}" >> .env
           echo "NEXT_PUBLIC_LEMONHEADS_INDEXER_URL=${{ vars.PRODUCTION_NEXT_PUBLIC_LEMONHEADS_INDEXER_URL }}" >> .env
+          echo "NEXT_PUBLIC_GIPHY_API_KEY=${{ vars.PRODUCTION_NEXT_PUBLIC_GIPHY_API_KEY }}" >> .env
 
       - name: Configure environment
         run: |

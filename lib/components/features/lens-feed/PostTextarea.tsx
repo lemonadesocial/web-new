@@ -11,10 +11,15 @@ type PostTextareaProps = {
   onFocus?: () => void;
   onBlur?: () => void;
   disabled?: boolean;
+  onSelectionChange?: () => void;
 };
 
 export interface PostTextareaRef {
   insertEmoji: (emoji: string) => void;
+  toggleBold: () => void;
+  toggleItalic: () => void;
+  isBoldActive: () => boolean;
+  isItalicActive: () => boolean;
 }
 
 const PostTextarea = forwardRef<PostTextareaRef, PostTextareaProps>(({
@@ -25,13 +30,11 @@ const PostTextarea = forwardRef<PostTextareaRef, PostTextareaProps>(({
   onFocus,
   onBlur,
   disabled,
+  onSelectionChange,
 }, ref) => {
   const editorRef = useRef<TextEditorRef>(null);
   const simpleToolbar = {
-    bubble: {
-      bold: true,
-      italic: true,
-    },
+    bubble: null,
     float: null,
   };
 
@@ -51,6 +54,22 @@ const PostTextarea = forwardRef<PostTextareaRef, PostTextareaProps>(({
         editorRef.current.commands.insertContent(emoji);
       }
     },
+    toggleBold: () => {
+      if (editorRef.current) {
+        editorRef.current.commands.toggleBold();
+      }
+    },
+    toggleItalic: () => {
+      if (editorRef.current) {
+        editorRef.current.commands.toggleItalic();
+      }
+    },
+    isBoldActive: () => {
+      return editorRef.current?.isActive.bold() ?? false;
+    },
+    isItalicActive: () => {
+      return editorRef.current?.isActive.italic() ?? false;
+    },
   }), []);
 
   return (
@@ -66,6 +85,7 @@ const PostTextarea = forwardRef<PostTextareaRef, PostTextareaProps>(({
         readOnly={disabled}
         onFocus={onFocus}
         onBlur={onBlur}
+        onSelectionChange={onSelectionChange}
       />
     </div>
   );
