@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useRouter } from 'next/navigation';
 
-import { Avatar, Button, toast, Menu, MenuItem } from '$lib/components/core';
+import { Avatar, Button, toast, Menu, MenuItem, modal } from '$lib/components/core';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { usePost } from '$lib/hooks/useLens';
 import { useAtomValue } from 'jotai';
@@ -16,6 +16,7 @@ import { PostButton } from './PostButton';
 import { PostHeader } from './PostHeader';
 import { PostContent } from './PostContent';
 import { PostComment } from './PostComment';
+import { PostComposerModal } from './PostComposerModal';
 
 type FeedPostProps = {
   post: Post | Repost;
@@ -111,14 +112,21 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
                   <Menu.Content className="p-1">
                     {({ toggle }) => (
                       <>
-                        {/* <MenuItem
+                        <MenuItem
                         title="Edit Post"
                         iconLeft="icon-edit-sharp"
-                        onClick={() => {
-                          toast.success('Edit functionality coming soon');
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          modal.open(PostComposerModal, {
+                            props: {
+                              post: rootPost,
+                            },
+                            className: 'overflow-visible'
+                          });
                           toggle();
                         }}
-                      /> */}
+                      />
                         <MenuItem
                           iconLeft="icon-delete text-error"
                           onClick={(e) => {
