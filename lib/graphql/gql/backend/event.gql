@@ -751,6 +751,16 @@ query GetEventInvitedStatistics($id: MongoID!, $statuses: [InvitationResponse!],
   }
 }
 
+query GetEventGuestsStatistics($event: MongoID!) {
+  getEventGuestsStatistics(event: $event) {
+    going
+    pending_approval
+    pending_invite
+    declined
+    checked_in
+  }
+}
+
 mutation UpdateEventRegistrationForm($id: MongoID!, $input: EventInput!) {
   updateEvent(_id: $id, input: $input) {
     rsvp_wallet_platforms {
