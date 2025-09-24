@@ -12,11 +12,11 @@ function Page() {
         </SubTitleSection>
       </div>
 
-      <div className="pt-9 pb-3">
+      <div className="pt-6 md:pt-7 pb-1">
         <LemonHeadsProgressBar />
       </div>
 
-      <div className="py-6">
+      <div className="py-3 md:py-6">
         <LemonHeadsLeaderboard />
       </div>
     </div>

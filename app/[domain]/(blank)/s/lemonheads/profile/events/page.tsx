@@ -98,7 +98,7 @@ export default function Page() {
     <div className="flex flex-col">
       <div className="flex flex-col gap-5 flex-1 w-full">
         <div className="flex justify-between">
-          <h3 className="text-xl font-semibold capitalize">{filter.type}</h3>
+          <h3 className="hidden md:block text-xl font-semibold capitalize">{filter.type}</h3>
           <div className="flex gap-2 items-center justify-between w-full md:w-fit">
             <div className="flex gap-2 items-center">
               <Segment

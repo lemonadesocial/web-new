@@ -28,21 +28,41 @@ export function LemonHeadsNFTCard() {
     );
 
   return (
-    <div className="backdrop-blur-md p-4 rounded-md space-y-3 border-(length:--card-border-width)">
-      <img src={data.image} className="rounded-sm" />
-      <div className="flex justify-between">
-        <p>LemonHead #{data.tokenId}</p>
-        <i
-          className="icon-share size-5 aspect-square text-quaternary hover:text-primary cursor-pointer"
-          onClick={() =>
-            drawer.open(SharedLemonheadsPane, {
-              props: {
-                tokenId: data.tokenId?.toString(),
-              },
-            })
-          }
-        />
+    <>
+      <div
+        className="md:hidden flex gap-2.5 py-2.5 px-3 bg-overlay-secondary border-(length:--card-border-width) backdrop-blur-md rounded-md items-center flex-1 w-full min-w-fit"
+        onClick={() =>
+          drawer.open(SharedLemonheadsPane, {
+            props: {
+              tokenId: data.tokenId?.toString(),
+            },
+          })
+        }
+      >
+        <img src={data?.image} className="rounded-sm size-8 aspect-square" />
+
+        <div className="flex flex-col">
+          <p className="text-sm">Share</p>
+          <p className="text-xs text-quaternary">LemonHead #{data?.tokenId}</p>
+        </div>
       </div>
-    </div>
+
+      <div className="hidden md:block backdrop-blur-md p-4 rounded-md space-y-3 border-(length:--card-border-width)">
+        <img src={data.image} className="rounded-sm" />
+        <div className="flex justify-between">
+          <p>LemonHead #{data.tokenId}</p>
+          <i
+            className="icon-share size-5 aspect-square text-quaternary hover:text-primary cursor-pointer"
+            onClick={() =>
+              drawer.open(SharedLemonheadsPane, {
+                props: {
+                  tokenId: data.tokenId?.toString(),
+                },
+              })
+            }
+          />
+        </div>
+      </div>
+    </>
   );
 }

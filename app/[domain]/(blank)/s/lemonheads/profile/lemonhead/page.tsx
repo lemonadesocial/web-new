@@ -86,7 +86,7 @@ function Page() {
         />
       )}
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="flex flex-col md:grid grid-cols-3 gap-3">
         {actions.map((item, idx) => (
           <Card.Root
             key={idx}

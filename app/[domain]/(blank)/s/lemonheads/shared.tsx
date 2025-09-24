@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import linkify from 'linkify-it';
 import { usePathname, useRouter } from 'next/navigation';
-import { match } from 'ts-pattern';
+import { match, P } from 'ts-pattern';
 
 import { Button, Card, Divider, drawer } from '$lib/components/core';
 import CommunityCard from '$lib/components/features/community/CommunityCard';
@@ -44,6 +44,7 @@ import exp from 'constants';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { LemonHeadsLockFeature } from '$lib/components/features/lemonheads/LemonHeadsLockFeature';
+import { LemonHeadsHubRightCol } from '$lib/components/features/lemonheads/LemonHeadsHubRightCol';
 
 export function HeroSection(props: { space?: Space }) {
   const me = useMe();
@@ -364,18 +365,20 @@ export function FeatureHubSection({ spaceId }: { spaceId?: string }) {
 
 function CardGroup({ title, onViewAll, children }: { title: string; onViewAll: () => void } & React.PropsWithChildren) {
   return (
-    <Card.Root className="bg-transparent">
-      <Card.Content className="flex flex-col gap-3">
-        <div className="flex justify-between items-center text-tertiary">
-          <p>{title}</p>
-          <i
-            className="icon-arrow-outward text-quaternary size-6 hover:text-primary cursor-pointer"
-            onClick={onViewAll}
-          />
-        </div>
-        {children}
-      </Card.Content>
-    </Card.Root>
+    <>
+      <Card.Root className="bg-transparent hidden md:block">
+        <Card.Content className="flex flex-col gap-3">
+          <div className="flex justify-between items-center text-tertiary">
+            <p>{title}</p>
+            <i
+              className="icon-arrow-outward text-quaternary size-6 hover:text-primary cursor-pointer"
+              onClick={onViewAll}
+            />
+          </div>
+          {children}
+        </Card.Content>
+      </Card.Root>
+    </>
   );
 }
 
@@ -387,7 +390,6 @@ export function NewFeedSection({ spaceId }: { spaceId?: string }) {
 
   const router = useRouter();
   const { createPost } = usePost();
-  const pathname = usePathname();
 
   const onPost = async (metadata: unknown) => {
     createPost({ metadata, feedAddress: LEMONADE_FEED_ADDRESS });
@@ -397,33 +399,10 @@ export function NewFeedSection({ spaceId }: { spaceId?: string }) {
     router.push(`/posts/${slug}`);
   };
 
-  const { data: dataGetUpcomingEvents } = useQuery(GetSpaceEventsDocument, {
-    variables: {
-      space: spaceId,
-      limit: 3,
-      skip: 0,
-      endFrom: FROM_NOW,
-    },
-    skip: !spaceId,
-  });
-  const upcomingEvents = (dataGetUpcomingEvents?.getEvents || []) as Event[];
-
-  const { data: dataGetInvitationRank } = useQuery(GetLemonheadInvitationRankDocument, {
-    variables: { skip: 0, limit: 3 },
-  });
-  const invitationRank = dataGetInvitationRank?.getLemonheadInvitationRank.items || [];
-
-  const getUsernameOrWallet = (user: LemonheadUserInfo) => {
-    if (user.username) return user.username;
-    if (user.lemonhead_inviter_wallet) return truncateMiddle(user.lemonhead_inviter_wallet, 6, 4);
-    if (user.kratos_wallet_address) return truncateMiddle(user.kratos_wallet_address, 6, 4);
-    return '';
-  };
-
   const locked = !address || !data || (data && data.tokenId == 0);
 
   return (
-    <div className="flex gap-12">
+    <div className="flex flex-col-reverse md:flex-row gap-12">
       <div className="flex flex-col gap-5 flex-1">
         {locked ? (
           <LemonHeadsLockFeature
@@ -439,103 +418,7 @@ export function NewFeedSection({ spaceId }: { spaceId?: string }) {
         )}
       </div>
 
-      <div className="hidden md:block w-full max-w-[264px] space-y-4">
-        <LemonHeadsNFTCard />
-
-        {!locked && !!upcomingEvents.length && (
-          <CardGroup title="Upcoming Events" onViewAll={() => router.push(`${pathname}/events`)}>
-            {upcomingEvents.map((item) => (
-              <div key={item._id} className="flex items-center gap-3 group">
-                {!!item?.new_new_photos_expanded?.[0] && (
-                  <img
-                    className="aspect-square object-contain rounded-sm size-8 border border-(--color-card-border)"
-                    src={
-                      item.new_new_photos_expanded?.[0]
-                        ? generateUrl(item.new_new_photos_expanded[0], {
-                            resize: { height: 32, width: 32, fit: 'cover' },
-                          })
-                        : randomEventDP()
-                    }
-                    loading="lazy"
-                    alt={item.title}
-                  />
-                )}
-                <div>
-                  <p
-                    className="group-hover:underline line-clamp-1 cursor-pointer"
-                    onClick={() => router.push(`/e/${item.shortid}`)}
-                  >
-                    {item.title}
-                  </p>
-                  <p className="text-tertiary text-sm">
-                    {formatWithTimezone(item.start, `EEE, MMM dd 'at' hh:mm a`, item.timezone)}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </CardGroup>
-        )}
-
-        {!!invitationRank.length && (
-          <CardGroup title="Leaderboard" onViewAll={() => router.push(`${pathname}/leaderboards`)}>
-            {invitationRank.map((item, idx) => (
-              <div key={idx}>
-                <div className="flex gap-3 items-center flex-1">
-                  <div className="relative">
-                    <img
-                      src={userAvatar(item.user as unknown as User)}
-                      className="size-8 aspect-square rounded-full border"
-                    />
-                    <div className="absolute bottom-0 right-0 size-4 rounded-full border z-10">
-                      {match(item.rank)
-                        .with(1, () => (
-                          <div
-                            className="w-full h-full aspect-square flex items-center justify-center bg-overlay-primary mix-blend-overlay rounded-full"
-                            style={{
-                              background:
-                                'linear-gradient(135deg, #856220 15.43%, #F4E683 34.91%, #BF923D 50.85%, #4E341B 68.56%, #F1EA82 86.26%)',
-                            }}
-                          >
-                            <p className="text-xs">1</p>
-                          </div>
-                        ))
-                        .with(2, () => (
-                          <div
-                            className="w-full h-full aspect-square flex items-center justify-center bg-overlay-primary mix-blend-overlay rounded-full"
-                            style={{
-                              background:
-                                'linear-gradient(138deg, #3A3A3A 2.28%, #A4A4A4 19.8%, #606060 32.94%, #CECECE 50.16%, #8F8F8F 62.15%, #464646 78.69%, #696969 95.24%)',
-                            }}
-                          >
-                            <p className="text-xs">2</p>
-                          </div>
-                        ))
-                        .with(3, () => (
-                          <div
-                            className="w-full h-full aspect-square flex items-center justify-center bg-overlay-primary mix-blend-overlay rounded-full"
-                            style={{
-                              background:
-                                'linear-gradient(135deg, #9E8976 15.43%, #7A5E50 30.62%, #F6D0AB 47.37%, #9D774E 62.96%, #C99B70 82.05%, #795F52 93.35%)',
-                            }}
-                          >
-                            <p className="text-xs">3</p>
-                          </div>
-                        ))
-                        .otherwise(() => null)}
-                    </div>
-                  </div>
-                  <div>
-                    {(!item.user.name || item.user.display_name) && (
-                      <p>{item.user.name || item.user.display_name} Skylar Vetrovs</p>
-                    )}
-                    <p className="text-sm text-tertiary">{getUsernameOrWallet(item?.user as LemonheadUserInfo)}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </CardGroup>
-        )}
-      </div>
+      <LemonHeadsHubRightCol spaceId={spaceId} />
     </div>
   );
 }

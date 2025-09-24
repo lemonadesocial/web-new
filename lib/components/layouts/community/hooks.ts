@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import { Space } from '$lib/graphql/generated/backend/graphql';
 
-export function useSpaceMenu({ space }: { space: Space }) {
+export function useSpaceMenu({ space, isMobile }: { space: Space; isMobile?: boolean }) {
   const pathname = usePathname();
 
   const menu = useMemo(() => {
@@ -17,6 +17,14 @@ export function useSpaceMenu({ space }: { space: Space }) {
         { icon: 'icon-account-balance-outline', path: 'treasury', label: 'Treasury' },
         { icon: 'icon-bar-chart', path: 'leaderboards', label: 'Leader Boards' },
       ];
+
+      if (isMobile) {
+        menu = [
+          { icon: 'icon-home', path: '', label: 'Home' },
+          { icon: 'icon-ticket', path: 'events', label: 'Events' },
+          { icon: 'icon-bar-chart', path: 'leaderboards', label: 'Leader Boards' },
+        ];
+      }
     } else {
       menu = [
         {
@@ -44,7 +52,7 @@ export function useSpaceMenu({ space }: { space: Space }) {
     }
 
     return menu;
-  }, [pathname, space]);
+  }, [pathname, space, isMobile]);
 
   const isActive = (item: { path: string }) => {
     const uid = space.slug || space._id;

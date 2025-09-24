@@ -6,13 +6,13 @@ export function LemonHeadsTreasuryCard() {
           <i className="icon-account-balance-outline text-success-500" />
         </div>
 
-        <div className="flex flex-col gpa-1.5">
+        <div className="flex flex-col gap-1.5">
           <p>Treasury</p>
           <p className="text-secondary text-sm">Unlocks at 5,000 LemonHeads.</p>
         </div>
       </div>
 
-      <div className="hidden md:flex p-4 border-(length:--card-border-width) border-card-border  rounded-md flex-col gap-3">
+      <div className="hidden md:flex p-4 border-(length:--card-border-width) border-card-border rounded-md flex-col gap-3">
         <div className="flex justify-between">
           <div className="flex justify-center items-center rounded-full bg-success-500/16 size-[48px] aspect-square">
             <i className="icon-account-balance-outline text-success-500" />

@@ -25,7 +25,7 @@ export default async function Page(_props: { params: Promise<{ uid: string }> })
   const { subSpaces, spaceTags } = await prefetchData(space);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 pb-28 md:pb-20">
       <div>
         <div className="flex flex-col gap-2">
           <TitleSection className="md:text-3xl">Events</TitleSection>

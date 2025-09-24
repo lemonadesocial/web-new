@@ -1,10 +1,10 @@
 import React from 'react';
-
+import { notFound } from 'next/navigation';
 import { Space } from '$lib/graphql/generated/backend/graphql';
 import { getSpace } from '$lib/utils/getSpace';
-import { notFound } from 'next/navigation';
-import { HeroSectionProfile, ProfileInfoSection, UpcomingEventsCard } from '../shared';
-import { LemonHeadsNFTCard } from '$lib/components/features/lemonheads/cards/LemonHeadsNFTCard';
+import { LemonHeadsHubRightCol } from '$lib/components/features/lemonheads/LemonHeadsHubRightCol';
+
+import { HeroSectionProfile, ProfileInfoSection } from '../shared';
 import { Tabs } from './tabs';
 
 async function Layout({ children }: React.PropsWithChildren) {
@@ -14,7 +14,7 @@ async function Layout({ children }: React.PropsWithChildren) {
   if (!space) return notFound();
 
   return (
-    <div className="flex gap-12">
+    <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-12 pb-28 md:pb-20">
       <div className="flex flex-col gap-5">
         <HeroSectionProfile space={space} />
         <ProfileInfoSection />
@@ -23,10 +23,7 @@ async function Layout({ children }: React.PropsWithChildren) {
         {children}
       </div>
 
-      <div className="hidden md:block w-full max-w-[296px] space-y-4">
-        <LemonHeadsNFTCard />
-        <UpcomingEventsCard />
-      </div>
+      <LemonHeadsHubRightCol spaceId={space._id} options={{ nft: true, upcomingEvents: true, leaderboard: false }} />
     </div>
   );
 }

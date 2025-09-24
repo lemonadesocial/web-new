@@ -19,8 +19,8 @@ function Page() {
   return (
     <div className="flex flex-col gap-4 pb-20">
       <div className="flex justify-between items-center">
-        <h3 className="capitalize text-xl font-semibold">{tab}</h3>
-        <div className="flex gap-2 items-center">
+        <h3 className="hidden md:block capitalize text-xl font-semibold">{tab}</h3>
+        <div className="flex gap-2 items-center justify-between w-full md:w-fit">
           <Segment selected={tab} size="sm" items={tabs} onSelect={(item) => setTab(item.value)} />
           <Button icon="icon-plus" variant="secondary" size="sm" onClick={() => router.push('/create/community')} />
         </div>

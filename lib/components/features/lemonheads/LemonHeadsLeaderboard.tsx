@@ -79,7 +79,7 @@ export function LemonHeadsLeaderboard() {
         <div className="flex flex-col gap-3">
           <Card.Root>
             {(!!invitationRank.length || loading) && (
-              <Card.Header className="flex gap-4 bg-transparent">
+              <Card.Header className="flex gap-4 bg-transparent border-b-(length:--card-border-width)">
                 <p className="w-8 text-sm text-tertiary">Rank</p>
                 <p className="flex-1 text-sm text-tertiary">Inviter</p>
                 <p className="text-sm text-tertiary">Invites</p>
@@ -128,32 +128,33 @@ export function LemonHeadsLeaderboard() {
                     <div className="hidden only:block ">
                       <EmptyLeaderboard />
                     </div>
-
-                    {invitationRank.map((item, idx) => (
-                      <Card.Content key={idx} className={clsx('py-3', idx % 2 === 0 && 'backdrop-blur-sm')}>
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0 }}
-                          className="flex items-center gap-4"
-                        >
-                          <LemonheadLeaderBoardRank rank={item.rank} />
-                          <div className="flex gap-3 items-center flex-1">
-                            <img
-                              src={userAvatar(item?.user as unknown as User)}
-                              className="size-8 aspect-square rounded-full"
-                            />
-                            <p>{getUsernameOrWallet(item.user as LemonheadUserInfo)}</p>
-                          </div>
-                          <p className="">{item?.invitations_count}</p>
-                          {/* <div className="w-[62px] hidden md:block"> */}
-                          {/*   <Button variant="tertiary-alt" size="sm" className="rounded-full"> */}
-                          {/*     Follow */}
-                          {/*   </Button> */}
-                          {/* </div> */}
-                        </motion.div>
-                      </Card.Content>
-                    ))}
+                    <div className="divide-y-(length:--card-border-width)">
+                      {invitationRank.map((item, idx) => (
+                        <Card.Content key={idx} className={clsx('py-3', idx % 2 === 0 && 'backdrop-blur-sm')}>
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0 }}
+                            className="flex items-center gap-4"
+                          >
+                            <LemonheadLeaderBoardRank rank={item.rank} />
+                            <div className="flex gap-3 items-center flex-1">
+                              <img
+                                src={userAvatar(item?.user as unknown as User)}
+                                className="size-8 aspect-square rounded-full"
+                              />
+                              <p>{getUsernameOrWallet(item.user as LemonheadUserInfo)}</p>
+                            </div>
+                            <p className="">{item?.invitations_count}</p>
+                            {/* <div className="w-[62px] hidden md:block"> */}
+                            {/*   <Button variant="tertiary-alt" size="sm" className="rounded-full"> */}
+                            {/*     Follow */}
+                            {/*   </Button> */}
+                            {/* </div> */}
+                          </motion.div>
+                        </Card.Content>
+                      ))}
+                    </div>
                   </>
                 )}
               </motion.div>
