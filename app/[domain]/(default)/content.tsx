@@ -32,10 +32,6 @@ import { useAtomValue } from 'jotai';
 import { chainsMapAtom } from '$lib/jotai';
 import { GetVerifiedModal } from '$lib/components/features/modals/GetVerifiedModal';
 import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
-import { LEMONHEAD_CHAIN_ID } from '$lib/components/features/lemonheads/utils';
-import { ethers } from 'ethers';
-import { LemonheadNFTContract } from '$lib/utils/crypto';
-import Page from './communities/page';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 
 export function Content() {

@@ -33,7 +33,10 @@ function MenuTrigger({
   return (
     <div
       ref={refs?.setReference}
-      onClick={toggle}
+      onClick={(e) => {
+        e.stopPropagation();
+        toggle();
+      }}
       className={twMerge(className, clsx(disabled ? 'cursor-not-allowed' : 'cursor-pointer'))}
       aria-haspopup="true"
     >

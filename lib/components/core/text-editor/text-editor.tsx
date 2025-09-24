@@ -28,12 +28,19 @@ type TextEditorProps = {
   readOnly?: boolean;
   onFocus?: React.FocusEventHandler<HTMLDivElement>;
   onBlur?: React.FocusEventHandler<HTMLDivElement>;
+  onSelectionChange?: () => void;
 };
 
 export interface TextEditorRef {
   commands: {
     clearContent: () => void;
     insertContent: (content: string) => void;
+    toggleBold: () => void;
+    toggleItalic: () => void;
+  };
+  isActive: {
+    bold: () => boolean;
+    italic: () => boolean;
   };
 }
 
@@ -73,6 +80,7 @@ const TextEditor = forwardRef<TextEditorRef, TextEditorProps>(({
   readOnly = false,
   onFocus,
   onBlur,
+  onSelectionChange,
   label,
 }, ref) => {
   const editor = useEditor({
@@ -103,6 +111,9 @@ const TextEditor = forwardRef<TextEditorRef, TextEditorProps>(({
         onChange?.(editor.getHTML());
       }
     },
+    onSelectionUpdate() {
+      onSelectionChange?.();
+    },
   });
 
   React.useEffect(() => {
@@ -117,6 +128,12 @@ const TextEditor = forwardRef<TextEditorRef, TextEditorProps>(({
     commands: {
       clearContent: () => editor?.commands.clearContent(),
       insertContent: (content: string) => editor?.commands.insertContent(content),
+      toggleBold: () => editor?.chain().focus().toggleBold().run(),
+      toggleItalic: () => editor?.chain().focus().toggleItalic().run(),
+    },
+    isActive: {
+      bold: () => editor?.isActive('bold') ?? false,
+      italic: () => editor?.isActive('italic') ?? false,
     },
   }), [editor]);
 
@@ -124,7 +141,11 @@ const TextEditor = forwardRef<TextEditorRef, TextEditorProps>(({
 
   return (
     <>
-      <TextEditorBubbleMenu editor={editor} toolbar={toolbar.bubble} />
+      {
+        toolbar.bubble && (
+          <TextEditorBubbleMenu editor={editor} toolbar={toolbar.bubble} />
+        )
+      }
       {
         toolbar.float && (
           <TextEditorFloatingMenu editor={editor} toolbar={toolbar.float} directory={directory} />

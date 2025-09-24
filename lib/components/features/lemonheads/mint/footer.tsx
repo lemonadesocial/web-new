@@ -23,7 +23,7 @@ import { TraitExtends } from '$lib/trpc/lemonheads/types';
 import { appKit } from '$lib/utils/appkit';
 import { truncateMiddle } from '$lib/utils/string';
 
-import { ConnectWallet } from '../modals/ConnectWallet';
+import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from './provider';
 import { LEMONHEAD_CHAIN_ID } from './utils';

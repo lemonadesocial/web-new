@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useAtomValue } from 'jotai';
 import useMeasure from 'react-use-measure';
 
-import { Avatar, Button, Card, FileInput, Menu, MenuItem, modal, toast } from '$lib/components/core';
+import { Avatar, Button, Card, Menu, MenuItem, modal, toast } from '$lib/components/core';
 import { accountAtom } from '$lib/jotai';
 import { generatePostMetadata, getAccountAvatar } from '$lib/utils/lens/utils';
 
@@ -11,17 +11,18 @@ import { randomUserImage } from '$lib/utils/user';
 import { extractLinks } from '$lib/utils/string';
 import { LinkPreview } from '$lib/components/core/link';
 
-import { Event } from '$lib/graphql/generated/backend/graphql';
+import { Event, GetEventDocument } from '$lib/graphql/generated/backend/graphql';
 import { MediaFile, uploadFiles } from '$lib/utils/file';
 import { useLensConnect, usePost } from '$lib/hooks/useLens';
+import { defaultClient } from '$lib/graphql/request/instances';
 
-import { PostTextarea } from './PostTextarea';
+import { PostTextarea, PostTextareaRef } from './PostTextarea';
 import { ImageInput } from './ImageInput';
 import { EventPreview } from './EventPreview';
-import { AddEventModal } from './AddEventModal';
 import clsx from 'clsx';
 import { isMobile, isMobileOnly } from 'react-device-detect';
 import { AnimatePresence, motion } from 'framer-motion';
+import { PostToolbar } from './PostToolbar';
 
 type FeedOptionType = {
   label: string;
@@ -43,27 +44,109 @@ type PostComposerModalProps = {
   defaultValue?: string;
   autoFocus?: boolean;
   placeholder?: string;
+  post?: any;
 };
 
 export function PostComposerModal({
   defaultValue = '',
   placeholder = `What's on your mind?`,
+  post,
 }: PostComposerModalProps) {
   const account = useAtomValue(accountAtom);
   const handleLensConnect = useLensConnect();
-  const { createPost } = usePost();
+  const { createPost, updatePost } = usePost();
 
   const [ref, { height }] = useMeasure();
 
-  const [value, setValue] = React.useState(defaultValue);
+  const textareaRef = useRef<PostTextareaRef>(null);
+
+  const [value, setValue] = React.useState(() => {
+    if (post && 'content' in post.metadata) {
+      return post.metadata.content || '';
+    }
+    return defaultValue;
+  });
   const [selectedFeed, setSelectedFeed] = React.useState<keyof FeedOptionsType>('lemonade');
   const [files, setFiles] = React.useState<File[]>([]);
   const [isUploading, setIsUploading] = React.useState(false);
+  const [isLoadingImages, setIsLoadingImages] = React.useState(false);
   const [event, setEvent] = React.useState<Event | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isFocus, setIsFocus] = React.useState(false);
+  const [gif, setGif] = React.useState<string | undefined>(undefined);
+  const [isBoldActive, setIsBoldActive] = React.useState(false);
+  const [isItalicActive, setIsItalicActive] = React.useState(false);
 
+  const isEditing = !!post;
   const links = extractLinks(value);
+
+  React.useEffect(() => {
+    const loadExistingImages = async () => {
+      if (post && 'attachments' in post.metadata && post.metadata.attachments) {
+        const imageAttachments = post.metadata.attachments.filter(
+          (attachment: any) => attachment.__typename === 'MediaImage'
+        );
+
+        if (imageAttachments.length > 0) {
+          setIsLoadingImages(true);
+          try {
+            const filePromises = imageAttachments.map(async (attachment: any) => {
+              const imageAttachment = attachment as any;
+              const response = await fetch(imageAttachment.item);
+
+              if (!response.ok) {
+                throw new Error(`Failed to fetch image: ${response.status}`);
+              }
+
+              const blob = await response.blob();
+              const contentType = response.headers.get('content-type') || 'image/*';
+
+              return new File([blob], `image-${Date.now()}.${contentType.split('/')[1] || 'jpg'}`, {
+                type: contentType,
+                lastModified: Date.now(),
+              });
+            });
+
+            const loadedFiles = await Promise.all(filePromises);
+            setFiles(loadedFiles);
+          } catch (error) {
+            toast.error('Failed to load existing images');
+          } finally {
+            setIsLoadingImages(false);
+          }
+        }
+      }
+    };
+
+    loadExistingImages();
+  }, [post]);
+
+  React.useEffect(() => {
+    const loadExistingEvent = async () => {
+      if (post && post.metadata.__typename === 'EventMetadata') {
+        const eventMetadata = post.metadata as any;
+
+        const shortid = eventMetadata.location;
+
+        if (shortid) {
+          try {
+            const { data } = await defaultClient.query({
+              query: GetEventDocument,
+              variables: { shortid },
+              fetchPolicy: 'network-only',
+            });
+            if (data?.getEvent) {
+              setEvent(data.getEvent as Event);
+            }
+          } catch (error) {
+            toast.error('Failed to load existing event');
+          }
+        }
+      }
+    };
+
+    loadExistingEvent();
+  }, [post]);
 
   const handlePost = async () => {
     const content = value.trim();
@@ -77,20 +160,50 @@ export function PostComposerModal({
 
     try {
       setIsSubmitting(true);
-      await createPost({
-        metadata: generatePostMetadata({ content, images, event }),
-        feedAddress: FEED_OPTIONS[selectedFeed].address,
-      });
+
+      if (isEditing && post) {
+        await updatePost(post.id, generatePostMetadata({ content, images, event, gif }));
+      } else {
+        await createPost({
+          metadata: generatePostMetadata({ content, images, event, gif }),
+          feedAddress: FEED_OPTIONS[selectedFeed].address,
+        });
+      }
+
       setValue('');
       setFiles([]);
       setEvent(undefined);
+      setGif(undefined);
       modal.close();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to post');
+      toast.error(error instanceof Error ? error.message : `Failed to ${isEditing ? 'update' : 'post'}`);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  function handleEmojiSelect(emoji: string): void {
+    textareaRef.current?.insertEmoji(emoji);
+  }
+
+  function handleGifSelect(gifUrl: string): void {
+    setGif(gifUrl);
+  }
+
+  function updateFormatStates(): void {
+    setIsBoldActive(textareaRef.current?.isBoldActive() ?? false);
+    setIsItalicActive(textareaRef.current?.isItalicActive() ?? false);
+  }
+
+  function handleBoldSelect(): void {
+    textareaRef.current?.toggleBold();
+    setTimeout(updateFormatStates, 0);
+  }
+
+  function handleItalicSelect(): void {
+    textareaRef.current?.toggleItalic();
+    setTimeout(updateFormatStates, 0);
+  }
 
   return (
     <AnimatePresence>
@@ -99,7 +212,7 @@ export function PostComposerModal({
         initial={{ height: '100%' }}
         animate={{ height: isMobileOnly && isFocus ? `calc(100dvh - ${height - 140}px)` : '100%' }}
       >
-        <Card.Root className="w-full h-full md:h-auto md:w-[640px] flex flex-col">
+        <Card.Root className="w-full h-full md:h-auto md:w-[640px] flex flex-col overflow-visible">
           <Card.Header className="bg-transparent flex justify-between items-center w-full px-4 py-3 md:hidden">
             <Button
               icon="icon-chevron-left"
@@ -110,9 +223,9 @@ export function PostComposerModal({
             />
 
             <div className="flex items-center gap-2">
-              <FeedOptions selected={selectedFeed} onSelect={(opt) => setSelectedFeed(opt)} />
-              <Button size="sm" className="rounded-full" loading={isUploading || isSubmitting} onClick={handlePost}>
-                Post
+              {!isEditing && <FeedOptions selected={selectedFeed} onSelect={(opt) => setSelectedFeed(opt)} />}
+              <Button size="sm" className="rounded-full" loading={isUploading || isSubmitting || isLoadingImages} onClick={handlePost}>
+                {isEditing ? 'Update' : 'Post'}
               </Button>
             </div>
           </Card.Header>
@@ -123,9 +236,11 @@ export function PostComposerModal({
               </div>
               <div className="flex-1 break-all flex flex-col gap-5 overflow-auto no-scrollbar">
                 <PostTextarea
+                  ref={textareaRef}
                   value={value}
                   onBlur={() => setIsFocus(false)}
                   onFocus={() => setIsFocus(true)}
+                  onSelectionChange={updateFormatStates}
                   setValue={setValue}
                   placeholder={placeholder}
                   className={clsx('mt-2', isMobile && 'max-h-2/3!')}
@@ -136,21 +251,66 @@ export function PostComposerModal({
             </div>
             {account ? (
               <div className="p-4 border-t border-(--color-divider) space-y-4">
-                {files.length > 0 && <ImageInput value={files} onChange={setFiles} />}
+                {
+                  !!(gif || files.length > 0) && (
+                    <div className="flex gap-2">
+                      {
+                        gif && (
+                          <div className="relative group w-35 h-35 ">
+                            <img src={gif} className="w-full h-full object-cover rounded-sm border border-card-border" />
+                            <button
+                              type="button"
+                              className="absolute top-3 right-3 bg-overlay-secondary rounded-full w-6 h-6 flex items-center justify-center"
+                              onClick={() => setGif(undefined)}
+                            >
+                              <i className="icon-x text-tertiary size-[14px]" />
+                            </button>
+                          </div>
+                        )
+                      }
 
-                <div className="flex justify-between ">
-                  <Toolbar event={event} onAddEvent={(event) => setEvent(event)} onSelectFile={setFiles} />
+                      {files.length > 0 && <ImageInput value={files} onChange={setFiles} />}
+                    </div>
+                  )
+                }
+
+
+                {event && (
+                  <div className="relative">
+                    <EventPreview event={event} />
+                    <Button
+                      icon="icon-x size-[14]"
+                      variant="tertiary"
+                      className="rounded-full absolute top-3 right-3"
+                      size="xs"
+                      onClick={() => setEvent(undefined)}
+                    />
+                  </div>
+                )}
+
+                <div className="flex justify-between">
+                  <PostToolbar
+                    onAddEvent={(event) => setEvent(event)}
+                    onSelectFiles={setFiles}
+                    onSelectEmoji={handleEmojiSelect}
+                    onSelectGif={handleGifSelect}
+                    onSelectBold={handleBoldSelect}
+                    onSelectItalic={handleItalicSelect}
+                    isBoldActive={isBoldActive}
+                    isItalicActive={isItalicActive}
+                  />
 
                   <div className="items-center gap-2 hidden md:flex">
-                    <FeedOptions selected={selectedFeed} onSelect={(opt) => setSelectedFeed(opt)} />
+                    {!isEditing && <FeedOptions selected={selectedFeed} onSelect={(opt) => setSelectedFeed(opt)} />}
                     <Button
                       size="sm"
                       className="rounded-full"
                       disabled={!value.trim()}
-                      loading={isUploading || isSubmitting}
+                      loading={isUploading || isSubmitting || isLoadingImages}
                       onClick={handlePost}
+                      variant={isEditing ? 'secondary' : 'primary'}
                     >
-                      Post
+                      {isEditing ? 'Update' : 'Post'}
                     </Button>
                   </div>
                 </div>
@@ -215,52 +375,5 @@ export function FeedOptions({
         )}
       </Menu.Content>
     </Menu.Root>
-  );
-}
-
-export function Toolbar({
-  event,
-  onSelectFile,
-  onAddEvent,
-}: {
-  event?: Event;
-  onAddEvent: (event?: Event) => void;
-  onSelectFile: (file: File[]) => void;
-}) {
-  return (
-    <>
-      {event && (
-        <div className="relative">
-          <EventPreview event={event} />
-          <Button
-            icon="icon-x size-[14]"
-            variant="tertiary"
-            className="rounded-full absolute top-3 right-3"
-            size="xs"
-            onClick={() => {
-              onAddEvent(undefined);
-            }}
-          />
-        </div>
-      )}
-
-      <div className="flex items-center justify-between">
-        <div className="flex gap-4 items-center">
-          <FileInput onChange={onSelectFile} accept="image/*" multiple>
-            {(open) => <i className="icon-image size-5 text-[#60A5FA] cursor-pointer" onClick={open} />}
-          </FileInput>
-          <i
-            className="icon-ticket size-5 text-[#A78BFA] cursor-pointer"
-            onClick={() => {
-              modal.open(AddEventModal, {
-                props: {
-                  onConfirm: onAddEvent,
-                },
-              });
-            }}
-          />
-        </div>
-      </div>
-    </>
   );
 }

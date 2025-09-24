@@ -12,15 +12,15 @@ import { Pane } from '$lib/components/core/pane/pane';
 import { useAccount, useLemonadeUsername, usePost } from '$lib/hooks/useLens';
 import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
 
-import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
-import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
-import { EditProfileModal } from '../../lens-account/EditProfileModal';
-import { PostComposer } from '../../lens-feed/PostComposer';
+import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
+import { ClaimLemonadeUsernameModal } from '$lib/components/features/lens-account/ClaimLemonadeUsernameModal';
+import { EditProfileModal } from '$lib/components/features/lens-account/EditProfileModal';
+import { PostComposer } from '$lib/components/features/lens-feed/PostComposer';
+import { PostComposerModal } from '$lib/components/features/lens-feed/PostComposerModal';
 import { LemonHeadActionKind, useLemonHeadContext } from '../provider';
-import { PostComposerModal } from '../../lens-feed/PostComposerModal';
 import { LEMONHEAD_COLORS } from '../utils';
 
-const getImage = (args: { address: string; tokenId: string; color: string; portrait?: boolean }) =>
+export const getLemonHeadImage = (args: { address: string; tokenId: string; color: string; portrait?: boolean }) =>
   `/api/og/lemonheads?address=${args.address}&tokenId=${args.tokenId || 3}&color=${args.color}&portrait=${args.portrait || false}`;
 
 export function ClaimLemonHead() {
@@ -61,8 +61,13 @@ export function ClaimLemonHead() {
         </div>
         <div className="flex-1 flex flex-col items-center gap-5 justify-center w-[68%]">
           {(myAccount?.address || address) && (
-            <ImageLazyLoad
-              src={getImage({ address: myAccount?.address || address, tokenId: state.mint.tokenId, color, portrait })}
+            <LemonHeadsImageLazyLoad
+              src={getLemonHeadImage({
+                address: myAccount?.address || address,
+                tokenId: state.mint.tokenId,
+                color,
+                portrait,
+              })}
               className="border border-primary"
             />
           )}
@@ -141,7 +146,7 @@ export function SharedLemonheadsPane({
   const [color, setColor] = React.useState(_color);
 
   const image = address
-    ? getImage({ address: myAccount?.address || address, tokenId, color, portrait: imageType === 'portrait' })
+    ? getLemonHeadImage({ address: myAccount?.address || address, tokenId, color, portrait: imageType === 'portrait' })
     : '';
 
   const handleUpdateProfile = () => {
@@ -207,7 +212,7 @@ export function SharedLemonheadsPane({
           </p>
         </div>
 
-        <ImageLazyLoad src={image} size="small" />
+        <LemonHeadsImageLazyLoad src={image} size="small" />
 
         <div className="flex flex-col gap-4">
           <p className="text-lg">Personalize Your Card</p>
@@ -271,7 +276,7 @@ export function SharedLemonheadsPane({
   );
 }
 
-function ImageLazyLoad({
+export function LemonHeadsImageLazyLoad({
   src = '',
   className,
   size = 'normal',

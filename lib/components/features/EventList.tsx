@@ -4,12 +4,11 @@ import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 
 import { Avatar, Badge, Button, Card, Divider, Spacer } from '$lib/components/core';
-import { Address, Event, SpaceTag, User } from '$lib/graphql/generated/backend/graphql';
+import { Event, SpaceTag, User } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
 import { getEventCohosts, getEventPrice, isAttending } from '$lib/utils/event';
 import { convertFromUtcToTimezone, formatWithTimezone } from '$lib/utils/date';
-import { useRouter } from 'next/navigation';
 import { useMe } from '$lib/hooks/useMe';
 import React from 'react';
 
@@ -54,7 +53,6 @@ export function EventList({
           </div>
         );
       })}
-      <Spacer className="h-6" />
     </div>
   );
 }
@@ -126,7 +124,6 @@ function EventListSkeleton() {
           </div>
         </div>
       ))}
-      <Spacer className="h-6" />
     </div>
   );
 }
@@ -147,21 +144,29 @@ export function EventListCard({
   const me = useMe();
   if (loading) return <EventListCardSkeleton />;
   if (!events.length) return <EmptyComp />;
+
+  const list = Object.entries(
+    groupBy(events, ({ start, timezone }) => formatWithTimezone(new Date(start), 'yyyy-MM-dd', timezone)),
+  );
   return (
     <div className="flex flex-col">
-      {Object.entries(
-        groupBy(events, ({ start, timezone }) => formatWithTimezone(new Date(start), 'yyyy-MM-dd', timezone)),
-      ).map(([date, data]) => {
+      {list.map(([date, data], idx) => {
         const timezone = data?.[0]?.timezone;
+
         return (
-          <div className="flex flex-col relative" key={date}>
-            <div className="border-dashed border-l-2 border-l-[var(--color-divider)] absolute h-full left-1 top-2 z-10">
-              <div className="size-2 backdrop-blur-lg -ml-[5px] absolute">
-                <div className="size-2 rounded-full bg-quaternary" />
+          <div className="flex" key={date}>
+            <div
+              className={clsx(
+                'border-l-2 border-dashed border-l-[var(--color-divider)] pt-2 relative',
+                idx === 0 && 'mt-2 pt-0!',
+              )}
+            >
+              <div className="size-2 backdrop-blur-lg rounded-full -ml-[5px] absolute">
+                <div className="size-2 rounded-full bg-(--color-divider)" />
               </div>
             </div>
 
-            <div className="ml-5">
+            <div className="ml-4 w-full">
               <p className="text-md text-tertiary font-medium">
                 <span className="text-primary">{formatWithTimezone(new Date(date), 'MMM dd ', timezone)}</span>{' '}
                 {formatWithTimezone(new Date(date), 'EEEE', timezone)}
@@ -181,24 +186,12 @@ export function EventListCard({
                     }}
                   />
                 ))}
+                {idx < list.length - 1 && <div className="h-3" />}
               </div>
             </div>
-
-            <Spacer className="h-6" />
           </div>
         );
       })}
-      {/* <div className="flex flex-col relative"> */}
-      {/*   <div className="border-dashed border-l-2 absolute h-full left-1 top-2 z-10"> */}
-      {/*     <div className="size-2 bg-background -ml-[5px] absolute"> */}
-      {/*       <div className="size-2 rounded-full bg-quaternary " /> */}
-      {/*     </div> */}
-      {/*   </div> */}
-      {/* </div> */}
-      {/* <div className="ml-5 mt-0.5"> */}
-      {/*   <p className="text-sm text-tertiary">No more events to see here!</p> */}
-      {/* </div> */}
-      {/* <Spacer className="h-6" /> */}
     </div>
   );
 }
@@ -371,8 +364,8 @@ function EventListCardSkeleton() {
       {Object.entries({ 1: [1, 2], 2: [1], 3: [1, 2, 3] }).map(([date, data]) => (
         <div className="flex flex-col relative" key={date}>
           <div className="border-dashed border-l-2 border-l-[var(--color-divider)] absolute h-full left-1 top-2 z-10">
-            <div className="size-2 backdrop-blur-lg -ml-[5px] absolute">
-              <div className="size-2 rounded-full bg-quaternary" />
+            <div className="size-2 backdrop-blur-lg rounded-full -ml-[5px] absolute">
+              <div className="size-2 rounded-full bg-(--color-divider)" />
             </div>
           </div>
           <div className="ml-5 mt-1">

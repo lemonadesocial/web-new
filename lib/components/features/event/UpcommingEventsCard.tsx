@@ -1,12 +1,12 @@
 'use client';
-import { format } from "date-fns";
-import { useRouter } from "next/navigation";
+import { format } from 'date-fns';
+import { useRouter } from 'next/navigation';
 
-import { File, GetUpcomingEventsDocument } from "$lib/graphql/generated/backend/graphql";
-import { useQuery } from "$lib/graphql/request";
-import { useMe } from "$lib/hooks/useMe";
-import { generateUrl } from "$lib/utils/cnd";
-import { randomEventDP } from "$lib/utils/user";
+import { File, GetUpcomingEventsDocument } from '$lib/graphql/generated/backend/graphql';
+import { useQuery } from '$lib/graphql/request';
+import { useMe } from '$lib/hooks/useMe';
+import { generateUrl } from '$lib/utils/cnd';
+import { randomEventDP } from '$lib/utils/user';
 
 export function UpcommingEventsCard() {
   const me = useMe();
@@ -32,12 +32,16 @@ export function UpcommingEventsCard() {
             onClick={() => router.push(`/e/${event.shortid}`)}
           >
             <img
-              src={event.new_new_photos_expanded?.[0] ? generateUrl(event.new_new_photos_expanded[0] as File) : randomEventDP()}
+              src={
+                event.new_new_photos_expanded?.[0]
+                  ? generateUrl(event.new_new_photos_expanded[0] as File)
+                  : randomEventDP()
+              }
               className="size-8 rounded-sm border"
             />
             <div>
               <p>{event.title}</p>
-              <p className="text-tertiary text-sm">{format(new Date(event.start), 'EEE, MMM d \'at\' h:mm a')}</p>
+              <p className="text-tertiary text-sm">{format(new Date(event.start), "EEE, MMM d 'at' h:mm a")}</p>
             </div>
           </div>
         ))}

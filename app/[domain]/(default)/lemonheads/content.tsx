@@ -7,7 +7,8 @@ import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { usePost } from '$lib/hooks/useLens';
 import { LEMONADE_FEED_ADDRESS } from '$lib/utils/constants';
 import { useRouter } from 'next/navigation';
-import { LockFeature, RightCol } from './shared';
+import { LemonHeadsRightCol } from '$lib/components/features/lemonheads/LemonheadsRightCol';
+import { LemonHeadsLockFeature } from '$lib/components/features/lemonheads/LemonHeadsLockFeature';
 
 export function Content() {
   const router = useRouter();
@@ -26,7 +27,7 @@ export function Content() {
     <div className="flex max-sm:flex-col-reverse max-sm:gap-5 gap-12">
       <div className="space-y-4 w-full">
         {!data || (data && data.tokenId == 0) ? (
-          <LockFeature
+          <LemonHeadsLockFeature
             title="Newsfeed is Locked"
             subtitle="Claim your LemonHead & become a part of an exclusive community."
             icon="icon-newspaper"
@@ -39,7 +40,7 @@ export function Content() {
         )}
       </div>
 
-      <RightCol />
+      <LemonHeadsRightCol />
     </div>
   );
 }
