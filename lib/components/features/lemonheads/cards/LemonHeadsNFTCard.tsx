@@ -14,7 +14,7 @@ export function LemonHeadsNFTCard() {
 
   if (!address || !data || (data && data.tokenId == 0))
     return (
-      <div className="backdrop-blur-md p-4 rounded-md space-y-3 border-(length:--card-border-width)">
+      <div className="hidden md:block backdrop-blur-md p-4 rounded-md space-y-3 border-(length:--card-border-width)">
         <img src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`} className="rounded-sm" />
         <div>
           <p>Unlock Access</p>
