@@ -110,7 +110,8 @@ export default function Page() {
                   { label: 'Past', value: 'past' },
                 ]}
               />
-
+            </div>
+            <div className="flex gap-2">
               <Menu.Root className="w-[132px]">
                 <Menu.Trigger>
                   <div className="btn btn-tertiary rounded-sm">
@@ -143,13 +144,9 @@ export default function Page() {
                   }
                 </Menu.Content>
               </Menu.Root>
+
+              <Button icon="icon-plus" variant="secondary" size="sm" onClick={() => router.push('/create/event')} />
             </div>
-            <Button
-              icon="icon-edit-square"
-              variant="secondary"
-              size="sm"
-              onClick={() => router.push('/create/event')}
-            />
           </div>
         </div>
 

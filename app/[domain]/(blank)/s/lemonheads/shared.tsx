@@ -344,6 +344,7 @@ export function FeatureHubSection({ spaceId }: { spaceId?: string }) {
           <Button
             variant="tertiary-alt"
             size="sm"
+            className="hidden md:block"
             onClick={() => {
               //TODO: should replace lemonheads with uid instead of after launched
               router.push('/s/lemonheads/featured-hubs');
@@ -351,6 +352,16 @@ export function FeatureHubSection({ spaceId }: { spaceId?: string }) {
           >
             View All ({list.length})
           </Button>
+          <Button
+            variant="tertiary-alt"
+            size="sm"
+            className="md:hidden"
+            icon="icon-arrow-outward"
+            onClick={() => {
+              //TODO: should replace lemonheads with uid instead of after launched
+              router.push('/s/lemonheads/featured-hubs');
+            }}
+          ></Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
