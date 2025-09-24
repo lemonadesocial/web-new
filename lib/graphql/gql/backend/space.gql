@@ -56,6 +56,13 @@ fragment Space on Space {
   theme_data
   sub_spaces
   lens_feed_id
+  council_members {
+    user {
+      _id
+      image_avatar
+    }
+    wallet
+  }
 }
 
 fragment SpaceTagFragment on SpaceTag {

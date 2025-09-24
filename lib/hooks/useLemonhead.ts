@@ -2,12 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import { ethers } from 'ethers';
 
-import ERC721 from '$lib/abis/ERC721.json';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { useAppKitAccount } from '$lib/utils/appkit';
 import { chainsMapAtom } from '$lib/jotai';
-import { LEMONHEAD_CHAIN_ID } from '$lib/components/features/lemonheads/mint/utils';
 import { LemonheadNFTContract } from '$lib/utils/crypto';
+import { LEMONHEAD_CHAIN_ID } from '$lib/components/features/lemonheads/mint/utils';
 
 async function fetchLemonheadData(address: string, chainsMap: Record<string, Chain>) {
   const data = { tokenId: 0, image: '', totalMinted: 0 };
