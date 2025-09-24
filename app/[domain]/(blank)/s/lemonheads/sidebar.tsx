@@ -57,20 +57,22 @@ const Sidebar = ({ space }: { space: Space }) => {
           })}
         </div>
 
-        <div className="py-3 flex flex-col gap-2 items-center">
-          <Link href={`/s/${uid}/profile`}>
-            <Button
-              variant={pathname === '/s/lemonheads/profile' ? 'secondary' : 'flat'}
-              size="lg"
-              className="max-h-[64px]! aspect-square"
-            >
-              <Avatar
-                className="size-8 rounded-full aspect-square"
-                src={account ? account?.metadata?.picture || getAccountAvatar(account) : userAvatar(me)}
-              />
-            </Button>
-          </Link>
-        </div>
+        {me && (
+          <div className="py-3 flex flex-col gap-2 items-center">
+            <Link href={`/s/${uid}/profile`}>
+              <Button
+                variant={pathname === '/s/lemonheads/profile' ? 'secondary' : 'flat'}
+                size="lg"
+                className="max-h-[64px]! aspect-square"
+              >
+                <Avatar
+                  className="size-8 rounded-full aspect-square"
+                  src={account ? account?.metadata?.picture || getAccountAvatar(account) : userAvatar(me)}
+                />
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

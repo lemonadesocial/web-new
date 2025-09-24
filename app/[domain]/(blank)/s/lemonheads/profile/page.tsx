@@ -17,17 +17,13 @@ function Page() {
   };
 
   const onSelectPost = (slug: string) => {
-    router.push(`/posts/${slug}`);
+    router.push(`/s/lemonheads/posts/${slug}`);
   };
 
   return (
     <div className="flex flex-col gap-5">
-      <PostComposer onPost={onPost} showFeedOptions />
-      {match(account?.address)
-        .with(account?.address, () => <FeedPosts feedAddress={account?.address} onSelectPost={onSelectPost} />)
-        .otherwise(() => (
-          <FeedPosts feedAddress={LEMONADE_FEED_ADDRESS} onSelectPost={onSelectPost} />
-        ))}
+      <PostComposer onPost={onPost} showFeedOptions={false} />
+      {account?.address && <FeedPosts feedAddress={account?.address} onSelectPost={onSelectPost} />}
     </div>
   );
 }

@@ -27,6 +27,7 @@ type PostComposerProps = {
   showFeedOptions?: boolean;
   defaultValue?: string;
   autoFocus?: boolean;
+  renderLock?: React.ReactElement;
 };
 
 export function PostComposer({
@@ -34,7 +35,7 @@ export function PostComposer({
   onPost,
   showFeedOptions = true,
   defaultValue = '',
-  autoFocus,
+  renderLock,
 }: PostComposerProps) {
   const account = useAtomValue(accountAtom);
   const isDesktop = useMediaQuery('md');
@@ -149,35 +150,31 @@ export function PostComposer({
             onFocus={() => setIsActive(true)}
             onSelectionChange={updateFormatStates}
             className="mt-2"
-            disabled={!account}
+            disabled={!account || !!renderLock}
           />
 
           {links.length > 0 && <LinkPreview url={links[0]} />}
 
           <Divider className="h-1" />
 
-          {
-            !!(gif || files.length > 0) && (
-              <div className="flex gap-2">
-                {
-                  gif && (
-                    <div className="relative group w-35 h-35 ">
-                      <img src={gif} className="w-full h-full object-cover rounded-sm border border-card-border" />
-                      <button
-                        type="button"
-                        className="absolute top-3 right-3 bg-overlay-secondary rounded-full w-6 h-6 flex items-center justify-center"
-                        onClick={() => setGif(undefined)}
-                      >
-                        <i className="icon-x text-tertiary size-[14px]" />
-                      </button>
-                    </div>
-                  )
-                }
+          {!!(gif || files.length > 0) && (
+            <div className="flex gap-2">
+              {gif && (
+                <div className="relative group w-35 h-35 ">
+                  <img src={gif} className="w-full h-full object-cover rounded-sm border border-card-border" />
+                  <button
+                    type="button"
+                    className="absolute top-3 right-3 bg-overlay-secondary rounded-full w-6 h-6 flex items-center justify-center"
+                    onClick={() => setGif(undefined)}
+                  >
+                    <i className="icon-x text-tertiary size-[14px]" />
+                  </button>
+                </div>
+              )}
 
-                {files.length > 0 && <ImageInput value={files} onChange={setFiles} />}
-              </div>
-            )
-          }
+              {files.length > 0 && <ImageInput value={files} onChange={setFiles} />}
+            </div>
+          )}
 
           {event && (
             <div className="relative">
@@ -262,20 +259,33 @@ export function PostComposer({
         )}
       </div>
 
-      {!account && (
-        <div className="px-4 py-3 gap-3 flex items-center bg-card rounded-b-md">
-          <div className="flex items-center justify-center bg-error/16 size-9 rounded-full">
-            <i className="icon-lock size-5 text-error" />
-          </div>
-          <div className="flex-1">
-            <p>Posting is Locked</p>
-            <p className="text-tertiary text-sm">Connect wallet to start posting on Lemonade.</p>
-          </div>
-          <Button variant="secondary" className="rounded-full" onClick={handleLensConnect} size="sm">
-            Connect Wallet
-          </Button>
-        </div>
-      )}
+      {renderLock ||
+        (!account && (
+          <PostLocked title="Posting is Locked" subtitle="Connect wallet to start posting on Lemonade.">
+            <Button variant="secondary" className="rounded-full" onClick={handleLensConnect} size="sm">
+              Connect Wallet
+            </Button>
+          </PostLocked>
+        ))}
+    </div>
+  );
+}
+
+export function PostLocked({
+  title,
+  subtitle,
+  children,
+}: React.PropsWithChildren & { title: string; subtitle: string }) {
+  return (
+    <div className="px-4 py-3 gap-3 flex items-center bg-card rounded-b-md">
+      <div className="flex items-center justify-center bg-error/16 size-9 rounded-full">
+        <i className="icon-lock size-5 text-error" />
+      </div>
+      <div className="flex-1">
+        <p>{title}</p>
+        <p className="text-tertiary text-sm">{subtitle}</p>
+      </div>
+      {children}
     </div>
   );
 }

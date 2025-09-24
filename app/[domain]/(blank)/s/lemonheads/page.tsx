@@ -21,12 +21,8 @@ async function Page() {
       <JourneySection />
       <LemonheadsGallery />
       <FeatureHubSection spaceId={space._id} />
-      <>
-        <Divider className="h-2" />
-        <div>
-          <NewFeedSection space={space} />
-        </div>
-      </>
+      <Divider className="h-2" />
+      <NewFeedSection space={space} />
     </div>
   );
 }

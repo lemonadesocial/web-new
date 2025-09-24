@@ -2,21 +2,17 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 import linkify from 'linkify-it';
-import { usePathname, useRouter } from 'next/navigation';
-import { match, P } from 'ts-pattern';
+import { useRouter } from 'next/navigation';
 
-import { Button, Card, Divider, drawer } from '$lib/components/core';
+import { Button, Card, Divider, drawer, modal } from '$lib/components/core';
 import CommunityCard from '$lib/components/features/community/CommunityCard';
-import { CommunityThemeBuilder } from '$lib/components/features/theme-builder/CommunityThemeBuilder';
 
 import {
   Event,
   FollowSpaceDocument,
-  GetLemonheadInvitationRankDocument,
   GetSpaceDocument,
   GetSpaceEventsDocument,
   GetSubSpacesDocument,
-  LemonheadUserInfo,
   PublicSpace,
   Space,
   UnfollowSpaceDocument,
@@ -29,22 +25,21 @@ import { generateUrl } from '$lib/utils/cnd';
 import { communityAvatar } from '$lib/utils/community';
 import { ASSET_PREFIX, LEMONADE_DOMAIN, LEMONADE_FEED_ADDRESS, PROFILE_SOCIAL_LINKS } from '$lib/utils/constants';
 import { COMMUNITY_SOCIAL_LINKS } from '$lib/components/features/community/constants';
-import { PostComposer } from '$lib/components/features/lens-feed/PostComposer';
+import { PostComposer, PostLocked } from '$lib/components/features/lens-feed/PostComposer';
 import { FeedPosts } from '$lib/components/features/lens-feed/FeedPosts';
 import { useAccount, usePost } from '$lib/hooks/useLens';
 import { LemonHeadsProgressBar } from '$lib/components/features/lemonheads/LemonHeadsProgressBar';
-import { LemonHeadsNFTCard } from '$lib/components/features/lemonheads/cards/LemonHeadsNFTCard';
 import { formatWithTimezone } from '$lib/utils/date';
 import { randomEventDP, userAvatar } from '$lib/utils/user';
-import { truncateMiddle } from '$lib/utils/string';
 import { twMerge } from 'tailwind-merge';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { ProfilePane } from '$lib/components/features/pane';
-import exp from 'constants';
-import { useLemonhead } from '$lib/hooks/useLemonhead';
-import { useAppKitAccount } from '@reown/appkit/react';
-import { LemonHeadsLockFeature } from '$lib/components/features/lemonheads/LemonHeadsLockFeature';
 import { LemonHeadsHubRightCol } from '$lib/components/features/lemonheads/LemonHeadsHubRightCol';
+import { match } from 'ts-pattern';
+import { useAppKitAccount } from '@reown/appkit/react';
+import { ConnectWalletButton } from '$lib/components/features/auth/ConnectWalletButton';
+import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
+import { useLemonhead } from '$lib/hooks/useLemonhead';
 
 export function HeroSection(props: { space?: Space }) {
   const me = useMe();
@@ -397,7 +392,7 @@ const FROM_NOW = new Date().toISOString();
 export function NewFeedSection({ space }: { space: Space }) {
   const spaceId = space._id;
   const feedAddress = space.lens_feed_id || LEMONADE_FEED_ADDRESS;
-  const { address } = useAppKitAccount();
+  const { isConnected } = useAppKitAccount();
   const { data } = useLemonhead();
 
   const router = useRouter();
@@ -408,26 +403,56 @@ export function NewFeedSection({ space }: { space: Space }) {
   };
 
   const onSelectPost = (slug: string) => {
-    router.push(`/posts/${slug}`);
+    router.push(`/s/lemonheads/posts/${slug}`);
   };
 
-  const locked = !address || !data || (data && data.tokenId == 0);
+  // const locked = !address || !data || (data && data.tokenId == 0);
 
   return (
     <div className="flex flex-col-reverse md:flex-row gap-12">
       <div className="flex flex-col gap-5 flex-1">
-        {locked ? (
-          <LemonHeadsLockFeature
-            title="Newsfeed is Locked"
-            subtitle="Claim your LemonHead & become a part of an exclusive community."
-            icon="icon-newspaper"
-          />
-        ) : (
-          <>
-            <PostComposer onPost={onPost} showFeedOptions={false} />
-            <FeedPosts feedAddress={feedAddress} onSelectPost={onSelectPost} />
-          </>
-        )}
+        {/* {locked ? ( */}
+        {/*   <LemonHeadsLockFeature */}
+        {/*     title="Newsfeed is Locked" */}
+        {/*     subtitle="Claim your LemonHead & become a part of an exclusive community." */}
+        {/*     icon="icon-newspaper" */}
+        {/*   /> */}
+        {/* ) : ( */}
+        <PostComposer
+          onPost={onPost}
+          showFeedOptions={false}
+          renderLock={match(isConnected)
+            .with(false, () => (
+              <PostLocked title="Posting is Locked" subtitle="Connect wallet to start posting on Lemonade.">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="rounded-full"
+                  onClick={() => modal.open(ConnectWallet, { props: { onConnect: () => {} } })}
+                >
+                  Connect Wallet
+                </Button>
+              </PostLocked>
+            ))
+            .otherwise(() => {
+              if (!data || (data && data.tokenId == 0)) {
+                return (
+                  <PostLocked title="Posting is Locked" subtitle="Claim Lemonhead to start posting">
+                    <Button
+                      variant="secondary"
+                      className="rounded-full"
+                      onClick={() => router.push('/lemonheads/mint')}
+                      size="sm"
+                    >
+                      Claim Lemonhead
+                    </Button>
+                  </PostLocked>
+                );
+              }
+            })}
+        />
+        <FeedPosts feedAddress={LEMONADE_FEED_ADDRESS} onSelectPost={onSelectPost} />
+        {/* )} */}
       </div>
 
       <LemonHeadsHubRightCol spaceId={spaceId} />
