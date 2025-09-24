@@ -8,7 +8,6 @@ const tabData = [
   { label: 'Events', path: '/events' },
   { label: 'Communities', path: '/communities' },
   // { label: 'Collectibles', path: '/collectibles' },
-  { label: 'LemonHead', path: '/lemonhead' },
 ];
 
 export function Tabs() {
