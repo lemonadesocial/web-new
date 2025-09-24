@@ -409,7 +409,7 @@ export function NewFeedSection({ space }: { space: Space }) {
   // const locked = !address || !data || (data && data.tokenId == 0);
 
   return (
-    <div className="flex flex-col-reverse md:flex-row gap-12">
+    <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-12">
       <div className="flex flex-col gap-5 flex-1">
         {/* {locked ? ( */}
         {/*   <LemonHeadsLockFeature */}

@@ -277,13 +277,15 @@ export function PostLocked({
   children,
 }: React.PropsWithChildren & { title: string; subtitle: string }) {
   return (
-    <div className="px-4 py-3 gap-3 flex items-center bg-card rounded-b-md">
-      <div className="flex items-center justify-center bg-error/16 size-9 rounded-full">
-        <i className="icon-lock size-5 text-error" />
-      </div>
-      <div className="flex-1">
-        <p>{title}</p>
-        <p className="text-tertiary text-sm">{subtitle}</p>
+    <div className="px-4 py-3 gap-3 flex flex-col md:flex-row md:items-center bg-card rounded-b-md">
+      <div className="flex items-center gap-3 flex-1">
+        <div className="flex items-center justify-center bg-error/16 size-9 rounded-full">
+          <i className="icon-lock size-5 text-error" />
+        </div>
+        <div className="flex-1">
+          <p>{title}</p>
+          <p className="text-tertiary text-sm">{subtitle}</p>
+        </div>
       </div>
       {children}
     </div>
