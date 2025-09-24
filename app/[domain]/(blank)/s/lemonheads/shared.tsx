@@ -382,9 +382,10 @@ function CardGroup({ title, onViewAll, children }: { title: string; onViewAll: (
   );
 }
 
-/** WARN: LEMONADE_FEED_ADDRESS should replace from BE value based on current community  */
 const FROM_NOW = new Date().toISOString();
-export function NewFeedSection({ spaceId }: { spaceId?: string }) {
+export function NewFeedSection({ space }: { space: Space }) {
+  const spaceId = space._id;
+  const feedAddress = space.lens_feed_id || LEMONADE_FEED_ADDRESS;
   const { address } = useAppKitAccount();
   const { data } = useLemonhead();
 
@@ -392,7 +393,7 @@ export function NewFeedSection({ spaceId }: { spaceId?: string }) {
   const { createPost } = usePost();
 
   const onPost = async (metadata: unknown) => {
-    createPost({ metadata, feedAddress: LEMONADE_FEED_ADDRESS });
+    createPost({ metadata, feedAddress });
   };
 
   const onSelectPost = (slug: string) => {
@@ -413,7 +414,7 @@ export function NewFeedSection({ spaceId }: { spaceId?: string }) {
         ) : (
           <>
             <PostComposer onPost={onPost} showFeedOptions={false} />
-            <FeedPosts feedAddress={LEMONADE_FEED_ADDRESS} onSelectPost={onSelectPost} />
+            <FeedPosts feedAddress={feedAddress} onSelectPost={onSelectPost} />
           </>
         )}
       </div>

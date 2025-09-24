@@ -24,7 +24,7 @@ async function Page() {
       <>
         <Divider className="h-2" />
         <div>
-          <NewFeedSection spaceId={space._id} />
+          <NewFeedSection space={space} />
         </div>
       </>
     </div>
