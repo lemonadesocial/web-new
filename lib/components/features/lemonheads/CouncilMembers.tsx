@@ -120,7 +120,7 @@ function CouncilMemberCard({ member }: { member: SpaceCouncilMember }) {
         alt="Lemonhead NFT"
         className="w-20 h-20 rounded-full object-cover border-(length:--card-border-width) border-card-border"
       />
-      <p className="text-center">{member.user?.name || formatWallet(member.wallet)}</p>
+      <p className="text-center">{member.user?.display_name || member.user?.username || formatWallet(member.wallet)}</p>
     </div>
   );
 }

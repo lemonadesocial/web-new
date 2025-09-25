@@ -59,6 +59,8 @@ fragment Space on Space {
   council_members {
     user {
       _id
+      display_name
+      username
       image_avatar
     }
     wallet
