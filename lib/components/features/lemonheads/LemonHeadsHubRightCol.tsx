@@ -61,7 +61,7 @@ export function LemonHeadsHubRightCol({
   };
 
   return (
-    <div className="flex items-center gap-2 md:block w-full md:max-w-[264px] space-y-4 overflow-auto no-scrollbar">
+    <div className="flex items-center gap-2 md:block w-full md:w-[264px] space-y-4 overflow-auto no-scrollbar">
       {options.nft && <LemonHeadsNFTCard />}
 
       {!locked && !!upcomingEvents.length && options.upcomingEvents && (
