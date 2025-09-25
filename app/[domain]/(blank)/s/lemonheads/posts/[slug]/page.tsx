@@ -7,7 +7,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   if (!slug) return notFound();
 
   return (
-    <div className="mt-6">
+    <div className="md:mt-6">
       <FeedPostDetail postSlug={slug} />
     </div>
   );
