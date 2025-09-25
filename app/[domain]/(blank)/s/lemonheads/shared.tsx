@@ -451,7 +451,7 @@ export function NewFeedSection({ space }: { space: Space }) {
               }
             })}
         />
-        <FeedPosts feedAddress={LEMONADE_FEED_ADDRESS} onSelectPost={onSelectPost} />
+        <FeedPosts feedAddress={feedAddress} onSelectPost={onSelectPost} />
         {/* )} */}
       </div>
 
