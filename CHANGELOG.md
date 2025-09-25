@@ -1,5 +1,37 @@
 # Changelog
 
+## [6.15.0](https://github.com/lemonadesocial/web-new/compare/v6.14.0...v6.15.0) (2025-09-24)
+
+
+### Features
+
+* add event to lemonheads community ([a76d070](https://github.com/lemonadesocial/web-new/commit/a76d070baf89d708bf1dbd5b70cf44963144630e))
+* add gif ([7fd2291](https://github.com/lemonadesocial/web-new/commit/7fd2291502db4b67a31069d31d4ec4e1f4d6e6b5))
+* complete home page lemonheads community ([25953fd](https://github.com/lemonadesocial/web-new/commit/25953fd3ccb1faa82b01de3e3ee70506d64e4fc2))
+* delete post ([ccb8d1d](https://github.com/lemonadesocial/web-new/commit/ccb8d1d6f652ede9be8479a8b52a92220271652d))
+* edit post ([b6fc276](https://github.com/lemonadesocial/web-new/commit/b6fc2762697abe8b2c4fd7e1548e33aff848f40b))
+* enhance post textarea ([2da53a2](https://github.com/lemonadesocial/web-new/commit/2da53a24f0c214f1295b6f676328523cb34ff991))
+* implement logic check render lock post feeds ([697d8e5](https://github.com/lemonadesocial/web-new/commit/697d8e543619eed6ab37ae1a790a147fbc306138))
+* lemonheads gallery ([99eb88b](https://github.com/lemonadesocial/web-new/commit/99eb88bd811742d96fa89a139d5c624b66ed9223))
+* load len feed from space ([12171f5](https://github.com/lemonadesocial/web-new/commit/12171f5606a14cb8dd429128f02ab0c8b7e1e7e4))
+* remove lemonhead tab profile ([30fa4df](https://github.com/lemonadesocial/web-new/commit/30fa4df64135d6a16cf4416cf3b0c3b17597e2e0))
+* resolve feedback from lemonheads hub ([118493b](https://github.com/lemonadesocial/web-new/commit/118493bbd11f8e6da548bc606408a932b8f10011))
+* update border card ([a63c0be](https://github.com/lemonadesocial/web-new/commit/a63c0be0af7dbbe049639b63386da2343c46f510))
+* update border dp ([8747bd0](https://github.com/lemonadesocial/web-new/commit/8747bd012c1e354cc45630d59a04c03eed7ee324))
+* update border-width post feed ([00ffad3](https://github.com/lemonadesocial/web-new/commit/00ffad3b4ec080b53636283f45ae99155da3c45c))
+* update connect wallet button lock feature ([b163175](https://github.com/lemonadesocial/web-new/commit/b163175ce15f9a476f6a7889d3780d5b8354e8c8))
+* update download before set profile photo ([026d345](https://github.com/lemonadesocial/web-new/commit/026d34549e340854657371f0848b72b0c6176bc8))
+* update featured hubs ([60dec3f](https://github.com/lemonadesocial/web-new/commit/60dec3f3d5f67b124c10ee9b180b8a239c5c7e7e))
+* update font title ([71187b6](https://github.com/lemonadesocial/web-new/commit/71187b6e94241d36ba0162912dc87066050f0b2f))
+* update icon ui mobile view ([e05d5b6](https://github.com/lemonadesocial/web-new/commit/e05d5b69e715802c3a7876631d50fc800910d9a3))
+* update import path ([2c7493c](https://github.com/lemonadesocial/web-new/commit/2c7493c849d6766583d352626b94b06b18ab194c))
+* update leaderboard lemonheads community ([5c54942](https://github.com/lemonadesocial/web-new/commit/5c549426f67d6cbc08cfd8c859646278404d8e1b))
+* update locked content ([24ccf92](https://github.com/lemonadesocial/web-new/commit/24ccf92d43b0de8c43acce6bd70cb7b5ae14ad65))
+* update mobile view ([cbfe331](https://github.com/lemonadesocial/web-new/commit/cbfe3313cbe9a645f74dadc964e04fff7d097abf))
+* update post profile (user feed) ([d09d071](https://github.com/lemonadesocial/web-new/commit/d09d071283792a42fdb7fff267a0e7c0d35b3e56))
+* update profile lemonheads community ([25c53a0](https://github.com/lemonadesocial/web-new/commit/25c53a007806e877062c82805cbed95d98d08f92))
+* update profile page lemonheads community ([c69c3aa](https://github.com/lemonadesocial/web-new/commit/c69c3aa973cdb49f1ea8ede14a0946fc0394e3bb))
+
 ## [6.14.0](https://github.com/lemonadesocial/web-new/compare/v6.13.2...v6.14.0) (2025-09-19)
 
 
