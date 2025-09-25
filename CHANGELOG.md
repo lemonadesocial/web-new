@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.1.0](https://github.com/lemonadesocial/web-new/compare/v7.0.0...v7.1.0) (2025-09-25)
+
+
+### Features
+
+* update feed address ([305a2ec](https://github.com/lemonadesocial/web-new/commit/305a2ec810f2e89842f33c7b26dc724ef87cafba))
+
 ## [7.0.0](https://github.com/lemonadesocial/web-new/compare/v6.15.0...v7.0.0) (2025-09-25)
 
 
