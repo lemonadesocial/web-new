@@ -1,5 +1,25 @@
 # Changelog
 
+## [7.0.0](https://github.com/lemonadesocial/web-new/compare/v6.15.0...v7.0.0) (2025-09-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* council members
+
+### Features
+
+* add council title ([3a5c709](https://github.com/lemonadesocial/web-new/commit/3a5c709b6e523483aef945542b82272e5d672fa2))
+* council members ([7813e15](https://github.com/lemonadesocial/web-new/commit/7813e15c59c3507c7bc7b08d226b656e46a164eb))
+* resolve conflict style ([ac37d16](https://github.com/lemonadesocial/web-new/commit/ac37d16cde61d20f54478b65ad61a8ed009cc5b0))
+* update feed post detail ([7a19d43](https://github.com/lemonadesocial/web-new/commit/7a19d43dddcf743eb6a98f883ab500fee0d8216d))
+
+
+### Bug Fixes
+
+* layout auto scale based on content ([f91f11a](https://github.com/lemonadesocial/web-new/commit/f91f11a4ed0e4af45ad70e258ecfbe87ee3efcc6))
+* missing council display name ([637d315](https://github.com/lemonadesocial/web-new/commit/637d315e9d55fd6727f2da746ecb1a6214475505))
+
 ## [6.15.0](https://github.com/lemonadesocial/web-new/compare/v6.14.0...v6.15.0) (2025-09-24)
 
 
