@@ -10,6 +10,7 @@ import { formatWallet, LemonheadNFTContract } from '$lib/utils/crypto';
 import { Skeleton } from '$lib/components/core/skeleton';
 import { toast } from "$lib/components/core";
 import { LEMONHEAD_CHAIN_ID } from './mint/utils';
+import { TitleSection } from '$app/[domain]/(blank)/s/lemonheads/shared';
 
 export function CouncilMembers() {
   const { data, loading } = useQuery(GetSpaceDocument, {
@@ -36,29 +37,38 @@ export function CouncilMembers() {
 
   const councilMembers = (data?.getSpace as Space)?.council_members || [];
 
-  if (!councilMembers.length) return;
-
   return (
-    <div className="grid grid-cols-5 gap-5">
-      {councilMembers.map((member) => (
-        <CouncilMemberCard key={member.wallet} member={member} />
-      ))}
-      {
-        councilMembers.length < 5 && Array.from({ length: 5 - councilMembers.length }).map((_, index) => (
-          <div
-            key={index}
-            className="pt-6 px-4 pb-3 rounded-md border-(length:--card-border-width) border-card-border flex flex-col items-center gap-3 bg-card"
-          >
-            <div
-              className="w-20 h-20 rounded-full bg-primary/8 flex items-center justify-center cursor-pointer"
-              onClick={() => toast.success('Coming soon')}
-            >
-              <i className="icon-plus text-tertiary size-8" />
-            </div>
-            <p className="text-center text-tertiary">Apply</p>
+    <div className="space-y-6">
+      <div className="flex items-center gap-2">
+        <TitleSection className="text-2xl">Council</TitleSection>
+        <div className="tooltip">
+          <div className="tooltip-content backdrop-blur-md border-card text-left! p-3">
+            <p>Five LemonHeads entrusted with shaping proposals and helping manage the community treasury.</p>
           </div>
-        ))
-      } 
+          <i className="icon-question size-5 aspect-square text-quaternary" />
+        </div>
+      </div>
+      <div className="grid grid-cols-5 gap-5">
+        {councilMembers.map((member) => (
+          <CouncilMemberCard key={member.wallet} member={member} />
+        ))}
+        {
+          councilMembers.length < 5 && Array.from({ length: 5 - councilMembers.length }).map((_, index) => (
+            <div
+              key={index}
+              className="pt-6 px-4 pb-3 rounded-md border-(length:--card-border-width) border-card-border flex flex-col items-center gap-3 bg-card"
+            >
+              <div
+                className="w-20 h-20 rounded-full bg-primary/8 flex items-center justify-center cursor-pointer"
+                onClick={() => toast.success('Coming soon')}
+              >
+                <i className="icon-plus text-tertiary size-8" />
+              </div>
+              <p className="text-center text-tertiary">Apply</p>
+            </div>
+          ))
+        }
+      </div>
     </div>
   );
 }
