@@ -15,6 +15,7 @@
   --color-card-border: rgba(255, 255, 255, 0.04);
   --color-card-border-hover: rgba(255, 255, 255, 0.16);
   --color-card-hover: rgba(255, 255, 255, 0.08);
+  --card-border-width: 1px;
 
   --color-divider: rgba(255, 255, 255, 0.08);
 
@@ -22,8 +23,9 @@
   --color-overlay-secondary: rgba(32, 32, 34, 0.8);
   --color-overlay-backdrop: rgba(0, 0, 0, 0.6);
 
-  /* btn colors */
+  --color-lemonheads-progress-bar: var(--color-yellow-400);
 
+  /* btn colors */
   --btn-secondary-content: #000;
   --btn-secondary: #fff;
   --btn-secondary-hover: rgba(255, 255, 255, 0.8);

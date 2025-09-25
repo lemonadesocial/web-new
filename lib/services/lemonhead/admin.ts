@@ -18,7 +18,7 @@ type Cache = {
 }
 
 export const getApproval = async (wallet: string, look: string, sponsor?: string) => {
-  return request<{ signature: string; price: string }>(`/lemonhead/approval`, 'POST', { wallet, look, sponsor });
+  return request<{ signature: string; price: string; inviter?: string }>(`/lemonhead/approval`, 'POST', { wallet, look, sponsor });
 };
 
 export const getCache = async (look: string) => {

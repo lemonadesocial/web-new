@@ -86,7 +86,7 @@ export function EventGuestSideContent({ event }: { event: Event }) {
         <PendingCohostRequest event={event} />
         <CommunitySection event={event} />
         <HostedBySection event={event} />
-        <AttendeesSection eventId={event._id} />
+        <AttendeesSection event={event} />
       </div>
 
       <div className="flex-1 flex flex-col gap-6 w-full">
@@ -157,13 +157,13 @@ export function EventGuestSideContent({ event }: { event: Event }) {
         {(event.layout_sections || DEFAULT_LAYOUT_SECTIONS)?.map((item) => {
           switch (item.id) {
             case 'registration':
-              return event ? <EventAccess event={event} /> : null;
+              return event ? <EventAccess key={item.id} event={event} /> : null;
             case 'about':
-              return <AboutSection event={event} />;
+              return <AboutSection key={item.id} event={event} />;
             case 'collectibles':
-              return attending ? <EventCollectibles event={event} /> : null;
+              return attending ? <EventCollectibles key={item.id} event={event} /> : null;
             case 'location':
-              return <LocationSection event={event} />;
+              return <LocationSection key={item.id} event={event} />;
 
             default:
               break;
@@ -174,7 +174,7 @@ export function EventGuestSideContent({ event }: { event: Event }) {
         <GallerySection event={event} />
         <div className="flex flex-col gap-6 md:hidden">
           <CommunitySection event={event} />
-          <AttendeesSection eventId={event._id} />
+          <AttendeesSection event={event} />
         </div>
         <Spacer className="h-8" />
       </div>

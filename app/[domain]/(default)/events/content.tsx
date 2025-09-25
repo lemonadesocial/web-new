@@ -52,7 +52,7 @@ export function EventsContent() {
     if (Number(filter.by) === FilterItem.Hosting) showHost = true;
     if (Number(filter.by) === FilterItem.Attending) showHost = false;
 
-    let unpublished = Number(filter.by) === FilterItem.Drafts ? true : undefined;
+    const unpublished = Number(filter.by) === FilterItem.Drafts ? true : undefined;
 
     const variables = {
       limit: 100,
@@ -109,7 +109,9 @@ export function EventsContent() {
                   { label: 'Past', value: 'past' },
                 ]}
               />
+            </div>
 
+            <div className="flex gap-2">
               <Menu.Root className="w-[132px]">
                 <Menu.Trigger>
                   <div className="btn btn-tertiary rounded-sm">
@@ -142,8 +144,8 @@ export function EventsContent() {
                   }
                 </Menu.Content>
               </Menu.Root>
+              <Button icon="icon-plus" size="sm" onClick={() => router.push('/create/event')} />
             </div>
-            <Button icon="icon-edit-square" size="sm" onClick={() => router.push('/create/event')} />
           </div>
         </PageTitle>
 

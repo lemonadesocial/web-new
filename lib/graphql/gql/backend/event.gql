@@ -154,6 +154,7 @@ query GetEvent($id: MongoID, $shortid: String) {
       active
       ticket_types
     }
+    hide_attending
   }
 }
 
@@ -576,6 +577,9 @@ mutation UpdateEventSettings($id: MongoID!, $input: EventInput!) {
     _id
     title
     description
+    start
+    end
+    timezone
     theme_data
     address {
       street_1
@@ -747,6 +751,16 @@ query GetEventInvitedStatistics($id: MongoID!, $statuses: [InvitationResponse!],
   }
 }
 
+query GetEventGuestsStatistics($event: MongoID!) {
+  getEventGuestsStatistics(event: $event) {
+    going
+    pending_approval
+    pending_invite
+    declined
+    checked_in
+  }
+}
+
 mutation UpdateEventRegistrationForm($id: MongoID!, $input: EventInput!) {
   updateEvent(_id: $id, input: $input) {
     rsvp_wallet_platforms {
@@ -756,8 +770,34 @@ mutation UpdateEventRegistrationForm($id: MongoID!, $input: EventInput!) {
   }
 }
 
-query ListEventGuests($event: MongoID!, $skip: Int, $limit: Int, $search: String) {
-  listEventGuests(event: $event, skip: $skip, limit: $limit, search: $search) {
+query ListEventGuests(
+  $ticketTypes: [MongoID!]
+  $going: Boolean
+  $pendingApproval: Boolean
+  $pendingInvite: Boolean
+  $declined: Boolean
+  $checkedIn: Boolean
+  $sortBy: ListEventGuestsSortBy
+  $sortOrder: SortOrder
+  $event: MongoID!
+  $search: String
+  $limit: Int
+  $skip: Int
+) {
+  listEventGuests(
+    ticket_types: $ticketTypes
+    going: $going
+    pending_approval: $pendingApproval
+    pending_invite: $pendingInvite
+    declined: $declined
+    checked_in: $checkedIn
+    sort_by: $sortBy
+    sort_order: $sortOrder
+    event: $event
+    search: $search
+    limit: $limit
+    skip: $skip
+  ) {
     items {
       join_request {
         _id

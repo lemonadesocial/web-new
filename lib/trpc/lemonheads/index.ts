@@ -1,9 +1,10 @@
 import axios, { Axios } from 'axios';
-import { TraitType, Trait as TraitCore } from '$lib/services/lemonhead/core';
+import { TraitType, Trait as TraitCore, Filter } from '$lib/services/lemonhead/core';
 import { GRAPHQL_URL } from '$lib/utils/constants';
 import { LemonHeadsColor, LemonHeadsLayer } from './types';
 import Trait from './trait';
 import { request, gql } from 'graphql-request';
+import { getRandomLook } from '$lib/services/lemonhead';
 
 /**
  * @description BuildQueryParams
@@ -127,6 +128,10 @@ class LemonHead {
 
     const res = await request<{ getLemonheadSupportData: LemonHeadsColor[] }>(GRAPHQL_URL, document);
     return { data: { items: (res?.getLemonheadSupportData || []) as LemonHeadsColor[] } };
+  }
+
+  getRandomLayers(baseLayers: Filter[]) {
+    return getRandomLook(baseLayers);
   }
 
   buildQuery({ traits, limit, page }: BuildQueryParams) {

@@ -1,5 +1,154 @@
 # Changelog
 
+## [6.15.0](https://github.com/lemonadesocial/web-new/compare/v6.14.0...v6.15.0) (2025-09-24)
+
+
+### Features
+
+* add event to lemonheads community ([a76d070](https://github.com/lemonadesocial/web-new/commit/a76d070baf89d708bf1dbd5b70cf44963144630e))
+* add gif ([7fd2291](https://github.com/lemonadesocial/web-new/commit/7fd2291502db4b67a31069d31d4ec4e1f4d6e6b5))
+* complete home page lemonheads community ([25953fd](https://github.com/lemonadesocial/web-new/commit/25953fd3ccb1faa82b01de3e3ee70506d64e4fc2))
+* delete post ([ccb8d1d](https://github.com/lemonadesocial/web-new/commit/ccb8d1d6f652ede9be8479a8b52a92220271652d))
+* edit post ([b6fc276](https://github.com/lemonadesocial/web-new/commit/b6fc2762697abe8b2c4fd7e1548e33aff848f40b))
+* enhance post textarea ([2da53a2](https://github.com/lemonadesocial/web-new/commit/2da53a24f0c214f1295b6f676328523cb34ff991))
+* implement logic check render lock post feeds ([697d8e5](https://github.com/lemonadesocial/web-new/commit/697d8e543619eed6ab37ae1a790a147fbc306138))
+* lemonheads gallery ([99eb88b](https://github.com/lemonadesocial/web-new/commit/99eb88bd811742d96fa89a139d5c624b66ed9223))
+* load len feed from space ([12171f5](https://github.com/lemonadesocial/web-new/commit/12171f5606a14cb8dd429128f02ab0c8b7e1e7e4))
+* remove lemonhead tab profile ([30fa4df](https://github.com/lemonadesocial/web-new/commit/30fa4df64135d6a16cf4416cf3b0c3b17597e2e0))
+* resolve feedback from lemonheads hub ([118493b](https://github.com/lemonadesocial/web-new/commit/118493bbd11f8e6da548bc606408a932b8f10011))
+* update border card ([a63c0be](https://github.com/lemonadesocial/web-new/commit/a63c0be0af7dbbe049639b63386da2343c46f510))
+* update border dp ([8747bd0](https://github.com/lemonadesocial/web-new/commit/8747bd012c1e354cc45630d59a04c03eed7ee324))
+* update border-width post feed ([00ffad3](https://github.com/lemonadesocial/web-new/commit/00ffad3b4ec080b53636283f45ae99155da3c45c))
+* update connect wallet button lock feature ([b163175](https://github.com/lemonadesocial/web-new/commit/b163175ce15f9a476f6a7889d3780d5b8354e8c8))
+* update download before set profile photo ([026d345](https://github.com/lemonadesocial/web-new/commit/026d34549e340854657371f0848b72b0c6176bc8))
+* update featured hubs ([60dec3f](https://github.com/lemonadesocial/web-new/commit/60dec3f3d5f67b124c10ee9b180b8a239c5c7e7e))
+* update font title ([71187b6](https://github.com/lemonadesocial/web-new/commit/71187b6e94241d36ba0162912dc87066050f0b2f))
+* update icon ui mobile view ([e05d5b6](https://github.com/lemonadesocial/web-new/commit/e05d5b69e715802c3a7876631d50fc800910d9a3))
+* update import path ([2c7493c](https://github.com/lemonadesocial/web-new/commit/2c7493c849d6766583d352626b94b06b18ab194c))
+* update leaderboard lemonheads community ([5c54942](https://github.com/lemonadesocial/web-new/commit/5c549426f67d6cbc08cfd8c859646278404d8e1b))
+* update locked content ([24ccf92](https://github.com/lemonadesocial/web-new/commit/24ccf92d43b0de8c43acce6bd70cb7b5ae14ad65))
+* update mobile view ([cbfe331](https://github.com/lemonadesocial/web-new/commit/cbfe3313cbe9a645f74dadc964e04fff7d097abf))
+* update post profile (user feed) ([d09d071](https://github.com/lemonadesocial/web-new/commit/d09d071283792a42fdb7fff267a0e7c0d35b3e56))
+* update profile lemonheads community ([25c53a0](https://github.com/lemonadesocial/web-new/commit/25c53a007806e877062c82805cbed95d98d08f92))
+* update profile page lemonheads community ([c69c3aa](https://github.com/lemonadesocial/web-new/commit/c69c3aa973cdb49f1ea8ede14a0946fc0394e3bb))
+
+## [6.14.0](https://github.com/lemonadesocial/web-new/compare/v6.13.2...v6.14.0) (2025-09-19)
+
+
+### Features
+
+* update gitignore ([dd605fc](https://github.com/lemonadesocial/web-new/commit/dd605fccc3e45b6103c763afdcb92ca8cc07a74f))
+
+
+### Bug Fixes
+
+* reduce size on lemonheads mint flow ([90c8ef2](https://github.com/lemonadesocial/web-new/commit/90c8ef231686ec38739100e07b23a9062f4ed890))
+* update missing shared action ([cd57669](https://github.com/lemonadesocial/web-new/commit/cd57669453950fc5d3d9fa5c8a7be3fbe734dcac))
+
+## [6.13.2](https://github.com/lemonadesocial/web-new/compare/v6.13.1...v6.13.2) (2025-09-18)
+
+
+### Bug Fixes
+
+* update text ([e6bb8dc](https://github.com/lemonadesocial/web-new/commit/e6bb8dc5c162c1aa3994168d4515be1d10f61e58))
+
+## [6.13.1](https://github.com/lemonadesocial/web-new/compare/v6.13.0...v6.13.1) (2025-09-18)
+
+
+### Bug Fixes
+
+* update event state hide_attending on manage event ([ed820df](https://github.com/lemonadesocial/web-new/commit/ed820df98ecdfc07b5c4463b06bee3aa7b1fdb71))
+
+## [6.13.0](https://github.com/lemonadesocial/web-new/compare/v6.12.2...v6.13.0) (2025-09-18)
+
+
+### Features
+
+* display suffle at customize step ([4912eb4](https://github.com/lemonadesocial/web-new/commit/4912eb4fb69ba7c4426ab0bdbbe6be9fca235172))
+* remove console ([975db82](https://github.com/lemonadesocial/web-new/commit/975db8233499c7ea17e34fa2560b459ad61982f5))
+* update loading and empty state on leaderboard lemonheads ([e9ea799](https://github.com/lemonadesocial/web-new/commit/e9ea7997682b1632e8503dc55cf4647638e06437))
+* update shared action on right column lemonheads ([2e45080](https://github.com/lemonadesocial/web-new/commit/2e45080e14d47aa0a9817219d92b451b01281d36))
+
+
+### Bug Fixes
+
+* improve ux ([07ff3d7](https://github.com/lemonadesocial/web-new/commit/07ff3d70d17856562a7feeeba50938da09248c74))
+* **lemonhead:** fix pet race filter when random look ([f605695](https://github.com/lemonadesocial/web-new/commit/f605695e7517c1e154f2a647a6696bb1fc93884c))
+* **lemonhead:** fix random look ([cdb03a0](https://github.com/lemonadesocial/web-new/commit/cdb03a0a3c0582eba724e6e54ce4a153e75e0ba9))
+* missing hide attending event guest page ([03efced](https://github.com/lemonadesocial/web-new/commit/03efced074d2e78ae0d78ba259c3a33b23c29224))
+* remove unused ([5ff1697](https://github.com/lemonadesocial/web-new/commit/5ff1697c0b55fd03e48e4f0b6b1687e712c2feaf))
+
+## [6.12.2](https://github.com/lemonadesocial/web-new/compare/v6.12.1...v6.12.2) (2025-09-18)
+
+
+### Bug Fixes
+
+* truncate on desktop view ([07a406e](https://github.com/lemonadesocial/web-new/commit/07a406ef022003021eca8743ef5465af220bd1bf))
+
+## [6.12.1](https://github.com/lemonadesocial/web-new/compare/v6.12.0...v6.12.1) (2025-09-18)
+
+
+### Bug Fixes
+
+* fix size avatar on mobile view ([c737208](https://github.com/lemonadesocial/web-new/commit/c737208bf2fd17daebb656264a5fa0637bd807e2))
+* lint ([7c79a0b](https://github.com/lemonadesocial/web-new/commit/7c79a0b2acb255d009ace274b487e5d4c49a84e4))
+
+## [6.12.0](https://github.com/lemonadesocial/web-new/compare/v6.11.1...v6.12.0) (2025-09-18)
+
+
+### Features
+
+* **lemonhead:** include inviter wallet address in nft metadata ([594dd57](https://github.com/lemonadesocial/web-new/commit/594dd57a764cf0e6dc24cbfb6d8c67dbd56fd1e8))
+* remove unused ([38e807e](https://github.com/lemonadesocial/web-new/commit/38e807e12deefdfdec814e0ee1c40b8e5bee010a))
+* update lemonheads title ([706beb1](https://github.com/lemonadesocial/web-new/commit/706beb1e4f5cf16edf3afaaa1c5373bdb0171d49))
+
+
+### Bug Fixes
+
+* add missing lin jpeg when build ([471744c](https://github.com/lemonadesocial/web-new/commit/471744cde32fd9c4f42058a302f347c428987fb6))
+* check canMintLemonhead it could be null for some reason from be ([0a1318a](https://github.com/lemonadesocial/web-new/commit/0a1318a98423876ef6f4e8f2b29c41d024556c29))
+* only fetch pricing when currency is set ([50b48c7](https://github.com/lemonadesocial/web-new/commit/50b48c71f203cfcd3bdd9b13b076a5bd65483526))
+* udpate ui mobile view ([512aca5](https://github.com/lemonadesocial/web-new/commit/512aca54985d2828ba54ec78b17842c92bc33862))
+* update drawer pane ui approval list ([1f29d87](https://github.com/lemonadesocial/web-new/commit/1f29d87035815224e171101089ef3b28a7e4c336))
+
+## [6.11.1](https://github.com/lemonadesocial/web-new/compare/v6.11.0...v6.11.1) (2025-09-16)
+
+
+### Bug Fixes
+
+* hide content when navigate ([fa22a2b](https://github.com/lemonadesocial/web-new/commit/fa22a2b25fa10c9c73eeaedf0424d3ba0b4305aa))
+
+## [6.11.0](https://github.com/lemonadesocial/web-new/compare/v6.10.0...v6.11.0) (2025-09-16)
+
+
+### Features
+
+* check wallets new before set user wallet ([931813f](https://github.com/lemonadesocial/web-new/commit/931813f8166a28e1183d0490c1fb84207895a492))
+* missing hide scrollbar ([fae3909](https://github.com/lemonadesocial/web-new/commit/fae39094626190cf71962ef04acc59b55067190d))
+* missing user avatar ([d745052](https://github.com/lemonadesocial/web-new/commit/d7450521449cef7b809dd743899f1cd9c406632d))
+* revert - update leaderboard ([6dc2b2a](https://github.com/lemonadesocial/web-new/commit/6dc2b2ae85544426994ae8b6cd342e0c1e336231))
+* update content ([6cceed8](https://github.com/lemonadesocial/web-new/commit/6cceed848b15aa12f96bb99934a8ebb646de5b49))
+* update invite wallet ([6a13a18](https://github.com/lemonadesocial/web-new/commit/6a13a18405b45a3db400ab4ee4c2663933148cf2))
+* update leaderboard ([7b12872](https://github.com/lemonadesocial/web-new/commit/7b12872e50cd28866dbd16610902bae54703f7ee))
+* update lemonheads get started page ([9091b33](https://github.com/lemonadesocial/web-new/commit/9091b339b00455eb665386a04c7035b3ba7f9ace))
+* update locked ([f372030](https://github.com/lemonadesocial/web-new/commit/f372030c0fb76920ff352cd8bff5d7030c406d11))
+* update message ([fdb2f59](https://github.com/lemonadesocial/web-new/commit/fdb2f592c62676acee13207675279495b9d47f9a))
+* update mobile view ([75a7a86](https://github.com/lemonadesocial/web-new/commit/75a7a86958bb82f2788363299088ab3b9dbdbf77))
+* update pending list ui ([1b38a43](https://github.com/lemonadesocial/web-new/commit/1b38a4318d8bdca36a0973a278f66d4266dddfbf))
+* update router lemonheads ([5f08c46](https://github.com/lemonadesocial/web-new/commit/5f08c46563279f13e29338a9e684560e13919281))
+* update shared mint url ([9b09c32](https://github.com/lemonadesocial/web-new/commit/9b09c32089b0f373a4fc46d23837286b1870d488))
+
+
+### Bug Fixes
+
+* cannot read APP_ENV ([ad8f4c6](https://github.com/lemonadesocial/web-new/commit/ad8f4c644e2d3e3011c16a87ecf3a240ae42114e))
+* discount payment ([5e27c4f](https://github.com/lemonadesocial/web-new/commit/5e27c4f7e92e1ceb44c3b3f6637b112c2918db8e))
+* lint ([302dd0e](https://github.com/lemonadesocial/web-new/commit/302dd0ecc97ca848e04b9abae52eb02a52dceb03))
+* rsvp doesn't close ([ba03d2f](https://github.com/lemonadesocial/web-new/commit/ba03d2ffca597c57cd56f1e5568f909b8e7a913f))
+* **temp:** remove cancel payment ([475a023](https://github.com/lemonadesocial/web-new/commit/475a023d800a097d09845621919d54d2c62629e2))
+* timezone not reflected ([a114343](https://github.com/lemonadesocial/web-new/commit/a1143437b2325ed538fc78f2dfa7df23bb9c0c34))
+* update content default bio ([fce91e7](https://github.com/lemonadesocial/web-new/commit/fce91e75489fd89593a54eafd30b3339191b1445))
+
 ## [6.10.0](https://github.com/lemonadesocial/web-new/compare/v6.9.0...v6.10.0) (2025-09-12)
 
 

@@ -1,0 +1,7 @@
+query GetMinteds($orderBy: Minted_orderBy, $orderDirection: OrderDirection, $first: Int) {
+  minteds(orderBy: $orderBy, orderDirection: $orderDirection, first: $first) {
+    tokenId
+    look
+    receiver
+  }
+}

@@ -2,36 +2,34 @@ import React, { useMemo } from 'react';
 
 import { useQuery } from '$lib/graphql/request';
 import { Avatar } from '$lib/components/core';
-import { PeekEventGuestsDocument, User } from '$lib/graphql/generated/backend/graphql';
+import { Event, PeekEventGuestsDocument, User } from '$lib/graphql/generated/backend/graphql';
 import { userAvatar } from '$lib/utils/user';
 
 interface AttendeesSectionProps {
-  eventId: string;
+  event?: Event;
   limit?: number;
 }
 
-export function AttendeesSection({ eventId, limit = 5 }: AttendeesSectionProps) {
+export function AttendeesSection({ event, limit = 5 }: AttendeesSectionProps) {
   const { data } = useQuery(PeekEventGuestsDocument, {
-    variables: { id: eventId, limit },
-    skip: !eventId,
+    variables: { id: event?._id, limit },
+    skip: !event?._id,
   });
 
   const guests = useMemo(() => data?.peekEventGuests?.items || [], [data]);
   const totalAttendees = useMemo(() => data?.peekEventGuests?.total || 0, [data]);
 
   const visibleAttendees = useMemo(() => {
-    return guests.slice(0, 2).map(guest => guest.first_name || guest.display_name || guest.name || 'Anonymous');
+    return guests.slice(0, 2).map((guest) => guest.first_name || guest.display_name || guest.name || 'Anonymous');
   }, [guests]);
 
   const othersCount = totalAttendees - visibleAttendees.length;
 
-  if (!guests.length) return null;
+  if (!guests.length || event?.hide_attending === true) return null;
 
   return (
     <div>
-      <p className="text-sm text-secondary">
-        {totalAttendees} Going
-      </p>
+      <p className="text-sm text-secondary">{totalAttendees} Going</p>
 
       <hr className="mt-2 mb-4 border-t border-t-divider" />
 
@@ -39,9 +37,7 @@ export function AttendeesSection({ eventId, limit = 5 }: AttendeesSectionProps) 
         {guests.map((guest, index) => (
           <div key={index} className="tooltip sm:tooltip">
             <div className="tooltip-content">
-              <p className="text-sm font-medium">
-                {guest.display_name || guest.name || 'Anonymous'}
-              </p>
+              <p className="text-sm font-medium">{guest.display_name || guest.name || 'Anonymous'}</p>
             </div>
             <Avatar
               src={userAvatar(guest as User)}

@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from 'date-fns';
-import { useMemo } from 'react';
+import { useMemo, useRef, useEffect, useState } from 'react';
+import clsx from 'clsx';
 
 import { Avatar, Button, drawer } from '$lib/components/core';
 import { Event, EventJoinRequestState, GetEventJoinRequestsDocument } from '$lib/graphql/generated/backend/graphql';
@@ -15,6 +16,9 @@ interface PendingApprovalListProps {
 }
 
 export function PendingApprovalList({ event, limit = 25 }: PendingApprovalListProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState<number>(0);
+
   const { data, refetch } = useQuery(GetEventJoinRequestsDocument, {
     variables: {
       event: event._id,
@@ -36,6 +40,13 @@ export function PendingApprovalList({ event, limit = 25 }: PendingApprovalListPr
     return data?.getEventJoinRequests.records || [];
   }, [data]);
 
+  useEffect(() => {
+    if (containerRef.current) {
+      const width = containerRef.current.offsetWidth;
+      setContainerWidth(width);
+    }
+  }, [pendingRequests]);
+
   const handleApprove = (requestId: string) => {
     approve([requestId]);
   };
@@ -55,8 +66,11 @@ export function PendingApprovalList({ event, limit = 25 }: PendingApprovalListPr
     });
   };
 
+  const isContainerNarrow = containerWidth < 500;
+  const isContainerVeryNarrow = containerWidth < 400;
+
   return (
-    <div className="rounded-md border border-card-border bg-card">
+    <div ref={containerRef} className="rounded-md border border-card-border bg-card">
       <div className="divide-y divide-(--color-divider)">
         {pendingRequests.map((request) => {
           const user = request.user_expanded || request.non_login_user;
@@ -64,63 +78,24 @@ export function PendingApprovalList({ event, limit = 25 }: PendingApprovalListPr
           const email = request.email || (user as any)?.email;
 
           return (
-            <div key={request._id} className="flex items-center justify-between px-4 py-3">
-              <div className="flex md:items-center gap-3 flex-1">
-                <Avatar src={userAvatar(user as any)} className="size-7 md:size-5" />
+            <div key={request._id} className="flex items-center justify-between px-4 py-3 gap-2">
+              <div className="flex items-center gap-3 flex-1">
+                <Avatar src={userAvatar(user as any)} className="size-5" />
                 <div className="flex flex-col flex-1 gap-2">
-                  <div className="flex justify-between w-full relative">
-                    <div className="flex-1 flex flex-col md:flex-row md:gap-2 md:items-center truncate">
+                  <div className="flex justify-between relative">
+                    <div className={clsx('flex-1 flex w-1', isContainerNarrow ? 'flex-col' : 'gap-2 items-center')}>
                       <p className="truncate">{name}</p>
-                      <p className="text-tertiary truncate">{email}</p>
+                      <p className="text-tertiary text-sm truncate">{email}</p>
                     </div>
-
-                    <span className="block md:hidden text-sm text-tertiary whitespace-nowrap absolute right-0 truncate">
-                      {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
-                    </span>
-                  </div>
-                  <div className="flex md:hidden gap-2">
-                    <Button
-                      variant="tertiary"
-                      size="xs"
-                      icon="icon-contract"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleGuestDetail(email);
-                      }}
-                    />
-                    <Button
-                      variant="danger"
-                      size="xs"
-                      iconLeft="icon-x"
-                      className="w-full"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDecline(request._id);
-                      }}
-                      disabled={requestLoading}
-                    >
-                      Decline
-                    </Button>
-                    <Button
-                      variant="success"
-                      size="xs"
-                      className="w-full"
-                      iconLeft="icon-done"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleApprove(request._id);
-                      }}
-                      disabled={requestLoading}
-                    >
-                      Approve
-                    </Button>
                   </div>
                 </div>
               </div>
-              <div className="hidden md:flex items-center gap-3">
-                <span className="text-sm text-tertiary whitespace-nowrap">
-                  {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
-                </span>
+              <div className="flex items-center gap-3">
+                {!isContainerVeryNarrow && (
+                  <span className="text-sm text-tertiary whitespace-nowrap">
+                    {formatDistanceToNow(new Date(request.created_at), { addSuffix: !isContainerNarrow })}
+                  </span>
+                )}
 
                 <div className="flex items-center gap-2">
                   <Button

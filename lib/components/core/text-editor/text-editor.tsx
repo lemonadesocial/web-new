@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { useEditor, EditorContent } from '@tiptap/react';
@@ -28,7 +28,21 @@ type TextEditorProps = {
   readOnly?: boolean;
   onFocus?: React.FocusEventHandler<HTMLDivElement>;
   onBlur?: React.FocusEventHandler<HTMLDivElement>;
+  onSelectionChange?: () => void;
 };
+
+export interface TextEditorRef {
+  commands: {
+    clearContent: () => void;
+    insertContent: (content: string) => void;
+    toggleBold: () => void;
+    toggleItalic: () => void;
+  };
+  isActive: {
+    bold: () => boolean;
+    italic: () => boolean;
+  };
+}
 
 const defaulToolBar = {
   bubble: {
@@ -56,7 +70,7 @@ const defaulToolBar = {
   },
 };
 
-export default function TextEditor({
+const TextEditor = forwardRef<TextEditorRef, TextEditorProps>(({
   content = '',
   placeholder = 'Write something …',
   containerClass = '',
@@ -66,8 +80,9 @@ export default function TextEditor({
   readOnly = false,
   onFocus,
   onBlur,
+  onSelectionChange,
   label,
-}: TextEditorProps) {
+}, ref) => {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -96,6 +111,9 @@ export default function TextEditor({
         onChange?.(editor.getHTML());
       }
     },
+    onSelectionUpdate() {
+      onSelectionChange?.();
+    },
   });
 
   React.useEffect(() => {
@@ -106,16 +124,41 @@ export default function TextEditor({
     editor.setEditable(!readOnly);
   }, [editor, readOnly]);
 
+  useImperativeHandle(ref, () => ({
+    commands: {
+      clearContent: () => editor?.commands.clearContent(),
+      insertContent: (content: string) => editor?.commands.insertContent(content),
+      toggleBold: () => editor?.chain().focus().toggleBold().run(),
+      toggleItalic: () => editor?.chain().focus().toggleItalic().run(),
+    },
+    isActive: {
+      bold: () => editor?.isActive('bold') ?? false,
+      italic: () => editor?.isActive('italic') ?? false,
+    },
+  }), [editor]);
+
   if (!editor) return null;
 
   return (
     <>
-      <TextEditorBubbleMenu editor={editor} toolbar={toolbar.bubble} />
-      <TextEditorFloatingMenu editor={editor} toolbar={toolbar.float} directory={directory} />
+      {
+        toolbar.bubble && (
+          <TextEditorBubbleMenu editor={editor} toolbar={toolbar.bubble} />
+        )
+      }
+      {
+        toolbar.float && (
+          <TextEditorFloatingMenu editor={editor} toolbar={toolbar.float} directory={directory} />
+        )
+      }
       <div className="flex flex-col gap-[6px]">
         {label && <label className="text-secondary text-sm font-medium">{label}</label>}
         <EditorContent editor={editor} onFocus={onFocus} onBlur={onBlur} />
       </div>
     </>
   );
-}
+});
+
+TextEditor.displayName = 'TextEditor';
+
+export default TextEditor;

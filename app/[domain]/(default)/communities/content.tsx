@@ -63,7 +63,7 @@ export function Content() {
   );
 }
 
-function MyHubs() {
+export function MyHubs() {
   const me = useMe();
   const { data, loading } = useQuery(GetSpacesDocument, {
     variables: {

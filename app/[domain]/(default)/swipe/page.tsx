@@ -61,7 +61,7 @@ export default function SwipePage() {
           </div>
         </div>
       ) : (
-        <Button variant="secondary" className="rounded-full mt-14" onClick={() => router.push('/lemonheads')}>
+        <Button variant="secondary" className="rounded-full mt-14" onClick={() => router.push('/lemonheads/mint')}>
           Claim Lemonhead to Unlock
         </Button>
       )}

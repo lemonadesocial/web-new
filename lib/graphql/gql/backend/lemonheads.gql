@@ -20,3 +20,64 @@ query CanMintLemonhead($wallet: String!) {
     white_list_enabled
   }
 }
+
+query GetListMyLemonheadInvitations {
+  listMyLemonheadInvitations {
+    invitations {
+      invitee_wallet
+      minted_at
+      user {
+        _id
+        username
+        image_avatar
+      }
+    }
+  }
+}
+
+query GetMyLemonheadInvitationRank {
+  getMyLemonheadInvitationRank {
+    rank
+    user {
+      _id
+      name
+      display_name
+      username
+      image_avatar
+      lemonhead_inviter_wallet
+      kratos_wallet_address
+    }
+    invitations_count
+  }
+}
+
+query GetLemonheadInvitationRank($skip: Int!, $limit: Int!) {
+  getLemonheadInvitationRank(skip: $skip, limit: $limit) {
+    items {
+      rank
+      user {
+        _id
+        name
+        display_name
+        username
+        image_avatar
+        lemonhead_inviter_wallet
+        kratos_wallet_address
+      }
+      invitations_count
+    }
+    total
+  }
+}
+
+mutation SetUserWallet($token: String!, $signature: String!) {
+  setUserWallet(token: $token, signature: $signature)
+}
+
+mutation UpdateMyLemonheadInvitations($invitations: [String!]!) {
+  updateMyLemonheadInvitations(invitations: $invitations) {
+    success
+    message
+    wallets
+  }
+}

@@ -1,7 +1,7 @@
 import { generateUrl } from '$lib/utils/cnd';
-import { calculateLookHash, formatString, getFinalTraits, Trait, validateTraits } from './core';
+import { calculateLookHash, Filter, FilterType, formatString, getFinalTraits, layerings, Trait, TraitType, validateTraits } from './core';
 import { getApproval, getCache, setCache } from './admin';
-import { getFinalImage, getRenderLayersFromTraits } from './image';
+import { getFinalImage, getRandomLayersFromTraits, getRenderLayersFromTraits, Layer, randomUseOutfit } from './image';
 import { uploadImage, uploadJSON } from './storage';
 
 const gatewayPrefix = 'https://api.grove.storage/';
@@ -49,21 +49,11 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
     imageUrl = await uploadImage(lookHash, finalImage);
   }
 
-  let metadataUrl = cache?.metadata_url;
-
-  if (!metadataUrl) {
-    //-- create and upload metadata
-    const metadata = createMetadata(imageUrl, finalTraits);
-    metadataUrl = await uploadJSON(lookHash, metadata);
-  }
-
   const imageChanged = imageUrl !== cache?.image_url;
-  const metadataChanged = metadataUrl !== cache?.metadata_url;
 
-  if (imageChanged || metadataChanged) {
+  if (imageChanged) {
     await setCache(lookHash, {
       ...(imageChanged && { image_url: imageUrl }),
-      ...(metadataChanged && { metadata_url: metadataUrl }),
     });
   }
 
@@ -73,6 +63,10 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
   if (!data) {
     throw new Error('Failed to get minting approval');
   }
+
+  //-- create and upload metadata
+  const metadata = createMetadata(imageUrl, finalTraits);
+  const metadataUrl = await uploadJSON(lookHash, { ...metadata, ...data?.inviter && { inviter: data.inviter } });
 
   return {
     //-- use these to call the contract minting function
@@ -84,4 +78,60 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
     image: imageUrl,
     metadata: metadataUrl.replace(gatewayPrefix, ''),
   };
+};
+
+//-- caller function must provider 4 required filters: race, gender, skin_tone, size
+export const getRandomLook = async (filters: Filter[]): Promise<Layer[]> => {
+  const newFilters = [...filters];
+
+  //-- check if filters include race
+  let raceFilter = newFilters.find((filter) => filter.type === FilterType.race);
+
+  if (!raceFilter) {
+    //-- random 50% human / alien
+    raceFilter = {
+      type: FilterType.race,
+      value: Math.random() < 0.5 ? 'human' : 'alien',
+    };
+
+    newFilters.push(raceFilter);
+  }
+
+  const traits: Omit<Trait, 'value'>[] = [];
+
+  //-- check if we use outfit or top / bottom
+  const useOutfit = await randomUseOutfit();
+
+  for (const [type, value] of Object.entries(layerings)) {
+    const traitType = type as TraitType;
+
+    const isTopOrBottom = traitType === TraitType.top || traitType === TraitType.bottom;
+    const isMouthOrEyes = traitType === TraitType.mouth || traitType === TraitType.eyes;
+
+    let toAdd: boolean;
+
+    if (traitType === TraitType.outfit) {
+      toAdd = useOutfit;
+    } else if (isTopOrBottom) {
+      //-- top and bottom has high chance to be included
+      toAdd = !useOutfit && Math.random() < 0.75;
+    } else if (isMouthOrEyes) {
+      //-- if alien then skip mouth & eyes, else (human) add both
+      toAdd = raceFilter.value !== 'alien';
+    }
+    else {
+      //-- other layers if not required have a 50% chance to be included
+      toAdd = value.required || Math.random() < 0.5;
+    }
+
+    if (toAdd) {
+      traits.push({
+        type: traitType,
+        //-- do not apply race filter to pet
+        filters: traitType === TraitType.pet ? newFilters.filter((filter) => filter.type !== FilterType.race) : newFilters,
+      });
+    }
+  }
+
+  return await getRandomLayersFromTraits(traits);
 };

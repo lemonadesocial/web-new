@@ -18,7 +18,7 @@ const eslintConfig = [
       'react-hooks/exhaustive-deps': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': [
-        'error',
+        'warn',
         {
           args: 'all',
           argsIgnorePattern: '^_',
@@ -29,6 +29,7 @@ const eslintConfig = [
           ignoreRestSiblings: true,
         },
       ],
+      'react/no-unescaped-entities': 'warn',
     },
   },
 ];

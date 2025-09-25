@@ -1,0 +1,546 @@
+'use client';
+import clsx from 'clsx';
+import Link from 'next/link';
+import linkify from 'linkify-it';
+import { useRouter } from 'next/navigation';
+
+import { Button, Card, Divider, drawer, modal } from '$lib/components/core';
+import CommunityCard from '$lib/components/features/community/CommunityCard';
+
+import {
+  Event,
+  FollowSpaceDocument,
+  GetSpaceDocument,
+  GetSpaceEventsDocument,
+  GetSubSpacesDocument,
+  PublicSpace,
+  Space,
+  UnfollowSpaceDocument,
+  User,
+} from '$lib/graphql/generated/backend/graphql';
+import { useMutation, useQuery } from '$lib/graphql/request';
+import { useMe } from '$lib/hooks/useMe';
+import { useSignIn } from '$lib/hooks/useSignIn';
+import { generateUrl } from '$lib/utils/cnd';
+import { communityAvatar } from '$lib/utils/community';
+import { ASSET_PREFIX, LEMONADE_DOMAIN, LEMONADE_FEED_ADDRESS, PROFILE_SOCIAL_LINKS } from '$lib/utils/constants';
+import { COMMUNITY_SOCIAL_LINKS } from '$lib/components/features/community/constants';
+import { PostComposer, PostLocked } from '$lib/components/features/lens-feed/PostComposer';
+import { FeedPosts } from '$lib/components/features/lens-feed/FeedPosts';
+import { useAccount, usePost } from '$lib/hooks/useLens';
+import { LemonHeadsProgressBar } from '$lib/components/features/lemonheads/LemonHeadsProgressBar';
+import { formatWithTimezone } from '$lib/utils/date';
+import { randomEventDP, userAvatar } from '$lib/utils/user';
+import { twMerge } from 'tailwind-merge';
+import { getAccountAvatar } from '$lib/utils/lens/utils';
+import { ProfilePane } from '$lib/components/features/pane';
+import { LemonHeadsHubRightCol } from '$lib/components/features/lemonheads/LemonHeadsHubRightCol';
+import { match } from 'ts-pattern';
+import { useAppKitAccount } from '@reown/appkit/react';
+import { ConnectWalletButton } from '$lib/components/features/auth/ConnectWalletButton';
+import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
+import { useLemonhead } from '$lib/hooks/useLemonhead';
+
+export function HeroSection(props: { space?: Space }) {
+  const me = useMe();
+  const { data: dataSpace } = useQuery(GetSpaceDocument, {
+    variables: { id: props.space?._id! },
+    skip: !props.space?._id,
+  });
+  const space = (dataSpace?.getSpace || props.space) as Space;
+  const canManage = [space?.creator, ...(space?.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
+
+  const signIn = useSignIn();
+
+  const [follow, resFollow] = useMutation(FollowSpaceDocument, {
+    onComplete: (client) => {
+      client.writeFragment({ id: `Space:${space?._id}`, data: { followed: true } });
+    },
+  });
+  const [unfollow, resUnfollow] = useMutation(UnfollowSpaceDocument, {
+    onComplete: (client) => {
+      client.writeFragment({ id: `Space:${space?._id}`, data: { followed: false } });
+    },
+  });
+
+  const handleSubscribe = () => {
+    if (!me) {
+      // need to login to subscribe
+      signIn();
+      return;
+    }
+
+    const variables = { space: space?._id };
+    if (space?.followed) unfollow({ variables });
+    else follow({ variables });
+  };
+
+  return (
+    <div className={clsx('relative w-full overflow-hidden', space?.image_cover ? 'h-[154px] md:h-96' : 'h-24 md:h-36')}>
+      {space?.image_cover ? (
+        <>
+          <img
+            className="md:hidden aspect-[3.5/1] object-cover rounded-md w-full max-h-2/3"
+            alt={space?.title as string}
+            loading="lazy"
+            src={generateUrl(space?.image_cover_expanded, {
+              resize: { width: 480, fit: 'contain' },
+            })}
+          />
+          <img
+            src={generateUrl(space?.image_cover_expanded, {
+              resize: { width: 1080, fit: 'contain' },
+            })}
+            loading="lazy"
+            alt={space?.title as string}
+            className="hidden md:block aspect-[3.5/1] object-cover rounded-md w-full"
+          />
+        </>
+      ) : (
+        <div className="absolute inset-0 top-0 left-0 aspect-[3.5/1] object-cover rounded-md w-full bg-blend-darken"></div>
+      )}
+
+      <div className="absolute bottom-1.5 md:bottom-4 size-20 md:size-32 rounded-md overflow-hidden border-2">
+        <img className="w-full h-full rounded-md" src={communityAvatar(space)} alt={space?.title} loading="lazy" />
+        {!space?.image_avatar_expanded && (
+          <img
+            src={`${ASSET_PREFIX}/assets/images/blank-avatar.svg`}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 icon-blank-avatar w-[62%] h-[62%]"
+          />
+        )}
+      </div>
+
+      {/* Subscribe button */}
+      <div className="absolute bottom-0 md:bottom-4 right-0">
+        <div className="flex items-center gap-3">
+          {/* {[space?.creator, ...(space?.admins?.map((p) => p._id) || [])].includes(me?._id) && ( */}
+          {/*   <CommunityThemeBuilder themeData={space?.theme_data} spaceId={space?._id} /> */}
+          {/* )} */}
+          {canManage ? (
+            <Link href={`${LEMONADE_DOMAIN}/manage/community/${space?.slug || space?._id}`} target="_blank">
+              <Button variant="primary" outlined iconRight="icon-arrow-outward" size="lg">
+                <span className="block">Manage</span>
+              </Button>
+            </Link>
+          ) : (
+            !space?.is_ambassador && (
+              <Button
+                loading={resFollow.loading || resUnfollow.loading}
+                outlined={!!space?.followed}
+                variant="primary"
+                size="lg"
+                className={clsx(space?.followed && 'hover:bg-accent-500 hover:text-tertiary w-auto duration-300')}
+                onClick={() => handleSubscribe()}
+              >
+                {!!space?.followed ? (
+                  <>
+                    <span className="hidden group-hover:block">Unsubscribe</span>
+                    <span className="block group-hover:hidden">Subscribed</span>
+                  </>
+                ) : (
+                  'Subscribe'
+                )}
+              </Button>
+            )
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function HeroSectionProfile({ space }: { space?: Space }) {
+  const { account } = useAccount();
+  const me = useMe();
+  const signIn = useSignIn();
+
+  const onEdit = () => {
+    if (!me) {
+      signIn();
+      return;
+    }
+
+    drawer.open(ProfilePane);
+  };
+
+  return (
+    <div
+      className={clsx(
+        'relative w-full overflow-hidden',
+        space?.image_cover ? 'h-[154px] md:h-[280px]' : 'h-24 md:h-36',
+      )}
+    >
+      {space?.image_cover ? (
+        <>
+          <img
+            className="md:hidden aspect-[3.5/1] object-cover rounded-md w-full max-h-2/3"
+            alt={space?.title as string}
+            loading="lazy"
+            src={generateUrl(space?.image_cover_expanded, {
+              resize: { width: 480, fit: 'contain' },
+            })}
+          />
+          <img
+            src={generateUrl(space?.image_cover_expanded, {
+              resize: { width: 1080, fit: 'contain' },
+            })}
+            loading="lazy"
+            alt={space?.title as string}
+            className="hidden md:block aspect-[3.5/1] object-cover rounded-md w-full"
+          />
+        </>
+      ) : (
+        <div className="absolute inset-0 top-0 left-0 aspect-[3.5/1] object-cover rounded-md w-full bg-blend-darken"></div>
+      )}
+
+      <div className="absolute bottom-1.5 md:bottom-4 size-20 md:size-28 rounded-full overflow-hidden border">
+        <img
+          className="w-full h-full outline outline-tertiary/4 rounded-md"
+          src={account ? account?.metadata?.picture || getAccountAvatar(account) : userAvatar(me)}
+        />
+      </div>
+
+      <div className="absolute bottom-0 md:bottom-4 right-0">
+        <div className="flex items-center gap-3">
+          <Button iconLeft="icon-edit-sharp" variant="tertiary" size="sm" onClick={onEdit}>
+            Edit Profile
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function ProfileInfoSection() {
+  const me = useMe();
+  return (
+    <div className="flex flex-col gap-3">
+      <div>
+        <TitleSection>{me?.name || me?.display_name}</TitleSection>
+        {me?.username && <SubTitleSection>{me?.username}</SubTitleSection>}
+      </div>
+
+      <p className="text-sm text-secondary">{me?.description}</p>
+
+      <div className="flex gap-3 text-sm">
+        <div className="flex gap-1">
+          <p>{me?.followers || 0}</p>
+          <p>Followers</p>
+        </div>
+        <div className="flex gap-1">
+          <p>{me?.following || 0}</p>
+          <p>Following</p>
+        </div>
+        <div className="flex gap-1">
+          <p>{me?.hosted || 0}</p>
+          <p>Hosted</p>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 mt-1">
+        {PROFILE_SOCIAL_LINKS.filter((item) => me?.[item.name as keyof User]).map((item) => (
+          <div key={item.name} className="tooltip sm:tooltip">
+            <div className="tooltip-content">
+              <div className="text-sm font-medium">
+                <span className="capitalize">{item.name.replace('handle_', '')}</span>: {me?.[item.name as keyof User]}
+              </div>
+            </div>
+            <i
+              className={`${item.icon} tooltip tooltip-open cursor-pointer text-tertiary hover:text-primary`}
+              onClick={() => window.open(`${item.prefix}${me?.[item.name as keyof User]}`, '_blank')}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function CommunityInfoSection({ space }: { space: Space }) {
+  return (
+    <div className="fle flex-col gap-2">
+      <TitleSection className="md:text-3xl">{space.title}</TitleSection>
+      <div className="text-sm md:text-md text-secondary font-medium whitespace-pre-wrap">
+        {renderTextWithLinks(space?.description || '')}
+      </div>
+      <div className="flex items-center gap-3 mt-1">
+        {COMMUNITY_SOCIAL_LINKS.filter((item) => space?.[item.key as keyof Space]).map((item) => (
+          <div key={item.key} className="tooltip sm:tooltip">
+            <div className="tooltip-content">
+              <div className="text-sm font-medium">
+                <span className="capitalize">{item.key.replace('handle_', '')}</span>:{' '}
+                {space?.[item.key as keyof Space]}
+              </div>
+            </div>
+            <i
+              className={`${item.icon} tooltip tooltip-open cursor-pointer text-tertiary hover:text-primary`}
+              onClick={() => window.open(`${item.prefix}${space?.[item.key as keyof Space]}`, '_blank')}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function TitleSection({ className, children }: React.PropsWithChildren & { className?: string }) {
+  return (
+    <h3
+      className={twMerge('text-2xl font-semibold text-primary-invert', className)}
+      style={{
+        WebkitTextStroke: '1px var(--color-card-border, #000000)',
+        textShadow: '2px 4px 0 var(--color-troke, #000000)',
+        fontFamily: 'var(--font-class-display-bold)',
+      }}
+    >
+      {children}
+    </h3>
+  );
+}
+
+export function SubTitleSection({ children }: React.PropsWithChildren) {
+  return <p className="text-tertiary max-sm:text-sm">{children}</p>;
+}
+
+export function JourneySection() {
+  return (
+    <>
+      {/* <Divider className="h-2" /> */}
+      <div className="flex flex-col gap-6">
+        <div className="flex justify-between items-center">
+          {/* <TitleSection>Featured Hubs</TitleSection> */}
+          {/* <Button variant="tertiary-alt" size="sm" iconLeft="icon-user-plus"> */}
+          {/*   Invite */}
+          {/* </Button> */}
+        </div>
+        <LemonHeadsProgressBar />
+      </div>
+    </>
+  );
+}
+
+export function FeatureHubSection({ spaceId }: { spaceId?: string }) {
+  const router = useRouter();
+  const { data: subSpacesData, loading } = useQuery(GetSubSpacesDocument, {
+    variables: { id: spaceId },
+    skip: !spaceId,
+  });
+
+  const list = (subSpacesData?.getSubSpaces || []) as PublicSpace[];
+
+  if (loading || !list.length) return null;
+
+  return (
+    <>
+      <Divider className="h-2" />
+      <div className="flex flex-col gap-6">
+        <div className="flex justify-between items-center">
+          <TitleSection>Featured Hubs</TitleSection>
+          <Button
+            variant="tertiary-alt"
+            size="sm"
+            className="hidden md:block"
+            onClick={() => {
+              //TODO: should replace lemonheads with uid instead of after launched
+              router.push('/s/lemonheads/featured-hubs');
+            }}
+          >
+            View All ({list.length})
+          </Button>
+          <Button
+            variant="tertiary-alt"
+            size="sm"
+            className="md:hidden"
+            icon="icon-arrow-outward"
+            onClick={() => {
+              //TODO: should replace lemonheads with uid instead of after launched
+              router.push('/s/lemonheads/featured-hubs');
+            }}
+          ></Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {list.slice(0, 3).map((space) => (
+            <CommunityCard key={space._id} space={space} />
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
+function CardGroup({ title, onViewAll, children }: { title: string; onViewAll: () => void } & React.PropsWithChildren) {
+  return (
+    <>
+      <Card.Root className="bg-transparent hidden md:block">
+        <Card.Content className="flex flex-col gap-3">
+          <div className="flex justify-between items-center text-tertiary">
+            <p>{title}</p>
+            <i
+              className="icon-arrow-outward text-quaternary size-6 hover:text-primary cursor-pointer"
+              onClick={onViewAll}
+            />
+          </div>
+          {children}
+        </Card.Content>
+      </Card.Root>
+    </>
+  );
+}
+
+const FROM_NOW = new Date().toISOString();
+export function NewFeedSection({ space }: { space: Space }) {
+  const spaceId = space._id;
+  const feedAddress = space.lens_feed_id || LEMONADE_FEED_ADDRESS;
+  const { isConnected } = useAppKitAccount();
+  const { data } = useLemonhead();
+
+  const router = useRouter();
+  const { createPost } = usePost();
+
+  const onPost = async (metadata: unknown) => {
+    createPost({ metadata, feedAddress });
+  };
+
+  const onSelectPost = (slug: string) => {
+    router.push(`/s/lemonheads/posts/${slug}`);
+  };
+
+  // const locked = !address || !data || (data && data.tokenId == 0);
+
+  return (
+    <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-12">
+      <div className="flex flex-col gap-5 flex-1">
+        {/* {locked ? ( */}
+        {/*   <LemonHeadsLockFeature */}
+        {/*     title="Newsfeed is Locked" */}
+        {/*     subtitle="Claim your LemonHead & become a part of an exclusive community." */}
+        {/*     icon="icon-newspaper" */}
+        {/*   /> */}
+        {/* ) : ( */}
+        <PostComposer
+          onPost={onPost}
+          showFeedOptions={false}
+          renderLock={match(isConnected)
+            .with(false, () => (
+              <PostLocked title="Posting is Locked" subtitle="Connect wallet to start posting on Lemonade.">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="rounded-full"
+                  onClick={() => modal.open(ConnectWallet, { props: { onConnect: () => {} } })}
+                >
+                  Connect Wallet
+                </Button>
+              </PostLocked>
+            ))
+            .otherwise(() => {
+              if (!data || (data && data.tokenId == 0)) {
+                return (
+                  <PostLocked title="Posting is Locked" subtitle="Claim Lemonhead to start posting">
+                    <Button
+                      variant="secondary"
+                      className="rounded-full"
+                      onClick={() => router.push('/lemonheads/mint')}
+                      size="sm"
+                    >
+                      Claim Lemonhead
+                    </Button>
+                  </PostLocked>
+                );
+              }
+            })}
+        />
+        <FeedPosts feedAddress={LEMONADE_FEED_ADDRESS} onSelectPost={onSelectPost} />
+        {/* )} */}
+      </div>
+
+      <LemonHeadsHubRightCol spaceId={spaceId} />
+    </div>
+  );
+}
+
+// TODO: it could be render more. just link for now
+function renderTextWithLinks(text?: string) {
+  if (!text) return null;
+
+  const matches = new linkify().match(text);
+  if (!matches) return text;
+
+  let lastIndex = 0;
+  const elements = [];
+
+  matches.forEach((match: any) => {
+    // Push the text before the match
+    if (lastIndex < match.index) {
+      elements.push(text.slice(lastIndex, match.index));
+    }
+
+    // Create a link element for the match
+    elements.push(
+      <a key={match.index} href={match.url} target="_blank" rel="noopener noreferrer" className="underline">
+        {match.raw}
+      </a>,
+    );
+
+    lastIndex = match.lastIndex;
+  });
+
+  // Push the remaining text after the last match
+  if (lastIndex < text.length) {
+    elements.push(text.slice(lastIndex));
+  }
+
+  return elements;
+}
+
+export function UpcomingEventsCard() {
+  const me = useMe();
+  const router = useRouter();
+
+  const { data: dataGetUpcomingEvents } = useQuery(GetSpaceEventsDocument, {
+    variables: {
+      limit: 3,
+      skip: 0,
+      endFrom: FROM_NOW,
+    },
+    skip: !me?._id,
+  });
+  const upcomingEvents = (dataGetUpcomingEvents?.getEvents || []) as Event[];
+
+  if (!upcomingEvents.length) return null;
+
+  return (
+    <CardGroup title="Upcoming Events" onViewAll={() => router.push(`/events`)}>
+      {upcomingEvents.map((item) => (
+        <div key={item._id} className="flex items-center gap-3">
+          {!!item?.new_new_photos_expanded?.[0] && (
+            <img
+              className="aspect-square object-contain rounded-sm size-8 border border-(--color-card-border)"
+              src={
+                item.new_new_photos_expanded?.[0]
+                  ? generateUrl(item.new_new_photos_expanded[0], {
+                      resize: { height: 32, width: 32, fit: 'cover' },
+                    })
+                  : randomEventDP()
+              }
+              loading="lazy"
+              alt={item.title}
+            />
+          )}
+          <div>
+            <p
+              className="line-clamp-1 cursor-pointer hover:underline"
+              onClick={() => router.push(`/e/${item.shortid}`)}
+            >
+              {item.title}
+            </p>
+            <p className="text-tertiary text-sm">
+              {formatWithTimezone(item.start, `EEE, MMM dd 'at' hh:mm a`, item.timezone)}
+            </p>
+          </div>
+        </div>
+      ))}
+    </CardGroup>
+  );
+}

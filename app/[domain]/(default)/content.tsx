@@ -32,10 +32,6 @@ import { useAtomValue } from 'jotai';
 import { chainsMapAtom } from '$lib/jotai';
 import { GetVerifiedModal } from '$lib/components/features/modals/GetVerifiedModal';
 import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
-import { LEMONHEAD_CHAIN_ID } from '$lib/components/features/lemonheads/utils';
-import { ethers } from 'ethers';
-import { LemonheadNFTContract } from '$lib/utils/crypto';
-import Page from './communities/page';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 
 export function Content() {
@@ -89,7 +85,7 @@ export function Content() {
 
             <CompleteYourProfile />
 
-            {/* <LemonHeadsZone /> */}
+            <LemonHeadsZone />
 
             {/* <CardItem */}
             {/*   onClick={() => comingSoon()} */}
@@ -628,7 +624,7 @@ function LemonHeadsZone() {
   const router = useRouter();
   const { data, loading } = useLemonhead();
 
-  const onClick = () => router.push('/lemonheads-zone');
+  const onClick = () => router.push('/lemonheads');
 
   //NOTE: prevent click to claim lemonheads. IMPORTANT: MUST WAITING FOR CHECKING
   if (loading) return null;

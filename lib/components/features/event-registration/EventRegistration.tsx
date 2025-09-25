@@ -204,7 +204,7 @@ const BaseEventRegistration: React.FC<{ event: Event; }> = ({ event: initialEven
         discount: discountCode,
       },
     },
-    skip: !purchaseItems.length,
+    skip: !purchaseItems.length || !currency,
     onComplete(data) {
       setPricingInfo(data.calculateTicketsPricing);
     },

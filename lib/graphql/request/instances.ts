@@ -22,3 +22,8 @@ export const walletClient  = new GraphqlClient({
     credentials: 'include',
   }
 });
+
+export const lemonheadsClient  = new GraphqlClient({
+  url: process.env.NEXT_PUBLIC_LEMONHEADS_INDEXER_URL as string,
+  cache: new InMemoryCache(),
+});
