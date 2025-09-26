@@ -51,7 +51,7 @@ ARG AWS_SESSION_TOKEN
 RUN aws s3 sync . s3://$ASSET_BUCKET_NAME --size-only
 
 ### app
-FROM public.ecr.aws/docker/library/node:20-alpine AS app
+FROM public.ecr.aws/docker/library/node:22-alpine AS app
 WORKDIR /app
 
 RUN apk add --no-cache cairo pango jpeg giflib libpng
