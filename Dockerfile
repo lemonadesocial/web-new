@@ -1,12 +1,12 @@
 # syntax=docker/dockerfile-upstream:1.4.0-rc1
 ### manifest
-FROM public.ecr.aws/docker/library/node:20-alpine AS manifest
+FROM public.ecr.aws/docker/library/node:22-alpine AS manifest
 
 COPY package.json yarn.lock /tmp/
 RUN sed -e 's/"version": "[^"]\+",/"version": "0.0.0",/' -i /tmp/package.json
 
 ### builder
-FROM public.ecr.aws/docker/library/node:20-alpine AS builder
+FROM public.ecr.aws/docker/library/node:22-alpine AS builder
 WORKDIR /app
 
 RUN apk add --no-cache git
@@ -51,7 +51,7 @@ ARG AWS_SESSION_TOKEN
 RUN aws s3 sync . s3://$ASSET_BUCKET_NAME --size-only
 
 ### app
-FROM public.ecr.aws/docker/library/node:20-alpine AS app
+FROM public.ecr.aws/docker/library/node:22-alpine AS app
 WORKDIR /app
 
 RUN apk add --no-cache cairo pango jpeg giflib libpng
