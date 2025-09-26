@@ -163,7 +163,7 @@ export function validateTraits(traits: Trait[]) {
     const filterValues = traits
       .flatMap((trait) => trait.filters || [])
       .filter((filter) => filter.type === filterType)
-      .flatMap((filter) => (filter.value ? [filter.value] : []));
+      .map((filter) => filter.value);
 
     if (_.uniq(filterValues).length > 1) {
       throw new Error('Gender and size must be consistent between traits');
