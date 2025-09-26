@@ -1,5 +1,20 @@
 # Changelog
 
+## [7.2.0](https://github.com/lemonadesocial/web-new/compare/v7.1.0...v7.2.0) (2025-09-26)
+
+
+### Features
+
+* check upgrade node ([39c618b](https://github.com/lemonadesocial/web-new/commit/39c618b089e063aa621cef2cb2f70606562ba55d))
+* update docker ([022413d](https://github.com/lemonadesocial/web-new/commit/022413dc08a17a083cb5798c82ecbe01d1dc3ad9))
+* update qrcode package - export guest list ([67173a0](https://github.com/lemonadesocial/web-new/commit/67173a0267a159327100cce86b9c4331732271f9))
+* upgrade self core ([559b88c](https://github.com/lemonadesocial/web-new/commit/559b88c46b4269ca587c3a34da725eebda0237bb))
+
+
+### Bug Fixes
+
+* **lemonhead:** fix validate trait filters ([62f9a73](https://github.com/lemonadesocial/web-new/commit/62f9a7397f93261446a0a181a5f1ca683e8c277c))
+
 ## [7.1.0](https://github.com/lemonadesocial/web-new/compare/v7.0.0...v7.1.0) (2025-09-25)
 
 
