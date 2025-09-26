@@ -6,9 +6,15 @@ import { snakeCase } from 'lodash';
 import { Button, Input, Menu, MenuItem } from '$lib/components/core';
 import { downloadCSVFile } from '$lib/utils/file';
 import { useQuery } from '$lib/graphql/request';
-import { Event, ListEventGuestsDocument, ListEventGuestsSortBy, SortOrder } from '$lib/graphql/generated/backend/graphql';
+import {
+  Event,
+  ListEventGuestsDocument,
+  ListEventGuestsSortBy,
+  SortOrder,
+} from '$lib/graphql/generated/backend/graphql';
 
 import { GuestTable } from './common/GuestTable';
+import { SELF_VERIFICATION_CONFIG } from '$lib/utils/constants';
 
 type SortOption = {
   key: string;
@@ -23,10 +29,11 @@ export function GuestList({ event }: { event: Event }) {
   const [selectedSort, setSelectedSort] = useState<SortOption | null>(null);
   const pageSize = 100;
 
-  const ticketTypeFilters = event.event_ticket_types?.map((ticketType) => ({
-    key: ticketType._id,
-    value: ticketType.title,
-  })) || [];
+  const ticketTypeFilters =
+    event.event_ticket_types?.map((ticketType) => ({
+      key: ticketType._id,
+      value: ticketType.title,
+    })) || [];
 
   const sortOptions: SortOption[] = [
     { key: 'register_time', value: 'Register Time' },
@@ -47,11 +54,16 @@ export function GuestList({ event }: { event: Event }) {
       pendingInvite: selectedFilters.includes('invited') || undefined,
       declined: selectedFilters.includes('not_going') || undefined,
       checkedIn: selectedFilters.includes('checked_in') || undefined,
-      sortBy: selectedSort?.key === 'register_time' ? ListEventGuestsSortBy.RegisterTime : 
-              selectedSort?.key === 'name' ? ListEventGuestsSortBy.Name :
-              selectedSort?.key === 'email' ? ListEventGuestsSortBy.Email :
-              selectedSort?.key === 'approval_status' ? ListEventGuestsSortBy.ApprovalStatus :
-              undefined,
+      sortBy:
+        selectedSort?.key === 'register_time'
+          ? ListEventGuestsSortBy.RegisterTime
+          : selectedSort?.key === 'name'
+            ? ListEventGuestsSortBy.Name
+            : selectedSort?.key === 'email'
+              ? ListEventGuestsSortBy.Email
+              : selectedSort?.key === 'approval_status'
+                ? ListEventGuestsSortBy.ApprovalStatus
+                : undefined,
       sortOrder: SortOrder.Desc,
     },
   });
@@ -62,7 +74,7 @@ export function GuestList({ event }: { event: Event }) {
 
   const exportGuestsCSV = () => {
     downloadCSVFile(
-      `/event/${event?._id}/export/guests`,
+      `/event/${event?._id}/export/guests?self_verification_config=${JSON.stringify(SELF_VERIFICATION_CONFIG)}`,
       snakeCase(`${event.title} Guests ${format(new Date(event.start), 'dd_MM_yyyy')}`),
     );
   };
@@ -77,19 +89,15 @@ export function GuestList({ event }: { event: Event }) {
   };
 
   const handleFilterToggle = (filterKey: string) => {
-    setSelectedFilters(prev => 
-      prev.includes(filterKey) 
-        ? prev.filter(key => key !== filterKey)
-        : [...prev, filterKey]
+    setSelectedFilters((prev) =>
+      prev.includes(filterKey) ? prev.filter((key) => key !== filterKey) : [...prev, filterKey],
     );
     setCurrentPage(1);
   };
 
   const handleTicketTypeToggle = (ticketTypeKey: string) => {
-    setSelectedTicketTypes(prev => 
-      prev.includes(ticketTypeKey) 
-        ? prev.filter(key => key !== ticketTypeKey)
-        : [...prev, ticketTypeKey]
+    setSelectedTicketTypes((prev) =>
+      prev.includes(ticketTypeKey) ? prev.filter((key) => key !== ticketTypeKey) : [...prev, ticketTypeKey],
     );
     setCurrentPage(1);
   };
@@ -132,27 +140,27 @@ export function GuestList({ event }: { event: Event }) {
       <div className="flex items-center justify-between">
         <Menu.Root>
           <Menu.Trigger>
-            <Button
-              variant="tertiary"
-              size="sm"
-              iconLeft="icon-filter-line"
-              iconRight="icon-chevron-down"
-            >
+            <Button variant="tertiary" size="sm" iconLeft="icon-filter-line" iconRight="icon-chevron-down">
               {selectedFilters.length === 0 && selectedTicketTypes.length === 0
-                ? 'All Guests' 
+                ? 'All Guests'
                 : [
-                    ...selectedFilters.map(filter => 
-                      filter === 'going' ? 'Going' :
-                      filter === 'pending' ? 'Pending' :
-                      filter === 'invited' ? 'Invited' :
-                      filter === 'not_going' ? 'Not Going' :
-                      filter === 'checked_in' ? 'Checked In' : filter
+                    ...selectedFilters.map((filter) =>
+                      filter === 'going'
+                        ? 'Going'
+                        : filter === 'pending'
+                          ? 'Pending'
+                          : filter === 'invited'
+                            ? 'Invited'
+                            : filter === 'not_going'
+                              ? 'Not Going'
+                              : filter === 'checked_in'
+                                ? 'Checked In'
+                                : filter,
                     ),
-                    ...selectedTicketTypes.map(typeKey => 
-                      ticketTypeFilters.find(t => t.key === typeKey)?.value || 'Ticket Type'
-                    )
-                  ].join(', ')
-              }
+                    ...selectedTicketTypes.map(
+                      (typeKey) => ticketTypeFilters.find((t) => t.key === typeKey)?.value || 'Ticket Type',
+                    ),
+                  ].join(', ')}
             </Button>
           </Menu.Trigger>
           <Menu.Content className="w-48 p-1">
@@ -160,7 +168,11 @@ export function GuestList({ event }: { event: Event }) {
               <>
                 <MenuItem
                   title="All Guests"
-                  iconRight={selectedFilters.length === 0 && selectedTicketTypes.length === 0 ? 'text-primary icon-richtext-check' : undefined}
+                  iconRight={
+                    selectedFilters.length === 0 && selectedTicketTypes.length === 0
+                      ? 'text-primary icon-richtext-check'
+                      : undefined
+                  }
                   onClick={() => {
                     setSelectedFilters([]);
                     setSelectedTicketTypes([]);
@@ -208,7 +220,9 @@ export function GuestList({ event }: { event: Event }) {
                   <MenuItem
                     key={ticketType.key}
                     title={ticketType.value}
-                    iconRight={selectedTicketTypes.includes(ticketType.key) ? 'text-primary icon-richtext-check' : undefined}
+                    iconRight={
+                      selectedTicketTypes.includes(ticketType.key) ? 'text-primary icon-richtext-check' : undefined
+                    }
                     onClick={() => {
                       handleTicketTypeToggle(ticketType.key);
                     }}
@@ -221,12 +235,7 @@ export function GuestList({ event }: { event: Event }) {
 
         <Menu.Root>
           <Menu.Trigger>
-            <Button
-              variant="tertiary"
-              size="sm"
-              iconLeft="icon-sort"
-              iconRight="icon-chevron-down"
-            >
+            <Button variant="tertiary" size="sm" iconLeft="icon-sort" iconRight="icon-chevron-down">
               {selectedSort?.value || 'Register Time'}
             </Button>
           </Menu.Trigger>
@@ -237,7 +246,11 @@ export function GuestList({ event }: { event: Event }) {
                   <MenuItem
                     key={option.key}
                     title={option.value}
-                    iconRight={option.key === selectedSort?.key || (!selectedSort && option.key === 'register_time') ? 'text-primary! icon-richtext-check' : undefined}
+                    iconRight={
+                      option.key === selectedSort?.key || (!selectedSort && option.key === 'register_time')
+                        ? 'text-primary! icon-richtext-check'
+                        : undefined
+                    }
                     onClick={() => {
                       handleSortChange(option);
                       toggle();
@@ -250,11 +263,7 @@ export function GuestList({ event }: { event: Event }) {
         </Menu.Root>
       </div>
 
-      <GuestTable
-        event={event}
-        guests={guests}
-        loading={loading}
-      />
+      <GuestTable event={event} guests={guests} loading={loading} />
 
       {totalPages > 1 && (
         <div className="flex justify-between items-center gap-4">
