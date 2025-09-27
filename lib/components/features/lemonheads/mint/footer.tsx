@@ -1,4 +1,5 @@
 'use client';
+import * as Sentry from '@sentry/browser';
 import { useRouter } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 import { Eip1193Provider, ethers, isError } from 'ethers';
@@ -418,6 +419,7 @@ function MintModal({
       }
     } catch (error: any) {
       console.log(error);
+      Sentry.captureException(error);
       toast.error(formatError(error));
     } finally {
       setIsMinting(false);
