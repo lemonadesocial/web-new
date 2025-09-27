@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.3.0](https://github.com/lemonadesocial/web-new/compare/v7.2.0...v7.3.0) (2025-09-27)
+
+
+### Features
+
+* add sentry capture exception ([2d467e9](https://github.com/lemonadesocial/web-new/commit/2d467e9e6151c7492e5a900b2e76b43a09b3fdab))
+* import nextjs package ([ccb8747](https://github.com/lemonadesocial/web-new/commit/ccb8747e0ae0aae0d2b698b9a0e25ead85d4afad))
+
 ## [7.2.0](https://github.com/lemonadesocial/web-new/compare/v7.1.0...v7.2.0) (2025-09-26)
 
 
