@@ -14,7 +14,7 @@ import { chainsMapAtom } from '$lib/jotai';
 import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
 import { useClient, useQuery } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
-import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
+import { ETHERSCAN } from '$lib/utils/constants';
 import {
   CanMintLemonheadDocument,
   GetListLemonheadSponsorsDocument,
@@ -440,7 +440,7 @@ function MintModal({
             iconRight="icon-arrow-outward"
             className="rounded-full"
             variant="tertiary-alt"
-            onClick={() => window.open(`${SEPOLIA_ETHERSCAN}/tx/${mintState.txHash}`)}
+            onClick={() => window.open(`${ETHERSCAN}/tx/${mintState.txHash}`)}
           >
             View txn.
           </Button>
