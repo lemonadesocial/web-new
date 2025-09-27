@@ -1,5 +1,5 @@
 'use client';
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/nextjs';
 import { useRouter } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 import { Eip1193Provider, ethers, isError } from 'ethers';
