@@ -1,5 +1,18 @@
 # Changelog
 
+## [7.4.0](https://github.com/lemonadesocial/web-new/compare/v7.3.0...v7.4.0) (2025-09-28)
+
+
+### Features
+
+* add break words apply for special content ([53a7c7d](https://github.com/lemonadesocial/web-new/commit/53a7c7de7ec72aabd81f32785abf51f59f535934))
+* update hint text ([4a28fa3](https://github.com/lemonadesocial/web-new/commit/4a28fa308b45cbf63cb6743c9c8219b7d6b7d3b9))
+
+
+### Bug Fixes
+
+* update tx url to mainet ([e4464e3](https://github.com/lemonadesocial/web-new/commit/e4464e3ca641186a2ed77b4774c6ca15e39a185c))
+
 ## [7.3.0](https://github.com/lemonadesocial/web-new/compare/v7.2.0...v7.3.0) (2025-09-27)
 
 
