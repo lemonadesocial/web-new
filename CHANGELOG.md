@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.5.0](https://github.com/lemonadesocial/web-new/compare/v7.4.0...v7.5.0) (2025-09-28)
+
+
+### Features
+
+* remove rule top, bottom and outfit ([da1faf4](https://github.com/lemonadesocial/web-new/commit/da1faf48e1e8b87058370f4b69846ee489f3a468))
+* remove trait data ([5154684](https://github.com/lemonadesocial/web-new/commit/51546845b28499e5cb6dd48ff00ee98b48c61e84))
+
 ## [7.4.0](https://github.com/lemonadesocial/web-new/compare/v7.3.0...v7.4.0) (2025-09-28)
 
 
