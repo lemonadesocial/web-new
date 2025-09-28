@@ -222,6 +222,8 @@ function PreviewImageLink({ color, image, portrait, username, tokenId, bio }: an
                 lineClamp: 4,
                 WebkitBoxOrient: 'vertical',
                 WebkitLineClamp: 4,
+                wordBreak: 'break-all',
+                overflowWrap: 'break-word',
               }}
             >
               {bio || 'Citizen of the United Stands of Lemonade - a nation shaped by creators and communities.'}
@@ -365,6 +367,8 @@ function DownloadImageLink({ color, image, portrait, username, tokenId, bio }: a
                 lineClamp: 4,
                 WebkitLineClamp: 4,
                 WebkitBoxOrient: 'vertical',
+                wordBreak: 'break-all',
+                overflowWrap: 'break-word',
               }}
             >
               {bio || 'Citizen of the United Stands of Lemonade - a nation shaped by creators and communities.'}
