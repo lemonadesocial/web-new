@@ -122,12 +122,12 @@ export function validateTraits(traits: Trait[]) {
   //-- 3. custom trait validations
 
   //-- 3.1 if no outfit then there must be top & bottom
-  if (
-    !traits.some((trait) => trait.type === TraitType.outfit) &&
-    [TraitType.top, TraitType.bottom].some((trait) => !traits.some((t) => t.type === trait))
-  ) {
-    throw new Error('Top and bottom are required if no outfit is present');
-  }
+  // if (
+  //   !traits.some((trait) => trait.type === TraitType.outfit) &&
+  //   [TraitType.top, TraitType.bottom].some((trait) => !traits.some((t) => t.type === trait))
+  // ) {
+  //   throw new Error('Top and bottom are required if no outfit is present');
+  // }
 
   //-- 3.2 alien cannot have eyes, mouth, or hair
   const bodyTrait = traits.find((trait) => trait.type === TraitType.body);
