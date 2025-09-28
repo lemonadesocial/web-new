@@ -366,7 +366,7 @@ function MintModal({
 
       const mintData = await mutation.mutateAsync({
         wallet: address,
-        traits: traits.map(({ _id, image, ...rest }) => rest),
+        traits: traits.filter(Boolean).map(({ _id, image, ...rest }) => rest),
         sponsor: sponsor?._id,
       });
       console.log('Mint data:', mintData);
