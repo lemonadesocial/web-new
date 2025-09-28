@@ -146,13 +146,13 @@ function reducers(state: LemonHeadState, action: LemonHeadAction) {
 
     case LemonHeadActionKind.random_traits: {
       const { data } = action.payload;
-      const _traits = state.traits.filter((i) => ['body'].includes(i.type));
+      const _traits = state.traits.filter(Boolean).filter((i) => ['body'].includes(i.type));
       const traits = unionBy(_traits, data, 'type');
       return { ...state, traits };
     }
 
     case LemonHeadActionKind.remove_traits: {
-      const traits = state.traits.filter((item) => action.payload?.data?.type !== item.type);
+      const traits = state.traits.filter(Boolean).filter((item) => action.payload?.data?.type !== item.type);
       return { ...state, traits };
     }
 
