@@ -10,7 +10,7 @@ import { useAppKitAccount } from '@reown/appkit/react';
 import { Button, Card, Divider, drawer, modal, Segment, Skeleton, Spacer } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { useAccount, useLemonadeUsername, usePost } from '$lib/hooks/useLens';
-import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
+import { ETHERSCAN } from '$lib/utils/constants';
 
 import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
 import { ClaimLemonadeUsernameModal } from '$lib/components/features/lens-account/ClaimLemonadeUsernameModal';
@@ -82,7 +82,7 @@ export function ClaimLemonHead() {
               <Button
                 iconRight="icon-arrow-outward"
                 variant="tertiary-alt"
-                onClick={() => window.open(`${SEPOLIA_ETHERSCAN}/tx/${state.mint.txHash}`)}
+                onClick={() => window.open(`${ETHERSCAN}/tx/${state.mint.txHash}`)}
               >
                 View txn.
               </Button>

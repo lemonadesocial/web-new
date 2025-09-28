@@ -15,14 +15,14 @@ export function useSpaceMenu({ space, isMobile }: { space: Space; isMobile?: boo
         { icon: 'icon-ticket', path: 'events', label: 'Events' },
         { icon: 'icon-sub-hubs', path: 'featured-hubs', label: 'Featured Hubs' },
         { icon: 'icon-account-balance-outline', path: 'treasury', label: 'Treasury' },
-        { icon: 'icon-bar-chart', path: 'leaderboards', label: 'Leader Boards' },
+        { icon: 'icon-bar-chart', path: 'leaderboards', label: 'Leaderboard' },
       ];
 
       if (isMobile) {
         menu = [
           { icon: 'icon-home', path: '', label: 'Home' },
           { icon: 'icon-ticket', path: 'events', label: 'Events' },
-          { icon: 'icon-bar-chart', path: 'leaderboards', label: 'Leader Boards' },
+          { icon: 'icon-bar-chart', path: 'leaderboards', label: 'Leaderboard' },
         ];
       }
     } else {
