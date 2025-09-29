@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.8.0](https://github.com/lemonadesocial/web-new/compare/v7.7.0...v7.8.0) (2025-09-29)
+
+
+### Features
+
+* update load more lemonheads gallery ([4e8adae](https://github.com/lemonadesocial/web-new/commit/4e8adae4ca120c153211ee8c80a8280cd3af4dcf))
+
 ## [7.7.0](https://github.com/lemonadesocial/web-new/compare/v7.6.0...v7.7.0) (2025-09-29)
 
 
