@@ -7,6 +7,7 @@ import { EventPreview } from './EventPreview';
 import { GetEventDocument, Event } from '$lib/graphql/generated/backend/graphql';
 import { defaultClient } from '$lib/graphql/request/instances';
 import { LinkPreview } from '$lib/components/core/link';
+import { markdownToHtml } from '$lib/utils/markdown';
 
 type PostContentProps = {
   post: Post;
@@ -56,12 +57,14 @@ export function PostContent({ post }: PostContentProps) {
 
   const sharingLink = (metadata as LinkMetadata).sharingLink || extractFirstUrl((metadata as TextOnlyMetadata).content);
 
+  console.log(sharingLink)
+
   return (
     <div className="space-y-2" style={{ overflowWrap: 'anywhere' }}>
-      <p
-        className="text-secondary whitespace-pre-line"
+      <div
+        className="text-secondary font-medium [&_a]:text-accent-400"
         dangerouslySetInnerHTML={{
-          __html: (metadata as TextOnlyMetadata).content || ''
+          __html: markdownToHtml((metadata as TextOnlyMetadata).content || '')
         }}
       />
       {(metadata as ImageMetadata).attachments && (metadata as ImageMetadata).attachments.length > 0 && (
