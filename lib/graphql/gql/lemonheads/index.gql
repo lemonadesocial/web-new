@@ -1,5 +1,5 @@
-query GetMinteds($orderBy: Minted_orderBy, $orderDirection: OrderDirection, $first: Int) {
-  minteds(orderBy: $orderBy, orderDirection: $orderDirection, first: $first) {
+query GetMinteds($orderBy: Minted_orderBy, $orderDirection: OrderDirection, $first: Int, $skip: Int) {
+  minteds(orderBy: $orderBy, orderDirection: $orderDirection, first: $first, skip: $skip) {
     tokenId
     look
     receiver
