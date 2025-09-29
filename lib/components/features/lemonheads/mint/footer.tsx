@@ -267,6 +267,7 @@ function BeforeMintModal({ onContinue }: { onContinue: () => void }) {
           <p className="text-sm">Please review and agree to the terms.</p>
           <p className="text-sm">By minting your LemonHead, you agree to our Terms of Use and acknowledge that:</p>
           <ul className="list-disc pl-5.5 text-sm">
+            <li>LemonHeads NFT is non-transferable & non-tradable (soul-bound)</li>
             <li>Your avatar will be permanently recorded on-chain.</li>
             <li>It will be publicly visible and tied to your wallet address.</li>
             <li>You won’t be able to edit the name or artwork after minting. All sales are final.</li>

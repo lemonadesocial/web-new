@@ -14,7 +14,10 @@ export function LemonHeadsProgressBar() {
         <motion.div
           className="h-2 bg-(--color-lemonheads-progress-bar) rounded-s-full"
           transition={{ duration: 1 }}
-          animate={{ width: `calc(${(totalMint * 100) / 10000}% - 50px)` }}
+          animate={{
+            width:
+              totalMint <= 5000 ? `calc(${(totalMint * 100) / 10000}%)` : `calc(${(totalMint * 100) / 10000}% - 50px)`,
+          }}
         />
 
         <div className="-ml-[1px]">
