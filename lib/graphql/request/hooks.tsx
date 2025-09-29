@@ -39,14 +39,21 @@ export function useQuery<T, V extends object>(
   };
 
   const fetchMore = async (params: { variables: Partial<V>; updateQuery?: (existing: T, res: T) => T }) => {
-    const { data: newData } = await client.query({
-      query,
-      variables: { ...variables, ...params.variables },
-      fetchPolicy: 'network-only',
-    });
-    const latestData = params.updateQuery?.(data as T, newData);
-    setData(latestData as T);
-    onComplete?.(latestData as T); // Call onComplete with updated data
+    try {
+      setLoading(true);
+      const { data: newData } = await client.query({
+        query,
+        variables: { ...variables, ...params.variables },
+        fetchPolicy: 'network-only',
+      });
+      const latestData = params.updateQuery?.(data as T, newData);
+      setData(latestData as T);
+      onComplete?.(latestData as T); // Call onComplete with updated data
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const variablesKey = React.useMemo(() => JSON.stringify(variables), [variables]);
