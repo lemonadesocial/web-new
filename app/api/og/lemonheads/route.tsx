@@ -367,8 +367,6 @@ function DownloadImageLink({ color, image, portrait, username, tokenId, bio }: a
                 lineClamp: 4,
                 WebkitLineClamp: 4,
                 WebkitBoxOrient: 'vertical',
-                wordBreak: 'break-all',
-                overflowWrap: 'break-word',
               }}
             >
               {bio || 'Citizen of the United Stands of Lemonade - a nation shaped by creators and communities.'}
