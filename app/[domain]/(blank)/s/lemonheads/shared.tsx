@@ -37,7 +37,6 @@ import { ProfilePane } from '$lib/components/features/pane';
 import { LemonHeadsHubRightCol } from '$lib/components/features/lemonheads/LemonHeadsHubRightCol';
 import { match } from 'ts-pattern';
 import { useAppKitAccount } from '@reown/appkit/react';
-import { ConnectWalletButton } from '$lib/components/features/auth/ConnectWalletButton';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 
