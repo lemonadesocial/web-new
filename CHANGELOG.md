@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.7.0](https://github.com/lemonadesocial/web-new/compare/v7.6.0...v7.7.0) (2025-09-29)
+
+
+### Features
+
+* save post in markdown ([e4ec318](https://github.com/lemonadesocial/web-new/commit/e4ec3181f8ef2fab559a563da5f7a8f45041ef76))
+
 ## [7.6.0](https://github.com/lemonadesocial/web-new/compare/v7.5.0...v7.6.0) (2025-09-29)
 
 
