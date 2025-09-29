@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.8.1](https://github.com/lemonadesocial/web-new/compare/v7.8.0...v7.8.1) (2025-09-29)
+
+
+### Bug Fixes
+
+* update download image ([8764c6b](https://github.com/lemonadesocial/web-new/commit/8764c6bb1c4d4264d727cdac1e44cccb09bc92c1))
+
 ## [7.8.0](https://github.com/lemonadesocial/web-new/compare/v7.7.0...v7.8.0) (2025-09-29)
 
 
