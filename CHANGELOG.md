@@ -1,5 +1,20 @@
 # Changelog
 
+## [7.6.0](https://github.com/lemonadesocial/web-new/compare/v7.5.0...v7.6.0) (2025-09-29)
+
+
+### Features
+
+* load more tokens in lemonheads gallery ([d0755b6](https://github.com/lemonadesocial/web-new/commit/d0755b67478e51ae01ac82b71fdbc4e945f598a4))
+* update content before mint ([0627c64](https://github.com/lemonadesocial/web-new/commit/0627c64c5f8feda9a334bd8967d5ff5a88002db9))
+* update progress bar lemonheads mobile ([f15a479](https://github.com/lemonadesocial/web-new/commit/f15a4791fd25fcef388e763f3e07ee27845560aa))
+* update timelines with lemonheads feed ([0276168](https://github.com/lemonadesocial/web-new/commit/02761683dc30cc076eefff0c123cc1ed8c8e66e8))
+
+
+### Bug Fixes
+
+* council cards mobile view ([8ecbf01](https://github.com/lemonadesocial/web-new/commit/8ecbf01be49fa01f7c03d2da03ecade37a9b5c9f))
+
 ## [7.5.0](https://github.com/lemonadesocial/web-new/compare/v7.4.0...v7.5.0) (2025-09-28)
 
 
