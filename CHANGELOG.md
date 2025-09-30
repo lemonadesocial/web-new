@@ -1,5 +1,112 @@
 # Changelog
 
+## [7.8.1](https://github.com/lemonadesocial/web-new/compare/v7.8.0...v7.8.1) (2025-09-29)
+
+
+### Bug Fixes
+
+* update download image ([8764c6b](https://github.com/lemonadesocial/web-new/commit/8764c6bb1c4d4264d727cdac1e44cccb09bc92c1))
+
+## [7.8.0](https://github.com/lemonadesocial/web-new/compare/v7.7.0...v7.8.0) (2025-09-29)
+
+
+### Features
+
+* update load more lemonheads gallery ([4e8adae](https://github.com/lemonadesocial/web-new/commit/4e8adae4ca120c153211ee8c80a8280cd3af4dcf))
+
+## [7.7.0](https://github.com/lemonadesocial/web-new/compare/v7.6.0...v7.7.0) (2025-09-29)
+
+
+### Features
+
+* save post in markdown ([e4ec318](https://github.com/lemonadesocial/web-new/commit/e4ec3181f8ef2fab559a563da5f7a8f45041ef76))
+
+## [7.6.0](https://github.com/lemonadesocial/web-new/compare/v7.5.0...v7.6.0) (2025-09-29)
+
+
+### Features
+
+* load more tokens in lemonheads gallery ([d0755b6](https://github.com/lemonadesocial/web-new/commit/d0755b67478e51ae01ac82b71fdbc4e945f598a4))
+* update content before mint ([0627c64](https://github.com/lemonadesocial/web-new/commit/0627c64c5f8feda9a334bd8967d5ff5a88002db9))
+* update progress bar lemonheads mobile ([f15a479](https://github.com/lemonadesocial/web-new/commit/f15a4791fd25fcef388e763f3e07ee27845560aa))
+* update timelines with lemonheads feed ([0276168](https://github.com/lemonadesocial/web-new/commit/02761683dc30cc076eefff0c123cc1ed8c8e66e8))
+
+
+### Bug Fixes
+
+* council cards mobile view ([8ecbf01](https://github.com/lemonadesocial/web-new/commit/8ecbf01be49fa01f7c03d2da03ecade37a9b5c9f))
+
+## [7.5.0](https://github.com/lemonadesocial/web-new/compare/v7.4.0...v7.5.0) (2025-09-28)
+
+
+### Features
+
+* remove rule top, bottom and outfit ([da1faf4](https://github.com/lemonadesocial/web-new/commit/da1faf48e1e8b87058370f4b69846ee489f3a468))
+* remove trait data ([5154684](https://github.com/lemonadesocial/web-new/commit/51546845b28499e5cb6dd48ff00ee98b48c61e84))
+
+## [7.4.0](https://github.com/lemonadesocial/web-new/compare/v7.3.0...v7.4.0) (2025-09-28)
+
+
+### Features
+
+* add break words apply for special content ([53a7c7d](https://github.com/lemonadesocial/web-new/commit/53a7c7de7ec72aabd81f32785abf51f59f535934))
+* update hint text ([4a28fa3](https://github.com/lemonadesocial/web-new/commit/4a28fa308b45cbf63cb6743c9c8219b7d6b7d3b9))
+
+
+### Bug Fixes
+
+* update tx url to mainet ([e4464e3](https://github.com/lemonadesocial/web-new/commit/e4464e3ca641186a2ed77b4774c6ca15e39a185c))
+
+## [7.3.0](https://github.com/lemonadesocial/web-new/compare/v7.2.0...v7.3.0) (2025-09-27)
+
+
+### Features
+
+* add sentry capture exception ([2d467e9](https://github.com/lemonadesocial/web-new/commit/2d467e9e6151c7492e5a900b2e76b43a09b3fdab))
+* import nextjs package ([ccb8747](https://github.com/lemonadesocial/web-new/commit/ccb8747e0ae0aae0d2b698b9a0e25ead85d4afad))
+
+## [7.2.0](https://github.com/lemonadesocial/web-new/compare/v7.1.0...v7.2.0) (2025-09-26)
+
+
+### Features
+
+* check upgrade node ([39c618b](https://github.com/lemonadesocial/web-new/commit/39c618b089e063aa621cef2cb2f70606562ba55d))
+* update docker ([022413d](https://github.com/lemonadesocial/web-new/commit/022413dc08a17a083cb5798c82ecbe01d1dc3ad9))
+* update qrcode package - export guest list ([67173a0](https://github.com/lemonadesocial/web-new/commit/67173a0267a159327100cce86b9c4331732271f9))
+* upgrade self core ([559b88c](https://github.com/lemonadesocial/web-new/commit/559b88c46b4269ca587c3a34da725eebda0237bb))
+
+
+### Bug Fixes
+
+* **lemonhead:** fix validate trait filters ([62f9a73](https://github.com/lemonadesocial/web-new/commit/62f9a7397f93261446a0a181a5f1ca683e8c277c))
+
+## [7.1.0](https://github.com/lemonadesocial/web-new/compare/v7.0.0...v7.1.0) (2025-09-25)
+
+
+### Features
+
+* update feed address ([305a2ec](https://github.com/lemonadesocial/web-new/commit/305a2ec810f2e89842f33c7b26dc724ef87cafba))
+
+## [7.0.0](https://github.com/lemonadesocial/web-new/compare/v6.15.0...v7.0.0) (2025-09-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* council members
+
+### Features
+
+* add council title ([3a5c709](https://github.com/lemonadesocial/web-new/commit/3a5c709b6e523483aef945542b82272e5d672fa2))
+* council members ([7813e15](https://github.com/lemonadesocial/web-new/commit/7813e15c59c3507c7bc7b08d226b656e46a164eb))
+* resolve conflict style ([ac37d16](https://github.com/lemonadesocial/web-new/commit/ac37d16cde61d20f54478b65ad61a8ed009cc5b0))
+* update feed post detail ([7a19d43](https://github.com/lemonadesocial/web-new/commit/7a19d43dddcf743eb6a98f883ab500fee0d8216d))
+
+
+### Bug Fixes
+
+* layout auto scale based on content ([f91f11a](https://github.com/lemonadesocial/web-new/commit/f91f11a4ed0e4af45ad70e258ecfbe87ee3efcc6))
+* missing council display name ([637d315](https://github.com/lemonadesocial/web-new/commit/637d315e9d55fd6727f2da746ecb1a6214475505))
+
 ## [6.15.0](https://github.com/lemonadesocial/web-new/compare/v6.14.0...v6.15.0) (2025-09-24)
 
 

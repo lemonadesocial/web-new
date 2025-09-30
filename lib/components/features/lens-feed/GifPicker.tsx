@@ -30,7 +30,6 @@ export function GifPicker({ onSelectGif, trigger }: GifPickerProps) {
 
       const newGifs = response.data;
 
-      console.log(newGifs, searchQuery)
       
       if (reset || searchQuery) {
         setGifs(newGifs);
@@ -75,7 +74,6 @@ export function GifPicker({ onSelectGif, trigger }: GifPickerProps) {
   };
 
   const handleGifClick = (gif: IGif) => {
-    console.log(gif)
     const gifUrl = gif.images.original.url;
     setSearchTerm('');
     onSelectGif(gifUrl);

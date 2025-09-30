@@ -61,7 +61,7 @@ async function Layout({ children }: React.PropsWithChildren) {
         <div>
           <Header hideLogo className="h-[64px]" />
           <div className="lg:pl-[97px]">
-            <div className="page mx-auto px-4 xl:px-0 pt-6">{children}</div>
+            <div className="page mx-auto px-4 xl:px-0 pt-6 w-full max-w-[1080px]">{children}</div>
           </div>
         </div>
         <Footer space={space} />

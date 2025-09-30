@@ -37,7 +37,6 @@ import { ProfilePane } from '$lib/components/features/pane';
 import { LemonHeadsHubRightCol } from '$lib/components/features/lemonheads/LemonHeadsHubRightCol';
 import { match } from 'ts-pattern';
 import { useAppKitAccount } from '@reown/appkit/react';
-import { ConnectWalletButton } from '$lib/components/features/auth/ConnectWalletButton';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 
@@ -406,18 +405,9 @@ export function NewFeedSection({ space }: { space: Space }) {
     router.push(`/s/lemonheads/posts/${slug}`);
   };
 
-  // const locked = !address || !data || (data && data.tokenId == 0);
-
   return (
     <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-12">
       <div className="flex flex-col gap-5 flex-1">
-        {/* {locked ? ( */}
-        {/*   <LemonHeadsLockFeature */}
-        {/*     title="Newsfeed is Locked" */}
-        {/*     subtitle="Claim your LemonHead & become a part of an exclusive community." */}
-        {/*     icon="icon-newspaper" */}
-        {/*   /> */}
-        {/* ) : ( */}
         <PostComposer
           onPost={onPost}
           showFeedOptions={false}
@@ -451,8 +441,7 @@ export function NewFeedSection({ space }: { space: Space }) {
               }
             })}
         />
-        <FeedPosts feedAddress={LEMONADE_FEED_ADDRESS} onSelectPost={onSelectPost} />
-        {/* )} */}
+        <FeedPosts feedAddress={feedAddress} onSelectPost={onSelectPost} />
       </div>
 
       <LemonHeadsHubRightCol spaceId={spaceId} />

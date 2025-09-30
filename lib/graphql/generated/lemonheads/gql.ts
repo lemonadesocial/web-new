@@ -14,10 +14,10 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "query GetMinteds($orderBy: Minted_orderBy, $orderDirection: OrderDirection, $first: Int) {\n  minteds(orderBy: $orderBy, orderDirection: $orderDirection, first: $first) {\n    tokenId\n    look\n    receiver\n  }\n}": typeof types.GetMintedsDocument,
+    "query GetMinteds($orderBy: Minted_orderBy, $orderDirection: OrderDirection, $first: Int, $skip: Int) {\n  minteds(\n    orderBy: $orderBy\n    orderDirection: $orderDirection\n    first: $first\n    skip: $skip\n  ) {\n    tokenId\n    look\n    receiver\n  }\n}": typeof types.GetMintedsDocument,
 };
 const documents: Documents = {
-    "query GetMinteds($orderBy: Minted_orderBy, $orderDirection: OrderDirection, $first: Int) {\n  minteds(orderBy: $orderBy, orderDirection: $orderDirection, first: $first) {\n    tokenId\n    look\n    receiver\n  }\n}": types.GetMintedsDocument,
+    "query GetMinteds($orderBy: Minted_orderBy, $orderDirection: OrderDirection, $first: Int, $skip: Int) {\n  minteds(\n    orderBy: $orderBy\n    orderDirection: $orderDirection\n    first: $first\n    skip: $skip\n  ) {\n    tokenId\n    look\n    receiver\n  }\n}": types.GetMintedsDocument,
 };
 
 /**
@@ -37,7 +37,7 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query GetMinteds($orderBy: Minted_orderBy, $orderDirection: OrderDirection, $first: Int) {\n  minteds(orderBy: $orderBy, orderDirection: $orderDirection, first: $first) {\n    tokenId\n    look\n    receiver\n  }\n}"): (typeof documents)["query GetMinteds($orderBy: Minted_orderBy, $orderDirection: OrderDirection, $first: Int) {\n  minteds(orderBy: $orderBy, orderDirection: $orderDirection, first: $first) {\n    tokenId\n    look\n    receiver\n  }\n}"];
+export function graphql(source: "query GetMinteds($orderBy: Minted_orderBy, $orderDirection: OrderDirection, $first: Int, $skip: Int) {\n  minteds(\n    orderBy: $orderBy\n    orderDirection: $orderDirection\n    first: $first\n    skip: $skip\n  ) {\n    tokenId\n    look\n    receiver\n  }\n}"): (typeof documents)["query GetMinteds($orderBy: Minted_orderBy, $orderDirection: OrderDirection, $first: Int, $skip: Int) {\n  minteds(\n    orderBy: $orderBy\n    orderDirection: $orderDirection\n    first: $first\n    skip: $skip\n  ) {\n    tokenId\n    look\n    receiver\n  }\n}"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

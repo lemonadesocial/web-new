@@ -1,4 +1,5 @@
 'use client';
+import * as Sentry from '@sentry/nextjs';
 import { useRouter } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 import { Eip1193Provider, ethers, isError } from 'ethers';
@@ -13,7 +14,7 @@ import { chainsMapAtom } from '$lib/jotai';
 import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
 import { useClient, useQuery } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
-import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
+import { ETHERSCAN } from '$lib/utils/constants';
 import {
   CanMintLemonheadDocument,
   GetListLemonheadSponsorsDocument,
@@ -266,6 +267,7 @@ function BeforeMintModal({ onContinue }: { onContinue: () => void }) {
           <p className="text-sm">Please review and agree to the terms.</p>
           <p className="text-sm">By minting your LemonHead, you agree to our Terms of Use and acknowledge that:</p>
           <ul className="list-disc pl-5.5 text-sm">
+            <li>LemonHeads NFT is non-transferable & non-tradable (soul-bound)</li>
             <li>Your avatar will be permanently recorded on-chain.</li>
             <li>It will be publicly visible and tied to your wallet address.</li>
             <li>You won’t be able to edit the name or artwork after minting. All sales are final.</li>
@@ -365,7 +367,7 @@ function MintModal({
 
       const mintData = await mutation.mutateAsync({
         wallet: address,
-        traits: traits.map(({ _id, image, ...rest }) => rest),
+        traits: traits.filter(Boolean).map(({ _id, image, ...rest }) => rest),
         sponsor: sponsor?._id,
       });
       console.log('Mint data:', mintData);
@@ -418,6 +420,7 @@ function MintModal({
       }
     } catch (error: any) {
       console.log(error);
+      Sentry.captureException(error);
       toast.error(formatError(error));
     } finally {
       setIsMinting(false);
@@ -438,7 +441,7 @@ function MintModal({
             iconRight="icon-arrow-outward"
             className="rounded-full"
             variant="tertiary-alt"
-            onClick={() => window.open(`${SEPOLIA_ETHERSCAN}/tx/${mintState.txHash}`)}
+            onClick={() => window.open(`${ETHERSCAN}/tx/${mintState.txHash}`)}
           >
             View txn.
           </Button>

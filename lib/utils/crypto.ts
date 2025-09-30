@@ -8,6 +8,7 @@ import LemonadeRelayPayment from '$lib/abis/LemonadeRelayPayment.json';
 import LemonadeStakePayment from '$lib/abis/LemonadeStakePayment.json';
 import ERC721 from '$lib/abis/ERC721.json'; 
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
+import { TRPCClientError } from '@trpc/client';
 
 export const ERC20Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC20));
 export const ERC721Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC721));
@@ -168,6 +169,10 @@ export function formatError(error: any): string {
     if (message.includes('nonce')) {
       return 'Transaction nonce error. Please try again';
     }
+  }
+
+  if (error instanceof TRPCClientError) {
+    return error.message;
   }
 
   return 'An unexpected error occurred. Please try again';

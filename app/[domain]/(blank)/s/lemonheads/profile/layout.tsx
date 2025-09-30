@@ -14,8 +14,8 @@ async function Layout({ children }: React.PropsWithChildren) {
   if (!space) return notFound();
 
   return (
-    <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-12 pb-28 md:pb-20">
-      <div className="flex flex-col gap-5">
+    <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-12 pb-28 md:pb-20 w-full">
+      <div className="flex flex-col gap-5 flex-1">
         <HeroSectionProfile space={space} />
         <ProfileInfoSection />
 

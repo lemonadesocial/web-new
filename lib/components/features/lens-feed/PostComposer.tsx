@@ -11,6 +11,7 @@ import { useLensConnect } from '$lib/hooks/useLens';
 import { useMediaQuery } from '$lib/hooks/useMediaQuery';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { LEMONADE_FEED_ADDRESS } from '$lib/utils/constants';
+import { htmlToMarkdown, markdownToHtml } from '$lib/utils/markdown';
 // import { chainsMapAtom } from "$lib/jotai";
 
 import { ImageInput } from './ImageInput';
@@ -41,7 +42,7 @@ export function PostComposer({
   const isDesktop = useMediaQuery('md');
   const handleLensConnect = useLensConnect();
 
-  const [value, setValue] = useState(defaultValue);
+  const [value, setValue] = useState(markdownToHtml(defaultValue));
   const [isActive, setIsActive] = useState(false);
   const [isBoldActive, setIsBoldActive] = useState(false);
   const [isItalicActive, setIsItalicActive] = useState(false);
@@ -79,7 +80,7 @@ export function PostComposer({
   const [selectedFeed, setSelectedFeed] = useState(FEED_OPTIONS[0]);
 
   const handlePost = async () => {
-    const content = value.trim();
+    const content = htmlToMarkdown(value).trim();
     let images: MediaFile[] = [];
 
     if (files.length > 0) {
