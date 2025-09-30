@@ -419,8 +419,11 @@ function MintModal({
         console.log('Token ID:', tokenId);
       }
     } catch (error: any) {
-      console.log(error);
-      Sentry.captureException(error);
+      Sentry.captureException(error, {
+        extra: {
+          walletInfo: appKit.getWalletInfo(),
+        }
+      });
       toast.error(formatError(error));
     } finally {
       setIsMinting(false);
