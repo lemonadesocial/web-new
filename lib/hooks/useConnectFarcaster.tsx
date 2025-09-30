@@ -211,6 +211,11 @@ export const useLinkFarcaster = () => {
               },
             }
           }, (_, err: any) => {
+            if (err.status === 403) {
+              toast.error('The session is too old, please log out and sign in again to link Farcaster account.', 8000);
+              return;
+            }
+
             toast.error(err.message || 'Failed to link Farcaster account');
           }, () => {
             toast.success('Farcaster account linked successfully');
