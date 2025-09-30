@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.10.0](https://github.com/lemonadesocial/web-new/compare/v7.9.0...v7.10.0) (2025-09-30)
+
+
+### Features
+
+* add fobbiden message for farcaster link ([d3fe88e](https://github.com/lemonadesocial/web-new/commit/d3fe88ebb8bea976b59808752dc5e7aa979d95b8))
+
 ## [7.9.0](https://github.com/lemonadesocial/web-new/compare/v7.8.1...v7.9.0) (2025-09-30)
 
 
