@@ -48,16 +48,7 @@ export async function writeContract(
   const signer = await browserProvider.getSigner();
   const contract = contractInstance.attach(contractAddress).connect(signer);
   const gasLimit = await contract.getFunction(functionName).estimateGas(...args, txOptions);
-  
-  const data = contract.interface.encodeFunctionData(functionName, args);
-  
-  const tx = await signer.sendTransaction({
-    to: contractAddress,
-    data: ethers.hexlify(data),
-    gasLimit,
-    ...txOptions
-  });
-  
+  const tx = await contract.getFunction(functionName)(...args, { ...txOptions, gasLimit });
   return tx;
 }
 

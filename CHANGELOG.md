@@ -1,12 +1,5 @@
 # Changelog
 
-## [7.9.0](https://github.com/lemonadesocial/web-new/compare/v7.8.1...v7.9.0) (2025-09-30)
-
-
-### Features
-
-* ensure proper hex formatting ([f072591](https://github.com/lemonadesocial/web-new/commit/f0725918ba2eddb6e8a86ec6c92dba35e64e68f7))
-
 ## [7.8.1](https://github.com/lemonadesocial/web-new/compare/v7.8.0...v7.8.1) (2025-09-29)
 
 
