@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.11.0](https://github.com/lemonadesocial/web-new/compare/v7.10.0...v7.11.0) (2025-10-01)
+
+
+### Features
+
+* update lemonheads invite ([eb2efcf](https://github.com/lemonadesocial/web-new/commit/eb2efcfe33035d3916d6f6b149ca1f1214c9d207))
+
 ## [7.10.0](https://github.com/lemonadesocial/web-new/compare/v7.9.0...v7.10.0) (2025-09-30)
 
 
