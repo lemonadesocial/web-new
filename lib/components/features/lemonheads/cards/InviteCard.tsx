@@ -1,12 +1,11 @@
 'use client';
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
-
+import { ethers } from 'ethers';
+import { useAppKitAccount } from '@reown/appkit/react';
 import { Avatar, Button, Card, modal, ModalContent, toast } from '$lib/components/core';
-import { useLemonhead } from '$lib/hooks/useLemonhead';
+
 import { truncateMiddle } from '$lib/utils/string';
 import { userAvatar } from '$lib/utils/user';
 import { Controller, useForm } from 'react-hook-form';
@@ -21,121 +20,6 @@ import {
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { VerifyWalletModal } from '$lib/components/features/event-registration/modals/VerifyWalletModal';
-import { ethers, lock } from 'ethers';
-import { useAppKitAccount } from '@reown/appkit/react';
-
-export function LockFeature({ title, subtitle, icon }: { title: string; subtitle: string; icon?: string }) {
-  const router = useRouter();
-  const { data } = useLemonhead();
-
-  return (
-    <div className="flex flex-col h-full w-full items-center justify-center gap-8 pt-10 pb-32">
-      <div className="flex flex-col justify-center items-center relative">
-        {icon && <i className={twMerge('size-[184px] text-quaternary', icon)} />}
-
-        <div className="bg-danger-500 rounded-full p-3 absolute bottom-0">
-          <i className="icon-lock text-primary size-8 aspect-square" />
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-2 text-tertiary text-center">
-        <p className="font-title font-semibold! text-xl">{title}</p>
-        <p>{subtitle}</p>
-      </div>
-
-      {data && data.tokenId == 0 && (
-        <Button variant="secondary" onClick={() => router.push('/lemonheads/mint')}>
-          Claim LemonHead
-        </Button>
-      )}
-    </div>
-  );
-}
-
-export function RightCol({
-  options = { nft: true, treasury: true, invite: true },
-}: {
-  options?: { nft?: boolean; treasury?: boolean; invite?: boolean };
-}) {
-  const { data } = useLemonhead();
-
-  return (
-    <>
-      <div className="md:hidden flex max-w-full overflow-y-auto no-scrollbar gap-2">
-        {options.nft && data && data.tokenId > 0 && (
-          <div className="flex gap-2.5 py-2.5 px-3 bg-overlay-secondary backdrop-blur-md rounded-md items-center flex-1 w-full min-w-fit">
-            <img src={data?.image} className="rounded-sm size-8 aspect-square" />
-
-            <div className="flex flex-col">
-              <p className="text-sm">Share</p>
-              <p className="text-xs text-quaternary">LemonHead #{data?.tokenId}</p>
-            </div>
-          </div>
-        )}
-
-        {options.treasury && <Treasury />}
-        {options.invite && <InviteFriend locked={!data || (data && data.tokenId == 0)} />}
-      </div>
-
-      <div className="hidden md:block w-full max-w-[296px]">
-        <div className="sticky top-0 flex flex-col gap-4">
-          {options.nft && data && data.tokenId > 0 && (
-            <div className="bg-overlay-secondary backdrop-blur-md p-4 rounded-md space-y-3 border">
-              <img src={data?.image} className="rounded-sm" />
-              <div className="flex justify-between">
-                <p>LemonHead #{data?.tokenId}</p>
-                <i className="icon-share size-5 aspect-square text-quaternary" />
-              </div>
-            </div>
-          )}
-
-          {options.treasury && <Treasury />}
-          {options.invite && <InviteFriend locked={!data || (data && data.tokenId == 0)} />}
-        </div>
-      </div>
-    </>
-  );
-}
-
-export function Treasury() {
-  return (
-    <>
-      <div className="flex w-full min-w-fit items-center md:hidden p-2.5 border rounded-md gap-2.5">
-        <div className="flex justify-center items-center rounded-sm bg-success-500/16 size-8 p-1.5 aspect-square">
-          <i className="icon-account-balance-outline text-success-500" />
-        </div>
-
-        <div className="flex flex-col gpa-1.5">
-          <p>Treasury</p>
-          <p className="text-secondary text-sm">Unlocks at 5,000 LemonHeads.</p>
-        </div>
-      </div>
-
-      <div className="hidden md:flex p-4 border rounded-md flex-col gap-3">
-        <div className="flex justify-between">
-          <div className="flex justify-center items-center rounded-full bg-success-500/16 size-[48px] aspect-square">
-            <i className="icon-account-balance-outline text-success-500" />
-          </div>
-
-          <div className="tooltip tooltip-bottom">
-            <div className="tooltip-content backdrop-blur-md border-card text-left! p-3">
-              <p>
-                The LemonHeads treasury is building up. Once 5,000 LemonHeads are minted, it will unlock for proposals
-                and voting—funding requests by the community, for the community.
-              </p>
-            </div>
-            <i className="icon-info size-5 aspect-square text-quaternary" />
-          </div>
-        </div>
-
-        <div className="flex flex-col gpa-1.5">
-          <p>Treasury</p>
-          <p className="text-secondary text-sm">Unlocks at 5,000 LemonHeads.</p>
-        </div>
-      </div>
-    </>
-  );
-}
 
 export function InviteFriend({ locked }: { locked?: boolean }) {
   const me = useMe();
@@ -170,7 +54,14 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
 
   return (
     <>
-      <div className="flex w-full min-w-fit items-center md:hidden p-2.5 border rounded-md justify-between gap-4">
+      <div
+        className="flex w-full min-w-fit items-center md:hidden p-2.5 border-(length:--card-border-width) border-card-border rounded-md justify-between gap-4"
+        onClick={() => {
+          if (invitations.length === 5) {
+            handleInvite();
+          }
+        }}
+      >
         <div className="flex gap-2.5 flex-1 items-center">
           <div className="flex justify-center items-center rounded-sm bg-alert-400/16 size-8 p-1.5 aspect-square">
             <i className="icon-user-plus text-alert-400" />
@@ -191,7 +82,14 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
         )}
       </div>
 
-      <div className="hidden md:flex p-4 border rounded-md flex-col gap-3">
+      <div
+        className="hidden md:flex p-4 border-(length:--card-border-width) border-card-border  rounded-md flex-col gap-3"
+        onClick={() => {
+          if (invitations.length === 5) {
+            handleInvite();
+          }
+        }}
+      >
         <div className="flex justify-between">
           <div className="flex justify-center items-center rounded-full bg-alert-400/16 size-[48px] aspect-square">
             <i className="icon-user-plus text-alert-400" />

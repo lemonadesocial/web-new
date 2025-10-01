@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { groupBy, merge } from 'lodash';
+import { groupBy, merge, unionBy } from 'lodash';
 
 import { findConflictTraits } from '$lib/services/lemonhead/core';
 import lemonHead from '$lib/trpc/lemonheads';
@@ -72,6 +72,7 @@ export enum LemonHeadActionKind {
   'set_colorset',
   'set_skintone',
   'set_trait',
+  'random_traits',
   'remove_traits',
   'next_step',
   'prev_step',
@@ -143,8 +144,15 @@ function reducers(state: LemonHeadState, action: LemonHeadAction) {
       return { ...state, traits };
     }
 
+    case LemonHeadActionKind.random_traits: {
+      const { data } = action.payload;
+      const _traits = state.traits.filter(Boolean).filter((i) => ['body'].includes(i.type));
+      const traits = unionBy(_traits, data, 'type');
+      return { ...state, traits };
+    }
+
     case LemonHeadActionKind.remove_traits: {
-      const traits = state.traits.filter((item) => action.payload?.data?.type !== item.type);
+      const traits = state.traits.filter(Boolean).filter((item) => action.payload?.data?.type !== item.type);
       return { ...state, traits };
     }
 

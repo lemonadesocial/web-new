@@ -11,6 +11,7 @@ import { FeedPostEmpty } from './FeedPostEmpty';
 import { FeedPostLoading } from './FeedPostLoading';
 import { AnyPost } from '@lens-protocol/client';
 import { LensProfileCard } from '../lens-account/LensProfileCard';
+import { Card } from '$lib/components/core';
 
 type Props = {
   postSlug: string;
@@ -54,13 +55,13 @@ export function FeedPostDetailContent({ post }: { post: AnyPost }) {
   const pathName = usePathname();
 
   return (
-    <div className="-mt-6 flex flex-col gap-5 w-full">
-      <div className="items-center border border-t-0 backdrop-blur-lg h-[48px] px-4 py-3 rounded-b-md">
-        <button className="inline-flex items-center cursor-pointer gap-3" onClick={router.back}>
+    <div className="flex flex-col gap-5 w-full">
+      <Card.Root onClick={router.back}>
+        <Card.Content className="flex items-center gap-3">
           <i className="icon-arrow-back-sharp size-[20px] text-tertiary" />
           Post
-        </button>
-      </div>
+        </Card.Content>
+      </Card.Root>
 
       <FeedPost post={post} showRepost />
       <PostComments

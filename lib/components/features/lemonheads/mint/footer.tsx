@@ -1,4 +1,5 @@
 'use client';
+import * as Sentry from '@sentry/nextjs';
 import { useRouter } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 import { Eip1193Provider, ethers, isError } from 'ethers';
@@ -13,7 +14,7 @@ import { chainsMapAtom } from '$lib/jotai';
 import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
 import { useClient, useQuery } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
-import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
+import { ETHERSCAN } from '$lib/utils/constants';
 import {
   CanMintLemonheadDocument,
   GetListLemonheadSponsorsDocument,
@@ -23,7 +24,7 @@ import { TraitExtends } from '$lib/trpc/lemonheads/types';
 import { appKit } from '$lib/utils/appkit';
 import { truncateMiddle } from '$lib/utils/string';
 
-import { ConnectWallet } from '../modals/ConnectWallet';
+import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from './provider';
 import { LEMONHEAD_CHAIN_ID } from './utils';
@@ -53,13 +54,14 @@ export function LemonHeadFooter() {
     let isValid = true;
 
     const address = appKit.getAddress();
-    const { data: dataCanMint } = await client.query({
+    const { data: dataCanMint, error } = await client.query({
       query: CanMintLemonheadDocument,
       variables: { wallet: address },
     });
-    const canMint = dataCanMint?.canMintLemonhead.can_mint;
+    const canMint = dataCanMint?.canMintLemonhead?.can_mint;
 
     if (!canMint) {
+      console.log(error);
       toast.error('Not able to mint!');
       return false;
     }
@@ -99,7 +101,7 @@ export function LemonHeadFooter() {
         modal.open(InsufficientFundsModal, {
           onClose: () => setMinting(false),
           props: {
-            mintPrice: dataCanMint.canMintLemonhead.price,
+            mintPrice: dataCanMint?.canMintLemonhead?.price,
             onRetry: () => {
               modal.close();
               handleMint();
@@ -265,6 +267,7 @@ function BeforeMintModal({ onContinue }: { onContinue: () => void }) {
           <p className="text-sm">Please review and agree to the terms.</p>
           <p className="text-sm">By minting your LemonHead, you agree to our Terms of Use and acknowledge that:</p>
           <ul className="list-disc pl-5.5 text-sm">
+            <li>LemonHeads NFT is non-transferable & non-tradable (soul-bound)</li>
             <li>Your avatar will be permanently recorded on-chain.</li>
             <li>It will be publicly visible and tied to your wallet address.</li>
             <li>You won’t be able to edit the name or artwork after minting. All sales are final.</li>
@@ -314,7 +317,7 @@ function MintModal({
   const { address } = useAppKitAccount();
 
   const { data: dataCanMint } = useQuery(CanMintLemonheadDocument, { variables: { wallet: address! }, skip: !address });
-  const mintPrice = !sponsor ? dataCanMint?.canMintLemonhead.price : 0;
+  const mintPrice = !sponsor ? dataCanMint?.canMintLemonhead?.price : 0;
 
   const [isMinting, setIsMinting] = React.useState(false);
   const [mintState, setMintState] = React.useState({
@@ -364,7 +367,7 @@ function MintModal({
 
       const mintData = await mutation.mutateAsync({
         wallet: address,
-        traits: traits.map(({ _id, image, ...rest }) => rest),
+        traits: traits.filter(Boolean).map(({ _id, image, ...rest }) => rest),
         sponsor: sponsor?._id,
       });
       console.log('Mint data:', mintData);
@@ -416,7 +419,11 @@ function MintModal({
         console.log('Token ID:', tokenId);
       }
     } catch (error: any) {
-      console.log(error);
+      Sentry.captureException(error, {
+        extra: {
+          walletInfo: appKit.getWalletInfo(),
+        }
+      });
       toast.error(formatError(error));
     } finally {
       setIsMinting(false);
@@ -437,7 +444,7 @@ function MintModal({
             iconRight="icon-arrow-outward"
             className="rounded-full"
             variant="tertiary-alt"
-            onClick={() => window.open(`${SEPOLIA_ETHERSCAN}/tx/${mintState.txHash}`)}
+            onClick={() => window.open(`${ETHERSCAN}/tx/${mintState.txHash}`)}
           >
             View txn.
           </Button>

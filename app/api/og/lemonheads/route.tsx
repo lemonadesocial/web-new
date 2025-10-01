@@ -3,10 +3,9 @@ import { NextRequest } from 'next/server';
 import { fetchAccount } from '@lens-protocol/client/actions';
 import { ethers } from 'ethers';
 import { PublicClient, evmAddress, mainnet, testnet } from '@lens-protocol/client';
-import request from 'graphql-request';
 
 import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
-import { LEMONHEAD_CHAIN_ID, LEMONHEAD_COLORS } from '$lib/components/features/lemonheads/utils';
+import { LEMONHEAD_CHAIN_ID, LEMONHEAD_COLORS } from '$lib/components/features/lemonheads/mint/utils';
 import { ERC721Contract } from '$lib/utils/crypto';
 import { getClient } from '$lib/graphql/request';
 
@@ -223,6 +222,8 @@ function PreviewImageLink({ color, image, portrait, username, tokenId, bio }: an
                 lineClamp: 4,
                 WebkitBoxOrient: 'vertical',
                 WebkitLineClamp: 4,
+                wordBreak: 'break-all',
+                overflowWrap: 'break-word',
               }}
             >
               {bio || 'Citizen of the United Stands of Lemonade - a nation shaped by creators and communities.'}

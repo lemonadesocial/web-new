@@ -17,7 +17,7 @@ interface PendingApprovalListProps {
 
 export function PendingApprovalList({ event, limit = 25 }: PendingApprovalListProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState<number>(0);    
+  const [containerWidth, setContainerWidth] = useState<number>(0);
 
   const { data, refetch } = useQuery(GetEventJoinRequestsDocument, {
     variables: {
@@ -78,12 +78,12 @@ export function PendingApprovalList({ event, limit = 25 }: PendingApprovalListPr
           const email = request.email || (user as any)?.email;
 
           return (
-            <div key={request._id} className="flex items-center justify-between px-4 py-3">
+            <div key={request._id} className="flex items-center justify-between px-4 py-3 gap-2">
               <div className="flex items-center gap-3 flex-1">
-                <Avatar src={userAvatar(user as any)} className={isContainerNarrow ? 'size-8' : 'size-5'} />
+                <Avatar src={userAvatar(user as any)} className="size-5" />
                 <div className="flex flex-col flex-1 gap-2">
-                  <div className="flex justify-between w-full relative">
-                    <div className={clsx("flex-1 flex truncate", isContainerNarrow ? 'flex-col' : 'gap-2 items-center')}>
+                  <div className="flex justify-between relative">
+                    <div className={clsx('flex-1 flex w-1', isContainerNarrow ? 'flex-col' : 'gap-2 items-center')}>
                       <p className="truncate">{name}</p>
                       <p className="text-tertiary text-sm truncate">{email}</p>
                     </div>
@@ -91,14 +91,11 @@ export function PendingApprovalList({ event, limit = 25 }: PendingApprovalListPr
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                {
-                  !isContainerVeryNarrow && (
-                    <span className="text-sm text-tertiary whitespace-nowrap">
-                      {formatDistanceToNow(new Date(request.created_at), { addSuffix: !isContainerNarrow })}
-                    </span>
-                  )
-                }
-
+                {!isContainerVeryNarrow && (
+                  <span className="text-sm text-tertiary whitespace-nowrap">
+                    {formatDistanceToNow(new Date(request.created_at), { addSuffix: !isContainerNarrow })}
+                  </span>
+                )}
 
                 <div className="flex items-center gap-2">
                   <Button

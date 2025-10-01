@@ -47,6 +47,17 @@ if (WALLET_SCHEMA) {
   };
 }
 
+const LEMONHEADS_SCHEMA = process.env.NEXT_PUBLIC_LEMONHEADS_INDEXER_URL;
+if (LEMONHEADS_SCHEMA) {
+  generates['./lib/graphql/generated/lemonheads/'] = {
+    schema: LEMONHEADS_SCHEMA,
+    documents: ['./lib/graphql/gql/lemonheads/*.gql'],
+    preset: 'client',
+    plugins: [],
+    documentTransforms: [addTypenameSelectionDocumentTransform],
+  };
+}
+
 const config: CodegenConfig = {
   ignoreNoDocuments: true,
   generates,

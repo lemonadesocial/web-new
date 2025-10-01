@@ -2,6 +2,7 @@
 @config "../tailwind.config.ts";
 @import './styles/themes/light.css';
 @import './styles/themes/dark.css';
+@import './styles/themes/lemonheads.css';
 
 @import './styles/components/button.css';
 @import './styles/components/link.css';
@@ -93,8 +94,8 @@
   --color-card: var(--color-card);
   --color-card-border: var(--color-card-border);
   --color-card-border-hover: var(--color-card-border-hover);
-
   --color-card-hover: var(--color-card-hover);
+  --card-border-width: var(--card-border-width, 1px);
 
   --color-overlay-primary: var(--color-overlay-primary);
   --color-overlay-secondary: var(--color-overlay-secondary);
@@ -405,6 +406,10 @@
   --color-stone-900: oklch(0.216 0.006 56.043);
   --color-stone-950: oklch(0.147 0.004 49.25);
 
+  --color-sidebar: var(--color-sidebar);
+  --color-stroke: var(--color-stroke);
+  --color-lemonheads-progress-bar: var(--color-lemonheads-progress-bar);
+
   @keyframes pulse {
     50% {
       opacity: 0;
@@ -440,6 +445,7 @@
 
 @layer components {
   .border,
+  .border-1,
   .border-2,
   .border-r,
   .border-l,
@@ -549,3 +555,8 @@ a[title='Open this area in Google Maps (opens a new window)'],
   filter: blur(var(--blur-lg));
   border: 1px solid var(--color-primary);
 }
+
+/* .text-stroke { */
+/*   -webkit-text-stroke: 1px var(--color-card-border, #000); */
+/*   text-shadow: 2px 4px 0 var(--color-troke, #000); */
+/* } */

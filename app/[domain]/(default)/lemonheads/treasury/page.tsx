@@ -1,6 +1,7 @@
 'use client';
+import { LemonHeadsLockFeature } from '$lib/components/features/lemonheads/LemonHeadsLockFeature';
+import { LemonHeadsRightCol } from '$lib/components/features/lemonheads/LemonheadsRightCol';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
-import { LockFeature, RightCol } from '../shared';
 
 function Page() {
   const { data } = useLemonhead();
@@ -8,7 +9,7 @@ function Page() {
   return (
     <div className="flex max-sm:flex-col-reverse max-sm:gap-5 gap-12">
       <div className="space-y-4 w-full">
-        <LockFeature
+        <LemonHeadsLockFeature
           title="Treasury is Locked"
           subtitle={
             data && data?.tokenId > 0
@@ -19,7 +20,7 @@ function Page() {
         />
       </div>
 
-      <RightCol options={{ nft: false, treasury: false, invite: true }} />
+      <LemonHeadsRightCol options={{ nft: false, treasury: false, invite: true }} />
     </div>
   );
 }

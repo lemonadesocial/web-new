@@ -2,10 +2,11 @@ import { z } from 'zod';
 import orgs from 'open-graph-scraper';
 
 import { getMintNftData } from '$lib/services/lemonhead';
-import { calculateLookHash, getFinalTraits, validateTraits, type Trait } from '$lib/services/lemonhead/core';
+import { calculateLookHash, Filter, getFinalTraits, validateTraits, type Trait } from '$lib/services/lemonhead/core';
 
 import { publicProcedure, router } from './trpc';
 import lemonheads, { BuildQueryParams } from './lemonheads';
+import { LemonHeadsLayer } from './lemonheads/types';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -37,6 +38,9 @@ export const appRouter = router({
     colorSet: publicProcedure.query(async () => {
       const { data } = await lemonheads.getColorSet();
       return data;
+    }),
+    random: publicProcedure.input(z.any()).mutation(async ({ input }) => {
+      return lemonheads.getRandomLayers(input as Filter[]) as unknown as LemonHeadsLayer[];
     }),
   },
   openGraph: {

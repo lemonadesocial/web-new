@@ -10,17 +10,17 @@ import { useAppKitAccount } from '@reown/appkit/react';
 import { Button, Card, Divider, drawer, modal, Segment, Skeleton, Spacer } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { useAccount, useLemonadeUsername, usePost } from '$lib/hooks/useLens';
-import { SEPOLIA_ETHERSCAN } from '$lib/utils/constants';
+import { ETHERSCAN } from '$lib/utils/constants';
 
-import { SelectProfileModal } from '../../lens-account/SelectProfileModal';
-import { ClaimLemonadeUsernameModal } from '../../lens-account/ClaimLemonadeUsernameModal';
-import { EditProfileModal } from '../../lens-account/EditProfileModal';
-import { PostComposer } from '../../lens-feed/PostComposer';
+import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
+import { ClaimLemonadeUsernameModal } from '$lib/components/features/lens-account/ClaimLemonadeUsernameModal';
+import { EditProfileModal } from '$lib/components/features/lens-account/EditProfileModal';
+import { PostComposer } from '$lib/components/features/lens-feed/PostComposer';
+import { PostComposerModal } from '$lib/components/features/lens-feed/PostComposerModal';
 import { LemonHeadActionKind, useLemonHeadContext } from '../provider';
-import { PostComposerModal } from '../../lens-feed/PostComposerModal';
 import { LEMONHEAD_COLORS } from '../utils';
 
-const getImage = (args: { address: string; tokenId: string; color: string; portrait?: boolean }) =>
+export const getLemonHeadImage = (args: { address: string; tokenId: string; color: string; portrait?: boolean }) =>
   `/api/og/lemonheads?address=${args.address}&tokenId=${args.tokenId || 3}&color=${args.color}&portrait=${args.portrait || false}`;
 
 export function ClaimLemonHead() {
@@ -59,10 +59,15 @@ export function ClaimLemonHead() {
           <p className="text-secondary md:text-xl">Welcome to</p>
           <p className="font-title text-2xl md:text-3xl font-semibold!">United Stands of Lemonade</p>
         </div>
-        <div className="flex-1 flex flex-col items-center gap-5 justify-center w-[70%]">
+        <div className="flex-1 flex flex-col items-center gap-5 justify-center w-[68%]">
           {(myAccount?.address || address) && (
-            <ImageLazyLoad
-              src={getImage({ address: myAccount?.address || address, tokenId: state.mint.tokenId, color, portrait })}
+            <LemonHeadsImageLazyLoad
+              src={getLemonHeadImage({
+                address: myAccount?.address || address,
+                tokenId: state.mint.tokenId,
+                color,
+                portrait,
+              })}
               className="border border-primary"
             />
           )}
@@ -77,7 +82,7 @@ export function ClaimLemonHead() {
               <Button
                 iconRight="icon-arrow-outward"
                 variant="tertiary-alt"
-                onClick={() => window.open(`${SEPOLIA_ETHERSCAN}/tx/${state.mint.txHash}`)}
+                onClick={() => window.open(`${ETHERSCAN}/tx/${state.mint.txHash}`)}
               >
                 View txn.
               </Button>
@@ -88,7 +93,7 @@ export function ClaimLemonHead() {
                 iconLeft="icon-share"
                 variant="secondary"
                 onClick={() =>
-                  drawer.open(RightPane, {
+                  drawer.open(SharedLemonheadsPane, {
                     props: {
                       color,
                       tokenId: state.mint.tokenId,
@@ -123,7 +128,7 @@ export function ClaimLemonHead() {
 const shareUrl = 'https://lemonade.social/lemonheads/mint';
 const shareText = 'Just claimed my LemonHead 🍋 Fully onchain, totally me. Yours is waiting—go mint it now → ';
 
-function RightPane({
+export function SharedLemonheadsPane({
   tokenId,
   onSelectColor,
   onSelectPortrait,
@@ -131,8 +136,8 @@ function RightPane({
 }: {
   color?: string;
   tokenId: string;
-  onSelectColor: (color: string) => void;
-  onSelectPortrait: (value: boolean) => void;
+  onSelectColor?: (color: string) => void;
+  onSelectPortrait?: (value: boolean) => void;
 }) {
   const { address } = useAppKitAccount();
   const { account: myAccount } = useAccount();
@@ -141,7 +146,7 @@ function RightPane({
   const [color, setColor] = React.useState(_color);
 
   const image = address
-    ? getImage({ address: myAccount?.address || address, tokenId, color, portrait: imageType === 'portrait' })
+    ? getLemonHeadImage({ address: myAccount?.address || address, tokenId, color, portrait: imageType === 'portrait' })
     : '';
 
   const handleUpdateProfile = () => {
@@ -207,7 +212,7 @@ function RightPane({
           </p>
         </div>
 
-        <ImageLazyLoad src={image} size="small" />
+        <LemonHeadsImageLazyLoad src={image} size="small" />
 
         <div className="flex flex-col gap-4">
           <p className="text-lg">Personalize Your Card</p>
@@ -219,7 +224,7 @@ function RightPane({
             selected={imageType}
             onSelect={({ value }: { value: 'body' | 'portrait' }) => {
               setImageType(value);
-              onSelectPortrait(value === 'portrait');
+              onSelectPortrait?.(value === 'portrait');
             }}
             items={[
               { iconLeft: 'icon-human', value: 'body', label: 'Full Body' },
@@ -227,16 +232,17 @@ function RightPane({
             ]}
           />
 
-          <div className="flex justify-between overflow-auto no-scrollbar h-[40px] gap-1 items-center px-1">
+          <div className="flex flex-row justify-between overflow-x-auto no-scrollbar h-[40px] gap-1 items-center px-1">
             {Object.entries(LEMONHEAD_COLORS).map(([key, value]) => (
               <div
+                key={key}
                 className={clsx('p-0.5 cursor-pointer', color === key && 'outline-2 rounded-full')}
                 onClick={() => {
                   setColor(key);
-                  onSelectColor(key);
+                  onSelectColor?.(key);
                 }}
               >
-                <div className="rounded-full aspect-square h-[30px]" style={{ backgroundColor: value.fg }} />
+                <div className="rounded-full aspect-square w-[30px]" style={{ backgroundColor: value.fg }} />
               </div>
             ))}
           </div>
@@ -270,7 +276,7 @@ function RightPane({
   );
 }
 
-function ImageLazyLoad({
+export function LemonHeadsImageLazyLoad({
   src = '',
   className,
   size = 'normal',
@@ -296,7 +302,7 @@ function ImageLazyLoad({
 
       <div
         className={twMerge(
-          'max-sm:w-sm w-full flex gap-5 md:gap-10 rounded-md aspect-[16/9] bg-overlay-primary p-4 md:p-12',
+          'max-sm:w-sm w-full flex gap-5 md:gap-10 rounded-md aspect-auto bg-overlay-primary p-4 md:p-12',
           clsx(size === 'small' && 'p-6! bg-(--btn-tertiary)', mounted && 'hidden'),
         )}
       >

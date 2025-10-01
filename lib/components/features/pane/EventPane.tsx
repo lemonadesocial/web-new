@@ -136,7 +136,7 @@ export function EventPane({ eventId }: { eventId: string }) {
           <GallerySection event={event} loading={loading} />
           <CommunitySection event={event} />
           <HostedBySection event={event} />
-          <AttendeesSection eventId={eventId} />
+          <AttendeesSection event={event} />
         </div>
       </Pane.Content>
     </Pane.Root>

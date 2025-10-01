@@ -13,6 +13,12 @@ const classDisplay = localFont({
   variable: '--font-class-display',
 });
 
+const classDisplayBold = localFont({
+  display: 'swap',
+  src: '../public/assets/fonts/ClashDisplay-Bold.ttf',
+  variable: '--font-class-display-bold',
+});
+
 // title fonts
 
 const aktura = localFont({
@@ -153,6 +159,7 @@ const synonym = localFont({
 export default twMerge(
   generalSans.variable,
   classDisplay.variable,
+  classDisplayBold.variable,
   aktura.variable,
   array.variable,
   sarpanch.variable,

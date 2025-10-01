@@ -7,6 +7,8 @@ import {
   fetchPost,
   lastLoggedInAccount,
   post,
+  deletePost,
+  editPost,
   fetchPosts as lensFetchPosts,
   fetchPostReferences,
   fetchAccountGraphStats,
@@ -423,6 +425,7 @@ export function usePost() {
         .andThen((txHash) => fetchPost(sessionClient, { txHash }))
         .andThen((post) => {
           if (post) {
+            console.log('post', post);
             setPosts((prev) => [post as AnyPost, ...prev]);
           }
           return ok(post);
@@ -443,9 +446,82 @@ export function usePost() {
     }
   };
 
+  const deletePostAction = async (postIdToDelete: string) => {
+    if (!sessionClient || !signer) return;
+
+    setIsLoading(true);
+    try {
+      const result = await deletePost(sessionClient, {
+        post: postId(postIdToDelete),
+      })
+        .andThen(handleOperationWith(signer))
+        .andThen(sessionClient.waitForTransaction)
+        .mapErr((error) => {
+          throw error;
+        });
+
+      if (result.isErr()) {
+        throw result.error;
+      }
+
+      setPosts((prev) => prev.filter((p) => p.id !== postIdToDelete));
+      
+      if (setCurrentPost) {
+        setCurrentPost(null);
+      }
+
+      toast.success('Post deleted successfully');
+      return result.value;
+    } catch (error) {
+      toast.error(formatError(error));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updatePost = async (postIdToUpdate: string, metadata: unknown) => {
+    if (!sessionClient || !signer) return;
+
+    setIsLoading(true);
+    try {
+      const { uri } = await storageClient.uploadAsJson(metadata);
+
+      const result = await editPost(sessionClient, {
+        contentUri: uri,
+        post: postId(postIdToUpdate),
+      })
+        .andThen(handleOperationWith(signer))
+        .andThen(sessionClient.waitForTransaction)
+        .mapErr((error) => {
+          throw error;
+        });
+
+      if (result.isErr()) {
+        throw result.error;
+      }
+
+      const updatedPost = await fetchPost(sessionClient, { post: postId(postIdToUpdate) });
+      if (updatedPost.isOk()) {
+        setPosts((prev) => prev.map((p) => p.id === postIdToUpdate ? updatedPost.value as AnyPost : p));
+        if (setCurrentPost) {
+          setCurrentPost(updatedPost.value);
+        }
+      }
+
+      toast.success('Post updated successfully');
+      return result.value;
+    } catch (error) {
+      toast.error(formatError(error));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     getPost,
     createPost,
+    updatePost,
+    deletePost: deletePostAction,
     selectPost,
     isLoading,
   };

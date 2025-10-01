@@ -6,10 +6,8 @@ import { endOfDay, startOfDay, format } from 'date-fns';
 import { Button, drawer, Menu, MenuItem, modal, Segment } from '$lib/components/core';
 import {
   Event,
-  GetSpaceDocument,
   GetSpaceEventsCalendarDocument,
   GetSpaceEventsDocument,
-  GetSpaceQuery,
   GetSpaceTagsDocument,
   GetSpaceTagsQuery,
   PublicSpace,
@@ -30,7 +28,7 @@ import { ListingEvent } from '$lib/components/features/community/ListingEvent';
 import { ListingExternalEvent } from '$lib/components/features/community/ListingExternalEvent';
 import { EventPane } from '$lib/components/features/pane';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
-import { LockFeature } from '../shared';
+import { LemonHeadsLockFeature } from '$lib/components/features/lemonheads/LemonHeadsLockFeature';
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
@@ -201,7 +199,7 @@ export function Content({ initData }: Props) {
             </Menu.Root>
 
             {data && data.tokenId == 0 ? (
-              <LockFeature
+              <LemonHeadsLockFeature
                 title="Events are Locked"
                 subtitle="Claim your LemonHead to unlock access to exclusive events."
                 icon="icon-confirmation-number"

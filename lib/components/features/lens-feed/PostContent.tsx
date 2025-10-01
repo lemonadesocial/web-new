@@ -6,8 +6,8 @@ import { EventPreview } from './EventPreview';
 // import { UrlPreview } from './UrlPreview';
 import { GetEventDocument, Event } from '$lib/graphql/generated/backend/graphql';
 import { defaultClient } from '$lib/graphql/request/instances';
-import { renderTextWithLinks } from '$lib/utils/render';
 import { LinkPreview } from '$lib/components/core/link';
+import { markdownToHtml } from '$lib/utils/markdown';
 
 type PostContentProps = {
   post: Post;
@@ -57,12 +57,17 @@ export function PostContent({ post }: PostContentProps) {
 
   const sharingLink = (metadata as LinkMetadata).sharingLink || extractFirstUrl((metadata as TextOnlyMetadata).content);
 
+  console.log(sharingLink)
+
   return (
     <div className="space-y-2" style={{ overflowWrap: 'anywhere' }}>
-      <p className="text-secondary whitespace-pre-line">
-        {renderTextWithLinks((metadata as TextOnlyMetadata).content || '')}
-      </p>
-      {(metadata as ImageMetadata).attachments?.length > 0 && (
+      <div
+        className="text-secondary font-medium [&_a]:text-accent-400"
+        dangerouslySetInnerHTML={{
+          __html: markdownToHtml((metadata as TextOnlyMetadata).content || '')
+        }}
+      />
+      {(metadata as ImageMetadata).attachments && (metadata as ImageMetadata).attachments.length > 0 && (
         <FeedPostGallery attachments={(metadata as ImageMetadata).attachments.map(({ item }) => item)} />
       )}
       {event && <EventPreview event={event} />}

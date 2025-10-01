@@ -29,7 +29,7 @@ export function PendingApprovalEmaillModal({ setting, event }: { setting: EmailS
           event: event._id,
           custom_body_html: body,
           type: EmailTemplateType.JoinRequested,
-          test_recipients: [me?.email!],
+          test_recipients: me?.email ? [me.email] : [],
         },
       },
     });

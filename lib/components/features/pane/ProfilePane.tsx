@@ -25,7 +25,7 @@ import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
 import { useClient, useMutation } from '$lib/graphql/request';
 import { File, UpdateUserDocument, User } from '$lib/graphql/generated/backend/graphql';
-import { chainsMapAtom, sessionClientAtom } from '$lib/jotai';
+import { chainsMapAtom, sessionClientAtom, userAtom } from '$lib/jotai';
 import { useConnectWallet } from '$lib/hooks/useConnectWallet';
 import { ATTRIBUTES_SAFE_KEYS, LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
@@ -73,6 +73,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
 
   const chainsMap = useAtomValue(chainsMapAtom);
   const { connect, isReady } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);
+  const setMe = useSetAtom(userAtom);
 
   const [uploading, setUploading] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -81,6 +82,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
   const [updateProfile] = useMutation(UpdateUserDocument, {
     onComplete(client, data) {
       const user = data.updateUser as User;
+      setMe(user);
       client.writeFragment({ id: `User:${user._id}`, data: user });
     },
   });
