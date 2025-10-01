@@ -212,9 +212,15 @@ query GetSpaceEventRequests($space: MongoID!, $skip: Int!, $limit: Int!, $state:
       state
       decided_at
       decided_by
+      created_by_expanded {
+        name
+        display_name
+        email
+      }
       event_expanded {
         title
         start
+        timezone
         address {
           city
           country
@@ -227,6 +233,7 @@ query GetSpaceEventRequests($space: MongoID!, $skip: Int!, $limit: Int!, $state:
           type
           url
         }
+        guests
       }
     }
     total
@@ -334,5 +341,33 @@ mutation CreateExternalEvent($input: EventInput!) {
 mutation CreateSpace($input: SpaceInput!) {
   createSpace(input: $input) {
     ...Space
+  }
+}
+
+mutation DecideSpaceEventRequests($input: DecideSpaceEventRequestsInput!) {
+  decideSpaceEventRequests(input: $input)
+}
+
+mutation AddSpaceMembers($input: AddSpaceMemberInput!) {
+  addSpaceMembers(input: $input)
+}
+
+mutation DeleteSpaceMembers($input: DeleteSpaceMemberInput!) {
+  deleteSpaceMembers(input: $input) {
+    _id
+    role
+    state
+    user
+    user_name
+    email
+    deleted_at
+    role_changed_at
+    user_expanded {
+      _id
+      name
+      email
+      image_avatar
+    }
+    visible
   }
 }

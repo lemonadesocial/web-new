@@ -100,7 +100,7 @@ export function MyHubs() {
             key={item._id}
             title={item.title}
             view={isMobile ? 'list-item' : 'card'}
-            onClick={() => (window.location.href = `/manage/community/${item.slug || item._id}`)}
+            onClick={() => (window.location.href = `/s/manage/${item.slug || item._id}`)}
             subtitle={`${item.followers_count || 0} Subscribers`}
             image={{
               src: getImageSrc(item),
