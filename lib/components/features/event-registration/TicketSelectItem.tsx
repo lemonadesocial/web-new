@@ -8,8 +8,9 @@ import { EventTicketPrice, NewPaymentAccount, PurchasableTicketType } from "$lib
 import { chainsMapAtom } from "$lib/jotai";
 import { formatPrice, formatTokenGateRange, getPaymentAccounts } from "$lib/utils/event";
 import { getPaymentNetworks } from "$lib/utils/payment";
-import { currenciesAtom, currencyAtom, eventTokenGatesAtom, paymentAccountsAtom, purchaseItemsAtom, selectedPaymentAccountAtom, ticketTypesAtom, useAtom, useAtomValue } from "./store";
+import { currenciesAtom, currencyAtom, eventTokenGatesAtom, paymentAccountsAtom, purchaseItemsAtom, registrationModal, selectedPaymentAccountAtom, ticketPasscodesAtom, ticketTypesAtom, useAtom, useAtomValue } from "./store";
 import { renderTextWithLinks } from "$lib/utils/render";
+import { PasscodeModal } from "./modals/PasscodeModal";
 
 export function TicketSelectItem({ ticketType, single, compact }: { ticketType: PurchasableTicketType; single?: boolean; compact?: boolean }) {
   const [purchaseItems, setPurchaseItems] = useAtom(purchaseItemsAtom);
@@ -19,6 +20,7 @@ export function TicketSelectItem({ ticketType, single, compact }: { ticketType: 
   const [selectedPaymentAccount, setSelectedPaymentAccount] = useAtom(selectedPaymentAccountAtom);
   const ticketTypes = useAtomValue(ticketTypesAtom);
   const eventTokenGates = useAtomValue(eventTokenGatesAtom);
+  const ticketPasscodes = useAtomValue(ticketPasscodesAtom);
 
   const currentPaymentAccounts = getPaymentAccounts(ticketType.prices);
   const currentCurrencies = ticketType.prices.map(price => price.currency);
@@ -32,6 +34,24 @@ export function TicketSelectItem({ ticketType, single, compact }: { ticketType: 
   }, [paymentAccounts, currentPaymentAccounts, currentCurrencies, currencies]);
 
   const handleTicketChange = (ticketType: PurchasableTicketType, value: number) => {
+    const currentCount = purchaseItems.find(item => item.id === ticketType._id)?.count || 0;
+
+    if (value > currentCount && ticketType.passcode_enabled && !ticketPasscodes[ticketType._id]) {
+      registrationModal.open(PasscodeModal, {
+        props: {
+          ticketTypeId: ticketType._id,
+          ticketTitle: ticketType.title,
+          onConfirm: () => processTicketChange(ticketType, value),
+        },
+      });
+      
+      return;
+    }
+
+    processTicketChange(ticketType, value);
+  };
+
+  const processTicketChange = (ticketType: PurchasableTicketType, value: number) => {
     const newPurchaseItems = [...purchaseItems];
     const index = newPurchaseItems.findIndex(item => item.id === ticketType._id);
 
@@ -78,6 +98,7 @@ export function TicketSelectItem({ ticketType, single, compact }: { ticketType: 
 
   const count = purchaseItems.find(item => item.id === ticketType._id)?.count || 0;
   const active = count > 0;
+  const hasPasscode = ticketType.passcode_enabled && ticketPasscodes[ticketType._id];
 
   if (compact) return (
     <div className="flex justify-between items-center">
@@ -95,7 +116,16 @@ export function TicketSelectItem({ ticketType, single, compact }: { ticketType: 
   if (single) return (
     <div className="flex gap-4 flex-col">
       <div>
-        <p className="text-sm text-secondary">Ticket Price</p>
+        <div className="flex items-center gap-1.5 mb-2">
+          <p className="text-sm text-secondary">Ticket Price</p>
+          {
+            ticketType.passcode_enabled && (
+              <Chip variant={hasPasscode ? 'success' : 'warning'} size="xxs" className="rounded-full">
+                {hasPasscode ? 'Ticket unlocked' : 'Passcode Required'}
+              </Chip>
+            )
+          }
+        </div>
         <TicketPrices prices={ticketType.prices} single={single} groupRegistration={ticketType.limit > 1} />
       </div>
       {
@@ -121,7 +151,7 @@ export function TicketSelectItem({ ticketType, single, compact }: { ticketType: 
   return (
     <div className={clsx('flex flex-col gap-2 p-3 rounded-sm', active ? 'border border-primary' : 'border border-transparent bg-primary/8')}>
       <div className="flex justify-between items-start">
-        <div>
+        <div className="flex-1">
           <div className="flex items-center gap-1.5">
             <p className={clsx('font-medium', active ? 'text-accent' : 'text-secondary')}>{ticketType.title}</p>
             {
@@ -131,6 +161,13 @@ export function TicketSelectItem({ ticketType, single, compact }: { ticketType: 
             }
             {
               !!tokenGate && <Chip variant="primary" size="xxs" className="rounded-full">Token Holder Exclusive</Chip>
+            }
+            {
+              ticketType.passcode_enabled && (
+                <Chip variant={hasPasscode ? 'success' : 'warning'} size="xxs" className="rounded-full">
+                  {hasPasscode ? 'Ticket unlocked' : 'Passcode Required'}
+                </Chip>
+              )
             }
           </div>
           <TicketPrices prices={ticketType.prices} groupRegistration={ticketType.limit > 1} active={active} />

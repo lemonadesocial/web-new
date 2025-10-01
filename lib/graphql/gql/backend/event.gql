@@ -481,6 +481,7 @@ query GetEventTicketTypes($input: GetEventTicketTypesInput!) {
         position
       }
       position
+      passcode_enabled
     }
   }
 }

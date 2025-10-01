@@ -2,7 +2,7 @@ import { toast } from "$lib/components/core";
 import { BuyTicketsDocument, BuyTicketsMutation } from "$lib/graphql/generated/backend/graphql";
 import { useMutation } from "$lib/graphql/request";
 
-import { buyerInfoAtom, ethereumWalletInputAtom, currencyAtom, discountCodeAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, selectedPaymentAccountAtom, useAtomValue, useEventRegistrationStore, userInfoAtom, buyerWalletAtom } from "../store";
+import { buyerInfoAtom, ethereumWalletInputAtom, currencyAtom, discountCodeAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, registrationModal, selectedPaymentAccountAtom, ticketPasscodesAtom, useAtomValue, useEventRegistrationStore, userInfoAtom, buyerWalletAtom } from "../store";
 import { useJoinRequest } from "./useJoinRequest";
 import { useProcessTickets } from "./useProcessTickets";
 
@@ -46,6 +46,11 @@ export function useBuyTickets(callback?: (data: BuyTicketsMutation) => void) {
     const discountCode = store.get(discountCodeAtom);
     const ethereumWalletInput = store.get(ethereumWalletInputAtom);
     const buyerWallet = store.get(buyerWalletAtom);
+    const ticketPasscodes = store.get(ticketPasscodesAtom);
+
+    const passcodes = purchaseItems
+      .map(item => ticketPasscodes[item.id])
+      .filter(Boolean);
 
     handleBuyTickets({
       variables: {
@@ -61,6 +66,7 @@ export function useBuyTickets(callback?: (data: BuyTicketsMutation) => void) {
           buyer_wallet: buyerWallet || undefined,
           user_info: userInfo ? { ...userInfo, email: buyerInfo?.email, display_name: buyerInfo?.name } : undefined,
           connect_wallets: ethereumWalletInput ? [ethereumWalletInput] : undefined,
+          passcodes: passcodes.length > 0 ? passcodes : undefined,
         }
       }
     });
