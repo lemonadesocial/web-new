@@ -1,5 +1,5 @@
 'use client';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 
 import { Space } from '$lib/graphql/generated/backend/graphql';
@@ -11,7 +11,6 @@ export function Footer({ space }: { space: Space }) {
   const { menu, isActive } = useSpaceMenu({ space, isMobile: true });
   const router = useRouter();
   const me = useMe();
-  const pathname = usePathname();
 
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 w-full p-4 flex justify-center">
@@ -26,15 +25,16 @@ export function Footer({ space }: { space: Space }) {
           </div>
         ))}
 
-        <div
-          className={clsx(
-            'p-2.5 aspect-square rounded-full cursor-pointer',
-            pathname.includes(`/s/${space.slug || space._id}/profile`) && 'bg-[var(--btn-secondary)]',
-          )}
-          onClick={() => router.push(`/s/${space.slug || space._id}/profile`)}
-        >
-          <img src={userAvatar(me)} className="size-6 rounded-full" />
-        </div>
+        {
+          me && (
+            <div
+              className='p-2.5 aspect-square rounded-full cursor-pointer'
+              onClick={() => router.push(`/profile`)}
+            >
+              <img src={userAvatar(me)} className="size-6 rounded-full" />
+            </div>
+          )
+        }
       </div>
     </div>
   );
