@@ -24,6 +24,7 @@ import { useRedeemTickets } from "../hooks/useRedeemTickets";
 import { BuyerInfoForm } from "../forms/BuyerInfoForm";
 import { ApplicationForm } from "../forms/ApplicationForm";
 import { UserForm } from "../forms/UserInfoForm";
+import { SelfVerificationForm } from "../forms/SelfVerificationForm";
 import { CardPayment } from "../payments/CardPayment";
 import { SubmitForm } from "../SubmitForm";
 import { OrderSummary } from "../OrderSummary";
@@ -101,6 +102,11 @@ export function RegistrationModal() {
           }
           {
             !!requiredProfileFields?.length && <UserForm />
+          }
+          {
+            event.application_self_verification && (
+              <SelfVerificationForm required={event.application_self_verification_required || false} />
+            )
           }
           {
             !!event.application_questions?.length && <ApplicationForm />

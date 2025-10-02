@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { Button, Menu, MenuItem, modal, toast } from '$lib/components/core';
-import { UpdateEventRegistrationFormDocument, BlockchainPlatform, EventApplicationQuestion, QuestionType } from '$lib/graphql/generated/backend/graphql';
+import { UpdateEventRegistrationFormDocument, UpdateEventSelfVerificationDocument, BlockchainPlatform, EventApplicationQuestion, QuestionType } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
 import { useEvent, useUpdateEvent } from '../store';
 import { AddQuestionModal } from './AddQuestionModal';
@@ -10,6 +10,7 @@ import { AddOptionsQuestion } from './AddOptionsQuestion';
 import { ApplicationProfileCard } from './ApplicationProfileCard';
 
 type EthAddressRequirement = 'Off' | 'Optional' | 'Required';
+type SelfIdRequirement = 'Off' | 'Optional' | 'Required';
 
 export function RegistrationForm() {
   const event = useEvent();
@@ -25,6 +26,12 @@ export function RegistrationForm() {
     return 'Optional';
   });
 
+  const [selfIdRequirement, setSelfIdRequirement] = useState<SelfIdRequirement>(() => {
+    if (!event?.application_self_verification) return 'Off';
+    if (event?.application_self_verification_required) return 'Required';
+    return 'Optional';
+  });
+
   const [updateEventRegistrationForm] = useMutation(UpdateEventRegistrationFormDocument, {
     onComplete: (_, data) => {
       if (data?.updateEvent) {
@@ -33,6 +40,17 @@ export function RegistrationForm() {
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to update registration form');
+    },
+  });
+
+  const [updateEventSelfVerification] = useMutation(UpdateEventSelfVerificationDocument, {
+    onComplete : (_, data) => {
+      if (data?.updateEvent) {
+        updateEvent(data.updateEvent);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to update Self ID verification');
     },
   });
 
@@ -56,6 +74,18 @@ export function RegistrationForm() {
         input: {
           rsvp_wallet_platforms,
         },
+      },
+    });
+  };
+
+  const handleSelfIdChange = (requirement: SelfIdRequirement) => {
+    setSelfIdRequirement(requirement);
+
+    updateEventSelfVerification({
+      variables: {
+        id: event!._id,
+        application_self_verification: requirement !== 'Off',
+        required: requirement === 'Required',
       },
     });
   };
@@ -91,6 +121,7 @@ export function RegistrationForm() {
             <i className="icon-wallet size-5 text-accent-400" />
             <p>Web3 Identity</p>
           </div>
+
           <div className="grid grid-cols-2 gap-3.5 max-w-[654px]">
             <div className="rounded-md py-2.5 px-3.5 border border-card-border bg-card flex gap-2 items-center">
               <i className="icon-eth size-5 text-tertiary" />
@@ -136,6 +167,50 @@ export function RegistrationForm() {
                 </Menu.Content>
               </Menu.Root>
             </div>
+            <div className="rounded-md py-2.5 px-3.5 border border-card-border bg-card flex gap-2 items-center">
+              <i className="icon-self size-5 text-tertiary" />
+              <p className="flex-1">Self ID</p>
+              <Menu.Root>
+                <Menu.Trigger>
+                  {({ toggle }) => (
+                    <div
+                      className="flex items-center gap-2 cursor-pointer"
+                      onClick={toggle}
+                    >
+                      <p className="text-tertiary">{selfIdRequirement}</p>
+                      <i className="icon-arrow-down text-tertiary size-4" />
+                    </div>
+                  )}
+                </Menu.Trigger>
+                <Menu.Content className="p-1 min-w-[120px]">
+                  {({ toggle }) => (
+                    <>
+                      <MenuItem
+                        title="Off"
+                        onClick={() => {
+                          handleSelfIdChange('Off');
+                          toggle();
+                        }}
+                      />
+                      <MenuItem
+                        title="Optional"
+                        onClick={() => {
+                          handleSelfIdChange('Optional');
+                          toggle();
+                        }}
+                      />
+                      <MenuItem
+                        title="Required"
+                        onClick={() => {
+                          handleSelfIdChange('Required');
+                          toggle();
+                        }}
+                      />
+                    </>
+                  )}
+                </Menu.Content>
+              </Menu.Root>
+            </div>
           </div>
         </div>
 
@@ -148,8 +223,8 @@ export function RegistrationForm() {
             {event?.application_questions?.map((question, index) => (
               <QuestionCard key={question._id} question={question} index={index} />
             ))}
-           {event?.application_profile_fields?.map((field, index) => (
-            <ApplicationProfileCard key={field.field} field={field} index={index} />
+           {event?.application_profile_fields?.map((field) => (
+            <ApplicationProfileCard key={field.field} field={field} />
           ))}
           </div>
           <Button
@@ -168,7 +243,7 @@ export function RegistrationForm() {
 
 function QuestionCard({ question, index }: { question: EventApplicationQuestion; index: number }) {
   const getQuestionTypeLabel = (type?: QuestionType, selectType?: string) => {
-    if (type === QuestionType.Options) {
+    if (type === QuestionType.Options && selectType) {
       return selectType === 'multi' ? 'Multi Select' : 'Single Select';
     }
     if (type === QuestionType.Text) {
@@ -183,6 +258,7 @@ function QuestionCard({ question, index }: { question: EventApplicationQuestion;
     if (type === QuestionType.Checkbox) {
       return 'Checkbox';
     }
+    return '';
   };
 
 
@@ -214,7 +290,7 @@ function QuestionCard({ question, index }: { question: EventApplicationQuestion;
         <p>{question.question}</p>
 
         <div className="flex items-center gap-1.5">
-          <p className="text-sm text-tertiary">{getQuestionTypeLabel(question.type, question.select_type)}</p>
+          <p className="text-sm text-tertiary">{getQuestionTypeLabel(question.type || undefined, question.select_type || undefined)}</p>
           {question.required && <>
             <i className="icon-dot size-2 text-tertiary" />
             <p className="text-sm text-tertiary">

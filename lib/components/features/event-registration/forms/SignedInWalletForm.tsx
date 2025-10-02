@@ -157,7 +157,7 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
               variant="tertiary"
               className={clsx(
                 'w-fit',
-                form.formState.errors.selectedAddress && 'bg-danger-400/16 hover:bg-danger-400/20 text-danger-400',
+                form.formState.errors.selectedAddress && '!bg-danger-400/16 !hover:bg-danger-400/20 !text-danger-400',
               )}
               iconLeft="icon-eth"
               onClick={onVerify}

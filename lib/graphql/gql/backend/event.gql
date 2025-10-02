@@ -94,6 +94,8 @@ query GetEvent($id: MongoID, $shortid: String) {
       options
       select_type
     }
+    application_self_verification
+    application_self_verification_required
     application_profile_fields {
       field
       required
@@ -1313,5 +1315,12 @@ mutation DeleteEventTicketDiscounts($event: MongoID!, $discounts: [String!]!) {
       active
       ticket_types
     }
+  }
+}
+
+mutation UpdateEventSelfVerification($id: MongoID!, $application_self_verification: Boolean!, $required: Boolean!) {
+  updateEvent(_id: $id, input: { application_self_verification: $application_self_verification, application_self_verification_required: $required }) {
+    application_self_verification
+    application_self_verification_required
   }
 }
