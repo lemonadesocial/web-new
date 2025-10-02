@@ -4,7 +4,6 @@ import { Button, Card, toast } from '$lib/components/core';
 import {
   Address,
   DecideSpaceEventRequestsDocument,
-  Event,
   EventJoinRequestState,
   GetSpaceEventRequestsDocument,
   SpaceEventRequest,
@@ -13,18 +12,19 @@ import {
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { formatWithTimezone } from '$lib/utils/date';
 import { getEventAddress } from '$lib/utils/event';
-import { uniq } from 'lodash';
-import { event } from '@lens-protocol/metadata';
+import { CommonSection, SmallCommonSection } from './shared';
 
 interface Props {
   spaceId: string;
   /** the number events want to show */
   total?: number;
+  /** using for render small or default CommonSection */
+  isCommonSection?: boolean;
 }
-export function PendingApprovalEvents({ spaceId, total = 10 }: Props) {
+export function PendingApprovalEvents({ spaceId, isCommonSection }: Props) {
   const [state, setState] = React.useState<{ id: string; action: SpaceEventRequestState; submitting: boolean }>();
   const { data, refetch } = useQuery(GetSpaceEventRequestsDocument, {
-    variables: { space: spaceId, skip: 0, limit: total, state: EventJoinRequestState.Pending },
+    variables: { space: spaceId, skip: 0, limit: 2, state: EventJoinRequestState.Pending },
     skip: !spaceId,
     fetchPolicy: 'cache-and-network',
   });
@@ -74,6 +74,8 @@ export function PendingApprovalEvents({ spaceId, total = 10 }: Props) {
 
     toast.success(`'${event.event_expanded?.title}' has been ${_action} to the space`);
   };
+
+  const Comp = isCommonSection ? CommonSection : SmallCommonSection;
 
   return (
     <div className="flex flex-col gap-3">

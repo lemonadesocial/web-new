@@ -5,14 +5,14 @@ import {
   Event,
   GetSpaceDocument,
   GetSpaceEventsDocument,
+  GetSpaceQuery,
   GetSubSpacesDocument,
   PublicSpace,
   Space,
 } from '$lib/graphql/generated/backend/graphql';
 
-import { isObjectId } from '$lib/utils/helpers';
 import { useParams, useRouter } from 'next/navigation';
-import { Avatar, Badge, Button, Card, Divider, toast } from '$lib/components/core';
+import { Avatar, Badge, Button, Card, Divider, Skeleton, toast } from '$lib/components/core';
 import { twMerge } from 'tailwind-merge';
 import { PendingApprovalEvents } from './PendingApprovalEvents';
 import { EventCardItem } from '../EventList';
@@ -20,21 +20,27 @@ import { match } from 'ts-pattern';
 import { userAvatar } from '$lib/utils/user';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
+import { CommonSection } from './shared';
+import { AnimatePresence, motion } from 'framer-motion';
+import clsx from 'clsx';
+import { CardTable } from '$lib/components/core/table';
 
-export function CommunityOverview() {
+export function CommunityOverview({ space: initSpace }: { space?: Space }) {
   const params = useParams<{ uid: string }>();
 
-  const variables = isObjectId(params.uid) ? { id: params.uid, slug: params.uid } : { slug: params.uid };
-  const { data, loading } = useQuery(GetSpaceDocument, { variables });
+  const { data } = useQuery(GetSpaceDocument, {
+    variables: { id: initSpace?._id },
+    fetchPolicy: 'cache-and-network',
+    skip: !initSpace?._id,
+    initData: { getSpace: initSpace } as unknown as GetSpaceQuery,
+  });
   const space = data?.getSpace as Space;
 
-  const { data: subSpacesData } = useQuery(GetSubSpacesDocument, {
+  const { data: subSpacesData, loading } = useQuery(GetSubSpacesDocument, {
     variables: { id: space?._id },
     skip: !space?._id,
   });
   const subSpaces = (subSpacesData?.getSubSpaces || []) as PublicSpace[];
-
-  if (loading) return <p>Loading ... </p>;
 
   return (
     <div className="flex flex-col gap-8 pt-7 pb-20">
@@ -42,7 +48,7 @@ export function CommunityOverview() {
 
       <div className="[&>*:only-child]:hidden flex flex-col gap-5">
         <h3 className="text-xl font-semibold">Events</h3>
-        {space?._id && <PendingApprovalEvents spaceId={space._id} total={2} />}
+        {space?._id && <PendingApprovalEvents spaceId={space._id} />}
         {space && <UpComingEventsSection space={space} />}
       </div>
 
@@ -54,7 +60,16 @@ export function CommunityOverview() {
       )}
 
       <Divider />
-      <FeaturedHubSection data={subSpaces} />
+      <AnimatePresence mode="wait">
+        <motion.div
+          initial={{ opacity: 0 }}
+          className="divide-y-(length:--card-border-width) divide-(--color-divider)"
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0 }}
+        >
+          <FeaturedHubSection data={subSpaces} loading={loading} />
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
@@ -149,44 +164,6 @@ function UpComingEventsSection({ space }: { space: Space }) {
   );
 }
 
-function CommonSection({
-  children,
-  title,
-  count,
-  subtitle,
-  actions = [],
-}: React.PropsWithChildren & {
-  title: string;
-  count?: number;
-  subtitle: string;
-  actions?: Array<{ icon: string; onClick?: React.MouseEventHandler<HTMLButtonElement>; title: string }>;
-}) {
-  return (
-    <div className="space-y-5">
-      <div className="flex justify-between">
-        <div className="space-y-1 flex-1">
-          <div className="flex gap-2">
-            <h3 className="text-xl font-semibold">{title}</h3>
-            {count && (
-              <div className="size-6 aspect-square rounded-full inline-flex items-center justify-center bg-primary/[0.08] text-tertiary">
-                <p className="text-xs">{count}</p>
-              </div>
-            )}
-          </div>
-
-          <p className="text-secondary">{subtitle}</p>
-        </div>
-        {actions.map((item, idx) => (
-          <Button key={idx} iconLeft={item.icon} size="sm" variant="tertiary-alt" onClick={item.onClick}>
-            {item.title}
-          </Button>
-        ))}
-      </div>
-      {children}
-    </div>
-  );
-}
-
 function AdminListSection({ space }: { space: Space }) {
   const me = useMe();
   if (!space.admins?.length) return null;
@@ -196,7 +173,7 @@ function AdminListSection({ space }: { space: Space }) {
     <CommonSection
       title="Admins"
       subtitle="Add hosts, special guests, and event managers."
-      actions={[{ icon: 'icon-plus', title: 'Add Admin', onClick: () => toast.success('Coming soon') }]}
+      actions={[{ iconLeft: 'icon-plus', title: 'Add Admin', onClick: () => toast.success('Coming soon') }]}
     >
       <Card.Root>
         <Card.Content className="p-0 divide-y divide-(--color-divider)">
@@ -225,32 +202,69 @@ function AdminListSection({ space }: { space: Space }) {
   );
 }
 
-function FeaturedHubSection({ data = [] }: { data?: PublicSpace[] }) {
+function FeaturedHubSection({ loading, data = [] }: { data?: PublicSpace[]; loading?: boolean }) {
   return (
     <CommonSection
       title="Featured Hubs"
       subtitle="Showcase other community hubs you manage on the community page."
-      actions={[{ icon: 'icon-plus', title: 'Add Hub', onClick: () => toast.success('Coming soon') }]}
+      actions={[{ iconLeft: 'icon-plus', title: 'Add Hub', onClick: () => toast.success('Coming soon') }]}
     >
       <Card.Root>
-        <Card.Content className="p-0 divide-y divide-(--color-divider)">
-          <div className="hidden only:flex flex-col justify-center items-center aspect-video py-12">
-            <i className="icon-community size-[120px] md:size-[184px] aspect-square text-quaternary" />
-            <div className="space-y-2 text-center">
-              <h3 className="text-xl text-tertiary font-semibold">No Featured Hub</h3>
-              <p className="text-tertiary max-sm:text-xs max-sm:w-xs md:w-[480px]"></p>
-            </div>
-          </div>
+        {loading ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.1 }}
+            className="divide-y-(--card-border-width) divide-(--color-divider)"
+          >
+            {Array.from({ length: 7 }).map((_, idx) => (
+              <Card.Content key={idx} className="py-3">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex items-center gap-4"
+                >
+                  <Skeleton className="size-8 aspect-square rounded-full" animate />
+                  <Skeleton className="h-5 w-32" animate />
 
-          {data.map((item) => (
-            <div key={item._id} className="flex gap-3 items-center px-4 py-3 hover:bg-card-hover">
-              {item.image_avatar_expanded && (
-                <Avatar src={generateUrl(item.image_avatar_expanded)} className="size-5" />
-              )}
-              <p className="flex-1">{item.title}</p>
-            </div>
-          ))}
-        </Card.Content>
+                  <Skeleton className="h-5 w-10" animate />
+
+                  <div className="w-[62px] px-[60px] hidden md:block">
+                    <Skeleton className="h-5 w-16 rounded-full" animate />
+                  </div>
+                </motion.div>
+              </Card.Content>
+            ))}
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0 }}
+            className="w-full"
+          >
+            <Card.Content className="p-0 divide-y divide-(--color-divider)">
+              <div className="hidden only:flex flex-col justify-center items-center py-12">
+                <i className="icon-community size-[120px] md:size-[184px] aspect-square text-quaternary" />
+                <div className="space-y-2 text-center">
+                  <h3 className="text-xl text-tertiary font-semibold">No Featured Hub</h3>
+                  <p className="text-tertiary max-sm:text-xs max-sm:w-xs md:w-[480px]"></p>
+                </div>
+              </div>
+
+              {data.map((item) => (
+                <div key={item._id} className="flex gap-3 items-center px-4 py-3 hover:bg-card-hover">
+                  {item.image_avatar_expanded && (
+                    <Avatar src={generateUrl(item.image_avatar_expanded)} className="size-5" />
+                  )}
+                  <p className="flex-1">{item.title}</p>
+                </div>
+              ))}
+            </Card.Content>
+          </motion.div>
+        )}
       </Card.Root>
     </CommonSection>
   );

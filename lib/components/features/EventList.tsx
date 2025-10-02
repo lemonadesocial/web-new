@@ -131,7 +131,7 @@ function EventListSkeleton() {
 // ListEventCard
 
 export function EventListCard({
-  events,
+  events = [],
   loading,
   tags = [],
   onSelect,
@@ -142,8 +142,8 @@ export function EventListCard({
   onSelect?: (event: Event) => void;
 }) {
   const me = useMe();
-  if (loading) return <EventListCardSkeleton />;
-  if (!events.length) return <EmptyComp />;
+
+  if (!loading && !events.length) return <EmptyComp />;
 
   const list = Object.entries(
     groupBy(events, ({ start, timezone }) => formatWithTimezone(new Date(start), 'yyyy-MM-dd', timezone)),
@@ -192,6 +192,13 @@ export function EventListCard({
           </div>
         );
       })}
+
+      {loading && (
+        <>
+          {!!list.length && <Spacer className="h-3" />}
+          <EventListCardSkeleton />
+        </>
+      )}
     </div>
   );
 }
@@ -361,24 +368,30 @@ export function EventCardItem({
 function EventListCardSkeleton() {
   return (
     <div className="flex flex-col">
-      {Object.entries({ 1: [1, 2], 2: [1], 3: [1, 2, 3] }).map(([date, data]) => (
-        <div className="flex flex-col relative" key={date}>
-          <div className="border-dashed border-l-2 border-l-[var(--color-divider)] absolute h-full left-1 top-2 z-10">
+      {Object.entries({ 1: [1, 2], 2: [1], 3: [1, 2, 3] }).map(([date, data], idx) => (
+        <div className="flex" key={date}>
+          <div
+            className={clsx(
+              'border-l-2 border-dashed border-l-[var(--color-divider)] pt-2 relative',
+              idx === 0 && 'mt-2 pt-0!',
+            )}
+          >
             <div className="size-2 backdrop-blur-lg rounded-full -ml-[5px] absolute">
               <div className="size-2 rounded-full bg-(--color-divider)" />
             </div>
           </div>
-          <div className="ml-5 mt-1">
-            <SkeletonLine animate className="h-4 w-[96px] rounded-full" />
-            <Spacer className="h-3" />
 
+          <div className="ml-4 w-full">
             <div className="flex flex-col gap-4">
-              {data.map((item) => (
-                <EventCardSkeleton key={item} />
-              ))}
-            </div>
+              <SkeletonLine animate className="mt-1 h-4 w-[96px] rounded-full" />
 
-            <Spacer className="h-4" />
+              <div className="flex flex-col gap-4">
+                {data.map((item) => (
+                  <EventCardSkeleton key={item} />
+                ))}
+              </div>
+              {idx < 3 && <div className="h-3" />}
+            </div>
           </div>
         </div>
       ))}

@@ -157,7 +157,7 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
           </nav>
         </div>
       </div>
-      <div className="page mx-auto py-7 px-4 md:px-0">{children}</div>
+      <main className="page bg-transparent! mx-auto py-7 px-4 md:px-0">{children}</main>
     </div>
   );
 }

@@ -133,7 +133,7 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
               setValue('external_url', data.external_url);
               setValue('host', data.host);
               setValue('location', data.location);
-              const country = ct.getCountry(data.location.address.country);
+              const country = ct.getCountry(data.location?.address?.country);
               setValue('datetime.timezone', country?.timezones?.[0]);
             }}
           />
