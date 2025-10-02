@@ -28,7 +28,7 @@ import { CardTable } from '$lib/components/core/table';
 export function CommunityOverview({ space: initSpace }: { space?: Space }) {
   const params = useParams<{ uid: string }>();
 
-  const { data } = useQuery(GetSpaceDocument, {
+  const { data, loading: loadingGetSpace } = useQuery(GetSpaceDocument, {
     variables: { id: initSpace?._id },
     fetchPolicy: 'cache-and-network',
     skip: !initSpace?._id,
@@ -52,12 +52,8 @@ export function CommunityOverview({ space: initSpace }: { space?: Space }) {
         {space && <UpComingEventsSection space={space} />}
       </div>
 
-      {space && (
-        <>
-          <Divider />
-          <AdminListSection space={space} />
-        </>
-      )}
+      <Divider />
+      <AdminListSection space={space} loading={loadingGetSpace} />
 
       <Divider />
       <AnimatePresence mode="wait">
@@ -164,7 +160,7 @@ function UpComingEventsSection({ space }: { space: Space }) {
   );
 }
 
-function AdminListSection({ space }: { space: Space }) {
+function AdminListSection({ space, loading }: { space: Space; loading?: boolean }) {
   const me = useMe();
   if (!space.admins?.length) return null;
   const isCreator = me?._id === space.creator;
@@ -175,9 +171,22 @@ function AdminListSection({ space }: { space: Space }) {
       subtitle="Add hosts, special guests, and event managers."
       actions={[{ iconLeft: 'icon-plus', title: 'Add Admin', onClick: () => toast.success('Coming soon') }]}
     >
-      <Card.Root>
-        <Card.Content className="p-0 divide-y divide-(--color-divider)">
-          {space.admins?.map((item) => (
+      <CardTable.Root loading={loading}>
+        <CardTable.Loading rows={3}>
+          <Skeleton className="size-8 aspect-square rounded-full" animate />
+          <Skeleton className="h-5 w-32" animate />
+
+          <Skeleton className="h-5 w-10" animate />
+
+          <div className="w-[62px] px-[60px] hidden md:block">
+            <Skeleton className="h-5 w-16 rounded-full" animate />
+          </div>
+        </CardTable.Loading>
+
+        <CardTable.EmptyState icon="icon-community" title="No Featured Hub" />
+
+        {space.admins.map((item) => (
+          <CardTable.Row key={item._id}>
             <div key={item._id} className="flex gap-3 items-center px-4 py-3">
               <Avatar src={userAvatar(item)} className="size-5" />
               <div className="flex gap-2 flex-1">
@@ -195,9 +204,9 @@ function AdminListSection({ space }: { space: Space }) {
                 onClick={() => toast.success('Coming soon')}
               />
             </div>
-          ))}
-        </Card.Content>
-      </Card.Root>
+          </CardTable.Row>
+        ))}
+      </CardTable.Root>
     </CommonSection>
   );
 }
@@ -209,63 +218,31 @@ function FeaturedHubSection({ loading, data = [] }: { data?: PublicSpace[]; load
       subtitle="Showcase other community hubs you manage on the community page."
       actions={[{ iconLeft: 'icon-plus', title: 'Add Hub', onClick: () => toast.success('Coming soon') }]}
     >
-      <Card.Root>
-        {loading ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.1 }}
-            className="divide-y-(--card-border-width) divide-(--color-divider)"
-          >
-            {Array.from({ length: 7 }).map((_, idx) => (
-              <Card.Content key={idx} className="py-3">
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex items-center gap-4"
-                >
-                  <Skeleton className="size-8 aspect-square rounded-full" animate />
-                  <Skeleton className="h-5 w-32" animate />
+      <CardTable.Root loading={loading}>
+        <CardTable.Loading rows={7}>
+          <Skeleton className="size-8 aspect-square rounded-full" animate />
+          <Skeleton className="h-5 w-32" animate />
 
-                  <Skeleton className="h-5 w-10" animate />
+          <Skeleton className="h-5 w-10" animate />
 
-                  <div className="w-[62px] px-[60px] hidden md:block">
-                    <Skeleton className="h-5 w-16 rounded-full" animate />
-                  </div>
-                </motion.div>
-              </Card.Content>
-            ))}
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0 }}
-            className="w-full"
-          >
-            <Card.Content className="p-0 divide-y divide-(--color-divider)">
-              <div className="hidden only:flex flex-col justify-center items-center py-12">
-                <i className="icon-community size-[120px] md:size-[184px] aspect-square text-quaternary" />
-                <div className="space-y-2 text-center">
-                  <h3 className="text-xl text-tertiary font-semibold">No Featured Hub</h3>
-                  <p className="text-tertiary max-sm:text-xs max-sm:w-xs md:w-[480px]"></p>
-                </div>
-              </div>
+          <div className="w-[62px] px-[60px] hidden md:block">
+            <Skeleton className="h-5 w-16 rounded-full" animate />
+          </div>
+        </CardTable.Loading>
 
-              {data.map((item) => (
-                <div key={item._id} className="flex gap-3 items-center px-4 py-3 hover:bg-card-hover">
-                  {item.image_avatar_expanded && (
-                    <Avatar src={generateUrl(item.image_avatar_expanded)} className="size-5" />
-                  )}
-                  <p className="flex-1">{item.title}</p>
-                </div>
-              ))}
-            </Card.Content>
-          </motion.div>
-        )}
-      </Card.Root>
+        <CardTable.EmptyState icon="icon-community" title="No Featured Hub" />
+
+        {data.map((item) => (
+          <CardTable.Row key={item._id}>
+            <div className="flex gap-3 items-center px-4 py-3 hover:bg-card-hover">
+              {item.image_avatar_expanded && (
+                <Avatar src={generateUrl(item.image_avatar_expanded)} className="size-5" />
+              )}
+              <p className="flex-1">{item.title}</p>
+            </div>
+          </CardTable.Row>
+        ))}
+      </CardTable.Root>
     </CommonSection>
   );
 }
