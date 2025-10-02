@@ -162,8 +162,8 @@ query getMyTickets($event: MongoID!, $withPaymentInfo: Boolean) {
   }
 }
 
-mutation redeemTickets($event: MongoID!, $items: [PurchasableItem!]!, $buyer_info: BuyerInfoInput, $inviter: MongoID, $user_info: UserInput, $connect_wallets: [ConnectWalletInput!], $buyer_wallet: String) {
-  redeemTickets(input: { event: $event, items: $items, buyer_info: $buyer_info, inviter: $inviter, user_info: $user_info, connect_wallets: $connect_wallets, buyer_wallet: $buyer_wallet }) {
+mutation redeemTickets($event: MongoID!, $items: [PurchasableItem!]!, $buyer_info: BuyerInfoInput, $inviter: MongoID, $user_info: UserInput, $connect_wallets: [ConnectWalletInput!], $buyer_wallet: String, $passcodes: [String!]) {
+  redeemTickets(input: { event: $event, items: $items, buyer_info: $buyer_info, inviter: $inviter, user_info: $user_info, connect_wallets: $connect_wallets, buyer_wallet: $buyer_wallet, passcodes: $passcodes }) {
     tickets {
       _id
       accepted
@@ -355,4 +355,8 @@ mutation CreateTickets(
   ) {
     _id
   }
+}
+
+query Query($passcode: String!, $type: MongoID!) {
+  checkTicketTypePasscode(passcode: $passcode, type: $type)
 }

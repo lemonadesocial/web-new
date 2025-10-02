@@ -3,7 +3,7 @@ import { RedeemTicketsDocument } from "$lib/graphql/generated/backend/graphql";
 import { toast } from "$lib/components/core";
 import { useMe } from "$lib/hooks/useMe";
 
-import { buyerInfoAtom, buyerWalletAtom, ethereumWalletInputAtom, eventDataAtom, purchaseItemsAtom, registrationModal, useAtomValue, useEventRegistrationStore, userInfoAtom } from "../store";
+import { buyerInfoAtom, buyerWalletAtom, ethereumWalletInputAtom, eventDataAtom, purchaseItemsAtom, registrationModal, ticketPasscodesAtom, useAtomValue, useEventRegistrationStore, userInfoAtom } from "../store";
 
 import { useJoinRequest } from "./useJoinRequest";
 import { useProcessTickets } from "./useProcessTickets";
@@ -40,6 +40,11 @@ export const useRedeemTickets = () => {
     const userInfo = store.get(userInfoAtom);
     const ethereumWalletInput = store.get(ethereumWalletInputAtom);
     const buyerWallet = store.get(buyerWalletAtom);
+    const ticketPasscodes = store.get(ticketPasscodesAtom);
+
+    const passcodes = purchaseItems
+      .map(item => ticketPasscodes[item.id])
+      .filter(Boolean);
 
     redeem({
       variables: {
@@ -49,6 +54,7 @@ export const useRedeemTickets = () => {
         user_info: userInfo ? { ...userInfo, email: me?.email || buyerInfo?.email, display_name: userInfo.display_name || buyerInfo?.name } : undefined,
         connect_wallets: ethereumWalletInput ? [ethereumWalletInput] : undefined,
         buyer_wallet: buyerWallet || undefined,
+        passcodes: passcodes.length > 0 ? passcodes : undefined,
       }
     });
   };
