@@ -1,5 +1,16 @@
 # Changelog
 
+## [8.0.0](https://github.com/lemonadesocial/web-new/compare/v7.11.0...v8.0.0) (2025-10-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* ticket passcode
+
+### Features
+
+* ticket passcode ([0afc324](https://github.com/lemonadesocial/web-new/commit/0afc32428a762b3d5e4e921b31c1785180c893f7))
+
 ## [7.11.0](https://github.com/lemonadesocial/web-new/compare/v7.10.0...v7.11.0) (2025-10-01)
 
 
