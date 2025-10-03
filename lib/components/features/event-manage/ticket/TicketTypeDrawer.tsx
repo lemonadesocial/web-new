@@ -41,7 +41,7 @@ import { EmailListDrawer } from './EmailListDrawer';
 type TicketFormState = {
   title: string;
   description: string;
-  ticket_limit_per: number | undefined;
+  ticket_limit_per: number | null;
   ticket_limit?: number;
   active: boolean;
   private: boolean;
@@ -383,7 +383,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
               </div>
               <div className="flex items-center gap-2">
                 <p className="text-tertiary">
-                  {ticket_limit_per === undefined
+                  {ticket_limit_per === null
                     ? 'Unlimited'
                     : ticket_limit_per === 1
                       ? 'Off'
