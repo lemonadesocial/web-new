@@ -42,7 +42,7 @@ type TicketFormState = {
   title: string;
   description: string;
   ticket_limit_per: number | null;
-  ticket_limit?: number;
+  ticket_limit?: number | null;
   active: boolean;
   private: boolean;
   limited: boolean;
@@ -58,7 +58,7 @@ const getInitialValues = (initialTicketType?: EventTicketType): TicketFormState 
     return {
       title: '',
       description: '',
-      ticket_limit: undefined,
+      ticket_limit: null,
       ticket_limit_per: 1,
       active: true,
       private: false,
