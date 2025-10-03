@@ -1,5 +1,18 @@
 # Changelog
 
+## [8.1.0](https://github.com/lemonadesocial/web-new/compare/v8.0.1...v8.1.0) (2025-10-03)
+
+
+### Features
+
+* update network check ([7ccac2a](https://github.com/lemonadesocial/web-new/commit/7ccac2a036c33f9f6472ebb6d1f215b104dd23fd))
+
+
+### Bug Fixes
+
+* missing user email when logging in with wallet ([87478af](https://github.com/lemonadesocial/web-new/commit/87478af091ca32d73c460b8db002ac1fa134b9c7))
+* unable to remove ticket limit ([1269a22](https://github.com/lemonadesocial/web-new/commit/1269a22329b1d4bafa8c812655dfe610a1aec748))
+
 ## [8.0.1](https://github.com/lemonadesocial/web-new/compare/v8.0.0...v8.0.1) (2025-10-03)
 
 
