@@ -51,7 +51,7 @@ export const useRedeemTickets = () => {
         event: event._id,
         items: purchaseItems,
         buyer_info: buyerInfo || undefined,
-        user_info: userInfo ? { ...userInfo, email: me?.email || buyerInfo?.email, display_name: userInfo.display_name || buyerInfo?.name } : undefined,
+        user_info: userInfo ? { ...userInfo, email: userInfo.email || buyerInfo?.email, display_name: userInfo.display_name || buyerInfo?.name } : undefined,
         connect_wallets: ethereumWalletInput ? [ethereumWalletInput] : undefined,
         buyer_wallet: buyerWallet || undefined,
         passcodes: passcodes.length > 0 ? passcodes : undefined,

@@ -64,7 +64,7 @@ export function useBuyTickets(callback?: (data: BuyTicketsMutation) => void) {
           fee: paymentAccount?.fee,
           buyer_info: buyerInfo,
           buyer_wallet: buyerWallet || undefined,
-          user_info: userInfo ? { ...userInfo, email: buyerInfo?.email, display_name: buyerInfo?.name } : undefined,
+          user_info: userInfo ? { ...userInfo, email: userInfo.email || buyerInfo?.email, display_name: userInfo.display_name || buyerInfo?.name } : undefined,
           connect_wallets: ethereumWalletInput ? [ethereumWalletInput] : undefined,
           passcodes: passcodes.length > 0 ? passcodes : undefined,
         }
