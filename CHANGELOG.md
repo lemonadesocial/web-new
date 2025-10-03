@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.0.1](https://github.com/lemonadesocial/web-new/compare/v8.0.0...v8.0.1) (2025-10-03)
+
+
+### Bug Fixes
+
+* unable to remove guest limit ([13e89f3](https://github.com/lemonadesocial/web-new/commit/13e89f352f2616fa5da0a079be0d2476f9a5f27c))
+* update tooltip position ([c67dc46](https://github.com/lemonadesocial/web-new/commit/c67dc46951e0d5e63698555b52bf031754ff56e6))
+
 ## [8.0.0](https://github.com/lemonadesocial/web-new/compare/v7.11.0...v8.0.0) (2025-10-02)
 
 
