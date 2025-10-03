@@ -14,12 +14,17 @@ import { useSigner } from '$lib/hooks/useSigner';
 import { SuccessModal } from '../modals/SuccessModal';
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { RulesSubject } from '@lens-protocol/client';
+import { formatError } from '$lib/utils/crypto';
+import { ConnectWallet } from '../modals/ConnectWallet';
+import { chainsMapAtom } from '$lib/jotai';
+import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 
 export function ClaimLemonadeUsernameModal() {
   const sessionClient = useAtomValue(sessionClientAtom);
   const signer = useSigner();
   const { account } = useAccount();
   const { refetch } = useLemonadeUsername(account);
+  const chainsMap = useAtomValue(chainsMapAtom);
 
   const [username, setUsername] = useState('');
   const [step, setStep] = useState<'search' | 'success'>('search');
@@ -108,7 +113,7 @@ export function ClaimLemonadeUsernameModal() {
       setStep('success');
       refetch();
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error(formatError(error));
     }
   }
 
@@ -171,7 +176,16 @@ export function ClaimLemonadeUsernameModal() {
       <Button
         className="w-full mt-4"
         variant="secondary"
-        onClick={handleClaimUsername}
+        onClick={() => {
+          modal.open(ConnectWallet, {
+            props: {
+              onConnect: () => {
+                handleClaimUsername();
+              },
+              chain: chainsMap[LENS_CHAIN_ID],
+            },
+          });
+        }}
         disabled={status !== 'available'}
         loading={isLoading}
       >
