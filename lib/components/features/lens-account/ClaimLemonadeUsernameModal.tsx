@@ -5,6 +5,7 @@ import { sessionClientAtom } from '$lib/jotai/lens';
 import { canCreateUsername, createUsername } from '@lens-protocol/client/actions';
 import { handleOperationWith } from '@lens-protocol/client/ethers';
 import debounce from 'lodash/debounce';
+import * as Sentry from '@sentry/nextjs';
 
 import { Button, modal, ModalContent, toast } from "$lib/components/core";
 import { ASSET_PREFIX, LENS_NAMESPACE } from "$lib/utils/constants";
@@ -113,6 +114,7 @@ export function ClaimLemonadeUsernameModal() {
       setStep('success');
       refetch();
     } catch (error: any) {
+      Sentry.captureException(error);
       toast.error(formatError(error));
     }
   }
