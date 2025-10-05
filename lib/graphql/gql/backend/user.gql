@@ -38,3 +38,50 @@ query SearchUsers($query: String!) {
     }
   }
 }
+
+query GetUser($id: MongoID, $username: String, $email: String) {
+  getUser(_id: $id, username: $username, email: $email) {
+    _id
+    name
+    display_name
+    email
+    username
+    description
+    followers
+    following
+    hosted
+    addresses {
+      _id
+      street_1
+      street_2
+      city
+      region
+      postal
+      country
+      title
+      phone
+      longitude
+      latitude
+      additional_directions
+    }
+    new_photos_expanded(limit: 1) {
+      _id
+      key
+      bucket
+    }
+    cover_expanded {
+      _id
+      bucket
+      url
+      type
+      key
+    }
+    handle_facebook
+    handle_instagram
+    handle_linkedin
+    handle_twitter
+    handle_farcaster
+    handle_github
+    created_at
+  }
+}
