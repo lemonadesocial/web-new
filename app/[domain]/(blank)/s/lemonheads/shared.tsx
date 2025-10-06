@@ -483,7 +483,7 @@ function renderTextWithLinks(text?: string) {
   return elements;
 }
 
-export function UpcomingEventsCard() {
+export function UpcomingEventsCard({ userId }: { userId?: string }) {
   const me = useMe();
   const router = useRouter();
 
