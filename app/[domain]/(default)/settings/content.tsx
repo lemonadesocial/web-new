@@ -4,8 +4,9 @@ import { useAppKitAccount, useDisconnect } from '@reown/appkit/react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useAtom, useAtomValue } from 'jotai';
+import { useRouter } from 'next/navigation';
 
-import { Avatar, Button, Card, drawer, modal } from '$lib/components/core';
+import { Avatar, Button, Card, drawer, modal, toast } from '$lib/components/core';
 import { VerifyEmailModal } from '$lib/components/features/auth/VerifyEmailModal';
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { useMe } from '$lib/hooks/useMe';
@@ -26,14 +27,20 @@ import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { User } from '$lib/graphql/generated/backend/graphql';
 import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
 import { useFarcasterUserData } from '$lib/hooks/useFarcasterUserData';
+import { ConfirmModal } from '$lib/components/features/modals/ConfirmModal';
+import { useMutation } from '$lib/graphql/request';
+import { DeleteUserDocument } from '$lib/graphql/generated/backend/graphql';
+import { useLogOut } from '$lib/hooks/useLogout';
 
 export function Content() {
   const [session] = useAtom(sessionAtom);
   const walletVerified = session?.wallet;
   const signIn = useSignIn();
   const [mounted, setMounted] = React.useState(false);
+  const router = useRouter();
 
   const me = useMe();
+  const logOut = useLogOut();
   const { account } = useAccount();
   const { address } = useAppKitAccount();
   const { username } = useLemonadeUsername(account);
@@ -63,6 +70,30 @@ export function Content() {
     return account?.metadata?.attributes.find((i) => i.key === name)?.value || me?.[name as keyof Partial<User>];
   };
 
+  const [deleteUser] = useMutation(DeleteUserDocument);
+
+  const handleDeletePost = async () => {
+    try {
+      await deleteUser({});
+      toast.success('Account deleted successfully');
+      logOut(true);
+    } catch (error: any) {
+      toast.error(error.message)
+    }
+  };
+
+  const handleDeleteAccountClick = () => {
+    modal.open(ConfirmModal, {
+      props: {
+        title: 'Delete Account',
+        subtitle: 'Are you sure you want to delete your account?',
+        icon: 'icon-delete',
+        onConfirm: handleDeletePost,
+        buttonText: 'Delete'
+      },
+    });
+  };
+
   React.useEffect(() => {
     if (!mounted) setMounted(true);
   }, []);
@@ -74,10 +105,10 @@ export function Content() {
   if (!me && !session) return null;
 
   return (
-    <div className="flex flex-col gap-8 mt-6 pb-24 md:my-11">
+    <div className="flex flex-col gap-8 mt-6 pb-24 md:my-11 max-w-[532px]">
       <PageTitle title="Settings" subtitle="Choose how you are displayed as a host or guest." />
 
-      <Card.Content className="max-w-[532px] bg-card backdrop-blur-lg rounded-lg border border-card-border flex flex-col p-0 divide-y divide-(--color-divider)">
+      <Card.Content className="bg-card backdrop-blur-lg rounded-lg border border-card-border flex flex-col p-0 divide-y divide-(--color-divider)">
         <div className="px-[18px] py-4 flex flex-col gap-4">
           <div className="flex justify-between items-start">
             <div className="size-[60px]">
@@ -247,6 +278,24 @@ export function Content() {
           </ListItem>
         </div>
       </Card.Content>
+
+      <div className="bg-card backdrop-blur-lg rounded-lg border border-card-border">
+      <div
+          className="flex gap-4 items-center cursor-pointer py-3 px-4"
+          onClick={() => logOut(true)}
+        >
+          <i className="icon-exit size-5 text-tertiary" />
+          <p>Sign Out</p>
+        </div>
+        <hr className="border-t ml-8" />
+        <div
+          className="flex gap-4 items-center cursor-pointer py-3 px-4"
+          onClick={handleDeleteAccountClick}
+        >
+          <i className="icon-delete size-5 text-error" />
+          <p className="text-error">Delete Account</p>
+        </div>
+      </div>
     </div>
   );
 }

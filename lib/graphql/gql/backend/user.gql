@@ -38,3 +38,7 @@ query SearchUsers($query: String!) {
     }
   }
 }
+
+mutation deleteUser {
+  deleteUser
+}
