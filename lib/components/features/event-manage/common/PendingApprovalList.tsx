@@ -1,44 +1,33 @@
 import { formatDistanceToNow } from 'date-fns';
-import { useMemo, useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import clsx from 'clsx';
 
-import { Avatar, Button, drawer } from '$lib/components/core';
-import { Event, EventJoinRequestState, GetEventJoinRequestsDocument } from '$lib/graphql/generated/backend/graphql';
-import { useQuery } from '$lib/graphql/request';
+import { Avatar, Button, drawer, Skeleton } from '$lib/components/core';
+import { GetEventJoinRequestsQuery } from '$lib/graphql/generated/backend/graphql';
 import { userAvatar } from '$lib/utils/user';
 
 import { useEventRequest } from '../hooks';
 import { GuestDetailsDrawer } from '../drawers/GuestDetailsDrawer';
 
+type EventJoinRequestFromQuery = GetEventJoinRequestsQuery['getEventJoinRequests']['records'][0];
+
 interface PendingApprovalListProps {
-  event: Event;
-  limit?: number;
+  pendingRequests: EventJoinRequestFromQuery[];
+  eventId: string;
+  onRefetch?: () => void;
 }
 
-export function PendingApprovalList({ event, limit = 25 }: PendingApprovalListProps) {
+export function PendingApprovalList({ pendingRequests, eventId, onRefetch }: PendingApprovalListProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number>(0);
-
-  const { data, refetch } = useQuery(GetEventJoinRequestsDocument, {
-    variables: {
-      event: event._id,
-      state: EventJoinRequestState.Pending,
-      skip: 0,
-      limit,
-    },
-  });
 
   const {
     approve,
     decline,
     loading: requestLoading,
-  } = useEventRequest(event._id, () => {
-    refetch();
+  } = useEventRequest(eventId, () => {
+    onRefetch?.();
   });
-
-  const pendingRequests = useMemo(() => {
-    return data?.getEventJoinRequests.records || [];
-  }, [data]);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -55,13 +44,11 @@ export function PendingApprovalList({ event, limit = 25 }: PendingApprovalListPr
     decline([requestId]);
   };
 
-  if (!pendingRequests.length) return;
-
   const handleGuestDetail = (email: string) => {
     drawer.open(GuestDetailsDrawer, {
       props: {
         email,
-        event: event._id,
+        event: eventId,
       },
     });
   };
