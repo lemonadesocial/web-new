@@ -357,6 +357,6 @@ mutation CreateTickets(
   }
 }
 
-query Query($passcode: String!, $type: MongoID!) {
+query CheckTicketTypePasscode($passcode: String!, $type: MongoID!) {
   checkTicketTypePasscode(passcode: $passcode, type: $type)
 }

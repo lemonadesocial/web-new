@@ -85,3 +85,7 @@ query GetUser($id: MongoID, $username: String, $email: String) {
     created_at
   }
 }
+
+mutation deleteUser {
+  deleteUser
+}
