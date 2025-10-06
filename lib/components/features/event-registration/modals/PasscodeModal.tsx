@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { Button, Input, ModalContent, toast } from '$lib/components/core';
-// import { CheckTicketTypePasscodeDocument } from '$lib/graphql/generated/backend/graphql';
+import { CheckTicketTypePasscodeDocument } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
 import { registrationModal, ticketPasscodesAtom, useAtom } from '../store';
 
@@ -14,27 +14,25 @@ interface PasscodeModalProps {
 export function PasscodeModal({ ticketTypeId, ticketTitle, onConfirm }: PasscodeModalProps) {
   const [ticketPasscodes, setTicketPasscodes] = useAtom(ticketPasscodesAtom);
   const [passcode, setPasscode] = useState(ticketPasscodes[ticketTypeId] || '');
-  const checkPasscode = () => {};
-  const loading = false;
 
-  // const [checkPasscode, { loading }] = useMutation(CheckTicketTypePasscodeDocument, {
-  //   onComplete: (_, data) => {
-  //     if (data?.checkTicketTypePasscode) {
-  //       setTicketPasscodes({
-  //         ...ticketPasscodes,
-  //         [ticketTypeId]: passcode.trim(),
-  //       });
-  //
-  //       registrationModal.close();
-  //       onConfirm();
-  //     } else {
-  //       toast.error('Invalid passcode. Please try again.');
-  //     }
-  //   },
-  //   onError: () => {
-  //     toast.error('Error validating passcode. Please try again.');
-  //   },
-  // });
+  const [checkPasscode, { loading }] = useMutation(CheckTicketTypePasscodeDocument, {
+    onComplete: (_, data) => {
+      if (data?.checkTicketTypePasscode) {
+        setTicketPasscodes({
+          ...ticketPasscodes,
+          [ticketTypeId]: passcode.trim(),
+        });
+
+        registrationModal.close();
+        onConfirm();
+      } else {
+        toast.error('Invalid passcode. Please try again.');
+      }
+    },
+    onError: () => {
+      toast.error('Error validating passcode. Please try again.');
+    },
+  });
 
   const handleConfirm = () => {
     if (!passcode.trim()) return;
