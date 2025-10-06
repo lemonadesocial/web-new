@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.3.0](https://github.com/lemonadesocial/web-new/compare/v8.2.0...v8.3.0) (2025-10-06)
+
+
+### Features
+
+* add confirmation modal for delete ([30fc90e](https://github.com/lemonadesocial/web-new/commit/30fc90e46ae389e5de6a9ffcbc3308f3ff2299d2))
+* delete user ([aa96cd2](https://github.com/lemonadesocial/web-new/commit/aa96cd286a64a0540329753205efdb90ef726f13))
+
 ## [8.2.0](https://github.com/lemonadesocial/web-new/compare/v8.1.0...v8.2.0) (2025-10-06)
 
 
