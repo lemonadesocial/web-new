@@ -29,12 +29,9 @@ const FILTER_OPTIONS = {
 };
 
 export default function UserProfileEvents({ user }: { user: User }) {
-  const session = useSession();
-  const me = useMe();
-  const signIn = useSignIn();
   const router = useRouter();
+  const me = useMe();
 
-  const [mounted, setMounted] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [filter, setFilter] = React.useState({
     type: 'upcoming',
@@ -45,8 +42,6 @@ export default function UserProfileEvents({ user }: { user: User }) {
   const { client } = useClient();
 
   const fetchData = React.useCallback(async () => {
-    if (!me) return;
-
     let events = [] as Event[];
     let showHost: any = null;
     if (Number(filter.by) === FilterItem.Hosting) showHost = true;
@@ -137,7 +132,9 @@ export default function UserProfileEvents({ user }: { user: User }) {
                 </Menu.Content>
               </Menu.Root>
 
-              <Button icon="icon-plus" variant="secondary" size="sm" onClick={() => router.push('/create/event')} />
+              {me?._id === user._id && (
+                <Button icon="icon-plus" variant="secondary" size="sm" onClick={() => router.push('/create/event')} />
+              )}
             </div>
           </div>
         </div>

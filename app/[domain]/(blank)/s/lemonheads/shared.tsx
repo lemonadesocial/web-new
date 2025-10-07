@@ -13,6 +13,7 @@ import {
   GetSpaceDocument,
   GetSpaceEventsDocument,
   GetSubSpacesDocument,
+  GetUpcomingEventsDocument,
   PublicSpace,
   Space,
   UnfollowSpaceDocument,
@@ -484,18 +485,17 @@ function renderTextWithLinks(text?: string) {
 }
 
 export function UpcomingEventsCard({ userId }: { userId?: string }) {
-  const me = useMe();
   const router = useRouter();
 
-  const { data: dataGetUpcomingEvents } = useQuery(GetSpaceEventsDocument, {
+  const { data: dataGetUpcomingEvents } = useQuery(GetUpcomingEventsDocument, {
     variables: {
       limit: 3,
       skip: 0,
-      endFrom: FROM_NOW,
+      user: userId,
     },
-    skip: !me?._id,
+    skip: !userId,
   });
-  const upcomingEvents = (dataGetUpcomingEvents?.getEvents || []) as Event[];
+  const upcomingEvents = (dataGetUpcomingEvents?.events || []) as Event[];
 
   if (!upcomingEvents.length) return null;
 

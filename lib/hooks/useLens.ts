@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 import { handleOperationWith, signMessageWith } from '@lens-protocol/client/ethers';
 import {
   createAccountWithUsername,
@@ -306,7 +307,8 @@ type PostFilter = {
 
 export function useFeedPosts(postFilter: PostFilter) {
   const sessionClient = useAtomValue(sessionClientAtom);
-  const [posts, setPosts] = useAtom(feedPostsAtom);
+  // const [posts, setPosts] = useAtom(feedPostsAtom);
+  const [posts, setPosts] = React.useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [cursor, setCursor] = useState<string | undefined>();

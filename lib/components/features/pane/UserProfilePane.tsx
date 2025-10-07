@@ -52,8 +52,12 @@ export function UserProfilePane({ username, address }: Props) {
 
       <Pane.Content className="py-4 w-full">
         <div className="px-4">
-          <UserProfileHero containerClass="md:hidden h-[140px]! [&>.user-dp]:size-18" user={user} />
-          <UserProfileHero containerClass="hidden md:block h-[172px]! [&>.user-dp]:size-24" user={user} />
+          <UserProfileHero address={address} containerClass="md:hidden h-[140px]! [&>.user-dp]:size-18" user={user} />
+          <UserProfileHero
+            address={address}
+            containerClass="hidden md:block h-[200px]! [&>.user-dp]:size-24"
+            user={user}
+          />
           <UserProfileInfo user={user} />
         </div>
 

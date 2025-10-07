@@ -4,10 +4,12 @@ import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '$lib/components/core';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
+import { User } from '$lib/graphql/generated/backend/graphql';
+
 import UserProfileEvents from './UserProfileEvents';
 import { UserProfilePost } from './UserProfilePost';
-import Component from 'video.js/dist/types/component';
-import { User } from '$lib/graphql/generated/backend/graphql';
+import { UserProfileCommunities } from './UserProfileCommunities';
+import { isAddress } from 'ethers';
 
 const pageTabsData = [
   { label: 'Feed', path: 'feed', icon: 'icon-newspaper' },
@@ -41,7 +43,7 @@ export function UserProfilePageTabs() {
 const tabData = [
   { label: 'Post', key: 'feed', component: UserProfilePost },
   { label: 'Events', key: 'events', component: UserProfileEvents, requiredLemonadeUser: true },
-  { label: 'Communities', key: 'communities', component: UserProfileEvents, requiredLemonadeUser: true },
+  { label: 'Communities', key: 'communities', component: UserProfileCommunities, requiredLemonadeUser: true },
 ];
 
 export function UserProfileTabs({
@@ -49,23 +51,27 @@ export function UserProfileTabs({
   address,
   containerClass,
   contentClass,
+  sticky = false,
 }: {
   user: User;
   address?: string;
   containerClass?: string;
   contentClass?: string;
+  sticky?: boolean;
 }) {
-  const [active, setActive] = React.useState('feed');
+  const [active, setActive] = React.useState(isAddress(address) ? 'feed' : 'events');
   const Comp = tabData.find((t) => t.key === active)?.component || React.Fragment;
   return (
     <>
       <div
         className={twMerge(
-          'w-full flex gap-4 overflow-auto no-scrollbar border-b-(length:--card-border-width) border-(--color-divider) pt-3',
+          'w-full flex gap-4 overflow-auto no-scrollbar border-b-(length:--card-border-width) border-(--color-divider) pt-3 z-50 backdrop-blur-sm',
           containerClass,
+          sticky && 'sticky top-0',
         )}
       >
         {tabData.map((tab, i) => {
+          if (tab.key === 'feed' && !isAddress(address)) return null;
           if (tab.requiredLemonadeUser && !user?._id) return null;
           return (
             <div
