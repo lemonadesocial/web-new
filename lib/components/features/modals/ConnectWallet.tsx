@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { Button, modal, ModalContent } from "$lib/components/core";
+import { Button, modal, ModalContent, toast } from "$lib/components/core";
 import { Chain } from "$lib/graphql/generated/backend/graphql";
 import { getAppKitNetwork, useAppKit, useAppKitAccount, useAppKitNetwork } from "$lib/utils/appkit";
 
@@ -32,6 +32,22 @@ export function ConnectWallet({ onConnect, chain }: { onConnect: () => void; cha
     setShowSwitchNetwork(true);
   }, [isConnected, chain, chainId, onConnect]);
 
+  useEffect(() => {
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      if (event.reason?.message?.includes('Chain is not supported')) {
+        toast.error(`${chain?.name} is not supported in your wallet. Please try a different wallet.`);
+        event.preventDefault();
+      }
+    };
+
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    
+    return () => {
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
+  }, []);
+
+
   if (showSwitchNetwork && chain) {
     return (
       <ModalContent icon={chain.logo_url && <img src={chain.logo_url} className="w-6" />}>
@@ -39,7 +55,14 @@ export function ConnectWallet({ onConnect, chain }: { onConnect: () => void; cha
         <p className="text-secondary mt-2">
           You&apos;re connected to a different network than the one you selected. Please switch to {chain.name} in your wallet to continue.
         </p>
-        <Button variant="secondary" className="w-full mt-4" onClick={() => switchNetwork(getAppKitNetwork(chain))}>
+        <Button variant="secondary" className="w-full mt-4" onClick={async () => {
+          try {
+            await switchNetwork(getAppKitNetwork(chain));
+          } catch (error: any) {
+            console.error('Network switch error:', error);
+            toast.error(error?.message || 'Failed to switch network');
+          }
+        }}>
           Switch to {chain.name}
         </Button>
       </ModalContent>

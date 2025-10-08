@@ -38,7 +38,7 @@ export default function Providers({ children, space }: { children: React.ReactNo
   }, [space]);
 
   useEffect(() => {
-    sdk.actions.ready().then(() => setMiniAppReady(true));
+    sdk.actions.ready().then(() => setMiniAppReady(true)).catch(e => console.error(e));
   }, []);
 
   useEffect(() => {

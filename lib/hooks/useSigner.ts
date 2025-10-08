@@ -14,16 +14,22 @@ export function useSigner() {
     if (!walletProvider) return;
 
     (async () => {
-      const browserProvider = new BrowserProvider(walletProvider as Eip1193Provider);
-      const network = await browserProvider.getNetwork();
+      try {
+        const browserProvider = new BrowserProvider(walletProvider as Eip1193Provider);
+        const network = await browserProvider.getNetwork();
 
-      const signer = Signer.from(
-        await browserProvider.getSigner(),
-        Number(network.chainId),
-        getDefaultProvider(process.env.NEXT_PUBLIC_APP_ENV === 'production' ? Network.Mainnet : Network.Testnet) as unknown as Provider
-      );
+        const browserSigner = await browserProvider.getSigner();
 
-      setSigner(signer);
+        const signer = Signer.from(
+          browserSigner,
+          Number(network.chainId),
+          getDefaultProvider(process.env.NEXT_PUBLIC_APP_ENV === 'production' ? Network.Mainnet : Network.Testnet) as unknown as Provider
+        );
+
+        setSigner(signer);
+      } catch {
+        setSigner(null);
+      }
     })();
   }, [walletProvider]);
 
