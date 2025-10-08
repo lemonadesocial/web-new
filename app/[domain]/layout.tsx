@@ -5,6 +5,7 @@ import { BottomSheetContainer, DrawerContainer, ModalProvider } from '$lib/compo
 import { ToastContainer } from '$lib/components/core/toast';
 import { getSpaceHydraKeys } from '$lib/utils/space';
 import TRPCProvider from '$lib/trpc/provider';
+import { Web3Provider } from '$lib/components/features/unicorn/providers';
 
 import { getSiteData } from '$utils/fetchers';
 import { Config } from '$utils/types';
@@ -32,15 +33,17 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
 
   return (
     <Providers space={space}>
-      <TRPCProvider>
-        <ModalProvider>
-          <StyleVariables theme={data.theme.styles} />
-          {props.children}
-          <DrawerContainer />
-          <BottomSheetContainer />
-          <ToastContainer />
-        </ModalProvider>
-      </TRPCProvider>
+      <Web3Provider>
+        <TRPCProvider>
+          <ModalProvider>
+            <StyleVariables theme={data.theme.styles} />
+            {props.children}
+            <DrawerContainer />
+            <BottomSheetContainer />
+            <ToastContainer />
+          </ModalProvider>
+        </TRPCProvider>
+      </Web3Provider>
     </Providers>
   );
 }
