@@ -11,14 +11,17 @@ import { decodeAuthCookie } from '$lib/services/unicorn/common';
 import { getUnicornCanLink, linkUnicornWallet } from "$lib/services/unicorn/api";
 import { toast } from '$lib/components/core';
 
+import { SiwePayload, useUnicornWalletSignature } from "../unicorn/client";
+
 export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: boolean) => void) => {
   const session = useSession();
   const logOut = useRawLogout();
   const authCookie = useMemo(() => decodeAuthCookie(cookie), [cookie]);
+  const { siwe } = useUnicornWalletSignature();
 
   const [status, setStatus] = useState<'processing' | 'linking' | 'link-options' | 'creating' | 'linked' | 'processed'>('processing');
 
-  const handleLogin = async (identifier: string, cookie: string) => {
+  const handleLogin = async (identifier: string, cookie: string, siwe: SiwePayload) => {
     const loginFlow = await ory!.createBrowserLoginFlow().then((response) => response.data);
 
     await handlePasswordLogin({
@@ -28,6 +31,7 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
         password: dummyWalletPassword,
         transient_payload: {
           unicorn_auth_cookie: cookie,
+          siwe,
         }
       },
       onSuccess: () => {
@@ -36,7 +40,7 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
     });
   }
 
-  const handleLinkWithAccount = async () => {
+  const handleLinkWithAccount = async (siwe: SiwePayload) => {
     setStatus('linking');
     const wallet = authCookie?.storedToken.authDetails.walletAddress?.toLowerCase();
 
@@ -51,6 +55,7 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
         },
         transient_payload: {
           unicorn_auth_cookie: cookie,
+          siwe,
         },
       },
     });
@@ -59,7 +64,7 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
     onSuccess?.(true);
   }
 
-  const createNewAccount = async () => {
+  const createNewAccount = async (siwe: SiwePayload) => {
     setStatus('creating');
     const wallet = authCookie?.storedToken.authDetails.walletAddress?.toLowerCase();
 
@@ -76,6 +81,7 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
         },
         transient_payload: {
           unicorn_auth_cookie: cookie,
+          siwe,
         },
       },
       onSuccess: () => {
@@ -85,7 +91,7 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
     });
   };
 
-  const processCookie = async (cookie: string) => {
+  const processCookie = async (cookie: string, siwe: SiwePayload) => {
     try {
       const response = await getUnicornCanLink(cookie);
 
@@ -109,30 +115,30 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
 
         assert.ok(identifier, 'No wallet address in Unicorn auth cookie');
 
-        await handleLogin(identifier, cookie);
+        await handleLogin(identifier, cookie, siwe);
 
         setStatus('processed');
-        return; 
+        return;
       }
-    
+
       if (!response.canLink) {
         if (session && !session.unicorn_wallet) {
-          await handleLinkWithAccount();
-          return; 
+          await handleLinkWithAccount(siwe);
+          return;
         }
 
         setStatus('link-options');
-        return; 
+        return;
       }
 
       const identifier = response.email || response.wallet;
 
       assert.ok(identifier, 'No identifier in Unicorn auth cookie');
 
-      await linkUnicornWallet(identifier, cookie);
+      await linkUnicornWallet(identifier, cookie, siwe);
 
       //-- link success, perform login
-      await handleLogin(identifier, cookie);
+      await handleLogin(identifier, cookie, siwe);
 
       setStatus('processed');
     }
@@ -142,10 +148,10 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
   }
 
   useEffect(() => {
-    if (cookie) {
-      processCookie(cookie);
+    if (cookie && siwe) {
+      processCookie(cookie, siwe);
     }
-  }, [cookie]);
+  }, [cookie, siwe]);
 
-  return { status, handleLinkWithAccount, createNewAccount };
+  return { siwe, status, handleLinkWithAccount, createNewAccount };
 }
