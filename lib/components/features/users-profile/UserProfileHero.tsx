@@ -29,9 +29,7 @@ export function UserProfileHero({ address, user, canEdit, containerClass }: Prop
   const me = useMe();
   const [loading, setLoading] = React.useState(false);
   const { account } = useAccount();
-  const appkit = useAppKitAccount();
 
-  const [followers, setFollowers] = React.useState<Follower[]>([]);
   const [followed, setFollowed] = React.useState(false);
 
   const sessionClient = useAtomValue(sessionClientAtom);
@@ -74,7 +72,7 @@ export function UserProfileHero({ address, user, canEdit, containerClass }: Prop
   };
 
   const getFollowers = async () => {
-    if (address) {
+    if (address && isAddress(address)) {
       const result = await fetchFollowers(client, { account: evmAddress(address) });
 
       if (result.isErr()) {
@@ -93,7 +91,13 @@ export function UserProfileHero({ address, user, canEdit, containerClass }: Prop
   }, [account, address]);
 
   return (
-    <div className={clsx('relative w-full overflow-hidden', 'h-[154px] md:h-[280px]', containerClass)}>
+    <div
+      className={clsx(
+        'relative w-full overflow-hidden',
+        user?.cover_expanded ? 'h-[154px] md:h-[280px]' : 'h-24 md:h-36',
+        containerClass,
+      )}
+    >
       {user?.cover_expanded ? (
         <>
           <img
@@ -111,9 +115,7 @@ export function UserProfileHero({ address, user, canEdit, containerClass }: Prop
             className="hidden md:block aspect-[3.5/1] object-cover rounded-md w-full"
           />
         </>
-      ) : (
-        <div className="absolute inset-0 top-0 left-0 aspect-[3.5/1] object-cover rounded-md w-full bg-blend-darken max-sm:max-h-2/3 border"></div>
-      )}
+      ) : null}
 
       <div className="user-dp absolute bottom-1.5 md:bottom-4 size-20 md:size-28 rounded-full overflow-hidden border">
         <img className="w-full h-full outline outline-tertiary/4 rounded-md" src={userAvatar(user)} />

@@ -25,7 +25,7 @@ function UserProfileLayout({ children }: React.PropsWithChildren) {
   return (
     <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-12 pb-28 md:pb-20 w-full pt-6 max-sm:px-4">
       <div className="flex flex-col gap-5 flex-1">
-        <UserProfileHero address={uid} user={user} />
+        <UserProfileHero address={uid as string} user={user} />
         <UserProfileInfo user={user} />
 
         <UserProfileTabs

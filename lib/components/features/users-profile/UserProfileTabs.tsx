@@ -65,9 +65,9 @@ export function UserProfileTabs({
     <>
       <div
         className={twMerge(
-          'w-full flex gap-4 overflow-auto no-scrollbar border-b-(length:--card-border-width) border-(--color-divider) pt-3 z-50 backdrop-blur-sm',
+          'w-full flex gap-4 overflow-auto no-scrollbar border-b-(length:--card-border-width) border-(--color-divider) pt-3 backdrop-blur-sm',
           containerClass,
-          sticky && 'sticky top-0',
+          sticky && 'sticky top-0 z-50 bg-page-background-overlay',
         )}
       >
         {tabData.map((tab, i) => {

@@ -11,6 +11,7 @@ import { useUserProfile } from '$lib/hooks/useUserProfile';
 import { UserProfileHero } from '../users-profile/UserProfileHero';
 import { UserProfileInfo } from '../users-profile/UserProfileInfo';
 import { UserProfileTabs } from '../users-profile/UserProfileTabs';
+import clsx from 'clsx';
 
 interface Props {
   /** localName lens account */
@@ -34,7 +35,7 @@ export function UserProfilePane({ username, address }: Props) {
               size="sm"
               iconLeft="icon-copy"
               variant="tertiary-alt"
-              onClick={() => copy(`${LEMONADE_DOMAIN}/u/${username || address}`, () => toast.success('Url Copied!'))}
+              onClick={() => copy(`${LEMONADE_DOMAIN}/u/${address || username}`, () => toast.success('Url Copied!'))}
             >
               Copy Link
             </Button>
@@ -42,7 +43,7 @@ export function UserProfilePane({ username, address }: Props) {
               size="sm"
               variant="tertiary-alt"
               iconRight="icon-arrow-outward"
-              onClick={() => router.push(`/u/${username || address}`)}
+              onClick={() => router.push(`/u/${address || username}`)}
             >
               Profile Page
             </Button>
@@ -52,10 +53,14 @@ export function UserProfilePane({ username, address }: Props) {
 
       <Pane.Content className="py-4 w-full">
         <div className="px-4">
-          <UserProfileHero address={address} containerClass="md:hidden h-[140px]! [&>.user-dp]:size-18" user={user} />
           <UserProfileHero
             address={address}
-            containerClass="hidden md:block h-[200px]! [&>.user-dp]:size-24"
+            containerClass={clsx('md:hidden [&>.user-dp]:size-18', user?.cover_expanded ? 'h-[140px]!' : 'h-[80px]!')}
+            user={user}
+          />
+          <UserProfileHero
+            address={address}
+            containerClass={clsx('hidden md:block [&>.user-dp]:size-24', user?.cover_expanded ? 'h-[200px]!' : 'h-32!')}
             user={user}
           />
           <UserProfileInfo user={user} />
