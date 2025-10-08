@@ -42,7 +42,7 @@ export function UserProfilePane({ username, address }: Props) {
               size="sm"
               variant="tertiary-alt"
               iconRight="icon-arrow-outward"
-              onClick={() => router.push(`${LEMONADE_DOMAIN}/u/${username || address}`)}
+              onClick={() => router.push(`/u/${username || address}`)}
             >
               Profile Page
             </Button>
