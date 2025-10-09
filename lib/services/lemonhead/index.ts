@@ -1,10 +1,10 @@
 import { generateUrl } from '$lib/utils/cnd';
+import { getUriFromUrl, uploadImage, uploadJSON } from '$lib/services/grove/storage';
+
 import { calculateLookHash, Filter, FilterType, formatString, getFinalTraits, layerings, Trait, TraitType, validateTraits } from './core';
 import { getApproval, getCache, setCache } from './admin';
 import { getFinalImage, getRandomLayersFromTraits, getRenderLayersFromTraits, Layer, randomUseOutfit } from './image';
-import { uploadImage, uploadJSON } from './storage';
 
-const gatewayPrefix = 'https://api.grove.storage/';
 const DESCRIPTION = [
   'LemonHeads are residents of the United Stands of Lemonade, a digital nation for creators celebrating inclusivity, community and good vibes. Each LemonHead is unique- customized by its creator- no two are alike. All holders get exclusive access to events, experiences, rewards and more.',
   'LemonHeads create, collaborate, celebrate. When life deals lemons, LemonHeads #makelemonade!',
@@ -76,7 +76,7 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
 
     //-- for display purposes
     image: imageUrl,
-    metadata: metadataUrl.replace(gatewayPrefix, ''),
+    metadata: getUriFromUrl(metadataUrl),
   };
 };
 
