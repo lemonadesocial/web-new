@@ -1,5 +1,4 @@
 import assert from 'assert';
-import { Canvas, Image } from 'canvas';
 import fetch from 'node-fetch';
 
 import { SystemFile } from '$lib/graphql/generated/backend/graphql';
@@ -18,14 +17,6 @@ export type Layer = { [K in FilterType]?: string } & {
   order?: string;
   file?: Pick<SystemFile, 'bucket' | 'key' | 'type' | 'url'>;
 }
-
-const outputSize = 3000;
-
-const readUrlToBuffer = async (url: string) => {
-  const response = await fetch(url);
-  const buffer = await response.arrayBuffer();
-  return Buffer.from(buffer);
-};
 
 const traitToQuery = (trait: Partial<Trait>) => {
   return {
@@ -84,43 +75,6 @@ export const getRenderLayersFromTraits = async (finalTraits: Trait[]) => {
 
     return layers.items.find((layer) => Object.entries(query).every(([key, value]) => layer[key as keyof Layer] === value))
   });
-};
-
-export const getFinalImage = async (imageUrls: string[], outputFormat: 'png' | 'jpeg') => {
-  const buffers = await Promise.all(imageUrls.map(readUrlToBuffer));
-
-  //-- this is run in nodejs, please use a library to create a canvas
-  const canvas = new Canvas(outputSize, outputSize);
-
-  //-- merge all images into a single image
-  const ctx = canvas.getContext('2d');
-  assert.ok(ctx);
-
-  // Load and draw all images sequentially
-  for (let i = 0; i < buffers.length; i++) {
-    const buffer = buffers[i];
-    const img = new Image();
-
-    await new Promise<void>((resolve, reject) => {
-      img.onload = () => {
-        // Scale the image to fit the canvas dimensions
-        ctx.drawImage(img, 0, 0, outputSize, outputSize);
-        resolve();
-      };
-      img.onerror = (err) => {
-        reject(err);
-      };
-      img.src = buffer;
-    });
-  }
-
-  // Return the final merged image as buffer
-  if (outputFormat === 'png') {
-    return canvas.toBuffer('image/png');
-  }
-  else {
-    return canvas.toBuffer('image/jpeg');
-  }
 };
 
 const countLayers = async (serverUrl: string, traits: Omit<Trait, 'value'>[]) => {

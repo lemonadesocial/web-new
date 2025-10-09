@@ -41,7 +41,7 @@ export const uploadImage = async (filename: string, image: Buffer) => {
     acl: immutable(parseInt(LENS_CHAIN_ID)),
   })) as unknown as UploadResponse;
 
-  return response.resource.gatewayUrl
+  return response.resource.gatewayUrl;
 };
 
 export const uploadJSON = async (filename: string, json: Record<string, unknown>) => {
