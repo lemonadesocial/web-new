@@ -8,9 +8,10 @@ import { AddQuestionModal } from './AddQuestionModal';
 import { AddTextQuestion } from './AddTextQuestion';
 import { AddOptionsQuestion } from './AddOptionsQuestion';
 import { ApplicationProfileCard } from './ApplicationProfileCard';
+import { SelfIdSettingsModal } from './SelfIdSettingsModal';
 
 type EthAddressRequirement = 'Off' | 'Optional' | 'Required';
-type SelfIdRequirement = 'Off' | 'Optional' | 'Required';
+type SelfIdRequirement = 'Off' | 'Required';
 
 export function RegistrationForm() {
   const event = useEvent();
@@ -27,9 +28,8 @@ export function RegistrationForm() {
   });
 
   const [selfIdRequirement, setSelfIdRequirement] = useState<SelfIdRequirement>(() => {
-    if (!event?.application_self_verification) return 'Off';
-    if (event?.application_self_verification_required) return 'Required';
-    return 'Optional';
+    if (!event?.self_verification?.enabled) return 'Off';
+    return 'Required';
   });
 
   const [updateEventRegistrationForm] = useMutation(UpdateEventRegistrationFormDocument, {
@@ -79,13 +79,27 @@ export function RegistrationForm() {
   };
 
   const handleSelfIdChange = (requirement: SelfIdRequirement) => {
-    setSelfIdRequirement(requirement);
+    if (requirement === 'Off') {
+      setSelfIdRequirement(requirement);
+      updateEventSelfVerification({
+        variables: {
+          id: event!._id,
+          self_verification: {
+            enabled: false,
+          },
+        },
+      });
 
-    updateEventSelfVerification({
-      variables: {
-        id: event!._id,
-        application_self_verification: requirement !== 'Off',
-        required: requirement === 'Required',
+      return;
+    }
+
+    modal.open(SelfIdSettingsModal, {
+      props: {
+        requirement,
+        eventId: event!._id,
+        onComplete: () => {
+          setSelfIdRequirement(requirement);
+        },
       },
     });
   };
@@ -189,13 +203,6 @@ export function RegistrationForm() {
                         title="Off"
                         onClick={() => {
                           handleSelfIdChange('Off');
-                          toggle();
-                        }}
-                      />
-                      <MenuItem
-                        title="Optional"
-                        onClick={() => {
-                          handleSelfIdChange('Optional');
                           toggle();
                         }}
                       />

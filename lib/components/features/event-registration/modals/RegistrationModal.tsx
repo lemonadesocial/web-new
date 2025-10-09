@@ -104,9 +104,7 @@ export function RegistrationModal() {
             !!requiredProfileFields?.length && <UserForm />
           }
           {
-            event.application_self_verification && (
-              <SelfVerificationForm required={event.application_self_verification_required || false} />
-            )
+            !!(event.self_verification?.enabled && event.self_verification?.config) && <SelfVerificationForm config={event.self_verification.config} />
           }
           {
             !!event.application_questions?.length && <ApplicationForm />

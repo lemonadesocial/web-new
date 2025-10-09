@@ -94,12 +94,20 @@ query GetEvent($id: MongoID, $shortid: String) {
       options
       select_type
     }
-    application_self_verification
-    application_self_verification_required
-    application_profile_fields {
-      field
-      required
-      question
+    self_verification {
+      config {
+        date_of_birth
+        excludedCountries
+        expiry_date
+        gender
+        issuing_state
+        minimumAge
+        name
+        nationality
+        ofac
+        passport_number
+      }
+      enabled
     }
     rsvp_wallet_platforms {
       platform
@@ -1318,9 +1326,22 @@ mutation DeleteEventTicketDiscounts($event: MongoID!, $discounts: [String!]!) {
   }
 }
 
-mutation UpdateEventSelfVerification($id: MongoID!, $application_self_verification: Boolean!, $required: Boolean!) {
-  updateEvent(_id: $id, input: { application_self_verification: $application_self_verification, application_self_verification_required: $required }) {
-    application_self_verification
-    application_self_verification_required
+mutation UpdateEventSelfVerification($id: MongoID!, $self_verification: SelfVerificationInput) {
+  updateEvent(_id: $id, input: { self_verification: $self_verification }) {
+    self_verification {
+      config {
+        date_of_birth
+        excludedCountries
+        expiry_date
+        gender
+        issuing_state
+        minimumAge
+        name
+        nationality
+        ofac
+        passport_number
+      }
+      enabled
+    }
   }
 }

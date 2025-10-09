@@ -4,13 +4,12 @@ import clsx from "clsx";
 
 import { formInstancesAtom, submitHandlersAtom, useSetAtom } from "../store";
 import { Button, LabeledInput, modal } from "$lib/components/core";
-import { GetSelfVerificationStatusDocument } from "$lib/graphql/generated/backend/graphql";
+import { GetSelfVerificationStatusDocument, SelfVerificationConfig } from "$lib/graphql/generated/backend/graphql";
 import { useQuery } from "$lib/graphql/request";
-import { SELF_VERIFICATION_CONFIG } from "$lib/utils/constants";
 
 import { GetVerifiedModal } from "../../modals/GetVerifiedModal";
 
-export function SelfVerificationForm({ required }: { required: boolean }) {
+export function SelfVerificationForm({ config }: { config: SelfVerificationConfig }) {
   const setFormInstances = useSetAtom(formInstancesAtom);
   const setSubmitHandlers = useSetAtom(submitHandlersAtom);
 
@@ -21,9 +20,11 @@ export function SelfVerificationForm({ required }: { required: boolean }) {
     mode: 'onChange',
   });
 
+  const { __typename, ...configWithoutTypename } = config;
+
   const { data } =useQuery(GetSelfVerificationStatusDocument, {
     variables: {
-      config: SELF_VERIFICATION_CONFIG
+      config: configWithoutTypename
     },
   });
 
@@ -42,6 +43,9 @@ export function SelfVerificationForm({ required }: { required: boolean }) {
   const handleVerifyClick = () => {
     modal.open(GetVerifiedModal, {
       dismissible: true,
+      props: {
+        config: configWithoutTypename
+      }
     });
   };
 
@@ -53,22 +57,16 @@ export function SelfVerificationForm({ required }: { required: boolean }) {
   useEffect(() => {
     form.register('isVerified', {
       validate: (value) => {
-        console.log(required, value)
-        if (required && !value) {
-          return 'Self ID verification is required';
-        }
-        return true;
+        return value ? true : 'Self ID verification is required';
       }
     });
-  }, [required]);
+  }, []);
 
   const isVerified = form.watch('isVerified');
 
-  console.log(form.formState.errors)
-
   return (
     <>
-      <LabeledInput label="Self ID Verification" required={required}>
+      <LabeledInput label="Self ID Verification" required={true}>
         {isVerified ? (
           <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-sm bg-success-400/16 w-min">
             <i className="icon-verified text-success-400 size-5" />
