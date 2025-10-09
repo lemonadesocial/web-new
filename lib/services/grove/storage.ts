@@ -2,6 +2,8 @@ import { storageClient } from '$lib/utils/lens/client';
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { immutable } from '@lens-chain/storage-client';
 
+const gatewayPrefix = 'https://api.grove.storage/';
+
 const bufferToFile = (buffer: Buffer, filename: string, mimeType: string = 'image/png'): File => {
   // Check if we're in a browser environment where Blob and File are available
   if (typeof Blob !== 'undefined' && typeof File !== 'undefined') {
@@ -24,8 +26,12 @@ type UploadResponse = {
   };
 };
 
-export const getUrlFromUri = async (uri: string) => {
+export const getUrlFromUri = (uri: string) => {
   return storageClient.resolve(uri);
+};
+
+export const getUriFromUrl = (url: string) => {
+  return url.replace(gatewayPrefix, '');
 };
 
 export const uploadImage = async (filename: string, image: Buffer) => {
