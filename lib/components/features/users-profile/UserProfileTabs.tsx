@@ -11,35 +11,6 @@ import { UserProfilePost } from './UserProfilePost';
 import { UserProfileCommunities } from './UserProfileCommunities';
 import { isAddress } from 'ethers';
 
-const pageTabsData = [
-  { label: 'Feed', path: 'feed', icon: 'icon-newspaper' },
-  { label: 'Events', path: 'events', icon: 'icon-ticket' },
-  { label: 'Communities', path: 'communities', icon: 'icon-community' },
-];
-
-export function UserProfilePageTabs() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const base = pathname.split('/profile')[0] + '/profile';
-  const active = pageTabsData.findIndex((tab) => pathname.startsWith(`${base}/${tab.path}`));
-
-  return (
-    <div className="w-full">
-      <div className="flex gap-3 overflow-auto no-scrollbar pb-4 pt-2 md:pt-0">
-        {pageTabsData.map((tab, i) => (
-          <Button
-            key={i}
-            icon={tab.icon}
-            variant={active === i ? 'secondary' : 'tertiary'}
-            outlined
-            onClick={() => router.push(`${base}/${tab.path}`)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
 const tabData = [
   { label: 'Post', key: 'feed', component: UserProfilePost },
   { label: 'Events', key: 'events', component: UserProfileEvents, requiredLemonadeUser: true },
@@ -61,6 +32,7 @@ export function UserProfileTabs({
 }) {
   const [active, setActive] = React.useState(isAddress(address) ? 'feed' : 'events');
   const Comp = tabData.find((t) => t.key === active)?.component || React.Fragment;
+
   return (
     <>
       <div

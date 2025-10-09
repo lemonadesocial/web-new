@@ -21,7 +21,8 @@ import { useAppKitAccount } from '@reown/appkit/react';
 
 interface Props {
   address?: string;
-  user?: User;
+  /** extends user coverPicture from lens */
+  user?: User & { coverPicture?: string };
   canEdit?: boolean;
   containerClass?: string;
 }
@@ -94,23 +95,29 @@ export function UserProfileHero({ address, user, canEdit, containerClass }: Prop
     <div
       className={clsx(
         'relative w-full overflow-hidden',
-        user?.cover_expanded ? 'h-[154px] md:h-[280px]' : 'h-24 md:h-36',
+        user?.cover_expanded || user?.coverPicture ? 'h-[154px] md:h-[280px]' : 'h-24 md:h-36',
         containerClass,
       )}
     >
-      {user?.cover_expanded ? (
+      {user?.coverPicture || user?.cover_expanded ? (
         <>
           <img
             className="md:hidden aspect-[3.5/1] object-cover rounded-md w-full max-h-2/3"
             loading="lazy"
-            src={generateUrl(user?.cover_expanded, {
-              resize: { width: 480, fit: 'contain' },
-            })}
+            src={
+              user?.coverPicture ||
+              generateUrl(user?.cover_expanded, {
+                resize: { width: 480, fit: 'contain' },
+              })
+            }
           />
           <img
-            src={generateUrl(user?.cover_expanded, {
-              resize: { width: 1080, fit: 'contain' },
-            })}
+            src={
+              user?.coverPicture ||
+              generateUrl(user?.cover_expanded, {
+                resize: { width: 1080, fit: 'contain' },
+              })
+            }
             loading="lazy"
             className="hidden md:block aspect-[3.5/1] object-cover rounded-md w-full"
           />

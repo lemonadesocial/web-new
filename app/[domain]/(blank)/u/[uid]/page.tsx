@@ -5,12 +5,12 @@ import Header from '$lib/components/layouts/header';
 
 function Page({ children }: React.PropsWithChildren) {
   return (
-    <div>
+    <main>
       <Header />
       <div className="page flex mx-auto">
         <UserProfileLayout>{children}</UserProfileLayout>
       </div>
-    </div>
+    </main>
   );
 }
 

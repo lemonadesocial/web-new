@@ -60,6 +60,7 @@ export const useUserProfile = (params: { username?: string; address: string }) =
           name: account?.metadata?.name || '',
           created_at: account?.createdAt,
           image_avatar: account?.metadata?.picture,
+          coverPicture: account?.metadata?.coverPicture,
 
           ...attributes,
         });
