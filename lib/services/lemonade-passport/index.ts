@@ -2,19 +2,18 @@ import { getData } from '$lib/services/lemonhead/admin';
 import { getImageFromBuffers } from '$lib/services/nft/image';
 import { getUriFromUrl, uploadImage, uploadJSON } from '$lib/services/nft/storage';
 import assert from 'assert';
-import { Canvas, Image, registerFont } from 'canvas';
+import { createCanvas, Image, registerFont, deregisterAllFonts } from 'canvas';
 import fs from 'fs';
 import moment from 'moment';
 import path from 'path';
 
 import { getApproval } from "./admin";
-import { DESCRIPTION, outputWidth, outputHeight, avatarOffset, avatarSize, fontSize, usernameOffset, passportIdOffset, creationDateOffset, Point } from "./common";
+import { avatarOffset, avatarSize, creationDateOffset, DESCRIPTION, fontSize, outputHeight, outputWidth, passportIdOffset, Point, usernameOffset } from "./common";
 
-const boldFontFamily = 'MultiTypePixelDisplayBold';
-const regularFontFamily = 'MultiTypePixelRegular';
-
-const boldFontPath = path.join(process.cwd(), "data", "passport", `${boldFontFamily}.otf`);
-const regularFontPath = path.join(process.cwd(), "data", "passport", `${regularFontFamily}.otf`);
+const regularFontPath = path.join(process.cwd(), "data", "passport", "regular.otf");
+const boldFontPath = path.join(process.cwd(), "data", "passport", "bold.otf");
+const regularFontFamily = 'lemonade-passport-font-regular';
+const boldFontFamily = 'lemonade-passport-font-bold';
 
 const createMetadata = (imageUrl: string) => {
   return {
@@ -25,7 +24,7 @@ const createMetadata = (imageUrl: string) => {
 
 const getAvatarImageBuffer = async (avatarImageUrl: string) => {
   //-- create a canvas of output size
-  const canvas = new Canvas(outputWidth, outputHeight);
+  const canvas = createCanvas(outputWidth, outputHeight);
   const ctx = canvas.getContext('2d');
   assert.ok(ctx);
   //-- draw the avatar image
@@ -51,17 +50,18 @@ const getBoilerplateImageBuffer = async () => {
   return fs.readFileSync(filePath);
 }
 
-const getTextImageBuffer = async (fontName: string, text: string, offset: Point, textColor: string) => {
+const getTextImageBuffer = async (font: string, text: string, offset: Point, textColor: string) => {
   // Create a canvas of output size
-  const canvas = new Canvas(outputWidth, outputHeight);
+  const canvas = createCanvas(outputWidth, outputHeight);
   const ctx = canvas.getContext('2d');
   assert.ok(ctx);
 
   // Set font properties
-  ctx.font = `${fontSize}px "${fontName}"`;
-  ctx.fillStyle = textColor; // Black text color
+
+  ctx.font = font;
+  ctx.fillStyle = textColor;
   ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
+  ctx.textBaseline = 'middle';
 
   // Draw the text at the specified offset
   ctx.fillText(text, offset.x, offset.y);
@@ -69,22 +69,22 @@ const getTextImageBuffer = async (fontName: string, text: string, offset: Point,
   return canvas.toBuffer('image/png');
 }
 
-// registerFont(regularFontPath, { family: regularFontFamily });
-// registerFont(boldFontPath, { family: boldFontFamily });
-
 const getUsernameImageBuffer = async (username: string) => {
+  deregisterAllFonts();
   registerFont(regularFontPath, { family: regularFontFamily });
-  return getTextImageBuffer(regularFontFamily, username, usernameOffset, '#ffffff');
+  return await getTextImageBuffer(`${fontSize}px "${regularFontFamily}"`, username, usernameOffset, '#ffffff');
 }
 
 const getPassportIdImageBuffer = async (passportId: string) => {
+  deregisterAllFonts();
   registerFont(boldFontPath, { family: boldFontFamily });
-  return getTextImageBuffer(boldFontFamily, passportId, passportIdOffset, '#000000');
+  return await getTextImageBuffer(`${fontSize}px "${boldFontFamily}"`, passportId, passportIdOffset, '#000000');
 }
 
 const getCreationDateImageBuffer = async (creationDate: string) => {
+  deregisterAllFonts();
   registerFont(boldFontPath, { family: boldFontFamily });
-  return getTextImageBuffer(boldFontFamily, creationDate, creationDateOffset, '#000000');
+  return await getTextImageBuffer(`${fontSize}px "${boldFontFamily}"`, creationDate, creationDateOffset, '#000000');
 }
 
 const getLensUsername = async (wallet: string) => {
