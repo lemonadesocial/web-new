@@ -39,8 +39,8 @@ query SearchUsers($query: String!) {
   }
 }
 
-query GetUser($id: MongoID, $username: String, $email: String) {
-  getUser(_id: $id, username: $username, email: $email) {
+query GetUser($id: MongoID, $username: String, $email: String, $lens_profile_id: String) {
+  getUser(_id: $id, username: $username, email: $email, lens_profile_id: $lens_profile_id) {
     _id
     name
     display_name

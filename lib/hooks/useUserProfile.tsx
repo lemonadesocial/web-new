@@ -16,10 +16,13 @@ export const useUserProfile = (params: { username?: string; address: string }) =
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
 
-  const getUser = async ({ id, username }: { id?: string; username?: string }) => {
+  const getUser = async ({ lens_profile_id, username }: { lens_profile_id?: string; username?: string }) => {
     const request = getClient();
 
-    const { data, error: queryError } = await request.query({ query: GetUserDocument, variables: { id, username } });
+    const { data, error: queryError } = await request.query({
+      query: GetUserDocument,
+      variables: { lens_profile_id, username },
+    });
 
     if (queryError) {
       setError(queryError);
@@ -48,9 +51,11 @@ export const useUserProfile = (params: { username?: string; address: string }) =
         let attributes: Record<string, string> = {};
         account?.metadata?.attributes?.forEach((item) => (attributes[item.key] = item.value));
 
+        console.log(account);
+
         let user: User | undefined;
         if (account?.metadata?.id) {
-          user = await getUser({ id: account.metadata.id });
+          user = await getUser({ lens_profile_id: account.metadata.id });
         }
 
         setData({
