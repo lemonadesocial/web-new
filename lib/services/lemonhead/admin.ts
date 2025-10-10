@@ -16,3 +16,7 @@ export const getCache = async (look: string) => {
 export const setCache = async (look: string, cache: Cache) => {
   return request<void>(`/lemonhead/set_cache?look=${look}`, 'POST', cache);
 };
+
+export const getData = async (wallet: string) => {
+  return request<{ tokenId: string; imageUrl: string }>(`/lemonhead/data?wallet=${wallet}`, 'GET');
+};

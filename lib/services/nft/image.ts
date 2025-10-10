@@ -1,15 +1,13 @@
 import assert from 'assert';
 import { Canvas, Image } from 'canvas';
 
-const readUrlToBuffer = async (url: string) => {
+export const readUrlToBuffer = async (url: string) => {
   const response = await fetch(url);
   const buffer = await response.arrayBuffer();
   return Buffer.from(buffer);
 };
 
-export const getFinalImage = async (imageUrls: string[], outputWidth: number, outputHeight: number, outputFormat: 'png' | 'jpeg') => {
-  const buffers = await Promise.all(imageUrls.map(readUrlToBuffer));
-
+export const getImageFromBuffers = async (buffers: Buffer[], outputWidth: number, outputHeight: number, outputFormat: 'png' | 'jpeg') => {
   //-- this is run in nodejs, please use a library to create a canvas
   const canvas = new Canvas(outputWidth, outputHeight);
 
@@ -42,4 +40,10 @@ export const getFinalImage = async (imageUrls: string[], outputWidth: number, ou
   else {
     return canvas.toBuffer('image/jpeg');
   }
+};
+
+export const getImageFromUrls = async (imageUrls: string[], outputWidth: number, outputHeight: number, outputFormat: 'png' | 'jpeg') => {
+  const buffers = await Promise.all(imageUrls.map(readUrlToBuffer));
+
+  return getImageFromBuffers(buffers, outputWidth, outputHeight, outputFormat);
 };

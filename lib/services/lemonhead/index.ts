@@ -1,6 +1,6 @@
 import { generateUrl } from '$lib/utils/cnd';
 import { getUriFromUrl, uploadImage, uploadJSON } from '$lib/services/nft/storage';
-import { getFinalImage } from '$lib/services/nft/image';
+import { getImageFromUrls } from '$lib/services/nft/image';
 
 import { calculateLookHash, Filter, FilterType, formatString, getFinalTraits, layerings, Trait, TraitType, validateTraits } from './core';
 import { getApproval, getCache, setCache } from './admin';
@@ -44,7 +44,7 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
     //-- when there is at least one jpeg layer, use jpeg, otherwise use png
     const outputFormat = layers.find((layer) => layer?.file?.type === 'image/jpeg') ? 'jpeg' : 'png';
 
-    const finalImage = await getFinalImage(
+    const finalImage = await getImageFromUrls(
       layers.flatMap((layer) => (layer?.file ? generateUrl(layer.file) : [])),
       outputSize,
       outputSize,
