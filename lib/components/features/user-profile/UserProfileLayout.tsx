@@ -2,8 +2,6 @@
 import React from 'react';
 import { notFound, useParams } from 'next/navigation';
 
-import { User } from '$lib/graphql/generated/backend/graphql';
-import { useMe } from '$lib/hooks/useMe';
 import { useUserProfile } from '$lib/hooks/useUserProfile';
 
 import { UserProfileHero } from './UserProfileHero';
@@ -26,7 +24,7 @@ function UserProfileLayout({ children }: React.PropsWithChildren) {
     <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-12 pb-28 md:pb-20 w-full pt-6 max-sm:px-4">
       <div className="flex flex-col gap-5 flex-1">
         <UserProfileHero address={uid as string} user={user} />
-        <UserProfileInfo user={user} />
+        <UserProfileInfo user={user} address={uid as string} />
 
         <UserProfileTabs
           sticky

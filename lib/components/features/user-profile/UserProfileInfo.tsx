@@ -1,8 +1,15 @@
 import { User } from '$lib/graphql/generated/backend/graphql';
+import { useAccountStats } from '$lib/hooks/useLens';
 import { PROFILE_SOCIAL_LINKS } from '$lib/utils/constants';
+import { Account } from '@lens-protocol/client';
+import { isAddress } from 'ethers';
 import { twMerge } from 'tailwind-merge';
 
-export function UserProfileInfo({ user }: { user: User }) {
+export function UserProfileInfo({ user, address }: { user: User; address?: string }) {
+  const account = isAddress(address) ? ({ address } as Account) : null;
+  // const { stats } = useAccountStats(account);
+  const stats = {};
+
   return (
     <div className="flex flex-col gap-3">
       <div>
@@ -14,17 +21,17 @@ export function UserProfileInfo({ user }: { user: User }) {
 
       <div className="flex gap-3 text-sm">
         <div className="flex gap-1">
-          <p>{user?.followers || 0}</p>
+          <p>{stats?.followers || 0}</p>
           <p>Followers</p>
         </div>
         <div className="flex gap-1">
-          <p>{user?.following || 0}</p>
+          <p>{stats?.following || 0}</p>
           <p>Following</p>
         </div>
-        <div className="flex gap-1">
-          <p>{user?.hosted || 0}</p>
-          <p>Hosted</p>
-        </div>
+        {/* <div className="flex gap-1"> */}
+        {/*   <p>{user?.hosted || 0}</p> */}
+        {/*   <p>Hosted</p> */}
+        {/* </div> */}
       </div>
 
       <div className="flex items-center gap-3 mt-1">

@@ -16,9 +16,10 @@ export const useUserProfile = (params: { username?: string; address: string }) =
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
 
-  const getUser = async (username: string) => {
+  const getUser = async ({ id, username }: { id?: string; username?: string }) => {
     const request = getClient();
-    const { data, error: queryError } = await request.query({ query: GetUserDocument, variables: { username } });
+
+    const { data, error: queryError } = await request.query({ query: GetUserDocument, variables: { id, username } });
 
     if (queryError) {
       setError(queryError);
@@ -48,8 +49,8 @@ export const useUserProfile = (params: { username?: string; address: string }) =
         account?.metadata?.attributes?.forEach((item) => (attributes[item.key] = item.value));
 
         let user: User | undefined;
-        if (account?.username?.localName) {
-          user = await getUser(account?.username?.localName);
+        if (account?.metadata?.id) {
+          user = await getUser({ id: account.metadata.id });
         }
 
         setData({
@@ -60,13 +61,12 @@ export const useUserProfile = (params: { username?: string; address: string }) =
           name: account?.metadata?.name || '',
           created_at: account?.createdAt,
           image_avatar: account?.metadata?.picture,
-          coverPicture: account?.metadata?.coverPicture,
-
+          // coverPicture: account?.metadata?.coverPicture,
           ...attributes,
         });
       } else {
         if (username) {
-          const user = await getUser(username);
+          const user = await getUser({ username });
           setData(user);
         }
       }

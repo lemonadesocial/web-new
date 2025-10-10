@@ -8,9 +8,9 @@ import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { copy } from '$lib/utils/helpers';
 import { useUserProfile } from '$lib/hooks/useUserProfile';
 
-import { UserProfileHero } from '../users-profile/UserProfileHero';
-import { UserProfileInfo } from '../users-profile/UserProfileInfo';
-import { UserProfileTabs } from '../users-profile/UserProfileTabs';
+import { UserProfileHero } from '../user-profile/UserProfileHero';
+import { UserProfileInfo } from '../user-profile/UserProfileInfo';
+import { UserProfileTabs } from '../user-profile/UserProfileTabs';
 import clsx from 'clsx';
 
 interface Props {
