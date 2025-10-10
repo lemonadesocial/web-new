@@ -9,5 +9,10 @@ export const request = async <T>(uri: string, method: 'POST' | 'GET', body?: Rec
     ...body && { body: JSON.stringify(body) },
   });
 
+  if (!response.ok) {
+    const data = await response.bytes();
+    throw new Error(Buffer.from(data).toString());
+  }
+
   return (response.body ? await response.json() : undefined) as T;
 };
