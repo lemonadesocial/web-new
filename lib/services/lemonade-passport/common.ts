@@ -18,7 +18,7 @@ export const fontSize = 70;
 
 export const usernameOffset: Point = {
   x: 990,
-  y: 440,
+  y: 441,
 };
 
 export const passportIdOffset: Point = {
