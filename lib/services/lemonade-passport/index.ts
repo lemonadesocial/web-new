@@ -1,8 +1,11 @@
 import { getData } from '$lib/services/lemonhead/admin';
 import { getImageFromBuffers } from '$lib/services/nft/image';
 import { getUriFromUrl, uploadImage, uploadJSON } from '$lib/services/nft/storage';
+import { client } from '$lib/utils/lens/client';
+import { fetchAccount } from '@lens-protocol/client/actions';
 import assert from 'assert';
-import { createCanvas, Image, registerFont, deregisterAllFonts } from 'canvas';
+import { createCanvas, deregisterAllFonts, Image, registerFont } from 'canvas';
+import { ethers } from 'ethers';
 import fs from 'fs';
 import moment from 'moment';
 import path from 'path';
@@ -71,8 +74,14 @@ const getTextImageBuffer = async (font: string, text: string, offset: Point, tex
 
 const getUsernameImageBuffer = async (username: string) => {
   deregisterAllFonts();
+
+  //-- calculate font size based on username length
+  const scaledFontSize = username.length <= 18
+    ? fontSize
+    : Math.trunc(19 * fontSize / username.length);
+
   registerFont(regularFontPath, { family: regularFontFamily });
-  return await getTextImageBuffer(`${fontSize}px "${regularFontFamily}"`, username, usernameOffset, '#ffffff');
+  return await getTextImageBuffer(`${scaledFontSize}px "${regularFontFamily}"`, username, usernameOffset, '#ffffff');
 }
 
 const getPassportIdImageBuffer = async (passportId: string) => {
@@ -88,18 +97,33 @@ const getCreationDateImageBuffer = async (creationDate: string) => {
 }
 
 const getLensUsername = async (wallet: string) => {
-  //-- TODO: implement
-  return 'lens-username';
+  // Use the existing Lens client to fetch account by address
+  const result = await fetchAccount(client, { address: wallet });
+
+  if (!result.isOk() || !result.value?.username?.localName) {
+    throw new Error('Failed to get Lens username');
+  }
+
+  return `@${result.value.username.localName}`;
 }
 
 const getEnsUsername = async (wallet: string) => {
-  //-- TODO: implement
-  return '@ens';
+  const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_ETHEREUM_PROVIDER);
+
+  // Use lookup to get ENS name from wallet address
+  const ensName = await provider.lookupAddress(wallet);
+
+  if (!ensName) {
+    throw new Error('Failed to get ENS username');
+  }
+
+  return `@${ensName}`;
 }
 
 export const getMintLemonadePassportData = async (
   wallet: string,
-  useLensForUserName: boolean, //-- otherwise use ENS
+  ensForUserName: boolean,
+  lensForUserName: boolean,
   fluffleTokenId: string, //-- if empty then use Lemonhead
 ) => {
   const passportData = await getData(wallet, fluffleTokenId);
@@ -107,7 +131,16 @@ export const getMintLemonadePassportData = async (
   //-- must have a lemonhead to mint
   assert.ok(passportData && passportData.lemonheadTokenId);
 
-  const username = useLensForUserName ? await getLensUsername(wallet) : await getEnsUsername(wallet);
+  let username = wallet.toLowerCase(); //-- fallback value
+
+  if (ensForUserName) {
+    username = await getEnsUsername(wallet);
+  } else if (lensForUserName) {
+    username = await getLensUsername(wallet);
+  }
+
+  assert.ok(username);
+
   const avatarImageUrl = fluffleTokenId ? passportData.fluffleImageUrl : passportData.lemonheadImageUrl;
 
   const passportId = passportData.lemonheadTokenId.padStart(8, '0');
