@@ -57,9 +57,7 @@ export function EditEventDrawer({ event }: { event: Event }) {
 }
 
 function EditEventDrawerContent({ event }: { event: Event }) {
-  const [timezone, setTimeZone] = React.useState(
-    getUserTimezoneOption(event.timezone || getUserTimezoneOption()?.value || 'UTC'),
-  );
+  const [timezone, setTimeZone] = React.useState(getUserTimezoneOption(event.timezone || ''));
 
   const {
     register,
@@ -73,9 +71,12 @@ function EditEventDrawerContent({ event }: { event: Event }) {
       description: event.description || '',
       theme_data: event.theme_data,
       date: {
-        start:
-          formatInTimeZone(event.start, event.timezone!, 'yyyy-MM-dd hh:mm:ss').toString() || new Date().toString(),
-        end: formatInTimeZone(event.end, event.timezone!, 'yyyy-MM-dd hh:mm:ss').toString() || new Date().toString(),
+        start: !event.timezone
+          ? event.start
+          : formatInTimeZone(event.start, event.timezone!, 'yyyy-MM-dd hh:mm:ss').toString() || new Date().toString(),
+        end: !event.timezone
+          ? event.end
+          : formatInTimeZone(event.end, event.timezone!, 'yyyy-MM-dd hh:mm:ss').toString() || new Date().toString(),
         timezone: event.timezone || getUserTimezoneOption()?.value || 'UTC',
       },
       address: {
