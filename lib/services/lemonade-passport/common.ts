@@ -17,16 +17,16 @@ export const avatarSize = 610;
 export const fontSize = 70;
 
 export const usernameOffset: Point = {
-  x: 983,
-  y: 393,
+  x: 990,
+  y: 440,
 };
 
 export const passportIdOffset: Point = {
   x: 960,
-  y: 700,
+  y: 720,
 };
 
 export const creationDateOffset: Point = {
   x: 1517,
-  y: 700,
+  y: 720,
 };
