@@ -5,7 +5,7 @@ import assert from 'assert';
 import fs from 'fs';
 import moment from 'moment';
 import path from 'path';
-import { Canvas, Image } from 'canvas';
+import { Canvas, Image, registerFont } from 'canvas';
 
 import { getApproval } from "./admin";
 
@@ -13,6 +13,10 @@ const DESCRIPTION = 'Lemonade Passport is the enttry point to Lemonade Ecosystem
 
 const outputWidth = 2160;
 const outputHeight = 1350;
+
+const boldFontPath = path.join(process.cwd(), "data", "passport", "MultiTypePixelDisplayBold.otf");
+const regularFontPath = path.join(process.cwd(), "data", "passport", "MultiTypePixelRegular.otf");
+const fontName = 'MultiTypePixel';
 
 type Point = {
   x: number;
@@ -25,21 +29,21 @@ const avatarOffset: Point = {
 };
 
 const avatarSize = 610;
-const fontSize = 60;
+const fontSize = 70;
 
 const usernameOffset: Point = {
-  x: 100,
-  y: 100,
+  x: 983,
+  y: 393,
 };
 
 const passportIdOffset: Point = {
   x: 960,
-  y: 720,
+  y: 700,
 };
 
 const creationDateOffset: Point = {
-  x: 100,
-  y: 100,
+  x: 1517,
+  y: 700,
 };
 
 const createMetadata = (imageUrl: string) => {
@@ -77,20 +81,37 @@ const getBoilerplateImageBuffer = async () => {
   return fs.readFileSync(filePath);
 }
 
-const getTextImageBuffer = async (text: string, offset: Point) => {
+const getTextImageBuffer = async (text: string, offset: Point, textColor: string) => {
+  // Create a canvas of output size
+  const canvas = new Canvas(outputWidth, outputHeight);
+  const ctx = canvas.getContext('2d');
+  assert.ok(ctx);
 
+  // Set font properties
+  ctx.font = `${fontSize}px "${fontName}"`;
+  ctx.fillStyle = textColor; // Black text color
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+
+  // Draw the text at the specified offset
+  ctx.fillText(text, offset.x, offset.y);
+
+  return canvas.toBuffer('image/png');
 }
 
 const getUsernameImageBuffer = async (username: string) => {
-  return getTextImageBuffer(username, usernameOffset);
+  registerFont(regularFontPath, { family: fontName });
+  return getTextImageBuffer(username, usernameOffset, '#ffffff');
 }
 
 const getPassportIdImageBuffer = async (passportId: string) => {
-  return getTextImageBuffer(passportId, passportIdOffset);
+  registerFont(boldFontPath, { family: fontName });
+  return getTextImageBuffer(passportId, passportIdOffset, '#000000');
 }
 
 const getCreationDateImageBuffer = async (creationDate: string) => {
-  return getTextImageBuffer(creationDate, creationDateOffset);
+  registerFont(regularFontPath, { family: fontName });
+  return getTextImageBuffer(creationDate, creationDateOffset, '#000000');
 }
 
 export const getMintLemonadePassportData = async (wallet: string, username: string, avatarNftContractAddress: string) => {
@@ -105,9 +126,9 @@ export const getMintLemonadePassportData = async (wallet: string, username: stri
   const buffers = await Promise.all([
     getAvatarImageBuffer(lemonheadData.imageUrl),
     getBoilerplateImageBuffer(),
-    // getUsernameImageBuffer(username),
-    // getPassportIdImageBuffer(passportId),
-    // getCreationDateImageBuffer(creationDate),
+    getUsernameImageBuffer(username),
+    getPassportIdImageBuffer(passportId),
+    getCreationDateImageBuffer(creationDate),
   ]);
 
   const finalImage = await getImageFromBuffers(
