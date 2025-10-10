@@ -97,24 +97,20 @@ const getEnsUsername = async (wallet: string) => {
   return '@ens';
 }
 
-const getFlufflesAvatarImageUrl = async (wallet: string) => {
-  //-- TODO: implement
-  return 'https://fluffles.xyz/api/v1/avatar';
-}
-
 export const getMintLemonadePassportData = async (
   wallet: string,
   useLensForUserName: boolean, //-- otherwise use ENS
-  useFlufflesForAvatar: boolean, //-- otherwise use Lemonhead
+  fluffleTokenId: string, //-- if empty then use Lemonhead
 ) => {
-  const lemonheadData = await getData(wallet);
+  const passportData = await getData(wallet, fluffleTokenId);
 
-  assert.ok(lemonheadData && lemonheadData.tokenId && lemonheadData.imageUrl);
+  //-- must have a lemonhead to mint
+  assert.ok(passportData && passportData.lemonheadTokenId);
 
   const username = useLensForUserName ? await getLensUsername(wallet) : await getEnsUsername(wallet);
-  const avatarImageUrl = useFlufflesForAvatar ? await getFlufflesAvatarImageUrl(wallet) : lemonheadData.imageUrl;
+  const avatarImageUrl = fluffleTokenId ? passportData.fluffleImageUrl : passportData.lemonheadImageUrl;
 
-  const passportId = lemonheadData.tokenId.padStart(8, '0');
+  const passportId = passportData.lemonheadTokenId.padStart(8, '0');
 
   const creationDate = moment().format('MM/DD/YYYY');
 
