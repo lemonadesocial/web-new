@@ -1,5 +1,14 @@
 # Changelog
 
+## [8.4.1](https://github.com/lemonadesocial/web-new/compare/v8.4.0...v8.4.1) (2025-10-10)
+
+
+### Bug Fixes
+
+* check timezone before parse ([1acccf2](https://github.com/lemonadesocial/web-new/commit/1acccf2c3cf2afdd7ad1ee1a9d50444485fbba8c))
+* remove farcaster login toast ([935d8be](https://github.com/lemonadesocial/web-new/commit/935d8bea0a4769dedd7940bf2a33a8d970c68d4b))
+* update event with timezone ([6e907c4](https://github.com/lemonadesocial/web-new/commit/6e907c4de8db26bec9da52ad98b601e74ea4085a))
+
 ## [8.4.0](https://github.com/lemonadesocial/web-new/compare/v8.3.0...v8.4.0) (2025-10-08)
 
 
