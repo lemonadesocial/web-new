@@ -10,6 +10,9 @@ import { ConnectWallet } from '../../modals/ConnectWallet';
 import { LEMONHEAD_CHAIN_ID } from '../../lemonheads/mint/utils';
 import { useAtomValue } from 'jotai';
 import { chainsMapAtom } from '$lib/jotai';
+import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
+import { match } from 'ts-pattern';
+import { MintPassportModal } from './modals/MintPassportModal';
 
 export function PassportFooter() {
   const router = useRouter();
@@ -27,34 +30,29 @@ export function PassportFooter() {
   };
 
   const handleNext = async () => {
-    if (state.currentStep === PassportStep.intro) {
-      modal.open(ConnectWallet, {
-        props: {
-          onConnect: () => {
-            dispatch({ type: PassportActionKind.NextStep });
+    match(state.currentStep)
+      .with(PassportStep.intro, () => {
+        modal.open(ConnectWallet, {
+          props: {
+            onConnect: () => {
+              dispatch({ type: PassportActionKind.NextStep });
+            },
+            chain: chainsMap[LEMONHEAD_CHAIN_ID],
           },
-          chain: chainsMap[LEMONHEAD_CHAIN_ID],
-        },
-      });
-
-      return;
-    }
-
-    if (state.currentStep === PassportStep.photo) {
-      dispatch({ type: PassportActionKind.NextStep });
-      return;
-    }
-
-    if (state.currentStep === PassportStep.claim) {
-      return;
-    }
-
-    if (state.currentStep === PassportStep.celebrate) {
-      router.push('/passport');
-      return;
-    }
-
-    dispatch({ type: PassportActionKind.NextStep });
+        });
+      })
+      .with(PassportStep.username, () =>
+        modal.open(BeforeMintPassportModal, {
+          props: {
+            onContinue: () => {
+              modal.open(MintPassportModal, {
+                props: { onComplete: () => dispatch({ type: PassportActionKind.NextStep }) },
+              });
+            },
+          },
+        }),
+      )
+      .otherwise(() => dispatch({ type: PassportActionKind.NextStep }));
   };
 
   return (
@@ -75,8 +73,8 @@ export function PassportFooter() {
 
         {PassportStep.intro !== state.currentStep && (
           <ul className="flex items-center justify-center flex-2 gap-1.5">
-            {Object.entries(state.steps).map(([key, item]) => {
-              const isActive = key === state.currentStep;
+            {Object.entries(state.steps).map(([key, item], idx) => {
+              const isActive = idx <= currentStep.index;
               return (
                 <li key={key} className="flex items-center gap-1.5">
                   {item.label && <p className={twMerge('text-quaternary', isActive && 'text-primary')}>{item.label}</p>}
