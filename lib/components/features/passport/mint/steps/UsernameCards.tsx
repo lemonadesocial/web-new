@@ -1,17 +1,18 @@
-
 import { useEffect, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 import { ethers } from 'ethers';
 import { mainnet } from 'viem/chains';
-import { Button, Skeleton, modal } from '$lib/components/core';
-import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
-import { PassportActionKind, usePassportContext } from '../provider';
-import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
-import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
+import { useAtomValue } from 'jotai';
 import { useAppKitAccount } from '@reown/appkit/react';
 
+import { Button, Card, Skeleton, modal } from '$lib/components/core';
+import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
+import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
+import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
 import { chainsMapAtom } from '$lib/jotai';
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
-import { useAtomValue } from 'jotai';
+
+import { PassportActionKind, usePassportContext } from '../provider';
 
 export function UsernameCard() {
   const { account } = useAccount();
@@ -37,47 +38,33 @@ export function UsernameCard() {
   const isSelected = state.useUsername;
 
   if (isLoading) {
-    return (
-      <div className="flex flex-col gap-4 rounded-md bg-card p-4 transition-all border border-card-border">
-        <Skeleton animate className="w-8 h-8 rounded-full" />
-        <div className="flex flex-col gap-2">
-          <Skeleton animate className="h-4 w-24 rounded-full" />
-          <Skeleton animate className="h-3 w-16 rounded-full" />
-        </div>
-        <Skeleton animate className="h-8 w-full rounded-md" />
-      </div>
-    );
+    return <CardIndicator />;
   }
 
   if (!username) {
     return (
-      <div className="flex flex-col gap-4 rounded-md bg-card p-4 border-dashed border-2 border-card-border">
-        <i className="icon-lemonade size-8 text-tertiary" />
-        <div>
-          <p>Claim Username</p>
-          <p className="text-sm text-tertiary">You don&apos;t have a username, yet.</p>
-        </div>
-        <Button
-          variant="secondary"
-          className="w-full"
-          onClick={handleClaimUsername}
-          size="sm"
-        >
+      <CardDetail
+        icon="icon-lemonade"
+        constainerClass="border-2 border-dashed"
+        title="Claim Username"
+        subtitle="You don't have a username, yet."
+      >
+        <Button variant="secondary" className="w-full" onClick={handleClaimUsername} size="sm">
           Claim Username
         </Button>
-      </div>
+      </CardDetail>
     );
   }
 
   return (
-    <div className={`flex flex-col gap-4 rounded-md bg-card p-4 transition-all border ${isSelected ? 'border-primary' : 'border-card-border'}`}>
-      <i className="icon-lemonade size-8 text-tertiary" />
-      <div>
-        <p>@{username}</p>
-        <p className="text-sm text-tertiary">Username</p>
-      </div>
+    <CardDetail
+      icon="icon-lemonade"
+      title={`@${username}`}
+      subtitle="Username"
+      constainerClass={isSelected ? 'border-primary' : 'border-card-border'}
+    >
       <Button
-        variant={isSelected ? "tertiary" : "secondary"}
+        variant={isSelected ? 'tertiary' : 'secondary'}
         className="w-full"
         onClick={handleSelect}
         iconLeft={isSelected ? 'icon-done' : undefined}
@@ -85,7 +72,7 @@ export function UsernameCard() {
       >
         {isSelected ? 'Selected' : 'Select'}
       </Button>
-    </div>
+    </CardDetail>
   );
 }
 
@@ -125,26 +112,17 @@ export function ENSDomainCard() {
   const isSelected = state.useENS;
 
   if (isLoading) {
-    return (
-      <div className="flex flex-col gap-4 rounded-md bg-card p-4 transition-all border border-card-border">
-        <Skeleton animate className="w-8 h-8 rounded-full" />
-        <div className="flex flex-col gap-2">
-          <Skeleton animate className="h-4 w-24 rounded-full" />
-          <Skeleton animate className="h-3 w-16 rounded-full" />
-        </div>
-        <Skeleton animate className="h-8 w-full rounded-md" />
-      </div>
-    );
+    return <CardIndicator />;
   }
 
   if (!ensName) {
     return (
-      <div className="flex flex-col gap-4 rounded-md bg-card p-4 border-dashed border-2 border-card-border">
-        <i className="icon-ens size-8 text-tertiary" />
-        <div>
-          <p>Get ENS Domain</p>
-          <p className="text-sm text-tertiary">You don&apos;t have an ENS domain, yet.</p>
-        </div>
+      <CardDetail
+        icon="icon-ens"
+        constainerClass="border-2 border-dashed"
+        title="Get ENS Domain"
+        subtitle="You don't have an ENS domain, yet."
+      >
         <Button
           variant="secondary"
           className="w-full"
@@ -154,19 +132,19 @@ export function ENSDomainCard() {
         >
           Get ENS Domain
         </Button>
-      </div>
+      </CardDetail>
     );
   }
 
   return (
-    <div className={`flex flex-col gap-4 rounded-md bg-card p-4 transition-all border ${isSelected ? 'border-primary' : 'border-card-border'}`}>
-      <i className="icon-ens size-8 text-tertiary" />
-      <div>
-        <p>{ensName}</p>
-        <p className="text-sm text-tertiary">ENS Domain</p>
-      </div>
+    <CardDetail
+      icon="icon-ens"
+      title={ensName}
+      subtitle="ENS Domain"
+      constainerClass={isSelected ? 'border-primary' : 'border-card-border'}
+    >
       <Button
-        variant={isSelected ? "tertiary" : "secondary"}
+        variant={isSelected ? 'tertiary' : 'secondary'}
         className="w-full"
         onClick={handleSelect}
         iconLeft={isSelected ? 'icon-done' : undefined}
@@ -174,6 +152,47 @@ export function ENSDomainCard() {
       >
         {isSelected ? 'Selected' : 'Select'}
       </Button>
-    </div>
+    </CardDetail>
+  );
+}
+
+function CardIndicator() {
+  return (
+    <Card.Root className="border-2">
+      <Card.Content className="flex flex-col gap-4">
+        <Skeleton animate className="w-8 h-8 rounded-full" />
+        <div className="flex flex-col gap-3">
+          <Skeleton animate className="h-4.5 w-24 rounded-full" />
+          <Skeleton animate className="h-3.5 w-16 rounded-full" />
+        </div>
+        <Skeleton animate className="h-8 w-full rounded-md" />
+      </Card.Content>
+    </Card.Root>
+  );
+}
+
+function CardDetail({
+  icon,
+  title,
+  subtitle,
+  constainerClass,
+  children,
+}: React.PropsWithChildren & {
+  icon: string;
+  title: string;
+  subtitle: string;
+  constainerClass?: string;
+}) {
+  return (
+    <Card.Root className={constainerClass}>
+      <Card.Content className="flex flex-col gap-4">
+        <i className={twMerge('size-8 text-tertiary', icon)} />
+        <div>
+          {title}
+          <p className="text-sm text-tertiary">{subtitle}</p>
+        </div>
+        {children}
+      </Card.Content>
+    </Card.Root>
   );
 }

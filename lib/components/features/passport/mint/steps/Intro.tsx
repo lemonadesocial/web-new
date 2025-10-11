@@ -1,9 +1,43 @@
 import React from 'react';
 
-import { Button } from '$lib/components/core';
+import { Button, Spacer } from '$lib/components/core';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 
 export function PassportIntro() {
+  return (
+    <div className="max-w-[1200px] h-full mx-auto flex flex-col-reverse md:flex-row gap-6 md:gap-18 p-4 md:0">
+      <div className="flex-1 h-full flex flex-col md:justify-center gap-4 md:gap-6 md:py-12">
+        <div className="flex flex-col gap-4">
+          <h1 className="text-2xl md:text-7xl font-semibold leading-tight">
+            Join the <br /> United Stands of Lemonade
+          </h1>
+
+          <p className="text-tertiary">
+            Become part of a new world built for creators and communities. Your free passport unlocks access across the
+            Lemonade universe.
+          </p>
+        </div>
+
+        <Spacer className="md:hidden h-2" />
+
+        <Button variant="tertiary" iconRight="icon-arrow-outward" className="w-fit">
+          Learn More
+        </Button>
+      </div>
+
+      <img src={`${ASSET_PREFIX}/assets/images/passport.png`} className="md:hidden w-full object-cover" />
+
+      <div className="hidden md:block flex-1 h-full pt-6 pb-12">
+        <div
+          className="h-full flex items-center rounded-md p-12 bg-primary/8"
+          style={{ backgroundImage: `url(${ASSET_PREFIX}/assets/images/preview-bg.png)` }}
+        >
+          <img src={`${ASSET_PREFIX}/assets/images/passport.png`} className="w-full object-cover" />
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="max-w-[1200px] mx-auto flex items-center gap-18 h-full">
       <div className="flex flex-col gap-6 flex-1 justify-center">
@@ -13,7 +47,8 @@ export function PassportIntro() {
           </h1>
 
           <p className="text-tertiary">
-            Become part of a new world built for creators and communities. Your free passport unlocks access across the Lemonade universe.
+            Become part of a new world built for creators and communities. Your free passport unlocks access across the
+            Lemonade universe.
           </p>
         </div>
 
@@ -21,9 +56,7 @@ export function PassportIntro() {
           Learn More
         </Button>
       </div>
-      <div
-        className="flex-1 h-full pt-6 bb-12 flex items-center justify-center"
-      >
+      <div className="flex-1 h-full pt-6 bb-12 flex items-center justify-center">
         <div
           className="bg-contain bg-no-repeat w-full h-full max-h-[596px] rounded-md overflow-hidden bg-primary/8 p-12 box-content flex items-center justify-center"
           style={{ backgroundImage: `url(${ASSET_PREFIX}/assets/images/preview-bg.png)` }}
