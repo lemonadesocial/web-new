@@ -21,14 +21,14 @@ export function PassportClaim() {
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-3">
           <p>Passport Preview</p>
-          
+
           <Card.Root>
             <Card.Content className="flex flex-col gap-4">
               <div className="flex items-center gap-4">
                 {state.photo ? (
-                  <img 
-                    src={state.photo} 
-                    alt="Profile" 
+                  <img
+                    src={state.photo}
+                    alt="Profile"
                     className="size-20 rounded-full object-cover border-2 border-primary/20"
                   />
                 ) : (
@@ -36,7 +36,7 @@ export function PassportClaim() {
                     <i className="icon-user size-10 text-tertiary" />
                   </div>
                 )}
-                
+
                 <div className="flex-1">
                   <p className="font-medium">Your Passport</p>
                   <p className="text-sm text-tertiary">Verified Identity NFT</p>
@@ -58,7 +58,7 @@ export function PassportClaim() {
 
         <div className="flex flex-col gap-3">
           <p>What Happens Next?</p>
-          
+
           <div className="flex flex-col gap-2">
             <div className="flex gap-3 items-start">
               <div className="size-6 rounded-full bg-accent-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -98,7 +98,8 @@ export function PassportClaim() {
             <div className="text-sm">
               <p className="font-medium mb-1">Important</p>
               <p className="text-tertiary">
-                Your passport is a non-transferable (soulbound) NFT. It will be permanently linked to your wallet address.
+                Your passport is a non-transferable (soulbound) NFT. It will be permanently linked to your wallet
+                address.
               </p>
             </div>
           </Card.Content>
@@ -107,4 +108,3 @@ export function PassportClaim() {
     </div>
   );
 }
-

@@ -16,6 +16,7 @@ export type PassportState = {
       label?: string;
       component: React.FC;
       btnText?: string;
+      index: number;
     };
   };
   currentStep: PassportStep;
@@ -23,20 +24,36 @@ export type PassportState = {
   useFluffle: boolean;
   useUsername: boolean;
   useENS: boolean;
+  mint: {
+    /** mint status */
+    minted: boolean;
+    /** show/mute video after minted */
+    video: boolean;
+    mute: boolean;
+    txHash: string;
+    tokenId: string;
+  };
 };
 
 const defaultState: PassportState = {
   steps: {
-    intro: { label: '', component: PassportIntro, btnText: 'Yes, I\'m In!' },
-    photo: { label: 'Passport Photo', component: PassportPhoto, btnText: 'Continue' },
-    username: { label: 'Username', component: PassportUsername, btnText: 'Claim Passport' },
-    celebrate: { label: 'Celebrate', component: PassportCelebrate, btnText: 'View Passport' },
+    intro: { label: '', component: PassportIntro, btnText: "Yes, I'm In!", index: 0 },
+    photo: { label: 'Passport Photo', component: PassportPhoto, btnText: 'Continue', index: 1 },
+    username: { label: 'Username', component: PassportUsername, btnText: 'Claim Passport', index: 2 },
+    celebrate: { label: 'Celebrate', component: PassportCelebrate, btnText: 'View Passport', index: 3 },
   },
   currentStep: PassportStep.intro,
   useLemonhead: true,
   useFluffle: false,
   useUsername: true,
   useENS: false,
+  mint: {
+    minted: false,
+    video: false,
+    mute: true,
+    txHash: '',
+    tokenId: '',
+  },
 };
 
 export enum PassportActionKind {
@@ -46,6 +63,7 @@ export enum PassportActionKind {
   SelectFluffle = 'SELECT_FLUFFLE',
   SelectUsername = 'SELECT_USERNAME',
   SelectENS = 'SELECT_ENS',
+  SetMint = 'SET_MINT',
 }
 
 export type PassportAction = { type: PassportActionKind; payload?: any };
@@ -110,8 +128,10 @@ function reducers(state: PassportState, action: PassportAction) {
       return { ...state, useUsername: false, useENS: true };
     }
 
+    case PassportActionKind.SetMint:
+      return { ...state, mint: { ...state.mint, ...action.payload } };
+
     default:
       return state;
   }
 }
-
