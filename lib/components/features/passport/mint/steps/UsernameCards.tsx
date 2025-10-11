@@ -189,7 +189,7 @@ function CardDetail({
         <i className={twMerge('size-8 text-tertiary', icon)} />
         <div>
           {title}
-          <p className="text-sm text-tertiary">{subtitle}</p>
+          <p className="hidden md:block text-sm text-tertiary">{subtitle}</p>
         </div>
         {children}
       </Card.Content>
