@@ -1,11 +1,11 @@
 import React from 'react';
 import clsx from 'clsx';
 
-import { Button, Skeleton } from '$lib/components/core';
+import { Button, Card, Skeleton } from '$lib/components/core';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { useFluffle } from '$lib/hooks/useFluffle';
-import { PassportActionKind, usePassportContext } from '../provider';
 import { ASSET_PREFIX } from '$lib/utils/constants';
+import { PassportActionKind, usePassportContext } from '../provider';
 
 export function LemonheadCard() {
   const { data, loading } = useLemonhead();
@@ -16,37 +16,28 @@ export function LemonheadCard() {
   };
 
   const isSelected = state.useLemonhead;
+
+  if (loading || !data) {
+    return <CardIndicator />;
+  }
+
   return (
-    <div
-      className={`flex flex-col gap-4 rounded-md bg-card p-4 transition-all border ${isSelected ? 'border-primary' : 'border-card-border'}`}
+    <CardDetail
+      containerClass={clsx({ 'border-primary': isSelected })}
+      image={data.image}
+      title={`LemonHead #${data.tokenId}`}
+      subtitle="Set LemonHead as Passport Photo."
     >
-      {loading || !data ? (
-        <>
-          <Skeleton animate className="w-full h-64 rounded-sm" />
-          <div className="flex flex-col gap-4">
-            <Skeleton animate className="h-4 w-24 rounded-full" />
-            <Skeleton animate className="h-3 w-32 rounded-full" />
-          </div>
-        </>
-      ) : (
-        <>
-          <img src={data.image} className={clsx('w-full aspect-square border-card-border rounded-sm')} />
-          <div className="flex flex-col gap-1">
-            <p>LemonHead #{data.tokenId}</p>
-            <p className="hidden md:block text-sm text-tertiary">Set LemonHead as Passport Photo.</p>
-          </div>
-          <Button
-            variant={isSelected ? 'tertiary' : 'secondary'}
-            className="w-full"
-            onClick={handleSelect}
-            iconLeft={isSelected ? 'icon-done' : undefined}
-            size="sm"
-          >
-            {isSelected ? 'Selected' : 'Select'}
-          </Button>
-        </>
-      )}
-    </div>
+      <Button
+        variant={isSelected ? 'tertiary' : 'secondary'}
+        className="w-full"
+        onClick={handleSelect}
+        iconLeft={isSelected ? 'icon-done' : undefined}
+        size="sm"
+      >
+        {isSelected ? 'Selected' : 'Select'}
+      </Button>
+    </CardDetail>
   );
 }
 
@@ -61,47 +52,36 @@ export function FluffleCard() {
   const isSelected = state.useFluffle;
 
   if (loading) {
-    return (
-      <div className="flex flex-col gap-4 rounded-md bg-card p-4 transition-all border border-card-border">
-        <Skeleton animate className="w-full h-64 rounded-sm" />
-        <div className="flex flex-col gap-4">
-          <Skeleton animate className="h-4 w-24 rounded-full" />
-          <Skeleton animate className="h-3 w-32 rounded-full" />
-        </div>
-      </div>
-    );
+    return <CardIndicator />;
   }
 
   if (data?.hasToken) {
     return (
-      <div
-        className={`flex flex-col gap-4 rounded-md bg-card p-4 transition-all border ${isSelected ? 'border-primary' : 'border-card-border'}`}
+      <CardDetail
+        image={data.image}
+        title={`Fluffle #${data.tokenId}`}
+        subtitle="Set Fluffle as Passport Photo."
+        containerClass={clsx({ 'border-primary': isSelected })}
       >
-        <img src={data.image} className="w-full h-64 object-cover border-card-border rounded-sm" />
-        <div className="flex flex-col gap-1">
-          <p>Fluffle #{data.tokenId}</p>
-          <p className="hidden md:block text-sm text-tertiary">Set Fluffle as Passport Photo.</p>
-        </div>
         <Button
-          variant={isSelected ? 'tertiary' : 'secondary'}
+          size="sm"
           className="w-full"
           onClick={handleSelect}
+          variant={isSelected ? 'tertiary' : 'secondary'}
           iconLeft={isSelected ? 'icon-done' : undefined}
-          size="sm"
         >
           {isSelected ? 'Selected' : 'Select'}
         </Button>
-      </div>
+      </CardDetail>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-md bg-card p-4 transition-all border-2 border-dashed border-card-border">
-      <img src={`${ASSET_PREFIX}/assets/images/fluffle.png`} className="w-full aspect-square" />
-      <div className="flex flex-col gap-1">
-        <p>Get Fluffle</p>
-        <p className="hidden md:block text-sm text-tertiary">You don’t have a fluffle, yet.</p>
-      </div>
+    <CardDetail
+      title="Get Fluffle"
+      subtitle="You don’t have a fluffle, yet."
+      image={`${ASSET_PREFIX}/assets/images/fluffle.png`}
+    >
       <Button
         variant={isSelected ? 'tertiary' : 'secondary'}
         className="w-full"
@@ -111,6 +91,41 @@ export function FluffleCard() {
       >
         {isSelected ? 'Selected' : 'Select'}
       </Button>
-    </div>
+    </CardDetail>
+  );
+}
+
+function CardIndicator() {
+  return (
+    <Card.Root>
+      <Card.Content className="flex flex-col gap-4">
+        <Skeleton animate className="w-full aspect-square rounded-sm" />
+        <Skeleton animate className="h-4 w-24 rounded-full" />
+        <Skeleton animate className="h-3 w-32 rounded-full" />
+        <Skeleton animate className="h-8 w-full rounded-md" />
+      </Card.Content>
+    </Card.Root>
+  );
+}
+
+interface CardDetailProps extends React.PropsWithChildren {
+  containerClass?: string;
+  image: string;
+  title: string;
+  subtitle: string;
+}
+
+function CardDetail({ containerClass, image, title, subtitle, children }: CardDetailProps) {
+  return (
+    <Card.Root className={containerClass}>
+      <Card.Content className="flex flex-col gap-4">
+        <img src={image} className={clsx('w-full aspect-square border-card-border rounded-sm')} />
+        <div className="flex flex-col gap-1">
+          <p>{title}</p>
+          <p className="hidden md:block text-sm text-tertiary">{subtitle}</p>
+        </div>
+        {children}
+      </Card.Content>
+    </Card.Root>
   );
 }

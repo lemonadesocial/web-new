@@ -163,7 +163,7 @@ function CardIndicator() {
         <Skeleton animate className="w-8 h-8 rounded-full" />
         <div className="flex flex-col gap-3">
           <Skeleton animate className="h-4.5 w-24 rounded-full" />
-          <Skeleton animate className="h-3.5 w-16 rounded-full" />
+          <Skeleton animate className="hidden md:block h-3.5 w-16 rounded-full" />
         </div>
         <Skeleton animate className="h-8 w-full rounded-md" />
       </Card.Content>
