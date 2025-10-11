@@ -59,6 +59,13 @@ export function PassportFooter() {
 
   return (
     <>
+      <div className="md:hidden flex items-center gap-2 min-h-[64px] px-4 z-10">
+        <Button icon="icon-logout" onClick={handlePrev} variant="tertiary" />
+        <Button variant="secondary" className="w-full" onClick={handleNext}>
+          {currentStep?.btnText}
+        </Button>
+      </div>
+
       <div className="hidden md:flex justify-between items-center min-h-[64px] px-4 bg-background/80 backdrop-blur-md">
         <div className="flex-1">
           <Button variant="tertiary" size="sm" onClick={handlePrev}>
@@ -72,13 +79,9 @@ export function PassportFooter() {
               const isActive = key === state.currentStep;
               return (
                 <li key={key} className="flex items-center gap-1.5">
+                  {item.label && <p className={twMerge('text-quaternary', isActive && 'text-primary')}>{item.label}</p>}
                   {item.label && (
-                    <p className={twMerge('text-quaternary', isActive && 'text-primary')}>{item.label}</p>
-                  )}
-                  {item.label && (
-                    <i
-                      className={twMerge('icon-chevron-right size-5 text-quaternary', isActive && 'text-primary')}
-                    />
+                    <i className={twMerge('icon-chevron-right size-5 text-quaternary', isActive && 'text-primary')} />
                   )}
                 </li>
               );
@@ -95,4 +98,3 @@ export function PassportFooter() {
     </>
   );
 }
-
