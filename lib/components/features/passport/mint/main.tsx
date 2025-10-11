@@ -4,6 +4,7 @@ import React from 'react';
 import Header from '$lib/components/layouts/header';
 import { PassportProvider, usePassportContext } from './provider';
 import { PassportFooter } from './footer';
+import { Preview } from './preview';
 
 export function PassportMain() {
   return (
@@ -23,8 +24,11 @@ function Content() {
         <Header />
       </div>
 
-      <div className="flex-1 flex flex-col overflow-auto">
-        <Comp />
+      <div className="flex-1 flex flex-col">
+        <div className="max-w-[1200px] mx-auto flex flex-col-reverse md:flex-row gap-6 md:gap-18 p-4 md:p-0 overflow-auto">
+          <Comp />
+          <Preview />
+        </div>
       </div>
 
       <PassportFooter />
