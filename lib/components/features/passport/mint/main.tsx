@@ -2,7 +2,7 @@
 import React from 'react';
 
 import Header from '$lib/components/layouts/header';
-import { PassportProvider, PassportStep, usePassportContext } from './provider';
+import { PassportProvider, usePassportContext } from './provider';
 import { PassportFooter } from './footer';
 
 export function PassportMain() {
@@ -15,6 +15,7 @@ export function PassportMain() {
 
 function Content() {
   const [state] = usePassportContext();
+  const Comp = state.steps[state.currentStep].component;
 
   return (
     <main className="h-dvh w-full flex flex-col divide-y divide-[var(--color-divider)]">
@@ -23,14 +24,10 @@ function Content() {
       </div>
 
       <div className="flex-1 flex flex-col overflow-auto">
-        {(() => {
-          const Comp = state.steps[state.currentStep].component;
-          return <Comp />;
-        })()}
+        <Comp />
       </div>
-      
+
       <PassportFooter />
     </main>
   );
 }
-
