@@ -34,7 +34,7 @@ function ImagePreview({ className }: { className?: string }) {
         state.photo && (
           <img
             src={state.photo}
-            className="absolute top-[27%] w-[28.5%] left-[8%] rounded"
+            className="absolute top-[27%] w-[28.5%] left-[8%] rounded-[5%]"
           />
         )
       }
