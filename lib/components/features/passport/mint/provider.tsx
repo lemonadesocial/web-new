@@ -24,6 +24,7 @@ export type PassportState = {
   useFluffle: boolean;
   useUsername: boolean;
   useENS: boolean;
+  photo: string;
   mint: {
     /** mint status */
     minted: boolean;
@@ -47,6 +48,7 @@ const defaultState: PassportState = {
   useFluffle: false,
   useUsername: true,
   useENS: false,
+  photo: '',
   mint: {
     minted: false,
     video: false,
@@ -64,6 +66,7 @@ export enum PassportActionKind {
   SelectUsername = 'SELECT_USERNAME',
   SelectENS = 'SELECT_ENS',
   SetMint = 'SET_MINT',
+  SetPhoto = 'SET_PHOTO',
 }
 
 export type PassportAction = { type: PassportActionKind; payload?: any };
@@ -130,6 +133,9 @@ function reducers(state: PassportState, action: PassportAction) {
 
     case PassportActionKind.SetMint:
       return { ...state, mint: { ...state.mint, ...action.payload } };
+
+    case PassportActionKind.SetPhoto:
+      return { ...state, photo: action.payload };
 
     default:
       return state;
