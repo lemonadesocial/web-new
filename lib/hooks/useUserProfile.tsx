@@ -51,12 +51,7 @@ export const useUserProfile = (params: { username?: string; address: string }) =
         let attributes: Record<string, string> = {};
         account?.metadata?.attributes?.forEach((item) => (attributes[item.key] = item.value));
 
-        console.log(account);
-
-        let user: User | undefined;
-        if (account?.metadata?.id) {
-          user = await getUser({ lens_profile_id: account.address });
-        }
+        const user = await getUser({ lens_profile_id: address });
 
         setData({
           _id: user?._id,
@@ -66,7 +61,6 @@ export const useUserProfile = (params: { username?: string; address: string }) =
           name: account?.metadata?.name || '',
           created_at: account?.createdAt,
           image_avatar: account?.metadata?.picture,
-          // coverPicture: account?.metadata?.coverPicture,
           ...attributes,
         });
       } else {
