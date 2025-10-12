@@ -10,7 +10,7 @@ import { isMobile } from 'react-device-detect';
 export function UserProfileCommunities({ user }: { user: User }) {
   const router = useRouter();
   const { data, loading } = useQuery(SearchSpacesDocument, {
-    variables: { input: { user: user._id }, limit: 10, skip: 0 },
+    variables: { input: { user: user._id }, limit: 100, skip: 0 },
     skip: !user._id,
   });
 

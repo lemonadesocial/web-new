@@ -55,7 +55,7 @@ export const useUserProfile = (params: { username?: string; address: string }) =
 
         let user: User | undefined;
         if (account?.metadata?.id) {
-          user = await getUser({ lens_profile_id: account.metadata.id });
+          user = await getUser({ lens_profile_id: account.address });
         }
 
         setData({
