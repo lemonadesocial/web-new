@@ -78,7 +78,7 @@ export function PassportFooter() {
               return (
                 <li key={key} className="flex items-center gap-1.5">
                   {item.label && <p className={twMerge('text-quaternary', isActive && 'text-primary')}>{item.label}</p>}
-                  {item.label && (
+                  {item.label && idx < Object.entries(state.steps).length - 1 && (
                     <i className={twMerge('icon-chevron-right size-5 text-quaternary', isActive && 'text-primary')} />
                   )}
                 </li>
