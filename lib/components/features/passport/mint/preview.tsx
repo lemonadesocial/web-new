@@ -1,7 +1,13 @@
-import { ASSET_PREFIX } from '$lib/utils/constants';
+'use client';
 import { twMerge } from 'tailwind-merge';
+import { ASSET_PREFIX } from '$lib/utils/constants';
+import { PassportStep, usePassportContext } from './provider';
 
 export function PassportPreview({ className }: { className?: string }) {
+  const [state] = usePassportContext();
+
+  if (state.currentStep === PassportStep.celebrate) return null;
+
   return (
     <>
       <img
