@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
 
 import { Button, Card, Skeleton } from '$lib/components/core';
@@ -16,6 +16,12 @@ export function LemonheadCard() {
   };
 
   const isSelected = state.useLemonhead;
+
+  useEffect(() => {
+    if (!state.photo && data) {
+      dispatch({ type: PassportActionKind.SetPhoto, payload: data.image });
+    }
+  }, [state.photo, data]);
 
   if (loading || !data) {
     return <CardIndicator />;
