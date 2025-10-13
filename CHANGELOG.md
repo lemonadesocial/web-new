@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.6.0](https://github.com/lemonadesocial/web-new/compare/v8.5.0...v8.6.0) (2025-10-13)
+
+
+### Features
+
+* update layout profile owner ([adbd55c](https://github.com/lemonadesocial/web-new/commit/adbd55c4eee5bd56be80371869fea1f078fccc0b))
+
+
+### Bug Fixes
+
+* update bottom bar ([54219f0](https://github.com/lemonadesocial/web-new/commit/54219f09d2fd6800ce534bd5c10795e06f2ddd8c))
+
 ## [8.5.0](https://github.com/lemonadesocial/web-new/compare/v8.4.1...v8.5.0) (2025-10-13)
 
 
