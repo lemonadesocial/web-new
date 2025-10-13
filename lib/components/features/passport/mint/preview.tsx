@@ -1,7 +1,9 @@
 'use client';
+import { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { PassportStep, usePassportContext } from './provider';
+import { format } from 'date-fns';
 
 export function PassportPreview() {
   const [state] = usePassportContext();
@@ -26,10 +28,29 @@ export function PassportPreview() {
 
 function ImagePreview({ className }: { className?: string }) {
   const [state] = usePassportContext();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [fontSize, setFontSize] = useState(16);
+
+  const updateFontSize = () => {
+    if (containerRef.current) {
+      const height = containerRef.current.offsetHeight;
+      const calculatedFontSize = (height / 400) * 16;
+      setFontSize(calculatedFontSize);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', updateFontSize);
+    return () => window.removeEventListener('resize', updateFontSize);
+  }, []);
 
   return (
-    <div className={twMerge('relative', className)}>
-      <img src={`${ASSET_PREFIX}/assets/images/passport.png`} className={"w-full object-cover"} />
+    <div ref={containerRef} className={twMerge('relative', className)}>
+      <img 
+        src={`${ASSET_PREFIX}/assets/images/passport.png`} 
+        className={"w-full object-cover"}
+        onLoad={updateFontSize}
+      />
       {
         state.photo && (
           <img
@@ -38,6 +59,12 @@ function ImagePreview({ className }: { className?: string }) {
           />
         )
       }
+      <p 
+        className="absolute top-[50.5%] left-[70%] text-black font-multitype-pixel"
+        style={{ fontSize: `${fontSize}px` }}
+      >
+        {format(new Date(), 'MM/dd/yyyy')}
+      </p>
     </div>
   );
 }

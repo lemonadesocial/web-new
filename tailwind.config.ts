@@ -4,6 +4,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export default {
+  theme: {
+    extend: {
+      fontFamily: {
+        'multitype-pixel': ['var(--font-multitype-pixel)'],
+      },
+    },
+  },
   plugins: [
     plugin(function ({ matchComponents }) {
       const iconsDir = path.join(import.meta.dirname, './lib/icons');

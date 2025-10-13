@@ -55,6 +55,8 @@ export function PassportFooter() {
       .otherwise(() => dispatch({ type: PassportActionKind.NextStep }));
   };
 
+  const disabled = (state.currentStep === PassportStep.photo && !state.photo);
+
   return (
     <>
       <div className="md:hidden flex items-center gap-2 min-h-[64px] px-4 z-10">
@@ -88,7 +90,7 @@ export function PassportFooter() {
         )}
 
         <div className="flex flex-1 justify-end">
-          <Button iconRight="icon-chevron-right" variant="secondary" size="sm" onClick={handleNext}>
+          <Button iconRight="icon-chevron-right" disabled={disabled} variant="secondary" size="sm" onClick={handleNext}>
             {currentStep?.btnText}
           </Button>
         </div>
