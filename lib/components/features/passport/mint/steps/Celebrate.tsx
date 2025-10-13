@@ -18,6 +18,8 @@ export function PassportCelebrate() {
   const videoRef = React.useRef(null);
   const playerRef = React.useRef<Player>(null);
 
+  const [mute, setMute] = React.useState(true);
+
   React.useEffect(() => {
     if (videoRef.current && !playerRef.current) {
       const srcPath = isMobile ? 'lemonhead_mint_mobile' : 'lemonhead_mint_web';
@@ -26,7 +28,7 @@ export function PassportCelebrate() {
         loop: true,
         controls: false,
         autoplay: true,
-        muted: true,
+        muted: mute,
         sources: [
           {
             src: `${process.env.NEXT_PUBLIC_LMD_VIDEO}/${srcPath}/video.m3u8`,
@@ -53,13 +55,13 @@ export function PassportCelebrate() {
             <div className="flex items-center gap-2">
               <Button
                 variant="tertiary-alt"
-                icon={state.mint.mute ? 'icon-speaker-wave' : 'icon-speaker-x-mark'}
-                onClick={() => dispatch({ type: PassportActionKind.SetMint, payload: { mute: !state.mint.mute } })}
+                icon={mute ? 'icon-speaker-wave' : 'icon-speaker-x-mark'}
+                onClick={() => setMute(!mute)}
               />
               <Button
                 iconRight="icon-arrow-outward"
                 variant="tertiary-alt"
-                onClick={() => window.open(`${ETHERSCAN}/tx/${state.mint.txHash}`)}
+                // onClick={() => window.open(`${ETHERSCAN}/tx/${state.mintData?.txHash}`)}
               >
                 View txn.
               </Button>

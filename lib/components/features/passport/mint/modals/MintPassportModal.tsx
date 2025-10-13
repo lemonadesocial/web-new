@@ -1,90 +1,86 @@
 'use client';
-import React from 'react';
-import { Button, modal, ModalContent } from '$lib/components/core';
-import { ethers } from 'ethers';
-import { ASSET_PREFIX, ETHERSCAN } from '$lib/utils/constants';
-import { PassportPreview } from '../preview';
-import { InsufficientFundsModal } from '$lib/components/features/modals/InsufficientFundsModal';
+import { useState } from 'react';
+import { Eip1193Provider, ethers } from 'ethers';
 
-export function MintPassportModal({ onComplete }: { onComplete: (mintState: any) => void }) {
-  const mintPrice = 0.01;
-  const [isMinting, setIsMinting] = React.useState(false);
-  const [done, setDone] = React.useState(false);
-  const [count, setCount] = React.useState(10);
-  const [mintState, setMintState] = React.useState({
-    minted: false,
-    video: false,
-    mute: true,
-    txHash: '',
-    tokenId: '',
-    contract: '',
-  });
+import { Button, modal, ModalContent, toast } from '$lib/components/core';
+import { ASSET_PREFIX } from '$lib/utils/constants';
+import { useAppKitProvider } from '$lib/utils/appkit';
+import { formatError, LemonadePassportContract, writeContract } from '$lib/utils/crypto';
+import { SignTransactionModal } from '$lib/components/features/modals/SignTransaction';
+import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
+import { SuccessModal } from '$lib/components/features/modals/SuccessModal';
+import { PASSPORT_CHAIN_ID } from '../utils';
+import { useAtomValue } from 'jotai';
+import { chainsMapAtom } from '$lib/jotai';
 
-  React.useEffect(() => {
-    if (count === 0) {
-      modal.close();
-      onComplete({ ...mintState, minted: true, video: true });
-    }
-  }, [count, mintState]);
+type MintData = {
+  signature: string;
+  price: string;
+  metadata: string;
+};
 
-  // TODO: Update handle mint logic
+export function MintPassportModal({ 
+  onComplete,
+  mintData 
+}: { 
+  onComplete: () => void;
+  mintData: MintData;
+}) {
+  const { walletProvider } = useAppKitProvider('eip155');
+  const chainsMap = useAtomValue(chainsMapAtom);
+  const [status, setStatus] = useState<'signing' | 'confirming' | 'success' | 'none'>('none');
+
   const handleMint = async () => {
-    // NOTE: this handle show InsufficientFunds
-    // modal.open(InsufficientFundsModal, {
-    //   onClose: () => setIsMinting(false),
-    //   props: {
-    //     message: `Make sure you have enough ETH to mint your Passport. Add funds and try again, or switch wallets.`,
-    //     onRetry: () => {
-    //       modal.close();
-    //       handleMint();
-    //     },
-    //   },
-    // });
+    try {
+      if (!mintData) {
+        throw new Error('Mint data not found');
+      }
 
-    setIsMinting(true);
-    await sleep(1000);
-    setIsMinting(false);
-    setMintState((prev) => ({ ...prev, txHash: 'UPDATE_TX_HASH' }));
-    await sleep(2000);
+      const contractAddress = chainsMap[PASSPORT_CHAIN_ID]?.lemonade_passport_contract_address;
+      
+      if (!contractAddress) {
+        throw new Error('Passport contract address not configured');
+      }
 
-    setDone(true);
+      setStatus('signing');
+      
+      const transaction = await writeContract(
+        LemonadePassportContract,
+        contractAddress,
+        walletProvider as Eip1193Provider,
+        'mint',
+        [mintData.metadata, mintData.signature],
+        { value: mintData.price }
+      );
 
-    setInterval(() => {
-      setCount((prev) => prev - 1);
-    }, 1000);
+      setStatus('confirming');
+
+      await transaction.wait();
+
+      onComplete();
+    } catch (error: any) {
+      toast.error(formatError(error));
+      setStatus('none');
+    }
   };
 
-  if (mintState.txHash) {
+  if (status === 'confirming') {
     return (
-      <ModalContent
-        icon={
-          <div className="size-[56px] flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
-            {done ? <p>{count}</p> : <i className="icon-loader animate-spin" />}
-          </div>
-        }
-        title={
-          <Button
-            size="sm"
-            iconRight="icon-arrow-outward"
-            className="rounded-full"
-            variant="tertiary-alt"
-            onClick={() => window.open(`${ETHERSCAN}/tx/${mintState.txHash}`)}
-          >
-            View txn.
-          </Button>
-        }
-      >
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <p className="text-lg">{done ? 'Verifying Transaction' : 'Processing Payment'}</p>
-            <p className="text-sm">
-              {done
-                ? 'Almost there! We’re confirming your transaction and preparing your custom Passport. Thanks for your patience!'
-                : `We’re securing your payment and locking in your Passport. This won’t take long — hang tight while we get things ready.`}
-            </p>
-          </div>
-        </div>
-      </ModalContent>
+      <ConfirmTransaction 
+        title="Confirming Transaction" 
+        description="Please wait while your transaction is being confirmed on the blockchain."
+      />
+    );
+  }
+
+  if (status === 'signing') {
+    return (
+      <SignTransactionModal
+        onClose={() => modal.close()}
+        description="Please sign the transaction to pay gas fees & claim your Passport."
+        onSign={handleMint}
+        loading={true}
+      />
     );
   }
 
@@ -98,20 +94,15 @@ export function MintPassportModal({ onComplete }: { onComplete: (mintState: any)
         <div className="flex flex-col gap-2">
           <p className="text-lg">Claim Your Passport</p>
           <p className="text-sm">
-            You’re just one step away from owning your unique & personalized Passport. Mint & claim your on-chain
+            You're just one step away from owning your unique & personalized Passport. Mint & claim your on-chain
             identity.
           </p>
         </div>
 
-        <Button variant="secondary" onClick={handleMint} loading={isMinting}>
-          {/* Mint {mintPrice && +mintPrice > 0 ? `‣ ${ethers.formatEther(mintPrice)} ETH` : '‣ Free'} */}
-          Mint {mintPrice && +mintPrice > 0 ? `‣ ${mintPrice} ETH` : '‣ Free'}
+        <Button variant="secondary" onClick={handleMint}>
+          Mint {mintData?.price && +mintData.price > 0 ? `‣ ${ethers.formatEther(mintData.price)} ETH` : '‣ Free'}
         </Button>
       </div>
     </ModalContent>
   );
-}
-
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }

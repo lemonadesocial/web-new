@@ -26,7 +26,7 @@ function Content() {
   const mintPassportMutation = trpc.mintPassport.useMutation();
 
   useEffect(() => {
-    if (!address || loading || state.passportImage) return;
+    if (!address || loading) return;
 
     if (state.lemonadeUsername || state.useENS) {
       const fluffleTokenId = state.useFluffle ? '1' : undefined;
@@ -38,9 +38,8 @@ function Content() {
         lemonadeUsername: state.lemonadeUsername || undefined,
         fluffleTokenId,
       }).then((data) => {
-        if (data?.image) {
-          dispatch({ type: PassportActionKind.SetPassportImage, payload: data.image });
-        }
+        dispatch({ type: PassportActionKind.SetMintData, payload: data });
+        dispatch({ type: PassportActionKind.SetPassportImage, payload: data.image });
         setLoading(false);
       }).catch(() => {
         setLoading(false);
