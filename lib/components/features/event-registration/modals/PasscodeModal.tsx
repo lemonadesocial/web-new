@@ -85,4 +85,3 @@ export function PasscodeModal({ ticketTypeId, ticketTitle, onConfirm }: Passcode
     </ModalContent>
   );
 }
-

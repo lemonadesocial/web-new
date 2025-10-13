@@ -28,7 +28,7 @@ import { File, UpdateUserDocument, User } from '$lib/graphql/generated/backend/g
 import { chainsMapAtom, sessionClientAtom, userAtom } from '$lib/jotai';
 import { useConnectWallet } from '$lib/hooks/useConnectWallet';
 import { ATTRIBUTES_SAFE_KEYS, LENS_CHAIN_ID } from '$lib/utils/lens/constants';
-import { getAccountAvatar } from '$lib/utils/lens/utils';
+import { getAccountAvatar, getAccountCover } from '$lib/utils/lens/utils';
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { uploadFiles } from '$lib/utils/file';
 import { generateUrl } from '$lib/utils/cnd';
@@ -54,6 +54,7 @@ type ProfileValues = {
   handle_linkedin?: string | null;
   calendly_url?: string | null;
   new_photos?: string[];
+  cover?: string;
 };
 
 export function ProfilePane() {
@@ -78,6 +79,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
   const [uploading, setUploading] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [file, setFile] = React.useState<{ lens: any; lemonade: File } | null>(null);
+  const [fileCover, setFileCover] = React.useState<{ lens: any; lemonade: File } | null>(null);
 
   const [updateProfile] = useMutation(UpdateUserDocument, {
     onComplete(client, data) {
@@ -109,6 +111,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
       pronoun: me?.pronoun,
       company_name: me?.company_name,
       new_photos: me?.new_photos || [],
+      cover: me.cover,
     },
   });
 
@@ -130,6 +133,12 @@ export function ProfilePaneContent({ me }: { me: User }) {
     return uri;
   };
 
+  const getCoverPicture = async () => {
+    if (!fileCover?.lens) return undefined;
+    const { uri } = await storageClient.uploadFile(fileCover?.lens);
+    return uri;
+  };
+
   const onSubmit = async (values: ProfileValues) => {
     setIsSubmitting(true);
     try {
@@ -145,6 +154,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
       if (myAccount && sessionClient) {
         // NOTE: picture not accept empty string
         const picture = (await getProfilePicture()) || myAccount.metadata?.picture || undefined;
+        const coverPicture = (await getCoverPicture()) || myAccount.metadata?.coverPicture || undefined;
 
         const attributes = [] as { key: string; type: MetadataAttributeType; value: string }[];
         ATTRIBUTES_SAFE_KEYS.forEach((k) => {
@@ -156,6 +166,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
           name: values.name || undefined,
           bio: values.description || undefined,
           picture,
+          coverPicture,
         } as AccountOptions;
 
         // @ts-expect-error no need to check attributes type
@@ -199,14 +210,14 @@ export function ProfilePaneContent({ me }: { me: User }) {
       </Pane.Header.Root>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Pane.Content className="p-4 flex flex-col gap-5">
-          <div className="flex items-center justify-center py-4">
-            <div className="size-[140px] relative">
-              <img
-                src={
-                  file?.lemonade ? generateUrl(file.lemonade) : myAccount ? getAccountAvatar(myAccount) : userAvatar(me)
-                }
-                className="w-full h-full aspect-square object-cover rounded-full"
-              />
+          <div className="relative h-[172px]">
+            <div className="bg-(--btn-tertiary) aspect-[4/1] rounded-sm">
+              {(fileCover?.lemonade || myAccount?.metadata?.coverPicture) && (
+                <img
+                  src={fileCover?.lemonade ? generateUrl(fileCover.lemonade) : getAccountCover(myAccount!)}
+                  className="w-full h-full object-cover rounded-sm"
+                />
+              )}
               <FileInput
                 onChange={async (files) => {
                   try {
@@ -214,8 +225,8 @@ export function ProfilePaneContent({ me }: { me: User }) {
                     const photos = watch('new_photos') || [];
                     const lemonadeFiles = await uploadFiles(files, 'user');
                     const file = lemonadeFiles[0] as File;
-                    setValue('new_photos', [file._id, ...photos], { shouldDirty: true });
-                    setFile({ lens: files[0], lemonade: file });
+                    setValue('cover', file._id, { shouldDirty: true });
+                    setFileCover({ lens: files[0], lemonade: file });
                   } catch (err) {
                     console.log(err);
                     toast.error('Upload fail!');
@@ -226,14 +237,57 @@ export function ProfilePaneContent({ me }: { me: User }) {
               >
                 {(open) => (
                   <Button
-                    icon="icon-upload-sharp"
-                    variant="secondary"
+                    variant="tertiary-alt"
+                    size="sm"
                     onClick={open}
                     loading={uploading}
-                    className="rounded-full absolute bottom-0 right-0 border-4! border-overlay-primary! max-w-[40px] max-h-[40px]"
-                  />
+                    className="absolute top-2 right-2"
+                  >
+                    Change Cover
+                  </Button>
                 )}
               </FileInput>
+            </div>
+            <div className="absolute bottom-0">
+              <div className="size-24 relative">
+                <img
+                  src={
+                    file?.lemonade
+                      ? generateUrl(file.lemonade)
+                      : myAccount
+                        ? getAccountAvatar(myAccount)
+                        : userAvatar(me)
+                  }
+                  className="w-full h-full aspect-square object-cover rounded-full"
+                />
+                <FileInput
+                  onChange={async (files) => {
+                    try {
+                      setUploading(true);
+                      const photos = watch('new_photos') || [];
+                      const lemonadeFiles = await uploadFiles(files, 'user');
+                      const file = lemonadeFiles[0] as File;
+                      setValue('new_photos', [file._id, ...photos], { shouldDirty: true });
+                      setFile({ lens: files[0], lemonade: file });
+                    } catch (err) {
+                      console.log(err);
+                      toast.error('Upload fail!');
+                    } finally {
+                      setUploading(false);
+                    }
+                  }}
+                >
+                  {(open) => (
+                    <Button
+                      icon="icon-upload-sharp"
+                      variant="secondary"
+                      onClick={open}
+                      loading={uploading}
+                      className="rounded-full absolute bottom-0 right-0 border-4! border-overlay-primary! max-w-[40px] max-h-[40px]"
+                    />
+                  )}
+                </FileInput>
+              </div>
             </div>
           </div>
 
