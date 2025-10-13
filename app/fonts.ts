@@ -156,6 +156,12 @@ const synonym = localFont({
   variable: '--font-synonym',
 });
 
+const multitypePixel = localFont({
+  display: 'swap',
+  src: '../public/assets/fonts/MultiTypePixel-DisplayBold.otf',
+  variable: '--font-multitype-pixel',
+});
+
 export default twMerge(
   generalSans.variable,
   classDisplay.variable,
@@ -185,4 +191,5 @@ export default twMerge(
   spline_sans.variable,
   supreme.variable,
   synonym.variable,
+  multitypePixel.variable,
 );

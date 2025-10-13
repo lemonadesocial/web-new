@@ -116,13 +116,18 @@ export const getMintLemonadePassportData = async (
   fluffleTokenId?: string,
 ) => {
   const passportData = await getData(wallet, fluffleTokenId || '');
+  // const passportData = {
+  //   lemonheadTokenId: '12',
+  //   lemonheadImageUrl: 'https://api.grove.storage/e35e3617ecf4b62e7f26aa7fff5ba13c05aea871d4ba2261c35368ade048adfe',
+  //   fluffleImageUrl: ''
+  // }
 
   assert.ok(passportData && passportData.lemonheadTokenId);
 
   let username = wallet.toLowerCase();
 
   if (lemonadeUsername) {
-    username = lemonadeUsername;
+    username = `@${lemonadeUsername}`;
   } else if (ensForUserName) {
     username = await getEnsUsername(wallet);
   }
@@ -160,6 +165,11 @@ export const getMintLemonadePassportData = async (
 
   //-- call backend API and obtain the signature
   const data = await getApproval(wallet, uri);
+  // const data = {
+  //   "signature": "0xa48a809952b3c9e9753c048a7c43b0739256d9d0e40521ac4a4c66ea8bc8051f0102a12b02b420bb9e027e45378aeba8d75f6565972d87fcf8fb8f84e53916e51c",
+  //   "price": "0",
+  //   "metadata": "7a16f780a1865ccd025afb1945726d8a274de57f04f9da532068d5be046068e6",
+  // }
 
   if (!data) {
     throw new Error('Failed to get minting approval');
