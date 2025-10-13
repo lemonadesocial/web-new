@@ -16,9 +16,3 @@ export const getCache = async (look: string) => {
 export const setCache = async (look: string, cache: Cache) => {
   return request<void>(`/lemonhead/set_cache?look=${look}`, 'POST', cache);
 };
-
-export const getData = async (wallet: string, fluffleTokenId: string) => {
-  return request<{ lemonheadTokenId: string; lemonheadImageUrl: string; fluffleImageUrl: string }>(
-    `/passport/data?wallet=${wallet}&fluffleTokenId=${fluffleTokenId}`, 'GET'
-  );
-};
