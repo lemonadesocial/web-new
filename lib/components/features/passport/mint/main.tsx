@@ -1,10 +1,12 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import Header from '$lib/components/layouts/header';
-import { PassportProvider, usePassportContext } from './provider';
+import { PassportActionKind, PassportProvider, usePassportContext } from './provider';
 import { PassportFooter } from './footer';
 import { PassportPreview } from './preview';
+import { useAppKitAccount } from '$lib/utils/appkit';
+import { trpc } from '$lib/trpc/client';
 
 export function PassportMain() {
   return (
@@ -15,8 +17,36 @@ export function PassportMain() {
 }
 
 function Content() {
-  const [state] = usePassportContext();
+  const [state, dispatch] = usePassportContext();
   const Comp = state.steps[state.currentStep].component;
+  const [loading, setLoading] = React.useState(false);
+
+  const { address } = useAppKitAccount();
+  
+  const mintPassportMutation = trpc.mintPassport.useMutation();
+
+  useEffect(() => {
+    if (!address || loading || state.passportImage) return;
+
+    if (state.lemonadeUsername || state.useENS) {
+      const fluffleTokenId = state.useFluffle ? '1' : undefined;
+      
+      setLoading(true);
+      mintPassportMutation.mutateAsync({
+        wallet: address,
+        ensForUserName: state.useENS,
+        lemonadeUsername: state.lemonadeUsername || undefined,
+        fluffleTokenId,
+      }).then((data) => {
+        if (data?.image) {
+          dispatch({ type: PassportActionKind.SetPassportImage, payload: data.image });
+        }
+        setLoading(false);
+      }).catch(() => {
+        setLoading(false);
+      });
+    }
+  }, [address, state.lemonadeUsername, state.useENS, state.useFluffle]);
 
   return (
     <main className="h-dvh w-full flex flex-col divide-y divide-[var(--color-divider)]">
@@ -27,7 +57,7 @@ function Content() {
       <div className="flex-1 flex flex-col">
         <div className="w-full max-w-[1200px] h-full mx-auto flex flex-col-reverse md:flex-row gap-6 md:gap-18 p-4 md:p-0 overflow-auto">
           <Comp />
-          <PassportPreview />
+          <PassportPreview loading={loading} />
         </div>
       </div>
 

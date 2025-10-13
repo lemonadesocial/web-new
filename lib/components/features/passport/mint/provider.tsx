@@ -1,6 +1,7 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 
+import { trpc } from '$lib/trpc/client';
 import { PassportIntro, PassportPhoto, PassportClaim, PassportCelebrate, PassportUsername } from './steps';
 
 export enum PassportStep {
@@ -22,10 +23,10 @@ export type PassportState = {
   currentStep: PassportStep;
   useLemonhead: boolean;
   useFluffle: boolean;
-  useUsername: boolean;
+  lemonadeUsername: string;
   useENS: boolean;
   photo: string;
-  name: string;
+  passportImage: string;
   mint: {
     /** mint status */
     minted: boolean;
@@ -47,10 +48,10 @@ const defaultState: PassportState = {
   currentStep: PassportStep.intro,
   useLemonhead: true,
   useFluffle: false,
-  useUsername: true,
+  lemonadeUsername: '',
   useENS: false,
   photo: '',
-  name: 'namnguyen',
+  passportImage: '',
   mint: {
     minted: false,
     video: false,
@@ -65,11 +66,11 @@ export enum PassportActionKind {
   PrevStep = 'PREV_STEP',
   SelectLemonhead = 'SELECT_LEMONHEAD',
   SelectFluffle = 'SELECT_FLUFFLE',
-  SelectUsername = 'SELECT_USERNAME',
+  SetLemonadeUsername = 'SET_LEMONADE_USERNAME',
   SelectENS = 'SELECT_ENS',
   SetMint = 'SET_MINT',
   SetPhoto = 'SET_PHOTO',
-  SetName = 'SET_NAME',
+  SetPassportImage = 'SET_PASSPORT_IMAGE',
 }
 
 export type PassportAction = { type: PassportActionKind; payload?: any };
@@ -126,12 +127,12 @@ function reducers(state: PassportState, action: PassportAction) {
       return { ...state, useLemonhead: false, useFluffle: true };
     }
 
-    case PassportActionKind.SelectUsername: {
-      return { ...state, useUsername: true, useENS: false };
+    case PassportActionKind.SetLemonadeUsername: {
+      return { ...state, lemonadeUsername: action.payload, useENS: false };
     }
 
     case PassportActionKind.SelectENS: {
-      return { ...state, useUsername: false, useENS: true };
+      return { ...state, lemonadeUsername: '', useENS: true };
     }
 
     case PassportActionKind.SetMint:
@@ -140,8 +141,8 @@ function reducers(state: PassportState, action: PassportAction) {
     case PassportActionKind.SetPhoto:
       return { ...state, photo: action.payload };
 
-    case PassportActionKind.SetName:
-      return { ...state, name: action.payload };
+    case PassportActionKind.SetPassportImage:
+      return { ...state, passportImage: action.payload };
 
     default:
       return state;
