@@ -7,12 +7,12 @@ import { Button, modal } from '$lib/components/core';
 
 import { PassportActionKind, PassportStep, usePassportContext } from './provider';
 import { ConnectWallet } from '../../modals/ConnectWallet';
-import { LEMONHEAD_CHAIN_ID } from '../../lemonheads/mint/utils';
 import { useAtomValue } from 'jotai';
 import { chainsMapAtom } from '$lib/jotai';
 import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { match } from 'ts-pattern';
 import { MintPassportModal } from './modals/MintPassportModal';
+import { PASSPORT_CHAIN_ID } from './utils';
 
 export function PassportFooter() {
   const router = useRouter();
@@ -37,25 +37,28 @@ export function PassportFooter() {
             onConnect: () => {
               dispatch({ type: PassportActionKind.NextStep });
             },
-            chain: chainsMap[LEMONHEAD_CHAIN_ID],
+            chain: chainsMap[PASSPORT_CHAIN_ID],
           },
         });
       })
-      .with(PassportStep.username, () =>
+      .with(PassportStep.username, () => {        
         modal.open(BeforeMintPassportModal, {
           props: {
             onContinue: () => {
               modal.open(MintPassportModal, {
-                props: { onComplete: () => dispatch({ type: PassportActionKind.NextStep }) },
+                props: { 
+                  onComplete: () => dispatch({ type: PassportActionKind.NextStep }),
+                  mintData: state.mintData!,
+                },
               });
             },
           },
-        }),
-      )
+        });
+      })
       .otherwise(() => dispatch({ type: PassportActionKind.NextStep }));
   };
 
-  const disabled = (state.currentStep === PassportStep.photo && !state.photo);
+  const disabled = (state.currentStep === PassportStep.photo && !state.photo) || (state.currentStep === PassportStep.username && !state.mintData);
 
   return (
     <>

@@ -27,14 +27,10 @@ export type PassportState = {
   useENS: boolean;
   photo: string;
   passportImage: string;
-  mint: {
-    /** mint status */
-    minted: boolean;
-    /** show/mute video after minted */
-    video: boolean;
-    mute: boolean;
-    txHash: string;
-    tokenId: string;
+  mintData?: {
+    signature: string;
+    price: string;
+    metadata: string;
   };
 };
 
@@ -52,13 +48,7 @@ const defaultState: PassportState = {
   useENS: false,
   photo: '',
   passportImage: '',
-  mint: {
-    minted: false,
-    video: false,
-    mute: true,
-    txHash: '',
-    tokenId: '',
-  },
+  mintData: undefined,
 };
 
 export enum PassportActionKind {
@@ -68,7 +58,7 @@ export enum PassportActionKind {
   SelectFluffle = 'SELECT_FLUFFLE',
   SetLemonadeUsername = 'SET_LEMONADE_USERNAME',
   SelectENS = 'SELECT_ENS',
-  SetMint = 'SET_MINT',
+  SetMintData = 'SET_MINT_DATA',
   SetPhoto = 'SET_PHOTO',
   SetPassportImage = 'SET_PASSPORT_IMAGE',
 }
@@ -135,8 +125,8 @@ function reducers(state: PassportState, action: PassportAction) {
       return { ...state, lemonadeUsername: '', useENS: true };
     }
 
-    case PassportActionKind.SetMint:
-      return { ...state, mint: { ...state.mint, ...action.payload } };
+    case PassportActionKind.SetMintData:
+      return { ...state, mintData: { ...state.mintData, ...action.payload } };
 
     case PassportActionKind.SetPhoto:
       return { ...state, photo: action.payload };
