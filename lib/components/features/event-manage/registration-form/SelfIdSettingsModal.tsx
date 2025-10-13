@@ -12,7 +12,7 @@ type SelfIdRequirement = 'Required';
 interface SelfIdSettingsModalProps {
   requirement: SelfIdRequirement;
   eventId: string;
-  onComplete: () => void;
+  onComplete?: () => void;
 }
 
 export function SelfIdSettingsModal({ requirement, eventId, onComplete }: SelfIdSettingsModalProps) {
@@ -26,7 +26,7 @@ export function SelfIdSettingsModal({ requirement, eventId, onComplete }: SelfId
       if (data?.updateEvent) {
         updateEvent(data.updateEvent);
         toast.success('Self ID verification settings updated');
-        onComplete();
+        onComplete?.();
         modal.close();
       }
     },

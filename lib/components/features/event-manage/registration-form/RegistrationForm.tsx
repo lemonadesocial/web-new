@@ -1,7 +1,13 @@
 import { useState } from 'react';
 
 import { Button, Menu, MenuItem, modal, toast } from '$lib/components/core';
-import { UpdateEventRegistrationFormDocument, UpdateEventSelfVerificationDocument, BlockchainPlatform, EventApplicationQuestion, QuestionType } from '$lib/graphql/generated/backend/graphql';
+import {
+  UpdateEventRegistrationFormDocument,
+  UpdateEventSelfVerificationDocument,
+  BlockchainPlatform,
+  EventApplicationQuestion,
+  QuestionType,
+} from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
 import { useEvent, useUpdateEvent } from '../store';
 import { AddQuestionModal } from './AddQuestionModal';
@@ -19,7 +25,7 @@ export function RegistrationForm() {
 
   const [ethAddressRequirement, setEthAddressRequirement] = useState<EthAddressRequirement>(() => {
     const ethereumPlatform = event?.rsvp_wallet_platforms?.find(
-      platform => platform.platform === BlockchainPlatform.Ethereum
+      (platform) => platform.platform === BlockchainPlatform.Ethereum,
     );
 
     if (!ethereumPlatform) return 'Off';
@@ -44,7 +50,7 @@ export function RegistrationForm() {
   });
 
   const [updateEventSelfVerification] = useMutation(UpdateEventSelfVerificationDocument, {
-    onComplete : (_, data) => {
+    onComplete: (_, data) => {
       if (data?.updateEvent) {
         updateEvent(data.updateEvent);
       }
@@ -57,9 +63,8 @@ export function RegistrationForm() {
   const handleEthAddressChange = (requirement: EthAddressRequirement) => {
     setEthAddressRequirement(requirement);
 
-    const rsvp_wallet_platforms = event?.rsvp_wallet_platforms?.filter(
-      platform => platform.platform !== BlockchainPlatform.Ethereum
-    ) || [];
+    const rsvp_wallet_platforms =
+      event?.rsvp_wallet_platforms?.filter((platform) => platform.platform !== BlockchainPlatform.Ethereum) || [];
 
     if (requirement !== 'Off') {
       rsvp_wallet_platforms.push({
@@ -79,27 +84,22 @@ export function RegistrationForm() {
   };
 
   const handleSelfIdChange = (requirement: SelfIdRequirement) => {
-    if (requirement === 'Off') {
-      setSelfIdRequirement(requirement);
-      updateEventSelfVerification({
-        variables: {
-          id: event!._id,
-          self_verification: {
-            enabled: false,
-          },
+    setSelfIdRequirement(requirement);
+    updateEventSelfVerification({
+      variables: {
+        id: event!._id,
+        self_verification: {
+          enabled: requirement !== 'Off',
         },
-      });
+      },
+    });
+  };
 
-      return;
-    }
-
+  const handleSelfIdSettings = () => {
     modal.open(SelfIdSettingsModal, {
       props: {
-        requirement,
+        requirement: 'Required',
         eventId: event!._id,
-        onComplete: () => {
-          setSelfIdRequirement(requirement);
-        },
       },
     });
   };
@@ -143,10 +143,7 @@ export function RegistrationForm() {
               <Menu.Root>
                 <Menu.Trigger>
                   {({ toggle }) => (
-                    <div
-                      className="flex items-center gap-2 cursor-pointer"
-                      onClick={toggle}
-                    >
+                    <div className="flex items-center gap-2 cursor-pointer" onClick={toggle}>
                       <p className="text-tertiary">{ethAddressRequirement}</p>
                       <i className="icon-arrow-down text-tertiary size-4" />
                     </div>
@@ -187,10 +184,7 @@ export function RegistrationForm() {
               <Menu.Root>
                 <Menu.Trigger>
                   {({ toggle }) => (
-                    <div
-                      className="flex items-center gap-2 cursor-pointer"
-                      onClick={toggle}
-                    >
+                    <div className="flex items-center gap-2 cursor-pointer" onClick={toggle}>
                       <p className="text-tertiary">{selfIdRequirement}</p>
                       <i className="icon-arrow-down text-tertiary size-4" />
                     </div>
@@ -218,6 +212,12 @@ export function RegistrationForm() {
                 </Menu.Content>
               </Menu.Root>
             </div>
+
+            {selfIdRequirement === 'Required' && (
+              <Button iconLeft="icon-gears" variant="tertiary-alt" className="w-fit" onClick={handleSelfIdSettings}>
+                Self ID Settings
+              </Button>
+            )}
           </div>
         </div>
 
@@ -230,15 +230,11 @@ export function RegistrationForm() {
             {event?.application_questions?.map((question, index) => (
               <QuestionCard key={question._id} question={question} index={index} />
             ))}
-           {event?.application_profile_fields?.map((field) => (
-            <ApplicationProfileCard key={field.field} field={field} />
-          ))}
+            {event?.application_profile_fields?.map((field) => (
+              <ApplicationProfileCard key={field.field} field={field} />
+            ))}
           </div>
-          <Button
-            variant="tertiary"
-            iconLeft="icon-plus"
-            onClick={() => modal.open(AddQuestionModal)}
-          >
+          <Button variant="tertiary" iconLeft="icon-plus" onClick={() => modal.open(AddQuestionModal)}>
             Add Question
           </Button>
         </div>
@@ -246,7 +242,6 @@ export function RegistrationForm() {
     </div>
   );
 }
-
 
 function QuestionCard({ question, index }: { question: EventApplicationQuestion; index: number }) {
   const getQuestionTypeLabel = (type?: QuestionType, selectType?: string) => {
@@ -268,7 +263,6 @@ function QuestionCard({ question, index }: { question: EventApplicationQuestion;
     return '';
   };
 
-
   const handleEdit = (question: EventApplicationQuestion) => {
     if (question.type === QuestionType.Text) {
       modal.open(AddTextQuestion, {
@@ -284,8 +278,8 @@ function QuestionCard({ question, index }: { question: EventApplicationQuestion;
       modal.open(AddOptionsQuestion, {
         props: {
           applicationQuestion: question,
-        }
-      })
+        },
+      });
     }
   };
 
@@ -297,27 +291,27 @@ function QuestionCard({ question, index }: { question: EventApplicationQuestion;
         <p>{question.question}</p>
 
         <div className="flex items-center gap-1.5">
-          <p className="text-sm text-tertiary">{getQuestionTypeLabel(question.type || undefined, question.select_type || undefined)}</p>
-          {question.required && <>
-            <i className="icon-dot size-2 text-tertiary" />
-            <p className="text-sm text-tertiary">
-              Required
-            </p>
-          </>}
+          <p className="text-sm text-tertiary">
+            {getQuestionTypeLabel(question.type || undefined, question.select_type || undefined)}
+          </p>
+          {question.required && (
+            <>
+              <i className="icon-dot size-2 text-tertiary" />
+              <p className="text-sm text-tertiary">Required</p>
+            </>
+          )}
         </div>
 
         {question.type === QuestionType.Options && question.options && question.options.length > 0 && (
           <p className="text-xs text-tertiary mt-1">
-            {question.options.length} Option{question.options.length !== 1 ? 's' : ''}: {question.options.slice(0, 3).join(', ')}
+            {question.options.length} Option{question.options.length !== 1 ? 's' : ''}:{' '}
+            {question.options.slice(0, 3).join(', ')}
             {question.options.length > 3 && ` +${question.options.length - 3} more`}
           </p>
         )}
       </div>
 
-      <i
-        className="icon-edit-sharp size-5 text-tertiary cursor-pointer"
-        onClick={() => handleEdit(question)}
-      />
+      <i className="icon-edit-sharp size-5 text-tertiary cursor-pointer" onClick={() => handleEdit(question)} />
     </div>
   );
 }
