@@ -43,7 +43,10 @@ export function BottomBar() {
     ];
 
     if (account || me) {
-      menu.push({ icon: <Avatar src={account?.metadata?.picture || userAvatar(me)} />, path: '/profile' });
+      menu.push({
+        icon: <Avatar src={account?.metadata?.picture || userAvatar(me)} />,
+        path: `/profile/${account?.address || me?.username}`,
+      });
     }
 
     return menu;
