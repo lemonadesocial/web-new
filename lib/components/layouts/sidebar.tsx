@@ -97,7 +97,7 @@ const Sidebar = () => {
                 <SidebarItem
                   item={{
                     icon: <Avatar src={account?.metadata?.picture || userAvatar(me)} />,
-                    path: `/u/${account?.address || me?.username}`,
+                    path: `/profile/${account?.address || me?.username}`,
                     label: 'Profile',
                   }}
                   isActive={isActive}
