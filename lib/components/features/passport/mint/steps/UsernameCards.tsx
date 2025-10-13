@@ -20,8 +20,12 @@ export function UsernameCard() {
   const [state, dispatch] = usePassportContext();
   const chainsMap = useAtomValue(chainsMapAtom);
 
+  console.log('setting username', username, state)
+
   const handleSelect = () => {
-    dispatch({ type: PassportActionKind.SelectUsername });
+    if (username) {
+      dispatch({ type: PassportActionKind.SetLemonadeUsername, payload: username });
+    }
   };
 
   const handleClaimUsername = () => {
@@ -35,7 +39,13 @@ export function UsernameCard() {
     });
   };
 
-  const isSelected = state.useUsername;
+  useEffect(() => {
+    if (username && !state.lemonadeUsername && !state.useENS) {
+      dispatch({ type: PassportActionKind.SetLemonadeUsername, payload: username });
+    }
+  }, [username, state.lemonadeUsername, state.useENS]);
+
+  const isSelected = state.lemonadeUsername;
 
   if (isLoading) {
     return <CardIndicator />;
