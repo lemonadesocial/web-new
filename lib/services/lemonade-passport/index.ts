@@ -7,7 +7,7 @@ import assert from 'assert';
 import { createCanvas, deregisterAllFonts, Image, registerFont } from 'canvas';
 import { ethers } from 'ethers';
 import fs from 'fs';
-import moment from 'moment';
+import { format } from 'date-fns';
 import path from 'path';
 
 import { getApproval } from "./admin";
@@ -145,7 +145,7 @@ export const getMintLemonadePassportData = async (
 
   const passportId = passportData.lemonheadTokenId.padStart(8, '0');
 
-  const creationDate = moment().format('MM/DD/YYYY');
+  const creationDate = format(new Date(), 'MM/dd/yyyy');
 
   const buffers = await Promise.all([
     getAvatarImageBuffer(avatarImageUrl),
