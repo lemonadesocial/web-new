@@ -3,6 +3,7 @@ import orgs from 'open-graph-scraper';
 
 import { getMintNftData } from '$lib/services/lemonhead';
 import { calculateLookHash, Filter, getFinalTraits, validateTraits, type Trait } from '$lib/services/lemonhead/core';
+import { getMintLemonadePassportData } from '$lib/services/lemonade-passport';
 
 import { publicProcedure, router } from './trpc';
 import lemonheads, { BuildQueryParams } from './lemonheads';
@@ -76,6 +77,19 @@ export const appRouter = router({
     .mutation(async ({ input }) => {
       const { wallet, traits, sponsor } = input;
       return getMintNftData(traits, wallet, sponsor);
+    }),
+  mintPassport: publicProcedure
+    .input(
+      z.object({
+        wallet: z.string(),
+        ensForUserName: z.boolean().optional(),
+        lemonadeUsername: z.string().optional(),
+        fluffleTokenId: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const { wallet, ensForUserName, lemonadeUsername, fluffleTokenId } = input;
+      return getMintLemonadePassportData(wallet, ensForUserName, lemonadeUsername, fluffleTokenId);
     }),
 });
 

@@ -96,17 +96,6 @@ const getCreationDateImageBuffer = async (creationDate: string) => {
   return await getTextImageBuffer(`${fontSize}px "${boldFontFamily}"`, creationDate, creationDateOffset, '#000000');
 }
 
-const getLensUsername = async (wallet: string) => {
-  // Use the existing Lens client to fetch account by address
-  const result = await fetchAccount(client, { address: wallet });
-
-  if (!result.isOk() || !result.value?.username?.localName) {
-    throw new Error('Failed to get Lens username');
-  }
-
-  return `@${result.value.username.localName}`;
-}
-
 const getEnsUsername = async (wallet: string) => {
   const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_ETHEREUM_PROVIDER);
 
@@ -122,21 +111,20 @@ const getEnsUsername = async (wallet: string) => {
 
 export const getMintLemonadePassportData = async (
   wallet: string,
-  ensForUserName: boolean,
-  lensForUserName: boolean,
-  fluffleTokenId: string, //-- if empty then use Lemonhead
+  ensForUserName?: boolean,
+  lemonadeUsername?: string,
+  fluffleTokenId?: string,
 ) => {
-  const passportData = await getData(wallet, fluffleTokenId);
+  const passportData = await getData(wallet, fluffleTokenId || '');
 
-  //-- must have a lemonhead to mint
   assert.ok(passportData && passportData.lemonheadTokenId);
 
-  let username = wallet.toLowerCase(); //-- fallback value
+  let username = wallet.toLowerCase();
 
-  if (ensForUserName) {
+  if (lemonadeUsername) {
+    username = lemonadeUsername;
+  } else if (ensForUserName) {
     username = await getEnsUsername(wallet);
-  } else if (lensForUserName) {
-    username = await getLensUsername(wallet);
   }
 
   assert.ok(username);
