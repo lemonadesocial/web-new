@@ -1,5 +1,43 @@
 # Changelog
 
+## [8.7.0](https://github.com/lemonadesocial/web-new/compare/v8.6.0...v8.7.0) (2025-10-13)
+
+
+### Features
+
+* missing / ([d4013f6](https://github.com/lemonadesocial/web-new/commit/d4013f604b3d27aae333ce77caa2b327722c56d6))
+* missing path ([bf45bff](https://github.com/lemonadesocial/web-new/commit/bf45bff6e278435afcec5b8968ffc182ffc8334a))
+
+## [8.6.0](https://github.com/lemonadesocial/web-new/compare/v8.5.0...v8.6.0) (2025-10-13)
+
+
+### Features
+
+* update layout profile owner ([adbd55c](https://github.com/lemonadesocial/web-new/commit/adbd55c4eee5bd56be80371869fea1f078fccc0b))
+
+
+### Bug Fixes
+
+* update bottom bar ([54219f0](https://github.com/lemonadesocial/web-new/commit/54219f09d2fd6800ce534bd5c10795e06f2ddd8c))
+
+## [8.5.0](https://github.com/lemonadesocial/web-new/compare/v8.4.1...v8.5.0) (2025-10-13)
+
+
+### Features
+
+* remove unused ([5d7d204](https://github.com/lemonadesocial/web-new/commit/5d7d2044c8983a834ece9650775d37b7aa2c47a8))
+* update lens_profile_id ([71d3e82](https://github.com/lemonadesocial/web-new/commit/71d3e8202bdabce9a866948faf395cbe20e51b80))
+* update query get user ([c73360e](https://github.com/lemonadesocial/web-new/commit/c73360e7b55a875a9d9cd867b98291d862bbbf2f))
+
+## [8.4.1](https://github.com/lemonadesocial/web-new/compare/v8.4.0...v8.4.1) (2025-10-10)
+
+
+### Bug Fixes
+
+* check timezone before parse ([1acccf2](https://github.com/lemonadesocial/web-new/commit/1acccf2c3cf2afdd7ad1ee1a9d50444485fbba8c))
+* remove farcaster login toast ([935d8be](https://github.com/lemonadesocial/web-new/commit/935d8bea0a4769dedd7940bf2a33a8d970c68d4b))
+* update event with timezone ([6e907c4](https://github.com/lemonadesocial/web-new/commit/6e907c4de8db26bec9da52ad98b601e74ea4085a))
+
 ## [8.4.0](https://github.com/lemonadesocial/web-new/compare/v8.3.0...v8.4.0) (2025-10-08)
 
 

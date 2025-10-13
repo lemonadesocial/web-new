@@ -1,12 +1,22 @@
-import { image, MediaImageMimeType, textOnly, event as eventMetadata } from "@lens-protocol/metadata";
-import { Account } from "@lens-protocol/client";
+import { image, MediaImageMimeType, textOnly, event as eventMetadata } from '@lens-protocol/metadata';
+import { Account } from '@lens-protocol/client';
 
 import { Event } from '$lib/graphql/generated/backend/graphql';
 
-import { MediaFile } from "../file";
-import { randomUserImage } from "../user";
+import { MediaFile } from '../file';
+import { randomUserImage } from '../user';
 
-export function generatePostMetadata({ content, images, event, gif }: { content: string, images?: MediaFile[]; event?: Event; gif?: string }) {
+export function generatePostMetadata({
+  content,
+  images,
+  event,
+  gif,
+}: {
+  content: string;
+  images?: MediaFile[];
+  event?: Event;
+  gif?: string;
+}) {
   if (event) {
     return eventMetadata({
       location: event.shortid,
@@ -19,16 +29,20 @@ export function generatePostMetadata({ content, images, event, gif }: { content:
   }
 
   if (gif) {
-    const attachments = [{
-      item: gif,
-      type: MediaImageMimeType.GIF,
-    }];
+    const attachments = [
+      {
+        item: gif,
+        type: MediaImageMimeType.GIF,
+      },
+    ];
 
     if (images?.length) {
-      attachments.push(...images.map(image => ({
-        item: image.url,
-        type: image.type as MediaImageMimeType,
-      })));
+      attachments.push(
+        ...images.map((image) => ({
+          item: image.url,
+          type: image.type as MediaImageMimeType,
+        })),
+      );
     }
 
     return image({
@@ -37,7 +51,7 @@ export function generatePostMetadata({ content, images, event, gif }: { content:
         item: gif,
         type: MediaImageMimeType.GIF,
       },
-      attachments
+      attachments,
     });
   }
 
@@ -48,7 +62,7 @@ export function generatePostMetadata({ content, images, event, gif }: { content:
         item: images[0].url,
         type: images[0].type as MediaImageMimeType,
       },
-      attachments: images.map(image => ({
+      attachments: images.map((image) => ({
         item: image.url,
         type: image.type as MediaImageMimeType,
       })),
@@ -62,9 +76,13 @@ export function getAccountAvatar(account: Account) {
   return account.metadata?.picture || randomUserImage(account.owner);
 }
 
+export function getAccountCover(account: Account) {
+  return account.metadata?.coverPicture;
+}
+
 export function getUsernameValidationMessage(validationResult: any, usernameLength?: number): string {
   const requiredRules = validationResult.unsatisfiedRules?.required || [];
-  
+
   const tokenRule = requiredRules.find((rule: any) => rule.reason === 'TOKEN_GATED_NOT_A_TOKEN_HOLDER');
   if (tokenRule) {
     const config = tokenRule.config || [];
@@ -89,18 +107,20 @@ export function getUsernameValidationMessage(validationResult: any, usernameLeng
           const length = override.dictionary?.find((d: any) => d.key === 'length')?.int;
           return length === usernameLength;
         });
-        
+
         if (specificOverride) {
           const amount = specificOverride.dictionary?.find((d: any) => d.key === 'amount')?.bigDecimal;
           return `You do not have sufficient balance. Username with ${usernameLength} ${usernameLength > 1 ? 'characters' : 'character'} costs ${amount} ${symbol}.`;
         }
       }
-      
-      const pricingInfo = overrides.map((override: any) => {
-        const length = override.dictionary?.find((d: any) => d.key === 'length')?.int;
-        const amount = override.dictionary?.find((d: any) => d.key === 'amount')?.bigDecimal;
-        return `${length} chars: ${amount} ${symbol}`;
-      }).join(', ');
+
+      const pricingInfo = overrides
+        .map((override: any) => {
+          const length = override.dictionary?.find((d: any) => d.key === 'length')?.int;
+          const amount = override.dictionary?.find((d: any) => d.key === 'amount')?.bigDecimal;
+          return `${length} chars: ${amount} ${symbol}`;
+        })
+        .join(', ');
 
       return `Username pricing: ${pricingInfo}`;
     }
@@ -109,4 +129,4 @@ export function getUsernameValidationMessage(validationResult: any, usernameLeng
   if (requiredRules[0]) return requiredRules[0].message;
 
   return validationResult.reason || 'Unknown error';
-};
+}

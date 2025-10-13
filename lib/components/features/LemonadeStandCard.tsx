@@ -1,8 +1,8 @@
 'use client';
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
-import { useAccount } from "$lib/hooks/useLens";
-import { useMe } from "$lib/hooks/useMe";
+import { useAccount } from '$lib/hooks/useLens';
+import { useMe } from '$lib/hooks/useMe';
 
 export function LemonadeStandCard() {
   const router = useRouter();
@@ -14,7 +14,7 @@ export function LemonadeStandCard() {
   return (
     <div
       className="hidden lg:block rounded-md border p-4 space-y-4 cursor-pointer"
-      onClick={() => router.push(`/profile`)}
+      onClick={() => router.push(`/profile/${account.address || me.username}`)}
     >
       <div className="flex justify-between">
         <div className="size-14 bg-warning-300/16 rounded-full flex items-center justify-center">
