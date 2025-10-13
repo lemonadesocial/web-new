@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.7.0](https://github.com/lemonadesocial/web-new/compare/v8.6.0...v8.7.0) (2025-10-13)
+
+
+### Features
+
+* missing / ([d4013f6](https://github.com/lemonadesocial/web-new/commit/d4013f604b3d27aae333ce77caa2b327722c56d6))
+* missing path ([bf45bff](https://github.com/lemonadesocial/web-new/commit/bf45bff6e278435afcec5b8968ffc182ffc8334a))
+
 ## [8.6.0](https://github.com/lemonadesocial/web-new/compare/v8.5.0...v8.6.0) (2025-10-13)
 
 
