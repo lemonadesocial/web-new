@@ -11,57 +11,60 @@ export type SiwePayload = {
 export const useUnicornWalletSignature = () => {
   const account = useAccount();
   const { disconnect } = useDisconnect();
-  const { signMessage } = useSignMessage();
+  const { signMessageAsync } = useSignMessage();
 
   const [authCookie, setAuthCookie] = useState<string>();
   const [siwe, setSiwe] = useState<SiwePayload | null>();
 
   const sign = async () => {
-    if (!account.address) {
+    console.log("sign with account address", account?.address);
+
+    if (!account?.address) {
       return;
     }
 
-    //-- request payload from backend
-    const data = await getUserWalletRequest(account.address);
+    try {
+      //-- request payload from backend
+      const data = await getUserWalletRequest(account.address);
 
-    const message = data.message;
+      console.log("data", data);
 
-    const siwe = await new Promise<SiwePayload>((resolve) =>
-      signMessage(
-        { message },
-        {
-          onSuccess: (signature) => {
-            // setSignature(signature);
-            resolve({ wallet_signature: signature, wallet_signature_token: data.token });
-          },
-          onError: () => {
-            if (account.isConnected) {
-              disconnect();
-            }
-          },
-        },
-      ),
-    );
+      const message = data.message;
 
-    setSiwe(siwe);
+      console.log("signing message with account", account);
+
+      // Use Thirdweb's signMessage which works with in-app wallets
+      const signature = await signMessageAsync({
+        message
+      });
+
+      console.log("signature received", signature);
+
+      const siwePayload = {
+        wallet_signature: signature,
+        wallet_signature_token: data.token
+      };
+
+      console.log("siwe payload", siwePayload);
+
+      setSiwe(siwePayload);
+    } catch (error) {
+      console.log("signMessage error", error);
+      disconnect();
+    }
   };
 
   useEffect(() => {
-    if (authCookie) {
+    if (authCookie && account?.address) {
+      console.log("sign");
       sign();
     } else {
       setSiwe(null);
     }
-  }, [authCookie]);
+  }, [authCookie, account?.address]);
 
   useEffect(() => {
-    if (account.isDisconnected) {
-      setSignature('');
-    }
-  }, [account.isDisconnected]);
-
-  useEffect(() => {
-    const params = new URL(window.location.search).searchParams;
+    const params = new URLSearchParams(window.location.search);
 
     const authCookie = params.get('authCookie');
 

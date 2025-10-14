@@ -22,6 +22,8 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
   const [status, setStatus] = useState<'processing' | 'linking' | 'link-options' | 'creating' | 'linked' | 'processed'>('processing');
 
   const handleLogin = async (identifier: string, cookie: string, siwe: SiwePayload) => {
+    console.log("handleLogin", identifier, cookie, siwe);
+
     const loginFlow = await ory!.createBrowserLoginFlow().then((response) => response.data);
 
     await handlePasswordLogin({
@@ -35,6 +37,7 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
         }
       },
       onSuccess: () => {
+        console.log("handleLogin onSuccess");
         onSuccess?.(true);
       },
     });
@@ -92,13 +95,18 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
   };
 
   const processCookie = async (cookie: string, siwe: SiwePayload) => {
+    console.log("processCookie", cookie, siwe);
     try {
       const response = await getUnicornCanLink(cookie);
 
+      console.log("canlink response", response);
+
       if (response.identityId) {
+        console.log("identityId", response.identityId);
         //-- perform login
         if (session && session._id === response.identityId) {
           //-- do nothing, this is the same user
+          console.log("same user");
           onSuccess?.(false);
           setStatus('processed');
           return;
@@ -106,17 +114,20 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
 
         if (session) {
           //-- raw logout, do not reload page
+          console.log("raw logout");
           await logOut();
         }
 
         //-- then login with wallet
 
+        console.log("authCookie", authCookie);
         const identifier = authCookie?.storedToken.authDetails.walletAddress?.toLowerCase();
 
         assert.ok(identifier, 'No wallet address in Unicorn auth cookie');
 
         await handleLogin(identifier, cookie, siwe);
 
+        console.log("handleLogin fisnihed ");
         setStatus('processed');
         return;
       }
@@ -148,6 +159,7 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
   }
 
   useEffect(() => {
+    console.log("useEffect", cookie, siwe);
     if (cookie && siwe) {
       processCookie(cookie, siwe);
     }
