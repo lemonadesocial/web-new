@@ -1,5 +1,18 @@
 # Changelog
 
+## [8.8.0](https://github.com/lemonadesocial/web-new/compare/v8.7.0...v8.8.0) (2025-10-14)
+
+
+### Features
+
+* resolve conflict ([c461a33](https://github.com/lemonadesocial/web-new/commit/c461a33527e6d68f91e52a4f7681b7dce28f1376))
+* update self settings button ([5b37e00](https://github.com/lemonadesocial/web-new/commit/5b37e00478c4d1571d8cf5075082f687f39a8c22))
+
+
+### Bug Fixes
+
+* missing stats ([2d79cd9](https://github.com/lemonadesocial/web-new/commit/2d79cd926120446f8161b0998eed8bcaef9c58be))
+
 ## [8.7.0](https://github.com/lemonadesocial/web-new/compare/v8.6.0...v8.7.0) (2025-10-13)
 
 
