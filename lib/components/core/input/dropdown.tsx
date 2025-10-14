@@ -83,6 +83,8 @@ export function DropdownTags(props: DropdownTagsProps) {
     setSelected((prev) => prev?.filter((o) => o.key !== item.key));
   };
 
+  const options = props.options.filter((item) => !query || item.value.toLowerCase().includes(query.toLowerCase()) || item.key.toString().toLowerCase().includes(query.toLowerCase()));
+
   return (
     <Menu.Root>
       <Menu.Trigger>
@@ -120,9 +122,7 @@ export function DropdownTags(props: DropdownTagsProps) {
               </div>
             </fieldset>
             <div className="p-2 max-h-[200px] overflow-auto no-scrollbar">
-              {props.options
-                .filter((item) => !query || item.value.includes(query.toLowerCase()))
-                .map((item) => (
+              {options.map((item) => (
                   <MenuItem
                     key={item.key}
                     title={item.value}
@@ -136,6 +136,7 @@ export function DropdownTags(props: DropdownTagsProps) {
                         props.onSelect?.(result);
                       }
                       toggle();
+                      setQuery('');
                     }}
                   />
                 ))}
