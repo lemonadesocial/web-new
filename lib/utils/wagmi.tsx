@@ -6,7 +6,7 @@ import { inAppWalletConnector } from "@thirdweb-dev/wagmi-adapter";
 import { ThirdwebProvider } from "thirdweb/react";
 import { createThirdwebClient, defineChain } from "thirdweb";
 import { mainnet } from "wagmi/chains";
-import * as ConnectKit from "connectkit";
+import { getDefaultConfig } from "connectkit";
 import { createContext, useContext, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 
@@ -19,7 +19,7 @@ const client = createThirdwebClient({
 
 const chain = defineChain(mainnet.id);
 
-const defaultConfig = ConnectKit.getDefaultConfig({
+const defaultConfig = getDefaultConfig({
   // Required API Keys
   walletConnectProjectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || "",
   // Required App Info
@@ -51,7 +51,6 @@ const config = createConfig(defaultConfig);
 const queryClient = new QueryClient();
 
 const context = createContext<{ authCookie: string }>({ authCookie: '' });
-
 const UnicornAuthCookieProvider = context.Provider;
 
 export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
