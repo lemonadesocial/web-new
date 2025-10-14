@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.8.1](https://github.com/lemonadesocial/web-new/compare/v8.8.0...v8.8.1) (2025-10-14)
+
+
+### Bug Fixes
+
+* missing address user info stats ([193be7e](https://github.com/lemonadesocial/web-new/commit/193be7eb223316ca34ae7542cc87e0d3bc23c765))
+
 ## [8.8.0](https://github.com/lemonadesocial/web-new/compare/v8.7.0...v8.8.0) (2025-10-14)
 
 
