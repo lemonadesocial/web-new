@@ -17,7 +17,6 @@ import { Chain } from '$lib/graphql/generated/backend/graphql';
 
 import { getListChains } from './crypto';
 
-
 export const getAppKitNetwork = (chain: Chain) => {
   return {
     id: Number(chain.chain_id),
@@ -46,24 +45,18 @@ export const getAppKitNetwork = (chain: Chain) => {
 let appKit: ReturnType<typeof createAppKit>;
 
 export function initializeAppKit() {
-  const networks = getListChains()
-    .filter((chain) => chain.tokens?.length)
-    .map((chain) => getAppKitNetwork(chain)) as [AppKitNetwork, ...AppKitNetwork[]];
-
-  const projectId = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID as string;
-
   appKit = createAppKit({
-    adapters: [
-      new EthersAdapter(),
-    ],
-    networks,
+    adapters: [new EthersAdapter()],
+    networks: getListChains()
+      .filter((chain) => chain.tokens?.length)
+      .map((chain) => getAppKitNetwork(chain)) as [AppKitNetwork, ...AppKitNetwork[]],
     metadata: {
       name: 'Lemonade',
       description: 'Discover events & communities, find your tribe! Create your own Lemonade Stand to build and collaborate with creators across the world. #makelemonade',
       url: window.location.origin,
       icons: [''],
     },
-    projectId,
+    projectId: process.env.NEXT_PUBLIC_REOWN_PROJECT_ID as string,
     themeVariables: {
       '--w3m-font-family': 'var(--font-general-sans)',
       '--w3m-accent': 'var(--color-accent-400)',
