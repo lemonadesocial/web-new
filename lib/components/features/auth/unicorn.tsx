@@ -12,12 +12,15 @@ import { getUnicornCanLink, linkUnicornWallet } from "$lib/services/unicorn/api"
 import { toast } from '$lib/components/core';
 
 import { SiwePayload, useUnicornWalletSignature } from "../unicorn/client";
+import { useMutation } from '$lib/graphql/request';
+import { SyncUserUnicornWalletDocument } from '$lib/graphql/generated/backend/graphql';
 
 export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: boolean) => void) => {
   const session = useSession();
   const logOut = useRawLogout();
   const authCookie = useMemo(() => decodeAuthCookie(cookie), [cookie]);
   const { siwe } = useUnicornWalletSignature(cookie);
+  const [syncUserUnicornWallet] = useMutation(SyncUserUnicornWalletDocument);
 
   const [status, setStatus] = useState<'processing' | 'linking' | 'link-options' | 'creating' | 'linked' | 'processed'>('processing');
 
@@ -35,8 +38,13 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
         }
       },
       onSuccess: () => {
-        //-- call here 
-        onSuccess?.(true);
+        syncUserUnicornWallet({}).then(
+          () => {
+            onSuccess?.(true);
+          }
+        ).catch(e => {
+          toast.error(e.message);
+        })
       },
     });
   }

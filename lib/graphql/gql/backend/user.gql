@@ -89,3 +89,7 @@ query GetUser($id: MongoID, $username: String, $email: String, $lens_profile_id:
 mutation deleteUser {
   deleteUser
 }
+
+mutation syncUserUnicornWallet {
+  syncUserUnicornWallet
+}
