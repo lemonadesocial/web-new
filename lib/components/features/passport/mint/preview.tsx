@@ -1,16 +1,13 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ASSET_PREFIX } from '$lib/utils/constants';
-import { PassportStep, usePassportContext } from './provider';
 import { format } from 'date-fns';
+
+import { ASSET_PREFIX } from '$lib/utils/constants';
+import { usePassportContext } from './provider';
 import { Skeleton } from '$lib/components/core';
 
 export function PassportPreview({ loading }: { loading?: boolean }) {
-  const [state] = usePassportContext();
-
-  if (state.currentStep === PassportStep.celebrate) return null;
-
   return (
     <>
       <ImagePreview className="md:hidden" loading={loading} />

@@ -1,17 +1,18 @@
 'use client';
 import { useState } from 'react';
 import { Eip1193Provider, ethers } from 'ethers';
+import { useAtomValue } from 'jotai';
+import * as Sentry from '@sentry/nextjs';
 
 import { Button, modal, ModalContent, toast } from '$lib/components/core';
 import { ASSET_PREFIX } from '$lib/utils/constants';
-import { useAppKitProvider } from '$lib/utils/appkit';
+import { appKit, useAppKitProvider } from '$lib/utils/appkit';
 import { formatError, LemonadePassportContract, writeContract } from '$lib/utils/crypto';
 import { SignTransactionModal } from '$lib/components/features/modals/SignTransaction';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
-import { SuccessModal } from '$lib/components/features/modals/SuccessModal';
 import { PASSPORT_CHAIN_ID } from '../utils';
-import { useAtomValue } from 'jotai';
 import { chainsMapAtom } from '$lib/jotai';
+import LemonadePassport from '$lib/abis/LemonadePassport.json';
 
 type MintData = {
   signature: string;
@@ -23,7 +24,7 @@ export function MintPassportModal({
   onComplete,
   mintData 
 }: { 
-  onComplete: () => void;
+  onComplete: (txHash: string, tokenId: string) => void;
   mintData: MintData;
 }) {
   const { walletProvider } = useAppKitProvider('eip155');
@@ -53,12 +54,42 @@ export function MintPassportModal({
         { value: mintData.price }
       );
 
+      const txHash = transaction.hash;
+
       setStatus('confirming');
 
-      await transaction.wait();
+      const receipt = await transaction.wait();
+      const iface = new ethers.Interface(LemonadePassport.abi);
 
-      onComplete();
+      let parsedTransferLog: any = null;
+
+      receipt.logs.some((log: any) => {
+        try {
+          const parsedLog = iface.parseLog(log);
+          if (parsedLog?.name === 'Transfer') {
+            parsedTransferLog = parsedLog;
+            return true;
+          }
+
+          return false;
+        } catch (error) {
+          return false;
+        }
+      });
+
+      let tokenId = '';
+
+      if (parsedTransferLog) {
+        tokenId = parsedTransferLog.args?.tokenId?.toString();
+      }
+
+      onComplete(txHash, tokenId);
     } catch (error: any) {
+      Sentry.captureException(error, {
+        extra: {
+          walletInfo: appKit.getWalletInfo(),
+        },
+      });
       toast.error(formatError(error));
       setStatus('none');
     }

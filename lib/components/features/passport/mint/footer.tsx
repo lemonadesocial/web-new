@@ -47,7 +47,10 @@ export function PassportFooter() {
             onContinue: () => {
               modal.open(MintPassportModal, {
                 props: { 
-                  onComplete: () => dispatch({ type: PassportActionKind.NextStep }),
+                  onComplete: (txHash, tokenId) => {
+                    dispatch({ type: PassportActionKind.SetMintState, payload: { txHash, tokenId } });
+                    dispatch({ type: PassportActionKind.NextStep });
+                  },
                   mintData: state.mintData!,
                 },
               });
