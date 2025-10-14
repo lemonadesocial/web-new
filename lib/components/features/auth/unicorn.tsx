@@ -17,7 +17,7 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
   const session = useSession();
   const logOut = useRawLogout();
   const authCookie = useMemo(() => decodeAuthCookie(cookie), [cookie]);
-  const { siwe } = useUnicornWalletSignature();
+  const { siwe } = useUnicornWalletSignature(cookie);
 
   const [status, setStatus] = useState<'processing' | 'linking' | 'link-options' | 'creating' | 'linked' | 'processed'>('processing');
 
@@ -99,14 +99,10 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
     try {
       const response = await getUnicornCanLink(cookie);
 
-      console.log("canlink response", response);
-
       if (response.identityId) {
-        console.log("identityId", response.identityId);
         //-- perform login
         if (session && session._id === response.identityId) {
           //-- do nothing, this is the same user
-          console.log("same user");
           onSuccess?.(false);
           setStatus('processed');
           return;
@@ -114,20 +110,16 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
 
         if (session) {
           //-- raw logout, do not reload page
-          console.log("raw logout");
           await logOut();
         }
 
         //-- then login with wallet
-
-        console.log("authCookie", authCookie);
         const identifier = authCookie?.storedToken.authDetails.walletAddress?.toLowerCase();
 
         assert.ok(identifier, 'No wallet address in Unicorn auth cookie');
 
         await handleLogin(identifier, cookie, siwe);
 
-        console.log("handleLogin fisnihed ");
         setStatus('processed');
         return;
       }
@@ -159,7 +151,6 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
   }
 
   useEffect(() => {
-    console.log("useEffect", cookie, siwe);
     if (cookie && siwe) {
       processCookie(cookie, siwe);
     }
