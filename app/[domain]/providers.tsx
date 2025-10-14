@@ -12,21 +12,25 @@ import { defaultClient } from '$lib/graphql/request/instances';
 import { useResumeSession as useLensResumeSession } from '$lib/hooks/useLens';
 import { useAuth } from '../../lib/hooks/useAuth';
 import { GetMeDocument, User } from '$lib/graphql/generated/backend/graphql';
+import { Web3Provider } from '$lib/utils/wagmi';
+import { Config } from "wagmi";
 
 export default function Providers({ children, space }: { children: React.ReactNode; space?: SpaceHydraKeys | null }) {
   const [miniAppReady, setMiniAppReady] = useState(false);
   const chainsLoading = useListChains();
   const setHydraClientId = useSetAtom(hydraClientIdAtom);
   const [appKitReady, setAppKitReady] = useState(false);
+  const [wagmiConfig, setWagmiConfig] = useState<Config>();
   useLensResumeSession();
 
   const { reload, loading: loadingAuth } = useAuth(space?.hydra_client_id);
   const session = useAtomValue(sessionAtom);
   const setUser = useSetAtom(userAtom);
-  
+
   useEffect(() => {
     if (!chainsLoading) {
-      initializeAppKit();
+      const { wagmiAdapter } = initializeAppKit();
+      setWagmiConfig(wagmiAdapter.wagmiConfig);
       setAppKitReady(true);
     }
   }, [chainsLoading]);
@@ -57,7 +61,7 @@ export default function Providers({ children, space }: { children: React.ReactNo
       });
       return;
     }
-    
+
     setUser(null);
   }, [session]);
 
@@ -65,7 +69,9 @@ export default function Providers({ children, space }: { children: React.ReactNo
 
   return (
     <GraphqlClientProvider client={defaultClient}>
-      {children}
+      {wagmiConfig && <Web3Provider config={wagmiConfig}>
+        {children}
+      </Web3Provider>}
     </GraphqlClientProvider>
   );
 }
