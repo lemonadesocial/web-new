@@ -24,8 +24,6 @@ export const useUnicornWalletSignature = (authCookie: string) => {
       //-- request payload from backend
       const data = await getUserWalletRequest(account.address);
 
-      console.log("data", data);
-
       const message = data.message;
 
       // Use Thirdweb's signMessage which works with in-app wallets

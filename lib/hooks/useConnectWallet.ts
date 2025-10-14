@@ -16,7 +16,6 @@ export function useConnectWallet(targetChain?: Chain) {
   }, [isConnected, chainId, targetChain]);
 
   useEffect(() => {
-    console.log(isConnected)
     if (
       isConnected &&
       targetChain &&
