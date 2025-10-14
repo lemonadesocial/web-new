@@ -63,7 +63,7 @@ export function UserProfilePane({ username, address }: Props) {
             containerClass={clsx('hidden md:block [&>.user-dp]:size-24', user?.cover_expanded ? 'h-[200px]!' : 'h-32!')}
             user={user}
           />
-          <UserProfileInfo user={user} />
+          <UserProfileInfo user={user} address={address} />
         </div>
 
         <UserProfileTabs user={user} address={address} containerClass="px-4" contentClass="p-4" />
