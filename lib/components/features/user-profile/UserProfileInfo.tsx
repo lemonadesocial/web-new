@@ -7,8 +7,7 @@ import { twMerge } from 'tailwind-merge';
 
 export function UserProfileInfo({ user, address }: { user: User; address?: string }) {
   const account = isAddress(address) ? ({ address } as Account) : null;
-  // const { stats } = useAccountStats(account);
-  const stats = {};
+  const { stats } = useAccountStats(account);
 
   return (
     <div className="flex flex-col gap-3">
