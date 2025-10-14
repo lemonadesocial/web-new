@@ -8,17 +8,14 @@ export type SiwePayload = {
   wallet_signature_token: string;
 }
 
-export const useUnicornWalletSignature = () => {
+export const useUnicornWalletSignature = (authCookie: string) => {
   const account = useAccount();
   const { disconnect } = useDisconnect();
   const { signMessageAsync } = useSignMessage();
 
-  const [authCookie, setAuthCookie] = useState<string>();
   const [siwe, setSiwe] = useState<SiwePayload | null>();
 
   const sign = async () => {
-    console.log("sign with account address", account?.address);
-
     if (!account?.address) {
       return;
     }
@@ -31,21 +28,15 @@ export const useUnicornWalletSignature = () => {
 
       const message = data.message;
 
-      console.log("signing message with account", account);
-
       // Use Thirdweb's signMessage which works with in-app wallets
       const signature = await signMessageAsync({
         message
       });
 
-      console.log("signature received", signature);
-
       const siwePayload = {
         wallet_signature: signature,
         wallet_signature_token: data.token
       };
-
-      console.log("siwe payload", siwePayload);
 
       setSiwe(siwePayload);
     } catch (error) {
@@ -56,20 +47,11 @@ export const useUnicornWalletSignature = () => {
 
   useEffect(() => {
     if (authCookie && account?.address) {
-      console.log("sign");
       sign();
     } else {
       setSiwe(null);
     }
-  }, [authCookie, account?.address]);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    const authCookie = params.get('authCookie');
-
-    setAuthCookie(authCookie || '');
-  }, []);
+  }, [authCookie, account]);
 
   return { siwe };
 };
