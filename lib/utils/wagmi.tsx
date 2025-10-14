@@ -8,6 +8,7 @@ import { createThirdwebClient, defineChain } from "thirdweb";
 import { mainnet } from "wagmi/chains";
 import * as ConnectKit from "connectkit";
 import { createContext, useContext, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 
 const thirdwebClientId =
   process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || "4e8c81182c3709ee441e30d776223354";
@@ -54,7 +55,8 @@ const context = createContext<{ authCookie: string }>({ authCookie: '' });
 const UnicornAuthCookieProvider = context.Provider;
 
 export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
-  const authCookie = useRef(new URLSearchParams(window.location.search).get('authCookie')).current;
+  const params = useSearchParams();
+  const authCookie = useRef(params.get('authCookie')).current;
 
   return (
     <UnicornAuthCookieProvider value={{ authCookie: authCookie || '' }}>
