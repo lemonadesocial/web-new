@@ -22,8 +22,6 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
   const [status, setStatus] = useState<'processing' | 'linking' | 'link-options' | 'creating' | 'linked' | 'processed'>('processing');
 
   const handleLogin = async (identifier: string, cookie: string, siwe: SiwePayload) => {
-    console.log("handleLogin", identifier, cookie, siwe);
-
     const loginFlow = await ory!.createBrowserLoginFlow().then((response) => response.data);
 
     await handlePasswordLogin({
@@ -37,7 +35,6 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
         }
       },
       onSuccess: () => {
-        console.log("handleLogin onSuccess");
         onSuccess?.(true);
       },
     });
@@ -95,7 +92,6 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
   };
 
   const processCookie = async (cookie: string, siwe: SiwePayload) => {
-    console.log("processCookie", cookie, siwe);
     try {
       const response = await getUnicornCanLink(cookie);
 

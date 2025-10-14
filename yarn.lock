@@ -5033,10 +5033,10 @@
   dependencies:
     "@babel/runtime" "^7.12.5"
 
-"@thirdweb-dev/engine@3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@thirdweb-dev/engine/-/engine-3.3.0.tgz#a658bd6ceb8a3280e0c3bceeee1fe5a1acd70d4a"
-  integrity sha512-kXpZ0uLOY6j9cZcepaS3O0jo+W33m9wGcdv7lmykYlNN+RTXinzn9cxJmBFGWh7DZREuRi98eDEs8+h6WTNa3A==
+"@thirdweb-dev/engine@3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@thirdweb-dev/engine/-/engine-3.2.1.tgz#22bdb941defa58df8494cffbb2cca7dce4d74183"
+  integrity sha512-JIIRmBjTSaLjIBk9h3QevCb3V5xXJlCEgjuAqbtviiCJKky+/9zr6IZBbZtO2w9Rq3F7PH+5pDFOKlwRpGU/kw==
   dependencies:
     "@hey-api/client-fetch" "0.10.0"
 
@@ -5045,10 +5045,10 @@
   resolved "https://registry.yarnpkg.com/@thirdweb-dev/insight/-/insight-1.1.1.tgz#e17673be7a4f8d3b0fe81e8505e2158247505273"
   integrity sha512-24oRscLTW9Mod+XpyLlusLxZIZjqQv0XFNSV4lR5u9eoRPaA/BG2HtlVPr0DUtguzTbEyBz98++s5UWleqchVg==
 
-"@thirdweb-dev/wagmi-adapter@^0.2.113":
-  version "0.2.163"
-  resolved "https://registry.yarnpkg.com/@thirdweb-dev/wagmi-adapter/-/wagmi-adapter-0.2.163.tgz#b192cbf79d39d2fe3d20e2195a3db04561b45698"
-  integrity sha512-MKvn+vzkQFT3pW46biJPk+me8P8Y5uigcpiR5ShE5UMbnkjrwOg/I9dXxmzwAN3ZkYOFi9xgJOwWLskf7dTU3g==
+"@thirdweb-dev/wagmi-adapter@^0.2.159":
+  version "0.2.159"
+  resolved "https://registry.yarnpkg.com/@thirdweb-dev/wagmi-adapter/-/wagmi-adapter-0.2.159.tgz#13b1f3384aacad1d63ad1614153b9c39031155bb"
+  integrity sha512-K1xkBob5hNoplvoxjbvtmj+fE2PUkrWCfedROZgylqKkymCdPxTx2e/8q1WgZUIIuYlord0uKH/3GOZpWOPfsQ==
 
 "@tiptap/core@^2.14.0":
   version "2.14.0"
@@ -7878,7 +7878,7 @@ concat-map@0.0.1:
   resolved "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz"
   integrity sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==
 
-connectkit@^1.9.0:
+connectkit@^1.9.1:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/connectkit/-/connectkit-1.9.1.tgz#4a9649189a30ee666a7d897d4c0e9a52483f4b1e"
   integrity sha512-ac9Ki3+HdS3l5NCa6H86y7R+0PqwJ8yzsBQVtWk4/jkFo+JJioetO43A/Q0O7VtxLbfuLLfwDGZ09taePLNzfQ==
@@ -14310,10 +14310,10 @@ text-encoding-utf-8@^1.0.2:
   resolved "https://registry.yarnpkg.com/text-encoding-utf-8/-/text-encoding-utf-8-1.0.2.tgz#585b62197b0ae437e3c7b5d0af27ac1021e10d13"
   integrity sha512-8bw4MY9WjdsD2aMtO0OzOCY3pXGYNx2d2FfHRVUKkiCPDWjKuOlhLVASS+pD7VkLTVjW268LYJHwsnPFlBpbAg==
 
-thirdweb@^5.105.16:
-  version "5.108.13"
-  resolved "https://registry.yarnpkg.com/thirdweb/-/thirdweb-5.108.13.tgz#2c0fae5e0807d88c72116ef8aa2deb678f5a1625"
-  integrity sha512-OdqnWVSwsiaONX4T2aSVb/nwerSpi3d75MOsvd2pSjHWr9kSrGK61Xowk3/JgjVqpscV1+EX1Fs1xUDwXl0hPA==
+thirdweb@^5.108.9:
+  version "5.108.9"
+  resolved "https://registry.yarnpkg.com/thirdweb/-/thirdweb-5.108.9.tgz#51be8e0359e0fbc731c5e67da559a121ca2a0cf7"
+  integrity sha512-XA67fIwm148A+ggyxgHYxR/Rhddwf5ZguJHY//MhS6q2OnLhck5leAkvt98yXOfNfjXU/8//qsSJ6r5RmGJivQ==
   dependencies:
     "@coinbase/wallet-sdk" "4.3.0"
     "@emotion/react" "11.14.0"
@@ -14327,7 +14327,7 @@ thirdweb@^5.105.16:
     "@radix-ui/react-tooltip" "1.2.7"
     "@storybook/react" "9.0.15"
     "@tanstack/react-query" "5.81.5"
-    "@thirdweb-dev/engine" "3.3.0"
+    "@thirdweb-dev/engine" "3.2.1"
     "@thirdweb-dev/insight" "1.1.1"
     "@walletconnect/sign-client" "2.21.8"
     "@walletconnect/universal-provider" "2.21.8"
@@ -15133,7 +15133,7 @@ w3c-xmlserializer@^5.0.0:
   dependencies:
     xml-name-validator "^5.0.0"
 
-wagmi@^2.15.6:
+wagmi@^2.15.6, wagmi@^2.17.5:
   version "2.17.5"
   resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.17.5.tgz#aa026818af2998b79de2be09a2add7afeb77b500"
   integrity sha512-Sk2e40gfo68gbJ6lHkpIwCMkH76rO0+toCPjf3PzdQX37rZo9042DdNTYcSg3zhnx8abFJtrk/5vAWfR8APTDw==
