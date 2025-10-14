@@ -1,8 +1,7 @@
 'use client';
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import { trpc } from '$lib/trpc/client';
-import { PassportIntro, PassportPhoto, PassportClaim, PassportCelebrate, PassportUsername } from './steps';
+import { PassportIntro, PassportPhoto, PassportCelebrate, PassportUsername } from './steps';
 
 export enum PassportStep {
   'intro' = 'intro',
@@ -32,6 +31,10 @@ export type PassportState = {
     price: string;
     metadata: string;
   };
+  mintState?: {
+    txHash: string;
+    tokenId: string;
+  };
 };
 
 const defaultState: PassportState = {
@@ -49,6 +52,7 @@ const defaultState: PassportState = {
   photo: '',
   passportImage: '',
   mintData: undefined,
+  mintState: undefined,
 };
 
 export enum PassportActionKind {
@@ -61,6 +65,7 @@ export enum PassportActionKind {
   SetMintData = 'SET_MINT_DATA',
   SetPhoto = 'SET_PHOTO',
   SetPassportImage = 'SET_PASSPORT_IMAGE',
+  SetMintState = 'SET_MINT_STATE',
 }
 
 export type PassportAction = { type: PassportActionKind; payload?: any };
@@ -133,6 +138,9 @@ function reducers(state: PassportState, action: PassportAction) {
 
     case PassportActionKind.SetPassportImage:
       return { ...state, passportImage: action.payload };
+
+    case PassportActionKind.SetMintState:
+      return { ...state, mintState: { ...state.mintState, ...action.payload } };
 
     default:
       return state;

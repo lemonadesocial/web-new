@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 
 import Header from '$lib/components/layouts/header';
-import { PassportActionKind, PassportProvider, usePassportContext } from './provider';
+import { PassportActionKind, PassportProvider, PassportStep, usePassportContext } from './provider';
 import { PassportFooter } from './footer';
 import { PassportPreview } from './preview';
 import { useAppKitAccount } from '$lib/utils/appkit';
@@ -56,7 +56,9 @@ function Content() {
       <div className="flex-1 flex flex-col">
         <div className="w-full max-w-[1200px] h-full mx-auto flex flex-col-reverse md:flex-row gap-6 md:gap-18 p-4 md:p-0 overflow-auto">
           <Comp />
-          <PassportPreview loading={loading} />
+          {
+            state.currentStep !== PassportStep.celebrate && <PassportPreview loading={loading} />
+          }
         </div>
       </div>
 

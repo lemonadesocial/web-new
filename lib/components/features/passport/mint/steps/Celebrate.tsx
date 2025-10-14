@@ -1,24 +1,23 @@
 'use client';
 import React from 'react';
-import { useAppKitAccount } from '@reown/appkit/react';
 import Player from 'video.js/dist/types/player';
 import { isMobile } from 'react-device-detect';
 import videojs from 'video.js';
+import { twMerge } from 'tailwind-merge';
 
 import { Card, Button, drawer, modal, Divider } from '$lib/components/core';
-import { PassportActionKind, PassportStep, usePassportContext } from '../provider';
+import { usePassportContext } from '../provider';
 import { ETHERSCAN } from '$lib/utils/constants';
 import { Pane } from '$lib/components/core/pane/pane';
 import { PostComposerModal } from '$lib/components/features/lens-feed/PostComposerModal';
-import { twMerge } from 'tailwind-merge';
 
 export function PassportCelebrate() {
-  const [state, dispatch] = usePassportContext();
-
   const videoRef = React.useRef(null);
   const playerRef = React.useRef<Player>(null);
 
   const [mute, setMute] = React.useState(true);
+  const [state] = usePassportContext();
+  const tokenId = state.mintState?.tokenId;
 
   React.useEffect(() => {
     if (videoRef.current && !playerRef.current) {
@@ -39,7 +38,11 @@ export function PassportCelebrate() {
     }
   }, [videoRef.current, isMobile]);
 
-  const handleShare = () => drawer.open(SharedPassportPane);
+  const handleShare = () => drawer.open(SharedPassportPane, {
+    props: {
+      tokenId: tokenId!,
+    }
+  });
 
   return (
     <div className="flex-1 h-full relative max-w-[612] md:mx-auto">
@@ -47,7 +50,7 @@ export function PassportCelebrate() {
         <div className="flex-1 flex flex-col items-center gap-11 pt-6 pb-11 max-sm:justify-center w-full">
           <Card.Root className="w-full">
             <Card.Content className="aspect-square flex items-center justify-center">
-              <p className="text-lg md:text-2xl">REPLACE IMAGE FROM BE HERE</p>
+              <img src={`/api/og/passport?tokenId=${tokenId}`} />
             </Card.Content>
           </Card.Root>
 
@@ -61,7 +64,7 @@ export function PassportCelebrate() {
               <Button
                 iconRight="icon-arrow-outward"
                 variant="tertiary-alt"
-                // onClick={() => window.open(`${ETHERSCAN}/tx/${state.mintData?.txHash}`)}
+                onClick={() => window.open(`${ETHERSCAN}/tx/${state.mintState?.txHash}`)}
               >
                 View txn.
               </Button>
@@ -82,7 +85,7 @@ export function PassportCelebrate() {
           autoPlay
           loop
           ref={videoRef}
-          muted={state.mint.mute}
+          muted={mute}
           playsInline
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         ></video>
@@ -91,10 +94,12 @@ export function PassportCelebrate() {
   );
 }
 
-const shareUrl = 'https://lemonade.social/passport/mint';
 const shareText = 'Just claimed my LemonHead Passport Fully onchain, totally me. Yours is waiting—go mint it now → ';
 
-function SharedPassportPane() {
+function SharedPassportPane({ tokenId }: { tokenId: string }) {
+  console.log(tokenId)
+  const shareUrl = `${window.location.origin}/api/og/passport?tokenId=${tokenId}`;
+
   const handleShare = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
@@ -149,11 +154,11 @@ function SharedPassportPane() {
 
         <Card.Root className="w-full">
           <Card.Content className="aspect-square flex items-center justify-center">
-            <p className="text-md">REPLACE IMAGE FROM BE HERE</p>
+            <img src={shareUrl} />
           </Card.Content>
         </Card.Root>
 
-        <a className="w-full" download>
+        <a className="w-full" href={shareUrl} download={`lemonade-passport-${tokenId}.png`}>
           <Button iconLeft="icon-vertical-align-top rotate-180" className="w-full" variant="secondary">
             Download Share Card
           </Button>
@@ -178,100 +183,5 @@ function SharedPassportPane() {
         </div>
       </Pane.Content>
     </Pane.Root>
-  );
-}
-
-export function PassportCelebrateOld() {
-  const [state] = usePassportContext();
-  const { address } = useAppKitAccount();
-
-  if (state.currentStep !== PassportStep.celebrate) return null;
-
-  const shareText = encodeURIComponent(`Just claimed my Lemonade Passport 🎉 Join me on-chain!`);
-  const shareUrl = encodeURIComponent(`${window.location.origin}/passport`);
-
-  return (
-    <div className="flex-1 flex flex-col gap-8 items-center justify-center text-center px-4">
-      <div className="flex flex-col gap-6 max-w-md">
-        <div className="flex justify-center">
-          <div className="relative">
-            <div className="size-32 rounded-full bg-gradient-to-br from-accent-500 to-primary flex items-center justify-center animate-pulse">
-              <i className="icon-celebration size-20 text-white" />
-            </div>
-            <div className="absolute -top-2 -right-2 size-10 rounded-full bg-success-400 flex items-center justify-center border-4 border-background">
-              <i className="icon-verified size-6 text-white" />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <h3 className="text-3xl md:text-4xl font-semibold">Congratulations!</h3>
-          <p className="text-lg text-tertiary">You've successfully claimed your Lemonade Passport</p>
-        </div>
-
-        {state.photo && (
-          <Card.Root>
-            <Card.Content className="flex flex-col items-center gap-4">
-              <img
-                src={state.photo}
-                alt="Passport"
-                className="size-24 rounded-full object-cover border-4 border-primary/20"
-              />
-              <div>
-                <p className="font-medium">Your Verified Identity</p>
-                {state.mint.tokenId && <p className="text-sm text-tertiary">Token ID: #{state.mint.tokenId}</p>}
-              </div>
-            </Card.Content>
-          </Card.Root>
-        )}
-
-        <div className="flex flex-col gap-3">
-          <p className="text-sm font-medium">Share Your Achievement</p>
-          <div className="flex gap-2 justify-center">
-            <Button
-              variant="tertiary"
-              icon="icon-x-twitter"
-              size="sm"
-              onClick={() =>
-                window.open(`https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`, '_blank')
-              }
-            >
-              Share on X
-            </Button>
-            <Button
-              variant="tertiary"
-              icon="icon-farcaster"
-              size="sm"
-              onClick={() => window.open(`https://warpcast.com/~/compose?text=${shareText}`, '_blank')}
-            >
-              Share on Farcaster
-            </Button>
-          </div>
-        </div>
-
-        <Card.Root className="border-primary/20 bg-primary/5">
-          <Card.Content className="flex flex-col gap-3 text-left">
-            <div className="flex items-center gap-2">
-              <i className="icon-sparkles size-5 text-accent-400" />
-              <p className="font-medium">What's Next?</p>
-            </div>
-            <ul className="text-sm text-tertiary space-y-2">
-              <li className="flex items-start gap-2">
-                <i className="icon-check size-4 text-success-400 mt-0.5" />
-                <span>Explore exclusive features unlocked by your passport</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <i className="icon-check size-4 text-success-400 mt-0.5" />
-                <span>Join verified-only events and communities</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <i className="icon-check size-4 text-success-400 mt-0.5" />
-                <span>Start earning achievements and rewards</span>
-              </li>
-            </ul>
-          </Card.Content>
-        </Card.Root>
-      </div>
-    </div>
   );
 }
