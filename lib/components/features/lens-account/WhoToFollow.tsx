@@ -4,12 +4,13 @@ import { useAtomValue } from 'jotai';
 import { fetchAccountsBulk, follow } from '@lens-protocol/client/actions';
 import { Account } from '@lens-protocol/client';
 
-import { Avatar, Button, toast } from '$lib/components/core';
+import { Avatar, Button, drawer, toast } from '$lib/components/core';
 import { sessionClientAtom } from '$lib/jotai';
 import { client } from '$lib/utils/lens/client';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { useSigner } from '$lib/hooks/useSigner';
 import { useLensAuth } from '$lib/hooks/useLens';
+import { UserProfilePane } from '../pane/UserProfilePane';
 
 const SUGGESTED_USERNAMES = [
   'vitalik',
@@ -142,7 +143,15 @@ export function WhoToFollow() {
       <p className="text-tertiary">Who to Follow</p>
       {displayedAccounts.map((account) => (
         <div key={account.address} className="flex items-center gap-3">
-          <Avatar src={getAccountAvatar(account)} size="lg" />
+          <Avatar
+            src={getAccountAvatar(account)}
+            size="lg"
+            onClick={() =>
+              drawer.open(UserProfilePane, {
+                props: { username: account.username?.localName, address: account.address },
+              })
+            }
+          />
           <div className="flex-1">
             <p>{account.metadata?.name}</p>
             <div className="text-tertiary text-sm">@{account.username?.localName}</div>
@@ -162,4 +171,3 @@ export function WhoToFollow() {
     </div>
   );
 }
-

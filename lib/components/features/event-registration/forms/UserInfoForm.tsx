@@ -102,7 +102,8 @@ function ProfileField({
       education_title: 'Education',
       ethnicity: 'Ethnicity / Race',
       industry: 'Industry',
-      date_of_birth: 'Date of Birth'
+      date_of_birth: 'Date of Birth',
+      email: 'Email'
     };
     
     return labels[fieldName] || fieldName;

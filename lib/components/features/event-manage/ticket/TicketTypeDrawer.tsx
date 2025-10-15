@@ -41,8 +41,8 @@ import { EmailListDrawer } from './EmailListDrawer';
 type TicketFormState = {
   title: string;
   description: string;
-  ticket_limit_per: number | undefined;
-  ticket_limit?: number;
+  ticket_limit_per: number | null;
+  ticket_limit?: number | null;
   active: boolean;
   private: boolean;
   limited: boolean;
@@ -58,7 +58,7 @@ const getInitialValues = (initialTicketType?: EventTicketType): TicketFormState 
     return {
       title: '',
       description: '',
-      ticket_limit: undefined,
+      ticket_limit: null,
       ticket_limit_per: 1,
       active: true,
       private: false,
@@ -383,7 +383,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
               </div>
               <div className="flex items-center gap-2">
                 <p className="text-tertiary">
-                  {ticket_limit_per === undefined
+                  {ticket_limit_per === null
                     ? 'Unlimited'
                     : ticket_limit_per === 1
                       ? 'Off'

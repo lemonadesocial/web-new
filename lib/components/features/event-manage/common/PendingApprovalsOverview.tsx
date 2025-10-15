@@ -14,7 +14,7 @@ interface PendingApprovalsOverviewProps {
 }
 
 export function PendingApprovalsOverview({ event, titleClassName }: PendingApprovalsOverviewProps) {
-  const { data } = useQuery(GetEventJoinRequestsDocument, {
+  const { data, refetch } = useQuery(GetEventJoinRequestsDocument, {
     variables: {
       event: event._id,
       state: EventJoinRequestState.Pending,
@@ -23,7 +23,9 @@ export function PendingApprovalsOverview({ event, titleClassName }: PendingAppro
     },
   });
 
-  if (!data?.getEventJoinRequests.records.length) return;
+  const pendingRequests = data?.getEventJoinRequests.records || [];
+
+  if (!pendingRequests.length) return;
 
   return (
     <div className="space-y-3">
@@ -41,7 +43,11 @@ export function PendingApprovalsOverview({ event, titleClassName }: PendingAppro
         </Button>
       </div>
       
-      <PendingApprovalList event={event} limit={3} />
+      <PendingApprovalList 
+        pendingRequests={pendingRequests}
+        eventId={event._id}
+        onRefetch={refetch}
+      />
     </div>
   );
 }

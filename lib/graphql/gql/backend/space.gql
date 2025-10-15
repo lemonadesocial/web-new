@@ -307,6 +307,15 @@ query CheckSpaceSlug($slug: String!) {
   canUseSpaceSlug(slug: $slug)
 }
 
+query SearchSpaces($skip: Int, $limit: Int, $input: SearchSpaceInput) {
+  searchSpaces(input: $input, limit: $limit, skip: $skip) {
+    items {
+      ...Space
+    }
+    total
+  }
+}
+
 #### Mutations
 
 mutation FollowSpace($space: MongoID!) {

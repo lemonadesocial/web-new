@@ -9,11 +9,13 @@ export function ConfirmModal({
   subtitle,
   onConfirm,
   icon = 'icon-info',
+  buttonText = 'Remove'
 }: {
   onConfirm: () => Promise<void> | void;
   title: string;
   subtitle: string;
   icon?: string;
+  buttonText?: string;
 }) {
   const [loading, setLoading] = React.useState(false);
   return (
@@ -46,7 +48,7 @@ export function ConfirmModal({
             modal.close();
           }}
         >
-          Remove
+          {buttonText}
         </Button>
       </div>
     </div>

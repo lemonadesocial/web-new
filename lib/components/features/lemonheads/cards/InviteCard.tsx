@@ -95,7 +95,7 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
             <i className="icon-user-plus text-alert-400" />
           </div>
 
-          <div className="tooltip">
+          <div className="tooltip tooltip-bottom">
             <div className="tooltip-content backdrop-blur-md border-card text-left! p-3">
               <p>LemonHeads are currently invite-only. Each LemonHead can invite up to 5 wallets to mint their own.</p>
             </div>

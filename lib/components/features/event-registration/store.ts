@@ -137,3 +137,5 @@ export const requiresTokenGatingAtom = atom((get) => {
 });
 
 export const buyerWalletAtom = atom<string | null>(null);
+
+export const ticketPasscodesAtom = atom<Record<string, string>>({});

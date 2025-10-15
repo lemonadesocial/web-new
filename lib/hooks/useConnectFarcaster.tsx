@@ -172,7 +172,7 @@ export const useHandleFarcasterMiniApp = (onSignInSuccess: () => Promise<void>) 
 
   useEffect(() => {
     if (!loading && !session) {
-      sdk.quickAuth.getToken().then(({ token }) => setToken(token));
+      sdk.quickAuth.getToken().then(({ token }) => setToken(token)).catch(e => console.error(e.message));
     }
   }, [loading, session]);
 

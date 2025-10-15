@@ -43,7 +43,7 @@ export function roundDateToHalfHour(date: Date) {
   return newDate;
 }
 
-export function combineDateAndTimeWithTimezone(date: Date, timeZone?: string) {
+export function combineDateAndTimeWithTimezone(date: Date, timeZone?: string | null) {
   if (!timeZone) return date;
   const dateWithoutTz = format(date, "yyyy-MM-dd'T'HH:mm:ss");
   return toDate(dateWithoutTz, { timeZone });
