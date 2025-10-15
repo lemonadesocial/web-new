@@ -13,6 +13,7 @@ import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { match } from 'ts-pattern';
 import { MintPassportModal } from './modals/MintPassportModal';
 import { PASSPORT_CHAIN_ID } from './utils';
+import { ClaimLemonheadModal } from './modals/ClaimLemonheadModal';
 
 export function PassportFooter() {
   const router = useRouter();
@@ -28,6 +29,16 @@ export function PassportFooter() {
     }
     dispatch({ type: PassportActionKind.PrevStep });
   };
+
+  const checkLemonhead = () => {
+    modal.open(ClaimLemonheadModal, {
+      props: {
+        onContinue: () => {
+          dispatch({ type: PassportActionKind.NextStep });
+        },
+      },
+    });
+  }
 
   const handleMint = () => {
     modal.open(BeforeMintPassportModal, {
@@ -53,7 +64,7 @@ export function PassportFooter() {
         modal.open(ConnectWallet, {
           props: {
             onConnect: () => {
-              dispatch({ type: PassportActionKind.NextStep });
+              checkLemonhead();
             },
             chain: chainsMap[PASSPORT_CHAIN_ID],
           },
