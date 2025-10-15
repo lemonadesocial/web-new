@@ -83,6 +83,7 @@ export function MintPassportModal({
         tokenId = parsedTransferLog.args?.tokenId?.toString();
       }
 
+      modal.close();
       onComplete(txHash, tokenId);
     } catch (error: any) {
       Sentry.captureException(error, {
@@ -119,7 +120,6 @@ export function MintPassportModal({
     <ModalContent
       icon={<img src={`${ASSET_PREFIX}/assets/images/passport.png`} className="w-full object-cover aspect-[45/28]" />}
       onClose={() => modal.close()}
-      className="**:data-icon:rounded-md **:data-icon:w-[90px]"
     >
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
