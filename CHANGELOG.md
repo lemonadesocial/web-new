@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.8.2](https://github.com/lemonadesocial/web-new/compare/v8.8.1...v8.8.2) (2025-10-15)
+
+
+### Bug Fixes
+
+* refactor state to form ([a6ae565](https://github.com/lemonadesocial/web-new/commit/a6ae565fafbdb54587450ff6c8bad0ce566125d7))
+* sort lib ([9f8d086](https://github.com/lemonadesocial/web-new/commit/9f8d0865d241a7acc1f2cdabaadb3855c26ad082))
+
 ## [8.8.1](https://github.com/lemonadesocial/web-new/compare/v8.8.0...v8.8.1) (2025-10-14)
 
 
