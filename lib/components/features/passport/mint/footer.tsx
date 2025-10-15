@@ -29,6 +29,24 @@ export function PassportFooter() {
     dispatch({ type: PassportActionKind.PrevStep });
   };
 
+  const handleMint = () => {
+    modal.open(BeforeMintPassportModal, {
+      props: {
+        onContinue: () => {
+          modal.open(MintPassportModal, {
+            props: { 
+              onComplete: (txHash, tokenId) => {
+                dispatch({ type: PassportActionKind.SetMintState, payload: { txHash, tokenId } });
+                dispatch({ type: PassportActionKind.NextStep });
+              },
+              mintData: state.mintData!,
+            },
+          });
+        },
+      },
+    }); 
+  }
+
   const handleNext = async () => {
     match(state.currentStep)
       .with(PassportStep.intro, () => {
@@ -41,22 +59,15 @@ export function PassportFooter() {
           },
         });
       })
-      .with(PassportStep.username, () => {        
-        modal.open(BeforeMintPassportModal, {
+      .with(PassportStep.username, () => {
+        modal.open(ConnectWallet, {
           props: {
-            onContinue: () => {
-              modal.open(MintPassportModal, {
-                props: { 
-                  onComplete: (txHash, tokenId) => {
-                    dispatch({ type: PassportActionKind.SetMintState, payload: { txHash, tokenId } });
-                    dispatch({ type: PassportActionKind.NextStep });
-                  },
-                  mintData: state.mintData!,
-                },
-              });
+            onConnect: () => {
+              handleMint();
             },
+            chain: chainsMap[PASSPORT_CHAIN_ID],
           },
-        });
+        });        
       })
       .otherwise(() => dispatch({ type: PassportActionKind.NextStep }));
   };
