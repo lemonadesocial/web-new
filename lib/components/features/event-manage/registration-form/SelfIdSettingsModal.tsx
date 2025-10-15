@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { countries } from '@selfxyz/qrcode';
+import { Controller, useForm } from 'react-hook-form';
+import { match } from 'ts-pattern';
 
 import { Button, Input, ModalContent, modal, toast } from '$lib/components/core';
 import { DropdownTags, Option } from '$lib/components/core/input/dropdown';
 import { Event, UpdateEventSelfVerificationDocument } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
 import { useUpdateEvent } from '../store';
-import { Controller, useForm } from 'react-hook-form';
-import { match } from 'ts-pattern';
 
 interface SelfIdSettingsModalProps {
   event: Event;
