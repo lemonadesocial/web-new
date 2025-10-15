@@ -2,9 +2,7 @@
 import React from 'react';
 import { InputField } from './input-field';
 import { Menu, MenuItem } from '../menu';
-import { extend } from 'lodash';
 import { Badge } from '../badge';
-import { Button } from '../button';
 
 export type Option = {
   icon?: string;
@@ -80,10 +78,21 @@ export function DropdownTags(props: DropdownTagsProps) {
   const keys = selected.map((i) => i?.key);
 
   const handleRemove = (item: Option) => {
-    setSelected((prev) => prev?.filter((o) => o.key !== item.key));
+    const filtered = selected.filter((o) => o.key !== item.key);
+    setSelected(filtered);
+    props.onSelect?.(filtered);
   };
 
-  const options = props.options.filter((item) => !query || item.value.toLowerCase().includes(query.toLowerCase()) || item.key.toString().toLowerCase().includes(query.toLowerCase()));
+  const options = props.options.filter(
+    (item) =>
+      !query ||
+      item.value.toLowerCase().includes(query.toLowerCase()) ||
+      item.key.toString().toLowerCase().includes(query.toLowerCase()),
+  );
+
+  React.useEffect(() => {
+    if (props.value) setSelected(props.value);
+  }, [props.value?.length]);
 
   return (
     <Menu.Root>
@@ -123,23 +132,23 @@ export function DropdownTags(props: DropdownTagsProps) {
             </fieldset>
             <div className="p-2 max-h-[200px] overflow-auto no-scrollbar">
               {options.map((item) => (
-                  <MenuItem
-                    key={item.key}
-                    title={item.value}
-                    iconLeft={item.icon}
-                    iconRight={keys.includes(item.key) ? 'text-primary! icon-richtext-check' : undefined}
-                    onClick={() => {
-                      const exist = props.options.find((o) => o.key === item.key) as Option;
-                      if (exist) {
-                        const result = [...selected, item];
-                        setSelected(result);
-                        props.onSelect?.(result);
-                      }
-                      toggle();
-                      setQuery('');
-                    }}
-                  />
-                ))}
+                <MenuItem
+                  key={item.key}
+                  title={item.value}
+                  iconLeft={item.icon}
+                  iconRight={keys.includes(item.key) ? 'text-primary! icon-richtext-check' : undefined}
+                  onClick={() => {
+                    const exist = props.options.find((o) => o.key === item.key) as Option;
+                    if (exist) {
+                      const result = [...selected, item];
+                      setSelected(result);
+                      props.onSelect?.(result);
+                    }
+                    toggle();
+                    setQuery('');
+                  }}
+                />
+              ))}
             </div>
           </>
         )}

@@ -98,8 +98,7 @@ export function RegistrationForm() {
   const handleSelfIdSettings = () => {
     modal.open(SelfIdSettingsModal, {
       props: {
-        requirement: 'Required',
-        eventId: event!._id,
+        event,
       },
     });
   };
