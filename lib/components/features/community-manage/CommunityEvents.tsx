@@ -11,9 +11,5 @@ export function CommunityEvents({ space: initSpace }: { space: Space }) {
   });
   const space = data?.getSpace as Space;
 
-  return (
-    <>
-      <CommunityEventsWithCalendar space={space} />
-    </>
-  );
+  return <CommunityEventsWithCalendar space={space} className="[&_.event-calendar]:top-36" />;
 }

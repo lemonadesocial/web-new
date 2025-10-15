@@ -32,17 +32,19 @@ import { MyEventRequests } from './MyEventRequests';
 import { EventPane } from '../pane';
 import { EventList, EventListCard } from '../EventList';
 import { match, P } from 'ts-pattern';
+import { twMerge } from 'tailwind-merge';
 
 interface Props {
   space?: Space;
   customTitle?: (title: string) => React.ReactElement;
   locked?: React.ReactElement;
+  className?: string;
 }
 
 const LIMIT = 50;
 const FROM_NOW = new Date().toISOString();
 
-export function CommunityEventsWithCalendar({ space: initSpace, customTitle, locked }: Props) {
+export function CommunityEventsWithCalendar({ space: initSpace, customTitle, locked, className }: Props) {
   const router = useRouter();
   const me = useMe();
 
@@ -196,7 +198,7 @@ export function CommunityEventsWithCalendar({ space: initSpace, customTitle, loc
   const canManage = [space?.creator, ...(space?.admins?.map((p) => p._id) || [])].filter((p) => p).includes(me?._id);
 
   return (
-    <div className="flex md:gap-18">
+    <div className={twMerge('flex md:gap-18', className)}>
       <div className="flex flex-col flex-1 gap-6 w-full">
         <div className="flex">
           {customTitle ? (
@@ -304,82 +306,84 @@ export function CommunityEventsWithCalendar({ space: initSpace, customTitle, loc
         )}
       </div>
 
-      <div className="hidden sticky top-7 z-50 flex-col gap-4 md:flex max-w-[296px]">
-        <Menu.Root>
-          <Menu.Trigger>
-            <Button variant="tertiary-alt" iconLeft="icon-plus" size="sm" className="w-full backdrop-blur-md">
-              {space?.is_ambassador || canManage ? 'Add Event' : 'Submit Event'}
-            </Button>
-          </Menu.Trigger>
-          <Menu.Content className="p-1">
-            {({ toggle }) => (
-              <>
-                <MenuItem
-                  title="Create New Event"
-                  iconLeft="icon-edit-square"
-                  onClick={() => {
-                    toggle();
-                    router.push(`/create/event?space=${space?._id}`);
-                  }}
-                />
-                <MenuItem
-                  title="Submit Existing Event"
-                  iconLeft="icon-celebration-outline"
-                  onClick={() => {
-                    toggle();
-                    if (space?._id) modal.open(ListingEvent, { dismissible: false, props: { spaceId: space._id } });
-                  }}
-                />
-                <MenuItem
-                  title="Submit External Event"
-                  iconLeft="icon-globe"
-                  onClick={() => {
-                    toggle();
-                    if (space?._id)
-                      modal.open(ListingExternalEvent, { dismissible: false, props: { spaceId: space._id } });
-                  }}
-                />
-              </>
-            )}
-          </Menu.Content>
-        </Menu.Root>
-
-        <Calendar
-          events={spaceEventsCalendar.map((item) => new Date(item.start))}
-          selected={selectedDate}
-          onSelectDate={setSelectedDate}
-          footer={() => {
-            if (selectedDate) {
-              return (
-                <div className="flex justify-between items-center text-primary mt-3">
-                  <time className="font-medium">{format(selectedDate, 'E, dd MMM yyyy')}</time>
-                  <Button
-                    variant="tertiary-alt"
-                    icon="icon-x"
-                    size="xs"
-                    aria-label="close"
-                    onClick={() => setSelectedDate(undefined)}
+      <div>
+        <div className="event-calendar hidden sticky top-7 z-50 flex-col gap-4 md:flex max-w-[296px]">
+          <Menu.Root>
+            <Menu.Trigger>
+              <Button variant="tertiary-alt" iconLeft="icon-plus" size="sm" className="w-full backdrop-blur-md">
+                {space?.is_ambassador || canManage ? 'Add Event' : 'Submit Event'}
+              </Button>
+            </Menu.Trigger>
+            <Menu.Content className="p-1">
+              {({ toggle }) => (
+                <>
+                  <MenuItem
+                    title="Create New Event"
+                    iconLeft="icon-edit-square"
+                    onClick={() => {
+                      toggle();
+                      router.push(`/create/event?space=${space?._id}`);
+                    }}
                   />
-                </div>
+                  <MenuItem
+                    title="Submit Existing Event"
+                    iconLeft="icon-celebration-outline"
+                    onClick={() => {
+                      toggle();
+                      if (space?._id) modal.open(ListingEvent, { dismissible: false, props: { spaceId: space._id } });
+                    }}
+                  />
+                  <MenuItem
+                    title="Submit External Event"
+                    iconLeft="icon-globe"
+                    onClick={() => {
+                      toggle();
+                      if (space?._id)
+                        modal.open(ListingExternalEvent, { dismissible: false, props: { spaceId: space._id } });
+                    }}
+                  />
+                </>
+              )}
+            </Menu.Content>
+          </Menu.Root>
+
+          <Calendar
+            events={spaceEventsCalendar.map((item) => new Date(item.start))}
+            selected={selectedDate}
+            onSelectDate={setSelectedDate}
+            footer={() => {
+              if (selectedDate) {
+                return (
+                  <div className="flex justify-between items-center text-primary mt-3">
+                    <time className="font-medium">{format(selectedDate, 'E, dd MMM yyyy')}</time>
+                    <Button
+                      variant="tertiary-alt"
+                      icon="icon-x"
+                      size="xs"
+                      aria-label="close"
+                      onClick={() => setSelectedDate(undefined)}
+                    />
+                  </div>
+                );
+              }
+
+              if (!upcomingEvents.length) return null;
+
+              return (
+                <Segment
+                  className="w-full mt-3"
+                  size="sm"
+                  onSelect={(item) => setEventListType(item.value)}
+                  selected={eventListType}
+                  items={[
+                    { label: 'Upcoming', value: 'upcoming' },
+                    { label: 'Past', value: 'past' },
+                  ]}
+                />
               );
-            }
-
-            if (!upcomingEvents.length) return null;
-
-            return (
-              <Segment
-                className="w-full mt-3"
-                size="sm"
-                onSelect={(item) => setEventListType(item.value)}
-                selected={eventListType}
-                items={[
-                  { label: 'Upcoming', value: 'upcoming' },
-                  { label: 'Past', value: 'past' },
-                ]}
-              />
-            );
-          }}
-        />
+            }}
+          />
+        </div>
       </div>
     </div>
   );

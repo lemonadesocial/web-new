@@ -15,6 +15,7 @@ import { communityAvatar } from '$lib/utils/community';
 const menu = [
   { name: 'Overview', page: 'overview' },
   { name: 'Events', page: 'events' },
+  { name: 'People', page: 'people' },
   { name: 'Vaults', page: 'vaults' },
 ];
 

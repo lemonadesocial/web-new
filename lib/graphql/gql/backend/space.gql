@@ -316,6 +316,68 @@ query SearchSpaces($skip: Int, $limit: Int, $input: SearchSpaceInput) {
   }
 }
 
+query GetSpaceMembers(
+  $space: MongoID!
+  $roles: [SpaceRole!]
+  $state: SpaceMembershipState
+  $visible: Boolean
+  $skip: Int
+  $limit: Int
+  $search: String
+  $sort: SortInput
+  $deletion: Boolean
+  $tags: [MongoID!]
+) {
+  listSpaceMembers(
+    space: $space
+    roles: $roles
+    state: $state
+    visible: $visible
+    skip: $skip
+    limit: $limit
+    search: $search
+    sort: $sort
+    deletion: $deletion
+    tags: $tags
+  ) {
+    total
+    items {
+      _id
+      user
+      user_name
+      email
+      space
+      role
+      state
+      visible
+      role_changed_at
+      deleted_at
+      user_expanded {
+        _id
+        name
+        display_name
+        email
+        new_photos_expanded(limit: 1) {
+          _id
+          key
+          bucket
+        }
+      }
+      event_count
+      checkin_count
+      tags {
+        _id
+        space
+        tag
+        color
+        type
+        targets
+        targets_count
+      }
+    }
+  }
+}
+
 #### Mutations
 
 mutation FollowSpace($space: MongoID!) {
