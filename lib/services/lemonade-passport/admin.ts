@@ -1,0 +1,11 @@
+import { request } from '$lib/services/nft/admin';
+
+export const getApproval = async (wallet: string, uri: string) => {
+  return request<{ signature: string; price: string; }>(`/passport/approval`, 'POST', { wallet, uri });
+};
+
+export const getData = async (wallet: string, fluffleTokenId: string) => {
+  return request<{ lemonheadTokenId: string; lemonheadImageUrl: string; fluffleImageUrl: string }>(
+    `/passport/data?wallet=${wallet}&fluffleTokenId=${fluffleTokenId}`, 'GET'
+  );
+};
