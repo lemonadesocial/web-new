@@ -84,18 +84,18 @@ export function FluffleCard() {
 
   return (
     <CardDetail
-      title="Get Fluffle"
+      title="No Fluffle Found"
       subtitle="You don’t have a fluffle, yet."
       image={`${ASSET_PREFIX}/assets/images/fluffle.png`}
     >
       <Button
-        variant={isSelected ? 'tertiary' : 'secondary'}
+        variant="secondary"
         className="w-full"
-        onClick={handleSelect}
-        iconLeft={isSelected ? 'icon-done' : undefined}
         size="sm"
+        iconRight="icon-arrow-outward"
+        onClick={() => window.open('https://www.megaeth.com/thefluffle', '_blank')}
       >
-        {isSelected ? 'Selected' : 'Select'}
+        Get Fluffle
       </Button>
     </CardDetail>
   );
