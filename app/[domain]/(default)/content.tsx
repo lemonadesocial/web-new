@@ -308,7 +308,7 @@ function CommunitySection() {
               title={item.title}
               subtitle={`${item.followers_count || 0} Subscribers`}
               image={getImageSrc(item)}
-              onClick={() => (window.location.href = `/manage/community/${item.slug || item._id}`)}
+              onClick={() => router.push(`/s/manage/${item.slug || item._id}`)}
             />
           ))}
         <div className="hidden only:block text-center text-gray-500 py-10">

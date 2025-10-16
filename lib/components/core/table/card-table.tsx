@@ -72,15 +72,8 @@ function Root<T>({ data = [], loading: fetching, children }: RootProps<T>) {
               </motion.div>
             ) : (
               <>
-                {empty && <div className="hidden only:block">{empty}</div>}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="divide-y-(length:--card-border-width) divide-(--color-divider)"
-                >
-                  {content}
-                </motion.div>
+                <div className="hidden only:block">{empty}</div>
+                {content}
               </>
             )}
           </motion.div>
