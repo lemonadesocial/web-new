@@ -1,11 +1,8 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
-import { fetchAccount } from '@lens-protocol/client/actions';
 import { ethers } from 'ethers';
-import { PublicClient, evmAddress, mainnet, testnet } from '@lens-protocol/client';
 
 import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
-import { LEMONHEAD_CHAIN_ID, LEMONHEAD_COLORS } from '$lib/components/features/lemonheads/mint/utils';
 import { ERC721Contract } from '$lib/utils/crypto';
 import { getClient } from '$lib/graphql/request';
 import { PASSPORT_CHAIN_ID } from '$lib/components/features/passport/mint/utils';

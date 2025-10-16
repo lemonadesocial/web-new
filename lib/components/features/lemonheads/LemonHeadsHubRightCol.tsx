@@ -19,7 +19,7 @@ import { truncateMiddle } from '$lib/utils/string';
 import { generateUrl } from '$lib/utils/cnd';
 import { randomEventDP, userAvatar } from '$lib/utils/user';
 import { formatWithTimezone } from '$lib/utils/date';
-import { PassportCard } from './cards/PassportCard';
+import { PassportCard } from '$lib/components/features/passport/PassportCard';
 
 const FROM_NOW = new Date().toISOString();
 

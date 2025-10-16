@@ -42,7 +42,7 @@ const defaultState: PassportState = {
     intro: { label: '', component: PassportIntro, btnText: "Yes, I'm In!", index: 0 },
     photo: { label: 'Passport Photo', component: PassportPhoto, btnText: 'Continue', index: 1 },
     username: { label: 'Username', component: PassportUsername, btnText: 'Claim Passport', index: 2 },
-    celebrate: { label: 'Celebrate', component: PassportCelebrate, btnText: 'View Passport', index: 3 },
+    celebrate: { label: 'Celebrate', component: PassportCelebrate, btnText: 'LemonHeads Zone', index: 3 },
   },
   currentStep: PassportStep.intro,
   useLemonhead: true,

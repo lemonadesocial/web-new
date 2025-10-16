@@ -30,7 +30,7 @@ export function LemonHeadsNFTCard() {
   return (
     <>
       <div
-        className="flex gap-2.5 py-2.5 px-3 md:p-4 border-(length:--card-border-width) backdrop-blur-md rounded-md items-center flex-1 w-full min-w-fit"
+        className="flex gap-2.5 py-2.5 px-3 md:p-4 border-(length:--card-border-width) backdrop-blur-md rounded-md items-center flex-1 w-full min-w-fit cursor-pointer"
         onClick={() =>
           drawer.open(SharedLemonheadsPane, {
             props: {

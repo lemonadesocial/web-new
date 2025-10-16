@@ -13,7 +13,7 @@ import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { match } from 'ts-pattern';
 import { MintPassportModal } from './modals/MintPassportModal';
 import { PASSPORT_CHAIN_ID } from './utils';
-import { ClaimLemonheadModal } from './modals/ClaimLemonheadModal';
+import { PassportEligibilityModal } from './modals/PassportEligibilityModal';
 
 export function PassportFooter() {
   const router = useRouter();
@@ -31,7 +31,7 @@ export function PassportFooter() {
   };
 
   const checkLemonhead = () => {
-    modal.open(ClaimLemonheadModal, {
+    modal.open(PassportEligibilityModal, {
       props: {
         onContinue: () => {
           dispatch({ type: PassportActionKind.NextStep });
@@ -45,7 +45,7 @@ export function PassportFooter() {
       props: {
         onContinue: () => {
           modal.open(MintPassportModal, {
-            props: { 
+            props: {
               onComplete: (txHash, tokenId) => {
                 dispatch({ type: PassportActionKind.SetMintState, payload: { txHash, tokenId } });
                 dispatch({ type: PassportActionKind.NextStep });
@@ -55,7 +55,7 @@ export function PassportFooter() {
           });
         },
       },
-    }); 
+    });
   }
 
   const handleNext = async () => {
@@ -78,7 +78,10 @@ export function PassportFooter() {
             },
             chain: chainsMap[PASSPORT_CHAIN_ID],
           },
-        });        
+        });
+      })
+      .with(PassportStep.celebrate, () => {
+        router.push('/lemonheads');
       })
       .otherwise(() => dispatch({ type: PassportActionKind.NextStep }));
   };
@@ -88,7 +91,9 @@ export function PassportFooter() {
   return (
     <>
       <div className="md:hidden flex items-center gap-2 min-h-[64px] px-4 z-10">
-        <Button icon="icon-logout" onClick={handlePrev} variant="tertiary" />
+        {state.currentStep !== PassportStep.celebrate && (
+          <Button icon="icon-logout" onClick={handlePrev} variant="tertiary" />
+        )}
         <Button variant="secondary" className="w-full" onClick={handleNext}>
           {currentStep?.btnText}
         </Button>
@@ -96,9 +101,11 @@ export function PassportFooter() {
 
       <div className="hidden md:flex justify-between items-center min-h-[64px] px-4 bg-background/80 backdrop-blur-md">
         <div className="flex-1">
-          <Button variant="tertiary" size="sm" onClick={handlePrev}>
-            {state.currentStep === PassportStep.intro ? 'Exit' : 'Back'}
-          </Button>
+          {state.currentStep !== PassportStep.celebrate && (
+            <Button variant="tertiary" size="sm" onClick={handlePrev}>
+              {state.currentStep === PassportStep.intro ? 'Exit' : 'Back'}
+            </Button>
+          )}
         </div>
 
         {PassportStep.intro !== state.currentStep && (
