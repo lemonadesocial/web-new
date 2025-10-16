@@ -17,10 +17,6 @@ export function PassportIntro() {
       </div>
 
       <Spacer className="md:hidden h-2" />
-
-      <Button variant="tertiary" iconRight="icon-arrow-outward" className="w-fit">
-        Learn More
-      </Button>
     </div>
   );
 }
