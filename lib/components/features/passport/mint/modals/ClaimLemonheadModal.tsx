@@ -16,7 +16,7 @@ export function ClaimLemonheadModal({ onContinue }: { onContinue: () => void }) 
   const router = useRouter();
 
   const handleClaimLemonHead = () => {
-    router.push('lemonheads/mint');
+    router.push('/lemonheads/mint');
   };
 
   const handleEditWallet = () => {
