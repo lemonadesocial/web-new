@@ -112,7 +112,7 @@ export function CommunityPeople({ space }: Props) {
           variant="tertiary-alt"
           size="sm"
           iconLeft="icon-user-plus"
-          onClick={() => modal.open(AddCommunityPeople, { onClose: refetch, props: { spaceId: space._id } })}
+          onClick={() => modal.open(AddCommunityPeople, { props: { spaceId: space._id, onCompleted: refetch } })}
         >
           Add People
         </Button>

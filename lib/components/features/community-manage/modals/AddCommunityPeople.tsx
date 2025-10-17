@@ -1,9 +1,12 @@
-import { Button, Card, FileInput, modal, ModalContent, Spacer } from '$lib/components/core';
-import { ASSET_PREFIX } from '$lib/utils/constants';
 import clsx from 'clsx';
 import { uniqBy } from 'lodash';
 import React from 'react';
-import { useForm, UseFormReturn } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { object, array, string } from 'yup';
+
+import { Button, Card, FileInput, InputField, modal, ModalContent, Spacer } from '$lib/components/core';
+import { ASSET_PREFIX } from '$lib/utils/constants';
+import { useFieldArray, useForm, UseFormReturn } from 'react-hook-form';
 import { AddSpaceMembersDocument, SpaceRole, SpaceTagType } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
 import { AddTags } from '$lib/components/features/community/ListingEvent';
@@ -17,14 +20,33 @@ const obj: Record<ContentKey, any> = {
   'manual.confirm': ConfirmImport,
 };
 
+const schemaEmailAddresses = object().shape({
+  people: array()
+    .transform((originalValue) => {
+      if (originalValue && originalValue.length > 0) {
+        return originalValue.slice(0, originalValue.length - 1);
+      }
+      return originalValue;
+    })
+    .of(
+      object().shape({
+        email: string().email(),
+        user_name: string(),
+      }),
+    ),
+});
+
 type FormPeopleValue = {
   view: ContentKey;
   people: { user_name?: string; email: string }[];
   tags: string[];
 };
 
-export function AddCommunityPeople({ spaceId }: { spaceId: string }) {
-  const form = useForm<FormPeopleValue>({ defaultValues: { view: 'default', people: [], tags: [] } });
+export function AddCommunityPeople({ spaceId, onCompleted }: { spaceId: string; onCompleted: () => void }) {
+  const form = useForm<FormPeopleValue>({
+    defaultValues: { view: 'default', people: [{ email: '', user_name: '' }], tags: [] },
+    resolver: yupResolver(schemaEmailAddresses),
+  });
   const view = form.watch('view');
   const Content = obj[view];
 
@@ -35,6 +57,7 @@ export function AddCommunityPeople({ spaceId }: { spaceId: string }) {
     await addPeopleFn({
       variables: { input: { role: SpaceRole.Subscriber, space: spaceId, users, tags: values.tags } },
     });
+    onCompleted();
     modal.close();
   };
 
@@ -82,6 +105,7 @@ function DefaultContent({ form }: CommonProps) {
 
 function ImportCsvContent({ form }: CommonProps) {
   const people = form.watch('people');
+  const list = people.filter((i) => i.email);
 
   const handleCsvChange = (files: File[]) => {
     const file = files?.[0];
@@ -107,14 +131,9 @@ function ImportCsvContent({ form }: CommonProps) {
   };
 
   return (
-    <ModalContent
-      className="w-[480px]"
-      title="Add People"
-      onBack={() => form.setValue('view', 'default')}
-      onClose={() => modal.close()}
-    >
+    <ModalContent className="w-[480px]" title="Add People" onBack={() => form.reset()} onClose={() => modal.close()}>
       <div className="flex flex-col gap-4">
-        {!people.length && (
+        {!list.length && (
           <a
             href={`${ASSET_PREFIX}/assets/templates/import-people-template.csv`}
             className="flex gap-1.5 items-center text-tertiary"
@@ -127,7 +146,7 @@ function ImportCsvContent({ form }: CommonProps) {
 
         <FileInput accept=".csv" multiple={false} allowDrop={true} onChange={handleCsvChange}>
           {(open, isDragOver) =>
-            !people.length ? (
+            !list.length ? (
               <div
                 className={clsx(
                   'flex flex-col items-center justify-center border border-dashed rounded-sm p-6 gap-4 cursor-pointer transition bg-card',
@@ -156,10 +175,10 @@ function ImportCsvContent({ form }: CommonProps) {
           }
         </FileInput>
 
-        {!!people.length && (
+        {!!list.length && (
           <Card.Root className="max-h-[456px] overflow-auto no-scrollbar">
             <Card.Content className="p-3 flex flex-col gap-1.5">
-              {people.map((item, idx) => (
+              {list.map((item, idx) => (
                 <div key={idx} className="flex justify-between items-center gap-3">
                   <div className="flex-1">
                     <p>{item.user_name || 'Anonymous'}</p>
@@ -180,7 +199,11 @@ function ImportCsvContent({ form }: CommonProps) {
           </Card.Root>
         )}
 
-        <Button variant="secondary" onClick={() => form.setValue('view', 'import_csv.confirm')}>
+        <Button
+          variant="secondary"
+          disabled={!people.length}
+          onClick={() => form.setValue('view', 'import_csv.confirm')}
+        >
           Preview
         </Button>
       </div>
@@ -189,21 +212,78 @@ function ImportCsvContent({ form }: CommonProps) {
 }
 
 function AddManualContent({ form }: CommonProps) {
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: 'people',
+  });
+  const people = form.watch('people');
+  const controlledFields = fields.map((field, index) => {
+    return {
+      ...field,
+      ...people[index],
+    };
+  });
+
   return (
-    <ModalContent
-      className="w-[480px]"
-      title="Add People"
-      onBack={() => form.setValue('view', 'default')}
-      onClose={() => modal.close()}
-    >
-      Add manual
-      <Button onClick={() => form.setValue('view', 'manual.confirm')}>Next</Button>
+    <ModalContent className="w-[480px]" title="Add People" onBack={() => form.reset()} onClose={() => modal.close()}>
+      <div className="flex flex-col gap-4">
+        <p className="text-sm text-secondary">
+          Pro tip: You can paste multiple emails into a single input, separated by comma or space.
+        </p>
+
+        <Card.Root className="max-h-[484px] overflow-auto no-scrollbar bg-transparent">
+          <Card.Content className="p-0 overflow-hidden divide-y divide-(--color-divider)">
+            {controlledFields.map((item, idx) => {
+              const canRemove = controlledFields.length > 1 && idx < controlledFields.length - 1;
+
+              return (
+                <div key={idx} className="flex divide-x divide-(--color-divider)">
+                  <InputField
+                    value={item.email}
+                    onChange={(e) => {
+                      form.setValue(`people.${idx}.email`, e.target.value);
+                      if (e.target.value?.length >= 2 && idx === people.length - 1) {
+                        append({ email: '', user_name: '' });
+                      }
+                    }}
+                    className="[&_.control]:border-none! [&_.control]:rounded-none! w-full max-w-[160px] md:max-w-[202px]"
+                    placeholder="Email Address"
+                  />
+                  <InputField
+                    value={item.user_name}
+                    onChange={(e) => form.setValue(`people.${idx}.user_name`, e.target.value)}
+                    className="[&_.control]:border-none! [&_.control]:rounded-none! w-full"
+                    placeholder="Full Name (Optional)"
+                  />
+                  {canRemove && (
+                    <Button
+                      icon="icon-x"
+                      variant="flat"
+                      className="hover:bg-(--input-bg)! bg-(--input-bg)! text-tertiary! hover:text-primary! rounded-none! border-none!"
+                      onClick={() => remove(idx)}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </Card.Content>
+        </Card.Root>
+
+        <Button
+          variant="secondary"
+          disabled={!schemaEmailAddresses.isValidSync({ people: controlledFields })}
+          onClick={() => form.setValue('view', 'manual.confirm')}
+        >
+          Preview
+        </Button>
+      </div>
     </ModalContent>
   );
 }
 
 function ConfirmImport({ form, spaceId }: CommonProps) {
   const [view, people] = form.watch(['view', 'people']);
+  const list = people.filter((i) => i.email);
 
   return (
     <ModalContent
@@ -215,20 +295,25 @@ function ConfirmImport({ form, spaceId }: CommonProps) {
       <div className="flex flex-col gap-4">
         <Card.Root>
           <Card.Content className="py-3">
-            <p className="text-sm text-tertiary">Importing {people.length} people</p>
+            <p className="text-sm text-tertiary">Importing {list.length} people</p>
             <p>
-              {people
+              {list
                 .slice(0, 2)
                 .map((i) => i.user_name || i.email)
                 .join(', ')}
-              {people.length > 2 && ` & ${people.length - 2} others`}
+              {list.length > 2 && ` & ${list.length - 2} others`}
             </p>
           </Card.Content>
         </Card.Root>
 
         {spaceId && <AddTags spaceId={spaceId} type={SpaceTagType.Member} />}
 
-        <Button variant="secondary" type="submit" loading={form.formState.isSubmitting}>
+        <Button
+          variant="secondary"
+          type="submit"
+          disabled={!form.formState.isValid}
+          loading={form.formState.isSubmitting}
+        >
           Start Import
         </Button>
         <div className="text-center text-xs text-tertiary">
