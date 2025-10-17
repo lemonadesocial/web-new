@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Avatar, Button, Divider, InputField, Menu, MenuItem, Skeleton } from '$lib/components/core';
+import { Avatar, Button, Divider, InputField, Menu, MenuItem, modal, Skeleton } from '$lib/components/core';
 import { CardTable } from '$lib/components/core/table';
 import {
   GetSpaceMembersDocument,
@@ -16,6 +16,7 @@ import { debounce, snakeCase } from 'lodash';
 import { format, formatDistance, isToday } from 'date-fns';
 import clsx from 'clsx';
 import { downloadCSVFile } from '$lib/utils/file';
+import { AddCommunityPeople } from './modals/AddCommunityPeople';
 
 interface Props {
   space: Space;
@@ -56,7 +57,7 @@ export function CommunityPeople({ space }: Props) {
   const [filterBy, setFilterBy] = React.useState('all');
   const [filterByTags, setFilterByTags] = React.useState<string[]>([]);
 
-  const { data, loading } = useQuery(GetSpaceMembersDocument, {
+  const { data, loading, refetch } = useQuery(GetSpaceMembersDocument, {
     variables: {
       space: space._id,
       limit: LIMIT,
@@ -107,7 +108,12 @@ export function CommunityPeople({ space }: Props) {
         <h3 className="flex-1 text-xl font-semibold">
           People {!!data?.listSpaceMembers.total && `(${data?.listSpaceMembers.total})`}
         </h3>
-        <Button variant="tertiary-alt" size="sm" iconLeft="icon-user-plus">
+        <Button
+          variant="tertiary-alt"
+          size="sm"
+          iconLeft="icon-user-plus"
+          onClick={() => modal.open(AddCommunityPeople, { onClose: refetch, props: { spaceId: space._id } })}
+        >
           Add People
         </Button>
         <Button variant="tertiary-alt" size="sm" iconLeft="icon-download" onClick={handleExport} />
@@ -128,9 +134,7 @@ export function CommunityPeople({ space }: Props) {
       </div>
 
       <InputField
-        onChange={(e) => {
-          setQuery(e.target.value);
-        }}
+        onChange={(e) => setQuery(e.target.value)}
         value={query}
         iconLeft="icon-search"
         placeholder="Search"
