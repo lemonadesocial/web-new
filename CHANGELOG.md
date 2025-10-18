@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.8.3](https://github.com/lemonadesocial/web-new/compare/v8.8.2...v8.8.3) (2025-10-18)
+
+
+### Bug Fixes
+
+* blast scrolling ([8a86d7a](https://github.com/lemonadesocial/web-new/commit/8a86d7ac9f17fdfc3e59323475dc9c6db17c461e))
+
 ## [8.8.2](https://github.com/lemonadesocial/web-new/compare/v8.8.1...v8.8.2) (2025-10-15)
 
 
