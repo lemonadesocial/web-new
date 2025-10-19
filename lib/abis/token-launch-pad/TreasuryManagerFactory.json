@@ -1,0 +1,2171 @@
+{
+  "abi": [
+    {
+      "type": "constructor",
+      "inputs": [
+        {
+          "name": "_protocolOwner",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_feeEscrow",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "DEFAULT_ADMIN_ROLE",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "approveManager",
+      "inputs": [
+        {
+          "name": "_managerImplementation",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "approvedManagerImplementation",
+      "inputs": [
+        {
+          "name": "_managerImplementation",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "_approved",
+          "type": "bool",
+          "internalType": "bool"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "cancelOwnershipHandover",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "completeOwnershipHandover",
+      "inputs": [
+        {
+          "name": "pendingOwner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "deployAndInitializeManager",
+      "inputs": [
+        {
+          "name": "_managerImplementation",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_owner",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_data",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "manager_",
+          "type": "address",
+          "internalType": "address payable"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "deployManager",
+      "inputs": [
+        {
+          "name": "_managerImplementation",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "manager_",
+          "type": "address",
+          "internalType": "address payable"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "feeEscrow",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "contract IFeeEscrow"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getRoleAdmin",
+      "inputs": [
+        {
+          "name": "role",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "grantRole",
+      "inputs": [
+        {
+          "name": "role",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        },
+        {
+          "name": "account",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "hasRole",
+      "inputs": [
+        {
+          "name": "role",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        },
+        {
+          "name": "account",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool",
+          "internalType": "bool"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "managerImplementation",
+      "inputs": [
+        {
+          "name": "_manager",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "_managerImplementation",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "result",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "ownershipHandoverExpiresAt",
+      "inputs": [
+        {
+          "name": "pendingOwner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "result",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "renounceOwnership",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "renounceRole",
+      "inputs": [
+        {
+          "name": "role",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        },
+        {
+          "name": "callerConfirmation",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "requestOwnershipHandover",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "revokeRole",
+      "inputs": [
+        {
+          "name": "role",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        },
+        {
+          "name": "account",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "supportsInterface",
+      "inputs": [
+        {
+          "name": "interfaceId",
+          "type": "bytes4",
+          "internalType": "bytes4"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool",
+          "internalType": "bool"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "transferOwnership",
+      "inputs": [
+        {
+          "name": "newOwner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "unapproveManager",
+      "inputs": [
+        {
+          "name": "_managerImplementation",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "event",
+      "name": "ManagerDeployed",
+      "inputs": [
+        {
+          "name": "_manager",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "_managerImplementation",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "ManagerImplementationApproved",
+      "inputs": [
+        {
+          "name": "_managerImplementation",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "ManagerImplementationUnapproved",
+      "inputs": [
+        {
+          "name": "_managerImplementation",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "OwnershipHandoverCanceled",
+      "inputs": [
+        {
+          "name": "pendingOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "OwnershipHandoverRequested",
+      "inputs": [
+        {
+          "name": "pendingOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "OwnershipTransferred",
+      "inputs": [
+        {
+          "name": "oldOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "newOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "RoleAdminChanged",
+      "inputs": [
+        {
+          "name": "role",
+          "type": "bytes32",
+          "indexed": true,
+          "internalType": "bytes32"
+        },
+        {
+          "name": "previousAdminRole",
+          "type": "bytes32",
+          "indexed": true,
+          "internalType": "bytes32"
+        },
+        {
+          "name": "newAdminRole",
+          "type": "bytes32",
+          "indexed": true,
+          "internalType": "bytes32"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "RoleGranted",
+      "inputs": [
+        {
+          "name": "role",
+          "type": "bytes32",
+          "indexed": true,
+          "internalType": "bytes32"
+        },
+        {
+          "name": "account",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "sender",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "RoleRevoked",
+      "inputs": [
+        {
+          "name": "role",
+          "type": "bytes32",
+          "indexed": true,
+          "internalType": "bytes32"
+        },
+        {
+          "name": "account",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "sender",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "error",
+      "name": "AccessControlBadConfirmation",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "AccessControlUnauthorizedAccount",
+      "inputs": [
+        {
+          "name": "account",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "neededRole",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "AlreadyInitialized",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "NewOwnerIsZeroAddress",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "NoHandoverRequest",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "Unauthorized",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "UnknownManagerImplemention",
+      "inputs": []
+    }
+  ],
+  "bytecode": {
+    "object": "0x60a060405234801561000f575f80fd5b50604051610cca380380610cca83398101604081905261002e91610172565b6001600160a01b03811660805261004482610056565b61004e5f836100ae565b5050506101a3565b638b78c6d81980541561007057630dc149f05f526004601cfd5b6001600160a01b03909116801560ff1b8117909155805f7f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08180a350565b5f828152602081815260408083206001600160a01b038516845290915281205460ff1661014e575f838152602081815260408083206001600160a01b03861684529091529020805460ff191660011790556101063390565b6001600160a01b0316826001600160a01b0316847f2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d60405160405180910390a4506001610151565b505f5b92915050565b80516001600160a01b038116811461016d575f80fd5b919050565b5f8060408385031215610183575f80fd5b61018c83610157565b915061019a60208401610157565b90509250929050565b608051610b0f6101bb5f395f6102ba0152610b0f5ff3fe6080604052600436106100f9575f3560e01c806301ffc9a7146100fd578063241ecfa714610131578063248a9ca314610152578063256929621461017f5780632f2ff15d1461018757806336568abe146101a657806354d1f13d146101c55780636eefb952146101cd578063715018a6146102195780638da5cb5b1461022157806391d1485414610239578063a217fddf14610258578063b5eee7221461026b578063b78a7fd61461028a578063c4b7de97146102a9578063d547741f146102dc578063ebe62d90146102fb578063ec485b1b1461031a578063f04e283e14610348578063f2fde38b1461035b578063fee81cf41461036e575b5f80fd5b348015610108575f80fd5b5061011c61011736600461096f565b61039f565b60405190151581526020015b60405180910390f35b34801561013c575f80fd5b5061015061014b3660046109b8565b6103d5565b005b34801561015d575f80fd5b5061017161016c3660046109d1565b61045d565b604051908152602001610128565b610150610471565b348015610192575f80fd5b506101506101a13660046109e8565b6104bd565b3480156101b1575f80fd5b506101506101c03660046109e8565b6104df565b610150610517565b3480156101d8575f80fd5b506102016101e73660046109b8565b60026020525f90815260409020546001600160a01b031681565b6040516001600160a01b039091168152602001610128565b610150610550565b34801561022c575f80fd5b50638b78c6d81954610201565b348015610244575f80fd5b5061011c6102533660046109e8565b610563565b348015610263575f80fd5b506101715f81565b348015610276575f80fd5b506101506102853660046109b8565b61058b565b348015610295575f80fd5b506102016102a4366004610a12565b6105e1565b3480156102b4575f80fd5b506102017f000000000000000000000000000000000000000000000000000000000000000081565b3480156102e7575f80fd5b506101506102f63660046109e8565b610653565b348015610306575f80fd5b506102016103153660046109b8565b61066f565b348015610325575f80fd5b5061011c6103343660046109b8565b60016020525f908152604090205460ff1681565b6101506103563660046109b8565b61070d565b6101506103693660046109b8565b61074a565b348015610379575f80fd5b506101716103883660046109b8565b63389a75e1600c9081525f91909152602090205490565b5f6001600160e01b03198216637965db0b60e01b14806103cf57506301ffc9a760e01b6001600160e01b03198316145b92915050565b6103dd610770565b6001600160a01b0381165f9081526001602052604090205460ff166104155760405163600fd44b60e01b815260040160405180910390fd5b6001600160a01b0381165f81815260016020526040808220805460ff19169055517f6a1a01a5ef5ef64c7c0d9123c065c84e7448b6f53735620b01b5eb3e3b6144a39190a250565b5f9081526020819052604090206001015490565b5f6202a3006001600160401b03164201905063389a75e1600c52335f52806020600c2055337fdbf36a107da19e49527a7176a1babf963b4b0ff8cde35ee35d6cd8f1f9ac7e1d5f80a250565b6104c68261045d565b6104cf8161078a565b6104d98383610794565b50505050565b6001600160a01b03811633146105085760405163334bd91960e11b815260040160405180910390fd5b6105128282610823565b505050565b63389a75e1600c52335f525f6020600c2055337ffa7b8eab7da67f412cc9575ed43464468f9bfbae89d1675917346ca6d8fe3c925f80a2565b610558610770565b6105615f61088c565b565b5f918252602082815260408084206001600160a01b0393909316845291905290205460ff1690565b610593610770565b6001600160a01b0381165f818152600160208190526040808320805460ff1916909217909155517f4287052986e40ee3d219ca67fc41602baee0f7492bf42d76957514f4230bbbab9190a250565b5f6105eb8561066f565b60405163347d5e2560e21b81529091506001600160a01b0382169063d1f578949061061e90879087908790600401610a9a565b5f604051808303815f87803b158015610635575f80fd5b505af1158015610647573d5f803e3d5ffd5b50505050949350505050565b61065c8261045d565b6106658161078a565b6104d98383610823565b6001600160a01b0381165f9081526001602052604081205460ff166106a75760405163600fd44b60e01b815260040160405180910390fd5b6106b0826108d2565b6001600160a01b038181165f8181526002602052604080822080546001600160a01b031916948816948517905551939450919290917fb9eeb0ca3259038acb2879e65ccb1f2a6433df58eefa491654cc6607b01944d491a3919050565b610715610770565b63389a75e1600c52805f526020600c20805442111561073b57636f5e88185f526004601cfd5b5f90556107478161088c565b50565b610752610770565b8060601b61076757637448fbae5f526004601cfd5b6107478161088c565b638b78c6d819543314610561576382b429005f526004601cfd5b61074781336108dd565b5f61079f8383610563565b61081c575f838152602081815260408083206001600160a01b03861684529091529020805460ff191660011790556107d43390565b6001600160a01b0316826001600160a01b0316847f2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d60405160405180910390a45060016103cf565b505f6103cf565b5f61082e8383610563565b1561081c575f838152602081815260408083206001600160a01b0386168085529252808320805460ff1916905551339286917ff6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b9190a45060016103cf565b638b78c6d81980546001600160a01b039092169182907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e05f80a3811560ff1b8217905550565b5f6103cf5f8361091e565b6108e78282610563565b61091a5760405163e2517d3f60e01b81526001600160a01b03821660048201526024810183905260440160405180910390fd5b5050565b5f6c5af43d3d93803e602a57fd5bf36021528160145273602c3d8160093d39f33d3d3d3d363d3d37363d735f526035600c84f09050806109655763301164255f526004601cfd5b5f60215292915050565b5f6020828403121561097f575f80fd5b81356001600160e01b031981168114610996575f80fd5b9392505050565b80356001600160a01b03811681146109b3575f80fd5b919050565b5f602082840312156109c8575f80fd5b6109968261099d565b5f602082840312156109e1575f80fd5b5035919050565b5f80604083850312156109f9575f80fd5b82359150610a096020840161099d565b90509250929050565b5f805f8060608587031215610a25575f80fd5b610a2e8561099d565b9350610a3c6020860161099d565b925060408501356001600160401b03811115610a56575f80fd5b8501601f81018713610a66575f80fd5b80356001600160401b03811115610a7b575f80fd5b876020828401011115610a8c575f80fd5b949793965060200194505050565b6001600160a01b03841681526040602082018190528101829052818360608301375f818301606090810191909152601f909201601f191601019291505056fea2646970667358221220c43b44d18062f1acd19e5b4832e8e359fbc9cda85af46ae667a335b52cc0767a64736f6c634300081a0033",
+    "sourceMap": "638:4290:235:-:0;;;1527:286;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;-1:-1:-1;;;;;1594:34:235;;;;1639:32;1656:14;1639:16;:32::i;:::-;1760:46;2232:4:43;1791:14:235;1760:10;:46::i;:::-;;1527:286;;638:4290;;4883:1190:82;-1:-1:-1;;5125:9:82;5119:16;5116:150;;;5171:10;5165:4;5158:24;5243:4;5237;5230:18;5116:150;-1:-1:-1;;;;;5339:26:82;;;5462:16;;5457:3;5453:26;5440:40;;5422:59;;;5339:26;5607:1;5567:38;5607:1;;5556:63;4883:1190;:::o;6179:316:43:-;6256:4;2954:12;;;;;;;;;;;-1:-1:-1;;;;;2954:29:43;;;;;;;;;;;;6272:217;;6315:6;:12;;;;;;;;;;;-1:-1:-1;;;;;6315:29:43;;;;;;;;;:36;;-1:-1:-1;;6315:36:43;6347:4;6315:36;;;6397:12;735:10:60;;656:96;6397:12:43;-1:-1:-1;;;;;6370:40:43;6388:7;-1:-1:-1;;;;;6370:40:43;6382:4;6370:40;;;;;;;;;;-1:-1:-1;6431:4:43;6424:11;;6272:217;-1:-1:-1;6473:5:43;6272:217;6179:316;;;;:::o;14:177:333:-;93:13;;-1:-1:-1;;;;;135:31:333;;125:42;;115:70;;181:1;178;171:12;115:70;14:177;;;:::o;196:293::-;275:6;283;336:2;324:9;315:7;311:23;307:32;304:52;;;352:1;349;342:12;304:52;375:40;405:9;375:40;:::i;:::-;365:50;;434:49;479:2;468:9;464:18;434:49;:::i;:::-;424:59;;196:293;;;;;:::o;:::-;638:4290:235;;;;;;;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x6080604052600436106100f9575f3560e01c806301ffc9a7146100fd578063241ecfa714610131578063248a9ca314610152578063256929621461017f5780632f2ff15d1461018757806336568abe146101a657806354d1f13d146101c55780636eefb952146101cd578063715018a6146102195780638da5cb5b1461022157806391d1485414610239578063a217fddf14610258578063b5eee7221461026b578063b78a7fd61461028a578063c4b7de97146102a9578063d547741f146102dc578063ebe62d90146102fb578063ec485b1b1461031a578063f04e283e14610348578063f2fde38b1461035b578063fee81cf41461036e575b5f80fd5b348015610108575f80fd5b5061011c61011736600461096f565b61039f565b60405190151581526020015b60405180910390f35b34801561013c575f80fd5b5061015061014b3660046109b8565b6103d5565b005b34801561015d575f80fd5b5061017161016c3660046109d1565b61045d565b604051908152602001610128565b610150610471565b348015610192575f80fd5b506101506101a13660046109e8565b6104bd565b3480156101b1575f80fd5b506101506101c03660046109e8565b6104df565b610150610517565b3480156101d8575f80fd5b506102016101e73660046109b8565b60026020525f90815260409020546001600160a01b031681565b6040516001600160a01b039091168152602001610128565b610150610550565b34801561022c575f80fd5b50638b78c6d81954610201565b348015610244575f80fd5b5061011c6102533660046109e8565b610563565b348015610263575f80fd5b506101715f81565b348015610276575f80fd5b506101506102853660046109b8565b61058b565b348015610295575f80fd5b506102016102a4366004610a12565b6105e1565b3480156102b4575f80fd5b506102017f000000000000000000000000000000000000000000000000000000000000000081565b3480156102e7575f80fd5b506101506102f63660046109e8565b610653565b348015610306575f80fd5b506102016103153660046109b8565b61066f565b348015610325575f80fd5b5061011c6103343660046109b8565b60016020525f908152604090205460ff1681565b6101506103563660046109b8565b61070d565b6101506103693660046109b8565b61074a565b348015610379575f80fd5b506101716103883660046109b8565b63389a75e1600c9081525f91909152602090205490565b5f6001600160e01b03198216637965db0b60e01b14806103cf57506301ffc9a760e01b6001600160e01b03198316145b92915050565b6103dd610770565b6001600160a01b0381165f9081526001602052604090205460ff166104155760405163600fd44b60e01b815260040160405180910390fd5b6001600160a01b0381165f81815260016020526040808220805460ff19169055517f6a1a01a5ef5ef64c7c0d9123c065c84e7448b6f53735620b01b5eb3e3b6144a39190a250565b5f9081526020819052604090206001015490565b5f6202a3006001600160401b03164201905063389a75e1600c52335f52806020600c2055337fdbf36a107da19e49527a7176a1babf963b4b0ff8cde35ee35d6cd8f1f9ac7e1d5f80a250565b6104c68261045d565b6104cf8161078a565b6104d98383610794565b50505050565b6001600160a01b03811633146105085760405163334bd91960e11b815260040160405180910390fd5b6105128282610823565b505050565b63389a75e1600c52335f525f6020600c2055337ffa7b8eab7da67f412cc9575ed43464468f9bfbae89d1675917346ca6d8fe3c925f80a2565b610558610770565b6105615f61088c565b565b5f918252602082815260408084206001600160a01b0393909316845291905290205460ff1690565b610593610770565b6001600160a01b0381165f818152600160208190526040808320805460ff1916909217909155517f4287052986e40ee3d219ca67fc41602baee0f7492bf42d76957514f4230bbbab9190a250565b5f6105eb8561066f565b60405163347d5e2560e21b81529091506001600160a01b0382169063d1f578949061061e90879087908790600401610a9a565b5f604051808303815f87803b158015610635575f80fd5b505af1158015610647573d5f803e3d5ffd5b50505050949350505050565b61065c8261045d565b6106658161078a565b6104d98383610823565b6001600160a01b0381165f9081526001602052604081205460ff166106a75760405163600fd44b60e01b815260040160405180910390fd5b6106b0826108d2565b6001600160a01b038181165f8181526002602052604080822080546001600160a01b031916948816948517905551939450919290917fb9eeb0ca3259038acb2879e65ccb1f2a6433df58eefa491654cc6607b01944d491a3919050565b610715610770565b63389a75e1600c52805f526020600c20805442111561073b57636f5e88185f526004601cfd5b5f90556107478161088c565b50565b610752610770565b8060601b61076757637448fbae5f526004601cfd5b6107478161088c565b638b78c6d819543314610561576382b429005f526004601cfd5b61074781336108dd565b5f61079f8383610563565b61081c575f838152602081815260408083206001600160a01b03861684529091529020805460ff191660011790556107d43390565b6001600160a01b0316826001600160a01b0316847f2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d60405160405180910390a45060016103cf565b505f6103cf565b5f61082e8383610563565b1561081c575f838152602081815260408083206001600160a01b0386168085529252808320805460ff1916905551339286917ff6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b9190a45060016103cf565b638b78c6d81980546001600160a01b039092169182907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e05f80a3811560ff1b8217905550565b5f6103cf5f8361091e565b6108e78282610563565b61091a5760405163e2517d3f60e01b81526001600160a01b03821660048201526024810183905260440160405180910390fd5b5050565b5f6c5af43d3d93803e602a57fd5bf36021528160145273602c3d8160093d39f33d3d3d3d363d3d37363d735f526035600c84f09050806109655763301164255f526004601cfd5b5f60215292915050565b5f6020828403121561097f575f80fd5b81356001600160e01b031981168114610996575f80fd5b9392505050565b80356001600160a01b03811681146109b3575f80fd5b919050565b5f602082840312156109c8575f80fd5b6109968261099d565b5f602082840312156109e1575f80fd5b5035919050565b5f80604083850312156109f9575f80fd5b82359150610a096020840161099d565b90509250929050565b5f805f8060608587031215610a25575f80fd5b610a2e8561099d565b9350610a3c6020860161099d565b925060408501356001600160401b03811115610a56575f80fd5b8501601f81018713610a66575f80fd5b80356001600160401b03811115610a7b575f80fd5b876020828401011115610a8c575f80fd5b949793965060200194505050565b6001600160a01b03841681526040602082018190528101829052818360608301375f818301606090810191909152601f909201601f191601019291505056fea2646970667358221220c43b44d18062f1acd19e5b4832e8e359fbc9cda85af46ae667a335b52cc0767a64736f6c634300081a0033",
+    "sourceMap": "638:4290:235:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2565:202:43;;;;;;;;;;-1:-1:-1;2565:202:43;;;;;:::i;:::-;;:::i;:::-;;;470:14:333;;463:22;445:41;;433:2;418:18;2565:202:43;;;;;;;;4283:353:235;;;;;;;;;;-1:-1:-1;4283:353:235;;;;;:::i;:::-;;:::i;:::-;;3810:120:43;;;;;;;;;;-1:-1:-1;3810:120:43;;;;;:::i;:::-;;:::i;:::-;;;1243:25:333;;;1231:2;1216:18;3810:120:43;1097:177:333;9021:617:82;;;:::i;4226:136:43:-;;;;;;;;;;-1:-1:-1;4226:136:43;;;;;:::i;:::-;;:::i;5328:245::-;;;;;;;;;;-1:-1:-1;5328:245:43;;;;;:::i;:::-;;:::i;9720:456:82:-;;;:::i;1289:89:235:-;;;;;;;;;;-1:-1:-1;1289:89:235;;;;;:::i;:::-;;;;;;;;;;;;-1:-1:-1;;;;;1289:89:235;;;;;;-1:-1:-1;;;;;1748:32:333;;;1730:51;;1718:2;1703:18;1289:89:235;1584:203:333;8762:100:82;;;:::i;11408:182::-;;;;;;;;;;-1:-1:-1;;;11556:18:82;11408:182;;2854:136:43;;;;;;;;;;-1:-1:-1;2854:136:43;;;;;:::i;:::-;;:::i;2187:49::-;;;;;;;;;;-1:-1:-1;2187:49:43;2232:4;2187:49;;3838:218:235;;;;;;;;;;-1:-1:-1;3838:218:235;;;;;:::i;:::-;;:::i;3193:425::-;;;;;;;;;;-1:-1:-1;3193:425:235;;;;;:::i;:::-;;:::i;1027:37::-;;;;;;;;;;;;;;;4642:138:43;;;;;;;;;;-1:-1:-1;4642:138:43;;;;;:::i;:::-;;:::i;2060:735:235:-;;;;;;;;;;-1:-1:-1;2060:735:235;;;;;:::i;:::-;;:::i;1131:95::-;;;;;;;;;;-1:-1:-1;1131:95:235;;;;;:::i;:::-;;;;;;;;;;;;;;;;10363:708:82;;;;;;:::i;:::-;;:::i;8348:349::-;;;;;;:::i;:::-;;:::i;11693:435::-;;;;;;;;;;-1:-1:-1;11693:435:82;;;;;:::i;:::-;11963:19;11957:4;11950:33;;;11812:14;11996:26;;;;12106:4;12090:21;;12084:28;;11693:435;2565:202:43;2650:4;-1:-1:-1;;;;;;2673:47:43;;-1:-1:-1;;;2673:47:43;;:87;;-1:-1:-1;;;;;;;;;;862:40:69;;;2724:36:43;2666:94;2565:202;-1:-1:-1;;2565:202:43:o;4283:353:235:-;12517:13:82;:11;:13::i;:::-;-1:-1:-1;;;;;4373:53:235;::::1;;::::0;;;:29:::1;:53;::::0;;;;;::::1;;4368:120;;4449:28;;-1:-1:-1::0;;;4449:28:235::1;;;;;;;;;;;4368:120;-1:-1:-1::0;;;;;4498:53:235;::::1;4554:5;4498:53:::0;;;:29:::1;:53;::::0;;;;;:61;;-1:-1:-1;;4498:61:235::1;::::0;;4574:55;::::1;::::0;4554:5;4574:55:::1;4283:353:::0;:::o;3810:120:43:-;3875:7;3901:12;;;;;;;;;;:22;;;;3810:120::o;9021:617:82:-;9114:15;7972:9;-1:-1:-1;;;;;9132:46:82;:15;:46;9114:64;;9346:19;9340:4;9333:33;9396:8;9390:4;9383:22;9452:7;9445:4;9439;9429:21;9422:38;9599:8;9552:45;9549:1;9546;9541:67;9248:374;9021:617::o;4226:136:43:-;4300:18;4313:4;4300:12;:18::i;:::-;2464:16;2475:4;2464:10;:16::i;:::-;4330:25:::1;4341:4;4347:7;4330:10;:25::i;:::-;;4226:136:::0;;;:::o;5328:245::-;-1:-1:-1;;;;;5421:34:43;;735:10:60;5421:34:43;5417:102;;5478:30;;-1:-1:-1;;;5478:30:43;;;;;;;;;;;5417:102;5529:37;5541:4;5547:18;5529:11;:37::i;:::-;;5328:245;;:::o;9720:456:82:-;9922:19;9916:4;9909:33;9968:8;9962:4;9955:22;10020:1;10013:4;10007;9997:21;9990:32;10151:8;10105:44;10102:1;10099;10094:66;9720:456::o;8762:100::-;12517:13;:11;:13::i;:::-;8834:21:::1;8852:1;8834:9;:21::i;:::-;8762:100::o:0;2854:136:43:-;2931:4;2954:12;;;;;;;;;;;-1:-1:-1;;;;;2954:29:43;;;;;;;;;;;;;;;2854:136::o;3838:218:235:-;12517:13:82;:11;:13::i;:::-;-1:-1:-1;;;;;3921:53:235;::::1;;::::0;;;3977:4:::1;3921:53;::::0;;;;;;;:60;;-1:-1:-1;;3921:60:235::1;::::0;;::::1;::::0;;;3996:53;::::1;::::0;3921;3996::::1;3838:218:::0;:::o;3193:425::-;3354:24;3451:37;3465:22;3451:13;:37::i;:::-;3559:52;;-1:-1:-1;;;3559:52:235;;3440:48;;-1:-1:-1;;;;;;3559:37:235;;;;;:52;;3597:6;;3605:5;;;;3559:52;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;3193:425;;;;;;:::o;4642:138:43:-;4717:18;4730:4;4717:12;:18::i;:::-;2464:16;2475:4;2464:10;:16::i;:::-;4747:26:::1;4759:4;4765:7;4747:11;:26::i;2060:735:235:-:0;-1:-1:-1;;;;;2226:53:235;;2131:24;2226:53;;;:29;:53;;;;;;;;2221:120;;2302:28;;-1:-1:-1;;;2302:28:235;;;;;;;;;;;2221:120;2447:38;2462:22;2447:14;:38::i;:::-;-1:-1:-1;;;;;2668:31:235;;;;;;;:21;:31;;;;;;:56;;-1:-1:-1;;;;;;2668:56:235;;;;;;;;;2739:49;2668:31;;-1:-1:-1;2668:56:235;;:31;;2739:49;;;2060:735;;;:::o;10363:708:82:-;12517:13;:11;:13::i;:::-;10597:19:::1;10591:4;10584:33;10643:12;10637:4;10630:26;10705:4;10699;10689:21;10811:12;10805:19;10792:11;10789:36;10786:157;;;10857:10;10851:4;10844:24;10924:4;10918;10911:18;10786:157;11020:1;10999:23:::0;;11041::::1;11051:12:::0;11041:9:::1;:23::i;:::-;10363:708:::0;:::o;8348:349::-;12517:13;:11;:13::i;:::-;8520:8:::1;8516:2;8512:17;8502:150;;8562:10;8556:4;8549:24;8633:4;8627;8620:18;8502:150;8671:19;8681:8;8671:9;:19::i;7292:355::-:0;-1:-1:-1;;7498:18:82;7488:8;7485:32;7475:156;;7550:10;7544:4;7537:24;7612:4;7606;7599:18;3199:103:43;3265:30;3276:4;735:10:60;3265::43;:30::i;6179:316::-;6256:4;6277:22;6285:4;6291:7;6277;:22::i;:::-;6272:217;;6315:6;:12;;;;;;;;;;;-1:-1:-1;;;;;6315:29:43;;;;;;;;;:36;;-1:-1:-1;;6315:36:43;6347:4;6315:36;;;6397:12;735:10:60;;656:96;6397:12:43;-1:-1:-1;;;;;6370:40:43;6388:7;-1:-1:-1;;;;;6370:40:43;6382:4;6370:40;;;;;;;;;;-1:-1:-1;6431:4:43;6424:11;;6272:217;-1:-1:-1;6473:5:43;6466:12;;6732:317;6810:4;6830:22;6838:4;6844:7;6830;:22::i;:::-;6826:217;;;6900:5;6868:12;;;;;;;;;;;-1:-1:-1;;;;;6868:29:43;;;;;;;;;;:37;;-1:-1:-1;;6868:37:43;;;6924:40;735:10:60;;6868:12:43;;6924:40;;6900:5;6924:40;-1:-1:-1;6985:4:43;6978:11;;6145:1089:82;-1:-1:-1;;6579:16:82;;-1:-1:-1;;;;;6427:26:82;;;;;;6539:38;6536:1;;6528:78;6703:16;;6698:3;6694:26;6681:40;;6663:59;;10363:708;:::o;6507:127:88:-;6564:16;6603:24;6609:1;6612:14;6603:5;:24::i;3432:197:43:-;3520:22;3528:4;3534:7;3520;:22::i;:::-;3515:108;;3565:47;;-1:-1:-1;;;3565:47:43;;-1:-1:-1;;;;;3848:32:333;;3565:47:43;;;3830:51:333;3897:18;;;3890:34;;;3803:18;;3565:47:43;;;;;;;3515:108;3432:197;;:::o;6738:5567:88:-;6810:16;11863:28;11857:4;11850:42;11918:14;11912:4;11905:28;11959:42;11953:4;11946:56;12047:4;12041;12034:5;12027:25;12015:37;;12075:8;12065:136;;12116:10;12110:4;12103:24;12182:4;12176;12169:18;12065:136;12227:1;12221:4;12214:15;6738:5567;;;;:::o;14:286:333:-;72:6;125:2;113:9;104:7;100:23;96:32;93:52;;;141:1;138;131:12;93:52;167:23;;-1:-1:-1;;;;;;219:32:333;;209:43;;199:71;;266:1;263;256:12;199:71;289:5;14:286;-1:-1:-1;;;14:286:333:o;497:173::-;565:20;;-1:-1:-1;;;;;614:31:333;;604:42;;594:70;;660:1;657;650:12;594:70;497:173;;;:::o;675:186::-;734:6;787:2;775:9;766:7;762:23;758:32;755:52;;;803:1;800;793:12;755:52;826:29;845:9;826:29;:::i;866:226::-;925:6;978:2;966:9;957:7;953:23;949:32;946:52;;;994:1;991;984:12;946:52;-1:-1:-1;1039:23:333;;866:226;-1:-1:-1;866:226:333:o;1279:300::-;1347:6;1355;1408:2;1396:9;1387:7;1383:23;1379:32;1376:52;;;1424:1;1421;1414:12;1376:52;1469:23;;;-1:-1:-1;1535:38:333;1569:2;1554:18;;1535:38;:::i;:::-;1525:48;;1279:300;;;;;:::o;1792:734::-;1880:6;1888;1896;1904;1957:2;1945:9;1936:7;1932:23;1928:32;1925:52;;;1973:1;1970;1963:12;1925:52;1996:29;2015:9;1996:29;:::i;:::-;1986:39;;2044:38;2078:2;2067:9;2063:18;2044:38;:::i;:::-;2034:48;-1:-1:-1;2133:2:333;2118:18;;2105:32;-1:-1:-1;;;;;2149:30:333;;2146:50;;;2192:1;2189;2182:12;2146:50;2215:22;;2268:4;2260:13;;2256:27;-1:-1:-1;2246:55:333;;2297:1;2294;2287:12;2246:55;2324:16;;-1:-1:-1;;;;;2352:30:333;;2349:50;;;2395:1;2392;2385:12;2349:50;2440:7;2435:2;2426:6;2422:2;2418:15;2414:24;2411:37;2408:57;;;2461:1;2458;2451:12;2408:57;1792:734;;;;-1:-1:-1;2492:2:333;2484:11;;-1:-1:-1;;;1792:734:333:o;3166:485::-;-1:-1:-1;;;;;3351:32:333;;3333:51;;3420:2;3415;3400:18;;3393:30;;;3439:18;;3432:34;;;3459:6;3508;3503:2;3488:18;;3475:48;3572:1;3543:22;;;3567:2;3539:31;;;3532:42;;;;3635:2;3614:15;;;-1:-1:-1;;3610:29:333;3595:45;3591:54;;3166:485;-1:-1:-1;;3166:485:333:o",
+    "linkReferences": {},
+    "immutableReferences": {
+      "112897": [
+        {
+          "start": 698,
+          "length": 32
+        }
+      ]
+    }
+  },
+  "methodIdentifiers": {
+    "DEFAULT_ADMIN_ROLE()": "a217fddf",
+    "approveManager(address)": "b5eee722",
+    "approvedManagerImplementation(address)": "ec485b1b",
+    "cancelOwnershipHandover()": "54d1f13d",
+    "completeOwnershipHandover(address)": "f04e283e",
+    "deployAndInitializeManager(address,address,bytes)": "b78a7fd6",
+    "deployManager(address)": "ebe62d90",
+    "feeEscrow()": "c4b7de97",
+    "getRoleAdmin(bytes32)": "248a9ca3",
+    "grantRole(bytes32,address)": "2f2ff15d",
+    "hasRole(bytes32,address)": "91d14854",
+    "managerImplementation(address)": "6eefb952",
+    "owner()": "8da5cb5b",
+    "ownershipHandoverExpiresAt(address)": "fee81cf4",
+    "renounceOwnership()": "715018a6",
+    "renounceRole(bytes32,address)": "36568abe",
+    "requestOwnershipHandover()": "25692962",
+    "revokeRole(bytes32,address)": "d547741f",
+    "supportsInterface(bytes4)": "01ffc9a7",
+    "transferOwnership(address)": "f2fde38b",
+    "unapproveManager(address)": "241ecfa7"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.26+commit.8a97fa7a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_protocolOwner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_feeEscrow\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"AccessControlBadConfirmation\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"neededRole\",\"type\":\"bytes32\"}],\"name\":\"AccessControlUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"AlreadyInitialized\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NewOwnerIsZeroAddress\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NoHandoverRequest\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"Unauthorized\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"UnknownManagerImplemention\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_manager\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_managerImplementation\",\"type\":\"address\"}],\"name\":\"ManagerDeployed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_managerImplementation\",\"type\":\"address\"}],\"name\":\"ManagerImplementationApproved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_managerImplementation\",\"type\":\"address\"}],\"name\":\"ManagerImplementationUnapproved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pendingOwner\",\"type\":\"address\"}],\"name\":\"OwnershipHandoverCanceled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pendingOwner\",\"type\":\"address\"}],\"name\":\"OwnershipHandoverRequested\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"oldOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_managerImplementation\",\"type\":\"address\"}],\"name\":\"approveManager\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_managerImplementation\",\"type\":\"address\"}],\"name\":\"approvedManagerImplementation\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"_approved\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"cancelOwnershipHandover\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"pendingOwner\",\"type\":\"address\"}],\"name\":\"completeOwnershipHandover\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_managerImplementation\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_owner\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"deployAndInitializeManager\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"manager_\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_managerImplementation\",\"type\":\"address\"}],\"name\":\"deployManager\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"manager_\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"feeEscrow\",\"outputs\":[{\"internalType\":\"contract IFeeEscrow\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_manager\",\"type\":\"address\"}],\"name\":\"managerImplementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"_managerImplementation\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"result\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"pendingOwner\",\"type\":\"address\"}],\"name\":\"ownershipHandoverExpiresAt\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"result\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"callerConfirmation\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"requestOwnershipHandover\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_managerImplementation\",\"type\":\"address\"}],\"name\":\"unapproveManager\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"errors\":{\"AccessControlBadConfirmation()\":[{\"details\":\"The caller of a function is not the expected one. NOTE: Don't confuse with {AccessControlUnauthorizedAccount}.\"}],\"AccessControlUnauthorizedAccount(address,bytes32)\":[{\"details\":\"The `account` is missing a role.\"}],\"AlreadyInitialized()\":[{\"details\":\"Cannot double-initialize.\"}],\"NewOwnerIsZeroAddress()\":[{\"details\":\"The `newOwner` cannot be the zero address.\"}],\"NoHandoverRequest()\":[{\"details\":\"The `pendingOwner` does not have a valid handover request.\"}],\"Unauthorized()\":[{\"details\":\"The caller is not authorized to call the function.\"}]},\"events\":{\"OwnershipHandoverCanceled(address)\":{\"details\":\"The ownership handover to `pendingOwner` has been canceled.\"},\"OwnershipHandoverRequested(address)\":{\"details\":\"An ownership handover to `pendingOwner` has been requested.\"},\"OwnershipTransferred(address,address)\":{\"details\":\"The ownership is transferred from `oldOwner` to `newOwner`. This event is intentionally kept the same as OpenZeppelin's Ownable to be compatible with indexers and [EIP-173](https://eips.ethereum.org/EIPS/eip-173), despite it not being as lightweight as a single argument event.\"},\"RoleAdminChanged(bytes32,bytes32,bytes32)\":{\"details\":\"Emitted when `newAdminRole` is set as ``role``'s admin role, replacing `previousAdminRole` `DEFAULT_ADMIN_ROLE` is the starting admin for all roles, despite {RoleAdminChanged} not being emitted to signal this.\"},\"RoleGranted(bytes32,address,address)\":{\"details\":\"Emitted when `account` is granted `role`. `sender` is the account that originated the contract call. This account bears the admin role (for the granted role). Expected in cases where the role was granted using the internal {AccessControl-_grantRole}.\"},\"RoleRevoked(bytes32,address,address)\":{\"details\":\"Emitted when `account` is revoked `role`. `sender` is the account that originated the contract call:   - if using `revokeRole`, it is the admin role bearer   - if using `renounceRole`, it is the role bearer (i.e. `account`)\"}},\"kind\":\"dev\",\"methods\":{\"approveManager(address)\":{\"details\":\"This will not revert if the implementation is already approved\",\"params\":{\"_managerImplementation\":\"The implementation to approve\"}},\"cancelOwnershipHandover()\":{\"details\":\"Cancels the two-step ownership handover to the caller, if any.\"},\"completeOwnershipHandover(address)\":{\"details\":\"Allows the owner to complete the two-step ownership handover to `pendingOwner`. Reverts if there is no existing ownership handover requested by `pendingOwner`.\"},\"constructor\":{\"details\":\"This contract should be created in the {PositionManager} constructor call.\"},\"deployAndInitializeManager(address,address,bytes)\":{\"params\":{\"_data\":\"The initialization data for the deployed manager\",\"_managerImplementation\":\"The address of the approved implementation\",\"_owner\":\"The owner address of the manager\"},\"returns\":{\"manager_\":\"The freshly deployed {TreasuryManager} contract address\"}},\"deployManager(address)\":{\"params\":{\"_managerImplementation\":\"The address of the approved implementation\"},\"returns\":{\"manager_\":\"The freshly deployed {TreasuryManager} contract address\"}},\"getRoleAdmin(bytes32)\":{\"details\":\"Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.\"},\"grantRole(bytes32,address)\":{\"details\":\"Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role. May emit a {RoleGranted} event.\"},\"hasRole(bytes32,address)\":{\"details\":\"Returns `true` if `account` has been granted `role`.\"},\"owner()\":{\"details\":\"Returns the owner of the contract.\"},\"ownershipHandoverExpiresAt(address)\":{\"details\":\"Returns the expiry timestamp for the two-step ownership handover to `pendingOwner`.\"},\"renounceOwnership()\":{\"details\":\"Allows the owner to renounce their ownership.\"},\"renounceRole(bytes32,address)\":{\"details\":\"Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been revoked `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `callerConfirmation`. May emit a {RoleRevoked} event.\"},\"requestOwnershipHandover()\":{\"details\":\"Request a two-step ownership handover to the caller. The request will automatically expire in 48 hours (172800 seconds) by default.\"},\"revokeRole(bytes32,address)\":{\"details\":\"Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role. May emit a {RoleRevoked} event.\"},\"supportsInterface(bytes4)\":{\"details\":\"See {IERC165-supportsInterface}.\"},\"transferOwnership(address)\":{\"details\":\"Allows the owner to transfer the ownership to `newOwner`.\"},\"unapproveManager(address)\":{\"details\":\"This will revert if the contract is no already approved\",\"params\":{\"_managerImplementation\":\"The implementation to unapprove\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"approveManager(address)\":{\"notice\":\"Approves a manager implementation.\"},\"approvedManagerImplementation(address)\":{\"notice\":\"Mapping to store approved action contract addresses\"},\"constructor\":{\"notice\":\"Sets the contract owner.\"},\"deployAndInitializeManager(address,address,bytes)\":{\"notice\":\"Deploys an approved manager and initializes it in a single transaction.\"},\"deployManager(address)\":{\"notice\":\"Deploys an approved manager implementation.\"},\"managerImplementation(address)\":{\"notice\":\"Mapping of deployments to their implementations\"},\"unapproveManager(address)\":{\"notice\":\"Remove a manager implementation from approval.\"}},\"notice\":\"Allows the contract owner to manage approved {ITreasuryAction} contracts.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/contracts/treasury/managers/TreasuryManagerFactory.sol\":\"TreasuryManagerFactory\"},\"evmVersion\":\"cancun\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":0},\"remappings\":[\":@ensdomains/=lib/v4-core/node_modules/@ensdomains/\",\":@flaunch-interfaces/=src/interfaces/\",\":@flaunch/=src/contracts/\",\":@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/\",\":@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/\",\":@optimism/=lib/optimism/packages/contracts-bedrock/\",\":@solady/=lib/solady/src/\",\":@uniswap-periphery/=lib/v4-periphery/src/\",\":@uniswap/v3-core/=lib/v3-core/\",\":@uniswap/v4-core/=lib/v4-core/\",\":ds-test/=lib/vulcan/lib/forge-std/lib/ds-test/src/\",\":erc4626-tests/=lib/openzeppelin-contracts-upgradeable/lib/erc4626-tests/\",\":forge-gas-snapshot/=lib/v4-periphery/lib/permit2/lib/forge-gas-snapshot/src/\",\":forge-std/=lib/forge-std/src/\",\":halmos-cheatcodes/=lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/\",\":hardhat/=lib/v4-core/node_modules/hardhat/\",\":kontrol-cheatcodes/=lib/optimism/packages/contracts-bedrock/lib/kontrol-cheatcodes/src/\",\":lib-keccak/=lib/optimism/packages/contracts-bedrock/lib/lib-keccak/contracts/\",\":openzeppelin-contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/\",\":openzeppelin-contracts-v5/=lib/optimism/packages/contracts-bedrock/lib/openzeppelin-contracts-v5/\",\":openzeppelin-contracts/=lib/openzeppelin-contracts/\",\":openzeppelin/=lib/openzeppelin-contracts-upgradeable/contracts/\",\":optimism/=lib/optimism/\",\":permit2/=lib/v4-periphery/lib/permit2/\",\":safe-contracts/=lib/optimism/packages/contracts-bedrock/lib/safe-contracts/contracts/\",\":solady-v0.0.245/=lib/optimism/packages/contracts-bedrock/lib/solady-v0.0.245/src/\",\":solady/=lib/solady/src/\",\":solmate/=lib/v4-core/lib/solmate/\",\":v3-core/=lib/v3-core/\",\":v4-core/=lib/v4-core/src/\",\":v4-periphery/=lib/v4-periphery/\",\":vulcan/=lib/vulcan/src/\"]},\"sources\":{\"lib/openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol\":{\"keccak256\":\"0x0e1f0f5f62f67a881cd1a9597acbc0a5e4071f3c2c10449a183b922ae7272e3f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c25f742ff154998d19a669e2508c3597b363e123ce9144cd0fcf6521229f401f\",\"dweb:/ipfs/QmQXRuFzStEWqeEPbhQU6cAg9PaSowxJVo4PDKyRod7dco\"]},\"lib/openzeppelin-contracts/contracts/access/AccessControl.sol\":{\"keccak256\":\"0xd0e967bcd2ad6fd4231951e744b121e4cb428ce9d38e1c99350db6bb4a5207f7\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://3f454d107c23bd052c0bdb26dcdbb64ea203fd01b5dabb08f185f4c096beb0c8\",\"dweb:/ipfs/QmSNAV8u7TLKWTKmoQhWbBiyTKVZVQTqi9NvnmNSvnWn2D\"]},\"lib/openzeppelin-contracts/contracts/access/IAccessControl.sol\":{\"keccak256\":\"0xccb9b54747f3733f9ca435191745881587b2b48a12d6903358b59bc8ae39ea6b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://021b637b39bddc68e1beed71677cb52919d27880804b1c7160d53064342786bc\",\"dweb:/ipfs/QmV3wgNQmoi9d6U3P7xwHAEKDoaQzGqGGjcSXsyWMf9rsK\"]},\"lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol\":{\"keccak256\":\"0x9b6b3e7803bc5f2f8cd7ad57db8ac1def61a9930a5a3107df4882e028a9605d7\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://da62d6be1f5c6edf577f0cb45666a8aa9c2086a4bac87d95d65f02e2f4c36a4b\",\"dweb:/ipfs/QmNkpvBpoCMvX8JwAFNSc5XxJ2q5BXJpL5L1txb4QkqVFF\"]},\"lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol\":{\"keccak256\":\"0xde7e9fd9aee8d4f40772f96bb3b58836cbc6dfc0227014a061947f8821ea9724\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://11fea9f8bc98949ac6709f0c1699db7430d2948137aa94d5a9e95a91f61a710a\",\"dweb:/ipfs/QmQdfRXxQjwP6yn3DVo1GHPpriKNcFghSPi94Z1oKEFUNS\"]},\"lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol\":{\"keccak256\":\"0xce41876e78d1badc0512229b4d14e4daf83bc1003d7f83978d18e0e56f965b9c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a2608291cb038b388d80b79a06b6118a42f7894ff67b7da10ec0dbbf5b2973ba\",\"dweb:/ipfs/QmWohqcBLbcxmA4eGPhZDXe5RYMMEEpFq22nfkaUMvTfw1\"]},\"lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xe06a3f08a987af6ad2e1c1e774405d4fe08f1694b67517438b467cecf0da0ef7\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://df6f0c459663c9858b6cba2cda1d14a7d05a985bed6d2de72bd8e78c25ee79db\",\"dweb:/ipfs/QmeTTxZ7qVk9rjEv2R4CpCwdf8UMCcRqDNMvzNxHc3Fnn9\"]},\"lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol\":{\"keccak256\":\"0x6dd0cb67846da3fa1241c520faaa215d6bec8226e37beac6056c51e8af44d24e\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://650e533e62b30dcc6edea2b6c91358d5659da3bde42e56adf7316c493b916a15\",\"dweb:/ipfs/QmYkmK2vPE6FjdAoQVpZSJxamTLGno9wzGS495TcMNFViV\"]},\"lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol\":{\"keccak256\":\"0x5dc63d1c6a12fe1b17793e1745877b2fcbe1964c3edfd0a482fac21ca8f18261\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6b7f97c5960a50fd1822cb298551ffc908e37b7893a68d6d08bce18a11cb0f11\",\"dweb:/ipfs/QmQQvxBytoY1eBt3pRQDmvH2hZ2yjhs12YqVfzGm7KSURq\"]},\"lib/openzeppelin-contracts/contracts/utils/Arrays.sol\":{\"keccak256\":\"0xb4d040e2cc1d4a66d08b174b97332aa3dbf330bc74f91c725d7ff653efca7eb1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9da205f459aac15cadd00538691b525eef81f098a95bc3eedea12968bcb70706\",\"dweb:/ipfs/QmcqTJET3rNsXMGT3UvqLgFS3RrKaHe5x97m4dcfUCWMoW\"]},\"lib/openzeppelin-contracts/contracts/utils/Comparators.sol\":{\"keccak256\":\"0x302eecd8cf323b4690e3494a7d960b3cbce077032ab8ef655b323cdd136cec58\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://49ba706f1bc476d68fe6c1fad75517acea4e9e275be0989b548e292eb3a3eacd\",\"dweb:/ipfs/QmeBpvcdGWzWMKTQESUCEhHgnEQYYATVwPxLMxa6vMT7jC\"]},\"lib/openzeppelin-contracts/contracts/utils/Context.sol\":{\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12\",\"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF\"]},\"lib/openzeppelin-contracts/contracts/utils/Panic.sol\":{\"keccak256\":\"0xf7fe324703a64fc51702311dc51562d5cb1497734f074e4f483bfb6717572d7a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c6a5ff4f9fd8649b7ee20800b7fa387d3465bd77cf20c2d1068cd5c98e1ed57a\",\"dweb:/ipfs/QmVSaVJf9FXFhdYEYeCEfjMVHrxDh5qL4CGkxdMWpQCrqG\"]},\"lib/openzeppelin-contracts/contracts/utils/SlotDerivation.sol\":{\"keccak256\":\"0x91832f9744a308318ef3344caf2122345d6a949e25017461322d13a4ede53f10\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://77f5fa6ce1145a3637406a77940cd1ab50523187c8ac7281805b3fc2bd6ffd5e\",\"dweb:/ipfs/QmewJyTg2SoBee1bKwks3vktT2wTQhB7TtzZg9xKvzvfUf\"]},\"lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol\":{\"keccak256\":\"0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9f660b1f351b757dfe01438e59888f31f33ded3afcf5cb5b0d9bf9aa6f320a8b\",\"dweb:/ipfs/QmarDJ5hZEgBtCmmrVzEZWjub9769eD686jmzb2XpSU1cM\"]},\"lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol\":{\"keccak256\":\"0xddce8e17e3d3f9ed818b4f4c4478a8262aab8b11ed322f1bf5ed705bb4bd97fa\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://8084aa71a4cc7d2980972412a88fe4f114869faea3fefa5436431644eb5c0287\",\"dweb:/ipfs/Qmbqfs5dRdPvHVKY8kTaeyc65NdqXRQwRK7h9s5UJEhD1p\"]},\"lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol\":{\"keccak256\":\"0x79796192ec90263f21b464d5bc90b777a525971d3de8232be80d9c4f9fb353b8\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f6fda447a62815e8064f47eff0dd1cf58d9207ad69b5d32280f8d7ed1d1e4621\",\"dweb:/ipfs/QmfDRc7pxfaXB2Dh9np5Uf29Na3pQ7tafRS684wd3GLjVL\"]},\"lib/openzeppelin-contracts/contracts/utils/math/Math.sol\":{\"keccak256\":\"0xc240f71206795cead02e49f999b3523414c230cec53423298d8457a7ce9d3ea4\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://7d5813c665d5ea1b73e27844800eb45831b9ba608b2a9216ead318e246fd5e8f\",\"dweb:/ipfs/QmNStA3tbwHZm1tXgdmY4wB3NbYKJtzYWADjKmDMhYHjyA\"]},\"lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol\":{\"keccak256\":\"0x195533c86d0ef72bcc06456a4f66a9b941f38eb403739b00f21fd7c1abd1ae54\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://b1d578337048cad08c1c03041cca5978eff5428aa130c781b271ad9e5566e1f8\",\"dweb:/ipfs/QmPFKL2r9CBsMwmUqqdcFPfHZB2qcs9g1HDrPxzWSxomvy\"]},\"lib/openzeppelin-contracts/contracts/utils/structs/EnumerableSet.sol\":{\"keccak256\":\"0x804753930b59f27c3a6747a4cf58b4d291f2c942a2a76edd43d4571a5f6b02bc\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6f05286cf2babfc5bf1c347c447477ca24147bea09bb4f5ba01fe9afd98ab409\",\"dweb:/ipfs/QmUcTFzF4y2U9VoBbv7kx3PDTACdNMoYQuTe89ot2pAqqA\"]},\"lib/optimism/packages/contracts-bedrock/interfaces/L2/IL2ToL2CrossDomainMessenger.sol\":{\"keccak256\":\"0x8ee3b6c749dc02a562c563e7990a0bac1da24bb32e89a1c0a78342ddd53b13be\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://3e29cc32d34d1907f6167956c99c210a94bed0c170cc28ada80a84bfbe294ac0\",\"dweb:/ipfs/QmTbcCVQg6pa2okfUNsig3PTH99zgoyoNJD2PWrFZVnnQa\"]},\"lib/optimism/packages/contracts-bedrock/src/libraries/Predeploys.sol\":{\"keccak256\":\"0x57983e9aaf75c3fefc61c08cb8cf34c0b18716cdb0a0b11623a7db501adaa62d\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://fbab15fa0831e68b7c29dabaaa195632dda6af6bbb6e22e95e0d6a448e565f3e\",\"dweb:/ipfs/QmXANzeLX6ggEhyCTYQG26M3njch66xSaKo91XZAxwCVwc\"]},\"lib/solady/src/auth/Ownable.sol\":{\"keccak256\":\"0xc208cdd9de02bbf4b5edad18b88e23a2be7ff56d2287d5649329dc7cda64b9a3\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://e8fba079cc7230c617f7493a2e97873f88e59a53a5018fcb2e2b6ac42d8aa5a3\",\"dweb:/ipfs/QmTXg8GSt8hsK2cZhbPFrund1mrwVdkLQmEPoQaFy4fhjs\"]},\"lib/solady/src/tokens/ERC721.sol\":{\"keccak256\":\"0x7ee665c5f70c388430cd7af42a5b1c2ff0e11ab45e46ab7ba02a6aad29f5cc77\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://14433fac4ec7393908c97a874fd735e6f80fb81d286d76bd83d7d6159ec9cc6f\",\"dweb:/ipfs/Qmc9nE2q5HrFSQDt9oKXxs5mbgnNNfYnnr7KhfForCERzv\"]},\"lib/solady/src/utils/Initializable.sol\":{\"keccak256\":\"0x58ee7b2e966232ca1ca9e9e705d8afcefa83fe29d37d6f8361d73015a9db1fe4\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://59f134cb038e0a547f0a3dbfe9c9b6939f7b39dff64646a79e8cf2dd6ba14f80\",\"dweb:/ipfs/QmfXt149JQEWsYbLUkS9iLP6kGZqzHYyMg7SsLUUPgafEb\"]},\"lib/solady/src/utils/LibBytes.sol\":{\"keccak256\":\"0x561dd29e4abd6feb7800e97a68f73ed100714296c42e444d1029f9e944ea4f5f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a76e216f6d36e1c1c7434195cd7dcf4a94d09f494a0e2beebb5714c75ad1d4c1\",\"dweb:/ipfs/QmeFHgUHSBg4cRZTeCD7nt5uMRZhgpzquzcYC9L9vyqBcn\"]},\"lib/solady/src/utils/LibClone.sol\":{\"keccak256\":\"0x1b96fd03a3948155bd2fe95dc4980930c759b174026e18f11bc8e88d55ae030e\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://64998d16472a127031ee6a796ed9afcf13dd662afd30eb4d3e2a42c2bc9fd204\",\"dweb:/ipfs/QmTXHGy9t8YTW96tjiZ8RBqmijXUTqc1JznEBqHv8Duc4A\"]},\"lib/solady/src/utils/LibString.sol\":{\"keccak256\":\"0xe0427faa09ff8439d820147a7485148c1eadd353d11f097755ed60cad80c3785\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://60d45e30ddb233e745b5de17c6c6cbc1149ca016655ad229d14141bb67aa4d05\",\"dweb:/ipfs/QmWWdczKjEKnU19qCcjAKosv1TtXMxnZd9oRsDkLaussv2\"]},\"lib/solady/src/utils/ReentrancyGuard.sol\":{\"keccak256\":\"0xdb28f318ec45197a6c7cc2abebed67d7cb8b965838ef962e3844423256a9ddb8\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://873cd46b77a2aeb781e7a0d131e7299151323ed884c330101a51d0727e218d98\",\"dweb:/ipfs/QmddadCjyedztvdSgLZEyKWoRes2SqtpviSjhEbSNrkUoi\"]},\"lib/solady/src/utils/SafeTransferLib.sol\":{\"keccak256\":\"0xf1a06ea1cce6a233b18a2b16d36195bf1ab7c7a721b51a172c7b493386c4825b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c54e268d1344503a360d99b9f25c1ff18685fba4f94fedcd9fa6277ea73554d7\",\"dweb:/ipfs/QmdYp5AP8rNLwBthb9gTyeNZdJGRaNUKpDz9bMRoPaY2oK\"]},\"lib/v4-core/src/interfaces/IExtsload.sol\":{\"keccak256\":\"0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://375c69148622aab7a3537d5fd37d373a8e9731022c8d87bdaee46233b0a99fe1\",\"dweb:/ipfs/QmXFjdoYRxsA5B1kyuxEXgNf3FBoL1zPvy26Qy8EtpdFRN\"]},\"lib/v4-core/src/interfaces/IExttload.sol\":{\"keccak256\":\"0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://294394f72dfc219689209f4130d85601dfd0d63c8d47578050d312db70f9b6c8\",\"dweb:/ipfs/QmTDMQ3oxCGHgEBU48a3Lp4S1rRjc8vVCxkhE5ZNej1bsY\"]},\"lib/v4-core/src/interfaces/IHooks.sol\":{\"keccak256\":\"0x4c9571aed0c2b6ef11832545554fc11ffdb03746daaf5c73683c00600bfc7ec0\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://e78b34b58ce9de91b91943b4f3cc3ce121d0b151e123e8a600ac5ef64d91db6c\",\"dweb:/ipfs/QmRkaQnPCYwLrXgbpGujJTx32PaZK63KSPJJV1XmnQuCMb\"]},\"lib/v4-core/src/interfaces/IPoolManager.sol\":{\"keccak256\":\"0x3534f00531038e77ab8a7fc4d0a6e0993ee53fb7a396b1324ad917318ea46cea\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://0a4a7e771828dc40848485b568a1cf514f553ace6653f4f4d1ad3f3e9cdb6c27\",\"dweb:/ipfs/QmTjzQ7KVYnrEWtxPER2E4MXzycgcznfzSDsZtd5turk5V\"]},\"lib/v4-core/src/interfaces/IProtocolFees.sol\":{\"keccak256\":\"0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://85751d302125881f72e5f8af051c2d5d9b1f606ebaea8ca7d04fccdd27cc252d\",\"dweb:/ipfs/QmeRwomeh9NWm6A6fgNA4KZPQZHPpdKsPQyYsHSFmvud7J\"]},\"lib/v4-core/src/interfaces/callback/IUnlockCallback.sol\":{\"keccak256\":\"0x58c82f2bd9d7c097ed09bd0991fedc403b0ec270eb3d0158bfb095c06a03d719\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://91168ca26a10980df2cdc3fbfe8ddf372c002b7ef19e3c59a0c9870d64198f1b\",\"dweb:/ipfs/QmUSpaM825vd1SwvF38esgbdLgYiPwefKaFERTWvUi6uSK\"]},\"lib/v4-core/src/interfaces/external/IERC20Minimal.sol\":{\"keccak256\":\"0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://118757369892687b99ef46ce28d6861f62c098285bd7687a4f17f7e44e5f81de\",\"dweb:/ipfs/QmUxqbYqQtcEwwFbb9e6BBMePEaSgN8C45v6RKubD4ib8d\"]},\"lib/v4-core/src/interfaces/external/IERC6909Claims.sol\":{\"keccak256\":\"0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://e8c557b7e52abdbbd82e415a1acc27921446a7fd090b7d4877e52be72619547f\",\"dweb:/ipfs/QmXE2KNPbXmGX8BQF3ei6zhzRTnhoTQg39XmqMnkhbr6QK\"]},\"lib/v4-core/src/libraries/BitMath.sol\":{\"keccak256\":\"0x51b9be4f5c4fd3e80cbc9631a65244a2eb2be250b6b7f128a2035080e18aee8d\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://fe98bbd5498e912146b9319827fc63621eb66ff55d5baae0fa02a7a972ab8d1e\",\"dweb:/ipfs/QmY5hCuyrtgsJtk4AavrxcvBkRrChfr4N6ZnhdC8roPpNi\"]},\"lib/v4-core/src/libraries/CurrencyReserves.sol\":{\"keccak256\":\"0x1576616129933fcdf3b684cea33cffd9c95e18fafbd2832a8c48ac3d8526d4c3\",\"license\":\"BUSL-1.1\",\"urls\":[\"bzz-raw://33b050efb9b81803b18f562271e7cca2ec5362c4d505860d6419b4a345636725\",\"dweb:/ipfs/QmQtFtTwKZ5pFVGD2ENDUXvp7ECFvzqeCuJ1miJcUHdmiX\"]},\"lib/v4-core/src/libraries/CustomRevert.sol\":{\"keccak256\":\"0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c9ea883c98d6ae1829160d0977bb5195761cfd5bc81692d0a941f45717f594cd\",\"dweb:/ipfs/QmZPwxzaeMNv536wzrAMrMswu7vMHuqPVpjcqL3YvCMoxt\"]},\"lib/v4-core/src/libraries/FixedPoint128.sol\":{\"keccak256\":\"0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://0de1f9a06520b1a689660943faa14fc0b8344ab41fab9e6012ea34bff4b9b3eb\",\"dweb:/ipfs/QmRNMPTyko7W6d6KxuTsnDBa9oZgDK4xiwRRq3H9ASTbwy\"]},\"lib/v4-core/src/libraries/FixedPoint96.sol\":{\"keccak256\":\"0xef5c3fd41aee26bb12aa1c32873cfee88e67eddfe7c2b32283786265ac669741\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4de298d02f662a1c36c7be0a150f18c2a161408a5d3e48432e707efd01fac9a4\",\"dweb:/ipfs/QmSiM4oeMmLVKmAtJXz2feYkv4R9ZcyBpkTRW5Nhw5KDyJ\"]},\"lib/v4-core/src/libraries/FullMath.sol\":{\"keccak256\":\"0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c3b2d66d36b1ad56b1ab6e2eb8a816740877b40b461c93f125e88621c8378e52\",\"dweb:/ipfs/QmPGvMZzKQvNiWKd8aRzzdW7oAizwrMgcMtnaworDkVHFC\"]},\"lib/v4-core/src/libraries/Hooks.sol\":{\"keccak256\":\"0x27b1c3b8aa3d07d8e3123970695745929315685a5ffaa7342c3ba3582f37fecb\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://fa3bb092dc205eaa1b9defc93e9bbad5f4c5c44e1c4aa531dfca2574c2aba9ba\",\"dweb:/ipfs/QmR1soxkepHNkbGxAMaK4XqhQ4VxWn69dewzGkQJNx5byM\"]},\"lib/v4-core/src/libraries/LPFeeLibrary.sol\":{\"keccak256\":\"0xbf6914e01014e7c1044111feb7df7a3d96bb503b3da827ad8464b1955580d13b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://33823c20a91882c9aacdcbb02f0558c05209f4d5954aa6dd4fa17c95664db475\",\"dweb:/ipfs/QmR7owkFgpfztpp1QUg3ut3nw9iPVQqLGP4hzgmZtRUQ2J\"]},\"lib/v4-core/src/libraries/LiquidityMath.sol\":{\"keccak256\":\"0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a766b620a7a22798b43c6c1f23b5c6cff0ebf588deb89842bad05208d448cd99\",\"dweb:/ipfs/QmVKjaFJdzkqA3ey2Byum8iTCMssWVD8MmVC8rw62Tj5WD\"]},\"lib/v4-core/src/libraries/Lock.sol\":{\"keccak256\":\"0x9338be4b5695f1da5f3d3f7a3eeaf7a356c1045458289586ac0cbe9cef77c6d5\",\"license\":\"BUSL-1.1\",\"urls\":[\"bzz-raw://485ec42ed6155469d612a9a0c18068ebfbad74448792a338a435503de3ef1b2c\",\"dweb:/ipfs/QmVnnv5u74MYatfRmBgrcfFYQcsMAJMG9jQ6ju8UiydKNF\"]},\"lib/v4-core/src/libraries/NonzeroDeltaCount.sol\":{\"keccak256\":\"0x0666ebd5d3528d7d52c48538296367a4cff97a578cf13365c51983fae3219b87\",\"license\":\"BUSL-1.1\",\"urls\":[\"bzz-raw://d27f1be3bd09d85c53d3e6a539dd6529ddd8b2b764ccb47fd7765fc81f9add59\",\"dweb:/ipfs/QmQdZujNXhKEXQBkKtF5jbdvo1yXMqPDUoBBaF9S5u3Kpm\"]},\"lib/v4-core/src/libraries/ParseBytes.sol\":{\"keccak256\":\"0x7533b13f53ee2c2c55500100b22ffd6e37e7523c27874edc98663d53a8672b15\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://82449058634fde28a085f3c59a6a5f412550c02181590593fd84c3e8b329aa17\",\"dweb:/ipfs/Qmev4E9Au6SsE4wsArChCwfg94KhHc5gYsEsZUnjF5sRLa\"]},\"lib/v4-core/src/libraries/Position.sol\":{\"keccak256\":\"0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9\",\"license\":\"BUSL-1.1\",\"urls\":[\"bzz-raw://c79fe61b50f3b70cff503abfa6f5643fcbefb9b794855bee1019b1e6d9c083b2\",\"dweb:/ipfs/QmbKmYNQesaMz8bo1b7TMHQcAwaDd3eDPrE5pAdPPZTtk5\"]},\"lib/v4-core/src/libraries/SafeCast.sol\":{\"keccak256\":\"0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c3db86e2ba3679105fc32edec656c70282e1fede6cab11217702443f6c26fa59\",\"dweb:/ipfs/QmX4yaaSPdKQzYNRsezjTvZKsubzS8JRTEGFD3fPpTTCcj\"]},\"lib/v4-core/src/libraries/SqrtPriceMath.sol\":{\"keccak256\":\"0xf8079fe6e3460db495451d06b1705e18f1c4075c1af96a31ad313545f7082982\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://582fc51546723a0a8acccf782f69b530bacf9b3ef929458e82569b7121f0b138\",\"dweb:/ipfs/QmSBXcmqZdFsM7M4sRaiyQAxykCeMNFKyKgBcwSMTw1bcF\"]},\"lib/v4-core/src/libraries/StateLibrary.sol\":{\"keccak256\":\"0x96db333ee126a841dd959e38e452cc59d73583cb0437a1d48b2052e33a74f952\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://8672bba1eb69608299b0904f4ff305238eb18479d371c26518f278c9ee184cd0\",\"dweb:/ipfs/QmTLu3s6ECvsEDHStQv8HTVHYtvkviBbdjPrFJd4SpVRFY\"]},\"lib/v4-core/src/libraries/SwapMath.sol\":{\"keccak256\":\"0x6baa782ae523269c079cc763639a9b91a25fcfa1743c049c76e43741ef494bd9\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://035c337e62e05262a5bd5d3bc85bc9a383c1013001216b429f49cf1e129a0812\",\"dweb:/ipfs/QmU7s4h58Fh2A6mM8yeorZ2ygwEJMQw8zdZLLkHeDoSWxD\"]},\"lib/v4-core/src/libraries/TickMath.sol\":{\"keccak256\":\"0x4e1a11e154eb06106cb1c4598f06cca5f5ca16eaa33494ba2f0e74981123eca8\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a79a57f7b240783b045168d1c4f774ac1812caf8f9a83cb6959a86b0b07b6c70\",\"dweb:/ipfs/QmTb5kvxwDNW8jDuQaqdJ445cCFejNkUqEB17Bjo8UBiva\"]},\"lib/v4-core/src/libraries/TransientStateLibrary.sol\":{\"keccak256\":\"0x7d1e0875747bd89b32c25f1a48da2766e5f4aff1f671ad5f3c0c07ebbbcb946a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d76cfeb1cb60595b41ecc51c8a12fb4bf63a7fc733d0b1a2e3adb55abeb1f9d5\",\"dweb:/ipfs/Qmb8oX7DtsRpw3tTtdWZwGhauj1evq43d3PLwe4nSDAKkV\"]},\"lib/v4-core/src/libraries/UnsafeMath.sol\":{\"keccak256\":\"0xa6e55e0a43a15df2df471d9972cd48f613d07c663ecb8bbeaf7623f6f99bcce4\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://02ea6e13879fc5a5f35149a2f1cd8af3a1f0877ff69101dad53841d16f515572\",\"dweb:/ipfs/QmcpL4gdG6hL2w1wqs2Vw4J1EFCwBs9T1Qd4p16CtECQkn\"]},\"lib/v4-core/src/types/BalanceDelta.sol\":{\"keccak256\":\"0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://7436928dc9de35c6c7c5c636cb51adaf295cfd590da83b19a004ae33cbec9ef9\",\"dweb:/ipfs/QmRJ9yZkUpzk4433GX3LgVVL8jwpbSYSUwXcucKisf3v4H\"]},\"lib/v4-core/src/types/BeforeSwapDelta.sol\":{\"keccak256\":\"0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a2c7a0379955cff9c17ab9e61f95e42909aa5947c22740f86ce940d09856f782\",\"dweb:/ipfs/QmaAuo8UBYXsGrVuKh8iRoAAdqwtg1jDq515cW1ZRP5m9K\"]},\"lib/v4-core/src/types/Currency.sol\":{\"keccak256\":\"0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://45f9d62ab3d51b52957279e353853ba1547c3182c9a1e3d1846ada4a90263b01\",\"dweb:/ipfs/QmS8NG84ccQS1yXVD8cv3eKX7J1UKxuJhbUfHTQR2opKF5\"]},\"lib/v4-core/src/types/PoolId.sol\":{\"keccak256\":\"0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://669c2cd7ac17690b5d8831e0bda72822376c3a04b36afed6d31df4d75fe60918\",\"dweb:/ipfs/QmT6EpkxqU8VF3WsgrZ66F3s1cCQRffR95z1HDYZz7ph6y\"]},\"lib/v4-core/src/types/PoolKey.sol\":{\"keccak256\":\"0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6f3118fa189025695c37fdf0bdd1190f085ad097484d3c88cf4c56d1db65f639\",\"dweb:/ipfs/QmamXpgtB8GV1CaFLvqefPWSoikLDhMk1yU4heBnVzU8gi\"]},\"lib/v4-core/test/utils/LiquidityAmounts.sol\":{\"keccak256\":\"0x3ec40b1ddf34a1b33fe3934a2f1e4f66dbcf4378a4c672d0d6ce845ccf8bcae2\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://6fc4a4688f272d4b55c1d0440ee5ebdc951e5299ff23ae79a4b52cc83e978b8a\",\"dweb:/ipfs/QmYJogZFeyaVeSFbYLCMdwEZtL8sWB8Ndx5AuepWdHsHGY\"]},\"lib/v4-periphery/src/base/ImmutableState.sol\":{\"keccak256\":\"0x2b4d3e76d118c351e3bba4b6d5761844a67c138631d2d6c30a30a343d4021631\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://119f8888a7ba7e8aa13fcfb6ce58e974b72d617851986c7b62e86b327e5a058b\",\"dweb:/ipfs/QmfZPZcGh8UeSCY4PqNyhnunN1FC938rZaxKTKYssNZGCt\"]},\"lib/v4-periphery/src/base/SafeCallback.sol\":{\"keccak256\":\"0xd00fd50f780bc9189e79adba6f0bff93b2e993df7049aca638f356807ab086a3\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://353e27536510b0cc38ebe3f5617999a8f87bed3cab118f8faa84fd6a487cfcbc\",\"dweb:/ipfs/QmQywaAkX4Rmq1vzQPsJvty7pctUiDsRE7QebPwj7p8ibn\"]},\"lib/v4-periphery/src/base/hooks/BaseHook.sol\":{\"keccak256\":\"0xcc005378e3c7b6677f7dfb18947ba0a8070f9a16a324389b532926f855665125\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a9c03164794e2fe55d06d112967507243b7b44798eb493277327128fbed1a199\",\"dweb:/ipfs/QmVQZ7NUeaWrs3f3WeLj7rA5xDyj3P3uE48aH71hU4GLsQ\"]},\"lib/v4-periphery/src/interfaces/IImmutableState.sol\":{\"keccak256\":\"0x36ab3100e87457ecf04887f4f540e34fd7f21d8e3b83880cb679239e60b7b06b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://7f290c7ce8e4832608d637a51b13dff95abecf6549485448e647a11c8ed01341\",\"dweb:/ipfs/QmfD1R6mTp8j4EjQXmQZW3vCh11EYFjnvoaw8rXRP27mMq\"]},\"src/contracts/Flaunch.sol\":{\"keccak256\":\"0x1c22280e0e3808accdf31a128e7aa05edf2bf7d58cc7be1934911d5c432256eb\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://5e3d4aa9c660181ffd052d0b0c140d2e8d108e0e38b45410db82408b7572c3a2\",\"dweb:/ipfs/QmQCCzotuDsE35p6E8X5VLrqvutsRcJNJAXKVq47T1hNtG\"]},\"src/contracts/PositionManager.sol\":{\"keccak256\":\"0xbaed796836da9506b5935d7043770f0b97c8c2cf80e92f8b768e5dbe4d65ccb5\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f4e5762e3537bbbaff86bc6a813e79c2e911796818ada7a0a343499c57551ec1\",\"dweb:/ipfs/QmUrhGDVjnbtKETFC25NHLPZZZ2kNRkrssX8enT2Vs2UWK\"]},\"src/contracts/bidwall/BidWall.sol\":{\"keccak256\":\"0x01276a42d85198a1ec83d1668e4be8c8f9ff07b1ddaf486fb6b3e3e471ab5b32\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://3734cf40fe7f3b92c6fc558cbe49cca210b61f3b4971b90b9709cb2bda0afad0\",\"dweb:/ipfs/QmX9Dfy7NNFNZeFAcUNtZvQ1UocZLKyzwDqrgfPoSUXB5E\"]},\"src/contracts/contants.sol\":{\"keccak256\":\"0x5ae6f584c76437cccc319f2cce96e8d51e2c38bbc550010282c47d4b23fc43eb\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://08890ac7a1510bc13508b6164310314a2cae5ea94b3898de8fdc06f68edb9216\",\"dweb:/ipfs/QmSqNM8wEuKgCbc9q83NSNHGdwKA2SS3rksaQr9eNbrRwY\"]},\"src/contracts/escrows/FeeEscrow.sol\":{\"keccak256\":\"0xb631600012a6df77c835249d61f12aeb0d636b5ec44ce69657c4d9a40fe8bd51\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://adf86e86af20ef4980b6f87a1c555e59d215914df76f1b322125c170d4b56c5e\",\"dweb:/ipfs/QmYw1riuJ7Pri7FDAyyGRUbDyaYPRQmtsBorRWcefQezyJ\"]},\"src/contracts/escrows/ReferralEscrow.sol\":{\"keccak256\":\"0xcd04f4016b830ac35dadc329f93ed3d97655062bcd1a03d875be05136631afdf\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f69143b495cf29515f823d8061d7e240188395c129de0ce5ce83d4c1f3d410d8\",\"dweb:/ipfs/QmeTJA984BBbjp6GeGCFsQy3fBQZWRbvpyPdqfXHJUBsuC\"]},\"src/contracts/hooks/FairLaunch.sol\":{\"keccak256\":\"0x5ae679b9ca3da408a8a55ee0a91ea69cfc86a2eec309694191efad9707d27687\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://89c4061dd462f85b85a4e6d800de010822189c5f8bd3b8c6ccc1d2a73f45868e\",\"dweb:/ipfs/QmVP98PRk5UiFtRCu5T4VLnCJ5z9BpageYoYkjVgXHYxSN\"]},\"src/contracts/hooks/FeeDistributor.sol\":{\"keccak256\":\"0x27216feec5a5cd5cdbfcd7f0cd753a8368c22df8cd2a821dd813feb8334a4438\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://42ad7e327628115dbf9428197352b90afa8003f90a784943727c1b2e5520aa4f\",\"dweb:/ipfs/QmY9r4ywP4pycABVK1VDUcajBaUoGdMmBMSVbvt3g3Cc9X\"]},\"src/contracts/hooks/FeeExemptions.sol\":{\"keccak256\":\"0xd014c6d17a996bc7402ceb3852cda5def88d5d5507bbbdb68cb997f6452e1383\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://641437d2ce67496fe880cd7cb3fdc8c20093bf0a1d6cbe8a98e2d77f2b37e48b\",\"dweb:/ipfs/QmQ4JuYLhk8wzMnKwViKD3kzphYSDnoMJ231pzs8s3b7RP\"]},\"src/contracts/hooks/InternalSwapPool.sol\":{\"keccak256\":\"0xa493412443fb32edc59d17152fd02694793a183fe6710177312f70e80fde758d\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://899412b7256955fdf4a97bd0e936c871924d394386f27a131bda6d66765c2a45\",\"dweb:/ipfs/Qme6yUcFmTNCpnD945WSgyssS9qpLWJH4Q7i9Zs8AfJoBb\"]},\"src/contracts/hooks/Notifier.sol\":{\"keccak256\":\"0x1c64833a18020b18d80eb2b6fac5034f52f5baba905ff89e027d65f9b1be06e4\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://3e04f39d3da4d4a37ce48cc10f1707d11cff5639e34e676bdfd1bb62dbbf6f2a\",\"dweb:/ipfs/QmYnswohkXfwKLcMdoquAQvbWz8Wasxze2s193BgdnYaZE\"]},\"src/contracts/libraries/CurrencySettler.sol\":{\"keccak256\":\"0x1947908d65887002ba48d984b18a4136f4894f0753e7effc4af74b78b8891637\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://448fd2c63df6d77d50b8cd747b61fda967baa6fc159eb4fdffe499951c0897fb\",\"dweb:/ipfs/QmRd8WL4Mg1YJoz8VNXLdN9xUCsXtxf1CxjG4LSXShW83S\"]},\"src/contracts/libraries/ProtocolRoles.sol\":{\"keccak256\":\"0xc3ecb32c87d15b5a149d23aa0143ca772e921e62f3c11482c05b9aad511c6037\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://b520151fbf6a72a86fc2cc370fc7afa92e4b6273b77a52e840dbff3d462087fe\",\"dweb:/ipfs/QmNvcuY6ag66mdFYAgcXY25qqukQTmFvYGi5UeGMpWxFCh\"]},\"src/contracts/libraries/TokenSupply.sol\":{\"keccak256\":\"0xbed223c0987d967e260a66bcdd283ba631f1b42c93c52d4a5afec735f7cd83e2\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://e3ce9b8c73cf13ae9c73ee3ceb575b6401762180f4afabc196cac4eca43ee21b\",\"dweb:/ipfs/Qmes76ZFHxqusfg9NwY6tL5SYxcchkiW6aGorpMWXXxAvV\"]},\"src/contracts/libraries/UniswapHookEvents.sol\":{\"keccak256\":\"0x124e75c5d2853da58681498ba5afff2380779d6e21f5b0f658c44066ab93a616\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://58276dce40ddf1675f0bcce9d56d6cdeb8e6d2a973bd0ad5298e2f11513e11e7\",\"dweb:/ipfs/QmRetjzoNXvJD5QkQuSQMcGLEuEdQyd2PPewxpcgv1bxDR\"]},\"src/contracts/price/FlaunchFeeExemption.sol\":{\"keccak256\":\"0xe5a256a583afa7ccd229d091310dcf774c7d1dcb9894dc5d1c9306981476694a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://ee7abb576861805a6669c1542cb9cadb045c3d88a4aab6c4563d70fe947c764d\",\"dweb:/ipfs/Qmdyv6y3HsWnzTznaG9H8TSwdG7CMA5oxXizRf7iuuzkt7\"]},\"src/contracts/subscribers/Indexer.sol\":{\"keccak256\":\"0x59bfca4d99bae3beebf1581ed93f569319f5f5c6b0d49f06b140b46a58509916\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://90b8876e25e6b2708cf5e4a075f2625b451c84778bf4d05d141ae419d41c9101\",\"dweb:/ipfs/QmYetyrsqFcqvAjem9KUxDnYRPP7EsXxVdMT7MWVu4H79g\"]},\"src/contracts/treasury/ActionManager.sol\":{\"keccak256\":\"0xbf83cfec82315dc4a3ec031a869984e1e754f92b41f474e86cf6088ae486e0b0\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://ad69c078fb563ac05d43063b37c826b388092521783cfa496ba57f743aa0c7c8\",\"dweb:/ipfs/QmWxvidGyn3zsnbRPARJZ88tvz7yYh4QQYV8AN1NmGVxDz\"]},\"src/contracts/treasury/MemecoinTreasury.sol\":{\"keccak256\":\"0x20629bd593397b351e9a3af1e7d573cca0d755af61b7312cca42565f900f1363\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://712598571d05445c0bfe64f5dd17bff24705eb7e6f66a3ebfa4acf3d2c733694\",\"dweb:/ipfs/QmTtZYNB7DTdpBVxZi36hsm9f7PouVKGiArsgttTRJXKkF\"]},\"src/contracts/treasury/managers/TreasuryManager.sol\":{\"keccak256\":\"0x774e3b48b06fad008710ec07e84454530e49e730f9d6f7f51c6f674375c00101\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://ae29b12c60f9980af446f6b71366054c5999c3391942c9e1089f00341e5ae11b\",\"dweb:/ipfs/QmSsA6ZtxrtZCvDrL56yByeLHJ7A1zT4PB4GfgfyRUJFeE\"]},\"src/contracts/treasury/managers/TreasuryManagerFactory.sol\":{\"keccak256\":\"0x934dbcfd1e3b2eaf5038f538a9f5dcd7c394c1a86b2dd13d731ee6f5a7fdf0b6\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://301b83b27b08bb4eb57635593307069661c42b1180338a46876f3b4ca61c0e46\",\"dweb:/ipfs/QmarVMDf2cEQdJ36NbAJR18XS2W9zbLEnFkTFM5Ayzk4SK\"]},\"src/contracts/types/MemecoinFinder.sol\":{\"keccak256\":\"0xfb797765334db24b80ce274dadddf2d02ae6e1bcc5b21ddc71e31ebe6a16a9bc\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://88ee3018fca8abded6d53a4464e19c545b93a0c275b3f6563198d72f4f7cda4a\",\"dweb:/ipfs/QmPCXvvzNCTafgtun4Dgi4oB2rCUaLPq6tzcBDXR32mN6A\"]},\"src/contracts/types/StoreKeys.sol\":{\"keccak256\":\"0x24a45a523b389f1e8e7c6dcb7d401458a67ad519b879eb2eb6f0501b3b2e4041\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://2c83f401837cbf0fbc57aefdb2fb09faed9a6c94025b98ee1ea8e0ab3020201c\",\"dweb:/ipfs/QmXCTEBxfBmUjYqiLUxnSuRnJ47KuRCJ8pifPrBmnbxAY3\"]},\"src/contracts/types/TickFinder.sol\":{\"keccak256\":\"0xd0520af45af21e3e21959edf440bf91a5c7008bba27f19a37157b068f15577a1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://37c00788c51797b6536f3a63ab3bf5eab0075b9311bc0607a474685a95c6dc97\",\"dweb:/ipfs/QmT5QQRMSdmZivyvK5pJxGxh6ueBFZLHFCmpMkqFwbqp5Z\"]},\"src/contracts/vesting/CreatorVesting.sol\":{\"keccak256\":\"0x1dd7fbdca1fece583b9db8a30d052d4c81b5be520e23b73e5dc99be26bc1ccdf\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://71f86832c84587c0d91a968e7e591e458599166be90a6e215ae943849ab11228\",\"dweb:/ipfs/QmYiqphd7TiGnjvC2Je1rNf2eWLBLExMvgBxDddDJ4pzzu\"]},\"src/contracts/zaps/PoolSwap.sol\":{\"keccak256\":\"0xc76373ac0ae07e02b01080b6f4f8784f23ad63759353f3e0c652e5765ea419e4\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://23aece61b14a38f729ad3f471dd2c7e928db1f34ca1df34a08f80dd248dad13c\",\"dweb:/ipfs/QmZwypsxv3SjVVexvfZom6QDYSCqDNJ8YmHtpBzNiEkKnj\"]},\"src/interfaces/IFLETH.sol\":{\"keccak256\":\"0x76d5a68a2aa36d96b5e686df7a390ed2dd6142979b538e0e0e889b45ce2fcbbf\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a50cd7e6979a1af1345a993ca9a4ec3ea8803d5e429d2dc585b7b74d723e0a0c\",\"dweb:/ipfs/QmW7ptGGwi8BCi8V9BrNwqFxdzG8WFtqNzMmLrFvQkWdK9\"]},\"src/interfaces/IFeeCalculator.sol\":{\"keccak256\":\"0x7fb44228009865a432793863a419d98511bfb4f777286f41a098747327d0b26d\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://490c1bcd8fef48aa6bc7cb481e814631025738700caa8b93ef2b3d7e70d34267\",\"dweb:/ipfs/QmUcuzY5wtAwwGssDCLMCr8G6tWRGD2P4RYav3yw7qYXAc\"]},\"src/interfaces/IFeeEscrow.sol\":{\"keccak256\":\"0x0870b9a7cf1e55e7dfca843cbee8f62fea73b774513be613834ff4943f923a8a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4c4aa7f69de2dd0eb46eb5a259cd4beebf8febdc89809ec695cbdf07c339eee3\",\"dweb:/ipfs/Qmebit14eEHQqZ9Boyu186t3RrXWXD1xiqa8iZfQ1Pc2iP\"]},\"src/interfaces/IFeeEscrowRegistry.sol\":{\"keccak256\":\"0xa30d7538bd81744c13f1e7d63776837667daa65e9817c23ac1376bc2611dc6d2\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c51189c5836571e514502a4856bf42e246e61adfc0ea0fd16248cc12a2ba6bc6\",\"dweb:/ipfs/QmatQKBpkw2skSKGcRkn42rJQR8ytGtmhVqrvwReJUW1Xq\"]},\"src/interfaces/IFlaunch.sol\":{\"keccak256\":\"0x673e7120c0573e3dd881535af90a9c36edf53fa5c96e11d1609d50a1e82d06eb\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://5637b5dd2c7774f7ddbc20b2ed875020f9b5c978c886d23257aa79ebc997d632\",\"dweb:/ipfs/Qmb3FUnRYUQVaww7p5uqMuhK1c562dro5bkb7geierd44Q\"]},\"src/interfaces/IInitialPrice.sol\":{\"keccak256\":\"0x9ba8d9c572577512288872bff08302298851224b75ef5803c694d244a1d87ad9\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a6c596953c3c0ffdd2841d8288eaf94129c94bfb4b776cc476e361851af06d20\",\"dweb:/ipfs/QmRi1NxTpsxMEYxZH7cVEkAUSw6fUJX1ZQ224NeHa3E6AB\"]},\"src/interfaces/IManagerPermissions.sol\":{\"keccak256\":\"0x86986f09849d1b934e9c25a578541785ea77cc88a0b4642706ced5be7b431230\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9fa38ab1228c3e48e63a9cf08fe5dad84f816dbc3a38eb2aeb74f4c4c6bf9066\",\"dweb:/ipfs/QmfFQUuCHRpm3ywMgqSbKjNMCPNTM62xayAngggHn5UJiW\"]},\"src/interfaces/IMemecoin.sol\":{\"keccak256\":\"0x5552714add1c5e2d86b6287585da5be78b4c52583ba59a15d090eb24e11bc882\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://19a42e80cf7f356ad7c1616879464c31624d6c6922aec343e76ebae1474660ef\",\"dweb:/ipfs/QmUS7sNX9QPuUc6wZxVzXhRzWqVyVrrycpxWmY273bFmeT\"]},\"src/interfaces/ISubscriber.sol\":{\"keccak256\":\"0x9e66782ee2129d3f7f43be7d22455d50baf0c872b072a24d2ed385ccea49c30e\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://bb37831e1c71192ecb3dfc1e0272d2c9e0b6afe1867059747140ec83b8aa993c\",\"dweb:/ipfs/QmSgCjT9MRbrB5RmdbFBx8P2KtuwPUZUuD8bDDFGfF3mbZ\"]},\"src/interfaces/ITreasuryAction.sol\":{\"keccak256\":\"0x57d93df0946a294dd050aa5ca5c6b0d18c3280f323bc5adc21a114ce7ad60dbc\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://51217a2625d02bf841082c5322e1de047edd60f9235e238de0deed51fc919edb\",\"dweb:/ipfs/QmdnF6VnjX7yVpPWDT5CRhJzfarqb2LctrzowG5LHuXDbo\"]},\"src/interfaces/ITreasuryManager.sol\":{\"keccak256\":\"0xf2a797accbd60e590d7b91fb726d84febbd6a0d6fe1c745c975fbfc63c0fa8b9\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://0921475f62ed4a649eeaf489cc8e91b37d265a5b74ae36ab4b59b4b92b138ec0\",\"dweb:/ipfs/QmUCwUaaBgCnYuakpgfUY5ej93BuWNFW831LPRGyCqWtVy\"]},\"src/interfaces/ITreasuryManagerFactory.sol\":{\"keccak256\":\"0xda0e0c806d70a2bf0685946876cf14e375528a3b38ff991fda4da734d6f177eb\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://33e0dd9531f3b0ad66aef5dc0830c8cef9830dbd203168e09ec7de70ecd48dbf\",\"dweb:/ipfs/QmT6ukaJkYketE4BqDkg3awKjZvHwRfwUkhqhujS4SBS1T\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.26+commit.8a97fa7a"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_protocolOwner",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_feeEscrow",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "type": "error",
+          "name": "AccessControlBadConfirmation"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "neededRole",
+              "type": "bytes32"
+            }
+          ],
+          "type": "error",
+          "name": "AccessControlUnauthorizedAccount"
+        },
+        {
+          "inputs": [],
+          "type": "error",
+          "name": "AlreadyInitialized"
+        },
+        {
+          "inputs": [],
+          "type": "error",
+          "name": "NewOwnerIsZeroAddress"
+        },
+        {
+          "inputs": [],
+          "type": "error",
+          "name": "NoHandoverRequest"
+        },
+        {
+          "inputs": [],
+          "type": "error",
+          "name": "Unauthorized"
+        },
+        {
+          "inputs": [],
+          "type": "error",
+          "name": "UnknownManagerImplemention"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_manager",
+              "type": "address",
+              "indexed": true
+            },
+            {
+              "internalType": "address",
+              "name": "_managerImplementation",
+              "type": "address",
+              "indexed": true
+            }
+          ],
+          "type": "event",
+          "name": "ManagerDeployed",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_managerImplementation",
+              "type": "address",
+              "indexed": true
+            }
+          ],
+          "type": "event",
+          "name": "ManagerImplementationApproved",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_managerImplementation",
+              "type": "address",
+              "indexed": true
+            }
+          ],
+          "type": "event",
+          "name": "ManagerImplementationUnapproved",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "pendingOwner",
+              "type": "address",
+              "indexed": true
+            }
+          ],
+          "type": "event",
+          "name": "OwnershipHandoverCanceled",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "pendingOwner",
+              "type": "address",
+              "indexed": true
+            }
+          ],
+          "type": "event",
+          "name": "OwnershipHandoverRequested",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "oldOwner",
+              "type": "address",
+              "indexed": true
+            },
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address",
+              "indexed": true
+            }
+          ],
+          "type": "event",
+          "name": "OwnershipTransferred",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32",
+              "indexed": true
+            },
+            {
+              "internalType": "bytes32",
+              "name": "previousAdminRole",
+              "type": "bytes32",
+              "indexed": true
+            },
+            {
+              "internalType": "bytes32",
+              "name": "newAdminRole",
+              "type": "bytes32",
+              "indexed": true
+            }
+          ],
+          "type": "event",
+          "name": "RoleAdminChanged",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32",
+              "indexed": true
+            },
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address",
+              "indexed": true
+            },
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address",
+              "indexed": true
+            }
+          ],
+          "type": "event",
+          "name": "RoleGranted",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32",
+              "indexed": true
+            },
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address",
+              "indexed": true
+            },
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address",
+              "indexed": true
+            }
+          ],
+          "type": "event",
+          "name": "RoleRevoked",
+          "anonymous": false
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "DEFAULT_ADMIN_ROLE",
+          "outputs": [
+            {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_managerImplementation",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "approveManager"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_managerImplementation",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "approvedManagerImplementation",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "_approved",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "payable",
+          "type": "function",
+          "name": "cancelOwnershipHandover"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "pendingOwner",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "payable",
+          "type": "function",
+          "name": "completeOwnershipHandover"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_managerImplementation",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "_data",
+              "type": "bytes"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "deployAndInitializeManager",
+          "outputs": [
+            {
+              "internalType": "address payable",
+              "name": "manager_",
+              "type": "address"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_managerImplementation",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "deployManager",
+          "outputs": [
+            {
+              "internalType": "address payable",
+              "name": "manager_",
+              "type": "address"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "feeEscrow",
+          "outputs": [
+            {
+              "internalType": "contract IFeeEscrow",
+              "name": "",
+              "type": "address"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "getRoleAdmin",
+          "outputs": [
+            {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "grantRole"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "hasRole",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_manager",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "managerImplementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "_managerImplementation",
+              "type": "address"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "result",
+              "type": "address"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "pendingOwner",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "ownershipHandoverExpiresAt",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "result",
+              "type": "uint256"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "payable",
+          "type": "function",
+          "name": "renounceOwnership"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "address",
+              "name": "callerConfirmation",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "renounceRole"
+        },
+        {
+          "inputs": [],
+          "stateMutability": "payable",
+          "type": "function",
+          "name": "requestOwnershipHandover"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "revokeRole"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes4",
+              "name": "interfaceId",
+              "type": "bytes4"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "supportsInterface",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "payable",
+          "type": "function",
+          "name": "transferOwnership"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_managerImplementation",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "unapproveManager"
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {
+          "approveManager(address)": {
+            "details": "This will not revert if the implementation is already approved",
+            "params": {
+              "_managerImplementation": "The implementation to approve"
+            }
+          },
+          "cancelOwnershipHandover()": {
+            "details": "Cancels the two-step ownership handover to the caller, if any."
+          },
+          "completeOwnershipHandover(address)": {
+            "details": "Allows the owner to complete the two-step ownership handover to `pendingOwner`. Reverts if there is no existing ownership handover requested by `pendingOwner`."
+          },
+          "constructor": {
+            "details": "This contract should be created in the {PositionManager} constructor call."
+          },
+          "deployAndInitializeManager(address,address,bytes)": {
+            "params": {
+              "_data": "The initialization data for the deployed manager",
+              "_managerImplementation": "The address of the approved implementation",
+              "_owner": "The owner address of the manager"
+            },
+            "returns": {
+              "manager_": "The freshly deployed {TreasuryManager} contract address"
+            }
+          },
+          "deployManager(address)": {
+            "params": {
+              "_managerImplementation": "The address of the approved implementation"
+            },
+            "returns": {
+              "manager_": "The freshly deployed {TreasuryManager} contract address"
+            }
+          },
+          "getRoleAdmin(bytes32)": {
+            "details": "Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}."
+          },
+          "grantRole(bytes32,address)": {
+            "details": "Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role. May emit a {RoleGranted} event."
+          },
+          "hasRole(bytes32,address)": {
+            "details": "Returns `true` if `account` has been granted `role`."
+          },
+          "owner()": {
+            "details": "Returns the owner of the contract."
+          },
+          "ownershipHandoverExpiresAt(address)": {
+            "details": "Returns the expiry timestamp for the two-step ownership handover to `pendingOwner`."
+          },
+          "renounceOwnership()": {
+            "details": "Allows the owner to renounce their ownership."
+          },
+          "renounceRole(bytes32,address)": {
+            "details": "Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been revoked `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `callerConfirmation`. May emit a {RoleRevoked} event."
+          },
+          "requestOwnershipHandover()": {
+            "details": "Request a two-step ownership handover to the caller. The request will automatically expire in 48 hours (172800 seconds) by default."
+          },
+          "revokeRole(bytes32,address)": {
+            "details": "Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role. May emit a {RoleRevoked} event."
+          },
+          "supportsInterface(bytes4)": {
+            "details": "See {IERC165-supportsInterface}."
+          },
+          "transferOwnership(address)": {
+            "details": "Allows the owner to transfer the ownership to `newOwner`."
+          },
+          "unapproveManager(address)": {
+            "details": "This will revert if the contract is no already approved",
+            "params": {
+              "_managerImplementation": "The implementation to unapprove"
+            }
+          }
+        },
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {
+          "approveManager(address)": {
+            "notice": "Approves a manager implementation."
+          },
+          "approvedManagerImplementation(address)": {
+            "notice": "Mapping to store approved action contract addresses"
+          },
+          "constructor": {
+            "notice": "Sets the contract owner."
+          },
+          "deployAndInitializeManager(address,address,bytes)": {
+            "notice": "Deploys an approved manager and initializes it in a single transaction."
+          },
+          "deployManager(address)": {
+            "notice": "Deploys an approved manager implementation."
+          },
+          "managerImplementation(address)": {
+            "notice": "Mapping of deployments to their implementations"
+          },
+          "unapproveManager(address)": {
+            "notice": "Remove a manager implementation from approval."
+          }
+        },
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        "@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+        "@flaunch-interfaces/=src/interfaces/",
+        "@flaunch/=src/contracts/",
+        "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
+        "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+        "@optimism/=lib/optimism/packages/contracts-bedrock/",
+        "@solady/=lib/solady/src/",
+        "@uniswap-periphery/=lib/v4-periphery/src/",
+        "@uniswap/v3-core/=lib/v3-core/",
+        "@uniswap/v4-core/=lib/v4-core/",
+        "ds-test/=lib/vulcan/lib/forge-std/lib/ds-test/src/",
+        "erc4626-tests/=lib/openzeppelin-contracts-upgradeable/lib/erc4626-tests/",
+        "forge-gas-snapshot/=lib/v4-periphery/lib/permit2/lib/forge-gas-snapshot/src/",
+        "forge-std/=lib/forge-std/src/",
+        "halmos-cheatcodes/=lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
+        "hardhat/=lib/v4-core/node_modules/hardhat/",
+        "kontrol-cheatcodes/=lib/optimism/packages/contracts-bedrock/lib/kontrol-cheatcodes/src/",
+        "lib-keccak/=lib/optimism/packages/contracts-bedrock/lib/lib-keccak/contracts/",
+        "openzeppelin-contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/",
+        "openzeppelin-contracts-v5/=lib/optimism/packages/contracts-bedrock/lib/openzeppelin-contracts-v5/",
+        "openzeppelin-contracts/=lib/openzeppelin-contracts/",
+        "openzeppelin/=lib/openzeppelin-contracts-upgradeable/contracts/",
+        "optimism/=lib/optimism/",
+        "permit2/=lib/v4-periphery/lib/permit2/",
+        "safe-contracts/=lib/optimism/packages/contracts-bedrock/lib/safe-contracts/contracts/",
+        "solady-v0.0.245/=lib/optimism/packages/contracts-bedrock/lib/solady-v0.0.245/src/",
+        "solady/=lib/solady/src/",
+        "solmate/=lib/v4-core/lib/solmate/",
+        "v3-core/=lib/v3-core/",
+        "v4-core/=lib/v4-core/src/",
+        "v4-periphery/=lib/v4-periphery/",
+        "vulcan/=lib/vulcan/src/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 0
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/contracts/treasury/managers/TreasuryManagerFactory.sol": "TreasuryManagerFactory"
+      },
+      "evmVersion": "cancun",
+      "libraries": {}
+    },
+    "sources": {
+      "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol": {
+        "keccak256": "0x0e1f0f5f62f67a881cd1a9597acbc0a5e4071f3c2c10449a183b922ae7272e3f",
+        "urls": [
+          "bzz-raw://c25f742ff154998d19a669e2508c3597b363e123ce9144cd0fcf6521229f401f",
+          "dweb:/ipfs/QmQXRuFzStEWqeEPbhQU6cAg9PaSowxJVo4PDKyRod7dco"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/access/AccessControl.sol": {
+        "keccak256": "0xd0e967bcd2ad6fd4231951e744b121e4cb428ce9d38e1c99350db6bb4a5207f7",
+        "urls": [
+          "bzz-raw://3f454d107c23bd052c0bdb26dcdbb64ea203fd01b5dabb08f185f4c096beb0c8",
+          "dweb:/ipfs/QmSNAV8u7TLKWTKmoQhWbBiyTKVZVQTqi9NvnmNSvnWn2D"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/access/IAccessControl.sol": {
+        "keccak256": "0xccb9b54747f3733f9ca435191745881587b2b48a12d6903358b59bc8ae39ea6b",
+        "urls": [
+          "bzz-raw://021b637b39bddc68e1beed71677cb52919d27880804b1c7160d53064342786bc",
+          "dweb:/ipfs/QmV3wgNQmoi9d6U3P7xwHAEKDoaQzGqGGjcSXsyWMf9rsK"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol": {
+        "keccak256": "0x9b6b3e7803bc5f2f8cd7ad57db8ac1def61a9930a5a3107df4882e028a9605d7",
+        "urls": [
+          "bzz-raw://da62d6be1f5c6edf577f0cb45666a8aa9c2086a4bac87d95d65f02e2f4c36a4b",
+          "dweb:/ipfs/QmNkpvBpoCMvX8JwAFNSc5XxJ2q5BXJpL5L1txb4QkqVFF"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol": {
+        "keccak256": "0xde7e9fd9aee8d4f40772f96bb3b58836cbc6dfc0227014a061947f8821ea9724",
+        "urls": [
+          "bzz-raw://11fea9f8bc98949ac6709f0c1699db7430d2948137aa94d5a9e95a91f61a710a",
+          "dweb:/ipfs/QmQdfRXxQjwP6yn3DVo1GHPpriKNcFghSPi94Z1oKEFUNS"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol": {
+        "keccak256": "0xce41876e78d1badc0512229b4d14e4daf83bc1003d7f83978d18e0e56f965b9c",
+        "urls": [
+          "bzz-raw://a2608291cb038b388d80b79a06b6118a42f7894ff67b7da10ec0dbbf5b2973ba",
+          "dweb:/ipfs/QmWohqcBLbcxmA4eGPhZDXe5RYMMEEpFq22nfkaUMvTfw1"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": {
+        "keccak256": "0xe06a3f08a987af6ad2e1c1e774405d4fe08f1694b67517438b467cecf0da0ef7",
+        "urls": [
+          "bzz-raw://df6f0c459663c9858b6cba2cda1d14a7d05a985bed6d2de72bd8e78c25ee79db",
+          "dweb:/ipfs/QmeTTxZ7qVk9rjEv2R4CpCwdf8UMCcRqDNMvzNxHc3Fnn9"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol": {
+        "keccak256": "0x6dd0cb67846da3fa1241c520faaa215d6bec8226e37beac6056c51e8af44d24e",
+        "urls": [
+          "bzz-raw://650e533e62b30dcc6edea2b6c91358d5659da3bde42e56adf7316c493b916a15",
+          "dweb:/ipfs/QmYkmK2vPE6FjdAoQVpZSJxamTLGno9wzGS495TcMNFViV"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol": {
+        "keccak256": "0x5dc63d1c6a12fe1b17793e1745877b2fcbe1964c3edfd0a482fac21ca8f18261",
+        "urls": [
+          "bzz-raw://6b7f97c5960a50fd1822cb298551ffc908e37b7893a68d6d08bce18a11cb0f11",
+          "dweb:/ipfs/QmQQvxBytoY1eBt3pRQDmvH2hZ2yjhs12YqVfzGm7KSURq"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/Arrays.sol": {
+        "keccak256": "0xb4d040e2cc1d4a66d08b174b97332aa3dbf330bc74f91c725d7ff653efca7eb1",
+        "urls": [
+          "bzz-raw://9da205f459aac15cadd00538691b525eef81f098a95bc3eedea12968bcb70706",
+          "dweb:/ipfs/QmcqTJET3rNsXMGT3UvqLgFS3RrKaHe5x97m4dcfUCWMoW"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/Comparators.sol": {
+        "keccak256": "0x302eecd8cf323b4690e3494a7d960b3cbce077032ab8ef655b323cdd136cec58",
+        "urls": [
+          "bzz-raw://49ba706f1bc476d68fe6c1fad75517acea4e9e275be0989b548e292eb3a3eacd",
+          "dweb:/ipfs/QmeBpvcdGWzWMKTQESUCEhHgnEQYYATVwPxLMxa6vMT7jC"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/Context.sol": {
+        "keccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2",
+        "urls": [
+          "bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12",
+          "dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/Panic.sol": {
+        "keccak256": "0xf7fe324703a64fc51702311dc51562d5cb1497734f074e4f483bfb6717572d7a",
+        "urls": [
+          "bzz-raw://c6a5ff4f9fd8649b7ee20800b7fa387d3465bd77cf20c2d1068cd5c98e1ed57a",
+          "dweb:/ipfs/QmVSaVJf9FXFhdYEYeCEfjMVHrxDh5qL4CGkxdMWpQCrqG"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/SlotDerivation.sol": {
+        "keccak256": "0x91832f9744a308318ef3344caf2122345d6a949e25017461322d13a4ede53f10",
+        "urls": [
+          "bzz-raw://77f5fa6ce1145a3637406a77940cd1ab50523187c8ac7281805b3fc2bd6ffd5e",
+          "dweb:/ipfs/QmewJyTg2SoBee1bKwks3vktT2wTQhB7TtzZg9xKvzvfUf"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol": {
+        "keccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97",
+        "urls": [
+          "bzz-raw://9f660b1f351b757dfe01438e59888f31f33ded3afcf5cb5b0d9bf9aa6f320a8b",
+          "dweb:/ipfs/QmarDJ5hZEgBtCmmrVzEZWjub9769eD686jmzb2XpSU1cM"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol": {
+        "keccak256": "0xddce8e17e3d3f9ed818b4f4c4478a8262aab8b11ed322f1bf5ed705bb4bd97fa",
+        "urls": [
+          "bzz-raw://8084aa71a4cc7d2980972412a88fe4f114869faea3fefa5436431644eb5c0287",
+          "dweb:/ipfs/Qmbqfs5dRdPvHVKY8kTaeyc65NdqXRQwRK7h9s5UJEhD1p"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol": {
+        "keccak256": "0x79796192ec90263f21b464d5bc90b777a525971d3de8232be80d9c4f9fb353b8",
+        "urls": [
+          "bzz-raw://f6fda447a62815e8064f47eff0dd1cf58d9207ad69b5d32280f8d7ed1d1e4621",
+          "dweb:/ipfs/QmfDRc7pxfaXB2Dh9np5Uf29Na3pQ7tafRS684wd3GLjVL"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/math/Math.sol": {
+        "keccak256": "0xc240f71206795cead02e49f999b3523414c230cec53423298d8457a7ce9d3ea4",
+        "urls": [
+          "bzz-raw://7d5813c665d5ea1b73e27844800eb45831b9ba608b2a9216ead318e246fd5e8f",
+          "dweb:/ipfs/QmNStA3tbwHZm1tXgdmY4wB3NbYKJtzYWADjKmDMhYHjyA"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol": {
+        "keccak256": "0x195533c86d0ef72bcc06456a4f66a9b941f38eb403739b00f21fd7c1abd1ae54",
+        "urls": [
+          "bzz-raw://b1d578337048cad08c1c03041cca5978eff5428aa130c781b271ad9e5566e1f8",
+          "dweb:/ipfs/QmPFKL2r9CBsMwmUqqdcFPfHZB2qcs9g1HDrPxzWSxomvy"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts/contracts/utils/structs/EnumerableSet.sol": {
+        "keccak256": "0x804753930b59f27c3a6747a4cf58b4d291f2c942a2a76edd43d4571a5f6b02bc",
+        "urls": [
+          "bzz-raw://6f05286cf2babfc5bf1c347c447477ca24147bea09bb4f5ba01fe9afd98ab409",
+          "dweb:/ipfs/QmUcTFzF4y2U9VoBbv7kx3PDTACdNMoYQuTe89ot2pAqqA"
+        ],
+        "license": "MIT"
+      },
+      "lib/optimism/packages/contracts-bedrock/interfaces/L2/IL2ToL2CrossDomainMessenger.sol": {
+        "keccak256": "0x8ee3b6c749dc02a562c563e7990a0bac1da24bb32e89a1c0a78342ddd53b13be",
+        "urls": [
+          "bzz-raw://3e29cc32d34d1907f6167956c99c210a94bed0c170cc28ada80a84bfbe294ac0",
+          "dweb:/ipfs/QmTbcCVQg6pa2okfUNsig3PTH99zgoyoNJD2PWrFZVnnQa"
+        ],
+        "license": "MIT"
+      },
+      "lib/optimism/packages/contracts-bedrock/src/libraries/Predeploys.sol": {
+        "keccak256": "0x57983e9aaf75c3fefc61c08cb8cf34c0b18716cdb0a0b11623a7db501adaa62d",
+        "urls": [
+          "bzz-raw://fbab15fa0831e68b7c29dabaaa195632dda6af6bbb6e22e95e0d6a448e565f3e",
+          "dweb:/ipfs/QmXANzeLX6ggEhyCTYQG26M3njch66xSaKo91XZAxwCVwc"
+        ],
+        "license": "MIT"
+      },
+      "lib/solady/src/auth/Ownable.sol": {
+        "keccak256": "0xc208cdd9de02bbf4b5edad18b88e23a2be7ff56d2287d5649329dc7cda64b9a3",
+        "urls": [
+          "bzz-raw://e8fba079cc7230c617f7493a2e97873f88e59a53a5018fcb2e2b6ac42d8aa5a3",
+          "dweb:/ipfs/QmTXg8GSt8hsK2cZhbPFrund1mrwVdkLQmEPoQaFy4fhjs"
+        ],
+        "license": "MIT"
+      },
+      "lib/solady/src/tokens/ERC721.sol": {
+        "keccak256": "0x7ee665c5f70c388430cd7af42a5b1c2ff0e11ab45e46ab7ba02a6aad29f5cc77",
+        "urls": [
+          "bzz-raw://14433fac4ec7393908c97a874fd735e6f80fb81d286d76bd83d7d6159ec9cc6f",
+          "dweb:/ipfs/Qmc9nE2q5HrFSQDt9oKXxs5mbgnNNfYnnr7KhfForCERzv"
+        ],
+        "license": "MIT"
+      },
+      "lib/solady/src/utils/Initializable.sol": {
+        "keccak256": "0x58ee7b2e966232ca1ca9e9e705d8afcefa83fe29d37d6f8361d73015a9db1fe4",
+        "urls": [
+          "bzz-raw://59f134cb038e0a547f0a3dbfe9c9b6939f7b39dff64646a79e8cf2dd6ba14f80",
+          "dweb:/ipfs/QmfXt149JQEWsYbLUkS9iLP6kGZqzHYyMg7SsLUUPgafEb"
+        ],
+        "license": "MIT"
+      },
+      "lib/solady/src/utils/LibBytes.sol": {
+        "keccak256": "0x561dd29e4abd6feb7800e97a68f73ed100714296c42e444d1029f9e944ea4f5f",
+        "urls": [
+          "bzz-raw://a76e216f6d36e1c1c7434195cd7dcf4a94d09f494a0e2beebb5714c75ad1d4c1",
+          "dweb:/ipfs/QmeFHgUHSBg4cRZTeCD7nt5uMRZhgpzquzcYC9L9vyqBcn"
+        ],
+        "license": "MIT"
+      },
+      "lib/solady/src/utils/LibClone.sol": {
+        "keccak256": "0x1b96fd03a3948155bd2fe95dc4980930c759b174026e18f11bc8e88d55ae030e",
+        "urls": [
+          "bzz-raw://64998d16472a127031ee6a796ed9afcf13dd662afd30eb4d3e2a42c2bc9fd204",
+          "dweb:/ipfs/QmTXHGy9t8YTW96tjiZ8RBqmijXUTqc1JznEBqHv8Duc4A"
+        ],
+        "license": "MIT"
+      },
+      "lib/solady/src/utils/LibString.sol": {
+        "keccak256": "0xe0427faa09ff8439d820147a7485148c1eadd353d11f097755ed60cad80c3785",
+        "urls": [
+          "bzz-raw://60d45e30ddb233e745b5de17c6c6cbc1149ca016655ad229d14141bb67aa4d05",
+          "dweb:/ipfs/QmWWdczKjEKnU19qCcjAKosv1TtXMxnZd9oRsDkLaussv2"
+        ],
+        "license": "MIT"
+      },
+      "lib/solady/src/utils/ReentrancyGuard.sol": {
+        "keccak256": "0xdb28f318ec45197a6c7cc2abebed67d7cb8b965838ef962e3844423256a9ddb8",
+        "urls": [
+          "bzz-raw://873cd46b77a2aeb781e7a0d131e7299151323ed884c330101a51d0727e218d98",
+          "dweb:/ipfs/QmddadCjyedztvdSgLZEyKWoRes2SqtpviSjhEbSNrkUoi"
+        ],
+        "license": "MIT"
+      },
+      "lib/solady/src/utils/SafeTransferLib.sol": {
+        "keccak256": "0xf1a06ea1cce6a233b18a2b16d36195bf1ab7c7a721b51a172c7b493386c4825b",
+        "urls": [
+          "bzz-raw://c54e268d1344503a360d99b9f25c1ff18685fba4f94fedcd9fa6277ea73554d7",
+          "dweb:/ipfs/QmdYp5AP8rNLwBthb9gTyeNZdJGRaNUKpDz9bMRoPaY2oK"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/interfaces/IExtsload.sol": {
+        "keccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43",
+        "urls": [
+          "bzz-raw://375c69148622aab7a3537d5fd37d373a8e9731022c8d87bdaee46233b0a99fe1",
+          "dweb:/ipfs/QmXFjdoYRxsA5B1kyuxEXgNf3FBoL1zPvy26Qy8EtpdFRN"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/interfaces/IExttload.sol": {
+        "keccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937",
+        "urls": [
+          "bzz-raw://294394f72dfc219689209f4130d85601dfd0d63c8d47578050d312db70f9b6c8",
+          "dweb:/ipfs/QmTDMQ3oxCGHgEBU48a3Lp4S1rRjc8vVCxkhE5ZNej1bsY"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/interfaces/IHooks.sol": {
+        "keccak256": "0x4c9571aed0c2b6ef11832545554fc11ffdb03746daaf5c73683c00600bfc7ec0",
+        "urls": [
+          "bzz-raw://e78b34b58ce9de91b91943b4f3cc3ce121d0b151e123e8a600ac5ef64d91db6c",
+          "dweb:/ipfs/QmRkaQnPCYwLrXgbpGujJTx32PaZK63KSPJJV1XmnQuCMb"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/interfaces/IPoolManager.sol": {
+        "keccak256": "0x3534f00531038e77ab8a7fc4d0a6e0993ee53fb7a396b1324ad917318ea46cea",
+        "urls": [
+          "bzz-raw://0a4a7e771828dc40848485b568a1cf514f553ace6653f4f4d1ad3f3e9cdb6c27",
+          "dweb:/ipfs/QmTjzQ7KVYnrEWtxPER2E4MXzycgcznfzSDsZtd5turk5V"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/interfaces/IProtocolFees.sol": {
+        "keccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848",
+        "urls": [
+          "bzz-raw://85751d302125881f72e5f8af051c2d5d9b1f606ebaea8ca7d04fccdd27cc252d",
+          "dweb:/ipfs/QmeRwomeh9NWm6A6fgNA4KZPQZHPpdKsPQyYsHSFmvud7J"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/interfaces/callback/IUnlockCallback.sol": {
+        "keccak256": "0x58c82f2bd9d7c097ed09bd0991fedc403b0ec270eb3d0158bfb095c06a03d719",
+        "urls": [
+          "bzz-raw://91168ca26a10980df2cdc3fbfe8ddf372c002b7ef19e3c59a0c9870d64198f1b",
+          "dweb:/ipfs/QmUSpaM825vd1SwvF38esgbdLgYiPwefKaFERTWvUi6uSK"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/interfaces/external/IERC20Minimal.sol": {
+        "keccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f",
+        "urls": [
+          "bzz-raw://118757369892687b99ef46ce28d6861f62c098285bd7687a4f17f7e44e5f81de",
+          "dweb:/ipfs/QmUxqbYqQtcEwwFbb9e6BBMePEaSgN8C45v6RKubD4ib8d"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/interfaces/external/IERC6909Claims.sol": {
+        "keccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48",
+        "urls": [
+          "bzz-raw://e8c557b7e52abdbbd82e415a1acc27921446a7fd090b7d4877e52be72619547f",
+          "dweb:/ipfs/QmXE2KNPbXmGX8BQF3ei6zhzRTnhoTQg39XmqMnkhbr6QK"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/BitMath.sol": {
+        "keccak256": "0x51b9be4f5c4fd3e80cbc9631a65244a2eb2be250b6b7f128a2035080e18aee8d",
+        "urls": [
+          "bzz-raw://fe98bbd5498e912146b9319827fc63621eb66ff55d5baae0fa02a7a972ab8d1e",
+          "dweb:/ipfs/QmY5hCuyrtgsJtk4AavrxcvBkRrChfr4N6ZnhdC8roPpNi"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/CurrencyReserves.sol": {
+        "keccak256": "0x1576616129933fcdf3b684cea33cffd9c95e18fafbd2832a8c48ac3d8526d4c3",
+        "urls": [
+          "bzz-raw://33b050efb9b81803b18f562271e7cca2ec5362c4d505860d6419b4a345636725",
+          "dweb:/ipfs/QmQtFtTwKZ5pFVGD2ENDUXvp7ECFvzqeCuJ1miJcUHdmiX"
+        ],
+        "license": "BUSL-1.1"
+      },
+      "lib/v4-core/src/libraries/CustomRevert.sol": {
+        "keccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de",
+        "urls": [
+          "bzz-raw://c9ea883c98d6ae1829160d0977bb5195761cfd5bc81692d0a941f45717f594cd",
+          "dweb:/ipfs/QmZPwxzaeMNv536wzrAMrMswu7vMHuqPVpjcqL3YvCMoxt"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/FixedPoint128.sol": {
+        "keccak256": "0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542",
+        "urls": [
+          "bzz-raw://0de1f9a06520b1a689660943faa14fc0b8344ab41fab9e6012ea34bff4b9b3eb",
+          "dweb:/ipfs/QmRNMPTyko7W6d6KxuTsnDBa9oZgDK4xiwRRq3H9ASTbwy"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/FixedPoint96.sol": {
+        "keccak256": "0xef5c3fd41aee26bb12aa1c32873cfee88e67eddfe7c2b32283786265ac669741",
+        "urls": [
+          "bzz-raw://4de298d02f662a1c36c7be0a150f18c2a161408a5d3e48432e707efd01fac9a4",
+          "dweb:/ipfs/QmSiM4oeMmLVKmAtJXz2feYkv4R9ZcyBpkTRW5Nhw5KDyJ"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/FullMath.sol": {
+        "keccak256": "0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2",
+        "urls": [
+          "bzz-raw://c3b2d66d36b1ad56b1ab6e2eb8a816740877b40b461c93f125e88621c8378e52",
+          "dweb:/ipfs/QmPGvMZzKQvNiWKd8aRzzdW7oAizwrMgcMtnaworDkVHFC"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/Hooks.sol": {
+        "keccak256": "0x27b1c3b8aa3d07d8e3123970695745929315685a5ffaa7342c3ba3582f37fecb",
+        "urls": [
+          "bzz-raw://fa3bb092dc205eaa1b9defc93e9bbad5f4c5c44e1c4aa531dfca2574c2aba9ba",
+          "dweb:/ipfs/QmR1soxkepHNkbGxAMaK4XqhQ4VxWn69dewzGkQJNx5byM"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/LPFeeLibrary.sol": {
+        "keccak256": "0xbf6914e01014e7c1044111feb7df7a3d96bb503b3da827ad8464b1955580d13b",
+        "urls": [
+          "bzz-raw://33823c20a91882c9aacdcbb02f0558c05209f4d5954aa6dd4fa17c95664db475",
+          "dweb:/ipfs/QmR7owkFgpfztpp1QUg3ut3nw9iPVQqLGP4hzgmZtRUQ2J"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/LiquidityMath.sol": {
+        "keccak256": "0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353",
+        "urls": [
+          "bzz-raw://a766b620a7a22798b43c6c1f23b5c6cff0ebf588deb89842bad05208d448cd99",
+          "dweb:/ipfs/QmVKjaFJdzkqA3ey2Byum8iTCMssWVD8MmVC8rw62Tj5WD"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/Lock.sol": {
+        "keccak256": "0x9338be4b5695f1da5f3d3f7a3eeaf7a356c1045458289586ac0cbe9cef77c6d5",
+        "urls": [
+          "bzz-raw://485ec42ed6155469d612a9a0c18068ebfbad74448792a338a435503de3ef1b2c",
+          "dweb:/ipfs/QmVnnv5u74MYatfRmBgrcfFYQcsMAJMG9jQ6ju8UiydKNF"
+        ],
+        "license": "BUSL-1.1"
+      },
+      "lib/v4-core/src/libraries/NonzeroDeltaCount.sol": {
+        "keccak256": "0x0666ebd5d3528d7d52c48538296367a4cff97a578cf13365c51983fae3219b87",
+        "urls": [
+          "bzz-raw://d27f1be3bd09d85c53d3e6a539dd6529ddd8b2b764ccb47fd7765fc81f9add59",
+          "dweb:/ipfs/QmQdZujNXhKEXQBkKtF5jbdvo1yXMqPDUoBBaF9S5u3Kpm"
+        ],
+        "license": "BUSL-1.1"
+      },
+      "lib/v4-core/src/libraries/ParseBytes.sol": {
+        "keccak256": "0x7533b13f53ee2c2c55500100b22ffd6e37e7523c27874edc98663d53a8672b15",
+        "urls": [
+          "bzz-raw://82449058634fde28a085f3c59a6a5f412550c02181590593fd84c3e8b329aa17",
+          "dweb:/ipfs/Qmev4E9Au6SsE4wsArChCwfg94KhHc5gYsEsZUnjF5sRLa"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/Position.sol": {
+        "keccak256": "0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9",
+        "urls": [
+          "bzz-raw://c79fe61b50f3b70cff503abfa6f5643fcbefb9b794855bee1019b1e6d9c083b2",
+          "dweb:/ipfs/QmbKmYNQesaMz8bo1b7TMHQcAwaDd3eDPrE5pAdPPZTtk5"
+        ],
+        "license": "BUSL-1.1"
+      },
+      "lib/v4-core/src/libraries/SafeCast.sol": {
+        "keccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86",
+        "urls": [
+          "bzz-raw://c3db86e2ba3679105fc32edec656c70282e1fede6cab11217702443f6c26fa59",
+          "dweb:/ipfs/QmX4yaaSPdKQzYNRsezjTvZKsubzS8JRTEGFD3fPpTTCcj"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/SqrtPriceMath.sol": {
+        "keccak256": "0xf8079fe6e3460db495451d06b1705e18f1c4075c1af96a31ad313545f7082982",
+        "urls": [
+          "bzz-raw://582fc51546723a0a8acccf782f69b530bacf9b3ef929458e82569b7121f0b138",
+          "dweb:/ipfs/QmSBXcmqZdFsM7M4sRaiyQAxykCeMNFKyKgBcwSMTw1bcF"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/StateLibrary.sol": {
+        "keccak256": "0x96db333ee126a841dd959e38e452cc59d73583cb0437a1d48b2052e33a74f952",
+        "urls": [
+          "bzz-raw://8672bba1eb69608299b0904f4ff305238eb18479d371c26518f278c9ee184cd0",
+          "dweb:/ipfs/QmTLu3s6ECvsEDHStQv8HTVHYtvkviBbdjPrFJd4SpVRFY"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/SwapMath.sol": {
+        "keccak256": "0x6baa782ae523269c079cc763639a9b91a25fcfa1743c049c76e43741ef494bd9",
+        "urls": [
+          "bzz-raw://035c337e62e05262a5bd5d3bc85bc9a383c1013001216b429f49cf1e129a0812",
+          "dweb:/ipfs/QmU7s4h58Fh2A6mM8yeorZ2ygwEJMQw8zdZLLkHeDoSWxD"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/TickMath.sol": {
+        "keccak256": "0x4e1a11e154eb06106cb1c4598f06cca5f5ca16eaa33494ba2f0e74981123eca8",
+        "urls": [
+          "bzz-raw://a79a57f7b240783b045168d1c4f774ac1812caf8f9a83cb6959a86b0b07b6c70",
+          "dweb:/ipfs/QmTb5kvxwDNW8jDuQaqdJ445cCFejNkUqEB17Bjo8UBiva"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/TransientStateLibrary.sol": {
+        "keccak256": "0x7d1e0875747bd89b32c25f1a48da2766e5f4aff1f671ad5f3c0c07ebbbcb946a",
+        "urls": [
+          "bzz-raw://d76cfeb1cb60595b41ecc51c8a12fb4bf63a7fc733d0b1a2e3adb55abeb1f9d5",
+          "dweb:/ipfs/Qmb8oX7DtsRpw3tTtdWZwGhauj1evq43d3PLwe4nSDAKkV"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/libraries/UnsafeMath.sol": {
+        "keccak256": "0xa6e55e0a43a15df2df471d9972cd48f613d07c663ecb8bbeaf7623f6f99bcce4",
+        "urls": [
+          "bzz-raw://02ea6e13879fc5a5f35149a2f1cd8af3a1f0877ff69101dad53841d16f515572",
+          "dweb:/ipfs/QmcpL4gdG6hL2w1wqs2Vw4J1EFCwBs9T1Qd4p16CtECQkn"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/types/BalanceDelta.sol": {
+        "keccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f",
+        "urls": [
+          "bzz-raw://7436928dc9de35c6c7c5c636cb51adaf295cfd590da83b19a004ae33cbec9ef9",
+          "dweb:/ipfs/QmRJ9yZkUpzk4433GX3LgVVL8jwpbSYSUwXcucKisf3v4H"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/types/BeforeSwapDelta.sol": {
+        "keccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78",
+        "urls": [
+          "bzz-raw://a2c7a0379955cff9c17ab9e61f95e42909aa5947c22740f86ce940d09856f782",
+          "dweb:/ipfs/QmaAuo8UBYXsGrVuKh8iRoAAdqwtg1jDq515cW1ZRP5m9K"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/types/Currency.sol": {
+        "keccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93",
+        "urls": [
+          "bzz-raw://45f9d62ab3d51b52957279e353853ba1547c3182c9a1e3d1846ada4a90263b01",
+          "dweb:/ipfs/QmS8NG84ccQS1yXVD8cv3eKX7J1UKxuJhbUfHTQR2opKF5"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/types/PoolId.sol": {
+        "keccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af",
+        "urls": [
+          "bzz-raw://669c2cd7ac17690b5d8831e0bda72822376c3a04b36afed6d31df4d75fe60918",
+          "dweb:/ipfs/QmT6EpkxqU8VF3WsgrZ66F3s1cCQRffR95z1HDYZz7ph6y"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/src/types/PoolKey.sol": {
+        "keccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786",
+        "urls": [
+          "bzz-raw://6f3118fa189025695c37fdf0bdd1190f085ad097484d3c88cf4c56d1db65f639",
+          "dweb:/ipfs/QmamXpgtB8GV1CaFLvqefPWSoikLDhMk1yU4heBnVzU8gi"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-core/test/utils/LiquidityAmounts.sol": {
+        "keccak256": "0x3ec40b1ddf34a1b33fe3934a2f1e4f66dbcf4378a4c672d0d6ce845ccf8bcae2",
+        "urls": [
+          "bzz-raw://6fc4a4688f272d4b55c1d0440ee5ebdc951e5299ff23ae79a4b52cc83e978b8a",
+          "dweb:/ipfs/QmYJogZFeyaVeSFbYLCMdwEZtL8sWB8Ndx5AuepWdHsHGY"
+        ],
+        "license": "UNLICENSED"
+      },
+      "lib/v4-periphery/src/base/ImmutableState.sol": {
+        "keccak256": "0x2b4d3e76d118c351e3bba4b6d5761844a67c138631d2d6c30a30a343d4021631",
+        "urls": [
+          "bzz-raw://119f8888a7ba7e8aa13fcfb6ce58e974b72d617851986c7b62e86b327e5a058b",
+          "dweb:/ipfs/QmfZPZcGh8UeSCY4PqNyhnunN1FC938rZaxKTKYssNZGCt"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-periphery/src/base/SafeCallback.sol": {
+        "keccak256": "0xd00fd50f780bc9189e79adba6f0bff93b2e993df7049aca638f356807ab086a3",
+        "urls": [
+          "bzz-raw://353e27536510b0cc38ebe3f5617999a8f87bed3cab118f8faa84fd6a487cfcbc",
+          "dweb:/ipfs/QmQywaAkX4Rmq1vzQPsJvty7pctUiDsRE7QebPwj7p8ibn"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-periphery/src/base/hooks/BaseHook.sol": {
+        "keccak256": "0xcc005378e3c7b6677f7dfb18947ba0a8070f9a16a324389b532926f855665125",
+        "urls": [
+          "bzz-raw://a9c03164794e2fe55d06d112967507243b7b44798eb493277327128fbed1a199",
+          "dweb:/ipfs/QmVQZ7NUeaWrs3f3WeLj7rA5xDyj3P3uE48aH71hU4GLsQ"
+        ],
+        "license": "MIT"
+      },
+      "lib/v4-periphery/src/interfaces/IImmutableState.sol": {
+        "keccak256": "0x36ab3100e87457ecf04887f4f540e34fd7f21d8e3b83880cb679239e60b7b06b",
+        "urls": [
+          "bzz-raw://7f290c7ce8e4832608d637a51b13dff95abecf6549485448e647a11c8ed01341",
+          "dweb:/ipfs/QmfD1R6mTp8j4EjQXmQZW3vCh11EYFjnvoaw8rXRP27mMq"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/Flaunch.sol": {
+        "keccak256": "0x1c22280e0e3808accdf31a128e7aa05edf2bf7d58cc7be1934911d5c432256eb",
+        "urls": [
+          "bzz-raw://5e3d4aa9c660181ffd052d0b0c140d2e8d108e0e38b45410db82408b7572c3a2",
+          "dweb:/ipfs/QmQCCzotuDsE35p6E8X5VLrqvutsRcJNJAXKVq47T1hNtG"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/PositionManager.sol": {
+        "keccak256": "0xbaed796836da9506b5935d7043770f0b97c8c2cf80e92f8b768e5dbe4d65ccb5",
+        "urls": [
+          "bzz-raw://f4e5762e3537bbbaff86bc6a813e79c2e911796818ada7a0a343499c57551ec1",
+          "dweb:/ipfs/QmUrhGDVjnbtKETFC25NHLPZZZ2kNRkrssX8enT2Vs2UWK"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/bidwall/BidWall.sol": {
+        "keccak256": "0x01276a42d85198a1ec83d1668e4be8c8f9ff07b1ddaf486fb6b3e3e471ab5b32",
+        "urls": [
+          "bzz-raw://3734cf40fe7f3b92c6fc558cbe49cca210b61f3b4971b90b9709cb2bda0afad0",
+          "dweb:/ipfs/QmX9Dfy7NNFNZeFAcUNtZvQ1UocZLKyzwDqrgfPoSUXB5E"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/contants.sol": {
+        "keccak256": "0x5ae6f584c76437cccc319f2cce96e8d51e2c38bbc550010282c47d4b23fc43eb",
+        "urls": [
+          "bzz-raw://08890ac7a1510bc13508b6164310314a2cae5ea94b3898de8fdc06f68edb9216",
+          "dweb:/ipfs/QmSqNM8wEuKgCbc9q83NSNHGdwKA2SS3rksaQr9eNbrRwY"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/escrows/FeeEscrow.sol": {
+        "keccak256": "0xb631600012a6df77c835249d61f12aeb0d636b5ec44ce69657c4d9a40fe8bd51",
+        "urls": [
+          "bzz-raw://adf86e86af20ef4980b6f87a1c555e59d215914df76f1b322125c170d4b56c5e",
+          "dweb:/ipfs/QmYw1riuJ7Pri7FDAyyGRUbDyaYPRQmtsBorRWcefQezyJ"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/escrows/ReferralEscrow.sol": {
+        "keccak256": "0xcd04f4016b830ac35dadc329f93ed3d97655062bcd1a03d875be05136631afdf",
+        "urls": [
+          "bzz-raw://f69143b495cf29515f823d8061d7e240188395c129de0ce5ce83d4c1f3d410d8",
+          "dweb:/ipfs/QmeTJA984BBbjp6GeGCFsQy3fBQZWRbvpyPdqfXHJUBsuC"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/hooks/FairLaunch.sol": {
+        "keccak256": "0x5ae679b9ca3da408a8a55ee0a91ea69cfc86a2eec309694191efad9707d27687",
+        "urls": [
+          "bzz-raw://89c4061dd462f85b85a4e6d800de010822189c5f8bd3b8c6ccc1d2a73f45868e",
+          "dweb:/ipfs/QmVP98PRk5UiFtRCu5T4VLnCJ5z9BpageYoYkjVgXHYxSN"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/hooks/FeeDistributor.sol": {
+        "keccak256": "0x27216feec5a5cd5cdbfcd7f0cd753a8368c22df8cd2a821dd813feb8334a4438",
+        "urls": [
+          "bzz-raw://42ad7e327628115dbf9428197352b90afa8003f90a784943727c1b2e5520aa4f",
+          "dweb:/ipfs/QmY9r4ywP4pycABVK1VDUcajBaUoGdMmBMSVbvt3g3Cc9X"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/hooks/FeeExemptions.sol": {
+        "keccak256": "0xd014c6d17a996bc7402ceb3852cda5def88d5d5507bbbdb68cb997f6452e1383",
+        "urls": [
+          "bzz-raw://641437d2ce67496fe880cd7cb3fdc8c20093bf0a1d6cbe8a98e2d77f2b37e48b",
+          "dweb:/ipfs/QmQ4JuYLhk8wzMnKwViKD3kzphYSDnoMJ231pzs8s3b7RP"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/hooks/InternalSwapPool.sol": {
+        "keccak256": "0xa493412443fb32edc59d17152fd02694793a183fe6710177312f70e80fde758d",
+        "urls": [
+          "bzz-raw://899412b7256955fdf4a97bd0e936c871924d394386f27a131bda6d66765c2a45",
+          "dweb:/ipfs/Qme6yUcFmTNCpnD945WSgyssS9qpLWJH4Q7i9Zs8AfJoBb"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/hooks/Notifier.sol": {
+        "keccak256": "0x1c64833a18020b18d80eb2b6fac5034f52f5baba905ff89e027d65f9b1be06e4",
+        "urls": [
+          "bzz-raw://3e04f39d3da4d4a37ce48cc10f1707d11cff5639e34e676bdfd1bb62dbbf6f2a",
+          "dweb:/ipfs/QmYnswohkXfwKLcMdoquAQvbWz8Wasxze2s193BgdnYaZE"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/libraries/CurrencySettler.sol": {
+        "keccak256": "0x1947908d65887002ba48d984b18a4136f4894f0753e7effc4af74b78b8891637",
+        "urls": [
+          "bzz-raw://448fd2c63df6d77d50b8cd747b61fda967baa6fc159eb4fdffe499951c0897fb",
+          "dweb:/ipfs/QmRd8WL4Mg1YJoz8VNXLdN9xUCsXtxf1CxjG4LSXShW83S"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/libraries/ProtocolRoles.sol": {
+        "keccak256": "0xc3ecb32c87d15b5a149d23aa0143ca772e921e62f3c11482c05b9aad511c6037",
+        "urls": [
+          "bzz-raw://b520151fbf6a72a86fc2cc370fc7afa92e4b6273b77a52e840dbff3d462087fe",
+          "dweb:/ipfs/QmNvcuY6ag66mdFYAgcXY25qqukQTmFvYGi5UeGMpWxFCh"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/libraries/TokenSupply.sol": {
+        "keccak256": "0xbed223c0987d967e260a66bcdd283ba631f1b42c93c52d4a5afec735f7cd83e2",
+        "urls": [
+          "bzz-raw://e3ce9b8c73cf13ae9c73ee3ceb575b6401762180f4afabc196cac4eca43ee21b",
+          "dweb:/ipfs/Qmes76ZFHxqusfg9NwY6tL5SYxcchkiW6aGorpMWXXxAvV"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/libraries/UniswapHookEvents.sol": {
+        "keccak256": "0x124e75c5d2853da58681498ba5afff2380779d6e21f5b0f658c44066ab93a616",
+        "urls": [
+          "bzz-raw://58276dce40ddf1675f0bcce9d56d6cdeb8e6d2a973bd0ad5298e2f11513e11e7",
+          "dweb:/ipfs/QmRetjzoNXvJD5QkQuSQMcGLEuEdQyd2PPewxpcgv1bxDR"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/price/FlaunchFeeExemption.sol": {
+        "keccak256": "0xe5a256a583afa7ccd229d091310dcf774c7d1dcb9894dc5d1c9306981476694a",
+        "urls": [
+          "bzz-raw://ee7abb576861805a6669c1542cb9cadb045c3d88a4aab6c4563d70fe947c764d",
+          "dweb:/ipfs/Qmdyv6y3HsWnzTznaG9H8TSwdG7CMA5oxXizRf7iuuzkt7"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/subscribers/Indexer.sol": {
+        "keccak256": "0x59bfca4d99bae3beebf1581ed93f569319f5f5c6b0d49f06b140b46a58509916",
+        "urls": [
+          "bzz-raw://90b8876e25e6b2708cf5e4a075f2625b451c84778bf4d05d141ae419d41c9101",
+          "dweb:/ipfs/QmYetyrsqFcqvAjem9KUxDnYRPP7EsXxVdMT7MWVu4H79g"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/treasury/ActionManager.sol": {
+        "keccak256": "0xbf83cfec82315dc4a3ec031a869984e1e754f92b41f474e86cf6088ae486e0b0",
+        "urls": [
+          "bzz-raw://ad69c078fb563ac05d43063b37c826b388092521783cfa496ba57f743aa0c7c8",
+          "dweb:/ipfs/QmWxvidGyn3zsnbRPARJZ88tvz7yYh4QQYV8AN1NmGVxDz"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/treasury/MemecoinTreasury.sol": {
+        "keccak256": "0x20629bd593397b351e9a3af1e7d573cca0d755af61b7312cca42565f900f1363",
+        "urls": [
+          "bzz-raw://712598571d05445c0bfe64f5dd17bff24705eb7e6f66a3ebfa4acf3d2c733694",
+          "dweb:/ipfs/QmTtZYNB7DTdpBVxZi36hsm9f7PouVKGiArsgttTRJXKkF"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/treasury/managers/TreasuryManager.sol": {
+        "keccak256": "0x774e3b48b06fad008710ec07e84454530e49e730f9d6f7f51c6f674375c00101",
+        "urls": [
+          "bzz-raw://ae29b12c60f9980af446f6b71366054c5999c3391942c9e1089f00341e5ae11b",
+          "dweb:/ipfs/QmSsA6ZtxrtZCvDrL56yByeLHJ7A1zT4PB4GfgfyRUJFeE"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/treasury/managers/TreasuryManagerFactory.sol": {
+        "keccak256": "0x934dbcfd1e3b2eaf5038f538a9f5dcd7c394c1a86b2dd13d731ee6f5a7fdf0b6",
+        "urls": [
+          "bzz-raw://301b83b27b08bb4eb57635593307069661c42b1180338a46876f3b4ca61c0e46",
+          "dweb:/ipfs/QmarVMDf2cEQdJ36NbAJR18XS2W9zbLEnFkTFM5Ayzk4SK"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/types/MemecoinFinder.sol": {
+        "keccak256": "0xfb797765334db24b80ce274dadddf2d02ae6e1bcc5b21ddc71e31ebe6a16a9bc",
+        "urls": [
+          "bzz-raw://88ee3018fca8abded6d53a4464e19c545b93a0c275b3f6563198d72f4f7cda4a",
+          "dweb:/ipfs/QmPCXvvzNCTafgtun4Dgi4oB2rCUaLPq6tzcBDXR32mN6A"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/types/StoreKeys.sol": {
+        "keccak256": "0x24a45a523b389f1e8e7c6dcb7d401458a67ad519b879eb2eb6f0501b3b2e4041",
+        "urls": [
+          "bzz-raw://2c83f401837cbf0fbc57aefdb2fb09faed9a6c94025b98ee1ea8e0ab3020201c",
+          "dweb:/ipfs/QmXCTEBxfBmUjYqiLUxnSuRnJ47KuRCJ8pifPrBmnbxAY3"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/types/TickFinder.sol": {
+        "keccak256": "0xd0520af45af21e3e21959edf440bf91a5c7008bba27f19a37157b068f15577a1",
+        "urls": [
+          "bzz-raw://37c00788c51797b6536f3a63ab3bf5eab0075b9311bc0607a474685a95c6dc97",
+          "dweb:/ipfs/QmT5QQRMSdmZivyvK5pJxGxh6ueBFZLHFCmpMkqFwbqp5Z"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/vesting/CreatorVesting.sol": {
+        "keccak256": "0x1dd7fbdca1fece583b9db8a30d052d4c81b5be520e23b73e5dc99be26bc1ccdf",
+        "urls": [
+          "bzz-raw://71f86832c84587c0d91a968e7e591e458599166be90a6e215ae943849ab11228",
+          "dweb:/ipfs/QmYiqphd7TiGnjvC2Je1rNf2eWLBLExMvgBxDddDJ4pzzu"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/zaps/PoolSwap.sol": {
+        "keccak256": "0xc76373ac0ae07e02b01080b6f4f8784f23ad63759353f3e0c652e5765ea419e4",
+        "urls": [
+          "bzz-raw://23aece61b14a38f729ad3f471dd2c7e928db1f34ca1df34a08f80dd248dad13c",
+          "dweb:/ipfs/QmZwypsxv3SjVVexvfZom6QDYSCqDNJ8YmHtpBzNiEkKnj"
+        ],
+        "license": "MIT"
+      },
+      "src/interfaces/IFLETH.sol": {
+        "keccak256": "0x76d5a68a2aa36d96b5e686df7a390ed2dd6142979b538e0e0e889b45ce2fcbbf",
+        "urls": [
+          "bzz-raw://a50cd7e6979a1af1345a993ca9a4ec3ea8803d5e429d2dc585b7b74d723e0a0c",
+          "dweb:/ipfs/QmW7ptGGwi8BCi8V9BrNwqFxdzG8WFtqNzMmLrFvQkWdK9"
+        ],
+        "license": "MIT"
+      },
+      "src/interfaces/IFeeCalculator.sol": {
+        "keccak256": "0x7fb44228009865a432793863a419d98511bfb4f777286f41a098747327d0b26d",
+        "urls": [
+          "bzz-raw://490c1bcd8fef48aa6bc7cb481e814631025738700caa8b93ef2b3d7e70d34267",
+          "dweb:/ipfs/QmUcuzY5wtAwwGssDCLMCr8G6tWRGD2P4RYav3yw7qYXAc"
+        ],
+        "license": "MIT"
+      },
+      "src/interfaces/IFeeEscrow.sol": {
+        "keccak256": "0x0870b9a7cf1e55e7dfca843cbee8f62fea73b774513be613834ff4943f923a8a",
+        "urls": [
+          "bzz-raw://4c4aa7f69de2dd0eb46eb5a259cd4beebf8febdc89809ec695cbdf07c339eee3",
+          "dweb:/ipfs/Qmebit14eEHQqZ9Boyu186t3RrXWXD1xiqa8iZfQ1Pc2iP"
+        ],
+        "license": "MIT"
+      },
+      "src/interfaces/IFeeEscrowRegistry.sol": {
+        "keccak256": "0xa30d7538bd81744c13f1e7d63776837667daa65e9817c23ac1376bc2611dc6d2",
+        "urls": [
+          "bzz-raw://c51189c5836571e514502a4856bf42e246e61adfc0ea0fd16248cc12a2ba6bc6",
+          "dweb:/ipfs/QmatQKBpkw2skSKGcRkn42rJQR8ytGtmhVqrvwReJUW1Xq"
+        ],
+        "license": "MIT"
+      },
+      "src/interfaces/IFlaunch.sol": {
+        "keccak256": "0x673e7120c0573e3dd881535af90a9c36edf53fa5c96e11d1609d50a1e82d06eb",
+        "urls": [
+          "bzz-raw://5637b5dd2c7774f7ddbc20b2ed875020f9b5c978c886d23257aa79ebc997d632",
+          "dweb:/ipfs/Qmb3FUnRYUQVaww7p5uqMuhK1c562dro5bkb7geierd44Q"
+        ],
+        "license": "MIT"
+      },
+      "src/interfaces/IInitialPrice.sol": {
+        "keccak256": "0x9ba8d9c572577512288872bff08302298851224b75ef5803c694d244a1d87ad9",
+        "urls": [
+          "bzz-raw://a6c596953c3c0ffdd2841d8288eaf94129c94bfb4b776cc476e361851af06d20",
+          "dweb:/ipfs/QmRi1NxTpsxMEYxZH7cVEkAUSw6fUJX1ZQ224NeHa3E6AB"
+        ],
+        "license": "MIT"
+      },
+      "src/interfaces/IManagerPermissions.sol": {
+        "keccak256": "0x86986f09849d1b934e9c25a578541785ea77cc88a0b4642706ced5be7b431230",
+        "urls": [
+          "bzz-raw://9fa38ab1228c3e48e63a9cf08fe5dad84f816dbc3a38eb2aeb74f4c4c6bf9066",
+          "dweb:/ipfs/QmfFQUuCHRpm3ywMgqSbKjNMCPNTM62xayAngggHn5UJiW"
+        ],
+        "license": "MIT"
+      },
+      "src/interfaces/IMemecoin.sol": {
+        "keccak256": "0x5552714add1c5e2d86b6287585da5be78b4c52583ba59a15d090eb24e11bc882",
+        "urls": [
+          "bzz-raw://19a42e80cf7f356ad7c1616879464c31624d6c6922aec343e76ebae1474660ef",
+          "dweb:/ipfs/QmUS7sNX9QPuUc6wZxVzXhRzWqVyVrrycpxWmY273bFmeT"
+        ],
+        "license": "MIT"
+      },
+      "src/interfaces/ISubscriber.sol": {
+        "keccak256": "0x9e66782ee2129d3f7f43be7d22455d50baf0c872b072a24d2ed385ccea49c30e",
+        "urls": [
+          "bzz-raw://bb37831e1c71192ecb3dfc1e0272d2c9e0b6afe1867059747140ec83b8aa993c",
+          "dweb:/ipfs/QmSgCjT9MRbrB5RmdbFBx8P2KtuwPUZUuD8bDDFGfF3mbZ"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/interfaces/ITreasuryAction.sol": {
+        "keccak256": "0x57d93df0946a294dd050aa5ca5c6b0d18c3280f323bc5adc21a114ce7ad60dbc",
+        "urls": [
+          "bzz-raw://51217a2625d02bf841082c5322e1de047edd60f9235e238de0deed51fc919edb",
+          "dweb:/ipfs/QmdnF6VnjX7yVpPWDT5CRhJzfarqb2LctrzowG5LHuXDbo"
+        ],
+        "license": "MIT"
+      },
+      "src/interfaces/ITreasuryManager.sol": {
+        "keccak256": "0xf2a797accbd60e590d7b91fb726d84febbd6a0d6fe1c745c975fbfc63c0fa8b9",
+        "urls": [
+          "bzz-raw://0921475f62ed4a649eeaf489cc8e91b37d265a5b74ae36ab4b59b4b92b138ec0",
+          "dweb:/ipfs/QmUCwUaaBgCnYuakpgfUY5ej93BuWNFW831LPRGyCqWtVy"
+        ],
+        "license": "MIT"
+      },
+      "src/interfaces/ITreasuryManagerFactory.sol": {
+        "keccak256": "0xda0e0c806d70a2bf0685946876cf14e375528a3b38ff991fda4da734d6f177eb",
+        "urls": [
+          "bzz-raw://33e0dd9531f3b0ad66aef5dc0830c8cef9830dbd203168e09ec7de70ecd48dbf",
+          "dweb:/ipfs/QmT6ukaJkYketE4BqDkg3awKjZvHwRfwUkhqhujS4SBS1T"
+        ],
+        "license": "MIT"
+      }
+    },
+    "version": 1
+  },
+  "id": 235
+}
