@@ -17,6 +17,7 @@ const menu = [
   { name: 'Events', page: 'events' },
   { name: 'People', page: 'people' },
   { name: 'Vaults', page: 'vaults' },
+  { name: 'Settings', page: 'settings' },
 ];
 
 export function CommunityManageLayout({ children }: React.PropsWithChildren) {
@@ -113,7 +114,7 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
   }
 
   return (
-    <div>
+    <div className="flex flex-col h-dvh">
       <Header />
       <div className="px-4 md:px-0 pt-6 sticky top-0 bg-page-background backdrop-blur-3xl z-10 border-b">
         <div className="page mx-auto">
@@ -158,7 +159,7 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
           </nav>
         </div>
       </div>
-      <main className="page bg-transparent! mx-auto py-7 px-4 md:px-0">{children}</main>
+      <main className="flex-1">{children}</main>
     </div>
   );
 }

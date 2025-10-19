@@ -43,29 +43,31 @@ export function CommunityOverview({ space: initSpace }: { space?: Space }) {
   const subSpaces = (subSpacesData?.getSubSpaces || []) as PublicSpace[];
 
   return (
-    <div className="flex flex-col gap-8 pt-7 pb-20">
-      <ListActions />
+    <div className="page bg-transparent! mx-auto py-7 px-4 md:px-0">
+      <div className="flex flex-col gap-8 pt-7 pb-20">
+        <ListActions />
 
-      <div className="[&>*:only-child]:hidden flex flex-col gap-5">
-        <h3 className="text-xl font-semibold">Events</h3>
-        {space?._id && <PendingApprovalEvents spaceId={space._id} />}
-        {space && <UpComingEventsSection space={space} />}
+        <div className="[&>*:only-child]:hidden flex flex-col gap-5">
+          <h3 className="text-xl font-semibold">Events</h3>
+          {space?._id && <PendingApprovalEvents spaceId={space._id} />}
+          {space && <UpComingEventsSection space={space} />}
+        </div>
+
+        <Divider />
+        <AdminListSection space={space} loading={loadingGetSpace} />
+
+        <Divider />
+        <AnimatePresence mode="wait">
+          <motion.div
+            initial={{ opacity: 0 }}
+            className="divide-y-(length:--card-border-width) divide-(--color-divider)"
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0 }}
+          >
+            <FeaturedHubSection data={subSpaces} loading={loading} />
+          </motion.div>
+        </AnimatePresence>
       </div>
-
-      <Divider />
-      <AdminListSection space={space} loading={loadingGetSpace} />
-
-      <Divider />
-      <AnimatePresence mode="wait">
-        <motion.div
-          initial={{ opacity: 0 }}
-          className="divide-y-(length:--card-border-width) divide-(--color-divider)"
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0 }}
-        >
-          <FeaturedHubSection data={subSpaces} loading={loading} />
-        </motion.div>
-      </AnimatePresence>
     </div>
   );
 }
