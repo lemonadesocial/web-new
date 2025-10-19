@@ -8,7 +8,7 @@ import { userAvatar } from '$lib/utils/user';
 export function SettingsCommunityTeam({ space }: { space: Space }) {
   const { data } = useQuery(GetSpaceMembersDocument, {
     variables: { space: space?._id, limit: 100, skip: 0 },
-    skip: space?._id,
+    skip: !space?._id,
   });
   const admins = data?.listSpaceMembers.items.filter((i) => i.role === SpaceRole.Admin);
   const ambassadors = data?.listSpaceMembers.items.filter((i) => i.role === SpaceRole.Ambassador);
@@ -33,7 +33,7 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
                 <div className="flex gap-3 items-center">
                   <Avatar src={userAvatar(item.user_expanded as unknown as User)} />
                   <div className="flex items-center gap-1">
-                    <p>{item.user_name || item.user_expanded?.name}</p>
+                    <p>{item.user_name || item.user_expanded?.name || 'Anonymous'}</p>
                     <p className="text-tertiary">{item.email || item.user_expanded?.email}</p>
                   </div>
                 </div>
@@ -83,7 +83,7 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
                   <div className="flex gap-3 items-center">
                     <Avatar src={userAvatar(item.user_expanded as unknown as User)} />
                     <div className="flex items-center gap-1">
-                      <p>{item.user_name || item.user_expanded?.name}</p>
+                      <p>{item.user_name || item.user_expanded?.name || 'Anonymous'}</p>
                       <p className="text-tertiary">{item.email || item.user_expanded?.email}</p>
                     </div>
                   </div>
