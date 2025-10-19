@@ -23,7 +23,7 @@ function SettingsCommunityLayout({ children }: React.PropsWithChildren) {
   return (
     <>
       <div className="bg-card sticky top-28 z-50 backdrop-blur-sm">
-        <nav className="page flex gap-4 pt-2 mx-auto overflow-auto no-scrollbar">
+        <nav className="page flex gap-4 px-4 md:px-0 pt-2 mx-auto overflow-auto no-scrollbar">
           {tabs.map((item) => {
             const url =
               item.path === 'display' ? `/s/manage/${uid}/settings` : `/s/manage/${uid}/settings/${item.path}`;
@@ -31,7 +31,11 @@ function SettingsCommunityLayout({ children }: React.PropsWithChildren) {
               item.path === 'display' ? pathname === `/s/manage/${uid}/settings` || pathname === url : pathname === url;
 
             return (
-              <Link href={url} key={item.path} className={clsx(isActive && 'border-b-2 border-b-primary', 'pb-2.5')}>
+              <Link
+                href={url}
+                key={item.path}
+                className={clsx('min-w-fit', isActive && 'border-b-2 border-b-primary', 'pb-2.5')}
+              >
                 <span className={clsx(isActive ? 'text-primary' : 'text-tertiary', 'font-medium')}>{item.label}</span>
               </Link>
             );

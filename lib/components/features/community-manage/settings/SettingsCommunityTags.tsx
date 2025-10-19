@@ -14,7 +14,7 @@ export function SettingsCommunityTags({ space }: { space: Space }) {
   const memberTags = spaceTags.filter((i) => i.type === SpaceTagType.Member);
 
   return (
-    <div className="page mx-auto py-7 flex flex-col gap-8">
+    <div className="page mx-auto py-7 px-4 md:px-0 flex flex-col gap-8">
       <div className="flex flex-col gap-4">
         <div>
           <div className="flex justify-between items-center">
@@ -28,7 +28,7 @@ export function SettingsCommunityTags({ space }: { space: Space }) {
 
         <CardTable.Root>
           {eventTags?.map((item) => (
-            <CardTable.Row>
+            <CardTable.Row key={item._id}>
               <div className="px-4 py-3 flex items-center justify-between">
                 <div className="flex gap-3 items-center">
                   <i className="icon-dot size-5 aspect-square" style={{ color: item.color }} />
@@ -68,7 +68,7 @@ export function SettingsCommunityTags({ space }: { space: Space }) {
         <CardTable.Root>
           {memberTags?.map((item) => (
             <CardTable.Row>
-              <div className="px-4 py-3 flex items-center justify-between">
+              <div key={item._id} className="px-4 py-3 flex items-center justify-between">
                 <div className="flex gap-3 items-center">
                   <i className="icon-dot size-5 aspect-square" style={{ color: item.color }} />
                   <div className="flex items-center gap-1">

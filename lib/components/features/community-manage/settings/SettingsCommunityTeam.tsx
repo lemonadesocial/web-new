@@ -14,7 +14,7 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
   const ambassadors = data?.listSpaceMembers.items.filter((i) => i.role === SpaceRole.Ambassador);
 
   return (
-    <div className="page mx-auto py-7 flex flex-col gap-8">
+    <div className="page mx-auto py-7 px-4 md:px-0 flex flex-col gap-8">
       <div className="flex flex-col gap-4">
         <div>
           <div className="flex justify-between items-center">
