@@ -78,7 +78,7 @@ export function GuestTable({ event, guests, loading = false, onGuestClick }: Gue
                     guest.join_request?.metadata?.buyer_name ||
                     'Anonymous'}
                 </p>
-                <p className="text-tertiary truncate md:truncate-none text-xs md:text-base max-w-[120px]">{guest.user.email}</p>
+                <p className="text-tertiary truncate md:truncate-none text-xs md:text-base max-w-[120px] md:max-w-none">{guest.user.email}</p>
               </div>
             </div>
             <div className="flex flex-col items-end md:flex-row gap-0.5">
