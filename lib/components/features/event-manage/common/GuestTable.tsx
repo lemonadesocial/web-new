@@ -78,7 +78,7 @@ export function GuestTable({ event, guests, loading = false, onGuestClick }: Gue
                     guest.join_request?.metadata?.buyer_name ||
                     'Anonymous'}
                 </p>
-                <p className="text-tertiary truncate text-xs md:text-base">{guest.user.email}</p>
+                <p className="text-tertiary truncate md:truncate-none text-xs md:text-base max-w-[120px]">{guest.user.email}</p>
               </div>
             </div>
             <div className="flex flex-col items-end md:flex-row gap-0.5">
@@ -86,7 +86,7 @@ export function GuestTable({ event, guests, loading = false, onGuestClick }: Gue
                 {guest.ticket && (
                   <>
                     <Chip variant="secondary" size="xxs" className="rounded-full" leftIcon="icon-ticket size-3">
-                      {guest.ticket?.type_expanded?.title}
+                      <span className=" max-w-20 truncate">This limits the email to a maxim</span>
                     </Chip>
                     <span className="hidden md:block text-sm text-tertiary whitespace-nowrap">
                       {guest.ticket?.created_at ? formatDistanceToNow(new Date(guest.ticket?.created_at), { addSuffix: true }) : ''}
