@@ -48,7 +48,7 @@ export function AddGuestsModal({
   };
 
   return (
-    <div className="w-full max-w-[448px]">
+    <div className="max-w-full w-[448px]">
       <div className="flex justify-between py-3 px-4 border-b">
         <p className="text-lg">{title}</p>
         <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
@@ -91,7 +91,7 @@ export function AddGuestsModal({
               <p className="truncate">{selectedTicketType?.title || 'Select a ticket type'}</p>
               <i className="text-quaternary icon-chevron-down size-5" />
             </Menu.Trigger>
-            <Menu.Content className="w-full p-1">
+            <Menu.Content className="w-full p-1 overflow-auto max-h-40">
               {({ toggle }) => (
                 <div className="space-y-1">
                   {event.event_ticket_types?.map((ticket) => (
