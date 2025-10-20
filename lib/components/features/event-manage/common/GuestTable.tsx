@@ -86,7 +86,7 @@ export function GuestTable({ event, guests, loading = false, onGuestClick }: Gue
                 {guest.ticket && (
                   <>
                     <Chip variant="secondary" size="xxs" className="rounded-full" leftIcon="icon-ticket size-3">
-                      <span className=" max-w-20 truncate">This limits the email to a maxim</span>
+                      <span className=" max-w-20 truncate">{guest.ticket?.type_expanded?.title}</span>
                     </Chip>
                     <span className="hidden md:block text-sm text-tertiary whitespace-nowrap">
                       {guest.ticket?.created_at ? formatDistanceToNow(new Date(guest.ticket?.created_at), { addSuffix: true }) : ''}
