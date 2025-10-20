@@ -9,10 +9,9 @@ import { useUpdateEvent } from '../store';
 
 export function UpdateEventLinkModal({ event }: { event: Event }) {
   const [shortid, setShortid] = useState(event.shortid || '');
-  const [loading, setLoading] = useState(false);
   const updateEvent = useUpdateEvent();
 
-  const [updateEventSettings] = useMutation(UpdateEventSettingsDocument, {
+  const [updateEventSettings, { loading }] = useMutation(UpdateEventSettingsDocument, {
     onComplete: (_, data) => {
       if (data?.updateEvent) {
         updateEvent(data.updateEvent);
@@ -39,19 +38,14 @@ export function UpdateEventLinkModal({ event }: { event: Event }) {
       return;
     }
 
-    setLoading(true);
-    try {
-      await updateEventSettings({
-        variables: {
-          id: event._id,
-          input: {
-            shortid: shortid.trim(),
-          },
+    updateEventSettings({
+      variables: {
+        id: event._id,
+        input: {
+          shortid: shortid.trim(),
         },
-      });
-    } catch (error) {
-      setLoading(false);
-    }
+      },
+    });
   };
 
   return (
