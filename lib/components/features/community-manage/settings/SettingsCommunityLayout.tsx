@@ -12,8 +12,8 @@ const tabs = [
   { label: 'Tags', path: 'tags' },
   { label: 'Advanced', path: 'advanced' },
   { label: 'Embed', path: 'embed' },
-  { label: 'Send Limit', path: 'send-limit' },
-  { label: 'Lemonade Pro', path: 'lemonade-pro' },
+  // { label: 'Send Limit', path: 'send-limit' },
+  // { label: 'Lemonade Pro', path: 'lemonade-pro' },
 ];
 
 function SettingsCommunityLayout({ children }: React.PropsWithChildren) {

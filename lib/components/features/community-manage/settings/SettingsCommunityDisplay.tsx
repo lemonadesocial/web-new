@@ -2,7 +2,7 @@
 import { Controller, useForm } from 'react-hook-form';
 import clsx from 'clsx';
 import React from 'react';
-import { debounce, kebabCase } from 'lodash';
+import { conformsTo, debounce, kebabCase } from 'lodash';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { object, string } from 'yup';
 
@@ -178,8 +178,6 @@ function SettingsCommunityDisplay({ space }: { space: Space }) {
     } else {
       return 'icon-x text-danger-400 align-items-center flex h-full mx-2';
     }
-
-    return '';
   };
 
   return (
@@ -280,7 +278,7 @@ function SettingsCommunityDisplay({ space }: { space: Space }) {
             </Card.Content>
           </Card.Root>
 
-          <div className="flex flex-col md:flex-row gap-6 justify-between">
+          <div className="flex flex-col md:flex-row gap-6 justify-between z-10">
             <Card.Root className="flex-1">
               <Card.Content className="space-y-4">
                 <p className="text-lg">Customization</p>
@@ -316,7 +314,7 @@ function SettingsCommunityDisplay({ space }: { space: Space }) {
               </Card.Content>
             </Card.Root>
 
-            <Card.Root className="flex-1" style={{ overflow: 'inherit !important' }}>
+            <Card.Root className="flex-1 overflow-visible">
               <Card.Content className="space-y-4">
                 <p className="text-lg">Location</p>
                 <div className="relative">
@@ -334,7 +332,18 @@ function SettingsCommunityDisplay({ space }: { space: Space }) {
                     ]}
                   />
                   <div className="absolute bottom-2 left-2 right-2">
-                    <PlaceAutoComplete onSelect={(value) => setValue('address', value)} />
+                    <Controller
+                      name="address"
+                      control={control}
+                      render={({ field }) => (
+                        <PlaceAutoComplete
+                          value={field.value?.title || ''}
+                          onSelect={(value) => {
+                            setValue('address', value, { shouldDirty: value?.title !== space.address?.title });
+                          }}
+                        />
+                      )}
+                    />
                   </div>
                 </div>
               </Card.Content>
@@ -356,7 +365,12 @@ function SettingsCommunityDisplay({ space }: { space: Space }) {
                         return (
                           <div className="flex items-center gap-4 flex-1">
                             <i className={`text-tertiary ${item.icon}`} />
-                            <InputField prefix={item.prefix} className="w-full" value={field.value} />
+                            <InputField
+                              prefix={item.prefix}
+                              className="w-full"
+                              value={field.value}
+                              onChange={field.onChange}
+                            />
                           </div>
                         );
                       }}
