@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.9.0](https://github.com/lemonadesocial/web-new/compare/v8.8.3...v8.9.0) (2025-10-20)
+
+
+### Features
+
+* guest list filter on mobile ([d2a52e8](https://github.com/lemonadesocial/web-new/commit/d2a52e8ae8e6882500960d99b8fdc595410d126a))
+
 ## [8.8.3](https://github.com/lemonadesocial/web-new/compare/v8.8.2...v8.8.3) (2025-10-18)
 
 
