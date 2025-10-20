@@ -65,6 +65,7 @@ fragment Space on Space {
     }
     wallet
   }
+  state
 }
 
 fragment SpaceTagFragment on SpaceTag {
@@ -441,4 +442,8 @@ mutation DeleteSpaceMembers($input: DeleteSpaceMemberInput!) {
     }
     visible
   }
+}
+
+mutation DeleteSpace($id: MongoID!) {
+  deleteSpace(_id: $id)
 }
