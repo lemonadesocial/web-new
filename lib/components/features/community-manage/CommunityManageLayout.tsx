@@ -121,7 +121,7 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
           <div className="flex justify-between items-center">
             <div className="flex gap-3 items-center">
               <img src={communityAvatar(space)} className="size-7 rounded-xs border-card-border" />
-              <h1 className="font-semibold text-2xl">{space.title}</h1>
+              <h1 className="font-semibold text-2xl max-sm:line-clamp-1">{space.title}</h1>
             </div>
             <Button
               iconRight="icon-arrow-outward"
