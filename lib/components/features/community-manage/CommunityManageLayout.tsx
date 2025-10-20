@@ -144,7 +144,7 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
             {menu.map((item) => {
               const url = item.page === 'overview' ? `/s/manage/${uid}` : `/s/manage/${uid}/${item.page}`;
               const isActive =
-                item.page === 'overview' ? pathname === `/s/manage/${uid}` || pathname === url : pathname === url;
+                item.page === 'overview' ? pathname === `/s/manage/${uid}` || pathname === url : pathname.includes(url);
 
               return (
                 <NextLink

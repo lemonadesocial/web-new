@@ -1,17 +1,41 @@
 'use client';
-import { Avatar, Button, Card, Divider, toast } from '$lib/components/core';
+import { Avatar, Button, Card, Divider, modal, Skeleton } from '$lib/components/core';
 import { CardTable } from '$lib/components/core/table';
-import { GetSpaceMembersDocument, Space, SpaceRole, User } from '$lib/graphql/generated/backend/graphql';
-import { useQuery } from '$lib/graphql/request';
+import {
+  DeleteSpaceMembersDocument,
+  GetSpaceMembersDocument,
+  Space,
+  SpaceMember,
+  SpaceRole,
+  User,
+} from '$lib/graphql/generated/backend/graphql';
+import { useMutation, useQuery } from '$lib/graphql/request';
+import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
+import React from 'react';
+import { ConfirmModal } from '../../modals/ConfirmModal';
 
 export function SettingsCommunityTeam({ space }: { space: Space }) {
-  const { data } = useQuery(GetSpaceMembersDocument, {
+  const me = useMe();
+  const [list, setList] = React.useState<SpaceMember[]>([]);
+
+  const { data, loading } = useQuery(GetSpaceMembersDocument, {
     variables: { space: space?._id, limit: 100, skip: 0 },
     skip: !space?._id,
   });
-  const admins = data?.listSpaceMembers.items.filter((i) => i.role === SpaceRole.Admin);
-  const ambassadors = data?.listSpaceMembers.items.filter((i) => i.role === SpaceRole.Ambassador);
+
+  const [removeMember] = useMutation(DeleteSpaceMembersDocument);
+
+  const handleRemove = async (id: string) => {
+    await removeMember({ variables: { input: { space: space._id, ids: [id] } } });
+    setList((prev) => prev.filter((i) => i._id !== id));
+  };
+
+  React.useEffect(() => {
+    if (data?.listSpaceMembers) {
+      setList(data.listSpaceMembers.items as SpaceMember[]);
+    }
+  }, [data?.listSpaceMembers]);
 
   return (
     <div className="page mx-auto py-7 px-4 md:px-0 flex flex-col gap-8">
@@ -26,24 +50,57 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
           <p className="text-secondary">Admins have full access to the community and can approve events.</p>
         </div>
 
-        <CardTable.Root>
-          {admins?.map((item) => (
-            <CardTable.Row>
-              <div className="px-4 py-3 flex items-center justify-between">
-                <div className="flex gap-3 items-center">
-                  <Avatar src={userAvatar(item.user_expanded as unknown as User)} />
-                  <div className="flex items-center gap-1">
-                    <p>{item.user_name || item.user_expanded?.name || 'Anonymous'}</p>
-                    <p className="text-tertiary">{item.email || item.user_expanded?.email}</p>
+        <CardTable.Root loading={loading}>
+          <CardTable.Loading rows={5}>
+            <Skeleton className="size-8 aspect-square rounded-full" animate />
+            <Skeleton className="h-5 w-32" animate />
+
+            <Skeleton className="h-5 w-10" animate />
+
+            <div className="w-[62px] px-[60px] hidden md:block">
+              <Skeleton className="h-5 w-16 rounded-full" animate />
+            </div>
+          </CardTable.Loading>
+
+          <CardTable.EmptyState icon="icon-tag" title="No Data Found" />
+
+          {list
+            .filter((i) => [SpaceRole.Admin, SpaceRole.Creator].includes(i.role as SpaceRole))
+            ?.map((item) => (
+              <CardTable.Row key={item._id}>
+                <div className="px-4 py-3 flex items-center justify-between">
+                  <div className="flex gap-3 items-center">
+                    <Avatar src={userAvatar(item.user_expanded as unknown as User)} />
+                    <div className="flex items-center gap-1">
+                      <p>{item.user_name || item.user_expanded?.name || 'Anonymous'}</p>
+                      <p className="text-tertiary">{item.email || item.user_expanded?.email}</p>
+                    </div>
                   </div>
+                  <i
+                    className="icon-user-remove cursor-pointer size-5 aspect-square text-tertiary hover:text-primary"
+                    onClick={() => {
+                      let title = 'Remove Admin';
+                      let subtitle = 'Are you sure you want to remove this admin? They will lose access to it.';
+                      let buttonText = undefined;
+                      if (me?._id === item.user_expanded?._id) {
+                        title = 'Leave Community Hub';
+                        subtitle = 'Are you sure you want to leave this calendar? You will lose access to it.';
+                        buttonText = 'Leave';
+                      }
+
+                      modal.open(ConfirmModal, {
+                        props: {
+                          title,
+                          subtitle,
+                          buttonText,
+                          onConfirm: () => handleRemove(item._id),
+                        },
+                      });
+                    }}
+                  />
                 </div>
-                <i
-                  className="icon-user-remove cursor-pointer size-5 aspect-square text-tertiary hover:text-primary"
-                  onClick={() => toast.success('Comming soon')}
-                />
-              </div>
-            </CardTable.Row>
-          ))}
+              </CardTable.Row>
+            ))}
         </CardTable.Root>
       </div>
 
@@ -76,24 +133,47 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
             </p>
           </div>
 
-          <CardTable.Root>
-            {ambassadors?.map((item) => (
-              <CardTable.Row>
-                <div className="px-4 py-3 flex items-center justify-between">
-                  <div className="flex gap-3 items-center">
-                    <Avatar src={userAvatar(item.user_expanded as unknown as User)} />
-                    <div className="flex items-center gap-1">
-                      <p>{item.user_name || item.user_expanded?.name || 'Anonymous'}</p>
-                      <p className="text-tertiary">{item.email || item.user_expanded?.email}</p>
+          <CardTable.Root loading={loading}>
+            <CardTable.Loading rows={5}>
+              <Skeleton className="size-8 aspect-square rounded-full" animate />
+              <Skeleton className="h-5 w-32" animate />
+
+              <Skeleton className="h-5 w-10" animate />
+
+              <div className="w-[62px] px-[60px] hidden md:block">
+                <Skeleton className="h-5 w-16 rounded-full" animate />
+              </div>
+            </CardTable.Loading>
+
+            <CardTable.EmptyState icon="icon-tag" title="No Data Found" />
+
+            {list
+              .filter((i) => i.role === SpaceRole.Ambassador)
+              ?.map((item) => (
+                <CardTable.Row>
+                  <div className="px-4 py-3 flex items-center justify-between">
+                    <div className="flex gap-3 items-center">
+                      <Avatar src={userAvatar(item.user_expanded as unknown as User)} />
+                      <div className="flex items-center gap-1">
+                        <p>{item.user_name || item.user_expanded?.name || 'Anonymous'}</p>
+                        <p className="text-tertiary">{item.email || item.user_expanded?.email}</p>
+                      </div>
                     </div>
+                    <i
+                      className="icon-user-remove cursor-pointer size-5 aspect-square text-tertiary hover:text-primary"
+                      onClick={() => {
+                        modal.open(ConfirmModal, {
+                          props: {
+                            title: 'Remove Ambassador?',
+                            subtitle: 'Are you sure you want to remove this ambassador? They will lose access to it.',
+                            onConfirm: () => handleRemove(item._id),
+                          },
+                        });
+                      }}
+                    />
                   </div>
-                  <i
-                    className="icon-user-remove cursor-pointer size-5 aspect-square text-tertiary hover:text-primary"
-                    onClick={() => toast.success('Comming soon')}
-                  />
-                </div>
-              </CardTable.Row>
-            ))}
+                </CardTable.Row>
+              ))}
           </CardTable.Root>
         </div>
       </div>

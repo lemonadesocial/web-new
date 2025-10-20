@@ -1,11 +1,11 @@
 'use client';
-import { Avatar, Button, Card, Divider, toast } from '$lib/components/core';
+import { Avatar, Button, Card, Divider, Skeleton, toast } from '$lib/components/core';
 import { CardTable } from '$lib/components/core/table';
 import { GetSpaceTagsDocument, Space, SpaceTag, SpaceTagType } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 
 export function SettingsCommunityTags({ space }: { space: Space }) {
-  const { data } = useQuery(GetSpaceTagsDocument, {
+  const { data, loading } = useQuery(GetSpaceTagsDocument, {
     variables: { space: space?._id },
     skip: !space?._id,
   });
@@ -26,7 +26,20 @@ export function SettingsCommunityTags({ space }: { space: Space }) {
           <p className="text-secondary">Allow visitors to filter events by categories on the community page.</p>
         </div>
 
-        <CardTable.Root>
+        <CardTable.Root loading={loading}>
+          <CardTable.Loading rows={7}>
+            <Skeleton className="size-8 aspect-square rounded-full" animate />
+            <Skeleton className="h-5 w-32" animate />
+
+            <Skeleton className="h-5 w-10" animate />
+
+            <div className="w-[62px] px-[60px] hidden md:block">
+              <Skeleton className="h-5 w-16 rounded-full" animate />
+            </div>
+          </CardTable.Loading>
+
+          <CardTable.EmptyState icon="icon-tag" title="No Data Found" />
+
           {eventTags?.map((item) => (
             <CardTable.Row key={item._id}>
               <div className="px-4 py-3 flex items-center justify-between">
@@ -65,10 +78,23 @@ export function SettingsCommunityTags({ space }: { space: Space }) {
           </p>
         </div>
 
-        <CardTable.Root>
+        <CardTable.Root loading={loading}>
+          <CardTable.Loading rows={7}>
+            <Skeleton className="size-8 aspect-square rounded-full" animate />
+            <Skeleton className="h-5 w-32" animate />
+
+            <Skeleton className="h-5 w-10" animate />
+
+            <div className="w-[62px] px-[60px] hidden md:block">
+              <Skeleton className="h-5 w-16 rounded-full" animate />
+            </div>
+          </CardTable.Loading>
+
+          <CardTable.EmptyState icon="icon-tag" title="No Data Found" />
+
           {memberTags?.map((item) => (
-            <CardTable.Row>
-              <div key={item._id} className="px-4 py-3 flex items-center justify-between">
+            <CardTable.Row key={item._id}>
+              <div className="px-4 py-3 flex items-center justify-between">
                 <div className="flex gap-3 items-center">
                   <i className="icon-dot size-5 aspect-square" style={{ color: item.color }} />
                   <div className="flex items-center gap-1">
