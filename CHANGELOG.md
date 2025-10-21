@@ -1,5 +1,21 @@
 # Changelog
 
+## [8.10.0](https://github.com/lemonadesocial/web-new/compare/v8.9.0...v8.10.0) (2025-10-21)
+
+
+### Features
+
+* collectible on mobile ([142e978](https://github.com/lemonadesocial/web-new/commit/142e978a24bf6132371101838a3c80519dcc8246))
+* display unicorn wallet ([3f055f6](https://github.com/lemonadesocial/web-new/commit/3f055f672e8657a40ae30ec0c931255fbafc078d))
+* update mobile manage event ([37918b7](https://github.com/lemonadesocial/web-new/commit/37918b7eb62579d1c9c559577fbf3ee432b84555))
+
+
+### Bug Fixes
+
+* loading update short id ([775110b](https://github.com/lemonadesocial/web-new/commit/775110bcb827f95609887dda10725222ff112c81))
+* overflow issues on modals ([d092544](https://github.com/lemonadesocial/web-new/commit/d092544c20434cdd4f271a383b4e0e251adfe1a7))
+* truncate email ([fb5f152](https://github.com/lemonadesocial/web-new/commit/fb5f152cc3c1a17395081643a41272e145154e59))
+
 ## [8.9.0](https://github.com/lemonadesocial/web-new/compare/v8.8.3...v8.9.0) (2025-10-20)
 
 
