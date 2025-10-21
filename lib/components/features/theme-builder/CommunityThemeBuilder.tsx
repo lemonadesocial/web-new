@@ -7,18 +7,15 @@ import { Button, modal } from '$lib/components/core';
 import {
   FileCategory,
   GetSystemFilesDocument,
-  Space, UpdateSpaceDocument
+  Space,
+  UpdateSpaceDocument,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 
-import {
-  defaultTheme, fonts,
-  getRandomColor,
-  getRandomFont,
-  getThemeName, presets, ThemeValues
-} from './store';
+import { defaultTheme, fonts, getRandomColor, getRandomFont, getThemeName, presets, ThemeValues } from './store';
 import { ThemeBuilderActionKind, useTheme } from './provider';
 import { PopoverColor, PopoverDisplay, PopoverEffect, PopoverFont, PopoverStyle, ThemeTemplate } from './ThemeBuilder';
+import { twMerge } from 'tailwind-merge';
 
 export function CommunityThemeBuilder({ themeData, spaceId }: { themeData: ThemeValues; spaceId?: string }) {
   const [toggle, setToggle] = React.useState(false);
@@ -49,9 +46,7 @@ function CommunityThemeBuilderPane({
 }) {
   const [state, dispatch] = useTheme();
   const sheetRef = React.useRef<SheetRef>(null);
-  
   const themeName = getThemeName(state);
-  const mode = state.config.mode || 'dark';
 
   const [updateCommunity, { loading }] = useMutation(UpdateSpaceDocument);
 
@@ -65,7 +60,7 @@ function CommunityThemeBuilderPane({
             dispatch({ type: ThemeBuilderActionKind.reset, payload: initial });
           },
         },
-        dismissible: false
+        dismissible: false,
       });
       sheetRef.current?.snapTo(0);
     } else {
@@ -85,46 +80,7 @@ function CommunityThemeBuilderPane({
         </Sheet.Header>
         <Sheet.Content disableDrag>
           <Sheet.Scroller draggableAt="top" className="no-scrollbar">
-            <div className="flex flex-col gap-6 max-w-[1080px] m-auto py-6 px-4">
-              <ThemeTemplate />
-
-              <div className="flex flex-col gap-2">
-                <div className="flex gap-2 flex-wrap">
-                  <PopoverColor disabled={state.theme && presets[themeName]?.ui?.disabled?.color} />
-                  <PopoverStyle />
-                  <PopoverEffect />
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  <PopoverFont
-                    fonts={fonts.title}
-                    label="Title"
-                    selected={state.font_title}
-                    onClick={(font) => {
-                      const payload = {
-                        font_title: font,
-                        variables: { font: { '--font-title': fonts.title[font] } },
-                      };
-                      dispatch({ type: ThemeBuilderActionKind.select_font, payload });
-                    }}
-                  />
-                  <PopoverFont
-                    fonts={fonts.body}
-                    label="Body"
-                    selected={state.font_body}
-                    onClick={(font) => {
-                      const payload = {
-                        font_body: font,
-                        variables: { font: { '--font-body': fonts.body[font] } },
-                      };
-                      dispatch({ type: ThemeBuilderActionKind.select_font, payload });
-                    }}
-                  />
-
-                  <PopoverDisplay />
-                </div>
-              </div>
-
+            <CommunityThemeContentBuilder>
               <div className="flex justify-between">
                 <div className="flex gap-2">
                   <Button
@@ -187,11 +143,64 @@ function CommunityThemeBuilderPane({
                   </Button>
                 </div>
               </div>
-            </div>
+            </CommunityThemeContentBuilder>
           </Sheet.Scroller>
         </Sheet.Content>
       </Sheet.Container>
     </Sheet>
+  );
+}
+
+export function CommunityThemeContentBuilder({
+  className,
+  children,
+}: React.PropsWithChildren & { className?: string }) {
+  const [state, dispatch] = useTheme();
+
+  const themeName = getThemeName(state);
+
+  return (
+    <div className={twMerge('flex flex-col gap-6 max-w-[1080px] m-auto py-6 px-4', className)}>
+      <ThemeTemplate />
+
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-2 flex-wrap">
+          <PopoverColor disabled={state.theme && presets[themeName]?.ui?.disabled?.color} />
+          <PopoverStyle />
+          <PopoverEffect />
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <PopoverFont
+            fonts={fonts.title}
+            label="Title"
+            selected={state.font_title}
+            onClick={(font) => {
+              const payload = {
+                font_title: font,
+                variables: { font: { '--font-title': fonts.title[font] } },
+              };
+              dispatch({ type: ThemeBuilderActionKind.select_font, payload });
+            }}
+          />
+          <PopoverFont
+            fonts={fonts.body}
+            label="Body"
+            selected={state.font_body}
+            onClick={(font) => {
+              const payload = {
+                font_body: font,
+                variables: { font: { '--font-body': fonts.body[font] } },
+              };
+              dispatch({ type: ThemeBuilderActionKind.select_font, payload });
+            }}
+          />
+
+          <PopoverDisplay />
+        </div>
+      </div>
+      {children}
+    </div>
   );
 }
 
