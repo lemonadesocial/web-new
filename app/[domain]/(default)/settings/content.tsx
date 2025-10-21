@@ -11,7 +11,7 @@ import { VerifyEmailModal } from '$lib/components/features/auth/VerifyEmailModal
 import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { useMe } from '$lib/hooks/useMe';
 import { chainsMapAtom, sessionAtom } from '$lib/jotai';
-import { ASSET_PREFIX, PROFILE_SOCIAL_LINKS } from '$lib/utils/constants';
+import { PROFILE_SOCIAL_LINKS } from '$lib/utils/constants';
 import { userAvatar } from '$lib/utils/user';
 import { truncateMiddle } from '$lib/utils/string';
 import { useConnectWallet } from '$lib/hooks/useConnectWallet';
@@ -262,6 +262,7 @@ export function Content() {
             title="Farcaster"
             placeholder={!me?.kratos_farcaster_fid}
             subtile={userData?.username || 'No Account Connected'}
+            divide={false}
           >
             {
               !me?.kratos_farcaster_fid && (
@@ -275,14 +276,6 @@ export function Content() {
               )
             }
           </ListItem>
-
-          <ListItem
-            icon={<img src={`${ASSET_PREFIX}/assets/images/wallet-unicorn.png`} className="size-5" />}
-            title="Unicorn Wallet"
-            placeholder={!me?.kratos_unicorn_wallet_address}
-            subtile={me?.kratos_unicorn_wallet_address || 'No Wallet Connected'}
-            divide={false}
-          />
         </div>
       </Card.Content>
 
@@ -315,7 +308,7 @@ function ListItem({
   divide = true,
   children,
 }: React.PropsWithChildren & {
-  icon: React.ReactNode;
+  icon: string;
   title: string;
   subtile: string;
   placeholder?: boolean;
@@ -324,11 +317,7 @@ function ListItem({
   return (
     <div className="flex items-center gap-4">
       <div className="pl-4">
-        {
-          typeof icon === 'string' ? (
-            <i className={twMerge('text-tertiary size-5', icon)} />
-          ) : icon
-        }
+        <i className={twMerge('text-tertiary size-5', icon)} />
       </div>
       <div className={clsx('flex flex-1 py-3 items-center', divide && 'border-b')}>
         <div className="flex-1">
