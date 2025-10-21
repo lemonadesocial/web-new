@@ -10,10 +10,10 @@ import { dummyWalletPassword, handlePasswordLogin, handlePasswordRegistration, h
 import { decodeAuthCookie } from '$lib/services/unicorn/common';
 import { getUnicornCanLink, linkUnicornWallet } from "$lib/services/unicorn/api";
 import { toast } from '$lib/components/core';
-
-import { SiwePayload, useUnicornWalletSignature } from "../unicorn/client";
 import { useMutation } from '$lib/graphql/request';
 import { SyncUserUnicornWalletDocument } from '$lib/graphql/generated/backend/graphql';
+
+import { SiwePayload, useUnicornWalletSignature } from "../unicorn/client";
 
 export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: boolean) => void) => {
   const session = useSession();
