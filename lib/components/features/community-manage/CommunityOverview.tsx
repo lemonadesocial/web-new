@@ -11,7 +11,7 @@ import {
   Space,
 } from '$lib/graphql/generated/backend/graphql';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Avatar, Badge, Button, Card, Divider, Skeleton, toast } from '$lib/components/core';
 import { twMerge } from 'tailwind-merge';
 import { PendingApprovalEvents } from './PendingApprovalEvents';
@@ -22,12 +22,12 @@ import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
 import { CommonSection } from './shared';
 import { AnimatePresence, motion } from 'framer-motion';
-import clsx from 'clsx';
 import { CardTable } from '$lib/components/core/table';
 
-export function CommunityOverview({ space: initSpace }: { space?: Space }) {
-  const params = useParams<{ uid: string }>();
+const LIMIT = 2;
+const FROM_NOW = new Date().toISOString();
 
+export function CommunityOverview({ space: initSpace }: { space?: Space }) {
   const { data, loading: loadingGetSpace } = useQuery(GetSpaceDocument, {
     variables: { id: initSpace?._id },
     fetchPolicy: 'cache-and-network',
@@ -42,6 +42,18 @@ export function CommunityOverview({ space: initSpace }: { space?: Space }) {
   });
   const subSpaces = (subSpacesData?.getSubSpaces || []) as PublicSpace[];
 
+  const { data: dataGetEvent, refetch } = useQuery(GetSpaceEventsDocument, {
+    variables: {
+      space: space._id,
+      limit: LIMIT,
+      skip: 0,
+      endFrom: FROM_NOW,
+      spaceTags: [],
+    },
+    skip: !space._id,
+  });
+  const events = (dataGetEvent?.getEvents || []) as Event[];
+
   return (
     <div className="page bg-transparent! mx-auto py-7 px-4 md:px-0">
       <div className="flex flex-col gap-8 pb-20">
@@ -50,8 +62,8 @@ export function CommunityOverview({ space: initSpace }: { space?: Space }) {
 
           <div className="[&>*:only-child]:hidden flex flex-col gap-5">
             <h3 className="text-xl font-semibold">Events</h3>
-            {space?._id && <PendingApprovalEvents spaceId={space._id} />}
-            {space && <UpComingEventsSection space={space} />}
+            {space?._id && <PendingApprovalEvents spaceId={space._id} onCompleted={refetch} />}
+            {space && <UpComingEventsSection space={space} events={events} />}
           </div>
         </div>
 
@@ -124,21 +136,8 @@ function ListActions({ spaceId }: { spaceId: string }) {
   );
 }
 
-const LIMIT = 2;
-const FROM_NOW = new Date().toISOString();
-function UpComingEventsSection({ space }: { space: Space }) {
+function UpComingEventsSection({ space, events = [] }: { space: Space; events?: Event[] }) {
   const router = useRouter();
-  const { data } = useQuery(GetSpaceEventsDocument, {
-    variables: {
-      space: space._id,
-      limit: LIMIT,
-      skip: 0,
-      endFrom: FROM_NOW,
-      spaceTags: [],
-    },
-    skip: !space._id,
-  });
-  const events = (data?.getEvents || []) as Event[];
 
   if (!events.length) return null;
 
@@ -194,7 +193,7 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
             <div key={item._id} className="flex gap-3 items-center px-4 py-3">
               <Avatar src={userAvatar(item)} className="size-5" />
               <div className="flex gap-2 flex-1">
-                <p>{item.name || item.display_name || 'Anonymous'}</p>
+                <p>{item.username || item.name || item.display_name || 'Anonymous'}</p>
                 {item.email && <p>{item.email}</p>}
                 <Badge
                   className="rounded-full"

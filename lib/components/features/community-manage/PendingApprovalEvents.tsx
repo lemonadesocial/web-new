@@ -20,8 +20,9 @@ interface Props {
   total?: number;
   /** using for render small or default CommonSection */
   isCommonSection?: boolean;
+  onCompleted?: () => void;
 }
-export function PendingApprovalEvents({ spaceId, isCommonSection }: Props) {
+export function PendingApprovalEvents({ spaceId, isCommonSection, onCompleted }: Props) {
   const [state, setState] = React.useState<{ id: string; action: SpaceEventRequestState; submitting: boolean }>();
   const { data, refetch } = useQuery(GetSpaceEventRequestsDocument, {
     variables: { space: spaceId, skip: 0, limit: 2, state: EventJoinRequestState.Pending },
@@ -36,6 +37,7 @@ export function PendingApprovalEvents({ spaceId, isCommonSection }: Props) {
     onComplete: async () => {
       await refetch();
       setState(undefined);
+      onCompleted?.();
     },
   });
 
