@@ -308,12 +308,7 @@ function ConfirmImport({ form, spaceId }: CommonProps) {
 
         {spaceId && <AddTags spaceId={spaceId} type={SpaceTagType.Member} />}
 
-        <Button
-          variant="secondary"
-          type="submit"
-          disabled={!form.formState.isValid}
-          loading={form.formState.isSubmitting}
-        >
+        <Button variant="secondary" type="submit" disabled={!list.length} loading={form.formState.isSubmitting}>
           Start Import
         </Button>
         <div className="text-center text-xs text-tertiary">

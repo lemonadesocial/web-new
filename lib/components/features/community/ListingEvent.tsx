@@ -120,15 +120,21 @@ export function ListingEvent({ spaceId }: { spaceId: string }) {
 
 export function AddTags({
   spaceId,
+  value = [],
   type,
   onChange,
+  onAdd,
+  onRemove,
 }: {
   spaceId: string;
+  value?: SpaceTag[];
   type: SpaceTagType;
   onChange?: (tags: SpaceTag[]) => void;
+  onRemove?: (tag: SpaceTag) => void;
+  onAdd?: (tag: SpaceTag) => void;
 }) {
   const [tag, setTag] = React.useState('');
-  const [tags, setTags] = React.useState<SpaceTag[]>([]);
+  const [tags, setTags] = React.useState<SpaceTag[]>(value);
   const { data } = useQuery(GetSpaceTagsDocument, { variables: { space: spaceId } });
   const list = (data?.listSpaceTags.filter((t) => (t as SpaceTag).type === type) || []) as SpaceTag[];
 
@@ -147,12 +153,15 @@ export function AddTags({
             title={t.tag}
             color={t.color}
             onClose={() => {
-              setTags((prev) => prev.filter((i) => i._id !== t._id));
+              const arr = tags.filter((i) => i._id !== t._id);
+              setTags(arr);
+              onChange?.(arr);
+              onRemove?.(t);
             }}
           />
         ))}
         <Menu.Trigger>
-          <Button iconLeft="icon-plus" variant="tertiary" size="xs" className="rounded-full">
+          <Button iconLeft="icon-plus" variant="tertiary" size="xs">
             Add Tag
           </Button>
         </Menu.Trigger>
@@ -169,7 +178,10 @@ export function AddTags({
           .map((t: SpaceTag) => (
             <div
               key={t._id}
-              onClick={() => onSelectTag(t)}
+              onClick={() => {
+                onSelectTag(t);
+                onAdd?.(t);
+              }}
               className="flex px-2 py-1.5 gap-2.5 items-center hover:bg-primary/8 rounded-xs cursor-pointer"
             >
               <i className="icon-dot" style={{ color: t.color }} />

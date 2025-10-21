@@ -447,3 +447,17 @@ mutation DeleteSpaceMembers($input: DeleteSpaceMemberInput!) {
 mutation DeleteSpace($id: MongoID!) {
   deleteSpace(_id: $id)
 }
+
+mutation UpsertSpaceTag($input: SpaceTagInput!) {
+  insertSpaceTag(input: $input) {
+    ...SpaceTagFragment
+  }
+}
+
+mutation ManageSpaceTag($tagged: Boolean!, $target: String!, $id: MongoID!, $space: MongoID!) {
+  manageSpaceTag(tagged: $tagged, target: $target, _id: $id, space: $space)
+}
+
+mutation DeleteSpaceTag($id: MongoID!, $space: MongoID!) {
+  deleteSpaceTag(_id: $id, space: $space)
+}

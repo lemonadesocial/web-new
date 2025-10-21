@@ -44,13 +44,15 @@ export function CommunityOverview({ space: initSpace }: { space?: Space }) {
 
   return (
     <div className="page bg-transparent! mx-auto py-7 px-4 md:px-0">
-      <div className="flex flex-col gap-8 pt-7 pb-20">
-        <ListActions />
+      <div className="flex flex-col gap-8 pb-20">
+        <div className="flex flex-col gap-8">
+          <ListActions spaceId={space?._id} />
 
-        <div className="[&>*:only-child]:hidden flex flex-col gap-5">
-          <h3 className="text-xl font-semibold">Events</h3>
-          {space?._id && <PendingApprovalEvents spaceId={space._id} />}
-          {space && <UpComingEventsSection space={space} />}
+          <div className="[&>*:only-child]:hidden flex flex-col gap-5">
+            <h3 className="text-xl font-semibold">Events</h3>
+            {space?._id && <PendingApprovalEvents spaceId={space._id} />}
+            {space && <UpComingEventsSection space={space} />}
+          </div>
         </div>
 
         <Divider />
@@ -89,17 +91,17 @@ const actions = [
   },
 ];
 
-function ListActions() {
+function ListActions({ spaceId }: { spaceId: string }) {
   const router = useRouter();
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 overflow-x-auto no-scrollbar">
       {actions.map((item) => (
         <Card.Root
           key={item.key}
-          className="flex-1"
+          className="flex-1 min-w-fit"
           onClick={() => {
             match(item.key)
-              .with('add_event', () => router.push('/create/event'))
+              .with('add_event', () => router.push(`/create/event?space=${spaceId}`))
               .with('send_news_letter', () => toast.success('Coming soon'))
               .with('create_post', () => toast.success('Coming soon'))
               .with('share_community', () => toast.success('Coming soon'));
@@ -192,7 +194,7 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
             <div key={item._id} className="flex gap-3 items-center px-4 py-3">
               <Avatar src={userAvatar(item)} className="size-5" />
               <div className="flex gap-2 flex-1">
-                <p>{item.name || item.display_name}</p>
+                <p>{item.name || item.display_name || 'Anonymous'}</p>
                 {item.email && <p>{item.email}</p>}
                 <Badge
                   className="rounded-full"
@@ -214,6 +216,7 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
 }
 
 function FeaturedHubSection({ loading, data = [] }: { data?: PublicSpace[]; loading?: boolean }) {
+  const router = useRouter();
   return (
     <CommonSection
       title="Featured Hubs"
@@ -240,7 +243,9 @@ function FeaturedHubSection({ loading, data = [] }: { data?: PublicSpace[]; load
               {item.image_avatar_expanded && (
                 <Avatar src={generateUrl(item.image_avatar_expanded)} className="size-5" />
               )}
-              <p className="flex-1">{item.title}</p>
+              <p className="flex-1 cursor-pointer" onClick={() => router.push(`/s/${item.slug || item._id}`)}>
+                {item.title}
+              </p>
             </div>
           </CardTable.Row>
         ))}

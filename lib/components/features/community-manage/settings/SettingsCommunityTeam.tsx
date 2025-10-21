@@ -106,32 +106,34 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
 
       <Divider />
 
-      <div className="flex flex-col gap-5">
-        <Card.Root onClick={() => {}}>
-          <Card.Content className="flex gap-3 items-center">
-            <div className="p-1.5 bg-card rounded-sm text-tertiary aspect-square size-7 flex items-center justify-center">
-              <i className="icon-token size-4 aspect-square" />
-            </div>
-            <div className="flex-1">
-              <p>Token Gating</p>
-              <p className="text-sm text-tertiary">Let anyone holding your chosen tokens join as a brand ambassador.</p>
-            </div>
-            <i className="icon-chevron-right text-quaternary" />
-          </Card.Content>
-        </Card.Root>
-
-        <div className="flex flex-col gap-4">
-          <div>
-            <div className="flex justify-between items-center">
-              <h3 className="text-xl font-semibold flex-1">Ambassadors</h3>
-              <Button iconLeft="icon-plus" size="sm" variant="tertiary-alt">
-                Add Ambassador
-              </Button>
-            </div>
-            <p className="text-secondary">
-              Ambassadors can create events in this community without needing admin approval.
-            </p>
+      <div className="flex flex-col gap-4">
+        <div>
+          <div className="flex justify-between items-center">
+            <h3 className="text-xl font-semibold flex-1">Ambassadors</h3>
+            <Button iconLeft="icon-plus" size="sm" variant="tertiary-alt">
+              Add Ambassador
+            </Button>
           </div>
+          <p className="text-secondary">
+            Ambassadors can create events in this community without needing admin approval.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-5">
+          <Card.Root onClick={() => {}}>
+            <Card.Content className="flex gap-3 items-center">
+              <div className="p-1.5 bg-card rounded-sm text-tertiary aspect-square size-7 flex items-center justify-center">
+                <i className="icon-token size-4 aspect-square" />
+              </div>
+              <div className="flex-1">
+                <p>Token Gating</p>
+                <p className="text-sm text-tertiary">
+                  Let anyone holding your chosen tokens join as a brand ambassador.
+                </p>
+              </div>
+              <i className="icon-chevron-right text-quaternary" />
+            </Card.Content>
+          </Card.Root>
 
           <CardTable.Root loading={loading}>
             <CardTable.Loading rows={5}>

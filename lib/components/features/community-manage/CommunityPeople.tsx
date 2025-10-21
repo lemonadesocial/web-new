@@ -1,22 +1,26 @@
 'use client';
 import React from 'react';
-import { Avatar, Button, Divider, InputField, Menu, MenuItem, modal, Skeleton } from '$lib/components/core';
+import { Avatar, Button, Divider, drawer, InputField, Menu, MenuItem, modal, Skeleton } from '$lib/components/core';
 import { CardTable } from '$lib/components/core/table';
 import {
   GetSpaceMembersDocument,
   GetSpaceTagsDocument,
+  ManageSpaceTagDocument,
   Space,
+  SpaceMember,
   SpaceTag,
   SpaceTagType,
   User,
 } from '$lib/graphql/generated/backend/graphql';
-import { useQuery } from '$lib/graphql/request';
+import { useMutation, useQuery } from '$lib/graphql/request';
 import { userAvatar } from '$lib/utils/user';
 import { debounce, snakeCase } from 'lodash';
 import { format, formatDistance, isToday } from 'date-fns';
 import clsx from 'clsx';
 import { downloadCSVFile } from '$lib/utils/file';
 import { AddCommunityPeople } from './modals/AddCommunityPeople';
+import { Pane } from '$lib/components/core/pane/pane';
+import { AddTags } from '../community/ListingEvent';
 
 interface Props {
   space: Space;
@@ -237,10 +241,17 @@ export function CommunityPeople({ space }: Props) {
 
           {data?.listSpaceMembers?.items?.map((item) => (
             <CardTable.Row key={item._id}>
-              <div className="flex px-4 py-3 items-center">
+              <div
+                className="flex px-4 py-3 items-center gap-3"
+                onClick={() =>
+                  drawer.open(PeopleDetailPane, {
+                    props: { member: item as SpaceMember, spaceId: space._id, onRefetch: refetch },
+                  })
+                }
+              >
                 <div className="flex-1 flex gap-3 items-center">
                   <Avatar src={userAvatar(item.user_expanded as unknown as User)} />
-                  <div className="flex flex-col md:flex-row md:gap-3 items-center">
+                  <div className="flex flex-col md:flex-row md:gap-3 md:items-center flex-1">
                     <p>
                       {item.user_name || item.user_expanded?.display_name || item.user_expanded?.name || 'Anonymous'}
                     </p>
@@ -268,5 +279,52 @@ export function CommunityPeople({ space }: Props) {
         </CardTable.Root>
       </div>
     </div>
+  );
+}
+
+function PeopleDetailPane({
+  member,
+  spaceId,
+  onRefetch,
+}: {
+  member: SpaceMember;
+  spaceId: string;
+  onRefetch: () => void;
+}) {
+  const [manageSpaceTag] = useMutation(ManageSpaceTagDocument, {
+    onComplete: () => {
+      onRefetch?.();
+    },
+  });
+
+  const handleManageSpaceTag = (tag: SpaceTag, tagged: boolean) => {
+    manageSpaceTag({
+      variables: { space: spaceId, target: member.user_expanded?._id || member.email, id: tag._id, tagged },
+    });
+  };
+
+  return (
+    <Pane.Root>
+      <Pane.Header.Root>
+        <Pane.Header.Left />
+      </Pane.Header.Root>
+      <Pane.Content className="p-4 gap-5">
+        <div className="flex gap-3 items-center">
+          <Avatar size="xl" src={userAvatar(member.user_expanded as unknown as User)} />
+          <div className="flex flex-col ">
+            <p>{member.user_name || member.user_expanded?.display_name || member.user_expanded?.name || 'Anonymous'}</p>
+            <p className="text-tertiary line-clamp-1">{member.email || member.user_expanded?.email}</p>
+          </div>
+        </div>
+
+        <AddTags
+          spaceId={spaceId}
+          value={member.tags || []}
+          type={SpaceTagType.Member}
+          onRemove={(t) => handleManageSpaceTag(t, false)}
+          onAdd={(t) => handleManageSpaceTag(t, true)}
+        />
+      </Pane.Content>
+    </Pane.Root>
   );
 }
