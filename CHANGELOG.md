@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.10.1](https://github.com/lemonadesocial/web-new/compare/v8.10.0...v8.10.1) (2025-10-22)
+
+
+### Bug Fixes
+
+* update route profile when not connect wallet or no username ([b0401da](https://github.com/lemonadesocial/web-new/commit/b0401dafa7ed34ef85ad8df3946cee48c5f0d255))
+
 ## [8.10.0](https://github.com/lemonadesocial/web-new/compare/v8.9.0...v8.10.0) (2025-10-21)
 
 
