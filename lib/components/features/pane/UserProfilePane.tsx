@@ -22,7 +22,7 @@ interface Props {
 
 export function UserProfilePane({ username, address }: Props) {
   const router = useRouter();
-  const { loading, user } = useUserProfile({ username, address });
+  const { loading, user } = useUserProfile(address || username);
 
   if (loading) return null;
 
