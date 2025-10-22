@@ -56,7 +56,7 @@ export const useUserProfile = (params?: string) => {
         }
 
         const account = result.value;
-        let attributes: Record<string, string> = {};
+        const attributes: Record<string, string> = {};
         account?.metadata?.attributes?.forEach((item) => (attributes[item.key] = item.value));
 
         const user = await getUser({ lens_profile_id: params });

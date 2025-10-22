@@ -1,4 +1,6 @@
 'use client';
+import { useEffect, useState } from "react";
+
 import { useHandleUnicornCookie } from './unicorn';
 import { useRawLogout } from '$lib/hooks/useLogout';
 import { useSession } from '$lib/hooks/useSession';
@@ -17,8 +19,9 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
   const logOut = useRawLogout();
   const session = useSession();
   const signIn = useSignIn();
+  const { siwe, status, createNewAccount, handleLinkWithAccount } = useHandleUnicornCookie(cookie, onSuccess);
 
-  const { status, createNewAccount, handleLinkWithAccount } = useHandleUnicornCookie(cookie, onSuccess);
+  const [readyToLink, setReadyToLink] = useState(false);
 
   const linkOtherAccount = async () => {
     if (session) {
@@ -30,10 +33,16 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
         //-- close current login modal
         modal.close();
 
-        handleLinkWithAccount();
+        setReadyToLink(true);
       }
     });
   };
+
+  useEffect(() => {
+    if (siwe && readyToLink) {
+      handleLinkWithAccount(siwe);
+    }
+  }, [siwe, readyToLink]);
 
   if (status === 'processing') return (
     <ModalContent>
@@ -80,7 +89,8 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
         </div>
         <div className='space-y-3'>
           <Button
-            onClick={createNewAccount}
+            disabled={!siwe}
+            onClick={() => siwe && createNewAccount(siwe)}
             variant='secondary'
             className='w-full'
           >
