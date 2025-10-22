@@ -76,11 +76,11 @@ interface LaunchTokenParams {
   symbol: string;
   tokenUri: string;
   initialTokenFairLaunch: bigint;
-  fairLaunchDuration: number;
+  fairLaunchDuration: number; //-- duration of fair launch in seconds
   premineAmount: bigint;
   creator: string;
   creatorFeeAllocation: number;
-  flaunchAt: number;
+  launchAt?: number; //-- launch at a timestamp in seconds
   usdcMarketCap: bigint; //-- market cap in usdc with 6 zero decimals
   feeSplit?: { recipient: string, percentage: number }[]; // 100_00000 = 100%
   vesting?: {
@@ -134,7 +134,7 @@ export const launchToken = async (
     params.premineAmount,
     params.creator,
     params.creatorFeeAllocation,
-    params.flaunchAt,
+    params.launchAt,
     initialPriceParams,
     feeCalculatorParams,
     creatorVestingParams,
