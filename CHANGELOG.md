@@ -1,5 +1,25 @@
 # Changelog
 
+## [8.11.0](https://github.com/lemonadesocial/web-new/compare/v8.10.1...v8.11.0) (2025-10-22)
+
+
+### Features
+
+* cleanup & revert package versions ([88a3c6b](https://github.com/lemonadesocial/web-new/commit/88a3c6b521433daf86eb0c44f4bfacd8182db43a))
+* config wagmi ([97d0db9](https://github.com/lemonadesocial/web-new/commit/97d0db98d27ae6fd62bc55a251b1d437736640fc))
+* revert change to appkit lib ([8989cff](https://github.com/lemonadesocial/web-new/commit/8989cff229688fa4f116376a80b673d19c2a211e))
+* sync wallet ([a23f708](https://github.com/lemonadesocial/web-new/commit/a23f7083c3656d5e09b154cec1598bc3fa47168a))
+* **unicorn:** handle unicorn siwe ([08143f9](https://github.com/lemonadesocial/web-new/commit/08143f9559f2213fb795dee322369d182f6621c5))
+* working wagmi config ([fc0bc04](https://github.com/lemonadesocial/web-new/commit/fc0bc04b5f29fab690e3fb762bc9abc1e08e3fcf))
+
+
+### Bug Fixes
+
+* fix lint stage ([149f398](https://github.com/lemonadesocial/web-new/commit/149f3988291ff518b3a04c8c204cc755ddd79a29))
+* fix package version ([bff230d](https://github.com/lemonadesocial/web-new/commit/bff230d5dc61793334d16eed0e58e47c449eca49))
+* fix window is not defined ([340c84b](https://github.com/lemonadesocial/web-new/commit/340c84ba152dd3ad9a6de48233e2bf4a34269011))
+* use search params ([9bb5942](https://github.com/lemonadesocial/web-new/commit/9bb594217f737b74e691b5fb6c2a79582ba3b02e))
+
 ## [8.10.1](https://github.com/lemonadesocial/web-new/compare/v8.10.0...v8.10.1) (2025-10-22)
 
 
