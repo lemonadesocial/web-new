@@ -7,21 +7,30 @@ import { GetUserDocument, User } from '$lib/graphql/generated/backend/graphql';
 import { getClient } from '$lib/graphql/request';
 import { client } from '$lib/utils/lens/client';
 import { isAddress } from 'ethers';
+import { isObjectId } from '$lib/utils/helpers';
 
 /**
  * @description this hooks support get user profile from BE or lens account via address
  */
-export const useUserProfile = (params: { username?: string; address: string }) => {
+export const useUserProfile = (params?: string) => {
   const [data, setData] = React.useState<Partial<User>>();
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
 
-  const getUser = async ({ lens_profile_id, username }: { lens_profile_id?: string; username?: string }) => {
+  const getUser = async ({
+    lens_profile_id,
+    username,
+    id,
+  }: {
+    lens_profile_id?: string;
+    username?: string;
+    id?: string;
+  }) => {
     const request = getClient();
 
     const { data, error: queryError } = await request.query({
       query: GetUserDocument,
-      variables: { lens_profile_id, username },
+      variables: { lens_profile_id, username, id },
     });
 
     if (queryError) {
@@ -35,11 +44,10 @@ export const useUserProfile = (params: { username?: string; address: string }) =
   const fetchData = async () => {
     try {
       setLoading(true);
-      const { address, username } = params;
 
-      if (address && isAddress(address)) {
+      if (isAddress(params)) {
         const result = await fetchAccount(client, {
-          address: evmAddress(address),
+          address: evmAddress(params),
         });
 
         if (result.isErr()) {
@@ -51,7 +59,7 @@ export const useUserProfile = (params: { username?: string; address: string }) =
         let attributes: Record<string, string> = {};
         account?.metadata?.attributes?.forEach((item) => (attributes[item.key] = item.value));
 
-        const user = await getUser({ lens_profile_id: address });
+        const user = await getUser({ lens_profile_id: params });
 
         setData({
           _id: user?._id,
@@ -64,10 +72,14 @@ export const useUserProfile = (params: { username?: string; address: string }) =
           ...attributes,
         });
       } else {
-        if (username) {
-          const user = await getUser({ username });
-          setData(user);
+        let user = undefined;
+        if (isObjectId(params)) {
+          user = await getUser({ id: params });
+        } else {
+          user = await getUser({ username: params });
         }
+
+        setData(user);
       }
     } catch (err: any) {
       setError(err);
@@ -77,8 +89,8 @@ export const useUserProfile = (params: { username?: string; address: string }) =
   };
 
   React.useEffect(() => {
-    fetchData();
-  }, [params.username, params.address]);
+    if (params) fetchData();
+  }, [params]);
 
   return { user: data as User, loading, error };
 };
