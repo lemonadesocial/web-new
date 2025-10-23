@@ -79,6 +79,12 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
 
     assert.ok(wallet, 'No wallet address in Unicorn auth cookie');
 
+    //-- if there is session logout first
+    if (session) {
+      //-- raw logout, do not reload page
+      await logOut();
+    }
+
     const registrationFlow = await ory!.createBrowserRegistrationFlow().then((response) => response.data);
 
     await handlePasswordRegistration({
