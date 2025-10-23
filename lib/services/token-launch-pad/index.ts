@@ -6,6 +6,8 @@ import PositionManagerABI from '../../abis/token-launch-pad/PositionManager.json
 import IERC721ABI from '../../abis/token-launch-pad/IERC721.json';
 import FlaunchABI from '../../abis/token-launch-pad/Flaunch.json';
 
+export const TOTAL_SUPPLY = BigInt(10) ** BigInt(27);
+
 const parseLogs = (receipt: ethers.TransactionReceipt | null, contractInterface: ethers.Interface) => {
   if (!receipt) return [];
 
@@ -35,7 +37,7 @@ export const createGroup = async (
   zapContractAddress: string, //-- get from chain
   stakingManagerImplementationContractAddress: string, //-- get from chain
   closedPermissionsContractAddress: string,
-  provider: ethers.Provider, //-- create provider from chain rpc url
+  signer: ethers.Signer, //-- signer for write operations
   params: CreateGroupParams,
 ) => {
   const permissionsContractAddress = params.isOpen ? ethers.ZeroAddress : params.isClosed ? closedPermissionsContractAddress : '';
@@ -44,7 +46,8 @@ export const createGroup = async (
     throw new Error('Permissions contract address is required');
   }
 
-  const contract = new ethers.Contract(zapContractAddress, ZapContractABI.abi, provider);
+  //-- write operation: deploy and initialize manager
+  const writeContract = new ethers.Contract(zapContractAddress, ZapContractABI.abi, signer);
 
   const data = ethers.AbiCoder.defaultAbiCoder().encode(['address', 'uint256', 'uint256', 'uint256', 'uint256'], [
     params.groupERC20Token,
@@ -54,16 +57,15 @@ export const createGroup = async (
     params.ownerSharePercentage * 100000,
   ]);
 
-  const tx: ethers.TransactionResponse = await contract.deployAndInitializeManager(
+  const tx: ethers.TransactionResponse = await writeContract.deployAndInitializeManager(
     stakingManagerImplementationContractAddress, params.groupOwner, data, permissionsContractAddress
   );
 
   const receipt = await tx.wait();
 
+  //-- read operation: parse logs to get manager address
   const contractInterface = new ethers.Interface(TreasuryManagerFactoryABI.abi);
-
   const event = parseLogs(receipt, contractInterface).find((log) => log.parsedLog.name === 'ManagerDeployed');
-
   const managerAddress = event?.parsedLog.args._manager as string;
 
   return {
@@ -98,21 +100,24 @@ interface LaunchTokenParams {
 export const launchToken = async (
   zapContractAddress: string, //-- get from chain
   addressFeeSplitManagerImplementationContract: string, //-- get from chain
-  provider: ethers.Provider, //-- create provider from chain rpc url
+  rpcProvider: ethers.Provider, //-- RPC provider for read operations
+  signer: ethers.Signer, //-- signer for write operations
   params: LaunchTokenParams,
 ) => {
-  const contract = new ethers.Contract(zapContractAddress, ZapContractABI.abi, provider);
+  // Create contracts for read and write operations
+  const readContract = new ethers.Contract(zapContractAddress, ZapContractABI.abi, rpcProvider);
+  const writeContract = new ethers.Contract(zapContractAddress, ZapContractABI.abi, signer);
 
   const initialPriceParams = ethers.AbiCoder.defaultAbiCoder().encode(['tuple(uint256)'], [[params.usdcMarketCap]]);
 
-  //-- call to get the fee
-  const fee = await contract.calculateFee(
+  //-- call to get the fee (read operation)
+  const fee = await readContract.calculateFee(
     params.premineAmount,
     0, //--assume no slippage
     initialPriceParams,
   );
 
-  const feeCalculatorParams = ''; //-- we use static fee calculator
+  const feeCalculatorParams = '0x'; //-- we use static fee calculator
 
   const creatorVestingParams = ethers.AbiCoder.defaultAbiCoder().encode(
     ['uint256', 'tuple(uint256,uint256,uint256,address,uint256)[]'],
@@ -134,50 +139,44 @@ export const launchToken = async (
     params.premineAmount,
     params.creator,
     params.creatorFeeAllocation,
-    params.launchAt,
+    params.launchAt || 0, // Default to 0 if launchAt is undefined
     initialPriceParams,
     feeCalculatorParams,
     creatorVestingParams,
   ];
 
-  let tx: ethers.TransactionResponse;
+  console.log('coinData:', coinData);
+  console.log('fee:', fee);
+  console.log('fee as hex:', fee.toString(16));
 
-  if (!params.feeSplit) {
-    //-- no fee split, call the simple function
-    const flaunchParams = [
-      coinData,
-      ethers.ZeroAddress, //-- trusted fee signer
-      '', //-- premine swap hook data
-    ];
+  const flaunchParams = params.feeSplit?.length ? [
+    coinData,
+    await signer.getAddress(), //-- use actual signer address
+    '0x', //-- premine swap hook data (empty bytes)
+    ['0x', '0x', 0], //-- whitelist params (empty bytes for strings)
+    [0, 0, 0, '0x', '0x'], //-- airdrop params (empty bytes for strings)
+    [
+      addressFeeSplitManagerImplementationContract,
+      ethers.ZeroAddress, //-- open permission
+      ethers.AbiCoder.defaultAbiCoder().encode(
+        ['uint256', 'uint256', 'tuple(address,uint256)[]'],
+        [0, 0, params.feeSplit.map(fee => [fee.recipient, fee.percentage * 100000])], //-- 1% = 1_00000
+      ),
+      '0x', //-- no deposit data (empty bytes)
+    ]
+  ] : [
+    coinData,
+    await signer.getAddress(), //-- use actual signer address
+    '0x', //-- premine swap hook data (empty bytes)
+  ];
 
-    tx = await contract.flaunch(...flaunchParams, { value: fee });
-  }
-  else {
-    //-- with fee split, call the function with the fee split
-    const flaunchParams = [
-      coinData,
-      ethers.ZeroAddress, //-- trusted fee signer
-      '', //-- premine swap hook data
-      ['', '', 0], //-- whitelist params
-      [0, 0, 0, '', ''], //-- airdrop params
-      [
-        addressFeeSplitManagerImplementationContract,
-        ethers.ZeroAddress, //-- open permission
-        ethers.AbiCoder.defaultAbiCoder().encode(
-          ['uint256', 'uint256', 'tuple(address,uint256)[]'],
-          [0, 0, params.feeSplit.map(fee => [fee.recipient, fee.percentage * 100000])], //-- 1% = 1_00000
-        ),
-        '', //-- no deposit data
-      ]
-    ];
-
-    tx = await contract.flaunch(...flaunchParams, { value: fee });
-  }
+  //-- write operation: launch the token
+  const tx : ethers.TransactionResponse = await writeContract.flaunch(...flaunchParams, { value: fee });
 
   const receipt = await tx.wait();
 
-  //-- read flaunch from the zap
-  const flaunch = await contract.flaunchContract() as string;
+  //-- read operations: get contract addresses and token info
+  const flaunch = await readContract.flaunchContract() as string;
 
   //-- read token id from Transfer event in the flaunch contract
   const flaunchInterface = new ethers.Interface(FlaunchABI.abi);
@@ -187,8 +186,8 @@ export const launchToken = async (
 
   const tokenId = event?.parsedLog.args.tokenId as bigint;
 
-  //-- get the memecoin from the flaunch contract
-  const flaunchContract = new ethers.Contract(flaunch, FlaunchABI.abi, provider);
+  //-- get the memecoin from the flaunch contract (read operation)
+  const flaunchContract = new ethers.Contract(flaunch, FlaunchABI.abi, rpcProvider);
 
   const memecoin = await flaunchContract.memecoin(tokenId) as string;
 
@@ -202,7 +201,8 @@ export const launchToken = async (
 export const launchTokenToGroup = async (
   zapContractAddress: string, //-- get from chain
   addressFeeSplitManagerImplementationContract: string, //-- get from chain
-  provider: ethers.Provider, //-- create provider from chain rpc url
+  rpcProvider: ethers.Provider, //-- RPC provider for read operations
+  signer: ethers.Signer, //-- signer for write operations
   params: LaunchTokenParams,
   groupAddress: string, //-- the treasury manager address returned from the createGroup function
 ) => {
@@ -210,25 +210,23 @@ export const launchTokenToGroup = async (
   const { memecoin, flaunch, tokenId } = await launchToken(
     zapContractAddress,
     addressFeeSplitManagerImplementationContract,
-    provider,
+    rpcProvider,
+    signer,
     { ...params, feeSplit: undefined },//-- no fee split when launching the token to a group
   );
-  const flaunchContract = new ethers.Contract(flaunch, FlaunchABI.abi, provider);
-
+  
+  //-- read operation: get creator from flaunch contract
+  const flaunchContract = new ethers.Contract(flaunch, FlaunchABI.abi, rpcProvider);
   const creator = await flaunchContract.ownerOf(tokenId) as string;
 
-  //-- then approve the transfer of NFT to the group
-  const contract = new ethers.Contract(memecoin, IERC721ABI.abi, provider);
-
-  const approveTx = await contract.approve(groupAddress, 1);
-
+  //-- write operation: approve the transfer of NFT to the group
+  const erc721Contract = new ethers.Contract(memecoin, IERC721ABI.abi, signer);
+  const approveTx = await erc721Contract.approve(groupAddress, 1);
   await approveTx.wait();
 
-  //-- call the group to deposit the NFT
-  const groupContract = new ethers.Contract(groupAddress, PositionManagerABI.abi, provider);
-
+  //-- write operation: call the group to deposit the NFT
+  const groupContract = new ethers.Contract(groupAddress, PositionManagerABI.abi, signer);
   const depositTx = await groupContract.deposit([flaunch, tokenId], creator, '');
-
   await depositTx.wait();
 
   return {
