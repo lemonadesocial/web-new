@@ -8,13 +8,15 @@ interface MenuItemProps {
   iconLeft?: React.ReactNode;
   iconRight?: React.ReactNode;
   children?: React.ReactNode;
+  className?: string;
 }
 
-export function MenuItem({ iconLeft, iconRight, title, onClick, children }: MenuItemProps) {
+export function MenuItem({ iconLeft, iconRight, title, onClick, children, className }: MenuItemProps) {
   return (
     <div
       className={clsx(
         'inline-flex gap-2.5 px-2 py-1.5 items-center min-w-full rounded-xs cursor-pointer text-nowrap max-w-3xs',
+        className,
         typeof onClick === 'function' && 'hover:bg-primary/8',
       )}
       onClick={onClick}

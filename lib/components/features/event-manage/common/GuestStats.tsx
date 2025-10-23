@@ -88,7 +88,7 @@ export function GuestStats({ event }: GuestStatsAtAGlanceProps) {
         })}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {guestStatuses.map((status) => (
           <div key={status.label} className="flex items-center gap-2">
             <div className={`w-3 h-3 rounded-full ${status.bgColor}`} />

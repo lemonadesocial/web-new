@@ -23,7 +23,7 @@ export default function Providers({ children, space }: { children: React.ReactNo
   const { reload, loading: loadingAuth } = useAuth(space?.hydra_client_id);
   const session = useAtomValue(sessionAtom);
   const setUser = useSetAtom(userAtom);
-  
+
   useEffect(() => {
     if (!chainsLoading) {
       initializeAppKit();
@@ -57,7 +57,7 @@ export default function Providers({ children, space }: { children: React.ReactNo
       });
       return;
     }
-    
+
     setUser(null);
   }, [session]);
 

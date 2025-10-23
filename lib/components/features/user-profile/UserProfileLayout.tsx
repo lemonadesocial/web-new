@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { notFound, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 import { useUserProfile } from '$lib/hooks/useUserProfile';
 
@@ -16,7 +16,7 @@ function UserProfileLayout({ children }: React.PropsWithChildren) {
   const params = useParams();
   const { uid } = params;
 
-  const { user, loading } = useUserProfile({ username: uid as string, address: uid as string });
+  const { user, loading } = useUserProfile(uid?.toString());
 
   if (loading) return null;
 

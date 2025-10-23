@@ -178,7 +178,7 @@ export function BlastAdvancedModal({ event, message }: { event: Event; message: 
           label="Message"
           content={body}
           onChange={(content) => setBody(content)}
-          containerClass="bg-background/64"
+          containerClass="bg-background/64 max-h-[200px] overflow-auto"
           placeholder="Share a message with your guests..."
         />
 

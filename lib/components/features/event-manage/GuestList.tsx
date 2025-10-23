@@ -138,7 +138,7 @@ export function GuestList({ event }: { event: Event }) {
       />
 
       <div className="flex items-center justify-between">
-        <Menu.Root>
+        <Menu.Root placement="bottom-start">
           <Menu.Trigger>
             <Button variant="tertiary" size="sm" iconLeft="icon-filter-line" iconRight="icon-chevron-down">
               {selectedFilters.length === 0 && selectedTicketTypes.length === 0
@@ -219,14 +219,16 @@ export function GuestList({ event }: { event: Event }) {
                 {ticketTypeFilters.map((ticketType) => (
                   <MenuItem
                     key={ticketType.key}
-                    title={ticketType.value}
                     iconRight={
                       selectedTicketTypes.includes(ticketType.key) ? 'text-primary icon-richtext-check' : undefined
                     }
                     onClick={() => {
                       handleTicketTypeToggle(ticketType.key);
                     }}
-                  />
+                    className="!flex !text-clip overflow-hidden"
+                  >
+                    <p className="text-sm text-secondary truncate min-w-0 flex-1">{ticketType.value}</p>
+                  </MenuItem>
                 ))}
               </>
             )}
