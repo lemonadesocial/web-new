@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.12.0](https://github.com/lemonadesocial/web-new/compare/v8.11.0...v8.12.0) (2025-10-23)
+
+
+### Features
+
+* upgrade appkit ([19bea43](https://github.com/lemonadesocial/web-new/commit/19bea437885ad68f7804240edc96339d460fe80c))
+
+
+### Bug Fixes
+
+* update single ticket token gating ([35e4786](https://github.com/lemonadesocial/web-new/commit/35e4786ec3e7b89a47344d35458bc62c7a8d52b4))
+
 ## [8.11.0](https://github.com/lemonadesocial/web-new/compare/v8.10.1...v8.11.0) (2025-10-22)
 
 
