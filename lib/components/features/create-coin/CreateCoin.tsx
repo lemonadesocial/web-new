@@ -1,10 +1,17 @@
 'use client';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, Textarea, FileInput, Toggle, Input, Segment, NumberInput, modal } from '$lib/components/core';
+import { Button, Textarea, FileInput, Toggle, Input, Segment, NumberInput, modal, toast } from '$lib/components/core';
 import { InputField } from '$lib/components/core/input/input-field';
 import { TokenReleaseScheduleModal } from './TokenReleaseScheduleModal';
+import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
+import { appKit, useAppKitAccount, useAppKitNetwork, useAppKitProvider } from '$lib/utils/appkit';
+import { useAtomValue } from 'jotai';
+import { chainsMapAtom } from '$lib/jotai';
+import { LAUNCH_CHAIN_ID } from '$lib/utils/constants';
 import clsx from 'clsx';
+import { launchToken, TOTAL_SUPPLY } from '$lib/services/token-launch-pad';
+import { JsonRpcProvider, BrowserProvider, Eip1193Provider } from 'ethers';
 
 type SplitFeeRecipient = {
   address: string;
@@ -32,6 +39,7 @@ type FormData = {
   splitFeeRecipients: SplitFeeRecipient[];
   feeReceiverShare: number;
   startingMarketcap: number;
+  fairLaunchPercentage: number;
 };
 
 export function CreateCoin() {
@@ -46,9 +54,14 @@ export function CreateCoin() {
       splitFeeRecipients: [],
       feeReceiverShare: 80,
       startingMarketcap: 50000,
+      fairLaunchPercentage: 10,
     },
     mode: 'onChange'
   });
+
+  const chainsMap = useAtomValue(chainsMapAtom);
+  const launchChain = chainsMap[LAUNCH_CHAIN_ID];
+  const { walletProvider } = useAppKitProvider('eip155');
 
   // Register validation rules
   register('ticker', { required: 'Ticker is required' });
@@ -59,7 +72,6 @@ export function CreateCoin() {
   const [currentAddress, setCurrentAddress] = useState('');
   const [activeTab, setActiveTab] = useState<'users' | 'community'>('users');
   const [launchMode, setLaunchMode] = useState<'fast' | 'advanced'>('fast');
-  const [fairLaunchPercentage, setFairLaunchPercentage] = useState(10);
   const [allocationRecipients, setAllocationRecipients] = useState<AllocationRecipient[]>([]);
   const [currentAllocationAddress, setCurrentAllocationAddress] = useState('');
   const [isFairLaunchExpanded, setIsFairLaunchExpanded] = useState(false);
@@ -68,6 +80,9 @@ export function CreateCoin() {
   const watchedImage = watch('image');
   const watchedFeeReceiverShare = watch('feeReceiverShare');
   const watchedStartingMarketcap = watch('startingMarketcap');
+  const watchedFairLaunchPercentage = watch('fairLaunchPercentage');
+
+  console.log(launchChain)
 
   const handleAddTag = () => {
     // TODO: Implement tag addition logic
@@ -238,40 +253,81 @@ export function CreateCoin() {
     });
   };
 
-  const onSubmit = async (data: FormData) => {
+  const handleTokenCreation = async (data: FormData) => {
     try {
       console.log('Form submitted:', data);
-      
+
       if (!data.image) {
-        console.error('No image provided');
-        return;
+        throw new Error('No image provided');
       }
-      
-      const formData = new FormData();
-      formData.append('file', data.image);
-      formData.append('coinName', data.coinName);
-      formData.append('ticker', data.ticker);
-      formData.append('description', data.description);
-      
-      const response = await fetch('/api/token-metadata', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to create token metadata');
+
+      const address = appKit.getAddress();
+
+      if (!address) {
+        throw new Error('No address found');
       }
+
+      // Create a JSON-RPC provider for contract calls
+      const rpcProvider = new JsonRpcProvider(launchChain.rpc_url);
+
+      // Convert walletProvider to ethers Signer
+      const browserProvider = new BrowserProvider(walletProvider! as Eip1193Provider);
+      const signer = await browserProvider.getSigner();
+
+      // const formData = new FormData();
+      // formData.append('file', data.image);
+      // formData.append('coinName', data.coinName);
+      // formData.append('ticker', data.ticker);
+      // formData.append('description', data.description);
+
+      // const response = await fetch('/api/token-metadata', {
+      //   method: 'POST',
+      //   body: formData,
+      // });
+
+      // const result = await response.json();
+
+      // const tokenUri = result.tokenUri;
+      const tokenUri = 'ipfs://bafkreicpy37i5ppeafcayktxsll56c3zm246owhqspqgw5qxt4fxsvdetu';
       
-      const result = await response.json();
-      console.log('Token URI created:', result.tokenUri);
-      console.log('Image URL:', result.imageUrl);
-      console.log('Metadata:', result.metadata);
-      
-      // TODO: Use result.tokenUri for token creation
-      
+
+      const params = {
+        name: data.coinName,
+        symbol: data.ticker,
+        tokenUri,
+        initialTokenFairLaunch: (BigInt(data.fairLaunchPercentage) * TOTAL_SUPPLY) / BigInt(100),
+        fairLaunchDuration: 300,
+        premineAmount: BigInt(0),
+        creator: address,
+        creatorFeeAllocation: 80,
+        usdcMarketCap: BigInt(5000000000)
+      }
+
+      console.log(params)
+
+      await launchToken(
+        launchChain.launchpad_zap_contract_address!,
+        launchChain.launchpad_treasury_address_fee_split_manager_implementation_contract_address!,
+        rpcProvider,
+        signer,
+        params
+      )
+
     } catch (error) {
-      console.error('Error creating token metadata:', error);
+      console.error(error);
     }
+  };
+
+  const onSubmit = async (data: FormData) => {
+    modal.open(ConnectWallet, {
+      props: {
+        onConnect: async () => {
+          modal.close();
+          await handleTokenCreation(data);
+        },
+        chain: launchChain,
+      },
+    });
   };
 
   const isAvandedMode = launchMode === 'advanced';
@@ -338,7 +394,7 @@ export function CreateCoin() {
 
         <div className="p-4 rounded-md border border-card-border bg-card flex flex-col gap-4">
           <div className="space-y-1.5">
-             <div className={clsx("flex items-center gap-3 py-2 px-3 rounded-sm border bg-card", errors.image ? "border-error" : "border-card-border")}>
+            <div className={clsx("flex items-center gap-3 py-2 px-3 rounded-sm border bg-card", errors.image ? "border-error" : "border-card-border")}>
               <div className="flex size-9.5 items-center justify-center rounded-sm bg-primary/8 border border-card-border overflow-hidden">
                 {watchedImage ? (
                   <img
@@ -378,50 +434,50 @@ export function CreateCoin() {
 
           <div className="space-y-4">
             <div className="space-y-1.5">
-               <InputField
-                 label="Ticker"
-                 value={watch('ticker')}
-                 onChangeText={(value) => {
-                   setValue('ticker', value);
-                   trigger('ticker');
-                 }}
-                 error={!!errors.ticker}
-               />
+              <InputField
+                label="Ticker"
+                value={watch('ticker')}
+                onChangeText={(value) => {
+                  setValue('ticker', value);
+                  trigger('ticker');
+                }}
+                error={!!errors.ticker}
+              />
               {errors.ticker && (
                 <p className="text-error text-sm">{errors.ticker.message}</p>
               )}
             </div>
 
             <div className="space-y-1.5">
-             <InputField
-               label="Coin Name"
-               value={watch('coinName')}
-               onChangeText={(value) => {
-                 setValue('coinName', value);
-                 trigger('coinName');
-               }}
-               error={!!errors.coinName}
-             />
-            {errors.coinName && (
-              <p className="text-error text-sm">{errors.coinName.message}</p>
-            )}
+              <InputField
+                label="Coin Name"
+                value={watch('coinName')}
+                onChangeText={(value) => {
+                  setValue('coinName', value);
+                  trigger('coinName');
+                }}
+                error={!!errors.coinName}
+              />
+              {errors.coinName && (
+                <p className="text-error text-sm">{errors.coinName.message}</p>
+              )}
             </div>
 
             <div className="space-y-1.5">
               <p className="block text-secondary text-sm">
                 Coin Description
               </p>
-               <Textarea
-                 value={watch('description')}
-                 onChange={(e) => {
-                   setValue('description', e.target.value);
-                   trigger('description');
-                 }}
-                 placeholder="What's the token used for?"
-                 variant="outlined"
-                 rows={3}
-                 className={errors.description ? 'border-error' : ''}
-               />
+              <Textarea
+                value={watch('description')}
+                onChange={(e) => {
+                  setValue('description', e.target.value);
+                  trigger('description');
+                }}
+                placeholder="What's the token used for?"
+                variant="outlined"
+                rows={3}
+                className={errors.description ? 'border-error' : ''}
+              />
               {errors.description && (
                 <p className="text-error text-sm">{errors.description.message}</p>
               )}
@@ -655,10 +711,10 @@ export function CreateCoin() {
                   {/* Fair Launch Section */}
                   <div className="space-y-4 p-4 pt-0">
                     <InputField
-                      value={fairLaunchPercentage.toString()}
+                      value={watchedFairLaunchPercentage.toString()}
                       onChangeText={(value) => {
                         const numValue = Math.max(0, Math.min(100, parseFloat(value) || 0));
-                        setFairLaunchPercentage(numValue);
+                        setValue('fairLaunchPercentage', numValue);
                       }}
                       subfix="%"
                       type="number"
@@ -671,11 +727,11 @@ export function CreateCoin() {
                           type="range"
                           min="0"
                           max="100"
-                          value={fairLaunchPercentage}
-                          onChange={(e) => setFairLaunchPercentage(parseInt(e.target.value))}
+                          value={watchedFairLaunchPercentage}
+                          onChange={(e) => setValue('fairLaunchPercentage', parseInt(e.target.value))}
                           className="w-full h-2 bg-quaternary rounded-lg appearance-none cursor-pointer slider"
                           style={{
-                            background: `linear-gradient(to right, #ffffff 0%, #ffffff ${fairLaunchPercentage}%, rgba(255, 255, 255, 0.24)${fairLaunchPercentage}%, rgba(255, 255, 255, 0.24) 100%)`
+                            background: `linear-gradient(to right, #ffffff 0%, #ffffff ${watchedFairLaunchPercentage}%, rgba(255, 255, 255, 0.24)${watchedFairLaunchPercentage}%, rgba(255, 255, 255, 0.24) 100%)`
                           }}
                         />
                         <div className="flex justify-between mt-3">
