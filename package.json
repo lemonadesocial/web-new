@@ -84,6 +84,7 @@
     "next": "15.5.4",
     "oidc-client-ts": "^3.2.0",
     "open-graph-scraper": "^6.10.0",
+    "pinata": "^2.5.1",
     "postcss": "^8.5.3",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
