@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.13.0](https://github.com/lemonadesocial/web-new/compare/v8.12.0...v8.13.0) (2025-10-23)
+
+
+### Features
+
+* display unicorn wallet in settings ([438e1a3](https://github.com/lemonadesocial/web-new/commit/438e1a37f1dc9069b9eefaae6dbad85d38bf0b33))
+
+
+### Bug Fixes
+
+* verified wallet not displaying ([241ade0](https://github.com/lemonadesocial/web-new/commit/241ade021e39657bf5c06e492d6190c8325a361c))
+
 ## [8.12.0](https://github.com/lemonadesocial/web-new/compare/v8.11.0...v8.12.0) (2025-10-23)
 
 
