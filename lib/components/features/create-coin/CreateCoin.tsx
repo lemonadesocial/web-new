@@ -238,9 +238,40 @@ export function CreateCoin() {
     });
   };
 
-  const onSubmit = (data: FormData) => {
-    console.log('Form submitted:', data);
-    // TODO: Handle form submission
+  const onSubmit = async (data: FormData) => {
+    try {
+      console.log('Form submitted:', data);
+      
+      if (!data.image) {
+        console.error('No image provided');
+        return;
+      }
+      
+      const formData = new FormData();
+      formData.append('file', data.image);
+      formData.append('coinName', data.coinName);
+      formData.append('ticker', data.ticker);
+      formData.append('description', data.description);
+      
+      const response = await fetch('/api/token-metadata', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create token metadata');
+      }
+      
+      const result = await response.json();
+      console.log('Token URI created:', result.tokenUri);
+      console.log('Image URL:', result.imageUrl);
+      console.log('Metadata:', result.metadata);
+      
+      // TODO: Use result.tokenUri for token creation
+      
+    } catch (error) {
+      console.error('Error creating token metadata:', error);
+    }
   };
 
   const isAvandedMode = launchMode === 'advanced';
