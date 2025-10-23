@@ -44,6 +44,10 @@ query listChains {
     lemonade_passport_contract_address
     zugrama_passport_contract_address
     poap_enabled
+    launchpad_closed_permissions_contract_address
+    launchpad_treasury_address_fee_split_manager_implementation_contract_address
+    launchpad_treasury_staking_manager_implementation_contract_address
+    launchpad_zap_contract_address
   }
 }
 
