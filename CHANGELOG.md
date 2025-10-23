@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.13.1](https://github.com/lemonadesocial/web-new/compare/v8.13.0...v8.13.1) (2025-10-23)
+
+
+### Bug Fixes
+
+* **unicorn:** perform logout before registration ([1351096](https://github.com/lemonadesocial/web-new/commit/1351096dd14addc988f53a5c11af141d7e5413cb))
+
 ## [8.13.0](https://github.com/lemonadesocial/web-new/compare/v8.12.0...v8.13.0) (2025-10-23)
 
 
