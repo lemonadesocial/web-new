@@ -12,6 +12,7 @@ query GetMe {
     }
     kratos_wallet_address
     kratos_farcaster_fid
+    kratos_unicorn_wallet_address
   }
 }
 
