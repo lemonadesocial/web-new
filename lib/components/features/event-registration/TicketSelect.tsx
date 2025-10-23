@@ -1,24 +1,32 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import { Collapsible } from "$lib/components/core";
-import { GroupedTicketTypes, groupTicketTypesByCategory } from "$lib/utils/event";
-import { PurchasableTicketType } from "$lib/graphql/generated/backend/graphql";
+import { Collapsible, Divider } from '$lib/components/core';
+import { GroupedTicketTypes, groupTicketTypesByCategory } from '$lib/utils/event';
+import { PurchasableTicketType } from '$lib/graphql/generated/backend/graphql';
 
-import { hasSingleFreeTicketAtom, ticketLimitAtom, ticketTypesAtom, useAtomValue } from "./store";
-import { TicketSelectItem } from "./TicketSelectItem";
+import { eventTokenGatesAtom, hasSingleFreeTicketAtom, ticketLimitAtom, ticketTypesAtom, useAtomValue } from './store';
+import { TicketSelectItem } from './TicketSelectItem';
 
 export function TicketSelect() {
   const ticketTypes = useAtomValue(ticketTypesAtom);
   const hasSingleFreeTicket = useAtomValue(hasSingleFreeTicketAtom);
   const ticketLimit = useAtomValue(ticketLimitAtom);
   const groupedTicketTypes = useMemo(() => groupTicketTypesByCategory(ticketTypes), [ticketTypes]);
+  const eventTokenGates = useAtomValue(eventTokenGatesAtom);
 
-  if (hasSingleFreeTicket && ticketLimit === 1) return null;
+  const ticketTypeIds = ticketTypes.map((i) => i._id);
+  const isTokenGate = eventTokenGates.some((i) => i.gated_ticket_types?.some((x) => ticketTypeIds.includes(x)));
 
-  if (ticketTypes.length === 1) return <TicketSelectItem ticketType={ticketTypes[0]} single />;
+  if (!isTokenGate) {
+    if (hasSingleFreeTicket && ticketLimit === 1) return null;
 
-  if (groupedTicketTypes.length > 1) {
-    return groupedTicketTypes.map((group, index) => <TicketCategory key={index} category={group.category} ticketTypes={group.ticketTypes} />);
+    if (ticketTypes.length === 1) return <TicketSelectItem ticketType={ticketTypes[0]} single />;
+
+    if (groupedTicketTypes.length > 1) {
+      return groupedTicketTypes.map((group, index) => (
+        <TicketCategory key={index} category={group.category} ticketTypes={group.ticketTypes} />
+      ));
+    }
   }
 
   return <TicketList ticketTypes={ticketTypes} />;
@@ -32,11 +40,9 @@ function TicketCategory({ category, ticketTypes }: GroupedTicketTypes) {
   return (
     <Collapsible
       header={
-        <div className='flex gap-3'>
+        <div className="flex gap-3">
           <i className="icon-folder text-secondary" />
-          <div>
-            {category?.title || 'Uncategorized'}
-          </div>
+          <div>{category?.title || 'Uncategorized'}</div>
         </div>
       }
     >
@@ -46,9 +52,34 @@ function TicketCategory({ category, ticketTypes }: GroupedTicketTypes) {
 }
 
 function TicketList({ ticketTypes }: { ticketTypes: PurchasableTicketType[] }) {
+  const eventTokenGates = useAtomValue(eventTokenGatesAtom);
+
+  if (ticketTypes.length === 1) {
+    return (
+      <div>
+        <div className="flex gap-3 items-center">
+          <div className="flex items-center justify-center size-7 bg-card rounded-sm aspect-square">
+            <i className="icon-token size-4 text-tertiary" />
+          </div>
+          <div>
+            <p>Token Holder Exclusive</p>
+            <p className="text-secondary text-sm">
+              You must be a holder of{' '}
+              {eventTokenGates.find((i) => i.gated_ticket_types?.includes(ticketTypes[0]._id))?.name} to register.
+            </p>
+          </div>
+        </div>
+        <Divider className="-mx-10 mt-3 mb-4" />
+        <TicketSelectItem key={ticketTypes[0]._id} ticketType={ticketTypes[0]} />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-2">
-      {ticketTypes.map((ticketType) => <TicketSelectItem key={ticketType._id} ticketType={ticketType} />)}
+      {ticketTypes.map((ticketType) => (
+        <TicketSelectItem key={ticketType._id} ticketType={ticketType} />
+      ))}
     </div>
   );
 }
