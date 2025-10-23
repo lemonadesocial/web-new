@@ -35,7 +35,7 @@ type FormData = {
 };
 
 export function CreateCoin() {
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, watch, setValue, trigger, formState: { errors } } = useForm<FormData>({
     defaultValues: {
       image: null,
       ticker: '',
@@ -46,8 +46,15 @@ export function CreateCoin() {
       splitFeeRecipients: [],
       feeReceiverShare: 80,
       startingMarketcap: 50000,
-    }
+    },
+    mode: 'onChange'
   });
+
+  // Register validation rules
+  register('ticker', { required: 'Ticker is required' });
+  register('coinName', { required: 'Coin name is required' });
+  register('description', { required: 'Description is required' });
+  register('image', { required: 'Image is required' });
 
   const [currentAddress, setCurrentAddress] = useState('');
   const [activeTab, setActiveTab] = useState<'users' | 'community'>('users');
@@ -70,6 +77,7 @@ export function CreateCoin() {
     if (files.length > 0) {
       const file = files[0];
       setValue('image', file);
+      trigger('image');
       console.log('Uploaded file:', file);
     }
   };
@@ -298,64 +306,94 @@ export function CreateCoin() {
         </div>
 
         <div className="p-4 rounded-md border border-card-border bg-card flex flex-col gap-4">
-          <div className="flex items-center gap-3 py-2 px-3 rounded-sm border border-card-border bg-card">
-            <div className="flex size-9.5 items-center justify-center rounded-sm bg-primary/8 border border-card-border overflow-hidden">
-              {watchedImage ? (
-                <img
-                  src={URL.createObjectURL(watchedImage)}
-                  alt="Coin preview"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <i className="icon-image text-tertiary size-5.5" />
-              )}
+          <div className="space-y-1.5">
+             <div className={clsx("flex items-center gap-3 py-2 px-3 rounded-sm border bg-card", errors.image ? "border-error" : "border-card-border")}>
+              <div className="flex size-9.5 items-center justify-center rounded-sm bg-primary/8 border border-card-border overflow-hidden">
+                {watchedImage ? (
+                  <img
+                    src={URL.createObjectURL(watchedImage)}
+                    alt="Coin preview"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <i className="icon-image text-tertiary size-5.5" />
+                )}
+              </div>
+              <div className="flex-1">
+                <p>Add Image</p>
+                <p className="text-tertiary text-sm">Choose an image below 5MB.</p>
+              </div>
+              <FileInput
+                onChange={handleImageUpload}
+                accept="image/*"
+                multiple={false}
+              >
+                {(open) => (
+                  <Button
+                    variant="tertiary"
+                    size="sm"
+                    iconLeft="icon-upload-sharp"
+                    onClick={open}
+                  >
+                    Upload Image
+                  </Button>
+                )}
+              </FileInput>
             </div>
-            <div className="flex-1">
-              <p>Add Image</p>
-              <p className="text-tertiary text-sm">Choose an image below 5MB.</p>
-            </div>
-            <FileInput
-              onChange={handleImageUpload}
-              accept="image/*"
-              multiple={false}
-            >
-              {(open) => (
-                <Button
-                  variant="tertiary"
-                  size="sm"
-                  iconLeft="icon-upload-sharp"
-                  onClick={open}
-                >
-                  Upload Image
-                </Button>
-              )}
-            </FileInput>
+            {errors.image && (
+              <p className="text-error text-sm">{errors.image.message}</p>
+            )}
           </div>
 
           <div className="space-y-4">
-            <InputField
-              label="Ticker"
-              value={watch('ticker')}
-              onChangeText={(value) => setValue('ticker', value)}
-              error={!!errors.ticker}
-            />
+            <div className="space-y-1.5">
+               <InputField
+                 label="Ticker"
+                 value={watch('ticker')}
+                 onChangeText={(value) => {
+                   setValue('ticker', value);
+                   trigger('ticker');
+                 }}
+                 error={!!errors.ticker}
+               />
+              {errors.ticker && (
+                <p className="text-error text-sm">{errors.ticker.message}</p>
+              )}
+            </div>
 
-            <InputField
-              label="Coin Name"
-              value={watch('coinName')}
-              onChangeText={(value) => setValue('coinName', value)}
-              error={!!errors.coinName}
-            />
+            <div className="space-y-1.5">
+             <InputField
+               label="Coin Name"
+               value={watch('coinName')}
+               onChangeText={(value) => {
+                 setValue('coinName', value);
+                 trigger('coinName');
+               }}
+               error={!!errors.coinName}
+             />
+            {errors.coinName && (
+              <p className="text-error text-sm">{errors.coinName.message}</p>
+            )}
+            </div>
 
-            <div>
-              <label className="block text-secondary text-sm font-medium mb-2">Coin Description</label>
-              <Textarea
-                value={watch('description')}
-                onChange={(e) => setValue('description', e.target.value)}
-                placeholder="What's the token used for?"
-                variant="outlined"
-                rows={3}
-              />
+            <div className="space-y-1.5">
+              <p className="block text-secondary text-sm">
+                Coin Description
+              </p>
+               <Textarea
+                 value={watch('description')}
+                 onChange={(e) => {
+                   setValue('description', e.target.value);
+                   trigger('description');
+                 }}
+                 placeholder="What's the token used for?"
+                 variant="outlined"
+                 rows={3}
+                 className={errors.description ? 'border-error' : ''}
+               />
+              {errors.description && (
+                <p className="text-error text-sm">{errors.description.message}</p>
+              )}
             </div>
           </div>
         </div>
@@ -665,12 +703,12 @@ export function CreateCoin() {
                                 onClick={() => handleToggleAllocationLock(index)}
                                 className={clsx(recipient.locked && 'bg-warning-400 text-primary')}
                               />
-                               <Button
-                                 type="button"
-                                 variant="tertiary"
-                                 icon="icon-tune"
-                                 onClick={() => handleOpenTokenReleaseModal(index)}
-                               />
+                              <Button
+                                type="button"
+                                variant="tertiary"
+                                icon="icon-tune"
+                                onClick={() => handleOpenTokenReleaseModal(index)}
+                              />
                               <Button
                                 type="button"
                                 variant="tertiary"
@@ -678,9 +716,9 @@ export function CreateCoin() {
                                 onClick={() => handleRemoveAllocationRecipient(index)}
                               />
                             </div>
-                             <p className="text-tertiary text-sm">
-                               {recipient.lockedSupply}% locked · {recipient.cliff}m cliff · {recipient.duration}m vesting ({recipient.interval})
-                             </p>
+                            <p className="text-tertiary text-sm">
+                              {recipient.lockedSupply}% locked · {recipient.cliff}m cliff · {recipient.duration}m vesting ({recipient.interval})
+                            </p>
                           </div>
                         ))}
                       </div>
@@ -714,9 +752,16 @@ export function CreateCoin() {
                 </div>
               )}
             </div>
-           </>
-         }
-       </form>
-     </div>
-   );
- }
+          </>
+        }
+
+        <Button
+          type="submit"
+          variant="secondary"
+        >
+          Create Coin
+        </Button>
+      </form>
+    </div>
+  );
+}
