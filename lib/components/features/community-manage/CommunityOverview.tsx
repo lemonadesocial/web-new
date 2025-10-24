@@ -12,7 +12,7 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 
 import { useRouter } from 'next/navigation';
-import { Avatar, Badge, Button, Card, Divider, Skeleton, toast } from '$lib/components/core';
+import { Avatar, Badge, Button, Card, Divider, modal, Skeleton, toast } from '$lib/components/core';
 import { twMerge } from 'tailwind-merge';
 import { PendingApprovalEvents } from './PendingApprovalEvents';
 import { EventCardItem } from '../EventList';
@@ -23,6 +23,7 @@ import { generateUrl } from '$lib/utils/cnd';
 import { CommonSection } from './shared';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CardTable } from '$lib/components/core/table';
+import { AddTeam } from './modals/AddTeam';
 
 const LIMIT = 2;
 const FROM_NOW = new Date().toISOString();
@@ -172,7 +173,21 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
     <CommonSection
       title="Admins"
       subtitle="Add hosts, special guests, and event managers."
-      actions={[{ iconLeft: 'icon-plus', title: 'Add Admin', onClick: () => toast.success('Coming soon') }]}
+      actions={[
+        {
+          iconLeft: 'icon-plus',
+          title: 'Add Admin',
+          onClick: () =>
+            modal.open(AddTeam, {
+              props: {
+                icon: 'icon-user',
+                title: 'Add Admins',
+                subtitle:
+                  'Add admins by entering their email addresses. They don’t need to have an existing Lemonade account.',
+              },
+            }),
+        },
+      ]}
     >
       <CardTable.Root loading={loading}>
         <CardTable.Loading rows={3}>

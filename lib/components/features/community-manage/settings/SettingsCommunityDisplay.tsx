@@ -205,7 +205,7 @@ function Content({ space }: { space: Space }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       {isDirty && (
-        <div className=" bg-warning-300/16 backdrop-blur-sm sticky top-[156px] z-50">
+        <div className="px-4 md:px-0 bg-warning-300/16 backdrop-blur-sm sticky top-[156px] z-50">
           <div className="page mx-auto flex justify-between py-3 items-center">
             <p className="text-warning-300">You have unsaved changes.</p>
             <Button type="submit" size="sm" loading={isSubmitting} className="rounded-full" variant="warning">
