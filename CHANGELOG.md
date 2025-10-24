@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.14.0](https://github.com/lemonadesocial/web-new/compare/v8.13.1...v8.14.0) (2025-10-24)
+
+
+### Features
+
+* check token balance ([3001beb](https://github.com/lemonadesocial/web-new/commit/3001bebc40e3ad99e8d17cbb8d6059828098d975))
+
 ## [8.13.1](https://github.com/lemonadesocial/web-new/compare/v8.13.0...v8.13.1) (2025-10-23)
 
 
