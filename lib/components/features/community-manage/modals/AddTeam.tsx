@@ -1,10 +1,36 @@
 'use client';
 
-import { Badge, InputField, modal, ModalContent } from '$lib/components/core';
+import { Badge, Button, InputField, modal, ModalContent } from '$lib/components/core';
+import { AddSpaceMembersDocument, SpaceRole } from '$lib/graphql/generated/backend/graphql';
+import { useMutation } from '$lib/graphql/request';
 import React from 'react';
 
-export function AddTeam({ icon, title, subtitle }: { icon: string; title: string; subtitle: string }) {
+export function AddTeam({
+  spaceId,
+  icon,
+  title,
+  btnText,
+  subtitle,
+  role,
+  onCompleted,
+}: {
+  spaceId: string;
+  icon: string;
+  title: string;
+  subtitle: string;
+  btnText: string;
+  role: SpaceRole.Admin | SpaceRole.Ambassador;
+  onCompleted?: () => void;
+}) {
   const [addresses, setAddresses] = React.useState<string[]>([]);
+
+  const [addTeam, { loading }] = useMutation(AddSpaceMembersDocument, {
+    onComplete: (client, income) => {
+      modal.close();
+      onCompleted?.();
+    },
+  });
+
   return (
     <ModalContent className="max-w-sm md:max-w-md w-full overflow-x-hidden" icon={icon} onClose={() => modal.close()}>
       <div className="flex flex-col gap-4">
@@ -13,13 +39,28 @@ export function AddTeam({ icon, title, subtitle }: { icon: string; title: string
           <p className="text-sm text-secondary">{subtitle}</p>
         </div>
 
-        <InputTags />
+        <InputTags onChange={setAddresses} />
+
+        <Button
+          variant="secondary"
+          loading={loading}
+          disabled={!addresses.length}
+          onClick={() =>
+            addTeam({
+              variables: {
+                input: { space: spaceId, users: addresses.map((email) => ({ email, user_name: '' })), role },
+              },
+            })
+          }
+        >
+          {btnText}
+        </Button>
       </div>
     </ModalContent>
   );
 }
 
-function InputTags({ value = [] }: { value?: string[]; onAdd?: (value: string[]) => void }) {
+function InputTags({ value = [], onChange }: { value?: string[]; onChange?: (value: string[]) => void }) {
   const [text, setText] = React.useState('');
   const [tags, setTags] = React.useState(value);
   return (
@@ -31,7 +72,9 @@ function InputTags({ value = [] }: { value?: string[]; onAdd?: (value: string[])
             title={t}
             color="var(--color-secondary)"
             onClose={() => {
-              setTags((prev) => prev.filter((i) => i !== t));
+              const arr = tags.filter((i) => i !== t);
+              setTags(arr);
+              onChange?.(arr);
             }}
           />
         ))}
@@ -44,6 +87,7 @@ function InputTags({ value = [] }: { value?: string[]; onAdd?: (value: string[])
                 const arr = [...tags, e.currentTarget.value];
                 setText('');
                 setTags(arr);
+                onChange?.(arr);
               }
             }}
           />

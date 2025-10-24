@@ -1,14 +1,18 @@
 'use client';
 
-import { useQuery } from '$lib/graphql/request';
+import { useMutation, useQuery } from '$lib/graphql/request';
 import {
+  DeleteSpaceMembersDocument,
   Event,
   GetSpaceDocument,
   GetSpaceEventsDocument,
+  GetSpaceMembersDocument,
   GetSpaceQuery,
   GetSubSpacesDocument,
   PublicSpace,
   Space,
+  SpaceMember,
+  SpaceRole,
 } from '$lib/graphql/generated/backend/graphql';
 
 import { useRouter } from 'next/navigation';
@@ -24,6 +28,7 @@ import { CommonSection } from './shared';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CardTable } from '$lib/components/core/table';
 import { AddTeam } from './modals/AddTeam';
+import { ConfirmModal } from '../modals/ConfirmModal';
 
 const LIMIT = 2;
 const FROM_NOW = new Date().toISOString();
@@ -165,8 +170,15 @@ function UpComingEventsSection({ space, events = [] }: { space: Space; events?: 
 }
 
 function AdminListSection({ space, loading }: { space: Space; loading?: boolean }) {
+  const { data, refetch } = useQuery(GetSpaceMembersDocument, {
+    variables: { space: space._id, limit: 100, roles: [SpaceRole.Admin], skip: 0 },
+  });
+  const admins = (data?.listSpaceMembers?.items || []) as SpaceMember[];
+
+  const [removeMember] = useMutation(DeleteSpaceMembersDocument);
+
   const me = useMe();
-  if (!space.admins?.length) return null;
+  if (!admins.length) return null;
   const isCreator = me?._id === space.creator;
 
   return (
@@ -180,10 +192,14 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
           onClick: () =>
             modal.open(AddTeam, {
               props: {
+                spaceId: space._id,
                 icon: 'icon-user',
                 title: 'Add Admins',
                 subtitle:
                   'Add admins by entering their email addresses. They don’t need to have an existing Lemonade account.',
+                btnText: 'Add Admins',
+                role: SpaceRole.Admin,
+                onCompleted: refetch,
               },
             }),
         },
@@ -203,13 +219,13 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
 
         <CardTable.EmptyState icon="icon-community" title="No Featured Hub" />
 
-        {space.admins.map((item) => (
+        {admins.map((item) => (
           <CardTable.Row key={item._id}>
             <div key={item._id} className="flex gap-3 items-center px-4 py-3">
-              <Avatar src={userAvatar(item)} className="size-5" />
+              <Avatar src={userAvatar(item.user)} className="size-5" />
               <div className="flex gap-2 flex-1">
-                <p>{item.username || item.name || item.display_name || 'Anonymous'}</p>
-                {item.email && <p>{item.email}</p>}
+                <p>{item.user_name || item.user?.name || item.user?.display_name || 'Anonymous'}</p>
+                {item.email && <p>{item.email || item.user?.email}</p>}
                 <Badge
                   className="rounded-full"
                   title={isCreator ? 'Creator' : 'Admin'}
@@ -218,8 +234,20 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
               </div>
 
               <i
-                className="icon-edit-sharp size-5 aspect-square text-tertiary hover:text-primary cursor-pointer"
-                onClick={() => toast.success('Coming soon')}
+                className="icon-user-remove size-5 aspect-square text-tertiary hover:text-primary cursor-pointer"
+                onClick={() =>
+                  modal.open(ConfirmModal, {
+                    props: {
+                      icon: 'icon-user-remove',
+                      title: 'Remove Admin',
+                      subtitle: 'Are you sure you want to remove this admin?',
+                      onConfirm: async () => {
+                        await removeMember({ variables: { input: { space: space._id, ids: [item._id] } } });
+                        await refetch();
+                      },
+                    },
+                  })
+                }
               />
             </div>
           </CardTable.Row>
