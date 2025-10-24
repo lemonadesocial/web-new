@@ -11,6 +11,7 @@ import { getPaymentNetworks } from "$lib/utils/payment";
 import { currenciesAtom, currencyAtom, eventTokenGatesAtom, paymentAccountsAtom, purchaseItemsAtom, registrationModal, selectedPaymentAccountAtom, ticketPasscodesAtom, ticketTypesAtom, useAtom, useAtomValue } from "./store";
 import { renderTextWithLinks } from "$lib/utils/render";
 import { PasscodeModal } from "./modals/PasscodeModal";
+import { TokenGateEligibilityModal } from "./modals/TokenGateEligibilityModal";
 
 export function TicketSelectItem({ ticketType, single, compact }: { ticketType: PurchasableTicketType; single?: boolean; compact?: boolean }) {
   const [purchaseItems, setPurchaseItems] = useAtom(purchaseItemsAtom);
@@ -35,6 +36,18 @@ export function TicketSelectItem({ ticketType, single, compact }: { ticketType: 
 
   const handleTicketChange = (ticketType: PurchasableTicketType, value: number) => {
     const currentCount = purchaseItems.find(item => item.id === ticketType._id)?.count || 0;
+
+    if (value > currentCount && tokenGate) {
+      registrationModal.open(TokenGateEligibilityModal, {
+        props: {
+          ticketTitle: ticketType.title,
+          tokenGate: tokenGate,
+          onConfirm: () => processTicketChange(ticketType, value),
+        }
+      });
+
+      return;
+    }
 
     if (value > currentCount && ticketType.passcode_enabled && !ticketPasscodes[ticketType._id]) {
       registrationModal.open(PasscodeModal, {
