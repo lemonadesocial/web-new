@@ -18,7 +18,6 @@ import {
   useAtomValue,
   useSetAtom,
   pricingInfoAtom,
-  requiresTokenGatingAtom
 } from "../store";
 import { useRedeemTickets } from "../hooks/useRedeemTickets";
 import { BuyerInfoForm } from "../forms/BuyerInfoForm";
@@ -48,7 +47,6 @@ export function RegistrationModal() {
   const purchaseItems = useAtomValue(purchaseItemsAtom);
   const setCurrency = useSetAtom(currencyAtom);
   const currencies = useAtomValue(currenciesAtom);
-  const requiresTokenGating = useAtomValue(requiresTokenGatingAtom);
 
   const { redeemTickets, loadingRedeem } = useRedeemTickets();
   const { pay, loading: loadingBuyTickets } = useBuyTickets();
@@ -96,8 +94,10 @@ export function RegistrationModal() {
             !session && <BuyerInfoForm />
           }
           {
-            !!(ethereumWalletCondition || requiresTokenGating) && (
-              session ? <SignedInWalletForm required={requiresTokenGating || !!ethereumWalletCondition?.required} /> : <SignedOutWalletForm required={requiresTokenGating || !!ethereumWalletCondition?.required} />
+            !!ethereumWalletCondition && (
+              session
+                ? <SignedInWalletForm required={!!ethereumWalletCondition.required} />
+                : <SignedOutWalletForm required={!!ethereumWalletCondition.required} />
             )
           }
           {
