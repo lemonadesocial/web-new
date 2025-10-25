@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.15.0](https://github.com/lemonadesocial/web-new/compare/v8.14.0...v8.15.0) (2025-10-25)
+
+
+### Features
+
+* **self-xyz:** add default config values ([395358e](https://github.com/lemonadesocial/web-new/commit/395358e8f71bd376e8924a624822465381476c77))
+
 ## [8.14.0](https://github.com/lemonadesocial/web-new/compare/v8.13.1...v8.14.0) (2025-10-24)
 
 
