@@ -1,6 +1,7 @@
 import { useForm, UseFormReturn } from "react-hook-form";
 import { useEffect } from "react";
 import clsx from "clsx";
+import type { SelfAppDisclosureConfig } from "@selfxyz/common";
 
 import { formInstancesAtom, submitHandlersAtom, useSetAtom } from "../store";
 import { Button, LabeledInput, modal } from "$lib/components/core";
@@ -8,6 +9,7 @@ import { GetSelfVerificationStatusDocument, SelfVerificationConfig } from "$lib/
 import { useQuery } from "$lib/graphql/request";
 
 import { GetVerifiedModal } from "../../modals/GetVerifiedModal";
+import { getFullConfig } from "../../../../utils/constants";
 
 export function SelfVerificationForm({ config }: { config: SelfVerificationConfig }) {
   const setFormInstances = useSetAtom(formInstancesAtom);
@@ -22,7 +24,7 @@ export function SelfVerificationForm({ config }: { config: SelfVerificationConfi
 
   const { __typename, ...configWithoutTypename } = config;
 
-  const { data } =useQuery(GetSelfVerificationStatusDocument, {
+  const { data } = useQuery(GetSelfVerificationStatusDocument, {
     variables: {
       config: configWithoutTypename
     },
@@ -44,7 +46,7 @@ export function SelfVerificationForm({ config }: { config: SelfVerificationConfi
     modal.open(GetVerifiedModal, {
       dismissible: true,
       props: {
-        config: configWithoutTypename
+        config: getFullConfig(configWithoutTypename as Partial<SelfAppDisclosureConfig>)
       }
     });
   };
