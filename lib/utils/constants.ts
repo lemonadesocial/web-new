@@ -1,3 +1,5 @@
+import type { SelfAppDisclosureConfig } from "@selfxyz/common";
+
 export const GRAPHQL_URL = process.env.NEXT_PUBLIC_GRAPHQL_URL as string;
 export const LEMONADE_DOMAIN = process.env.NEXT_PUBLIC_LEMONADE_DOMAIN as string;
 export const HYDRA_PUBLIC_URL = process.env.NEXT_PUBLIC_HYDRA_PUBLIC_URL as string;
@@ -72,8 +74,25 @@ export const DEFAULT_LAYOUT_SECTIONS = [
 
 export const IDENTITY_TOKEN_KEY = 'identity_token';
 
-export const SELF_VERIFICATION_CONFIG = {
-  minimumAge: 18,
-  ofac: true,
-  nationality: true,
+export const getFullConfig = (config: Partial<SelfAppDisclosureConfig>) => {
+  const finalConfig: SelfAppDisclosureConfig = {
+    issuing_state: config.issuing_state ?? false,
+    name: config.name ?? false,
+    passport_number: config.passport_number ?? false,
+    nationality: config.nationality ?? false,
+    date_of_birth: config.date_of_birth ?? false,
+    gender: config.gender ?? false,
+    expiry_date: config.expiry_date ?? false,
+    ofac: config.ofac ?? false,
+    excludedCountries: config.excludedCountries ?? [],
+    minimumAge: config.minimumAge ?? 0,
+  }
+
+  return finalConfig;
 };
+
+export const SELF_VERIFICATION_CONFIG = getFullConfig({
+  nationality: true,
+  ofac: true,
+  minimumAge: 18,
+});
