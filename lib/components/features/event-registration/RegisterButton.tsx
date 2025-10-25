@@ -3,6 +3,7 @@ import { Button } from "$lib/components/core";
 import { RegistrationModal } from "./modals/RegistrationModal";
 import { approvalRequiredAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, registrationModal, useAtomValue, hasSingleFreeTicketAtom } from "./store";
 import { useSession } from "$lib/hooks/useSession";
+import { useSignIn } from '$lib/hooks/useSignIn';
 import { useRedeemTickets } from "./hooks/useRedeemTickets";
 
 export function RegisterButton() {
@@ -18,7 +19,9 @@ export function RegisterButton() {
   const applicationQuestionsRequired = event.application_questions?.length;
   const connectWalletRequired = event.rsvp_wallet_platforms?.length;
   const hasTerms = event.terms_text;
+  const selfRequired = event.self_verification?.enabled && event.self_verification?.config;
 
+  const signIn = useSignIn();
   const { redeemTickets, loadingRedeem } = useRedeemTickets();
 
   const disabled = purchaseItems.length ? !pricingInfo : true;
@@ -28,7 +31,13 @@ export function RegisterButton() {
     registrationModal.open(RegistrationModal, { dismissible: false, skipBaseClassName: true });
   };
 
-  if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session) return (
+  if (selfRequired && !session) return (
+    <Button variant="secondary" disabled={disabled} onClick={() => signIn()}>
+      Sign In To Register
+    </Button>
+  );
+
+  if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session || selfRequired) return (
     <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
       {approvalRequired ? 'Request to Join' : hasSingleFreeTicket ? 'Register' : 'Get Tickets'}
     </Button>
