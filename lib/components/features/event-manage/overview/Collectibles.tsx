@@ -133,25 +133,27 @@ function CollectibleItem({ poapDrop, event }: { poapDrop: PoapDrop; event: Event
       <div className="flex items-center gap-2 flex-1">
         <p>{poapDrop.name}</p>
         <p className="text-tertiary">{poapDrop.claim_count || 0}/{poapDrop.amount} claimed</p>
+        <div className="hidden sm:flex">
         {
           poapDrop.claim_mode === 'registration' ? <Chip size="xxs" variant="secondary" className="rounded-full">Registration</Chip> : <Chip size="xxs" className="rounded-full">Check In</Chip>
         }
+        </div>
       </div>
 
-      <Chip size="xxs" variant="secondary" leftIcon="icon-ticket" className="rounded-full">
+      <Chip size="xxs" variant="secondary" leftIcon="icon-ticket" className="rounded-full hidden sm:flex">
         {
           poapDrop.ticket_types_expanded?.length ? poapDrop.ticket_types_expanded.map((ticketType) => ticketType.title).join(', ') : 'All Tickets'
         }
       </Chip>
 
       {
-        poapDrop.status === 'pending' && <Chip size="xxs" variant="warning" className="rounded-full">Validating...</Chip>
+        poapDrop.status === 'pending' && <Chip size="xxs" variant="warning" className="rounded-full hidden sm:flex">Validating...</Chip>
       }
       {
-        poapDrop.status === 'failed' && <Chip size="xxs" variant="error" className="rounded-full">Failed</Chip>
+        poapDrop.status === 'failed' && <Chip size="xxs" variant="error" className="rounded-full hidden sm:flex">Failed</Chip>
       }
       {
-        network?.logo_url && <img src={network.logo_url} alt={network.name} className="size-4 rounded-full object-cover" />
+        network?.logo_url && <img src={network.logo_url} alt={network.name} className="size-4 rounded-full object-cover hidden sm:block" />
       }
       <Menu.Root>
         <Menu.Trigger>

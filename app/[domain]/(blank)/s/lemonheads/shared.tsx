@@ -44,7 +44,7 @@ import { useLemonhead } from '$lib/hooks/useLemonhead';
 export function HeroSection(props: { space?: Space }) {
   const me = useMe();
   const { data: dataSpace } = useQuery(GetSpaceDocument, {
-    variables: { id: props.space?._id! },
+    variables: { id: props.space?._id },
     skip: !props.space?._id,
   });
   const space = (dataSpace?.getSpace || props.space) as Space;

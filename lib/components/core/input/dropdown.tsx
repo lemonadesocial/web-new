@@ -105,7 +105,7 @@ export function DropdownTags(props: DropdownTagsProps) {
                 <Badge
                   key={item.key}
                   title={item.value}
-                  className="btn btn-tertiary text-primary! text-sm rounded py-0.5!"
+                  className="btn btn-tertiary text-primary! text-sm rounded py-0.5! max-w-[200px]"
                   onClose={(e) => {
                     e.stopPropagation();
                     handleRemove(item);

@@ -2,20 +2,20 @@ import { useForm, UseFormReturn } from "react-hook-form";
 import { useEffect } from "react";
 import clsx from "clsx";
 
-import { buyerWalletAtom, formInstancesAtom, registrationModal, useSetAtom } from "../store";
+import { buyerWalletAtom, formInstancesAtom, registrationModal, useAtom, useSetAtom } from "../store";
 import { Button, LabeledInput, Menu, MenuItem, modal, toast } from "$lib/components/core";
 import { SetUserWalletDocument } from "$lib/graphql/generated/backend/graphql";
 import { formatWallet } from "$lib/utils/crypto";
 import { useAppKit, appKit } from "$lib/utils/appkit";
-import { useMe } from "$lib/hooks/useMe";
 import { useMutation } from "$lib/graphql/request";
-import { defaultClient } from "$lib/graphql/request/instances";
 
 import { ConnectWallet } from "../../modals/ConnectWallet";
 import { VerifyWalletModal } from "../modals/VerifyWalletModal";
+import { userAtom } from "$lib/jotai";
 
 export function SignedInWalletForm({ required }: { required: boolean }) {
-  const me = useMe();
+  const [me, setMe] = useAtom(userAtom);
+
   const setBuyerWallet = useSetAtom(buyerWalletAtom);
 
   const userWallets = me?.wallets_new?.ethereum?.filter((wallet: string) => wallet !== me?.wallet_custodial) || [];
@@ -62,12 +62,11 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
 
             const currentAddress = appKit.getAddress()!;
             
-            defaultClient.writeFragment({
-              id: `User:${me?._id}`,
-              data: {
-                wallets_new: {
-                  ethereum: [...(me?.wallets_new?.ethereum ?? []), currentAddress]
-                }
+            setMe({
+              ...me!,
+              wallets_new: {
+                ...me?.wallets_new,
+                ethereum: [...(me?.wallets_new?.ethereum ?? []), currentAddress]
               }
             });
             
@@ -100,7 +99,7 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
   }, [userWallets, form]);
 
   const selectedAddress = form.watch('selectedAddress');
-
+  
   return (
     <>
       <LabeledInput label="Your Ethereum Address" required={required}>

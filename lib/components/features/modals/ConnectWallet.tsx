@@ -4,7 +4,7 @@ import { Button, modal, ModalContent, toast } from "$lib/components/core";
 import { Chain } from "$lib/graphql/generated/backend/graphql";
 import { getAppKitNetwork, useAppKit, useAppKitAccount, useAppKitNetwork } from "$lib/utils/appkit";
 
-export function ConnectWallet({ onConnect, chain }: { onConnect: () => void; chain?: Chain; }) {
+export function ConnectWallet({ onConnect, chain, onClose }: { onConnect: () => void; chain?: Chain; onClose?: () => void }) {
   const { isConnected } = useAppKitAccount();
   const { open } = useAppKit();
   const { chainId, switchNetwork } = useAppKitNetwork();
@@ -70,7 +70,7 @@ export function ConnectWallet({ onConnect, chain }: { onConnect: () => void; cha
   }
 
   return (
-    <ModalContent icon="icon-wallet">
+    <ModalContent icon="icon-wallet" onClose={onClose}>
       <p className="text-lg">Connect Wallet</p>
       <p className="text-secondary mt-2">
         Connect a compatible wallet to securely complete your payment on your preferred blockchain network.

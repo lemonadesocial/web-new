@@ -102,7 +102,7 @@ export function InviteGuestsModal({
   }
 
   return (
-    <div className="w-sm md:w-[448px]">
+    <div className="w-[480px] max-w-full">
       <div className="flex justify-between py-3 px-4 border-b">
         <p className="text-lg">{title}</p>
         <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
