@@ -57,6 +57,7 @@ export function EditEventDrawer({ event }: { event: Event }) {
 
 function EditEventDrawerContent({ event }: { event: Event }) {
   const [timezone, setTimeZone] = React.useState(getUserTimezoneOption(event.timezone || ''));
+  console.log(event.start);
 
   const {
     register,
@@ -70,12 +71,8 @@ function EditEventDrawerContent({ event }: { event: Event }) {
       description: event.description || '',
       theme_data: event.theme_data,
       date: {
-        start: !event.timezone
-          ? event.start
-          : convertFromUtcToTimezone(event.start, event.timezone).toString() || new Date().toString(),
-        end: !event.timezone
-          ? event.end
-          : convertFromUtcToTimezone(event.end, event.timezone).toString() || new Date().toString(),
+        start: event.start,
+        end: event.end,
         timezone: event.timezone || getUserTimezoneOption()?.value || 'UTC',
       },
       address: {
@@ -113,8 +110,14 @@ function EditEventDrawerContent({ event }: { event: Event }) {
   const onSubmit = (values: FormValues) => {
     if (!event._id) return;
 
-    const startDate = combineDateAndTimeWithTimezone(new Date(values.date.start), values.date.timezone);
-    const endDate = combineDateAndTimeWithTimezone(new Date(values.date.end), values.date.timezone);
+    const startDate =
+      values.date.start !== event.start
+        ? combineDateAndTimeWithTimezone(new Date(values.date.start), values.date.timezone)
+        : values.date.start;
+    const endDate =
+      values.date.end !== event.end
+        ? combineDateAndTimeWithTimezone(new Date(values.date.end), values.date.timezone)
+        : values.date.end;
 
     updateEventSettings({
       variables: {
@@ -180,6 +183,7 @@ function EditEventDrawerContent({ event }: { event: Event }) {
                 minDate={startOfDay(new Date())}
                 start={date.start}
                 end={date.end}
+                timezone={date.timezone}
                 onSelect={(dateRange) => setValue('date', { ...date, ...dateRange })}
               />
               <Timezone

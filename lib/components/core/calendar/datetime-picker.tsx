@@ -2,8 +2,9 @@ import React from 'react';
 import { addHours, format, isBefore } from 'date-fns';
 import { FloatingPortal, Placement } from '@floating-ui/react';
 import clsx from 'clsx';
+import { toZonedTime } from 'date-fns-tz';
 
-import { TimezoneOption, timezoneOptions } from '$lib/utils/timezone';
+import { getUserTimezoneOption, TimezoneOption, timezoneOptions } from '$lib/utils/timezone';
 
 import { Menu } from '../menu';
 import { Button } from '../button';
@@ -19,12 +20,14 @@ export function DateTimeGroup({
   onSelect,
   placement = 'top',
   minDate,
+  timezone,
 }: {
   start: string;
   end: string;
   minDate?: Date;
   onSelect: (value: { start: string; end: string }) => void;
   placement?: 'top' | 'bottom';
+  timezone?: string;
 }) {
   const [startTime, setStartTime] = React.useState(start || new Date().toISOString());
   const [endTime, setEndTime] = React.useState(end || new Date().toISOString());
@@ -45,6 +48,7 @@ export function DateTimeGroup({
               minDate={minDate}
               placement={placement}
               value={startTime}
+              timezone={timezone}
               onSelect={(datetime) => {
                 let _endTime = endTime;
                 if (isBefore(endTime, datetime)) {
@@ -73,6 +77,7 @@ export function DateTimeGroup({
               value={endTime}
               minDate={minDate}
               placement={placement}
+              timezone={timezone}
               onSelect={(datetime) => {
                 let endTime = datetime;
                 if (isBefore(endTime, startTime)) {
@@ -97,6 +102,7 @@ export function DateTimePicker({
   minDate,
   className,
   showTime = true,
+  timezone = getUserTimezoneOption()?.value || 'UTC',
 }: {
   value?: string;
   onSelect: (datetime: string) => void;
@@ -104,7 +110,9 @@ export function DateTimePicker({
   minDate?: Date;
   className?: string;
   showTime?: boolean;
+  timezone?: string;
 }) {
+  const [date, setDate] = React.useState(toZonedTime(new Date(value), timezone));
   const times = React.useMemo(() => {
     const formatTime = (hour: number, minutes: number) => {
       const period = hour < 12 ? 'AM' : 'PM';
@@ -135,7 +143,7 @@ export function DateTimePicker({
             size="sm"
             className={clsx('min-w-[110px]! text-primary! min-h-[36px]! text-base', showTime && 'rounded-e-none!')}
           >
-            {format(value ? new Date(value) : new Date(), 'EEE, dd MMM')}
+            {format(date, 'EEE, dd MMM')}
           </Button>
         </Menu.Trigger>
         <FloatingPortal>
@@ -143,13 +151,13 @@ export function DateTimePicker({
             {({ toggle }) => (
               <Calendar
                 minDate={minDate}
-                selected={value ? new Date(value) : undefined}
-                onSelectDate={(date = new Date()) => {
-                  const datetime = value ? new Date(value) : new Date();
-                  datetime.setFullYear(date.getFullYear());
-                  datetime.setMonth(date.getMonth());
-                  datetime.setDate(date.getDate());
-                  handleSelect({ value: datetime });
+                selected={date}
+                onSelectDate={(d = new Date()) => {
+                  date.setFullYear(d.getFullYear());
+                  date.setMonth(d.getMonth());
+                  date.setDate(d.getDate());
+                  setDate(date);
+                  handleSelect({ value: date });
                   toggle();
                 }}
               />
@@ -165,7 +173,7 @@ export function DateTimePicker({
               size="sm"
               className="rounded-s-none! min-w-[84px] text-primary! min-h-[36px]! text-base"
             >
-              {format(value ? new Date(value) : new Date(), 'hh:mm a')}
+              {format(date, 'hh:mm a')}
             </Button>
           </Menu.Trigger>
           <FloatingPortal>
@@ -180,10 +188,10 @@ export function DateTimePicker({
                         className="hover:bg-quaternary! w-full whitespace-nowrap"
                         onClick={() => {
                           const [hours, minutes] = t.value.split(':').map(Number);
-                          const datetime = value ? new Date(value) : new Date();
-                          datetime.setHours(hours);
-                          datetime.setMinutes(minutes);
-                          handleSelect({ value: datetime });
+                          date.setHours(hours);
+                          date.setMinutes(minutes);
+                          setDate(date);
+                          handleSelect({ value: date });
                           toggle();
                         }}
                       >
