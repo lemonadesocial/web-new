@@ -1,8 +1,9 @@
 import { useForm, UseFormReturn } from "react-hook-form";
 import { useEffect } from "react";
+import { useAtom } from "jotai";
 import clsx from "clsx";
 
-import { buyerWalletAtom, formInstancesAtom, registrationModal, useAtom, useSetAtom } from "../store";
+import { buyerWalletAtom, formInstancesAtom, registrationModal, useSetAtom } from "../store";
 import { Button, LabeledInput, Menu, MenuItem, modal, toast } from "$lib/components/core";
 import { SetUserWalletDocument } from "$lib/graphql/generated/backend/graphql";
 import { formatWallet } from "$lib/utils/crypto";
