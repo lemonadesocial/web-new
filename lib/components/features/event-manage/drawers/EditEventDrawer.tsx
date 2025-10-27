@@ -21,14 +21,13 @@ import { useMutation } from '$lib/graphql/request';
 import { ThemeValues } from '$lib/components/features/theme-builder/store';
 import { DateTimeGroup, Timezone } from '$lib/components/core/calendar';
 import { getUserTimezoneOption } from '$lib/utils/timezone';
-import { combineDateAndTimeWithTimezone } from '$lib/utils/date';
+import { combineDateAndTimeWithTimezone, convertFromUtcToTimezone } from '$lib/utils/date';
 import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 import { Pane } from '$lib/components/core/pane/pane';
 import { useUpdateEvent } from '../store';
 import { ThemeSettings } from './ThemeSettings';
 import { ThemeProvider, useTheme } from '../../theme-builder/provider';
 import { ReoderSectionsModal } from '../modals/ReoderSectionsModal';
-import { formatInTimeZone } from 'date-fns-tz';
 
 type FormValues = {
   title: string;
@@ -73,10 +72,10 @@ function EditEventDrawerContent({ event }: { event: Event }) {
       date: {
         start: !event.timezone
           ? event.start
-          : formatInTimeZone(event.start, event.timezone!, 'yyyy-MM-dd hh:mm:ss').toString() || new Date().toString(),
+          : convertFromUtcToTimezone(event.start, event.timezone).toString() || new Date().toString(),
         end: !event.timezone
           ? event.end
-          : formatInTimeZone(event.end, event.timezone!, 'yyyy-MM-dd hh:mm:ss').toString() || new Date().toString(),
+          : convertFromUtcToTimezone(event.end, event.timezone).toString() || new Date().toString(),
         timezone: event.timezone || getUserTimezoneOption()?.value || 'UTC',
       },
       address: {
