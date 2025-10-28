@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.17.0](https://github.com/lemonadesocial/web-new/compare/v8.16.0...v8.17.0) (2025-10-28)
+
+
+### Features
+
+* update unicorn copy ([35cbe59](https://github.com/lemonadesocial/web-new/commit/35cbe595543bffaf11a19a86e881e31e9113717d))
+
 ## [8.16.0](https://github.com/lemonadesocial/web-new/compare/v8.15.0...v8.16.0) (2025-10-28)
 
 
