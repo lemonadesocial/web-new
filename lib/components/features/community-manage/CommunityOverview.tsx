@@ -1,5 +1,5 @@
 'use client';
-
+import React from 'react';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
   DeleteSpaceMembersDocument,
@@ -8,6 +8,7 @@ import {
   GetSpaceEventsDocument,
   GetSpaceMembersDocument,
   GetSpaceQuery,
+  GetSpacesDocument,
   GetSubSpacesDocument,
   PublicSpace,
   Space,
@@ -16,7 +17,19 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 
 import { useRouter } from 'next/navigation';
-import { Avatar, Badge, Button, Card, Divider, modal, Skeleton, toast } from '$lib/components/core';
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Checkbox,
+  Divider,
+  drawer,
+  InputField,
+  modal,
+  Skeleton,
+  toast,
+} from '$lib/components/core';
 import { twMerge } from 'tailwind-merge';
 import { PendingApprovalEvents } from './PendingApprovalEvents';
 import { EventCardItem } from '../EventList';
@@ -29,6 +42,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { CardTable } from '$lib/components/core/table';
 import { AddTeam } from './modals/AddTeam';
 import { ConfirmModal } from '../modals/ConfirmModal';
+import { Pane } from '$lib/components/core/pane/pane';
+import { space } from 'postcss/lib/list';
+import { setQuarter } from 'date-fns';
+import { ASSET_PREFIX } from '$lib/utils/constants';
 
 const LIMIT = 2;
 const FROM_NOW = new Date().toISOString();
@@ -84,7 +101,7 @@ export function CommunityOverview({ space: initSpace }: { space?: Space }) {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0 }}
           >
-            <FeaturedHubSection data={subSpaces} loading={loading} />
+            <FeaturedHubSection data={subSpaces} loading={loading} spaceId={space._id} />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -257,13 +274,23 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
   );
 }
 
-function FeaturedHubSection({ loading, data = [] }: { data?: PublicSpace[]; loading?: boolean }) {
+function FeaturedHubSection({
+  loading,
+  data = [],
+  spaceId,
+}: {
+  data?: PublicSpace[];
+  loading?: boolean;
+  spaceId: string;
+}) {
   const router = useRouter();
   return (
     <CommonSection
       title="Featured Hubs"
       subtitle="Showcase other community hubs you manage on the community page."
-      actions={[{ iconLeft: 'icon-plus', title: 'Add Hub', onClick: () => toast.success('Coming soon') }]}
+      actions={[
+        { iconLeft: 'icon-plus', title: 'Add Hub', onClick: () => drawer.open(SubFeatureHubs, { props: { spaceId } }) },
+      ]}
     >
       <CardTable.Root loading={loading}>
         <CardTable.Loading rows={7}>
@@ -293,5 +320,51 @@ function FeaturedHubSection({ loading, data = [] }: { data?: PublicSpace[]; load
         ))}
       </CardTable.Root>
     </CommonSection>
+  );
+}
+
+function SubFeatureHubs({ spaceId }: { spaceId: string }) {
+  const { data } = useQuery(GetSpacesDocument, {
+    variables: { roles: [SpaceRole.Admin, SpaceRole.Creator] },
+  });
+  const spaces = (data?.listSpaces as Space[]) || [];
+
+  const [query, setQuery] = React.useState('');
+
+  return (
+    <Pane.Root>
+      <Pane.Header.Root>
+        <Pane.Header.Left />
+      </Pane.Header.Root>
+      <Pane.Content className="p-4 flex flex-col gap-4">
+        <div>
+          <h3 className="text-xl font-semibold">Add Featured Hub</h3>
+          <p className="text-sm text-secondary">Highlight other community hubs you manage on this community.</p>
+        </div>
+
+        <InputField iconLeft="icon-search" placeholder="Search" value={query} onChangeText={setQuery} />
+
+        {spaces
+          .filter((i) => i._id !== spaceId)
+          .filter((i) => (query ? query.toLowerCase().includes(i.title.toLowerCase()) : true))
+          .map((i) => (
+            <Card.Root>
+              <Card.Content className="py-3 flex items-center gap-3">
+                <Avatar
+                  className="size-[38px] rounded-sm!"
+                  src={generateUrl(i.image_avatar_expanded) || `${ASSET_PREFIX}/assets/images/default-dp.png`}
+                />
+
+                <div className="flex-1">
+                  <p className="text-lg">{i.title}</p>
+                  <p className="text-sm text-tertiary">{i.followers_count || 0} followers</p>
+                </div>
+
+                <Checkbox id={i._id} variant="circle" />
+              </Card.Content>
+            </Card.Root>
+          ))}
+      </Pane.Content>
+    </Pane.Root>
   );
 }
