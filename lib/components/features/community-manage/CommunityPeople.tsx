@@ -94,6 +94,10 @@ export function CommunityPeople({ space }: Props) {
     await downloadCSVFile(url, snakeCase(`${space.title}_people`));
   };
 
+  const onAddPeople = () => {
+    modal.open(AddCommunityPeople, { props: { spaceId: space._id, onCompleted: refetch } });
+  };
+
   React.useEffect(() => {
     const handler = debounce(() => {
       setSearch(query);
@@ -113,12 +117,7 @@ export function CommunityPeople({ space }: Props) {
           <h3 className="flex-1 text-xl font-semibold">
             People {!!data?.listSpaceMembers.total && `(${data?.listSpaceMembers.total})`}
           </h3>
-          <Button
-            variant="tertiary-alt"
-            size="sm"
-            iconLeft="icon-user-plus"
-            onClick={() => modal.open(AddCommunityPeople, { props: { spaceId: space._id, onCompleted: refetch } })}
-          >
+          <Button variant="tertiary-alt" size="sm" iconLeft="icon-user-plus" onClick={() => onAddPeople()}>
             Add People
           </Button>
           <Button variant="tertiary-alt" size="sm" iconLeft="icon-download" onClick={handleExport} />
@@ -237,7 +236,18 @@ export function CommunityPeople({ space }: Props) {
             </div>
           </CardTable.Loading>
 
-          <CardTable.EmptyState icon="icon-user-group-outline-2" title="No Data Found" />
+          <CardTable.EmptyState>
+            <div className="flex flex-col gap-5 pt-12 pb-20 items-center justify-center text-tertiary">
+              <i className="icon-user-group-outline size-44 md:size-[184px] text-quaternary" />
+              <div className="space-y-2 text-center">
+                <h3 className="text-xl font-semibold">No Subscribers</h3>
+                <p>When people subscribe to your calendar, they will appear here.</p>
+              </div>
+              <Button iconLeft="icon-plus" variant="tertiary-alt" size="sm" onClick={() => onAddPeople()}>
+                Add People
+              </Button>
+            </div>
+          </CardTable.EmptyState>
 
           {data?.listSpaceMembers?.items?.map((item) => (
             <CardTable.Row key={item._id}>

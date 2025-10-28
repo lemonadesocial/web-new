@@ -95,7 +95,7 @@ const Header = ({ children }: React.PropsWithChildren) => {
 };
 Header.displayName = 'Header';
 
-function Row({ children, striped, className }: React.PropsWithChildren & { striped?: boolean }) {
+function Row({ children, striped }: React.PropsWithChildren & { striped?: boolean }) {
   return <Card.Content className={clsx('p-0', striped && 'backdrop-blur-sm')}>{children}</Card.Content>;
 }
 
@@ -127,7 +127,7 @@ const EmptyState = ({
   subtile,
   icon,
   children,
-}: { title: string; subtile?: string; icon: string } & React.PropsWithChildren) => {
+}: { title?: string; subtile?: string; icon?: string } & React.PropsWithChildren) => {
   return (
     <>
       {children || (

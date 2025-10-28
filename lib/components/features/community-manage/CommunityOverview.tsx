@@ -173,9 +173,20 @@ function UpComingEventsSection({ space, events = [] }: { space: Space; events?: 
           All Events
         </Button>
       </div>
-      {events.map((item) => (
-        <EventCardItem key={item._id} item={item} />
-      ))}
+
+      <div className="flex flex-col gap-3">
+        <div className="p-4 gap-3 items-center hidden only:flex">
+          <i className="icon-confirmation-number size-9 aspect-square text-quaternary" />
+          <div className="text-tertiary space-y-0.5">
+            <p>No Events</p>
+            <p className="text-sm">This community has no upcoming events.</p>
+          </div>
+        </div>
+
+        {events.map((item) => (
+          <EventCardItem key={item._id} item={item} />
+        ))}
+      </div>
     </div>
   );
 }
@@ -302,7 +313,15 @@ function FeaturedHubSection({ spaceId }: { spaceId: string }) {
           </div>
         </CardTable.Loading>
 
-        <CardTable.EmptyState icon="icon-community" title="No Featured Hub" />
+        <CardTable.EmptyState>
+          <div className="p-4 flex gap-3 items-center">
+            <i className="icon-workspaces size-9 aspect-square text-quaternary" />
+            <div className="text-tertiary space-y-0.5">
+              <p>No Featured Hubs</p>
+              <p className="text-sm">Add people who can create or list events without needing admin approval.</p>
+            </div>
+          </div>
+        </CardTable.EmptyState>
 
         {subSpaces.map((item) => (
           <CardTable.Row key={item._id}>
