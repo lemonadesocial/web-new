@@ -23,7 +23,7 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
 
   const form: UseFormReturn<{ selectedAddress: string }> = useForm<{ selectedAddress: string }>({
     defaultValues: {
-      selectedAddress: userWallets[0] || '',
+      selectedAddress: '',
     },
   });
   const setFormInstances = useSetAtom(formInstancesAtom);
