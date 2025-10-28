@@ -2,6 +2,7 @@
 import React from 'react';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
+  AttachSubSpacesDocument,
   DeleteSpaceMembersDocument,
   Event,
   GetSpaceDocument,
@@ -11,6 +12,7 @@ import {
   GetSpacesDocument,
   GetSubSpacesDocument,
   PublicSpace,
+  RemoveSubSpacesDocument,
   Space,
   SpaceMember,
   SpaceRole,
@@ -43,8 +45,6 @@ import { CardTable } from '$lib/components/core/table';
 import { AddTeam } from './modals/AddTeam';
 import { ConfirmModal } from '../modals/ConfirmModal';
 import { Pane } from '$lib/components/core/pane/pane';
-import { space } from 'postcss/lib/list';
-import { setQuarter } from 'date-fns';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 
 const LIMIT = 2;
@@ -58,12 +58,6 @@ export function CommunityOverview({ space: initSpace }: { space?: Space }) {
     initData: { getSpace: initSpace } as unknown as GetSpaceQuery,
   });
   const space = data?.getSpace as Space;
-
-  const { data: subSpacesData, loading } = useQuery(GetSubSpacesDocument, {
-    variables: { id: space?._id },
-    skip: !space?._id,
-  });
-  const subSpaces = (subSpacesData?.getSubSpaces || []) as PublicSpace[];
 
   const { data: dataGetEvent, refetch } = useQuery(GetSpaceEventsDocument, {
     variables: {
@@ -101,7 +95,7 @@ export function CommunityOverview({ space: initSpace }: { space?: Space }) {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0 }}
           >
-            <FeaturedHubSection data={subSpaces} loading={loading} spaceId={space._id} />
+            <FeaturedHubSection spaceId={space._id} />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -239,10 +233,10 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
         {admins.map((item) => (
           <CardTable.Row key={item._id}>
             <div key={item._id} className="flex gap-3 items-center px-4 py-3">
-              <Avatar src={userAvatar(item.user)} className="size-5" />
-              <div className="flex gap-2 flex-1">
+              <Avatar src={userAvatar(item.user)} className="size-5 aspect-square" />
+              <div className="flex gap-2 flex-1 truncate">
                 <p>{item.user_name || item.user?.name || item.user?.display_name || 'Anonymous'}</p>
-                {item.email && <p>{item.email || item.user?.email}</p>}
+                {item.email && <p className="truncate">{item.email || item.user?.email}</p>}
                 <Badge
                   className="rounded-full"
                   title={isCreator ? 'Creator' : 'Admin'}
@@ -274,16 +268,20 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
   );
 }
 
-function FeaturedHubSection({
-  loading,
-  data = [],
-  spaceId,
-}: {
-  data?: PublicSpace[];
-  loading?: boolean;
-  spaceId: string;
-}) {
+function FeaturedHubSection({ spaceId }: { spaceId: string }) {
   const router = useRouter();
+  const { data, loading, refetch } = useQuery(GetSubSpacesDocument, {
+    variables: { id: spaceId },
+    skip: !spaceId,
+  });
+  const subSpaces = (data?.getSubSpaces || []) as PublicSpace[];
+
+  const [removeFeatureHub] = useMutation(RemoveSubSpacesDocument, {
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
   return (
     <CommonSection
       title="Featured Hubs"
@@ -306,15 +304,34 @@ function FeaturedHubSection({
 
         <CardTable.EmptyState icon="icon-community" title="No Featured Hub" />
 
-        {data.map((item) => (
+        {subSpaces.map((item) => (
           <CardTable.Row key={item._id}>
-            <div className="flex gap-3 items-center px-4 py-3 hover:bg-card-hover">
-              {item.image_avatar_expanded && (
-                <Avatar src={generateUrl(item.image_avatar_expanded)} className="size-5" />
-              )}
+            <div className="flex gap-3 items-center px-4 py-3 hover:bg-card-hover flex-1">
+              <Avatar
+                className="size-5 rounded-xs!"
+                src={generateUrl(item.image_avatar_expanded) || `${ASSET_PREFIX}/assets/images/default-dp.png`}
+              />
+
               <p className="flex-1 cursor-pointer" onClick={() => router.push(`/s/${item.slug || item._id}`)}>
                 {item.title}
               </p>
+              <i
+                className="icon-delete size-5 aspect-square text-tertiary hover:text-primary cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  modal.open(ConfirmModal, {
+                    props: {
+                      title: 'Remove Featured Hub',
+                      subtitle: `Are you sure you want to remove ${item.title}?`,
+                      onConfirm: async () => {
+                        await removeFeatureHub({ variables: { id: spaceId, subSpaces: item._id } });
+                        await refetch();
+                        toast.success(`Remove ${item.title} success!`);
+                      },
+                    },
+                  });
+                }}
+              />
             </div>
           </CardTable.Row>
         ))}
@@ -324,12 +341,37 @@ function FeaturedHubSection({
 }
 
 function SubFeatureHubs({ spaceId }: { spaceId: string }) {
+  const [selected, setSelected] = React.useState<string[]>([]);
+  const [unSelected, setUnSelected] = React.useState<string[]>([]);
+  const [query, setQuery] = React.useState('');
+
   const { data } = useQuery(GetSpacesDocument, {
     variables: { roles: [SpaceRole.Admin, SpaceRole.Creator] },
+    skip: !spaceId,
   });
   const spaces = (data?.listSpaces as Space[]) || [];
 
-  const [query, setQuery] = React.useState('');
+  const { data: dataSubSpaces, refetch } = useQuery(GetSubSpacesDocument, {
+    variables: { id: spaceId },
+    skip: !spaceId,
+  });
+  const subSpaceIds = ((dataSubSpaces?.getSubSpaces as PublicSpace[]) || []).map((i) => i._id as string);
+
+  const [attachFeatureHub, { loading: updating }] = useMutation(AttachSubSpacesDocument, {
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const [removeFeatureHub, { loading: removing }] = useMutation(RemoveSubSpacesDocument, {
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  React.useEffect(() => {
+    if (subSpaceIds.length) setSelected(subSpaceIds);
+  }, [subSpaceIds.length]);
 
   return (
     <Pane.Root>
@@ -348,7 +390,18 @@ function SubFeatureHubs({ spaceId }: { spaceId: string }) {
           .filter((i) => i._id !== spaceId)
           .filter((i) => (query ? query.toLowerCase().includes(i.title.toLowerCase()) : true))
           .map((i) => (
-            <Card.Root>
+            <Card.Root
+              key={i._id}
+              onClick={() => {
+                const _selected = selected.includes(i._id) ? selected.filter((s) => s !== i._id) : [...selected, i._id];
+                const _unSelected = selected.includes(i._id)
+                  ? [...unSelected, i._id]
+                  : unSelected.filter((s) => s !== i._id);
+
+                setSelected(_selected);
+                setUnSelected(_unSelected);
+              }}
+            >
               <Card.Content className="py-3 flex items-center gap-3">
                 <Avatar
                   className="size-[38px] rounded-sm!"
@@ -360,11 +413,27 @@ function SubFeatureHubs({ spaceId }: { spaceId: string }) {
                   <p className="text-sm text-tertiary">{i.followers_count || 0} followers</p>
                 </div>
 
-                <Checkbox id={i._id} variant="circle" />
+                <Checkbox id={i._id} variant="circle" value={selected.includes(i._id)} />
               </Card.Content>
             </Card.Root>
           ))}
       </Pane.Content>
+
+      <Pane.Footer className="p-4">
+        <Button
+          variant="secondary"
+          loading={updating || removing}
+          disabled={!selected.length}
+          onClick={async () => {
+            if (unSelected.length > 0) await removeFeatureHub({ variables: { id: spaceId, subSpaces: unSelected } });
+            if (selected.length > 0) await attachFeatureHub({ variables: { id: spaceId, subSpaces: selected } });
+            toast.success('Hubs added successfully.');
+            refetch();
+          }}
+        >
+          Add Hubs
+        </Button>
+      </Pane.Footer>
     </Pane.Root>
   );
 }

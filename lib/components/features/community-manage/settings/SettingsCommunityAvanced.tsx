@@ -5,14 +5,13 @@ import {
   GetSpaceDocument,
   GetSpaceQuery,
   Space,
-  SpaceState,
   UpdateSpaceDocument,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
-import { ASSET_PREFIX } from '$lib/utils/constants';
 import React from 'react';
 import { TitleDescModal } from '../modals/TitleDescModal';
 import { ConfirmModal } from '../../modals/ConfirmModal';
+import { ChangeStatusModal } from '../modals/ChangeStatusModal';
 
 export function SettingsCommunityAvanced(props: { space: Space }) {
   const { data } = useQuery(GetSpaceDocument, {
@@ -30,7 +29,7 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
   });
 
   const [deleteSpace] = useMutation(DeleteSpaceDocument, {
-    onComplete(client, response) {
+    onComplete(_client, response) {
       if (response.deleteSpace) {
         window.location.href = '/communities';
       }
@@ -181,7 +180,7 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
           <Card.Content className="p-0 divide-y divide-(--color-divider)">
             <div className="flex justify-between items-center py-3 px-4">
               <div className="flex gap-3 items-center">
-                <div className="p-1.5 bg-card rounded-sm size7 aspect-square flex items-center justify-center bg-success-400/16">
+                <div className="p-1.5 rounded-sm size7 aspect-square flex items-center justify-center bg-success-400/16">
                   <i className="icon-calendar text-success-400 size-4" />
                 </div>
                 <div>
@@ -192,33 +191,14 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
                 </div>
               </div>
 
-              <Menu.Root placement="bottom-end">
-                <Menu.Trigger>
-                  <Button size="sm" variant="tertiary-alt" className="capitalize">
-                    {space.state}
-                  </Button>
-                </Menu.Trigger>
-                <Menu.Content className="p-1 w-32">
-                  {({ toggle }) => (
-                    <>
-                      <MenuItem
-                        title="Active"
-                        onClick={() => {
-                          handleUpdate({ state: SpaceState.Active });
-                          toggle();
-                        }}
-                      />
-                      <MenuItem
-                        title="Archive"
-                        onClick={() => {
-                          handleUpdate({ state: SpaceState.Archived });
-                          toggle();
-                        }}
-                      />
-                    </>
-                  )}
-                </Menu.Content>
-              </Menu.Root>
+              <Button
+                size="sm"
+                variant="tertiary-alt"
+                className="capitalize"
+                onClick={() => modal.open(ChangeStatusModal, { props: { space } })}
+              >
+                Change Status
+              </Button>
             </div>
           </Card.Content>
         </Card.Root>

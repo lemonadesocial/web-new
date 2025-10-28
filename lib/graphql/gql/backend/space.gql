@@ -461,3 +461,25 @@ mutation ManageSpaceTag($tagged: Boolean!, $target: String!, $id: MongoID!, $spa
 mutation DeleteSpaceTag($id: MongoID!, $space: MongoID!) {
   deleteSpaceTag(_id: $id, space: $space)
 }
+
+mutation AttachSubSpaces($id: MongoID!, $subSpaces: [String!]!) {
+  attachSubSpaces(_id: $id, sub_spaces: $subSpaces)
+}
+
+mutation RemoveSubSpaces($subSpaces: [MongoID!]!, $id: MongoID!) {
+  removeSubSpaces(sub_spaces: $subSpaces, _id: $id)
+}
+
+mutation UpdateSubSpaceOrder($id: MongoID!, $subSpaces: [MongoID!]!) {
+  updateSubSpaceOrder(_id: $id, sub_spaces: $subSpaces)
+}
+
+mutation UpsertSpaceTag($input: SpaceTagInput!) {
+  insertSpaceTag(input: $input) {
+    ...SpaceTagFragment
+  }
+}
+
+mutation DeleteSpaceTag($id: MongoID!, $space: MongoID!) {
+  deleteSpaceTag(_id: $id, space: $space)
+}

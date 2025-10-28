@@ -11,9 +11,10 @@ interface RootProps<T> extends React.PropsWithChildren {
   loading?: boolean;
   rows?: number;
   data?: Array<T>;
+  className?: string;
 }
 
-function Root<T>({ data = [], loading: fetching, children }: RootProps<T>) {
+function Root<T>({ data = [], loading: fetching, children, className }: RootProps<T>) {
   const header = React.Children.map(children, (child: any) => {
     if (child?.type && child?.type?.displayName === 'Header') {
       return child;
@@ -51,7 +52,7 @@ function Root<T>({ data = [], loading: fetching, children }: RootProps<T>) {
 
   return (
     <div className="flex flex-col gap-3">
-      <Card.Root>
+      <Card.Root className={className}>
         {(!!data.length || fetching) && header}
 
         <AnimatePresence mode="wait">
@@ -94,7 +95,7 @@ const Header = ({ children }: React.PropsWithChildren) => {
 };
 Header.displayName = 'Header';
 
-function Row({ children, striped }: React.PropsWithChildren & { striped?: boolean }) {
+function Row({ children, striped, className }: React.PropsWithChildren & { striped?: boolean }) {
   return <Card.Content className={clsx('p-0', striped && 'backdrop-blur-sm')}>{children}</Card.Content>;
 }
 

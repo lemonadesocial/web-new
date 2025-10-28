@@ -3,6 +3,7 @@
 import { Badge, Button, InputField, modal, ModalContent } from '$lib/components/core';
 import { AddSpaceMembersDocument, SpaceRole } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
+import { isValidEmail } from '$lib/utils/string';
 import React from 'react';
 
 export function AddTeam({
@@ -83,8 +84,9 @@ function InputTags({ value = [], onChange }: { value?: string[]; onChange?: (val
             value={text}
             onChange={(e) => setText(e.currentTarget.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                const arr = [...tags, e.currentTarget.value];
+              const email = e.currentTarget.value;
+              if (e.key === 'Enter' && isValidEmail(email)) {
+                const arr = [...tags, email];
                 setText('');
                 setTags(arr);
                 onChange?.(arr);

@@ -14,20 +14,27 @@ import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
 import React from 'react';
 import { ConfirmModal } from '../../modals/ConfirmModal';
+import { AddTeam } from '../modals/AddTeam';
 
 export function SettingsCommunityTeam({ space }: { space: Space }) {
   const me = useMe();
   const [list, setList] = React.useState<SpaceMember[]>([]);
 
-  const { data, loading } = useQuery(GetSpaceMembersDocument, {
-    variables: { space: space?._id, limit: 100, skip: 0 },
+  const [mounted, setMounted] = React.useState(false);
+
+  const { data, loading, refetch } = useQuery(GetSpaceMembersDocument, {
+    variables: { space: space?._id, limit: 100, skip: 0, deletion: false },
     skip: !space?._id,
+    onComplete: () => {
+      if (!mounted) setMounted(true);
+    },
   });
 
   const [removeMember] = useMutation(DeleteSpaceMembersDocument);
 
   const handleRemove = async (id: string) => {
     await removeMember({ variables: { input: { space: space._id, ids: [id] } } });
+    await refetch();
     setList((prev) => prev.filter((i) => i._id !== id));
   };
 
@@ -43,14 +50,32 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
         <div>
           <div className="flex justify-between items-center">
             <h3 className="text-xl font-semibold flex-1">Admins</h3>
-            <Button iconLeft="icon-plus" size="sm" variant="tertiary-alt">
+            <Button
+              iconLeft="icon-plus"
+              size="sm"
+              variant="tertiary-alt"
+              onClick={() =>
+                modal.open(AddTeam, {
+                  props: {
+                    spaceId: space._id,
+                    icon: 'icon-user',
+                    title: 'Add Admins',
+                    subtitle:
+                      'Add admins by entering their email addresses. They don’t need to have an existing Lemonade account.',
+                    btnText: 'Add Admins',
+                    role: SpaceRole.Admin,
+                    onCompleted: refetch,
+                  },
+                })
+              }
+            >
               Add Admin
             </Button>
           </div>
           <p className="text-secondary">Admins have full access to the community and can approve events.</p>
         </div>
 
-        <CardTable.Root loading={loading}>
+        <CardTable.Root loading={!mounted && loading}>
           <CardTable.Loading rows={5}>
             <Skeleton className="size-8 aspect-square rounded-full" animate />
             <Skeleton className="h-5 w-32" animate />
@@ -90,6 +115,7 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
 
                       modal.open(ConfirmModal, {
                         props: {
+                          icon: 'icon-user-remove',
                           title,
                           subtitle,
                           buttonText,
@@ -110,7 +136,25 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
         <div>
           <div className="flex justify-between items-center">
             <h3 className="text-xl font-semibold flex-1">Ambassadors</h3>
-            <Button iconLeft="icon-plus" size="sm" variant="tertiary-alt">
+            <Button
+              iconLeft="icon-plus"
+              size="sm"
+              variant="tertiary-alt"
+              onClick={() =>
+                modal.open(AddTeam, {
+                  props: {
+                    spaceId: space._id,
+                    icon: 'icon-user',
+                    title: 'Add Ambassadors',
+                    subtitle:
+                      'Add ambassadors by entering their email addresses. They don’t need to have an existing Lemonade account.',
+                    btnText: 'Add Ambassadors',
+                    role: SpaceRole.Ambassador,
+                    onCompleted: refetch,
+                  },
+                })
+              }
+            >
               Add Ambassador
             </Button>
           </div>
@@ -135,7 +179,7 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
             </Card.Content>
           </Card.Root>
 
-          <CardTable.Root loading={loading}>
+          <CardTable.Root loading={!mounted && loading}>
             <CardTable.Loading rows={5}>
               <Skeleton className="size-8 aspect-square rounded-full" animate />
               <Skeleton className="h-5 w-32" animate />
@@ -152,7 +196,7 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
             {list
               .filter((i) => i.role === SpaceRole.Ambassador)
               ?.map((item) => (
-                <CardTable.Row>
+                <CardTable.Row key={item._id}>
                   <div className="px-4 py-3 flex items-center justify-between">
                     <div className="flex gap-3 items-center">
                       <Avatar src={userAvatar(item.user_expanded as unknown as User)} />
@@ -166,6 +210,7 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
                       onClick={() => {
                         modal.open(ConfirmModal, {
                           props: {
+                            icon: 'icon-user-remove',
                             title: 'Remove Ambassador?',
                             subtitle: 'Are you sure you want to remove this ambassador? They will lose access to it.',
                             onConfirm: () => handleRemove(item._id),
