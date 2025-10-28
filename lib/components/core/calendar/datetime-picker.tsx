@@ -134,6 +134,12 @@ export function DateTimePicker({
     onSelect(args.value.toISOString());
   };
 
+  React.useEffect(() => {
+    if (timezone) {
+      setDate(toZonedTime(new Date(value), timezone));
+    }
+  }, [timezone]);
+
   return (
     <div className={twMerge('flex gap-0.5', className)}>
       <Menu.Root className="trigger-date" placement={placement}>
