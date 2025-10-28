@@ -12,6 +12,7 @@ import { LAUNCH_CHAIN_ID } from '$lib/utils/constants';
 import clsx from 'clsx';
 import { launchToken, TOTAL_SUPPLY } from '$lib/services/token-launch-pad';
 import { JsonRpcProvider, BrowserProvider, Eip1193Provider } from 'ethers';
+import { formatError } from '$lib/utils/crypto';
 
 type SplitFeeRecipient = {
   address: string;
@@ -82,8 +83,6 @@ export function CreateCoin() {
   const watchedStartingMarketcap = watch('startingMarketcap');
   const watchedFairLaunchPercentage = watch('fairLaunchPercentage');
 
-  console.log(launchChain)
-
   const handleAddTag = () => {
     // TODO: Implement tag addition logic
   };
@@ -93,7 +92,6 @@ export function CreateCoin() {
       const file = files[0];
       setValue('image', file);
       trigger('image');
-      console.log('Uploaded file:', file);
     }
   };
 
@@ -255,8 +253,6 @@ export function CreateCoin() {
 
   const handleTokenCreation = async (data: FormData) => {
     try {
-      console.log('Form submitted:', data);
-
       if (!data.image) {
         throw new Error('No image provided');
       }
@@ -303,8 +299,6 @@ export function CreateCoin() {
         usdcMarketCap: BigInt(5000000000)
       }
 
-      console.log(params)
-
       await launchToken(
         launchChain.launchpad_zap_contract_address!,
         launchChain.launchpad_treasury_address_fee_split_manager_implementation_contract_address!,
@@ -314,7 +308,7 @@ export function CreateCoin() {
       )
 
     } catch (error) {
-      console.error(error);
+      toast.error(formatError(error));
     }
   };
 
