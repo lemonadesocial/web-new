@@ -87,7 +87,7 @@ export const FarcasterAuthPrompt = (props: {
   if (done) return (
     <SuccessModal
       title="Welcome to Lemonade!"
-      description='Your account is ready, and your Unicorn wallet is already linked. Start exploring events, communities, and collectibles!'
+      description='Your account is ready, and your Farcaster wallet is already linked. Start exploring events, communities, and collectibles!'
       buttonText='Start Exploring'
     />
   )
