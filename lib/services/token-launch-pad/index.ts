@@ -73,7 +73,7 @@ export const createGroup = async (
   };
 }
 
-interface LaunchTokenParams {
+export interface LaunchTokenParams {
   name: string;
   symbol: string;
   tokenUri: string;
@@ -97,16 +97,19 @@ interface LaunchTokenParams {
   };
 }
 
-export const launchToken = async (
-  zapContractAddress: string, //-- get from chain
-  addressFeeSplitManagerImplementationContract: string, //-- get from chain
-  rpcProvider: ethers.Provider, //-- RPC provider for read operations
-  signer: ethers.Signer, //-- signer for write operations
+export interface LaunchTokenTxParams {
+  coinData: any[];
+  flaunchParams: any[];
+  fee: bigint;
+}
+
+export const getLaunchTokenParams = async (
+  zapContractAddress: string,
+  addressFeeSplitManagerImplementationContract: string,
+  rpcProvider: ethers.Provider,
   params: LaunchTokenParams,
-) => {
-  // Create contracts for read and write operations
+): Promise<LaunchTokenTxParams> => {
   const readContract = new ethers.Contract(zapContractAddress, ZapContractABI.abi, rpcProvider);
-  const writeContract = new ethers.Contract(zapContractAddress, ZapContractABI.abi, signer);
 
   const initialPriceParams = ethers.AbiCoder.defaultAbiCoder().encode(['tuple(uint256)'], [[params.usdcMarketCap]]);
 
@@ -130,6 +133,7 @@ export const launchToken = async (
     ])]
   );
 
+  //-- assemble coin data for the launch
   const coinData = [
     params.name,
     params.symbol,
@@ -147,7 +151,7 @@ export const launchToken = async (
 
   const flaunchParams = params.feeSplit?.length ? [
     coinData,
-    await signer.getAddress(), //-- use actual signer address
+    params.creator, //-- use creator address from params
     '0x', //-- premine swap hook data (empty bytes)
     ['0x', '0x', 0], //-- whitelist params (empty bytes for strings)
     [0, 0, 0, '0x', '0x'], //-- airdrop params (empty bytes for strings)
@@ -162,15 +166,33 @@ export const launchToken = async (
     ]
   ] : [
     coinData,
-    await ethers.ZeroAddress, //-- open permission
+    ethers.ZeroAddress, //-- open permission
     '0x', //-- premine swap hook data (empty bytes)
   ];
 
-  const estimatedGas = await writeContract.flaunch.estimateGas(...flaunchParams, { value: fee });
+  return {
+    coinData,
+    flaunchParams,
+    fee,
+  };
+}
 
-  const tx : ethers.TransactionResponse = await writeContract.flaunch(...flaunchParams, { 
-    value: fee,
-    gasLimit: estimatedGas
+export const executeLaunchToken = async (
+  zapContractAddress: string,
+  rpcProvider: ethers.Provider,
+  signer: ethers.Signer,
+  txParams: LaunchTokenTxParams,
+) => {
+  const writeContract = new ethers.Contract(zapContractAddress, ZapContractABI.abi, signer);
+  const readContract = new ethers.Contract(zapContractAddress, ZapContractABI.abi, rpcProvider);
+
+  //-- estimate gas for the transaction
+  const estimatedGas = await writeContract.flaunch.estimateGas(...txParams.flaunchParams, { value: txParams.fee });
+
+  //-- write operation: launch the token
+  const tx: ethers.TransactionResponse = await writeContract.flaunch(...txParams.flaunchParams, {
+    value: txParams.fee,
+    gasLimit: estimatedGas,
   });
 
   const receipt = await tx.wait();
@@ -196,6 +218,23 @@ export const launchToken = async (
     flaunch,
     tokenId,
   };
+}
+
+export const launchToken = async (
+  zapContractAddress: string, //-- get from chain
+  addressFeeSplitManagerImplementationContract: string, //-- get from chain
+  rpcProvider: ethers.Provider, //-- RPC provider for read operations
+  signer: ethers.Signer, //-- signer for write operations
+  params: LaunchTokenParams,
+) => {
+  const txParams = await getLaunchTokenParams(
+    zapContractAddress,
+    addressFeeSplitManagerImplementationContract,
+    rpcProvider,
+    params,
+  );
+
+  return executeLaunchToken(zapContractAddress, rpcProvider, signer, txParams);
 }
 
 export const launchTokenToGroup = async (
