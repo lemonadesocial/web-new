@@ -1,18 +1,22 @@
 'use client';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, Textarea, FileInput, Toggle, Input, Segment, NumberInput, modal, toast } from '$lib/components/core';
-import { InputField } from '$lib/components/core/input/input-field';
-import { TokenReleaseScheduleModal } from './TokenReleaseScheduleModal';
-import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
-import { appKit, useAppKitAccount, useAppKitNetwork, useAppKitProvider } from '$lib/utils/appkit';
 import { useAtomValue } from 'jotai';
+import { JsonRpcProvider } from 'ethers';
+import clsx from 'clsx';
+
+import { appKit } from '$lib/utils/appkit';
+import { Button, Textarea, FileInput, Toggle, Input, Segment, modal, toast } from '$lib/components/core';
+import { InputField } from '$lib/components/core/input/input-field';
+import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 import { chainsMapAtom } from '$lib/jotai';
 import { LAUNCH_CHAIN_ID } from '$lib/utils/constants';
-import clsx from 'clsx';
-import { launchToken, TOTAL_SUPPLY } from '$lib/services/token-launch-pad';
-import { JsonRpcProvider, BrowserProvider, Eip1193Provider } from 'ethers';
+import { TOTAL_SUPPLY, getLaunchTokenParams } from '$lib/services/token-launch-pad';
 import { formatError } from '$lib/utils/crypto';
+import type { LaunchTokenParams } from '$lib/services/token-launch-pad';
+
+import { TokenReleaseScheduleModal } from './TokenReleaseScheduleModal';
+import { CreateCoinModal } from './CreateCoinModal';
 
 type SplitFeeRecipient = {
   address: string;
@@ -62,7 +66,6 @@ export function CreateCoin() {
 
   const chainsMap = useAtomValue(chainsMapAtom);
   const launchChain = chainsMap[LAUNCH_CHAIN_ID];
-  const { walletProvider } = useAppKitProvider('eip155');
 
   // Register validation rules
   register('ticker', { required: 'Ticker is required' });
@@ -77,6 +80,7 @@ export function CreateCoin() {
   const [currentAllocationAddress, setCurrentAllocationAddress] = useState('');
   const [isFairLaunchExpanded, setIsFairLaunchExpanded] = useState(false);
   const [isMarketcapExpanded, setIsMarketcapExpanded] = useState(false);
+  const [isLoading, setisLoading] = useState(false);
 
   const watchedImage = watch('image');
   const watchedFeeReceiverShare = watch('feeReceiverShare');
@@ -263,31 +267,25 @@ export function CreateCoin() {
         throw new Error('No address found');
       }
 
-      // Create a JSON-RPC provider for contract calls
-      const rpcProvider = new JsonRpcProvider(launchChain.rpc_url);
+      setisLoading(true);
 
-      // Convert walletProvider to ethers Signer
-      const browserProvider = new BrowserProvider(walletProvider! as Eip1193Provider);
-      const signer = await browserProvider.getSigner();
+      const formData = new FormData();
+      formData.append('file', data.image);
+      formData.append('coinName', data.coinName);
+      formData.append('ticker', data.ticker);
+      formData.append('description', data.description);
 
-      // const formData = new FormData();
-      // formData.append('file', data.image);
-      // formData.append('coinName', data.coinName);
-      // formData.append('ticker', data.ticker);
-      // formData.append('description', data.description);
+      const response = await fetch('/api/token-metadata', {
+        method: 'POST',
+        body: formData,
+      });
 
-      // const response = await fetch('/api/token-metadata', {
-      //   method: 'POST',
-      //   body: formData,
-      // });
+      const result = await response.json();
 
-      // const result = await response.json();
+      const tokenUri = result.tokenUri;
+      // const tokenUri = 'ipfs://bafkreicpy37i5ppeafcayktxsll56c3zm246owhqspqgw5qxt4fxsvdetu';
 
-      // const tokenUri = result.tokenUri;
-      const tokenUri = 'ipfs://bafkreicpy37i5ppeafcayktxsll56c3zm246owhqspqgw5qxt4fxsvdetu';
-      
-
-      const params = {
+      const params: LaunchTokenParams = {
         name: data.coinName,
         symbol: data.ticker,
         tokenUri,
@@ -297,18 +295,28 @@ export function CreateCoin() {
         creator: address,
         creatorFeeAllocation: 80,
         usdcMarketCap: BigInt(5000000000)
-      }
+      };
 
-      await launchToken(
+      const rpcProvider = new JsonRpcProvider(launchChain.rpc_url);
+
+      const txParams = await getLaunchTokenParams(
         launchChain.launchpad_zap_contract_address!,
         launchChain.launchpad_treasury_address_fee_split_manager_implementation_contract_address!,
         rpcProvider,
-        signer,
-        params
-      )
+        params,
+      );
 
+      setisLoading(false);
+
+      modal.open(CreateCoinModal, {
+        props: {
+          txParams,
+        }
+      });
     } catch (error) {
       toast.error(formatError(error));
+    } finally {
+      setisLoading(false);
     }
   };
 
@@ -839,6 +847,7 @@ export function CreateCoin() {
         <Button
           type="submit"
           variant="secondary"
+          loading={isLoading}
         >
           Create Coin
         </Button>
