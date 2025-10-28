@@ -19,7 +19,7 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
 
   const setBuyerWallet = useSetAtom(buyerWalletAtom);
 
-  const userWallets = [...(me?.wallets_new?.ethereum ?? []), me?.kratos_unicorn_wallet_address].filter((wallet: string) => wallet && wallet !== me?.wallet_custodial);
+  const userWallets = (me?.wallets_new?.ethereum ?? []).filter((wallet: string) => wallet && wallet !== me?.wallet_custodial);
 
   const form: UseFormReturn<{ selectedAddress: string }> = useForm<{ selectedAddress: string }>({
     defaultValues: {
