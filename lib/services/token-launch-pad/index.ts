@@ -138,16 +138,12 @@ export const launchToken = async (
     params.fairLaunchDuration,
     params.premineAmount,
     params.creator,
-    params.creatorFeeAllocation,
+    params.creatorFeeAllocation * 100,
     params.launchAt || 0, // Default to 0 if launchAt is undefined
     initialPriceParams,
     feeCalculatorParams,
     creatorVestingParams,
   ];
-
-  console.log('coinData:', coinData);
-  console.log('fee:', fee);
-  console.log('fee as hex:', fee.toString(16));
 
   const flaunchParams = params.feeSplit?.length ? [
     coinData,
@@ -166,12 +162,16 @@ export const launchToken = async (
     ]
   ] : [
     coinData,
-    await signer.getAddress(), //-- use actual signer address
+    await ethers.ZeroAddress, //-- open permission
     '0x', //-- premine swap hook data (empty bytes)
   ];
 
-  //-- write operation: launch the token
-  const tx : ethers.TransactionResponse = await writeContract.flaunch(...flaunchParams, { value: fee });
+  const estimatedGas = await writeContract.flaunch.estimateGas(...flaunchParams, { value: fee });
+
+  const tx : ethers.TransactionResponse = await writeContract.flaunch(...flaunchParams, { 
+    value: fee,
+    gasLimit: estimatedGas
+  });
 
   const receipt = await tx.wait();
 
