@@ -17,6 +17,7 @@ import type { LaunchTokenParams } from '$lib/services/token-launch-pad';
 
 import { TokenReleaseScheduleModal } from './TokenReleaseScheduleModal';
 import { CreateCoinModal } from './CreateCoinModal';
+import { CoinDistributionBar } from './CoinDistributionBar';
 
 type SplitFeeRecipient = {
   address: string;
@@ -28,9 +29,8 @@ type AllocationRecipient = {
   address: string;
   percentage: number;
   locked: boolean;
-  lockedSupply: number; // Percentage of allocation that is locked
-  cliff: number; // months
-  duration: number; // months
+  cliff: number;
+  duration: number;
   interval: 'monthly' | 'daily';
 };
 
@@ -45,7 +45,31 @@ type FormData = {
   feeReceiverShare: number;
   startingMarketcap: number;
   fairLaunchPercentage: number;
+  allocationRecipients: AllocationRecipient[];
 };
+
+function normalizeRecipientPercentages(allocationRecipients: AllocationRecipient[]) {
+  const vestingPercentage = allocationRecipients.reduce((sum, recipient) => sum + recipient.percentage, 0);
+  const SECONDS_PER_DAY = 86400;
+  const DAYS_PER_MONTH = 30;
+  if (vestingPercentage === 0 || allocationRecipients.length === 0) return [];
+
+  let total = 0;
+  const rawPercentages = allocationRecipients.map(r => (r.percentage / vestingPercentage) * 100);
+  const normalized = rawPercentages.map((p, i) =>
+    i === allocationRecipients.length - 1
+      ? Math.round((100 - total) * 100) / 100
+      : (() => { const val = Math.round(p * 100) / 100; total += val; return val; })()
+  );
+
+  return allocationRecipients.map((recipient, i) => ({
+    cliff: recipient.cliff * SECONDS_PER_DAY,
+    duration: recipient.duration * SECONDS_PER_DAY,
+    period: (recipient.interval === 'monthly' ? DAYS_PER_MONTH : 1) * SECONDS_PER_DAY,
+    beneficiary: recipient.address,
+    percentage: normalized[i],
+  }));
+}
 
 export function CreateCoin() {
   const { register, handleSubmit, watch, setValue, trigger, formState: { errors } } = useForm<FormData>({
@@ -58,8 +82,9 @@ export function CreateCoin() {
       sniperProtection: false,
       splitFeeRecipients: [],
       feeReceiverShare: 80,
-      startingMarketcap: 50000,
+      startingMarketcap: 5000,
       fairLaunchPercentage: 10,
+      allocationRecipients: [{ address: '', percentage: 0, locked: false, cliff: 6, duration: 12, interval: 'monthly' }],
     },
     mode: 'onChange'
   });
@@ -76,16 +101,16 @@ export function CreateCoin() {
   const [currentAddress, setCurrentAddress] = useState('');
   const [activeTab, setActiveTab] = useState<'users' | 'community'>('users');
   const [launchMode, setLaunchMode] = useState<'fast' | 'advanced'>('fast');
-  const [allocationRecipients, setAllocationRecipients] = useState<AllocationRecipient[]>([]);
-  const [currentAllocationAddress, setCurrentAllocationAddress] = useState('');
-  const [isFairLaunchExpanded, setIsFairLaunchExpanded] = useState(false);
+  const { allocationRecipients } = watch();
+  const setAllocationRecipients = (recipients: AllocationRecipient[]) => setValue('allocationRecipients', recipients);
+  const [isCoinDistributionExpanded, setIsCoinDistributionExpanded] = useState(false);
   const [isMarketcapExpanded, setIsMarketcapExpanded] = useState(false);
   const [isLoading, setisLoading] = useState(false);
 
   const watchedImage = watch('image');
   const watchedFeeReceiverShare = watch('feeReceiverShare');
   const watchedStartingMarketcap = watch('startingMarketcap');
-  const watchedFairLaunchPercentage = watch('fairLaunchPercentage');
+  const watchedCoinDistributionPercentage = watch('fairLaunchPercentage');
 
   const handleAddTag = () => {
     // TODO: Implement tag addition logic
@@ -180,16 +205,14 @@ export function CreateCoin() {
 
   const handleAddAllocationRecipient = () => {
     const newRecipient: AllocationRecipient = {
-      address: currentAllocationAddress.trim(),
+      address: '',
       percentage: 0,
       locked: false,
-      lockedSupply: 50, // Default 50% of allocation is locked
       cliff: 6,
       duration: 12,
       interval: 'monthly'
     };
     setAllocationRecipients([...allocationRecipients, newRecipient]);
-    setCurrentAllocationAddress('');
   };
 
   const handleUpdateAllocationAddress = (index: number, address: string) => {
@@ -201,12 +224,6 @@ export function CreateCoin() {
   const handleUpdateAllocationPercentage = (index: number, percentage: number) => {
     const newRecipients = [...allocationRecipients];
     newRecipients[index] = { ...newRecipients[index], percentage };
-    setAllocationRecipients(newRecipients);
-  };
-
-  const handleToggleAllocationLock = (index: number) => {
-    const newRecipients = [...allocationRecipients];
-    newRecipients[index] = { ...newRecipients[index], locked: !newRecipients[index].locked };
     setAllocationRecipients(newRecipients);
   };
 
@@ -244,7 +261,6 @@ export function CreateCoin() {
           const newRecipients = [...allocationRecipients];
           newRecipients[index] = {
             ...newRecipients[index],
-            lockedSupply: data.lockedSupply,
             cliff: data.cliff,
             duration: data.duration,
             interval: data.interval
@@ -269,21 +285,24 @@ export function CreateCoin() {
 
       setisLoading(true);
 
-      const formData = new FormData();
-      formData.append('file', data.image);
-      formData.append('coinName', data.coinName);
-      formData.append('ticker', data.ticker);
-      formData.append('description', data.description);
+      // const formData = new FormData();
+      // formData.append('file', data.image);
+      // formData.append('coinName', data.coinName);
+      // formData.append('ticker', data.ticker);
+      // formData.append('description', data.description);
 
-      const response = await fetch('/api/token-metadata', {
-        method: 'POST',
-        body: formData,
-      });
+      // const response = await fetch('/api/token-metadata', {
+      //   method: 'POST',
+      //   body: formData,
+      // });
 
-      const result = await response.json();
+      // const result = await response.json();
 
-      const tokenUri = result.tokenUri;
-      // const tokenUri = 'ipfs://bafkreicpy37i5ppeafcayktxsll56c3zm246owhqspqgw5qxt4fxsvdetu';
+      // const tokenUri = result.tokenUri;
+      const tokenUri = 'ipfs://bafkreicpy37i5ppeafcayktxsll56c3zm246owhqspqgw5qxt4fxsvdetu';
+
+      const vestingPercentage = allocationRecipients.reduce((sum, recipient) => sum + recipient.percentage, 0);
+      const vestingRecipients = normalizeRecipientPercentages(allocationRecipients);
 
       const params: LaunchTokenParams = {
         name: data.coinName,
@@ -293,9 +312,22 @@ export function CreateCoin() {
         fairLaunchDuration: 300,
         premineAmount: BigInt(0),
         creator: address,
-        creatorFeeAllocation: 80,
-        usdcMarketCap: BigInt(5000000000)
+        creatorFeeAllocation: data.feeReceiverShare,
+        usdcMarketCap: BigInt(data.startingMarketcap) * BigInt(1_000_000),
+        feeSplit: data.splitFeeRecipients.map(recipient => ({
+          recipient: recipient.address,
+          percentage: recipient.percentage,
+        })),
+        vesting: vestingPercentage > 0 ? {
+          amount: BigInt(vestingPercentage) * TOTAL_SUPPLY / BigInt(100),
+          recipients: vestingRecipients,
+        } : undefined,
       };
+
+      console.log({
+        amount: BigInt(vestingPercentage) * TOTAL_SUPPLY / BigInt(100),
+        recipients: vestingRecipients,
+      })
 
       const rpcProvider = new JsonRpcProvider(launchChain.rpc_url);
 
@@ -557,8 +589,9 @@ export function CreateCoin() {
                   <div className="space-y-3">
                     <Input
                       value={currentAddress}
+                      min={0}
                       onChange={(e) => setCurrentAddress(e.target.value)}
-                      placeholder="Wallet Address or ENS"
+                      placeholder="Wallet Address"
                       variant="outlined"
                     />
                   </div>
@@ -575,7 +608,7 @@ export function CreateCoin() {
                         <Input
                           value={recipient.address}
                           onChange={(e) => handleUpdateAddress(index, e.target.value)}
-                          placeholder="Wallet Address or ENS"
+                          placeholder="Wallet Address"
                           variant="outlined"
                         />
 
@@ -650,12 +683,14 @@ export function CreateCoin() {
         {
           isAvandedMode && <>
             <div className="bg-card border border-card-border rounded-md">
-              <div
+              <div 
                 className="flex items-center justify-between p-4 cursor-pointer"
                 onClick={() => setIsMarketcapExpanded(!isMarketcapExpanded)}
               >
                 <p className="text-lg font-medium">Starting Marketcap</p>
-                <i className={clsx('icon-chevron-down size-5.5 transition-transform', isMarketcapExpanded && 'rotate-180')} />
+                <div className={clsx('p-2 rounded-full bg-primary/8 flex items-center justify-center transition-transform', isMarketcapExpanded && 'rotate-180')}>
+                  <i className="icon-chevron-down size-4 text-tertiary" />
+                </div>
               </div>
 
               {isMarketcapExpanded && (
@@ -696,24 +731,29 @@ export function CreateCoin() {
             </div>
 
             <div className="bg-card border border-card-border rounded-md">
-              <div
+              <div 
                 className="flex items-center justify-between p-4 cursor-pointer"
-                onClick={() => setIsFairLaunchExpanded(!isFairLaunchExpanded)}
+                onClick={() => setIsCoinDistributionExpanded(!isCoinDistributionExpanded)}
               >
                 <p className="text-lg font-medium">
-                  {
-                    isFairLaunchExpanded ? 'Fair Launch' : 'Fair Launch & Initial Allocation'
-                  }
+                  Core Distribution
                 </p>
-                <i className={clsx('icon-chevron-down size-5.5 transition-transform', isFairLaunchExpanded && 'rotate-180')} />
+                <div className={clsx('p-2 rounded-full bg-primary/8 flex items-center justify-center transition-transform', isCoinDistributionExpanded && 'rotate-180')}>
+                  <i className="icon-chevron-down size-4 text-tertiary" />
+                </div>
               </div>
 
-              {isFairLaunchExpanded && (
+              {isCoinDistributionExpanded && <>
+                <CoinDistributionBar
+                  fairLaunchPercentage={watchedCoinDistributionPercentage}
+                  initialAllocationPercentage={allocationRecipients.reduce((sum, recipient) => sum + recipient.percentage, 0)}
+                />
                 <div>
                   {/* Fair Launch Section */}
-                  <div className="space-y-4 p-4 pt-0">
+                  <div className="space-y-4 p-4 border-t border-t-divider">
+                    <p className="text-lg">Fair Launch</p>
                     <InputField
-                      value={watchedFairLaunchPercentage.toString()}
+                      value={watchedCoinDistributionPercentage.toString()}
                       onChangeText={(value) => {
                         const numValue = Math.max(0, Math.min(100, parseFloat(value) || 0));
                         setValue('fairLaunchPercentage', numValue);
@@ -729,11 +769,11 @@ export function CreateCoin() {
                           type="range"
                           min="0"
                           max="100"
-                          value={watchedFairLaunchPercentage}
+                          value={watchedCoinDistributionPercentage}
                           onChange={(e) => setValue('fairLaunchPercentage', parseInt(e.target.value))}
                           className="w-full h-2 bg-quaternary rounded-lg appearance-none cursor-pointer slider"
                           style={{
-                            background: `linear-gradient(to right, #ffffff 0%, #ffffff ${watchedFairLaunchPercentage}%, rgba(255, 255, 255, 0.24)${watchedFairLaunchPercentage}%, rgba(255, 255, 255, 0.24) 100%)`
+                            background: `linear-gradient(to right, #ffffff 0%, #ffffff ${watchedCoinDistributionPercentage}%, rgba(255, 255, 255, 0.24)${watchedCoinDistributionPercentage}%, rgba(255, 255, 255, 0.24) 100%)`
                           }}
                         />
                         <div className="flex justify-between mt-3">
@@ -745,101 +785,74 @@ export function CreateCoin() {
                     <p className="text-tertiary text-sm">Portion of tokens released publicly at launch. Unsold tokens are burned.</p>
                   </div>
 
-                  <hr className="border-t border-t-divider" />
                   {/* Initial Allocation Section */}
-                  <div className="space-y-4 p-4">
+                  <div className="space-y-4 p-4 border-t border-t-divider">
                     <p className="text-lg">Initial Allocation</p>
 
-                    {/* Initial state - single address input */}
-                    {allocationRecipients.length === 0 && (
-                      <div className="space-y-3">
-                        <Input
-                          value={currentAllocationAddress}
-                          onChange={(e) => setCurrentAllocationAddress(e.target.value)}
-                          placeholder="Wallet Address or ENS"
-                          variant="outlined"
-                        />
-                      </div>
-                    )}
-
-                    {/* Recipients list - when there are recipients */}
-                    {allocationRecipients.length > 0 && (
-                      <div className="space-y-4">
-                        {allocationRecipients.map((recipient, index) => (
-                          <div key={index} className="space-y-2">
-                            <div className="flex gap-2">
-                              <Input
-                                value={recipient.address}
-                                onChange={(e) => handleUpdateAllocationAddress(index, e.target.value)}
-                                placeholder="Wallet Address or ENS"
-                                variant="outlined"
-                                className="flex-1"
-                              />
-                              <InputField
-                                value={recipient.percentage.toString()}
-                                onChangeText={(value) => {
-                                  const numValue = parseFloat(value) || 0;
-                                  handleUpdateAllocationPercentage(index, numValue);
-                                }}
-                                subfix="%"
-                                readOnly={recipient.locked}
-                                type="number"
-                              />
-                              <Button
-                                type="button"
-                                variant="tertiary"
-                                icon="icon-lock"
-                                onClick={() => handleToggleAllocationLock(index)}
-                                className={clsx(recipient.locked && 'bg-warning-400 text-primary')}
-                              />
-                              <Button
-                                type="button"
-                                variant="tertiary"
-                                icon="icon-tune"
-                                onClick={() => handleOpenTokenReleaseModal(index)}
-                              />
+                    <div className="space-y-4">
+                      {allocationRecipients.map((recipient, index) => (
+                        <div key={index} className="space-y-2">
+                          <div className="flex gap-2">
+                            <Input
+                              value={recipient.address}
+                              onChange={(e) => handleUpdateAllocationAddress(index, e.target.value)}
+                              placeholder="Wallet Address"
+                              variant="outlined"
+                              className="flex-1"
+                            />
+                            <InputField
+                              value={recipient.percentage.toString()}
+                              onChangeText={(value) => {
+                                const numValue = parseFloat(value) || 0;
+                                handleUpdateAllocationPercentage(index, numValue);
+                              }}
+                              subfix="%"
+                              type="number"
+                            />
+                            <Button
+                              type="button"
+                              variant="tertiary"
+                              icon="icon-tune"
+                              onClick={() => handleOpenTokenReleaseModal(index)}
+                            />
+                            {allocationRecipients.length > 1 && (
                               <Button
                                 type="button"
                                 variant="tertiary"
                                 icon="icon-delete"
                                 onClick={() => handleRemoveAllocationRecipient(index)}
                               />
-                            </div>
-                            <p className="text-tertiary text-sm">
-                              {recipient.lockedSupply}% locked · {recipient.cliff}m cliff · {recipient.duration}m vesting ({recipient.interval})
-                            </p>
+                            )}
                           </div>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="flex justify-between">
-                      <Button
-                        type="button"
-                        variant="tertiary"
-                        size="sm"
-                        iconLeft="icon-plus"
-                        onClick={handleAddAllocationRecipient}
-                        disabled={allocationRecipients.length === 0 && !currentAllocationAddress.trim()}
-                      >
-                        Add Another
-                      </Button>
-
-                      {allocationRecipients.length > 1 && (
-                        <Button
-                          type="button"
-                          variant="tertiary"
-                          size="sm"
-                          iconLeft="icon-arrow-split"
-                          onClick={handleSplitAllocationEvenly}
-                        >
-                          Split Evenly
-                        </Button>
-                      )}
+                          {recipient.address && (
+                            <p className="text-tertiary text-sm">
+                              {recipient.cliff}m cliff · {recipient.duration}m vesting ({recipient.interval})
+                            </p>
+                          )}
+                        </div>
+                      ))}
                     </div>
+
+                    <Button
+                      type="button"
+                      variant="tertiary"
+                      size="sm"
+                      iconLeft="icon-plus"
+                      onClick={handleAddAllocationRecipient}
+                    >
+                      Add Another
+                    </Button>
+
+                    <p className="text-tertiary text-sm">
+                      {(() => {
+                        const initialAllocationTotal = allocationRecipients.reduce((sum, recipient) => sum + recipient.percentage, 0);
+                        const liquidityPoolPercentage = 100 - watchedCoinDistributionPercentage - initialAllocationTotal;
+                        return `Remaining ${liquidityPoolPercentage.toFixed(1)}% will be allocated to the liquidity pool.`;
+                      })()}
+                    </p>
                   </div>
                 </div>
-              )}
+              </>}
             </div>
           </>
         }
