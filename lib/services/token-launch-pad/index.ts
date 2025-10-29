@@ -151,10 +151,10 @@ export const getLaunchTokenParams = async (
 
   const flaunchParams = params.feeSplit?.length ? [
     coinData,
-    params.creator, //-- use creator address from params
-    '0x', //-- premine swap hook data (empty bytes)
-    ['0x', '0x', 0], //-- whitelist params (empty bytes for strings)
-    [0, 0, 0, '0x', '0x'], //-- airdrop params (empty bytes for strings)
+    ethers.ZeroAddress, //-- open permission
+    ethers.ZeroHash, //-- premine swap hook data (bytes32)
+    [ethers.ZeroHash, ethers.ZeroHash, 0], //-- whitelist params (bytes32 for merkleRoot)
+    [0, 0, 0, ethers.ZeroHash, ethers.ZeroHash], //-- airdrop params (bytes32 for merkleRoots)
     [
       addressFeeSplitManagerImplementationContract,
       ethers.ZeroAddress, //-- open permission
@@ -162,7 +162,7 @@ export const getLaunchTokenParams = async (
         ['uint256', 'uint256', 'tuple(address,uint256)[]'],
         [0, 0, params.feeSplit.map(fee => [fee.recipient, fee.percentage * 100000])], //-- 1% = 1_00000
       ),
-      '0x', //-- no deposit data (empty bytes)
+      ethers.ZeroHash, //-- no deposit data (bytes32)
     ]
   ] : [
     coinData,
