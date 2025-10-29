@@ -42,6 +42,8 @@ export function CreateCoinModal({
 
       const writeContract = new Contract(launchChain.launchpad_zap_contract_address!, ZapContractABI.abi, signer);
 
+      console.log(txParams)
+
       const estimatedGas = await writeContract.flaunch.estimateGas(...txParams.flaunchParams, { value: txParams.fee });
       
       const tx = await writeContract.flaunch(...txParams.flaunchParams, {
@@ -55,6 +57,7 @@ export function CreateCoinModal({
 
       setStatus('success');
     } catch (err: any) {
+      console.log(err)
       setError(formatError(err));
       setStatus('error');
     }

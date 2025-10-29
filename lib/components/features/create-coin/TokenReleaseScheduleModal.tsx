@@ -7,9 +7,8 @@ type AllocationRecipient = {
   address: string;
   percentage: number;
   locked: boolean;
-  lockedSupply: number; // Percentage of allocation that is locked
-  cliff: number; // months
-  duration: number; // months
+  cliff: number;
+  duration: number;
   interval: 'monthly' | 'daily';
 };
 
@@ -18,10 +17,9 @@ export function TokenReleaseScheduleModal({
   onConfirm,
 }: {
   recipient: AllocationRecipient;
-  onConfirm: (data: Pick<AllocationRecipient, 'lockedSupply' | 'cliff' | 'duration' | 'interval'>) => void;
+  onConfirm: (data: Pick<AllocationRecipient, 'cliff' | 'duration' | 'interval'>) => void;
 }) {
   const [tokenReleaseForm, setTokenReleaseForm] = useState({
-    lockedSupply: recipient.lockedSupply || 50, // Use recipient's lockedSupply or default to 50%
     cliffPeriod: recipient.cliff,
     vestingSchedule: recipient.duration,
     unlocks: recipient.interval
@@ -32,7 +30,6 @@ export function TokenReleaseScheduleModal({
       cliff: tokenReleaseForm.cliffPeriod,
       duration: tokenReleaseForm.vestingSchedule,
       interval: tokenReleaseForm.unlocks,
-      lockedSupply: tokenReleaseForm.lockedSupply
     });
     modal.close();
   };
@@ -49,16 +46,6 @@ export function TokenReleaseScheduleModal({
             {`${formatWallet(recipient.address)} · ${recipient.percentage}%`}
           </p>
           <p className="text-tertiary text-sm mt-1">Control when your tokens become available.</p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-1.5 items-center">
-          <p className="text-secondary text-sm">Locked Supply</p>
-          <InputField
-            value={tokenReleaseForm.lockedSupply.toString()}
-            onChangeText={(value) => setTokenReleaseForm(prev => ({ ...prev, lockedSupply: parseInt(value) || 0 }))}
-            type="number"
-            subfix="%"
-          />
         </div>
 
         <div className="grid grid-cols-2 gap-1.5 items-center">
@@ -95,7 +82,7 @@ export function TokenReleaseScheduleModal({
 
         {/* Summary Text */}
         <p className="text-secondary text-sm">
-          {tokenReleaseForm.lockedSupply}% of tokens unlock after {tokenReleaseForm.cliffPeriod} months, released {tokenReleaseForm.unlocks === 'monthly' ? 'monthly' : 'daily'} over the next {tokenReleaseForm.vestingSchedule} months.
+          Tokens unlock after {tokenReleaseForm.cliffPeriod} months, released {tokenReleaseForm.unlocks === 'monthly' ? 'monthly' : 'daily'} over the next {tokenReleaseForm.vestingSchedule} months.
         </p>
 
         <Button
