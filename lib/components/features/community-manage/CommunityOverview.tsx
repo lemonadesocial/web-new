@@ -156,8 +156,6 @@ function ListActions({ spaceId }: { spaceId: string }) {
 function UpComingEventsSection({ space, events = [] }: { space: Space; events?: Event[] }) {
   const router = useRouter();
 
-  if (!events.length) return null;
-
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between mb-1">
@@ -200,7 +198,6 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
   const [removeMember] = useMutation(DeleteSpaceMembersDocument);
 
   const me = useMe();
-  if (!admins.length) return null;
   const isCreator = me?._id === space.creator;
 
   return (
@@ -239,7 +236,15 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
           </div>
         </CardTable.Loading>
 
-        <CardTable.EmptyState icon="icon-community" title="No Featured Hub" />
+        <CardTable.EmptyState>
+          <div className="p-4 flex gap-3 items-center">
+            <i className="icon-user-group-outline size-9 aspect-square text-quaternary" />
+            <div className="text-tertiary space-y-0.5">
+              <p>No Admins</p>
+              <p className="text-sm">Add people who can manage community.</p>
+            </div>
+          </div>
+        </CardTable.EmptyState>
 
         {admins.map((item) => (
           <CardTable.Row key={item._id}>
