@@ -73,7 +73,15 @@ export function SettingsCommunityTags({ space }: { space: Space }) {
             </div>
           </CardTable.Loading>
 
-          <CardTable.EmptyState icon="icon-tag" title="No Data Found" />
+          <CardTable.EmptyState>
+            <div className="p-4 flex gap-3 items-center">
+              <i className="icon-price-tag-filled size-9 aspect-square text-quaternary" />
+              <div className="text-tertiary space-y-0.5">
+                <p>No Tags</p>
+                <p className="text-sm">Create event tags to let visitors filter events by category.</p>
+              </div>
+            </div>
+          </CardTable.EmptyState>
 
           {eventTags?.map((item, idx) => (
             <CardTable.Row key={item._id}>
@@ -163,7 +171,15 @@ export function SettingsCommunityTags({ space }: { space: Space }) {
             </div>
           </CardTable.Loading>
 
-          <CardTable.EmptyState icon="icon-tag" title="No Data Found" />
+          <CardTable.EmptyState>
+            <div className="p-4 flex gap-3 items-center">
+              <i className="icon-price-tag-filled size-9 aspect-square text-quaternary" />
+              <div className="text-tertiary space-y-0.5">
+                <p>No Tags</p>
+                <p className="text-sm">Tag members to better organize and communicate with them.</p>
+              </div>
+            </div>
+          </CardTable.EmptyState>
 
           {memberTags?.map((item, idx) => (
             <CardTable.Row key={item._id}>
