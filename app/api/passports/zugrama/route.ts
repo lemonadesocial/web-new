@@ -16,9 +16,13 @@ export async function GET(request: NextRequest) {
   const authCookie = request.cookies.get(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME)?.value;
   assert.ok(authCookie);
 
-  const passportData = await getData(wallet, authCookie);
+  const passportData = await getData(authCookie);
 
   assert.ok(passportData);
+
+  if (!passportData?.selfVerifiedTimestamp) {
+    return NextResponse.json({ error: 'Self not verified' }, { status: 400 });
+  }
 
   const mintData = await getMintZuGramaPassportData(
     passportData.userId,

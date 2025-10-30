@@ -4,8 +4,8 @@ export const getApproval = async (wallet: string, user: string, uri: string) => 
   return request<{ signature: string; price: string; }>(`/passport/zugrama/approval`, 'POST', { wallet, user, uri });
 };
 
-export const getData = async (wallet: string, authCookie: string) => {
+export const getData = async (authCookie: string) => {
   return request<{userId: string; passportNumber: number; selfVerifiedTimestamp: number; }>(
-    `/passport/zugrama/data?wallet=${wallet}&auth=${authCookie}`, 'GET'
+    `/passport/zugrama/data?auth=${authCookie}`, 'GET'
   );
 };
