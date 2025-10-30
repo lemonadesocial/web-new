@@ -3,7 +3,7 @@ import orgs from 'open-graph-scraper';
 
 import { getMintNftData } from '$lib/services/lemonhead';
 import { calculateLookHash, Filter, getFinalTraits, validateTraits, type Trait } from '$lib/services/lemonhead/core';
-import { getMintLemonadePassportData } from '$lib/services/lemonade-passport';
+import { getMintLemonadePassportData } from '$lib/services/passports/lemonade';
 
 import { publicProcedure, router } from './trpc';
 import lemonheads, { BuildQueryParams } from './lemonheads';

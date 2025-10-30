@@ -1,5 +1,6 @@
 import assert from "assert";
 import path from "path";
+import { deregisterAllFonts, registerFont } from "canvas";
 
 import { getImageFromBuffers } from "../../nft/image";
 import { getUriFromUrl, uploadImage, uploadJSON } from "../../nft/storage";
@@ -7,7 +8,8 @@ import { getUriFromUrl, uploadImage, uploadJSON } from "../../nft/storage";
 import { getEnsUsername } from "../common/ens";
 import { formatDate } from "../common/format";
 import { getFileImageBuffer, getTextImageBuffer, getUrlImageBuffer, Point } from "../common/canvas";
-import { deregisterAllFonts, registerFont } from "canvas";
+
+import { getApproval, getData } from "./admin";
 
 const regularFontPath = path.join(process.cwd(), "data", "zugrama-passport", "regular.ttf");
 const boldFontPath = path.join(process.cwd(), "data", "zugrama-passport", "semibold.ttf");
@@ -27,6 +29,7 @@ const secondLineY = 476;
 
 const avatarOffset: Point = { x: 88, y: 193 };
 const usernameOffset: Point = { x: 495, y: 236 };
+
 const passportIdOffset: Point = { x: firstColumnX, y: firstLineY };
 const mintDateOffset: Point = { x: secondColumnX, y: firstLineY };
 const titleOffset: Point = { x: firstColumnX, y: secondLineY };
@@ -36,7 +39,7 @@ const createMetadata = (imageUrl: string, passportId: string) => {
   return {
     image: imageUrl,
     attributes: [
-      { trait_type: 'passport_number', value: passportId },
+      { trait_type: 'Passport ID', value: passportId },
     ]
   };
 };
@@ -91,10 +94,11 @@ export const getMintZuGramaPassportData = async (
   userId: string,
   wallet: string,
   avatarImageUrl: string,
-  ensForUserName?: boolean,
+  ensForUserName?: boolean, //-- this should always be true, use false for testing
 ) => {
-  // const passportData = await getData(wallet, userId);
-  // assert.ok(passportData && passportData.lemonheadTokenId);
+  const passportData = await getData(wallet, userId);
+
+  assert.ok(passportData && passportData.passportId && passportData.selfVerifiedTimestamp > 0);
 
   let username = wallet.toLowerCase();
 
@@ -102,14 +106,12 @@ export const getMintZuGramaPassportData = async (
     username = await getEnsUsername(wallet);
   }
 
-  username = 'a'.repeat(12);
-
   assert.ok(username);
 
-  const passportId = '123'; //passportData.lemonheadTokenId.padStart(8, '0');
+  const passportId = passportData.passportId.toString().padStart(8, '0');
 
   const creationDate = formatDate(new Date());
-  const verifiedDate = formatDate(new Date());
+  const verifiedDate = formatDate(new Date(passportData.selfVerifiedTimestamp));
 
   const buffers = await Promise.all([
     getAvatarImageBuffer(avatarImageUrl),
@@ -137,16 +139,16 @@ export const getMintZuGramaPassportData = async (
   const uri = getUriFromUrl(metadataUrl);
 
   //-- call backend API and obtain the signature
-  // const data = await getApproval(wallet, uri);
+  const data = await getApproval(wallet, userId, uri);
 
-  // if (!data) {
-  //   throw new Error('Failed to get minting approval');
-  // }
+  if (!data) {
+    throw new Error('Failed to get minting approval');
+  }
 
   return {
     //-- use these to call the contract minting function
-    // signature: data.signature,
-    // price: data.price,
+    signature: data.signature,
+    price: data.price,
     metadata: uri,
 
     //-- for display purposes
