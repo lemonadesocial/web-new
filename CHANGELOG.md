@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.18.0](https://github.com/lemonadesocial/web-new/compare/v8.17.0...v8.18.0) (2025-10-30)
+
+
+### Features
+
+* update name from ethdenver ([bf2b77b](https://github.com/lemonadesocial/web-new/commit/bf2b77b4552af453d71bff579c79ab20611ba206))
+
 ## [8.17.0](https://github.com/lemonadesocial/web-new/compare/v8.16.0...v8.17.0) (2025-10-28)
 
 
