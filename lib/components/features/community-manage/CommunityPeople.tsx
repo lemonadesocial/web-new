@@ -260,7 +260,10 @@ export function CommunityPeople({ space }: Props) {
                 }
               >
                 <div className="flex-1 flex gap-3 items-center">
-                  <Avatar src={userAvatar(item.user_expanded as unknown as User)} />
+                  <Avatar
+                    className="size-7 md:size-5 aspect-square"
+                    src={userAvatar(item.user_expanded as unknown as User)}
+                  />
                   <div className="flex flex-col md:flex-row md:gap-3 md:items-center flex-1">
                     <p>
                       {item.user_name || item.user_expanded?.display_name || item.user_expanded?.name || 'Anonymous'}

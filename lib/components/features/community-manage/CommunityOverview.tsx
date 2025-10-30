@@ -332,7 +332,7 @@ function FeaturedHubSection({ spaceId }: { spaceId: string }) {
           <CardTable.Row key={item._id}>
             <div className="flex gap-3 items-center px-4 py-3 hover:bg-card-hover flex-1">
               <Avatar
-                className="size-5 rounded-xs!"
+                className="size-7 md:size-5 rounded-xs!"
                 src={generateUrl(item.image_avatar_expanded) || `${ASSET_PREFIX}/assets/images/default-dp.png`}
               />
 
