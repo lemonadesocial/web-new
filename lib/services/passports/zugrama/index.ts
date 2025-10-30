@@ -90,6 +90,44 @@ const getVerifiedDateImageBuffer = async (verifiedDate: string) => {
   return getTextImageBuffer(outputWidth, outputHeight, regularFont, verifiedDate, verifiedDateOffset, '#ffffff');
 }
 
+export const getMintZuGramaPassportImage = async (
+  userId: string,
+  wallet: string,
+  avatarImageUrl?: string,
+  username?: string,
+) => {
+  const passportData = await getData(wallet, userId);
+
+  const passportId = passportData?.passportId?.toString().padStart(8, '0') || 'XXXXXXXX';
+
+  const creationDate = formatDate(new Date());
+  const verifiedDate = passportData?.selfVerifiedTimestamp ? formatDate(new Date(passportData.selfVerifiedTimestamp)) : 'XXXXXXXX';
+
+  const layerPromises: Array<Promise<Buffer>> = [
+    getBoilerplateImageBuffer(),
+    getUsernameImageBuffer(username || 'XXXXXXXX'),
+    getPassportIdImageBuffer(passportId),
+    getMintDateImageBuffer(creationDate),
+    getTitleImageBuffer('Founding Citizen'),
+    getVerifiedDateImageBuffer(verifiedDate),
+  ];
+  
+  if (avatarImageUrl) layerPromises.unshift(getAvatarImageBuffer(avatarImageUrl));
+
+  const buffers = await Promise.all(layerPromises);
+
+  const finalImage = await getImageFromBuffers(
+    buffers,
+    outputWidth,
+    outputHeight,
+    'png',
+  );
+
+  const base64 = finalImage.toString('base64');
+  const dataUrl = `data:image/png;base64,${base64}`;
+  return { image: dataUrl };
+};
+
 export const getMintZuGramaPassportData = async (
   userId: string,
   wallet: string,

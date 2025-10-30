@@ -4,6 +4,7 @@ import orgs from 'open-graph-scraper';
 import { getMintNftData } from '$lib/services/lemonhead';
 import { calculateLookHash, Filter, getFinalTraits, validateTraits, type Trait } from '$lib/services/lemonhead/core';
 import { getMintLemonadePassportData } from '$lib/services/passports/lemonade';
+import { getMintZuGramaPassportImage } from '$lib/services/passports/zugrama';
 
 import { publicProcedure, router } from './trpc';
 import lemonheads, { BuildQueryParams } from './lemonheads';
@@ -91,6 +92,21 @@ export const appRouter = router({
       const { wallet, ensForUserName, lemonadeUsername, fluffleTokenId } = input;
       return getMintLemonadePassportData(wallet, ensForUserName, lemonadeUsername, fluffleTokenId);
     }),
+  zugrama: {
+    getImage: publicProcedure
+      .input(
+        z.object({
+          userId: z.string(),
+          wallet: z.string(),
+          avatarImageUrl: z.string().optional(),
+          username: z.string().optional(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const { userId, wallet, avatarImageUrl, username } = input;
+        return getMintZuGramaPassportImage(userId, wallet, avatarImageUrl, username);
+      }),
+  },
 });
 
 export type AppRouter = typeof appRouter;

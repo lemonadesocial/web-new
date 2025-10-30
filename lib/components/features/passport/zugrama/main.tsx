@@ -71,7 +71,7 @@ function Content() {
         <div className="w-full max-w-[1200px] h-full mx-auto flex flex-col-reverse md:flex-row gap-6 md:gap-18 p-4 md:p-0 overflow-auto">
           <Comp />
           {
-            state.currentStep !== PassportStep.celebrate && <PassportPreview loading={loading} />
+            state.currentStep !== PassportStep.celebrate && <PassportPreview />
           }
         </div>
       </div>

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useAppKitAccount } from '$lib/utils/appkit';
 import { ethers } from 'ethers';
 import { mainnet } from 'viem/chains';
-import { Button, Card, toast } from '$lib/components/core';
+import { Button, Card, Skeleton, toast } from '$lib/components/core';
 import { formatError } from '$lib/utils/crypto';
 import { PassportActionKind, usePassportContext } from '../provider';
 
@@ -42,12 +42,15 @@ export function PassportUsername() {
       </div>
 
       {isLoading ? (
-        <Card.Root>
-          <Card.Content className="py-12 flex flex-col items-center gap-4">
-            <i className="icon-eth text-tertiary/60 text-6xl" />
-            <p className="text-xl text-tertiary">Checking ENS...</p>
-          </Card.Content>
-        </Card.Root>
+        <div className="px-3 py-4 rounded-md flex items-center gap-4 bg-card w-full">
+          <div className="flex items-center justify-center p-2 rounded-sm bg-primary/8 aspect-square">
+            <i className="icon-ens size-[22px]" />
+          </div>
+          <div className="space-y-0.5 flex-1">
+            <Skeleton animate className="h-5 w-[160px] rounded-full" />
+            <Skeleton className="h-4 w-[100px] rounded-full mt-1" />
+          </div>
+        </div>
       ) : !state.ensName ? (
         <div className="flex flex-col gap-5 pt-12 pb-6 items-center rounded-md border border-divider border-dashed">
           <i className="icon-ens size-[128px] text-tertiary" />
