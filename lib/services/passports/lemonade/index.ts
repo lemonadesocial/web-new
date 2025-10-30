@@ -1,5 +1,3 @@
-import { client } from '$lib/utils/lens/client';
-import { fetchAccount } from '@lens-protocol/client/actions';
 import { createCanvas, deregisterAllFonts, Image, registerFont } from 'canvas';
 import assert from 'assert';
 import { ethers } from 'ethers';
@@ -11,7 +9,35 @@ import { getImageFromBuffers } from '$lib/services/nft/image';
 import { getUriFromUrl, uploadImage, uploadJSON } from '$lib/services/nft/storage';
 
 import { getApproval, getData } from "./admin";
-import { avatarOffset, avatarSize, creationDateOffset, DESCRIPTION, fontSize, outputHeight, outputWidth, passportIdOffset, Point, usernameOffset } from "./common";
+import { Point } from "../common/canvas";
+
+export const DESCRIPTION = 'Lemonade Passport is the enttry point to Lemonade Ecosystem';
+
+const outputWidth = 2160;
+const outputHeight = 1350;
+
+const avatarOffset: Point = {
+  x: 175,
+  y: 367,
+};
+
+const avatarSize = 610;
+const fontSize = 70;
+
+const usernameOffset: Point = {
+  x: 990,
+  y: 439,
+};
+
+const passportIdOffset: Point = {
+  x: 960,
+  y: 720,
+};
+
+const creationDateOffset: Point = {
+  x: 1517,
+  y: 720,
+};
 
 const regularFontPath = path.join(process.cwd(), "data", "passport", "regular.otf");
 const boldFontPath = path.join(process.cwd(), "data", "passport", "bold.otf");
