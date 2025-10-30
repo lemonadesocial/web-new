@@ -371,7 +371,6 @@ function MintModal({
         traits: traits.filter(Boolean).map(({ _id, image, ...rest }) => rest),
         sponsor: sponsor?._id,
       });
-      console.log('Mint data:', mintData);
 
       if (!contractAddress) throw new Error('LemonheadNFT contract address not set');
       if (!walletProvider) throw new Error('No wallet provider found');
@@ -417,7 +416,6 @@ function MintModal({
         setInterval(() => {
           setCount((prev) => prev - 1);
         }, 1000);
-        console.log('Token ID:', tokenId);
       }
     } catch (error: any) {
       Sentry.captureException(error, {

@@ -13,7 +13,7 @@ import { useMe } from '$lib/hooks/useMe';
 import React from 'react';
 
 export function EventList({
-  events,
+  events = [],
   loading,
   onSelect,
 }: {

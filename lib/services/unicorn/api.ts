@@ -1,3 +1,5 @@
+import { SiwePayload } from "../../components/features/unicorn/client";
+
 const request = async <T>(uri: string, method: "GET" | "POST" = "GET", body?: any): Promise<T> => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTITY_URL}${uri}`, {
     method,
@@ -17,5 +19,5 @@ export const getUnicornCanLink = (cookie: string) =>
     `/api/unicorn/canlink?auth_cookie=${cookie}`,
   );
 
-export const linkUnicornWallet = (identifier: string, cookie: string) =>
-  request(`/api/unicorn/link`, "POST", { identifier, auth_cookie: cookie });
+export const linkUnicornWallet = (identifier: string, cookie: string, siwe: SiwePayload) =>
+  request(`/api/unicorn/link`, "POST", { identifier, auth_cookie: cookie, siwe });

@@ -1,5 +1,124 @@
 # Changelog
 
+## [8.18.0](https://github.com/lemonadesocial/web-new/compare/v8.17.0...v8.18.0) (2025-10-30)
+
+
+### Features
+
+* update name from ethdenver ([bf2b77b](https://github.com/lemonadesocial/web-new/commit/bf2b77b4552af453d71bff579c79ab20611ba206))
+
+## [8.17.0](https://github.com/lemonadesocial/web-new/compare/v8.16.0...v8.17.0) (2025-10-28)
+
+
+### Features
+
+* update unicorn copy ([35cbe59](https://github.com/lemonadesocial/web-new/commit/35cbe595543bffaf11a19a86e881e31e9113717d))
+
+## [8.16.0](https://github.com/lemonadesocial/web-new/compare/v8.15.0...v8.16.0) (2025-10-28)
+
+
+### Features
+
+* remove unicorn from eth requirements ([18c2e39](https://github.com/lemonadesocial/web-new/commit/18c2e39a9eb084e0fd6d5a7b832296b6b5730eef))
+
+
+### Bug Fixes
+
+* allow unicorn wallet in event application form ([bd5fc3c](https://github.com/lemonadesocial/web-new/commit/bd5fc3c6bb3910cd9e2e9134ed8e0c09634cf7bc))
+* buyer wallet not subbmitted ([7f4ac39](https://github.com/lemonadesocial/web-new/commit/7f4ac391968e12462d10c725a72eba11645ac35f))
+* format date in timzone issue (date-fns-tz) ([7087303](https://github.com/lemonadesocial/web-new/commit/7087303367481efdd0a96d1c7cfbe00ddba5e2d0))
+* update format timezone datetime picker ([aaa43c7](https://github.com/lemonadesocial/web-new/commit/aaa43c75e90acb3873315bba47040674cb8c5b63))
+* update time when change timezone ([bda0e1b](https://github.com/lemonadesocial/web-new/commit/bda0e1b55bd567cb294f537c3681f3e8632e45cb))
+* user atom source ([8ca81db](https://github.com/lemonadesocial/web-new/commit/8ca81db4e4250f1f32d769ff17725b7cbaa66583))
+
+## [8.15.0](https://github.com/lemonadesocial/web-new/compare/v8.14.0...v8.15.0) (2025-10-25)
+
+
+### Features
+
+* **self-xyz:** add default config values ([395358e](https://github.com/lemonadesocial/web-new/commit/395358e8f71bd376e8924a624822465381476c77))
+
+## [8.14.0](https://github.com/lemonadesocial/web-new/compare/v8.13.1...v8.14.0) (2025-10-24)
+
+
+### Features
+
+* check token balance ([3001beb](https://github.com/lemonadesocial/web-new/commit/3001bebc40e3ad99e8d17cbb8d6059828098d975))
+
+## [8.13.1](https://github.com/lemonadesocial/web-new/compare/v8.13.0...v8.13.1) (2025-10-23)
+
+
+### Bug Fixes
+
+* **unicorn:** perform logout before registration ([1351096](https://github.com/lemonadesocial/web-new/commit/1351096dd14addc988f53a5c11af141d7e5413cb))
+
+## [8.13.0](https://github.com/lemonadesocial/web-new/compare/v8.12.0...v8.13.0) (2025-10-23)
+
+
+### Features
+
+* display unicorn wallet in settings ([438e1a3](https://github.com/lemonadesocial/web-new/commit/438e1a37f1dc9069b9eefaae6dbad85d38bf0b33))
+
+
+### Bug Fixes
+
+* verified wallet not displaying ([241ade0](https://github.com/lemonadesocial/web-new/commit/241ade021e39657bf5c06e492d6190c8325a361c))
+
+## [8.12.0](https://github.com/lemonadesocial/web-new/compare/v8.11.0...v8.12.0) (2025-10-23)
+
+
+### Features
+
+* upgrade appkit ([19bea43](https://github.com/lemonadesocial/web-new/commit/19bea437885ad68f7804240edc96339d460fe80c))
+
+
+### Bug Fixes
+
+* update single ticket token gating ([35e4786](https://github.com/lemonadesocial/web-new/commit/35e4786ec3e7b89a47344d35458bc62c7a8d52b4))
+
+## [8.11.0](https://github.com/lemonadesocial/web-new/compare/v8.10.1...v8.11.0) (2025-10-22)
+
+
+### Features
+
+* cleanup & revert package versions ([88a3c6b](https://github.com/lemonadesocial/web-new/commit/88a3c6b521433daf86eb0c44f4bfacd8182db43a))
+* config wagmi ([97d0db9](https://github.com/lemonadesocial/web-new/commit/97d0db98d27ae6fd62bc55a251b1d437736640fc))
+* revert change to appkit lib ([8989cff](https://github.com/lemonadesocial/web-new/commit/8989cff229688fa4f116376a80b673d19c2a211e))
+* sync wallet ([a23f708](https://github.com/lemonadesocial/web-new/commit/a23f7083c3656d5e09b154cec1598bc3fa47168a))
+* **unicorn:** handle unicorn siwe ([08143f9](https://github.com/lemonadesocial/web-new/commit/08143f9559f2213fb795dee322369d182f6621c5))
+* working wagmi config ([fc0bc04](https://github.com/lemonadesocial/web-new/commit/fc0bc04b5f29fab690e3fb762bc9abc1e08e3fcf))
+
+
+### Bug Fixes
+
+* fix lint stage ([149f398](https://github.com/lemonadesocial/web-new/commit/149f3988291ff518b3a04c8c204cc755ddd79a29))
+* fix package version ([bff230d](https://github.com/lemonadesocial/web-new/commit/bff230d5dc61793334d16eed0e58e47c449eca49))
+* fix window is not defined ([340c84b](https://github.com/lemonadesocial/web-new/commit/340c84ba152dd3ad9a6de48233e2bf4a34269011))
+* use search params ([9bb5942](https://github.com/lemonadesocial/web-new/commit/9bb594217f737b74e691b5fb6c2a79582ba3b02e))
+
+## [8.10.1](https://github.com/lemonadesocial/web-new/compare/v8.10.0...v8.10.1) (2025-10-22)
+
+
+### Bug Fixes
+
+* update route profile when not connect wallet or no username ([b0401da](https://github.com/lemonadesocial/web-new/commit/b0401dafa7ed34ef85ad8df3946cee48c5f0d255))
+
+## [8.10.0](https://github.com/lemonadesocial/web-new/compare/v8.9.0...v8.10.0) (2025-10-21)
+
+
+### Features
+
+* collectible on mobile ([142e978](https://github.com/lemonadesocial/web-new/commit/142e978a24bf6132371101838a3c80519dcc8246))
+* display unicorn wallet ([3f055f6](https://github.com/lemonadesocial/web-new/commit/3f055f672e8657a40ae30ec0c931255fbafc078d))
+* update mobile manage event ([37918b7](https://github.com/lemonadesocial/web-new/commit/37918b7eb62579d1c9c559577fbf3ee432b84555))
+
+
+### Bug Fixes
+
+* loading update short id ([775110b](https://github.com/lemonadesocial/web-new/commit/775110bcb827f95609887dda10725222ff112c81))
+* overflow issues on modals ([d092544](https://github.com/lemonadesocial/web-new/commit/d092544c20434cdd4f271a383b4e0e251adfe1a7))
+* truncate email ([fb5f152](https://github.com/lemonadesocial/web-new/commit/fb5f152cc3c1a17395081643a41272e145154e59))
+
 ## [8.9.0](https://github.com/lemonadesocial/web-new/compare/v8.8.3...v8.9.0) (2025-10-20)
 
 

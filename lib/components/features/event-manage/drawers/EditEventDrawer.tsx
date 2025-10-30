@@ -21,14 +21,13 @@ import { useMutation } from '$lib/graphql/request';
 import { ThemeValues } from '$lib/components/features/theme-builder/store';
 import { DateTimeGroup, Timezone } from '$lib/components/core/calendar';
 import { getUserTimezoneOption } from '$lib/utils/timezone';
-import { combineDateAndTimeWithTimezone } from '$lib/utils/date';
+import { combineDateAndTimeWithTimezone, convertFromUtcToTimezone } from '$lib/utils/date';
 import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 import { Pane } from '$lib/components/core/pane/pane';
 import { useUpdateEvent } from '../store';
 import { ThemeSettings } from './ThemeSettings';
 import { ThemeProvider, useTheme } from '../../theme-builder/provider';
 import { ReoderSectionsModal } from '../modals/ReoderSectionsModal';
-import { formatInTimeZone } from 'date-fns-tz';
 
 type FormValues = {
   title: string;
@@ -58,6 +57,7 @@ export function EditEventDrawer({ event }: { event: Event }) {
 
 function EditEventDrawerContent({ event }: { event: Event }) {
   const [timezone, setTimeZone] = React.useState(getUserTimezoneOption(event.timezone || ''));
+  console.log(event.start);
 
   const {
     register,
@@ -71,12 +71,8 @@ function EditEventDrawerContent({ event }: { event: Event }) {
       description: event.description || '',
       theme_data: event.theme_data,
       date: {
-        start: !event.timezone
-          ? event.start
-          : formatInTimeZone(event.start, event.timezone!, 'yyyy-MM-dd hh:mm:ss').toString() || new Date().toString(),
-        end: !event.timezone
-          ? event.end
-          : formatInTimeZone(event.end, event.timezone!, 'yyyy-MM-dd hh:mm:ss').toString() || new Date().toString(),
+        start: event.start,
+        end: event.end,
         timezone: event.timezone || getUserTimezoneOption()?.value || 'UTC',
       },
       address: {
@@ -114,8 +110,14 @@ function EditEventDrawerContent({ event }: { event: Event }) {
   const onSubmit = (values: FormValues) => {
     if (!event._id) return;
 
-    const startDate = combineDateAndTimeWithTimezone(new Date(values.date.start), values.date.timezone);
-    const endDate = combineDateAndTimeWithTimezone(new Date(values.date.end), values.date.timezone);
+    const startDate =
+      values.date.start !== event.start
+        ? combineDateAndTimeWithTimezone(new Date(values.date.start), values.date.timezone)
+        : values.date.start;
+    const endDate =
+      values.date.end !== event.end
+        ? combineDateAndTimeWithTimezone(new Date(values.date.end), values.date.timezone)
+        : values.date.end;
 
     updateEventSettings({
       variables: {
@@ -181,6 +183,7 @@ function EditEventDrawerContent({ event }: { event: Event }) {
                 minDate={startOfDay(new Date())}
                 start={date.start}
                 end={date.end}
+                timezone={date.timezone}
                 onSelect={(dateRange) => setValue('date', { ...date, ...dateRange })}
               />
               <Timezone
