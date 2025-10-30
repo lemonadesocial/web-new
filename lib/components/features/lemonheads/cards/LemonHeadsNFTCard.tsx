@@ -30,7 +30,7 @@ export function LemonHeadsNFTCard() {
   return (
     <>
       <div
-        className="md:hidden flex gap-2.5 py-2.5 px-3 bg-overlay-secondary border-(length:--card-border-width) backdrop-blur-md rounded-md items-center flex-1 w-full min-w-fit"
+        className="flex gap-2.5 py-2.5 px-3 md:p-4 border-(length:--card-border-width) backdrop-blur-md rounded-md items-center flex-1 w-full min-w-fit cursor-pointer"
         onClick={() =>
           drawer.open(SharedLemonheadsPane, {
             props: {
@@ -39,30 +39,30 @@ export function LemonHeadsNFTCard() {
           })
         }
       >
-        <img src={data?.image} className="rounded-sm size-8 aspect-square" />
+        <img src={data?.image} className="rounded-sm size-8 aspect-square border" />
 
         <div className="flex flex-col">
-          <p className="text-sm">Share</p>
-          <p className="text-xs text-quaternary">LemonHead #{data?.tokenId}</p>
+          <p className="text-sm md:text-md">Share</p>
+          <p className="text-xs md:text-sm text-tertiary">LemonHead #{data?.tokenId}</p>
         </div>
       </div>
 
-      <div className="hidden md:block backdrop-blur-md p-4 rounded-md space-y-3 border-(length:--card-border-width)">
-        <img src={data.image} className="rounded-sm" />
-        <div className="flex justify-between">
-          <p>LemonHead #{data.tokenId}</p>
-          <i
-            className="icon-share size-5 aspect-square text-quaternary hover:text-primary cursor-pointer"
-            onClick={() =>
-              drawer.open(SharedLemonheadsPane, {
-                props: {
-                  tokenId: data.tokenId?.toString(),
-                },
-              })
-            }
-          />
-        </div>
-      </div>
+      {/* <div className="hidden backdrop-blur-md p-4 rounded-md space-y-3 border-(length:--card-border-width)"> */}
+      {/*   <img src={data.image} className="rounded-sm" /> */}
+      {/*   <div className="flex justify-between"> */}
+      {/*     <p>LemonHead #{data.tokenId}</p> */}
+      {/*     <i */}
+      {/*       className="icon-share size-5 aspect-square text-quaternary hover:text-primary cursor-pointer" */}
+      {/*       onClick={() => */}
+      {/*         drawer.open(SharedLemonheadsPane, { */}
+      {/*           props: { */}
+      {/*             tokenId: data.tokenId?.toString(), */}
+      {/*           }, */}
+      {/*         }) */}
+      {/*       } */}
+      {/*     /> */}
+      {/*   </div> */}
+      {/* </div> */}
     </>
   );
 }

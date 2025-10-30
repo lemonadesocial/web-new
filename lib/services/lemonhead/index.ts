@@ -1,10 +1,13 @@
 import { generateUrl } from '$lib/utils/cnd';
+import { getUriFromUrl, uploadImage, uploadJSON } from '$lib/services/nft/storage';
+import { getImageFromUrls } from '$lib/services/nft/image';
+
 import { calculateLookHash, Filter, FilterType, formatString, getFinalTraits, layerings, Trait, TraitType, validateTraits } from './core';
 import { getApproval, getCache, setCache } from './admin';
-import { getFinalImage, getRandomLayersFromTraits, getRenderLayersFromTraits, Layer, randomUseOutfit } from './image';
-import { uploadImage, uploadJSON } from './storage';
+import { getRandomLayersFromTraits, getRenderLayersFromTraits, Layer, randomUseOutfit } from './image';
 
-const gatewayPrefix = 'https://api.grove.storage/';
+const outputSize = 3000;
+
 const DESCRIPTION = [
   'LemonHeads are residents of the United Stands of Lemonade, a digital nation for creators celebrating inclusivity, community and good vibes. Each LemonHead is unique- customized by its creator- no two are alike. All holders get exclusive access to events, experiences, rewards and more.',
   'LemonHeads create, collaborate, celebrate. When life deals lemons, LemonHeads #makelemonade!',
@@ -41,8 +44,10 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
     //-- when there is at least one jpeg layer, use jpeg, otherwise use png
     const outputFormat = layers.find((layer) => layer?.file?.type === 'image/jpeg') ? 'jpeg' : 'png';
 
-    const finalImage = await getFinalImage(
+    const finalImage = await getImageFromUrls(
       layers.flatMap((layer) => (layer?.file ? generateUrl(layer.file) : [])),
+      outputSize,
+      outputSize,
       outputFormat,
     );
 
@@ -76,7 +81,7 @@ export const getMintNftData = async (traits: Trait[], wallet: string, sponsor?: 
 
     //-- for display purposes
     image: imageUrl,
-    metadata: metadataUrl.replace(gatewayPrefix, ''),
+    metadata: getUriFromUrl(metadataUrl),
   };
 };
 
