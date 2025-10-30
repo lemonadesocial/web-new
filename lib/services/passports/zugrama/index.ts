@@ -9,7 +9,7 @@ import { getEnsUsername } from "../common/ens";
 import { formatDate } from "../common/format";
 import { getFileImageBuffer, getTextImageBuffer, getUrlImageBuffer, Point } from "../common/canvas";
 
-import { getApproval, getData } from "./admin";
+import { getApproval } from "./admin";
 
 const regularFontPath = path.join(process.cwd(), "data", "zugrama-passport", "regular.ttf");
 const boldFontPath = path.join(process.cwd(), "data", "zugrama-passport", "semibold.ttf");
@@ -92,13 +92,15 @@ const getVerifiedDateImageBuffer = async (verifiedDate: string) => {
 
 export const getMintZuGramaPassportData = async (
   userId: string,
+  passportNumber: number,
+  selfVerifiedTimestamp: number,
   wallet: string,
   avatarImageUrl: string,
   ensForUserName?: boolean, //-- this should always be true, use false for testing
 ) => {
-  const passportData = await getData(wallet, userId);
+  // const passportData = await getData(wallet, userId);
 
-  assert.ok(passportData && passportData.passportId && passportData.selfVerifiedTimestamp > 0);
+  // assert.ok(passportData && passportData.passportId && passportData.selfVerifiedTimestamp > 0);
 
   let username = wallet.toLowerCase();
 
@@ -108,10 +110,10 @@ export const getMintZuGramaPassportData = async (
 
   assert.ok(username);
 
-  const passportId = passportData.passportId.toString().padStart(8, '0');
+  const passportId = passportNumber.toString().padStart(8, '0');
 
   const creationDate = formatDate(new Date());
-  const verifiedDate = formatDate(new Date(passportData.selfVerifiedTimestamp));
+  const verifiedDate = formatDate(new Date(selfVerifiedTimestamp));
 
   const buffers = await Promise.all([
     getAvatarImageBuffer(avatarImageUrl),
