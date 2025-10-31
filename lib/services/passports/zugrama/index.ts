@@ -35,8 +35,14 @@ const mintDateOffset: Point = { x: secondColumnX, y: firstLineY };
 const titleOffset: Point = { x: firstColumnX, y: secondLineY };
 const verifiedDateOffset: Point = { x: secondColumnX, y: secondLineY };
 
+const DESCRIPTION = [
+  'The best way to predict the future is to create it.',
+  'You are among the first to shape ZuGrama, villages for those who dream to build a future where humanity is surviving, thriving, and flourishing.',
+].join('\n');
+
 const createMetadata = (imageUrl: string, passportId: string) => {
   return {
+    description: DESCRIPTION,
     image: imageUrl,
     attributes: [
       { trait_type: 'Passport ID', value: passportId },
