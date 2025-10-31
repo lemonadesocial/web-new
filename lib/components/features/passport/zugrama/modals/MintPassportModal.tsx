@@ -7,12 +7,12 @@ import * as Sentry from '@sentry/nextjs';
 import { Button, modal, ModalContent, toast } from '$lib/components/core';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { appKit, useAppKitProvider } from '$lib/utils/appkit';
-import { formatError, LemonadePassportContract, writeContract } from '$lib/utils/crypto';
+import { formatError, ZugramaPassportContract, writeContract } from '$lib/utils/crypto';
 import { SignTransactionModal } from '$lib/components/features/modals/SignTransaction';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
 import { PASSPORT_CHAIN_ID } from '../utils';
 import { chainsMapAtom } from '$lib/jotai';
-import LemonadePassport from '$lib/abis/LemonadePassport.json';
+import ZuGramaPassport from '$lib/abis/ZuGramaPassport.json';
 
 type MintData = {
   signature: string;
@@ -20,10 +20,10 @@ type MintData = {
   metadata: string;
 };
 
-export function MintPassportModal({ 
+export function MintPassportModal({
   onComplete,
-  mintData 
-}: { 
+  mintData
+}: {
   onComplete: (txHash: string, tokenId: string) => void;
   mintData: MintData;
 }) {
@@ -37,20 +37,20 @@ export function MintPassportModal({
         throw new Error('Mint data not found');
       }
 
-      const contractAddress = chainsMap[PASSPORT_CHAIN_ID]?.lemonade_passport_contract_address;
-      
+      const contractAddress = chainsMap[PASSPORT_CHAIN_ID]?.zugrama_passport_contract_address;
+
       if (!contractAddress) {
         throw new Error('Passport contract address not configured');
       }
 
       setStatus('signing');
-      
+
       const transaction = await writeContract(
-        LemonadePassportContract,
+        ZugramaPassportContract,
         contractAddress,
         walletProvider as Eip1193Provider,
         'mint',
-        [mintData.metadata, mintData.signature],
+        [mintData.metadata, mintData.price, mintData.signature],
         { value: mintData.price }
       );
 
@@ -59,7 +59,7 @@ export function MintPassportModal({
       setStatus('confirming');
 
       const receipt = await transaction.wait();
-      const iface = new ethers.Interface(LemonadePassport.abi);
+      const iface = new ethers.Interface(ZuGramaPassport.abi);
 
       let parsedTransferLog: any = null;
 
@@ -86,6 +86,7 @@ export function MintPassportModal({
       modal.close();
       onComplete(txHash, tokenId);
     } catch (error: any) {
+      console.log(error)
       Sentry.captureException(error, {
         extra: {
           walletInfo: appKit.getWalletInfo(),
@@ -98,8 +99,8 @@ export function MintPassportModal({
 
   if (status === 'confirming') {
     return (
-      <ConfirmTransaction 
-        title="Confirming Transaction" 
+      <ConfirmTransaction
+        title="Confirming Transaction"
         description="Please wait while your transaction is being confirmed on the blockchain."
       />
     );
@@ -117,11 +118,12 @@ export function MintPassportModal({
   }
 
   return (
-    <ModalContent
-      icon={<img src={`${ASSET_PREFIX}/assets/images/passport.png`} className="w-full object-cover aspect-[45/28]" />}
-      onClose={() => modal.close()}
-    >
+    <ModalContent>
       <div className="flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+          <img src={`${ASSET_PREFIX}/assets/images/zugrama-passport-placeholder.png`} className="object-cover w-[90px]" />
+          <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
+        </div>
         <div className="flex flex-col gap-2">
           <p className="text-lg">Claim Your Passport</p>
           <p className="text-sm">

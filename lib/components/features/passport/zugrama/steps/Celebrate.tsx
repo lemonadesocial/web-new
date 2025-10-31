@@ -65,11 +65,11 @@ export function PassportCelebrate() {
               </Button>
             </div>
 
-            <div className="flex gap-2">
+            {/* <div className="flex gap-2">
               <Button iconLeft="icon-share" variant="secondary" onClick={handleShare}>
                 Share
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

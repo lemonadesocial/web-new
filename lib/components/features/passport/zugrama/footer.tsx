@@ -53,7 +53,7 @@ export function PassportFooter() {
     setIsMinting(true);
     try {
       const response = await fetch(
-        `/api/passport/zugrama?wallet=${address}&avatar=${encodeURIComponent(state.photo)}`
+        `https://staging.lemonade.social/api/passport/zugrama?wallet=${address}&avatar=${encodeURIComponent(state.photo)}`
       );
 
       // const response = await fetch(
