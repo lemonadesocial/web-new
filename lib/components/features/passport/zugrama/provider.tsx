@@ -114,7 +114,7 @@ function reducers(state: PassportState, action: PassportAction) {
     }
 
     case PassportActionKind.SetMintData:
-      return { ...state, mintData: { ...state.mintData, ...action.payload } };
+      return { ...state, mintData: action.payload };
 
     case PassportActionKind.SetPhoto:
       return { ...state, photo: action.payload };

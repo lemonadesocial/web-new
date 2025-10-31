@@ -96,15 +96,13 @@ export const appRouter = router({
     getImage: publicProcedure
       .input(
         z.object({
-          userId: z.string(),
-          wallet: z.string(),
           avatarImageUrl: z.string().optional(),
           username: z.string().optional(),
         }),
       )
       .mutation(async ({ input }) => {
-        const { userId, wallet, avatarImageUrl, username } = input;
-        return getMintZuGramaPassportImage(userId, wallet, avatarImageUrl, username);
+        const { avatarImageUrl, username } = input;
+        return getMintZuGramaPassportImage(avatarImageUrl, username);
       }),
   },
 });

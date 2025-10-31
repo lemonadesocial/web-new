@@ -526,6 +526,7 @@ export type Chain = {
   escrow_manager_contract?: Maybe<Scalars['String']['output']>;
   fluffle_contract_address?: Maybe<Scalars['String']['output']>;
   launchpad_closed_permissions_contract_address?: Maybe<Scalars['String']['output']>;
+  launchpad_token_importer_contract_address?: Maybe<Scalars['String']['output']>;
   launchpad_treasury_address_fee_split_manager_implementation_contract_address?: Maybe<Scalars['String']['output']>;
   launchpad_treasury_staking_manager_implementation_contract_address?: Maybe<Scalars['String']['output']>;
   launchpad_zap_contract_address?: Maybe<Scalars['String']['output']>;
@@ -546,6 +547,7 @@ export type Chain = {
   safe_confirmations: Scalars['Float']['output'];
   stake_payment_contract?: Maybe<Scalars['String']['output']>;
   tokens?: Maybe<Array<Token>>;
+  zugrama_passport_contract_address?: Maybe<Scalars['String']['output']>;
 };
 
 export type CheckinTokenRewardSetting = {
@@ -4948,6 +4950,18 @@ export type ParentCastInput = {
   hash: Scalars['String']['input'];
 };
 
+export type PassportMintingInfo = {
+  __typename?: 'PassportMintingInfo';
+  can_mint: Scalars['Boolean']['output'];
+  price: Scalars['String']['output'];
+  white_list_enabled: Scalars['Boolean']['output'];
+};
+
+export enum PassportProvider {
+  Lemonade = 'lemonade',
+  Zugrama = 'zugrama'
+}
+
 export type PaymentAccountInfo = {
   __typename?: 'PaymentAccountInfo';
   _id: Scalars['MongoID']['output'];
@@ -5250,6 +5264,7 @@ export type Query = {
   __typename?: 'Query';
   calculateTicketsPricing: PricingInfo;
   canMintLemonhead: LemonheadMintingInfo;
+  canMintPassport: PassportMintingInfo;
   canUseSpaceSlug: Scalars['Boolean']['output'];
   checkPoapDropEditCode: Scalars['Boolean']['output'];
   checkTicketTypePasscode: Scalars['Boolean']['output'];
@@ -5421,6 +5436,7 @@ export type Query = {
   listNewPaymentAccounts: Array<NewPaymentAccount>;
   listNewPayments: Array<NewPayment>;
   listOauth2Clients: Array<OAuth2Client>;
+  listPassportSponsors: ListLemonheadSponsorsResponse;
   listPoapDrops: Array<PoapDrop>;
   listRewardVaults: Array<TokenRewardVault>;
   listSpaceCategories: Array<SpaceCategory>;
@@ -5452,6 +5468,12 @@ export type QueryCalculateTicketsPricingArgs = {
 
 
 export type QueryCanMintLemonheadArgs = {
+  wallet: Scalars['String']['input'];
+};
+
+
+export type QueryCanMintPassportArgs = {
+  provider: PassportProvider;
   wallet: Scalars['String']['input'];
 };
 
@@ -6444,6 +6466,12 @@ export type QueryListNewPaymentsArgs = {
 
 export type QueryListOauth2ClientsArgs = {
   ids?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+
+export type QueryListPassportSponsorsArgs = {
+  provider: PassportProvider;
+  wallet: Scalars['String']['input'];
 };
 
 
@@ -10081,6 +10109,14 @@ export type CreateSelfVerificationRequestMutationVariables = Exact<{
 
 export type CreateSelfVerificationRequestMutation = { __typename: 'Mutation', createSelfVerificationRequest: { __typename: 'UserSelfRequest', endpoint: string, endpoint_type: string, scope: string, uuid: string } };
 
+export type CanMintPassportQueryVariables = Exact<{
+  wallet: Scalars['String']['input'];
+  provider: PassportProvider;
+}>;
+
+
+export type CanMintPassportQuery = { __typename: 'Query', canMintPassport: { __typename: 'PassportMintingInfo', can_mint: boolean, price: string, white_list_enabled: boolean } };
+
 export type CreateStripeCardMutationVariables = Exact<{
   paymentMethod: Scalars['String']['input'];
 }>;
@@ -10602,6 +10638,7 @@ export const ListChainsDocument = {"kind":"Document","definitions":[{"kind":"Ope
 export const GetUserWalletRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserWalletRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getUserWalletRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"wallet"},"value":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<GetUserWalletRequestQuery, GetUserWalletRequestQueryVariables>;
 export const GetSelfVerificationStatusDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSelfVerificationStatus"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"config"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SelfVerificationConfigInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getSelfVerificationStatus"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"config"},"value":{"kind":"Variable","name":{"kind":"Name","value":"config"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"disclosures"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"verified"}}]}}]}}]}}]} as unknown as DocumentNode<GetSelfVerificationStatusQuery, GetSelfVerificationStatusQueryVariables>;
 export const CreateSelfVerificationRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateSelfVerificationRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"config"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SelfVerificationConfigInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"createSelfVerificationRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"config"},"value":{"kind":"Variable","name":{"kind":"Name","value":"config"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"endpoint"}},{"kind":"Field","name":{"kind":"Name","value":"endpoint_type"}},{"kind":"Field","name":{"kind":"Name","value":"scope"}},{"kind":"Field","name":{"kind":"Name","value":"uuid"}}]}}]}}]} as unknown as DocumentNode<CreateSelfVerificationRequestMutation, CreateSelfVerificationRequestMutationVariables>;
+export const CanMintPassportDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CanMintPassport"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"provider"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PassportProvider"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"canMintPassport"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"wallet"},"value":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}}},{"kind":"Argument","name":{"kind":"Name","value":"provider"},"value":{"kind":"Variable","name":{"kind":"Name","value":"provider"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"can_mint"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"white_list_enabled"}}]}}]}}]} as unknown as DocumentNode<CanMintPassportQuery, CanMintPassportQueryVariables>;
 export const CreateStripeCardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createStripeCard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paymentMethod"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"createStripeCard"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"payment_method"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paymentMethod"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"provider_id"}}]}}]}}]} as unknown as DocumentNode<CreateStripeCardMutation, CreateStripeCardMutationVariables>;
 export const GetStripeCardsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getStripeCards"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getStripeCards"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"brand"}},{"kind":"Field","name":{"kind":"Name","value":"last4"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"provider_id"}},{"kind":"Field","name":{"kind":"Name","value":"stamp"}},{"kind":"Field","name":{"kind":"Name","value":"user"}}]}}]}}]} as unknown as DocumentNode<GetStripeCardsQuery, GetStripeCardsQueryVariables>;
 export const UpdatePaymentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updatePayment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdatePaymentInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"updatePayment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"transfer_metadata"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"failure_reason"}}]}}]}}]} as unknown as DocumentNode<UpdatePaymentMutation, UpdatePaymentMutationVariables>;

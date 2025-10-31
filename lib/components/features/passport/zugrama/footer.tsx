@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import { match } from 'ts-pattern';
 import React from 'react';
 
-import { Button, modal } from '$lib/components/core';
+import { Button, modal, toast } from '$lib/components/core';
 
 import { PassportActionKind, PassportStep, usePassportContext } from './provider';
 import { ConnectWallet } from '../../modals/ConnectWallet';
@@ -14,11 +14,15 @@ import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { MintPassportModal } from './modals/MintPassportModal';
 import { PASSPORT_CHAIN_ID } from './utils';
 import { PassportEligibilityModal } from './modals/PassportEligibilityModal';
+import { useAppKitAccount } from '$lib/utils/appkit';
+import { formatError } from '$lib/utils/crypto';
 
 export function PassportFooter() {
   const router = useRouter();
   const [state, dispatch] = usePassportContext();
   const chainsMap = useAtomValue(chainsMapAtom);
+  const { address } = useAppKitAccount();
+  const [isMinting, setIsMinting] = React.useState(false);
 
   const currentStep = state.steps[state.currentStep];
 
@@ -31,33 +35,50 @@ export function PassportFooter() {
   };
 
   const checkAccess = () => {
-    dispatch({ type: PassportActionKind.NextStep });
-
-    // modal.open(PassportEligibilityModal, {
-    //   props: {
-    //     onContinue: () => {
-    //       dispatch({ type: PassportActionKind.NextStep });
-    //     },
-    //   },
-    // });
-  }
-
-  const handleMint = () => {
-    modal.open(BeforeMintPassportModal, {
+    modal.open(PassportEligibilityModal, {
       props: {
         onContinue: () => {
-          modal.open(MintPassportModal, {
-            props: {
-              onComplete: (txHash, tokenId) => {
-                dispatch({ type: PassportActionKind.SetMintState, payload: { txHash, tokenId } });
-                dispatch({ type: PassportActionKind.NextStep });
-              },
-              mintData: state.mintData!,
-            },
-          });
+          dispatch({ type: PassportActionKind.NextStep });
         },
       },
     });
+  }
+
+  const handleMint = async () => {
+    if (!address) {
+      toast.error('Wallet not connected');
+      return;
+    }
+
+    setIsMinting(true);
+    try {
+      const response = await fetch(
+        `/api/passports/zugrama?wallet=${address}&avatar=${encodeURIComponent(state.photo)}`
+      );
+
+      const mintData = await response.json();
+      dispatch({ type: PassportActionKind.SetMintData, payload: mintData });
+
+      modal.open(BeforeMintPassportModal, {
+        props: {
+          onContinue: () => {
+            modal.open(MintPassportModal, {
+              props: {
+                onComplete: (txHash, tokenId) => {
+                  dispatch({ type: PassportActionKind.SetMintState, payload: { txHash, tokenId } });
+                  dispatch({ type: PassportActionKind.NextStep });
+                },
+                mintData: mintData,
+              },
+            });
+          },
+        },
+      });
+    } catch (error) {
+      toast.error(formatError(error));
+    } finally {
+      setIsMinting(false);
+    }
   }
 
   const handleNext = async () => {
@@ -73,14 +94,7 @@ export function PassportFooter() {
         });
       })
       .with(PassportStep.username, () => {
-        modal.open(ConnectWallet, {
-          props: {
-            onConnect: () => {
-              handleMint();
-            },
-            chain: chainsMap[PASSPORT_CHAIN_ID],
-          },
-        });
+        handleMint();
       })
       .with(PassportStep.celebrate, () => {
         router.push('/lemonheads');
@@ -88,7 +102,7 @@ export function PassportFooter() {
       .otherwise(() => dispatch({ type: PassportActionKind.NextStep }));
   };
 
-  const disabled = (state.currentStep === PassportStep.photo && (!state.photo || !state.isSelfVerified)) || (state.currentStep === PassportStep.username && !state.mintData);
+  const disabled = state.currentStep === PassportStep.photo && (!state.photo || !state.isSelfVerified);
 
   return (
     <>
@@ -96,7 +110,7 @@ export function PassportFooter() {
         {state.currentStep !== PassportStep.celebrate && (
           <Button icon="icon-logout" onClick={handlePrev} variant="tertiary" />
         )}
-        <Button variant="secondary" className="w-full" onClick={handleNext}>
+        <Button variant="secondary" className="w-full" onClick={handleNext} loading={isMinting}>
           {currentStep?.btnText}
         </Button>
       </div>
@@ -127,7 +141,7 @@ export function PassportFooter() {
         )}
 
         <div className="flex flex-1 justify-end">
-          <Button iconRight="icon-chevron-right" disabled={disabled} variant="secondary" size="sm" onClick={handleNext}>
+          <Button iconRight="icon-chevron-right" disabled={disabled} variant="secondary" size="sm" onClick={handleNext} loading={isMinting}>
             {currentStep?.btnText}
           </Button>
         </div>

@@ -1,22 +1,37 @@
 'use client';
-
 import { useAppKitAccount } from '$lib/utils/appkit';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
 import { SuccessModal } from '$lib/components/features/modals/SuccessModal';
 import { Button, Card, ModalContent } from '$lib/components/core';
 import { formatWallet } from '$lib/utils/crypto';
+import { useQuery } from '$lib/graphql/request';
+import { CanMintLemonheadDocument, PassportProvider } from '$lib/graphql/generated/backend/graphql';
 
 export function PassportEligibilityModal({ onContinue }: { onContinue: () => void }) {
   const { address } = useAppKitAccount();
 
-  // return (
-  //   <SuccessModal
-  //     title='You’re On The Whitelist!'
-  //     description='You can now personalize your Zugrama Passport to make it truly yours before minting your on-chain identity.'
-  //     buttonText="Continue"
-  //     onClose={onContinue}
-  //   />
-  // );
+  const { data, loading } = useQuery(CanMintLemonheadDocument, {
+    variables: {
+      wallet: address!,
+      provider: PassportProvider.Zugrama,
+    },
+  });
+
+  if (loading) return (
+    <ConfirmTransaction
+      title="Checking Your Access"
+      description="We’re checking if you’re on the Zugrama whitelist. This may take a moment."
+    />
+  );
+
+  if (data?.canMintLemonhead.can_mint) return (
+    <SuccessModal
+      title='You’re On The Whitelist!'
+      description='You can now personalize your Zugrama Passport to make it truly yours before minting your on-chain identity.'
+      buttonText="Continue"
+      onClose={onContinue}
+    />
+  );
 
   return (
     <ModalContent>
@@ -35,7 +50,7 @@ export function PassportEligibilityModal({ onContinue }: { onContinue: () => voi
           <Card.Content className="justify-between flex items-center py-2 px-3">
             <div className="flex gap-3">
               <i className="icon-wallet size-5 aspect-square text-tertiary" />
-              {address && <p>{formatWallet(address)}</p>}
+              {address && <p>{formatWallet(address!)}</p>}
             </div>
             <i
               className="icon-edit-sharp size-5 aspect-square text-quaternary hover:text-primary"
@@ -49,12 +64,5 @@ export function PassportEligibilityModal({ onContinue }: { onContinue: () => voi
       </Button> */}
       </div>
     </ModalContent>
-  )
-
-  return (
-    <ConfirmTransaction
-      title="Checking Your Access"
-      description="We’re checking if you’re on the Zugrama whitelist. This may take a moment."
-    />
   );
 }

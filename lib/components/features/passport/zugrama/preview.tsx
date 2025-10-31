@@ -28,8 +28,6 @@ export function PassportPreview() {
 
 function ImagePreview({ className }: { className?: string; }) {
   const [state, dispatch] = usePassportContext();
-  const me = useMe();
-  const { address } = useAppKitAccount();
 
   const getImage = trpc.zugrama.getImage.useMutation();
   const loading = getImage.isPending;
@@ -38,12 +36,10 @@ function ImagePreview({ className }: { className?: string; }) {
     if (state.currentStep === PassportStep.intro) return;
 
     getImage.mutate({
-      userId: me?._id as any,
-      wallet: address as any,
       avatarImageUrl: state.photo,
       username: state.ensName,
     });
-  }, [state.currentStep, me?._id, address, state.photo, state.ensName]);
+  }, [state.currentStep, state.photo, state.ensName]);
 
   React.useEffect(() => {
     const img = getImage.data?.image;
