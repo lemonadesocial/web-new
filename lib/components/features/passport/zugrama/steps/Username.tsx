@@ -22,7 +22,9 @@ export function PassportUsername() {
       try {
         const provider = new ethers.JsonRpcProvider(mainnet.rpcUrls.default.http[0]);
         const name = await provider.lookupAddress(address);
-        dispatch({ type: PassportActionKind.SetEnsName, payload: `@${name}` });
+        if (name) {
+          dispatch({ type: PassportActionKind.SetEnsName, payload: `@${name}` });
+        }
       } catch (error) {
         toast.error(formatError(error))
       } finally {
