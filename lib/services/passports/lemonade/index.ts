@@ -11,7 +11,9 @@ import { getUriFromUrl, uploadImage, uploadJSON } from '$lib/services/nft/storag
 import { getApproval, getData } from "./admin";
 import { Point } from "../common/canvas";
 
-export const DESCRIPTION = 'Lemonade Passport is the enttry point to Lemonade Ecosystem';
+export const DESCRIPTION = [
+  ''
+].join('\n');
 
 const outputWidth = 2160;
 const outputHeight = 1350;
