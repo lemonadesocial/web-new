@@ -133,17 +133,8 @@ export const getMintZuGramaPassportData = async (
   selfVerifiedTimestamp: number,
   wallet: string,
   avatarImageUrl: string,
-  ensForUserName?: boolean, //-- this should always be true, use false for testing
 ) => {
-  // const passportData = await getData(wallet, userId);
-
-  // assert.ok(passportData && passportData.passportId && passportData.selfVerifiedTimestamp > 0);
-
-  let username = wallet.toLowerCase();
-
-  if (ensForUserName) {
-    username = await getEnsUsername(wallet);
-  }
+  const username = await getEnsUsername(wallet);
 
   assert.ok(username);
 
