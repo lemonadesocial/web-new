@@ -72,7 +72,7 @@ export function PassportUsername() {
               <i className="icon-ens size-[22px]" />
             </div>
             <div className="space-y-0.5 flex-1">
-              <p>@{state.ensName}</p>
+              <p>{state.ensName}</p>
               <p className="text-sm text-tertiary">ENS Domain</p>
             </div>
             <i className="icon-check-filled" />
