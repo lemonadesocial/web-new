@@ -12,6 +12,8 @@ import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
 import { FileInput } from '$lib/components/core/file-input';
 import { uploadFiles } from '$lib/utils/file';
+import { useSession } from '$lib/hooks/useSession';
+import { useSignIn } from '$lib/hooks/useSignIn';
 
 export function PassportPhoto() {
 
@@ -34,10 +36,14 @@ export function PassportPhoto() {
 function VerifySelf() {
   const [state, dispatch] = usePassportContext();
 
+  const session = useSession();
+  const signIn = useSignIn();
+
   const { data, loading } = useQuery(GetSelfVerificationStatusDocument, {
     variables: {
       config: SELF_VERIFICATION_CONFIG
     },
+    skip: !session,
   });
 
   useEffect(() => {
@@ -85,19 +91,32 @@ function VerifySelf() {
           <p className="text-sm text-tertiary">Prove you are a unique human and not a bot to continue.</p>
         </div>
 
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={() => {
-            modal.open(GetVerifiedModal, {
-              props: {
-                config: SELF_VERIFICATION_CONFIG
-              }
-            });
-          }}
-        >
-          Verify
-        </Button>
+        {
+          session ? (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                modal.open(GetVerifiedModal, {
+                  props: {
+                    config: SELF_VERIFICATION_CONFIG
+                  }
+                });
+              }}
+            >
+              Verify
+            </Button>
+          ) : (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => signIn()}
+            >
+              Sign In
+            </Button>
+          )
+        }
+
       </Card.Content>
     </Card.Root>
   );

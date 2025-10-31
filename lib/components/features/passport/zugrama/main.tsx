@@ -1,7 +1,4 @@
 'use client';
-import React, { useEffect } from 'react';
-import { useSession } from '$lib/hooks/useSession';
-import { useSignIn } from '$lib/hooks/useSignIn';
 
 import Header from '$lib/components/layouts/header';
 import { PassportProvider, PassportStep, usePassportContext } from './provider';
@@ -19,20 +16,6 @@ export function PassportMain() {
 function Content() {
   const [state] = usePassportContext();
   const Comp = state.steps[state.currentStep].component;
-  const session = useSession();
-  const signIn = useSignIn();
-
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    if (!mounted) setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!session && mounted) {
-      signIn(false);
-    }
-  }, [session, mounted]);
 
   return (
     <main className="h-dvh w-full flex flex-col divide-y divide-[var(--color-divider)]">
