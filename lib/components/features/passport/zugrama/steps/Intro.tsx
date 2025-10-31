@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from '$lib/components/core';
 
 export function PassportIntro() {
   return (

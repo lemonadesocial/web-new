@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
-
-import { useAppKitAccount } from '$lib/utils/appkit';
 import { ethers } from 'ethers';
 import { mainnet } from 'viem/chains';
-import { Button, Card, Skeleton, toast } from '$lib/components/core';
+
+import { useAppKitAccount } from '$lib/utils/appkit';
+import { Button, Skeleton, toast } from '$lib/components/core';
 import { formatError } from '$lib/utils/crypto';
 import { PassportActionKind, usePassportContext } from '../provider';
 
 export function PassportUsername() {
-  // const { address } = useAppKitAccount();
-  const address = '0xb41e34e0b3272e88ef9852f4557e98961fdedf19'
+  const { address } = useAppKitAccount();
 
   const [state, dispatch] = usePassportContext();
 

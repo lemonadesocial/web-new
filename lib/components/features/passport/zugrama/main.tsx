@@ -1,14 +1,12 @@
 'use client';
 import React, { useEffect } from 'react';
-
-import Header from '$lib/components/layouts/header';
-import { PassportActionKind, PassportProvider, PassportStep, usePassportContext } from './provider';
-import { PassportFooter } from './footer';
-import { PassportPreview } from './preview';
-import { useAppKitAccount } from '$lib/utils/appkit';
-import { trpc } from '$lib/trpc/client';
 import { useSession } from '$lib/hooks/useSession';
 import { useSignIn } from '$lib/hooks/useSignIn';
+
+import Header from '$lib/components/layouts/header';
+import { PassportProvider, PassportStep, usePassportContext } from './provider';
+import { PassportFooter } from './footer';
+import { PassportPreview } from './preview';
 
 export function PassportMain() {
   return (
@@ -19,13 +17,10 @@ export function PassportMain() {
 }
 
 function Content() {
-  const [state, dispatch] = usePassportContext();
+  const [state] = usePassportContext();
   const Comp = state.steps[state.currentStep].component;
-  const [loading, setLoading] = React.useState(false);
   const session = useSession();
   const signIn = useSignIn();
-
-  const { address } = useAppKitAccount();
 
   const [mounted, setMounted] = React.useState(false);
 
@@ -38,28 +33,6 @@ function Content() {
       signIn(false);
     }
   }, [session, mounted]);
-
-  // useEffect(() => {
-  //   if (!address || loading) return;
-
-  //   if (state.lemonadeUsername || state.useENS) {
-  //     const fluffleTokenId = state.useFluffle ? '1' : undefined;
-      
-  //     setLoading(true);
-  //     mintPassportMutation.mutateAsync({
-  //       wallet: address,
-  //       ensForUserName: state.useENS,
-  //       lemonadeUsername: state.lemonadeUsername || undefined,
-  //       fluffleTokenId,
-  //     }).then((data) => {
-  //       dispatch({ type: PassportActionKind.SetMintData, payload: data });
-  //       dispatch({ type: PassportActionKind.SetPassportImage, payload: data.image });
-  //       setLoading(false);
-  //     }).catch(() => {
-  //       setLoading(false);
-  //     });
-  //   }
-  // }, [address, state.lemonadeUsername, state.useENS, state.useFluffle]);
 
   return (
     <main className="h-dvh w-full flex flex-col divide-y divide-[var(--color-divider)]">

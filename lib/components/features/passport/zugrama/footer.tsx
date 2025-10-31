@@ -2,20 +2,20 @@
 import { useRouter } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 import { match } from 'ts-pattern';
+import { useAtomValue } from 'jotai';
 import React from 'react';
 
 import { Button, modal, toast } from '$lib/components/core';
+import { chainsMapAtom } from '$lib/jotai';
+import { useAppKitAccount } from '$lib/utils/appkit';
+import { formatError } from '$lib/utils/crypto';
 
 import { PassportActionKind, PassportStep, usePassportContext } from './provider';
 import { ConnectWallet } from '../../modals/ConnectWallet';
-import { useAtomValue } from 'jotai';
-import { chainsMapAtom } from '$lib/jotai';
 import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { MintPassportModal } from './modals/MintPassportModal';
 import { PASSPORT_CHAIN_ID } from './utils';
 import { PassportEligibilityModal } from './modals/PassportEligibilityModal';
-import { useAppKitAccount } from '$lib/utils/appkit';
-import { formatError } from '$lib/utils/crypto';
 
 export function PassportFooter() {
   const router = useRouter();
@@ -53,12 +53,8 @@ export function PassportFooter() {
     setIsMinting(true);
     try {
       const response = await fetch(
-        `https://staging.lemonade.social/api/passport/zugrama?wallet=${address}&avatar=${encodeURIComponent(state.photo)}`
+        `/api/passports/zugrama?wallet=${address}&avatar=${encodeURIComponent(state.photo)}`
       );
-
-      // const response = await fetch(
-      //   `/api/passports/zugrama?wallet=${address}&avatar=${encodeURIComponent(state.photo)}`
-      // );
 
       const mintData = await response.json();
       dispatch({ type: PassportActionKind.SetMintData, payload: mintData });

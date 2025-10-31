@@ -110,6 +110,7 @@ export function MintPassportModal({
     return (
       <SignTransactionModal
         onClose={() => modal.close()}
+        title="Confirm Payment"
         description="Please sign the transaction to pay gas fees & claim your Passport."
         onSign={handleMint}
         loading={true}
@@ -125,9 +126,9 @@ export function MintPassportModal({
           <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-lg">Claim Your Passport</p>
+          <p className="text-lg">Claim Your Zugrama Passport</p>
           <p className="text-sm">
-            You're just one step away from owning your unique & personalized Passport. Mint & claim your on-chain
+            You're just one step away from owning your unique & personalized Zugrama Passport. Mint & claim your on-chain
             identity.
           </p>
         </div>
