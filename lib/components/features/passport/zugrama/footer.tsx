@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
 import { match } from 'ts-pattern';
 import { useAtomValue } from 'jotai';
+import * as Sentry from '@sentry/nextjs';
 import React from 'react';
 
 import { Button, modal, toast } from '$lib/components/core';
@@ -75,6 +76,7 @@ export function PassportFooter() {
         },
       });
     } catch (error) {
+      Sentry.captureException(error);
       toast.error(formatError(error));
     } finally {
       setIsMinting(false);
