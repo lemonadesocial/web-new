@@ -124,8 +124,10 @@ function VerifySelf() {
 
 function UploadPhoto() {
   const me = useMe();
+  const session = useSession();
   const [state, dispatch] = usePassportContext();
   const [uploading, setUploading] = React.useState(false);
+  const signIn = useSignIn();
 
   useEffect(() => {
     if (me?.new_photos_expanded?.length && !state.photo) {
@@ -151,35 +153,47 @@ function UploadPhoto() {
           <p>Passport Photo</p>
           <p className="text-sm text-tertiary">Choose a square image (1:1) below 5MB.</p>
         </div>
-        <FileInput
-          accept="image/*"
-          multiple={false}
-          onChange={async (files) => {
-            if (!files.length) return;
-            setUploading(true);
-            try {
-              const results = await uploadFiles([files[0]], 'user');
-              if (results[0]) {
-                dispatch({ type: PassportActionKind.SetPhoto, payload: results[0].url });
+        {
+          session ? (
+            <FileInput
+            accept="image/*"
+            multiple={false}
+            onChange={async (files) => {
+              if (!files.length) return;
+              setUploading(true);
+              try {
+                const results = await uploadFiles([files[0]], 'user');
+                if (results[0]) {
+                  dispatch({ type: PassportActionKind.SetPhoto, payload: results[0].url });
+                }
+              } catch {
+              } finally {
+                setUploading(false);
               }
-            } catch {
-            } finally {
-              setUploading(false);
-            }
-          }}
-        >
-          {(open) => (
+            }}
+          >
+            {(open) => (
+              <Button
+                variant="secondary"
+                size="sm"
+                iconLeft="icon-upload-sharp"
+                onClick={open}
+                loading={uploading}
+              >
+                Upload
+              </Button>
+            )}
+          </FileInput>
+          ) : (
             <Button
-              variant="secondary"
-              size="sm"
-              iconLeft="icon-upload-sharp"
-              onClick={open}
-              loading={uploading}
-            >
-              Upload
-            </Button>
-          )}
-        </FileInput>
+            variant="secondary"
+            size="sm"
+            onClick={() => signIn()}
+          >
+            Sign In
+          </Button>
+          )
+        }
       </Card.Content>
     </Card.Root>
   );
