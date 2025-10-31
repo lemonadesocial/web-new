@@ -1,6 +1,6 @@
 import assert from "assert";
 import path from "path";
-import { deregisterAllFonts, registerFont } from "canvas";
+import { deregisterAllFonts, registerFont, createCanvas } from "canvas";
 
 import { getImageFromBuffers } from "../../nft/image";
 import { getUriFromUrl, uploadImage, uploadJSON } from "../../nft/storage";
@@ -54,6 +54,17 @@ const regularFont = `${textFontSize}px "${regularFontFamily}"`;
 
 const getAvatarImageBuffer = async (avatarImageUrl: string) => {
   return getUrlImageBuffer(outputWidth, outputHeight, avatarOffset, { x: avatarSize, y: avatarSize }, avatarImageUrl);
+}
+
+const getAvatarPlaceholderBuffer = async () => {
+  const canvas = createCanvas(outputWidth, outputHeight);
+  const ctx = canvas.getContext('2d');
+  assert.ok(ctx);
+  
+  ctx.fillStyle = '#C7FE42';
+  ctx.fillRect(avatarOffset.x, avatarOffset.y, avatarSize, avatarSize);
+  
+  return canvas.toBuffer('image/png');
 }
 
 const getBoilerplateImageBuffer = async () => {
@@ -111,7 +122,11 @@ export const getMintZuGramaPassportImage = async (
     getVerifiedDateImageBuffer('XXXXXXXX'),
   ];
   
-  if (avatarImageUrl) layerPromises.unshift(getAvatarImageBuffer(avatarImageUrl));
+  if (avatarImageUrl) {
+    layerPromises.unshift(getAvatarImageBuffer(avatarImageUrl));
+  } else {
+    layerPromises.unshift(getAvatarPlaceholderBuffer());
+  }
 
   const buffers = await Promise.all(layerPromises);
 
