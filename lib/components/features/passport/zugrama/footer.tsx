@@ -54,7 +54,7 @@ export function PassportFooter() {
     setIsMinting(true);
     try {
       const response = await fetch(
-        `/api/passports/zugrama?wallet=${address}&avatar=${encodeURIComponent(state.photo)}`
+        `/api/passport/zugrama?wallet=${address}&avatar=${encodeURIComponent(state.photo)}`
       );
 
       const mintData = await response.json();
