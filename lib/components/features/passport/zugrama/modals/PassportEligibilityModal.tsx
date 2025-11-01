@@ -5,12 +5,12 @@ import { SuccessModal } from '$lib/components/features/modals/SuccessModal';
 import { Button, Card, ModalContent } from '$lib/components/core';
 import { formatWallet } from '$lib/utils/crypto';
 import { useQuery } from '$lib/graphql/request';
-import { CanMintLemonheadDocument, PassportProvider } from '$lib/graphql/generated/backend/graphql';
+import { CanMintPassportDocument, PassportProvider } from '$lib/graphql/generated/backend/graphql';
 
 export function PassportEligibilityModal({ onContinue }: { onContinue: () => void }) {
   const { address } = useAppKitAccount();
 
-  const { data, loading } = useQuery(CanMintLemonheadDocument, {
+  const { data, loading } = useQuery(CanMintPassportDocument, {
     variables: {
       wallet: address!,
       provider: PassportProvider.Zugrama,
@@ -24,7 +24,7 @@ export function PassportEligibilityModal({ onContinue }: { onContinue: () => voi
     />
   );
 
-  if (data?.canMintLemonhead.can_mint) return (
+  if (data?.canMintPassport.can_mint) return (
     <SuccessModal
       title='You’re On The Whitelist!'
       description='You can now personalize your Zugrama Passport to make it truly yours before minting your on-chain identity.'

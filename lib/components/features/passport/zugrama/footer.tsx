@@ -58,6 +58,7 @@ export function PassportFooter() {
       );
 
       const mintData = await response.json();
+
       dispatch({ type: PassportActionKind.SetMintData, payload: mintData });
 
       modal.open(BeforeMintPassportModal, {
@@ -99,7 +100,7 @@ export function PassportFooter() {
         handleMint();
       })
       .with(PassportStep.celebrate, () => {
-        router.push('/lemonheads');
+        router.push('/');
       })
       .otherwise(() => dispatch({ type: PassportActionKind.NextStep }));
   };
