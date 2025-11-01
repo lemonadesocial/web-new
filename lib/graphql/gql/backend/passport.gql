@@ -1,0 +1,7 @@
+query CanMintPassport($wallet: String!, $provider: PassportProvider!) {
+  canMintPassport(wallet: $wallet, provider: $provider) {
+    can_mint
+    price
+    white_list_enabled
+  }
+}
