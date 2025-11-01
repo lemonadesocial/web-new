@@ -149,7 +149,8 @@ export const getMintZuGramaPassportData = async (
   wallet: string,
   avatarImageUrl: string,
 ) => {
-  const username = await getEnsUsername(wallet);
+  // const username = await getEnsUsername(wallet);
+  const username = wallet.toLowerCase();
 
   assert.ok(username);
 
