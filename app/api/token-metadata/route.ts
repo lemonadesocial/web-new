@@ -8,6 +8,7 @@ export async function POST(request: NextRequest) {
     const coinName = data.get("coinName") as string;
     const ticker = data.get("ticker") as string;
     const description = data.get("description") as string;
+    const attributesJson = data.get("attributes") as string;
 
     if (!file || !coinName || !ticker || !description) {
       return NextResponse.json(
@@ -19,12 +20,23 @@ export async function POST(request: NextRequest) {
     const { cid: imageCid } = await pinata.upload.public.file(file);
     const imageUrl = await pinata.gateways.public.convert(imageCid);
 
-    const metadata = {
+    const metadata: any = {
       name: coinName,
       symbol: ticker,
       description: description,
       image: `ipfs://${imageCid}`
     };
+
+    if (attributesJson) {
+      try {
+        const attributes = JSON.parse(attributesJson);
+        if (Array.isArray(attributes) && attributes.length > 0) {
+          metadata.attributes = attributes;
+        }
+      } catch (e) {
+        console.error('Failed to parse attributes:', e);
+      }
+    }
 
     const metadataJson = JSON.stringify(metadata, null, 2);
     const metadataBlob = new Blob([metadataJson], { type: 'application/json' });

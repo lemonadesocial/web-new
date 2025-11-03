@@ -11,6 +11,7 @@ import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import LemonadePassport from '$lib/abis/LemonadePassport.json';
 import { TRPCClientError } from '@trpc/client';
 import ZugramaPassport from '$lib/abis/ZuGramaPassport.json';
+import { mainnet } from 'viem/chains';
 
 export const ERC20Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC20));
 export const ERC721Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC721));
@@ -257,3 +258,5 @@ export function multiplyByPowerOf10(amount: string, power: number) {
 
   return result.toString();
 }
+
+export const MainnetRpcProvider = new ethers.JsonRpcProvider(mainnet.rpcUrls.default.http[0]); 
