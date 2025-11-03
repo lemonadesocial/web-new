@@ -54,7 +54,7 @@ export function TokenReleaseScheduleModal({
             value={tokenReleaseForm.cliffPeriod.toString()}
             onChangeText={(value) => setTokenReleaseForm(prev => ({ ...prev, cliffPeriod: parseInt(value) || 0 }))}
             type="number"
-            subfix="months"
+            subfix={tokenReleaseForm.unlocks === 'monthly' ? 'months' : 'days'}
           />
         </div>
 
@@ -64,7 +64,7 @@ export function TokenReleaseScheduleModal({
             value={tokenReleaseForm.vestingSchedule.toString()}
             onChangeText={(value) => setTokenReleaseForm(prev => ({ ...prev, vestingSchedule: parseInt(value) || 0 }))}
             type="number"
-            subfix="months"
+            subfix={tokenReleaseForm.unlocks === 'monthly' ? 'months' : 'days'}
           />
         </div>
 
@@ -82,7 +82,7 @@ export function TokenReleaseScheduleModal({
 
         {/* Summary Text */}
         <p className="text-secondary text-sm">
-          Tokens unlock after {tokenReleaseForm.cliffPeriod} months, released {tokenReleaseForm.unlocks === 'monthly' ? 'monthly' : 'daily'} over the next {tokenReleaseForm.vestingSchedule} months.
+          Tokens unlock after {tokenReleaseForm.cliffPeriod} {tokenReleaseForm.unlocks === 'monthly' ? 'months' : 'days'}, released {tokenReleaseForm.unlocks === 'monthly' ? 'monthly' : 'daily'} over the next {tokenReleaseForm.vestingSchedule} {tokenReleaseForm.unlocks === 'monthly' ? 'months' : 'days'}.
         </p>
 
         <Button
