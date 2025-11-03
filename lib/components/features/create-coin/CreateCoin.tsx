@@ -3,21 +3,27 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAtomValue } from 'jotai';
 import { JsonRpcProvider } from 'ethers';
+import { format } from 'date-fns';
+import { toDate } from 'date-fns-tz';
 import clsx from 'clsx';
 
 import { appKit } from '$lib/utils/appkit';
-import { Button, Textarea, FileInput, Toggle, Input, Segment, modal, toast } from '$lib/components/core';
+import { Button, Textarea, FileInput, Toggle, Input, Segment, modal, toast, Menu } from '$lib/components/core';
 import { InputField } from '$lib/components/core/input/input-field';
+import { Timezone } from '$lib/components/core/calendar/datetime-picker';
+import { Calendar } from '$lib/components/core/calendar';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 import { chainsMapAtom } from '$lib/jotai';
 import { LAUNCH_CHAIN_ID } from '$lib/utils/constants';
 import { TOTAL_SUPPLY, getLaunchTokenParams } from '$lib/services/token-launch-pad';
 import { formatError } from '$lib/utils/crypto';
 import type { LaunchTokenParams } from '$lib/services/token-launch-pad';
+import { getUserTimezoneOption, type TimezoneOption } from '$lib/utils/timezone';
 
 import { TokenReleaseScheduleModal } from './TokenReleaseScheduleModal';
 import { CreateCoinModal } from './CreateCoinModal';
 import { CoinDistributionBar } from './CoinDistributionBar';
+import { AddressInput } from './AddressInput';
 
 type SplitFeeRecipient = {
   address: string;
@@ -46,6 +52,13 @@ type FormData = {
   startingMarketcap: number;
   fairLaunchPercentage: number;
   allocationRecipients: AllocationRecipient[];
+  socialTwitter: string;
+  socialTelegram: string;
+  socialDiscord: string;
+  socialWarpcast: string;
+  socialWebsite: string;
+  launchDate: string | undefined;
+  timezone: string;
 };
 
 function normalizeRecipientPercentages(allocationRecipients: AllocationRecipient[]) {
@@ -62,13 +75,28 @@ function normalizeRecipientPercentages(allocationRecipients: AllocationRecipient
       : (() => { const val = Math.round(p * 100) / 100; total += val; return val; })()
   );
 
-  return allocationRecipients.map((recipient, i) => ({
-    cliff: recipient.cliff * SECONDS_PER_DAY,
-    duration: recipient.duration * SECONDS_PER_DAY,
-    period: (recipient.interval === 'monthly' ? DAYS_PER_MONTH : 1) * SECONDS_PER_DAY,
-    beneficiary: recipient.address,
-    percentage: normalized[i],
-  }));
+  return allocationRecipients.map((recipient, i) => {
+    const unitInDays = recipient.interval === 'monthly' ? DAYS_PER_MONTH : 1;
+    return {
+      cliff: recipient.cliff * unitInDays * SECONDS_PER_DAY,
+      duration: recipient.duration * unitInDays * SECONDS_PER_DAY,
+      period: unitInDays * SECONDS_PER_DAY,
+      beneficiary: recipient.address,
+      percentage: normalized[i],
+    };
+  });
+}
+
+function getLaunchAtTimestamp(launchDate: string | undefined, timezone: string | undefined): number | undefined {
+  if (!launchDate || !timezone) {
+    return undefined;
+  }
+
+  const date = new Date(launchDate);
+  const dateTimeString = format(date, "yyyy-MM-dd'T'HH:mm:ss");
+  const zonedDate = toDate(dateTimeString, { timeZone: timezone });
+  
+  return Math.floor(zonedDate.getTime() / 1000);
 }
 
 export function CreateCoin() {
@@ -85,6 +113,13 @@ export function CreateCoin() {
       startingMarketcap: 5000,
       fairLaunchPercentage: 10,
       allocationRecipients: [{ address: '', percentage: 0, locked: false, cliff: 6, duration: 12, interval: 'monthly' }],
+      socialTwitter: '',
+      socialTelegram: '',
+      socialDiscord: '',
+      socialWarpcast: '',
+      socialWebsite: '',
+      launchDate: undefined,
+      timezone: getUserTimezoneOption()?.value || '',
     },
     mode: 'onChange'
   });
@@ -105,6 +140,9 @@ export function CreateCoin() {
   const setAllocationRecipients = (recipients: AllocationRecipient[]) => setValue('allocationRecipients', recipients);
   const [isCoinDistributionExpanded, setIsCoinDistributionExpanded] = useState(false);
   const [isMarketcapExpanded, setIsMarketcapExpanded] = useState(false);
+  const [isSocialsExpanded, setIsSocialsExpanded] = useState(false);
+  const [isScheduleExpanded, setIsScheduleExpanded] = useState(false);
+  const [timezoneOption, setTimezoneOption] = useState<TimezoneOption | undefined>(getUserTimezoneOption());
   const [isLoading, setisLoading] = useState(false);
 
   const watchedImage = watch('image');
@@ -231,27 +269,6 @@ export function CreateCoin() {
     setAllocationRecipients(allocationRecipients.filter((_, i) => i !== index));
   };
 
-  const handleSplitAllocationEvenly = () => {
-    const unlockedRecipients = allocationRecipients.filter(recipient => !recipient.locked);
-    const lockedTotal = allocationRecipients
-      .filter(recipient => recipient.locked)
-      .reduce((sum, recipient) => sum + recipient.percentage, 0);
-
-    if (unlockedRecipients.length > 0) {
-      const remainingPercentage = 100 - lockedTotal;
-      const evenSplit = remainingPercentage / unlockedRecipients.length;
-
-      const newRecipients = allocationRecipients.map(recipient => {
-        if (!recipient.locked) {
-          return { ...recipient, percentage: Math.round(evenSplit * 100) / 100 };
-        }
-        return recipient;
-      });
-
-      setAllocationRecipients(newRecipients);
-    }
-  };
-
   const handleOpenTokenReleaseModal = (index: number) => {
     const recipient = allocationRecipients[index];
     modal.open(TokenReleaseScheduleModal, {
@@ -285,24 +302,37 @@ export function CreateCoin() {
 
       setisLoading(true);
 
-      // const formData = new FormData();
-      // formData.append('file', data.image);
-      // formData.append('coinName', data.coinName);
-      // formData.append('ticker', data.ticker);
-      // formData.append('description', data.description);
+      const formData = new FormData();
+      formData.append('file', data.image);
+      formData.append('coinName', data.coinName);
+      formData.append('ticker', data.ticker);
+      formData.append('description', data.description);
 
-      // const response = await fetch('/api/token-metadata', {
-      //   method: 'POST',
-      //   body: formData,
-      // });
+      const attributes = [
+        data.socialTwitter && { trait_type: 'Twitter', value: data.socialTwitter },
+        data.socialTelegram && { trait_type: 'Telegram', value: data.socialTelegram },
+        data.socialDiscord && { trait_type: 'Discord', value: data.socialDiscord },
+        data.socialWarpcast && { trait_type: 'Warpcast', value: data.socialWarpcast },
+        data.socialWebsite && { trait_type: 'Website', value: data.socialWebsite },
+      ].filter(Boolean) as Array<{ trait_type: string; value: string }>;
 
-      // const result = await response.json();
+      if (attributes.length > 0) {
+        formData.append('attributes', JSON.stringify(attributes));
+      }
 
-      // const tokenUri = result.tokenUri;
-      const tokenUri = 'ipfs://bafkreicpy37i5ppeafcayktxsll56c3zm246owhqspqgw5qxt4fxsvdetu';
+      const response = await fetch('/api/token-metadata', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      const tokenUri = result.tokenUri;
 
       const vestingPercentage = allocationRecipients.reduce((sum, recipient) => sum + recipient.percentage, 0);
       const vestingRecipients = normalizeRecipientPercentages(allocationRecipients);
+
+      const launchAt = getLaunchAtTimestamp(data.launchDate, data.timezone);
 
       const params: LaunchTokenParams = {
         name: data.coinName,
@@ -322,12 +352,8 @@ export function CreateCoin() {
           amount: BigInt(vestingPercentage) * TOTAL_SUPPLY / BigInt(100),
           recipients: vestingRecipients,
         } : undefined,
+        launchAt,
       };
-
-      console.log({
-        amount: BigInt(vestingPercentage) * TOTAL_SUPPLY / BigInt(100),
-        recipients: vestingRecipients,
-      })
 
       const rpcProvider = new JsonRpcProvider(launchChain.rpc_url);
 
@@ -587,11 +613,9 @@ export function CreateCoin() {
                 {/* Initial state - single address input */}
                 {watch('splitFeeRecipients').length === 0 && (
                   <div className="space-y-3">
-                    <Input
+                    <AddressInput
                       value={currentAddress}
-                      min={0}
-                      onChange={(e) => setCurrentAddress(e.target.value)}
-                      placeholder="Wallet Address"
+                      onChange={(address) => setCurrentAddress(address)}
                       variant="outlined"
                     />
                   </div>
@@ -605,10 +629,9 @@ export function CreateCoin() {
                         key={index}
                         className="flex gap-2"
                       >
-                        <Input
+                        <AddressInput
                           value={recipient.address}
-                          onChange={(e) => handleUpdateAddress(index, e.target.value)}
-                          placeholder="Wallet Address"
+                          onChange={(address) => handleUpdateAddress(index, address)}
                           variant="outlined"
                         />
 
@@ -683,7 +706,82 @@ export function CreateCoin() {
         {
           isAvandedMode && <>
             <div className="bg-card border border-card-border rounded-md">
-              <div 
+              <div
+                className="flex items-center justify-between p-4 cursor-pointer"
+                onClick={() => setIsSocialsExpanded(!isSocialsExpanded)}
+              >
+                <p className="text-lg font-medium">Socials</p>
+                <div className={clsx('p-2 rounded-full bg-primary/8 flex items-center justify-center transition-transform', isSocialsExpanded && 'rotate-180')}>
+                  <i className="icon-chevron-down size-4 text-tertiary" />
+                </div>
+              </div>
+
+              {isSocialsExpanded && (
+                <div className="grid grid-cols-2 gap-4 p-4 pt-0">
+                  <div className="flex items-center gap-4">
+                    <i className="icon-x size-5 text-tertiary" />
+                    <div className="flex-1">
+                      <InputField
+                        value={watch('socialTwitter')}
+                        onChangeText={(value) => setValue('socialTwitter', value)}
+                        prefix="x.com/"
+                        placeholder="/johndoe"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <i className="icon-telegram size-5 text-tertiary" />
+                    <div className="flex-1">
+                      <InputField
+                        value={watch('socialTelegram')}
+                        onChangeText={(value) => setValue('socialTelegram', value)}
+                        placeholder="/in/johndoe"
+                        prefix="t.me/"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <i className="icon-chat size-5 text-tertiary" />
+                    <div className="flex-1">
+                      <InputField
+                        value={watch('socialDiscord')}
+                        onChangeText={(value) => setValue('socialDiscord', value)}
+                        prefix="discord.gg/"
+                        placeholder="its_johndoe"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <i className="icon-warpcast size-5 text-tertiary" />
+                    <div className="flex-1">
+                      <InputField
+                        value={watch('socialWarpcast')}
+                        onChangeText={(value) => setValue('socialWarpcast', value)}
+                        prefix="warpcast.com/"
+                        placeholder="john.builds"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <i className="icon-globe size-5 text-tertiary" />
+                    <div className="flex-1">
+                      <InputField
+                        value={watch('socialWebsite')}
+                        onChangeText={(value) => setValue('socialWebsite', value)}
+                        placeholder="johndoe.xyz"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-card border border-card-border rounded-md">
+              <div
                 className="flex items-center justify-between p-4 cursor-pointer"
                 onClick={() => setIsMarketcapExpanded(!isMarketcapExpanded)}
               >
@@ -731,7 +829,7 @@ export function CreateCoin() {
             </div>
 
             <div className="bg-card border border-card-border rounded-md">
-              <div 
+              <div
                 className="flex items-center justify-between p-4 cursor-pointer"
                 onClick={() => setIsCoinDistributionExpanded(!isCoinDistributionExpanded)}
               >
@@ -853,6 +951,130 @@ export function CreateCoin() {
                   </div>
                 </div>
               </>}
+            </div>
+
+            <div className="bg-card border border-card-border rounded-md">
+              <div
+                className="flex items-center justify-between p-4 cursor-pointer"
+                onClick={() => setIsScheduleExpanded(!isScheduleExpanded)}
+              >
+                <p className="text-lg font-medium">Schedule</p>
+                <div className={clsx('p-2 rounded-full bg-primary/8 flex items-center justify-center transition-transform', isScheduleExpanded && 'rotate-180')}>
+                  <i className="icon-chevron-down size-4 text-tertiary" />
+                </div>
+              </div>
+
+              {isScheduleExpanded && (
+                <div className="space-y-4 p-4 pt-0">
+                  <p className="text-secondary text-sm">Select Date & Time</p>
+
+                  <div className="flex gap-3">
+                    <Menu.Root placement="top-start" className="flex-1">
+                      <Menu.Trigger>
+                        <div className="flex items-center gap-3 py-2 px-3 rounded-sm border border-card-border bg-card cursor-pointer hover:bg-primary/8 transition-colors">
+                          <i className="icon-calendar size-5 text-tertiary" />
+                          <span className="text-primary flex-1 text-left">
+                            {watch('launchDate') ? format(new Date(watch('launchDate')!), 'EEE, dd MMM') : 'Select date'}
+                          </span>
+                          <i className="icon-chevron-down size-4 text-tertiary" />
+                        </div>
+                      </Menu.Trigger>
+                      <Menu.Content className="w-[296px] p-0 rounded-lg">
+                        {({ toggle }) => {
+                          const launchDate = watch('launchDate');
+                          return (
+                            <Calendar
+                              minDate={new Date()}
+                              selected={launchDate ? new Date(launchDate) : undefined}
+                              onSelectDate={(date = new Date()) => {
+                                const datetime = launchDate ? new Date(launchDate) : new Date();
+                                datetime.setFullYear(date.getFullYear());
+                                datetime.setMonth(date.getMonth());
+                                datetime.setDate(date.getDate());
+                                setValue('launchDate', datetime.toISOString());
+                                toggle();
+                              }}
+                            />
+                          );
+                        }}
+                      </Menu.Content>
+                    </Menu.Root>
+
+                    <Menu.Root placement="top-start" className="flex-1">
+                      <Menu.Trigger>
+                        <div className="flex items-center gap-3 py-2 px-3 rounded-sm border border-card-border bg-card cursor-pointer hover:bg-primary/8 transition-colors">
+                          <i className="icon-clock size-5 text-tertiary" />
+                          <span className="text-primary flex-1 text-left">
+                            {watch('launchDate') ? format(new Date(watch('launchDate')!), 'hh:mm a') : 'Select time'}
+                          </span>
+                          <i className="icon-chevron-down size-4 text-tertiary" />
+                        </div>
+                      </Menu.Trigger>
+                      <Menu.Content className="w-[100px] no-scrollbar rounded-lg overflow-auto h-[200px] p-2">
+                        {({ toggle }) => {
+                          const launchDate = watch('launchDate');
+                          const times = Array.from({ length: 24 }, (_, hour) => {
+                            return [0, 30].map((minute) => {
+                              const period = hour < 12 ? 'AM' : 'PM';
+                              const formattedHour = (hour % 12 === 0 ? 12 : hour % 12).toString().padStart(2, '0');
+                              const formattedMinutes = minute.toString().padStart(2, '0');
+                              return {
+                                value: `${hour.toString().padStart(2, '0')}:${formattedMinutes}`,
+                                label: `${formattedHour}:${formattedMinutes} ${period}`,
+                              };
+                            });
+                          }).flat();
+
+                          return (
+                            <div>
+                              {times.map((t, i) => (
+                                <Button
+                                  key={i}
+                                  variant="flat"
+                                  className="hover:bg-quaternary! w-full whitespace-nowrap"
+                                  onClick={() => {
+                                    const [hours, minutes] = t.value.split(':').map(Number);
+                                    const datetime = launchDate ? new Date(launchDate) : new Date();
+                                    datetime.setHours(hours);
+                                    datetime.setMinutes(minutes);
+                                    setValue('launchDate', datetime.toISOString());
+                                    toggle();
+                                  }}
+                                >
+                                  {t.label}
+                                </Button>
+                              ))}
+                            </div>
+                          );
+                        }}
+                      </Menu.Content>
+                    </Menu.Root>
+
+                    <Timezone
+                      placement="top-start"
+                      className="flex-1"
+                      value={timezoneOption}
+                      onSelect={(zone) => {
+                        setTimezoneOption(zone);
+                        setValue('timezone', zone.value);
+                      }}
+                      trigger={() => (
+                        <div className="flex items-center gap-3 py-2 px-3 rounded-sm border border-card-border bg-card cursor-pointer hover:bg-primary/8 transition-colors">
+                          <i className="icon-globe size-5 text-tertiary" />
+                          <span className="text-primary flex-1 text-left">
+                            {timezoneOption?.short || timezoneOption?.value || 'Select timezone'}
+                          </span>
+                          <i className="icon-chevron-down size-4 text-tertiary" />
+                        </div>
+                      )}
+                    />
+                  </div>
+
+                  <p className="text-tertiary text-xs">
+                    The starting market cap is fixed in ETH, but its USD value will fluctuate based on ETH&apos;s price at launch.
+                  </p>
+                </div>
+              )}
             </div>
           </>
         }
