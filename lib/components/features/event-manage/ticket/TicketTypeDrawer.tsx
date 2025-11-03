@@ -1,4 +1,6 @@
-import { useForm } from 'react-hook-form';
+'use client';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { pick, omit } from 'lodash';
 import { useState } from 'react';
 
@@ -14,6 +16,7 @@ import {
   toast,
   modal,
   Toggle,
+  FileInput,
 } from '$lib/components/core';
 import {
   EventTicketType,
@@ -26,6 +29,7 @@ import {
   ListEventTokenGatesDocument,
   ListEventGuestsDocument,
   ExportEventTicketsDocument,
+  File,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { UpdateFiatPriceModal } from './UpdateFiatPriceModal';
@@ -37,6 +41,8 @@ import { TokenGatingDrawer } from './TokenGatingDrawer';
 import { TokenDetailsModal } from './TokenDetailsModal';
 import { useEvent } from '../store';
 import { EmailListDrawer } from './EmailListDrawer';
+import { generateUrl } from '$lib/utils/cnd';
+import { uploadFiles } from '$lib/utils/file';
 
 type TicketFormState = {
   title: string;
@@ -49,6 +55,8 @@ type TicketFormState = {
   fiatPrice?: EventTicketPrice;
   cryptoPrice?: EventTicketPrice;
   category?: any;
+  photos_expanded?: File[];
+  photos?: string[];
 };
 
 type PaymentType = 'free' | 'direct';
@@ -66,6 +74,7 @@ const getInitialValues = (initialTicketType?: EventTicketType): TicketFormState 
       fiatPrice: undefined,
       cryptoPrice: undefined,
       category: undefined,
+      photos: [],
     };
   }
 
@@ -78,6 +87,7 @@ const getInitialValues = (initialTicketType?: EventTicketType): TicketFormState 
     'active',
     'private',
     'limited',
+    'photos',
   ]) as TicketFormState;
 
   const fiatPrice = ticket.prices.find(
@@ -99,13 +109,17 @@ const getInitialValues = (initialTicketType?: EventTicketType): TicketFormState 
 export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType?: EventTicketType }) {
   const event = useEvent();
   const defaultValues = getInitialValues(initialTicketType);
+
+  const [ticketTypePhotos, setTicketTypePhotos] = React.useState([]);
+
   const form = useForm<TicketFormState>({
     defaultValues,
   });
 
   const {
+    control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     setValue,
   } = form;
   const paymnentTypes = [
@@ -135,7 +149,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
 
   const tokenGates = data?.listEventTokenGates;
 
-  const [createTicket, { loading: createLoading }] = useMutation(CreateEventTicketTypeDocument, {
+  const [createTicket] = useMutation(CreateEventTicketTypeDocument, {
     onComplete: (client) => {
       client.refetchQuery({
         query: ListEventTicketTypesDocument,
@@ -152,7 +166,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
     },
   });
 
-  const [updateTicket, { loading: updateLoading }] = useMutation(UpdateEventTicketTypeDocument, {
+  const [updateTicket] = useMutation(UpdateEventTicketTypeDocument, {
     onComplete: (client) => {
       client.refetchQuery({
         query: ListEventTicketTypesDocument,
@@ -169,7 +183,13 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
     },
   });
 
-  const onSubmit = (values: TicketFormState) => {
+  const onSubmit = async (values: TicketFormState) => {
+    let images = [];
+    if (ticketTypePhotos.length > 0) {
+      images = await uploadFiles(ticketTypePhotos, 'ticket_type');
+    }
+    console.log(images);
+
     const { category, fiatPrice, cryptoPrice, ...ticket } = values;
 
     const prices = [fiatPrice, cryptoPrice].filter(Boolean);
@@ -185,20 +205,12 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
       prices: prices.length
         ? prices.map((price) => pick(price, ['cost', 'currency', 'payment_accounts']))
         : [{ cost: '0', currency: 'USD' }],
-      ...pick(ticket, [
-        'title',
-        'description',
-        'ticket_limit_per',
-        'ticket_limit',
-        'photos',
-        'active',
-        'private',
-        'limited',
-      ]),
+      photos: [...images.map((i) => i._id), ...(ticket.photos, [])],
+      ...pick(ticket, ['title', 'description', 'ticket_limit_per', 'ticket_limit', 'active', 'private', 'limited']),
     } as EventTicketTypeInput;
 
     if (!initialTicketType) {
-      createTicket({
+      await createTicket({
         variables: {
           input: newTicket,
         },
@@ -207,7 +219,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
       return;
     }
 
-    updateTicket({
+    await updateTicket({
       variables: {
         id: initialTicketType._id,
         input: newTicket,
@@ -254,15 +266,56 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
       </div>
       <div className="flex-1 overflow-y-auto no-scrollbar">
         <div className="p-4">
-          <LabeledInput label="Ticket Name">
-            <Input
-              {...form.register('title', { required: 'Please enter a ticket name' })}
-              placeholder="Friends & Family"
-              variant="outlined"
-              error={!!errors.title}
+          <div className="flex gap-3">
+            <Controller
+              name="photos"
+              control={control}
+              render={() => {
+                return (
+                  <FileInput accept="image/*" onChange={(files) => setTicketTypePhotos(files)}>
+                    {(open) => (
+                      <div
+                        className="size-[60px] aspect-square rounded-sm relative flex items-center justify-center bg-(--btn-tertiary) cursor-pointer"
+                        onClick={() => {
+                          if (!isSubmitting) open();
+                        }}
+                      >
+                        {!!ticketTypePhotos.length || initialTicketType.photos_expanded?.[0] ? (
+                          <img
+                            src={
+                              !!ticketTypePhotos.length
+                                ? URL.createObjectURL(ticketTypePhotos[0])
+                                : generateUrl(initialTicketType.photos_expanded[0])
+                            }
+                          />
+                        ) : (
+                          <i className="icon-image size-6 text-tertiary" />
+                        )}
+
+                        <Button
+                          className="rounded-full absolute -bottom-0.5 -right-0.5 border-overlay-primary! border-2!"
+                          variant="secondary"
+                          icon="icon-upload-sharp"
+                          disabled={isSubmitting}
+                          size="xs"
+                        />
+                      </div>
+                    )}
+                  </FileInput>
+                );
+              }}
             />
-            {errors.title?.message && <ErrorText message={errors.title.message} />}
-          </LabeledInput>
+
+            <LabeledInput label="Ticket Name" className="flex-1">
+              <Input
+                {...form.register('title', { required: 'Please enter a ticket name' })}
+                placeholder="Friends & Family"
+                variant="outlined"
+                error={!!errors.title}
+              />
+              {errors.title?.message && <ErrorText message={errors.title.message} />}
+            </LabeledInput>
+          </div>
           <Spacer className="h-4" />
           {showDescription ? (
             <LabeledInput label="Description">
@@ -461,7 +514,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
         </div>
       </div>
       <div className="px-4 py-3 border-t border-t-divider flex-shrink-0">
-        <Button type="submit" variant="secondary" loading={createLoading || updateLoading}>
+        <Button type="submit" variant="secondary" loading={isSubmitting}>
           {initialTicketType ? 'Update Ticket' : 'Create Ticket'}
         </Button>
       </div>
