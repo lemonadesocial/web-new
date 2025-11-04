@@ -24,6 +24,8 @@ import { TokenReleaseScheduleModal } from './TokenReleaseScheduleModal';
 import { CreateCoinModal } from './CreateCoinModal';
 import { CoinDistributionBar } from './CoinDistributionBar';
 import { AddressInput } from './AddressInput';
+import { CommunitySearch, type CommunityData } from './CommunitySearch';
+import { SplitBreakdown } from './SplitBreakdown';
 
 type SplitFeeRecipient = {
   address: string;
@@ -95,7 +97,7 @@ function getLaunchAtTimestamp(launchDate: string | undefined, timezone: string |
   const date = new Date(launchDate);
   const dateTimeString = format(date, "yyyy-MM-dd'T'HH:mm:ss");
   const zonedDate = toDate(dateTimeString, { timeZone: timezone });
-  
+
   return Math.floor(zonedDate.getTime() / 1000);
 }
 
@@ -144,14 +146,15 @@ export function CreateCoin() {
   const [isScheduleExpanded, setIsScheduleExpanded] = useState(false);
   const [timezoneOption, setTimezoneOption] = useState<TimezoneOption | undefined>(getUserTimezoneOption());
   const [isLoading, setisLoading] = useState(false);
+  const [communityData, setCommunityData] = useState<CommunityData | null>(null);
 
   const watchedImage = watch('image');
   const watchedFeeReceiverShare = watch('feeReceiverShare');
   const watchedStartingMarketcap = watch('startingMarketcap');
   const watchedCoinDistributionPercentage = watch('fairLaunchPercentage');
 
-  const handleAddTag = () => {
-    // TODO: Implement tag addition logic
+  const handleCommunitySearchSuccess = (data: CommunityData) => {
+    setCommunityData(data);
   };
 
   const handleImageUpload = (files: File[]) => {
@@ -369,6 +372,7 @@ export function CreateCoin() {
       modal.open(CreateCoinModal, {
         props: {
           txParams,
+          groupAddress: communityData?.groupAddress
         }
       });
     } catch (error) {
@@ -593,6 +597,16 @@ export function CreateCoin() {
                 </div>
               </div>
               <hr className="border-t border-t-divider" />
+
+              {
+                communityData && <>
+                  <SplitBreakdown
+                    communityData={communityData}
+                    feeReceiverShare={watchedFeeReceiverShare}
+                  />
+                  <hr className="border-t border-t-divider" />
+                </>
+              }
             </>
           }
 
@@ -691,13 +705,8 @@ export function CreateCoin() {
                 </div>
               </>
             ) : (
-              /* Community Tab - Coming Soon */
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="flex size-16 items-center justify-center rounded-full bg-primary/8 border border-card-border mb-4">
-                  <i className="icon-users text-tertiary size-8" />
-                </div>
-                <h4 className="text-white text-lg font-medium mb-2">Coming Soon</h4>
-                <p className="text-tertiary text-sm">Community split fee feature is under development.</p>
+              <div className="space-y-3">
+                <CommunitySearch onSuccess={handleCommunitySearchSuccess} />
               </div>
             )}
           </div>
