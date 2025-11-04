@@ -68,7 +68,7 @@ function Content({ space }: { space: Space }) {
 
   const [uploadingDp, setUploadingDp] = React.useState(false);
   const [dp, setDp] = React.useState(
-    generateUrl(space?.image_avatar) || `${ASSET_PREFIX}/assets/images/default-dp.png`,
+    generateUrl(space?.image_avatar_expanded) || `${ASSET_PREFIX}/assets/images/default-dp.png`,
   );
 
   const [slug, setSlug] = React.useState(space.slug || '');

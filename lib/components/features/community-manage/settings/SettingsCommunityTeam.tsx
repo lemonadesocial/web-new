@@ -1,5 +1,5 @@
 'use client';
-import { Avatar, Button, Card, Divider, modal, Skeleton } from '$lib/components/core';
+import { Avatar, Button, Card, Divider, modal, Skeleton, toast } from '$lib/components/core';
 import { CardTable } from '$lib/components/core/table';
 import {
   DeleteSpaceMembersDocument,
@@ -15,6 +15,7 @@ import { userAvatar } from '$lib/utils/user';
 import React from 'react';
 import { ConfirmModal } from '../../modals/ConfirmModal';
 import { AddTeam } from '../modals/AddTeam';
+import { GraphQLError } from 'graphql';
 
 export function SettingsCommunityTeam({ space }: { space: Space }) {
   const me = useMe();
@@ -33,7 +34,11 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
   const [removeMember] = useMutation(DeleteSpaceMembersDocument);
 
   const handleRemove = async (id: string) => {
-    await removeMember({ variables: { input: { space: space._id, ids: [id] } } });
+    const { error } = await removeMember({ variables: { input: { space: space._id, ids: [id] } } });
+    if (error && error instanceof GraphQLError) {
+      toast.error(error.message);
+      return;
+    }
     await refetch();
     setList((prev) => prev.filter((i) => i._id !== id));
   };
