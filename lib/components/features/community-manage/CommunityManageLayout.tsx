@@ -116,7 +116,7 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
   return (
     <main className="flex flex-col h-dvh overflow-auto">
       <Header />
-      <div className="px-4 md:px-0 pt-6 sticky top-0 bg-page-background backdrop-blur-3xl z-50 border-b">
+      <div className="px-4 md:px-0 pt-6 sticky top-0 bg-page-background backdrop-blur-3xl z-1 border-b">
         <div className="page mx-auto">
           <div className="flex justify-between items-center">
             <div className="flex gap-3 items-center">

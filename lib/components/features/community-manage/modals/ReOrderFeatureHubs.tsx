@@ -52,7 +52,7 @@ export const ReOrderFeatureHubs = ({
                   src={generateUrl(item.image_avatar_expanded) || `${ASSET_PREFIX}/assets/images/default-dp.png`}
                 />
                 <div className="flex-1">
-                  <p className="line-clamp-2">{item.title} asdkjasld asdjkolasjd</p>
+                  <p className="line-clamp-2">{item.title}</p>
                 </div>
               </Card.Content>
             </Card.Root>
