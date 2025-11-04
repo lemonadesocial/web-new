@@ -1,5 +1,22 @@
 # Changelog
 
+## [8.19.0](https://github.com/lemonadesocial/web-new/compare/v8.18.0...v8.19.0) (2025-11-04)
+
+
+### Features
+
+* add reorder sub hubs ([0635670](https://github.com/lemonadesocial/web-new/commit/0635670794f41cdff5634ce13313df8d2fcb34ef))
+* resolve feedback ([f52a6dc](https://github.com/lemonadesocial/web-new/commit/f52a6dc341c4a5a424a8ddd544d7bef1f0ac948d))
+* update avatar size mobile ([596b1ee](https://github.com/lemonadesocial/web-new/commit/596b1eef247d216a8fd7253835f7ebdb8b7766c2))
+* update icon empty state ([9cbd391](https://github.com/lemonadesocial/web-new/commit/9cbd3918944c41931b052145138f7c35d3514cd1))
+* update message error ([a16377c](https://github.com/lemonadesocial/web-new/commit/a16377c3a23b3e5c0555e0ae820088127537695a))
+
+
+### Bug Fixes
+
+* layout sticky ([65868ec](https://github.com/lemonadesocial/web-new/commit/65868ec320c791e36f781200c9976df4c1ae5e06))
+* menu layout sticky layer ([6863a49](https://github.com/lemonadesocial/web-new/commit/6863a49f4bcb6cb11d3078fc8818283ef1a8ea55))
+
 ## [8.18.0](https://github.com/lemonadesocial/web-new/compare/v8.17.0...v8.18.0) (2025-10-30)
 
 
