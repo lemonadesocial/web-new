@@ -29,7 +29,6 @@ import {
   ListEventTokenGatesDocument,
   ExportEventTicketsDocument,
   File,
-  MediaFile,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { UpdateFiatPriceModal } from './UpdateFiatPriceModal';
@@ -109,7 +108,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
   const event = useEvent();
   const defaultValues = getInitialValues(initialTicketType);
 
-  const [ticketTypePhotos, setTicketTypePhotos] = React.useState<File[]>([]);
+  const [ticketTypePhotos, setTicketTypePhotos] = React.useState([]);
 
   const form = useForm<TicketFormState>({
     defaultValues,
@@ -183,7 +182,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
   });
 
   const onSubmit = async (values: TicketFormState) => {
-    let images: MediaFile[] = [];
+    let images = [];
     if (ticketTypePhotos.length > 0) {
       images = await uploadFiles(ticketTypePhotos, 'ticket_type');
     }
@@ -273,13 +272,14 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                   <FileInput accept="image/*" onChange={(files) => setTicketTypePhotos(files)}>
                     {(open) => (
                       <div
-                        className="size-[60px] aspect-square rounded-sm relative flex items-center justify-center bg-(--btn-tertiary) cursor-pointer"
+                        className="size-[60px] aspect-square rounded-sm relative flex items-center justify-center bg-(--btn-tertiary) cursor-pointer overflow-hidden"
                         onClick={() => {
                           if (!isSubmitting) open();
                         }}
                       >
                         {!!ticketTypePhotos.length || initialTicketType?.photos_expanded?.[0] ? (
                           <img
+                            className="w-full h-full object-contain"
                             src={
                               !!ticketTypePhotos.length
                                 ? URL.createObjectURL(ticketTypePhotos[0])
