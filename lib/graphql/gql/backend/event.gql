@@ -481,6 +481,7 @@ query GetEventTicketTypes($input: GetEventTicketTypesInput!) {
       photos_expanded(limit: 1) {
         _id
         key
+        type
         bucket
       }
       category
@@ -680,6 +681,7 @@ query listEventTicketTypes($event: MongoID!) {
       _id
       bucket
       key
+      type
     }
     prices {
       cost
