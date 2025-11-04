@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.20.0](https://github.com/lemonadesocial/web-new/compare/v8.19.0...v8.20.0) (2025-11-04)
+
+
+### Features
+
+* fix image size ([0ff9080](https://github.com/lemonadesocial/web-new/commit/0ff90800dbc432c911ee2220d6d28dc9514e0e85))
+
 ## [8.19.0](https://github.com/lemonadesocial/web-new/compare/v8.18.0...v8.19.0) (2025-11-04)
 
 
