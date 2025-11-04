@@ -194,7 +194,7 @@ function UpComingEventsSection({ space, events = [] }: { space: Space; events?: 
 
 function AdminListSection({ space, loading }: { space: Space; loading?: boolean }) {
   const { data, refetch } = useQuery(GetSpaceMembersDocument, {
-    variables: { space: space._id, limit: 100, roles: [SpaceRole.Admin], skip: 0, deletion: false },
+    variables: { space: space._id, limit: 100, roles: [SpaceRole.Admin, SpaceRole.Creator], skip: 0, deletion: false },
   });
   const admins = (data?.listSpaceMembers?.items || []) as SpaceMember[];
 
@@ -272,7 +272,15 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
                       title: 'Remove Admin',
                       subtitle: 'Are you sure you want to remove this admin?',
                       onConfirm: async () => {
-                        await removeMember({ variables: { input: { space: space._id, ids: [item._id] } } });
+                        const { error } = await removeMember({
+                          variables: { input: { space: space._id, ids: [item._id] } },
+                        });
+
+                        if (error) {
+                          toast.error(error.message);
+                          return;
+                        }
+
                         await refetch();
                       },
                     },

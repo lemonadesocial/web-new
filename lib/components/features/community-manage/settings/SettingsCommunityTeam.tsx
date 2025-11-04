@@ -15,7 +15,6 @@ import { userAvatar } from '$lib/utils/user';
 import React from 'react';
 import { ConfirmModal } from '../../modals/ConfirmModal';
 import { AddTeam } from '../modals/AddTeam';
-import { GraphQLError } from 'graphql';
 
 export function SettingsCommunityTeam({ space }: { space: Space }) {
   const me = useMe();
@@ -35,7 +34,7 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
 
   const handleRemove = async (id: string) => {
     const { error } = await removeMember({ variables: { input: { space: space._id, ids: [id] } } });
-    if (error && error instanceof GraphQLError) {
+    if (error) {
       toast.error(error.message);
       return;
     }
