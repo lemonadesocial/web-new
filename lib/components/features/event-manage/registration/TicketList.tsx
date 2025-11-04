@@ -50,12 +50,8 @@ function TicketItem({ ticket }: { ticket: EventTicketType }) {
       }
     >
       <div className="flex gap-3 items-center">
-        {ticket.photos_expanded?.[0] ? (
+        {ticket?.photos_expanded?.[0] && (
           <img src={generateUrl(ticket.photos_expanded?.[0] as any)} className="size-5 aspect-square rounded-xs" />
-        ) : (
-          <div className="size-5 aspect-square rounded-xs border-card-border border bg-[#3f3e42] flex items-center justify-center">
-            <i className="icon-confirmation-number size-3 text-quaternary" />
-          </div>
         )}
 
         <div className="flex gap-2 flex-1 items-center">

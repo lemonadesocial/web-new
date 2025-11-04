@@ -194,15 +194,11 @@ export function TicketSelectItem({
     >
       <div className="flex justify-between items-start">
         <div className="flex-1 flex gap-3 items-center">
-          {ticketType.photos_expanded?.[0] ? (
+          {ticketType.photos_expanded?.[0] && (
             <img
               src={generateUrl(ticketType.photos_expanded?.[0] as any)}
               className="size-10 aspect-square rounded-xs"
             />
-          ) : (
-            <div className="size-10 aspect-square rounded-xs border-card-border border bg-[#3f3e42] flex items-center justify-center">
-              <i className="icon-ticket size-5" />
-            </div>
           )}
           <div>
             <div className="flex items-center gap-1.5">

@@ -27,9 +27,9 @@ import {
   EventTicketTypeInput,
   UpdateEventTicketTypeDocument,
   ListEventTokenGatesDocument,
-  ListEventGuestsDocument,
   ExportEventTicketsDocument,
   File,
+  MediaFile,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { UpdateFiatPriceModal } from './UpdateFiatPriceModal';
@@ -40,7 +40,6 @@ import { AdditionalTicketsModal } from './AdditionalTicketsModal';
 import { TokenGatingDrawer } from './TokenGatingDrawer';
 import { TokenDetailsModal } from './TokenDetailsModal';
 import { useEvent } from '../store';
-import { EmailListDrawer } from './EmailListDrawer';
 import { generateUrl } from '$lib/utils/cnd';
 import { uploadFiles } from '$lib/utils/file';
 
@@ -110,7 +109,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
   const event = useEvent();
   const defaultValues = getInitialValues(initialTicketType);
 
-  const [ticketTypePhotos, setTicketTypePhotos] = React.useState([]);
+  const [ticketTypePhotos, setTicketTypePhotos] = React.useState<File[]>([]);
 
   const form = useForm<TicketFormState>({
     defaultValues,
@@ -184,11 +183,10 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
   });
 
   const onSubmit = async (values: TicketFormState) => {
-    let images = [];
+    let images: MediaFile[] = [];
     if (ticketTypePhotos.length > 0) {
       images = await uploadFiles(ticketTypePhotos, 'ticket_type');
     }
-    console.log(images);
 
     const { category, fiatPrice, cryptoPrice, ...ticket } = values;
 
@@ -280,12 +278,12 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                           if (!isSubmitting) open();
                         }}
                       >
-                        {!!ticketTypePhotos.length || initialTicketType.photos_expanded?.[0] ? (
+                        {!!ticketTypePhotos.length || initialTicketType?.photos_expanded?.[0] ? (
                           <img
                             src={
                               !!ticketTypePhotos.length
                                 ? URL.createObjectURL(ticketTypePhotos[0])
-                                : generateUrl(initialTicketType.photos_expanded[0])
+                                : generateUrl(initialTicketType?.photos_expanded?.[0])
                             }
                           />
                         ) : (
