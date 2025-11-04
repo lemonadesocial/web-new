@@ -193,32 +193,43 @@ export function TicketSelectItem({
       )}
     >
       <div className="flex justify-between items-start">
-        <div className="flex-1">
-          {ticketType.photos_expanded?.[0] && <img src={generateUrl(ticketType.photos_expanded?.[0] as any)} />}
-          <div className="flex items-center gap-1.5">
-            <p className={clsx('font-medium', active ? 'text-accent' : 'text-secondary')}>{ticketType.title}</p>
-            {ticketType.prices[0].payment_accounts_expanded?.[0]?.type === 'ethereum_stake' && (
-              <Chip variant="success" size="xxs" className="rounded-full">
-                Check In to Earn
-              </Chip>
-            )}
-            {!!tokenGate && (
-              <Chip variant="primary" size="xxs" className="rounded-full">
-                Token Holder Exclusive
-              </Chip>
-            )}
-            {ticketType.passcode_enabled && (
-              <Chip variant={hasPasscode ? 'success' : 'warning'} size="xxs" className="rounded-full">
-                {hasPasscode ? 'Ticket unlocked' : 'Passcode Required'}
-              </Chip>
+        <div className="flex-1 flex gap-3 items-center">
+          {ticketType.photos_expanded?.[0] ? (
+            <img
+              src={generateUrl(ticketType.photos_expanded?.[0] as any)}
+              className="size-10 aspect-square rounded-xs"
+            />
+          ) : (
+            <div className="size-10 aspect-square rounded-xs border-card-border border bg-[#3f3e42] flex items-center justify-center">
+              <i className="icon-ticket size-5" />
+            </div>
+          )}
+          <div>
+            <div className="flex items-center gap-1.5">
+              <p className={clsx('font-medium', active ? 'text-accent' : 'text-secondary')}>{ticketType.title}</p>
+              {ticketType.prices[0].payment_accounts_expanded?.[0]?.type === 'ethereum_stake' && (
+                <Chip variant="success" size="xxs" className="rounded-full">
+                  Check In to Earn
+                </Chip>
+              )}
+              {!!tokenGate && (
+                <Chip variant="primary" size="xxs" className="rounded-full">
+                  Token Holder Exclusive
+                </Chip>
+              )}
+              {ticketType.passcode_enabled && (
+                <Chip variant={hasPasscode ? 'success' : 'warning'} size="xxs" className="rounded-full">
+                  {hasPasscode ? 'Ticket unlocked' : 'Passcode Required'}
+                </Chip>
+              )}
+            </div>
+            <TicketPrices prices={ticketType.prices} groupRegistration={ticketType.limit > 1} active={active} />
+            {ticketType.description && (
+              <p className="text-secondary whitespace-pre" style={{ textWrap: 'wrap' }}>
+                {renderTextWithLinks(ticketType.description)}
+              </p>
             )}
           </div>
-          <TicketPrices prices={ticketType.prices} groupRegistration={ticketType.limit > 1} active={active} />
-          {ticketType.description && (
-            <p className="text-secondary whitespace-pre" style={{ textWrap: 'wrap' }}>
-              {renderTextWithLinks(ticketType.description)}
-            </p>
-          )}
         </div>
         <NumberInput
           value={count}
