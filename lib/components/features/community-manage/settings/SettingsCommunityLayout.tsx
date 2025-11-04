@@ -22,7 +22,7 @@ function SettingsCommunityLayout({ children }: React.PropsWithChildren) {
 
   return (
     <>
-      <div className="bg-card sticky top-28 z-50 backdrop-blur-sm">
+      <div className="bg-card sticky top-28 z-2 backdrop-blur-sm">
         <nav className="page flex gap-4 px-4 md:px-0 pt-2 mx-auto overflow-auto no-scrollbar">
           {tabs.map((item) => {
             const url =

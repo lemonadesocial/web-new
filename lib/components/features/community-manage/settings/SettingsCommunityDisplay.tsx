@@ -300,7 +300,7 @@ function Content({ space }: { space: Space }) {
             </Card.Content>
           </Card.Root>
 
-          <div className="flex flex-col md:flex-row gap-6 justify-between z-10">
+          <div className="flex flex-col md:flex-row gap-6 justify-between z-1">
             <Card.Root className="flex-1">
               <Card.Content className="space-y-4">
                 <p className="text-lg">Customization</p>

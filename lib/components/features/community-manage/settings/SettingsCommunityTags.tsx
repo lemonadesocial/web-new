@@ -192,7 +192,7 @@ export function SettingsCommunityTags({ space }: { space: Space }) {
                 </div>
 
                 <div className="flex gap-3 items-center">
-                  <p className="text-sm text-tertiary">{item.targets?.length} Events</p>
+                  <p className="text-sm text-tertiary">{item.targets?.length} members</p>
                   <Menu.Root placement={idx > memberTags.length - 3 ? 'top-end' : 'bottom-end'}>
                     <Menu.Trigger>
                       {({ toggle }) => (

@@ -67,8 +67,9 @@ function InputTags({ value = [], onChange }: { value?: string[]; onChange?: (val
   return (
     <fieldset className="input-field">
       <div className="control p-1! min-h-[40px] h-auto! flex flex-wrap gap-1! items-center">
-        {tags.map((t) => (
+        {tags.map((t, idx) => (
           <Badge
+            key={idx}
             className="text-md"
             title={t}
             color="var(--color-secondary)"

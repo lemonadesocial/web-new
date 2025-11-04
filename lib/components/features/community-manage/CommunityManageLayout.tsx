@@ -16,7 +16,7 @@ const menu = [
   { name: 'Overview', page: 'overview' },
   { name: 'Events', page: 'events' },
   { name: 'People', page: 'people' },
-  { name: 'Vaults', page: 'vaults' },
+  // { name: 'Vaults', page: 'vaults' },
   { name: 'Settings', page: 'settings' },
 ];
 
@@ -31,7 +31,7 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
   if (loading) {
     return (
       <div className="font-default">
-        <div className="sticky top-0 backdrop-blur-md transition-all duration-300 z-1 pt-7">
+        <div className="sticky top-0 backdrop-blur-md transition-all duration-300 z-2 pt-7">
           <div className="page mx-auto px-4 md:px-0">
             <div className="flex justify-between items-center">
               <Skeleton className="h-8 w-32" />
@@ -116,7 +116,7 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
   return (
     <main className="flex flex-col h-dvh overflow-auto">
       <Header />
-      <div className="px-4 md:px-0 pt-6 sticky top-0 bg-page-background backdrop-blur-3xl z-1 border-b">
+      <div className="px-4 md:px-0 pt-6 sticky top-0 bg-page-background backdrop-blur-3xl z-2 border-b">
         <div className="page mx-auto">
           <div className="flex justify-between items-center">
             <div className="flex gap-3 items-center">

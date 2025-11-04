@@ -194,7 +194,7 @@ function UpComingEventsSection({ space, events = [] }: { space: Space; events?: 
 
 function AdminListSection({ space, loading }: { space: Space; loading?: boolean }) {
   const { data, refetch } = useQuery(GetSpaceMembersDocument, {
-    variables: { space: space._id, limit: 100, roles: [SpaceRole.Admin], skip: 0 },
+    variables: { space: space._id, limit: 100, roles: [SpaceRole.Admin], skip: 0, deletion: false },
   });
   const admins = (data?.listSpaceMembers?.items || []) as SpaceMember[];
 
