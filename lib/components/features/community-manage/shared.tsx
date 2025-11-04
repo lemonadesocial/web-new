@@ -11,12 +11,16 @@ export function CommonSection({
   title: string;
   count?: number;
   subtitle: string;
-  actions?: Array<{
-    iconLeft?: string;
-    iconRight?: string;
-    onClick?: React.MouseEventHandler<HTMLButtonElement>;
-    title: string;
-  }>;
+  actions?: Array<
+    | {
+        iconLeft?: string;
+        iconRight?: string;
+        onClick?: React.MouseEventHandler<HTMLButtonElement>;
+        title?: string;
+        icon?: string;
+      }
+    | undefined
+  >;
 }) {
   return (
     <div className="space-y-5">
@@ -33,18 +37,22 @@ export function CommonSection({
 
           <p className="text-secondary">{subtitle}</p>
         </div>
-        {actions.map((item, idx) => (
-          <Button
-            key={idx}
-            iconLeft={item.iconLeft}
-            iconRight={item.iconRight}
-            size="sm"
-            variant="tertiary-alt"
-            onClick={item.onClick}
-          >
-            {item.title}
-          </Button>
-        ))}
+
+        <div className="flex gap-2">
+          {actions.filter(Boolean).map((item, idx) => (
+            <Button
+              key={idx}
+              iconLeft={item?.iconLeft}
+              iconRight={item?.iconRight}
+              icon={item?.icon}
+              size="sm"
+              variant="tertiary-alt"
+              onClick={item?.onClick}
+            >
+              {item?.title}
+            </Button>
+          ))}
+        </div>
       </div>
       {children}
     </div>

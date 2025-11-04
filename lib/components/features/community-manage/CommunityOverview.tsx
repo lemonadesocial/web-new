@@ -16,6 +16,7 @@ import {
   Space,
   SpaceMember,
   SpaceRole,
+  UpdateSubSpaceOrderDocument,
 } from '$lib/graphql/generated/backend/graphql';
 
 import { useRouter } from 'next/navigation';
@@ -46,6 +47,8 @@ import { AddTeam } from './modals/AddTeam';
 import { ConfirmModal } from '../modals/ConfirmModal';
 import { Pane } from '$lib/components/core/pane/pane';
 import { ASSET_PREFIX } from '$lib/utils/constants';
+import { ReOrderFeatureHubs } from './modals/ReOrderFeatureHubs';
+import { sub } from 'date-fns';
 
 const LIMIT = 2;
 const FROM_NOW = new Date().toISOString();
@@ -298,12 +301,28 @@ function FeaturedHubSection({ spaceId }: { spaceId: string }) {
     },
   });
 
+  const [updateOrder] = useMutation(UpdateSubSpaceOrderDocument, { onComplete: () => refetch() });
+
   return (
     <CommonSection
       title="Featured Hubs"
       subtitle="Showcase other community hubs you manage on the community page."
       actions={[
         { iconLeft: 'icon-plus', title: 'Add Hub', onClick: () => drawer.open(SubFeatureHubs, { props: { spaceId } }) },
+        subSpaces.length
+          ? {
+              icon: 'icon-arrow-up-down-line',
+              onClick: () =>
+                modal.open(ReOrderFeatureHubs, {
+                  props: {
+                    data: subSpaces,
+                    onChange: (arr) => {
+                      updateOrder({ variables: { id: spaceId, subSpaces: arr.map((i) => i._id) } });
+                    },
+                  },
+                }),
+            }
+          : undefined,
       ]}
     >
       <CardTable.Root loading={loading}>
