@@ -8,7 +8,7 @@ import FlaunchABI from '../../abis/token-launch-pad/Flaunch.json';
 
 export const TOTAL_SUPPLY = BigInt(10) ** BigInt(27);
 
-const parseLogs = (receipt: ethers.TransactionReceipt | null, contractInterface: ethers.Interface) => {
+export const parseLogs = (receipt: ethers.TransactionReceipt | null, contractInterface: ethers.Interface) => {
   if (!receipt) return [];
 
   return receipt.logs
