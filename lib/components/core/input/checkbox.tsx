@@ -9,7 +9,7 @@ const iconClassMap = {
   },
   circle: {
     checked: 'icon-check-filled text-primary',
-    unchecked: 'icon-check-filled text-quaternary',
+    unchecked: 'icon-circle-outline text-quaternary',
   },
 };
 
@@ -24,7 +24,7 @@ export interface CheckboxProps extends React.PropsWithChildren {
 export function Checkbox({
   id,
   value = false,
-  onChange,
+  onChange = () => {},
   children,
   containerClass,
   variant = 'square',

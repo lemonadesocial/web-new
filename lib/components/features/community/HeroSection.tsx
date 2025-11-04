@@ -103,7 +103,7 @@ export function HeroSection({ space, renderTitle }: HeroSectionProps) {
               <CommunityThemeBuilder themeData={space?.theme_data} spaceId={space?._id} />
             )}
             {canManage ? (
-              <Link href={`${LEMONADE_DOMAIN}/manage/community/${space?.slug || space?._id}`} target="_blank">
+              <Link href={`/s/manage/${space?.slug || space?._id}`} target="_blank">
                 <Button variant="primary" outlined iconRight="icon-arrow-outward" size="lg">
                   <span className="block">Manage</span>
                 </Button>

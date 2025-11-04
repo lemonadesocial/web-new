@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export function formatCurrency(amount = 0, currency?: string, attemptedDecimals = 2, showFree = true): string {
   amount /= 100;
 
@@ -49,4 +51,15 @@ export function extractLinks(text: string) {
         ),
       )
     : [];
+}
+
+const EmailSchema = z.string().email('Invalid email address format.');
+export function isValidEmail(input: string) {
+  try {
+    EmailSchema.parse(input);
+    return true;
+  } catch (error: any) {
+    console.error(`Zod Error for "${input}": ${error.errors[0].message}`);
+    return false;
+  }
 }

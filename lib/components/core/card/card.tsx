@@ -31,7 +31,7 @@ export function CardRoot({ children, href = '', onClick, as: tag = 'button', cla
     <div
       className={twMerge(
         'text-left rounded-md border-(length:--card-border-width) border-card-border bg-card backdrop-blur-lg overflow-hidden',
-        clsx((typeof onClick === 'function' || !!href) && 'cursor-pointer hover:bg-card-hover)'),
+        clsx((typeof onClick === 'function' || !!href) && 'cursor-pointer hover:bg-card-hover'),
         className,
       )}
       onClick={onClick}

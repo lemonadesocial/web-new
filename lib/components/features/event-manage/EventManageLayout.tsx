@@ -189,7 +189,7 @@ export function EventManageLayout({ children }: React.PropsWithChildren) {
           {event.space_expanded && (
             <div
               className="text-sm text-tertiary flex items-center gap-0.5 group cursor-pointer"
-              onClick={() => router.push(`/manage/community/${event.space_expanded?.slug || event.space}`)}
+              onClick={() => router.push(`/s/manage/${event.space_expanded?.slug || event.space}`)}
             >
               <p className="group-hover:text-primary">{event.space_expanded?.title}</p>
               <i className="icon-chevron-right size-4.5 text-quaternary transition group-hover:translate-x-0.5" />

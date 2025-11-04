@@ -104,6 +104,13 @@
   }
 
   .btn-warning {
-    --btn-content: var(--color-yellow-300);
+    --btn-bg: var(--color-warning-600);
+    --btn-bg-hover: var(--color-warning-700);
+    --btn-content: var(--color-primary);
+
+    &.btn-outlined {
+      --btn-content: var(--color-yellow-300);
+      --btn-bg-hover: transparent !important;
+    }
   }
 }
