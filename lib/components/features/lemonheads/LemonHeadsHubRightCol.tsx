@@ -19,15 +19,16 @@ import { truncateMiddle } from '$lib/utils/string';
 import { generateUrl } from '$lib/utils/cnd';
 import { randomEventDP, userAvatar } from '$lib/utils/user';
 import { formatWithTimezone } from '$lib/utils/date';
+import { PassportCard } from '$lib/components/features/passport/PassportCard';
 
 const FROM_NOW = new Date().toISOString();
 
 export function LemonHeadsHubRightCol({
   spaceId,
-  options = { nft: true, upcomingEvents: true, leaderboard: true },
+  options = { passport: true, nft: true, upcomingEvents: true, leaderboard: true },
 }: {
   spaceId?: string;
-  options?: { nft?: boolean; upcomingEvents?: boolean; leaderboard?: boolean };
+  options?: { passport?: boolean; nft?: boolean; upcomingEvents?: boolean; leaderboard?: boolean };
 }) {
   const { address } = useAppKitAccount();
   const { data } = useLemonhead();
@@ -61,7 +62,9 @@ export function LemonHeadsHubRightCol({
   };
 
   return (
-    <div className="flex items-center gap-2 md:block w-full md:w-[264px] space-y-4 overflow-auto no-scrollbar">
+    <div className="flex items-center gap-2 md:block w-full md:w-[296px] space-y-4 overflow-auto no-scrollbar">
+      {options.passport && <PassportCard />}
+
       {options.nft && <LemonHeadsNFTCard />}
 
       {!locked && !!upcomingEvents.length && options.upcomingEvents && (

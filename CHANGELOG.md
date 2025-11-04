@@ -1,5 +1,36 @@
 # Changelog
 
+## [8.18.0](https://github.com/lemonadesocial/web-new/compare/v8.17.0...v8.18.0) (2025-10-30)
+
+
+### Features
+
+* update name from ethdenver ([bf2b77b](https://github.com/lemonadesocial/web-new/commit/bf2b77b4552af453d71bff579c79ab20611ba206))
+
+## [8.17.0](https://github.com/lemonadesocial/web-new/compare/v8.16.0...v8.17.0) (2025-10-28)
+
+
+### Features
+
+* update unicorn copy ([35cbe59](https://github.com/lemonadesocial/web-new/commit/35cbe595543bffaf11a19a86e881e31e9113717d))
+
+## [8.16.0](https://github.com/lemonadesocial/web-new/compare/v8.15.0...v8.16.0) (2025-10-28)
+
+
+### Features
+
+* remove unicorn from eth requirements ([18c2e39](https://github.com/lemonadesocial/web-new/commit/18c2e39a9eb084e0fd6d5a7b832296b6b5730eef))
+
+
+### Bug Fixes
+
+* allow unicorn wallet in event application form ([bd5fc3c](https://github.com/lemonadesocial/web-new/commit/bd5fc3c6bb3910cd9e2e9134ed8e0c09634cf7bc))
+* buyer wallet not subbmitted ([7f4ac39](https://github.com/lemonadesocial/web-new/commit/7f4ac391968e12462d10c725a72eba11645ac35f))
+* format date in timzone issue (date-fns-tz) ([7087303](https://github.com/lemonadesocial/web-new/commit/7087303367481efdd0a96d1c7cfbe00ddba5e2d0))
+* update format timezone datetime picker ([aaa43c7](https://github.com/lemonadesocial/web-new/commit/aaa43c75e90acb3873315bba47040674cb8c5b63))
+* update time when change timezone ([bda0e1b](https://github.com/lemonadesocial/web-new/commit/bda0e1b55bd567cb294f537c3681f3e8632e45cb))
+* user atom source ([8ca81db](https://github.com/lemonadesocial/web-new/commit/8ca81db4e4250f1f32d769ff17725b7cbaa66583))
+
 ## [8.15.0](https://github.com/lemonadesocial/web-new/compare/v8.14.0...v8.15.0) (2025-10-25)
 
 

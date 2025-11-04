@@ -16,21 +16,39 @@ export function ConnectWallet({ onConnect, chain, onClose }: { onConnect: () => 
     if (hasConnected.current || !isConnected) return;
 
     if (!chain) {
+      modal.close();
       onConnect();
       hasConnected.current = true;
-      modal.close();
       return;
     }
 
     if (chainId?.toString() === chain.chain_id) {
+      modal.close();
       onConnect();
       hasConnected.current = true;
-      modal.close();
       return;
     }
 
     setShowSwitchNetwork(true);
   }, [isConnected, chain, chainId, onConnect]);
+
+  const handleSwitchNetwork = async () => {
+    if (!chain) return;
+    
+    if (chainId?.toString() === chain.chain_id) {
+      modal.close();
+      hasConnected.current = true;
+      onConnect();
+      return;
+    }
+
+    try {
+      await switchNetwork(getAppKitNetwork(chain));
+    } catch (error: any) {
+      console.error('Network switch error:', error);
+      toast.error(error?.message || 'Failed to switch network');
+    }
+  };
 
   useEffect(() => {
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
@@ -55,14 +73,7 @@ export function ConnectWallet({ onConnect, chain, onClose }: { onConnect: () => 
         <p className="text-secondary mt-2">
           You&apos;re connected to a different network than the one you selected. Please switch to {chain.name} in your wallet to continue.
         </p>
-        <Button variant="secondary" className="w-full mt-4" onClick={async () => {
-          try {
-            await switchNetwork(getAppKitNetwork(chain));
-          } catch (error: any) {
-            console.error('Network switch error:', error);
-            toast.error(error?.message || 'Failed to switch network');
-          }
-        }}>
+        <Button variant="secondary" className="w-full mt-4" onClick={handleSwitchNetwork}>
           Switch to {chain.name}
         </Button>
       </ModalContent>

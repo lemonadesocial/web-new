@@ -54,8 +54,8 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
           <img src={`${ASSET_PREFIX}/assets/images/wallet-unicorn.png`} alt='Unicorn Logo' className='w-[26px] relative z-10' />
         </div>
         <div className='space-y-1'>
-          <p className='text-lg'>Authenticating With Unicorn</p>
-          <p className='text-sm text-secondary'>We're securely verifying your Unicorn account details and preparing to connect them to Lemonade. This should only take a moment.</p>
+          <p className='text-lg'>Authenticating With ETHDenver</p>
+          <p className='text-sm text-secondary'>We're verifying your ETHDenver Account details and preparing to connect them to Lemonade.</p>
         </div>
       </div>
     </ModalContent>
@@ -64,7 +64,7 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
   if (status === 'linked') return (
     <SuccessModal
       title="Welcome to Lemonade!"
-      description='Your account is ready, and your Unicorn wallet is already linked. Start exploring events, communities, and collectibles!'
+      description='Your ETHDenver account wallet is already linked. Start exploring events, communities and collectibles!'
       buttonText='Start Exploring'
     />
   );
@@ -72,7 +72,7 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
   if (status === 'processed') return (
     <SuccessModal
       title="You're All Set!"
-      description='We found your Lemonade account with the same email as your Unicorn account. Your wallet is now linked and ready to use.'
+      description='We found your Lemonade account with the same email as your ETHDenver account. Your wallet is now linked and ready to use.'
       buttonText='Continue to Lemonade'
     />
   );
@@ -85,7 +85,7 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
         </div>
         <div className='space-y-1'>
           <p className='text-lg'>Let's Get You Started</p>
-          <p className='text-sm text-secondary'>We couldn't find a Lemonade account for your Unicorn email. Create one now or link an existing account.</p>
+          <p className='text-sm text-secondary'>We couldn't find a Lemonade account associated with the email used for your ETHDenver account. Create a Lemonade account now or link an existing account.</p>
         </div>
         <div className='space-y-3'>
           <Button
@@ -107,7 +107,7 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
   if (status === 'creating') return (
     <ConfirmTransaction
       title='Creating Your Account'
-      description="We're setting up your brand-new Lemonade account using your Unicorn email and wallet. Almost there…"
+      description="We're setting up your brand-new Lemonade account associated with your ETHDenver account and wallet. Almost there…"
     />
   );
 

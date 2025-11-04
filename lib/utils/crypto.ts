@@ -8,6 +8,7 @@ import LemonadeRelayPayment from '$lib/abis/LemonadeRelayPayment.json';
 import LemonadeStakePayment from '$lib/abis/LemonadeStakePayment.json';
 import ERC721 from '$lib/abis/ERC721.json'; 
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
+import LemonadePassport from '$lib/abis/LemonadePassport.json';
 import { TRPCClientError } from '@trpc/client';
 
 export const ERC20Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC20));
@@ -15,6 +16,7 @@ export const ERC721Contract = new ethers.Contract(ethers.ZeroAddress, new ethers
 export const LemonadeRelayPaymentContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonadeRelayPayment.abi));
 export const LemonadeStakePaymentContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonadeStakePayment.abi));
 export const LemonheadNFTContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonheadNFT.abi));
+export const LemonadePassportContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonadePassport.abi));
 
 export function getListChains() {
   return getDefaultStore().get(listChainsAtom);
