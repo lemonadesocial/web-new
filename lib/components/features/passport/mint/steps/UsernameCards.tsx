@@ -147,7 +147,7 @@ export function ENSDomainCard() {
   return (
     <CardDetail
       icon="icon-ens"
-      title={ensName}
+      title={`@${ensName}`}
       subtitle="ENS Domain"
       constainerClass={isSelected ? 'border-primary' : 'border-card-border'}
     >

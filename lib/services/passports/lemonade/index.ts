@@ -137,6 +137,10 @@ export const getMintLemonadePassportData = async (
 
   const username = lemonadeUsername ? `@${lemonadeUsername}` : await getEnsUsername(wallet);
 
+  if (!username) {
+    throw new Error('Failed to get username');
+  }
+
   const avatarImageUrl = fluffleTokenId ? passportData.fluffleImageUrl : passportData.lemonheadImageUrl;
 
   const passportId = passportData.lemonheadTokenId.padStart(8, '0');
