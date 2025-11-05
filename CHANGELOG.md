@@ -1,5 +1,32 @@
 # Changelog
 
+## [8.21.0](https://github.com/lemonadesocial/web-new/compare/v8.20.0...v8.21.0) (2025-11-05)
+
+
+### Features
+
+* add error ([a4e33ac](https://github.com/lemonadesocial/web-new/commit/a4e33acf61f151d95354823703f0eddfd37f6e7d))
+* enable passport card ([9180fdc](https://github.com/lemonadesocial/web-new/commit/9180fdcbb9eeb49869fbdf59369beb6766058f94))
+* hide passport card ([443f112](https://github.com/lemonadesocial/web-new/commit/443f11261ed1045feeb9a46cd823725b79ec8f15))
+* update content mint passport ([6040f9d](https://github.com/lemonadesocial/web-new/commit/6040f9d7f203793badeec7b9f665562f68eed0c7))
+* update error msg ([9ef0c03](https://github.com/lemonadesocial/web-new/commit/9ef0c0374e06b115f34d478229d108dc1a7f2db5))
+* update error msg ([ded81d3](https://github.com/lemonadesocial/web-new/commit/ded81d3c3e054475076a7e49d076e991c2e6c0b0))
+* update people tags ui ([b817d02](https://github.com/lemonadesocial/web-new/commit/b817d0267baf44ec62df68fd34b4be57174f98c6))
+* update share community modal ([d867cd0](https://github.com/lemonadesocial/web-new/commit/d867cd020d56fb07f2d47d00ad650f69af421414))
+* update share facebook and email ([2256366](https://github.com/lemonadesocial/web-new/commit/2256366c73b79d26ced2f40e027ce88ac991caae))
+* update space image ticket type ([e4009d9](https://github.com/lemonadesocial/web-new/commit/e4009d940deb085faf1e0b7eb32ff69832391b6d))
+* update title - desc mint flow ([05b3662](https://github.com/lemonadesocial/web-new/commit/05b366264bdf3c34f8d587fd103676473816d017))
+
+
+### Bug Fixes
+
+* correct mint params ([923635c](https://github.com/lemonadesocial/web-new/commit/923635c699abbce9c5b089a2c3be15cf54c8f10f))
+* ens display ([b036ffc](https://github.com/lemonadesocial/web-new/commit/b036ffcbe52f6191d44d53a28186a95de5245573))
+* get ens name ([6b3da42](https://github.com/lemonadesocial/web-new/commit/6b3da4223a78f28dea19a54532e2dcfbec527e24))
+* passport link ([521abf4](https://github.com/lemonadesocial/web-new/commit/521abf44f45b477574d98470efdcac3673f60810))
+* remove video bg in zugrama ([da13eef](https://github.com/lemonadesocial/web-new/commit/da13eef207c24c7d4b8cec4d372263a28259dc72))
+* update ui mobile view ([8eddd2e](https://github.com/lemonadesocial/web-new/commit/8eddd2e7cdc2aed193bc89bd9706d038ceecef66))
+
 ## [8.20.0](https://github.com/lemonadesocial/web-new/compare/v8.19.0...v8.20.0) (2025-11-04)
 
 
