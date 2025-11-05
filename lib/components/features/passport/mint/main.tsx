@@ -34,7 +34,6 @@ function Content() {
       setLoading(true);
       mintPassportMutation.mutateAsync({
         wallet: address,
-        ensForUserName: state.useENS,
         lemonadeUsername: state.lemonadeUsername || undefined,
         fluffleTokenId,
       }).then((data) => {

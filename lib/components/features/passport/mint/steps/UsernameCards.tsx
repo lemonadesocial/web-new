@@ -20,8 +20,6 @@ export function UsernameCard() {
   const [state, dispatch] = usePassportContext();
   const chainsMap = useAtomValue(chainsMapAtom);
 
-  console.log('setting username', username, state)
-
   const handleSelect = () => {
     if (username) {
       dispatch({ type: PassportActionKind.SetLemonadeUsername, payload: username });

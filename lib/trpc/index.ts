@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { TRPCError } from '@trpc/server';
 import orgs from 'open-graph-scraper';
 
 import { getMintNftData } from '$lib/services/lemonhead';
@@ -83,14 +84,21 @@ export const appRouter = router({
     .input(
       z.object({
         wallet: z.string(),
-        ensForUserName: z.boolean().optional(),
         lemonadeUsername: z.string().optional(),
         fluffleTokenId: z.string().optional(),
       }),
     )
     .mutation(async ({ input }) => {
-      const { wallet, ensForUserName, lemonadeUsername, fluffleTokenId } = input;
-      return getMintLemonadePassportData(wallet, ensForUserName, lemonadeUsername, fluffleTokenId);
+      const { wallet, lemonadeUsername, fluffleTokenId } = input;
+      try {
+        return await getMintLemonadePassportData(wallet, lemonadeUsername, fluffleTokenId);
+      } catch (err: any) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: err?.message || 'Failed to get mint data',
+          cause: err,
+        });
+      }
     }),
   zugrama: {
     getImage: publicProcedure
