@@ -49,11 +49,12 @@ import { Pane } from '$lib/components/core/pane/pane';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { ReOrderFeatureHubs } from './modals/ReOrderFeatureHubs';
 import { sub } from 'date-fns';
+import { SharedModal } from './modals/SharedModal';
 
 const LIMIT = 2;
 const FROM_NOW = new Date().toISOString();
 
-export function CommunityOverview({ space: initSpace }: { space?: Space }) {
+export function CommunityOverview({ space: initSpace, hostname }: { space?: Space; hostname?: string }) {
   const { data, loading: loadingGetSpace } = useQuery(GetSpaceDocument, {
     variables: { id: initSpace?._id },
     fetchPolicy: 'cache-and-network',
@@ -78,7 +79,7 @@ export function CommunityOverview({ space: initSpace }: { space?: Space }) {
     <div className="page bg-transparent! mx-auto py-7 px-4 md:px-0">
       <div className="flex flex-col gap-8 pb-20">
         <div className="flex flex-col gap-8">
-          <ListActions spaceId={space?._id} />
+          <ListActions spaceId={space?._id} hostname={`https://${hostname}/s/${space.slug || space._id}`} />
 
           <div className="[&>*:only-child]:hidden flex flex-col gap-5">
             <h3 className="text-xl font-semibold">Events</h3>
@@ -123,7 +124,7 @@ const actions = [
   },
 ];
 
-function ListActions({ spaceId }: { spaceId: string }) {
+function ListActions({ spaceId, hostname }: { spaceId: string; hostname?: string }) {
   const router = useRouter();
   return (
     <div className="flex gap-2 overflow-x-auto no-scrollbar">
@@ -136,7 +137,7 @@ function ListActions({ spaceId }: { spaceId: string }) {
               .with('add_event', () => router.push(`/create/event?space=${spaceId}`))
               .with('send_news_letter', () => toast.success('Coming soon'))
               .with('create_post', () => toast.success('Coming soon'))
-              .with('share_community', () => toast.success('Coming soon'));
+              .with('share_community', () => modal.open(SharedModal, { props: { hostname } }));
           }}
         >
           <Card.Content className="flex gap-3 items-center py-2 px-3">

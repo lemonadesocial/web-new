@@ -268,14 +268,32 @@ export function CommunityPeople({ space }: Props) {
                     <p>
                       {item.user_name || item.user_expanded?.display_name || item.user_expanded?.name || 'Anonymous'}
                     </p>
+                    <div className="items-center hidden md:flex">
+                      {item.tags?.map((t) => (
+                        <div
+                          className="border-1 first:ml-0 border-overlay-primary -ml-0.5 size-2 rounded-full"
+                          style={{ background: t.color }}
+                        />
+                      ))}
+                    </div>
                     <p className="text-tertiary line-clamp-1">{item.email || item.user_expanded?.email}</p>
                   </div>
                 </div>
-                <p className="text-tertiary text-sm">
-                  {isToday(item.role_changed_at)
-                    ? formatDistance(item.role_changed_at, new Date(), { addSuffix: true })
-                    : format(item.role_changed_at, 'MMM dd, yyyy')}
-                </p>
+                <div className="flex flex-col items-end gap-1">
+                  <p className="text-tertiary text-sm">
+                    {isToday(item.role_changed_at)
+                      ? formatDistance(item.role_changed_at, new Date(), { addSuffix: true })
+                      : format(item.role_changed_at, 'MMM dd, yyyy')}
+                  </p>
+                  <div className="items-center flex md:hidden">
+                    {item.tags?.map((t) => (
+                      <div
+                        className="border-1 first:ml-0 border-overlay-primary -ml-0.5 size-2 rounded-full"
+                        style={{ background: t.color }}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
             </CardTable.Row>
           ))}
@@ -305,9 +323,7 @@ function PeopleDetailPane({
   onRefetch: () => void;
 }) {
   const [manageSpaceTag] = useMutation(ManageSpaceTagDocument, {
-    onComplete: () => {
-      onRefetch?.();
-    },
+    onComplete: () => onRefetch?.(),
   });
 
   const handleManageSpaceTag = (tag: SpaceTag, tagged: boolean) => {
