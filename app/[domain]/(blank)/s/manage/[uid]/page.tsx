@@ -4,7 +4,10 @@ import { CommunityOverview } from '$lib/components/features/community-manage/Com
 import { getClient } from '$lib/graphql/request';
 import { GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
 
-export default async function Page({ params }: { params: Promise<{ uid: string }> }) {
+export default async function Page({ params }: { params: Promise<{ uid: string; domain: string }> }) {
+  const domain = (await params).domain;
+  const host = decodeURIComponent(domain);
+
   const uid = (await params).uid;
   const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
 
@@ -14,5 +17,5 @@ export default async function Page({ params }: { params: Promise<{ uid: string }
 
   if (!space) return notFound();
 
-  return <CommunityOverview space={space} />;
+  return <CommunityOverview space={space} hostname={host} />;
 }
