@@ -126,24 +126,16 @@ const getCreationDateImageBuffer = async (creationDate: string) => {
 
 export const getMintLemonadePassportData = async (
   wallet: string,
-  ensForUserName?: boolean,
   lemonadeUsername?: string,
   fluffleTokenId?: string,
 ) => {
   const passportData = await getData(wallet, fluffleTokenId || '');
-  assert.ok(passportData && passportData.lemonheadTokenId);
 
-  let username = wallet.toLowerCase();
-
-  if (lemonadeUsername) {
-    username = `@${lemonadeUsername}`;
-  } else if (ensForUserName) {
-    username = await getEnsUsername(wallet);
+  if (!passportData?.lemonheadTokenId) {
+    throw new Error('Failed to get passport data');
   }
 
-  if (!username) {
-    throw new Error('Username is required');
-  }
+  const username = lemonadeUsername ? `@${lemonadeUsername}` : await getEnsUsername(wallet);
 
   const avatarImageUrl = fluffleTokenId ? passportData.fluffleImageUrl : passportData.lemonheadImageUrl;
 
