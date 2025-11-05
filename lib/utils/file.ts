@@ -21,7 +21,7 @@ export type MediaFile = {
 
 export async function uploadFiles(files: File[], directory: FileDirectory): Promise<MediaFile[]> {
   const uploadInfos = files.map((file) => ({
-    extension: file.name.split('.').pop()!.toString(),
+    extension: file.name.split('.').pop()!.toString().toLowerCase(),
   }));
 
   const createFileUploadsResponse = await defaultClient.query({

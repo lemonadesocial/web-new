@@ -42,6 +42,7 @@ query listChains {
     donation_registry_contract
     lemonhead_contract_address
     lemonade_passport_contract_address
+    zugrama_passport_contract_address
     poap_enabled
   }
 }
