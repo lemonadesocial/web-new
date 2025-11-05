@@ -136,7 +136,9 @@ export function AddTags({
   const [tag, setTag] = React.useState('');
   const [tags, setTags] = React.useState<SpaceTag[]>(value);
   const { data } = useQuery(GetSpaceTagsDocument, { variables: { space: spaceId } });
-  const list = (data?.listSpaceTags.filter((t) => (t as SpaceTag).type === type) || []) as SpaceTag[];
+  const list = (data?.listSpaceTags.filter(
+    (t) => (t as SpaceTag).type === type && !tags.map((i) => i._id).includes((t as SpaceTag)._id),
+  ) || []) as SpaceTag[];
 
   const onSelectTag = (t: SpaceTag) => {
     const _tags = uniq([...tags, t]);
