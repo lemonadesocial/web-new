@@ -15,6 +15,7 @@ export function BeforeMintPassportModal({ onContinue }: { onContinue: () => void
           <p className="text-sm">Please review and agree to the terms.</p>
           <p className="text-sm">By minting your Passport, you agree to our Terms of Use and acknowledge that::</p>
           <ul className="list-disc pl-5.5 text-sm">
+            <li>Lemonade Passport NFT is non-transferable & non-tradable (soul-bound).</li>
             <li>Your Passport will be permanently recorded on-chain</li>
             <li>It will be publicly visible and tied to your wallet address.</li>
             <li>All claims are final.</li>

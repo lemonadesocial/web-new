@@ -26,7 +26,7 @@ export function PassportUsername() {
           dispatch({ type: PassportActionKind.SetEnsName, payload: `@${name}` });
         }
       } catch (error) {
-        toast.error(formatError(error))
+        toast.error(formatError(error));
       } finally {
         setIsLoading(false);
       }
@@ -39,7 +39,7 @@ export function PassportUsername() {
     <div className="flex-1 flex flex-col gap-6 md:py-12">
       <div className="flex flex-col gap-4">
         <h1 className="text-5xl font-semibold leading-tight">Select passport name.</h1>
-        <p className="text-tertiary">Verify yourself and pick an ENS name or claim one.</p>
+        <p className="text-tertiary">Choose which ENS appears on your passport.</p>
       </div>
 
       {isLoading ? (
@@ -58,7 +58,7 @@ export function PassportUsername() {
           <div>
             <h2 className="text-xl font-semibold text-tertiary text-center">No ENS Name Found</h2>
             <p className="text-tertiary text-center">Get your ENS domain to use as your passport name.</p>
-          </div> 
+          </div>
           <Button
             variant="secondary"
             iconRight="icon-arrow-outward"
