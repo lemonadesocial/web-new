@@ -50,7 +50,7 @@ export function MintPassportModal({
         contractAddress,
         walletProvider as Eip1193Provider,
         'mint',
-        [mintData.metadata, mintData.signature],
+        [mintData.metadata, mintData.price, mintData.signature],
         { value: mintData.price }
       );
 
