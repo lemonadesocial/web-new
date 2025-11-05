@@ -18,11 +18,10 @@ import { truncateMiddle } from '$lib/utils/string';
 import { generateUrl } from '$lib/utils/cnd';
 import { randomEventDP, userAvatar } from '$lib/utils/user';
 import { formatWithTimezone } from '$lib/utils/date';
-// import { PassportCard } from '$lib/components/features/passport/PassportCard';
+import { PassportCard } from '$lib/components/features/passport/PassportCard';
 
 const FROM_NOW = new Date().toISOString();
 
-// TODO: should enable show passport when it's ready to show
 export function LemonHeadsHubRightCol({
   spaceId,
   options = { passport: true, nft: true, upcomingEvents: true, leaderboard: true },
@@ -63,7 +62,7 @@ export function LemonHeadsHubRightCol({
 
   return (
     <div className="flex items-center gap-2 md:block w-full md:w-[296px] space-y-4 overflow-auto no-scrollbar">
-      {/*options.passport && <PassportCard />*/}
+      options.passport && <PassportCard />
 
       {options.nft && <LemonHeadsNFTCard />}
 
