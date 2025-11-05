@@ -1,6 +1,5 @@
 import { createCanvas, deregisterAllFonts, Image, registerFont } from 'canvas';
 import assert from 'assert';
-import { ethers } from 'ethers';
 import fs from 'fs';
 import { format } from 'date-fns';
 import path from 'path';
@@ -10,6 +9,7 @@ import { getUriFromUrl, uploadImage, uploadJSON } from '$lib/services/nft/storag
 
 import { getApproval, getData } from "./admin";
 import { Point } from "../common/canvas";
+import { getEnsUsername } from '../common/ens';
 
 export const DESCRIPTION = [
   ''
@@ -122,19 +122,6 @@ const getCreationDateImageBuffer = async (creationDate: string) => {
   deregisterAllFonts();
   registerFont(boldFontPath, { family: boldFontFamily });
   return await getTextImageBuffer(`${fontSize}px "${boldFontFamily}"`, creationDate, creationDateOffset, '#000000');
-}
-
-const getEnsUsername = async (wallet: string) => {
-  const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_ETHEREUM_PROVIDER);
-
-  // Use lookup to get ENS name from wallet address
-  const ensName = await provider.lookupAddress(wallet);
-
-  if (!ensName) {
-    throw new Error('Failed to get ENS username');
-  }
-
-  return `@${ensName}`;
 }
 
 export const getMintLemonadePassportData = async (
