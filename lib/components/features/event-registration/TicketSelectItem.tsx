@@ -193,11 +193,11 @@ export function TicketSelectItem({
       )}
     >
       <div className="flex justify-between items-start gap-3">
-        <div className="flex-1 flex gap-3 items-center">
+        <div className="flex-1 flex gap-3">
           {ticketType.photos_expanded?.[0] && (
             <img
               src={generateUrl(ticketType.photos_expanded?.[0] as any)}
-              className="size-10 aspect-square rounded-xs"
+              className="size-10 aspect-square rounded-xs my-1"
             />
           )}
           <div>
