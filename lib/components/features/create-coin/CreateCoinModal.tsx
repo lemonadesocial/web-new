@@ -1,13 +1,11 @@
 'use client';
 import { useState } from "react";
-import { useAtomValue } from 'jotai';
 
 import { useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
 import { modal } from "$lib/components/core";
 import { BrowserProvider, Eip1193Provider, Contract, ethers, JsonRpcProvider } from "ethers";
 import { LaunchTokenTxParams, parseLogs } from "$lib/services/token-launch-pad";
-import { chainsMapAtom } from '$lib/jotai';
-import { LAUNCH_CHAIN_ID } from '$lib/utils/constants';
+import { Chain } from "$lib/graphql/generated/backend/graphql";
 import { formatError } from "$lib/utils/crypto";
 import ZapContractABI from "$lib/abis/token-launch-pad/FlaunchZap.json";
 import TreasuryManagerABI from '$lib/abis/token-launch-pad/TreasuryManager.json';
@@ -22,14 +20,14 @@ import FlaunchABI from '$lib/abis/token-launch-pad/Flaunch.json';
 interface CreateCoinModalProps {
   txParams: LaunchTokenTxParams;
   groupAddress?: string;
+  launchChain: Chain;
 }
 
 export function CreateCoinModal({ 
   txParams,
-  groupAddress
+  groupAddress,
+  launchChain
 }: CreateCoinModalProps) {
-  const chainsMap = useAtomValue(chainsMapAtom);
-  const launchChain = chainsMap[LAUNCH_CHAIN_ID];
   const { walletProvider } = useAppKitProvider('eip155');
   const [status, setStatus] = useState<'signing' | 'confirming' | 'depositing' | 'success' | 'none' | 'error'>('none');
   const [error, setError] = useState('');
