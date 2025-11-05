@@ -1,5 +1,6 @@
 import { getDefaultStore } from 'jotai';
 import { Eip1193Provider, ethers, isError } from 'ethers';
+import { mainnet } from 'viem/chains';
 
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
 
@@ -11,7 +12,6 @@ import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import LemonadePassport from '$lib/abis/LemonadePassport.json';
 import { TRPCClientError } from '@trpc/client';
 import ZugramaPassport from '$lib/abis/ZuGramaPassport.json';
-import { mainnet } from 'viem/chains';
 
 export const ERC20Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC20));
 export const ERC721Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC721));

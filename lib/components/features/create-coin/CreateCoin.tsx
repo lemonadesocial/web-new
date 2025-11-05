@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAtomValue } from 'jotai';
 import { JsonRpcProvider } from 'ethers';
@@ -8,13 +8,12 @@ import { toDate } from 'date-fns-tz';
 import clsx from 'clsx';
 
 import { appKit } from '$lib/utils/appkit';
-import { Button, Textarea, FileInput, Toggle, Input, Segment, modal, toast, Menu } from '$lib/components/core';
+import { Button, Textarea, FileInput, Toggle, Input, Segment, modal, toast, Menu, MenuItem } from '$lib/components/core';
 import { InputField } from '$lib/components/core/input/input-field';
 import { Timezone } from '$lib/components/core/calendar/datetime-picker';
 import { Calendar } from '$lib/components/core/calendar';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
-import { chainsMapAtom } from '$lib/jotai';
-import { LAUNCH_CHAIN_ID } from '$lib/utils/constants';
+import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
 import { TOTAL_SUPPLY, getLaunchTokenParams } from '$lib/services/token-launch-pad';
 import { formatError } from '$lib/utils/crypto';
 import type { LaunchTokenParams } from '$lib/services/token-launch-pad';
@@ -127,13 +126,17 @@ export function CreateCoin() {
   });
 
   const chainsMap = useAtomValue(chainsMapAtom);
-  const launchChain = chainsMap[LAUNCH_CHAIN_ID];
+  const listChains = useAtomValue(listChainsAtom);
+  const availableChains = listChains.filter(chain => chain.launchpad_zap_contract_address);
+  const [selectedChainId, setSelectedChainId] = useState<string>(availableChains[0]?.chain_id || '');
+  const launchChain = chainsMap[selectedChainId];
 
-  // Register validation rules
-  register('ticker', { required: 'Ticker is required' });
-  register('coinName', { required: 'Coin name is required' });
-  register('description', { required: 'Description is required' });
-  register('image', { required: 'Image is required' });
+  useEffect(() => {
+    register('ticker', { required: 'Ticker is required' });
+    register('coinName', { required: 'Coin name is required' });
+    register('description', { required: 'Description is required' });
+    register('image', { required: 'Image is required' });
+  }, []);
 
   const [currentAddress, setCurrentAddress] = useState('');
   const [activeTab, setActiveTab] = useState<'users' | 'community'>('users');
@@ -372,7 +375,8 @@ export function CreateCoin() {
       modal.open(CreateCoinModal, {
         props: {
           txParams,
-          groupAddress: communityData?.groupAddress
+          groupAddress: communityData?.groupAddress,
+          launchChain
         }
       });
     } catch (error) {
@@ -456,95 +460,137 @@ export function CreateCoin() {
           </div>
         </div>
 
-        <div className="p-4 rounded-md border border-card-border bg-card flex flex-col gap-4">
-          <div className="space-y-1.5">
-            <div className={clsx("flex items-center gap-3 py-2 px-3 rounded-sm border bg-card", errors.image ? "border-error" : "border-card-border")}>
-              <div className="flex size-9.5 items-center justify-center rounded-sm bg-primary/8 border border-card-border overflow-hidden">
-                {watchedImage ? (
-                  <img
-                    src={URL.createObjectURL(watchedImage)}
-                    alt="Coin preview"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <i className="icon-image text-tertiary size-5.5" />
+        <div className="rounded-md border border-card-border bg-card flex flex-col gap-4">
+          <div className="p-4 space-y-1.5 border-b border-b-divider flex flex-col">
+            <p className="text-sm">Network</p>
+            <Menu.Root>
+              <Menu.Trigger>
+                <div className="flex items-center gap-3 py-2 px-3 rounded-sm border border-card-border bg-card cursor-pointer">
+                  {launchChain?.logo_url && (
+                    <img src={launchChain.logo_url} alt={launchChain.name} className="size-5 rounded-full" />
+                  )}
+                  <p className="flex-1 text-left">{launchChain?.name || 'Select Network'}</p>
+                  <i className="icon-chevron-down text-tertiary size-4" />
+                </div>
+              </Menu.Trigger>
+              <Menu.Content className="p-1 w-full">
+                {({ toggle }) => (
+                  <>
+                    {availableChains.map((chain) => (
+                      <MenuItem
+                        key={chain.chain_id}
+                        onClick={() => {
+                          setSelectedChainId(chain.chain_id);
+                          toggle();
+                        }}
+                      >
+                        <div className="flex items-center gap-2.5 flex-1">
+                          {chain.logo_url && (
+                            <img src={chain.logo_url} alt={chain.name} className="size-4 rounded-full" />
+                          )}
+                          <p className="text-sm text-secondary flex-1">{chain.name}</p>
+                          {selectedChainId === chain.chain_id && (
+                            <i className="icon-check text-accent-400 size-4" />
+                          )}
+                        </div>
+                      </MenuItem>
+                    ))}
+                  </>
                 )}
-              </div>
-              <div className="flex-1">
-                <p>Add Image</p>
-                <p className="text-tertiary text-sm">Choose an image below 5MB.</p>
-              </div>
-              <FileInput
-                onChange={handleImageUpload}
-                accept="image/*"
-                multiple={false}
-              >
-                {(open) => (
-                  <Button
-                    variant="tertiary"
-                    size="sm"
-                    iconLeft="icon-upload-sharp"
-                    onClick={open}
-                  >
-                    Upload Image
-                  </Button>
-                )}
-              </FileInput>
-            </div>
-            {errors.image && (
-              <p className="text-error text-sm">{errors.image.message}</p>
-            )}
+              </Menu.Content>
+            </Menu.Root>
           </div>
+          <div className="p-4 flex flex-col gap-4">
 
-          <div className="space-y-4">
             <div className="space-y-1.5">
-              <InputField
-                label="Ticker"
-                value={watch('ticker')}
-                onChangeText={(value) => {
-                  setValue('ticker', value);
-                  trigger('ticker');
-                }}
-                error={!!errors.ticker}
-              />
-              {errors.ticker && (
-                <p className="text-error text-sm">{errors.ticker.message}</p>
+              <div className={clsx("flex items-center gap-3 py-2 px-3 rounded-sm border bg-card", errors.image ? "border-error" : "border-card-border")}>
+                <div className="flex size-9.5 items-center justify-center rounded-sm bg-primary/8 border border-card-border overflow-hidden">
+                  {watchedImage ? (
+                    <img
+                      src={URL.createObjectURL(watchedImage)}
+                      alt="Coin preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <i className="icon-image text-tertiary size-5.5" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p>Add Image</p>
+                  <p className="text-tertiary text-sm">Choose an image below 5MB.</p>
+                </div>
+                <FileInput
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  multiple={false}
+                >
+                  {(open) => (
+                    <Button
+                      variant="tertiary"
+                      size="sm"
+                      iconLeft="icon-upload-sharp"
+                      onClick={open}
+                    >
+                      Upload Image
+                    </Button>
+                  )}
+                </FileInput>
+              </div>
+              {errors.image && (
+                <p className="text-error text-sm">{errors.image.message}</p>
               )}
             </div>
 
-            <div className="space-y-1.5">
-              <InputField
-                label="Coin Name"
-                value={watch('coinName')}
-                onChangeText={(value) => {
-                  setValue('coinName', value);
-                  trigger('coinName');
-                }}
-                error={!!errors.coinName}
-              />
-              {errors.coinName && (
-                <p className="text-error text-sm">{errors.coinName.message}</p>
-              )}
-            </div>
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <InputField
+                  label="Ticker"
+                  value={watch('ticker')}
+                  onChangeText={(value) => {
+                    setValue('ticker', value);
+                    trigger('ticker');
+                  }}
+                  error={!!errors.ticker}
+                />
+                {errors.ticker && (
+                  <p className="text-error text-sm">{errors.ticker.message}</p>
+                )}
+              </div>
 
-            <div className="space-y-1.5">
-              <p className="block text-secondary text-sm">
-                Coin Description
-              </p>
-              <Textarea
-                value={watch('description')}
-                onChange={(e) => {
-                  setValue('description', e.target.value);
-                  trigger('description');
-                }}
-                placeholder="What's the token used for?"
-                variant="outlined"
-                rows={3}
-                className={errors.description ? 'border-error' : ''}
-              />
-              {errors.description && (
-                <p className="text-error text-sm">{errors.description.message}</p>
-              )}
+              <div className="space-y-1.5">
+                <InputField
+                  label="Coin Name"
+                  value={watch('coinName')}
+                  onChangeText={(value) => {
+                    setValue('coinName', value);
+                    trigger('coinName');
+                  }}
+                  error={!!errors.coinName}
+                />
+                {errors.coinName && (
+                  <p className="text-error text-sm">{errors.coinName.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <p className="block text-secondary text-sm">
+                  Coin Description
+                </p>
+                <Textarea
+                  value={watch('description')}
+                  onChange={(e) => {
+                    setValue('description', e.target.value);
+                    trigger('description');
+                  }}
+                  placeholder="What's the token used for?"
+                  variant="outlined"
+                  rows={3}
+                  className={errors.description ? 'border-error' : ''}
+                />
+                {errors.description && (
+                  <p className="text-error text-sm">{errors.description.message}</p>
+                )}
+              </div>
             </div>
           </div>
         </div>
