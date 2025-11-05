@@ -141,7 +141,9 @@ export const getMintLemonadePassportData = async (
     username = await getEnsUsername(wallet);
   }
 
-  assert.ok(username);
+  if (!username) {
+    throw new Error('Username is required');
+  }
 
   const avatarImageUrl = fluffleTokenId ? passportData.fluffleImageUrl : passportData.lemonheadImageUrl;
 
