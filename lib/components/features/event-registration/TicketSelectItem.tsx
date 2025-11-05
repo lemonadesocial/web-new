@@ -192,7 +192,7 @@ export function TicketSelectItem({
         active ? 'border border-primary' : 'border border-transparent bg-primary/8',
       )}
     >
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-start gap-3">
         <div className="flex-1 flex gap-3 items-center">
           {ticketType.photos_expanded?.[0] && (
             <img
@@ -201,7 +201,7 @@ export function TicketSelectItem({
             />
           )}
           <div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
               <p className={clsx('font-medium', active ? 'text-accent' : 'text-secondary')}>{ticketType.title}</p>
               {ticketType.prices[0].payment_accounts_expanded?.[0]?.type === 'ethereum_stake' && (
                 <Chip variant="success" size="xxs" className="rounded-full">
