@@ -1,10 +1,11 @@
 'use client';
 import { useRouter } from 'next/navigation';
 
-import { Button } from '$lib/components/core';
+import { Button, drawer } from '$lib/components/core';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { usePassport } from '$lib/hooks/usePassport';
 import { ASSET_PREFIX } from '$lib/utils/constants';
+import { SharedPassportPane } from '$lib/components/features/passport/SharedPassportPane';
 
 export function PassportCard() {
   const router = useRouter();
@@ -15,7 +16,11 @@ export function PassportCard() {
     return (
       <div
         className="flex gap-2.5 py-2.5 px-3 md:p-4 border-(length:--card-border-width) backdrop-blur-md rounded-md items-center flex-1 w-full min-w-fit"
-        onClick={() => router.push('/passport')}
+        onClick={() => drawer.open(SharedPassportPane, {
+          props: {
+            tokenId: passport.tokenId.toString(),
+          },
+        })}
       >
         <img src={passport.image} className="rounded-sm size-8 aspect-square border" />
         <div className="flex flex-col">

@@ -35,7 +35,7 @@ export function PassportCard() {
           <p>Your Passport Awaits</p>
           <p className="text-sm">Claim your free United Stands of Lemonade Passport, exclusive to LemonHeads.</p>
         </div>
-        <Button variant="secondary" className="w-full" size="sm" onClick={() => router.push('/passport')}>
+        <Button variant="secondary" className="w-full" size="sm" onClick={() => router.push('/passport/mint')}>
           Claim Passport
         </Button>
       </div>
