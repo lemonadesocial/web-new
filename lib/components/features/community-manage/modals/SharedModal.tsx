@@ -7,20 +7,23 @@ import { PostComposerModal } from '../../lens-feed/PostComposerModal';
 import { twMerge } from 'tailwind-merge';
 import { copy } from '$lib/utils/helpers';
 
+const shareText = 'I’m part of Culture Fest — join the community and be part of what’s next!';
+
 export function SharedModal({ hostname = '' }: { hostname?: string }) {
   const [copied, setCopied] = React.useState(false);
   const shareOptions = [
     {
       name: 'Tweet',
       icon: 'icon-twitter',
-      onClick: () => handleShare(`https://twitter.com/intent/tweet?url=${encodeURIComponent(hostname)}`),
+      onClick: () =>
+        handleShare(`https://twitter.com/intent/tweet?url=${encodeURIComponent(hostname)}&text=${shareText}`),
     },
     {
       name: 'Cast',
-      icon: 'icon-farcaster',
+      icon: 'icon-warpcast',
       onClick: () =>
         handleShare(
-          `https://warpcast.com/~/compose?text=${encodeURIComponent(hostname)}&embeds[]=${encodeURIComponent(hostname)}`,
+          `https://warpcast.com/~/compose?text=${encodeURIComponent(shareText)}&embeds[]=${encodeURIComponent(hostname)}`,
         ),
     },
     {
@@ -30,18 +33,24 @@ export function SharedModal({ hostname = '' }: { hostname?: string }) {
         modal.open(PostComposerModal, {
           dismissible: true,
           fullscreen: isMobile,
-          props: { defaultValue: hostname },
+          props: { defaultValue: `${shareText} <br /> ${hostname}` },
         }),
-    },
-    {
-      name: 'Share',
-      icon: 'icon-instagram',
-      onClick: () => alert('Comming soon'),
     },
     {
       name: 'Post',
       icon: 'icon-linkedin',
       onClick: () => handleShare(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(hostname)}`),
+    },
+    {
+      name: 'Share',
+      icon: 'icon-facebook',
+      onClick: () => handleShare(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(hostname)}`),
+    },
+    {
+      name: 'Email',
+      icon: 'icon-email',
+      onClick: () =>
+        handleShare(`mailto:?subject=${encodeURIComponent(shareText)}&body=${encodeURIComponent(hostname)}`),
     },
   ];
 
