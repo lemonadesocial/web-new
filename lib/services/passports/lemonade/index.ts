@@ -131,7 +131,7 @@ export const getMintLemonadePassportData = async (
 ) => {
   const passportData = await getData(wallet, fluffleTokenId || '');
 
-  if (!passportData?.lemonheadTokenId) {
+  if (!passportData?.passportNumber) {
     throw new Error('Failed to get passport data');
   }
 
@@ -143,7 +143,7 @@ export const getMintLemonadePassportData = async (
 
   const avatarImageUrl = fluffleTokenId ? passportData.fluffleImageUrl : passportData.lemonheadImageUrl;
 
-  const passportId = passportData.lemonheadTokenId.padStart(8, '0');
+  const passportId = passportData.passportNumber.toString().padStart(8, '0');
 
   const creationDate = format(new Date(), 'MM/dd/yyyy');
 

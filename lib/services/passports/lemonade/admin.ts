@@ -5,7 +5,7 @@ export const getApproval = async (wallet: string, uri: string) => {
 };
 
 export const getData = async (wallet: string, fluffleTokenId: string) => {
-  return request<{ lemonheadTokenId: string; lemonheadImageUrl: string; fluffleImageUrl: string }>(
+  return request<{ passportNumber: number; lemonheadImageUrl: string; fluffleImageUrl: string }>(
     `/passport/data?provider=lemonade&wallet=${wallet}&fluffleTokenId=${fluffleTokenId}`, 'GET'
   );
 };
