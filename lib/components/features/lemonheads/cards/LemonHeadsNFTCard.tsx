@@ -14,7 +14,7 @@ export function LemonHeadsNFTCard() {
 
   if (!address || !data || (data && data.tokenId == 0))
     return (
-      <div className="hidden md:block backdrop-blur-md p-4 rounded-md space-y-3 border-(length:--card-border-width)">
+      <div className="hidden md:block backdrop-blur-md p-4 rounded-md space-y-3 border-card border-(length:--card-border-width)">
         <img src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`} className="rounded-sm" />
         <div>
           <p>Unlock Access</p>
@@ -30,7 +30,7 @@ export function LemonHeadsNFTCard() {
   return (
     <>
       <div
-        className="flex gap-2.5 py-2.5 px-3 md:p-4 border-(length:--card-border-width) backdrop-blur-md rounded-md items-center flex-1 w-full min-w-fit cursor-pointer"
+        className="flex gap-2.5 py-2.5 px-3 md:p-4 border-card-border border-(length:--card-border-width) backdrop-blur-md rounded-md items-center flex-1 w-full min-w-fit cursor-pointer"
         onClick={() =>
           drawer.open(SharedLemonheadsPane, {
             props: {
