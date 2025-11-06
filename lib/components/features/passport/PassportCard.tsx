@@ -29,7 +29,7 @@ export function PassportCard() {
 
   if (lemonhead && lemonhead.tokenId > 0) {
     return (
-      <div className="hidden md:block backdrop-blur-md p-4 rounded-md space-y-3 border-(length:--card-border-width)">
+      <div className="hidden md:block backdrop-blur-md p-4 rounded-md space-y-3 border-(length:--card-border-width) border-card-border">
         <img src={`${ASSET_PREFIX}/assets/images/passport-dummy.png`} />
         <div>
           <p>Your Passport Awaits</p>
@@ -44,5 +44,3 @@ export function PassportCard() {
 
   return null;
 }
-
-
