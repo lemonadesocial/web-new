@@ -1,5 +1,6 @@
 import { getDefaultStore } from 'jotai';
 import { Eip1193Provider, ethers, isError } from 'ethers';
+import { mainnet } from 'viem/chains';
 
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
 
@@ -257,3 +258,5 @@ export function multiplyByPowerOf10(amount: string, power: number) {
 
   return result.toString();
 }
+
+export const MainnetRpcProvider = new ethers.JsonRpcProvider(mainnet.rpcUrls.default.http[0]); 
