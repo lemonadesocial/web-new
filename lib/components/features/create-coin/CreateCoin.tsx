@@ -14,7 +14,7 @@ import { Timezone } from '$lib/components/core/calendar/datetime-picker';
 import { Calendar } from '$lib/components/core/calendar';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
-import { TOTAL_SUPPLY, getLaunchTokenParams } from '$lib/services/token-launch-pad';
+import { TOTAL_SUPPLY, getLaunchTokenParams, SECONDS_PER_DAY, DAYS_PER_MONTH } from '$lib/services/token-launch-pad';
 import { formatError } from '$lib/utils/crypto';
 import type { LaunchTokenParams } from '$lib/services/token-launch-pad';
 import { getUserTimezoneOption, type TimezoneOption } from '$lib/utils/timezone';
@@ -64,8 +64,6 @@ type FormData = {
 
 function normalizeRecipientPercentages(allocationRecipients: AllocationRecipient[]) {
   const vestingPercentage = allocationRecipients.reduce((sum, recipient) => sum + recipient.percentage, 0);
-  const SECONDS_PER_DAY = 86400;
-  const DAYS_PER_MONTH = 30;
   if (vestingPercentage === 0 || allocationRecipients.length === 0) return [];
 
   let total = 0;

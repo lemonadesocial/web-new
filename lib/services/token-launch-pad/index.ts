@@ -6,6 +6,10 @@ import PositionManagerABI from '../../abis/token-launch-pad/PositionManager.json
 import IERC721ABI from '../../abis/token-launch-pad/IERC721.json';
 import FlaunchABI from '../../abis/token-launch-pad/Flaunch.json';
 
+export const SECONDS_PER_DAY = 86400;
+export const DAYS_PER_MONTH = 30;
+export const SECONDS_PER_MONTH = SECONDS_PER_DAY * DAYS_PER_MONTH;
+
 export const TOTAL_SUPPLY = BigInt(10) ** BigInt(27);
 
 export const parseLogs = (receipt: ethers.TransactionReceipt | null, contractInterface: ethers.Interface) => {
@@ -22,7 +26,7 @@ export const parseLogs = (receipt: ethers.TransactionReceipt | null, contractInt
     })
 }
 
-interface CreateGroupParams {
+export interface CreateGroupParams {
   groupERC20Token: string; //-- contract address of the group ERC20 token
   groupOwner: string; //-- wallet address of the group owner
   minEscrowDuration: number;
@@ -30,17 +34,16 @@ interface CreateGroupParams {
   creatorSharePercentage: number;
   ownerSharePercentage: number;
   isOpen?: boolean;
-  isClosed?: boolean;
 }
 
 export const createGroup = async (
   zapContractAddress: string, //-- get from chain
   stakingManagerImplementationContractAddress: string, //-- get from chain
-  closedPermissionsContractAddress: string,
+  closedPermissionsContractAddress: string,  //-- get from chain
   signer: ethers.Signer, //-- signer for write operations
   params: CreateGroupParams,
 ) => {
-  const permissionsContractAddress = params.isOpen ? ethers.ZeroAddress : params.isClosed ? closedPermissionsContractAddress : '';
+  const permissionsContractAddress = params.isOpen ? ethers.ZeroAddress : closedPermissionsContractAddress;
 
   if (!permissionsContractAddress) {
     throw new Error('Permissions contract address is required');
