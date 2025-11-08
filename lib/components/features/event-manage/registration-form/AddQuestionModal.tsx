@@ -46,7 +46,7 @@ export function AddQuestionModal() {
             className="justify-start"
             onClick={() => {
               modal.close();
-              modal.open(AddPersonalDetailsQuestion);
+              modal.open(AddPersonalDetailsQuestion, { className: 'overflow-visible' });
             }}
           >
             Personal Details

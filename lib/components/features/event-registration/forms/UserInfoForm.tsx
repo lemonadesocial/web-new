@@ -1,9 +1,16 @@
-import { useForm, UseFormRegister, FieldErrors, Control, FieldError } from 'react-hook-form';
+import { useForm, Controller, UseFormReturn, FieldError } from 'react-hook-form';
 import * as React from 'react';
 
 import { UserInput, ApplicationProfileField } from '$lib/graphql/generated/backend/graphql';
-import { Input, LabeledInput, SelectController } from '$lib/components/core';
-import { formInstancesAtom, requiredProfileFieldsAtom, submitHandlersAtom, useAtomValue, userInfoAtom, useSetAtom } from '../store';
+import { Input, LabeledInput, PlaceAutoComplete, SelectController } from '$lib/components/core';
+import {
+  formInstancesAtom,
+  requiredProfileFieldsAtom,
+  submitHandlersAtom,
+  useAtomValue,
+  userInfoAtom,
+  useSetAtom,
+} from '../store';
 import { useMe } from '$lib/hooks/useMe';
 import { ETHNICITIES, INDUSTRY_OPTIONS, PRONOUNS } from '$lib/utils/constants';
 
@@ -33,6 +40,7 @@ export function UserForm() {
       calendly_url: me?.calendly_url,
       ethnicity: me?.ethnicity,
       industry: me?.industry,
+      addresses: me?.addresses,
     },
     mode: 'onChange',
   });
@@ -42,13 +50,11 @@ export function UserForm() {
   };
 
   React.useEffect(() => {
-    setFormInstances(prev => ({ ...prev, userInfo: form }));
-    setSubmitHandlers(prev => ({ ...prev, userInfo: onSubmit }));
+    setFormInstances((prev) => ({ ...prev, userInfo: form }));
+    setSubmitHandlers((prev) => ({ ...prev, userInfo: onSubmit }));
   }, []);
 
   if (!requiredProfileFields?.length) return <></>;
-
-  const { register, formState: { errors }, control } = form;
 
   return (
     <>
@@ -57,10 +63,8 @@ export function UserForm() {
           key={profileField.field}
           profileField={profileField}
           name={profileField.field as keyof UserInput}
-          register={register}
-          errors={errors}
-          control={control}
           required={!!profileField.required}
+          form={form}
         />
       ))}
     </>
@@ -70,18 +74,21 @@ export function UserForm() {
 function ProfileField({
   profileField,
   name,
-  register,
-  errors,
-  control,
-  required
+  required,
+  form,
 }: {
   profileField: ApplicationProfileField;
   name: keyof UserInput;
-  register: UseFormRegister<UserInput>;
-  errors: FieldErrors<UserInput>;
-  control: Control<UserInput>;
   required?: boolean;
+  form: UseFormReturn<UserInput>;
 }) {
+  const {
+    setValue,
+    control,
+    register,
+    formState: { errors },
+  } = form;
+
   const getFieldLabel = (fieldName: string) => {
     const labels: Record<string, string> = {
       display_name: 'Name',
@@ -103,9 +110,10 @@ function ProfileField({
       ethnicity: 'Ethnicity / Race',
       industry: 'Industry',
       date_of_birth: 'Date of Birth',
-      email: 'Email'
+      email: 'Email',
+      addresses: 'Location',
     };
-    
+
     return labels[fieldName] || fieldName;
   };
 
@@ -140,13 +148,26 @@ function ProfileField({
       );
     }
 
-    return (
-      <Input
-        {...register(name, { required })}
-        placeholder={placeholder}
-        error={!!errors[name]}
-      />
-    );
+    if (name === 'addresses') {
+      return (
+        <Controller
+          control={control}
+          name="addresses"
+          rules={{ required }}
+          render={({ field }) => {
+            return (
+              <PlaceAutoComplete
+                error={!!errors[name]}
+                value={field.value?.[0]?.title || ''}
+                onSelect={(value) => (value ? setValue('addresses', [value]) : setValue('addresses', []))}
+              />
+            );
+          }}
+        />
+      );
+    }
+
+    return <Input {...register(name, { required })} placeholder={placeholder} error={!!errors[name]} />;
   };
 
   return (

@@ -1,17 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
-import { Button, Input, LabeledInput, ModalContent, modal, Toggle, Select } from "$lib/components/core";
-import { ApplicationProfileField } from "$lib/graphql/generated/backend/graphql";
+import { Button, Input, LabeledInput, ModalContent, modal, Toggle, Select } from '$lib/components/core';
+import { ApplicationProfileField } from '$lib/graphql/generated/backend/graphql';
 
-import { AddQuestionModal } from "./AddQuestionModal";
-import { useSaveApplicationProfileField } from "../hooks";
+import { AddQuestionModal } from './AddQuestionModal';
+import { useSaveApplicationProfileField } from '../hooks';
 
 const INFO_OPTIONS = ['Bio', 'Location', 'Pronouns'];
 
 const FIELD_CONFIG: Record<string, { field: string; defaultQuestion: string }> = {
-  'Bio': { field: 'description', defaultQuestion: 'Tell us about yourself' },
-  // 'Location': { field: 'location_line', defaultQuestion: 'Where are you based?' },
-  'Pronouns': { field: 'pronoun', defaultQuestion: 'What are your pronouns?' }
+  Bio: { field: 'description', defaultQuestion: 'Tell us about yourself' },
+  // Location: { field: 'location_line', defaultQuestion: 'Where are you based?' },
+  Location: { field: 'addresses', defaultQuestion: 'Where are you based?' },
+  Pronouns: { field: 'pronoun', defaultQuestion: 'What are your pronouns?' },
 };
 
 interface AddPersonalDetailsQuestionProps {
@@ -21,14 +22,14 @@ interface AddPersonalDetailsQuestionProps {
 export function AddPersonalDetailsQuestion({ field }: AddPersonalDetailsQuestionProps) {
   const getInitialInfoType = () => {
     if (!field) return INFO_OPTIONS[0];
-    
+
     const fieldConfig = Object.entries(FIELD_CONFIG).find(([_, config]) => config.field === field.field);
     return fieldConfig ? fieldConfig[0] : INFO_OPTIONS[0];
   };
 
   const getInitialQuestion = () => {
     if (field?.question) return field.question;
-    
+
     const infoType = getInitialInfoType();
     return FIELD_CONFIG[infoType]?.defaultQuestion || INFO_OPTIONS[0];
   };
@@ -37,7 +38,7 @@ export function AddPersonalDetailsQuestion({ field }: AddPersonalDetailsQuestion
   const [required, setRequired] = useState<boolean>(field?.required || false);
   const [selectedInfoType, setSelectedInfoType] = useState<string>(getInitialInfoType());
   const { saveApplicationProfileField, loading } = useSaveApplicationProfileField();
-  
+
   useEffect(() => {
     if (field) {
       const infoType = getInitialInfoType();
@@ -46,17 +47,17 @@ export function AddPersonalDetailsQuestion({ field }: AddPersonalDetailsQuestion
       setRequired(field.required || false);
     }
   }, [field]);
-  
+
   const handleSaveClick = () => {
     const fieldConfig = FIELD_CONFIG[selectedInfoType];
     if (!fieldConfig) {
       return;
     }
-    
+
     const questionText = question || fieldConfig.defaultQuestion || selectedInfoType;
     saveApplicationProfileField(fieldConfig.field, required, questionText);
   };
-  
+
   return (
     <ModalContent
       title={'Add Question'}
@@ -96,23 +97,17 @@ export function AddPersonalDetailsQuestion({ field }: AddPersonalDetailsQuestion
           />
         </LabeledInput>
         <LabeledInput label="Question">
-          <Input
-            variant="outlined"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-          />
-          <p className="text-sm text-secondary">We'll automatically get this information from their profile if available.</p>
+          <Input variant="outlined" value={question} onChange={(e) => setQuestion(e.target.value)} />
+          <p className="text-sm text-secondary">
+            We'll automatically get this information from their profile if available.
+          </p>
         </LabeledInput>
         <div className="flex items-center justify-between">
           <p className="text-sm text-secondary">Required</p>
-          <Toggle
-            id="required"
-            checked={required}
-            onChange={(value) => setRequired(value)}
-          />
+          <Toggle id="required" checked={required} onChange={(value) => setRequired(value)} />
         </div>
-        <Button 
-          variant="secondary" 
+        <Button
+          variant="secondary"
           className="w-full"
           onClick={handleSaveClick}
           disabled={!selectedInfoType.trim()}

@@ -1,27 +1,28 @@
-import { ApplicationProfileField } from "$lib/graphql/generated/backend/graphql";
-import { modal } from "$lib/components/core";
-import { AddJobTitleQuestion } from "./AddJobTitleQuestion";
-import { AddOrganizationQuestion } from "./AddOrganizationQuestion";
-import { AddPersonalDetailsQuestion } from "./AddPersonalDetailsQuestion";
-import { AddSocialProfileQuestion } from "./AddSocialProfileQuestion";
-import { AddWebsiteQuestion } from "./AddWebsiteQuestion";
+import { ApplicationProfileField } from '$lib/graphql/generated/backend/graphql';
+import { modal } from '$lib/components/core';
+import { AddJobTitleQuestion } from './AddJobTitleQuestion';
+import { AddOrganizationQuestion } from './AddOrganizationQuestion';
+import { AddPersonalDetailsQuestion } from './AddPersonalDetailsQuestion';
+import { AddSocialProfileQuestion } from './AddSocialProfileQuestion';
+import { AddWebsiteQuestion } from './AddWebsiteQuestion';
 
 const FIELD_LABELS: Record<string, string> = {
-  'job_title': 'Job Title',
-  'company_name': 'Organization',
-  'description': 'Bio',
-  'location_line': 'Location',
-  'pronoun': 'Pronouns',
-  'website': 'Website',
-  'handle_twitter': 'X (Twitter)',
-  'handle_linkedin': 'LinkedIn',
-  'handle_farcaster': 'Farcaster',
-  'handle_instagram': 'Instagram',
-  'handle_github': 'Github',
-  'calendly_url': 'Calendly'
+  job_title: 'Job Title',
+  company_name: 'Organization',
+  description: 'Bio',
+  location_line: 'Location',
+  addresses: 'Location',
+  pronoun: 'Pronouns',
+  website: 'Website',
+  handle_twitter: 'X (Twitter)',
+  handle_linkedin: 'LinkedIn',
+  handle_farcaster: 'Farcaster',
+  handle_instagram: 'Instagram',
+  handle_github: 'Github',
+  calendly_url: 'Calendly',
 };
 
-export function ApplicationProfileCard({ field }: { field: ApplicationProfileField; }) {
+export function ApplicationProfileCard({ field }: { field: ApplicationProfileField }) {
   const getFieldLabel = (fieldName: string) => {
     return FIELD_LABELS[fieldName] || fieldName;
   };
@@ -39,6 +40,7 @@ export function ApplicationProfileCard({ field }: { field: ApplicationProfileFie
         break;
       case 'description':
       case 'location_line':
+      case 'addresses':
       case 'pronoun':
         modal.open(AddPersonalDetailsQuestion, { props: { field } });
         break;
@@ -70,10 +72,8 @@ export function ApplicationProfileCard({ field }: { field: ApplicationProfileFie
         </div>
       </div>
 
-      <i
-        className="icon-edit-sharp size-5 text-tertiary cursor-pointer"
-        onClick={() => handleEdit(field)}
-      />
+      <i className="icon-edit-sharp size-5 text-tertiary cursor-pointer" onClick={() => handleEdit(field)} />
     </div>
   );
-} 
+}
+

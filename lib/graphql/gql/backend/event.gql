@@ -94,6 +94,11 @@ query GetEvent($id: MongoID, $shortid: String) {
       options
       select_type
     }
+    application_profile_fields {
+      field
+      question
+      required
+    }
     self_verification {
       config {
         date_of_birth

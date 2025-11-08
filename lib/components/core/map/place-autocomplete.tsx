@@ -11,12 +11,16 @@ export function PlaceAutoComplete({
   value,
   onSelect,
   autoFocus,
+  error,
+  hint,
 }: {
   label?: string;
   placeholder?: string;
   value?: string;
   onSelect?: (address: Address | undefined) => void;
   autoFocus?: boolean;
+  error?: boolean;
+  hint?: string;
 }) {
   const [toggle, setToggle] = React.useState(false);
   const [query, setQuery] = React.useState('');
@@ -84,8 +88,10 @@ export function PlaceAutoComplete({
         label={label}
         autoFocus={autoFocus}
         iconLeft="icon-location-outline text-tertiary"
-        right={{ icon: 'icon-cancel text-tertiary size-5 cursor-pointer', onClick: handleClear }}
+        right={query ? { icon: 'icon-cancel text-tertiary size-5 cursor-pointer', onClick: handleClear } : undefined}
         value={query}
+        error={error}
+        hint={hint}
         placeholder={placeholder}
         onChange={(e) => {
           setQuery(e.currentTarget.value);
