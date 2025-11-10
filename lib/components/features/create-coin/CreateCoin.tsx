@@ -748,11 +748,7 @@ export function CreateCoin() {
                   )}
                 </div>
               </>
-            ) : (
-              <div className="space-y-3">
-                <CommunitySearch onSuccess={handleCommunitySearchSuccess} />
-              </div>
-            )}
+            ) : <CommunitySearch onSuccess={handleCommunitySearchSuccess} />}
           </div>
         </div>
 
