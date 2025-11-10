@@ -1,0 +1,16 @@
+query ListLaunchpadGroups($address: String, $search: String) {
+  listLaunchpadGroups(address: $address, search: $search) {
+    items {
+      address
+      cover_photo
+      cover_photo_expanded {
+        _id
+        key
+        bucket
+      }
+      cover_photo_url
+      implementation_address
+      name
+    }
+  }
+}
