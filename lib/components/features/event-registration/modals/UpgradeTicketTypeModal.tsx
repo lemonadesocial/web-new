@@ -13,11 +13,17 @@ interface Props {
 export function UpgradeTicketTypeModal({ onClose }: Props) {
   const [purchaseItems, setPurchaseItems] = useAtom(purchaseItemsAtom);
   const ticketTypes = useAtomValue(ticketTypesAtom);
-  const [list] = React.useState(purchaseItems);
+  const tierMap = Object.fromEntries(
+    new Map(
+      ticketTypes.map((tier) => {
+        return [tier._id, tier];
+      }),
+    ),
+  );
 
-  const getTicket = (id: string) => {
-    return ticketTypes.find((t) => t._id === id);
-  };
+  const [list] = React.useState(() =>
+    purchaseItems.filter(({ id }) => !!tierMap[id].recommended_upgrade_ticket_types?.length),
+  );
 
   // const getRecommendedTicketTypes = (ticketType: PurchasableTicketType) => {
   //   const arr = ticketTypes.filter((i) => ticketType.recommended_upgrade_ticket_types?.includes(i._id));
@@ -25,11 +31,16 @@ export function UpgradeTicketTypeModal({ onClose }: Props) {
 
   const handleUpgrade = () => {
     const arr = purchaseItems.reduce((acc: any = [], obj) => {
-      const ticketType = getTicket(obj.id);
+      const ticketType = tierMap[obj.id];
       // TODO: need to update check highest prices
       // 1. ticket type has 2 recommended
       // 2. pick highest price instead of first
-      acc.push({ id: ticketType?.recommended_upgrade_ticket_types?.[0], count: obj.count });
+      if (ticketType?.recommended_upgrade_ticket_types) {
+        ticketType?.recommended_upgrade_ticket_types.forEach((id: string) => {
+          const existing = purchaseItems.find((i) => i.id === id);
+          if (tierMap[id]) acc.push({ id: id, count: obj.count + (existing?.count || 0) });
+        });
+      }
       return acc;
     }, []);
     setPurchaseItems(arr);
@@ -51,7 +62,7 @@ export function UpgradeTicketTypeModal({ onClose }: Props) {
 
         <div>
           {list.map((item) => {
-            const ticketType = getTicket(item.id);
+            const ticketType = tierMap[item.id];
             if (!ticketType) return null;
 
             return (
@@ -82,12 +93,12 @@ export function UpgradeTicketTypeModal({ onClose }: Props) {
                   </div>
                 </div>
 
-                {ticketType.recommended_upgrade_ticket_types?.map((recommended) => {
-                  const t = getTicket(recommended);
+                {ticketType.recommended_upgrade_ticket_types?.map((id: string) => {
+                  const t = tierMap[id];
                   if (!t) return null;
 
                   return (
-                    <Card.Root key={recommended} className="bg-(--btn-tertiary-hover) border-secondary">
+                    <Card.Root key={id} className="bg-(--btn-tertiary-hover) border-secondary">
                       <Card.Content className="py-2 px-3">
                         <div className="absolute right-0 top-0 rounded-bl-sm rounded-tr-sm bg-secondary px-2 py-[3px] text-primary-invert text-xs">
                           <p>Upgrade</p>
