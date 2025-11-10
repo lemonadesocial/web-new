@@ -494,6 +494,7 @@ query GetEventTicketTypes($input: GetEventTicketTypesInput!) {
       }
       position
       passcode_enabled
+      recommended_upgrade_ticket_types
     }
   }
 }
