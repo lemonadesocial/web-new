@@ -1,4 +1,4 @@
-import { Button, modal } from '$lib/components/core';
+import { Button } from '$lib/components/core';
 import { RegistrationModal } from './modals/RegistrationModal';
 import {
   approvalRequiredAtom,
@@ -36,8 +36,17 @@ export function RegisterButton() {
   const isFree = pricingInfo?.total === '0';
 
   const openRegistrationModal = () => {
-    if (ticketTypes.some((t) => !!t.recommended_upgrade_ticket_types?.length)) {
-      modal.open(UpgradeTicketTypeModal);
+    const purchaseItemIds = purchaseItems.map((i) => i.id);
+    const hasRecommended = ticketTypes
+      .filter((item) => purchaseItemIds.includes(item._id))
+      .some((i) => !!i.recommended_upgrade_ticket_types?.length);
+    if (hasRecommended) {
+      registrationModal.open(UpgradeTicketTypeModal, {
+        dismissible: false,
+        props: {
+          onClose: () => registrationModal.open(RegistrationModal, { dismissible: false, skipBaseClassName: true }),
+        },
+      });
     } else {
       registrationModal.open(RegistrationModal, { dismissible: false, skipBaseClassName: true });
     }
