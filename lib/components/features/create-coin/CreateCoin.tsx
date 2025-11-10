@@ -143,7 +143,6 @@ export function CreateCoin() {
   const setAllocationRecipients = (recipients: AllocationRecipient[]) => setValue('allocationRecipients', recipients);
   const [isCoinDistributionExpanded, setIsCoinDistributionExpanded] = useState(false);
   const [isMarketcapExpanded, setIsMarketcapExpanded] = useState(false);
-  const [isSocialsExpanded, setIsSocialsExpanded] = useState(false);
   const [isScheduleExpanded, setIsScheduleExpanded] = useState(false);
   const [timezoneOption, setTimezoneOption] = useState<TimezoneOption | undefined>(getUserTimezoneOption());
   const [isLoading, setisLoading] = useState(false);
@@ -752,83 +751,74 @@ export function CreateCoin() {
           </div>
         </div>
 
-        {
-          isAvandedMode && <>
-            <div className="bg-card border border-card-border rounded-md">
-              <div
-                className="flex items-center justify-between p-4 cursor-pointer"
-                onClick={() => setIsSocialsExpanded(!isSocialsExpanded)}
-              >
-                <p className="text-lg font-medium">Socials</p>
-                <div className={clsx('p-2 rounded-full bg-primary/8 flex items-center justify-center transition-transform', isSocialsExpanded && 'rotate-180')}>
-                  <i className="icon-chevron-down size-4 text-tertiary" />
-                </div>
-              </div>
-
-              {isSocialsExpanded && (
-                <div className="grid grid-cols-2 gap-4 p-4 pt-0">
-                  <div className="flex items-center gap-4">
-                    <i className="icon-x size-5 text-tertiary" />
-                    <div className="flex-1">
-                      <InputField
-                        value={watch('socialTwitter')}
-                        onChangeText={(value) => setValue('socialTwitter', value)}
-                        prefix="x.com/"
-                        placeholder="/johndoe"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <i className="icon-telegram size-5 text-tertiary" />
-                    <div className="flex-1">
-                      <InputField
-                        value={watch('socialTelegram')}
-                        onChangeText={(value) => setValue('socialTelegram', value)}
-                        placeholder="/in/johndoe"
-                        prefix="t.me/"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <i className="icon-chat size-5 text-tertiary" />
-                    <div className="flex-1">
-                      <InputField
-                        value={watch('socialDiscord')}
-                        onChangeText={(value) => setValue('socialDiscord', value)}
-                        prefix="discord.gg/"
-                        placeholder="its_johndoe"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <i className="icon-warpcast size-5 text-tertiary" />
-                    <div className="flex-1">
-                      <InputField
-                        value={watch('socialWarpcast')}
-                        onChangeText={(value) => setValue('socialWarpcast', value)}
-                        prefix="warpcast.com/"
-                        placeholder="john.builds"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <i className="icon-globe size-5 text-tertiary" />
-                    <div className="flex-1">
-                      <InputField
-                        value={watch('socialWebsite')}
-                        onChangeText={(value) => setValue('socialWebsite', value)}
-                        placeholder="johndoe.xyz"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
+      <div className="bg-card border border-card-border rounded-md">
+        <div className="flex items-center justify-between p-4">
+          <p className="text-lg font-medium">Socials</p>
+        </div>
+        <div className="grid grid-cols-2 gap-4 p-4 pt-0">
+          <div className="flex items-center gap-4">
+            <i className="icon-x size-5 text-tertiary" />
+            <div className="flex-1">
+              <InputField
+                value={watch('socialTwitter')}
+                onChangeText={(value) => setValue('socialTwitter', value)}
+                prefix="x.com/"
+                placeholder="/johndoe"
+              />
             </div>
+          </div>
 
+          <div className="flex items-center gap-4">
+            <i className="icon-telegram size-5 text-tertiary" />
+            <div className="flex-1">
+              <InputField
+                value={watch('socialTelegram')}
+                onChangeText={(value) => setValue('socialTelegram', value)}
+                placeholder="/in/johndoe"
+                prefix="t.me/"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <i className="icon-chat size-5 text-tertiary" />
+            <div className="flex-1">
+              <InputField
+                value={watch('socialDiscord')}
+                onChangeText={(value) => setValue('socialDiscord', value)}
+                prefix="discord.gg/"
+                placeholder="its_johndoe"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <i className="icon-warpcast size-5 text-tertiary" />
+            <div className="flex-1">
+              <InputField
+                value={watch('socialWarpcast')}
+                onChangeText={(value) => setValue('socialWarpcast', value)}
+                prefix="warpcast.com/"
+                placeholder="john.builds"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <i className="icon-globe size-5 text-tertiary" />
+            <div className="flex-1">
+              <InputField
+                value={watch('socialWebsite')}
+                onChangeText={(value) => setValue('socialWebsite', value)}
+                placeholder="johndoe.xyz"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {
+        isAvandedMode && <>
             <div className="bg-card border border-card-border rounded-md">
               <div
                 className="flex items-center justify-between p-4 cursor-pointer"
