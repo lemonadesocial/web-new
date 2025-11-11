@@ -41,6 +41,14 @@ type AllocationRecipient = {
   interval: 'monthly' | 'daily';
 };
 
+export type LaunchpadSocials = {
+  twitter?: string;
+  telegram?: string;
+  discord?: string;
+  warpcast?: string;
+  website?: string;
+};
+
 type FormData = {
   image: File | null;
   ticker: string;
@@ -311,18 +319,6 @@ export function CreateCoin() {
       formData.append('ticker', data.ticker);
       formData.append('description', data.description);
 
-      const attributes = [
-        data.socialTwitter && { trait_type: 'Twitter', value: data.socialTwitter },
-        data.socialTelegram && { trait_type: 'Telegram', value: data.socialTelegram },
-        data.socialDiscord && { trait_type: 'Discord', value: data.socialDiscord },
-        data.socialWarpcast && { trait_type: 'Warpcast', value: data.socialWarpcast },
-        data.socialWebsite && { trait_type: 'Website', value: data.socialWebsite },
-      ].filter(Boolean) as Array<{ trait_type: string; value: string }>;
-
-      if (attributes.length > 0) {
-        formData.append('attributes', JSON.stringify(attributes));
-      }
-
       const response = await fetch('/api/token-metadata', {
         method: 'POST',
         body: formData,
@@ -369,11 +365,20 @@ export function CreateCoin() {
 
       setisLoading(false);
 
+      const socials: LaunchpadSocials = {
+        twitter: data.socialTwitter.trim() || undefined,
+        telegram: data.socialTelegram.trim() || undefined,
+        discord: data.socialDiscord.trim() || undefined,
+        warpcast: data.socialWarpcast.trim() || undefined,
+        website: data.socialWebsite.trim() || undefined,
+      };
+
       modal.open(CreateCoinModal, {
         props: {
           txParams,
           groupAddress: communityData?.groupAddress,
-          launchChain
+          launchChain,
+          socials
         }
       });
     } catch (error) {
@@ -763,7 +768,7 @@ export function CreateCoin() {
                 value={watch('socialTwitter')}
                 onChangeText={(value) => setValue('socialTwitter', value)}
                 prefix="x.com/"
-                placeholder="/johndoe"
+                placeholder="johndoe"
               />
             </div>
           </div>
@@ -774,7 +779,7 @@ export function CreateCoin() {
               <InputField
                 value={watch('socialTelegram')}
                 onChangeText={(value) => setValue('socialTelegram', value)}
-                placeholder="/in/johndoe"
+                placeholder="in/johndoe"
                 prefix="t.me/"
               />
             </div>
