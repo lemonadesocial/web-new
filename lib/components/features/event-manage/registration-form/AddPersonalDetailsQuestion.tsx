@@ -6,7 +6,8 @@ import { ApplicationProfileField } from "$lib/graphql/generated/backend/graphql"
 import { AddQuestionModal } from "./AddQuestionModal";
 import { useSaveApplicationProfileField } from "../hooks";
 
-const INFO_OPTIONS = ['Bio', 'Location', 'Pronouns'];
+// const INFO_OPTIONS = ['Bio', 'Location', 'Pronouns'];
+const INFO_OPTIONS = ['Bio', 'Pronouns'];
 
 const FIELD_CONFIG: Record<string, { field: string; defaultQuestion: string }> = {
   'Bio': { field: 'description', defaultQuestion: 'Tell us about yourself' },
