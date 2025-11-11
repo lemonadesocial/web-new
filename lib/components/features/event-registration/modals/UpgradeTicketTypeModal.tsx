@@ -2,15 +2,27 @@
 import React from 'react';
 
 import { Button, Card, ModalContent } from '$lib/components/core';
-import { purchaseItemsAtom, registrationModal, ticketTypesAtom, useAtom, useAtomValue } from '../store';
+import {
+  eventTokenGatesAtom,
+  purchaseItemsAtom,
+  registrationModal,
+  ticketTypesAtom,
+  useAtom,
+  useAtomValue,
+} from '../store';
 import { generateUrl } from '$lib/utils/cnd';
+import { PurchasableTicketType } from '$lib/graphql/generated/backend/graphql';
+
 import { TicketPrices } from '../TicketSelectItem';
+import { TokenGateEligibilityModal } from './TokenGateEligibilityModal';
 
 interface Props {
   onClose: () => void;
 }
 
 export function UpgradeTicketTypeModal({ onClose }: Props) {
+  const eventTokenGates = useAtomValue(eventTokenGatesAtom);
+
   const [purchaseItems, setPurchaseItems] = useAtom(purchaseItemsAtom);
   const ticketTypes = useAtomValue(ticketTypesAtom);
   const tierMap = Object.fromEntries(
@@ -25,26 +37,50 @@ export function UpgradeTicketTypeModal({ onClose }: Props) {
     purchaseItems.filter(({ id }) => !!tierMap[id].recommended_upgrade_ticket_types?.length),
   );
 
-  // const getRecommendedTicketTypes = (ticketType: PurchasableTicketType) => {
-  //   const arr = ticketTypes.filter((i) => ticketType.recommended_upgrade_ticket_types?.includes(i._id));
-  // };
+  const getRecommendedTicketType = (ticketType: PurchasableTicketType) => {
+    return ticketTypes
+      .filter((i) => ticketType.recommended_upgrade_ticket_types?.includes(i._id))
+      .reduce((max, current) => {
+        const currentPrice = current.prices[0];
+        const maxPrice = max.prices[0];
+        if (currentPrice && maxPrice && currentPrice.cost > maxPrice.cost) {
+          return current;
+        } else {
+          return max;
+        }
+      });
+  };
 
   const handleUpgrade = () => {
+    let tokenGate = null;
+    let ticketRecommended: PurchasableTicketType | null = null;
     const arr = purchaseItems.reduce((acc: any = [], obj) => {
-      const ticketType = tierMap[obj.id];
-      // TODO: need to update check highest prices
-      // 1. ticket type has 2 recommended
-      // 2. pick highest price instead of first
+      const ticketType = tierMap[obj.id] as PurchasableTicketType;
       if (ticketType?.recommended_upgrade_ticket_types) {
-        ticketType?.recommended_upgrade_ticket_types.forEach((id: string) => {
-          const existing = purchaseItems.find((i) => i.id === id);
-          if (tierMap[id]) acc.push({ id: id, count: obj.count + (existing?.count || 0) });
-        });
+        ticketRecommended = getRecommendedTicketType(ticketType);
+        tokenGate = eventTokenGates.find((gate) => gate.gated_ticket_types?.includes(ticketRecommended?._id));
+
+        const existing = purchaseItems.find((i) => i.id === ticketRecommended?._id);
+        acc.push({ id: ticketRecommended._id, count: obj.count + (existing?.count || 0) });
       }
       return acc;
     }, []);
+
+    if (tokenGate && ticketRecommended) {
+      registrationModal.open(TokenGateEligibilityModal, {
+        props: {
+          ticketTitle: ticketRecommended.title,
+          tokenGate: tokenGate,
+          onConfirm: () => {
+            setPurchaseItems(arr);
+            onClose();
+          },
+        },
+      });
+      return;
+    }
+
     setPurchaseItems(arr);
-    registrationModal.close();
     onClose();
   };
 
@@ -64,6 +100,8 @@ export function UpgradeTicketTypeModal({ onClose }: Props) {
           {list.map((item) => {
             const ticketType = tierMap[item.id];
             if (!ticketType) return null;
+
+            const t = getRecommendedTicketType(ticketType);
 
             return (
               <div key={ticketType._id} className="relative">
@@ -93,36 +131,29 @@ export function UpgradeTicketTypeModal({ onClose }: Props) {
                   </div>
                 </div>
 
-                {ticketType.recommended_upgrade_ticket_types?.map((id: string) => {
-                  const t = tierMap[id];
-                  if (!t) return null;
+                <Card.Root className="bg-(--btn-tertiary-hover) border-secondary">
+                  <Card.Content className="py-2 px-3">
+                    <div className="absolute right-0 top-0 rounded-bl-sm rounded-tr-sm bg-secondary px-2 py-[3px] text-primary-invert text-xs">
+                      <p>Upgrade</p>
+                    </div>
+                    <div className="flex gap-3">
+                      {t?.photos_expanded?.[0] && (
+                        <img
+                          src={generateUrl(t.photos_expanded?.[0] as any)}
+                          className="size-10 aspect-square rounded-xs my-1"
+                        />
+                      )}
 
-                  return (
-                    <Card.Root key={id} className="bg-(--btn-tertiary-hover) border-secondary">
-                      <Card.Content className="py-2 px-3">
-                        <div className="absolute right-0 top-0 rounded-bl-sm rounded-tr-sm bg-secondary px-2 py-[3px] text-primary-invert text-xs">
-                          <p>Upgrade</p>
-                        </div>
-                        <div className="flex gap-3">
-                          {t?.photos_expanded?.[0] && (
-                            <img
-                              src={generateUrl(t.photos_expanded?.[0] as any)}
-                              className="size-10 aspect-square rounded-xs my-1"
-                            />
-                          )}
-
-                          <div>
-                            <p>
-                              {item.count} x {t?.title}
-                            </p>
-                            <TicketPrices prices={t.prices} groupRegistration={t.limit > 1} active />
-                          </div>
-                        </div>
-                        <p>{t.description}</p>
-                      </Card.Content>
-                    </Card.Root>
-                  );
-                })}
+                      <div>
+                        <p>
+                          {item.count} x {t?.title}
+                        </p>
+                        <TicketPrices prices={t.prices} groupRegistration={t.limit > 1} active />
+                      </div>
+                    </div>
+                    <p>{t.description}</p>
+                  </Card.Content>
+                </Card.Root>
               </div>
             );
           })}

@@ -40,11 +40,14 @@ export function RegisterButton() {
     const hasRecommended = ticketTypes
       .filter((item) => purchaseItemIds.includes(item._id))
       .some((i) => !!i.recommended_upgrade_ticket_types?.length);
+
     if (hasRecommended) {
       registrationModal.open(UpgradeTicketTypeModal, {
         dismissible: false,
         props: {
-          onClose: () => registrationModal.open(RegistrationModal, { dismissible: false, skipBaseClassName: true }),
+          onClose: () => {
+            registrationModal.open(RegistrationModal, { dismissible: false, skipBaseClassName: true });
+          },
         },
       });
     } else {
