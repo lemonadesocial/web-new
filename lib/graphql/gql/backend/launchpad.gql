@@ -14,3 +14,9 @@ query ListLaunchpadGroups($address: String, $search: String) {
     }
   }
 }
+
+mutation AddLaunchpadCoin($input: LaunchpadCoinInput!) {
+  addLaunchpadCoin(input: $input) {
+    address
+  }
+}
