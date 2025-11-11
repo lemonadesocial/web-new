@@ -12,7 +12,12 @@ export function CommunityLaunchpad() {
           <p className="text-warning-300">Please activate your Launchpad.</p>
           <p className="text-secondary text-sm">You can activate your Launchpad by clicking the button below.</p>
         </div>
-        <Button size="sm" variant="tertiary" iconRight="icon-arrow-foward-sharp" onClick={() => drawer.open(ActivateLaunchpad)}>
+        <Button
+          size="sm"
+          variant="tertiary"
+          iconRight="icon-arrow-foward-sharp"
+          onClick={() => drawer.open(ActivateLaunchpad, { dismissible: false })}
+        >
           Activate
         </Button>
       </div>

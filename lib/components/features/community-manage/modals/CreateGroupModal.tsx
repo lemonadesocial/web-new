@@ -9,11 +9,13 @@ import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTrans
 import { SuccessModal } from '$lib/components/features/modals/SuccessModal';
 import { ErrorModal } from '$lib/components/features/modals/ErrorModal';
 import { useAppKitProvider } from '$lib/utils/appkit';
-import { Chain } from '$lib/graphql/generated/backend/graphql';
+import { Chain, AddLaunchpadGroupDocument } from '$lib/graphql/generated/backend/graphql';
 import { CreateGroupParams, parseLogs } from '$lib/services/token-launch-pad';
 import { formatError } from '$lib/utils/crypto';
 import ZapContractABI from '$lib/abis/token-launch-pad/FlaunchZap.json';
 import TreasuryManagerFactoryABI from '$lib/abis/token-launch-pad/TreasuryManagerFactory.json';
+import { useMutation } from '$lib/graphql/request';
+import { useSpace } from '$lib/hooks/useSpace';
 
 interface CreateGroupModalProps {
   params: CreateGroupParams;
@@ -24,10 +26,12 @@ interface CreateGroupModalProps {
 type CreateGroupStatus = 'idle' | 'signing' | 'confirming' | 'success' | 'error';
 
 export function CreateGroupModal({ params, launchChain, onSuccess }: CreateGroupModalProps) {
+  const space = useSpace();
   const { walletProvider } = useAppKitProvider('eip155');
   const [status, setStatus] = useState<CreateGroupStatus>('idle');
   const [error, setError] = useState('');
   const [managerAddress, setManagerAddress] = useState('');
+  const [addLaunchpadGroup] = useMutation(AddLaunchpadGroupDocument);
 
   const getSigner = async () => {
     const provider = new BrowserProvider(walletProvider as Eip1193Provider);
@@ -82,6 +86,20 @@ export function CreateGroupModal({ params, launchChain, onSuccess }: CreateGroup
       if (!manager) {
         throw new Error('Manager address not found');
       }
+
+      addLaunchpadGroup({
+        variables: {
+          input: {
+            address: manager,
+            implementation_address: stakingManagerImplementation,
+            name: space?.title || '',
+            description: space?.description,
+            cover_photo: space?.image_cover,
+            handle_twitter: space?.handle_twitter,
+            website: space?.website,
+          },
+        },
+      });
 
       setManagerAddress(manager);
       onSuccess?.(manager);

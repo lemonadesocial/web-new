@@ -1,18 +1,20 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { useForm, Controller } from 'react-hook-form';
 
 import { Button, Input, InputField, Menu, MenuItem, Segment, Toggle, toast, ErrorText, modal } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
-import { useAppKitAccount } from '$lib/utils/appkit';
+import { useAppKit, useAppKitAccount } from '$lib/utils/appkit';
 import { CreateGroupParams, SECONDS_PER_MONTH } from '$lib/services/token-launch-pad';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 import { CreateGroupModal } from '$lib/components/features/community-manage/modals/CreateGroupModal';
+import { formatWallet } from '$lib/utils/crypto';
 
 type ActivateLaunchpadForm = {
   coinAddress: string;
+  ownerAddress: string;
   access: 'open' | 'closed';
   ownerFeeEnabled: boolean;
   ownerFee: number;
@@ -30,6 +32,7 @@ export function ActivateLaunchpad() {
   const { register, setValue, watch, control, handleSubmit, formState: { errors } } = useForm<ActivateLaunchpadForm>({
     defaultValues: {
       coinAddress: '',
+      ownerAddress: '',
       access: 'open',
       ownerFeeEnabled: false,
       ownerFee: 0,
@@ -39,12 +42,24 @@ export function ActivateLaunchpad() {
     },
   });
   const { address } = useAppKitAccount();
+  const { open } = useAppKit();
   const access = watch('access');
+  const ownerAddress = watch('ownerAddress');
   const ownerFeeEnabled = watch('ownerFeeEnabled');
   const ownerFee = watch('ownerFee');
   const coinCreatorsFee = watch('coinCreatorsFee');
   const membersFee = watch('membersFee');
   const [isEditingFees, setIsEditingFees] = useState(false);
+
+  useEffect(() => {
+    register('ownerAddress', { required: 'Community owner wallet is required' });
+  }, [register]);
+
+  useEffect(() => {
+    if (address && !ownerAddress) {
+      setValue('ownerAddress', address);
+    }
+  }, [address, ownerAddress, setValue]);
 
   const clamp = (value: number) => Math.max(0, Math.min(100, value || 0));
   const ownerWidth = clamp(ownerFee);
@@ -55,6 +70,16 @@ export function ActivateLaunchpad() {
   const creatorsDisplayWidth = creatorsWidth ? (creatorsWidth / widthTotal) * 100 : 0;
   const membersDisplayWidth = membersWidth ? (membersWidth / widthTotal) * 100 : 0;
 
+  const handleConnectOwner = () => {
+    modal.open(ConnectWallet, {
+      props: {
+        onConnect: async () => {
+          modal.close();
+        },
+      },
+    });
+  };
+
   const handleActivate = handleSubmit((formData) => {
     if (!launchChain) {
       toast.error('Select a network before activating your launchpad');
@@ -62,14 +87,9 @@ export function ActivateLaunchpad() {
     }
 
     const openCreateGroup = () => {
-      if (!address) {
-        toast.error('Connect your wallet to activate your launchpad');
-        return;
-      }
-
       const payload: CreateGroupParams = {
         groupERC20Token: formData.coinAddress,
-        groupOwner: address,
+        groupOwner: formData.ownerAddress,
         minEscrowDuration: 0,
         minStakeDuration: formData.stakeDurationValue * SECONDS_PER_MONTH,
         creatorSharePercentage: formData.coinCreatorsFee,
@@ -160,12 +180,30 @@ export function ActivateLaunchpad() {
           </Menu.Root>
         </div>
 
+        <div className="flex flex-col gap-1.5">
+          <p className="text-sm">Community Owner</p>
+          {ownerAddress ? (
+            <div className="flex gap-2.5 py-2 px-3 rounded-sm bg-primary/8">
+              <i className="icon-wallet size-5 aspect-square text-tertiary" />
+              <p className="flex-1">{formatWallet(ownerAddress)}</p>
+              <i
+                className="icon-edit-sharp size-5 aspect-square text-quaternary hover:text-primary"
+                onClick={() => open()}
+              />
+            </div>
+          ) : (
+            <Button variant="secondary" size="sm" iconLeft="icon-wallet" className="w-fit" onClick={handleConnectOwner}>
+              Connect Wallet
+            </Button>
+          )}
+          {errors.ownerAddress?.message && <ErrorText message={errors.ownerAddress.message} />}
+        </div>
 
         <div className="flex flex-col gap-1.5">
           <p className="text-sm">Coin Contract Address</p>
           <Input
             placeholder="0x000000..."
-            {...register('coinAddress', { required: 'Coin Contract Address is required' })}
+            {...register('coinAddress', { required: 'Enter your community coin contract address to continue' })}
             variant="outlined"
             error={Boolean(errors.coinAddress)}
           />
