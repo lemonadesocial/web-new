@@ -5,10 +5,12 @@ import { useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
 import { modal } from "$lib/components/core";
 import { BrowserProvider, Eip1193Provider, Contract, ethers, JsonRpcProvider } from "ethers";
 import { LaunchTokenTxParams, parseLogs } from "$lib/services/token-launch-pad";
-import { Chain } from "$lib/graphql/generated/backend/graphql";
+import { Chain, AddLaunchpadCoinDocument } from "$lib/graphql/generated/backend/graphql";
 import { formatError } from "$lib/utils/crypto";
 import ZapContractABI from "$lib/abis/token-launch-pad/FlaunchZap.json";
 import TreasuryManagerABI from '$lib/abis/token-launch-pad/TreasuryManager.json';
+import { useMutation } from "$lib/graphql/request";
+import type { LaunchpadSocials } from "./CreateCoin";
 
 import { SignTransactionModal } from "../modals/SignTransaction";
 import { ConfirmTransaction } from "../modals/ConfirmTransaction";
@@ -21,18 +23,22 @@ interface CreateCoinModalProps {
   txParams: LaunchTokenTxParams;
   groupAddress?: string;
   launchChain: Chain;
+  socials: LaunchpadSocials;
 }
 
 export function CreateCoinModal({ 
   txParams,
   groupAddress,
-  launchChain
+  launchChain,
+  socials
 }: CreateCoinModalProps) {
   const { walletProvider } = useAppKitProvider('eip155');
   const [status, setStatus] = useState<'signing' | 'confirming' | 'depositing' | 'success' | 'none' | 'error'>('none');
   const [error, setError] = useState('');
-  const [receipt, setReceipt] = useState<ethers.ContractTransactionReceipt | null>(null);
+  const [flaunchAddress, setFlaunchAddress] = useState<string | null>(null);
+  const [tokenId, setTokenId] = useState<bigint | null>(null);
   const { address } = useAppKitAccount();
+  const [addLaunchpadCoinMutation] = useMutation(AddLaunchpadCoinDocument);
 
   const getSigner = async () => {
     const browserProvider = new BrowserProvider(walletProvider as Eip1193Provider);
@@ -40,23 +46,11 @@ export function CreateCoinModal({
     return signer;
   }
 
-  const handleDepositToGroup = async (receipt: ethers.ContractTransactionReceipt) => {
+  const handleDepositToGroup = async (flaunchAddress: string, tokenId: bigint) => {
     if (!walletProvider || !groupAddress) {
       throw new Error('Wallet not connected or group address missing');
     }
 
-    const rpcProvider = new JsonRpcProvider(launchChain.rpc_url);
-    const readContract = new ethers.Contract(launchChain.launchpad_zap_contract_address!, ZapContractABI.abi, rpcProvider);
-
-    const flaunchAddress = await readContract.flaunchContract() as string;
-  
-    const flaunchInterface = new ethers.Interface(FlaunchABI.abi);
-    const event = parseLogs(receipt, flaunchInterface).find(
-      (log) => log.address == flaunchAddress.toLowerCase() && log.parsedLog.name === 'Transfer'
-    );
-  
-    const tokenId = event?.parsedLog.args[2] as bigint;
-  
     const signer = await getSigner();
 
     const flaunchContract = new ethers.Contract(flaunchAddress, FlaunchABI.abi, signer);
@@ -88,8 +82,6 @@ export function CreateCoinModal({
 
       const writeContract = new Contract(launchChain.launchpad_zap_contract_address!, ZapContractABI.abi, signer);
 
-      console.log(txParams)
-
       const estimatedGas = await writeContract.flaunch.estimateGas(...txParams.flaunchParams, { value: txParams.fee });
       
       const tx = await writeContract.flaunch(...txParams.flaunchParams, {
@@ -101,9 +93,42 @@ export function CreateCoinModal({
 
       const receipt = await tx.wait();
 
+      const rpcProvider = new JsonRpcProvider(launchChain.rpc_url);
+      const zapContract = new ethers.Contract(launchChain.launchpad_zap_contract_address!, ZapContractABI.abi, rpcProvider);
+
+      const flaunchAddress = await zapContract.flaunchContract() as string;
+      setFlaunchAddress(flaunchAddress);
+
+      const flaunchInterface = new ethers.Interface(FlaunchABI.abi);
+      
+      const event = parseLogs(receipt, flaunchInterface).find(
+        log => log.address === flaunchAddress.toLowerCase() && log.parsedLog.name === 'Transfer'
+      );
+
+      const tokenId = event?.parsedLog.args[2] as bigint;
+      setTokenId(tokenId);
+
+      const flaunchContract = new ethers.Contract(flaunchAddress, FlaunchABI.abi, rpcProvider);
+      const memecoinAddress = await flaunchContract.memecoin(tokenId) as string;
+      if (!memecoinAddress) {
+        throw new Error('Failed to determine memecoin address');
+      }
+
+      addLaunchpadCoinMutation({
+        variables: {
+          input: {
+            address: memecoinAddress,
+            handle_twitter: socials.twitter,
+            handle_telegram: socials.telegram,
+            handle_discord: socials.discord,
+            handle_farcaster: socials.warpcast,
+            website: socials.website,
+          }
+        }
+      });
+
       if (groupAddress) {
-        setReceipt(receipt);
-        await handleDepositToGroup(receipt);
+        await handleDepositToGroup(flaunchAddress, tokenId);
         return;
       }
 
@@ -116,11 +141,10 @@ export function CreateCoinModal({
   };
 
   const handleRetry = async () => {
-    if (receipt && groupAddress) {
+    if (flaunchAddress && tokenId && groupAddress) {
       try {
-        await handleDepositToGroup(receipt);
+        await handleDepositToGroup(flaunchAddress, tokenId);
       } catch (err: any) {
-        console.log(err)
         setError(formatError(err));
         setStatus('error');
       }
