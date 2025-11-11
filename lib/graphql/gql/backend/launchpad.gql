@@ -20,3 +20,9 @@ mutation AddLaunchpadCoin($input: LaunchpadCoinInput!) {
     address
   }
 }
+
+mutation AddLaunchpadGroup($input: AddLaunchpadGroupInput!) {
+  addLaunchpadGroup(input: $input) {
+    address
+  }
+}
