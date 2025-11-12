@@ -81,6 +81,22 @@ export function getEventAddress(address?: Address | undefined, short?: boolean) 
     .join(', \n');
 }
 
+export function getEventSubAddress(address?: Address | undefined) {
+  if (!address) return;
+
+  return [
+    address.street_1 === address.title ? undefined : address.street_1,
+    address.street_2,
+    address.postal,
+    address.city,
+    address.region,
+    address.country,
+    address.additional_directions,
+  ]
+    .filter(Boolean)
+    .join(', \n');
+}
+
 export function getEventDateBlockStart(event: Event) {
   const startTime = convertFromUtcToTimezone(event.start, event.timezone as string);
   const endTime = convertFromUtcToTimezone(event.end, event.timezone as string);
