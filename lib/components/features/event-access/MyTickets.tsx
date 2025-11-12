@@ -158,18 +158,23 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
               </Button>
             )
           }
-          <Button
-            variant="tertiary"
-            size="sm"
-            iconLeft="icon-share"
-            onClick={() => modal.open(InviteFriendModal, {
-              props: {
-                event
-              },
-            })}
-          >
-            Invite a Friend
-          </Button>
+          
+          {
+            ((!!event.guest_limit_per && event.guest_limit_per > 0) || event.guest_limit_per === null) && (
+              <Button
+                variant="tertiary"
+                size="sm"
+                iconLeft="icon-share"
+                onClick={() => modal.open(InviteFriendModal, {
+                  props: {
+                    event
+                  },
+                })}
+              >
+                Invite a Friend
+              </Button>
+            )
+          }
         </div>
       </div>
       {
