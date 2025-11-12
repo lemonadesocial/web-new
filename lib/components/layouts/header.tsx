@@ -28,6 +28,8 @@ import { SelectProfileModal } from '../features/lens-account/SelectProfileModal'
 import { ConnectWallet } from '../features/modals/ConnectWallet';
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 
+import { CreateSmartAccount } from '../features/zerodev-smart-account';
+
 type Props = {
   title?: string;
   mainMenu?: () => ReactElement;
@@ -89,6 +91,8 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
         )}
         {title && <h1 className="text-md text-tertiary font-medium">{title}</h1>}
       </div>
+
+      <CreateSmartAccount/>
 
       {mainMenu?.()}
 
