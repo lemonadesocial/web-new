@@ -1,9 +1,17 @@
 import { createKernelAccount } from '@zerodev/sdk';
 import { KERNEL_V3_1, getEntryPoint } from '@zerodev/sdk/constants';
-import { WeightedValidatorContractVersion, createWeightedValidator, createWeightedKernelAccountClient, toECDSASigner, WeightedSigner } from '@zerodev/weighted-validator';
+import { WebAuthnMode, toWebAuthnKey } from '@zerodev/webauthn-key';
+import {
+  WeightedSigner,
+  WeightedValidatorContractVersion,
+  createWeightedKernelAccountClient,
+  createWeightedValidator,
+  toECDSASigner,
+  toWebAuthnSigner,
+} from '@zerodev/weighted-validator';
 import { createPublicClient, http, type EIP1193Provider } from 'viem';
-import { baseSepolia, base } from 'viem/chains';
-import { useAccount } from "wagmi";
+import { base, baseSepolia } from 'viem/chains';
+import { useAccount } from 'wagmi';
 
 import { Button, useModal } from '$lib/components/core';
 
@@ -11,7 +19,9 @@ const entryPoint = getEntryPoint('0.7');
 const kernelVersion = KERNEL_V3_1;
 const validatorContractVersion = WeightedValidatorContractVersion.V0_0_2_PATCHED;
 const chain = base;
+
 const BUNDLER_URL = 'https://rpc.zerodev.app/api/v3/7fa4f613-d955-4964-91d4-3c73010f2bbc/chain/84532'; //-- add to secret?
+const PASSKEY_SERVER_URL = 'https://passkeys.zerodev.app/api/v3/7fa4f613-d955-4964-91d4-3c73010f2bbc';
 
 const publicClient = createPublicClient({
   transport: http(),
@@ -52,14 +62,14 @@ const createAccount = async (signer: WeightedSigner, publicKeys: string[]) => {
 
 function CreateSmartAccountModal() {
   const account = useAccount();
-  
-  const createWithWallet = async ()=>{
-    if(!account.address){
+
+  const createWithWallet = async () => {
+    if (!account.address) {
       //-- todo show connect popup
       return;
     }
 
-    if(!account.connector){
+    if (!account.connector) {
       alert('Wallet connector not available. Please connect your wallet.');
       return;
     }
@@ -67,24 +77,44 @@ function CreateSmartAccountModal() {
     // Get the provider from the connector
     const provider = await account.connector.getProvider();
 
-    if(!provider){
+    if (!provider) {
       alert('Provider not available. Please connect your wallet.');
       return;
     }
-    
+
     const ecdsaSigner = await toECDSASigner({
       signer: provider as EIP1193Provider,
     });
 
     const smartAccount = await createAccount(ecdsaSigner, [account.address]);
 
-    console.log("smartAccount address", smartAccount.account.address);
-  }
+    console.log('smartAccount address', smartAccount.account.address);
+  };
+
+  const createWithPasskey = async () => {
+    const passkeyName = 'Lemonade Smart Account';
+    const mode = WebAuthnMode.Login; // can also be "login" if you are using an existing key
+
+    const webAuthnKey = await toWebAuthnKey({
+      passkeyName,
+      passkeyServerUrl: PASSKEY_SERVER_URL,
+      mode,
+      passkeyServerHeaders: {},
+    });
+
+    const signer = await toWebAuthnSigner(publicClient, {
+      webAuthnKey,
+    });
+
+    const smartAccount = await createAccount(signer, [signer.getPublicKey()]);
+
+    console.log('smartAccount address', smartAccount.account.address);
+  };
 
   return (
     <div style={{ padding: 21, display: 'flex', flexDirection: 'column', gap: 21 }}>
       <Button onClick={createWithWallet}>Use my wallet</Button>
-      <Button>Use my passkey</Button>
+      <Button onClick={createWithPasskey}>Use my passkey</Button>
       <Button>Use social accounts</Button>
     </div>
   );
@@ -93,7 +123,7 @@ function CreateSmartAccountModal() {
 export function CreateSmartAccount() {
   const modal = useModal();
 
-  if (!modal){
+  if (!modal) {
     return null;
   }
 
