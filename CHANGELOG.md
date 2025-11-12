@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.25.0](https://github.com/lemonadesocial/web-new/compare/v8.24.0...v8.25.0) (2025-11-12)
+
+
+### Features
+
+* remove token range from erc721 gate ([c837af0](https://github.com/lemonadesocial/web-new/commit/c837af0ed92544b03390457eac17c730d1a30c91))
+
 ## [8.24.0](https://github.com/lemonadesocial/web-new/compare/v8.23.0...v8.24.0) (2025-11-12)
 
 
