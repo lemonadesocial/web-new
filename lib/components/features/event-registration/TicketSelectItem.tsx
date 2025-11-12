@@ -254,7 +254,7 @@ interface TicketPricesProps {
   active?: boolean;
 }
 
-function TicketPrices({ prices, single, groupRegistration, active }: TicketPricesProps) {
+export function TicketPrices({ prices, single, groupRegistration, active }: TicketPricesProps) {
   const [firstPrice, secondPrice] = useMemo(() => {
     if (prices.length > 1 && prices[1]?.payment_accounts_expanded?.[0]?.provider === 'stripe')
       return [prices[1], prices[0]];

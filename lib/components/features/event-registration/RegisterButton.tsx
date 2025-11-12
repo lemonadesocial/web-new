@@ -1,9 +1,19 @@
-
-import { Button } from "$lib/components/core";
-import { RegistrationModal } from "./modals/RegistrationModal";
-import { approvalRequiredAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, requiredProfileFieldsAtom, registrationModal, useAtomValue, hasSingleFreeTicketAtom } from "./store";
-import { useSession } from "$lib/hooks/useSession";
-import { useRedeemTickets } from "./hooks/useRedeemTickets";
+import { Button } from '$lib/components/core';
+import { RegistrationModal } from './modals/RegistrationModal';
+import {
+  approvalRequiredAtom,
+  eventDataAtom,
+  pricingInfoAtom,
+  purchaseItemsAtom,
+  requiredProfileFieldsAtom,
+  registrationModal,
+  useAtomValue,
+  hasSingleFreeTicketAtom,
+  ticketTypesAtom,
+} from './store';
+import { useSession } from '$lib/hooks/useSession';
+import { useRedeemTickets } from './hooks/useRedeemTickets';
+import { UpgradeTicketTypeModal } from './modals/UpgradeTicketTypeModal';
 
 export function RegisterButton() {
   const session = useSession();
@@ -13,6 +23,7 @@ export function RegisterButton() {
   const requiredProfileFields = useAtomValue(requiredProfileFieldsAtom);
   const approvalRequired = useAtomValue(approvalRequiredAtom);
   const hasSingleFreeTicket = useAtomValue(hasSingleFreeTicketAtom);
+  const ticketTypes = useAtomValue(ticketTypesAtom);
 
   const profileFieldsRequired = requiredProfileFields?.length;
   const applicationQuestionsRequired = event.application_questions?.length;
@@ -25,23 +36,49 @@ export function RegisterButton() {
   const isFree = pricingInfo?.total === '0';
 
   const openRegistrationModal = () => {
-    registrationModal.open(RegistrationModal, { dismissible: false, skipBaseClassName: true });
+    const purchaseItemIds = purchaseItems.map((i) => i.id);
+    const hasRecommended = ticketTypes
+      .filter((item) => purchaseItemIds.includes(item._id))
+      .some((i) => !!i.recommended_upgrade_ticket_types?.length);
+
+    if (hasRecommended) {
+      registrationModal.open(UpgradeTicketTypeModal, {
+        dismissible: false,
+        props: {
+          onClose: () => {
+            registrationModal.close();
+            setTimeout(() => {
+              registrationModal.open(RegistrationModal, { dismissible: false, skipBaseClassName: true });
+            }, 200);
+          },
+        },
+      });
+    } else {
+      registrationModal.open(RegistrationModal, { dismissible: false, skipBaseClassName: true });
+    }
   };
 
-  if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session) return (
-    <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
-      {approvalRequired ? 'Request to Join' : hasSingleFreeTicket ? 'Register' : 'Get Tickets'}
-    </Button>
-  );
+  if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session)
+    return (
+      <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
+        {approvalRequired ? 'Request to Join' : hasSingleFreeTicket ? 'Register' : 'Get Tickets'}
+      </Button>
+    );
 
   return (
     <Button
       variant="secondary"
       disabled={disabled}
-      onClick={() => isFree ? redeemTickets() : openRegistrationModal()}
+      onClick={() => (isFree ? redeemTickets() : openRegistrationModal())}
       loading={loadingRedeem}
     >
-      {approvalRequired ? (hasSingleFreeTicket ? 'One-click Apply' : 'Request to Join') : (hasSingleFreeTicket ? 'One-click Register' : 'Get Tickets')}
+      {approvalRequired
+        ? hasSingleFreeTicket
+          ? 'One-click Apply'
+          : 'Request to Join'
+        : hasSingleFreeTicket
+          ? 'One-click Register'
+          : 'Get Tickets'}
     </Button>
   );
 }
