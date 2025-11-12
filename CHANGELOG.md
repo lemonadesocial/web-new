@@ -1,5 +1,25 @@
 # Changelog
 
+## [8.22.0](https://github.com/lemonadesocial/web-new/compare/v8.21.0...v8.22.0) (2025-11-12)
+
+
+### Features
+
+* add upgrade modal ([6d18384](https://github.com/lemonadesocial/web-new/commit/6d1838424d9fba426766720eee3aa53d42192c29))
+* check token gate ticket ([e46151a](https://github.com/lemonadesocial/web-new/commit/e46151a9407de3b613d387dd2e9c3e05c048781e))
+* enable passport ([57078b0](https://github.com/lemonadesocial/web-new/commit/57078b0317e080ade8c7df0290e2badc75672e17))
+* filter empty data ([6fa6716](https://github.com/lemonadesocial/web-new/commit/6fa67162b9daa25454ab0dec6d263a91fe80d70c))
+* hide passport ([8a3f3b0](https://github.com/lemonadesocial/web-new/commit/8a3f3b00db2747feeb42104dc843d6c1a786651b))
+* hide passport ([1c99b21](https://github.com/lemonadesocial/web-new/commit/1c99b21b48c13410b2e4fdb2747e785ed7b258b0))
+* hide upgrade modal when open registration modal ([7067b1a](https://github.com/lemonadesocial/web-new/commit/7067b1ac0d4d47a1f2297d0b9efb832f375597c8))
+* implement upgrade ticket types ([deadde8](https://github.com/lemonadesocial/web-new/commit/deadde848b48b0ea9f1cbeb57c0b2b1a66c9448a))
+* update ui mint passport inside lemonheads hub and zone ([e8dc538](https://github.com/lemonadesocial/web-new/commit/e8dc53874db31807d7434b932c905e4fc73d204c))
+
+
+### Bug Fixes
+
+* missing rsvp status ([6c8c990](https://github.com/lemonadesocial/web-new/commit/6c8c9909702f0102cb34d0e3c95f1557c72d5237))
+
 ## [8.21.0](https://github.com/lemonadesocial/web-new/compare/v8.20.0...v8.21.0) (2025-11-05)
 
 
