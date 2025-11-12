@@ -191,7 +191,7 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
         ) : (
           <>
             {!session && (
-              <Button size="sm" variant="tertiary-alt" onClick={signIn} className="rounded-full backdrop-blur-none">
+              <Button size="sm" variant="tertiary-alt" onClick={() => signIn()} className="rounded-full backdrop-blur-none">
                 Sign In
               </Button>
             )}
@@ -223,33 +223,33 @@ function ConnectLens() {
     });
   };
 
-  if (!walletVerified && !account)
-    return (
-      <Button
-        onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
-        size="sm"
-        className="rounded-full"
-        variant="warning"
-        iconLeft="icon-error"
-        outlined
-      >
-        Claim Username
-      </Button>
-    );
+  // if (!walletVerified && !account)
+  //   return (
+  //     <Button
+  //       onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
+  //       size="sm"
+  //       className="rounded-full"
+  //       variant="warning"
+  //       iconLeft="icon-error"
+  //       outlined
+  //     >
+  //       Claim Username
+  //     </Button>
+  //   );
 
-  if (!account)
-    return (
-      <Button
-        onClick={handleSelectWallet}
-        size="sm"
-        className="rounded-full"
-        variant="warning"
-        iconLeft="icon-error"
-        outlined
-      >
-        Claim Username
-      </Button>
-    );
+  // if (!account)
+  //   return (
+  //     <Button
+  //       onClick={handleSelectWallet}
+  //       size="sm"
+  //       className="rounded-full"
+  //       variant="warning"
+  //       iconLeft="icon-error"
+  //       outlined
+  //     >
+  //       Claim Username
+  //     </Button>
+  //   );
 
   if (!walletVerified)
     return (
