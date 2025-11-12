@@ -46,7 +46,10 @@ export function RegisterButton() {
         dismissible: false,
         props: {
           onClose: () => {
-            registrationModal.open(RegistrationModal, { dismissible: false, skipBaseClassName: true });
+            registrationModal.close();
+            setTimeout(() => {
+              registrationModal.open(RegistrationModal, { dismissible: false, skipBaseClassName: true });
+            }, 200);
           },
         },
       });
