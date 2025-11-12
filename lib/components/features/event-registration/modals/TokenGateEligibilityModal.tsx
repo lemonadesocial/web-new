@@ -94,7 +94,7 @@ export function TokenGateEligibilityModal({
         const erc721Contract = new ethers.Contract(tokenGate.token_address, ERC721, provider);
         const balance = await erc721Contract.balanceOf(wallet);
 
-        return balance >= BigInt(0);
+        return balance >= BigInt(tokenGate.min_value ?? 0);
       }
 
       const erc20Contract = new ethers.Contract(tokenGate.token_address, ERC20, provider);

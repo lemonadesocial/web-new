@@ -197,7 +197,7 @@ export function formatTokenGateRange(tokenGate: EventTokenGate) {
 
   if (is_nft) {
     if (min_value && max_value) return `(${min_value} - ${max_value})`;
-    if (min_value) return `> ${max_value}`;
+    if (min_value) return `> ${min_value}`;
     if (max_value) return `< ${max_value}`;
   }
 
