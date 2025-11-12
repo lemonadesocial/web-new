@@ -226,7 +226,7 @@ export function TokenDetailsModal({ event, ticketType, tokenGate, onCreate, onUp
           )
         }
 
-        {
+        {/* {
           type === ContractType.ERC721 && (
             <div className="flex flex-col gap-4 w-min">
               {
@@ -258,7 +258,7 @@ export function TokenDetailsModal({ event, ticketType, tokenGate, onCreate, onUp
               </Button>
             </div>
           )
-        }
+        } */}
 
         <Button
           variant="secondary"
