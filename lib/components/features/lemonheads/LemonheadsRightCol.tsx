@@ -1,12 +1,12 @@
 'use client';
 
-import { drawer } from '$lib/components/core';
+// import { drawer } from '$lib/components/core';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
-import { PassportCard } from '../passport/PassportCard';
+// import { PassportCard } from '../passport/PassportCard';
 import { InviteFriend } from './cards/InviteCard';
 import { LemonHeadsNFTCard } from './cards/LemonHeadsNFTCard';
 import { LemonHeadsTreasuryCard } from './cards/TreasuryCard';
-import { SharedLemonheadsPane } from './mint/steps/ClaimLemonHead';
+// import { SharedLemonheadsPane } from './mint/steps/ClaimLemonHead';
 
 export function LemonHeadsRightCol({
   options = { nft: true, treasury: true, invite: true, passport: true },
@@ -18,7 +18,7 @@ export function LemonHeadsRightCol({
   return (
     <>
       <div className="md:hidden flex max-w-full overflow-y-auto no-scrollbar gap-2">
-        {options.passport && <PassportCard />}
+        {/* {options.passport && <PassportCard />} */}
         {options.nft && <LemonHeadsNFTCard />}
 
         {options.treasury && <LemonHeadsTreasuryCard />}
@@ -27,7 +27,7 @@ export function LemonHeadsRightCol({
 
       <div className="hidden md:block w-full max-w-[296px]">
         <div className="sticky top-0 flex flex-col gap-4">
-          {options.passport && <PassportCard />}
+          {/* {options.passport && <PassportCard />} */}
           {options.nft && <LemonHeadsNFTCard />}
 
           {options.treasury && <LemonHeadsTreasuryCard />}
