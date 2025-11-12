@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.24.0](https://github.com/lemonadesocial/web-new/compare/v8.23.0...v8.24.0) (2025-11-12)
+
+
+### Features
+
+* hide invite friend when limit eq zero ([b5e1a3e](https://github.com/lemonadesocial/web-new/commit/b5e1a3e5a6252264114a879c300d2019fdea653d))
+
 ## [8.23.0](https://github.com/lemonadesocial/web-new/compare/v8.22.0...v8.23.0) (2025-11-12)
 
 
