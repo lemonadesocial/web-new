@@ -1,5 +1,19 @@
 # Changelog
 
+## [8.23.0](https://github.com/lemonadesocial/web-new/compare/v8.22.0...v8.23.0) (2025-11-12)
+
+
+### Features
+
+* erc721 token gate check ([223de52](https://github.com/lemonadesocial/web-new/commit/223de52ee535d62dccb59b9bdf68e21d8bdc5649))
+* hide claim username ([7053cdf](https://github.com/lemonadesocial/web-new/commit/7053cdfb0b16e2a2b001681c434f68b802750eb3))
+* update time label to have month ([1d89b5d](https://github.com/lemonadesocial/web-new/commit/1d89b5d41ad9dce6d6b7062adef223dba4d8a821))
+
+
+### Bug Fixes
+
+* event address display ([de8e846](https://github.com/lemonadesocial/web-new/commit/de8e846a24c4cefa787a16f8e1ad7df7902ef831))
+
 ## [8.22.0](https://github.com/lemonadesocial/web-new/compare/v8.21.0...v8.22.0) (2025-11-12)
 
 
