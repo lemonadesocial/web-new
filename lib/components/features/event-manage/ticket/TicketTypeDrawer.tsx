@@ -206,7 +206,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
       ...pick(ticket, ['title', 'description', 'ticket_limit_per', 'ticket_limit', 'active', 'private', 'limited']),
     } as EventTicketTypeInput;
 
-    if (!newTicket.photos.length) {
+    if (!newTicket?.photos?.length) {
       delete newTicket['photos'];
     }
 
