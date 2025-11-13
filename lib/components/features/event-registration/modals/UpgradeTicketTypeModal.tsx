@@ -1,8 +1,10 @@
 'use client';
 import React from 'react';
+import { intersection } from 'lodash';
 
 import { Button, Card, ModalContent } from '$lib/components/core';
 import {
+  currenciesAtom,
   currencyAtom,
   eventTokenGatesAtom,
   purchaseItemsAtom,
@@ -27,6 +29,7 @@ export function UpgradeTicketTypeModal({ onClose }: Props) {
   const eventTokenGates = useAtomValue(eventTokenGatesAtom);
   const setCurrency = useSetAtom(currencyAtom);
   const setSelectedPaymentAccount = useSetAtom(selectedPaymentAccountAtom);
+  const setCurrencies = useSetAtom(currenciesAtom);
 
   const [purchaseItems, setPurchaseItems] = useAtom(purchaseItemsAtom);
   const ticketTypes = useAtomValue(ticketTypesAtom);
@@ -80,6 +83,15 @@ export function UpgradeTicketTypeModal({ onClose }: Props) {
             setPurchaseItems(arr);
             if (ticketRecommended) {
               const price = ticketRecommended.prices[0];
+
+              const selectedTicketTypes = ticketTypes.filter((ticket) => arr.some((item) => item.id === ticket._id));
+
+              const paymentCurrencies = selectedTicketTypes.map((ticket) =>
+                ticket.prices.map((price) => price.currency),
+              );
+              const newCurrencies = intersection(...paymentCurrencies);
+              setCurrencies(newCurrencies);
+
               setCurrency(price.currency);
               setSelectedPaymentAccount(price.payment_accounts_expanded?.[0] as NewPaymentAccount);
             }
