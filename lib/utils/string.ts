@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export function formatCurrency(amount = 0, currency?: string, attemptedDecimals = 2, showFree = true): string {
-  amount /= 10 ** attemptedDecimals;
+  if (attemptedDecimals > 0) amount /= 10 ** attemptedDecimals;
 
   // const decimals = amount % 1 === 0 ? attemptedDecimals : 2;
   const decimals = amount % 1 === 0 ? 0 : attemptedDecimals;
