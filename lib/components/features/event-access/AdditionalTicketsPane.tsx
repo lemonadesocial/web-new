@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { Button, drawer, Input, modal, ModalContent, toast } from '$lib/components/core';
 import { AssignTicketsDocument, GetMyTicketsDocument, Ticket } from '$lib/graphql/generated/backend/graphql';
 import { useMe } from '$lib/hooks/useMe';
-import { downloadTicketPass, formatPrice } from '$lib/utils/event';
+import { formatPrice } from '$lib/utils/event';
 import { EMAIL_REGEX } from '$lib/utils/regex';
 import { useMutation } from '$lib/graphql/request';
+import { AddToWalletModal } from './AddToWallet';
 
 export function AdditionalTicketsPane({ tickets }: { tickets: Ticket[] }) {
   const me = useMe();
@@ -51,7 +52,18 @@ export function AdditionalTicketsPane({ tickets }: { tickets: Ticket[] }) {
                   >
                     View QR
                   </Button>
-                  <Button variant="tertiary" size="sm" iconLeft="icon-pass" onClick={() => downloadTicketPass(ticket)}>
+                  <Button
+                    variant="tertiary"
+                    size="sm"
+                    iconLeft="icon-pass"
+                    onClick={() => {
+                      modal.open(AddToWalletModal, {
+                        props: {
+                          ticket
+                        },
+                      });
+                    }}
+                  >
                     Download Pass
                   </Button>
                 </div>

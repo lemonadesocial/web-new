@@ -3,10 +3,11 @@ import { QRCodeSVG } from 'qrcode.react';
 import { Button, drawer, modal } from "$lib/components/core";
 import { Ticket, Event } from "$lib/graphql/generated/backend/graphql";
 import { useMe } from "$lib/hooks/useMe";
-import { downloadTicketPass, getAssignedTicket, getUnassignedTickets } from '$lib/utils/event';
+import { getAssignedTicket, getUnassignedTickets } from '$lib/utils/event';
 
 import { AddToCalendarModal } from "./AddToCalendar";
 import { AdditionalTicketsPane } from './AdditionalTicketsPane';
+import { AddToWalletModal } from './AddToWallet';
 
 export function MyTicketsPane({ tickets, event }: { tickets: Ticket[]; event: Event; }) {
   const me = useMe();
@@ -50,7 +51,13 @@ export function MyTicketsPane({ tickets, event }: { tickets: Ticket[]; event: Ev
                   variant="tertiary"
                   size="sm"
                   iconLeft="icon-pass"
-                  onClick={() => downloadTicketPass(myTicket)}
+                  onClick={() => {
+                    modal.open(AddToWalletModal, {
+                      props: {
+                        ticket: myTicket
+                      },
+                    });
+                  }}
                 >
                   Download Pass
                 </Button>
