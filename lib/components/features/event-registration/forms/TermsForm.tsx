@@ -31,7 +31,7 @@ export function TermsForm() {
 
   return (
     <div className="flex flex-col gap-1.5">
-      <div className="flex items-start gap-3">
+      <div className="flex items-end gap-3">
         <div className="flex items-start">
           <input
             type="checkbox"
@@ -48,7 +48,7 @@ export function TermsForm() {
             {acceptTerms ? <i className="icon-checkbox-sharp size-5 text-white" /> : <i className="icon-checkbox-outline size-5 text-tertiary" />}
           </div>
         </div>
-        <label htmlFor="acceptTerms" className="text-sm flex-1 cursor-pointer" dangerouslySetInnerHTML={{ __html: event.terms_text }} />
+        <label htmlFor="acceptTerms" className="text-sm flex-1 cursor-pointer tiptap" dangerouslySetInnerHTML={{ __html: event.terms_text }} />
       </div>
 
       {errors.acceptTerms && <ErrorText message={errors.acceptTerms.message!} />}

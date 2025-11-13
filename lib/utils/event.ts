@@ -209,7 +209,7 @@ export function getEventCohosts(event: Event) {
 export function formatTokenGateRange(tokenGate: EventTokenGate) {
   const { min_value, decimals } = tokenGate;
 
-  if (min_value && decimals) return `> ${formatUnits(min_value, decimals)}`;
+  if (min_value && decimals) return `> ${formatNumber(formatUnits(min_value, decimals))}`;
 
   return `> 0`;
 }
