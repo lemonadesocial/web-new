@@ -73,10 +73,5 @@ export function isValidEmail(input: string) {
  **/
 export function formatNumber(str: string) {
   const num = parseFloat(str);
-
-  if (Number.isInteger(num)) {
-    return num.toString();
-  } else {
-    return num.toString();
-  }
+  return num.toString();
 }
