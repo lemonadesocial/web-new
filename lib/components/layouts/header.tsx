@@ -206,7 +206,7 @@ function ConnectLens() {
   const { account } = useAccount();
   const me = useMe();
 
-  const walletVerified = me?.kratos_wallet_address;
+  const walletVerified = me?.kratos_wallet_address || me?.kratos_unicorn_wallet_address;
   const chainsMap = useAtomValue(chainsMapAtom);
 
   const handleSelectWallet = () => {

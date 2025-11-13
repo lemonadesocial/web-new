@@ -34,12 +34,13 @@ import { useLogOut } from '$lib/hooks/useLogout';
 
 export function Content() {
   const [session] = useAtom(sessionAtom);
-  const walletVerified = session?.wallet;
   const signIn = useSignIn();
   const [mounted, setMounted] = React.useState(false);
   const router = useRouter();
-
+  
   const me = useMe();
+  const walletVerified = session?.wallet || me?.kratos_unicorn_wallet_address || me?.kratos_wallet_address;
+
   const logOut = useLogOut();
   const { account } = useAccount();
   const { address } = useAppKitAccount();
