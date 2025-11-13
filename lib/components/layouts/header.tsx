@@ -97,7 +97,7 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
 
         {session && me ? (
           <div className="flex gap-2 items-center">
-            {!me.email_verified && (
+            {/* {!me.email_verified && (
               <Button
                 onClick={() => modal.open(VerifyEmailModal)}
                 size="sm"
@@ -108,9 +108,9 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
               >
                 Verify Email
               </Button>
-            )}
+            )} */}
 
-            <ConnectLens />
+            {/* <ConnectLens /> */}
 
             {/* { */}
             {/*   hasLemonhead ? ( */}
