@@ -1,9 +1,10 @@
 import { z } from 'zod';
 
 export function formatCurrency(amount = 0, currency?: string, attemptedDecimals = 2, showFree = true): string {
-  amount /= 100;
+  amount /= 10 ** attemptedDecimals;
 
-  const decimals = amount % 1 === 0 ? attemptedDecimals : 2;
+  // const decimals = amount % 1 === 0 ? attemptedDecimals : 2;
+  const decimals = amount % 1 === 0 ? 0 : attemptedDecimals;
   return !!amount || !showFree
     ? amount.toLocaleString(undefined, {
         style: 'currency',
@@ -61,5 +62,21 @@ export function isValidEmail(input: string) {
   } catch (error: any) {
     console.error(`Zod Error for "${input}": ${error.errors[0].message}`);
     return false;
+  }
+}
+
+/**
+ * @description this format str to number
+ * Ex:
+ *    formatNumber("1") -> 1
+ *    formatNumber("1.2") -> 1.2
+ **/
+export function formatNumber(str: string) {
+  const num = parseFloat(str);
+
+  if (Number.isInteger(num)) {
+    return num.toString();
+  } else {
+    return num.toString();
   }
 }
