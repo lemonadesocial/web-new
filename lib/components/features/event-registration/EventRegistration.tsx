@@ -132,15 +132,15 @@ const EventRegistrationContent: React.FC = () => {
       )}
       <div className='flex flex-col gap-4 p-4'>
         <TicketSelect />
-        <p className='font-medium'>
+        <p>
           {hasSingleFreeTicket ? 'Welcome! To join the event, please register below.' : 'Welcome! To join the event, please get your ticket below.'}
         </p>
         {
           me && (
             <div className='flex gap-2 items-center'>
               <Avatar src={userAvatar(me)} className='size-5' />
-              <p className='font-medium'>{me.name}</p>
-              <p className='font-medium text-secondary'>{me.email}</p>
+              <p>{me.display_name || me.name}</p>
+              <p className="text-secondary">{me.email}</p>
             </div>
           )
         }
