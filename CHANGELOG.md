@@ -1,5 +1,19 @@
 # Changelog
 
+## [8.27.0](https://github.com/lemonadesocial/web-new/compare/v8.26.0...v8.27.0) (2025-11-13)
+
+
+### Features
+
+* refactor ([131e605](https://github.com/lemonadesocial/web-new/commit/131e6051ae16af2df0c22e3345ff45a4af321142))
+* update currencies list when not token gate ([8c7b58b](https://github.com/lemonadesocial/web-new/commit/8c7b58bfaca9f1310c2b8a54e07ab3472441921e))
+
+
+### Bug Fixes
+
+* center checkbox term form ([7d5697e](https://github.com/lemonadesocial/web-new/commit/7d5697e0ac391a97badfc65d01bddc0b16447efe))
+* missing currencies ([da80413](https://github.com/lemonadesocial/web-new/commit/da804136fd1f46dc10b283d2a5c7c5e59878f963))
+
 ## [8.26.0](https://github.com/lemonadesocial/web-new/compare/v8.25.0...v8.26.0) (2025-11-13)
 
 
