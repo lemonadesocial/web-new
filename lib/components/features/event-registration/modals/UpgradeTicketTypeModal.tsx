@@ -3,15 +3,19 @@ import React from 'react';
 
 import { Button, Card, ModalContent } from '$lib/components/core';
 import {
+  currencyAtom,
   eventTokenGatesAtom,
+  paymentAccountsAtom,
   purchaseItemsAtom,
   registrationModal,
+  selectedPaymentAccountAtom,
   ticketTypesAtom,
   useAtom,
   useAtomValue,
+  useSetAtom,
 } from '../store';
 import { generateUrl } from '$lib/utils/cnd';
-import { PurchasableTicketType } from '$lib/graphql/generated/backend/graphql';
+import { NewPaymentAccount, PurchasableTicketType } from '$lib/graphql/generated/backend/graphql';
 
 import { TicketPrices } from '../TicketSelectItem';
 import { TokenGateEligibilityModal } from './TokenGateEligibilityModal';
@@ -22,6 +26,8 @@ interface Props {
 
 export function UpgradeTicketTypeModal({ onClose }: Props) {
   const eventTokenGates = useAtomValue(eventTokenGatesAtom);
+  const setCurrency = useSetAtom(currencyAtom);
+  const setSelectedPaymentAccount = useSetAtom(selectedPaymentAccountAtom);
 
   const [purchaseItems, setPurchaseItems] = useAtom(purchaseItemsAtom);
   const ticketTypes = useAtomValue(ticketTypesAtom);
@@ -73,6 +79,11 @@ export function UpgradeTicketTypeModal({ onClose }: Props) {
           tokenGate: tokenGate,
           onConfirm: () => {
             setPurchaseItems(arr);
+            if (ticketRecommended) {
+              const price = ticketRecommended.prices[0];
+              setCurrency(price.currency);
+              setSelectedPaymentAccount(price.payment_accounts_expanded?.[0] as NewPaymentAccount);
+            }
             onClose();
           },
         },
