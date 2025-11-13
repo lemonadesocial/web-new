@@ -5,7 +5,6 @@ import { Button, Card, ModalContent } from '$lib/components/core';
 import {
   currencyAtom,
   eventTokenGatesAtom,
-  paymentAccountsAtom,
   purchaseItemsAtom,
   registrationModal,
   selectedPaymentAccountAtom,
@@ -92,6 +91,12 @@ export function UpgradeTicketTypeModal({ onClose }: Props) {
     }
 
     setPurchaseItems(arr);
+    if (ticketRecommended) {
+      const price = ticketRecommended.prices[0];
+      setCurrency(price.currency);
+      setSelectedPaymentAccount(price.payment_accounts_expanded?.[0] as NewPaymentAccount);
+    }
+
     onClose();
   };
 
