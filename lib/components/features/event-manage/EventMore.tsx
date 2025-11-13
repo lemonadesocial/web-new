@@ -57,73 +57,75 @@ export function EventMore() {
   };
 
   return (
-    <div className="flex flex-col gap-8">
-      <Section
-        title="Clone Event"
-        subtitle="Create a new event with the same information as this one. Everything except the guest list and event blasts will be copied over."
-      >
-        <div>
-          <Button
-            iconLeft="icon-duplicate"
-            variant="secondary"
-            onClick={() =>
-              modal.open(CloneEventModal, {
-                className: 'overflow-visible',
-                props: { event },
-                dismissible: false,
-              })
-            }
-          >
-            Clone Event
-          </Button>
-        </div>
-      </Section>
+    <div className="page mx-auto py-7 px-4 md:px-0">
+      <div className="flex flex-col gap-8">
+        <Section
+          title="Clone Event"
+          subtitle="Create a new event with the same information as this one. Everything except the guest list and event blasts will be copied over."
+        >
+          <div>
+            <Button
+              iconLeft="icon-duplicate"
+              variant="secondary"
+              onClick={() =>
+                modal.open(CloneEventModal, {
+                  className: 'overflow-visible',
+                  props: { event },
+                  dismissible: false,
+                })
+              }
+            >
+              Clone Event
+            </Button>
+          </div>
+        </Section>
 
-      <Divider className="h-1" />
+        <Divider className="h-1" />
 
-      <Section
-        title="Event Link"
-        subtitle="When you choose a new URL, the current one will no longer work. Do not change your URL if you have already shared the event."
-      >
-        <div className="flex gap-2 items-end">
-          <InputField
-            label="Public URL"
-            value={shortid}
-            onChangeText={(text) => setShortid(text)}
-            prefix="lemonade.social/e/"
-          />
-          <Button variant="secondary" disabled={shortid === event.shortid} loading={loading} onClick={handleUpdate}>
-            Update
-          </Button>
-        </div>
-      </Section>
+        <Section
+          title="Event Link"
+          subtitle="When you choose a new URL, the current one will no longer work. Do not change your URL if you have already shared the event."
+        >
+          <div className="flex gap-2 items-end">
+            <InputField
+              label="Public URL"
+              value={shortid}
+              onChangeText={(text) => setShortid(text)}
+              prefix="lemonade.social/e/"
+            />
+            <Button variant="secondary" disabled={shortid === event.shortid} loading={loading} onClick={handleUpdate}>
+              Update
+            </Button>
+          </div>
+        </Section>
 
-      <Divider className="h-1" />
+        <Divider className="h-1" />
 
-      <Section
-        title="Cancel Event"
-        subtitle="Cancel and permanently delete this event. This operation cannot be undone. If there are any registered guests, we will notify them that the event has been canceled."
-      >
-        <div>
-          <Button
-            iconLeft="icon-cancel"
-            variant="danger"
-            onClick={() =>
-              modal.open(CancelEventModal, {
-                props: {
-                  title: 'Cancel Event',
-                  subtitle: 'If you aren’t able to host your event, you can cancel and we’ll notify your guests.',
-                  onConfirm: async () => {
-                    await deleteEvent({ variables: { event: event._id } });
+        <Section
+          title="Cancel Event"
+          subtitle="Cancel and permanently delete this event. This operation cannot be undone. If there are any registered guests, we will notify them that the event has been canceled."
+        >
+          <div>
+            <Button
+              iconLeft="icon-cancel"
+              variant="danger"
+              onClick={() =>
+                modal.open(CancelEventModal, {
+                  props: {
+                    title: 'Cancel Event',
+                    subtitle: 'If you aren’t able to host your event, you can cancel and we’ll notify your guests.',
+                    onConfirm: async () => {
+                      await deleteEvent({ variables: { event: event._id } });
+                    },
                   },
-                },
-              })
-            }
-          >
-            Cancel Event
-          </Button>
-        </div>
-      </Section>
+                })
+              }
+            >
+              Cancel Event
+            </Button>
+          </div>
+        </Section>
+      </div>
     </div>
   );
 }

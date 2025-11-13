@@ -43,7 +43,7 @@ export function EventBlasts() {
   if (!event) return null;
 
   return (
-    <>
+    <div className="page mx-auto py-7 px-4 md:px-0">
       <BlastsInput event={event} />
       <Spacer className="h-6" />
 
@@ -149,7 +149,7 @@ export function EventBlasts() {
           </Card.Content>
         </Card.Root>
       </section>
-    </>
+    </div>
   );
 }
 
