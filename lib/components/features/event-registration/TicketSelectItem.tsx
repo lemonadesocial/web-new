@@ -3,7 +3,7 @@ import { useAtomValue as useJotaiAtomValue } from 'jotai';
 import { intersection } from 'lodash';
 import clsx from 'clsx';
 
-import { Chip, NumberInput } from '$lib/components/core';
+import { Chip, NumberInput, toast } from '$lib/components/core';
 import { EventTicketPrice, NewPaymentAccount, PurchasableTicketType } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom } from '$lib/jotai';
 import { formatPrice, formatTokenGateRange, getPaymentAccounts } from '$lib/utils/event';
@@ -11,6 +11,7 @@ import { getPaymentNetworks } from '$lib/utils/payment';
 import {
   currenciesAtom,
   currencyAtom,
+  eventDataAtom,
   eventTokenGatesAtom,
   paymentAccountsAtom,
   purchaseItemsAtom,
@@ -43,6 +44,7 @@ export function TicketSelectItem({
   const ticketTypes = useAtomValue(ticketTypesAtom);
   const eventTokenGates = useAtomValue(eventTokenGatesAtom);
   const ticketPasscodes = useAtomValue(ticketPasscodesAtom);
+  const event = useAtomValue(eventDataAtom);  
 
   const currentPaymentAccounts = getPaymentAccounts(ticketType.prices);
   const currentCurrencies = ticketType.prices.map((price) => price.currency);
@@ -58,7 +60,19 @@ export function TicketSelectItem({
   const handleTicketChange = (ticketType: PurchasableTicketType, value: number) => {
     const currentCount = purchaseItems.find((item) => item.id === ticketType._id)?.count || 0;
 
-    if (value > currentCount && tokenGate) {
+    if (value < currentCount) {
+      processTicketChange(ticketType, value);
+      return;
+    }
+
+    const currentTotalCount = purchaseItems.reduce((acc, item) => acc + item.count, 0);
+
+    if (event?.ticket_limit_per && currentTotalCount + value > event.ticket_limit_per) {
+      toast.error('You have reached the maximum number of tickets for this event.');
+      return;
+    }
+
+    if (tokenGate) {
       registrationModal.open(TokenGateEligibilityModal, {
         props: {
           ticketTitle: ticketType.title,
@@ -70,7 +84,7 @@ export function TicketSelectItem({
       return;
     }
 
-    if (value > currentCount && ticketType.passcode_enabled && !ticketPasscodes[ticketType._id]) {
+    if (ticketType.passcode_enabled && !ticketPasscodes[ticketType._id]) {
       registrationModal.open(PasscodeModal, {
         props: {
           ticketTypeId: ticketType._id,
