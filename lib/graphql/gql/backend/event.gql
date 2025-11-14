@@ -1350,3 +1350,130 @@ mutation UpdateEventSelfVerification($id: MongoID!, $self_verification: SelfVeri
     }
   }
 }
+
+query GetEventPaymentStatistics($event: MongoID!) {
+  getEventPaymentStatistics(event: $event) {
+    total_payments
+    stripe_payments {
+      count
+      revenue {
+        currency
+        formatted_total_amount
+      }
+    }
+    crypto_payments {
+      count
+      revenue {
+        currency
+        formatted_total_amount
+      }
+      networks {
+        chain_id
+        count
+      }
+    }
+  }
+}
+
+query GetListEventPayments(
+  $skip: Int
+  $limit: Int
+  $event: MongoID!
+  $provider: NewPaymentProvider
+  $networks: [String!]
+  $checked_in: Boolean
+  $ticket_types: [MongoID!]
+  $search: String
+) {
+  listEventPayments(
+    skip: $skip
+    limit: $limit
+    event: $event
+    provider: $provider
+    networks: $networks
+    checked_in: $checked_in
+    ticket_types: $ticket_types
+    search: $search
+  ) {
+    records {
+      _id
+      account_expanded {
+        provider
+      }
+      stripe_payment_info {
+        payment_intent
+        card {
+          last4
+          brand
+        }
+      }
+      application {
+        question
+        answer
+      }
+      buyer_info {
+        email
+        name
+      }
+      buyer_user {
+        email
+        display_name
+        name
+        image_avatar
+      }
+      amount
+      currency
+      due_amount
+      fee
+      formatted_total_amount
+      formatted_discount_amount
+      currency
+      user
+      stamps
+      ticket_types_expanded {
+        _id
+        category_expanded {
+          title
+        }
+      }
+      state
+      account_expanded {
+        _id
+        active
+        created_at
+        user
+        type
+        title
+        provider
+      }
+      ref_data
+      transfer_params
+      transfer_metadata
+      crypto_payment_info {
+        network
+        tx_hash
+      }
+    }
+    total
+  }
+}
+
+query getTicketStatistics($id: MongoID!) {
+  getTicketStatistics(id: $id) {
+    all
+    checked_in
+    invited
+    issued
+    cancelled
+    applicants {
+      state
+      count
+    }
+    not_checked_in
+    ticket_types {
+      ticket_type
+      ticket_type_title
+      count
+    }
+  }
+}
