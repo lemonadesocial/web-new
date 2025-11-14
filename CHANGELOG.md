@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.27.1](https://github.com/lemonadesocial/web-new/compare/v8.27.0...v8.27.1) (2025-11-14)
+
+
+### Bug Fixes
+
+* event ticket limit per guest ([d707cbc](https://github.com/lemonadesocial/web-new/commit/d707cbc0813bd04c30dfd6e866e012a090c391ef))
+
 ## [8.27.0](https://github.com/lemonadesocial/web-new/compare/v8.26.0...v8.27.0) (2025-11-13)
 
 
