@@ -1,5 +1,43 @@
 # Changelog
 
+## [8.27.0](https://github.com/lemonadesocial/web-new/compare/v8.26.0...v8.27.0) (2025-11-13)
+
+
+### Features
+
+* refactor ([131e605](https://github.com/lemonadesocial/web-new/commit/131e6051ae16af2df0c22e3345ff45a4af321142))
+* update currencies list when not token gate ([8c7b58b](https://github.com/lemonadesocial/web-new/commit/8c7b58bfaca9f1310c2b8a54e07ab3472441921e))
+
+
+### Bug Fixes
+
+* center checkbox term form ([7d5697e](https://github.com/lemonadesocial/web-new/commit/7d5697e0ac391a97badfc65d01bddc0b16447efe))
+* missing currencies ([da80413](https://github.com/lemonadesocial/web-new/commit/da804136fd1f46dc10b283d2a5c7c5e59878f963))
+
+## [8.26.0](https://github.com/lemonadesocial/web-new/compare/v8.25.0...v8.26.0) (2025-11-13)
+
+
+### Features
+
+* add download pass option ([f93e36f](https://github.com/lemonadesocial/web-new/commit/f93e36fa124182f6c17f19df96f30cc575b6133c))
+* add rsvp success modal ([6f04142](https://github.com/lemonadesocial/web-new/commit/6f041420d968a7bb60262d48bf646180b5dc529b))
+* check attempedDecimals ([490a7d7](https://github.com/lemonadesocial/web-new/commit/490a7d7552a0a820901d42a79eb40e36466276b2))
+* missing price when not token gate ([c277d38](https://github.com/lemonadesocial/web-new/commit/c277d389ba11380f5eac734d25a0ec2f45218f20))
+* remove decimal when zero ([3601013](https://github.com/lemonadesocial/web-new/commit/3601013096db029dfabadba4d2b8e67c7fba3f8d))
+* remove toolbar actions ([87e04f5](https://github.com/lemonadesocial/web-new/commit/87e04f5c353f07eef70d1e61e1ab216378037c45))
+* revert testing ([a82e0ec](https://github.com/lemonadesocial/web-new/commit/a82e0ec25855ad09b5b0d811475c8c6797f70c19))
+* update featured wallet list ([6a1c5e0](https://github.com/lemonadesocial/web-new/commit/6a1c5e0307f8c67e42fa935cd9d3f095277386bc))
+* use display name ([bbd54d0](https://github.com/lemonadesocial/web-new/commit/bbd54d0d7666da1b4c1250bbdaa5830b1115bb0b))
+
+
+### Bug Fixes
+
+* add unicorn wallet to verification ([8e46482](https://github.com/lemonadesocial/web-new/commit/8e464820a7238f5235dc3568bb035d959ef5be31))
+* check photos ticket type before update ([0b9a096](https://github.com/lemonadesocial/web-new/commit/0b9a09620e37606e048b05aa7ccc3247e30822a4))
+* check upgrade ticket and style term form ([bdb5e06](https://github.com/lemonadesocial/web-new/commit/bdb5e060b7be36701b7d1ff6dbae46c0fbb390fc))
+* type check ([4824e2b](https://github.com/lemonadesocial/web-new/commit/4824e2bb8f6e8bb84bb10b04ecb766769cef9983))
+* update formatTokenGateRange ([4c8a311](https://github.com/lemonadesocial/web-new/commit/4c8a3111763a67a24da25d3f2f00ec27d595df63))
+
 ## [8.25.0](https://github.com/lemonadesocial/web-new/compare/v8.24.0...v8.25.0) (2025-11-12)
 
 

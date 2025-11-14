@@ -65,6 +65,8 @@ export function initializeAppKit() {
     allowUnsupportedChain: true,
     coinbasePreference: 'smartWalletOnly',
     featuredWalletIds: [
+      'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
+      '18388be9ac2d02726dbac9777c96efaac06d744b2f6d580fccdd4127a6d01fd1', // Rabby
       '445ced0f482742632dfa6684f802eb1a2bb3cb97531bd06e02fb297c6ad21de1' // Family
     ],
     features: {

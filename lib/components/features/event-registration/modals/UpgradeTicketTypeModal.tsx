@@ -1,17 +1,22 @@
 'use client';
 import React from 'react';
+import { intersection } from 'lodash';
 
 import { Button, Card, ModalContent } from '$lib/components/core';
 import {
+  currenciesAtom,
+  currencyAtom,
   eventTokenGatesAtom,
   purchaseItemsAtom,
   registrationModal,
+  selectedPaymentAccountAtom,
   ticketTypesAtom,
   useAtom,
   useAtomValue,
+  useSetAtom,
 } from '../store';
 import { generateUrl } from '$lib/utils/cnd';
-import { PurchasableTicketType } from '$lib/graphql/generated/backend/graphql';
+import { NewPaymentAccount, PurchasableTicketType } from '$lib/graphql/generated/backend/graphql';
 
 import { TicketPrices } from '../TicketSelectItem';
 import { TokenGateEligibilityModal } from './TokenGateEligibilityModal';
@@ -22,6 +27,9 @@ interface Props {
 
 export function UpgradeTicketTypeModal({ onClose }: Props) {
   const eventTokenGates = useAtomValue(eventTokenGatesAtom);
+  const setCurrency = useSetAtom(currencyAtom);
+  const setSelectedPaymentAccount = useSetAtom(selectedPaymentAccountAtom);
+  const setCurrencies = useSetAtom(currenciesAtom);
 
   const [purchaseItems, setPurchaseItems] = useAtom(purchaseItemsAtom);
   const ticketTypes = useAtomValue(ticketTypesAtom);
@@ -51,6 +59,19 @@ export function UpgradeTicketTypeModal({ onClose }: Props) {
       });
   };
 
+  const processTicketChange = (newPurchaseTickets, ticketRecommended) => {
+    const price = ticketRecommended.prices[0];
+
+    const selectedTicketTypes = ticketTypes.filter((ticket) =>
+      newPurchaseTickets.some((item) => item.id === ticket._id),
+    );
+    const paymentCurrencies = selectedTicketTypes.map((ticket) => ticket.prices.map((price) => price.currency));
+    const newCurrencies = intersection(...paymentCurrencies);
+    setCurrencies(newCurrencies);
+    setCurrency(price.currency);
+    setSelectedPaymentAccount(price.payment_accounts_expanded?.[0] as NewPaymentAccount);
+  };
+
   const handleUpgrade = () => {
     let tokenGate = null;
     let ticketRecommended: PurchasableTicketType | null = null;
@@ -73,6 +94,9 @@ export function UpgradeTicketTypeModal({ onClose }: Props) {
           tokenGate: tokenGate,
           onConfirm: () => {
             setPurchaseItems(arr);
+            if (ticketRecommended) {
+              processTicketChange(arr, ticketRecommended);
+            }
             onClose();
           },
         },
@@ -81,6 +105,10 @@ export function UpgradeTicketTypeModal({ onClose }: Props) {
     }
 
     setPurchaseItems(arr);
+    if (ticketRecommended) {
+      processTicketChange(arr, ticketRecommended);
+    }
+
     onClose();
   };
 

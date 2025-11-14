@@ -14,7 +14,7 @@ import {
   User,
 } from '$lib/graphql/generated/backend/graphql';
 
-import { formatCurrency } from './string';
+import { formatCurrency, formatNumber } from './string';
 
 import { convertFromUtcToTimezone, formatWithTimezone } from './date';
 import { getListChains } from './crypto';
@@ -33,14 +33,15 @@ export function formatCryptoPrice(price: EventTicketPrice, skipCurrency: boolean
   }
   if (skipCurrency) return ethers.formatUnits(cost, decimals);
 
-  return `${ethers.formatUnits(cost, decimals)} ${currency.toUpperCase()}`;
+  // return `${ethers.formatUnits(cost, decimals)} ${currency.toUpperCase()}`;
+  return `${formatNumber(ethers.formatUnits(cost, decimals))} ${currency.toUpperCase()}`;
 }
 
 export function formatFiatPrice(price: EventTicketPrice) {
   const { cost, currency, payment_accounts_expanded } = price;
   const decimals = payment_accounts_expanded?.[0]?.account_info?.currency_map[currency]?.decimals;
 
-  if (!decimals) return '';
+  if (!Number.isFinite(decimals)) return '';
 
   return formatCurrency(Number(cost), currency, decimals, false);
 }
@@ -173,7 +174,7 @@ export const getDisplayPrice = (cost: string, currency: string, account?: Paymen
 
   const decimals = account?.account_info.currency_map[currency]?.decimals;
 
-  if (!decimals) return 0;
+  if (!Number.isFinite(decimals)) return 0;
 
   if (account.provider === 'stripe') return formatCurrency(Number(cost), currency, decimals, false);
 
@@ -190,11 +191,8 @@ export function isAttending(event: Event, userId: string): boolean {
   ).has(userId);
 }
 
-export function downloadTicketPass(ticket: Ticket) {
-  window.open(
-    `${process.env.NEXT_PUBLIC_LMD_BE}/event/pass/${/iPad|iPhone|iPod/.test(navigator.userAgent) ? 'apple' : 'google'}/${ticket._id}?shortid=${ticket.shortid}`,
-    '_blank',
-  );
+export function getTicketPassUrl(ticket: Ticket, provider: 'apple' | 'google') {
+  return `${process.env.NEXT_PUBLIC_LMD_BE}/event/pass/${provider}/${ticket._id}?shortid=${ticket.shortid}`;
 }
 
 export function extractShortId(url: string): string | null {
@@ -211,7 +209,7 @@ export function getEventCohosts(event: Event) {
 export function formatTokenGateRange(tokenGate: EventTokenGate) {
   const { min_value, decimals } = tokenGate;
 
-  if (min_value && decimals) return `> ${formatUnits(min_value, decimals)}`;
+  if (min_value && decimals) return `> ${formatNumber(formatUnits(min_value, decimals))}`;
 
   return `> 0`;
 }

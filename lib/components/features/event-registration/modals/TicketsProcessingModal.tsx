@@ -1,21 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
-import { GetMyTicketsDocument } from "$lib/graphql/generated/backend/graphql";
+import { GetMyTicketsDocument, Ticket } from "$lib/graphql/generated/backend/graphql";
 import { useSession } from "$lib/hooks/useSession";
 import { useClient } from "$lib/graphql/request";
-import { toast } from "$lib/components/core";
+import { modal, toast } from "$lib/components/core";
 
 import { eventDataAtom, registrationModal, useAtomValue } from "../store";
+import { RegistrationSuccessModal } from "./RegistrationSuccessModal";
 
 export function TicketsProcessingModal() {
   const session = useSession();
   const { client } = useClient();
   const event = useAtomValue(eventDataAtom);
 
-  const [retryCount, setRetryCount] = useState(0);
+  const retryCountRef = useRef(0);
+  const hasOpenedSuccess = useRef(false);
 
   useEffect(() => {
     if (!session || !event?._id) return;
+
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+
+    const stopPolling = () => {
+      if (!intervalId) return;
+      clearInterval(intervalId);
+      intervalId = null;
+    };
 
     const checkForTickets = async () => {
       try {
@@ -30,13 +40,23 @@ export function TicketsProcessingModal() {
 
         const hasTickets = !!data?.getMyTickets?.tickets?.length;
 
-        if (hasTickets) { 
+        if (hasTickets && !hasOpenedSuccess.current) { 
+          hasOpenedSuccess.current = true;
+          stopPolling();
           registrationModal.close();
+          modal.open(RegistrationSuccessModal, {
+            props: {
+              tickets: data.getMyTickets.tickets as Ticket[],
+              event
+            },
+          });
+
           return true;
         }
 
         return false;
       } catch (error: any) {
+      stopPolling();
         registrationModal.close();
         toast.error(error.message || 'Failed to check for tickets. Please try again later.');
         return false;
@@ -46,20 +66,25 @@ export function TicketsProcessingModal() {
     const pollForTickets = async () => {
       const hasTickets = await checkForTickets();
 
-      if (hasTickets || retryCount >= 2) {
+      if (hasTickets) {
+        return;
+      }
+
+      if (retryCountRef.current >= 2) {
+        stopPolling();
         registrationModal.close();
         return;
       }
 
-      setRetryCount(prev => prev + 1);
+      retryCountRef.current += 1;
     };
 
     pollForTickets();
 
-    const intervalId = setInterval(pollForTickets, 3000);
+    intervalId = setInterval(pollForTickets, 3000);
 
     return () => {
-      clearInterval(intervalId);
+      stopPolling();
     };
   }, []);
 
