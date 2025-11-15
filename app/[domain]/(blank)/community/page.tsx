@@ -1,14 +1,14 @@
 import { notFound } from 'next/navigation';
 import type { ResolvingMetadata } from 'next';
 
-import { getClient } from '$lib/graphql/request/client';
-import {
-  GetSpaceTagsDocument,
-  GetSubSpacesDocument,
-  Space,
-  PublicSpace,
-  SpaceTag,
-} from '$lib/graphql/generated/backend/graphql';
+// import { getClient } from '$lib/graphql/request/client';
+// import {
+//   GetSpaceTagsDocument,
+//   GetSubSpacesDocument,
+//   Space,
+//   PublicSpace,
+//   SpaceTag,
+// } from '$lib/graphql/generated/backend/graphql';
 
 import { Community } from '$lib/components/features/community';
 import { generateUrl } from '$lib/utils/cnd';
@@ -43,24 +43,24 @@ export default async function Page({ params }: Props) {
   const domain = decodeURIComponent(res.domain);
 
   const space = await getSpace({ hostname: domain });
-  
+
   if (!space) return notFound();
 
-  const { subSpaces, spaceTags } = await prefetchData(space);
+  // const { subSpaces, spaceTags } = await prefetchData(space);
 
-  return <Community initData={{ space, subSpaces, spaceTags }} />;
+  return <Community initData={{ space }} />;
 }
 
-const prefetchData = async (space: Space) => {
-  const client = getClient();
-
-  const [subSpaces, spaceTags] = await Promise.all([
-    client.query({ query: GetSubSpacesDocument, variables: { id: space._id } }),
-    client.query({ query: GetSpaceTagsDocument, variables: { space: space._id } }),
-  ]);
-
-  return {
-    subSpaces: (subSpaces.data?.getSubSpaces || []) as PublicSpace[],
-    spaceTags: (spaceTags.data?.listSpaceTags || []) as SpaceTag[],
-  };
-};
+// const prefetchData = async (space: Space) => {
+//   const client = getClient();
+//
+//   const [subSpaces, spaceTags] = await Promise.all([
+//     client.query({ query: GetSubSpacesDocument, variables: { id: space._id } }),
+//     client.query({ query: GetSpaceTagsDocument, variables: { space: space._id } }),
+//   ]);
+//
+//   return {
+//     subSpaces: (subSpaces.data?.getSubSpaces || []) as PublicSpace[],
+//     spaceTags: (spaceTags.data?.listSpaceTags || []) as SpaceTag[],
+//   };
+// };
