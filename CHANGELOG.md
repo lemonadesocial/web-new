@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.27.2](https://github.com/lemonadesocial/web-new/compare/v8.27.1...v8.27.2) (2025-11-15)
+
+
+### Bug Fixes
+
+* optimize query ssr ([c6281cd](https://github.com/lemonadesocial/web-new/commit/c6281cdcd4f5e1f9c814d4d2bab99c0a5a03929f))
+
 ## [8.27.1](https://github.com/lemonadesocial/web-new/compare/v8.27.0...v8.27.1) (2025-11-14)
 
 
