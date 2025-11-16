@@ -167,6 +167,7 @@ query GetEvent($id: MongoID, $shortid: String) {
     }
     hide_attending
     registration_disabled
+    ticket_limit_per
   }
 }
 
