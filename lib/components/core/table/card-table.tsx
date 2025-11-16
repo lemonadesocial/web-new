@@ -52,35 +52,36 @@ function Root<T>({ data = [], loading: fetching, children, className }: RootProp
 
   return (
     <div className="flex flex-col gap-3">
-      <Card.Root className={className}>
-        {(!!data.length || fetching) && header}
+      <div className="overflow-auto no-scrollbar">
+        <Card.Root className={twMerge('w-full', className)}>
+          {(!!data.length || fetching) && header}
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            initial={{ opacity: 0 }}
-            className="divide-y-(length:--card-border-width) divide-(--color-divider)"
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            {fetching ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.1 }}
-              >
-                {loading}
-              </motion.div>
-            ) : (
-              <>
-                <div className="hidden only:block">{empty}</div>
-                {content}
-              </>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </Card.Root>
-
+          <AnimatePresence mode="wait">
+            <motion.div
+              initial={{ opacity: 0 }}
+              className="divide-y-(length:--card-border-width) divide-(--color-divider)"
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              {fetching ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.1 }}
+                >
+                  {loading}
+                </motion.div>
+              ) : (
+                <>
+                  <div className="hidden only:block">{empty}</div>
+                  {content}
+                </>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </Card.Root>
+      </div>
       {paginate}
     </div>
   );

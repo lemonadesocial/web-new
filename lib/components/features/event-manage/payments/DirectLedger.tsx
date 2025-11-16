@@ -1,7 +1,18 @@
 'use client';
 import clsx from 'clsx';
 
-import { Avatar, Badge, Button, Card, Checkbox, InputField, Menu, MenuItem, Skeleton } from '$lib/components/core';
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Checkbox,
+  Divider,
+  InputField,
+  Menu,
+  MenuItem,
+  Skeleton,
+} from '$lib/components/core';
 import { useClient, useQuery } from '$lib/graphql/request';
 import {
   GetEventPaymentStatisticsDocument,
@@ -16,19 +27,19 @@ import { CardTable } from '$lib/components/core/table';
 import { userAvatar } from '$lib/utils/user';
 import { format, isValid } from 'date-fns';
 import { debounce, sumBy } from 'lodash';
-import { match } from 'ts-pattern';
+import { match, P } from 'ts-pattern';
 import { useAtomValue } from 'jotai';
 import { listChainsAtom } from '$lib/jotai';
 import { downloadFile, makeCSV } from '$lib/utils/file';
 
-const LIMIT = 50;
+const LIMIT = 10;
 const filterMenuGuest: Record<string, { icon: string; label: string }> = {
   all: { icon: 'ic_guests', label: 'All Guests' },
   checked_in: { icon: 'ic_enter', label: 'Checked in' },
   not_checked_in: { icon: 'ic_close_circle', label: 'Not Checked In' },
 };
 
-export function DirectLedger(props: {}) {
+export function DirectLedger() {
   const event = useEvent();
   if (!event) return null;
 
@@ -48,7 +59,12 @@ export function DirectLedger(props: {}) {
     },
     {
       icon: 'icon-wallet',
-      title: paymentStatistics?.crypto_payments?.revenue?.[1]?.formatted_total_amount || 0,
+      title: `${paymentStatistics?.crypto_payments?.revenue?.[0]?.formatted_total_amount || 0} ETH`,
+      subtitle: 'Crypto Transactions',
+    },
+    {
+      icon: 'icon-wallet',
+      title: `${paymentStatistics?.crypto_payments?.revenue?.[1]?.formatted_total_amount || 0} USDC`,
       subtitle: 'Crypto Transactions',
     },
   ];
@@ -196,7 +212,13 @@ export function DirectLedger(props: {}) {
                         className="hidden md:block"
                         iconRight="icon-chevron-down"
                       >
-                        All Networks
+                        {match(filterNetworks.length)
+                          .with(P.number.gt(1), () => `Networks (${filterNetworks.length})`)
+                          .otherwise(() => {
+                            const chain = chains?.find((c) => c.chain_id === filterNetworks[0]);
+                            if (!filterNetworks.length) return 'All Networks';
+                            else return chain?.name || filterNetworks[0];
+                          })}
                       </Button>
                       <Button
                         icon="icon-filter-line"
@@ -217,6 +239,7 @@ export function DirectLedger(props: {}) {
                         onClick={() => setFilterNetworks([])}
                         iconRight={!filterNetworks.length && 'icon-done'}
                       />
+
                       <MenuItem
                         title={`Stripe (${paymentStatistics?.stripe_payments.count})`}
                         iconLeft="icon-stripe"
@@ -283,38 +306,44 @@ export function DirectLedger(props: {}) {
                 </Menu.Trigger>
                 <Menu.Content className="p-2">
                   {({ toggle }) => (
-                    <>
-                      {Object.entries(filterMenuGuest).map(([key, item]) => (
-                        <MenuItem
-                          key={key}
-                          title={item.label}
-                          className="w-44"
-                          iconRight={key === filter && 'icon-done'}
-                          onClick={() => {
-                            setFilter(key);
-                            toggle();
-                          }}
-                        />
-                      ))}
+                    <div className="flex flex-col gap-3">
+                      <div>
+                        {Object.entries(filterMenuGuest).map(([key, item]) => (
+                          <MenuItem
+                            key={key}
+                            title={item.label}
+                            className="w-44"
+                            iconRight={key === filter && 'icon-done'}
+                            onClick={() => {
+                              setFilter(key);
+                              toggle();
+                            }}
+                          />
+                        ))}
+                      </div>
 
-                      {dataTicketStats?.getTicketStatistics?.ticket_types?.map((item) => (
-                        <MenuItem
-                          key={item.ticket_type}
-                          title={`${item.ticket_type_title} (${item.count})`}
-                          className="[&_p]:truncate"
-                          iconRight={clsx(filterTickets.includes(item.ticket_type) ? 'icon-done' : 'icon-none')}
-                          onClick={() => {
-                            const arr = [...filterTickets];
-                            if (!arr.includes(item.ticket_type)) {
-                              arr.push(item.ticket_type);
-                            } else {
-                              arr.splice(arr.indexOf(item.ticket_type), 1);
-                            }
-                            setFilterTickets(arr);
-                          }}
-                        />
-                      ))}
-                    </>
+                      <Divider />
+                      <div>
+                        {dataTicketStats?.getTicketStatistics?.ticket_types?.map((item) => (
+                          <MenuItem
+                            key={item.ticket_type}
+                            title={`${item.ticket_type_title} (${item.count})`}
+                            className="[&_p]:truncate"
+                            iconRight={clsx(filterTickets.includes(item.ticket_type) ? 'icon-done' : 'icon-none')}
+                            onClick={() => {
+                              const arr = [...filterTickets];
+                              if (!arr.includes(item.ticket_type)) {
+                                arr.push(item.ticket_type);
+                              } else {
+                                arr.splice(arr.indexOf(item.ticket_type), 1);
+                              }
+                              setFilterTickets(arr);
+                              toggle();
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </Menu.Content>
               </Menu.Root>
@@ -342,7 +371,7 @@ export function DirectLedger(props: {}) {
             </Menu.Root>
           </div>
 
-          <CardTable.Root loading={loading} data={dataSource}>
+          <CardTable.Root loading={loading} data={dataSource} className="table table-auto overflow-visible">
             <CardTable.Header>
               <div className="flex gap-3 px-4 py-3 w-full">
                 <Checkbox
@@ -393,7 +422,9 @@ export function DirectLedger(props: {}) {
                         else setSelected((prev) => [...prev, item._id]);
                       }}
                     />
-                    <Avatar src={item.buyer_user?.image_avatar || userAvatar()} />
+                    <div className=" size-6">
+                      <Avatar src={item.buyer_user?.image_avatar || userAvatar()} className="aspect-square" />
+                    </div>
                     <div className="flex gap-2 flex-1">
                       <p className="text-primary min-w-fit">
                         {item.buyer_user?.display_name || item.buyer_user?.name || item.buyer_info?.name}
