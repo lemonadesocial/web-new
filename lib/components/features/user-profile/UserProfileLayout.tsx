@@ -11,19 +11,21 @@ import { UserProfileInfo } from './UserProfileInfo';
 import { UpcomingEventsCard } from '$app/[domain]/(blank)/s/lemonheads/shared';
 import { WhoToFollow } from '../lens-account/WhoToFollow';
 import { LemonadeStandCard } from '../LemonadeStandCard';
+import { useMe } from '$lib/hooks/useMe';
 
 function UserProfileLayout({ children }: React.PropsWithChildren) {
   const params = useParams();
   const { uid } = params;
 
   const { user, loading } = useUserProfile(uid?.toString());
+  const me = useMe()
 
   if (loading) return null;
 
   return (
     <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-12 pb-28 md:pb-20 w-full pt-6 max-sm:px-4">
       <div className="flex flex-col gap-5 flex-1">
-        <UserProfileHero address={uid as string} user={user} />
+        <UserProfileHero address={uid as string} user={user} canEdit={me?._id === user?._id} />
         <UserProfileInfo user={user} address={uid as string} />
 
         <UserProfileTabs
