@@ -203,7 +203,8 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
         ? prices.map((price) => pick(price, ['cost', 'currency', 'payment_accounts']))
         : [{ cost: '0', currency: 'USD' }],
       photos: [...images.map((i) => i._id), ...(ticket.photos, [])],
-      ...pick(ticket, ['title', 'description', 'ticket_limit_per', 'ticket_limit', 'active', 'private', 'limited']),
+      ticket_limit: ticket.ticket_limit || null,
+      ...pick(ticket, ['title', 'description', 'ticket_limit_per', 'active', 'private', 'limited']),
     } as EventTicketTypeInput;
 
     if (!newTicket?.photos?.length) {

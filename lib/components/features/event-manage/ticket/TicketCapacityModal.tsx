@@ -25,6 +25,7 @@ export function TicketCapacityModal({ ticketLimit, onChange }: { ticketLimit: nu
             onChange={(e) => setLimit(e.target.valueAsNumber)}
             variant="outlined"
             placeholder="Unlimited"
+            min={1}
           />
         </LabeledInput>
 
