@@ -44,7 +44,7 @@ export function UserProfileInfo({ user, address }: { user: User; address?: strin
             </div>
             <i
               className={`${item.icon} tooltip tooltip-open cursor-pointer text-tertiary hover:text-primary`}
-              onClick={() => window.open(`${item.prefix}${user?.[item.name as keyof User]}`, '_blank')}
+              onClick={() => window.open(`https://${item.prefix}${user?.[item.name as keyof User]}`, '_blank')}
             />
           </div>
         ))}
