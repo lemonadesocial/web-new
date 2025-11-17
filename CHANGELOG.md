@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.28.0](https://github.com/lemonadesocial/web-new/compare/v8.27.4...v8.28.0) (2025-11-17)
+
+
+### Features
+
+* update ethdenver modal copy ([1587fce](https://github.com/lemonadesocial/web-new/commit/1587fcee494a9b74458b6aaa3878591ef4e2af32))
+
 ## [8.27.4](https://github.com/lemonadesocial/web-new/compare/v8.27.3...v8.27.4) (2025-11-17)
 
 
