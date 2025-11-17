@@ -50,7 +50,6 @@ export function DirectLedger() {
   });
 
   const paymentStatistics = dataEventPaymentStats?.getEventPaymentStatistics;
-  console.log(paymentStatistics)
   const statics = [
     { icon: 'icon-user-group-outline', title: paymentStatistics?.total_payments || 0, subtitle: 'Total Transactions' },
     {
