@@ -45,6 +45,7 @@ export function AdditionalTicketsModal({ ticketLimitPer, onChange }: { ticketLim
                 variant="outlined"
                 className="[-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
                 placeholder="Unlimited"
+                min={2}
               />
               <i className="icon-cancel size-5 text-quaternary cursor-pointer absolute right-3.5 top-1/2 -translate-y-1/2" onClick={() => setLimit(null)} />
             </div>
