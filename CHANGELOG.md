@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.27.3](https://github.com/lemonadesocial/web-new/compare/v8.27.2...v8.27.3) (2025-11-17)
+
+
+### Bug Fixes
+
+* application profile not showing in guest ([415fcad](https://github.com/lemonadesocial/web-new/commit/415fcadafe4296e4388f9cf5b23a4d50b85dd088))
+
 ## [8.27.2](https://github.com/lemonadesocial/web-new/compare/v8.27.1...v8.27.2) (2025-11-15)
 
 
