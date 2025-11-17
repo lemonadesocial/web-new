@@ -50,21 +50,17 @@ export function DirectLedger() {
   });
 
   const paymentStatistics = dataEventPaymentStats?.getEventPaymentStatistics;
+  console.log(paymentStatistics)
   const statics = [
     { icon: 'icon-user-group-outline', title: paymentStatistics?.total_payments || 0, subtitle: 'Total Transactions' },
     {
       icon: 'icon-credit-card',
-      title: paymentStatistics?.stripe_payments?.revenue?.[0]?.formatted_total_amount || 0,
+      title: paymentStatistics?.stripe_payments?.count || 0,
       subtitle: 'Card Transactions',
     },
     {
       icon: 'icon-wallet',
-      title: `${paymentStatistics?.crypto_payments?.revenue?.[0]?.formatted_total_amount || 0} ETH`,
-      subtitle: 'Crypto Transactions',
-    },
-    {
-      icon: 'icon-wallet',
-      title: `${paymentStatistics?.crypto_payments?.revenue?.[1]?.formatted_total_amount || 0} USDC`,
+      title: paymentStatistics?.crypto_payments?.count || 0,
       subtitle: 'Crypto Transactions',
     },
   ];
