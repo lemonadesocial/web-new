@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.30.0](https://github.com/lemonadesocial/web-new/compare/v8.29.0...v8.30.0) (2025-11-18)
+
+
+### Features
+
+* trigger release-please ([3dfd692](https://github.com/lemonadesocial/web-new/commit/3dfd692f83078b06503c62fa5c892e9899cb4f30))
+
 ## [8.29.0](https://github.com/lemonadesocial/web-new/compare/v8.28.0...v8.29.0) (2025-11-18)
 
 
