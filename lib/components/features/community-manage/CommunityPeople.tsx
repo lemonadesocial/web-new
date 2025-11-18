@@ -271,6 +271,7 @@ export function CommunityPeople({ space }: Props) {
                     <div className="items-center hidden md:flex">
                       {item.tags?.map((t) => (
                         <div
+                          key={t._id}
                           className="border-1 first:ml-0 border-overlay-primary -ml-0.5 size-2 rounded-full"
                           style={{ background: t.color }}
                         />
@@ -288,6 +289,7 @@ export function CommunityPeople({ space }: Props) {
                   <div className="items-center flex md:hidden">
                     {item.tags?.map((t) => (
                       <div
+                        key={t._id}
                         className="border-1 first:ml-0 border-overlay-primary -ml-0.5 size-2 rounded-full"
                         style={{ background: t.color }}
                       />

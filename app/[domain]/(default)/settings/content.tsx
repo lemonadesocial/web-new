@@ -4,7 +4,6 @@ import { useAppKitAccount, useDisconnect } from '@reown/appkit/react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useAtom, useAtomValue } from 'jotai';
-import { useRouter } from 'next/navigation';
 
 import { Avatar, Button, Card, drawer, modal, toast } from '$lib/components/core';
 import { VerifyEmailModal } from '$lib/components/features/auth/VerifyEmailModal';
@@ -32,12 +31,14 @@ import { useMutation } from '$lib/graphql/request';
 import { DeleteUserDocument } from '$lib/graphql/generated/backend/graphql';
 import { useLogOut } from '$lib/hooks/useLogout';
 
+import { ListItem } from './list-item';
+import { OAuthClient } from './oauth-client';
+
 export function Content() {
   const [session] = useAtom(sessionAtom);
   const signIn = useSignIn();
   const [mounted, setMounted] = React.useState(false);
-  const router = useRouter();
-  
+
   const me = useMe();
   const walletVerified = session?.wallet || me?.kratos_unicorn_wallet_address || me?.kratos_wallet_address;
 
@@ -79,7 +80,7 @@ export function Content() {
       toast.success('Account deleted successfully');
       logOut(true);
     } catch (error: any) {
-      toast.error(error.message)
+      toast.error(error.message);
     }
   };
 
@@ -90,7 +91,7 @@ export function Content() {
         subtitle: 'Are you sure you want to delete your account?',
         icon: 'icon-delete',
         onConfirm: handleDeletePost,
-        buttonText: 'Delete'
+        buttonText: 'Delete',
       },
     });
   };
@@ -264,17 +265,11 @@ export function Content() {
             placeholder={!me?.kratos_farcaster_fid}
             subtile={userData?.username || 'No Account Connected'}
           >
-            {
-              !me?.kratos_farcaster_fid && (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => handleConnect()}
-                >
-                  Connect Farcaster
-                </Button>
-              )
-            }
+            {!me?.kratos_farcaster_fid && (
+              <Button variant="secondary" size="sm" onClick={() => handleConnect()}>
+                Connect Farcaster
+              </Button>
+            )}
           </ListItem>
 
           <ListItem
@@ -286,6 +281,12 @@ export function Content() {
           />
         </div>
       </Card.Content>
+
+      {!!me?.oauth2_allow_creation && (
+        <div className="bg-card backdrop-blur-lg rounded-lg border border-card-border">
+          <OAuthClient />
+        </div>
+      )}
 
       <div className="bg-card backdrop-blur-lg rounded-lg border border-card-border">
       <div
@@ -303,40 +304,6 @@ export function Content() {
           <i className="icon-delete size-5 text-error" />
           <p className="text-error">Delete Account</p>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function ListItem({
-  icon,
-  title,
-  placeholder,
-  subtile,
-  divide = true,
-  children,
-}: React.PropsWithChildren & {
-  icon: React.ReactNode;
-  title: string;
-  subtile: string;
-  placeholder?: boolean;
-  divide?: boolean;
-}) {
-  return (
-    <div className="flex items-center gap-4">
-      <div className="pl-4">
-        {
-          typeof icon === 'string' ? (
-            <i className={twMerge('text-tertiary size-5', icon)} />
-          ) : icon
-        }
-      </div>
-      <div className={clsx('flex flex-1 py-3 items-center', divide && 'border-b')}>
-        <div className="flex-1">
-          <p className="text-sm text-tertiary">{title}</p>
-          <p className={clsx(placeholder ? 'text-tertiary' : 'text-primary')}>{subtile}</p>
-        </div>
-        <div className="pr-4">{children}</div>
       </div>
     </div>
   );
