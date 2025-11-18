@@ -34,7 +34,7 @@ import { listChainsAtom } from '$lib/jotai';
 import { downloadFile, makeCSV } from '$lib/utils/file';
 import { GuestDetailsDrawer } from '../drawers/GuestDetailsDrawer';
 
-const LIMIT = 10;
+const LIMIT = 50;
 const filterMenuGuest: Record<string, { icon: string; label: string }> = {
   all: { icon: 'ic_guests', label: 'All Guests' },
   checked_in: { icon: 'ic_enter', label: 'Checked in' },
