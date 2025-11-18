@@ -1,0 +1,7 @@
+mutation CreateOauth2Client($input: Oauth2ClientInput!) {
+  createOauth2Client(input: $input) {
+    client_id
+    client_secret
+    audience
+  }
+}

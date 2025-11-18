@@ -13,6 +13,9 @@ query GetMe {
     kratos_wallet_address
     kratos_farcaster_fid
     kratos_unicorn_wallet_address
+    oauth2_allow_creation
+    oauth2_clients
+    oauth2_max_clients
   }
 }
 
