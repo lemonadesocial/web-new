@@ -65,7 +65,7 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
     <SuccessModal
       title="Welcome to Lemonade!"
       description={`You're all set to claim your ETH Denver ticket!`}
-      buttonText='Claim Ticket'
+      buttonText='Select Ticket'
     />
   );
 
