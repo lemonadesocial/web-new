@@ -43,7 +43,6 @@ const filterMenuGuest: Record<string, { icon: string; label: string }> = {
 
 export function DirectLedger() {
   const event = useEvent();
-  if (!event) return null;
 
   const { client } = useClient();
   const chains = useAtomValue(listChainsAtom);
@@ -106,7 +105,7 @@ export function DirectLedger() {
     });
 
     const records = list?.listEventPayments?.records || [];
-    let ds = [
+    const ds = [
       [
         'ID',
         'Name',
@@ -171,6 +170,8 @@ export function DirectLedger() {
     debounce((query) => setQuery(query), 500), // 500ms debounce time
     [],
   );
+
+  if (!event) return null;
 
   return (
     <div className="page mx-auto py-6 px-4 md:px-0">
