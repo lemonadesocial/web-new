@@ -47,7 +47,8 @@ export function DirectLedger() {
   const { client } = useClient();
   const chains = useAtomValue(listChainsAtom);
   const { data: dataEventPaymentStats } = useQuery(GetEventPaymentStatisticsDocument, {
-    variables: { event: event._id },
+    variables: { event: event?._id },
+    skip: !event?._id,
   });
 
   const paymentStatistics = dataEventPaymentStats?.getEventPaymentStatistics;
@@ -78,24 +79,27 @@ export function DirectLedger() {
     variables: {
       skip,
       limit: LIMIT,
-      event: event._id,
+      event: event?._id,
       checked_in: filter === 'all' ? undefined : filter == 'checked_in',
       ticket_types: filterTickets.length ? filterTickets : undefined,
       provider: filterNetworks.find((item) => item === 'stripe') ? NewPaymentProvider.Stripe : undefined,
       networks: filterNetworks.length ? filterNetworks.filter((item) => item !== 'stripe') : undefined,
       search: query.trim() || undefined,
     },
-    skip: !event._id,
+    skip: !event?._id,
   });
   const dataSource = dataListEventPayments?.listEventPayments.records || [];
 
-  const { data: dataTicketStats } = useQuery(GetTicketStatisticsDocument, { variables: { id: event._id } });
+  const { data: dataTicketStats } = useQuery(GetTicketStatisticsDocument, {
+    variables: { id: event?._id },
+    skip: !event?._id,
+  });
 
   const download = async () => {
     const { data: list } = await client.query({
       query: GetListEventPaymentsDocument,
       variables: {
-        event: event._id,
+        event: event?._id,
         checked_in: filter === 'all' ? undefined : filter == 'checked_in',
         ticket_types: filterTickets.length ? filterTickets : undefined,
         provider: filterNetworks.find((item) => item === 'stripe') ? NewPaymentProvider.Stripe : undefined,
@@ -333,7 +337,7 @@ export function DirectLedger() {
               <div className="flex gap-3 px-4 py-3 w-full">
                 <Checkbox
                   id="select-all"
-                  value={selected.length === dataSource.length}
+                  value={!loading && selected.length === dataSource.length}
                   onChange={() => {
                     if (selected.length !== dataSource.length) setSelected(dataSource.map((i) => i._id));
                     else setSelected([]);
