@@ -1,5 +1,14 @@
 # Changelog
 
+## [8.30.1](https://github.com/lemonadesocial/web-new/compare/v8.30.0...v8.30.1) (2025-11-18)
+
+
+### Bug Fixes
+
+* cannot read _id of undefined ([849ce28](https://github.com/lemonadesocial/web-new/commit/849ce28bd4e1dadab7c40e838f1671e80bc58b80))
+* **lint:** fix linting ([b5970e9](https://github.com/lemonadesocial/web-new/commit/b5970e934b063dbe8f685ce2265b982714627517))
+* missing useQuery ([d235328](https://github.com/lemonadesocial/web-new/commit/d23532858270bca154662082cbdb9ef757075ce4))
+
 ## [8.30.0](https://github.com/lemonadesocial/web-new/compare/v8.29.0...v8.30.0) (2025-11-18)
 
 
