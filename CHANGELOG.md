@@ -1,5 +1,14 @@
 # Changelog
 
+## [8.29.0](https://github.com/lemonadesocial/web-new/compare/v8.28.0...v8.29.0) (2025-11-18)
+
+
+### Features
+
+* click address to open google maps ([808f2a6](https://github.com/lemonadesocial/web-new/commit/808f2a604803d5ac4067866a726ce4583073093a))
+* update get ticket text ([e52c362](https://github.com/lemonadesocial/web-new/commit/e52c3629c130b91ec0b308360139c3d1f0b23167))
+* update welcome text ([4d11c8f](https://github.com/lemonadesocial/web-new/commit/4d11c8f18fa85e88687be2ba95f618b8937db12f))
+
 ## [8.28.0](https://github.com/lemonadesocial/web-new/compare/v8.27.4...v8.28.0) (2025-11-17)
 
 
