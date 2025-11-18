@@ -19,6 +19,7 @@ const eventManageMenu = [
   { name: 'Overview', page: 'overview' },
   { name: 'Guests', page: 'guests' },
   { name: 'Registration', page: 'registration' },
+  { name: 'Payments', page: 'payments' },
   { name: 'Blasts', page: 'blasts' },
   // { name: 'Program', page: 'program' },
   // { name: 'Insights', page: 'insights' },
@@ -258,7 +259,8 @@ export function EventManageLayout({ children }: React.PropsWithChildren) {
         </div>
         <hr className="w-screen -mx-[50vw] ml-[calc(-50vw+50%)] border-t border-t-divider" />
       </div>
-      <div className="page mx-auto py-7 px-4 md:px-0">{children}</div>
+
+      {children}
     </div>
   );
 }

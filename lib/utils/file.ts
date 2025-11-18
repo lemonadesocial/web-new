@@ -93,3 +93,22 @@ export const downloadCSVFile = async (endpoint: string, title: string) => {
     toast.error('Something went wrong when exporting CSV. Please try again.');
   }
 };
+
+export function makeCSV(data: Array<Array<string | number | null | undefined>>): string {
+  return data.map((row) => row.map((cell) => `"${(cell?.toString() ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+}
+
+export function downloadFile(data: string, name: string, mime: string) {
+  const file = new Blob([data], { type: mime });
+  const a = document.createElement('a');
+  const url = URL.createObjectURL(file);
+
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }, 0);
+}

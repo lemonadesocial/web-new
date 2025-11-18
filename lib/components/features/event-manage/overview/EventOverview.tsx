@@ -23,77 +23,79 @@ export function EventOverview() {
   const isEventEnded = event.end && new Date(event.end) < new Date();
 
   return (
-    <div className="space-y-8">
-      {isEventEnded ? (
-        <EventRecap event={event} />
-      ) : (
-        <>
-          <div className="flex md:grid md:grid-cols-4 gap-2 overflow-auto no-scrollbar font-default">
-            <div
-              className="py-2 px-3 items-center flex gap-3 rounded-md border border-card-border bg-card cursor-pointer min-w-fit"
-              onClick={() => modal.open(InviteGuestsModal, { props: { event }, dismissible: true })}
-            >
-              <div className="size-[38px] aspect-square rounded-sm bg-blue-400/16 flex items-center justify-center">
-                <i className="icon-person-add size-5 text-blue-400" />
-              </div>
-              <p>Invite Guests</p>
-            </div>
-            <div
-              className="py-2 px-3 items-center flex gap-3 rounded-md border border-card-border bg-card cursor-pointer  min-w-fit"
-              onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event.shortid}/check-in`, '_blank')}
-            >
-              <div className="size-[38px] aspect-square rounded-sm bg-success-500/16 flex items-center justify-center">
-                <i className="icon-qr size-5 text-success-500" />
-              </div>
-              <p>Check In Guests</p>
-            </div>
-            <div
-              className="py-2 px-3 items-center flex gap-3 rounded-md border border-card-border bg-card cursor-pointer  min-w-fit"
-              onClick={() => modal.open(BlastAdvancedModal, { dismissible: false, props: { event, message: '' } })}
-            >
-              <div className="size-[38px] aspect-square rounded-sm bg-[#C084FC]/16 flex items-center justify-center">
-                <i className="icon-email size-5 text-[#C084FC]" />
-              </div>
-              <p>Send a Blast</p>
-            </div>
-            <div
-              className="py-2 px-3 items-center flex gap-3 rounded-md border border-card-border bg-card cursor-pointer  min-w-fit"
-              onClick={() => modal.open(InviteFriendModal, { props: { event }, dismissible: true })}
-            >
+    <div className="page mx-auto py-7 px-4 md:px-0">
+      <div className="space-y-8">
+        {isEventEnded ? (
+          <EventRecap event={event} />
+        ) : (
+          <>
+            <div className="flex md:grid md:grid-cols-4 gap-2 overflow-auto no-scrollbar font-default">
               <div
-                className="size-[38px] aspect-square rounded-sm flex items-center justify-center"
-                style={{ background: 'rgba(244, 114, 182, 0.16)' }}
+                className="py-2 px-3 items-center flex gap-3 rounded-md border border-card-border bg-card cursor-pointer min-w-fit"
+                onClick={() => modal.open(InviteGuestsModal, { props: { event }, dismissible: true })}
               >
-                <i className="icon-person-add size-5 text-[#F472B6]" />
+                <div className="size-[38px] aspect-square rounded-sm bg-blue-400/16 flex items-center justify-center">
+                  <i className="icon-person-add size-5 text-blue-400" />
+                </div>
+                <p>Invite Guests</p>
               </div>
-              <p>Share Event</p>
+              <div
+                className="py-2 px-3 items-center flex gap-3 rounded-md border border-card-border bg-card cursor-pointer  min-w-fit"
+                onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event.shortid}/check-in`, '_blank')}
+              >
+                <div className="size-[38px] aspect-square rounded-sm bg-success-500/16 flex items-center justify-center">
+                  <i className="icon-qr size-5 text-success-500" />
+                </div>
+                <p>Check In Guests</p>
+              </div>
+              <div
+                className="py-2 px-3 items-center flex gap-3 rounded-md border border-card-border bg-card cursor-pointer  min-w-fit"
+                onClick={() => modal.open(BlastAdvancedModal, { dismissible: false, props: { event, message: '' } })}
+              >
+                <div className="size-[38px] aspect-square rounded-sm bg-[#C084FC]/16 flex items-center justify-center">
+                  <i className="icon-email size-5 text-[#C084FC]" />
+                </div>
+                <p>Send a Blast</p>
+              </div>
+              <div
+                className="py-2 px-3 items-center flex gap-3 rounded-md border border-card-border bg-card cursor-pointer  min-w-fit"
+                onClick={() => modal.open(InviteFriendModal, { props: { event }, dismissible: true })}
+              >
+                <div
+                  className="size-[38px] aspect-square rounded-sm flex items-center justify-center"
+                  style={{ background: 'rgba(244, 114, 182, 0.16)' }}
+                >
+                  <i className="icon-person-add size-5 text-[#F472B6]" />
+                </div>
+                <p>Share Event</p>
+              </div>
             </div>
-          </div>
 
-          <EventAccessInfo event={event} />
-        </>
-      )}
+            <EventAccessInfo event={event} />
+          </>
+        )}
 
-      <div className="space-y-8 font-default">
-        <EventInvites event={event} />
+        <div className="space-y-8 font-default">
+          <EventInvites event={event} />
 
-        <hr className="border-t" />
+          <hr className="border-t" />
 
-        <GuestsOverview event={event} />
+          <GuestsOverview event={event} />
 
-        <hr className="border-t" />
+          <hr className="border-t" />
 
-        <ManageHost event={event} />
+          <ManageHost event={event} />
 
-        <hr className="border-t" />
+          <hr className="border-t" />
 
-        <Collectibles event={event} />
+          <Collectibles event={event} />
 
-        <PaymentOverview event={event} />
+          <PaymentOverview event={event} />
 
-        <hr className="border-t" />
+          <hr className="border-t" />
 
-        <VisibilityDiscovery event={event} />
+          <VisibilityDiscovery event={event} />
+        </div>
       </div>
     </div>
   );
