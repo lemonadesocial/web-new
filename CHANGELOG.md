@@ -1,5 +1,29 @@
 # Changelog
 
+## [8.28.0](https://github.com/lemonadesocial/web-new/compare/v8.27.4...v8.28.0) (2025-11-17)
+
+
+### Features
+
+* update ethdenver modal copy ([1587fce](https://github.com/lemonadesocial/web-new/commit/1587fcee494a9b74458b6aaa3878591ef4e2af32))
+
+## [8.27.4](https://github.com/lemonadesocial/web-new/compare/v8.27.3...v8.27.4) (2025-11-17)
+
+
+### Bug Fixes
+
+* add prefix link and edit profile ([24d625d](https://github.com/lemonadesocial/web-new/commit/24d625ddfee1898ef55af0b343be5e19caff1685))
+* not found after create community ([3bfd249](https://github.com/lemonadesocial/web-new/commit/3bfd249246d5a8782687f48a0a7d7c4f9e973984))
+* zero ticket limit ([63d1362](https://github.com/lemonadesocial/web-new/commit/63d13623bdd33808dd1370cd2006797411e45650))
+* zero ticket limit ([bf005f5](https://github.com/lemonadesocial/web-new/commit/bf005f584a494ed6763653260f0cbeccc0fc34ba))
+
+## [8.27.3](https://github.com/lemonadesocial/web-new/compare/v8.27.2...v8.27.3) (2025-11-17)
+
+
+### Bug Fixes
+
+* application profile not showing in guest ([415fcad](https://github.com/lemonadesocial/web-new/commit/415fcadafe4296e4388f9cf5b23a4d50b85dd088))
+
 ## [8.27.2](https://github.com/lemonadesocial/web-new/compare/v8.27.1...v8.27.2) (2025-11-15)
 
 

@@ -191,7 +191,7 @@ function CapacityModal({ event }: { event: Event }) {
       variables: {
         id: event._id,
         input: {
-          guest_limit: limit,
+          guest_limit: limit || null,
         },
       },
     });
@@ -208,7 +208,7 @@ function CapacityModal({ event }: { event: Event }) {
         </div>
 
         <LabeledInput label="Capacity">
-          <Input type="number" value={limit} onChange={(e) => setLimit(e.target.valueAsNumber)} variant="outlined" />
+          <Input type="number" value={limit} min={1} onChange={(e) => setLimit(e.target.valueAsNumber)} variant="outlined" />
         </LabeledInput>
 
         <div className="flex gap-2">
