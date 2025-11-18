@@ -8,6 +8,7 @@ import {
   Card,
   Checkbox,
   Divider,
+  drawer,
   InputField,
   Menu,
   MenuItem,
@@ -31,6 +32,7 @@ import { match, P } from 'ts-pattern';
 import { useAtomValue } from 'jotai';
 import { listChainsAtom } from '$lib/jotai';
 import { downloadFile, makeCSV } from '$lib/utils/file';
+import { GuestDetailsDrawer } from '../drawers/GuestDetailsDrawer';
 
 const LIMIT = 10;
 const filterMenuGuest: Record<string, { icon: string; label: string }> = {
@@ -198,34 +200,24 @@ export function DirectLedger() {
               <Menu.Root placement="bottom-start">
                 <Menu.Trigger>
                   {({ toggle }) => (
-                    <>
-                      <Button
-                        iconLeft="icon-filter-line"
-                        onClick={toggle}
-                        size="sm"
-                        variant="tertiary-alt"
-                        className="hidden md:block"
-                        iconRight="icon-chevron-down"
-                      >
-                        {match(filterNetworks.length)
-                          .with(P.number.gt(1), () => `Networks (${filterNetworks.length})`)
-                          .otherwise(() => {
-                            const chain = chains?.find((c) => c.chain_id === filterNetworks[0]);
-                            if (!filterNetworks.length) return 'All Networks';
-                            else return chain?.name || filterNetworks[0];
-                          })}
-                      </Button>
-                      <Button
-                        icon="icon-filter-line"
-                        onClick={toggle}
-                        size="sm"
-                        variant="tertiary-alt"
-                        className="md:hidden"
-                      />
-                    </>
+                    <Button
+                      iconLeft="icon-filter-line"
+                      onClick={toggle}
+                      size="sm"
+                      variant="tertiary-alt"
+                      iconRight="icon-chevron-down"
+                    >
+                      {match(filterNetworks.length)
+                        .with(P.number.gt(1), () => `Networks (${filterNetworks.length})`)
+                        .otherwise(() => {
+                          const chain = chains?.find((c) => c.chain_id === filterNetworks[0]);
+                          if (!filterNetworks.length) return 'All Networks';
+                          else return chain?.name || filterNetworks[0];
+                        })}
+                    </Button>
                   )}
                 </Menu.Trigger>
-                <Menu.Content className="p-2 w-52">
+                <Menu.Content className="p-2 w-52 max-h-64 overflow-y-auto">
                   {({ toggle }) => (
                     <>
                       <MenuItem
@@ -275,31 +267,21 @@ export function DirectLedger() {
                 </Menu.Content>
               </Menu.Root>
 
-              <Menu.Root placement="bottom-start">
+              <Menu.Root placement="bottom-end">
                 <Menu.Trigger>
                   {({ toggle }) => (
-                    <>
-                      <Button
-                        iconLeft="icon-filter-line"
-                        onClick={toggle}
-                        size="sm"
-                        variant="tertiary-alt"
-                        iconRight="icon-chevron-down"
-                        className="hidden md:block"
-                      >
-                        {filterMenuGuest[filter].label}
-                      </Button>
-                      <Button
-                        icon="icon-filter-line"
-                        onClick={toggle}
-                        size="sm"
-                        variant="tertiary-alt"
-                        className="md:hidden"
-                      />
-                    </>
+                    <Button
+                      iconLeft="icon-filter-line"
+                      onClick={toggle}
+                      size="sm"
+                      variant="tertiary-alt"
+                      iconRight="icon-chevron-down"
+                    >
+                      {filterMenuGuest[filter].label}
+                    </Button>
                   )}
                 </Menu.Trigger>
-                <Menu.Content className="p-2">
+                <Menu.Content className="p-2 overflow-y-auto max-h-64">
                   {({ toggle }) => (
                     <div className="flex flex-col gap-3">
                       <div>
@@ -343,27 +325,6 @@ export function DirectLedger() {
                 </Menu.Content>
               </Menu.Root>
             </div>
-
-            <Menu.Root placement="bottom-end">
-              <Menu.Trigger>
-                {({ toggle }) => (
-                  <>
-                    <Button
-                      iconLeft="icon-sort"
-                      onClick={toggle}
-                      size="sm"
-                      variant="tertiary-alt"
-                      iconRight="icon-chevron-down"
-                      className="hidden md:block"
-                    >
-                      Register Time
-                    </Button>
-                    <Button icon="icon-sort" onClick={toggle} size="sm" variant="tertiary-alt" className="md:hidden" />
-                  </>
-                )}
-              </Menu.Trigger>
-              <Menu.Content>{({ toggle }) => <>Content menu</>}</Menu.Content>
-            </Menu.Root>
           </div>
 
           <CardTable.Root loading={loading} data={dataSource} className="table table-auto overflow-visible">
@@ -408,7 +369,19 @@ export function DirectLedger() {
 
               return (
                 <CardTable.Row key={item._id}>
-                  <div className="flex gap-3 px-4 py-3 items-center justify-between text-tertiary">
+                  <div
+                    className="flex gap-3 px-4 py-3 items-center justify-between text-tertiary cursor-pointer hover:bg-(--btn-tertiary)"
+                    onClick={(e) => {
+                      if (['I', 'INPUT'].includes((e.target as HTMLDivElement).nodeName)) return;
+
+                      drawer.open(GuestDetailsDrawer, {
+                        props: {
+                          email: (item.buyer_user?.email || item.buyer_info?.email) as string,
+                          event: event._id,
+                        },
+                      });
+                    }}
+                  >
                     <Checkbox
                       id={`select-${item._id}`}
                       value={selected.includes(item._id)}

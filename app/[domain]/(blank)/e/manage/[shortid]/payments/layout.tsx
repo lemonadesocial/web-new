@@ -6,7 +6,7 @@ import React from 'react';
 
 const routers = [
   { label: 'Direct Ledger', path: 'direct-ledger' },
-  { label: 'Settings', path: 'settings' },
+  // { label: 'Settings', path: 'settings' },
 ];
 
 function Layout({ children }: React.PropsWithChildren) {
