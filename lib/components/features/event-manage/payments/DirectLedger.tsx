@@ -48,6 +48,7 @@ export function DirectLedger() {
   const chains = useAtomValue(listChainsAtom);
   const { data: dataEventPaymentStats } = useQuery(GetEventPaymentStatisticsDocument, {
     variables: { event: event?._id },
+    skip: !event?._id,
   });
 
   const paymentStatistics = dataEventPaymentStats?.getEventPaymentStatistics;
