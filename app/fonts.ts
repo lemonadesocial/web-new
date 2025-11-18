@@ -1,7 +1,6 @@
 import localFont from 'next/font/local';
 import { twMerge } from 'tailwind-merge';
 
-// NOTE: trigger
 const generalSans = localFont({
   display: 'swap',
   src: '../public/assets/fonts/GeneralSans-Variable.ttf',
