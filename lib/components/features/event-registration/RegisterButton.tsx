@@ -58,10 +58,12 @@ export function RegisterButton() {
     }
   };
 
+  const getTicketText = (purchaseItems.length && purchaseItems.length > 1) ? 'Get Tickets' : 'Get Ticket';
+
   if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session)
     return (
       <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
-        {approvalRequired ? 'Request to Join' : hasSingleFreeTicket ? 'Register' : 'Get Tickets'}
+        {approvalRequired ? 'Request to Join' : hasSingleFreeTicket ? 'Register' : getTicketText}
       </Button>
     );
 
@@ -78,7 +80,7 @@ export function RegisterButton() {
           : 'Request to Join'
         : hasSingleFreeTicket
           ? 'One-click Register'
-          : 'Get Tickets'}
+          : getTicketText}
     </Button>
   );
 }

@@ -14,7 +14,7 @@ export function RegistrationSuccessModal({
       </div>
       <div className="space-y-2">
         <p className="text-lg">You’re in!</p>
-        <p className="text-sm text-secondary">Your registration is confirmed. You can view your event details and any tickets in your account at any time.</p>
+        <p className="text-sm text-secondary">Your registration is confirmed.</p>
       </div>
       <div className="flex gap-2">
         <Button

@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 import { Skeleton } from '$lib/components/core';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { useMe } from '$lib/hooks/useMe';
@@ -7,11 +9,22 @@ export function EventLocationBlock({ loading = false, event }: { loading?: boole
   const me = useMe();
 
   const attending = me?._id && event ? isAttending(event, me?._id) : false;
-  
+  const googleMapsUrl =
+    attending && event?.address?.latitude && event.address.longitude
+      ? `https://www.google.com/maps?q=${event.address.latitude},${event.address.longitude}`
+      : undefined;
+
+  const handleOpenGoogleMaps = () => {
+    window.open(googleMapsUrl, '_blank');
+  };
+
   if (loading) return <EventLocationBlockSkeleton />;
 
   if (event?.address) return (
-    <div className="flex gap-4 flex-1 w-full">
+    <div
+      className={clsx('flex gap-4 flex-1 w-full', googleMapsUrl && 'cursor-pointer')}
+      onClick={googleMapsUrl ? handleOpenGoogleMaps : undefined}
+    >
       <div className="border rounded-sm size-12 min-w-12 flex items-center justify-center">
         <i className="icon-location-outline" />
       </div>
