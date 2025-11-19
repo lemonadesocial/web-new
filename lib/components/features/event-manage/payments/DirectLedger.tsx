@@ -420,9 +420,12 @@ export function DirectLedger() {
                     </div>
                     <div className="w-[108px]">
                       {item.ref_data.discount ? (
-                        <Badge color="var(--color-accent-400)" className="flex gap-1">
+                        <Badge
+                          color="var(--color-accent-400)"
+                          className="flex! items-center gap-1 max-w-full overflow-hidden"
+                        >
                           <i className="icon-discount size-3 aspect-square" />
-                          {item.ref_data.discount}
+                          <p className="truncate line-clamp-1">{item.ref_data.discount}</p>
                         </Badge>
                       ) : (
                         <span>-</span>
