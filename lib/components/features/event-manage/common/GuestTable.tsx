@@ -71,7 +71,7 @@ export function GuestTable({ event, guests, loading = false, onGuestClick }: Gue
                 className="size-5"
               />
               <div className="flex-1 flex flex-col md:flex-row md:gap-2 md:items-center">
-                <p className="truncate">
+                <p className="truncate max-w-[118px]">
                   {guest.user.display_name ||
                     guest.user.name ||
                     guest.ticket?.metadata?.buyer_name ||
