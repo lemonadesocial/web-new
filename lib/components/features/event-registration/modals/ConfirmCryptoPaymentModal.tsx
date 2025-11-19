@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useAtomValue as useJotaiAtomValue } from "jotai";
 import { Eip1193Provider } from "ethers";
+import * as Sentry from '@sentry/nextjs';
 
 import { Button, ModalContent } from "$lib/components/core";
 import { EthereumAccount, EthereumRelayAccount, EthereumStakeAccount, UpdatePaymentDocument } from "$lib/graphql/generated/backend/graphql";
 import { useMutation } from "$lib/graphql/request";
-import { useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
+import { appKit, useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
 import { approveERC20Spender, formatError, formatWallet, isNativeToken, LemonadeRelayPaymentContract, LemonadeStakePaymentContract, transfer, writeContract } from "$lib/utils/crypto";
 import { chainsMapAtom } from "$lib/jotai";
 
@@ -113,6 +114,13 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
 
       handleConfirm(txHash);
     } catch (e) {
+      Sentry.captureException(e, {
+        extra: {
+          walletInfo: appKit.getWalletInfo(),
+          paymentId,
+        },
+      });
+      
       setError(formatError(e));
     } finally {
       setLoadingSign(false);
