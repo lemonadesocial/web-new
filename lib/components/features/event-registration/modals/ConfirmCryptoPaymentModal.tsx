@@ -128,29 +128,38 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
   };
 
   const handleConfirm = async (txHash: string) => {
-    await handleUpdatePayment({
-      variables: {
-        input: {
-          _id: paymentId,
-          payment_secret: paymentSecret,
-          transfer_params: {
-            tx_hash: txHash,
+    try {
+      if (!txHash) {
+        throw new Error('Failed to get transaction hash');
+      }
+  
+      await handleUpdatePayment({
+        variables: {
+          input: {
+            _id: paymentId,
+            payment_secret: paymentSecret,
+            transfer_params: {
+              tx_hash: txHash,
+            }
           }
         }
-      }
-    });
-
-    registrationModal.close();
-
-    registrationModal.open(VerifyingTransactionModal, {
-      props: {
-        paymentId,
-        paymentSecret,
-        txHash,
-        hasJoinRequest
-      },
-      dismissible: false
-    });
+      });
+  
+      registrationModal.close();
+  
+      registrationModal.open(VerifyingTransactionModal, {
+        props: {
+          paymentId,
+          paymentSecret,
+          txHash,
+          hasJoinRequest
+        },
+        dismissible: false
+      });
+    } catch (e) {
+      Sentry.captureException(e);
+      setError(formatError(e));
+    }
   };
 
   if (error) return (
