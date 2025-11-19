@@ -81,7 +81,7 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
           { value: isNativeToken(tokenAddress, network) ? payAmount.toString() : 0 }
         );
 
-        handleConfirm(transaction.hash);
+        await handleConfirm(transaction.hash);
 
         return;
       }
@@ -104,7 +104,7 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
           { value: isNativeToken(tokenAddress, network) ? payAmount.toString() : 0 }
         );
 
-        handleConfirm(transaction.hash);
+        await handleConfirm(transaction.hash);
 
         return;
       }
@@ -112,7 +112,7 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
       const toAddress = paymentAccountInfo.address;
       const txHash = await transfer(toAddress, (pricingInfo?.total || 0).toString(), tokenAddress, walletProvider as Eip1193Provider, network);
 
-      handleConfirm(txHash);
+      await handleConfirm(txHash);
     } catch (e) {
       Sentry.captureException(e, {
         extra: {
