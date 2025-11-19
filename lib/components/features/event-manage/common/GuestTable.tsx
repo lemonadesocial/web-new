@@ -62,23 +62,24 @@ export function GuestTable({ event, guests, loading = false, onGuestClick }: Gue
         {guests.map((guest: EventGuestDetail, index) => (
           <div
             key={index}
-            className="flex items-center justify-between px-4 py-3 hover:bg-card-hover cursor-pointer"
+            className="flex items-center justify-between px-4 py-3 gap-1 hover:bg-card-hover cursor-pointer"
             onClick={() => handleGuestClick(guest)}
           >
-            <div className="flex items-center gap-3 flex-1">
+            <div className="flex items-center gap-3 flex-1 overflow-hidden">
               <Avatar
+                className='size-5'
                 src={guest.user.image_avatar || randomUserImage(guest.user.email?.toString())}
-                className="size-5"
               />
-              <div className="flex-1 flex flex-col md:flex-row md:gap-2 md:items-center">
-                <p className="truncate max-w-[118px]">
+
+              <div className="flex-1 flex flex-col md:flex-row md:gap-2 md:items-center overflow-hidden">
+                <p className="truncate overflow-hidden">
                   {guest.user.display_name ||
                     guest.user.name ||
                     guest.ticket?.metadata?.buyer_name ||
                     guest.join_request?.metadata?.buyer_name ||
                     'Anonymous'}
                 </p>
-                <p className="text-tertiary truncate md:truncate-none text-xs md:text-base max-w-[120px] md:max-w-none">{guest.user.email}</p>
+                <p className="text-tertiary overflow-hidden truncate line-clamp-1 md:truncate-none text-xs md:text-base md:max-w-none">{guest.user.email}</p>
               </div>
             </div>
             <div className="flex flex-col items-end md:flex-row gap-0.5">
