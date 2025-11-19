@@ -113,8 +113,11 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
       if (response.identityId) {
         //-- perform login
         if (session && session._id === response.identityId) {
-          //-- do nothing, this is the same user
-          onSuccess?.(false);
+          //-- only trigger sync, nothing else
+          await syncUserUnicornWallet({});
+
+          //-- reload because the above sync might have updated the user
+          onSuccess?.(true);
           setStatus('processed');
           return;
         }
