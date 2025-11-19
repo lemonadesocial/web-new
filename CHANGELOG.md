@@ -1,5 +1,23 @@
 # Changelog
 
+## [8.31.0](https://github.com/lemonadesocial/web-new/compare/v8.30.1...v8.31.0) (2025-11-19)
+
+
+### Features
+
+* add extra info to Sentry log ([b7a3f11](https://github.com/lemonadesocial/web-new/commit/b7a3f11b5adf71c3106709a21e16489cef848259))
+* fallback if txhash not found ([da64311](https://github.com/lemonadesocial/web-new/commit/da64311c0236df5744057d6d9415b9ee82c54c90))
+
+
+### Bug Fixes
+
+* await confirm ([4b837fd](https://github.com/lemonadesocial/web-new/commit/4b837fd32c3535fc312cb9477c0beaed9b28f4fc))
+* better truncate text ([389fe08](https://github.com/lemonadesocial/web-new/commit/389fe0887c2aff75300ea67f17ebd114875ae99e))
+* long text ([8a2c54f](https://github.com/lemonadesocial/web-new/commit/8a2c54f7c03cb4c3bedef6911ce1a196ce68c012))
+* truncate copoun long text ([06aa714](https://github.com/lemonadesocial/web-new/commit/06aa714309acf5ce592c146e47f1624c8adcd9d8))
+* truncate name guest table ([d1e5511](https://github.com/lemonadesocial/web-new/commit/d1e5511c081d4aa821c0cb091463a36633a434b1))
+* **unicorn:** sync unicorn even if session exists ([56bb7cc](https://github.com/lemonadesocial/web-new/commit/56bb7cc2ddae0dfe0df3d9dd939d97d1806d6a66))
+
 ## [8.30.1](https://github.com/lemonadesocial/web-new/compare/v8.30.0...v8.30.1) (2025-11-18)
 
 
