@@ -3,6 +3,13 @@ import { pinata } from "../../../lib/utils/pinata";
 
 export async function POST(request: NextRequest) {
   try {
+    if (!process.env.PINATA_JWT) {
+      return NextResponse.json(
+        { error: "PINATA_JWT is not set" },
+        { status: 500 }
+      );
+    }
+    
     const data = await request.formData();
     const file: File | null = data.get("file") as unknown as File;
     const coinName = data.get("coinName") as string;
