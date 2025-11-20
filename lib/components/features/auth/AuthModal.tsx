@@ -162,7 +162,7 @@ export function AuthModal({ onSuccess }: Props) {
             disabled={loadingEmail}
             placeholder="you@email.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value.toLowerCase())}
             variant="outlined"
           />
         </LabeledInput>
