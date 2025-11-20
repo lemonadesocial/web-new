@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.31.1](https://github.com/lemonadesocial/web-new/compare/v8.31.0...v8.31.1) (2025-11-20)
+
+
+### Bug Fixes
+
+* **auth-modal:** fix email casing ([a4c5bc3](https://github.com/lemonadesocial/web-new/commit/a4c5bc3af52b60b500e3030f02d1d727e4bc5796))
+
 ## [8.31.0](https://github.com/lemonadesocial/web-new/compare/v8.30.1...v8.31.0) (2025-11-19)
 
 
