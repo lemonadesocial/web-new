@@ -48,6 +48,9 @@ query listChains {
     launchpad_treasury_address_fee_split_manager_implementation_contract_address
     launchpad_treasury_staking_manager_implementation_contract_address
     launchpad_zap_contract_address
+    launchpad_fee_escrow_contract_address
+    launchpad_market_capped_price_contract_address
+    launchpad_market_utils_contract_address
   }
 }
 
