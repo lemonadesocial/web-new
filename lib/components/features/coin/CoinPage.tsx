@@ -1,21 +1,51 @@
-import { StatItem } from "./StatItem";
+'use client';
 
-export function CoinPage() {
+import { useState } from 'react';
+import { StatItem } from './StatItem';
+import { useAtomValue } from 'jotai';
+import { listChainsAtom } from '$lib/jotai';
+import { Chain } from '$lib/graphql/generated/backend/graphql';
+import { formatWallet } from '$lib/utils/crypto';
+import { useFees, useGroup, useOwner } from './useCoin';
+
+interface CoinPageProps {
+  network: string;
+  address: string;
+}
+
+export function CoinPage({ network, address }: CoinPageProps) {
+  const listChains = useAtomValue(listChainsAtom);
+  const chain = listChains.find(chain => chain.code_name === network);
+
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-5 gap-3">
-        <StatItem title="Owner" value="johndoe.eth" />
-        <StatItem title="Owner" value="johndoe.eth" />
-        <StatItem title="Owner" value="johndoe.eth" />
-        <StatItem title="Owner" value="johndoe.eth" />
-        <StatItem title="Owner" value="johndoe.eth" />
-        <StatItem title="Owner" value="johndoe.eth" />
-        <StatItem title="Owner" value="johndoe.eth" />
-        <StatItem title="Owner" value="johndoe.eth" />
-      </div>
+      <Stats chain={chain!} address={address} />
       <BuybackCharging />
     </div>
   );
+}
+
+function Stats({ chain, address }: { chain: Chain; address: string }) {
+  const [treasuryValue, setTreasuryValue] = useState<string>('');
+  const { launchpadGroup, implementationAddress, isLoading } = useGroup(chain, address);
+  const { owner, isLoadingOwner } = useOwner(chain, address);
+  const { formattedFees, isLoadingFees } = useFees(chain, address);
+
+  return (
+    <div className="grid grid-cols-5 gap-3">
+      <StatItem title="Owner" value={owner ? formatWallet(owner) : isLoadingOwner ? 'Loading...' : 'N/A'} />
+      <StatItem
+        title="Community"
+        value={isLoading ? "Loading..." : launchpadGroup && implementationAddress ? (launchpadGroup?.name || formatWallet(implementationAddress)) : "N/A"} />
+      <StatItem title="Fees Earned" value={formattedFees || (isLoadingFees ? 'Loading...' : 'N/A')} />
+      <StatItem title="Treasury" value="Coming Soon" />
+      <StatItem title="Volume (24h)" value="Coming Soon" />
+      <StatItem title="Marketcap" value="Coming Soon" />
+      <StatItem title="Liquidity" value="Coming Soon" />
+      <StatItem title="Fair Launch" value="Coming Soon" />
+      <StatItem title="Holders" value="Coming Soon" />
+    </div>
+  )
 }
 
 function BuybackCharging({

@@ -1903,6 +1903,21 @@
   resolved "https://registry.npmjs.org/@graphql-typed-document-node/core/-/core-3.2.0.tgz"
   integrity sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==
 
+"@gud/drift-ethers@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@gud/drift-ethers/-/drift-ethers-1.0.2.tgz#9e84ab620e2d5399155e1093a8133f084689e01a"
+  integrity sha512-lNZ2XdIlMOtrYDW5HOtMHBHJpD6j7a4/Jwj+BVjPK28WV5NSFmZn/KS6Ay+3Mzm9wPk4kt22DmY2QNdL6OKAHA==
+
+"@gud/drift@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@gud/drift/-/drift-1.0.2.tgz#536b924311702afdff2960307094564c04ad600a"
+  integrity sha512-wX6gHKGVfAE+sJBVFmm4Qtb53TJnEFvlGY1pG8kdjFRFD9r1YPsxtwEy10NF+GKTjvZoe7Zp+SfQ0tJIcU3oeA==
+  dependencies:
+    lodash.ismatch "^4.4.0"
+    lru-cache "^11.1.0"
+    ox "^0.8.6"
+    safe-stable-stringify "^2.5.0"
+
 "@hey-api/client-fetch@0.10.0":
   version "0.10.0"
   resolved "https://registry.yarnpkg.com/@hey-api/client-fetch/-/client-fetch-0.10.0.tgz#d11016a3b4cff249f57eb6a323dc001a2c203848"
@@ -10952,6 +10967,11 @@ lodash.isinteger@^4.0.4:
   resolved "https://registry.yarnpkg.com/lodash.isinteger/-/lodash.isinteger-4.0.4.tgz#619c0af3d03f8b04c31f5882840b77b11cd68343"
   integrity sha512-DBwtEWN2caHQ9/imiNeEA5ys1JoRtRfY3d7V9wkqtbycnAmTvRRmbHKDV4a0EYc678/dia0jrte4tjYwVBaZUA==
 
+lodash.ismatch@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/lodash.ismatch/-/lodash.ismatch-4.4.0.tgz#756cb5150ca3ba6f11085a78849645f188f85f37"
+  integrity sha512-fPMfXjGQEV9Xsq/8MTSgUf255gawYRbjwMyDbcvDhXgV7enSZA0hynz6vMPnpAb5iONEzBHBPsT+0zes5Z301g==
+
 lodash.isnumber@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/lodash.isnumber/-/lodash.isnumber-3.0.3.tgz#3ce76810c5928d03352301ac287317f11c0b1ffc"
@@ -11071,6 +11091,11 @@ lru-cache@^10.2.0, lru-cache@^10.4.3:
   version "10.4.3"
   resolved "https://registry.npmjs.org/lru-cache/-/lru-cache-10.4.3.tgz"
   integrity sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==
+
+lru-cache@^11.1.0:
+  version "11.2.2"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-11.2.2.tgz#40fd37edffcfae4b2940379c0722dc6eeaa75f24"
+  integrity sha512-F9ODfyqML2coTIsQpSkRHnLSZMtkU8Q+mSfcaIyKwy58u+8k5nvAYeiNhsyMARvzNcXJ9QfWVrcPsC9e9rAxtg==
 
 lru-cache@^5.1.1:
   version "5.1.1"
@@ -11919,6 +11944,20 @@ ox@^0.4.4:
     "@scure/bip32" "^1.5.0"
     "@scure/bip39" "^1.4.0"
     abitype "^1.0.6"
+    eventemitter3 "5.0.1"
+
+ox@^0.8.6:
+  version "0.8.9"
+  resolved "https://registry.yarnpkg.com/ox/-/ox-0.8.9.tgz#a161de1ac83af0eef0192c79a920bda3125616ca"
+  integrity sha512-8pDZzrfZ3EE/ubomc57Nf+ZEQzvtdDjJaW8/ygI8O026V8oVWV4+WwBRCaSP0IYc3Pi0fQCgpg9WDQjl9qN3yQ==
+  dependencies:
+    "@adraffy/ens-normalize" "^1.11.0"
+    "@noble/ciphers" "^1.3.0"
+    "@noble/curves" "^1.9.1"
+    "@noble/hashes" "^1.8.0"
+    "@scure/bip32" "^1.7.0"
+    "@scure/bip39" "^1.6.0"
+    abitype "^1.0.8"
     eventemitter3 "5.0.1"
 
 ox@^0.9.6:
@@ -13253,7 +13292,7 @@ safe-regex-test@^1.0.3, safe-regex-test@^1.1.0:
     es-errors "^1.3.0"
     is-regex "^1.2.1"
 
-safe-stable-stringify@^2.1.0, safe-stable-stringify@^2.3.1:
+safe-stable-stringify@^2.1.0, safe-stable-stringify@^2.3.1, safe-stable-stringify@^2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/safe-stable-stringify/-/safe-stable-stringify-2.5.0.tgz#4ca2f8e385f2831c432a719b108a3bf7af42a1dd"
   integrity sha512-b3rppTKm9T+PsVCBEOUR46GWI7fdOs00VKZ1+9c1EWDaDMvjQc6tUwuFyIprgGgTcWoVHSKrU8H31ZHA2e0RHA==
