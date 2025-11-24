@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { Badge, Card, Divider, Progress, Skeleton } from '$lib/components/core';
+import { match } from 'ts-pattern';
 
 const list = [
   {
@@ -60,38 +61,35 @@ export function FeaturedCoins() {
     };
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex flex-col gap-4 relative">
-        <p className="text-xl font-semibold">Featured Communities</p>
-        <div className="flex gap-4">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="min-w-[384px] flex flex-col gap-3 p-4 rounded-md border-card-border bg-card">
-              <Skeleton animate className="w-12 h-12 rounded-sm" />
-              <Skeleton animate className="h-[28px] w-[200px]" />
-              <Skeleton animate className="h-4 w-full" />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col gap-4 relative">
       <p className="text-xl font-semibold">Featured Coins</p>
-      <div className='flex gap-4 overflow-y-auto no-scrollbar'>
-        {list.map((item, idx) => (
-          <FeaturedCoinItem key={idx} data={item} />
+      {match(loading)
+        .with(true, () => (
+          <div className="flex gap-4">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="min-w-[384px] flex flex-col gap-3 p-4 rounded-md border-card-border bg-card">
+                <Skeleton animate className="w-12 h-12 rounded-sm" />
+                <Skeleton animate className="h-[28px] w-[200px]" />
+                <Skeleton animate className="h-4 w-full" />
+              </div>
+            ))}
+          </div>
+        ))
+        .otherwise(() => (
+          <div className="flex gap-4 overflow-y-auto no-scrollbar">
+            {list.map((item, idx) => (
+              <FeaturedCoinItem key={idx} data={item} />
+            ))}
+          </div>
         ))}
-      </div>
     </div>
   );
 }
 
 function FeaturedCoinItem({ data }: { data: any }) {
   return (
-    <Card.Root className='flex-1 min-w-[384px] max-w-[384px]'>
+    <Card.Root className="flex-1 min-w-[384px] max-w-[384px]">
       <Card.Content className="p-0">
         <div className="flex gap-4 p-4">
           <div className="w-[118px] h-[118px] rounded-sm bg-gray-500 aspect-square" />
@@ -112,11 +110,11 @@ function FeaturedCoinItem({ data }: { data: any }) {
         </div>
         <Divider className="h-1" />
         <div className="px-4 py-3.5 space-y-3">
-          <div className='flex justify-between'>
+          <div className="flex justify-between">
             <p>Buyback Charging</p>
-            <p className='text-alert-400'>{data.cost}</p>
+            <p className="text-alert-400">{data.cost}</p>
           </div>
-          <Progress value={100} total={1000} className='**:data-color:bg-alert-500!' />
+          <Progress value={100} total={1000} className="**:data-color:bg-alert-500!" />
         </div>
       </Card.Content>
     </Card.Root>
