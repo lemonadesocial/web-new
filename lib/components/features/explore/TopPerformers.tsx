@@ -68,7 +68,7 @@ function CardList({ data, title }: { data: any; title: string }) {
             <div className="text-right">
               <p>{item.amount}</p>
               {item.percent && (
-                <p className={clsx(item.percent > 0 ? 'text-success-500' : 'text-danger-500')}>
+                <p className={clsx('text-sm', item.percent > 0 ? 'text-success-500' : 'text-danger-500')}>
                   {item.percent > 0 && '+'}
                   {parseFloat(item.percent).toFixed(2)}%
                 </p>

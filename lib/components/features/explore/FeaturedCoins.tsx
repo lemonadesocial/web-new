@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Badge, Card, Divider, Progress, Skeleton } from '$lib/components/core';
+import { Badge, Button, Card, Divider, Progress, Skeleton } from '$lib/components/core';
 import { match } from 'ts-pattern';
 
 const list = [
@@ -54,7 +54,7 @@ export function FeaturedCoins() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000);
+    const timer = setTimeout(() => setLoading(false), 3000);
 
     return () => {
       clearTimeout(timer);
@@ -63,7 +63,12 @@ export function FeaturedCoins() {
 
   return (
     <div className="flex flex-col gap-4 relative">
-      <p className="text-xl font-semibold">Featured Coins</p>
+      <div className="flex justify-between items-center">
+        <p className="text-xl font-semibold">Featured Coins</p>
+        <Button variant="tertiary-alt" size="sm" iconRight="icon-arrow-back-sharp rotate-180">
+          View All
+        </Button>
+      </div>
       {match(loading)
         .with(true, () => (
           <div className="flex gap-4">
