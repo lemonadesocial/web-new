@@ -42,14 +42,14 @@ export function FeaturedCommunityHubs() {
   return (
     <div className="flex flex-col gap-4 relative">
       <p className="text-xl font-semibold">Featured Communities</p>
-      <HorizontalScroll>
+      <div className='flex gap-4 overflow-y-auto no-scrollbar'>
         {list.map((item, idx) => (
           <FeaturedCommunityHubsItem  
             key={idx}
             space={item}
           />
         ))}
-      </HorizontalScroll>
+      </div>
     </div>
   );
 }
