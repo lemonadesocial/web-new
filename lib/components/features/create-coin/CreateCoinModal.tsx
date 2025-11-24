@@ -1,12 +1,14 @@
 'use client';
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import * as Sentry from '@sentry/nextjs';
 
 import { useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
 import { modal } from "$lib/components/core";
 import { BrowserProvider, Eip1193Provider, Contract, ethers, JsonRpcProvider } from "ethers";
 import { LaunchTokenTxParams, parseLogs } from "$lib/services/token-launch-pad";
 import { Chain, AddLaunchpadCoinDocument } from "$lib/graphql/generated/backend/graphql";
-import { formatError } from "$lib/utils/crypto";
+import { formatError, getTransactionUrl } from "$lib/utils/crypto";
 import ZapContractABI from "$lib/abis/token-launch-pad/FlaunchZap.json";
 import TreasuryManagerABI from '$lib/abis/token-launch-pad/TreasuryManager.json';
 import { useMutation } from "$lib/graphql/request";
@@ -14,10 +16,10 @@ import type { LaunchpadSocials } from "./CreateCoin";
 
 import { SignTransactionModal } from "../modals/SignTransaction";
 import { ConfirmTransaction } from "../modals/ConfirmTransaction";
-import { SuccessModal } from "../modals/SuccessModal";
 import { ErrorModal } from "../modals/ErrorModal";
 
 import FlaunchABI from '$lib/abis/token-launch-pad/Flaunch.json';
+import { SuccessModal } from "./SuccessModal";
 
 interface CreateCoinModalProps {
   txParams: LaunchTokenTxParams;
@@ -33,12 +35,13 @@ export function CreateCoinModal({
   socials
 }: CreateCoinModalProps) {
   const { walletProvider } = useAppKitProvider('eip155');
-  const [status, setStatus] = useState<'signing' | 'confirming' | 'depositing' | 'success' | 'none' | 'error'>('none');
+  const [status, setStatus] = useState<'signing' | 'confirming' | 'depositing' | 'none' | 'error'>('none');
   const [error, setError] = useState('');
   const [flaunchAddress, setFlaunchAddress] = useState<string | null>(null);
   const [tokenId, setTokenId] = useState<bigint | null>(null);
   const { address } = useAppKitAccount();
   const [addLaunchpadCoinMutation] = useMutation(AddLaunchpadCoinDocument);
+  const router = useRouter();
 
   const getSigner = async () => {
     const browserProvider = new BrowserProvider(walletProvider as Eip1193Provider);
@@ -46,7 +49,7 @@ export function CreateCoinModal({
     return signer;
   }
 
-  const handleDepositToGroup = async (flaunchAddress: string, tokenId: bigint) => {
+  const handleDepositToGroup = async (flaunchAddress: string, tokenId: bigint, memecoinAddress: string, txHash: string) => {
     if (!walletProvider || !groupAddress) {
       throw new Error('Wallet not connected or group address missing');
     }
@@ -67,7 +70,7 @@ export function CreateCoinModal({
     });
     await depositTx.wait();
 
-    setStatus('success');
+    handleSuccess(memecoinAddress, txHash);
   };
 
   const handleLaunch = async () => {
@@ -128,13 +131,13 @@ export function CreateCoinModal({
       });
 
       if (groupAddress) {
-        await handleDepositToGroup(flaunchAddress, tokenId);
+        await handleDepositToGroup(flaunchAddress, tokenId, memecoinAddress, tx.hash);
         return;
       }
 
-      setStatus('success');
+      handleSuccess(memecoinAddress, tx.hash);
     } catch (err: any) {
-      console.log(err)
+      Sentry.captureException(err);
       setError(formatError(err));
       setStatus('error');
     }
@@ -155,15 +158,19 @@ export function CreateCoinModal({
     await handleLaunch();
   };
 
-  if (status === 'success') {
-    return (
-      <SuccessModal 
-        title="You’re Token is Live!"
-        description="Congratulations! Your payment has been confirmed, and your token is ready to use."
-        onClose={() => modal.close()}
-      />
-    );
-  }
+  const handleSuccess = (memecoinAddress: string, txHash: string) => {
+    modal.close();
+    modal.open(SuccessModal, {
+      props: {
+        title: 'Token Created',
+        description: 'Congratulations! Your payment has been confirmed, and your token is ready to use.',
+        txUrl: getTransactionUrl(launchChain, txHash)
+      },
+      onClose: () => {
+        router.push(`/coin/${launchChain.code_name}/${memecoinAddress}`);
+      }
+    });
+  };
 
   if (status === 'confirming') {
     return (

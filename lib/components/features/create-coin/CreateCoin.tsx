@@ -378,7 +378,7 @@ export function CreateCoin() {
           txParams,
           groupAddress: communityData?.groupAddress,
           launchChain,
-          socials
+          socials,
         }
       });
     } catch (error) {

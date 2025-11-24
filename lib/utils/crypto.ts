@@ -12,6 +12,7 @@ import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import LemonadePassport from '$lib/abis/LemonadePassport.json';
 import { TRPCClientError } from '@trpc/client';
 import ZugramaPassport from '$lib/abis/ZuGramaPassport.json';
+import { Chain } from '$lib/graphql/generated/backend/graphql';
 
 export const ERC20Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC20));
 export const ERC721Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC721));
@@ -260,3 +261,23 @@ export function multiplyByPowerOf10(amount: string, power: number) {
 }
 
 export const MainnetRpcProvider = new ethers.JsonRpcProvider(mainnet.rpcUrls.default.http[0]); 
+
+export const getTransactionUrl = (chain: Chain, txHash: string) => {
+  if (!chain?.block_explorer_url || !chain?.block_explorer_for_tx) {
+    return '';
+  }
+
+  const pathTemplate = chain.block_explorer_for_tx.includes('${hash}')
+    ? chain.block_explorer_for_tx.replaceAll('${hash}', txHash)
+    : `${chain.block_explorer_for_tx}${txHash}`;
+
+  const baseUrl = chain.block_explorer_url.endsWith('/')
+    ? chain.block_explorer_url.slice(0, -1)
+    : chain.block_explorer_url;
+
+  const path = pathTemplate.startsWith('/')
+    ? pathTemplate
+    : `/${pathTemplate}`;
+
+  return `${baseUrl}${path}`;
+};
