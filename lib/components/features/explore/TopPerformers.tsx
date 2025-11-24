@@ -59,7 +59,7 @@ function CardList({ data, title }: { data: any; title: string }) {
       <Card.Content className="divide-y divide-(--color-divider) p-0">
         {data.map((item: any, idx: number) => (
           <div key={idx} className="flex gap-3 items-center px-4 py-3">
-            <LemonheadLeaderBoardRank rank={idx + 1} />
+            <LemonheadLeaderBoardRank rank={idx + 1} className="size-6 text-primary" />
             <div className="size-10 aspect-square rounded-sm bg-gray-500" />
             <div className="flex-1">
               <p className="line-clamp-1">{item.title}</p>
