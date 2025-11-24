@@ -114,7 +114,7 @@ function FeaturedCoinItem({ data }: { data: any }) {
             <p>Buyback Charging</p>
             <p className="text-alert-400">{data.cost}</p>
           </div>
-          <Progress value={100} total={1000} className="**:data-color:bg-alert-500!" />
+          <Progress value={Math.floor(Math.random() * 1000)} total={1000} className="**:data-color:bg-alert-500!" />
         </div>
       </Card.Content>
     </Card.Root>
