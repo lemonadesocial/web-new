@@ -44,6 +44,9 @@ export function AllCoins() {
   return (
     <div className="flex flex-col gap-4 relative">
       <p className="text-xl font-semibold">All Coins</p>
+      <div className='flex justify-end items-center'>   
+        <Button iconLeft="icon-plus" variant='secondary' size="sm">Create Coin</Button>
+      </div>
 
       <div className="space-y-3">
         <div className="overflow-y-auto no-scrollbar rounded-md">
