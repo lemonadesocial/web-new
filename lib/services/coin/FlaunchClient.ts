@@ -3,19 +3,31 @@ import { createDrift, type Drift, type ReadContract, type Abi } from '@gud/drift
 import { ethersAdapter } from '@gud/drift-ethers';
 
 import { Chain } from '$lib/graphql/generated/backend/graphql';
+import { Flaunch } from '$lib/abis/token-launch-pad/Flaunch';
 import ZapContractABI from '$lib/abis/token-launch-pad/FlaunchZap.json';
-import FlaunchABI from '$lib/abis/token-launch-pad/Flaunch.json';
 import TreasuryManagerFactoryABI from '$lib/abis/token-launch-pad/TreasuryManagerFactory.json';
 import MarketCappedPriceABI from '$lib/abis/token-launch-pad/MarketCappedPrice.json';
-import MarketUtilsABI from '$lib/abis/token-launch-pad/MarketUtils.json';
-import MemecoinABI from '$lib/abis/token-launch-pad/Memecoin.json';
+
 import FeeEscrowABI from '$lib/abis/token-launch-pad/FeeEscrow.json';
-import ERC20ABI from '$lib/abis/ERC20.json';
+
+type FlaunchABI = typeof Flaunch;
 
 export class FlaunchClient {
+  private static instances: Map<string, FlaunchClient> = new Map();
+
+  static getInstance(chain: Chain, memecoinAddress: string): FlaunchClient {
+    const key = `${chain.chain_id}-${memecoinAddress}`;
+
+    if (!FlaunchClient.instances.has(key)) {
+      FlaunchClient.instances.set(key, new FlaunchClient(chain, memecoinAddress));
+    }
+
+    return FlaunchClient.instances.get(key)!;
+  }
+
   private drift: Drift;
   private zapContract: ReadContract<Abi>;
-  private flaunchContract: ReadContract<Abi> | null = null;
+  private flaunchContract: ReadContract<FlaunchABI> | null = null;
   private treasuryManagerFactoryContract: ReadContract<Abi> | null = null;
   private feeEscrowContract: ReadContract<Abi>;
   private marketCappedPriceContract: ReadContract<Abi>;
@@ -70,7 +82,7 @@ export class FlaunchClient {
     return result;
   }
 
-  async getFlaunchContract(): Promise<ReadContract<Abi>> {
+  async getFlaunchContract(): Promise<ReadContract<FlaunchABI>> {
     if (this.flaunchContract) {
       return this.flaunchContract;
     }
@@ -78,7 +90,7 @@ export class FlaunchClient {
     const address = await this.getFlaunchAddress();
 
     this.flaunchContract = this.drift.contract({
-      abi: FlaunchABI.abi as Abi,
+      abi: Flaunch,
       address: address,
     });
 
@@ -90,7 +102,7 @@ export class FlaunchClient {
 
     const tokenId = await flaunchContract.read('tokenId', {
       _memecoin: this.memecoinAddress
-    } as any);
+    });
 
     return tokenId as bigint;
   }
@@ -100,9 +112,9 @@ export class FlaunchClient {
 
     const flaunchContract = await this.getFlaunchContract();
 
-    const owner = await flaunchContract.read('ownerOf', { 
+    const owner = await flaunchContract.read('ownerOf', {
       id: tokenId
-    } as any);
+    });
 
     return owner as string;
   }
@@ -132,7 +144,7 @@ export class FlaunchClient {
 
     const implementation = await factoryContract.read('managerImplementation', {
       _manager: owner,
-    } as any);
+    });
 
     if (!isAddress(implementation)) return null;
 
@@ -145,7 +157,7 @@ export class FlaunchClient {
 
     const poolId = await flaunchContract.read('poolId', {
       _tokenId: tokenId,
-    } as any);
+    });
 
     return poolId as string;
   }
@@ -155,11 +167,11 @@ export class FlaunchClient {
 
     const ethAmount = await this.feeEscrowContract.read('totalFeesAllocated', {
       _poolId: poolId,
-    } as any);
+    });
 
     const usdcAmount = await this.marketCappedPriceContract.read('getFlippedMarketCap', {
       ethAmount: ethAmount,
-    } as any);
+    });
 
     return usdcAmount as bigint;
   }

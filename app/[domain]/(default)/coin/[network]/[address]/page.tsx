@@ -1,12 +1,13 @@
 import { CoinPage } from "$lib/components/features/coin/CoinPage";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     network: string;
     address: string;
-  };
+  }>;
 }
 
-export default function Page({ params }: PageProps) {
-  return <CoinPage network={params.network} address={params.address} />;
+export default async function Page({ params }: PageProps) {
+  const { network, address } = await params;
+  return <CoinPage network={network} address={address} />;
 }
