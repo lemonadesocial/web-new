@@ -6,7 +6,7 @@ import { useAtomValue } from 'jotai';
 import { listChainsAtom } from '$lib/jotai';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { formatWallet } from '$lib/utils/crypto';
-import { useFees, useGroup, useOwner } from './useCoin';
+import { useFees, useGroup, useOwner, useTokenData } from './useCoin';
 import { BuyCoin } from './BuyCoin';
 import { notFound } from 'next/navigation';
 

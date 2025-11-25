@@ -7,6 +7,7 @@ import { Flaunch } from '$lib/abis/token-launch-pad/Flaunch';
 import ZapContractABI from '$lib/abis/token-launch-pad/FlaunchZap.json';
 import TreasuryManagerFactoryABI from '$lib/abis/token-launch-pad/TreasuryManagerFactory.json';
 import MarketCappedPriceABI from '$lib/abis/token-launch-pad/MarketCappedPrice.json';
+import MemecoinABI from '$lib/abis/token-launch-pad/Memecoin.json';
 
 import FeeEscrowABI from '$lib/abis/token-launch-pad/FeeEscrow.json';
 
@@ -31,6 +32,7 @@ export class FlaunchClient {
   private treasuryManagerFactoryContract: ReadContract<Abi> | null = null;
   private feeEscrowContract: ReadContract<Abi>;
   private marketCappedPriceContract: ReadContract<Abi>;
+  private memecoinContract: ReadContract<Abi>;
   private memecoinAddress: string;
 
   constructor(chain: Chain, memecoinAddress: string) {
@@ -71,6 +73,11 @@ export class FlaunchClient {
     this.marketCappedPriceContract = this.drift.contract({
       abi: MarketCappedPriceABI.abi as Abi,
       address: chain.launchpad_market_capped_price_contract_address,
+    });
+
+    this.memecoinContract = this.drift.contract({
+      abi: MemecoinABI.abi as Abi,
+      address: memecoinAddress,
     });
   }
 
@@ -176,4 +183,22 @@ export class FlaunchClient {
     return usdcAmount as bigint;
   }
 
+  async getTokenData(): Promise<{ name: string; symbol: string; tokenURI: string }> {
+    const tokenId = await this.getTokenId();
+    const flaunchContract = await this.getFlaunchContract();
+
+    const [name, symbol, tokenURI] = await Promise.all([
+      this.memecoinContract.read('name'),
+      this.memecoinContract.read('symbol'),
+      flaunchContract.read('tokenURI', {
+        _tokenId: tokenId,
+      }),
+    ]);
+
+    return {
+      name: name as string,
+      symbol: symbol as string,
+      tokenURI: tokenURI as string,
+    };
+  }
 }

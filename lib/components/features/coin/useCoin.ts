@@ -106,3 +106,26 @@ export function useFees(chain: Chain, address: string) {
     isLoadingFees: isLoading,
   };
 }
+
+export function useTokenData(chain: Chain, address: string) {
+  const [tokenData, setTokenData] = useState<{ name: string; symbol: string; tokenURI: string } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTokenData = async () => {
+      setIsLoading(true);
+      const flaunchClient = FlaunchClient.getInstance(chain, address);
+      const data = await flaunchClient.getTokenData();
+
+      setTokenData(data);
+      setIsLoading(false);
+    };
+
+    fetchTokenData();
+  }, [chain, address]);
+
+  return {
+    tokenData,
+    isLoadingTokenData: isLoading,
+  };
+}
