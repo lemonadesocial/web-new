@@ -1,22 +1,34 @@
-import { isAddress, JsonRpcProvider } from 'ethers';
-import { createDrift, type Drift, type ReadContract, type Abi } from '@gud/drift';
+import { isAddress, JsonRpcProvider, type Signer } from 'ethers';
+import { createDrift, type Drift, type ReadContract, type Abi, type Hash, ReadWriteContract } from '@gud/drift';
 import { ethersAdapter } from '@gud/drift-ethers';
 
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { Flaunch } from '$lib/abis/token-launch-pad/Flaunch';
-import ZapContractABI from '$lib/abis/token-launch-pad/FlaunchZap.json';
-import TreasuryManagerFactoryABI from '$lib/abis/token-launch-pad/TreasuryManagerFactory.json';
-import MarketCappedPriceABI from '$lib/abis/token-launch-pad/MarketCappedPrice.json';
-import MemecoinABI from '$lib/abis/token-launch-pad/Memecoin.json';
-
-import FeeEscrowABI from '$lib/abis/token-launch-pad/FeeEscrow.json';
+import { FeeEscrow } from '$lib/abis/token-launch-pad/FeeEscrow';
+import { MarketUtils } from '$lib/abis/token-launch-pad/MarketUtils';
+import { PoolSwap } from '$lib/abis/token-launch-pad/PoolSwap';
+import { PositionManager } from '$lib/abis/token-launch-pad/PositionManager';
+import { FlaunchZap } from '$lib/abis/token-launch-pad/FlaunchZap';
+import { TreasuryManagerFactory } from '$lib/abis/token-launch-pad/TreasuryManagerFactory';
+import { MarketCappedPrice } from '$lib/abis/token-launch-pad/MarketCappedPrice';
+import { Memecoin } from '$lib/abis/token-launch-pad/Memecoin';
 
 type FlaunchABI = typeof Flaunch;
+type FeeEscrowABI = typeof FeeEscrow;
+type MarketUtilsABI = typeof MarketUtils;
+type PositionManagerABI = typeof PositionManager;
+type FlaunchZapABI = typeof FlaunchZap;
+type TreasuryManagerFactoryABI = typeof TreasuryManagerFactory;
+type MarketCappedPriceABI = typeof MarketCappedPrice;
+type MemecoinABI = typeof Memecoin;
 
 export class FlaunchClient {
   private static instances: Map<string, FlaunchClient> = new Map();
 
-  static getInstance(chain: Chain, memecoinAddress: string): FlaunchClient {
+  static getInstance(chain: Chain, memecoinAddress: string, signer?: Signer): FlaunchClient {
+    if (signer) {
+      return new FlaunchClient(chain, memecoinAddress, signer);
+    }
     const key = `${chain.chain_id}-${memecoinAddress}`;
 
     if (!FlaunchClient.instances.has(key)) {
@@ -27,15 +39,20 @@ export class FlaunchClient {
   }
 
   private drift: Drift;
-  private zapContract: ReadContract<Abi>;
-  private flaunchContract: ReadContract<FlaunchABI> | null = null;
-  private treasuryManagerFactoryContract: ReadContract<Abi> | null = null;
-  private feeEscrowContract: ReadContract<Abi>;
-  private marketCappedPriceContract: ReadContract<Abi>;
-  private memecoinContract: ReadContract<Abi>;
-  private memecoinAddress: string;
 
-  constructor(chain: Chain, memecoinAddress: string) {
+  private zapContract: ReadContract<FlaunchZapABI>;
+  private flaunchContract: ReadContract<FlaunchABI> | null = null;
+  private treasuryManagerFactoryContract: ReadContract<TreasuryManagerFactoryABI> | null = null;
+  private feeEscrowContract: ReadContract<FeeEscrowABI>;
+  private marketCappedPriceContract: ReadContract<MarketCappedPriceABI>;
+  private marketUtilsContract: ReadContract<MarketUtilsABI>;
+  private memecoinContract: ReadContract<MemecoinABI>;
+  private positionManagerContract: ReadContract<PositionManagerABI> | null = null;
+
+  private memecoinAddress: string;
+  private poolSwapAddress: string;
+
+  constructor(chain: Chain, memecoinAddress: string, signer?: Signer) {
     if (!chain.rpc_url) {
       throw new Error('Chain RPC URL is required');
     }
@@ -51,32 +68,43 @@ export class FlaunchClient {
     if (!chain.launchpad_market_utils_contract_address) {
       throw new Error('Launchpad market utils contract address is required');
     }
+    if (!chain.launchpad_pool_swap_contract_address) {
+      throw new Error('Launchpad pool swap contract address is required');
+    }
 
     this.memecoinAddress = memecoinAddress;
+    this.poolSwapAddress = chain.launchpad_pool_swap_contract_address;
 
     const provider = new JsonRpcProvider(chain.rpc_url);
 
+    const adapterConfig = signer ? { provider, signer } : { provider };
+
     this.drift = createDrift({
-      adapter: ethersAdapter({ provider }),
+      adapter: ethersAdapter(adapterConfig),
     });
 
     this.zapContract = this.drift.contract({
-      abi: ZapContractABI.abi as Abi,
+      abi: FlaunchZap,
       address: chain.launchpad_zap_contract_address,
     });
 
     this.feeEscrowContract = this.drift.contract({
-      abi: FeeEscrowABI.abi as Abi,
+      abi: FeeEscrow,
       address: chain.launchpad_fee_escrow_contract_address,
     });
 
     this.marketCappedPriceContract = this.drift.contract({
-      abi: MarketCappedPriceABI.abi as Abi,
+      abi: MarketCappedPrice,
       address: chain.launchpad_market_capped_price_contract_address,
     });
 
+    this.marketUtilsContract = this.drift.contract({
+      abi: MarketUtils,
+      address: chain.launchpad_market_utils_contract_address,
+    });
+
     this.memecoinContract = this.drift.contract({
-      abi: MemecoinABI.abi as Abi,
+      abi: Memecoin,
       address: memecoinAddress,
     });
   }
@@ -126,7 +154,7 @@ export class FlaunchClient {
     return owner as string;
   }
 
-  async getTreasuryManagerFactory(): Promise<ReadContract<Abi>> {
+  async getTreasuryManagerFactory(): Promise<ReadContract<TreasuryManagerFactoryABI>> {
     if (this.treasuryManagerFactoryContract) {
       return this.treasuryManagerFactoryContract;
     }
@@ -138,7 +166,7 @@ export class FlaunchClient {
     }
 
     this.treasuryManagerFactoryContract = this.drift.contract({
-      abi: TreasuryManagerFactoryABI.abi as Abi,
+      abi: TreasuryManagerFactory,
       address: factoryAddress,
     });
 
@@ -200,5 +228,90 @@ export class FlaunchClient {
       symbol: symbol as string,
       tokenURI: tokenURI as string,
     };
+  }
+
+  async getEthValueForAmount(tokenAmount?: bigint): Promise<bigint> {
+    const decimals = await this.memecoinContract.read('decimals');
+    const unitAmount = (tokenAmount ?? BigInt(1)) * (BigInt(10) ** BigInt(decimals));
+
+    const ethAmount = await this.marketUtilsContract.read('marketCap', {
+      memecoin: this.memecoinAddress,
+      tokenAmount: unitAmount,
+    });
+
+    return ethAmount as bigint;
+  }
+
+  private async getPositionManagerContract(): Promise<ReadContract<PositionManagerABI>> {
+    if (this.positionManagerContract) return this.positionManagerContract;
+
+    const flaunchContract = await this.getFlaunchContract();
+    const address = await flaunchContract.read('positionManager');
+
+    if (!isAddress(address)) {
+      throw new Error('Invalid position manager address');
+    }
+
+    this.positionManagerContract = this.drift.contract({
+      abi: PositionManager,
+      address,
+    });
+
+    return this.positionManagerContract;
+  }
+
+  async buyCoin({
+    buyAmount,
+    slippageTolerance = 500,
+  }: {
+    buyAmount: bigint;
+    slippageTolerance?: number;
+  }): Promise<Hash> {
+    const positionManager = await this.getPositionManagerContract();
+    const nativeToken = await positionManager.read('nativeToken');
+
+    const poolKey = await positionManager.read('poolKey', {
+      _token: this.memecoinAddress,
+    });
+
+    const priceBounds = await this.marketUtilsContract.read('currentSqrtPriceX96', {
+      memecoin: this.memecoinAddress,
+      slippage: slippageTolerance,
+    });
+    
+    const minSqrtPriceX96 = priceBounds.min;
+    const maxSqrtPriceX96 = priceBounds.max;
+
+    const isNativeToken0 = nativeToken.toLowerCase().localeCompare(this.memecoinAddress.toLowerCase()) <= 0;
+    const sqrtPriceLimitX96 = isNativeToken0 ? minSqrtPriceX96 : maxSqrtPriceX96;
+
+    const poolSwapContract = this.drift.contract({
+      abi: PoolSwap,
+      address: this.poolSwapAddress,
+    }) as unknown as ReadWriteContract<typeof PoolSwap>;
+
+    console.log(this.poolSwapAddress)
+
+    console.log({
+      '_key': poolKey,
+      '_params': {
+        zeroForOne: isNativeToken0,
+        amountSpecified: -buyAmount,
+        sqrtPriceLimitX96,
+      }})
+
+    const txHash = await poolSwapContract.write(
+      'swap',
+      {
+        _key: poolKey,
+        _params: {
+          zeroForOne: isNativeToken0,
+          amountSpecified: -buyAmount,
+          sqrtPriceLimitX96,
+        }
+      }
+    );
+
+    return txHash;
   }
 }
