@@ -1,61 +1,74 @@
-import { Button } from '$lib/components/core';
+import { useState } from 'react';
+import { mainnet, sepolia } from 'viem/chains';
 
-const quickAmounts = ['0.01 ETH', '0.1 ETH', '0.5 ETH', '1 ETH'];
+import { Button, Spacer } from '$lib/components/core';
+import { Chain } from '$lib/graphql/generated/backend/graphql';
+import { chainsMapAtom } from '$lib/jotai';
+import { useAtomValue } from 'jotai';
 
-export function BuyCoin() {
+const quickAmounts = ['0.01', '0.1', '0.5', '1'];
+
+export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
+  const chainsMap = useAtomValue(chainsMapAtom);
+  const ethChainId = process.env.NEXT_PUBLIC_APP_ENV === 'production' ? mainnet.id : sepolia.id;
+  const ethChain = chainsMap[ethChainId];
+  const [amount, setAmount] = useState('');
+
   return (
-    <div className="w-full max-w-[336px] rounded-[28px] bg-[#0c0c14] p-6 text-white space-y-5 shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
+    <div className="w-full max-w-[336px] rounded-md bg-card border border-card-border py-3 px-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-white/70">1 LSD = 0.00261 ETH</p>
-        <Button size="sm" variant="flat" icon="icon-settings" className="p-2 rounded-full bg-white/5 hover:bg-white/10" />
+        <p className="text-tertiary">1 LSD = 0.00261 ETH</p>
+        <i className="icon-settings size-5 text-tertiary" />
       </div>
 
-      <div className="rounded-3xl bg-white/5 p-4 space-y-4 border border-white/5">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="rounded-2xl bg-white/10 px-3 py-2 flex items-center gap-2">
-              <div className="size-8 rounded-full bg-white/10 flex items-center justify-center">
-                <i className="icon-eth text-lg" />
-              </div>
-              <p className="text-base font-semibold">ETH</p>
-            </div>
+      <div className="mt-3 py-2 px-3 rounded-sm bg-primary/8 flex flex-col gap-2">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center py-1.5 px-4.5 justify-center rounded-full bg-primary/8 gap-1.5">
+            {
+              ethChain.logo_url && <img src={ethChain.logo_url} alt={ethChain.name} className="size-4 rounded-full" />
+            }
+            <p className="text-secondary font-medium text-sm">ETH</p>
           </div>
-          <p className="text-4xl font-semibold text-white/40">0.00</p>
+          <input
+            type="text"
+            placeholder="0.00"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="text-2xl bg-transparent border-none outline-none text-right w-full"
+          />
         </div>
-        <div className="flex items-center justify-between text-sm">
-          <p className="text-white/40">Balance: 18.32 ETH</p>
-          <p className="text-white/30">Max</p>
-        </div>
+        <p className="text-sm text-tertiary">Balance: 18.32 ETH</p>
         <div className="grid grid-cols-4 gap-2">
           {quickAmounts.map(value => (
-            <Button key={value} size="sm" variant="flat" className="w-full rounded-xl border border-white/10 bg-white/5 text-xs text-white/80">
-              {value}
+            <Button
+              key={value}
+              size="xs"
+              variant="tertiary"
+              onClick={() => setAmount(value)}
+            >
+              {value} ETH
             </Button>
           ))}
         </div>
       </div>
 
-      <div className="rounded-3xl bg-white/5 p-4 space-y-4 border border-white/5">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-white/40">0 ETH</p>
-            <p className="text-sm text-white/40">→ 0 LSD</p>
+      <div className="mt-3 rounded-sm bg-primary/8">
+        <div className="flex items-center justify-between py-2.5 px-3">
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-tertiary">0 ETH</p>
+            <i className="icon-arrow-foward-sharp text-tertiary size-4" />
+            <p  className="text-sm text-tertiary">0 LSD</p>
           </div>
-          <p className="text-sm text-white/40">~$0</p>
+          <p className="text-sm text-tertiary">~$0</p>
         </div>
-        <div className="rounded-2xl bg-white/[0.02] p-3 space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <p className="text-white/40">Est. gas fees</p>
-            <p className="text-white/80">0.000015 ETH</p>
-          </div>
-          <div className="flex items-center justify-between text-sm">
-            <p className="text-white/40">Slippage</p>
-            <p className="text-white/80">5%</p>
-          </div>
+        <hr className="border-t border-t-divider" />
+        <div className="flex items-center justify-between py-2.5 px-3">
+          <p className="text-sm text-tertiary">Slippage</p>
+          <p className="text-sm text-tertiary">5%</p>
         </div>
       </div>
 
-      <Button variant="secondary" className="w-full rounded-2xl py-4 text-base text-black">
+      <Button variant="secondary" className="w-full mt-4">
         Buy LSD
       </Button>
     </div>
