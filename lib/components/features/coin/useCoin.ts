@@ -19,7 +19,7 @@ export function useGroup(chain: Chain, address: string) {
   useEffect(() => {
     const fetchOwner = async () => {
       setIsLoadingOwner(true);
-      const flaunchClient = new FlaunchClient(chain, address);
+      const flaunchClient = FlaunchClient.getInstance(chain, address);
       const owner = await flaunchClient.getOwnerOf();
       
       if (owner && owner.toLowerCase() !== zeroAddress.toLowerCase()) {
@@ -64,7 +64,7 @@ export function useOwner(chain: Chain, address: string) {
   useEffect(() => {
     const fetchOwner = async () => {
       setIsLoading(true);
-      const flaunchClient = new FlaunchClient(chain, address);
+      const flaunchClient = FlaunchClient.getInstance(chain, address);
       const ownerAddress = await flaunchClient.getOwnerOf();
 
       setOwner(ownerAddress);
@@ -88,7 +88,7 @@ export function useFees(chain: Chain, address: string) {
   useEffect(() => {
     const fetchFees = async () => {
       setIsLoading(true);
-      const flaunchClient = new FlaunchClient(chain, address);
+      const flaunchClient = FlaunchClient.getInstance(chain, address);
       const usdcAmount = await flaunchClient.getEarnedFees();
       setRawFees(usdcAmount);
 

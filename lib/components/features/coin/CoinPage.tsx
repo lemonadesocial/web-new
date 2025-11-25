@@ -7,6 +7,7 @@ import { listChainsAtom } from '$lib/jotai';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { formatWallet } from '$lib/utils/crypto';
 import { useFees, useGroup, useOwner } from './useCoin';
+import { BuyCoin } from './BuyCoin';
 
 interface CoinPageProps {
   network: string;
@@ -18,9 +19,12 @@ export function CoinPage({ network, address }: CoinPageProps) {
   const chain = listChains.find(chain => chain.code_name === network);
 
   return (
-    <div className="flex flex-col gap-4">
-      <Stats chain={chain!} address={address} />
-      <BuybackCharging />
+    <div className="flex gap-4">
+      <div className="flex flex-col gap-4">
+        <Stats chain={chain!} address={address} />
+        <BuybackCharging />
+      </div>
+      <BuyCoin />
     </div>
   );
 }
