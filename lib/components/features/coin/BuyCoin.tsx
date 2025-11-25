@@ -1,10 +1,17 @@
 import { useState } from 'react';
 import { mainnet, sepolia } from 'viem/chains';
 
-import { Button, Spacer } from '$lib/components/core';
+import { BrowserProvider, type Eip1193Provider } from 'ethers';
+import { parseEther } from 'viem';
+
+import { Button, Skeleton, modal, toast } from '$lib/components/core';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom } from '$lib/jotai';
 import { useAtomValue } from 'jotai';
+import { ConnectWallet } from '../modals/ConnectWallet';
+import { useTokenData } from './useCoin';
+import { useAppKitProvider } from '$lib/utils/appkit';
+import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 
 const quickAmounts = ['0.01', '0.1', '0.5', '1'];
 
@@ -13,11 +20,74 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
   const ethChainId = process.env.NEXT_PUBLIC_APP_ENV === 'production' ? mainnet.id : sepolia.id;
   const ethChain = chainsMap[ethChainId];
   const [amount, setAmount] = useState('');
+  const [isBuying, setIsBuying] = useState(false);
+  const { walletProvider } = useAppKitProvider('eip155');
+
+  const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
+
+  const executeBuy = async () => {
+    if (!walletProvider) {
+      toast.error('Connect your wallet to continue');
+      return;
+    }
+
+    let buyAmount: bigint;
+
+    try {
+      buyAmount = parseEther(amount || '0');
+    } catch {
+      toast.error('Enter a valid ETH amount');
+      return;
+    }
+
+    if (buyAmount <= BigInt(0)) {
+      toast.error('Enter an amount greater than zero');
+      return;
+    }
+
+    try {
+      setIsBuying(true);
+      const provider = new BrowserProvider(walletProvider as Eip1193Provider);
+      const signer = await provider.getSigner();
+      const flaunchClient = FlaunchClient.getInstance(chain, address, signer);
+      const txHash = await flaunchClient.buyCoin({ buyAmount });
+      console.log(txHash)
+      toast.success(`Transaction submitted: ${txHash}`);
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsBuying(false);
+    }
+  };
+
+  const handleBuyCoin = () => {
+    modal.open(ConnectWallet, {
+      props: {
+        chain,
+        onConnect: () => {
+          executeBuy();
+        },
+      },
+    });
+  };
+
+  if (isLoadingTokenData) {
+    return (
+      <div className="w-full max-w-[336px] rounded-md bg-card border border-card-border py-3 px-4">
+        <Skeleton animate className="h-4 w-32 rounded-full" />
+        <Skeleton animate className="h-24 w-full rounded-sm mt-4" />
+        <Skeleton animate className="h-16 w-full rounded-sm mt-4" />
+        <Skeleton animate className="h-10 w-full rounded-sm mt-4" />
+      </div>
+    );
+  }
+
+  if (!tokenData) return null;
 
   return (
     <div className="w-full max-w-[336px] rounded-md bg-card border border-card-border py-3 px-4">
       <div className="flex items-center justify-between">
-        <p className="text-tertiary">1 LSD = 0.00261 ETH</p>
+        <p className="text-tertiary">1 {tokenData.symbol} = 0.00261 ETH</p>
         <i className="icon-settings size-5 text-tertiary" />
       </div>
 
@@ -57,7 +127,7 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
           <div className="flex items-center gap-2">
             <p className="text-sm text-tertiary">0 ETH</p>
             <i className="icon-arrow-foward-sharp text-tertiary size-4" />
-            <p  className="text-sm text-tertiary">0 LSD</p>
+            <p className="text-sm text-tertiary">0 {tokenData.symbol}</p>
           </div>
           <p className="text-sm text-tertiary">~$0</p>
         </div>
@@ -68,8 +138,8 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
         </div>
       </div>
 
-      <Button variant="secondary" className="w-full mt-4">
-        Buy LSD
+      <Button variant="secondary" className="w-full mt-4" onClick={handleBuyCoin} loading={isBuying}>
+        Buy {tokenData.symbol}
       </Button>
     </div>
   );
