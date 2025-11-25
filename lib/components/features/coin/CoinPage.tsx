@@ -15,7 +15,6 @@ import { RegistrationTransactions } from './RegistrationTransactions';
 import { RegistrationHolders } from './RegistrationHolders';
 import { RegistrationAvanced } from './RegistrationAvanced';
 import { copy } from '$lib/utils/helpers';
-import { add } from 'date-fns';
 
 interface CoinPageProps {
   network: string;
@@ -36,7 +35,7 @@ export function CoinPage({ network, address }: CoinPageProps) {
         <Registration />
       </div>
 
-      <div className="flex flex-col gap-4 max-w-sm">
+      <div className="flex-col gap-4 max-w-[336px] hidden md:flex">
         <BuyCoin chain={chain} address={address} />
         <CoinInfo />
       </div>
