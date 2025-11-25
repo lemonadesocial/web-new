@@ -230,6 +230,18 @@ export class FlaunchClient {
     };
   }
 
+  async getEthValueForAmount(tokenAmount?: bigint): Promise<bigint> {
+    const decimals = await this.memecoinContract.read('decimals');
+    const unitAmount = (tokenAmount ?? BigInt(1)) * (BigInt(10) ** BigInt(decimals));
+
+    const ethAmount = await this.marketUtilsContract.read('marketCap', {
+      memecoin: this.memecoinAddress,
+      tokenAmount: unitAmount,
+    });
+
+    return ethAmount as bigint;
+  }
+
   private async getPositionManagerContract(): Promise<ReadContract<PositionManagerABI>> {
     if (this.positionManagerContract) return this.positionManagerContract;
 
@@ -278,6 +290,8 @@ export class FlaunchClient {
       address: this.poolSwapAddress,
     }) as unknown as ReadWriteContract<typeof PoolSwap>;
 
+    console.log(this.poolSwapAddress)
+
     console.log({
       '_key': poolKey,
       '_params': {
@@ -295,10 +309,7 @@ export class FlaunchClient {
           amountSpecified: -buyAmount,
           sqrtPriceLimitX96,
         }
-      },
-      {
-        value: buyAmount,
-      },
+      }
     );
 
     return txHash;

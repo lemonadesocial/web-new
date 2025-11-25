@@ -1,17 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { mainnet, sepolia } from 'viem/chains';
-
+import { useAtomValue } from 'jotai';
 import { BrowserProvider, type Eip1193Provider } from 'ethers';
-import { parseEther } from 'viem';
+import { formatEther, parseEther } from 'viem';
 
 import { Button, Skeleton, modal, toast } from '$lib/components/core';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom } from '$lib/jotai';
-import { useAtomValue } from 'jotai';
 import { ConnectWallet } from '../modals/ConnectWallet';
 import { useTokenData } from './useCoin';
 import { useAppKitProvider } from '$lib/utils/appkit';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
+import { useBalance } from '$lib/hooks/useBalance';
 
 const quickAmounts = ['0.01', '0.1', '0.5', '1'];
 
@@ -19,11 +19,29 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
   const chainsMap = useAtomValue(chainsMapAtom);
   const ethChainId = process.env.NEXT_PUBLIC_APP_ENV === 'production' ? mainnet.id : sepolia.id;
   const ethChain = chainsMap[ethChainId];
+
   const [amount, setAmount] = useState('');
   const [isBuying, setIsBuying] = useState(false);
+  const [tokenPrice, setTokenPrice] = useState<string | null>(null);
   const { walletProvider } = useAppKitProvider('eip155');
 
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
+  const { formattedBalance } = useBalance();
+
+  useEffect(() => {
+    const fetchPrice = async () => {
+      try {
+        const flaunchClient = FlaunchClient.getInstance(chain, address);
+        const ethAmount = await flaunchClient.getEthValueForAmount();
+        setTokenPrice(formatEther(ethAmount));
+      } catch (error) {
+        console.error('Failed to fetch price', error);
+        setTokenPrice(null);
+      }
+    };
+
+    fetchPrice();
+  }, [chain, address]);
 
   const executeBuy = async () => {
     if (!walletProvider) {
@@ -86,10 +104,13 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
 
   return (
     <div className="w-full max-w-[336px] rounded-md bg-card border border-card-border py-3 px-4">
-      <div className="flex items-center justify-between">
-        <p className="text-tertiary">1 {tokenData.symbol} = 0.00261 ETH</p>
-        <i className="icon-settings size-5 text-tertiary" />
-      </div>
+      {
+        tokenPrice && (
+          <p className="text-tertiary">
+            1 {tokenData.symbol} = {tokenPrice} ETH
+          </p>
+        )
+      }
 
       <div className="mt-3 py-2 px-3 rounded-sm bg-primary/8 flex flex-col gap-2">
         <div className="flex items-center justify-between gap-4">
@@ -107,7 +128,7 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
             className="text-2xl bg-transparent border-none outline-none text-right w-full"
           />
         </div>
-        <p className="text-sm text-tertiary">Balance: 18.32 ETH</p>
+        <p className="text-sm text-tertiary">Balance: <span className="text-primary">{formattedBalance} ETH</span></p>
         <div className="grid grid-cols-4 gap-2">
           {quickAmounts.map(value => (
             <Button
