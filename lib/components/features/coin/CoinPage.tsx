@@ -8,6 +8,7 @@ import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { formatWallet } from '$lib/utils/crypto';
 import { useFees, useGroup, useOwner } from './useCoin';
 import { BuyCoin } from './BuyCoin';
+import { notFound } from 'next/navigation';
 
 interface CoinPageProps {
   network: string;
@@ -18,13 +19,15 @@ export function CoinPage({ network, address }: CoinPageProps) {
   const listChains = useAtomValue(listChainsAtom);
   const chain = listChains.find(chain => chain.code_name === network);
 
+  if (!chain) return notFound();
+
   return (
     <div className="flex gap-4">
       <div className="flex flex-col gap-4">
         <Stats chain={chain!} address={address} />
         <BuybackCharging />
       </div>
-      <BuyCoin />
+      <BuyCoin chain={chain} address={address} />
     </div>
   );
 }
