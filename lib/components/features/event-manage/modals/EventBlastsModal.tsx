@@ -33,6 +33,7 @@ import { DateTimePicker } from '$lib/components/core/calendar';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { getEmailBlastsRecipients } from '$lib/utils/event';
 import { convertFromUtcToTimezone } from '$lib/utils/date';
+import { isObjectId } from '$lib/utils/helpers';
 
 function ModalHeader({ icon }: { icon: string }) {
   return (
@@ -63,6 +64,7 @@ export function BlastAdvancedModal({ event, message }: { event: Event; message: 
   const [scheduleAt, setScheduleAt] = React.useState<string>();
 
   const [createEmail, { loading: sendingEmail }] = useMutation(CreateEventEmailSettingDocument, {
+    onError: (error) => toast.error('Please select at least one ticket types'),
     onComplete: (client, res) => {
       toast.success('Email created successfully');
       const variables = {
@@ -105,6 +107,10 @@ export function BlastAdvancedModal({ event, message }: { event: Event; message: 
   };
 
   const handleSendEmail = () => {
+    const recipient_registration = selectReceipts.some((i) => i.key === 'all_tickets' || isObjectId(i.key))
+      ? [EmailRecipientType.Registration]
+      : [];
+
     const join_request_states = selectReceipts
       .filter((i) => i.key in EventJoinRequestState)
       .map((i) => i.key) as EventJoinRequestState[];
@@ -126,7 +132,7 @@ export function BlastAdvancedModal({ event, message }: { event: Event; message: 
           event: event._id,
           custom_body_html: body,
           custom_subject_html: subject,
-          recipient_types,
+          recipient_types: [...recipient_types, ...recipient_registration],
           type: EmailTemplateType.Custom,
           scheduled_at: scheduleAt,
           recipient_filters: {
