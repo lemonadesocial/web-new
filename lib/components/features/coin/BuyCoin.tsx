@@ -115,9 +115,7 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
       <div className="mt-3 py-2 px-3 rounded-sm bg-primary/8 flex flex-col gap-2">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center py-1.5 px-4.5 justify-center rounded-full bg-primary/8 gap-1.5">
-            {
-              ethChain.logo_url && <img src={ethChain.logo_url} alt={ethChain.name} className="size-4 rounded-full" />
-            }
+            {ethChain.logo_url && <img src={ethChain.logo_url} alt={ethChain.name} className="size-4 rounded-full" />}
             <p className="text-secondary font-medium text-sm">ETH</p>
           </div>
           <input
@@ -130,13 +128,8 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
         </div>
         <p className="text-sm text-tertiary">Balance: <span className="text-primary">{formattedBalance} ETH</span></p>
         <div className="grid grid-cols-4 gap-2">
-          {quickAmounts.map(value => (
-            <Button
-              key={value}
-              size="xs"
-              variant="tertiary"
-              onClick={() => setAmount(value)}
-            >
+          {quickAmounts.map((value) => (
+            <Button key={value} size="xs" variant="tertiary" onClick={() => setAmount(value)}>
               {value} ETH
             </Button>
           ))}
@@ -165,4 +158,3 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
     </div>
   );
 }
-
