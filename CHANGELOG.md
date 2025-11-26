@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.32.0](https://github.com/lemonadesocial/web-new/compare/v8.31.1...v8.32.0) (2025-11-26)
+
+
+### Features
+
+* enable eoa wallets for coin base ([f5d2517](https://github.com/lemonadesocial/web-new/commit/f5d2517ce0a9fed890398fed4e8bc2662cb16342))
+
+
+### Bug Fixes
+
+* fail to check balance after connectting wallet ([0cdae4c](https://github.com/lemonadesocial/web-new/commit/0cdae4cac0ca3cfd83d5952e2d9cb7613037090a))
+
 ## [8.31.1](https://github.com/lemonadesocial/web-new/compare/v8.31.0...v8.31.1) (2025-11-20)
 
 
