@@ -8,15 +8,15 @@ import { Button, Skeleton, modal, toast } from '$lib/components/core';
 import { chainsMapAtom } from '$lib/jotai';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { useTokenData } from '$lib/hooks/useCoin';
+import { ConnectWallet } from '../modals/ConnectWallet';
 import { useAppKitProvider } from '$lib/utils/appkit';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
-import { ConnectWallet } from '../modals/ConnectWallet';
-import { useBalance } from '$lib/hooks/useBalance';
+import { useBalance, useTokenBalance } from '$lib/hooks/useBalance';
 import { formatNumber } from '$lib/utils/number';
 
-const quickAmounts = ['0.01', '0.1', '0.5', '1'];
+const quickAmounts = [10, 20, 50, 100];
 
-export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
+export function SellCoin({ chain, address }: { chain: Chain; address: string }) {
   const chainsMap = useAtomValue(chainsMapAtom);
   const ethChainId = process.env.NEXT_PUBLIC_APP_ENV === 'production' ? mainnet.id : sepolia.id;
   const ethChain = chainsMap[ethChainId];
@@ -27,7 +27,7 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
   const { walletProvider } = useAppKitProvider('eip155');
 
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
-  const { formattedBalance } = useBalance();
+  const { formattedBalance, balance } = useTokenBalance(chain, address);
 
   useEffect(() => {
     const fetchPrice = async () => {
@@ -44,39 +44,8 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
     fetchPrice();
   }, [chain, address]);
 
-  const executeBuy = async () => {
-    if (!walletProvider) {
-      toast.error('Connect your wallet to continue');
-      return;
-    }
+  const executeSell = async () => {
 
-    let buyAmount: bigint;
-
-    try {
-      buyAmount = parseEther(amount || '0');
-    } catch {
-      toast.error('Enter a valid ETH amount');
-      return;
-    }
-
-    if (buyAmount <= BigInt(0)) {
-      toast.error('Enter an amount greater than zero');
-      return;
-    }
-
-    try {
-      setIsBuying(true);
-      const provider = new BrowserProvider(walletProvider as Eip1193Provider);
-      const signer = await provider.getSigner();
-      const flaunchClient = FlaunchClient.getInstance(chain, address, signer);
-      const txHash = await flaunchClient.buyCoin({ buyAmount });
-      console.log(txHash)
-      toast.success(`Transaction submitted: ${txHash}`);
-    } catch (error) {
-      console.log(error)
-    } finally {
-      setIsBuying(false);
-    }
   };
 
   const handleBuyCoin = () => {
@@ -84,10 +53,29 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
       props: {
         chain,
         onConnect: () => {
-          executeBuy();
+          executeSell();
         },
       },
     });
+  };
+
+  const handlePercentageClick = (value: number) => {
+    if (value === 100) {
+      setAmount(formattedBalance);
+      return;
+    }
+    
+    const balanceNum = Number(formattedBalance);
+    const calculatedAmount = (balanceNum * value) / 100;
+    const fixedStr = calculatedAmount.toFixed(3);
+    
+    if (fixedStr.includes('e')) {
+      const coefficient = parseFloat(fixedStr.split('e')[0]);
+      setAmount(coefficient.toFixed(3));
+      return;
+    } 
+    
+    setAmount(fixedStr);
   };
 
   if (isLoadingTokenData) {
@@ -103,21 +91,23 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
 
   if (!tokenData) return null;
 
+  console.log(Number(amount) * Number(tokenPrice))
+
   return (
     <div className="w-full py-3 px-4">
       {
         tokenPrice && (
           <p className="text-tertiary">
-            1 {tokenData.symbol} = {tokenPrice} ETH
+            1 ETH = {1 / Number(tokenPrice)} {tokenData.symbol}
           </p>
         )
       }
 
       <div className="mt-3 py-2 px-3 rounded-sm bg-primary/8 flex flex-col gap-2">
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center py-1.5 px-4.5 justify-center rounded-full bg-primary/8 gap-1.5">
-            {ethChain.logo_url && <img src={ethChain.logo_url} alt={ethChain.name} className="size-4 rounded-full" />}
-            <p className="text-secondary font-medium text-sm">ETH</p>
+          <div className="flex items-center py-1.5 px-2.5 justify-center rounded-full bg-primary/8 gap-1.5">
+            {/* {ethChain.logo_url && <img src={ethChain.logo_url} alt={ethChain.name} className="size-4 rounded-full" />} */}
+            <p className="text-secondary font-medium text-sm">{tokenData.symbol}</p>
           </div>
           <input
             type="text"
@@ -127,11 +117,16 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
             className="text-2xl bg-transparent border-none outline-none text-right w-full"
           />
         </div>
-        <p className="text-sm text-tertiary">Balance: <span className="text-primary">{formattedBalance} ETH</span></p>
+        <p className="text-sm text-tertiary">Balance: <span className="text-primary">{formatNumber(Number(formattedBalance))} {tokenData.symbol}</span></p>
         <div className="grid grid-cols-4 gap-2">
           {quickAmounts.map((value) => (
-            <Button key={value} size="xs" variant="tertiary" onClick={() => setAmount(value)}>
-              {value} ETH
+            <Button
+              key={value}
+              size="xs"
+              variant="tertiary"
+              onClick={() => handlePercentageClick(value)}
+            >
+              {value}%
             </Button>
           ))}
         </div>
@@ -140,9 +135,9 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
       <div className="mt-3 rounded-sm bg-primary/8">
         <div className="flex items-center justify-between py-2.5 px-3">
           <div className="flex items-center gap-2">
-            <p className="text-sm text-tertiary">{formatNumber(Number(amount))} ETH</p>
+            <p className="text-sm text-tertiary">{formatNumber(Number(amount))} {tokenData.symbol}</p>
             <i className="icon-arrow-foward-sharp text-tertiary size-4" />
-            <p className="text-sm text-tertiary">{formatNumber(Number(amount) / Number(tokenPrice))} {tokenData.symbol}</p>
+            <p className="text-sm text-tertiary">{formatNumber(Number(amount) * Number(tokenPrice))} ETH</p>
           </div>
           {/* <p className="text-sm text-tertiary">~$0</p> */}
         </div>

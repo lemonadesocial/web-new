@@ -3,6 +3,7 @@ import clsx from "clsx";
 
 import { Chain } from "$lib/graphql/generated/backend/graphql";
 import { BuyCoin } from "./BuyCoin";
+import { SellCoin } from "./SellCoin";
 
 export function SwapCoin ({ chain, address }: { chain: Chain; address: string }) {
   const [tab, setTab] = useState<'buy' | 'sell'>('buy');
@@ -20,6 +21,11 @@ export function SwapCoin ({ chain, address }: { chain: Chain; address: string })
       {
         tab === 'buy' && (
           <BuyCoin chain={chain} address={address} />
+        )
+      }
+      {
+        tab === 'sell' && (
+          <SellCoin chain={chain} address={address} />
         )
       }
     </div>
