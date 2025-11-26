@@ -12,7 +12,7 @@ import { FlaunchZap } from '$lib/abis/token-launch-pad/FlaunchZap';
 import { TreasuryManagerFactory } from '$lib/abis/token-launch-pad/TreasuryManagerFactory';
 import { MarketCappedPrice } from '$lib/abis/token-launch-pad/MarketCappedPrice';
 import { Memecoin } from '$lib/abis/token-launch-pad/Memecoin';
-import ERC20 from '$lib/abis/ERC20.json';
+import { LETH } from '$lib/abis/token-launch-pad/LETH';
 
 type FlaunchABI = typeof Flaunch;
 type FeeEscrowABI = typeof FeeEscrow;
@@ -22,6 +22,7 @@ type FlaunchZapABI = typeof FlaunchZap;
 type TreasuryManagerFactoryABI = typeof TreasuryManagerFactory;
 type MarketCappedPriceABI = typeof MarketCappedPrice;
 type MemecoinABI = typeof Memecoin;
+type LETHABI = typeof LETH;
 
 export class FlaunchClient {
   private static instances: Map<string, FlaunchClient> = new Map();
@@ -40,6 +41,7 @@ export class FlaunchClient {
   }
 
   private drift: Drift;
+  private provider: JsonRpcProvider;
 
   private zapContract: ReadContract<FlaunchZapABI>;
   private flaunchContract: ReadContract<FlaunchABI> | null = null;
@@ -76,9 +78,9 @@ export class FlaunchClient {
     this.memecoinAddress = memecoinAddress;
     this.poolSwapAddress = chain.launchpad_pool_swap_contract_address;
 
-    const provider = new JsonRpcProvider(chain.rpc_url);
+    this.provider = new JsonRpcProvider(chain.rpc_url);
 
-    const adapterConfig = signer ? { provider, signer } : { provider };
+    const adapterConfig = signer ? { provider: this.provider, signer } : { provider: this.provider };
 
     this.drift = createDrift({
       adapter: ethersAdapter(adapterConfig),
@@ -286,15 +288,27 @@ export class FlaunchClient {
     const isNativeToken0 = nativeToken.toLowerCase().localeCompare(this.memecoinAddress.toLowerCase()) <= 0;
     const sqrtPriceLimitX96 = isNativeToken0 ? minSqrtPriceX96 : maxSqrtPriceX96;
 
-    const tokenContract = this.drift.contract({
-      abi: ERC20 as Abi,
+    const LETHContract = this.drift.contract({
+      abi: LETH,
       address: nativeToken,
-    }) as any;
+    }) as unknown as ReadWriteContract<LETHABI>;
 
-    await (tokenContract.write as any)('approve', {
-      spender: this.poolSwapAddress,
-      amount: buyAmount,
+    await LETHContract.write('approve', {
+      _spender: this.poolSwapAddress,
+      _amount: buyAmount,
     });
+
+    const depositTxHash = await LETHContract.write('deposit', {
+      [0]: buyAmount,
+    }, {
+      value: buyAmount,
+    });
+
+    const depositTx = await this.provider.getTransaction(depositTxHash);
+    if (!depositTx) {
+      throw new Error('Failed to get deposit transaction');
+    }
+    await depositTx.wait();
 
     const poolSwapContract = this.drift.contract({
       abi: PoolSwap,
@@ -320,6 +334,9 @@ export class FlaunchClient {
           amountSpecified: -buyAmount,
           sqrtPriceLimitX96,
         }
+      },
+      {
+        value: buyAmount,
       }
     );
 
