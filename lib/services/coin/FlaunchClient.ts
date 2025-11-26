@@ -53,7 +53,6 @@ export class FlaunchClient {
   private positionManagerContract: ReadContract<PositionManagerABI> | null = null;
 
   private memecoinAddress: string;
-  private poolSwapAddress: string;
 
   constructor(chain: Chain, memecoinAddress: string, signer?: Signer) {
     if (!chain.rpc_url) {
@@ -71,12 +70,8 @@ export class FlaunchClient {
     if (!chain.launchpad_market_utils_contract_address) {
       throw new Error('Launchpad market utils contract address is required');
     }
-    if (!chain.launchpad_pool_swap_contract_address) {
-      throw new Error('Launchpad pool swap contract address is required');
-    }
 
     this.memecoinAddress = memecoinAddress;
-    this.poolSwapAddress = chain.launchpad_pool_swap_contract_address;
 
     this.provider = new JsonRpcProvider(chain.rpc_url);
 
@@ -293,8 +288,10 @@ export class FlaunchClient {
       address: nativeToken,
     }) as unknown as ReadWriteContract<LETHABI>;
 
+    const poolSwapAddress = await this.zapContract.read('poolSwap');
+
     await LETHContract.write('approve', {
-      _spender: this.poolSwapAddress,
+      _spender: poolSwapAddress,
       _amount: buyAmount,
     });
 
@@ -312,18 +309,8 @@ export class FlaunchClient {
 
     const poolSwapContract = this.drift.contract({
       abi: PoolSwap,
-      address: this.poolSwapAddress,
+      address: poolSwapAddress,
     }) as unknown as ReadWriteContract<typeof PoolSwap>;
-
-    console.log(this.poolSwapAddress)
-
-    console.log({
-      '_key': poolKey,
-      '_params': {
-        zeroForOne: isNativeToken0,
-        amountSpecified: -buyAmount,
-        sqrtPriceLimitX96,
-      }})
 
     const txHash = await poolSwapContract.write(
       'swap',
