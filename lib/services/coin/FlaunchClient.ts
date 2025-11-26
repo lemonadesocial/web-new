@@ -12,6 +12,7 @@ import { FlaunchZap } from '$lib/abis/token-launch-pad/FlaunchZap';
 import { TreasuryManagerFactory } from '$lib/abis/token-launch-pad/TreasuryManagerFactory';
 import { MarketCappedPrice } from '$lib/abis/token-launch-pad/MarketCappedPrice';
 import { Memecoin } from '$lib/abis/token-launch-pad/Memecoin';
+import ERC20 from '$lib/abis/ERC20.json';
 
 type FlaunchABI = typeof Flaunch;
 type FeeEscrowABI = typeof FeeEscrow;
@@ -284,6 +285,16 @@ export class FlaunchClient {
 
     const isNativeToken0 = nativeToken.toLowerCase().localeCompare(this.memecoinAddress.toLowerCase()) <= 0;
     const sqrtPriceLimitX96 = isNativeToken0 ? minSqrtPriceX96 : maxSqrtPriceX96;
+
+    const tokenContract = this.drift.contract({
+      abi: ERC20 as Abi,
+      address: nativeToken,
+    }) as any;
+
+    await (tokenContract.write as any)('approve', {
+      spender: this.poolSwapAddress,
+      amount: buyAmount,
+    });
 
     const poolSwapContract = this.drift.contract({
       abi: PoolSwap,
