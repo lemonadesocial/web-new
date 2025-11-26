@@ -91,7 +91,7 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
 
   if (isLoadingTokenData) {
     return (
-      <div className="w-full max-w-[336px] rounded-md bg-card border border-card-border py-3 px-4">
+      <div className="w-full py-3 px-4">
         <Skeleton animate className="h-4 w-32 rounded-full" />
         <Skeleton animate className="h-24 w-full rounded-sm mt-4" />
         <Skeleton animate className="h-16 w-full rounded-sm mt-4" />
@@ -103,7 +103,7 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
   if (!tokenData) return null;
 
   return (
-    <div className="w-full max-w-[336px] rounded-md bg-card border border-card-border py-3 px-4">
+    <div className="w-full py-3 px-4">
       {
         tokenPrice && (
           <p className="text-tertiary">

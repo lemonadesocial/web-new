@@ -16,6 +16,7 @@ import { RegistrationTransactions } from './RegistrationTransactions';
 import { RegistrationHolders } from './RegistrationHolders';
 import { RegistrationAvanced } from './RegistrationAvanced';
 import { copy } from '$lib/utils/helpers';
+import { SwapCoin } from './SwapCoin';
 
 interface CoinPageProps {
   network: string;
@@ -37,7 +38,7 @@ export function CoinPage({ network, address }: CoinPageProps) {
       </div>
 
       <div className="flex-col gap-4 max-w-[336px] w-full hidden md:flex">
-        <BuyCoin chain={chain} address={address} />
+        <SwapCoin chain={chain} address={address} />
         <CoinInfo chain={chain} address={address} />
       </div>
     </div>

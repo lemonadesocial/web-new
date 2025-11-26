@@ -51,7 +51,6 @@ query listChains {
     launchpad_fee_escrow_contract_address
     launchpad_market_capped_price_contract_address
     launchpad_market_utils_contract_address
-    launchpad_pool_swap_contract_address
   }
 }
 
