@@ -209,22 +209,24 @@ export class FlaunchClient {
     return usdcAmount as bigint;
   }
 
-  async getTokenData(): Promise<{ name: string; symbol: string; tokenURI: string }> {
+  async getTokenData(): Promise<{ name: string; symbol: string; tokenURI: string; decimals: number }> {
     const tokenId = await this.getTokenId();
     const flaunchContract = await this.getFlaunchContract();
 
-    const [name, symbol, tokenURI] = await Promise.all([
+    const [name, symbol, tokenURI, decimals] = await Promise.all([
       this.memecoinContract.read('name'),
       this.memecoinContract.read('symbol'),
       flaunchContract.read('tokenURI', {
         _tokenId: tokenId,
       }),
+      this.memecoinContract.read('decimals'),
     ]);
 
     return {
       name: name as string,
       symbol: symbol as string,
       tokenURI: tokenURI as string,
+      decimals: Number(decimals),
     };
   }
 

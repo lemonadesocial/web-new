@@ -11,7 +11,7 @@ import { formatWallet } from '$lib/utils/crypto';
 import { copy } from '$lib/utils/helpers';
 import { Badge, Card, Skeleton, toast } from '$lib/components/core';
 
-import { useFees, useGroup, useOwner, useTokenData } from './useCoin';
+import { useFees, useGroup, useOwner, useTokenData } from '$lib/hooks/useCoin';
 import { RegistrationTransactions } from './RegistrationTransactions';
 import { RegistrationHolders } from './RegistrationHolders';
 import { RegistrationAvanced } from './RegistrationAvanced';
