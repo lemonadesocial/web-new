@@ -5,16 +5,17 @@ import React, { useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { notFound } from 'next/navigation';
 
-import { StatItem } from './StatItem';
 import { listChainsAtom } from '$lib/jotai';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { formatWallet } from '$lib/utils/crypto';
-import { useFees, useGroup, useOwner, useTokenData } from './useCoin';
+import { copy } from '$lib/utils/helpers';
 import { Badge, Card, Skeleton, toast } from '$lib/components/core';
+
+import { useFees, useGroup, useOwner, useTokenData } from './useCoin';
 import { RegistrationTransactions } from './RegistrationTransactions';
 import { RegistrationHolders } from './RegistrationHolders';
 import { RegistrationAvanced } from './RegistrationAvanced';
-import { copy } from '$lib/utils/helpers';
+import { StatItem } from './StatItem';
 import { SwapCoin } from './SwapCoin';
 import { CoinDetail } from './CoinDetail';
 
@@ -133,7 +134,7 @@ function Registration() {
 
 function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
-  const { owner } = useOwner(chain, address);
+  const { launchpadGroup } = useGroup(chain, address);
 
   if (isLoadingTokenData) {
     return (
@@ -203,14 +204,15 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
           </div>
         </div>
 
-        {owner && (
-          <div className="p-4 flex gap-10 items-center text-sm text-tertiary">
-            <p className="flex-1">Community</p>
-            <div className="flex gap-1.5 items-center overflow-hidden">
-              <div className="size-4 aspect-square rounded-xs bg-gray-500" />
-              <p className="line-clamp-1 truncate">Culture Fest</p>
+        {
+          launchpadGroup && (
+            <div className="p-4 flex gap-10 items-center text-sm text-tertiary">
+              <p className="flex-1">Community</p>
+              <div className="flex gap-1.5 items-center overflow-hidden">
+                <div className="size-4 aspect-square rounded-xs bg-gray-500" />
+                <p className='line-clamp-1 truncate'>{launchpadGroup.name}</p>
+              </div>
             </div>
-          </div>
         )}
 
         <div className="p-4 flex gap-10 items-center text-sm text-tertiary">
