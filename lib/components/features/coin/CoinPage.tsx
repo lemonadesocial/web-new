@@ -1,16 +1,17 @@
 'use client';
 
+import clsx from 'clsx';
 import React, { useState } from 'react';
-import { StatItem } from './StatItem';
 import { useAtomValue } from 'jotai';
+import { notFound } from 'next/navigation';
+
+import { StatItem } from './StatItem';
 import { listChainsAtom } from '$lib/jotai';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { formatWallet } from '$lib/utils/crypto';
 import { useFees, useGroup, useOwner, useTokenData } from './useCoin';
 import { BuyCoin } from './BuyCoin';
-import { notFound } from 'next/navigation';
-import { Badge, Card, toast } from '$lib/components/core';
-import clsx from 'clsx';
+import { Badge, Card, Skeleton, toast } from '$lib/components/core';
 import { RegistrationTransactions } from './RegistrationTransactions';
 import { RegistrationHolders } from './RegistrationHolders';
 import { RegistrationAvanced } from './RegistrationAvanced';
@@ -35,9 +36,9 @@ export function CoinPage({ network, address }: CoinPageProps) {
         <Registration />
       </div>
 
-      <div className="flex-col gap-4 max-w-[336px] hidden md:flex">
+      <div className="flex-col gap-4 max-w-[336px] w-full hidden md:flex">
         <BuyCoin chain={chain} address={address} />
-        <CoinInfo />
+        <CoinInfo chain={chain} address={address} />
       </div>
     </div>
   );
@@ -123,11 +124,30 @@ function Registration() {
   );
 }
 
-function CoinInfo() {
-  const percent = 6.28;
-  const address = '0x7dg7...f8ws';
+function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
+  const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
+  const { owner } = useOwner(chain, address);
+
+  if (isLoadingTokenData) {
+    return (
+      <Card.Root className="w-full">
+        <Card.Content className="p-4 space-y-4">
+          <div className="flex gap-3">
+            <Skeleton className="size-[76px] rounded-sm" animate />
+            <Skeleton className="h-5 w-32 rounded-md" animate />
+          </div>
+          <Skeleton className="h-15 w-full rounded-md" animate />
+          <Skeleton className="h-4 w-3/4 rounded-md" animate />
+          <Skeleton className="h-4 w-fullrounded-md" animate />
+        </Card.Content>
+      </Card.Root>
+    );
+  }
+
+  if (!tokenData) return null;
+
   return (
-    <Card.Root>
+    <Card.Root className="w-full">
       <Card.Content className="p-0 divide-y divide-(--color-divider)">
         <div className="flex flex-col gap-4 p-4">
           <div className="flex gap-3">
@@ -136,16 +156,16 @@ function CoinInfo() {
             <div className="flex flex-col gap-2 w-full">
               <div className="flex gap-3">
                 <div className="flex-1">
-                  <p>$LSD</p>
-                  <p className="line-clamp-1 text-tertiary text-sm">Lemonade Stable Dollar</p>
+                  <p>${tokenData.symbol}</p>
+                  <p className="line-clamp-1 text-tertiary text-sm">{tokenData.name}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-accent-400">$683.17K</p>
-                  <p className={clsx('text-sm', percent > 0 ? 'text-success-500' : 'text-danger-500')}>+6.28%</p>
+                  {/* <p className="text-accent-400">$683.17K</p> */}
+                  {/* <p className={clsx('text-sm', percent > 0 ? 'text-success-500' : 'text-danger-500')}>+6.28%</p> */}
                 </div>
               </div>
               <Badge className="text-tertiary bg-quaternary flex gap-1">
-                <p className="text-xs">{address}</p>
+                <p className="text-xs">{formatWallet(address)}</p>
                 <i
                   className="icon-copy size-4 aspect-square"
                   onClick={() => copy(address, () => toast.success('Copied address!'))}
@@ -176,13 +196,17 @@ function CoinInfo() {
           </div>
         </div>
 
-        <div className="p-4 flex gap-10 items-center text-sm text-tertiary">
-          <p className="flex-1">Community</p>
-          <div className="flex gap-1.5 items-center overflow-hidden">
-            <div className="size-4 aspect-square rounded-xs bg-gray-500" />
-            <p className='line-clamp-1 truncate'>Culture Fest</p>
-          </div>
-        </div>
+        {
+          owner && (
+            <div className="p-4 flex gap-10 items-center text-sm text-tertiary">
+              <p className="flex-1">Community</p>
+              <div className="flex gap-1.5 items-center overflow-hidden">
+                <div className="size-4 aspect-square rounded-xs bg-gray-500" />
+                <p className='line-clamp-1 truncate'>Culture Fest</p>
+              </div>
+            </div>
+          )
+        }
 
         <div className="p-4 flex gap-10 items-center text-sm text-tertiary">
           <p className="flex-1">Creator</p>
