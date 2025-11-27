@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { mainnet, sepolia } from 'viem/chains';
 import { useAtomValue } from 'jotai';
 import { BrowserProvider, type Eip1193Provider } from 'ethers';
-import { formatEther, parseEther } from 'viem';
+import { formatEther, parseUnits } from 'viem';
 
 import { Button, Skeleton, modal, toast } from '$lib/components/core';
 import { chainsMapAtom } from '$lib/jotai';
@@ -22,7 +22,7 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
   const ethChain = chainsMap[ethChainId];
 
   const [amount, setAmount] = useState('');
-  const [isBuying, setIsBuying] = useState(false);
+  const [isSelling, setIsSelling] = useState(false);
   const [tokenPrice, setTokenPrice] = useState<string | null>(null);
   const { walletProvider } = useAppKitProvider('eip155');
 
@@ -45,10 +45,46 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
   }, [chain, address]);
 
   const executeSell = async () => {
+    if (!walletProvider) {
+      toast.error('Connect your wallet to continue');
+      return;
+    }
 
+    if (!tokenData) {
+      toast.error('Token data not available');
+      return;
+    }
+
+    let sellAmount: bigint;
+
+    try {
+      sellAmount = parseUnits(amount || '0', tokenData.decimals);
+    } catch {
+      toast.error('Enter a valid token amount');
+      return;
+    }
+
+    if (sellAmount > balance) {
+      toast.error('Insufficient balance');
+      return;
+    }
+
+    try {
+      setIsSelling(true);
+      const provider = new BrowserProvider(walletProvider as Eip1193Provider);
+      const signer = await provider.getSigner();
+      const flaunchClient = FlaunchClient.getInstance(chain, address, signer);
+      const txHash = await flaunchClient.sellCoin({ sellAmount });
+      toast.success(`Transaction submitted: ${txHash}`);
+    } catch (error) {
+      console.error('Failed to sell coin:', error);
+      toast.error('Failed to sell coin. Please try again.');
+    } finally {
+      setIsSelling(false);
+    }
   };
 
-  const handleBuyCoin = () => {
+  const handleSellCoin = () => {
     modal.open(ConnectWallet, {
       props: {
         chain,
@@ -148,8 +184,14 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
         </div>
       </div>
 
-      <Button variant="secondary" className="w-full mt-4" onClick={handleBuyCoin} loading={isBuying}>
-        Buy {tokenData.symbol}
+      <Button
+        variant="secondary"
+        className="w-full mt-4"
+        onClick={handleSellCoin}
+        loading={isSelling}
+        disabled={!amount || Number(amount) <= 0}
+      >
+        Sell {tokenData.symbol}
       </Button>
     </div>
   );

@@ -13,6 +13,7 @@ import { TreasuryManagerFactory } from '$lib/abis/token-launch-pad/TreasuryManag
 import { MarketCappedPrice } from '$lib/abis/token-launch-pad/MarketCappedPrice';
 import { Memecoin } from '$lib/abis/token-launch-pad/Memecoin';
 import { LETH } from '$lib/abis/token-launch-pad/LETH';
+import { ERC20 } from '$lib/abis/ERC20';
 
 type FlaunchABI = typeof Flaunch;
 type FeeEscrowABI = typeof FeeEscrow;
@@ -28,9 +29,8 @@ export class FlaunchClient {
   private static instances: Map<string, FlaunchClient> = new Map();
 
   static getInstance(chain: Chain, memecoinAddress: string, signer?: Signer): FlaunchClient {
-    if (signer) {
-      return new FlaunchClient(chain, memecoinAddress, signer);
-    }
+    if (signer) return new FlaunchClient(chain, memecoinAddress, signer);
+    
     const key = `${chain.chain_id}-${memecoinAddress}`;
 
     if (!FlaunchClient.instances.has(key)) {
@@ -326,6 +326,78 @@ export class FlaunchClient {
       },
       {
         value: buyAmount,
+      }
+    );
+
+    return txHash;
+  }
+
+  async sellCoin({
+    sellAmount,
+    slippageTolerance = 500,
+  }: {
+    sellAmount: bigint;
+    slippageTolerance?: number;
+  }): Promise<Hash> {
+    const positionManager = await this.getPositionManagerContract();
+    const nativeToken = await positionManager.read('nativeToken');
+
+    const poolKey = await positionManager.read('poolKey', {
+      _token: this.memecoinAddress,
+    });
+
+    const priceBounds = await this.marketUtilsContract.read('currentSqrtPriceX96', {
+      memecoin: this.memecoinAddress,
+      slippage: slippageTolerance,
+    });
+    
+    const minSqrtPriceX96 = priceBounds.min;
+    const maxSqrtPriceX96 = priceBounds.max;
+
+    const isNativeToken0 = nativeToken.toLowerCase().localeCompare(this.memecoinAddress.toLowerCase()) <= 0;
+    const sqrtPriceLimitX96 = !isNativeToken0 ? minSqrtPriceX96 : maxSqrtPriceX96;
+
+    const ERC20Contract = this.drift.contract({
+      abi: ERC20,
+      address: this.memecoinAddress,
+    }) as unknown as ReadWriteContract<typeof ERC20>;
+
+    const poolSwapAddress = await this.zapContract.read('poolSwap');
+
+    const approveTxHash = await ERC20Contract.write('approve', {
+      spender: poolSwapAddress,
+      amount: sellAmount,
+    });
+
+    const approveTx = await this.provider.getTransaction(approveTxHash);
+    if (!approveTx) {
+      throw new Error('Failed to get approval transaction');
+    }
+    await approveTx.wait();
+
+    const poolSwapContract = this.drift.contract({
+      abi: PoolSwap,
+      address: poolSwapAddress,
+    }) as unknown as ReadWriteContract<typeof PoolSwap>;
+
+    console.log({
+      _key: poolKey,
+      _params: {
+        zeroForOne: !isNativeToken0,
+        amountSpecified: -sellAmount,
+        sqrtPriceLimitX96,
+      }
+    })
+
+    const txHash = await poolSwapContract.write(
+      'swap',
+      {
+        _key: poolKey,
+        _params: {
+          zeroForOne: !isNativeToken0,
+          amountSpecified: -sellAmount,
+          sqrtPriceLimitX96,
+        }
       }
     );
 
