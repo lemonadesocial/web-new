@@ -18,6 +18,7 @@ import { RegistrationAvanced } from './RegistrationAvanced';
 import { StatItem } from './StatItem';
 import { SwapCoin } from './SwapCoin';
 import { CoinDetail } from './CoinDetail';
+import { BuybackCharging } from './BuybackCharging';
 
 interface CoinPageProps {
   network: string;
@@ -78,25 +79,6 @@ function Stats({ chain, address }: { chain: Chain; address: string }) {
       <StatItem title="Liquidity" value="Coming Soon" />
       <StatItem title="Fair Launch" value="Coming Soon" />
       <StatItem title="Holders" value="Coming Soon" />
-    </div>
-  );
-}
-
-function BuybackCharging({ amount = '0.0061 ETH', progress = 0.17 }: { amount?: string; progress?: number }) {
-  const progressPercentage = Math.min(100, Math.max(0, progress * 100));
-
-  return (
-    <div className="py-3 px-4 rounded-md border-card-border bg-card space-y-2">
-      <div className="flex justify-between items-center">
-        <p>Buyback Charging</p>
-        <p className="text-alert-400">{amount}</p>
-      </div>
-      <div className="relative w-full h-2 rounded-full bg-quaternary overflow-hidden">
-        <div
-          className="h-full rounded-full bg-alert-400 transition-all duration-300"
-          style={{ width: `${progressPercentage}%` }}
-        />
-      </div>
     </div>
   );
 }
