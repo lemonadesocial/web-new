@@ -1,6 +1,6 @@
 import { Button, modal } from '$lib/components/core';
 
-export function SuccessModal({
+export function TxnConfirmedModal({
   title,
   description,
   txUrl

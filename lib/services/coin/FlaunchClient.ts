@@ -1,5 +1,5 @@
 import { isAddress, JsonRpcProvider, type Signer } from 'ethers';
-import { createDrift, type Drift, type ReadContract, type Abi, type Hash, ReadWriteContract } from '@gud/drift';
+import { createDrift, type Drift, type ReadContract, type Hash, ReadWriteContract } from '@gud/drift';
 import { ethersAdapter } from '@gud/drift-ethers';
 
 import { Chain } from '$lib/graphql/generated/backend/graphql';
@@ -379,15 +379,6 @@ export class FlaunchClient {
       abi: PoolSwap,
       address: poolSwapAddress,
     }) as unknown as ReadWriteContract<typeof PoolSwap>;
-
-    console.log({
-      _key: poolKey,
-      _params: {
-        zeroForOne: !isNativeToken0,
-        amountSpecified: -sellAmount,
-        sqrtPriceLimitX96,
-      }
-    })
 
     const txHash = await poolSwapContract.write(
       'swap',
