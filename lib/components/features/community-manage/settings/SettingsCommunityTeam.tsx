@@ -23,7 +23,7 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
   const [mounted, setMounted] = React.useState(false);
 
   const { data, loading, refetch } = useQuery(GetSpaceMembersDocument, {
-    variables: { space: space?._id, limit: 100, skip: 0, deletion: false },
+    variables: { space: space?._id, limit: 100, skip: 0, deletion: false, roles: [SpaceRole.Admin, SpaceRole.Ambassador, SpaceRole.Creator] },
     skip: !space?._id,
     onComplete: () => {
       if (!mounted) setMounted(true);
