@@ -11,7 +11,7 @@ import { formatWallet } from '$lib/utils/crypto';
 import { copy } from '$lib/utils/helpers';
 import { Badge, Card, Skeleton, toast } from '$lib/components/core';
 
-import { useFees, useGroup, useOwner, useTokenData } from '$lib/hooks/useCoin';
+import { useFees, useGroup, useLiquidity, useMarketCap, useOwner, useTokenData, useTreasuryValue } from '$lib/hooks/useCoin';
 import { RegistrationTransactions } from './RegistrationTransactions';
 import { RegistrationHolders } from './RegistrationHolders';
 import { RegistrationAvanced } from './RegistrationAvanced';
@@ -54,10 +54,12 @@ export function CoinPage({ network, address }: CoinPageProps) {
 }
 
 function Stats({ chain, address }: { chain: Chain; address: string }) {
-  const [treasuryValue, setTreasuryValue] = useState<string>('');
   const { launchpadGroup, implementationAddress, isLoading } = useGroup(chain, address);
   const { owner, isLoadingOwner } = useOwner(chain, address);
   const { formattedFees, isLoadingFees } = useFees(chain, address);
+  const { formattedTreasuryValue, isLoadingTreasuryValue } = useTreasuryValue(chain, address);
+  const { formattedMarketCap, isLoadingMarketCap } = useMarketCap(chain, address);
+  const { formattedLiquidity, isLoadingLiquidity } = useLiquidity(chain, address);
 
   return (
     <div className="grid grid-cols-5 gap-3">
@@ -73,10 +75,10 @@ function Stats({ chain, address }: { chain: Chain; address: string }) {
         }
       />
       <StatItem title="Fees Earned" value={formattedFees || (isLoadingFees ? 'Loading...' : 'N/A')} />
-      <StatItem title="Treasury" value="Coming Soon" />
+      <StatItem title="Treasury" value={formattedTreasuryValue || (isLoadingTreasuryValue ? 'Loading...' : 'N/A')} />
       <StatItem title="Volume (24h)" value="Coming Soon" />
-      <StatItem title="Marketcap" value="Coming Soon" />
-      <StatItem title="Liquidity" value="Coming Soon" />
+      <StatItem title="Marketcap" value={formattedMarketCap || (isLoadingMarketCap ? 'Loading...' : 'N/A')} />
+      <StatItem title="Liquidity" value={formattedLiquidity || (isLoadingLiquidity ? 'Loading...' : 'N/A')} />
       <StatItem title="Fair Launch" value="Coming Soon" />
       <StatItem title="Holders" value="Coming Soon" />
     </div>
@@ -90,7 +92,7 @@ function Registration() {
     advanced: <RegistrationAvanced />,
   };
 
-  const [selected, setSelected] = React.useState('transactions');
+  const [selected, setSelected] = useState('transactions');
   return (
     <Card.Root>
       <Card.Content className="p-0">
@@ -193,6 +195,7 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
               <div className="size-4 aspect-square rounded-xs bg-gray-500" />
               <p className="line-clamp-1 truncate">{launchpadGroup.name}</p>
             </div>
+          </div>
         )}
 
         <div className="p-4 flex gap-10 items-center text-sm text-tertiary">

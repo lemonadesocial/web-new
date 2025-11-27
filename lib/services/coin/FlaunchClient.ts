@@ -14,6 +14,7 @@ import { MarketCappedPrice } from '$lib/abis/token-launch-pad/MarketCappedPrice'
 import { Memecoin } from '$lib/abis/token-launch-pad/Memecoin';
 import { LETH } from '$lib/abis/token-launch-pad/LETH';
 import { ERC20 } from '$lib/abis/ERC20';
+import { FairLaunch } from '$lib/abis/token-launch-pad/FairLaunch';
 
 type FlaunchABI = typeof Flaunch;
 type FeeEscrowABI = typeof FeeEscrow;
@@ -24,6 +25,9 @@ type TreasuryManagerFactoryABI = typeof TreasuryManagerFactory;
 type MarketCappedPriceABI = typeof MarketCappedPrice;
 type MemecoinABI = typeof Memecoin;
 type LETHABI = typeof LETH;
+type ERC20ABI = typeof ERC20;
+
+const TOTAL_MEMECOIN_SUPPLY = BigInt('100000000000000000000000000000');
 
 export class FlaunchClient {
   private static instances: Map<string, FlaunchClient> = new Map();
@@ -51,6 +55,7 @@ export class FlaunchClient {
   private marketUtilsContract: ReadContract<MarketUtilsABI>;
   private memecoinContract: ReadContract<MemecoinABI>;
   private positionManagerContract: ReadContract<PositionManagerABI> | null = null;
+  private erc20Contract: ReadContract<ERC20ABI>;
 
   private memecoinAddress: string;
 
@@ -103,6 +108,11 @@ export class FlaunchClient {
 
     this.memecoinContract = this.drift.contract({
       abi: Memecoin,
+      address: memecoinAddress,
+    });
+
+    this.erc20Contract = this.drift.contract({
+      abi: ERC20,
       address: memecoinAddress,
     });
   }
@@ -242,6 +252,125 @@ export class FlaunchClient {
     return ethAmount as bigint;
   }
 
+  async getLETHAddress(): Promise<string> {
+    const positionManager = await this.getPositionManagerContract();
+    const nativeToken = await positionManager.read('nativeToken');
+
+    return nativeToken;
+  }
+
+  async getTreasuryValue(): Promise<bigint> {
+    const flaunchContract = await this.getFlaunchContract();
+
+    const memeCoinTreasury = await flaunchContract.read('memecoinTreasury', {
+      _tokenId: await this.getTokenId(),
+    });
+
+    const memeCoinTreasuryBalance = await this.erc20Contract.read('balanceOf', {
+      account: memeCoinTreasury,
+    });
+
+    const marketCap = await this.marketUtilsContract.read('marketCap', {
+      memecoin: this.memecoinAddress,
+      tokenAmount: memeCoinTreasuryBalance,
+    });
+
+    const lETHAddress = await this.getLETHAddress();
+    const lETHContract = this.drift.contract({
+      abi: ERC20,
+      address: lETHAddress,
+    }) 
+
+    const lETHBalance = await lETHContract.read('balanceOf', {
+      account: memeCoinTreasury,
+    });
+
+    const finalETHAmount = marketCap + lETHBalance;
+
+    const finalUSDCAmount = await this.marketCappedPriceContract.read('getFlippedMarketCap', {
+      ethAmount: finalETHAmount,
+    });
+
+    return finalUSDCAmount as bigint;
+  }
+
+  async getMarketCap(): Promise<bigint> {
+    const totalSupply = await this.memecoinContract.read('totalSupply');
+
+    const ethAmount = await this.marketUtilsContract.read('marketCap', {
+      memecoin: this.memecoinAddress,
+      tokenAmount: totalSupply,
+    });
+
+    const usdcAmount = await this.marketCappedPriceContract.read('getFlippedMarketCap', {
+      ethAmount,
+    });
+
+    return usdcAmount as bigint;
+  }
+
+  async getLiquidity(): Promise<bigint> {
+    const liquidity = await this.marketUtilsContract.read('poolLiquidity', {
+      memecoin: this.memecoinAddress,
+    });
+
+    const memecoinETHValue = await this.marketUtilsContract.read('marketCap', {
+      memecoin: this.memecoinAddress,
+      tokenAmount: liquidity._tokenAmount,
+    });
+
+    const totalETHAmount = memecoinETHValue + liquidity._ethAmount;
+
+    const totalUSDCAmount = await this.marketCappedPriceContract.read('getFlippedMarketCap', {
+      ethAmount: totalETHAmount,
+    });
+
+    return totalUSDCAmount;
+  }
+
+  async getFairLaunch(): Promise<{
+    info: any;
+    percentage: number;
+    usdcValue: bigint;
+  }> {
+    const positionManager = await this.getPositionManagerContract();
+    const fairLaunchAddress = await positionManager.read('fairLaunch');
+
+    if (!isAddress(fairLaunchAddress)) {
+      throw new Error('Invalid fair launch address');
+    }
+
+    const fairLaunchContract = this.drift.contract({
+      abi: FairLaunch,
+      address: fairLaunchAddress,
+    });
+
+    const poolId = await this.getPoolId();
+
+    const fairLaunchInfo = await fairLaunchContract.read('fairLaunchInfo', {
+      _poolId: poolId,
+    });
+
+    const supply = fairLaunchInfo.supply as bigint;
+
+    const percentage = Number((supply * BigInt(10000)) / TOTAL_MEMECOIN_SUPPLY) / 100;
+
+    const supplyEthValue = await this.marketUtilsContract.read('marketCap', {
+      memecoin: this.memecoinAddress,
+      tokenAmount: supply,
+    });
+
+    const supplyUsdcValue = await this.marketCappedPriceContract.read('getFlippedMarketCap', {
+      ethAmount: supplyEthValue,
+    });
+
+    return {
+      info: fairLaunchInfo,
+      percentage,
+      usdcValue: supplyUsdcValue as bigint,
+    };
+  }
+
   private async getPositionManagerContract(): Promise<ReadContract<PositionManagerABI>> {
     if (this.positionManagerContract) return this.positionManagerContract;
 
@@ -268,7 +397,7 @@ export class FlaunchClient {
     slippageTolerance?: number;
   }): Promise<Hash> {
     const positionManager = await this.getPositionManagerContract();
-    const nativeToken = await positionManager.read('nativeToken');
+    const nativeToken = await this.getLETHAddress();
 
     const poolKey = await positionManager.read('poolKey', {
       _token: this.memecoinAddress,
@@ -340,7 +469,7 @@ export class FlaunchClient {
     slippageTolerance?: number;
   }): Promise<Hash> {
     const positionManager = await this.getPositionManagerContract();
-    const nativeToken = await positionManager.read('nativeToken');
+    const nativeToken = await this.getLETHAddress();
 
     const poolKey = await positionManager.read('poolKey', {
       _token: this.memecoinAddress,

@@ -1,5 +1,8 @@
+import { formatUnits, zeroAddress } from 'viem';
+
 import { useEffect, useState } from 'react';
-import { useQuery } from '$lib/graphql/request';
+import { useQuery as useGraphQLQuery } from '$lib/graphql/request';
+import { useQuery as useReactQuery } from '@tanstack/react-query';
 import {
   ListLaunchpadGroupsDocument,
   type ListLaunchpadGroupsQuery,
@@ -7,8 +10,7 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
-import { useTokenBalance } from '$lib/hooks/useBalance';
-import { formatUnits, zeroAddress } from 'viem';
+import { formatNumber } from '$lib/utils/number';
 
 type LaunchpadGroupItem = ListLaunchpadGroupsQuery['listLaunchpadGroups']['items'][number];
 
@@ -35,7 +37,7 @@ export function useGroup(chain: Chain, address: string) {
 
   const shouldSkipQuery = !implementationAddress || implementationAddress.toLowerCase() === zeroAddress.toLowerCase();
 
-  const { loading: isLoadingQuery } = useQuery<ListLaunchpadGroupsQuery, ListLaunchpadGroupsQueryVariables>(
+  const { loading: isLoadingQuery } = useGraphQLQuery<ListLaunchpadGroupsQuery, ListLaunchpadGroupsQueryVariables>(
     ListLaunchpadGroupsDocument,
     {
       variables: implementationAddress ? { address: implementationAddress } : undefined,
@@ -108,6 +110,79 @@ export function useFees(chain: Chain, address: string) {
   };
 }
 
+export function useTreasuryValue(chain: Chain, address: string) {
+  const [formattedTreasuryValue, setFormattedTreasuryValue] = useState<string | null>(null);
+  const [rawTreasuryValue, setRawTreasuryValue] = useState<bigint | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTreasuryValue = async () => {
+      setIsLoading(true);
+      const flaunchClient = FlaunchClient.getInstance(chain, address);
+
+      const treasuryValue = await flaunchClient.getTreasuryValue();
+      setRawTreasuryValue(treasuryValue);
+      
+      const formattedValue = formatUnits(treasuryValue, 6);
+      setFormattedTreasuryValue(`${formattedValue} USDC`);
+      
+      setIsLoading(false);
+    };
+
+    fetchTreasuryValue();
+  }, [chain, address]);
+
+  return {
+    formattedTreasuryValue,
+    rawTreasuryValue,
+    isLoadingTreasuryValue: isLoading,
+  };
+}
+
+export function useMarketCap(chain: Chain, address: string) {
+  const {
+    data,
+    isLoading,
+  } = useReactQuery({
+    queryKey: ['market-cap', chain.chain_id, address],
+    queryFn: async () => {
+      const flaunchClient = FlaunchClient.getInstance(chain, address);
+      return flaunchClient.getMarketCap();
+    },
+    enabled: !!chain && !!address,
+  });
+
+  const formattedMarketCap = data ? `${formatNumber(Number(formatUnits(data, 6)))} USDC` : null;
+
+  return {
+    formattedMarketCap,
+    rawMarketCap: data ?? null,
+    isLoadingMarketCap: isLoading,
+  };
+}
+
+export function useLiquidity(chain: Chain, address: string) {
+  const {
+    data,
+    isLoading,
+  } = useReactQuery({
+    queryKey: ['liquidity', chain.chain_id, address],
+    queryFn: async () => {
+      const flaunchClient = FlaunchClient.getInstance(chain, address);
+      return flaunchClient.getLiquidity();
+    },
+    enabled: !!chain && !!address,
+  });
+
+  const formattedLiquidity = data ? `${formatNumber(Number(formatUnits(data, 6)))} USDC` : null;
+
+  return {
+    formattedLiquidity,
+    rawLiquidity: data ?? null,
+    isLoadingLiquidity: isLoading,
+  };
+}
+
 export function useTokenData(chain: Chain, address: string) {
   const [tokenData, setTokenData] = useState<{ name: string; symbol: string; tokenURI: string; decimals: number } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -130,27 +205,4 @@ export function useTokenData(chain: Chain, address: string) {
     isLoadingTokenData: isLoading,
   };
 }
-
-export function useCoinTokenBalance(chain: Chain, address: string) {
-  const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
-
-  const {
-    balance,
-    formattedBalance,
-    loading,
-    error,
-  } = useTokenBalance({
-    chain,
-    tokenAddress: address,
-    decimals: tokenData?.decimals ?? 18,
-  });
-
-  return {
-    balance,
-    formattedBalance,
-    loading: loading || isLoadingTokenData,
-    error,
-  };
-}
-
 
