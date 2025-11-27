@@ -186,14 +186,12 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
           </div>
         </div>
 
-        {
-          launchpadGroup && (
-            <div className="p-4 flex gap-10 items-center text-sm text-tertiary">
-              <p className="flex-1">Community</p>
-              <div className="flex gap-1.5 items-center overflow-hidden">
-                <div className="size-4 aspect-square rounded-xs bg-gray-500" />
-                <p className='line-clamp-1 truncate'>{launchpadGroup.name}</p>
-              </div>
+        {launchpadGroup && (
+          <div className="p-4 flex gap-10 items-center text-sm text-tertiary">
+            <p className="flex-1">Community</p>
+            <div className="flex gap-1.5 items-center overflow-hidden">
+              <div className="size-4 aspect-square rounded-xs bg-gray-500" />
+              <p className="line-clamp-1 truncate">{launchpadGroup.name}</p>
             </div>
           </div>
         )}
