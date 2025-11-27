@@ -10,13 +10,13 @@ import { listChainsAtom } from '$lib/jotai';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { formatWallet } from '$lib/utils/crypto';
 import { useFees, useGroup, useOwner, useTokenData } from './useCoin';
-import { BuyCoin } from './BuyCoin';
 import { Badge, Card, Skeleton, toast } from '$lib/components/core';
 import { RegistrationTransactions } from './RegistrationTransactions';
 import { RegistrationHolders } from './RegistrationHolders';
 import { RegistrationAvanced } from './RegistrationAvanced';
 import { copy } from '$lib/utils/helpers';
 import { SwapCoin } from './SwapCoin';
+import { CoinDetail } from './CoinDetail';
 
 interface CoinPageProps {
   network: string;
@@ -30,18 +30,24 @@ export function CoinPage({ network, address }: CoinPageProps) {
   if (!chain) return notFound();
 
   return (
-    <div className="flex gap-4 items-start">
-      <div className="flex flex-col gap-4">
-        <Stats chain={chain!} address={address} />
-        <BuybackCharging />
-        <Registration />
+    <>
+      <div className="gap-4 items-start hidden md:flex">
+        <div className="flex flex-col gap-4">
+          <Stats chain={chain!} address={address} />
+          <BuybackCharging />
+          <Registration />
+        </div>
+
+        <div className="flex-col gap-4 max-w-[336px] w-full">
+          <SwapCoin chain={chain} address={address} />
+          <CoinInfo chain={chain} address={address} />
+        </div>
       </div>
 
-      <div className="flex-col gap-4 max-w-[336px] w-full hidden md:flex">
-        <SwapCoin chain={chain} address={address} />
-        <CoinInfo chain={chain} address={address} />
+      <div className="md:hidden pt-4 pb-20">
+        <CoinDetail chain={chain} address={address} />
       </div>
-    </div>
+    </>
   );
 }
 
@@ -197,29 +203,27 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
           </div>
         </div>
 
-        {
-          owner && (
-            <div className="p-4 flex gap-10 items-center text-sm text-tertiary">
-              <p className="flex-1">Community</p>
-              <div className="flex gap-1.5 items-center overflow-hidden">
-                <div className="size-4 aspect-square rounded-xs bg-gray-500" />
-                <p className='line-clamp-1 truncate'>Culture Fest</p>
-              </div>
+        {owner && (
+          <div className="p-4 flex gap-10 items-center text-sm text-tertiary">
+            <p className="flex-1">Community</p>
+            <div className="flex gap-1.5 items-center overflow-hidden">
+              <div className="size-4 aspect-square rounded-xs bg-gray-500" />
+              <p className="line-clamp-1 truncate">Culture Fest</p>
             </div>
-          )
-        }
+          </div>
+        )}
 
         <div className="p-4 flex gap-10 items-center text-sm text-tertiary">
           <p className="flex-1">Creator</p>
           <div className="flex gap-1.5 items-center overflow-hidden">
-            <p className='line-clamp-1 truncate'>johndoe.eth</p>
+            <p className="line-clamp-1 truncate">johndoe.eth</p>
           </div>
         </div>
 
         <div className="p-4 flex gap-10 items-center text-sm text-tertiary">
           <p className="flex-1">Launched on Lemonade</p>
           <div className="flex gap-1.5 items-center overflow-hidden">
-            <p className='line-clamp-1 truncate'>July 29, 2023</p>
+            <p className="line-clamp-1 truncate">July 29, 2023</p>
           </div>
         </div>
       </Card.Content>
