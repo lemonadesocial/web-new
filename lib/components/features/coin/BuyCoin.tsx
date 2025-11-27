@@ -1,18 +1,22 @@
 import { useEffect, useState } from 'react';
 import { mainnet, sepolia } from 'viem/chains';
 import { useAtomValue } from 'jotai';
-import { BrowserProvider, type Eip1193Provider } from 'ethers';
-import { formatEther, parseEther } from 'viem';
+import { BrowserProvider, type Eip1193Provider, Interface } from 'ethers';
+import { formatEther, parseEther, formatUnits } from 'viem';
+import * as Sentry from '@sentry/nextjs';
 
 import { Button, Skeleton, modal, toast } from '$lib/components/core';
 import { chainsMapAtom } from '$lib/jotai';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { useTokenData } from '$lib/hooks/useCoin';
-import { useAppKitProvider } from '$lib/utils/appkit';
+import { useAppKitProvider, useAppKitAccount } from '$lib/utils/appkit';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 import { ConnectWallet } from '../modals/ConnectWallet';
 import { useBalance } from '$lib/hooks/useBalance';
 import { formatNumber } from '$lib/utils/number';
+import { formatError, getTransactionUrl } from '$lib/utils/crypto';
+import { TxnConfirmedModal } from '../create-coin/TxnConfirmedModal';
+import { ERC20 } from '$lib/abis/ERC20';
 
 const quickAmounts = ['0.01', '0.1', '0.5', '1'];
 
@@ -25,6 +29,7 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
   const [isBuying, setIsBuying] = useState(false);
   const [tokenPrice, setTokenPrice] = useState<string | null>(null);
   const { walletProvider } = useAppKitProvider('eip155');
+  const { address: userAddress } = useAppKitAccount();
 
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
   const { formattedBalance } = useBalance();
@@ -50,30 +55,54 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
       return;
     }
 
-    let buyAmount: bigint;
-
     try {
-      buyAmount = parseEther(amount || '0');
-    } catch {
-      toast.error('Enter a valid ETH amount');
-      return;
-    }
+      const buyAmount = parseEther(amount || '0');
 
-    if (buyAmount <= BigInt(0)) {
-      toast.error('Enter an amount greater than zero');
-      return;
-    }
-
-    try {
       setIsBuying(true);
       const provider = new BrowserProvider(walletProvider as Eip1193Provider);
       const signer = await provider.getSigner();
       const flaunchClient = FlaunchClient.getInstance(chain, address, signer);
       const txHash = await flaunchClient.buyCoin({ buyAmount });
-      console.log(txHash)
-      toast.success(`Transaction submitted: ${txHash}`);
+      
+      const receipt = await provider.waitForTransaction(txHash);
+      
+      let tokenAmount: string | null = null;
+      
+      if (receipt && tokenData && userAddress) {
+        const erc20Interface = new Interface(ERC20);
+        const memecoinAddressLower = address.toLowerCase();
+        const userAddressLower = userAddress.toLowerCase();
+        
+        for (const log of receipt.logs) {
+          if (log.address.toLowerCase() !== memecoinAddressLower) continue;
+          
+          try {
+            const parsedLog = erc20Interface.parseLog(log);
+            if (parsedLog?.name === 'Transfer' && parsedLog.args.to.toLowerCase() === userAddressLower) {
+              const value = parsedLog.args.value as bigint;
+              tokenAmount = formatNumber(Number(formatUnits(value, tokenData.decimals)));
+              break;
+            }
+          } catch {
+            continue;
+          }
+        }
+      }
+      
+      const description = tokenAmount && tokenData
+        ? `${tokenAmount} ${tokenData.symbol} has been added to your wallet.`
+        : `You have successfully purchased ${formatNumber(Number(amount))} ETH worth of ${tokenData?.symbol || 'tokens'}.`;
+      
+      modal.open(TxnConfirmedModal, {
+        props: {
+          title: 'Purchase Complete',
+          description,
+          txUrl: getTransactionUrl(chain, txHash)
+        }
+      });
     } catch (error) {
-      console.log(error)
+      Sentry.captureException(error);
+      toast.error(formatError(error));
     } finally {
       setIsBuying(false);
     }
@@ -153,7 +182,13 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
         </div>
       </div>
 
-      <Button variant="secondary" className="w-full mt-4" onClick={handleBuyCoin} loading={isBuying}>
+      <Button
+        variant="secondary"
+        className="w-full mt-4"
+        onClick={handleBuyCoin}
+        loading={isBuying}
+        disabled={!amount || Number(amount) <= 0}
+      >
         Buy {tokenData.symbol}
       </Button>
     </div>

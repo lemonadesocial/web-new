@@ -3,6 +3,7 @@ import { mainnet, sepolia } from 'viem/chains';
 import { useAtomValue } from 'jotai';
 import { BrowserProvider, type Eip1193Provider } from 'ethers';
 import { formatEther, parseUnits } from 'viem';
+import * as Sentry from '@sentry/nextjs';
 
 import { Button, Skeleton, modal, toast } from '$lib/components/core';
 import { chainsMapAtom } from '$lib/jotai';
@@ -11,8 +12,10 @@ import { useTokenData } from '$lib/hooks/useCoin';
 import { ConnectWallet } from '../modals/ConnectWallet';
 import { useAppKitProvider } from '$lib/utils/appkit';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
-import { useBalance, useTokenBalance } from '$lib/hooks/useBalance';
+import { useTokenBalance } from '$lib/hooks/useBalance';
 import { formatNumber } from '$lib/utils/number';
+import { formatError, getTransactionUrl } from '$lib/utils/crypto';
+import { TxnConfirmedModal } from '../create-coin/TxnConfirmedModal';
 
 const quickAmounts = [10, 20, 50, 100];
 
@@ -55,30 +58,30 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
       return;
     }
 
-    let sellAmount: bigint;
-
     try {
-      sellAmount = parseUnits(amount || '0', tokenData.decimals);
-    } catch {
-      toast.error('Enter a valid token amount');
-      return;
-    }
+      const sellAmount = parseUnits(amount || '0', tokenData.decimals);
 
-    if (sellAmount > balance) {
-      toast.error('Insufficient balance');
-      return;
-    }
-
-    try {
+      if (sellAmount > balance) {
+        toast.error('Insufficient balance');
+        return;
+      }
+  
       setIsSelling(true);
       const provider = new BrowserProvider(walletProvider as Eip1193Provider);
       const signer = await provider.getSigner();
       const flaunchClient = FlaunchClient.getInstance(chain, address, signer);
       const txHash = await flaunchClient.sellCoin({ sellAmount });
-      toast.success(`Transaction submitted: ${txHash}`);
+      
+      modal.open(TxnConfirmedModal, {
+        props: {
+          title: 'Coin Sold',
+          description: `You have successfully sold ${amount} ${tokenData.symbol}.`,
+          txUrl: getTransactionUrl(chain, txHash)
+        }
+      });
     } catch (error) {
-      console.error('Failed to sell coin:', error);
-      toast.error('Failed to sell coin. Please try again.');
+      Sentry.captureException(error);
+      toast.error(formatError(error));
     } finally {
       setIsSelling(false);
     }
