@@ -48,7 +48,11 @@ export default async function Page({ params }: Props) {
 
   // const { subSpaces, spaceTags } = await prefetchData(space);
 
-  return <Community initData={{ space }} />;
+  return (
+    <div className="page mx-auto px-4 xl:px-0 pt-6">
+      <Community initData={{ space }} />
+    </div>
+  );
 }
 
 // const prefetchData = async (space: Space) => {

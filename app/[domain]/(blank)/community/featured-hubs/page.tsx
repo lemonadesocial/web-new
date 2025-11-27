@@ -1,11 +1,11 @@
-import { getClient } from "$lib/graphql/request";
+import { getClient } from '$lib/graphql/request';
 
 import { isObjectId } from '$lib/utils/helpers';
 import { GetSubSpacesDocument, PublicSpace } from '$lib/graphql/generated/backend/graphql';
-import SubCommunity from "$lib/components/features/sub-community";
-import { getSpace } from "$lib/utils/getSpace";
+import SubCommunity from '$lib/components/features/sub-community';
+import { getSpace } from '$lib/utils/getSpace';
 
-export default async function FeaturedHubs({ params }: { params: Promise<{ uid: string; }>; }) {
+export default async function FeaturedHubs({ params }: { params: Promise<{ uid: string }> }) {
   const uid = (await params).uid;
   const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
 
@@ -16,6 +16,8 @@ export default async function FeaturedHubs({ params }: { params: Promise<{ uid: 
   const subSpaces = subSpacesData?.getSubSpaces || [];
 
   return (
-    <SubCommunity subSpaces={subSpaces as PublicSpace[]} />
+    <div className="page mx-auto px-4 xl:px-0 pt-6">
+      <SubCommunity subSpaces={subSpaces as PublicSpace[]} />
+    </div>
   );
-};
+}
