@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.32.1](https://github.com/lemonadesocial/web-new/compare/v8.32.0...v8.32.1) (2025-11-27)
+
+
+### Bug Fixes
+
+* filter roles space members ([f58742b](https://github.com/lemonadesocial/web-new/commit/f58742bfb597440a15fcf1291bb11ab648680153))
+
 ## [8.32.0](https://github.com/lemonadesocial/web-new/compare/v8.31.1...v8.32.0) (2025-11-26)
 
 
