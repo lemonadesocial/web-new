@@ -5,8 +5,9 @@ import {
   type ListLaunchpadGroupsQuery,
   type ListLaunchpadGroupsQueryVariables,
 } from '$lib/graphql/generated/backend/graphql';
-import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
+import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
+import { useTokenBalance } from '$lib/hooks/useBalance';
 import { formatUnits, zeroAddress } from 'viem';
 
 type LaunchpadGroupItem = ListLaunchpadGroupsQuery['listLaunchpadGroups']['items'][number];
@@ -21,11 +22,11 @@ export function useGroup(chain: Chain, address: string) {
       setIsLoadingOwner(true);
       const flaunchClient = FlaunchClient.getInstance(chain, address);
       const owner = await flaunchClient.getOwnerOf();
-      
+
       if (owner && owner.toLowerCase() !== zeroAddress.toLowerCase()) {
         setImplementationAddress(owner);
       }
-        
+
       setIsLoadingOwner(false);
     };
 
@@ -108,7 +109,7 @@ export function useFees(chain: Chain, address: string) {
 }
 
 export function useTokenData(chain: Chain, address: string) {
-  const [tokenData, setTokenData] = useState<{ name: string; symbol: string; tokenURI: string } | null>(null);
+  const [tokenData, setTokenData] = useState<{ name: string; symbol: string; tokenURI: string; decimals: number } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -129,3 +130,27 @@ export function useTokenData(chain: Chain, address: string) {
     isLoadingTokenData: isLoading,
   };
 }
+
+export function useCoinTokenBalance(chain: Chain, address: string) {
+  const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
+
+  const {
+    balance,
+    formattedBalance,
+    loading,
+    error,
+  } = useTokenBalance({
+    chain,
+    tokenAddress: address,
+    decimals: tokenData?.decimals ?? 18,
+  });
+
+  return {
+    balance,
+    formattedBalance,
+    loading: loading || isLoadingTokenData,
+    error,
+  };
+}
+
+

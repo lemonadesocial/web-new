@@ -19,7 +19,7 @@ import { ConfirmTransaction } from "../modals/ConfirmTransaction";
 import { ErrorModal } from "../modals/ErrorModal";
 
 import FlaunchABI from '$lib/abis/token-launch-pad/Flaunch.json';
-import { SuccessModal } from "./SuccessModal";
+import { TxnConfirmedModal } from "./TxnConfirmedModal";
 
 interface CreateCoinModalProps {
   txParams: LaunchTokenTxParams;
@@ -160,7 +160,7 @@ export function CreateCoinModal({
 
   const handleSuccess = (memecoinAddress: string, txHash: string) => {
     modal.close();
-    modal.open(SuccessModal, {
+    modal.open(TxnConfirmedModal, {
       props: {
         title: 'Token Created',
         description: 'Congratulations! Your payment has been confirmed, and your token is ready to use.',
