@@ -403,7 +403,7 @@ export function CreateCoin() {
   const isAvandedMode = launchMode === 'advanced';
 
   return (
-    <div className="max-w-[720px] mx-auto pb-10">
+    <div className="max-w-[720px] mx-auto pb-10 px-4">
       <style jsx>{`
         .slider::-webkit-slider-thumb {
           appearance: none;
@@ -428,7 +428,7 @@ export function CreateCoin() {
       `}</style>
       <h1 className="text-3xl font-semibold pt-6 pb-8">Create Coin</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div
             className="p-2 pr-3 bg-card border border-card-border rounded-md gap-3 flex items-center cursor-pointer"
             onClick={() => setLaunchMode('fast')}
@@ -756,74 +756,74 @@ export function CreateCoin() {
           </div>
         </div>
 
-      <div className="bg-card border border-card-border rounded-md">
-        <div className="flex items-center justify-between p-4">
-          <p className="text-lg font-medium">Socials</p>
+        <div className="bg-card border border-card-border rounded-md">
+          <div className="flex items-center justify-between p-4">
+            <p className="text-lg font-medium">Socials</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 pt-0">
+            <div className="flex items-center gap-4">
+              <i className="icon-x size-5 text-tertiary" />
+              <div className="flex-1">
+                <InputField
+                  value={watch('socialTwitter')}
+                  onChangeText={(value) => setValue('socialTwitter', value)}
+                  prefix="x.com/"
+                  placeholder="johndoe"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <i className="icon-telegram size-5 text-tertiary" />
+              <div className="flex-1">
+                <InputField
+                  value={watch('socialTelegram')}
+                  onChangeText={(value) => setValue('socialTelegram', value)}
+                  placeholder="in/johndoe"
+                  prefix="t.me/"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <i className="icon-chat size-5 text-tertiary" />
+              <div className="flex-1">
+                <InputField
+                  value={watch('socialDiscord')}
+                  onChangeText={(value) => setValue('socialDiscord', value)}
+                  prefix="discord.gg/"
+                  placeholder="its_johndoe"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <i className="icon-warpcast size-5 text-tertiary" />
+              <div className="flex-1">
+                <InputField
+                  value={watch('socialWarpcast')}
+                  onChangeText={(value) => setValue('socialWarpcast', value)}
+                  prefix="warpcast.com/"
+                  placeholder="john.builds"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <i className="icon-globe size-5 text-tertiary" />
+              <div className="flex-1">
+                <InputField
+                  value={watch('socialWebsite')}
+                  onChangeText={(value) => setValue('socialWebsite', value)}
+                  placeholder="johndoe.xyz"
+                />
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="grid grid-cols-2 gap-4 p-4 pt-0">
-          <div className="flex items-center gap-4">
-            <i className="icon-x size-5 text-tertiary" />
-            <div className="flex-1">
-              <InputField
-                value={watch('socialTwitter')}
-                onChangeText={(value) => setValue('socialTwitter', value)}
-                prefix="x.com/"
-                placeholder="johndoe"
-              />
-            </div>
-          </div>
 
-          <div className="flex items-center gap-4">
-            <i className="icon-telegram size-5 text-tertiary" />
-            <div className="flex-1">
-              <InputField
-                value={watch('socialTelegram')}
-                onChangeText={(value) => setValue('socialTelegram', value)}
-                placeholder="in/johndoe"
-                prefix="t.me/"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <i className="icon-chat size-5 text-tertiary" />
-            <div className="flex-1">
-              <InputField
-                value={watch('socialDiscord')}
-                onChangeText={(value) => setValue('socialDiscord', value)}
-                prefix="discord.gg/"
-                placeholder="its_johndoe"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <i className="icon-warpcast size-5 text-tertiary" />
-            <div className="flex-1">
-              <InputField
-                value={watch('socialWarpcast')}
-                onChangeText={(value) => setValue('socialWarpcast', value)}
-                prefix="warpcast.com/"
-                placeholder="john.builds"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <i className="icon-globe size-5 text-tertiary" />
-            <div className="flex-1">
-              <InputField
-                value={watch('socialWebsite')}
-                onChangeText={(value) => setValue('socialWebsite', value)}
-                placeholder="johndoe.xyz"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {
-        isAvandedMode && <>
+        {
+          isAvandedMode && <>
             <div className="bg-card border border-card-border rounded-md">
               <div
                 className="flex items-center justify-between p-4 cursor-pointer"
@@ -934,37 +934,39 @@ export function CreateCoin() {
                     <div className="space-y-4">
                       {allocationRecipients.map((recipient, index) => (
                         <div key={index} className="space-y-2">
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 flex-col md:flex-row">
                             <Input
                               value={recipient.address}
                               onChange={(e) => handleUpdateAllocationAddress(index, e.target.value)}
                               placeholder="Wallet Address"
                               variant="outlined"
-                              className="flex-1"
+                              className="flex-1 min-h-10"
                             />
-                            <InputField
-                              value={recipient.percentage.toString()}
-                              onChangeText={(value) => {
-                                const numValue = parseFloat(value) || 0;
-                                handleUpdateAllocationPercentage(index, numValue);
-                              }}
-                              subfix="%"
-                              type="number"
-                            />
-                            <Button
-                              type="button"
-                              variant="tertiary"
-                              icon="icon-tune"
-                              onClick={() => handleOpenTokenReleaseModal(index)}
-                            />
-                            {allocationRecipients.length > 1 && (
+                            <div className="flex gap-2">
+                              <InputField
+                                value={recipient.percentage.toString()}
+                                onChangeText={(value) => {
+                                  const numValue = parseFloat(value) || 0;
+                                  handleUpdateAllocationPercentage(index, numValue);
+                                }}
+                                subfix="%"
+                                type="number"
+                              />
                               <Button
                                 type="button"
                                 variant="tertiary"
-                                icon="icon-delete"
-                                onClick={() => handleRemoveAllocationRecipient(index)}
+                                icon="icon-tune"
+                                onClick={() => handleOpenTokenReleaseModal(index)}
                               />
-                            )}
+                              {allocationRecipients.length > 1 && (
+                                <Button
+                                  type="button"
+                                  variant="tertiary"
+                                  icon="icon-delete"
+                                  onClick={() => handleRemoveAllocationRecipient(index)}
+                                />
+                              )}
+                            </div>
                           </div>
                           {recipient.address && (
                             <p className="text-tertiary text-sm">
@@ -1012,7 +1014,7 @@ export function CreateCoin() {
                 <div className="space-y-4 p-4 pt-0">
                   <p className="text-secondary text-sm">Select Date & Time</p>
 
-                  <div className="flex gap-3">
+                  <div className="flex flex-col md:flex-row gap-3">
                     <Menu.Root placement="top-start" className="flex-1">
                       <Menu.Trigger>
                         <div className="flex items-center gap-3 py-2 px-3 rounded-sm border border-card-border bg-card cursor-pointer hover:bg-primary/8 transition-colors">

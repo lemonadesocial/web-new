@@ -29,12 +29,12 @@ export function CoinDistributionBar({
           />
         </div>
       </div>
-      <div className="flex gap-6 text-sm">
+      <div className="flex gap-1 md:gap-6 text-sm flex-wrap md:flex-nowrap">
         <div className="flex items-center gap-1.5">
           <span className="inline-block size-2 rounded-full bg-accent-400" />
           <span className="text-secondary">Fair Launch {fairLaunchPercentage}%</span>
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 ml-2 md:ml-0">
           <span className="inline-block size-2 rounded-full bg-warning-300" />
           <span className="text-secondary">Initial Allocation {initialAllocationPercentage.toFixed(1)}%</span>
         </div>
