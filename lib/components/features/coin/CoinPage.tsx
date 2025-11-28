@@ -11,7 +11,7 @@ import { formatWallet } from '$lib/utils/crypto';
 import { copy } from '$lib/utils/helpers';
 import { Badge, Card, Skeleton, toast } from '$lib/components/core';
 
-import { useFees, useGroup, useLiquidity, useMarketCap, useOwner, useTokenData, useTreasuryValue } from '$lib/hooks/useCoin';
+import { useFairLaunch, useFees, useGroup, useLiquidity, useMarketCap, useOwner, useTokenData, useTreasuryValue } from '$lib/hooks/useCoin';
 import { RegistrationTransactions } from './RegistrationTransactions';
 import { RegistrationHolders } from './RegistrationHolders';
 import { RegistrationAvanced } from './RegistrationAvanced';
@@ -60,27 +60,57 @@ function Stats({ chain, address }: { chain: Chain; address: string }) {
   const { formattedTreasuryValue, isLoadingTreasuryValue } = useTreasuryValue(chain, address);
   const { formattedMarketCap, isLoadingMarketCap } = useMarketCap(chain, address);
   const { formattedLiquidity, isLoadingLiquidity } = useLiquidity(chain, address);
+  const { formattedPercentage, formattedUsdcValue, isLoadingFairLaunch } = useFairLaunch(chain, address);
 
   return (
     <div className="grid grid-cols-5 gap-3">
-      <StatItem title="Owner" value={owner ? formatWallet(owner) : isLoadingOwner ? 'Loading...' : 'N/A'} />
+      <StatItem
+        title="Owner"
+        value={owner ? formatWallet(owner) : 'N/A'}
+        loading={isLoadingOwner}
+      />
       <StatItem
         title="Community"
         value={
-          isLoading
-            ? 'Loading...'
-            : launchpadGroup && implementationAddress
-              ? launchpadGroup?.name || formatWallet(implementationAddress)
-              : 'N/A'
+          launchpadGroup && implementationAddress
+            ? launchpadGroup?.name || formatWallet(implementationAddress)
+            : 'N/A'
         }
+        loading={isLoading}
       />
-      <StatItem title="Fees Earned" value={formattedFees || (isLoadingFees ? 'Loading...' : 'N/A')} />
-      <StatItem title="Treasury" value={formattedTreasuryValue || (isLoadingTreasuryValue ? 'Loading...' : 'N/A')} />
-      <StatItem title="Volume (24h)" value="Coming Soon" />
-      <StatItem title="Marketcap" value={formattedMarketCap || (isLoadingMarketCap ? 'Loading...' : 'N/A')} />
-      <StatItem title="Liquidity" value={formattedLiquidity || (isLoadingLiquidity ? 'Loading...' : 'N/A')} />
-      <StatItem title="Fair Launch" value="Coming Soon" />
-      <StatItem title="Holders" value="Coming Soon" />
+      <StatItem
+        title="Fees Earned"
+        value={formattedFees || 'N/A'}
+        loading={isLoadingFees}
+      />
+      <StatItem
+        title="Treasury"
+        value={formattedTreasuryValue || 'N/A'}
+        loading={isLoadingTreasuryValue}
+      />
+      <StatItem
+        title="Volume (24h)"
+        value="Coming Soon"
+      />
+      <StatItem
+        title="Marketcap"
+        value={formattedMarketCap || 'N/A'}
+        loading={isLoadingMarketCap}
+      />
+      <StatItem
+        title="Liquidity"
+        value={formattedLiquidity || 'N/A'}
+        loading={isLoadingLiquidity}
+      />
+      <StatItem
+        title="Fair Launch"
+        value={formattedPercentage && formattedUsdcValue ? `${formattedUsdcValue} / ${formattedPercentage}` : 'N/A'}
+        loading={isLoadingFairLaunch}
+      />
+      <StatItem
+        title="Holders"
+        value="Coming Soon"
+      />
     </div>
   );
 }

@@ -183,6 +183,32 @@ export function useLiquidity(chain: Chain, address: string) {
   };
 }
 
+export function useFairLaunch(chain: Chain, address: string) {
+  const {
+    data,
+    isLoading,
+  } = useReactQuery({
+    queryKey: ['fair-launch', chain.chain_id, address],
+    queryFn: async () => {
+      const flaunchClient = FlaunchClient.getInstance(chain, address);
+      return flaunchClient.getFairLaunch();
+    },
+    enabled: !!chain && !!address,
+  });
+
+  const formattedUsdcValue = data ? `${formatNumber(Number(formatUnits(data.usdcValue, 6)))} USDC` : null;
+  const formattedPercentage = data ? `${data.percentage.toFixed(2)}%` : null;
+
+  return {
+    info: data?.info ?? null,
+    percentage: data?.percentage ?? null,
+    formattedPercentage,
+    usdcValue: data?.usdcValue ?? null,
+    formattedUsdcValue,
+    isLoadingFairLaunch: isLoading,
+  };
+}
+
 export function useTokenData(chain: Chain, address: string) {
   const [tokenData, setTokenData] = useState<{ name: string; symbol: string; tokenURI: string; decimals: number } | null>(null);
   const [isLoading, setIsLoading] = useState(true);

@@ -15,6 +15,7 @@ import { Memecoin } from '$lib/abis/token-launch-pad/Memecoin';
 import { LETH } from '$lib/abis/token-launch-pad/LETH';
 import { ERC20 } from '$lib/abis/ERC20';
 import { FairLaunch } from '$lib/abis/token-launch-pad/FairLaunch';
+import { TOTAL_SUPPLY } from '../token-launch-pad';
 
 type FlaunchABI = typeof Flaunch;
 type FeeEscrowABI = typeof FeeEscrow;
@@ -26,8 +27,6 @@ type MarketCappedPriceABI = typeof MarketCappedPrice;
 type MemecoinABI = typeof Memecoin;
 type LETHABI = typeof LETH;
 type ERC20ABI = typeof ERC20;
-
-const TOTAL_MEMECOIN_SUPPLY = BigInt('100000000000000000000000000000');
 
 export class FlaunchClient {
   private static instances: Map<string, FlaunchClient> = new Map();
@@ -353,7 +352,7 @@ export class FlaunchClient {
 
     const supply = fairLaunchInfo.supply as bigint;
 
-    const percentage = Number((supply * BigInt(10000)) / TOTAL_MEMECOIN_SUPPLY) / 100;
+    const percentage = Number((supply * BigInt(10000)) / TOTAL_SUPPLY) / 100;
 
     const supplyEthValue = await this.marketUtilsContract.read('marketCap', {
       memecoin: this.memecoinAddress,
