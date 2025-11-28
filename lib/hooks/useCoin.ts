@@ -1,4 +1,4 @@
-import { formatUnits, zeroAddress } from 'viem';
+import { formatEther, formatUnits, zeroAddress } from 'viem';
 
 import { useEffect, useState } from 'react';
 import { useQuery as useGraphQLQuery } from '$lib/graphql/request';
@@ -229,6 +229,32 @@ export function useTokenData(chain: Chain, address: string) {
   return {
     tokenData,
     isLoadingTokenData: isLoading,
+  };
+}
+
+export function useBuybackCharging(chain: Chain, address: string) {
+  const {
+    data,
+    isLoading,
+  } = useReactQuery({
+    queryKey: ['buyback-charging', chain.chain_id, address],
+    queryFn: async () => {
+      const flaunchClient = FlaunchClient.getInstance(chain, address);
+      return flaunchClient.getBuybackCharging();
+    },
+    enabled: !!chain && !!address,
+  });
+
+  const formattedCurrent = data ? `${formatEther(data.current)} ETH` : null;
+  const formattedThreshold = data ? `${formatEther(data.threshold)} ETH` : null;
+
+  return {
+    current: data?.current ?? null,
+    threshold: data?.threshold ?? null,
+    progress: data?.progress ?? null,
+    formattedCurrent,
+    formattedThreshold,
+    isLoadingBuybackCharging: isLoading,
   };
 }
 

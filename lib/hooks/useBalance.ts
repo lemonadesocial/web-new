@@ -32,7 +32,6 @@ export function useBalance() {
     queryKey: ['balance', address],
     queryFn: () => fetchBalance(address!, walletProvider as Eip1193Provider) ,
     enabled: !!address && !!walletProvider,
-    refetchInterval: 10000,
   });
 
   return {

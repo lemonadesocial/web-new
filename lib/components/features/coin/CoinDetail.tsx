@@ -38,7 +38,7 @@ export function CoinDetail({ address, chain }: CoinPageProps) {
         </div>
       </div>
 
-      <BuybackCharging className="bg-transparent! border-none **:data-label:text-tertiary" />
+      <BuybackCharging chain={chain} address={address} className="bg-transparent! border-none **:data-label:text-tertiary" />
       <SwapCoin chain={chain} address={address} />
 
       <TabSection />

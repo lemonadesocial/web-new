@@ -522,4 +522,30 @@ export class FlaunchClient {
 
     return txHash;
   }
+
+  async getBuybackCharging(): Promise<{
+    current: bigint;
+    threshold: bigint;
+    progress: number;
+  }> {
+    const positionManager = await this.getPositionManagerContract();
+
+    const poolKey = await positionManager.read('poolKey', {
+      _token: this.memecoinAddress,
+    });
+
+    const poolFeesResult = await positionManager.read('poolFees', {
+      _poolKey: poolKey,
+    });
+
+    const current = (poolFeesResult.amount0 as bigint);
+    const threshold = BigInt('1000000000000000');
+    const progress = threshold > 0n ? Number(current) / Number(threshold) : 0;
+
+    return {
+      current,
+      threshold,
+      progress: Math.min(1, Math.max(0, progress)),
+    };
+  }
 }
