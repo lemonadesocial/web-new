@@ -1,8 +1,9 @@
 import React from 'react';
-import { Card, toast } from '$lib/components/core';
+import { Card, Skeleton, toast } from '$lib/components/core';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { copy } from '$lib/utils/helpers';
 import { truncateMiddle } from '$lib/utils/string';
+import { useMarketCap, useTokenData } from '$lib/hooks/useCoin';
 import { BuybackCharging } from './BuybackCharging';
 import { RegistrationAvanced } from './RegistrationAvanced';
 import { RegistrationHolders } from './RegistrationHolders';
@@ -16,13 +17,20 @@ interface CoinPageProps {
 }
 
 export function CoinDetail({ address, chain }: CoinPageProps) {
+  const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
+  const { formattedMarketCap, isLoadingMarketCap } = useMarketCap(chain, address);
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex gap-4 items-center">
         <div className="size-20 aspecct-square rounded-sm bg-gray-500" />
         <div className="flex flex-col gap-2">
           <div className="space-y-0.5">
-            <p className="text-xl">ZYN</p>
+            {isLoadingTokenData ? (
+              <Skeleton className="h-7 w-20" animate />
+            ) : (
+              <p className="text-xl">{tokenData?.symbol || 'N/A'}</p>
+            )}
             <div className="flex gap-1 text-sm text-tertiary items-center">
               <p>{truncateMiddle(address, 6, 4)}</p>
               <i
@@ -32,8 +40,12 @@ export function CoinDetail({ address, chain }: CoinPageProps) {
             </div>
           </div>
           <div className="flex items-end gap-1.5">
-            <p className="text-accent-400 text-lg">$2.10M</p>
-            <p className="text-success-500 text-sm">+15.20%</p>
+            {isLoadingMarketCap ? (
+              <Skeleton className="h-7 w-20" animate />
+            ) : (
+              formattedMarketCap && <p className="text-accent-400 text-lg">{formattedMarketCap}</p>
+            )}
+            {/* <p className="text-success-500 text-sm">+15.20%</p> */}
           </div>
         </div>
       </div>

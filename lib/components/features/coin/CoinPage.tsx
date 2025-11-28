@@ -40,7 +40,7 @@ export function CoinPage({ network, address }: CoinPageProps) {
           <Registration />
         </div>
 
-        <div className="flex-col gap-4 max-w-[336px] w-full">
+        <div className="flex flex-col gap-4 max-w-[336px] w-full">
           <SwapCoin chain={chain} address={address} />
           <CoinInfo chain={chain} address={address} />
         </div>
@@ -149,6 +149,7 @@ function Registration() {
 function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
   const { launchpadGroup } = useGroup(chain, address);
+  const { formattedMarketCap, isLoadingMarketCap } = useMarketCap(chain, address);
 
   if (isLoadingTokenData) {
     return (
@@ -182,7 +183,11 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
                   <p className="line-clamp-1 text-tertiary text-sm">{tokenData.name}</p>
                 </div>
                 <div className="text-right">
-                  {/* <p className="text-accent-400">$683.17K</p> */}
+                  {isLoadingMarketCap ? (
+                    <Skeleton className="h-5 w-20" animate />
+                  ) : (
+                    formattedMarketCap && <p className="text-accent-400">{formattedMarketCap}</p>
+                  )}
                   {/* <p className={clsx('text-sm', percent > 0 ? 'text-success-500' : 'text-danger-500')}>+6.28%</p> */}
                 </div>
               </div>
