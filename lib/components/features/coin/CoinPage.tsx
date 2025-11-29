@@ -12,9 +12,9 @@ import { copy } from '$lib/utils/helpers';
 import { Badge, Card, Skeleton, toast } from '$lib/components/core';
 
 import { useFairLaunch, useFees, useGroup, useLiquidity, useMarketCap, useOwner, useTokenData, useTreasuryValue } from '$lib/hooks/useCoin';
-import { RegistrationTransactions } from './RegistrationTransactions';
-import { RegistrationHolders } from './RegistrationHolders';
-import { RegistrationAvanced } from './RegistrationAvanced';
+import { CoinTransactions } from './CoinTransactions';
+import { CoinHolders } from './CoinHolders';
+import { CoinAdvanced } from './CoinAdvanced';
 import { StatItem } from './StatItem';
 import { SwapCoin } from './SwapCoin';
 import { CoinDetail } from './CoinDetail';
@@ -37,7 +37,7 @@ export function CoinPage({ network, address }: CoinPageProps) {
         <div className="flex flex-col gap-4">
           <Stats chain={chain!} address={address} />
           <BuybackCharging chain={chain} address={address} />
-          <Registration />
+          <CoinTabs chain={chain} address={address} />
         </div>
 
         <div className="flex flex-col gap-4 max-w-[336px] w-full">
@@ -115,11 +115,11 @@ function Stats({ chain, address }: { chain: Chain; address: string }) {
   );
 }
 
-function Registration() {
+function CoinTabs({ chain, address }: { chain: Chain; address: string }) {
   const tabs: Record<string, React.ReactElement> = {
-    transactions: <RegistrationTransactions />,
-    holders: <RegistrationHolders />,
-    advanced: <RegistrationAvanced />,
+    transactions: <CoinTransactions chain={chain} address={address} />,
+    holders: <CoinHolders />,
+    advanced: <CoinAdvanced />,
   };
 
   const [selected, setSelected] = useState('transactions');

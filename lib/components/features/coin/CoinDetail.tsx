@@ -5,9 +5,9 @@ import { copy } from '$lib/utils/helpers';
 import { truncateMiddle } from '$lib/utils/string';
 import { useMarketCap, useTokenData } from '$lib/hooks/useCoin';
 import { BuybackCharging } from './BuybackCharging';
-import { RegistrationAvanced } from './RegistrationAvanced';
-import { RegistrationHolders } from './RegistrationHolders';
-import { RegistrationTransactions } from './RegistrationTransactions';
+import { CoinAdvanced } from './CoinAdvanced';
+import { CoinHolders } from './CoinHolders';
+import { CoinTransactions } from './CoinTransactions';
 import { SwapCoin } from './SwapCoin';
 import clsx from 'clsx';
 
@@ -53,16 +53,16 @@ export function CoinDetail({ address, chain }: CoinPageProps) {
       <BuybackCharging chain={chain} address={address} className="bg-transparent! border-none **:data-label:text-tertiary" />
       <SwapCoin chain={chain} address={address} />
 
-      <TabSection />
+      <TabSection chain={chain} address={address} />
     </div>
   );
 }
 
-function TabSection() {
+function TabSection({ chain, address }: CoinPageProps) {
   const tabs: Record<string, React.ReactElement> = {
-    transactions: <RegistrationTransactions />,
-    holders: <RegistrationHolders />,
-    advanced: <RegistrationAvanced />,
+    transactions: <CoinTransactions chain={chain} address={address} />,
+    holders: <CoinHolders />,
+    advanced: <CoinAdvanced />,
   };
 
   const [selected, setSelected] = React.useState('transactions');

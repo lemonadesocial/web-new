@@ -1,8 +1,8 @@
 import { formatEther, formatUnits, zeroAddress } from 'viem';
-
 import { useEffect, useState } from 'react';
 import { useQuery as useGraphQLQuery } from '$lib/graphql/request';
 import { useQuery as useReactQuery } from '@tanstack/react-query';
+
 import {
   ListLaunchpadGroupsDocument,
   type ListLaunchpadGroupsQuery,
@@ -210,24 +210,20 @@ export function useFairLaunch(chain: Chain, address: string) {
 }
 
 export function useTokenData(chain: Chain, address: string) {
-  const [tokenData, setTokenData] = useState<{ name: string; symbol: string; tokenURI: string; decimals: number } | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchTokenData = async () => {
-      setIsLoading(true);
+  const {
+    data,
+    isLoading,
+  } = useReactQuery({
+    queryKey: ['token-data', chain.chain_id, address],
+    queryFn: async () => {
       const flaunchClient = FlaunchClient.getInstance(chain, address);
-      const data = await flaunchClient.getTokenData();
-
-      setTokenData(data);
-      setIsLoading(false);
-    };
-
-    fetchTokenData();
-  }, [chain, address]);
+      return flaunchClient.getTokenData();
+    },
+    enabled: !!chain && !!address,
+  });
 
   return {
-    tokenData,
+    tokenData: data ?? null,
     isLoadingTokenData: isLoading,
   };
 }

@@ -2,6 +2,7 @@
 
 import { EmptyState } from './EmptyState';
 
-export function RegistrationAvanced() {
+export function CoinAdvanced() {
   return <EmptyState title="Comming Soon" />;
 }
+

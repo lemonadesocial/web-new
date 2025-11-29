@@ -207,6 +207,8 @@ export class FlaunchClient {
   async getEarnedFees(): Promise<bigint> {
     const poolId = await this.getPoolId();
 
+    console.log(poolId)
+
     const ethAmount = await this.feeEscrowContract.read('totalFeesAllocated', {
       _poolId: poolId,
     });
