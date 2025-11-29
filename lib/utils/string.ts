@@ -75,3 +75,12 @@ export function formatNumber(str: string) {
   const num = parseFloat(str);
   return num.toString();
 }
+
+/**
+ * @description this format str to number
+ * Ex:
+ *    numberWithCommas(1000) -> "1,000"
+ **/
+export function formatNumberWithCommas(num: number) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
