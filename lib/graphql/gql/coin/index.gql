@@ -1,0 +1,21 @@
+query PoolSwap($where: PoolSwap_bool_exp, $orderBy: [PoolSwap_order_by!], $limit: Int, $offset: Int) {
+  PoolSwap(where: $where, order_by: $orderBy, limit: $limit, offset: $offset) {
+    blockNumber
+    blockTimestamp
+    transactionHash
+    flAmount0
+    flAmount1
+    flFee0
+    flFee1
+    id
+    ispAmount0
+    ispAmount1
+    ispFee0
+    ispFee1
+    poolId
+    uniAmount0
+    uniAmount1
+    uniFee0
+    uniFee1
+  }
+}
