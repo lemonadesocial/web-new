@@ -61,7 +61,7 @@ export function CoinDetail({ address, chain }: CoinPageProps) {
 function TabSection({ chain, address }: CoinPageProps) {
   const tabs: Record<string, React.ReactElement> = {
     transactions: <CoinTransactions chain={chain} address={address} />,
-    holders: <CoinHolders />,
+    holders: <CoinHolders chain={chain} address={address} />,
     advanced: <CoinAdvanced />,
   };
 

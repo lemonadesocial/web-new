@@ -56,6 +56,9 @@ export function CoinTransactions({ chain, address }: CoinTransactionsProps) {
               poolId: {
                 _eq: poolId,
               },
+              chainId: {
+                _eq: Number(chain.chain_id),
+              },
             },
             orderBy: {
               blockTimestamp: Order_By.Desc,
@@ -171,25 +174,27 @@ export function CoinTransactions({ chain, address }: CoinTransactionsProps) {
         );
       })}
 
-      <CardTable.Pagination
-        total={totalForPagination}
-        skip={pagination.offset}
-        limit={pagination.limit}
-        onNext={() =>
-          hasNextPage &&
-          setPagination((prev) => ({
-            ...prev,
-            offset: prev.offset + prev.limit,
-          }))
-        }
-        onPrev={() =>
-          pagination.offset > 0 &&
-          setPagination((prev) => ({
-            ...prev,
-            offset: Math.max(0, prev.offset - prev.limit),
-          }))
-        }
-      />
+      {totalForPagination > pagination.limit && (
+        <CardTable.Pagination
+          total={totalForPagination}
+          skip={pagination.offset}
+          limit={pagination.limit}
+          onNext={() =>
+            hasNextPage &&
+            setPagination((prev) => ({
+              ...prev,
+              offset: prev.offset + prev.limit,
+            }))
+          }
+          onPrev={() =>
+            pagination.offset > 0 &&
+            setPagination((prev) => ({
+              ...prev,
+              offset: Math.max(0, prev.offset - prev.limit),
+            }))
+          }
+        />
+      )}
     </CardTable.Root>
   );
 }

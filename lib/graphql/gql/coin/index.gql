@@ -19,3 +19,13 @@ query PoolSwap($where: PoolSwap_bool_exp, $orderBy: [PoolSwap_order_by!], $limit
     uniFee1
   }
 }
+
+query MemecoinHolder($where: MemecoinHolder_bool_exp, $orderBy: [MemecoinHolder_order_by!], $limit: Int, $offset: Int) {
+  MemecoinHolder(where: $where, order_by: $orderBy, limit: $limit, offset: $offset) {
+    balance
+    chainId
+    holder
+    id
+    memecoin
+  }
+}

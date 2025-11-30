@@ -281,3 +281,23 @@ export const getTransactionUrl = (chain: Chain, txHash: string) => {
 
   return `${baseUrl}${path}`;
 };
+
+export const getAddressUrl = (chain: Chain, address: string) => {
+  if (!chain?.block_explorer_url || !chain?.block_explorer_for_address) {
+    return '';
+  }
+
+  const pathTemplate = chain.block_explorer_for_address.includes('${address}')
+    ? chain.block_explorer_for_address.replaceAll('${address}', address)
+    : `${chain.block_explorer_for_address}${address}`;
+
+  const baseUrl = chain.block_explorer_url.endsWith('/')
+    ? chain.block_explorer_url.slice(0, -1)
+    : chain.block_explorer_url;
+
+  const path = pathTemplate.startsWith('/')
+    ? pathTemplate
+    : `/${pathTemplate}`;
+
+  return `${baseUrl}${path}`;
+};

@@ -118,7 +118,7 @@ function Stats({ chain, address }: { chain: Chain; address: string }) {
 function CoinTabs({ chain, address }: { chain: Chain; address: string }) {
   const tabs: Record<string, React.ReactElement> = {
     transactions: <CoinTransactions chain={chain} address={address} />,
-    holders: <CoinHolders />,
+    holders: <CoinHolders chain={chain} address={address} />,
     advanced: <CoinAdvanced />,
   };
 
