@@ -124,6 +124,15 @@ export class FlaunchClient {
     return result;
   }
 
+  async getPositionManagerAddress(): Promise<string> {
+    const flaunchContract = await this.getFlaunchContract();
+    const address = await flaunchContract.read('positionManager');
+    if (!isAddress(address)) {
+      throw new Error('Invalid position manager address');
+    }
+    return address;
+  }
+
   async getFlaunchContract(): Promise<ReadContract<FlaunchABI>> {
     if (this.flaunchContract) {
       return this.flaunchContract;

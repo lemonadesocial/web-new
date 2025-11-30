@@ -62,7 +62,7 @@ function TabSection({ chain, address }: CoinPageProps) {
   const tabs: Record<string, React.ReactElement> = {
     transactions: <CoinTransactions chain={chain} address={address} />,
     holders: <CoinHolders chain={chain} address={address} />,
-    advanced: <CoinAdvanced />,
+    advanced: <CoinAdvanced chain={chain} address={address} />,
   };
 
   const [selected, setSelected] = React.useState('transactions');
