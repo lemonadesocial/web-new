@@ -65,6 +65,120 @@ const data = [
     minted: 3880,
     url: `${ASSET_PREFIX}/assets/audio/example_4.mp3`,
   },
+
+  {
+    id: 1,
+    image:
+      'https://plus.unsplash.com/premium_photo-1673306778968-5aab577a7365?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    title: 'Going The Distance 1',
+    username: 'vinylnation.eth',
+    totalMint: 9999,
+    minted: 3880,
+    url: `${ASSET_PREFIX}/assets/audio/example.mp3`,
+  },
+
+  {
+    id: 2,
+    image:
+      'https://images.unsplash.com/photo-1762112800005-a61bacb1d15c?q=80&w=1586&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    title: 'Going The Distance 2',
+    username: 'vinylnation.eth',
+    totalMint: 9999,
+    minted: 3880,
+    url: `${ASSET_PREFIX}/assets/audio/example_1.mp3`,
+  },
+
+  {
+    id: 3,
+
+    image:
+      'https://images.unsplash.com/photo-1762715461167-69eaae9758d6?q=80&w=1587&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    title: 'Going The Distance 3',
+    username: 'vinylnation.eth',
+    totalMint: 9999,
+    minted: 3880,
+    url: `${ASSET_PREFIX}/assets/audio/example_2.mp3`,
+  },
+
+  {
+    id: 4,
+    image:
+      'https://images.unsplash.com/photo-1763996313498-8c60ed0610ac?q=80&w=3269&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    title: 'Going The Distance 4',
+    username: 'vinylnation.eth',
+    totalMint: 9999,
+    minted: 3880,
+    url: `${ASSET_PREFIX}/assets/audio/example_3.mp3`,
+  },
+
+  {
+    id: 5,
+
+    image:
+      'https://plus.unsplash.com/premium_photo-1722018576626-dc10f32a86f4?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    title: 'Going The Distance 5',
+    username: 'vinylnation.eth',
+    totalMint: 9999,
+    minted: 3880,
+    url: `${ASSET_PREFIX}/assets/audio/example_4.mp3`,
+  },
+
+  {
+    id: 1,
+    image:
+      'https://plus.unsplash.com/premium_photo-1673306778968-5aab577a7365?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    title: 'Going The Distance 1',
+    username: 'vinylnation.eth',
+    totalMint: 9999,
+    minted: 3880,
+    url: `${ASSET_PREFIX}/assets/audio/example.mp3`,
+  },
+
+  {
+    id: 2,
+    image:
+      'https://images.unsplash.com/photo-1762112800005-a61bacb1d15c?q=80&w=1586&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    title: 'Going The Distance 2',
+    username: 'vinylnation.eth',
+    totalMint: 9999,
+    minted: 3880,
+    url: `${ASSET_PREFIX}/assets/audio/example_1.mp3`,
+  },
+
+  {
+    id: 3,
+
+    image:
+      'https://images.unsplash.com/photo-1762715461167-69eaae9758d6?q=80&w=1587&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    title: 'Going The Distance 3',
+    username: 'vinylnation.eth',
+    totalMint: 9999,
+    minted: 3880,
+    url: `${ASSET_PREFIX}/assets/audio/example_2.mp3`,
+  },
+
+  {
+    id: 4,
+    image:
+      'https://images.unsplash.com/photo-1763996313498-8c60ed0610ac?q=80&w=3269&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    title: 'Going The Distance 4',
+    username: 'vinylnation.eth',
+    totalMint: 9999,
+    minted: 3880,
+    url: `${ASSET_PREFIX}/assets/audio/example_3.mp3`,
+  },
+
+  {
+    id: 5,
+
+    image:
+      'https://plus.unsplash.com/premium_photo-1722018576626-dc10f32a86f4?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    title: 'Going The Distance 5',
+    username: 'vinylnation.eth',
+    totalMint: 9999,
+    minted: 3880,
+    url: `${ASSET_PREFIX}/assets/audio/example_4.mp3`,
+  },
 ];
 
 export function HubMusicPlayer() {
@@ -89,9 +203,26 @@ export function HubMusicPlayer() {
   if (loading) return null;
 
   return (
-    <div className="p-2 flex gap-4 h-[calc(100dvh-64px)] w-full">
-      <Vinyl track={track} ref={vinylRef} />
-      <div className="w-[397px]">
+    <div className="px-4 md:px-2 pb-28 md:p-2 flex flex-col md:flex-row gap-4 md:h-[calc(100dvh-64px)] w-full">
+      <Vinyl
+        track={track}
+        ref={vinylRef}
+        onNext={async () => {
+          const idx = list.findIndex((i) => i.id === track.id);
+          if (idx + 1 < list.length) {
+            await setTrack(list[idx + 1]);
+            vinylRef.current?.onChangeTrack();
+          }
+        }}
+        onPrev={async () => {
+          const idx = list.findIndex((i) => i.id === track.id);
+          if (idx - 1 >= 0) {
+            await setTrack(list[idx - 1]);
+            vinylRef.current?.onChangeTrack();
+          }
+        }}
+      />
+      <div className="w-full md:w-[397px]">
         <TrackList
           data={list}
           selected={track}
@@ -116,7 +247,7 @@ interface VinylProps {
   };
 }
 
-const Vinyl = React.forwardRef(({ track }: VinylProps, ref) => {
+const Vinyl = React.forwardRef(({ track, onNext, onPrev }: VinylProps, ref) => {
   const audioRef = React.useRef<HTMLAudioElement>(null);
 
   const [isPlaying, setIsPlaying] = React.useState(false);
@@ -197,11 +328,11 @@ const Vinyl = React.forwardRef(({ track }: VinylProps, ref) => {
   const progress = (currentTime * 100) / duration;
 
   return (
-    <Card.Root className="flex-1 h-full">
+    <Card.Root className="flex-1 h-full max-sm:border-transparent! max-sm:bg-transparent">
       <Card.Content className="p-0 h-full">
         <div
           className={twMerge(
-            'absolute z-0 h-[110%] -top-[5%] -left-75 [animation-duration:5s] aspect-square',
+            'absolute hidden md:block z-0 h-[110%] -top-[5%] -left-75 [animation-duration:5s] aspect-square',
             isPlaying && 'animate-spin',
           )}
         >
@@ -220,13 +351,14 @@ const Vinyl = React.forwardRef(({ track }: VinylProps, ref) => {
           </div>
         </div>
 
-        <div className="flex flex-col justify-between p-4 h-full">
-          <div className="flex-1 flex justify-end w-full">
-            <Button icon="icon-share" variant="tertiary-alt" size="sm" />
-          </div>
+        <img src={track.image} className="md:hidden aspect-square w-full object-cover rounded-lg" />
+        <Button icon="icon-share" variant="tertiary-alt" size="sm" className="absolute right-4 top-4" />
 
-          <Card.Root className="bg-page-background-overlay!">
-            <Card.Content className="p-6 flex-col flex gap-4">
+        <div className="flex flex-col justify-between md:p-4 h-full">
+          <div className="flex-1" />
+
+          <Card.Root className="bg-transparent max-sm:backdrop-blur-none max-sm:border-transparent md:bg-page-background-overlay!">
+            <Card.Content className="px-0 pb-0 md:p-6 flex-col flex gap-4">
               <div>
                 <h3 className="text-xl">{track.title}</h3>
                 <div className="flex gap-2 items-center">
@@ -245,7 +377,7 @@ const Vinyl = React.forwardRef(({ track }: VinylProps, ref) => {
                 <audio ref={audioRef} src={track.url} preload="auto"></audio>
                 <div className="space-y-2">
                   <input
-                    className="range range-primary"
+                    className="transition-all range range-primary"
                     type="range"
                     step="0.01"
                     style={{
@@ -265,14 +397,37 @@ const Vinyl = React.forwardRef(({ track }: VinylProps, ref) => {
 
               <div className="flex justify-between">
                 <div className="flex gap-2">
-                  <Button icon="icon-skip-previous" size="sm" variant="tertiary-alt" onClick={togglePlayPause} />
                   <Button
-                    icon={!isPlaying ? 'icon-play-arrow' : 'icon-pause'}
                     size="sm"
+                    icon="icon-skip-previous"
+                    className="hidden md:block"
+                    variant="tertiary-alt"
+                    onClick={onPrev}
+                  />
+                  <Button icon="icon-skip-previous" className="md:hidden" variant="tertiary-alt" onClick={onPrev} />
+
+                  <Button
+                    size="sm"
+                    icon={!isPlaying ? 'icon-play-arrow' : 'icon-pause'}
+                    className="hidden md:block"
                     variant="tertiary-alt"
                     onClick={togglePlayPause}
                   />
-                  <Button icon="icon-skip-next" size="sm" variant="tertiary-alt" onClick={togglePlayPause} />
+                  <Button
+                    icon={!isPlaying ? 'icon-play-arrow' : 'icon-pause'}
+                    className="md:hidden"
+                    variant="tertiary-alt"
+                    onClick={togglePlayPause}
+                  />
+
+                  <Button
+                    size="sm"
+                    icon="icon-skip-next"
+                    className="hidden md:block"
+                    variant="tertiary-alt"
+                    onClick={onNext}
+                  />
+                  <Button icon="icon-skip-next" className="md:hidden" variant="tertiary-alt" onClick={onNext} />
                 </div>
 
                 <Button variant="primary" size="sm">
@@ -289,12 +444,12 @@ const Vinyl = React.forwardRef(({ track }: VinylProps, ref) => {
 
 function TrackList({ data, selected, onPlay }: any) {
   return (
-    <Card.Root>
+    <Card.Root className="flex-1 h-full flex flex-col">
       <Card.Header>Up Next</Card.Header>
-      <Card.Content className="flex flex-col gap-2">
+      <Card.Content className="flex flex-1 flex-col gap-2 overflow-auto! no-scrollbar">
         {data.map((item: any, idx: number) => (
-          <Card.Root key={idx}>
-            <Card.Content className="flex items-center gap-3">
+          <Card.Root key={idx} className="overflow-visible!">
+            <Card.Content className="px-4 py-2 flex items-center gap-3">
               <div className="size-[52px] aspect-square rounded-sm bg-tertiary overflow-hidden">
                 <img src={item.image} className="w-full h-full" />
               </div>
