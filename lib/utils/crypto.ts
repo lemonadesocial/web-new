@@ -260,7 +260,7 @@ export function multiplyByPowerOf10(amount: string, power: number) {
   return result.toString();
 }
 
-export const MainnetRpcProvider = new ethers.JsonRpcProvider(mainnet.rpcUrls.default.http[0]); 
+export const MainnetRpcProvider = new ethers.JsonRpcProvider('https://eth-mainnet.public.blastapi.io'); 
 
 export const getTransactionUrl = (chain: Chain, txHash: string) => {
   if (!chain?.block_explorer_url || !chain?.block_explorer_for_tx) {
