@@ -3,10 +3,10 @@ import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { useBuybackCharging } from '$lib/hooks/useCoin';
 
 export function BuybackCharging({ className, chain, address }: { className?: string; chain: Chain; address: string }) {
-  const { formattedCurrent, progress, isLoadingBuybackCharging } = useBuybackCharging(chain, address);
+  const { formattedAmount0, progress, isLoadingBuybackCharging } = useBuybackCharging(chain, address);
 
   const progressPercentage = progress !== null ? Math.min(100, Math.max(0, progress * 100)) : 0;
-  const displayAmount = formattedCurrent || '0 ETH';
+  const displayAmount = formattedAmount0 || '0 ETH';
 
   return (
     <Card.Root className={className}>

@@ -15,32 +15,32 @@ import { formatNumber } from '$lib/utils/number';
 type LaunchpadGroupItem = ListLaunchpadGroupsQuery['listLaunchpadGroups']['items'][number];
 
 export function useGroup(chain: Chain, address: string) {
-  const [implementationAddress, setImplementationAddress] = useState<string | null>(null);
-  const [isLoadingOwner, setIsLoadingOwner] = useState(true);
+  const [treasuryManagerAddress, setTreasuryManagerAddress] = useState<string | null>(null);
+  const [isLoadingTreasuryManagerAddress, setIsLoadingTreasuryManagerAddress] = useState(true);
   const [launchpadGroup, setLaunchpadGroup] = useState<LaunchpadGroupItem | null>(null);
 
   useEffect(() => {
     const fetchOwner = async () => {
-      setIsLoadingOwner(true);
+      setIsLoadingTreasuryManagerAddress(true);
       const flaunchClient = FlaunchClient.getInstance(chain, address);
-      const owner = await flaunchClient.getOwnerOf();
+      const implementation = await flaunchClient.getImplementationAddress();
 
-      if (owner && owner.toLowerCase() !== zeroAddress.toLowerCase()) {
-        setImplementationAddress(owner);
+      if (implementation && implementation.toLowerCase() !== zeroAddress.toLowerCase()) {
+        setTreasuryManagerAddress(implementation);
       }
 
-      setIsLoadingOwner(false);
+      setIsLoadingTreasuryManagerAddress(false);
     };
 
     fetchOwner();
   }, [chain, address]);
 
-  const shouldSkipQuery = !implementationAddress || implementationAddress.toLowerCase() === zeroAddress.toLowerCase();
+  const shouldSkipQuery = !treasuryManagerAddress || treasuryManagerAddress.toLowerCase() === zeroAddress.toLowerCase();
 
   const { loading: isLoadingQuery } = useGraphQLQuery<ListLaunchpadGroupsQuery, ListLaunchpadGroupsQueryVariables>(
     ListLaunchpadGroupsDocument,
     {
-      variables: implementationAddress ? { address: implementationAddress } : undefined,
+      variables: treasuryManagerAddress ? { address: treasuryManagerAddress } : undefined,
       skip: shouldSkipQuery,
       onComplete: (data) => {
         if (data?.listLaunchpadGroups?.items && data.listLaunchpadGroups.items.length > 0) {
@@ -51,10 +51,10 @@ export function useGroup(chain: Chain, address: string) {
     }
   );
 
-  const isLoading = isLoadingOwner || isLoadingQuery;
+  const isLoading = isLoadingTreasuryManagerAddress || isLoadingQuery;
 
   return {
-    implementationAddress,
+    treasuryManagerAddress,
     launchpadGroup,
     isLoading,
   };
@@ -92,7 +92,8 @@ export function useFees(chain: Chain, address: string) {
     const fetchFees = async () => {
       setIsLoading(true);
       const flaunchClient = FlaunchClient.getInstance(chain, address);
-      const usdcAmount = await flaunchClient.getEarnedFees();
+      const ethAmount = await flaunchClient.getEarnedFees();
+      const usdcAmount = await flaunchClient.getUSDCFromETH(ethAmount);
       setRawFees(usdcAmount);
 
       const usdcValue = formatUnits(usdcAmount, 6);
@@ -241,15 +242,49 @@ export function useBuybackCharging(chain: Chain, address: string) {
     enabled: !!chain && !!address,
   });
 
-  const formattedCurrent = data ? `${formatEther(data.current)} ETH` : null;
+  const formattedAmount0 = data ? `${formatEther(data.amount0)} ETH` : null;
+  const formattedAmount1 = data ? `${formatEther(data.amount1)} ETH` : null;
   const formattedThreshold = data ? `${formatEther(data.threshold)} ETH` : null;
 
   return {
-    current: data?.current ?? null,
+    amount0: data?.amount0 ?? null,
     threshold: data?.threshold ?? null,
     progress: data?.progress ?? null,
-    formattedCurrent,
+    amount1: data?.amount1 ?? null,
+    formattedAmount0,
+    formattedAmount1,
     formattedThreshold,
     isLoadingBuybackCharging: isLoading,
+  };
+}
+
+export function useBidWallInfo(chain: Chain, address: string) {
+  const {
+    data,
+    isLoading,
+  } = useReactQuery({
+    queryKey: ['bid-wall-info', chain.chain_id, address],
+    queryFn: async () => {
+      const flaunchClient = FlaunchClient.getInstance(chain, address);
+      return flaunchClient.getBidWallInfo();
+    },
+    enabled: !!chain && !!address,
+  });
+
+  const formattedCumulativeSwapFees = data ? `${formatEther(data.cumulativeSwapFees)} ETH` : null;
+  const formattedAmount0 = data ? formatEther(data.amount0) : null;
+  const formattedAmount1 = data ? formatEther(data.amount1) : null;
+  const formattedPendingETH = data ? `${formatEther(data.pendingETH)} ETH` : null;
+
+  return {
+    cumulativeSwapFees: data?.cumulativeSwapFees ?? null,
+    amount0: data?.amount0 ?? null,
+    amount1: data?.amount1 ?? null,
+    pendingETH: data?.pendingETH ?? null,
+    formattedCumulativeSwapFees,
+    formattedAmount0,
+    formattedAmount1,
+    formattedPendingETH,
+    isLoadingBidWallInfo: isLoading,
   };
 }

@@ -1,14 +1,15 @@
 'use client';
-
+import { useQuery } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
+import { formatEther } from 'ethers';
+
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { CardTable } from '$lib/components/core/table';
 import { toast, Skeleton } from '$lib/components/core';
 import { copy } from '$lib/utils/helpers';
-import { formatWallet } from '$lib/utils/crypto';
 import { formatNumber } from '$lib/utils/number';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
-import { useQuery } from '@tanstack/react-query';
+import { useGroup, useTokenData } from '$lib/hooks/useCoin';
 
 interface CoinAdvancedProps {
   chain: Chain;
@@ -17,6 +18,8 @@ interface CoinAdvancedProps {
 
 export function CoinAdvanced({ chain, address }: CoinAdvancedProps) {
   const flaunchClient = FlaunchClient.getInstance(chain, address);
+  const { treasuryManagerAddress, isLoading: isLoadingGroup } = useGroup(chain, address);
+  const { tokenData } = useTokenData(chain, address);
 
   const { data: poolId, isLoading: isLoadingPoolId } = useQuery({
     queryKey: ['pool-id', chain.chain_id, address],
@@ -46,6 +49,21 @@ export function CoinAdvanced({ chain, address }: CoinAdvancedProps) {
     },
   });
 
+  const { data: claimableFees, isLoading: isLoadingClaimableFees } = useQuery({
+    queryKey: ['claimable-fees', chain.chain_id, address],
+    queryFn: async () => await flaunchClient.getEarnedFees()
+  });
+
+  const { data: bidWallInfo, isLoading: isLoadingBidWallInfo } = useQuery({
+    queryKey: ['bid-wall-info', chain.chain_id, address],
+    queryFn: async () => await flaunchClient.getBidWallInfo()
+  });
+
+  const { data: buybackCharging, isLoading: isLoadingBuybackCharging } = useQuery({
+    queryKey: ['buyback-charging', chain.chain_id, address],
+    queryFn: async () => await flaunchClient.getBuybackCharging()
+  });
+
   return (
     <CardTable.Root data={[]}>
       <AdvancedRow label="Pool ID">
@@ -73,47 +91,51 @@ export function CoinAdvanced({ chain, address }: CoinAdvancedProps) {
       </AdvancedRow>
 
       <AdvancedRow label="Manager">
-        <p className="text-tertiary">Coming Soon</p>
+        <AsyncValue isLoading={isLoadingGroup} value={treasuryManagerAddress}>
+          {(value) => <AddressValue address={value} />}
+        </AsyncValue>
       </AdvancedRow>
 
       <AdvancedRow label="Bid Wall - Cumulative Swap Fees">
-        <p className="text-tertiary">Coming Soon</p>
+        <AsyncValue isLoading={isLoadingBidWallInfo} value={bidWallInfo?.cumulativeSwapFees}>
+          {(value) => <p>{formatEther(value)} ETH</p>}
+        </AsyncValue>
       </AdvancedRow>
 
       <AdvancedRow label="Bid Wall - Amount0">
-        <p className="text-tertiary">Coming Soon</p>
+        <AsyncValue isLoading={isLoadingBidWallInfo} value={bidWallInfo?.amount0}>
+          {(value) => <p>{formatEther(value)} ETH</p>}
+        </AsyncValue>
       </AdvancedRow>
 
       <AdvancedRow label="Bid Wall - Amount1">
-        <p className="text-tertiary">Coming Soon</p>
+        <AsyncValue isLoading={isLoadingBidWallInfo} value={bidWallInfo?.amount1}>
+          {(value) => <p>{formatEther(value)} ETH</p>}
+        </AsyncValue>
       </AdvancedRow>
 
       <AdvancedRow label="Bid Wall - Pending ETH">
-        <p className="text-tertiary">Coming Soon</p>
+        <AsyncValue isLoading={isLoadingBidWallInfo} value={bidWallInfo?.pendingETH}>
+          {(value) => <p>{formatEther(value)} ETH</p>}
+        </AsyncValue>
       </AdvancedRow>
 
       <AdvancedRow label="Internal Swap Pool - Amount0">
-        <p className="text-tertiary">Coming Soon</p>
+        <AsyncValue isLoading={isLoadingBuybackCharging} value={buybackCharging?.amount0}>
+          {(value) => <p>{formatNumber(Number(formatEther(value)))} ETH</p>}
+        </AsyncValue>
       </AdvancedRow>
 
       <AdvancedRow label="Internal Swap Pool - Amount1">
-        <p className="text-tertiary">Coming Soon</p>
+        <AsyncValue isLoading={isLoadingBuybackCharging} value={buybackCharging?.amount1}>
+          {(value) => <p>{formatNumber(Number(formatEther(value)))} {tokenData?.symbol}</p>}
+        </AsyncValue>
       </AdvancedRow>
 
       <AdvancedRow label="Claimable Fees">
-        <p className="text-tertiary">Coming Soon</p>
-      </AdvancedRow>
-
-      <AdvancedRow label="Notifier">
-        <p className="text-tertiary">Coming Soon</p>
-      </AdvancedRow>
-
-      <AdvancedRow label="Indexer Subscriber">
-        <p className="text-tertiary">Coming Soon</p>
-      </AdvancedRow>
-
-      <AdvancedRow label="Is Indexed?">
-        <p className="text-tertiary">Coming Soon</p>
+        <AsyncValue isLoading={isLoadingClaimableFees} value={claimableFees}>
+          {(value) => <p>{formatEther(value)} ETH</p>}
+        </AsyncValue>
       </AdvancedRow>
     </CardTable.Root>
   );
@@ -146,11 +168,11 @@ function AsyncValue<T>({ isLoading, value, children }: AsyncValueProps<T>) {
     return <Skeleton className="h-5 w-[200px]" animate />;
   }
 
-  if (!value) {
+  if (value === null || value === undefined) {
     return <p className="text-tertiary">N/A</p>;
   }
 
-  return <>{children(value)}</>;
+  return <>{children(value as T)}</>;
 }
 
 function AddressValue({ address }: { address: string; }) {

@@ -54,7 +54,7 @@ export function CoinPage({ network, address }: CoinPageProps) {
 }
 
 function Stats({ chain, address }: { chain: Chain; address: string }) {
-  const { launchpadGroup, implementationAddress, isLoading } = useGroup(chain, address);
+  const { launchpadGroup, treasuryManagerAddress, isLoading } = useGroup(chain, address);
   const { owner, isLoadingOwner } = useOwner(chain, address);
   const { formattedFees, isLoadingFees } = useFees(chain, address);
   const { formattedTreasuryValue, isLoadingTreasuryValue } = useTreasuryValue(chain, address);
@@ -72,8 +72,8 @@ function Stats({ chain, address }: { chain: Chain; address: string }) {
       <StatItem
         title="Community"
         value={
-          launchpadGroup && implementationAddress
-            ? launchpadGroup?.name || formatWallet(implementationAddress)
+          launchpadGroup && treasuryManagerAddress
+            ? launchpadGroup?.name || formatWallet(treasuryManagerAddress)
             : 'N/A'
         }
         loading={isLoading}

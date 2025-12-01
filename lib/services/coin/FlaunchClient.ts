@@ -15,6 +15,7 @@ import { Memecoin } from '$lib/abis/token-launch-pad/Memecoin';
 import { LETH } from '$lib/abis/token-launch-pad/LETH';
 import { ERC20 } from '$lib/abis/ERC20';
 import { FairLaunch } from '$lib/abis/token-launch-pad/FairLaunch';
+import { BidWall } from '$lib/abis/token-launch-pad/BidWall';
 import { TOTAL_SUPPLY } from '../token-launch-pad';
 
 type FlaunchABI = typeof Flaunch;
@@ -27,6 +28,7 @@ type MarketCappedPriceABI = typeof MarketCappedPrice;
 type MemecoinABI = typeof Memecoin;
 type LETHABI = typeof LETH;
 type ERC20ABI = typeof ERC20;
+type BidWallABI = typeof BidWall;
 
 export class FlaunchClient {
   private static instances: Map<string, FlaunchClient> = new Map();
@@ -55,6 +57,7 @@ export class FlaunchClient {
   private memecoinContract: ReadContract<MemecoinABI>;
   private positionManagerContract: ReadContract<PositionManagerABI> | null = null;
   private erc20Contract: ReadContract<ERC20ABI>;
+  private bidWallContract: ReadContract<BidWallABI> | null = null;
 
   private memecoinAddress: string;
 
@@ -216,17 +219,11 @@ export class FlaunchClient {
   async getEarnedFees(): Promise<bigint> {
     const poolId = await this.getPoolId();
 
-    console.log(poolId)
-
     const ethAmount = await this.feeEscrowContract.read('totalFeesAllocated', {
       _poolId: poolId,
     });
 
-    const usdcAmount = await this.marketCappedPriceContract.read('getFlippedMarketCap', {
-      ethAmount: ethAmount,
-    });
-
-    return usdcAmount as bigint;
+    return ethAmount;
   }
 
   async getTokenData(): Promise<{ name: string; symbol: string; tokenURI: string; decimals: number }> {
@@ -269,6 +266,14 @@ export class FlaunchClient {
     return nativeToken;
   }
 
+  async getUSDCFromETH(ethAmount: bigint): Promise<bigint> {
+    const usdcAmount = await this.marketCappedPriceContract.read('getFlippedMarketCap', {
+      ethAmount,
+    });
+
+    return usdcAmount as bigint;
+  }
+
   async getTreasuryValue(): Promise<bigint> {
     const flaunchContract = await this.getFlaunchContract();
 
@@ -297,11 +302,9 @@ export class FlaunchClient {
 
     const finalETHAmount = marketCap + lETHBalance;
 
-    const finalUSDCAmount = await this.marketCappedPriceContract.read('getFlippedMarketCap', {
-      ethAmount: finalETHAmount,
-    });
+    const finalUSDCAmount = await this.getUSDCFromETH(finalETHAmount);
 
-    return finalUSDCAmount as bigint;
+    return finalUSDCAmount;
   }
 
   async getMarketCap(): Promise<bigint> {
@@ -312,11 +315,9 @@ export class FlaunchClient {
       tokenAmount: totalSupply,
     });
 
-    const usdcAmount = await this.marketCappedPriceContract.read('getFlippedMarketCap', {
-      ethAmount,
-    });
+    const usdcAmount = await this.getUSDCFromETH(ethAmount);
 
-    return usdcAmount as bigint;
+    return usdcAmount;
   }
 
   async getLiquidity(): Promise<bigint> {
@@ -331,9 +332,7 @@ export class FlaunchClient {
 
     const totalETHAmount = memecoinETHValue + liquidity._ethAmount;
 
-    const totalUSDCAmount = await this.marketCappedPriceContract.read('getFlippedMarketCap', {
-      ethAmount: totalETHAmount,
-    });
+    const totalUSDCAmount = await this.getUSDCFromETH(totalETHAmount);
 
     return totalUSDCAmount;
   }
@@ -370,14 +369,12 @@ export class FlaunchClient {
       tokenAmount: supply,
     });
 
-    const supplyUsdcValue = await this.marketCappedPriceContract.read('getFlippedMarketCap', {
-      ethAmount: supplyEthValue,
-    });
+    const supplyUsdcValue = await this.getUSDCFromETH(supplyEthValue);
 
     return {
       info: fairLaunchInfo,
       percentage,
-      usdcValue: supplyUsdcValue as bigint,
+      usdcValue: supplyUsdcValue,
     };
   }
 
@@ -535,9 +532,10 @@ export class FlaunchClient {
   }
 
   async getBuybackCharging(): Promise<{
-    current: bigint;
     threshold: bigint;
     progress: number;
+    amount0: bigint;
+    amount1: bigint;
   }> {
     const positionManager = await this.getPositionManagerContract();
 
@@ -549,14 +547,59 @@ export class FlaunchClient {
       _poolKey: poolKey,
     });
 
-    const current = (poolFeesResult.amount0 as bigint);
+    const current = poolFeesResult.amount0;
     const threshold = BigInt('1000000000000000');
     const progress = threshold > 0n ? Number(current) / Number(threshold) : 0;
 
     return {
-      current,
       threshold,
       progress: Math.min(1, Math.max(0, progress)),
+      amount0: poolFeesResult.amount0,
+      amount1: poolFeesResult.amount1,
+    };
+  }
+
+  private async getBidWallContract(): Promise<ReadContract<BidWallABI>> {
+    if (this.bidWallContract) return this.bidWallContract;
+
+    const positionManager = await this.getPositionManagerContract();
+    const bidWallAddress = await positionManager.read('bidWall');
+
+    if (!isAddress(bidWallAddress)) {
+      throw new Error('Invalid bid wall address');
+    }
+
+    this.bidWallContract = this.drift.contract({
+      abi: BidWall,
+      address: bidWallAddress,
+    });
+
+    return this.bidWallContract;
+  }
+
+  async getBidWallInfo(): Promise<{
+    cumulativeSwapFees: bigint;
+    amount0: bigint;
+    amount1: bigint;
+    pendingETH: bigint;
+  }> {
+    const poolId = await this.getPoolId();
+    const bidWallContract = await this.getBidWallContract();
+
+    const [poolInfo, position] = await Promise.all([
+      bidWallContract.read('poolInfo', {
+        _poolId: poolId,
+      }),
+      bidWallContract.read('position', {
+        _poolId: poolId,
+      }),
+    ]);
+
+    return {
+      cumulativeSwapFees: poolInfo.cumulativeSwapFees,
+      amount0: position.amount0_,
+      amount1: position.amount1_,
+      pendingETH: position.pendingEth_,
     };
   }
 }
