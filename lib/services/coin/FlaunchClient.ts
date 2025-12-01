@@ -512,41 +512,53 @@ export class FlaunchClient {
     const isNativeToken0 = nativeToken.toLowerCase().localeCompare(this.memecoinAddress.toLowerCase()) <= 0;
     const sqrtPriceLimitX96 = !isNativeToken0 ? minSqrtPriceX96 : maxSqrtPriceX96;
 
-    const ERC20Contract = this.drift.contract({
-      abi: ERC20,
-      address: this.memecoinAddress,
-    }) as unknown as ReadWriteContract<typeof ERC20>;
-
     const poolSwapAddress = await this.zapContract.read('poolSwap');
 
-    const approveTxHash = await ERC20Contract.write('approve', {
-      spender: poolSwapAddress,
-      amount: sellAmount,
-    });
+    const erc20Interface = new Interface(ERC20);
+    const poolSwapInterface = new Interface(PoolSwap);
 
-    const approveTx = await this.provider.getTransaction(approveTxHash);
-    if (!approveTx) {
-      throw new Error('Failed to get approval transaction');
-    }
-    await approveTx.wait();
-
-    const poolSwapContract = this.drift.contract({
-      abi: PoolSwap,
-      address: poolSwapAddress,
-    }) as unknown as ReadWriteContract<typeof PoolSwap>;
-
-    const txHash = await poolSwapContract.write(
-      'swap',
+    const calls: Array<{
+      target: string;
+      allowFailure: boolean;
+      value: bigint;
+      callData: string;
+    }> = [
       {
-        _key: poolKey,
-        _params: {
-          zeroForOne: !isNativeToken0,
-          amountSpecified: -sellAmount,
-          sqrtPriceLimitX96,
-        },
-        _recipient: recipient,
-      }
-    );
+        target: this.memecoinAddress,
+        allowFailure: false,
+        value: 0n,
+        callData: erc20Interface.encodeFunctionData('approve', [poolSwapAddress, sellAmount]),
+      },
+      {
+        target: poolSwapAddress,
+        allowFailure: false,
+        value: 0n,
+        callData: poolSwapInterface.encodeFunctionData('swap', [
+          [
+            poolKey.currency0,
+            poolKey.currency1,
+            poolKey.fee,
+            poolKey.tickSpacing,
+            poolKey.hooks,
+          ],
+          {
+            zeroForOne: !isNativeToken0,
+            amountSpecified: -sellAmount,
+            sqrtPriceLimitX96,
+          },
+          recipient,
+        ]),
+      },
+    ];
+
+    const multicall3Contract = this.drift.contract({
+      abi: MULTICALL,
+      address: MULTICALL3_ADDRESS,
+    }) as unknown as ReadWriteContract<typeof MULTICALL>;
+
+    const txHash = await multicall3Contract.write('aggregate3Value', {
+      calls,
+    });
 
     return txHash;
   }

@@ -85,6 +85,7 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
         }
       });
     } catch (error) {
+      console.log(error)
       Sentry.captureException(error);
       toast.error(formatError(error));
     } finally {
