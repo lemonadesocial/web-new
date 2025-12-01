@@ -29,6 +29,8 @@ export function CoinPage({ network, address }: CoinPageProps) {
   const listChains = useAtomValue(listChainsAtom);
   const chain = listChains.find((chain) => chain.code_name === network);
 
+  console.log(chain)
+
   if (!chain) return notFound();
 
   return (

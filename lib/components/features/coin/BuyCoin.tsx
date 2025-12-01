@@ -62,7 +62,11 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
       const provider = new BrowserProvider(walletProvider as Eip1193Provider);
       const signer = await provider.getSigner();
       const flaunchClient = FlaunchClient.getInstance(chain, address, signer);
-      const txHash = await flaunchClient.buyCoin({ buyAmount });
+      if (!userAddress) {
+        toast.error('Wallet address not available');
+        return;
+      }
+      const txHash = await flaunchClient.buyCoin({ buyAmount, recipient: userAddress });
       
       const receipt = await provider.waitForTransaction(txHash);
       
@@ -101,6 +105,7 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
         }
       });
     } catch (error) {
+      console.log(error)
       Sentry.captureException(error);
       toast.error(formatError(error));
     } finally {

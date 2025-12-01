@@ -1,4 +1,4 @@
-import { isAddress, JsonRpcProvider, type Signer } from 'ethers';
+import { isAddress, JsonRpcProvider, type Signer, Interface } from 'ethers';
 import { createDrift, type Drift, type ReadContract, type Hash, ReadWriteContract } from '@gud/drift';
 import { ethersAdapter } from '@gud/drift-ethers';
 
@@ -16,6 +16,7 @@ import { LETH } from '$lib/abis/token-launch-pad/LETH';
 import { ERC20 } from '$lib/abis/ERC20';
 import { FairLaunch } from '$lib/abis/token-launch-pad/FairLaunch';
 import { BidWall } from '$lib/abis/token-launch-pad/BidWall';
+import { MULTICALL } from '$lib/abis/token-launch-pad/Multicall';
 import { TOTAL_SUPPLY } from '../token-launch-pad';
 
 type FlaunchABI = typeof Flaunch;
@@ -29,6 +30,8 @@ type MemecoinABI = typeof Memecoin;
 type LETHABI = typeof LETH;
 type ERC20ABI = typeof ERC20;
 type BidWallABI = typeof BidWall;
+
+const MULTICALL3_ADDRESS = '0xcA11bde05977b3631167028862bE2a173976CA11';
 
 export class FlaunchClient {
   private static instances: Map<string, FlaunchClient> = new Map();
@@ -399,9 +402,11 @@ export class FlaunchClient {
   async buyCoin({
     buyAmount,
     slippageTolerance = 500,
+    recipient,
   }: {
     buyAmount: bigint;
     slippageTolerance?: number;
+    recipient: string;
   }): Promise<Hash> {
     const positionManager = await this.getPositionManagerContract();
     const nativeToken = await this.getLETHAddress();
@@ -421,49 +426,61 @@ export class FlaunchClient {
     const isNativeToken0 = nativeToken.toLowerCase().localeCompare(this.memecoinAddress.toLowerCase()) <= 0;
     const sqrtPriceLimitX96 = isNativeToken0 ? minSqrtPriceX96 : maxSqrtPriceX96;
 
-    const LETHContract = this.drift.contract({
-      abi: LETH,
-      address: nativeToken,
-    }) as unknown as ReadWriteContract<LETHABI>;
-
     const poolSwapAddress = await this.zapContract.read('poolSwap');
 
-    await LETHContract.write('approve', {
-      _spender: poolSwapAddress,
-      _amount: buyAmount,
-    });
+    const lETHInterface = new Interface(LETH);
+    const poolSwapInterface = new Interface(PoolSwap);
 
-    const depositTxHash = await LETHContract.write('deposit', {
-      [0]: buyAmount,
+    const calls: Array<{
+      target: string;
+      allowFailure: boolean;
+      value: bigint;
+      callData: string;
+    }> = [
+      {
+        target: nativeToken,
+        allowFailure: false,
+        value: buyAmount,
+        callData: lETHInterface.encodeFunctionData('deposit', [0]),
+      },
+      {
+        target: nativeToken,
+        allowFailure: false,
+        value: 0n,
+        callData: lETHInterface.encodeFunctionData('approve', [poolSwapAddress, buyAmount]),
+      },
+      {
+        target: poolSwapAddress,
+        allowFailure: false,
+        value: 0n,
+        callData: poolSwapInterface.encodeFunctionData('swap', [
+          [
+            poolKey.currency0,
+            poolKey.currency1,
+            poolKey.fee,
+            poolKey.tickSpacing,
+            poolKey.hooks,
+          ],
+          {
+            zeroForOne: isNativeToken0,
+            amountSpecified: -buyAmount,
+            sqrtPriceLimitX96,
+          },
+          recipient,
+        ]),
+      },
+    ];
+
+    const multicall3Contract = this.drift.contract({
+      abi: MULTICALL,
+      address: MULTICALL3_ADDRESS,
+    }) as unknown as ReadWriteContract<typeof MULTICALL>;
+
+    const txHash = await multicall3Contract.write('aggregate3Value', {
+      calls,
     }, {
       value: buyAmount,
     });
-
-    const depositTx = await this.provider.getTransaction(depositTxHash);
-    if (!depositTx) {
-      throw new Error('Failed to get deposit transaction');
-    }
-    await depositTx.wait();
-
-    const poolSwapContract = this.drift.contract({
-      abi: PoolSwap,
-      address: poolSwapAddress,
-    }) as unknown as ReadWriteContract<typeof PoolSwap>;
-
-    const txHash = await poolSwapContract.write(
-      'swap',
-      {
-        _key: poolKey,
-        _params: {
-          zeroForOne: isNativeToken0,
-          amountSpecified: -buyAmount,
-          sqrtPriceLimitX96,
-        }
-      },
-      {
-        value: buyAmount,
-      }
-    );
 
     return txHash;
   }
@@ -471,9 +488,11 @@ export class FlaunchClient {
   async sellCoin({
     sellAmount,
     slippageTolerance = 500,
+    recipient,
   }: {
     sellAmount: bigint;
     slippageTolerance?: number;
+    recipient: string;
   }): Promise<Hash> {
     const positionManager = await this.getPositionManagerContract();
     const nativeToken = await this.getLETHAddress();
@@ -524,7 +543,8 @@ export class FlaunchClient {
           zeroForOne: !isNativeToken0,
           amountSpecified: -sellAmount,
           sqrtPriceLimitX96,
-        }
+        },
+        _recipient: recipient,
       }
     );
 

@@ -10,7 +10,7 @@ import { chainsMapAtom } from '$lib/jotai';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { useTokenData } from '$lib/hooks/useCoin';
 import { ConnectWallet } from '../modals/ConnectWallet';
-import { useAppKitProvider } from '$lib/utils/appkit';
+import { useAppKitProvider, useAppKitAccount } from '$lib/utils/appkit';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 import { useTokenBalance } from '$lib/hooks/useBalance';
 import { formatNumber } from '$lib/utils/number';
@@ -28,6 +28,7 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
   const [isSelling, setIsSelling] = useState(false);
   const [tokenPrice, setTokenPrice] = useState<string | null>(null);
   const { walletProvider } = useAppKitProvider('eip155');
+  const { address: userAddress } = useAppKitAccount();
 
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
   const { formattedBalance, balance } = useTokenBalance(chain, address);
@@ -66,11 +67,15 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
         return;
       }
   
+      if (!userAddress) {
+        toast.error('Wallet address not available');
+        return;
+      }
       setIsSelling(true);
       const provider = new BrowserProvider(walletProvider as Eip1193Provider);
       const signer = await provider.getSigner();
       const flaunchClient = FlaunchClient.getInstance(chain, address, signer);
-      const txHash = await flaunchClient.sellCoin({ sellAmount });
+      const txHash = await flaunchClient.sellCoin({ sellAmount, recipient: userAddress });
       
       modal.open(TxnConfirmedModal, {
         props: {

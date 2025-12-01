@@ -98,6 +98,11 @@ export const PoolSwap = [
             "internalType": "uint160"
           }
         ]
+      },
+      {
+        "name": "_recipient",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "outputs": [
