@@ -751,6 +751,21 @@ export function CreateCoin() {
                     </Button>
                   )}
                 </div>
+
+                {watch('splitFeeRecipients').length > 0 && (() => {
+                  const total = watch('splitFeeRecipients').reduce((sum, recipient) => sum + recipient.percentage, 0);
+                  const isValid = Math.abs(total - 100) < 0.01;
+                  
+                  if (!isValid) {
+                    return (
+                      <p className="text-error text-sm">
+                        Total percentage must equal 100%.
+                      </p>
+                    );
+                  }
+                  return null;
+                })()}
+
               </>
             ) : <CommunitySearch onSuccess={handleCommunitySearchSuccess} />}
           </div>

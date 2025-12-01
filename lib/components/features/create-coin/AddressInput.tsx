@@ -72,7 +72,7 @@ export function AddressInput({ value = '', onChange, placeholder = 'Wallet Addre
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <Input
         value={inputValue}
         onChange={handleChange}

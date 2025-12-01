@@ -17,9 +17,9 @@ type ActivateLaunchpadForm = {
   ownerAddress: string;
   access: 'open' | 'closed';
   ownerFeeEnabled: boolean;
-  ownerFee: number;
-  coinCreatorsFee: number;
-  membersFee: number;
+  ownerFee: number | null;
+  coinCreatorsFee: number | null;
+  membersFee: number | null;
   stakeDurationValue: number;
 };
 
@@ -61,7 +61,7 @@ export function ActivateLaunchpad() {
     }
   }, [address, ownerAddress, setValue]);
 
-  const clamp = (value: number) => Math.max(0, Math.min(100, value || 0));
+  const clamp = (value: number | null) => Math.max(0, Math.min(100, value ?? 0));
   const ownerWidth = clamp(ownerFee);
   const creatorsWidth = clamp(coinCreatorsFee);
   const membersWidth = clamp(membersFee);
@@ -92,8 +92,8 @@ export function ActivateLaunchpad() {
         groupOwner: formData.ownerAddress,
         minEscrowDuration: 0,
         minStakeDuration: formData.stakeDurationValue * SECONDS_PER_MONTH,
-        creatorSharePercentage: formData.coinCreatorsFee,
-        ownerSharePercentage: formData.ownerFeeEnabled ? formData.ownerFee : 0,
+        creatorSharePercentage: formData.coinCreatorsFee ?? 0,
+        ownerSharePercentage: formData.ownerFeeEnabled ? (formData.ownerFee ?? 0) : 0,
         isOpen: formData.access === 'open',
       };
 
@@ -257,7 +257,7 @@ export function ActivateLaunchpad() {
               onChange={(value) => {
                 setValue('ownerFeeEnabled', value);
                 if (!value) {
-                  setValue('ownerFee', 0);
+                  setValue('ownerFee', null);
                 }
               }}
             />
@@ -265,27 +265,37 @@ export function ActivateLaunchpad() {
 
           {isEditingFees ? (
             <div className="space-y-3">
-              <div className="space-y-1.5">
-                <p className="text-sm text-secondary">Community Owner</p>
-                <Controller
-                  control={control}
-                  name="ownerFee"
-                  render={({ field }) => (
-                    <div className="relative">
-                      <Input
-                        type="number"
-                        variant="outlined"
-                        value={field.value}
-                        onChange={(event) => field.onChange(Number(event.target.value) || 0)}
-                        min={0}
-                        max={100}
-                        disabled={!ownerFeeEnabled}
-                      />
-                      <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-sm text-tertiary">%</span>
-                    </div>
-                  )}
-                />
-              </div>
+              {
+                ownerFeeEnabled && (
+                  <div className="space-y-1.5">
+                    <p className="text-sm text-secondary">Community Owner</p>
+                    <Controller
+                      control={control}
+                      name="ownerFee"
+                      render={({ field }) => (
+                        <div className="relative">
+                          <Input
+                            type="number"
+                            variant="outlined"
+                            value={field.value ?? ''}
+                            onChange={(event) => {
+                              const value = event.target.value;
+                              field.onChange(value === '' ? null : Number(value) || null);
+                            }}
+                            min={0}
+                            max={100}
+                            style={{
+                              MozAppearance: 'textfield',
+                            }}
+                            className="[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                          />
+                          <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-sm text-tertiary">%</span>
+                        </div>
+                      )}
+                    />
+                  </div>
+                )
+              }
 
               <div className="space-y-1.5">
                 <p className="text-sm text-secondary">Coin Creators</p>
@@ -297,10 +307,17 @@ export function ActivateLaunchpad() {
                       <Input
                         type="number"
                         variant="outlined"
-                        value={field.value}
-                        onChange={(event) => field.onChange(Number(event.target.value) || 0)}
+                        value={field.value ?? ''}
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          field.onChange(value === '' ? null : Number(value) || null);
+                        }}
                         min={0}
                         max={100}
+                        style={{
+                          MozAppearance: 'textfield',
+                        }}
+                        className="[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       />
                       <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-sm text-tertiary">%</span>
                     </div>
@@ -318,16 +335,37 @@ export function ActivateLaunchpad() {
                       <Input
                         type="number"
                         variant="outlined"
-                        value={field.value}
-                        onChange={(event) => field.onChange(Number(event.target.value) || 0)}
+                        value={field.value ?? ''}
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          field.onChange(value === '' ? null : Number(value) || null);
+                        }}
                         min={0}
                         max={100}
+                        style={{
+                          MozAppearance: 'textfield',
+                        }}
+                        className="[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       />
                       <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-sm text-tertiary">%</span>
                     </div>
                   )}
                 />
               </div>
+
+              {(() => {
+                const total = (ownerFee ?? 0) + (coinCreatorsFee ?? 0) + (membersFee ?? 0);
+                const isValid = Math.abs(total - 100) < 0.01;
+                
+                if (!isValid) {
+                  return (
+                    <p className="text-error text-sm">
+                      Total percentage must equal 100%.
+                    </p>
+                  );
+                }
+                return null;
+              })()}
             </div>
           ) : (
             <div className="space-y-3">
@@ -352,7 +390,7 @@ export function ActivateLaunchpad() {
                 )}
               </div>
               <div className="flex flex-wrap gap-4 text-sm">
-                {ownerFee > 0 && (
+                {ownerFee != null && ownerFee > 0 && (
                   <div className="flex items-center gap-1 text-secondary">
                     <span className="inline-block size-2 rounded-full bg-accent-400" />
                     <p className="text-accent-400 text-sm">Community Owner {ownerFee}%</p>
