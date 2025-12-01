@@ -29,3 +29,39 @@ query MemecoinHolder($where: MemecoinHolder_bool_exp, $orderBy: [MemecoinHolder_
     memecoin
   }
 }
+
+query TradeVolume($limit: Int, $offset: Int, $where: TradeVolume_bool_exp, $orderBy: [TradeVolume_order_by!]) {
+  TradeVolume(limit: $limit, offset: $offset, where: $where, order_by: $orderBy) {
+    chainId
+    date
+    id
+    memecoin
+    tradeCount
+    updatedAt
+    volumeETH
+    volumeMemecoin
+  }
+}
+
+query PoolCreated($limit: Int, $offset: Int, $orderBy: [PoolCreated_order_by!], $where: PoolCreated_bool_exp) {
+  PoolCreated(limit: $limit, offset: $offset, order_by: $orderBy, where: $where) {
+    blockNumber
+    blockTimestamp
+    chainId
+    currencyFlipped
+    id
+    latestMarketCapDate
+    latestMarketCapETH
+    memecoin
+    memecoinTreasury
+    paramsCreator
+    paramsCreatorFeeAllocation
+    paramsFeeCalculatorParams
+    paramsInitialPriceParams
+    poolId
+    previousMarketCapDate
+    previousMarketCapETH
+    tokenId
+    transactionHash
+  }
+}

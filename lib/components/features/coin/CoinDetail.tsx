@@ -3,7 +3,7 @@ import { Card, Skeleton, toast } from '$lib/components/core';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { copy } from '$lib/utils/helpers';
 import { truncateMiddle } from '$lib/utils/string';
-import { useMarketCap, useTokenData } from '$lib/hooks/useCoin';
+import { useMarketCap, useMarketCapChange, useTokenData } from '$lib/hooks/useCoin';
 import { BuybackCharging } from './BuybackCharging';
 import { CoinAdvanced } from './CoinAdvanced';
 import { CoinHolders } from './CoinHolders';
@@ -19,6 +19,7 @@ interface CoinPageProps {
 export function CoinDetail({ address, chain }: CoinPageProps) {
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
   const { formattedMarketCap, isLoadingMarketCap } = useMarketCap(chain, address);
+  const { percentageChange, isLoadingMarketCapChange } = useMarketCapChange(chain, address);
 
   return (
     <div className="flex flex-col gap-5">
@@ -45,7 +46,21 @@ export function CoinDetail({ address, chain }: CoinPageProps) {
             ) : (
               formattedMarketCap && <p className="text-accent-400 text-lg">{formattedMarketCap}</p>
             )}
-            {/* <p className="text-success-500 text-sm">+15.20%</p> */}
+            {isLoadingMarketCapChange ? (
+              <Skeleton className="h-5 w-16" animate />
+            ) : (
+              percentageChange !== null && (
+                <p
+                  className={clsx(
+                    'text-sm',
+                    percentageChange >= 0 ? 'text-success-500' : 'text-error',
+                  )}
+                >
+                  {percentageChange >= 0 ? '+' : '-'}
+                  {Math.abs(percentageChange).toFixed(2)}%
+                </p>
+              )
+            )}
           </div>
         </div>
       </div>

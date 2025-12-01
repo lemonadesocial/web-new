@@ -2,12 +2,22 @@ import { formatEther, formatUnits, zeroAddress } from 'viem';
 import { useEffect, useState } from 'react';
 import { useQuery as useGraphQLQuery } from '$lib/graphql/request';
 import { useQuery as useReactQuery } from '@tanstack/react-query';
+import { coinClient } from '$lib/graphql/request/instances';
 
 import {
   ListLaunchpadGroupsDocument,
   type ListLaunchpadGroupsQuery,
   type ListLaunchpadGroupsQueryVariables,
 } from '$lib/graphql/generated/backend/graphql';
+import {
+  TradeVolumeDocument,
+  type TradeVolumeQuery,
+  type TradeVolumeQueryVariables,
+  PoolCreatedDocument,
+  type PoolCreatedQuery,
+  type PoolCreatedQueryVariables,
+  Order_By,
+} from '$lib/graphql/generated/coin/graphql';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 import { formatNumber } from '$lib/utils/number';
@@ -286,5 +296,135 @@ export function useBidWallInfo(chain: Chain, address: string) {
     formattedAmount1,
     formattedPendingETH,
     isLoadingBidWallInfo: isLoading,
+  };
+}
+
+export function useVolume24h(chain: Chain, address: string) {
+  const today = new Date().toISOString().split('T')[0];
+  const [formattedVolumeUSDC, setFormattedVolumeUSDC] = useState<string | null>(null);
+  const [rawVolumeUSDC, setRawVolumeUSDC] = useState<bigint | null>(null);
+  const [isLoadingUSDC, setIsLoadingUSDC] = useState(false);
+
+  const { data, loading } = useGraphQLQuery(
+    TradeVolumeDocument,
+    {
+      variables: {
+        where: {
+          memecoin: {
+            _eq: address.toLowerCase(),
+          },
+          chainId: {
+            _eq: Number(chain.chain_id),
+          },
+          date: {
+            _eq: today,
+          },
+        },
+        orderBy: [
+          {
+            volumeETH: Order_By.Desc,
+          },
+        ],
+        limit: 1,
+        offset: 0,
+      },
+      fetchPolicy: 'network-only',
+    },
+    coinClient,
+  );
+
+  const volume = data?.TradeVolume?.[0];
+  const rawVolume = volume?.volumeETH ? BigInt(volume.volumeETH || '0') : null;
+  const formattedVolume = rawVolume ? `${formatNumber(Number(formatEther(rawVolume)))} ETH` : null;
+
+  useEffect(() => {
+    const convertToUSDC = async () => {
+      if (!rawVolume) {
+        setFormattedVolumeUSDC(null);
+        setRawVolumeUSDC(null);
+        setIsLoadingUSDC(false);
+        return;
+      }
+
+      setIsLoadingUSDC(true);
+      try {
+        const flaunchClient = FlaunchClient.getInstance(chain, address);
+        const usdcAmount = await flaunchClient.getUSDCFromETH(rawVolume);
+        setRawVolumeUSDC(usdcAmount);
+
+        const usdcValue = formatUnits(usdcAmount, 6);
+        setFormattedVolumeUSDC(`${formatNumber(Number(usdcValue))} USDC`);
+      } catch (error) {
+        setFormattedVolumeUSDC(null);
+        setRawVolumeUSDC(null);
+      } finally {
+        setIsLoadingUSDC(false);
+      }
+    };
+
+    convertToUSDC();
+  }, [rawVolume, chain, address]);
+
+  return {
+    formattedVolume,
+    rawVolume,
+    formattedVolumeUSDC,
+    rawVolumeUSDC,
+    isLoadingVolume: loading || isLoadingUSDC,
+  };
+}
+
+export function useMarketCapChange(chain: Chain, address: string) {
+  const {
+    data,
+    loading,
+  } = useGraphQLQuery<PoolCreatedQuery, PoolCreatedQueryVariables>(
+    PoolCreatedDocument,
+    {
+      variables: {
+        where: {
+          memecoin: {
+            _eq: address.toLowerCase(),
+          },
+          chainId: {
+            _eq: Number(chain.chain_id),
+          },
+        },
+        orderBy: [
+          {
+            latestMarketCapETH: Order_By.Desc,
+          },
+        ],
+        limit: 1,
+        offset: 0,
+      },
+      fetchPolicy: 'network-only',
+    },
+    coinClient,
+  );
+
+  const pool = data?.PoolCreated?.[0];
+  const latestMarketCapETH = pool?.latestMarketCapETH ?? null;
+  const previousMarketCapETH = pool?.previousMarketCapETH ?? null;
+
+  let percentageChange: number | null = null;
+
+  if (latestMarketCapETH != null && previousMarketCapETH != null) {
+    const latest = Number(latestMarketCapETH);
+    const previous = Number(previousMarketCapETH);
+
+    if (previous !== 0) {
+      const change = ((latest - previous) / previous) * 100;
+      percentageChange = change;
+    }
+  }
+
+  return {
+    latestMarketCapETH,
+    previousMarketCapETH,
+    latestMarketCapDate: pool?.latestMarketCapDate ?? null,
+    previousMarketCapDate: pool?.previousMarketCapDate ?? null,
+    percentageChange,
+    isLoadingMarketCapChange: loading,
   };
 }

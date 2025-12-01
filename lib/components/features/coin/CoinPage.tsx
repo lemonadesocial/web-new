@@ -11,7 +11,7 @@ import { formatWallet } from '$lib/utils/crypto';
 import { copy } from '$lib/utils/helpers';
 import { Badge, Card, Skeleton, toast } from '$lib/components/core';
 
-import { useFairLaunch, useFees, useGroup, useLiquidity, useMarketCap, useOwner, useTokenData, useTreasuryValue } from '$lib/hooks/useCoin';
+import { useFairLaunch, useFees, useGroup, useLiquidity, useMarketCap, useOwner, useTokenData, useTreasuryValue, useVolume24h } from '$lib/hooks/useCoin';
 import { CoinTransactions } from './CoinTransactions';
 import { CoinHolders } from './CoinHolders';
 import { CoinAdvanced } from './CoinAdvanced';
@@ -63,6 +63,7 @@ function Stats({ chain, address }: { chain: Chain; address: string }) {
   const { formattedMarketCap, isLoadingMarketCap } = useMarketCap(chain, address);
   const { formattedLiquidity, isLoadingLiquidity } = useLiquidity(chain, address);
   const { formattedPercentage, formattedUsdcValue, isLoadingFairLaunch } = useFairLaunch(chain, address);
+  const { formattedVolumeUSDC, isLoadingVolume } = useVolume24h(chain, address);
 
   return (
     <div className="grid grid-cols-5 gap-3">
@@ -92,7 +93,8 @@ function Stats({ chain, address }: { chain: Chain; address: string }) {
       />
       <StatItem
         title="Volume (24h)"
-        value="Coming Soon"
+        value={formattedVolumeUSDC || 'N/A'}
+        loading={isLoadingVolume}
       />
       <StatItem
         title="Marketcap"
