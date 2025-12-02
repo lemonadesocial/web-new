@@ -43,15 +43,15 @@ export function AllCoins() {
 
   return (
     <div className="flex flex-col gap-4 relative">
-      <p className="text-xl font-semibold">All Coins</p>
-      <div className='flex justify-end items-center'>   
+      <div className='flex justify-between items-center'>
+        <p className="text-xl font-semibold">All Coins</p>
         <Button iconLeft="icon-plus" variant='secondary' size="sm">Create Coin</Button>
       </div>
 
       <div className="space-y-3">
         <div className="overflow-y-auto no-scrollbar rounded-md">
           <CardTable.Root loading={loading} data={list} className="table">
-            <CardTable.Header>
+            <CardTable.Header className="px-4 py-3">
               <p className="w-[179px]">Ticker</p>
               <p className="w-[144px]">Contract Address</p>
               <p className="w-[144px]">Owner</p>
