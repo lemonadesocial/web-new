@@ -3,14 +3,7 @@ import React from 'react';
 import { Card } from '$lib/components/core';
 import { LemonheadLeaderBoardRank } from '../lemonheads/LemonheadLeaderBoardRank';
 import clsx from 'clsx';
-
-const topVolumn = [
-  { id: 1, title: 'Tech Growth Token', subtitle: 'TGT', amount: '$4.20M' },
-  { id: 2, title: 'Crypto Art Token', subtitle: 'CRYPTOART', amount: '$3.05M' },
-  { id: 3, title: 'Solar Power Token', subtitle: 'SOLAR', amount: '$7.60M' },
-  { id: 4, title: 'Clean Water Coin', subtitle: 'CCWATER', amount: '$3.85M' },
-  { id: 5, title: 'Education Token', subtitle: 'EDUCOIN', amount: '$4.20M' },
-];
+import { TopVolume } from './TopVolume';
 
 const topMarket = [
   { id: 1, title: 'Green Energy Coin', subtitle: 'TGT', amount: '$4.20M', percent: -11 },
@@ -29,20 +22,11 @@ const topTrade = [
 ];
 
 export function TopPerformers() {
-  const [loadingTopVolumn, setLoadingTopVolumn] = React.useState(true);
-
-  React.useEffect(() => {
-    const timer1 = setTimeout(() => setLoadingTopVolumn(false), 1000);
-    return () => {
-      clearTimeout(timer1);
-    };
-  }, []);
-
   return (
     <div className="flex flex-col gap-4 relative">
       <p className="text-xl font-semibold">Top Performers</p>
       <div className="flex flex-col md:flex-row gap-4">
-        <CardList title="Top Volume" data={topVolumn} />
+        <TopVolume />
         <CardList title="Top Market" data={topMarket} />
         <CardList title="Most Trades (24h)" data={topTrade} />
       </div>
