@@ -26,12 +26,10 @@ function TransactionRow({
   swap,
   chain,
   isEthToken0,
-  tokenData,
 }: {
   swap: PoolSwapItem;
   chain: Chain;
   isEthToken0: boolean | null;
-  tokenData: { symbol?: string; decimals?: number } | null;
 }) {
   const [fromAddress, setFromAddress] = React.useState<string | null>(null);
   const [isLoadingFrom, setIsLoadingFrom] = React.useState(true);

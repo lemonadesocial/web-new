@@ -57,9 +57,9 @@ export function CoinHolders({ chain, address }: CoinHoldersProps) {
     <CardTable.Root loading={isLoading} data={holders}>
       <CardTable.Header>
         <div className="flex gap-4 px-4 py-3 w-full">
-          <p className="w-[60px]">Rank</p>
+          <p className="w-[50px]">Rank</p>
           <p className="w-[100px]">Wallet ID</p>
-          <p className="w-[50px]">%</p>
+          <p className="w-[100px]">%</p>
           <p className="flex-1">Amount</p>
           {/* <p className="w-[96px] text-right">Value</p> */}
           <p className="w-[16px]"></p>
@@ -86,7 +86,7 @@ export function CoinHolders({ chain, address }: CoinHoldersProps) {
         
         const balanceFormatted = formatEther(balance);
         const balanceNumber = Number(balanceFormatted);
-        const percentage = Number((balance) / TOTAL_SUPPLY) / 100;
+        const percentage = Number(balance) / Number(TOTAL_SUPPLY) * 100;
 
         const rank = pagination.offset + index + 1;
         const addressUrl = getAddressUrl(chain, holder.holder);
@@ -94,13 +94,13 @@ export function CoinHolders({ chain, address }: CoinHoldersProps) {
         return (
           <CardTable.Row key={holder.id}>
             <div className="flex gap-4 px-4 py-3 items-center justify-between text-tertiary">
-              <div className="w-[60px]">
+              <div className="w-[50px]">
                 <p>{rank}</p>
               </div>
               <div className="w-[100px]">
                 <p className="text-primary">{formatWallet(holder.holder, 4)}</p>
               </div>
-              <div className="w-[50px]">
+              <div className="w-[100px]">
                 <p>{formatNumber(percentage)}%</p>
               </div>
               <div className="flex-1">

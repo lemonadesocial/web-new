@@ -6,7 +6,7 @@ export const SECONDS_PER_DAY = 86400;
 export const DAYS_PER_MONTH = 30;
 export const SECONDS_PER_MONTH = SECONDS_PER_DAY * DAYS_PER_MONTH;
 
-export const TOTAL_SUPPLY = BigInt(10) ** BigInt(27);
+export const TOTAL_SUPPLY = BigInt(10) ** BigInt(29);
 
 export const parseLogs = (receipt: ethers.TransactionReceipt | null, contractInterface: ethers.Interface) => {
   if (!receipt) return [];
