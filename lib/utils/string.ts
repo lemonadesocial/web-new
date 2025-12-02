@@ -81,6 +81,7 @@ export function formatNumber(str: string) {
  * Ex:
  *    numberWithCommas(1000) -> "1,000"
  **/
-export function formatNumberWithCommas(num: number) {
+export function formatNumberWithCommas(num?: number) {
+  if (!num) return '0';
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
