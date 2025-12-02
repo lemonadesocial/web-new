@@ -13,16 +13,18 @@ async function Page() {
   if (!space) return notFound();
 
   return (
-    <div className="flex flex-col gap-6 pb-20">
-      <div>
-        <HeroSection space={space} />
-        <CommunityInfoSection space={space} />
+    <div className="page mx-auto px-4 xl:px-0 pt-6 w-full max-w-[1080px]">
+      <div className="flex flex-col gap-6 pb-20">
+        <div>
+          <HeroSection space={space} />
+          <CommunityInfoSection space={space} />
+        </div>
+        <JourneySection />
+        <LemonheadsGallery />
+        <FeatureHubSection spaceId={space._id} />
+        <Divider className="h-2" />
+        <NewFeedSection space={space} />
       </div>
-      <JourneySection />
-      <LemonheadsGallery />
-      <FeatureHubSection spaceId={space._id} />
-      <Divider className="h-2" />
-      <NewFeedSection space={space} />
     </div>
   );
 }
