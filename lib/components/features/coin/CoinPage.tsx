@@ -29,12 +29,10 @@ export function CoinPage({ network, address }: CoinPageProps) {
   const listChains = useAtomValue(listChainsAtom);
   const chain = listChains.find((chain) => chain.code_name === network);
 
-  console.log(chain)
-
   if (!chain) return notFound();
 
   return (
-    <>
+    <div className="max-w-[1256px] mx-auto">
       <div className="gap-4 items-start hidden md:flex">
         <div className="flex flex-col gap-4">
           <Stats chain={chain!} address={address} />
@@ -51,7 +49,7 @@ export function CoinPage({ network, address }: CoinPageProps) {
       <div className="md:hidden pt-4 pb-20">
         <CoinDetail chain={chain} address={address} />
       </div>
-    </>
+    </div>
   );
 }
 
