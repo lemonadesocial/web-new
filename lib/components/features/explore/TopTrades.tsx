@@ -1,5 +1,4 @@
 'use client';
-import { formatEther } from 'viem';
 import { useAtomValue } from 'jotai';
 
 import { useQuery } from '$lib/graphql/request/hooks';
@@ -7,20 +6,26 @@ import { coinClient } from '$lib/graphql/request/instances';
 import { TradeVolumeDocument, Order_By } from '$lib/graphql/generated/coin/graphql';
 import { Card } from '$lib/components/core';
 import { LemonheadLeaderBoardRank } from '../lemonheads/LemonheadLeaderBoardRank';
-import { formatNumber } from '$lib/utils/number';
 import { formatWallet } from '$lib/utils/crypto';
 import { chainsMapAtom } from '$lib/jotai/chains';
 import { useTokenData } from '$lib/hooks/useCoin';
 import type { TradeVolume } from '$lib/graphql/generated/coin/graphql';
 
-export function TopVolume() {
+export function TopTrades() {
+  const today = new Date().toISOString().split('T')[0];
+
   const { data, loading } = useQuery(
     TradeVolumeDocument,
     {
       variables: {
+        where: {
+          date: {
+            _eq: today,
+          },
+        },
         orderBy: [
           {
-            volumeETH: Order_By.Desc,
+            tradeCount: Order_By.Desc,
           },
         ],
         limit: 5,
@@ -36,7 +41,7 @@ export function TopVolume() {
   return (
     <Card.Root className="flex-1 w-full">
       <Card.Header className="border-b">
-        <p>Top Volume</p>
+        <p>Most Trades (24h)</p>
       </Card.Header>
       <Card.Content className="divide-y divide-(--color-divider) p-0">
         {loading && (
@@ -58,27 +63,25 @@ export function TopVolume() {
         )}
         {!loading && volumes.length === 0 && (
           <div className="px-4 py-8 text-center text-tertiary">
-            <p>No volume data available</p>
+            <p>No trade data available</p>
           </div>
         )}
         {!loading &&
           volumes.map((volume, idx) => (
-            <TopVolumeItem key={volume.id} volume={volume} rank={idx + 1} />
+            <TopTradesItem key={volume.id} volume={volume} rank={idx + 1} />
           ))}
       </Card.Content>
     </Card.Root>
   );
 }
 
-function TopVolumeItem({ volume, rank }: { volume: TradeVolume; rank: number }) {
+function TopTradesItem({ volume, rank }: { volume: TradeVolume; rank: number }) {
   const chainsMap = useAtomValue(chainsMapAtom);
   const chain = chainsMap[volume.chainId.toString()];
   const { tokenData, isLoadingTokenData } = useTokenData(chain, volume.memecoin);
 
-  const volumeETH = volume.volumeETH ? BigInt(volume.volumeETH) : BigInt(0);
-  const formattedVolume = formatEther(volumeETH);
-  const volumeNumber = Number(formattedVolume);
-  const formattedAmount = volumeNumber > 0 ? `${formatNumber(volumeNumber)} ETH` : '0 ETH';
+  const tradeCount = volume.tradeCount ? Number(volume.tradeCount) : 0;
+  const formattedAmount = tradeCount.toString();
 
   const displayName = tokenData?.name || formatWallet(volume.memecoin, 6);
   const displaySymbol = tokenData?.symbol || formatWallet(volume.memecoin, 4);

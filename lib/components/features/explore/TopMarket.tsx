@@ -1,26 +1,37 @@
 'use client';
+import React from 'react';
 import { formatEther } from 'viem';
 import { useAtomValue } from 'jotai';
-
 import { useQuery } from '$lib/graphql/request/hooks';
 import { coinClient } from '$lib/graphql/request/instances';
-import { TradeVolumeDocument, Order_By } from '$lib/graphql/generated/coin/graphql';
+import {
+  PoolCreatedDocument,
+  type PoolCreatedQuery,
+  type PoolCreatedQueryVariables,
+  Order_By,
+} from '$lib/graphql/generated/coin/graphql';
 import { Card } from '$lib/components/core';
 import { LemonheadLeaderBoardRank } from '../lemonheads/LemonheadLeaderBoardRank';
 import { formatNumber } from '$lib/utils/number';
 import { formatWallet } from '$lib/utils/crypto';
 import { chainsMapAtom } from '$lib/jotai/chains';
 import { useTokenData } from '$lib/hooks/useCoin';
-import type { TradeVolume } from '$lib/graphql/generated/coin/graphql';
+import type { PoolCreated } from '$lib/graphql/generated/coin/graphql';
+import clsx from 'clsx';
 
-export function TopVolume() {
+export function TopMarket() {
   const { data, loading } = useQuery(
-    TradeVolumeDocument,
+    PoolCreatedDocument,
     {
       variables: {
+        where: {
+          latestMarketCapETH: {
+            _is_null: false,
+          },
+        },
         orderBy: [
           {
-            volumeETH: Order_By.Desc,
+            latestMarketCapETH: Order_By.Desc,
           },
         ],
         limit: 5,
@@ -31,12 +42,12 @@ export function TopVolume() {
     coinClient,
   );
 
-  const volumes = data?.TradeVolume || [];
+  const pools = data?.PoolCreated || [];
 
   return (
     <Card.Root className="flex-1 w-full">
       <Card.Header className="border-b">
-        <p>Top Volume</p>
+        <p>Top Market</p>
       </Card.Header>
       <Card.Content className="divide-y divide-(--color-divider) p-0">
         {loading && (
@@ -50,38 +61,50 @@ export function TopVolume() {
                   <div className="h-3 w-24 bg-gray-500 rounded animate-pulse" />
                 </div>
                 <div className="text-right">
-                  <div className="h-4 w-20 bg-gray-500 rounded animate-pulse" />
+                  <div className="h-4 w-20 bg-gray-500 rounded animate-pulse mb-1" />
+                  <div className="h-3 w-16 bg-gray-500 rounded animate-pulse" />
                 </div>
               </div>
             ))}
           </>
         )}
-        {!loading && volumes.length === 0 && (
+        {!loading && pools.length === 0 && (
           <div className="px-4 py-8 text-center text-tertiary">
-            <p>No volume data available</p>
+            <p>No market cap data available</p>
           </div>
         )}
         {!loading &&
-          volumes.map((volume, idx) => (
-            <TopVolumeItem key={volume.id} volume={volume} rank={idx + 1} />
+          pools.map((pool, idx) => (
+            <TopMarketItem key={pool.id} pool={pool} rank={idx + 1} />
           ))}
       </Card.Content>
     </Card.Root>
   );
 }
 
-function TopVolumeItem({ volume, rank }: { volume: TradeVolume; rank: number }) {
+function TopMarketItem({ pool, rank }: { pool: PoolCreated; rank: number }) {
   const chainsMap = useAtomValue(chainsMapAtom);
-  const chain = chainsMap[volume.chainId.toString()];
-  const { tokenData, isLoadingTokenData } = useTokenData(chain, volume.memecoin);
+  const chain = chainsMap[pool.chainId.toString()];
+  const { tokenData, isLoadingTokenData } = useTokenData(chain, pool.memecoin);
 
-  const volumeETH = volume.volumeETH ? BigInt(volume.volumeETH) : BigInt(0);
-  const formattedVolume = formatEther(volumeETH);
-  const volumeNumber = Number(formattedVolume);
-  const formattedAmount = volumeNumber > 0 ? `${formatNumber(volumeNumber)} ETH` : '0 ETH';
+  const latestMarketCapETH = pool.latestMarketCapETH ? BigInt(pool.latestMarketCapETH) : BigInt(0);
+  const previousMarketCapETH = pool.previousMarketCapETH ? BigInt(pool.previousMarketCapETH) : null;
 
-  const displayName = tokenData?.name || formatWallet(volume.memecoin, 6);
-  const displaySymbol = tokenData?.symbol || formatWallet(volume.memecoin, 4);
+  const formattedMarketCap = formatEther(latestMarketCapETH);
+  const marketCapNumber = Number(formattedMarketCap);
+  const formattedAmount = marketCapNumber > 0 ? `${formatNumber(marketCapNumber)} ETH` : '0 ETH';
+
+  let percentageChange: number | null = null;
+  if (previousMarketCapETH !== null && previousMarketCapETH > 0) {
+    const latest = Number(latestMarketCapETH);
+    const previous = Number(previousMarketCapETH);
+    if (previous !== 0) {
+      percentageChange = ((latest - previous) / previous) * 100;
+    }
+  }
+
+  const displayName = tokenData?.name || formatWallet(pool.memecoin, 6);
+  const displaySymbol = tokenData?.symbol || formatWallet(pool.memecoin, 4);
 
   return (
     <div className="flex gap-3 items-center px-4 py-3">
@@ -102,6 +125,12 @@ function TopVolumeItem({ volume, rank }: { volume: TradeVolume; rank: number }) 
       </div>
       <div className="text-right">
         <p>{formattedAmount}</p>
+        {percentageChange !== null && (
+          <p className={clsx('text-sm', percentageChange > 0 ? 'text-success-500' : 'text-danger-500')}>
+            {percentageChange > 0 && '+'}
+            {percentageChange.toFixed(2)}%
+          </p>
+        )}
       </div>
     </div>
   );
