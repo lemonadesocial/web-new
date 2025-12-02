@@ -38,7 +38,7 @@ export class FlaunchClient {
 
   static getInstance(chain: Chain, memecoinAddress: string, signer?: Signer): FlaunchClient {
     if (signer) return new FlaunchClient(chain, memecoinAddress, signer);
-    
+
     const key = `${chain.chain_id}-${memecoinAddress}`;
 
     if (!FlaunchClient.instances.has(key)) {
@@ -297,7 +297,7 @@ export class FlaunchClient {
     const lETHContract = this.drift.contract({
       abi: ERC20,
       address: lETHAddress,
-    }) 
+    })
 
     const lETHBalance = await lETHContract.read('balanceOf', {
       account: memeCoinTreasury,
@@ -419,7 +419,7 @@ export class FlaunchClient {
       memecoin: this.memecoinAddress,
       slippage: slippageTolerance,
     });
-    
+
     const minSqrtPriceX96 = priceBounds.min;
     const maxSqrtPriceX96 = priceBounds.max;
 
@@ -437,39 +437,39 @@ export class FlaunchClient {
       value: bigint;
       callData: string;
     }> = [
-      {
-        target: nativeToken,
-        allowFailure: false,
-        value: buyAmount,
-        callData: lETHInterface.encodeFunctionData('deposit', [0]),
-      },
-      {
-        target: nativeToken,
-        allowFailure: false,
-        value: 0n,
-        callData: lETHInterface.encodeFunctionData('approve', [poolSwapAddress, buyAmount]),
-      },
-      {
-        target: poolSwapAddress,
-        allowFailure: false,
-        value: 0n,
-        callData: poolSwapInterface.encodeFunctionData('swap', [
-          [
-            poolKey.currency0,
-            poolKey.currency1,
-            poolKey.fee,
-            poolKey.tickSpacing,
-            poolKey.hooks,
-          ],
-          {
-            zeroForOne: isNativeToken0,
-            amountSpecified: -buyAmount,
-            sqrtPriceLimitX96,
-          },
-          recipient,
-        ]),
-      },
-    ];
+        {
+          target: nativeToken,
+          allowFailure: false,
+          value: buyAmount,
+          callData: lETHInterface.encodeFunctionData('deposit', [0]),
+        },
+        {
+          target: nativeToken,
+          allowFailure: false,
+          value: 0n,
+          callData: lETHInterface.encodeFunctionData('approve', [poolSwapAddress, buyAmount]),
+        },
+        {
+          target: poolSwapAddress,
+          allowFailure: false,
+          value: 0n,
+          callData: poolSwapInterface.encodeFunctionData('swap', [
+            [
+              poolKey.currency0,
+              poolKey.currency1,
+              poolKey.fee,
+              poolKey.tickSpacing,
+              poolKey.hooks,
+            ],
+            {
+              zeroForOne: isNativeToken0,
+              amountSpecified: -buyAmount,
+              sqrtPriceLimitX96,
+            },
+            recipient,
+          ]),
+        },
+      ];
 
     const multicall3Contract = this.drift.contract({
       abi: MULTICALL,
@@ -485,6 +485,7 @@ export class FlaunchClient {
     return txHash;
   }
 
+  //-- keep this function for fallback if other wallet clients do not support 7702
   async sellCoin({
     sellAmount,
     slippageTolerance = 500,
@@ -505,7 +506,7 @@ export class FlaunchClient {
       memecoin: this.memecoinAddress,
       slippage: slippageTolerance,
     });
-    
+
     const minSqrtPriceX96 = priceBounds.min;
     const maxSqrtPriceX96 = priceBounds.max;
 
@@ -547,6 +548,77 @@ export class FlaunchClient {
         _recipient: recipient,
       }
     );
+
+    return txHash;
+  }
+
+  async sellCoinWith7702(sendCalls: (calls: any[]) => Promise<string>, {
+    sellAmount,
+    slippageTolerance = 500,
+    recipient,
+  }: {
+    sellAmount: bigint;
+    slippageTolerance?: number;
+    recipient: string;
+  }): Promise<Hash> {
+    const positionManager = await this.getPositionManagerContract();
+    const nativeToken = await this.getLETHAddress();
+
+    const poolKey = await positionManager.read('poolKey', {
+      _token: this.memecoinAddress,
+    });
+
+    const priceBounds = await this.marketUtilsContract.read('currentSqrtPriceX96', {
+      memecoin: this.memecoinAddress,
+      slippage: slippageTolerance,
+    });
+
+    const minSqrtPriceX96 = priceBounds.min;
+    const maxSqrtPriceX96 = priceBounds.max;
+
+    const isNativeToken0 = nativeToken.toLowerCase().localeCompare(this.memecoinAddress.toLowerCase()) <= 0;
+    const sqrtPriceLimitX96 = !isNativeToken0 ? minSqrtPriceX96 : maxSqrtPriceX96;
+
+    const poolSwapAddress = await this.zapContract.read('poolSwap');
+
+    const erc20Interface = new Interface(ERC20);
+    const poolSwapInterface = new Interface(PoolSwap);
+
+    const approveData = erc20Interface.encodeFunctionData('approve', [
+      poolSwapAddress,
+      sellAmount,
+    ]);
+
+    const swapData = poolSwapInterface.encodeFunctionData('swap', [
+      [
+        poolKey.currency0,
+        poolKey.currency1,
+        poolKey.fee,
+        poolKey.tickSpacing,
+        poolKey.hooks,
+      ],
+      {
+        zeroForOne: !isNativeToken0,
+        amountSpecified: -sellAmount,
+        sqrtPriceLimitX96,
+      },
+      recipient,
+    ]);
+
+    const userOps = [
+      {
+        to: this.memecoinAddress as `0x${string}`,
+        value: 0n,
+        data: approveData as `0x${string}`,
+      },
+      {
+        to: poolSwapAddress as `0x${string}`,
+        value: 0n,
+        data: swapData as `0x${string}`,
+      },
+    ];
+
+    const txHash = await sendCalls(userOps);
 
     return txHash;
   }
