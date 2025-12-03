@@ -18,7 +18,7 @@ export function RadialProgress({
         <svg className="w-full h-full" viewBox="0 0 100 100">
           <circle
             className="text-quaternary stroke-current"
-            stroke-width="4"
+            strokeWidth="4"
             cx="50"
             cy="50"
             r="40"
@@ -27,14 +27,14 @@ export function RadialProgress({
 
           <circle
             className={twMerge('stroke-current transition-all duration-700', color)}
-            stroke-width="16"
-            stroke-linecap="round"
+            strokeWidth="16"
+            strokeLinecap="round"
             cx="50"
             cy="50"
             r="40"
             fill="transparent"
-            stroke-dasharray="251.2"
-            style={{ 'stroke-dashoffset': `calc(251.2 - (251.2 * ${value}) / 100)` }}
+            strokeDasharray="251.2"
+            style={{ strokeDashoffset: `calc(251.2 - (251.2 * ${value}) / 100)` }}
           ></circle>
         </svg>
       </div>

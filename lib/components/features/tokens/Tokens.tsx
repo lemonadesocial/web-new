@@ -6,10 +6,10 @@ import { useScrollable } from '$lib/hooks/useScrollable';
 
 export function Tokens() {
   return (
-    <div className="flex flex-col gap-3 py-4 max-h-[calc(100dvh-56px)]">
+    <div className="flex flex-col gap-3 max-sm:pb-28 py-4 md:max-h-[calc(100dvh-56px)]">
       <Toolbar />
 
-      <div className="grid grid-cols-3 gap-4 flex-1 overflow-hidden">
+      <div className="flex flex-col md:grid grid-cols-3 gap-4 flex-1 overflow-hidden">
         <List data={[1, 2, 3, 4, 5, 6, 7, 8, 9]} title="New Tokens" onLoadMore={() => console.log('loading')} />
         <List data={[1, 2, 3]} title="Graduating Tokens" />
         <List data={[1, 2, 3]} title="Recently Graduated" />
@@ -30,7 +30,11 @@ function Toolbar() {
         <Button icon="icon-arrow-down" size="sm" variant="tertiary-alt" />
       </div>
 
-      <Button iconLeft="icon-plus" size="sm" variant="secondary">
+      <Button iconLeft="icon-plus" size="sm" variant="secondary" className="hidden md:block">
+        Create Coin
+      </Button>
+
+      <Button icon="icon-plus" size="sm" variant="secondary" className="md:hidden">
         Create Coin
       </Button>
     </div>
@@ -41,7 +45,7 @@ function List({ title, data = [], onLoadMore }: { title: string; data: any; onLo
   const { ref } = useScrollable(onLoadMore);
 
   return (
-    <Card.Root className="flex flex-col h-full">
+    <Card.Root className="flex flex-col flex-1 max-sm:max-h-[700px] h-full">
       <Card.Header>
         <p>{title}</p>
       </Card.Header>
