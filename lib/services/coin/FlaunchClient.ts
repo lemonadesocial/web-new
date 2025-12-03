@@ -18,6 +18,7 @@ import { FairLaunch } from '$lib/abis/token-launch-pad/FairLaunch';
 import { BidWall } from '$lib/abis/token-launch-pad/BidWall';
 import { MULTICALL } from '$lib/abis/token-launch-pad/Multicall';
 import { TOTAL_SUPPLY } from '../token-launch-pad';
+import { getFetchableUrl } from '$lib/utils/metadata';
 
 type FlaunchABI = typeof Flaunch;
 type FeeEscrowABI = typeof FeeEscrow;
@@ -32,6 +33,15 @@ type ERC20ABI = typeof ERC20;
 type BidWallABI = typeof BidWall;
 
 const MULTICALL3_ADDRESS = '0xcA11bde05977b3631167028862bE2a173976CA11';
+
+export interface TokenMetadata {
+  name?: string;
+  symbol?: string;
+  description?: string;
+  image?: string;
+  imageUrl?: string;
+  attributes?: Array<{ trait_type?: string; value?: string | number }>;
+}
 
 export class FlaunchClient {
   private static instances: Map<string, FlaunchClient> = new Map();
@@ -229,7 +239,7 @@ export class FlaunchClient {
     return ethAmount;
   }
 
-  async getTokenData(): Promise<{ name: string; symbol: string; tokenURI: string; decimals: number }> {
+  async getTokenData(): Promise<{ name: string; symbol: string; tokenURI: string; decimals: number; metadata: TokenMetadata | null }> {
     const tokenId = await this.getTokenId();
     const flaunchContract = await this.getFlaunchContract();
 
@@ -242,11 +252,41 @@ export class FlaunchClient {
       this.memecoinContract.read('decimals'),
     ]);
 
+    let resolvedMetadata: TokenMetadata | null = null;
+    if (tokenURI) {
+      try {
+        const fetchableUrl = getFetchableUrl(tokenURI as string);
+        const response = await fetch(fetchableUrl.href);
+        if (response.ok) {
+          const rawMetadata = await response.json() as TokenMetadata;
+          
+          if (rawMetadata.image) {
+            try {
+              const imageFetchableUrl = getFetchableUrl(rawMetadata.image);
+              resolvedMetadata = {
+                ...rawMetadata,
+                imageUrl: imageFetchableUrl.href,
+              };
+            } catch {
+              resolvedMetadata = rawMetadata;
+            }
+          } else {
+            resolvedMetadata = rawMetadata;
+          }
+        }
+      } catch (error) {
+        console.error('Failed to resolve tokenURI:', error);
+      }
+    }
+
+    console.log(resolvedMetadata)
+
     return {
       name: name as string,
       symbol: symbol as string,
       tokenURI: tokenURI as string,
       decimals: Number(decimals),
+      metadata: resolvedMetadata,
     };
   }
 

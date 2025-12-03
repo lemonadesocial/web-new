@@ -176,7 +176,15 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
       <Card.Content className="p-0 divide-y divide-(--color-divider)">
         <div className="flex flex-col gap-4 p-4">
           <div className="flex gap-3">
-            <div className="size-[76px] aspect-square rounded-sm bg-gray-500" />
+            {tokenData.metadata?.imageUrl ? (
+              <img
+                src={tokenData.metadata.imageUrl}
+                alt={tokenData.name}
+                className="size-[76px] aspect-square rounded-sm object-cover"
+              />
+            ) : (
+              <div className="size-[76px] aspect-square rounded-sm bg-gray-500" />
+            )}
 
             <div className="flex flex-col gap-2 w-full">
               <div className="flex gap-3">
@@ -203,10 +211,9 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
             </div>
           </div>
 
-          <p>
-            Introducing Lemonade Stable Dollar, the ultimate cryptocurrency designed for seamless transactions and
-            vibrant community engagement.
-          </p>
+          {tokenData.metadata?.description && (
+            <p>{tokenData.metadata.description}</p>
+          )}
 
           <div className="flex justify-between items-center text-tertiary [&_i]:hover:text-primary [&_i]:cursor-pointer">
             <div className="flex gap-3">
