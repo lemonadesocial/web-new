@@ -86,7 +86,15 @@ function TopVolumeItem({ volume, rank }: { volume: TradeVolume; rank: number }) 
   return (
     <div className="flex gap-3 items-center px-4 py-3">
       <LemonheadLeaderBoardRank rank={rank} className="size-6 text-primary" />
-      <div className="size-10 aspect-square rounded-sm bg-gray-500" />
+      {tokenData?.metadata?.imageUrl ? (
+        <img
+          src={tokenData.metadata.imageUrl}
+          alt={displayName}
+          className="size-10 aspect-square rounded-sm object-cover"
+        />
+      ) : (
+        <div className="size-10 aspect-square rounded-sm bg-gray-500" />
+      )}
       <div className="flex-1">
         {isLoadingTokenData && chain ? (
           <>
