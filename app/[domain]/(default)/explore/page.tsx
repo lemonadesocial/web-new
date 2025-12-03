@@ -7,12 +7,9 @@ import { PageTitle } from '../shared';
 
 export default function ExplorePage() {
   return (
-    <div className="max-w-[1256px] mx-auto overflow-visible">
+    <div className="md:px-8 overflow-visible">
       <Spacer className="h-6 md:h-11" />
-      <PageTitle
-        title="Explore"
-        subtitle="Discover popular communities, events & coins."
-      />
+      <PageTitle title="Explore" subtitle="Discover popular communities, events & coins." />
       <ExploreContent />
     </div>
   );
