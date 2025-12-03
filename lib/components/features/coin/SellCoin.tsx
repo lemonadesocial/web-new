@@ -1,37 +1,71 @@
 import { useEffect, useState } from 'react';
-import { mainnet, sepolia } from 'viem/chains';
-import { useAtomValue } from 'jotai';
 import { BrowserProvider, type Eip1193Provider } from 'ethers';
 import { formatEther, parseUnits } from 'viem';
 import * as Sentry from '@sentry/nextjs';
+import { Provider } from '@reown/appkit/react';
+import { useSendCalls } from 'wagmi';
+import { waitForCallsStatus } from '@wagmi/core';
 
 import { Button, Skeleton, modal, toast } from '$lib/components/core';
-import { chainsMapAtom } from '$lib/jotai';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { useTokenData } from '$lib/hooks/useCoin';
-import { ConnectWallet } from '../modals/ConnectWallet';
 import { useAppKitProvider, useAppKitAccount } from '$lib/utils/appkit';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 import { useTokenBalance } from '$lib/hooks/useBalance';
 import { formatNumber } from '$lib/utils/number';
 import { formatError, getTransactionUrl } from '$lib/utils/crypto';
+import { config } from '$lib/utils/wagmi';
+
+import { ConnectWallet } from '../modals/ConnectWallet';
 import { TxnConfirmedModal } from '../create-coin/TxnConfirmedModal';
 
 const quickAmounts = [10, 20, 50, 100];
 
 export function SellCoin({ chain, address }: { chain: Chain; address: string }) {
-  const chainsMap = useAtomValue(chainsMapAtom);
-  const ethChainId = process.env.NEXT_PUBLIC_APP_ENV === 'production' ? mainnet.id : sepolia.id;
-  const ethChain = chainsMap[ethChainId];
-
   const [amount, setAmount] = useState('');
   const [isSelling, setIsSelling] = useState(false);
   const [tokenPrice, setTokenPrice] = useState<string | null>(null);
-  const { walletProvider } = useAppKitProvider('eip155');
+  const { walletProvider } = useAppKitProvider<Provider>('eip155');
   const { address: userAddress } = useAppKitAccount();
+
+  const { sendCalls, error, data, reset } = useSendCalls();
+  const [resolver, setResolver] = useState<(id?: string, err?: any) => void>();
 
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
   const { formattedBalance, balance } = useTokenBalance(chain, address);
+
+  const send7702Calls = async (calls: any[]) => {
+    const promise = new Promise<string>((resolve, reject) => {
+      setResolver(() => (id?: string, err?: any) => {
+        if (err) {
+          reject(err);
+        } else if (id) {
+          waitForCallsStatus(config, { id })
+            .then((status) => {
+              const txHash = status.receipts?.[0]?.transactionHash;
+              if (status.status === 'success' && txHash) {
+                resolve(txHash);
+              } else {
+                reject(status);
+              }
+            })
+            .finally(() => {
+              reset();
+            });
+        }
+      });
+
+      sendCalls({ calls, chainId: Number(chain.chain_id) });
+    });
+
+    return promise;
+  };
+
+  useEffect(() => {
+    if (resolver && (data?.id || error)) {
+      resolver(data?.id, error);
+    }
+  }, [resolver, data, error]);
 
   useEffect(() => {
     const fetchPrice = async () => {
@@ -66,7 +100,7 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
         toast.error('Insufficient balance');
         return;
       }
-  
+
       if (!userAddress) {
         toast.error('Wallet address not available');
         return;
@@ -75,17 +109,21 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
       const provider = new BrowserProvider(walletProvider as Eip1193Provider);
       const signer = await provider.getSigner();
       const flaunchClient = FlaunchClient.getInstance(chain, address, signer);
-      const txHash = await flaunchClient.sellCoin({ sellAmount, recipient: userAddress });
-      
+
+      const txHash = await flaunchClient.sellCoinWith7702((userOps) => send7702Calls(userOps), {
+        sellAmount,
+        recipient: userAddress,
+      });
+
       modal.open(TxnConfirmedModal, {
         props: {
           title: 'Coin Sold',
           description: `You have successfully sold ${amount} ${tokenData.symbol}.`,
-          txUrl: getTransactionUrl(chain, txHash)
-        }
+          txUrl: getTransactionUrl(chain, txHash),
+        },
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       Sentry.captureException(error);
       toast.error(formatError(error));
     } finally {
@@ -109,17 +147,17 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
       setAmount(formattedBalance);
       return;
     }
-    
+
     const balanceNum = Number(formattedBalance);
     const calculatedAmount = (balanceNum * value) / 100;
     const fixedStr = calculatedAmount.toFixed(3);
-    
+
     if (fixedStr.includes('e')) {
       const coefficient = parseFloat(fixedStr.split('e')[0]);
       setAmount(coefficient.toFixed(3));
       return;
-    } 
-    
+    }
+
     setAmount(fixedStr);
   };
 
@@ -136,17 +174,13 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
 
   if (!tokenData) return null;
 
-  console.log(Number(amount) * Number(tokenPrice))
-
   return (
     <div className="w-full py-3 px-4">
-      {
-        tokenPrice && (
-          <p className="text-tertiary">
-            1 ETH = {1 / Number(tokenPrice)} {tokenData.symbol}
-          </p>
-        )
-      }
+      {tokenPrice && (
+        <p className="text-tertiary">
+          1 ETH = {1 / Number(tokenPrice)} {tokenData.symbol}
+        </p>
+      )}
 
       <div className="mt-3 py-2 px-3 rounded-sm bg-primary/8 flex flex-col gap-2">
         <div className="flex items-center justify-between gap-4">
@@ -162,15 +196,15 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
             className="text-2xl bg-transparent border-none outline-none text-right w-full"
           />
         </div>
-        <p className="text-sm text-tertiary">Balance: <span className="text-primary">{formatNumber(Number(formattedBalance))} {tokenData.symbol}</span></p>
+        <p className="text-sm text-tertiary">
+          Balance:{' '}
+          <span className="text-primary">
+            {formatNumber(Number(formattedBalance))} {tokenData.symbol}
+          </span>
+        </p>
         <div className="grid grid-cols-4 gap-2">
           {quickAmounts.map((value) => (
-            <Button
-              key={value}
-              size="xs"
-              variant="tertiary"
-              onClick={() => handlePercentageClick(value)}
-            >
+            <Button key={value} size="xs" variant="tertiary" onClick={() => handlePercentageClick(value)}>
               {value}%
             </Button>
           ))}
@@ -180,7 +214,9 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
       <div className="mt-3 rounded-sm bg-primary/8">
         <div className="flex items-center justify-between py-2.5 px-3">
           <div className="flex items-center gap-2">
-            <p className="text-sm text-tertiary">{formatNumber(Number(amount))} {tokenData.symbol}</p>
+            <p className="text-sm text-tertiary">
+              {formatNumber(Number(amount))} {tokenData.symbol}
+            </p>
             <i className="icon-arrow-foward-sharp text-tertiary size-4" />
             <p className="text-sm text-tertiary">{formatNumber(Number(amount) * Number(tokenPrice))} ETH</p>
           </div>
