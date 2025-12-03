@@ -105,15 +105,26 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
         toast.error('Wallet address not available');
         return;
       }
+
       setIsSelling(true);
+      
       const provider = new BrowserProvider(walletProvider as Eip1193Provider);
       const signer = await provider.getSigner();
       const flaunchClient = FlaunchClient.getInstance(chain, address, signer);
 
-      const txHash = await flaunchClient.sellCoinWith7702((userOps) => send7702Calls(userOps), {
-        sellAmount,
-        recipient: userAddress,
-      });
+      let txHash: string;
+      
+      try {
+        txHash = await flaunchClient.sellCoinWith7702((userOps) => send7702Calls(userOps), {
+          sellAmount,
+          recipient: userAddress,
+        });
+      } catch {
+        txHash = await flaunchClient.sellCoin({
+          sellAmount,
+          recipient: userAddress,
+        });
+      }
 
       modal.open(TxnConfirmedModal, {
         props: {
