@@ -119,7 +119,8 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
           sellAmount,
           recipient: userAddress,
         });
-      } catch {
+      } catch (e) {
+        Sentry.captureException(e);
         txHash = await flaunchClient.sellCoin({
           sellAmount,
           recipient: userAddress,
