@@ -9,7 +9,7 @@ import { waitForCallsStatus } from '@wagmi/core';
 import { Button, Skeleton, modal, toast } from '$lib/components/core';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { useTokenData } from '$lib/hooks/useCoin';
-import { useAppKitProvider, useAppKitAccount } from '$lib/utils/appkit';
+import { useAppKitProvider, useAppKitAccount, appKit } from '$lib/utils/appkit';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 import { useTokenBalance } from '$lib/hooks/useBalance';
 import { formatNumber } from '$lib/utils/number';
@@ -25,8 +25,6 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
   const [amount, setAmount] = useState('');
   const [isSelling, setIsSelling] = useState(false);
   const [tokenPrice, setTokenPrice] = useState<string | null>(null);
-  const { walletProvider } = useAppKitProvider<Provider>('eip155');
-  const { address: userAddress } = useAppKitAccount();
 
   const { sendCalls, error, data, reset } = useSendCalls();
   const [resolver, setResolver] = useState<(id?: string, err?: any) => void>();
@@ -83,8 +81,11 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
   }, [chain, address]);
 
   const executeSell = async () => {
-    if (!walletProvider) {
-      toast.error('Connect your wallet to continue');
+    const walletProvider = appKit.getProvider('eip155');
+    const userAddress = appKit.getAddress();
+
+    if (!walletProvider || !userAddress) {
+      toast.error(`Wallet isn't fully connected yet. Please try again in a moment.`);
       return;
     }
 
@@ -120,6 +121,7 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
           recipient: userAddress,
         });
       } catch (e) {
+        console.log(e)
         Sentry.captureException(e);
         txHash = await flaunchClient.sellCoin({
           sellAmount,

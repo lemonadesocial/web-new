@@ -279,8 +279,6 @@ export class FlaunchClient {
       }
     }
 
-    console.log(resolvedMetadata)
-
     return {
       name: name as string,
       symbol: symbol as string,

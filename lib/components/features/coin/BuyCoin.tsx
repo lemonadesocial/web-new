@@ -9,7 +9,7 @@ import { Button, Skeleton, modal, toast } from '$lib/components/core';
 import { chainsMapAtom } from '$lib/jotai';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { useTokenData } from '$lib/hooks/useCoin';
-import { useAppKitProvider, useAppKitAccount } from '$lib/utils/appkit';
+import { useAppKitAccount, appKit } from '$lib/utils/appkit';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 import { ConnectWallet } from '../modals/ConnectWallet';
 import { useBalance } from '$lib/hooks/useBalance';
@@ -28,8 +28,6 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
   const [amount, setAmount] = useState('');
   const [isBuying, setIsBuying] = useState(false);
   const [tokenPrice, setTokenPrice] = useState<string | null>(null);
-  const { walletProvider } = useAppKitProvider('eip155');
-  const { address: userAddress } = useAppKitAccount();
 
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
   const { formattedBalance } = useBalance();
@@ -50,8 +48,11 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
   }, [chain, address]);
 
   const executeBuy = async () => {
-    if (!walletProvider) {
-      toast.error('Connect your wallet to continue');
+    const walletProvider = appKit.getProvider('eip155');
+    const userAddress = appKit.getAddress();
+
+    if (!walletProvider || !userAddress) {
+      toast.error('Wallet isn’t fully connected yet. Please try again in a moment.');
       return;
     }
 
@@ -62,10 +63,7 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
       const provider = new BrowserProvider(walletProvider as Eip1193Provider);
       const signer = await provider.getSigner();
       const flaunchClient = FlaunchClient.getInstance(chain, address, signer);
-      if (!userAddress) {
-        toast.error('Wallet address not available');
-        return;
-      }
+
       const txHash = await flaunchClient.buyCoin({ buyAmount, recipient: userAddress });
       
       const receipt = await provider.waitForTransaction(txHash);

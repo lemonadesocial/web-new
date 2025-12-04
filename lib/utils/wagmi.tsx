@@ -8,7 +8,7 @@ import { createThirdwebClient, defineChain } from 'thirdweb';
 import { mainnet } from 'wagmi/chains';
 import { getDefaultConfig } from 'connectkit';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { metaMask } from "wagmi/connectors";
+import { metaMask, baseAccount } from "wagmi/connectors";
 
 const thirdwebClientId = process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || '4e8c81182c3709ee441e30d776223354';
 
@@ -44,6 +44,7 @@ const unicornConnector = inAppWalletConnector({
 defaultConfig.connectors = [
   unicornConnector,
   metaMask(),
+  baseAccount(),
   ...(defaultConfig.connectors || []),
 ];
 
