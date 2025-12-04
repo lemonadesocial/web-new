@@ -12,6 +12,9 @@ import { copy } from '$lib/utils/helpers';
 import { Badge, Card, Skeleton, toast } from '$lib/components/core';
 
 import { useFairLaunch, useFees, useGroup, useLiquidity, useMarketCap, useOwner, useTokenData, useTreasuryValue, useVolume24h } from '$lib/hooks/useCoin';
+import { useQuery } from '$lib/graphql/request/hooks';
+import { ItemsDocument } from '$lib/graphql/generated/backend/graphql';
+import { defaultClient } from '$lib/graphql/request/instances';
 import { CoinTransactions } from './CoinTransactions';
 import { CoinHolders } from './CoinHolders';
 import { CoinAdvanced } from './CoinAdvanced';
@@ -152,6 +155,14 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
   const { launchpadGroup } = useGroup(chain, address);
   const { formattedMarketCap, isLoadingMarketCap } = useMarketCap(chain, address);
+  
+  const { data } = useQuery(ItemsDocument,
+    {
+      variables: { address, limit: 1 },
+    },
+  );
+  
+  const launchpadCoin = data?.listLaunchpadCoins?.items?.[0] || null;
 
   if (isLoadingTokenData) {
     return (
@@ -215,14 +226,35 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
             <p>{tokenData.metadata.description}</p>
           )}
 
-          <div className="flex justify-between items-center text-tertiary [&_i]:hover:text-primary [&_i]:cursor-pointer">
+          <div className="flex justify-between items-center text-tertiary [&_a]:hover:text-primary [&_a]:cursor-pointer">
             <div className="flex gap-3">
-              <i className="size-5 aspect-square icon-globe" />
-              <i className="size-5 aspect-square icon-instagram" />
-              <i className="size-5 aspect-square icon-telegram" />
-              <i className="size-5 aspect-square icon-tiktok" />
-              <i className="size-5 aspect-square icon-twitter" />
-              <i className="size-5 aspect-square icon-youtube-outline" />
+              {launchpadCoin?.website && (
+                <a 
+                  href={launchpadCoin.website.startsWith('http') ? launchpadCoin.website : `https://${launchpadCoin.website}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <i className="size-5 aspect-square icon-globe" />
+                </a>
+              )}
+              {launchpadCoin?.handle_telegram && (
+                <a 
+                  href={launchpadCoin.handle_telegram.startsWith('http') ? launchpadCoin.handle_telegram : `https://t.me/${launchpadCoin.handle_telegram}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <i className="size-5 aspect-square icon-telegram" />
+                </a>
+              )}
+              {launchpadCoin?.handle_twitter && (
+                <a 
+                  href={launchpadCoin.handle_twitter.startsWith('http') ? launchpadCoin.handle_twitter : `https://x.com/${launchpadCoin.handle_twitter}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <i className="size-5 aspect-square icon-twitter" />
+                </a>
+              )}
             </div>
 
             <div className="flex gap-3">

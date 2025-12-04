@@ -113,6 +113,7 @@ export type AddLaunchpadGroupInput = {
   implementation_address: Scalars['String']['input'];
   /** Name of the group */
   name: Scalars['String']['input'];
+  space?: InputMaybe<Scalars['MongoID']['input']>;
   website?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -532,6 +533,7 @@ export type Chain = {
   block_explorer_for_address?: Maybe<Scalars['String']['output']>;
   block_explorer_for_token?: Maybe<Scalars['String']['output']>;
   block_explorer_for_tx?: Maybe<Scalars['String']['output']>;
+  block_explorer_icon_url?: Maybe<Scalars['String']['output']>;
   block_explorer_name?: Maybe<Scalars['String']['output']>;
   block_explorer_url?: Maybe<Scalars['String']['output']>;
   block_time: Scalars['Float']['output'];
@@ -3122,6 +3124,8 @@ export type LaunchpadGroup = {
   implementation_address: Scalars['String']['output'];
   /** Name of the group */
   name: Scalars['String']['output'];
+  space?: Maybe<Scalars['MongoID']['output']>;
+  space_expanded?: Maybe<Space>;
   website?: Maybe<Scalars['String']['output']>;
 };
 
@@ -3262,12 +3266,6 @@ export type ListMyLemonheadInvitationsResponse = {
 export type ListSpaceMembersResponse = {
   __typename?: 'ListSpaceMembersResponse';
   items: Array<SpaceMember>;
-  total: Scalars['Int']['output'];
-};
-
-export type ListSpaceNfTsResponse = {
-  __typename?: 'ListSpaceNFTsResponse';
-  items: Array<SpaceNft>;
   total: Scalars['Int']['output'];
 };
 
@@ -5555,7 +5553,6 @@ export type Query = {
   listRewardVaults: Array<TokenRewardVault>;
   listSpaceCategories: Array<SpaceCategory>;
   listSpaceMembers: ListSpaceMembersResponse;
-  listSpaceNFTs: ListSpaceNfTsResponse;
   listSpaceNewsletters: Array<EmailSetting>;
   listSpaceRewardSettings: SpaceRewardSettings;
   listSpaceRewardVaults: Array<TokenRewardVault>;
@@ -6553,6 +6550,7 @@ export type QueryListEventVotingsArgs = {
 
 
 export type QueryListLaunchpadCoinsArgs = {
+  address?: InputMaybe<Scalars['String']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   skip?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -6621,14 +6619,6 @@ export type QueryListSpaceMembersArgs = {
   state?: InputMaybe<SpaceMembershipState>;
   tags?: InputMaybe<Array<Scalars['MongoID']['input']>>;
   visible?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-export type QueryListSpaceNfTsArgs = {
-  kind?: InputMaybe<SpaceNftKind>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  space?: InputMaybe<Scalars['MongoID']['input']>;
 };
 
 
@@ -7529,14 +7519,12 @@ export type Space = {
   image_cover?: Maybe<Scalars['MongoID']['output']>;
   image_cover_expanded?: Maybe<File>;
   is_ambassador?: Maybe<Scalars['Boolean']['output']>;
-  launchpad_groups?: Maybe<Array<Scalars['MongoID']['output']>>;
   launchpad_groups_expanded?: Maybe<Array<LaunchpadGroup>>;
   lens_feed_id?: Maybe<Scalars['String']['output']>;
   light_theme_image?: Maybe<Scalars['MongoID']['output']>;
   light_theme_image_expanded?: Maybe<File>;
   /** External events are listed on this space */
   listed_events?: Maybe<Array<Scalars['MongoID']['output']>>;
-  nft_enabled?: Maybe<Scalars['Boolean']['output']>;
   personal?: Maybe<Scalars['Boolean']['output']>;
   /** Private space requires moderation for membership */
   private?: Maybe<Scalars['Boolean']['output']>;
@@ -7818,10 +7806,8 @@ export type SpaceInput = {
   hostnames?: InputMaybe<Array<Scalars['String']['input']>>;
   image_avatar?: InputMaybe<Scalars['MongoID']['input']>;
   image_cover?: InputMaybe<Scalars['MongoID']['input']>;
-  launchpad_groups?: InputMaybe<Array<Scalars['MongoID']['input']>>;
   lens_feed_id?: InputMaybe<Scalars['String']['input']>;
   light_theme_image?: InputMaybe<Scalars['MongoID']['input']>;
-  nft_enabled?: InputMaybe<Scalars['Boolean']['input']>;
   /** Private space requires moderation for membership */
   private?: InputMaybe<Scalars['Boolean']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
@@ -7913,34 +7899,6 @@ export enum SpaceMembershipState {
   Joined = 'joined',
   Rejected = 'rejected',
   Requested = 'requested'
-}
-
-export type SpaceNft = {
-  __typename?: 'SpaceNFT';
-  _id: Scalars['MongoID']['output'];
-  content_url?: Maybe<Scalars['String']['output']>;
-  contracts: Array<SpaceNftContract>;
-  cover_image_url: Scalars['String']['output'];
-  kind: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  space: Scalars['MongoID']['output'];
-  /** Zero for no limit */
-  token_limit: Scalars['Float']['output'];
-};
-
-export type SpaceNftContract = {
-  __typename?: 'SpaceNFTContract';
-  _id: Scalars['MongoID']['output'];
-  currency_address?: Maybe<Scalars['String']['output']>;
-  deployed_contract_address?: Maybe<Scalars['String']['output']>;
-  /** Zero for free mint */
-  mint_price?: Maybe<Scalars['String']['output']>;
-  network_id: Scalars['String']['output'];
-  space_nft: Scalars['MongoID']['output'];
-};
-
-export enum SpaceNftKind {
-  MusicTrack = 'music_track'
 }
 
 export type SpaceNewsletterStatistics = {
@@ -10271,6 +10229,15 @@ export type AddLaunchpadGroupMutationVariables = Exact<{
 
 export type AddLaunchpadGroupMutation = { __typename: 'Mutation', addLaunchpadGroup: { __typename: 'LaunchpadGroup', address: string } };
 
+export type ItemsQueryVariables = Exact<{
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  address?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type ItemsQuery = { __typename: 'Query', listLaunchpadCoins: { __typename: 'ListLaunchpadCoinsResponse', items: Array<{ __typename: 'LaunchpadCoin', handle_telegram?: string | null, handle_discord?: string | null, handle_farcaster?: string | null, handle_twitter?: string | null, address: string, owner: any, website?: string | null }> } };
+
 export type GetListLemonheadSponsorsQueryVariables = Exact<{
   wallet: Scalars['String']['input'];
 }>;
@@ -10971,6 +10938,7 @@ export const UpdateFileDescriptionMutationDocument = {"kind":"Document","definit
 export const ListLaunchpadGroupsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListLaunchpadGroups"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"search"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listLaunchpadGroups"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"address"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}},{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"search"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"cover_photo"}},{"kind":"Field","name":{"kind":"Name","value":"cover_photo_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cover_photo_url"}},{"kind":"Field","name":{"kind":"Name","value":"implementation_address"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<ListLaunchpadGroupsQuery, ListLaunchpadGroupsQueryVariables>;
 export const AddLaunchpadCoinDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddLaunchpadCoin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LaunchpadCoinInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"addLaunchpadCoin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]} as unknown as DocumentNode<AddLaunchpadCoinMutation, AddLaunchpadCoinMutationVariables>;
 export const AddLaunchpadGroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddLaunchpadGroup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AddLaunchpadGroupInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"addLaunchpadGroup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]} as unknown as DocumentNode<AddLaunchpadGroupMutation, AddLaunchpadGroupMutationVariables>;
+export const ItemsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Items"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listLaunchpadCoins"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"address"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"handle_telegram"}},{"kind":"Field","name":{"kind":"Name","value":"handle_discord"}},{"kind":"Field","name":{"kind":"Name","value":"handle_farcaster"}},{"kind":"Field","name":{"kind":"Name","value":"handle_twitter"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"owner"}},{"kind":"Field","name":{"kind":"Name","value":"website"}}]}}]}}]}}]} as unknown as DocumentNode<ItemsQuery, ItemsQueryVariables>;
 export const GetListLemonheadSponsorsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetListLemonheadSponsors"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listLemonheadSponsors"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"wallet"},"value":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"sponsors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"sponsor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image_url"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"Field","name":{"kind":"Name","value":"remaining"}}]}}]}}]}}]} as unknown as DocumentNode<GetListLemonheadSponsorsQuery, GetListLemonheadSponsorsQueryVariables>;
 export const CanMintLemonheadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CanMintLemonhead"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"canMintLemonhead"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"wallet"},"value":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"can_mint"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"white_list_enabled"}}]}}]}}]} as unknown as DocumentNode<CanMintLemonheadQuery, CanMintLemonheadQueryVariables>;
 export const CanMintPassportDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CanMintPassport"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"provider"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PassportProvider"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"canMintPassport"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"wallet"},"value":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}}},{"kind":"Argument","name":{"kind":"Name","value":"provider"},"value":{"kind":"Variable","name":{"kind":"Name","value":"provider"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"can_mint"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"white_list_enabled"}}]}}]}}]} as unknown as DocumentNode<CanMintPassportQuery, CanMintPassportQueryVariables>;
