@@ -1,14 +1,12 @@
 'use client';
-import React from 'react';
 import { formatEther } from 'viem';
 import { useAtomValue } from 'jotai';
+import clsx from 'clsx';
+
 import { useQuery } from '$lib/graphql/request/hooks';
 import { coinClient } from '$lib/graphql/request/instances';
 import {
-  PoolCreatedDocument,
-  type PoolCreatedQuery,
-  type PoolCreatedQueryVariables,
-  Order_By,
+  PoolCreatedDocument, Order_By
 } from '$lib/graphql/generated/coin/graphql';
 import { Card } from '$lib/components/core';
 import { LemonheadLeaderBoardRank } from '../lemonheads/LemonheadLeaderBoardRank';
@@ -17,7 +15,6 @@ import { formatWallet } from '$lib/utils/crypto';
 import { chainsMapAtom } from '$lib/jotai/chains';
 import { useTokenData } from '$lib/hooks/useCoin';
 import type { PoolCreated } from '$lib/graphql/generated/coin/graphql';
-import clsx from 'clsx';
 
 export function TopMarket() {
   const { data, loading } = useQuery(
@@ -85,7 +82,7 @@ export function TopMarket() {
 function TopMarketItem({ pool, rank }: { pool: PoolCreated; rank: number }) {
   const chainsMap = useAtomValue(chainsMapAtom);
   const chain = chainsMap[pool.chainId.toString()];
-  const { tokenData, isLoadingTokenData } = useTokenData(chain, pool.memecoin);
+  const { tokenData, isLoadingTokenData } = useTokenData(chain, pool.memecoin, pool.tokenURI as string);
 
   const latestMarketCapETH = pool.latestMarketCapETH ? BigInt(pool.latestMarketCapETH) : BigInt(0);
   const previousMarketCapETH = pool.previousMarketCapETH ? BigInt(pool.previousMarketCapETH) : null;

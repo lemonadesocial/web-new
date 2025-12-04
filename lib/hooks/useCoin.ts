@@ -2,21 +2,14 @@ import { formatEther, formatUnits, zeroAddress } from 'viem';
 import { useEffect, useState } from 'react';
 import { useQuery as useGraphQLQuery } from '$lib/graphql/request';
 import { useQuery as useReactQuery } from '@tanstack/react-query';
-import { coinClient } from '$lib/graphql/request/instances';
 
+import { coinClient } from '$lib/graphql/request/instances';
 import {
   ListLaunchpadGroupsDocument,
-  type ListLaunchpadGroupsQuery,
-  type ListLaunchpadGroupsQueryVariables,
+  type ListLaunchpadGroupsQuery
 } from '$lib/graphql/generated/backend/graphql';
 import {
-  TradeVolumeDocument,
-  type TradeVolumeQuery,
-  type TradeVolumeQueryVariables,
-  PoolCreatedDocument,
-  type PoolCreatedQuery,
-  type PoolCreatedQueryVariables,
-  Order_By,
+  TradeVolumeDocument, PoolCreatedDocument, Order_By
 } from '$lib/graphql/generated/coin/graphql';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
@@ -47,7 +40,7 @@ export function useGroup(chain: Chain, address: string) {
 
   const shouldSkipQuery = !treasuryManagerAddress || treasuryManagerAddress.toLowerCase() === zeroAddress.toLowerCase();
 
-  const { loading: isLoadingQuery } = useGraphQLQuery<ListLaunchpadGroupsQuery, ListLaunchpadGroupsQueryVariables>(
+  const { loading: isLoadingQuery } = useGraphQLQuery(
     ListLaunchpadGroupsDocument,
     {
       variables: treasuryManagerAddress ? { address: treasuryManagerAddress } : undefined,
@@ -220,15 +213,15 @@ export function useFairLaunch(chain: Chain, address: string) {
   };
 }
 
-export function useTokenData(chain: Chain, address: string) {
+export function useTokenData(chain: Chain, address: string, tokenUri?: string) {
   const {
     data,
     isLoading,
   } = useReactQuery({
-    queryKey: ['token-data', chain.chain_id, address],
+    queryKey: ['token-data', chain.chain_id, address, tokenUri],
     queryFn: async () => {
       const flaunchClient = FlaunchClient.getInstance(chain, address);
-      return flaunchClient.getTokenData();
+      return flaunchClient.getTokenData(tokenUri);
     },
     enabled: !!chain && !!address,
   });
@@ -375,11 +368,7 @@ export function useVolume24h(chain: Chain, address: string) {
 }
 
 export function useMarketCapChange(chain: Chain, address: string) {
-  const {
-    data,
-    loading,
-  } = useGraphQLQuery<PoolCreatedQuery, PoolCreatedQueryVariables>(
-    PoolCreatedDocument,
+  const { data, loading } = useGraphQLQuery(PoolCreatedDocument,
     {
       variables: {
         where: {

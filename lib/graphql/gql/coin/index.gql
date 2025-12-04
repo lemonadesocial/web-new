@@ -63,5 +63,6 @@ query PoolCreated($limit: Int, $offset: Int, $orderBy: [PoolCreated_order_by!], 
     previousMarketCapETH
     tokenId
     transactionHash
+    tokenURI
   }
 }

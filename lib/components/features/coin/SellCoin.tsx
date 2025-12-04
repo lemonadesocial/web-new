@@ -2,14 +2,13 @@ import { useEffect, useState } from 'react';
 import { BrowserProvider, type Eip1193Provider } from 'ethers';
 import { formatEther, parseUnits } from 'viem';
 import * as Sentry from '@sentry/nextjs';
-import { Provider } from '@reown/appkit/react';
 import { useSendCalls } from 'wagmi';
 import { waitForCallsStatus } from '@wagmi/core';
 
 import { Button, Skeleton, modal, toast } from '$lib/components/core';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { useTokenData } from '$lib/hooks/useCoin';
-import { useAppKitProvider, useAppKitAccount, appKit } from '$lib/utils/appkit';
+import { appKit } from '$lib/utils/appkit';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 import { useTokenBalance } from '$lib/hooks/useBalance';
 import { formatNumber } from '$lib/utils/number';

@@ -181,6 +181,62 @@ export type MemecoinHolder_Stream_Cursor_Value_Input = {
   memecoin?: InputMaybe<Scalars['String']['input']>;
 };
 
+/** columns and relationships of "MemecoinMetadata" */
+export type MemecoinMetadata = {
+  __typename?: 'MemecoinMetadata';
+  chainId: Scalars['Int']['output'];
+  holdersCount: Scalars['numeric']['output'];
+  id: Scalars['String']['output'];
+  memecoin: Scalars['String']['output'];
+};
+
+/** Boolean expression to filter rows from the table "MemecoinMetadata". All fields are combined with a logical 'AND'. */
+export type MemecoinMetadata_Bool_Exp = {
+  _and?: InputMaybe<Array<MemecoinMetadata_Bool_Exp>>;
+  _not?: InputMaybe<MemecoinMetadata_Bool_Exp>;
+  _or?: InputMaybe<Array<MemecoinMetadata_Bool_Exp>>;
+  chainId?: InputMaybe<Int_Comparison_Exp>;
+  holdersCount?: InputMaybe<Numeric_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  memecoin?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "MemecoinMetadata". */
+export type MemecoinMetadata_Order_By = {
+  chainId?: InputMaybe<Order_By>;
+  holdersCount?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  memecoin?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "MemecoinMetadata" */
+export enum MemecoinMetadata_Select_Column {
+  /** column name */
+  ChainId = 'chainId',
+  /** column name */
+  HoldersCount = 'holdersCount',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Memecoin = 'memecoin'
+}
+
+/** Streaming cursor of the table "MemecoinMetadata" */
+export type MemecoinMetadata_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: MemecoinMetadata_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type MemecoinMetadata_Stream_Cursor_Value_Input = {
+  chainId?: InputMaybe<Scalars['Int']['input']>;
+  holdersCount?: InputMaybe<Scalars['numeric']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  memecoin?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** columns and relationships of "PoolCreated" */
 export type PoolCreated = {
   __typename?: 'PoolCreated';
@@ -201,6 +257,7 @@ export type PoolCreated = {
   previousMarketCapDate?: Maybe<Scalars['String']['output']>;
   previousMarketCapETH?: Maybe<Scalars['numeric']['output']>;
   tokenId: Scalars['numeric']['output'];
+  tokenURI?: Maybe<Scalars['String']['output']>;
   transactionHash: Scalars['String']['output'];
 };
 
@@ -226,6 +283,7 @@ export type PoolCreated_Bool_Exp = {
   previousMarketCapDate?: InputMaybe<String_Comparison_Exp>;
   previousMarketCapETH?: InputMaybe<Numeric_Comparison_Exp>;
   tokenId?: InputMaybe<Numeric_Comparison_Exp>;
+  tokenURI?: InputMaybe<String_Comparison_Exp>;
   transactionHash?: InputMaybe<String_Comparison_Exp>;
 };
 
@@ -248,6 +306,7 @@ export type PoolCreated_Order_By = {
   previousMarketCapDate?: InputMaybe<Order_By>;
   previousMarketCapETH?: InputMaybe<Order_By>;
   tokenId?: InputMaybe<Order_By>;
+  tokenURI?: InputMaybe<Order_By>;
   transactionHash?: InputMaybe<Order_By>;
 };
 
@@ -288,6 +347,8 @@ export enum PoolCreated_Select_Column {
   /** column name */
   TokenId = 'tokenId',
   /** column name */
+  TokenUri = 'tokenURI',
+  /** column name */
   TransactionHash = 'transactionHash'
 }
 
@@ -318,6 +379,7 @@ export type PoolCreated_Stream_Cursor_Value_Input = {
   previousMarketCapDate?: InputMaybe<Scalars['String']['input']>;
   previousMarketCapETH?: InputMaybe<Scalars['numeric']['input']>;
   tokenId?: InputMaybe<Scalars['numeric']['input']>;
+  tokenURI?: InputMaybe<Scalars['String']['input']>;
   transactionHash?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1195,6 +1257,10 @@ export type Query_Root = {
   MemecoinHolder: Array<MemecoinHolder>;
   /** fetch data from the table: "MemecoinHolder" using primary key columns */
   MemecoinHolder_by_pk?: Maybe<MemecoinHolder>;
+  /** fetch data from the table: "MemecoinMetadata" */
+  MemecoinMetadata: Array<MemecoinMetadata>;
+  /** fetch data from the table: "MemecoinMetadata" using primary key columns */
+  MemecoinMetadata_by_pk?: Maybe<MemecoinMetadata>;
   /** fetch data from the table: "PoolCreated" */
   PoolCreated: Array<PoolCreated>;
   /** fetch data from the table: "PoolCreated" using primary key columns */
@@ -1258,6 +1324,20 @@ export type Query_RootMemecoinHolderArgs = {
 
 
 export type Query_RootMemecoinHolder_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootMemecoinMetadataArgs = {
+  distinct_on?: InputMaybe<Array<MemecoinMetadata_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<MemecoinMetadata_Order_By>>;
+  where?: InputMaybe<MemecoinMetadata_Bool_Exp>;
+};
+
+
+export type Query_RootMemecoinMetadata_By_PkArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -1533,6 +1613,12 @@ export type Subscription_Root = {
   MemecoinHolder_by_pk?: Maybe<MemecoinHolder>;
   /** fetch data from the table in a streaming manner: "MemecoinHolder" */
   MemecoinHolder_stream: Array<MemecoinHolder>;
+  /** fetch data from the table: "MemecoinMetadata" */
+  MemecoinMetadata: Array<MemecoinMetadata>;
+  /** fetch data from the table: "MemecoinMetadata" using primary key columns */
+  MemecoinMetadata_by_pk?: Maybe<MemecoinMetadata>;
+  /** fetch data from the table in a streaming manner: "MemecoinMetadata" */
+  MemecoinMetadata_stream: Array<MemecoinMetadata>;
   /** fetch data from the table: "PoolCreated" */
   PoolCreated: Array<PoolCreated>;
   /** fetch data from the table: "PoolCreated" using primary key columns */
@@ -1631,6 +1717,27 @@ export type Subscription_RootMemecoinHolder_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<MemecoinHolder_Stream_Cursor_Input>>;
   where?: InputMaybe<MemecoinHolder_Bool_Exp>;
+};
+
+
+export type Subscription_RootMemecoinMetadataArgs = {
+  distinct_on?: InputMaybe<Array<MemecoinMetadata_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<MemecoinMetadata_Order_By>>;
+  where?: InputMaybe<MemecoinMetadata_Bool_Exp>;
+};
+
+
+export type Subscription_RootMemecoinMetadata_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootMemecoinMetadata_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<MemecoinMetadata_Stream_Cursor_Input>>;
+  where?: InputMaybe<MemecoinMetadata_Bool_Exp>;
 };
 
 
@@ -1884,10 +1991,10 @@ export type PoolCreatedQueryVariables = Exact<{
 }>;
 
 
-export type PoolCreatedQuery = { __typename?: 'query_root', PoolCreated: Array<{ __typename?: 'PoolCreated', blockNumber: any, blockTimestamp: any, chainId: number, currencyFlipped: boolean, id: string, latestMarketCapDate?: string | null, latestMarketCapETH?: any | null, memecoin: string, memecoinTreasury: string, paramsCreator: string, paramsCreatorFeeAllocation: any, paramsFeeCalculatorParams: string, paramsInitialPriceParams: string, poolId: string, previousMarketCapDate?: string | null, previousMarketCapETH?: any | null, tokenId: any, transactionHash: string }> };
+export type PoolCreatedQuery = { __typename?: 'query_root', PoolCreated: Array<{ __typename?: 'PoolCreated', blockNumber: any, blockTimestamp: any, chainId: number, currencyFlipped: boolean, id: string, latestMarketCapDate?: string | null, latestMarketCapETH?: any | null, memecoin: string, memecoinTreasury: string, paramsCreator: string, paramsCreatorFeeAllocation: any, paramsFeeCalculatorParams: string, paramsInitialPriceParams: string, poolId: string, previousMarketCapDate?: string | null, previousMarketCapETH?: any | null, tokenId: any, transactionHash: string, tokenURI?: string | null }> };
 
 
 export const PoolSwapDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PoolSwap"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PoolSwap_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PoolSwap_order_by"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"PoolSwap"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"blockNumber"}},{"kind":"Field","name":{"kind":"Name","value":"blockTimestamp"}},{"kind":"Field","name":{"kind":"Name","value":"transactionHash"}},{"kind":"Field","name":{"kind":"Name","value":"flAmount0"}},{"kind":"Field","name":{"kind":"Name","value":"flAmount1"}},{"kind":"Field","name":{"kind":"Name","value":"flFee0"}},{"kind":"Field","name":{"kind":"Name","value":"flFee1"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"ispAmount0"}},{"kind":"Field","name":{"kind":"Name","value":"ispAmount1"}},{"kind":"Field","name":{"kind":"Name","value":"ispFee0"}},{"kind":"Field","name":{"kind":"Name","value":"ispFee1"}},{"kind":"Field","name":{"kind":"Name","value":"poolId"}},{"kind":"Field","name":{"kind":"Name","value":"uniAmount0"}},{"kind":"Field","name":{"kind":"Name","value":"uniAmount1"}},{"kind":"Field","name":{"kind":"Name","value":"uniFee0"}},{"kind":"Field","name":{"kind":"Name","value":"uniFee1"}}]}}]}}]} as unknown as DocumentNode<PoolSwapQuery, PoolSwapQueryVariables>;
 export const MemecoinHolderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MemecoinHolder"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"MemecoinHolder_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MemecoinHolder_order_by"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"MemecoinHolder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"holder"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"memecoin"}}]}}]}}]} as unknown as DocumentNode<MemecoinHolderQuery, MemecoinHolderQueryVariables>;
 export const TradeVolumeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"TradeVolume"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"TradeVolume_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TradeVolume_order_by"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"TradeVolume"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"memecoin"}},{"kind":"Field","name":{"kind":"Name","value":"tradeCount"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"volumeETH"}},{"kind":"Field","name":{"kind":"Name","value":"volumeMemecoin"}}]}}]}}]} as unknown as DocumentNode<TradeVolumeQuery, TradeVolumeQueryVariables>;
-export const PoolCreatedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PoolCreated"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PoolCreated_order_by"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PoolCreated_bool_exp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"PoolCreated"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"blockNumber"}},{"kind":"Field","name":{"kind":"Name","value":"blockTimestamp"}},{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"currencyFlipped"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"latestMarketCapDate"}},{"kind":"Field","name":{"kind":"Name","value":"latestMarketCapETH"}},{"kind":"Field","name":{"kind":"Name","value":"memecoin"}},{"kind":"Field","name":{"kind":"Name","value":"memecoinTreasury"}},{"kind":"Field","name":{"kind":"Name","value":"paramsCreator"}},{"kind":"Field","name":{"kind":"Name","value":"paramsCreatorFeeAllocation"}},{"kind":"Field","name":{"kind":"Name","value":"paramsFeeCalculatorParams"}},{"kind":"Field","name":{"kind":"Name","value":"paramsInitialPriceParams"}},{"kind":"Field","name":{"kind":"Name","value":"poolId"}},{"kind":"Field","name":{"kind":"Name","value":"previousMarketCapDate"}},{"kind":"Field","name":{"kind":"Name","value":"previousMarketCapETH"}},{"kind":"Field","name":{"kind":"Name","value":"tokenId"}},{"kind":"Field","name":{"kind":"Name","value":"transactionHash"}}]}}]}}]} as unknown as DocumentNode<PoolCreatedQuery, PoolCreatedQueryVariables>;
+export const PoolCreatedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PoolCreated"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PoolCreated_order_by"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PoolCreated_bool_exp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"PoolCreated"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"blockNumber"}},{"kind":"Field","name":{"kind":"Name","value":"blockTimestamp"}},{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"currencyFlipped"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"latestMarketCapDate"}},{"kind":"Field","name":{"kind":"Name","value":"latestMarketCapETH"}},{"kind":"Field","name":{"kind":"Name","value":"memecoin"}},{"kind":"Field","name":{"kind":"Name","value":"memecoinTreasury"}},{"kind":"Field","name":{"kind":"Name","value":"paramsCreator"}},{"kind":"Field","name":{"kind":"Name","value":"paramsCreatorFeeAllocation"}},{"kind":"Field","name":{"kind":"Name","value":"paramsFeeCalculatorParams"}},{"kind":"Field","name":{"kind":"Name","value":"paramsInitialPriceParams"}},{"kind":"Field","name":{"kind":"Name","value":"poolId"}},{"kind":"Field","name":{"kind":"Name","value":"previousMarketCapDate"}},{"kind":"Field","name":{"kind":"Name","value":"previousMarketCapETH"}},{"kind":"Field","name":{"kind":"Name","value":"tokenId"}},{"kind":"Field","name":{"kind":"Name","value":"transactionHash"}},{"kind":"Field","name":{"kind":"Name","value":"tokenURI"}}]}}]}}]} as unknown as DocumentNode<PoolCreatedQuery, PoolCreatedQueryVariables>;

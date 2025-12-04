@@ -54,16 +54,36 @@ export function AllCoins() {
         <div className="overflow-y-auto no-scrollbar rounded-md">
           <CardTable.Root loading={loading} data={pools} className="table">
             <CardTable.Header className="px-4 py-3">
-              <p className="w-[220px]">Ticker</p>
-              <p className="w-[144px]">Contract Address</p>
-              <p className="w-[100px]">Owner</p>
-              <p className="w-[144px]">Community</p>
-              <p className="w-[96px]">Marketcap</p>
-              <p className="w-[72px]">Buyback</p>
-              <p className="w-[80px]">Liquidity</p>
-              <p className="w-[80px]">Holders</p>
-              <p className="w-[96px]">Fees Earned</p>
-              <p className="w-[45px]"></p>
+              <div className="flex-[2.2] min-w-0">
+                <p>Ticker</p>
+              </div>
+              <div className="flex-[1.44] min-w-0">
+                <p>Contract Address</p>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p>Owner</p>
+              </div>
+              <div className="flex-[1.44] min-w-0">
+                <p>Community</p>
+              </div>
+              <div className="flex-[0.96] min-w-0">
+                <p>Marketcap</p>
+              </div>
+              <div className="flex-[0.72] min-w-0">
+                <p>Buyback</p>
+              </div>
+              <div className="flex-[0.8] min-w-0">
+                <p>Liquidity</p>
+              </div>
+              <div className="flex-[0.8] min-w-0">
+                <p>Holders</p>
+              </div>
+              <div className="flex-[0.96] min-w-0">
+                <p>Fees Earned</p>
+              </div>
+              <div className="w-20 flex-shrink-0 flex justify-end">
+                <p></p>
+              </div>
             </CardTable.Header>
 
             {pools.map((pool) => (
@@ -89,7 +109,7 @@ function AllCoinsRow({ pool }: { pool: PoolCreated }) {
   const router = useRouter();
   const chainsMap = useAtomValue(chainsMapAtom);
   const chain = chainsMap[pool.chainId.toString()];
-  const { tokenData } = useTokenData(chain, pool.memecoin);
+  const { tokenData } = useTokenData(chain, pool.memecoin, pool.tokenURI as string);
   const { owner } = useOwner(chain, pool.memecoin);
   const { launchpadGroup } = useGroup(chain, pool.memecoin);
   const { formattedMarketCap } = useMarketCap(chain, pool.memecoin);
@@ -104,7 +124,7 @@ function AllCoinsRow({ pool }: { pool: PoolCreated }) {
   return (
     <CardTable.Row>
       <div className="flex items-center gap-4 text-tertiary px-4 py-3">
-        <div className="flex items-center gap-3 w-[220px]">
+        <div className="flex items-center gap-3 flex-[2.2] min-w-0">
           {tokenData?.metadata?.imageUrl ? (
             <img
               src={tokenData.metadata.imageUrl}
@@ -118,7 +138,7 @@ function AllCoinsRow({ pool }: { pool: PoolCreated }) {
           <p className="text-tertiary line-clamp-1 truncate whitespace-nowrap">{displayName}</p>
         </div>
 
-        <div className="flex gap-2 items-center w-[144px]">
+        <div className="flex gap-2 items-center flex-[1.44] min-w-0">
           <p className="text-tertiary">{formatWallet(pool.memecoin, 6)}</p>
           <i 
             className="icon-copy size-4 aspect-square text-quaternary cursor-pointer"
@@ -126,11 +146,11 @@ function AllCoinsRow({ pool }: { pool: PoolCreated }) {
           />
         </div>
 
-        <div className="flex gap-2 items-center w-[100px]">
+        <div className="flex gap-2 items-center flex-1 min-w-0">
           <p>{displayOwner}</p>
         </div>
 
-        <div className="flex gap-2 items-center w-[144px]">
+        <div className="flex gap-2 items-center flex-[1.44] min-w-0">
           {launchpadGroup?.cover_photo_url ? (
             <img
               src={launchpadGroup.cover_photo_url}
@@ -143,34 +163,36 @@ function AllCoinsRow({ pool }: { pool: PoolCreated }) {
           <p>{displayCommunity}</p>
         </div>
 
-        <div className="w-[96px] text-accent-400">
+        <div className="flex-[0.96] min-w-0 text-accent-400">
           <p>{formattedMarketCap || 'N/A'}</p>
         </div>
 
-        <div className="w-[72px]">
+        <div className="flex-[0.72] min-w-0">
           <p>-</p>
         </div>
 
-        <div className="w-[80px]">
+        <div className="flex-[0.8] min-w-0">
           <p>{formattedLiquidity || 'N/A'}</p>
         </div>
 
-        <div className="w-[80px] flex items-center gap-2">
+        <div className="flex-[0.8] min-w-0 flex items-center gap-2">
           <i className="icon-user size-5 aspect-square" />
           <p>-</p>
         </div>
 
-        <div className="w-[96px] text-success-500">
+        <div className="flex-[0.96] min-w-0 text-success-500">
           <p>{formattedFees || 'N/A'}</p>
         </div>
 
-        <Button 
-          variant="tertiary-alt" 
-          size="sm"
-          onClick={() => router.push(`/coin/${chain.code_name}/${pool.memecoin}`)}
-        >
-          Buy
-        </Button>
+        <div className="w-20 flex-shrink-0 flex justify-end">
+          <Button 
+            variant="tertiary-alt" 
+            size="sm"
+            onClick={() => router.push(`/coin/${chain.code_name}/${pool.memecoin}`)}
+          >
+            Buy
+          </Button>
+        </div>
       </div>
     </CardTable.Row>
   );

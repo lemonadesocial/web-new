@@ -239,17 +239,30 @@ export class FlaunchClient {
     return ethAmount;
   }
 
-  async getTokenData(): Promise<{ name: string; symbol: string; tokenURI: string; decimals: number; metadata: TokenMetadata | null }> {
-    const tokenId = await this.getTokenId();
-    const flaunchContract = await this.getFlaunchContract();
+  async getTokenData(tokenUri?: string): Promise<{ name: string; symbol: string; tokenURI: string; decimals: number; metadata: TokenMetadata | null }> {
+    let tokenURIPromise: Promise<string>;
+    
+    if (tokenUri) {
+      tokenURIPromise = Promise.resolve(tokenUri);
+    } else {
+      const tokenIdPromise = this.getTokenId();
+      const flaunchContractPromise = this.getFlaunchContract();
+      
+      const [tokenId, flaunchContract] = await Promise.all([
+        tokenIdPromise,
+        flaunchContractPromise,
+      ]);
+      
+      tokenURIPromise = flaunchContract.read('tokenURI', {
+        _tokenId: tokenId,
+      }) as Promise<string>;
+    }
 
-    const [name, symbol, tokenURI, decimals] = await Promise.all([
+    const [name, symbol, decimals, tokenURI] = await Promise.all([
       this.memecoinContract.read('name'),
       this.memecoinContract.read('symbol'),
-      flaunchContract.read('tokenURI', {
-        _tokenId: tokenId,
-      }),
       this.memecoinContract.read('decimals'),
+      tokenURIPromise,
     ]);
 
     let resolvedMetadata: TokenMetadata | null = null;
