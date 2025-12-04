@@ -9,7 +9,7 @@ import {
   type ListLaunchpadGroupsQuery
 } from '$lib/graphql/generated/backend/graphql';
 import {
-  TradeVolumeDocument, PoolCreatedDocument, Order_By
+  TradeVolumeDocument, PoolCreatedDocument, Order_By, MemecoinMetadataDocument
 } from '$lib/graphql/generated/coin/graphql';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
@@ -218,12 +218,11 @@ export function useTokenData(chain: Chain, address: string, tokenUri?: string) {
     data,
     isLoading,
   } = useReactQuery({
-    queryKey: ['token-data', chain.chain_id, address, tokenUri],
+    queryKey: ['token-data', chain.chain_id, address],
     queryFn: async () => {
       const flaunchClient = FlaunchClient.getInstance(chain, address);
       return flaunchClient.getTokenData(tokenUri);
     },
-    enabled: !!chain && !!address,
   });
 
   return {
@@ -321,7 +320,6 @@ export function useVolume24h(chain: Chain, address: string) {
         limit: 1,
         offset: 0,
       },
-      fetchPolicy: 'network-only',
     },
     coinClient,
   );
@@ -386,8 +384,7 @@ export function useMarketCapChange(chain: Chain, address: string) {
         ],
         limit: 1,
         offset: 0,
-      },
-      fetchPolicy: 'network-only',
+      }
     },
     coinClient,
   );
@@ -415,5 +412,34 @@ export function useMarketCapChange(chain: Chain, address: string) {
     previousMarketCapDate: pool?.previousMarketCapDate ?? null,
     percentageChange,
     isLoadingMarketCapChange: loading,
+  };
+}
+
+export function useHoldersCount(chain: Chain, address: string) {
+  const { data, loading } = useGraphQLQuery(
+    MemecoinMetadataDocument,
+    {
+      variables: {
+        where: {
+          memecoin: {
+            _eq: address.toLowerCase(),
+          },
+          chainId: {
+            _eq: Number(chain.chain_id),
+          },
+        },
+        limit: 1,
+        offset: 0,
+      },
+    },
+    coinClient,
+  );
+
+  const metadata = data?.MemecoinMetadata?.[0];
+  const holdersCount = metadata?.holdersCount ? Number(metadata.holdersCount) : null;
+
+  return {
+    holdersCount,
+    isLoadingHoldersCount: loading,
   };
 }

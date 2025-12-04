@@ -66,3 +66,12 @@ query PoolCreated($limit: Int, $offset: Int, $orderBy: [PoolCreated_order_by!], 
     tokenURI
   }
 }
+
+query MemecoinMetadata($where: MemecoinMetadata_bool_exp, $limit: Int, $offset: Int) {
+  MemecoinMetadata(where: $where, limit: $limit, offset: $offset) {
+    chainId
+    holdersCount
+    id
+    memecoin
+  }
+}

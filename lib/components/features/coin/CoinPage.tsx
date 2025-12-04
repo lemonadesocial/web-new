@@ -9,12 +9,12 @@ import { listChainsAtom } from '$lib/jotai';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { formatWallet, getAddressUrl } from '$lib/utils/crypto';
 import { copy } from '$lib/utils/helpers';
+import { formatNumber } from '$lib/utils/number';
 import { Badge, Card, Skeleton, toast } from '$lib/components/core';
 
-import { useFairLaunch, useFees, useGroup, useLiquidity, useMarketCap, useOwner, useTokenData, useTreasuryValue, useVolume24h } from '$lib/hooks/useCoin';
+import { useFairLaunch, useFees, useGroup, useHoldersCount, useLiquidity, useMarketCap, useOwner, useTokenData, useTreasuryValue, useVolume24h } from '$lib/hooks/useCoin';
 import { useQuery } from '$lib/graphql/request/hooks';
 import { ItemsDocument } from '$lib/graphql/generated/backend/graphql';
-import { defaultClient } from '$lib/graphql/request/instances';
 import { CoinTransactions } from './CoinTransactions';
 import { CoinHolders } from './CoinHolders';
 import { CoinAdvanced } from './CoinAdvanced';
@@ -65,6 +65,7 @@ function Stats({ chain, address }: { chain: Chain; address: string }) {
   const { formattedLiquidity, isLoadingLiquidity } = useLiquidity(chain, address);
   const { formattedPercentage, formattedUsdcValue, isLoadingFairLaunch } = useFairLaunch(chain, address);
   const { formattedVolumeUSDC, isLoadingVolume } = useVolume24h(chain, address);
+  const { holdersCount, isLoadingHoldersCount } = useHoldersCount(chain, address);
 
   return (
     <div className="grid grid-cols-5 gap-3">
@@ -114,7 +115,8 @@ function Stats({ chain, address }: { chain: Chain; address: string }) {
       />
       <StatItem
         title="Holders"
-        value="Coming Soon"
+        value={holdersCount !== null ? formatNumber(holdersCount) : 'N/A'}
+        loading={isLoadingHoldersCount}
       />
     </div>
   );

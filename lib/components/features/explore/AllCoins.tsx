@@ -12,9 +12,10 @@ import {
 } from '$lib/graphql/generated/coin/graphql';
 import { formatWallet } from '$lib/utils/crypto';
 import { copy } from '$lib/utils/helpers';
+import { formatNumber } from '$lib/utils/number';
 import { chainsMapAtom } from '$lib/jotai/chains';
 import { useRouter } from 'next/navigation';
-import { useTokenData, useOwner, useGroup, useMarketCap, useLiquidity, useFees } from '$lib/hooks/useCoin';
+import { useTokenData, useOwner, useGroup, useMarketCap, useLiquidity, useFees, useHoldersCount } from '$lib/hooks/useCoin';
 import type { PoolCreated } from '$lib/graphql/generated/coin/graphql';
 import { toast } from '$lib/components/core';
 
@@ -115,6 +116,7 @@ function AllCoinsRow({ pool }: { pool: PoolCreated }) {
   const { formattedMarketCap } = useMarketCap(chain, pool.memecoin);
   const { formattedLiquidity } = useLiquidity(chain, pool.memecoin);
   const { formattedFees } = useFees(chain, pool.memecoin);
+  const { holdersCount } = useHoldersCount(chain, pool.memecoin);
 
   const displayName = tokenData?.name || formatWallet(pool.memecoin, 6);
   const displaySymbol = tokenData?.symbol || formatWallet(pool.memecoin, 4);
@@ -177,7 +179,7 @@ function AllCoinsRow({ pool }: { pool: PoolCreated }) {
 
         <div className="flex-[0.8] min-w-0 flex items-center gap-2">
           <i className="icon-user size-5 aspect-square" />
-          <p>-</p>
+          <p>{holdersCount !== null ? formatNumber(holdersCount) : 'N/A'}</p>
         </div>
 
         <div className="flex-[0.96] min-w-0 text-success-500">
