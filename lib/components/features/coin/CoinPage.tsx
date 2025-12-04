@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import React, { useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { notFound } from 'next/navigation';
+import { format } from 'date-fns';
 
 import { listChainsAtom } from '$lib/jotai';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
@@ -15,6 +16,8 @@ import { Badge, Card, Skeleton, toast } from '$lib/components/core';
 import { useFairLaunch, useFees, useGroup, useHoldersCount, useLiquidity, useMarketCap, useOwner, useTokenData, useTreasuryValue, useVolume24h } from '$lib/hooks/useCoin';
 import { useQuery } from '$lib/graphql/request/hooks';
 import { ItemsDocument } from '$lib/graphql/generated/backend/graphql';
+import { PoolCreatedDocument, Order_By } from '$lib/graphql/generated/coin/graphql';
+import { coinClient } from '$lib/graphql/request/instances';
 import { CoinTransactions } from './CoinTransactions';
 import { CoinHolders } from './CoinHolders';
 import { CoinAdvanced } from './CoinAdvanced';
@@ -164,7 +167,30 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
     },
   );
 
+  const { data: poolData } = useQuery(
+    PoolCreatedDocument,
+    {
+      variables: {
+        where: {
+          memecoin: {
+            _eq: address.toLowerCase(),
+          },
+          chainId: {
+            _eq: Number(chain.chain_id),
+          },
+        },
+        limit: 1,
+        offset: 0,
+      },
+    },
+    coinClient,
+  );
+
   const launchpadCoin = data?.listLaunchpadCoins?.items?.[0] || null;
+  const pool = poolData?.PoolCreated?.[0];
+  const launchDate = pool?.blockTimestamp
+    ? format(new Date(Number(pool.blockTimestamp) * 1000), 'MMMM d, yyyy')
+    : null;
 
   if (isLoadingTokenData) {
     return (
@@ -295,7 +321,7 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
         <div className="p-4 flex gap-10 items-center text-sm text-tertiary">
           <p className="flex-1">Launched on Lemonade</p>
           <div className="flex gap-1.5 items-center overflow-hidden">
-            <p className="line-clamp-1 truncate">July 29, 2023</p>
+            <p className="line-clamp-1 truncate">{launchDate || 'N/A'}</p>
           </div>
         </div>
       </Card.Content>
