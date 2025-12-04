@@ -108,7 +108,7 @@ function Content({ space }: { space: Space }) {
       if (incomming?.updateSpace) {
         const data = incomming.updateSpace as Space;
 
-        client.writeFragment({ id: `Space:${space._id}`, data: { ...incomming.updateSpace } });
+        client.writeFragment({ id: `Space:${space._id}`, data: { ...space, ...incomming.updateSpace } });
 
         const { __typename: _, ...dataAddress } = data.address || {};
         reset({
