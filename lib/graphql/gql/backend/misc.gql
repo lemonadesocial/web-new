@@ -11,6 +11,7 @@ query listChains {
     block_explorer_for_tx
     block_explorer_for_token
     block_explorer_for_address
+    block_explorer_icon_url
     block_time
     safe_confirmations
     logo_url

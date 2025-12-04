@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation';
 
 import { listChainsAtom } from '$lib/jotai';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
-import { formatWallet } from '$lib/utils/crypto';
+import { formatWallet, getAddressUrl } from '$lib/utils/crypto';
 import { copy } from '$lib/utils/helpers';
 import { Badge, Card, Skeleton, toast } from '$lib/components/core';
 
@@ -155,13 +155,13 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
   const { launchpadGroup } = useGroup(chain, address);
   const { formattedMarketCap, isLoadingMarketCap } = useMarketCap(chain, address);
-  
+
   const { data } = useQuery(ItemsDocument,
     {
       variables: { address, limit: 1 },
     },
   );
-  
+
   const launchpadCoin = data?.listLaunchpadCoins?.items?.[0] || null;
 
   if (isLoadingTokenData) {
@@ -181,6 +181,8 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
   }
 
   if (!tokenData) return null;
+
+  const addressUrl = getAddressUrl(chain, address);
 
   return (
     <Card.Root className="w-full">
@@ -229,27 +231,27 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
           <div className="flex justify-between items-center text-tertiary [&_a]:hover:text-primary [&_a]:cursor-pointer">
             <div className="flex gap-3">
               {launchpadCoin?.website && (
-                <a 
-                  href={launchpadCoin.website.startsWith('http') ? launchpadCoin.website : `https://${launchpadCoin.website}`} 
-                  target="_blank" 
+                <a
+                  href={launchpadCoin.website.startsWith('http') ? launchpadCoin.website : `https://${launchpadCoin.website}`}
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   <i className="size-5 aspect-square icon-globe" />
                 </a>
               )}
               {launchpadCoin?.handle_telegram && (
-                <a 
-                  href={launchpadCoin.handle_telegram.startsWith('http') ? launchpadCoin.handle_telegram : `https://t.me/${launchpadCoin.handle_telegram}`} 
-                  target="_blank" 
+                <a
+                  href={launchpadCoin.handle_telegram.startsWith('http') ? launchpadCoin.handle_telegram : `https://t.me/${launchpadCoin.handle_telegram}`}
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   <i className="size-5 aspect-square icon-telegram" />
                 </a>
               )}
               {launchpadCoin?.handle_twitter && (
-                <a 
-                  href={launchpadCoin.handle_twitter.startsWith('http') ? launchpadCoin.handle_twitter : `https://x.com/${launchpadCoin.handle_twitter}`} 
-                  target="_blank" 
+                <a
+                  href={launchpadCoin.handle_twitter.startsWith('http') ? launchpadCoin.handle_twitter : `https://x.com/${launchpadCoin.handle_twitter}`}
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   <i className="size-5 aspect-square icon-twitter" />
@@ -257,10 +259,17 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
               )}
             </div>
 
-            <div className="flex gap-3">
-              <i className="size-5 aspect-square icon-basescan-fill" />
-              <i className="size-5 aspect-square icon-dexscreener-fill" />
-            </div>
+            {
+              addressUrl && (
+                <a href={addressUrl} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                  {chain.block_explorer_icon_url ? (
+                    <img src={chain.block_explorer_icon_url} alt="Block explorer" className="size-5 aspect-square" />
+                  ) : (
+                    <i className="size-5 aspect-square icon-basescan-fill" />
+                  )}
+                </a>
+              )
+            }
           </div>
         </div>
 
