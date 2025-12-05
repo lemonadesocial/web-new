@@ -108,7 +108,26 @@ function Content({ space }: { space: Space }) {
       if (incomming?.updateSpace) {
         const data = incomming.updateSpace as Space;
 
-        client.writeFragment({ id: `Space:${space._id}`, data: { ...incomming.updateSpace } });
+        /** map form fields bc backend is not return some field based on roles  */
+        client.writeFragment({
+          id: `Space:${space._id}`,
+          data: {
+            ...space,
+            title: data.title,
+            description: data.description,
+            slug: data.slug,
+            image_avatar: data.image_avatar,
+            image_cover: data.image_cover,
+            address: data.address,
+            handle_instagram: data.handle_instagram,
+            handle_twitter: data.handle_twitter,
+            handle_youtube: data.handle_youtube,
+            handle_tiktok: data.handle_tiktok,
+            handle_linkedin: data.handle_linkedin,
+            website: data.website,
+            theme_data: data.theme_data || defaultTheme,
+          },
+        });
 
         const { __typename: _, ...dataAddress } = data.address || {};
         reset({

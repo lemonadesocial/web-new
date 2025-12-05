@@ -1,5 +1,24 @@
 # Changelog
 
+## [8.33.1](https://github.com/lemonadesocial/web-new/compare/v8.33.0...v8.33.1) (2025-12-05)
+
+
+### Bug Fixes
+
+* map form fields ([34c17b5](https://github.com/lemonadesocial/web-new/commit/34c17b591450416c9b12392249d0fd7298f077de))
+
+## [8.33.0](https://github.com/lemonadesocial/web-new/compare/v8.32.1...v8.33.0) (2025-12-04)
+
+
+### Features
+
+* update social size ([1485aae](https://github.com/lemonadesocial/web-new/commit/1485aaee0b3a6356a2a26bca24cf87aaf668baa5))
+
+
+### Bug Fixes
+
+* merge data respone instead of replace ([b6fbd19](https://github.com/lemonadesocial/web-new/commit/b6fbd19e0b683cb2e4a28b7da4941bcc57158fa9))
+
 ## [8.32.1](https://github.com/lemonadesocial/web-new/compare/v8.32.0...v8.32.1) (2025-11-27)
 
 
