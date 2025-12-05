@@ -545,15 +545,22 @@ export function CreateCoin() {
 
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <InputField
-                  label="Ticker"
-                  value={watch('ticker')}
-                  onChangeText={(value) => {
-                    setValue('ticker', value);
-                    trigger('ticker');
-                  }}
-                  error={!!errors.ticker}
-                />
+                <div className="flex flex-col gap-1.5">
+                  <p className="text-secondary text-sm">Ticker</p>
+                  <div className="relative">
+                    <p className={clsx('absolute top-[8px] left-[11px]', !watch('ticker') && 'text-tertiary')}>$</p>
+                    <Input
+                      value={watch('ticker')}
+                      onChange={(e) => {
+                        setValue('ticker', e.target.value);
+                        trigger('ticker');
+                      }}
+                      error={!!errors.ticker}
+                      variant="outlined"
+                      className="pl-5"
+                    />
+                  </div>
+                </div>
                 {errors.ticker && (
                   <p className="text-error text-sm">{errors.ticker.message}</p>
                 )}
@@ -755,7 +762,7 @@ export function CreateCoin() {
                 {watch('splitFeeRecipients').length > 0 && (() => {
                   const total = watch('splitFeeRecipients').reduce((sum, recipient) => sum + recipient.percentage, 0);
                   const isValid = Math.abs(total - 100) < 0.01;
-                  
+
                   if (!isValid) {
                     return (
                       <p className="text-error text-sm">
