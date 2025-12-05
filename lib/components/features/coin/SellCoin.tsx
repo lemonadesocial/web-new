@@ -17,6 +17,7 @@ import { config } from '$lib/utils/wagmi';
 
 import { ConnectWallet } from '../modals/ConnectWallet';
 import { TxnConfirmedModal } from '../create-coin/TxnConfirmedModal';
+import { SlippageSelect } from './SlippageSelect';
 
 const quickAmounts = [10, 20, 50, 100];
 
@@ -24,6 +25,7 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
   const [amount, setAmount] = useState('');
   const [isSelling, setIsSelling] = useState(false);
   const [tokenPrice, setTokenPrice] = useState<string | null>(null);
+  const [slippage, setSlippage] = useState(5);
 
   const { sendCalls, error, data, reset } = useSendCalls();
   const [resolver, setResolver] = useState<(id?: string, err?: any) => void>();
@@ -117,6 +119,7 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
       try {
         txHash = await flaunchClient.sellCoinWith7702((userOps) => send7702Calls(userOps), {
           sellAmount,
+          slippageTolerance: slippage * 100,
           recipient: userAddress,
         });
       } catch (e) {
@@ -124,6 +127,7 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
         Sentry.captureException(e);
         txHash = await flaunchClient.sellCoin({
           sellAmount,
+          slippageTolerance: slippage * 100,
           recipient: userAddress,
         });
       }
@@ -236,10 +240,7 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
           {/* <p className="text-sm text-tertiary">~$0</p> */}
         </div>
         <hr className="border-t border-t-divider" />
-        <div className="flex items-center justify-between py-2.5 px-3">
-          <p className="text-sm text-tertiary">Slippage</p>
-          <p className="text-sm text-tertiary">5%</p>
-        </div>
+        <SlippageSelect value={slippage} onChange={setSlippage} />
       </div>
 
       <Button

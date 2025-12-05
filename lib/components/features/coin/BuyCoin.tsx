@@ -17,6 +17,7 @@ import { formatNumber } from '$lib/utils/number';
 import { formatError, getTransactionUrl } from '$lib/utils/crypto';
 import { TxnConfirmedModal } from '../create-coin/TxnConfirmedModal';
 import { ERC20 } from '$lib/abis/ERC20';
+import { SlippageSelect } from './SlippageSelect';
 
 const quickAmounts = ['0.01', '0.1', '0.5', '1'];
 
@@ -28,6 +29,7 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
   const [amount, setAmount] = useState('');
   const [isBuying, setIsBuying] = useState(false);
   const [tokenPrice, setTokenPrice] = useState<string | null>(null);
+  const [slippage, setSlippage] = useState(5);
 
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
   const { formattedBalance } = useBalance();
@@ -64,7 +66,11 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
       const signer = await provider.getSigner();
       const flaunchClient = FlaunchClient.getInstance(chain, address, signer);
 
-      const txHash = await flaunchClient.buyCoin({ buyAmount, recipient: userAddress });
+      const txHash = await flaunchClient.buyCoin({ 
+        buyAmount, 
+        slippageTolerance: slippage * 100,
+        recipient: userAddress 
+      });
       
       const receipt = await provider.waitForTransaction(txHash);
       
@@ -179,10 +185,7 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
           {/* <p className="text-sm text-tertiary">~$0</p> */}
         </div>
         <hr className="border-t border-t-divider" />
-        <div className="flex items-center justify-between py-2.5 px-3">
-          <p className="text-sm text-tertiary">Slippage</p>
-          <p className="text-sm text-tertiary">5%</p>
-        </div>
+        <SlippageSelect value={slippage} onChange={setSlippage} />
       </div>
 
       <Button
