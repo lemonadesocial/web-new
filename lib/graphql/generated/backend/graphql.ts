@@ -113,6 +113,7 @@ export type AddLaunchpadGroupInput = {
   implementation_address: Scalars['String']['input'];
   /** Name of the group */
   name: Scalars['String']['input'];
+  space?: InputMaybe<Scalars['MongoID']['input']>;
   website?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -532,6 +533,7 @@ export type Chain = {
   block_explorer_for_address?: Maybe<Scalars['String']['output']>;
   block_explorer_for_token?: Maybe<Scalars['String']['output']>;
   block_explorer_for_tx?: Maybe<Scalars['String']['output']>;
+  block_explorer_icon_url?: Maybe<Scalars['String']['output']>;
   block_explorer_name?: Maybe<Scalars['String']['output']>;
   block_explorer_url?: Maybe<Scalars['String']['output']>;
   block_time: Scalars['Float']['output'];
@@ -545,6 +547,9 @@ export type Chain = {
   fluffle_contract_address?: Maybe<Scalars['String']['output']>;
   is_zerodev_compatible?: Maybe<Scalars['Boolean']['output']>;
   launchpad_closed_permissions_contract_address?: Maybe<Scalars['String']['output']>;
+  launchpad_fee_escrow_contract_address?: Maybe<Scalars['String']['output']>;
+  launchpad_market_capped_price_contract_address?: Maybe<Scalars['String']['output']>;
+  launchpad_market_utils_contract_address?: Maybe<Scalars['String']['output']>;
   launchpad_token_importer_contract_address?: Maybe<Scalars['String']['output']>;
   launchpad_treasury_address_fee_split_manager_implementation_contract_address?: Maybe<Scalars['String']['output']>;
   launchpad_treasury_staking_manager_implementation_contract_address?: Maybe<Scalars['String']['output']>;
@@ -3119,6 +3124,8 @@ export type LaunchpadGroup = {
   implementation_address: Scalars['String']['output'];
   /** Name of the group */
   name: Scalars['String']['output'];
+  space?: Maybe<Scalars['MongoID']['output']>;
+  space_expanded?: Maybe<Space>;
   website?: Maybe<Scalars['String']['output']>;
 };
 
@@ -3259,6 +3266,12 @@ export type ListMyLemonheadInvitationsResponse = {
 export type ListSpaceMembersResponse = {
   __typename?: 'ListSpaceMembersResponse';
   items: Array<SpaceMember>;
+  total: Scalars['Int']['output'];
+};
+
+export type ListSpaceNfTsResponse = {
+  __typename?: 'ListSpaceNFTsResponse';
+  items: Array<SpaceNft>;
   total: Scalars['Int']['output'];
 };
 
@@ -5546,6 +5559,7 @@ export type Query = {
   listRewardVaults: Array<TokenRewardVault>;
   listSpaceCategories: Array<SpaceCategory>;
   listSpaceMembers: ListSpaceMembersResponse;
+  listSpaceNFTs: ListSpaceNfTsResponse;
   listSpaceNewsletters: Array<EmailSetting>;
   listSpaceRewardSettings: SpaceRewardSettings;
   listSpaceRewardVaults: Array<TokenRewardVault>;
@@ -6543,6 +6557,7 @@ export type QueryListEventVotingsArgs = {
 
 
 export type QueryListLaunchpadCoinsArgs = {
+  address?: InputMaybe<Scalars['String']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   skip?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -6611,6 +6626,14 @@ export type QueryListSpaceMembersArgs = {
   state?: InputMaybe<SpaceMembershipState>;
   tags?: InputMaybe<Array<Scalars['MongoID']['input']>>;
   visible?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryListSpaceNfTsArgs = {
+  kind?: InputMaybe<SpaceNftKind>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  space?: InputMaybe<Scalars['MongoID']['input']>;
 };
 
 
@@ -7511,13 +7534,13 @@ export type Space = {
   image_cover?: Maybe<Scalars['MongoID']['output']>;
   image_cover_expanded?: Maybe<File>;
   is_ambassador?: Maybe<Scalars['Boolean']['output']>;
-  launchpad_groups?: Maybe<Array<Scalars['MongoID']['output']>>;
   launchpad_groups_expanded?: Maybe<Array<LaunchpadGroup>>;
   lens_feed_id?: Maybe<Scalars['String']['output']>;
   light_theme_image?: Maybe<Scalars['MongoID']['output']>;
   light_theme_image_expanded?: Maybe<File>;
   /** External events are listed on this space */
   listed_events?: Maybe<Array<Scalars['MongoID']['output']>>;
+  nft_enabled?: Maybe<Scalars['Boolean']['output']>;
   personal?: Maybe<Scalars['Boolean']['output']>;
   /** Private space requires moderation for membership */
   private?: Maybe<Scalars['Boolean']['output']>;
@@ -7799,9 +7822,9 @@ export type SpaceInput = {
   hostnames?: InputMaybe<Array<Scalars['String']['input']>>;
   image_avatar?: InputMaybe<Scalars['MongoID']['input']>;
   image_cover?: InputMaybe<Scalars['MongoID']['input']>;
-  launchpad_groups?: InputMaybe<Array<Scalars['MongoID']['input']>>;
   lens_feed_id?: InputMaybe<Scalars['String']['input']>;
   light_theme_image?: InputMaybe<Scalars['MongoID']['input']>;
+  nft_enabled?: InputMaybe<Scalars['Boolean']['input']>;
   /** Private space requires moderation for membership */
   private?: InputMaybe<Scalars['Boolean']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
@@ -7893,6 +7916,36 @@ export enum SpaceMembershipState {
   Joined = 'joined',
   Rejected = 'rejected',
   Requested = 'requested'
+}
+
+export type SpaceNft = {
+  __typename?: 'SpaceNFT';
+  _id: Scalars['MongoID']['output'];
+  content_url?: Maybe<Scalars['String']['output']>;
+  contracts: Array<SpaceNftContract>;
+  cover_image_url: Scalars['String']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  kind: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  space: Scalars['MongoID']['output'];
+  symbol: Scalars['String']['output'];
+  /** Zero for no limit */
+  token_limit: Scalars['Float']['output'];
+};
+
+export type SpaceNftContract = {
+  __typename?: 'SpaceNFTContract';
+  _id: Scalars['MongoID']['output'];
+  currency_address?: Maybe<Scalars['String']['output']>;
+  deployed_contract_address?: Maybe<Scalars['String']['output']>;
+  /** Zero for free mint */
+  mint_price?: Maybe<Scalars['String']['output']>;
+  network_id: Scalars['String']['output'];
+  space_nft: Scalars['MongoID']['output'];
+};
+
+export enum SpaceNftKind {
+  MusicTrack = 'music_track'
 }
 
 export type SpaceNewsletterStatistics = {
