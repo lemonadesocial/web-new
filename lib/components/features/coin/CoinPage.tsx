@@ -257,35 +257,37 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
           )}
 
           <div className="flex justify-between items-center text-tertiary [&_a]:hover:text-primary [&_a]:cursor-pointer">
-            <div className="flex gap-3">
-              {launchpadCoin?.website && (
-                <a
-                  href={launchpadCoin.website.startsWith('http') ? launchpadCoin.website : `https://${launchpadCoin.website}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i className="size-5 aspect-square icon-globe" />
-                </a>
-              )}
-              {launchpadCoin?.handle_telegram && (
-                <a
-                  href={launchpadCoin.handle_telegram.startsWith('http') ? launchpadCoin.handle_telegram : `https://t.me/${launchpadCoin.handle_telegram}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i className="size-5 aspect-square icon-telegram" />
-                </a>
-              )}
-              {launchpadCoin?.handle_twitter && (
-                <a
-                  href={launchpadCoin.handle_twitter.startsWith('http') ? launchpadCoin.handle_twitter : `https://x.com/${launchpadCoin.handle_twitter}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i className="size-5 aspect-square icon-twitter" />
-                </a>
-              )}
-            </div>
+            {(launchpadCoin?.website || launchpadCoin?.handle_telegram || launchpadCoin?.handle_twitter) && (
+              <div className="flex gap-3">
+                {launchpadCoin?.website && (
+                  <a
+                    href={launchpadCoin.website.startsWith('http') ? launchpadCoin.website : `https://${launchpadCoin.website}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <i className="size-5 aspect-square icon-globe" />
+                  </a>
+                )}
+                {launchpadCoin?.handle_telegram && (
+                  <a
+                    href={launchpadCoin.handle_telegram.startsWith('http') ? launchpadCoin.handle_telegram : `https://t.me/${launchpadCoin.handle_telegram}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <i className="size-5 aspect-square icon-telegram" />
+                  </a>
+                )}
+                {launchpadCoin?.handle_twitter && (
+                  <a
+                    href={launchpadCoin.handle_twitter.startsWith('http') ? launchpadCoin.handle_twitter : `https://x.com/${launchpadCoin.handle_twitter}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <i className="size-5 aspect-square icon-twitter" />
+                  </a>
+                )}
+              </div>
+            )}
 
             {
               addressUrl && (
@@ -318,12 +320,14 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
           </div>
         </div>
 
-        <div className="p-4 flex gap-10 items-center text-sm text-tertiary">
-          <p className="flex-1">Launched on Lemonade</p>
-          <div className="flex gap-1.5 items-center overflow-hidden">
-            <p className="line-clamp-1 truncate">{launchDate || 'N/A'}</p>
+        {
+          launchDate && (
+            <div className="p-4 flex gap-4 items-center text-sm text-tertiary">
+            <p className="whitespace-nowrap">Launched on Lemonade</p>
+            <p className="whitespace-nowrap">{launchDate}</p>
           </div>
-        </div>
+          )
+        }
       </Card.Content>
     </Card.Root>
   );
