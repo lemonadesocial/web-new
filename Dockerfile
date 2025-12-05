@@ -19,6 +19,10 @@ ENV PYTHON=/usr/bin/python3
 COPY --from=manifest /tmp/package.json /tmp/yarn.lock ./
 RUN --mount=type=secret,id=npmrc,dst=/root/.npmrc \
     yarn install --frozen-lockfile && \
+    yarn global add node-gyp && \
+    sed -i '1i#include <cstdint>' node_modules/canvas/src/CharData.h && \
+    sed -i '1i#include <cstdint>' node_modules/canvas/src/FontParser.h && \
+    cd node_modules/canvas && node-gyp rebuild && cd ../.. && \
     rm -rf /usr/local/share/.cache/yarn
 
 ### build
