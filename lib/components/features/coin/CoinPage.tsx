@@ -40,7 +40,7 @@ export function CoinPage({ network, address }: CoinPageProps) {
   return (
     <div className="max-w-[1256px] mx-auto">
       <div className="gap-4 items-start hidden md:flex">
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 w-full">
           <Stats chain={chain!} address={address} />
           <BuybackCharging chain={chain} address={address} />
           <CoinTabs chain={chain} address={address} />

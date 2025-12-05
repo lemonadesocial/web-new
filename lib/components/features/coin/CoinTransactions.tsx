@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { formatDistanceToNow } from 'date-fns';
+import { getTimeAgo } from '$lib/utils/date';
 import { formatEther } from 'viem';
 import { ethers } from 'ethers';
 
@@ -90,7 +90,7 @@ function TransactionRow({
   const tokenValue = formatEther(tokenAmountAbs);
 
   const timestamp = Number(swap.blockTimestamp) * 1000;
-  const timeAgo = formatDistanceToNow(new Date(timestamp), { addSuffix: true });
+  const timeAgo = getTimeAgo(timestamp);
   const txUrl = getTransactionUrl(chain, swap.transactionHash);
 
   return (
