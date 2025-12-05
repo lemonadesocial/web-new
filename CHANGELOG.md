@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.33.1](https://github.com/lemonadesocial/web-new/compare/v8.33.0...v8.33.1) (2025-12-05)
+
+
+### Bug Fixes
+
+* map form fields ([34c17b5](https://github.com/lemonadesocial/web-new/commit/34c17b591450416c9b12392249d0fd7298f077de))
+
 ## [8.33.0](https://github.com/lemonadesocial/web-new/compare/v8.32.1...v8.33.0) (2025-12-04)
 
 
