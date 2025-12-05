@@ -100,7 +100,7 @@ export function useFees(chain: Chain, address: string) {
       setRawFees(usdcAmount);
 
       const usdcValue = formatUnits(usdcAmount, 6);
-      setFormattedFees(`${usdcValue} USDC`);
+      setFormattedFees(`$${usdcValue}`);
       setIsLoading(false);
     };
 
@@ -128,7 +128,7 @@ export function useTreasuryValue(chain: Chain, address: string) {
       setRawTreasuryValue(treasuryValue);
       
       const formattedValue = formatUnits(treasuryValue, 6);
-      setFormattedTreasuryValue(`${formattedValue} USDC`);
+      setFormattedTreasuryValue(`$${formattedValue}`);
       
       setIsLoading(false);
     };
@@ -156,7 +156,7 @@ export function useMarketCap(chain: Chain, address: string) {
     enabled: !!chain && !!address,
   });
 
-  const formattedMarketCap = data ? `${formatNumber(Number(formatUnits(data, 6)))} USDC` : null;
+  const formattedMarketCap = data ? `$${formatNumber(Number(formatUnits(data, 6)), true)}` : null;
 
   return {
     formattedMarketCap,
@@ -178,7 +178,7 @@ export function useLiquidity(chain: Chain, address: string) {
     enabled: !!chain && !!address,
   });
 
-  const formattedLiquidity = data ? `${formatNumber(Number(formatUnits(data, 6)))} USDC` : null;
+  const formattedLiquidity = data ? `$${formatNumber(Number(formatUnits(data, 6)), true)}` : null;
 
   return {
     formattedLiquidity,
@@ -200,7 +200,7 @@ export function useFairLaunch(chain: Chain, address: string) {
     enabled: !!chain && !!address,
   });
 
-  const formattedUsdcValue = data ? `${formatNumber(Number(formatUnits(data.usdcValue, 6)))} USDC` : null;
+  const formattedUsdcValue = data ? `$${formatNumber(Number(formatUnits(data.usdcValue, 6)), true)}` : null;
   const formattedPercentage = data ? `${data.percentage.toFixed(2)}%` : null;
 
   return {
@@ -344,7 +344,7 @@ export function useVolume24h(chain: Chain, address: string) {
         setRawVolumeUSDC(usdcAmount);
 
         const usdcValue = formatUnits(usdcAmount, 6);
-        setFormattedVolumeUSDC(`${formatNumber(Number(usdcValue))} USDC`);
+        setFormattedVolumeUSDC(`$${formatNumber(Number(usdcValue)), true}`);
       } catch (error) {
         setFormattedVolumeUSDC(null);
         setRawVolumeUSDC(null);

@@ -597,7 +597,7 @@ export function CreateCoin() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 py-2 px-3 rounded-md border border-card-border bg-card">
+        {/* <div className="flex items-center gap-3 py-2 px-3 rounded-md border border-card-border bg-card">
           <div className="flex size-9.5 items-center justify-center rounded-sm bg-primary/8 border border-card-border">
             <i className="icon-image text-tertiary size-5.5" />
           </div>
@@ -610,7 +610,7 @@ export function CreateCoin() {
             checked={watch('sniperProtection')}
             onChange={(value) => setValue('sniperProtection', value)}
           />
-        </div>
+        </div> */}
 
         <div className="border border-card-border bg-card rounded-md">
           {

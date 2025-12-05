@@ -114,7 +114,7 @@ function TransactionRow({
           <p>{formatNumber(Number(ethValue))}</p>
         </div>
         <div className="flex-1">
-          <p>{formatNumber(Number(tokenValue))}</p>
+          <p>{formatNumber(Number(tokenValue), true)}</p>
         </div>
         <div className="w-[144px]">
           <p>{timeAgo}</p>

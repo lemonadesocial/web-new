@@ -1,4 +1,4 @@
-export function formatNumber(num: number): string {
+export function formatNumber(num: number, useThousandsFormat?: boolean): string {
   if (isNaN(num)) return "NaN";
   const abs = Math.abs(num);
   const sign = num < 0 ? "-" : "";
@@ -15,6 +15,9 @@ export function formatNumber(num: number): string {
   } else if (abs >= 1e6) {
       const value = (num / 1e6).toFixed(3).replace(/\.?0+$/, '');
       formatted = value + "M";
+  } else if (useThousandsFormat && abs >= 1000) {
+      const value = (abs / 1000).toFixed(2).replace(/\.?0+$/, '');
+      formatted = value + "k";
   } else if (abs < 1e-6) {
       const expStr = abs.toExponential(5);
       const [mantStr, expPart] = expStr.split('e');
