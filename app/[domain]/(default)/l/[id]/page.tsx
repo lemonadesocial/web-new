@@ -17,9 +17,11 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   if (result.isErr() || !result.value) return notFound();
 
   return (
-    <div className="md:grid md:grid-cols-[336px_1fr] gap-5 md:gap-8 items-start pb-10">
-      <LensProfileCard account={result.value} />
-      <UserFeed authorId={result.value.address} />
+    <div className="max-w-[1080px] mx-auto">
+      <div className="md:grid md:grid-cols-[336px_1fr] gap-5 md:gap-8 items-start pb-10">
+        <LensProfileCard account={result.value} />
+        <UserFeed authorId={result.value.address} />
+      </div>
     </div>
   );
 }

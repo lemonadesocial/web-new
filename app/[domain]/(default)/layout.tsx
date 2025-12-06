@@ -24,8 +24,8 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
       <Header hideLogo />
 
       <Sidebar />
-      <div className="min-lg:ml-[88px] px-4">
-        <div className="max-w-[1080px] mx-auto">{props.children}</div>
+      <div className="min-lg:ml-[88px] px-4" style={{ overflowX: 'visible' }}>
+        {props.children}
       </div>
       <BottomBar />
     </main>

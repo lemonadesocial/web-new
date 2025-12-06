@@ -23,7 +23,11 @@ function Page({ children }: React.PropsWithChildren) {
     }
   }, [me, session, mounted]);
 
-  return <UserProfileLayout>{children}</UserProfileLayout>;
+  return (
+    <div className="max-w-[1080px] mx-auto">
+      <UserProfileLayout>{children}</UserProfileLayout>
+    </div>
+  );
 }
 
 export default Page;

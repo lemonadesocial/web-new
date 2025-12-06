@@ -73,7 +73,9 @@ export function useQuery<T, V extends object>(
       ...subscriptionVariables,
       callback: () => {
         const res = client.readQuery(subscriptionVariables.query, subscriptionVariables.variables);
-        setData(() => (res ? ({ ...res } as T) : (res as T)));
+        if (res) {
+          setData(() => ({ ...res } as T));
+        }
       },
     });
 

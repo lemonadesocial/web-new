@@ -20,3 +20,5 @@ export * from './file-input';
 export * from './map';
 export * from './text-editor';
 export * from './chip';
+export * from './horizontal-scroll';
+export * from './progess'

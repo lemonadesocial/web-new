@@ -28,7 +28,7 @@ export function InputField(props: Props) {
   return (
     <fieldset className={twMerge('input-field relative', props.className)}>
       {props.label && <label className="text-secondary text-sm font-medium">{props.label}</label>}
-      <div className={clsx('control', props.error && 'border-danger-500!')}>
+      <div className={clsx('control', props.error && 'border-error!')}>
         {props.prefix && <div className="prefix text-base font-medium text-secondary">{props.prefix}</div>}
         {typeof props.iconLeft === 'string' ? (
           <i className={twMerge('size-5 text-tertiary', props.iconLeft)} />

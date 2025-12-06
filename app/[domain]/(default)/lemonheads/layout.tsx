@@ -21,7 +21,7 @@ export default function Layout(props: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <>
+    <div className="max-w-[1080px] mx-auto">
       <div className="flex flex-col gap-2 pt-6 pb-2">
         <h3 className="text-2xl md:text-3xl font-semibold">LemonHeads Zone</h3>
         <p className="max-sm:text-sm text-tertiary">
@@ -36,7 +36,7 @@ export default function Layout(props: { children: React.ReactNode }) {
 
       <div className="pt-2 md:px-0 sticky top-0 bg-background/80 backdrop-blur-md z-10">
         <div className="border-b">
-          <div className="w-full max-w-[1080px] mx-auto">
+          <div className="w-full">
             <ul className="inline-flex gap-4 overflow-x-auto w-full no-scrollbar">
               {tabs.map((item, idx) => (
                 <li key={idx}>
@@ -57,7 +57,7 @@ export default function Layout(props: { children: React.ReactNode }) {
         </div>
       </div>
 
-      <div className="w-full max-w-[1080px] mx-auto pt-6">{props.children}</div>
-    </>
+      <div className="w-full pt-6">{props.children}</div>
+    </div>
   );
 }

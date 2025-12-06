@@ -10,7 +10,7 @@ export default function SwipePage() {
   const router = useRouter();
 
   return (
-    <div className="max-w-[794] mx-auto pt-11 flex flex-col items-center">
+    <div className="max-w-[1080px] mx-auto pt-11 flex flex-col items-center">
       <div
         className="h-[296] flex items-end justify-center w-full"
         style={{
