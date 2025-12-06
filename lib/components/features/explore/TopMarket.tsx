@@ -1,6 +1,7 @@
 'use client';
 import { formatEther } from 'viem';
 import { useAtomValue } from 'jotai';
+import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 
 import { useQuery } from '$lib/graphql/request/hooks';
@@ -80,6 +81,7 @@ export function TopMarket() {
 }
 
 function TopMarketItem({ pool, rank }: { pool: PoolCreated; rank: number }) {
+  const router = useRouter();
   const chainsMap = useAtomValue(chainsMapAtom);
   const chain = chainsMap[pool.chainId.toString()];
   const { tokenData, isLoadingTokenData } = useTokenData(chain, pool.memecoin, pool.tokenURI as string);
@@ -104,7 +106,10 @@ function TopMarketItem({ pool, rank }: { pool: PoolCreated; rank: number }) {
   const displaySymbol = tokenData?.symbol || formatWallet(pool.memecoin, 4);
 
   return (
-    <div className="flex gap-3 items-center px-4 py-3">
+    <div
+      className="flex gap-3 items-center px-4 py-3 cursor-pointer hover:bg-(--btn-tertiary)"
+      onClick={() => router.push(`/coin/${chain.code_name}/${pool.memecoin}`)}
+    >
       <LemonheadLeaderBoardRank rank={rank} className="size-6 text-primary" />
       {tokenData?.metadata?.imageUrl ? (
         <img

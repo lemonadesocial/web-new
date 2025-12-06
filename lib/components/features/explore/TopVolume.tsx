@@ -1,6 +1,7 @@
 'use client';
 import { formatEther } from 'viem';
 import { useAtomValue } from 'jotai';
+import { useRouter } from 'next/navigation';
 
 import { useQuery } from '$lib/graphql/request/hooks';
 import { coinClient } from '$lib/graphql/request/instances';
@@ -71,6 +72,7 @@ export function TopVolume() {
 }
 
 function TopVolumeItem({ volume, rank }: { volume: TradeVolume; rank: number }) {
+  const router = useRouter();
   const chainsMap = useAtomValue(chainsMapAtom);
   const chain = chainsMap[volume.chainId.toString()];
   const { tokenData, isLoadingTokenData } = useTokenData(chain, volume.memecoin);
@@ -84,7 +86,10 @@ function TopVolumeItem({ volume, rank }: { volume: TradeVolume; rank: number }) 
   const displaySymbol = tokenData?.symbol || formatWallet(volume.memecoin, 4);
 
   return (
-    <div className="flex gap-3 items-center px-4 py-3">
+    <div
+      className="flex gap-3 items-center px-4 py-3 cursor-pointer hover:bg-(--btn-tertiary)"
+      onClick={() => router.push(`/coin/${chain.code_name}/${volume.memecoin}`)}
+    >
       <LemonheadLeaderBoardRank rank={rank} className="size-6 text-primary" />
       {tokenData?.metadata?.imageUrl ? (
         <img

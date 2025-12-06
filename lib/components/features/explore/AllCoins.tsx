@@ -125,7 +125,10 @@ function AllCoinsRow({ pool }: { pool: PoolCreated }) {
 
   return (
     <CardTable.Row>
-      <div className="flex items-center gap-4 text-tertiary px-4 py-3">
+      <div
+        className="flex items-center gap-4 text-tertiary px-4 py-3 cursor-pointer hover:bg-(--btn-tertiary)"
+        onClick={() => router.push(`/coin/${chain.code_name}/${pool.memecoin}`)}
+      >
         <div className="flex items-center gap-3 flex-[2.2] min-w-0">
           {tokenData?.metadata?.imageUrl ? (
             <img
@@ -190,7 +193,6 @@ function AllCoinsRow({ pool }: { pool: PoolCreated }) {
           <Button 
             variant="tertiary-alt" 
             size="sm"
-            onClick={() => router.push(`/coin/${chain.code_name}/${pool.memecoin}`)}
           >
             Buy
           </Button>
