@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.34.0](https://github.com/lemonadesocial/web-new/compare/v8.33.1...v8.34.0) (2025-12-07)
+
+
+### Features
+
+* upgrade next.js due to CVE-2025-66478 ([3ace23d](https://github.com/lemonadesocial/web-new/commit/3ace23ddff6954e8fdbfc6aee7ddd406334e2fe7))
+
+
+### Bug Fixes
+
+* upgrade alpine ([22dacd9](https://github.com/lemonadesocial/web-new/commit/22dacd902dbbd7ca6f117b95644fac2c862ac9a3))
+
 ## [8.33.1](https://github.com/lemonadesocial/web-new/compare/v8.33.0...v8.33.1) (2025-12-05)
 
 
