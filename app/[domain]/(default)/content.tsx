@@ -33,8 +33,12 @@ import { chainsMapAtom } from '$lib/jotai';
 import { GetVerifiedModal } from '$lib/components/features/modals/GetVerifiedModal';
 import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
-import { Order_By, PoolCreatedDocument } from '$lib/graphql/generated/coin/graphql';
+import { Order_By, PoolCreated, PoolCreatedDocument } from '$lib/graphql/generated/coin/graphql';
 import { coinClient } from '$lib/graphql/request/instances';
+import { useTokenData } from '$lib/hooks/useCoin';
+import { formatWallet } from '$lib/utils/crypto';
+import { formatEther } from 'ethers';
+import { formatNumber } from '$lib/utils/number';
 
 export function Content() {
   const me = useMe();
@@ -447,7 +451,7 @@ function CardItem({
   rightContent,
   className,
 }: {
-  image: string | React.ReactElement;
+  image?: string | React.ReactElement;
   title: string;
   subtitle: string | React.ReactElement;
   rightContent?: React.ReactElement;
@@ -666,7 +670,7 @@ function LemonHeadsZone() {
   );
 }
 
-const LIMIT = 6;
+const LIMIT = 5;
 function AllCoins() {
   const { data } = useQuery(
     PoolCreatedDocument,
@@ -685,7 +689,7 @@ function AllCoins() {
     coinClient,
   );
 
-  const pools = data?.PoolCreated || [1, 2, 3];
+  const pools = data?.PoolCreated || [];
 
   return (
     <Accordion.Root className="border-none" open>
@@ -702,7 +706,6 @@ function AllCoins() {
                   onClick={() => toggle()}
                 />
                 <h3 className="text-xl font-semibold">Coins</h3>
-                <Badge title="5" className="rounded-full bg-(--btn-tertiary) text-tertiary" />
               </div>
               <div className="hidden md:flex gap-2">
                 <Button
@@ -732,19 +735,8 @@ function AllCoins() {
         }}
       </Accordion.Header>
       <Accordion.Content className={clsx('pt-1! px-0! flex flex-col md:grid gap-3', !!pools.length && 'grid-cols-2')}>
-        {pools.map((item, idx) => (
-          <CardItem
-            key={idx}
-            title={'$LSD'}
-            subtitle={'0x1abc...2xyz'}
-            image={'Image here'}
-            rightContent={
-              <div className="flex flex-col items-end">
-                <p className="text-primary">$256.78K</p>
-                <p className={clsx('text-sm', !true ? 'text-success-500' : 'text-danger-400')}>+2.10</p>
-              </div>
-            }
-          />
+        {pools.map((pool) => (
+          <CoinItem key={pool.id} pool={pool} />
         ))}
         <div className="hidden only:block text-center text-gray-500 py-10">
           <EmptyCard
@@ -755,5 +747,52 @@ function AllCoins() {
         </div>
       </Accordion.Content>
     </Accordion.Root>
+  );
+}
+
+function CoinItem({ pool }: { pool: PoolCreated }) {
+  const router = useRouter();
+  const chainsMap = useAtomValue(chainsMapAtom);
+
+  const chain = chainsMap[pool.chainId.toString()];
+  const { tokenData } = useTokenData(chain, pool.memecoin, pool.tokenURI as string);
+
+  const latestMarketCapETH = pool.latestMarketCapETH ? BigInt(pool.latestMarketCapETH) : BigInt(0);
+  const previousMarketCapETH = pool.previousMarketCapETH ? BigInt(pool.previousMarketCapETH) : null;
+
+  const formattedMarketCap = formatEther(latestMarketCapETH);
+  const marketCapNumber = Number(formattedMarketCap);
+  const formattedAmount = marketCapNumber > 0 ? `${formatNumber(marketCapNumber)} ETH` : '0 ETH';
+
+  let percentageChange: number | null = null;
+  if (previousMarketCapETH !== null && previousMarketCapETH > 0) {
+    const latest = Number(latestMarketCapETH);
+    const previous = Number(previousMarketCapETH);
+    if (previous !== 0) {
+      percentageChange = ((latest - previous) / previous) * 100;
+    }
+  }
+
+  const displaySymbol = tokenData?.symbol || formatWallet(pool.memecoin, 4);
+
+  return (
+    <CardItem
+      key={pool.id}
+      title={displaySymbol}
+      subtitle={'0x1abc...2xyz'}
+      image={tokenData?.metadata?.imageUrl}
+      onClick={() => router.push(`/coin/${chain.code_name}/${pool.memecoin}`)}
+      rightContent={
+        <div className="flex flex-col items-end">
+          <p className="text-primary">{formattedAmount}</p>
+          {percentageChange !== null && (
+            <p className={clsx('text-sm', percentageChange > 0 ? 'text-success-500' : 'text-danger-500')}>
+              {percentageChange > 0 && '+'}
+              {percentageChange.toFixed(2)}%
+            </p>
+          )}
+        </div>
+      }
+    />
   );
 }
