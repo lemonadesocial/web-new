@@ -25,6 +25,7 @@ import { StatItem } from './StatItem';
 import { SwapCoin } from './SwapCoin';
 import { CoinDetail } from './CoinDetail';
 import { BuybackCharging } from './BuybackCharging';
+import { PriceChart } from './PriceChart';
 
 interface CoinPageProps {
   network: string;
@@ -43,6 +44,7 @@ export function CoinPage({ network, address }: CoinPageProps) {
         <div className="flex flex-col gap-4 w-full">
           <Stats chain={chain!} address={address} />
           <BuybackCharging chain={chain} address={address} />
+          <PriceChart chain={chain} address={address} />
           <CoinTabs chain={chain} address={address} />
         </div>
 
@@ -322,7 +324,7 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
 
         {
           launchDate && (
-            <div className="p-4 flex gap-4 items-center text-sm text-tertiary">
+            <div className="p-4 flex gap-4 justify-between text-sm text-tertiary">
             <p className="whitespace-nowrap">Launched on Lemonade</p>
             <p className="whitespace-nowrap">{launchDate}</p>
           </div>

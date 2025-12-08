@@ -1,5 +1,5 @@
 import { formatEther, formatUnits, zeroAddress } from 'viem';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useQuery as useGraphQLQuery } from '$lib/graphql/request';
 import { useQuery as useReactQuery } from '@tanstack/react-query';
 
@@ -9,7 +9,7 @@ import {
   type ListLaunchpadGroupsQuery
 } from '$lib/graphql/generated/backend/graphql';
 import {
-  TradeVolumeDocument, PoolCreatedDocument, Order_By, MemecoinMetadataDocument
+  TradeVolumeDocument, PoolCreatedDocument, Order_By, MemecoinMetadataDocument, PoolSwapDocument, type PoolSwap
 } from '$lib/graphql/generated/coin/graphql';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
@@ -341,6 +341,7 @@ export function useVolume24h(chain: Chain, address: string) {
       try {
         const flaunchClient = FlaunchClient.getInstance(chain, address);
         const usdcAmount = await flaunchClient.getUSDCFromETH(rawVolume);
+        console.log(usdcAmount)
         setRawVolumeUSDC(usdcAmount);
 
         const usdcValue = formatUnits(usdcAmount, 6);
@@ -441,5 +442,192 @@ export function useHoldersCount(chain: Chain, address: string) {
   return {
     holdersCount,
     isLoadingHoldersCount: loading,
+  };
+}
+
+export function usePoolInfo(chain: Chain, address: string) {
+  const {
+    data,
+    isLoading,
+  } = useReactQuery({
+    queryKey: ['pool-info', chain.chain_id, address],
+    queryFn: async () => {
+      const flaunchClient = FlaunchClient.getInstance(chain, address);
+      const poolIdValue = await flaunchClient.getPoolId();
+      
+      const nativeToken = await flaunchClient.getLETHAddress();
+      const isNativeToken0 = nativeToken.toLowerCase().localeCompare(address.toLowerCase()) <= 0;
+      
+      return {
+        poolId: poolIdValue,
+        isEthToken0: isNativeToken0,
+      };
+    },
+    enabled: !!chain && !!address,
+  });
+
+  return {
+    poolId: data?.poolId ?? null,
+    isEthToken0: data?.isEthToken0 ?? null,
+    isLoadingPoolInfo: isLoading,
+  };
+}
+
+export function useEthToUsdcRate(chain: Chain, address: string) {
+  const {
+    data,
+    isLoading,
+  } = useReactQuery({
+    queryKey: ['eth-to-usdc-rate', chain.chain_id, address],
+    queryFn: async () => {
+      const flaunchClient = FlaunchClient.getInstance(chain, address);
+      const oneEth = BigInt('1000000000000000000');
+      const usdcAmount = await flaunchClient.getUSDCFromETH(oneEth);
+      return Number(formatUnits(usdcAmount, 6));
+    },
+    enabled: !!chain && !!address,
+  });
+
+  return {
+    rate: data ?? null,
+    isLoadingRate: isLoading,
+  };
+}
+
+export type PriceTimeSeriesData = {
+  time: Date;
+  timestamp: number;
+  price: number;
+  priceUSDC: number;
+  totalAmount0: bigint;
+  totalAmount1: bigint;
+};
+
+export function usePoolSwapPriceTimeSeries(
+  chain: Chain,
+  address: string,
+  timeRange?: {
+    startTime?: Date | number;
+    endTime?: Date | number;
+  },
+) {
+  const { poolId, isEthToken0, isLoadingPoolInfo } = usePoolInfo(chain, address);
+
+  const blockTimestampFilter = useMemo(() => {
+    if (!timeRange) {
+      return undefined;
+    }
+
+    const filter: { _gte?: string; _lte?: string } = {};
+
+    if (timeRange.startTime !== undefined) {
+      const startTimestamp = timeRange.startTime instanceof Date
+        ? Math.floor(timeRange.startTime.getTime() / 1000)
+        : Math.floor(timeRange.startTime / 1000);
+      filter._gte = startTimestamp.toString();
+    }
+
+    if (timeRange.endTime !== undefined) {
+      const endTimestamp = timeRange.endTime instanceof Date
+        ? Math.floor(timeRange.endTime.getTime() / 1000)
+        : Math.floor(timeRange.endTime / 1000);
+      filter._lte = endTimestamp.toString();
+    }
+
+    return Object.keys(filter).length > 0 ? filter : undefined;
+  }, [timeRange]);
+
+  const { data, loading } = useGraphQLQuery(
+    PoolSwapDocument,
+    {
+      variables: poolId
+        ? {
+            where: {
+              poolId: {
+                _eq: poolId,
+              },
+              chainId: {
+                _eq: Number(chain.chain_id),
+              },
+              ...(blockTimestampFilter && {
+                blockTimestamp: blockTimestampFilter,
+              }),
+            },
+            orderBy: {
+              blockTimestamp: Order_By.Asc,
+            },
+            limit: 10000,
+          }
+        : undefined,
+      skip: !poolId || isLoadingPoolInfo,
+      fetchPolicy: 'network-only',
+    },
+    coinClient,
+  );
+
+  const { rate: ethToUsdcRate } = useEthToUsdcRate(chain, address);
+
+  const swaps = data?.PoolSwap || [];
+
+  const priceTimeSeries = useMemo(() => {
+    if (swaps.length === 0 || isEthToken0 === null) {
+      return [];
+    }
+
+    const timeSeriesData: PriceTimeSeriesData[] = swaps
+      .map((swap) => {
+        const ispAmount0 = BigInt(swap.ispAmount0 || '0');
+        const ispAmount1 = BigInt(swap.ispAmount1 || '0');
+        const flAmount0 = BigInt(swap.flAmount0 || '0');
+        const flAmount1 = BigInt(swap.flAmount1 || '0');
+        const uniAmount0 = BigInt(swap.uniAmount0 || '0');
+        const uniAmount1 = BigInt(swap.uniAmount1 || '0');
+        const ispFee0 = BigInt(swap.ispFee0 || '0');
+        const ispFee1 = BigInt(swap.ispFee1 || '0');
+        const flFee0 = BigInt(swap.flFee0 || '0');
+        const flFee1 = BigInt(swap.flFee1 || '0');
+        const uniFee0 = BigInt(swap.uniFee0 || '0');
+        const uniFee1 = BigInt(swap.uniFee1 || '0');
+
+        const totalAmount0 = (ispAmount0 + flAmount0 + uniAmount0) - (ispFee0 + flFee0 + uniFee0);
+        const totalAmount1 = (ispAmount1 + flAmount1 + uniAmount1) - (ispFee1 + flFee1 + uniFee1);
+
+        const ethAmount = isEthToken0 ? totalAmount0 : totalAmount1;
+        const tokenAmount = isEthToken0 ? totalAmount1 : totalAmount0;
+
+        const ethAmountAbs = ethAmount < BigInt(0) ? -ethAmount : ethAmount;
+        const tokenAmountAbs = tokenAmount < BigInt(0) ? -tokenAmount : tokenAmount;
+
+        const timestamp = Number(swap.blockTimestamp) * 1000;
+        const time = new Date(timestamp);
+
+        let price = 0;
+        let priceUSDC = 0;
+        if (tokenAmountAbs !== BigInt(0)) {
+          const ethValue = Number(formatEther(ethAmountAbs));
+          const tokenValue = Number(formatEther(tokenAmountAbs));
+          price = ethValue / tokenValue;
+          
+          if (ethToUsdcRate) {
+            priceUSDC = price * ethToUsdcRate;
+          }
+        }
+
+        return {
+          time,
+          timestamp,
+          price,
+          priceUSDC,
+          totalAmount0,
+          totalAmount1,
+        };
+      });
+
+    return timeSeriesData;
+  }, [swaps, isEthToken0, ethToUsdcRate]);
+
+  return {
+    data: priceTimeSeries,
+    isLoading: isLoadingPoolInfo || loading,
   };
 }

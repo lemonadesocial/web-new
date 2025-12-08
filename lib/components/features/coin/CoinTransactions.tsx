@@ -8,12 +8,11 @@ import { useQuery } from '$lib/graphql/request/hooks';
 import { coinClient } from '$lib/graphql/request/instances';
 import { PoolSwapDocument, Order_By, type PoolSwap } from '$lib/graphql/generated/coin/graphql';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
-import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 import { CardTable } from '$lib/components/core/table';
 import { Skeleton, Chip } from '$lib/components/core';
 import { formatWallet, getTransactionUrl } from '$lib/utils/crypto';
 import { formatNumber } from '$lib/utils/number';
-import { useTokenData } from '$lib/hooks/useCoin';
+import { useTokenData, usePoolInfo } from '$lib/hooks/useCoin';
 
 type PoolSwapItem = Omit<PoolSwap, 'chainId'>;
 
@@ -131,32 +130,13 @@ function TransactionRow({
 }
 
 export function CoinTransactions({ chain, address }: CoinTransactionsProps) {
-  const [poolId, setPoolId] = React.useState<string | null>(null);
-  const [isLoadingPoolId, setIsLoadingPoolId] = React.useState(true);
-  const [isEthToken0, setIsEthToken0] = React.useState<boolean | null>(null);
   const [pagination, setPagination] = React.useState<{ limit: number; offset: number }>({
     limit: 10,
     offset: 0,
   });
 
   const { tokenData } = useTokenData(chain, address);
-
-  React.useEffect(() => {
-    const fetchPoolId = async () => {
-      setIsLoadingPoolId(true);
-      const flaunchClient = FlaunchClient.getInstance(chain, address);
-      const poolIdValue = await flaunchClient.getPoolId();
-      setPoolId(poolIdValue);
-      
-      const nativeToken = await flaunchClient.getLETHAddress();
-      const isNativeToken0 = nativeToken.toLowerCase().localeCompare(address.toLowerCase()) <= 0;
-      setIsEthToken0(isNativeToken0);
-      
-      setIsLoadingPoolId(false);
-    };
-
-    fetchPoolId();
-  }, [chain, address]);
+  const { poolId, isEthToken0, isLoadingPoolInfo } = usePoolInfo(chain, address);
 
   const { data, loading } = useQuery(
     PoolSwapDocument,
@@ -178,14 +158,14 @@ export function CoinTransactions({ chain, address }: CoinTransactionsProps) {
             offset: pagination.offset,
           }
         : undefined,
-      skip: !poolId || isLoadingPoolId,
+      skip: !poolId || isLoadingPoolInfo,
       fetchPolicy: 'network-only',
     },
     coinClient,
   );
 
   const swaps = data?.PoolSwap || [];
-  const isLoading = isLoadingPoolId || loading;
+  const isLoading = isLoadingPoolInfo || loading;
   const hasNextPage = swaps.length === pagination.limit;
   const totalForPagination = hasNextPage
     ? pagination.offset + pagination.limit + 1
@@ -224,7 +204,6 @@ export function CoinTransactions({ chain, address }: CoinTransactionsProps) {
           swap={swap}
           chain={chain}
           isEthToken0={isEthToken0}
-          tokenData={tokenData}
         />
       ))}
 
