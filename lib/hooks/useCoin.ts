@@ -341,11 +341,10 @@ export function useVolume24h(chain: Chain, address: string) {
       try {
         const flaunchClient = FlaunchClient.getInstance(chain, address);
         const usdcAmount = await flaunchClient.getUSDCFromETH(rawVolume);
-        console.log(usdcAmount)
         setRawVolumeUSDC(usdcAmount);
 
         const usdcValue = formatUnits(usdcAmount, 6);
-        setFormattedVolumeUSDC(`$${formatNumber(Number(usdcValue)), true}`);
+        setFormattedVolumeUSDC(`$${formatNumber(Number(usdcValue), true)}`);
       } catch (error) {
         setFormattedVolumeUSDC(null);
         setRawVolumeUSDC(null);

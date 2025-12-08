@@ -318,7 +318,7 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
         <div className="p-4 flex gap-10 items-center text-sm text-tertiary">
           <p className="flex-1">Creator</p>
           <div className="flex gap-1.5 items-center overflow-hidden">
-            <p className="line-clamp-1 truncate">johndoe.eth</p>
+            <p className="line-clamp-1 truncate">{pool?.paramsCreator ? formatWallet(pool.paramsCreator) : 'N/A'}</p>
           </div>
         </div>
 
