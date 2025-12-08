@@ -2,7 +2,7 @@
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Accordion, Button, Card, Divider, drawer, modal } from '$lib/components/core';
+import { Accordion, Badge, Button, Card, Divider, drawer, modal } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { ASSET_PREFIX, SELF_VERIFICATION_CONFIG } from '$lib/utils/constants';
@@ -33,6 +33,8 @@ import { chainsMapAtom } from '$lib/jotai';
 import { GetVerifiedModal } from '$lib/components/features/modals/GetVerifiedModal';
 import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
+import { Order_By, PoolCreatedDocument } from '$lib/graphql/generated/coin/graphql';
+import { coinClient } from '$lib/graphql/request/instances';
 
 export function Content() {
   const me = useMe();
@@ -58,6 +60,8 @@ export function Content() {
           <UpcomingEventSection />
           <Divider />
           <CommunitySection />
+          <Divider />
+          <AllCoins />
         </div>
 
         <div>
@@ -453,7 +457,7 @@ function CardItem({
   return (
     <Card.Root onClick={onClick} className={twMerge('min-w-fit', className)}>
       <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
-        {typeof image === 'string' ? <img src={image} className="size-[38px] aspect-square" /> : image}
+        {typeof image === 'string' ? <img src={image} className="size-[38px] rounded-sm aspect-square" /> : image}
         <div className="space-y-0.5 flex-1">
           <p className="title text-lg">{title}</p>
           {typeof subtitle === 'string' ? <p className="text-sm text-tertiary">{subtitle}</p> : subtitle}
@@ -659,5 +663,97 @@ function LemonHeadsZone() {
       rightContent={<i className="icon-chevron-right text-tertiary" />}
       onClick={onClick}
     />
+  );
+}
+
+const LIMIT = 6;
+function AllCoins() {
+  const { data } = useQuery(
+    PoolCreatedDocument,
+    {
+      variables: {
+        orderBy: [
+          {
+            blockTimestamp: Order_By.Desc,
+          },
+        ],
+        limit: LIMIT,
+        offset: 0,
+      },
+      fetchPolicy: 'network-only',
+    },
+    coinClient,
+  );
+
+  const pools = data?.PoolCreated || [1, 2, 3];
+
+  return (
+    <Accordion.Root className="border-none" open>
+      <Accordion.Header chevron={false} className="px-0!">
+        {({ toggle, isOpen }) => {
+          return (
+            <div className="flex items-center justify-between text-primary w-full">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="tertiary"
+                  className="rounded-full"
+                  size="xs"
+                  icon={clsx('icon-chevron-down', isOpen && 'rotate-180')}
+                  onClick={() => toggle()}
+                />
+                <h3 className="text-xl font-semibold">Coins</h3>
+                <Badge title="5" className="rounded-full bg-(--btn-tertiary) text-tertiary" />
+              </div>
+              <div className="hidden md:flex gap-2">
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  iconLeft="icon-plus"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  New Coin
+                </Button>
+              </div>
+
+              <div className="flex md:hidden gap-2">
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  icon="icon-plus"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                />
+              </div>
+            </div>
+          );
+        }}
+      </Accordion.Header>
+      <Accordion.Content className={clsx('pt-1! px-0! flex flex-col md:grid gap-3', !!pools.length && 'grid-cols-2')}>
+        {pools.map((item, idx) => (
+          <CardItem
+            key={idx}
+            title={'$LSD'}
+            subtitle={'0x1abc...2xyz'}
+            image={'Image here'}
+            rightContent={
+              <div className="flex flex-col items-end">
+                <p className="text-primary">$256.78K</p>
+                <p className={clsx('text-sm', !true ? 'text-success-500' : 'text-danger-400')}>+2.10</p>
+              </div>
+            }
+          />
+        ))}
+        <div className="hidden only:block text-center text-gray-500 py-10">
+          <EmptyCard
+            icon="icon-confirmation-number"
+            title="No Coins Yet"
+            subtitle="Coins you create and manage will appear here."
+          />
+        </div>
+      </Accordion.Content>
+    </Accordion.Root>
   );
 }
