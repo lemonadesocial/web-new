@@ -39,6 +39,7 @@ import { useTokenData } from '$lib/hooks/useCoin';
 import { formatWallet } from '$lib/utils/crypto';
 import { formatEther } from 'ethers';
 import { formatNumber } from '$lib/utils/number';
+import { truncateMiddle } from '$lib/utils/string';
 
 export function Content() {
   const me = useMe();
@@ -779,7 +780,7 @@ function CoinItem({ pool }: { pool: PoolCreated }) {
     <CardItem
       key={pool.id}
       title={displaySymbol}
-      subtitle={'0x1abc...2xyz'}
+      subtitle={truncateMiddle(pool.memecoin, 6, 4)}
       image={tokenData?.metadata?.imageUrl}
       onClick={() => router.push(`/coin/${chain.code_name}/${pool.memecoin}`)}
       rightContent={
