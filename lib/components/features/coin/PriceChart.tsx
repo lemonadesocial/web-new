@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo, useState, useEffect } from 'react';
-import { AreaChart, Area, ResponsiveContainer, Tooltip } from 'recharts';
+import { AreaChart, Area, ResponsiveContainer, Tooltip, CartesianGrid } from 'recharts';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import { formatEther } from 'viem';
@@ -151,6 +151,12 @@ export function PriceChart({ chain, address }: PriceChartProps) {
                     <stop offset="100%" stopColor="rgba(253, 224, 71, 0)" />
                   </linearGradient>
                 </defs>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={true}
+                  horizontal={false}
+                  stroke="rgba(255, 255, 255, 0.1)"
+                />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: 'var(--color-card)',
