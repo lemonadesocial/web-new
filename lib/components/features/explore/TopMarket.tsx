@@ -34,7 +34,6 @@ export function TopMarket() {
         limit: 5,
         offset: 0,
       },
-      fetchPolicy: 'network-only',
     },
     coinClient,
   );

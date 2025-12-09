@@ -672,8 +672,13 @@ function LemonHeadsZone() {
 }
 
 function AllCoins() {
+  const router = useRouter();
   const me = useMe();
   const { address } = useAppKitAccount();
+
+  const handleCreateCoin = () => {
+    router.push('/create/coin');
+  };
 
   const userWallets = React.useMemo(() => {
     const wallets: string[] = [];
@@ -742,9 +747,7 @@ function AllCoins() {
                   size="sm"
                   variant="tertiary-alt"
                   iconLeft="icon-plus"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
+                  onClick={handleCreateCoin}
                 >
                   New Coin
                 </Button>
@@ -755,9 +758,7 @@ function AllCoins() {
                   size="sm"
                   variant="tertiary-alt"
                   icon="icon-plus"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
+                  onClick={handleCreateCoin}
                 />
               </div>
             </div>

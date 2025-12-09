@@ -36,7 +36,6 @@ export function AllCoins() {
         limit: LIMIT,
         offset: skip,
       },
-      fetchPolicy: 'network-only',
     },
     coinClient,
   );
@@ -116,7 +115,7 @@ function AllCoinsRow({ pool }: { pool: PoolCreated }) {
   const { formattedMarketCap } = useMarketCap(chain, pool.memecoin);
   const { formattedLiquidity } = useLiquidity(chain, pool.memecoin);
   const { formattedFees } = useFees(chain, pool.memecoin);
-  const { holdersCount } = useHoldersCount(chain, pool.memecoin);
+  const { holdersCount } = useHoldersCount(chain.chain_id, pool.memecoin);
 
   const displayName = tokenData?.name || formatWallet(pool.memecoin, 6);
   const displaySymbol = tokenData?.symbol || formatWallet(pool.memecoin, 4);

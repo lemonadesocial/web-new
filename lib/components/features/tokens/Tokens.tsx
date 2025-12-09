@@ -7,7 +7,7 @@ import { Button, Card, Skeleton } from '$lib/components/core';
 import { RadialProgress } from '$lib/components/core/progess/radial';
 import { useQuery } from '$lib/graphql/request';
 import { PoolCreatedDocument, FairLaunchDocument, Order_By, type PoolCreated } from '$lib/graphql/generated/coin/graphql';
-import { coinClient } from '$lib/graphql/request/instances';
+import { getCoinClient } from '$lib/graphql/request/instances';
 import { chainsMapAtom } from '$lib/jotai/chains';
 import { useTokenData, useHoldersCount, useVolume24h } from '$lib/hooks/useCoin';
 import { calculateMarketCapData } from '$lib/utils/coin';
@@ -94,6 +94,8 @@ function NewTokensList() {
     </Card.Root>
   );
 }
+
+const coinClient = getCoinClient();
 
 function GraduatingTokensList() {
   const { data: fairLaunchData, loading: loadingFairLaunch } = useQuery(
@@ -288,7 +290,7 @@ function TokenCard({ pool }: { pool: PoolCreated }) {
 
   const chain = chainsMap[pool.chainId.toString()];
   const { tokenData, isLoadingTokenData } = useTokenData(chain, pool.memecoin, pool.tokenURI as string);
-  const { holdersCount, isLoadingHoldersCount } = useHoldersCount(chain, pool.memecoin);
+  const { holdersCount, isLoadingHoldersCount } = useHoldersCount(chain.chain_id, pool.memecoin);
   const { formattedVolumeUSDC, isLoadingVolume } = useVolume24h(chain, pool.memecoin);
 
   const { formattedAmount } = calculateMarketCapData(

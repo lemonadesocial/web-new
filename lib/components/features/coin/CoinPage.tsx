@@ -13,11 +13,9 @@ import { copy } from '$lib/utils/helpers';
 import { formatNumber } from '$lib/utils/number';
 import { Badge, Card, Skeleton, toast } from '$lib/components/core';
 
-import { useFairLaunch, useFees, useGroup, useHoldersCount, useLiquidity, useMarketCap, useOwner, useTokenData, useTreasuryValue, useVolume24h } from '$lib/hooks/useCoin';
+import { useFairLaunch, useFees, useGroup, useHoldersCount, useLiquidity, useMarketCap, useMarketCapChange, useOwner, usePool, useTokenData, useTreasuryValue, useVolume24h } from '$lib/hooks/useCoin';
 import { useQuery } from '$lib/graphql/request/hooks';
 import { ItemsDocument } from '$lib/graphql/generated/backend/graphql';
-import { PoolCreatedDocument, Order_By } from '$lib/graphql/generated/coin/graphql';
-import { coinClient } from '$lib/graphql/request/instances';
 import { CoinTransactions } from './CoinTransactions';
 import { CoinHolders } from './CoinHolders';
 import { CoinAdvanced } from './CoinAdvanced';
@@ -70,7 +68,7 @@ function Stats({ chain, address }: { chain: Chain; address: string }) {
   const { formattedLiquidity, isLoadingLiquidity } = useLiquidity(chain, address);
   const { formattedPercentage, formattedUsdcValue, isLoadingFairLaunch } = useFairLaunch(chain, address);
   const { formattedVolumeUSDC, isLoadingVolume } = useVolume24h(chain, address);
-  const { holdersCount, isLoadingHoldersCount } = useHoldersCount(chain, address);
+  const { holdersCount, isLoadingHoldersCount } = useHoldersCount(chain.chain_id, address);
 
   return (
     <div className="grid grid-cols-5 gap-3">
@@ -162,6 +160,8 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
   const { launchpadGroup } = useGroup(chain, address);
   const { formattedMarketCap, isLoadingMarketCap } = useMarketCap(chain, address);
+  const { percentageChange, isLoadingMarketCapChange } = useMarketCapChange(chain.chain_id, address);
+  const { pool } = usePool(chain.chain_id, address);
 
   const { data } = useQuery(ItemsDocument,
     {
@@ -169,27 +169,7 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
     },
   );
 
-  const { data: poolData } = useQuery(
-    PoolCreatedDocument,
-    {
-      variables: {
-        where: {
-          memecoin: {
-            _eq: address.toLowerCase(),
-          },
-          chainId: {
-            _eq: Number(chain.chain_id),
-          },
-        },
-        limit: 1,
-        offset: 0,
-      },
-    },
-    coinClient,
-  );
-
   const launchpadCoin = data?.listLaunchpadCoins?.items?.[0] || null;
-  const pool = poolData?.PoolCreated?.[0];
   const launchDate = pool?.blockTimestamp
     ? format(new Date(Number(pool.blockTimestamp) * 1000), 'MMMM d, yyyy')
     : null;
@@ -241,7 +221,13 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
                   ) : (
                     formattedMarketCap && <p className="text-accent-400">{formattedMarketCap}</p>
                   )}
-                  {/* <p className={clsx('text-sm', percent > 0 ? 'text-success-500' : 'text-danger-500')}>+6.28%</p> */}
+                  {isLoadingMarketCapChange ? (
+                    <Skeleton className="h-4 w-16 mt-1" animate />
+                  ) : percentageChange !== null ? (
+                    <p className={clsx('text-sm', percentageChange > 0 ? 'text-success-500' : 'text-danger-500')}>
+                      {percentageChange > 0 ? '+' : ''}{percentageChange.toFixed(2)}%
+                    </p>
+                  ) : null}
                 </div>
               </div>
               <Badge className="text-tertiary bg-quaternary flex gap-1">

@@ -19,7 +19,7 @@ interface CoinPageProps {
 export function CoinDetail({ address, chain }: CoinPageProps) {
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
   const { formattedMarketCap, isLoadingMarketCap } = useMarketCap(chain, address);
-  const { percentageChange, isLoadingMarketCapChange } = useMarketCapChange(chain, address);
+  const { percentageChange, isLoadingMarketCapChange } = useMarketCapChange(chain.chain_id, address);
 
   return (
     <div className="flex flex-col gap-5">

@@ -9,7 +9,7 @@ import {
   type ListLaunchpadGroupsQuery
 } from '$lib/graphql/generated/backend/graphql';
 import {
-  TradeVolumeDocument, PoolCreatedDocument, Order_By, MemecoinMetadataDocument, PoolSwapDocument, type PoolSwap
+  TradeVolumeDocument, PoolCreatedDocument, Order_By, MemecoinMetadataDocument, PoolSwapDocument, type PoolSwap, type PoolCreated
 } from '$lib/graphql/generated/coin/graphql';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
@@ -241,7 +241,6 @@ export function useBuybackCharging(chain: Chain, address: string) {
       const flaunchClient = FlaunchClient.getInstance(chain, address);
       return flaunchClient.getBuybackCharging();
     },
-    enabled: !!chain && !!address,
   });
 
   const formattedAmount0 = data ? `${formatEther(data.amount0)} ETH` : null;
@@ -297,32 +296,34 @@ export function useVolume24h(chain: Chain, address: string) {
   const [rawVolumeUSDC, setRawVolumeUSDC] = useState<bigint | null>(null);
   const [isLoadingUSDC, setIsLoadingUSDC] = useState(false);
 
-  const { data, loading } = useGraphQLQuery(
-    TradeVolumeDocument,
-    {
-      variables: {
-        where: {
-          memecoin: {
-            _eq: address.toLowerCase(),
+  const { data, isLoading } = useReactQuery({
+    queryKey: ['volume-24h', chain.chain_id, address, today],
+    queryFn: async () => {
+      const { data } = await coinClient.query({
+        query: TradeVolumeDocument,
+        variables: {
+          where: {
+            memecoin: {
+              _eq: address.toLowerCase(),
+            },
+            chainId: {
+              _eq: Number(chain.chain_id),
+            },
+            date: {
+              _eq: today,
+            },
           },
-          chainId: {
-            _eq: Number(chain.chain_id),
-          },
-          date: {
-            _eq: today,
-          },
+          orderBy: [
+            {
+              volumeETH: Order_By.Desc,
+            },
+          ],
         },
-        orderBy: [
-          {
-            volumeETH: Order_By.Desc,
-          },
-        ],
-        limit: 1,
-        offset: 0,
-      },
+      });
+      
+      return data;
     },
-    coinClient,
-  );
+  });
 
   const volume = data?.TradeVolume?.[0];
   const rawVolume = volume?.volumeETH ? BigInt(volume.volumeETH || '0') : null;
@@ -361,35 +362,42 @@ export function useVolume24h(chain: Chain, address: string) {
     rawVolume,
     formattedVolumeUSDC,
     rawVolumeUSDC,
-    isLoadingVolume: loading || isLoadingUSDC,
+    isLoadingVolume: isLoading || isLoadingUSDC,
   };
 }
 
-export function useMarketCapChange(chain: Chain, address: string) {
-  const { data, loading } = useGraphQLQuery(PoolCreatedDocument,
-    {
-      variables: {
-        where: {
-          memecoin: {
-            _eq: address.toLowerCase(),
-          },
-          chainId: {
-            _eq: Number(chain.chain_id),
+export function usePool(chainId: string, address: string) {
+  const { data, isLoading } = useReactQuery({
+    queryKey: ['pool', chainId, address],
+    queryFn: async () => {
+      const result = await coinClient.query({
+        query: PoolCreatedDocument,
+        variables: {
+          where: {
+            memecoin: {
+              _eq: address.toLowerCase(),
+            },
+            chainId: {
+              _eq: Number(chainId),
+            },
           },
         },
-        orderBy: [
-          {
-            latestMarketCapETH: Order_By.Desc,
-          },
-        ],
-        limit: 1,
-        offset: 0,
-      }
-    },
-    coinClient,
-  );
+      });
 
-  const pool = data?.PoolCreated?.[0];
+      return result.data;
+    },
+  });
+
+  const pool = data?.PoolCreated?.[0] ?? null;
+
+  return {
+    pool,
+    isLoadingPool: isLoading,
+  };
+}
+
+export function useMarketCapChange(chainId: string, address: string) {
+  const { pool, isLoadingPool } = usePool(chainId, address);
   const latestMarketCapETH = pool?.latestMarketCapETH ?? null;
   const previousMarketCapETH = pool?.previousMarketCapETH ?? null;
 
@@ -411,36 +419,38 @@ export function useMarketCapChange(chain: Chain, address: string) {
     latestMarketCapDate: pool?.latestMarketCapDate ?? null,
     previousMarketCapDate: pool?.previousMarketCapDate ?? null,
     percentageChange,
-    isLoadingMarketCapChange: loading,
+    isLoadingMarketCapChange: isLoadingPool,
   };
 }
 
-export function useHoldersCount(chain: Chain, address: string) {
-  const { data, loading } = useGraphQLQuery(
-    MemecoinMetadataDocument,
-    {
-      variables: {
-        where: {
-          memecoin: {
-            _eq: address.toLowerCase(),
-          },
-          chainId: {
-            _eq: Number(chain.chain_id),
+export function useHoldersCount(chainId: string, address: string) {
+  const { data, isLoading } = useReactQuery({
+    queryKey: ['holders-count', chainId, address],
+    queryFn: async () => {
+      const { data } = await coinClient.query({
+        query: MemecoinMetadataDocument,
+        variables: {
+          where: {
+            memecoin: {
+              _eq: address.toLowerCase(),
+            },
+            chainId: {
+              _eq: Number(chainId),
+            },
           },
         },
-        limit: 1,
-        offset: 0,
-      },
+      });
+      
+      return data;
     },
-    coinClient,
-  );
+  });
 
   const metadata = data?.MemecoinMetadata?.[0];
   const holdersCount = metadata?.holdersCount ? Number(metadata.holdersCount) : null;
 
   return {
     holdersCount,
-    isLoadingHoldersCount: loading,
+    isLoadingHoldersCount: isLoading,
   };
 }
 
@@ -462,7 +472,6 @@ export function usePoolInfo(chain: Chain, address: string) {
         isEthToken0: isNativeToken0,
       };
     },
-    enabled: !!chain && !!address,
   });
 
   return {
@@ -484,7 +493,6 @@ export function useEthToUsdcRate(chain: Chain, address: string) {
       const usdcAmount = await flaunchClient.getUSDCFromETH(oneEth);
       return Number(formatUnits(usdcAmount, 6));
     },
-    enabled: !!chain && !!address,
   });
 
   return {
