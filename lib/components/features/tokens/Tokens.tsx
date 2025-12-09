@@ -1,8 +1,17 @@
 'use client';
+import { useAtomValue } from 'jotai';
+import { useRouter } from 'next/navigation';
 
-import { Button, Card } from '$lib/components/core';
+import { Button, Card, Skeleton } from '$lib/components/core';
 import { RadialProgress } from '$lib/components/core/progess/radial';
-import { useScrollable } from '$lib/hooks/useScrollable';
+import { useQuery } from '$lib/graphql/request';
+import { PoolCreatedDocument, Order_By, type PoolCreated } from '$lib/graphql/generated/coin/graphql';
+import { coinClient } from '$lib/graphql/request/instances';
+import { chainsMapAtom } from '$lib/jotai/chains';
+import { useTokenData, useHoldersCount, useVolume24h } from '$lib/hooks/useCoin';
+import { calculateMarketCapData } from '$lib/utils/coin';
+import { formatWallet } from '$lib/utils/crypto';
+import { getTimeAgo } from '$lib/utils/date';
 
 export function Tokens() {
   return (
@@ -10,9 +19,9 @@ export function Tokens() {
       <Toolbar />
 
       <div className="flex flex-col md:grid grid-cols-3 gap-4 flex-1 overflow-hidden">
-        <List data={[1, 2, 3, 4, 5, 6, 7, 8, 9]} title="New Tokens" onLoadMore={() => console.log('loading')} />
-        <List data={[1, 2, 3]} title="Graduating Tokens" />
-        <List data={[1, 2, 3]} title="Recently Graduated" />
+        <NewTokensList />
+        {/* <List data={[1, 2, 3]} title="Graduating Tokens" />
+        <List data={[1, 2, 3]} title="Recently Graduated" /> */}
       </div>
     </div>
   );
@@ -41,62 +50,162 @@ function Toolbar() {
   );
 }
 
-function List({ title, data = [], onLoadMore }: { title: string; data: any; onLoadMore?: () => void }) {
-  const { ref } = useScrollable(onLoadMore);
+function NewTokensList() {
+  const { data, loading } = useQuery(
+    PoolCreatedDocument,
+    {
+      variables: {
+        orderBy: [
+          {
+            blockTimestamp: Order_By.Desc,
+          },
+        ],
+        limit: 10,
+        offset: 0,
+      },
+    },
+    coinClient,
+  );
+
+  const pools = data?.PoolCreated || [];
 
   return (
     <Card.Root className="flex flex-col flex-1 max-sm:max-h-[700px] h-full">
       <Card.Header>
-        <p>{title}</p>
+        <p>New Tokens</p>
       </Card.Header>
 
-      <div ref={ref} className="flex-1 overflow-auto no-scrollbar">
+      <div className="flex-1 overflow-auto no-scrollbar">
         <Card.Content>
           <div className="flex flex-col gap-2">
-            {data.map((_item: any, idx: number) => (
-              <Card.Root key={idx}>
-                <Card.Content className="py-3">
-                  <div className="flex gap-4">
-                    <div className="size-[114px] aspect-square rounded-sm bg-gray-300" />
-                    <div className="text-tertiary text-sm w-full">
-                      <div className="flex flex-col gap-0.5">
-                        <div className="flex justify-between">
-                          <div>
-                            <div className="flex gap-1 items-end">
-                              <p className="text-base text-primary">$ETH</p>
-                              <p className="text-sm">2h 10m ago</p>
-                            </div>
-                            <div className="flex gap-1.5 items-center text-sm">
-                              <p className="text-tertiary">0x3a4b...q6r5</p>
-                              <i className="icon-copy size-3.5 aspect-square text-quaternary" />
-                            </div>
-                          </div>
-
-                          <RadialProgress value={50} label="1" size="size-10" color="text-blue-400" />
-                        </div>
-
-                        <div className="flex justify-between items-end">
-                          <div className="flex flex-col gap-1">
-                            <p>MC: $450.2K</p>
-                            <p>VOL: $12.3K</p>
-                            <div className="flex gap-2 items-center">
-                              <i className="icon-user-group-outline size-4" />
-                              <p className="text-secondary">350</p>
-                            </div>
-                          </div>
-                          <Button variant="tertiary-alt" size="sm">
-                            Quick Buy
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Card.Content>
-              </Card.Root>
-            ))}
+            {loading ? (
+              Array.from({ length: 5 }).map((_, idx) => (
+                <TokenCardSkeleton key={idx} />
+              ))
+            ) : (
+              pools.map((pool) => (
+                <TokenCard key={pool.id} pool={pool} />
+              ))
+            )}
           </div>
         </Card.Content>
       </div>
+    </Card.Root>
+  );
+}
+
+function TokenCardSkeleton() {
+  return (
+    <Card.Root>
+      <Card.Content className="py-3">
+        <div className="flex gap-4">
+          <Skeleton className="size-[114px] aspect-square rounded-sm" animate />
+          <div className="text-tertiary text-sm w-full">
+            <div className="flex flex-col gap-0.5">
+              <div className="flex justify-between">
+                <div>
+                  <Skeleton className="h-5 w-20 mb-1" animate />
+                  <Skeleton className="h-4 w-24" animate />
+                </div>
+                <Skeleton className="size-10 rounded-full" animate />
+              </div>
+              <div className="flex justify-between items-end mt-2">
+                <div className="flex flex-col gap-1">
+                  <Skeleton className="h-4 w-16" animate />
+                  <Skeleton className="h-4 w-16" animate />
+                  <Skeleton className="h-4 w-12" animate />
+                </div>
+                <Skeleton className="h-8 w-20 rounded-md" animate />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card.Content>
+    </Card.Root>
+  );
+}
+
+function TokenCard({ pool }: { pool: PoolCreated }) {
+  const router = useRouter();
+  const chainsMap = useAtomValue(chainsMapAtom);
+
+  const chain = chainsMap[pool.chainId.toString()];
+  const { tokenData, isLoadingTokenData } = useTokenData(chain, pool.memecoin, pool.tokenURI as string);
+  const { holdersCount, isLoadingHoldersCount } = useHoldersCount(chain, pool.memecoin);
+  const { formattedVolumeUSDC, isLoadingVolume } = useVolume24h(chain, pool.memecoin);
+
+  const { formattedAmount } = calculateMarketCapData(
+    pool.latestMarketCapETH,
+    pool.previousMarketCapETH,
+  );
+
+  const timestamp = Number(pool.blockTimestamp) * 1000;
+  const timeAgo = getTimeAgo(timestamp);
+  const displaySymbol = tokenData?.symbol || formatWallet(pool.memecoin, 4);
+
+  const handleClick = () => {
+    router.push(`/coin/${chain.code_name}/${pool.memecoin}`);
+  };
+
+  return (
+    <Card.Root className="cursor-pointer" onClick={handleClick}>
+      <Card.Content className="py-3">
+        <div className="flex gap-4">
+          {isLoadingTokenData ? (
+            <Skeleton className="size-[114px] aspect-square rounded-sm" animate />
+          ) : (
+            <div className="h-[114px] max-w-[114px] w-full rounded-sm bg-gray-300 overflow-hidden">
+              {tokenData?.metadata?.imageUrl && (
+                <img
+                  src={tokenData.metadata.imageUrl}
+                  alt={displaySymbol}
+                  className="w-full h-full object-cover"
+                />
+              )}
+            </div>
+          )}
+          <div className="text-tertiary text-sm w-full">
+            <div className="flex flex-col gap-0.5">
+              <div className="flex justify-between">
+                <div>
+                  <div className="flex gap-1 items-end">
+                    <p className="text-base text-primary">{displaySymbol}</p>
+                    <p className="text-sm">{timeAgo}</p>
+                  </div>
+                  <div className="flex gap-1.5 items-center text-sm">
+                    <p className="text-tertiary">{formatWallet(pool.memecoin)}</p>
+                    <i className="icon-copy size-3.5 aspect-square text-quaternary" />
+                  </div>
+                </div>
+
+                {/* <RadialProgress value={50} label="1" size="size-10" color="text-blue-400" /> */}
+              </div>
+
+              <div className="flex justify-between items-end">
+                <div className="flex flex-col gap-1">
+                  <p>MC: {formattedAmount}</p>
+                  {isLoadingVolume ? (
+                    <Skeleton className="h-4 w-16" animate />
+                  ) : (
+                    <p>VOL: {formattedVolumeUSDC || 'N/A'}</p>
+                  )}
+                  <div className="flex gap-2 items-center">
+                    <i className="icon-user-group-outline size-4" />
+                    {isLoadingHoldersCount ? (
+                      <Skeleton className="h-4 w-8" animate />
+                    ) : (
+                      <p className="text-secondary">{holdersCount || 0}</p>
+                    )}
+                  </div>
+                </div>
+                <Button variant="tertiary-alt" size="sm" onClick={(e) => e.stopPropagation()}>
+                  Quick Buy
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card.Content>
     </Card.Root>
   );
 }
