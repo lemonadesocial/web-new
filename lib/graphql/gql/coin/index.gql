@@ -75,3 +75,15 @@ query MemecoinMetadata($where: MemecoinMetadata_bool_exp, $limit: Int, $offset: 
     memecoin
   }
 }
+
+query FairLaunch($where: FairLaunch_bool_exp, $limit: Int, $offset: Int, $orderBy: [FairLaunch_order_by!]) {
+  FairLaunch(where: $where, limit: $limit, offset: $offset, order_by: $orderBy) {
+    burnedAmount
+    chainId
+    closeAt
+    endAt
+    id
+    poolId
+    startAt
+  }
+}

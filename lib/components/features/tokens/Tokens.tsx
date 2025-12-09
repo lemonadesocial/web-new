@@ -1,11 +1,12 @@
 'use client';
+import React from 'react';
 import { useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
 
 import { Button, Card, Skeleton } from '$lib/components/core';
 import { RadialProgress } from '$lib/components/core/progess/radial';
 import { useQuery } from '$lib/graphql/request';
-import { PoolCreatedDocument, Order_By, type PoolCreated } from '$lib/graphql/generated/coin/graphql';
+import { PoolCreatedDocument, FairLaunchDocument, Order_By, type PoolCreated } from '$lib/graphql/generated/coin/graphql';
 import { coinClient } from '$lib/graphql/request/instances';
 import { chainsMapAtom } from '$lib/jotai/chains';
 import { useTokenData, useHoldersCount, useVolume24h } from '$lib/hooks/useCoin';
@@ -20,8 +21,8 @@ export function Tokens() {
 
       <div className="flex flex-col md:grid grid-cols-3 gap-4 flex-1 overflow-hidden">
         <NewTokensList />
-        {/* <List data={[1, 2, 3]} title="Graduating Tokens" />
-        <List data={[1, 2, 3]} title="Recently Graduated" /> */}
+        <GraduatingTokensList />
+        <RecentlyGraduatedTokensList />
       </div>
     </div>
   );
@@ -84,6 +85,162 @@ function NewTokensList() {
               ))
             ) : (
               pools.map((pool) => (
+                <TokenCard key={pool.id} pool={pool} />
+              ))
+            )}
+          </div>
+        </Card.Content>
+      </div>
+    </Card.Root>
+  );
+}
+
+function GraduatingTokensList() {
+  const { data: fairLaunchData, loading: loadingFairLaunch } = useQuery(
+    FairLaunchDocument,
+    {
+      variables: {
+        where: {
+          closeAt: {
+            _is_null: true,
+          },
+        },
+        orderBy: [
+          {
+            endAt: Order_By.Asc,
+          },
+        ],
+        limit: 10,
+        offset: 0,
+      },
+    },
+    coinClient,
+  );
+
+  const fairLaunches = fairLaunchData?.FairLaunch || [];
+  const poolIds = fairLaunches.map((fl) => fl.poolId);
+
+  const { data: poolsData, loading: loadingPools } = useQuery(
+    PoolCreatedDocument,
+    {
+      variables: {
+        where: {
+          poolId: {
+            _in: poolIds,
+          },
+        }
+      },
+      skip: poolIds.length === 0,
+    },
+    coinClient,
+  );
+
+  const pools = poolsData?.PoolCreated || [];
+  const loading = loadingFairLaunch || loadingPools;
+
+  const sortedPools = React.useMemo(() => {
+    if (!pools.length || !fairLaunches.length) return pools;
+
+    const poolMap = new Map(pools.map((pool) => [pool.poolId, pool]));
+
+    return fairLaunches
+      .map((fl) => poolMap.get(fl.poolId))
+      .filter((pool): pool is PoolCreated => pool !== undefined);
+  }, [pools, fairLaunches]);
+
+  return (
+    <Card.Root className="flex flex-col flex-1 max-sm:max-h-[700px] h-full">
+      <Card.Header>
+        <p>Graduating Tokens</p>
+      </Card.Header>
+
+      <div className="flex-1 overflow-auto no-scrollbar">
+        <Card.Content>
+          <div className="flex flex-col gap-2">
+            {loading ? (
+              Array.from({ length: 5 }).map((_, idx) => (
+                <TokenCardSkeleton key={idx} />
+              ))
+            ) : (
+              sortedPools.map((pool) => (
+                <TokenCard key={pool.id} pool={pool} />
+              ))
+            )}
+          </div>
+        </Card.Content>
+      </div>
+    </Card.Root>
+  );
+}
+
+function RecentlyGraduatedTokensList() {
+  const { data: fairLaunchData, loading: loadingFairLaunch } = useQuery(
+    FairLaunchDocument,
+    {
+      variables: {
+        where: {
+          closeAt: {
+            _is_null: false,
+          },
+        },
+        orderBy: [
+          {
+            closeAt: Order_By.Desc,
+          },
+        ],
+        limit: 10,
+        offset: 0,
+      },
+    },
+    coinClient,
+  );
+
+  const fairLaunches = fairLaunchData?.FairLaunch || [];
+  const poolIds = fairLaunches.map((fl) => fl.poolId);
+
+  const { data: poolsData, loading: loadingPools } = useQuery(
+    PoolCreatedDocument,
+    {
+      variables: {
+        where: {
+          poolId: {
+            _in: poolIds,
+          },
+        },
+      },
+      skip: poolIds.length === 0,
+    },
+    coinClient,
+  );
+
+  const pools = poolsData?.PoolCreated || [];
+  const loading = loadingFairLaunch || loadingPools;
+
+  const sortedPools = React.useMemo(() => {
+    if (!pools.length || !fairLaunches.length) return pools;
+
+    const poolMap = new Map(pools.map((pool) => [pool.poolId, pool]));
+
+    return fairLaunches
+      .map((fl) => poolMap.get(fl.poolId))
+      .filter((pool): pool is PoolCreated => pool !== undefined);
+  }, [pools, fairLaunches]);
+
+  return (
+    <Card.Root className="flex flex-col flex-1 max-sm:max-h-[700px] h-full">
+      <Card.Header>
+        <p>Recently Graduated</p>
+      </Card.Header>
+
+      <div className="flex-1 overflow-auto no-scrollbar">
+        <Card.Content>
+          <div className="flex flex-col gap-2">
+            {loading ? (
+              Array.from({ length: 5 }).map((_, idx) => (
+                <TokenCardSkeleton key={idx} />
+              ))
+            ) : (
+              sortedPools.map((pool) => (
                 <TokenCard key={pool.id} pool={pool} />
               ))
             )}

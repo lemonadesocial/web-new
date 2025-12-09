@@ -32,6 +32,80 @@ export type Boolean_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['Boolean']['input']>>;
 };
 
+/** columns and relationships of "FairLaunch" */
+export type FairLaunch = {
+  __typename?: 'FairLaunch';
+  burnedAmount?: Maybe<Scalars['numeric']['output']>;
+  chainId: Scalars['Int']['output'];
+  closeAt?: Maybe<Scalars['numeric']['output']>;
+  endAt: Scalars['numeric']['output'];
+  id: Scalars['String']['output'];
+  poolId: Scalars['String']['output'];
+  startAt: Scalars['numeric']['output'];
+};
+
+/** Boolean expression to filter rows from the table "FairLaunch". All fields are combined with a logical 'AND'. */
+export type FairLaunch_Bool_Exp = {
+  _and?: InputMaybe<Array<FairLaunch_Bool_Exp>>;
+  _not?: InputMaybe<FairLaunch_Bool_Exp>;
+  _or?: InputMaybe<Array<FairLaunch_Bool_Exp>>;
+  burnedAmount?: InputMaybe<Numeric_Comparison_Exp>;
+  chainId?: InputMaybe<Int_Comparison_Exp>;
+  closeAt?: InputMaybe<Numeric_Comparison_Exp>;
+  endAt?: InputMaybe<Numeric_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  poolId?: InputMaybe<String_Comparison_Exp>;
+  startAt?: InputMaybe<Numeric_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "FairLaunch". */
+export type FairLaunch_Order_By = {
+  burnedAmount?: InputMaybe<Order_By>;
+  chainId?: InputMaybe<Order_By>;
+  closeAt?: InputMaybe<Order_By>;
+  endAt?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  poolId?: InputMaybe<Order_By>;
+  startAt?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "FairLaunch" */
+export enum FairLaunch_Select_Column {
+  /** column name */
+  BurnedAmount = 'burnedAmount',
+  /** column name */
+  ChainId = 'chainId',
+  /** column name */
+  CloseAt = 'closeAt',
+  /** column name */
+  EndAt = 'endAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PoolId = 'poolId',
+  /** column name */
+  StartAt = 'startAt'
+}
+
+/** Streaming cursor of the table "FairLaunch" */
+export type FairLaunch_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: FairLaunch_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type FairLaunch_Stream_Cursor_Value_Input = {
+  burnedAmount?: InputMaybe<Scalars['numeric']['input']>;
+  chainId?: InputMaybe<Scalars['Int']['input']>;
+  closeAt?: InputMaybe<Scalars['numeric']['input']>;
+  endAt?: InputMaybe<Scalars['numeric']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  poolId?: InputMaybe<Scalars['String']['input']>;
+  startAt?: InputMaybe<Scalars['numeric']['input']>;
+};
+
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
 export type Int_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['Int']['input']>;
@@ -1249,6 +1323,10 @@ export enum Order_By {
 
 export type Query_Root = {
   __typename?: 'query_root';
+  /** fetch data from the table: "FairLaunch" */
+  FairLaunch: Array<FairLaunch>;
+  /** fetch data from the table: "FairLaunch" using primary key columns */
+  FairLaunch_by_pk?: Maybe<FairLaunch>;
   /** fetch data from the table: "ManagerDeployed" */
   ManagerDeployed: Array<ManagerDeployed>;
   /** fetch data from the table: "ManagerDeployed" using primary key columns */
@@ -1297,6 +1375,20 @@ export type Query_Root = {
   raw_events: Array<Raw_Events>;
   /** fetch data from the table: "raw_events" using primary key columns */
   raw_events_by_pk?: Maybe<Raw_Events>;
+};
+
+
+export type Query_RootFairLaunchArgs = {
+  distinct_on?: InputMaybe<Array<FairLaunch_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<FairLaunch_Order_By>>;
+  where?: InputMaybe<FairLaunch_Bool_Exp>;
+};
+
+
+export type Query_RootFairLaunch_By_PkArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -1601,6 +1693,12 @@ export type Raw_Events_Stream_Cursor_Value_Input = {
 
 export type Subscription_Root = {
   __typename?: 'subscription_root';
+  /** fetch data from the table: "FairLaunch" */
+  FairLaunch: Array<FairLaunch>;
+  /** fetch data from the table: "FairLaunch" using primary key columns */
+  FairLaunch_by_pk?: Maybe<FairLaunch>;
+  /** fetch data from the table in a streaming manner: "FairLaunch" */
+  FairLaunch_stream: Array<FairLaunch>;
   /** fetch data from the table: "ManagerDeployed" */
   ManagerDeployed: Array<ManagerDeployed>;
   /** fetch data from the table: "ManagerDeployed" using primary key columns */
@@ -1675,6 +1773,27 @@ export type Subscription_Root = {
   raw_events_by_pk?: Maybe<Raw_Events>;
   /** fetch data from the table in a streaming manner: "raw_events" */
   raw_events_stream: Array<Raw_Events>;
+};
+
+
+export type Subscription_RootFairLaunchArgs = {
+  distinct_on?: InputMaybe<Array<FairLaunch_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<FairLaunch_Order_By>>;
+  where?: InputMaybe<FairLaunch_Bool_Exp>;
+};
+
+
+export type Subscription_RootFairLaunch_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootFairLaunch_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<FairLaunch_Stream_Cursor_Input>>;
+  where?: InputMaybe<FairLaunch_Bool_Exp>;
 };
 
 
@@ -2002,9 +2121,20 @@ export type MemecoinMetadataQueryVariables = Exact<{
 
 export type MemecoinMetadataQuery = { __typename?: 'query_root', MemecoinMetadata: Array<{ __typename?: 'MemecoinMetadata', chainId: number, holdersCount: any, id: string, memecoin: string }> };
 
+export type FairLaunchQueryVariables = Exact<{
+  where?: InputMaybe<FairLaunch_Bool_Exp>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<FairLaunch_Order_By> | FairLaunch_Order_By>;
+}>;
+
+
+export type FairLaunchQuery = { __typename?: 'query_root', FairLaunch: Array<{ __typename?: 'FairLaunch', burnedAmount?: any | null, chainId: number, closeAt?: any | null, endAt: any, id: string, poolId: string, startAt: any }> };
+
 
 export const PoolSwapDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PoolSwap"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PoolSwap_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PoolSwap_order_by"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"PoolSwap"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"blockNumber"}},{"kind":"Field","name":{"kind":"Name","value":"blockTimestamp"}},{"kind":"Field","name":{"kind":"Name","value":"transactionHash"}},{"kind":"Field","name":{"kind":"Name","value":"flAmount0"}},{"kind":"Field","name":{"kind":"Name","value":"flAmount1"}},{"kind":"Field","name":{"kind":"Name","value":"flFee0"}},{"kind":"Field","name":{"kind":"Name","value":"flFee1"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"ispAmount0"}},{"kind":"Field","name":{"kind":"Name","value":"ispAmount1"}},{"kind":"Field","name":{"kind":"Name","value":"ispFee0"}},{"kind":"Field","name":{"kind":"Name","value":"ispFee1"}},{"kind":"Field","name":{"kind":"Name","value":"poolId"}},{"kind":"Field","name":{"kind":"Name","value":"uniAmount0"}},{"kind":"Field","name":{"kind":"Name","value":"uniAmount1"}},{"kind":"Field","name":{"kind":"Name","value":"uniFee0"}},{"kind":"Field","name":{"kind":"Name","value":"uniFee1"}}]}}]}}]} as unknown as DocumentNode<PoolSwapQuery, PoolSwapQueryVariables>;
 export const MemecoinHolderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MemecoinHolder"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"MemecoinHolder_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MemecoinHolder_order_by"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"MemecoinHolder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"holder"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"memecoin"}}]}}]}}]} as unknown as DocumentNode<MemecoinHolderQuery, MemecoinHolderQueryVariables>;
 export const TradeVolumeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"TradeVolume"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"TradeVolume_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TradeVolume_order_by"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"TradeVolume"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"memecoin"}},{"kind":"Field","name":{"kind":"Name","value":"tradeCount"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"volumeETH"}},{"kind":"Field","name":{"kind":"Name","value":"volumeMemecoin"}}]}}]}}]} as unknown as DocumentNode<TradeVolumeQuery, TradeVolumeQueryVariables>;
 export const PoolCreatedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PoolCreated"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PoolCreated_order_by"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PoolCreated_bool_exp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"PoolCreated"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"blockNumber"}},{"kind":"Field","name":{"kind":"Name","value":"blockTimestamp"}},{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"currencyFlipped"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"latestMarketCapDate"}},{"kind":"Field","name":{"kind":"Name","value":"latestMarketCapETH"}},{"kind":"Field","name":{"kind":"Name","value":"memecoin"}},{"kind":"Field","name":{"kind":"Name","value":"memecoinTreasury"}},{"kind":"Field","name":{"kind":"Name","value":"paramsCreator"}},{"kind":"Field","name":{"kind":"Name","value":"paramsCreatorFeeAllocation"}},{"kind":"Field","name":{"kind":"Name","value":"paramsFeeCalculatorParams"}},{"kind":"Field","name":{"kind":"Name","value":"paramsInitialPriceParams"}},{"kind":"Field","name":{"kind":"Name","value":"poolId"}},{"kind":"Field","name":{"kind":"Name","value":"previousMarketCapDate"}},{"kind":"Field","name":{"kind":"Name","value":"previousMarketCapETH"}},{"kind":"Field","name":{"kind":"Name","value":"tokenId"}},{"kind":"Field","name":{"kind":"Name","value":"transactionHash"}},{"kind":"Field","name":{"kind":"Name","value":"tokenURI"}}]}}]}}]} as unknown as DocumentNode<PoolCreatedQuery, PoolCreatedQueryVariables>;
 export const MemecoinMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MemecoinMetadata"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"MemecoinMetadata_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"MemecoinMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"holdersCount"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"memecoin"}}]}}]}}]} as unknown as DocumentNode<MemecoinMetadataQuery, MemecoinMetadataQueryVariables>;
+export const FairLaunchDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FairLaunch"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"FairLaunch_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FairLaunch_order_by"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"FairLaunch"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"burnedAmount"}},{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"closeAt"}},{"kind":"Field","name":{"kind":"Name","value":"endAt"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"poolId"}},{"kind":"Field","name":{"kind":"Name","value":"startAt"}}]}}]}}]} as unknown as DocumentNode<FairLaunchQuery, FairLaunchQueryVariables>;

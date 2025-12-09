@@ -192,6 +192,13 @@ export function CreateCoin() {
   const handleImageUpload = (files: File[]) => {
     if (files.length > 0) {
       const file = files[0];
+      const maxSize = 5 * 1024 * 1024;
+      
+      if (file.size > maxSize) {
+        toast.error('Image size must be below 5MB');
+        return;
+      }
+      
       setValue('image', file);
       trigger('image');
     }
