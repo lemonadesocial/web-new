@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAtomValue } from 'jotai';
-import { JsonRpcProvider } from 'ethers';
+import * as ethers from 'ethers';
 import { format } from 'date-fns';
 import { toDate } from 'date-fns-tz';
 import clsx from 'clsx';
@@ -18,6 +18,8 @@ import { TOTAL_SUPPLY, getLaunchTokenParams, SECONDS_PER_DAY, DAYS_PER_MONTH } f
 import { formatError } from '$lib/utils/crypto';
 import type { LaunchTokenParams } from '$lib/services/token-launch-pad';
 import { getUserTimezoneOption, type TimezoneOption } from '$lib/utils/timezone';
+import { PositionManager } from '$lib/abis/token-launch-pad/PositionManager';
+import ZapContractABI from '$lib/abis/token-launch-pad/FlaunchZap.json';
 
 import { TokenReleaseScheduleModal } from './TokenReleaseScheduleModal';
 import { CreateCoinModal } from './CreateCoinModal';
@@ -155,6 +157,7 @@ export function CreateCoin() {
   const [timezoneOption, setTimezoneOption] = useState<TimezoneOption | undefined>(getUserTimezoneOption());
   const [isLoading, setisLoading] = useState(false);
   const [communityData, setCommunityData] = useState<CommunityData | null>(null);
+  const [deploymentFee, setDeploymentFee] = useState<string | null>(null);
 
   const watchedImage = watch('image');
   const watchedFeeReceiverShare = watch('feeReceiverShare');
@@ -164,6 +167,35 @@ export function CreateCoin() {
   const handleCommunitySearchSuccess = (data: CommunityData) => {
     setCommunityData(data);
   };
+
+  useEffect(() => {
+    const fetchDeploymentFee = async () => {
+      if (!launchChain?.launchpad_zap_contract_address || !launchChain?.rpc_url || !watchedStartingMarketcap) {
+        setDeploymentFee(null);
+        return;
+      }
+
+      try {
+        const rpcProvider = new ethers.JsonRpcProvider(launchChain.rpc_url);
+        const zapContract = new ethers.Contract(launchChain.launchpad_zap_contract_address, ZapContractABI.abi, rpcProvider);
+        const positionManagerAddress = await zapContract.positionManager();
+
+        const positionManagerContract = new ethers.Contract(positionManagerAddress, PositionManager, rpcProvider);
+
+        const usdcMarketCap = BigInt(watchedStartingMarketcap) * BigInt(1_000_000);
+        const initialPriceParams = ethers.AbiCoder.defaultAbiCoder().encode(['tuple(uint256)'], [[usdcMarketCap]]);
+
+        const fee = await positionManagerContract.getFlaunchingFee(initialPriceParams);
+        const feeInEth = ethers.formatEther(fee);
+        setDeploymentFee(feeInEth);
+      } catch (error) {
+        console.error('Failed to fetch deployment fee:', error);
+        setDeploymentFee(null);
+      }
+    };
+
+    fetchDeploymentFee();
+  }, [launchChain, watchedStartingMarketcap]);
 
   const handleImageUpload = (files: File[]) => {
     if (files.length > 0) {
@@ -354,7 +386,7 @@ export function CreateCoin() {
         launchAt,
       };
 
-      const rpcProvider = new JsonRpcProvider(launchChain.rpc_url);
+      const rpcProvider = new ethers.JsonRpcProvider(launchChain.rpc_url);
 
       const txParams = await getLaunchTokenParams(
         launchChain.launchpad_zap_contract_address!,
@@ -620,48 +652,43 @@ export function CreateCoin() {
         </div> */}
 
         <div className="border border-card-border bg-card rounded-md">
-          {
-            isAvandedMode && <>
-              <div className="p-4 flex flex-col">
-                <p className="text-lg">Trading Fees</p>
-                <p className="mt-4 text-secondary text-sm">Choose your share of the coin's trading fees</p>
-                <div className="flex-1">
-                  <div className="relative mt-2 mb-1.5">
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={watchedFeeReceiverShare}
-                      onChange={(e) => setValue('feeReceiverShare', parseInt(e.target.value))}
-                      className="w-full h-2 rounded-lg appearance-none cursor-pointer slider"
-                      style={{
-                        background: `linear-gradient(to right, #9b87f5 0%, #9b87f5 ${watchedFeeReceiverShare}%, #f6d032 ${watchedFeeReceiverShare}%, #f6d032 100%)`
-                      }}
-                    />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1.5">
-                      <span className="inline-block size-2 rounded-full bg-accent-400" />
-                      <span className="text-accent-400 text-sm">Fee Receiver {watchedFeeReceiverShare}%</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="inline-block size-2 rounded-full bg-warning-300" />
-                      <span className="text-warning-300 text-sm">Auto Buybacks {100 - watchedFeeReceiverShare}%</span>
-                    </div>
-                  </div>
+          <div className="p-4 flex flex-col">
+            <p className="text-lg">Trading Fees</p>
+            <p className="mt-4 text-secondary text-sm">Choose your share of the coin's trading fees</p>
+            <div className="flex-1">
+              <div className="relative mt-2 mb-1.5">
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={watchedFeeReceiverShare}
+                  onChange={(e) => setValue('feeReceiverShare', parseInt(e.target.value))}
+                  className="w-full h-2 rounded-lg appearance-none cursor-pointer slider"
+                  style={{
+                    background: `linear-gradient(to right, #9b87f5 0%, #9b87f5 ${watchedFeeReceiverShare}%, #f6d032 ${watchedFeeReceiverShare}%, #f6d032 100%)`
+                  }}
+                />
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <span className="inline-block size-2 rounded-full bg-accent-400" />
+                  <span className="text-accent-400 text-sm">Fee Receiver {watchedFeeReceiverShare}%</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="inline-block size-2 rounded-full bg-warning-300" />
+                  <span className="text-warning-300 text-sm">Auto Buybacks {100 - watchedFeeReceiverShare}%</span>
                 </div>
               </div>
+            </div>
+          </div>
+          <hr className="border-t border-t-divider" />
+          {
+            !!(isAvandedMode && communityData) && <>
+              <SplitBreakdown
+                communityData={communityData}
+                feeReceiverShare={watchedFeeReceiverShare}
+              />
               <hr className="border-t border-t-divider" />
-
-              {
-                communityData && <>
-                  <SplitBreakdown
-                    communityData={communityData}
-                    feeReceiverShare={watchedFeeReceiverShare}
-                  />
-                  <hr className="border-t border-t-divider" />
-                </>
-              }
             </>
           }
 
@@ -857,7 +884,7 @@ export function CreateCoin() {
                 </div>
               </div>
 
-              {isMarketcapExpanded && (
+              {isMarketcapExpanded && <>
                 <div className="space-y-4 p-4 pt-0">
                   <InputField
                     value={watchedStartingMarketcap.toLocaleString()}
@@ -891,7 +918,13 @@ export function CreateCoin() {
                     </div>
                   </div>
                 </div>
-              )}
+                <div className="px-4 py-3 border-t border-t-divider">
+                  <p>
+                    <span className="text-tertiary">Deployment cost:</span>{' '}
+                    {deploymentFee ? `${parseFloat(deploymentFee).toFixed(4)} ETH` : 'Loading...'}
+                  </p>
+                </div>
+              </>}
             </div>
 
             <div className="bg-card border border-card-border rounded-md">
