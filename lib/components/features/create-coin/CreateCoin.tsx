@@ -170,28 +170,20 @@ export function CreateCoin() {
 
   useEffect(() => {
     const fetchDeploymentFee = async () => {
-      if (!launchChain?.launchpad_zap_contract_address || !launchChain?.rpc_url || !watchedStartingMarketcap) {
-        setDeploymentFee(null);
-        return;
-      }
+      if (!launchChain?.launchpad_zap_contract_address || !launchChain?.rpc_url || !watchedStartingMarketcap) return;
 
-      try {
-        const rpcProvider = new ethers.JsonRpcProvider(launchChain.rpc_url);
-        const zapContract = new ethers.Contract(launchChain.launchpad_zap_contract_address, ZapContractABI.abi, rpcProvider);
-        const positionManagerAddress = await zapContract.positionManager();
+      const rpcProvider = new ethers.JsonRpcProvider(launchChain.rpc_url);
+      const zapContract = new ethers.Contract(launchChain.launchpad_zap_contract_address, ZapContractABI.abi, rpcProvider);
+      const positionManagerAddress = await zapContract.positionManager();
 
-        const positionManagerContract = new ethers.Contract(positionManagerAddress, PositionManager, rpcProvider);
+      const positionManagerContract = new ethers.Contract(positionManagerAddress, PositionManager, rpcProvider);
 
-        const usdcMarketCap = BigInt(watchedStartingMarketcap) * BigInt(1_000_000);
-        const initialPriceParams = ethers.AbiCoder.defaultAbiCoder().encode(['tuple(uint256)'], [[usdcMarketCap]]);
+      const usdcMarketCap = BigInt(watchedStartingMarketcap) * BigInt(1_000_000);
+      const initialPriceParams = ethers.AbiCoder.defaultAbiCoder().encode(['tuple(uint256)'], [[usdcMarketCap]]);
 
-        const fee = await positionManagerContract.getFlaunchingFee(initialPriceParams);
-        const feeInEth = ethers.formatEther(fee);
-        setDeploymentFee(feeInEth);
-      } catch (error) {
-        console.error('Failed to fetch deployment fee:', error);
-        setDeploymentFee(null);
-      }
+      const fee = await positionManagerContract.getFlaunchingFee(initialPriceParams);
+      const feeInEth = ethers.formatEther(fee);
+      setDeploymentFee(feeInEth);
     };
 
     fetchDeploymentFee();

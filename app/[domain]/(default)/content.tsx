@@ -2,7 +2,7 @@
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Accordion, Badge, Button, Card, Divider, drawer, modal } from '$lib/components/core';
+import { Accordion, Badge, Button, Card, Divider, drawer, modal, Skeleton } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { ASSET_PREFIX, SELF_VERIFICATION_CONFIG } from '$lib/utils/constants';
@@ -37,8 +37,8 @@ import { Order_By, PoolCreated, PoolCreatedDocument } from '$lib/graphql/generat
 import { coinClient } from '$lib/graphql/request/instances';
 import { useTokenData } from '$lib/hooks/useCoin';
 import { formatWallet } from '$lib/utils/crypto';
-import { formatEther } from 'ethers';
-import { formatNumber } from '$lib/utils/number';
+
+import { calculateMarketCapData } from '$lib/utils/coin';
 import { truncateMiddle } from '$lib/utils/string';
 
 export function Content() {
@@ -208,9 +208,9 @@ function UpcomingEventSection() {
             onManage={
               [item.host, ...(item.cohosts || [])].includes(me?._id)
                 ? (e) => {
-                    e.stopPropagation();
-                    router.push(`/e/manage/${item.shortid}`);
-                  }
+                  e.stopPropagation();
+                  router.push(`/e/manage/${item.shortid}`);
+                }
                 : undefined
             }
           />
@@ -671,9 +671,33 @@ function LemonHeadsZone() {
   );
 }
 
-const LIMIT = 5;
 function AllCoins() {
-  const { data } = useQuery(
+  const me = useMe();
+  const { address } = useAppKitAccount();
+
+  const userWallets = React.useMemo(() => {
+    const wallets: string[] = [];
+
+    if (address) {
+      wallets.push(address.toLowerCase());
+    }
+
+    if (me?.wallets_new?.ethereum) {
+      me.wallets_new.ethereum.forEach((wallet: string) => {
+        if (wallet) {
+          wallets.push(wallet.toLowerCase());
+        }
+      });
+    }
+
+    if (me?.kratos_wallet_address) {
+      wallets.push(me.kratos_wallet_address.toLowerCase());
+    }
+
+    return [...new Set(wallets)];
+  }, [address, me?.wallets_new?.ethereum, me?.kratos_wallet_address]);
+
+  const { data, loading } = useQuery(
     PoolCreatedDocument,
     {
       variables: {
@@ -682,10 +706,15 @@ function AllCoins() {
             blockTimestamp: Order_By.Desc,
           },
         ],
-        limit: LIMIT,
         offset: 0,
+        where: userWallets.length > 0 ? {
+          paramsCreator: {
+            _in: userWallets,
+          },
+        } : undefined,
       },
       fetchPolicy: 'network-only',
+      skip: userWallets.length === 0,
     },
     coinClient,
   );
@@ -736,16 +765,27 @@ function AllCoins() {
         }}
       </Accordion.Header>
       <Accordion.Content className={clsx('pt-1! px-0! flex flex-col md:grid gap-3', !!pools.length && 'grid-cols-2')}>
-        {pools.map((pool) => (
-          <CoinItem key={pool.id} pool={pool} />
-        ))}
-        <div className="hidden only:block text-center text-gray-500 py-10">
-          <EmptyCard
-            icon="icon-confirmation-number"
-            title="No Coins Yet"
-            subtitle="Coins you create and manage will appear here."
-          />
-        </div>
+        {loading ? (
+          <Card.Root className="min-w-fit">
+            <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
+              <Skeleton className="size-[38px] rounded-sm" animate />
+              <Skeleton className="h-9 w-24 rounded-md" animate />
+            </Card.Content>
+          </Card.Root>
+        ) : (
+          <>
+            {pools.map((pool) => (
+              <CoinItem key={pool.id} pool={pool} />
+            ))}
+            <div className="hidden only:block text-center text-gray-500">
+              <EmptyCard
+                icon="icon-confirmation-number"
+                title="No Coins Yet"
+                subtitle="Coins you create and manage will appear here."
+              />
+            </div>
+          </>
+        )}
       </Accordion.Content>
     </Accordion.Root>
   );
@@ -756,32 +796,35 @@ function CoinItem({ pool }: { pool: PoolCreated }) {
   const chainsMap = useAtomValue(chainsMapAtom);
 
   const chain = chainsMap[pool.chainId.toString()];
-  const { tokenData } = useTokenData(chain, pool.memecoin, pool.tokenURI as string);
+  const { tokenData, isLoadingTokenData } = useTokenData(chain, pool.memecoin, pool.tokenURI as string);
 
-  const latestMarketCapETH = pool.latestMarketCapETH ? BigInt(pool.latestMarketCapETH) : BigInt(0);
-  const previousMarketCapETH = pool.previousMarketCapETH ? BigInt(pool.previousMarketCapETH) : null;
+  const { formattedAmount, percentageChange } = calculateMarketCapData(
+    pool.latestMarketCapETH,
+    pool.previousMarketCapETH,
+  );
 
-  const formattedMarketCap = formatEther(latestMarketCapETH);
-  const marketCapNumber = Number(formattedMarketCap);
-  const formattedAmount = marketCapNumber > 0 ? `${formatNumber(marketCapNumber)} ETH` : '0 ETH';
+  if (isLoadingTokenData) return (
+    <Card.Root className="min-w-fit">
+      <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
+        <Skeleton className="size-[38px] rounded-sm" animate />
+        <div className="space-y-0.5 flex-1">
+          <Skeleton className="h-5 w-24 rounded-md" animate />
+          <Skeleton className="h-4 w-32 rounded-md" animate />
+        </div>
+      </Card.Content>
+    </Card.Root>
+  );
 
-  let percentageChange: number | null = null;
-  if (previousMarketCapETH !== null && previousMarketCapETH > 0) {
-    const latest = Number(latestMarketCapETH);
-    const previous = Number(previousMarketCapETH);
-    if (previous !== 0) {
-      percentageChange = ((latest - previous) / previous) * 100;
-    }
-  }
+  if (!tokenData) return null;
 
-  const displaySymbol = tokenData?.symbol || formatWallet(pool.memecoin, 4);
+  const displaySymbol = tokenData?.symbol || formatWallet(pool.memecoin);
 
   return (
     <CardItem
       key={pool.id}
       title={displaySymbol}
-      subtitle={truncateMiddle(pool.memecoin, 6, 4)}
-      image={tokenData?.metadata?.imageUrl}
+      subtitle={formatWallet(pool.memecoin)}
+      image={tokenData.metadata?.imageUrl || undefined}
       onClick={() => router.push(`/coin/${chain.code_name}/${pool.memecoin}`)}
       rightContent={
         <div className="flex flex-col items-end">

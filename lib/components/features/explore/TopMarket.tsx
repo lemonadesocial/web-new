@@ -1,5 +1,4 @@
 'use client';
-import { formatEther } from 'viem';
 import { useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
@@ -11,7 +10,7 @@ import {
 } from '$lib/graphql/generated/coin/graphql';
 import { Card } from '$lib/components/core';
 import { LemonheadLeaderBoardRank } from '../lemonheads/LemonheadLeaderBoardRank';
-import { formatNumber } from '$lib/utils/number';
+import { calculateMarketCapData } from '$lib/utils/coin';
 import { formatWallet } from '$lib/utils/crypto';
 import { chainsMapAtom } from '$lib/jotai/chains';
 import { useTokenData } from '$lib/hooks/useCoin';
@@ -86,21 +85,10 @@ function TopMarketItem({ pool, rank }: { pool: PoolCreated; rank: number }) {
   const chain = chainsMap[pool.chainId.toString()];
   const { tokenData, isLoadingTokenData } = useTokenData(chain, pool.memecoin, pool.tokenURI as string);
 
-  const latestMarketCapETH = pool.latestMarketCapETH ? BigInt(pool.latestMarketCapETH) : BigInt(0);
-  const previousMarketCapETH = pool.previousMarketCapETH ? BigInt(pool.previousMarketCapETH) : null;
-
-  const formattedMarketCap = formatEther(latestMarketCapETH);
-  const marketCapNumber = Number(formattedMarketCap);
-  const formattedAmount = marketCapNumber > 0 ? `${formatNumber(marketCapNumber)} ETH` : '0 ETH';
-
-  let percentageChange: number | null = null;
-  if (previousMarketCapETH !== null && previousMarketCapETH > 0) {
-    const latest = Number(latestMarketCapETH);
-    const previous = Number(previousMarketCapETH);
-    if (previous !== 0) {
-      percentageChange = ((latest - previous) / previous) * 100;
-    }
-  }
+  const { formattedAmount, percentageChange } = calculateMarketCapData(
+    pool.latestMarketCapETH,
+    pool.previousMarketCapETH,
+  );
 
   const displayName = tokenData?.name || formatWallet(pool.memecoin, 6);
   const displaySymbol = tokenData?.symbol || formatWallet(pool.memecoin, 4);
