@@ -149,7 +149,7 @@ export function HeroSection({ space, renderTitle }: HeroSectionProps) {
                 </div>
               </div>
               <i
-                className={`${item.icon} tooltip tooltip-open cursor-pointer text-tertiary hover:text-primary`}
+                className={`${item.icon} tooltip tooltip-open cursor-pointer text-tertiary size-5 hover:text-primary`}
                 onClick={() => window.open(`${item.prefix}${space?.[item.key as keyof Space]}`, '_blank')}
               />
             </div>

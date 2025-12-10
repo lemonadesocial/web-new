@@ -1,5 +1,62 @@
 # Changelog
 
+## [8.34.0](https://github.com/lemonadesocial/web-new/compare/v8.33.1...v8.34.0) (2025-12-07)
+
+
+### Features
+
+* upgrade next.js due to CVE-2025-66478 ([3ace23d](https://github.com/lemonadesocial/web-new/commit/3ace23ddff6954e8fdbfc6aee7ddd406334e2fe7))
+
+
+### Bug Fixes
+
+* upgrade alpine ([22dacd9](https://github.com/lemonadesocial/web-new/commit/22dacd902dbbd7ca6f117b95644fac2c862ac9a3))
+
+## [8.33.1](https://github.com/lemonadesocial/web-new/compare/v8.33.0...v8.33.1) (2025-12-05)
+
+
+### Bug Fixes
+
+* map form fields ([34c17b5](https://github.com/lemonadesocial/web-new/commit/34c17b591450416c9b12392249d0fd7298f077de))
+
+## [8.33.0](https://github.com/lemonadesocial/web-new/compare/v8.32.1...v8.33.0) (2025-12-04)
+
+
+### Features
+
+* update social size ([1485aae](https://github.com/lemonadesocial/web-new/commit/1485aaee0b3a6356a2a26bca24cf87aaf668baa5))
+
+
+### Bug Fixes
+
+* merge data respone instead of replace ([b6fbd19](https://github.com/lemonadesocial/web-new/commit/b6fbd19e0b683cb2e4a28b7da4941bcc57158fa9))
+
+## [8.32.1](https://github.com/lemonadesocial/web-new/compare/v8.32.0...v8.32.1) (2025-11-27)
+
+
+### Bug Fixes
+
+* filter roles space members ([f58742b](https://github.com/lemonadesocial/web-new/commit/f58742bfb597440a15fcf1291bb11ab648680153))
+
+## [8.32.0](https://github.com/lemonadesocial/web-new/compare/v8.31.1...v8.32.0) (2025-11-26)
+
+
+### Features
+
+* enable eoa wallets for coin base ([f5d2517](https://github.com/lemonadesocial/web-new/commit/f5d2517ce0a9fed890398fed4e8bc2662cb16342))
+
+
+### Bug Fixes
+
+* fail to check balance after connectting wallet ([0cdae4c](https://github.com/lemonadesocial/web-new/commit/0cdae4cac0ca3cfd83d5952e2d9cb7613037090a))
+
+## [8.31.1](https://github.com/lemonadesocial/web-new/compare/v8.31.0...v8.31.1) (2025-11-20)
+
+
+### Bug Fixes
+
+* **auth-modal:** fix email casing ([a4c5bc3](https://github.com/lemonadesocial/web-new/commit/a4c5bc3af52b60b500e3030f02d1d727e4bc5796))
+
 ## [8.31.0](https://github.com/lemonadesocial/web-new/compare/v8.30.1...v8.31.0) (2025-11-19)
 
 
