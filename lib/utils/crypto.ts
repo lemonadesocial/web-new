@@ -19,6 +19,7 @@ export const LemonadeStakePaymentContract = new ethers.Contract(ethers.ZeroAddre
 export const LemonheadNFTContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonheadNFT.abi));
 export const LemonadePassportContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonadePassport.abi));
 export const ZugramaPassportContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ZugramaPassport.abi));
+export const MusicNftContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(MusicNft.abi));
 
 export function getListChains() {
   return getDefaultStore().get(listChainsAtom);

@@ -500,6 +500,7 @@ query GetSpaceNFTs($skip: Int, $limit: Int, $space: MongoID, $kind: SpaceNFTKind
         network_id
         mint_price
         currency_address
+        deployed_contract_address
       }
     }
     total
