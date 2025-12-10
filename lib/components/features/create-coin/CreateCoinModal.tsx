@@ -143,21 +143,6 @@ export function CreateCoinModal({
     }
   };
 
-  const handleRetry = async () => {
-    if (flaunchAddress && tokenId && groupAddress) {
-      try {
-        await handleDepositToGroup(flaunchAddress, tokenId);
-      } catch (err: any) {
-        setError(formatError(err));
-        setStatus('error');
-      }
-
-      return;
-    }
-
-    await handleLaunch();
-  };
-
   const handleSuccess = (memecoinAddress: string, txHash: string) => {
     modal.close();
     modal.open(TxnConfirmedModal, {
@@ -195,7 +180,7 @@ export function CreateCoinModal({
       <ErrorModal
         title="Launch Failed"
         message={formatError(error)}
-        onRetry={handleRetry}
+        onRetry={handleLaunch}
         onClose={() => modal.close()}
       />
     );

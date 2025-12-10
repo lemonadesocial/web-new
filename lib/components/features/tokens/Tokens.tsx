@@ -2,48 +2,205 @@
 import React from 'react';
 import { useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
+import { parseEther, formatEther } from 'ethers';
+import { BrowserProvider, type Eip1193Provider, Interface } from 'ethers';
+import * as Sentry from '@sentry/nextjs';
 
-import { Button, Card, Skeleton } from '$lib/components/core';
-import { RadialProgress } from '$lib/components/core/progess/radial';
+import { Button, Card, Skeleton, modal, toast } from '$lib/components/core';
 import { useQuery } from '$lib/graphql/request';
 import { PoolCreatedDocument, FairLaunchDocument, Order_By, type PoolCreated } from '$lib/graphql/generated/coin/graphql';
 import { getCoinClient } from '$lib/graphql/request/instances';
 import { chainsMapAtom } from '$lib/jotai/chains';
 import { useTokenData, useHoldersCount, useVolume24h } from '$lib/hooks/useCoin';
 import { calculateMarketCapData } from '$lib/utils/coin';
-import { formatWallet } from '$lib/utils/crypto';
+import { formatWallet, formatError, getTransactionUrl } from '$lib/utils/crypto';
 import { getTimeAgo } from '$lib/utils/date';
+import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
+import { appKit } from '$lib/utils/appkit';
+import { ConnectWallet } from '../modals/ConnectWallet';
+import { TxnConfirmedModal } from '../create-coin/TxnConfirmedModal';
+import { ERC20 } from '$lib/abis/ERC20';
+import { formatNumber } from '$lib/utils/number';
+
+const QUICK_BUY_UNIT = parseEther('0.0001');
+
+interface QuickBuyContextType {
+  quickBuySize: bigint;
+  isBuyingPool: (poolId: string) => boolean;
+  incrementQuickBuy: () => void;
+  decrementQuickBuy: () => void;
+  handleQuickBuy: (pool: PoolCreated) => void;
+}
+
+const QuickBuyContext = React.createContext<QuickBuyContextType | undefined>(undefined);
+
+export function useQuickBuy() {
+  const context = React.useContext(QuickBuyContext);
+  if (context === undefined) {
+    throw new Error('useQuickBuy must be used within a QuickBuyProvider');
+  }
+  return context;
+}
+
+function QuickBuyProvider({ children }: { children: React.ReactNode }) {
+  const chainsMap = useAtomValue(chainsMapAtom);
+  const [quickBuySize, setQuickBuySize] = React.useState<bigint>(QUICK_BUY_UNIT);
+  const [buyingPoolId, setBuyingPoolId] = React.useState<string | null>(null);
+
+  const incrementQuickBuy = React.useCallback(() => {
+    setQuickBuySize((prev) => prev + QUICK_BUY_UNIT);
+  }, []);
+
+  const decrementQuickBuy = React.useCallback(() => {
+    setQuickBuySize((prev) => {
+      const newSize = prev - QUICK_BUY_UNIT;
+      return newSize < QUICK_BUY_UNIT ? QUICK_BUY_UNIT : newSize;
+    });
+  }, []);
+
+  const executeBuy = React.useCallback(async (pool: PoolCreated) => {
+    const chain = chainsMap[pool.chainId.toString()];
+    if (!chain) {
+      toast.error('Chain not found');
+      return;
+    }
+
+    const walletProvider = appKit.getProvider('eip155');
+    const userAddress = appKit.getAddress();
+
+    if (!walletProvider || !userAddress) {
+      toast.error('Wallet isn\'t fully connected yet. Please try again in a moment.');
+      return;
+    }
+
+    try {
+      setBuyingPoolId(pool.id);
+      const provider = new BrowserProvider(walletProvider as Eip1193Provider);
+      const signer = await provider.getSigner();
+      const flaunchClient = FlaunchClient.getInstance(chain, pool.memecoin, signer);
+
+      const txHash = await flaunchClient.buyCoin({
+        buyAmount: quickBuySize,
+        recipient: userAddress
+      });
+
+      const receipt = await provider.waitForTransaction(txHash);
+
+      let tokenAmount: string | null = null;
+
+      if (receipt && userAddress) {
+        const erc20Interface = new Interface(ERC20);
+        const memecoinAddressLower = pool.memecoin.toLowerCase();
+        const userAddressLower = userAddress.toLowerCase();
+
+        for (const log of receipt.logs) {
+          if (log.address.toLowerCase() !== memecoinAddressLower) continue;
+
+          try {
+            const parsedLog = erc20Interface.parseLog(log);
+            if (parsedLog?.name === 'Transfer' && parsedLog.args.to.toLowerCase() === userAddressLower) {
+              const value = parsedLog.args.value as bigint;
+              tokenAmount = formatNumber(Number(formatEther(value)));
+              break;
+            }
+          } catch {
+            continue;
+          }
+        }
+      }
+
+      const buyAmountFormatted = formatEther(quickBuySize);
+      const description = tokenAmount
+        ? `${tokenAmount} tokens have been added to your wallet.`
+        : `You have successfully purchased ${formatNumber(Number(buyAmountFormatted))} ETH worth of tokens.`;
+
+      modal.open(TxnConfirmedModal, {
+        props: {
+          title: 'Purchase Complete',
+          description,
+          txUrl: getTransactionUrl(chain, txHash)
+        }
+      });
+    } catch (error) {
+      console.log(error);
+      Sentry.captureException(error);
+      toast.error(formatError(error));
+    } finally {
+      setBuyingPoolId(null);
+    }
+  }, [quickBuySize, chainsMap]);
+
+  const handleQuickBuy = React.useCallback((pool: PoolCreated) => {
+    const chain = chainsMap[pool.chainId.toString()];
+    if (!chain) {
+      toast.error('Chain not found');
+      return;
+    }
+
+    modal.open(ConnectWallet, {
+      props: {
+        chain,
+        onConnect: () => {
+          executeBuy(pool);
+        },
+      },
+    });
+  }, [executeBuy, chainsMap]);
+
+  const isBuyingPool = React.useCallback((poolId: string) => {
+    return buyingPoolId === poolId;
+  }, [buyingPoolId]);
+
+  const value = React.useMemo(
+    () => ({
+      quickBuySize,
+      isBuyingPool,
+      incrementQuickBuy,
+      decrementQuickBuy,
+      handleQuickBuy,
+    }),
+    [quickBuySize, isBuyingPool, incrementQuickBuy, decrementQuickBuy, handleQuickBuy],
+  );
+
+  return <QuickBuyContext.Provider value={value}>{children}</QuickBuyContext.Provider>;
+}
 
 export function Tokens() {
   return (
-    <div className="flex flex-col gap-3 max-sm:pb-28 py-4 md:max-h-[calc(100dvh-56px)]">
-      <Toolbar />
+    <QuickBuyProvider>
+      <div className="flex flex-col gap-3 max-sm:pb-28 py-4 md:max-h-[calc(100dvh-56px)]">
+        <Toolbar />
 
-      <div className="flex flex-col md:grid grid-cols-3 gap-4 flex-1 overflow-hidden">
-        <NewTokensList />
-        <GraduatingTokensList />
-        <RecentlyGraduatedTokensList />
+        <div className="flex flex-col md:grid grid-cols-3 gap-4 flex-1 overflow-hidden">
+          <NewTokensList />
+          <GraduatingTokensList />
+          <RecentlyGraduatedTokensList />
+        </div>
       </div>
-    </div>
+    </QuickBuyProvider>
   );
 }
 
 function Toolbar() {
   const router = useRouter();
+  const { quickBuySize, incrementQuickBuy, decrementQuickBuy } = useQuickBuy();
 
   const handleCreateCoin = () => {
     router.push('/create/coin');
   };
+
+  const formattedSize = formatEther(quickBuySize);
+  const isAtMinimum = quickBuySize === QUICK_BUY_UNIT;
 
   return (
     <div className="flex items-center justify-between">
       <div className="flex gap-2">
         <div className="text-sm flex gap-1 px-2.5 py-1.5 bg-(--btn-tertiary) w-fit rounded-sm">
           <p className="text-tertiary">Quick Buy Size:</p>
-          <p className="text-secondary">0.0001 ETH</p>
+          <p className="text-secondary w-[75px] text-right">{formattedSize} ETH</p>
         </div>
-        <Button icon="icon-arrow-down rotate-180" size="sm" variant="tertiary-alt" />
-        <Button icon="icon-arrow-down" size="sm" variant="tertiary-alt" />
+        <Button icon="icon-arrow-down rotate-180" size="sm" variant="tertiary-alt" onClick={incrementQuickBuy} />
+        <Button icon="icon-arrow-down" size="sm" variant="tertiary-alt" onClick={decrementQuickBuy} disabled={isAtMinimum} />
       </div>
 
       <Button iconLeft="icon-plus" size="sm" variant="secondary" className="hidden md:block" onClick={handleCreateCoin}>
@@ -293,6 +450,8 @@ function TokenCardSkeleton() {
 function TokenCard({ pool }: { pool: PoolCreated }) {
   const router = useRouter();
   const chainsMap = useAtomValue(chainsMapAtom);
+  const { handleQuickBuy, isBuyingPool } = useQuickBuy();
+  const isBuying = isBuyingPool(pool.id);
 
   const chain = chainsMap[pool.chainId.toString()];
   const { tokenData, isLoadingTokenData } = useTokenData(chain, pool.memecoin, pool.tokenURI as string);
@@ -310,6 +469,11 @@ function TokenCard({ pool }: { pool: PoolCreated }) {
 
   const handleClick = () => {
     router.push(`/coin/${chain.code_name}/${pool.memecoin}`);
+  };
+
+  const onQuickBuyClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleQuickBuy(pool);
   };
 
   return (
@@ -363,7 +527,7 @@ function TokenCard({ pool }: { pool: PoolCreated }) {
                     )}
                   </div>
                 </div>
-                <Button variant="tertiary-alt" size="sm" onClick={(e) => e.stopPropagation()}>
+                <Button variant="tertiary-alt" size="sm" onClick={onQuickBuyClick} loading={isBuying}>
                   Quick Buy
                 </Button>
               </div>
