@@ -29,6 +29,12 @@ export function Tokens() {
 }
 
 function Toolbar() {
+  const router = useRouter();
+
+  const handleCreateCoin = () => {
+    router.push('/create/coin');
+  };
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex gap-2">
@@ -40,11 +46,11 @@ function Toolbar() {
         <Button icon="icon-arrow-down" size="sm" variant="tertiary-alt" />
       </div>
 
-      <Button iconLeft="icon-plus" size="sm" variant="secondary" className="hidden md:block">
+      <Button iconLeft="icon-plus" size="sm" variant="secondary" className="hidden md:block" onClick={handleCreateCoin}>
         Create Coin
       </Button>
 
-      <Button icon="icon-plus" size="sm" variant="secondary" className="md:hidden">
+      <Button icon="icon-plus" size="sm" variant="secondary" className="md:hidden" onClick={handleCreateCoin}>
         Create Coin
       </Button>
     </div>
