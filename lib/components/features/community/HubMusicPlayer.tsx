@@ -19,6 +19,7 @@ import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react';
 import { formatError, MusicNftContract, writeContract } from '$lib/utils/crypto';
 import * as Sentry from '@sentry/nextjs';
 import { appKit } from '$lib/utils/appkit';
+import { useMusicNft } from '$lib/hooks/useMusicNft';
 
 const musicState = atom({ playing: false, _id: '' });
 
@@ -93,6 +94,8 @@ const Vinyl = React.forwardRef(({ track, onNext, onPrev }: VinylProps, ref) => {
     network_id: contract?.network_id,
     contract,
   });
+
+  const { data } = useMusicNft({ network_id: contract?.network_id });
 
   const audioRef = React.useRef<HTMLAudioElement>(null);
   const setMusicState = useSetAtom(musicState);
@@ -226,11 +229,14 @@ const Vinyl = React.forwardRef(({ track, onNext, onPrev }: VinylProps, ref) => {
                     <p>USERNAME COMMING SOON</p>
                   </div>
                   <div className="flex gap-2 items-center">
-                    <RadialProgress color="text-accent-400" size="size-5" value={75} />
+                    <RadialProgress
+                      color="text-accent-400"
+                      size="size-5"
+                      value={track?.token_limit ? ((data?.totalMinted || 0) / track?.token_limit) * 100 : 0}
+                    />
 
                     <p className="text-tertiary">
-                      MINT INFO COMMING SOON / {formatNumberWithCommas(track?.token_limit)} left
-                      {/* {formatNumberWithCommas(track.minted)} / {formatNumberWithCommas(track.totalMint)} left */}
+                      {formatNumberWithCommas(data?.totalMinted)} / {formatNumberWithCommas(track?.token_limit)} left
                     </p>
                   </div>
                 </div>
@@ -350,58 +356,73 @@ function TrackList({
             )
             .otherwise(() =>
               data.map((item: SpaceNft, idx: number) => (
-                <Card.Root key={idx} className="overflow-visible!" onClick={() => onSelect?.(item, false)}>
-                  <Card.Content className="px-4 py-2 flex items-center gap-3">
-                    <div className="size-[52px] aspect-square rounded-sm bg-tertiary overflow-hidden">
-                      <img src={item.cover_image_url} className="w-full h-full" />
-                    </div>
-
-                    <div className="space-y-0.5 flex-1">
-                      <p className="line-clamp-1">{item.name}</p>
-                      <p className="text-tertiary line-clamp-1">USERNAME COMMING SOON</p>
-
-                      <p className="text-sm text-tertiary">
-                        {/* {formatNumberWithCommas(item.minted)} / {formatNumberWithCommas(item.totalMint)} left */}
-                        Comming soon / {formatNumberWithCommas(item.token_limit)} left
-                      </p>
-                    </div>
-
-                    <div className="flex gap-2 items-center">
-                      <Button
-                        icon="icon-add-check-sharp"
-                        size="sm"
-                        variant="tertiary-alt"
-                        className="rounded-full bg-transparent!"
-                      />
-
-                      {match(selected?._id === item._id)
-                        .with(true, () => (
-                          <Button
-                            icon="icon-bar-chart-rounded text-accent-400"
-                            variant="flat"
-                            className="rounded-full bg-transparent!"
-                            size="sm"
-                          />
-                        ))
-                        .otherwise(() => (
-                          <Button
-                            icon="icon-play-arrow"
-                            size="sm"
-                            variant="tertiary-alt"
-                            className="rounded-full bg-transparent!"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onSelect?.(item, true);
-                            }}
-                          />
-                        ))}
-                    </div>
-                  </Card.Content>
-                </Card.Root>
+                <TrackListItem key={item._id} track={item} onSelect={onSelect} active={selected?._id === item._id} />
               )),
             )}
         </Card.Content>
       </div>
+    </Card.Root>
+  );
+}
+
+function TrackListItem({
+  track,
+  onSelect,
+  active,
+}: {
+  track: SpaceNft;
+  onSelect?: (track: SpaceNft, shouldPlay: boolean) => void;
+  active?: boolean;
+}) {
+  const { data } = useMusicNft({ network_id: track?.contracts?.[0]?.network_id });
+
+  return (
+    <Card.Root className="overflow-visible!" onClick={() => onSelect?.(track, false)}>
+      <Card.Content className="px-4 py-2 flex items-center gap-3">
+        <div className="size-[52px] aspect-square rounded-sm bg-tertiary overflow-hidden">
+          <img src={track.cover_image_url} className="w-full h-full" />
+        </div>
+
+        <div className="space-y-0.5 flex-1">
+          <p className="line-clamp-1">{track.name}</p>
+          <p className="text-tertiary line-clamp-1">USERNAME COMMING SOON</p>
+
+          <p className="text-sm text-tertiary">
+            {formatNumberWithCommas(data?.totalMinted || 0)} / {formatNumberWithCommas(track.token_limit)} left
+          </p>
+        </div>
+
+        <div className="flex gap-2 items-center">
+          <Button
+            icon="icon-add-check-sharp"
+            size="sm"
+            variant="tertiary-alt"
+            className="rounded-full bg-transparent!"
+          />
+
+          {match(active)
+            .with(true, () => (
+              <Button
+                icon="icon-bar-chart-rounded text-accent-400"
+                variant="flat"
+                className="rounded-full bg-transparent!"
+                size="sm"
+              />
+            ))
+            .otherwise(() => (
+              <Button
+                icon="icon-play-arrow"
+                size="sm"
+                variant="tertiary-alt"
+                className="rounded-full bg-transparent!"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelect?.(track, true);
+                }}
+              />
+            ))}
+        </div>
+      </Card.Content>
     </Card.Root>
   );
 }
