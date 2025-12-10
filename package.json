@@ -1,6 +1,6 @@
 {
   "name": "web-new",
-  "version": "8.32.1",
+  "version": "8.34.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 8000 --experimental-https -H localhost.staging.lemonade.social",
@@ -81,7 +81,7 @@
     "linkify-it": "^5.0.0",
     "marked": "^16.3.0",
     "mongodb": "^6.15.0",
-    "next": "15.5.4",
+    "next": "15.4.8",
     "oidc-client-ts": "^3.2.0",
     "open-graph-scraper": "^6.10.0",
     "postcss": "^8.5.3",
