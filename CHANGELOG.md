@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.34.2](https://github.com/lemonadesocial/web-new/compare/v8.34.1...v8.34.2) (2025-12-10)
+
+
+### Bug Fixes
+
+* check initial data ([12adb73](https://github.com/lemonadesocial/web-new/commit/12adb73a10b814760a7861abc6863d9533fe83de))
+
 ## [8.34.1](https://github.com/lemonadesocial/web-new/compare/v8.34.0...v8.34.1) (2025-12-10)
 
 
