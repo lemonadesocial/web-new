@@ -20,6 +20,8 @@ import { formatError, MusicNftContract, writeContract } from '$lib/utils/crypto'
 import * as Sentry from '@sentry/nextjs';
 import { appKit } from '$lib/utils/appkit';
 import { useMusicNft } from '$lib/hooks/useMusicNft';
+import { mainnet } from 'viem/chains';
+import { useGetEns } from '$lib/hooks/useGetEnsName';
 
 const musicState = atom({ playing: false, _id: '' });
 
@@ -95,7 +97,12 @@ const Vinyl = React.forwardRef(({ track, onNext, onPrev }: VinylProps, ref) => {
     contract,
   });
 
-  const { data } = useMusicNft({ network_id: contract?.network_id });
+  const { data } = useMusicNft({
+    network_id: contract?.network_id,
+    contractAddress: contract?.deployed_contract_address,
+  });
+
+  const ensData = useGetEns(data?.owner);
 
   const audioRef = React.useRef<HTMLAudioElement>(null);
   const setMusicState = useSetAtom(musicState);
@@ -226,7 +233,7 @@ const Vinyl = React.forwardRef(({ track, onNext, onPrev }: VinylProps, ref) => {
                   <h3 className="text-xl">{track?.name || '--'}</h3>
                   <div className="flex gap-2 items-center">
                     <div className="size-5 aspect-square rounded-xs bg-gray-500" />
-                    <p>USERNAME COMMING SOON</p>
+                    <p>{ensData.username || '--'}</p>
                   </div>
                   <div className="flex gap-2 items-center">
                     <RadialProgress
@@ -355,7 +362,7 @@ function TrackList({
               )),
             )
             .otherwise(() =>
-              data.map((item: SpaceNft, idx: number) => (
+              data.map((item: SpaceNft) => (
                 <TrackListItem key={item._id} track={item} onSelect={onSelect} active={selected?._id === item._id} />
               )),
             )}
@@ -374,7 +381,12 @@ function TrackListItem({
   onSelect?: (track: SpaceNft, shouldPlay: boolean) => void;
   active?: boolean;
 }) {
-  const { data } = useMusicNft({ network_id: track?.contracts?.[0]?.network_id });
+  const contract = track.contracts?.[0];
+  const { data } = useMusicNft({
+    network_id: contract?.network_id,
+    contractAddress: contract?.deployed_contract_address,
+  });
+  const ensData = useGetEns(data?.owner);
 
   return (
     <Card.Root className="overflow-visible!" onClick={() => onSelect?.(track, false)}>
@@ -385,7 +397,7 @@ function TrackListItem({
 
         <div className="space-y-0.5 flex-1">
           <p className="line-clamp-1">{track.name}</p>
-          <p className="text-tertiary line-clamp-1">USERNAME COMMING SOON</p>
+          <p className="text-tertiary line-clamp-1">{ensData.username || '--'}</p>
 
           <p className="text-sm text-tertiary">
             {formatNumberWithCommas(data?.totalMinted || 0)} / {formatNumberWithCommas(track.token_limit)} left
@@ -477,8 +489,7 @@ function useMintMusicNft({ contract, network_id }: { contract?: SpaceNftContract
     modal.open(ConnectWallet, {
       props: {
         onConnect: () => {
-          setStatus('signing');
-          modal.open(MintModal, { props: { onSign: handleMint, status: 'signing' } });
+          handleMint();
         },
         chain: chainsMap[network_id],
       },
@@ -494,6 +505,7 @@ function useMintMusicNft({ contract, network_id }: { contract?: SpaceNftContract
 
     try {
       setStatus('signing');
+      modal.open(MintModal, { props: { onSign: handleMint, status: 'signing' } });
 
       const transaction = await writeContract(
         MusicNftContract,
@@ -503,7 +515,11 @@ function useMintMusicNft({ contract, network_id }: { contract?: SpaceNftContract
         [address],
         { value: contract.mint_price },
       );
-      console.log(transaction);
+      setStatus('confirming');
+      modal.open(MintModal, { props: { onSign: handleMint, status: 'confirming' } });
+
+      await transaction.wait();
+      setStatus('success');
       toast.success('Mint success');
     } catch (error: any) {
       Sentry.captureException(error, {
@@ -511,6 +527,7 @@ function useMintMusicNft({ contract, network_id }: { contract?: SpaceNftContract
           walletInfo: appKit.getWalletInfo(),
         },
       });
+      modal.close();
       toast.error(formatError(error));
       setStatus('none');
     }

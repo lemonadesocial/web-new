@@ -6,24 +6,30 @@ import { useQuery } from '@tanstack/react-query';
 import { ethers } from 'ethers';
 import { useAtomValue } from 'jotai';
 
-async function fetchMusicNftData(address: string, chain: Chain) {
-  const data = { totalMinted: 0 };
-  const contractAddress = chain?.lemonhead_contract_address;
+type Data = {
+  totalMinted?: number;
+  owner?: string;
+};
+
+async function fetchMusicNftData(contractAddress: string, chain: Chain) {
+  const data: Data = { totalMinted: 0, owner: undefined };
 
   if (contractAddress) {
     const provider = new ethers.JsonRpcProvider(chain.rpc_url);
     const contract = MusicNftContract.attach(contractAddress).connect(provider) as ethers.Contract;
 
-    const nextTokenId = await contract.getFunction('nextTokenId')(address);
-    // NOTE: nextTokenId should minus 1
-    data.totalMinted = nextTokenId > 0 ? nextTokenId - 1 : 0;
+    const owner = await contract.getFunction('owner')();
+    data.owner = owner;
+
+    const nextTokenId = await contract.getFunction('nextTokenId')();
+    // // NOTE: nextTokenId should minus 1
+    data.totalMinted = Number(nextTokenId) > 0 ? Number(nextTokenId) - 1 : 0;
   }
 
   return data;
 }
 
-export function useMusicNft({ network_id }: { network_id?: string }) {
-  const { address } = useAppKitAccount();
+export function useMusicNft({ network_id, contractAddress }: { network_id?: string; contractAddress?: string | null }) {
   const chainsMap = useAtomValue(chainsMapAtom);
 
   const {
@@ -31,9 +37,9 @@ export function useMusicNft({ network_id }: { network_id?: string }) {
     isLoading: loading,
     error,
   } = useQuery({
-    queryKey: ['music_nft', address, chainsMap],
-    queryFn: () => fetchMusicNftData(address!, chainsMap[network_id!]),
-    enabled: !!address && !!chainsMap && !!network_id,
+    queryKey: ['music_nft', contractAddress, chainsMap],
+    queryFn: () => fetchMusicNftData(contractAddress!, chainsMap[network_id!]),
+    enabled: !!chainsMap && !!network_id && !!contractAddress,
   });
 
   return { data, loading, error };
