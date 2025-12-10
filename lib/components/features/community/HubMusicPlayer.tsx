@@ -22,6 +22,8 @@ import { appKit } from '$lib/utils/appkit';
 import { useMusicNft } from '$lib/hooks/useMusicNft';
 import { mainnet } from 'viem/chains';
 import { useGetEns } from '$lib/hooks/useGetEnsName';
+import { delay } from 'lodash';
+import { useQueryClient } from '@tanstack/react-query';
 
 const musicState = atom({ playing: false, _id: '' });
 
@@ -468,6 +470,7 @@ function useScrollable(callback?: () => void) {
 }
 
 function useMintMusicNft({ contract, network_id }: { contract?: SpaceNftContract; network_id?: string }) {
+  const queryClient = useQueryClient();
   const { walletProvider } = useAppKitProvider('eip155');
   const { address } = useAppKitAccount();
 
@@ -515,12 +518,17 @@ function useMintMusicNft({ contract, network_id }: { contract?: SpaceNftContract
         [address],
         { value: contract.mint_price },
       );
+      modal.close();
       setStatus('confirming');
       modal.open(MintModal, { props: { onSign: handleMint, status: 'confirming' } });
 
       await transaction.wait();
       setStatus('success');
-      toast.success('Mint success');
+      delay(() => {
+        modal.close();
+        toast.success('Mint success');
+        queryClient.invalidateQueries({ queryKey: ['music_nft', contract.deployed_contract_address] });
+      }, 500);
     } catch (error: any) {
       Sentry.captureException(error, {
         extra: {

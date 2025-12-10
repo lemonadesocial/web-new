@@ -37,7 +37,7 @@ export function useMusicNft({ network_id, contractAddress }: { network_id?: stri
     isLoading: loading,
     error,
   } = useQuery({
-    queryKey: ['music_nft', contractAddress, chainsMap],
+    queryKey: ['music_nft', contractAddress],
     queryFn: () => fetchMusicNftData(contractAddress!, chainsMap[network_id!]),
     enabled: !!chainsMap && !!network_id && !!contractAddress,
   });
