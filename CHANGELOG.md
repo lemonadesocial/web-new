@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.34.1](https://github.com/lemonadesocial/web-new/compare/v8.34.0...v8.34.1) (2025-12-10)
+
+
+### Bug Fixes
+
+* update delete ticket type action ([b4d25c4](https://github.com/lemonadesocial/web-new/commit/b4d25c43741e3fdda361a926344b9911294fbffb))
+
 ## [8.34.0](https://github.com/lemonadesocial/web-new/compare/v8.33.1...v8.34.0) (2025-12-07)
 
 
