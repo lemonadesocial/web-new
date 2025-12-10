@@ -286,16 +286,18 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
         <Pane.Header.Center className="flex-1 flex items-center justify-center">
           <p>{initialTicketType ? 'Edit Ticket Type' : 'New Ticket Type'}</p>
         </Pane.Header.Center>
-        <Pane.Header.Right>
-          <Button
-            variant="flat"
-            loading={isDeleting}
-            onClick={() => deleteTicketType({ variables: { event: event._id, id: initialTicketType._id } })}
-            className="hover:bg-danger-500/10!"
-            icon="icon-delete text-danger-400"
-            size="sm"
-          />
-        </Pane.Header.Right>
+        {initialTicketType && event && (
+          <Pane.Header.Right>
+            <Button
+              variant="flat"
+              loading={isDeleting}
+              onClick={() => deleteTicketType({ variables: { event: event._id, id: initialTicketType._id } })}
+              className="hover:bg-danger-500/10!"
+              icon="icon-delete text-danger-400"
+              size="sm"
+            />
+          </Pane.Header.Right>
+        )}
       </Pane.Header.Root>
       <Pane.Content>
         <form onSubmit={handleSubmit(onSubmit)} className="h-full flex flex-col">
