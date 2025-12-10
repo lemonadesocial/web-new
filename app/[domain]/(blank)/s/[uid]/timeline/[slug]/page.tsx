@@ -12,5 +12,9 @@ export default async function Page({ params }: { params: Promise<{ uid: string; 
 
   if (!space?.lens_feed_id || !postSlug) return notFound();
 
-  return <FeedPostDetail postSlug={postSlug} />;
+  return (
+    <div className="page mx-auto px-4 xl:px-0 pt-6">
+      <FeedPostDetail postSlug={postSlug} />
+    </div>
+  );
 }

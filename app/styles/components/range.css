@@ -1,0 +1,29 @@
+@layer utilities {
+  .range {
+    -webkit-appearance: none;
+    --range-thumb: var(--color-primary);
+    width: 100%;
+    background: var(--color-divider);
+    height: 4px;
+    border-radius: 9999;
+    cursor: pointer;
+    outline: none;
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      background: var(--range-thumb);
+      border-radius: 9999;
+      width: 16px;
+      height: 16px;
+      transition: 0.2s ease-in-out;
+    }
+
+    &::-moz-range-thumb {
+      background: var(--range-thumb);
+      border-radius: 9999;
+      width: 16px;
+      height: 16px;
+      transition: 0.2s ease-in-out;
+    }
+  }
+}

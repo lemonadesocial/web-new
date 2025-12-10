@@ -10,6 +10,7 @@
 @import './styles/components/input.css';
 @import './styles/components/tooltips.css';
 @import './styles/components/tiptap.css';
+@import './styles/components/range.css';
 
 @import './styles/presets/minimal.css';
 @import './styles/presets/shader.css';
