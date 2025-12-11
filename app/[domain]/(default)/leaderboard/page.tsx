@@ -2,7 +2,7 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 
 export default function SwipePage() {
   return (
-    <div className="max-w-[794] mx-auto pt-11 flex flex-col items-center gap-14">
+    <div className="max-w-[1080px] mx-auto pt-11 flex flex-col items-center gap-14">
       <img src={`${ASSET_PREFIX}/assets/images/leaderboard-graphic.png`} alt="Leaderboard" className="w-full h-full" />
 
       <div className="space-y-2 max-w-[600px]">

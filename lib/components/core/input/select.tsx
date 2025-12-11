@@ -28,7 +28,7 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
         baseClasses,
         {
           'bg-primary/8': variant === 'default',
-          '': variant === 'outlined', // TODO
+          'bg-background/64 border border-primary/8 hover:border-primary focus:border-primary': variant === 'outlined',
         },
         {
           'text-sm': inputSize === 's',

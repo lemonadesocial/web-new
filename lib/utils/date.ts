@@ -48,3 +48,28 @@ export function combineDateAndTimeWithTimezone(date: Date, timeZone?: string | n
   const dateWithoutTz = format(date, "yyyy-MM-dd'T'HH:mm:ss");
   return toDate(dateWithoutTz, { timeZone });
 }
+
+export function getTimeAgo(date: Date | number = Date.now()): string {
+  const now = Date.now();
+  const targetTime = typeof date === 'number' ? date : date.getTime();
+  const diffMs = now - targetTime;
+  
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+  
+  if (diffMinutes < 1) {
+    return 'Just now';
+  }
+  
+  if (diffHours < 1) {
+    return `${diffMinutes}m ago`;
+  }
+  
+  if (diffDays < 1) {
+    return `${diffHours}h ago`;
+  }
+  
+  return `${diffDays}d ago`;
+}
