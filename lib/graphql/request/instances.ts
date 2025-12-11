@@ -36,3 +36,7 @@ export function getCoinClient() {
 }
 
 export const coinClient = getCoinClient();
+export const usernameClient = new GraphqlClient({
+  url: process.env.NEXT_PUBLIC_USERNAME_INDEXER as string,
+  cache: new InMemoryCache(),
+});

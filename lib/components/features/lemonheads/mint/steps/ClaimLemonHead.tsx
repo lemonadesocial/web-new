@@ -5,31 +5,26 @@ import clsx from 'clsx';
 import videojs from 'video.js';
 import Player from 'video.js/dist/types/player';
 import 'video.js/dist/video-js.css';
-import { useAppKitAccount } from '@reown/appkit/react';
 
 import { Button, Card, Divider, drawer, modal, Segment, Skeleton, Spacer } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
-import { useAccount, useLemonadeUsername, usePost } from '$lib/hooks/useLens';
+import { usePost } from '$lib/hooks/useLens';
 import { ETHERSCAN } from '$lib/utils/constants';
 
-import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
-import { ClaimLemonadeUsernameModal } from '$lib/components/features/lens-account/ClaimLemonadeUsernameModal';
-import { EditProfileModal } from '$lib/components/features/lens-account/EditProfileModal';
 import { PostComposer } from '$lib/components/features/lens-feed/PostComposer';
 import { PostComposerModal } from '$lib/components/features/lens-feed/PostComposerModal';
 import { LemonHeadActionKind, useLemonHeadContext } from '../provider';
 import { LEMONHEAD_COLORS } from '../utils';
+import { useClaimUsername, useLemonadeUsername } from '$lib/hooks/useUsername';
 
-export const getLemonHeadImage = (args: { address: string; tokenId: string; color: string; portrait?: boolean }) =>
-  `/api/og/lemonheads?address=${args.address}&tokenId=${args.tokenId || 3}&color=${args.color}&portrait=${args.portrait || false}`;
+export const getLemonHeadImage = (args: { username: string; tokenId: string; color: string; portrait?: boolean }) =>
+  `/api/og/lemonheads?username=${args.username}&tokenId=${args.tokenId || 3}&color=${args.color}&portrait=${args.portrait || false}`;
 
 export function ClaimLemonHead() {
   const [state, dispatch] = useLemonHeadContext();
-  const { address } = useAppKitAccount();
-  const { account: myAccount } = useAccount();
   const [color, setColor] = React.useState('violet');
   const [portrait, setPortrait] = React.useState(false);
-
+  const { username } = useLemonadeUsername();
   const videoRef = React.useRef(null);
   const playerRef = React.useRef<Player>(null);
 
@@ -60,17 +55,15 @@ export function ClaimLemonHead() {
           <p className="font-title text-2xl md:text-3xl font-semibold!">United Stands of Lemonade</p>
         </div>
         <div className="flex-1 flex flex-col items-center gap-5 justify-center w-[68%]">
-          {(myAccount?.address || address) && (
-            <LemonHeadsImageLazyLoad
-              src={getLemonHeadImage({
-                address: myAccount?.address || address,
-                tokenId: state.mint.tokenId,
-                color,
-                portrait,
-              })}
-              className="border border-primary"
-            />
-          )}
+          <LemonHeadsImageLazyLoad
+            src={getLemonHeadImage({
+              username: username || '',
+              tokenId: state.mint.tokenId,
+              color,
+              portrait,
+            })}
+            className="border border-primary"
+          />
 
           <div className="flex flex-wrap gap-5 w-full max-w-[1200px] justify-center md:justify-between">
             <div className="flex items-center gap-2">
@@ -139,24 +132,12 @@ export function SharedLemonheadsPane({
   onSelectColor?: (color: string) => void;
   onSelectPortrait?: (value: boolean) => void;
 }) {
-  const { address } = useAppKitAccount();
-  const { account: myAccount } = useAccount();
-  const { username } = useLemonadeUsername(myAccount);
   const [imageType, setImageType] = React.useState<'body' | 'portrait'>('body');
   const [color, setColor] = React.useState(_color);
+  const { username, isLoading } = useLemonadeUsername();
+  const openClaimUsername = useClaimUsername();
 
-  const image = address
-    ? getLemonHeadImage({ address: myAccount?.address || address, tokenId, color, portrait: imageType === 'portrait' })
-    : '';
-
-  const handleUpdateProfile = () => {
-    if (!myAccount) {
-      modal.open(SelectProfileModal);
-    } else {
-      if (!username) modal.open(ClaimLemonadeUsernameModal);
-      else modal.open(EditProfileModal);
-    }
-  };
+  const image = getLemonHeadImage({ username: username || '', tokenId, color, portrait: imageType === 'portrait' });
 
   const handleShare = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -216,9 +197,13 @@ export function SharedLemonheadsPane({
 
         <div className="flex flex-col gap-4">
           <p className="text-lg">Personalize Your Card</p>
-          <Button variant="tertiary-alt" onClick={handleUpdateProfile}>
-            Add Username & Bio
-          </Button>
+          {
+            (!username && !isLoading) && (
+              <Button variant="tertiary-alt" onClick={openClaimUsername}>
+                Add Username
+              </Button>
+            )
+          }
 
           <Segment
             selected={imageType}

@@ -64,12 +64,12 @@ jobs:
           echo "NEXT_PUBLIC_APP_ENV=${{ vars.STAGING_NEXT_PUBLIC_APP_ENV }}" >> .env
           echo "NEXT_PUBLIC_LENS_APP_ID=${{ vars.STAGING_NEXT_PUBLIC_LENS_APP_ID }}" >> .env
           echo "NEXT_PUBLIC_LEMONADE_FEED_ADDRESS=${{ vars.STAGING_NEXT_PUBLIC_LEMONADE_FEED_ADDRESS }}" >> .env
-          echo "NEXT_PUBLIC_LENS_NAMESPACE=${{ vars.STAGING_NEXT_PUBLIC_LENS_NAMESPACE }}" >> .env
           echo "NEXT_PUBLIC_LMD_VIDEO=${{ vars.STAGING_NEXT_PUBLIC_LMD_VIDEO }}" >> .env
           echo "NEXT_PUBLIC_LEMONHEADS_INDEXER_URL=${{ vars.STAGING_NEXT_PUBLIC_LEMONHEADS_INDEXER_URL }}" >> .env
           echo "NEXT_PUBLIC_GIPHY_API_KEY=${{ vars.STAGING_NEXT_PUBLIC_GIPHY_API_KEY }}" >> .env
           echo "NEXT_PUBLIC_AUTH_COOKIE_NAME=${{ vars.STAGING_NEXT_PUBLIC_AUTH_COOKIE_NAME }}" >> .env
           echo "NEXT_PUBLIC_COIN_INDEXER_URL=${{ vars.STAGING_NEXT_PUBLIC_COIN_INDEXER_URL }}" >> .env
+          echo "NEXT_PUBLIC_USERNAME_INDEXER=${{ vars.STAGING_NEXT_PUBLIC_USERNAME_INDEXER }}" >> .env
 
       - name: Configure environment
         run: |

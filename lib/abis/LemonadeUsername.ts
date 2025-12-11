@@ -21,6 +21,11 @@ export const LemonadeUsernameABI = [
         "name": "_gatedNft",
         "type": "address",
         "internalType": "address"
+      },
+      {
+        "name": "_royaltyBasisPoints",
+        "type": "uint96",
+        "internalType": "uint96"
       }
     ],
     "stateMutability": "nonpayable"
@@ -133,36 +138,12 @@ export const LemonadeUsernameABI = [
   },
   {
     "type": "function",
-    "name": "isPendingReserved",
+    "name": "isUserNameMinted",
     "inputs": [
       {
         "name": "username",
         "type": "string",
         "internalType": "string"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "isUsernameAvailable",
-    "inputs": [
-      {
-        "name": "username",
-        "type": "string",
-        "internalType": "string"
-      },
-      {
-        "name": "to",
-        "type": "address",
-        "internalType": "address"
       }
     ],
     "outputs": [
@@ -335,21 +316,32 @@ export const LemonadeUsernameABI = [
   },
   {
     "type": "function",
-    "name": "reserveUsernames",
+    "name": "royaltyInfo",
     "inputs": [
       {
-        "name": "usernames",
-        "type": "string[]",
-        "internalType": "string[]"
+        "name": "tokenId",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        "name": "owners",
-        "type": "address[]",
-        "internalType": "address[]"
+        "name": "salePrice",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
+    "outputs": [
+      {
+        "name": "receiver",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -428,6 +420,24 @@ export const LemonadeUsernameABI = [
         "name": "_beneficiary",
         "type": "address",
         "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setDefaultRoyalty",
+    "inputs": [
+      {
+        "name": "receiver",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "royaltyBasisPoints",
+        "type": "uint96",
+        "internalType": "uint96"
       }
     ],
     "outputs": [],
@@ -586,25 +596,6 @@ export const LemonadeUsernameABI = [
         "name": "",
         "type": "bool",
         "internalType": "bool"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "usernameOwners",
-    "inputs": [
-      {
-        "name": "",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
       }
     ],
     "stateMutability": "view"
@@ -801,6 +792,70 @@ export const LemonadeUsernameABI = [
   },
   {
     "type": "error",
+    "name": "ERC2981InvalidDefaultRoyalty",
+    "inputs": [
+      {
+        "name": "numerator",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "denominator",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "ERC2981InvalidDefaultRoyaltyReceiver",
+    "inputs": [
+      {
+        "name": "receiver",
+        "type": "address",
+        "internalType": "address"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "ERC2981InvalidTokenRoyalty",
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "numerator",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "denominator",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "ERC2981InvalidTokenRoyaltyReceiver",
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "receiver",
+        "type": "address",
+        "internalType": "address"
+      }
+    ]
+  },
+  {
+    "type": "error",
     "name": "ERC721IncorrectOwner",
     "inputs": [
       {
@@ -915,11 +970,6 @@ export const LemonadeUsernameABI = [
   {
     "type": "error",
     "name": "InvalidBeneficiary",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "InvalidLength",
     "inputs": []
   },
   {
