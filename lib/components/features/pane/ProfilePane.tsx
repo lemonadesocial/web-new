@@ -36,7 +36,7 @@ import { useDisconnect } from '$lib/utils/appkit';
 
 import { SelectProfileModal } from '../lens-account/SelectProfileModal';
 import { ProfileMenu } from '../lens-account/ProfileMenu';
-import { ClaimLemonadeUsernameModal } from '../lens-account/ClaimLemonadeUsernameModal';
+import { ClaimLemonadeUsernameModal } from '../modals/ClaimLemonadeUsernameModal';
 import { PROFILE_SOCIAL_LINKS } from '$lib/utils/constants';
 
 type ProfileValues = {

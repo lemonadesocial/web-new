@@ -9,7 +9,7 @@ import { getAccountAvatar } from "$lib/utils/lens/utils";
 import { LensConnectWallet } from "./LensConnectWallet";
 import { SelectProfileModal } from "./SelectProfileModal";
 import { ProfileMenu } from "./ProfileMenu";
-import { ClaimLemonadeUsernameModal } from "./ClaimLemonadeUsernameModal";
+import { ClaimLemonadeUsernameModal } from "../modals/ClaimLemonadeUsernameModal";
 
 export function LensAccountCard() {
   const { isLoading: loadingSession } = useResumeSession();

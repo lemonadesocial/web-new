@@ -3,26 +3,27 @@ import { useState, useCallback } from 'react';
 import { useAtomValue } from 'jotai';
 import * as Sentry from '@sentry/nextjs';
 import { createDrift } from '@gud/drift';
+import { ethersAdapter } from '@gud/drift-ethers';
+import { BrowserProvider, Eip1193Provider } from 'ethers';
 import debounce from 'lodash/debounce';
 
 import { Button, modal, ModalContent, toast } from "$lib/components/core";
 import { formatError } from '$lib/utils/crypto';
-import { ConnectWallet } from '../modals/ConnectWallet';
 import { listChainsAtom } from '$lib/jotai';
-import { useSigner } from '$lib/hooks/useSigner';
-import { appKit } from '$lib/utils/appkit';
+import { appKit, useAppKitProvider } from '$lib/utils/appkit';
 import { LemonadeUsernameABI } from '$lib/abis/LemonadeUsername';
+import { trpc } from '$lib/trpc/client';
 
-import { SuccessModal } from '../modals/SuccessModal';
+import { SuccessModal } from './SuccessModal';
+import { ASSET_PREFIX, GAS_LIMIT } from '$lib/utils/constants';
 
 export function ClaimLemonadeUsernameModal() {
-  const signer = useSigner();
+  const { walletProvider } = useAppKitProvider('eip155');
   const listChains = useAtomValue(listChainsAtom);
   const usernameChain = listChains.find(chain => chain.lemonade_username_contract_address)!;
-  const drift = createDrift({
-    rpcUrl: usernameChain.rpc_url,
-  });
 
+  const usernameApprovalMutation = trpc.usernameApproval.useMutation();
+  const uploadUsernameMetadataMutation = trpc.uploadUsernameMetadata.useMutation();
 
   const [username, setUsername] = useState('');
   const [step, setStep] = useState<'search' | 'success'>('search');
@@ -31,6 +32,10 @@ export function ClaimLemonadeUsernameModal() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const checkUsernameAvailability = async (value: string, toAddress: string) => {
+    const drift = createDrift({
+      rpcUrl: usernameChain.rpc_url,
+    });
+
     const isAvailable = await drift.read({
       abi: LemonadeUsernameABI,
       address: usernameChain.lemonade_username_contract_address as `0x${string}`,
@@ -48,12 +53,11 @@ export function ClaimLemonadeUsernameModal() {
     debounce(async (value: string) => {
       if (!value || value.length === 0) return;
 
-      const walletProvider = appKit.getProvider('eip155');
       const address = appKit.getAddress();
 
-      if (!walletProvider || !address) {
+      if (!address) {
         setStatus('idle');
-        setErrorMessage('');
+        setErrorMessage('Please connect your wallet');
         return;
       }
 
@@ -81,14 +85,61 @@ export function ClaimLemonadeUsernameModal() {
 
   const handleClaimUsername = async () => {
     try {
-      if (!signer) return;
+      if (!walletProvider) throw new Error('Could not find wallet provider');
+
+      const address = appKit.getAddress();
+      if (!address) throw new Error('No wallet address found');
 
       setIsLoading(true);
+
+      const { tokenUri } = await uploadUsernameMetadataMutation.mutateAsync({
+        username,
+      });
+
+      const result = await usernameApprovalMutation.mutateAsync({
+        username,
+        tokenUri,
+        wallet: address,
+      });
+
+      // const result = {
+      //   "signature":"0x5c60b8df42685ecf17c3142347ee6810f5b381d6bfc1722993758fd959afd2880b490361bba4f3353c7d130474cc1b57997aa21047a5214c62b4dfd8515dba901c",
+      //   "price":"100000000000000",
+      //   "currency":"0x0000000000000000000000000000000000000000"
+      // }
+
+      const provider = new BrowserProvider(walletProvider as Eip1193Provider);
+      const signer = await provider.getSigner();
+
+      const adapterConfig = { provider, signer };
+      const drift = createDrift({
+        adapter: ethersAdapter(adapterConfig),
+      });
+
+      const txHash = await drift.write({
+        abi: LemonadeUsernameABI,
+        address: usernameChain.lemonade_username_contract_address as `0x${string}`,
+        fn: 'mintWithSignature',
+        args: {
+          username,
+          to: address as `0x${string}`,
+          tokenUri,
+          price: BigInt(result.price),
+          currency: result.currency as `0x${string}`,
+          signature: result.signature as `0x${string}`,
+        },
+        value: BigInt(result.price),
+        gas: GAS_LIMIT,
+      });
+
+      console.log('Mint transaction hash:', txHash);
 
       setIsLoading(false);
 
       setStep('success');
     } catch (error: any) {
+      console.log(error)
+      setIsLoading(false);
       Sentry.captureException(error);
       toast.error(formatError(error));
     }
@@ -126,10 +177,17 @@ export function ClaimLemonadeUsernameModal() {
 
   return (
     <ModalContent
-      title="Lemonade Username"
+      icon="icon-alternate-email"
       onClose={() => modal.close()}
     >
-      <p className='text-secondary text-sm'>Secure your identity before someone else does. Price depends on character count. This cannot be changed later.</p>
+      <div className='space-y-2'>
+        <p className='text-lg'>Pick Username</p>
+        <p className='text-secondary text-sm'>Secure your identity before someone else does. Price depends on character count. This cannot be changed later.</p>
+        <div className='flex items-center gap-1 mt-2'>
+          <p className='text-sm text-tertiary'>Powered by</p>
+          <img src={`${ASSET_PREFIX}/assets/images/megaeth.svg`} alt='MegaETH' />
+        </div>
+      </div>
 
       <div className='flex items-center justify-between mt-4 h-6'>
         <p className='text-sm'>Lemonade Username</p>
@@ -157,16 +215,7 @@ export function ClaimLemonadeUsernameModal() {
       <Button
         className="w-full mt-4"
         variant="secondary"
-        onClick={() => {
-          modal.open(ConnectWallet, {
-            props: {
-              onConnect: () => {
-                handleClaimUsername();
-              },
-              chain: usernameChain,
-            },
-          });
-        }}
+        onClick={handleClaimUsername}
         disabled={status !== 'available'}
         loading={isLoading}
       >

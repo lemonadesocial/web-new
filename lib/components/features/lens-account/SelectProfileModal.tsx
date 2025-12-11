@@ -15,7 +15,7 @@ import { LENS_NAMESPACE } from '$lib/utils/constants';
 import { formatError, formatWallet } from '$lib/utils/crypto';
 
 import { SignTransactionModal } from '../modals/SignTransaction';
-import { ClaimLemonadeUsernameModal } from './ClaimLemonadeUsernameModal';
+import { ClaimLemonadeUsernameModal } from '../modals/ClaimLemonadeUsernameModal';
 import { ClaimAccountModal } from './ClaimAccountModal';
 import { useSyncLensAccount } from '$lib/hooks/useLens';
 import { useClient } from '$lib/graphql/request';

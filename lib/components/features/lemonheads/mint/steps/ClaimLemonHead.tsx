@@ -13,7 +13,7 @@ import { useAccount, useLemonadeUsername, usePost } from '$lib/hooks/useLens';
 import { ETHERSCAN } from '$lib/utils/constants';
 
 import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
-import { ClaimLemonadeUsernameModal } from '$lib/components/features/lens-account/ClaimLemonadeUsernameModal';
+import { ClaimLemonadeUsernameModal } from '$lib/components/features/modals/ClaimLemonadeUsernameModal';
 import { EditProfileModal } from '$lib/components/features/lens-account/EditProfileModal';
 import { PostComposer } from '$lib/components/features/lens-feed/PostComposer';
 import { PostComposerModal } from '$lib/components/features/lens-feed/PostComposerModal';

@@ -1903,6 +1903,11 @@
   resolved "https://registry.npmjs.org/@graphql-typed-document-node/core/-/core-3.2.0.tgz"
   integrity sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==
 
+"@gud/drift-ethers@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@gud/drift-ethers/-/drift-ethers-1.0.2.tgz#9e84ab620e2d5399155e1093a8133f084689e01a"
+  integrity sha512-lNZ2XdIlMOtrYDW5HOtMHBHJpD6j7a4/Jwj+BVjPK28WV5NSFmZn/KS6Ay+3Mzm9wPk4kt22DmY2QNdL6OKAHA==
+
 "@gud/drift@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@gud/drift/-/drift-1.0.2.tgz#536b924311702afdff2960307094564c04ad600a"
@@ -12219,6 +12224,11 @@ pify@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/pify/-/pify-5.0.0.tgz#1f5eca3f5e87ebec28cc6d54a0e4aaf00acc127f"
   integrity sha512-eW/gHNMlxdSP6dmG6uJip6FXN0EQBwm2clYYd8Wul42Cwu/DK8HEftzsapcNdYe2MfLiIwZqsDk2RDEsTE79hA==
+
+pinata@^2.5.1:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/pinata/-/pinata-2.5.1.tgz#59b689bce48bc7a8154d2daaca502e410ff53fde"
+  integrity sha512-AyQIlgeD1uI3C/qjqBOare5kj9J4O/x85hkDckPiB13RY2Fem4bvkMOLQsLWSv79xlkVeLAx15PO7slGItiClQ==
 
 pino-abstract-transport@^2.0.0:
   version "2.0.0"

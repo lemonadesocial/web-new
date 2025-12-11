@@ -18,7 +18,7 @@ import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { ConnectWalletModal } from '$lib/components/features/auth/ConnectWalletModal';
 import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
-import { ClaimLemonadeUsernameModal } from '$lib/components/features/lens-account/ClaimLemonadeUsernameModal';
+import { ClaimLemonadeUsernameModal } from '$lib/components/features/modals/ClaimLemonadeUsernameModal';
 import { ProfilePane } from '$lib/components/features/pane';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { PageTitle } from '../shared';

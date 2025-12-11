@@ -540,10 +540,12 @@ export type Chain = {
   chain_id: Scalars['String']['output'];
   code_name: Scalars['String']['output'];
   donation_registry_contract?: Maybe<Scalars['String']['output']>;
+  drip_nation_passport_contract_address?: Maybe<Scalars['String']['output']>;
   eas_event_contract?: Maybe<Scalars['String']['output']>;
   eas_graphql_url?: Maybe<Scalars['String']['output']>;
   ens_registry?: Maybe<Scalars['String']['output']>;
   escrow_manager_contract?: Maybe<Scalars['String']['output']>;
+  festival_nation_passport_contract_address?: Maybe<Scalars['String']['output']>;
   fluffle_contract_address?: Maybe<Scalars['String']['output']>;
   is_zerodev_compatible?: Maybe<Scalars['Boolean']['output']>;
   launchpad_closed_permissions_contract_address?: Maybe<Scalars['String']['output']>;
@@ -572,6 +574,7 @@ export type Chain = {
   safe_confirmations: Scalars['Float']['output'];
   stake_payment_contract?: Maybe<Scalars['String']['output']>;
   tokens?: Maybe<Array<Token>>;
+  vinyl_nation_passport_contract_address?: Maybe<Scalars['String']['output']>;
   zugrama_passport_contract_address?: Maybe<Scalars['String']['output']>;
 };
 
@@ -5074,7 +5077,10 @@ export type PassportMintingInfo = {
 };
 
 export enum PassportProvider {
+  DripNation = 'drip_nation',
+  FestivalNation = 'festival_nation',
   Lemonade = 'lemonade',
+  VinylNation = 'vinyl_nation',
   Zugrama = 'zugrama'
 }
 

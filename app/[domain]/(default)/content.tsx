@@ -20,19 +20,17 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { EventPane, ProfilePane } from '$lib/components/features/pane';
-import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { CompleteProfilePane } from '$lib/components/features/pane/CompleteProfilePane';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { VerifyEmailModal } from '$lib/components/features/auth/VerifyEmailModal';
-import { ClaimLemonadeUsernameModal } from '$lib/components/features/lens-account/ClaimLemonadeUsernameModal';
+import { ClaimLemonadeUsernameModal } from '$lib/components/features/modals/ClaimLemonadeUsernameModal';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
-import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
-import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { useAtomValue } from 'jotai';
 import { chainsMapAtom } from '$lib/jotai';
 import { GetVerifiedModal } from '$lib/components/features/modals/GetVerifiedModal';
 import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
+import { useClaimUsername } from '$lib/hooks/useUsername';
 
 export function Content() {
   const me = useMe();
@@ -468,6 +466,7 @@ function CompleteYourProfile() {
   const me = useMe();
   // const { username } = useLemonadeUsername(account);
   const { username } = { username: false }
+  const openClaimUsername = useClaimUsername();
 
   const chainsMap = useAtomValue(chainsMapAtom);
 
@@ -505,7 +504,7 @@ function CompleteYourProfile() {
       label: 'Claim Username',
       completed: !!username,
       show: true,
-      onClick: () => modal.open(ClaimLemonadeUsernameModal),
+      onClick: openClaimUsername,
     },
     // {key: 'verify_email', label: 'Download Lemonade app', completed: false },
     {

@@ -12,6 +12,8 @@ export const LENS_NAMESPACE = process.env.NEXT_PUBLIC_LENS_NAMESPACE as string;
 
 export const ETHERSCAN = 'https://etherscan.io';
 
+export const GAS_LIMIT = BigInt(1_000_000);
+
 export const ETHNICITIES = [
   'African American',
   'Alaska Native',

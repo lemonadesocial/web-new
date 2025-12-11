@@ -12,7 +12,7 @@ import { Avatar, Button, Input, modal, ModalContent, toast, FileInput, LabeledIn
 import { randomUserImage } from '$lib/utils/user';
 import { useSigner } from '$lib/hooks/useSigner';
 
-import { ClaimLemonadeUsernameModal } from './ClaimLemonadeUsernameModal';
+import { ClaimLemonadeUsernameModal } from '../modals/ClaimLemonadeUsernameModal';
 
 export function ClaimAccountModal() {
   const sessionClient = useAtomValue(sessionClientAtom);
