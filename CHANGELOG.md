@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.35.0](https://github.com/lemonadesocial/web-new/compare/v8.34.2...v8.35.0) (2025-12-12)
+
+
+### Features
+
+* upgrade react security patches ([08c25e8](https://github.com/lemonadesocial/web-new/commit/08c25e86b3526b463ea189162fb8b9213d4b435b))
+
 ## [8.34.2](https://github.com/lemonadesocial/web-new/compare/v8.34.1...v8.34.2) (2025-12-10)
 
 
