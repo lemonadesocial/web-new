@@ -10,6 +10,8 @@ import { PASSPORT_CONFIG } from '../config';
 
 export function MintPassportContent() {
   const [state, dispatch] = usePassportContext();
+  const provider = state.provider;
+
   const [loading, setLoading] = React.useState(false);
 
   const { address } = useAppKitAccount();
@@ -40,7 +42,7 @@ export function MintPassportContent() {
     }
   }, [address, state.lemonadeUsername, state.useENS, state.useFluffle]);
 
-  const Comp = PASSPORT_CONFIG.mint.steps[state.currentStep].component;
+  const Comp = PASSPORT_CONFIG[provider].steps[state.currentStep].component;
 
   return (
     <>

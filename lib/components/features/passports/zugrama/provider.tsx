@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { PASSPORT_PROVIDER } from '../config';
 
 export enum PassportStep {
   'intro' = 'intro',
@@ -9,6 +10,7 @@ export enum PassportStep {
 }
 
 export type PassportState = {
+  provider: PASSPORT_PROVIDER;
   currentStep: PassportStep;
   photo: string;
   isSelfVerified: boolean;
@@ -26,6 +28,7 @@ export type PassportState = {
 };
 
 const defaultState: PassportState = {
+  provider: 'zugrama',
   currentStep: PassportStep.intro,
   photo: '',
   isSelfVerified: false,
