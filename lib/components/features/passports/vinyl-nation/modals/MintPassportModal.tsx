@@ -10,7 +10,7 @@ import { appKit, useAppKitProvider } from '$lib/utils/appkit';
 import { formatError, ZugramaPassportContract, writeContract } from '$lib/utils/crypto';
 import { SignTransactionModal } from '$lib/components/features/modals/SignTransaction';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
-import { PASSPORT_CHAIN_ID } from '../utils';
+import { PASSPORT_CHAIN_ID } from '../../utils';
 import { chainsMapAtom } from '$lib/jotai';
 import ZuGramaPassport from '$lib/abis/ZuGramaPassport.json';
 

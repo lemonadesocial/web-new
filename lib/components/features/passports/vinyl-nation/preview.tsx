@@ -1,13 +1,12 @@
 'use client';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
-import { TypeAnimation } from 'react-type-animation';
+import { skipToken } from '@tanstack/react-query';
 
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { usePassportContext } from './provider';
 import { PassportStep, PassportActionKind } from './provider';
 import { trpc } from '$lib/trpc/client';
-import { Skeleton, Spacer } from '$lib/components/core';
 
 export function PassportPreview() {
   return (
@@ -29,17 +28,11 @@ export function PassportPreview() {
 function ImagePreview({ className }: { className?: string }) {
   const [state, dispatch] = usePassportContext();
 
-  const getImage = trpc.zugrama.getImage.useMutation();
-  const loading = getImage.isPending;
+  const variables =
+    state.currentStep === PassportStep.intro ? skipToken : { avatarImageUrl: state.photo, username: state.ensName };
 
-  React.useEffect(() => {
-    if (state.currentStep === PassportStep.intro) return;
-
-    getImage.mutate({
-      avatarImageUrl: state.photo,
-      username: state.ensName,
-    });
-  }, [state.currentStep, state.photo, state.ensName]);
+  const getImage = trpc.passport.getImage.zugrama.useQuery(variables);
+  const loading = getImage.isLoading;
 
   React.useEffect(() => {
     const img = getImage.data?.image;

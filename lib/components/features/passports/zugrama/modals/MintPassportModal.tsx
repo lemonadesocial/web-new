@@ -10,7 +10,7 @@ import { appKit, useAppKitProvider } from '$lib/utils/appkit';
 import { formatError, ZugramaPassportContract, writeContract } from '$lib/utils/crypto';
 import { SignTransactionModal } from '$lib/components/features/modals/SignTransaction';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
-import { PASSPORT_CHAIN_ID } from '../utils';
+import { PASSPORT_CHAIN_ID } from '../../utils';
 import { chainsMapAtom } from '$lib/jotai';
 import ZuGramaPassport from '$lib/abis/ZuGramaPassport.json';
 
@@ -22,7 +22,7 @@ type MintData = {
 
 export function MintPassportModal({
   onComplete,
-  mintData
+  mintData,
 }: {
   onComplete: (txHash: string, tokenId: string) => void;
   mintData: MintData;
@@ -51,7 +51,7 @@ export function MintPassportModal({
         walletProvider as Eip1193Provider,
         'mint',
         [mintData.metadata, mintData.price, mintData.signature],
-        { value: mintData.price }
+        { value: mintData.price },
       );
 
       const txHash = transaction.hash;
@@ -86,7 +86,7 @@ export function MintPassportModal({
       modal.close();
       onComplete(txHash, tokenId);
     } catch (error: any) {
-      console.log(error)
+      console.log(error);
       Sentry.captureException(error, {
         extra: {
           walletInfo: appKit.getWalletInfo(),
@@ -122,14 +122,17 @@ export function MintPassportModal({
     <ModalContent>
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
-          <img src={`${ASSET_PREFIX}/assets/images/zugrama-passport-placeholder.png`} className="object-cover w-[90px]" />
+          <img
+            src={`${ASSET_PREFIX}/assets/images/zugrama-passport-placeholder.png`}
+            className="object-cover w-[90px]"
+          />
           <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
         </div>
         <div className="flex flex-col gap-2">
           <p className="text-lg">Claim Your Zugrama Passport</p>
           <p className="text-sm">
-            You're just one step away from owning your unique & personalized Zugrama Passport. Mint & claim your on-chain
-            identity.
+            You're just one step away from owning your unique & personalized Zugrama Passport. Mint & claim your
+            on-chain identity.
           </p>
         </div>
 

@@ -11,7 +11,7 @@ import { formatWallet, ZugramaPassportContract } from '$lib/utils/crypto';
 import { useClient } from '$lib/graphql/request';
 import { CanMintPassportDocument, Chain, PassportProvider } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom } from '$lib/jotai';
-import { PASSPORT_CHAIN_ID } from '../utils';
+import { PASSPORT_CHAIN_ID } from '../../utils';
 
 // TODO: PASSPORT UPDATING
 async function checkPassportBalance(address: string, chain: Chain) {

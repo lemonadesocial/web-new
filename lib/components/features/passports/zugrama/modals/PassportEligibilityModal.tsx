@@ -11,7 +11,7 @@ import { formatWallet, ZugramaPassportContract } from '$lib/utils/crypto';
 import { useClient } from '$lib/graphql/request';
 import { CanMintPassportDocument, Chain, PassportProvider } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom } from '$lib/jotai';
-import { PASSPORT_CHAIN_ID } from '../utils';
+import { PASSPORT_CHAIN_ID } from '../../utils';
 
 async function checkPassportBalance(address: string, chain: Chain) {
   const contractAddress = chain.zugrama_passport_contract_address;
@@ -138,7 +138,8 @@ export function PassportEligibilityModal({ onContinue }: { onContinue: () => voi
         <div className="space-y-2">
           <p className="text-lg">You're Not on the List Yet</p>
           <p className="text-sm text-secondary">
-            You're not whitelisted to mint your Zugrama Passport yet. Register to the Zugrama Launch to secure your spot.
+            You're not whitelisted to mint your Zugrama Passport yet. Register to the Zugrama Launch to secure your
+            spot.
           </p>
         </div>
 

@@ -91,6 +91,7 @@ export const appRouter = router({
       const { wallet, lemonadeUsername, fluffleTokenId } = input;
       return getMintLemonadePassportData(wallet, lemonadeUsername, fluffleTokenId);
     }),
+  // TODO: check and remove this func after test dynamic mint passport
   zugrama: {
     getImage: publicProcedure
       .input(
@@ -103,6 +104,21 @@ export const appRouter = router({
         const { avatarImageUrl, username } = input;
         return getMintZuGramaPassportImage(avatarImageUrl, username);
       }),
+  },
+  passport: {
+    getImage: {
+      zugrama: publicProcedure
+        .input(
+          z.object({
+            avatarImageUrl: z.string().optional(),
+            username: z.string().optional(),
+          }),
+        )
+        .query(async ({ input }) => {
+          const { avatarImageUrl, username } = input;
+          return getMintZuGramaPassportImage(avatarImageUrl, username);
+        }),
+    },
   },
 });
 
