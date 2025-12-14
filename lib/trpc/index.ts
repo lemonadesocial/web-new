@@ -9,6 +9,7 @@ import { getMintZuGramaPassportImage } from '$lib/services/passports/zugrama';
 import { publicProcedure, router } from './trpc';
 import lemonheads, { BuildQueryParams } from './lemonheads';
 import { LemonHeadsLayer } from './lemonheads/types';
+import { getMintVinylNationPassportImage } from '$lib/services/passports/vinyl-nation';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -116,7 +117,7 @@ export const appRouter = router({
         )
         .query(async ({ input }) => {
           const { avatarImageUrl, username } = input;
-          return getMintZuGramaPassportImage(avatarImageUrl, username);
+          return getMintVinylNationPassportImage(avatarImageUrl, username);
         }),
     },
   },
