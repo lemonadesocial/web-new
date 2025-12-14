@@ -15,7 +15,7 @@ import { PassportActionKind, PassportStep, usePassportContext } from './provider
 import { ConnectWallet } from '../../modals/ConnectWallet';
 import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { MintPassportModal } from './modals/MintPassportModal';
-import { PASSPORT_CHAIN_ID } from './utils';
+import { PASSPORT_CHAIN_ID } from '../utils';
 import { PassportEligibilityModal } from './modals/PassportEligibilityModal';
 import { PASSPORT_CONFIG } from '../config';
 

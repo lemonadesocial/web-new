@@ -2,12 +2,9 @@
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { ASSET_PREFIX } from '$lib/utils/constants';
-import { usePassportContext } from './provider';
-import { PassportStep, PassportActionKind } from './provider';
 import { trpc } from '$lib/trpc/client';
-import { useMe } from '$lib/hooks/useMe';
-import { useAppKitAccount } from '$lib/utils/appkit';
+import { ASSET_PREFIX } from '$lib/utils/constants';
+import { usePassportContext, PassportStep, PassportActionKind } from './provider';
 
 export function PassportPreview() {
   return (

@@ -12,7 +12,7 @@ import { chainsMapAtom } from '$lib/jotai';
 import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { match } from 'ts-pattern';
 import { MintPassportModal } from './modals/MintPassportModal';
-import { PASSPORT_CHAIN_ID } from './utils';
+import { PASSPORT_CHAIN_ID } from '../utils';
 import { PassportEligibilityModal } from './modals/PassportEligibilityModal';
 import { PASSPORT_CONFIG } from '../config';
 
