@@ -31,7 +31,7 @@ function ImagePreview({ className }: { className?: string }) {
   const variables =
     state.currentStep === PassportStep.intro
       ? skipToken
-      : { avatarImageUrl: state.photo, username: state.ensName, provider: 'vinyl-nation' };
+      : { avatarImageUrl: state.photo, username: state.ensName, provider: 'drip-nation' };
 
   const getImage = trpc.passport.getImage.useQuery(variables);
   const loading = getImage.isLoading;
@@ -48,7 +48,7 @@ function ImagePreview({ className }: { className?: string }) {
     return (
       <div className={twMerge('relative', className)}>
         <img
-          src={`${ASSET_PREFIX}/assets/images/passports/vinyl-nation-passport-citizen-mini.png`}
+          src={`${ASSET_PREFIX}/assets/images/passports/drip-nation-passport-mini.png`}
           className="w-full object-cover"
         />
       </div>
@@ -61,7 +61,7 @@ function ImagePreview({ className }: { className?: string }) {
   return (
     <div className={twMerge('relative', className)}>
       <img
-        src={`${ASSET_PREFIX}/assets/images/passports/vinyl-nation-passport-citizen-mini.png`}
+        src={`${ASSET_PREFIX}/assets/images/passports/drip-nation-passport-mini.png`}
         className="w-full object-cover"
       />
     </div>

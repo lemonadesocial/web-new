@@ -10,6 +10,8 @@ import { publicProcedure, router } from './trpc';
 import lemonheads, { BuildQueryParams } from './lemonheads';
 import { LemonHeadsLayer } from './lemonheads/types';
 import { getMintVinylNationPassportImage } from '$lib/services/passports/vinyl-nation';
+import { match } from 'ts-pattern';
+import { getMintDripNationPassportImage } from '$lib/services/passports/drip-nation';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -107,19 +109,23 @@ export const appRouter = router({
       }),
   },
   passport: {
-    getImage: {
-      zugrama: publicProcedure
-        .input(
-          z.object({
-            avatarImageUrl: z.string().optional(),
-            username: z.string().optional(),
-          }),
-        )
-        .query(async ({ input }) => {
-          const { avatarImageUrl, username } = input;
-          return getMintVinylNationPassportImage(avatarImageUrl, username);
+    getImage: publicProcedure
+      .input(
+        z.object({
+          provider: z.string(),
+          avatarImageUrl: z.string().optional(),
+          username: z.string().optional(),
         }),
-    },
+      )
+      .query(async ({ input }) => {
+        const { avatarImageUrl, username, provider } = input;
+
+        return match(provider)
+          .with('zugrama', () => getMintZuGramaPassportImage(avatarImageUrl, username))
+          .with('vinyl-nation', () => getMintVinylNationPassportImage(avatarImageUrl, username))
+          .with('drip-nation', () => getMintDripNationPassportImage(avatarImageUrl, username))
+          .otherwise(() => {});
+      }),
   },
 });
 

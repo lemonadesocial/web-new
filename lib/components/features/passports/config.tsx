@@ -9,17 +9,25 @@ import { PassportFooter as MintPassportFooter } from './mint/footer';
 import { MintPassportContent } from './mint/content';
 import * as mint from './mint/steps';
 
+// zugrama
 import { PassportFooter as ZugramaPassportFooter } from './zugrama/footer';
 import { ZugramaPassportContent } from './zugrama/content';
 import { PassportProvider as ZugramaPassportProvider } from './zugrama/provider';
 import * as zugrama from './zugrama/steps';
 
+// vinyl-nation
 import { PassportFooter as VinylNationPassportFooter } from './vinyl-nation/footer';
 import { VinylNationPassportContent } from './vinyl-nation/content';
 import { PassportProvider as VinylNationPassportProvider } from './vinyl-nation/provider';
 import * as vinylNation from './vinyl-nation/steps';
 
-export type PASSPORT_PROVIDER = 'mint' | 'zugrama' | 'vinyl-nation';
+// drip- nation
+import { PassportFooter as DripNationPassportFooter } from './drip-nation/footer';
+import { DripNationPassportContent } from './drip-nation/content';
+import { PassportProvider as DripNationPassportProvider } from './drip-nation/provider';
+import * as dripNation from './drip-nation/steps';
+
+export type PASSPORT_PROVIDER = 'mint' | 'zugrama' | 'vinyl-nation' | 'drip-nation';
 
 export interface PassportConfig {
   steps: {
@@ -58,7 +66,15 @@ export const PASSPORT_METADATA: { [key: string]: object } = {
     metadata: {
       title: 'Vinyl Nation Passport',
       openGraph: {
-        images: `${ASSET_PREFIX}/assets/images/passports/vinyl-nation-passport-placeholder.png`,
+        images: `${ASSET_PREFIX}/assets/images/passports/vinyl-nation-passport-citizen-mini.png`,
+      },
+    },
+  },
+  'drip-nation': {
+    metadata: {
+      title: 'Drip Nation Passport',
+      openGraph: {
+        images: `${ASSET_PREFIX}/assets/images/passports/drip-nation-passport-mini.png`,
       },
     },
   },
@@ -97,5 +113,16 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
     provider: VinylNationPassportProvider,
     content: VinylNationPassportContent,
     footer: VinylNationPassportFooter,
+  },
+  'drip-nation': {
+    steps: {
+      intro: { label: '', component: dripNation.PassportIntro, btnText: "Yes, I'm In!", index: 0 },
+      photo: { label: 'Passport Photo', component: dripNation.PassportPhoto, btnText: 'Continue', index: 1 },
+      username: { label: 'Username', component: dripNation.PassportUsername, btnText: 'Claim Passport', index: 2 },
+      celebrate: { label: 'Celebrate', component: dripNation.PassportCelebrate, btnText: 'Done', index: 3 },
+    },
+    provider: DripNationPassportProvider,
+    content: DripNationPassportContent,
+    footer: DripNationPassportFooter,
   },
 };

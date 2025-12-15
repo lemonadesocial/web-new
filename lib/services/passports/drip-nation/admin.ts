@@ -2,7 +2,7 @@ import { request } from '$lib/services/nft/admin';
 
 export const getApproval = async (wallet: string, user: string, uri: string) => {
   const opts = {
-    provider: 'vinyl-nation',
+    provider: 'drip-nation',
     wallet,
     user,
     uri,
@@ -12,7 +12,7 @@ export const getApproval = async (wallet: string, user: string, uri: string) => 
 
 export const getData = async (authCookie: string) => {
   return request<{ userId: string; passportNumber: number; selfVerifiedTimestamp: number }>(
-    `/passport/data?provider=vinyl-nation&auth=${authCookie}`,
+    `/passport/data?provider=drip-nation&auth=${authCookie}`,
     'GET',
   );
 };
