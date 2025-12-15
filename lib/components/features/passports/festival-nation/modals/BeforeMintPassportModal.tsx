@@ -13,10 +13,12 @@ export function BeforeMintPassportModal({ onContinue }: { onContinue: () => void
         <div className="flex flex-col gap-2">
           <p className="text-lg">Before You Mint</p>
           <p className="text-sm">Please review and agree to the terms.</p>
-          <p className="text-sm">By minting your Passport, you agree to our Terms of Use and acknowledge that:</p>
+          <p className="text-sm">
+            By minting your Festival Nation Passport, you agree to our Terms of Use and acknowledge that:
+          </p>
           <ul className="list-disc pl-5.5 text-sm">
             <li className="text-secondary text-sm font-medium">
-              Drip Nation Passport NFT is non-transferable & non-tradable (soul-bound).
+              Festival Nation Passport NFT is non-transferable & non-tradable (soul-bound).
             </li>
             <li className="text-secondary text-sm font-medium">Your Passport will be permanently recorded on-chain.</li>
             <li className="text-secondary text-sm font-medium">

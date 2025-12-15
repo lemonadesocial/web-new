@@ -12,6 +12,7 @@ import { LemonHeadsLayer } from './lemonheads/types';
 import { getMintVinylNationPassportImage } from '$lib/services/passports/vinyl-nation';
 import { match } from 'ts-pattern';
 import { getMintDripNationPassportImage } from '$lib/services/passports/drip-nation';
+import { getMintFestivalNationPassportImage } from '$lib/services/passports/festival-nation';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -123,6 +124,7 @@ export const appRouter = router({
         return match(provider)
           .with('zugrama', () => getMintZuGramaPassportImage(avatarImageUrl, username))
           .with('vinyl-nation', () => getMintVinylNationPassportImage(avatarImageUrl, username))
+          .with('festival-nation', () => getMintFestivalNationPassportImage(avatarImageUrl, username))
           .with('drip-nation', () => getMintDripNationPassportImage(avatarImageUrl, username))
           .otherwise(() => {});
       }),

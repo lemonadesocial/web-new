@@ -21,13 +21,19 @@ import { VinylNationPassportContent } from './vinyl-nation/content';
 import { PassportProvider as VinylNationPassportProvider } from './vinyl-nation/provider';
 import * as vinylNation from './vinyl-nation/steps';
 
+// festival-nation
+import { PassportFooter as FestivalNationPassportFooter } from './festival-nation/footer';
+import { FestivalNationPassportContent } from './festival-nation/content';
+import { PassportProvider as FestivalNationPassportProvider } from './festival-nation/provider';
+import * as festivalNation from './festival-nation/steps';
+
 // drip- nation
 import { PassportFooter as DripNationPassportFooter } from './drip-nation/footer';
 import { DripNationPassportContent } from './drip-nation/content';
 import { PassportProvider as DripNationPassportProvider } from './drip-nation/provider';
 import * as dripNation from './drip-nation/steps';
 
-export type PASSPORT_PROVIDER = 'mint' | 'zugrama' | 'vinyl-nation' | 'drip-nation';
+export type PASSPORT_PROVIDER = 'mint' | 'zugrama' | 'vinyl-nation' | 'festival-nation' | 'drip-nation';
 
 export interface PassportConfig {
   steps: {
@@ -113,6 +119,17 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
     provider: VinylNationPassportProvider,
     content: VinylNationPassportContent,
     footer: VinylNationPassportFooter,
+  },
+  'festival-nation': {
+    steps: {
+      intro: { label: '', component: festivalNation.PassportIntro, btnText: "Yes, I'm In!", index: 0 },
+      photo: { label: 'Passport Photo', component: festivalNation.PassportPhoto, btnText: 'Continue', index: 1 },
+      username: { label: 'Username', component: festivalNation.PassportUsername, btnText: 'Claim Passport', index: 2 },
+      celebrate: { label: 'Celebrate', component: festivalNation.PassportCelebrate, btnText: 'Done', index: 3 },
+    },
+    provider: FestivalNationPassportProvider,
+    content: FestivalNationPassportContent,
+    footer: FestivalNationPassportFooter,
   },
   'drip-nation': {
     steps: {

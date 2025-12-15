@@ -11,8 +11,8 @@ import { getFileImageBuffer, getTextImageBuffer, getUrlImageBuffer, Point } from
 
 import { getApproval } from './admin';
 
-const regularFontPath = path.join(process.cwd(), 'data', 'vinyl-nation-passport', 'regular.ttf');
-const regularFontFamily = 'vinyl-nation-passport-font-regular';
+const regularFontPath = path.join(process.cwd(), 'data', 'festival-nation-passport', 'regular.ttf');
+const regularFontFamily = 'festival-nation-passport-font-regular';
 
 const usernameFontSize = 28;
 const textFontSize = 28;
@@ -26,7 +26,7 @@ const firstLineY = 202;
 // const secondLineY = 476;
 
 const avatarOffset: Point = { x: 64, y: 78 };
-const usernameOffset: Point = { x: 552, y: 292 };
+const usernameOffset: Point = { x: 552, y: 312 };
 
 const passportIdOffset: Point = { x: 376, y: 613 };
 const mintDateOffset: Point = { x: firstColumnX, y: firstLineY };
@@ -34,7 +34,7 @@ const titleOffset: Point = { x: secondColumnX, y: firstLineY };
 
 const DESCRIPTION = [
   'The best way to predict the future is to create it.',
-  'You are among the first to shape Vinyl Nation, villages for those who dream to build a future where humanity is surviving, thriving, and flourishing.',
+  'You are among the first to shape Festival Nation, villages for those who dream to build a future where humanity is surviving, thriving, and flourishing.',
 ].join('\n');
 
 const createMetadata = (imageUrl: string, passportId: string) => {
@@ -63,7 +63,7 @@ const getAvatarPlaceholderBuffer = async () => {
 };
 
 const getBoilerplateImageBuffer = async () => {
-  return getFileImageBuffer(path.join(process.cwd(), 'data', 'vinyl-nation-passport', 'boilerplate.png'));
+  return getFileImageBuffer(path.join(process.cwd(), 'data', 'festival-nation-passport', 'boilerplate.png'));
 };
 
 const getUsernameImageBuffer = async (username: string) => {
@@ -80,7 +80,7 @@ const getUsernameImageBuffer = async (username: string) => {
     `${scaledFontSize}px "${regularFontFamily}"`,
     username,
     usernameOffset,
-    '#ffffff',
+    '#E1CE27',
   );
 };
 
@@ -90,26 +90,26 @@ const getPassportIdImageBuffer = async (passportId: string) => {
   return getTextImageBuffer(
     outputWidth,
     outputHeight,
-    `32.88px "${regularFontFamily}"`,
+    `32px "${regularFontFamily}"`,
     passportId,
     passportIdOffset,
-    '#DCD9C1',
+    '#E5E5E5',
   );
 };
 
 const getMintDateImageBuffer = async (mintDate: string) => {
   deregisterAllFonts();
   registerFont(regularFontPath, { family: regularFontFamily });
-  return getTextImageBuffer(outputWidth, outputHeight, regularFont, mintDate, mintDateOffset, '#DCD9C1');
+  return getTextImageBuffer(outputWidth, outputHeight, regularFont, mintDate, mintDateOffset, '#FFFFFF');
 };
 
 const getTitleImageBuffer = async (title: string) => {
   deregisterAllFonts();
   registerFont(regularFontPath, { family: regularFontFamily });
-  return getTextImageBuffer(outputWidth, outputHeight, regularFont, title, titleOffset, '#DCD9C1');
+  return getTextImageBuffer(outputWidth, outputHeight, regularFont, title, titleOffset, '#FFFFFF');
 };
 
-export const getMintVinylNationPassportImage = async (avatarImageUrl?: string, username?: string) => {
+export const getMintFestivalNationPassportImage = async (avatarImageUrl?: string, username?: string) => {
   const creationDate = formatDate(new Date());
 
   const layerPromises: Array<Promise<Buffer>> = [
@@ -135,7 +135,7 @@ export const getMintVinylNationPassportImage = async (avatarImageUrl?: string, u
   return { image: dataUrl };
 };
 
-export const getMintVinylNationPassportData = async (
+export const getMintFestivalNationPassportData = async (
   userId: string,
   passportNumber: number,
   selfVerifiedTimestamp: number,
