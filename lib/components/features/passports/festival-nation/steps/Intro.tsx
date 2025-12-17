@@ -7,7 +7,7 @@ export function PassportIntro() {
         <h1 className="text-2xl md:text-7xl font-semibold leading-tight">Join The Vinyl Nation</h1>
 
         <p className="text-tertiary">
-          Mint your Vinyl Passport and join a community built by music lovers, collectors, and creators.
+          Mint your Festival Passport and join a community built by music lovers, collectors, and creators.
         </p>
       </div>
     </div>
