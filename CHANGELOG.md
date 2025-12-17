@@ -1,5 +1,26 @@
 # Changelog
 
+## [8.35.0](https://github.com/lemonadesocial/web-new/compare/v8.34.2...v8.35.0) (2025-12-12)
+
+
+### Features
+
+* upgrade react security patches ([08c25e8](https://github.com/lemonadesocial/web-new/commit/08c25e86b3526b463ea189162fb8b9213d4b435b))
+
+## [8.34.2](https://github.com/lemonadesocial/web-new/compare/v8.34.1...v8.34.2) (2025-12-10)
+
+
+### Bug Fixes
+
+* check initial data ([12adb73](https://github.com/lemonadesocial/web-new/commit/12adb73a10b814760a7861abc6863d9533fe83de))
+
+## [8.34.1](https://github.com/lemonadesocial/web-new/compare/v8.34.0...v8.34.1) (2025-12-10)
+
+
+### Bug Fixes
+
+* update delete ticket type action ([b4d25c4](https://github.com/lemonadesocial/web-new/commit/b4d25c43741e3fdda361a926344b9911294fbffb))
+
 ## [8.34.0](https://github.com/lemonadesocial/web-new/compare/v8.33.1...v8.34.0) (2025-12-07)
 
 
