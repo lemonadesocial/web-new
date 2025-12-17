@@ -44,6 +44,9 @@ query listChains {
     lemonhead_contract_address
     lemonade_passport_contract_address
     zugrama_passport_contract_address
+    vinyl_nation_passport_contract_address
+    drip_nation_passport_contract_address
+    festival_nation_passport_contract_address
     lemonade_username_contract_address
     poap_enabled
     launchpad_closed_permissions_contract_address

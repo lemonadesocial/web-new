@@ -37,7 +37,7 @@ export function MintPassportModal({
         throw new Error('Mint data not found');
       }
 
-      const contractAddress = chainsMap[PASSPORT_CHAIN_ID]?.zugrama_passport_contract_address;
+      const contractAddress = chainsMap[PASSPORT_CHAIN_ID]?.festival_nation_passport_contract_address;
 
       if (!contractAddress) {
         throw new Error('Passport contract address not configured');

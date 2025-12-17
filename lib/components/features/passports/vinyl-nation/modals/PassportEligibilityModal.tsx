@@ -15,7 +15,7 @@ import { PASSPORT_CHAIN_ID } from '../../utils';
 
 // TODO: PASSPORT UPDATING
 async function checkPassportBalance(address: string, chain: Chain) {
-  // const contractAddress = chain.zugrama_passport_contract_address;
+  // const contractAddress = chain.vinyl_nation_passport_contract_address;
   //
   // if (!contractAddress) {
   //   return 0;
