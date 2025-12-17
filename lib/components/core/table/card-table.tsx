@@ -87,9 +87,9 @@ function Root<T>({ data = [], loading: fetching, children, className }: RootProp
   );
 }
 
-const Header = ({ children }: React.PropsWithChildren) => {
+const Header = ({ children, className }: React.PropsWithChildren & { className?: string }) => {
   return (
-    <Card.Header className="flex p-0 gap-4 text-tertiary bg-transparent border-b-(length:--card-border-width) border-(--color-divider)">
+    <Card.Header className={twMerge("flex p-0 gap-4 text-tertiary bg-transparent border-b-(length:--card-border-width) border-(--color-divider)", className)}>
       {children}
     </Card.Header>
   );
