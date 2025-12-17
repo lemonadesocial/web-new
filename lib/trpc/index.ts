@@ -9,6 +9,8 @@ import { getMintZuGramaPassportImage } from '$lib/services/passports/zugrama';
 import { publicProcedure, router } from './trpc';
 import lemonheads, { BuildQueryParams } from './lemonheads';
 import { LemonHeadsLayer } from './lemonheads/types';
+import { request } from '$lib/services/nft/admin';
+import { pinata } from '$lib/utils/pinata';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -104,6 +106,56 @@ export const appRouter = router({
         return getMintZuGramaPassportImage(avatarImageUrl, username);
       }),
   },
+  usernameApproval: publicProcedure
+    .input(z.object({ username: z.string(), tokenUri: z.string(), wallet: z.string() }))
+    .output(
+      z.object({
+        signature: z.string(),
+        price: z.string(),
+        currency: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const res = await request<{ signature: string; price: string; currency: string; }>(
+        `/lemonade-username/approval`,
+        'POST',
+        input,
+      );
+
+      if (!res) throw new Error('An error occurred while fetching the approval signature.');
+
+      return res;
+    }),
+  uploadUsernameMetadata: publicProcedure
+    .input(z.object({ username: z.string() }))
+    .output(z.object({ tokenUri: z.string() }))
+    .mutation(async ({ input }) => {
+      const { username } = input;
+      const metadata = {
+        name: username,
+        description: 'Lemonade Username',
+        attributes: [
+          {
+            trait_type: 'Created Date',
+            display_type: 'date',
+            value: Date.now(),
+          },
+          {
+            trait_type: 'Length',
+            display_type: 'number',
+            value: username.length,
+          },
+        ],
+      };
+
+      const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
+      const metadataFile = new File([metadataBlob], 'metadata.json', { type: 'application/json' });
+
+      const { cid: metadataCid } = await pinata.upload.public.file(metadataFile);
+      const tokenUri = `ipfs://${metadataCid}`;
+
+      return { tokenUri };
+    }),
 });
 
 export type AppRouter = typeof appRouter;

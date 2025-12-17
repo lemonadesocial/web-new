@@ -38,9 +38,8 @@ import { toast } from '$lib/components/core/toast';
 import { sessionClientAtom, accountAtom, feedAtom, feedPostsAtom, chainsMapAtom, feedPostAtom, lemonadeUsernameAtom } from '$lib/jotai';
 import { useAppKitAccount } from '$lib/utils/appkit';
 import { client, storageClient } from '$lib/utils/lens/client';
-import { ATTRIBUTES_SAFE_KEYS, LENS_CHAIN_ID } from '$lib/utils/lens/constants';
+import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { modal } from '$lib/components/core';
-import { LENS_NAMESPACE } from '$lib/utils/constants';
 import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
 import { useClient } from '$lib/graphql/request';
 
@@ -707,144 +706,6 @@ export function useLensAuth() {
   };
 
   return handleAuth;
-}
-
-export function useLemonadeUsername(account: Account | null) {
-  const [username, setUsername] = useAtom(lemonadeUsernameAtom);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const fetchUsernameData = async () => {
-    if (!account?.address) return;
-
-    setIsLoading(true);
-    try {
-      const result = await fetchUsernames(client, {
-        filter: {
-          owner: account.address,
-          namespace: evmAddress(LENS_NAMESPACE),
-        },
-      });
-
-      if (result.isOk() && result.value.items.length > 0) {
-        setUsername(result.value.items[0].localName);
-      } else {
-        setUsername(null);
-      }
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUsernameData();
-  }, [account?.address]);
-
-  return {
-    username,
-    isLoading,
-    refetch: fetchUsernameData,
-  };
-}
-
-export function useSyncLensAccount() {
-  const me = useMe();
-  const { refreshAccount } = useAccount();
-
-  const { client } = useClient();
-
-  /**
-   * @description sync data from lens to lemonade - ignore username bc it can be claim
-   *
-   * 1. sync from lens to lemonade
-   * 2. sync back from lemonade to lens
-   *
-   * note: step 2 is necessary it's bc lens might not have value from lemonade and need to sync back.
-   * picture is more complex - need to figure out later
-   */
-  const triggerSync = async (myAccount: any, sessionClient: any) => {
-    if (!me?.lens_profile_synced && myAccount && sessionClient) {
-      let new_photos = me?.new_photos || [];
-      if (myAccount.metadata?.picture) {
-        try {
-          const response = await fetch(myAccount.metadata?.picture);
-
-          // Check if the request was successful
-          if (!response.ok) {
-            console.log(`HTTP error! status: ${response.status}`);
-          }
-
-          const imageBlob = await response.blob();
-          const contentType = response.headers.get('content-type') || 'application/octet-stream';
-          const file = new File([imageBlob], generateRandomAlphanumeric() + '.' + contentType.split('/')[1], {
-            type: contentType,
-            lastModified: Date.now(),
-          });
-          const res = await uploadFiles([file], 'user');
-          if (res.length) {
-            new_photos = [res[0]._id, ...new_photos];
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      }
-
-      const variables = {
-        input: {
-          name: myAccount.metadata?.name,
-          display_name: myAccount.metadata?.name,
-          description: myAccount.metadata?.bio,
-          lens_profile_synced: true,
-        },
-      } as UpdateUserMutationVariables;
-
-      if (new_photos.length) variables.input.new_photos = new_photos;
-
-      ATTRIBUTES_SAFE_KEYS.forEach((key) => {
-        const attr = myAccount.metadata?.attributes.find((i) => i.key === key);
-        // @ts-expect-error no need to check type on safe keys
-        variables.input[key] = attr?.value;
-      });
-
-      const { data } = await client.query({ query: UpdateUserDocument, variables });
-      const user = data?.updateUser as User;
-
-      if (user) {
-        const attributes = [] as { key: string; type: MetadataAttributeType; value: string }[];
-        ATTRIBUTES_SAFE_KEYS.forEach((k) => {
-          // @ts-expect-error ignore ts check
-          if (user[k]) attributes.push({ key: k, type: MetadataAttributeType.STRING, value: user[k] });
-        });
-
-        const accountMetadata = account({
-          name: myAccount.metadata?.name || undefined,
-          bio: myAccount.metadata?.bio || undefined,
-          picture: myAccount.metadata?.picture || undefined,
-          // @ts-expect-error ignore ts check
-          attributes,
-        });
-
-        const { uri } = await storageClient.uploadAsJson(accountMetadata);
-
-        const result = await setAccountMetadata(sessionClient, {
-          metadataUri: uri,
-        });
-
-        if (result.isErr()) {
-          toast.error(result.error.message);
-          return;
-        }
-
-        setTimeout(() => {
-          refreshAccount();
-          toast.success('Sync success!');
-        }, 1000);
-      }
-    }
-  };
-
-  return { triggerSync };
 }
 
 export function useLensConnect () {

@@ -97,3 +97,7 @@ mutation deleteUser {
 mutation syncUserUnicornWallet {
   syncUserUnicornWallet
 }
+
+query UsernameAvailability($wallet: String!, $username: String!) {
+  isUsernameAvailable(wallet: $wallet, username: $username)
+}
