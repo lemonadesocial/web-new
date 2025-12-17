@@ -88,16 +88,16 @@ export function PassportFooter() {
 
   const handleNext = async () => {
     match(state.currentStep)
-      // .with(PassportStep.intro, () => {
-      //   modal.open(ConnectWallet, {
-      //     props: {
-      //       onConnect: () => {
-      //         checkAccess();
-      //       },
-      //       chain: chainsMap[PASSPORT_CHAIN_ID],
-      //     },
-      //   });
-      // })
+      .with(PassportStep.intro, () => {
+        modal.open(ConnectWallet, {
+          props: {
+            onConnect: () => {
+              checkAccess();
+            },
+            chain: chainsMap[PASSPORT_CHAIN_ID],
+          },
+        });
+      })
       .with(PassportStep.username, () => {
         handleMint();
       })
@@ -107,9 +107,7 @@ export function PassportFooter() {
       .otherwise(() => dispatch({ type: PassportActionKind.NextStep }));
   };
 
-  const disabled =
-    (state.currentStep === PassportStep.photo && (!state.photo || !state.isSelfVerified)) ||
-    (state.currentStep === PassportStep.username && !state.ensName);
+  const disabled = state.currentStep === PassportStep.username && !state.ensName;
 
   return (
     <>

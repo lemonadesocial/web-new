@@ -88,16 +88,16 @@ export function PassportFooter() {
 
   const handleNext = async () => {
     match(state.currentStep)
-      // .with(PassportStep.intro, () => {
-      //   modal.open(ConnectWallet, {
-      //     props: {
-      //       onConnect: () => {
-      //         checkAccess();
-      //       },
-      //       chain: chainsMap[PASSPORT_CHAIN_ID],
-      //     },
-      //   });
-      // })
+      .with(PassportStep.intro, () => {
+        modal.open(ConnectWallet, {
+          props: {
+            onConnect: () => {
+              checkAccess();
+            },
+            chain: chainsMap[PASSPORT_CHAIN_ID],
+          },
+        });
+      })
       .with(PassportStep.username, () => {
         handleMint();
       })
