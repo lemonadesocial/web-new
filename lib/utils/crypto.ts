@@ -1,5 +1,6 @@
 import { getDefaultStore } from 'jotai';
 import { Eip1193Provider, ethers, isError } from 'ethers';
+import { mainnet } from 'viem/chains';
 
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
 
@@ -11,6 +12,7 @@ import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import LemonadePassport from '$lib/abis/LemonadePassport.json';
 import { TRPCClientError } from '@trpc/client';
 import ZugramaPassport from '$lib/abis/ZuGramaPassport.json';
+import { Chain } from '$lib/graphql/generated/backend/graphql';
 
 export const ERC20Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC20));
 export const ERC721Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC721));
@@ -257,3 +259,45 @@ export function multiplyByPowerOf10(amount: string, power: number) {
 
   return result.toString();
 }
+
+export const MainnetRpcProvider = new ethers.JsonRpcProvider('https://eth-mainnet.public.blastapi.io'); 
+
+export const getTransactionUrl = (chain: Chain, txHash: string) => {
+  if (!chain?.block_explorer_url || !chain?.block_explorer_for_tx) {
+    return '';
+  }
+
+  const pathTemplate = chain.block_explorer_for_tx.includes('${hash}')
+    ? chain.block_explorer_for_tx.replaceAll('${hash}', txHash)
+    : `${chain.block_explorer_for_tx}${txHash}`;
+
+  const baseUrl = chain.block_explorer_url.endsWith('/')
+    ? chain.block_explorer_url.slice(0, -1)
+    : chain.block_explorer_url;
+
+  const path = pathTemplate.startsWith('/')
+    ? pathTemplate
+    : `/${pathTemplate}`;
+
+  return `${baseUrl}${path}`;
+};
+
+export const getAddressUrl = (chain: Chain, address: string) => {
+  if (!chain?.block_explorer_url || !chain?.block_explorer_for_address) {
+    return '';
+  }
+
+  const pathTemplate = chain.block_explorer_for_address.includes('${address}')
+    ? chain.block_explorer_for_address.replaceAll('${address}', address)
+    : `${chain.block_explorer_for_address}${address}`;
+
+  const baseUrl = chain.block_explorer_url.endsWith('/')
+    ? chain.block_explorer_url.slice(0, -1)
+    : chain.block_explorer_url;
+
+  const path = pathTemplate.startsWith('/')
+    ? pathTemplate
+    : `/${pathTemplate}`;
+
+  return `${baseUrl}${path}`;
+};

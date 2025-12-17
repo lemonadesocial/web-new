@@ -69,6 +69,7 @@ jobs:
           echo "NEXT_PUBLIC_LEMONHEADS_INDEXER_URL=${{ vars.STAGING_NEXT_PUBLIC_LEMONHEADS_INDEXER_URL }}" >> .env
           echo "NEXT_PUBLIC_GIPHY_API_KEY=${{ vars.STAGING_NEXT_PUBLIC_GIPHY_API_KEY }}" >> .env
           echo "NEXT_PUBLIC_AUTH_COOKIE_NAME=${{ vars.STAGING_NEXT_PUBLIC_AUTH_COOKIE_NAME }}" >> .env
+          echo "NEXT_PUBLIC_COIN_INDEXER_URL=${{ vars.STAGING_NEXT_PUBLIC_COIN_INDEXER_URL }}" >> .env
 
       - name: Configure environment
         run: |

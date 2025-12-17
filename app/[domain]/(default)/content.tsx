@@ -2,7 +2,7 @@
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Accordion, Button, Card, Divider, drawer, modal } from '$lib/components/core';
+import { Accordion, Badge, Button, Card, Divider, drawer, modal, Skeleton } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { ASSET_PREFIX, SELF_VERIFICATION_CONFIG } from '$lib/utils/constants';
@@ -33,6 +33,13 @@ import { chainsMapAtom } from '$lib/jotai';
 import { GetVerifiedModal } from '$lib/components/features/modals/GetVerifiedModal';
 import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
+import { Order_By, PoolCreated, PoolCreatedDocument } from '$lib/graphql/generated/coin/graphql';
+import { coinClient } from '$lib/graphql/request/instances';
+import { useTokenData } from '$lib/hooks/useCoin';
+import { formatWallet } from '$lib/utils/crypto';
+
+import { calculateMarketCapData } from '$lib/utils/coin';
+import { truncateMiddle } from '$lib/utils/string';
 
 export function Content() {
   const me = useMe();
@@ -58,6 +65,8 @@ export function Content() {
           <UpcomingEventSection />
           <Divider />
           <CommunitySection />
+          <Divider />
+          <AllCoins />
         </div>
 
         <div>
@@ -199,9 +208,9 @@ function UpcomingEventSection() {
             onManage={
               [item.host, ...(item.cohosts || [])].includes(me?._id)
                 ? (e) => {
-                    e.stopPropagation();
-                    router.push(`/e/manage/${item.shortid}`);
-                  }
+                  e.stopPropagation();
+                  router.push(`/e/manage/${item.shortid}`);
+                }
                 : undefined
             }
           />
@@ -443,7 +452,7 @@ function CardItem({
   rightContent,
   className,
 }: {
-  image: string | React.ReactElement;
+  image?: string | React.ReactElement;
   title: string;
   subtitle: string | React.ReactElement;
   rightContent?: React.ReactElement;
@@ -453,7 +462,7 @@ function CardItem({
   return (
     <Card.Root onClick={onClick} className={twMerge('min-w-fit', className)}>
       <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
-        {typeof image === 'string' ? <img src={image} className="size-[38px] aspect-square" /> : image}
+        {typeof image === 'string' ? <img src={image} className="size-[38px] rounded-sm aspect-square" /> : image}
         <div className="space-y-0.5 flex-1">
           <p className="title text-lg">{title}</p>
           {typeof subtitle === 'string' ? <p className="text-sm text-tertiary">{subtitle}</p> : subtitle}
@@ -658,6 +667,177 @@ function LemonHeadsZone() {
       subtitle="Claim your LemonHead"
       rightContent={<i className="icon-chevron-right text-tertiary" />}
       onClick={onClick}
+    />
+  );
+}
+
+function AllCoins() {
+  const router = useRouter();
+  const me = useMe();
+  const { address } = useAppKitAccount();
+
+  const handleCreateCoin = () => {
+    router.push('/create/coin');
+  };
+
+  const userWallets = React.useMemo(() => {
+    const wallets: string[] = [];
+
+    if (address) {
+      wallets.push(address.toLowerCase());
+    }
+
+    if (me?.wallets_new?.ethereum) {
+      me.wallets_new.ethereum.forEach((wallet: string) => {
+        if (wallet) {
+          wallets.push(wallet.toLowerCase());
+        }
+      });
+    }
+
+    if (me?.kratos_wallet_address) {
+      wallets.push(me.kratos_wallet_address.toLowerCase());
+    }
+
+    return [...new Set(wallets)];
+  }, [address, me?.wallets_new?.ethereum, me?.kratos_wallet_address]);
+
+  const { data, loading } = useQuery(
+    PoolCreatedDocument,
+    {
+      variables: {
+        orderBy: [
+          {
+            blockTimestamp: Order_By.Desc,
+          },
+        ],
+        offset: 0,
+        where: userWallets.length > 0 ? {
+          paramsCreator: {
+            _in: userWallets,
+          },
+        } : undefined,
+      },
+      fetchPolicy: 'network-only',
+      skip: userWallets.length === 0,
+    },
+    coinClient,
+  );
+
+  const pools = data?.PoolCreated || [];
+
+  return (
+    <Accordion.Root className="border-none" open>
+      <Accordion.Header chevron={false} className="px-0!">
+        {({ toggle, isOpen }) => {
+          return (
+            <div className="flex items-center justify-between text-primary w-full">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="tertiary"
+                  className="rounded-full"
+                  size="xs"
+                  icon={clsx('icon-chevron-down', isOpen && 'rotate-180')}
+                  onClick={() => toggle()}
+                />
+                <h3 className="text-xl font-semibold">Coins</h3>
+              </div>
+              <div className="hidden md:flex gap-2">
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  iconLeft="icon-plus"
+                  onClick={handleCreateCoin}
+                >
+                  New Coin
+                </Button>
+              </div>
+
+              <div className="flex md:hidden gap-2">
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  icon="icon-plus"
+                  onClick={handleCreateCoin}
+                />
+              </div>
+            </div>
+          );
+        }}
+      </Accordion.Header>
+      <Accordion.Content className={clsx('pt-1! px-0! flex flex-col md:grid gap-3', !!pools.length && 'grid-cols-2')}>
+        {loading ? (
+          <Card.Root className="min-w-fit">
+            <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
+              <Skeleton className="size-[38px] rounded-sm" animate />
+              <Skeleton className="h-9 w-24 rounded-md" animate />
+            </Card.Content>
+          </Card.Root>
+        ) : (
+          <>
+            {pools.map((pool) => (
+              <CoinItem key={pool.id} pool={pool} />
+            ))}
+            <div className="hidden only:block text-center text-gray-500">
+              <EmptyCard
+                icon="icon-confirmation-number"
+                title="No Coins Yet"
+                subtitle="Coins you create and manage will appear here."
+              />
+            </div>
+          </>
+        )}
+      </Accordion.Content>
+    </Accordion.Root>
+  );
+}
+
+function CoinItem({ pool }: { pool: PoolCreated }) {
+  const router = useRouter();
+  const chainsMap = useAtomValue(chainsMapAtom);
+
+  const chain = chainsMap[pool.chainId.toString()];
+  const { tokenData, isLoadingTokenData } = useTokenData(chain, pool.memecoin, pool.tokenURI as string);
+
+  const { formattedAmount, percentageChange } = calculateMarketCapData(
+    pool.latestMarketCapETH,
+    pool.previousMarketCapETH,
+  );
+
+  if (isLoadingTokenData) return (
+    <Card.Root className="min-w-fit">
+      <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
+        <Skeleton className="size-[38px] rounded-sm" animate />
+        <div className="space-y-0.5 flex-1">
+          <Skeleton className="h-5 w-24 rounded-md" animate />
+          <Skeleton className="h-4 w-32 rounded-md" animate />
+        </div>
+      </Card.Content>
+    </Card.Root>
+  );
+
+  if (!tokenData) return null;
+
+  const displaySymbol = tokenData?.symbol || formatWallet(pool.memecoin);
+
+  return (
+    <CardItem
+      key={pool.id}
+      title={displaySymbol}
+      subtitle={formatWallet(pool.memecoin)}
+      image={tokenData.metadata?.imageUrl || undefined}
+      onClick={() => router.push(`/coin/${chain.code_name}/${pool.memecoin}`)}
+      rightContent={
+        <div className="flex flex-col items-end">
+          <p className="text-primary">{formattedAmount}</p>
+          {percentageChange !== null && (
+            <p className={clsx('text-sm', percentageChange > 0 ? 'text-success-500' : 'text-danger-500')}>
+              {percentageChange > 0 && '+'}
+              {percentageChange.toFixed(2)}%
+            </p>
+          )}
+        </div>
+      }
     />
   );
 }
