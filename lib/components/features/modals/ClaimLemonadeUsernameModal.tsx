@@ -1,5 +1,6 @@
 'use client';
 import { useState, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import * as Sentry from '@sentry/nextjs';
 import { createDrift } from '@gud/drift';
@@ -24,6 +25,7 @@ export function ClaimLemonadeUsernameModal() {
   const listChains = useAtomValue(listChainsAtom);
   const usernameChain = listChains.find(chain => chain.lemonade_username_contract_address)!;
   const { client } = useClient();
+  const queryClient = useQueryClient();
 
   const usernameApprovalMutation = trpc.usernameApproval.useMutation();
   const uploadUsernameMetadataMutation = trpc.uploadUsernameMetadata.useMutation();
@@ -134,9 +136,9 @@ export function ClaimLemonadeUsernameModal() {
         gas: GAS_LIMIT,
       });
 
-      console.log('Mint transaction hash:', txHash);
-
       setIsLoading(false);
+
+      await queryClient.invalidateQueries({ queryKey: ['lemonadeUsername', address] });
 
       setStep('success');
     } catch (error: any) {

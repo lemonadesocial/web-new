@@ -176,8 +176,10 @@ function CardDetail({
 }) {
   return (
     <Card.Root className={constainerClass}>
-      <Card.Content className="flex flex-col gap-4">
-        <i className={twMerge('size-8 text-tertiary', icon)} />
+      <Card.Content className="flex gap-4">
+        <div className="size-[38px] flex items-center justify-center rounded-sm bg-primary/8">
+          <i className={twMerge('size-8 text-tertiary', icon)} />
+        </div>
         <div>
           {title}
           <p className="hidden md:block text-sm text-tertiary">{subtitle}</p>

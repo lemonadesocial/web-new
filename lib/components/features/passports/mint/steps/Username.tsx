@@ -10,7 +10,7 @@ export function PassportUsername() {
         <p className="text-tertiary">Choose what appears on your passport, your username or ENS.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="flex flex-col gap-3">
         <UsernameCard />
         <ENSDomainCard />
       </div>

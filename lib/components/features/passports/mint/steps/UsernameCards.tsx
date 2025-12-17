@@ -2,39 +2,22 @@ import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ethers } from 'ethers';
 import { mainnet } from 'viem/chains';
-import { useAtomValue } from 'jotai';
 import { useAppKitAccount } from '@reown/appkit/react';
 
-import { Button, Card, Skeleton, modal } from '$lib/components/core';
-import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
-import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
-import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
-import { chainsMapAtom } from '$lib/jotai';
-import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
+import { Button, Card, Skeleton } from '$lib/components/core';
 
 import { PassportActionKind, usePassportContext } from '../provider';
+import { useClaimUsername, useLemonadeUsername } from '$lib/hooks/useUsername';
 
 export function UsernameCard() {
-  const { account } = useAccount();
-  const { username, isLoading } = useLemonadeUsername(account);
+  const handleClaimUsername = useClaimUsername();
+  const { username, isLoading } = useLemonadeUsername();
   const [state, dispatch] = usePassportContext();
-  const chainsMap = useAtomValue(chainsMapAtom);
 
   const handleSelect = () => {
     if (username) {
       dispatch({ type: PassportActionKind.SetLemonadeUsername, payload: username });
     }
-  };
-
-  const handleClaimUsername = () => {
-    modal.open(ConnectWallet, {
-      props: {
-        onConnect: () => {
-          modal.open(SelectProfileModal);
-        },
-        chain: chainsMap[LENS_CHAIN_ID],
-      },
-    });
   };
 
   useEffect(() => {
@@ -54,10 +37,10 @@ export function UsernameCard() {
       <CardDetail
         icon="icon-lemonade"
         constainerClass="border-2 border-dashed"
-        title="Claim Username"
+        title="No Username Found"
         subtitle="You don't have a username, yet."
       >
-        <Button variant="secondary" className="w-full" onClick={handleClaimUsername} size="sm">
+        <Button variant="secondary" onClick={handleClaimUsername} size="sm">
           Claim Username
         </Button>
       </CardDetail>
@@ -73,7 +56,6 @@ export function UsernameCard() {
     >
       <Button
         variant={isSelected ? 'tertiary' : 'secondary'}
-        className="w-full"
         onClick={handleSelect}
         iconLeft={isSelected ? 'icon-done' : undefined}
         size="sm"
@@ -128,12 +110,11 @@ export function ENSDomainCard() {
       <CardDetail
         icon="icon-ens"
         constainerClass="border-2 border-dashed"
-        title="Get ENS Domain"
+        title="No ENS Found"
         subtitle="You don't have an ENS domain, yet."
       >
         <Button
-          variant="secondary"
-          className="w-full"
+          variant="tertiary"
           size="sm"
           iconRight="icon-arrow-outward"
           onClick={() => window.open('https://ens.domains/', '_blank')}
@@ -153,7 +134,6 @@ export function ENSDomainCard() {
     >
       <Button
         variant={isSelected ? 'tertiary' : 'secondary'}
-        className="w-full"
         onClick={handleSelect}
         iconLeft={isSelected ? 'icon-done' : undefined}
         size="sm"
@@ -167,13 +147,13 @@ export function ENSDomainCard() {
 function CardIndicator() {
   return (
     <Card.Root className="border-2">
-      <Card.Content className="flex flex-col gap-4">
+      <Card.Content className="flex gap-4">
         <Skeleton animate className="w-8 h-8 rounded-full" />
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 flex-1">
           <Skeleton animate className="h-4.5 w-24 rounded-full" />
           <Skeleton animate className="hidden md:block h-3.5 w-16 rounded-full" />
         </div>
-        <Skeleton animate className="h-8 w-full rounded-md" />
+        <Skeleton animate className="h-8 w-8 rounded-md" />
       </Card.Content>
     </Card.Root>
   );
@@ -193,10 +173,12 @@ function CardDetail({
 }) {
   return (
     <Card.Root className={constainerClass}>
-      <Card.Content className="flex flex-col gap-4">
-        <i className={twMerge('size-8 text-tertiary', icon)} />
-        <div>
-          {title}
+      <Card.Content className="flex gap-4">
+        <div className="size-[38px] flex items-center justify-center rounded-sm bg-primary/8">
+          <i className={twMerge('text-tertiary', icon)} />
+        </div>
+        <div className="flex-1">
+          <p>{title}</p>
           <p className="hidden md:block text-sm text-tertiary">{subtitle}</p>
         </div>
         {children}
