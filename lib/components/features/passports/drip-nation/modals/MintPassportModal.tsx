@@ -33,69 +33,69 @@ export function MintPassportModal({
   const [status, setStatus] = useState<'signing' | 'confirming' | 'success' | 'none'>('none');
 
   const handleMint = async () => {
-    // try {
-    //   if (!mintData) {
-    //     throw new Error('Mint data not found');
-    //   }
-    //
-    //   const contractAddress = chainsMap[PASSPORT_CHAIN_ID]?.zugrama_passport_contract_address;
-    //
-    //   if (!contractAddress) {
-    //     throw new Error('Passport contract address not configured');
-    //   }
-    //
-    //   setStatus('signing');
-    //
-    //   const transaction = await writeContract(
-    //     ZugramaPassportContract,
-    //     contractAddress,
-    //     walletProvider as Eip1193Provider,
-    //     'mint',
-    //     [mintData.metadata, mintData.price, mintData.signature],
-    //     { value: mintData.price },
-    //   );
-    //
-    //   const txHash = transaction.hash;
-    //
-    //   setStatus('confirming');
-    //
-    //   const receipt = await transaction.wait();
-    //   const iface = new ethers.Interface(ZuGramaPassport.abi);
-    //
-    //   let parsedTransferLog: any = null;
-    //
-    //   receipt.logs.some((log: any) => {
-    //     try {
-    //       const parsedLog = iface.parseLog(log);
-    //       if (parsedLog?.name === 'Transfer') {
-    //         parsedTransferLog = parsedLog;
-    //         return true;
-    //       }
-    //
-    //       return false;
-    //     } catch (error) {
-    //       return false;
-    //     }
-    //   });
-    //
-    //   let tokenId = '';
-    //
-    //   if (parsedTransferLog) {
-    //     tokenId = parsedTransferLog.args?.tokenId?.toString();
-    //   }
-    //
-    //   modal.close();
-    //   onComplete(txHash, tokenId);
-    // } catch (error: any) {
-    //   console.log(error);
-    //   Sentry.captureException(error, {
-    //     extra: {
-    //       walletInfo: appKit.getWalletInfo(),
-    //     },
-    //   });
-    //   toast.error(formatError(error));
-    //   setStatus('none');
-    // }
+    try {
+      if (!mintData) {
+        throw new Error('Mint data not found');
+      }
+
+      const contractAddress = chainsMap[PASSPORT_CHAIN_ID]?.zugrama_passport_contract_address;
+
+      if (!contractAddress) {
+        throw new Error('Passport contract address not configured');
+      }
+
+      setStatus('signing');
+
+      const transaction = await writeContract(
+        ZugramaPassportContract,
+        contractAddress,
+        walletProvider as Eip1193Provider,
+        'mint',
+        [mintData.metadata, mintData.price, mintData.signature],
+        { value: mintData.price },
+      );
+
+      const txHash = transaction.hash;
+
+      setStatus('confirming');
+
+      const receipt = await transaction.wait();
+      const iface = new ethers.Interface(ZuGramaPassport.abi);
+
+      let parsedTransferLog: any = null;
+
+      receipt.logs.some((log: any) => {
+        try {
+          const parsedLog = iface.parseLog(log);
+          if (parsedLog?.name === 'Transfer') {
+            parsedTransferLog = parsedLog;
+            return true;
+          }
+
+          return false;
+        } catch (error) {
+          return false;
+        }
+      });
+
+      let tokenId = '';
+
+      if (parsedTransferLog) {
+        tokenId = parsedTransferLog.args?.tokenId?.toString();
+      }
+
+      modal.close();
+      onComplete(txHash, tokenId);
+    } catch (error: any) {
+      console.log(error);
+      Sentry.captureException(error, {
+        extra: {
+          walletInfo: appKit.getWalletInfo(),
+        },
+      });
+      toast.error(formatError(error));
+      setStatus('none');
+    }
   };
 
   if (status === 'confirming') {
