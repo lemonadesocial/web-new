@@ -475,8 +475,8 @@ function CardItem({
 
 function CompleteYourProfile() {
   const me = useMe();
-  const { account } = useAccount();
-  const { username } = useLemonadeUsername(account);
+  // const { username } = useLemonadeUsername(account);
+  const { username } = { username: false }
 
   const chainsMap = useAtomValue(chainsMapAtom);
 
@@ -514,23 +514,7 @@ function CompleteYourProfile() {
       label: 'Claim Username',
       completed: !!username,
       show: true,
-      onClick: () => {
-        if (!account) {
-          modal.open(ConnectWallet, {
-            props: {
-              onConnect: () => {
-                modal.close();
-                setTimeout(() => {
-                  modal.open(SelectProfileModal);
-                });
-              },
-              chain: chainsMap[LENS_CHAIN_ID],
-            },
-          });
-        } else {
-          modal.open(ClaimLemonadeUsernameModal, { dismissible: false });
-        }
-      },
+      onClick: () => modal.open(ClaimLemonadeUsernameModal),
     },
     // {key: 'verify_email', label: 'Download Lemonade app', completed: false },
     {

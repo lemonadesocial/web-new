@@ -6,10 +6,18 @@ import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { coinClient } from '$lib/graphql/request/instances';
 import {
   ListLaunchpadGroupsDocument,
-  type ListLaunchpadGroupsQuery
+  type ListLaunchpadGroupsQuery,
+  type ListLaunchpadGroupsQueryVariables
 } from '$lib/graphql/generated/backend/graphql';
 import {
-  TradeVolumeDocument, PoolCreatedDocument, Order_By, MemecoinMetadataDocument, PoolSwapDocument, type PoolSwap, type PoolCreated
+  TradeVolumeDocument,
+  PoolCreatedDocument,
+  Order_By,
+  MemecoinMetadataDocument,
+  PoolSwapDocument,
+  type PoolCreated,
+  type PoolSwapQuery,
+  type PoolSwapQueryVariables
 } from '$lib/graphql/generated/coin/graphql';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
@@ -40,7 +48,10 @@ export function useGroup(chain: Chain, address: string) {
 
   const shouldSkipQuery = !treasuryManagerAddress || treasuryManagerAddress.toLowerCase() === zeroAddress.toLowerCase();
 
-  const { loading: isLoadingQuery } = useGraphQLQuery(
+  const { loading: isLoadingQuery } = useGraphQLQuery<
+    ListLaunchpadGroupsQuery,
+    ListLaunchpadGroupsQueryVariables
+  >(
     ListLaunchpadGroupsDocument,
     {
       variables: treasuryManagerAddress ? { address: treasuryManagerAddress } : undefined,
@@ -505,10 +516,44 @@ export type PriceTimeSeriesData = {
   time: Date;
   timestamp: number;
   price: number;
-  priceUSDC: number;
-  totalAmount0: bigint;
-  totalAmount1: bigint;
 };
+
+function getPoolSwapPriceSnapshot(params: {
+  swap: PoolSwapQuery['PoolSwap'][number];
+  isEthToken0: boolean;
+}): number {
+  const ispAmount0 = BigInt(String(params.swap.ispAmount0 ?? '0'));
+  const ispAmount1 = BigInt(String(params.swap.ispAmount1 ?? '0'));
+  const flAmount0 = BigInt(String(params.swap.flAmount0 ?? '0'));
+  const flAmount1 = BigInt(String(params.swap.flAmount1 ?? '0'));
+  const uniAmount0 = BigInt(String(params.swap.uniAmount0 ?? '0'));
+  const uniAmount1 = BigInt(String(params.swap.uniAmount1 ?? '0'));
+  const ispFee0 = BigInt(String(params.swap.ispFee0 ?? '0'));
+  const ispFee1 = BigInt(String(params.swap.ispFee1 ?? '0'));
+  const flFee0 = BigInt(String(params.swap.flFee0 ?? '0'));
+  const flFee1 = BigInt(String(params.swap.flFee1 ?? '0'));
+  const uniFee0 = BigInt(String(params.swap.uniFee0 ?? '0'));
+  const uniFee1 = BigInt(String(params.swap.uniFee1 ?? '0'));
+
+  const totalAmount0 = (ispAmount0 + flAmount0 + uniAmount0) - (ispFee0 + flFee0 + uniFee0);
+  const totalAmount1 = (ispAmount1 + flAmount1 + uniAmount1) - (ispFee1 + flFee1 + uniFee1);
+
+  const ethAmount = params.isEthToken0 ? totalAmount0 : totalAmount1;
+  const tokenAmount = params.isEthToken0 ? totalAmount1 : totalAmount0;
+
+  const ethAmountAbs = ethAmount < BigInt(0) ? -ethAmount : ethAmount;
+  const tokenAmountAbs = tokenAmount < BigInt(0) ? -tokenAmount : tokenAmount;
+
+  if (tokenAmountAbs === BigInt(0)) {
+    return 0;
+  }
+
+  const ethValue = Number(formatEther(ethAmountAbs));
+  const tokenValue = Number(formatEther(tokenAmountAbs));
+  const price = ethValue / tokenValue;
+
+  return price;
+}
 
 export function usePoolSwapPriceTimeSeries(
   chain: Chain,
@@ -544,7 +589,7 @@ export function usePoolSwapPriceTimeSeries(
     return Object.keys(filter).length > 0 ? filter : undefined;
   }, [timeRange]);
 
-  const { data, loading } = useGraphQLQuery(
+  const { data, loading } = useGraphQLQuery<PoolSwapQuery, PoolSwapQueryVariables>(
     PoolSwapDocument,
     {
       variables: poolId
@@ -572,69 +617,106 @@ export function usePoolSwapPriceTimeSeries(
     coinClient,
   );
 
-  const { rate: ethToUsdcRate } = useEthToUsdcRate(chain, address);
-
   const swaps = data?.PoolSwap || [];
 
+  const shouldFetchLatestSwaps = Boolean(
+    timeRange && poolId && !isLoadingPoolInfo && swaps.length < 2,
+  );
+
+  const { data: latestSwapsData, loading: latestSwapsLoading } = useGraphQLQuery<
+    PoolSwapQuery,
+    PoolSwapQueryVariables
+  >(
+    PoolSwapDocument,
+    {
+      variables: poolId
+        ? {
+            where: {
+              poolId: {
+                _eq: poolId,
+              },
+              chainId: {
+                _eq: Number(chain.chain_id),
+              },
+            },
+            orderBy: {
+              blockTimestamp: Order_By.Desc,
+            },
+            limit: 2,
+          }
+        : undefined,
+      skip: !shouldFetchLatestSwaps,
+      fetchPolicy: 'network-only',
+    },
+    coinClient,
+  );
+
   const priceTimeSeries = useMemo(() => {
-    if (swaps.length === 0 || isEthToken0 === null) {
+    if (isEthToken0 === null) {
       return [];
+    }
+
+    if (swaps.length < 2) {
+      if (!timeRange) {
+        return [];
+      }
+
+      const latestSwap = swaps[swaps.length - 1] ?? latestSwapsData?.PoolSwap?.[0];
+      const secondLatestSwap = latestSwapsData?.PoolSwap?.[1];
+
+      if (!latestSwap) {
+        return [];
+      }
+
+      const startTimestampMs = timeRange.startTime instanceof Date
+        ? timeRange.startTime.getTime()
+        : timeRange.startTime;
+      const endTimestampMs = timeRange.endTime instanceof Date ? timeRange.endTime.getTime() : timeRange.endTime;
+
+      if (startTimestampMs === undefined || endTimestampMs === undefined) {
+        return [];
+      }
+
+      const startSwap = swaps.length === 0 ? (secondLatestSwap ?? latestSwap) : (secondLatestSwap ?? swaps[0]);
+      const startPrice = getPoolSwapPriceSnapshot({ swap: startSwap, isEthToken0 });
+      const endPrice = getPoolSwapPriceSnapshot({ swap: latestSwap, isEthToken0 });
+
+      return [
+        {
+          time: new Date(startTimestampMs),
+          timestamp: startTimestampMs,
+          price: startPrice,
+        },
+        {
+          time: new Date(endTimestampMs),
+          timestamp: endTimestampMs,
+          price: endPrice,
+        },
+      ];
     }
 
     const timeSeriesData: PriceTimeSeriesData[] = swaps
       .map((swap) => {
-        const ispAmount0 = BigInt(swap.ispAmount0 || '0');
-        const ispAmount1 = BigInt(swap.ispAmount1 || '0');
-        const flAmount0 = BigInt(swap.flAmount0 || '0');
-        const flAmount1 = BigInt(swap.flAmount1 || '0');
-        const uniAmount0 = BigInt(swap.uniAmount0 || '0');
-        const uniAmount1 = BigInt(swap.uniAmount1 || '0');
-        const ispFee0 = BigInt(swap.ispFee0 || '0');
-        const ispFee1 = BigInt(swap.ispFee1 || '0');
-        const flFee0 = BigInt(swap.flFee0 || '0');
-        const flFee1 = BigInt(swap.flFee1 || '0');
-        const uniFee0 = BigInt(swap.uniFee0 || '0');
-        const uniFee1 = BigInt(swap.uniFee1 || '0');
-
-        const totalAmount0 = (ispAmount0 + flAmount0 + uniAmount0) - (ispFee0 + flFee0 + uniFee0);
-        const totalAmount1 = (ispAmount1 + flAmount1 + uniAmount1) - (ispFee1 + flFee1 + uniFee1);
-
-        const ethAmount = isEthToken0 ? totalAmount0 : totalAmount1;
-        const tokenAmount = isEthToken0 ? totalAmount1 : totalAmount0;
-
-        const ethAmountAbs = ethAmount < BigInt(0) ? -ethAmount : ethAmount;
-        const tokenAmountAbs = tokenAmount < BigInt(0) ? -tokenAmount : tokenAmount;
-
         const timestamp = Number(swap.blockTimestamp) * 1000;
         const time = new Date(timestamp);
 
-        let price = 0;
-        let priceUSDC = 0;
-        if (tokenAmountAbs !== BigInt(0)) {
-          const ethValue = Number(formatEther(ethAmountAbs));
-          const tokenValue = Number(formatEther(tokenAmountAbs));
-          price = ethValue / tokenValue;
-          
-          if (ethToUsdcRate) {
-            priceUSDC = price * ethToUsdcRate;
-          }
-        }
+        const price = getPoolSwapPriceSnapshot({
+          swap,
+          isEthToken0,
+        });
 
         return {
           time,
           timestamp,
           price,
-          priceUSDC,
-          totalAmount0,
-          totalAmount1,
         };
       });
 
     return timeSeriesData;
-  }, [swaps, isEthToken0, ethToUsdcRate]);
+  }, [swaps, isEthToken0, latestSwapsData, timeRange]);
 
   return {
     data: priceTimeSeries,
-    isLoading: isLoadingPoolInfo || loading,
+    isLoading: isLoadingPoolInfo || loading || latestSwapsLoading,
   };
 }

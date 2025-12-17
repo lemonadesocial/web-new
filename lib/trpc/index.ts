@@ -9,6 +9,7 @@ import { getMintZuGramaPassportImage } from '$lib/services/passports/zugrama';
 import { publicProcedure, router } from './trpc';
 import lemonheads, { BuildQueryParams } from './lemonheads';
 import { LemonHeadsLayer } from './lemonheads/types';
+import { request } from '$lib/services/nft/admin';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -104,6 +105,10 @@ export const appRouter = router({
         return getMintZuGramaPassportImage(avatarImageUrl, username);
       }),
   },
+  usernameApproval: publicProcedure.input(z.object({ username: z.string(), tokenUri: z.string(), wallet: z.string() })).mutation(async ({ input }) => {
+    const { username, tokenUri, wallet } = input;
+    return request(`/lemonade-username/approval`, 'POST', { username, tokenUri, wallet });
+  }),
 });
 
 export type AppRouter = typeof appRouter;
