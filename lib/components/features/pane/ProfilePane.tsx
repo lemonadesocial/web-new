@@ -2,10 +2,7 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { account, AccountOptions, MetadataAttributeType } from '@lens-protocol/metadata';
-import { setAccountMetadata } from '@lens-protocol/client/actions';
-import { storageClient } from '$lib/utils/lens/client';
+import { useSetAtom } from 'jotai';
 
 import {
   Button,
@@ -13,10 +10,6 @@ import {
   Dropdown,
   FileInput,
   InputField,
-  Menu,
-  MenuItem,
-  modal,
-  Skeleton,
   TextAreaField,
   toast,
 } from '$lib/components/core';
@@ -25,19 +18,12 @@ import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
 import { useClient, useMutation } from '$lib/graphql/request';
 import { File, UpdateUserDocument, User } from '$lib/graphql/generated/backend/graphql';
-import { chainsMapAtom, sessionClientAtom, userAtom } from '$lib/jotai';
-import { useConnectWallet } from '$lib/hooks/useConnectWallet';
-import { ATTRIBUTES_SAFE_KEYS, LENS_CHAIN_ID } from '$lib/utils/lens/constants';
-import { getAccountAvatar, getAccountCover } from '$lib/utils/lens/utils';
-import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
+import { userAtom } from '$lib/jotai';
 import { uploadFiles } from '$lib/utils/file';
 import { generateUrl } from '$lib/utils/cnd';
-import { useDisconnect } from '$lib/utils/appkit';
 
-import { SelectProfileModal } from '../lens-account/SelectProfileModal';
-import { ProfileMenu } from '../lens-account/ProfileMenu';
-import { ClaimLemonadeUsernameModal } from '../lens-account/ClaimLemonadeUsernameModal';
 import { PROFILE_SOCIAL_LINKS } from '$lib/utils/constants';
+import { useClaimUsername } from '$lib/hooks/useUsername';
 
 type ProfileValues = {
   name?: string | null;
@@ -65,21 +51,14 @@ export function ProfilePane() {
 }
 
 export function ProfilePaneContent({ me }: { me: User }) {
-  const sessionClient = useAtomValue(sessionClientAtom);
-  const { account: myAccount, refreshAccount } = useAccount();
-  const { username, isLoading } = useLemonadeUsername(myAccount);
-  const { disconnect } = useDisconnect();
   const { client } = useClient();
-  const setSessionClient = useSetAtom(sessionClientAtom);
-
-  const chainsMap = useAtomValue(chainsMapAtom);
-  const { connect, isReady } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);
   const setMe = useSetAtom(userAtom);
+  const claimUsername = useClaimUsername();
 
   const [uploading, setUploading] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [file, setFile] = React.useState<{ lens: any; lemonade: File } | null>(null);
-  const [fileCover, setFileCover] = React.useState<{ lens: any; lemonade: File } | null>(null);
+  const [file, setFile] = React.useState<File | null>(null);
+  const [fileCover, setFileCover] = React.useState<File | null>(null);
 
   const [updateProfile] = useMutation(UpdateUserDocument, {
     onComplete(client, data) {
@@ -98,7 +77,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
   } = useForm<ProfileValues>({
     defaultValues: {
       name: me?.name,
-      // username: me?.username,
+      username: me?.username,
       description: me?.description,
       website: me.website,
       handle_farcaster: me?.handle_farcaster,
@@ -115,86 +94,20 @@ export function ProfilePaneContent({ me }: { me: User }) {
     },
   });
 
-  React.useEffect(() => {
-    if (myAccount) {
-      setValue('name', myAccount.metadata?.name);
-      setValue('username', username);
-      setValue('description', myAccount.metadata?.bio);
-      ATTRIBUTES_SAFE_KEYS.forEach((key) => {
-        const attr = myAccount.metadata?.attributes.find((p) => p.key === key);
-        setValue(key as any, attr?.value || '');
-      });
-    }
-  }, [myAccount, username]);
-
-  const getProfilePicture = async () => {
-    if (!file?.lens) return undefined;
-    const { uri } = await storageClient.uploadFile(file.lens);
-    return uri;
-  };
-
-  const getCoverPicture = async () => {
-    if (!fileCover?.lens) return undefined;
-    const { uri } = await storageClient.uploadFile(fileCover?.lens);
-    return uri;
-  };
-
   const onSubmit = async (values: ProfileValues) => {
     setIsSubmitting(true);
     try {
       const { username: _, new_photos, ...data } = values;
       let input: any = { ...data, display_name: data.name };
       if (new_photos?.length) input = { ...input, new_photos };
-      const { error } = await updateProfile({ variables: { input } });
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
 
-      if (myAccount && sessionClient) {
-        // NOTE: picture not accept empty string
-        const picture = (await getProfilePicture()) || myAccount.metadata?.picture || undefined;
-        const coverPicture = (await getCoverPicture()) || myAccount.metadata?.coverPicture || undefined;
-
-        const attributes = [] as { key: string; type: MetadataAttributeType; value: string }[];
-        ATTRIBUTES_SAFE_KEYS.forEach((k) => {
-          // @ts-expect-error ignore ts check
-          if (values[k]) attributes.push({ key: k, type: MetadataAttributeType.STRING, value: values[k] });
-        });
-
-        const accountVariables = {
-          name: values.name || undefined,
-          bio: values.description || undefined,
-          picture,
-          coverPicture,
-        } as AccountOptions;
-
-        // @ts-expect-error no need to check attributes type
-        if (attributes.length) accountVariables.attributes = attributes;
-
-        const accountMetadata = account(accountVariables);
-
-        const { uri } = await storageClient.uploadAsJson(accountMetadata);
-
-        const result = await setAccountMetadata(sessionClient, {
-          metadataUri: uri,
-        });
-
-        if (result.isErr()) {
-          toast.error(result.error.message);
-          return;
-        }
-
-        setTimeout(() => {
-          refreshAccount();
-        }, 2000);
-      }
+      await updateProfile({ variables: { input } });
 
       toast.success('Profile updated successfully');
       drawer.close();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      // toast.error(err.message);
+      toast.error(err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -212,9 +125,9 @@ export function ProfilePaneContent({ me }: { me: User }) {
         <Pane.Content className="p-4 flex flex-col gap-5">
           <div className="relative h-[172px]">
             <div className="bg-(--btn-tertiary) aspect-[4/1] rounded-sm">
-              {(fileCover?.lemonade || myAccount?.metadata?.coverPicture) && (
+              {(fileCover || me.cover_expanded) && (
                 <img
-                  src={fileCover?.lemonade ? generateUrl(fileCover.lemonade) : getAccountCover(myAccount!)}
+                  src={fileCover ? generateUrl(fileCover) : me.cover_expanded ? generateUrl(me.cover_expanded) : ''}
                   className="w-full h-full object-cover rounded-sm"
                 />
               )}
@@ -222,11 +135,10 @@ export function ProfilePaneContent({ me }: { me: User }) {
                 onChange={async (files) => {
                   try {
                     setUploading(true);
-                    const photos = watch('new_photos') || [];
                     const lemonadeFiles = await uploadFiles(files, 'user');
                     const file = lemonadeFiles[0] as File;
                     setValue('cover', file._id, { shouldDirty: true });
-                    setFileCover({ lens: files[0], lemonade: file });
+                    setFileCover(file);
                   } catch (err) {
                     console.log(err);
                     toast.error('Upload fail!');
@@ -252,10 +164,10 @@ export function ProfilePaneContent({ me }: { me: User }) {
               <div className="size-24 relative">
                 <img
                   src={
-                    file?.lemonade
-                      ? generateUrl(file.lemonade)
-                      : myAccount
-                        ? getAccountAvatar(myAccount)
+                    file
+                      ? generateUrl(file)
+                      : me.new_photos_expanded?.[0]
+                        ? generateUrl(me.new_photos_expanded[0])
                         : userAvatar(me)
                   }
                   className="w-full h-full aspect-square object-cover rounded-full"
@@ -268,7 +180,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
                       const lemonadeFiles = await uploadFiles(files, 'user');
                       const file = lemonadeFiles[0] as File;
                       setValue('new_photos', [file._id, ...photos], { shouldDirty: true });
-                      setFile({ lens: files[0], lemonade: file });
+                      setFile(file);
                     } catch (err) {
                       console.log(err);
                       toast.error('Upload fail!');
@@ -303,83 +215,28 @@ export function ProfilePaneContent({ me }: { me: User }) {
                 }}
               />
 
-              {isLoading ? (
-                <Skeleton animate className="h-8 w-1/2 rounded" />
-              ) : myAccount && username ? (
+              {me.username ? (
                 <Controller
                   control={control}
                   name="username"
                   render={({ field }) => {
                     return (
-                      <div className="flex gap-2 items-end">
-                        <div className="flex-1">
-                          <InputField
-                            label="Username"
-                            prefix="@lemonade/"
-                            readOnly
-                            value={field.value}
-                            onChange={field.onChange}
-                          />
-                        </div>
-
-                        <ProfileMenu options={{ canView: false, canEdit: false }}>
-                          <Button variant="tertiary-alt" icon="icon-more-vert" className="w-[40px] h-[40px]" />
-                        </ProfileMenu>
-                      </div>
+                      <InputField
+                        label="Username"
+                        prefix="@lemonade/"
+                        readOnly
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
                     );
                   }}
                 />
               ) : (
                 <div className="flex flex-col gap-1.5">
                   <label className="font-medium text-sm">Username</label>
-                  <div className="flex w-full flex-between gap-5">
-                    <div className="flex-1">
-                      <Button
-                        variant="secondary"
-                        className="w-full"
-                        onClick={() => {
-                          if (!isReady) connect();
-                          if (!myAccount) modal.open(SelectProfileModal);
-                          else modal.open(ClaimLemonadeUsernameModal);
-                        }}
-                      >
-                        {isReady
-                          ? myAccount && !username
-                            ? 'Claim Your Username'
-                            : 'Select Account'
-                          : 'Connect Wallet'}
-                      </Button>
-                    </div>
-
-                    {myAccount ? (
-                      <ProfileMenu options={{ canView: false, canEdit: false }}>
-                        <Button variant="tertiary-alt" icon="icon-more-vert" className="w-[40px] h-[40px]" />
-                      </ProfileMenu>
-                    ) : (
-                      <Menu.Root>
-                        <Menu.Trigger>
-                          <Button variant="tertiary-alt" icon="icon-more-vert" className="w-[40px] h-[40px]" />
-                        </Menu.Trigger>
-                        <Menu.Content className="p-1">
-                          {({ toggle }) => (
-                            <MenuItem
-                              onClick={async () => {
-                                disconnect();
-                                client.resetCustomerHeader();
-                                setSessionClient(null);
-                                toggle();
-                              }}
-                            >
-                              <div className="flex items-center gap-2.5">
-                                <i className="icon-exit size-4 text-error" />
-                                <p className="text-sm text-error">Disconnect</p>
-                              </div>
-                            </MenuItem>
-                          )}
-                        </Menu.Content>
-                      </Menu.Root>
-                    )}
-                  </div>
+                  <Button variant="secondary" className="w-full" onClick={claimUsername}>
+                    Claim Your Username
+                  </Button>
                 </div>
               )}
 
@@ -391,7 +248,6 @@ export function ProfilePaneContent({ me }: { me: User }) {
                 )}
               />
 
-              {/* TODO: check location value from lens */}
               {/* <InputField label="Location" iconLeft="icon-location-outline" placeholder="Where you’re currently based" /> */}
 
               <Controller

@@ -2,39 +2,22 @@ import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ethers } from 'ethers';
 import { mainnet } from 'viem/chains';
-import { useAtomValue } from 'jotai';
 import { useAppKitAccount } from '@reown/appkit/react';
 
-import { Button, Card, Skeleton, modal } from '$lib/components/core';
-import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
-import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
-import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
-import { chainsMapAtom } from '$lib/jotai';
-import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
+import { Button, Card, Skeleton } from '$lib/components/core';
 
 import { PassportActionKind, usePassportContext } from '../provider';
+import { useClaimUsername, useLemonadeUsername } from '$lib/hooks/useUsername';
 
 export function UsernameCard() {
-  const { account } = useAccount();
-  const { username, isLoading } = useLemonadeUsername(account);
+  const handleClaimUsername = useClaimUsername();
+  const { username, isLoading } = useLemonadeUsername();
   const [state, dispatch] = usePassportContext();
-  const chainsMap = useAtomValue(chainsMapAtom);
 
   const handleSelect = () => {
     if (username) {
       dispatch({ type: PassportActionKind.SetLemonadeUsername, payload: username });
     }
-  };
-
-  const handleClaimUsername = () => {
-    modal.open(ConnectWallet, {
-      props: {
-        onConnect: () => {
-          modal.open(SelectProfileModal);
-        },
-        chain: chainsMap[LENS_CHAIN_ID],
-      },
-    });
   };
 
   useEffect(() => {

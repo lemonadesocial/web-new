@@ -65,6 +65,17 @@ if (COIN_INDEXER) {
     documents: ['./lib/graphql/gql/coin/*.gql'],
     preset: 'client',
     plugins: [],
+  }
+}
+
+const USERNAME_INDEXER = process.env.NEXT_PUBLIC_USERNAME_INDEXER;
+if (USERNAME_INDEXER) {
+  generates['./lib/graphql/generated/username/'] = {
+    schema: USERNAME_INDEXER,
+    documents: ['./lib/graphql/gql/username/*.gql'],
+    preset: 'client',
+    plugins: [],
+    documentTransforms: [addTypenameSelectionDocumentTransform],
   };
 }
 

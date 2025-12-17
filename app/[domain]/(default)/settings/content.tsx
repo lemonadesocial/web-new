@@ -7,7 +7,7 @@ import { useAtom, useAtomValue } from 'jotai';
 
 import { Avatar, Button, Card, drawer, modal, toast } from '$lib/components/core';
 import { VerifyEmailModal } from '$lib/components/features/auth/VerifyEmailModal';
-import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
+import { useAccount } from '$lib/hooks/useLens';
 import { useMe } from '$lib/hooks/useMe';
 import { chainsMapAtom, sessionAtom } from '$lib/jotai';
 import { ASSET_PREFIX, PROFILE_SOCIAL_LINKS } from '$lib/utils/constants';
@@ -18,7 +18,6 @@ import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { ConnectWalletModal } from '$lib/components/features/auth/ConnectWalletModal';
 import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
-import { ClaimLemonadeUsernameModal } from '$lib/components/features/lens-account/ClaimLemonadeUsernameModal';
 import { ProfilePane } from '$lib/components/features/pane';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { PageTitle } from '../shared';
@@ -33,6 +32,7 @@ import { useLogOut } from '$lib/hooks/useLogout';
 
 import { ListItem } from './list-item';
 import { OAuthClient } from './oauth-client';
+import { useClaimUsername, useLemonadeUsername } from '$lib/hooks/useUsername';
 
 export function Content() {
   const [session] = useAtom(sessionAtom);
@@ -45,12 +45,13 @@ export function Content() {
   const logOut = useLogOut();
   const { account } = useAccount();
   const { address } = useAppKitAccount();
-  const { username } = useLemonadeUsername(account);
+  const { username } = useLemonadeUsername();
 
   const chainsMap = useAtomValue(chainsMapAtom);
   const { connect, isReady } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);
   const { disconnect } = useDisconnect();
   const { handleConnect } = useLinkFarcaster();
+  const openClaimUsername = useClaimUsername();
 
   const { userData } = useFarcasterUserData(me?.kratos_farcaster_fid ? me?.kratos_farcaster_fid.replace('farcaster:', '') : null);
 
@@ -246,13 +247,7 @@ export function Content() {
               <Button
                 variant="secondary"
                 size="sm"
-                onClick={() => {
-                  if (!account) {
-                    handleSelectWallet();
-                  } else {
-                    modal.open(ClaimLemonadeUsernameModal, { dismissible: false });
-                  }
-                }}
+                onClick={openClaimUsername}
               >
                 Claim Username
               </Button>

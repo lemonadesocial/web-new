@@ -57,8 +57,6 @@ export function PostContent({ post }: PostContentProps) {
 
   const sharingLink = (metadata as LinkMetadata).sharingLink || extractFirstUrl((metadata as TextOnlyMetadata).content);
 
-  console.log(sharingLink)
-
   return (
     <div className="space-y-2" style={{ overflowWrap: 'anywhere' }}>
       <div
