@@ -7,12 +7,12 @@ import * as Sentry from '@sentry/nextjs';
 import { Button, modal, ModalContent, toast } from '$lib/components/core';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { appKit, useAppKitProvider } from '$lib/utils/appkit';
-import { formatError, ZugramaPassportContract, writeContract } from '$lib/utils/crypto';
+import { formatError, AbstractPassportContract, writeContract } from '$lib/utils/crypto';
 import { SignTransactionModal } from '$lib/components/features/modals/SignTransaction';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
 import { PASSPORT_CHAIN_ID } from '../../utils';
 import { chainsMapAtom } from '$lib/jotai';
-import ZuGramaPassport from '$lib/abis/ZuGramaPassport.json';
+import { AbstractPassportABI } from '$lib/abis/AbstractPassport';
 
 type MintData = {
   signature: string;
@@ -47,7 +47,7 @@ export function MintPassportModal({
       setStatus('signing');
 
       const transaction = await writeContract(
-        ZugramaPassportContract,
+        AbstractPassportContract,
         contractAddress,
         walletProvider as Eip1193Provider,
         'mint',
@@ -60,7 +60,7 @@ export function MintPassportModal({
       setStatus('confirming');
 
       const receipt = await transaction.wait();
-      const iface = new ethers.Interface(ZuGramaPassport.abi);
+      const iface = new ethers.Interface(AbstractPassportABI);
 
       let parsedTransferLog: any = null;
 
@@ -124,7 +124,7 @@ export function MintPassportModal({
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <img
-            src={`${ASSET_PREFIX}/assets/images/zugrama-passport-placeholder.png`}
+            src={`${ASSET_PREFIX}/assets/images/drip-nation-passport-mini.png`}
             className="object-cover w-[90px]"
           />
           <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
