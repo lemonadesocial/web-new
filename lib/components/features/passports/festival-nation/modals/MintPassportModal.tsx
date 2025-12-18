@@ -123,7 +123,7 @@ export function MintPassportModal({
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <img
-            src={`${ASSET_PREFIX}/assets/images/festival-nation-passport-mini.png`}
+            src={`${ASSET_PREFIX}/assets/images/passports/festival-nation-passport-mini.png`}
             className="object-cover w-[90px]"
           />
           <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />

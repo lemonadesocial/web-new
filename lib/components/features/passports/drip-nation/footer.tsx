@@ -56,8 +56,9 @@ export function PassportFooter() {
 
     setIsMinting(true);
     try {
+      const username = state.lemonadeUsername || state.ensName;
       const response = await fetch(
-        `/api/passport/${BackendPassportProvider.DripNation}?wallet=${address}&avatar=${encodeURIComponent(state.photo)}&username=${state.lemonadeUsername}`,
+        `/api/passport/${BackendPassportProvider.DripNation}?wallet=${address}&avatar=${encodeURIComponent(state.photo)}&username=${username}`,
       );
 
       const mintData = await response.json();
@@ -110,7 +111,7 @@ export function PassportFooter() {
 
   const disabled =
     (state.currentStep === PassportStep.photo && !state.photo) ||
-    (state.currentStep === PassportStep.username && !state.lemonadeUsername && !state.useENS);
+    (state.currentStep === PassportStep.username && !state.lemonadeUsername && !state.ensName);
 
   return (
     <>

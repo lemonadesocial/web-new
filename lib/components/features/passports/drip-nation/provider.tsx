@@ -15,7 +15,7 @@ export type PassportState = {
   useLemonhead: boolean;
   useFluffle: boolean;
   lemonadeUsername: string;
-  useENS: boolean;
+  ensName: string;
   photo: string;
   isSelfVerified: boolean;
   passportImage: string;
@@ -36,7 +36,7 @@ const defaultState: PassportState = {
   useLemonhead: true,
   useFluffle: false,
   lemonadeUsername: '',
-  useENS: false,
+  ensName: '',
   isSelfVerified: false,
   photo: '',
   passportImage: '',
@@ -50,7 +50,7 @@ export enum PassportActionKind {
   SelectLemonhead = 'SELECT_LEMONHEAD',
   SelectFluffle = 'SELECT_FLUFFLE',
   SetLemonadeUsername = 'SET_LEMONADE_USERNAME',
-  SelectENS = 'SELECT_ENS',
+  SetEnsName = 'SET_ENS_NAME',
   SetMintData = 'SET_MINT_DATA',
   SetPhoto = 'SET_PHOTO',
   SetPassportImage = 'SET_PASSPORT_IMAGE',
@@ -112,11 +112,11 @@ function reducers(state: PassportState, action: PassportAction) {
     }
 
     case PassportActionKind.SetLemonadeUsername: {
-      return { ...state, lemonadeUsername: action.payload, useENS: false };
+      return { ...state, lemonadeUsername: action.payload, ensName: '' };
     }
 
-    case PassportActionKind.SelectENS: {
-      return { ...state, lemonadeUsername: '', useENS: true };
+    case PassportActionKind.SetEnsName: {
+      return { ...state, lemonadeUsername: '', ensName: action.payload };
     }
 
     case PassportActionKind.SetMintData:

@@ -5,7 +5,6 @@ import { deregisterAllFonts, registerFont, createCanvas } from 'canvas';
 import { getImageFromBuffers } from '../../nft/image';
 import { getUriFromUrl, uploadImage, uploadJSON } from '../../nft/storage';
 
-import { getEnsUsername } from '../common/ens';
 import { formatDate } from '../common/format';
 import { getFileImageBuffer, getTextImageBuffer, getUrlImageBuffer, Point } from '../common/canvas';
 
@@ -117,7 +116,7 @@ export const getMintFestivalNationPassportImage = async (avatarImageUrl?: string
     getPassportIdImageBuffer('XXXXXXXX'),
     getMintDateImageBuffer(creationDate),
     getTitleImageBuffer('Citizen'),
-    getUsernameImageBuffer(username || '@username'),
+    getUsernameImageBuffer(username ? `@${username}` : '@username'),
   ];
 
   if (avatarImageUrl) {
@@ -136,15 +135,11 @@ export const getMintFestivalNationPassportImage = async (avatarImageUrl?: string
 };
 
 export const getMintFestivalNationPassportData = async (
-  userId: string,
+  username: string,
   passportNumber: number,
   wallet: string,
   avatarImageUrl: string,
 ) => {
-  const username = await getEnsUsername(wallet);
-
-  assert.ok(username);
-
   const passportId = passportNumber.toString().padStart(8, '0');
 
   const creationDate = formatDate(new Date());
@@ -152,7 +147,7 @@ export const getMintFestivalNationPassportData = async (
   const buffers = await Promise.all([
     getAvatarImageBuffer(avatarImageUrl),
     getBoilerplateImageBuffer(),
-    getUsernameImageBuffer(username),
+    getUsernameImageBuffer(`@${username}`),
     getPassportIdImageBuffer(passportId),
     getMintDateImageBuffer(creationDate),
     getTitleImageBuffer('Founding Citizen'),
@@ -169,7 +164,7 @@ export const getMintFestivalNationPassportData = async (
   const uri = getUriFromUrl(metadataUrl);
 
   //-- call backend API and obtain the signature
-  const data = await getApproval(wallet, userId, uri);
+  const data = await getApproval(wallet, uri);
 
   if (!data) {
     throw new Error('Failed to get minting approval');

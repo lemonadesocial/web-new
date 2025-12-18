@@ -21,10 +21,10 @@ export function UsernameCard() {
   };
 
   useEffect(() => {
-    if (username && !state.lemonadeUsername && !state.useENS) {
+    if (username && !state.lemonadeUsername && !state.ensName) {
       dispatch({ type: PassportActionKind.SetLemonadeUsername, payload: username });
     }
-  }, [username, state.lemonadeUsername, state.useENS]);
+  }, [username, state.lemonadeUsername, state.ensName]);
 
   const isSelected = state.lemonadeUsername;
 
@@ -95,11 +95,19 @@ export function ENSDomainCard() {
     fetchENSName();
   }, [address]);
 
+  useEffect(() => {
+    if (ensName && !state.lemonadeUsername && !state.ensName) {
+      dispatch({ type: PassportActionKind.SetEnsName, payload: ensName });
+    }
+  }, [ensName, state.lemonadeUsername, state.ensName]);
+
   const handleSelect = () => {
-    dispatch({ type: PassportActionKind.SelectENS });
+    if (ensName) {
+      dispatch({ type: PassportActionKind.SetEnsName, payload: ensName });
+    }
   };
 
-  const isSelected = state.useENS;
+  const isSelected = state.ensName;
 
   if (isLoading) {
     return <CardIndicator />;

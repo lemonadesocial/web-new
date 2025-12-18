@@ -5,7 +5,6 @@ import { deregisterAllFonts, registerFont, createCanvas } from 'canvas';
 import { getImageFromBuffers } from '../../nft/image';
 import { getUriFromUrl, uploadImage, uploadJSON } from '../../nft/storage';
 
-import { getEnsUsername } from '../common/ens';
 import { formatDate } from '../common/format';
 import { getFileImageBuffer, getTextImageBuffer, getUrlImageBuffer, Point } from '../common/canvas';
 
@@ -117,7 +116,7 @@ export const getMintDripNationPassportImage = async (avatarImageUrl?: string, us
     getPassportIdImageBuffer('XXXXXXXX'),
     getMintDateImageBuffer(creationDate),
     getTitleImageBuffer('Citizen'),
-    getUsernameImageBuffer(username || 'Username'),
+    getUsernameImageBuffer(username ? `@${username}` : 'Username'),
     getStyleImageBuffer('Streetwear'),
   ];
 
@@ -149,7 +148,7 @@ export const getMintDripNationPassportData = async (
   const buffers = await Promise.all([
     getAvatarImageBuffer(avatarImageUrl),
     getBoilerplateImageBuffer(),
-    getUsernameImageBuffer(username),
+    getUsernameImageBuffer(`@${username}`),
     getPassportIdImageBuffer(passportId),
     getMintDateImageBuffer(creationDate),
     getTitleImageBuffer('Founding Citizen'),

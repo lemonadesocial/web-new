@@ -11,7 +11,7 @@ export const getApproval = async (wallet: string, uri: string) => {
 };
 
 export const getData = async () => {
-  return request<{ userId: string; passportNumber: number; }>(
+  return request<{ passportNumber: number; }>(
     `/passport/data?provider=${PassportProvider.DripNation}`,
     'GET',
   );
