@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { BrowserProvider, Contract, Eip1193Provider, ethers } from 'ethers';
+import * as Sentry from '@sentry/nextjs';
 
 import { modal } from '$lib/components/core';
 import { SignTransactionModal } from '$lib/components/features/modals/SignTransaction';
@@ -105,6 +106,7 @@ export function CreateGroupModal({ params, launchChain, onSuccess }: CreateGroup
       onSuccess?.(manager);
       setStatus('success');
     } catch (err: any) {
+      Sentry.captureException(err);
       setError(formatError(err));
       setStatus('error');
     }
