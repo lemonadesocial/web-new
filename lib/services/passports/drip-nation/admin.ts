@@ -1,8 +1,9 @@
 import { request } from '$lib/services/nft/admin';
+import { PassportProvider } from '$lib/graphql/generated/backend/graphql';
 
 export const getApproval = async (wallet: string, user: string, uri: string) => {
   const opts = {
-    provider: 'drip_nation',
+    provider: PassportProvider.DripNation,
     wallet,
     user,
     uri,
@@ -12,7 +13,7 @@ export const getApproval = async (wallet: string, user: string, uri: string) => 
 
 export const getData = async () => {
   return request<{ userId: string; passportNumber: number; }>(
-    `/passport/data?provider=drip_nation}`,
+    `/passport/data?provider=${PassportProvider.DripNation}`,
     'GET',
   );
 };
