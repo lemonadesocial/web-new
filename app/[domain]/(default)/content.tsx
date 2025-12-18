@@ -33,8 +33,9 @@ import { useTokenData } from '$lib/hooks/useCoin';
 import { formatWallet } from '$lib/utils/crypto';
 
 import { calculateMarketCapData } from '$lib/utils/coin';
-import { truncateMiddle } from '$lib/utils/string';
 import { useClaimUsername, useLemonadeUsername } from '$lib/hooks/useUsername';
+import { useAtomValue } from 'jotai';
+import { chainsMapAtom } from '$lib/jotai';
 
 export function Content() {
   const me = useMe();

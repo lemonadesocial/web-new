@@ -41,9 +41,9 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
   }
 
   const getPassportData = match(provider)
-    .with(PassportProvider.VinylNation, () => getVinylNationData(authCookie))
-    .with(PassportProvider.FestivalNation, () => getFestivalNationData(authCookie))
-    .with(PassportProvider.DripNation, () => getDripNationData(authCookie))
+    .with(PassportProvider.VinylNation, () => getVinylNationData())
+    .with(PassportProvider.FestivalNation, () => getFestivalNationData())
+    .with(PassportProvider.DripNation, () => getDripNationData())
     .otherwise(() => null);
 
   if (!getPassportData) {
