@@ -34,7 +34,7 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
     .otherwise(() => null);
 
   if (!getPassportData) {
-    return NextResponse.json({ error: 'Provider does not support' }, { status: 404 });
+    return NextResponse.json({ error: 'Provider does not support' }, { status: 400 });
   }
 
   const passportData = await getPassportData;

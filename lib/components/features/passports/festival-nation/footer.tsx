@@ -18,6 +18,7 @@ import { MintPassportModal } from './modals/MintPassportModal';
 import { PASSPORT_CHAIN_ID } from '../utils';
 import { PassportEligibilityModal } from './modals/PassportEligibilityModal';
 import { PASSPORT_CONFIG } from '../config';
+import { PassportProvider } from '$lib/graphql/generated/backend/graphql';
 
 export function PassportFooter() {
   const router = useRouter();
@@ -56,7 +57,7 @@ export function PassportFooter() {
     setIsMinting(true);
     try {
       const response = await fetch(
-        `/api/passport/${state.provider}?wallet=${address}&avatar=${encodeURIComponent(state.photo)}`,
+        `/api/passport/${PassportProvider.FestivalNation}?wallet=${address}&avatar=${encodeURIComponent(state.photo)}`,
       );
 
       const mintData = await response.json();

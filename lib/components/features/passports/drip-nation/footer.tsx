@@ -5,13 +5,14 @@ import { match } from 'ts-pattern';
 import { useAtomValue } from 'jotai';
 import * as Sentry from '@sentry/nextjs';
 import React from 'react';
+import { PassportProvider as BackendPassportProvider} from '$lib/graphql/generated/backend/graphql';
 
 import { Button, modal, toast } from '$lib/components/core';
 import { chainsMapAtom } from '$lib/jotai';
 import { useAppKitAccount } from '$lib/utils/appkit';
 import { formatError } from '$lib/utils/crypto';
 
-import { PassportActionKind, PassportStep, usePassportContext } from './provider';
+import { PassportActionKind, PassportProvider, PassportStep, usePassportContext } from './provider';
 import { ConnectWallet } from '../../modals/ConnectWallet';
 import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { MintPassportModal } from './modals/MintPassportModal';
@@ -56,7 +57,7 @@ export function PassportFooter() {
     setIsMinting(true);
     try {
       const response = await fetch(
-        `/api/passport/${state.provider}?wallet=${address}&avatar=${encodeURIComponent(state.photo)}`,
+        `/api/passport/${BackendPassportProvider.DripNation}?wallet=${address}&avatar=${encodeURIComponent(state.photo)}`,
       );
 
       const mintData = await response.json();
