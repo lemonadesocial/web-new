@@ -139,7 +139,6 @@ export const getMintDripNationPassportImage = async (avatarImageUrl?: string, us
 export const getMintDripNationPassportData = async (
   userId: string,
   passportNumber: number,
-  selfVerifiedTimestamp: number,
   wallet: string,
   avatarImageUrl: string,
 ) => {
@@ -150,7 +149,6 @@ export const getMintDripNationPassportData = async (
   const passportId = passportNumber.toString().padStart(8, '0');
 
   const creationDate = formatDate(new Date());
-  const verifiedDate = formatDate(new Date(selfVerifiedTimestamp));
 
   const buffers = await Promise.all([
     getAvatarImageBuffer(avatarImageUrl),

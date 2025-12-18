@@ -56,10 +56,6 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
     return NextResponse.json({ error: 'Passport data not found' }, { status: 404 });
   }
 
-  if (!passportData.selfVerifiedTimestamp) {
-    return NextResponse.json({ error: 'Self not verified' }, { status: 400 });
-  }
-
   const getMintData = match(provider)
     .with(PassportProvider.VinylNation, () => getMintVinylNationPassportData)
     .with(PassportProvider.FestivalNation, () => getMintFestivalNationPassportData)
@@ -73,7 +69,6 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
   const mintData = await getMintData(
     passportData.userId,
     passportData.passportNumber,
-    passportData.selfVerifiedTimestamp,
     wallet,
     avatarImageUrl,
   );

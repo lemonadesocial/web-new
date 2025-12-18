@@ -138,7 +138,6 @@ export const getMintFestivalNationPassportImage = async (avatarImageUrl?: string
 export const getMintFestivalNationPassportData = async (
   userId: string,
   passportNumber: number,
-  selfVerifiedTimestamp: number,
   wallet: string,
   avatarImageUrl: string,
 ) => {
@@ -149,7 +148,6 @@ export const getMintFestivalNationPassportData = async (
   const passportId = passportNumber.toString().padStart(8, '0');
 
   const creationDate = formatDate(new Date());
-  const verifiedDate = formatDate(new Date(selfVerifiedTimestamp));
 
   const buffers = await Promise.all([
     getAvatarImageBuffer(avatarImageUrl),
@@ -162,7 +160,7 @@ export const getMintFestivalNationPassportData = async (
 
   const finalImage = await getImageFromBuffers(buffers, outputWidth, outputHeight, 'png');
 
-  const fileId = `viynl-nation-passport-${passportId}`;
+  const fileId = `festival-nation-passport-${passportId}`;
   const imageUrl = await uploadImage(`${fileId}.png`, finalImage);
 
   //-- create and upload metadata
