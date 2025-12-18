@@ -12,9 +12,12 @@ export enum PassportStep {
 export type PassportState = {
   provider: PASSPORT_PROVIDER;
   currentStep: PassportStep;
+  useLemonhead: boolean;
+  useFluffle: boolean;
+  lemonadeUsername: string;
+  useENS: boolean;
   photo: string;
   isSelfVerified: boolean;
-  ensName: string;
   passportImage: string;
   mintData?: {
     signature: string;
@@ -30,9 +33,12 @@ export type PassportState = {
 const defaultState: PassportState = {
   provider: 'festival-nation',
   currentStep: PassportStep.intro,
-  photo: '',
+  useLemonhead: true,
+  useFluffle: false,
+  lemonadeUsername: '',
+  useENS: false,
   isSelfVerified: false,
-  ensName: '',
+  photo: '',
   passportImage: '',
   mintData: undefined,
   mintState: undefined,
@@ -41,10 +47,12 @@ const defaultState: PassportState = {
 export enum PassportActionKind {
   NextStep = 'NEXT_STEP',
   PrevStep = 'PREV_STEP',
-  SetPhoto = 'SET_PHOTO',
-  SetSelfVerified = 'SET_SELF_VERIFIED',
-  SetEnsName = 'SET_ENS_NAME',
+  SelectLemonhead = 'SELECT_LEMONHEAD',
+  SelectFluffle = 'SELECT_FLUFFLE',
+  SetLemonadeUsername = 'SET_LEMONADE_USERNAME',
+  SelectENS = 'SELECT_ENS',
   SetMintData = 'SET_MINT_DATA',
+  SetPhoto = 'SET_PHOTO',
   SetPassportImage = 'SET_PASSPORT_IMAGE',
   SetMintState = 'SET_MINT_STATE',
 }
@@ -95,17 +103,27 @@ function reducers(state: PassportState, action: PassportAction) {
       return state;
     }
 
+    case PassportActionKind.SelectLemonhead: {
+      return { ...state, useLemonhead: true, useFluffle: false };
+    }
+
+    case PassportActionKind.SelectFluffle: {
+      return { ...state, useLemonhead: false, useFluffle: true };
+    }
+
+    case PassportActionKind.SetLemonadeUsername: {
+      return { ...state, lemonadeUsername: action.payload, useENS: false };
+    }
+
+    case PassportActionKind.SelectENS: {
+      return { ...state, lemonadeUsername: '', useENS: true };
+    }
+
     case PassportActionKind.SetMintData:
-      return { ...state, mintData: action.payload };
+      return { ...state, mintData: { ...state.mintData, ...action.payload } };
 
     case PassportActionKind.SetPhoto:
       return { ...state, photo: action.payload };
-
-    case PassportActionKind.SetSelfVerified:
-      return { ...state, isSelfVerified: action.payload };
-
-    case PassportActionKind.SetEnsName:
-      return { ...state, ensName: action.payload };
 
     case PassportActionKind.SetPassportImage:
       return { ...state, passportImage: action.payload };

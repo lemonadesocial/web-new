@@ -107,7 +107,9 @@ export function PassportFooter() {
       .otherwise(() => dispatch({ type: PassportActionKind.NextStep }));
   };
 
-  const disabled = state.currentStep === PassportStep.username && !state.ensName;
+  const disabled =
+    (state.currentStep === PassportStep.photo && !state.photo) ||
+    (state.currentStep === PassportStep.username && !state.mintData);
 
   return (
     <>

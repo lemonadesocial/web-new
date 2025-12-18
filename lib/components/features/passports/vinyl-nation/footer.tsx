@@ -108,8 +108,8 @@ export function PassportFooter() {
   };
 
   const disabled =
-    (state.currentStep === PassportStep.photo && (!state.photo || !state.isSelfVerified)) ||
-    (state.currentStep === PassportStep.username && !state.ensName);
+    (state.currentStep === PassportStep.photo && !state.photo) ||
+    (state.currentStep === PassportStep.username && !state.mintData);
 
   return (
     <>

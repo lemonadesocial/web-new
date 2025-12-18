@@ -13,24 +13,22 @@ import { CanMintPassportDocument, Chain, PassportProvider } from '$lib/graphql/g
 import { chainsMapAtom } from '$lib/jotai';
 import { PASSPORT_CHAIN_ID } from '../../utils';
 
-// TODO: PASSPORT UPDATING
 async function checkPassportBalance(address: string, chain: Chain) {
-  // const contractAddress = chain.drip_nation_passport_contract_address;
-  //
-  // if (!contractAddress) {
-  //   return 0;
-  // }
-  //
-  // try {
-  //   const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-  //   const contract = ZugramaPassportContract.attach(contractAddress).connect(provider) as ethers.Contract;
-  //   const balance = await contract.getFunction('balanceOf')(address);
-  //   return Number(balance);
-  // } catch (error) {
-  //   console.error('Error checking passport balance:', error);
-  //   return 0;
-  // }
-  return 0;
+  const contractAddress = chain.drip_nation_passport_contract_address;
+
+  if (!contractAddress) {
+    return 0;
+  }
+
+  try {
+    const provider = new ethers.JsonRpcProvider(chain.rpc_url);
+    const contract = ZugramaPassportContract.attach(contractAddress).connect(provider) as ethers.Contract;
+    const balance = await contract.getFunction('balanceOf')(address);
+    return Number(balance);
+  } catch (error) {
+    console.error('Error checking passport balance:', error);
+    return 0;
+  }
 }
 
 export function PassportEligibilityModal({ onContinue }: { onContinue: () => void }) {
