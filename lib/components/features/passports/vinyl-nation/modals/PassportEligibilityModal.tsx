@@ -7,7 +7,7 @@ import { useAppKitAccount, useAppKit } from '$lib/utils/appkit';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
 import { SuccessModal } from '$lib/components/features/modals/SuccessModal';
 import { Card, ModalContent } from '$lib/components/core';
-import { formatWallet, ZugramaPassportContract } from '$lib/utils/crypto';
+import { AbstractPassportContract, formatWallet } from '$lib/utils/crypto';
 import { useClient } from '$lib/graphql/request';
 import { CanMintPassportDocument, Chain, PassportProvider } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom } from '$lib/jotai';
@@ -23,7 +23,7 @@ async function checkPassportBalance(address: string, chain: Chain) {
 
   try {
     const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-    const contract = ZugramaPassportContract.attach(contractAddress).connect(provider) as ethers.Contract;
+    const contract = AbstractPassportContract.attach(contractAddress).connect(provider) as ethers.Contract;
     const balance = await contract.getFunction('balanceOf')(address);
     return Number(balance);
   } catch (error) {

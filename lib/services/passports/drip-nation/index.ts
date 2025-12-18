@@ -137,15 +137,11 @@ export const getMintDripNationPassportImage = async (avatarImageUrl?: string, us
 };
 
 export const getMintDripNationPassportData = async (
-  userId: string,
+  username: string,
   passportNumber: number,
   wallet: string,
   avatarImageUrl: string,
 ) => {
-  const username = await getEnsUsername(wallet);
-
-  assert.ok(username);
-
   const passportId = passportNumber.toString().padStart(8, '0');
 
   const creationDate = formatDate(new Date());
@@ -170,7 +166,7 @@ export const getMintDripNationPassportData = async (
   const uri = getUriFromUrl(metadataUrl);
 
   //-- call backend API and obtain the signature
-  const data = await getApproval(wallet, userId, uri);
+  const data = await getApproval(wallet, uri);
 
   if (!data) {
     throw new Error('Failed to get minting approval');

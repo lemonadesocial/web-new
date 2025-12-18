@@ -17,7 +17,12 @@ type Params = Promise<{ provider: PassportProvider }>;
 export async function GET(request: NextRequest, { params }: { params: Params }) {
   const wallet = new URL(request.url).searchParams.get('wallet');
   const avatarImageUrl = new URL(request.url).searchParams.get('avatar');
+  const username = new URL(request.url).searchParams.get('username');
   const { provider } = await params;
+
+  if (!username) {
+    return NextResponse.json({ error: 'Username parameter is required' }, { status: 400 });
+  }
 
   if (!wallet) {
     return NextResponse.json({ error: 'Wallet parameter is required' }, { status: 400 });
@@ -50,15 +55,29 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
     .otherwise(() => null);
 
   if (!getMintData) {
-    return NextResponse.json({ error: 'Unable to get mint data' }, { status: 404 });
+    return NextResponse.json({ error: 'Provider does not support' }, { status: 400 });
   }
 
-  const mintData = await getMintData(
-    passportData.userId,
-    passportData.passportNumber,
-    wallet,
-    avatarImageUrl,
-  );
+  try {
+    const mintData = await getMintData(
+      username,
+      passportData.passportNumber,
+      wallet,
+      avatarImageUrl,
+    );
 
-  return NextResponse.json(mintData);
+    return NextResponse.json(mintData);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    const errorStack = error instanceof Error ? error.stack : undefined;
+
+    return NextResponse.json(
+      {
+        error: 'Failed to get mint data',
+        message: errorMessage,
+        ...(errorStack && { stack: errorStack }),
+      },
+      { status: 500 },
+    );
+  }
 }

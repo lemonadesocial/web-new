@@ -57,7 +57,7 @@ export function PassportFooter() {
     setIsMinting(true);
     try {
       const response = await fetch(
-        `/api/passport/${BackendPassportProvider.DripNation}?wallet=${address}&avatar=${encodeURIComponent(state.photo)}`,
+        `/api/passport/${BackendPassportProvider.DripNation}?wallet=${address}&avatar=${encodeURIComponent(state.photo)}&username=${state.lemonadeUsername}`,
       );
 
       const mintData = await response.json();
