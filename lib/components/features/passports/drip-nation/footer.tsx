@@ -26,7 +26,7 @@ export function PassportFooter() {
   const { address } = useAppKitAccount();
   const [isMinting, setIsMinting] = React.useState(false);
 
-  const steps = PASSPORT_CONFIG.zugrama.steps;
+  const steps = PASSPORT_CONFIG[state.provider].steps;
   const currentStep = steps[state.currentStep];
 
   const handlePrev = () => {

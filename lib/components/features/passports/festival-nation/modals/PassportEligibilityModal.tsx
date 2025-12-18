@@ -61,7 +61,7 @@ export function PassportEligibilityModal({ onContinue }: { onContinue: () => voi
         query: CanMintPassportDocument,
         variables: {
           wallet: address,
-          provider: PassportProvider.Zugrama,
+          provider: PassportProvider.FestivalNation,
         },
       });
       setWhitelistData(data);
@@ -73,7 +73,7 @@ export function PassportEligibilityModal({ onContinue }: { onContinue: () => voi
     return (
       <ConfirmTransaction
         title="Checking Your Access"
-        description="We're checking if you already own a Zugrama Passport. This may take a moment."
+        description="We're checking if you already own a Festival Nation Passport. This may take a moment."
       />
     );
   }
