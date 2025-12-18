@@ -27,19 +27,6 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
     return NextResponse.json({ error: 'Avatar parameter is required' }, { status: 400 });
   }
 
-  if (!process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME) {
-    return NextResponse.json(
-      { error: 'NEXT_PUBLIC_AUTH_COOKIE_NAME environment variable is not set' },
-      { status: 500 },
-    );
-  }
-
-  const authCookie = request.cookies.get(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME)?.value;
-
-  if (!authCookie) {
-    return NextResponse.json({ error: 'Authentication cookie not found' }, { status: 401 });
-  }
-
   const getPassportData = match(provider)
     .with(PassportProvider.VinylNation, () => getVinylNationData())
     .with(PassportProvider.FestivalNation, () => getFestivalNationData())
