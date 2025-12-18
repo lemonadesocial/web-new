@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
+import { useAtomValue } from 'jotai';
 
 import { Accordion, Badge, Button, Card, Divider, drawer, modal, Skeleton } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
@@ -20,16 +21,10 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { EventPane, ProfilePane } from '$lib/components/features/pane';
-import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { CompleteProfilePane } from '$lib/components/features/pane/CompleteProfilePane';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { VerifyEmailModal } from '$lib/components/features/auth/VerifyEmailModal';
-import { ClaimLemonadeUsernameModal } from '$lib/components/features/lens-account/ClaimLemonadeUsernameModal';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
-import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
-import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
-import { useAtomValue } from 'jotai';
-import { chainsMapAtom } from '$lib/jotai';
 import { GetVerifiedModal } from '$lib/components/features/modals/GetVerifiedModal';
 import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
@@ -39,7 +34,8 @@ import { useTokenData } from '$lib/hooks/useCoin';
 import { formatWallet } from '$lib/utils/crypto';
 
 import { calculateMarketCapData } from '$lib/utils/coin';
-import { truncateMiddle } from '$lib/utils/string';
+import { useClaimUsername, useLemonadeUsername } from '$lib/hooks/useUsername';
+import { chainsMapAtom } from '$lib/jotai';
 
 export function Content() {
   const me = useMe();
@@ -475,12 +471,9 @@ function CardItem({
 
 function CompleteYourProfile() {
   const me = useMe();
-  const { account } = useAccount();
-  const { username } = useLemonadeUsername(account);
+  const { username } = useLemonadeUsername();
+  const openClaimUsername = useClaimUsername();
 
-  const chainsMap = useAtomValue(chainsMapAtom);
-
-  const walletVerified = me?.kratos_wallet_address;
   const { isConnected } = useAppKitAccount();
 
   const openEditProfilePane = () => drawer.open(ProfilePane);
@@ -514,23 +507,7 @@ function CompleteYourProfile() {
       label: 'Claim Username',
       completed: !!username,
       show: true,
-      onClick: () => {
-        if (!account) {
-          modal.open(ConnectWallet, {
-            props: {
-              onConnect: () => {
-                modal.close();
-                setTimeout(() => {
-                  modal.open(SelectProfileModal);
-                });
-              },
-              chain: chainsMap[LENS_CHAIN_ID],
-            },
-          });
-        } else {
-          modal.open(ClaimLemonadeUsernameModal, { dismissible: false });
-        }
-      },
+      onClick: openClaimUsername,
     },
     // {key: 'verify_email', label: 'Download Lemonade app', completed: false },
     {

@@ -12,8 +12,6 @@ import { Avatar, Button, Input, modal, ModalContent, toast, FileInput, LabeledIn
 import { randomUserImage } from '$lib/utils/user';
 import { useSigner } from '$lib/hooks/useSigner';
 
-import { ClaimLemonadeUsernameModal } from './ClaimLemonadeUsernameModal';
-
 export function ClaimAccountModal() {
   const sessionClient = useAtomValue(sessionClientAtom);
   const signer = useSigner();
@@ -69,13 +67,12 @@ export function ClaimAccountModal() {
     }
 
     modal.close();
-    modal.open(ClaimLemonadeUsernameModal);
   }
 
   return (
     <ModalContent
       onClose={() => modal.close()}
-      title="Create Your Profile"
+      title="Create Lens Profile"
     >
       <div className="flex items-center justify-center">
         <div className="relative">

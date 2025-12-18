@@ -15,7 +15,6 @@ import {
   Order_By,
   MemecoinMetadataDocument,
   PoolSwapDocument,
-  type PoolCreated,
   type PoolSwapQuery,
   type PoolSwapQueryVariables
 } from '$lib/graphql/generated/coin/graphql';

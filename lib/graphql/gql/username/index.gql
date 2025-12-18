@@ -1,0 +1,6 @@
+query TokenOwner($where: TokenOwner_bool_exp) {
+  TokenOwner(where: $where) {
+    id
+    tokenId
+  }
+}

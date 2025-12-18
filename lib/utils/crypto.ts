@@ -135,7 +135,7 @@ export function formatError(error: any): string {
   }
 
   if (isError(error, 'CALL_EXCEPTION')) {
-    return 'Transaction failed. Please check your inputs and try again';
+    return 'Transaction failed. Please check your inputs and try again.';
   }
 
   if (isError(error, 'NONCE_EXPIRED')) {
