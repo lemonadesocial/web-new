@@ -47,13 +47,13 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
     .otherwise(() => null);
 
   if (!getPassportData) {
-    return NextResponse.json({ error: 'Passport data not found' }, { status: 404 });
+    return NextResponse.json({ error: 'Provider does not support' }, { status: 404 });
   }
 
   const passportData = await getPassportData;
 
   if (!passportData) {
-    return NextResponse.json({ error: 'Passport data not found' }, { status: 404 });
+    return NextResponse.json({ error: 'Unable to get passport data' }, { status: 404 });
   }
 
   const getMintData = match(provider)
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
     .otherwise(() => null);
 
   if (!getMintData) {
-    return NextResponse.json({ error: 'Provider does not support' }, { status: 404 });
+    return NextResponse.json({ error: 'Unable to get mint data' }, { status: 404 });
   }
 
   const mintData = await getMintData(
