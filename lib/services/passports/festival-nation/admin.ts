@@ -2,7 +2,7 @@ import { request } from '$lib/services/nft/admin';
 
 export const getApproval = async (wallet: string, user: string, uri: string) => {
   const opts = {
-    provider: 'vinyl-nation',
+    provider: 'festival-nation',
     wallet,
     user,
     uri,
