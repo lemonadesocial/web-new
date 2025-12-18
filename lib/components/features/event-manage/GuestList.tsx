@@ -49,8 +49,6 @@ export function GuestList({ event }: { event: Event }) {
 
   const sortOptions: SortOption[] = [
     { key: 'register_time', value: 'Register Time' },
-    { key: 'name', value: 'Name' },
-    { key: 'email', value: 'Email' },
     { key: 'approval_status', value: 'Approval Status' },
   ];
 
@@ -69,10 +67,6 @@ export function GuestList({ event }: { event: Event }) {
       sortBy:
         selectedSort?.key === 'register_time'
           ? ListEventGuestsSortBy.RegisterTime
-          : selectedSort?.key === 'name'
-            ? ListEventGuestsSortBy.Name
-            : selectedSort?.key === 'email'
-              ? ListEventGuestsSortBy.Email
               : selectedSort?.key === 'approval_status'
                 ? ListEventGuestsSortBy.ApprovalStatus
                 : undefined,
