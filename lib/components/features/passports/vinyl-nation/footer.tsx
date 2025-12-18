@@ -56,7 +56,7 @@ export function PassportFooter() {
     setIsMinting(true);
     try {
       const response = await fetch(
-        `/api/passport/vinyl-nation?wallet=${address}&avatar=${encodeURIComponent(state.photo)}`,
+        `/api/passport/${state.provider}?wallet=${address}&avatar=${encodeURIComponent(state.photo)}`,
       );
 
       const mintData = await response.json();
