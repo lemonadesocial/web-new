@@ -109,7 +109,7 @@ export function PassportFooter() {
 
   const disabled =
     (state.currentStep === PassportStep.photo && !state.photo) ||
-    (state.currentStep === PassportStep.username && !state.mintData);
+    (state.currentStep === PassportStep.username && !state.lemonadeUsername && !state.useENS);
 
   return (
     <>
