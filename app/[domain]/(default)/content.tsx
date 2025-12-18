@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
+import { useAtomValue } from 'jotai';
 
 import { Accordion, Badge, Button, Card, Divider, drawer, modal, Skeleton } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
@@ -33,8 +34,8 @@ import { useTokenData } from '$lib/hooks/useCoin';
 import { formatWallet } from '$lib/utils/crypto';
 
 import { calculateMarketCapData } from '$lib/utils/coin';
-import { truncateMiddle } from '$lib/utils/string';
 import { useClaimUsername, useLemonadeUsername } from '$lib/hooks/useUsername';
+import { chainsMapAtom } from '$lib/jotai';
 
 export function Content() {
   const me = useMe();
