@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { snakeCase } from 'lodash';
 
@@ -23,11 +23,23 @@ type SortOption = {
 
 export function GuestList({ event }: { event: Event }) {
   const [searchText, setSearchText] = useState('');
+  const [debouncedSearchText, setDebouncedSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [selectedTicketTypes, setSelectedTicketTypes] = useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState<SortOption | null>(null);
   const pageSize = 100;
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchText(searchText);
+      setCurrentPage(1);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchText]);
 
   const ticketTypeFilters =
     event.event_ticket_types?.map((ticketType) => ({
@@ -45,7 +57,7 @@ export function GuestList({ event }: { event: Event }) {
   const { data, loading, error, refetch } = useQuery(ListEventGuestsDocument, {
     variables: {
       event: event._id,
-      search: searchText || undefined,
+      search: debouncedSearchText || undefined,
       skip: (currentPage - 1) * pageSize,
       limit: pageSize,
       ticketTypes: selectedTicketTypes.length > 0 ? selectedTicketTypes : undefined,
@@ -81,7 +93,6 @@ export function GuestList({ event }: { event: Event }) {
 
   const handleSearch = (value: string) => {
     setSearchText(value);
-    setCurrentPage(1);
   };
 
   const handlePageChange = (page: number) => {
