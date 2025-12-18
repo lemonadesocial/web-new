@@ -16,6 +16,7 @@ import { useQuery } from '$lib/graphql/request';
 
 import CommunityCard from './CommunityCard';
 import { useTheme } from '../theme-builder/provider';
+import { WidgetContainer } from './widgets/WidgetContainer';
 
 type Props = {
   initData: {
@@ -30,6 +31,8 @@ type Props = {
 
 export function Community({ initData, hideHeroSection = false }: Props) {
   const [state] = useTheme();
+  const hideSubspace = true;
+
   const { data: dataGetSpace } = useQuery(GetSpaceDocument, {
     variables: { id: initData.space?._id },
     fetchPolicy: 'cache-and-network',
@@ -51,7 +54,7 @@ export function Community({ initData, hideHeroSection = false }: Props) {
         <>
           <HeroSection space={dataGetSpace?.getSpace as Space} />
           <Divider className="my-8" />
-          {subSpaces.length > 0 && (
+          {!hideSubspace && subSpaces.length > 0 && (
             <>
               <section className="flex flex-col gap-6">
                 <div className="w-full flex justify-between items-center">
@@ -77,6 +80,7 @@ export function Community({ initData, hideHeroSection = false }: Props) {
       )}
 
       {/* <CommunityEventsWithCalendar space={space} /> */}
+      <WidgetContainer />
     </div>
   );
 }
