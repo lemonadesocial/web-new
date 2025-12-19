@@ -1,9 +1,9 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
-// import { ethers } from 'ethers';
+import { ethers } from 'ethers';
 
 import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
-// import { ERC721Contract } from '$lib/utils/crypto';
+import { ERC721Contract } from '$lib/utils/crypto';
 import { getClient } from '$lib/graphql/request';
 import { PASSPORT_CHAIN_ID } from '$lib/components/features/passport/mint/utils';
 import { ASSET_PREFIX } from '$lib/utils/constants';
@@ -22,40 +22,39 @@ export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const tokenId = searchParams.get('tokenId');
 
-  // if (!tokenId) {
-  //   return new Response(`Bad Request: Token ID not provided`, { status: 400 });
-  // }
-  //
-  // const chain = await fetchChain();
-  //
-  // if (!chain) {
-  //   return new Response(`Error: Chain does not support!`, { status: 400 });
-  // }
-  //
-  // let image;
-  //
-  // try {
-  //   const contractAddress = chain.festival_nation_passport_contract_address;
-  //
-  //   if (!contractAddress) {
-  //     return new Response('Festival nation contract address not set', { status: 400 });
-  //   }
-  //
-  //   const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-  //   const contract = ERC721Contract.attach(contractAddress).connect(provider);
-  //
-  //   const tokenUri = await contract.getFunction('tokenURI')(tokenId);
-  //   const res = await fetch(tokenUri);
-  //   const data = await res.json();
-  //   image = data.image;
-  // } catch (err: any) {
-  //   return new Response(err.message || 'Error: Something went wrong!', { status: 500 });
-  // }
+  if (!tokenId) {
+    return new Response(`Bad Request: Token ID not provided`, { status: 400 });
+  }
 
-  // if (!image) {
-  //   return new Response('Passport image not found', { status: 404 });
-  // }
-  //
+  const chain = await fetchChain();
+
+  if (!chain) {
+    return new Response(`Error: Chain does not support!`, { status: 400 });
+  }
+
+  let image;
+
+  try {
+    const contractAddress = chain.festival_nation_passport_contract_address;
+
+    if (!contractAddress) {
+      return new Response('Festival nation contract address not set', { status: 400 });
+    }
+
+    const provider = new ethers.JsonRpcProvider(chain.rpc_url);
+    const contract = ERC721Contract.attach(contractAddress).connect(provider);
+
+    const tokenUri = await contract.getFunction('tokenURI')(tokenId);
+    const res = await fetch(tokenUri);
+    const data = await res.json();
+    image = data.image;
+  } catch (err: any) {
+    return new Response(err.message || 'Error: Something went wrong!', { status: 500 });
+  }
+
+  if (!image) {
+    return new Response('Passport image not found', { status: 404 });
+  }
 
   return new ImageResponse(
     (
@@ -80,26 +79,38 @@ export async function GET(req: NextRequest) {
           style={{
             display: 'flex',
             justifyContent: 'space-between',
+            alignItems: 'center',
             width: '100%',
           }}
         >
           <div style={{ display: 'flex' }}>
-            <p
-              style={{
-                fontSize: 40,
-                fontFamily: 'Bungee Regular',
-                color: 'rgba(255, 255, 255)',
-                margin: 0,
-                padding: 0,
-              }}
-            >
-              Festival NATION
-            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', color: '#E1CE27' }}>
+              <p
+                style={{
+                  fontSize: 20,
+                  fontFamily: 'Bungee Regular',
+                  margin: 0,
+                  padding: 0,
+                }}
+              >
+                festival
+              </p>
+              <p
+                style={{
+                  fontSize: 20,
+                  fontFamily: 'Bungee Regular',
+                  margin: 0,
+                  padding: 0,
+                }}
+              >
+                NATION
+              </p>
+            </div>
           </div>
           <LemonadeLogo />
         </div>
 
-        {/* <img src={image} /> */}
+        <img src={image} />
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <p
