@@ -3,7 +3,7 @@ import { useAtomValue } from "jotai";
 import { format } from "date-fns";
 import { useMemo } from "react";
 
-import { Avatar, Button, drawer, Skeleton } from "$lib/components/core";
+import { Avatar, Button, drawer, modal, Skeleton } from "$lib/components/core";
 import { EventGuestPayment, GetEventGuestDetailedInfoDocument } from "$lib/graphql/generated/backend/graphql";
 import { useQuery } from "$lib/graphql/request";
 import { randomUserImage } from "$lib/utils/user";
@@ -12,6 +12,7 @@ import { chainsMapAtom } from "$lib/jotai";
 
 import { CardIcon } from "../../event-registration/payments/CardIcon";
 import { useEventRequest } from "../hooks";
+import { ModifyTicketsModal } from "../modals/ModifyTicketsModal";
 
 export function GuestDetailsDrawer({ email, event }: { email: string; event: string }) {
   const { data, loading, refetch } = useQuery(GetEventGuestDetailedInfoDocument, {
@@ -25,11 +26,11 @@ export function GuestDetailsDrawer({ email, event }: { email: string; event: str
 
   const ticketGroups = useMemo(() => {
     if (!guestInfo?.purchased_tickets) return {};
-    
+
     return guestInfo.purchased_tickets.reduce((acc, ticket) => {
       const typeId = ticket.type_expanded?._id;
       const typeTitle = ticket.type_expanded?.title || 'Unknown';
-      
+
       if (!acc[typeId]) {
         acc[typeId] = {
           title: typeTitle,
@@ -137,7 +138,7 @@ export function GuestDetailsDrawer({ email, event }: { email: string; event: str
               <p className="text-lg">{guestInfo.payments.length} {guestInfo.payments.length === 1 ? 'Payment' : 'Payments'}</p>
               <div className="rounded-md border border-card-border bg-card divide-y divide-divider">
                 {guestInfo.payments.map((payment) => (
-                  <PaymentItem key={payment._id} payment={payment} />
+                  <PaymentItem key={payment._id} payment={payment as unknown as EventGuestPayment} />
                 ))}
               </div>
             </div>
@@ -148,11 +149,29 @@ export function GuestDetailsDrawer({ email, event }: { email: string; event: str
           !!guestInfo.purchased_tickets?.length && <>
             <hr className="border-t border-t-divider" />
             <div className="space-y-4">
-              <p className="text-lg">{guestInfo.purchased_tickets.length} {guestInfo.purchased_tickets.length === 1 ? 'Ticket' : 'Tickets'}</p>
+              <div className="flex justify-between items-center">
+                <p className="text-lg">
+                  {guestInfo.purchased_tickets.length} {guestInfo.purchased_tickets.length === 1 ? 'Ticket' : 'Tickets'}
+                </p>
+                <Button
+                  size="sm"
+                  variant="tertiary"
+                  iconLeft="icon-edit-sharp"
+                  onClick={() => {
+                    modal.open(ModifyTicketsModal, {
+                      props: {
+                        purchasedTickets: guestInfo.purchased_tickets || [],
+                      },
+                    });
+                  }}
+                >
+                  Edit
+                </Button>
+              </div>
               <div>
                 {Object.values(ticketGroups).map((group, index) => (
                   <div key={index} className="flex items-start gap-1.5">
-                    <p className="text-tertiary flex-1 whitespace-pre">{group.count} x</p>
+                    <p className="text-tertiary whitespace-pre">{group.count} x</p>
                     <p>{group.title}</p>
                   </div>
                 ))}
