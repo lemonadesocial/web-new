@@ -99,6 +99,7 @@ export function CreateGroupModal({ params, launchChain, onSuccess }: CreateGroup
             cover_photo: space?.image_cover,
             handle_twitter: space?.handle_twitter,
             website: space?.website,
+            space: space?._id,
           },
         },
       });
