@@ -55,7 +55,6 @@ const getAvatarPlaceholderBuffer = async () => {
   const ctx = canvas.getContext('2d');
   assert.ok(ctx);
 
-  ctx.fillStyle = '#C7FE42';
   ctx.fillRect(avatarOffset.x, avatarOffset.y, avatarSize, avatarSize);
 
   return canvas.toBuffer('image/png');
@@ -150,7 +149,7 @@ export const getMintFestivalNationPassportData = async (
     getUsernameImageBuffer(`@${username}`),
     getPassportIdImageBuffer(passportId),
     getMintDateImageBuffer(creationDate),
-    getTitleImageBuffer('Founding Citizen'),
+    getTitleImageBuffer('Citizen'),
   ]);
 
   const finalImage = await getImageFromBuffers(buffers, outputWidth, outputHeight, 'png');

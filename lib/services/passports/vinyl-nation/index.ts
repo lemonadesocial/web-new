@@ -152,7 +152,7 @@ export const getMintVinylNationPassportData = async (
     getUsernameImageBuffer(`@${username}`),
     getPassportIdImageBuffer(passportId),
     getMintDateImageBuffer(creationDate),
-    getTitleImageBuffer('Founding Citizen'),
+    getTitleImageBuffer('Citizen'),
   ]);
 
   const finalImage = await getImageFromBuffers(buffers, outputWidth, outputHeight, 'png');
