@@ -32,7 +32,7 @@ export const useClaimUsername = () => {
 }
 
 async function fetchLemonadeUsernameToken(address: string, usernameChain: Chain | undefined) {
-  if (!usernameChain) {
+  if (!usernameChain?.lemonade_username_contract_address) {
     return null;
   }
 
@@ -42,6 +42,12 @@ async function fetchLemonadeUsernameToken(address: string, usernameChain: Chain 
       where: {
         owner: {
           _eq: address.toLowerCase(),
+        },
+        tokenAddress: {
+          _eq: usernameChain.lemonade_username_contract_address.toLowerCase(),
+        },
+        chainId: {
+          _eq: usernameChain.chain_id,
         },
       },
     },
