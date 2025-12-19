@@ -18,10 +18,10 @@ export function LemonheadCard() {
   const isSelected = state.useLemonhead;
 
   useEffect(() => {
-    if (!state.photo && data) {
+    if (state.useLemonhead && data) {
       dispatch({ type: PassportActionKind.SetPhoto, payload: data.image });
     }
-  }, [state.photo, data]);
+  }, [state.useLemonhead, data, dispatch]);
 
   if (loading || !data) {
     return <CardIndicator />;
@@ -57,15 +57,21 @@ export function FluffleCard() {
 
   const isSelected = state.useFluffle;
 
+  useEffect(() => {
+    if (state.useFluffle && data) {
+      dispatch({ type: PassportActionKind.SetPhoto, payload: data.image });
+    }
+  }, [state.useFluffle, data, dispatch]);
+
   if (loading) {
     return <CardIndicator />;
   }
 
-  if (data?.hasToken) {
+  if (data) {
     return (
       <CardDetail
         image={data.image}
-        title={`Fluffle #${data.tokenId}`}
+        title={data.name}
         subtitle="Set Fluffle as Passport Photo."
         containerClass={clsx({ 'border-primary': isSelected })}
       >

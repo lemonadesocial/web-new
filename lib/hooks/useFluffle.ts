@@ -5,7 +5,7 @@ import { mainnet } from 'viem/chains';
 import { usernameClient } from '$lib/graphql/request/instances';
 import { TokenOwnerDocument } from '$lib/graphql/generated/username/graphql';
 import { getFetchableUrl } from '$lib/utils/metadata';
-import ERC721 from '$lib/abis/ERC721.json';
+import { useAppKitAccount } from '$lib/utils/appkit';
 
 const FLUFFLE_CONTRACT_ADDRESS = '0x4E502Ab1Bb313B3C1311eb0D11B31a6B62988b86';
 
@@ -83,7 +83,7 @@ async function fetchFluffleTokenUri(address: string) {
 }
 
 export function useFluffle() {
-  const address = '0xc78042a8b84fd7446c05f24add517731c638fc5f';
+  const { address } = useAppKitAccount();
 
   const {
     data,
@@ -91,7 +91,8 @@ export function useFluffle() {
     error,
   } = useQuery({
     queryKey: ['fluffle', address],
-    queryFn: () => fetchFluffleTokenUri(address),
+    queryFn: () => fetchFluffleTokenUri(address!),
+    enabled: !!address,
   });
 
   return { 
