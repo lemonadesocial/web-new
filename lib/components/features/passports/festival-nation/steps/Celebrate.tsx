@@ -17,7 +17,7 @@ export function PassportCelebrate() {
         <div className="flex-1 flex flex-col items-center gap-11 pt-6 pb-11 max-sm:justify-center w-full">
           <Card.Root className="w-full">
             <Card.Content className="aspect-square flex items-center justify-center">
-              <img src={`/api/og/passport/zugrama/?tokenId=${tokenId}`} />
+              <img src={`/api/og/passport/festival-nation/?tokenId=${tokenId}`} />
             </Card.Content>
           </Card.Root>
 
