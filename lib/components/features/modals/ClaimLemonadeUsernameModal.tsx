@@ -96,16 +96,16 @@ export function ClaimLemonadeUsernameModal() {
         username,
       });
 
-      // const tokenUri = `ipfs://bafkreicgram5os3qctna2xrdwahsnak6enijxy4wtuv3ko5f6ns4zqzh4m`
-
       const result = await usernameApprovalMutation.mutateAsync({
         username,
         tokenUri,
         wallet: address,
       });
 
+      // const tokenUri = "ipfs://bafkreidinwlbrekvgt7mq453ppiuondxiw5rppv6ectmu3syae3563s7aq"
+
       // const result = {
-      //   "signature":"0xd30ca4a34c2317dcbd7db5c93a5cff2f24613ae027685636476b35ceed6b40e8392fd2884e1622388fd76b80fdf8ddbd8483a5d70a35e5175703e67073f8f58a1b",
+      //   "signature":"0x925e4c013bdb3d51a2f5bb6a7c1136301bb4ad8d0f6c65dd625ab0cd28c7f0616d05972f03cbe5f2781cae77fb148d179d499da70c74fa4c9ea5ceb2f89a274e1c",
       //   "price":"100000000000000",
       //   "currency":"0x0000000000000000000000000000000000000000"
       // }
@@ -118,7 +118,7 @@ export function ClaimLemonadeUsernameModal() {
         adapter: ethersAdapter(adapterConfig),
       });
 
-      const txHash = await drift.write({
+      await drift.write({
         abi: LemonadeUsernameABI,
         address: usernameChain.lemonade_username_contract_address as `0x${string}`,
         fn: 'mintWithSignature',
@@ -134,7 +134,9 @@ export function ClaimLemonadeUsernameModal() {
         gas: GAS_LIMIT,
       });
 
-      console.log('Mint transaction hash:', txHash);
+      queryClient.setQueryData(['lemonadeUsername', address], {
+        username,
+      });
 
       setIsLoading(false);
 
