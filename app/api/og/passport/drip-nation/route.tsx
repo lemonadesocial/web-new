@@ -35,10 +35,10 @@ export async function GET(req: NextRequest) {
   let image;
 
   try {
-    const contractAddress = chain.festival_nation_passport_contract_address;
+    const contractAddress = chain.drip_nation_passport_contract_address;
 
     if (!contractAddress) {
-      return new Response('Festival nation contract address not set', { status: 400 });
+      return new Response('Drip nation contract address not set', { status: 400 });
     }
 
     const provider = new ethers.JsonRpcProvider(chain.rpc_url);
@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          backgroundImage: `url('${ASSET_PREFIX}/assets/images/share-festival-passport.png')`,
+          backgroundImage: `url('${ASSET_PREFIX}/assets/images/share-drip-nation-passport.png')`,
           padding: '86px',
           width: '100%',
           height: '100%',
@@ -75,8 +75,11 @@ export async function GET(req: NextRequest) {
         }}
       >
         <img src={image} style={{ marginTop: 100 }} />
-        <div style={{ display: 'flex', position: 'absolute', bottom: 80, left: 150 }}>
-          <p style={{ fontSize: 80, fontFamily: 'Bungee Regular', color: '#FFF', margin: 0, padding: 0 }}>{tokenId}</p>
+
+        <div style={{ display: 'flex', position: 'absolute', bottom: 85, left: 140 }}>
+          <p style={{ fontSize: 80, fontFamily: 'SedgwickAve Regular', color: '#FFF', margin: 0, padding: 0 }}>
+            {tokenId}
+          </p>
         </div>
       </div>
     ),
@@ -85,8 +88,8 @@ export async function GET(req: NextRequest) {
       height: 1080,
       fonts: [
         {
-          name: 'Bungee Regular',
-          data: await fetchFont(`${ASSET_PREFIX}/assets/fonts/Bungee-Regular.ttf`),
+          name: 'SedgwickAve Regular',
+          data: await fetchFont(`${ASSET_PREFIX}/assets/fonts/SedgwickAve-Regular.ttf`),
           style: 'normal',
         },
       ],

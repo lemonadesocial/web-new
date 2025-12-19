@@ -35,10 +35,10 @@ export async function GET(req: NextRequest) {
   let image;
 
   try {
-    const contractAddress = chain.festival_nation_passport_contract_address;
+    const contractAddress = chain.vinyl_nation_passport_contract_address;
 
     if (!contractAddress) {
-      return new Response('Festival nation contract address not set', { status: 400 });
+      return new Response('Vinyl nation contract address not set', { status: 400 });
     }
 
     const provider = new ethers.JsonRpcProvider(chain.rpc_url);
@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          backgroundImage: `url('${ASSET_PREFIX}/assets/images/share-festival-passport.png')`,
+          backgroundImage: `url('${ASSET_PREFIX}/assets/images/share-vinyl-nation-passport.png')`,
           padding: '86px',
           width: '100%',
           height: '100%',
@@ -75,6 +75,7 @@ export async function GET(req: NextRequest) {
         }}
       >
         <img src={image} style={{ marginTop: 100 }} />
+
         <div style={{ display: 'flex', position: 'absolute', bottom: 80, left: 150 }}>
           <p style={{ fontSize: 80, fontFamily: 'Bungee Regular', color: '#FFF', margin: 0, padding: 0 }}>{tokenId}</p>
         </div>
