@@ -2529,6 +2529,7 @@ export enum FeatureCode {
   Poap = 'Poap',
   PromotionCodes = 'PromotionCodes',
   SpaceStatistic = 'SpaceStatistic',
+  Ticket = 'Ticket',
   TicketingSettings = 'TicketingSettings',
   ViewSpace = 'ViewSpace',
   ViewSpaceEvent = 'ViewSpaceEvent',
@@ -3543,6 +3544,7 @@ export type Mutation = {
   updateTicketTokenRewardSetting: TicketTokenRewardSetting;
   updateTokenRewardClaim: Scalars['Boolean']['output'];
   updateUser: User;
+  upgradeTicket: Scalars['Boolean']['output'];
 };
 
 
@@ -4698,6 +4700,11 @@ export type MutationUpdateTokenRewardClaimArgs = {
 
 export type MutationUpdateUserArgs = {
   input: UserInput;
+};
+
+
+export type MutationUpgradeTicketArgs = {
+  input: UpgradeTicketInput;
 };
 
 export type NewPayment = {
@@ -6582,6 +6589,7 @@ export type QueryListLaunchpadGroupsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   search?: InputMaybe<Scalars['String']['input']>;
   skip?: InputMaybe<Scalars['Int']['input']>;
+  space?: InputMaybe<Scalars['MongoID']['input']>;
 };
 
 
@@ -7548,7 +7556,6 @@ export type Space = {
   image_cover?: Maybe<Scalars['MongoID']['output']>;
   image_cover_expanded?: Maybe<File>;
   is_ambassador?: Maybe<Scalars['Boolean']['output']>;
-  launchpad_groups_expanded?: Maybe<Array<LaunchpadGroup>>;
   lens_feed_id?: Maybe<Scalars['String']['output']>;
   light_theme_image?: Maybe<Scalars['MongoID']['output']>;
   light_theme_image_expanded?: Maybe<File>;
@@ -7566,12 +7573,6 @@ export type Space = {
   tint_color?: Maybe<Scalars['String']['output']>;
   title: Scalars['String']['output'];
   website?: Maybe<Scalars['String']['output']>;
-};
-
-
-export type SpaceLaunchpad_Groups_ExpandedArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -8753,6 +8754,7 @@ export type Ticket = {
   shortid: Scalars['String']['output'];
   type: Scalars['MongoID']['output'];
   type_expanded?: Maybe<EventTicketType>;
+  upgrade_history?: Maybe<Array<TicketUpgradeHistory>>;
 };
 
 export type TicketAssignee = {
@@ -8880,6 +8882,17 @@ export type TicketTypeReward = {
 export type TicketTypeRewardInput = {
   reward_per_ticket: Scalars['String']['input'];
   ticket_type: Scalars['MongoID']['input'];
+};
+
+export type TicketUpgradeHistory = {
+  __typename?: 'TicketUpgradeHistory';
+  from_type: Scalars['MongoID']['output'];
+  from_type_expanded?: Maybe<EventTicketType>;
+  to_type: Scalars['MongoID']['output'];
+  to_type_expanded?: Maybe<EventTicketType>;
+  updated_at: Scalars['DateTimeISO']['output'];
+  updated_by: Scalars['MongoID']['output'];
+  updated_by_expanded?: Maybe<User>;
 };
 
 export type ToggleBlockUserInput = {
@@ -9109,6 +9122,12 @@ export type UpdateTokenRewardClaimInput = {
   from_wallet: Scalars['String']['input'];
   network: Scalars['String']['input'];
   tx_hash: Scalars['String']['input'];
+};
+
+export type UpgradeTicketInput = {
+  event: Scalars['MongoID']['input'];
+  ticket: Scalars['MongoID']['input'];
+  to_type: Scalars['MongoID']['input'];
 };
 
 export type User = {
