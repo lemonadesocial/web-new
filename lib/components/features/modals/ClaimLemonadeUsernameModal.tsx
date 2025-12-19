@@ -136,16 +136,11 @@ export function ClaimLemonadeUsernameModal() {
         gas: GAS_LIMIT,
       });
 
-<<<<<<< HEAD
-=======
       queryClient.setQueryData(['lemonadeUsername', address], {
         username,
       });
 
->>>>>>> master
       setIsLoading(false);
-
-      await queryClient.invalidateQueries({ queryKey: ['lemonadeUsername', address] });
 
       setStep('success');
     } catch (error: any) {
