@@ -870,6 +870,7 @@ query GetEventGuestDetailedInfo($event: MongoID!, $email: String) {
         _id
         title
       }
+      cancelled_by
     }
     ticket {
       _id

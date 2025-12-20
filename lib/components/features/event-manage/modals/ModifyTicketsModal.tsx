@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, modal, Radiobox, ModalContent } from '$lib/components/core';
+import { Button, modal, Radiobox, ModalContent, toast } from '$lib/components/core';
+import { ConfirmModal } from '../../modals/ConfirmModal';
+import { CancelTicketsDocument } from '$lib/graphql/generated/backend/graphql';
+import { useMutation } from '$lib/graphql/request';
 
 interface PurchasedTicket {
   _id: string;
@@ -13,10 +16,25 @@ interface PurchasedTicket {
 
 export function ModifyTicketsModal({
   purchasedTickets,
+  event,
+  onComplete,
 }: {
   purchasedTickets: PurchasedTicket[];
+  event: string;
+  onComplete?: () => void;
 }) {
-  const [selectedTicketTypeId, setSelectedTicketTypeId] = useState<string | null>(null);
+  const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
+
+  const [cancelTickets, { loading }] = useMutation(CancelTicketsDocument, {
+    onComplete: () => {
+      toast.success('Tickets canceled successfully');
+      modal.close();
+      onComplete?.();
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to cancel tickets');
+    },
+  });
 
   return (
     <ModalContent
@@ -36,17 +54,17 @@ export function ModifyTicketsModal({
             <div
               key={ticket._id}
               className="flex items-center p-3 cursor-pointer gap-2"
-              onClick={() => ticket.type_expanded?._id && setSelectedTicketTypeId(ticket.type_expanded._id)}
+              onClick={() => setSelectedTicketId(ticket._id)}
             >
               <p className="text-tertiary">#{index + 1}</p>
               <p className="flex-1">
                 {ticket.type_expanded?.title || 'Unknown'}
               </p>
               <Radiobox
-                id={`ticket-type-${ticket._id}`}
-                name="ticket-type"
-                value={selectedTicketTypeId === ticket.type_expanded?._id}
-                onChange={() => ticket.type_expanded?._id && setSelectedTicketTypeId(ticket.type_expanded._id)}
+                id={`ticket-${ticket._id}`}
+                name="ticket"
+                value={selectedTicketId === ticket._id}
+                onChange={() => setSelectedTicketId(ticket._id)}
                 containerClass="flex-row-reverse gap-3"
               >
                 <span className="hidden" />
@@ -60,14 +78,36 @@ export function ModifyTicketsModal({
             variant="danger"
             outlined
             className="flex-1"
-            onClick={() => modal.close()}
+            disabled={!selectedTicketId}
+            onClick={() => {
+              if (!selectedTicketId) return;
+
+              modal.open(ConfirmModal, {
+                props: {
+                  title: 'Cancel Tickets?',
+                  subtitle: 'The selected tickets will be canceled. Any other tickets for this guest will remain active.',
+                  icon: 'icon-remove-ticket',
+                  onConfirm: async () => {
+                    await cancelTickets({
+                      variables: {
+                        input: {
+                          event,
+                          tickets: [selectedTicketId],
+                        },
+                      },
+                    });
+                  },
+                  buttonText: 'Confirm',
+                },
+              });
+            }}
           >
             Cancel
           </Button>
           <Button
             variant="secondary"
             className="flex-1"
-            disabled={!selectedTicketTypeId}
+            disabled={!selectedTicketId}
           >
             Replace
           </Button>

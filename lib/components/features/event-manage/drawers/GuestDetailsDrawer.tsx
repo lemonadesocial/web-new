@@ -161,6 +161,10 @@ export function GuestDetailsDrawer({ email, event }: { email: string; event: str
                     modal.open(ModifyTicketsModal, {
                       props: {
                         purchasedTickets: guestInfo.purchased_tickets || [],
+                        event,
+                        onComplete: () => {
+                          refetch();
+                        },
                       },
                     });
                   }}
