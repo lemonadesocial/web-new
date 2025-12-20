@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { getMintZuGramaPassportData } from "../../../../lib/services/passports/zugrama";
-import { getData } from "../../../../lib/services/passports/zugrama/admin";
+import { getMintZuGramaPassportData } from "$lib/services/passports/zugrama";
+import { getData } from "$lib/services/passports/zugrama/admin";
 
 export async function GET(request: NextRequest) {
   const wallet = new URL(request.url).searchParams.get('wallet');

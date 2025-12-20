@@ -81,9 +81,11 @@ export type String_Comparison_Exp = {
 /** columns and relationships of "TokenOwner" */
 export type TokenOwner = {
   __typename?: 'TokenOwner';
+  chainId: Scalars['numeric']['output'];
   id: Scalars['String']['output'];
   own_at: Scalars['numeric']['output'];
   owner: Scalars['String']['output'];
+  tokenAddress: Scalars['String']['output'];
   tokenId: Scalars['numeric']['output'];
 };
 
@@ -92,28 +94,36 @@ export type TokenOwner_Bool_Exp = {
   _and?: InputMaybe<Array<TokenOwner_Bool_Exp>>;
   _not?: InputMaybe<TokenOwner_Bool_Exp>;
   _or?: InputMaybe<Array<TokenOwner_Bool_Exp>>;
+  chainId?: InputMaybe<Numeric_Comparison_Exp>;
   id?: InputMaybe<String_Comparison_Exp>;
   own_at?: InputMaybe<Numeric_Comparison_Exp>;
   owner?: InputMaybe<String_Comparison_Exp>;
+  tokenAddress?: InputMaybe<String_Comparison_Exp>;
   tokenId?: InputMaybe<Numeric_Comparison_Exp>;
 };
 
 /** Ordering options when selecting data from "TokenOwner". */
 export type TokenOwner_Order_By = {
+  chainId?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   own_at?: InputMaybe<Order_By>;
   owner?: InputMaybe<Order_By>;
+  tokenAddress?: InputMaybe<Order_By>;
   tokenId?: InputMaybe<Order_By>;
 };
 
 /** select columns of table "TokenOwner" */
 export enum TokenOwner_Select_Column {
   /** column name */
+  ChainId = 'chainId',
+  /** column name */
   Id = 'id',
   /** column name */
   OwnAt = 'own_at',
   /** column name */
   Owner = 'owner',
+  /** column name */
+  TokenAddress = 'tokenAddress',
   /** column name */
   TokenId = 'tokenId'
 }
@@ -128,9 +138,11 @@ export type TokenOwner_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type TokenOwner_Stream_Cursor_Value_Input = {
+  chainId?: InputMaybe<Scalars['numeric']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
   own_at?: InputMaybe<Scalars['numeric']['input']>;
   owner?: InputMaybe<Scalars['String']['input']>;
+  tokenAddress?: InputMaybe<Scalars['String']['input']>;
   tokenId?: InputMaybe<Scalars['numeric']['input']>;
 };
 

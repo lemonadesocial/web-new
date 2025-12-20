@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import orgs from 'open-graph-scraper';
+import { match } from 'ts-pattern';
 
 import { getMintNftData } from '$lib/services/lemonhead';
 import { calculateLookHash, Filter, getFinalTraits, validateTraits, type Trait } from '$lib/services/lemonhead/core';
@@ -9,6 +10,9 @@ import { getMintZuGramaPassportImage } from '$lib/services/passports/zugrama';
 import { publicProcedure, router } from './trpc';
 import lemonheads, { BuildQueryParams } from './lemonheads';
 import { LemonHeadsLayer } from './lemonheads/types';
+import { getMintVinylNationPassportImage } from '$lib/services/passports/vinyl-nation';
+import { getMintDripNationPassportImage } from '$lib/services/passports/drip-nation';
+import { getMintFestivalNationPassportImage } from '$lib/services/passports/festival-nation';
 import { request } from '$lib/services/nft/admin';
 import { pinata } from '$lib/utils/pinata';
 
@@ -93,6 +97,7 @@ export const appRouter = router({
       const { wallet, lemonadeUsername, fluffleTokenId } = input;
       return getMintLemonadePassportData(wallet, lemonadeUsername, fluffleTokenId);
     }),
+  // TODO: check and remove this func after test dynamic mint passport
   zugrama: {
     getImage: publicProcedure
       .input(
@@ -104,6 +109,26 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         const { avatarImageUrl, username } = input;
         return getMintZuGramaPassportImage(avatarImageUrl, username);
+      }),
+  },
+  passport: {
+    getImage: publicProcedure
+      .input(
+        z.object({
+          provider: z.string(),
+          avatarImageUrl: z.string().optional(),
+          username: z.string().optional(),
+        }),
+      )
+      .query(async ({ input }) => {
+        const { avatarImageUrl, username, provider } = input;
+
+        return match(provider)
+          .with('zugrama', () => getMintZuGramaPassportImage(avatarImageUrl, username))
+          .with('vinyl-nation', () => getMintVinylNationPassportImage(avatarImageUrl, username))
+          .with('festival-nation', () => getMintFestivalNationPassportImage(avatarImageUrl, username))
+          .with('drip-nation', () => getMintDripNationPassportImage(avatarImageUrl, username))
+          .otherwise(() => {});
       }),
   },
   usernameApproval: publicProcedure

@@ -62,10 +62,11 @@ export function CreateGroupModal({ params, launchChain, onSuccess }: CreateGroup
       }
 
       const writeContract = new Contract(zapContractAddress, ZapContractABI.abi, signer);
-      const data = ethers.AbiCoder.defaultAbiCoder().encode(['address', 'uint256', 'uint256', 'uint256', 'uint256'], [
+      const data = ethers.AbiCoder.defaultAbiCoder().encode(['address', 'uint256', 'uint256', 'uint256', 'uint256','uint256'], [
         params.groupERC20Token,
         params.minEscrowDuration,
         params.minStakeDuration,
+        0, // minStakeAmount
         params.creatorSharePercentage * 100000,
         params.ownerSharePercentage * 100000,
       ]);
@@ -98,6 +99,7 @@ export function CreateGroupModal({ params, launchChain, onSuccess }: CreateGroup
             cover_photo: space?.image_cover,
             handle_twitter: space?.handle_twitter,
             website: space?.website,
+            space: space?._id,
           },
         },
       });

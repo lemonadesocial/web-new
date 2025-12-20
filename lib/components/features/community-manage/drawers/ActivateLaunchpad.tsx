@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { useForm, Controller } from 'react-hook-form';
 
-import { Button, Input, InputField, Menu, MenuItem, Segment, Toggle, toast, ErrorText, modal } from '$lib/components/core';
+import { Button, Input, InputField, Menu, MenuItem, Segment, Toggle, toast, ErrorText, modal, drawer } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
 import { useAppKit, useAppKitAccount } from '$lib/utils/appkit';
@@ -101,6 +101,9 @@ export function ActivateLaunchpad() {
         props: {
           params: payload,
           launchChain,
+          onSuccess: () => {
+            drawer.close();
+          },
         },
       });
     };

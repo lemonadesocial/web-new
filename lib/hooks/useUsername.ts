@@ -8,7 +8,7 @@ import { ConnectWallet } from "$lib/components/features/modals/ConnectWallet";
 import { listChainsAtom } from "$lib/jotai";
 import { useAppKitAccount } from "$lib/utils/appkit";
 import { usernameClient } from "$lib/graphql/request/instances";
-import { TokenOwnerDocument, TokenOwnerQueryVariables } from "$lib/graphql/generated/username/graphql";
+import { TokenOwnerDocument } from "$lib/graphql/generated/username/graphql";
 import { LemonadeUsernameABI } from "$lib/abis/LemonadeUsername";
 import { Chain } from "$lib/graphql/generated/backend/graphql";
 import { getFetchableUrl } from "$lib/utils/metadata";
@@ -32,21 +32,26 @@ export const useClaimUsername = () => {
 }
 
 async function fetchLemonadeUsernameToken(address: string, usernameChain: Chain | undefined) {
-  if (!usernameChain) {
+  if (!usernameChain?.lemonade_username_contract_address) {
     return null;
   }
 
-  const variables: TokenOwnerQueryVariables = {
-    where: {
-      owner: {
-        _eq: address.toLowerCase(),
-      },
-    },
-  };
-
   const { data } = await usernameClient.query({
     query: TokenOwnerDocument,
-    variables,
+    variables: {
+      where: {
+        owner: {
+          _eq: address.toLowerCase(),
+        },
+        tokenAddress: {
+          _eq: usernameChain.lemonade_username_contract_address.toLowerCase(),
+        },
+        chainId: {
+          _eq: usernameChain.chain_id,
+        },
+      },
+    },
+    fetchPolicy: 'network-only',
   });
 
   if (data?.TokenOwner && data.TokenOwner.length > 0) {
