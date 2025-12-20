@@ -364,3 +364,7 @@ query CheckTicketTypePasscode($passcode: String!, $type: MongoID!) {
 mutation CancelTickets($input: CancelTicketsInput!) {
   cancelTickets(input: $input)
 }
+
+mutation UpgradeTicket($input: UpgradeTicketInput!) {
+  upgradeTicket(input: $input)
+}

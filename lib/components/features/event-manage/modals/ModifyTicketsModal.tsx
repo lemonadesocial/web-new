@@ -5,6 +5,7 @@ import { Button, modal, Radiobox, ModalContent, toast } from '$lib/components/co
 import { ConfirmModal } from '../../modals/ConfirmModal';
 import { CancelTicketsDocument } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
+import { ReplaceTicketModal } from './ReplaceTicketModal';
 
 interface PurchasedTicket {
   _id: string;
@@ -25,7 +26,7 @@ export function ModifyTicketsModal({
 }) {
   const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
 
-  const [cancelTickets, { loading }] = useMutation(CancelTicketsDocument, {
+  const [cancelTickets] = useMutation(CancelTicketsDocument, {
     onComplete: () => {
       toast.success('Tickets canceled successfully');
       modal.close();
@@ -108,6 +109,27 @@ export function ModifyTicketsModal({
             variant="secondary"
             className="flex-1"
             disabled={!selectedTicketId}
+            onClick={() => {
+              if (!selectedTicketId) return;
+
+              const selectedTicket = purchasedTickets.find((t) => t._id === selectedTicketId);
+              if (!selectedTicket) return;
+
+              modal.open(ReplaceTicketModal, {
+                props: {
+                  ticket: selectedTicket,
+                  event,
+                  onComplete: () => {
+                    modal.close();
+                    onComplete?.();
+                  },
+                  onBack: () => {
+                    modal.close();
+                  },
+                },
+                className: 'overflow-visible'
+              });
+            }}
           >
             Replace
           </Button>
