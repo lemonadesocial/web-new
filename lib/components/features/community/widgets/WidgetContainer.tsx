@@ -1,28 +1,78 @@
 'use client';
 
-import { ASSET_PREFIX } from '$lib/utils/constants';
 import GridLayout from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+
 import { WidgetPassport } from './WidgetPassport';
+import { WidgetCommunityCoin } from './WidgetCommunityCoin';
 
 const layout = [
-  { i: 'a', x: 0, y: 0, w: 1, h: 2, static: true },
-  { i: 'b', x: 1, y: 0, w: 3, h: 2, minW: 2, maxW: 4 },
-  { i: 'c', x: 4, y: 0, w: 1, h: 2 },
+  {
+    i: 'a',
+    x: 0,
+    y: 0,
+    w: 1,
+    h: 2,
+    static: true,
+    component: WidgetPassport,
+    props: {
+      provider: 'drip-nation',
+      title: 'Become a Citizen',
+      subtitle: 'Mint your Vinyl Passport and join a community built by music lovers, collectors, and creators.',
+    },
+  },
+  {
+    i: 'b',
+    x: 1,
+    y: 0,
+    w: 1,
+    h: 1,
+    component: WidgetCommunityCoin,
+    props: {
+      provider: 'drip-nation',
+    },
+  },
+  {
+    i: 'c',
+    x: 3,
+    y: 0,
+    w: 1,
+    h: 1,
+    component: WidgetCommunityCoin,
+    props: {
+      provider: 'drip-nation',
+    },
+  },
 ];
 
 const config = {
   widgets: [
     {
-      i: 'passport',
+      i: 'a',
       x: 0,
       y: 0,
       w: 1,
       h: 2,
+      static: true,
       component: WidgetPassport,
       props: {
-        defaultImage: `${ASSET_PREFIX}/assets/images/zugrama-passport-placeholder.png`,
+        provider: 'drip-nation',
+        title: 'Become a Citizen',
+        subtitle: 'Mint your Vinyl Passport and join a community built by music lovers, collectors, and creators.',
+      },
+    },
+    {
+      i: 'b',
+      x: 1,
+      y: 0,
+      w: 1,
+      h: 1,
+      component: WidgetCommunityCoin,
+      props: {
+        provider: 'drip-nation',
+        title: '$VINYL',
+        subtitle: 'Launching soon',
       },
     },
   ],
@@ -30,10 +80,21 @@ const config = {
 
 export function WidgetContainer() {
   return (
-    <GridLayout className="layout" layout={layout} width={1200}>
-      <div key="a">a</div>
-      <div key="b">b</div>
-      <div key="c">c</div>
+    <GridLayout
+      className="layout"
+      layout={layout}
+      gridConfig={{ containerPadding: [0, 0], cols: 2, margin: [32, 32] }}
+      width={1080}
+    >
+      {config.widgets.map((w) => {
+        const Comp = w.component;
+
+        return (
+          <div key={w.i}>
+            <Comp {...w.props} />
+          </div>
+        );
+      })}
     </GridLayout>
   );
 }

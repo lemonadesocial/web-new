@@ -72,7 +72,7 @@ export const PASSPORT_METADATA: { [key: string]: object } = {
     metadata: {
       title: 'Vinyl Nation Passport',
       openGraph: {
-        images: `${ASSET_PREFIX}/assets/images/passports/vinyl-nation-passport-citizen-mini.png`,
+        images: `${ASSET_PREFIX}/assets/images/passports/vinyl-nation-passport-mini.png`,
       },
     },
   },
