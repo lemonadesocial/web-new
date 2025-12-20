@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
 import { ERC721Contract } from '$lib/utils/crypto';
 import { getClient } from '$lib/graphql/request';
-import { PASSPORT_CHAIN_ID } from '$lib/components/features/passport/mint/utils';
+import { PASSPORT_CHAIN_ID } from '$lib/components/features/passports/utils';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 
 const fetchFont = (url: string) => {
