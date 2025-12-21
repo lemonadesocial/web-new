@@ -13,18 +13,14 @@ interface Props {
 export function WidgetCommunityCoin({ title, subtitle, provider }: Props) {
   return (
     <WidgetContent title="Community Coin">
-      <div
-        className="min-w-full min-h-full"
-        style={{
-          backgroundImage: `url(${'https://localhost.staging.lemonade.social:8000' || ASSET_PREFIX}/assets/passports/${provider}-community-coin-bg.png)`,
-        }}
-      >
+      <div className="p-6">
         <Button icon="icon-bell" variant="tertiary-alt" className="rounded-full absolute right-4 top-4" />
-      </div>
+        <img src={`${ASSET_PREFIX}/assets/passports/${provider}-community-coin-bg.png`} />
 
-      <div className="text-center">
-        <h3 className="text-xl font-semibold">{title}</h3>
-        <p className="text-tertiary">{subtitle}</p>
+        <div className="text-center">
+          <h3 className="text-xl font-semibold">{title}</h3>
+          <p className="text-tertiary">{subtitle}</p>
+        </div>
       </div>
     </WidgetContent>
   );

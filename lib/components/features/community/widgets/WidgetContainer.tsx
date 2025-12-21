@@ -1,100 +1,60 @@
 'use client';
 
-import GridLayout from 'react-grid-layout';
-import 'react-grid-layout/css/styles.css';
-import 'react-resizable/css/styles.css';
-
 import { WidgetPassport } from './WidgetPassport';
 import { WidgetCommunityCoin } from './WidgetCommunityCoin';
+import { WidgetUpcomingEvents } from './WidgetUpcomingEvents';
+import { Space } from '$lib/graphql/generated/backend/graphql';
+import { WidgetMusicNFT } from './WidgetMusicNFT';
 
-const layout = [
-  {
-    i: 'a',
-    x: 0,
-    y: 0,
-    w: 1,
-    h: 2,
-    static: true,
-    component: WidgetPassport,
-    props: {
-      provider: 'drip-nation',
-      title: 'Become a Citizen',
-      subtitle: 'Mint your Vinyl Passport and join a community built by music lovers, collectors, and creators.',
-    },
-  },
-  {
-    i: 'b',
-    x: 1,
-    y: 0,
-    w: 1,
-    h: 1,
-    component: WidgetCommunityCoin,
-    props: {
-      provider: 'drip-nation',
-    },
-  },
-  {
-    i: 'c',
-    x: 3,
-    y: 0,
-    w: 1,
-    h: 1,
-    component: WidgetCommunityCoin,
-    props: {
-      provider: 'drip-nation',
-    },
-  },
-];
-
-const config = {
-  widgets: [
-    {
-      i: 'a',
-      x: 0,
-      y: 0,
-      w: 1,
-      h: 2,
-      static: true,
-      component: WidgetPassport,
-      props: {
-        provider: 'drip-nation',
-        title: 'Become a Citizen',
-        subtitle: 'Mint your Vinyl Passport and join a community built by music lovers, collectors, and creators.',
+export function WidgetContainer({ space }: { space: Space }) {
+  const config = {
+    widgets: [
+      {
+        key: 'a',
+        static: true,
+        component: WidgetPassport,
+        props: {
+          provider: 'drip-nation',
+          title: 'Become a Citizen',
+          subtitle: 'Mint your Vinyl Passport and join a community built by music lovers, collectors, and creators.',
+        },
       },
-    },
-    {
-      i: 'b',
-      x: 1,
-      y: 0,
-      w: 1,
-      h: 1,
-      component: WidgetCommunityCoin,
-      props: {
-        provider: 'drip-nation',
-        title: '$VINYL',
-        subtitle: 'Launching soon',
+      {
+        key: 'community-coin',
+        component: WidgetCommunityCoin,
+        props: {
+          provider: 'drip-nation',
+          title: '$VINYL',
+          subtitle: 'Launching soon',
+        },
       },
-    },
-  ],
-};
+      {
+        key: 'music-player',
+        component: WidgetMusicNFT,
+        props: {
+          provider: 'drip-nation',
+          title: '$VINYL',
+          subtitle: 'Launching soon',
+        },
+      },
+      {
+        key: 'upcomine-events',
+        component: WidgetUpcomingEvents,
+        props: {
+          provider: 'drip-nation',
+          space,
+        },
+      },
+    ],
+  };
 
-export function WidgetContainer() {
   return (
-    <GridLayout
-      className="layout"
-      layout={layout}
-      gridConfig={{ containerPadding: [0, 0], cols: 2, margin: [32, 32] }}
-      width={1080}
-    >
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {config.widgets.map((w) => {
         const Comp = w.component;
 
-        return (
-          <div key={w.i}>
-            <Comp {...w.props} />
-          </div>
-        );
+        return <Comp key={w.key} {...w.props} />;
       })}
-    </GridLayout>
+    </div>
   );
 }

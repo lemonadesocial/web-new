@@ -80,7 +80,7 @@ export function Community({ initData, hideHeroSection = false }: Props) {
       )}
 
       {/* <CommunityEventsWithCalendar space={space} /> */}
-      <WidgetContainer />
+      <WidgetContainer space={space} />
     </div>
   );
 }

@@ -1,6 +1,5 @@
 'use client';
 import { Button } from '$lib/components/core';
-import { PASSPORT_PROVIDER } from '$lib/components/features/passports/config';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { WidgetContent } from './WidgetContent';
 
@@ -12,7 +11,7 @@ interface Props {
 
 export function WidgetPassport({ provider, title, subtitle }: Props) {
   return (
-    <WidgetContent title="Passport">
+    <WidgetContent title="Passport" className="w-full row-span-2">
       <div className="flex flex-col gap-12 p-12">
         <img src={`${ASSET_PREFIX}/assets/images/passports/${provider}-passport-mini.png`} />
 
