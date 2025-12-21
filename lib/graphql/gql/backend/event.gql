@@ -871,6 +871,12 @@ query GetEventGuestDetailedInfo($event: MongoID!, $email: String) {
         title
       }
       cancelled_by
+      cancelled_by_expanded {
+        _id
+        display_name
+        name
+      }
+      cancelled_at
     }
     ticket {
       _id
@@ -879,6 +885,25 @@ query GetEventGuestDetailedInfo($event: MongoID!, $email: String) {
       type_expanded {
         _id
         title
+      }
+      upgrade_history {
+        from_type
+        from_type_expanded {
+          _id
+          title
+        }
+        to_type
+        to_type_expanded {
+          _id
+          title     
+        }
+        updated_at
+        updated_by
+        updated_by_expanded {
+          _id
+          display_name
+          name
+        }
       }
     }
     user {
@@ -915,11 +940,31 @@ query GetEventGuestDetailedInfo($event: MongoID!, $email: String) {
     join_request {
       _id
       state
+      created_at
+      decided_at
+      decided_by_expanded {
+        _id
+        display_name
+        name
+      }
+      requested_tickets {
+        count
+        ticket_type
+      }
     }
     application {
       answer
       answers
       question
+    }
+    invitation {
+      _id
+      created_at
+      inviters_expanded {
+        _id
+        display_name
+        name
+      }
     }
   }
 }
