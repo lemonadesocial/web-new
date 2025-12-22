@@ -53,18 +53,19 @@ export const appRouter = router({
   },
   openGraph: {
     extractUrl: publicProcedure.input(z.object({ url: z.string().optional() })).query(async ({ input }) => {
-      if (!input.url) return { error: null, result: null, html: null };
-
-      const userAgent = 'MyBot';
-      // 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36';
-
+      // if (!input.url) return { error: null, result: null, html: null };
+      //
+      // const userAgent = 'MyBot';
+      // // 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36';
+      //
       try {
-        const { error, result, html } = await orgs({
-          url: input.url,
-          fetchOptions: { headers: { 'user-agent': userAgent } },
-        });
-
-        return { error, result, html };
+        //   const { error, result, html } = await orgs({
+        //     url: input.url,
+        //     fetchOptions: { headers: { 'user-agent': userAgent } },
+        //   });
+        //
+        //   return { error, result, html };
+        return {};
       } catch (error) {
         return { error, result: null, html: null };
       }
@@ -141,7 +142,7 @@ export const appRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
-      const res = await request<{ signature: string; price: string; currency: string; }>(
+      const res = await request<{ signature: string; price: string; currency: string }>(
         `/lemonade-username/approval`,
         'POST',
         input,
