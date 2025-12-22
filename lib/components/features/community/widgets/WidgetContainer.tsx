@@ -1,12 +1,14 @@
 'use client';
-
+import React from 'react';
 import { WidgetPassport } from './WidgetPassport';
 import { WidgetCommunityCoin } from './WidgetCommunityCoin';
 import { WidgetUpcomingEvents } from './WidgetUpcomingEvents';
 import { Space } from '$lib/graphql/generated/backend/graphql';
 import { WidgetMusicNFT } from './WidgetMusicNFT';
+import { ASSET_PREFIX } from '$lib/utils/constants';
 
 export function WidgetContainer({ space }: { space: Space }) {
+  const provider = 'drip-nation';
   const config = {
     widgets: [
       {
@@ -35,6 +37,7 @@ export function WidgetContainer({ space }: { space: Space }) {
           provider: 'drip-nation',
           title: '$VINYL',
           subtitle: 'Launching soon',
+          space
         },
       },
       {
@@ -48,8 +51,18 @@ export function WidgetContainer({ space }: { space: Space }) {
     ],
   };
 
+  React.useEffect(() => {
+    const main = document.getElementsByTagName('main')?.[0];
+    // const child = main.getElementsByClassName('background')?.[0];
+    // if (child) {
+    //   main.removeChild(child);
+    // }
+
+    main.setAttribute('style', `background: url(${ASSET_PREFIX}/assets/images/passports/templates/${provider}-bg.png)`);
+  }, []);
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div data-coin-template className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {config.widgets.map((w) => {
         const Comp = w.component;
 
