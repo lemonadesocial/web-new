@@ -1,5 +1,70 @@
 # Changelog
 
+## [8.36.0](https://github.com/lemonadesocial/web-new/compare/v8.35.0...v8.36.0) (2025-12-22)
+
+
+### Features
+
+* add quick buy ([60702f3](https://github.com/lemonadesocial/web-new/commit/60702f34bd0af43b8d573da200eaac45a17518f0))
+* change pat ([d7e2239](https://github.com/lemonadesocial/web-new/commit/d7e22392d075fba5877e8f7b0835755e5e727db9))
+* check mint vinyl - festival - drip passport ([2312558](https://github.com/lemonadesocial/web-new/commit/231255844b1233c70d904b58accba7b3a162f24b))
+* checking generate canvas vinyl nation ([809ae65](https://github.com/lemonadesocial/web-new/commit/809ae657de26edb531cf7c14300aa2bc78a0c384))
+* checking trpc call ([53ac854](https://github.com/lemonadesocial/web-new/commit/53ac85430cec7072ff9934d4d359c17d8c2bdc6f))
+* complete share passport og ([1632ccd](https://github.com/lemonadesocial/web-new/commit/1632ccd43549120a9f14ca4bde1f7c8eee84ef47))
+* correct check provider ([1df81c8](https://github.com/lemonadesocial/web-new/commit/1df81c8b642e3c003b9c791d95a818744c6562cc))
+* debounce guest list search ([ddb1ec0](https://github.com/lemonadesocial/web-new/commit/ddb1ec0255e0760cdfa61d183cc871ebafe18de7))
+* enable check white list ([35bdf5a](https://github.com/lemonadesocial/web-new/commit/35bdf5a5f48ebed94edb9cf873cd45169e18d2ae))
+* fallback username chain ([741c4db](https://github.com/lemonadesocial/web-new/commit/741c4db12432df7b664b9f899c5b093da3bff9c2))
+* move utils file ([1bdad24](https://github.com/lemonadesocial/web-new/commit/1bdad246e6f6c7e7a6cd058d20f69b057e20402f))
+* remove cookie check ([83b3c4e](https://github.com/lemonadesocial/web-new/commit/83b3c4ea50dfbc878abf59d9287d989b5303d59b))
+* remove old files ([91c13ad](https://github.com/lemonadesocial/web-new/commit/91c13ad776717748d58a347a9063e27c40e01d7d))
+* udpate vinyl nation passport ([3f4bf79](https://github.com/lemonadesocial/web-new/commit/3f4bf79852190b83b37a47ce08a7cc796e2d16c5))
+* update bg after mean ([72d691d](https://github.com/lemonadesocial/web-new/commit/72d691dbda5cf8be973de155cc89b0f55dac0214))
+* update bg and font for shared passport ([862b2b6](https://github.com/lemonadesocial/web-new/commit/862b2b6ef1b7f5f803b605c89713620d04db5080))
+* update bg share ([84b6686](https://github.com/lemonadesocial/web-new/commit/84b66864bd8a9e8275d1dba59a8fe1e1c7b501bf))
+* update contract ([a0acce8](https://github.com/lemonadesocial/web-new/commit/a0acce84503307dc160d442682ec83b0d77ca2aa))
+* update create group params ([9bcf8c9](https://github.com/lemonadesocial/web-new/commit/9bcf8c981df4e37641999988a9a9a8991364365b))
+* update empty chart data ([37b93fd](https://github.com/lemonadesocial/web-new/commit/37b93fd0c7db15067b2cc61ffee16af11aa6a5f7))
+* update err msg ([588d7fe](https://github.com/lemonadesocial/web-new/commit/588d7fec66433689eb738b203de5cabc09338fd7))
+* update error message ([a9c3e9a](https://github.com/lemonadesocial/web-new/commit/a9c3e9a82a02ffcdc5ef5134698108f5ef2f94b3))
+* update festival passport ([e0b3bc0](https://github.com/lemonadesocial/web-new/commit/e0b3bc05fdfe3f09b5dc8c8b3dfbdeb29d02a03c))
+* update fluffle ([49b6695](https://github.com/lemonadesocial/web-new/commit/49b6695e853825fb16d4d6006b8fb796b39a2c8d))
+* update fluffle use ([28e4ffc](https://github.com/lemonadesocial/web-new/commit/28e4ffc58de70437b6a85a82696bd9e1f2fc050c))
+* update get mint data api ([ed954e7](https://github.com/lemonadesocial/web-new/commit/ed954e76d064d0f382528418323c0b80ab741fbc))
+* update mint data ([6b9c16f](https://github.com/lemonadesocial/web-new/commit/6b9c16f78be9f49cbbde1be905055c97e31fc0d0))
+* update modal ([0d74cb2](https://github.com/lemonadesocial/web-new/commit/0d74cb278f0879acfa3709381233791a0424a000))
+* update new flow username - contract adress ([a2aa379](https://github.com/lemonadesocial/web-new/commit/a2aa379f4273ac701f8980e83dfcb708228685e2))
+* update og festival nation ([54704fd](https://github.com/lemonadesocial/web-new/commit/54704fd13f8ecd911417d37b2a87b45192fb9757))
+* update path ([b0297d6](https://github.com/lemonadesocial/web-new/commit/b0297d6474f0887a15059114de088282b6395be8))
+* update path og ([cdd5ee6](https://github.com/lemonadesocial/web-new/commit/cdd5ee68bae093c1d2d90b084db3d5df033dd472))
+* update provider generate passport ([28ee7f3](https://github.com/lemonadesocial/web-new/commit/28ee7f3371fb51728b79976c36d61b763e969b41))
+* update text intro ([06e7569](https://github.com/lemonadesocial/web-new/commit/06e7569f4de6a35425c3a79655f582b1cc2a80af))
+* update title passport ([13360e2](https://github.com/lemonadesocial/web-new/commit/13360e22f2741e560c4d3530e146f43d4203627b))
+* update username ([e2e7677](https://github.com/lemonadesocial/web-new/commit/e2e767718661407d0856433831963b23683f2614))
+* update username indexer ([ece734b](https://github.com/lemonadesocial/web-new/commit/ece734b3a2892c799833889df887079b42f7838e))
+* updated generate drip nation ([4026c0c](https://github.com/lemonadesocial/web-new/commit/4026c0c9e81b9a6a3972d80dc41e73a3da9b2619))
+* use abstract abi ([17285c4](https://github.com/lemonadesocial/web-new/commit/17285c477a718c40ea9979fb48fa5020afedea6c))
+
+
+### Bug Fixes
+
+* correct provider ([a5b7410](https://github.com/lemonadesocial/web-new/commit/a5b7410d9f7899c42f79f2f25196a62af6376d2a))
+* correct provider ([c8e64d8](https://github.com/lemonadesocial/web-new/commit/c8e64d8da83ca5460ba965d16a637a4ef6c6a34a))
+* ens name ([73e81d3](https://github.com/lemonadesocial/web-new/commit/73e81d30d3f2212c190b2c9777c5d065285991fe))
+* import path ([15a5d83](https://github.com/lemonadesocial/web-new/commit/15a5d8325f8308a15816b379a1110853bfc4ee3e))
+* missing chainmap ([6af2364](https://github.com/lemonadesocial/web-new/commit/6af2364226e2dced9268496ec2d9c2fdbe4f4a79))
+* missing space id in launchpad group ([b01890c](https://github.com/lemonadesocial/web-new/commit/b01890c5a8b034475ca22ab8f125fe59fea201af))
+* provider ([02c11c9](https://github.com/lemonadesocial/web-new/commit/02c11c95a52c6d5979cfb68bdd522cbe2cf8dd6b))
+* remove lens connect in settings ([c5178dd](https://github.com/lemonadesocial/web-new/commit/c5178dd3a0ae78e544e94c8f2aad86d9af72d6fe))
+* remove lens profile connect after signing up ([b1a813a](https://github.com/lemonadesocial/web-new/commit/b1a813a9bdc8f7d20be1d2c40f4ab272bc0ae925))
+* remove lens profile from user menu ([07f1cc2](https://github.com/lemonadesocial/web-new/commit/07f1cc2aa3c0e93b00bdcc5680e016875f6d15d9))
+* remove lens profile in settings ([cc93f84](https://github.com/lemonadesocial/web-new/commit/cc93f8432011a5bb08b897a85f57fb0e68c218b5))
+* remove self ([755904d](https://github.com/lemonadesocial/web-new/commit/755904d9db3987ad84fd337b12ce091e494227c8))
+* resolve conflicts ([b608568](https://github.com/lemonadesocial/web-new/commit/b608568e90e69e364b13165f21db048c84191f02))
+* update next check ([fc36a72](https://github.com/lemonadesocial/web-new/commit/fc36a72761ff88d7fd65cc48526095b5ab56bf0c))
+* update passport api ([aab9120](https://github.com/lemonadesocial/web-new/commit/aab9120ed247451da056ee6a19979f0aa8690c3e))
+* update username store ([0887f91](https://github.com/lemonadesocial/web-new/commit/0887f918d30d6fb6670de780adf0baa8bf0569ef))
+
 ## [8.35.0](https://github.com/lemonadesocial/web-new/compare/v8.34.2...v8.35.0) (2025-12-12)
 
 
