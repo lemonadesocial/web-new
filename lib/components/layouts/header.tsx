@@ -143,7 +143,7 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
                     >
                       <Avatar size="lg" src={userAvatar(me)} />
                       <div>
-                        <p className="text-md font-medium whitespace-nowrap">{me.display_name || me.name}</p>
+                        <p className="text-md font-medium whitespace-nowrap">{me.name}</p>
                         <p className="text-xs font-medium text-tertiary">{me.email}</p>
                       </div>
                     </div>
