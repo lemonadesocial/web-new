@@ -1,5 +1,24 @@
 # Changelog
 
+## [8.37.0](https://github.com/lemonadesocial/web-new/compare/v8.36.0...v8.37.0) (2025-12-22)
+
+
+### Features
+
+* cancel tickets ([2cc05ab](https://github.com/lemonadesocial/web-new/commit/2cc05ab4915a2c48b550dc9391416e1196908944))
+* display canncelled tickets ([e7d4459](https://github.com/lemonadesocial/web-new/commit/e7d4459599c059b8e28b03af42920d589f0e106e))
+* improve ux ([a6dcd75](https://github.com/lemonadesocial/web-new/commit/a6dcd752baef107fda03530414ddacd59117a527))
+* modify tickets ([2cdb159](https://github.com/lemonadesocial/web-new/commit/2cdb1599b390d4d184939a8f3acc22dccf199687))
+* modify tickets ([50599a8](https://github.com/lemonadesocial/web-new/commit/50599a8ecf5f91f081c43b4c14736a332907fc99))
+* **temp:** hide all coins ([a509b27](https://github.com/lemonadesocial/web-new/commit/a509b27f7d25154412a9274a7add9bd2dffa41e0))
+* truncate ticket title ([c3bb639](https://github.com/lemonadesocial/web-new/commit/c3bb639b82994bea94866b4a1db9dee0c4520d27))
+
+
+### Bug Fixes
+
+* disable the openGraph endpoint ([5f191b4](https://github.com/lemonadesocial/web-new/commit/5f191b4ecfb8cdce299ca6874d0bef0c0d129246))
+* explore padding ([ae05fd1](https://github.com/lemonadesocial/web-new/commit/ae05fd16a8a0f16ec3339a14cc0762fe58a2130e))
+
 ## [8.36.0](https://github.com/lemonadesocial/web-new/compare/v8.35.0...v8.36.0) (2025-12-22)
 
 
