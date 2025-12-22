@@ -49,7 +49,7 @@ export function ReplaceTicketModal({
 
   const [upgradeTicket, { loading }] = useMutation(UpgradeTicketDocument, {
     onComplete: () => {
-      toast.success('Ticket upgraded successfully');
+      toast.success('Ticket replaced successfully');
       modal.close();
       onComplete?.();
     },
@@ -92,11 +92,11 @@ export function ReplaceTicketModal({
         <div className="space-y-1.5">
           <p className="text-sm text-tertiary">Select Replacement Ticket</p>
           <Menu.Root placement="bottom-start" className="w-full">
-            <Menu.Trigger className="flex items-center px-3.5 py-2 rounded-sm border border-divider cursor-pointer bg-background/64 w-full">
-              <span className="font-medium flex-1 text-left">
+            <Menu.Trigger className="flex items-center px-3.5 py-2 rounded-sm border border-divider cursor-pointer bg-background/64 w-full min-w-0">
+              <span className="font-medium flex-1 text-left truncate min-w-0">
                 {selectedTicketTypeId ? ticketTypes.find((t) => t._id === selectedTicketTypeId)?.title : 'Select ticket type'}
               </span>
-              <i className="icon-chevron-down size-5 text-tertiary" />
+              <i className="icon-chevron-down size-5 text-tertiary flex-shrink-0" />
             </Menu.Trigger>
             <Menu.Content className="w-full p-1 max-h-[200px] overflow-auto no-scrollbar">
               {({ toggle }) => (
@@ -113,11 +113,11 @@ export function ReplaceTicketModal({
                             toggle();
                           }}
                         >
-                          <div className="flex items-center gap-3 flex-1">
-                            <i className="icon-ticket size-4 text-tertiary" />
-                              <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <i className="icon-ticket size-4 text-tertiary flex-shrink-0" />
+                              <div className="flex-1 min-w-0 overflow-hidden">
                                 <p className="text-sm text-secondary truncate">{ticketType.title}</p>
-                                <p className="text-xs text-tertiary truncate">{priceFormatted}</p>
+                                <p className="text-xs text-tertiary">{priceFormatted}</p>
                               </div>
                           </div>
                           {selectedTicketTypeId === ticketType._id && <i className="icon-check size-4 text-primary" />}
