@@ -504,7 +504,7 @@ main {
   width: 100%;
 }
 
-.page:has([data-coin-template]) {
+.page:has([data-coin-template='true']) {
   max-width: 75rem;
   width: 100%;
 }

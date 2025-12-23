@@ -12,7 +12,7 @@ interface Props {
 
 export function WidgetCommunityCoin({ title, subtitle, provider }: Props) {
   return (
-    <WidgetContent title="Community Coin">
+    <WidgetContent title="Community Coin" className="col-span-2">
       <div className="p-6 flex flex-col gap-5">
         <Button icon="icon-bell" variant="tertiary-alt" className="rounded-full absolute right-4 top-4" />
         <div className="absolute top-0 left-0 right-0">

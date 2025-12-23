@@ -32,7 +32,7 @@ export function WidgetUpcomingEvents({ space }: Props) {
   const upcomingEvents = (data?.getEvents || []) as Event[];
 
   return (
-    <WidgetContent title="Events" onClick={() => router.push('/events')}>
+    <WidgetContent title="Events" className="col-span-2" onClick={() => router.push('/events')}>
       <div className="p-6 space-y-6">
         <div>
           <h3 className="text-2xl font-semibold">12</h3>

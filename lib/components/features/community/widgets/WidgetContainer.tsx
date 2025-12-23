@@ -6,13 +6,16 @@ import { WidgetUpcomingEvents } from './WidgetUpcomingEvents';
 import { Space } from '$lib/graphql/generated/backend/graphql';
 import { WidgetMusicNFT } from './WidgetMusicNFT';
 import { ASSET_PREFIX } from '$lib/utils/constants';
+import { WidgetConnectWallet } from './WidgetConnectWallet';
+import { WidgetLaunchpad } from './WidgetLaunchpad';
+import { WidgetCollectibles } from './WidgetCollectibles';
 
 export function WidgetContainer({ space }: { space: Space }) {
   const provider = 'drip-nation';
   const config = {
     widgets: [
       {
-        key: 'a',
+        key: 'passport',
         static: true,
         component: WidgetPassport,
         props: {
@@ -37,15 +40,42 @@ export function WidgetContainer({ space }: { space: Space }) {
           provider: 'drip-nation',
           title: '$VINYL',
           subtitle: 'Launching soon',
-          space
+          space,
         },
       },
       {
-        key: 'upcomine-events',
+        key: 'upcoming-events',
         component: WidgetUpcomingEvents,
         props: {
           provider: 'drip-nation',
           space,
+        },
+      },
+      {
+        key: 'wallet',
+        component: WidgetConnectWallet,
+        props: {
+          provider: 'drip-nation',
+          title: 'Connect Wallet',
+          subtitle: 'Connect your wallet to access your tokens and rewards.',
+        },
+      },
+      {
+        key: 'launchpad',
+        component: WidgetLaunchpad,
+        props: {
+          provider: 'drip-nation',
+          title: 'Artist Coins',
+          subtitle: 'Connect Wallet',
+        },
+      },
+      {
+        key: 'launchpad',
+        component: WidgetCollectibles,
+        props: {
+          provider: 'drip-nation',
+          title: 'DRiP NFT Marketplace',
+          subtitle: 'Coming soon',
         },
       },
     ],
@@ -62,7 +92,7 @@ export function WidgetContainer({ space }: { space: Space }) {
   }, []);
 
   return (
-    <div data-coin-template className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div data-coin-template className="grid grid-cols-1 lg:grid-cols-4 gap-8">
       {config.widgets.map((w) => {
         const Comp = w.component;
 

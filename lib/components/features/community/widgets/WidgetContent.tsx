@@ -10,8 +10,8 @@ interface Props extends React.PropsWithChildren {
 
 export function WidgetContent({ title, children, className, onClick }: Props) {
   return (
-    <div className={twMerge('flex flex-col flex-1 items-center gap-2', className)}>
-      <Card.Root className="flex-1 w-full" onClick={onClick}>
+    <div className={twMerge('flex flex-col items-center gap-2', className)}>
+      <Card.Root data-card className="w-full" onClick={onClick}>
         <Card.Content className="p-0">{children}</Card.Content>
       </Card.Root>
       <p className="text-sm text-tertiary">{title}</p>

@@ -66,6 +66,7 @@ fragment Space on Space {
     wallet
   }
   state
+  nft_enabled
 }
 
 fragment SpaceTagFragment on SpaceTag {

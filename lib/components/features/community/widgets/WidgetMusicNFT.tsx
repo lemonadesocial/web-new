@@ -7,7 +7,6 @@ import { useGetEns } from '$lib/hooks/useGetEnsName';
 import { useMusicNft } from '$lib/hooks/useMusicNft';
 
 import { WidgetContent } from './WidgetContent';
-import { ASSET_PREFIX } from '$lib/utils/constants';
 
 interface Props {
   space: Space;
@@ -19,6 +18,7 @@ export function WidgetMusicNFT({ space }: Props) {
 
   const { data: dataListSpaceNfts, loading } = useQuery(GetSpaceNfTsDocument, {
     variables: { space: space._id, skip, limit: 1, kind: SpaceNftKind.MusicTrack },
+    skip: !space.nft_enabled,
   });
   const list = (dataListSpaceNfts?.listSpaceNFTs?.items || []) as SpaceNft[];
   const track = list?.[0];
@@ -42,8 +42,10 @@ export function WidgetMusicNFT({ space }: Props) {
     };
   }, [track, audioRef.current]);
 
+  if (!space.nft_enabled || !track) return null;
+
   return (
-    <WidgetContent title="Music Player">
+    <WidgetContent title="Music Player" className="col-span-2">
       <div className="p-6 flex items-center gap-8">
         <div className="bg-gray-50 size-[228px] aspect-square rounded-sm overflow-hidden">
           {track?.cover_image_url && (
@@ -55,7 +57,7 @@ export function WidgetMusicNFT({ space }: Props) {
             <p className="text-sm text-tertiary">NOW PLAYING</p>
             <div className="space-y-1">
               <h3 className="text-xl font-semibold">{loading ? '--' : track?.name || '--'}</h3>
-              <p className="text-tertiary">{loading ? '--' : track?.name || '--'}</p>
+              <p className="text-tertiary">{loading ? '--' : ensData?.username || '--'}</p>
             </div>
           </div>
 
