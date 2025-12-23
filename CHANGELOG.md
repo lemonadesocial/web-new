@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.37.2](https://github.com/lemonadesocial/web-new/compare/v8.37.1...v8.37.2) (2025-12-23)
+
+
+### Bug Fixes
+
+* check private ip ([9ca3d25](https://github.com/lemonadesocial/web-new/commit/9ca3d25c5b1d19e5219f4dee74a6873267c2dc49))
+* correct lookup func ([fda08c5](https://github.com/lemonadesocial/web-new/commit/fda08c5fa4d51cbe683cd665200887f913a0694e))
+
 ## [8.37.1](https://github.com/lemonadesocial/web-new/compare/v8.37.0...v8.37.1) (2025-12-23)
 
 
