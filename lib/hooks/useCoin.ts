@@ -15,8 +15,11 @@ import {
   Order_By,
   MemecoinMetadataDocument,
   PoolSwapDocument,
+  StakingManagerTokenDocument,
   type PoolSwapQuery,
-  type PoolSwapQueryVariables
+  type PoolSwapQueryVariables,
+  type StakingManagerTokenQuery,
+  type StakingManagerTokenQueryVariables
 } from '$lib/graphql/generated/coin/graphql';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
@@ -24,12 +27,14 @@ import { formatNumber } from '$lib/utils/number';
 
 type LaunchpadGroupItem = ListLaunchpadGroupsQuery['listLaunchpadGroups']['items'][number];
 
-export function useGroup(chain: Chain, address: string) {
+export function useGroup(chain: Chain, address: string, skip = false) {
   const [treasuryManagerAddress, setTreasuryManagerAddress] = useState<string | null>(null);
-  const [isLoadingTreasuryManagerAddress, setIsLoadingTreasuryManagerAddress] = useState(true);
+  const [isLoadingTreasuryManagerAddress, setIsLoadingTreasuryManagerAddress] = useState(!skip);
   const [launchpadGroup, setLaunchpadGroup] = useState<LaunchpadGroupItem | null>(null);
 
   useEffect(() => {
+    if (skip) return;
+
     const fetchOwner = async () => {
       setIsLoadingTreasuryManagerAddress(true);
       const flaunchClient = FlaunchClient.getInstance(chain, address);
@@ -43,9 +48,9 @@ export function useGroup(chain: Chain, address: string) {
     };
 
     fetchOwner();
-  }, [chain, address]);
+  }, [chain, address, skip]);
 
-  const shouldSkipQuery = !treasuryManagerAddress || treasuryManagerAddress.toLowerCase() === zeroAddress.toLowerCase();
+  const shouldSkipQuery = skip || !treasuryManagerAddress || treasuryManagerAddress.toLowerCase() === zeroAddress.toLowerCase();
 
   const { loading: isLoadingQuery } = useGraphQLQuery<
     ListLaunchpadGroupsQuery,
@@ -64,7 +69,7 @@ export function useGroup(chain: Chain, address: string) {
     }
   );
 
-  const isLoading = isLoadingTreasuryManagerAddress || isLoadingQuery;
+  const isLoading = !skip && (isLoadingTreasuryManagerAddress || isLoadingQuery);
 
   return {
     treasuryManagerAddress,
@@ -717,5 +722,63 @@ export function usePoolSwapPriceTimeSeries(
   return {
     data: priceTimeSeries,
     isLoading: isLoadingPoolInfo || loading || latestSwapsLoading,
+  };
+}
+
+export function useTokenIds(spaceId: string) {
+  const [stakingManagerAddress, setStakingManagerAddress] = useState<string | null>(null);
+
+  const { loading: isLoadingGroups } = useGraphQLQuery<
+    ListLaunchpadGroupsQuery,
+    ListLaunchpadGroupsQueryVariables
+  >(
+    ListLaunchpadGroupsDocument,
+    {
+      variables: { space: spaceId },
+      onComplete: (data) => {
+        if (data?.listLaunchpadGroups?.items && data.listLaunchpadGroups.items.length > 0) {
+          const firstItem = data.listLaunchpadGroups.items[0];
+          setStakingManagerAddress(firstItem.address);
+        }
+      },
+    }
+  );
+
+  const { data, isLoading: isLoadingTokens } = useReactQuery({
+    queryKey: ['staking-manager-tokens', stakingManagerAddress],
+    queryFn: async () => {
+      if (!stakingManagerAddress) {
+        return null;
+      }
+
+      const { data } = await coinClient.query<
+        StakingManagerTokenQuery,
+        StakingManagerTokenQueryVariables
+      >({
+        query: StakingManagerTokenDocument,
+        variables: {
+          where: {
+            stakingManagerAddress: {
+              _eq: stakingManagerAddress.toLowerCase(),
+            },
+          },
+        },
+      });
+
+      return data;
+    },
+    enabled: !!stakingManagerAddress,
+  });
+
+  const tokenIds = useMemo(() => {
+    if (!data?.StakingManagerToken) {
+      return [];
+    }
+    return data.StakingManagerToken.map((token) => Number(token.tokenId));
+  }, [data]);
+
+  return {
+    tokenIds,
+    isLoading: isLoadingGroups || isLoadingTokens,
   };
 }

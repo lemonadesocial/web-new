@@ -2,13 +2,14 @@
 import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 
-import { Button } from '$lib/components/core';
+import { Button, Skeleton } from '$lib/components/core';
 import { CardTable } from '$lib/components/core/table';
 import { useQuery } from '$lib/graphql/request/hooks';
 import { coinClient } from '$lib/graphql/request/instances';
 import {
   PoolCreatedDocument,
   Order_By,
+  PoolCreated_Bool_Exp,
 } from '$lib/graphql/generated/coin/graphql';
 import { formatWallet } from '$lib/utils/crypto';
 import { copy } from '$lib/utils/helpers';
@@ -21,7 +22,14 @@ import { toast } from '$lib/components/core';
 
 const LIMIT = 10;
 
-export function AllCoins() {
+export type CoinListColumn = 'community' | 'buy';
+
+interface CoinListProps {
+  filter?: PoolCreated_Bool_Exp;
+  hiddenColumns?: CoinListColumn[];
+}
+
+export function CoinList({ filter, hiddenColumns = [] }: CoinListProps) {
   const [skip, setSkip] = useState(0);
   
   const { data, loading } = useQuery(
@@ -35,6 +43,7 @@ export function AllCoins() {
         ],
         limit: LIMIT,
         offset: skip,
+        where: filter,
       },
     },
     coinClient,
@@ -42,14 +51,10 @@ export function AllCoins() {
 
   const pools = data?.PoolCreated || [];
   const total = pools.length >= LIMIT ? (skip + LIMIT) + 1 : pools.length;
+  const showColumn = (column: CoinListColumn) => !hiddenColumns.includes(column);
 
   return (
     <div className="flex flex-col gap-4 relative">
-      <div className='flex justify-between items-center'>
-        <p className="text-xl font-semibold">All Coins</p>
-        <Button iconLeft="icon-plus" variant='secondary' size="sm">Create Coin</Button>
-      </div>
-
       <div className="space-y-3">
         <div className="overflow-y-auto no-scrollbar rounded-md">
           <CardTable.Root loading={loading} data={pools} className="table">
@@ -63,9 +68,11 @@ export function AllCoins() {
               <div className="flex-1 min-w-0">
                 <p>Owner</p>
               </div>
-              <div className="flex-[1.44] min-w-0">
-                <p>Community</p>
-              </div>
+              {showColumn('community') && (
+                <div className="flex-[1.44] min-w-0">
+                  <p>Community</p>
+                </div>
+              )}
               <div className="flex-[0.96] min-w-0">
                 <p>Marketcap</p>
               </div>
@@ -81,13 +88,32 @@ export function AllCoins() {
               <div className="flex-[0.96] min-w-0">
                 <p>Fees Earned</p>
               </div>
-              <div className="w-20 flex-shrink-0 flex justify-end">
-                <p></p>
-              </div>
+              {showColumn('buy') && (
+                <div className="w-20 flex-shrink-0 flex justify-end">
+                  <p></p>
+                </div>
+              )}
             </CardTable.Header>
 
+            <CardTable.Loading rows={LIMIT}>
+              <Skeleton className="h-5 flex-[2.2]" animate />
+              <Skeleton className="h-5 flex-[1.44]" animate />
+              <Skeleton className="h-5 flex-1" animate />
+              <Skeleton className="h-5 flex-[0.96]" animate />
+              <Skeleton className="h-5 flex-[0.72]" animate />
+              <Skeleton className="h-5 flex-[0.8]" animate />
+              <Skeleton className="h-5 flex-[0.8]" animate />
+              <Skeleton className="h-5 flex-[0.96]" animate />
+            </CardTable.Loading>
+
+            <CardTable.EmptyState
+              icon="icon-token"
+              title="No Coins"
+              subtile="Activate Launchpad to allow members to launch their own coins."
+            />
+
             {pools.map((pool) => (
-              <AllCoinsRow key={pool.id} pool={pool} />
+              <CoinListRow key={pool.id} pool={pool} hiddenColumns={hiddenColumns} />
             ))}
           </CardTable.Root>
         </div>
@@ -105,13 +131,20 @@ export function AllCoins() {
   );
 }
 
-function AllCoinsRow({ pool }: { pool: PoolCreated }) {
+interface CoinListRowProps {
+  pool: PoolCreated;
+  hiddenColumns: CoinListColumn[];
+}
+
+function CoinListRow({ pool, hiddenColumns }: CoinListRowProps) {
   const router = useRouter();
   const chainsMap = useAtomValue(chainsMapAtom);
   const chain = chainsMap[pool.chainId.toString()];
+  const showColumn = (column: CoinListColumn) => !hiddenColumns.includes(column);
+
   const { tokenData } = useTokenData(chain, pool.memecoin, pool.tokenURI as string);
   const { owner } = useOwner(chain, pool.memecoin);
-  const { launchpadGroup } = useGroup(chain, pool.memecoin);
+  const { launchpadGroup } = useGroup(chain, pool.memecoin, !showColumn('community'));
   const { formattedMarketCap } = useMarketCap(chain, pool.memecoin);
   const { formattedLiquidity } = useLiquidity(chain, pool.memecoin);
   const { formattedFees } = useFees(chain, pool.memecoin);
@@ -154,18 +187,20 @@ function AllCoinsRow({ pool }: { pool: PoolCreated }) {
           <p>{displayOwner}</p>
         </div>
 
-        <div className="flex gap-2 items-center flex-[1.44] min-w-0">
-          {launchpadGroup?.cover_photo_url ? (
-            <img
-              src={launchpadGroup.cover_photo_url}
-              alt={displayCommunity}
-              className="size-5 aspect-square rounded-xs object-cover"
-            />
-          ) : (
-            <div className="size-5 aspect-square rounded-xs bg-gray-500" />
-          )}
-          <p>{displayCommunity}</p>
-        </div>
+        {showColumn('community') && (
+          <div className="flex gap-2 items-center flex-[1.44] min-w-0">
+            {launchpadGroup?.cover_photo_url ? (
+              <img
+                src={launchpadGroup.cover_photo_url}
+                alt={displayCommunity}
+                className="size-5 aspect-square rounded-xs object-cover"
+              />
+            ) : (
+              <div className="size-5 aspect-square rounded-xs bg-gray-500" />
+            )}
+            <p>{displayCommunity}</p>
+          </div>
+        )}
 
         <div className="flex-[0.96] min-w-0 text-accent-400">
           <p>{formattedMarketCap || 'N/A'}</p>
@@ -188,15 +223,18 @@ function AllCoinsRow({ pool }: { pool: PoolCreated }) {
           <p>{formattedFees || 'N/A'}</p>
         </div>
 
-        <div className="w-20 flex-shrink-0 flex justify-end">
-          <Button 
-            variant="tertiary-alt" 
-            size="sm"
-          >
-            Buy
-          </Button>
-        </div>
+        {showColumn('buy') && (
+          <div className="w-20 flex-shrink-0 flex justify-end">
+            <Button 
+              variant="tertiary-alt" 
+              size="sm"
+            >
+              Buy
+            </Button>
+          </div>
+        )}
       </div>
     </CardTable.Row>
   );
 }
+

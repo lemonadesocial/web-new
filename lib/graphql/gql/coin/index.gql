@@ -87,3 +87,9 @@ query FairLaunch($where: FairLaunch_bool_exp, $limit: Int, $offset: Int, $orderB
     startAt
   }
 }
+
+query StakingManagerToken($where: StakingManagerToken_bool_exp) {
+  StakingManagerToken(where: $where) {
+    tokenId
+  }
+}

@@ -1,11 +1,30 @@
 'use client';
+import { useMemo } from 'react';
 import { Button } from "$lib/components/core";
 import { drawer } from "$lib/components/core/dialog";
+import { CoinList } from "../coins/CoinList";
 import { ActivateLaunchpad } from "./drawers/ActivateLaunchpad";
+import { useTokenIds } from "$lib/hooks/useCoin";
+import { useSpace } from "$lib/hooks/useSpace";
+import type { PoolCreated_Bool_Exp } from "$lib/graphql/generated/coin/graphql";
 
 export function CommunityLaunchpad() {
+  const space = useSpace();
+  const { tokenIds } = useTokenIds(space?._id || '');
+
+  const filter = useMemo<PoolCreated_Bool_Exp | undefined>(() => {
+    if (!tokenIds || tokenIds.length === 0) {
+      return undefined;
+    }
+    return {
+      tokenId: {
+        _in: tokenIds,
+      },
+    };
+  }, [tokenIds]);
+
   return (
-    <div className="page mx-auto py-7 px-4 md:px-0">
+    <div className="page mx-auto py-7 px-4 md:px-0 flex flex-col gap-8">
       <div className="flex py-2.5 px-4 items-center gap-3 bg-warning-300/16 rounded-sm">
         <i className="icon-rocket size-5 text-warning-300" />
         <div className="flex-1">
@@ -20,6 +39,27 @@ export function CommunityLaunchpad() {
         >
           Activate
         </Button>
+      </div>
+
+      <hr className="border-t" />
+
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between gap-4">
+          <h3 className="text-xl font-semibold">Coins</h3>
+          <Button iconLeft="icon-plus" variant='secondary' size="sm">Create Coin</Button>
+        </div>
+
+        {tokenIds && tokenIds.length > 0 ? (
+          <CoinList filter={filter} hiddenColumns={['community', 'buy']} />
+        ) : (
+          <div className="flex flex-col justify-center items-center py-10">
+            <i className="icon-token size-[184px] text-quaternary" />
+            <div className="text-center mt-5 space-y-2">
+              <h3 className="text-xl text-tertiary font-semibold">No Coins</h3>
+              <p className="text-tertiary">Activate Launchpad to allow members to launch their own coins.</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
