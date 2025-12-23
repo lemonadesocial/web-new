@@ -10614,6 +10614,16 @@ invariant@^2.2.4:
   dependencies:
     loose-envify "^1.0.0"
 
+ip6@^0.2.11:
+  version "0.2.11"
+  resolved "https://registry.yarnpkg.com/ip6/-/ip6-0.2.11.tgz#b7cf71864ef16c7418c29f7b1f2f5db892a189ec"
+  integrity sha512-OmTP7FyIp+ZoNvZ7Xr97bWrCgypa3BeuYuRFNTOPT8Y11cxMW1pW1VC70kHZP1onSHHMotADcjdg5QyECiIMUw==
+
+ipaddr.js@^2.2.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/ipaddr.js/-/ipaddr.js-2.3.0.tgz#71dce70e1398122208996d1c22f2ba46a24b1abc"
+  integrity sha512-Zv/pA+ciVFbCSBBjGfaKUya/CcGmUHzTydLMaTwrUUEM2DIEO3iZvueGxmacvmN50fGpGVKeTXpb2LcYQxeVdg==
+
 iron-webcrypto@^1.2.1:
   version "1.2.1"
   resolved "https://registry.npmjs.org/iron-webcrypto/-/iron-webcrypto-1.2.1.tgz"
@@ -13453,6 +13463,14 @@ radix3@^1.1.2:
   version "1.1.2"
   resolved "https://registry.npmjs.org/radix3/-/radix3-1.1.2.tgz"
   integrity sha512-b484I/7b8rDEdSDKckSSBA8knMpcdsXudlE/LNL639wFoHKwLbEkQFZHWEYwDC0wa0FKUcCY+GAF73Z7wxNVFA==
+
+range_check@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/range_check/-/range_check-4.1.0.tgz#6fb2688b5edee18d7be3b737191489acb4261084"
+  integrity sha512-qyWcVNa9GVtyK0lKcQ49lFuV2QTRL5XlagrdH2U5UWDhTUnCnrPrjqph0stBdAE3h4hs1gZSxtpJEksn1rSeNA==
+  dependencies:
+    ip6 "^0.2.11"
+    ipaddr.js "^2.2.0"
 
 rc@^1.2.7:
   version "1.2.8"
