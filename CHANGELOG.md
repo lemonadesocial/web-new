@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.37.1](https://github.com/lemonadesocial/web-new/compare/v8.37.0...v8.37.1) (2025-12-23)
+
+
+### Bug Fixes
+
+* valid url before extract info ([adf28df](https://github.com/lemonadesocial/web-new/commit/adf28df7754bfcb0e76556d2ceb0557813b54d93))
+
 ## [8.37.0](https://github.com/lemonadesocial/web-new/compare/v8.36.0...v8.37.0) (2025-12-22)
 
 
