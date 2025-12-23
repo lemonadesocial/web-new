@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import orgs from 'open-graph-scraper';
 import { match } from 'ts-pattern';
+import net from 'net';
 
 import { getMintNftData } from '$lib/services/lemonhead';
 import { calculateLookHash, Filter, getFinalTraits, validateTraits, type Trait } from '$lib/services/lemonhead/core';
@@ -53,19 +54,25 @@ export const appRouter = router({
   },
   openGraph: {
     extractUrl: publicProcedure.input(z.object({ url: z.string().optional() })).query(async ({ input }) => {
-      // if (!input.url) return { error: null, result: null, html: null };
-      //
-      // const userAgent = 'MyBot';
-      // // 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36';
-      //
+      if (!input.url) return { error: 'Invalid URL', result: null, html: null };
+
       try {
-        //   const { error, result, html } = await orgs({
-        //     url: input.url,
-        //     fetchOptions: { headers: { 'user-agent': userAgent } },
-        //   });
-        //
-        //   return { error, result, html };
-        return {};
+        const url = new URL(input.url);
+        const host = url.hostname;
+
+        if (net.isIP(host) === 0) {
+          const userAgent = 'MyBot';
+          // 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36';
+
+          const { error, result, html } = await orgs({
+            url: url.href,
+            fetchOptions: { headers: { 'user-agent': userAgent } },
+          });
+
+          return { error, result, html };
+        } else {
+          throw new Error('IP addresses are not allowed.');
+        }
       } catch (error) {
         return { error, result: null, html: null };
       }
