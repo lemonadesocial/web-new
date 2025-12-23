@@ -5,6 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { isDate } from 'lodash';
 import ct from 'countries-and-timezones';
+import { skipToken } from '@tanstack/react-query';
 
 import { Button, Card, Map, modal, toast } from '$lib/components/core';
 import { DateTimeGroup, Timezone } from '$lib/components/core/calendar';
@@ -241,7 +242,7 @@ function InputFieldCustom({
 }) {
   const [value, setValue] = React.useState('');
 
-  const { data, isLoading } = trpc.openGraph.extractUrl.useQuery({ url: value });
+  const { data, isLoading } = trpc.openGraph.extractUrl.useQuery(value ? { url: value } : skipToken);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
