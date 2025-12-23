@@ -2,6 +2,8 @@ import { z } from 'zod';
 import orgs from 'open-graph-scraper';
 import { match } from 'ts-pattern';
 import net from 'net';
+import dns from 'dns';
+import rangeCheck from 'range_check';
 
 import { getMintNftData } from '$lib/services/lemonhead';
 import { calculateLookHash, Filter, getFinalTraits, validateTraits, type Trait } from '$lib/services/lemonhead/core';
@@ -16,6 +18,7 @@ import { getMintDripNationPassportImage } from '$lib/services/passports/drip-nat
 import { getMintFestivalNationPassportImage } from '$lib/services/passports/festival-nation';
 import { request } from '$lib/services/nft/admin';
 import { pinata } from '$lib/utils/pinata';
+import { result } from 'lodash';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -60,7 +63,18 @@ export const appRouter = router({
         const url = new URL(input.url);
         const host = url.hostname;
 
-        if (net.isIP(host) === 0) {
+        const errorMessage = 'The address is not allowed';
+
+        if (net.isIP(host)) {
+          console.log('Literal IP addresses are not allowed.');
+          return { error: errorMessage, result: null, html: null };
+        }
+
+        dns.lookup(host, async (err, address) => {
+          if (err || rangeCheck.isPrivate(address)) {
+            return { error: errorMessage, result: null, html: null };
+          }
+
           const userAgent = 'MyBot';
           // 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36';
 
@@ -70,9 +84,7 @@ export const appRouter = router({
           });
 
           return { error, result, html };
-        } else {
-          throw new Error('IP addresses are not allowed.');
-        }
+        });
       } catch (error) {
         return { error, result: null, html: null };
       }
