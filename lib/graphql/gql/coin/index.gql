@@ -93,3 +93,15 @@ query StakingManagerToken($where: StakingManagerToken_bool_exp) {
     tokenId
   }
 }
+
+query StakingSummary($where: StakingSummary_bool_exp) {
+  StakingSummary(where: $where) {
+    chainId
+    date
+    id
+    stakingManagerAddress
+    totalDeposited
+    totalFees
+    updatedAt
+  }
+}

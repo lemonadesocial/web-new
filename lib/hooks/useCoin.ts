@@ -16,16 +16,44 @@ import {
   MemecoinMetadataDocument,
   PoolSwapDocument,
   StakingManagerTokenDocument,
+  StakingSummaryDocument,
   type PoolSwapQuery,
   type PoolSwapQueryVariables,
   type StakingManagerTokenQuery,
-  type StakingManagerTokenQueryVariables
+  type StakingManagerTokenQueryVariables,
+  type StakingSummaryQuery,
+  type StakingSummaryQueryVariables
 } from '$lib/graphql/generated/coin/graphql';
+import { StakingManagerClient } from '$lib/services/coin/StakingManagerClient';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 import { formatNumber } from '$lib/utils/number';
 
 type LaunchpadGroupItem = ListLaunchpadGroupsQuery['listLaunchpadGroups']['items'][number];
+
+export function useLaunchpadGroup(spaceId: string) {
+  const [launchpadGroup, setLaunchpadGroup] = useState<LaunchpadGroupItem | null>(null);
+
+  const { loading } = useGraphQLQuery<
+    ListLaunchpadGroupsQuery,
+    ListLaunchpadGroupsQueryVariables
+  >(
+    ListLaunchpadGroupsDocument,
+    {
+      variables: { space: spaceId },
+      onComplete: (data) => {
+        if (data?.listLaunchpadGroups?.items && data.listLaunchpadGroups.items.length > 0) {
+          setLaunchpadGroup(data.listLaunchpadGroups.items[0]);
+        }
+      },
+    }
+  );
+
+  return {
+    launchpadGroup,
+    isLoading: loading,
+  };
+}
 
 export function useGroup(chain: Chain, address: string, skip = false) {
   const [treasuryManagerAddress, setTreasuryManagerAddress] = useState<string | null>(null);
@@ -725,26 +753,8 @@ export function usePoolSwapPriceTimeSeries(
   };
 }
 
-export function useTokenIds(spaceId: string) {
-  const [stakingManagerAddress, setStakingManagerAddress] = useState<string | null>(null);
-
-  const { loading: isLoadingGroups } = useGraphQLQuery<
-    ListLaunchpadGroupsQuery,
-    ListLaunchpadGroupsQueryVariables
-  >(
-    ListLaunchpadGroupsDocument,
-    {
-      variables: { space: spaceId },
-      onComplete: (data) => {
-        if (data?.listLaunchpadGroups?.items && data.listLaunchpadGroups.items.length > 0) {
-          const firstItem = data.listLaunchpadGroups.items[0];
-          setStakingManagerAddress(firstItem.address);
-        }
-      },
-    }
-  );
-
-  const { data, isLoading: isLoadingTokens } = useReactQuery({
+export function useTokenIds(stakingManagerAddress: string) {
+  const { data, isLoading } = useReactQuery({
     queryKey: ['staking-manager-tokens', stakingManagerAddress],
     queryFn: async () => {
       if (!stakingManagerAddress) {
@@ -779,6 +789,135 @@ export function useTokenIds(spaceId: string) {
 
   return {
     tokenIds,
-    isLoading: isLoadingGroups || isLoadingTokens,
+    isLoading,
+  };
+}
+
+export function useStakingAPR(chain: Chain, stakingManagerAddress: string) {
+  const [apr, setApr] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const today = new Date();
+  const weekAgo = new Date(today);
+  weekAgo.setDate(weekAgo.getDate() - 7);
+
+  const dateEnd = today.toISOString().split('T')[0];
+  const dateStart = weekAgo.toISOString().split('T')[0];
+
+  const { data: summaryData, isLoading: isLoadingSummary } = useReactQuery({
+    queryKey: ['staking-summary', stakingManagerAddress, dateStart, dateEnd],
+    queryFn: async () => {
+      const { data } = await coinClient.query<
+        StakingSummaryQuery,
+        StakingSummaryQueryVariables
+      >({
+        query: StakingSummaryDocument,
+        variables: {
+          where: {
+            stakingManagerAddress: { _eq: stakingManagerAddress.toLowerCase() },
+            date: { _in: [dateStart, dateEnd] },
+          },
+        },
+      });
+
+      return data;
+    },
+  });
+
+  useEffect(() => {
+    if (isLoadingSummary) return;
+
+    const calculateAPR = async () => {
+      setIsLoading(true);
+
+      const summaries = summaryData?.StakingSummary || [];
+      if (summaries.length < 2) {
+        setApr(0);
+        setIsLoading(false);
+        return;
+      }
+
+      const sorted = [...summaries].sort((a, b) => a.date.localeCompare(b.date));
+      const summary1 = sorted[0];
+      const summary2 = sorted[sorted.length - 1];
+
+      const totalDeposited1 = BigInt(summary1.totalDeposited || '0');
+      const totalDeposited2 = BigInt(summary2.totalDeposited || '0');
+      const avgToken = (totalDeposited1 + totalDeposited2) / BigInt(2);
+
+      if (avgToken === BigInt(0)) {
+        setApr(0);
+        setIsLoading(false);
+        return;
+      }
+
+      const client = StakingManagerClient.getInstance(chain, stakingManagerAddress);
+
+      let marketCap: bigint;
+      try {
+        marketCap = await client.getStakingTokenMarketCap(avgToken);
+      } catch {
+        setApr(0);
+        setIsLoading(false);
+        return;
+      }
+
+      if (marketCap === BigInt(0)) {
+        setApr(0);
+        setIsLoading(false);
+        return;
+      }
+
+      const totalFees1 = BigInt(summary1.totalFees || '0');
+      const totalFees2 = BigInt(summary2.totalFees || '0');
+      const deltaFee = totalFees2 - totalFees1;
+
+      const expectedFee = deltaFee * BigInt(52);
+      const aprValue = (expectedFee * BigInt(100)) / marketCap;
+
+      setApr(Number(aprValue));
+      setIsLoading(false);
+    };
+
+    calculateAPR();
+  }, [chain, stakingManagerAddress, summaryData, isLoadingSummary]);
+
+  return {
+    apr,
+    isLoading: isLoading || isLoadingSummary,
+  };
+}
+
+export function useStakingTVL(chain: Chain, stakingManagerAddress: string) {
+  const [formattedTVL, setFormattedTVL] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTVL = async () => {
+      setIsLoading(true);
+      
+      const stakingClient = StakingManagerClient.getInstance(chain, stakingManagerAddress);
+      const totalDeposited = await stakingClient.getTotalDeposited();
+      const stakingToken = await stakingClient.getStakingToken();
+
+      const ethValue = await stakingClient.getStakingTokenMarketCap(totalDeposited);
+      
+      const flaunchClient = FlaunchClient.getInstance(chain, stakingToken);
+      const usdcValue = await flaunchClient.getUSDCFromETH(ethValue);
+
+      const formattedValue = formatUnits(usdcValue, 6);
+      setFormattedTVL(`$${formattedValue}`);
+      setIsLoading(false);
+    };
+
+    fetchTVL().catch(() => {
+      setFormattedTVL(null);
+      setIsLoading(false);
+    });
+  }, [chain, stakingManagerAddress]);
+
+  return {
+    tvl: formattedTVL,
+    isLoading,
   };
 }
