@@ -1,5 +1,16 @@
 # Changelog
 
+## [8.38.0](https://github.com/lemonadesocial/web-new/compare/v8.37.2...v8.38.0) (2025-12-25)
+
+
+### Features
+
+* add hook for getting group coin ([0caf342](https://github.com/lemonadesocial/web-new/commit/0caf342af90048621199620fb6c4fd32f0e00d4d))
+* add main coin stats ([eae0117](https://github.com/lemonadesocial/web-new/commit/eae01173a55e437384df88bca68d01186bbc4d11))
+* community subcoins ([11a5b8b](https://github.com/lemonadesocial/web-new/commit/11a5b8b0cbd22d0e79b104ac3d90c652886b07fb))
+* custom price hook ([2317893](https://github.com/lemonadesocial/web-new/commit/2317893509a64f694f35514a2914f356472527e9))
+* launchpad settings view ([3a46844](https://github.com/lemonadesocial/web-new/commit/3a46844c7d43f7c12cf364420094302a3056a030))
+
 ## [8.37.2](https://github.com/lemonadesocial/web-new/compare/v8.37.1...v8.37.2) (2025-12-23)
 
 
