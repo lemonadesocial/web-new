@@ -73,6 +73,14 @@ export class StakingManagerClient {
     return this.contract.read('totalDeposited');
   }
 
+  async getMinStakeDuration(): Promise<bigint> {
+    return this.contract.read('minStakeDuration');
+  }
+
+  async getPermissions(): Promise<string> {
+    return this.contract.read('permissions');
+  }
+
   async getStakingTokenMarketCap(tokenAmount: bigint): Promise<bigint> {
     if (!this.marketUtilsContract) {
       throw new Error('MarketUtils contract not available');

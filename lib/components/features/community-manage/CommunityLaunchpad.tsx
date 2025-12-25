@@ -5,6 +5,7 @@ import { Button } from "$lib/components/core";
 import { drawer } from "$lib/components/core/dialog";
 import { CoinList } from "../coins/CoinList";
 import { ActivateLaunchpad } from "./drawers/ActivateLaunchpad";
+import { MembershipSettingsDrawer } from "./drawers/MembershipSettingsDrawer";
 import { useLaunchpadGroup, useTokenIds, useStakingAPR, useStakingTVL } from "$lib/hooks/useCoin";
 import { useSpace } from "$lib/hooks/useSpace";
 import type { PoolCreated_Bool_Exp } from "$lib/graphql/generated/coin/graphql";
@@ -60,7 +61,21 @@ export function CommunityLaunchpad() {
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-4">
           <h3 className="text-xl font-semibold">Coins</h3>
-          <Button iconLeft="icon-plus" variant='secondary' size="sm">Create Coin</Button>
+          <div className="flex gap-2">
+            <Button
+              icon="icon-settings"
+              variant='tertiary'
+              size="sm"
+              onClick={() => {
+                if (launchpadGroup) {
+                  drawer.open(MembershipSettingsDrawer, {
+                    props: { launchpadGroup: launchpadGroup as LaunchpadGroup },
+                  });
+                }
+              }}
+            />
+            <Button iconLeft="icon-plus" variant='tertiary' size="sm">Add Coin</Button>
+          </div>
         </div>
 
         {tokenIds && tokenIds.length > 0 ? (
