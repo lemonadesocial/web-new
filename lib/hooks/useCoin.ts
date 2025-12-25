@@ -592,35 +592,40 @@ function getPoolSwapPriceSnapshot(params: {
 export function usePoolSwapPriceTimeSeries(
   chain: Chain,
   address: string,
-  timeRange?: {
-    startTime?: Date | number;
-    endTime?: Date | number;
+  filter?: {
+    timeRange?: {
+      startTime?: Date | number;
+      endTime?: Date | number;
+    };
+    limit?: number;
   },
 ) {
   const { poolId, isEthToken0, isLoadingPoolInfo } = usePoolInfo(chain, address);
+  const timeRange = filter?.timeRange;
+  const limit = filter?.limit ?? 10000;
 
   const blockTimestampFilter = useMemo(() => {
     if (!timeRange) {
       return undefined;
     }
 
-    const filter: { _gte?: string; _lte?: string } = {};
+    const timestampFilter: { _gte?: string; _lte?: string } = {};
 
     if (timeRange.startTime !== undefined) {
       const startTimestamp = timeRange.startTime instanceof Date
         ? Math.floor(timeRange.startTime.getTime() / 1000)
         : Math.floor(timeRange.startTime / 1000);
-      filter._gte = startTimestamp.toString();
+      timestampFilter._gte = startTimestamp.toString();
     }
 
     if (timeRange.endTime !== undefined) {
       const endTimestamp = timeRange.endTime instanceof Date
         ? Math.floor(timeRange.endTime.getTime() / 1000)
         : Math.floor(timeRange.endTime / 1000);
-      filter._lte = endTimestamp.toString();
+      timestampFilter._lte = endTimestamp.toString();
     }
 
-    return Object.keys(filter).length > 0 ? filter : undefined;
+    return Object.keys(timestampFilter).length > 0 ? timestampFilter : undefined;
   }, [timeRange]);
 
   const { data, loading } = useGraphQLQuery<PoolSwapQuery, PoolSwapQueryVariables>(
@@ -642,7 +647,7 @@ export function usePoolSwapPriceTimeSeries(
             orderBy: {
               blockTimestamp: Order_By.Asc,
             },
-            limit: 10000,
+            limit,
           }
         : undefined,
       skip: !poolId || isLoadingPoolInfo,
@@ -747,7 +752,7 @@ export function usePoolSwapPriceTimeSeries(
       });
 
     return timeSeriesData;
-  }, [swaps, isEthToken0, latestSwapsData, timeRange]);
+  }, [swaps, isEthToken0, latestSwapsData, timeRange, limit]);
 
   return {
     data: priceTimeSeries,

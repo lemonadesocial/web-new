@@ -55,7 +55,7 @@ export function PriceChart({ chain, address }: PriceChartProps) {
   const { data: priceData, isLoading } = usePoolSwapPriceTimeSeries(
     chain,
     address,
-    timeRange.startTime ? timeRange : undefined,
+    timeRange.startTime ? { timeRange } : undefined,
   );
 
   const { rate: ethToUsdcRate } = useEthToUsdcRate(chain, address);
