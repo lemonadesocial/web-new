@@ -1,5 +1,6 @@
 import { formatEther, formatUnits, zeroAddress } from 'viem';
 import { useEffect, useState, useMemo } from 'react';
+import { useAtomValue } from 'jotai';
 import { useQuery as useGraphQLQuery } from '$lib/graphql/request';
 import { useQuery as useReactQuery } from '@tanstack/react-query';
 
@@ -28,6 +29,7 @@ import { StakingManagerClient } from '$lib/services/coin/StakingManagerClient';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 import { formatNumber } from '$lib/utils/number';
+import { chainsMapAtom } from '$lib/jotai/chains';
 
 type LaunchpadGroupItem = ListLaunchpadGroupsQuery['listLaunchpadGroups']['items'][number];
 
@@ -919,5 +921,31 @@ export function useStakingTVL(chain: Chain, stakingManagerAddress: string) {
   return {
     tvl: formattedTVL,
     isLoading,
+  };
+}
+
+export function useStakingCoin(spaceId: string) {
+  const chainsMap = useAtomValue(chainsMapAtom);
+  const { launchpadGroup, isLoading: isLoadingLaunchpadGroup } = useLaunchpadGroup(spaceId);
+
+  const chain = launchpadGroup?.chain_id ? chainsMap[launchpadGroup.chain_id] : undefined;
+
+  const { data: stakingToken, isLoading: isLoadingStakingToken } = useReactQuery({
+    queryKey: ['staking-coin', spaceId, launchpadGroup?.address],
+    queryFn: async () => {
+      if (!chain || !launchpadGroup?.address) {
+        return null;
+      }
+
+      const stakingClient = StakingManagerClient.getInstance(chain, launchpadGroup.address);
+      return stakingClient.getStakingToken();
+    },
+    enabled: !!chain && !!launchpadGroup?.address,
+  });
+
+  return {
+    stakingToken: stakingToken ?? null,
+    chain,
+    isLoading: isLoadingLaunchpadGroup || isLoadingStakingToken,
   };
 }
