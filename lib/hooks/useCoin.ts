@@ -34,25 +34,13 @@ import { chainsMapAtom } from '$lib/jotai/chains';
 type LaunchpadGroupItem = ListLaunchpadGroupsQuery['listLaunchpadGroups']['items'][number];
 
 export function useLaunchpadGroup(spaceId: string) {
-  const [launchpadGroup, setLaunchpadGroup] = useState<LaunchpadGroupItem | null>(null);
-
-  const { loading } = useGraphQLQuery<
-    ListLaunchpadGroupsQuery,
-    ListLaunchpadGroupsQueryVariables
-  >(
-    ListLaunchpadGroupsDocument,
-    {
-      variables: { space: spaceId },
-      onComplete: (data) => {
-        if (data?.listLaunchpadGroups?.items && data.listLaunchpadGroups.items.length > 0) {
-          setLaunchpadGroup(data.listLaunchpadGroups.items[0]);
-        }
-      },
-    }
-  );
+  const { data, loading } = useGraphQLQuery(ListLaunchpadGroupsDocument, {
+    variables: { space: spaceId },
+    skip: !spaceId
+  });
 
   return {
-    launchpadGroup,
+    launchpadGroup: data?.listLaunchpadGroups?.items?.[0] ?? null,
     isLoading: loading,
   };
 }
@@ -171,10 +159,10 @@ export function useTreasuryValue(chain: Chain, address: string) {
 
       const treasuryValue = await flaunchClient.getTreasuryValue();
       setRawTreasuryValue(treasuryValue);
-      
+
       const formattedValue = formatUnits(treasuryValue, 6);
       setFormattedTreasuryValue(`$${formattedValue}`);
-      
+
       setIsLoading(false);
     };
 
@@ -365,7 +353,7 @@ export function useVolume24h(chain: Chain, address: string) {
           ],
         },
       });
-      
+
       return data;
     },
   });
@@ -485,7 +473,7 @@ export function useHoldersCount(chainId: string, address: string) {
           },
         },
       });
-      
+
       return data;
     },
   });
@@ -508,10 +496,10 @@ export function usePoolInfo(chain: Chain, address: string) {
     queryFn: async () => {
       const flaunchClient = FlaunchClient.getInstance(chain, address);
       const poolIdValue = await flaunchClient.getPoolId();
-      
+
       const nativeToken = await flaunchClient.getLETHAddress();
       const isNativeToken0 = nativeToken.toLowerCase().localeCompare(address.toLowerCase()) <= 0;
-      
+
       return {
         poolId: poolIdValue,
         isEthToken0: isNativeToken0,
@@ -633,22 +621,22 @@ export function usePoolSwapPriceTimeSeries(
     {
       variables: poolId
         ? {
-            where: {
-              poolId: {
-                _eq: poolId,
-              },
-              chainId: {
-                _eq: Number(chain.chain_id),
-              },
-              ...(blockTimestampFilter && {
-                blockTimestamp: blockTimestampFilter,
-              }),
+          where: {
+            poolId: {
+              _eq: poolId,
             },
-            orderBy: {
-              blockTimestamp: Order_By.Asc,
+            chainId: {
+              _eq: Number(chain.chain_id),
             },
-            limit,
-          }
+            ...(blockTimestampFilter && {
+              blockTimestamp: blockTimestampFilter,
+            }),
+          },
+          orderBy: {
+            blockTimestamp: Order_By.Asc,
+          },
+          limit,
+        }
         : undefined,
       skip: !poolId || isLoadingPoolInfo,
       fetchPolicy: 'network-only',
@@ -670,19 +658,19 @@ export function usePoolSwapPriceTimeSeries(
     {
       variables: poolId
         ? {
-            where: {
-              poolId: {
-                _eq: poolId,
-              },
-              chainId: {
-                _eq: Number(chain.chain_id),
-              },
+          where: {
+            poolId: {
+              _eq: poolId,
             },
-            orderBy: {
-              blockTimestamp: Order_By.Desc,
+            chainId: {
+              _eq: Number(chain.chain_id),
             },
-            limit: 2,
-          }
+          },
+          orderBy: {
+            blockTimestamp: Order_By.Desc,
+          },
+          limit: 2,
+        }
         : undefined,
       skip: !shouldFetchLatestSwaps,
       fetchPolicy: 'network-only',
@@ -902,13 +890,13 @@ export function useStakingTVL(chain: Chain, stakingManagerAddress: string) {
   useEffect(() => {
     const fetchTVL = async () => {
       setIsLoading(true);
-      
+
       const stakingClient = StakingManagerClient.getInstance(chain, stakingManagerAddress);
       const totalDeposited = await stakingClient.getTotalDeposited();
       const stakingToken = await stakingClient.getStakingToken();
 
       const ethValue = await stakingClient.getStakingTokenMarketCap(totalDeposited);
-      
+
       const flaunchClient = FlaunchClient.getInstance(chain, stakingToken);
       const usdcValue = await flaunchClient.getUSDCFromETH(ethValue);
 
@@ -932,6 +920,8 @@ export function useStakingTVL(chain: Chain, stakingManagerAddress: string) {
 export function useStakingCoin(spaceId: string) {
   const chainsMap = useAtomValue(chainsMapAtom);
   const { launchpadGroup, isLoading: isLoadingLaunchpadGroup } = useLaunchpadGroup(spaceId);
+
+  console.log({ launchpadGroup })
 
   const chain = launchpadGroup?.chain_id ? chainsMap[launchpadGroup.chain_id] : undefined;
 
