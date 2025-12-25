@@ -45,7 +45,7 @@ export function WidgetMusicNFT({ space }: Props) {
   if (!space.nft_enabled || !track) return null;
 
   return (
-    <WidgetContent title="Music Player" className="col-span-2">
+    <WidgetContent space={space} title="Music Player" className="col-span-2">
       <div className="p-6 flex items-center gap-8">
         <div className="bg-gray-50 size-[228px] aspect-square rounded-sm overflow-hidden">
           {track?.cover_image_url && (

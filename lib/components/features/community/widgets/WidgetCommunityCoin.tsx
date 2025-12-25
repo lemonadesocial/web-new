@@ -1,23 +1,27 @@
 'use client';
 
-import { Button, Spacer } from '$lib/components/core';
+import { Spacer } from '$lib/components/core';
+import { Space } from '$lib/graphql/generated/backend/graphql';
 import { ASSET_PREFIX } from '$lib/utils/constants';
+import { PassportTemplate } from '$lib/components/features/theme-builder/passports/types';
+import { ThemeBuilderAction, useTheme } from '$lib/components/features/theme-builder/provider';
 import { WidgetContent } from './WidgetContent';
 
 interface Props {
-  provider: string;
+  space: Space;
   title: string;
   subtitle: string;
 }
 
-export function WidgetCommunityCoin({ title, subtitle, provider }: Props) {
+export function WidgetCommunityCoin({ space, title, subtitle }: Props) {
+  const [state] = useTheme() as [PassportTemplate, React.Dispatch<ThemeBuilderAction>];
+
   return (
-    <WidgetContent title="Community Coin" className="col-span-2">
+    <WidgetContent space={space} title="Community Coin" className="col-span-2">
       <div className="p-6 flex flex-col gap-5">
-        <Button icon="icon-bell" variant="tertiary-alt" className="rounded-full absolute right-4 top-4" />
         <div className="absolute top-0 left-0 right-0">
           <img
-            src={`${ASSET_PREFIX}/assets/images/passports/templates/${provider}-community-coin.png`}
+            src={`${ASSET_PREFIX}/assets/images/passports/templates/${state.template.provider}-community-coin.png`}
             className="w-full h-full"
           />
         </div>

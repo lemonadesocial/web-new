@@ -1,12 +1,11 @@
 'use client';
+import { useRouter } from 'next/navigation';
 
 import { Avatar, Card } from '$lib/components/core';
 import { Event, GetSpaceEventsDocument, Space } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
-import { router } from '$lib/trpc/trpc';
 import { generateUrl } from '$lib/utils/cnd';
 import { formatWithTimezone } from '$lib/utils/date';
-import { useRouter } from 'next/navigation';
 import { WidgetContent } from './WidgetContent';
 
 interface Props {
@@ -17,6 +16,7 @@ const FROM_NOW = new Date().toISOString();
 
 export function WidgetUpcomingEvents({ space }: Props) {
   const router = useRouter();
+
   const { data, loading } = useQuery(GetSpaceEventsDocument, {
     variables: {
       space: space?._id,
@@ -32,7 +32,13 @@ export function WidgetUpcomingEvents({ space }: Props) {
   const upcomingEvents = (data?.getEvents || []) as Event[];
 
   return (
-    <WidgetContent title="Events" className="col-span-2" onClick={() => router.push('/events')}>
+    <WidgetContent
+      space={space}
+      canSubscribe={false}
+      title="Events"
+      className="col-span-2"
+      onClick={() => router.push('/events')}
+    >
       <div className="p-6 space-y-6">
         <div>
           <h3 className="text-2xl font-semibold">12</h3>

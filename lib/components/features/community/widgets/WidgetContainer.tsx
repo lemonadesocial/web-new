@@ -1,103 +1,104 @@
 'use client';
 import React from 'react';
-import { WidgetPassport } from './WidgetPassport';
-import { WidgetCommunityCoin } from './WidgetCommunityCoin';
-import { WidgetUpcomingEvents } from './WidgetUpcomingEvents';
 import { Space } from '$lib/graphql/generated/backend/graphql';
-import { WidgetMusicNFT } from './WidgetMusicNFT';
-import { ASSET_PREFIX } from '$lib/utils/constants';
-import { WidgetConnectWallet } from './WidgetConnectWallet';
-import { WidgetLaunchpad } from './WidgetLaunchpad';
-import { WidgetCollectibles } from './WidgetCollectibles';
+import { ThemeBuilderActionKind, useTheme } from '$lib/components/features/theme-builder/provider';
+import vinylPassportConfig from '$lib/components/features/theme-builder/passports/vinyl-nation';
 
 export function WidgetContainer({ space }: { space: Space }) {
-  const provider = 'drip-nation';
-  const config = {
-    widgets: [
-      {
-        key: 'passport',
-        static: true,
-        component: WidgetPassport,
-        props: {
-          provider: 'drip-nation',
-          title: 'Become a Citizen',
-          subtitle: 'Mint your Vinyl Passport and join a community built by music lovers, collectors, and creators.',
-        },
-      },
-      {
-        key: 'community-coin',
-        component: WidgetCommunityCoin,
-        props: {
-          provider: 'drip-nation',
-          title: '$VINYL',
-          subtitle: 'Launching soon',
-        },
-      },
-      {
-        key: 'music-player',
-        component: WidgetMusicNFT,
-        props: {
-          provider: 'drip-nation',
-          title: '$VINYL',
-          subtitle: 'Launching soon',
-          space,
-        },
-      },
-      {
-        key: 'upcoming-events',
-        component: WidgetUpcomingEvents,
-        props: {
-          provider: 'drip-nation',
-          space,
-        },
-      },
-      {
-        key: 'wallet',
-        component: WidgetConnectWallet,
-        props: {
-          provider: 'drip-nation',
-          title: 'Connect Wallet',
-          subtitle: 'Connect your wallet to access your tokens and rewards.',
-        },
-      },
-      {
-        key: 'launchpad',
-        component: WidgetLaunchpad,
-        props: {
-          provider: 'drip-nation',
-          title: 'Artist Coins',
-          subtitle: 'Connect Wallet',
-        },
-      },
-      {
-        key: 'launchpad',
-        component: WidgetCollectibles,
-        props: {
-          provider: 'drip-nation',
-          title: 'DRiP NFT Marketplace',
-          subtitle: 'Coming soon',
-        },
-      },
-    ],
-  };
+  const [state, dispatch] = useTheme();
 
   React.useEffect(() => {
-    const main = document.getElementsByTagName('main')?.[0];
-    // const child = main.getElementsByClassName('background')?.[0];
-    // if (child) {
-    //   main.removeChild(child);
-    // }
+    // const config = {
+    //   provider,
+    //   template: 'passport',
+    //   passportTitle: 'Citizen',
+    //   image: `${ASSET_PREFIX}/assets/images/passports/templates/${state.provider}-bg.png`,
+    //   widgets: [
+    //     {
+    //       key: 'passport',
+    //       static: true,
+    //       component: WidgetPassport,
+    //       props: {
+    //         space,
+    //         provider,
+    //         title: 'Become a Citizen',
+    //         subtitle: 'Mint your Vinyl Passport and join a community built by music lovers, collectors, and creators.',
+    //       },
+    //     },
+    //     {
+    //       key: 'community-coin',
+    //       component: WidgetCommunityCoin,
+    //       props: {
+    //         space,
+    //
+    //         provider,
+    //         title: '$VINYL',
+    //         subtitle: 'Launching soon',
+    //       },
+    //     },
+    //     {
+    //       key: 'music-player',
+    //       component: WidgetMusicNFT,
+    //       props: {
+    //         space,
+    //         provider,
+    //         title: '$VINYL',
+    //         subtitle: 'Launching soon',
+    //       },
+    //     },
+    //     {
+    //       key: 'upcoming-events',
+    //       component: WidgetUpcomingEvents,
+    //       props: {
+    //         provider,
+    //         space,
+    //       },
+    //     },
+    //     {
+    //       key: 'wallet',
+    //       component: WidgetConnectWallet,
+    //       props: {
+    //         space,
+    //         provider,
+    //         title: 'Connect Wallet',
+    //         subtitle: 'Connect your wallet to access your tokens and rewards.',
+    //       },
+    //     },
+    //     {
+    //       key: 'launchpad',
+    //       component: WidgetLaunchpad,
+    //       props: {
+    //         space,
+    //         provider,
+    //         title: 'Artist Coins',
+    //         subtitle: 'Connect Wallet',
+    //       },
+    //     },
+    //     {
+    //       key: 'collectibles',
+    //       component: WidgetCollectibles,
+    //       props: {
+    //         space,
+    //         provider,
+    //         title: 'DRiP NFT Marketplace',
+    //         subtitle: 'Coming soon',
+    //       },
+    //     },
+    //   ],
+    // };
 
-    main.setAttribute('style', `background: url(${ASSET_PREFIX}/assets/images/passports/templates/${provider}-bg.png)`);
+    const config = vinylPassportConfig;
+    dispatch({ type: ThemeBuilderActionKind.select_template, payload: { ...config } });
   }, []);
 
   return (
     <div data-coin-template className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-      {config.widgets.map((w) => {
-        const Comp = w.component;
+      {'template' in state &&
+        state.template.widgets?.map((w) => {
+          const Comp = w.component;
 
-        return <Comp key={w.key} {...w.props} />;
-      })}
+          return <Comp key={w.key} space={space} {...w.props} />;
+        })}
     </div>
   );
 }

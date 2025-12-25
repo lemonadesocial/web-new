@@ -1,19 +1,24 @@
 'use client';
-import { Spacer } from '$lib/components/core';
+import React from 'react';
+
+import { Space } from '$lib/graphql/generated/backend/graphql';
 import { ASSET_PREFIX } from '$lib/utils/constants';
+import { PassportTemplate } from '$lib/components/features/theme-builder/passports/types';
+import { ThemeBuilderAction, useTheme } from '$lib/components/features/theme-builder/provider';
 import { WidgetContent } from './WidgetContent';
 
 interface Props {
-  provider: string;
+  space: Space;
   title: string;
   subtitle: string;
 }
 
-export function WidgetLaunchpad({ provider, title, subtitle }: Props) {
+export function WidgetLaunchpad({ space, title, subtitle }: Props) {
+  const [state] = useTheme() as [PassportTemplate, React.Dispatch<ThemeBuilderAction>];
   return (
-    <WidgetContent title="Launchpad" className="grid-cols-1">
+    <WidgetContent space={space} title="Launchpad" className="grid-cols-1">
       <div className="p-6 flex items-center flex-col gap-5 relative">
-        <img src={`${ASSET_PREFIX}/assets/images/passports/templates/${provider}-launchpad.png`} />
+        <img src={`${ASSET_PREFIX}/assets/images/passports/templates/${state.template.provider}-launchpad.png`} />
 
         <div className="text-center">
           <h3 className="text-lg font-semibold">{title}</h3>
