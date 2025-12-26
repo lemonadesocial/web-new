@@ -1,6 +1,6 @@
 {
   "name": "web-new",
-  "version": "8.35.0",
+  "version": "8.37.2",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 8000 --experimental-https -H localhost.staging.lemonade.social",
@@ -89,6 +89,7 @@
     "pinata": "^2.5.1",
     "postcss": "^8.5.3",
     "qrcode.react": "^4.2.0",
+    "range_check": "^4.1.0",
     "react": "^19.0.0",
     "react-device-detect": "^2.2.3",
     "react-dom": "^19.0.0",

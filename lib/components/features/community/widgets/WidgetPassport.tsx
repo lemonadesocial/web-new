@@ -30,11 +30,12 @@ export function WidgetPassport({ space, title, subtitle }: Props) {
     <WidgetContent
       space={space}
       title="Passport"
+      canSubscribe={false}
       className={clsx('w-full col-span-2', !!data?.tokenId ? 'row-span-1' : 'row-span-2')}
     >
       {!!data?.tokenId ? (
         <div className="flex gap-8 p-6">
-          <div className="flex justify-between flex-col">
+          <div className="flex flex-1 justify-between flex-col">
             <div className="space-y-1">
               <div className="text-xl font-semibold">
                 <h3>{state.template.passportTitle}</h3>
@@ -49,9 +50,7 @@ export function WidgetPassport({ space, title, subtitle }: Props) {
               onClick={() => toast.success('Comming soon')}
             />
           </div>
-          <div className="flex-1">
-            <img src={data.image} className="w-full h-full" />
-          </div>
+          <img src={data.image} className="w-[365px] h-[228px]" />
         </div>
       ) : (
         <div className="flex flex-col gap-12 p-12">

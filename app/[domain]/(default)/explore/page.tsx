@@ -1,16 +1,21 @@
 import React from 'react';
 
-import { ExploreContent } from '$lib/components/features/explore/Explore';
+import { Content } from './content';
 import { Spacer } from '$lib/components/core';
 
 import { PageTitle } from '../shared';
 
 export default function ExplorePage() {
   return (
-    <div className="md:px-8 overflow-visible">
+    <>
       <Spacer className="h-6 md:h-11" />
-      <PageTitle title="Explore" subtitle="Discover popular communities, events & coins." />
-      <ExploreContent />
-    </div>
+      <div className="md:px-8">
+        <PageTitle
+          title="Explore"
+          subtitle="Explore popular events near you, browse by category, or check out some of the great community hubs."
+        />
+      </div>
+      <Content />
+    </>
   );
 }

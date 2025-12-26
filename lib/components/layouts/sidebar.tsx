@@ -59,7 +59,7 @@ const Sidebar = () => {
       { icon: 'icon-home', path: '/', label: 'Home' },
       { icon: 'icon-newspaper', path: '/timelines', label: 'Timelines' },
       { icon: 'icon-explore', path: '/explore', label: 'Explore' },
-      { icon: 'icon-token', path: '/tokens', label: 'Tokens' },
+      // { icon: 'icon-token', path: '/tokens', label: 'Tokens' },
       // { icon: 'icon-swipe', path: '/swipe', label: 'Swipe & Match' },  // FIXME: add back when lemonheads  are live
       // { icon: 'icon-trophy', path: '/leaderboard', label: 'Leaderboard' },
       { icon: 'icon-passport', path: '/lemonheads', label: 'LemonHeads Zone' },

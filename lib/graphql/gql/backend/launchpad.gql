@@ -1,6 +1,7 @@
-query ListLaunchpadGroups($address: String, $search: String) {
-  listLaunchpadGroups(address: $address, search: $search) {
+query ListLaunchpadGroups($address: String, $search: String, $space: MongoID) {
+  listLaunchpadGroups(address: $address, search: $search, space: $space) {
     items {
+      chain_id
       address
       cover_photo
       cover_photo_expanded {

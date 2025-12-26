@@ -1,28 +1,20 @@
 'use client';
 import React from 'react';
-import { useAppKitAccount, useDisconnect } from '@reown/appkit/react';
+import { useAppKit, useAppKitAccount, useDisconnect } from '@reown/appkit/react';
 import clsx from 'clsx';
-import { twMerge } from 'tailwind-merge';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom } from 'jotai';
 
 import { Avatar, Button, Card, drawer, modal, toast } from '$lib/components/core';
 import { VerifyEmailModal } from '$lib/components/features/auth/VerifyEmailModal';
-import { useAccount } from '$lib/hooks/useLens';
 import { useMe } from '$lib/hooks/useMe';
-import { chainsMapAtom, sessionAtom } from '$lib/jotai';
-import { ASSET_PREFIX, PROFILE_SOCIAL_LINKS } from '$lib/utils/constants';
+import { sessionAtom } from '$lib/jotai';
+import { ASSET_PREFIX } from '$lib/utils/constants';
 import { userAvatar } from '$lib/utils/user';
 import { truncateMiddle } from '$lib/utils/string';
-import { useConnectWallet } from '$lib/hooks/useConnectWallet';
-import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
 import { ConnectWalletModal } from '$lib/components/features/auth/ConnectWalletModal';
-import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
-import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 import { ProfilePane } from '$lib/components/features/pane';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { PageTitle } from '../shared';
-import { getAccountAvatar } from '$lib/utils/lens/utils';
-import { User } from '$lib/graphql/generated/backend/graphql';
 import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
 import { useFarcasterUserData } from '$lib/hooks/useFarcasterUserData';
 import { ConfirmModal } from '$lib/components/features/modals/ConfirmModal';
@@ -43,36 +35,14 @@ export function Content() {
   const walletVerified = session?.wallet || me?.kratos_unicorn_wallet_address || me?.kratos_wallet_address;
 
   const logOut = useLogOut();
-  const { account } = useAccount();
-  const { address } = useAppKitAccount();
+  const { address, isConnected } = useAppKitAccount();
   const { username } = useLemonadeUsername();
-
-  const chainsMap = useAtomValue(chainsMapAtom);
-  const { connect, isReady } = useConnectWallet(chainsMap[LENS_CHAIN_ID]);
   const { disconnect } = useDisconnect();
+  const { open } = useAppKit();
   const { handleConnect } = useLinkFarcaster();
   const openClaimUsername = useClaimUsername();
 
   const { userData } = useFarcasterUserData(me?.kratos_farcaster_fid ? me?.kratos_farcaster_fid.replace('farcaster:', '') : null);
-
-  const handleSelectWallet = () => {
-    modal.open(ConnectWallet, {
-      props: {
-        onConnect: () => {
-          modal.close();
-          setTimeout(() => {
-            modal.open(SelectProfileModal);
-          });
-        },
-        chain: chainsMap[LENS_CHAIN_ID],
-      },
-    });
-  };
-
-  const getSocialLink = (name: string) => {
-    return account?.metadata?.attributes.find((i) => i.key === name)?.value || me?.[name as keyof Partial<User>];
-  };
-
   const [deleteUser] = useMutation(DeleteUserDocument);
 
   const handleDeletePost = async () => {
@@ -117,7 +87,7 @@ export function Content() {
             <div className="size-[60px]">
               <Avatar
                 className="w-full h-full"
-                src={account ? account?.metadata?.picture || getAccountAvatar(account) : userAvatar(me)}
+                src={userAvatar(me)}
               />
             </div>
             <Button
@@ -135,17 +105,16 @@ export function Content() {
                 <h3
                   className={clsx(
                     'text-xl font-semibold',
-                    account?.metadata?.name || me?.name ? 'text-primary' : 'text-tertiary',
+                    me?.name ? 'text-primary' : 'text-tertiary',
                   )}
                 >
-                  {account?.metadata?.name || me?.name || 'No Name Added'}
+                  {me?.name || 'No Name Added'}
                 </h3>
                 <p className="text-tertiary">{username ? `@${username}` : 'No Username Picked'}</p>
               </div>
-              {account?.metadata?.bio ||
-                (me?.description && <p className="text-secondary">{account?.metadata?.bio || me?.description}</p>)}
+              {me?.description && <p className="text-secondary">{me?.description}</p>}
             </div>
-            <div className="flex gap-3">
+            {/* <div className="flex gap-3">
               {PROFILE_SOCIAL_LINKS.map((s, idx) => {
                 const link = getSocialLink(s.name);
                 if (!link) return null;
@@ -166,7 +135,7 @@ export function Content() {
                   </div>
                 );
               })}
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -192,7 +161,7 @@ export function Content() {
             placeholder={!address}
             subtile={address ? truncateMiddle(address, 6, 6) : 'No Wallet Connected'}
           >
-            {isReady ? (
+            {isConnected ? (
               !walletVerified ? (
                 <Button
                   onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
@@ -209,32 +178,10 @@ export function Content() {
                 </Button>
               )
             ) : (
-              <Button variant="secondary" size="sm" onClick={() => connect()}>
+              <Button variant="secondary" size="sm" onClick={() => open()}>
                 Connect Wallet
               </Button>
             )}
-          </ListItem>
-
-          <ListItem
-            icon="icon-lens"
-            title="Profile"
-            placeholder={!account?.metadata?.name}
-            subtile={account?.metadata?.name || 'No Profile Selected'}
-          >
-            <Button
-              iconLeft={account ? 'icon-renew' : ''}
-              variant={account ? 'tertiary-alt' : 'secondary'}
-              size="sm"
-              onClick={() => {
-                if (account) {
-                  modal.open(SelectProfileModal);
-                } else {
-                  handleSelectWallet();
-                }
-              }}
-            >
-              {account ? 'Switch' : 'Select Profile'}
-            </Button>
           </ListItem>
 
           <ListItem

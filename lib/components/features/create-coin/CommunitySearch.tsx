@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { Contract, JsonRpcProvider, ethers } from 'ethers';
+import { ethers } from 'ethers';
 
 import { InputField } from '$lib/components/core';
+import { StakingManagerClient } from '$lib/services/coin/StakingManagerClient';
 import { chainsMapAtom } from '$lib/jotai';
 import { LAUNCH_CHAIN_ID } from '$lib/utils/constants';
 import { useQuery } from '$lib/graphql/request';
@@ -13,7 +14,6 @@ import {
   type ListLaunchpadGroupsQuery,
   type ListLaunchpadGroupsQueryVariables,
 } from '$lib/graphql/generated/backend/graphql';
-import StakingManagerABI from '$lib/abis/token-launch-pad/StakingManager.json';
 import { Menu, MenuItem } from '$lib/components/core';
 import { randomUserImage } from '$lib/utils/community';
 
@@ -69,16 +69,15 @@ export function CommunitySearch({ onSuccess }: CommunitySearchProps) {
     setContractError(false);
 
     try {
-      if (!launchChain?.rpc_url) {
-        throw new Error('Missing RPC URL');
+      if (!launchChain) {
+        throw new Error('Missing launch chain');
       }
 
-      const provider = new JsonRpcProvider(launchChain.rpc_url);
-      const contract = new Contract(group.address, StakingManagerABI.abi, provider);
+      const client = StakingManagerClient.getInstance(launchChain, group.address);
 
       const [ownerShare, creatorShare] = await Promise.all([
-        contract.ownerShare().catch(() => null),
-        contract.creatorShare().catch(() => null),
+        client.getOwnerShare().catch(() => null),
+        client.getCreatorShare().catch(() => null),
       ]);
 
       if (ownerShare === null || creatorShare === null) {
