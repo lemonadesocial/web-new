@@ -53,11 +53,18 @@ export function useSpaceMenu({ space, isMobile }: { space: Space; isMobile?: boo
       }
 
       if (stakingToken) {
-        menu.push({
-          icon: 'icon-token',
-          path: 'coin',
-          label: 'Community Coin',
-        });
+        menu.push(
+          {
+            icon: 'icon-token',
+            path: 'coin',
+            label: 'Community Coin',
+          },
+          {
+            icon: 'icon-rocket',
+            path: 'launchpad',
+            label: 'Launchpad',
+          }
+        );
       }
     }
 

@@ -276,7 +276,7 @@ export function useBuybackCharging(chain: Chain, address: string) {
     },
   });
 
-  const formattedAmount0 = data ? `${formatEther(data.amount0)} ETH` : null;
+  const formattedAmount0 = data ? `${formatNumber(Number(formatEther(data.amount0)))} ETH` : null;
   const formattedAmount1 = data ? `${formatEther(data.amount1)} ETH` : null;
   const formattedThreshold = data ? `${formatEther(data.threshold)} ETH` : null;
 

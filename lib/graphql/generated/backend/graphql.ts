@@ -847,6 +847,13 @@ export type Currency = {
   decimals: Scalars['Float']['output'];
 };
 
+export type DateRange = {
+  /** End exclusive */
+  end: Scalars['DateTimeISO']['input'];
+  /** Start inclusive */
+  start: Scalars['DateTimeISO']['input'];
+};
+
 export type DecideEventCohostRequestInput = {
   decision: Scalars['Boolean']['input'];
   event: Scalars['MongoID']['input'];
@@ -1754,6 +1761,16 @@ export type EventCheckin = {
   user?: Maybe<Scalars['MongoID']['output']>;
 };
 
+export type EventCheckinChartData = {
+  __typename?: 'EventCheckinChartData';
+  items: Array<EventCheckinItem>;
+};
+
+export type EventCheckinItem = {
+  __typename?: 'EventCheckinItem';
+  created_at: Scalars['DateTimeISO']['output'];
+};
+
 export type EventCohostRequest = {
   __typename?: 'EventCohostRequest';
   _id: Scalars['MongoID']['output'];
@@ -2000,6 +2017,12 @@ export type EventInvite = {
   inviter_expanded?: Maybe<User>;
 };
 
+export type EventInviter = {
+  __typename?: 'EventInviter';
+  count: Scalars['Int']['output'];
+  inviter: BasicUserInfo;
+};
+
 export type EventJoinRequest = {
   __typename?: 'EventJoinRequest';
   _id: Scalars['MongoID']['output'];
@@ -2041,6 +2064,11 @@ export enum EventJoinRequestState {
   Declined = 'declined',
   Pending = 'pending'
 }
+
+export type EventLatestViews = {
+  __typename?: 'EventLatestViews';
+  views: Array<Track>;
+};
 
 export type EventOffer = {
   __typename?: 'EventOffer';
@@ -2446,6 +2474,35 @@ export type EventTokenGateInput = {
   name?: InputMaybe<Scalars['String']['input']>;
   network?: InputMaybe<Scalars['String']['input']>;
   token_address?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventTopViewsByCity = {
+  __typename?: 'EventTopViewsByCity';
+  count: Scalars['Int']['output'];
+  geoip_city: Scalars['String']['output'];
+  geoip_country: Scalars['String']['output'];
+  geoip_region: Scalars['String']['output'];
+};
+
+export type EventTopViewsBySource = {
+  __typename?: 'EventTopViewsBySource';
+  count: Scalars['Int']['output'];
+  utm_source?: Maybe<Scalars['String']['output']>;
+};
+
+export type EventViewChartData = {
+  __typename?: 'EventViewChartData';
+  items: Array<EventViewItem>;
+};
+
+export type EventViewItem = {
+  __typename?: 'EventViewItem';
+  date: Scalars['DateTimeISO']['output'];
+};
+
+export type EventViewStats = {
+  __typename?: 'EventViewStats';
+  counts: Array<Scalars['Int']['output']>;
 };
 
 export type EventVoting = {
@@ -2882,6 +2939,13 @@ export type GetEventTicketTypesResponse = {
   ticket_types: Array<PurchasableTicketType>;
 };
 
+export type GetEventTopViewsResponse = {
+  __typename?: 'GetEventTopViewsResponse';
+  by_city: Array<EventTopViewsByCity>;
+  by_source: Array<EventTopViewsBySource>;
+  total: Scalars['Int']['output'];
+};
+
 export type GetEventbriteEventsInput = {
   order?: InputMaybe<EventbriteEventOrder>;
   status?: InputMaybe<EventbriteEventStatus>;
@@ -2956,6 +3020,12 @@ export type GetRoomsInputState = {
 export type GetSpaceEventRequestsResponse = {
   __typename?: 'GetSpaceEventRequestsResponse';
   records: Array<SpaceEventRequest>;
+  total: Scalars['Int']['output'];
+};
+
+export type GetTopInvitersResponse = {
+  __typename?: 'GetTopInvitersResponse';
+  items: Array<EventInviter>;
   total: Scalars['Int']['output'];
 };
 
@@ -3219,6 +3289,12 @@ export type LemonheadUserInfo = {
 export type ListDonationsResponse = {
   __typename?: 'ListDonationsResponse';
   items: Array<Donation>;
+  total: Scalars['Int']['output'];
+};
+
+export type ListEventFeedbacksResponse = {
+  __typename?: 'ListEventFeedbacksResponse';
+  items: Array<EventFeedback>;
   total: Scalars['Int']['output'];
 };
 
@@ -5425,6 +5501,7 @@ export type Query = {
   getEventApplicationAnswers: Array<EventApplicationAnswer>;
   getEventAttestation?: Maybe<EventAttestation>;
   getEventAttestationDiff?: Maybe<EventAttestationDiff>;
+  getEventCheckinChartData: EventCheckinChartData;
   getEventCheckins: Array<EventCheckin>;
   /** @deprecated Requests are auto accepted */
   getEventCohostInvites: Array<EventCohostRequest>;
@@ -5446,6 +5523,7 @@ export type Query = {
   getEventJoinRequest: EventJoinRequest;
   getEventJoinRequestStateStatistic: Array<EventRequestStateStatistic>;
   getEventJoinRequests: GetEventJoinRequestsResponse;
+  getEventLatestViews: EventLatestViews;
   getEventPayment?: Maybe<NewPayment>;
   getEventPaymentStatistics: EventPaymentStatistics;
   getEventPaymentSummary: Array<EventPaymentSummary>;
@@ -5458,7 +5536,12 @@ export type Query = {
   getEventTags: Array<Scalars['String']['output']>;
   getEventTicketCategories: Array<EventTicketCategory>;
   getEventTicketSales: EventTicketSaleResponse;
+  getEventTicketSoldChartData: TicketSoldChartData;
   getEventTicketTypes: GetEventTicketTypesResponse;
+  getEventTopInviters: GetTopInvitersResponse;
+  getEventTopViews: GetEventTopViewsResponse;
+  getEventViewChartData: EventViewChartData;
+  getEventViewStats: EventViewStats;
   getEventbriteEvents: Array<EventbriteEvent>;
   getEvents: Array<Event>;
   getFiles: Array<File>;
@@ -5559,6 +5642,7 @@ export type Query = {
   listDonations: ListDonationsResponse;
   listEventEmailSettings: Array<EmailSetting>;
   listEventFeedBacks: Array<EventFeedback>;
+  listEventFeedbacksNew: ListEventFeedbacksResponse;
   listEventGuests: ListEventGuestsResponse;
   listEventHosts: ListEventHostsResponse;
   listEventPayments: ListEventPaymentsResponse;
@@ -5752,6 +5836,11 @@ export type QueryGetEventAttestationDiffArgs = {
 };
 
 
+export type QueryGetEventCheckinChartDataArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
 export type QueryGetEventCheckinsArgs = {
   input: GetEventCheckinsInput;
 };
@@ -5847,6 +5936,12 @@ export type QueryGetEventJoinRequestsArgs = {
 };
 
 
+export type QueryGetEventLatestViewsArgs = {
+  event: Scalars['MongoID']['input'];
+  limit: Scalars['Int']['input'];
+};
+
+
 export type QueryGetEventPaymentArgs = {
   _id: Scalars['MongoID']['input'];
   event: Scalars['MongoID']['input'];
@@ -5898,8 +5993,39 @@ export type QueryGetEventTicketSalesArgs = {
 };
 
 
+export type QueryGetEventTicketSoldChartDataArgs = {
+  event: Scalars['MongoID']['input'];
+  types?: InputMaybe<Array<Scalars['MongoID']['input']>>;
+};
+
+
 export type QueryGetEventTicketTypesArgs = {
   input: GetEventTicketTypesInput;
+};
+
+
+export type QueryGetEventTopInvitersArgs = {
+  event: Scalars['MongoID']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryGetEventTopViewsArgs = {
+  city_limit: Scalars['Int']['input'];
+  event: Scalars['MongoID']['input'];
+  source_limit: Scalars['Int']['input'];
+};
+
+
+export type QueryGetEventViewChartDataArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryGetEventViewStatsArgs = {
+  event: Scalars['MongoID']['input'];
+  ranges: Array<DateRange>;
 };
 
 
@@ -6517,6 +6643,14 @@ export type QueryListEventFeedBacksArgs = {
   limit?: Scalars['Int']['input'];
   rate_value?: InputMaybe<Scalars['Float']['input']>;
   skip?: Scalars['Int']['input'];
+};
+
+
+export type QueryListEventFeedbacksNewArgs = {
+  event: Scalars['MongoID']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  rate_value?: InputMaybe<Scalars['Float']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -8575,6 +8709,7 @@ export type Subscription = {
   roomAction: RoomActionPayload;
   roomStarted: Room;
   roomUpdated: Room;
+  subscribeEventLatestViews: Track;
   votingUpdated: Scalars['MongoID']['output'];
 };
 
@@ -8601,6 +8736,11 @@ export type SubscriptionRoomStartedArgs = {
 
 export type SubscriptionRoomUpdatedArgs = {
   _id: Scalars['MongoID']['input'];
+};
+
+
+export type SubscriptionSubscribeEventLatestViewsArgs = {
+  event: Scalars['MongoID']['input'];
 };
 
 
@@ -8839,6 +8979,17 @@ export type TicketExport = {
   ticket_type_id?: Maybe<Scalars['MongoID']['output']>;
 };
 
+export type TicketSoldChartData = {
+  __typename?: 'TicketSoldChartData';
+  items: Array<TicketSoldItem>;
+};
+
+export type TicketSoldItem = {
+  __typename?: 'TicketSoldItem';
+  created_at: Scalars['DateTimeISO']['output'];
+  type: Scalars['MongoID']['output'];
+};
+
 export type TicketStatisticPerTier = {
   __typename?: 'TicketStatisticPerTier';
   count: Scalars['Float']['output'];
@@ -8951,6 +9102,15 @@ export type TokenRewardVaultInput = {
   network?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   tokens?: InputMaybe<Array<RewardTokenInput>>;
+};
+
+export type Track = {
+  __typename?: 'Track';
+  date: Scalars['DateTimeISO']['output'];
+  geoip_city: Scalars['String']['output'];
+  geoip_country: Scalars['String']['output'];
+  geoip_region: Scalars['String']['output'];
+  user_agent: Scalars['String']['output'];
 };
 
 export type UnsubscribeSpaceInput = {
@@ -10304,7 +10464,7 @@ export type ListLaunchpadGroupsQueryVariables = Exact<{
 }>;
 
 
-export type ListLaunchpadGroupsQuery = { __typename: 'Query', listLaunchpadGroups: { __typename: 'ListLaunchpadGroupsResponse', items: Array<{ __typename: 'LaunchpadGroup', chain_id: number, address: string, cover_photo?: any | null, cover_photo_url?: string | null, implementation_address: string, name: string, cover_photo_expanded?: { __typename: 'File', _id?: any | null, key: string, bucket: string } | null }> } };
+export type ListLaunchpadGroupsQuery = { __typename: 'Query', listLaunchpadGroups: { __typename: 'ListLaunchpadGroupsResponse', items: Array<{ __typename: 'LaunchpadGroup', chain_id: number, address: string, cover_photo?: any | null, cover_photo_url?: string | null, implementation_address: string, name: string, description?: string | null, cover_photo_expanded?: { __typename: 'File', _id?: any | null, key: string, bucket: string } | null }> } };
 
 export type AddLaunchpadCoinMutationVariables = Exact<{
   input: LaunchpadCoinInput;
@@ -11048,7 +11208,7 @@ export const GetSystemFilesDocument = {"kind":"Document","definitions":[{"kind":
 export const CreateFileUploadsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createFileUploads"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"uploadInfos"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FileUploadInfo"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"directory"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"createFileUploads"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"upload_infos"},"value":{"kind":"Variable","name":{"kind":"Name","value":"uploadInfos"}}},{"kind":"Argument","name":{"kind":"Name","value":"directory"},"value":{"kind":"Variable","name":{"kind":"Name","value":"directory"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"stamp"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"owner"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","alias":{"kind":"Name","value":"presignedUrl"},"name":{"kind":"Name","value":"presigned_url"}}]}}]}}]} as unknown as DocumentNode<CreateFileUploadsMutation, CreateFileUploadsMutationVariables>;
 export const ConfirmFileUploadsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"confirmFileUploads"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"confirmFileUploads"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ids"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}]}]}}]} as unknown as DocumentNode<ConfirmFileUploadsMutation, ConfirmFileUploadsMutationVariables>;
 export const UpdateFileDescriptionMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updateFileDescriptionMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FileInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"updateFile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}},{"kind":"Argument","name":{"kind":"Name","value":"_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"stamp"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"owner"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<UpdateFileDescriptionMutationMutation, UpdateFileDescriptionMutationMutationVariables>;
-export const ListLaunchpadGroupsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListLaunchpadGroups"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"search"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"space"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listLaunchpadGroups"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"address"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}},{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"search"}}},{"kind":"Argument","name":{"kind":"Name","value":"space"},"value":{"kind":"Variable","name":{"kind":"Name","value":"space"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"chain_id"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"cover_photo"}},{"kind":"Field","name":{"kind":"Name","value":"cover_photo_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cover_photo_url"}},{"kind":"Field","name":{"kind":"Name","value":"implementation_address"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<ListLaunchpadGroupsQuery, ListLaunchpadGroupsQueryVariables>;
+export const ListLaunchpadGroupsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ListLaunchpadGroups"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"search"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"space"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"MongoID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listLaunchpadGroups"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"address"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}},{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"search"}}},{"kind":"Argument","name":{"kind":"Name","value":"space"},"value":{"kind":"Variable","name":{"kind":"Name","value":"space"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"chain_id"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"cover_photo"}},{"kind":"Field","name":{"kind":"Name","value":"cover_photo_expanded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cover_photo_url"}},{"kind":"Field","name":{"kind":"Name","value":"implementation_address"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]}}]} as unknown as DocumentNode<ListLaunchpadGroupsQuery, ListLaunchpadGroupsQueryVariables>;
 export const AddLaunchpadCoinDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddLaunchpadCoin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LaunchpadCoinInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"addLaunchpadCoin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]} as unknown as DocumentNode<AddLaunchpadCoinMutation, AddLaunchpadCoinMutationVariables>;
 export const AddLaunchpadGroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddLaunchpadGroup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AddLaunchpadGroupInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"addLaunchpadGroup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]} as unknown as DocumentNode<AddLaunchpadGroupMutation, AddLaunchpadGroupMutationVariables>;
 export const ItemsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Items"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listLaunchpadCoins"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"address"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"handle_telegram"}},{"kind":"Field","name":{"kind":"Name","value":"handle_discord"}},{"kind":"Field","name":{"kind":"Name","value":"handle_farcaster"}},{"kind":"Field","name":{"kind":"Name","value":"handle_twitter"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"owner"}},{"kind":"Field","name":{"kind":"Name","value":"website"}}]}}]}}]}}]} as unknown as DocumentNode<ItemsQuery, ItemsQueryVariables>;
