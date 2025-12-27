@@ -51,6 +51,31 @@ export function CoinList({ filter, hiddenColumns = [] }: CoinListProps) {
 
   const pools = data?.PoolCreated || [];
   const total = pools.length >= LIMIT ? (skip + LIMIT) + 1 : pools.length;
+
+  return (
+    <CoinListTable
+      pools={pools}
+      loading={loading}
+      hiddenColumns={hiddenColumns}
+      skip={skip}
+      total={total}
+      onNext={() => setSkip(skip + LIMIT)}
+      onPrev={() => setSkip(Math.max(0, skip - LIMIT))}
+    />
+  );
+}
+
+interface CoinListTableProps {
+  pools: PoolCreated[];
+  loading: boolean;
+  hiddenColumns?: CoinListColumn[];
+  skip?: number;
+  total?: number;
+  onNext?: () => void;
+  onPrev?: () => void;
+}
+
+export function CoinListTable({ pools, loading, hiddenColumns = [], skip = 0, total, onNext, onPrev }: CoinListTableProps) {
   const showColumn = (column: CoinListColumn) => !hiddenColumns.includes(column);
 
   return (
@@ -117,13 +142,13 @@ export function CoinList({ filter, hiddenColumns = [] }: CoinListProps) {
             ))}
           </CardTable.Root>
         </div>
-        {pools.length > 0 && (
+        {pools.length > 0 && onNext && onPrev && total !== undefined && (
           <CardTable.Pagination 
             limit={LIMIT} 
             skip={skip} 
             total={total}
-            onNext={() => setSkip(skip + LIMIT)}
-            onPrev={() => setSkip(Math.max(0, skip - LIMIT))}
+            onNext={onNext}
+            onPrev={onPrev}
           />
         )}
       </div>

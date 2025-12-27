@@ -1,29 +1,46 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import clsx from 'clsx';
 
-import { useLaunchpadGroup, useStakingCoin, useTokenData, useMarketCap, useMarketCapChange, useBuybackCharging } from "$lib/hooks/useCoin";
+import { useLaunchpadGroup, useStakingCoin, useTokenData, useMarketCap, useMarketCapChange, useBuybackCharging, useTokenIds } from "$lib/hooks/useCoin";
 import { useSpace } from "$lib/hooks/useSpace";
 import { CoinStats } from './CoinStats';
 import { Chain, LaunchpadGroup, Space } from '$lib/graphql/generated/backend/graphql';
 import { formatWallet } from '$lib/utils/crypto';
 import { copy } from '$lib/utils/helpers';
 import { communityAvatar } from '$lib/utils/community';
-import { Button, Card, Skeleton, toast } from '$lib/components/core';
+import { Button, Card, Skeleton, toast, Segment } from '$lib/components/core';
+import { CoinCard } from '../coin/CoinCard';
+import { CoinListTable } from '../coins/CoinList';
 import { chainsMapAtom } from '$lib/jotai';
 import { StakingManagerClient } from '$lib/services/coin/StakingManagerClient';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 import { SECONDS_PER_MONTH } from '$lib/services/token-launch-pad';
+import { useQuery } from '$lib/graphql/request/hooks';
+import { coinClient } from '$lib/graphql/request/instances';
+import { PoolCreatedDocument, Order_By, PoolCreated_Bool_Exp } from '$lib/graphql/generated/coin/graphql';
 
 export function CommunityLaunchpad() {
   const space = useSpace();
 
   const { launchpadGroup, isLoading } = useLaunchpadGroup(space?._id || '');
   const { stakingToken, chain, isLoading: isLoadingStakingToken } = useStakingCoin(space?._id || '');
+  const { tokenIds, isLoading: isLoadingTokenIds } = useTokenIds(launchpadGroup?.address || '');
 
-  if (isLoading) return <div>Loading...</div>;
+  const filter = useMemo<PoolCreated_Bool_Exp | undefined>(() => {
+    if (!tokenIds || tokenIds.length === 0) {
+      return undefined;
+    }
+    return {
+      tokenId: {
+        _in: tokenIds,
+      },
+    };
+  }, [tokenIds]);
+
+  if (isLoading || isLoadingStakingToken) return <div>Loading...</div>;
 
   if (!launchpadGroup) return null;
 
@@ -41,6 +58,13 @@ export function CommunityLaunchpad() {
           <LaunchpadSettingsInfo launchpadGroup={launchpadGroup as any} stakingToken={stakingToken} />
         </div>
       </div>
+      {isLoadingTokenIds ? (
+        <Skeleton className="h-[225px] w-[348px]" animate />
+      ) : (
+        <div className="p-4 rounded-md space-y-4 border border-card-border bg-card">
+          <SubCoinsList filter={filter} />
+        </div>
+      )}
     </div>
   );
 }
@@ -345,6 +369,77 @@ function LaunchpadSettingsInfo({ launchpadGroup, stakingToken }: { launchpadGrou
           <p className="text-sm text-tertiary">N/A</p>
         )}
       </div>
+    </div>
+  );
+}
+
+function SubCoinsList({ filter }: { filter?: PoolCreated_Bool_Exp }) {
+  const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
+  const { data, loading } = useQuery(
+    PoolCreatedDocument,
+    {
+      variables: {
+        orderBy: [
+          {
+            blockTimestamp: Order_By.Desc,
+          },
+        ],
+        where: filter,
+      },
+    },
+    coinClient,
+  );
+
+  const pools = data?.PoolCreated || [];
+
+  if (!filter || pools.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between">
+        <p className="text-lg">Sub Coins</p>
+        <Segment
+          size="sm"
+          selected={viewMode}
+          onSelect={(item) => setViewMode(item.value as 'card' | 'list')}
+          items={[
+            { value: 'card', icon: 'icon-view-agenda-outline' },
+            { value: 'list', icon: 'icon-list-bulleted' },
+          ]}
+        />
+      </div>
+      {viewMode === 'list' ? (
+        <CoinListTable pools={pools} loading={loading} hiddenColumns={['buy', 'community']} />
+      ) : (
+        <>
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <Card.Root key={i} className="flex-1">
+                  <Card.Content className="p-0">
+                    <div className="flex gap-4 p-4">
+                      <Skeleton className="w-[118px] h-[118px] rounded-sm" animate />
+                      <div className="flex flex-col gap-2 flex-1">
+                        <Skeleton className="h-6 w-24" animate />
+                        <Skeleton className="h-4 w-32" animate />
+                        <Skeleton className="h-5 w-20" animate />
+                      </div>
+                    </div>
+                  </Card.Content>
+                </Card.Root>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {pools.map((pool) => (
+                <CoinCard key={pool.id} pool={pool} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
