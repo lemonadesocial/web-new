@@ -23,12 +23,12 @@ export function WidgetContent({ space, title, children, className, onClick, canS
   const me = useMe();
   const signIn = useSignIn();
 
-  const [follow, resFollow] = useMutation(FollowSpaceDocument, {
+  const [follow] = useMutation(FollowSpaceDocument, {
     onComplete: (client) => {
       client.writeFragment({ id: `Space:${space?._id}`, data: { followed: true } });
     },
   });
-  const [unfollow, resUnfollow] = useMutation(UnfollowSpaceDocument, {
+  const [unfollow] = useMutation(UnfollowSpaceDocument, {
     onComplete: (client) => {
       client.writeFragment({ id: `Space:${space?._id}`, data: { followed: false } });
     },
@@ -49,17 +49,19 @@ export function WidgetContent({ space, title, children, className, onClick, canS
   return (
     <div className={twMerge('flex flex-col flex-1 items-center gap-2', className)}>
       <Card.Root data-card className="w-full h-full" onClick={onClick}>
-        <Card.Content className="p-0">
-          {canSubscribe && ![space?.creator, ...(space?.admins?.map((p) => p._id) || [])].includes(me?._id) && (
-            <Button
-              icon="icon-bell"
-              variant="tertiary-alt"
-              className="rounded-full absolute right-4 top-4"
-              onClick={handleSubscribe}
-            />
-          )}
-
+        <Card.Content className="p-0 h-full">
           {children}
+
+          {!space.followed &&
+            canSubscribe &&
+            ![space?.creator, ...(space?.admins?.map((p) => p._id) || [])].includes(me?._id) && (
+              <Button
+                icon="icon-bell"
+                variant="tertiary-alt"
+                className="rounded-full absolute right-4 top-4"
+                onClick={handleSubscribe}
+              />
+            )}
         </Card.Content>
       </Card.Root>
       <p className="text-sm text-tertiary">{title}</p>
