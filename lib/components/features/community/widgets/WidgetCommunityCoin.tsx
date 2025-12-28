@@ -1,8 +1,9 @@
 'use client';
 import React from 'react';
-import { AreaChart, Area, ResponsiveContainer, Tooltip, CartesianGrid, XAxis } from 'recharts';
+import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
 import { format } from 'date-fns';
 import { match, P } from 'ts-pattern';
+import clsx from 'clsx';
 
 import { Spacer } from '$lib/components/core';
 import { Chain, Space } from '$lib/graphql/generated/backend/graphql';
@@ -10,6 +11,7 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { PassportTemplate } from '$lib/components/features/theme-builder/passports/types';
 import { ThemeBuilderAction, useTheme } from '$lib/components/features/theme-builder/provider';
 import {
+  useHoldersCount,
   useMarketCap,
   useMarketCapChange,
   usePoolSwapPriceTimeSeries,
@@ -18,7 +20,6 @@ import {
 } from '$lib/hooks/useCoin';
 import { formatNumber } from '$lib/utils/number';
 import { WidgetContent } from './WidgetContent';
-import clsx from 'clsx';
 
 interface Props {
   space: Space;
@@ -63,8 +64,9 @@ function CommunityCoin({ chain, address }: { chain: Chain; address: string }) {
   const { percentageChange, isLoadingMarketCapChange } = useMarketCapChange(chain.chain_id, address);
 
   const { data: priceData, isLoading } = usePoolSwapPriceTimeSeries(chain, address);
+  const { holdersCount, isLoadingHoldersCount } = useHoldersCount(chain.chain_id, address);
 
-  if (isLoadingTokenData || isLoadingMarketCap || isLoading || isLoadingMarketCapChange) {
+  if (isLoadingTokenData || isLoadingMarketCap || isLoading || isLoadingMarketCapChange || isLoadingHoldersCount) {
     return (
       <div className="flex justify-center items-center">
         <p>loading... </p>
@@ -155,7 +157,7 @@ function CommunityCoin({ chain, address }: { chain: Chain; address: string }) {
         </div>
         <div>
           <p className="text-tertiary text-sm">Holders</p>
-          <p>$0.0097</p>
+          <p className="text-right">{formatNumber(holdersCount || 0, true)}</p>
         </div>
       </div>
     </>
