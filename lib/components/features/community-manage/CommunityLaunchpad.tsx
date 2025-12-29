@@ -1,19 +1,16 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { useMemo } from 'react';
+
 import { Button } from "$lib/components/core";
 import { drawer } from "$lib/components/core/dialog";
 import { CoinList } from "../coins/CoinList";
 import { ActivateLaunchpad } from "./drawers/ActivateLaunchpad";
 import { MembershipSettingsDrawer } from "./drawers/MembershipSettingsDrawer";
-import { useLaunchpadGroup, useTokenIds, useStakingAPR, useStakingTVL } from "$lib/hooks/useCoin";
+import { useLaunchpadGroup, useTokenIds } from "$lib/hooks/useCoin";
 import { useSpace } from "$lib/hooks/useSpace";
 import type { PoolCreated_Bool_Exp } from "$lib/graphql/generated/coin/graphql";
 import { LaunchpadGroup } from '$lib/graphql/generated/backend/graphql';
-import { StatItem } from '../coin/StatItem';
-import { chainsMapAtom } from '$lib/jotai';
-import { StakingManagerClient } from '$lib/services/coin/StakingManagerClient';
-import { formatWallet } from '$lib/utils/crypto';
+import { CoinStats } from '../community/CoinStats';
 
 export function CommunityLaunchpad() {
   const space = useSpace();
@@ -36,7 +33,7 @@ export function CommunityLaunchpad() {
     <div className="page mx-auto py-7 px-4 md:px-0 flex flex-col gap-8">
       {
         launchpadGroup ? (
-          <Stats launchpadGroup={launchpadGroup as LaunchpadGroup} />
+          <CoinStats launchpadGroup={launchpadGroup as LaunchpadGroup} />
         ) : (
           <div className="flex py-2.5 px-4 items-center gap-3 bg-warning-300/16 rounded-sm">
             <i className="icon-rocket size-5 text-warning-300" />
@@ -90,38 +87,6 @@ export function CommunityLaunchpad() {
           </div>
         )}
       </div>
-    </div>
-  );
-}
-
-function Stats({ launchpadGroup }: { launchpadGroup: LaunchpadGroup }) {
-  const chainsMap = useAtomValue(chainsMapAtom);
-  const chain = chainsMap[launchpadGroup.chain_id];
-  const [owner, setOwner] = useState<string | null>(null);
-  const [isLoadingOwner, setIsLoadingOwner] = useState(true);
-
-  const { apr, isLoading: isLoadingAPR } = useStakingAPR(chain!, launchpadGroup.address);
-  const { tvl, isLoading: isLoadingTVL } = useStakingTVL(chain!, launchpadGroup.address);
-
-  useEffect(() => {
-    if (!chain) return;
-
-    const fetchOwner = async () => {
-      setIsLoadingOwner(true);
-      const client = StakingManagerClient.getInstance(chain, launchpadGroup.address);
-      const ownerAddress = await client.getManagerOwner();
-      setOwner(ownerAddress);
-      setIsLoadingOwner(false);
-    };
-
-    fetchOwner();
-  }, [chain, launchpadGroup.address]);
-
-  return (
-    <div className="grid grid-cols-5 gap-3">
-      <StatItem title="Owner" value={owner ? formatWallet(owner) : 'N/A'} loading={isLoadingOwner} />
-      <StatItem title="APR" value={apr !== null ? `${apr}%` : 'N/A'} loading={isLoadingAPR} />
-      <StatItem title="TVL" value={tvl || 'N/A'} loading={isLoadingTVL} />
     </div>
   );
 }
