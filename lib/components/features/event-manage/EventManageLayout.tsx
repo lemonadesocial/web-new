@@ -22,7 +22,7 @@ const eventManageMenu = [
   { name: 'Payments', page: 'payments' },
   { name: 'Blasts', page: 'blasts' },
   // { name: 'Program', page: 'program' },
-  // { name: 'Insights', page: 'insights' },
+  { name: 'Insights', page: 'insights' },
   { name: 'More', page: 'more' },
 ];
 

@@ -1529,3 +1529,12 @@ query getTicketStatistics($id: MongoID!) {
     }
   }
 }
+
+query GetEventTicketSoldChartData($event: MongoID!, $start: DateTimeISO!, $end: DateTimeISO!, $types: [MongoID!]) {
+  getEventTicketSoldChartData(event: $event, start: $start, end: $end, types: $types) {
+    items {
+      created_at
+      type
+    }
+  }
+}
