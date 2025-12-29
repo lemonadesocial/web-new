@@ -92,7 +92,7 @@ const Sidebar = () => {
             <i className="icon-lemonade-logo text-[#FDE047]" />
           </div>
           {mainMenu.map((item) => (
-            <SidebarItem key={item.path} item={item} isActive={isActive} />
+            <SidebarItem key={item!.path} item={item!} isActive={isActive} />
           ))}
         </div>
         <div className="flex flex-col gap-2 p-3 flex-1">
@@ -129,7 +129,7 @@ const Sidebar = () => {
 const actions = {
   event: { icon: 'icon-ticket text-accent-400', title: 'Event', subtitle: 'Virtual & IRL' },
   community: { icon: 'icon-community text-alert-400', title: 'Community', subtitle: 'Build your space' },
-  // coin: { icon: 'icon-token text-warning-400', title: 'Coin', subtitle: 'Launch your crypto token' },
+  coin: { icon: 'icon-token text-warning-400', title: 'Coin', subtitle: 'Launch your crypto token' },
   post: { icon: 'icon-edit-square text-[#2DD4BF]!', title: 'Post', subtitle: 'Share updates' },
 };
 
