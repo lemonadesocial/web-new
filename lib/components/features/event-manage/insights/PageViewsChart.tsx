@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import { AreaChart, Area, ResponsiveContainer, Tooltip, CartesianGrid } from 'recharts';
+import clsx from 'clsx';
 
 import { Segment } from '$lib/components/core';
 import { GetEventViewChartDataDocument } from '$lib/graphql/generated/backend/graphql';
@@ -13,6 +14,7 @@ import {
   useTimeRange,
   groupDataByInterval,
   formatTooltipLabel,
+  getIntervalLabel,
 } from '$lib/utils/chart';
 import { useEvent } from '../store';
 
@@ -43,13 +45,32 @@ export function PageViewsChart() {
     return chartData.reduce((sum, item) => sum + item.count, 0);
   }, [chartData]);
 
+  const viewsChange = useMemo(() => {
+    if (chartData.length < 2) return null;
+
+    const latest = chartData[chartData.length - 1].count;
+    const previous = chartData[chartData.length - 2].count;
+
+    if (previous === 0) return null;
+
+    return ((latest - previous) / previous) * 100;
+  }, [chartData]);
+
   const formattedTotal = formatNumber(totalViews, true);
+  const formattedChange = viewsChange !== null
+    ? `${viewsChange >= 0 ? '+' : ''}${viewsChange.toFixed(1)}%`
+    : null;
 
   return (
     <div>
       <div className="absolute top-4 left-0 px-4 z-10">
         <p className="text-tertiary text-sm">Page Views</p>
         <h4 className="text-2xl font-semibold">{formattedTotal}</h4>
+        {formattedChange && (
+          <p className={clsx('text-sm', viewsChange && viewsChange >= 0 ? 'text-success-500' : 'text-error')}>
+            {formattedChange} ({getIntervalLabel(selectedRange)})
+          </p>
+        )}
       </div>
 
       <div className="flex justify-end items-center gap-2 pt-4 px-4">

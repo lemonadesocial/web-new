@@ -115,3 +115,18 @@ export function formatTooltipLabel(timeValue: string, range: TimeRange): string 
   }
 }
 
+export function getIntervalLabel(range: TimeRange): string {
+  switch (range) {
+    case '1H':
+      return 'M';
+    case '1D':
+      return 'H';
+    case '1W':
+    case '1M':
+    case 'All':
+      return 'D';
+    default:
+      return 'H';
+  }
+}
+

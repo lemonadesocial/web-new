@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import { AreaChart, Area, ResponsiveContainer, Tooltip, CartesianGrid } from 'recharts';
+import clsx from 'clsx';
 
 import { Card, Button, Menu, MenuItem, Segment } from '$lib/components/core';
 import { GetEventTicketSoldChartDataDocument } from '$lib/graphql/generated/backend/graphql';
@@ -13,6 +14,7 @@ import {
   useTimeRange,
   groupDataByInterval,
   formatTooltipLabel,
+  getIntervalLabel,
 } from '$lib/utils/chart';
 import { useEvent } from '../store';
 
@@ -69,6 +71,21 @@ export function TicketsSoldChart() {
 
   const formattedTotal = formatNumber(totalTickets, true);
 
+  const ticketChange = useMemo(() => {
+    if (chartData.length < 2) return null;
+
+    const latest = chartData[chartData.length - 1].count;
+    const previous = chartData[chartData.length - 2].count;
+
+    if (previous === 0) return null;
+
+    return ((latest - previous) / previous) * 100;
+  }, [chartData]);
+
+  const formattedChange = ticketChange !== null
+    ? `${ticketChange >= 0 ? '+' : ''}${ticketChange.toFixed(1)}%`
+    : null;
+
   const selectedTicketTypeData = ticketTypes.find((t) => t._id === selectedTicketType);
   const filterLabel = selectedTicketTypeData ? selectedTicketTypeData.title : 'All Tickets';
 
@@ -78,7 +95,11 @@ export function TicketsSoldChart() {
         <div className="absolute top-4 left-0 px-4 z-10">
           <p className="text-tertiary text-sm">Tickets Sold</p>
           <h4 className="text-2xl font-semibold">{formattedTotal}</h4>
-          {/* tickets sold change */}
+          {formattedChange && (
+            <p className={clsx('text-sm', ticketChange && ticketChange >= 0 ? 'text-success-500' : 'text-error')}>
+              {formattedChange} ({getIntervalLabel(selectedRange)})
+            </p>
+          )}
         </div>
 
         <div className="flex justify-end items-center gap-2 pt-4 px-4">
