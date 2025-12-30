@@ -2,7 +2,9 @@
 
 import { Card } from '$lib/components/core';
 import { useEvent } from './store';
-import { TicketsSoldChart } from './TicketsSoldChart';
+import { TicketsSoldChart } from './insights/TicketsSoldChart';
+import { PageViewsChart } from './insights/PageViewsChart';
+import { PageViewsStats } from './insights/PageViewsStats';
 
 export function EventInsights() {
   const event = useEvent();
@@ -15,7 +17,9 @@ export function EventInsights() {
         <TicketsSoldChart />
         <Card.Root>
           <Card.Content className="p-0">
-
+            <PageViewsChart />
+            <hr className="border-t" />
+            <PageViewsStats />
           </Card.Content>
         </Card.Root>
       </div>

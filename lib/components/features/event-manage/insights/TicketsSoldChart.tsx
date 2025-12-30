@@ -2,63 +2,26 @@
 
 import React, { useMemo, useState } from 'react';
 import { AreaChart, Area, ResponsiveContainer, Tooltip, CartesianGrid } from 'recharts';
-import { format } from 'date-fns';
 
 import { Card, Button, Menu, MenuItem, Segment } from '$lib/components/core';
 import { GetEventTicketSoldChartDataDocument } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { formatNumber } from '$lib/utils/number';
-import { useEvent } from './store';
-
-type TimeRange = '1H' | '1D' | '1W' | '1M' | 'All';
+import {
+  TimeRange,
+  TIME_RANGES,
+  useTimeRange,
+  groupDataByInterval,
+  formatTooltipLabel,
+} from '$lib/utils/chart';
+import { useEvent } from '../store';
 
 export function TicketsSoldChart() {
   const event = useEvent();
   const [selectedRange, setSelectedRange] = useState<TimeRange>('All');
   const [selectedTicketType, setSelectedTicketType] = useState<string | null>(null);
 
-  const timeRange = useMemo(() => {
-    if (!event) {
-      return { startTime: new Date(), endTime: new Date() };
-    }
-
-    const eventStart = event.stamp ? new Date(event.stamp) : null;
-    const eventEnd = event.end ? new Date(event.end) : null;
-    const now = new Date();
-
-    let calculatedEndTime = now;
-    if (eventEnd && eventEnd < now) {
-      calculatedEndTime = eventEnd;
-    }
-
-    let calculatedStartTime: Date;
-
-    switch (selectedRange) {
-      case '1H':
-        calculatedStartTime = new Date(calculatedEndTime.getTime() - 60 * 60 * 1000);
-        break;
-      case '1D':
-        calculatedStartTime = new Date(calculatedEndTime.getTime() - 24 * 60 * 60 * 1000);
-        break;
-      case '1W':
-        calculatedStartTime = new Date(calculatedEndTime.getTime() - 7 * 24 * 60 * 60 * 1000);
-        break;
-      case '1M':
-        calculatedStartTime = new Date(calculatedEndTime.getTime() - 30 * 24 * 60 * 60 * 1000);
-        break;
-      case 'All':
-        calculatedStartTime = eventStart || new Date(calculatedEndTime.getTime() - 365 * 24 * 60 * 60 * 1000);
-        break;
-      default:
-        calculatedStartTime = new Date(calculatedEndTime.getTime() - 24 * 60 * 60 * 1000);
-    }
-
-    if (eventStart && calculatedStartTime < eventStart) {
-      calculatedStartTime = eventStart;
-    }
-
-    return { startTime: calculatedStartTime, endTime: calculatedEndTime };
-  }, [selectedRange, event]);
+  const timeRange = useTimeRange(event, selectedRange);
 
   const { data, loading } = useQuery(GetEventTicketSoldChartDataDocument, {
     variables: {
@@ -71,35 +34,11 @@ export function TicketsSoldChart() {
   });
 
   const chartData = useMemo(() => {
-    if (!data?.getEventTicketSoldChartData?.items) return [];
+    const items = data?.getEventTicketSoldChartData?.items;
+    if (!items || items.length === 0) return [];
 
-    const items = data.getEventTicketSoldChartData.items;
-    if (items.length === 0) return [];
-
-    const groupedData: Record<string, number> = {};
-
-    items.forEach((item) => {
-      const date = new Date(item.created_at);
-      const intervalKey = getIntervalKey(date, selectedRange);
-      
-      if (!groupedData[intervalKey]) {
-        groupedData[intervalKey] = 0;
-      }
-      groupedData[intervalKey]++;
-    });
-
-    const result: Array<{ time: string; count: number }> = [];
-    const sortedKeys = Object.keys(groupedData).sort();
-
-    sortedKeys.forEach((key) => {
-      result.push({
-        time: key,
-        count: groupedData[key],
-      });
-    });
-
-    return result;
-  }, [data, selectedRange, timeRange]);
+    return groupDataByInterval(items, (item) => new Date(item.created_at), selectedRange);
+  }, [data, selectedRange]);
 
   const totalTickets = useMemo(() => {
     if (chartData.length === 0) return 0;
@@ -109,8 +48,6 @@ export function TicketsSoldChart() {
   const ticketTypes = useMemo(() => {
     return event?.event_ticket_types || [];
   }, [event]);
-
-  const timeRanges: TimeRange[] = ['1H', '1D', '1W', '1M', 'All'];
 
   const formattedTotal = formatNumber(totalTickets, true);
 
@@ -130,7 +67,7 @@ export function TicketsSoldChart() {
             <Menu.Root>
               <Menu.Trigger>
                 <Button size="sm" variant="tertiary" iconLeft="icon-filter-line" iconRight="icon-chevron-down">
-                  <span className="w-[66px] text-left truncate">{filterLabel}</span>
+                  <span className="w-[72px] text-left truncate">{filterLabel}</span>
                 </Button>
               </Menu.Trigger>
               <Menu.Content className="w-[184px] p-0">
@@ -169,7 +106,7 @@ export function TicketsSoldChart() {
             size="sm"
             selected={selectedRange}
             onSelect={(item) => setSelectedRange(item.value as TimeRange)}
-            items={timeRanges.map((range) => ({ value: range, label: range }))}
+            items={TIME_RANGES.map((range) => ({ value: range, label: range }))}
           />
         </div>
 
@@ -212,28 +149,14 @@ export function TicketsSoldChart() {
                   }}
                   labelFormatter={(_, payload) => {
                     if (payload && payload[0] && payload[0].payload) {
-                      const timeValue = payload[0].payload.time;
-                      const date = new Date(timeValue);
-                      
-                      switch (selectedRange) {
-                        case '1H':
-                          return format(date, 'h:mm');
-                        case '1D':
-                          return format(date, 'MMM d, h:mm a');
-                        case '1W':
-                        case '1M':
-                        case 'All':
-                          return format(date, 'MMM d, yyyy');
-                        default:
-                          return format(date, 'MMM d, yyyy HH:mm');
-                      }
+                      return formatTooltipLabel(payload[0].payload.time, selectedRange);
                     }
                     return '';
                   }}
                   formatter={(value: number) => [formatNumber(value, true), 'Tickets Sold']}
                 />
                 <Area
-                  type="monotone"
+                  type="linear"
                   dataKey="count"
                   stroke="rgba(168, 85, 247, 1)"
                   fill="url(#ticketsGradient)"
@@ -249,27 +172,3 @@ export function TicketsSoldChart() {
     </Card.Root>
   );
 }
-
-function getIntervalKey(date: Date, range: TimeRange): string {
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  const day = date.getDate();
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-
-  switch (range) {
-    case '1H':
-      return new Date(year, month, day, hour, minute).toISOString();
-    case '1D':
-      return new Date(year, month, day, hour).toISOString();
-    case '1W':
-      return new Date(year, month, day).toISOString();
-    case '1M':
-      return new Date(year, month, day).toISOString();
-    case 'All':
-      return new Date(year, month, day).toISOString();
-    default:
-      return new Date(year, month, day, hour).toISOString();
-  }
-}
-
