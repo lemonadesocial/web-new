@@ -12,6 +12,7 @@ import { defaultClient } from '$lib/graphql/request/instances';
 import { useResumeSession as useLensResumeSession } from '$lib/hooks/useLens';
 import { useAuth } from '../../lib/hooks/useAuth';
 import { GetMeDocument, User } from '$lib/graphql/generated/backend/graphql';
+import { useUtmTracker } from '$lib/hooks/useUtmTracker';
 
 export default function Providers({ children, space }: { children: React.ReactNode; space?: SpaceHydraKeys | null }) {
   const [miniAppReady, setMiniAppReady] = useState(false);
@@ -19,6 +20,7 @@ export default function Providers({ children, space }: { children: React.ReactNo
   const setHydraClientId = useSetAtom(hydraClientIdAtom);
   const [appKitReady, setAppKitReady] = useState(false);
   useLensResumeSession();
+  useUtmTracker();
 
   const { reload, loading: loadingAuth } = useAuth(space?.hydra_client_id);
   const session = useAtomValue(sessionAtom);
