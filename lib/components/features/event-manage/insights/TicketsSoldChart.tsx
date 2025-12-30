@@ -33,6 +33,15 @@ export function TicketsSoldChart() {
     skip: !event?._id,
   });
 
+  const { data: allTicketsData } = useQuery(GetEventTicketSoldChartDataDocument, {
+    variables: {
+      event: event?._id || '',
+      start: timeRange.startTime.toISOString(),
+      end: timeRange.endTime.toISOString(),
+    },
+    skip: !event?._id,
+  });
+
   const chartData = useMemo(() => {
     const items = data?.getEventTicketSoldChartData?.items;
     if (!items || items.length === 0) return [];
@@ -49,6 +58,15 @@ export function TicketsSoldChart() {
     return event?.event_ticket_types || [];
   }, [event]);
 
+  const ticketCountByType = useMemo(() => {
+    const items = allTicketsData?.getEventTicketSoldChartData?.items || [];
+    const counts: Record<string, number> = {};
+    items.forEach((item) => {
+      counts[item.type] = (counts[item.type] || 0) + 1;
+    });
+    return counts;
+  }, [allTicketsData]);
+
   const formattedTotal = formatNumber(totalTickets, true);
 
   const selectedTicketTypeData = ticketTypes.find((t) => t._id === selectedTicketType);
@@ -60,6 +78,7 @@ export function TicketsSoldChart() {
         <div className="absolute top-4 left-0 px-4 z-10">
           <p className="text-tertiary text-sm">Tickets Sold</p>
           <h4 className="text-2xl font-semibold">{formattedTotal}</h4>
+          {/* tickets sold change */}
         </div>
 
         <div className="flex justify-end items-center gap-2 pt-4 px-4">
@@ -70,13 +89,13 @@ export function TicketsSoldChart() {
                   <span className="w-[72px] text-left truncate">{filterLabel}</span>
                 </Button>
               </Menu.Trigger>
-              <Menu.Content className="w-[184px] p-0">
+              <Menu.Content className="w-[240px] p-0">
                 {({ toggle }) => (
                   <>
                     <div className="p-1 max-h-[200px] overflow-auto no-scrollbar">
                       <MenuItem
                         title="All Tickets"
-                        iconRight={selectedTicketType === null ? 'text-primary! icon-check-filled' : undefined}
+                        iconLeft={selectedTicketType === null ? 'icon-done' : 'icon-done opacity-0'}
                         onClick={() => {
                           setSelectedTicketType(null);
                           toggle();
@@ -86,13 +105,16 @@ export function TicketsSoldChart() {
                       {ticketTypes.map((ticketType) => (
                         <MenuItem
                           key={ticketType._id}
-                          iconRight={selectedTicketType === ticketType._id ? 'text-primary! icon-check-filled' : undefined}
+                          iconLeft={selectedTicketType === ticketType._id ? 'icon-done' : 'icon-done opacity-0'}
                           onClick={() => {
                             setSelectedTicketType(ticketType._id);
                             toggle();
                           }}
                         >
-                          <p className="text-sm text-secondary truncate w-[136px]">{ticketType.title}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm truncate w-[172px]">{ticketType.title}</p>
+                            <p className="text-sm text-tertiary">{ticketCountByType[ticketType._id] || 0}</p>
+                          </div>
                         </MenuItem>
                       ))}
                     </div>

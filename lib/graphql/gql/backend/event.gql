@@ -1580,3 +1580,13 @@ query GetEventTopViews($event: MongoID!, $cityLimit: Int!, $sourceLimit: Int!) {
     total
   }
 }
+
+subscription SubscribeEventLatestViews($event: MongoID!) {
+  subscribeEventLatestViews(event: $event) {
+    date
+    geoip_city
+    geoip_country
+    geoip_region
+    user_agent
+  }
+}
