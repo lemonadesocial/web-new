@@ -1,5 +1,16 @@
 # Changelog
 
+## [8.39.0](https://github.com/lemonadesocial/web-new/compare/v8.38.0...v8.39.0) (2025-12-31)
+
+
+### Features
+
+* add count changes ([cb52e93](https://github.com/lemonadesocial/web-new/commit/cb52e93fc7f56fdd2eccfa3fce7da05b015bfc83))
+* add page views stats ([8149952](https://github.com/lemonadesocial/web-new/commit/81499525a50a4248c082603aee75338503303743))
+* ticket sold ([ed1ed17](https://github.com/lemonadesocial/web-new/commit/ed1ed17539eb4dd965cfae4337e2b60c454ab450))
+* update ticket filter ([f8858fd](https://github.com/lemonadesocial/web-new/commit/f8858fd7ed347d337cf0f5a6900ea4b86f1f90a6))
+* utm tracker ([e2408e8](https://github.com/lemonadesocial/web-new/commit/e2408e8c45a2e462733b32254f3a787379a3d459))
+
 ## [8.38.0](https://github.com/lemonadesocial/web-new/compare/v8.37.2...v8.38.0) (2025-12-29)
 
 
