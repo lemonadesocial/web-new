@@ -48,7 +48,7 @@ export function WidgetContent({ space, title, children, className, onClick, canS
 
   return (
     <div className={twMerge('flex flex-col flex-1 items-center gap-2', className)}>
-      <Card.Root data-card className="w-full h-full" onClick={onClick}>
+      <Card.Root data-card className="w-full h-full min-h-[276px]" onClick={onClick}>
         <Card.Content className="p-0 h-full">
           {children}
 

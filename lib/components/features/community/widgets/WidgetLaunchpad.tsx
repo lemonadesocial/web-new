@@ -41,7 +41,7 @@ export function WidgetLaunchpad({ space, title, subtitle }: Props) {
   }, [tokenIds]);
 
   return (
-    <WidgetContent space={space} title="Launchpad" className="grid-cols-1">
+    <WidgetContent space={space} title="Launchpad" canSubscribe={!tokenIds} className="grid-cols-1">
       {tokenIds && tokenIds?.length > 0 ? (
         <LaunpadDetail filter={filter} />
       ) : (
@@ -60,10 +60,10 @@ export function WidgetLaunchpad({ space, title, subtitle }: Props) {
 
 const LIMIT = 10;
 function LaunpadDetail({ filter }: { filter?: PoolCreated_Bool_Exp }) {
-  const [skip, setSkip] = React.useState(0);
+  const [skip] = React.useState(0);
   const chainsMap = useAtomValue(chainsMapAtom);
 
-  const { data, loading } = useQuery(
+  const { data } = useQuery(
     PoolCreatedDocument,
     {
       variables: {
@@ -105,7 +105,7 @@ function CoinDetail({ pool, chain }: { chain: Chain; pool: PoolCreated }) {
         <p>${tokenData?.symbol}</p>
       </div>
       <p className={clsx(data?.[0]?.price > data?.[1]?.price ? 'text-success-500' : 'text-danger-500')}>
-        ${formatNumber(data?.[0]?.price || 0, true)}
+        ${formatNumber(data?.[0]?.price || 0, false)}
       </p>
     </div>
   );

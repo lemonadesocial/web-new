@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
+import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis, CartesianGrid } from 'recharts';
 import { format } from 'date-fns';
 import { match, P } from 'ts-pattern';
 import clsx from 'clsx';
@@ -106,13 +106,13 @@ function CommunityCoin({ chain, address }: { chain: Chain; address: string }) {
       <div className="px-4">
         <ResponsiveContainer width="100%" height={90}>
           <AreaChart data={chartData}>
-            {/* <defs> */}
-            {/*   <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1"> */}
-            {/*     <stop offset="0%" stopColor="rgb(from var(--color-accent-500) r g b / 0.3)" /> */}
-            {/*     <stop offset="100%" stopColor="rgb(from var(--color-accent-500) r g b / 0)" /> */}
-            {/*   </linearGradient> */}
-            {/* </defs> */}
-            {/* <CartesianGrid strokeDasharray="3 3" vertical={true} horizontal={false} stroke="rgba(255, 255, 255, 0.1)" /> */}
+            <defs>
+              <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="rgb(from var(--color-accent-500) r g b / 0.3)" />
+                <stop offset="100%" stopColor="rgb(from var(--color-accent-500) r g b / 0)" />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" vertical={true} horizontal={false} stroke="rgba(255, 255, 255, 0.1)" />
             <Tooltip
               contentStyle={{
                 backgroundColor: 'var(--color-card)',
@@ -135,7 +135,7 @@ function CommunityCoin({ chain, address }: { chain: Chain; address: string }) {
               stroke="var(--color-accent-500)"
               fill="url(#priceGradient)"
               strokeWidth={2}
-              dot={<RenderLastDot data={chartData} />}
+              // dot={<RenderLastDot data={chartData} />}
               activeDot={<CustomActiveDot />}
             />
           </AreaChart>
@@ -171,15 +171,15 @@ const CustomActiveDot = (props: any) => {
   );
 };
 
-const RenderLastDot = (props: any) => {
-  const { cx, cy, index, data } = props;
-
-  // Only render if it's the last index in the data array
-  if (index === data.length - 1) {
-    return (
-      <circle cx={cx} cy={cy} r={6} fill="var(--color-accent-500)" stroke="var(--color-accent-500)" strokeWidth={2} />
-    );
-  }
-
-  return null;
-};
+// const RenderLastDot = (props: any) => {
+//   const { cx, cy, index, data } = props;
+//
+//   // Only render if it's the last index in the data array
+//   if (index === data.length - 1) {
+//     return (
+//       <circle cx={cx} cy={cy} r={6} fill="var(--color-accent-500)" stroke="var(--color-accent-500)" strokeWidth={2} />
+//     );
+//   }
+//
+//   return null;
+// };

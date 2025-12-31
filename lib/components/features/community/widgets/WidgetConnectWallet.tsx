@@ -23,6 +23,7 @@ import { coinClient } from '$lib/graphql/request/instances';
 import { WidgetContent } from './WidgetContent';
 import { useAtomValue } from 'jotai';
 import { chainsMapAtom } from '$lib/jotai';
+import { formatNumber } from '$lib/utils/number';
 
 interface Props {
   space: Space;
@@ -117,7 +118,7 @@ function ConnectedWalletContent({ chain, address, spaceId }: { chain: Chain; add
 function CoinList({ filter }: { filter?: PoolCreated_Bool_Exp }) {
   const chainsMap = useAtomValue(chainsMapAtom);
 
-  const { data, loading } = useQuery(
+  const { data } = useQuery(
     PoolCreatedDocument,
     {
       variables: {
@@ -134,20 +135,32 @@ function CoinList({ filter }: { filter?: PoolCreated_Bool_Exp }) {
     coinClient,
   );
   const pools = data?.PoolCreated || [];
-  console.log(pools);
 
   return (
     <div>
       {pools.map((item) => (
-        <CointListItem key={item.id} chain={chainsMap[item.chainId]} address={item.memecoin} />
+        <CointListItem key={item.id} chain={chainsMap[item.chainId]} address={item.memecoin} memecoin={item.memecoin} />
       ))}
     </div>
   );
 }
 
-function CointListItem({ chain, address }: { chain: Chain; address: string }) {
+function CointListItem({ chain, address, memecoin }: { chain: Chain; address: string; memecoin: string }) {
   const { tokenData } = useTokenData(chain, address);
-  console.log(tokenData);
-  return null;
-  // return <img src={} />;
+  const { data } = usePoolSwapPriceTimeSeries(chain, memecoin, { limit: 1 });
+
+  return (
+    <div className="flex justify-between items-center">
+      <div className="flex gap-2 items-center">
+        <img
+          src={tokenData?.metadata?.imageUrl}
+          alt={tokenData?.metadata?.name}
+          className="size-4 aspect-square rounded-xs"
+        />
+        <p>
+          {formatNumber(data?.[0]?.price || 0, false)} ${tokenData?.symbol}
+        </p>
+      </div>
+    </div>
+  );
 }

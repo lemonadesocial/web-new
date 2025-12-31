@@ -1,27 +1,27 @@
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { MAPPING_Widgets, PassportTemplate } from './types';
 
-const vinylPassportConfig: PassportTemplate = {
+const dripPassportConfig: PassportTemplate = {
   theme: 'passport',
   config: {},
   template: {
-    provider: 'vinyl-nation',
+    provider: 'drip-nation',
     passportTitle: 'Citizen',
-    image: `${ASSET_PREFIX}/assets/images/passports/templates/vinyl-nation-bg.png`,
+    image: `${ASSET_PREFIX}/assets/images/passports/templates/drip-nation-bg.png`,
     widgets: [
       {
         key: 'passport',
         component: MAPPING_Widgets.passport,
         props: {
           title: 'Become a Citizen',
-          subtitle: 'Mint your Vinyl Passport and join a community built by music lovers, collectors, and creators.',
+          subtitle: 'Mint your Drip Passport and join a community built by music lovers, collectors, and creators.',
         },
       },
       {
         key: 'community-coin',
         component: MAPPING_Widgets['community-coin'],
         props: {
-          title: '$VINYL',
+          title: '$DRIP',
           subtitle: 'Launching soon',
         },
       },
@@ -29,7 +29,7 @@ const vinylPassportConfig: PassportTemplate = {
         key: 'music-player',
         component: MAPPING_Widgets['music-player'],
         props: {
-          title: '$VINYL',
+          title: '$DRIP',
           subtitle: 'Launching soon',
         },
       },
@@ -49,7 +49,7 @@ const vinylPassportConfig: PassportTemplate = {
         key: 'launchpad',
         component: MAPPING_Widgets.launchpad,
         props: {
-          title: 'Artist Coins',
+          title: 'Fashion Coins',
           subtitle: 'Coming soon',
         },
       },
@@ -57,7 +57,7 @@ const vinylPassportConfig: PassportTemplate = {
         key: 'collectibles',
         component: MAPPING_Widgets.collectibles,
         props: {
-          title: 'Vinyl NFT Marketplace',
+          title: 'DRIP NFT Marketplace',
           subtitle: 'Coming soon',
         },
       },
@@ -68,7 +68,8 @@ const vinylPassportConfig: PassportTemplate = {
   variables: {
     font: {},
     custom: {
-      '--color-accent-500': '#8F863D',
+      '--color-accent-500': '#9BFF77',
+      '--btn-content': '#000000',
     },
     light: {},
     dark: {},
@@ -76,4 +77,4 @@ const vinylPassportConfig: PassportTemplate = {
   },
 };
 
-export default vinylPassportConfig;
+export default dripPassportConfig;
