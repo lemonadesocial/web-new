@@ -106,7 +106,7 @@ function ConnectedWalletContent({ chain, address, spaceId }: { chain: Chain; add
   return (
     <div className="flex h-full">
       <div className="flex-1 p-6 pb-5 flex w-full">
-        <div className="flex flex-col justify-between w-full">
+        <div className="flex flex-col justify-between w-ful">
           <div className="flex flex-1 justify-between">
             <div className="relative bg-(--btn-tertiary) text-(--btn-tertiary-content) size-16 aspect-square rounded-sm flex items-center justify-center">
               <i className="icon-account-balance-outline size-10 aspect-square"></i>

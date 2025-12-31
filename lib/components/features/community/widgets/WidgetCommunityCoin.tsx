@@ -20,6 +20,7 @@ import {
 } from '$lib/hooks/useCoin';
 import { formatNumber } from '$lib/utils/number';
 import { WidgetContent } from './WidgetContent';
+import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 
 interface Props {
   space: Space;
@@ -28,34 +29,55 @@ interface Props {
 }
 
 export function WidgetCommunityCoin({ space, title, subtitle }: Props) {
-  const [state] = useTheme() as [PassportTemplate, React.Dispatch<ThemeBuilderAction>];
   const { stakingToken, chain } = useStakingCoin(space._id);
 
   return (
     <WidgetContent space={space} canSubscribe={!stakingToken && !chain} title="Community Coin" className="col-span-2">
-      {match([chain, stakingToken])
-        .with([P.not(P.nullish), P.not(P.nullish)], ([chain, address]) => (
-          <CommunityCoin chain={chain} address={address} />
-        ))
-        .otherwise(() => (
-          <div className="p-6 flex flex-col gap-5">
-            <div className="absolute top-0 left-0 right-0">
-              <img
-                src={`${ASSET_PREFIX}/assets/images/passports/templates/${state.template.provider}-community-coin.png`}
-                className="w-full h-full"
-              />
-            </div>
-
-            <Spacer className="h-[148px]" />
-
-            <div className="text-center">
-              <h3 className="text-xl font-semibold">{title}</h3>
-              <p className="text-tertiary">{subtitle}</p>
-            </div>
-          </div>
-        ))}
+      {stakingToken && chain && (
+        <CommunityCoinContent chain={chain} address={stakingToken} title={title} subtitle={subtitle} />
+      )}
     </WidgetContent>
   );
+}
+
+function CommunityCoinContent({
+  chain,
+  address,
+  title,
+  subtitle,
+}: {
+  chain: Chain;
+  title: string;
+  address: string;
+  subtitle: string;
+}) {
+  const [state] = useTheme() as [PassportTemplate, React.Dispatch<ThemeBuilderAction>];
+  const [isInFlaunch, setIsInFlaunch] = React.useState(true);
+
+  React.useEffect(() => {
+    const fairLaunchClient = new FlaunchClient(chain, address);
+    fairLaunchClient.isInFairLaunchWindow().then(setIsInFlaunch);
+  }, []);
+
+  return match(isInFlaunch)
+    .with(false, () => <CommunityCoin chain={chain} address={address} />)
+    .otherwise(() => (
+      <div className="p-6 flex flex-col gap-5">
+        <div className="absolute top-0 left-0 right-0">
+          <img
+            src={`${ASSET_PREFIX}/assets/images/passports/templates/${state.template.provider}-community-coin.png`}
+            className="w-full h-full"
+          />
+        </div>
+
+        <Spacer className="h-[148px]" />
+
+        <div className="text-center">
+          <h3 className="text-xl font-semibold">{title}</h3>
+          <p className="text-tertiary">{subtitle}</p>
+        </div>
+      </div>
+    ));
 }
 
 function CommunityCoin({ chain, address }: { chain: Chain; address: string }) {
