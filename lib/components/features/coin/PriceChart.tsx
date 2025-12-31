@@ -19,6 +19,22 @@ interface PriceChartProps {
 
 type TimeRange = '1H' | '1D' | '1W' | '1M' | '1Y' | 'All';
 
+const getIntervalLabel = (range: TimeRange): string => {
+  switch (range) {
+    case '1H':
+      return 'M';
+    case '1D':
+      return 'H';
+    case '1W':
+    case '1M':
+    case '1Y':
+    case 'All':
+      return 'D';
+    default:
+      return 'H';
+  }
+};
+
 export function PriceChart({ chain, address }: PriceChartProps) {
   const [selectedRange, setSelectedRange] = useState<TimeRange>('1D');
   const [currentPrice, setCurrentPrice] = useState<string | null>(null);
@@ -111,7 +127,7 @@ export function PriceChart({ chain, address }: PriceChartProps) {
           <h4 className="text-2xl font-semibold">{formattedPrice}</h4>
           {formattedChange && (
             <p className={clsx('text-sm', priceChange && priceChange >= 0 ? 'text-success-500' : 'text-error')}>
-              {formattedChange} ({selectedRange})
+              {formattedChange} ({getIntervalLabel(selectedRange)})
             </p>
           )}
         </div>
