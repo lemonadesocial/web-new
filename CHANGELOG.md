@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.40.0](https://github.com/lemonadesocial/web-new/compare/v8.39.0...v8.40.0) (2025-12-31)
+
+
+### Features
+
+* fix insights on mobile ([3642f7e](https://github.com/lemonadesocial/web-new/commit/3642f7e61148f30f03abe944dbb5259927ef0239))
+
 ## [8.39.0](https://github.com/lemonadesocial/web-new/compare/v8.38.0...v8.39.0) (2025-12-31)
 
 
