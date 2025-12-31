@@ -9,6 +9,7 @@ import { WidgetConnectWallet } from '../../community/widgets/WidgetConnectWallet
 import { WidgetLaunchpad } from '../../community/widgets/WidgetLaunchpad';
 import { WidgetCollectibles } from '../../community/widgets/WidgetCollectibles';
 import { ThemeValues } from '../store';
+import { Space } from '$lib/graphql/generated/backend/graphql';
 
 type WidgetKey =
   | 'passport'
@@ -36,7 +37,7 @@ export type PassportTemplate = ThemeValues & {
   };
 };
 
-export const MAPPING_Widgets: { [key: string]: React.FC } = {
+export const MAPPING_Widgets: { [key: string]: React.FC<any> } = {
   passport: WidgetPassport,
   'community-coin': WidgetCommunityCoin,
   'music-player': WidgetMusicNFT,

@@ -24,6 +24,7 @@ import { WidgetContent } from './WidgetContent';
 import { useAtomValue } from 'jotai';
 import { chainsMapAtom } from '$lib/jotai';
 import { formatNumber } from '$lib/utils/number';
+import { StakingManagerClient } from '$lib/services/coin/StakingManagerClient';
 
 interface Props {
   space: Space;
@@ -77,7 +78,8 @@ function ConnectedWalletContent({ chain, address, spaceId }: { chain: Chain; add
   const { launchpadGroup } = useLaunchpadGroup(spaceId);
   const { tokenIds } = useTokenIds(launchpadGroup?.address || '');
 
-  // usePoolSwapPriceTimeSeries
+  const stakingClient = StakingManagerClient.getInstance(chain, address);
+  const [totalDeposited, setTotalDeposited] = React.useState(0);
 
   const filter = React.useMemo<PoolCreated_Bool_Exp | undefined>(() => {
     if (!tokenIds || tokenIds.length === 0) {
@@ -90,25 +92,61 @@ function ConnectedWalletContent({ chain, address, spaceId }: { chain: Chain; add
     };
   }, [tokenIds]);
 
+  React.useEffect(() => {
+    const init = async () => {
+      const total = await stakingClient.getTotalDeposited();
+      setTotalDeposited(Number(total));
+    };
+
+    if (stakingClient) init();
+  }, [stakingClient]);
+
+  if (isLoadingTokenData || isLoading) return <p className="text-center">Loading ...</p>;
+
   return (
     <div className="flex h-full">
-      <div className="flex-1 p-6 pb-5 flex justify-between">
-        <div className="relative bg-(--btn-tertiary) text-(--btn-tertiary-content) size-16 aspect-square rounded-sm flex items-center justify-center">
-          <i className="icon-account-balance-outline size-10 aspect-square"></i>
-          {tokenData?.metadata?.imageUrl && (
-            <img
-              src={tokenData?.metadata.imageUrl}
-              alt={tokenData?.name}
-              className="size-6 aspect-square rounded-sm absolute bottom-0 right-0 object-cover"
-            />
-          )}
-        </div>
-        <div>
-          <Badge title={`APR: ${apr}%`} color="var(--color-accent-500)" className="rounded-full" />
+      <div className="flex-1 p-6 pb-5 flex w-full">
+        <div className="flex flex-col justify-between w-full">
+          <div className="flex flex-1 justify-between">
+            <div className="relative bg-(--btn-tertiary) text-(--btn-tertiary-content) size-16 aspect-square rounded-sm flex items-center justify-center">
+              <i className="icon-account-balance-outline size-10 aspect-square"></i>
+              {tokenData?.metadata?.imageUrl && (
+                <img
+                  src={tokenData?.metadata.imageUrl}
+                  alt={tokenData?.name}
+                  className="size-6 aspect-square rounded-sm absolute bottom-0 right-0 object-cover"
+                />
+              )}
+            </div>
+            <div>
+              <Badge title={`APR: ${apr}%`} color="var(--color-accent-500)" className="rounded-full" />
+            </div>
+          </div>
+          <div className="space-y-3">
+            <div>
+              <p className="text-tertiary">${tokenData?.symbol} staked</p>
+              <p>{formatNumber(totalDeposited, false)}</p>
+            </div>
+            <div className="text-accent-500">
+              <p>Rewards: N/A ${tokenData?.symbol}</p>
+            </div>
+          </div>
         </div>
       </div>
       <div className="flex-1 bg-(--btn-tertiary) px-6 py-5">
         <p className="text-tertiary">Balances</p>
+        <div className="flex justify-between items-center">
+          <div className="flex gap-2 items-center">
+            <img
+              src={tokenData?.metadata?.imageUrl}
+              alt={tokenData?.metadata?.name}
+              className="size-4 aspect-square rounded-xs"
+            />
+            <p>
+              {formatNumber(totalDeposited, false)} ${tokenData?.symbol}
+            </p>
+          </div>
+        </div>
         {tokenIds && tokenIds.length > 0 && <CoinList filter={filter} />}
       </div>
     </div>

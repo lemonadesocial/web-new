@@ -5,7 +5,13 @@ import { Chain, Space } from '$lib/graphql/generated/backend/graphql';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { PassportTemplate } from '$lib/components/features/theme-builder/passports/types';
 import { ThemeBuilderAction, useTheme } from '$lib/components/features/theme-builder/provider';
-import { useLaunchpadGroup, usePoolSwapPriceTimeSeries, useTokenData, useTokenIds } from '$lib/hooks/useCoin';
+import {
+  useLaunchpadGroup,
+  usePoolSwapPriceTimeSeries,
+  useStakingCoin,
+  useTokenData,
+  useTokenIds,
+} from '$lib/hooks/useCoin';
 import { PoolCreated, PoolCreated_Bool_Exp, PoolCreatedDocument } from '$lib/graphql/generated/coin/graphql';
 
 import { WidgetContent } from './WidgetContent';
@@ -16,6 +22,7 @@ import { useAtomValue } from 'jotai';
 import { chainsMapAtom } from '$lib/jotai';
 import { formatNumber } from '$lib/utils/number';
 import clsx from 'clsx';
+import { StakingManagerClient } from '$lib/services/coin/StakingManagerClient';
 
 interface Props {
   space: Space;
@@ -41,9 +48,9 @@ export function WidgetLaunchpad({ space, title, subtitle }: Props) {
   }, [tokenIds]);
 
   return (
-    <WidgetContent space={space} title="Launchpad" canSubscribe={!tokenIds} className="grid-cols-1">
+    <WidgetContent space={space} title="Launchpad" canSubscribe={!tokenIds} className="max-sm:col-span-2">
       {tokenIds && tokenIds?.length > 0 ? (
-        <LaunpadDetail filter={filter} />
+        <LaunpadDetail filter={filter} spaceId={space._id} />
       ) : (
         <div className="p-6 flex items-center flex-col gap-5 relative">
           <img src={`${ASSET_PREFIX}/assets/images/passports/templates/${state.template.provider}-launchpad.png`} />
@@ -59,7 +66,7 @@ export function WidgetLaunchpad({ space, title, subtitle }: Props) {
 }
 
 const LIMIT = 10;
-function LaunpadDetail({ filter }: { filter?: PoolCreated_Bool_Exp }) {
+function LaunpadDetail({ spaceId, filter }: { spaceId: string; filter?: PoolCreated_Bool_Exp }) {
   const [skip] = React.useState(0);
   const chainsMap = useAtomValue(chainsMapAtom);
 
