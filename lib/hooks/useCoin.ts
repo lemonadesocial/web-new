@@ -246,16 +246,18 @@ export function useFairLaunch(chain: Chain, address: string) {
   };
 }
 
-export function useTokenData(chain: Chain, address: string, tokenUri?: string) {
+export function useTokenData(chain: Chain | undefined, address: string | undefined, tokenUri?: string) {
   const {
     data,
     isLoading,
   } = useReactQuery({
-    queryKey: ['token-data', chain.chain_id, address],
+    queryKey: ['token-data', chain?.chain_id, address],
     queryFn: async () => {
+      if (!chain || !address) return null;
       const flaunchClient = FlaunchClient.getInstance(chain, address);
       return flaunchClient.getTokenData(tokenUri);
     },
+    enabled: !!chain && !!address,
   });
 
   return {
@@ -920,8 +922,6 @@ export function useStakingTVL(chain: Chain, stakingManagerAddress: string) {
 export function useStakingCoin(spaceId: string) {
   const chainsMap = useAtomValue(chainsMapAtom);
   const { launchpadGroup, isLoading: isLoadingLaunchpadGroup } = useLaunchpadGroup(spaceId);
-
-  console.log({ launchpadGroup })
 
   const chain = launchpadGroup?.chain_id ? chainsMap[launchpadGroup.chain_id] : undefined;
 

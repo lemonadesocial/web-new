@@ -11,7 +11,7 @@ import { Chain, LaunchpadGroup, Space } from '$lib/graphql/generated/backend/gra
 import { formatWallet } from '$lib/utils/crypto';
 import { copy } from '$lib/utils/helpers';
 import { communityAvatar } from '$lib/utils/community';
-import { Button, Card, Skeleton, toast, Segment } from '$lib/components/core';
+import { Button, Card, Skeleton, toast, Segment, modal } from '$lib/components/core';
 import { CoinCard } from '../coin/CoinCard';
 import { CoinListTable } from '../coins/CoinList';
 import { chainsMapAtom } from '$lib/jotai';
@@ -21,6 +21,7 @@ import { SECONDS_PER_MONTH } from '$lib/services/token-launch-pad';
 import { useQuery } from '$lib/graphql/request/hooks';
 import { coinClient } from '$lib/graphql/request/instances';
 import { PoolCreatedDocument, Order_By, PoolCreated_Bool_Exp } from '$lib/graphql/generated/coin/graphql';
+import { JoinCommunityModal } from './JoinCommunityModal';
 
 export function CommunityLaunchpad() {
   const space = useSpace();
@@ -186,13 +187,16 @@ function CommunityCoin({ stakingToken, chain }: { stakingToken: string; chain: C
 }
 
 function LaunchpadGroupCard({ launchpadGroup, space, stakingToken, chain }: { launchpadGroup: LaunchpadGroup; space?: Space | null; stakingToken?: string; chain?: Chain }) {
-  const router = useRouter();
-  const { tokenData } = chain && stakingToken ? useTokenData(chain, stakingToken) : { tokenData: null };
+  const { tokenData } = useTokenData(chain, stakingToken);
 
   const handleJoinClick = () => {
-    if (space) {
-      router.push(`/s/${space.slug || space._id}`);
-    }
+    modal.open(JoinCommunityModal, {
+      props: {
+        launchpadGroup,
+        stakingToken,
+        chain,
+      },
+    });
   };
 
   const tokenSymbol = tokenData?.symbol || '';
@@ -207,7 +211,7 @@ function LaunchpadGroupCard({ launchpadGroup, space, stakingToken, chain }: { la
         />
 
         {tokenSymbol && (
-          <div className="flex h-6 px-2 items-center rounded-full bg-primary/8">
+          <div className="flex h-6 px-2 items-center rounded-full bg-primary/8 gap-1.5">
             {tokenData?.metadata?.imageUrl && (
               <img
                 src={tokenData.metadata.imageUrl}
@@ -225,7 +229,7 @@ function LaunchpadGroupCard({ launchpadGroup, space, stakingToken, chain }: { la
           <p className="text-sm text-tertiary line-clamp-2">{launchpadGroup.description}</p>
         )}
       </div>
-      <Button variant="secondary" size="sm" onClick={handleJoinClick} className="w-full">
+      <Button variant="secondary" onClick={handleJoinClick} className="w-full">
         Join Community
       </Button>
     </div>

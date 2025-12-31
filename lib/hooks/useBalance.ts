@@ -67,7 +67,7 @@ async function fetchTokenBalance({
   };
 }
 
-export function useTokenBalance(chain: Chain, tokenAddress: string) {
+export function useTokenBalance(chain: Chain | undefined, tokenAddress: string | undefined) {
   const { address } = useAppKitAccount();
   const { tokenData } = useTokenData(chain, tokenAddress);
 
@@ -78,15 +78,15 @@ export function useTokenBalance(chain: Chain, tokenAddress: string) {
     isLoading: loading,
     error,
   } = useQuery({
-    queryKey: ['token-balance', chain.chain_id, address, tokenAddress, decimals],
+    queryKey: ['token-balance', chain?.chain_id, address, tokenAddress, decimals],
     queryFn: () =>
       fetchTokenBalance({
         address: address!,
-        tokenAddress,
-        chain,
+        tokenAddress: tokenAddress!,
+        chain: chain!,
         decimals: Number(decimals),
       }),
-    enabled: !!decimals,
+    enabled: !!chain && !!tokenAddress && !!decimals && !!address,
   });
 
   return {

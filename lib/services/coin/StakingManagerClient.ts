@@ -1,5 +1,5 @@
 import { JsonRpcProvider, type Signer } from 'ethers';
-import { createDrift, type Drift, type ReadContract } from '@gud/drift';
+import { createDrift, type Drift, type ReadContract, type ReadWriteContract } from '@gud/drift';
 import { ethersAdapter } from '@gud/drift-ethers';
 
 import { Chain } from '$lib/graphql/generated/backend/graphql';
@@ -94,6 +94,10 @@ export class StakingManagerClient {
     });
 
     return marketCap;
+  }
+
+  async stake(amount: bigint): Promise<string> {
+    return (this.contract as ReadWriteContract<StakingManagerABI>).write('stake', { _amount: amount });
   }
 }
 
