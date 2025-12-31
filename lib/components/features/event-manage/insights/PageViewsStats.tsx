@@ -93,8 +93,8 @@ export function PageViewsStats() {
   };
 
   return (
-    <div className="grid grid-cols-2">
-      <div className="p-4 space-y-6 border-r">
+    <div className="flex flex-col md:grid md:grid-cols-2">
+      <div className="p-4 space-y-6 border-b md:border-r md:border-b-0">
         <div className="space-y-3">
           <p>Page Views</p>
           <div className="grid grid-cols-3">

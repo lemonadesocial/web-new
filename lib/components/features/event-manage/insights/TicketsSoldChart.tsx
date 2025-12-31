@@ -102,7 +102,7 @@ export function TicketsSoldChart() {
           )}
         </div>
 
-        <div className="flex justify-end items-center gap-2 pt-4 px-4">
+        <div className="flex flex-col-reverse items-end md:flex-row md:justify-end md:items-center gap-2 pt-4 px-4">
           {ticketTypes.length > 0 && (
             <Menu.Root>
               <Menu.Trigger>
