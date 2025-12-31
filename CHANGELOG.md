@@ -1,5 +1,31 @@
 # Changelog
 
+## [8.39.0](https://github.com/lemonadesocial/web-new/compare/v8.38.0...v8.39.0) (2025-12-31)
+
+
+### Features
+
+* add count changes ([cb52e93](https://github.com/lemonadesocial/web-new/commit/cb52e93fc7f56fdd2eccfa3fce7da05b015bfc83))
+* add page views stats ([8149952](https://github.com/lemonadesocial/web-new/commit/81499525a50a4248c082603aee75338503303743))
+* ticket sold ([ed1ed17](https://github.com/lemonadesocial/web-new/commit/ed1ed17539eb4dd965cfae4337e2b60c454ab450))
+* update ticket filter ([f8858fd](https://github.com/lemonadesocial/web-new/commit/f8858fd7ed347d337cf0f5a6900ea4b86f1f90a6))
+* utm tracker ([e2408e8](https://github.com/lemonadesocial/web-new/commit/e2408e8c45a2e462733b32254f3a787379a3d459))
+
+## [8.38.0](https://github.com/lemonadesocial/web-new/compare/v8.37.2...v8.38.0) (2025-12-29)
+
+
+### Features
+
+* add event tracker ([07a9cf0](https://github.com/lemonadesocial/web-new/commit/07a9cf0ae17f5532ce986412fdc5d1c48eba572f))
+* add hook for getting group coin ([0caf342](https://github.com/lemonadesocial/web-new/commit/0caf342af90048621199620fb6c4fd32f0e00d4d))
+* add main coin stats ([eae0117](https://github.com/lemonadesocial/web-new/commit/eae01173a55e437384df88bca68d01186bbc4d11))
+* community coin ([de15d9c](https://github.com/lemonadesocial/web-new/commit/de15d9cae72676d0e2ce99f07c077a1e22523182))
+* community subcoins ([11a5b8b](https://github.com/lemonadesocial/web-new/commit/11a5b8b0cbd22d0e79b104ac3d90c652886b07fb))
+* custom price hook ([2317893](https://github.com/lemonadesocial/web-new/commit/2317893509a64f694f35514a2914f356472527e9))
+* guest launchpad ([8991cd5](https://github.com/lemonadesocial/web-new/commit/8991cd591b53755d4b6d2ca39d4b64293dbf7a4f))
+* launchpad settings view ([3a46844](https://github.com/lemonadesocial/web-new/commit/3a46844c7d43f7c12cf364420094302a3056a030))
+* subcoins ([099c4b1](https://github.com/lemonadesocial/web-new/commit/099c4b1952c9ace33c5af61a1b4cd435b4d5547b))
+
 ## [8.37.2](https://github.com/lemonadesocial/web-new/compare/v8.37.1...v8.37.2) (2025-12-23)
 
 

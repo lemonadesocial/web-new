@@ -12,6 +12,7 @@ query ListLaunchpadGroups($address: String, $search: String, $space: MongoID) {
       cover_photo_url
       implementation_address
       name
+      description
     }
   }
 }

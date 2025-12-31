@@ -26,6 +26,7 @@ import { EventLocationBlock } from './EventLocationBlock';
 import { AttendeesSection } from './AttendeesSection';
 import { PendingCohostRequest } from './PendingCohostRequest';
 import { useMe } from '$lib/hooks/useMe';
+import { useTracker } from '$lib/hooks/useTracker';
 import { EventCollectibles } from '../event-collectibles';
 import { DEFAULT_LAYOUT_SECTIONS } from '$lib/utils/constants';
 
@@ -34,6 +35,8 @@ export function EventGuestSide({ event: initEvent }: { event: Event }) {
     variables: { id: initEvent._id },
     initData: { getEvent: initEvent } as unknown as GetEventQuery,
   });
+
+  useTracker(initEvent._id);
 
   return <EventGuestSideContent event={(data?.getEvent as Event) || initEvent} />;
 }

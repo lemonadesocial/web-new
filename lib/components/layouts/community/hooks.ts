@@ -2,9 +2,11 @@ import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
 import { Space } from '$lib/graphql/generated/backend/graphql';
+import { useStakingCoin } from '$lib/hooks/useCoin';
 
 export function useSpaceMenu({ space, isMobile }: { space: Space; isMobile?: boolean }) {
   const pathname = usePathname();
+  const { stakingToken } = useStakingCoin(space._id);
 
   const menu = useMemo(() => {
     let menu = [];
@@ -49,10 +51,25 @@ export function useSpaceMenu({ space, isMobile }: { space: Space; isMobile?: boo
           label: 'Featured Hubs',
         });
       }
+
+      if (stakingToken) {
+        menu.push(
+          {
+            icon: 'icon-token',
+            path: 'coin',
+            label: 'Community Coin',
+          },
+          {
+            icon: 'icon-rocket',
+            path: 'launchpad',
+            label: 'Launchpad',
+          }
+        );
+      }
     }
 
     return menu;
-  }, [pathname, space, isMobile]);
+  }, [pathname, space, isMobile, stakingToken]);
 
   const isActive = (item: { path: string }) => {
     const uid = space.slug || space._id;
