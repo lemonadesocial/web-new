@@ -69,6 +69,7 @@ const vinylPassportConfig: PassportTemplate = {
     font: {},
     custom: {
       '--color-accent-500': '#8F863D',
+      '--color-accent-700': '#6E6C24',
     },
     light: {},
     dark: {},

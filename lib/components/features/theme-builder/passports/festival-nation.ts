@@ -69,7 +69,9 @@ const festivalPassportConfig: PassportTemplate = {
     font: {},
     custom: {
       '--color-accent-500': '#FDE047',
+      '--color-accent-700': '#EAB308',
       '--btn-content': '#000000',
+      '--btn-content-hover': '#000000',
     },
     light: {},
     dark: {},

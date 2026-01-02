@@ -2,7 +2,7 @@
 import React from 'react';
 import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis, CartesianGrid } from 'recharts';
 import { format } from 'date-fns';
-import { match, P } from 'ts-pattern';
+import { match } from 'ts-pattern';
 import clsx from 'clsx';
 
 import { Spacer } from '$lib/components/core';

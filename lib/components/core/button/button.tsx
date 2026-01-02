@@ -30,25 +30,6 @@ const iconSizeBase = {
   xs: 'size-4',
 };
 
-// const variants: { [key: string]: string } = {
-//   primary: 'bg-accent-500 hover:bg-accent-700',
-//   success: 'bg-success-600 hover:bg-success-600/8',
-//   danger: 'bg-danger-500 hover:bg-danger-500/8',
-//   tertiary: 'bg-primary/8 hover:bg-primary/16 text-tertiary',
-//   'tertiary-alt':
-//     'bg-primary/8 hover:bg-primary/80 text-tertiary hover:text-black light:hover:text-white! disabled:opacity-50 disabled:hover:bg-primary/8 disabled:hover:text-tertiary',
-//   secondary: 'bg-primary hover:bg-primary/80 disabled:bg-primary/50 text-black',
-//   flat: 'hover:bg-primary/[0.08]',
-// };
-
-// const outlineVariants: { [key: string]: string } = {
-//   primary: 'border-accent-500 hover:bg-accent-500/[0.1] text-accent-500',
-//   success: 'border-success-600 hover:bg-success-600/[0.1] text-success-600',
-//   tertiary: 'border-primary/[0.8] hover:bg-primary/[.1] text-tertiary',
-//   secondary: 'border-primary hover:bg-primary/[0.1] text-black',
-//   flat: 'border-primary/[0.1] hover:bg-primary/[0.08] text-tertiary',
-// };
-
 interface ButtonProps extends React.PropsWithChildren<HTMLAttributes<HTMLButtonElement>> {
   size?: 'sm' | 'base' | 'lg' | 'xs';
   variant?: 'primary' | 'success' | 'danger' | 'tertiary' | 'tertiary-alt' | 'secondary' | 'flat' | 'warning';

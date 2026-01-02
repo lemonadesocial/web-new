@@ -69,7 +69,9 @@ const dripPassportConfig: PassportTemplate = {
     font: {},
     custom: {
       '--color-accent-500': '#9BFF77',
+      '--color-accent-700': '#41D33C',
       '--btn-content': '#000000',
+      '--btn-content-hover': '#000000',
     },
     light: {},
     dark: {},
