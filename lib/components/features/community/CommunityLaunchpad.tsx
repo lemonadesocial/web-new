@@ -4,13 +4,12 @@ import { useEffect, useState, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import clsx from 'clsx';
 
-import { useLaunchpadGroup, useStakingCoin, useTokenData, useMarketCap, useMarketCapChange, useBuybackCharging, useTokenIds } from "$lib/hooks/useCoin";
+import { useLaunchpadGroup, useStakingCoin, useTokenData, useMarketCap, useMarketCapChange, useBuybackCharging, useTokenIds } from '$lib/hooks/useCoin';
 import { useSpace } from "$lib/hooks/useSpace";
 import { CoinStats } from './CoinStats';
 import { Chain, LaunchpadGroup, Space } from '$lib/graphql/generated/backend/graphql';
 import { formatWallet } from '$lib/utils/crypto';
 import { copy } from '$lib/utils/helpers';
-import { communityAvatar } from '$lib/utils/community';
 import { Button, Card, Skeleton, toast, Segment, modal } from '$lib/components/core';
 import { CoinCard } from '../coin/CoinCard';
 import { CoinListTable } from '../coins/CoinList';
@@ -22,6 +21,7 @@ import { useQuery } from '$lib/graphql/request/hooks';
 import { coinClient } from '$lib/graphql/request/instances';
 import { PoolCreatedDocument, Order_By, PoolCreated_Bool_Exp } from '$lib/graphql/generated/coin/graphql';
 import { JoinCommunityModal } from './JoinCommunityModal';
+import { LaunchpadGroupCard } from './LaunchpadGroupCard';
 
 export function CommunityLaunchpad() {
   const space = useSpace();
@@ -186,56 +186,6 @@ function CommunityCoin({ stakingToken, chain }: { stakingToken: string; chain: C
   );
 }
 
-function LaunchpadGroupCard({ launchpadGroup, space, stakingToken, chain }: { launchpadGroup: LaunchpadGroup; space?: Space | null; stakingToken?: string; chain?: Chain }) {
-  const { tokenData } = useTokenData(chain, stakingToken);
-
-  const handleJoinClick = () => {
-    modal.open(JoinCommunityModal, {
-      props: {
-        launchpadGroup,
-        stakingToken,
-        chain,
-      },
-    });
-  };
-
-  const tokenSymbol = tokenData?.symbol || '';
-
-  return (
-    <div className="rounded-md bg-card border-card-border flex flex-col gap-4 p-4">
-      <div className="flex justify-between items-start">
-        <img
-          src={launchpadGroup.cover_photo_url || communityAvatar(space || undefined)}
-          alt={launchpadGroup.name}
-          className="size-12 aspect-square rounded-sm object-cover"
-        />
-
-        {tokenSymbol && (
-          <div className="flex h-6 px-2 items-center rounded-full bg-primary/8 gap-1.5">
-            {tokenData?.metadata?.imageUrl && (
-              <img
-                src={tokenData.metadata.imageUrl}
-                alt={tokenSymbol}
-                className="size-4 rounded-full object-cover"
-              />
-            )}
-            <p className="text-xs text-tertiary">{tokenSymbol}</p>
-          </div>
-        )}
-      </div>
-      <div className="space-y-2">
-        <h3 className="text-xl font-semibold">{launchpadGroup.name}</h3>
-        {launchpadGroup.description && (
-          <p className="text-sm text-tertiary line-clamp-2">{launchpadGroup.description}</p>
-        )}
-      </div>
-      <Button variant="secondary" onClick={handleJoinClick} className="w-full">
-        Join Community
-      </Button>
-    </div>
-  );
-}
-
 function LaunchpadSettingsInfo({ launchpadGroup, stakingToken }: { launchpadGroup: LaunchpadGroup; stakingToken?: string | null }) {
   const chainsMap = useAtomValue(chainsMapAtom);
   const chain = chainsMap[launchpadGroup.chain_id];
@@ -396,7 +346,7 @@ function SubCoinsList({ filter }: { filter?: PoolCreated_Bool_Exp }) {
 
   const pools = data?.PoolCreated || [];
 
-  if (!filter || pools.length === 0) {
+  if (!filter || pools.length === 0 && !loading) {
     return null;
   }
 
@@ -420,7 +370,7 @@ function SubCoinsList({ filter }: { filter?: PoolCreated_Bool_Exp }) {
         <>
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[...Array(6)].map((_, i) => (
+              {[...Array(3)].map((_, i) => (
                 <Card.Root key={i} className="flex-1">
                   <Card.Content className="p-0">
                     <div className="flex gap-4 p-4">

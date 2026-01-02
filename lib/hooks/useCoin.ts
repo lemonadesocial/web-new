@@ -28,6 +28,7 @@ import {
 import { StakingManagerClient } from '$lib/services/coin/StakingManagerClient';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
+import { appKit } from '$lib/utils/appkit';
 import { formatNumber } from '$lib/utils/number';
 import { chainsMapAtom } from '$lib/jotai/chains';
 
@@ -942,5 +943,44 @@ export function useStakingCoin(spaceId: string) {
     stakingToken: stakingToken ?? null,
     chain,
     isLoading: isLoadingLaunchpadGroup || isLoadingStakingToken,
+  };
+}
+
+export function useClaimableAmount(chain: Chain, stakingManagerAddress: string, stakingToken: string) {
+  const [claimableUSDC, setClaimableUSDC] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchClaimableAmount = async () => {
+      setIsLoading(true);
+      const userAddress = appKit.getAddress();
+      if (!userAddress) {
+        setClaimableUSDC(null);
+        setIsLoading(false);
+        return;
+      }
+
+      const stakingClient = StakingManagerClient.getInstance(chain, stakingManagerAddress);
+      const ethBalance = await stakingClient.balances(userAddress).catch(() => 0n);
+
+      if (ethBalance === 0n) {
+        setClaimableUSDC('$0.00');
+        setIsLoading(false);
+        return;
+      }
+
+      const flaunchClient = FlaunchClient.getInstance(chain, stakingToken);
+      const usdcAmount = await flaunchClient.getUSDCFromETH(ethBalance).catch(() => 0n);
+      const usdcValue = formatUnits(usdcAmount, 6);
+      setClaimableUSDC(`$${Number(usdcValue).toFixed(2)}`);
+      setIsLoading(false);
+    };
+
+    fetchClaimableAmount();
+  }, [chain, stakingManagerAddress, stakingToken]);
+
+  return {
+    claimableUSDC,
+    isLoading,
   };
 }
