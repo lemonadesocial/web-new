@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.40.2](https://github.com/lemonadesocial/web-new/compare/v8.40.1...v8.40.2) (2026-01-03)
+
+
+### Bug Fixes
+
+* missing check empty space ([f41ee35](https://github.com/lemonadesocial/web-new/commit/f41ee353b6f4a05eabaa67290b570e949cba6152))
+
 ## [8.40.1](https://github.com/lemonadesocial/web-new/compare/v8.40.0...v8.40.1) (2026-01-03)
 
 
