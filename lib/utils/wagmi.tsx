@@ -8,9 +8,9 @@ import { createThirdwebClient, defineChain } from 'thirdweb';
 import { mainnet } from 'wagmi/chains';
 import { getDefaultConfig } from 'connectkit';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { metaMask, baseAccount } from "wagmi/connectors";
+import { metaMask, baseAccount } from 'wagmi/connectors';
 
-const thirdwebClientId = process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || '4e8c81182c3709ee441e30d776223354';
+const thirdwebClientId = process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || '';
 
 const client = createThirdwebClient({
   clientId: thirdwebClientId,
@@ -25,7 +25,8 @@ const defaultConfig = getDefaultConfig({
   appName: 'lemonade.social',
 });
 
-const unicornFactoryAddress = process.env.NEXT_PUBLIC_UNICORN_FACTORY_ADDRESS || '0xD771615c873ba5a2149D5312448cE01D677Ee48A';
+const unicornFactoryAddress =
+  process.env.NEXT_PUBLIC_UNICORN_FACTORY_ADDRESS || '0xD771615c873ba5a2149D5312448cE01D677Ee48A';
 
 // Create the Unicorn Wallet Connector (using Thirdweb In-App Wallet)
 // Note: The chain specified here is for the smart account functionality as per Unicorn docs.
@@ -41,14 +42,11 @@ const unicornConnector = inAppWalletConnector({
   },
 });
 
-defaultConfig.connectors = [
-  unicornConnector,
-  metaMask(),
-  baseAccount(),
-  ...(defaultConfig.connectors || []),
-];
+defaultConfig.connectors = [unicornConnector, metaMask(), baseAccount(), ...(defaultConfig.connectors || [])];
 
 export const config = createConfig(defaultConfig);
+
+const authCookieStorageKey = 'UNICORN_AUTH_COOKIE';
 
 const queryClient = new QueryClient();
 
@@ -61,7 +59,16 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const value = new URLSearchParams(window.location.search).get('authCookie');
-      setAuthCookie(value || '');
+      if (value) {
+        localStorage.setItem(authCookieStorageKey, value);
+        setAuthCookie(value);
+      } else {
+        //-- try read from local storage
+        const cookie = localStorage.getItem(authCookieStorageKey);
+        if (cookie) {
+          setAuthCookie(cookie);
+        }
+      }
     }
   }, []);
 
