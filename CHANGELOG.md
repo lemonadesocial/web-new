@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.40.1](https://github.com/lemonadesocial/web-new/compare/v8.40.0...v8.40.1) (2026-01-03)
+
+
+### Bug Fixes
+
+* feature hub issue ([8308afc](https://github.com/lemonadesocial/web-new/commit/8308afc4b73e85780f5c4af99218d8aba9751993))
+
 ## [8.40.0](https://github.com/lemonadesocial/web-new/compare/v8.39.0...v8.40.0) (2025-12-31)
 
 
