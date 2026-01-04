@@ -58,6 +58,12 @@ function reducers(state: PassportState, action: PassportAction) {
       return { ...state, lemonadeUsername: '', useENS: true };
     }
 
+    case PassportActionKind.SetSelfVerified:
+      return { ...state, isSelfVerified: action.payload };
+
+    case PassportActionKind.SetEnsName:
+      return { ...state, ensName: action.payload };
+
     case PassportActionKind.SetMintData:
       return { ...state, mintData: { ...state.mintData, ...action.payload } };
 

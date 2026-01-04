@@ -83,6 +83,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
         },
       },
       celebrate: {
+        showBgVideo: true,
         footer: {
           label: 'Celebrate',
           btnText: 'Done',
@@ -102,6 +103,8 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       },
     },
     enabled: {
+      lemohead: true,
+      fluffePhoto: true,
       ens: true,
       lemonadeUsername: true,
     },
@@ -139,6 +142,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
         },
       },
       celebrate: {
+        showBgVideo: true,
         footer: {
           label: 'Celebrate',
           btnText: 'Done',
@@ -147,6 +151,8 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       },
     },
     enabled: {
+      lemohead: true,
+      fluffePhoto: true,
       ens: true,
       lemonadeUsername: true,
     },
@@ -195,6 +201,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
         },
       },
       celebrate: {
+        showBgVideo: true,
         footer: {
           label: 'Celebrate',
           btnText: 'Done',
@@ -203,6 +210,8 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       },
     },
     enabled: {
+      lemohead: true,
+      fluffePhoto: true,
       ens: true,
       lemonadeUsername: true,
     },
@@ -251,6 +260,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
         },
       },
       celebrate: {
+        showBgVideo: true,
         footer: {
           label: 'Celebrate',
           btnText: 'Done',
@@ -259,6 +269,8 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       },
     },
     enabled: {
+      lemohead: true,
+      fluffePhoto: true,
       ens: true,
       lemonadeUsername: true,
     },
@@ -277,5 +289,57 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
   zugrama: {
     provider: 'zugrama',
     currentStep: PassportStep.intro,
+    ui: {
+      intro: {
+        title: 'Join Zugrama',
+        subtitle: 'Become part of a new world.',
+        footer: {
+          label: '',
+          btnText: "Yes, I'm In",
+          index: 0,
+        },
+      },
+      photo: {
+        title: 'Choose Your Passport Photo',
+        subtitle: 'Select the avatar you’d like on your passport.',
+        footer: {
+          label: 'Passport Photo',
+          btnText: 'Continue',
+          index: 1,
+        },
+      },
+      username: {
+        title: 'Select passport name.',
+        subtitle: 'Choose what appears on your passport, your username or ENS.',
+        footer: {
+          label: 'Username',
+          btnText: 'Claim Passport',
+          index: 2,
+        },
+      },
+      celebrate: {
+        footer: {
+          label: 'Celebrate',
+          btnText: 'Done',
+          index: 3,
+        },
+      },
+    },
+    modal: {
+      beforeMint: {
+        description: 'By minting your Zugrama Passport, you agree to our Terms of Use and acknowledge that:',
+        li: [
+          'Zugrama Passport NFT is non-transferable & non-tradable (soul-bound).',
+          'Your Passport will be permanently recorded on-chain.',
+          'It will be publicly visible and tied to your wallet address.',
+          'All claims are final.',
+        ],
+      },
+    },
+    enabled: {
+      selfVerify: true,
+      uploadPhoto: true,
+      ens: true,
+    },
   },
 };

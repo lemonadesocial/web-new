@@ -30,7 +30,6 @@ export function PassportPreview() {
 function ImagePreview({ className }: { className?: string }) {
   const [state, dispatch] = usePassportContext();
   const { address } = useAppKitAccount();
-  console.log(state);
 
   const variables = !address
     ? skipToken
@@ -67,10 +66,12 @@ function ImagePreview({ className }: { className?: string }) {
     return <img src={state.passportImage} className={twMerge('w-full object-cover', className)} />;
   }
 
-  // return (
-  //   <div className={twMerge('relative', className)}>
-  //     <img src={`${ASSET_PREFIX}/assets/images/passport.png`} className="w-full object-cover" />
-  //     {state.photo && <img src={state.photo} className="absolute top-[27%] w-[28.5%] left-[8%] rounded-[5%]" />}
-  //   </div>
-  // );
+  return (
+    <div className={twMerge('relative', className)}>
+      <img
+        src={`${ASSET_PREFIX}/assets/images/passports/${state.provider}-passport-mini.png`}
+        className="w-full object-cover"
+      />
+    </div>
+  );
 }

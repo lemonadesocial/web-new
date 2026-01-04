@@ -91,10 +91,10 @@ export function Footer() {
 
   const disabled = match(state.currentStep)
     .with(PassportStep.photo, () => !state.photo)
-    .with(
-      PassportStep.username,
-      () => state.enabled?.lemonadeUsername && !state.lemonadeUsername && state.enabled.ens && !state.ensName,
-    )
+    .with(PassportStep.username, () => {
+      if (state.enabled?.lemonadeUsername) return !state.lemonadeUsername && state.enabled?.ens && !state.ensName;
+      else return state.enabled?.ens && !state.ensName;
+    })
     .otherwise(() => false);
 
   const btnText = state.ui?.[state.currentStep!]?.footer?.btnText;

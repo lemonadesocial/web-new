@@ -4,8 +4,9 @@ export type PassportConfig = PassportState & {
   ui?: Record<
     PassportStep,
     {
-      title: string;
+      title?: string;
       subtitle?: string;
+      showBgVideo?: boolean;
       footer: {
         label?: string;
         btnText: string;
@@ -52,9 +53,17 @@ export type PassportState = {
     tokenId: string;
   };
   enabled?: {
+    /** @description Passport Photo */
+    lemohead?: boolean;
+    /** @description Passport Photo */
+    fluffePhoto?: boolean;
+
+    /** @description Passport Username */
     ens?: boolean;
+    /** @description Passport Username */
     lemonadeUsername?: boolean;
     selfVerify?: boolean;
+    uploadPhoto?: boolean;
   };
 };
 
@@ -68,6 +77,8 @@ export enum PassportActionKind {
   SetMintData = 'SET_MINT_DATA',
   SetPhoto = 'SET_PHOTO',
   SetPassportImage = 'SET_PASSPORT_IMAGE',
+  SetSelfVerified = 'SET_SELF_VERIFIED',
+  SetEnsName = 'SET_ENS_NAME',
   SetMintState = 'SET_MINT_STATE',
 }
 
