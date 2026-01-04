@@ -7,8 +7,19 @@ import { ThirdwebProvider } from 'thirdweb/react';
 import { createThirdwebClient, defineChain } from 'thirdweb';
 import { mainnet } from 'wagmi/chains';
 import { getDefaultConfig } from 'connectkit';
-import { createContext, useContext, useEffect, useState } from 'react';
-import { metaMask, baseAccount } from "wagmi/connectors";
+import { createContext, useContext, useRef } from 'react';
+import { metaMask } from 'wagmi/connectors';
+
+const UNICORN_AUTH_COOKIE_STORAGE_KEY = 'unicorn_auth_cookie';
+
+if (typeof window !== 'undefined') {
+  try {
+    const cookieFromUrl = new URLSearchParams(window.location.search).get('authCookie');
+    if (cookieFromUrl) {
+      sessionStorage.setItem(UNICORN_AUTH_COOKIE_STORAGE_KEY, cookieFromUrl);
+    }
+  } catch {}
+}
 
 const thirdwebClientId = process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || '4e8c81182c3709ee441e30d776223354';
 
@@ -41,14 +52,9 @@ const unicornConnector = inAppWalletConnector({
   },
 });
 
-defaultConfig.connectors = [
-  unicornConnector,
-  metaMask(),
-  baseAccount(),
-  ...(defaultConfig.connectors || []),
-];
+defaultConfig.connectors = [unicornConnector, metaMask() as any, ...(defaultConfig.connectors || [])];
 
-export const config = createConfig(defaultConfig);
+export const config = createConfig(defaultConfig as any);
 
 const queryClient = new QueryClient();
 
@@ -56,14 +62,23 @@ const context = createContext<{ authCookie: string }>({ authCookie: '' });
 const UnicornAuthCookieProvider = context.Provider;
 
 export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
-  const [authCookie, setAuthCookie] = useState<string>('');
+  const authCookie = useRef(
+    (() => {
+      if (typeof window === 'undefined') return '';
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const value = new URLSearchParams(window.location.search).get('authCookie');
-      setAuthCookie(value || '');
-    }
-  }, []);
+      try {
+        const cookieFromUrl = new URLSearchParams(window.location.search).get('authCookie');
+        if (cookieFromUrl) {
+          sessionStorage.setItem(UNICORN_AUTH_COOKIE_STORAGE_KEY, cookieFromUrl);
+          return cookieFromUrl;
+        }
+
+        return sessionStorage.getItem(UNICORN_AUTH_COOKIE_STORAGE_KEY) || '';
+      } catch {
+        return '';
+      }
+    })(),
+  ).current;
 
   return (
     <UnicornAuthCookieProvider value={{ authCookie: authCookie || '' }}>
