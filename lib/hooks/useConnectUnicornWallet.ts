@@ -35,6 +35,10 @@ export const useConnectUnicornWallet = () => {
         props: {
           cookie: authCookie,
           onSuccess: (reloadAuth) => {
+            try {
+              sessionStorage.removeItem('unicorn_auth_cookie');
+            } catch {}
+
             if (reloadAuth) {
               reload();
             }
