@@ -1,5 +1,16 @@
 # Changelog
 
+## [8.41.0](https://github.com/lemonadesocial/web-new/compare/v8.40.2...v8.41.0) (2026-01-05)
+
+
+### Features
+
+* pin version and fix auth cookie persisting ([48ae40b](https://github.com/lemonadesocial/web-new/commit/48ae40bd26fe7e8b568300faf21894bcd1270957))
+* remove testing ([28cc7a2](https://github.com/lemonadesocial/web-new/commit/28cc7a2e00139e9eef75160bd1b599aba59dd464))
+* testing zugrama generate og ([b3c4cee](https://github.com/lemonadesocial/web-new/commit/b3c4ceebec3db45dd9c874ee1cd7a85237703074))
+* update bg image theme build with new template community hub ([dd4f5f0](https://github.com/lemonadesocial/web-new/commit/dd4f5f0443b91f15760666e8ccf1a8c5c2a6b648))
+* update zugrama passport ([1017771](https://github.com/lemonadesocial/web-new/commit/10177713c257822bbb8504f6f122d0005c154856))
+
 ## [8.40.2](https://github.com/lemonadesocial/web-new/compare/v8.40.1...v8.40.2) (2026-01-03)
 
 
