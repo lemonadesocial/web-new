@@ -6,7 +6,7 @@ import videojs from 'video.js';
 
 import { Card, Button, drawer, modal } from '$lib/components/core';
 import { ETHERSCAN } from '$lib/utils/constants';
-import { SharedPassportPane } from '$lib/components/features/passport/SharedPassportPane';
+import { SharedPassportPane } from '../SharedPassportPane';
 import { usePassportContext } from '../provider';
 
 export function PassportCelebrate() {
@@ -36,7 +36,10 @@ export function PassportCelebrate() {
     }
   }, [videoRef.current, isMobile, state.ui?.celebrate.showBgVideo]);
 
-  const handleShare = () => drawer.open(SharedPassportPane, { props: { tokenId: tokenId! } });
+  const handleShare = () =>
+    drawer.open(SharedPassportPane, {
+      props: { provider: state.provider, passportTitle: state.passportTitle, tokenId: tokenId! },
+    });
 
   return (
     <div className="flex-1 h-full relative max-w-[612] md:mx-auto">
@@ -44,7 +47,7 @@ export function PassportCelebrate() {
         <div className="flex-1 flex flex-col items-center gap-11 pt-6 pb-11 max-sm:justify-center w-full">
           <Card.Root className="w-full">
             <Card.Content className="aspect-square flex items-center justify-center">
-              <img src={`/api/og/passport?tokenId=${tokenId}`} />
+              <img src={`/api/og/passport/${state.provider}?tokenId=${tokenId || 1}`} />
             </Card.Content>
           </Card.Root>
 
@@ -66,11 +69,13 @@ export function PassportCelebrate() {
               </Button>
             </div>
 
-            <div className="flex gap-2">
-              <Button iconLeft="icon-share" variant="secondary" onClick={handleShare}>
-                Share
-              </Button>
-            </div>
+            {state.enabled?.sharePassport && (
+              <div className="flex gap-2">
+                <Button iconLeft="icon-share" variant="secondary" onClick={handleShare}>
+                  Share
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>

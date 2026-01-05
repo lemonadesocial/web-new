@@ -24,13 +24,41 @@ export function Footer() {
   const [state, dispatch] = usePassportContext();
 
   const checkLemonhead = () => {
-    modal.open(PassportEligibilityModal, {
-      props: {
-        onContinue: () => {
-          dispatch({ type: PassportActionKind.NextStep });
+    if (state.enabled?.shouldMintedLemonhead) {
+      modal.open(PassportEligibilityModal.CheckMintedLemonheadModal, {
+        props: {
+          onContinue: () => {
+            modal.open(PassportEligibilityModal.CheckWhiteListModal, {
+              props: {
+                provider: state.provider,
+                passportTitle: state.passportTitle,
+                onContinue: () => {
+                  dispatch({ type: PassportActionKind.NextStep });
+                },
+              },
+            });
+          },
         },
-      },
-    });
+      });
+    } else {
+      canAccess();
+    }
+  };
+
+  const canAccess = () => {
+    if (state.enabled?.whitelist) {
+      modal.open(PassportEligibilityModal.CheckWhiteListModal, {
+        props: {
+          provider: state.provider,
+          passportTitle: state.passportTitle,
+          onContinue: () => {
+            dispatch({ type: PassportActionKind.NextStep });
+          },
+        },
+      });
+    } else {
+      dispatch({ type: PassportActionKind.NextStep });
+    }
   };
 
   const handleNext = () => {

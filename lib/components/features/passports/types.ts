@@ -34,6 +34,7 @@ export enum PassportStep {
 
 export type PassportState = {
   provider: PASSPORT_PROVIDER;
+  passportTitle: string;
   currentStep?: PassportStep;
   useLemonhead?: boolean;
   useFluffle?: boolean;
@@ -64,6 +65,11 @@ export type PassportState = {
     lemonadeUsername?: boolean;
     selfVerify?: boolean;
     uploadPhoto?: boolean;
+    /** @description check can mint before move next */
+    whitelist?: boolean;
+    /** @description required minted lemonhead before mint */
+    shouldMintedLemonhead?: boolean;
+    sharePassport?: boolean;
   };
 };
 
@@ -84,7 +90,7 @@ export enum PassportActionKind {
 
 export const ContractAddressFieldMapping: Record<PASSPORT_PROVIDER, string> = {
   mint: 'lemonade_passport_contract_address',
-  zugrama: '',
+  zugrama: 'zugrama_passport_contract_address',
   'vinyl-nation': 'vinyl_nation_passport_contract_address',
   'festival-nation': 'festival_nation_passport_contract_address',
   'drip-nation': 'drip_nation_passport_contract_address',

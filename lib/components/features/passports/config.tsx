@@ -1,4 +1,5 @@
 import { ASSET_PREFIX } from '$lib/utils/constants';
+import { PassportCelebrate } from './steps/Celebrate';
 import { PassportIntro } from './steps/Intro';
 import { PassportPhoto } from './steps/Photo';
 import { PassportUsername } from './steps/Username';
@@ -45,12 +46,13 @@ export const MAPPING_PASSPORT_STEPS: Record<PassportStep, React.FC> = {
   intro: PassportIntro,
   photo: PassportPhoto,
   username: PassportUsername,
-  celebrate: PassportIntro,
+  celebrate: PassportCelebrate,
 };
 
 export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
   mint: {
     provider: 'mint',
+    passportTitle: 'Lemonade',
     currentStep: PassportStep.intro,
     useLemonhead: true,
     ui: {
@@ -107,10 +109,13 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       fluffePhoto: true,
       ens: true,
       lemonadeUsername: true,
+      shouldMintedLemonhead: true,
+      sharePassport: true,
     },
   },
   'vinyl-nation': {
     provider: 'vinyl-nation',
+    passportTitle: 'Vinyl Nation',
     currentStep: PassportStep.intro,
     useLemonhead: true,
     ui: {
@@ -155,6 +160,8 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       fluffePhoto: true,
       ens: true,
       lemonadeUsername: true,
+      whitelist: true,
+      sharePassport: true,
     },
     modal: {
       beforeMint: {
@@ -170,6 +177,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
   },
   'festival-nation': {
     provider: 'festival-nation',
+    passportTitle: 'Festival Nation',
     currentStep: PassportStep.intro,
     useLemonhead: true,
     ui: {
@@ -214,6 +222,8 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       fluffePhoto: true,
       ens: true,
       lemonadeUsername: true,
+      whitelist: true,
+      sharePassport: true,
     },
     modal: {
       beforeMint: {
@@ -229,6 +239,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
   },
   'drip-nation': {
     provider: 'drip-nation',
+    passportTitle: 'Drip Nation',
     currentStep: PassportStep.intro,
     useLemonhead: true,
     ui: {
@@ -273,6 +284,8 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       fluffePhoto: true,
       ens: true,
       lemonadeUsername: true,
+      whitelist: true,
+      sharePassport: true,
     },
     modal: {
       beforeMint: {
@@ -288,7 +301,8 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
   },
   zugrama: {
     provider: 'zugrama',
-    currentStep: PassportStep.intro,
+    passportTitle: 'Zugrama',
+    currentStep: PassportStep.celebrate,
     ui: {
       intro: {
         title: 'Join Zugrama',
@@ -340,6 +354,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       selfVerify: true,
       uploadPhoto: true,
       ens: true,
+      whitelist: true,
     },
   },
 };
