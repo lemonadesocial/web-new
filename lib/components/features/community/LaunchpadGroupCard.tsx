@@ -1,17 +1,20 @@
 'use client';
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { formatUnits } from 'viem';
+import { formatUnits, parseUnits } from 'viem';
 import { BrowserProvider, type Eip1193Provider } from 'ethers';
 import * as Sentry from '@sentry/nextjs';
 
 import { useTokenData, useStakingAPR, useClaimableAmount } from '$lib/hooks/useCoin';
+import { useTokenBalance } from '$lib/hooks/useBalance';
+import { useStakeDeposit, StepIcon } from '$lib/hooks/useStakeDeposit';
 import { Chain, LaunchpadGroup, Space } from '$lib/graphql/generated/backend/graphql';
 import { communityAvatar } from '$lib/utils/community';
 import { Button, modal, toast } from '$lib/components/core';
 import { StakingManagerClient } from '$lib/services/coin/StakingManagerClient';
 import { appKit } from '$lib/utils/appkit';
-import { formatError } from '$lib/utils/crypto';
+import { formatError, getTransactionUrl } from '$lib/utils/crypto';
+import { formatNumber } from '$lib/utils/number';
 import { JoinCommunityModal } from './JoinCommunityModal';
 import { TxnConfirmedModal } from '../create-coin/TxnConfirmedModal';
 
@@ -227,9 +230,125 @@ function ClaimTab({ stakingInfo }: { stakingInfo: StakingInfo }) {
 }
 
 function DepositTab({ stakingInfo }: { stakingInfo: StakingInfo }) {
+  const { chain, stakingManagerAddress, stakingToken, tokenSymbol, tokenDecimals } = stakingInfo;
+  const { formattedBalance } = useTokenBalance(chain, stakingToken);
+  const { apr, isLoading: isLoadingAPR } = useStakingAPR(chain, stakingManagerAddress);
+
+  const [depositAmount, setDepositAmount] = useState('');
+
+  const {
+    isDepositing,
+    approveStatus,
+    stakeStatus,
+    approveTxHash,
+    stakeTxHash,
+    handleDeposit,
+    reset,
+  } = useStakeDeposit({
+    chain,
+    stakingToken,
+    stakingManagerAddress,
+    onSuccess: () => {
+      modal.open(TxnConfirmedModal, {
+        props: {
+          title: 'Deposit Successful',
+          description: `You've successfully deposited ${depositAmount} ${tokenSymbol}.`,
+        }
+      });
+      setDepositAmount('');
+      reset();
+    },
+  });
+
+  const balanceNumber = parseFloat(formattedBalance || '0');
+  const depositNumber = parseFloat(depositAmount || '0');
+
+  const handleDepositClick = () => {
+    const amount = parseUnits(depositAmount, tokenDecimals);
+    handleDeposit(amount);
+  };
+
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-tertiary text-center py-8">Deposit tab coming soon</p>
+      <div className="space-y-1.5">
+        <div className="flex justify-between items-center">
+          <p className="text-sm">Owned</p>
+          <p className="text-sm">{formatNumber(balanceNumber)} {tokenSymbol}</p>
+        </div>
+        <div className="flex justify-between items-center">
+          <p className="text-sm">APR</p>
+          <p className="text-sm">{isLoadingAPR ? '...' : `${apr}%`}</p>
+        </div>
+      </div>
+
+      <div className="rounded-sm bg-primary/8">
+        <div className="py-2 px-3 space-y-1">
+          <div className="flex justify-between items-center">
+            <p className="text-sm text-tertiary">Deposit {tokenSymbol}</p>
+            <a
+              href={`/coin/${chain.code_name}/${stakingToken}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium"
+            >
+              Buy {tokenSymbol}
+            </a>
+          </div>
+          <input
+            type="text"
+            placeholder="0.00"
+            value={depositAmount}
+            onChange={(e) => setDepositAmount(e.target.value)}
+            className="text-2xl bg-transparent border-none outline-none w-full text-tertiary"
+            disabled={isDepositing}
+          />
+        </div>
+      </div>
+
+      {isDepositing && (
+        <div className="rounded-sm bg-primary/8 py-2 px-3 space-y-2">
+          <p className="text-sm text-tertiary">Sign Transactions</p>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <StepIcon status={approveStatus} />
+              <p className="text-sm">Approve {tokenSymbol} for staking</p>
+              {approveTxHash && chain && (
+                <a
+                  href={getTransactionUrl(chain, approveTxHash)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-tertiary hover:text-primary"
+                >
+                  <i className="icon-arrow-top-right size-4" />
+                </a>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <StepIcon status={stakeStatus} />
+              <p className="text-sm">Stake {tokenSymbol}</p>
+              {stakeTxHash && chain && (
+                <a
+                  href={getTransactionUrl(chain, stakeTxHash)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-tertiary hover:text-primary"
+                >
+                  <i className="icon-arrow-top-right size-4" />
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Button
+        variant="secondary"
+        className="w-full"
+        onClick={handleDepositClick}
+        disabled={!depositAmount || depositNumber <= 0 || depositNumber > balanceNumber || isDepositing}
+      >
+        Deposit
+      </Button>
     </div>
   );
 }

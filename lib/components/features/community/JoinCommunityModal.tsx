@@ -1,22 +1,17 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { BrowserProvider, Contract, type Eip1193Provider } from 'ethers';
 import { parseUnits } from 'viem';
-import * as Sentry from '@sentry/nextjs';
 
-import { Button, ModalContent, Skeleton, modal, toast } from '$lib/components/core';
+import { Button, ModalContent, Skeleton, modal } from '$lib/components/core';
 import { useTokenBalance } from '$lib/hooks/useBalance';
 import { useTokenData } from '$lib/hooks/useCoin';
+import { useStakeDeposit, StepIcon } from '$lib/hooks/useStakeDeposit';
 import { Chain, LaunchpadGroup } from '$lib/graphql/generated/backend/graphql';
 import { StakingManagerClient } from '$lib/services/coin/StakingManagerClient';
 import { SECONDS_PER_MONTH } from '$lib/services/token-launch-pad';
 import { formatNumber } from '$lib/utils/number';
-import { formatError, getTransactionUrl } from '$lib/utils/crypto';
-import { appKit } from '$lib/utils/appkit';
-import { ERC20 } from '$lib/abis/ERC20';
+import { getTransactionUrl } from '$lib/utils/crypto';
 import { TxnConfirmedModal } from '../create-coin/TxnConfirmedModal';
-
-type StepStatus = 'pending' | 'loading' | 'completed' | 'error';
 
 interface JoinCommunityModalProps {
   launchpadGroup: LaunchpadGroup;
@@ -31,10 +26,27 @@ export function JoinCommunityModal({ launchpadGroup, stakingToken, chain }: Join
   const [depositAmount, setDepositAmount] = useState('');
   const [minStakeDuration, setMinStakeDuration] = useState<bigint | null>(null);
   const [isLoadingRequirements, setIsLoadingRequirements] = useState(true);
-  const [isDepositing, setIsDepositing] = useState(false);
-  const [approveStatus, setApproveStatus] = useState<StepStatus>('pending');
-  const [stakeStatus, setStakeStatus] = useState<StepStatus>('pending');
-  const [approveTxHash, setApproveTxHash] = useState<string | null>(null);
+
+  const {
+    isDepositing,
+    approveStatus,
+    stakeStatus,
+    approveTxHash,
+    handleDeposit,
+  } = useStakeDeposit({
+    chain,
+    stakingToken,
+    stakingManagerAddress: launchpadGroup.address,
+    onSuccess: () => {
+      modal.close();
+      modal.open(TxnConfirmedModal, {
+        props: {
+          title: `Welcome to ${launchpadGroup.name}!`,
+          description: `You've joined the community and can now launch your own tokens on it.`,
+        }
+      });
+    },
+  });
 
   useEffect(() => {
     if (!chain) return;
@@ -58,62 +70,10 @@ export function JoinCommunityModal({ launchpadGroup, stakingToken, chain }: Join
 
   const minDurationMonths = minStakeDuration ? Number(minStakeDuration) / SECONDS_PER_MONTH : 12;
 
-  const handleDeposit = async () => {
-    if (!chain || !stakingToken || !tokenData) {
-      toast.error('Missing required data');
-      return;
-    }
-
-    const walletProvider = appKit.getProvider('eip155');
-    const userAddress = appKit.getAddress();
-
-    if (!walletProvider || !userAddress) {
-      toast.error('Wallet isn\'t fully connected yet. Please try again in a moment.');
-      return;
-    }
-
-    const amount = parseUnits(depositAmount, tokenData.decimals);
-
-    setIsDepositing(true);
-    setApproveStatus('loading');
-    setStakeStatus('pending');
-
-    const provider = new BrowserProvider(walletProvider as Eip1193Provider);
-    const signer = await provider.getSigner();
-
-    const tokenContract = new Contract(stakingToken, ERC20, signer);
-    const approveTx = await tokenContract.approve(launchpadGroup.address, amount);
-    const approveReceipt = await approveTx.wait();
-    setApproveTxHash(approveReceipt.hash);
-    setApproveStatus('completed');
-
-    setStakeStatus('loading');
-    const stakingClient = StakingManagerClient.getInstance(chain, launchpadGroup.address, signer);
-    const stakeTxHash = await stakingClient.stake(amount);
-    await provider.waitForTransaction(stakeTxHash);
-    setStakeStatus('completed');
-
-    modal.close();
-    modal.open(TxnConfirmedModal, {
-      props: {
-        title: `Welcome to ${launchpadGroup.name}!`,
-        description: `You've joined the community and can now launch your own tokens on it.`,
-      }
-    });
-  };
-
   const handleDepositClick = () => {
-    handleDeposit().catch((error) => {
-      Sentry.captureException(error);
-      toast.error(formatError(error));
-      setIsDepositing(false);
-      if (approveStatus === 'loading') {
-        setApproveStatus('error');
-      }
-      if (stakeStatus === 'loading') {
-        setStakeStatus('error');
-      }
-    });
+    if (!tokenData) return;
+    const amount = parseUnits(depositAmount, tokenData.decimals);
+    handleDeposit(amount);
   };
 
   return (
@@ -217,16 +177,4 @@ export function JoinCommunityModal({ launchpadGroup, stakingToken, chain }: Join
   );
 }
 
-function StepIcon({ status }: { status: StepStatus }) {
-  if (status === 'completed') {
-    return <i className="icon-check-filled size-4 text-success-500" />;
-  }
-  if (status === 'loading') {
-    return <i className="icon-loader size-4 text-tertiary animate-spin" />;
-  }
-  if (status === 'error') {
-    return <i className="icon-error size-4 text-danger-500" />;
-  }
-  return <i className="icon-circle-outline size-4 text-tertiary" />;
-}
 
