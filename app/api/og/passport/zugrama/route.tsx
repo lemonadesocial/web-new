@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
         <img src={image} style={{ marginTop: 100 }} />
 
         <div style={{ display: 'flex', position: 'absolute', bottom: 90, left: 160 }}>
-          <p style={{ fontSize: 90, fontFamily: 'Syne Bold', color: '#FFF', margin: 0, padding: 0 }}>{tokenId}123</p>
+          <p style={{ fontSize: 90, fontFamily: 'Syne Bold', color: '#FFF', margin: 0, padding: 0 }}>{tokenId}</p>
         </div>
       </div>
     ),

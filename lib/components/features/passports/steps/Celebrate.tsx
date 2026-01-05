@@ -4,7 +4,7 @@ import Player from 'video.js/dist/types/player';
 import { isMobile } from 'react-device-detect';
 import videojs from 'video.js';
 
-import { Card, Button, drawer, modal } from '$lib/components/core';
+import { Card, Button, drawer } from '$lib/components/core';
 import { ETHERSCAN } from '$lib/utils/constants';
 import { SharedPassportPane } from '../SharedPassportPane';
 import { usePassportContext } from '../provider';
@@ -47,7 +47,7 @@ export function PassportCelebrate() {
         <div className="flex-1 flex flex-col items-center gap-11 pt-6 pb-11 max-sm:justify-center w-full">
           <Card.Root className="w-full border-0">
             <Card.Content className="p-0 aspect-square flex items-center justify-center">
-              <img src={`/api/og/passport/${state.provider}?tokenId=${tokenId || 2}`} />
+              <img src={`/api/og/passport/${state.provider}?tokenId=${tokenId}`} />
             </Card.Content>
           </Card.Root>
 

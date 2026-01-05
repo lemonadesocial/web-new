@@ -28,15 +28,7 @@ export function Footer() {
       modal.open(PassportEligibilityModal.CheckMintedLemonheadModal, {
         props: {
           onContinue: () => {
-            modal.open(PassportEligibilityModal.CheckWhiteListModal, {
-              props: {
-                provider: state.provider,
-                passportTitle: state.passportTitle,
-                onContinue: () => {
-                  dispatch({ type: PassportActionKind.NextStep });
-                },
-              },
-            });
+            canAccess();
           },
         },
       });
