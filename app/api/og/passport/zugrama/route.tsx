@@ -76,8 +76,8 @@ export async function GET(req: NextRequest) {
       >
         <img src={image} style={{ marginTop: 100 }} />
 
-        <div style={{ display: 'flex', position: 'absolute', bottom: 80, left: 150 }}>
-          <p style={{ fontSize: 80, fontFamily: 'Syne Regular', color: '#FFF', margin: 0, padding: 0 }}>{tokenId}</p>
+        <div style={{ display: 'flex', position: 'absolute', bottom: 90, left: 160 }}>
+          <p style={{ fontSize: 90, fontFamily: 'Syne Bold', color: '#FFF', margin: 0, padding: 0 }}>{tokenId}123</p>
         </div>
       </div>
     ),
@@ -85,11 +85,11 @@ export async function GET(req: NextRequest) {
       width: 1080,
       height: 1080,
       fonts: [
-        // {
-        //   name: 'Syne SemiBold',
-        //   data: await fetchFont(`${ASSET_PREFIX}/assets/fonts/Syne-SemiBold.ttf`),
-        //   style: 'normal',
-        // },
+        {
+          name: 'Syne SemiBold',
+          data: await fetchFont(`${ASSET_PREFIX}/assets/fonts/Syne-SemiBold.ttf`),
+          style: 'normal',
+        },
         {
           name: 'Syne Regular',
           data: await fetchFont(`${ASSET_PREFIX}/assets/fonts/Syne-Regular.ttf`),
@@ -179,18 +179,5 @@ export async function GET(req: NextRequest) {
         },
       ],
     },
-  );
-}
-
-function LemonadeLogo() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
-      <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M28.1667 34C30.9281 34 33.1667 36.2386 33.1667 39C33.1667 41.7614 30.9281 44 28.1667 44C25.4052 44 23.1667 41.7614 23.1667 39C23.1667 36.2386 25.4052 34 28.1667 34ZM11.5 21.5C15.6421 21.5 19 24.8579 19 29C19 33.1421 15.6421 36.5 11.5 36.5C7.35786 36.5 4 33.1421 4 29C4 24.8579 7.35786 21.5 11.5 21.5ZM32.75 4C38.9632 4 44 9.0368 44 15.25C44 21.4632 38.9632 26.5 32.75 26.5C26.5368 26.5 21.5 21.4632 21.5 15.25C21.5 9.0368 26.5368 4 32.75 4Z"
-        fill="white"
-      />
-    </svg>
   );
 }

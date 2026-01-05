@@ -13,10 +13,11 @@ import {
   SpaceTag,
 } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
+import { PASSPORT_PROVIDERS, type PASSPORT_PROVIDER } from '$lib/components/features/passports/types';
 
 import CommunityCard from './CommunityCard';
-import { useTheme } from '../theme-builder/provider';
 import { WidgetContainer } from './widgets/WidgetContainer';
+import { CommunityEventsWithCalendar } from './CommunityEventsWithCalendar';
 
 type Props = {
   initData: {
@@ -30,7 +31,6 @@ type Props = {
 };
 
 export function Community({ initData, hideHeroSection = false }: Props) {
-  const [state] = useTheme();
   const hideSubspace = true;
 
   const { data: dataGetSpace } = useQuery(GetSpaceDocument, {
@@ -79,8 +79,11 @@ export function Community({ initData, hideHeroSection = false }: Props) {
         </>
       )}
 
-      {/* <CommunityEventsWithCalendar space={space} /> */}
-      <WidgetContainer space={space} />
+      {space.theme_name && PASSPORT_PROVIDERS.includes(space.theme_name as PASSPORT_PROVIDER) ? (
+        <WidgetContainer space={space} />
+      ) : (
+        <CommunityEventsWithCalendar space={space} />
+      )}
     </div>
   );
 }

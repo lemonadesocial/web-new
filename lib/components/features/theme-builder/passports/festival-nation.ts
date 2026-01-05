@@ -2,7 +2,7 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { MAPPING_Widgets, PassportTemplate } from './types';
 
 const festivalPassportConfig: PassportTemplate = {
-  theme: 'passport',
+  // theme: 'passport',
   config: {},
   template: {
     provider: 'festival-nation',

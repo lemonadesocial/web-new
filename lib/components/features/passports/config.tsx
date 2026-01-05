@@ -302,7 +302,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
   zugrama: {
     provider: 'zugrama',
     passportTitle: 'Zugrama',
-    currentStep: PassportStep.celebrate,
+    currentStep: PassportStep.intro,
     ui: {
       intro: {
         title: 'Join Zugrama',

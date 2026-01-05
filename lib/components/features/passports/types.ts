@@ -1,4 +1,5 @@
-export type PASSPORT_PROVIDER = 'mint' | 'zugrama' | 'vinyl-nation' | 'festival-nation' | 'drip-nation';
+export const PASSPORT_PROVIDERS = ['mint', 'zugrama', 'vinyl-nation', 'festival-nation', 'drip-nation'] as const;
+export type PASSPORT_PROVIDER = (typeof PASSPORT_PROVIDERS)[number];
 
 export type PassportConfig = PassportState & {
   ui?: Record<

@@ -45,9 +45,9 @@ export function PassportCelebrate() {
     <div className="flex-1 h-full relative max-w-[612] md:mx-auto">
       <div className="relative z-10 flex flex-col items-center gap-5 md:gap-11 text-center h-full">
         <div className="flex-1 flex flex-col items-center gap-11 pt-6 pb-11 max-sm:justify-center w-full">
-          <Card.Root className="w-full">
-            <Card.Content className="aspect-square flex items-center justify-center">
-              <img src={`/api/og/passport/${state.provider}?tokenId=${tokenId || 1}`} />
+          <Card.Root className="w-full border-0">
+            <Card.Content className="p-0 aspect-square flex items-center justify-center">
+              <img src={`/api/og/passport/${state.provider}?tokenId=${tokenId || 2}`} />
             </Card.Content>
           </Card.Root>
 
