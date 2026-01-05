@@ -1,53 +1,9 @@
-'use client';
-
-import React from 'react';
-import { Metadata } from 'next';
 import { ASSET_PREFIX } from '$lib/utils/constants';
-
-import { MintPassportProvider } from './mint/provider';
-import { PassportFooter as MintPassportFooter } from './mint/footer';
-import { MintPassportContent } from './mint/content';
-import * as mint from './mint/steps';
-
-// zugrama
-import { PassportFooter as ZugramaPassportFooter } from './zugrama/footer';
-import { ZugramaPassportContent } from './zugrama/content';
-import { PassportProvider as ZugramaPassportProvider } from './zugrama/provider';
-import * as zugrama from './zugrama/steps';
-
-// vinyl-nation
-import { PassportFooter as VinylNationPassportFooter } from './vinyl-nation/footer';
-import { VinylNationPassportContent } from './vinyl-nation/content';
-import { PassportProvider as VinylNationPassportProvider } from './vinyl-nation/provider';
-import * as vinylNation from './vinyl-nation/steps';
-
-// festival-nation
-import { PassportFooter as FestivalNationPassportFooter } from './festival-nation/footer';
-import { FestivalNationPassportContent } from './festival-nation/content';
-import { PassportProvider as FestivalNationPassportProvider } from './festival-nation/provider';
-import * as festivalNation from './festival-nation/steps';
-
-// drip- nation
-import { PassportFooter as DripNationPassportFooter } from './drip-nation/footer';
-import { DripNationPassportContent } from './drip-nation/content';
-import { PassportProvider as DripNationPassportProvider } from './drip-nation/provider';
-import * as dripNation from './drip-nation/steps';
-
-export type PASSPORT_PROVIDER = 'mint' | 'zugrama' | 'vinyl-nation' | 'festival-nation' | 'drip-nation';
-
-export interface PassportConfig {
-  steps: {
-    [key: string]: {
-      label?: string;
-      component: () => React.ReactElement;
-      btnText?: string;
-      index: number;
-    };
-  };
-  provider: React.FC<any>;
-  content: () => React.ReactElement;
-  footer: () => React.ReactElement;
-}
+import { PassportCelebrate } from './steps/Celebrate';
+import { PassportIntro } from './steps/Intro';
+import { PassportPhoto } from './steps/Photo';
+import { PassportUsername } from './steps/Username';
+import { PASSPORT_PROVIDER, PassportConfig, PassportStep } from './types';
 
 export const PASSPORT_METADATA: { [key: string]: object } = {
   mint: {
@@ -72,7 +28,7 @@ export const PASSPORT_METADATA: { [key: string]: object } = {
     metadata: {
       title: 'Vinyl Nation Passport',
       openGraph: {
-        images: `${ASSET_PREFIX}/assets/images/passports/vinyl-nation-passport-citizen-mini.png`,
+        images: `${ASSET_PREFIX}/assets/images/passports/vinyl-nation-passport-mini.png`,
       },
     },
   },
@@ -86,60 +42,319 @@ export const PASSPORT_METADATA: { [key: string]: object } = {
   },
 };
 
+export const MAPPING_PASSPORT_STEPS: Record<PassportStep, React.FC> = {
+  intro: PassportIntro,
+  photo: PassportPhoto,
+  username: PassportUsername,
+  celebrate: PassportCelebrate,
+};
+
 export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
   mint: {
-    steps: {
-      intro: { label: '', component: mint.PassportIntro, btnText: "Yes, I'm In!", index: 0 },
-      photo: { label: 'Passport Photo', component: mint.PassportPhoto, btnText: 'Continue', index: 1 },
-      username: { label: 'Username', component: mint.PassportUsername, btnText: 'Claim Passport', index: 2 },
-      celebrate: { label: 'Celebrate', component: mint.PassportCelebrate, btnText: 'LemonHeads Zone', index: 3 },
+    provider: 'mint',
+    passportTitle: 'Lemonade',
+    currentStep: PassportStep.intro,
+    useLemonhead: true,
+    ui: {
+      intro: {
+        title: 'Join the <br /> United Stands of Lemonade',
+        subtitle:
+          'Become part of a new world built for creators and communities. Your free passport unlocks access across the Lemonade universe.',
+        footer: {
+          label: '',
+          btnText: "Yes, I'm In",
+          index: 0,
+        },
+      },
+      photo: {
+        title: 'Choose Your Passport Photo',
+        subtitle: 'Select the avatar you’d like on your passport.',
+        footer: {
+          label: 'Passport Photo',
+          btnText: 'Continue',
+          index: 1,
+        },
+      },
+      username: {
+        title: 'Customize Your Passport',
+        subtitle: 'Select your passport name.',
+        footer: {
+          label: 'Username',
+          btnText: 'Claim Passport',
+          index: 2,
+        },
+      },
+      celebrate: {
+        showBgVideo: true,
+        footer: {
+          label: 'Celebrate',
+          btnText: 'Done',
+          index: 3,
+        },
+      },
     },
-    provider: MintPassportProvider,
-    content: MintPassportContent,
-    footer: MintPassportFooter,
-  },
-  zugrama: {
-    steps: {
-      intro: { label: '', component: zugrama.PassportIntro, btnText: "Yes, I'm In!", index: 0 },
-      photo: { label: 'Passport Photo', component: zugrama.PassportPhoto, btnText: 'Continue', index: 1 },
-      username: { label: 'Username', component: zugrama.PassportUsername, btnText: 'Claim Passport', index: 2 },
-      celebrate: { label: 'Celebrate', component: zugrama.PassportCelebrate, btnText: 'Done', index: 3 },
+    modal: {
+      beforeMint: {
+        description: 'By minting your Passport, you agree to our Terms of Use and acknowledge that:',
+        li: [
+          'Lemonade Passport NFT is non-transferable & non-tradable (soul-bound).',
+          'Your Passport will be permanently recorded on-chain.',
+          'It will be publicly visible and tied to your wallet address.',
+          'All claims are final.',
+        ],
+      },
     },
-    provider: ZugramaPassportProvider,
-    content: ZugramaPassportContent,
-    footer: ZugramaPassportFooter,
+    enabled: {
+      lemohead: true,
+      fluffePhoto: true,
+      ens: true,
+      lemonadeUsername: true,
+      shouldMintedLemonhead: true,
+      sharePassport: true,
+    },
   },
   'vinyl-nation': {
-    steps: {
-      intro: { label: '', component: vinylNation.PassportIntro, btnText: "Yes, I'm In!", index: 0 },
-      photo: { label: 'Passport Photo', component: vinylNation.PassportPhoto, btnText: 'Continue', index: 1 },
-      username: { label: 'Username', component: vinylNation.PassportUsername, btnText: 'Claim Passport', index: 2 },
-      celebrate: { label: 'Celebrate', component: vinylNation.PassportCelebrate, btnText: 'Done', index: 3 },
+    provider: 'vinyl-nation',
+    passportTitle: 'Vinyl Nation',
+    currentStep: PassportStep.intro,
+    useLemonhead: true,
+    ui: {
+      intro: {
+        title: 'Join the <br /> Vinyl Nation',
+        subtitle: 'Mint your Vinyl Passport and join a community built by music lovers, collectors, and creators.',
+        footer: {
+          label: '',
+          btnText: "Yes, I'm In",
+          index: 0,
+        },
+      },
+      photo: {
+        title: 'Choose Your Passport Photo',
+        subtitle: 'Select the avatar you’d like on your passport.',
+        footer: {
+          label: 'Passport Photo',
+          btnText: 'Continue',
+          index: 1,
+        },
+      },
+      username: {
+        title: 'Select passport name.',
+        subtitle: 'Choose what appears on your passport, your username or ENS.',
+        footer: {
+          label: 'Username',
+          btnText: 'Claim Passport',
+          index: 2,
+        },
+      },
+      celebrate: {
+        showBgVideo: true,
+        footer: {
+          label: 'Celebrate',
+          btnText: 'Done',
+          index: 3,
+        },
+      },
     },
-    provider: VinylNationPassportProvider,
-    content: VinylNationPassportContent,
-    footer: VinylNationPassportFooter,
+    enabled: {
+      lemohead: true,
+      fluffePhoto: true,
+      ens: true,
+      lemonadeUsername: true,
+      whitelist: true,
+      sharePassport: true,
+    },
+    modal: {
+      beforeMint: {
+        description: 'By minting your Passport, you agree to our Terms of Use and acknowledge that:',
+        li: [
+          'Vinyl Nation Passport NFT is non-transferable & non-tradable (soul-bound).',
+          'Your Passport will be permanently recorded on-chain.',
+          'It will be publicly visible and tied to your wallet address.',
+          'All claims are final.',
+        ],
+      },
+    },
   },
   'festival-nation': {
-    steps: {
-      intro: { label: '', component: festivalNation.PassportIntro, btnText: "Yes, I'm In!", index: 0 },
-      photo: { label: 'Passport Photo', component: festivalNation.PassportPhoto, btnText: 'Continue', index: 1 },
-      username: { label: 'Username', component: festivalNation.PassportUsername, btnText: 'Claim Passport', index: 2 },
-      celebrate: { label: 'Celebrate', component: festivalNation.PassportCelebrate, btnText: 'Done', index: 3 },
+    provider: 'festival-nation',
+    passportTitle: 'Festival Nation',
+    currentStep: PassportStep.intro,
+    useLemonhead: true,
+    ui: {
+      intro: {
+        title: 'Join the <br /> Festival Nation',
+        subtitle: 'Mint your Festival Passport and join a community built by music lovers, collectors, and creators.',
+        footer: {
+          label: '',
+          btnText: "Yes, I'm In",
+          index: 0,
+        },
+      },
+      photo: {
+        title: 'Choose Your Passport Photo',
+        subtitle: 'Select the avatar you’d like on your passport.',
+        footer: {
+          label: 'Passport Photo',
+          btnText: 'Continue',
+          index: 1,
+        },
+      },
+      username: {
+        title: 'Select passport name.',
+        subtitle: 'Choose what appears on your passport, your username or ENS.',
+        footer: {
+          label: 'Username',
+          btnText: 'Claim Passport',
+          index: 2,
+        },
+      },
+      celebrate: {
+        showBgVideo: true,
+        footer: {
+          label: 'Celebrate',
+          btnText: 'Done',
+          index: 3,
+        },
+      },
     },
-    provider: FestivalNationPassportProvider,
-    content: FestivalNationPassportContent,
-    footer: FestivalNationPassportFooter,
+    enabled: {
+      lemohead: true,
+      fluffePhoto: true,
+      ens: true,
+      lemonadeUsername: true,
+      whitelist: true,
+      sharePassport: true,
+    },
+    modal: {
+      beforeMint: {
+        description: 'By minting your Passport, you agree to our Terms of Use and acknowledge that:',
+        li: [
+          'Festival Nation Passport NFT is non-transferable & non-tradable (soul-bound).',
+          'Your Passport will be permanently recorded on-chain.',
+          'It will be publicly visible and tied to your wallet address.',
+          'All claims are final.',
+        ],
+      },
+    },
   },
   'drip-nation': {
-    steps: {
-      intro: { label: '', component: dripNation.PassportIntro, btnText: "Yes, I'm In!", index: 0 },
-      photo: { label: 'Passport Photo', component: dripNation.PassportPhoto, btnText: 'Continue', index: 1 },
-      username: { label: 'Username', component: dripNation.PassportUsername, btnText: 'Claim Passport', index: 2 },
-      celebrate: { label: 'Celebrate', component: dripNation.PassportCelebrate, btnText: 'Done', index: 3 },
+    provider: 'drip-nation',
+    passportTitle: 'Drip Nation',
+    currentStep: PassportStep.intro,
+    useLemonhead: true,
+    ui: {
+      intro: {
+        title: 'Join the <br /> Drip Nation',
+        subtitle: 'Mint your DRIP Passport and join a community built by music lovers, collectors, and creators.',
+        footer: {
+          label: '',
+          btnText: "Yes, I'm In",
+          index: 0,
+        },
+      },
+      photo: {
+        title: 'Choose Your Passport Photo',
+        subtitle: 'Select the avatar you’d like on your passport.',
+        footer: {
+          label: 'Passport Photo',
+          btnText: 'Continue',
+          index: 1,
+        },
+      },
+      username: {
+        title: 'Select passport name.',
+        subtitle: 'Choose what appears on your passport, your username or ENS.',
+        footer: {
+          label: 'Username',
+          btnText: 'Claim Passport',
+          index: 2,
+        },
+      },
+      celebrate: {
+        showBgVideo: true,
+        footer: {
+          label: 'Celebrate',
+          btnText: 'Done',
+          index: 3,
+        },
+      },
     },
-    provider: DripNationPassportProvider,
-    content: DripNationPassportContent,
-    footer: DripNationPassportFooter,
+    enabled: {
+      lemohead: true,
+      fluffePhoto: true,
+      ens: true,
+      lemonadeUsername: true,
+      whitelist: true,
+      sharePassport: true,
+    },
+    modal: {
+      beforeMint: {
+        description: 'By minting your Passport, you agree to our Terms of Use and acknowledge that:',
+        li: [
+          'DRIP Nation Passport NFT is non-transferable & non-tradable (soul-bound).',
+          'Your Passport will be permanently recorded on-chain.',
+          'It will be publicly visible and tied to your wallet address.',
+          'All claims are final.',
+        ],
+      },
+    },
+  },
+  zugrama: {
+    provider: 'zugrama',
+    passportTitle: 'Zugrama',
+    currentStep: PassportStep.intro,
+    ui: {
+      intro: {
+        title: 'Join Zugrama',
+        subtitle: 'Become part of a new world.',
+        footer: {
+          label: '',
+          btnText: "Yes, I'm In",
+          index: 0,
+        },
+      },
+      photo: {
+        title: 'Choose Your Passport Photo',
+        subtitle: 'Select the avatar you’d like on your passport.',
+        footer: {
+          label: 'Passport Photo',
+          btnText: 'Continue',
+          index: 1,
+        },
+      },
+      username: {
+        title: 'Select passport name.',
+        subtitle: 'Choose what appears on your passport, your username or ENS.',
+        footer: {
+          label: 'Username',
+          btnText: 'Claim Passport',
+          index: 2,
+        },
+      },
+      celebrate: {
+        footer: {
+          label: 'Celebrate',
+          btnText: 'Done',
+          index: 3,
+        },
+      },
+    },
+    modal: {
+      beforeMint: {
+        description: 'By minting your Zugrama Passport, you agree to our Terms of Use and acknowledge that:',
+        li: [
+          'Zugrama Passport NFT is non-transferable & non-tradable (soul-bound).',
+          'Your Passport will be permanently recorded on-chain.',
+          'It will be publicly visible and tied to your wallet address.',
+          'All claims are final.',
+        ],
+      },
+    },
+    enabled: {
+      selfVerify: true,
+      uploadPhoto: true,
+      ens: true,
+      whitelist: true,
+    },
   },
 };

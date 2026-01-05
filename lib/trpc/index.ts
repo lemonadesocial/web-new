@@ -7,7 +7,7 @@ import { isPrivateIP } from 'range_check';
 
 import { getMintNftData } from '$lib/services/lemonhead';
 import { calculateLookHash, Filter, getFinalTraits, validateTraits, type Trait } from '$lib/services/lemonhead/core';
-import { getMintLemonadePassportData } from '$lib/services/passports/lemonade';
+import { getMintLemonadePassportData, getMintPassportImage } from '$lib/services/passports/lemonade';
 import { getMintZuGramaPassportImage } from '$lib/services/passports/zugrama';
 
 import { publicProcedure, router } from './trpc';
@@ -143,6 +143,7 @@ export const appRouter = router({
         const { avatarImageUrl, username, provider } = input;
 
         return match(provider)
+          .with('mint', () => getMintPassportImage(avatarImageUrl, username))
           .with('zugrama', () => getMintZuGramaPassportImage(avatarImageUrl, username))
           .with('vinyl-nation', () => getMintVinylNationPassportImage(avatarImageUrl, username))
           .with('festival-nation', () => getMintFestivalNationPassportImage(avatarImageUrl, username))

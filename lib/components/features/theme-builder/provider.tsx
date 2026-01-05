@@ -2,6 +2,7 @@
 import React from 'react';
 import { defaultTheme, getRandomColor, getRandomFont, patterns, shaders, ThemeValues } from './store';
 import { merge } from 'lodash';
+import { PassportTemplate } from './passports/types';
 
 export const EventThemeContext = React.createContext(null);
 
@@ -28,7 +29,7 @@ export function ThemeProvider({ themeData, children }: React.PropsWithChildren &
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
-export function useTheme(): [state: ThemeValues, dispatch: React.Dispatch<ThemeBuilderAction>] {
+export function useTheme(): [state: ThemeValues | PassportTemplate, dispatch: React.Dispatch<ThemeBuilderAction>] {
   const context = React.useContext(ThemeContext);
   if (!context) throw new Error('useTheme must be used within a ThemeProvider');
 

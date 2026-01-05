@@ -66,6 +66,8 @@ fragment Space on Space {
     wallet
   }
   state
+  nft_enabled
+  theme_name
 }
 
 fragment SpaceTagFragment on SpaceTag {
@@ -482,4 +484,26 @@ mutation UpsertSpaceTag($input: SpaceTagInput!) {
 
 mutation DeleteSpaceTag($id: MongoID!, $space: MongoID!) {
   deleteSpaceTag(_id: $id, space: $space)
+}
+
+query GetSpaceNFTs($skip: Int, $limit: Int, $space: MongoID, $kind: SpaceNFTKind) {
+  listSpaceNFTs(space: $space, limit: $limit, skip: $skip, kind: $kind) {
+    items {
+      _id
+      cover_image_url
+      name
+      content_url
+      kind
+      token_limit
+      contracts {
+        _id
+        space_nft
+        network_id
+        mint_price
+        currency_address
+        deployed_contract_address
+      }
+    }
+    total
+  }
 }

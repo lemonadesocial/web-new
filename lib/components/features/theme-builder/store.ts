@@ -2,7 +2,7 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { atom } from 'jotai';
 
 export type ThemeValues = {
-  theme?: 'default' | 'minimal' | 'shader' | 'pattern' | 'image';
+  theme?: 'default' | 'minimal' | 'shader' | 'pattern' | 'image' | 'passport';
   config: {
     mode?: 'dark' | 'light' | 'auto';
     name?: string;

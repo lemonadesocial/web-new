@@ -64,6 +64,12 @@ const getBoilerplateImageBuffer = async () => {
   return getFileImageBuffer(path.join(process.cwd(), 'data', 'festival-nation-passport', 'boilerplate.png'));
 };
 
+const getBoilerplatePlaceholderImageBuffer = async () => {
+  return getFileImageBuffer(
+    path.join(process.cwd(), 'data', 'festival-nation-passport-placeholder', 'boilerplate-placeholder.png'),
+  );
+};
+
 const getUsernameImageBuffer = async (username: string) => {
   deregisterAllFonts();
   registerFont(regularFontPath, { family: regularFontFamily });
@@ -121,7 +127,7 @@ export const getMintFestivalNationPassportImage = async (avatarImageUrl?: string
   if (avatarImageUrl) {
     layerPromises.unshift(getAvatarImageBuffer(avatarImageUrl));
   } else {
-    layerPromises.unshift(getAvatarPlaceholderBuffer());
+    layerPromises.unshift(getBoilerplatePlaceholderImageBuffer());
   }
 
   const buffers = await Promise.all(layerPromises);

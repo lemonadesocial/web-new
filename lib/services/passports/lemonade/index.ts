@@ -7,13 +7,12 @@ import path from 'path';
 import { getImageFromBuffers } from '$lib/services/nft/image';
 import { getUriFromUrl, uploadImage, uploadJSON } from '$lib/services/nft/storage';
 
-import { getApproval, getData } from "./admin";
-import { Point } from "../common/canvas";
+import { getApproval, getData } from './admin';
+import { Point } from '../common/canvas';
 import { getEnsUsername } from '../common/ens';
+import { formatDate } from '../common/format';
 
-export const DESCRIPTION = [
-  ''
-].join('\n');
+export const DESCRIPTION = [''].join('\n');
 
 const outputWidth = 2160;
 const outputHeight = 1350;
@@ -41,8 +40,8 @@ const creationDateOffset: Point = {
   y: 720,
 };
 
-const regularFontPath = path.join(process.cwd(), "data", "passport", "regular.otf");
-const boldFontPath = path.join(process.cwd(), "data", "passport", "bold.otf");
+const regularFontPath = path.join(process.cwd(), 'data', 'passport', 'regular.otf');
+const boldFontPath = path.join(process.cwd(), 'data', 'passport', 'bold.otf');
 const regularFontFamily = 'lemonade-passport-font-regular';
 const boldFontFamily = 'lemonade-passport-font-bold';
 
@@ -74,12 +73,17 @@ const getAvatarImageBuffer = async (avatarImageUrl: string) => {
   });
 
   return canvas.toBuffer('image/png');
-}
+};
 
 const getBoilerplateImageBuffer = async () => {
-  const filePath = path.join(process.cwd(), "data", "passport", "lemonade-passport.png");
+  const filePath = path.join(process.cwd(), 'data', 'passport', 'lemonade-passport.png');
   return fs.readFileSync(filePath);
-}
+};
+
+const getBoilerplatePlaceholderImageBuffer = async () => {
+  const filePath = path.join(process.cwd(), 'data', 'passport-placeholder', 'lemonade-passport-placeholder.png');
+  return fs.readFileSync(filePath);
+};
 
 const getTextImageBuffer = async (font: string, text: string, offset: Point, textColor: string) => {
   // Create a canvas of output size
@@ -98,31 +102,53 @@ const getTextImageBuffer = async (font: string, text: string, offset: Point, tex
   ctx.fillText(text, offset.x, offset.y);
 
   return canvas.toBuffer('image/png');
-}
+};
 
 const getUsernameImageBuffer = async (username: string) => {
   deregisterAllFonts();
 
   //-- calculate font size based on username length
-  const scaledFontSize = username.length <= 18
-    ? fontSize
-    : Math.trunc(19 * fontSize / username.length);
+  const scaledFontSize = username.length <= 18 ? fontSize : Math.trunc((19 * fontSize) / username.length);
 
   registerFont(regularFontPath, { family: regularFontFamily });
   return await getTextImageBuffer(`${scaledFontSize}px "${regularFontFamily}"`, username, usernameOffset, '#ffffff');
-}
+};
 
 const getPassportIdImageBuffer = async (passportId: string) => {
   deregisterAllFonts();
   registerFont(boldFontPath, { family: boldFontFamily });
   return await getTextImageBuffer(`${fontSize}px "${boldFontFamily}"`, passportId, passportIdOffset, '#000000');
-}
+};
 
 const getCreationDateImageBuffer = async (creationDate: string) => {
   deregisterAllFonts();
   registerFont(boldFontPath, { family: boldFontFamily });
   return await getTextImageBuffer(`${fontSize}px "${boldFontFamily}"`, creationDate, creationDateOffset, '#000000');
-}
+};
+
+export const getMintPassportImage = async (avatarImageUrl?: string, username?: string) => {
+  const creationDate = formatDate(new Date());
+
+  let layerPromises: Array<Promise<Buffer>> = [
+    getBoilerplateImageBuffer(),
+    getUsernameImageBuffer(`@${username || 'username'}`),
+    getPassportIdImageBuffer('XXXXXXXX'),
+    getCreationDateImageBuffer(creationDate),
+  ];
+
+  if (avatarImageUrl) {
+    layerPromises.splice(1, 0, getAvatarImageBuffer(avatarImageUrl));
+  } else {
+    layerPromises.unshift(getBoilerplatePlaceholderImageBuffer());
+  }
+  const buffers = await Promise.all(layerPromises);
+
+  const finalImage = await getImageFromBuffers(buffers, outputWidth, outputHeight, 'png');
+
+  const base64 = finalImage.toString('base64');
+  const dataUrl = `data:image/png;base64,${base64}`;
+  return { image: dataUrl };
+};
 
 export const getMintLemonadePassportData = async (
   wallet: string,
@@ -155,12 +181,7 @@ export const getMintLemonadePassportData = async (
     getCreationDateImageBuffer(creationDate),
   ]);
 
-  const finalImage = await getImageFromBuffers(
-    buffers,
-    outputWidth,
-    outputHeight,
-    'png',
-  );
+  const finalImage = await getImageFromBuffers(buffers, outputWidth, outputHeight, 'png');
 
   const fileId = `lemonade-passport-${passportId}`;
   const imageUrl = await uploadImage(`${fileId}.png`, finalImage);

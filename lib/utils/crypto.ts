@@ -14,6 +14,7 @@ import { TRPCClientError } from '@trpc/client';
 import ZugramaPassport from '$lib/abis/ZuGramaPassport.json';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { AbstractPassportABI } from '$lib/abis/AbstractPassport';
+import MusicNft from '$lib/abis/MusicNft.json';
 
 export const ERC20Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC20));
 export const ERC721Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC721));
@@ -23,6 +24,7 @@ export const LemonheadNFTContract = new ethers.Contract(ethers.ZeroAddress, new 
 export const LemonadePassportContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonadePassport.abi));
 export const ZugramaPassportContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ZugramaPassport.abi));
 export const AbstractPassportContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(AbstractPassportABI));
+export const MusicNftContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(MusicNft.abi));
 
 export function getListChains() {
   return getDefaultStore().get(listChainsAtom);

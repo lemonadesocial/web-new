@@ -7,12 +7,15 @@ import * as Sentry from '@sentry/nextjs';
 import { Button, modal, ModalContent, toast } from '$lib/components/core';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { appKit, useAppKitProvider } from '$lib/utils/appkit';
-import { formatError, writeContract, AbstractPassportContract } from '$lib/utils/crypto';
+import { AbstractPassportContract, formatError, writeContract } from '$lib/utils/crypto';
 import { SignTransactionModal } from '$lib/components/features/modals/SignTransaction';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
-import { PASSPORT_CHAIN_ID } from '../../utils';
 import { chainsMapAtom } from '$lib/jotai';
+import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { AbstractPassportABI } from '$lib/abis/AbstractPassport';
+
+import { PASSPORT_CHAIN_ID } from '../utils';
+import { ContractAddressFieldMapping, PASSPORT_PROVIDER } from '../types';
 
 type MintData = {
   signature: string;
@@ -23,9 +26,11 @@ type MintData = {
 export function MintPassportModal({
   onComplete,
   mintData,
+  provider,
 }: {
   onComplete: (txHash: string, tokenId: string) => void;
   mintData: MintData;
+  provider: PASSPORT_PROVIDER;
 }) {
   const { walletProvider } = useAppKitProvider('eip155');
   const chainsMap = useAtomValue(chainsMapAtom);
@@ -37,7 +42,8 @@ export function MintPassportModal({
         throw new Error('Mint data not found');
       }
 
-      const contractAddress = chainsMap[PASSPORT_CHAIN_ID]?.vinyl_nation_passport_contract_address;
+      const contrackKey = ContractAddressFieldMapping[provider] as keyof Chain;
+      const contractAddress = chainsMap[PASSPORT_CHAIN_ID]?.[contrackKey];
 
       if (!contractAddress) {
         throw new Error('Passport contract address not configured');
@@ -47,7 +53,7 @@ export function MintPassportModal({
 
       const transaction = await writeContract(
         AbstractPassportContract,
-        contractAddress,
+        contractAddress as string,
         walletProvider as Eip1193Provider,
         'mint',
         [mintData.metadata, mintData.price, mintData.signature],
@@ -86,7 +92,6 @@ export function MintPassportModal({
       modal.close();
       onComplete(txHash, tokenId);
     } catch (error: any) {
-      console.log(error);
       Sentry.captureException(error, {
         extra: {
           walletInfo: appKit.getWalletInfo(),
@@ -110,7 +115,6 @@ export function MintPassportModal({
     return (
       <SignTransactionModal
         onClose={() => modal.close()}
-        title="Confirm Payment"
         description="Please sign the transaction to pay gas fees & claim your Passport."
         onSign={handleMint}
         loading={true}
@@ -119,20 +123,22 @@ export function MintPassportModal({
   }
 
   return (
-    <ModalContent>
+    <ModalContent
+      icon={
+        <img
+          src={`${ASSET_PREFIX}/assets/images/passports/${provider}-passport-mini.png`}
+          className="w-full object-cover aspect-[45/28]"
+        />
+      }
+      className="**:data-icon:bg-transparent!"
+      onClose={() => modal.close()}
+    >
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between items-center">
-          <img
-            src={`${ASSET_PREFIX}/assets/images/passports/vinyl-nation-passport-citizen-mini.png`}
-            className="object-cover w-[90px]"
-          />
-          <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
-        </div>
         <div className="flex flex-col gap-2">
-          <p className="text-lg">Claim Your Vinyl Nation Passport</p>
+          <p className="text-lg">Claim Your Passport</p>
           <p className="text-sm">
-            You're just one step away from owning your unique & personalized Vinyl Nation Passport. Mint & claim your
-            on-chain identity.
+            You're just one step away from owning your unique & personalized Passport. Mint & claim your on-chain
+            identity.
           </p>
         </div>
 

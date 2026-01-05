@@ -55,7 +55,7 @@ const getAvatarPlaceholderBuffer = async () => {
   const ctx = canvas.getContext('2d');
   assert.ok(ctx);
 
-  ctx.fillStyle = '#C7FE42';
+  // ctx.fillStyle = '#C7FE42';
   ctx.fillRect(avatarOffset.x, avatarOffset.y, avatarSize, avatarSize);
 
   return canvas.toBuffer('image/png');
@@ -63,6 +63,12 @@ const getAvatarPlaceholderBuffer = async () => {
 
 const getBoilerplateImageBuffer = async () => {
   return getFileImageBuffer(path.join(process.cwd(), 'data', 'vinyl-nation-passport', 'boilerplate.png'));
+};
+
+const getBoilerplatePlaceholderImageBuffer = async () => {
+  return getFileImageBuffer(
+    path.join(process.cwd(), 'data', 'vinyl-nation-passport-placeholder', 'boilerplate-placeholder.png'),
+  );
 };
 
 const getUsernameImageBuffer = async (username: string) => {
@@ -122,7 +128,7 @@ export const getMintVinylNationPassportImage = async (avatarImageUrl?: string, u
   if (avatarImageUrl) {
     layerPromises.unshift(getAvatarImageBuffer(avatarImageUrl));
   } else {
-    layerPromises.unshift(getAvatarPlaceholderBuffer());
+    layerPromises.unshift(getBoilerplatePlaceholderImageBuffer());
   }
 
   const buffers = await Promise.all(layerPromises);

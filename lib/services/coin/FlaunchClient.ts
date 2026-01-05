@@ -745,4 +745,23 @@ export class FlaunchClient {
       pendingETH: position.pendingEth_,
     };
   }
+
+  async isInFairLaunchWindow(): Promise<boolean> {
+    const positionManager = await this.getPositionManagerContract();
+    const fairLaunchAddress = await positionManager.read('fairLaunch');
+
+    if (!isAddress(fairLaunchAddress)) {
+      throw new Error('Invalid fair launch address');
+    }
+
+    const fairLaunchContract = this.drift.contract({
+      abi: FairLaunch,
+      address: fairLaunchAddress,
+    });
+
+    const poolId = await this.getPoolId();
+    return fairLaunchContract.read('inFairLaunchWindow', {
+      _poolId: poolId,
+    });
+  }
 }

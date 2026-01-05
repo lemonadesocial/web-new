@@ -48,7 +48,7 @@ function ImagePreview({ className }: { className?: string }) {
     return (
       <div className={twMerge('relative', className)}>
         <img
-          src={`${ASSET_PREFIX}/assets/images/passports/vinyl-nation-passport-citizen-mini.png`}
+          src={`${ASSET_PREFIX}/assets/images/passports/vinyl-nation-passport-mini.png`}
           className="w-full object-cover"
         />
       </div>
@@ -61,7 +61,7 @@ function ImagePreview({ className }: { className?: string }) {
   return (
     <div className={twMerge('relative', className)}>
       <img
-        src={`${ASSET_PREFIX}/assets/images/passports/vinyl-nation-passport-citizen-mini.png`}
+        src={`${ASSET_PREFIX}/assets/images/passports/vinyl-nation-passport-mini.png`}
         className="w-full object-cover"
       />
     </div>
