@@ -100,6 +100,10 @@ export class StakingManagerClient {
     return (this.contract as ReadWriteContract<StakingManagerABI>).write('stake', { _amount: amount });
   }
 
+  async unstake(amount: bigint): Promise<string> {
+    return (this.contract as ReadWriteContract<StakingManagerABI>).write('unstake', { _amount: amount });
+  }
+
   async userPositions(user: string): Promise<{ amount: bigint; timelockedUntil: bigint; ethRewardsPerTokenSnapshotX128: bigint; ethOwed: bigint }> {
     return this.contract.read('userPositions', { user });
   }

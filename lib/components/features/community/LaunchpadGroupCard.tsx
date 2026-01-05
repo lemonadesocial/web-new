@@ -148,9 +148,9 @@ function StakingCard({ stakingInfo }: { stakingInfo: StakingInfo }) {
       </div>
 
       <div className="p-4">
-      {activeTab === 'claim' && <ClaimTab stakingInfo={stakingInfo} />}
-      {activeTab === 'deposit' && <DepositTab stakingInfo={stakingInfo} />}
-      {activeTab === 'withdraw' && <WithdrawTab stakingInfo={stakingInfo} />}
+        {activeTab === 'claim' && <ClaimTab stakingInfo={stakingInfo} />}
+        {activeTab === 'deposit' && <DepositTab stakingInfo={stakingInfo} />}
+        {activeTab === 'withdraw' && <WithdrawTab stakingInfo={stakingInfo} />}
       </div>
     </div>
   );
@@ -354,9 +354,93 @@ function DepositTab({ stakingInfo }: { stakingInfo: StakingInfo }) {
 }
 
 function WithdrawTab({ stakingInfo }: { stakingInfo: StakingInfo }) {
+  const { chain, stakingManagerAddress, stakingToken, tokenSymbol, tokenDecimals, positionAmount } = stakingInfo;
+  const { apr, isLoading: isLoadingAPR } = useStakingAPR(chain, stakingManagerAddress);
+  const formattedPositionAmount = formatUnits(positionAmount, tokenDecimals);
+
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
+
+  const positionNumber = parseFloat(formattedPositionAmount || '0');
+  const withdrawNumber = parseFloat(withdrawAmount || '0');
+
+  const handleWithdraw = async () => {
+    if (!chain || !stakingToken) {
+      toast.error('Missing required data');
+      return;
+    }
+
+    const walletProvider = appKit.getProvider('eip155');
+    const userAddress = appKit.getAddress();
+
+    if (!walletProvider || !userAddress) {
+      toast.error('Wallet isn\'t fully connected yet. Please try again in a moment.');
+      return;
+    }
+
+    const amount = parseUnits(withdrawAmount, tokenDecimals);
+
+    setIsWithdrawing(true);
+
+    const provider = new BrowserProvider(walletProvider as Eip1193Provider);
+    const signer = await provider.getSigner();
+
+    const stakingClient = StakingManagerClient.getInstance(chain, stakingManagerAddress, signer);
+    const txHash = await stakingClient.unstake(amount);
+    await provider.waitForTransaction(txHash);
+
+    modal.open(TxnConfirmedModal, {
+      props: {
+        title: 'Withdraw Successful',
+        description: `You've successfully withdrawn ${withdrawAmount} ${tokenSymbol}.`,
+      }
+    });
+
+    setWithdrawAmount('');
+    setIsWithdrawing(false);
+  };
+
+  const handleWithdrawClick = () => {
+    handleWithdraw().catch((error) => {
+      Sentry.captureException(error);
+      toast.error(formatError(error));
+      setIsWithdrawing(false);
+    });
+  };
+
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-tertiary text-center py-8">Withdraw tab coming soon</p>
+      <div className="space-y-1.5">
+        <div className="flex justify-between items-center">
+          <p className="text-sm">Deposited</p>
+          <p className="text-sm">{formattedPositionAmount} {tokenSymbol}</p>
+        </div>
+        <div className="flex justify-between items-center">
+          <p className="text-sm">APR</p>
+          <p className="text-sm">{isLoadingAPR ? '...' : `${apr}%`}</p>
+        </div>
+      </div>
+
+      <div className="rounded-sm bg-primary/8 py-2 px-3 space-y-1">
+        <p className="text-sm text-tertiary">Withdraw {tokenSymbol}</p>
+        <input
+          type="text"
+          placeholder="0.00"
+          value={withdrawAmount}
+          onChange={(e) => setWithdrawAmount(e.target.value)}
+          className="text-2xl bg-transparent border-none outline-none w-full text-tertiary"
+          disabled={isWithdrawing}
+        />
+      </div>
+
+      <Button
+        variant="secondary"
+        className="w-full"
+        onClick={handleWithdrawClick}
+        disabled={!withdrawAmount || withdrawNumber <= 0 || withdrawNumber > positionNumber || isWithdrawing}
+      >
+        Withdraw
+      </Button>
     </div>
   );
 }
