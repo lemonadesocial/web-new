@@ -1,5 +1,25 @@
 # Changelog
 
+## [8.42.0](https://github.com/lemonadesocial/web-new/compare/v8.41.0...v8.42.0) (2026-01-06)
+
+
+### Features
+
+* claim revenue ([9c97e53](https://github.com/lemonadesocial/web-new/commit/9c97e53c538da240ff39052746600ba72a2b8618))
+* deposit coin ([92ffc4e](https://github.com/lemonadesocial/web-new/commit/92ffc4e8e40ea7a4c685c2f710386bb5032be08f))
+* deposit in group ([218462b](https://github.com/lemonadesocial/web-new/commit/218462beaf04aac0ad60f4dc2a346f1a61e94b1c))
+* optimize launchpad ([dabf153](https://github.com/lemonadesocial/web-new/commit/dabf153bb086592bf84c790cc2ce8fa085620df4))
+* remove test ([3041588](https://github.com/lemonadesocial/web-new/commit/3041588682a6a1b026a85e90051dfea8e09d89af))
+* update config fonts ([6a431ce](https://github.com/lemonadesocial/web-new/commit/6a431ce6aec8ce949b9bd4aa224ec8b0667f9be1))
+* update fonts ([230c3aa](https://github.com/lemonadesocial/web-new/commit/230c3aa45f77dc7bc3e15ce2800d5c22fb85bec6))
+* update zugrama template ([61b8808](https://github.com/lemonadesocial/web-new/commit/61b8808195fa20b1b4936435aa35b8ab0447b231))
+* withdraw coin ([06a0f0b](https://github.com/lemonadesocial/web-new/commit/06a0f0b25e02d90b00e9443acf2c07ebe25a2a1d))
+
+
+### Bug Fixes
+
+* wrong path ([69f3f67](https://github.com/lemonadesocial/web-new/commit/69f3f67b19af05125a9eb0d933a30a5b46a0c04e))
+
 ## [8.41.0](https://github.com/lemonadesocial/web-new/compare/v8.40.2...v8.41.0) (2026-01-05)
 
 
