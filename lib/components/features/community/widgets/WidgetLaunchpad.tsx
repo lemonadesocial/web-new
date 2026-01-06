@@ -22,7 +22,6 @@ import { useAtomValue } from 'jotai';
 import { chainsMapAtom } from '$lib/jotai';
 import { formatNumber } from '$lib/utils/number';
 import clsx from 'clsx';
-import { StakingManagerClient } from '$lib/services/coin/StakingManagerClient';
 
 interface Props {
   space: Space;

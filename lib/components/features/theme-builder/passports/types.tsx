@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { PASSPORT_PROVIDER } from '$lib/components/features/passports/config';
 import { WidgetPassport } from '../../community/widgets/WidgetPassport';
 import { WidgetCommunityCoin } from '../../community/widgets/WidgetCommunityCoin';
 import { WidgetMusicNFT } from '../../community/widgets/WidgetMusicNFT';
@@ -9,7 +8,8 @@ import { WidgetConnectWallet } from '../../community/widgets/WidgetConnectWallet
 import { WidgetLaunchpad } from '../../community/widgets/WidgetLaunchpad';
 import { WidgetCollectibles } from '../../community/widgets/WidgetCollectibles';
 import { ThemeValues } from '../store';
-import { Space } from '$lib/graphql/generated/backend/graphql';
+import { WidgetPlaces } from '../../community/widgets/WidgetPlaces';
+import { PASSPORT_PROVIDER } from '../../passports/types';
 
 type WidgetKey =
   | 'passport'
@@ -18,7 +18,8 @@ type WidgetKey =
   | 'upcoming-events'
   | 'wallet'
   | 'launchpad'
-  | 'collectibles';
+  | 'collectibles'
+  | 'places';
 
 export type PassportWidget = {
   key: WidgetKey;
@@ -26,6 +27,7 @@ export type PassportWidget = {
   static?: boolean;
   component?: React.FC;
   props?: Record<string, string | number>;
+  enable?: boolean;
 };
 
 export type PassportTemplate = ThemeValues & {
@@ -45,4 +47,5 @@ export const MAPPING_Widgets: { [key: string]: React.FC<any> } = {
   wallet: WidgetConnectWallet,
   launchpad: WidgetLaunchpad,
   collectibles: WidgetCollectibles,
+  places: WidgetPlaces,
 };

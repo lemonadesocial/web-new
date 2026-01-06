@@ -37,11 +37,11 @@ export function WidgetUpcomingEvents({ space }: Props) {
       canSubscribe={false}
       title="Events"
       className="col-span-2"
-      onClick={() => router.push('/events')}
+      onClick={() => router.push(`/s/${space.slug || space._id}/events`)}
     >
       <div className="p-6 space-y-6">
         <div>
-          <h3 className="text-2xl font-semibold">12</h3>
+          <h3 className="text-2xl font-semibold">{upcomingEvents.length}</h3>
           <p className="text-tertiary">Upcoming</p>
         </div>
         {upcomingEvents.map((item) => (
