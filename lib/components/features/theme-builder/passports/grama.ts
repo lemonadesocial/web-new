@@ -82,8 +82,8 @@ const gramaPassportConfig: PassportTemplate = {
   font_body: 'default',
   variables: {
     font: {
-      '--font-body': '--font-orbitron-bold',
-      '--font-title': 'var(--font-orbitron)',
+      '--font-body': 'var(--font-orbitron)',
+      '--font-title': 'var(--font-orbitron-bold)',
     },
     custom: {
       '--color-accent-500': '#388F6C',
