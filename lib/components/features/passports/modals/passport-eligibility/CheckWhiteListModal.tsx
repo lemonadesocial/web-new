@@ -7,7 +7,7 @@ import { useAppKitAccount, useAppKit } from '$lib/utils/appkit';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
 import { SuccessModal } from '$lib/components/features/modals/SuccessModal';
 import { Card, ModalContent } from '$lib/components/core';
-import { AbstractPassportContract, formatWallet, ZugramaPassportContract } from '$lib/utils/crypto';
+import { AbstractPassportContract, formatWallet } from '$lib/utils/crypto';
 import { useClient } from '$lib/graphql/request';
 import { CanMintPassportDocument, Chain, PassportProvider } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom } from '$lib/jotai';

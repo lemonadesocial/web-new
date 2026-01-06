@@ -3,7 +3,6 @@ import React from 'react';
 import Link from 'next/link';
 
 import { Button, Checkbox, modal, ModalContent } from '$lib/components/core';
-import { usePassportContext } from '../provider';
 import { PassportModalConfig } from '../types';
 
 export function BeforeMintPassportModal({

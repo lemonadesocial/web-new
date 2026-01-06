@@ -92,11 +92,12 @@ export function MintPassportModal({
       modal.close();
       onComplete(txHash, tokenId);
     } catch (error: any) {
-      Sentry.captureException(error, {
-        extra: {
-          walletInfo: appKit.getWalletInfo(),
-        },
-      });
+      console.log(error);
+      // Sentry.captureException(error, {
+      //   extra: {
+      //     walletInfo: appKit.getWalletInfo(),
+      //   },
+      // });
       toast.error(formatError(error));
       setStatus('none');
     }

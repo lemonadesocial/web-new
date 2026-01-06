@@ -8,7 +8,7 @@ import { isPrivateIP } from 'range_check';
 import { getMintNftData } from '$lib/services/lemonhead';
 import { calculateLookHash, Filter, getFinalTraits, validateTraits, type Trait } from '$lib/services/lemonhead/core';
 import { getMintLemonadePassportData, getMintPassportImage } from '$lib/services/passports/lemonade';
-import { getMintZuGramaPassportImage } from '$lib/services/passports/zugrama';
+import { getMintZuGramaPassportData, getMintZuGramaPassportImage } from '$lib/services/passports/zugrama';
 
 import { publicProcedure, router } from './trpc';
 import lemonheads, { BuildQueryParams } from './lemonheads';
@@ -16,8 +16,17 @@ import { LemonHeadsLayer } from './lemonheads/types';
 import { getMintVinylNationPassportImage } from '$lib/services/passports/vinyl-nation';
 import { getMintDripNationPassportImage } from '$lib/services/passports/drip-nation';
 import { getMintFestivalNationPassportImage } from '$lib/services/passports/festival-nation';
+
+import { getData } from '$lib/services/passports/common/admin';
+import { getMintVinylNationPassportData } from '$lib/services/passports/vinyl-nation';
+import { getMintFestivalNationPassportData } from '$lib/services/passports/festival-nation';
+import { getMintDripNationPassportData } from '$lib/services/passports/drip-nation';
+import { PassportProvider } from '$lib/graphql/generated/backend/graphql';
+
 import { request } from '$lib/services/nft/admin';
 import { pinata } from '$lib/utils/pinata';
+import { throws } from 'assert';
+import { TRPCError } from '@trpc/server';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -149,6 +158,60 @@ export const appRouter = router({
           .with('festival-nation', () => getMintFestivalNationPassportImage(avatarImageUrl, username))
           .with('drip-nation', () => getMintDripNationPassportImage(avatarImageUrl, username))
           .otherwise(() => {});
+      }),
+    getMintData: publicProcedure
+      .input(
+        z.object({
+          provider: z.string(),
+          wallet: z.string(),
+          username: z.string().optional(),
+          fluffleTokenId: z.string().optional(),
+          auth: z.string().optional(),
+        avatarImageUrl: z.string().optional()
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const { provider, wallet, username, fluffleTokenId, auth, avatarImageUrl } = input;
+        const p: Record<string, PassportProvider> = {
+          mint: PassportProvider.Lemonade,
+          zugrama: PassportProvider.Zugrama,
+          'vinyl-nation': PassportProvider.VinylNation,
+          'festival-nation': PassportProvider.FestivalNation,
+          'drip-nation': PassportProvider.DripNation,
+        };
+        const passportData = await getData({ provider: p[provider], fluffleTokenId, wallet, auth });
+
+        if (!passportData) {
+        throw new TRPCError({
+        code: 'BAD_REQUEST', // Corresponds to HTTP 400
+        message: 'Unable to get passport data.',
+      });
+      }
+
+        const getMintData = match(p[provider])
+          .with(PassportProvider.Lemonade, () => getMintLemonadePassportData)
+          .with(PassportProvider.Zugrama, () => getMintZuGramaPassportData)
+          .with(PassportProvider.VinylNation, () => getMintVinylNationPassportData)
+          .with(PassportProvider.FestivalNation, () => getMintFestivalNationPassportData)
+          .with(PassportProvider.DripNation, () => getMintDripNationPassportData)
+          .otherwise(() => null);
+
+     if (!getMintData) {
+        throw new TRPCError({
+        code: 'BAD_REQUEST', // Corresponds to HTTP 400
+        message: 'Provider does not support.',
+      });
+      }
+
+
+
+      return  getMintData(
+      username,
+      passportData.passportNumber,
+      wallet,
+      avatarImageUrl,
+    );
+
       }),
   },
   usernameApproval: publicProcedure

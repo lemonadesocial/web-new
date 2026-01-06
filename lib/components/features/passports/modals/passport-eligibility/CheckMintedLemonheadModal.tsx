@@ -5,13 +5,20 @@ import { useRouter } from 'next/navigation';
 import { Button, ModalContent, modal, Skeleton } from '$lib/components/core';
 import { formatWallet } from '$lib/utils/crypto';
 import { useAppKit, useAppKitAccount } from '$lib/utils/appkit';
-import { usePassport } from '$lib/hooks/usePassport';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { ASSET_PREFIX } from '$lib/utils/constants';
+import { usePassports } from '$lib/hooks/usePassports';
+import { PASSPORT_PROVIDER } from '../../types';
 
-export function CheckMintedLemonheadModal({ onContinue }: { onContinue: () => void }) {
+export function CheckMintedLemonheadModal({
+  provider,
+  onContinue,
+}: {
+  provider: PASSPORT_PROVIDER;
+  onContinue: () => void;
+}) {
   const router = useRouter();
-  const { data: passport, loading: loadingPassport } = usePassport();
+  const { data: passport, loading: loadingPassport } = usePassports(provider);
   const { data: lemonhead, loading: loadingLemonhead } = useLemonhead();
   const { address } = useAppKitAccount();
   const { open } = useAppKit();

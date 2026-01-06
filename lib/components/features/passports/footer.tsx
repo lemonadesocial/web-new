@@ -27,6 +27,7 @@ export function Footer() {
     if (state.enabled?.shouldMintedLemonhead) {
       modal.open(PassportEligibilityModal.CheckMintedLemonheadModal, {
         props: {
+          provider: state.provider,
           onContinue: () => {
             canAccess();
           },
