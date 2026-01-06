@@ -870,6 +870,13 @@ query GetEventGuestDetailedInfo($event: MongoID!, $email: String) {
         _id
         title
       }
+      cancelled_by
+      cancelled_by_expanded {
+        _id
+        display_name
+        name
+      }
+      cancelled_at
     }
     ticket {
       _id
@@ -878,6 +885,25 @@ query GetEventGuestDetailedInfo($event: MongoID!, $email: String) {
       type_expanded {
         _id
         title
+      }
+      upgrade_history {
+        from_type
+        from_type_expanded {
+          _id
+          title
+        }
+        to_type
+        to_type_expanded {
+          _id
+          title     
+        }
+        updated_at
+        updated_by
+        updated_by_expanded {
+          _id
+          display_name
+          name
+        }
       }
     }
     user {
@@ -914,11 +940,31 @@ query GetEventGuestDetailedInfo($event: MongoID!, $email: String) {
     join_request {
       _id
       state
+      created_at
+      decided_at
+      decided_by_expanded {
+        _id
+        display_name
+        name
+      }
+      requested_tickets {
+        count
+        ticket_type
+      }
     }
     application {
       answer
       answers
       question
+    }
+    invitation {
+      _id
+      created_at
+      inviters_expanded {
+        _id
+        display_name
+        name
+      }
     }
   }
 }
@@ -1481,5 +1527,66 @@ query getTicketStatistics($id: MongoID!) {
       ticket_type_title
       count
     }
+  }
+}
+
+query GetEventTicketSoldChartData($event: MongoID!, $start: DateTimeISO!, $end: DateTimeISO!, $types: [MongoID!]) {
+  getEventTicketSoldChartData(event: $event, start: $start, end: $end, types: $types) {
+    items {
+      created_at
+      type
+    }
+  }
+}
+
+query GetEventViewChartData($start: DateTimeISO!, $end: DateTimeISO!, $event: MongoID!) {
+  getEventViewChartData(start: $start, end: $end, event: $event) {
+    items {
+      date
+    }
+  }
+}
+
+query GetEventViewStats($event: MongoID!, $ranges: [DateRangeInput!]!) {
+  getEventViewStats(event: $event, ranges: $ranges) {
+    counts
+  }
+}
+
+query Views($event: MongoID!, $limit: Int!) {
+  getEventLatestViews(event: $event, limit: $limit) {
+    views {
+      date
+      geoip_country
+      geoip_region
+      geoip_city
+      user_agent
+    }
+  }
+}
+
+query GetEventTopViews($event: MongoID!, $cityLimit: Int!, $sourceLimit: Int!) {
+  getEventTopViews(event: $event, city_limit: $cityLimit, source_limit: $sourceLimit) {
+    by_city {
+      count
+      geoip_city
+      geoip_country
+      geoip_region
+    }
+    by_source {
+      count
+      utm_source
+    }
+    total
+  }
+}
+
+subscription SubscribeEventLatestViews($event: MongoID!) {
+  subscribeEventLatestViews(event: $event) {
+    date
+    geoip_city
+    geoip_country
+    geoip_region
+    user_agent
   }
 }

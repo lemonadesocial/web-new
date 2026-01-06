@@ -25,7 +25,7 @@ let generates: Record<string, Types.ConfiguredOutput | Types.ConfiguredPlugin[]>
 //   };
 // }
 
-const METAVERSE_SCHEMA = process.env.NEXT_PUBLIC_METAVERSE_HTTP_URL;
+const METAVERSE_SCHEMA = process.env.te;
 if (METAVERSE_SCHEMA) {
   generates['./lib/graphql/generated/metaverse/'] = {
     schema: METAVERSE_SCHEMA,
@@ -47,11 +47,32 @@ if (WALLET_SCHEMA) {
   };
 }
 
-const LEMONHEADS_SCHEMA = process.env.NEXT_PUBLIC_LEMONHEADS_INDEXER_URL;
-if (LEMONHEADS_SCHEMA) {
-  generates['./lib/graphql/generated/lemonheads/'] = {
-    schema: LEMONHEADS_SCHEMA,
-    documents: ['./lib/graphql/gql/lemonheads/*.gql'],
+// const LEMONHEADS_SCHEMA = process.env.NEXT_PUBLIC_LEMONHEADS_INDEXER_URL;
+// if (LEMONHEADS_SCHEMA) {
+//   generates['./lib/graphql/generated/lemonheads/'] = {
+//     schema: LEMONHEADS_SCHEMA,
+//     documents: ['./lib/graphql/gql/lemonheads/*.gql'],
+//     preset: 'client',
+//     plugins: [],
+//     documentTransforms: [addTypenameSelectionDocumentTransform],
+//   };
+// }
+
+const COIN_INDEXER = process.env.NEXT_PUBLIC_COIN_INDEXER_URL;
+if (COIN_INDEXER) {
+  generates['./lib/graphql/generated/coin/'] = {
+    schema: COIN_INDEXER,
+    documents: ['./lib/graphql/gql/coin/*.gql'],
+    preset: 'client',
+    plugins: [],
+  }
+}
+
+const USERNAME_INDEXER = process.env.NEXT_PUBLIC_USERNAME_INDEXER;
+if (USERNAME_INDEXER) {
+  generates['./lib/graphql/generated/username/'] = {
+    schema: USERNAME_INDEXER,
+    documents: ['./lib/graphql/gql/username/*.gql'],
     preset: 'client',
     plugins: [],
     documentTransforms: [addTypenameSelectionDocumentTransform],

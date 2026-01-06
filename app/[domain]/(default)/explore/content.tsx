@@ -19,7 +19,7 @@ import { isMobile } from 'react-device-detect';
 
 export function Content() {
   return (
-    <div className="flex flex-col gap-6 py-8">
+    <div className="flex flex-col gap-6 md:p-8">
       <PageSection title="Browse by Category">
         <BrowseByCategories />
       </PageSection>

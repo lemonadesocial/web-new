@@ -1,0 +1,44 @@
+query ListLaunchpadGroups($address: String, $search: String, $space: MongoID) {
+  listLaunchpadGroups(address: $address, search: $search, space: $space) {
+    items {
+      chain_id
+      address
+      cover_photo
+      cover_photo_expanded {
+        _id
+        key
+        bucket
+      }
+      cover_photo_url
+      implementation_address
+      name
+      description
+    }
+  }
+}
+
+mutation AddLaunchpadCoin($input: LaunchpadCoinInput!) {
+  addLaunchpadCoin(input: $input) {
+    address
+  }
+}
+
+mutation AddLaunchpadGroup($input: AddLaunchpadGroupInput!) {
+  addLaunchpadGroup(input: $input) {
+    address
+  }
+}
+
+query Items($skip: Int, $limit: Int, $address: String) {
+  listLaunchpadCoins(skip: $skip, limit: $limit, address: $address) {
+    items {
+      handle_telegram
+      handle_discord
+      handle_farcaster
+      handle_twitter
+      address
+      owner
+      website
+    }
+  }
+}

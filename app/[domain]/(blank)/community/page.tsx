@@ -54,17 +54,3 @@ export default async function Page({ params }: Props) {
     </div>
   );
 }
-
-// const prefetchData = async (space: Space) => {
-//   const client = getClient();
-//
-//   const [subSpaces, spaceTags] = await Promise.all([
-//     client.query({ query: GetSubSpacesDocument, variables: { id: space._id } }),
-//     client.query({ query: GetSpaceTagsDocument, variables: { space: space._id } }),
-//   ]);
-//
-//   return {
-//     subSpaces: (subSpaces.data?.getSubSpaces || []) as PublicSpace[],
-//     spaceTags: (spaceTags.data?.listSpaceTags || []) as SpaceTag[],
-//   };
-// };

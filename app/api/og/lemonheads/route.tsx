@@ -1,8 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
-import { fetchAccount } from '@lens-protocol/client/actions';
 import { ethers } from 'ethers';
-import { PublicClient, evmAddress, mainnet, testnet } from '@lens-protocol/client';
 
 import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
 import { LEMONHEAD_CHAIN_ID, LEMONHEAD_COLORS } from '$lib/components/features/lemonheads/mint/utils';
@@ -25,19 +23,18 @@ const fetchChain = async () => {
  *
  * 1. fetch and find chain
  * 2. fetch contract address - extract image data from uri
- * 3. fetch lens account - username, bio, etc.
- * 4. generate final image
+ * 3. generate final image
  *
  */
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const tokenId = searchParams.get('tokenId') || '';
-  const address = searchParams.get('address') || '';
+  const username = searchParams.get('username') || '';
   const color = searchParams.get('color') || 'violet';
   const portrait = searchParams.get('portrait') === 'true' ? true : false;
   const download = searchParams.get('download') === 'true' ? true : false;
 
-  if (!tokenId || !address) {
+  if (!tokenId) {
     return new Response(`Error: Bad Request!`, { status: 400 });
   }
 
@@ -47,7 +44,7 @@ export async function GET(req: NextRequest) {
     return new Response(`Error: Chain does not support!`, { status: 400 });
   }
 
-  let username, bio, image;
+  let image;
 
   try {
     const contractAddress = chain.lemonhead_contract_address;
@@ -63,26 +60,12 @@ export async function GET(req: NextRequest) {
     const res = await fetch(tokenUri);
     const data = await res.json();
     image = data.image;
-
-    const client = PublicClient.create({
-      environment: process.env.NEXT_PUBLIC_APP_ENV === 'production' ? mainnet : testnet,
-    });
-
-    const result = await fetchAccount(client, { address: evmAddress(address) });
-
-    if (result.isErr()) {
-      return new Response(`Error: Not found!`, { status: 404 });
-    }
-
-    const account = result.value;
-    username = account?.username?.localName;
-    bio = account?.metadata?.bio;
   } catch (err) {
     console.log(err);
     return new Response(`Error: Something went wrong!`, { status: 500 });
   }
 
-  const props = { color, image, portrait, username, tokenId, bio };
+  const props = { color, image, portrait, username, tokenId };
 
   return new ImageResponse(download ? <DownloadImageLink {...props} /> : <PreviewImageLink {...props} />, {
     width: download ? 1920 : 1200,
@@ -240,7 +223,7 @@ function PreviewImageLink({ color, image, portrait, username, tokenId, bio }: an
   );
 }
 
-function DownloadImageLink({ color, image, portrait, username, tokenId, bio }: any) {
+function DownloadImageLink({ color, image, portrait, username, tokenId }: any) {
   return (
     <div
       style={{
@@ -369,7 +352,7 @@ function DownloadImageLink({ color, image, portrait, username, tokenId, bio }: a
                 WebkitBoxOrient: 'vertical',
               }}
             >
-              {bio || 'Citizen of the United Stands of Lemonade - a nation shaped by creators and communities.'}
+              Citizen of the United Stands of Lemonade - a nation shaped by creators and communities.
             </p>
           </div>
 

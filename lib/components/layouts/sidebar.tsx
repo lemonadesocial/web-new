@@ -59,6 +59,7 @@ const Sidebar = () => {
       { icon: 'icon-home', path: '/', label: 'Home' },
       { icon: 'icon-newspaper', path: '/timelines', label: 'Timelines' },
       { icon: 'icon-explore', path: '/explore', label: 'Explore' },
+      // { icon: 'icon-token', path: '/tokens', label: 'Tokens' },
       // { icon: 'icon-swipe', path: '/swipe', label: 'Swipe & Match' },  // FIXME: add back when lemonheads  are live
       // { icon: 'icon-trophy', path: '/leaderboard', label: 'Leaderboard' },
       { icon: 'icon-passport', path: '/lemonheads', label: 'LemonHeads Zone' },
@@ -124,6 +125,7 @@ const Sidebar = () => {
 const actions = {
   event: { icon: 'icon-ticket text-accent-400', title: 'Event', subtitle: 'Virtual & IRL' },
   community: { icon: 'icon-community text-alert-400', title: 'Community', subtitle: 'Build your space' },
+  coin: { icon: 'icon-token text-warning-400', title: 'Coin', subtitle: 'Launch your crypto token' },
   post: { icon: 'icon-edit-square text-[#2DD4BF]!', title: 'Post', subtitle: 'Share updates' },
 };
 
@@ -139,6 +141,7 @@ export function CreatingModal() {
 
       case 'community':
       case 'event':
+      case 'coin':
         router.push(`/create/${key}`);
         modal.close();
         break;
@@ -165,7 +168,7 @@ export function CreatingModal() {
           <p className="text-secondary text-sm">What are we creating today?</p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-2">
+        <div className="grid md:grid-cols-2 gap-2">
           {Object.entries(actions).map(([key, item]) => (
             <Card.Root key={key} className="flex-1" onClick={() => handleClick(key)}>
               <Card.Content className="py-1.5 px-3 md:py-3.5 md:px-4 flex items-center md:items-start md:flex-col gap-3">

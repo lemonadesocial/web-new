@@ -1,14 +1,23 @@
 import { z } from 'zod';
 import orgs from 'open-graph-scraper';
+import { match } from 'ts-pattern';
+import net from 'net';
+import { lookup } from 'dns/promises';
+import { isPrivateIP } from 'range_check';
 
 import { getMintNftData } from '$lib/services/lemonhead';
 import { calculateLookHash, Filter, getFinalTraits, validateTraits, type Trait } from '$lib/services/lemonhead/core';
-import { getMintLemonadePassportData } from '$lib/services/passports/lemonade';
+import { getMintLemonadePassportData, getMintPassportImage } from '$lib/services/passports/lemonade';
 import { getMintZuGramaPassportImage } from '$lib/services/passports/zugrama';
 
 import { publicProcedure, router } from './trpc';
 import lemonheads, { BuildQueryParams } from './lemonheads';
 import { LemonHeadsLayer } from './lemonheads/types';
+import { getMintVinylNationPassportImage } from '$lib/services/passports/vinyl-nation';
+import { getMintDripNationPassportImage } from '$lib/services/passports/drip-nation';
+import { getMintFestivalNationPassportImage } from '$lib/services/passports/festival-nation';
+import { request } from '$lib/services/nft/admin';
+import { pinata } from '$lib/utils/pinata';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -47,14 +56,30 @@ export const appRouter = router({
   },
   openGraph: {
     extractUrl: publicProcedure.input(z.object({ url: z.string().optional() })).query(async ({ input }) => {
-      if (!input.url) return { error: null, result: null, html: null };
-
-      const userAgent = 'MyBot';
-      // 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36';
+      if (!input.url) return { error: 'Invalid URL', result: null, html: null };
 
       try {
+        const url = new URL(input.url);
+        const host = url.hostname;
+
+        const errorMessage = 'The address is not allowed';
+
+        if (net.isIP(host)) {
+          console.log('Literal IP addresses are not allowed.');
+          return { error: errorMessage, result: null, html: null };
+        }
+
+        const { address } = await lookup(host);
+
+        if (isPrivateIP(address)) {
+          return { error: errorMessage, result: null, html: null };
+        }
+
+        const userAgent = 'MyBot';
+        // 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36';
+
         const { error, result, html } = await orgs({
-          url: input.url,
+          url: url.href,
           fetchOptions: { headers: { 'user-agent': userAgent } },
         });
 
@@ -91,6 +116,7 @@ export const appRouter = router({
       const { wallet, lemonadeUsername, fluffleTokenId } = input;
       return getMintLemonadePassportData(wallet, lemonadeUsername, fluffleTokenId);
     }),
+  // TODO: check and remove this func after test dynamic mint passport
   zugrama: {
     getImage: publicProcedure
       .input(
@@ -104,6 +130,77 @@ export const appRouter = router({
         return getMintZuGramaPassportImage(avatarImageUrl, username);
       }),
   },
+  passport: {
+    getImage: publicProcedure
+      .input(
+        z.object({
+          provider: z.string(),
+          avatarImageUrl: z.string().optional(),
+          username: z.string().optional(),
+        }),
+      )
+      .query(async ({ input }) => {
+        const { avatarImageUrl, username, provider } = input;
+
+        return match(provider)
+          .with('mint', () => getMintPassportImage(avatarImageUrl, username))
+          .with('zugrama', () => getMintZuGramaPassportImage(avatarImageUrl, username))
+          .with('vinyl-nation', () => getMintVinylNationPassportImage(avatarImageUrl, username))
+          .with('festival-nation', () => getMintFestivalNationPassportImage(avatarImageUrl, username))
+          .with('drip-nation', () => getMintDripNationPassportImage(avatarImageUrl, username))
+          .otherwise(() => {});
+      }),
+  },
+  usernameApproval: publicProcedure
+    .input(z.object({ username: z.string(), tokenUri: z.string(), wallet: z.string() }))
+    .output(
+      z.object({
+        signature: z.string(),
+        price: z.string(),
+        currency: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const res = await request<{ signature: string; price: string; currency: string }>(
+        `/lemonade-username/approval`,
+        'POST',
+        input,
+      );
+
+      if (!res) throw new Error('An error occurred while fetching the approval signature.');
+
+      return res;
+    }),
+  uploadUsernameMetadata: publicProcedure
+    .input(z.object({ username: z.string() }))
+    .output(z.object({ tokenUri: z.string() }))
+    .mutation(async ({ input }) => {
+      const { username } = input;
+      const metadata = {
+        name: username,
+        description: 'Lemonade Username',
+        attributes: [
+          {
+            trait_type: 'Created Date',
+            display_type: 'date',
+            value: Date.now(),
+          },
+          {
+            trait_type: 'Length',
+            display_type: 'number',
+            value: username.length,
+          },
+        ],
+      };
+
+      const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
+      const metadataFile = new File([metadataBlob], 'metadata.json', { type: 'application/json' });
+
+      const { cid: metadataCid } = await pinata.upload.public.file(metadataFile);
+      const tokenUri = `ipfs://${metadataCid}`;
+
+      return { tokenUri };
+    }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -1,0 +1,107 @@
+query PoolSwap($where: PoolSwap_bool_exp, $orderBy: [PoolSwap_order_by!], $limit: Int, $offset: Int) {
+  PoolSwap(where: $where, order_by: $orderBy, limit: $limit, offset: $offset) {
+    blockNumber
+    blockTimestamp
+    transactionHash
+    flAmount0
+    flAmount1
+    flFee0
+    flFee1
+    id
+    ispAmount0
+    ispAmount1
+    ispFee0
+    ispFee1
+    poolId
+    uniAmount0
+    uniAmount1
+    uniFee0
+    uniFee1
+  }
+}
+
+query MemecoinHolder($where: MemecoinHolder_bool_exp, $orderBy: [MemecoinHolder_order_by!], $limit: Int, $offset: Int) {
+  MemecoinHolder(where: $where, order_by: $orderBy, limit: $limit, offset: $offset) {
+    balance
+    chainId
+    holder
+    id
+    memecoin
+  }
+}
+
+query TradeVolume($limit: Int, $offset: Int, $where: TradeVolume_bool_exp, $orderBy: [TradeVolume_order_by!]) {
+  TradeVolume(limit: $limit, offset: $offset, where: $where, order_by: $orderBy) {
+    chainId
+    date
+    id
+    memecoin
+    tradeCount
+    updatedAt
+    volumeETH
+    volumeMemecoin
+  }
+}
+
+query PoolCreated($limit: Int, $offset: Int, $orderBy: [PoolCreated_order_by!], $where: PoolCreated_bool_exp) {
+  PoolCreated(limit: $limit, offset: $offset, order_by: $orderBy, where: $where) {
+    blockNumber
+    blockTimestamp
+    chainId
+    currencyFlipped
+    id
+    latestMarketCapDate
+    latestMarketCapETH
+    memecoin
+    memecoinTreasury
+    paramsCreator
+    paramsCreatorFeeAllocation
+    paramsFeeCalculatorParams
+    paramsInitialPriceParams
+    poolId
+    previousMarketCapDate
+    previousMarketCapETH
+    tokenId
+    transactionHash
+    tokenURI
+  }
+}
+
+query MemecoinMetadata($where: MemecoinMetadata_bool_exp, $limit: Int, $offset: Int) {
+  MemecoinMetadata(where: $where, limit: $limit, offset: $offset) {
+    chainId
+    holdersCount
+    id
+    memecoin
+  }
+}
+
+query FairLaunch($where: FairLaunch_bool_exp, $limit: Int, $offset: Int, $orderBy: [FairLaunch_order_by!]) {
+  FairLaunch(where: $where, limit: $limit, offset: $offset, order_by: $orderBy) {
+    burnedAmount
+    chainId
+    closeAt
+    endAt
+    id
+    poolId
+    startAt
+  }
+}
+
+query StakingManagerToken($where: StakingManagerToken_bool_exp) {
+  StakingManagerToken(where: $where) {
+    tokenId
+  }
+}
+
+query StakingSummary($where: StakingSummary_bool_exp) {
+  StakingSummary(where: $where) {
+    chainId
+    date
+    id
+    stakingManagerAddress
+    totalDeposited
+    totalFees
+    updatedAt
+  }
+}

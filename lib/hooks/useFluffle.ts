@@ -1,44 +1,89 @@
 import { useQuery } from '@tanstack/react-query';
-import { ethers } from 'ethers';
+import { createDrift } from '@gud/drift';
 import { mainnet } from 'viem/chains';
 
+import { usernameClient } from '$lib/graphql/request/instances';
+import { TokenOwnerDocument } from '$lib/graphql/generated/username/graphql';
+import { getFetchableUrl } from '$lib/utils/metadata';
 import { useAppKitAccount } from '$lib/utils/appkit';
-import { ERC721Contract } from '$lib/utils/crypto';
 
 const FLUFFLE_CONTRACT_ADDRESS = '0x4E502Ab1Bb313B3C1311eb0D11B31a6B62988b86';
 
-async function fetchFluffleData(address: string) {
-  const data = { tokenId: 0, image: '', hasToken: false };
+const ERC721_TOKEN_URI_ABI = [
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'tokenId',
+        type: 'uint256',
+      },
+    ],
+    name: 'tokenURI',
+    outputs: [
+      {
+        internalType: 'string',
+        name: '',
+        type: 'string',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const;
 
-  try {
-    const provider = new ethers.JsonRpcProvider(mainnet.rpcUrls.default.http[0]);
-    const contract = ERC721Contract.attach(FLUFFLE_CONTRACT_ADDRESS).connect(provider) as ethers.Contract;
+async function fetchFluffleTokenUri(address: string) {
+  const { data } = await usernameClient.query({
+    query: TokenOwnerDocument,
+    variables: {
+      where: {
+        owner: {
+          _eq: address.toLowerCase(),
+        },
+        tokenAddress: {
+          _eq: FLUFFLE_CONTRACT_ADDRESS.toLowerCase(),
+        },
+        chainId: {
+          _eq: mainnet.id.toString(),
+        },
+      },
+    },
+    fetchPolicy: 'network-only',
+  });
 
-    const balance = await contract.getFunction('balanceOf')(address);
-    console.log(balance)
-    
-    if (balance > 0) {
-      // data.hasToken = true;
-      // const tokenId = await contract.getFunction('tokenOfOwnerByIndex')(address, 0);
-      // data.tokenId = Number(tokenId);
-      
-      // if (data.tokenId > 0) {
-      //   const tokenUri = await contract.getFunction('tokenURI')(data.tokenId);
-      //   const res = await fetch(tokenUri);
-      //   const jsonData = await res.json();
-      //   data.image = jsonData.image;
-      // }
-    }
-  } catch (error) {
-    console.error('Error fetching Fluffle data:', error);
+  if (data?.TokenOwner && data.TokenOwner.length > 0) {
+    const firstToken = data.TokenOwner[0];
+    const tokenId = firstToken.tokenId.toString();
+
+    const drift = createDrift({
+      rpcUrl: mainnet.rpcUrls.default.http[0],
+    });
+
+    const tokenUri = await drift.read({
+      abi: ERC721_TOKEN_URI_ABI,
+      address: FLUFFLE_CONTRACT_ADDRESS as `0x${string}`,
+      fn: 'tokenURI',
+      args: {
+        tokenId: BigInt(tokenId),
+      },
+    });
+
+    const fetchableUrl = getFetchableUrl(tokenUri as string);
+    const response = await fetch(fetchableUrl.href);
+    const metadata = await response.json();
+    const name = metadata.name as string;
+    const image = metadata.image as string;
+
+    return {
+      name,
+      image,
+    };
   }
 
-  return data;
+  return null;
 }
 
 export function useFluffle() {
-  // const { address } = useAppKitAccount();
-  const address = '0xc78042a8b84fd7446c05f24add517731c638fc5f';
+  const { address } = useAppKitAccount();
 
   const {
     data,
@@ -46,10 +91,14 @@ export function useFluffle() {
     error,
   } = useQuery({
     queryKey: ['fluffle', address],
-    queryFn: () => fetchFluffleData(address!),
+    queryFn: () => fetchFluffleTokenUri(address!),
     enabled: !!address,
   });
 
-  return { data, loading, error };
+  return { 
+    data: data ? { name: data.name, image: data.image } : null,
+    loading, 
+    error 
+  };
 }
 

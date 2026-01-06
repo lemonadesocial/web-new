@@ -505,6 +505,11 @@ main {
   width: 100%;
 }
 
+.page:has([data-coin-template='true']) {
+  max-width: 75rem;
+  width: 100%;
+}
+
 .font-title {
   font-family: var(--font-title);
 }
