@@ -62,7 +62,11 @@ export function WidgetConnectWallet({ space, title, subtitle }: Props) {
             <p className="text-tertiary">{subtitle}</p>
           </div>
 
-          <Button variant="primary" onClick={() => modal.open(ConnectWallet, { props: { onConnect: () => {} } })}>
+          <Button
+            variant="primary"
+            className="w-fit rounded-full mx-auto"
+            onClick={() => modal.open(ConnectWallet, { props: { onConnect: () => {} } })}
+          >
             Connect Wallet
           </Button>
         </div>

@@ -28,9 +28,10 @@ type Props = {
   customTitle?: (title: string) => React.ReactElement;
   hideHeroSection?: boolean;
   locked?: React.ReactElement;
+  showEvents?: boolean;
 };
 
-export function Community({ initData, hideHeroSection = false }: Props) {
+export function Community({ initData, hideHeroSection = false, showEvents }: Props) {
   const hideSubspace = true;
 
   const { data: dataGetSpace } = useQuery(GetSpaceDocument, {
@@ -79,7 +80,7 @@ export function Community({ initData, hideHeroSection = false }: Props) {
         </>
       )}
 
-      {space.theme_name && PASSPORT_PROVIDERS.includes(space.theme_name as PASSPORT_PROVIDER) ? (
+      {space.theme_name && PASSPORT_PROVIDERS.includes(space.theme_name as PASSPORT_PROVIDER) && !showEvents ? (
         <WidgetContainer space={space} />
       ) : (
         <CommunityEventsWithCalendar space={space} />
