@@ -20,6 +20,14 @@ export function useSpaceMenu({ space, isMobile }: { space: Space; isMobile?: boo
         { icon: 'icon-bar-chart', path: 'leaderboards', label: 'Leaderboard' },
       ];
 
+      if (space.nft_enabled) {
+        menu.push({
+          icon: 'icon-music-fill',
+          path: 'music',
+          label: 'Music',
+        });
+      }
+
       if (isMobile) {
         menu = [
           { icon: 'icon-home', path: '', label: 'Home' },
@@ -41,6 +49,14 @@ export function useSpaceMenu({ space, isMobile }: { space: Space; isMobile?: boo
           icon: 'icon-newsfeed',
           path: 'timeline',
           label: 'Timeline',
+        });
+      }
+
+      if (space.nft_enabled) {
+        menu.push({
+          icon: 'icon-music-fill',
+          path: 'music',
+          label: 'Music',
         });
       }
 

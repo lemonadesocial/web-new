@@ -19,5 +19,9 @@ export default async function FeaturedHubs({ params }: Props) {
   const { data: subSpacesData } = await client.query({ query: GetSubSpacesDocument, variables: { id: space._id } });
   const subSpaces = subSpacesData?.getSubSpaces || [];
 
-  return <SubCommunity subSpaces={subSpaces as PublicSpace[]} />;
+  return (
+    <div className="page mx-auto px-4 xl:px-0 pt-6">
+      <SubCommunity subSpaces={subSpaces as PublicSpace[]} />
+    </div>
+  );
 }

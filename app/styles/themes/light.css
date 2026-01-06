@@ -3,6 +3,7 @@
   color-scheme: light;
 
   --color-background: var(--color-woodsmoke-50);
+  --color-page-background-overlay: rgba(247, 247, 248, 0.8);
 
   --color-primary: #000000;
   --color-primary-invert: #ffffff;

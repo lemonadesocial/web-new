@@ -14,16 +14,18 @@ async function Layout({ children }: React.PropsWithChildren) {
   if (!space) return notFound();
 
   return (
-    <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-12 pb-28 md:pb-20 w-full">
-      <div className="flex flex-col gap-5 flex-1">
-        <HeroSectionProfile space={space} />
-        <ProfileInfoSection />
+    <div className="page mx-auto px-4 xl:px-0 pt-6 w-full max-w-[1080px]">
+      <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-12 pb-28 md:pb-20 w-full">
+        <div className="flex flex-col gap-5 flex-1">
+          <HeroSectionProfile space={space} />
+          <ProfileInfoSection />
 
-        <Tabs />
-        {children}
+          <Tabs />
+          {children}
+        </div>
+
+        <LemonHeadsHubRightCol spaceId={space._id} options={{ nft: true, upcomingEvents: true, leaderboard: false }} />
       </div>
-
-      <LemonHeadsHubRightCol spaceId={space._id} options={{ nft: true, upcomingEvents: true, leaderboard: false }} />
     </div>
   );
 }

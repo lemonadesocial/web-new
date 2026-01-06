@@ -46,5 +46,11 @@ export default async function Page({ params }: Props) {
 
   if (!space) return notFound();
 
-  return <Community initData={{ space }} />;
+  // const { subSpaces, spaceTags } = await prefetchData(space);
+
+  return (
+    <div className="page mx-auto px-4 xl:px-0 pt-6">
+      <Community initData={{ space }} />
+    </div>
+  );
 }

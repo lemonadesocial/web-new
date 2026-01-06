@@ -1,11 +1,10 @@
-import { Spacer } from '$lib/components/core';
 import { CouncilMembers } from '$lib/components/features/lemonheads/CouncilMembers';
 import { LemonHeadsTreasury } from '$lib/components/features/lemonheads/LemonHeadsTreasury';
 import { JourneySection, SubTitleSection, TitleSection } from '../shared';
 
 function Page() {
   return (
-    <div>
+    <div className="page mx-auto px-4 xl:px-0 pt-6 w-full max-w-[1080px]">
       <div className="flex flex-col gap-2">
         <TitleSection className="text-3xl">Treasury</TitleSection>
         <SubTitleSection>Shared vault for the community. Create & vote on proposals to access funds.</SubTitleSection>

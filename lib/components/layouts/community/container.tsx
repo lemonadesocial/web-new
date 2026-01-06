@@ -26,11 +26,7 @@ export function CommunityContainer({ space, children }: React.PropsWithChildren 
           <Header title={space?.title} />
         </div>
         <Sidebar space={space} />
-        <div>
-          <div className="lg:pl-[97px] pt-[64px]">
-            <div className="page mx-auto px-4 xl:px-0 pt-6">{children}</div>
-          </div>
-        </div>
+        <div className="lg:pl-[97px] pt-[64px]">{children}</div>
         <Footer space={space} />
       </LoadMoreWrapper>
     </main>
