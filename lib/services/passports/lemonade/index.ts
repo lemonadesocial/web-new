@@ -81,7 +81,7 @@ const getBoilerplateImageBuffer = async () => {
 };
 
 const getBoilerplatePlaceholderImageBuffer = async () => {
-  const filePath = path.join(process.cwd(), 'data', 'passport-placeholder', 'lemonade-passport-placeholder.png');
+  const filePath = path.join(process.cwd(), 'data', 'passport', 'lemonade-passport-placeholder.png');
   return fs.readFileSync(filePath);
 };
 
