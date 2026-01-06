@@ -21,6 +21,7 @@ import {
 import { formatNumber } from '$lib/utils/number';
 import { WidgetContent } from './WidgetContent';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
+import { PASSPORT_PROVIDER } from '../../passports/types';
 
 interface Props {
   space: Space;
@@ -30,11 +31,14 @@ interface Props {
 
 export function WidgetCommunityCoin({ space, title, subtitle }: Props) {
   const { stakingToken, chain } = useStakingCoin(space._id);
+  const [state] = useTheme() as [PassportTemplate, React.Dispatch<ThemeBuilderAction>];
 
   return (
     <WidgetContent space={space} canSubscribe={!stakingToken && !chain} title="Community Coin" className="col-span-2">
-      {stakingToken && chain && (
+      {stakingToken && chain ? (
         <CommunityCoinContent chain={chain} address={stakingToken} title={title} subtitle={subtitle} />
+      ) : (
+        <LaunchSoon title={title} subtitle={subtitle} provider={state.template.provider} />
       )}
     </WidgetContent>
   );
@@ -61,23 +65,27 @@ function CommunityCoinContent({
 
   return match(isInFlaunch)
     .with(false, () => <CommunityCoin chain={chain} address={address} />)
-    .otherwise(() => (
-      <div className="p-6 flex flex-col gap-5">
-        <div className="absolute top-0 left-0 right-0">
-          <img
-            src={`${ASSET_PREFIX}/assets/images/passports/templates/${state.template.provider}-community-coin.png`}
-            className="w-full h-full"
-          />
-        </div>
+    .otherwise(() => <LaunchSoon title={title} subtitle={subtitle} provider={state.template.provider} />);
+}
 
-        <Spacer className="h-[148px]" />
-
-        <div className="text-center">
-          <h3 className="text-xl font-semibold">{title}</h3>
-          <p className="text-tertiary">{subtitle}</p>
-        </div>
+function LaunchSoon({ title, subtitle, provider }: { title: string; subtitle: string; provider: PASSPORT_PROVIDER }) {
+  return (
+    <div className="p-6 flex flex-col gap-5">
+      <div className="absolute top-0 left-0 right-0">
+        <img
+          src={`${ASSET_PREFIX}/assets/images/passports/templates/${provider}-community-coin.png`}
+          className="w-full h-full"
+        />
       </div>
-    ));
+
+      <Spacer className="h-[148px]" />
+
+      <div className="text-center">
+        <h3 className="text-xl font-semibold">{title}</h3>
+        <p className="text-tertiary">{subtitle}</p>
+      </div>
+    </div>
+  );
 }
 
 function CommunityCoin({ chain, address }: { chain: Chain; address: string }) {

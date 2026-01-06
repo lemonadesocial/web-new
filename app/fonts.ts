@@ -19,6 +19,18 @@ const classDisplayBold = localFont({
   variable: '--font-class-display-bold',
 });
 
+const orbitron = localFont({
+  display: 'swap',
+  src: '../public/assets/fonts/Orbitron-Medium.ttf',
+  variable: '--font-orbitron',
+});
+
+const orbitronBold = localFont({
+  display: 'swap',
+  src: '../public/assets/fonts/Orbitron-Bold.ttf',
+  variable: '--font-orbitron-bold',
+});
+
 // title fonts
 
 const aktura = localFont({
@@ -166,6 +178,9 @@ export default twMerge(
   generalSans.variable,
   classDisplay.variable,
   classDisplayBold.variable,
+  orbitron.variable,
+  orbitronBold.variable,
+  //title
   aktura.variable,
   array.variable,
   sarpanch.variable,
