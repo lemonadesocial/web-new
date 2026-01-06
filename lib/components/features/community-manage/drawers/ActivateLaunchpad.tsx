@@ -1,16 +1,21 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { useForm, Controller } from 'react-hook-form';
 
 import { Button, Input, InputField, Menu, MenuItem, Segment, Toggle, toast, ErrorText, modal, drawer } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
+import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { useAppKit, useAppKitAccount } from '$lib/utils/appkit';
 import { CreateGroupParams, SECONDS_PER_MONTH } from '$lib/services/token-launch-pad';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 import { CreateGroupModal } from '$lib/components/features/community-manage/modals/CreateGroupModal';
 import { formatWallet } from '$lib/utils/crypto';
+import { useQuery } from '$lib/graphql/request';
+import { PoolCreatedDocument, Order_By, PoolCreated } from '$lib/graphql/generated/coin/graphql';
+import { coinClient } from '$lib/graphql/request/instances';
+import { useTokenData } from '$lib/hooks/useCoin';
 
 type ActivateLaunchpadForm = {
   coinAddress: string;
@@ -21,6 +26,15 @@ type ActivateLaunchpadForm = {
   coinCreatorsFee: number | null;
   membersFee: number | null;
   stakeDurationValue: number;
+};
+
+type CoinSelectionMode = 'select' | 'contract';
+
+type SelectedCoin = {
+  address: string;
+  name: string;
+  symbol: string;
+  imageUrl?: string;
 };
 
 export function ActivateLaunchpad() {
@@ -50,6 +64,56 @@ export function ActivateLaunchpad() {
   const coinCreatorsFee = watch('coinCreatorsFee');
   const membersFee = watch('membersFee');
   const [isEditingFees, setIsEditingFees] = useState(false);
+
+  const [coinSelectionMode, setCoinSelectionMode] = useState<CoinSelectionMode>('select');
+  const [selectedCoin, setSelectedCoin] = useState<SelectedCoin | null>(null);
+  const [coinSearchQuery, setCoinSearchQuery] = useState('');
+  const [tokenDataCache, setTokenDataCache] = useState<Record<string, { name: string; symbol: string; imageUrl?: string }>>({});
+
+  const { data: userCoinsData, loading: isLoadingUserCoins } = useQuery(
+    PoolCreatedDocument,
+    {
+      variables: {
+        orderBy: [{ blockTimestamp: Order_By.Desc }],
+        where: address ? {
+          paramsCreator: { _eq: address.toLowerCase() },
+          chainId: launchChain ? { _eq: Number(launchChain.chain_id) } : undefined,
+        } : undefined,
+        limit: 20,
+      },
+      skip: !address,
+    },
+    coinClient,
+  );
+
+  const userCoins = userCoinsData?.PoolCreated || [];
+
+  const filteredCoins = useMemo(() => {
+    if (!coinSearchQuery.trim()) return userCoins;
+    const query = coinSearchQuery.toLowerCase();
+    return userCoins.filter((coin: PoolCreated) => {
+      const addressMatch = coin.memecoin.toLowerCase().includes(query);
+      const cachedData = tokenDataCache[coin.memecoin.toLowerCase()];
+      if (cachedData) {
+        const symbolMatch = cachedData.symbol.toLowerCase().includes(query);
+        const nameMatch = cachedData.name.toLowerCase().includes(query);
+        return addressMatch || symbolMatch || nameMatch;
+      }
+      return addressMatch;
+    });
+  }, [userCoins, coinSearchQuery, tokenDataCache]);
+
+  const handleSelectCoin = (coin: PoolCreated, tokenData: { name: string; symbol: string; imageUrl?: string } | null) => {
+    const selected: SelectedCoin = {
+      address: coin.memecoin,
+      name: tokenData?.name || 'Unknown',
+      symbol: tokenData?.symbol || 'N/A',
+      imageUrl: tokenData?.imageUrl,
+    };
+    setSelectedCoin(selected);
+    setValue('coinAddress', coin.memecoin);
+    setCoinSelectionMode('select');
+  };
 
   useEffect(() => {
     register('ownerAddress', { required: 'Community owner wallet is required' });
@@ -204,12 +268,113 @@ export function ActivateLaunchpad() {
 
         <div className="flex flex-col gap-1.5">
           <p className="text-sm">Coin Contract Address</p>
-          <Input
-            placeholder="0x000000..."
-            {...register('coinAddress', { required: 'Enter your community coin contract address to continue' })}
-            variant="outlined"
-            error={Boolean(errors.coinAddress)}
-          />
+          <input type="hidden" {...register('coinAddress', { required: 'Select or enter your community coin contract address to continue' })} />
+          {coinSelectionMode === 'contract' ? (
+            <Input
+              placeholder="0x000000..."
+              value={watch('coinAddress')}
+              onChange={(e) => setValue('coinAddress', e.target.value)}
+              variant="outlined"
+              error={Boolean(errors.coinAddress)}
+            />
+          ) : (
+            <Menu.Root placement="bottom-start">
+              <Menu.Trigger className="w-full">
+                {selectedCoin ? (
+                  <div className="flex items-center gap-2.5 py-2 px-3.5 rounded-sm bg-primary/8 cursor-pointer">
+                    {selectedCoin.imageUrl ? (
+                      <img src={selectedCoin.imageUrl} alt={selectedCoin.name} className="size-5 rounded-xs object-cover border border-card-border" />
+                    ) : (
+                      <div className="size-5 rounded-xs bg-primary/8 border border-card-border flex items-center justify-center">
+                        <i className="icon-token size-4 text-tertiary" />
+                      </div>
+                    )}
+                    <div className="flex gap-2 items-center flex-1">
+                      <p>{selectedCoin.symbol}</p>
+                      <p className="text-tertiary">{formatWallet(selectedCoin.address)}</p>
+                    </div>
+                    <i className="icon-chevron-down text-tertiary size-4" />
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3 py-2 px-3 rounded-sm border border-card-border bg-card cursor-pointer">
+                    <p className="flex-1 text-left text-tertiary">Select a coin</p>
+                    <i className="icon-chevron-down text-tertiary size-4" />
+                  </div>
+                )}
+              </Menu.Trigger>
+              <Menu.Content className="p-0 w-full min-w-[320px]">
+                {({ toggle }) => (
+                  <div className="flex flex-col">
+                    <input
+                      type="text"
+                      placeholder="Search coins"
+                      value={coinSearchQuery}
+                      onChange={(e) => setCoinSearchQuery(e.target.value)}
+                      className="w-full py-2 px-3 border-0 border-b border-card-border bg-card outline-none font-medium"
+                    />
+                    <div className="p-1">
+                      <MenuItem
+                        onClick={() => {
+                          window.open('/create/coin', '_blank');
+                          toggle();
+                        }}
+                        className="px-2 py-1.5"
+                      >
+                        <div className="flex items-center gap-2.5 w-full">
+                          <i className="icon-plus size-4 text-tertiary" />
+                          <p className="flex-1 text-sm text-secondary">Create New Coin</p>
+                          <i className="icon-arrow-outward size-4 text-tertiary" />
+                        </div>
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          setCoinSelectionMode('contract');
+                          toggle();
+                        }}
+                        className="px-2 py-1.5"
+                      >
+                        <div className="flex items-center gap-2.5 w-full">
+                          <i className="icon-edit-square size-4 text-tertiary" />
+                          <p className="flex-1 text-sm text-secondary">Add by Contract Address</p>
+                        </div>
+                      </MenuItem>
+                    </div>
+                    {filteredCoins.length > 0 && (
+                      <div className="border-t border-card-border p-1">
+                        <p className="px-2 py-1 text-sm text-tertiary">Your Coins</p>
+                        <div className="max-h-[200px] overflow-y-auto">
+                          {filteredCoins.map((coin: PoolCreated) => (
+                            <CoinListItem
+                              key={coin.id}
+                              coin={coin}
+                              chain={launchChain}
+                              onSelect={(tokenData) => {
+                                handleSelectCoin(coin, tokenData);
+                                toggle();
+                              }}
+                              onTokenDataLoad={(tokenData) => {
+                                if (tokenData) {
+                                  setTokenDataCache((prev) => ({
+                                    ...prev,
+                                    [coin.memecoin.toLowerCase()]: tokenData,
+                                  }));
+                                }
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {isLoadingUserCoins && (
+                      <div className="flex items-center justify-center py-4">
+                        <i className="icon-loader animate-spin size-5 text-tertiary" />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </Menu.Content>
+            </Menu.Root>
+          )}
           {errors.coinAddress?.message && <ErrorText message={errors.coinAddress.message} />}
           <p className="text-sm text-tertiary mt-0.5">This coin can be staked to earn the Group's ETH rewards.</p>
         </div>
@@ -359,7 +524,7 @@ export function ActivateLaunchpad() {
               {(() => {
                 const total = (ownerFee ?? 0) + (coinCreatorsFee ?? 0) + (membersFee ?? 0);
                 const isValid = Math.abs(total - 100) < 0.01;
-                
+
                 if (!isValid) {
                   return (
                     <p className="text-error text-sm">
@@ -452,5 +617,60 @@ export function ActivateLaunchpad() {
         </Button>
       </Pane.Footer>
     </Pane.Root>
+  );
+}
+
+type CoinListItemProps = {
+  coin: PoolCreated;
+  chain: Chain | undefined;
+  onSelect: (tokenData: { name: string; symbol: string; imageUrl?: string } | null) => void;
+  onTokenDataLoad?: (tokenData: { name: string; symbol: string; imageUrl?: string } | null) => void;
+};
+
+function CoinListItem({ coin, chain, onSelect, onTokenDataLoad }: CoinListItemProps) {
+  const { tokenData, isLoadingTokenData } = useTokenData(chain, coin.memecoin, coin.tokenURI || undefined);
+
+  useEffect(() => {
+    if (tokenData && onTokenDataLoad) {
+      onTokenDataLoad({
+        name: tokenData.name,
+        symbol: tokenData.symbol,
+        imageUrl: tokenData.metadata?.imageUrl,
+      });
+    }
+  }, [tokenData, onTokenDataLoad]);
+
+  return (
+    <div
+      className="flex items-center gap-2 px-3 py-1.5 cursor-pointer hover:bg-primary/8"
+      onClick={() => onSelect(tokenData ? {
+        name: tokenData.name,
+        symbol: tokenData.symbol,
+        imageUrl: tokenData.metadata?.imageUrl,
+      } : null)}
+    >
+      {isLoadingTokenData ? (
+        <div className="size-4 rounded-sm bg-primary/8 border border-card-border animate-pulse" />
+      ) : tokenData?.metadata?.imageUrl ? (
+        <img src={tokenData.metadata.imageUrl} alt={tokenData.name} className="size-4 rounded-sm object-cover border border-card-border" />
+      ) : (
+        <div className="size-4 rounded-sm bg-primary/8 border border-card-border flex items-center justify-center">
+          <i className="icon-token size-3 text-tertiary" />
+        </div>
+      )}
+      <div className="flex-1 min-w-0">
+        {isLoadingTokenData ? (
+          <>
+            <div className="h-4 w-16 bg-primary/8 rounded animate-pulse" />
+            <div className="h-3 w-32 bg-primary/8 rounded mt-1 animate-pulse" />
+          </>
+        ) : (
+          <>
+            <p className="text-sm text-secondary truncate">{tokenData?.symbol || 'Unknown'}</p>
+            <p className="text-sm text-tertiary truncate">{coin.memecoin}</p>
+          </>
+        )}
+      </div>
+    </div>
   );
 }

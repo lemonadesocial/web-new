@@ -18,12 +18,12 @@ export function TxnConfirmedModal({
         <p className="text-lg">{title}</p>
         <p className="text-sm text-secondary break-words">{description}</p>
       </div>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="flex gap-2">
         {txUrl && (
           <Button
             variant="tertiary"
             onClick={() => window.open(txUrl, '_blank')}
-            className="w-full"
+            className="w-full flex-1"
           >
             View Txn.
           </Button>)
@@ -31,7 +31,7 @@ export function TxnConfirmedModal({
         <Button
           variant="secondary"
           onClick={() => modal.close()}
-          className="w-full"
+          className="w-full flex-1"
         >
           Done
         </Button>

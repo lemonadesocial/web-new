@@ -10,7 +10,7 @@ import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTrans
 import { SuccessModal } from '$lib/components/features/modals/SuccessModal';
 import { ErrorModal } from '$lib/components/features/modals/ErrorModal';
 import { useAppKitProvider } from '$lib/utils/appkit';
-import { Chain, AddLaunchpadGroupDocument } from '$lib/graphql/generated/backend/graphql';
+import { Chain, AddLaunchpadGroupDocument, ListLaunchpadGroupsDocument } from '$lib/graphql/generated/backend/graphql';
 import { CreateGroupParams, parseLogs } from '$lib/services/token-launch-pad';
 import { formatError } from '$lib/utils/crypto';
 import ZapContractABI from '$lib/abis/token-launch-pad/FlaunchZap.json';
@@ -32,7 +32,16 @@ export function CreateGroupModal({ params, launchChain, onSuccess }: CreateGroup
   const [status, setStatus] = useState<CreateGroupStatus>('idle');
   const [error, setError] = useState('');
   const [managerAddress, setManagerAddress] = useState('');
-  const [addLaunchpadGroup] = useMutation(AddLaunchpadGroupDocument);
+  const [addLaunchpadGroup] = useMutation(AddLaunchpadGroupDocument, {
+    onComplete: (client) => {
+      if (space?._id) {
+        client.refetchQuery({
+          query: ListLaunchpadGroupsDocument,
+          variables: { space: space._id },
+        });
+      }
+    },
+  });
 
   const getSigner = async () => {
     const provider = new BrowserProvider(walletProvider as Eip1193Provider);
@@ -93,6 +102,7 @@ export function CreateGroupModal({ params, launchChain, onSuccess }: CreateGroup
         variables: {
           input: {
             address: manager,
+            chain_id: Number(launchChain.chain_id),
             implementation_address: stakingManagerImplementation,
             name: space?.title || '',
             description: space?.description,

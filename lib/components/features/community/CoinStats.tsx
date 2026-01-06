@@ -37,6 +37,8 @@ export function CoinStats({ launchpadGroup }: { launchpadGroup: LaunchpadGroup }
       <StatItem title="Owner" value={owner ? formatWallet(owner) : 'N/A'} loading={isLoadingOwner} />
       <StatItem title="APR" value={apr !== null ? `${apr}%` : 'N/A'} loading={isLoadingAPR} />
       <StatItem title="TVL" value={tvl || 'N/A'} loading={isLoadingTVL} />
+      <StatItem title="Earned" value={'$0'} />
+      <StatItem title="Members" value={'0'} />
     </div>
   );
 }
