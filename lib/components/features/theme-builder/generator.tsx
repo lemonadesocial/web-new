@@ -94,6 +94,13 @@ export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: Rea
             />
           )}
 
+          {data.theme === 'passport' && (data.config?.image || data.template?.image) && (
+            <div
+              className="min-w-full min-h-full fixed inset-0 aspect-video bg-cover! bg-no-repeat"
+              style={{ background: `url(${data.config?.image?.url || data.template?.image})` }}
+            />
+          )}
+
           {data.config?.effect?.type === 'video' && data?.config?.effect?.url && (
             <div key={data.config.effect.name}>
               {!isMobile ? (

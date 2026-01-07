@@ -30,25 +30,21 @@ export function useSpaceMenu({ space, isMobile }: { space: Space; isMobile?: boo
     } else {
       menu = [
         {
-          icon: 'icon-house-party',
+          icon: !space.theme_name || space.theme_name === 'default' ? 'icon-house-party' : 'icon-home',
           path: '',
           label: 'Home',
         },
       ];
+
+      if (space.theme_name && space.theme_name !== 'default') {
+        menu.push({ icon: 'icon-ticket', path: 'events', label: 'Events' });
+      }
 
       if (space.lens_feed_id) {
         menu.push({
           icon: 'icon-newsfeed',
           path: 'timeline',
           label: 'Timeline',
-        });
-      }
-
-      if (space.sub_spaces) {
-        menu.push({
-          icon: 'icon-sub-hubs',
-          path: 'featured-hubs',
-          label: 'Featured Hubs',
         });
       }
 
@@ -63,8 +59,16 @@ export function useSpaceMenu({ space, isMobile }: { space: Space; isMobile?: boo
             icon: 'icon-rocket',
             path: 'launchpad',
             label: 'Launchpad',
-          }
+          },
         );
+      }
+
+      if (space.sub_spaces) {
+        menu.push({
+          icon: 'icon-sub-hubs',
+          path: 'featured-hubs',
+          label: 'Featured Hubs',
+        });
       }
     }
 

@@ -6,7 +6,7 @@ import React from 'react';
 import linkify from 'linkify-it';
 
 import { Button, Spacer } from '$lib/components/core';
-import { ASSET_PREFIX, LEMONADE_DOMAIN } from '$lib/utils/constants';
+import { ASSET_PREFIX } from '$lib/utils/constants';
 import { FollowSpaceDocument, Space, UnfollowSpaceDocument } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { useMutation } from '$lib/graphql/request';
@@ -23,7 +23,7 @@ interface HeroSectionProps {
   renderTitle?: () => React.ReactElement;
 }
 
-export function HeroSection({ space, renderTitle }: HeroSectionProps) {
+export function HeroSection({ space }: HeroSectionProps) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
   const signIn = useSignIn();
@@ -55,9 +55,7 @@ export function HeroSection({ space, renderTitle }: HeroSectionProps) {
 
   return (
     <>
-      <div
-        className={clsx('relative w-full overflow-hidden', space?.image_cover ? 'h-[154px] md:h-96' : 'h-24 md:h-36')}
-      >
+      <div className="pb-4">
         {space?.image_cover ? (
           <>
             <img
@@ -81,57 +79,60 @@ export function HeroSection({ space, renderTitle }: HeroSectionProps) {
           <div className="absolute inset-0 top-0 left-0 aspect-[3.5/1] object-cover rounded-md w-full bg-blend-darken"></div>
         )}
 
-        <div className="absolute bottom-1.5 md:bottom-4 size-20 md:size-32 rounded-md overflow-hidden">
-          <img
-            className="w-full h-full outline outline-tertiary/4 rounded-md"
-            src={communityAvatar(space)}
-            alt={space?.title}
-            loading="lazy"
-          />
-          {!space?.image_avatar_expanded && (
+        <div className={clsx('flex items-end justify-between', space?.image_cover ? '-mt-[30px] md:-mt-[68px]' : '')}>
+          <div className="size-20 md:size-32 rounded-md overflow-hidden">
             <img
-              src={`${ASSET_PREFIX}/assets/images/blank-avatar.svg`}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 icon-blank-avatar w-[62%] h-[62%]"
+              className="w-full h-full outline outline-tertiary/4 rounded-md"
+              src={communityAvatar(space)}
+              alt={space?.title}
+              loading="lazy"
             />
-          )}
-        </div>
+            {!space?.image_avatar_expanded && (
+              <img
+                src={`${ASSET_PREFIX}/assets/images/blank-avatar.svg`}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 icon-blank-avatar w-[62%] h-[62%]"
+              />
+            )}
+          </div>
 
-        {/* Subscribe button */}
-        <div className="absolute bottom-0 md:bottom-4 right-0">
-          <div className="flex items-center gap-3">
-            {[space?.creator, ...(space?.admins?.map((p) => p._id) || [])].includes(me?._id) && (
-              <CommunityThemeBuilder themeData={space?.theme_data} spaceId={space?._id} />
-            )}
-            {canManage ? (
-              <Link href={`/s/manage/${space?.slug || space?._id}`} target="_blank">
-                <Button variant="primary" outlined iconRight="icon-arrow-outward" size="lg">
-                  <span className="block">Manage</span>
-                </Button>
-              </Link>
-            ) : (
-              !space?.is_ambassador && (
-                <Button
-                  loading={resFollow.loading || resUnfollow.loading}
-                  outlined={!!space?.followed}
-                  variant="primary"
-                  size="lg"
-                  className={clsx(space?.followed && 'hover:bg-accent-500 hover:text-tertiary w-auto duration-300')}
-                  onClick={() => handleSubscribe()}
-                >
-                  {!!space?.followed ? (
-                    <>
-                      <span className="hidden group-hover:block">Unsubscribe</span>
-                      <span className="block group-hover:hidden">Subscribed</span>
-                    </>
-                  ) : (
-                    'Subscribe'
-                  )}
-                </Button>
-              )
-            )}
+          {/* Subscribe button */}
+          <div className="">
+            <div className="flex items-center gap-3">
+              {[space?.creator, ...(space?.admins?.map((p) => p._id) || [])].includes(me?._id) && (
+                <CommunityThemeBuilder themeData={space?.theme_data} spaceId={space?._id} />
+              )}
+              {canManage ? (
+                <Link href={`/s/manage/${space?.slug || space?._id}`} target="_blank">
+                  <Button variant="primary" outlined iconRight="icon-arrow-outward" size="lg">
+                    <span className="block">Manage</span>
+                  </Button>
+                </Link>
+              ) : (
+                !space?.is_ambassador && (
+                  <Button
+                    loading={resFollow.loading || resUnfollow.loading}
+                    outlined={!!space?.followed}
+                    variant="primary"
+                    size="lg"
+                    className={clsx(space?.followed && 'hover:bg-accent-500 hover:text-tertiary w-auto duration-300')}
+                    onClick={() => handleSubscribe()}
+                  >
+                    {!!space?.followed ? (
+                      <>
+                        <span className="hidden group-hover:block">Unsubscribe</span>
+                        <span className="block group-hover:hidden">Subscribed</span>
+                      </>
+                    ) : (
+                      'Subscribe'
+                    )}
+                  </Button>
+                )
+              )}
+            </div>
           </div>
         </div>
       </div>
+
       <Spacer className="h-6" />
       <div>
         <h1 className="community-title text-2xl text-primary md:text-3xl font-semibold">{space?.title}</h1>
