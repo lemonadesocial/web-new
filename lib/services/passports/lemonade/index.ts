@@ -129,7 +129,7 @@ const getCreationDateImageBuffer = async (creationDate: string) => {
 export const getMintPassportImage = async (avatarImageUrl?: string, username?: string) => {
   const creationDate = formatDate(new Date());
 
-  let layerPromises: Array<Promise<Buffer>> = [
+  const layerPromises: Array<Promise<Buffer>> = [
     getBoilerplateImageBuffer(),
     getUsernameImageBuffer(`@${username || 'username'}`),
     getPassportIdImageBuffer('XXXXXXXX'),
