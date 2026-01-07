@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { getMintZuGramaPassportData } from "$lib/services/passports/zugrama";
-import { getData } from "$lib/services/passports/zugrama/admin";
+import { getMintZuGramaPassportData } from '$lib/services/passports/zugrama';
+import { getData } from '$lib/services/passports/zugrama/admin';
 
 export async function GET(request: NextRequest) {
   const wallet = new URL(request.url).searchParams.get('wallet');
@@ -16,7 +16,10 @@ export async function GET(request: NextRequest) {
   }
 
   if (!process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME) {
-    return NextResponse.json({ error: 'NEXT_PUBLIC_AUTH_COOKIE_NAME environment variable is not set' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'NEXT_PUBLIC_AUTH_COOKIE_NAME environment variable is not set' },
+      { status: 500 },
+    );
   }
 
   const authCookie = request.cookies.get(process.env.NEXT_PUBLIC_AUTH_COOKIE_NAME)?.value;
@@ -35,13 +38,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Self not verified' }, { status: 400 });
   }
 
-  const mintData = await getMintZuGramaPassportData(
-    passportData.userId,
-    passportData.passportNumber,
-    passportData.selfVerifiedTimestamp,
+  const mintData = await getMintZuGramaPassportData({
+    userId: passportData.userId,
+    passportNumber: passportData.passportNumber,
+    selfVerifiedTimestamp: passportData.selfVerifiedTimestamp,
     wallet,
     avatarImageUrl,
-  );
+  });
 
   return NextResponse.json(mintData);
 }

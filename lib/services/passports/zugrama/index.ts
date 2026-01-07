@@ -1,18 +1,19 @@
-import assert from "assert";
-import path from "path";
-import { deregisterAllFonts, registerFont, createCanvas } from "canvas";
+import assert from 'assert';
+import path from 'path';
+import { deregisterAllFonts, registerFont, createCanvas } from 'canvas';
 
-import { getImageFromBuffers } from "../../nft/image";
-import { getUriFromUrl, uploadImage, uploadJSON } from "../../nft/storage";
+import { getImageFromBuffers } from '../../nft/image';
+import { getUriFromUrl, uploadImage, uploadJSON } from '../../nft/storage';
 
-import { getEnsUsername } from "../common/ens";
-import { formatDate } from "../common/format";
-import { getFileImageBuffer, getTextImageBuffer, getUrlImageBuffer, Point } from "../common/canvas";
+import { getEnsUsername } from '../common/ens';
+import { formatDate } from '../common/format';
+import { getFileImageBuffer, getTextImageBuffer, getUrlImageBuffer, Point } from '../common/canvas';
 
-import { getApproval } from "./admin";
+import { getApproval } from './admin';
+import { PassportDataArgs } from '../common/types';
 
-const regularFontPath = path.join(process.cwd(), "data", "zugrama-passport", "regular.ttf");
-const boldFontPath = path.join(process.cwd(), "data", "zugrama-passport", "semibold.ttf");
+const regularFontPath = path.join(process.cwd(), 'data', 'zugrama-passport', 'regular.ttf');
+const boldFontPath = path.join(process.cwd(), 'data', 'zugrama-passport', 'semibold.ttf');
 const regularFontFamily = 'zugrama-passport-font-regular';
 const boldFontFamily = 'zugrama-passport-font-semibold';
 
@@ -44,9 +45,7 @@ const createMetadata = (imageUrl: string, passportId: string) => {
   return {
     description: DESCRIPTION,
     image: imageUrl,
-    attributes: [
-      { trait_type: 'Passport ID', value: passportId },
-    ]
+    attributes: [{ trait_type: 'Passport ID', value: passportId }],
   };
 };
 
@@ -54,63 +53,66 @@ const regularFont = `${textFontSize}px "${regularFontFamily}"`;
 
 const getAvatarImageBuffer = async (avatarImageUrl: string) => {
   return getUrlImageBuffer(outputWidth, outputHeight, avatarOffset, { x: avatarSize, y: avatarSize }, avatarImageUrl);
-}
+};
 
 const getAvatarPlaceholderBuffer = async () => {
   const canvas = createCanvas(outputWidth, outputHeight);
   const ctx = canvas.getContext('2d');
   assert.ok(ctx);
-  
+
   ctx.fillStyle = '#C7FE42';
   ctx.fillRect(avatarOffset.x, avatarOffset.y, avatarSize, avatarSize);
-  
+
   return canvas.toBuffer('image/png');
-}
+};
 
 const getBoilerplateImageBuffer = async () => {
-  return getFileImageBuffer(path.join(process.cwd(), "data", "zugrama-passport", "boilerplate.png"));
-}
+  return getFileImageBuffer(path.join(process.cwd(), 'data', 'zugrama-passport', 'boilerplate.png'));
+};
 
 const getUsernameImageBuffer = async (username: string) => {
   deregisterAllFonts();
   registerFont(boldFontPath, { family: boldFontFamily });
 
   //-- calculate font size based on username length
-  const scaledFontSize = username.length <= 14
-    ? usernameFontSize
-    : Math.trunc(14 * usernameFontSize / username.length);
+  const scaledFontSize =
+    username.length <= 14 ? usernameFontSize : Math.trunc((14 * usernameFontSize) / username.length);
 
-  return getTextImageBuffer(outputWidth, outputHeight, `${scaledFontSize}px "${boldFontFamily}"`, username, usernameOffset, '#000000');
-}
+  return getTextImageBuffer(
+    outputWidth,
+    outputHeight,
+    `${scaledFontSize}px "${boldFontFamily}"`,
+    username,
+    usernameOffset,
+    '#000000',
+  );
+};
 
 const getPassportIdImageBuffer = async (passportId: string) => {
   deregisterAllFonts();
   registerFont(regularFontPath, { family: regularFontFamily });
   return getTextImageBuffer(outputWidth, outputHeight, regularFont, passportId, passportIdOffset, '#ffffff');
-}
+};
 
 const getMintDateImageBuffer = async (mintDate: string) => {
   deregisterAllFonts();
   registerFont(regularFontPath, { family: regularFontFamily });
   return getTextImageBuffer(outputWidth, outputHeight, regularFont, mintDate, mintDateOffset, '#ffffff');
-}
+};
 
 const getTitleImageBuffer = async (title: string) => {
   deregisterAllFonts();
   registerFont(regularFontPath, { family: regularFontFamily });
   return getTextImageBuffer(outputWidth, outputHeight, regularFont, title, titleOffset, '#ffffff');
-}
+};
 
 const getVerifiedDateImageBuffer = async (verifiedDate: string) => {
   deregisterAllFonts();
   registerFont(regularFontPath, { family: regularFontFamily });
   return getTextImageBuffer(outputWidth, outputHeight, regularFont, verifiedDate, verifiedDateOffset, '#ffffff');
-}
+};
 
-export const getMintZuGramaPassportImage = async (
-  avatarImageUrl?: string,
-  username?: string,
-) => {
+export const getMintZuGramaPassportImage = async (avatarImageUrl?: string, username?: string) => {
   const creationDate = formatDate(new Date());
 
   const layerPromises: Array<Promise<Buffer>> = [
@@ -121,7 +123,7 @@ export const getMintZuGramaPassportImage = async (
     getTitleImageBuffer('Founding Citizen'),
     getVerifiedDateImageBuffer('XXXXXXXX'),
   ];
-  
+
   if (avatarImageUrl) {
     layerPromises.unshift(getAvatarImageBuffer(avatarImageUrl));
   } else {
@@ -130,25 +132,25 @@ export const getMintZuGramaPassportImage = async (
 
   const buffers = await Promise.all(layerPromises);
 
-  const finalImage = await getImageFromBuffers(
-    buffers,
-    outputWidth,
-    outputHeight,
-    'png',
-  );
+  const finalImage = await getImageFromBuffers(buffers, outputWidth, outputHeight, 'png');
 
   const base64 = finalImage.toString('base64');
   const dataUrl = `data:image/png;base64,${base64}`;
   return { image: dataUrl };
 };
 
-export const getMintZuGramaPassportData = async (
-  userId: string,
-  passportNumber: number,
-  selfVerifiedTimestamp: number,
-  wallet: string,
-  avatarImageUrl: string,
-) => {
+export const getMintZuGramaPassportData = async ({
+  userId,
+  passportNumber,
+  selfVerifiedTimestamp,
+  wallet,
+  avatarImageUrl,
+}: PassportDataArgs) => {
+  assert.ok(userId);
+  assert.ok(selfVerifiedTimestamp);
+  assert.ok(passportNumber);
+  assert.ok(avatarImageUrl);
+
   const username = await getEnsUsername(wallet);
 
   assert.ok(username);
@@ -168,12 +170,7 @@ export const getMintZuGramaPassportData = async (
     getVerifiedDateImageBuffer(verifiedDate),
   ]);
 
-  const finalImage = await getImageFromBuffers(
-    buffers,
-    outputWidth,
-    outputHeight,
-    'png',
-  );
+  const finalImage = await getImageFromBuffers(buffers, outputWidth, outputHeight, 'png');
 
   const fileId = `zugrama-passport-${passportId}`;
   const imageUrl = await uploadImage(`${fileId}.png`, finalImage);

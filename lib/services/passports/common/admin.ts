@@ -20,5 +20,11 @@ export const getData = async (opts: {
       params.append(key, value.toString());
     }
   }
-  return request<{ passportNumber: number }>(`/passport/data?${params.toString()}`, 'GET');
+  return request<{
+    passportNumber: number;
+    lemonheadImageUrl?: string;
+    fluffleImageUrl?: string;
+    userId?: string;
+    selfVerifiedTimestamp?: number;
+  }>(`/passport/data?${params.toString()}`, 'GET');
 };

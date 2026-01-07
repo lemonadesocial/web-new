@@ -9,6 +9,7 @@ import { formatDate } from '../common/format';
 import { getFileImageBuffer, getTextImageBuffer, getUrlImageBuffer, Point } from '../common/canvas';
 
 import { getApproval } from './admin';
+import { PassportDataArgs } from '../common/types';
 
 const regularFontPath = path.join(process.cwd(), 'data', 'festival-nation-passport', 'regular.ttf');
 const regularFontFamily = 'festival-nation-passport-font-regular';
@@ -139,12 +140,16 @@ export const getMintFestivalNationPassportImage = async (avatarImageUrl?: string
   return { image: dataUrl };
 };
 
-export const getMintFestivalNationPassportData = async (
-  username: string,
-  passportNumber: number,
-  wallet: string,
-  avatarImageUrl: string,
-) => {
+export const getMintFestivalNationPassportData = async ({
+  username,
+  passportNumber,
+  wallet,
+  avatarImageUrl,
+}: PassportDataArgs) => {
+  assert.ok(username);
+  assert.ok(passportNumber);
+  assert.ok(avatarImageUrl);
+
   const passportId = passportNumber.toString().padStart(8, '0');
 
   const creationDate = formatDate(new Date());

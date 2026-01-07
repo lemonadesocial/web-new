@@ -9,6 +9,7 @@ import { formatDate } from '../common/format';
 import { getFileImageBuffer, getTextImageBuffer, getUrlImageBuffer, Point } from '../common/canvas';
 
 import { getApproval } from './admin';
+import { PassportDataArgs } from '../common/types';
 
 const regularFontPath = path.join(process.cwd(), 'data', 'drip-nation-passport', 'regular.ttf');
 const regularFontFamily = 'drip-nation-passport-font-regular';
@@ -134,12 +135,16 @@ export const getMintDripNationPassportImage = async (avatarImageUrl?: string, us
   return { image: dataUrl };
 };
 
-export const getMintDripNationPassportData = async (
-  username: string,
-  passportNumber: number,
-  wallet: string,
-  avatarImageUrl: string,
-) => {
+export const getMintDripNationPassportData = async ({
+  username,
+  passportNumber,
+  wallet,
+  avatarImageUrl,
+}: PassportDataArgs) => {
+  assert.ok(username);
+  assert.ok(passportNumber);
+  assert.ok(avatarImageUrl);
+
   const passportId = passportNumber.toString().padStart(8, '0');
 
   const creationDate = formatDate(new Date());

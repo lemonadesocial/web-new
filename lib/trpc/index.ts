@@ -166,12 +166,11 @@ export const appRouter = router({
           wallet: z.string(),
           username: z.string().optional(),
           fluffleTokenId: z.string().optional(),
-          auth: z.string().optional(),
-        avatarImageUrl: z.string().optional()
+          avatarImageUrl: z.string().optional(),
         }),
       )
-      .mutation(async ({ input }) => {
-        const { provider, wallet, username, fluffleTokenId, auth, avatarImageUrl } = input;
+      .mutation(async ({ input, ctx }) => {
+        const { provider, wallet, username, fluffleTokenId, avatarImageUrl } = input;
         const p: Record<string, PassportProvider> = {
           mint: PassportProvider.Lemonade,
           zugrama: PassportProvider.Zugrama,
@@ -179,14 +178,17 @@ export const appRouter = router({
           'festival-nation': PassportProvider.FestivalNation,
           'drip-nation': PassportProvider.DripNation,
         };
+
+        // it's using for check seftverify zugrama passport
+        const auth = ctx.authCookie;
         const passportData = await getData({ provider: p[provider], fluffleTokenId, wallet, auth });
 
         if (!passportData) {
-        throw new TRPCError({
-        code: 'BAD_REQUEST', // Corresponds to HTTP 400
-        message: 'Unable to get passport data.',
-      });
-      }
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Unable to get passport data.',
+          });
+        }
 
         const getMintData = match(p[provider])
           .with(PassportProvider.Lemonade, () => getMintLemonadePassportData)
@@ -196,22 +198,22 @@ export const appRouter = router({
           .with(PassportProvider.DripNation, () => getMintDripNationPassportData)
           .otherwise(() => null);
 
-     if (!getMintData) {
-        throw new TRPCError({
-        code: 'BAD_REQUEST', // Corresponds to HTTP 400
-        message: 'Provider does not support.',
-      });
-      }
+        if (!getMintData) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Provider does not support.',
+          });
+        }
 
-
-
-      return  getMintData(
-      username,
-      passportData.passportNumber,
-      wallet,
-      avatarImageUrl,
-    );
-
+        return getMintData({
+          username,
+          wallet,
+          fluffleTokenId,
+          avatarImageUrl,
+          userId: passportData.userId,
+          passportNumber: passportData.passportNumber,
+          selfVerifiedTimestamp: passportData.selfVerifiedTimestamp,
+        });
       }),
   },
   usernameApproval: publicProcedure

@@ -9,6 +9,7 @@ import { formatDate } from '../common/format';
 import { getFileImageBuffer, getTextImageBuffer, getUrlImageBuffer, Point } from '../common/canvas';
 
 import { getApproval } from './admin';
+import { PassportDataArgs } from '../common/types';
 
 const regularFontPath = path.join(process.cwd(), 'data', 'vinyl-nation-passport', 'regular.ttf');
 const regularFontFamily = 'vinyl-nation-passport-font-regular';
@@ -140,13 +141,15 @@ export const getMintVinylNationPassportImage = async (avatarImageUrl?: string, u
   return { image: dataUrl };
 };
 
-export const getMintVinylNationPassportData = async (
-  username: string,
-  passportNumber: number,
-  wallet: string,
-  avatarImageUrl: string,
-) => {
+export const getMintVinylNationPassportData = async ({
+  username,
+  passportNumber,
+  wallet,
+  avatarImageUrl,
+}: PassportDataArgs) => {
   assert.ok(username);
+  assert.ok(passportNumber);
+  assert.ok(avatarImageUrl);
 
   const passportId = passportNumber.toString().padStart(8, '0');
 

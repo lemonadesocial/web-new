@@ -34,20 +34,21 @@ function Content() {
 
   const { address } = useAppKitAccount();
 
-  const mintPassportMutation = trpc.mintPassport.useMutation();
+  const mintPassportMutation = trpc.passport.getMintData.useMutation();
 
   React.useEffect(() => {
     if (!address || loading) return;
 
     // PERF: ONLY CHECK WITH MINT (Lemonade) provider
-    if (state.provider === 'mint' && (state.lemonadeUsername || state.useENS)) {
+    if (state.lemonadeUsername || state.useENS) {
       const fluffleTokenId = state.useFluffle ? '1' : undefined;
 
       setLoading(true);
       mintPassportMutation
         .mutateAsync({
+          provider: state.provider,
           wallet: address,
-          lemonadeUsername: state.lemonadeUsername || undefined,
+          username: state.lemonadeUsername || undefined,
           fluffleTokenId,
         })
         .then((data) => {

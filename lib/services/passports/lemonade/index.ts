@@ -11,6 +11,7 @@ import { getApproval, getData } from './admin';
 import { Point } from '../common/canvas';
 import { getEnsUsername } from '../common/ens';
 import { formatDate } from '../common/format';
+import { PassportDataArgs } from '../common/types';
 
 export const DESCRIPTION = [''].join('\n');
 
@@ -150,11 +151,11 @@ export const getMintPassportImage = async (avatarImageUrl?: string, username?: s
   return { image: dataUrl };
 };
 
-export const getMintLemonadePassportData = async (
-  wallet: string,
-  lemonadeUsername?: string,
-  fluffleTokenId?: string,
-) => {
+export const getMintLemonadePassportData = async ({
+  wallet,
+  username: lemonadeUsername,
+  fluffleTokenId,
+}: PassportDataArgs) => {
   const passportData = await getData(wallet, fluffleTokenId || '');
 
   if (!passportData?.passportNumber) {
