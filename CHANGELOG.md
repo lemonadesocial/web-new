@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.44.1](https://github.com/lemonadesocial/web-new/compare/v8.44.0...v8.44.1) (2026-01-07)
+
+
+### Bug Fixes
+
+* check env build time ([b4194e6](https://github.com/lemonadesocial/web-new/commit/b4194e6a72788a6e058a468086ebef3d70fc7cab))
+
 ## [8.44.0](https://github.com/lemonadesocial/web-new/compare/v8.43.0...v8.44.0) (2026-01-07)
 
 
