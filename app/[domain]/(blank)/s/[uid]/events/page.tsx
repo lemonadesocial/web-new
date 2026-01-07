@@ -1,16 +1,8 @@
 import { notFound } from 'next/navigation';
 
-// import { getClient } from '$lib/graphql/request/client';
 import { isObjectId } from '$lib/utils/helpers';
-// import {
-//   GetSpaceTagsDocument,
-//   GetSubSpacesDocument,
-//   Space,
-//   PublicSpace,
-//   SpaceTag,
-// } from '$lib/graphql/generated/backend/graphql';
-import { Community } from '$lib/components/features/community';
 import { getSpace } from '$lib/utils/getSpace';
+import { CommunityEventsWithCalendar } from '$lib/components/features/community/CommunityEventsWithCalendar';
 
 export default async function Page({ params }: { params: Promise<{ uid: string }> }) {
   const uid = (await params).uid;
@@ -20,5 +12,5 @@ export default async function Page({ params }: { params: Promise<{ uid: string }
 
   if (!space) return notFound();
 
-  return <Community initData={{ space }} showEvents />;
+  return <CommunityEventsWithCalendar space={space} />;
 }

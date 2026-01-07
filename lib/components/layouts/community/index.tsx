@@ -8,6 +8,8 @@ import { defaultTheme } from '$lib/components/features/theme-builder/store';
 import { getClient } from '$lib/graphql/request';
 import { GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
 import { CommunityContainer } from './container';
+import { defaultPassportConfig } from '$lib/components/features/theme-builder/passports';
+import { merge } from 'lodash';
 
 type LayoutProps = {
   children: React.ReactElement;
@@ -33,7 +35,9 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
     return notFound();
   }
 
-  const themeData = defaultTheme;
+  let emptyTheme = null;
+
+  let themeData = defaultTheme;
   // NOTE: adapt existing config
   if (space.theme_data) {
     themeData.theme = space.theme_data.theme;
@@ -49,10 +53,18 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
       name: space.theme_data.config?.name,
       effect: space.theme_data.config?.effect,
     };
+
+    if (space.theme_name && space.theme_name !== 'default') {
+      themeData = merge(themeData, defaultPassportConfig[space.theme_name as string] || {});
+    }
+  } else {
+    if (space.theme_name && space.theme_name !== 'default') {
+      emptyTheme = defaultPassportConfig[space.theme_name as string] || null;
+    }
   }
 
   return (
-    <ThemeProvider themeData={!space.theme_data ? space.theme_data : themeData}>
+    <ThemeProvider themeData={!space.theme_data ? emptyTheme : themeData}>
       <CommunityContainer space={space}>{children}</CommunityContainer>
     </ThemeProvider>
   );
