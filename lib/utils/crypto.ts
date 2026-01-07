@@ -3,6 +3,7 @@ import { Eip1193Provider, ethers, isError } from 'ethers';
 import { mainnet } from 'viem/chains';
 
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
+import { MEGAETH_CHAIN_ID, GAS_LIMIT } from '$lib/utils/constants';
 
 import ERC20 from '$lib/abis/ERC20.json';
 import LemonadeRelayPayment from '$lib/abis/LemonadeRelayPayment.json';
@@ -46,6 +47,11 @@ export const isNativeToken = (tokenAddress: string, network: string) => {
   return token?.is_native;
 };
 
+export async function getGasOptions(provider: ethers.Provider): Promise<{ gas?: bigint }> {
+  const network = await provider.getNetwork();
+  return Number(network.chainId) === MEGAETH_CHAIN_ID ? { gas: GAS_LIMIT } : {};
+}
+
 export async function writeContract(
   contractInstance: ethers.Contract,
   contractAddress: string,
@@ -57,7 +63,10 @@ export async function writeContract(
   const browserProvider = new ethers.BrowserProvider(provider);
   const signer = await browserProvider.getSigner();
   const contract = contractInstance.attach(contractAddress).connect(signer);
-  const gasLimit = await contract.getFunction(functionName).estimateGas(...args, txOptions);
+  const network = await browserProvider.getNetwork();
+  const gasLimit = Number(network.chainId) === MEGAETH_CHAIN_ID
+    ? GAS_LIMIT
+    : await contract.getFunction(functionName).estimateGas(...args, txOptions);
   
   const data = contract.interface.encodeFunctionData(functionName, args);
   

@@ -9,7 +9,7 @@ import { BrowserProvider, Eip1193Provider } from 'ethers';
 import debounce from 'lodash/debounce';
 
 import { Button, modal, ModalContent, toast } from "$lib/components/core";
-import { formatError } from '$lib/utils/crypto';
+import { formatError, getGasOptions } from '$lib/utils/crypto';
 import { listChainsAtom } from '$lib/jotai';
 import { appKit, useAppKitProvider } from '$lib/utils/appkit';
 import { LemonadeUsernameABI } from '$lib/abis/LemonadeUsername';
@@ -18,7 +18,7 @@ import { useClient } from '$lib/graphql/request';
 import { UsernameAvailabilityDocument, UsernameAvailabilityQueryVariables } from '$lib/graphql/generated/backend/graphql';
 
 import { SuccessModal } from './SuccessModal';
-import { ASSET_PREFIX, GAS_LIMIT } from '$lib/utils/constants';
+import { ASSET_PREFIX } from '$lib/utils/constants';
 
 export function ClaimLemonadeUsernameModal() {
   const { walletProvider } = useAppKitProvider('eip155');
@@ -120,6 +120,8 @@ export function ClaimLemonadeUsernameModal() {
         adapter: ethersAdapter(adapterConfig),
       });
 
+      const gasOptions = await getGasOptions(provider);
+
       await drift.write({
         abi: LemonadeUsernameABI,
         address: usernameChain.lemonade_username_contract_address as `0x${string}`,
@@ -133,7 +135,7 @@ export function ClaimLemonadeUsernameModal() {
           signature: result.signature as `0x${string}`,
         },
         value: BigInt(result.price),
-        gas: GAS_LIMIT,
+        ...gasOptions,
       });
 
       queryClient.setQueryData(['lemonadeUsername', address], {

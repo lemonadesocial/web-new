@@ -173,17 +173,19 @@ export function CreatingModal() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-2">
-          {Object.entries(actions).map(([key, item]) => (
-            <Card.Root key={key} className="flex-1" onClick={() => handleClick(key)}>
-              <Card.Content className="py-1.5 px-3 md:py-3.5 md:px-4 flex items-center md:items-start md:flex-col gap-3">
-                <i className={twMerge('size-5 md:size-8', item.icon)} />
-                <div>
-                  <p className="text-primary">{item.title}</p>
-                  <p className="text-sm text-tertiary">{item.subtitle}</p>
-                </div>
-              </Card.Content>
-            </Card.Root>
-          ))}
+          {Object.entries(actions)
+            .filter(([key]) => key !== 'coin' || process.env.NEXT_PUBLIC_APP_ENV !== 'production') // FIXME: put back when add new UI
+            .map(([key, item]) => (
+              <Card.Root key={key} className="flex-1" onClick={() => handleClick(key)}>
+                <Card.Content className="py-1.5 px-3 md:py-3.5 md:px-4 flex items-center md:items-start md:flex-col gap-3">
+                  <i className={twMerge('size-5 md:size-8', item.icon)} />
+                  <div>
+                    <p className="text-primary">{item.title}</p>
+                    <p className="text-sm text-tertiary">{item.subtitle}</p>
+                  </div>
+                </Card.Content>
+              </Card.Root>
+            ))}
         </div>
       </Card.Content>
     </Card.Root>
