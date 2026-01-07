@@ -7,7 +7,7 @@ import { PageTitle } from '../shared';
 import { notFound } from 'next/navigation';
 
 export default function ExplorePage() {
-  if (process.env.APP_ENV === 'production') return notFound();
+  if (process.env.NEXT_PUBLIC_APP_ENV === 'production') return notFound();
 
   return (
     <>
