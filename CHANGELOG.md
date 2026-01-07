@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.43.0](https://github.com/lemonadesocial/web-new/compare/v8.42.0...v8.43.0) (2026-01-07)
+
+
+### Features
+
+* hide create coin ([7b2e900](https://github.com/lemonadesocial/web-new/commit/7b2e900b0890598712cca4d88ed9195caa9f64c3))
+
 ## [8.42.0](https://github.com/lemonadesocial/web-new/compare/v8.41.0...v8.42.0) (2026-01-06)
 
 
