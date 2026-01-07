@@ -125,7 +125,7 @@ const Sidebar = () => {
 const actions = {
   event: { icon: 'icon-ticket text-accent-400', title: 'Event', subtitle: 'Virtual & IRL' },
   community: { icon: 'icon-community text-alert-400', title: 'Community', subtitle: 'Build your space' },
-  coin: { icon: 'icon-token text-warning-400', title: 'Coin', subtitle: 'Launch your crypto token' },
+  // coin: { icon: 'icon-token text-warning-400', title: 'Coin', subtitle: 'Launch your crypto token' },
   post: { icon: 'icon-edit-square text-[#2DD4BF]!', title: 'Post', subtitle: 'Share updates' },
 };
 
