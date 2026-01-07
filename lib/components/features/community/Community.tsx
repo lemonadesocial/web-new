@@ -33,7 +33,6 @@ type Props = {
 
 export function Community({ initData, hideHeroSection = false, showEvents }: Props) {
   const hideSubspace = true;
-  console.log(initData);
 
   const { data: dataGetSpace } = useQuery(GetSpaceDocument, {
     variables: { id: initData.space?._id },
