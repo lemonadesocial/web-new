@@ -1,5 +1,20 @@
 # Changelog
 
+## [8.44.0](https://github.com/lemonadesocial/web-new/compare/v8.43.0...v8.44.0) (2026-01-07)
+
+
+### Features
+
+* init theme with passport template ([854c84c](https://github.com/lemonadesocial/web-new/commit/854c84ccdee5add4af7215d1363d86c8fcf97937))
+* update community template sidebar ([b32dd35](https://github.com/lemonadesocial/web-new/commit/b32dd352011deaba287aca6c1b2e1819f7a37b61))
+* update empty upcoming events widget ([9acbf18](https://github.com/lemonadesocial/web-new/commit/9acbf185b4efe6e60cb0dbfab634e62c9282ec51))
+* update page events community ([4e92557](https://github.com/lemonadesocial/web-new/commit/4e92557e538313297a94d13c72152b080c79a73c))
+
+
+### Bug Fixes
+
+* remove console ([f8489f3](https://github.com/lemonadesocial/web-new/commit/f8489f35c26f10c216b052792d7653990dfd3bbb))
+
 ## [8.43.0](https://github.com/lemonadesocial/web-new/compare/v8.42.0...v8.43.0) (2026-01-07)
 
 
