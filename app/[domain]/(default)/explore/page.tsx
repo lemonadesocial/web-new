@@ -4,8 +4,11 @@ import { Content } from './content';
 import { Spacer } from '$lib/components/core';
 
 import { PageTitle } from '../shared';
+import { notFound } from 'next/navigation';
 
 export default function ExplorePage() {
+  if (process.env.APP_ENV === 'production') return notFound();
+
   return (
     <>
       <Spacer className="h-6 md:h-11" />

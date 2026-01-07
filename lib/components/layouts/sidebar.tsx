@@ -58,12 +58,12 @@ const Sidebar = () => {
     const menu = [
       { icon: 'icon-home', path: '/', label: 'Home' },
       { icon: 'icon-newspaper', path: '/timelines', label: 'Timelines' },
-      { icon: 'icon-explore', path: '/explore', label: 'Explore' },
-      // { icon: 'icon-token', path: '/tokens', label: 'Tokens' },
+      process.env.APP_ENV !== 'production' ? { icon: 'icon-explore', path: '/explore', label: 'Explore' } : undefined, // FIXME: put back when add new UI
+      process.env.APP_ENV !== 'production' ? { icon: 'icon-token', path: '/tokens', label: 'Tokens' } : undefined, // FIXME: put back when add new UI
       // { icon: 'icon-swipe', path: '/swipe', label: 'Swipe & Match' },  // FIXME: add back when lemonheads  are live
       // { icon: 'icon-trophy', path: '/leaderboard', label: 'Leaderboard' },
       { icon: 'icon-passport', path: '/lemonheads', label: 'LemonHeads Zone' },
-    ];
+    ].filter(Boolean);
 
     return menu;
   }, []);
