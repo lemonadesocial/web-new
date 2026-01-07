@@ -35,6 +35,8 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
     return notFound();
   }
 
+  let emptyTheme = null;
+
   let themeData = defaultTheme;
   // NOTE: adapt existing config
   if (space.theme_data) {
@@ -55,10 +57,14 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
     if (space.theme_name && space.theme_name !== 'default') {
       themeData = merge(themeData, defaultPassportConfig[space.theme_name as string] || {});
     }
+  } else {
+    if (space.theme_name && space.theme_name !== 'default') {
+      emptyTheme = defaultPassportConfig[space.theme_name as string] || null;
+    }
   }
 
   return (
-    <ThemeProvider themeData={!space.theme_data ? space.theme_data : themeData}>
+    <ThemeProvider themeData={!space.theme_data ? emptyTheme : themeData}>
       <CommunityContainer space={space}>{children}</CommunityContainer>
     </ThemeProvider>
   );

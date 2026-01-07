@@ -80,7 +80,7 @@ export function HeroSection({ space }: HeroSectionProps) {
         )}
 
         <div className={clsx('flex items-end justify-between', space?.image_cover ? '-mt-[30px] md:-mt-[68px]' : '')}>
-          <div className="size-20 md:size-32 rounded-md overflow-hidden">
+          <div className="relative size-20 md:size-32 rounded-md overflow-hidden">
             <img
               className="w-full h-full outline outline-tertiary/4 rounded-md"
               src={communityAvatar(space)}
