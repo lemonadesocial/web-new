@@ -46,7 +46,6 @@ function ImagePreview({ className }: { className?: string }) {
 
   React.useEffect(() => {
     if (getImage.data) {
-      dispatch({ type: PassportActionKind.SetMintData, payload: getImage.data });
       dispatch({ type: PassportActionKind.SetPassportImage, payload: getImage.data.image });
     }
   }, [getImage?.data]);
