@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.46.0](https://github.com/lemonadesocial/web-new/compare/v8.45.0...v8.46.0) (2026-01-08)
+
+
+### Features
+
+* update text widget upcoming event ([c890f77](https://github.com/lemonadesocial/web-new/commit/c890f7793294145a7a03329dd2555eb2b81dfb36))
+
 ## [8.45.0](https://github.com/lemonadesocial/web-new/compare/v8.44.1...v8.45.0) (2026-01-08)
 
 
