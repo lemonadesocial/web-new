@@ -133,32 +133,33 @@ function EmptyUpcomingEvents({ space }: { space: Space }) {
             <p className="text-tertiary">Upcoming</p>
           </div>
           <div className="text-tertiary">
-            <p>Click to view</p>
-            <p> 6 past events</p>
+            <p>
+              Subscribe to get updates <br /> on upcoming events
+            </p>
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col gap-5 ">
+        <div className="flex-1 flex flex-col gap-5">
           <Card.Root
             className="bg-(--btn-tertiary)"
             onClick={
               canSubscribe
                 ? (e) => {
-                    e.stopPropagation();
                     handleSubscribe();
+                    e.stopPropagation();
                   }
                 : undefined
             }
           >
-            <Card.Content className="flex flex-col justify-center gap-3">
+            <Card.Content className="flex flex-col justify-center items-center gap-3">
               <i className="icon-user-plus" />
-              <p>Subscribe</p>
+              <p>{space.followed ? 'Subscribed' : 'Subscribe'}</p>
             </Card.Content>
           </Card.Root>
 
           <Card.Root className="bg-(--btn-tertiary)">
-            <Card.Content className="flex flex-col justify-center gap-3">
-              <i className="icon-user-plus" />
+            <Card.Content className="flex flex-col justify-center items-center gap-3">
+              <i className="icon-calendar-add" />
               <p>Submit Event</p>
             </Card.Content>
           </Card.Root>
