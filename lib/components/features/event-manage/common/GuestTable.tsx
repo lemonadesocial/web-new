@@ -94,6 +94,11 @@ export function GuestTable({ event, guests, loading = false, onGuestClick }: Gue
                     </span>
                   </>
                 )}
+                {guest.ticket?.checkin?.active && (
+                  <Chip variant="success" size="xxs" className="rounded-full">
+                    Checked In
+                  </Chip>
+                )}
                 {(!guest.join_request || guest.join_request.state === EventJoinRequestState.Approved) && (
                   <Chip variant="success" size="xxs" className="rounded-full">
                     Going
