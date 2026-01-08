@@ -126,6 +126,12 @@ const zodiak = localFont({
   variable: '--font-zodiak',
 });
 
+const basePixel = localFont({
+  display: 'swap',
+  src: '../public/assets/fonts/title/BasePixel-LowResolution.otf',
+  variable: '--font-base-pixel',
+});
+
 // body fonts
 const archivo = localFont({
   src: '../public/assets/fonts/body/Archivo-Regular.otf',
@@ -174,6 +180,12 @@ const multitypePixel = localFont({
   variable: '--font-multitype-pixel',
 });
 
+const antonio = localFont({
+  display: 'swap',
+  src: '../public/assets/fonts/body/Antonio-VariableFont_wght.ttf',
+  variable: '--font-antonio',
+});
+
 export default twMerge(
   generalSans.variable,
   classDisplay.variable,
@@ -198,6 +210,7 @@ export default twMerge(
   technor.variable,
   zina.variable,
   zodiak.variable,
+  basePixel.variable,
   //body fonts
   archivo.variable,
   azeret_mono.variable,
@@ -207,4 +220,5 @@ export default twMerge(
   supreme.variable,
   synonym.variable,
   multitypePixel.variable,
+  antonio.variable,
 );
