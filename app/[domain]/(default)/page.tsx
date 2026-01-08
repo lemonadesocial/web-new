@@ -2,7 +2,7 @@ import { Content } from './content';
 
 function Page() {
   return (
-    <div className="max-w-[1080px] mx-auto">
+    <div className="max-w-[1200px] mx-auto">
       <Content />
     </div>
   );
