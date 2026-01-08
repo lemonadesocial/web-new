@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.45.0](https://github.com/lemonadesocial/web-new/compare/v8.44.1...v8.45.0) (2026-01-08)
+
+
+### Features
+
+* add alzena world theme ([d06a520](https://github.com/lemonadesocial/web-new/commit/d06a520ec36603aacf7495613b45125e4534b515))
+
 ## [8.44.1](https://github.com/lemonadesocial/web-new/compare/v8.44.0...v8.44.1) (2026-01-07)
 
 
