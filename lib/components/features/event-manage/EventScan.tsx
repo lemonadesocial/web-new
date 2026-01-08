@@ -217,6 +217,8 @@ function GuestStatsCard({ event }: { event: Event }) {
 
       <NextLink
         href={`/e/manage/${event.shortid}`}
+        target="_blank"
+        rel="noopener noreferrer"
         className="flex items-center gap-1 text-tertiary hover:text-primary transition-colors w-fit"
       >
         <p className="text-tertiary">Manage Event Page</p>

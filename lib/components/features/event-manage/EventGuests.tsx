@@ -44,7 +44,7 @@ export function EventGuests() {
 
             <Card.Root
               className="flex-1 min-w-fit"
-              onClick={() => (window.location.href = `/manage/event/${event.shortid}/check-in`)}
+              onClick={() => (window.location.href = `/e/check-in/${event.shortid}`)}
             >
               <Card.Content className="flex gap-3 p-2 items-center pr-3">
                 <div className="flex items-center justify-center rounded-sm p-2 bg-success-400/[0.16] w-[38px] aspect-square">

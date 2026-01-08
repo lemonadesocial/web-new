@@ -59,6 +59,7 @@
     "@uiw/react-color": "^2.4.5",
     "@uiw/react-color-github": "^2.4.5",
     "@vis.gl/react-google-maps": "^1.5.1",
+    "@yudiel/react-qr-scanner": "^2.5.0",
     "array-move": "^4.0.0",
     "axios": "^1.10.0",
     "canvas": "^3.1.2",
