@@ -5,9 +5,7 @@ import clsx from 'clsx';
 
 import { useQuery } from '$lib/graphql/request/hooks';
 import { coinClient } from '$lib/graphql/request/instances';
-import {
-  PoolCreatedDocument, Order_By
-} from '$lib/graphql/generated/coin/graphql';
+import { PoolCreatedDocument, Order_By } from '$lib/graphql/generated/coin/graphql';
 import { Card } from '$lib/components/core';
 import { LemonheadLeaderBoardRank } from '../lemonheads/LemonheadLeaderBoardRank';
 import { calculateMarketCapData } from '$lib/utils/coin';
@@ -15,6 +13,7 @@ import { formatWallet } from '$lib/utils/crypto';
 import { chainsMapAtom } from '$lib/jotai/chains';
 import { useTokenData } from '$lib/hooks/useCoin';
 import type { PoolCreated } from '$lib/graphql/generated/coin/graphql';
+import { TopEmptyComp } from './TopEmptyComp';
 
 export function TopMarket() {
   const { data, loading } = useQuery(
@@ -41,11 +40,11 @@ export function TopMarket() {
   const pools = data?.PoolCreated || [];
 
   return (
-    <Card.Root className="flex-1 w-full">
+    <Card.Root className="flex-1 flex flex-col w-full">
       <Card.Header className="border-b">
         <p>Top Market</p>
       </Card.Header>
-      <Card.Content className="divide-y divide-(--color-divider) p-0">
+      <Card.Content className="flex-1 divide-y divide-(--color-divider) p-0">
         {loading && (
           <>
             {Array.from({ length: 5 }).map((_, idx) => (
@@ -65,14 +64,13 @@ export function TopMarket() {
           </>
         )}
         {!loading && pools.length === 0 && (
-          <div className="px-4 py-8 text-center text-tertiary">
-            <p>No market cap data available</p>
-          </div>
+          <TopEmptyComp
+            title="No market cap data yet"
+            subtitle="Market cap rankings will show up once coins have enough data."
+            icon="icon-input-circle"
+          />
         )}
-        {!loading &&
-          pools.map((pool, idx) => (
-            <TopMarketItem key={pool.id} pool={pool} rank={idx + 1} />
-          ))}
+        {!loading && pools.map((pool, idx) => <TopMarketItem key={pool.id} pool={pool} rank={idx + 1} />)}
       </Card.Content>
     </Card.Root>
   );
@@ -132,4 +130,3 @@ function TopMarketItem({ pool, rank }: { pool: PoolCreated; rank: number }) {
     </div>
   );
 }
-

@@ -12,7 +12,7 @@ export function FeaturedCommunityHubs() {
   const list = (data?.listSpaces || []) as Space[];
 
   return (
-    <div className="flex flex-col gap-4 relative">
+    <div className="flex flex-col gap-5 relative">
       <div className="flex justify-between items-center">
         <p className="text-xl font-semibold">Featured Communities</p>
         <Button variant="tertiary-alt" size="sm" iconRight="icon-arrow-back-sharp rotate-180">
@@ -33,8 +33,8 @@ export function FeaturedCommunityHubs() {
           </div>
         ))
         .otherwise(() => (
-          <div className="flex gap-4 overflow-y-auto no-scrollbar">
-            {list.map((item, idx) => (
+          <div className="grid grid-cols-3 gap-4">
+            {list.slice(0, 6).map((item, idx) => (
               <FeaturedCommunityHubsItem key={idx} space={item} />
             ))}
           </div>
