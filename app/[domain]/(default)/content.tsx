@@ -61,8 +61,8 @@ export function Content() {
           <UpcomingEventSection />
           <Divider />
           <CommunitySection />
-          {/* <Divider />
-          <AllCoins /> */}
+          <Divider />
+          <AllCoins />
         </div>
 
         <div>

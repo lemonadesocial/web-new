@@ -13,6 +13,7 @@ export const ETHERSCAN = 'https://etherscan.io';
 
 export const LAUNCH_CHAIN_ID = process.env.NEXT_PUBLIC_APP_ENV === 'production' ? '8453' : '84532';
 export const GAS_LIMIT = BigInt(1_000_000);
+export const MEGAETH_CHAIN_ID = 6343;
 
 export const ETHNICITIES = [
   'African American',

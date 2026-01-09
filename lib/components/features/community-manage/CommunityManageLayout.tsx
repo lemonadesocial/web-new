@@ -17,7 +17,7 @@ const menu = [
   { name: 'Events', page: 'events' },
   { name: 'People', page: 'people' },
   // { name: 'Vaults', page: 'vaults' },
-  // { name: 'Launchpad', page: 'launchpad' },
+  { name: 'Launchpad', page: 'launchpad' },
   { name: 'Settings', page: 'settings' },
 ];
 
@@ -42,9 +42,11 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
               </div>
             </div>
             <nav className="flex gap-4 pt-1 overflow-auto no-scrollbar">
-              {menu.map((item) => (
-                <Skeleton key={item.page} className="h-6 w-20" />
-              ))}
+              {menu
+                .filter((item) => item.page !== 'launchpad' || process.env.NEXT_PUBLIC_APP_ENV !== 'production') // FIXME: put back when add new UI
+                .map((item) => (
+                  <Skeleton key={item.page} className="h-6 w-20" />
+                ))}
             </nav>
           </div>
         </div>
@@ -142,21 +144,23 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
             />
           </div>
           <nav className="flex gap-4 pt-3 overflow-auto no-scrollbar">
-            {menu.map((item) => {
-              const url = item.page === 'overview' ? `/s/manage/${uid}` : `/s/manage/${uid}/${item.page}`;
-              const isActive =
-                item.page === 'overview' ? pathname === `/s/manage/${uid}` || pathname === url : pathname.includes(url);
+            {menu
+              .filter((item) => item.page !== 'launchpad' || process.env.NEXT_PUBLIC_APP_ENV !== 'production')
+              .map((item) => {
+                const url = item.page === 'overview' ? `/s/manage/${uid}` : `/s/manage/${uid}/${item.page}`;
+                const isActive =
+                  item.page === 'overview' ? pathname === `/s/manage/${uid}` || pathname === url : pathname.includes(url);
 
-              return (
-                <NextLink
-                  href={url}
-                  key={item.page}
-                  className={clsx(isActive && 'border-b-2 border-b-primary', 'pb-2.5')}
-                >
-                  <span className={clsx(isActive ? 'text-primary' : 'text-tertiary', 'font-medium')}>{item.name}</span>
-                </NextLink>
-              );
-            })}
+                return (
+                  <NextLink
+                    href={url}
+                    key={item.page}
+                    className={clsx(isActive && 'border-b-2 border-b-primary', 'pb-2.5')}
+                  >
+                    <span className={clsx(isActive ? 'text-primary' : 'text-tertiary', 'font-medium')}>{item.name}</span>
+                  </NextLink>
+                );
+              })}
           </nav>
         </div>
       </div>

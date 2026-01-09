@@ -3,6 +3,7 @@ import { createDrift, type Drift, type ReadContract, type Hash, ReadWriteContrac
 import { ethersAdapter } from '@gud/drift-ethers';
 
 import { Chain } from '$lib/graphql/generated/backend/graphql';
+import { getGasOptions } from '$lib/utils/crypto';
 import { Flaunch } from '$lib/abis/token-launch-pad/Flaunch';
 import { FeeEscrow } from '$lib/abis/token-launch-pad/FeeEscrow';
 import { MarketUtils } from '$lib/abis/token-launch-pad/MarketUtils';
@@ -527,10 +528,12 @@ export class FlaunchClient {
       address: MULTICALL3_ADDRESS,
     }) as unknown as ReadWriteContract<typeof MULTICALL>;
 
+    const gasOptions = await getGasOptions(this.provider);
     const txHash = await multicall3Contract.write('aggregate3Value', {
       calls,
     }, {
       value: buyAmount,
+      ...gasOptions,
     });
 
     return txHash;
@@ -571,10 +574,11 @@ export class FlaunchClient {
 
     const poolSwapAddress = await this.zapContract.read('poolSwap');
 
+    const gasOptions = await getGasOptions(this.provider);
     const approveTxHash = await ERC20Contract.write('approve', {
       spender: poolSwapAddress,
       amount: sellAmount,
-    });
+    }, gasOptions);
 
     const approveTx = await this.provider.getTransaction(approveTxHash);
     if (!approveTx) {
@@ -587,6 +591,7 @@ export class FlaunchClient {
       address: poolSwapAddress,
     }) as unknown as ReadWriteContract<typeof PoolSwap>;
 
+    const gasOptionsForSwap = await getGasOptions(this.provider);
     const txHash = await poolSwapContract.write(
       'swap',
       {
@@ -597,7 +602,8 @@ export class FlaunchClient {
           sqrtPriceLimitX96,
         },
         _recipient: recipient,
-      }
+      },
+      gasOptionsForSwap
     );
 
     return txHash;
