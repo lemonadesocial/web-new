@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.47.0](https://github.com/lemonadesocial/web-new/compare/v8.46.0...v8.47.0) (2026-01-09)
+
+
+### Features
+
+* custom gas limit ([ad6e68f](https://github.com/lemonadesocial/web-new/commit/ad6e68fc2648bf931d2d7468698f837dec9fc83e))
+
 ## [8.46.0](https://github.com/lemonadesocial/web-new/compare/v8.45.0...v8.46.0) (2026-01-08)
 
 
