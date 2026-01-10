@@ -34,8 +34,7 @@ export function EventList({
         return (
           <div key={date}>
             <p className="text-tertiary font-medium">
-              <span className="text-primary">{formatWithTimezone(new Date(date), 'MMM dd', timezone)}</span>{' '}
-              {formatWithTimezone(new Date(date), 'EEE', timezone)}
+              <span className="text-primary">{format(new Date(date), 'MMM dd')}</span> {format(new Date(date), 'EEE')}
             </p>
             <Divider className="mt-2 mb-3" />
 
@@ -148,11 +147,10 @@ export function EventListCard({
   const list = Object.entries(
     groupBy(events, ({ start, timezone }) => formatWithTimezone(new Date(start), 'yyyy-MM-dd', timezone)),
   );
+
   return (
     <div className="flex flex-col">
       {list.map(([date, data], idx) => {
-        const timezone = data?.[0]?.timezone;
-
         return (
           <div className="flex" key={date}>
             <div
@@ -168,8 +166,8 @@ export function EventListCard({
 
             <div className="ml-4 w-full">
               <p className="text-md text-tertiary font-medium">
-                <span className="text-primary">{formatWithTimezone(new Date(date), 'MMM dd ', timezone)}</span>{' '}
-                {formatWithTimezone(new Date(date), 'EEEE', timezone)}
+                <span className="text-primary">{format(new Date(date), 'MMM dd ')}</span>{' '}
+                {format(new Date(date), 'EEEE')}
               </p>
               <Spacer className="h-3" />
 
