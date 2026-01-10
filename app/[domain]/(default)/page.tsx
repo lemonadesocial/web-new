@@ -2,8 +2,10 @@ import { Content } from './content';
 
 function Page() {
   return (
-    <div className="max-w-[1080px] mx-auto">
-      <Content />
+    <div className="flex justify-center h-[calc(100dvh-56px)]">
+      <div className="w-full max-w-[720px]">
+        <Content />
+      </div>
     </div>
   );
 }
