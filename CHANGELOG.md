@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.47.1](https://github.com/lemonadesocial/web-new/compare/v8.47.0...v8.47.1) (2026-01-10)
+
+
+### Bug Fixes
+
+* group date events list community ([3759599](https://github.com/lemonadesocial/web-new/commit/3759599b9e50b74266c4f3d72145e4bb3f93d8d4))
+
 ## [8.47.0](https://github.com/lemonadesocial/web-new/compare/v8.46.0...v8.47.0) (2026-01-09)
 
 
