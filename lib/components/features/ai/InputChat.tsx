@@ -56,6 +56,7 @@ export function InputChat() {
     <Card.Root className="backdrop-blur-none! border-0 bg-(--btn-tertiary) rounded-lg overflow-visible">
       <Card.Content className="space-y-4 flex flex-col">
         <textarea
+          disabled={loading}
           ref={textareaRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}

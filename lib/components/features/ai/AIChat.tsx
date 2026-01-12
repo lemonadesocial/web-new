@@ -15,14 +15,14 @@ export function AIChat() {
   if (!me) return null;
 
   return (
-    <div className="space-y-8 flex flex-col h-full pb-25 md:pb-10">
+    <div className="space-y-8 flex flex-col h-full pb-20 md:pb-10">
       <AnimatePresence mode="wait">
         {!state.messages.length && <motion.div key="spacer-top" className="flex-1" exit={{ opacity: 0 }} />}
 
         {!!state.messages.length ? (
           <motion.div
             key="messages"
-            className="flex-1"
+            className="flex-1 overflow-y-auto no-scrollbar"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
