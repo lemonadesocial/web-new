@@ -57,6 +57,7 @@ const Sidebar = () => {
   const mainMenu = useMemo(() => {
     const menu = [
       { icon: 'icon-home', path: '/', label: 'Home' },
+      { icon: 'icon-storefront-outline', path: '/lemonade-stand', label: 'Lemonade Stand' },
       { icon: 'icon-newspaper', path: '/timelines', label: 'Timelines' },
       process.env.NEXT_PUBLIC_APP_ENV !== 'production'
         ? { icon: 'icon-explore', path: '/explore', label: 'Explore' }

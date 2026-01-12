@@ -1,12 +1,31 @@
 'use client';
 import React from 'react';
-import { Button, Card, Menu, MenuItem } from '$lib/components/core';
+import { Button, Card, Menu, MenuItem, toast } from '$lib/components/core';
 import { AIChatActionKind, useAIChat } from './provider';
+import { useMutation } from '$lib/graphql/request';
+import { RunAiChatDocument } from '$lib/graphql/generated/ai/graphql';
+import { aiChatClient } from '$lib/graphql/request/instances';
+import { AI_CONFIG } from '$lib/utils/constants';
 
 export function InputChat() {
   const [state, dispatch] = useAIChat();
   const [input, setInput] = React.useState('');
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+
+  const [run, { loading }] = useMutation(
+    RunAiChatDocument,
+    {
+      onComplete: (_, income) => {
+        dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: false } });
+        dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ ...income.run, role: 'assistant' }] } });
+      },
+      onError: (error) => {
+        toast.error(error.message);
+        dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: false } });
+      },
+    },
+    aiChatClient,
+  );
 
   React.useEffect(() => {
     if (textareaRef.current) {
@@ -15,13 +34,15 @@ export function InputChat() {
     }
   }, [input]);
 
-  const handleSubmit = () => {
-    if (!input.trim()) {
+  const handleSubmit = async () => {
+    const text = input.trim();
+    if (!text) {
       return;
     }
-    // TODO: dispatch action to send message
-    console.log('Submitting message:', input);
+    dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ message: text, role: 'user' }] } });
+    dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: true } });
     setInput('');
+    run({ variables: { message: text, config: AI_CONFIG, session: state.session } });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -71,7 +92,7 @@ export function InputChat() {
               )}
             </Menu.Content>
           </Menu.Root>
-          <Button icon="icon-arrow-foward-sharp -rotate-90" size="sm" onClick={handleSubmit} />
+          <Button icon="icon-arrow-foward-sharp -rotate-90" size="sm" onClick={handleSubmit} loading={loading} />
         </div>
       </Card.Content>
     </Card.Root>

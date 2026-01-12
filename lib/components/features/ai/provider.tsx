@@ -1,4 +1,6 @@
 'use client';
+import { RunResult } from '$lib/graphql/generated/ai/graphql';
+import { v4 as uuidV4 } from 'uuid';
 import React from 'react';
 
 type ToolKey = 'create-event' | 'manage-event' | 'create-community' | 'manage-community';
@@ -9,15 +11,21 @@ type Tool = {
   label: string;
 };
 
-type ChatMessage = {};
-
-type State = {
-  selectedTool?: Tool;
-  tools: Tool[];
-  messages: ChatMessage[];
+export type Message = Partial<RunResult> & {
+  role: 'user' | 'assistant';
 };
 
+type State = {
+  session: string;
+  selectedTool?: Tool;
+  tools: Tool[];
+  messages: Message[];
+  thinking?: boolean;
+};
+
+const session = uuidV4();
 const defaultState: State = {
+  session: session,
   tools: [
     { key: 'create-event', icon: 'icon-ticket', label: 'Create Event' },
     { key: 'manage-event', icon: 'icon-crown', label: 'Create Event' },
@@ -45,6 +53,8 @@ export function useAIChat(): [state: State, dispatch: React.Dispatch<AIChatActio
 
 export enum AIChatActionKind {
   'select_tool',
+  'add_message',
+  'set_thinking',
 }
 
 export type AIChatAction = { type: AIChatActionKind; payload?: Partial<State> };
@@ -53,6 +63,18 @@ function reducers(state: State, action: AIChatAction) {
   switch (action.type) {
     case AIChatActionKind.select_tool: {
       return { ...state, selectedTool: action.payload?.selectedTool };
+    }
+
+    case AIChatActionKind.add_message: {
+      if (action.payload?.messages) {
+        return { ...state, messages: [...state.messages, action.payload?.messages[0]] };
+      }
+
+      return state;
+    }
+
+    case AIChatActionKind.set_thinking: {
+      return { ...state, thinking: action.payload?.thinking };
     }
 
     default:

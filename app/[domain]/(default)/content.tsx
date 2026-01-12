@@ -11,11 +11,20 @@ import { AIChatProvider } from '$lib/components/features/ai/provider';
 
 export function Content() {
   const me = useMe();
-  if (!me) return <NonLoginContent />;
+  if (!me) {
+    return (
+      <div className="w-full max-w-[1200px]">
+        <NonLoginContent />
+      </div>
+    );
+  }
+
   return (
-    <AIChatProvider>
-      <AIChat />
-    </AIChatProvider>
+    <div className="w-full max-w-[720px]">
+      <AIChatProvider>
+        <AIChat />
+      </AIChatProvider>
+    </div>
   );
 }
 
