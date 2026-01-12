@@ -46,7 +46,9 @@ export function AIChat() {
           delay: state.messages.length ? 0.3 : 0,
         }}
       >
-        <InputChat />
+        <div className="relative z-10">
+          <InputChat />
+        </div>
         {!!state.messages.length ? (
           <motion.div
             initial={{ opacity: 0 }}

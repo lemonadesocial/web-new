@@ -53,7 +53,7 @@ export function InputChat() {
   };
 
   return (
-    <Card.Root className="border-0 bg-(--btn-tertiary) rounded-lg overflow-visible">
+    <Card.Root className="backdrop-blur-none! border-0 bg-(--btn-tertiary) rounded-lg overflow-visible">
       <Card.Content className="space-y-4 flex flex-col">
         <textarea
           ref={textareaRef}
@@ -66,7 +66,7 @@ export function InputChat() {
           style={{ maxHeight: 160 }}
         />
         <div className="flex justify-between items-center">
-          <Menu.Root placement="bottom-start">
+          <Menu.Root placement={!!state.messages.length ? 'top-start' : 'bottom-start'}>
             <Menu.Trigger>
               {({ toggle }) => (
                 <Button variant="tertiary-alt" onClick={() => toggle()} size="sm" iconLeft="icon-discover-tune">
@@ -74,7 +74,7 @@ export function InputChat() {
                 </Button>
               )}
             </Menu.Trigger>
-            <Menu.Content className="p-1 w-[192px]">
+            <Menu.Content className="p-1 w-[192px] backdrop-blur-md!">
               {({ toggle }) => (
                 <>
                   {state.tools.map((tool) => (
