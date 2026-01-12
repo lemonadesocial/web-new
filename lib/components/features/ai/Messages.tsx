@@ -25,7 +25,7 @@ export function Messages() {
       <AnimatePresence mode="wait">
         {state.thinking && (
           <motion.div
-            className="flex gap-4 max-w-2/3"
+            className="flex gap-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition: { duration: 0.3 } }}
             exit={{ opacity: 0, transition: { duration: 0 } }}

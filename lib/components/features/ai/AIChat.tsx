@@ -47,7 +47,21 @@ export function AIChat() {
         }}
       >
         <InputChat />
-        <ToolsSuggest />
+        {!!state.messages.length ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{
+              duration: 0.3,
+              ease: 'easeOut',
+              delay: 0.3,
+            }}
+          >
+            <p className="text-center text-xs text-tertiary">LemonAI can make mistakes, so double-check it</p>
+          </motion.div>
+        ) : (
+          <ToolsSuggest />
+        )}
       </motion.div>
       <AnimatePresence mode="wait">
         {!state.messages.length && <motion.div key="spacer-bottom" className="flex-1" exit={{ opacity: 0 }} />}
