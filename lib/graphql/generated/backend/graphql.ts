@@ -1758,6 +1758,7 @@ export type EventCheckin = {
   login_user?: Maybe<UserWithEmail>;
   non_login_user?: Maybe<NonloginUser>;
   ticket: Scalars['MongoID']['output'];
+  updated_by_expanded?: Maybe<User>;
   user?: Maybe<Scalars['MongoID']['output']>;
 };
 
@@ -5657,6 +5658,7 @@ export type Query = {
   listLemonheadSponsors: ListLemonheadSponsorsResponse;
   listMyLemonheadInvitations: ListMyLemonheadInvitationsResponse;
   listMyPoapClaims: Array<PoapClaim>;
+  listMySpaces: SearchSpacesResponse;
   listNewPaymentAccounts: Array<NewPaymentAccount>;
   listNewPayments: Array<NewPayment>;
   listOauth2Clients: Array<OAuth2Client>;
@@ -6747,6 +6749,12 @@ export type QueryListLemonheadSponsorsArgs = {
 
 export type QueryListMyPoapClaimsArgs = {
   event?: InputMaybe<Scalars['MongoID']['input']>;
+};
+
+
+export type QueryListMySpacesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
 };
 
 

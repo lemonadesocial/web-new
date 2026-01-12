@@ -2,7 +2,7 @@ import { Content } from './content';
 
 function Page() {
   return (
-    <div className="flex justify-center h-[calc(100dvh-56px)]">
+    <div className="max-w-[1200px] mx-auto">
       <Content />
     </div>
   );
