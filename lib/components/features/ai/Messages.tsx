@@ -1,25 +1,44 @@
 'use client';
-import { RunResult } from '$lib/graphql/generated/ai/graphql';
-import { match, P } from 'ts-pattern';
+import React from 'react';
+import { match } from 'ts-pattern';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Message, useAIChat } from './provider';
 
 export function Messages() {
   const [state] = useAIChat();
+
+  const messagesEndRef = React.useRef<HTMLDivElement | null>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  React.useEffect(() => {
+    scrollToBottom();
+  }, [state.messages]);
+
   return (
-    <div className="flex-1 flex flex-col gap-6 ">
+    <div className="flex-1 flex flex-col gap-6 px-1 overflow-auto no-scrollbar">
       {state.messages.map((message, idx) => (
         <MessageItem key={idx} message={message} />
       ))}
-
-      {state.thinking && (
-        <div className="flex gap-4 max-w-2/3">
-          <div className="relative flex items-center justify-center">
-            <i className="absolute icon-loader-thin text-primary animate-spin" />
-            <i className="icon-lemon-ai size-4 aspect-square text-warning-300" />
-          </div>
-          <p className="text-tertiary">Thinking...</p>{' '}
-        </div>
-      )}
+      <AnimatePresence mode="wait">
+        {state.thinking && (
+          <motion.div
+            className="flex gap-4 max-w-2/3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.3 } }}
+            exit={{ opacity: 0, transition: { duration: 0 } }}
+          >
+            <div className="relative flex items-center justify-center">
+              <i className="absolute icon-loader-thin text-primary animate-spin" />
+              <i className="icon-lemon-ai size-4 aspect-square text-warning-300" />
+            </div>
+            <p className="text-tertiary animate-text-shimmer">Thinking...</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <div ref={messagesEndRef} />
     </div>
   );
 }
@@ -27,8 +46,8 @@ export function Messages() {
 function MessageItem({ message: item }: { message: Message }) {
   return match(item.role)
     .with('assistant', () => (
-      <div className="flex gap-4">
-        <div className="relative flex items-center justify-center">
+      <div className="flex items-start gap-4">
+        <div className="relative flex mt-1 items-center justify-center">
           <i className="icon-lemon-ai size-4 aspect-square text-warning-300" />
         </div>
         <p>{item.message}</p>
