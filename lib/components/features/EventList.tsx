@@ -8,7 +8,7 @@ import { Event, SpaceTag, User } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
 import { getEventCohosts, getEventPrice, isAttending } from '$lib/utils/event';
-import { convertFromUtcToTimezone, formatWithTimezone } from '$lib/utils/date';
+import { convertFromUtcToTimezone } from '$lib/utils/date';
 import { useMe } from '$lib/hooks/useMe';
 import React from 'react';
 
@@ -28,16 +28,16 @@ export function EventList({
   return (
     <div className="flex flex-col gap-8">
       {Object.entries(
-        groupBy(events, ({ start, timezone }) => formatWithTimezone(new Date(start), 'yyyy-MM-dd', timezone)),
+        groupBy(events, ({ start, timezone }) => format(convertFromUtcToTimezone(start, timezone), 'yyyy-MM-dd')),
       ).map(([date, data]) => {
-        const timezone = data?.[0]?.timezone;
         return (
           <div key={date}>
+            {' '}
             <p className="text-tertiary font-medium">
-              <span className="text-primary">{format(new Date(date), 'MMM dd')}</span> {format(new Date(date), 'EEE')}
+              <span className="text-primary">{format(new Date(`${date}T12:00:00`), 'MMM dd')}</span>{' '}
+              {format(new Date(`${date}T12:00:00`), 'EEE')}
             </p>
             <Divider className="mt-2 mb-3" />
-
             {data.map((item) => (
               <div
                 key={item._id}
@@ -145,9 +145,8 @@ export function EventListCard({
   if (!loading && !events.length) return <EmptyComp />;
 
   const list = Object.entries(
-    groupBy(events, ({ start, timezone }) => formatWithTimezone(new Date(start), 'yyyy-MM-dd', timezone)),
+    groupBy(events, ({ start, timezone }) => format(convertFromUtcToTimezone(start, timezone), 'yyyy-MM-dd')),
   );
-
   return (
     <div className="flex flex-col">
       {list.map(([date, data], idx) => {
@@ -166,8 +165,8 @@ export function EventListCard({
 
             <div className="ml-4 w-full">
               <p className="text-md text-tertiary font-medium">
-                <span className="text-primary">{format(new Date(date), 'MMM dd ')}</span>{' '}
-                {format(new Date(date), 'EEEE')}
+                <span className="text-primary">{format(new Date(`${date}T12:00:00`), 'MMM dd ')}</span>{' '}
+                {format(new Date(`${date}T12:00:00`), 'EEEE')}{' '}
               </p>
               <Spacer className="h-3" />
 
@@ -242,9 +241,8 @@ export function EventCardItem({
                   <div className="size-0.5 bg-quaternary rounded-full" />
                 </div>
               )}
-
               {/* <p>{format(convertFromUtcToTimezone(item.start, item.timezone as string), "MMM dd 'at' hh:mm a")}</p> */}
-              <p>{formatWithTimezone(item.start, "MMM dd 'at' hh:mm a", item.timezone)}</p>
+              <p>{format(convertFromUtcToTimezone(item.start, item.timezone), "MMM dd 'at' hh:mm a")}</p>
               {!item.published && <Badge title="Draft" color="var(--color-warning-400)" />}
             </div>
 
