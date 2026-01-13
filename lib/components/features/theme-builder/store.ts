@@ -78,6 +78,7 @@ export const fonts: { title: Record<string, string>; body: Record<string, string
     technor: 'var(--font-technor)',
     zina: 'var(--font-zina)',
     zodiak: 'var(--font-zodiak)',
+    figtreeBlack: 'var(--font-figtree-black)'
   },
   body: {
     default: 'var(--font-general-sans)',
