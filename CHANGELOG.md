@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.0](https://github.com/lemonadesocial/web-new/compare/v9.0.1...v9.1.0) (2026-01-13)
+
+
+### Features
+
+* update figtree black font ([f3d42b2](https://github.com/lemonadesocial/web-new/commit/f3d42b249b5d665937d1ed37d67f0849be659741))
+
 ## [9.0.1](https://github.com/lemonadesocial/web-new/compare/v9.0.0...v9.0.1) (2026-01-13)
 
 
