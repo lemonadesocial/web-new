@@ -166,7 +166,7 @@ export function EventAccessInfo({ event }: { event: Event }) {
             variant="tertiary"
             size="sm"
             iconLeft="icon-qr"
-            onClick={() => window.open(`${LEMONADE_DOMAIN}/manage/event/${event.shortid}/check-in`, '_blank')}
+            onClick={() => window.open(`/e/check-in/${event.shortid}`, '_blank')}
             className="w-full"
           >
             Check In Guests
