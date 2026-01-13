@@ -1,5 +1,16 @@
 # Changelog
 
+## [9.0.0](https://github.com/lemonadesocial/web-new/compare/v8.47.1...v9.0.0) (2026-01-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* check-in event
+
+### Features
+
+* check-in event ([f6d4533](https://github.com/lemonadesocial/web-new/commit/f6d453354eb0c175114f3b5bf107643c30620f75))
+
 ## [8.47.1](https://github.com/lemonadesocial/web-new/compare/v8.47.0...v8.47.1) (2026-01-10)
 
 
