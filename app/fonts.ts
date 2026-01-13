@@ -132,6 +132,12 @@ const basePixel = localFont({
   variable: '--font-base-pixel',
 });
 
+const figtreeBlack = localFont({
+  display: 'swap',
+  src: '../public/assets/fonts/title/Figtree-Black.ttf',
+  variable: '--font-figtree-black',
+})
+
 // body fonts
 const archivo = localFont({
   src: '../public/assets/fonts/body/Archivo-Regular.otf',
@@ -211,6 +217,7 @@ export default twMerge(
   zina.variable,
   zodiak.variable,
   basePixel.variable,
+  figtreeBlack.variable,
   //body fonts
   archivo.variable,
   azeret_mono.variable,
