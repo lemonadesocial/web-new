@@ -69,7 +69,6 @@ export function EventProtected({
     );
   }
 
-
   if (!event.me_is_host) {
     return (
       <div className="page mx-auto py-7 px-4 md:px-0 font-default">
