@@ -19,6 +19,59 @@ export type MediaFile = {
   _id: string;
 };
 
+async function processFile(file: File): Promise<File | Blob> {
+  if (!file.type.startsWith('image/')) {
+    return file;
+  }
+
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.src = URL.createObjectURL(file);
+
+    image.onload = () => {
+      URL.revokeObjectURL(image.src);
+      const MAX_DIMENSION = 5000;
+      const { width, height } = image;
+
+      if (width <= MAX_DIMENSION && height <= MAX_DIMENSION) {
+        return resolve(file);
+      }
+
+      const scaleRatio = Math.min(MAX_DIMENSION / width, MAX_DIMENSION / height);
+      const newWidth = width * scaleRatio;
+      const newHeight = height * scaleRatio;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        return resolve(file);
+      }
+
+      ctx.drawImage(image, 0, 0, newWidth, newHeight);
+
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            resolve(file);
+          }
+        },
+        file.type,
+        0.95,
+      );
+    };
+
+    image.onerror = () => {
+      URL.revokeObjectURL(image.src);
+      resolve(file);
+    };
+  });
+}
+
 export async function uploadFiles(files: File[], directory: FileDirectory): Promise<MediaFile[]> {
   const uploadInfos = files.map((file) => ({
     extension: file.name.split('.').pop()!.toString().toLowerCase(),
@@ -45,9 +98,11 @@ export async function uploadFiles(files: File[], directory: FileDirectory): Prom
       throw new Error('Failed to get upload data');
     }
 
+    const processedFile = await processFile(file);
+
     const s3Response = await fetch(presignedUrl, {
       method: 'PUT',
-      body: file,
+      body: processedFile,
       headers: {
         'Content-Type': file.type,
         'x-amz-tagging': 'pending=true',
