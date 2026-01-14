@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.2.0](https://github.com/lemonadesocial/web-new/compare/v9.1.1...v9.2.0) (2026-01-14)
+
+
+### Features
+
+* update lemonade username metadata desc ([7d82047](https://github.com/lemonadesocial/web-new/commit/7d82047465004a0a678b885ac632200805a6dec4))
+
 ## [9.1.1](https://github.com/lemonadesocial/web-new/compare/v9.1.0...v9.1.1) (2026-01-14)
 
 
