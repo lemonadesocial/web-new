@@ -8,6 +8,7 @@ import { Button, InputField, Spacer, modal } from '$lib/components/core';
 import { CardTable } from '$lib/components/core/table';
 import { useQuery } from '$lib/graphql/request';
 import { formatWithTimezone } from '$lib/utils/date';
+import { isPromoter } from '$lib/utils/event';
 import { GuestTable } from './common/GuestTable';
 import { EventProtected } from './EventProtected';
 import { TicketCheckInModal } from './modals/TicketCheckInModal';
@@ -16,7 +17,13 @@ type TabType = 'all' | 'going' | 'checked_in' | 'invited';
 
 export function EventCheckIn({ shortid }: { shortid: string }) {
   return (
-    <EventProtected shortid={shortid}>
+    <EventProtected
+      shortid={shortid}
+      gate={(event, userId) => {
+        if (!userId) return false;
+        return event.me_is_host || isPromoter(event, userId);
+      }}
+    >
       {(event: Event) => <EventCheckInContent event={event} />}
     </EventProtected>
   );

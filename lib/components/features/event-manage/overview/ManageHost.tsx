@@ -62,14 +62,11 @@ export function ManageHost({ event }: { event: Event }) {
             <div className="flex gap-2">
               <HostInfo host={host as User} />
               {
-                host?.event_role === EventRole.Gatekeeper && (
+                host?.event_role === EventRole.Gatekeeper ? (
                   <Chip variant="alert" size="xxs" className="rounded-full">
                     Promoter
                   </Chip>
-                )
-              }
-              {
-                !host?.event_role && (
+                ) : (
                   <Chip variant="primary" size="xxs" className="rounded-full">
                     Cohost
                   </Chip>

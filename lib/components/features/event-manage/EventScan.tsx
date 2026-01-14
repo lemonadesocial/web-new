@@ -8,12 +8,19 @@ import { Event } from '$lib/graphql/generated/backend/graphql';
 import { formatWithTimezone } from '$lib/utils/date';
 import { useQuery } from '$lib/graphql/request';
 import { GetEventGuestsStatisticsDocument } from '$lib/graphql/generated/backend/graphql';
+import { isPromoter } from '$lib/utils/event';
 import { EventProtected } from '../event-manage/EventProtected';
 import { TicketCheckInModal } from './modals/TicketCheckInModal';
 
 export function EventScan({ shortid }: { shortid: string }) {
   return (
-    <EventProtected shortid={shortid}>
+    <EventProtected
+      shortid={shortid}
+      gate={(event, userId) => {
+        if (!userId) return false;
+        return event.me_is_host || isPromoter(event, userId);
+      }}
+    >
       {(event: Event) => <EventScanContent event={event} />}
     </EventProtected>
   );

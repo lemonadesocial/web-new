@@ -4,22 +4,26 @@ import { useAtom } from 'jotai';
 import { Event, GetEventDocument } from '$lib/graphql/generated/backend/graphql';
 import { Button, Skeleton } from '$lib/components/core';
 import { useQuery } from '$lib/graphql/request';
+import { useMe } from '$lib/hooks/useMe';
 
 import { eventAtom } from './store';
 
 interface EventProtectedProps {
   shortid: string;
   loadingFallback?: React.ReactNode;
+  gate?: (event: Event, userId: string | undefined) => boolean;
   children: (event: Event) => React.ReactNode;
 }
 
 export function EventProtected({
   shortid,
   loadingFallback,
+  gate,
   children,
 }: EventProtectedProps) {
 
   const [event, setEvent] = useAtom(eventAtom);
+  const me = useMe();
 
   const { loading } = useQuery(GetEventDocument, {
     variables: { shortid },
@@ -69,8 +73,9 @@ export function EventProtected({
     );
   }
 
+  const hasAccess = gate ? gate(event, me?._id) : event.me_is_host;
 
-  if (!event.me_is_host) {
+  if (!hasAccess) {
     return (
       <div className="page mx-auto py-7 px-4 md:px-0 font-default">
         <div className="flex flex-col items-center justify-center min-h-[400px] text-center space-y-6">
