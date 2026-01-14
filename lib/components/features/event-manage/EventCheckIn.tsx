@@ -22,7 +22,7 @@ export function EventCheckIn({ shortid }: { shortid: string }) {
   );
 }
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 50;
 
 function EventCheckInContent({ event }: { event: Event }) {
   const router = useRouter();
@@ -57,6 +57,7 @@ function EventCheckInContent({ event }: { event: Event }) {
       going: selectedTab === 'going' ? true : undefined,
       checkedIn: selectedTab === 'checked_in' ? true : undefined,
       pendingInvite: selectedTab === 'invited' ? true : undefined,
+      pendingApproval: false,
       skip,
       limit: PAGE_SIZE,
     },

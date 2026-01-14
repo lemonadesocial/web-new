@@ -30,6 +30,7 @@ query GetEvent($id: MongoID, $shortid: String) {
       display_name
       email
       image_avatar
+      event_role
     }
     accepted
     new_new_photos_expanded {
@@ -1594,5 +1595,24 @@ subscription SubscribeEventLatestViews($event: MongoID!) {
     geoip_country
     geoip_region
     user_agent
+  }
+}
+
+query GetEventCohostRequests($input: GetEventCohostRequestsInput!) {
+  getEventCohostRequests(input: $input) {
+    _id
+    event_role
+    to_expanded {
+      _id
+      name
+      display_name
+      email
+      image_avatar
+    }
+    visible
+    to_email
+    to
+    profile_image_avatar
+    profile_name
   }
 }
