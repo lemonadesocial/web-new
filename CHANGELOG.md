@@ -1,5 +1,13 @@
 # Changelog
 
+## [9.1.1](https://github.com/lemonadesocial/web-new/compare/v9.1.0...v9.1.1) (2026-01-14)
+
+
+### Bug Fixes
+
+* check upload image dimension for scale ([94f6aaf](https://github.com/lemonadesocial/web-new/commit/94f6aaf3fbd48b0c0d201ea2f3cccad2251b59da))
+* pane footer ([1bcce41](https://github.com/lemonadesocial/web-new/commit/1bcce411c00de3ff1ed50a889e396367b0ed84e5))
+
 ## [9.1.0](https://github.com/lemonadesocial/web-new/compare/v9.0.1...v9.1.0) (2026-01-13)
 
 
