@@ -7,13 +7,13 @@ import { generateUrl } from '$lib/utils/cnd';
 import { getSpace } from '$lib/utils/getSpace';
 import { notFound } from 'next/navigation';
 
-import Header from '$lib/components/layouts/header';
-import { Footer } from '$lib/components/layouts/community/footer';
-import clsx from 'clsx';
+// import Header from '$lib/components/layouts/header';
+// import { Footer } from '$lib/components/layouts/community/footer';
+// import clsx from 'clsx';
 import { Space } from '$lib/graphql/generated/backend/graphql';
-import Sidebar from './sidebar';
-import { ThemeProvider } from '$lib/components/features/theme-builder/provider';
-import { defaultTheme } from '$lib/components/features/theme-builder/store';
+// import Sidebar from './sidebar';
+// import { ThemeProvider } from '$lib/components/features/theme-builder/provider';
+// import { defaultTheme } from '$lib/components/features/theme-builder/store';
 // import { isObjectId } from '$lib/utils/helpers';
 
 type Props = { params: Promise<{ domain: string; uid: string }> };
@@ -47,28 +47,30 @@ async function Layout({ children }: React.PropsWithChildren) {
 
   if (!space) return notFound();
 
-  return (
-    <ThemeProvider themeData={defaultTheme}>
-      <main
-        id={space._id}
-        className={clsx(
-          'lemonheads relative flex flex-col h-dvh w-full z-100 overflow-auto',
-          // state.theme !== 'default' && [state.config.color, state.config.mode],
-        )}
-      >
-        {/* <LoadMoreWrapper> */}
-        <Sidebar space={space} />
-        <div>
-          <Header hideLogo className="h-[64px]" />
-          <div className="lg:pl-[97px]">
-            <div className="max-w-[1256px] mx-auto px-4 xl:px-0 pt-6 w-ful">{children}</div>
-          </div>
-        </div>
-        <Footer space={space} />
-        {/* </LoadMoreWrapper> */}
-      </main>
-    </ThemeProvider>
-  );
+  return <p>{space.title} is under maintenance</p>;
+
+  // return (
+  //   <ThemeProvider themeData={defaultTheme}>
+  //     <main
+  //       id={space._id}
+  //       className={clsx(
+  //         'lemonheads relative flex flex-col h-dvh w-full z-100 overflow-auto',
+  //         // state.theme !== 'default' && [state.config.color, state.config.mode],
+  //       )}
+  //     >
+  //       {/* <LoadMoreWrapper> */}
+  //       <Sidebar space={space} />
+  //       <div>
+  //         <Header hideLogo className="h-[64px]" />
+  //         <div className="lg:pl-[97px]">
+  //           <div className="max-w-[1256px] mx-auto px-4 xl:px-0 pt-6 w-ful">{children}</div>
+  //         </div>
+  //       </div>
+  //       <Footer space={space} />
+  //       {/* </LoadMoreWrapper> */}
+  //     </main>
+  //   </ThemeProvider>
+  // );
 }
 
 export default Layout;
