@@ -178,7 +178,7 @@ export const appRouter = router({
       const { username } = input;
       const metadata = {
         name: username,
-        description: 'Lemonade Username',
+        description: 'Lemonade usernames powered by MegaETH! #makelemonade',
         attributes: [
           {
             trait_type: 'Created Date',
