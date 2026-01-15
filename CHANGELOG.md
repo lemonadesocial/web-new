@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.3.2](https://github.com/lemonadesocial/web-new/compare/v9.3.1...v9.3.2) (2026-01-15)
+
+
+### Bug Fixes
+
+* add default native token ([636e79f](https://github.com/lemonadesocial/web-new/commit/636e79f9744b6347b4e5f84d43c4c0eeb28d895d))
+
 ## [9.3.1](https://github.com/lemonadesocial/web-new/compare/v9.3.0...v9.3.1) (2026-01-15)
 
 
