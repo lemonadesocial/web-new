@@ -33,7 +33,7 @@ export function FeaturedCommunityHubs() {
           </div>
         ))
         .otherwise(() => (
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {list.slice(0, 6).map((item, idx) => (
               <FeaturedCommunityHubsItem key={idx} space={item} />
             ))}
@@ -45,7 +45,7 @@ export function FeaturedCommunityHubs() {
 
 function FeaturedCommunityHubsItem({ space }: { space: Space }) {
   return (
-    <div className="min-w-[384px] flex flex-col gap-3 p-4 rounded-md border-card-border bg-card">
+    <div className="w-full flex flex-col gap-3 p-4 rounded-md border-card-border bg-card">
       <img src={communityAvatar(space)} className="w-12 h-12 object-cover rounded-sm border-card-border" />
       <h3 className="text-lg font-semibold">{space.title}</h3>
       {space.description && <p className="text-sm text-tertiary line-clamp-2">{space.description as string}</p>}

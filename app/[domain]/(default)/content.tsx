@@ -3,7 +3,7 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useAtomValue } from 'jotai';
 
-import { Accordion, Badge, Button, Card, Divider, drawer, modal, Skeleton } from '$lib/components/core';
+import { Accordion, Button, Card, Divider, drawer, modal, Skeleton } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { ASSET_PREFIX, SELF_VERIFICATION_CONFIG } from '$lib/utils/constants';
@@ -276,27 +276,6 @@ function CommunitySection() {
                   New Community
                 </Button>
               </div>
-
-              {/* <div className="flex md:hidden gap-2"> */}
-              {/*   <Button */}
-              {/*     size="sm" */}
-              {/*     variant="tertiary-alt" */}
-              {/*     icon="icon-plus" */}
-              {/*     onClick={(e) => { */}
-              {/*       e.stopPropagation(); */}
-              {/*       router.push('/create/community'); */}
-              {/*     }} */}
-              {/*   /> */}
-              {/*   <Button */}
-              {/*     size="sm" */}
-              {/*     variant="tertiary-alt" */}
-              {/*     icon="icon-chevron-right" */}
-              {/*     onClick={(e) => { */}
-              {/*       e.stopPropagation(); */}
-              {/*       router.push('/communities'); */}
-              {/*     }} */}
-              {/*   /> */}
-              {/* </div> */}
             </div>
           );
         }}
