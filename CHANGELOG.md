@@ -1,5 +1,13 @@
 # Changelog
 
+## [9.3.0](https://github.com/lemonadesocial/web-new/compare/v9.2.0...v9.3.0) (2026-01-15)
+
+
+### Features
+
+* update ipfs env ([2192a44](https://github.com/lemonadesocial/web-new/commit/2192a44feee1b0f7c4f4f382ef0784c08e7cea14))
+* update megaeth chain id on prod ([efa9ea5](https://github.com/lemonadesocial/web-new/commit/efa9ea5f4ed3c79bf9e459afceb23ef1f903044c))
+
 ## [9.2.0](https://github.com/lemonadesocial/web-new/compare/v9.1.1...v9.2.0) (2026-01-14)
 
 
