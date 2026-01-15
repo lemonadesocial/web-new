@@ -92,6 +92,7 @@ query getMyTickets($event: MongoID!, $withPaymentInfo: Boolean) {
   getMyTickets(event: $event, with_payment_info: $withPaymentInfo) {
     tickets {
       _id
+      shortid
       accepted
       assigned_email
       assigned_to
@@ -367,4 +368,50 @@ mutation CancelTickets($input: CancelTicketsInput!) {
 
 mutation UpgradeTicket($input: UpgradeTicketInput!) {
   upgradeTicket(input: $input)
+}
+
+query GetTicket($shortid: String!) {
+  getTicket(shortid: $shortid) {
+    _id
+    shortid
+    event
+    type
+    type_expanded {
+      _id
+      title
+    }
+    acquired_tickets {
+      _id
+      shortid
+      type_expanded {
+        _id
+        title
+      }
+      checkin {
+        _id
+        active
+        created_at
+        updated_by_expanded {
+          name
+        }
+      }
+    }
+    checkin {
+      _id
+      active
+      created_at
+      updated_by_expanded {
+        name
+      }
+    }
+    created_at
+    metadata
+  }
+}
+
+mutation updateEventCheckinsMutation($input: UpdateEventCheckinInput!) {
+  updateEventCheckins(input: $input) {
+    _id
+    active
+  }
 }

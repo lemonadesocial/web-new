@@ -1,6 +1,6 @@
 {
   "name": "web-new",
-  "version": "8.46.0",
+  "version": "9.3.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 8000 --experimental-https -H localhost.staging.lemonade.social",
@@ -59,6 +59,7 @@
     "@uiw/react-color": "^2.4.5",
     "@uiw/react-color-github": "^2.4.5",
     "@vis.gl/react-google-maps": "^1.5.1",
+    "@yudiel/react-qr-scanner": "^2.5.0",
     "array-move": "^4.0.0",
     "axios": "^1.10.0",
     "canvas": "^3.1.2",

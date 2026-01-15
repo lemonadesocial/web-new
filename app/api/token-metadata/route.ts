@@ -1,14 +1,18 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { pinata } from "../../../lib/utils/pinata";
+import { PinataSDK } from "pinata";
 
 export async function POST(request: NextRequest) {
   try {
-    if (!process.env.PINATA_JWT) {
+    if (!process.env.LAUNCHPAD_PINATA_JWT) {
       return NextResponse.json(
-        { error: "PINATA_JWT is not set" },
+        { error: "LAUNCHPAD_PINATA_JWT is not set" },
         { status: 500 }
       );
     }
+    
+    const pinata = new PinataSDK({
+      pinataJwt: process.env.LAUNCHPAD_PINATA_JWT,
+    });
     
     const data = await request.formData();
     const file: File | null = data.get("file") as unknown as File;

@@ -5,6 +5,7 @@ import { ethersAdapter } from '@gud/drift-ethers';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { StakingManagerAbi } from '$lib/abis/token-launch-pad/StakingManager';
 import { MarketUtils } from '$lib/abis/token-launch-pad/MarketUtils';
+import { getGasOptions } from '$lib/utils/crypto';
 
 type StakingManagerABI = typeof StakingManagerAbi;
 type MarketUtilsABI = typeof MarketUtils;
@@ -25,6 +26,7 @@ export class StakingManagerClient {
   }
 
   private drift: Drift;
+  private provider: JsonRpcProvider;
   private contract: ReadContract<StakingManagerABI>;
   private marketUtilsContract: ReadContract<MarketUtilsABI> | null = null;
 
@@ -33,8 +35,8 @@ export class StakingManagerClient {
       throw new Error('Chain RPC URL is required');
     }
 
-    const provider = new JsonRpcProvider(chain.rpc_url);
-    const adapterConfig = signer ? { provider, signer } : { provider };
+    this.provider = new JsonRpcProvider(chain.rpc_url);
+    const adapterConfig = signer ? { provider: this.provider, signer } : { provider: this.provider };
 
     this.drift = createDrift({
       adapter: ethersAdapter(adapterConfig),
@@ -97,11 +99,13 @@ export class StakingManagerClient {
   }
 
   async stake(amount: bigint): Promise<string> {
-    return (this.contract as ReadWriteContract<StakingManagerABI>).write('stake', { _amount: amount });
+    const gasOptions = await getGasOptions(this.provider);
+    return (this.contract as ReadWriteContract<StakingManagerABI>).write('stake', { _amount: amount }, gasOptions);
   }
 
   async unstake(amount: bigint): Promise<string> {
-    return (this.contract as ReadWriteContract<StakingManagerABI>).write('unstake', { _amount: amount });
+    const gasOptions = await getGasOptions(this.provider);
+    return (this.contract as ReadWriteContract<StakingManagerABI>).write('unstake', { _amount: amount }, gasOptions);
   }
 
   async userPositions(user: string): Promise<{ amount: bigint; timelockedUntil: bigint; ethRewardsPerTokenSnapshotX128: bigint; ethOwed: bigint }> {
@@ -113,7 +117,8 @@ export class StakingManagerClient {
   }
 
   async claim(): Promise<string> {
-    return (this.contract as ReadWriteContract<StakingManagerABI>).write('claim');
+    const gasOptions = await getGasOptions(this.provider);
+    return (this.contract as ReadWriteContract<StakingManagerABI>).write('claim', {}, gasOptions);
   }
 }
 

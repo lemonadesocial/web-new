@@ -1,5 +1,67 @@
 # Changelog
 
+## [9.3.0](https://github.com/lemonadesocial/web-new/compare/v9.2.0...v9.3.0) (2026-01-15)
+
+
+### Features
+
+* update ipfs env ([2192a44](https://github.com/lemonadesocial/web-new/commit/2192a44feee1b0f7c4f4f382ef0784c08e7cea14))
+* update megaeth chain id on prod ([efa9ea5](https://github.com/lemonadesocial/web-new/commit/efa9ea5f4ed3c79bf9e459afceb23ef1f903044c))
+
+## [9.2.0](https://github.com/lemonadesocial/web-new/compare/v9.1.1...v9.2.0) (2026-01-14)
+
+
+### Features
+
+* update lemonade username metadata desc ([7d82047](https://github.com/lemonadesocial/web-new/commit/7d82047465004a0a678b885ac632200805a6dec4))
+
+## [9.1.1](https://github.com/lemonadesocial/web-new/compare/v9.1.0...v9.1.1) (2026-01-14)
+
+
+### Bug Fixes
+
+* check upload image dimension for scale ([94f6aaf](https://github.com/lemonadesocial/web-new/commit/94f6aaf3fbd48b0c0d201ea2f3cccad2251b59da))
+* pane footer ([1bcce41](https://github.com/lemonadesocial/web-new/commit/1bcce411c00de3ff1ed50a889e396367b0ed84e5))
+
+## [9.1.0](https://github.com/lemonadesocial/web-new/compare/v9.0.1...v9.1.0) (2026-01-13)
+
+
+### Features
+
+* update figtree black font ([f3d42b2](https://github.com/lemonadesocial/web-new/commit/f3d42b249b5d665937d1ed37d67f0849be659741))
+
+## [9.0.1](https://github.com/lemonadesocial/web-new/compare/v9.0.0...v9.0.1) (2026-01-13)
+
+
+### Bug Fixes
+
+* display correct datetime ([8ef6f35](https://github.com/lemonadesocial/web-new/commit/8ef6f359eeb5d4442aff98d9501b689dbd7349c6))
+
+## [9.0.0](https://github.com/lemonadesocial/web-new/compare/v8.47.1...v9.0.0) (2026-01-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* check-in event
+
+### Features
+
+* check-in event ([f6d4533](https://github.com/lemonadesocial/web-new/commit/f6d453354eb0c175114f3b5bf107643c30620f75))
+
+## [8.47.1](https://github.com/lemonadesocial/web-new/compare/v8.47.0...v8.47.1) (2026-01-10)
+
+
+### Bug Fixes
+
+* group date events list community ([3759599](https://github.com/lemonadesocial/web-new/commit/3759599b9e50b74266c4f3d72145e4bb3f93d8d4))
+
+## [8.47.0](https://github.com/lemonadesocial/web-new/compare/v8.46.0...v8.47.0) (2026-01-09)
+
+
+### Features
+
+* custom gas limit ([ad6e68f](https://github.com/lemonadesocial/web-new/commit/ad6e68fc2648bf931d2d7468698f837dec9fc83e))
+
 ## [8.46.0](https://github.com/lemonadesocial/web-new/compare/v8.45.0...v8.46.0) (2026-01-08)
 
 

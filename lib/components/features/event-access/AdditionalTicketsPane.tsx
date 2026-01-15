@@ -171,7 +171,7 @@ function ViewQRModal({ ticket }: { ticket: Ticket }) {
   return (
     <ModalContent className="p-0">
       <div className="flex items-center justify-center px-4 pt-11 pb-9">
-        <QRCodeSVG value={ticket._id} size={200} fgColor="#FFFFFF" bgColor="transparent" />
+        <QRCodeSVG value={ticket.shortid} size={200} fgColor="#FFFFFF" bgColor="transparent" />
       </div>
       <div className="border-t border-dashed border-divider" />
       <div className="p-4 space-y-2">

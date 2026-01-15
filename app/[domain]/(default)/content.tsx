@@ -60,6 +60,7 @@ export function Content() {
         <div className="flex-1 flex flex-col gap-12 mb-20">
           <UpcomingEventSection />
           <CommunitySection />
+          <Divider />
           <AllCoins />
         </div>
 

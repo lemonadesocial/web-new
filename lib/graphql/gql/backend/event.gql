@@ -9,6 +9,7 @@ query GetEvent($id: MongoID, $shortid: String) {
     shortid
     host
     cohosts
+    me_is_host
     host_expanded_new {
       _id
       name
@@ -842,12 +843,17 @@ query ListEventGuests(
       }
       ticket {
         _id
+        shortid
         created_at
         type_expanded {
           _id
           title
         }
         metadata
+        checkin {
+          _id
+          active
+        }
       }
       user {
         _id

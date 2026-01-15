@@ -68,7 +68,7 @@ function PaneContent({ children, className }: React.PropsWithChildren & { classN
 }
 
 function PaneFooter({ children, className }: React.PropsWithChildren & { className?: string }) {
-  return <div className={twMerge('sticky bottom-0 bg-overlay-primary', className)}>{children}</div>;
+  return <div className={twMerge('sticky bottom-0 bg-overlay-primary z-50', className)}>{children}</div>;
 }
 
 const PaneHeader = {
