@@ -2,12 +2,12 @@
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useMe } from '$lib/hooks/useMe';
+import { Button, drawer } from '$lib/components/core';
 import { InputChat } from './InputChat';
 import { Messages } from './Messages';
 import { useAIChat } from './provider';
 import { ToolsSuggest } from './ToolsSuggest';
 import { WelcomeChat } from './WelcomeChat';
-import { Button, drawer } from '$lib/components/core';
 import { CreateEventPane } from './panes/CreateEventPane';
 
 export function AIChat() {
