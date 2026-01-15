@@ -10,11 +10,13 @@ import { LemonheadLeaderBoardRank } from '../lemonheads/LemonheadLeaderBoardRank
 import { formatWallet } from '$lib/utils/crypto';
 import { chainsMapAtom } from '$lib/jotai/chains';
 import { useTokenData } from '$lib/hooks/useCoin';
+import { useListChainIds } from '$lib/hooks/useListChainIds';
 import type { TradeVolume } from '$lib/graphql/generated/coin/graphql';
 import { TopEmptyComp } from './TopEmptyComp';
 
 export function TopTrades() {
   const today = new Date().toISOString().split('T')[0];
+  const chainIds = useListChainIds();
 
   const { data, loading } = useQuery(
     TradeVolumeDocument,
@@ -23,6 +25,9 @@ export function TopTrades() {
         where: {
           date: {
             _eq: today,
+          },
+          chainId: {
+            _in: chainIds,
           },
         },
         orderBy: [
@@ -33,6 +38,7 @@ export function TopTrades() {
         limit: 5,
         offset: 0,
       },
+      skip: chainIds.length === 0,
       fetchPolicy: 'network-only',
     },
     coinClient,

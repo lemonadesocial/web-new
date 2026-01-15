@@ -11,9 +11,11 @@ import { useSpace } from "$lib/hooks/useSpace";
 import type { PoolCreated_Bool_Exp } from "$lib/graphql/generated/coin/graphql";
 import { LaunchpadGroup } from '$lib/graphql/generated/backend/graphql';
 import { CoinStats } from '../community/CoinStats';
+import { useRouter } from 'next/navigation';
 
 export function CommunityLaunchpad() {
   const space = useSpace();
+  const router = useRouter();
 
   const { launchpadGroup } = useLaunchpadGroup(space?._id || '');
   const { tokenIds } = useTokenIds(launchpadGroup?.address || '');
@@ -71,7 +73,14 @@ export function CommunityLaunchpad() {
                 }
               }}
             />
-            <Button iconLeft="icon-plus" variant='tertiary' size="sm">Add Coin</Button>
+            <Button
+              iconLeft="icon-plus"
+              variant='tertiary'
+              size="sm"
+              onClick={() => router.push('/create/coin')}
+            >
+              Add Coin
+            </Button>
           </div>
         </div>
 

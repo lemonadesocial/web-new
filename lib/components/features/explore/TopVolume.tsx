@@ -12,14 +12,21 @@ import { formatNumber } from '$lib/utils/number';
 import { formatWallet } from '$lib/utils/crypto';
 import { chainsMapAtom } from '$lib/jotai/chains';
 import { useTokenData } from '$lib/hooks/useCoin';
+import { useListChainIds } from '$lib/hooks/useListChainIds';
 import type { TradeVolume } from '$lib/graphql/generated/coin/graphql';
 import { TopEmptyComp } from './TopEmptyComp';
 
 export function TopVolume() {
+  const chainIds = useListChainIds();
   const { data, loading } = useQuery(
     TradeVolumeDocument,
     {
       variables: {
+        where: {
+          chainId: {
+            _in: chainIds,
+          },
+        },
         orderBy: [
           {
             volumeETH: Order_By.Desc,
@@ -28,6 +35,7 @@ export function TopVolume() {
         limit: 5,
         offset: 0,
       },
+      skip: chainIds.length === 0,
       fetchPolicy: 'network-only',
     },
     coinClient,
