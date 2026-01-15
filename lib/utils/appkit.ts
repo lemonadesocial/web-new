@@ -18,15 +18,17 @@ import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { getListChains } from './crypto';
 
 export const getAppKitNetwork = (chain: Chain) => {
+  const nativeToken = chain.tokens?.find(token => token.is_native) || chain.tokens?.[0];
+  
   return {
     id: Number(chain.chain_id),
     name: chain.name,
     caipNetworkId: chain.platform === 'ethereum' ? `eip155:${chain.chain_id}` : `solana:${chain.chain_id}`,
     chainNamespace: chain.platform === 'ethereum' ? 'eip155' : 'solana',
     nativeCurrency: {
-      name: chain.tokens?.[0].name,
-      symbol: chain.tokens?.[0].symbol,
-      decimals: chain.tokens?.[0].decimals,
+      name: nativeToken?.name,
+      symbol: nativeToken?.symbol,
+      decimals: nativeToken?.decimals,
     },
     rpcUrls: {
       default: {
