@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.3.1](https://github.com/lemonadesocial/web-new/compare/v9.3.0...v9.3.1) (2026-01-15)
+
+
+### Bug Fixes
+
+* username check debounce ([8b36bb8](https://github.com/lemonadesocial/web-new/commit/8b36bb83b66db0d6002f8e207c622b9976250d67))
+
 ## [9.3.0](https://github.com/lemonadesocial/web-new/compare/v9.2.0...v9.3.0) (2026-01-15)
 
 
