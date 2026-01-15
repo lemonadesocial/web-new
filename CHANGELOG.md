@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.4.0](https://github.com/lemonadesocial/web-new/compare/v9.3.2...v9.4.0) (2026-01-15)
+
+
+### Features
+
+* update page title - rm unused ([b71a0f3](https://github.com/lemonadesocial/web-new/commit/b71a0f36ec071c257e6e1153b705d561b75fec39))
+
 ## [9.3.2](https://github.com/lemonadesocial/web-new/compare/v9.3.1...v9.3.2) (2026-01-15)
 
 
