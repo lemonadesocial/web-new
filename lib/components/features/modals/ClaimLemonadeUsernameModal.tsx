@@ -36,21 +36,21 @@ export function ClaimLemonadeUsernameModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const checkUsernameAvailability = async (value: string, toAddress: string) => {
+  const checkUsernameAvailability = useCallback(async (value: string, toAddress: string) => {
     const variables: UsernameAvailabilityQueryVariables = {
       wallet: toAddress,
       username: value,
     };
-
+  
     const { data } = await client.query({
       query: UsernameAvailabilityDocument,
       variables,
       fetchPolicy: 'network-only',
     });
-
+  
     return data?.isUsernameAvailable ?? false;
-  };
-
+  }, [client]);
+  
   const debouncedCheckUsername = useCallback(
     debounce(async (value: string) => {
       if (!value || value.length === 0) return;
