@@ -7,6 +7,8 @@ import { Messages } from './Messages';
 import { useAIChat } from './provider';
 import { ToolsSuggest } from './ToolsSuggest';
 import { WelcomeChat } from './WelcomeChat';
+import { Button, drawer } from '$lib/components/core';
+import { CreateEventPane } from './panes/CreateEventPane';
 
 export function AIChat() {
   const me = useMe();
@@ -64,6 +66,8 @@ export function AIChat() {
         ) : (
           <ToolsSuggest />
         )}
+
+        <Button onClick={() => drawer.open(CreateEventPane)}>Test Right Pane</Button>
       </motion.div>
       <AnimatePresence mode="wait">
         {!state.messages.length && <motion.div key="spacer-bottom" className="flex-1" exit={{ opacity: 0 }} />}

@@ -2,7 +2,7 @@
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Button, Card } from '$lib/components/core';
+import { Button, Card, drawer } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { ASSET_PREFIX } from '$lib/utils/constants';
@@ -24,6 +24,7 @@ export function Content() {
       <AIChatProvider>
         <AIChat />
       </AIChatProvider>
+      <button onClick={() => drawer.open()}>test</button>
     </div>
   );
 }
