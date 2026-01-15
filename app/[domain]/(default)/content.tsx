@@ -52,14 +52,13 @@ export function Content() {
   return (
     <div className="pt-6 flex flex-col gap-6">
       <div className="space-y-1">
-        <h3 className="text-lg font-medium">Welcome, {me.name || me.display_name}</h3>
-        <p className="text-sm text-secondary">Quickly catch up, access your events, communities & feeds.</p>
+        <h3 className="text-2xl font-semibold">Welcome, {me.name || me.display_name}</h3>
+        <p className="text-sm text-tertiary">Quickly catch up, access your events, communities & feeds.</p>
       </div>
 
-      <div className="flex flex-col-reverse md:flex-row gap-6 md:gap-14">
-        <div className="flex-1 flex flex-col gap-4 mb-20">
+      <div className="flex flex-col-reverse md:flex-row gap-6 md:gap-18">
+        <div className="flex-1 flex flex-col gap-12 mb-20">
           <UpcomingEventSection />
-          <Divider />
           <CommunitySection />
           <Divider />
           <AllCoins />
@@ -149,28 +148,14 @@ function UpcomingEventSection() {
                 <Button
                   size="sm"
                   variant="tertiary-alt"
-                  iconLeft="icon-plus"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push('/create/event');
-                  }}
-                >
-                  New Event
-                </Button>
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
                   iconRight="icon-chevron-right"
                   onClick={(e) => {
                     e.stopPropagation();
                     router.push('/events');
                   }}
                 >
-                  All Events
+                  View All
                 </Button>
-              </div>
-
-              <div className="flex md:hidden gap-2">
                 <Button
                   size="sm"
                   variant="tertiary-alt"
@@ -179,7 +164,12 @@ function UpcomingEventSection() {
                     e.stopPropagation();
                     router.push('/create/event');
                   }}
-                />
+                >
+                  New Event
+                </Button>
+              </div>
+
+              <div className="flex md:hidden gap-2">
                 <Button
                   size="sm"
                   variant="tertiary-alt"
@@ -187,6 +177,15 @@ function UpcomingEventSection() {
                   onClick={(e) => {
                     e.stopPropagation();
                     router.push('/events');
+                  }}
+                />
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  icon="icon-plus"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push('/create/event');
                   }}
                 />
               </div>
@@ -204,15 +203,15 @@ function UpcomingEventSection() {
             onManage={
               [item.host, ...(item.cohosts || [])].includes(me?._id)
                 ? (e) => {
-                  e.stopPropagation();
-                  router.push(`/e/manage/${item.shortid}`);
-                }
+                    e.stopPropagation();
+                    router.push(`/e/manage/${item.shortid}`);
+                  }
                 : undefined
             }
           />
         ))}
 
-        <div className="hidden only:block text-center text-gray-500 py-10">
+        <div className="hidden only:block text-center text-gray-500">
           <EmptyCard
             icon="icon-confirmation-number"
             title="No Upcoming Events"
@@ -253,18 +252,7 @@ function CommunitySection() {
                 />
                 <h3 className="text-xl font-semibold">Communities</h3>
               </div>
-              <div className="hidden md:flex gap-2">
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
-                  iconLeft="icon-plus"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push('/create/community');
-                  }}
-                >
-                  New Community
-                </Button>
+              <div className="flex gap-2">
                 <Button
                   size="sm"
                   variant="tertiary-alt"
@@ -274,11 +262,8 @@ function CommunitySection() {
                     router.push('/communities');
                   }}
                 >
-                  All Communities
+                  View All
                 </Button>
-              </div>
-
-              <div className="flex md:hidden gap-2">
                 <Button
                   size="sm"
                   variant="tertiary-alt"
@@ -287,17 +272,31 @@ function CommunitySection() {
                     e.stopPropagation();
                     router.push('/create/community');
                   }}
-                />
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
-                  icon="icon-chevron-right"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push('/communities');
-                  }}
-                />
+                >
+                  New Community
+                </Button>
               </div>
+
+              {/* <div className="flex md:hidden gap-2"> */}
+              {/*   <Button */}
+              {/*     size="sm" */}
+              {/*     variant="tertiary-alt" */}
+              {/*     icon="icon-plus" */}
+              {/*     onClick={(e) => { */}
+              {/*       e.stopPropagation(); */}
+              {/*       router.push('/create/community'); */}
+              {/*     }} */}
+              {/*   /> */}
+              {/*   <Button */}
+              {/*     size="sm" */}
+              {/*     variant="tertiary-alt" */}
+              {/*     icon="icon-chevron-right" */}
+              {/*     onClick={(e) => { */}
+              {/*       e.stopPropagation(); */}
+              {/*       router.push('/communities'); */}
+              {/*     }} */}
+              {/*   /> */}
+              {/* </div> */}
             </div>
           );
         }}
@@ -316,7 +315,7 @@ function CommunitySection() {
               onClick={() => router.push(`/s/manage/${item.slug || item._id}`)}
             />
           ))}
-        <div className="hidden only:block text-center text-gray-500 py-10">
+        <div className="hidden only:block text-center text-gray-500 ">
           <EmptyCard
             icon="icon-confirmation-number"
             title="No Communities Yet"
@@ -689,11 +688,14 @@ function AllCoins() {
           },
         ],
         offset: 0,
-        where: userWallets.length > 0 ? {
-          paramsCreator: {
-            _in: userWallets,
-          },
-        } : undefined,
+        where:
+          userWallets.length > 0
+            ? {
+                paramsCreator: {
+                  _in: userWallets,
+                },
+              }
+            : undefined,
       },
       fetchPolicy: 'network-only',
       skip: userWallets.length === 0,
@@ -720,23 +722,13 @@ function AllCoins() {
                 <h3 className="text-xl font-semibold">Coins</h3>
               </div>
               <div className="hidden md:flex gap-2">
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
-                  iconLeft="icon-plus"
-                  onClick={handleCreateCoin}
-                >
+                <Button size="sm" variant="tertiary-alt" iconLeft="icon-plus" onClick={handleCreateCoin}>
                   New Coin
                 </Button>
               </div>
 
               <div className="flex md:hidden gap-2">
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
-                  icon="icon-plus"
-                  onClick={handleCreateCoin}
-                />
+                <Button size="sm" variant="tertiary-alt" icon="icon-plus" onClick={handleCreateCoin} />
               </div>
             </div>
           );
@@ -781,17 +773,18 @@ function CoinItem({ pool }: { pool: PoolCreated }) {
     pool.previousMarketCapETH,
   );
 
-  if (isLoadingTokenData) return (
-    <Card.Root className="min-w-fit">
-      <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
-        <Skeleton className="size-[38px] rounded-sm" animate />
-        <div className="space-y-0.5 flex-1">
-          <Skeleton className="h-5 w-24 rounded-md" animate />
-          <Skeleton className="h-4 w-32 rounded-md" animate />
-        </div>
-      </Card.Content>
-    </Card.Root>
-  );
+  if (isLoadingTokenData)
+    return (
+      <Card.Root className="min-w-fit">
+        <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
+          <Skeleton className="size-[38px] rounded-sm" animate />
+          <div className="space-y-0.5 flex-1">
+            <Skeleton className="h-5 w-24 rounded-md" animate />
+            <Skeleton className="h-4 w-32 rounded-md" animate />
+          </div>
+        </Card.Content>
+      </Card.Root>
+    );
 
   if (!tokenData) return null;
 

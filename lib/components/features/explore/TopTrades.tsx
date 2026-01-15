@@ -11,6 +11,7 @@ import { formatWallet } from '$lib/utils/crypto';
 import { chainsMapAtom } from '$lib/jotai/chains';
 import { useTokenData } from '$lib/hooks/useCoin';
 import type { TradeVolume } from '$lib/graphql/generated/coin/graphql';
+import { TopEmptyComp } from './TopEmptyComp';
 
 export function TopTrades() {
   const today = new Date().toISOString().split('T')[0];
@@ -40,11 +41,11 @@ export function TopTrades() {
   const volumes = data?.TradeVolume || [];
 
   return (
-    <Card.Root className="flex-1 w-full">
+    <Card.Root className="flex flex-col flex-1 w-full">
       <Card.Header className="border-b">
         <p>Most Trades (24h)</p>
       </Card.Header>
-      <Card.Content className="divide-y divide-(--color-divider) p-0">
+      <Card.Content className="flex-1 divide-y divide-(--color-divider) p-0">
         {loading && (
           <>
             {Array.from({ length: 5 }).map((_, idx) => (
@@ -63,14 +64,13 @@ export function TopTrades() {
           </>
         )}
         {!loading && volumes.length === 0 && (
-          <div className="px-4 py-8 text-center text-tertiary">
-            <p>No trade data available</p>
-          </div>
+          <TopEmptyComp
+            icon="icon-arrow-up-down-line"
+            title="No trades yet"
+            subtitle="Coins with the most trades in the last 24 hours will appear here."
+          />
         )}
-        {!loading &&
-          volumes.map((volume, idx) => (
-            <TopTradesItem key={volume.id} volume={volume} rank={idx + 1} />
-          ))}
+        {!loading && volumes.map((volume, idx) => <TopTradesItem key={volume.id} volume={volume} rank={idx + 1} />)}
       </Card.Content>
     </Card.Root>
   );
@@ -122,4 +122,3 @@ function TopTradesItem({ volume, rank }: { volume: TradeVolume; rank: number }) 
     </div>
   );
 }
-
