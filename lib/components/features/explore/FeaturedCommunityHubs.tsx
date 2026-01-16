@@ -30,8 +30,8 @@ export function FeaturedCommunityHubs() {
           </div>
         ))
         .otherwise(() => (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {list.slice(0, 6).map((item, idx) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {list.slice(0, 8).map((item, idx) => (
               <FeaturedCommunityHubsItem key={idx} space={item} />
             ))}
           </div>

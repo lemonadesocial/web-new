@@ -36,6 +36,7 @@ import { formatWallet } from '$lib/utils/crypto';
 import { calculateMarketCapData } from '$lib/utils/coin';
 import { useClaimUsername, useLemonadeUsername } from '$lib/hooks/useUsername';
 import { chainsMapAtom } from '$lib/jotai';
+import Link from 'next/link';
 
 export function Content() {
   const me = useMe();
@@ -287,10 +288,12 @@ function CommunitySection() {
           ?.slice(0, 6)
           .map((item) => (
             <CardItem
+              tag="link"
               key={item._id}
               title={item.title}
               subtitle={`${item.followers_count || 0} Subscribers`}
               image={getImageSrc(item)}
+              href={`/s/manage/${item.slug || item._id}`}
               onClick={() => router.push(`/s/manage/${item.slug || item._id}`)}
             />
           ))}
@@ -425,6 +428,8 @@ function CardItem({
   onClick,
   rightContent,
   className,
+  href,
+  tag = 'button',
 }: {
   image?: string | React.ReactElement;
   title: string;
@@ -432,18 +437,24 @@ function CardItem({
   rightContent?: React.ReactElement;
   onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
   className?: string;
+  href?: string;
+  tag?: 'link' | 'button';
 }) {
+  const Wrap = tag === 'link' ? Link : React.Fragment;
+  //TODO: should use Card.Root as link - have no time to check style, will update later
   return (
-    <Card.Root onClick={onClick} className={twMerge('min-w-fit', className)}>
-      <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
-        {typeof image === 'string' ? <img src={image} className="size-[38px] rounded-sm aspect-square" /> : image}
-        <div className="space-y-0.5 flex-1">
-          <p className="title text-lg">{title}</p>
-          {typeof subtitle === 'string' ? <p className="text-sm text-tertiary">{subtitle}</p> : subtitle}
-        </div>
-        <div className="hidden md:block">{rightContent}</div>
-      </Card.Content>
-    </Card.Root>
+    <Wrap href={href || ''}>
+      <Card.Root onClick={onClick} className={twMerge('min-w-fit', className)}>
+        <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
+          {typeof image === 'string' ? <img src={image} className="size-[38px] rounded-sm aspect-square" /> : image}
+          <div className="space-y-0.5 flex-1">
+            <p className="title text-lg">{title}</p>
+            {typeof subtitle === 'string' ? <p className="text-sm text-tertiary">{subtitle}</p> : subtitle}
+          </div>
+          <div className="hidden md:block">{rightContent}</div>
+        </Card.Content>
+      </Card.Root>
+    </Wrap>
   );
 }
 
