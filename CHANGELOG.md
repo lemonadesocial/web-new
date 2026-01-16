@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.7.0](https://github.com/lemonadesocial/web-new/compare/v9.6.0...v9.7.0) (2026-01-16)
+
+
+### Features
+
+* enable explore and tokens page ([4887500](https://github.com/lemonadesocial/web-new/commit/4887500d53a28c2493189a5fb53720a4cff7216f))
+
 ## [9.6.0](https://github.com/lemonadesocial/web-new/compare/v9.5.0...v9.6.0) (2026-01-16)
 
 
