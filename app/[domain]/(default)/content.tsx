@@ -2,11 +2,12 @@
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Button, Card, drawer } from '$lib/components/core';
+import { Button, Card } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { AIChat } from '$lib/components/features/ai/AIChat';
+import { AIChatRightPane } from '$lib/components/features/ai/AIChatRightPane';
 import { AIChatProvider } from '$lib/components/features/ai/provider';
 
 export function Content() {
@@ -20,11 +21,13 @@ export function Content() {
   }
 
   return (
-    <div className="w-full max-w-[720px]">
+    <div className="w-full flex">
       <AIChatProvider>
-        <AIChat />
+        <div className="w-full max-w-[720px]">
+          <AIChat />
+        </div>
+        <AIChatRightPane />
       </AIChatProvider>
-      <button onClick={() => drawer.open()}>test</button>
     </div>
   );
 }

@@ -2,8 +2,9 @@
 import { RunResult } from '$lib/graphql/generated/ai/graphql';
 import { v4 as uuidV4 } from 'uuid';
 import React from 'react';
+import { Space, Event } from '$lib/graphql/generated/backend/graphql';
 
-type ToolKey = 'create-event' | 'manage-event' | 'create-community' | 'manage-community';
+export type ToolKey = 'create_event' | 'manage_event' | 'create_community' | 'manage_community';
 
 type Tool = {
   key: ToolKey;
@@ -21,16 +22,23 @@ type State = {
   tools: Tool[];
   messages: Message[];
   thinking?: boolean;
+  toggleDetail?: {
+    action: ToolKey;
+    props: {
+      title: string;
+      data: Partial<Space | Event>;
+    };
+  };
 };
 
 const session = uuidV4();
 const defaultState: State = {
   session: session,
   tools: [
-    { key: 'create-event', icon: 'icon-ticket', label: 'Create Event' },
-    { key: 'manage-event', icon: 'icon-crown', label: 'Create Event' },
-    { key: 'create-community', icon: 'icon-community', label: 'Create Community' },
-    { key: 'manage-community', icon: 'icon-settings', label: 'Manage Community' },
+    { key: 'create_event', icon: 'icon-ticket', label: 'Create Event' },
+    { key: 'manage_event', icon: 'icon-crown', label: 'Create Event' },
+    { key: 'create_community', icon: 'icon-community', label: 'Create Community' },
+    { key: 'manage_community', icon: 'icon-settings', label: 'Manage Community' },
   ],
   messages: [],
 };
@@ -55,6 +63,7 @@ export enum AIChatActionKind {
   'select_tool',
   'add_message',
   'set_thinking',
+  'toggle_detail',
 }
 
 export type AIChatAction = { type: AIChatActionKind; payload?: Partial<State> };
@@ -75,6 +84,10 @@ function reducers(state: State, action: AIChatAction) {
 
     case AIChatActionKind.set_thinking: {
       return { ...state, thinking: action.payload?.thinking };
+    }
+
+    case AIChatActionKind.toggle_detail: {
+      return { ...state, toggleDetail: action.payload?.toggleDetail };
     }
 
     default:

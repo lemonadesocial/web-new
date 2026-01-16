@@ -16,7 +16,9 @@ export function ToolsSuggest() {
             iconLeft={item.icon}
             size="sm"
             className="rounded-full"
-            onClick={() => dispatch({ type: AIChatActionKind.select_tool, payload: { selectedTool: item } })}
+            onClick={() => {
+              dispatch({ type: AIChatActionKind.select_tool, payload: { selectedTool: item } });
+            }}
           >
             {item.label}
           </Button>

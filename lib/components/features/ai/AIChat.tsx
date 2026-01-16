@@ -5,7 +5,7 @@ import { useMe } from '$lib/hooks/useMe';
 import { Button, drawer } from '$lib/components/core';
 import { InputChat } from './InputChat';
 import { Messages } from './Messages';
-import { useAIChat } from './provider';
+import { AIChatActionKind, useAIChat } from './provider';
 import { ToolsSuggest } from './ToolsSuggest';
 import { WelcomeChat } from './WelcomeChat';
 import { CreateEventPane } from './panes/CreateEventPane';
@@ -13,7 +13,7 @@ import { CreateCommunityPane } from './panes/CreateCommunityPane';
 
 export function AIChat() {
   const me = useMe();
-  const [state] = useAIChat();
+  const [state, dispatch] = useAIChat();
 
   if (!me) return null;
 
@@ -69,24 +69,32 @@ export function AIChat() {
         )}
 
         <Button
-          onClick={() =>
-            drawer.open(CreateEventPane, {
-              dismissible: false,
-              showBackdrop: false,
-              props: { title: 'Create Event', data: { title: '123' } },
-            })
-          }
+          onClick={() => {
+            dispatch({
+              type: AIChatActionKind.toggle_detail,
+              payload: {
+                toggleDetail: {
+                  action: 'create_event',
+                  props: { title: 'Create Event', data: { title: 'My Event' } },
+                },
+              },
+            });
+          }}
         >
           Test Right Pane
         </Button>
         <Button
-          onClick={() =>
-            drawer.open(CreateCommunityPane, {
-              dismissible: false,
-              showBackdrop: false,
-              props: { title: 'Create Community', data: { title: '123' } },
-            })
-          }
+          onClick={() => {
+            dispatch({
+              type: AIChatActionKind.toggle_detail,
+              payload: {
+                toggleDetail: {
+                  action: 'create_community',
+                  props: { title: 'Create Community', data: { title: 'My Community' } },
+                },
+              },
+            });
+          }}
         >
           Test Create Community
         </Button>
