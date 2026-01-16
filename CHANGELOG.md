@@ -1,5 +1,17 @@
 # Changelog
 
+## [9.5.0](https://github.com/lemonadesocial/web-new/compare/v9.4.0...v9.5.0) (2026-01-16)
+
+
+### Features
+
+* **lemonade-username:** add endpoint to retrieve metadata ([9d1c7ee](https://github.com/lemonadesocial/web-new/commit/9d1c7ee1f1f56364ae4268a639bc57fd4f1186b7))
+
+
+### Bug Fixes
+
+* rm view all - open new tab community hub ([f704f73](https://github.com/lemonadesocial/web-new/commit/f704f7329ef759f00d05342c5329a829a2e545d5))
+
 ## [9.4.0](https://github.com/lemonadesocial/web-new/compare/v9.3.2...v9.4.0) (2026-01-15)
 
 
