@@ -63,6 +63,7 @@ export async function writeContract(
   const browserProvider = new ethers.BrowserProvider(provider);
   const signer = await browserProvider.getSigner();
   const contract = contractInstance.attach(contractAddress).connect(signer);
+  const network = await browserProvider.getNetwork();
   
   const data = contract.interface.encodeFunctionData(functionName, args);
   
@@ -72,6 +73,20 @@ export async function writeContract(
     gasLimit: GAS_LIMIT,
     ...txOptions
   });
+
+  if (Number(network.chainId) === MEGAETH_CHAIN_ID) {
+    try {
+      const receipt = await browserProvider.send('realtime_getTransactionReceipt', [tx.hash]);
+      if (receipt) {
+        return {
+          ...tx,
+          wait: async () => Promise.resolve(receipt),
+          receipt
+        };
+      }
+    } catch {
+    }
+  }
   
   return tx;
 }
