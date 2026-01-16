@@ -9,6 +9,7 @@ import {
   GetSpacesDocument,
   PinEventsToSpaceDocument,
   Space,
+  Event,
   SpaceRole,
 } from '$lib/graphql/generated/backend/graphql';
 import { getUserTimezoneOption } from '$lib/utils/timezone';
@@ -21,7 +22,7 @@ import { Pane } from '$lib/components/core/pane/pane';
 import { Button } from '$lib/components/core';
 import { EventFormValue } from '$lib/components/features/event/form/utils';
 
-export function CreateEventPane(_props: Partial<Space>) {
+export function CreateEventPane(_props: Partial<Event>) {
   return (
     <EventThemeProvider>
       <FormContent />

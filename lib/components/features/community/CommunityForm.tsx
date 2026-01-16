@@ -94,7 +94,7 @@ export function CommunityForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
       <CommunityFormContent form={form} />
       <div>
-        <Button type="submit" loading={isSubmitting} variant="secondary" disabled={!isValid || !canUseSpaceSlug}>
+        <Button type="submit" loading={isSubmitting} variant="secondary" disabled={!isValid}>
           Create Community
         </Button>
       </div>
@@ -102,10 +102,18 @@ export function CommunityForm() {
   );
 }
 
-export function CommunityFormContent({ form }: { form: UseFormReturn<FormValues> }) {
+export function CommunityFormContent({
+  form,
+  mobile,
+}: {
+  form: UseFormReturn<FormValues>;
+  /** @description force mobile view such as right pane */
+  mobile?: boolean;
+}) {
   const {
     control,
     setValue,
+    setError,
     formState: { errors, dirtyFields },
   } = form;
 
@@ -125,8 +133,12 @@ export function CommunityFormContent({ form }: { form: UseFormReturn<FormValues>
     debounce(async (query) => {
       try {
         const { data } = await client.query({ query: CheckSpaceSlugDocument, variables: { slug: query } });
+
+        if (!!data?.canUseSpaceSlug) {
+          setError('slug', { type: 'validate', message: 'This URL is already taken.' });
+        }
         setCanUseSpaceSlug(!!data?.canUseSpaceSlug);
-      } catch (err) {
+      } catch (err: any) {
         console.log(err);
       } finally {
         setChecking(false);
@@ -169,6 +181,11 @@ export function CommunityFormContent({ form }: { form: UseFormReturn<FormValues>
       if (type === 'dp') setUploadingDp(false);
     }
   };
+
+  React.useEffect(() => {
+    if (!canUseSpaceSlug) {
+    }
+  }, [canUseSpaceSlug]);
 
   return (
     <>
@@ -255,7 +272,7 @@ export function CommunityFormContent({ form }: { form: UseFormReturn<FormValues>
         </Card.Content>
       </Card.Root>
 
-      <div className="flex flex-col md:flex-row gap-6 justify-between">
+      <div className={clsx('flex flex-col gap-6 justify-between', !mobile && 'md:flex-row')}>
         <Card.Root className="flex-1">
           <Card.Content className="space-y-4">
             <p className="text-lg">Customization</p>

@@ -9,6 +9,7 @@ import { useAIChat } from './provider';
 import { ToolsSuggest } from './ToolsSuggest';
 import { WelcomeChat } from './WelcomeChat';
 import { CreateEventPane } from './panes/CreateEventPane';
+import { CreateCommunityPane } from './panes/CreateCommunityPane';
 
 export function AIChat() {
   const me = useMe();
@@ -67,7 +68,28 @@ export function AIChat() {
           <ToolsSuggest />
         )}
 
-        <Button onClick={() => drawer.open(CreateEventPane)}>Test Right Pane</Button>
+        <Button
+          onClick={() =>
+            drawer.open(CreateEventPane, {
+              dismissible: false,
+              showBackdrop: false,
+              props: { title: 'Create Event', data: { title: '123' } },
+            })
+          }
+        >
+          Test Right Pane
+        </Button>
+        <Button
+          onClick={() =>
+            drawer.open(CreateCommunityPane, {
+              dismissible: false,
+              showBackdrop: false,
+              props: { title: 'Create Community', data: { title: '123' } },
+            })
+          }
+        >
+          Test Create Community
+        </Button>
       </motion.div>
       <AnimatePresence mode="wait">
         {!state.messages.length && <motion.div key="spacer-bottom" className="flex-1" exit={{ opacity: 0 }} />}
