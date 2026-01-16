@@ -4,7 +4,6 @@ import { match } from 'ts-pattern';
 import net from 'net';
 import { lookup } from 'dns/promises';
 import { isPrivateIP } from 'range_check';
-import { PinataSDK } from 'pinata';
 
 import { getMintNftData } from '$lib/services/lemonhead';
 import { calculateLookHash, Filter, getFinalTraits, validateTraits, type Trait } from '$lib/services/lemonhead/core';
@@ -18,6 +17,7 @@ import { getMintVinylNationPassportImage } from '$lib/services/passports/vinyl-n
 import { getMintDripNationPassportImage } from '$lib/services/passports/drip-nation';
 import { getMintFestivalNationPassportImage } from '$lib/services/passports/festival-nation';
 import { request } from '$lib/services/nft/admin';
+import { uploadUsernameMetadata } from '$lib/services/lemonade-username';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -176,34 +176,8 @@ export const appRouter = router({
     .output(z.object({ tokenUri: z.string() }))
     .mutation(async ({ input }) => {
       const { username } = input;
-      const metadata = {
-        name: username,
-        description: 'Lemonade usernames powered by MegaETH! #makelemonade',
-        attributes: [
-          {
-            trait_type: 'Created Date',
-            display_type: 'date',
-            value: Date.now(),
-          },
-          {
-            trait_type: 'Length',
-            display_type: 'number',
-            value: username.length,
-          },
-        ],
-      };
 
-      const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
-      const metadataFile = new File([metadataBlob], 'metadata.json', { type: 'application/json' });
-
-      const pinata = new PinataSDK({
-        pinataJwt: process.env.USERNAME_PINATA_JWT,
-      });
-      
-      const { cid: metadataCid } = await pinata.upload.public.file(metadataFile);
-      const tokenUri = `ipfs://${metadataCid}`;
-
-      return { tokenUri };
+      return await uploadUsernameMetadata(username);
     }),
 });
 
