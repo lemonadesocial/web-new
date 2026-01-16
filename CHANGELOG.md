@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.6.0](https://github.com/lemonadesocial/web-new/compare/v9.5.0...v9.6.0) (2026-01-16)
+
+
+### Features
+
+* update grid cols ([2e4e537](https://github.com/lemonadesocial/web-new/commit/2e4e5375a454bc51486d0b4270f9cb0c3c1dacd4))
+
 ## [9.5.0](https://github.com/lemonadesocial/web-new/compare/v9.4.0...v9.5.0) (2026-01-16)
 
 
