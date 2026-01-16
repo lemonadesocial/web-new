@@ -44,7 +44,7 @@ export function formatWallet(address: string, length = 4): string {
 export const isNativeToken = (tokenAddress: string, network: string) => {
   const chain = getListChains().find(c => c.chain_id === network);
   const token = chain?.tokens?.find(t => t.contract === tokenAddress);
-  return token?.is_native;
+  return token?.is_native || tokenAddress.toLowerCase() === ethers.ZeroAddress;
 };
 
 export async function getGasOptions(provider: ethers.Provider): Promise<{ gas?: bigint }> {
@@ -64,18 +64,29 @@ export async function writeContract(
   const signer = await browserProvider.getSigner();
   const contract = contractInstance.attach(contractAddress).connect(signer);
   const network = await browserProvider.getNetwork();
-  const gasLimit = Number(network.chainId) === MEGAETH_CHAIN_ID
-    ? GAS_LIMIT
-    : await contract.getFunction(functionName).estimateGas(...args, txOptions);
   
   const data = contract.interface.encodeFunctionData(functionName, args);
   
   const tx = await signer.sendTransaction({
     to: contractAddress,
     data: ethers.hexlify(data),
-    gasLimit,
+    gasLimit: GAS_LIMIT,
     ...txOptions
   });
+
+  if (Number(network.chainId) === MEGAETH_CHAIN_ID) {
+    try {
+      const receipt = await browserProvider.send('realtime_getTransactionReceipt', [tx.hash]);
+      if (receipt) {
+        return {
+          ...tx,
+          wait: async () => Promise.resolve(receipt),
+          receipt
+        };
+      }
+    } catch {
+    }
+  }
   
   return tx;
 }
