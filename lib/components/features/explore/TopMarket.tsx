@@ -12,10 +12,12 @@ import { calculateMarketCapData } from '$lib/utils/coin';
 import { formatWallet } from '$lib/utils/crypto';
 import { chainsMapAtom } from '$lib/jotai/chains';
 import { useTokenData } from '$lib/hooks/useCoin';
+import { useListChainIds } from '$lib/hooks/useListChainIds';
 import type { PoolCreated } from '$lib/graphql/generated/coin/graphql';
 import { TopEmptyComp } from './TopEmptyComp';
 
 export function TopMarket() {
+  const chainIds = useListChainIds();
   const { data, loading } = useQuery(
     PoolCreatedDocument,
     {
@@ -23,6 +25,9 @@ export function TopMarket() {
         where: {
           latestMarketCapETH: {
             _is_null: false,
+          },
+          chainId: {
+            _in: chainIds,
           },
         },
         orderBy: [
@@ -33,6 +38,7 @@ export function TopMarket() {
         limit: 5,
         offset: 0,
       },
+      skip: chainIds.length === 0,
     },
     coinClient,
   );
