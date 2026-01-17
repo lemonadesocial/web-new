@@ -9,7 +9,6 @@ import { AIChatActionKind, useAIChat } from './provider';
 import { ToolsSuggest } from './ToolsSuggest';
 import { WelcomeChat } from './WelcomeChat';
 import { CreateEventPane } from './panes/CreateEventPane';
-import { CreateCommunityPane } from './panes/CreateCommunityPane';
 
 export function AIChat() {
   const me = useMe();
@@ -70,14 +69,11 @@ export function AIChat() {
 
         <Button
           onClick={() => {
-            dispatch({
-              type: AIChatActionKind.toggle_detail,
-              payload: {
-                toggleDetail: {
-                  action: 'create_event',
-                  props: { title: 'Create Event', data: { title: 'My Event' } },
-                },
-              },
+            drawer.open(CreateEventPane, {
+              dismissible: false,
+              showBackdrop: false,
+              fixed: false,
+              props: { title: 'Create Event', data: { title: 'My Event' } },
             });
           }}
         >

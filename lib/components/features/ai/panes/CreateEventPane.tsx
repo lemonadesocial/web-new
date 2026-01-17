@@ -119,7 +119,7 @@ function FormContent() {
   const [title] = watch(['title']);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className="h-full">
       <Pane.Root>
         <Pane.Header.Root>
           <Pane.Header.Left showBackButton />

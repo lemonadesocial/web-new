@@ -31,6 +31,7 @@ interface Options<T> {
   contentClass?: string;
   dismissible?: boolean;
   showBackdrop?: boolean;
+  fixed?: boolean;
 }
 
 interface DrawerItem {
@@ -66,7 +67,7 @@ export function DrawerContainer() {
         {
           id,
           content: <Component {...(opts.props as T)} />,
-          options: { duration: 0.3, position: 'right', dismissible: true, showBackdrop: true, ...opts },
+          options: { duration: 0.3, position: 'right', dismissible: true, fixed: true, showBackdrop: true, ...opts },
         },
       ]);
       return id;
@@ -128,7 +129,7 @@ export function DrawerContainer() {
     <AnimatePresence>
       {drawers.map((drawer, index) => (
         <React.Fragment key={drawer.id}>
-          <div className="fixed inset-0" style={{ zIndex: 10000 + index }}>
+          <div className={clsx(drawer.options.fixed ? 'fixed inset-0' : 'h-dvh')} style={{ zIndex: 10000 + index }}>
             <div className="h-full w-full p-2">
               {drawer.options.showBackdrop && <div className="bg-overlay-backdrop fixed inset-0 z-0" />}
               <div

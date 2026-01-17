@@ -74,7 +74,7 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
   const router = useRouter();
 
   return (
-    <div className={twMerge('py-3 px-4 h-[56px] flex justify-between items-center z-10 gap-4 font-default', className)}>
+    <div className={twMerge('p-4 h-[56px] flex justify-between items-center z-10 gap-4 font-default', className)}>
       <div className="flex items-center gap-3 flex-1">
         {!hideLogo && (
           <NextLink
@@ -167,7 +167,12 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
         ) : (
           <>
             {!session && (
-              <Button size="sm" variant="tertiary-alt" onClick={() => signIn()} className="rounded-full backdrop-blur-none">
+              <Button
+                size="sm"
+                variant="tertiary-alt"
+                onClick={() => signIn()}
+                className="rounded-full backdrop-blur-none"
+              >
                 Sign In
               </Button>
             )}
