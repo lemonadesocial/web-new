@@ -2,7 +2,6 @@
 import { RunResult } from '$lib/graphql/generated/ai/graphql';
 import { v4 as uuidV4 } from 'uuid';
 import React from 'react';
-import { Space, Event } from '$lib/graphql/generated/backend/graphql';
 
 export type ToolKey = 'create_event' | 'manage_event' | 'create_community' | 'manage_community';
 
@@ -22,13 +21,7 @@ type State = {
   tools: Tool[];
   messages: Message[];
   thinking?: boolean;
-  toggleDetail?: {
-    action: ToolKey;
-    props: {
-      title: string;
-      data: Partial<Space | Event>;
-    };
-  };
+  openPane?: boolean;
 };
 
 const session = uuidV4();
@@ -63,7 +56,7 @@ export enum AIChatActionKind {
   'select_tool',
   'add_message',
   'set_thinking',
-  'toggle_detail',
+  'set_open_pane',
 }
 
 export type AIChatAction = { type: AIChatActionKind; payload?: Partial<State> };
@@ -86,8 +79,8 @@ function reducers(state: State, action: AIChatAction) {
       return { ...state, thinking: action.payload?.thinking };
     }
 
-    case AIChatActionKind.toggle_detail: {
-      return { ...state, toggleDetail: action.payload?.toggleDetail };
+    case AIChatActionKind.set_open_pane: {
+      return { ...state, openPane: action.payload?.openPane };
     }
 
     default:

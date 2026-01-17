@@ -81,14 +81,11 @@ export function AIChat() {
         </Button>
         <Button
           onClick={() => {
-            dispatch({
-              type: AIChatActionKind.toggle_detail,
-              payload: {
-                toggleDetail: {
-                  action: 'create_community',
-                  props: { title: 'Create Community', data: { title: 'My Community' } },
-                },
-              },
+            drawer.open(CreateEventPane, {
+              dismissible: false,
+              showBackdrop: false,
+              fixed: false,
+              props: { title: 'Create Event', data: { title: 'My Event' } },
             });
           }}
         >
