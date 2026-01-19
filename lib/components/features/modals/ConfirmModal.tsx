@@ -25,7 +25,7 @@ export function ConfirmModal({
       </div>
       <div className="flex flex-col gap-2">
         <p className="text-lg font-medium">{title}</p>
-        <p className="text-sm font-medium text-secondary">{subtitle}</p>
+        <p className="text-sm font-medium text-secondary whitespace-pre-line">{subtitle}</p>
       </div>
       <div className="flex gap-3">
         <Button
