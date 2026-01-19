@@ -10,7 +10,7 @@ import { WelcomeChat } from './WelcomeChat';
 
 export function AIChat() {
   const me = useMe();
-  const [state, dispatch] = useAIChat();
+  const [state] = useAIChat();
 
   if (!me) return null;
 

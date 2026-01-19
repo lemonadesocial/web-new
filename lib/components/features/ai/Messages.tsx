@@ -4,6 +4,8 @@ import { match } from 'ts-pattern';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Message, useAIChat } from './provider';
 import { Button, Card } from '$lib/components/core';
+import { windowPane } from '$lib/components/core/dialog/window-panes';
+import BrowserPreview from './BrowserPreview';
 
 export function Messages() {
   const [state] = useAIChat();
@@ -76,7 +78,18 @@ function CardDetail({ tool }: { tool: any }) {
             <p>{tool.data?.shortid}</p>
             <p className="text-xs text-tertiary capitalize">{tool.name?.replace('_', ' ')}</p>
           </div>
-          <Button icon="icon-chevron-right" variant="tertiary-alt" className="rounded-full"></Button>
+          <Button
+            icon="icon-chevron-right"
+            variant="tertiary-alt"
+            className="rounded-full"
+            onClick={() => {
+              match(tool.name).with('create_event', () =>
+                windowPane.open(BrowserPreview, {
+                  props: { url: `e/manage/${tool.data?.shortid || tool.data?._id}` },
+                }),
+              );
+            }}
+          />
         </Card.Content>
       </Card.Root>
     );

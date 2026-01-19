@@ -6,6 +6,7 @@ import Header from '$lib/components/layouts/header';
 import Sidebar from '$lib/components/layouts/sidebar';
 import { BottomBar } from '$lib/components/layouts/bottombar';
 import { DrawerContainer } from '$lib/components/core/dialog';
+import { WindowPanesContainer } from '$lib/components/core/dialog/window-panes';
 
 export async function generateMetadata(props: { params: Promise<{ domain: string }> }): Promise<Metadata | null> {
   const params = await props.params;
@@ -21,17 +22,19 @@ export async function generateMetadata(props: { params: Promise<{ domain: string
 
 export default async function SiteLayout(props: { params: Promise<{ domain: string }>; children: React.ReactNode }) {
   return (
-    <main className="transition-all ease-in-out delay-300 flex w-full">
-      <div className="transition-all ease-in-out delay-300 flex flex-col min-h-dvh w-full">
-        <Header hideLogo />
+    <main className="flex w-full">
+      <WindowPanesContainer>
+        <div className="flex flex-col min-h-dvh w-full">
+          <Header hideLogo />
 
-        <Sidebar />
-        <div className="min-lg:ml-[88px] px-4" style={{ overflowX: 'visible' }}>
-          {props.children}
+          <Sidebar />
+          <div className="min-lg:ml-[88px] px-4" style={{ overflowX: 'visible' }}>
+            {props.children}
+          </div>
+
+          <BottomBar />
         </div>
-
-        <BottomBar />
-      </div>
+      </WindowPanesContainer>
       <DrawerContainer />
     </main>
   );
