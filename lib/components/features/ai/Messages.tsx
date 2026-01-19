@@ -3,6 +3,7 @@ import React from 'react';
 import { match } from 'ts-pattern';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Message, useAIChat } from './provider';
+import { Button, Card } from '$lib/components/core';
 
 export function Messages() {
   const [state] = useAIChat();
@@ -50,14 +51,37 @@ function MessageItem({ message: item }: { message: Message }) {
         <div className="relative flex mt-1 items-center justify-center">
           <i className="icon-lemon-ai size-4 aspect-square text-warning-300" />
         </div>
-        <p>{item.message}</p>
+        <div className="whitespace-break-spaces flex flex-col gap-6">
+          <p>{item.message}</p>
+          <CardDetail tool={item.metadata?.tool} />
+        </div>
       </div>
     ))
     .otherwise(() => (
       <div className="w-full flex justify-end">
         <div className="w-fit bg-(--btn-tertiary) text-secondary py-2 px-3 rounded-sm rounded-tr-none">
-          <p>{item.message}</p>
+          <p className="whitespace-break-spaces">{item.message}</p>
         </div>
       </div>
     ));
+}
+
+function CardDetail({ tool }: { tool: any }) {
+  if (tool.type === 'lemonade_backend') {
+    return (
+      <Card.Root>
+        <Card.Content className="p-2 flex justify-between items-center gap-3">
+          <div className="bg-tertiary size-[38px] rounded-sm" />
+          <div className="flex-1 space-y-0.5">
+            <p>{tool.data?.shortid}</p>
+            <p className="text-xs text-tertiary capitalize">{tool.name?.replace('_', ' ')}</p>
+          </div>
+          <Button icon="icon-chevron-right" variant="tertiary-alt" className="rounded-full"></Button>
+        </Card.Content>
+      </Card.Root>
+    );
+  }
+
+  console.log('Tool call unsupported.');
+  return null;
 }

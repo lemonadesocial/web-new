@@ -2,13 +2,11 @@
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useMe } from '$lib/hooks/useMe';
-import { Button, drawer } from '$lib/components/core';
 import { InputChat } from './InputChat';
 import { Messages } from './Messages';
-import { AIChatActionKind, useAIChat } from './provider';
+import { useAIChat } from './provider';
 import { ToolsSuggest } from './ToolsSuggest';
 import { WelcomeChat } from './WelcomeChat';
-import { CreateEventPane } from './panes/CreateEventPane';
 
 export function AIChat() {
   const me = useMe();
@@ -66,31 +64,6 @@ export function AIChat() {
         ) : (
           <ToolsSuggest />
         )}
-
-        <Button
-          onClick={() => {
-            drawer.open(CreateEventPane, {
-              dismissible: false,
-              showBackdrop: false,
-              fixed: false,
-              props: { title: 'Create Event', data: { title: 'My Event' } },
-            });
-          }}
-        >
-          Test Right Pane
-        </Button>
-        <Button
-          onClick={() => {
-            drawer.open(CreateEventPane, {
-              dismissible: false,
-              showBackdrop: false,
-              fixed: false,
-              props: { title: 'Create Event', data: { title: 'My Event' } },
-            });
-          }}
-        >
-          Test Create Community
-        </Button>
       </motion.div>
       <AnimatePresence mode="wait">
         {!state.messages.length && <motion.div key="spacer-bottom" className="flex-1" exit={{ opacity: 0 }} />}
