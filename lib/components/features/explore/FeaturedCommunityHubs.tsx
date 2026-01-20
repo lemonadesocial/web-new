@@ -12,12 +12,9 @@ export function FeaturedCommunityHubs() {
   const list = (data?.listSpaces || []) as Space[];
 
   return (
-    <div className="flex flex-col gap-4 relative">
+    <div className="flex flex-col gap-5 relative">
       <div className="flex justify-between items-center">
         <p className="text-xl font-semibold">Featured Communities</p>
-        <Button variant="tertiary-alt" size="sm" iconRight="icon-arrow-back-sharp rotate-180">
-          View All
-        </Button>
       </div>
 
       {match(loading)
@@ -33,8 +30,8 @@ export function FeaturedCommunityHubs() {
           </div>
         ))
         .otherwise(() => (
-          <div className="flex gap-4 overflow-y-auto no-scrollbar">
-            {list.map((item, idx) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {list.slice(0, 8).map((item, idx) => (
               <FeaturedCommunityHubsItem key={idx} space={item} />
             ))}
           </div>
@@ -45,7 +42,10 @@ export function FeaturedCommunityHubs() {
 
 function FeaturedCommunityHubsItem({ space }: { space: Space }) {
   return (
-    <div className="min-w-[384px] flex flex-col gap-3 p-4 rounded-md border-card-border bg-card">
+    <div
+      className="w-full flex flex-col gap-3 p-4 rounded-md border-card-border bg-card hover:bg-card-hover cursor-pointer"
+      onClick={() => window.open(`/s/${space.slug || space._id}`)}
+    >
       <img src={communityAvatar(space)} className="w-12 h-12 object-cover rounded-sm border-card-border" />
       <h3 className="text-lg font-semibold">{space.title}</h3>
       {space.description && <p className="text-sm text-tertiary line-clamp-2">{space.description as string}</p>}

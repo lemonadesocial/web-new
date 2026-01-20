@@ -12,13 +12,21 @@ import { formatNumber } from '$lib/utils/number';
 import { formatWallet } from '$lib/utils/crypto';
 import { chainsMapAtom } from '$lib/jotai/chains';
 import { useTokenData } from '$lib/hooks/useCoin';
+import { useListChainIds } from '$lib/hooks/useListChainIds';
 import type { TradeVolume } from '$lib/graphql/generated/coin/graphql';
+import { TopEmptyComp } from './TopEmptyComp';
 
 export function TopVolume() {
+  const chainIds = useListChainIds();
   const { data, loading } = useQuery(
     TradeVolumeDocument,
     {
       variables: {
+        where: {
+          chainId: {
+            _in: chainIds,
+          },
+        },
         orderBy: [
           {
             volumeETH: Order_By.Desc,
@@ -27,6 +35,7 @@ export function TopVolume() {
         limit: 5,
         offset: 0,
       },
+      skip: chainIds.length === 0,
       fetchPolicy: 'network-only',
     },
     coinClient,
@@ -35,11 +44,11 @@ export function TopVolume() {
   const volumes = data?.TradeVolume || [];
 
   return (
-    <Card.Root className="flex-1 w-full">
+    <Card.Root className="flex-1 flex flex-col w-full">
       <Card.Header className="border-b">
         <p>Top Volume</p>
       </Card.Header>
-      <Card.Content className="divide-y divide-(--color-divider) p-0">
+      <Card.Content className="flex-1 divide-y divide-(--color-divider) p-0">
         {loading && (
           <>
             {Array.from({ length: 5 }).map((_, idx) => (
@@ -58,14 +67,13 @@ export function TopVolume() {
           </>
         )}
         {!loading && volumes.length === 0 && (
-          <div className="px-4 py-8 text-center text-tertiary">
-            <p>No volume data available</p>
-          </div>
+          <TopEmptyComp
+            icon="icon-cards-outline"
+            title="No volume data yet"
+            subtitle="Trading activity will appear here once coins start seeing volume."
+          />
         )}
-        {!loading &&
-          volumes.map((volume, idx) => (
-            <TopVolumeItem key={volume.id} volume={volume} rank={idx + 1} />
-          ))}
+        {!loading && volumes.map((volume, idx) => <TopVolumeItem key={volume.id} volume={volume} rank={idx + 1} />)}
       </Card.Content>
     </Card.Root>
   );
@@ -119,4 +127,3 @@ function TopVolumeItem({ volume, rank }: { volume: TradeVolume; rank: number }) 
     </div>
   );
 }
-

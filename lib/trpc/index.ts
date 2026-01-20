@@ -17,7 +17,7 @@ import { getMintVinylNationPassportImage } from '$lib/services/passports/vinyl-n
 import { getMintDripNationPassportImage } from '$lib/services/passports/drip-nation';
 import { getMintFestivalNationPassportImage } from '$lib/services/passports/festival-nation';
 import { request } from '$lib/services/nft/admin';
-import { pinata } from '$lib/utils/pinata';
+import { uploadUsernameMetadata } from '$lib/services/lemonade-username';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -176,30 +176,8 @@ export const appRouter = router({
     .output(z.object({ tokenUri: z.string() }))
     .mutation(async ({ input }) => {
       const { username } = input;
-      const metadata = {
-        name: username,
-        description: 'Lemonade Username',
-        attributes: [
-          {
-            trait_type: 'Created Date',
-            display_type: 'date',
-            value: Date.now(),
-          },
-          {
-            trait_type: 'Length',
-            display_type: 'number',
-            value: username.length,
-          },
-        ],
-      };
 
-      const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
-      const metadataFile = new File([metadataBlob], 'metadata.json', { type: 'application/json' });
-
-      const { cid: metadataCid } = await pinata.upload.public.file(metadataFile);
-      const tokenUri = `ipfs://${metadataCid}`;
-
-      return { tokenUri };
+      return await uploadUsernameMetadata(username);
     }),
 });
 

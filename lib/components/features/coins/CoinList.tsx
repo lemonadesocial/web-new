@@ -19,6 +19,7 @@ import { useRouter } from 'next/navigation';
 import { useTokenData, useOwner, useGroup, useMarketCap, useLiquidity, useFees, useHoldersCount } from '$lib/hooks/useCoin';
 import type { PoolCreated } from '$lib/graphql/generated/coin/graphql';
 import { toast } from '$lib/components/core';
+import { useListChainIds } from '$lib/hooks/useListChainIds';
 
 const LIMIT = 10;
 
@@ -31,6 +32,7 @@ interface CoinListProps {
 
 export function CoinList({ filter, hiddenColumns = [] }: CoinListProps) {
   const [skip, setSkip] = useState(0);
+  const chainIds = useListChainIds();
   
   const { data, loading } = useQuery(
     PoolCreatedDocument,
@@ -43,7 +45,12 @@ export function CoinList({ filter, hiddenColumns = [] }: CoinListProps) {
         ],
         limit: LIMIT,
         offset: skip,
-        where: filter,
+        where: {
+          ...filter,
+          chainId: {
+            _in: chainIds,
+          },
+        },
       },
     },
     coinClient,

@@ -59,12 +59,8 @@ const Sidebar = () => {
       { icon: 'icon-home', path: '/', label: 'Home' },
       { icon: 'icon-storefront-outline', path: '/lemonade-stand', label: 'Lemonade Stand' },
       { icon: 'icon-newspaper', path: '/timelines', label: 'Timelines' },
-      process.env.NEXT_PUBLIC_APP_ENV !== 'production'
-        ? { icon: 'icon-explore', path: '/explore', label: 'Explore' }
-        : undefined, // FIXME: put back when add new UI
-      process.env.NEXT_PUBLIC_APP_ENV !== 'production'
-        ? { icon: 'icon-token', path: '/tokens', label: 'Tokens' }
-        : undefined, // FIXME: put back when add new UI
+      { icon: 'icon-explore', path: '/explore', label: 'Explore' },
+      { icon: 'icon-token', path: '/tokens', label: 'Tokens' },
       // { icon: 'icon-swipe', path: '/swipe', label: 'Swipe & Match' },  // FIXME: add back when lemonheads  are live
       // { icon: 'icon-trophy', path: '/leaderboard', label: 'Leaderboard' },
       { icon: 'icon-passport', path: '/lemonheads', label: 'LemonHeads Zone' },
@@ -175,7 +171,6 @@ export function CreatingModal() {
 
         <div className="grid md:grid-cols-2 gap-2">
           {Object.entries(actions)
-            .filter(([key]) => key !== 'coin' || process.env.NEXT_PUBLIC_APP_ENV !== 'production') // FIXME: put back when add new UI
             .map(([key, item]) => (
               <Card.Root key={key} className="flex-1" onClick={() => handleClick(key)}>
                 <Card.Content className="py-1.5 px-3 md:py-3.5 md:px-4 flex items-center md:items-start md:flex-col gap-3">

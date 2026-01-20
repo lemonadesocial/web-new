@@ -5,6 +5,7 @@ import {
   Address,
   EmailSetting,
   Event,
+  EventRole,
   EventTicketCategory,
   EventTicketPrice,
   EventTokenGate,
@@ -149,7 +150,21 @@ export function attending(event: Event, user: string | undefined) {
 }
 
 export function hosting(event: Event, user: string) {
-  return [event.host, ...(event.cohosts || [])].includes(user);
+  const cohostIds = event.cohosts_expanded_new
+    ?.filter((host) => !host?.event_role || host?.event_role === EventRole.Cohost)
+    .map((host) => host?._id)
+    .filter(Boolean) || [];
+  
+  return [event.host, ...cohostIds].includes(user);
+}
+
+export function isPromoter(event: Event, user: string) {
+  const promoterIds = event.cohosts_expanded_new
+    ?.filter((host) => host?.event_role === EventRole.Gatekeeper)
+    .map((host) => host?._id)
+    .filter(Boolean) || [];
+  
+  return promoterIds.includes(user);
 }
 
 export function getAssignedTicket(tickets: Ticket[], user?: string, email?: string | null) {

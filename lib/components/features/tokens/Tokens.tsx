@@ -11,6 +11,7 @@ import { useQuery } from '$lib/graphql/request';
 import { PoolCreatedDocument, FairLaunchDocument, Order_By, type PoolCreated } from '$lib/graphql/generated/coin/graphql';
 import { getCoinClient } from '$lib/graphql/request/instances';
 import { chainsMapAtom } from '$lib/jotai/chains';
+import { useListChainIds } from '$lib/hooks/useListChainIds';
 import { useTokenData, useHoldersCount, useVolume24h } from '$lib/hooks/useCoin';
 import { calculateMarketCapData } from '$lib/utils/coin';
 import { formatWallet, formatError, getTransactionUrl } from '$lib/utils/crypto';
@@ -215,10 +216,16 @@ function Toolbar() {
 }
 
 function NewTokensList() {
+  const chainIds = useListChainIds();
   const { data, loading } = useQuery(
     PoolCreatedDocument,
     {
       variables: {
+        where: {
+          chainId: {
+            _in: chainIds,
+          },
+        },
         orderBy: [
           {
             blockTimestamp: Order_By.Desc,
@@ -227,6 +234,7 @@ function NewTokensList() {
         limit: 10,
         offset: 0,
       },
+      skip: chainIds.length === 0,
     },
     coinClient,
   );
@@ -261,11 +269,15 @@ function NewTokensList() {
 const coinClient = getCoinClient();
 
 function GraduatingTokensList() {
+  const chainIds = useListChainIds();
   const { data: fairLaunchData, loading: loadingFairLaunch } = useQuery(
     FairLaunchDocument,
     {
       variables: {
         where: {
+          chainId: {
+            _in: chainIds,
+          },
           closeAt: {
             _is_null: true,
           },
@@ -339,11 +351,15 @@ function GraduatingTokensList() {
 }
 
 function RecentlyGraduatedTokensList() {
+  const chainIds = useListChainIds();
   const { data: fairLaunchData, loading: loadingFairLaunch } = useQuery(
     FairLaunchDocument,
     {
       variables: {
         where: {
+          chainId: {
+            _in: chainIds,
+          },
           closeAt: {
             _is_null: false,
           },

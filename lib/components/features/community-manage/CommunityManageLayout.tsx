@@ -42,11 +42,9 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
               </div>
             </div>
             <nav className="flex gap-4 pt-1 overflow-auto no-scrollbar">
-              {menu
-                .filter((item) => item.page !== 'launchpad' || process.env.NEXT_PUBLIC_APP_ENV !== 'production') // FIXME: put back when add new UI
-                .map((item) => (
-                  <Skeleton key={item.page} className="h-6 w-20" />
-                ))}
+              {menu.map((item) => (
+                <Skeleton key={item.page} className="h-6 w-20" />
+              ))}
             </nav>
           </div>
         </div>
@@ -145,7 +143,6 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
           </div>
           <nav className="flex gap-4 pt-3 overflow-auto no-scrollbar">
             {menu
-              .filter((item) => item.page !== 'launchpad' || process.env.NEXT_PUBLIC_APP_ENV !== 'production')
               .map((item) => {
                 const url = item.page === 'overview' ? `/s/manage/${uid}` : `/s/manage/${uid}/${item.page}`;
                 const isActive =
