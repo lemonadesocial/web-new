@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.8.0](https://github.com/lemonadesocial/web-new/compare/v9.7.0...v9.8.0) (2026-01-20)
+
+
+### Features
+
+* check-in access ([fc22001](https://github.com/lemonadesocial/web-new/commit/fc2200124d02367dc6cac5a8975800868dc51393))
+
 ## [9.7.0](https://github.com/lemonadesocial/web-new/compare/v9.6.0...v9.7.0) (2026-01-16)
 
 
