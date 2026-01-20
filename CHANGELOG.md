@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.9.0](https://github.com/lemonadesocial/web-new/compare/v9.8.0...v9.9.0) (2026-01-20)
+
+
+### Features
+
+* custom domain ([6b57261](https://github.com/lemonadesocial/web-new/commit/6b572611cc75faab31d7dd6210eae0cecdab6d20))
+
 ## [9.8.0](https://github.com/lemonadesocial/web-new/compare/v9.7.0...v9.8.0) (2026-01-20)
 
 
