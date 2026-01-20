@@ -7,7 +7,7 @@ import { Event, GetEventDocument, GetEventQuery } from '$lib/graphql/generated/b
 import { useQuery } from '$lib/graphql/request';
 import { Badge, Button, Spacer } from '$lib/components/core';
 import { EDIT_KEY, generateUrl } from '$lib/utils/cnd';
-import { getEventCohosts, hosting, isAttending } from '$lib/utils/event';
+import { getEventCohosts, hosting, isAttending, isPromoter } from '$lib/utils/event';
 import { useEventTheme } from '$lib/components/features/theme-builder/provider';
 
 import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
@@ -47,6 +47,7 @@ export function EventGuestSideContent({ event }: { event: Event }) {
   const me = useMe();
 
   const isHost = me?._id && event && hosting(event, me._id);
+  const isUserPromoter = me?._id && event && isPromoter(event, me._id);
   const attending = me?._id ? isAttending(event, me._id) : false;
   const hosts = getEventCohosts(event);
 
@@ -84,6 +85,23 @@ export function EventGuestSideContent({ event }: { event: Event }) {
               </div>
             </>
           )}
+
+          {
+            isUserPromoter && (
+              <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
+                <p className="text-accent-500">You have check in access for this event.</p>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  iconRight="icon-arrow-outward"
+                  className="rounded-full"
+                  onClick={() => router.push(`/e/check-in/${event.shortid}`)}
+                >
+                  Check In
+                </Button>
+              </div>
+            )
+          }
         </div>
 
         <PendingCohostRequest event={event} />
@@ -125,6 +143,23 @@ export function EventGuestSideContent({ event }: { event: Event }) {
               </div>
             </>
           )}
+
+{
+            isUserPromoter && (
+              <div className="flex gap-2 items-center px-3.5 py-2 border border-card-border bg-accent-400/16 rounded-md">
+                <p className="text-accent-500">You have check in access for this event.</p>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  iconRight="icon-arrow-outward"
+                  className="rounded-full"
+                  onClick={() => router.push(`/e/check-in/${event.shortid}`)}
+                >
+                  Check In
+                </Button>
+              </div>
+            )
+          }
 
           {event.private && (
             <>

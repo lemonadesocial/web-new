@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { Input, ModalContent, modal, Avatar, Toggle, FileInput, Button, toast } from "$lib/components/core";
-import { Event, User, ManageEventCohostRequestsDocument, GetEventDocument } from "$lib/graphql/generated/backend/graphql";
+import { Event, User, ManageEventCohostRequestsDocument, GetEventDocument, EventRole } from "$lib/graphql/generated/backend/graphql";
 import { useMutation, useClient } from "$lib/graphql/request";
 import { userAvatar } from "$lib/utils/user";
 import { uploadFiles } from "$lib/utils/file";
@@ -23,6 +23,14 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
   const [file, setFile] = useState<File | undefined>(undefined);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
+  
+  const currentRole = event.cohosts_expanded_new?.find(
+    (host) => host?._id === user._id
+  )?.event_role;
+  
+  const [selectedRole, setSelectedRole] = useState<EventRole>(
+    currentRole || EventRole.Cohost
+  );
 
   const { client } = useClient();
   const updateEvent = useUpdateEvent();
@@ -70,6 +78,7 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
             profile_name: name,
             profile_image_avatar: profileImageAvatar,
             visible: showOnEventPage,
+            event_role: selectedRole,
           }
         }
       });
@@ -108,7 +117,7 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
     >
       <div className="space-y-4">
         {
-          user ? (
+          user && (
             <div className="flex gap-3 items-center">
               <Avatar
                 src={userAvatar(user as any)}
@@ -120,11 +129,6 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
                   {user.email}
                 </p>
               </div>
-            </div>
-          ) : (
-            <div className="flex gap-2 items-center">
-              <i className="icon-person-outline text-tertiary size-5" />
-              <p>{email}</p>
             </div>
           )
         }
@@ -171,6 +175,46 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
             </>
           }
         </div>
+
+        {
+          user._id !== event.host && (
+            <div className="space-y-2">
+              <p className="text-sm text-secondary">Access Control</p>
+              <div className="space-y-2">
+                <div
+                  className={`flex items-center gap-3 py-1.5 px-3 rounded-sm cursor-pointer border transition-colors ${
+                    selectedRole === EventRole.Cohost
+                      ? 'border-primary'
+                      : 'border-primary/8'
+                  }`}
+                  onClick={() => setSelectedRole(EventRole.Cohost)}
+                >
+                  <i className="icon-crown size-5" />
+                  <div className="flex-1">
+                    <p>Cohost</p>
+                    <p className="text-sm text-tertiary">Full manage access to the event</p>
+                  </div>
+                  {selectedRole === EventRole.Cohost && <i className="icon-check size-5" />}
+                </div>
+                <div
+                  className={`flex items-center gap-3 py-1.5 px-3 rounded-sm cursor-pointer border transition-colors ${
+                    selectedRole === EventRole.Gatekeeper
+                      ? 'border-primary'
+                      : 'border-primary/8'
+                  }`}
+                  onClick={() => setSelectedRole(EventRole.Gatekeeper)}
+                >
+                  <i className="icon-person-sharp size-5" />
+                  <div className="flex-1">
+                    <p>Promoter</p>
+                    <p className="text-sm text-tertiary">Check in guests & view guest list</p>
+                  </div>
+                  {selectedRole === EventRole.Gatekeeper && <i className="icon-check size-5" />}
+                </div>
+              </div>
+            </div>
+          )
+        }
 
         <div className="flex gap-2">
           {

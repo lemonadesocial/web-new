@@ -8,7 +8,7 @@ import { useQuery } from '$lib/graphql/request';
 import { userAvatar } from '$lib/utils/user';
 import { copy } from '$lib/utils/helpers';
 import { LEMONADE_DOMAIN } from '$lib/utils/constants';
-import { getEventCohosts, hosting } from '$lib/utils/event';
+import { getEventCohosts, hosting, isPromoter } from '$lib/utils/event';
 
 import { AboutSection } from '../event/AboutSection';
 import { LocationSection } from '../event/LocationSection';
@@ -31,6 +31,7 @@ export function EventPane({ eventId }: { eventId: string }) {
   const hosts = event ? getEventCohosts(event) : [];
 
   const canManage = me?._id && event && hosting(event, me._id);
+  const canCheckIn = me?._id && event && isPromoter(event, me._id);
 
   const router = useRouter();
 
@@ -75,6 +76,23 @@ export function EventPane({ eventId }: { eventId: string }) {
             </Button>
           </Alert>
         )}
+
+        {
+          canCheckIn && (
+            <Alert message="You have check in access for this event.">
+              <Button
+                iconRight="icon-arrow-outward"
+                className="rounded-full"
+                onClick={() => {
+                  router.push(`/e/check-in/${event?.shortid}`);
+                  drawer.close();
+                }}
+              >
+                Check In
+              </Button>
+            </Alert>
+          )
+        }
 
         <div className="p-4 flex flex-col gap-6">
           {loading ? (
