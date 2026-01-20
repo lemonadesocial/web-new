@@ -1,5 +1,5 @@
 'use client';
-import { Button, Card, Divider, Menu, MenuItem, modal, toast, Toggle } from '$lib/components/core';
+import { Button, Card, Divider, drawer, Input, Menu, MenuItem, modal, toast, Toggle } from '$lib/components/core';
 import {
   DeleteSpaceDocument,
   GetSpaceDocument,
@@ -12,6 +12,7 @@ import React from 'react';
 import { TitleDescModal } from '../modals/TitleDescModal';
 import { ConfirmModal } from '../../modals/ConfirmModal';
 import { ChangeStatusModal } from '../modals/ChangeStatusModal';
+import { CustomDomainPane } from '../pane/CustomDomainPane';
 
 export function SettingsCommunityAvanced(props: { space: Space }) {
   const { data } = useQuery(GetSpaceDocument, {
@@ -39,6 +40,8 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
   const handleUpdate = async (input: Partial<Space>) => {
     await update({ variables: { id: space._id, input } });
   };
+
+  console.log(space)
 
   return (
     <div className="page mx-auto py-7 px-4 md:px-0 flex flex-col gap-8">
@@ -130,42 +133,101 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
           </p>
         </div>
 
-        <Card.Root>
-          <Card.Content className="p-0 divide-y divide-(--color-divider)">
-            <div className="flex justify-between items-center py-3 px-4">
-              <div className="flex gap-3 items-center">
-                <div className="p-1.5 bg-card rounded-sm size-7 aspect-square flex items-center justify-center">
-                  <i className="icon-lemonade-logo text-[#FDE047] size-4" />
-                </div>
-                <div>
-                  <p>Favicon</p>
-                  <p className="text-sm text-tertiary">32x32px ICO, PNG, GIF, or JPG file recommended.</p>
-                </div>
+        {space?.hostnames ? (
+          <>
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2 items-center">
+                <Input
+                  variant="default"
+                  value={space.hostnames.join(', ')}
+                  readOnly
+                  className="flex-1"
+                />
+                <Menu.Root>
+                  <Menu.Trigger>
+                    {({ toggle }) => (
+                      <Button
+                        variant="tertiary-alt"
+                        onClick={toggle}
+                        icon="icon-more-vert"
+                        className="shrink-0"
+                      />
+                    )}
+                  </Menu.Trigger>
+                  <Menu.Content className="p-1">
+                    {({ toggle }) => (
+                      <MenuItem
+                        title="Remove Domain"
+                        onClick={() => {
+                          const domain = space.hostnames?.[0] || '';
+                          const fallbackUrl = `lemonade.social/s/${space.slug || space._id}`;
+                          modal.open(ConfirmModal, {
+                            props: {
+                              title: 'Remove Custom Domain?',
+                              subtitle: `Removing this domain will disconnect ${domain} from your community hub.\n\nPlease note: your community will still be available at: ${fallbackUrl}`,
+                              icon: 'icon-person-remove',
+                              buttonText: 'Remove',
+                              onConfirm: async () => {
+                                await handleUpdate({ hostnames: [] });
+                              },
+                            },
+                          });
+                          toggle();
+                        }}
+                      />
+                    )}
+                  </Menu.Content>
+                </Menu.Root>
               </div>
-              <Button size="sm" variant="tertiary-alt" onClick={() => toast.success('Coming soon.')}>
-                Change Favicon
-              </Button>
+              <p className="text-sm text-tertiary">Connect a new custom domain by removing the above.</p>
             </div>
 
-            <div
-              className="flex justify-between items-center py-3 px-4"
-              onClick={() => modal.open(TitleDescModal, { props: { space } })}
-            >
-              <div className="flex gap-3 items-center">
-                <div className="p-1.5 bg-card rounded-sm size-7 aspect-square flex items-center justify-center">
-                  <i className="icon-info text-tertiary size-4" />
+            <Card.Root>
+              <Card.Content className="p-0 divide-y divide-(--color-divider)">
+                <div className="flex justify-between items-center py-3 px-4">
+                  <div className="flex gap-3 items-center">
+                    <div className="p-1.5 bg-card rounded-sm size-7 aspect-square flex items-center justify-center">
+                      <i className="icon-lemonade-logo text-[#FDE047] size-4" />
+                    </div>
+                    <div>
+                      <p>Favicon</p>
+                      <p className="text-sm text-tertiary">32x32px ICO, PNG, GIF, or JPG file recommended.</p>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="tertiary-alt" onClick={() => toast.success('Coming soon.')}>
+                    Change Favicon
+                  </Button>
                 </div>
-                <div>
-                  <p>Title & Description</p>
-                  <p className="text-sm text-tertiary">
-                    {space.title} - ${space.description}
-                  </p>
+
+                <div
+                  className="flex justify-between items-center py-3 px-4"
+                  onClick={() => modal.open(TitleDescModal, { props: { space } })}
+                >
+                  <div className="flex gap-3 items-center">
+                    <div className="p-1.5 bg-card rounded-sm size-7 aspect-square flex items-center justify-center">
+                      <i className="icon-info text-tertiary size-4" />
+                    </div>
+                    <div>
+                      <p>Title & Description</p>
+                      <p className="text-sm text-tertiary">
+                        {space.title} - ${space.description}
+                      </p>
+                    </div>
+                  </div>
+                  <i className="icon-chevron-right size-5 aspect-square text-quaternary" />
                 </div>
-              </div>
-              <i className="icon-chevron-right size-5 aspect-square text-quaternary" />
-            </div>
-          </Card.Content>
-        </Card.Root>
+              </Card.Content>
+            </Card.Root>
+          </>
+        ) : (
+          <Button
+            variant="secondary"
+            className="w-fit"
+            onClick={() => drawer.open(CustomDomainPane, { props: { space } })}
+          >
+            Add Domain
+          </Button>
+        )}
       </div>
 
       <Divider />

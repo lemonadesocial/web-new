@@ -177,7 +177,7 @@ function UpComingEventsSection({ space, events = [] }: { space: Space; events?: 
       </div>
 
       <div className="flex flex-col gap-3">
-        <div className="p-4 gap-3 items-center hidden only:flex">
+        <div className="p-4 gap-3 items-center hidden only:flex bg-card rounded-md border border-card-border">
           <i className="icon-confirmation-number size-9 aspect-square text-quaternary" />
           <div className="text-tertiary space-y-0.5">
             <p>No Events</p>

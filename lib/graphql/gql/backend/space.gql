@@ -68,6 +68,7 @@ fragment Space on Space {
   state
   nft_enabled
   theme_name
+  hostnames
 }
 
 fragment SpaceTagFragment on SpaceTag {
