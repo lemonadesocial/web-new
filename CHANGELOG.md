@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.9.1](https://github.com/lemonadesocial/web-new/compare/v9.9.0...v9.9.1) (2026-01-21)
+
+
+### Bug Fixes
+
+* filter default domain ([bf00328](https://github.com/lemonadesocial/web-new/commit/bf003285a9697d95ad839fcf91f890c7b5e541c4))
+
 ## [9.9.0](https://github.com/lemonadesocial/web-new/compare/v9.8.0...v9.9.0) (2026-01-20)
 
 
