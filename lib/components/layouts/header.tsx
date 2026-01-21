@@ -73,6 +73,8 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
 
   const router = useRouter();
 
+  return null;
+
   return (
     <div className={twMerge('p-4 h-[56px] flex justify-between items-center z-10 gap-4 font-default', className)}>
       <div className="flex items-center gap-3 flex-1">

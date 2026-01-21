@@ -1,13 +1,17 @@
 'use client';
 import React from 'react';
 import { Button, Card, Menu, MenuItem, toast } from '$lib/components/core';
-import { AIChatActionKind, useAIChat } from './provider';
+import { AIChatActionKind, Message, useAIChat } from './provider';
 import { useMutation } from '$lib/graphql/request';
-import { RunAiChatDocument } from '$lib/graphql/generated/ai/graphql';
+import { RunAiChatDocument, RunResult } from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { AI_CONFIG } from '$lib/utils/constants';
+import { useRouter } from 'next/navigation';
+import { match } from 'ts-pattern';
+import { Event } from '$lib/graphql/generated/backend/graphql';
 
 export function InputChat() {
+  const router = useRouter();
   const [state, dispatch] = useAIChat();
   const [input, setInput] = React.useState('');
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
@@ -18,6 +22,12 @@ export function InputChat() {
       onComplete: (_, income) => {
         dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: false } });
         dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ ...income.run, role: 'assistant' }] } });
+
+        const tool = income.run?.metadata?.tool;
+        match(tool?.name).with('create_event', () => {
+          dispatch({ type: AIChatActionKind.reset });
+          router.push(`/ai/e/manage/${tool?.data?.shortid}`);
+        });
       },
       onError: (error) => {
         toast.error(error.message);
@@ -28,7 +38,7 @@ export function InputChat() {
   );
 
   React.useEffect(() => {
-    if (textareaRef.current) {
+    if (textareaRef.current && input) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
@@ -96,6 +106,33 @@ export function InputChat() {
           <Button icon="icon-arrow-foward-sharp -rotate-90" size="sm" onClick={handleSubmit} loading={loading} />
         </div>
       </Card.Content>
+      {/* <i className='icon-location-outline' /> */}
     </Card.Root>
   );
+}
+
+export function mockWelcomeEvent(event: Event): Message[] {
+  const actions = [];
+  if (!event.location) {
+    actions.push({
+      type: 'button',
+      props: { icon: 'icon-location-outline', label: 'Add Location', tool: 'add_location' },
+    });
+  }
+
+  if (!event.description) {
+    actions.push({
+      type: 'button',
+      props: { icon: 'icon-sort', label: 'Add Description', tool: 'add_description' },
+    });
+  }
+
+  return [
+    {
+      message: `Welcome to ${event.title} Event. How can I help make your event awesome?`,
+      metadata: { actions },
+      sourceDocuments: [],
+      role: 'assistant',
+    },
+  ];
 }

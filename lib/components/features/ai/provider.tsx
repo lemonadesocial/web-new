@@ -16,6 +16,7 @@ export type Message = Partial<RunResult> & {
 };
 
 type State = {
+  toggleChat: boolean;
   session: string;
   selectedTool?: Tool;
   tools: Tool[];
@@ -26,6 +27,7 @@ type State = {
 
 const session = uuidV4();
 const defaultState: State = {
+  toggleChat: false,
   session: session,
   tools: [
     { key: 'create_event', icon: 'icon-ticket', label: 'Create Event' },
@@ -53,16 +55,22 @@ export function useAIChat(): [state: State, dispatch: React.Dispatch<AIChatActio
 }
 
 export enum AIChatActionKind {
+  'toggle_chat',
   'select_tool',
   'add_message',
   'set_thinking',
   'set_open_pane',
+  'reset',
 }
 
 export type AIChatAction = { type: AIChatActionKind; payload?: Partial<State> };
 
 function reducers(state: State, action: AIChatAction) {
   switch (action.type) {
+    case AIChatActionKind.toggle_chat: {
+      return { ...state, toggleChat: !state.toggleChat };
+    }
+
     case AIChatActionKind.select_tool: {
       return { ...state, selectedTool: action.payload?.selectedTool };
     }
@@ -81,6 +89,10 @@ function reducers(state: State, action: AIChatAction) {
 
     case AIChatActionKind.set_open_pane: {
       return { ...state, openPane: action.payload?.openPane };
+    }
+
+    case AIChatActionKind.reset: {
+      return defaultState;
     }
 
     default:

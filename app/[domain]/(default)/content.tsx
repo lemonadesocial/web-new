@@ -7,7 +7,6 @@ import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { AIChat } from '$lib/components/features/ai/AIChat';
-import { AIChatProvider } from '$lib/components/features/ai/provider';
 
 export function Content() {
   const me = useMe();
@@ -20,11 +19,9 @@ export function Content() {
   }
 
   return (
-    <AIChatProvider>
-      <div className="w-full max-w-[720px]">
-        <AIChat />
-      </div>
-    </AIChatProvider>
+    <div className="w-full max-w-[720px]">
+      <AIChat />
+    </div>
   );
 }
 

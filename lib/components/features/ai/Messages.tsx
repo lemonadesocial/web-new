@@ -3,9 +3,7 @@ import React from 'react';
 import { match } from 'ts-pattern';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Message, useAIChat } from './provider';
-import { Button, Card } from '$lib/components/core';
-import { windowPane } from '$lib/components/core/dialog/window-panes';
-import BrowserPreview from './BrowserPreview';
+import { Button } from '$lib/components/core';
 
 export function Messages() {
   const [state] = useAIChat();
@@ -47,6 +45,7 @@ export function Messages() {
 }
 
 function MessageItem({ message: item }: { message: Message }) {
+  console.log(item);
   return match(item.role)
     .with('assistant', () => (
       <div className="flex items-start gap-4">
@@ -55,7 +54,18 @@ function MessageItem({ message: item }: { message: Message }) {
         </div>
         <div className="whitespace-break-spaces flex flex-col gap-6">
           <p>{item.message}</p>
-          <CardDetail tool={item.metadata?.tool} />
+
+          <div>
+            {item.metadata?.actions?.map((action) =>
+              match(action.type)
+                .with('button', () => (
+                  <Button variant="tertiary-alt" size="sm" iconLeft={action.props.icon}>
+                    {action.props.label}
+                  </Button>
+                ))
+                .otherwise(() => <>Action unsupported</>),
+            )}
+          </div>
         </div>
       </div>
     ))
@@ -68,33 +78,33 @@ function MessageItem({ message: item }: { message: Message }) {
     ));
 }
 
-function CardDetail({ tool }: { tool: any }) {
-  if (tool.type === 'lemonade_backend') {
-    return (
-      <Card.Root>
-        <Card.Content className="p-2 flex justify-between items-center gap-3">
-          <div className="bg-tertiary size-[38px] rounded-sm" />
-          <div className="flex-1 space-y-0.5">
-            <p>{tool.data?.shortid}</p>
-            <p className="text-xs text-tertiary capitalize">{tool.name?.replace('_', ' ')}</p>
-          </div>
-          <Button
-            icon="icon-chevron-right"
-            variant="tertiary-alt"
-            className="rounded-full"
-            onClick={() => {
-              match(tool.name).with('create_event', () =>
-                windowPane.open(BrowserPreview, {
-                  props: { url: `e/manage/${tool.data?.shortid || tool.data?._id}` },
-                }),
-              );
-            }}
-          />
-        </Card.Content>
-      </Card.Root>
-    );
-  }
-
-  console.log('Tool call unsupported.');
-  return null;
-}
+// function CardDetail({ tool }: { tool: any }) {
+//   if (tool.type === 'lemonade_backend') {
+//     return (
+//       <Card.Root>
+//         <Card.Content className="p-2 flex justify-between items-center gap-3">
+//           <div className="bg-tertiary size-[38px] rounded-sm" />
+//           <div className="flex-1 space-y-0.5">
+//             <p>{tool.data?.shortid}</p>
+//             <p className="text-xs text-tertiary capitalize">{tool.name?.replace('_', ' ')}</p>
+//           </div>
+//           <Button
+//             icon="icon-chevron-right"
+//             variant="tertiary-alt"
+//             className="rounded-full"
+//             onClick={() => {
+//               match(tool.name).with('create_event', () =>
+//                 windowPane.open(BrowserPreview, {
+//                   props: { url: `e/manage/${tool.data?.shortid || tool.data?._id}` },
+//                 }),
+//               );
+//             }}
+//           />
+//         </Card.Content>
+//       </Card.Root>
+//     );
+//   }
+//
+//   console.log('Tool call unsupported.');
+//   return null;
+// }

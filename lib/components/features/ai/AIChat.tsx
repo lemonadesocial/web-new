@@ -8,21 +8,25 @@ import { useAIChat } from './provider';
 import { ToolsSuggest } from './ToolsSuggest';
 import { WelcomeChat } from './WelcomeChat';
 
-export function AIChat() {
+export interface AIChatProps {
+  fullscreen?: boolean;
+}
+
+export function AIChat({}: AIChatProps) {
   const me = useMe();
   const [state] = useAIChat();
 
   if (!me) return null;
 
   return (
-    <div className="space-y-8 flex flex-col h-full pb-20 md:pb-10">
+    <div className="space-y-8 flex flex-col h-full">
       <AnimatePresence mode="wait">
         {!state.messages.length && <motion.div key="spacer-top" className="flex-1" exit={{ opacity: 0 }} />}
 
         {!!state.messages.length ? (
           <motion.div
             key="messages"
-            className="flex-1 overflow-y-auto no-scrollbar"
+            className="flex-1  pt-8 pb-12 overflow-y-auto no-scrollbar"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -37,7 +41,7 @@ export function AIChat() {
         )}
       </AnimatePresence>
       <motion.div
-        className="space-y-4"
+        className="space-y-4 pb-3"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
