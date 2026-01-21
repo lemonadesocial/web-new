@@ -67,6 +67,8 @@ export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: Rea
             :root {
               ${data.variables?.custom && generateCssVariables(data.variables?.custom)}
               ${data.variables.pattern && generateCssVariables(data.variables.pattern)}
+              ${mode === 'dark' && data.variables.dark && generateCssVariables(data.variables.dark)}
+              ${mode === 'light' && data.variables.light && generateCssVariables(data.variables.light)}
             }
           `}
         </style>
