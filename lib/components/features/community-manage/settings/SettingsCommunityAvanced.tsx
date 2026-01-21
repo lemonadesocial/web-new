@@ -41,7 +41,7 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
     await update({ variables: { id: space._id, input } });
   };
 
-  console.log(space)
+  const hostNames = space?.hostnames?.filter((hostname) => !hostname.endsWith('lemonade.social'));
 
   return (
     <div className="page mx-auto py-7 px-4 md:px-0 flex flex-col gap-8">
@@ -133,13 +133,13 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
           </p>
         </div>
 
-        {space?.hostnames ? (
+        {hostNames && hostNames.length > 0 ? (
           <>
             <div className="flex flex-col gap-2">
               <div className="flex gap-2 items-center">
                 <Input
                   variant="default"
-                  value={space.hostnames.join(', ')}
+                  value={hostNames.join(', ')}
                   readOnly
                   className="flex-1"
                 />
@@ -159,7 +159,7 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
                       <MenuItem
                         title="Remove Domain"
                         onClick={() => {
-                          const domain = space.hostnames?.[0] || '';
+                          const domain = hostNames?.[0] || '';
                           const fallbackUrl = `lemonade.social/s/${space.slug || space._id}`;
                           modal.open(ConfirmModal, {
                             props: {
