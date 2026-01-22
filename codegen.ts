@@ -47,16 +47,16 @@ if (WALLET_SCHEMA) {
   };
 }
 
-// const LEMONHEADS_SCHEMA = process.env.NEXT_PUBLIC_LEMONHEADS_INDEXER_URL;
-// if (LEMONHEADS_SCHEMA) {
-//   generates['./lib/graphql/generated/lemonheads/'] = {
-//     schema: LEMONHEADS_SCHEMA,
-//     documents: ['./lib/graphql/gql/lemonheads/*.gql'],
-//     preset: 'client',
-//     plugins: [],
-//     documentTransforms: [addTypenameSelectionDocumentTransform],
-//   };
-// }
+const LEMONHEADS_SCHEMA = process.env.NEXT_PUBLIC_LEMONHEADS_INDEXER_URL;
+if (LEMONHEADS_SCHEMA) {
+  generates['./lib/graphql/generated/lemonheads/'] = {
+    schema: LEMONHEADS_SCHEMA,
+    documents: ['./lib/graphql/gql/lemonheads/*.gql'],
+    preset: 'client',
+    plugins: [],
+    documentTransforms: [addTypenameSelectionDocumentTransform],
+  };
+}
 
 const COIN_INDEXER = process.env.NEXT_PUBLIC_COIN_INDEXER_URL;
 if (COIN_INDEXER) {
@@ -65,7 +65,7 @@ if (COIN_INDEXER) {
     documents: ['./lib/graphql/gql/coin/*.gql'],
     preset: 'client',
     plugins: [],
-  }
+  };
 }
 
 const USERNAME_INDEXER = process.env.NEXT_PUBLIC_USERNAME_INDEXER;
@@ -78,6 +78,14 @@ if (USERNAME_INDEXER) {
     documentTransforms: [addTypenameSelectionDocumentTransform],
   };
 }
+
+generates['./lib/graphql/generated/ai/'] = {
+  schema: process.env.NEXT_PUBLIC_AI_API_HTTP,
+  documents: ['./lib/graphql/gql/ai/*.gql'],
+  preset: 'client',
+  plugins: [],
+  documentTransforms: [addTypenameSelectionDocumentTransform],
+};
 
 const config: CodegenConfig = {
   ignoreNoDocuments: true,

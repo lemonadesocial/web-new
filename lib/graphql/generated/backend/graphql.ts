@@ -2588,6 +2588,7 @@ export type Feature = {
 };
 
 export enum FeatureCode {
+  Ai = 'AI',
   CsvGuestList = 'CSVGuestList',
   Checkin = 'Checkin',
   CollectibleData = 'CollectibleData',
