@@ -49,9 +49,9 @@ const Sidebar = () => {
     pathname === item.path || (item.path.startsWith('/lemonheads') && pathname.includes(item.path));
 
   const handleNavigate = (path: string) => {
-    aiChat.close();
     dispatch({ type: AIChatActionKind.reset });
     router.replace(path);
+    aiChat.close();
   };
 
   return (
@@ -222,7 +222,7 @@ function SectionEvents({ handleNavigate }: { handleNavigate: (path: string) => v
           <div
             key={item._id}
             className="p-2.5 flex cursor-pointer hover:bg-(--btn-tertiary) rounded-sm text-sm"
-            onClick={() => handleNavigate(`/ai/e/manage/${item.shortid}`)}
+            onClick={() => handleNavigate(`/agent/e/manage/${item.shortid}`)}
           >
             <div className="flex gap-2.5 flex-1">
               <div className="size-5 aspect-square rounded-xs bg-tertiary">
