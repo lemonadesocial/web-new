@@ -9,6 +9,7 @@ import { AI_CONFIG } from '$lib/utils/constants';
 import { useRouter } from 'next/navigation';
 import { match } from 'ts-pattern';
 import { Event } from '$lib/graphql/generated/backend/graphql';
+import { delay } from 'lodash';
 
 export function InputChat() {
   const router = useRouter();
@@ -25,8 +26,13 @@ export function InputChat() {
 
         const tool = income.run?.metadata?.tool;
         match(tool?.name).with('create_event', () => {
-          router.push(`/agent/e/manage/${tool?.data?.shortid}`);
-          dispatch({ type: AIChatActionKind.reset });
+          dispatch({
+            type: AIChatActionKind.add_message,
+            payload: { messages: [{ message: 'Redicting...', role: 'assistant' }] },
+          });
+
+          delay(() => router.push(`/agent/e/manage/${tool?.data?.shortid}`), 2000);
+          delay(() => dispatch({ type: AIChatActionKind.reset }), 2500);
         });
       },
       onError: (error) => {
@@ -52,7 +58,7 @@ export function InputChat() {
     dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ message: text, role: 'user' }] } });
     dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: true } });
     setInput('');
-    run({ variables: { message: text, config: AI_CONFIG, session: state.session } });
+    run({ variables: { message: text, config: AI_CONFIG, session: state.session, data: state.data || {} } });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

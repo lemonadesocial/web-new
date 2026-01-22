@@ -98,6 +98,6 @@ export function EventProtected({
     );
   }
 
-  return <>{children(event)}</>;
+  return <>{children(event, loading)}</>;
 }
 

@@ -54,7 +54,7 @@ function MessageItem({ message: item }: { message: Message }) {
         <div className="whitespace-break-spaces flex flex-col gap-6">
           <p>{item.message}</p>
 
-          <div>
+          <div className="flex gap-2">
             {item.metadata?.actions?.map((action) =>
               match(action.type)
                 .with('button', () => (

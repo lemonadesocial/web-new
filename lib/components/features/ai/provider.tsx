@@ -24,6 +24,7 @@ type State = {
   messages: Message[];
   thinking?: boolean;
   openPane?: boolean;
+  data?: unknown;
 };
 
 const session = uuidV4();
@@ -62,6 +63,7 @@ export enum AIChatActionKind {
   'add_message',
   'set_thinking',
   'set_open_pane',
+  'set_data_run',
   'reset',
 }
 
@@ -95,6 +97,10 @@ function reducers(state: State, action: AIChatAction) {
 
     case AIChatActionKind.set_open_pane: {
       return { ...state, openPane: action.payload?.openPane };
+    }
+
+    case AIChatActionKind.set_data_run: {
+      return { ...state, data: action.payload?.data || {} };
     }
 
     case AIChatActionKind.reset: {
