@@ -2,6 +2,7 @@
 import { RunResult } from '$lib/graphql/generated/ai/graphql';
 import { v4 as uuidV4 } from 'uuid';
 import React from 'react';
+import { defer } from 'lodash';
 
 export type ToolKey = 'create_event' | 'manage_event' | 'create_community' | 'manage_community';
 
@@ -56,6 +57,7 @@ export function useAIChat(): [state: State, dispatch: React.Dispatch<AIChatActio
 
 export enum AIChatActionKind {
   'toggle_chat',
+  'close_chat',
   'select_tool',
   'add_message',
   'set_thinking',
@@ -69,6 +71,10 @@ function reducers(state: State, action: AIChatAction) {
   switch (action.type) {
     case AIChatActionKind.toggle_chat: {
       return { ...state, toggleChat: !state.toggleChat };
+    }
+
+    case AIChatActionKind.close_chat: {
+      return { ...state, toggleChat: false };
     }
 
     case AIChatActionKind.select_tool: {
@@ -92,7 +98,7 @@ function reducers(state: State, action: AIChatAction) {
     }
 
     case AIChatActionKind.reset: {
-      return defaultState;
+      return { ...defaultState };
     }
 
     default:

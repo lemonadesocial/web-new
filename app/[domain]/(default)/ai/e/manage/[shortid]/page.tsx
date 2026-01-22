@@ -1,10 +1,9 @@
 'use client';
 import React from 'react';
-import NextLink from 'next/link';
-import { usePathname, useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { useRef } from 'react';
-
+import { v4 as uuidV4 } from 'uuid';
 import { PublishEventDocument } from '$lib/graphql/generated/backend/graphql';
 import { Button, toast, Skeleton } from '$lib/components/core';
 import { useMutation } from '$lib/graphql/request';
@@ -13,20 +12,28 @@ import { EventProtected } from '$lib/components/features/event-manage/EventProte
 import { aiChat } from '$lib/components/features/ai/AIChatContainer';
 import { AIChatActionKind, useAIChat } from '$lib/components/features/ai/provider';
 import { mockWelcomeEvent } from '$lib/components/features/ai/InputChat';
+import { EventBlasts } from '$lib/components/features/event-manage/EventBlasts';
+import { EventGuests } from '$lib/components/features/event-manage/EventGuests';
+import { EventInsights } from '$lib/components/features/event-manage/EventInsights';
+import { EventMore } from '$lib/components/features/event-manage/EventMore';
+import { EventOverview } from '$lib/components/features/event-manage/overview/EventOverview';
+import { EventRegistration } from '$lib/components/features/event-manage/EventRegistration';
+import { EventPaymentLayout } from './EventPaymentLayout';
+import { RunAiChatDocument } from '$lib/graphql/generated/ai/graphql';
+import { aiChatClient } from '$lib/graphql/request/instances';
+import { AI_CONFIG } from '$lib/utils/constants';
 
-const eventManageMenu = [
-  { name: 'Overview', page: 'overview' },
-  { name: 'Guests', page: 'guests' },
-  { name: 'Registration', page: 'registration' },
-  { name: 'Payments', page: 'payments' },
-  { name: 'Blasts', page: 'blasts' },
-  // { name: 'Program', page: 'program' },
-  { name: 'Insights', page: 'insights' },
-  { name: 'More', page: 'more' },
-];
+const tabs: Record<string, { label: string; component: React.FC }> = {
+  overview: { label: 'Overview', component: EventOverview },
+  guests: { label: 'Guests', component: EventGuests },
+  registration: { label: 'Registration', component: EventRegistration },
+  payments: { label: 'Payments', component: EventPaymentLayout },
+  blasts: { label: 'Blasts', component: EventBlasts },
+  insights: { label: 'Insights', component: EventInsights },
+  more: { label: 'More', component: EventMore },
+};
 
 export default function Page() {
-  const pathname = usePathname();
   const params = useParams<{ shortid: string }>();
   const shortid = params.shortid;
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -36,6 +43,26 @@ export default function Page() {
   const router = useRouter();
   const event = useEvent();
   const updateEvent = useUpdateEvent();
+
+  const [run] = useMutation(
+    RunAiChatDocument,
+    {
+      onComplete: (_, income) => {
+        aiChatDispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: false } });
+        aiChatDispatch({
+          type: AIChatActionKind.add_message,
+          payload: { messages: [{ ...income.run, role: 'assistant' }] },
+        });
+      },
+      onError: (error) => {
+        toast.error(error.message);
+        aiChatDispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: false } });
+      },
+    },
+    aiChatClient,
+  );
+
+  const [selectedTab, setSelectedTab] = React.useState('overview');
 
   const [publishEvent, { loading: publishing }] = useMutation(PublishEventDocument, {
     onComplete: (_, data) => {
@@ -60,12 +87,29 @@ export default function Page() {
   };
 
   React.useEffect(() => {
-    if (event) {
-      aiChatDispatch({ type: AIChatActionKind.reset });
-      aiChatDispatch({ type: AIChatActionKind.add_message, payload: { messages: mockWelcomeEvent(event) } });
+    if (event && !aiChatState.messages.length && !aiChatState.thinking) {
+      aiChatDispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: true } });
+
+      run({
+        variables: {
+          message: 'Send me a welcome message with the event title and some infor related to the event',
+          config: AI_CONFIG,
+          data: { event_id: event._id },
+          session: uuidV4(),
+        },
+      });
       aiChat.open();
     }
-  }, [event]);
+  }, [event, aiChatState]);
+
+  // React.useEffect(() => {
+  //   return () => {
+  //     aiChat.close();
+  //     aiChatDispatch({ type: AIChatActionKind.reset });
+  //   };
+  // }, []);
+
+  const Comp = tabs[selectedTab].component;
 
   const loadingFallback = (
     <div className="font-default">
@@ -79,8 +123,8 @@ export default function Page() {
             </div>
           </div>
           <nav className="flex gap-4 pt-1 overflow-auto no-scrollbar">
-            {eventManageMenu.map((item) => (
-              <Skeleton key={item.page} className="h-6 w-20" />
+            {Object.keys(tabs).map((key) => (
+              <Skeleton key={key} className="h-6 w-20" />
             ))}
           </nav>
         </div>
@@ -88,8 +132,8 @@ export default function Page() {
       <div className="page mx-auto py-7 px-4 md:px-0">
         <div className="space-y-6">
           <div className="flex gap-2 overflow-auto no-scrollbar">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <Skeleton key={index} className="h-12 w-32 rounded-md" />
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <Skeleton key={idx} className="h-12 w-32 rounded-md" />
             ))}
           </div>
 
@@ -107,87 +151,88 @@ export default function Page() {
   return (
     <EventProtected shortid={shortid} loadingFallback={loadingFallback}>
       {(event) => (
-        <div className="relative h-full">
+        <div className="relative h-dvh px-4">
           <div ref={sentinelRef} />
-          <div className={clsx('sticky top-0 backdrop-blur-md transition-all duration-300 z-1 pt-7 font-default')}>
-            <div className="page mx-auto px-4 md:px-0">
-              {event.space_expanded && (
-                <div
-                  className="text-sm text-tertiary flex items-center gap-0.5 group cursor-pointer"
-                  onClick={() => router.push(`/s/manage/${event.space_expanded?.slug || event.space}`)}
-                >
-                  <p className="group-hover:text-primary">{event.space_expanded?.title}</p>
-                  <i className="icon-chevron-right size-4.5 text-quaternary transition group-hover:translate-x-0.5" />
-                </div>
-              )}
-              <div className="flex justify-between items-center">
-                <h1 className={clsx('font-semibold transition-all duration-300 text-2xl')}>{event.title}</h1>
-                <div className="flex gap-2">
-                  {event.published ? (
-                    <Button
-                      variant="tertiary-alt"
-                      className="hidden md:block hover:bg-(--btn-tertiary)! hover:text-tertiary! cursor-default!"
-                      size="sm"
-                    >
-                      Published
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={handlePublish}
-                      loading={publishing}
-                      className="hidden md:block"
-                    >
-                      Publish
-                    </Button>
-                  )}
-                  <Button
-                    iconRight="icon-arrow-outward"
-                    variant="tertiary-alt"
-                    size="sm"
-                    className="hidden md:block"
-                    onClick={() => window.open(`/e/${shortid}`, '_blank')}
+          <div className="sticky top-0 border-b z-1">
+            <div className="backdrop-blur-md transition-all duration-300 pt-7 font-default">
+              <div className="page mx-auto px-4 md:px-0">
+                {event.space_expanded && (
+                  <div
+                    className="text-sm text-tertiary flex items-center gap-0.5 group cursor-pointer"
+                    onClick={() => router.push(`/s/manage/${event.space_expanded?.slug || event.space}`)}
                   >
-                    Event Page
-                  </Button>
-                  <Button
-                    icon="icon-arrow-outward"
-                    className="md:hidden"
-                    variant="tertiary-alt"
-                    size="sm"
-                    onClick={() => window.open(`/e/${shortid}`, '_blank')}
-                  ></Button>
-                </div>
-              </div>
-              <nav className="flex gap-4 pt-1 overflow-auto no-scrollbar">
-                {eventManageMenu.map((item) => {
-                  const url = `/e/manage/${shortid}/${item.page}`;
-                  const isActive =
-                    item.page === 'overview'
-                      ? pathname === `/e/manage/${shortid}` || pathname === url
-                      : pathname === url;
-
-                  return (
-                    <NextLink
-                      href={url}
-                      key={item.page}
-                      className={clsx(isActive && 'border-b-2 border-b-primary', 'pb-2.5')}
+                    <p className="group-hover:text-primary">{event.space_expanded?.title}</p>
+                    <i className="icon-chevron-right size-4.5 text-quaternary transition group-hover:translate-x-0.5" />
+                  </div>
+                )}
+                <div className="flex justify-between items-center">
+                  <h1 className={clsx('font-semibold transition-all duration-300 text-2xl')}>{event.title}</h1>
+                  <div className="flex gap-2">
+                    {event.published ? (
+                      <Button
+                        variant="tertiary-alt"
+                        className="hidden md:block hover:bg-(--btn-tertiary)! hover:text-tertiary! cursor-default!"
+                        size="sm"
+                      >
+                        Published
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={handlePublish}
+                        loading={publishing}
+                        className="hidden md:block"
+                      >
+                        Publish
+                      </Button>
+                    )}
+                    <Button
+                      iconRight="icon-arrow-outward"
+                      variant="tertiary-alt"
+                      size="sm"
+                      className="hidden md:block"
+                      onClick={() => window.open(`/e/${shortid}`, '_blank')}
                     >
-                      <span className={clsx(isActive ? 'text-primary' : 'text-tertiary', 'font-medium')}>
-                        {item.name}
-                      </span>
-                    </NextLink>
-                  );
-                })}
-              </nav>
+                      Event Page
+                    </Button>
+                    <Button
+                      icon="icon-arrow-outward"
+                      className="md:hidden"
+                      variant="tertiary-alt"
+                      size="sm"
+                      onClick={() => window.open(`/e/${shortid}`, '_blank')}
+                    ></Button>
+                  </div>
+                </div>
+                <nav className="flex gap-4 pt-1 overflow-auto no-scrollbar">
+                  {Object.entries(tabs).map(([key, item]) => {
+                    return (
+                      <div
+                        key={key}
+                        className={clsx(
+                          'cursor-pointer',
+                          key === selectedTab && 'border-b-2 border-b-primary',
+                          'pb-2.5',
+                        )}
+                        onClick={() => setSelectedTab(key)}
+                      >
+                        <span className={clsx(key === selectedTab ? 'text-primary' : 'text-tertiary', 'font-medium')}>
+                          {item.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </nav>
+              </div>
             </div>
-            <hr className="w-screen -mx-[50vw] ml-[calc(-50vw+50%)] border-t border-t-divider" />
           </div>
-          Content go here
+
+          <Comp />
+
           {!aiChatState.toggleChat && (
             <button
-              className="absolute bottom-10 left-10 w-14 h-14 aspect-square flex items-center justify-center rounded-full bg-gradient-to-r from-(--btn-tertiary) via-[rgba(255,255,255,0.08)] via-(--color-page-background-overlay) to-(--btn-tertiary) border cursor-pointer group"
+              className="sticky bottom-10 left-10 w-14 h-14 aspect-square flex items-center justify-center rounded-full bg-gradient-to-r from-(--btn-tertiary) via-[rgba(255,255,255,0.08)] via-(--color-page-background-overlay) to-(--btn-tertiary) border cursor-pointer group"
               onClick={() => aiChat.open()}
             >
               <i className="icon-lemon-ai text-warning-300 w-8 h-8 aspect-square hover:scale-110  transition-all ease-in-out duration-300" />

@@ -45,7 +45,6 @@ export function Messages() {
 }
 
 function MessageItem({ message: item }: { message: Message }) {
-  console.log(item);
   return match(item.role)
     .with('assistant', () => (
       <div className="flex items-start gap-4">

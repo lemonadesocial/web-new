@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, Card, Menu, MenuItem, toast } from '$lib/components/core';
 import { AIChatActionKind, Message, useAIChat } from './provider';
 import { useMutation } from '$lib/graphql/request';
-import { RunAiChatDocument, RunResult } from '$lib/graphql/generated/ai/graphql';
+import { RunAiChatDocument } from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { AI_CONFIG } from '$lib/utils/constants';
 import { useRouter } from 'next/navigation';
@@ -106,7 +106,6 @@ export function InputChat() {
           <Button icon="icon-arrow-foward-sharp -rotate-90" size="sm" onClick={handleSubmit} loading={loading} />
         </div>
       </Card.Content>
-      {/* <i className='icon-location-outline' /> */}
     </Card.Root>
   );
 }

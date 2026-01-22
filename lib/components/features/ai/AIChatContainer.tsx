@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { AIChat } from './AIChat';
 import { Pane } from '$lib/components/core/pane/pane';
 import { Button } from '$lib/components/core';
@@ -39,7 +38,7 @@ export function AIChatContainer() {
     chatStoreDispath({ type: AIChatActionKind.toggle_chat });
     setState({
       content: (
-        <Pane.Root>
+        <Pane.Root className="rounded-none">
           <Pane.Header.Root>
             <Pane.Header.Right>
               <Button
@@ -50,7 +49,7 @@ export function AIChatContainer() {
               />
             </Pane.Header.Right>
           </Pane.Header.Root>
-          <Pane.Content className="p-4">
+          <Pane.Content className="p-4 overflow-auto">
             <AIChat {...(opts.props as T)} />
           </Pane.Content>
         </Pane.Root>
@@ -61,7 +60,7 @@ export function AIChatContainer() {
 
   const handleClose = () => {
     setState(undefined);
-    chatStoreDispath({ type: AIChatActionKind.toggle_chat });
+    chatStoreDispath({ type: AIChatActionKind.close_chat });
   };
 
   React.useEffect(() => {

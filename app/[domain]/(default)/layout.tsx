@@ -5,7 +5,6 @@ import { getSiteData } from '$lib/utils/fetchers';
 import Sidebar from '$lib/components/layouts/sidebar';
 import { BottomBar } from '$lib/components/layouts/bottombar';
 import { DrawerContainer } from '$lib/components/core/dialog';
-import { WindowPanesContainer } from '$lib/components/core/dialog/window-panes';
 import { AIChatContainer } from '$lib/components/features/ai/AIChatContainer';
 import { AIChatProvider } from '$lib/components/features/ai/provider';
 import Header from '$lib/components/layouts/header';
@@ -27,12 +26,10 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
     <AIChatProvider>
       <main className="flex w-full">
         <Header />
-        <div className="flex min-h-dvh w-full">
+        <div className="flex h-dvh w-full overflow-hidden">
           <Sidebar />
           <AIChatContainer />
-          <div className="flex-1 px-4" style={{ overflowX: 'visible' }}>
-            {props.children}
-          </div>
+          <div className="flex-1 overflow-auto no-scrollbar px-4">{props.children}</div>
 
           <BottomBar />
         </div>
