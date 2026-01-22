@@ -25,8 +25,8 @@ export function InputChat() {
 
         const tool = income.run?.metadata?.tool;
         match(tool?.name).with('create_event', () => {
+          router.push(`/agent/e/manage/${tool?.data?.shortid}`);
           dispatch({ type: AIChatActionKind.reset });
-          router.push(`/ai/e/manage/${tool?.data?.shortid}`);
         });
       },
       onError: (error) => {
