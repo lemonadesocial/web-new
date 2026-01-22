@@ -33,6 +33,7 @@ type Props = {
   mainMenu?: () => ReactElement;
   hideLogo?: boolean;
   className?: string;
+  showUI?: boolean;
 };
 
 const menu = [
@@ -61,7 +62,7 @@ export function RootMenu() {
   );
 }
 
-export default function Header({ title, mainMenu, hideLogo, className }: Props) {
+export default function Header({ showUI = true, title, mainMenu, hideLogo, className }: Props) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
   const { reload } = useAuth();
@@ -73,7 +74,7 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
 
   const router = useRouter();
 
-  return null;
+  if (!showUI) return null;
 
   return (
     <div className={twMerge('p-4 h-[56px] flex justify-between items-center z-10 gap-4 font-default', className)}>

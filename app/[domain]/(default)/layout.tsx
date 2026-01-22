@@ -25,7 +25,7 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
   return (
     <AIChatProvider>
       <main className="flex w-full">
-        <Header />
+        <Header showUI={false} />
         <div className="flex h-dvh w-full overflow-hidden">
           <Sidebar />
           <AIChatContainer />
