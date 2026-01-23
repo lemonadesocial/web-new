@@ -3,13 +3,12 @@ import { useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import * as Sentry from '@sentry/nextjs';
-import { createDrift } from '@gud/drift';
-import { ethersAdapter } from '@gud/drift-ethers';
-import { BrowserProvider, Eip1193Provider } from 'ethers';
+import type { Eip1193Provider } from 'ethers';
+import { ethers } from 'ethers';
 import debounce from 'lodash/debounce';
 
 import { Button, modal, ModalContent, toast } from "$lib/components/core";
-import { formatError, getGasOptions } from '$lib/utils/crypto';
+import { approveERC20Spender, formatError, isNativeToken, writeContract } from '$lib/utils/crypto';
 import { listChainsAtom } from '$lib/jotai';
 import { appKit, useAppKitProvider } from '$lib/utils/appkit';
 import { LemonadeUsernameABI } from '$lib/abis/LemonadeUsername';
@@ -104,39 +103,48 @@ export function ClaimLemonadeUsernameModal() {
         wallet: address,
       });
 
-      // const tokenUri = "ipfs://bafkreidinwlbrekvgt7mq453ppiuondxiw5rppv6ectmu3syae3563s7aq"
+      // const tokenUri = "ipfs://bafkreibf2wymoxnoyyev6ki4uozfnpitjtez2yr55ipdqudrceeymlaaeu"
 
       // const result = {
-      //   "signature":"0x925e4c013bdb3d51a2f5bb6a7c1136301bb4ad8d0f6c65dd625ab0cd28c7f0616d05972f03cbe5f2781cae77fb148d179d499da70c74fa4c9ea5ceb2f89a274e1c",
-      //   "price":"100000000000000",
-      //   "currency":"0x0000000000000000000000000000000000000000"
+      //   "signature":"0xf05c1a1b9b9208e4c55d1866f237b5611eda88e814a568d11f61c2d882ef9335631933da84866fdb720eb48b0aa5035093c2bdcdbbedabba6966fa4f8363e7051b",
+      //   "price":"0",
+      //   "currency":"0xa19adb1929d2D7C7ABF97dB80a2c231C41eE972B"
       // }
 
-      const provider = new BrowserProvider(walletProvider as Eip1193Provider);
-      const signer = await provider.getSigner();
+      const contractInstance = new ethers.Contract(
+        ethers.ZeroAddress,
+        new ethers.Interface(LemonadeUsernameABI)
+      );
+      const currencyAddress = result.currency as string;
+      const price = BigInt(result.price);
+      const isNativeCurrency = isNativeToken(currencyAddress, usernameChain.chain_id);
 
-      const adapterConfig = { provider, signer };
-      const drift = createDrift({
-        adapter: ethersAdapter(adapterConfig),
-      });
+      if (!isNativeCurrency && price > 0n) {
+        await approveERC20Spender(
+          currencyAddress,
+          usernameChain.lemonade_username_contract_address as string,
+          BigInt(result.price),
+          walletProvider as Eip1193Provider,
+        );
+      }
 
-      const gasOptions = await getGasOptions(provider);
-
-      await drift.write({
-        abi: LemonadeUsernameABI,
-        address: usernameChain.lemonade_username_contract_address as `0x${string}`,
-        fn: 'mintWithSignature',
-        args: {
+      const transaction = await writeContract(
+        contractInstance,
+        usernameChain.lemonade_username_contract_address as string,
+        walletProvider as Eip1193Provider,
+        'mintWithSignature',
+        [
           username,
-          to: address as `0x${string}`,
+          address as `0x${string}`,
           tokenUri,
-          price: BigInt(result.price),
-          currency: result.currency as `0x${string}`,
-          signature: result.signature as `0x${string}`,
-        },
-        value: BigInt(result.price),
-        ...gasOptions,
-      });
+          price,
+          currencyAddress as `0x${string}`,
+          result.signature as `0x${string}`,
+        ],
+        { value: isNativeCurrency ? price : 0 },
+      );
+
+      await transaction.wait();
 
       queryClient.setQueryData(['lemonadeUsername', address], {
         username,
