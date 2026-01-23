@@ -15,13 +15,7 @@ interface EventProtectedProps {
   children: (event: Event) => React.ReactNode;
 }
 
-export function EventProtected({
-  shortid,
-  loadingFallback,
-  gate,
-  children,
-}: EventProtectedProps) {
-
+export function EventProtected({ shortid, loadingFallback, gate, children }: EventProtectedProps) {
   const [event, setEvent] = useAtom(eventAtom);
   const me = useMe();
 
@@ -98,6 +92,5 @@ export function EventProtected({
     );
   }
 
-  return <>{children(event, loading)}</>;
+  return <>{children(event)}</>;
 }
-
