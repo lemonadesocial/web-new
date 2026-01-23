@@ -355,7 +355,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       selfVerify: true,
       uploadPhoto: true,
       ens: true,
-      whitelist: false,
+      whitelist: true,
     },
   },
 };
