@@ -77,7 +77,9 @@ export async function GET(req: NextRequest) {
         <img src={image} style={{ marginTop: 100 }} />
 
         <div style={{ display: 'flex', position: 'absolute', bottom: 90, left: 160 }}>
-          <p style={{ fontSize: 90, fontFamily: 'Syne Bold', color: '#FFF', margin: 0, padding: 0 }}>{tokenId}</p>
+          <p style={{ fontSize: 90, fontFamily: 'Orbitron Bold', color: '#587871', margin: 0, padding: 0 }}>
+            {tokenId}
+          </p>
         </div>
       </div>
     ),
@@ -86,98 +88,11 @@ export async function GET(req: NextRequest) {
       height: 1080,
       fonts: [
         {
-          name: 'Syne SemiBold',
-          data: await fetchFont(`${ASSET_PREFIX}/assets/fonts/Syne-SemiBold.ttf`),
+          name: 'Orbitron Bold',
+          data: await fetchFont(`${ASSET_PREFIX}/assets/fonts/Orbitron-Bold.ttf`),
           style: 'normal',
         },
-        {
-          name: 'Syne Regular',
-          data: await fetchFont(`${ASSET_PREFIX}/assets/fonts/Syne-Regular.ttf`),
-          style: 'normal',
-        },
-        // {
-        //   name: 'Syne Tactile',
-        //   data: await fetchFont(`${ASSET_PREFIX}/assets/fonts/SyneTactile-Regular.ttf`),
-        //   style: 'normal',
-        // },
       ],
     },
   );
-
-  // return new ImageResponse(
-  //   (
-  //     <div
-  //       style={{
-  //         display: 'flex',
-  //         flexDirection: 'column',
-  //         justifyContent: 'space-between',
-  //         backgroundImage: `url(${ASSET_PREFIX}/assets/images/share-zugrama-passport-bg.png)`,
-  //         padding: '64px',
-  //         width: '100%',
-  //         height: '100%',
-  //         borderRadius: '24px',
-  //         borderTop: '2px solid rgba(255, 255, 255, 0.56)',
-  //         borderRight: '2px solid rgba(255, 255, 255, 0.56)',
-  //         borderBottom: '4px solid rgba(255, 255, 255, 0.56)',
-  //         borderLeft: '2px solid rgba(255, 255, 255, 0.56)',
-  //         overflow: 'hidden',
-  //       }}
-  //     >
-  //       <div
-  //         style={{
-  //           display: 'flex',
-  //           justifyContent: 'space-between',
-  //           width: '100%',
-  //         }}
-  //       >
-  //         <div style={{ display: 'flex' }}>
-  //           <p
-  //             style={{ fontSize: 40, fontFamily: 'Syne Tactile', color: 'rgba(255, 255, 255)', margin: 0, padding: 0 }}
-  //           >
-  //             Zu-Grāma
-  //           </p>
-  //         </div>
-  //         <LemonadeLogo />
-  //       </div>
-
-  //       <img src={image} />
-
-  //       <div style={{ display: 'flex', flexDirection: 'column' }}>
-  //         <p
-  //           style={{
-  //             fontSize: 56,
-  //             fontFamily: 'Syne Regular',
-  //             color: 'rgba(255, 255, 255, 0.80)',
-  //             margin: 0,
-  //             padding: 0,
-  //           }}
-  //         >
-  //           Citizen
-  //         </p>
-  //         <p style={{ fontSize: 80, fontFamily: 'Syne SemiBold', color: '#FFF', margin: 0, padding: 0 }}>#{tokenId}</p>
-  //       </div>
-  //     </div>
-  //   ),
-  //   {
-  //     width: 1032,
-  //     height: 1032,
-  //     fonts: [
-  //       {
-  //         name: 'Syne SemiBold',
-  //         data: await fetchFont(`${ASSET_PREFIX}/assets/fonts/Syne-SemiBold.ttf`),
-  //         style: 'normal',
-  //       },
-  //       {
-  //         name: 'Syne Regular',
-  //         data: await fetchFont(`${ASSET_PREFIX}/assets/fonts/Syne-Regular.ttf`),
-  //         style: 'normal',
-  //       },
-  //       {
-  //         name: 'Syne Tactile',
-  //         data: await fetchFont(`${ASSET_PREFIX}/assets/fonts/SyneTactile-Regular.ttf`),
-  //         style: 'normal',
-  //       },
-  //     ],
-  //   },
-  // );
 }

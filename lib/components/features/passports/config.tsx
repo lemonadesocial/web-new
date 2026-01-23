@@ -306,7 +306,8 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
     ui: {
       intro: {
         title: 'Join Zugrama',
-        subtitle: 'Become part of a new world.',
+        subtitle:
+          'Mint your ZuGrama passport & lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna.',
         footer: {
           label: '',
           btnText: "Yes, I'm In",
@@ -354,7 +355,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       selfVerify: true,
       uploadPhoto: true,
       ens: true,
-      whitelist: true,
+      whitelist: false,
     },
   },
 };
