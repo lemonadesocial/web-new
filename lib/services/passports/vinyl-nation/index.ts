@@ -66,9 +66,7 @@ const getBoilerplateImageBuffer = async () => {
 };
 
 const getBoilerplatePlaceholderImageBuffer = async () => {
-  return getFileImageBuffer(
-    path.join(process.cwd(), 'data', 'vinyl-nation-passport-placeholder', 'boilerplate-placeholder.png'),
-  );
+  return getFileImageBuffer(path.join(process.cwd(), 'data', 'vinyl-nation-passport', 'boilerplate-placeholder.png'));
 };
 
 const getUsernameImageBuffer = async (username: string) => {
