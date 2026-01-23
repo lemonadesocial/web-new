@@ -1,6 +1,8 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from '@supabase/supabase-js';
+
 const apiKey = process.env.SUPABASE_API_KEY;
 const supabaseUrl = process.env.SUPABASE_PROJECT_URL;
+const tableName = process.env.SUPABASE_RED_ENVELOPE_TABLE || "";
 
 export type RedEnvelope = {
   id: number;
@@ -13,16 +15,15 @@ export type RedEnvelope = {
   recipient_wallet: string | null;
 };
 
-export type RedEnvelopeInput = Omit<RedEnvelope, "id" | "created_at" | "owner_user">;
+export type RedEnvelopeInput = Omit<RedEnvelope, 'id' | 'created_at' | 'owner_user'>;
 
 const getSupabaseClient = () => {
   if (!supabaseUrl) {
-    throw new Error(
-      "Missing Supabase URL. Set SUPABASE_PROJECT_URL."
-    );
+    throw new Error('Missing Supabase URL');
   }
+
   if (!apiKey) {
-    throw new Error("Missing SUPABASE_API_KEY.");
+    throw new Error('Missing SUPABASE_API_KEY');
   }
 
   return createClient(supabaseUrl, apiKey, {
@@ -30,15 +31,13 @@ const getSupabaseClient = () => {
   });
 };
 
-export const getRedEnvelopesByOwnerUser = async (
-  ownerUser: string
-): Promise<RedEnvelope[]> => {
+export const getRedEnvelopesByOwnerUser = async (ownerUser: string): Promise<RedEnvelope[]> => {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
-    .from("red_envelopes")
-    .select("*")
-    .eq("owner_user", ownerUser)
-    .order("created_at", { ascending: false });
+    .from(tableName)
+    .select('*')
+    .eq('owner_user', ownerUser)
+    .order('created_at', { ascending: false });
 
   if (error) {
     throw error;
@@ -47,21 +46,21 @@ export const getRedEnvelopesByOwnerUser = async (
   return data ?? [];
 };
 
-export const upsertRedEnvelopes = async (
-  ownerUser: string,
-  envelopes: RedEnvelopeInput[]
-): Promise<RedEnvelope[]> => {
+export const upsertRedEnvelopes = async (ownerUser: string, envelopes: RedEnvelopeInput[]): Promise<RedEnvelope[]> => {
   if (envelopes.length === 0) {
     return [];
   }
 
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
-    .from("red_envelopes")
-    .upsert(envelopes.map((e) => ({ ...e, owner_user: ownerUser })), {
-      onConflict: "owner_user,token_id",
-    })
-    .select("*");
+    .from(tableName)
+    .upsert(
+      envelopes.map((e) => ({ ...e, owner_user: ownerUser })),
+      {
+        onConflict: 'owner_user,token_id',
+      },
+    )
+    .select('*');
 
   if (error) {
     throw error;
@@ -70,20 +69,17 @@ export const upsertRedEnvelopes = async (
   return data ?? [];
 };
 
-export const deleteRedEnvelopesByTokenIds = async (
-  ownerUser: string,
-  tokens: number[]
-): Promise<number> => {
+export const deleteRedEnvelopesByTokenIds = async (ownerUser: string, tokens: number[]): Promise<number> => {
   if (tokens.length === 0) {
     return 0;
   }
 
   const supabase = getSupabaseClient();
   const { count, error } = await supabase
-    .from("red_envelopes")
-    .delete({ count: "exact" })
-    .eq("owner_user", ownerUser)
-    .in("token_id", tokens);
+    .from(tableName)
+    .delete({ count: 'exact' })
+    .eq('owner_user', ownerUser)
+    .in('token_id', tokens);
 
   if (error) {
     throw error;
