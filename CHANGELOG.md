@@ -1,5 +1,17 @@
 # Changelog
 
+## [9.11.0](https://github.com/lemonadesocial/web-new/compare/v9.10.0...v9.11.0) (2026-01-26)
+
+
+### Features
+
+* update dns record values ([22b5573](https://github.com/lemonadesocial/web-new/commit/22b5573fbdca4a291350d63b615ce0a159af060f))
+
+
+### Bug Fixes
+
+* remove dollar sign ([97f61d2](https://github.com/lemonadesocial/web-new/commit/97f61d26ca836142417a62bfbac18d686cf33dd0))
+
 ## [9.10.0](https://github.com/lemonadesocial/web-new/compare/v9.9.1...v9.10.0) (2026-01-26)
 
 
