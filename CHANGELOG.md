@@ -1,5 +1,19 @@
 # Changelog
 
+## [9.13.0](https://github.com/lemonadesocial/web-new/compare/v9.12.0...v9.13.0) (2026-01-26)
+
+
+### Features
+
+* check can mint for go next ([f5870ad](https://github.com/lemonadesocial/web-new/commit/f5870ad1a691c4bda1d50538207c1188f2b08c88))
+* checking cache ([44bdadb](https://github.com/lemonadesocial/web-new/commit/44bdadb8c98ce560e71a19df337866d8125d5783))
+
+
+### Bug Fixes
+
+* checking image cache ([c500b25](https://github.com/lemonadesocial/web-new/commit/c500b25715e08f6f08350abcbae1c1d18a7c306e))
+* theme override widgets ([fe14c93](https://github.com/lemonadesocial/web-new/commit/fe14c932ef0927ef97191c500ac756ddf60bdbcb))
+
 ## [9.12.0](https://github.com/lemonadesocial/web-new/compare/v9.11.0...v9.12.0) (2026-01-26)
 
 
