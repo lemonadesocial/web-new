@@ -4,7 +4,6 @@ export const PASSPORT_PROVIDERS = [
   'vinyl-nation',
   'festival-nation',
   'drip-nation',
-  'grama',
   'alzena-world',
 ] as const;
 export type PASSPORT_PROVIDER = (typeof PASSPORT_PROVIDERS)[number];

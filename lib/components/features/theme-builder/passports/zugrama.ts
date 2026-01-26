@@ -1,16 +1,16 @@
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { MAPPING_Widgets, PassportTemplate } from './types';
 
-const gramaPassportConfig: PassportTemplate = {
+const zugramaPassportConfig: PassportTemplate = {
   theme: 'passport',
   config: {
     mode: 'light',
     color: '',
   },
   template: {
-    provider: 'grama',
+    provider: 'zugrama',
     passportTitle: 'Citizen',
-    image: `${ASSET_PREFIX}/assets/images/passports/templates/grama-bg.png`,
+    image: `${ASSET_PREFIX}/assets/images/passports/templates/zugrama-bg.png`,
     widgets: [
       {
         key: 'passport',
@@ -95,4 +95,4 @@ const gramaPassportConfig: PassportTemplate = {
   },
 };
 
-export default gramaPassportConfig;
+export default zugramaPassportConfig;
