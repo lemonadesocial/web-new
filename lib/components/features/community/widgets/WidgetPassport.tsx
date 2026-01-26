@@ -60,7 +60,7 @@ export function WidgetPassport({ space, title, subtitle }: Props) {
             src={
               !!passportWidget?.props?.image
                 ? (passportWidget.props.image as string)
-                : `${ASSET_PREFIX}/assets/images/passports/${state.template.provider}-passport-mini.png`
+                : `${ASSET_PREFIX}/assets/images/passports/${state.template.provider}-passport-mini-new.png`
             }
           />
           <div className="flex flex-col gap-6 text-center items-center">
