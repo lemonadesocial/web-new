@@ -1,5 +1,13 @@
 # Changelog
 
+## [9.14.0](https://github.com/lemonadesocial/web-new/compare/v9.13.0...v9.14.0) (2026-01-26)
+
+
+### Features
+
+* checking file path ([bd33f42](https://github.com/lemonadesocial/web-new/commit/bd33f42a005a2ff79885c9607a85bfc99d41b843))
+* replace passport image cache ([bf4966f](https://github.com/lemonadesocial/web-new/commit/bf4966fe27f10f5aa4b2e14e279f5fb01d964dd1))
+
 ## [9.13.0](https://github.com/lemonadesocial/web-new/compare/v9.12.0...v9.13.0) (2026-01-26)
 
 
