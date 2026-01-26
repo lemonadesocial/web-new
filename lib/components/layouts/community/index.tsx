@@ -55,7 +55,7 @@ export default async function CommunityLayout({ children, params }: LayoutProps)
     };
 
     if (space.theme_name && space.theme_name !== 'default') {
-      themeData = merge(themeData, defaultPassportConfig[space.theme_name as string] || {});
+      themeData = merge({}, themeData, defaultPassportConfig[space.theme_name as string] || {});
     }
   } else {
     if (space.theme_name && space.theme_name !== 'default') {
