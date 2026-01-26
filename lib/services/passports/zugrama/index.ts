@@ -62,7 +62,7 @@ const getBoilerplateImageBuffer = async () => {
 };
 
 const getBoilerplatePlaceholderImageBuffer = async () => {
-  return getFileImageBuffer(path.join(process.cwd(), 'data', 'zugrama-nation', 'boilerplate-placeholder.png'));
+  return getFileImageBuffer(path.join(process.cwd(), 'data', 'zugrama-passport', 'boilerplate-placeholder.png'));
 };
 
 const getUsernameImageBuffer = async (username: string) => {
