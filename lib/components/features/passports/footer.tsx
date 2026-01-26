@@ -109,6 +109,13 @@ export function Footer() {
       if (state.photo) {
         query += `&avatar=${encodeURIComponent(state.photo)}`;
       }
+      if (state.useLemonhead && state.lemonadeUsername) {
+        query += `&username=${encodeURIComponent(state.lemonadeUsername)}`;
+      }
+      if (state.useENS && state.ensName) {
+        query += `&username=${encodeURIComponent(state.ensName)}`;
+      }
+
       const response = await fetch(`/api/passport/${state.provider}?${query}`);
       const mintData = await response.json();
 
