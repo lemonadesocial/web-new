@@ -17,6 +17,17 @@ type DNSType = { type: 'A' | 'CNAME'; values: string[]; host: string };
 
 const isProduction = process.env.NEXT_PUBLIC_APP_ENV === 'production';
 
+const DNS_A_RECORD_VALUES = isProduction ? ['3.33.143.109', '15.197.167.65'] : ['3.33.172.112', '15.197.167.73'];
+
+const DNS_RECORDS: DNSType[] = [
+  {
+    type: 'A' as const,
+    host: '@',
+    values: DNS_A_RECORD_VALUES,
+  },
+  { type: 'CNAME' as const, host: 'www', values: ['@'] },
+];
+
 const domainSchema = z.object({
   domain: z
     .string()
@@ -27,22 +38,6 @@ const domainSchema = z.object({
     ),
   primaryDomain: z.boolean().default(true),
   subdomains: z.array(z.string()).default(['']),
-  dns: z
-    .array(
-      z.object({
-        type: z.enum(['A', 'CNAME']),
-        values: z.array(z.string()),
-        host: z.string(),
-      }),
-    )
-    .default([
-      {
-        type: 'A' as const,
-        host: '@',
-        values: isProduction ? ['15.197.209.64', '3.33.205.125'] : ['15.197.209.64', '3.33.205.125'],
-      },
-      { type: 'CNAME' as const, host: 'www', values: ['@'] },
-    ]),
 });
 
 type DomainFormValues = z.infer<typeof domainSchema>;
@@ -65,14 +60,6 @@ export function CustomDomainPane({ space }: { space: Space }) {
       domain: '',
       primaryDomain: true,
       subdomains: [''],
-      dns: [
-        {
-          type: 'A' as const,
-          host: '@',
-          values: isProduction ? ['15.197.209.64', '3.33.205.125'] : ['15.197.209.64', '3.33.205.125'],
-        },
-        { type: 'CNAME' as const, host: 'www', values: ['@'] },
-      ],
     },
     mode: 'onChange',
   });
@@ -80,7 +67,6 @@ export function CustomDomainPane({ space }: { space: Space }) {
   const domain = watch('domain');
   const primaryDomain = watch('primaryDomain');
   const subdomains = watch('subdomains');
-  const dns = watch('dns');
 
   const [updateSpace, { loading }] = useMutation(UpdateSpaceDocument, {
     onComplete: (client, incoming) => {
@@ -172,7 +158,7 @@ export function CustomDomainPane({ space }: { space: Space }) {
     }
 
     if (currentStep === 'dns') {
-      return <AddDNSDomain dns={dns} />;
+      return <AddDNSDomain />;
     }
 
     return null;
@@ -443,12 +429,12 @@ function DomainWarningInfo({ subdomains }: { subdomains: string[] }) {
   );
 }
 
-function AddDNSDomain({ dns }: { dns: DNSType[] }) {
+function AddDNSDomain() {
   return (
     <>
       <p className="text-2xl">In your DNS settings, add these records:</p>
 
-      {dns.map((item, idx) => (
+      {DNS_RECORDS.map((item, idx) => (
         <div key={idx} className="flex flex-col gap-3">
           <p className="text-sm text-secondary">Add New {item.type} Record</p>
           <Card.Root className="border border-card-border">
