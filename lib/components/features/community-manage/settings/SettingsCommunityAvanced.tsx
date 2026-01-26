@@ -210,7 +210,7 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
                     <div>
                       <p>Title & Description</p>
                       <p className="text-sm text-tertiary">
-                        {space.title} - ${space.description}
+                        {space.title} - {space.description}
                       </p>
                     </div>
                   </div>
