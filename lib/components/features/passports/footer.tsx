@@ -113,7 +113,8 @@ export function Footer() {
     .with(PassportStep.photo, () => !state.photo)
     .with(PassportStep.username, () => {
       if (state.enabled?.lemonadeUsername) return !state.lemonadeUsername && state.enabled?.ens && !state.ensName;
-      else return state.enabled?.ens && !state.ensName;
+      else if (state.enabled?.ens) return !state.ensName;
+      else return false;
     })
     .otherwise(() => false);
 

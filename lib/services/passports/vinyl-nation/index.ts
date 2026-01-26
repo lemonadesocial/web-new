@@ -50,17 +50,6 @@ const getAvatarImageBuffer = async (avatarImageUrl: string) => {
   return getUrlImageBuffer(outputWidth, outputHeight, avatarOffset, { x: avatarSize, y: avatarSize }, avatarImageUrl);
 };
 
-const getAvatarPlaceholderBuffer = async () => {
-  const canvas = createCanvas(outputWidth, outputHeight);
-  const ctx = canvas.getContext('2d');
-  assert.ok(ctx);
-
-  // ctx.fillStyle = '#C7FE42';
-  ctx.fillRect(avatarOffset.x, avatarOffset.y, avatarSize, avatarSize);
-
-  return canvas.toBuffer('image/png');
-};
-
 const getBoilerplateImageBuffer = async () => {
   return getFileImageBuffer(path.join(process.cwd(), 'data', 'vinyl-nation-passport', 'boilerplate.png'));
 };
