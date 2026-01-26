@@ -17,7 +17,7 @@ type DNSType = { type: 'A' | 'CNAME'; values: string[]; host: string };
 
 const isProduction = process.env.NEXT_PUBLIC_APP_ENV === 'production';
 
-const DNS_A_RECORD_VALUES = isProduction ? ['3.33.143.109', '15.197.167.65'] : ['3.33.172.112', '15.197.167.73'];
+const DNS_A_RECORD_VALUES = isProduction ? ['15.197.209.64', '3.33.205.125'] : ['15.197.191.87', '3.33.251.112'];
 
 const DNS_RECORDS: DNSType[] = [
   {
