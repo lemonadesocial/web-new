@@ -31,17 +31,6 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
     return NextResponse.json({ error: 'Avatar parameter is required' }, { status: 400 });
   }
 
-  // const getPassportData = match(provider)
-  //   .with('mint', () => getMintData())
-  //   .with(PassportProvider.VinylNation, () => getVinylNationData())
-  //   .with(PassportProvider.FestivalNation, () => getFestivalNationData())
-  //   .with(PassportProvider.DripNation, () => getDripNationData())
-  //   .otherwise(() => null);
-  //
-  // if (!getPassportData) {
-  //   return NextResponse.json({ error: 'Provider does not support' }, { status: 400 });
-  // }
-
   const passportData = await getData({ provider, fluffleTokenId, wallet });
 
   if (!passportData) {

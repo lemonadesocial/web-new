@@ -354,6 +354,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
     },
     enabled: {
       lemohead: true,
+      shouldMintedLemonhead: true,
       fluffePhoto: true,
       // selfVerify: true,
       // uploadPhoto: true,
