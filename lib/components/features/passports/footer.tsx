@@ -1,11 +1,13 @@
 'use client';
+import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import { match } from 'ts-pattern';
 import { useAtomValue } from 'jotai';
+import * as Sentry from '@sentry/nextjs';
 
 import { chainsMapAtom } from '$lib/jotai';
 
-import { Button, modal } from '$lib/components/core';
+import { Button, modal, toast } from '$lib/components/core';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 
 import { MAPPING_PASSPORT_STEPS } from './config';
@@ -16,10 +18,15 @@ import { PASSPORT_CHAIN_ID } from './utils';
 import { useRouter } from 'next/navigation';
 import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { MintPassportModal } from './modals/MintPassportModal';
+import { useAppKitAccount } from '@reown/appkit/react';
+import { formatError } from '$lib/utils/crypto';
 
 export function Footer() {
   const chainsMap = useAtomValue(chainsMapAtom);
   const router = useRouter();
+
+  const { address } = useAppKitAccount();
+  const [isMinting, setIsMinting] = React.useState(false);
 
   const [state, dispatch] = usePassportContext();
 
@@ -89,24 +96,47 @@ export function Footer() {
     dispatch({ type: PassportActionKind.PrevStep });
   };
 
-  const handleMint = () => {
-    modal.open(BeforeMintPassportModal, {
-      props: {
-        config: state.modal.beforeMint,
-        onContinue: () => {
-          modal.open(MintPassportModal, {
-            props: {
-              provider: state.provider,
-              onComplete: (txHash, tokenId) => {
-                dispatch({ type: PassportActionKind.SetMintState, payload: { txHash, tokenId } });
-                dispatch({ type: PassportActionKind.NextStep });
+  const handleMint = async () => {
+    if (!address) {
+      toast.error('Wallet not connected');
+      return;
+    }
+
+    setIsMinting(true);
+
+    try {
+      let query = `wallet=${address}`;
+      if (state.photo) {
+        query += `&avatar=${encodeURIComponent(state.photo)}`;
+      }
+      const response = await fetch(`/api/passport/${state.provider}?${query}`);
+      const mintData = await response.json();
+
+      dispatch({ type: PassportActionKind.SetMintData, payload: mintData });
+
+      modal.open(BeforeMintPassportModal, {
+        props: {
+          config: state.modal.beforeMint,
+          onContinue: () => {
+            modal.open(MintPassportModal, {
+              props: {
+                provider: state.provider,
+                onComplete: (txHash, tokenId) => {
+                  dispatch({ type: PassportActionKind.SetMintState, payload: { txHash, tokenId } });
+                  dispatch({ type: PassportActionKind.NextStep });
+                },
+                mintData: mintData,
               },
-              mintData: state.mintData!,
-            },
-          });
+            });
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      Sentry.captureException(error);
+      toast.error(formatError(error));
+    } finally {
+      setIsMinting(false);
+    }
   };
 
   const disabled = match(state.currentStep)

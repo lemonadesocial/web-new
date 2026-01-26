@@ -102,4 +102,5 @@ export const ContractAddressFieldMapping: Record<PASSPORT_PROVIDER, string> = {
   'vinyl-nation': 'vinyl_nation_passport_contract_address',
   'festival-nation': 'festival_nation_passport_contract_address',
   'drip-nation': 'drip_nation_passport_contract_address',
+  'alzena-world': '',
 };

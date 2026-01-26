@@ -7,7 +7,7 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { trpc } from '$lib/trpc/client';
 
 import { usePassportContext } from './provider';
-import { PassportActionKind, PassportStep } from './types';
+import { PassportActionKind } from './types';
 import { useAppKitAccount } from '@reown/appkit/react';
 
 export function PassportPreview() {

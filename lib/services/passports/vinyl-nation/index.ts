@@ -127,13 +127,20 @@ export const getMintVinylNationPassportImage = async (avatarImageUrl?: string, u
   return { image: dataUrl };
 };
 
-export const getMintVinylNationPassportData = async (
-  username: string,
-  passportNumber: number,
-  wallet: string,
-  avatarImageUrl: string,
-) => {
+export const getMintVinylNationPassportData = async ({
+  username,
+  passportNumber,
+  wallet,
+  avatarImageUrl,
+}: {
+  username: string;
+  passportNumber?: number;
+  wallet: string;
+  avatarImageUrl?: string;
+}) => {
   assert.ok(username);
+  assert.ok(passportNumber);
+  assert.ok(avatarImageUrl);
 
   const passportId = passportNumber.toString().padStart(8, '0');
 
