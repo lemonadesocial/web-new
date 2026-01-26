@@ -126,7 +126,7 @@ export function MintPassportModal({
     <ModalContent
       icon={
         <img
-          src={`${ASSET_PREFIX}/assets/images/passports/${provider}-passport-mini.png`}
+          src={`${ASSET_PREFIX}/assets/images/passports/${provider}-passport-mini-new.png`}
           className="w-full object-cover aspect-[45/28]"
         />
       }
