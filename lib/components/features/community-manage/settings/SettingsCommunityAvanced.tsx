@@ -12,7 +12,7 @@ import React from 'react';
 import { TitleDescModal } from '../modals/TitleDescModal';
 import { ConfirmModal } from '../../modals/ConfirmModal';
 import { ChangeStatusModal } from '../modals/ChangeStatusModal';
-import { CustomDomainPane } from '../pane/CustomDomainPane';
+import { CustomDomainPane } from '../panes/CustomDomainPane';
 
 export function SettingsCommunityAvanced(props: { space: Space }) {
   const { data } = useQuery(GetSpaceDocument, {
