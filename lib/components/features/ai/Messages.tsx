@@ -2,8 +2,10 @@
 import React from 'react';
 import { match } from 'ts-pattern';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Message, useAIChat } from './provider';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Button } from '$lib/components/core';
+import { Message, useAIChat } from './provider';
 
 export function Messages() {
   const [state] = useAIChat();
@@ -52,7 +54,7 @@ function MessageItem({ message: item }: { message: Message }) {
           <i className="icon-lemon-ai size-4 aspect-square text-warning-300" />
         </div>
         <div className="whitespace-break-spaces flex flex-col gap-6">
-          <p>{item.message}</p>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.message}</ReactMarkdown>
 
           <div className="flex gap-2">
             {item.metadata?.actions?.map((action) =>
