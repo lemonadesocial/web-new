@@ -26,6 +26,8 @@ export function WidgetPassport({ space, title, subtitle }: Props) {
   // TODO: need to find another way to load username - it could be different username
   const { username } = useLemonadeUsername();
 
+  const passportWidget = state.template.widgets.find((item) => item.key === 'passport');
+
   return (
     <WidgetContent
       space={space}
@@ -54,7 +56,13 @@ export function WidgetPassport({ space, title, subtitle }: Props) {
         </div>
       ) : (
         <div className="flex flex-col gap-12 p-12">
-          <img src={`${ASSET_PREFIX}/assets/images/passports/${state.template.provider}-passport-mini.png`} />
+          <img
+            src={
+              !!passportWidget?.props?.image
+                ? (passportWidget.props.image as string)
+                : `${ASSET_PREFIX}/assets/images/passports/${state.template.provider}-passport-mini.png`
+            }
+          />
           <div className="flex flex-col gap-6 text-center items-center">
             <div className="space-y-2">
               <h3 className="text-2xl font-semibold">{title}</h3>

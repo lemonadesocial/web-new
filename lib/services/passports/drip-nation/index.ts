@@ -134,12 +134,17 @@ export const getMintDripNationPassportImage = async (avatarImageUrl?: string, us
   return { image: dataUrl };
 };
 
-export const getMintDripNationPassportData = async (
-  username: string,
-  passportNumber: number,
-  wallet: string,
-  avatarImageUrl: string,
-) => {
+export const getMintDripNationPassportData = async ({
+  username,
+  passportNumber,
+  wallet,
+  avatarImageUrl,
+}: {
+  username: string;
+  passportNumber?: number;
+  wallet: string;
+  avatarImageUrl?: string;
+}) => {
   const passportId = passportNumber.toString().padStart(8, '0');
 
   const creationDate = formatDate(new Date());

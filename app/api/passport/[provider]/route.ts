@@ -1,22 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { match } from 'ts-pattern';
 
-import { getData as getVinylNationData } from '$lib/services/passports/vinyl-nation/admin';
+import { getData } from '$lib/services/passports/common/admin';
+
 import { getMintVinylNationPassportData } from '$lib/services/passports/vinyl-nation';
-
-import { getData as getFestivalNationData } from '$lib/services/passports/festival-nation/admin';
 import { getMintFestivalNationPassportData } from '$lib/services/passports/festival-nation';
-
-import { getData as getDripNationData } from '$lib/services/passports/drip-nation/admin';
 import { getMintDripNationPassportData } from '$lib/services/passports/drip-nation';
 
 import { PassportProvider } from '$lib/graphql/generated/backend/graphql';
+import { getMintLemonadePassportDataNew } from '$lib/services/passports/lemonade';
 
 type Params = Promise<{ provider: PassportProvider }>;
 
 export async function GET(request: NextRequest, { params }: { params: Params }) {
   const wallet = new URL(request.url).searchParams.get('wallet');
   const avatarImageUrl = new URL(request.url).searchParams.get('avatar');
+  const fluffleTokenId = new URL(request.url).searchParams.get('fluffleTokenId');
   const username = new URL(request.url).searchParams.get('username');
   const { provider } = await params;
 
@@ -32,23 +31,25 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
     return NextResponse.json({ error: 'Avatar parameter is required' }, { status: 400 });
   }
 
-  const getPassportData = match(provider)
-    .with(PassportProvider.VinylNation, () => getVinylNationData())
-    .with(PassportProvider.FestivalNation, () => getFestivalNationData())
-    .with(PassportProvider.DripNation, () => getDripNationData())
-    .otherwise(() => null);
+  // const getPassportData = match(provider)
+  //   .with('mint', () => getMintData())
+  //   .with(PassportProvider.VinylNation, () => getVinylNationData())
+  //   .with(PassportProvider.FestivalNation, () => getFestivalNationData())
+  //   .with(PassportProvider.DripNation, () => getDripNationData())
+  //   .otherwise(() => null);
+  //
+  // if (!getPassportData) {
+  //   return NextResponse.json({ error: 'Provider does not support' }, { status: 400 });
+  // }
 
-  if (!getPassportData) {
-    return NextResponse.json({ error: 'Provider does not support' }, { status: 400 });
-  }
-
-  const passportData = await getPassportData;
+  const passportData = await getData({ provider, fluffleTokenId, wallet });
 
   if (!passportData) {
     return NextResponse.json({ error: 'Unable to get passport data' }, { status: 404 });
   }
 
   const getMintData = match(provider)
+    .with(PassportProvider.Lemonade, () => getMintLemonadePassportDataNew)
     .with(PassportProvider.VinylNation, () => getMintVinylNationPassportData)
     .with(PassportProvider.FestivalNation, () => getMintFestivalNationPassportData)
     .with(PassportProvider.DripNation, () => getMintDripNationPassportData)
@@ -59,12 +60,13 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
   }
 
   try {
-    const mintData = await getMintData(
+    const mintData = await getMintData({
       username,
-      passportData.passportNumber,
+      passportNumber: passportData.passportNumber,
       wallet,
       avatarImageUrl,
-    );
+      fluffleTokenId,
+    });
 
     return NextResponse.json(mintData);
   } catch (error) {

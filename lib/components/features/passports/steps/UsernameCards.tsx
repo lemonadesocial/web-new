@@ -87,7 +87,7 @@ export function ENSDomainCard() {
         const provider = new ethers.JsonRpcProvider(mainnet.rpcUrls.default.http[0]);
         const name = await provider.lookupAddress(address);
         setEnsName(name);
-        // dispatch({type: PassportActionKind.SetLemonadeUsername, payload: name})
+        dispatch({ type: PassportActionKind.SetEnsName, payload: name });
       } catch (error) {
         console.error('Error fetching ENS name:', error);
         setEnsName(null);
@@ -111,21 +111,22 @@ export function ENSDomainCard() {
 
   if (!ensName) {
     return (
-      <CardDetail
-        icon="icon-ens"
-        constainerClass="border-2 border-dashed"
-        title="No ENS Found"
-        subtitle="You don't have an ENS domain, yet."
-      >
-        <Button
-          variant="tertiary"
-          size="sm"
-          iconRight="icon-arrow-outward"
-          onClick={() => window.open('https://ens.domains/', '_blank')}
-        >
-          Get ENS Domain
-        </Button>
-      </CardDetail>
+      <Card.Root className="border-2 border-dashed">
+        <Card.Content className="text-tertiary flex flex-col gap-5 justify-center items-center py-12 px-0">
+          <i className="icon-ens w-[128px] h-[128px] aspect-square" />
+          <div className="flex flex-col gap-2 items-center">
+            <p>No ENS Found</p>
+            <p className="text-sm">Get your ENS domain to use as your passport name.</p>
+          </div>
+          <Button
+            variant="secondary"
+            iconRight="icon-arrow-outward"
+            onClick={() => window.open('https://ens.domains/', '_blank')}
+          >
+            Get ENS Domain
+          </Button>
+        </Card.Content>
+      </Card.Root>
     );
   }
 
@@ -134,16 +135,9 @@ export function ENSDomainCard() {
       icon="icon-ens"
       title={`@${ensName}`}
       subtitle="ENS Domain"
-      constainerClass={isSelected ? 'border-primary' : 'border-card-border'}
+      containerClass={isSelected ? 'border-primary' : 'border-card-border'}
     >
-      <Button
-        variant={isSelected ? 'tertiary' : 'secondary'}
-        onClick={handleSelect}
-        iconLeft={isSelected ? 'icon-done' : undefined}
-        size="sm"
-      >
-        {isSelected ? 'Selected' : 'Select'}
-      </Button>
+      <Button variant="flat" onClick={handleSelect} icon={isSelected ? 'icon-check' : undefined} />
     </CardDetail>
   );
 }
@@ -167,17 +161,17 @@ function CardDetail({
   icon,
   title,
   subtitle,
-  constainerClass,
+  containerClass,
   children,
 }: React.PropsWithChildren & {
   icon: string;
   title: string;
   subtitle: string;
-  constainerClass?: string;
+  containerClass?: string;
 }) {
   return (
-    <Card.Root className={constainerClass}>
-      <Card.Content className="flex gap-4">
+    <Card.Root className={containerClass}>
+      <Card.Content className="flex gap-4 items-center py-3">
         <div className="size-[38px] flex items-center justify-center rounded-sm bg-primary/8">
           <i className={twMerge('text-tertiary', icon)} />
         </div>

@@ -10,7 +10,7 @@ export const getData = async (opts: {
   /** @description wallet is required for lemonhead */
   wallet?: string;
   /** @description fluffleTokenId is required for lemonhead */
-  fluffleTokenId?: string;
+  fluffleTokenId?: string | null;
   /** @description authCookie is required for zugrama */
   auth?: string;
 }) => {
