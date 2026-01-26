@@ -1,5 +1,15 @@
 # Changelog
 
+## [9.12.0](https://github.com/lemonadesocial/web-new/compare/v9.11.0...v9.12.0) (2026-01-26)
+
+
+### Features
+
+* check whitelist ([1921c4e](https://github.com/lemonadesocial/web-new/commit/1921c4e76a905d6263c4d5d1ed5afa359d61c884))
+* update custom passport image for template ([f4a9782](https://github.com/lemonadesocial/web-new/commit/f4a978249976aa84553726bc089a12f8ed612a34))
+* update get mint data ([cc42960](https://github.com/lemonadesocial/web-new/commit/cc4296081e16a9d8053ea2a63427f31b69c247bd))
+* update query mint data ([39a4327](https://github.com/lemonadesocial/web-new/commit/39a4327d05803aa865c9ccd111dac5f0dcd6637f))
+
 ## [9.11.0](https://github.com/lemonadesocial/web-new/compare/v9.10.0...v9.11.0) (2026-01-26)
 
 
