@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.10.0](https://github.com/lemonadesocial/web-new/compare/v9.9.1...v9.10.0) (2026-01-26)
+
+
+### Features
+
+* update dns config ([0bf9f2b](https://github.com/lemonadesocial/web-new/commit/0bf9f2b6bb0c8ccd3902a9ca3b931997d60b5599))
+
 ## [9.9.1](https://github.com/lemonadesocial/web-new/compare/v9.9.0...v9.9.1) (2026-01-21)
 
 
