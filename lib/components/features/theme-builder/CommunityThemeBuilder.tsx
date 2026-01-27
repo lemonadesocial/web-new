@@ -341,7 +341,7 @@ function CommunityThemeBuilderPane({
               <Menu.Trigger>
                 <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
                   <span className="flex-1 text-left">
-                    {themeName in presets ? presets[themeName as keyof typeof presets].name : 'Default'}
+                    {themeName in presets && state.theme === themeName ? presets[themeName as keyof typeof presets].name : 'Default'}
                   </span>
                   <i className="icon-chevrons-up-down text-quaternary" />
                 </div>
