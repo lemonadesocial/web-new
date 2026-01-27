@@ -29,7 +29,7 @@ export function CommunityThemeBuilder({ themeData, spaceId }: { themeData: Theme
   });
 
   React.useEffect(() => {
-    const drawerWidth = 400;
+    const drawerWidth = 280;
     if (isOpen) {
       document.body.style.marginRight = `${drawerWidth}px`;
     } else {
