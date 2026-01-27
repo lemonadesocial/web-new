@@ -32,6 +32,184 @@ export type Boolean_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['Boolean']['input']>>;
 };
 
+/** columns and relationships of "Envelope" */
+export type Envelope = {
+  __typename?: 'Envelope';
+  amount?: Maybe<Scalars['numeric']['output']>;
+  chain_id: Scalars['numeric']['output'];
+  claimed: Scalars['Boolean']['output'];
+  claimed_at?: Maybe<Scalars['numeric']['output']>;
+  created_at: Scalars['numeric']['output'];
+  currency?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  message?: Maybe<Scalars['String']['output']>;
+  owner: Scalars['String']['output'];
+  recipient?: Maybe<Scalars['String']['output']>;
+  sealed_at?: Maybe<Scalars['numeric']['output']>;
+  token_id: Scalars['numeric']['output'];
+};
+
+/** Boolean expression to filter rows from the table "Envelope". All fields are combined with a logical 'AND'. */
+export type Envelope_Bool_Exp = {
+  _and?: InputMaybe<Array<Envelope_Bool_Exp>>;
+  _not?: InputMaybe<Envelope_Bool_Exp>;
+  _or?: InputMaybe<Array<Envelope_Bool_Exp>>;
+  amount?: InputMaybe<Numeric_Comparison_Exp>;
+  chain_id?: InputMaybe<Numeric_Comparison_Exp>;
+  claimed?: InputMaybe<Boolean_Comparison_Exp>;
+  claimed_at?: InputMaybe<Numeric_Comparison_Exp>;
+  created_at?: InputMaybe<Numeric_Comparison_Exp>;
+  currency?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  message?: InputMaybe<String_Comparison_Exp>;
+  owner?: InputMaybe<String_Comparison_Exp>;
+  recipient?: InputMaybe<String_Comparison_Exp>;
+  sealed_at?: InputMaybe<Numeric_Comparison_Exp>;
+  token_id?: InputMaybe<Numeric_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "Envelope". */
+export type Envelope_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  chain_id?: InputMaybe<Order_By>;
+  claimed?: InputMaybe<Order_By>;
+  claimed_at?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  currency?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  message?: InputMaybe<Order_By>;
+  owner?: InputMaybe<Order_By>;
+  recipient?: InputMaybe<Order_By>;
+  sealed_at?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "Envelope" */
+export enum Envelope_Select_Column {
+  /** column name */
+  Amount = 'amount',
+  /** column name */
+  ChainId = 'chain_id',
+  /** column name */
+  Claimed = 'claimed',
+  /** column name */
+  ClaimedAt = 'claimed_at',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Currency = 'currency',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  Owner = 'owner',
+  /** column name */
+  Recipient = 'recipient',
+  /** column name */
+  SealedAt = 'sealed_at',
+  /** column name */
+  TokenId = 'token_id'
+}
+
+/** Streaming cursor of the table "Envelope" */
+export type Envelope_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Envelope_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Envelope_Stream_Cursor_Value_Input = {
+  amount?: InputMaybe<Scalars['numeric']['input']>;
+  chain_id?: InputMaybe<Scalars['numeric']['input']>;
+  claimed?: InputMaybe<Scalars['Boolean']['input']>;
+  claimed_at?: InputMaybe<Scalars['numeric']['input']>;
+  created_at?: InputMaybe<Scalars['numeric']['input']>;
+  currency?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  message?: InputMaybe<Scalars['String']['input']>;
+  owner?: InputMaybe<Scalars['String']['input']>;
+  recipient?: InputMaybe<Scalars['String']['input']>;
+  sealed_at?: InputMaybe<Scalars['numeric']['input']>;
+  token_id?: InputMaybe<Scalars['numeric']['input']>;
+};
+
+/** columns and relationships of "FairLaunch" */
+export type FairLaunch = {
+  __typename?: 'FairLaunch';
+  burnedAmount?: Maybe<Scalars['numeric']['output']>;
+  chainId: Scalars['Int']['output'];
+  closeAt?: Maybe<Scalars['numeric']['output']>;
+  endAt: Scalars['numeric']['output'];
+  id: Scalars['String']['output'];
+  poolId: Scalars['String']['output'];
+  startAt: Scalars['numeric']['output'];
+};
+
+/** Boolean expression to filter rows from the table "FairLaunch". All fields are combined with a logical 'AND'. */
+export type FairLaunch_Bool_Exp = {
+  _and?: InputMaybe<Array<FairLaunch_Bool_Exp>>;
+  _not?: InputMaybe<FairLaunch_Bool_Exp>;
+  _or?: InputMaybe<Array<FairLaunch_Bool_Exp>>;
+  burnedAmount?: InputMaybe<Numeric_Comparison_Exp>;
+  chainId?: InputMaybe<Int_Comparison_Exp>;
+  closeAt?: InputMaybe<Numeric_Comparison_Exp>;
+  endAt?: InputMaybe<Numeric_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  poolId?: InputMaybe<String_Comparison_Exp>;
+  startAt?: InputMaybe<Numeric_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "FairLaunch". */
+export type FairLaunch_Order_By = {
+  burnedAmount?: InputMaybe<Order_By>;
+  chainId?: InputMaybe<Order_By>;
+  closeAt?: InputMaybe<Order_By>;
+  endAt?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  poolId?: InputMaybe<Order_By>;
+  startAt?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "FairLaunch" */
+export enum FairLaunch_Select_Column {
+  /** column name */
+  BurnedAmount = 'burnedAmount',
+  /** column name */
+  ChainId = 'chainId',
+  /** column name */
+  CloseAt = 'closeAt',
+  /** column name */
+  EndAt = 'endAt',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  PoolId = 'poolId',
+  /** column name */
+  StartAt = 'startAt'
+}
+
+/** Streaming cursor of the table "FairLaunch" */
+export type FairLaunch_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: FairLaunch_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type FairLaunch_Stream_Cursor_Value_Input = {
+  burnedAmount?: InputMaybe<Scalars['numeric']['input']>;
+  chainId?: InputMaybe<Scalars['Int']['input']>;
+  closeAt?: InputMaybe<Scalars['numeric']['input']>;
+  endAt?: InputMaybe<Scalars['numeric']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  poolId?: InputMaybe<Scalars['String']['input']>;
+  startAt?: InputMaybe<Scalars['numeric']['input']>;
+};
+
 /** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
 export type Int_Comparison_Exp = {
   _eq?: InputMaybe<Scalars['Int']['input']>;
@@ -43,6 +221,668 @@ export type Int_Comparison_Exp = {
   _lte?: InputMaybe<Scalars['Int']['input']>;
   _neq?: InputMaybe<Scalars['Int']['input']>;
   _nin?: InputMaybe<Array<Scalars['Int']['input']>>;
+};
+
+/** columns and relationships of "ManagerDeployed" */
+export type ManagerDeployed = {
+  __typename?: 'ManagerDeployed';
+  blockNumber: Scalars['numeric']['output'];
+  blockTimestamp: Scalars['numeric']['output'];
+  chainId: Scalars['Int']['output'];
+  id: Scalars['String']['output'];
+  manager: Scalars['String']['output'];
+  managerImplementation: Scalars['String']['output'];
+  transactionHash: Scalars['String']['output'];
+};
+
+/** Boolean expression to filter rows from the table "ManagerDeployed". All fields are combined with a logical 'AND'. */
+export type ManagerDeployed_Bool_Exp = {
+  _and?: InputMaybe<Array<ManagerDeployed_Bool_Exp>>;
+  _not?: InputMaybe<ManagerDeployed_Bool_Exp>;
+  _or?: InputMaybe<Array<ManagerDeployed_Bool_Exp>>;
+  blockNumber?: InputMaybe<Numeric_Comparison_Exp>;
+  blockTimestamp?: InputMaybe<Numeric_Comparison_Exp>;
+  chainId?: InputMaybe<Int_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  manager?: InputMaybe<String_Comparison_Exp>;
+  managerImplementation?: InputMaybe<String_Comparison_Exp>;
+  transactionHash?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "ManagerDeployed". */
+export type ManagerDeployed_Order_By = {
+  blockNumber?: InputMaybe<Order_By>;
+  blockTimestamp?: InputMaybe<Order_By>;
+  chainId?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  manager?: InputMaybe<Order_By>;
+  managerImplementation?: InputMaybe<Order_By>;
+  transactionHash?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "ManagerDeployed" */
+export enum ManagerDeployed_Select_Column {
+  /** column name */
+  BlockNumber = 'blockNumber',
+  /** column name */
+  BlockTimestamp = 'blockTimestamp',
+  /** column name */
+  ChainId = 'chainId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Manager = 'manager',
+  /** column name */
+  ManagerImplementation = 'managerImplementation',
+  /** column name */
+  TransactionHash = 'transactionHash'
+}
+
+/** Streaming cursor of the table "ManagerDeployed" */
+export type ManagerDeployed_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: ManagerDeployed_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type ManagerDeployed_Stream_Cursor_Value_Input = {
+  blockNumber?: InputMaybe<Scalars['numeric']['input']>;
+  blockTimestamp?: InputMaybe<Scalars['numeric']['input']>;
+  chainId?: InputMaybe<Scalars['Int']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  manager?: InputMaybe<Scalars['String']['input']>;
+  managerImplementation?: InputMaybe<Scalars['String']['input']>;
+  transactionHash?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** columns and relationships of "MemecoinHolder" */
+export type MemecoinHolder = {
+  __typename?: 'MemecoinHolder';
+  balance: Scalars['numeric']['output'];
+  chainId: Scalars['Int']['output'];
+  holder: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  memecoin: Scalars['String']['output'];
+};
+
+/** Boolean expression to filter rows from the table "MemecoinHolder". All fields are combined with a logical 'AND'. */
+export type MemecoinHolder_Bool_Exp = {
+  _and?: InputMaybe<Array<MemecoinHolder_Bool_Exp>>;
+  _not?: InputMaybe<MemecoinHolder_Bool_Exp>;
+  _or?: InputMaybe<Array<MemecoinHolder_Bool_Exp>>;
+  balance?: InputMaybe<Numeric_Comparison_Exp>;
+  chainId?: InputMaybe<Int_Comparison_Exp>;
+  holder?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  memecoin?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "MemecoinHolder". */
+export type MemecoinHolder_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  chainId?: InputMaybe<Order_By>;
+  holder?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  memecoin?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "MemecoinHolder" */
+export enum MemecoinHolder_Select_Column {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  ChainId = 'chainId',
+  /** column name */
+  Holder = 'holder',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Memecoin = 'memecoin'
+}
+
+/** Streaming cursor of the table "MemecoinHolder" */
+export type MemecoinHolder_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: MemecoinHolder_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type MemecoinHolder_Stream_Cursor_Value_Input = {
+  balance?: InputMaybe<Scalars['numeric']['input']>;
+  chainId?: InputMaybe<Scalars['Int']['input']>;
+  holder?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  memecoin?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** columns and relationships of "MemecoinMetadata" */
+export type MemecoinMetadata = {
+  __typename?: 'MemecoinMetadata';
+  chainId: Scalars['Int']['output'];
+  holdersCount: Scalars['numeric']['output'];
+  id: Scalars['String']['output'];
+  memecoin: Scalars['String']['output'];
+};
+
+/** Boolean expression to filter rows from the table "MemecoinMetadata". All fields are combined with a logical 'AND'. */
+export type MemecoinMetadata_Bool_Exp = {
+  _and?: InputMaybe<Array<MemecoinMetadata_Bool_Exp>>;
+  _not?: InputMaybe<MemecoinMetadata_Bool_Exp>;
+  _or?: InputMaybe<Array<MemecoinMetadata_Bool_Exp>>;
+  chainId?: InputMaybe<Int_Comparison_Exp>;
+  holdersCount?: InputMaybe<Numeric_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  memecoin?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "MemecoinMetadata". */
+export type MemecoinMetadata_Order_By = {
+  chainId?: InputMaybe<Order_By>;
+  holdersCount?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  memecoin?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "MemecoinMetadata" */
+export enum MemecoinMetadata_Select_Column {
+  /** column name */
+  ChainId = 'chainId',
+  /** column name */
+  HoldersCount = 'holdersCount',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Memecoin = 'memecoin'
+}
+
+/** Streaming cursor of the table "MemecoinMetadata" */
+export type MemecoinMetadata_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: MemecoinMetadata_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type MemecoinMetadata_Stream_Cursor_Value_Input = {
+  chainId?: InputMaybe<Scalars['Int']['input']>;
+  holdersCount?: InputMaybe<Scalars['numeric']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  memecoin?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** columns and relationships of "PoolCreated" */
+export type PoolCreated = {
+  __typename?: 'PoolCreated';
+  blockNumber: Scalars['numeric']['output'];
+  blockTimestamp: Scalars['numeric']['output'];
+  chainId: Scalars['Int']['output'];
+  currencyFlipped: Scalars['Boolean']['output'];
+  id: Scalars['String']['output'];
+  latestMarketCapDate?: Maybe<Scalars['String']['output']>;
+  latestMarketCapETH?: Maybe<Scalars['numeric']['output']>;
+  memecoin: Scalars['String']['output'];
+  memecoinTreasury: Scalars['String']['output'];
+  paramsCreator: Scalars['String']['output'];
+  paramsCreatorFeeAllocation: Scalars['numeric']['output'];
+  paramsFeeCalculatorParams: Scalars['String']['output'];
+  paramsInitialPriceParams: Scalars['String']['output'];
+  poolId: Scalars['String']['output'];
+  previousMarketCapDate?: Maybe<Scalars['String']['output']>;
+  previousMarketCapETH?: Maybe<Scalars['numeric']['output']>;
+  tokenId: Scalars['numeric']['output'];
+  tokenURI?: Maybe<Scalars['String']['output']>;
+  transactionHash: Scalars['String']['output'];
+};
+
+/** Boolean expression to filter rows from the table "PoolCreated". All fields are combined with a logical 'AND'. */
+export type PoolCreated_Bool_Exp = {
+  _and?: InputMaybe<Array<PoolCreated_Bool_Exp>>;
+  _not?: InputMaybe<PoolCreated_Bool_Exp>;
+  _or?: InputMaybe<Array<PoolCreated_Bool_Exp>>;
+  blockNumber?: InputMaybe<Numeric_Comparison_Exp>;
+  blockTimestamp?: InputMaybe<Numeric_Comparison_Exp>;
+  chainId?: InputMaybe<Int_Comparison_Exp>;
+  currencyFlipped?: InputMaybe<Boolean_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  latestMarketCapDate?: InputMaybe<String_Comparison_Exp>;
+  latestMarketCapETH?: InputMaybe<Numeric_Comparison_Exp>;
+  memecoin?: InputMaybe<String_Comparison_Exp>;
+  memecoinTreasury?: InputMaybe<String_Comparison_Exp>;
+  paramsCreator?: InputMaybe<String_Comparison_Exp>;
+  paramsCreatorFeeAllocation?: InputMaybe<Numeric_Comparison_Exp>;
+  paramsFeeCalculatorParams?: InputMaybe<String_Comparison_Exp>;
+  paramsInitialPriceParams?: InputMaybe<String_Comparison_Exp>;
+  poolId?: InputMaybe<String_Comparison_Exp>;
+  previousMarketCapDate?: InputMaybe<String_Comparison_Exp>;
+  previousMarketCapETH?: InputMaybe<Numeric_Comparison_Exp>;
+  tokenId?: InputMaybe<Numeric_Comparison_Exp>;
+  tokenURI?: InputMaybe<String_Comparison_Exp>;
+  transactionHash?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "PoolCreated". */
+export type PoolCreated_Order_By = {
+  blockNumber?: InputMaybe<Order_By>;
+  blockTimestamp?: InputMaybe<Order_By>;
+  chainId?: InputMaybe<Order_By>;
+  currencyFlipped?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  latestMarketCapDate?: InputMaybe<Order_By>;
+  latestMarketCapETH?: InputMaybe<Order_By>;
+  memecoin?: InputMaybe<Order_By>;
+  memecoinTreasury?: InputMaybe<Order_By>;
+  paramsCreator?: InputMaybe<Order_By>;
+  paramsCreatorFeeAllocation?: InputMaybe<Order_By>;
+  paramsFeeCalculatorParams?: InputMaybe<Order_By>;
+  paramsInitialPriceParams?: InputMaybe<Order_By>;
+  poolId?: InputMaybe<Order_By>;
+  previousMarketCapDate?: InputMaybe<Order_By>;
+  previousMarketCapETH?: InputMaybe<Order_By>;
+  tokenId?: InputMaybe<Order_By>;
+  tokenURI?: InputMaybe<Order_By>;
+  transactionHash?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "PoolCreated" */
+export enum PoolCreated_Select_Column {
+  /** column name */
+  BlockNumber = 'blockNumber',
+  /** column name */
+  BlockTimestamp = 'blockTimestamp',
+  /** column name */
+  ChainId = 'chainId',
+  /** column name */
+  CurrencyFlipped = 'currencyFlipped',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LatestMarketCapDate = 'latestMarketCapDate',
+  /** column name */
+  LatestMarketCapEth = 'latestMarketCapETH',
+  /** column name */
+  Memecoin = 'memecoin',
+  /** column name */
+  MemecoinTreasury = 'memecoinTreasury',
+  /** column name */
+  ParamsCreator = 'paramsCreator',
+  /** column name */
+  ParamsCreatorFeeAllocation = 'paramsCreatorFeeAllocation',
+  /** column name */
+  ParamsFeeCalculatorParams = 'paramsFeeCalculatorParams',
+  /** column name */
+  ParamsInitialPriceParams = 'paramsInitialPriceParams',
+  /** column name */
+  PoolId = 'poolId',
+  /** column name */
+  PreviousMarketCapDate = 'previousMarketCapDate',
+  /** column name */
+  PreviousMarketCapEth = 'previousMarketCapETH',
+  /** column name */
+  TokenId = 'tokenId',
+  /** column name */
+  TokenUri = 'tokenURI',
+  /** column name */
+  TransactionHash = 'transactionHash'
+}
+
+/** Streaming cursor of the table "PoolCreated" */
+export type PoolCreated_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: PoolCreated_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type PoolCreated_Stream_Cursor_Value_Input = {
+  blockNumber?: InputMaybe<Scalars['numeric']['input']>;
+  blockTimestamp?: InputMaybe<Scalars['numeric']['input']>;
+  chainId?: InputMaybe<Scalars['Int']['input']>;
+  currencyFlipped?: InputMaybe<Scalars['Boolean']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  latestMarketCapDate?: InputMaybe<Scalars['String']['input']>;
+  latestMarketCapETH?: InputMaybe<Scalars['numeric']['input']>;
+  memecoin?: InputMaybe<Scalars['String']['input']>;
+  memecoinTreasury?: InputMaybe<Scalars['String']['input']>;
+  paramsCreator?: InputMaybe<Scalars['String']['input']>;
+  paramsCreatorFeeAllocation?: InputMaybe<Scalars['numeric']['input']>;
+  paramsFeeCalculatorParams?: InputMaybe<Scalars['String']['input']>;
+  paramsInitialPriceParams?: InputMaybe<Scalars['String']['input']>;
+  poolId?: InputMaybe<Scalars['String']['input']>;
+  previousMarketCapDate?: InputMaybe<Scalars['String']['input']>;
+  previousMarketCapETH?: InputMaybe<Scalars['numeric']['input']>;
+  tokenId?: InputMaybe<Scalars['numeric']['input']>;
+  tokenURI?: InputMaybe<Scalars['String']['input']>;
+  transactionHash?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** columns and relationships of "PoolSwap" */
+export type PoolSwap = {
+  __typename?: 'PoolSwap';
+  blockNumber: Scalars['numeric']['output'];
+  blockTimestamp: Scalars['numeric']['output'];
+  chainId: Scalars['Int']['output'];
+  flAmount0: Scalars['numeric']['output'];
+  flAmount1: Scalars['numeric']['output'];
+  flFee0: Scalars['numeric']['output'];
+  flFee1: Scalars['numeric']['output'];
+  id: Scalars['String']['output'];
+  ispAmount0: Scalars['numeric']['output'];
+  ispAmount1: Scalars['numeric']['output'];
+  ispFee0: Scalars['numeric']['output'];
+  ispFee1: Scalars['numeric']['output'];
+  poolId: Scalars['String']['output'];
+  transactionHash: Scalars['String']['output'];
+  uniAmount0: Scalars['numeric']['output'];
+  uniAmount1: Scalars['numeric']['output'];
+  uniFee0: Scalars['numeric']['output'];
+  uniFee1: Scalars['numeric']['output'];
+};
+
+/** Boolean expression to filter rows from the table "PoolSwap". All fields are combined with a logical 'AND'. */
+export type PoolSwap_Bool_Exp = {
+  _and?: InputMaybe<Array<PoolSwap_Bool_Exp>>;
+  _not?: InputMaybe<PoolSwap_Bool_Exp>;
+  _or?: InputMaybe<Array<PoolSwap_Bool_Exp>>;
+  blockNumber?: InputMaybe<Numeric_Comparison_Exp>;
+  blockTimestamp?: InputMaybe<Numeric_Comparison_Exp>;
+  chainId?: InputMaybe<Int_Comparison_Exp>;
+  flAmount0?: InputMaybe<Numeric_Comparison_Exp>;
+  flAmount1?: InputMaybe<Numeric_Comparison_Exp>;
+  flFee0?: InputMaybe<Numeric_Comparison_Exp>;
+  flFee1?: InputMaybe<Numeric_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  ispAmount0?: InputMaybe<Numeric_Comparison_Exp>;
+  ispAmount1?: InputMaybe<Numeric_Comparison_Exp>;
+  ispFee0?: InputMaybe<Numeric_Comparison_Exp>;
+  ispFee1?: InputMaybe<Numeric_Comparison_Exp>;
+  poolId?: InputMaybe<String_Comparison_Exp>;
+  transactionHash?: InputMaybe<String_Comparison_Exp>;
+  uniAmount0?: InputMaybe<Numeric_Comparison_Exp>;
+  uniAmount1?: InputMaybe<Numeric_Comparison_Exp>;
+  uniFee0?: InputMaybe<Numeric_Comparison_Exp>;
+  uniFee1?: InputMaybe<Numeric_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "PoolSwap". */
+export type PoolSwap_Order_By = {
+  blockNumber?: InputMaybe<Order_By>;
+  blockTimestamp?: InputMaybe<Order_By>;
+  chainId?: InputMaybe<Order_By>;
+  flAmount0?: InputMaybe<Order_By>;
+  flAmount1?: InputMaybe<Order_By>;
+  flFee0?: InputMaybe<Order_By>;
+  flFee1?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  ispAmount0?: InputMaybe<Order_By>;
+  ispAmount1?: InputMaybe<Order_By>;
+  ispFee0?: InputMaybe<Order_By>;
+  ispFee1?: InputMaybe<Order_By>;
+  poolId?: InputMaybe<Order_By>;
+  transactionHash?: InputMaybe<Order_By>;
+  uniAmount0?: InputMaybe<Order_By>;
+  uniAmount1?: InputMaybe<Order_By>;
+  uniFee0?: InputMaybe<Order_By>;
+  uniFee1?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "PoolSwap" */
+export enum PoolSwap_Select_Column {
+  /** column name */
+  BlockNumber = 'blockNumber',
+  /** column name */
+  BlockTimestamp = 'blockTimestamp',
+  /** column name */
+  ChainId = 'chainId',
+  /** column name */
+  FlAmount0 = 'flAmount0',
+  /** column name */
+  FlAmount1 = 'flAmount1',
+  /** column name */
+  FlFee0 = 'flFee0',
+  /** column name */
+  FlFee1 = 'flFee1',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IspAmount0 = 'ispAmount0',
+  /** column name */
+  IspAmount1 = 'ispAmount1',
+  /** column name */
+  IspFee0 = 'ispFee0',
+  /** column name */
+  IspFee1 = 'ispFee1',
+  /** column name */
+  PoolId = 'poolId',
+  /** column name */
+  TransactionHash = 'transactionHash',
+  /** column name */
+  UniAmount0 = 'uniAmount0',
+  /** column name */
+  UniAmount1 = 'uniAmount1',
+  /** column name */
+  UniFee0 = 'uniFee0',
+  /** column name */
+  UniFee1 = 'uniFee1'
+}
+
+/** Streaming cursor of the table "PoolSwap" */
+export type PoolSwap_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: PoolSwap_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type PoolSwap_Stream_Cursor_Value_Input = {
+  blockNumber?: InputMaybe<Scalars['numeric']['input']>;
+  blockTimestamp?: InputMaybe<Scalars['numeric']['input']>;
+  chainId?: InputMaybe<Scalars['Int']['input']>;
+  flAmount0?: InputMaybe<Scalars['numeric']['input']>;
+  flAmount1?: InputMaybe<Scalars['numeric']['input']>;
+  flFee0?: InputMaybe<Scalars['numeric']['input']>;
+  flFee1?: InputMaybe<Scalars['numeric']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  ispAmount0?: InputMaybe<Scalars['numeric']['input']>;
+  ispAmount1?: InputMaybe<Scalars['numeric']['input']>;
+  ispFee0?: InputMaybe<Scalars['numeric']['input']>;
+  ispFee1?: InputMaybe<Scalars['numeric']['input']>;
+  poolId?: InputMaybe<Scalars['String']['input']>;
+  transactionHash?: InputMaybe<Scalars['String']['input']>;
+  uniAmount0?: InputMaybe<Scalars['numeric']['input']>;
+  uniAmount1?: InputMaybe<Scalars['numeric']['input']>;
+  uniFee0?: InputMaybe<Scalars['numeric']['input']>;
+  uniFee1?: InputMaybe<Scalars['numeric']['input']>;
+};
+
+/** columns and relationships of "StakingManagerToken" */
+export type StakingManagerToken = {
+  __typename?: 'StakingManagerToken';
+  chainId: Scalars['Int']['output'];
+  escrowTransactionHash: Scalars['String']['output'];
+  escrowedAt: Scalars['numeric']['output'];
+  escrowedBlockNumber: Scalars['numeric']['output'];
+  flaunch: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  isActive: Scalars['Boolean']['output'];
+  owner: Scalars['String']['output'];
+  reclaimTransactionHash?: Maybe<Scalars['String']['output']>;
+  reclaimedAt?: Maybe<Scalars['numeric']['output']>;
+  reclaimedBlockNumber?: Maybe<Scalars['numeric']['output']>;
+  stakingManagerAddress: Scalars['String']['output'];
+  tokenId: Scalars['numeric']['output'];
+};
+
+/** Boolean expression to filter rows from the table "StakingManagerToken". All fields are combined with a logical 'AND'. */
+export type StakingManagerToken_Bool_Exp = {
+  _and?: InputMaybe<Array<StakingManagerToken_Bool_Exp>>;
+  _not?: InputMaybe<StakingManagerToken_Bool_Exp>;
+  _or?: InputMaybe<Array<StakingManagerToken_Bool_Exp>>;
+  chainId?: InputMaybe<Int_Comparison_Exp>;
+  escrowTransactionHash?: InputMaybe<String_Comparison_Exp>;
+  escrowedAt?: InputMaybe<Numeric_Comparison_Exp>;
+  escrowedBlockNumber?: InputMaybe<Numeric_Comparison_Exp>;
+  flaunch?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  isActive?: InputMaybe<Boolean_Comparison_Exp>;
+  owner?: InputMaybe<String_Comparison_Exp>;
+  reclaimTransactionHash?: InputMaybe<String_Comparison_Exp>;
+  reclaimedAt?: InputMaybe<Numeric_Comparison_Exp>;
+  reclaimedBlockNumber?: InputMaybe<Numeric_Comparison_Exp>;
+  stakingManagerAddress?: InputMaybe<String_Comparison_Exp>;
+  tokenId?: InputMaybe<Numeric_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "StakingManagerToken". */
+export type StakingManagerToken_Order_By = {
+  chainId?: InputMaybe<Order_By>;
+  escrowTransactionHash?: InputMaybe<Order_By>;
+  escrowedAt?: InputMaybe<Order_By>;
+  escrowedBlockNumber?: InputMaybe<Order_By>;
+  flaunch?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  isActive?: InputMaybe<Order_By>;
+  owner?: InputMaybe<Order_By>;
+  reclaimTransactionHash?: InputMaybe<Order_By>;
+  reclaimedAt?: InputMaybe<Order_By>;
+  reclaimedBlockNumber?: InputMaybe<Order_By>;
+  stakingManagerAddress?: InputMaybe<Order_By>;
+  tokenId?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "StakingManagerToken" */
+export enum StakingManagerToken_Select_Column {
+  /** column name */
+  ChainId = 'chainId',
+  /** column name */
+  EscrowTransactionHash = 'escrowTransactionHash',
+  /** column name */
+  EscrowedAt = 'escrowedAt',
+  /** column name */
+  EscrowedBlockNumber = 'escrowedBlockNumber',
+  /** column name */
+  Flaunch = 'flaunch',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  IsActive = 'isActive',
+  /** column name */
+  Owner = 'owner',
+  /** column name */
+  ReclaimTransactionHash = 'reclaimTransactionHash',
+  /** column name */
+  ReclaimedAt = 'reclaimedAt',
+  /** column name */
+  ReclaimedBlockNumber = 'reclaimedBlockNumber',
+  /** column name */
+  StakingManagerAddress = 'stakingManagerAddress',
+  /** column name */
+  TokenId = 'tokenId'
+}
+
+/** Streaming cursor of the table "StakingManagerToken" */
+export type StakingManagerToken_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: StakingManagerToken_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type StakingManagerToken_Stream_Cursor_Value_Input = {
+  chainId?: InputMaybe<Scalars['Int']['input']>;
+  escrowTransactionHash?: InputMaybe<Scalars['String']['input']>;
+  escrowedAt?: InputMaybe<Scalars['numeric']['input']>;
+  escrowedBlockNumber?: InputMaybe<Scalars['numeric']['input']>;
+  flaunch?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  owner?: InputMaybe<Scalars['String']['input']>;
+  reclaimTransactionHash?: InputMaybe<Scalars['String']['input']>;
+  reclaimedAt?: InputMaybe<Scalars['numeric']['input']>;
+  reclaimedBlockNumber?: InputMaybe<Scalars['numeric']['input']>;
+  stakingManagerAddress?: InputMaybe<Scalars['String']['input']>;
+  tokenId?: InputMaybe<Scalars['numeric']['input']>;
+};
+
+/** columns and relationships of "StakingSummary" */
+export type StakingSummary = {
+  __typename?: 'StakingSummary';
+  chainId: Scalars['Int']['output'];
+  date: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  stakingManagerAddress: Scalars['String']['output'];
+  totalDeposited: Scalars['numeric']['output'];
+  totalFees: Scalars['numeric']['output'];
+  updatedAt: Scalars['numeric']['output'];
+};
+
+/** Boolean expression to filter rows from the table "StakingSummary". All fields are combined with a logical 'AND'. */
+export type StakingSummary_Bool_Exp = {
+  _and?: InputMaybe<Array<StakingSummary_Bool_Exp>>;
+  _not?: InputMaybe<StakingSummary_Bool_Exp>;
+  _or?: InputMaybe<Array<StakingSummary_Bool_Exp>>;
+  chainId?: InputMaybe<Int_Comparison_Exp>;
+  date?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  stakingManagerAddress?: InputMaybe<String_Comparison_Exp>;
+  totalDeposited?: InputMaybe<Numeric_Comparison_Exp>;
+  totalFees?: InputMaybe<Numeric_Comparison_Exp>;
+  updatedAt?: InputMaybe<Numeric_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "StakingSummary". */
+export type StakingSummary_Order_By = {
+  chainId?: InputMaybe<Order_By>;
+  date?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  stakingManagerAddress?: InputMaybe<Order_By>;
+  totalDeposited?: InputMaybe<Order_By>;
+  totalFees?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "StakingSummary" */
+export enum StakingSummary_Select_Column {
+  /** column name */
+  ChainId = 'chainId',
+  /** column name */
+  Date = 'date',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  StakingManagerAddress = 'stakingManagerAddress',
+  /** column name */
+  TotalDeposited = 'totalDeposited',
+  /** column name */
+  TotalFees = 'totalFees',
+  /** column name */
+  UpdatedAt = 'updatedAt'
+}
+
+/** Streaming cursor of the table "StakingSummary" */
+export type StakingSummary_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: StakingSummary_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type StakingSummary_Stream_Cursor_Value_Input = {
+  chainId?: InputMaybe<Scalars['Int']['input']>;
+  date?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  stakingManagerAddress?: InputMaybe<Scalars['String']['input']>;
+  totalDeposited?: InputMaybe<Scalars['numeric']['input']>;
+  totalFees?: InputMaybe<Scalars['numeric']['input']>;
+  updatedAt?: InputMaybe<Scalars['numeric']['input']>;
 };
 
 /** Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'. */
@@ -144,6 +984,258 @@ export type TokenOwner_Stream_Cursor_Value_Input = {
   owner?: InputMaybe<Scalars['String']['input']>;
   tokenAddress?: InputMaybe<Scalars['String']['input']>;
   tokenId?: InputMaybe<Scalars['numeric']['input']>;
+};
+
+/** columns and relationships of "TradeVolume" */
+export type TradeVolume = {
+  __typename?: 'TradeVolume';
+  chainId: Scalars['Int']['output'];
+  date: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  memecoin: Scalars['String']['output'];
+  tradeCount: Scalars['numeric']['output'];
+  updatedAt: Scalars['numeric']['output'];
+  volumeETH: Scalars['numeric']['output'];
+  volumeMemecoin: Scalars['numeric']['output'];
+};
+
+/** Boolean expression to filter rows from the table "TradeVolume". All fields are combined with a logical 'AND'. */
+export type TradeVolume_Bool_Exp = {
+  _and?: InputMaybe<Array<TradeVolume_Bool_Exp>>;
+  _not?: InputMaybe<TradeVolume_Bool_Exp>;
+  _or?: InputMaybe<Array<TradeVolume_Bool_Exp>>;
+  chainId?: InputMaybe<Int_Comparison_Exp>;
+  date?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  memecoin?: InputMaybe<String_Comparison_Exp>;
+  tradeCount?: InputMaybe<Numeric_Comparison_Exp>;
+  updatedAt?: InputMaybe<Numeric_Comparison_Exp>;
+  volumeETH?: InputMaybe<Numeric_Comparison_Exp>;
+  volumeMemecoin?: InputMaybe<Numeric_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "TradeVolume". */
+export type TradeVolume_Order_By = {
+  chainId?: InputMaybe<Order_By>;
+  date?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  memecoin?: InputMaybe<Order_By>;
+  tradeCount?: InputMaybe<Order_By>;
+  updatedAt?: InputMaybe<Order_By>;
+  volumeETH?: InputMaybe<Order_By>;
+  volumeMemecoin?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "TradeVolume" */
+export enum TradeVolume_Select_Column {
+  /** column name */
+  ChainId = 'chainId',
+  /** column name */
+  Date = 'date',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Memecoin = 'memecoin',
+  /** column name */
+  TradeCount = 'tradeCount',
+  /** column name */
+  UpdatedAt = 'updatedAt',
+  /** column name */
+  VolumeEth = 'volumeETH',
+  /** column name */
+  VolumeMemecoin = 'volumeMemecoin'
+}
+
+/** Streaming cursor of the table "TradeVolume" */
+export type TradeVolume_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: TradeVolume_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type TradeVolume_Stream_Cursor_Value_Input = {
+  chainId?: InputMaybe<Scalars['Int']['input']>;
+  date?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  memecoin?: InputMaybe<Scalars['String']['input']>;
+  tradeCount?: InputMaybe<Scalars['numeric']['input']>;
+  updatedAt?: InputMaybe<Scalars['numeric']['input']>;
+  volumeETH?: InputMaybe<Scalars['numeric']['input']>;
+  volumeMemecoin?: InputMaybe<Scalars['numeric']['input']>;
+};
+
+/** columns and relationships of "TreasuryEscrowed" */
+export type TreasuryEscrowed = {
+  __typename?: 'TreasuryEscrowed';
+  blockNumber: Scalars['numeric']['output'];
+  blockTimestamp: Scalars['numeric']['output'];
+  chainId: Scalars['Int']['output'];
+  flaunch: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  owner: Scalars['String']['output'];
+  sender: Scalars['String']['output'];
+  tokenId: Scalars['numeric']['output'];
+  transactionHash: Scalars['String']['output'];
+};
+
+/** Boolean expression to filter rows from the table "TreasuryEscrowed". All fields are combined with a logical 'AND'. */
+export type TreasuryEscrowed_Bool_Exp = {
+  _and?: InputMaybe<Array<TreasuryEscrowed_Bool_Exp>>;
+  _not?: InputMaybe<TreasuryEscrowed_Bool_Exp>;
+  _or?: InputMaybe<Array<TreasuryEscrowed_Bool_Exp>>;
+  blockNumber?: InputMaybe<Numeric_Comparison_Exp>;
+  blockTimestamp?: InputMaybe<Numeric_Comparison_Exp>;
+  chainId?: InputMaybe<Int_Comparison_Exp>;
+  flaunch?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  owner?: InputMaybe<String_Comparison_Exp>;
+  sender?: InputMaybe<String_Comparison_Exp>;
+  tokenId?: InputMaybe<Numeric_Comparison_Exp>;
+  transactionHash?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "TreasuryEscrowed". */
+export type TreasuryEscrowed_Order_By = {
+  blockNumber?: InputMaybe<Order_By>;
+  blockTimestamp?: InputMaybe<Order_By>;
+  chainId?: InputMaybe<Order_By>;
+  flaunch?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  owner?: InputMaybe<Order_By>;
+  sender?: InputMaybe<Order_By>;
+  tokenId?: InputMaybe<Order_By>;
+  transactionHash?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "TreasuryEscrowed" */
+export enum TreasuryEscrowed_Select_Column {
+  /** column name */
+  BlockNumber = 'blockNumber',
+  /** column name */
+  BlockTimestamp = 'blockTimestamp',
+  /** column name */
+  ChainId = 'chainId',
+  /** column name */
+  Flaunch = 'flaunch',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Owner = 'owner',
+  /** column name */
+  Sender = 'sender',
+  /** column name */
+  TokenId = 'tokenId',
+  /** column name */
+  TransactionHash = 'transactionHash'
+}
+
+/** Streaming cursor of the table "TreasuryEscrowed" */
+export type TreasuryEscrowed_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: TreasuryEscrowed_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type TreasuryEscrowed_Stream_Cursor_Value_Input = {
+  blockNumber?: InputMaybe<Scalars['numeric']['input']>;
+  blockTimestamp?: InputMaybe<Scalars['numeric']['input']>;
+  chainId?: InputMaybe<Scalars['Int']['input']>;
+  flaunch?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  owner?: InputMaybe<Scalars['String']['input']>;
+  sender?: InputMaybe<Scalars['String']['input']>;
+  tokenId?: InputMaybe<Scalars['numeric']['input']>;
+  transactionHash?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** columns and relationships of "TreasuryReclaimed" */
+export type TreasuryReclaimed = {
+  __typename?: 'TreasuryReclaimed';
+  blockNumber: Scalars['numeric']['output'];
+  blockTimestamp: Scalars['numeric']['output'];
+  chainId: Scalars['Int']['output'];
+  flaunch: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  recipient: Scalars['String']['output'];
+  sender: Scalars['String']['output'];
+  tokenId: Scalars['numeric']['output'];
+  transactionHash: Scalars['String']['output'];
+};
+
+/** Boolean expression to filter rows from the table "TreasuryReclaimed". All fields are combined with a logical 'AND'. */
+export type TreasuryReclaimed_Bool_Exp = {
+  _and?: InputMaybe<Array<TreasuryReclaimed_Bool_Exp>>;
+  _not?: InputMaybe<TreasuryReclaimed_Bool_Exp>;
+  _or?: InputMaybe<Array<TreasuryReclaimed_Bool_Exp>>;
+  blockNumber?: InputMaybe<Numeric_Comparison_Exp>;
+  blockTimestamp?: InputMaybe<Numeric_Comparison_Exp>;
+  chainId?: InputMaybe<Int_Comparison_Exp>;
+  flaunch?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  recipient?: InputMaybe<String_Comparison_Exp>;
+  sender?: InputMaybe<String_Comparison_Exp>;
+  tokenId?: InputMaybe<Numeric_Comparison_Exp>;
+  transactionHash?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "TreasuryReclaimed". */
+export type TreasuryReclaimed_Order_By = {
+  blockNumber?: InputMaybe<Order_By>;
+  blockTimestamp?: InputMaybe<Order_By>;
+  chainId?: InputMaybe<Order_By>;
+  flaunch?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  recipient?: InputMaybe<Order_By>;
+  sender?: InputMaybe<Order_By>;
+  tokenId?: InputMaybe<Order_By>;
+  transactionHash?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "TreasuryReclaimed" */
+export enum TreasuryReclaimed_Select_Column {
+  /** column name */
+  BlockNumber = 'blockNumber',
+  /** column name */
+  BlockTimestamp = 'blockTimestamp',
+  /** column name */
+  ChainId = 'chainId',
+  /** column name */
+  Flaunch = 'flaunch',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Recipient = 'recipient',
+  /** column name */
+  Sender = 'sender',
+  /** column name */
+  TokenId = 'tokenId',
+  /** column name */
+  TransactionHash = 'transactionHash'
+}
+
+/** Streaming cursor of the table "TreasuryReclaimed" */
+export type TreasuryReclaimed_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: TreasuryReclaimed_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type TreasuryReclaimed_Stream_Cursor_Value_Input = {
+  blockNumber?: InputMaybe<Scalars['numeric']['input']>;
+  blockTimestamp?: InputMaybe<Scalars['numeric']['input']>;
+  chainId?: InputMaybe<Scalars['Int']['input']>;
+  flaunch?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  recipient?: InputMaybe<Scalars['String']['input']>;
+  sender?: InputMaybe<Scalars['String']['input']>;
+  tokenId?: InputMaybe<Scalars['numeric']['input']>;
+  transactionHash?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** columns and relationships of "_meta" */
@@ -403,10 +1495,58 @@ export enum Order_By {
 
 export type Query_Root = {
   __typename?: 'query_root';
+  /** fetch data from the table: "Envelope" */
+  Envelope: Array<Envelope>;
+  /** fetch data from the table: "Envelope" using primary key columns */
+  Envelope_by_pk?: Maybe<Envelope>;
+  /** fetch data from the table: "FairLaunch" */
+  FairLaunch: Array<FairLaunch>;
+  /** fetch data from the table: "FairLaunch" using primary key columns */
+  FairLaunch_by_pk?: Maybe<FairLaunch>;
+  /** fetch data from the table: "ManagerDeployed" */
+  ManagerDeployed: Array<ManagerDeployed>;
+  /** fetch data from the table: "ManagerDeployed" using primary key columns */
+  ManagerDeployed_by_pk?: Maybe<ManagerDeployed>;
+  /** fetch data from the table: "MemecoinHolder" */
+  MemecoinHolder: Array<MemecoinHolder>;
+  /** fetch data from the table: "MemecoinHolder" using primary key columns */
+  MemecoinHolder_by_pk?: Maybe<MemecoinHolder>;
+  /** fetch data from the table: "MemecoinMetadata" */
+  MemecoinMetadata: Array<MemecoinMetadata>;
+  /** fetch data from the table: "MemecoinMetadata" using primary key columns */
+  MemecoinMetadata_by_pk?: Maybe<MemecoinMetadata>;
+  /** fetch data from the table: "PoolCreated" */
+  PoolCreated: Array<PoolCreated>;
+  /** fetch data from the table: "PoolCreated" using primary key columns */
+  PoolCreated_by_pk?: Maybe<PoolCreated>;
+  /** fetch data from the table: "PoolSwap" */
+  PoolSwap: Array<PoolSwap>;
+  /** fetch data from the table: "PoolSwap" using primary key columns */
+  PoolSwap_by_pk?: Maybe<PoolSwap>;
+  /** fetch data from the table: "StakingManagerToken" */
+  StakingManagerToken: Array<StakingManagerToken>;
+  /** fetch data from the table: "StakingManagerToken" using primary key columns */
+  StakingManagerToken_by_pk?: Maybe<StakingManagerToken>;
+  /** fetch data from the table: "StakingSummary" */
+  StakingSummary: Array<StakingSummary>;
+  /** fetch data from the table: "StakingSummary" using primary key columns */
+  StakingSummary_by_pk?: Maybe<StakingSummary>;
   /** fetch data from the table: "TokenOwner" */
   TokenOwner: Array<TokenOwner>;
   /** fetch data from the table: "TokenOwner" using primary key columns */
   TokenOwner_by_pk?: Maybe<TokenOwner>;
+  /** fetch data from the table: "TradeVolume" */
+  TradeVolume: Array<TradeVolume>;
+  /** fetch data from the table: "TradeVolume" using primary key columns */
+  TradeVolume_by_pk?: Maybe<TradeVolume>;
+  /** fetch data from the table: "TreasuryEscrowed" */
+  TreasuryEscrowed: Array<TreasuryEscrowed>;
+  /** fetch data from the table: "TreasuryEscrowed" using primary key columns */
+  TreasuryEscrowed_by_pk?: Maybe<TreasuryEscrowed>;
+  /** fetch data from the table: "TreasuryReclaimed" */
+  TreasuryReclaimed: Array<TreasuryReclaimed>;
+  /** fetch data from the table: "TreasuryReclaimed" using primary key columns */
+  TreasuryReclaimed_by_pk?: Maybe<TreasuryReclaimed>;
   /** fetch data from the table: "_meta" */
   _meta: Array<_Meta>;
   /** fetch data from the table: "chain_metadata" */
@@ -415,6 +1555,132 @@ export type Query_Root = {
   raw_events: Array<Raw_Events>;
   /** fetch data from the table: "raw_events" using primary key columns */
   raw_events_by_pk?: Maybe<Raw_Events>;
+};
+
+
+export type Query_RootEnvelopeArgs = {
+  distinct_on?: InputMaybe<Array<Envelope_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Envelope_Order_By>>;
+  where?: InputMaybe<Envelope_Bool_Exp>;
+};
+
+
+export type Query_RootEnvelope_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootFairLaunchArgs = {
+  distinct_on?: InputMaybe<Array<FairLaunch_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<FairLaunch_Order_By>>;
+  where?: InputMaybe<FairLaunch_Bool_Exp>;
+};
+
+
+export type Query_RootFairLaunch_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootManagerDeployedArgs = {
+  distinct_on?: InputMaybe<Array<ManagerDeployed_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<ManagerDeployed_Order_By>>;
+  where?: InputMaybe<ManagerDeployed_Bool_Exp>;
+};
+
+
+export type Query_RootManagerDeployed_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootMemecoinHolderArgs = {
+  distinct_on?: InputMaybe<Array<MemecoinHolder_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<MemecoinHolder_Order_By>>;
+  where?: InputMaybe<MemecoinHolder_Bool_Exp>;
+};
+
+
+export type Query_RootMemecoinHolder_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootMemecoinMetadataArgs = {
+  distinct_on?: InputMaybe<Array<MemecoinMetadata_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<MemecoinMetadata_Order_By>>;
+  where?: InputMaybe<MemecoinMetadata_Bool_Exp>;
+};
+
+
+export type Query_RootMemecoinMetadata_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootPoolCreatedArgs = {
+  distinct_on?: InputMaybe<Array<PoolCreated_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<PoolCreated_Order_By>>;
+  where?: InputMaybe<PoolCreated_Bool_Exp>;
+};
+
+
+export type Query_RootPoolCreated_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootPoolSwapArgs = {
+  distinct_on?: InputMaybe<Array<PoolSwap_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<PoolSwap_Order_By>>;
+  where?: InputMaybe<PoolSwap_Bool_Exp>;
+};
+
+
+export type Query_RootPoolSwap_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootStakingManagerTokenArgs = {
+  distinct_on?: InputMaybe<Array<StakingManagerToken_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<StakingManagerToken_Order_By>>;
+  where?: InputMaybe<StakingManagerToken_Bool_Exp>;
+};
+
+
+export type Query_RootStakingManagerToken_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootStakingSummaryArgs = {
+  distinct_on?: InputMaybe<Array<StakingSummary_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<StakingSummary_Order_By>>;
+  where?: InputMaybe<StakingSummary_Bool_Exp>;
+};
+
+
+export type Query_RootStakingSummary_By_PkArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -428,6 +1694,48 @@ export type Query_RootTokenOwnerArgs = {
 
 
 export type Query_RootTokenOwner_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootTradeVolumeArgs = {
+  distinct_on?: InputMaybe<Array<TradeVolume_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<TradeVolume_Order_By>>;
+  where?: InputMaybe<TradeVolume_Bool_Exp>;
+};
+
+
+export type Query_RootTradeVolume_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootTreasuryEscrowedArgs = {
+  distinct_on?: InputMaybe<Array<TreasuryEscrowed_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<TreasuryEscrowed_Order_By>>;
+  where?: InputMaybe<TreasuryEscrowed_Bool_Exp>;
+};
+
+
+export type Query_RootTreasuryEscrowed_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootTreasuryReclaimedArgs = {
+  distinct_on?: InputMaybe<Array<TreasuryReclaimed_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<TreasuryReclaimed_Order_By>>;
+  where?: InputMaybe<TreasuryReclaimed_Bool_Exp>;
+};
+
+
+export type Query_RootTreasuryReclaimed_By_PkArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -593,12 +1901,84 @@ export type Raw_Events_Stream_Cursor_Value_Input = {
 
 export type Subscription_Root = {
   __typename?: 'subscription_root';
+  /** fetch data from the table: "Envelope" */
+  Envelope: Array<Envelope>;
+  /** fetch data from the table: "Envelope" using primary key columns */
+  Envelope_by_pk?: Maybe<Envelope>;
+  /** fetch data from the table in a streaming manner: "Envelope" */
+  Envelope_stream: Array<Envelope>;
+  /** fetch data from the table: "FairLaunch" */
+  FairLaunch: Array<FairLaunch>;
+  /** fetch data from the table: "FairLaunch" using primary key columns */
+  FairLaunch_by_pk?: Maybe<FairLaunch>;
+  /** fetch data from the table in a streaming manner: "FairLaunch" */
+  FairLaunch_stream: Array<FairLaunch>;
+  /** fetch data from the table: "ManagerDeployed" */
+  ManagerDeployed: Array<ManagerDeployed>;
+  /** fetch data from the table: "ManagerDeployed" using primary key columns */
+  ManagerDeployed_by_pk?: Maybe<ManagerDeployed>;
+  /** fetch data from the table in a streaming manner: "ManagerDeployed" */
+  ManagerDeployed_stream: Array<ManagerDeployed>;
+  /** fetch data from the table: "MemecoinHolder" */
+  MemecoinHolder: Array<MemecoinHolder>;
+  /** fetch data from the table: "MemecoinHolder" using primary key columns */
+  MemecoinHolder_by_pk?: Maybe<MemecoinHolder>;
+  /** fetch data from the table in a streaming manner: "MemecoinHolder" */
+  MemecoinHolder_stream: Array<MemecoinHolder>;
+  /** fetch data from the table: "MemecoinMetadata" */
+  MemecoinMetadata: Array<MemecoinMetadata>;
+  /** fetch data from the table: "MemecoinMetadata" using primary key columns */
+  MemecoinMetadata_by_pk?: Maybe<MemecoinMetadata>;
+  /** fetch data from the table in a streaming manner: "MemecoinMetadata" */
+  MemecoinMetadata_stream: Array<MemecoinMetadata>;
+  /** fetch data from the table: "PoolCreated" */
+  PoolCreated: Array<PoolCreated>;
+  /** fetch data from the table: "PoolCreated" using primary key columns */
+  PoolCreated_by_pk?: Maybe<PoolCreated>;
+  /** fetch data from the table in a streaming manner: "PoolCreated" */
+  PoolCreated_stream: Array<PoolCreated>;
+  /** fetch data from the table: "PoolSwap" */
+  PoolSwap: Array<PoolSwap>;
+  /** fetch data from the table: "PoolSwap" using primary key columns */
+  PoolSwap_by_pk?: Maybe<PoolSwap>;
+  /** fetch data from the table in a streaming manner: "PoolSwap" */
+  PoolSwap_stream: Array<PoolSwap>;
+  /** fetch data from the table: "StakingManagerToken" */
+  StakingManagerToken: Array<StakingManagerToken>;
+  /** fetch data from the table: "StakingManagerToken" using primary key columns */
+  StakingManagerToken_by_pk?: Maybe<StakingManagerToken>;
+  /** fetch data from the table in a streaming manner: "StakingManagerToken" */
+  StakingManagerToken_stream: Array<StakingManagerToken>;
+  /** fetch data from the table: "StakingSummary" */
+  StakingSummary: Array<StakingSummary>;
+  /** fetch data from the table: "StakingSummary" using primary key columns */
+  StakingSummary_by_pk?: Maybe<StakingSummary>;
+  /** fetch data from the table in a streaming manner: "StakingSummary" */
+  StakingSummary_stream: Array<StakingSummary>;
   /** fetch data from the table: "TokenOwner" */
   TokenOwner: Array<TokenOwner>;
   /** fetch data from the table: "TokenOwner" using primary key columns */
   TokenOwner_by_pk?: Maybe<TokenOwner>;
   /** fetch data from the table in a streaming manner: "TokenOwner" */
   TokenOwner_stream: Array<TokenOwner>;
+  /** fetch data from the table: "TradeVolume" */
+  TradeVolume: Array<TradeVolume>;
+  /** fetch data from the table: "TradeVolume" using primary key columns */
+  TradeVolume_by_pk?: Maybe<TradeVolume>;
+  /** fetch data from the table in a streaming manner: "TradeVolume" */
+  TradeVolume_stream: Array<TradeVolume>;
+  /** fetch data from the table: "TreasuryEscrowed" */
+  TreasuryEscrowed: Array<TreasuryEscrowed>;
+  /** fetch data from the table: "TreasuryEscrowed" using primary key columns */
+  TreasuryEscrowed_by_pk?: Maybe<TreasuryEscrowed>;
+  /** fetch data from the table in a streaming manner: "TreasuryEscrowed" */
+  TreasuryEscrowed_stream: Array<TreasuryEscrowed>;
+  /** fetch data from the table: "TreasuryReclaimed" */
+  TreasuryReclaimed: Array<TreasuryReclaimed>;
+  /** fetch data from the table: "TreasuryReclaimed" using primary key columns */
+  TreasuryReclaimed_by_pk?: Maybe<TreasuryReclaimed>;
+  /** fetch data from the table in a streaming manner: "TreasuryReclaimed" */
+  TreasuryReclaimed_stream: Array<TreasuryReclaimed>;
   /** fetch data from the table: "_meta" */
   _meta: Array<_Meta>;
   /** fetch data from the table in a streaming manner: "_meta" */
@@ -613,6 +1993,195 @@ export type Subscription_Root = {
   raw_events_by_pk?: Maybe<Raw_Events>;
   /** fetch data from the table in a streaming manner: "raw_events" */
   raw_events_stream: Array<Raw_Events>;
+};
+
+
+export type Subscription_RootEnvelopeArgs = {
+  distinct_on?: InputMaybe<Array<Envelope_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Envelope_Order_By>>;
+  where?: InputMaybe<Envelope_Bool_Exp>;
+};
+
+
+export type Subscription_RootEnvelope_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootEnvelope_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Envelope_Stream_Cursor_Input>>;
+  where?: InputMaybe<Envelope_Bool_Exp>;
+};
+
+
+export type Subscription_RootFairLaunchArgs = {
+  distinct_on?: InputMaybe<Array<FairLaunch_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<FairLaunch_Order_By>>;
+  where?: InputMaybe<FairLaunch_Bool_Exp>;
+};
+
+
+export type Subscription_RootFairLaunch_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootFairLaunch_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<FairLaunch_Stream_Cursor_Input>>;
+  where?: InputMaybe<FairLaunch_Bool_Exp>;
+};
+
+
+export type Subscription_RootManagerDeployedArgs = {
+  distinct_on?: InputMaybe<Array<ManagerDeployed_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<ManagerDeployed_Order_By>>;
+  where?: InputMaybe<ManagerDeployed_Bool_Exp>;
+};
+
+
+export type Subscription_RootManagerDeployed_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootManagerDeployed_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<ManagerDeployed_Stream_Cursor_Input>>;
+  where?: InputMaybe<ManagerDeployed_Bool_Exp>;
+};
+
+
+export type Subscription_RootMemecoinHolderArgs = {
+  distinct_on?: InputMaybe<Array<MemecoinHolder_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<MemecoinHolder_Order_By>>;
+  where?: InputMaybe<MemecoinHolder_Bool_Exp>;
+};
+
+
+export type Subscription_RootMemecoinHolder_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootMemecoinHolder_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<MemecoinHolder_Stream_Cursor_Input>>;
+  where?: InputMaybe<MemecoinHolder_Bool_Exp>;
+};
+
+
+export type Subscription_RootMemecoinMetadataArgs = {
+  distinct_on?: InputMaybe<Array<MemecoinMetadata_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<MemecoinMetadata_Order_By>>;
+  where?: InputMaybe<MemecoinMetadata_Bool_Exp>;
+};
+
+
+export type Subscription_RootMemecoinMetadata_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootMemecoinMetadata_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<MemecoinMetadata_Stream_Cursor_Input>>;
+  where?: InputMaybe<MemecoinMetadata_Bool_Exp>;
+};
+
+
+export type Subscription_RootPoolCreatedArgs = {
+  distinct_on?: InputMaybe<Array<PoolCreated_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<PoolCreated_Order_By>>;
+  where?: InputMaybe<PoolCreated_Bool_Exp>;
+};
+
+
+export type Subscription_RootPoolCreated_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootPoolCreated_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<PoolCreated_Stream_Cursor_Input>>;
+  where?: InputMaybe<PoolCreated_Bool_Exp>;
+};
+
+
+export type Subscription_RootPoolSwapArgs = {
+  distinct_on?: InputMaybe<Array<PoolSwap_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<PoolSwap_Order_By>>;
+  where?: InputMaybe<PoolSwap_Bool_Exp>;
+};
+
+
+export type Subscription_RootPoolSwap_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootPoolSwap_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<PoolSwap_Stream_Cursor_Input>>;
+  where?: InputMaybe<PoolSwap_Bool_Exp>;
+};
+
+
+export type Subscription_RootStakingManagerTokenArgs = {
+  distinct_on?: InputMaybe<Array<StakingManagerToken_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<StakingManagerToken_Order_By>>;
+  where?: InputMaybe<StakingManagerToken_Bool_Exp>;
+};
+
+
+export type Subscription_RootStakingManagerToken_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootStakingManagerToken_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<StakingManagerToken_Stream_Cursor_Input>>;
+  where?: InputMaybe<StakingManagerToken_Bool_Exp>;
+};
+
+
+export type Subscription_RootStakingSummaryArgs = {
+  distinct_on?: InputMaybe<Array<StakingSummary_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<StakingSummary_Order_By>>;
+  where?: InputMaybe<StakingSummary_Bool_Exp>;
+};
+
+
+export type Subscription_RootStakingSummary_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootStakingSummary_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<StakingSummary_Stream_Cursor_Input>>;
+  where?: InputMaybe<StakingSummary_Bool_Exp>;
 };
 
 
@@ -634,6 +2203,69 @@ export type Subscription_RootTokenOwner_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<TokenOwner_Stream_Cursor_Input>>;
   where?: InputMaybe<TokenOwner_Bool_Exp>;
+};
+
+
+export type Subscription_RootTradeVolumeArgs = {
+  distinct_on?: InputMaybe<Array<TradeVolume_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<TradeVolume_Order_By>>;
+  where?: InputMaybe<TradeVolume_Bool_Exp>;
+};
+
+
+export type Subscription_RootTradeVolume_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootTradeVolume_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<TradeVolume_Stream_Cursor_Input>>;
+  where?: InputMaybe<TradeVolume_Bool_Exp>;
+};
+
+
+export type Subscription_RootTreasuryEscrowedArgs = {
+  distinct_on?: InputMaybe<Array<TreasuryEscrowed_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<TreasuryEscrowed_Order_By>>;
+  where?: InputMaybe<TreasuryEscrowed_Bool_Exp>;
+};
+
+
+export type Subscription_RootTreasuryEscrowed_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootTreasuryEscrowed_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<TreasuryEscrowed_Stream_Cursor_Input>>;
+  where?: InputMaybe<TreasuryEscrowed_Bool_Exp>;
+};
+
+
+export type Subscription_RootTreasuryReclaimedArgs = {
+  distinct_on?: InputMaybe<Array<TreasuryReclaimed_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<TreasuryReclaimed_Order_By>>;
+  where?: InputMaybe<TreasuryReclaimed_Bool_Exp>;
+};
+
+
+export type Subscription_RootTreasuryReclaimed_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootTreasuryReclaimed_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<TreasuryReclaimed_Stream_Cursor_Input>>;
+  where?: InputMaybe<TreasuryReclaimed_Bool_Exp>;
 };
 
 
