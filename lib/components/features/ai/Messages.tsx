@@ -4,8 +4,10 @@ import { match } from 'ts-pattern';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Button } from '$lib/components/core';
+import { Button, drawer } from '$lib/components/core';
 import { Message, useAIChat } from './provider';
+import { EventPane } from '../pane';
+import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 
 export function Messages() {
   const [state] = useAIChat();
@@ -57,11 +59,17 @@ function MessageItem({ message: item }: { message: Message }) {
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.message}</ReactMarkdown>
 
           <div className="flex gap-2">
-            {item.metadata?.actions?.map((action) =>
+            {item.metadata?.actions?.map((action, idx) =>
               match(action.type)
                 .with('button', () => (
-                  <Button variant="tertiary-alt" size="sm" iconLeft={action.props.icon}>
-                    {action.props.label}
+                  <Button
+                    key={idx}
+                    onClick={action.props?.onClick}
+                    variant="tertiary-alt"
+                    size="sm"
+                    iconLeft={action.props.icon}
+                  >
+                    {action.props?.label}
                   </Button>
                 ))
                 .otherwise(() => <>Action unsupported</>),

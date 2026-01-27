@@ -129,7 +129,11 @@ export function DrawerContainer() {
     <AnimatePresence>
       {drawers.map((drawer, index) => (
         <React.Fragment key={drawer.id}>
-          <div className={clsx(drawer.options.fixed ? 'fixed inset-0' : 'h-dvh')} style={{ zIndex: 10000 + index }}>
+          <motion.div
+            layout={!drawer.options.fixed}
+            className={clsx(drawer.options.fixed ? 'fixed inset-0' : 'h-dvh')}
+            style={{ zIndex: 10000 + index }}
+          >
             <div className="h-full w-full p-2">
               {drawer.options.showBackdrop && <div className="bg-overlay-backdrop fixed inset-0 z-0" />}
               <div
@@ -161,7 +165,7 @@ export function DrawerContainer() {
                 </motion.div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </React.Fragment>
       ))}
     </AnimatePresence>

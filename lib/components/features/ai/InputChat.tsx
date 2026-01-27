@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Button, Card, Menu, MenuItem, toast } from '$lib/components/core';
+import { Button, Card, drawer, Menu, MenuItem, toast } from '$lib/components/core';
 import { AIChatActionKind, Message, useAIChat } from './provider';
 import { useMutation } from '$lib/graphql/request';
 import { RunAiChatDocument } from '$lib/graphql/generated/ai/graphql';
@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { match } from 'ts-pattern';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { delay } from 'lodash';
+import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 
 export function InputChat() {
   const router = useRouter();
@@ -118,17 +119,32 @@ export function InputChat() {
 
 export function mockWelcomeEvent(event: Event): Message[] {
   const actions = [];
+  const opts = { dismissible: false, fixed: false, showBackdrop: false, props: { event } };
   if (!event.location) {
     actions.push({
       type: 'button',
-      props: { icon: 'icon-location-outline', label: 'Add Location', tool: 'add_location' },
+      props: {
+        icon: 'icon-location-outline',
+        label: 'Add Location',
+        onClick: () => {
+          drawer.close();
+          drawer.open(EditEventDrawer, { ...opts });
+        },
+      },
     });
   }
 
   if (!event.description) {
     actions.push({
       type: 'button',
-      props: { icon: 'icon-sort', label: 'Add Description', tool: 'add_description' },
+      props: {
+        icon: 'icon-sort',
+        label: 'Add Description',
+        onClick: () => {
+          drawer.close();
+          drawer.open(EditEventDrawer, { ...opts });
+        },
+      },
     });
   }
 
