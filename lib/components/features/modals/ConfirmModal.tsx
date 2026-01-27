@@ -9,11 +9,13 @@ export function ConfirmModal({
   subtitle,
   onConfirm,
   icon = 'icon-info',
+  buttonText = 'Remove'
 }: {
   onConfirm: () => Promise<void> | void;
   title: string;
   subtitle: string;
   icon?: string;
+  buttonText?: string;
 }) {
   const [loading, setLoading] = React.useState(false);
   return (
@@ -23,7 +25,7 @@ export function ConfirmModal({
       </div>
       <div className="flex flex-col gap-2">
         <p className="text-lg font-medium">{title}</p>
-        <p className="text-sm font-medium text-secondary">{subtitle}</p>
+        <p className="text-sm font-medium text-secondary whitespace-pre-line">{subtitle}</p>
       </div>
       <div className="flex gap-3">
         <Button
@@ -46,7 +48,7 @@ export function ConfirmModal({
             modal.close();
           }}
         >
-          Remove
+          {buttonText}
         </Button>
       </div>
     </div>

@@ -1,4 +1,6 @@
 'use client';
+import { useEffect, useState } from "react";
+
 import { useHandleUnicornCookie } from './unicorn';
 import { useRawLogout } from '$lib/hooks/useLogout';
 import { useSession } from '$lib/hooks/useSession';
@@ -17,8 +19,9 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
   const logOut = useRawLogout();
   const session = useSession();
   const signIn = useSignIn();
+  const { siwe, status, createNewAccount, handleLinkWithAccount } = useHandleUnicornCookie(cookie, onSuccess);
 
-  const { status, createNewAccount, handleLinkWithAccount } = useHandleUnicornCookie(cookie, onSuccess);
+  const [readyToLink, setReadyToLink] = useState(false);
 
   const linkOtherAccount = async () => {
     if (session) {
@@ -30,10 +33,16 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
         //-- close current login modal
         modal.close();
 
-        handleLinkWithAccount();
+        setReadyToLink(true);
       }
     });
   };
+
+  useEffect(() => {
+    if (siwe && readyToLink) {
+      handleLinkWithAccount(siwe);
+    }
+  }, [siwe, readyToLink]);
 
   if (status === 'processing') return (
     <ModalContent>
@@ -45,8 +54,8 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
           <img src={`${ASSET_PREFIX}/assets/images/wallet-unicorn.png`} alt='Unicorn Logo' className='w-[26px] relative z-10' />
         </div>
         <div className='space-y-1'>
-          <p className='text-lg'>Authenticating With Unicorn</p>
-          <p className='text-sm text-secondary'>We're securely verifying your Unicorn account details and preparing to connect them to Lemonade. This should only take a moment.</p>
+          <p className='text-lg'>Authenticating With ETHDenver</p>
+          <p className='text-sm text-secondary'>We're verifying your ETHDenver Account details and preparing to connect them to Lemonade.</p>
         </div>
       </div>
     </ModalContent>
@@ -55,15 +64,15 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
   if (status === 'linked') return (
     <SuccessModal
       title="Welcome to Lemonade!"
-      description='Your account is ready, and your Unicorn wallet is already linked. Start exploring events, communities, and collectibles!'
-      buttonText='Start Exploring'
+      description={`You're all set to claim your ETH Denver ticket!`}
+      buttonText='Select Ticket'
     />
   );
 
   if (status === 'processed') return (
     <SuccessModal
       title="You're All Set!"
-      description='We found your Lemonade account with the same email as your Unicorn account. Your wallet is now linked and ready to use.'
+      description='We found your Lemonade account with the same email as your ETHDenver account. Your wallet is now linked and ready to use.'
       buttonText='Continue to Lemonade'
     />
   );
@@ -74,21 +83,17 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
         <div className='size-14 flex items-center justify-center rounded-full bg-primary/8'>
           <img src={`${ASSET_PREFIX}/assets/images/wallet-unicorn.png`} alt='Unicorn Logo' className='w-[26px] relative z-10' />
         </div>
-        <div className='space-y-1'>
-          <p className='text-lg'>Let's Get You Started</p>
-          <p className='text-sm text-secondary'>We couldn't find a Lemonade account for your Unicorn email. Create one now or link an existing account.</p>
-        </div>
+        <p className='text-lg'>Let's Get You Started</p>
         <div className='space-y-3'>
           <Button
-            onClick={createNewAccount}
+            disabled={!siwe}
+            onClick={() => siwe && createNewAccount(siwe)}
             variant='secondary'
             className='w-full'
           >
-            Create New Account
+            New to Lemonade
           </Button>
-          <p className='text-sm text-secondary text-center'>
-            Already have an account? <span className='text-accent-400 cursor-pointer' onClick={linkOtherAccount}>Link it here</span>
-          </p>
+          <p className='text-sm text-center text-accent-400 cursor-pointer' onClick={linkOtherAccount}>Continue with existing Lemonade Account</p>
         </div>
       </div>
     </ModalContent>
@@ -97,7 +102,7 @@ export function UnicornAuth({ cookie, onSuccess }: Props) {
   if (status === 'creating') return (
     <ConfirmTransaction
       title='Creating Your Account'
-      description="We're setting up your brand-new Lemonade account using your Unicorn email and wallet. Almost there…"
+      description="We're setting up your brand-new Lemonade account associated with your ETHDenver account and wallet. Almost there…"
     />
   );
 

@@ -62,23 +62,24 @@ export function GuestTable({ event, guests, loading = false, onGuestClick }: Gue
         {guests.map((guest: EventGuestDetail, index) => (
           <div
             key={index}
-            className="flex items-center justify-between px-4 py-3 hover:bg-card-hover cursor-pointer"
+            className="flex items-center justify-between px-4 py-3 gap-1 hover:bg-card-hover cursor-pointer"
             onClick={() => handleGuestClick(guest)}
           >
-            <div className="flex items-center gap-3 flex-1">
+            <div className="flex items-center gap-3 flex-1 overflow-hidden">
               <Avatar
+                className='size-5'
                 src={guest.user.image_avatar || randomUserImage(guest.user.email?.toString())}
-                className="size-5"
               />
-              <div className="flex-1 flex flex-col md:flex-row md:gap-2 md:items-center">
-                <p className="truncate">
+
+              <div className="flex-1 flex flex-col md:flex-row md:gap-2 md:items-center overflow-hidden">
+                <p className="truncate overflow-hidden">
                   {guest.user.display_name ||
                     guest.user.name ||
                     guest.ticket?.metadata?.buyer_name ||
                     guest.join_request?.metadata?.buyer_name ||
                     'Anonymous'}
                 </p>
-                <p className="text-tertiary truncate text-xs md:text-base">{guest.user.email}</p>
+                <p className="text-tertiary overflow-hidden truncate line-clamp-1 md:truncate-none text-xs md:text-base md:max-w-none">{guest.user.email}</p>
               </div>
             </div>
             <div className="flex flex-col items-end md:flex-row gap-0.5">
@@ -86,12 +87,17 @@ export function GuestTable({ event, guests, loading = false, onGuestClick }: Gue
                 {guest.ticket && (
                   <>
                     <Chip variant="secondary" size="xxs" className="rounded-full" leftIcon="icon-ticket size-3">
-                      {guest.ticket?.type_expanded?.title}
+                      <span className=" max-w-20 truncate">{guest.ticket?.type_expanded?.title}</span>
                     </Chip>
                     <span className="hidden md:block text-sm text-tertiary whitespace-nowrap">
                       {guest.ticket?.created_at ? formatDistanceToNow(new Date(guest.ticket?.created_at), { addSuffix: true }) : ''}
                     </span>
                   </>
+                )}
+                {guest.ticket?.checkin?.active && (
+                  <Chip variant="success" size="xxs" className="rounded-full">
+                    Checked In
+                  </Chip>
                 )}
                 {(!guest.join_request || guest.join_request.state === EventJoinRequestState.Approved) && (
                   <Chip variant="success" size="xxs" className="rounded-full">

@@ -17,6 +17,7 @@ import { PostHeader } from './PostHeader';
 import { PostContent } from './PostContent';
 import { PostComment } from './PostComment';
 import { PostComposerModal } from './PostComposerModal';
+import { ConfirmModal } from '$lib/components/features/modals/ConfirmModal';
 
 type FeedPostProps = {
   post: Post | Repost;
@@ -45,6 +46,17 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
     } catch (error) {
       console.error('Failed to delete post:', error);
     }
+  };
+
+  const handleDeleteClick = () => {
+    modal.open(ConfirmModal, {
+      props: {
+        title: 'Delete Post',
+        subtitle: 'Are you sure you want to delete this post? This operation cannot be undone.',
+        icon: 'icon-delete',
+        onConfirm: handleDeletePost,
+      },
+    });
   };
 
   if (isRepost && !showRepost) return null;
@@ -131,7 +143,7 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
                           iconLeft="icon-delete text-error"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeletePost();
+                            handleDeleteClick();
                             toggle();
                           }}
                         >

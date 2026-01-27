@@ -64,10 +64,8 @@ export function RootMenu() {
 export default function Header({ title, mainMenu, hideLogo, className }: Props) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
-  const { account } = useAccount();
   const { reload } = useAuth();
   const logOut = useLogOut();
-  const { logOut: lensLogOut } = useLensLogOut();
   const signIn = useSignIn();
   // const { hasLemonhead } = useLemonhead();
   useConnectUnicornWallet();
@@ -97,7 +95,7 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
 
         {session && me ? (
           <div className="flex gap-2 items-center">
-            {!me.email_verified && (
+            {/* {!me.email_verified && (
               <Button
                 onClick={() => modal.open(VerifyEmailModal)}
                 size="sm"
@@ -108,9 +106,9 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
               >
                 Verify Email
               </Button>
-            )}
+            )} */}
 
-            <ConnectLens />
+            {/* <ConnectLens /> */}
 
             {/* { */}
             {/*   hasLemonhead ? ( */}
@@ -133,7 +131,7 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
                       clsx(isOpen && 'bg-primary/8'),
                     )}
                   >
-                    <Avatar size="lg" src={account ? getAccountAvatar(account) : userAvatar(me)} />
+                    <Avatar size="lg" src={userAvatar(me)} />
                   </div>
                 )}
               </Menu.Trigger>
@@ -143,9 +141,9 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
                     <div
                       className={'flex gap-2.5 px-2 py-1.5 items-center hover:bg-primary/8 rounded-t-xs cursor-pointer'}
                     >
-                      <Avatar size="lg" src={account ? getAccountAvatar(account) : userAvatar(me)} />
+                      <Avatar size="lg" src={userAvatar(me)} />
                       <div>
-                        <p className="text-md font-medium whitespace-nowrap">{account?.metadata?.name || me.name}</p>
+                        <p className="text-md font-medium whitespace-nowrap">{me.name}</p>
                         <p className="text-xs font-medium text-tertiary">{me.email}</p>
                       </div>
                     </div>
@@ -153,33 +151,11 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
                     <div className="p-1">
                       <MenuItem title="Edit Profile" onClick={() => drawer.open(ProfilePane, { dismissible: false })} />
                       <MenuItem title="Settings" onClick={() => router.push('/settings')} />
-                      {account && (
-                        <>
-                          <MenuItem
-                            title="Switch Profile"
-                            onClick={() => {
-                              toggle();
-                              modal.open(SelectProfileModal);
-                            }}
-                          />
-                          <MenuItem
-                            title="Disconnect"
-                            onClick={() => {
-                              toggle();
-                              lensLogOut();
-                            }}
-                          />
-                        </>
-                      )}
                       <MenuItem
                         title="Sign Out"
                         onClick={async () => {
                           toggle();
                           logOut();
-
-                          if (account) {
-                            lensLogOut();
-                          }
                         }}
                       />
                     </div>
@@ -191,7 +167,7 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
         ) : (
           <>
             {!session && (
-              <Button size="sm" variant="tertiary-alt" onClick={signIn} className="rounded-full backdrop-blur-none">
+              <Button size="sm" variant="tertiary-alt" onClick={() => signIn()} className="rounded-full backdrop-blur-none">
                 Sign In
               </Button>
             )}
@@ -206,7 +182,7 @@ function ConnectLens() {
   const { account } = useAccount();
   const me = useMe();
 
-  const walletVerified = me?.kratos_wallet_address;
+  const walletVerified = me?.kratos_wallet_address || me?.kratos_unicorn_wallet_address;
   const chainsMap = useAtomValue(chainsMapAtom);
 
   const handleSelectWallet = () => {
@@ -223,33 +199,33 @@ function ConnectLens() {
     });
   };
 
-  if (!walletVerified && !account)
-    return (
-      <Button
-        onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
-        size="sm"
-        className="rounded-full"
-        variant="warning"
-        iconLeft="icon-error"
-        outlined
-      >
-        Claim Username
-      </Button>
-    );
+  // if (!walletVerified && !account)
+  //   return (
+  //     <Button
+  //       onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
+  //       size="sm"
+  //       className="rounded-full"
+  //       variant="warning"
+  //       iconLeft="icon-error"
+  //       outlined
+  //     >
+  //       Claim Username
+  //     </Button>
+  //   );
 
-  if (!account)
-    return (
-      <Button
-        onClick={handleSelectWallet}
-        size="sm"
-        className="rounded-full"
-        variant="warning"
-        iconLeft="icon-error"
-        outlined
-      >
-        Claim Username
-      </Button>
-    );
+  // if (!account)
+  //   return (
+  //     <Button
+  //       onClick={handleSelectWallet}
+  //       size="sm"
+  //       className="rounded-full"
+  //       variant="warning"
+  //       iconLeft="icon-error"
+  //       outlined
+  //     >
+  //       Claim Username
+  //     </Button>
+  //   );
 
   if (!walletVerified)
     return (

@@ -19,6 +19,18 @@ const classDisplayBold = localFont({
   variable: '--font-class-display-bold',
 });
 
+const orbitron = localFont({
+  display: 'swap',
+  src: '../public/assets/fonts/Orbitron-Medium.ttf',
+  variable: '--font-orbitron',
+});
+
+const orbitronBold = localFont({
+  display: 'swap',
+  src: '../public/assets/fonts/Orbitron-Bold.ttf',
+  variable: '--font-orbitron-bold',
+});
+
 // title fonts
 
 const aktura = localFont({
@@ -114,6 +126,18 @@ const zodiak = localFont({
   variable: '--font-zodiak',
 });
 
+const basePixel = localFont({
+  display: 'swap',
+  src: '../public/assets/fonts/title/BasePixel-LowResolution.otf',
+  variable: '--font-base-pixel',
+});
+
+const figtreeBlack = localFont({
+  display: 'swap',
+  src: '../public/assets/fonts/title/Figtree-Black.ttf',
+  variable: '--font-figtree-black',
+})
+
 // body fonts
 const archivo = localFont({
   src: '../public/assets/fonts/body/Archivo-Regular.otf',
@@ -156,10 +180,25 @@ const synonym = localFont({
   variable: '--font-synonym',
 });
 
+const multitypePixel = localFont({
+  display: 'swap',
+  src: '../public/assets/fonts/MultiTypePixel-DisplayBold.otf',
+  variable: '--font-multitype-pixel',
+});
+
+const antonio = localFont({
+  display: 'swap',
+  src: '../public/assets/fonts/body/Antonio-VariableFont_wght.ttf',
+  variable: '--font-antonio',
+});
+
 export default twMerge(
   generalSans.variable,
   classDisplay.variable,
   classDisplayBold.variable,
+  orbitron.variable,
+  orbitronBold.variable,
+  //title
   aktura.variable,
   array.variable,
   sarpanch.variable,
@@ -177,6 +216,8 @@ export default twMerge(
   technor.variable,
   zina.variable,
   zodiak.variable,
+  basePixel.variable,
+  figtreeBlack.variable,
   //body fonts
   archivo.variable,
   azeret_mono.variable,
@@ -185,4 +226,6 @@ export default twMerge(
   spline_sans.variable,
   supreme.variable,
   synonym.variable,
+  multitypePixel.variable,
+  antonio.variable,
 );

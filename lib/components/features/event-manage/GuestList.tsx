@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { snakeCase } from 'lodash';
 
@@ -23,11 +23,23 @@ type SortOption = {
 
 export function GuestList({ event }: { event: Event }) {
   const [searchText, setSearchText] = useState('');
+  const [debouncedSearchText, setDebouncedSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [selectedTicketTypes, setSelectedTicketTypes] = useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState<SortOption | null>(null);
   const pageSize = 100;
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchText(searchText);
+      setCurrentPage(1);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchText]);
 
   const ticketTypeFilters =
     event.event_ticket_types?.map((ticketType) => ({
@@ -37,15 +49,13 @@ export function GuestList({ event }: { event: Event }) {
 
   const sortOptions: SortOption[] = [
     { key: 'register_time', value: 'Register Time' },
-    { key: 'name', value: 'Name' },
-    { key: 'email', value: 'Email' },
     { key: 'approval_status', value: 'Approval Status' },
   ];
 
   const { data, loading, error, refetch } = useQuery(ListEventGuestsDocument, {
     variables: {
       event: event._id,
-      search: searchText || undefined,
+      search: debouncedSearchText || undefined,
       skip: (currentPage - 1) * pageSize,
       limit: pageSize,
       ticketTypes: selectedTicketTypes.length > 0 ? selectedTicketTypes : undefined,
@@ -57,10 +67,6 @@ export function GuestList({ event }: { event: Event }) {
       sortBy:
         selectedSort?.key === 'register_time'
           ? ListEventGuestsSortBy.RegisterTime
-          : selectedSort?.key === 'name'
-            ? ListEventGuestsSortBy.Name
-            : selectedSort?.key === 'email'
-              ? ListEventGuestsSortBy.Email
               : selectedSort?.key === 'approval_status'
                 ? ListEventGuestsSortBy.ApprovalStatus
                 : undefined,
@@ -81,7 +87,6 @@ export function GuestList({ event }: { event: Event }) {
 
   const handleSearch = (value: string) => {
     setSearchText(value);
-    setCurrentPage(1);
   };
 
   const handlePageChange = (page: number) => {
@@ -138,7 +143,7 @@ export function GuestList({ event }: { event: Event }) {
       />
 
       <div className="flex items-center justify-between">
-        <Menu.Root>
+        <Menu.Root placement="bottom-start">
           <Menu.Trigger>
             <Button variant="tertiary" size="sm" iconLeft="icon-filter-line" iconRight="icon-chevron-down">
               {selectedFilters.length === 0 && selectedTicketTypes.length === 0
@@ -219,14 +224,16 @@ export function GuestList({ event }: { event: Event }) {
                 {ticketTypeFilters.map((ticketType) => (
                   <MenuItem
                     key={ticketType.key}
-                    title={ticketType.value}
                     iconRight={
                       selectedTicketTypes.includes(ticketType.key) ? 'text-primary icon-richtext-check' : undefined
                     }
                     onClick={() => {
                       handleTicketTypeToggle(ticketType.key);
                     }}
-                  />
+                    className="!flex !text-clip overflow-hidden"
+                  >
+                    <p className="text-sm text-secondary truncate min-w-0 flex-1">{ticketType.value}</p>
+                  </MenuItem>
                 ))}
               </>
             )}

@@ -1,20 +1,31 @@
 import { getDefaultStore } from 'jotai';
 import { Contract, Eip1193Provider, ethers, isError } from 'ethers';
+import { mainnet } from 'viem/chains';
 
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
+import { MEGAETH_CHAIN_ID, GAS_LIMIT } from '$lib/utils/constants';
 
 import ERC20 from '$lib/abis/ERC20.json';
 import LemonadeRelayPayment from '$lib/abis/LemonadeRelayPayment.json';
 import LemonadeStakePayment from '$lib/abis/LemonadeStakePayment.json';
 import ERC721 from '$lib/abis/ERC721.json'; 
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
+import LemonadePassport from '$lib/abis/LemonadePassport.json';
 import { TRPCClientError } from '@trpc/client';
+import ZugramaPassport from '$lib/abis/ZuGramaPassport.json';
+import { Chain } from '$lib/graphql/generated/backend/graphql';
+import { AbstractPassportABI } from '$lib/abis/AbstractPassport';
+import MusicNft from '$lib/abis/MusicNft.json';
 
 export const ERC20Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC20));
 export const ERC721Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC721));
 export const LemonadeRelayPaymentContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonadeRelayPayment.abi));
 export const LemonadeStakePaymentContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonadeStakePayment.abi));
 export const LemonheadNFTContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonheadNFT.abi));
+export const LemonadePassportContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonadePassport.abi));
+export const ZugramaPassportContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ZugramaPassport.abi));
+export const AbstractPassportContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(AbstractPassportABI));
+export const MusicNftContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(MusicNft.abi));
 
 export function getListChains() {
   return getDefaultStore().get(listChainsAtom);
@@ -33,8 +44,13 @@ export function formatWallet(address: string, length = 4): string {
 export const isNativeToken = (tokenAddress: string, network: string) => {
   const chain = getListChains().find(c => c.chain_id === network);
   const token = chain?.tokens?.find(t => t.contract === tokenAddress);
-  return token?.is_native;
+  return token?.is_native || tokenAddress.toLowerCase() === ethers.ZeroAddress;
 };
+
+export async function getGasOptions(provider: ethers.Provider): Promise<{ gas?: bigint }> {
+  const network = await provider.getNetwork();
+  return Number(network.chainId) === MEGAETH_CHAIN_ID ? { gas: GAS_LIMIT } : {};
+}
 
 export async function writeContract(
   contractInstance: ethers.Contract,
@@ -47,8 +63,31 @@ export async function writeContract(
   const browserProvider = new ethers.BrowserProvider(provider);
   const signer = await browserProvider.getSigner();
   const contract = contractInstance.attach(contractAddress).connect(signer);
-  const gasLimit = await contract.getFunction(functionName).estimateGas(...args, txOptions);
-  const tx = await contract.getFunction(functionName)(...args, { ...txOptions, gasLimit });
+  const network = await browserProvider.getNetwork();
+  
+  const data = contract.interface.encodeFunctionData(functionName, args);
+  
+  const tx = await signer.sendTransaction({
+    to: contractAddress,
+    data: ethers.hexlify(data),
+    gasLimit: GAS_LIMIT,
+    ...txOptions
+  });
+
+  if (Number(network.chainId) === MEGAETH_CHAIN_ID) {
+    try {
+      const receipt = await browserProvider.send('realtime_getTransactionReceipt', [tx.hash]);
+      if (receipt) {
+        return {
+          ...tx,
+          wait: async () => Promise.resolve(receipt),
+          receipt
+        };
+      }
+    } catch {
+    }
+  }
+  
   return tx;
 }
 
@@ -120,7 +159,7 @@ export function formatError(error: any): string {
   }
 
   if (isError(error, 'CALL_EXCEPTION')) {
-    return 'Transaction failed. Please check your inputs and try again';
+    return 'Transaction failed. Please check your inputs and try again.';
   }
 
   if (isError(error, 'NONCE_EXPIRED')) {
@@ -261,3 +300,45 @@ export async function waitForEvent(tx: any, contract: Contract, eventName: strin
 
   return parsedEventLog;
 }
+
+export const MainnetRpcProvider = new ethers.JsonRpcProvider('https://eth-mainnet.public.blastapi.io'); 
+
+export const getTransactionUrl = (chain: Chain, txHash: string) => {
+  if (!chain?.block_explorer_url || !chain?.block_explorer_for_tx) {
+    return '';
+  }
+
+  const pathTemplate = chain.block_explorer_for_tx.includes('${hash}')
+    ? chain.block_explorer_for_tx.replaceAll('${hash}', txHash)
+    : `${chain.block_explorer_for_tx}${txHash}`;
+
+  const baseUrl = chain.block_explorer_url.endsWith('/')
+    ? chain.block_explorer_url.slice(0, -1)
+    : chain.block_explorer_url;
+
+  const path = pathTemplate.startsWith('/')
+    ? pathTemplate
+    : `/${pathTemplate}`;
+
+  return `${baseUrl}${path}`;
+};
+
+export const getAddressUrl = (chain: Chain, address: string) => {
+  if (!chain?.block_explorer_url || !chain?.block_explorer_for_address) {
+    return '';
+  }
+
+  const pathTemplate = chain.block_explorer_for_address.includes('${address}')
+    ? chain.block_explorer_for_address.replaceAll('${address}', address)
+    : `${chain.block_explorer_for_address}${address}`;
+
+  const baseUrl = chain.block_explorer_url.endsWith('/')
+    ? chain.block_explorer_url.slice(0, -1)
+    : chain.block_explorer_url;
+
+  const path = pathTemplate.startsWith('/')
+    ? pathTemplate
+    : `/${pathTemplate}`;
+
+  return `${baseUrl}${path}`;
+};

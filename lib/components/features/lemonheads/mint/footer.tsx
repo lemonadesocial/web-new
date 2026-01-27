@@ -8,7 +8,7 @@ import { useAtomValue } from 'jotai';
 import React from 'react';
 import Link from 'next/link';
 
-import { Button, Card, Checkbox, modal, ModalContent, toast } from '$lib/components/core';
+import { Button, Checkbox, modal, ModalContent, toast } from '$lib/components/core';
 import { trpc } from '$lib/trpc/client';
 import { chainsMapAtom } from '$lib/jotai';
 import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
@@ -22,9 +22,9 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { TraitExtends } from '$lib/trpc/lemonheads/types';
 import { appKit } from '$lib/utils/appkit';
-import { truncateMiddle } from '$lib/utils/string';
 
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
+import { InsufficientFundsModal } from '$lib/components/features/modals/InsufficientFundsModal';
 
 import { LemonHeadActionKind, LemonHeadStep, useLemonHeadContext } from './provider';
 import { LEMONHEAD_CHAIN_ID } from './utils';
@@ -98,10 +98,11 @@ export function LemonHeadFooter() {
       if (error?.message) message = error.message.toLowerCase();
 
       if (isError(error, 'INSUFFICIENT_FUNDS') || message.includes('insufficient funds')) {
+        const mintPrice = dataCanMint?.canMintLemonhead?.price;
         modal.open(InsufficientFundsModal, {
           onClose: () => setMinting(false),
           props: {
-            mintPrice: dataCanMint?.canMintLemonhead?.price,
+            message: `You need ${mintPrice && +mintPrice > 0 ? ethers.formatEther(mintPrice) : ''} ETH to mint your LemonHead. Add funds and try again, or switch wallets.`,
             onRetry: () => {
               modal.close();
               handleMint();
@@ -370,7 +371,6 @@ function MintModal({
         traits: traits.filter(Boolean).map(({ _id, image, ...rest }) => rest),
         sponsor: sponsor?._id,
       });
-      console.log('Mint data:', mintData);
 
       if (!contractAddress) throw new Error('LemonheadNFT contract address not set');
       if (!walletProvider) throw new Error('No wallet provider found');
@@ -416,11 +416,13 @@ function MintModal({
         setInterval(() => {
           setCount((prev) => prev - 1);
         }, 1000);
-        console.log('Token ID:', tokenId);
       }
     } catch (error: any) {
-      console.log(error);
-      Sentry.captureException(error);
+      Sentry.captureException(error, {
+        extra: {
+          walletInfo: appKit.getWalletInfo(),
+        },
+      });
       toast.error(formatError(error));
     } finally {
       setIsMinting(false);
@@ -497,54 +499,6 @@ function MintModal({
 
         <Button variant="secondary" onClick={handleMint} loading={isMinting}>
           Mint {mintPrice && +mintPrice > 0 ? `‣ ${ethers.formatEther(mintPrice)} ETH` : '‣ Free'}
-        </Button>
-      </div>
-    </ModalContent>
-  );
-}
-
-function InsufficientFundsModal({ mintPrice, onRetry }: { mintPrice?: string | number; onRetry: () => void }) {
-  const { isConnected, address } = useAppKitAccount();
-  const { open } = useAppKit();
-
-  React.useEffect(() => {
-    if (!isConnected) modal.close();
-  }, [isConnected]);
-
-  return (
-    <ModalContent
-      icon={
-        <div className="size-[56px] flex justify-center items-center rounded-full bg-danger-500/16" data-icon>
-          <i className="icon-info text-danger-500 size-8" />
-        </div>
-      }
-      onClose={() => modal.close()}
-      className="**:data-icon:rounded-md"
-    >
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <p className="text-lg">Insufficient Funds</p>
-          <p className="text-sm text-secondary">
-            You need {mintPrice && +mintPrice > 0 ? ethers.formatEther(mintPrice) : ''} ETH to mint your LemonHead. Add
-            funds and try again, or switch wallets.
-          </p>
-        </div>
-
-        <Card.Root className="border-none bg-none">
-          <Card.Content className="justify-between flex items-center py-2 px-3">
-            <div className="flex gap-3">
-              <i className="icon-wallet size-5 aspect-square text-tertiary" />
-              {address && <p>{truncateMiddle(address, 6, 4)}</p>}
-            </div>
-            <i
-              className="icon-edit-sharp size-5 aspect-square text-quaternary hover:text-primary"
-              onClick={() => open()}
-            />
-          </Card.Content>
-        </Card.Root>
-
-        <Button variant="secondary" className="w-full" onClick={() => onRetry()}>
-          Try Again
         </Button>
       </div>
     </ModalContent>

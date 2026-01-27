@@ -11,14 +11,10 @@ import { client } from '$lib/utils/lens/client';
 import { useSigner } from '$lib/hooks/useSigner';
 import { accountAtom, sessionClientAtom } from '$lib/jotai';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
-import { LENS_NAMESPACE } from '$lib/utils/constants';
 import { formatError, formatWallet } from '$lib/utils/crypto';
 
 import { SignTransactionModal } from '../modals/SignTransaction';
-import { ClaimLemonadeUsernameModal } from './ClaimLemonadeUsernameModal';
 import { ClaimAccountModal } from './ClaimAccountModal';
-import { useSyncLensAccount } from '$lib/hooks/useLens';
-import { useClient } from '$lib/graphql/request';
 
 export function SelectProfileModal() {
   const [accounts, setAccounts] = useState<AccountManaged[]>([]);
@@ -26,9 +22,6 @@ export function SelectProfileModal() {
   const signer = useSigner();
   const setSessionClient = useSetAtom(sessionClientAtom);
   const setAccount = useSetAtom(accountAtom);
-
-  const requestClient = useClient();
-  const { triggerSync } = useSyncLensAccount();
 
   const [isLoadingAccounts, setIsLoadingAccounts] = useState(true);
   const [isLoadingSignIn, setIsLoadingSignIn] = useState(false);
@@ -122,24 +115,6 @@ export function SelectProfileModal() {
     setSessionClient(loginResult.value);
     setAccount(account);
     modal.close();
-
-    requestClient.client.addCustomheader({ 'x-lens-profile-id': account.address });
-    await triggerSync(account, loginResult.value);
-
-    const lemonadeUsernamesRes = await fetchUsernames(client, {
-      filter: {
-        owner: account.address,
-        namespace: evmAddress(LENS_NAMESPACE),
-      },
-    });
-
-    if (lemonadeUsernamesRes.isErr()) return;
-
-    const lemonadeUsernames = lemonadeUsernamesRes.value.items;
-
-    if (lemonadeUsernames.length) return;
-
-    modal.open(ClaimLemonadeUsernameModal, { dismissible: false });
   };
 
   if (isLoadingAccounts)

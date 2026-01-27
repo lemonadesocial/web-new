@@ -12,6 +12,9 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
+    linterOptions: {
+      reportUnusedDisableDirectives: false,
+    },
     rules: {
       '@next/next/no-img-element': 'off',
       'jsx-a11y/alt-text': 'off',

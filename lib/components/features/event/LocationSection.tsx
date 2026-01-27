@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { Divider, Map, Skeleton } from '$lib/components/core';
-import { getEventAddress, isAttending } from '$lib/utils/event';
+import { getEventSubAddress, isAttending } from '$lib/utils/event';
 import { useMe } from '$lib/hooks/useMe';
 
 export function LocationSection({ event, loading = false }: { event?: Event; loading?: boolean }) {
@@ -27,7 +27,7 @@ export function LocationSection({ event, loading = false }: { event?: Event; loa
         </p>
         <p className="text-sm text-secondary">
           {attending
-            ? getEventAddress(event.address, true) || 'Virtual'
+            ? getEventSubAddress(event.address) || 'Virtual'
             : [event.address?.city || event.address?.region, event.address?.country].filter(Boolean).join(', ')}
         </p>
       </div>

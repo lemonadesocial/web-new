@@ -5,6 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { isDate } from 'lodash';
 import ct from 'countries-and-timezones';
+import { skipToken } from '@tanstack/react-query';
 
 import { Button, Card, Map, modal, toast } from '$lib/components/core';
 import { DateTimeGroup, Timezone } from '$lib/components/core/calendar';
@@ -133,7 +134,7 @@ export function ListingExternalEvent({ spaceId }: { spaceId: string }) {
               setValue('external_url', data.external_url);
               setValue('host', data.host);
               setValue('location', data.location);
-              const country = ct.getCountry(data.location.address.country);
+              const country = ct.getCountry(data.location?.address?.country);
               setValue('datetime.timezone', country?.timezones?.[0]);
             }}
           />
@@ -241,7 +242,7 @@ function InputFieldCustom({
 }) {
   const [value, setValue] = React.useState('');
 
-  const { data, isLoading } = trpc.openGraph.extractUrl.useQuery({ url: value });
+  const { data, isLoading } = trpc.openGraph.extractUrl.useQuery(value ? { url: value } : skipToken);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;

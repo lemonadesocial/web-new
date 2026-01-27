@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { Button, drawer, Input, modal, ModalContent, toast } from '$lib/components/core';
 import { AssignTicketsDocument, GetMyTicketsDocument, Ticket } from '$lib/graphql/generated/backend/graphql';
 import { useMe } from '$lib/hooks/useMe';
-import { downloadTicketPass, formatPrice } from '$lib/utils/event';
+import { formatPrice } from '$lib/utils/event';
 import { EMAIL_REGEX } from '$lib/utils/regex';
 import { useMutation } from '$lib/graphql/request';
+import { AddToWalletModal } from './AddToWallet';
 
 export function AdditionalTicketsPane({ tickets }: { tickets: Ticket[] }) {
   const me = useMe();
@@ -51,7 +52,18 @@ export function AdditionalTicketsPane({ tickets }: { tickets: Ticket[] }) {
                   >
                     View QR
                   </Button>
-                  <Button variant="tertiary" size="sm" iconLeft="icon-pass" onClick={() => downloadTicketPass(ticket)}>
+                  <Button
+                    variant="tertiary"
+                    size="sm"
+                    iconLeft="icon-pass"
+                    onClick={() => {
+                      modal.open(AddToWalletModal, {
+                        props: {
+                          ticket
+                        },
+                      });
+                    }}
+                  >
                     Download Pass
                   </Button>
                 </div>
@@ -159,7 +171,7 @@ function ViewQRModal({ ticket }: { ticket: Ticket }) {
   return (
     <ModalContent className="p-0">
       <div className="flex items-center justify-center px-4 pt-11 pb-9">
-        <QRCodeSVG value={ticket._id} size={200} fgColor="#FFFFFF" bgColor="transparent" />
+        <QRCodeSVG value={ticket.shortid} size={200} fgColor="#FFFFFF" bgColor="transparent" />
       </div>
       <div className="border-t border-dashed border-divider" />
       <div className="p-4 space-y-2">

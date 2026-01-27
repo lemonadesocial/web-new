@@ -1,8 +1,10 @@
 'use client';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
+import { useAtomValue } from 'jotai';
+import Link from 'next/link';
 
-import { Accordion, Button, Card, Divider, drawer, modal } from '$lib/components/core';
+import { Accordion, Button, Card, Divider, drawer, modal, Skeleton } from '$lib/components/core';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { ASSET_PREFIX, SELF_VERIFICATION_CONFIG } from '$lib/utils/constants';
@@ -20,19 +22,22 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { EventPane, ProfilePane } from '$lib/components/features/pane';
-import { useAccount, useLemonadeUsername } from '$lib/hooks/useLens';
 import { CompleteProfilePane } from '$lib/components/features/pane/CompleteProfilePane';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { VerifyEmailModal } from '$lib/components/features/auth/VerifyEmailModal';
-import { ClaimLemonadeUsernameModal } from '$lib/components/features/lens-account/ClaimLemonadeUsernameModal';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
-import { SelectProfileModal } from '$lib/components/features/lens-account/SelectProfileModal';
-import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
-import { useAtomValue } from 'jotai';
-import { chainsMapAtom } from '$lib/jotai';
 import { GetVerifiedModal } from '$lib/components/features/modals/GetVerifiedModal';
 import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
+import { Order_By, PoolCreated, PoolCreatedDocument } from '$lib/graphql/generated/coin/graphql';
+import { coinClient } from '$lib/graphql/request/instances';
+import { useTokenData } from '$lib/hooks/useCoin';
+import { formatWallet } from '$lib/utils/crypto';
+
+import { calculateMarketCapData } from '$lib/utils/coin';
+import { useClaimUsername, useLemonadeUsername } from '$lib/hooks/useUsername';
+import { chainsMapAtom } from '$lib/jotai';
+import { useListChainIds } from '$lib/hooks/useListChainIds';
 
 export function Content() {
   const me = useMe();
@@ -49,15 +54,16 @@ export function Content() {
   return (
     <div className="pt-6 flex flex-col gap-6">
       <div className="space-y-1">
-        <h3 className="text-lg font-medium">Welcome, {me.name || me.display_name}</h3>
-        <p className="text-sm text-secondary">Quickly catch up, access your events, communities & feeds.</p>
+        <h3 className="text-2xl font-semibold">Welcome, {me.name || me.display_name}</h3>
+        <p className="text-sm text-tertiary">Quickly catch up, access your events, communities & feeds.</p>
       </div>
 
-      <div className="flex flex-col-reverse md:flex-row gap-6 md:gap-14">
-        <div className="flex-1 flex flex-col gap-4 mb-20">
+      <div className="flex flex-col-reverse md:flex-row gap-6 md:gap-18">
+        <div className="flex-1 flex flex-col gap-12 mb-20">
           <UpcomingEventSection />
-          <Divider />
           <CommunitySection />
+          <Divider />
+          <AllCoins />
         </div>
 
         <div>
@@ -144,28 +150,14 @@ function UpcomingEventSection() {
                 <Button
                   size="sm"
                   variant="tertiary-alt"
-                  iconLeft="icon-plus"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push('/create/event');
-                  }}
-                >
-                  New Event
-                </Button>
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
                   iconRight="icon-chevron-right"
                   onClick={(e) => {
                     e.stopPropagation();
                     router.push('/events');
                   }}
                 >
-                  All Events
+                  View All
                 </Button>
-              </div>
-
-              <div className="flex md:hidden gap-2">
                 <Button
                   size="sm"
                   variant="tertiary-alt"
@@ -174,7 +166,12 @@ function UpcomingEventSection() {
                     e.stopPropagation();
                     router.push('/create/event');
                   }}
-                />
+                >
+                  New Event
+                </Button>
+              </div>
+
+              <div className="flex md:hidden gap-2">
                 <Button
                   size="sm"
                   variant="tertiary-alt"
@@ -182,6 +179,15 @@ function UpcomingEventSection() {
                   onClick={(e) => {
                     e.stopPropagation();
                     router.push('/events');
+                  }}
+                />
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  icon="icon-plus"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push('/create/event');
                   }}
                 />
               </div>
@@ -207,7 +213,7 @@ function UpcomingEventSection() {
           />
         ))}
 
-        <div className="hidden only:block text-center text-gray-500 py-10">
+        <div className="hidden only:block text-center text-gray-500">
           <EmptyCard
             icon="icon-confirmation-number"
             title="No Upcoming Events"
@@ -248,18 +254,7 @@ function CommunitySection() {
                 />
                 <h3 className="text-xl font-semibold">Communities</h3>
               </div>
-              <div className="hidden md:flex gap-2">
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
-                  iconLeft="icon-plus"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push('/create/community');
-                  }}
-                >
-                  New Community
-                </Button>
+              <div className="flex gap-2">
                 <Button
                   size="sm"
                   variant="tertiary-alt"
@@ -269,11 +264,8 @@ function CommunitySection() {
                     router.push('/communities');
                   }}
                 >
-                  All Communities
+                  View All
                 </Button>
-              </div>
-
-              <div className="flex md:hidden gap-2">
                 <Button
                   size="sm"
                   variant="tertiary-alt"
@@ -282,16 +274,9 @@ function CommunitySection() {
                     e.stopPropagation();
                     router.push('/create/community');
                   }}
-                />
-                <Button
-                  size="sm"
-                  variant="tertiary-alt"
-                  icon="icon-chevron-right"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push('/communities');
-                  }}
-                />
+                >
+                  New Community
+                </Button>
               </div>
             </div>
           );
@@ -304,14 +289,16 @@ function CommunitySection() {
           ?.slice(0, 6)
           .map((item) => (
             <CardItem
+              tag="link"
               key={item._id}
               title={item.title}
               subtitle={`${item.followers_count || 0} Subscribers`}
               image={getImageSrc(item)}
-              onClick={() => (window.location.href = `/manage/community/${item.slug || item._id}`)}
+              href={`/s/manage/${item.slug || item._id}`}
+              onClick={() => router.push(`/s/manage/${item.slug || item._id}`)}
             />
           ))}
-        <div className="hidden only:block text-center text-gray-500 py-10">
+        <div className="hidden only:block text-center text-gray-500 ">
           <EmptyCard
             icon="icon-confirmation-number"
             title="No Communities Yet"
@@ -442,36 +429,41 @@ function CardItem({
   onClick,
   rightContent,
   className,
+  href,
+  tag = 'button',
 }: {
-  image: string | React.ReactElement;
+  image?: string | React.ReactElement;
   title: string;
   subtitle: string | React.ReactElement;
   rightContent?: React.ReactElement;
   onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
   className?: string;
+  href?: string;
+  tag?: 'link' | 'button';
 }) {
+  const Wrap = tag === 'link' ? Link : React.Fragment;
+  //TODO: should use Card.Root as link - have no time to check style, will update later
   return (
-    <Card.Root onClick={onClick} className={twMerge('min-w-fit', className)}>
-      <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
-        {typeof image === 'string' ? <img src={image} className="size-[38px] aspect-square" /> : image}
-        <div className="space-y-0.5 flex-1">
-          <p className="title text-lg">{title}</p>
-          {typeof subtitle === 'string' ? <p className="text-sm text-tertiary">{subtitle}</p> : subtitle}
-        </div>
-        <div className="hidden md:block">{rightContent}</div>
-      </Card.Content>
-    </Card.Root>
+    <Wrap href={href || ''}>
+      <Card.Root onClick={onClick} className={twMerge('min-w-fit', className)}>
+        <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
+          {typeof image === 'string' ? <img src={image} className="size-[38px] rounded-sm aspect-square" /> : image}
+          <div className="space-y-0.5 flex-1">
+            <p className="title text-lg">{title}</p>
+            {typeof subtitle === 'string' ? <p className="text-sm text-tertiary">{subtitle}</p> : subtitle}
+          </div>
+          <div className="hidden md:block">{rightContent}</div>
+        </Card.Content>
+      </Card.Root>
+    </Wrap>
   );
 }
 
 function CompleteYourProfile() {
   const me = useMe();
-  const { account } = useAccount();
-  const { username } = useLemonadeUsername(account);
+  const { username } = useLemonadeUsername();
+  const openClaimUsername = useClaimUsername();
 
-  const chainsMap = useAtomValue(chainsMapAtom);
-
-  const walletVerified = me?.kratos_wallet_address;
   const { isConnected } = useAppKitAccount();
 
   const openEditProfilePane = () => drawer.open(ProfilePane);
@@ -505,23 +497,7 @@ function CompleteYourProfile() {
       label: 'Claim Username',
       completed: !!username,
       show: true,
-      onClick: () => {
-        if (!account) {
-          modal.open(ConnectWallet, {
-            props: {
-              onConnect: () => {
-                modal.close();
-                setTimeout(() => {
-                  modal.open(SelectProfileModal);
-                });
-              },
-              chain: chainsMap[LENS_CHAIN_ID],
-            },
-          });
-        } else {
-          modal.open(ClaimLemonadeUsernameModal, { dismissible: false });
-        }
-      },
+      onClick: openClaimUsername,
     },
     // {key: 'verify_email', label: 'Download Lemonade app', completed: false },
     {
@@ -658,6 +634,175 @@ function LemonHeadsZone() {
       subtitle="Claim your LemonHead"
       rightContent={<i className="icon-chevron-right text-tertiary" />}
       onClick={onClick}
+    />
+  );
+}
+
+function AllCoins() {
+  const router = useRouter();
+  const me = useMe();
+  const { address } = useAppKitAccount();
+  const chainIds = useListChainIds();
+
+  const handleCreateCoin = () => {
+    router.push('/create/coin');
+  };
+
+  const userWallets = React.useMemo(() => {
+    const wallets: string[] = [];
+
+    if (address) {
+      wallets.push(address.toLowerCase());
+    }
+
+    if (me?.wallets_new?.ethereum) {
+      me.wallets_new.ethereum.forEach((wallet: string) => {
+        if (wallet) {
+          wallets.push(wallet.toLowerCase());
+        }
+      });
+    }
+
+    if (me?.kratos_wallet_address) {
+      wallets.push(me.kratos_wallet_address.toLowerCase());
+    }
+
+    return [...new Set(wallets)];
+  }, [address, me?.wallets_new?.ethereum, me?.kratos_wallet_address]);
+
+  const { data, loading } = useQuery(
+    PoolCreatedDocument,
+    {
+      variables: {
+        orderBy: [
+          {
+            blockTimestamp: Order_By.Desc,
+          },
+        ],
+        offset: 0,
+        where:
+          userWallets.length > 0
+            ? {
+                paramsCreator: {
+                  _in: userWallets,
+                },
+                chainId: {
+                  _in: chainIds,
+                },
+              }
+            : undefined,
+      },
+      fetchPolicy: 'network-only',
+      skip: userWallets.length === 0,
+    },
+    coinClient,
+  );
+
+  const pools = data?.PoolCreated || [];
+
+  return (
+    <Accordion.Root className="border-none" open>
+      <Accordion.Header chevron={false} className="px-0!">
+        {({ toggle, isOpen }) => {
+          return (
+            <div className="flex items-center justify-between text-primary w-full">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="tertiary"
+                  className="rounded-full"
+                  size="xs"
+                  icon={clsx('icon-chevron-down', isOpen && 'rotate-180')}
+                  onClick={() => toggle()}
+                />
+                <h3 className="text-xl font-semibold">Coins</h3>
+              </div>
+              <div className="hidden md:flex gap-2">
+                <Button size="sm" variant="tertiary-alt" iconLeft="icon-plus" onClick={handleCreateCoin}>
+                  New Coin
+                </Button>
+              </div>
+
+              <div className="flex md:hidden gap-2">
+                <Button size="sm" variant="tertiary-alt" icon="icon-plus" onClick={handleCreateCoin} />
+              </div>
+            </div>
+          );
+        }}
+      </Accordion.Header>
+      <Accordion.Content className={clsx('pt-1! px-0! flex flex-col md:grid gap-3', !!pools.length && 'grid-cols-2')}>
+        {loading ? (
+          <Card.Root className="min-w-fit">
+            <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
+              <Skeleton className="size-[38px] rounded-sm" animate />
+              <Skeleton className="h-9 w-24 rounded-md" animate />
+            </Card.Content>
+          </Card.Root>
+        ) : (
+          <>
+            {pools.map((pool) => (
+              <CoinItem key={pool.id} pool={pool} />
+            ))}
+            <div className="hidden only:block text-center text-gray-500">
+              <EmptyCard
+                icon="icon-confirmation-number"
+                title="No Coins Yet"
+                subtitle="Coins you create and manage will appear here."
+              />
+            </div>
+          </>
+        )}
+      </Accordion.Content>
+    </Accordion.Root>
+  );
+}
+
+function CoinItem({ pool }: { pool: PoolCreated }) {
+  const router = useRouter();
+  const chainsMap = useAtomValue(chainsMapAtom);
+
+  const chain = chainsMap[pool.chainId.toString()];
+  const { tokenData, isLoadingTokenData } = useTokenData(chain, pool.memecoin, pool.tokenURI as string);
+
+  const { formattedAmount, percentageChange } = calculateMarketCapData(
+    pool.latestMarketCapETH,
+    pool.previousMarketCapETH,
+  );
+
+  if (isLoadingTokenData)
+    return (
+      <Card.Root className="min-w-fit">
+        <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
+          <Skeleton className="size-[38px] rounded-sm" animate />
+          <div className="space-y-0.5 flex-1">
+            <Skeleton className="h-5 w-24 rounded-md" animate />
+            <Skeleton className="h-4 w-32 rounded-md" animate />
+          </div>
+        </Card.Content>
+      </Card.Root>
+    );
+
+  if (!tokenData) return null;
+
+  const displaySymbol = tokenData?.symbol || formatWallet(pool.memecoin);
+
+  return (
+    <CardItem
+      key={pool.id}
+      title={displaySymbol}
+      subtitle={formatWallet(pool.memecoin)}
+      image={tokenData.metadata?.imageUrl || undefined}
+      onClick={() => router.push(`/coin/${chain.code_name}/${pool.memecoin}`)}
+      rightContent={
+        <div className="flex flex-col items-end">
+          <p className="text-primary">{formattedAmount}</p>
+          {percentageChange !== null && (
+            <p className={clsx('text-sm', percentageChange > 0 ? 'text-success-500' : 'text-danger-500')}>
+              {percentageChange > 0 && '+'}
+              {percentageChange.toFixed(2)}%
+            </p>
+          )}
+        </div>
+      }
     />
   );
 }

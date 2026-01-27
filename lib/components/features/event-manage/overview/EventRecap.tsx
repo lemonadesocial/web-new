@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { convertFromUtcToTimezone, formatWithTimezone } from '$lib/utils/date';
 import { Event } from '$lib/graphql/generated/backend/graphql';
-import { Button, drawer, modal, toast } from '$lib/components/core';
+import { Button, drawer, modal } from '$lib/components/core';
 import { ScheduleFeedbackModal } from '../modals/EventBlastsModal';
 import { EditEventDrawer } from '../drawers/EditEventDrawer';
 

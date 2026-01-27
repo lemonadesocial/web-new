@@ -67,6 +67,8 @@ export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: Rea
             :root {
               ${data.variables?.custom && generateCssVariables(data.variables?.custom)}
               ${data.variables.pattern && generateCssVariables(data.variables.pattern)}
+              ${mode === 'dark' && data.variables.dark && generateCssVariables(data.variables.dark)}
+              ${mode === 'light' && data.variables.light && generateCssVariables(data.variables.light)}
             }
           `}
         </style>
@@ -91,6 +93,13 @@ export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: Rea
             <div
               className="min-w-full min-h-full fixed inset-0 aspect-video bg-cover! bg-no-repeat"
               style={{ background: `url(${data.config.image?.url})` }}
+            />
+          )}
+
+          {data.theme === 'passport' && (data.config?.image || data.template?.image) && (
+            <div
+              className="min-w-full min-h-full fixed inset-0 aspect-video bg-cover! bg-no-repeat"
+              style={{ background: `url(${data.config?.image?.url || data.template?.image})` }}
             />
           )}
 

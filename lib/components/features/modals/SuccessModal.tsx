@@ -18,7 +18,7 @@ export function SuccessModal({
       </div>
       <div className="space-y-2">
         <p className="text-lg">{title}</p>
-        <p className="text-sm text-secondary">{description}</p>
+        <p className="text-sm text-secondary break-words">{description}</p>
       </div>
       <Button
         variant="secondary"

@@ -2,9 +2,11 @@ import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
 import { Space } from '$lib/graphql/generated/backend/graphql';
+import { useStakingCoin } from '$lib/hooks/useCoin';
 
 export function useSpaceMenu({ space, isMobile }: { space: Space; isMobile?: boolean }) {
   const pathname = usePathname();
+  const { stakingToken } = useStakingCoin(space._id);
 
   const menu = useMemo(() => {
     let menu = [];
@@ -28,11 +30,15 @@ export function useSpaceMenu({ space, isMobile }: { space: Space; isMobile?: boo
     } else {
       menu = [
         {
-          icon: 'icon-house-party',
+          icon: !space.theme_name || space.theme_name === 'default' ? 'icon-house-party' : 'icon-home',
           path: '',
           label: 'Home',
         },
       ];
+
+      if (space.theme_name && space.theme_name !== 'default') {
+        menu.push({ icon: 'icon-ticket', path: 'events', label: 'Events' });
+      }
 
       if (space.lens_feed_id) {
         menu.push({
@@ -40,6 +46,21 @@ export function useSpaceMenu({ space, isMobile }: { space: Space; isMobile?: boo
           path: 'timeline',
           label: 'Timeline',
         });
+      }
+
+      if (stakingToken) {
+        menu.push(
+          {
+            icon: 'icon-token',
+            path: 'coin',
+            label: 'Community Coin',
+          },
+          {
+            icon: 'icon-rocket',
+            path: 'launchpad',
+            label: 'Launchpad',
+          },
+        );
       }
 
       if (space.sub_spaces) {
@@ -52,7 +73,7 @@ export function useSpaceMenu({ space, isMobile }: { space: Space; isMobile?: boo
     }
 
     return menu;
-  }, [pathname, space, isMobile]);
+  }, [pathname, space, isMobile, stakingToken]);
 
   const isActive = (item: { path: string }) => {
     const uid = space.slug || space._id;

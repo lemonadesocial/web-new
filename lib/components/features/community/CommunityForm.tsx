@@ -130,9 +130,8 @@ export function CommunityForm() {
 
       if (data) {
         const space = data.createSpace as Space;
-        router.push(`/manage/community/${space.slug || space._id}`);
+        router.push(`/s/manage/${space.slug || space._id}`);
       }
-      create({ variables: { input: values } });
     } catch (err: any) {
       toast.error(err.message);
     } finally {

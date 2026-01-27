@@ -65,6 +65,7 @@ export function Content() {
 
 export function MyHubs() {
   const me = useMe();
+  const router = useRouter();
   const { data, loading } = useQuery(GetSpacesDocument, {
     variables: {
       with_my_spaces: true,
@@ -100,7 +101,7 @@ export function MyHubs() {
             key={item._id}
             title={item.title}
             view={isMobile ? 'list-item' : 'card'}
-            onClick={() => (window.location.href = `/manage/community/${item.slug || item._id}`)}
+            onClick={() => router.push(`/s/manage/${item.slug || item._id}`)}
             subtitle={`${item.followers_count || 0} Subscribers`}
             image={{
               src: getImageSrc(item),

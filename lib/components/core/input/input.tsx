@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  variant?: 'default' | 'outlined';
+  variant?: 'default' | 'outlined' | 'underlined';
   inputSize?: 's' | 'm';
   error?: boolean;
 }
@@ -20,20 +20,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
   error,
   ...props
 }, ref) => {
-  const baseClasses = 'w-full rounded-sm focus:outline-none border border-transparent placeholder-quaternary px-2.5 hover:border hover:border-tertiary h-10 font-medium';
+  const baseClasses = 'w-full rounded-sm focus:outline-none border border-transparent placeholder-quaternary px-2.5 h-10 font-medium';
 
   const finalClassName = twMerge(
     clsx(
       baseClasses,
       {
-        'bg-primary/8': variant === 'default',
+        'bg-primary/8 hover:border hover:border-tertiary': variant === 'default',
         'bg-background/64 border-primary/8 hover:border-primary focus:border-primary': variant === 'outlined',
+        'bg-transparent border-0 border-b border-primary/8 rounded-none px-0': variant === 'underlined',
       },
       {
         'text-sm': inputSize === 's',
         'text-base': inputSize === 'm',
       },
-      error && 'border border-error',
+      error && variant !== 'underlined' && 'border border-error',
+      error && variant === 'underlined' && '!border-0 !border-b border-error',
       className
     )
   );
@@ -54,7 +56,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
 Input.displayName = 'Input';
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  variant?: 'default' | 'outlined';
+  variant?: 'default' | 'outlined' | 'underlined';
   inputSize?: 's' | 'm';
   error?: boolean;
   rows?: number;
@@ -79,12 +81,14 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
       {
         'bg-primary/8': variant === 'default',
         'bg-background/64 border border-primary/8 hover:border-primary focus:border-primary': variant === 'outlined',
+        'bg-transparent border-0 border-b border-primary/8 focus:border-primary rounded-none px-0 py-0': variant === 'underlined',
       },
       {
         'text-sm': inputSize === 's',
         'text-base': inputSize === 'm',
       },
-      error && 'border border-error',
+      error && variant !== 'underlined' && 'border border-error',
+      error && variant === 'underlined' && '!border-0 !border-b border-error',
       className
     )
   );

@@ -89,7 +89,7 @@ export function UpdateCryptoPriceModal({ price, onChange }: { price?: EventTicke
             <Menu.Trigger>
               <div className="flex rounded-sm bg-primary/8 py-2 px-3.5 gap-2.5 items-center w-full">
                 <i className="icon-account-balance size-5 text-secondary" />
-                <p className="flex-1">{selectedPaymentAccounts?.[0]?.title || "Select a vault"}</p>
+                <p className="flex-1 truncate">{selectedPaymentAccounts?.[0]?.title || "Select a vault"}</p>
                 <i className="icon-chevron-down size-5 text-quaternary" />
               </div>
             </Menu.Trigger>

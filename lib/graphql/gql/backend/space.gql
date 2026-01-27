@@ -65,6 +65,11 @@ fragment Space on Space {
     }
     wallet
   }
+  state
+  nft_enabled
+  theme_name
+  hostnames
+  fav_icon_url
 }
 
 fragment SpaceTagFragment on SpaceTag {
@@ -212,9 +217,15 @@ query GetSpaceEventRequests($space: MongoID!, $skip: Int!, $limit: Int!, $state:
       state
       decided_at
       decided_by
+      created_by_expanded {
+        name
+        display_name
+        email
+      }
       event_expanded {
         title
         start
+        timezone
         address {
           city
           country
@@ -227,6 +238,7 @@ query GetSpaceEventRequests($space: MongoID!, $skip: Int!, $limit: Int!, $state:
           type
           url
         }
+        guests
       }
     }
     total
@@ -300,6 +312,77 @@ query CheckSpaceSlug($slug: String!) {
   canUseSpaceSlug(slug: $slug)
 }
 
+query SearchSpaces($skip: Int, $limit: Int, $input: SearchSpaceInput) {
+  searchSpaces(input: $input, limit: $limit, skip: $skip) {
+    items {
+      ...Space
+    }
+    total
+  }
+}
+
+query GetSpaceMembers(
+  $space: MongoID!
+  $roles: [SpaceRole!]
+  $state: SpaceMembershipState
+  $visible: Boolean
+  $skip: Int
+  $limit: Int
+  $search: String
+  $sort: SortInput
+  $deletion: Boolean
+  $tags: [MongoID!]
+) {
+  listSpaceMembers(
+    space: $space
+    roles: $roles
+    state: $state
+    visible: $visible
+    skip: $skip
+    limit: $limit
+    search: $search
+    sort: $sort
+    deletion: $deletion
+    tags: $tags
+  ) {
+    total
+    items {
+      _id
+      user
+      user_name
+      email
+      space
+      role
+      state
+      visible
+      role_changed_at
+      deleted_at
+      user_expanded {
+        _id
+        name
+        display_name
+        email
+        new_photos_expanded(limit: 1) {
+          _id
+          key
+          bucket
+        }
+      }
+      event_count
+      checkin_count
+      tags {
+        _id
+        space
+        tag
+        color
+        type
+        targets
+        targets_count
+      }
+    }
+  }
+}
+
 #### Mutations
 
 mutation FollowSpace($space: MongoID!) {
@@ -334,5 +417,95 @@ mutation CreateExternalEvent($input: EventInput!) {
 mutation CreateSpace($input: SpaceInput!) {
   createSpace(input: $input) {
     ...Space
+  }
+}
+
+mutation DecideSpaceEventRequests($input: DecideSpaceEventRequestsInput!) {
+  decideSpaceEventRequests(input: $input)
+}
+
+mutation AddSpaceMembers($input: AddSpaceMemberInput!) {
+  addSpaceMembers(input: $input)
+}
+
+mutation DeleteSpaceMembers($input: DeleteSpaceMemberInput!) {
+  deleteSpaceMembers(input: $input) {
+    _id
+    role
+    state
+    user
+    user_name
+    email
+    deleted_at
+    role_changed_at
+    user_expanded {
+      _id
+      name
+      email
+      image_avatar
+    }
+    visible
+  }
+}
+
+mutation DeleteSpace($id: MongoID!) {
+  deleteSpace(_id: $id)
+}
+
+mutation UpsertSpaceTag($input: SpaceTagInput!) {
+  insertSpaceTag(input: $input) {
+    ...SpaceTagFragment
+  }
+}
+
+mutation ManageSpaceTag($tagged: Boolean!, $target: String!, $id: MongoID!, $space: MongoID!) {
+  manageSpaceTag(tagged: $tagged, target: $target, _id: $id, space: $space)
+}
+
+mutation DeleteSpaceTag($id: MongoID!, $space: MongoID!) {
+  deleteSpaceTag(_id: $id, space: $space)
+}
+
+mutation AttachSubSpaces($id: MongoID!, $subSpaces: [String!]!) {
+  attachSubSpaces(_id: $id, sub_spaces: $subSpaces)
+}
+
+mutation RemoveSubSpaces($subSpaces: [MongoID!]!, $id: MongoID!) {
+  removeSubSpaces(sub_spaces: $subSpaces, _id: $id)
+}
+
+mutation UpdateSubSpaceOrder($id: MongoID!, $subSpaces: [MongoID!]!) {
+  updateSubSpaceOrder(_id: $id, sub_spaces: $subSpaces)
+}
+
+mutation UpsertSpaceTag($input: SpaceTagInput!) {
+  insertSpaceTag(input: $input) {
+    ...SpaceTagFragment
+  }
+}
+
+mutation DeleteSpaceTag($id: MongoID!, $space: MongoID!) {
+  deleteSpaceTag(_id: $id, space: $space)
+}
+
+query GetSpaceNFTs($skip: Int, $limit: Int, $space: MongoID, $kind: SpaceNFTKind) {
+  listSpaceNFTs(space: $space, limit: $limit, skip: $skip, kind: $kind) {
+    items {
+      _id
+      cover_image_url
+      name
+      content_url
+      kind
+      token_limit
+      contracts {
+        _id
+        space_nft
+        network_id
+        mint_price
+        currency_address
+        deployed_contract_address
+      }
+    }
+    total
   }
 }

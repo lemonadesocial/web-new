@@ -5,6 +5,7 @@ import {
   Address,
   EmailSetting,
   Event,
+  EventRole,
   EventTicketCategory,
   EventTicketPrice,
   EventTokenGate,
@@ -15,7 +16,7 @@ import {
   User,
 } from '$lib/graphql/generated/backend/graphql';
 
-import { formatCurrency } from './string';
+import { formatCurrency, formatNumber } from './string';
 
 import { convertFromUtcToTimezone, formatWithTimezone } from './date';
 import { getListChains } from './crypto';
@@ -34,14 +35,15 @@ export function formatCryptoPrice(price: EventTicketPrice, skipCurrency: boolean
   }
   if (skipCurrency) return ethers.formatUnits(cost, decimals);
 
-  return `${ethers.formatUnits(cost, decimals)} ${currency.toUpperCase()}`;
+  // return `${ethers.formatUnits(cost, decimals)} ${currency.toUpperCase()}`;
+  return `${formatNumber(ethers.formatUnits(cost, decimals))} ${currency.toUpperCase()}`;
 }
 
 export function formatFiatPrice(price: EventTicketPrice) {
   const { cost, currency, payment_accounts_expanded } = price;
   const decimals = payment_accounts_expanded?.[0]?.account_info?.currency_map[currency]?.decimals;
 
-  if (!decimals) return '';
+  if (!Number.isFinite(decimals)) return '';
 
   return formatCurrency(Number(cost), currency, decimals, false);
 }
@@ -71,6 +73,22 @@ export function getEventAddress(address?: Address | undefined, short?: boolean) 
   return [
     address.title,
     address.street_1,
+    address.street_2,
+    address.postal,
+    address.city,
+    address.region,
+    address.country,
+    address.additional_directions,
+  ]
+    .filter(Boolean)
+    .join(', \n');
+}
+
+export function getEventSubAddress(address?: Address | undefined) {
+  if (!address) return;
+
+  return [
+    address.street_1 === address.title ? undefined : address.street_1,
     address.street_2,
     address.postal,
     address.city,
@@ -133,7 +151,21 @@ export function attending(event: Event, user: string | undefined) {
 }
 
 export function hosting(event: Event, user: string) {
-  return [event.host, ...(event.cohosts || [])].includes(user);
+  const cohostIds = event.cohosts_expanded_new
+    ?.filter((host) => !host?.event_role || host?.event_role === EventRole.Cohost)
+    .map((host) => host?._id)
+    .filter(Boolean) || [];
+  
+  return [event.host, ...cohostIds].includes(user);
+}
+
+export function isPromoter(event: Event, user: string) {
+  const promoterIds = event.cohosts_expanded_new
+    ?.filter((host) => host?.event_role === EventRole.Gatekeeper)
+    .map((host) => host?._id)
+    .filter(Boolean) || [];
+  
+  return promoterIds.includes(user);
 }
 
 export function getAssignedTicket(tickets: Ticket[], user?: string, email?: string | null) {
@@ -158,7 +190,7 @@ export const getDisplayPrice = (cost: string, currency: string, account?: Paymen
 
   const decimals = account?.account_info.currency_map[currency]?.decimals;
 
-  if (!decimals) return 0;
+  if (!Number.isFinite(decimals)) return 0;
 
   if (account.provider === 'stripe') return formatCurrency(Number(cost), currency, decimals, false);
 
@@ -175,11 +207,8 @@ export function isAttending(event: Event, userId: string): boolean {
   ).has(userId);
 }
 
-export function downloadTicketPass(ticket: Ticket) {
-  window.open(
-    `${process.env.NEXT_PUBLIC_LMD_BE}/event/pass/${/iPad|iPhone|iPod/.test(navigator.userAgent) ? 'apple' : 'google'}/${ticket._id}?shortid=${ticket.shortid}`,
-    '_blank',
-  );
+export function getTicketPassUrl(ticket: Ticket, provider: 'apple' | 'google') {
+  return `${process.env.NEXT_PUBLIC_LMD_BE}/event/pass/${provider}/${ticket._id}?shortid=${ticket.shortid}`;
 }
 
 export function extractShortId(url: string): string | null {
@@ -194,15 +223,9 @@ export function getEventCohosts(event: Event) {
 }
 
 export function formatTokenGateRange(tokenGate: EventTokenGate) {
-  const { is_nft, min_value, max_value, decimals } = tokenGate;
+  const { min_value, decimals } = tokenGate;
 
-  if (is_nft) {
-    if (min_value && max_value) return `(${min_value} - ${max_value})`;
-    if (min_value) return `> ${max_value}`;
-    if (max_value) return `< ${max_value}`;
-  }
-
-  if (min_value && decimals) return `> ${formatUnits(min_value, decimals)}`;
+  if (min_value && decimals) return `> ${formatNumber(formatUnits(min_value, decimals))}`;
 
   return `> 0`;
 }

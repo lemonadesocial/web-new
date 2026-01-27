@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   SelfQRcodeWrapper,
   SelfAppBuilder,
@@ -7,15 +7,15 @@ import {
 
 import { Button, modal, ModalContent, toast } from "$lib/components/core";
 import { useClient, useMutation } from "$lib/graphql/request";
-import { CreateSelfVerificationRequestDocument, GetSelfVerificationStatusDocument } from "$lib/graphql/generated/backend/graphql";
+import { CreateSelfVerificationRequestDocument, GetSelfVerificationStatusDocument, SelfVerificationConfig } from "$lib/graphql/generated/backend/graphql";
 
-import { EndpointType, getUniversalLink } from "@selfxyz/common";
+import { EndpointType, getUniversalLink, SelfAppDisclosureConfig } from "@selfxyz/common";
 import { SELF_VERIFICATION_CONFIG } from "$lib/utils/constants";
 import { useMe } from "$lib/hooks/useMe";
 import { userAvatar } from "$lib/utils/user";
 import { ErrorModal } from "./ErrorModal";
 
-export function GetVerifiedModal() {
+export function GetVerifiedModal({ config = SELF_VERIFICATION_CONFIG }: { config?: SelfVerificationConfig }) {
   const me = useMe();
   const { client } = useClient();
 
@@ -25,6 +25,31 @@ export function GetVerifiedModal() {
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
+
+  const requirements = useMemo(() => {
+    const requirementMap: Array<{ key: keyof typeof config; label: string | ((value: any) => string) }> = [
+      { key: 'minimumAge', label: (age: number) => `Age [over ${age}]` },
+      { key: 'name', label: 'Name' },
+      { key: 'date_of_birth', label: 'Date of Birth' },
+      { key: 'nationality', label: 'Nationality' },
+      { key: 'gender', label: 'Gender' },
+      { key: 'passport_number', label: 'Passport Number' },
+      { key: 'issuing_state', label: 'Issuing State' },
+      { key: 'expiry_date', label: 'Expiry Date' },
+      { key: 'excludedCountries', label: 'Country eligibility' },
+      { key: 'ofac', label: 'My name is not present on the OFAC list' },
+    ];
+
+    return requirementMap
+      .filter(({ key }) => {
+        const value = config[key];
+        return key === 'excludedCountries' ? value && Array.isArray(value) && value.length > 0 : !!value;
+      })
+      .map(({ key, label }) => {
+        const value = config[key];
+        return typeof label === 'function' ? label(value) : label;
+      });
+  }, [config]);
 
   const [createSelfVerificationRequest, { loading: creatingRequest }] = useMutation(CreateSelfVerificationRequestDocument, {
     onComplete: (_, data) => {
@@ -40,7 +65,7 @@ export function GetVerifiedModal() {
             userId: uuid,
             userIdType: 'uuid',
             endpointType: endpoint_type as EndpointType,
-            disclosures: SELF_VERIFICATION_CONFIG
+            disclosures: config as SelfAppDisclosureConfig
           }).build();
 
           setSelfApp(app);
@@ -59,7 +84,7 @@ export function GetVerifiedModal() {
   const handleRevealCode = () => {
     createSelfVerificationRequest({
       variables: {
-        config: SELF_VERIFICATION_CONFIG
+        config
       }
     });
   };
@@ -69,7 +94,7 @@ export function GetVerifiedModal() {
     client.refetchQuery({
       query: GetSelfVerificationStatusDocument,
       variables: {
-        config: SELF_VERIFICATION_CONFIG
+        config
       }
     });
   };
@@ -138,21 +163,17 @@ export function GetVerifiedModal() {
         <p className="text-sm text-secondary">Prove you are a unique human and not a bot. Unlock rewards and build trust across events and communities.</p>
       </div>
 
-      <div className="space-y-2">
-        <p className="text-sm text-secondary">You'll be asked to confirm:</p>
-        <div className="flex gap-2 items-center">
-          <i className="icon-checkbox-sharp size-4" />
-          <p className="text-sm">Age [over 18]</p>
+      {requirements.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-sm text-secondary">You'll be asked to confirm:</p>
+          {requirements.map((requirement, index) => (
+            <div key={index} className="flex gap-2 items-center">
+              <i className="icon-checkbox-sharp size-4" />
+              <p className="text-sm">{requirement}</p>
+            </div>
+          ))}
         </div>
-        <div className="flex gap-2 items-center">
-          <i className="icon-checkbox-sharp size-4" />
-          <p className="text-sm">Nationality</p>
-        </div>
-        <div className="flex gap-2 items-center">
-          <i className="icon-checkbox-sharp size-4" />
-          <p className="text-sm">My name is not present on the OFAC list</p>
-        </div>
-      </div>
+      )}
 
       <p className="text-sm text-secondary">Please note: you'll need the Self app on your phone to complete verification. <a href="https://self.xyz/" target="_blank" className="text-accent-400">Learn more</a>.</p>
 

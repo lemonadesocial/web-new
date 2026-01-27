@@ -13,6 +13,7 @@ import {
   GetSpaceDocument,
   GetSpaceEventsDocument,
   GetSubSpacesDocument,
+  GetUpcomingEventsDocument,
   PublicSpace,
   Space,
   UnfollowSpaceDocument,
@@ -43,7 +44,7 @@ import { useLemonhead } from '$lib/hooks/useLemonhead';
 export function HeroSection(props: { space?: Space }) {
   const me = useMe();
   const { data: dataSpace } = useQuery(GetSpaceDocument, {
-    variables: { id: props.space?._id! },
+    variables: { id: props.space?._id },
     skip: !props.space?._id,
   });
   const space = (dataSpace?.getSpace || props.space) as Space;
@@ -483,19 +484,18 @@ function renderTextWithLinks(text?: string) {
   return elements;
 }
 
-export function UpcomingEventsCard() {
-  const me = useMe();
+export function UpcomingEventsCard({ userId }: { userId?: string }) {
   const router = useRouter();
 
-  const { data: dataGetUpcomingEvents } = useQuery(GetSpaceEventsDocument, {
+  const { data: dataGetUpcomingEvents } = useQuery(GetUpcomingEventsDocument, {
     variables: {
       limit: 3,
       skip: 0,
-      endFrom: FROM_NOW,
+      user: userId,
     },
-    skip: !me?._id,
+    skip: !userId,
   });
-  const upcomingEvents = (dataGetUpcomingEvents?.getEvents || []) as Event[];
+  const upcomingEvents = (dataGetUpcomingEvents?.events || []) as Event[];
 
   if (!upcomingEvents.length) return null;
 

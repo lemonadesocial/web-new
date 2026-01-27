@@ -54,7 +54,14 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
 
   return (
     <>
-      <div className="flex w-full min-w-fit items-center md:hidden p-2.5 border-(length:--card-border-width) border-card-border rounded-md justify-between gap-4">
+      <div
+        className="flex w-full min-w-fit items-center md:hidden p-2.5 border-(length:--card-border-width) border-card-border rounded-md justify-between gap-4"
+        onClick={() => {
+          if (invitations.length === 5) {
+            handleInvite();
+          }
+        }}
+      >
         <div className="flex gap-2.5 flex-1 items-center">
           <div className="flex justify-center items-center rounded-sm bg-alert-400/16 size-8 p-1.5 aspect-square">
             <i className="icon-user-plus text-alert-400" />
@@ -75,13 +82,20 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
         )}
       </div>
 
-      <div className="hidden md:flex p-4 border-(length:--card-border-width) border-card-border  rounded-md flex-col gap-3">
+      <div
+        className="hidden md:flex p-4 border-(length:--card-border-width) border-card-border  rounded-md flex-col gap-3"
+        onClick={() => {
+          if (invitations.length === 5) {
+            handleInvite();
+          }
+        }}
+      >
         <div className="flex justify-between">
           <div className="flex justify-center items-center rounded-full bg-alert-400/16 size-[48px] aspect-square">
             <i className="icon-user-plus text-alert-400" />
           </div>
 
-          <div className="tooltip">
+          <div className="tooltip tooltip-bottom">
             <div className="tooltip-content backdrop-blur-md border-card text-left! p-3">
               <p>LemonHeads are currently invite-only. Each LemonHead can invite up to 5 wallets to mint their own.</p>
             </div>

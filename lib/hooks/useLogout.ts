@@ -22,8 +22,13 @@ export function useRawLogout() {
 export function useLogOut() {
   const rawLogout = useRawLogout();
 
-  return async () => {
+  return async (redirectToHome = false) => {
     await rawLogout();
+
+    if (redirectToHome) {
+      window.location.href = '/';
+      return;
+    }
 
     //-- remove the auth cookie from the url and reload
     const url = new URL(window.location.href);

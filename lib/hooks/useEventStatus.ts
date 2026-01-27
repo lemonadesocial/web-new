@@ -38,13 +38,22 @@ export function useEventStatus(start?: string, end?: string): EventStatusData {
       const d = intervalToDuration({ start: now, end: startDate });
 
       const totalDays = differenceInDays(startDate, now);
+      const years = d.years ?? 0;
+      const months = d.months ?? 0;
+      const totalMonths = years * 12 + months;
+      const days = d.days ?? 0;
       const hours = d.hours ?? 0;
       const minutes = d.minutes ?? 0;
       const seconds = d.seconds ?? 0;
       const status = hours === 0 && minutes < 60 ? 'starting-soon' : 'upcoming';
 
       let timeLabel = '';
-      if (totalDays > 0) {
+      if (totalMonths > 0) {
+        timeLabel = `${totalMonths}mo`;
+        if (days > 0) {
+          timeLabel += ` ${days}d`;
+        }
+      } else if (totalDays > 0) {
         timeLabel = `${totalDays}d`;
         if (hours > 0) {
           timeLabel += ` ${hours}h`;

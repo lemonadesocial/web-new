@@ -1,53 +1,31 @@
-import { useEffect, useState } from "react";
-import { useAtom, useAtomValue } from "jotai";
+import { useState } from "react";
+import { useAtom } from "jotai";
 
 import { Button, ErrorText, modal, ModalContent, toast } from "$lib/components/core";
-import { getAppKitNetwork, useAppKit, useAppKitAccount, useAppKitNetwork } from "$lib/utils/appkit";
-import { LENS_CHAIN_ID } from "$lib/utils/lens/constants";
-import { chainsMapAtom, sessionAtom } from "$lib/jotai";
+import { useAppKit, useAppKitAccount } from "$lib/utils/appkit";
+import { sessionAtom } from "$lib/jotai";
 import { useHandleVerifyWallet } from "$lib/hooks/useSignIn";
 import { useSignWallet } from "$lib/hooks/useSignWallet";
 
 import { completeProfile } from "./utils";
-import { SelectProfileModal } from "../lens-account/SelectProfileModal";
 import { formatError } from "$lib/utils/crypto";
 
-export function ConnectWalletModal({ verifyRequired, skipSelectProfile }: { verifyRequired: boolean; skipSelectProfile?: boolean }) {
+export function ConnectWalletModal({ verifyRequired }: { verifyRequired: boolean }) {
   const { isConnected } = useAppKitAccount();
   const { open } = useAppKit();
-  const { chainId, switchNetwork } = useAppKitNetwork();
   const { address } = useAppKitAccount();
   const [session, setSession] = useAtom(sessionAtom);
 
   const [verified, setVerified] = useState(!verifyRequired);
-
-  const chainsMap = useAtomValue(chainsMapAtom);
-  const chain = chainsMap[LENS_CHAIN_ID];
   const signWallet = useSignWallet();
-
-  const isChainValid = chainId?.toString() === LENS_CHAIN_ID && chain;
-
-  useEffect(() => {
-    if (verified && isConnected && isChainValid && !skipSelectProfile) {
-      modal.close();
-      setTimeout(() => {
-        modal.open(SelectProfileModal);
-      });
-    }
-  }, [isConnected, isChainValid, verified]);
 
   const { processSignature, loading: loadingVerify, error: errorVerify } = useHandleVerifyWallet({
     onSuccess: () => {
       if (address && session) {
         setSession({ ...session, wallet: address });
       }
-
-      if (skipSelectProfile) {
-        modal.close();
-        return;
-      }
-
       setVerified(true);
+      modal.close();
     },
   });
 
@@ -71,16 +49,6 @@ export function ConnectWalletModal({ verifyRequired, skipSelectProfile }: { veri
     )
   }
 
-  if (!isChainValid) {
-    return (
-      <ConnectWalletModalContainer subtitle={`Please switch to ${chain.name} in your wallet to continue.`}>
-        <Button variant="secondary" className="w-full" onClick={() => switchNetwork(getAppKitNetwork(chain))}>
-          Switch to {chain.name}
-        </Button>
-      </ConnectWalletModalContainer>
-    );
-  }
-
   if (!verified) {
     return (
       <ConnectWalletModalContainer subtitle="Please sign a message to verify your ownership of the wallet. This will not incur any cost." errorMessage={errorVerify}>
@@ -92,24 +60,11 @@ export function ConnectWalletModal({ verifyRequired, skipSelectProfile }: { veri
   }
 
   return (
-    <ConnectWalletModalContainer>
-      <Button
-        variant="secondary"
-        className="w-full"
-        onClick={() => {
-          modal.close();
-          setTimeout(() => {
-            modal.open(SelectProfileModal);
-          });
-        }}
-      >
-        Continue
-      </Button>
-    </ConnectWalletModalContainer>
+    <ConnectWalletModalContainer subtitle="Your wallet is already verified." />
   );
 }
 
-export function ConnectWalletModalContainer({ children, subtitle, errorMessage }: { children: React.ReactNode; subtitle?: string; errorMessage?: string }) {
+export function ConnectWalletModalContainer({ children, subtitle, errorMessage }: { children?: React.ReactNode; subtitle?: string; errorMessage?: string }) {
   return (
     <ModalContent icon="icon-wallet">
       <div className="space-y-4">
@@ -120,16 +75,26 @@ export function ConnectWalletModalContainer({ children, subtitle, errorMessage }
           </p>
         </div>
         {errorMessage && <ErrorText message={errorMessage} />}
-        {children}
-        <p
-          className="w-full text-tertiary text-center cursor-pointer"
-          onClick={() => {
-            completeProfile();
-            modal.close();
-          }}
-        >
-          Do It Later
-        </p>
+        {
+          children
+            ? <>
+              {children}
+              <p
+                className="w-full text-tertiary text-center cursor-pointer"
+                onClick={() => {
+                  completeProfile();
+                  modal.close();
+                }}
+              >
+                Do It Later
+              </p>
+            </>
+            : (
+              <Button variant="tertiary" className="w-full" onClick={() => modal.close()}>
+                Done
+              </Button>
+            )
+        }
       </div>
     </ModalContent>
   )

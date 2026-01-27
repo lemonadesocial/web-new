@@ -27,3 +27,16 @@ export const lemonheadsClient  = new GraphqlClient({
   url: process.env.NEXT_PUBLIC_LEMONHEADS_INDEXER_URL as string,
   cache: new InMemoryCache(),
 });
+
+export function getCoinClient() {
+  return new GraphqlClient({
+    url: process.env.NEXT_PUBLIC_COIN_INDEXER_URL as string,
+    cache: new InMemoryCache(),
+  });
+}
+
+export const coinClient = getCoinClient();
+export const usernameClient = new GraphqlClient({
+  url: process.env.NEXT_PUBLIC_USERNAME_INDEXER as string,
+  cache: new InMemoryCache(),
+});

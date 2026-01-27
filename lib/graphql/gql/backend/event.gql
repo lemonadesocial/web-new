@@ -9,6 +9,7 @@ query GetEvent($id: MongoID, $shortid: String) {
     shortid
     host
     cohosts
+    me_is_host
     host_expanded_new {
       _id
       name
@@ -29,6 +30,7 @@ query GetEvent($id: MongoID, $shortid: String) {
       display_name
       email
       image_avatar
+      event_role
     }
     accepted
     new_new_photos_expanded {
@@ -96,8 +98,23 @@ query GetEvent($id: MongoID, $shortid: String) {
     }
     application_profile_fields {
       field
-      required
       question
+      required
+    }
+    self_verification {
+      config {
+        date_of_birth
+        excludedCountries
+        expiry_date
+        gender
+        issuing_state
+        minimumAge
+        name
+        nationality
+        ofac
+        passport_number
+      }
+      enabled
     }
     rsvp_wallet_platforms {
       platform
@@ -126,6 +143,7 @@ query GetEvent($id: MongoID, $shortid: String) {
       }
     }
     guest_limit
+    guest_limit_per
     terms_text
     virtual
     virtual_url
@@ -155,6 +173,8 @@ query GetEvent($id: MongoID, $shortid: String) {
       ticket_types
     }
     hide_attending
+    registration_disabled
+    ticket_limit_per
   }
 }
 
@@ -471,6 +491,7 @@ query GetEventTicketTypes($input: GetEventTicketTypesInput!) {
       photos_expanded(limit: 1) {
         _id
         key
+        type
         bucket
       }
       category
@@ -481,6 +502,8 @@ query GetEventTicketTypes($input: GetEventTicketTypesInput!) {
         position
       }
       position
+      passcode_enabled
+      recommended_upgrade_ticket_types
     }
   }
 }
@@ -669,6 +692,7 @@ query listEventTicketTypes($event: MongoID!) {
       _id
       bucket
       key
+      type
     }
     prices {
       cost
@@ -820,12 +844,17 @@ query ListEventGuests(
       }
       ticket {
         _id
+        shortid
         created_at
         type_expanded {
           _id
           title
         }
         metadata
+        checkin {
+          _id
+          active
+        }
       }
       user {
         _id
@@ -848,6 +877,13 @@ query GetEventGuestDetailedInfo($event: MongoID!, $email: String) {
         _id
         title
       }
+      cancelled_by
+      cancelled_by_expanded {
+        _id
+        display_name
+        name
+      }
+      cancelled_at
     }
     ticket {
       _id
@@ -856,6 +892,25 @@ query GetEventGuestDetailedInfo($event: MongoID!, $email: String) {
       type_expanded {
         _id
         title
+      }
+      upgrade_history {
+        from_type
+        from_type_expanded {
+          _id
+          title
+        }
+        to_type
+        to_type_expanded {
+          _id
+          title     
+        }
+        updated_at
+        updated_by
+        updated_by_expanded {
+          _id
+          display_name
+          name
+        }
       }
     }
     user {
@@ -892,11 +947,31 @@ query GetEventGuestDetailedInfo($event: MongoID!, $email: String) {
     join_request {
       _id
       state
+      created_at
+      decided_at
+      decided_by_expanded {
+        _id
+        display_name
+        name
+      }
+      requested_tickets {
+        count
+        ticket_type
+      }
     }
     application {
       answer
       answers
       question
+    }
+    invitation {
+      _id
+      created_at
+      inviters_expanded {
+        _id
+        display_name
+        name
+      }
     }
   }
 }
@@ -1312,5 +1387,232 @@ mutation DeleteEventTicketDiscounts($event: MongoID!, $discounts: [String!]!) {
       active
       ticket_types
     }
+  }
+}
+
+mutation UpdateEventSelfVerification($id: MongoID!, $self_verification: SelfVerificationInput) {
+  updateEvent(_id: $id, input: { self_verification: $self_verification }) {
+    self_verification {
+      config {
+        date_of_birth
+        excludedCountries
+        expiry_date
+        gender
+        issuing_state
+        minimumAge
+        name
+        nationality
+        ofac
+        passport_number
+      }
+      enabled
+    }
+  }
+}
+
+query GetEventPaymentStatistics($event: MongoID!) {
+  getEventPaymentStatistics(event: $event) {
+    total_payments
+    stripe_payments {
+      count
+      revenue {
+        currency
+        formatted_total_amount
+      }
+    }
+    crypto_payments {
+      count
+      revenue {
+        currency
+        formatted_total_amount
+      }
+      networks {
+        chain_id
+        count
+      }
+    }
+  }
+}
+
+query GetListEventPayments(
+  $skip: Int
+  $limit: Int
+  $event: MongoID!
+  $provider: NewPaymentProvider
+  $networks: [String!]
+  $checked_in: Boolean
+  $ticket_types: [MongoID!]
+  $search: String
+) {
+  listEventPayments(
+    skip: $skip
+    limit: $limit
+    event: $event
+    provider: $provider
+    networks: $networks
+    checked_in: $checked_in
+    ticket_types: $ticket_types
+    search: $search
+  ) {
+    records {
+      _id
+      account_expanded {
+        provider
+      }
+      stripe_payment_info {
+        payment_intent
+        card {
+          last4
+          brand
+        }
+      }
+      application {
+        question
+        answer
+      }
+      buyer_info {
+        email
+        name
+      }
+      buyer_user {
+        email
+        display_name
+        name
+        image_avatar
+      }
+      amount
+      currency
+      due_amount
+      fee
+      formatted_total_amount
+      formatted_discount_amount
+      currency
+      user
+      stamps
+      ticket_types_expanded {
+        _id
+        category_expanded {
+          title
+        }
+      }
+      state
+      account_expanded {
+        _id
+        active
+        created_at
+        user
+        type
+        title
+        provider
+      }
+      ref_data
+      transfer_params
+      transfer_metadata
+      crypto_payment_info {
+        network
+        tx_hash
+      }
+    }
+    total
+  }
+}
+
+query getTicketStatistics($id: MongoID!) {
+  getTicketStatistics(id: $id) {
+    all
+    checked_in
+    invited
+    issued
+    cancelled
+    applicants {
+      state
+      count
+    }
+    not_checked_in
+    ticket_types {
+      ticket_type
+      ticket_type_title
+      count
+    }
+  }
+}
+
+query GetEventTicketSoldChartData($event: MongoID!, $start: DateTimeISO!, $end: DateTimeISO!, $types: [MongoID!]) {
+  getEventTicketSoldChartData(event: $event, start: $start, end: $end, types: $types) {
+    items {
+      created_at
+      type
+    }
+  }
+}
+
+query GetEventViewChartData($start: DateTimeISO!, $end: DateTimeISO!, $event: MongoID!) {
+  getEventViewChartData(start: $start, end: $end, event: $event) {
+    items {
+      date
+    }
+  }
+}
+
+query GetEventViewStats($event: MongoID!, $ranges: [DateRangeInput!]!) {
+  getEventViewStats(event: $event, ranges: $ranges) {
+    counts
+  }
+}
+
+query Views($event: MongoID!, $limit: Int!) {
+  getEventLatestViews(event: $event, limit: $limit) {
+    views {
+      date
+      geoip_country
+      geoip_region
+      geoip_city
+      user_agent
+    }
+  }
+}
+
+query GetEventTopViews($event: MongoID!, $cityLimit: Int!, $sourceLimit: Int!) {
+  getEventTopViews(event: $event, city_limit: $cityLimit, source_limit: $sourceLimit) {
+    by_city {
+      count
+      geoip_city
+      geoip_country
+      geoip_region
+    }
+    by_source {
+      count
+      utm_source
+    }
+    total
+  }
+}
+
+subscription SubscribeEventLatestViews($event: MongoID!) {
+  subscribeEventLatestViews(event: $event) {
+    date
+    geoip_city
+    geoip_country
+    geoip_region
+    user_agent
+  }
+}
+
+query GetEventCohostRequests($input: GetEventCohostRequestsInput!) {
+  getEventCohostRequests(input: $input) {
+    _id
+    event_role
+    to_expanded {
+      _id
+      name
+      display_name
+      email
+      image_avatar
+    }
+    visible
+    to_email
+    to
+    profile_image_avatar
+    profile_name
   }
 }

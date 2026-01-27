@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useAtomValue as useJotaiAtomValue } from "jotai";
 import { Eip1193Provider } from "ethers";
+import * as Sentry from '@sentry/nextjs';
 
 import { Button, ModalContent } from "$lib/components/core";
 import { EthereumAccount, EthereumRelayAccount, EthereumStakeAccount, UpdatePaymentDocument } from "$lib/graphql/generated/backend/graphql";
 import { useMutation } from "$lib/graphql/request";
-import { useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
+import { appKit, useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
 import { approveERC20Spender, formatError, formatWallet, isNativeToken, LemonadeRelayPaymentContract, LemonadeStakePaymentContract, transfer, writeContract } from "$lib/utils/crypto";
 import { chainsMapAtom } from "$lib/jotai";
 
@@ -80,7 +81,7 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
           { value: isNativeToken(tokenAddress, network) ? payAmount.toString() : 0 }
         );
 
-        handleConfirm(transaction.hash);
+        await handleConfirm(transaction.hash);
 
         return;
       }
@@ -103,7 +104,7 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
           { value: isNativeToken(tokenAddress, network) ? payAmount.toString() : 0 }
         );
 
-        handleConfirm(transaction.hash);
+        await handleConfirm(transaction.hash);
 
         return;
       }
@@ -111,8 +112,15 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
       const toAddress = paymentAccountInfo.address;
       const txHash = await transfer(toAddress, (pricingInfo?.total || 0).toString(), tokenAddress, walletProvider as Eip1193Provider, network);
 
-      handleConfirm(txHash);
+      await handleConfirm(txHash);
     } catch (e) {
+      Sentry.captureException(e, {
+        extra: {
+          walletInfo: appKit.getWalletInfo(),
+          paymentId,
+        },
+      });
+      
       setError(formatError(e));
     } finally {
       setLoadingSign(false);
@@ -120,29 +128,38 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
   };
 
   const handleConfirm = async (txHash: string) => {
-    await handleUpdatePayment({
-      variables: {
-        input: {
-          _id: paymentId,
-          payment_secret: paymentSecret,
-          transfer_params: {
-            tx_hash: txHash,
+    try {
+      if (!txHash) {
+        throw new Error('Failed to get transaction hash');
+      }
+  
+      await handleUpdatePayment({
+        variables: {
+          input: {
+            _id: paymentId,
+            payment_secret: paymentSecret,
+            transfer_params: {
+              tx_hash: txHash,
+            }
           }
         }
-      }
-    });
-
-    registrationModal.close();
-
-    registrationModal.open(VerifyingTransactionModal, {
-      props: {
-        paymentId,
-        paymentSecret,
-        txHash,
-        hasJoinRequest
-      },
-      dismissible: false
-    });
+      });
+  
+      registrationModal.close();
+  
+      registrationModal.open(VerifyingTransactionModal, {
+        props: {
+          paymentId,
+          paymentSecret,
+          txHash,
+          hasJoinRequest
+        },
+        dismissible: false
+      });
+    } catch (e) {
+      Sentry.captureException(e);
+      setError(formatError(e));
+    }
   };
 
   if (error) return (

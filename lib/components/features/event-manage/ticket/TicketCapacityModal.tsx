@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { Button, Input, LabeledInput, modal, ModalContent } from "$lib/components/core";
 
-export function TicketCapacityModal({ ticketLimit, onChange }: { ticketLimit: number | undefined; onChange: (limit: number | undefined) => void }) {
+export function TicketCapacityModal({ ticketLimit, onChange }: { ticketLimit: number | null; onChange: (limit: number | null) => void }) {
   const [limit, setLimit] = useState(ticketLimit);
 
   const handleConfirm = async () => {
@@ -21,10 +21,11 @@ export function TicketCapacityModal({ ticketLimit, onChange }: { ticketLimit: nu
         <LabeledInput label="Capacity">
           <Input
             type="number"
-            value={limit}
+            value={limit ?? ''}
             onChange={(e) => setLimit(e.target.valueAsNumber)}
             variant="outlined"
             placeholder="Unlimited"
+            min={1}
           />
         </LabeledInput>
 
@@ -33,7 +34,7 @@ export function TicketCapacityModal({ ticketLimit, onChange }: { ticketLimit: nu
             variant="tertiary"
             className="w-full"
             onClick={() => {
-              onChange(undefined);
+              onChange(null);
               modal.close();
             }}
           >

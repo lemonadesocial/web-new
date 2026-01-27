@@ -1,5 +1,981 @@
 # Changelog
 
+## [9.14.0](https://github.com/lemonadesocial/web-new/compare/v9.13.0...v9.14.0) (2026-01-26)
+
+
+### Features
+
+* checking file path ([bd33f42](https://github.com/lemonadesocial/web-new/commit/bd33f42a005a2ff79885c9607a85bfc99d41b843))
+* replace passport image cache ([bf4966f](https://github.com/lemonadesocial/web-new/commit/bf4966fe27f10f5aa4b2e14e279f5fb01d964dd1))
+
+## [9.13.0](https://github.com/lemonadesocial/web-new/compare/v9.12.0...v9.13.0) (2026-01-26)
+
+
+### Features
+
+* check can mint for go next ([f5870ad](https://github.com/lemonadesocial/web-new/commit/f5870ad1a691c4bda1d50538207c1188f2b08c88))
+* checking cache ([44bdadb](https://github.com/lemonadesocial/web-new/commit/44bdadb8c98ce560e71a19df337866d8125d5783))
+
+
+### Bug Fixes
+
+* checking image cache ([c500b25](https://github.com/lemonadesocial/web-new/commit/c500b25715e08f6f08350abcbae1c1d18a7c306e))
+* theme override widgets ([fe14c93](https://github.com/lemonadesocial/web-new/commit/fe14c932ef0927ef97191c500ac756ddf60bdbcb))
+
+## [9.12.0](https://github.com/lemonadesocial/web-new/compare/v9.11.0...v9.12.0) (2026-01-26)
+
+
+### Features
+
+* check whitelist ([1921c4e](https://github.com/lemonadesocial/web-new/commit/1921c4e76a905d6263c4d5d1ed5afa359d61c884))
+* update custom passport image for template ([f4a9782](https://github.com/lemonadesocial/web-new/commit/f4a978249976aa84553726bc089a12f8ed612a34))
+* update get mint data ([cc42960](https://github.com/lemonadesocial/web-new/commit/cc4296081e16a9d8053ea2a63427f31b69c247bd))
+* update query mint data ([39a4327](https://github.com/lemonadesocial/web-new/commit/39a4327d05803aa865c9ccd111dac5f0dcd6637f))
+
+## [9.11.0](https://github.com/lemonadesocial/web-new/compare/v9.10.0...v9.11.0) (2026-01-26)
+
+
+### Features
+
+* update dns record values ([22b5573](https://github.com/lemonadesocial/web-new/commit/22b5573fbdca4a291350d63b615ce0a159af060f))
+
+
+### Bug Fixes
+
+* remove dollar sign ([97f61d2](https://github.com/lemonadesocial/web-new/commit/97f61d26ca836142417a62bfbac18d686cf33dd0))
+
+## [9.10.0](https://github.com/lemonadesocial/web-new/compare/v9.9.1...v9.10.0) (2026-01-26)
+
+
+### Features
+
+* update dns config ([0bf9f2b](https://github.com/lemonadesocial/web-new/commit/0bf9f2b6bb0c8ccd3902a9ca3b931997d60b5599))
+
+## [9.9.1](https://github.com/lemonadesocial/web-new/compare/v9.9.0...v9.9.1) (2026-01-21)
+
+
+### Bug Fixes
+
+* filter default domain ([bf00328](https://github.com/lemonadesocial/web-new/commit/bf003285a9697d95ad839fcf91f890c7b5e541c4))
+
+## [9.9.0](https://github.com/lemonadesocial/web-new/compare/v9.8.0...v9.9.0) (2026-01-20)
+
+
+### Features
+
+* custom domain ([6b57261](https://github.com/lemonadesocial/web-new/commit/6b572611cc75faab31d7dd6210eae0cecdab6d20))
+
+## [9.8.0](https://github.com/lemonadesocial/web-new/compare/v9.7.0...v9.8.0) (2026-01-20)
+
+
+### Features
+
+* check-in access ([fc22001](https://github.com/lemonadesocial/web-new/commit/fc2200124d02367dc6cac5a8975800868dc51393))
+
+## [9.7.0](https://github.com/lemonadesocial/web-new/compare/v9.6.0...v9.7.0) (2026-01-16)
+
+
+### Features
+
+* enable explore and tokens page ([4887500](https://github.com/lemonadesocial/web-new/commit/4887500d53a28c2493189a5fb53720a4cff7216f))
+
+## [9.6.0](https://github.com/lemonadesocial/web-new/compare/v9.5.0...v9.6.0) (2026-01-16)
+
+
+### Features
+
+* update grid cols ([2e4e537](https://github.com/lemonadesocial/web-new/commit/2e4e5375a454bc51486d0b4270f9cb0c3c1dacd4))
+
+## [9.5.0](https://github.com/lemonadesocial/web-new/compare/v9.4.0...v9.5.0) (2026-01-16)
+
+
+### Features
+
+* **lemonade-username:** add endpoint to retrieve metadata ([9d1c7ee](https://github.com/lemonadesocial/web-new/commit/9d1c7ee1f1f56364ae4268a639bc57fd4f1186b7))
+
+
+### Bug Fixes
+
+* rm view all - open new tab community hub ([f704f73](https://github.com/lemonadesocial/web-new/commit/f704f7329ef759f00d05342c5329a829a2e545d5))
+
+## [9.4.0](https://github.com/lemonadesocial/web-new/compare/v9.3.2...v9.4.0) (2026-01-15)
+
+
+### Features
+
+* update page title - rm unused ([b71a0f3](https://github.com/lemonadesocial/web-new/commit/b71a0f36ec071c257e6e1153b705d561b75fec39))
+
+## [9.3.2](https://github.com/lemonadesocial/web-new/compare/v9.3.1...v9.3.2) (2026-01-15)
+
+
+### Bug Fixes
+
+* add default native token ([636e79f](https://github.com/lemonadesocial/web-new/commit/636e79f9744b6347b4e5f84d43c4c0eeb28d895d))
+
+## [9.3.1](https://github.com/lemonadesocial/web-new/compare/v9.3.0...v9.3.1) (2026-01-15)
+
+
+### Bug Fixes
+
+* username check debounce ([8b36bb8](https://github.com/lemonadesocial/web-new/commit/8b36bb83b66db0d6002f8e207c622b9976250d67))
+
+## [9.3.0](https://github.com/lemonadesocial/web-new/compare/v9.2.0...v9.3.0) (2026-01-15)
+
+
+### Features
+
+* update ipfs env ([2192a44](https://github.com/lemonadesocial/web-new/commit/2192a44feee1b0f7c4f4f382ef0784c08e7cea14))
+* update megaeth chain id on prod ([efa9ea5](https://github.com/lemonadesocial/web-new/commit/efa9ea5f4ed3c79bf9e459afceb23ef1f903044c))
+
+## [9.2.0](https://github.com/lemonadesocial/web-new/compare/v9.1.1...v9.2.0) (2026-01-14)
+
+
+### Features
+
+* update lemonade username metadata desc ([7d82047](https://github.com/lemonadesocial/web-new/commit/7d82047465004a0a678b885ac632200805a6dec4))
+
+## [9.1.1](https://github.com/lemonadesocial/web-new/compare/v9.1.0...v9.1.1) (2026-01-14)
+
+
+### Bug Fixes
+
+* check upload image dimension for scale ([94f6aaf](https://github.com/lemonadesocial/web-new/commit/94f6aaf3fbd48b0c0d201ea2f3cccad2251b59da))
+* pane footer ([1bcce41](https://github.com/lemonadesocial/web-new/commit/1bcce411c00de3ff1ed50a889e396367b0ed84e5))
+
+## [9.1.0](https://github.com/lemonadesocial/web-new/compare/v9.0.1...v9.1.0) (2026-01-13)
+
+
+### Features
+
+* update figtree black font ([f3d42b2](https://github.com/lemonadesocial/web-new/commit/f3d42b249b5d665937d1ed37d67f0849be659741))
+
+## [9.0.1](https://github.com/lemonadesocial/web-new/compare/v9.0.0...v9.0.1) (2026-01-13)
+
+
+### Bug Fixes
+
+* display correct datetime ([8ef6f35](https://github.com/lemonadesocial/web-new/commit/8ef6f359eeb5d4442aff98d9501b689dbd7349c6))
+
+## [9.0.0](https://github.com/lemonadesocial/web-new/compare/v8.47.1...v9.0.0) (2026-01-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* check-in event
+
+### Features
+
+* check-in event ([f6d4533](https://github.com/lemonadesocial/web-new/commit/f6d453354eb0c175114f3b5bf107643c30620f75))
+
+## [8.47.1](https://github.com/lemonadesocial/web-new/compare/v8.47.0...v8.47.1) (2026-01-10)
+
+
+### Bug Fixes
+
+* group date events list community ([3759599](https://github.com/lemonadesocial/web-new/commit/3759599b9e50b74266c4f3d72145e4bb3f93d8d4))
+
+## [8.47.0](https://github.com/lemonadesocial/web-new/compare/v8.46.0...v8.47.0) (2026-01-09)
+
+
+### Features
+
+* custom gas limit ([ad6e68f](https://github.com/lemonadesocial/web-new/commit/ad6e68fc2648bf931d2d7468698f837dec9fc83e))
+
+## [8.46.0](https://github.com/lemonadesocial/web-new/compare/v8.45.0...v8.46.0) (2026-01-08)
+
+
+### Features
+
+* update text widget upcoming event ([c890f77](https://github.com/lemonadesocial/web-new/commit/c890f7793294145a7a03329dd2555eb2b81dfb36))
+
+## [8.45.0](https://github.com/lemonadesocial/web-new/compare/v8.44.1...v8.45.0) (2026-01-08)
+
+
+### Features
+
+* add alzena world theme ([d06a520](https://github.com/lemonadesocial/web-new/commit/d06a520ec36603aacf7495613b45125e4534b515))
+
+## [8.44.1](https://github.com/lemonadesocial/web-new/compare/v8.44.0...v8.44.1) (2026-01-07)
+
+
+### Bug Fixes
+
+* check env build time ([b4194e6](https://github.com/lemonadesocial/web-new/commit/b4194e6a72788a6e058a468086ebef3d70fc7cab))
+
+## [8.44.0](https://github.com/lemonadesocial/web-new/compare/v8.43.0...v8.44.0) (2026-01-07)
+
+
+### Features
+
+* init theme with passport template ([854c84c](https://github.com/lemonadesocial/web-new/commit/854c84ccdee5add4af7215d1363d86c8fcf97937))
+* update community template sidebar ([b32dd35](https://github.com/lemonadesocial/web-new/commit/b32dd352011deaba287aca6c1b2e1819f7a37b61))
+* update empty upcoming events widget ([9acbf18](https://github.com/lemonadesocial/web-new/commit/9acbf185b4efe6e60cb0dbfab634e62c9282ec51))
+* update page events community ([4e92557](https://github.com/lemonadesocial/web-new/commit/4e92557e538313297a94d13c72152b080c79a73c))
+
+
+### Bug Fixes
+
+* remove console ([f8489f3](https://github.com/lemonadesocial/web-new/commit/f8489f35c26f10c216b052792d7653990dfd3bbb))
+
+## [8.43.0](https://github.com/lemonadesocial/web-new/compare/v8.42.0...v8.43.0) (2026-01-07)
+
+
+### Features
+
+* hide create coin ([7b2e900](https://github.com/lemonadesocial/web-new/commit/7b2e900b0890598712cca4d88ed9195caa9f64c3))
+
+## [8.42.0](https://github.com/lemonadesocial/web-new/compare/v8.41.0...v8.42.0) (2026-01-06)
+
+
+### Features
+
+* claim revenue ([9c97e53](https://github.com/lemonadesocial/web-new/commit/9c97e53c538da240ff39052746600ba72a2b8618))
+* deposit coin ([92ffc4e](https://github.com/lemonadesocial/web-new/commit/92ffc4e8e40ea7a4c685c2f710386bb5032be08f))
+* deposit in group ([218462b](https://github.com/lemonadesocial/web-new/commit/218462beaf04aac0ad60f4dc2a346f1a61e94b1c))
+* optimize launchpad ([dabf153](https://github.com/lemonadesocial/web-new/commit/dabf153bb086592bf84c790cc2ce8fa085620df4))
+* remove test ([3041588](https://github.com/lemonadesocial/web-new/commit/3041588682a6a1b026a85e90051dfea8e09d89af))
+* update config fonts ([6a431ce](https://github.com/lemonadesocial/web-new/commit/6a431ce6aec8ce949b9bd4aa224ec8b0667f9be1))
+* update fonts ([230c3aa](https://github.com/lemonadesocial/web-new/commit/230c3aa45f77dc7bc3e15ce2800d5c22fb85bec6))
+* update zugrama template ([61b8808](https://github.com/lemonadesocial/web-new/commit/61b8808195fa20b1b4936435aa35b8ab0447b231))
+* withdraw coin ([06a0f0b](https://github.com/lemonadesocial/web-new/commit/06a0f0b25e02d90b00e9443acf2c07ebe25a2a1d))
+
+
+### Bug Fixes
+
+* wrong path ([69f3f67](https://github.com/lemonadesocial/web-new/commit/69f3f67b19af05125a9eb0d933a30a5b46a0c04e))
+
+## [8.41.0](https://github.com/lemonadesocial/web-new/compare/v8.40.2...v8.41.0) (2026-01-05)
+
+
+### Features
+
+* pin version and fix auth cookie persisting ([48ae40b](https://github.com/lemonadesocial/web-new/commit/48ae40bd26fe7e8b568300faf21894bcd1270957))
+* remove testing ([28cc7a2](https://github.com/lemonadesocial/web-new/commit/28cc7a2e00139e9eef75160bd1b599aba59dd464))
+* testing zugrama generate og ([b3c4cee](https://github.com/lemonadesocial/web-new/commit/b3c4ceebec3db45dd9c874ee1cd7a85237703074))
+* update bg image theme build with new template community hub ([dd4f5f0](https://github.com/lemonadesocial/web-new/commit/dd4f5f0443b91f15760666e8ccf1a8c5c2a6b648))
+* update zugrama passport ([1017771](https://github.com/lemonadesocial/web-new/commit/10177713c257822bbb8504f6f122d0005c154856))
+
+## [8.40.2](https://github.com/lemonadesocial/web-new/compare/v8.40.1...v8.40.2) (2026-01-03)
+
+
+### Bug Fixes
+
+* missing check empty space ([f41ee35](https://github.com/lemonadesocial/web-new/commit/f41ee353b6f4a05eabaa67290b570e949cba6152))
+
+## [8.40.1](https://github.com/lemonadesocial/web-new/compare/v8.40.0...v8.40.1) (2026-01-03)
+
+
+### Bug Fixes
+
+* feature hub issue ([8308afc](https://github.com/lemonadesocial/web-new/commit/8308afc4b73e85780f5c4af99218d8aba9751993))
+
+## [8.40.0](https://github.com/lemonadesocial/web-new/compare/v8.39.0...v8.40.0) (2025-12-31)
+
+
+### Features
+
+* fix insights on mobile ([3642f7e](https://github.com/lemonadesocial/web-new/commit/3642f7e61148f30f03abe944dbb5259927ef0239))
+
+## [8.39.0](https://github.com/lemonadesocial/web-new/compare/v8.38.0...v8.39.0) (2025-12-31)
+
+
+### Features
+
+* add count changes ([cb52e93](https://github.com/lemonadesocial/web-new/commit/cb52e93fc7f56fdd2eccfa3fce7da05b015bfc83))
+* add page views stats ([8149952](https://github.com/lemonadesocial/web-new/commit/81499525a50a4248c082603aee75338503303743))
+* ticket sold ([ed1ed17](https://github.com/lemonadesocial/web-new/commit/ed1ed17539eb4dd965cfae4337e2b60c454ab450))
+* update ticket filter ([f8858fd](https://github.com/lemonadesocial/web-new/commit/f8858fd7ed347d337cf0f5a6900ea4b86f1f90a6))
+* utm tracker ([e2408e8](https://github.com/lemonadesocial/web-new/commit/e2408e8c45a2e462733b32254f3a787379a3d459))
+
+## [8.38.0](https://github.com/lemonadesocial/web-new/compare/v8.37.2...v8.38.0) (2025-12-29)
+
+
+### Features
+
+* add event tracker ([07a9cf0](https://github.com/lemonadesocial/web-new/commit/07a9cf0ae17f5532ce986412fdc5d1c48eba572f))
+* add hook for getting group coin ([0caf342](https://github.com/lemonadesocial/web-new/commit/0caf342af90048621199620fb6c4fd32f0e00d4d))
+* add main coin stats ([eae0117](https://github.com/lemonadesocial/web-new/commit/eae01173a55e437384df88bca68d01186bbc4d11))
+* community coin ([de15d9c](https://github.com/lemonadesocial/web-new/commit/de15d9cae72676d0e2ce99f07c077a1e22523182))
+* community subcoins ([11a5b8b](https://github.com/lemonadesocial/web-new/commit/11a5b8b0cbd22d0e79b104ac3d90c652886b07fb))
+* custom price hook ([2317893](https://github.com/lemonadesocial/web-new/commit/2317893509a64f694f35514a2914f356472527e9))
+* guest launchpad ([8991cd5](https://github.com/lemonadesocial/web-new/commit/8991cd591b53755d4b6d2ca39d4b64293dbf7a4f))
+* launchpad settings view ([3a46844](https://github.com/lemonadesocial/web-new/commit/3a46844c7d43f7c12cf364420094302a3056a030))
+* subcoins ([099c4b1](https://github.com/lemonadesocial/web-new/commit/099c4b1952c9ace33c5af61a1b4cd435b4d5547b))
+
+## [8.37.2](https://github.com/lemonadesocial/web-new/compare/v8.37.1...v8.37.2) (2025-12-23)
+
+
+### Bug Fixes
+
+* check private ip ([9ca3d25](https://github.com/lemonadesocial/web-new/commit/9ca3d25c5b1d19e5219f4dee74a6873267c2dc49))
+* correct lookup func ([fda08c5](https://github.com/lemonadesocial/web-new/commit/fda08c5fa4d51cbe683cd665200887f913a0694e))
+
+## [8.37.1](https://github.com/lemonadesocial/web-new/compare/v8.37.0...v8.37.1) (2025-12-23)
+
+
+### Bug Fixes
+
+* valid url before extract info ([adf28df](https://github.com/lemonadesocial/web-new/commit/adf28df7754bfcb0e76556d2ceb0557813b54d93))
+
+## [8.37.0](https://github.com/lemonadesocial/web-new/compare/v8.36.0...v8.37.0) (2025-12-22)
+
+
+### Features
+
+* cancel tickets ([2cc05ab](https://github.com/lemonadesocial/web-new/commit/2cc05ab4915a2c48b550dc9391416e1196908944))
+* display canncelled tickets ([e7d4459](https://github.com/lemonadesocial/web-new/commit/e7d4459599c059b8e28b03af42920d589f0e106e))
+* improve ux ([a6dcd75](https://github.com/lemonadesocial/web-new/commit/a6dcd752baef107fda03530414ddacd59117a527))
+* modify tickets ([2cdb159](https://github.com/lemonadesocial/web-new/commit/2cdb1599b390d4d184939a8f3acc22dccf199687))
+* modify tickets ([50599a8](https://github.com/lemonadesocial/web-new/commit/50599a8ecf5f91f081c43b4c14736a332907fc99))
+* **temp:** hide all coins ([a509b27](https://github.com/lemonadesocial/web-new/commit/a509b27f7d25154412a9274a7add9bd2dffa41e0))
+* truncate ticket title ([c3bb639](https://github.com/lemonadesocial/web-new/commit/c3bb639b82994bea94866b4a1db9dee0c4520d27))
+
+
+### Bug Fixes
+
+* disable the openGraph endpoint ([5f191b4](https://github.com/lemonadesocial/web-new/commit/5f191b4ecfb8cdce299ca6874d0bef0c0d129246))
+* explore padding ([ae05fd1](https://github.com/lemonadesocial/web-new/commit/ae05fd16a8a0f16ec3339a14cc0762fe58a2130e))
+
+## [8.36.0](https://github.com/lemonadesocial/web-new/compare/v8.35.0...v8.36.0) (2025-12-22)
+
+
+### Features
+
+* add quick buy ([60702f3](https://github.com/lemonadesocial/web-new/commit/60702f34bd0af43b8d573da200eaac45a17518f0))
+* change pat ([d7e2239](https://github.com/lemonadesocial/web-new/commit/d7e22392d075fba5877e8f7b0835755e5e727db9))
+* check mint vinyl - festival - drip passport ([2312558](https://github.com/lemonadesocial/web-new/commit/231255844b1233c70d904b58accba7b3a162f24b))
+* checking generate canvas vinyl nation ([809ae65](https://github.com/lemonadesocial/web-new/commit/809ae657de26edb531cf7c14300aa2bc78a0c384))
+* checking trpc call ([53ac854](https://github.com/lemonadesocial/web-new/commit/53ac85430cec7072ff9934d4d359c17d8c2bdc6f))
+* complete share passport og ([1632ccd](https://github.com/lemonadesocial/web-new/commit/1632ccd43549120a9f14ca4bde1f7c8eee84ef47))
+* correct check provider ([1df81c8](https://github.com/lemonadesocial/web-new/commit/1df81c8b642e3c003b9c791d95a818744c6562cc))
+* debounce guest list search ([ddb1ec0](https://github.com/lemonadesocial/web-new/commit/ddb1ec0255e0760cdfa61d183cc871ebafe18de7))
+* enable check white list ([35bdf5a](https://github.com/lemonadesocial/web-new/commit/35bdf5a5f48ebed94edb9cf873cd45169e18d2ae))
+* fallback username chain ([741c4db](https://github.com/lemonadesocial/web-new/commit/741c4db12432df7b664b9f899c5b093da3bff9c2))
+* move utils file ([1bdad24](https://github.com/lemonadesocial/web-new/commit/1bdad246e6f6c7e7a6cd058d20f69b057e20402f))
+* remove cookie check ([83b3c4e](https://github.com/lemonadesocial/web-new/commit/83b3c4ea50dfbc878abf59d9287d989b5303d59b))
+* remove old files ([91c13ad](https://github.com/lemonadesocial/web-new/commit/91c13ad776717748d58a347a9063e27c40e01d7d))
+* udpate vinyl nation passport ([3f4bf79](https://github.com/lemonadesocial/web-new/commit/3f4bf79852190b83b37a47ce08a7cc796e2d16c5))
+* update bg after mean ([72d691d](https://github.com/lemonadesocial/web-new/commit/72d691dbda5cf8be973de155cc89b0f55dac0214))
+* update bg and font for shared passport ([862b2b6](https://github.com/lemonadesocial/web-new/commit/862b2b6ef1b7f5f803b605c89713620d04db5080))
+* update bg share ([84b6686](https://github.com/lemonadesocial/web-new/commit/84b66864bd8a9e8275d1dba59a8fe1e1c7b501bf))
+* update contract ([a0acce8](https://github.com/lemonadesocial/web-new/commit/a0acce84503307dc160d442682ec83b0d77ca2aa))
+* update create group params ([9bcf8c9](https://github.com/lemonadesocial/web-new/commit/9bcf8c981df4e37641999988a9a9a8991364365b))
+* update empty chart data ([37b93fd](https://github.com/lemonadesocial/web-new/commit/37b93fd0c7db15067b2cc61ffee16af11aa6a5f7))
+* update err msg ([588d7fe](https://github.com/lemonadesocial/web-new/commit/588d7fec66433689eb738b203de5cabc09338fd7))
+* update error message ([a9c3e9a](https://github.com/lemonadesocial/web-new/commit/a9c3e9a82a02ffcdc5ef5134698108f5ef2f94b3))
+* update festival passport ([e0b3bc0](https://github.com/lemonadesocial/web-new/commit/e0b3bc05fdfe3f09b5dc8c8b3dfbdeb29d02a03c))
+* update fluffle ([49b6695](https://github.com/lemonadesocial/web-new/commit/49b6695e853825fb16d4d6006b8fb796b39a2c8d))
+* update fluffle use ([28e4ffc](https://github.com/lemonadesocial/web-new/commit/28e4ffc58de70437b6a85a82696bd9e1f2fc050c))
+* update get mint data api ([ed954e7](https://github.com/lemonadesocial/web-new/commit/ed954e76d064d0f382528418323c0b80ab741fbc))
+* update mint data ([6b9c16f](https://github.com/lemonadesocial/web-new/commit/6b9c16f78be9f49cbbde1be905055c97e31fc0d0))
+* update modal ([0d74cb2](https://github.com/lemonadesocial/web-new/commit/0d74cb278f0879acfa3709381233791a0424a000))
+* update new flow username - contract adress ([a2aa379](https://github.com/lemonadesocial/web-new/commit/a2aa379f4273ac701f8980e83dfcb708228685e2))
+* update og festival nation ([54704fd](https://github.com/lemonadesocial/web-new/commit/54704fd13f8ecd911417d37b2a87b45192fb9757))
+* update path ([b0297d6](https://github.com/lemonadesocial/web-new/commit/b0297d6474f0887a15059114de088282b6395be8))
+* update path og ([cdd5ee6](https://github.com/lemonadesocial/web-new/commit/cdd5ee68bae093c1d2d90b084db3d5df033dd472))
+* update provider generate passport ([28ee7f3](https://github.com/lemonadesocial/web-new/commit/28ee7f3371fb51728b79976c36d61b763e969b41))
+* update text intro ([06e7569](https://github.com/lemonadesocial/web-new/commit/06e7569f4de6a35425c3a79655f582b1cc2a80af))
+* update title passport ([13360e2](https://github.com/lemonadesocial/web-new/commit/13360e22f2741e560c4d3530e146f43d4203627b))
+* update username ([e2e7677](https://github.com/lemonadesocial/web-new/commit/e2e767718661407d0856433831963b23683f2614))
+* update username indexer ([ece734b](https://github.com/lemonadesocial/web-new/commit/ece734b3a2892c799833889df887079b42f7838e))
+* updated generate drip nation ([4026c0c](https://github.com/lemonadesocial/web-new/commit/4026c0c9e81b9a6a3972d80dc41e73a3da9b2619))
+* use abstract abi ([17285c4](https://github.com/lemonadesocial/web-new/commit/17285c477a718c40ea9979fb48fa5020afedea6c))
+
+
+### Bug Fixes
+
+* correct provider ([a5b7410](https://github.com/lemonadesocial/web-new/commit/a5b7410d9f7899c42f79f2f25196a62af6376d2a))
+* correct provider ([c8e64d8](https://github.com/lemonadesocial/web-new/commit/c8e64d8da83ca5460ba965d16a637a4ef6c6a34a))
+* ens name ([73e81d3](https://github.com/lemonadesocial/web-new/commit/73e81d30d3f2212c190b2c9777c5d065285991fe))
+* import path ([15a5d83](https://github.com/lemonadesocial/web-new/commit/15a5d8325f8308a15816b379a1110853bfc4ee3e))
+* missing chainmap ([6af2364](https://github.com/lemonadesocial/web-new/commit/6af2364226e2dced9268496ec2d9c2fdbe4f4a79))
+* missing space id in launchpad group ([b01890c](https://github.com/lemonadesocial/web-new/commit/b01890c5a8b034475ca22ab8f125fe59fea201af))
+* provider ([02c11c9](https://github.com/lemonadesocial/web-new/commit/02c11c95a52c6d5979cfb68bdd522cbe2cf8dd6b))
+* remove lens connect in settings ([c5178dd](https://github.com/lemonadesocial/web-new/commit/c5178dd3a0ae78e544e94c8f2aad86d9af72d6fe))
+* remove lens profile connect after signing up ([b1a813a](https://github.com/lemonadesocial/web-new/commit/b1a813a9bdc8f7d20be1d2c40f4ab272bc0ae925))
+* remove lens profile from user menu ([07f1cc2](https://github.com/lemonadesocial/web-new/commit/07f1cc2aa3c0e93b00bdcc5680e016875f6d15d9))
+* remove lens profile in settings ([cc93f84](https://github.com/lemonadesocial/web-new/commit/cc93f8432011a5bb08b897a85f57fb0e68c218b5))
+* remove self ([755904d](https://github.com/lemonadesocial/web-new/commit/755904d9db3987ad84fd337b12ce091e494227c8))
+* resolve conflicts ([b608568](https://github.com/lemonadesocial/web-new/commit/b608568e90e69e364b13165f21db048c84191f02))
+* update next check ([fc36a72](https://github.com/lemonadesocial/web-new/commit/fc36a72761ff88d7fd65cc48526095b5ab56bf0c))
+* update passport api ([aab9120](https://github.com/lemonadesocial/web-new/commit/aab9120ed247451da056ee6a19979f0aa8690c3e))
+* update username store ([0887f91](https://github.com/lemonadesocial/web-new/commit/0887f918d30d6fb6670de780adf0baa8bf0569ef))
+
+## [8.35.0](https://github.com/lemonadesocial/web-new/compare/v8.34.2...v8.35.0) (2025-12-12)
+
+
+### Features
+
+* upgrade react security patches ([08c25e8](https://github.com/lemonadesocial/web-new/commit/08c25e86b3526b463ea189162fb8b9213d4b435b))
+
+## [8.34.2](https://github.com/lemonadesocial/web-new/compare/v8.34.1...v8.34.2) (2025-12-10)
+
+
+### Bug Fixes
+
+* check initial data ([12adb73](https://github.com/lemonadesocial/web-new/commit/12adb73a10b814760a7861abc6863d9533fe83de))
+
+## [8.34.1](https://github.com/lemonadesocial/web-new/compare/v8.34.0...v8.34.1) (2025-12-10)
+
+
+### Bug Fixes
+
+* update delete ticket type action ([b4d25c4](https://github.com/lemonadesocial/web-new/commit/b4d25c43741e3fdda361a926344b9911294fbffb))
+
+## [8.34.0](https://github.com/lemonadesocial/web-new/compare/v8.33.1...v8.34.0) (2025-12-07)
+
+
+### Features
+
+* upgrade next.js due to CVE-2025-66478 ([3ace23d](https://github.com/lemonadesocial/web-new/commit/3ace23ddff6954e8fdbfc6aee7ddd406334e2fe7))
+
+
+### Bug Fixes
+
+* upgrade alpine ([22dacd9](https://github.com/lemonadesocial/web-new/commit/22dacd902dbbd7ca6f117b95644fac2c862ac9a3))
+
+## [8.33.1](https://github.com/lemonadesocial/web-new/compare/v8.33.0...v8.33.1) (2025-12-05)
+
+
+### Bug Fixes
+
+* map form fields ([34c17b5](https://github.com/lemonadesocial/web-new/commit/34c17b591450416c9b12392249d0fd7298f077de))
+
+## [8.33.0](https://github.com/lemonadesocial/web-new/compare/v8.32.1...v8.33.0) (2025-12-04)
+
+
+### Features
+
+* update social size ([1485aae](https://github.com/lemonadesocial/web-new/commit/1485aaee0b3a6356a2a26bca24cf87aaf668baa5))
+
+
+### Bug Fixes
+
+* merge data respone instead of replace ([b6fbd19](https://github.com/lemonadesocial/web-new/commit/b6fbd19e0b683cb2e4a28b7da4941bcc57158fa9))
+
+## [8.32.1](https://github.com/lemonadesocial/web-new/compare/v8.32.0...v8.32.1) (2025-11-27)
+
+
+### Bug Fixes
+
+* filter roles space members ([f58742b](https://github.com/lemonadesocial/web-new/commit/f58742bfb597440a15fcf1291bb11ab648680153))
+
+## [8.32.0](https://github.com/lemonadesocial/web-new/compare/v8.31.1...v8.32.0) (2025-11-26)
+
+
+### Features
+
+* enable eoa wallets for coin base ([f5d2517](https://github.com/lemonadesocial/web-new/commit/f5d2517ce0a9fed890398fed4e8bc2662cb16342))
+
+
+### Bug Fixes
+
+* fail to check balance after connectting wallet ([0cdae4c](https://github.com/lemonadesocial/web-new/commit/0cdae4cac0ca3cfd83d5952e2d9cb7613037090a))
+
+## [8.31.1](https://github.com/lemonadesocial/web-new/compare/v8.31.0...v8.31.1) (2025-11-20)
+
+
+### Bug Fixes
+
+* **auth-modal:** fix email casing ([a4c5bc3](https://github.com/lemonadesocial/web-new/commit/a4c5bc3af52b60b500e3030f02d1d727e4bc5796))
+
+## [8.31.0](https://github.com/lemonadesocial/web-new/compare/v8.30.1...v8.31.0) (2025-11-19)
+
+
+### Features
+
+* add extra info to Sentry log ([b7a3f11](https://github.com/lemonadesocial/web-new/commit/b7a3f11b5adf71c3106709a21e16489cef848259))
+* fallback if txhash not found ([da64311](https://github.com/lemonadesocial/web-new/commit/da64311c0236df5744057d6d9415b9ee82c54c90))
+
+
+### Bug Fixes
+
+* await confirm ([4b837fd](https://github.com/lemonadesocial/web-new/commit/4b837fd32c3535fc312cb9477c0beaed9b28f4fc))
+* better truncate text ([389fe08](https://github.com/lemonadesocial/web-new/commit/389fe0887c2aff75300ea67f17ebd114875ae99e))
+* long text ([8a2c54f](https://github.com/lemonadesocial/web-new/commit/8a2c54f7c03cb4c3bedef6911ce1a196ce68c012))
+* truncate copoun long text ([06aa714](https://github.com/lemonadesocial/web-new/commit/06aa714309acf5ce592c146e47f1624c8adcd9d8))
+* truncate name guest table ([d1e5511](https://github.com/lemonadesocial/web-new/commit/d1e5511c081d4aa821c0cb091463a36633a434b1))
+* **unicorn:** sync unicorn even if session exists ([56bb7cc](https://github.com/lemonadesocial/web-new/commit/56bb7cc2ddae0dfe0df3d9dd939d97d1806d6a66))
+
+## [8.30.1](https://github.com/lemonadesocial/web-new/compare/v8.30.0...v8.30.1) (2025-11-18)
+
+
+### Bug Fixes
+
+* cannot read _id of undefined ([849ce28](https://github.com/lemonadesocial/web-new/commit/849ce28bd4e1dadab7c40e838f1671e80bc58b80))
+* **lint:** fix linting ([b5970e9](https://github.com/lemonadesocial/web-new/commit/b5970e934b063dbe8f685ce2265b982714627517))
+* missing useQuery ([d235328](https://github.com/lemonadesocial/web-new/commit/d23532858270bca154662082cbdb9ef757075ce4))
+
+## [8.30.0](https://github.com/lemonadesocial/web-new/compare/v8.29.0...v8.30.0) (2025-11-18)
+
+
+### Features
+
+* trigger release-please ([3dfd692](https://github.com/lemonadesocial/web-new/commit/3dfd692f83078b06503c62fa5c892e9899cb4f30))
+
+## [8.29.0](https://github.com/lemonadesocial/web-new/compare/v8.28.0...v8.29.0) (2025-11-18)
+
+
+### Features
+
+* click address to open google maps ([808f2a6](https://github.com/lemonadesocial/web-new/commit/808f2a604803d5ac4067866a726ce4583073093a))
+* update get ticket text ([e52c362](https://github.com/lemonadesocial/web-new/commit/e52c3629c130b91ec0b308360139c3d1f0b23167))
+* update welcome text ([4d11c8f](https://github.com/lemonadesocial/web-new/commit/4d11c8f18fa85e88687be2ba95f618b8937db12f))
+
+## [8.28.0](https://github.com/lemonadesocial/web-new/compare/v8.27.4...v8.28.0) (2025-11-17)
+
+
+### Features
+
+* update ethdenver modal copy ([1587fce](https://github.com/lemonadesocial/web-new/commit/1587fcee494a9b74458b6aaa3878591ef4e2af32))
+
+## [8.27.4](https://github.com/lemonadesocial/web-new/compare/v8.27.3...v8.27.4) (2025-11-17)
+
+
+### Bug Fixes
+
+* add prefix link and edit profile ([24d625d](https://github.com/lemonadesocial/web-new/commit/24d625ddfee1898ef55af0b343be5e19caff1685))
+* not found after create community ([3bfd249](https://github.com/lemonadesocial/web-new/commit/3bfd249246d5a8782687f48a0a7d7c4f9e973984))
+* zero ticket limit ([63d1362](https://github.com/lemonadesocial/web-new/commit/63d13623bdd33808dd1370cd2006797411e45650))
+* zero ticket limit ([bf005f5](https://github.com/lemonadesocial/web-new/commit/bf005f584a494ed6763653260f0cbeccc0fc34ba))
+
+## [8.27.3](https://github.com/lemonadesocial/web-new/compare/v8.27.2...v8.27.3) (2025-11-17)
+
+
+### Bug Fixes
+
+* application profile not showing in guest ([415fcad](https://github.com/lemonadesocial/web-new/commit/415fcadafe4296e4388f9cf5b23a4d50b85dd088))
+
+## [8.27.2](https://github.com/lemonadesocial/web-new/compare/v8.27.1...v8.27.2) (2025-11-15)
+
+
+### Bug Fixes
+
+* optimize query ssr ([c6281cd](https://github.com/lemonadesocial/web-new/commit/c6281cdcd4f5e1f9c814d4d2bab99c0a5a03929f))
+
+## [8.27.1](https://github.com/lemonadesocial/web-new/compare/v8.27.0...v8.27.1) (2025-11-14)
+
+
+### Bug Fixes
+
+* event ticket limit per guest ([d707cbc](https://github.com/lemonadesocial/web-new/commit/d707cbc0813bd04c30dfd6e866e012a090c391ef))
+
+## [8.27.0](https://github.com/lemonadesocial/web-new/compare/v8.26.0...v8.27.0) (2025-11-13)
+
+
+### Features
+
+* refactor ([131e605](https://github.com/lemonadesocial/web-new/commit/131e6051ae16af2df0c22e3345ff45a4af321142))
+* update currencies list when not token gate ([8c7b58b](https://github.com/lemonadesocial/web-new/commit/8c7b58bfaca9f1310c2b8a54e07ab3472441921e))
+
+
+### Bug Fixes
+
+* center checkbox term form ([7d5697e](https://github.com/lemonadesocial/web-new/commit/7d5697e0ac391a97badfc65d01bddc0b16447efe))
+* missing currencies ([da80413](https://github.com/lemonadesocial/web-new/commit/da804136fd1f46dc10b283d2a5c7c5e59878f963))
+
+## [8.26.0](https://github.com/lemonadesocial/web-new/compare/v8.25.0...v8.26.0) (2025-11-13)
+
+
+### Features
+
+* add download pass option ([f93e36f](https://github.com/lemonadesocial/web-new/commit/f93e36fa124182f6c17f19df96f30cc575b6133c))
+* add rsvp success modal ([6f04142](https://github.com/lemonadesocial/web-new/commit/6f041420d968a7bb60262d48bf646180b5dc529b))
+* check attempedDecimals ([490a7d7](https://github.com/lemonadesocial/web-new/commit/490a7d7552a0a820901d42a79eb40e36466276b2))
+* missing price when not token gate ([c277d38](https://github.com/lemonadesocial/web-new/commit/c277d389ba11380f5eac734d25a0ec2f45218f20))
+* remove decimal when zero ([3601013](https://github.com/lemonadesocial/web-new/commit/3601013096db029dfabadba4d2b8e67c7fba3f8d))
+* remove toolbar actions ([87e04f5](https://github.com/lemonadesocial/web-new/commit/87e04f5c353f07eef70d1e61e1ab216378037c45))
+* revert testing ([a82e0ec](https://github.com/lemonadesocial/web-new/commit/a82e0ec25855ad09b5b0d811475c8c6797f70c19))
+* update featured wallet list ([6a1c5e0](https://github.com/lemonadesocial/web-new/commit/6a1c5e0307f8c67e42fa935cd9d3f095277386bc))
+* use display name ([bbd54d0](https://github.com/lemonadesocial/web-new/commit/bbd54d0d7666da1b4c1250bbdaa5830b1115bb0b))
+
+
+### Bug Fixes
+
+* add unicorn wallet to verification ([8e46482](https://github.com/lemonadesocial/web-new/commit/8e464820a7238f5235dc3568bb035d959ef5be31))
+* check photos ticket type before update ([0b9a096](https://github.com/lemonadesocial/web-new/commit/0b9a09620e37606e048b05aa7ccc3247e30822a4))
+* check upgrade ticket and style term form ([bdb5e06](https://github.com/lemonadesocial/web-new/commit/bdb5e060b7be36701b7d1ff6dbae46c0fbb390fc))
+* type check ([4824e2b](https://github.com/lemonadesocial/web-new/commit/4824e2bb8f6e8bb84bb10b04ecb766769cef9983))
+* update formatTokenGateRange ([4c8a311](https://github.com/lemonadesocial/web-new/commit/4c8a3111763a67a24da25d3f2f00ec27d595df63))
+
+## [8.25.0](https://github.com/lemonadesocial/web-new/compare/v8.24.0...v8.25.0) (2025-11-12)
+
+
+### Features
+
+* remove token range from erc721 gate ([c837af0](https://github.com/lemonadesocial/web-new/commit/c837af0ed92544b03390457eac17c730d1a30c91))
+
+## [8.24.0](https://github.com/lemonadesocial/web-new/compare/v8.23.0...v8.24.0) (2025-11-12)
+
+
+### Features
+
+* hide invite friend when limit eq zero ([b5e1a3e](https://github.com/lemonadesocial/web-new/commit/b5e1a3e5a6252264114a879c300d2019fdea653d))
+
+## [8.23.0](https://github.com/lemonadesocial/web-new/compare/v8.22.0...v8.23.0) (2025-11-12)
+
+
+### Features
+
+* erc721 token gate check ([223de52](https://github.com/lemonadesocial/web-new/commit/223de52ee535d62dccb59b9bdf68e21d8bdc5649))
+* hide claim username ([7053cdf](https://github.com/lemonadesocial/web-new/commit/7053cdfb0b16e2a2b001681c434f68b802750eb3))
+* update time label to have month ([1d89b5d](https://github.com/lemonadesocial/web-new/commit/1d89b5d41ad9dce6d6b7062adef223dba4d8a821))
+
+
+### Bug Fixes
+
+* event address display ([de8e846](https://github.com/lemonadesocial/web-new/commit/de8e846a24c4cefa787a16f8e1ad7df7902ef831))
+
+## [8.22.0](https://github.com/lemonadesocial/web-new/compare/v8.21.0...v8.22.0) (2025-11-12)
+
+
+### Features
+
+* add upgrade modal ([6d18384](https://github.com/lemonadesocial/web-new/commit/6d1838424d9fba426766720eee3aa53d42192c29))
+* check token gate ticket ([e46151a](https://github.com/lemonadesocial/web-new/commit/e46151a9407de3b613d387dd2e9c3e05c048781e))
+* enable passport ([57078b0](https://github.com/lemonadesocial/web-new/commit/57078b0317e080ade8c7df0290e2badc75672e17))
+* filter empty data ([6fa6716](https://github.com/lemonadesocial/web-new/commit/6fa67162b9daa25454ab0dec6d263a91fe80d70c))
+* hide passport ([8a3f3b0](https://github.com/lemonadesocial/web-new/commit/8a3f3b00db2747feeb42104dc843d6c1a786651b))
+* hide passport ([1c99b21](https://github.com/lemonadesocial/web-new/commit/1c99b21b48c13410b2e4fdb2747e785ed7b258b0))
+* hide upgrade modal when open registration modal ([7067b1a](https://github.com/lemonadesocial/web-new/commit/7067b1ac0d4d47a1f2297d0b9efb832f375597c8))
+* implement upgrade ticket types ([deadde8](https://github.com/lemonadesocial/web-new/commit/deadde848b48b0ea9f1cbeb57c0b2b1a66c9448a))
+* update ui mint passport inside lemonheads hub and zone ([e8dc538](https://github.com/lemonadesocial/web-new/commit/e8dc53874db31807d7434b932c905e4fc73d204c))
+
+
+### Bug Fixes
+
+* missing rsvp status ([6c8c990](https://github.com/lemonadesocial/web-new/commit/6c8c9909702f0102cb34d0e3c95f1557c72d5237))
+
+## [8.21.0](https://github.com/lemonadesocial/web-new/compare/v8.20.0...v8.21.0) (2025-11-05)
+
+
+### Features
+
+* add error ([a4e33ac](https://github.com/lemonadesocial/web-new/commit/a4e33acf61f151d95354823703f0eddfd37f6e7d))
+* enable passport card ([9180fdc](https://github.com/lemonadesocial/web-new/commit/9180fdcbb9eeb49869fbdf59369beb6766058f94))
+* hide passport card ([443f112](https://github.com/lemonadesocial/web-new/commit/443f11261ed1045feeb9a46cd823725b79ec8f15))
+* update content mint passport ([6040f9d](https://github.com/lemonadesocial/web-new/commit/6040f9d7f203793badeec7b9f665562f68eed0c7))
+* update error msg ([9ef0c03](https://github.com/lemonadesocial/web-new/commit/9ef0c0374e06b115f34d478229d108dc1a7f2db5))
+* update error msg ([ded81d3](https://github.com/lemonadesocial/web-new/commit/ded81d3c3e054475076a7e49d076e991c2e6c0b0))
+* update people tags ui ([b817d02](https://github.com/lemonadesocial/web-new/commit/b817d0267baf44ec62df68fd34b4be57174f98c6))
+* update share community modal ([d867cd0](https://github.com/lemonadesocial/web-new/commit/d867cd020d56fb07f2d47d00ad650f69af421414))
+* update share facebook and email ([2256366](https://github.com/lemonadesocial/web-new/commit/2256366c73b79d26ced2f40e027ce88ac991caae))
+* update space image ticket type ([e4009d9](https://github.com/lemonadesocial/web-new/commit/e4009d940deb085faf1e0b7eb32ff69832391b6d))
+* update title - desc mint flow ([05b3662](https://github.com/lemonadesocial/web-new/commit/05b366264bdf3c34f8d587fd103676473816d017))
+
+
+### Bug Fixes
+
+* correct mint params ([923635c](https://github.com/lemonadesocial/web-new/commit/923635c699abbce9c5b089a2c3be15cf54c8f10f))
+* ens display ([b036ffc](https://github.com/lemonadesocial/web-new/commit/b036ffcbe52f6191d44d53a28186a95de5245573))
+* get ens name ([6b3da42](https://github.com/lemonadesocial/web-new/commit/6b3da4223a78f28dea19a54532e2dcfbec527e24))
+* passport link ([521abf4](https://github.com/lemonadesocial/web-new/commit/521abf44f45b477574d98470efdcac3673f60810))
+* remove video bg in zugrama ([da13eef](https://github.com/lemonadesocial/web-new/commit/da13eef207c24c7d4b8cec4d372263a28259dc72))
+* update ui mobile view ([8eddd2e](https://github.com/lemonadesocial/web-new/commit/8eddd2e7cdc2aed193bc89bd9706d038ceecef66))
+
+## [8.20.0](https://github.com/lemonadesocial/web-new/compare/v8.19.0...v8.20.0) (2025-11-04)
+
+
+### Features
+
+* fix image size ([0ff9080](https://github.com/lemonadesocial/web-new/commit/0ff90800dbc432c911ee2220d6d28dc9514e0e85))
+
+## [8.19.0](https://github.com/lemonadesocial/web-new/compare/v8.18.0...v8.19.0) (2025-11-04)
+
+
+### Features
+
+* add reorder sub hubs ([0635670](https://github.com/lemonadesocial/web-new/commit/0635670794f41cdff5634ce13313df8d2fcb34ef))
+* resolve feedback ([f52a6dc](https://github.com/lemonadesocial/web-new/commit/f52a6dc341c4a5a424a8ddd544d7bef1f0ac948d))
+* update avatar size mobile ([596b1ee](https://github.com/lemonadesocial/web-new/commit/596b1eef247d216a8fd7253835f7ebdb8b7766c2))
+* update icon empty state ([9cbd391](https://github.com/lemonadesocial/web-new/commit/9cbd3918944c41931b052145138f7c35d3514cd1))
+* update message error ([a16377c](https://github.com/lemonadesocial/web-new/commit/a16377c3a23b3e5c0555e0ae820088127537695a))
+
+
+### Bug Fixes
+
+* layout sticky ([65868ec](https://github.com/lemonadesocial/web-new/commit/65868ec320c791e36f781200c9976df4c1ae5e06))
+* menu layout sticky layer ([6863a49](https://github.com/lemonadesocial/web-new/commit/6863a49f4bcb6cb11d3078fc8818283ef1a8ea55))
+
+## [8.18.0](https://github.com/lemonadesocial/web-new/compare/v8.17.0...v8.18.0) (2025-10-30)
+
+
+### Features
+
+* update name from ethdenver ([bf2b77b](https://github.com/lemonadesocial/web-new/commit/bf2b77b4552af453d71bff579c79ab20611ba206))
+
+## [8.17.0](https://github.com/lemonadesocial/web-new/compare/v8.16.0...v8.17.0) (2025-10-28)
+
+
+### Features
+
+* update unicorn copy ([35cbe59](https://github.com/lemonadesocial/web-new/commit/35cbe595543bffaf11a19a86e881e31e9113717d))
+
+## [8.16.0](https://github.com/lemonadesocial/web-new/compare/v8.15.0...v8.16.0) (2025-10-28)
+
+
+### Features
+
+* remove unicorn from eth requirements ([18c2e39](https://github.com/lemonadesocial/web-new/commit/18c2e39a9eb084e0fd6d5a7b832296b6b5730eef))
+
+
+### Bug Fixes
+
+* allow unicorn wallet in event application form ([bd5fc3c](https://github.com/lemonadesocial/web-new/commit/bd5fc3c6bb3910cd9e2e9134ed8e0c09634cf7bc))
+* buyer wallet not subbmitted ([7f4ac39](https://github.com/lemonadesocial/web-new/commit/7f4ac391968e12462d10c725a72eba11645ac35f))
+* format date in timzone issue (date-fns-tz) ([7087303](https://github.com/lemonadesocial/web-new/commit/7087303367481efdd0a96d1c7cfbe00ddba5e2d0))
+* update format timezone datetime picker ([aaa43c7](https://github.com/lemonadesocial/web-new/commit/aaa43c75e90acb3873315bba47040674cb8c5b63))
+* update time when change timezone ([bda0e1b](https://github.com/lemonadesocial/web-new/commit/bda0e1b55bd567cb294f537c3681f3e8632e45cb))
+* user atom source ([8ca81db](https://github.com/lemonadesocial/web-new/commit/8ca81db4e4250f1f32d769ff17725b7cbaa66583))
+
+## [8.15.0](https://github.com/lemonadesocial/web-new/compare/v8.14.0...v8.15.0) (2025-10-25)
+
+
+### Features
+
+* **self-xyz:** add default config values ([395358e](https://github.com/lemonadesocial/web-new/commit/395358e8f71bd376e8924a624822465381476c77))
+
+## [8.14.0](https://github.com/lemonadesocial/web-new/compare/v8.13.1...v8.14.0) (2025-10-24)
+
+
+### Features
+
+* check token balance ([3001beb](https://github.com/lemonadesocial/web-new/commit/3001bebc40e3ad99e8d17cbb8d6059828098d975))
+
+## [8.13.1](https://github.com/lemonadesocial/web-new/compare/v8.13.0...v8.13.1) (2025-10-23)
+
+
+### Bug Fixes
+
+* **unicorn:** perform logout before registration ([1351096](https://github.com/lemonadesocial/web-new/commit/1351096dd14addc988f53a5c11af141d7e5413cb))
+
+## [8.13.0](https://github.com/lemonadesocial/web-new/compare/v8.12.0...v8.13.0) (2025-10-23)
+
+
+### Features
+
+* display unicorn wallet in settings ([438e1a3](https://github.com/lemonadesocial/web-new/commit/438e1a37f1dc9069b9eefaae6dbad85d38bf0b33))
+
+
+### Bug Fixes
+
+* verified wallet not displaying ([241ade0](https://github.com/lemonadesocial/web-new/commit/241ade021e39657bf5c06e492d6190c8325a361c))
+
+## [8.12.0](https://github.com/lemonadesocial/web-new/compare/v8.11.0...v8.12.0) (2025-10-23)
+
+
+### Features
+
+* upgrade appkit ([19bea43](https://github.com/lemonadesocial/web-new/commit/19bea437885ad68f7804240edc96339d460fe80c))
+
+
+### Bug Fixes
+
+* update single ticket token gating ([35e4786](https://github.com/lemonadesocial/web-new/commit/35e4786ec3e7b89a47344d35458bc62c7a8d52b4))
+
+## [8.11.0](https://github.com/lemonadesocial/web-new/compare/v8.10.1...v8.11.0) (2025-10-22)
+
+
+### Features
+
+* cleanup & revert package versions ([88a3c6b](https://github.com/lemonadesocial/web-new/commit/88a3c6b521433daf86eb0c44f4bfacd8182db43a))
+* config wagmi ([97d0db9](https://github.com/lemonadesocial/web-new/commit/97d0db98d27ae6fd62bc55a251b1d437736640fc))
+* revert change to appkit lib ([8989cff](https://github.com/lemonadesocial/web-new/commit/8989cff229688fa4f116376a80b673d19c2a211e))
+* sync wallet ([a23f708](https://github.com/lemonadesocial/web-new/commit/a23f7083c3656d5e09b154cec1598bc3fa47168a))
+* **unicorn:** handle unicorn siwe ([08143f9](https://github.com/lemonadesocial/web-new/commit/08143f9559f2213fb795dee322369d182f6621c5))
+* working wagmi config ([fc0bc04](https://github.com/lemonadesocial/web-new/commit/fc0bc04b5f29fab690e3fb762bc9abc1e08e3fcf))
+
+
+### Bug Fixes
+
+* fix lint stage ([149f398](https://github.com/lemonadesocial/web-new/commit/149f3988291ff518b3a04c8c204cc755ddd79a29))
+* fix package version ([bff230d](https://github.com/lemonadesocial/web-new/commit/bff230d5dc61793334d16eed0e58e47c449eca49))
+* fix window is not defined ([340c84b](https://github.com/lemonadesocial/web-new/commit/340c84ba152dd3ad9a6de48233e2bf4a34269011))
+* use search params ([9bb5942](https://github.com/lemonadesocial/web-new/commit/9bb594217f737b74e691b5fb6c2a79582ba3b02e))
+
+## [8.10.1](https://github.com/lemonadesocial/web-new/compare/v8.10.0...v8.10.1) (2025-10-22)
+
+
+### Bug Fixes
+
+* update route profile when not connect wallet or no username ([b0401da](https://github.com/lemonadesocial/web-new/commit/b0401dafa7ed34ef85ad8df3946cee48c5f0d255))
+
+## [8.10.0](https://github.com/lemonadesocial/web-new/compare/v8.9.0...v8.10.0) (2025-10-21)
+
+
+### Features
+
+* collectible on mobile ([142e978](https://github.com/lemonadesocial/web-new/commit/142e978a24bf6132371101838a3c80519dcc8246))
+* display unicorn wallet ([3f055f6](https://github.com/lemonadesocial/web-new/commit/3f055f672e8657a40ae30ec0c931255fbafc078d))
+* update mobile manage event ([37918b7](https://github.com/lemonadesocial/web-new/commit/37918b7eb62579d1c9c559577fbf3ee432b84555))
+
+
+### Bug Fixes
+
+* loading update short id ([775110b](https://github.com/lemonadesocial/web-new/commit/775110bcb827f95609887dda10725222ff112c81))
+* overflow issues on modals ([d092544](https://github.com/lemonadesocial/web-new/commit/d092544c20434cdd4f271a383b4e0e251adfe1a7))
+* truncate email ([fb5f152](https://github.com/lemonadesocial/web-new/commit/fb5f152cc3c1a17395081643a41272e145154e59))
+
+## [8.9.0](https://github.com/lemonadesocial/web-new/compare/v8.8.3...v8.9.0) (2025-10-20)
+
+
+### Features
+
+* guest list filter on mobile ([d2a52e8](https://github.com/lemonadesocial/web-new/commit/d2a52e8ae8e6882500960d99b8fdc595410d126a))
+
+## [8.8.3](https://github.com/lemonadesocial/web-new/compare/v8.8.2...v8.8.3) (2025-10-18)
+
+
+### Bug Fixes
+
+* blast scrolling ([8a86d7a](https://github.com/lemonadesocial/web-new/commit/8a86d7ac9f17fdfc3e59323475dc9c6db17c461e))
+
+## [8.8.2](https://github.com/lemonadesocial/web-new/compare/v8.8.1...v8.8.2) (2025-10-15)
+
+
+### Bug Fixes
+
+* refactor state to form ([a6ae565](https://github.com/lemonadesocial/web-new/commit/a6ae565fafbdb54587450ff6c8bad0ce566125d7))
+* sort lib ([9f8d086](https://github.com/lemonadesocial/web-new/commit/9f8d0865d241a7acc1f2cdabaadb3855c26ad082))
+
+## [8.8.1](https://github.com/lemonadesocial/web-new/compare/v8.8.0...v8.8.1) (2025-10-14)
+
+
+### Bug Fixes
+
+* missing address user info stats ([193be7e](https://github.com/lemonadesocial/web-new/commit/193be7eb223316ca34ae7542cc87e0d3bc23c765))
+
+## [8.8.0](https://github.com/lemonadesocial/web-new/compare/v8.7.0...v8.8.0) (2025-10-14)
+
+
+### Features
+
+* resolve conflict ([c461a33](https://github.com/lemonadesocial/web-new/commit/c461a33527e6d68f91e52a4f7681b7dce28f1376))
+* update self settings button ([5b37e00](https://github.com/lemonadesocial/web-new/commit/5b37e00478c4d1571d8cf5075082f687f39a8c22))
+
+
+### Bug Fixes
+
+* missing stats ([2d79cd9](https://github.com/lemonadesocial/web-new/commit/2d79cd926120446f8161b0998eed8bcaef9c58be))
+
+## [8.7.0](https://github.com/lemonadesocial/web-new/compare/v8.6.0...v8.7.0) (2025-10-13)
+
+
+### Features
+
+* missing / ([d4013f6](https://github.com/lemonadesocial/web-new/commit/d4013f604b3d27aae333ce77caa2b327722c56d6))
+* missing path ([bf45bff](https://github.com/lemonadesocial/web-new/commit/bf45bff6e278435afcec5b8968ffc182ffc8334a))
+
+## [8.6.0](https://github.com/lemonadesocial/web-new/compare/v8.5.0...v8.6.0) (2025-10-13)
+
+
+### Features
+
+* update layout profile owner ([adbd55c](https://github.com/lemonadesocial/web-new/commit/adbd55c4eee5bd56be80371869fea1f078fccc0b))
+
+
+### Bug Fixes
+
+* update bottom bar ([54219f0](https://github.com/lemonadesocial/web-new/commit/54219f09d2fd6800ce534bd5c10795e06f2ddd8c))
+
+## [8.5.0](https://github.com/lemonadesocial/web-new/compare/v8.4.1...v8.5.0) (2025-10-13)
+
+
+### Features
+
+* remove unused ([5d7d204](https://github.com/lemonadesocial/web-new/commit/5d7d2044c8983a834ece9650775d37b7aa2c47a8))
+* update lens_profile_id ([71d3e82](https://github.com/lemonadesocial/web-new/commit/71d3e8202bdabce9a866948faf395cbe20e51b80))
+* update query get user ([c73360e](https://github.com/lemonadesocial/web-new/commit/c73360e7b55a875a9d9cd867b98291d862bbbf2f))
+
+## [8.4.1](https://github.com/lemonadesocial/web-new/compare/v8.4.0...v8.4.1) (2025-10-10)
+
+
+### Bug Fixes
+
+* check timezone before parse ([1acccf2](https://github.com/lemonadesocial/web-new/commit/1acccf2c3cf2afdd7ad1ee1a9d50444485fbba8c))
+* remove farcaster login toast ([935d8be](https://github.com/lemonadesocial/web-new/commit/935d8bea0a4769dedd7940bf2a33a8d970c68d4b))
+* update event with timezone ([6e907c4](https://github.com/lemonadesocial/web-new/commit/6e907c4de8db26bec9da52ad98b601e74ea4085a))
+
+## [8.4.0](https://github.com/lemonadesocial/web-new/compare/v8.3.0...v8.4.0) (2025-10-08)
+
+
+### Features
+
+* lemonhead frame ([56d0275](https://github.com/lemonadesocial/web-new/commit/56d0275a1efabfc782849e31a186f73cd2ec0c0d))
+
+
+### Bug Fixes
+
+* handle chain error ([afd7249](https://github.com/lemonadesocial/web-new/commit/afd7249ef17761fafa4d363212c5f04e71ace5ef))
+
+## [8.3.0](https://github.com/lemonadesocial/web-new/compare/v8.2.0...v8.3.0) (2025-10-06)
+
+
+### Features
+
+* add confirmation modal for delete ([30fc90e](https://github.com/lemonadesocial/web-new/commit/30fc90e46ae389e5de6a9ffcbc3308f3ff2299d2))
+* delete user ([aa96cd2](https://github.com/lemonadesocial/web-new/commit/aa96cd286a64a0540329753205efdb90ef726f13))
+
+## [8.2.0](https://github.com/lemonadesocial/web-new/compare/v8.1.0...v8.2.0) (2025-10-06)
+
+
+### Features
+
+* load more pending approvals ([10007dc](https://github.com/lemonadesocial/web-new/commit/10007dc381d2d7dae7c959514f97719a09d324a4))
+
+## [8.1.0](https://github.com/lemonadesocial/web-new/compare/v8.0.1...v8.1.0) (2025-10-03)
+
+
+### Features
+
+* update network check ([7ccac2a](https://github.com/lemonadesocial/web-new/commit/7ccac2a036c33f9f6472ebb6d1f215b104dd23fd))
+
+
+### Bug Fixes
+
+* missing user email when logging in with wallet ([87478af](https://github.com/lemonadesocial/web-new/commit/87478af091ca32d73c460b8db002ac1fa134b9c7))
+* unable to remove ticket limit ([1269a22](https://github.com/lemonadesocial/web-new/commit/1269a22329b1d4bafa8c812655dfe610a1aec748))
+
+## [8.0.1](https://github.com/lemonadesocial/web-new/compare/v8.0.0...v8.0.1) (2025-10-03)
+
+
+### Bug Fixes
+
+* unable to remove guest limit ([13e89f3](https://github.com/lemonadesocial/web-new/commit/13e89f352f2616fa5da0a079be0d2476f9a5f27c))
+* update tooltip position ([c67dc46](https://github.com/lemonadesocial/web-new/commit/c67dc46951e0d5e63698555b52bf031754ff56e6))
+
+## [8.0.0](https://github.com/lemonadesocial/web-new/compare/v7.11.0...v8.0.0) (2025-10-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* ticket passcode
+
+### Features
+
+* ticket passcode ([0afc324](https://github.com/lemonadesocial/web-new/commit/0afc32428a762b3d5e4e921b31c1785180c893f7))
+
+## [7.11.0](https://github.com/lemonadesocial/web-new/compare/v7.10.0...v7.11.0) (2025-10-01)
+
+
+### Features
+
+* update lemonheads invite ([eb2efcf](https://github.com/lemonadesocial/web-new/commit/eb2efcfe33035d3916d6f6b149ca1f1214c9d207))
+
+## [7.10.0](https://github.com/lemonadesocial/web-new/compare/v7.9.0...v7.10.0) (2025-09-30)
+
+
+### Features
+
+* add fobbiden message for farcaster link ([d3fe88e](https://github.com/lemonadesocial/web-new/commit/d3fe88ebb8bea976b59808752dc5e7aa979d95b8))
+
+## [7.9.0](https://github.com/lemonadesocial/web-new/compare/v7.8.1...v7.9.0) (2025-09-30)
+
+
+### Features
+
+* ensure proper hex formatting ([f072591](https://github.com/lemonadesocial/web-new/commit/f0725918ba2eddb6e8a86ec6c92dba35e64e68f7))
+
 ## [7.8.1](https://github.com/lemonadesocial/web-new/compare/v7.8.0...v7.8.1) (2025-09-29)
 
 

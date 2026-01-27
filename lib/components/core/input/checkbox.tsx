@@ -9,26 +9,19 @@ const iconClassMap = {
   },
   circle: {
     checked: 'icon-check-filled text-primary',
-    unchecked: 'icon-check-filled text-quaternary',
+    unchecked: 'icon-circle-outline text-quaternary',
   },
 };
 
 export interface CheckboxProps extends React.PropsWithChildren {
   id: string;
   value?: boolean;
-  onChange?: () => void;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
   containerClass?: string;
   variant?: 'square' | 'circle';
 }
 
-export function Checkbox({
-  id,
-  value = false,
-  onChange,
-  children,
-  containerClass,
-  variant = 'square',
-}: CheckboxProps) {
+export function Checkbox({ id, value = false, onChange, children, containerClass, variant = 'square' }: CheckboxProps) {
   return (
     <div className={twMerge('flex gap-3', containerClass)}>
       <input id={id} name={id} type="checkbox" checked={value} className="peer hidden" onChange={onChange} />

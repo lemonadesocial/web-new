@@ -132,15 +132,15 @@ const EventRegistrationContent: React.FC = () => {
       )}
       <div className='flex flex-col gap-4 p-4'>
         <TicketSelect />
-        <p className='font-medium'>
+        <p>
           {hasSingleFreeTicket ? 'Welcome! To join the event, please register below.' : 'Welcome! To join the event, please get your ticket below.'}
         </p>
         {
           me && (
             <div className='flex gap-2 items-center'>
               <Avatar src={userAvatar(me)} className='size-5' />
-              <p className='font-medium'>{me.name}</p>
-              <p className='font-medium text-secondary'>{me.email}</p>
+              <p>{me.display_name || me.name}</p>
+              <p className="text-secondary">{me.email}</p>
             </div>
           )
         }
@@ -176,22 +176,13 @@ const BaseEventRegistration: React.FC<{ event: Event; }> = ({ event: initialEven
     skip: !session || !initialEvent.approval_required,
   });
 
-  const { loading: loadingTicketTypes } = useQuery(GetEventTicketTypesDocument, {
+  const { loading: loadingTicketTypes, data: ticketTypesData } = useQuery(GetEventTicketTypesDocument, {
     variables: { input: { event: initialEvent._id } },
     onComplete(data) {
       const ticketTypes = data.getEventTicketTypes.ticket_types as PurchasableTicketType[];
 
       setTicketTypes(ticketTypes);
       setTicketLimit(ticketTypes.reduce((acc, ticketType) => acc + ticketType.limit, 0));
-
-      if (ticketTypes.length == 1) {
-        const ticket = ticketTypes[0];
-        const price = ticket.prices[0];
-
-        setPurchaseItems([{ id: ticket._id, count: 1 }]);
-        setCurrency(price.currency);
-        setSelectedPaymentAccount(price.payment_accounts_expanded?.[0] as NewPaymentAccount);
-      }
     },
   });
 
@@ -211,12 +202,24 @@ const BaseEventRegistration: React.FC<{ event: Event; }> = ({ event: initialEven
   });
 
 
-  useQuery(ListEventTokenGatesDocument, {
+  const { data: tokenGatesData } = useQuery(ListEventTokenGatesDocument, {
     variables: { event: initialEvent._id },
     onComplete(data) {
       setEventTokenGates(data.listEventTokenGates);
     },
   });
+
+  React.useEffect(() => {
+    const ticketTypes = ticketTypesData?.getEventTicketTypes.ticket_types as PurchasableTicketType[];
+    if (ticketTypes?.length === 1 && tokenGatesData?.listEventTokenGates.length === 0) {
+      const ticket = ticketTypes[0];
+      const price = ticket.prices[0];
+
+      setPurchaseItems([{ id: ticket._id, count: 1 }]);
+      setCurrency(price.currency);
+      setSelectedPaymentAccount(price.payment_accounts_expanded?.[0] as NewPaymentAccount);
+    }
+  }, [ticketTypesData, tokenGatesData]);
 
   React.useEffect(() => {
     if (!initialEvent.approval_required) return;

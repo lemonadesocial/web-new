@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { Ticket, Event, PaymentRefundInfo } from '$lib/graphql/generated/backend/graphql';
 import { Button, drawer, modal } from "$lib/components/core";
-import { downloadTicketPass, getAssignedTicket, getUnassignedTickets } from "$lib/utils/event";
+import { getAssignedTicket, getUnassignedTickets } from "$lib/utils/event";
 import { useEventStatus } from "$lib/hooks/useEventStatus";
 import { useMe } from "$lib/hooks/useMe";
 
@@ -13,6 +13,7 @@ import { AddToCalendarModal } from "./AddToCalendar";
 import { AdditionalTicketsPane } from "./AdditionalTicketsPane";
 import { EventCountdown } from "./EventCountdown";
 import { InviteFriendModal } from "../modals/InviteFriendModal";
+import { AddToWalletModal } from "./AddToWallet";
 
 export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; payments?: PaymentRefundInfo[]; event: Event; }) {
   const me = useMe();
@@ -136,7 +137,13 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
                 variant="tertiary"
                 size="sm"
                 iconLeft="icon-pass"
-                onClick={() => downloadTicketPass(myTicket)}
+                onClick={() => {
+                  modal.open(AddToWalletModal, {
+                    props: {
+                      ticket: myTicket
+                    },
+                  });
+                }}
               />
             )
           }
@@ -158,18 +165,23 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
               </Button>
             )
           }
-          <Button
-            variant="tertiary"
-            size="sm"
-            iconLeft="icon-share"
-            onClick={() => modal.open(InviteFriendModal, {
-              props: {
-                event
-              },
-            })}
-          >
-            Invite a Friend
-          </Button>
+          
+          {
+            ((!!event.guest_limit_per && event.guest_limit_per > 0) || event.guest_limit_per === null) && (
+              <Button
+                variant="tertiary"
+                size="sm"
+                iconLeft="icon-share"
+                onClick={() => modal.open(InviteFriendModal, {
+                  props: {
+                    event
+                  },
+                })}
+              >
+                Invite a Friend
+              </Button>
+            )
+          }
         </div>
       </div>
       {

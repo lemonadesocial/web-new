@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Eip1193Provider, ethers } from "ethers";
 
-import { useAppKitProvider } from "$lib/utils/appkit";
+import { appKit } from "$lib/utils/appkit";
 import { isNativeToken } from "$lib/utils/crypto";
 import { toast } from "$lib/components/core/toast";
 import ERC20 from "$lib/abis/ERC20.json";
@@ -12,7 +12,6 @@ import { useBuyTickets } from "./useBuyTickets";
 
 export function useCryptoPayment() {
   const store = useEventRegistrationStore();
-  const { walletProvider } = useAppKitProvider('eip155');
 
   const { pay: handleBuyTickets, loading: buyTicketsLoading } = useBuyTickets(data => {
     registrationModal.open(ConfirmCryptoPaymentModal, {
@@ -33,7 +32,7 @@ export function useCryptoPayment() {
 
     if (!tokenAddress) return;
 
-    const provider = new ethers.BrowserProvider(walletProvider as Eip1193Provider);
+    const provider = new ethers.BrowserProvider(appKit.getProvider('eip155') as Eip1193Provider);
     const network = await provider.getNetwork();
     const signer = await provider.getSigner();
     const address = await signer.getAddress();

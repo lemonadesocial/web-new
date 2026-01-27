@@ -2,7 +2,7 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { atom } from 'jotai';
 
 export type ThemeValues = {
-  theme?: 'default' | 'minimal' | 'shader' | 'pattern' | 'image';
+  theme?: 'default' | 'minimal' | 'shader' | 'pattern' | 'image' | 'passport';
   config: {
     mode?: 'dark' | 'light' | 'auto';
     name?: string;
@@ -62,6 +62,7 @@ export const fonts: { title: Record<string, string>; body: Record<string, string
     default: 'var(--font-class-display)',
     aktura: 'var(--font-aktura)',
     array: 'var(--font-array)',
+    basePixel: 'var(--font-base-pixel)',
     sarpanch: 'var(--font-sarpanch)',
     chillax: 'var(--font-chillax)',
     chubbo: 'var(--font-chubbo)',
@@ -77,11 +78,13 @@ export const fonts: { title: Record<string, string>; body: Record<string, string
     technor: 'var(--font-technor)',
     zina: 'var(--font-zina)',
     zodiak: 'var(--font-zodiak)',
+    figtreeBlack: 'var(--font-figtree-black)'
   },
   body: {
     default: 'var(--font-general-sans)',
     archivo: 'var(--font-archivo)',
     azeret_mono: 'var(--font-azeret-mono)',
+    antonio: 'var(--font-antonio)',
     ranade: 'var(--font-ranade)',
     sentient: 'var(--font-sentient)',
     spline_sans: 'var(--font-spline-sans)',
