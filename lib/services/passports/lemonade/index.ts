@@ -208,3 +208,66 @@ export const getMintLemonadePassportData = async (
     image: imageUrl,
   };
 };
+
+export const getMintLemonadePassportDataNew = async ({
+  wallet,
+  username: lemonadeUsername,
+  fluffleTokenId,
+}: {
+  wallet: string;
+  username?: string;
+  fluffleTokenId?: string;
+}) => {
+  const passportData = await getData(wallet, fluffleTokenId || '');
+
+  if (!passportData?.passportNumber) {
+    throw new Error('Failed to get passport data');
+  }
+
+  const username = lemonadeUsername ? `@${lemonadeUsername}` : await getEnsUsername(wallet);
+
+  if (!username) {
+    throw new Error('Failed to get username');
+  }
+
+  const avatarImageUrl = fluffleTokenId ? passportData.fluffleImageUrl : passportData.lemonheadImageUrl;
+
+  const passportId = passportData.passportNumber.toString().padStart(8, '0');
+
+  const creationDate = format(new Date(), 'MM/dd/yyyy');
+
+  const buffers = await Promise.all([
+    getAvatarImageBuffer(avatarImageUrl),
+    getBoilerplateImageBuffer(),
+    getUsernameImageBuffer(username),
+    getPassportIdImageBuffer(passportId),
+    getCreationDateImageBuffer(creationDate),
+  ]);
+
+  const finalImage = await getImageFromBuffers(buffers, outputWidth, outputHeight, 'png');
+
+  const fileId = `lemonade-passport-${passportId}`;
+  const imageUrl = await uploadImage(`${fileId}.png`, finalImage);
+
+  //-- create and upload metadata
+  const metadata = createMetadata(imageUrl);
+  const metadataUrl = await uploadJSON(fileId, { ...metadata });
+  const uri = getUriFromUrl(metadataUrl);
+
+  //-- call backend API and obtain the signature
+  const data = await getApproval(wallet, uri);
+
+  if (!data) {
+    throw new Error('Failed to get minting approval');
+  }
+
+  return {
+    //-- use these to call the contract minting function
+    signature: data.signature,
+    price: data.price,
+    metadata: uri,
+
+    //-- for display purposes
+    image: imageUrl,
+  };
+};

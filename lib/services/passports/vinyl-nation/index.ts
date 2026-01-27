@@ -50,25 +50,12 @@ const getAvatarImageBuffer = async (avatarImageUrl: string) => {
   return getUrlImageBuffer(outputWidth, outputHeight, avatarOffset, { x: avatarSize, y: avatarSize }, avatarImageUrl);
 };
 
-const getAvatarPlaceholderBuffer = async () => {
-  const canvas = createCanvas(outputWidth, outputHeight);
-  const ctx = canvas.getContext('2d');
-  assert.ok(ctx);
-
-  // ctx.fillStyle = '#C7FE42';
-  ctx.fillRect(avatarOffset.x, avatarOffset.y, avatarSize, avatarSize);
-
-  return canvas.toBuffer('image/png');
-};
-
 const getBoilerplateImageBuffer = async () => {
   return getFileImageBuffer(path.join(process.cwd(), 'data', 'vinyl-nation-passport', 'boilerplate.png'));
 };
 
 const getBoilerplatePlaceholderImageBuffer = async () => {
-  return getFileImageBuffer(
-    path.join(process.cwd(), 'data', 'vinyl-nation-passport-placeholder', 'boilerplate-placeholder.png'),
-  );
+  return getFileImageBuffer(path.join(process.cwd(), 'data', 'vinyl-nation-passport', 'boilerplate-placeholder.png'));
 };
 
 const getUsernameImageBuffer = async (username: string) => {
@@ -140,13 +127,20 @@ export const getMintVinylNationPassportImage = async (avatarImageUrl?: string, u
   return { image: dataUrl };
 };
 
-export const getMintVinylNationPassportData = async (
-  username: string,
-  passportNumber: number,
-  wallet: string,
-  avatarImageUrl: string,
-) => {
+export const getMintVinylNationPassportData = async ({
+  username,
+  passportNumber,
+  wallet,
+  avatarImageUrl,
+}: {
+  username: string;
+  passportNumber?: number;
+  wallet: string;
+  avatarImageUrl?: string;
+}) => {
   assert.ok(username);
+  assert.ok(passportNumber);
+  assert.ok(avatarImageUrl);
 
   const passportId = passportNumber.toString().padStart(8, '0');
 

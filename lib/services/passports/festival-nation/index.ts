@@ -139,12 +139,17 @@ export const getMintFestivalNationPassportImage = async (avatarImageUrl?: string
   return { image: dataUrl };
 };
 
-export const getMintFestivalNationPassportData = async (
-  username: string,
-  passportNumber: number,
-  wallet: string,
-  avatarImageUrl: string,
-) => {
+export const getMintFestivalNationPassportData = async ({
+  username,
+  passportNumber,
+  wallet,
+  avatarImageUrl,
+}: {
+  username: string;
+  passportNumber?: number;
+  wallet: string;
+  avatarImageUrl?: string;
+}) => {
   const passportId = passportNumber.toString().padStart(8, '0');
 
   const creationDate = formatDate(new Date());

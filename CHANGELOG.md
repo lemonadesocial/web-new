@@ -1,5 +1,70 @@
 # Changelog
 
+## [9.14.0](https://github.com/lemonadesocial/web-new/compare/v9.13.0...v9.14.0) (2026-01-26)
+
+
+### Features
+
+* checking file path ([bd33f42](https://github.com/lemonadesocial/web-new/commit/bd33f42a005a2ff79885c9607a85bfc99d41b843))
+* replace passport image cache ([bf4966f](https://github.com/lemonadesocial/web-new/commit/bf4966fe27f10f5aa4b2e14e279f5fb01d964dd1))
+
+## [9.13.0](https://github.com/lemonadesocial/web-new/compare/v9.12.0...v9.13.0) (2026-01-26)
+
+
+### Features
+
+* check can mint for go next ([f5870ad](https://github.com/lemonadesocial/web-new/commit/f5870ad1a691c4bda1d50538207c1188f2b08c88))
+* checking cache ([44bdadb](https://github.com/lemonadesocial/web-new/commit/44bdadb8c98ce560e71a19df337866d8125d5783))
+
+
+### Bug Fixes
+
+* checking image cache ([c500b25](https://github.com/lemonadesocial/web-new/commit/c500b25715e08f6f08350abcbae1c1d18a7c306e))
+* theme override widgets ([fe14c93](https://github.com/lemonadesocial/web-new/commit/fe14c932ef0927ef97191c500ac756ddf60bdbcb))
+
+## [9.12.0](https://github.com/lemonadesocial/web-new/compare/v9.11.0...v9.12.0) (2026-01-26)
+
+
+### Features
+
+* check whitelist ([1921c4e](https://github.com/lemonadesocial/web-new/commit/1921c4e76a905d6263c4d5d1ed5afa359d61c884))
+* update custom passport image for template ([f4a9782](https://github.com/lemonadesocial/web-new/commit/f4a978249976aa84553726bc089a12f8ed612a34))
+* update get mint data ([cc42960](https://github.com/lemonadesocial/web-new/commit/cc4296081e16a9d8053ea2a63427f31b69c247bd))
+* update query mint data ([39a4327](https://github.com/lemonadesocial/web-new/commit/39a4327d05803aa865c9ccd111dac5f0dcd6637f))
+
+## [9.11.0](https://github.com/lemonadesocial/web-new/compare/v9.10.0...v9.11.0) (2026-01-26)
+
+
+### Features
+
+* update dns record values ([22b5573](https://github.com/lemonadesocial/web-new/commit/22b5573fbdca4a291350d63b615ce0a159af060f))
+
+
+### Bug Fixes
+
+* remove dollar sign ([97f61d2](https://github.com/lemonadesocial/web-new/commit/97f61d26ca836142417a62bfbac18d686cf33dd0))
+
+## [9.10.0](https://github.com/lemonadesocial/web-new/compare/v9.9.1...v9.10.0) (2026-01-26)
+
+
+### Features
+
+* update dns config ([0bf9f2b](https://github.com/lemonadesocial/web-new/commit/0bf9f2b6bb0c8ccd3902a9ca3b931997d60b5599))
+
+## [9.9.1](https://github.com/lemonadesocial/web-new/compare/v9.9.0...v9.9.1) (2026-01-21)
+
+
+### Bug Fixes
+
+* filter default domain ([bf00328](https://github.com/lemonadesocial/web-new/commit/bf003285a9697d95ad839fcf91f890c7b5e541c4))
+
+## [9.9.0](https://github.com/lemonadesocial/web-new/compare/v9.8.0...v9.9.0) (2026-01-20)
+
+
+### Features
+
+* custom domain ([6b57261](https://github.com/lemonadesocial/web-new/commit/6b572611cc75faab31d7dd6210eae0cecdab6d20))
+
 ## [9.8.0](https://github.com/lemonadesocial/web-new/compare/v9.7.0...v9.8.0) (2026-01-20)
 
 

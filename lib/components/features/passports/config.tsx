@@ -303,10 +303,12 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
     provider: 'zugrama',
     passportTitle: 'Zugrama',
     currentStep: PassportStep.intro,
+    useLemonhead: true,
     ui: {
       intro: {
         title: 'Join Zugrama',
-        subtitle: 'Become part of a new world.',
+        subtitle:
+          'Mint your ZuGrama passport & lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna.',
         footer: {
           label: '',
           btnText: "Yes, I'm In",
@@ -351,8 +353,11 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       },
     },
     enabled: {
-      selfVerify: true,
-      uploadPhoto: true,
+      lemohead: true,
+      shouldMintedLemonhead: true,
+      fluffePhoto: true,
+      // selfVerify: true,
+      // uploadPhoto: true,
       ens: true,
       whitelist: true,
     },
