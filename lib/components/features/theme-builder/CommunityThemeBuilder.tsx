@@ -208,6 +208,7 @@ function CommunityThemeBuilderPane({
     dispatch({
       type: ThemeBuilderActionKind.select_color,
       payload: {
+        config: { ...state.config, mode: 'auto' },
         variables: {
           ...state.variables,
           [modeVarKey]: updatedVars,
