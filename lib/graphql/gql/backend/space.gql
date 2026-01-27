@@ -69,6 +69,7 @@ fragment Space on Space {
   nft_enabled
   theme_name
   hostnames
+  fav_icon_url
 }
 
 fragment SpaceTagFragment on SpaceTag {

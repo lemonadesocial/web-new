@@ -1,5 +1,5 @@
 'use client';
-import { Button, Card, Divider, drawer, Input, Menu, MenuItem, modal, toast, Toggle } from '$lib/components/core';
+import { Button, Card, Divider, drawer, FileInput, Input, Menu, MenuItem, modal, toast, Toggle } from '$lib/components/core';
 import {
   DeleteSpaceDocument,
   GetSpaceDocument,
@@ -13,6 +13,7 @@ import { TitleDescModal } from '../modals/TitleDescModal';
 import { ConfirmModal } from '../../modals/ConfirmModal';
 import { ChangeStatusModal } from '../modals/ChangeStatusModal';
 import { CustomDomainPane } from '../panes/CustomDomainPane';
+import { uploadFiles } from '$lib/utils/file';
 
 export function SettingsCommunityAvanced(props: { space: Space }) {
   const { data } = useQuery(GetSpaceDocument, {
@@ -39,6 +40,25 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
 
   const handleUpdate = async (input: Partial<Space>) => {
     await update({ variables: { id: space._id, input } });
+  };
+
+  const [uploadingFavicon, setUploadingFavicon] = React.useState(false);
+
+  const handleFaviconUpload = async (files: File[]) => {
+    if (!files.length || !space) return;
+
+    try {
+      setUploadingFavicon(true);
+      const uploadedFiles = await uploadFiles(files, 'community');
+      if (uploadedFiles[0]?.url) {
+        await handleUpdate({ fav_icon_url: uploadedFiles[0].url });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Cannot upload favicon!');
+    } finally {
+      setUploadingFavicon(false);
+    }
   };
 
   const hostNames = space?.hostnames?.filter((hostname) => !hostname.endsWith('lemonade.social'));
@@ -186,17 +206,29 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
               <Card.Content className="p-0 divide-y divide-(--color-divider)">
                 <div className="flex justify-between items-center py-3 px-4">
                   <div className="flex gap-3 items-center">
-                    <div className="p-1.5 bg-card rounded-sm size-7 aspect-square flex items-center justify-center">
-                      <i className="icon-lemonade-logo text-[#FDE047] size-4" />
+                    <div className="p-1.5 bg-card rounded-sm size-7 aspect-square flex items-center justify-center overflow-hidden">
+                      {space?.fav_icon_url ? (
+                        <img src={space.fav_icon_url} alt="Favicon" className="size-full object-contain" />
+                      ) : (
+                        <i className="icon-lemonade-logo text-[#FDE047] size-4" />
+                      )}
                     </div>
                     <div>
                       <p>Favicon</p>
                       <p className="text-sm text-tertiary">32x32px ICO, PNG, GIF, or JPG file recommended.</p>
                     </div>
                   </div>
-                  <Button size="sm" variant="tertiary-alt" onClick={() => toast.success('Coming soon.')}>
-                    Change Favicon
-                  </Button>
+                  <FileInput
+                    accept="image/*"
+                    multiple={false}
+                    onChange={handleFaviconUpload}
+                  >
+                    {(open) => (
+                      <Button size="sm" variant="tertiary-alt" onClick={open} loading={uploadingFavicon}>
+                        Change Favicon
+                      </Button>
+                    )}
+                  </FileInput>
                 </div>
 
                 <div

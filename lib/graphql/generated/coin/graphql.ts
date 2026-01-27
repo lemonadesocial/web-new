@@ -32,6 +32,110 @@ export type Boolean_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['Boolean']['input']>>;
 };
 
+/** columns and relationships of "Envelope" */
+export type Envelope = {
+  __typename?: 'Envelope';
+  amount?: Maybe<Scalars['numeric']['output']>;
+  chain_id: Scalars['numeric']['output'];
+  claimed: Scalars['Boolean']['output'];
+  claimed_at?: Maybe<Scalars['numeric']['output']>;
+  created_at: Scalars['numeric']['output'];
+  currency?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  message?: Maybe<Scalars['String']['output']>;
+  owner: Scalars['String']['output'];
+  recipient?: Maybe<Scalars['String']['output']>;
+  sealed_at?: Maybe<Scalars['numeric']['output']>;
+  token_id: Scalars['numeric']['output'];
+};
+
+/** Boolean expression to filter rows from the table "Envelope". All fields are combined with a logical 'AND'. */
+export type Envelope_Bool_Exp = {
+  _and?: InputMaybe<Array<Envelope_Bool_Exp>>;
+  _not?: InputMaybe<Envelope_Bool_Exp>;
+  _or?: InputMaybe<Array<Envelope_Bool_Exp>>;
+  amount?: InputMaybe<Numeric_Comparison_Exp>;
+  chain_id?: InputMaybe<Numeric_Comparison_Exp>;
+  claimed?: InputMaybe<Boolean_Comparison_Exp>;
+  claimed_at?: InputMaybe<Numeric_Comparison_Exp>;
+  created_at?: InputMaybe<Numeric_Comparison_Exp>;
+  currency?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  message?: InputMaybe<String_Comparison_Exp>;
+  owner?: InputMaybe<String_Comparison_Exp>;
+  recipient?: InputMaybe<String_Comparison_Exp>;
+  sealed_at?: InputMaybe<Numeric_Comparison_Exp>;
+  token_id?: InputMaybe<Numeric_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "Envelope". */
+export type Envelope_Order_By = {
+  amount?: InputMaybe<Order_By>;
+  chain_id?: InputMaybe<Order_By>;
+  claimed?: InputMaybe<Order_By>;
+  claimed_at?: InputMaybe<Order_By>;
+  created_at?: InputMaybe<Order_By>;
+  currency?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  message?: InputMaybe<Order_By>;
+  owner?: InputMaybe<Order_By>;
+  recipient?: InputMaybe<Order_By>;
+  sealed_at?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "Envelope" */
+export enum Envelope_Select_Column {
+  /** column name */
+  Amount = 'amount',
+  /** column name */
+  ChainId = 'chain_id',
+  /** column name */
+  Claimed = 'claimed',
+  /** column name */
+  ClaimedAt = 'claimed_at',
+  /** column name */
+  CreatedAt = 'created_at',
+  /** column name */
+  Currency = 'currency',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Message = 'message',
+  /** column name */
+  Owner = 'owner',
+  /** column name */
+  Recipient = 'recipient',
+  /** column name */
+  SealedAt = 'sealed_at',
+  /** column name */
+  TokenId = 'token_id'
+}
+
+/** Streaming cursor of the table "Envelope" */
+export type Envelope_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Envelope_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Envelope_Stream_Cursor_Value_Input = {
+  amount?: InputMaybe<Scalars['numeric']['input']>;
+  chain_id?: InputMaybe<Scalars['numeric']['input']>;
+  claimed?: InputMaybe<Scalars['Boolean']['input']>;
+  claimed_at?: InputMaybe<Scalars['numeric']['input']>;
+  created_at?: InputMaybe<Scalars['numeric']['input']>;
+  currency?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  message?: InputMaybe<Scalars['String']['input']>;
+  owner?: InputMaybe<Scalars['String']['input']>;
+  recipient?: InputMaybe<Scalars['String']['input']>;
+  sealed_at?: InputMaybe<Scalars['numeric']['input']>;
+  token_id?: InputMaybe<Scalars['numeric']['input']>;
+};
+
 /** columns and relationships of "FairLaunch" */
 export type FairLaunch = {
   __typename?: 'FairLaunch';
@@ -814,6 +918,74 @@ export type String_Comparison_Exp = {
   _similar?: InputMaybe<Scalars['String']['input']>;
 };
 
+/** columns and relationships of "TokenOwner" */
+export type TokenOwner = {
+  __typename?: 'TokenOwner';
+  chainId: Scalars['numeric']['output'];
+  id: Scalars['String']['output'];
+  own_at: Scalars['numeric']['output'];
+  owner: Scalars['String']['output'];
+  tokenAddress: Scalars['String']['output'];
+  tokenId: Scalars['numeric']['output'];
+};
+
+/** Boolean expression to filter rows from the table "TokenOwner". All fields are combined with a logical 'AND'. */
+export type TokenOwner_Bool_Exp = {
+  _and?: InputMaybe<Array<TokenOwner_Bool_Exp>>;
+  _not?: InputMaybe<TokenOwner_Bool_Exp>;
+  _or?: InputMaybe<Array<TokenOwner_Bool_Exp>>;
+  chainId?: InputMaybe<Numeric_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  own_at?: InputMaybe<Numeric_Comparison_Exp>;
+  owner?: InputMaybe<String_Comparison_Exp>;
+  tokenAddress?: InputMaybe<String_Comparison_Exp>;
+  tokenId?: InputMaybe<Numeric_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "TokenOwner". */
+export type TokenOwner_Order_By = {
+  chainId?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  own_at?: InputMaybe<Order_By>;
+  owner?: InputMaybe<Order_By>;
+  tokenAddress?: InputMaybe<Order_By>;
+  tokenId?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "TokenOwner" */
+export enum TokenOwner_Select_Column {
+  /** column name */
+  ChainId = 'chainId',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  OwnAt = 'own_at',
+  /** column name */
+  Owner = 'owner',
+  /** column name */
+  TokenAddress = 'tokenAddress',
+  /** column name */
+  TokenId = 'tokenId'
+}
+
+/** Streaming cursor of the table "TokenOwner" */
+export type TokenOwner_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: TokenOwner_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type TokenOwner_Stream_Cursor_Value_Input = {
+  chainId?: InputMaybe<Scalars['numeric']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  own_at?: InputMaybe<Scalars['numeric']['input']>;
+  owner?: InputMaybe<Scalars['String']['input']>;
+  tokenAddress?: InputMaybe<Scalars['String']['input']>;
+  tokenId?: InputMaybe<Scalars['numeric']['input']>;
+};
+
 /** columns and relationships of "TradeVolume" */
 export type TradeVolume = {
   __typename?: 'TradeVolume';
@@ -1323,6 +1495,10 @@ export enum Order_By {
 
 export type Query_Root = {
   __typename?: 'query_root';
+  /** fetch data from the table: "Envelope" */
+  Envelope: Array<Envelope>;
+  /** fetch data from the table: "Envelope" using primary key columns */
+  Envelope_by_pk?: Maybe<Envelope>;
   /** fetch data from the table: "FairLaunch" */
   FairLaunch: Array<FairLaunch>;
   /** fetch data from the table: "FairLaunch" using primary key columns */
@@ -1355,6 +1531,10 @@ export type Query_Root = {
   StakingSummary: Array<StakingSummary>;
   /** fetch data from the table: "StakingSummary" using primary key columns */
   StakingSummary_by_pk?: Maybe<StakingSummary>;
+  /** fetch data from the table: "TokenOwner" */
+  TokenOwner: Array<TokenOwner>;
+  /** fetch data from the table: "TokenOwner" using primary key columns */
+  TokenOwner_by_pk?: Maybe<TokenOwner>;
   /** fetch data from the table: "TradeVolume" */
   TradeVolume: Array<TradeVolume>;
   /** fetch data from the table: "TradeVolume" using primary key columns */
@@ -1375,6 +1555,20 @@ export type Query_Root = {
   raw_events: Array<Raw_Events>;
   /** fetch data from the table: "raw_events" using primary key columns */
   raw_events_by_pk?: Maybe<Raw_Events>;
+};
+
+
+export type Query_RootEnvelopeArgs = {
+  distinct_on?: InputMaybe<Array<Envelope_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Envelope_Order_By>>;
+  where?: InputMaybe<Envelope_Bool_Exp>;
+};
+
+
+export type Query_RootEnvelope_By_PkArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -1486,6 +1680,20 @@ export type Query_RootStakingSummaryArgs = {
 
 
 export type Query_RootStakingSummary_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootTokenOwnerArgs = {
+  distinct_on?: InputMaybe<Array<TokenOwner_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<TokenOwner_Order_By>>;
+  where?: InputMaybe<TokenOwner_Bool_Exp>;
+};
+
+
+export type Query_RootTokenOwner_By_PkArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -1693,6 +1901,12 @@ export type Raw_Events_Stream_Cursor_Value_Input = {
 
 export type Subscription_Root = {
   __typename?: 'subscription_root';
+  /** fetch data from the table: "Envelope" */
+  Envelope: Array<Envelope>;
+  /** fetch data from the table: "Envelope" using primary key columns */
+  Envelope_by_pk?: Maybe<Envelope>;
+  /** fetch data from the table in a streaming manner: "Envelope" */
+  Envelope_stream: Array<Envelope>;
   /** fetch data from the table: "FairLaunch" */
   FairLaunch: Array<FairLaunch>;
   /** fetch data from the table: "FairLaunch" using primary key columns */
@@ -1741,6 +1955,12 @@ export type Subscription_Root = {
   StakingSummary_by_pk?: Maybe<StakingSummary>;
   /** fetch data from the table in a streaming manner: "StakingSummary" */
   StakingSummary_stream: Array<StakingSummary>;
+  /** fetch data from the table: "TokenOwner" */
+  TokenOwner: Array<TokenOwner>;
+  /** fetch data from the table: "TokenOwner" using primary key columns */
+  TokenOwner_by_pk?: Maybe<TokenOwner>;
+  /** fetch data from the table in a streaming manner: "TokenOwner" */
+  TokenOwner_stream: Array<TokenOwner>;
   /** fetch data from the table: "TradeVolume" */
   TradeVolume: Array<TradeVolume>;
   /** fetch data from the table: "TradeVolume" using primary key columns */
@@ -1773,6 +1993,27 @@ export type Subscription_Root = {
   raw_events_by_pk?: Maybe<Raw_Events>;
   /** fetch data from the table in a streaming manner: "raw_events" */
   raw_events_stream: Array<Raw_Events>;
+};
+
+
+export type Subscription_RootEnvelopeArgs = {
+  distinct_on?: InputMaybe<Array<Envelope_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Envelope_Order_By>>;
+  where?: InputMaybe<Envelope_Bool_Exp>;
+};
+
+
+export type Subscription_RootEnvelope_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootEnvelope_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Envelope_Stream_Cursor_Input>>;
+  where?: InputMaybe<Envelope_Bool_Exp>;
 };
 
 
@@ -1941,6 +2182,27 @@ export type Subscription_RootStakingSummary_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<StakingSummary_Stream_Cursor_Input>>;
   where?: InputMaybe<StakingSummary_Bool_Exp>;
+};
+
+
+export type Subscription_RootTokenOwnerArgs = {
+  distinct_on?: InputMaybe<Array<TokenOwner_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<TokenOwner_Order_By>>;
+  where?: InputMaybe<TokenOwner_Bool_Exp>;
+};
+
+
+export type Subscription_RootTokenOwner_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootTokenOwner_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<TokenOwner_Stream_Cursor_Input>>;
+  where?: InputMaybe<TokenOwner_Bool_Exp>;
 };
 
 
