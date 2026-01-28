@@ -9,6 +9,7 @@ import { getMintDripNationPassportData } from '$lib/services/passports/drip-nati
 
 import { PassportProvider } from '$lib/graphql/generated/backend/graphql';
 import { getMintLemonadePassportDataNew } from '$lib/services/passports/lemonade';
+import { getMintAlzenaWorldPassportData } from '$lib/services/passports/alzena-world';
 
 export async function GET(request: NextRequest) {
   const wallet = new URL(request.url).searchParams.get('wallet');
@@ -44,6 +45,7 @@ export async function GET(request: NextRequest) {
     .with(PassportProvider.VinylNation, () => getMintVinylNationPassportData)
     .with(PassportProvider.FestivalNation, () => getMintFestivalNationPassportData)
     .with(PassportProvider.DripNation, () => getMintDripNationPassportData)
+    .with(PassportProvider.AlzenaWorld, () => getMintAlzenaWorldPassportData)
     .otherwise(() => null);
 
   if (!getMintData) {
