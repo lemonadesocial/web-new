@@ -149,7 +149,7 @@ export function Footer() {
   const disabled = match(state.currentStep)
     .with(PassportStep.photo, () => !state.photo)
     .with(PassportStep.username, () => {
-      if (state.enabled?.lemonadeUsername) return !state.lemonadeUsername && state.enabled?.ens && !state.ensName;
+      if (state.enabled?.lemonadeUsername) return !state.lemonadeUsername;
       else if (state.enabled?.ens) return !state.ensName;
       else return false;
     })

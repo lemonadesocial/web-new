@@ -362,4 +362,52 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       whitelist: true,
     },
   },
+  'alzena-world': {
+    provider: 'alzena-world',
+    passportTitle: 'Alzena World',
+    currentStep: PassportStep.intro,
+    useLemonhead: true,
+    ui: {
+      intro: {
+        title: 'Join <br />  Alzena World',
+        subtitle: `Mint your Alzena World passport & lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna.`,
+        footer: {
+          label: '',
+          btnText: "Yes, I'm In",
+          index: 0,
+        },
+      },
+      photo: {
+        title: 'Choose Your Passport Photo',
+        subtitle: 'Select the avatar you’d like on your passport.',
+        footer: {
+          label: 'Passport Photo',
+          btnText: 'Next',
+          index: 1,
+        },
+      },
+      username: {
+        title: 'Select Passport Name',
+        subtitle: 'Choose what appears on your passport, your username or ENS.',
+        footer: {
+          label: 'Username',
+          btnText: 'Claim Passport',
+          index: 2,
+        },
+      },
+      celebrate: {
+        showBgVideo: true,
+        footer: {
+          label: 'Celebrate',
+          btnText: 'Done',
+          index: 3,
+        },
+      },
+    },
+    enabled: {
+      lemohead: true,
+      fluffePhoto: true,
+      lemonadeUsername: true,
+    },
+  },
 };
