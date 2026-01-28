@@ -139,7 +139,7 @@ function CommunityThemeBuilderPane({
     { key: 'page/bg', label: 'page/bg', cssVar: '--color-background' },
     { key: 'page/bg-overlay', label: 'page/bg-overlay', cssVar: '--color-page-background-overlay' },
     { key: 'page/bg-inverse', label: 'page/bg-inverse', cssVar: '--color-primary-invert' },
-    { key: 'page/overlay-primary', label: 'page/overlay-primary', cssVar: '--color-overlay-primary' },
+    // { key: 'page/overlay-primary', label: 'page/overlay-primary', cssVar: '--color-overlay-primary' },
     { key: 'page/overlay-secondary', label: 'page/overlay-secondary', cssVar: '--color-overlay-secondary' },
     { key: 'page/overlay-backdrop', label: 'page/overlay-backdrop', cssVar: '--color-overlay-backdrop' },
     { key: 'card/bg', label: 'card/bg', cssVar: '--color-card' },
