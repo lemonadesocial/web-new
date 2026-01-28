@@ -63,7 +63,7 @@ export type PassportState = {
   };
   enabled?: {
     /** @description Passport Photo */
-    lemohead?: boolean;
+    lemonhead?: boolean;
     /** @description Passport Photo */
     fluffePhoto?: boolean;
 

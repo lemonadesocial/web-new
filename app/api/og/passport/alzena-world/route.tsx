@@ -32,29 +32,29 @@ export async function GET(req: NextRequest) {
     return new Response(`Error: Chain does not support!`, { status: 400 });
   }
 
-  // let image;
-  //
-  // try {
-  //   const contractAddress = chain.drip_nation_passport_contract_address;
-  //
-  //   if (!contractAddress) {
-  //     return new Response('Drip nation contract address not set', { status: 400 });
-  //   }
-  //
-  //   const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-  //   const contract = ERC721Contract.attach(contractAddress).connect(provider);
-  //
-  //   const tokenUri = await contract.getFunction('tokenURI')(tokenId);
-  //   const res = await fetch(tokenUri);
-  //   const data = await res.json();
-  //   image = data.image;
-  // } catch (err: any) {
-  //   return new Response(err.message || 'Error: Something went wrong!', { status: 500 });
-  // }
-  //
-  // if (!image) {
-  //   return new Response('Passport image not found', { status: 404 });
-  // }
+  let image;
+
+  try {
+    const contractAddress = chain.drip_nation_passport_contract_address;
+
+    if (!contractAddress) {
+      return new Response('Drip nation contract address not set', { status: 400 });
+    }
+
+    const provider = new ethers.JsonRpcProvider(chain.rpc_url);
+    const contract = ERC721Contract.attach(contractAddress).connect(provider);
+
+    const tokenUri = await contract.getFunction('tokenURI')(tokenId);
+    const res = await fetch(tokenUri);
+    const data = await res.json();
+    image = data.image;
+  } catch (err: any) {
+    return new Response(err.message || 'Error: Something went wrong!', { status: 500 });
+  }
+
+  if (!image) {
+    return new Response('Passport image not found', { status: 404 });
+  }
 
   return new ImageResponse(
     (
@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          backgroundImage: `url('${ASSET_PREFIX}/assets/images/share-alzena-world-passport.png')`,
+          backgroundImage: `url('${ASSET_PREFIX}/assets/images/share-alzena-world-passport-bg.png')`,
           padding: '86px',
           width: '100%',
           height: '100%',
@@ -74,10 +74,10 @@ export async function GET(req: NextRequest) {
           overflow: 'hidden',
         }}
       >
-        {/* <img src={image} style={{ marginTop: 100 }} /> */}
+        <img src={image} style={{ marginTop: 100 }} />
 
-        <div style={{ display: 'flex', position: 'absolute', bottom: 85, left: 140 }}>
-          <p style={{ fontSize: 80, fontFamily: 'BasePixel', color: '#FFF', margin: 0, padding: 0 }}>{tokenId}</p>
+        <div style={{ display: 'flex', position: 'absolute', bottom: 85, left: 85 }}>
+          <p style={{ fontSize: 80, fontFamily: 'BasePixel', color: '#FFF', margin: 0, padding: 0 }}>#{tokenId}</p>
         </div>
       </div>
     ),

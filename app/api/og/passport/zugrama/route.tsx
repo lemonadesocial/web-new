@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          backgroundImage: `url('${ASSET_PREFIX}/assets/images/share-zugrama-passport.png')`,
+          backgroundImage: `url('${ASSET_PREFIX}/assets/images/share-zugrama-passport-bg.png')`,
           padding: '86px',
           width: '100%',
           height: '100%',
@@ -76,7 +76,7 @@ export async function GET(req: NextRequest) {
       >
         <img src={image} style={{ marginTop: 100 }} />
 
-        <div style={{ display: 'flex', position: 'absolute', bottom: 90, left: 160 }}>
+        <div style={{ display: 'flex', position: 'absolute', bottom: 80, left: 150 }}>
           <p style={{ fontSize: 90, fontFamily: 'Orbitron Bold', color: '#587871', margin: 0, padding: 0 }}>
             {tokenId}
           </p>

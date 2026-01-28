@@ -105,7 +105,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       },
     },
     enabled: {
-      lemohead: true,
+      lemonhead: true,
       fluffePhoto: true,
       ens: true,
       lemonadeUsername: true,
@@ -156,7 +156,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       },
     },
     enabled: {
-      lemohead: true,
+      lemonhead: true,
       fluffePhoto: true,
       ens: true,
       lemonadeUsername: true,
@@ -218,7 +218,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       },
     },
     enabled: {
-      lemohead: true,
+      lemonhead: true,
       fluffePhoto: true,
       ens: true,
       lemonadeUsername: true,
@@ -280,7 +280,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       },
     },
     enabled: {
-      lemohead: true,
+      lemonhead: true,
       fluffePhoto: true,
       ens: true,
       lemonadeUsername: true,
@@ -353,7 +353,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       },
     },
     enabled: {
-      lemohead: true,
+      lemonhead: true,
       shouldMintedLemonhead: true,
       fluffePhoto: true,
       // selfVerify: true,
@@ -404,8 +404,19 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
         },
       },
     },
+    modal: {
+      beforeMint: {
+        description: 'By minting your Passport, you agree to our Terms of Use and acknowledge that:',
+        li: [
+          'Alzena World Passport NFT is non-transferable & non-tradable (soul-bound).',
+          'Your Passport will be permanently recorded on-chain.',
+          'It will be publicly visible and tied to your wallet address.',
+          'All claims are final.',
+        ],
+      },
+    },
     enabled: {
-      lemohead: true,
+      lemonhead: true,
       fluffePhoto: true,
       lemonadeUsername: true,
     },

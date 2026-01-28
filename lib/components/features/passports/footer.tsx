@@ -14,7 +14,7 @@ import { MAPPING_PASSPORT_STEPS } from './config';
 import { usePassportContext } from './provider';
 import { PassportActionKind, PassportStep } from './types';
 import { PassportEligibilityModal } from './modals/PassportEligibilityModal';
-import { PASSPORT_CHAIN_ID } from './utils';
+import { MAPPING_PROVIDER, PASSPORT_CHAIN_ID } from './utils';
 import { useRouter } from 'next/navigation';
 import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { MintPassportModal } from './modals/MintPassportModal';
@@ -105,7 +105,7 @@ export function Footer() {
     setIsMinting(true);
 
     try {
-      let query = `wallet=${address}`;
+      let query = `wallet=${address}&provider=${MAPPING_PROVIDER[state.provider]}`;
       if (state.photo) {
         query += `&avatar=${encodeURIComponent(state.photo)}`;
       }
@@ -128,6 +128,7 @@ export function Footer() {
             modal.open(MintPassportModal, {
               props: {
                 provider: state.provider,
+                passportImage: state.passportImage,
                 onComplete: (txHash, tokenId) => {
                   dispatch({ type: PassportActionKind.SetMintState, payload: { txHash, tokenId } });
                   dispatch({ type: PassportActionKind.NextStep });
