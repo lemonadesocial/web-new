@@ -63,7 +63,7 @@ export type PassportState = {
   };
   enabled?: {
     /** @description Passport Photo */
-    lemohead?: boolean;
+    lemonhead?: boolean;
     /** @description Passport Photo */
     fluffePhoto?: boolean;
 
@@ -102,5 +102,5 @@ export const ContractAddressFieldMapping: Record<PASSPORT_PROVIDER, string> = {
   'vinyl-nation': 'vinyl_nation_passport_contract_address',
   'festival-nation': 'festival_nation_passport_contract_address',
   'drip-nation': 'drip_nation_passport_contract_address',
-  'alzena-world': '',
+  'alzena-world': 'alzena_world_passport_contract_address',
 };

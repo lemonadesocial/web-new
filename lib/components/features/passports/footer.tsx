@@ -14,7 +14,7 @@ import { MAPPING_PASSPORT_STEPS } from './config';
 import { usePassportContext } from './provider';
 import { PassportActionKind, PassportStep } from './types';
 import { PassportEligibilityModal } from './modals/PassportEligibilityModal';
-import { PASSPORT_CHAIN_ID } from './utils';
+import { MAPPING_PROVIDER, PASSPORT_CHAIN_ID } from './utils';
 import { useRouter } from 'next/navigation';
 import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { MintPassportModal } from './modals/MintPassportModal';
@@ -105,7 +105,7 @@ export function Footer() {
     setIsMinting(true);
 
     try {
-      let query = `wallet=${address}`;
+      let query = `wallet=${address}&provider=${MAPPING_PROVIDER[state.provider]}`;
       if (state.photo) {
         query += `&avatar=${encodeURIComponent(state.photo)}`;
       }
@@ -114,6 +114,9 @@ export function Footer() {
       }
       if (state.useENS && state.ensName) {
         query += `&username=${encodeURIComponent(state.ensName)}`;
+      }
+      if (state.useFluffle) {
+        query += `&fluffleTokenId=1`;
       }
 
       const response = await fetch(`/api/passport/${state.provider}?${query}`);
@@ -128,6 +131,7 @@ export function Footer() {
             modal.open(MintPassportModal, {
               props: {
                 provider: state.provider,
+                passportImage: state.passportImage,
                 onComplete: (txHash, tokenId) => {
                   dispatch({ type: PassportActionKind.SetMintState, payload: { txHash, tokenId } });
                   dispatch({ type: PassportActionKind.NextStep });
@@ -149,7 +153,7 @@ export function Footer() {
   const disabled = match(state.currentStep)
     .with(PassportStep.photo, () => !state.photo)
     .with(PassportStep.username, () => {
-      if (state.enabled?.lemonadeUsername) return !state.lemonadeUsername && state.enabled?.ens && !state.ensName;
+      if (state.enabled?.lemonadeUsername) return !state.lemonadeUsername;
       else if (state.enabled?.ens) return !state.ensName;
       else return false;
     })
@@ -197,7 +201,14 @@ export function Footer() {
         )}
 
         <div className="flex flex-1 justify-end">
-          <Button iconRight="icon-chevron-right" disabled={disabled} variant="secondary" size="sm" onClick={handleNext}>
+          <Button
+            iconRight="icon-chevron-right"
+            loading={isMinting}
+            disabled={disabled}
+            variant="secondary"
+            size="sm"
+            onClick={handleNext}
+          >
             {btnText}
           </Button>
         </div>

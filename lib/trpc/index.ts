@@ -18,6 +18,7 @@ import { getMintDripNationPassportImage } from '$lib/services/passports/drip-nat
 import { getMintFestivalNationPassportImage } from '$lib/services/passports/festival-nation';
 import { request } from '$lib/services/nft/admin';
 import { uploadUsernameMetadata } from '$lib/services/lemonade-username';
+import { getAlzenaWorldPassportImage } from '$lib/services/passports/alzena-world';
 
 export const appRouter = router({
   ping: publicProcedure.query(async () => {
@@ -148,6 +149,7 @@ export const appRouter = router({
           .with('vinyl-nation', () => getMintVinylNationPassportImage(avatarImageUrl, username))
           .with('festival-nation', () => getMintFestivalNationPassportImage(avatarImageUrl, username))
           .with('drip-nation', () => getMintDripNationPassportImage(avatarImageUrl, username))
+          .with('alzena-world', () => getAlzenaWorldPassportImage(avatarImageUrl, username))
           .otherwise(() => {});
       }),
   },

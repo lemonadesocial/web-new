@@ -27,9 +27,9 @@ export function PassportPhoto() {
         <p className="text-tertiary">{state.ui?.[state.currentStep!]?.subtitle}</p>
       </div>
 
-      {(state.enabled?.lemohead || state.enabled?.fluffePhoto) && (
+      {(state.enabled?.lemonhead || state.enabled?.fluffePhoto) && (
         <div className="grid grid-cols-2 gap-4">
-          {state.enabled?.lemohead && <LemonheadCard />}
+          {state.enabled?.lemonhead && <LemonheadCard />}
           {state.enabled?.fluffePhoto && <FluffleCard />}
         </div>
       )}
