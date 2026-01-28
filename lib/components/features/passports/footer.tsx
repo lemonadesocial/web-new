@@ -201,7 +201,14 @@ export function Footer() {
         )}
 
         <div className="flex flex-1 justify-end">
-          <Button iconRight="icon-chevron-right" disabled={disabled} variant="secondary" size="sm" onClick={handleNext}>
+          <Button
+            iconRight="icon-chevron-right"
+            loading={isMinting}
+            disabled={disabled}
+            variant="secondary"
+            size="sm"
+            onClick={handleNext}
+          >
             {btnText}
           </Button>
         </div>
