@@ -565,3 +565,21 @@ a[title='Open this area in Google Maps (opens a new window)'],
 /*   -webkit-text-stroke: 1px var(--color-card-border, #000); */
 /*   text-shadow: 2px 4px 0 var(--color-troke, #000); */
 /* } */
+
+@keyframes text-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.animate-text-shimmer {
+  animation: text-shimmer 2s linear infinite;
+  background: linear-gradient(to left, var(--color-tertiary) 40%, var(--color-primary) 50%, var(--color-tertiary) 60%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

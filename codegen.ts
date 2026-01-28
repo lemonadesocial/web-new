@@ -65,7 +65,7 @@ if (COIN_INDEXER) {
     documents: ['./lib/graphql/gql/coin/*.gql'],
     preset: 'client',
     plugins: [],
-  }
+  };
 }
 
 const USERNAME_INDEXER = process.env.NEXT_PUBLIC_USERNAME_INDEXER;
@@ -78,6 +78,14 @@ if (USERNAME_INDEXER) {
     documentTransforms: [addTypenameSelectionDocumentTransform],
   };
 }
+
+generates['./lib/graphql/generated/ai/'] = {
+  schema: process.env.NEXT_PUBLIC_AI_API_HTTP,
+  documents: ['./lib/graphql/gql/ai/*.gql'],
+  preset: 'client',
+  plugins: [],
+  documentTransforms: [addTypenameSelectionDocumentTransform],
+};
 
 const config: CodegenConfig = {
   ignoreNoDocuments: true,

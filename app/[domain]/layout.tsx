@@ -36,7 +36,7 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
         <ModalProvider>
           <StyleVariables theme={data.theme.styles} />
           {props.children}
-          <DrawerContainer />
+          {/* <DrawerContainer /> */}
           <BottomSheetContainer />
           <ToastContainer />
         </ModalProvider>

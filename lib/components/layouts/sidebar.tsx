@@ -1,6 +1,8 @@
 'use client';
+import React from 'react';
 import clsx from 'clsx';
-import Link from 'next/link';
+import { motion } from 'framer-motion';
+// import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { isMobile } from 'react-device-detect';
@@ -9,43 +11,14 @@ import { twMerge } from 'tailwind-merge';
 import { useMe } from '$lib/hooks/useMe';
 import { useAccount } from '$lib/hooks/useLens';
 import { userAvatar } from '$lib/utils/user';
-import { Avatar, Button, Card, modal } from '../core';
+import { Accordion, Badge, Button, Card, Divider, modal } from '../core';
 import { PostComposerModal } from '../features/lens-feed/PostComposerModal';
-
-type SidebarItemProps = {
-  item: {
-    icon: React.ReactNode;
-    path: string;
-    label: string;
-  };
-  isActive: (item: { path: string }) => boolean;
-};
-
-const SidebarItem = ({ item, isActive }: SidebarItemProps) => {
-  return (
-    <Link href={item.path} key={item.path}>
-      <div className={clsx('w-full', item?.label && 'tooltip tooltip-right')}>
-        {item?.label && (
-          <div className="tooltip-content">
-            <p className="text-md font-medium ">{item?.label}</p>
-          </div>
-        )}
-        <div
-          className={clsx(
-            'size-16 flex items-center justify-center rounded-md',
-            isActive(item) && 'bg-[var(--btn-secondary)]',
-          )}
-        >
-          {typeof item.icon === 'string' ? (
-            <i className={clsx(item.icon, isActive(item) ? 'text-[var(--btn-secondary-content)]' : 'text-tertiary')} />
-          ) : (
-            item.icon
-          )}
-        </div>
-      </div>
-    </Link>
-  );
-};
+import { useQuery } from '$lib/graphql/request';
+import { GetHostingEventsSidebarLelfDocument } from '$lib/graphql/generated/backend/graphql';
+import { generateUrl } from '$lib/utils/cnd';
+import { AIChatActionKind, useAIChat } from '../features/ai/provider';
+import { aiChat } from '../features/ai/AIChatContainer';
+import { delay } from 'lodash';
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -53,10 +26,14 @@ const Sidebar = () => {
 
   const me = useMe();
   const { account } = useAccount();
+  const [_state, dispatch] = useAIChat();
+
+  const [toggle, setToggle] = React.useState(false);
 
   const mainMenu = useMemo(() => {
     const menu = [
       { icon: 'icon-home', path: '/', label: 'Home' },
+      { icon: 'icon-storefront-outline', path: '/lemonade-stand', label: 'Lemonade Stand' },
       { icon: 'icon-newspaper', path: '/timelines', label: 'Timelines' },
       { icon: 'icon-explore', path: '/explore', label: 'Explore' },
       { icon: 'icon-token', path: '/tokens', label: 'Tokens' },
@@ -68,56 +45,87 @@ const Sidebar = () => {
     return menu;
   }, []);
 
-  const secondaryMenu = useMemo(() => {
-    const menu = [
-      { icon: 'icon-ticket', path: '/events', label: 'Events' },
-      { icon: 'icon-community', path: '/communities', label: 'Communities' },
-    ];
-
-    return menu;
-  }, []);
-
   const isActive = (item: { path: string }) =>
     pathname === item.path || (item.path.startsWith('/lemonheads') && pathname.includes(item.path));
 
+  const handleNavigate = (path: string) => {
+    dispatch({ type: AIChatActionKind.reset });
+    router.replace(path);
+    aiChat.close();
+  };
+
   return (
-    <div className="hidden lg:block fixed left-0 h-screen border-r z-10">
-      <div className="flex flex-col h-full divide-y divide-(--color-divider)">
-        <div className="flex flex-col gap-2 p-3">
-          <div className="flex items-center justify-center h-12 cursor-pointer" onClick={() => router.push('/')}>
-            <i className="icon-lemonade-logo text-[#FDE047]" />
+    <div
+      className={clsx(
+        'relative bg-overlay-secondary transition-all duration-300 h-screen text-tertiary border-r max-sm:hidden',
+        toggle ? 'w-[240px]' : 'w-[53px]',
+      )}
+    >
+      <div className="p-1.5 flex items-center justify-between">
+        <div className="group">
+          <div className={clsx('p-2 flex items-center justify-center', !toggle && 'group-hover:hidden')}>
+            <i className="icon-lemonade-logo text-warning-300 size-6" />
           </div>
-          {mainMenu.map((item) => (
-            <SidebarItem key={item!.path} item={item!} isActive={isActive} />
-          ))}
-        </div>
-        <div className="flex flex-col gap-2 p-3 flex-1">
-          <div className="flex flex-col flex-1">
-            {(me || account) && (
-              <>
-                <SidebarItem
-                  item={{
-                    icon: <Avatar src={account?.metadata?.picture || userAvatar(me)} />,
-                    path: `/profile/${account?.address || me?.username || me?._id}`,
-                    label: 'Profile',
-                  }}
-                  isActive={isActive}
-                />
-              </>
-            )}
-
-            {secondaryMenu.map((item) => (
-              <SidebarItem key={item.path} item={item} isActive={isActive} />
-            ))}
-          </div>
-
-          <Button icon="icon-plus" className="rounded-full mx-auto" onClick={() => modal.open(CreatingModal)} />
-
-          {(me || account) && (
-            <SidebarItem item={{ icon: 'icon-gears', label: 'Settings', path: '/settings' }} isActive={isActive} />
+          {!toggle && (
+            <button
+              className="p-2.5 items-center justify-center cursor-pointer hidden group-hover:flex"
+              onClick={() => setToggle(!toggle)}
+            >
+              <i className="icon-left-panel-close-outline size-5" />
+            </button>
           )}
         </div>
+
+        {toggle && (
+          <button className="p-2.5 flex items-center justify-center cursor-pointer" onClick={() => setToggle(!toggle)}>
+            <i className="icon-left-panel-close-outline size-5" />
+          </button>
+        )}
       </div>
+
+      <div className="px-1.5">
+        {mainMenu.map((item) => (
+          <div
+            key={item.path}
+            className={clsx(
+              'cursor-pointer text-secondary p-2.5 flex gap-2.5 items-center hover:bg-(--btn-tertiary) rounded-sm',
+              isActive(item) && 'bg-(--btn-tertiary)',
+            )}
+            onClick={() => handleNavigate(item.path)}
+          >
+            <i className={twMerge('size-5 aspect-square', item.icon)} />
+            {toggle && <span className="text-sm whitespace-nowrap">{item.label}</span>}
+          </div>
+        ))}
+
+        <div
+          className={clsx(
+            'cursor-pointer text-secondary p-2.5 flex gap-2.5 items-center hover:bg-(--btn-tertiary) rounded-sm',
+          )}
+          onClick={() => modal.open(CreatingModal)}
+        >
+          <i className="size-5 icon-plus aspect-square" />
+          {toggle && <span className="text-sm">Create</span>}
+        </div>
+      </div>
+
+      <div className={clsx(!toggle && 'hidden')}>
+        <Divider className="h-1 w-full" />
+        <SectionEvents handleNavigate={(path) => handleNavigate(path)} />
+      </div>
+
+      {(me || account) && (
+        <div className="absolute p-1.5 bottom-0 left-0 right-0 border-t">
+          <div className="flex gap-2 items-center p-2">
+            <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
+            {toggle && (
+              <div className="flex flex-col">
+                <p className="text-sm font-medium text-secondary">{me?.username || me?.display_name || me?.name}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -169,21 +177,75 @@ export function CreatingModal() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-2">
-          {Object.entries(actions)
-            .map(([key, item]) => (
-              <Card.Root key={key} className="flex-1" onClick={() => handleClick(key)}>
-                <Card.Content className="py-1.5 px-3 md:py-3.5 md:px-4 flex items-center md:items-start md:flex-col gap-3">
-                  <i className={twMerge('size-5 md:size-8', item.icon)} />
-                  <div>
-                    <p className="text-primary">{item.title}</p>
-                    <p className="text-sm text-tertiary">{item.subtitle}</p>
-                  </div>
-                </Card.Content>
-              </Card.Root>
-            ))}
+          {Object.entries(actions).map(([key, item]) => (
+            <Card.Root key={key} className="flex-1" onClick={() => handleClick(key)}>
+              <Card.Content className="py-1.5 px-3 md:py-3.5 md:px-4 flex items-center md:items-start md:flex-col gap-3">
+                <i className={twMerge('size-5 md:size-8', item.icon)} />
+                <div>
+                  <p className="text-primary">{item.title}</p>
+                  <p className="text-sm text-tertiary">{item.subtitle}</p>
+                </div>
+              </Card.Content>
+            </Card.Root>
+          ))}
         </div>
       </Card.Content>
     </Card.Root>
+  );
+}
+
+function SectionEvents({ handleNavigate }: { handleNavigate: (path: string) => void }) {
+  const me = useMe();
+
+  const { data } = useQuery(GetHostingEventsSidebarLelfDocument, {
+    variables: { limit: 6, user: me?._id },
+    skip: !me,
+  });
+  const events = data?.getHostingEvents || [];
+
+  return (
+    <Accordion.Root className="border-none">
+      <Accordion.Header chevron={false} className="px-2.5! py-2!">
+        {({ isOpen }) => (
+          <div className="flex gap-1 items-center">
+            <p>Events</p>
+            <motion.i
+              animate={{ rotate: isOpen ? 90 : 0 }}
+              transition={{ duration: 0.3 }}
+              className="icon-chevron-right text-tertiary size-5"
+            />
+          </div>
+        )}
+      </Accordion.Header>
+      <Accordion.Content className="bg-overlay-secondary p-0! px-1.5!">
+        {events.map((item) => (
+          <div
+            key={item._id}
+            className="p-2.5 flex cursor-pointer hover:bg-(--btn-tertiary) rounded-sm text-sm"
+            onClick={() => handleNavigate(`/agent/e/manage/${item.shortid}`)}
+          >
+            <div className="flex gap-2.5 flex-1">
+              <div className="size-5 aspect-square rounded-xs bg-tertiary">
+                {item.new_new_photos_expanded?.[0] && <img src={generateUrl(item.new_new_photos_expanded?.[0])} />}
+              </div>
+              <p className="text-secondary line-clamp-1">{item.title}</p>
+            </div>
+            <Badge className="text-tertiary bg-(--color-card-hover) text-xs rounded-full px-1.5 py-[1px]">
+              <i className="icon-draft-outline w-3 h-3 aspect-square" />
+              <p>Draft</p>
+            </Badge>
+          </div>
+        ))}
+
+        <div
+          className="flex gap-1 items-center text-tertiary text-sm p-2.5 cursor-pointer hover:bg-(--btn-tertiary) rounded-sm"
+          onClick={() => handleNavigate('/events')}
+        >
+          <p className="text-secondary">View All</p>
+          <i className="icon-chevron-right size-[18px] aspect-square" />
+        </div>
+      </Accordion.Content>
+    </Accordion.Root>
   );
 }
 

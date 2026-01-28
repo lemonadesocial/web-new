@@ -30,6 +30,8 @@ interface Options<T> {
   duration?: number;
   contentClass?: string;
   dismissible?: boolean;
+  showBackdrop?: boolean;
+  fixed?: boolean;
 }
 
 interface DrawerItem {
@@ -65,7 +67,7 @@ export function DrawerContainer() {
         {
           id,
           content: <Component {...(opts.props as T)} />,
-          options: { duration: 0.3, position: 'right', dismissible: true, ...opts },
+          options: { duration: 0.3, position: 'right', dismissible: true, fixed: true, showBackdrop: true, ...opts },
         },
       ]);
       return id;
@@ -127,9 +129,13 @@ export function DrawerContainer() {
     <AnimatePresence>
       {drawers.map((drawer, index) => (
         <React.Fragment key={drawer.id}>
-          <div className="fixed inset-0" style={{ zIndex: 10000 + index }}>
+          <motion.div
+            layout={!drawer.options.fixed}
+            className={clsx(drawer.options.fixed ? 'fixed inset-0' : 'h-dvh')}
+            style={{ zIndex: 10000 + index }}
+          >
             <div className="h-full w-full p-2">
-              <div className="bg-overlay-backdrop fixed inset-0 z-0" />
+              {drawer.options.showBackdrop && <div className="bg-overlay-backdrop fixed inset-0 z-0" />}
               <div
                 className={clsx('flex h-full', drawer.options.position === 'right' ? 'justify-end' : 'justify-start')}
               >
@@ -159,7 +165,7 @@ export function DrawerContainer() {
                 </motion.div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </React.Fragment>
       ))}
     </AnimatePresence>

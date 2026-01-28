@@ -7,22 +7,22 @@ import { usePathname, useRouter } from 'next/navigation';
 import NextLink from 'next/link';
 
 import { chainsMapAtom, sessionAtom } from '$lib/jotai';
-import { LEMONADE_DOMAIN } from '$lib/utils/constants';
+// import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useMe } from '$lib/hooks/useMe';
 import { useLogOut } from '$lib/hooks/useLogout';
 import { Divider, Menu, MenuItem, Button, Avatar, drawer, modal } from '$lib/components/core';
 import { userAvatar } from '$lib/utils/user';
-import { useLogOut as useLensLogOut } from '$lib/hooks/useLens';
+// import { useLogOut as useLensLogOut } from '$lib/hooks/useLens';
 import { useAuth } from '$lib/hooks/useAuth';
 
 import { useAccount } from '$lib/hooks/useLens';
 import { useSignIn } from '$lib/hooks/useSignIn';
-import { getAccountAvatar } from '$lib/utils/lens/utils';
+// import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { useConnectUnicornWallet } from '$lib/hooks/useConnectUnicornWallet';
 import { useHandleFarcasterMiniApp } from '$lib/hooks/useConnectFarcaster';
 // import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { ProfilePane } from '../features/pane';
-import { VerifyEmailModal } from '../features/auth/VerifyEmailModal';
+// import { VerifyEmailModal } from '../features/auth/VerifyEmailModal';
 import { ConnectWalletModal } from '../features/auth/ConnectWalletModal';
 import { SelectProfileModal } from '../features/lens-account/SelectProfileModal';
 import { ConnectWallet } from '../features/modals/ConnectWallet';
@@ -33,6 +33,7 @@ type Props = {
   mainMenu?: () => ReactElement;
   hideLogo?: boolean;
   className?: string;
+  showUI?: boolean;
 };
 
 const menu = [
@@ -61,7 +62,7 @@ export function RootMenu() {
   );
 }
 
-export default function Header({ title, mainMenu, hideLogo, className }: Props) {
+export default function Header({ showUI = true, title, mainMenu, hideLogo, className }: Props) {
   const [session] = useAtom(sessionAtom);
   const me = useMe();
   const { reload } = useAuth();
@@ -73,8 +74,10 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
 
   const router = useRouter();
 
+  if (!showUI) return null;
+
   return (
-    <div className={twMerge('py-3 px-4 h-[56px] flex justify-between items-center z-10 gap-4 font-default', className)}>
+    <div className={twMerge('p-4 h-[56px] flex justify-between items-center z-10 gap-4 font-default', className)}>
       <div className="flex items-center gap-3 flex-1">
         {!hideLogo && (
           <NextLink
@@ -167,7 +170,12 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
         ) : (
           <>
             {!session && (
-              <Button size="sm" variant="tertiary-alt" onClick={() => signIn()} className="rounded-full backdrop-blur-none">
+              <Button
+                size="sm"
+                variant="tertiary-alt"
+                onClick={() => signIn()}
+                className="rounded-full backdrop-blur-none"
+              >
                 Sign In
               </Button>
             )}
@@ -178,68 +186,68 @@ export default function Header({ title, mainMenu, hideLogo, className }: Props) 
   );
 }
 
-function ConnectLens() {
-  const { account } = useAccount();
-  const me = useMe();
-
-  const walletVerified = me?.kratos_wallet_address || me?.kratos_unicorn_wallet_address;
-  const chainsMap = useAtomValue(chainsMapAtom);
-
-  const handleSelectWallet = () => {
-    modal.open(ConnectWallet, {
-      props: {
-        onConnect: () => {
-          modal.close();
-          setTimeout(() => {
-            modal.open(SelectProfileModal);
-          });
-        },
-        chain: chainsMap[LENS_CHAIN_ID],
-      },
-    });
-  };
-
-  // if (!walletVerified && !account)
-  //   return (
-  //     <Button
-  //       onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
-  //       size="sm"
-  //       className="rounded-full"
-  //       variant="warning"
-  //       iconLeft="icon-error"
-  //       outlined
-  //     >
-  //       Claim Username
-  //     </Button>
-  //   );
-
-  // if (!account)
-  //   return (
-  //     <Button
-  //       onClick={handleSelectWallet}
-  //       size="sm"
-  //       className="rounded-full"
-  //       variant="warning"
-  //       iconLeft="icon-error"
-  //       outlined
-  //     >
-  //       Claim Username
-  //     </Button>
-  //   );
-
-  if (!walletVerified)
-    return (
-      <Button
-        onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
-        size="sm"
-        className="rounded-full"
-        variant="warning"
-        iconLeft="icon-error"
-        outlined
-      >
-        Verify Wallet
-      </Button>
-    );
-
-  return null;
-}
+// function ConnectLens() {
+//   const { account } = useAccount();
+//   const me = useMe();
+//
+//   const walletVerified = me?.kratos_wallet_address || me?.kratos_unicorn_wallet_address;
+//   const chainsMap = useAtomValue(chainsMapAtom);
+//
+//   const handleSelectWallet = () => {
+//     modal.open(ConnectWallet, {
+//       props: {
+//         onConnect: () => {
+//           modal.close();
+//           setTimeout(() => {
+//             modal.open(SelectProfileModal);
+//           });
+//         },
+//         chain: chainsMap[LENS_CHAIN_ID],
+//       },
+//     });
+//   };
+//
+//   // if (!walletVerified && !account)
+//   //   return (
+//   //     <Button
+//   //       onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
+//   //       size="sm"
+//   //       className="rounded-full"
+//   //       variant="warning"
+//   //       iconLeft="icon-error"
+//   //       outlined
+//   //     >
+//   //       Claim Username
+//   //     </Button>
+//   //   );
+//
+//   // if (!account)
+//   //   return (
+//   //     <Button
+//   //       onClick={handleSelectWallet}
+//   //       size="sm"
+//   //       className="rounded-full"
+//   //       variant="warning"
+//   //       iconLeft="icon-error"
+//   //       outlined
+//   //     >
+//   //       Claim Username
+//   //     </Button>
+//   //   );
+//
+//   if (!walletVerified)
+//     return (
+//       <Button
+//         onClick={() => modal.open(ConnectWalletModal, { props: { verifyRequired: true } })}
+//         size="sm"
+//         className="rounded-full"
+//         variant="warning"
+//         iconLeft="icon-error"
+//         outlined
+//       >
+//         Verify Wallet
+//       </Button>
+//     );
+//
+//   return null;
+// }
