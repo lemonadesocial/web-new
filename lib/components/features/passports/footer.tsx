@@ -115,6 +115,9 @@ export function Footer() {
       if (state.useENS && state.ensName) {
         query += `&username=${encodeURIComponent(state.ensName)}`;
       }
+      if (state.useFluffle) {
+        query += `&fluffleTokenId=1`;
+      }
 
       const response = await fetch(`/api/passport/${state.provider}?${query}`);
       const mintData = await response.json();
