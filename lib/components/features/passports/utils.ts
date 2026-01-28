@@ -11,5 +11,5 @@ export const MAPPING_PROVIDER: Record<PASSPORT_PROVIDER, PassportProvider> = {
   'vinyl-nation': PassportProvider.VinylNation,
   'drip-nation': PassportProvider.DripNation,
   'festival-nation': PassportProvider.FestivalNation,
-  // "alzena-world": PassportProvider.
+  'alzena-world': PassportProvider.AlzenaWorld,
 };

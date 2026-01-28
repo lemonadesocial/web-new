@@ -21,6 +21,94 @@ export type Scalars = {
   MongoID: { input: any; output: any; }
 };
 
+export type AiCreateEventInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  end?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  /** Id of the community that this event is organized to. Default to the first found personal community of the host user. */
+  space?: InputMaybe<Scalars['MongoID']['input']>;
+  start?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AiEvent = {
+  __typename?: 'AIEvent';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  address?: Maybe<Address>;
+  description?: Maybe<Scalars['String']['output']>;
+  end: Scalars['DateTimeISO']['output'];
+  /** If this is true then the event is published, otherwise the event is unpublished. */
+  published?: Maybe<Scalars['Boolean']['output']>;
+  start: Scalars['DateTimeISO']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type AiEventTicketType = {
+  __typename?: 'AIEventTicketType';
+  active?: Maybe<Scalars['Boolean']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  limited?: Maybe<Scalars['Boolean']['output']>;
+  private?: Maybe<Scalars['Boolean']['output']>;
+  title: Scalars['String']['output'];
+};
+
+export type AiGetHostingEventsResponse = {
+  __typename?: 'AIGetHostingEventsResponse';
+  /** The paginated response */
+  items: Array<AiEvent>;
+  /** Number of the records that match the filter */
+  total: Scalars['Int']['output'];
+};
+
+export type AiGetMeResponse = {
+  __typename?: 'AIGetMeResponse';
+  /** Information about the current user */
+  user: AiUser;
+};
+
+export type AiListMySpacesResponse = {
+  __typename?: 'AIListMySpacesResponse';
+  /** The paginated response */
+  items: Array<AiSpace>;
+  /** Number of the records that match the filter */
+  total: Scalars['Int']['output'];
+};
+
+export type AiSpace = {
+  __typename?: 'AISpace';
+  _id: Scalars['MongoID']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  /** One user is provided with one personal community where he can manage his own events. The personal community is not meant to be publicly visible and featured. */
+  personal?: Maybe<Scalars['Boolean']['output']>;
+  /** If true then the community is private, else the community is public. A private community requires moderation for membership. */
+  private?: Maybe<Scalars['Boolean']['output']>;
+  title: Scalars['String']['output'];
+};
+
+export type AiSpaceInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** If true then the community is private, else the community is public. A private community requires moderation for membership. */
+  private?: InputMaybe<Scalars['Boolean']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AiUpdateEventInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  end?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  start?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AiUser = {
+  __typename?: 'AIUser';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  addresses?: Maybe<Array<Address>>;
+  email?: Maybe<Scalars['String']['output']>;
+  first_name?: Maybe<Scalars['String']['output']>;
+  last_name?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
+  name: Scalars['String']['output'];
+};
+
 export type AcceptEventTermsInput = {
   _id: Scalars['MongoID']['input'];
   email_permission?: InputMaybe<Scalars['Boolean']['input']>;
@@ -187,6 +275,7 @@ export type Applicant = {
   image_avatar?: Maybe<Scalars['String']['output']>;
   industry?: Maybe<Scalars['String']['output']>;
   job_title?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name?: Maybe<Scalars['String']['output']>;
   new_gender?: Maybe<Scalars['String']['output']>;
   pronoun?: Maybe<Scalars['String']['output']>;
@@ -276,6 +365,7 @@ export type BasicUserInfo = {
   kratos_unicorn_wallet_address?: Maybe<Scalars['String']['output']>;
   kratos_wallet_address?: Maybe<Scalars['String']['output']>;
   matrix_localpart?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name: Scalars['String']['output'];
   username?: Maybe<Scalars['String']['output']>;
 };
@@ -527,6 +617,7 @@ export type Chain = {
   __typename?: 'Chain';
   access_registry_contract?: Maybe<Scalars['String']['output']>;
   active?: Maybe<Scalars['Boolean']['output']>;
+  alzena_world_passport_contract_address?: Maybe<Scalars['String']['output']>;
   aragon_network?: Maybe<Scalars['String']['output']>;
   aragon_subgraph_url?: Maybe<Scalars['String']['output']>;
   axelar_chain_name?: Maybe<Scalars['String']['output']>;
@@ -664,6 +755,7 @@ export type ConfidentialUserInfo = {
   kratos_unicorn_wallet_address?: Maybe<Scalars['String']['output']>;
   kratos_wallet_address?: Maybe<Scalars['String']['output']>;
   matrix_localpart?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name: Scalars['String']['output'];
   username?: Maybe<Scalars['String']['output']>;
 };
@@ -1023,6 +1115,7 @@ export type DonationUserInfo = {
   _id?: Maybe<Scalars['MongoID']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name?: Maybe<Scalars['String']['output']>;
 };
 
@@ -1396,6 +1489,7 @@ export type Event = {
   pending_request_count?: Maybe<Scalars['Float']['output']>;
   photos?: Maybe<Array<Scalars['String']['output']>>;
   private?: Maybe<Scalars['Boolean']['output']>;
+  /** If this is true then the event is published, otherwise the event is unpublished. */
   published?: Maybe<Scalars['Boolean']['output']>;
   registration_disabled?: Maybe<Scalars['Boolean']['output']>;
   reward_uses?: Maybe<Scalars['JSON']['output']>;
@@ -1406,6 +1500,7 @@ export type Event = {
   sessions?: Maybe<Array<EventSession>>;
   shortid: Scalars['String']['output'];
   slug: Scalars['String']['output'];
+  /** Id of the community that this event is organized to. Default to the first found personal community of the host user. */
   space?: Maybe<Scalars['MongoID']['output']>;
   space_expanded?: Maybe<Space>;
   space_tags?: Maybe<Array<SpaceTag>>;
@@ -1692,6 +1787,7 @@ export type EventBase = {
   pending?: Maybe<Array<Scalars['MongoID']['output']>>;
   photos?: Maybe<Array<Scalars['String']['output']>>;
   private?: Maybe<Scalars['Boolean']['output']>;
+  /** If this is true then the event is published, otherwise the event is unpublished. */
   published?: Maybe<Scalars['Boolean']['output']>;
   registration_disabled?: Maybe<Scalars['Boolean']['output']>;
   reward_uses?: Maybe<Scalars['JSON']['output']>;
@@ -1702,6 +1798,7 @@ export type EventBase = {
   sessions?: Maybe<Array<EventSessionBase>>;
   shortid: Scalars['String']['output'];
   slug: Scalars['String']['output'];
+  /** Id of the community that this event is organized to. Default to the first found personal community of the host user. */
   space?: Maybe<Scalars['MongoID']['output']>;
   speaker_emails?: Maybe<Array<Scalars['String']['output']>>;
   speaker_users?: Maybe<Array<Scalars['MongoID']['output']>>;
@@ -1880,6 +1977,7 @@ export type EventGuestUser = {
   first_name?: Maybe<Scalars['String']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
   last_name?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name?: Maybe<Scalars['String']['output']>;
   username?: Maybe<Scalars['String']['output']>;
   wallets_new?: Maybe<Scalars['JSON']['output']>;
@@ -1890,6 +1988,7 @@ export type EventHost = {
   _id?: Maybe<Scalars['MongoID']['output']>;
   events_count?: Maybe<Scalars['Float']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name: Scalars['String']['output'];
 };
 
@@ -1904,6 +2003,7 @@ export type EventHostUser = {
   first_name?: Maybe<Scalars['String']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
   last_name?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name?: Maybe<Scalars['String']['output']>;
   username?: Maybe<Scalars['String']['output']>;
 };
@@ -1971,6 +2071,7 @@ export type EventInput = {
   payment_ticket_purchase_title?: InputMaybe<Scalars['String']['input']>;
   photos?: InputMaybe<Array<Scalars['String']['input']>>;
   private?: InputMaybe<Scalars['Boolean']['input']>;
+  /** If this is true then the event is published, otherwise the event is unpublished. */
   published?: InputMaybe<Scalars['Boolean']['input']>;
   registration_disabled?: InputMaybe<Scalars['Boolean']['input']>;
   rewards?: InputMaybe<Array<EventRewardInput>>;
@@ -1978,6 +2079,7 @@ export type EventInput = {
   self_verification?: InputMaybe<SelfVerificationInput>;
   sessions?: InputMaybe<Array<EventSessionInput>>;
   shortid?: InputMaybe<Scalars['String']['input']>;
+  /** Id of the community that this event is organized to. Default to the first found personal community of the host user. */
   space?: InputMaybe<Scalars['MongoID']['input']>;
   speaker_emails?: InputMaybe<Array<Scalars['String']['input']>>;
   speaker_users?: InputMaybe<Array<Scalars['MongoID']['input']>>;
@@ -2987,7 +3089,9 @@ export type GetInitSafeTransactionInput = {
 
 export type GetMyLemonheadInvitationRankResponse = {
   __typename?: 'GetMyLemonheadInvitationRankResponse';
+  /** The paginated response */
   items: Array<LemonheadInvitationRank>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -3042,7 +3146,9 @@ export type GetSpaceEventRequestsResponse = {
 
 export type GetTopInvitersResponse = {
   __typename?: 'GetTopInvitersResponse';
+  /** The paginated response */
   items: Array<EventInviter>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -3055,7 +3161,9 @@ export type GetUserContactsInput = {
 export type GetUserContactsResponse = {
   __typename?: 'GetUserContactsResponse';
   counts?: Maybe<Scalars['JSON']['output']>;
+  /** The paginated response */
   items: Array<UserContact>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -3079,7 +3187,9 @@ export type GetUserFriendshipsInput = {
 
 export type GetUserFriendshipsResponse = {
   __typename?: 'GetUserFriendshipsResponse';
+  /** The paginated response */
   items: Array<UserFriendship>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -3299,25 +3409,32 @@ export type LemonheadUserInfo = {
   kratos_wallet_address?: Maybe<Scalars['String']['output']>;
   lemonhead_inviter_wallet?: Maybe<Scalars['String']['output']>;
   matrix_localpart?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name: Scalars['String']['output'];
   username?: Maybe<Scalars['String']['output']>;
 };
 
 export type ListDonationsResponse = {
   __typename?: 'ListDonationsResponse';
+  /** The paginated response */
   items: Array<Donation>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
 export type ListEventFeedbacksResponse = {
   __typename?: 'ListEventFeedbacksResponse';
+  /** The paginated response */
   items: Array<EventFeedback>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
 export type ListEventGuestsResponse = {
   __typename?: 'ListEventGuestsResponse';
+  /** The paginated response */
   items: Array<EventGuestDetail>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -3342,19 +3459,25 @@ export type ListEventPaymentsResponse = {
 
 export type ListEventStakePaymentsResponse = {
   __typename?: 'ListEventStakePaymentsResponse';
+  /** The paginated response */
   items: Array<EventStakePayment>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
 export type ListLaunchpadCoinsResponse = {
   __typename?: 'ListLaunchpadCoinsResponse';
+  /** The paginated response */
   items: Array<LaunchpadCoin>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
 export type ListLaunchpadGroupsResponse = {
   __typename?: 'ListLaunchpadGroupsResponse';
+  /** The paginated response */
   items: Array<LaunchpadGroup>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -3370,13 +3493,17 @@ export type ListMyLemonheadInvitationsResponse = {
 
 export type ListSpaceMembersResponse = {
   __typename?: 'ListSpaceMembersResponse';
+  /** The paginated response */
   items: Array<SpaceMember>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
 export type ListSpaceNfTsResponse = {
   __typename?: 'ListSpaceNFTsResponse';
+  /** The paginated response */
   items: Array<SpaceNft>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -3422,6 +3549,14 @@ export type Mutation = {
   addLaunchpadGroup: LaunchpadGroup;
   addSpaceMembers: Scalars['Boolean']['output'];
   addUserFcmToken: Scalars['Boolean']['output'];
+  /** This tool creates an event by default in unpublished state */
+  aiCreateEvent: AiEvent;
+  aiCreateSpace: AiSpace;
+  /** This tool publishes an event given its id, that user has admin permissions. Return true if publish successfully, return false if the event is not found or already published. */
+  aiPublishEvent: Scalars['Boolean']['output'];
+  /** This tool updates an event given its id, that user has admin permissions */
+  aiUpdateEvent: AiEvent;
+  aiUpdateSpace: AiSpace;
   assignTickets: Scalars['Boolean']['output'];
   attachSubSpaces: Scalars['Boolean']['output'];
   buyTickets: BuyTicketsResponse;
@@ -3688,6 +3823,33 @@ export type MutationAddSpaceMembersArgs = {
 
 export type MutationAddUserFcmTokenArgs = {
   token: Scalars['String']['input'];
+};
+
+
+export type MutationAiCreateEventArgs = {
+  input: AiCreateEventInput;
+};
+
+
+export type MutationAiCreateSpaceArgs = {
+  input: AiSpaceInput;
+};
+
+
+export type MutationAiPublishEventArgs = {
+  id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationAiUpdateEventArgs = {
+  id: Scalars['MongoID']['input'];
+  input: AiUpdateEventInput;
+};
+
+
+export type MutationAiUpdateSpaceArgs = {
+  id: Scalars['MongoID']['input'];
+  input: AiSpaceInput;
 };
 
 
@@ -4946,6 +5108,7 @@ export type NonloginUser = {
   location_line?: Maybe<Scalars['String']['output']>;
   matrix_localpart?: Maybe<Scalars['String']['output']>;
   music?: Maybe<Array<Scalars['String']['output']>>;
+  /** This field contains the name of the user in a short version */
   name?: Maybe<Scalars['String']['output']>;
   new_gender?: Maybe<Scalars['String']['output']>;
   new_photos?: Maybe<Array<Scalars['MongoID']['output']>>;
@@ -5184,6 +5347,7 @@ export type PassportMintingInfo = {
 };
 
 export enum PassportProvider {
+  AlzenaWorld = 'alzena_world',
   DripNation = 'drip_nation',
   FestivalNation = 'festival_nation',
   Lemonade = 'lemonade',
@@ -5259,7 +5423,9 @@ export type PaymentStatistics = {
 
 export type PeekEventGuestsResponse = {
   __typename?: 'PeekEventGuestsResponse';
+  /** The paginated response */
   items: Array<EventGuestUser>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -5478,6 +5644,17 @@ export type PurchasableTicketTypePhotos_ExpandedArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  aiGetBackendVersion: Scalars['String']['output'];
+  /** This tool returns the public detail info of an event given its id */
+  aiGetEvent: AiEvent;
+  /** This tool returns all the events that the current user has admin permission. */
+  aiGetHostingEvents: AiGetHostingEventsResponse;
+  /** This tool returns information about the current user */
+  aiGetMe: AiGetMeResponse;
+  /** This tools return all the ticket types of an event given its id */
+  aiListEventTicketTypes: Array<AiEventTicketType>;
+  /** This tool returns all the communities of the current user */
+  aiListMySpaces: AiListMySpacesResponse;
   calculateTicketsPricing: PricingInfo;
   canMintLemonhead: LemonheadMintingInfo;
   canMintPassport: PassportMintingInfo;
@@ -5688,6 +5865,30 @@ export type Query = {
   searchSpaces: SearchSpacesResponse;
   searchUsers: Array<UserWithEmail>;
   tgGetMyChannels: ScanChannelsResult;
+};
+
+
+export type QueryAiGetEventArgs = {
+  id: Scalars['MongoID']['input'];
+};
+
+
+export type QueryAiGetHostingEventsArgs = {
+  draft?: InputMaybe<Scalars['Boolean']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryAiListEventTicketTypesArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryAiListMySpacesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -6953,6 +7154,7 @@ export type RecipientDetail = {
   _id?: Maybe<Scalars['MongoID']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name: Scalars['String']['output'];
 };
 
@@ -7398,7 +7600,9 @@ export type SearchSpaceInput = {
 
 export type SearchSpacesResponse = {
   __typename?: 'SearchSpacesResponse';
+  /** The paginated response */
   items: Array<Space>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -7721,8 +7925,9 @@ export type Space = {
   /** External events are listed on this space */
   listed_events?: Maybe<Array<Scalars['MongoID']['output']>>;
   nft_enabled?: Maybe<Scalars['Boolean']['output']>;
+  /** One user is provided with one personal community where he can manage his own events. The personal community is not meant to be publicly visible and featured. */
   personal?: Maybe<Scalars['Boolean']['output']>;
-  /** Private space requires moderation for membership */
+  /** If true then the community is private, else the community is public. A private community requires moderation for membership. */
   private?: Maybe<Scalars['Boolean']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
   state: SpaceState;
@@ -7889,6 +8094,7 @@ export type SpaceEventInsight = {
   pending?: Maybe<Array<Scalars['MongoID']['output']>>;
   photos?: Maybe<Array<Scalars['String']['output']>>;
   private?: Maybe<Scalars['Boolean']['output']>;
+  /** If this is true then the event is published, otherwise the event is unpublished. */
   published?: Maybe<Scalars['Boolean']['output']>;
   rating?: Maybe<Scalars['Float']['output']>;
   registration_disabled?: Maybe<Scalars['Boolean']['output']>;
@@ -7901,6 +8107,7 @@ export type SpaceEventInsight = {
   sessions?: Maybe<Array<EventSessionBase>>;
   shortid: Scalars['String']['output'];
   slug: Scalars['String']['output'];
+  /** Id of the community that this event is organized to. Default to the first found personal community of the host user. */
   space?: Maybe<Scalars['MongoID']['output']>;
   speaker_emails?: Maybe<Array<Scalars['String']['output']>>;
   speaker_users?: Maybe<Array<Scalars['MongoID']['output']>>;
@@ -7942,7 +8149,9 @@ export type SpaceEventInsight = {
 
 export type SpaceEventInsightResponse = {
   __typename?: 'SpaceEventInsightResponse';
+  /** The paginated response */
   items: Array<SpaceEventInsight>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -8001,7 +8210,7 @@ export type SpaceInput = {
   lens_feed_id?: InputMaybe<Scalars['String']['input']>;
   light_theme_image?: InputMaybe<Scalars['MongoID']['input']>;
   nft_enabled?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Private space requires moderation for membership */
+  /** If true then the community is private, else the community is public. A private community requires moderation for membership. */
   private?: InputMaybe<Scalars['Boolean']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   state?: InputMaybe<SpaceState>;
@@ -8084,7 +8293,9 @@ export type SpaceMemberRecipientFilterInput = {
 
 export type SpaceMembersLeaderboardResponse = {
   __typename?: 'SpaceMembersLeaderboardResponse';
+  /** The paginated response */
   items: Array<SpaceMemberLeaderboard>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -8257,7 +8468,9 @@ export type SpaceTokenRewardClaim = {
 
 export type SpaceTokenRewardClaims = {
   __typename?: 'SpaceTokenRewardClaims';
+  /** The paginated response */
   items: Array<SpaceTokenRewardClaim>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -8317,6 +8530,7 @@ export type StakeUser = {
   display_name?: Maybe<Scalars['String']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name?: Maybe<Scalars['String']['output']>;
   wallet: Scalars['String']['output'];
 };
@@ -9394,6 +9608,7 @@ export type User = {
   location_line?: Maybe<Scalars['String']['output']>;
   matrix_localpart?: Maybe<Scalars['String']['output']>;
   music?: Maybe<Array<Scalars['String']['output']>>;
+  /** This field contains the name of the user in a short version */
   name: Scalars['String']['output'];
   new_gender?: Maybe<Scalars['String']['output']>;
   new_photos?: Maybe<Array<Scalars['MongoID']['output']>>;
@@ -9639,6 +9854,7 @@ export type UserInput = {
   layout_sections?: InputMaybe<Array<LayoutSectionInput>>;
   lens_profile_synced?: InputMaybe<Scalars['Boolean']['input']>;
   music?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** This field contains the name of the user in a short version */
   name?: InputMaybe<Scalars['String']['input']>;
   new_gender?: InputMaybe<Scalars['String']['input']>;
   new_photos?: InputMaybe<Array<Scalars['MongoID']['input']>>;
@@ -9802,6 +10018,7 @@ export type UserWithEmail = {
   location_line?: Maybe<Scalars['String']['output']>;
   matrix_localpart?: Maybe<Scalars['String']['output']>;
   music?: Maybe<Array<Scalars['String']['output']>>;
+  /** This field contains the name of the user in a short version */
   name: Scalars['String']['output'];
   new_gender?: Maybe<Scalars['String']['output']>;
   new_photos?: Maybe<Array<Scalars['MongoID']['output']>>;
