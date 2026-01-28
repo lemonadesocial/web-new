@@ -348,7 +348,7 @@ function CommunityThemeBuilderPane({
                 </div>
               </Menu.Trigger>
               <FloatingPortal>
-                <Menu.Content>
+                <Menu.Content className="p-1">
                   {Object.entries(presets).map(([key, preset]) => (
                     <MenuItem
                       key={key}
@@ -469,6 +469,7 @@ function CommunityThemeBuilderPane({
                 variables: { id: spaceId, input: { theme_data: state } },
                 onComplete: (client) => {
                   client.writeFragment<Space>({ id: `Space:${spaceId}`, data: { theme_data: state } });
+                  onClose();
                 },
               });
             }
