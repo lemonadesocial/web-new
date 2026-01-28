@@ -396,7 +396,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
         },
       },
       celebrate: {
-        showBgVideo: true,
+        showBgVideo: false,
         footer: {
           label: 'Celebrate',
           btnText: 'Done',
