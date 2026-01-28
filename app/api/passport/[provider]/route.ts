@@ -10,14 +10,12 @@ import { getMintDripNationPassportData } from '$lib/services/passports/drip-nati
 import { PassportProvider } from '$lib/graphql/generated/backend/graphql';
 import { getMintLemonadePassportDataNew } from '$lib/services/passports/lemonade';
 
-type Params = Promise<{ provider: PassportProvider }>;
-
-export async function GET(request: NextRequest, { params }: { params: Params }) {
+export async function GET(request: NextRequest) {
   const wallet = new URL(request.url).searchParams.get('wallet');
   const avatarImageUrl = new URL(request.url).searchParams.get('avatar');
   const fluffleTokenId = new URL(request.url).searchParams.get('fluffleTokenId');
   const username = new URL(request.url).searchParams.get('username');
-  const { provider } = await params;
+  const provider = new URL(request.url).searchParams.get('provider');
 
   if (!username) {
     return NextResponse.json({ error: 'Username parameter is required' }, { status: 400 });
@@ -31,7 +29,11 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
     return NextResponse.json({ error: 'Avatar parameter is required' }, { status: 400 });
   }
 
-  const passportData = await getData({ provider, fluffleTokenId, wallet });
+  if (!provider) {
+    return NextResponse.json({ error: 'Provider parameter is required' }, { status: 400 });
+  }
+
+  const passportData = await getData({ provider: provider as PassportProvider, fluffleTokenId, wallet });
 
   if (!passportData) {
     return NextResponse.json({ error: 'Unable to get passport data' }, { status: 404 });
