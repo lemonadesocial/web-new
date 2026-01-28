@@ -419,6 +419,8 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       lemonhead: true,
       fluffePhoto: true,
       lemonadeUsername: true,
+      whitelist: true,
+      sharePassport: true,
     },
   },
 };
