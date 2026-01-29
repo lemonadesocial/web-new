@@ -68,16 +68,16 @@ if (COIN_INDEXER) {
   }
 }
 
-const USERNAME_INDEXER = process.env.NEXT_PUBLIC_USERNAME_INDEXER;
-if (USERNAME_INDEXER) {
-  generates['./lib/graphql/generated/username/'] = {
-    schema: USERNAME_INDEXER,
-    documents: ['./lib/graphql/gql/username/*.gql'],
-    preset: 'client',
-    plugins: [],
-    documentTransforms: [addTypenameSelectionDocumentTransform],
-  };
-}
+// const USERNAME_INDEXER = process.env.NEXT_PUBLIC_USERNAME_INDEXER;
+// if (USERNAME_INDEXER) {
+//   generates['./lib/graphql/generated/username/'] = {
+//     schema: USERNAME_INDEXER,
+//     documents: ['./lib/graphql/gql/username/*.gql'],
+//     preset: 'client',
+//     plugins: [],
+//     documentTransforms: [addTypenameSelectionDocumentTransform],
+//   };
+// }
 
 const config: CodegenConfig = {
   ignoreNoDocuments: true,

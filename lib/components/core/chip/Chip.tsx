@@ -8,6 +8,12 @@ const chipSizes = {
   xxs: 'px-1.5 py-[1px] text-xs rounded-xs',
 }
 
+const iconOnlySizes = {
+  s: 'size-7 p-0 rounded-sm',
+  xs: 'size-6 p-0 rounded-xs',
+  xxs: 'size-5 p-0 rounded-xs',
+}
+
 const chipGaps = {
   s: 'gap-1.5',
   xs: 'gap-1',
@@ -16,8 +22,8 @@ const chipGaps = {
 
 const iconSizes = {
   s: 'size-4',
-  xs: 'size-2.5',
-  xxs: 'size-2',
+  xs: 'size-3.5',
+  xxs: 'size-3',
 }
 
 const chipVariants = {
@@ -51,19 +57,18 @@ export function Chip({
   const iconOnly = !!icon && !children;
 
   return (
-    <span
+    <div
       className={twMerge(
-        'inline-flex items-center font-medium select-none transition',
-        chipSizes[size],
-        chipGaps[size],
+        'flex items-center justify-center font-medium select-none transition',
+        iconOnly ? iconOnlySizes[size] : chipSizes[size],
+        !iconOnly && chipGaps[size],
         chipVariants[variant],
-        iconOnly && 'justify-center',
         className
       )}
     >
       {leftIcon && <i className={twMerge(iconSizes[size], leftIcon)} />}
       {iconOnly ? <i className={twMerge(iconSizes[size], icon)} /> : children}
       {rightIcon && <i className={twMerge(iconSizes[size], rightIcon)} />}
-    </span>
+    </div>
   )
 }

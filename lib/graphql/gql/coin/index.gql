@@ -105,3 +105,20 @@ query StakingSummary($where: StakingSummary_bool_exp) {
     updatedAt
   }
 }
+
+query Envelope($where: Envelope_bool_exp) {
+  Envelope(where: $where) {
+    amount
+    token_id
+    sealed_at
+    chain_id
+    owner
+    claimed
+    claimed_at
+    created_at
+    currency
+    id
+    message
+    recipient
+  }
+}
