@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { Sheet, SheetRef } from 'react-modal-sheet';
 import { isEqual } from 'lodash';
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,7 +22,8 @@ import { twMerge } from 'tailwind-merge';
 import getPalette from 'tailwindcss-palette-generator';
 
 export function CommunityThemeBuilder({ themeData, spaceId }: { themeData: ThemeValues; spaceId?: string }) {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [toggle, setToggle] = React.useState(false);
+  const [isAdvancedOpen, setIsAdvancedOpen] = React.useState(false);
 
   // PERF: loading images
   useQuery(GetSystemFilesDocument, {
@@ -30,7 +32,7 @@ export function CommunityThemeBuilder({ themeData, spaceId }: { themeData: Theme
 
   React.useEffect(() => {
     const drawerWidth = 280;
-    if (isOpen) {
+    if (isAdvancedOpen) {
       document.body.style.marginRight = `${drawerWidth}px`;
     } else {
       document.body.style.marginRight = '';
@@ -38,17 +40,27 @@ export function CommunityThemeBuilder({ themeData, spaceId }: { themeData: Theme
     return () => {
       document.body.style.marginRight = '';
     };
-  }, [isOpen]);
+  }, [isAdvancedOpen]);
 
   return (
     <>
-      <Button icon="icon-palette-outline" outlined size="lg" onClick={() => setIsOpen(true)} />
+      <Button icon="icon-palette-outline" outlined size="lg" onClick={() => setToggle(true)} />
+      <CommunityThemeBuilderPane
+        show={toggle}
+        initial={themeData}
+        spaceId={spaceId}
+        onClose={() => setToggle(false)}
+        onOpenAdvanced={() => {
+          setToggle(false);
+          setIsAdvancedOpen(true);
+        }}
+      />
       <AnimatePresence>
-        {isOpen && (
+        {isAdvancedOpen && (
           <CommunityThemeBuilderDrawer
             initial={themeData}
             spaceId={spaceId}
-            onClose={() => setIsOpen(false)}
+            onClose={() => setIsAdvancedOpen(false)}
           />
         )}
       </AnimatePresence>
@@ -86,20 +98,25 @@ function CommunityThemeBuilderDrawer({
 
 function CommunityThemeBuilderPane({
   initial,
-  spaceId,
+  show,
   onClose,
+  spaceId,
+  onOpenAdvanced,
 }: {
   initial: ThemeValues;
+  show?: boolean;
   spaceId?: string;
   onClose: () => void;
+  onOpenAdvanced?: () => void;
 }) {
   const [state, dispatch] = useTheme();
+  const sheetRef = React.useRef<SheetRef>(null);
   const themeName = getThemeName(state);
   const mode = state.config.mode || 'dark';
 
   const [updateCommunity, { loading }] = useMutation(UpdateSpaceDocument);
 
-  const handleClose = () => {
+  const handleCloseSheet = () => {
     const dirty = !isEqual(state, initial);
     if (dirty) {
       modal.open(ConfirmModal, {
@@ -111,6 +128,7 @@ function CommunityThemeBuilderPane({
         },
         dismissible: false,
       });
+      sheetRef.current?.snapTo(0);
     } else {
       onClose();
     }
@@ -121,7 +139,7 @@ function CommunityThemeBuilderPane({
     { key: 'page/bg', label: 'page/bg', cssVar: '--color-background' },
     { key: 'page/bg-overlay', label: 'page/bg-overlay', cssVar: '--color-page-background-overlay' },
     { key: 'page/bg-inverse', label: 'page/bg-inverse', cssVar: '--color-primary-invert' },
-    { key: 'page/overlay-primary', label: 'page/overlay-primary', cssVar: '--color-overlay-primary' },
+    // { key: 'page/overlay-primary', label: 'page/overlay-primary', cssVar: '--color-overlay-primary' },
     { key: 'page/overlay-secondary', label: 'page/overlay-secondary', cssVar: '--color-overlay-secondary' },
     { key: 'page/overlay-backdrop', label: 'page/overlay-backdrop', cssVar: '--color-overlay-backdrop' },
     { key: 'card/bg', label: 'card/bg', cssVar: '--color-card' },
@@ -190,6 +208,7 @@ function CommunityThemeBuilderPane({
     dispatch({
       type: ThemeBuilderActionKind.select_color,
       payload: {
+        config: { ...state.config, mode: 'auto' },
         variables: {
           ...state.variables,
           [modeVarKey]: updatedVars,
@@ -198,11 +217,102 @@ function CommunityThemeBuilderPane({
     });
   };
 
+  if (onOpenAdvanced) {
+    return (
+      <Sheet ref={sheetRef} isOpen={show ?? false} onClose={handleCloseSheet} snapPoints={[324]} initialSnap={0}>
+      <Sheet.Backdrop onTap={handleCloseSheet} />
+
+      <Sheet.Container className="bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
+        <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
+          <div className="flex justify-center items-end h-[20px]">
+            <div className="bg-primary/8 rounded-xs w-[48px] h-1 cursor-row-resize"></div>
+          </div>
+        </Sheet.Header>
+        <Sheet.Content disableDrag>
+          <Sheet.Scroller draggableAt="top" className="no-scrollbar">
+            <CommunityThemeContentBuilder>
+              <div className="flex justify-between">
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    iconLeft="icon-tune"
+                    variant="tertiary-alt"
+                    onClick={() => {
+                      onOpenAdvanced?.();
+                    }}
+                  >
+                    Advanced Options
+                  </Button>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    icon="icon-recent"
+                    variant="tertiary-alt"
+                    onClick={async () => {
+                      if (spaceId) {
+                        await updateCommunity({
+                          variables: { id: spaceId, input: { theme_data: null } },
+                          onComplete: (client) => {
+                            client.writeFragment<Space>({ id: `Space:${spaceId}`, data: { theme_data: null } });
+                            dispatch({ type: ThemeBuilderActionKind.reset, payload: defaultTheme });
+                          },
+                        });
+                      }
+                    }}
+                  />
+                  <Button
+                    size="sm"
+                    icon="icon-shuffle"
+                    variant="tertiary-alt"
+                    disabled={themeName !== 'minimal'}
+                    onClick={async () => {
+                      const [fontTitle, fontTitleVariable] = getRandomFont('title');
+                      const [fontBody, fontBodyVariable] = getRandomFont('body');
+                      const payload = {
+                        font_title: fontTitle,
+                        font_body: fontBody,
+                        variables: { font: { '--font-title': fontTitleVariable, '--font-body': fontBodyVariable } },
+                      };
+                      dispatch({ type: ThemeBuilderActionKind.select_font, payload });
+                      dispatch({
+                        type: ThemeBuilderActionKind.select_template,
+                        payload: { theme: 'minimal', config: { color: getRandomColor() } },
+                      });
+                    }}
+                  />
+                  <Button
+                    size="sm"
+                    loading={loading}
+                    onClick={async () => {
+                      if (spaceId) {
+                        await updateCommunity({
+                          variables: { id: spaceId, input: { theme_data: state } },
+                          onComplete: (client) => {
+                            client.writeFragment<Space>({ id: `Space:${spaceId}`, data: { theme_data: state } });
+                          },
+                        });
+                      }
+                    }}
+                  >
+                    Apply
+                  </Button>
+                </div>
+              </div>
+            </CommunityThemeContentBuilder>
+          </Sheet.Scroller>
+        </Sheet.Content>
+      </Sheet.Container>
+    </Sheet>
+    );
+  }
+
   return (
     <div className="h-full flex flex-col">
       <div className="px-4 py-3 border-b border-divider flex justify-between items-center flex-shrink-0">
         <p className="text-lg font-medium">Advanced Options</p>
-        <i className="icon-x size-4 cursor-pointer text-tertiary hover:text-secondary" onClick={handleClose} />
+        <i className="icon-x size-4 cursor-pointer text-tertiary hover:text-secondary" onClick={onClose} />
       </div>
 
       <div className="flex-1 overflow-y-auto no-scrollbar">
@@ -232,13 +342,13 @@ function CommunityThemeBuilderPane({
               <Menu.Trigger>
                 <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
                   <span className="flex-1 text-left">
-                    {themeName in presets ? presets[themeName as keyof typeof presets].name : 'Default'}
+                    {themeName in presets && state.theme === themeName ? presets[themeName as keyof typeof presets].name : 'Default'}
                   </span>
                   <i className="icon-chevrons-up-down text-quaternary" />
                 </div>
               </Menu.Trigger>
               <FloatingPortal>
-                <Menu.Content>
+                <Menu.Content className="p-1">
                   {Object.entries(presets).map(([key, preset]) => (
                     <MenuItem
                       key={key}
@@ -359,6 +469,7 @@ function CommunityThemeBuilderPane({
                 variables: { id: spaceId, input: { theme_data: state } },
                 onComplete: (client) => {
                   client.writeFragment<Space>({ id: `Space:${spaceId}`, data: { theme_data: state } });
+                  onClose();
                 },
               });
             }
@@ -385,7 +496,7 @@ export function CommunityThemeContentBuilder({
 
       <div className="flex flex-col gap-2">
         <div className="flex gap-2 flex-wrap">
-          <PopoverColor disabled={state.theme && presets[themeName]?.ui?.disabled?.color} />
+          <PopoverColor disabled={state.theme && themeName in presets && presets[themeName as keyof typeof presets]?.ui?.disabled?.color} />
           <PopoverStyle />
           <PopoverEffect />
         </div>

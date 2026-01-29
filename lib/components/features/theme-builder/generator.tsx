@@ -55,10 +55,15 @@ export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: Rea
     return () => document.removeEventListener('visibilitychange', autoplay);
   }, []);
 
+  const modeKey = mode === 'auto' ? 'dark' : mode;
+  const modeVars = data.variables?.[modeKey === 'dark' ? 'dark' : 'light'];
+  const isMinimalTheme = data.theme === 'minimal';
+  const backgroundColor = modeVars?.['--color-background'];
+
   return (
     <>
       {data?.variables && (
-        <style global jsx>
+        <style jsx global>
           {`
             body {
               ${data.variables.font && generateCssVariables(data.variables.font)}
@@ -73,6 +78,18 @@ export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: Rea
           `}
         </style>
       )}
+
+      {
+        !!(backgroundColor && isMinimalTheme) && (
+          <style jsx global>
+            {`
+              .background.minimal {
+                --minimal-color-bg: ${backgroundColor} !important;
+              }
+            `}
+          </style>
+        )
+      }
 
       {data?.theme && (
         <div
