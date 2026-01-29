@@ -130,6 +130,7 @@ export function OAuthClient() {
                       setNewUrl('');
                     }}
                     icon="icon-plus"
+                    variant="secondary"
                   />
                 </div>
               )}
@@ -144,7 +145,7 @@ export function OAuthClient() {
                       setNewUrl('');
                     }}
                     size="sm"
-                    variant="secondary"
+                    variant="tertiary"
                   >
                     Cancel
                   </Button>
