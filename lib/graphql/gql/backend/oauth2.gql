@@ -5,3 +5,16 @@ mutation CreateOauth2Client($input: Oauth2ClientInput!) {
     audience
   }
 }
+
+mutation UpdateOauth2Client($input: Oauth2ClientInput!, $updateOauth2ClientId: String!) {
+  updateOauth2Client(input: $input, id: $updateOauth2ClientId) {
+    client_id
+  }
+}
+
+query ListOauth2Clients($ids: [String!]) {
+  listOauth2Clients(ids: $ids) {
+    client_id
+    redirect_uris
+  }
+}
