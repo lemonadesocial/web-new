@@ -1,5 +1,22 @@
 # Changelog
 
+## [9.15.0](https://github.com/lemonadesocial/web-new/compare/v9.14.0...v9.15.0) (2026-01-28)
+
+
+### Features
+
+* disbable overlay color change ([f5ee86a](https://github.com/lemonadesocial/web-new/commit/f5ee86adf8e989d3ae7c1126738be4db78d9401c))
+* minimal colors ([10b59d9](https://github.com/lemonadesocial/web-new/commit/10b59d9db2209ca28461a1e71b1bc0616d651b26))
+* update community favicon ([40fa333](https://github.com/lemonadesocial/web-new/commit/40fa3334f1ecf7659072b4bd6a2238229fc79203))
+
+
+### Bug Fixes
+
+* default theme ([a94cd76](https://github.com/lemonadesocial/web-new/commit/a94cd76d53fbe51a395aed3ff433853cfe5b976b))
+* drawer witdh ([ff035c2](https://github.com/lemonadesocial/web-new/commit/ff035c20f03696729e2a15ca791083733d6fb48b))
+* template menu ([c89533c](https://github.com/lemonadesocial/web-new/commit/c89533c386a214afd33ff9f3c88af468b7ad06b0))
+* theme flow ([03a7e3b](https://github.com/lemonadesocial/web-new/commit/03a7e3b00dce89f20136a6aadd05729a38b4ddaa))
+
 ## [9.14.0](https://github.com/lemonadesocial/web-new/compare/v9.13.0...v9.14.0) (2026-01-26)
 
 
