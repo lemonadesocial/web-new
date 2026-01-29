@@ -22,6 +22,8 @@ type Props = {
   handleClear?: () => void;
   type?: string;
   className?: string;
+  min?: number | string;
+  max?: number | string;
 };
 
 export function InputField(props: Props) {
@@ -42,6 +44,8 @@ export function InputField(props: Props) {
           readOnly={props.readOnly}
           autoFocus={props.autoFocus}
           placeholder={props.placeholder}
+          min={props.min}
+          max={props.max}
           onChange={(e) => {
             props.onChange?.(e);
             props.onChangeText?.(e.target.value);
