@@ -35,10 +35,10 @@ export async function GET(req: NextRequest) {
   let image;
 
   try {
-    const contractAddress = chain.drip_nation_passport_contract_address;
+    const contractAddress = chain.alzena_world_passport_contract_address;
 
     if (!contractAddress) {
-      return new Response('Drip nation contract address not set', { status: 400 });
+      return new Response('Alzena world contract address not set', { status: 400 });
     }
 
     const provider = new ethers.JsonRpcProvider(chain.rpc_url);
