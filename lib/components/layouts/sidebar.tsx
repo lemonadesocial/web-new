@@ -34,6 +34,7 @@ const Sidebar = () => {
     const menu = [
       { icon: 'icon-home', path: '/', label: 'Home' },
       { icon: 'icon-storefront-outline', path: '/lemonade-stand', label: 'Lemonade Stand' },
+      { icon: 'icon-community', path: '/communities', label: 'Community Hubs' },
       { icon: 'icon-newspaper', path: '/timelines', label: 'Timelines' },
       { icon: 'icon-explore', path: '/explore', label: 'Explore' },
       { icon: 'icon-token', path: '/tokens', label: 'Tokens' },
@@ -42,6 +43,11 @@ const Sidebar = () => {
       { icon: 'icon-passport', path: '/lemonheads', label: 'LemonHeads Zone' },
     ].filter(Boolean);
 
+    return menu;
+  }, []);
+
+  const exploreMenu = useMemo(() => {
+    const menu = [];
     return menu;
   }, []);
 
@@ -83,7 +89,7 @@ const Sidebar = () => {
         )}
       </div>
 
-      <div className="px-1.5">
+      <div className="px-1.5 flex flex-col gap-1">
         {mainMenu.map((item) => (
           <div
             key={item.path}
@@ -248,5 +254,7 @@ function SectionEvents({ handleNavigate }: { handleNavigate: (path: string) => v
     </Accordion.Root>
   );
 }
+
+function SectionCommunities({}) {}
 
 export default Sidebar;
