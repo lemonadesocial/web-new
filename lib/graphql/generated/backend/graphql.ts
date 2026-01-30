@@ -21,6 +21,94 @@ export type Scalars = {
   MongoID: { input: any; output: any; }
 };
 
+export type AiCreateEventInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  end?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  /** Id of the community that this event is organized to. Default to the first found personal community of the host user. */
+  space?: InputMaybe<Scalars['MongoID']['input']>;
+  start?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AiEvent = {
+  __typename?: 'AIEvent';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  address?: Maybe<Address>;
+  description?: Maybe<Scalars['String']['output']>;
+  end: Scalars['DateTimeISO']['output'];
+  /** If this is true then the event is published, otherwise the event is unpublished. */
+  published?: Maybe<Scalars['Boolean']['output']>;
+  start: Scalars['DateTimeISO']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type AiEventTicketType = {
+  __typename?: 'AIEventTicketType';
+  active?: Maybe<Scalars['Boolean']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  limited?: Maybe<Scalars['Boolean']['output']>;
+  private?: Maybe<Scalars['Boolean']['output']>;
+  title: Scalars['String']['output'];
+};
+
+export type AiGetHostingEventsResponse = {
+  __typename?: 'AIGetHostingEventsResponse';
+  /** The paginated response */
+  items: Array<AiEvent>;
+  /** Number of the records that match the filter */
+  total: Scalars['Int']['output'];
+};
+
+export type AiGetMeResponse = {
+  __typename?: 'AIGetMeResponse';
+  /** Information about the current user */
+  user: AiUser;
+};
+
+export type AiListMySpacesResponse = {
+  __typename?: 'AIListMySpacesResponse';
+  /** The paginated response */
+  items: Array<AiSpace>;
+  /** Number of the records that match the filter */
+  total: Scalars['Int']['output'];
+};
+
+export type AiSpace = {
+  __typename?: 'AISpace';
+  _id: Scalars['MongoID']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  /** One user is provided with one personal community where he can manage his own events. The personal community is not meant to be publicly visible and featured. */
+  personal?: Maybe<Scalars['Boolean']['output']>;
+  /** If true then the community is private, else the community is public. A private community requires moderation for membership. */
+  private?: Maybe<Scalars['Boolean']['output']>;
+  title: Scalars['String']['output'];
+};
+
+export type AiSpaceInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** If true then the community is private, else the community is public. A private community requires moderation for membership. */
+  private?: InputMaybe<Scalars['Boolean']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AiUpdateEventInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  end?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  start?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AiUser = {
+  __typename?: 'AIUser';
+  _id?: Maybe<Scalars['MongoID']['output']>;
+  addresses?: Maybe<Array<Address>>;
+  email?: Maybe<Scalars['String']['output']>;
+  first_name?: Maybe<Scalars['String']['output']>;
+  last_name?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
+  name: Scalars['String']['output'];
+};
+
 export type AcceptEventTermsInput = {
   _id: Scalars['MongoID']['input'];
   email_permission?: InputMaybe<Scalars['Boolean']['input']>;
@@ -187,6 +275,7 @@ export type Applicant = {
   image_avatar?: Maybe<Scalars['String']['output']>;
   industry?: Maybe<Scalars['String']['output']>;
   job_title?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name?: Maybe<Scalars['String']['output']>;
   new_gender?: Maybe<Scalars['String']['output']>;
   pronoun?: Maybe<Scalars['String']['output']>;
@@ -276,6 +365,7 @@ export type BasicUserInfo = {
   kratos_unicorn_wallet_address?: Maybe<Scalars['String']['output']>;
   kratos_wallet_address?: Maybe<Scalars['String']['output']>;
   matrix_localpart?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name: Scalars['String']['output'];
   username?: Maybe<Scalars['String']['output']>;
 };
@@ -527,6 +617,7 @@ export type Chain = {
   __typename?: 'Chain';
   access_registry_contract?: Maybe<Scalars['String']['output']>;
   active?: Maybe<Scalars['Boolean']['output']>;
+  alzena_world_passport_contract_address?: Maybe<Scalars['String']['output']>;
   aragon_network?: Maybe<Scalars['String']['output']>;
   aragon_subgraph_url?: Maybe<Scalars['String']['output']>;
   axelar_chain_name?: Maybe<Scalars['String']['output']>;
@@ -664,6 +755,7 @@ export type ConfidentialUserInfo = {
   kratos_unicorn_wallet_address?: Maybe<Scalars['String']['output']>;
   kratos_wallet_address?: Maybe<Scalars['String']['output']>;
   matrix_localpart?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name: Scalars['String']['output'];
   username?: Maybe<Scalars['String']['output']>;
 };
@@ -1023,6 +1115,7 @@ export type DonationUserInfo = {
   _id?: Maybe<Scalars['MongoID']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name?: Maybe<Scalars['String']['output']>;
 };
 
@@ -1396,6 +1489,7 @@ export type Event = {
   pending_request_count?: Maybe<Scalars['Float']['output']>;
   photos?: Maybe<Array<Scalars['String']['output']>>;
   private?: Maybe<Scalars['Boolean']['output']>;
+  /** If this is true then the event is published, otherwise the event is unpublished. */
   published?: Maybe<Scalars['Boolean']['output']>;
   registration_disabled?: Maybe<Scalars['Boolean']['output']>;
   reward_uses?: Maybe<Scalars['JSON']['output']>;
@@ -1406,6 +1500,7 @@ export type Event = {
   sessions?: Maybe<Array<EventSession>>;
   shortid: Scalars['String']['output'];
   slug: Scalars['String']['output'];
+  /** Id of the community that this event is organized to. Default to the first found personal community of the host user. */
   space?: Maybe<Scalars['MongoID']['output']>;
   space_expanded?: Maybe<Space>;
   space_tags?: Maybe<Array<SpaceTag>>;
@@ -1692,6 +1787,7 @@ export type EventBase = {
   pending?: Maybe<Array<Scalars['MongoID']['output']>>;
   photos?: Maybe<Array<Scalars['String']['output']>>;
   private?: Maybe<Scalars['Boolean']['output']>;
+  /** If this is true then the event is published, otherwise the event is unpublished. */
   published?: Maybe<Scalars['Boolean']['output']>;
   registration_disabled?: Maybe<Scalars['Boolean']['output']>;
   reward_uses?: Maybe<Scalars['JSON']['output']>;
@@ -1702,6 +1798,7 @@ export type EventBase = {
   sessions?: Maybe<Array<EventSessionBase>>;
   shortid: Scalars['String']['output'];
   slug: Scalars['String']['output'];
+  /** Id of the community that this event is organized to. Default to the first found personal community of the host user. */
   space?: Maybe<Scalars['MongoID']['output']>;
   speaker_emails?: Maybe<Array<Scalars['String']['output']>>;
   speaker_users?: Maybe<Array<Scalars['MongoID']['output']>>;
@@ -1880,6 +1977,7 @@ export type EventGuestUser = {
   first_name?: Maybe<Scalars['String']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
   last_name?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name?: Maybe<Scalars['String']['output']>;
   username?: Maybe<Scalars['String']['output']>;
   wallets_new?: Maybe<Scalars['JSON']['output']>;
@@ -1890,6 +1988,7 @@ export type EventHost = {
   _id?: Maybe<Scalars['MongoID']['output']>;
   events_count?: Maybe<Scalars['Float']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name: Scalars['String']['output'];
 };
 
@@ -1904,6 +2003,7 @@ export type EventHostUser = {
   first_name?: Maybe<Scalars['String']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
   last_name?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name?: Maybe<Scalars['String']['output']>;
   username?: Maybe<Scalars['String']['output']>;
 };
@@ -1971,6 +2071,7 @@ export type EventInput = {
   payment_ticket_purchase_title?: InputMaybe<Scalars['String']['input']>;
   photos?: InputMaybe<Array<Scalars['String']['input']>>;
   private?: InputMaybe<Scalars['Boolean']['input']>;
+  /** If this is true then the event is published, otherwise the event is unpublished. */
   published?: InputMaybe<Scalars['Boolean']['input']>;
   registration_disabled?: InputMaybe<Scalars['Boolean']['input']>;
   rewards?: InputMaybe<Array<EventRewardInput>>;
@@ -1978,6 +2079,7 @@ export type EventInput = {
   self_verification?: InputMaybe<SelfVerificationInput>;
   sessions?: InputMaybe<Array<EventSessionInput>>;
   shortid?: InputMaybe<Scalars['String']['input']>;
+  /** Id of the community that this event is organized to. Default to the first found personal community of the host user. */
   space?: InputMaybe<Scalars['MongoID']['input']>;
   speaker_emails?: InputMaybe<Array<Scalars['String']['input']>>;
   speaker_users?: InputMaybe<Array<Scalars['MongoID']['input']>>;
@@ -2987,7 +3089,9 @@ export type GetInitSafeTransactionInput = {
 
 export type GetMyLemonheadInvitationRankResponse = {
   __typename?: 'GetMyLemonheadInvitationRankResponse';
+  /** The paginated response */
   items: Array<LemonheadInvitationRank>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -3042,7 +3146,9 @@ export type GetSpaceEventRequestsResponse = {
 
 export type GetTopInvitersResponse = {
   __typename?: 'GetTopInvitersResponse';
+  /** The paginated response */
   items: Array<EventInviter>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -3055,7 +3161,9 @@ export type GetUserContactsInput = {
 export type GetUserContactsResponse = {
   __typename?: 'GetUserContactsResponse';
   counts?: Maybe<Scalars['JSON']['output']>;
+  /** The paginated response */
   items: Array<UserContact>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -3079,7 +3187,9 @@ export type GetUserFriendshipsInput = {
 
 export type GetUserFriendshipsResponse = {
   __typename?: 'GetUserFriendshipsResponse';
+  /** The paginated response */
   items: Array<UserFriendship>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -3299,25 +3409,32 @@ export type LemonheadUserInfo = {
   kratos_wallet_address?: Maybe<Scalars['String']['output']>;
   lemonhead_inviter_wallet?: Maybe<Scalars['String']['output']>;
   matrix_localpart?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name: Scalars['String']['output'];
   username?: Maybe<Scalars['String']['output']>;
 };
 
 export type ListDonationsResponse = {
   __typename?: 'ListDonationsResponse';
+  /** The paginated response */
   items: Array<Donation>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
 export type ListEventFeedbacksResponse = {
   __typename?: 'ListEventFeedbacksResponse';
+  /** The paginated response */
   items: Array<EventFeedback>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
 export type ListEventGuestsResponse = {
   __typename?: 'ListEventGuestsResponse';
+  /** The paginated response */
   items: Array<EventGuestDetail>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -3342,19 +3459,25 @@ export type ListEventPaymentsResponse = {
 
 export type ListEventStakePaymentsResponse = {
   __typename?: 'ListEventStakePaymentsResponse';
+  /** The paginated response */
   items: Array<EventStakePayment>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
 export type ListLaunchpadCoinsResponse = {
   __typename?: 'ListLaunchpadCoinsResponse';
+  /** The paginated response */
   items: Array<LaunchpadCoin>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
 export type ListLaunchpadGroupsResponse = {
   __typename?: 'ListLaunchpadGroupsResponse';
+  /** The paginated response */
   items: Array<LaunchpadGroup>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -3370,13 +3493,17 @@ export type ListMyLemonheadInvitationsResponse = {
 
 export type ListSpaceMembersResponse = {
   __typename?: 'ListSpaceMembersResponse';
+  /** The paginated response */
   items: Array<SpaceMember>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
 export type ListSpaceNfTsResponse = {
   __typename?: 'ListSpaceNFTsResponse';
+  /** The paginated response */
   items: Array<SpaceNft>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -3422,6 +3549,14 @@ export type Mutation = {
   addLaunchpadGroup: LaunchpadGroup;
   addSpaceMembers: Scalars['Boolean']['output'];
   addUserFcmToken: Scalars['Boolean']['output'];
+  /** This tool creates an event by default in unpublished state */
+  aiCreateEvent: AiEvent;
+  aiCreateSpace: AiSpace;
+  /** This tool publishes an event given its id, that user has admin permissions. Return true if publish successfully, return false if the event is not found or already published. */
+  aiPublishEvent: Scalars['Boolean']['output'];
+  /** This tool updates an event given its id, that user has admin permissions */
+  aiUpdateEvent: AiEvent;
+  aiUpdateSpace: AiSpace;
   assignTickets: Scalars['Boolean']['output'];
   attachSubSpaces: Scalars['Boolean']['output'];
   buyTickets: BuyTicketsResponse;
@@ -3688,6 +3823,33 @@ export type MutationAddSpaceMembersArgs = {
 
 export type MutationAddUserFcmTokenArgs = {
   token: Scalars['String']['input'];
+};
+
+
+export type MutationAiCreateEventArgs = {
+  input: AiCreateEventInput;
+};
+
+
+export type MutationAiCreateSpaceArgs = {
+  input: AiSpaceInput;
+};
+
+
+export type MutationAiPublishEventArgs = {
+  id: Scalars['MongoID']['input'];
+};
+
+
+export type MutationAiUpdateEventArgs = {
+  id: Scalars['MongoID']['input'];
+  input: AiUpdateEventInput;
+};
+
+
+export type MutationAiUpdateSpaceArgs = {
+  id: Scalars['MongoID']['input'];
+  input: AiSpaceInput;
 };
 
 
@@ -4946,6 +5108,7 @@ export type NonloginUser = {
   location_line?: Maybe<Scalars['String']['output']>;
   matrix_localpart?: Maybe<Scalars['String']['output']>;
   music?: Maybe<Array<Scalars['String']['output']>>;
+  /** This field contains the name of the user in a short version */
   name?: Maybe<Scalars['String']['output']>;
   new_gender?: Maybe<Scalars['String']['output']>;
   new_photos?: Maybe<Array<Scalars['MongoID']['output']>>;
@@ -5184,6 +5347,7 @@ export type PassportMintingInfo = {
 };
 
 export enum PassportProvider {
+  AlzenaWorld = 'alzena_world',
   DripNation = 'drip_nation',
   FestivalNation = 'festival_nation',
   Lemonade = 'lemonade',
@@ -5259,7 +5423,9 @@ export type PaymentStatistics = {
 
 export type PeekEventGuestsResponse = {
   __typename?: 'PeekEventGuestsResponse';
+  /** The paginated response */
   items: Array<EventGuestUser>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -5478,6 +5644,17 @@ export type PurchasableTicketTypePhotos_ExpandedArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  aiGetBackendVersion: Scalars['String']['output'];
+  /** This tool returns the public detail info of an event given its id */
+  aiGetEvent: AiEvent;
+  /** This tool returns all the events that the current user has admin permission. */
+  aiGetHostingEvents: AiGetHostingEventsResponse;
+  /** This tool returns information about the current user */
+  aiGetMe: AiGetMeResponse;
+  /** This tools return all the ticket types of an event given its id */
+  aiListEventTicketTypes: Array<AiEventTicketType>;
+  /** This tool returns all the communities of the current user */
+  aiListMySpaces: AiListMySpacesResponse;
   calculateTicketsPricing: PricingInfo;
   canMintLemonhead: LemonheadMintingInfo;
   canMintPassport: PassportMintingInfo;
@@ -5688,6 +5865,30 @@ export type Query = {
   searchSpaces: SearchSpacesResponse;
   searchUsers: Array<UserWithEmail>;
   tgGetMyChannels: ScanChannelsResult;
+};
+
+
+export type QueryAiGetEventArgs = {
+  id: Scalars['MongoID']['input'];
+};
+
+
+export type QueryAiGetHostingEventsArgs = {
+  draft?: InputMaybe<Scalars['Boolean']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryAiListEventTicketTypesArgs = {
+  event: Scalars['MongoID']['input'];
+};
+
+
+export type QueryAiListMySpacesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -6953,6 +7154,7 @@ export type RecipientDetail = {
   _id?: Maybe<Scalars['MongoID']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name: Scalars['String']['output'];
 };
 
@@ -7398,7 +7600,9 @@ export type SearchSpaceInput = {
 
 export type SearchSpacesResponse = {
   __typename?: 'SearchSpacesResponse';
+  /** The paginated response */
   items: Array<Space>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -7721,8 +7925,9 @@ export type Space = {
   /** External events are listed on this space */
   listed_events?: Maybe<Array<Scalars['MongoID']['output']>>;
   nft_enabled?: Maybe<Scalars['Boolean']['output']>;
+  /** One user is provided with one personal community where he can manage his own events. The personal community is not meant to be publicly visible and featured. */
   personal?: Maybe<Scalars['Boolean']['output']>;
-  /** Private space requires moderation for membership */
+  /** If true then the community is private, else the community is public. A private community requires moderation for membership. */
   private?: Maybe<Scalars['Boolean']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
   state: SpaceState;
@@ -7889,6 +8094,7 @@ export type SpaceEventInsight = {
   pending?: Maybe<Array<Scalars['MongoID']['output']>>;
   photos?: Maybe<Array<Scalars['String']['output']>>;
   private?: Maybe<Scalars['Boolean']['output']>;
+  /** If this is true then the event is published, otherwise the event is unpublished. */
   published?: Maybe<Scalars['Boolean']['output']>;
   rating?: Maybe<Scalars['Float']['output']>;
   registration_disabled?: Maybe<Scalars['Boolean']['output']>;
@@ -7901,6 +8107,7 @@ export type SpaceEventInsight = {
   sessions?: Maybe<Array<EventSessionBase>>;
   shortid: Scalars['String']['output'];
   slug: Scalars['String']['output'];
+  /** Id of the community that this event is organized to. Default to the first found personal community of the host user. */
   space?: Maybe<Scalars['MongoID']['output']>;
   speaker_emails?: Maybe<Array<Scalars['String']['output']>>;
   speaker_users?: Maybe<Array<Scalars['MongoID']['output']>>;
@@ -7942,7 +8149,9 @@ export type SpaceEventInsight = {
 
 export type SpaceEventInsightResponse = {
   __typename?: 'SpaceEventInsightResponse';
+  /** The paginated response */
   items: Array<SpaceEventInsight>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -8001,7 +8210,7 @@ export type SpaceInput = {
   lens_feed_id?: InputMaybe<Scalars['String']['input']>;
   light_theme_image?: InputMaybe<Scalars['MongoID']['input']>;
   nft_enabled?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Private space requires moderation for membership */
+  /** If true then the community is private, else the community is public. A private community requires moderation for membership. */
   private?: InputMaybe<Scalars['Boolean']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   state?: InputMaybe<SpaceState>;
@@ -8084,7 +8293,9 @@ export type SpaceMemberRecipientFilterInput = {
 
 export type SpaceMembersLeaderboardResponse = {
   __typename?: 'SpaceMembersLeaderboardResponse';
+  /** The paginated response */
   items: Array<SpaceMemberLeaderboard>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -8257,7 +8468,9 @@ export type SpaceTokenRewardClaim = {
 
 export type SpaceTokenRewardClaims = {
   __typename?: 'SpaceTokenRewardClaims';
+  /** The paginated response */
   items: Array<SpaceTokenRewardClaim>;
+  /** Number of the records that match the filter */
   total: Scalars['Int']['output'];
 };
 
@@ -8317,6 +8530,7 @@ export type StakeUser = {
   display_name?: Maybe<Scalars['String']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   image_avatar?: Maybe<Scalars['String']['output']>;
+  /** This field contains the name of the user in a short version */
   name?: Maybe<Scalars['String']['output']>;
   wallet: Scalars['String']['output'];
 };
@@ -9394,6 +9608,7 @@ export type User = {
   location_line?: Maybe<Scalars['String']['output']>;
   matrix_localpart?: Maybe<Scalars['String']['output']>;
   music?: Maybe<Array<Scalars['String']['output']>>;
+  /** This field contains the name of the user in a short version */
   name: Scalars['String']['output'];
   new_gender?: Maybe<Scalars['String']['output']>;
   new_photos?: Maybe<Array<Scalars['MongoID']['output']>>;
@@ -9639,6 +9854,7 @@ export type UserInput = {
   layout_sections?: InputMaybe<Array<LayoutSectionInput>>;
   lens_profile_synced?: InputMaybe<Scalars['Boolean']['input']>;
   music?: InputMaybe<Array<Scalars['String']['input']>>;
+  /** This field contains the name of the user in a short version */
   name?: InputMaybe<Scalars['String']['input']>;
   new_gender?: InputMaybe<Scalars['String']['input']>;
   new_photos?: InputMaybe<Array<Scalars['MongoID']['input']>>;
@@ -9802,6 +10018,7 @@ export type UserWithEmail = {
   location_line?: Maybe<Scalars['String']['output']>;
   matrix_localpart?: Maybe<Scalars['String']['output']>;
   music?: Maybe<Array<Scalars['String']['output']>>;
+  /** This field contains the name of the user in a short version */
   name: Scalars['String']['output'];
   new_gender?: Maybe<Scalars['String']['output']>;
   new_photos?: Maybe<Array<Scalars['MongoID']['output']>>;
@@ -10626,7 +10843,7 @@ export type UpdateMyLemonheadInvitationsMutation = { __typename: 'Mutation', upd
 export type ListChainsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListChainsQuery = { __typename: 'Query', listChains: Array<{ __typename: 'Chain', active?: boolean | null, platform: string, chain_id: string, name: string, code_name: string, rpc_url: string, block_explorer_url?: string | null, block_explorer_name?: string | null, block_explorer_for_tx?: string | null, block_explorer_for_token?: string | null, block_explorer_for_address?: string | null, block_explorer_icon_url?: string | null, block_time: number, safe_confirmations: number, logo_url?: string | null, access_registry_contract?: string | null, poap_contract?: string | null, marketplace_contract?: string | null, marketplace_version?: number | null, biconomy_api_key?: string | null, ens_registry?: string | null, proxy_admin_contract?: string | null, payment_config_registry_contract?: string | null, escrow_manager_contract?: string | null, relay_payment_contract?: string | null, stake_payment_contract?: string | null, reward_registry_contract?: string | null, eas_event_contract?: string | null, eas_graphql_url?: string | null, aragon_network?: string | null, axelar_chain_name?: string | null, donation_registry_contract?: string | null, lemonhead_contract_address?: string | null, lemonade_passport_contract_address?: string | null, zugrama_passport_contract_address?: string | null, vinyl_nation_passport_contract_address?: string | null, drip_nation_passport_contract_address?: string | null, festival_nation_passport_contract_address?: string | null, lemonade_username_contract_address?: string | null, poap_enabled?: boolean | null, launchpad_closed_permissions_contract_address?: string | null, launchpad_treasury_address_fee_split_manager_implementation_contract_address?: string | null, launchpad_treasury_staking_manager_implementation_contract_address?: string | null, launchpad_zap_contract_address?: string | null, launchpad_fee_escrow_contract_address?: string | null, launchpad_market_capped_price_contract_address?: string | null, launchpad_market_utils_contract_address?: string | null, tokens?: Array<{ __typename: 'Token', active?: boolean | null, name: string, symbol: string, decimals: number, contract: string, logo_url?: string | null, is_native?: boolean | null }> | null }> };
+export type ListChainsQuery = { __typename: 'Query', listChains: Array<{ __typename: 'Chain', active?: boolean | null, platform: string, chain_id: string, name: string, code_name: string, rpc_url: string, block_explorer_url?: string | null, block_explorer_name?: string | null, block_explorer_for_tx?: string | null, block_explorer_for_token?: string | null, block_explorer_for_address?: string | null, block_explorer_icon_url?: string | null, block_time: number, safe_confirmations: number, logo_url?: string | null, access_registry_contract?: string | null, poap_contract?: string | null, marketplace_contract?: string | null, marketplace_version?: number | null, biconomy_api_key?: string | null, ens_registry?: string | null, proxy_admin_contract?: string | null, payment_config_registry_contract?: string | null, escrow_manager_contract?: string | null, relay_payment_contract?: string | null, stake_payment_contract?: string | null, reward_registry_contract?: string | null, eas_event_contract?: string | null, eas_graphql_url?: string | null, aragon_network?: string | null, axelar_chain_name?: string | null, donation_registry_contract?: string | null, lemonhead_contract_address?: string | null, lemonade_passport_contract_address?: string | null, zugrama_passport_contract_address?: string | null, vinyl_nation_passport_contract_address?: string | null, drip_nation_passport_contract_address?: string | null, festival_nation_passport_contract_address?: string | null, lemonade_username_contract_address?: string | null, poap_enabled?: boolean | null, launchpad_closed_permissions_contract_address?: string | null, launchpad_treasury_address_fee_split_manager_implementation_contract_address?: string | null, launchpad_treasury_staking_manager_implementation_contract_address?: string | null, launchpad_zap_contract_address?: string | null, launchpad_fee_escrow_contract_address?: string | null, launchpad_market_capped_price_contract_address?: string | null, launchpad_market_utils_contract_address?: string | null, alzena_world_passport_contract_address?: string | null, tokens?: Array<{ __typename: 'Token', active?: boolean | null, name: string, symbol: string, decimals: number, contract: string, logo_url?: string | null, is_native?: boolean | null }> | null }> };
 
 export type GetUserWalletRequestQueryVariables = Exact<{
   wallet: Scalars['String']['input'];
@@ -11330,7 +11547,7 @@ export const GetMyLemonheadInvitationRankDocument = {"kind":"Document","definiti
 export const GetLemonheadInvitationRankDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLemonheadInvitationRank"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getLemonheadInvitationRank"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"display_name"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"image_avatar"}},{"kind":"Field","name":{"kind":"Name","value":"lemonhead_inviter_wallet"}},{"kind":"Field","name":{"kind":"Name","value":"kratos_wallet_address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"invitations_count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"}}]}}]}}]} as unknown as DocumentNode<GetLemonheadInvitationRankQuery, GetLemonheadInvitationRankQueryVariables>;
 export const SetUserWalletDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetUserWallet"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"signature"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"setUserWallet"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}},{"kind":"Argument","name":{"kind":"Name","value":"signature"},"value":{"kind":"Variable","name":{"kind":"Name","value":"signature"}}}]}]}}]} as unknown as DocumentNode<SetUserWalletMutation, SetUserWalletMutationVariables>;
 export const UpdateMyLemonheadInvitationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateMyLemonheadInvitations"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"invitations"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"updateMyLemonheadInvitations"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"invitations"},"value":{"kind":"Variable","name":{"kind":"Name","value":"invitations"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"wallets"}}]}}]}}]} as unknown as DocumentNode<UpdateMyLemonheadInvitationsMutation, UpdateMyLemonheadInvitationsMutationVariables>;
-export const ListChainsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"listChains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listChains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"platform"}},{"kind":"Field","name":{"kind":"Name","value":"chain_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"code_name"}},{"kind":"Field","name":{"kind":"Name","value":"rpc_url"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_url"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_name"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_tx"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_token"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_address"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_icon_url"}},{"kind":"Field","name":{"kind":"Name","value":"block_time"}},{"kind":"Field","name":{"kind":"Name","value":"safe_confirmations"}},{"kind":"Field","name":{"kind":"Name","value":"logo_url"}},{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"contract"}},{"kind":"Field","name":{"kind":"Name","value":"logo_url"}},{"kind":"Field","name":{"kind":"Name","value":"is_native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"access_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"poap_contract"}},{"kind":"Field","name":{"kind":"Name","value":"marketplace_contract"}},{"kind":"Field","name":{"kind":"Name","value":"marketplace_version"}},{"kind":"Field","name":{"kind":"Name","value":"biconomy_api_key"}},{"kind":"Field","name":{"kind":"Name","value":"ens_registry"}},{"kind":"Field","name":{"kind":"Name","value":"proxy_admin_contract"}},{"kind":"Field","name":{"kind":"Name","value":"payment_config_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"escrow_manager_contract"}},{"kind":"Field","name":{"kind":"Name","value":"relay_payment_contract"}},{"kind":"Field","name":{"kind":"Name","value":"stake_payment_contract"}},{"kind":"Field","name":{"kind":"Name","value":"reward_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"eas_event_contract"}},{"kind":"Field","name":{"kind":"Name","value":"eas_graphql_url"}},{"kind":"Field","name":{"kind":"Name","value":"aragon_network"}},{"kind":"Field","name":{"kind":"Name","value":"axelar_chain_name"}},{"kind":"Field","name":{"kind":"Name","value":"donation_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"lemonhead_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"lemonade_passport_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"zugrama_passport_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"vinyl_nation_passport_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"drip_nation_passport_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"festival_nation_passport_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"lemonade_username_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"poap_enabled"}},{"kind":"Field","name":{"kind":"Name","value":"launchpad_closed_permissions_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"launchpad_treasury_address_fee_split_manager_implementation_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"launchpad_treasury_staking_manager_implementation_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"launchpad_zap_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"launchpad_fee_escrow_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"launchpad_market_capped_price_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"launchpad_market_utils_contract_address"}}]}}]}}]} as unknown as DocumentNode<ListChainsQuery, ListChainsQueryVariables>;
+export const ListChainsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"listChains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"listChains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"platform"}},{"kind":"Field","name":{"kind":"Name","value":"chain_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"code_name"}},{"kind":"Field","name":{"kind":"Name","value":"rpc_url"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_url"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_name"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_tx"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_token"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_for_address"}},{"kind":"Field","name":{"kind":"Name","value":"block_explorer_icon_url"}},{"kind":"Field","name":{"kind":"Name","value":"block_time"}},{"kind":"Field","name":{"kind":"Name","value":"safe_confirmations"}},{"kind":"Field","name":{"kind":"Name","value":"logo_url"}},{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"contract"}},{"kind":"Field","name":{"kind":"Name","value":"logo_url"}},{"kind":"Field","name":{"kind":"Name","value":"is_native"}}]}},{"kind":"Field","name":{"kind":"Name","value":"access_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"poap_contract"}},{"kind":"Field","name":{"kind":"Name","value":"marketplace_contract"}},{"kind":"Field","name":{"kind":"Name","value":"marketplace_version"}},{"kind":"Field","name":{"kind":"Name","value":"biconomy_api_key"}},{"kind":"Field","name":{"kind":"Name","value":"ens_registry"}},{"kind":"Field","name":{"kind":"Name","value":"proxy_admin_contract"}},{"kind":"Field","name":{"kind":"Name","value":"payment_config_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"escrow_manager_contract"}},{"kind":"Field","name":{"kind":"Name","value":"relay_payment_contract"}},{"kind":"Field","name":{"kind":"Name","value":"stake_payment_contract"}},{"kind":"Field","name":{"kind":"Name","value":"reward_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"eas_event_contract"}},{"kind":"Field","name":{"kind":"Name","value":"eas_graphql_url"}},{"kind":"Field","name":{"kind":"Name","value":"aragon_network"}},{"kind":"Field","name":{"kind":"Name","value":"axelar_chain_name"}},{"kind":"Field","name":{"kind":"Name","value":"donation_registry_contract"}},{"kind":"Field","name":{"kind":"Name","value":"lemonhead_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"lemonade_passport_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"zugrama_passport_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"vinyl_nation_passport_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"drip_nation_passport_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"festival_nation_passport_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"lemonade_username_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"poap_enabled"}},{"kind":"Field","name":{"kind":"Name","value":"launchpad_closed_permissions_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"launchpad_treasury_address_fee_split_manager_implementation_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"launchpad_treasury_staking_manager_implementation_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"launchpad_zap_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"launchpad_fee_escrow_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"launchpad_market_capped_price_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"launchpad_market_utils_contract_address"}},{"kind":"Field","name":{"kind":"Name","value":"alzena_world_passport_contract_address"}}]}}]}}]} as unknown as DocumentNode<ListChainsQuery, ListChainsQueryVariables>;
 export const GetUserWalletRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserWalletRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getUserWalletRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"wallet"},"value":{"kind":"Variable","name":{"kind":"Name","value":"wallet"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"token"}}]}}]}}]} as unknown as DocumentNode<GetUserWalletRequestQuery, GetUserWalletRequestQueryVariables>;
 export const GetSelfVerificationStatusDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSelfVerificationStatus"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"config"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SelfVerificationConfigInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"getSelfVerificationStatus"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"config"},"value":{"kind":"Variable","name":{"kind":"Name","value":"config"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"disclosures"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"verified"}}]}}]}}]}}]} as unknown as DocumentNode<GetSelfVerificationStatusQuery, GetSelfVerificationStatusQueryVariables>;
 export const CreateSelfVerificationRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateSelfVerificationRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"config"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SelfVerificationConfigInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"createSelfVerificationRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"config"},"value":{"kind":"Variable","name":{"kind":"Name","value":"config"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"endpoint"}},{"kind":"Field","name":{"kind":"Name","value":"endpoint_type"}},{"kind":"Field","name":{"kind":"Name","value":"scope"}},{"kind":"Field","name":{"kind":"Name","value":"uuid"}}]}}]}}]} as unknown as DocumentNode<CreateSelfVerificationRequestMutation, CreateSelfVerificationRequestMutationVariables>;
