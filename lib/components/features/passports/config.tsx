@@ -158,6 +158,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
     enabled: {
       lemonhead: true,
       fluffePhoto: true,
+      shouldMintedLemonhead: true,
       ens: true,
       lemonadeUsername: true,
       whitelist: true,
@@ -220,6 +221,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
     enabled: {
       lemonhead: true,
       fluffePhoto: true,
+      shouldMintedLemonhead: true,
       ens: true,
       lemonadeUsername: true,
       whitelist: true,
@@ -282,6 +284,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
     enabled: {
       lemonhead: true,
       fluffePhoto: true,
+      lemonadeUsername: true,
       ens: true,
       lemonadeUsername: true,
       whitelist: true,
@@ -420,6 +423,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       fluffePhoto: true,
       lemonadeUsername: true,
       whitelist: true,
+      shouldMintedLemonhead: true,
       sharePassport: true,
     },
   },
