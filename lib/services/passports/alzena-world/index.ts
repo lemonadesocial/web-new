@@ -150,9 +150,8 @@ export const getMintAlzenaWorldPassportData = async ({
 
   const buffers = await Promise.all([
     getAvatarImageBuffer(avatarImageUrl),
-
+    getBoilerplateImageBuffer(),
     getUsernameImageBuffer(`@${username}`),
-
     getPassportIdImageBuffer(passportId),
     getWalletAddressImageBuffer(wallet),
     getMintDateImageBuffer(creationDate),
