@@ -1,5 +1,19 @@
 # Changelog
 
+## [9.16.0](https://github.com/lemonadesocial/web-new/compare/v9.15.0...v9.16.0) (2026-01-30)
+
+
+### Features
+
+* missing boiler plate image ([9d18ee0](https://github.com/lemonadesocial/web-new/commit/9d18ee00ea775c9b9ca8bbd5b42b2ad7efa7debb))
+* missing minted lemonhead step ([dbcd411](https://github.com/lemonadesocial/web-new/commit/dbcd411b012bd0158b7594dbe2d9645dac73de1f))
+
+
+### Bug Fixes
+
+* missing deploy vars ([97e5256](https://github.com/lemonadesocial/web-new/commit/97e525622ecef9d25e0476e4130ba52a2edbd701))
+* wrong generate passport ([a26462a](https://github.com/lemonadesocial/web-new/commit/a26462ad26c2249636db1e21e730070bb82ad49e))
+
 ## [9.15.0](https://github.com/lemonadesocial/web-new/compare/v9.14.0...v9.15.0) (2026-01-28)
 
 
