@@ -75,7 +75,7 @@ export function AIChatContainer() {
   return (
     <div
       className={clsx(
-        'flex-1 w-full transition-all ease-in-out duration-300',
+        'flex-1 w-full transition-all ease-in-out duration-300 z-0',
         state?.content ? 'max-w-[432px] opacity-100' : 'max-w-0 opacity-0',
       )}
     >

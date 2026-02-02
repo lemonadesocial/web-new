@@ -63,6 +63,7 @@ function EditEventDrawerContent({ event }: { event: Event }) {
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
@@ -83,6 +84,26 @@ function EditEventDrawerContent({ event }: { event: Event }) {
       layout_sections: event.layout_sections?.map(({ __typename, ...rest }) => rest) || DEFAULT_LAYOUT_SECTIONS,
     },
   });
+
+  React.useEffect(() => {
+    reset({
+      title: event.title || '',
+      description: event.description || '',
+      theme_data: event.theme_data,
+      date: {
+        start: event.start,
+        end: event.end,
+        timezone: event.timezone || getUserTimezoneOption()?.value || 'UTC',
+      },
+      address: {
+        address: event.address || undefined,
+        latitude: event.latitude ?? undefined,
+        longitude: event.longitude ?? undefined,
+      },
+      virtual_url: event.virtual_url || undefined,
+      layout_sections: event.layout_sections?.map(({ __typename, ...rest }) => rest) || DEFAULT_LAYOUT_SECTIONS,
+    });
+  }, [event]);
 
   const [state] = useTheme();
 

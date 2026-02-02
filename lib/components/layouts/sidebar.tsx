@@ -10,13 +10,14 @@ import { twMerge } from 'tailwind-merge';
 import { useMe } from '$lib/hooks/useMe';
 import { useAccount } from '$lib/hooks/useLens';
 import { userAvatar } from '$lib/utils/user';
-import { Badge, Button, Card, CardRoot, Divider, modal } from '../core';
+import { Badge, Button, Menu, MenuItem, Card, CardRoot, Divider, modal, drawer } from '../core';
 import { PostComposerModal } from '../features/lens-feed/PostComposerModal';
 import { useQuery } from '$lib/graphql/request';
 import { GetHostingEventsSidebarLelfDocument } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { useSignIn } from '$lib/hooks/useSignIn';
-
+import { useLogOut } from '$lib/hooks/useLogout';
+import { ProfilePane } from '../features/pane';
 import { AIChatActionKind, useAIChat } from '../features/ai/provider';
 import { aiChat } from '../features/ai/AIChatContainer';
 
@@ -24,6 +25,7 @@ const Sidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
 
+  const logOut = useLogOut();
   const signIn = useSignIn();
 
   const me = useMe();
@@ -67,7 +69,7 @@ const Sidebar = () => {
   return (
     <div
       className={clsx(
-        'relative bg-overlay-secondary transition-all duration-300 h-screen text-tertiary border-r max-sm:hidden',
+        'relative bg-overlay-secondary transition-all duration-300 h-screen text-tertiary border-r max-sm:hidden z-10',
         toggle ? 'w-64' : 'w-16',
       )}
     >
@@ -191,21 +193,45 @@ const Sidebar = () => {
           </Card.Root>
 
           {me || account ? (
-            <div className="flex gap-2 items-center p-2">
-              <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
-              {toggle && (
-                <div className="flex flex-col">
-                  <p className="text-sm font-medium text-secondary">{me?.username || me?.display_name || me?.name}</p>
-                </div>
-              )}
-            </div>
+            <Menu.Root strategy="absolute" placement="right-end">
+              <Menu.Trigger>
+                {({ isOpen }) => (
+                  <div className="flex gap-2 items-center p-2">
+                    <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
+                    {toggle && (
+                      <div className="flex flex-col">
+                        <p className="text-sm font-medium text-secondary">
+                          {me?.username || me?.display_name || me?.name}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </Menu.Trigger>
+              <Menu.Content className="p-0 min-w-[228px]">
+                {({ toggle }) => (
+                  <>
+                    <div className="p-1">
+                      <MenuItem title="Edit Profile" onClick={() => drawer.open(ProfilePane, { dismissible: false })} />
+                      <MenuItem title="Settings" onClick={() => router.push('/settings')} />
+                      <MenuItem
+                        title="Sign Out"
+                        onClick={async () => {
+                          toggle();
+                          logOut();
+                        }}
+                      />
+                    </div>
+                  </>
+                )}
+              </Menu.Content>
+            </Menu.Root>
           ) : (
-            <div className="flex gap-2 items-center p-2">
-              <img
-                src={userAvatar(me)}
-                className="rounded-full border aspect-square w-6 h-6"
-                onClick={() => signIn()}
-              />
+            <div
+              className="flex gap-2 items-center p-2 cursor-pointer hover:bg-(--btn-tertiary) rounded-sm"
+              onClick={() => signIn()}
+            >
+              <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
               {toggle && (
                 <div className="flex flex-col">
                   <p className="text-sm font-medium text-secondary">Login</p>

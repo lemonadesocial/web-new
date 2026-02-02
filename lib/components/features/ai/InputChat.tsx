@@ -1,16 +1,18 @@
 'use client';
 import React from 'react';
+import { delay } from 'lodash';
+import { useRouter } from 'next/navigation';
+import { match } from 'ts-pattern';
+
 import { Button, Card, drawer, Menu, MenuItem, toast } from '$lib/components/core';
-import { AIChatActionKind, Message, useAIChat } from './provider';
 import { useClient, useMutation } from '$lib/graphql/request';
 import { RunAiChatDocument } from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { AI_CONFIG } from '$lib/utils/constants';
-import { useRouter } from 'next/navigation';
-import { match } from 'ts-pattern';
 import { Event, GetEventDocument, GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
-import { delay } from 'lodash';
+import { useUpdateEvent } from '$lib/components/features/event-manage/store';
 import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
+import { AIChatActionKind, Message, useAIChat } from './provider';
 
 export function InputChat() {
   const router = useRouter();
@@ -18,6 +20,7 @@ export function InputChat() {
   const [input, setInput] = React.useState('');
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const { client } = useClient();
+  const updateEvent = useUpdateEvent();
 
   const [run, { loading }] = useMutation(
     RunAiChatDocument,
@@ -44,14 +47,29 @@ export function InputChat() {
               variables: { id: data._id },
               fetchPolicy: 'network-only',
             });
-            if (res.data?.getEvent) client.writeFragment({ id: `Event:${data._id}`, data: res.data.getEvent });
+            if (res.data?.getEvent) {
+              client.writeFragment({ id: `Event:${data._id}`, data: res.data.getEvent });
+              updateEvent(res.data.getEvent);
+            }
+          })
+          .with('publish_event', async () => {
+            const data = tool.data;
+            const res = await client.query({
+              query: GetEventDocument,
+              variables: { id: data._id },
+              fetchPolicy: 'network-only',
+            });
+            if (res.data?.getEvent) {
+              client.writeFragment({ id: `Event:${data._id}`, data: res.data.getEvent });
+              updateEvent(res.data.getEvent);
+            }
           })
           .with('create_space', () => {
             dispatch({
               type: AIChatActionKind.add_message,
               payload: { messages: [{ message: 'Redicting...', role: 'assistant' }] },
             });
-            delay(() => router.push(`/agent/e/manage/${tool?.data?._id}`), 2000);
+            delay(() => router.push(`/agent/s/manage/${tool?.data?._id}`), 2000);
             delay(() => dispatch({ type: AIChatActionKind.reset }), 2500);
           })
           .with('update_space', async () => {

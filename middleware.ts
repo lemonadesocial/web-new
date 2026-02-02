@@ -26,9 +26,18 @@ export default async function middleware(req: NextRequest) {
   const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ''}`;
 
   if (
-    ['/s/', '/e/', '/l/', '/lemonheads', '/create/event', '/timelines', '/profile', '/u/', '/passport'].some(
-      (subpath) => path.includes(subpath),
-    )
+    [
+      '/s/',
+      '/e/',
+      '/l/',
+      '/lemonheads',
+      '/create/event',
+      '/timelines',
+      '/profile',
+      '/u/',
+      '/passport',
+      'lemonade-stand',
+    ].some((subpath) => path.includes(subpath))
   ) {
     return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
   }
