@@ -96,7 +96,6 @@
     "react-dom": "^19.0.0",
     "react-grid-layout": "^2.1.0",
     "react-hook-form": "^7.54.2",
-    "react-infinite-scroll-component": "^6.1.1",
     "react-markdown": "^10.1.0",
     "react-modal-sheet": "^4.0.1",
     "react-sortablejs": "^6.1.4",

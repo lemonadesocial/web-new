@@ -6,7 +6,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { isMobile } from 'react-device-detect';
 import { twMerge } from 'tailwind-merge';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { useMe } from '$lib/hooks/useMe';
 import { useAccount } from '$lib/hooks/useLens';
@@ -16,12 +15,16 @@ import { PostComposerModal } from '../features/lens-feed/PostComposerModal';
 import { useQuery } from '$lib/graphql/request';
 import { GetHostingEventsSidebarLelfDocument } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
+import { useSignIn } from '$lib/hooks/useSignIn';
+
 import { AIChatActionKind, useAIChat } from '../features/ai/provider';
 import { aiChat } from '../features/ai/AIChatContainer';
 
 const Sidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
+
+  const signIn = useSignIn();
 
   const me = useMe();
   const { account } = useAccount();
@@ -187,12 +190,25 @@ const Sidebar = () => {
             </Card.Content>
           </Card.Root>
 
-          {(me || account) && (
+          {me || account ? (
             <div className="flex gap-2 items-center p-2">
               <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
               {toggle && (
                 <div className="flex flex-col">
                   <p className="text-sm font-medium text-secondary">{me?.username || me?.display_name || me?.name}</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex gap-2 items-center p-2">
+              <img
+                src={userAvatar(me)}
+                className="rounded-full border aspect-square w-6 h-6"
+                onClick={() => signIn()}
+              />
+              {toggle && (
+                <div className="flex flex-col">
+                  <p className="text-sm font-medium text-secondary">Login</p>
                 </div>
               )}
             </div>
