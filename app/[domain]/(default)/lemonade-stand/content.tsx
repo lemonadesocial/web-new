@@ -50,11 +50,8 @@ export function Content() {
   if (!me) return <NonLoginContent />;
 
   return (
-    <div className="pt-6 flex flex-col gap-6">
-      <div className="space-y-1">
-        <h3 className="text-lg font-medium">Welcome, {me.name || me.display_name}</h3>
-        <p className="text-sm text-secondary">Quickly catch up, access your events, communities & feeds.</p>
-      </div>
+    <div className="pt-12 flex flex-col gap-6">
+      <h1 className="text-2xl font-semibold">Lemonade Stand</h1>
 
       <div className="flex flex-col-reverse md:flex-row gap-6 md:gap-14">
         <div className="flex-1 flex flex-col gap-4 mb-20">

@@ -11,7 +11,7 @@ import { twMerge } from 'tailwind-merge';
 import { useMe } from '$lib/hooks/useMe';
 import { useAccount } from '$lib/hooks/useLens';
 import { userAvatar } from '$lib/utils/user';
-import { Accordion, Badge, Button, Card, Divider, modal } from '../core';
+import { Accordion, Badge, Button, Card, CardRoot, Divider, modal } from '../core';
 import { PostComposerModal } from '../features/lens-feed/PostComposerModal';
 import { useQuery } from '$lib/graphql/request';
 import { GetHostingEventsSidebarLelfDocument } from '$lib/graphql/generated/backend/graphql';
@@ -35,19 +35,21 @@ const Sidebar = () => {
       { icon: 'icon-home', path: '/', label: 'Home' },
       { icon: 'icon-storefront-outline', path: '/lemonade-stand', label: 'Lemonade Stand' },
       { icon: 'icon-community', path: '/communities', label: 'Community Hubs' },
-      { icon: 'icon-newspaper', path: '/timelines', label: 'Timelines' },
-      { icon: 'icon-explore', path: '/explore', label: 'Explore' },
-      { icon: 'icon-token', path: '/tokens', label: 'Tokens' },
+
       // { icon: 'icon-swipe', path: '/swipe', label: 'Swipe & Match' },  // FIXME: add back when lemonheads  are live
       // { icon: 'icon-trophy', path: '/leaderboard', label: 'Leaderboard' },
-      { icon: 'icon-passport', path: '/lemonheads', label: 'LemonHeads Zone' },
-    ].filter(Boolean);
+      // { icon: 'icon-passport', path: '/lemonheads', label: 'LemonHeads Zone' },
+    ];
 
     return menu;
   }, []);
 
   const exploreMenu = useMemo(() => {
-    const menu = [];
+    const menu = [
+      { icon: 'icon-explore', path: '/explore', label: 'Discover' },
+      { icon: 'icon-token', path: '/tokens', label: 'Coins' },
+      { icon: 'icon-newspaper', path: '/timelines', label: 'Newsfeed' },
+    ];
     return menu;
   }, []);
 
@@ -64,17 +66,28 @@ const Sidebar = () => {
     <div
       className={clsx(
         'relative bg-overlay-secondary transition-all duration-300 h-screen text-tertiary border-r max-sm:hidden',
-        toggle ? 'w-[240px]' : 'w-[53px]',
+        toggle ? 'w-64' : 'w-16',
       )}
     >
-      <div className="p-1.5 flex items-center justify-between">
-        <div className="group">
-          <div className={clsx('p-2 flex items-center justify-center', !toggle && 'group-hover:hidden')}>
-            <i className="icon-lemonade-logo text-warning-300 size-6" />
+      <div className="h-full">
+        <div className="p-3 flex items-center justify-between">
+          <div className="group">
+            <div className={clsx('p-2 flex items-center justify-center', !toggle && 'group-hover:hidden')}>
+              <i className="icon-lemonade-logo text-warning-300 size-6" />
+            </div>
+            {!toggle && (
+              <button
+                className="p-2.5 items-center justify-center cursor-pointer hidden group-hover:flex"
+                onClick={() => setToggle(!toggle)}
+              >
+                <i className="icon-left-panel-close-outline size-5" />
+              </button>
+            )}
           </div>
-          {!toggle && (
+
+          {toggle && (
             <button
-              className="p-2.5 items-center justify-center cursor-pointer hidden group-hover:flex"
+              className="p-2.5 flex items-center justify-center cursor-pointer"
               onClick={() => setToggle(!toggle)}
             >
               <i className="icon-left-panel-close-outline size-5" />
@@ -82,46 +95,83 @@ const Sidebar = () => {
           )}
         </div>
 
-        {toggle && (
-          <button className="p-2.5 flex items-center justify-center cursor-pointer" onClick={() => setToggle(!toggle)}>
-            <i className="icon-left-panel-close-outline size-5" />
-          </button>
-        )}
-      </div>
+        <div className="px-3 pb-3 flex flex-col gap-1">
+          {mainMenu.map((item) => (
+            <div
+              key={item.path}
+              className={clsx(
+                'cursor-pointer text-secondary p-2.5 flex gap-2.5 items-center hover:bg-(--btn-tertiary) rounded-sm',
+                isActive(item) && 'bg-(--btn-tertiary)',
+              )}
+              onClick={() => handleNavigate(item.path)}
+            >
+              <i className={twMerge('size-5 aspect-square', item.icon)} />
+              {toggle && <span className="text-sm whitespace-nowrap">{item.label}</span>}
+            </div>
+          ))}
 
-      <div className="px-1.5 flex flex-col gap-1">
-        {mainMenu.map((item) => (
           <div
-            key={item.path}
             className={clsx(
               'cursor-pointer text-secondary p-2.5 flex gap-2.5 items-center hover:bg-(--btn-tertiary) rounded-sm',
-              isActive(item) && 'bg-(--btn-tertiary)',
             )}
-            onClick={() => handleNavigate(item.path)}
+            onClick={() => modal.open(CreatingModal)}
           >
-            <i className={twMerge('size-5 aspect-square', item.icon)} />
-            {toggle && <span className="text-sm whitespace-nowrap">{item.label}</span>}
+            <i className="size-5 icon-plus aspect-square" />
+            {toggle && <span className="text-sm">Create</span>}
           </div>
-        ))}
+        </div>
 
-        <div
-          className={clsx(
-            'cursor-pointer text-secondary p-2.5 flex gap-2.5 items-center hover:bg-(--btn-tertiary) rounded-sm',
-          )}
-          onClick={() => modal.open(CreatingModal)}
-        >
-          <i className="size-5 icon-plus aspect-square" />
-          {toggle && <span className="text-sm">Create</span>}
+        <div className="px-3 pb-3 flex flex-col gap-1">
+          <div className={clsx('text-tertiary text-sm p-2.5 pb-1.5', !toggle && 'invisible')}>
+            <p>Explore</p>
+          </div>
+          {exploreMenu.map((item) => (
+            <div
+              key={item.path}
+              className={clsx(
+                'cursor-pointer text-secondary p-2.5 flex gap-2.5 items-center hover:bg-(--btn-tertiary) rounded-sm',
+                isActive(item) && 'bg-(--btn-tertiary)',
+              )}
+              onClick={() => handleNavigate(item.path)}
+            >
+              <i className={twMerge('size-5 aspect-square', item.icon)} />
+              {toggle && <span className="text-sm whitespace-nowrap">{item.label}</span>}
+            </div>
+          ))}
+        </div>
+
+        <div className={clsx(!toggle && 'hidden')}>
+          <Divider className="h-1 w-full" />
+          <SectionEvents handleNavigate={(path) => handleNavigate(path)} />
         </div>
       </div>
 
-      <div className={clsx(!toggle && 'hidden')}>
-        <Divider className="h-1 w-full" />
-        <SectionEvents handleNavigate={(path) => handleNavigate(path)} />
-      </div>
+      <div className="sticky bottom-0 left-0 right-0 border-t p-3 pt-4 flex flex-col gap-3">
+        <Card.Root className="bg-(--btn-tertiary) border-none">
+          <Card.Content className="flex justify-between items-center px-3 py-2 gap-3">
+            <div>
+              <p className="text-sm">Rewards</p>
+              <p className="text-quaternary text-xs">Earn credits for your hubs</p>
+            </div>
+            <div className="p-2 bg-warning-600 rounded-full w-[30px] h-[30px] aspect-square flex items-center justify-center">
+              <i className="icon-gift-line w-4 h-4" />
+            </div>
+          </Card.Content>
+        </Card.Root>
 
-      {(me || account) && (
-        <div className="absolute p-1.5 bottom-0 left-0 right-0 border-t">
+        <Card.Root className="bg-(--btn-tertiary) border-none">
+          <Card.Content className="flex justify-between items-center px-3 py-2 gap-3">
+            <div>
+              <p className="text-sm">Upgrade to Pro</p>
+              <p className="text-quaternary text-xs">Unlock more benefits</p>
+            </div>
+            <div className="p-2 bg-alert-500 rounded-full w-[30px] h-[30px] aspect-square flex items-center justify-center">
+              <i className="icon-flash w-4 h-4" />
+            </div>
+          </Card.Content>
+        </Card.Root>
+
+        {(me || account) && (
           <div className="flex gap-2 items-center p-2">
             <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
             {toggle && (
@@ -130,8 +180,8 @@ const Sidebar = () => {
               </div>
             )}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
@@ -210,20 +260,15 @@ function SectionEvents({ handleNavigate }: { handleNavigate: (path: string) => v
   const events = data?.getHostingEvents || [];
 
   return (
-    <Accordion.Root className="border-none">
-      <Accordion.Header chevron={false} className="px-2.5! py-2!">
-        {({ isOpen }) => (
-          <div className="flex gap-1 items-center">
-            <p>Events</p>
-            <motion.i
-              animate={{ rotate: isOpen ? 90 : 0 }}
-              transition={{ duration: 0.3 }}
-              className="icon-chevron-right text-tertiary size-5"
-            />
-          </div>
-        )}
-      </Accordion.Header>
-      <Accordion.Content className="bg-overlay-secondary p-0! px-1.5!">
+    <div className="px-3">
+      <div className="flex items-center justify-between p-2.5 pb-1.5">
+        <p>Events</p>
+        <i
+          className="icon-arrow-outward text-quaternary hover:text-primary cursor-pointer size-5"
+          onClick={() => handleNavigate('/events')}
+        />
+      </div>
+      <div>
         {events.map((item) => (
           <div
             key={item._id}
@@ -242,19 +287,9 @@ function SectionEvents({ handleNavigate }: { handleNavigate: (path: string) => v
             </Badge>
           </div>
         ))}
-
-        <div
-          className="flex gap-1 items-center text-tertiary text-sm p-2.5 cursor-pointer hover:bg-(--btn-tertiary) rounded-sm"
-          onClick={() => handleNavigate('/events')}
-        >
-          <p className="text-secondary">View All</p>
-          <i className="icon-chevron-right size-[18px] aspect-square" />
-        </div>
-      </Accordion.Content>
-    </Accordion.Root>
+      </div>
+    </div>
   );
 }
-
-function SectionCommunities({}) {}
 
 export default Sidebar;
