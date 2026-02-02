@@ -1,13 +1,14 @@
 'use client';
 import React from 'react';
+
 import { Button, Card, Skeleton, Avatar, drawer } from '$lib/components/core';
 import { Space } from '$lib/graphql/generated/backend/graphql';
 import type { Config } from '$lib/graphql/generated/ai/graphql';
 import { GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { aiChatClient } from '$lib/graphql/request/instances';
-import { ASSET_PREFIX } from '$lib/utils/constants';
 import { CreateAgentPane } from './panes/CreateAgentPane';
+import { randomEventDP } from '$lib/utils/user';
 
 interface Props {
   space: Space;
@@ -39,6 +40,16 @@ export function CommunityAgents({ space }: Props) {
     drawer.open(CreateAgentPane, {
       props: {
         space,
+        onCreated: () => refetch(),
+      },
+    });
+  };
+
+  const openEdit = (config: Config) => {
+    drawer.open(CreateAgentPane, {
+      props: {
+        space,
+        config,
         onCreated: () => refetch(),
       },
     });
@@ -89,9 +100,14 @@ export function CommunityAgents({ space }: Props) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {configs.map((config) => {
               const count = getSpotlightCount(config.welcomeMetadata);
-              const avatarSrc = config.avatar || `${ASSET_PREFIX}/assets/images/agent.png`;
+              const avatarSrc = config.avatar || randomEventDP(config._id);
+              
               return (
-                <Card.Root key={config._id} className="p-4 relative flex flex-col gap-3">
+                <Card.Root 
+                  key={config._id} 
+                  className="p-4 relative flex flex-col gap-3 cursor-pointer hover:bg-card transition-colors"
+                  onClick={() => openEdit(config)}
+                >
                   <div className="flex justify-between items-start gap-2">
                     <Avatar
                       src={avatarSrc}

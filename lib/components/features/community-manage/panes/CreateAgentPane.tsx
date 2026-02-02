@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Button, Textarea, FileInput, Card, Menu, MenuItem, Input, Divider, drawer, modal, toast } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { Space, Event, SearchSpacesDocument } from '$lib/graphql/generated/backend/graphql';
-import { CreateAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { CreateAiConfigDocument, UpdateAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { WelcomeMessagePane } from './WelcomeMessagePane';
 import { BackstoryPane } from './BackstoryPane';
 import { AnswerStylePane, AnswerStyleValue, ANSWER_STYLES } from './AnswerStylePane';
@@ -15,9 +15,12 @@ import { useQuery, useMutation } from '$lib/graphql/request';
 import { communityAvatar } from '$lib/utils/community';
 import { uploadFiles } from '$lib/utils/file';
 import { aiChatClient } from '$lib/graphql/request/instances';
+import type { Config } from '$lib/graphql/generated/ai/graphql';
+import { GetEventsDocument } from '$lib/graphql/generated/backend/graphql';
 
 interface Props {
   space: Space;
+  config?: Config;
   onCreated?: () => void;
 }
 
@@ -42,31 +45,81 @@ const ANSWER_STYLE_MAPPING: Record<AnswerStyleValue, { temperature: number; topP
   very_expressive: { temperature: 0.95, topP: 1.00 },
 };
 
-export function CreateAgentPane({ space, onCreated }: Props) {
-  const [avatar, setAvatar] = React.useState<File | null>(null);
+function getAnswerStyleFromConfig(temperature?: number | null, topP?: number | null): AnswerStyleValue | undefined {
+  if (temperature === undefined || topP === undefined) return undefined;
 
-  const { register, watch, setValue, handleSubmit, formState: { errors } } = useForm<AgentFormData>({
+  for (const [style, config] of Object.entries(ANSWER_STYLE_MAPPING)) {
+    if (Math.abs(config.temperature - temperature) < 0.01 && Math.abs(config.topP - topP) < 0.01) {
+      return style as AnswerStyleValue;
+    }
+  }
+  return undefined;
+}
+
+export function CreateAgentPane({ space, config, onCreated }: Props) {
+  const [avatar, setAvatar] = React.useState<File | null>(null);
+  const isEditMode = !!config;
+
+  const welcomeMetadata = config?.welcomeMetadata as { events?: string[] } | null | undefined;
+  const spotlightEventIds = welcomeMetadata?.events || [];
+
+  const { data: eventsData } = useQuery(GetEventsDocument, {
+    variables: {
+      id: spotlightEventIds.length > 0 ? spotlightEventIds : undefined,
+      limit: spotlightEventIds.length || 100,
+    },
+    skip: !isEditMode || spotlightEventIds.length === 0,
+  }, aiChatClient);
+
+  const initialSpotlightEvents = React.useMemo(() => {
+    if (!isEditMode || !eventsData?.getEvents) return [];
+    return eventsData.getEvents as Event[];
+  }, [isEditMode, eventsData]);
+
+  const { register, watch, setValue, handleSubmit, formState: { errors }, reset } = useForm<AgentFormData>({
     defaultValues: {
-      name: '',
-      jobTitle: '',
-      shortBio: '',
-      isPublic: true,
-      welcomeMessage: '',
-      backstory: '',
+      name: config?.name || '',
+      jobTitle: config?.job || '',
+      shortBio: config?.description || '',
+      isPublic: config?.isPublic ?? true,
+      welcomeMessage: config?.welcomeMessage || '',
+      backstory: config?.backstory || '',
       spotlightEvents: [],
       activeIn: [space],
+      answerStyle: getAnswerStyleFromConfig(config?.temperature, config?.topP),
+      openAIKey: config?.openaiApiKey || undefined,
     },
   });
 
-  const [createAgent, { loading }] = useMutation(CreateAiConfigDocument, {
+  React.useEffect(() => {
+    if (isEditMode && initialSpotlightEvents.length > 0) {
+      setValue('spotlightEvents', initialSpotlightEvents);
+    }
+  }, [isEditMode, initialSpotlightEvents, setValue]);
+
+  const [createAgent, { loading: creating }] = useMutation(CreateAiConfigDocument, {
     onComplete: () => {
       toast.success('Agent created successfully');
       onCreated?.();
+      drawer.close();
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to create agent');
     },
   }, aiChatClient);
+
+  const [updateAgent, { loading: updating }] = useMutation(UpdateAiConfigDocument, {
+    onComplete: () => {
+      toast.success('Agent updated successfully');
+      onCreated?.();
+      drawer.close();
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to update agent');
+    },
+  }, aiChatClient);
+
+  const loading = creating || updating;
 
   const isPublic = watch('isPublic');
   const welcomeMessage = watch('welcomeMessage');
@@ -82,6 +135,8 @@ export function CreateAgentPane({ space, onCreated }: Props) {
       if (avatar) {
         const uploadedFiles = await uploadFiles([avatar], 'community');
         avatarUrl = uploadedFiles[0]?.url;
+      } else if (isEditMode && config?.avatar) {
+        avatarUrl = config.avatar;
       }
 
       const answerStyleConfig = answerStyle ? ANSWER_STYLE_MAPPING[answerStyle] : undefined;
@@ -90,26 +145,39 @@ export function CreateAgentPane({ space, onCreated }: Props) {
         ? { events: spotlightEvents.map(event => event._id) }
         : undefined;
 
+      const input = {
+        name: data.name,
+        job: data.jobTitle,
+        description: data.shortBio,
+        isPublic: data.isPublic,
+        avatar: avatarUrl,
+        backstory: data.backstory || undefined,
+        welcomeMessage: data.welcomeMessage || undefined,
+        welcomeMetadata,
+        temperature: answerStyleConfig?.temperature,
+        topP: answerStyleConfig?.topP,
+        openaiApiKey: data.openAIKey || undefined,
+        spaces: activeIn.map(s => s._id),
+      };
+
+      if (isEditMode) {
+        await updateAgent({
+          variables: {
+            input,
+            id: config._id,
+          },
+        });
+
+        return;
+      }
+
       await createAgent({
         variables: {
-          input: {
-            name: data.name,
-            job: data.jobTitle,
-            description: data.shortBio,
-            isPublic: data.isPublic,
-            avatar: avatarUrl,
-            backstory: data.backstory || undefined,
-            welcomeMessage: data.welcomeMessage || undefined,
-            welcomeMetadata,
-            temperature: answerStyleConfig?.temperature,
-            topP: answerStyleConfig?.topP,
-            openaiApiKey: data.openAIKey || undefined,
-            spaces: activeIn.map(s => s._id),
-          },
+          input,
         },
       });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to create agent');
+      toast.error(error instanceof Error ? error.message : `Failed to ${isEditMode ? 'update' : 'create'} agent`);
     }
   };
 
@@ -117,7 +185,7 @@ export function CreateAgentPane({ space, onCreated }: Props) {
     <Pane.Root>
       <Pane.Header.Root>
         <Pane.Header.Left className="flex items-center gap-3">
-          <p>Create Agent</p>
+          <p>{isEditMode ? 'Edit Agent' : 'Create Agent'}</p>
         </Pane.Header.Left>
       </Pane.Header.Root>
 
@@ -138,7 +206,7 @@ export function CreateAgentPane({ space, onCreated }: Props) {
                     <>
                       <div className="size-[62px] rounded-full flex items-center justify-center border-2 border-card-border">
                         <img
-                          src={avatar ? URL.createObjectURL(avatar) : `${ASSET_PREFIX}/assets/images/agent.png`}
+                          src={avatar ? URL.createObjectURL(avatar) : (config?.avatar || `${ASSET_PREFIX}/assets/images/agent.png`)}
                           alt="Agent avatar"
                           className="size-full rounded-full object-cover"
                         />
@@ -366,7 +434,7 @@ export function CreateAgentPane({ space, onCreated }: Props) {
       <Pane.Footer>
         <div className="p-4 border-t">
           <Button variant="secondary" onClick={handleSubmit(onSubmit)} loading={loading}>
-            Create Agent
+            {isEditMode ? 'Update Agent' : 'Create Agent'}
           </Button>
         </div>
       </Pane.Footer>
