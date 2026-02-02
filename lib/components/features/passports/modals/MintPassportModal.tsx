@@ -27,12 +27,15 @@ export function MintPassportModal({
   onComplete,
   mintData,
   provider,
+  passportImage,
 }: {
   onComplete: (txHash: string, tokenId: string) => void;
   mintData: MintData;
   provider: PASSPORT_PROVIDER;
+  passportImage?: string;
 }) {
   const { walletProvider } = useAppKitProvider('eip155');
+
   const chainsMap = useAtomValue(chainsMapAtom);
   const [status, setStatus] = useState<'signing' | 'confirming' | 'success' | 'none'>('none');
 
@@ -126,7 +129,7 @@ export function MintPassportModal({
     <ModalContent
       icon={
         <img
-          src={`${ASSET_PREFIX}/assets/images/passports/${provider}-passport-mini-new.png`}
+          src={passportImage || `${ASSET_PREFIX}/assets/images/passports/${provider}-passport-mini-new.png`}
           className="w-full object-cover aspect-[45/28]"
         />
       }

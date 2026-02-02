@@ -5,8 +5,8 @@ import { ethers } from 'ethers';
 import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
 import { ERC721Contract } from '$lib/utils/crypto';
 import { getClient } from '$lib/graphql/request';
-import { ASSET_PREFIX } from '$lib/utils/constants';
 import { PASSPORT_CHAIN_ID } from '$lib/components/features/passports/utils';
+import { ASSET_PREFIX } from '$lib/utils/constants';
 
 const fetchFont = (url: string) => {
   return fetch(new URL(url)).then((res) => res.arrayBuffer());
@@ -35,10 +35,10 @@ export async function GET(req: NextRequest) {
   let image;
 
   try {
-    const contractAddress = chain.zugrama_passport_contract_address;
+    const contractAddress = chain.alzena_world_passport_contract_address;
 
     if (!contractAddress) {
-      return new Response('LemonheadPassort contract address not set', { status: 400 });
+      return new Response('Alzena world contract address not set', { status: 400 });
     }
 
     const provider = new ethers.JsonRpcProvider(chain.rpc_url);
@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          backgroundImage: `url('${ASSET_PREFIX}/assets/images/share-zugrama-passport-bg.png')`,
+          backgroundImage: `url('${ASSET_PREFIX}/assets/images/share-alzena-world-passport-bg.png')`,
           padding: '86px',
           width: '100%',
           height: '100%',
@@ -76,10 +76,8 @@ export async function GET(req: NextRequest) {
       >
         <img src={image} style={{ marginTop: 100 }} />
 
-        <div style={{ display: 'flex', position: 'absolute', bottom: 80, left: 150 }}>
-          <p style={{ fontSize: 90, fontFamily: 'Orbitron Bold', color: '#587871', margin: 0, padding: 0 }}>
-            {tokenId}
-          </p>
+        <div style={{ display: 'flex', position: 'absolute', bottom: 85, left: 85 }}>
+          <p style={{ fontSize: 80, fontFamily: 'BasePixel', color: '#FFF', margin: 0, padding: 0 }}>#{tokenId}</p>
         </div>
       </div>
     ),
@@ -88,8 +86,8 @@ export async function GET(req: NextRequest) {
       height: 1080,
       fonts: [
         {
-          name: 'Orbitron Bold',
-          data: await fetchFont(`${ASSET_PREFIX}/assets/fonts/Orbitron-Bold.ttf`),
+          name: 'BasePixel',
+          data: await fetchFont(`${ASSET_PREFIX}/assets/fonts/title/BasePixel-LowResolution.otf`),
           style: 'normal',
         },
       ],

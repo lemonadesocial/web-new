@@ -28,12 +28,16 @@ export type Config = {
   backstory?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTimeISO']['output'];
   description: Scalars['String']['output'];
+  /** Ids of events this agent is attached */
+  events?: Maybe<Array<Scalars['ObjectId']['output']>>;
   filter?: Maybe<Scalars['JSON']['output']>;
   isPublic?: Maybe<Scalars['Boolean']['output']>;
   job: Scalars['String']['output'];
   modelName?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   openaiApiKey?: Maybe<Scalars['String']['output']>;
+  /** Ids of spaces this agent is attached */
+  spaces?: Maybe<Array<Scalars['ObjectId']['output']>>;
   systemMessage?: Maybe<Scalars['String']['output']>;
   temperature?: Maybe<Scalars['Float']['output']>;
   topP?: Maybe<Scalars['Float']['output']>;
@@ -85,6 +89,20 @@ export type ConfigFilter = {
   description_in?: InputMaybe<Array<Scalars['String']['input']>>;
   description_lt?: InputMaybe<Scalars['String']['input']>;
   description_lte?: InputMaybe<Scalars['String']['input']>;
+  /** Ids of events this agent is attached */
+  events_eq?: InputMaybe<Scalars['ObjectId']['input']>;
+  /** Ids of events this agent is attached */
+  events_exists?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Ids of events this agent is attached */
+  events_gt?: InputMaybe<Scalars['ObjectId']['input']>;
+  /** Ids of events this agent is attached */
+  events_gte?: InputMaybe<Scalars['ObjectId']['input']>;
+  /** Ids of events this agent is attached */
+  events_in?: InputMaybe<Array<Scalars['ObjectId']['input']>>;
+  /** Ids of events this agent is attached */
+  events_lt?: InputMaybe<Scalars['ObjectId']['input']>;
+  /** Ids of events this agent is attached */
+  events_lte?: InputMaybe<Scalars['ObjectId']['input']>;
   filter_eq?: InputMaybe<Scalars['JSON']['input']>;
   filter_exists?: InputMaybe<Scalars['Boolean']['input']>;
   filter_gt?: InputMaybe<Scalars['JSON']['input']>;
@@ -127,6 +145,20 @@ export type ConfigFilter = {
   openaiApiKey_in?: InputMaybe<Array<Scalars['String']['input']>>;
   openaiApiKey_lt?: InputMaybe<Scalars['String']['input']>;
   openaiApiKey_lte?: InputMaybe<Scalars['String']['input']>;
+  /** Ids of spaces this agent is attached */
+  spaces_eq?: InputMaybe<Scalars['ObjectId']['input']>;
+  /** Ids of spaces this agent is attached */
+  spaces_exists?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Ids of spaces this agent is attached */
+  spaces_gt?: InputMaybe<Scalars['ObjectId']['input']>;
+  /** Ids of spaces this agent is attached */
+  spaces_gte?: InputMaybe<Scalars['ObjectId']['input']>;
+  /** Ids of spaces this agent is attached */
+  spaces_in?: InputMaybe<Array<Scalars['ObjectId']['input']>>;
+  /** Ids of spaces this agent is attached */
+  spaces_lt?: InputMaybe<Scalars['ObjectId']['input']>;
+  /** Ids of spaces this agent is attached */
+  spaces_lte?: InputMaybe<Scalars['ObjectId']['input']>;
   systemMessage_eq?: InputMaybe<Scalars['String']['input']>;
   systemMessage_exists?: InputMaybe<Scalars['Boolean']['input']>;
   systemMessage_gt?: InputMaybe<Scalars['String']['input']>;
@@ -182,12 +214,16 @@ export type ConfigInput = {
   avatar?: InputMaybe<Scalars['String']['input']>;
   backstory?: InputMaybe<Scalars['String']['input']>;
   description: Scalars['String']['input'];
+  /** Ids of events this agent is attached */
+  events?: InputMaybe<Array<Scalars['ObjectId']['input']>>;
   filter?: InputMaybe<Scalars['JSON']['input']>;
   isPublic?: InputMaybe<Scalars['Boolean']['input']>;
   job: Scalars['String']['input'];
   modelName?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   openaiApiKey?: InputMaybe<Scalars['String']['input']>;
+  /** Ids of spaces this agent is attached */
+  spaces?: InputMaybe<Array<Scalars['ObjectId']['input']>>;
   systemMessage?: InputMaybe<Scalars['String']['input']>;
   temperature?: InputMaybe<Scalars['Float']['input']>;
   topP?: InputMaybe<Scalars['Float']['input']>;

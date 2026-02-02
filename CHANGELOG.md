@@ -1,5 +1,36 @@
 # Changelog
 
+## [9.16.0](https://github.com/lemonadesocial/web-new/compare/v9.15.0...v9.16.0) (2026-01-30)
+
+
+### Features
+
+* missing boiler plate image ([9d18ee0](https://github.com/lemonadesocial/web-new/commit/9d18ee00ea775c9b9ca8bbd5b42b2ad7efa7debb))
+* missing minted lemonhead step ([dbcd411](https://github.com/lemonadesocial/web-new/commit/dbcd411b012bd0158b7594dbe2d9645dac73de1f))
+
+
+### Bug Fixes
+
+* missing deploy vars ([97e5256](https://github.com/lemonadesocial/web-new/commit/97e525622ecef9d25e0476e4130ba52a2edbd701))
+* wrong generate passport ([a26462a](https://github.com/lemonadesocial/web-new/commit/a26462ad26c2249636db1e21e730070bb82ad49e))
+
+## [9.15.0](https://github.com/lemonadesocial/web-new/compare/v9.14.0...v9.15.0) (2026-01-28)
+
+
+### Features
+
+* disbable overlay color change ([f5ee86a](https://github.com/lemonadesocial/web-new/commit/f5ee86adf8e989d3ae7c1126738be4db78d9401c))
+* minimal colors ([10b59d9](https://github.com/lemonadesocial/web-new/commit/10b59d9db2209ca28461a1e71b1bc0616d651b26))
+* update community favicon ([40fa333](https://github.com/lemonadesocial/web-new/commit/40fa3334f1ecf7659072b4bd6a2238229fc79203))
+
+
+### Bug Fixes
+
+* default theme ([a94cd76](https://github.com/lemonadesocial/web-new/commit/a94cd76d53fbe51a395aed3ff433853cfe5b976b))
+* drawer witdh ([ff035c2](https://github.com/lemonadesocial/web-new/commit/ff035c20f03696729e2a15ca791083733d6fb48b))
+* template menu ([c89533c](https://github.com/lemonadesocial/web-new/commit/c89533c386a214afd33ff9f3c88af468b7ad06b0))
+* theme flow ([03a7e3b](https://github.com/lemonadesocial/web-new/commit/03a7e3b00dce89f20136a6aadd05729a38b4ddaa))
+
 ## [9.14.0](https://github.com/lemonadesocial/web-new/compare/v9.13.0...v9.14.0) (2026-01-26)
 
 
