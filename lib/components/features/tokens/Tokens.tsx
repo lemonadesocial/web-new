@@ -183,13 +183,16 @@ function QuickBuyProvider({ children }: { children: React.ReactNode }) {
 export function Tokens() {
   return (
     <QuickBuyProvider>
-      <div className="pt-6 px-8 max-sm:px-4 pb-20 flex flex-col gap-3 md:max-h-[calc(100dvh-56px)]">
-        <Toolbar />
+      <div className="flex flex-col gap-6 pt-12 px-8 max-sm:px-4 pb-20 flex flex-col">
+        <h1 className="text-2xl font-semibold">Coins</h1>
+        <div className="flex flex-col gap-3">
+          <Toolbar />
 
-        <div className="flex flex-col md:grid grid-cols-3 gap-4 flex-1 overflow-hidden">
-          <NewTokensList />
-          <GraduatingTokensList />
-          <RecentlyGraduatedTokensList />
+          <div className="flex flex-col md:grid grid-cols-3 gap-4 flex-1 overflow-hidden">
+            <NewTokensList />
+            <GraduatingTokensList />
+            <RecentlyGraduatedTokensList />
+          </div>
         </div>
       </div>
     </QuickBuyProvider>

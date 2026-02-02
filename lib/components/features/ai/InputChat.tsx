@@ -2,13 +2,13 @@
 import React from 'react';
 import { Button, Card, drawer, Menu, MenuItem, toast } from '$lib/components/core';
 import { AIChatActionKind, Message, useAIChat } from './provider';
-import { useMutation } from '$lib/graphql/request';
+import { useClient, useMutation } from '$lib/graphql/request';
 import { RunAiChatDocument } from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { AI_CONFIG } from '$lib/utils/constants';
 import { useRouter } from 'next/navigation';
 import { match } from 'ts-pattern';
-import { Event } from '$lib/graphql/generated/backend/graphql';
+import { Event, GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
 import { delay } from 'lodash';
 import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 
@@ -17,6 +17,7 @@ export function InputChat() {
   const [state, dispatch] = useAIChat();
   const [input, setInput] = React.useState('');
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const { client } = useClient();
 
   const [run, { loading }] = useMutation(
     RunAiChatDocument,
@@ -26,15 +27,33 @@ export function InputChat() {
         dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ ...income.run, role: 'assistant' }] } });
 
         const tool = income.run?.metadata?.tool;
-        match(tool?.name).with('create_event', () => {
-          dispatch({
-            type: AIChatActionKind.add_message,
-            payload: { messages: [{ message: 'Redicting...', role: 'assistant' }] },
-          });
+        match(tool?.name)
+          .with('create_event', () => {
+            dispatch({
+              type: AIChatActionKind.add_message,
+              payload: { messages: [{ message: 'Redicting...', role: 'assistant' }] },
+            });
 
-          delay(() => router.push(`/agent/e/manage/${tool?.data?.shortid}`), 2000);
-          delay(() => dispatch({ type: AIChatActionKind.reset }), 2500);
-        });
+            delay(() => router.push(`/agent/e/manage/${tool?.data?.shortid}`), 2000);
+            delay(() => dispatch({ type: AIChatActionKind.reset }), 2500);
+          })
+          .with('create_space', () => {
+            dispatch({
+              type: AIChatActionKind.add_message,
+              payload: { messages: [{ message: 'Redicting...', role: 'assistant' }] },
+            });
+            delay(() => router.push(`/agent/e/manage/${tool?.data?._id}`), 2000);
+            delay(() => dispatch({ type: AIChatActionKind.reset }), 2500);
+          })
+          .with('update_space', async () => {
+            const data = tool.data;
+            const res = await client.query({
+              query: GetSpaceDocument,
+              variables: { id: data._id },
+              fetchPolicy: 'network-only',
+            });
+            if (res.data?.getSpace) client.writeFragment({ id: `Space:${data._id}`, data: res.data.getSpace });
+          });
       },
       onError: (error) => {
         toast.error(error.message);
@@ -152,6 +171,34 @@ export function mockWelcomeEvent(event: Event): Message[] {
     {
       message: `Welcome to ${event.title} Event. How can I help make your event awesome?`,
       metadata: { actions },
+      sourceDocuments: [],
+      role: 'assistant',
+    },
+  ];
+}
+
+export function mockWelcomeSpace(space: Space): Message[] {
+  // const actions = [];
+  // const opts = { dismissible: false, fixed: false, showBackdrop: false, props: { space } };
+
+  // if (!space.description) {
+  //   actions.push({
+  //     type: 'button',
+  //     props: {
+  //       icon: 'icon-sort',
+  //       label: 'Add Description',
+  //       onClick: () => {
+  //         // drawer.close();
+  //         // drawer.open(Edit, { ...opts });
+  //       },
+  //     },
+  //   });
+  // }
+
+  return [
+    {
+      message: `Welcome to ${space.title} Community. How can I help make your community awesome?`,
+      // metadata: { actions },
       sourceDocuments: [],
       role: 'assistant',
     },
