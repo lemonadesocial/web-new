@@ -1,20 +1,19 @@
 'use client';
 import React from 'react';
 
-import { Button, Card, Skeleton, Avatar, drawer } from '$lib/components/core';
+import { Button, Card, Skeleton, Avatar, drawer, Menu, MenuItem } from '$lib/components/core';
 import { Space } from '$lib/graphql/generated/backend/graphql';
 import type { Config } from '$lib/graphql/generated/ai/graphql';
 import { GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { CreateAgentPane } from './panes/CreateAgentPane';
+import { AddExistingAgentPane } from './panes/AddExistingAgentPane';
 import { randomEventDP } from '$lib/utils/user';
 
 interface Props {
   space: Space;
 }
-
-const LIMIT = 15;
 
 function getSpotlightCount(welcomeMetadata: unknown): number {
   const meta = welcomeMetadata as { events?: unknown[] } | null | undefined;
@@ -27,7 +26,6 @@ export function CommunityAgents({ space }: Props) {
     {
       variables: {
         filter: { spaces_in: [space._id] },
-        limit: LIMIT,
       },
       skip: !space?._id,
     },
@@ -41,6 +39,15 @@ export function CommunityAgents({ space }: Props) {
       props: {
         space,
         onCreated: () => refetch(),
+      },
+    });
+  };
+
+  const openAddExisting = () => {
+    drawer.open(AddExistingAgentPane, {
+      props: {
+        space,
+        onAdded: () => refetch(),
       },
     });
   };
@@ -65,9 +72,35 @@ export function CommunityAgents({ space }: Props) {
               Create and manage assistants that help people discover events, answer questions, and navigate your community.
             </p>
           </div>
-          <Button variant="tertiary-alt" size="sm" iconLeft="icon-plus" onClick={openCreate}>
-            Create Agent
-          </Button>
+          <Menu.Root placement="bottom-end">
+            <Menu.Trigger>
+              <Button variant="tertiary-alt" size="sm" iconLeft="icon-plus">
+                Create Agent
+              </Button>
+            </Menu.Trigger>
+            <Menu.Content className="p-2">
+              {({ toggle }) => (
+                <>
+                  <MenuItem
+                    title="Create New Agent"
+                    iconLeft="icon-plus"
+                    onClick={() => {
+                      openCreate();
+                      toggle();
+                    }}
+                  />
+                  <MenuItem
+                    title="Add Existing Agent"
+                    iconLeft="icon-robot"
+                    onClick={() => {
+                      openAddExisting();
+                      toggle();
+                    }}
+                  />
+                </>
+              )}
+            </Menu.Content>
+          </Menu.Root>
         </div>
 
         {loading ? (

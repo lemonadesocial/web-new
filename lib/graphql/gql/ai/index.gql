@@ -22,6 +22,7 @@ fragment AIConfigFields on Config {
   }
   welcomeMessage
   welcomeMetadata
+  spaces
 }
 
 query GetAIConfig($id: ObjectId!) {
