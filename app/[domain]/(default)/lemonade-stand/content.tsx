@@ -47,7 +47,13 @@ export function Content() {
     skip: !me,
   });
 
-  if (!me) return <NonLoginContent />;
+  if (me) {
+    return (
+      <div className="w-full h-dvh flex items-center justify-between max-w-[1200px]">
+        <NonLoginContent />
+      </div>
+    );
+  }
 
   return (
     <div className="pt-12 flex flex-col gap-6">
