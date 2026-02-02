@@ -130,7 +130,7 @@ function Content({ space, uid }: { space: Space; uid: string }) {
   const Comp = tabs[selectedTab].component;
 
   React.useEffect(() => {
-    if (space.slug === uid) {
+    if (space.slug === uid || space._id === uid) {
       aiChatDispatch({ type: AIChatActionKind.reset });
       aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { data: { space_id: space._id } } });
       aiChatDispatch({ type: AIChatActionKind.add_message, payload: { messages: mockWelcomeSpace(space) } });
