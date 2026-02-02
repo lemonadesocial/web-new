@@ -8,7 +8,7 @@ import { aiChatClient } from '$lib/graphql/request/instances';
 import { AI_CONFIG } from '$lib/utils/constants';
 import { useRouter } from 'next/navigation';
 import { match } from 'ts-pattern';
-import { Event, GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
+import { Event, GetEventDocument, GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
 import { delay } from 'lodash';
 import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 
@@ -36,6 +36,15 @@ export function InputChat() {
 
             delay(() => router.push(`/agent/e/manage/${tool?.data?.shortid}`), 2000);
             delay(() => dispatch({ type: AIChatActionKind.reset }), 2500);
+          })
+          .with('update_event', async () => {
+            const data = tool.data;
+            const res = await client.query({
+              query: GetEventDocument,
+              variables: { id: data._id },
+              fetchPolicy: 'network-only',
+            });
+            if (res.data?.getEvent) client.writeFragment({ id: `Event:${data._id}`, data: res.data.getEvent });
           })
           .with('create_space', () => {
             dispatch({
