@@ -154,6 +154,11 @@ function Content({ space }: { space: Space }) {
     if (!mounted) setMounted(true);
   }, []);
 
+  React.useEffect(() => {
+    if (space.title) setValue('title', space.title);
+    if (space.description) setValue('description', space.description);
+  }, [space]);
+
   const handleUpload = async (files: globalThis.File[], type: 'cover' | 'dp') => {
     try {
       if (type === 'cover') setUploadingCover(true);

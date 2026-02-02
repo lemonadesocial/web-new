@@ -45,7 +45,8 @@ export function HomePageContent() {
   ];
 
   return (
-    <div className="space-y-5 w-full">
+    <div className="space-y-5 w-full max-sm:px-4 max-sm:pb-12">
+      <h1 className="text-2xl font-semibold mb-6">Newsfeed</h1>
       <Segment
         size="sm"
         selected={tab}

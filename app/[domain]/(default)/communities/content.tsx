@@ -36,7 +36,7 @@ export function Content() {
   if (!me && !session) return null;
 
   return (
-    <div className="flex flex-col gap-8 mt-6 pb-24 md:my-11">
+    <div className="flex flex-col gap-8 max-sm:px-4 pt-8 pb-20">
       <PageTitle
         title="Communities"
         subtitle="Manage your community hubs and stay up-to-date with communities you subscribed to."

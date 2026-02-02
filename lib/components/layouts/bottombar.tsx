@@ -21,7 +21,8 @@ export function BottomBar() {
   const menu = useMemo(() => {
     const menu: Array<{ icon: string | React.ReactElement; path?: string; custom?: boolean }> = [
       { icon: 'icon-home', path: '/' },
-      { icon: 'icon-newspaper', path: '/timelines' },
+      { icon: 'icon-storefront-outline', path: '/lemonade-stand' },
+
       {
         icon: (
           <Button
@@ -38,19 +39,43 @@ export function BottomBar() {
         custom: true,
       },
       { icon: 'icon-explore', path: '/explore' },
+      { icon: 'icon-newspaper', path: '/timelines' },
+
       // { icon: 'icon-ticket', path: '/events' },
       // { icon: 'icon-community', path: '/communities' },
     ];
 
-    if (account || me) {
-      menu.push({
-        icon: <Avatar src={account?.metadata?.picture || userAvatar(me)} />,
-        path: `/profile/${account?.address || me?.username}`,
-      });
-    }
-
     return menu;
-  }, [account, me]);
+  }, []);
+
+  return (
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 border-t bg-page-background-overlay">
+      <div className="flex w-full gap-4 px-6 py-3">
+        {menu.map((item, idx) => {
+          if (item.custom) return <React.Fragment key={idx}>{item.icon}</React.Fragment>;
+
+          return (
+            <div
+              key={item.path}
+              className={clsx(
+                'cursor-pointer flex-1 flex items-center justify-center rounded-full',
+                isActive(item) && 'bg-[var(--btn-secondary)]',
+              )}
+              onClick={() => router.push(item.path as string)}
+            >
+              {typeof item.icon === 'string' ? (
+                <i
+                  className={clsx(item.icon, isActive(item) ? 'text-[var(--btn-secondary-content)]' : 'text-secondary')}
+                />
+              ) : (
+                item.icon
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 w-full p-4 flex justify-center">
