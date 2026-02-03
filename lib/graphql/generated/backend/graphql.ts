@@ -36,9 +36,10 @@ export type AiChain = {
 };
 
 export type AiCreateEventInput = {
+  address?: InputMaybe<AddressInput>;
   description?: InputMaybe<Scalars['String']['input']>;
   end?: InputMaybe<Scalars['DateTimeISO']['input']>;
-  /** Id of the community that this event is organized to. Default to the first found personal community of the host user. */
+  /** MongoId of the community (aka space) that this event is organized to. */
   space?: InputMaybe<Scalars['MongoID']['input']>;
   start?: InputMaybe<Scalars['DateTimeISO']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
@@ -52,6 +53,7 @@ export type AiEvent = {
   end: Scalars['DateTimeISO']['output'];
   /** If this is true then the event is published, otherwise the event is unpublished. */
   published?: Maybe<Scalars['Boolean']['output']>;
+  shortid: Scalars['String']['output'];
   start: Scalars['DateTimeISO']['output'];
   title: Scalars['String']['output'];
 };
@@ -95,6 +97,7 @@ export type AiSpace = {
   personal?: Maybe<Scalars['Boolean']['output']>;
   /** If true then the community is private, else the community is public. A private community requires moderation for membership. */
   private?: Maybe<Scalars['Boolean']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
   title: Scalars['String']['output'];
 };
 
@@ -117,6 +120,7 @@ export type AiToken = {
 };
 
 export type AiUpdateEventInput = {
+  address?: InputMaybe<AddressInput>;
   description?: InputMaybe<Scalars['String']['input']>;
   end?: InputMaybe<Scalars['DateTimeISO']['input']>;
   start?: InputMaybe<Scalars['DateTimeISO']['input']>;
@@ -1538,7 +1542,7 @@ export type Event = {
   sessions?: Maybe<Array<EventSession>>;
   shortid: Scalars['String']['output'];
   slug: Scalars['String']['output'];
-  /** Id of the community that this event is organized to. Default to the first found personal community of the host user. */
+  /** MongoId of the community (aka space) that this event is organized to. */
   space?: Maybe<Scalars['MongoID']['output']>;
   space_expanded?: Maybe<Space>;
   space_tags?: Maybe<Array<SpaceTag>>;
@@ -1836,7 +1840,7 @@ export type EventBase = {
   sessions?: Maybe<Array<EventSessionBase>>;
   shortid: Scalars['String']['output'];
   slug: Scalars['String']['output'];
-  /** Id of the community that this event is organized to. Default to the first found personal community of the host user. */
+  /** MongoId of the community (aka space) that this event is organized to. */
   space?: Maybe<Scalars['MongoID']['output']>;
   speaker_emails?: Maybe<Array<Scalars['String']['output']>>;
   speaker_users?: Maybe<Array<Scalars['MongoID']['output']>>;
@@ -2127,7 +2131,7 @@ export type EventInput = {
   self_verification?: InputMaybe<SelfVerificationInput>;
   sessions?: InputMaybe<Array<EventSessionInput>>;
   shortid?: InputMaybe<Scalars['String']['input']>;
-  /** Id of the community that this event is organized to. Default to the first found personal community of the host user. */
+  /** MongoId of the community (aka space) that this event is organized to. */
   space?: InputMaybe<Scalars['MongoID']['input']>;
   speaker_emails?: InputMaybe<Array<Scalars['String']['input']>>;
   speaker_users?: InputMaybe<Array<Scalars['MongoID']['input']>>;
@@ -3626,14 +3630,6 @@ export type ListSpaceNfTsResponse = {
   total: Scalars['Int']['output'];
 };
 
-export type ListSpacePaymentAccountsResponse = {
-  __typename?: 'ListSpacePaymentAccountsResponse';
-  /** The paginated response */
-  items: Array<NewPaymentAccount>;
-  /** Number of the records that match the filter */
-  total: Scalars['Int']['output'];
-};
-
 export type ListSpaceRoleFeaturesResponse = {
   __typename?: 'ListSpaceRoleFeaturesResponse';
   codes: Array<FeatureCode>;
@@ -3680,12 +3676,11 @@ export type Mutation = {
   aiCreateEvent: AiEvent;
   aiCreateSpace: AiSpace;
   /** This tool publishes an event given its id, that user has admin permissions. Return true if publish successfully, return false if the event is not found or already published. */
-  aiPublishEvent: Scalars['Boolean']['output'];
+  aiPublishEvent: AiEvent;
   /** This tool updates an event given its id, that user has admin permissions */
   aiUpdateEvent: AiEvent;
   aiUpdateSpace: AiSpace;
   assignTickets: Scalars['Boolean']['output'];
-  attachSpacePaymentAccount: Scalars['Boolean']['output'];
   attachSubSpaces: Scalars['Boolean']['output'];
   buyTickets: BuyTicketsResponse;
   cancelEvent: Event;
@@ -3797,7 +3792,6 @@ export type Mutation = {
   deleteUserDiscoverySwipe: Scalars['Boolean']['output'];
   deleteUserFollow: Scalars['Boolean']['output'];
   deleteUserFriendship: Scalars['Boolean']['output'];
-  detachSpacePaymentAccount: Scalars['Boolean']['output'];
   disconnectStripeAccount: Scalars['Boolean']['output'];
   flagEvent: Scalars['Boolean']['output'];
   flagPost: Scalars['Boolean']['output'];
@@ -3984,12 +3978,6 @@ export type MutationAiUpdateSpaceArgs = {
 
 export type MutationAssignTicketsArgs = {
   input: AssignTicketsInput;
-};
-
-
-export type MutationAttachSpacePaymentAccountArgs = {
-  payment_account: Scalars['MongoID']['input'];
-  space: Scalars['MongoID']['input'];
 };
 
 
@@ -4574,12 +4562,6 @@ export type MutationDeleteUserFollowArgs = {
 
 export type MutationDeleteUserFriendshipArgs = {
   input: DeleteUserFriendshipInput;
-};
-
-
-export type MutationDetachSpacePaymentAccountArgs = {
-  payment_account: Scalars['MongoID']['input'];
-  space: Scalars['MongoID']['input'];
 };
 
 
@@ -5991,7 +5973,6 @@ export type Query = {
   listSpaceMembers: ListSpaceMembersResponse;
   listSpaceNFTs: ListSpaceNfTsResponse;
   listSpaceNewsletters: Array<EmailSetting>;
-  listSpacePaymentAccounts: ListSpacePaymentAccountsResponse;
   listSpaceRewardSettings: SpaceRewardSettings;
   listSpaceRewardVaults: Array<TokenRewardVault>;
   listSpaceRoleFeatures: ListSpaceRoleFeaturesResponse;
@@ -7172,15 +7153,6 @@ export type QueryListSpaceNewslettersArgs = {
 };
 
 
-export type QueryListSpacePaymentAccountsArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  search?: InputMaybe<Scalars['String']['input']>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  space: Scalars['MongoID']['input'];
-  types?: InputMaybe<Array<PaymentAccountType>>;
-};
-
-
 export type QueryListSpaceRewardSettingsArgs = {
   space: Scalars['MongoID']['input'];
   vaults?: InputMaybe<Array<Scalars['MongoID']['input']>>;
@@ -8083,8 +8055,6 @@ export type Space = {
   /** External events are listed on this space */
   listed_events?: Maybe<Array<Scalars['MongoID']['output']>>;
   nft_enabled?: Maybe<Scalars['Boolean']['output']>;
-  /** Payment accounts attached to this space */
-  payment_accounts?: Maybe<Array<Scalars['MongoID']['output']>>;
   /** One user is provided with one personal community where he can manage his own events. The personal community is not meant to be publicly visible and featured. */
   personal?: Maybe<Scalars['Boolean']['output']>;
   /** If true then the community is private, else the community is public. A private community requires moderation for membership. */
@@ -8267,7 +8237,7 @@ export type SpaceEventInsight = {
   sessions?: Maybe<Array<EventSessionBase>>;
   shortid: Scalars['String']['output'];
   slug: Scalars['String']['output'];
-  /** Id of the community that this event is organized to. Default to the first found personal community of the host user. */
+  /** MongoId of the community (aka space) that this event is organized to. */
   space?: Maybe<Scalars['MongoID']['output']>;
   speaker_emails?: Maybe<Array<Scalars['String']['output']>>;
   speaker_users?: Maybe<Array<Scalars['MongoID']['output']>>;

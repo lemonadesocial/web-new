@@ -47,16 +47,16 @@ if (WALLET_SCHEMA) {
   };
 }
 
-const LEMONHEADS_SCHEMA = process.env.NEXT_PUBLIC_LEMONHEADS_INDEXER_URL;
-if (LEMONHEADS_SCHEMA) {
-  generates['./lib/graphql/generated/lemonheads/'] = {
-    schema: LEMONHEADS_SCHEMA,
-    documents: ['./lib/graphql/gql/lemonheads/*.gql'],
-    preset: 'client',
-    plugins: [],
-    documentTransforms: [addTypenameSelectionDocumentTransform],
-  };
-}
+// const LEMONHEADS_SCHEMA = process.env.NEXT_PUBLIC_LEMONHEADS_INDEXER_URL;
+// if (LEMONHEADS_SCHEMA) {
+//   generates['./lib/graphql/generated/lemonheads/'] = {
+//     schema: LEMONHEADS_SCHEMA,
+//     documents: ['./lib/graphql/gql/lemonheads/*.gql'],
+//     preset: 'client',
+//     plugins: [],
+//     documentTransforms: [addTypenameSelectionDocumentTransform],
+//   };
+// }
 
 const COIN_INDEXER = process.env.NEXT_PUBLIC_COIN_INDEXER_URL;
 if (COIN_INDEXER) {
@@ -68,16 +68,16 @@ if (COIN_INDEXER) {
   };
 }
 
-const USERNAME_INDEXER = process.env.NEXT_PUBLIC_USERNAME_INDEXER;
-if (USERNAME_INDEXER) {
-  generates['./lib/graphql/generated/username/'] = {
-    schema: USERNAME_INDEXER,
-    documents: ['./lib/graphql/gql/username/*.gql'],
-    preset: 'client',
-    plugins: [],
-    documentTransforms: [addTypenameSelectionDocumentTransform],
-  };
-}
+// const USERNAME_INDEXER = process.env.NEXT_PUBLIC_USERNAME_INDEXER;
+// if (USERNAME_INDEXER) {
+//   generates['./lib/graphql/generated/username/'] = {
+//     schema: USERNAME_INDEXER,
+//     documents: ['./lib/graphql/gql/username/*.gql'],
+//     preset: 'client',
+//     plugins: [],
+//     documentTransforms: [addTypenameSelectionDocumentTransform],
+//   };
+// }
 
 generates['./lib/graphql/generated/ai/'] = {
   schema: process.env.NEXT_PUBLIC_AI_API_HTTP,

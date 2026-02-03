@@ -3,12 +3,14 @@ import React from 'react';
 
 import { Button, Card, Skeleton, Avatar, drawer, Menu, MenuItem } from '$lib/components/core';
 import { Space } from '$lib/graphql/generated/backend/graphql';
-import type { Config } from '$lib/graphql/generated/ai/graphql';
+import type { Config, Document } from '$lib/graphql/generated/ai/graphql';
 import { GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { CreateAgentPane } from './panes/CreateAgentPane';
 import { AddExistingAgentPane } from './panes/AddExistingAgentPane';
+import { AddKnowledgeBasePane } from './panes/AddKnowledgeBasePane';
+import { SelectExistingKnowledgeBasePane } from './panes/SelectExistingKnowledgeBasePane';
 import { randomEventDP } from '$lib/utils/user';
 
 interface Props {
@@ -34,6 +36,36 @@ export function CommunityAgents({ space }: Props) {
 
   const configs = (data?.configs?.items ?? []) as Config[];
 
+  const knowledgeBases = React.useMemo(() => {
+    const uniqueDocuments = new Map<string, Pick<Document, '_id' | 'title' | 'text'>>();
+
+    configs.forEach((config) => {
+      (config.documentsExpanded ?? []).forEach((doc) => {
+        if (!uniqueDocuments.has(doc._id)) {
+          uniqueDocuments.set(doc._id, { _id: doc._id, title: doc.title, text: doc.text });
+        }
+      });
+    });
+
+    return Array.from(uniqueDocuments.values());
+  }, [configs]);
+
+  const documentsToConfigs = React.useMemo(() => {
+    const map = new Map<string, Config[]>();
+
+    configs.forEach((config) => {
+      (config.documentsExpanded ?? []).forEach((doc) => {
+        const existing = map.get(doc._id) ?? [];
+
+        if (!existing.includes(config)) {
+          map.set(doc._id, [...existing, config]);
+        }
+      });
+    });
+    
+    return map;
+  }, [configs]);
+
   const openCreate = () => {
     drawer.open(CreateAgentPane, {
       props: {
@@ -48,6 +80,15 @@ export function CommunityAgents({ space }: Props) {
       props: {
         space,
         onAdded: () => refetch(),
+      },
+    });
+  };
+
+  const openAddKnowledgeBase = () => {
+    drawer.open(AddKnowledgeBasePane, {
+      props: {
+        space,
+        onCreated: () => refetch(),
       },
     });
   };
@@ -170,6 +211,121 @@ export function CommunityAgents({ space }: Props) {
             })}
           </div>
         )}
+
+        <hr className="border-t" />
+
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-2 items-center justify-between">
+            <div className="flex flex-col gap-1 flex-1">
+              <h3 className="text-xl font-semibold">Knowledge Bases</h3>
+              <p className="text-secondary text-sm">
+                These knowledge sources can be shared across one or more agents.
+              </p>
+            </div>
+            <Menu.Root>
+              <Menu.Trigger>
+                {({ toggle }) => (
+                  <Button
+                    variant="tertiary-alt"
+                    size="sm"
+                    iconLeft="icon-plus"
+                    onClick={toggle}
+                  >
+                    Add
+                  </Button>
+                )}
+              </Menu.Trigger>
+              <Menu.Content className="p-1 min-w-[200px]">
+                {({ toggle }) => (
+                  <>
+                    <MenuItem
+                      title="Create New Knowledge Base"
+                      iconLeft="icon-plus"
+                      onClick={() => {
+                        toggle();
+                        openAddKnowledgeBase();
+                      }}
+                    />
+                    <MenuItem
+                      title="Add Existing Knowledge Base"
+                      iconLeft="icon-book"
+                      onClick={() => {
+                        toggle();
+                        drawer.open(SelectExistingKnowledgeBasePane, {
+                          props: {
+                            currentDocumentIds: knowledgeBases.map(d => d._id),
+                            onSelected: (_document) => {
+                              refetch();
+                            },
+                          },
+                        });
+                      }}
+                    />
+                  </>
+                )}
+              </Menu.Content>
+            </Menu.Root>
+          </div>
+
+          <div className="flex flex-col divide-y divide-(--color-divider) bg-card rounded-md border border-card-border">
+            <div className="flex items-center gap-3 px-4 py-3">
+              <div className="size-7 rounded-sm flex items-center justify-center bg-card">
+                <i className="icon-info size-4 text-tertiary" />
+              </div>
+              <div className="flex flex-col gap-0.5 min-w-0">
+                <p className="font-medium">Community Details</p>
+                <p className="text-sm text-tertiary">
+                  Core information about your community, events, and more.
+                </p>
+              </div>
+            </div>
+
+            {loading ? (
+              <div className="flex flex-col gap-3 px-4 py-3">
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <Skeleton className="size-7 rounded-sm" animate />
+                    <div className="flex flex-col gap-2 min-w-0 flex-1">
+                      <Skeleton className="h-4 w-28" animate />
+                      <Skeleton className="h-3 w-56" animate />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              knowledgeBases.map((doc) => {
+                const usedConfigs = documentsToConfigs.get(doc._id) ?? [];
+                return (
+                  <div key={doc._id} className="flex items-center gap-3 px-4 py-3">
+                    <div className="size-7 shrink-0 rounded-sm flex items-center justify-center bg-card">
+                      <i className="icon-book size-4 text-tertiary" />
+                    </div>
+                    <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+                      <p className="font-medium">{doc.title || 'Untitled'}</p>
+                      <p className="text-sm text-tertiary line-clamp-1">{doc.text}</p>
+                    </div>
+                    {usedConfigs.length > 0 && (
+                      <div className="flex -space-x-2 shrink-0">
+                        {usedConfigs.map((config) => (
+                          <div
+                            key={config._id}
+                            className="tooltip tooltip-top"
+                            data-tip={config.name}
+                          >
+                            <Avatar
+                              src={config.avatar || randomEventDP(config._id)}
+                              className="size-6 rounded-full"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

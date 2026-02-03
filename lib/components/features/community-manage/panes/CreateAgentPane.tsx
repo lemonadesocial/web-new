@@ -8,6 +8,8 @@ import { Space, Event, SearchSpacesDocument } from '$lib/graphql/generated/backe
 import { CreateAiConfigDocument, UpdateAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { WelcomeMessagePane } from './WelcomeMessagePane';
 import { BackstoryPane } from './BackstoryPane';
+import { AddKnowledgeBasePane } from './AddKnowledgeBasePane';
+import { SelectExistingKnowledgeBasePane } from './SelectExistingKnowledgeBasePane';
 import { AnswerStylePane, AnswerStyleValue, ANSWER_STYLES } from './AnswerStylePane';
 import { OpenAIKeyPane } from './OpenAIKeyPane';
 import { ASSET_PREFIX } from '$lib/utils/constants';
@@ -15,7 +17,7 @@ import { useQuery, useMutation } from '$lib/graphql/request';
 import { communityAvatar } from '$lib/utils/community';
 import { uploadFiles } from '$lib/utils/file';
 import { aiChatClient } from '$lib/graphql/request/instances';
-import type { Config } from '$lib/graphql/generated/ai/graphql';
+import type { Config, Document } from '$lib/graphql/generated/ai/graphql';
 import { GetEventsDocument } from '$lib/graphql/generated/backend/graphql';
 
 interface Props {
@@ -35,6 +37,7 @@ type AgentFormData = {
   openAIKey?: string;
   spotlightEvents: Event[];
   activeIn: Space[];
+  documents: Array<Pick<Document, '_id' | 'title' | 'text'>>;
 };
 
 const ANSWER_STYLE_MAPPING: Record<AnswerStyleValue, { temperature: number; topP: number }> = {
@@ -46,7 +49,7 @@ const ANSWER_STYLE_MAPPING: Record<AnswerStyleValue, { temperature: number; topP
 };
 
 function getAnswerStyleFromConfig(temperature?: number | null, topP?: number | null): AnswerStyleValue | undefined {
-  if (temperature === undefined || topP === undefined) return undefined;
+  if (!temperature || !topP) return undefined;
 
   for (const [style, config] of Object.entries(ANSWER_STYLE_MAPPING)) {
     if (Math.abs(config.temperature - temperature) < 0.01 && Math.abs(config.topP - topP) < 0.01) {
@@ -88,6 +91,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
       activeIn: [space],
       answerStyle: getAnswerStyleFromConfig(config?.temperature, config?.topP),
       openAIKey: config?.openaiApiKey || undefined,
+      documents: (config?.documentsExpanded ?? []).map((d) => ({ _id: d._id, title: d.title, text: d.text })),
     },
   });
 
@@ -128,6 +132,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
   const openAIKey = watch('openAIKey');
   const activeIn = watch('activeIn') || [];
   const spotlightEvents = watch('spotlightEvents') || [];
+  const documents = watch('documents') || [];
 
   const onSubmit = async (data: AgentFormData) => {
     try {
@@ -158,6 +163,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
         topP: answerStyleConfig?.topP,
         openaiApiKey: data.openAIKey || undefined,
         spaces: activeIn.map(s => s._id),
+        documents: documents.length > 0 ? documents.map(d => d._id) : undefined,
       };
 
       if (isEditMode) {
@@ -324,6 +330,119 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                 onSpacesChange={(spaces) => setValue('activeIn', spaces)}
                 space={space}
               />
+            </div>
+          </div>
+
+          <Divider />
+
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <p className="text-lg">Knowledge Base</p>
+              <Menu.Root>
+                <Menu.Trigger>
+                  {({ toggle }) => (
+                    <Button
+                      variant="tertiary"
+                      size="sm"
+                      iconLeft="icon-plus"
+                      onClick={toggle}
+                    >
+                      Add
+                    </Button>
+                  )}
+                </Menu.Trigger>
+                <Menu.Content className="p-1 min-w-[200px]">
+                  {({ toggle }) => (
+                    <>
+                      <MenuItem
+                        title="Create New Knowledge Base"
+                        iconLeft="icon-plus"
+                        onClick={() => {
+                          toggle();
+                        drawer.open(AddKnowledgeBasePane, {
+                          props: {
+                            space,
+                            skipAvailableTo: true,
+                            onCreated: (document) => {
+                              setValue('documents', [...documents, { _id: document._id, title: document.title, text: document.text }]);
+                            },
+                          },
+                        });
+                        }}
+                      />
+                      <MenuItem
+                        title="Add Existing Knowledge Base"
+                        iconLeft="icon-book"
+                        onClick={() => {
+                          toggle();
+                          drawer.open(SelectExistingKnowledgeBasePane, {
+                            props: {
+                              currentDocumentIds: documents.map(d => d._id),
+                              onSelected: (document) => {
+                                setValue('documents', [...documents, { _id: document._id, title: document.title, text: document.text }]);
+                              },
+                            },
+                          });
+                        }}
+                      />
+                    </>
+                  )}
+                </Menu.Content>
+              </Menu.Root>
+            </div>
+            <div className="flex flex-col divide-y divide-(--color-divider) bg-card rounded-md border border-card-border">
+              <div className="flex items-center gap-3 px-4 py-3">
+                <div className="size-7 rounded-sm flex items-center justify-center bg-card">
+                  <i className="icon-info size-4 text-tertiary" />
+                </div>
+                <div className="flex flex-col gap-0.5 min-w-0">
+                  <p className="font-medium">Community Details</p>
+                  <p className="text-sm text-tertiary">
+                    Core information about your community, events, and more.
+                  </p>
+                </div>
+              </div>
+              {!!documents.length && documents.map((doc) => (
+                <div
+                  key={doc._id}
+                  className="flex items-center gap-3 px-4 py-3"
+                >
+                  <div className="size-7 rounded-sm flex items-center justify-center bg-card">
+                    <i className="icon-book size-4 text-tertiary" />
+                  </div>
+                  <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+                    <p className="font-medium">{doc.title || 'Untitled'}</p>
+                    <p className="text-sm text-tertiary line-clamp-1">
+                      {doc.text}
+                    </p>
+                  </div>
+                  <Menu.Root>
+                    <Menu.Trigger>
+                      {({ toggle }) => (
+                        <i
+                          className="icon-more-horiz cursor-pointer size-5 text-tertiary hover:text-primary"
+                          onClick={toggle}
+                        />
+                      )}
+                    </Menu.Trigger>
+                    <Menu.Content className="p-1">
+                      {({ toggle }) => (
+                        <MenuItem
+                          title="Remove"
+                          iconLeft="icon-delete"
+                          onClick={() => {
+                            setValue(
+                              'documents',
+                              documents.filter((d) => d._id !== doc._id),
+                            );
+                            toggle();
+                          }}
+                        />
+                      )}
+                    </Menu.Content>
+                  </Menu.Root>
+                </div>
+              ))}
             </div>
           </div>
 
