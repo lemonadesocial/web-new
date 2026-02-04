@@ -20,6 +20,7 @@ import { EventRegistration } from '$lib/components/features/event-manage/EventRe
 import { EventPaymentLayout } from './EventPaymentLayout';
 import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
+import { isMobile } from 'react-device-detect';
 
 const tabs: Record<string, { label: string; component: React.FC }> = {
   overview: { label: 'Overview', component: EventOverview },
@@ -130,16 +131,16 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
       aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { data: { event_id: event._id } } });
       aiChatDispatch({ type: AIChatActionKind.add_message, payload: { messages: mockWelcomeEvent(event) } });
 
-      aiChat.open();
+      if (!isMobile) aiChat.open();
     }
   }, []);
 
   const Comp = tabs[selectedTab].component;
 
   return (
-    <div className="relative h-dvh ">
+    <div className="relative h-dvh overflow-auto">
       <div ref={sentinelRef} />
-      <div className="sticky top-0 border-b z-1 px-4">
+      <div className="sticky top-12 md:top-0 border-b z-1 px-4">
         <div className="backdrop-blur-md transition-all duration-300 pt-7 font-default">
           <div className="page mx-auto px-4 md:px-0">
             {event.space_expanded && (
@@ -210,13 +211,13 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
         </div>
       </div>
 
-      <div className="px-4">
+      <div className="md:px-4">
         <Comp />
       </div>
 
       {!aiChatState.toggleChat && (
         <button
-          className="sticky bottom-10 left-10 w-14 h-14 aspect-square flex items-center justify-center rounded-full bg-gradient-to-r from-(--btn-tertiary) via-[rgba(255,255,255,0.08)] via-(--color-page-background-overlay) to-(--btn-tertiary) border cursor-pointer group"
+          className="sticky bottom-5 left-5 w-14 h-14 aspect-square flex items-center justify-center rounded-full bg-gradient-to-r from-(--btn-tertiary) via-[rgba(255,255,255,0.08)] via-(--color-page-background-overlay) to-(--btn-tertiary) border cursor-pointer group"
           onClick={() => aiChat.open()}
         >
           <i className="icon-lemon-ai text-warning-300 w-8 h-8 aspect-square hover:scale-110  transition-all ease-in-out duration-300" />

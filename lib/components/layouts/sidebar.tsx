@@ -202,7 +202,7 @@ const Sidebar = () => {
             </Card.Root>
 
             {me || account ? (
-              <Menu.Root strategy="absolute" placement="right-end">
+              <Menu.Root strategy="absolute" placement="top-start">
                 <Menu.Trigger>
                   {({ isOpen }) => (
                     <div className="flex gap-2 items-center p-2">
@@ -256,7 +256,7 @@ const Sidebar = () => {
       </div>
 
       {/* Mobile View */}
-      <div className="md:hidden fixed top-0 left-0 right-0 p-2.5">
+      <div className="md:hidden fixed z-50 top-0 bg-background left-0 right-0 p-2.5">
         <button className="text-tertiary p-2.5 flex justify-center cursor-pointer" onClick={() => setToggle(!toggle)}>
           <i className="icon-left-panel-close-outline size-5" />
         </button>
@@ -371,7 +371,7 @@ const Sidebar = () => {
                   </Card.Root>
 
                   {me || account ? (
-                    <Menu.Root strategy="absolute" placement="right-end">
+                    <Menu.Root strategy="absolute" placement="top">
                       <Menu.Trigger>
                         {({ isOpen }) => (
                           <div className="flex gap-2 items-center p-2">
