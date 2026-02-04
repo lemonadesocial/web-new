@@ -22,6 +22,13 @@ fragment AIConfigFields on Config {
   }
   welcomeMessage
   welcomeMetadata
+  spaces
+  documents
+  documentsExpanded {
+    _id
+    title
+    text
+  }
 }
 
 query GetAIConfig($id: ObjectId!) {
@@ -60,5 +67,34 @@ mutation UpdateAIConfig($input: ConfigInput!, $id: ObjectId!) {
 mutation CreateAIConfig($input: ConfigInput!) {
   createConfig(input: $input) {
     ...AIConfigFields
+  }
+}
+
+mutation CreateDocument($input: DocumentInput!) {
+  createDocument(input: $input) {
+    _id
+    createdAt
+    isPublic
+    metadata
+    text
+    title
+    updatedAt
+    user
+  }
+}
+
+query ListDocuments($skip: Int, $limit: Int) {
+  listDocuments(skip: $skip, limit: $limit) {
+    items {
+      _id
+      createdAt
+      updatedAt
+      metadata
+      title
+      text
+      isPublic
+      user
+    }
+    total
   }
 }
