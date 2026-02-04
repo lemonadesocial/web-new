@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { sdk } from '@farcaster/miniapp-sdk';
+import type { EthereumProvider } from '@avail-project/nexus-core';
+import { useAccount } from 'wagmi';
 
 import { GraphqlClientProvider } from '$lib/graphql/request';
 import { initializeAppKit } from '$lib/utils/appkit';
@@ -13,6 +15,7 @@ import { useResumeSession as useLensResumeSession } from '$lib/hooks/useLens';
 import { useAuth } from '../../lib/hooks/useAuth';
 import { GetMeDocument, User } from '$lib/graphql/generated/backend/graphql';
 import { useUtmTracker } from '$lib/hooks/useUtmTracker';
+import { useNexus } from '$app/components/nexus/NexusProvider';
 
 export default function Providers({ children, space }: { children: React.ReactNode; space?: SpaceHydraKeys | null }) {
   const [miniAppReady, setMiniAppReady] = useState(false);
@@ -25,6 +28,9 @@ export default function Providers({ children, space }: { children: React.ReactNo
   const { reload, loading: loadingAuth } = useAuth(space?.hydra_client_id);
   const session = useAtomValue(sessionAtom);
   const setUser = useSetAtom(userAtom);
+
+  const { status, connector } = useAccount();
+  const { handleInit } = useNexus();
 
   useEffect(() => {
     if (!chainsLoading) {
@@ -63,10 +69,17 @@ export default function Providers({ children, space }: { children: React.ReactNo
     setUser(null);
   }, [session]);
 
+  useEffect(() => {
+    if (status === 'connected') {
+      connector?.getProvider().then(p => handleInit(p as EthereumProvider));
+    }
+  }, [status, connector, handleInit]);
+
   if (chainsLoading || !appKitReady || !miniAppReady || loadingAuth) return null;
 
   return (
     <GraphqlClientProvider client={defaultClient}>
+      <InitNexusOnConnect />
       {children}
     </GraphqlClientProvider>
   );
