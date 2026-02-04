@@ -31,7 +31,7 @@ export default async function SiteLayout(props: { params: Promise<{ domain: stri
           <AIChatContainer />
           <div className="flex-1 overflow-auto no-scrollbar">{props.children}</div>
 
-          <BottomBar />
+          {/* <BottomBar /> */}
         </div>
         <DrawerContainer />
       </main>

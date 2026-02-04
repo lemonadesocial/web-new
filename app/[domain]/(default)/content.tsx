@@ -19,7 +19,7 @@ export function Content() {
   }
 
   return (
-    <div className="w-full max-w-[720px]">
+    <div className="w-full max-w-[720px] px-4 md:px-0">
       <AIChat />
     </div>
   );

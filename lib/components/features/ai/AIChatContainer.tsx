@@ -5,6 +5,7 @@ import { Pane } from '$lib/components/core/pane/pane';
 import { Button } from '$lib/components/core';
 import clsx from 'clsx';
 import { AIChatActionKind, useAIChat } from './provider';
+import { Sheet } from 'react-modal-sheet';
 
 interface Option<T> {
   props?: T;
@@ -32,7 +33,7 @@ export const aiChat: AIChatPaneAPI = {
 
 export function AIChatContainer() {
   const [state, setState] = React.useState<AIChatPane>();
-  const [chatStore, chatStoreDispath] = useAIChat();
+  const [_, chatStoreDispath] = useAIChat();
 
   const handleOpen = <T extends object>(opts: Option<T> = {}) => {
     chatStoreDispath({ type: AIChatActionKind.toggle_chat });

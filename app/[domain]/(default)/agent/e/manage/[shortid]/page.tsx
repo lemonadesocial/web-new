@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { useRef } from 'react';
 import { Event, PublishEventDocument } from '$lib/graphql/generated/backend/graphql';
 import { Button, toast, Skeleton } from '$lib/components/core';
-import { useMutation } from '$lib/graphql/request';
+import { useMutation, useQuery } from '$lib/graphql/request';
 import { useUpdateEvent } from '$lib/components/features/event-manage/store';
 import { EventProtected } from '$lib/components/features/event-manage/EventProtected';
 import { aiChat } from '$lib/components/features/ai/AIChatContainer';
@@ -18,6 +18,8 @@ import { EventMore } from '$lib/components/features/event-manage/EventMore';
 import { EventOverview } from '$lib/components/features/event-manage/overview/EventOverview';
 import { EventRegistration } from '$lib/components/features/event-manage/EventRegistration';
 import { EventPaymentLayout } from './EventPaymentLayout';
+import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { aiChatClient } from '$lib/graphql/request/instances';
 
 const tabs: Record<string, { label: string; component: React.FC }> = {
   overview: { label: 'Overview', component: EventOverview },
@@ -83,6 +85,20 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [aiChatState, aiChatDispatch] = useAIChat();
+  useQuery(
+    GetListAiConfigDocument,
+    {
+      variables: { filter: { events_eq: event._id } },
+      onComplete: (data) => {
+        if (data?.configs?.items?.length) {
+          const config = data.configs.items[0] as AiConfigFieldsFragment;
+          aiChatDispatch({ type: AIChatActionKind.set_config, payload: { config: config._id } });
+        }
+      },
+      skip: !event._id,
+    },
+    aiChatClient,
+  );
 
   const [selectedTab, setSelectedTab] = React.useState('overview');
 

@@ -19,6 +19,8 @@ import { CommunitySettingsLayout } from './CommunitySettingsLayout';
 import { AIChatActionKind, useAIChat } from '$lib/components/features/ai/provider';
 import { aiChat } from '$lib/components/features/ai/AIChatContainer';
 import { mockWelcomeSpace } from '$lib/components/features/ai/InputChat';
+import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { aiChatClient } from '$lib/graphql/request/instances';
 
 const tabs: Record<string, { label: string; component: React.FC<{ space: Space }> }> = {
   overview: { label: 'Overview', component: CommunityOverview },
@@ -126,6 +128,21 @@ export default function Page() {
 function Content({ space, uid }: { space: Space; uid: string }) {
   const [selectedTab, setSelectedTab] = React.useState('overview');
   const [aiChatState, aiChatDispatch] = useAIChat();
+
+  useQuery(
+    GetListAiConfigDocument,
+    {
+      variables: { filter: { spaces_eq: space._id } },
+      onComplete: (data) => {
+        if (data?.configs?.items?.length) {
+          const config = data.configs.items[0] as AiConfigFieldsFragment;
+          aiChatDispatch({ type: AIChatActionKind.set_config, payload: { config: config._id } });
+        }
+      },
+      skip: !space._id,
+    },
+    aiChatClient,
+  );
 
   const Comp = tabs[selectedTab].component;
 

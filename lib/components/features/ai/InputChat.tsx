@@ -6,7 +6,12 @@ import { match } from 'ts-pattern';
 
 import { Button, Card, drawer, Menu, MenuItem, toast } from '$lib/components/core';
 import { useClient, useMutation } from '$lib/graphql/request';
-import { RunAiChatDocument } from '$lib/graphql/generated/ai/graphql';
+import {
+  AiConfigFieldsFragment,
+  GetAiConfigDocument,
+  GetListAiConfigDocument,
+  RunAiChatDocument,
+} from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { AI_CONFIG } from '$lib/utils/constants';
 import { Event, GetEventDocument, GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
@@ -31,14 +36,25 @@ export function InputChat() {
 
         const tool = income.run?.metadata?.tool;
         match(tool?.name)
-          .with('create_event', () => {
+          .with('create_event', async () => {
             dispatch({
               type: AIChatActionKind.add_message,
               payload: { messages: [{ message: 'Redicting...', role: 'assistant' }] },
             });
 
+            const res = await aiChatClient.query({
+              query: GetListAiConfigDocument,
+              variables: { filter: { events_eq: tool.data._id } },
+            });
+
             delay(() => router.push(`/agent/e/manage/${tool?.data?.shortid}`), 2000);
-            delay(() => dispatch({ type: AIChatActionKind.reset }), 2500);
+            delay(() => {
+              dispatch({ type: AIChatActionKind.reset });
+              if (res.data?.configs?.items?.length) {
+                const config = res.data.configs.items[0] as AiConfigFieldsFragment;
+                dispatch({ type: AIChatActionKind.set_config, payload: { config: config._id } });
+              }
+            }, 2500);
           })
           .with('update_event', async () => {
             const data = tool.data;
@@ -64,13 +80,25 @@ export function InputChat() {
               updateEvent(res.data.getEvent);
             }
           })
-          .with('create_space', () => {
+          .with('create_space', async () => {
             dispatch({
               type: AIChatActionKind.add_message,
               payload: { messages: [{ message: 'Redicting...', role: 'assistant' }] },
             });
+
+            const res = await aiChatClient.query({
+              query: GetListAiConfigDocument,
+              variables: { filter: { spaces_eq: tool.data._id } },
+            });
+
             delay(() => router.push(`/agent/s/manage/${tool?.data?._id}`), 2000);
-            delay(() => dispatch({ type: AIChatActionKind.reset }), 2500);
+            delay(() => {
+              dispatch({ type: AIChatActionKind.reset });
+              if (res.data?.configs?.items?.length) {
+                const config = res.data.configs.items[0] as AiConfigFieldsFragment;
+                dispatch({ type: AIChatActionKind.set_config, payload: { config: config._id } });
+              }
+            }, 2500);
           })
           .with('update_space', async () => {
             const data = tool.data;
@@ -105,7 +133,9 @@ export function InputChat() {
     dispatch({ type: AIChatActionKind.add_message, payload: { messages: [{ message: text, role: 'user' }] } });
     dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: true } });
     setInput('');
-    run({ variables: { message: text, config: AI_CONFIG, session: state.session, data: state.data || {} } });
+    run({
+      variables: { message: text, config: state.config || AI_CONFIG, session: state.session, data: state.data || {} },
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
