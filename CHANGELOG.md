@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.18.1](https://github.com/lemonadesocial/web-new/compare/v9.18.0...v9.18.1) (2026-02-05)
+
+
+### Bug Fixes
+
+* textarea max height ([443ee63](https://github.com/lemonadesocial/web-new/commit/443ee632ac7bb6039a1dea3669e9b27241e60998))
+
 ## [9.18.0](https://github.com/lemonadesocial/web-new/compare/v9.17.1...v9.18.0) (2026-02-04)
 
 
