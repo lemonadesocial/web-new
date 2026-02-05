@@ -56,7 +56,7 @@ export function Content() {
   }
 
   return (
-    <div className="pt-12 flex flex-col gap-6">
+    <div className="flex flex-col gap-6 max-sm:px-4 pt-16 md:pt-8">
       <h1 className="text-2xl font-semibold">Lemonade Stand</h1>
 
       <div className="flex flex-col-reverse md:flex-row gap-6 md:gap-14">

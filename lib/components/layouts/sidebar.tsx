@@ -204,7 +204,7 @@ const Sidebar = () => {
             {me || account ? (
               <Menu.Root strategy="absolute" placement="top-start">
                 <Menu.Trigger>
-                  {({ isOpen }) => (
+                  {() => (
                     <div className="flex gap-2 items-center p-2">
                       <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
                       {toggle && (

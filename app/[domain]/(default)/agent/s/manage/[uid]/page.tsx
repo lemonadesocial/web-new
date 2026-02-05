@@ -207,7 +207,7 @@ function Content({ space, uid }: { space: Space; uid: string }) {
 
       {!aiChatState.toggleChat && (
         <button
-          className="sticky bottom-5 left-5 w-14 h-14 aspect-square flex items-center justify-center rounded-full bg-gradient-to-r from-(--btn-tertiary) via-[rgba(255,255,255,0.08)] via-(--color-page-background-overlay) to-(--btn-tertiary) border cursor-pointer group"
+          className="sticky bottom-5 left-5 w-14 h-14 aspect-square flex items-center justify-center rounded-full bg-gradient-to-r from-(--btn-tertiary) via-[rgba(255,255,255,0.08)] via-(--color-page-background-overlay) to-(--btn-tertiary) border cursor-pointer group backdrop-blur-sm"
           onClick={() => aiChat.open()}
         >
           <i className="icon-lemon-ai text-warning-300 w-8 h-8 aspect-square hover:scale-110  transition-all ease-in-out duration-300" />

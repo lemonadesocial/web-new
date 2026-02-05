@@ -18,6 +18,7 @@ import { Event, GetEventDocument, GetSpaceDocument, Space } from '$lib/graphql/g
 import { useUpdateEvent } from '$lib/components/features/event-manage/store';
 import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 import { AIChatActionKind, Message, useAIChat } from './provider';
+import { isMobile } from 'react-device-detect';
 
 export function InputChat() {
   const router = useRouter();
@@ -195,7 +196,7 @@ export function InputChat() {
 
 export function mockWelcomeEvent(event: Event): Message[] {
   const actions = [];
-  const opts = { dismissible: false, fixed: false, showBackdrop: false, props: { event } };
+  const opts = { dismissible: false, fixed: isMobile, showBackdrop: false, props: { event } };
   if (!event.location) {
     actions.push({
       type: 'button',
