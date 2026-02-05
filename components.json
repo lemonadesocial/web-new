@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "tailwind.config.ts",
+    "css": "app/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "rtl": false,
+  "aliases": {
+    "components": "$lib/components/features/avail",
+    "utils": "$app/lib/utils",
+    "ui": "$lib/components/features/avail/ui",
+    "lib": "$app/lib",
+    "hooks": "$app/hooks"
+  },
+  "registries": {
+    "@nexus-elements": "https://elements.nexus.availproject.org/r/{name}.json"
+  }
+}

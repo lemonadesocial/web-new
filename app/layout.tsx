@@ -4,7 +4,7 @@ import clsx from 'clsx';
 
 import { GOOGLE_MAP_KEY } from '$lib/utils/constants';
 import { Web3Provider } from '$lib/utils/wagmi';
-import NexusProvider from '$app/components/nexus/NexusProvider';
+import NexusProvider from '$lib/components/features/avail/nexus/NexusProvider';
 
 import StyledJsxRegistry from './registry';
 import './globals.css';

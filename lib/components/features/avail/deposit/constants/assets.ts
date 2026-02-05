@@ -1,0 +1,44 @@
+export const DEPOSIT_WIDGET_ASSETS = {
+  tokens: {
+    USDC: "/usdc.svg",
+    ETH: "/ethereum.svg",
+  },
+  protocols: {
+    aave: "/aave.svg",
+  },
+  wallets: {
+    metamask: "/metamask.svg",
+    phantom: "/phantom.svg",
+  },
+  // features now use React icon components instead of SVG files
+} as const;
+
+export const TOKEN_IMAGES: Record<string, string> = {
+  USDC: "https://coin-images.coingecko.com/coins/images/6319/large/usdc.png",
+  USDT: "https://coin-images.coingecko.com/coins/images/35023/large/USDT.png",
+  "USD₮0":
+    "https://coin-images.coingecko.com/coins/images/35023/large/USDT.png",
+  WETH: "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880",
+  USDS: "https://assets.coingecko.com/coins/images/39926/standard/usds.webp?1726666683",
+  SOPH: "https://assets.coingecko.com/coins/images/38680/large/sophon_logo_200.png",
+  KAIA: "https://assets.coingecko.com/asset_platforms/images/9672/large/kaia.png",
+  BNB: "https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png",
+  // Add ETH as fallback for any ETH-related tokens
+  ETH: "https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628",
+  // Add common token fallbacks
+  POL: "https://coin-images.coingecko.com/coins/images/32440/standard/polygon.png",
+  AVAX: "https://assets.coingecko.com/coins/images/12559/standard/Avalanche_Circle_RedWhite_Trans.png",
+  FUEL: "https://coin-images.coingecko.com/coins/images/279/large/ethereum.png",
+  HYPE: "https://assets.coingecko.com/asset_platforms/images/243/large/hyperliquid.png",
+  // Popular swap tokens
+  DAI: "https://coin-images.coingecko.com/coins/images/9956/large/Badge_Dai.png?1696509996",
+  UNI: "https://coin-images.coingecko.com/coins/images/12504/large/uni.jpg?1696512319",
+  AAVE: "https://coin-images.coingecko.com/coins/images/12645/large/AAVE.png?1696512452",
+  LDO: "https://coin-images.coingecko.com/coins/images/13573/large/Lido_DAO.png?1696513326",
+  PEPE: "https://coin-images.coingecko.com/coins/images/29850/large/pepe-token.jpeg?1696528776",
+  OP: "https://coin-images.coingecko.com/coins/images/25244/large/Optimism.png?1696524385",
+  ZRO: "https://coin-images.coingecko.com/coins/images/28206/large/ftxG9_TJ_400x400.jpeg?1696527208",
+  OM: "https://assets.coingecko.com/coins/images/12151/standard/OM_Token.png?1696511991",
+  KAITO:
+    "https://assets.coingecko.com/coins/images/54411/standard/Qm4DW488_400x400.jpg",
+};
