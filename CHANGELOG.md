@@ -1,5 +1,14 @@
 # Changelog
 
+## [9.18.0](https://github.com/lemonadesocial/web-new/compare/v9.17.1...v9.18.0) (2026-02-04)
+
+
+### Features
+
+* add knowledge page ([27c90b3](https://github.com/lemonadesocial/web-new/commit/27c90b3c7df0d0ec47fe0ace8c68b49d7437c21e))
+* update agent ([c8cab4e](https://github.com/lemonadesocial/web-new/commit/c8cab4eee2f1ba1a3e1f847138a904ea9771abd3))
+* update agent ([c9a16ab](https://github.com/lemonadesocial/web-new/commit/c9a16ab5b39431fd8fb8d433f5ad10b1f03ae386))
+
 ## [9.17.1](https://github.com/lemonadesocial/web-new/compare/v9.17.0...v9.17.1) (2026-02-02)
 
 
