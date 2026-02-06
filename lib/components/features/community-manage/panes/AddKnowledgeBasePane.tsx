@@ -1,28 +1,60 @@
 'use client';
 import React from 'react';
-import { Button, Textarea, Input, drawer, toast, Menu, MenuItem, Avatar, Skeleton } from '$lib/components/core';
+import { Button, Textarea, Input, drawer, toast, Menu, MenuItem, Avatar, Skeleton, modal } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
-import { CreateDocumentDocument, GetListAiConfigDocument, UpdateAiConfigDocument, type Config, type Document, type CreateDocumentMutation } from '$lib/graphql/generated/ai/graphql';
+import { CreateDocumentDocument, GetListAiConfigDocument, UpdateAiConfigDocument, UpdateDocumentDocument, DeleteDocumentDocument, type Config, type Document, type CreateDocumentMutation } from '$lib/graphql/generated/ai/graphql';
 import { Space } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { randomEventDP } from '$lib/utils/user';
 import { ASSET_PREFIX } from '$lib/utils/constants';
+import { ConfirmModal } from '$lib/components/features/modals/ConfirmModal';
 
 interface Props {
   space: Space;
   onCreated: (document: Document) => void;
   skipAvailableTo?: boolean;
+  document?: Pick<Document, '_id' | 'title' | 'text'>;
+  onUpdated?: () => void;
+  onDeleted?: () => void;
+  initialConfigs?: Config[];
 }
 
-export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false }: Props) {
-  const [title, setTitle] = React.useState('');
-  const [content, setContent] = React.useState('');
-  const [selectedConfigs, setSelectedConfigs] = React.useState<Config[]>([]);
+export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false, document, onUpdated, onDeleted, initialConfigs = [] }: Props) {
+  const isEditing = !!document;
+  
+  const [title, setTitle] = React.useState(document?.title || '');
+  const [content, setContent] = React.useState(document?.text || '');
+  const [selectedConfigs, setSelectedConfigs] = React.useState<Config[]>(initialConfigs);
+  
+  React.useEffect(() => {
+    if (document) {
+      setTitle(document.title || '');
+      setContent(document.text || '');
+    }
+  }, [document]);
+
+  React.useEffect(() => {
+    if (initialConfigs.length > 0) {
+      setSelectedConfigs(initialConfigs);
+    }
+  }, [initialConfigs]);
 
   const [createDocument, { loading: creating }] = useMutation(CreateDocumentDocument, {
     onError: (error) => {
       toast.error(error.message || 'Failed to create knowledge base');
+    },
+  }, aiChatClient);
+
+  const [updateDocument, { loading: updating }] = useMutation(UpdateDocumentDocument, {
+    onError: (error) => {
+      toast.error(error.message || 'Failed to update knowledge base');
+    },
+  }, aiChatClient);
+
+  const [deleteDocument, { loading: deleting }] = useMutation(DeleteDocumentDocument, {
+    onError: (error) => {
+      toast.error(error.message || 'Failed to delete knowledge base');
     },
   }, aiChatClient);
 
@@ -35,6 +67,77 @@ export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false
   const handleSubmit = async () => {
     if (!content.trim()) {
       toast.error('Content is required');
+      return;
+    }
+
+    if (isEditing && document?._id) {
+      const documentId = document._id;
+      const previousConfigIds = new Set(initialConfigs.map(c => c._id));
+      const currentConfigIds = new Set(selectedConfigs.map(c => c._id));
+
+      const configsToRemove = initialConfigs.filter(c => !currentConfigIds.has(c._id));
+      const configsToAdd = selectedConfigs.filter(c => !previousConfigIds.has(c._id));
+
+      await updateDocument({
+        variables: {
+          input: {
+            title: title.trim() || undefined,
+            text: content.trim(),
+          },
+          _id: documentId,
+        },
+        onComplete: async (_client, response) => {
+          if (response?.updateDocument) {
+            const updatePromises: Promise<any>[] = [];
+
+            configsToRemove.forEach((config) => {
+              const currentDocuments = config.documents || [];
+              const updatedDocuments = currentDocuments.filter((id: string) => id !== documentId);
+
+              updatePromises.push(
+                updateConfig({
+                  variables: {
+                    input: {
+                      name: config.name,
+                      job: config.job,
+                      description: config.description,
+                      documents: updatedDocuments,
+                    },
+                    id: config._id,
+                  },
+                })
+              );
+            });
+
+            configsToAdd.forEach((config) => {
+              const currentDocuments = config.documents || [];
+              const updatedDocuments = [...currentDocuments, documentId];
+
+              updatePromises.push(
+                updateConfig({
+                  variables: {
+                    input: {
+                      name: config.name,
+                      job: config.job,
+                      description: config.description,
+                      documents: updatedDocuments,
+                    },
+                    id: config._id,
+                  },
+                })
+              );
+            });
+
+            if (updatePromises.length > 0) {
+              await Promise.all(updatePromises);
+            }
+
+            onUpdated?.();
+            drawer.close();
+            toast.success('Knowledge base updated');
+          }
+        },
+      });
       return;
     }
 
@@ -79,6 +182,31 @@ export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false
     });
   };
 
+  const handleDelete = () => {
+    if (!document?._id) return;
+
+    modal.open(ConfirmModal, {
+      props: {
+        title: 'Delete Knowledge Base?',
+        subtitle: 'Are you sure you want to delete this knowledge base? Bots that use it will no longer have access to this information.',
+        icon: 'icon-delete',
+        buttonText: 'Delete',
+        onConfirm: async () => {
+          await deleteDocument({
+            variables: {
+              _id: document._id,
+            },
+            onComplete: () => {
+              onDeleted?.();
+              drawer.close();
+              toast.success('Knowledge base deleted');
+            },
+          });
+        },
+      },
+    });
+  };
+
   return (
     <Pane.Root>
       <Pane.Header.Root>
@@ -87,9 +215,9 @@ export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false
 
       <Pane.Content className="p-4 flex flex-col gap-6 overflow-auto">
         <div className="flex flex-col gap-1">
-          <h2 className="text-xl font-semibold">Add Knowledge Base</h2>
+          <h2 className="text-xl font-semibold">{isEditing ? 'Edit Knowledge Base' : 'Add Knowledge Base'}</h2>
           <p className="text-secondary">
-            Add written information that your agents can use to answer questions accurately.
+            {isEditing ? 'Update written information that your agents can use to answer questions accurately.' : 'Add written information that your agents can use to answer questions accurately.'}
           </p>
         </div>
 
@@ -129,15 +257,38 @@ export function AddKnowledgeBasePane({ space, onCreated, skipAvailableTo = false
       </Pane.Content>
 
       <Pane.Footer>
-        <div className="p-4 border-t">
-          <Button
-            variant="secondary"
-            onClick={handleSubmit}
-            loading={creating}
-            disabled={!content.trim()}
-          >
-            Add Knowledge Base
-          </Button>
+        <div className="p-4 border-t flex items-center gap-3">
+          {isEditing ? (
+            <>
+              <Button
+                variant="danger"
+                className="flex-1"
+                outlined
+                onClick={handleDelete}
+                loading={deleting}
+              >
+                Delete
+              </Button>
+              <Button
+                variant="secondary"
+                className="flex-1"
+                onClick={handleSubmit}
+                loading={updating}
+                disabled={!content.trim()}
+              >
+                Save Changes
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="secondary"
+              onClick={handleSubmit}
+              loading={creating}
+              disabled={!content.trim()}
+            >
+              Add Knowledge Base
+            </Button>
+          )}
         </div>
       </Pane.Footer>
     </Pane.Root>

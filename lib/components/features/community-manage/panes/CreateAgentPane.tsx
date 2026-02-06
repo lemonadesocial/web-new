@@ -5,7 +5,8 @@ import { useForm } from 'react-hook-form';
 import { Button, Textarea, FileInput, Card, Menu, MenuItem, Input, Divider, drawer, modal, toast } from '$lib/components/core';
 import { Pane } from '$lib/components/core/pane/pane';
 import { Space, Event, SearchSpacesDocument } from '$lib/graphql/generated/backend/graphql';
-import { CreateAiConfigDocument, UpdateAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { CreateAiConfigDocument, UpdateAiConfigDocument, DeleteConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { ConfirmModal } from '$lib/components/features/modals/ConfirmModal';
 import { WelcomeMessagePane } from './WelcomeMessagePane';
 import { BackstoryPane } from './BackstoryPane';
 import { AddKnowledgeBasePane } from './AddKnowledgeBasePane';
@@ -123,7 +124,18 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
     },
   }, aiChatClient);
 
-  const loading = creating || updating;
+  const [deleteAgent, { loading: deleting }] = useMutation(DeleteConfigDocument, {
+    onComplete: () => {
+      toast.success('Agent deleted successfully');
+      onCreated?.();
+      drawer.close();
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to delete agent');
+    },
+  }, aiChatClient);
+
+  const loading = creating || updating || deleting;
 
   const isPublic = watch('isPublic');
   const welcomeMessage = watch('welcomeMessage');
@@ -551,10 +563,48 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
       </Pane.Content>
 
       <Pane.Footer>
-        <div className="p-4 border-t">
-          <Button variant="secondary" onClick={handleSubmit(onSubmit)} loading={loading}>
-            {isEditMode ? 'Update Agent' : 'Create Agent'}
-          </Button>
+        <div className="p-4 border-t flex items-center gap-3">
+          {isEditMode ? (
+            <>
+              <Button
+                variant="danger"
+                className="flex-1"
+                outlined
+                onClick={() => {
+                  modal.open(ConfirmModal, {
+                    props: {
+                      title: 'Delete Agent?',
+                      subtitle: `You are about to permanently delete ${config?.name || 'this agent'}. This operation can't be undone. Are you sure you want to delete it?`,
+                      icon: 'icon-delete',
+                      buttonText: 'Delete',
+                      onConfirm: async () => {
+                        await deleteAgent({
+                          variables: {
+                            id: config._id,
+                          },
+                        });
+                      },
+                    },
+                  });
+                }}
+                loading={deleting}
+              >
+                Delete
+              </Button>
+              <Button
+                variant="secondary"
+                className="flex-1"
+                onClick={handleSubmit(onSubmit)}
+                loading={loading}
+              >
+                Update Agent
+              </Button>
+            </>
+          ) : (
+            <Button variant="secondary" onClick={handleSubmit(onSubmit)} loading={loading}>
+              Create Agent
+            </Button>
+          )}
         </div>
       </Pane.Footer>
     </Pane.Root>

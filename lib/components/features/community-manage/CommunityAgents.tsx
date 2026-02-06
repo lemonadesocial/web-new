@@ -103,6 +103,19 @@ export function CommunityAgents({ space }: Props) {
     });
   };
 
+  const openEditKnowledgeBase = (doc: Pick<Document, '_id' | 'title' | 'text'>) => {
+    const usedConfigs = documentsToConfigs.get(doc._id) ?? [];
+    drawer.open(AddKnowledgeBasePane, {
+      props: {
+        space,
+        document: doc,
+        initialConfigs: usedConfigs,
+        onUpdated: () => refetch(),
+        onDeleted: () => refetch(),
+      },
+    });
+  };
+
   return (
     <div className="page bg-transparent! mx-auto py-7 px-4 md:px-0">
       <div className="flex flex-col gap-5">
@@ -295,8 +308,13 @@ export function CommunityAgents({ space }: Props) {
             ) : (
               knowledgeBases.map((doc) => {
                 const usedConfigs = documentsToConfigs.get(doc._id) ?? [];
+                
                 return (
-                  <div key={doc._id} className="flex items-center gap-3 px-4 py-3">
+                  <div 
+                    key={doc._id} 
+                    className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-card transition-colors"
+                    onClick={() => openEditKnowledgeBase(doc)}
+                  >
                     <div className="size-7 shrink-0 rounded-sm flex items-center justify-center bg-card">
                       <i className="icon-book size-4 text-tertiary" />
                     </div>

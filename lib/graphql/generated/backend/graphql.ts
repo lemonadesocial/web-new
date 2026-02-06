@@ -3630,6 +3630,14 @@ export type ListSpaceNfTsResponse = {
   total: Scalars['Int']['output'];
 };
 
+export type ListSpacePaymentAccountsResponse = {
+  __typename?: 'ListSpacePaymentAccountsResponse';
+  /** The paginated response */
+  items: Array<NewPaymentAccount>;
+  /** Number of the records that match the filter */
+  total: Scalars['Int']['output'];
+};
+
 export type ListSpaceRoleFeaturesResponse = {
   __typename?: 'ListSpaceRoleFeaturesResponse';
   codes: Array<FeatureCode>;
@@ -3681,6 +3689,7 @@ export type Mutation = {
   aiUpdateEvent: AiEvent;
   aiUpdateSpace: AiSpace;
   assignTickets: Scalars['Boolean']['output'];
+  attachSpacePaymentAccount: Scalars['Boolean']['output'];
   attachSubSpaces: Scalars['Boolean']['output'];
   buyTickets: BuyTicketsResponse;
   cancelEvent: Event;
@@ -3792,6 +3801,7 @@ export type Mutation = {
   deleteUserDiscoverySwipe: Scalars['Boolean']['output'];
   deleteUserFollow: Scalars['Boolean']['output'];
   deleteUserFriendship: Scalars['Boolean']['output'];
+  detachSpacePaymentAccount: Scalars['Boolean']['output'];
   disconnectStripeAccount: Scalars['Boolean']['output'];
   flagEvent: Scalars['Boolean']['output'];
   flagPost: Scalars['Boolean']['output'];
@@ -3978,6 +3988,12 @@ export type MutationAiUpdateSpaceArgs = {
 
 export type MutationAssignTicketsArgs = {
   input: AssignTicketsInput;
+};
+
+
+export type MutationAttachSpacePaymentAccountArgs = {
+  payment_account: Scalars['MongoID']['input'];
+  space: Scalars['MongoID']['input'];
 };
 
 
@@ -4562,6 +4578,12 @@ export type MutationDeleteUserFollowArgs = {
 
 export type MutationDeleteUserFriendshipArgs = {
   input: DeleteUserFriendshipInput;
+};
+
+
+export type MutationDetachSpacePaymentAccountArgs = {
+  payment_account: Scalars['MongoID']['input'];
+  space: Scalars['MongoID']['input'];
 };
 
 
@@ -5973,6 +5995,7 @@ export type Query = {
   listSpaceMembers: ListSpaceMembersResponse;
   listSpaceNFTs: ListSpaceNfTsResponse;
   listSpaceNewsletters: Array<EmailSetting>;
+  listSpacePaymentAccounts: ListSpacePaymentAccountsResponse;
   listSpaceRewardSettings: SpaceRewardSettings;
   listSpaceRewardVaults: Array<TokenRewardVault>;
   listSpaceRoleFeatures: ListSpaceRoleFeaturesResponse;
@@ -7153,6 +7176,15 @@ export type QueryListSpaceNewslettersArgs = {
 };
 
 
+export type QueryListSpacePaymentAccountsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  space: Scalars['MongoID']['input'];
+  types?: InputMaybe<Array<PaymentAccountType>>;
+};
+
+
 export type QueryListSpaceRewardSettingsArgs = {
   space: Scalars['MongoID']['input'];
   vaults?: InputMaybe<Array<Scalars['MongoID']['input']>>;
@@ -8055,6 +8087,8 @@ export type Space = {
   /** External events are listed on this space */
   listed_events?: Maybe<Array<Scalars['MongoID']['output']>>;
   nft_enabled?: Maybe<Scalars['Boolean']['output']>;
+  /** Payment accounts attached to this space */
+  payment_accounts?: Maybe<Array<Scalars['MongoID']['output']>>;
   /** One user is provided with one personal community where he can manage his own events. The personal community is not meant to be publicly visible and featured. */
   personal?: Maybe<Scalars['Boolean']['output']>;
   /** If true then the community is private, else the community is public. A private community requires moderation for membership. */
