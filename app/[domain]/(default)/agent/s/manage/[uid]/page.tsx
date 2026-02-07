@@ -19,11 +19,13 @@ import { CommunitySettingsLayout } from './CommunitySettingsLayout';
 import { AIChatActionKind, useAIChat } from '$lib/components/features/ai/provider';
 import { aiChat } from '$lib/components/features/ai/AIChatContainer';
 import { mockWelcomeSpace } from '$lib/components/features/ai/InputChat';
+import { CommunityAgents } from '$lib/components/features/community-manage/CommunityAgents';
 
 const tabs: Record<string, { label: string; component: React.FC<{ space: Space }> }> = {
   overview: { label: 'Overview', component: CommunityOverview },
   events: { label: 'Events', component: CommunityEvents },
   people: { label: 'People', component: CommunityPeople },
+  agents: { label: 'Agents', component: CommunityAgents },
   launchpad: { label: 'Launchpad', component: CommunityLaunchpad },
   settings: { label: 'Settings', component: CommunitySettingsLayout },
 };
