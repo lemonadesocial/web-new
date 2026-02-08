@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Eip1193Provider, ethers } from "ethers";
+import type { EthereumProvider } from "@avail-project/nexus-core";
+import { useAccount } from "wagmi";
 
 import { appKit } from "$lib/utils/appkit";
 import { isNativeToken } from "$lib/utils/crypto";
@@ -8,10 +10,14 @@ import ERC20 from "$lib/abis/ERC20.json";
 
 import { pricingInfoAtom, registrationModal, tokenAddressAtom, useEventRegistrationStore } from "../store";
 import { ConfirmCryptoPaymentModal } from "../modals/ConfirmCryptoPaymentModal";
+import { InsufficientBalanceSwapModal } from "../modals/InsufficientBalanceSwapModal";
 import { useBuyTickets } from "./useBuyTickets";
+import { useNexus } from "$lib/components/features/avail/nexus/NexusProvider";
 
 export function useCryptoPayment() {
   const store = useEventRegistrationStore();
+  const { connector } = useAccount();
+  const { handleInit } = useNexus();
 
   const { pay: handleBuyTickets, loading: buyTicketsLoading } = useBuyTickets(data => {
     registrationModal.open(ConfirmCryptoPaymentModal, {
@@ -54,7 +60,23 @@ export function useCryptoPayment() {
       const total = store.get(pricingInfoAtom)?.total || 0;
     
       if (BigInt(balance) < BigInt(total)) {
-        toast.error('Insufficient balance');
+        // toast.error('Insufficient balance');
+
+        const provider = connector
+          ? await connector.getProvider()
+          : appKit.getProvider("eip155");
+        if (provider) {
+          handleInit(provider as EthereumProvider);
+        }
+        
+        const shortfall = BigInt(total) - BigInt(balance);
+        registrationModal.open(InsufficientBalanceSwapModal, {
+          props: {
+            currentBalance: String(balance),
+            neededAmount: String(shortfall),
+            onSuccess: pay,
+          },
+        });
         return;
       }
 

@@ -41,6 +41,7 @@ interface NexusContextType {
   initializeNexus: (provider: EthereumProvider) => Promise<void>;
   deinitializeNexus: () => Promise<void>;
   attachEventHooks: () => void;
+  requestSwapIntentAutoAllow: () => void;
 }
 
 const NexusContext = createContext<NexusContextType | undefined>(undefined);
@@ -89,6 +90,7 @@ const NexusProvider = ({
   const intent = useRef<OnIntentHookData | null>(null);
   const allowance = useRef<OnAllowanceHookData | null>(null);
   const swapIntent = useRef<OnSwapIntentHookData | null>(null);
+  const swapIntentAutoAllowRef = useRef(false);
 
   const setupNexus = useCallback(async () => {
     const list = sdk.utils.getSupportedChains(
@@ -180,10 +182,11 @@ const NexusProvider = ({
     });
 
     sdk.setOnSwapIntentHook((data: OnSwapIntentHookData) => {
-      /**
-       * Same behaviour and function as setOnIntentHook, except this one is for swaps exclusively
-       */
       swapIntent.current = data;
+      if (swapIntentAutoAllowRef.current) {
+        swapIntentAutoAllowRef.current = false;
+        data.allow();
+      }
     });
   };
 
@@ -223,6 +226,10 @@ const NexusProvider = ({
     return rate * amount;
   }
 
+  const requestSwapIntentAutoAllow = useCallback(() => {
+    swapIntentAutoAllowRef.current = true;
+  }, []);
+
   useAccountEffect({
     onDisconnect() {
       deinitializeNexus();
@@ -249,6 +256,7 @@ const NexusProvider = ({
       swapIntent,
       exchangeRate: exchangeRate.current,
       getFiatValue,
+      requestSwapIntentAutoAllow,
     }),
     [
       nexusSDK,
@@ -261,6 +269,7 @@ const NexusProvider = ({
       loading,
       fetchBridgableBalance,
       fetchSwapBalance,
+      requestSwapIntentAutoAllow,
     ]
   );
   return (
