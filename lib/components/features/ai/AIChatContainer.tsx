@@ -91,7 +91,7 @@ export function AIChatContainer() {
       {state?.content}
     </div>
   ) : (
-    <Sheet isOpen={!!state?.content} onClose={() => handleClose()}>
+    <Sheet avoidKeyboard isOpen={!!state?.content} onClose={() => handleClose()}>
       <Sheet.Container className="bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
         <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
           <div className="flex justify-center items-end h-[20px]">
@@ -99,9 +99,7 @@ export function AIChatContainer() {
           </div>
         </Sheet.Header>
         <Sheet.Content disableDrag>
-          <Sheet.Scroller draggableAt="top">
-            <div className="p-4 overflow-auto h-full">{state?.content}</div>
-          </Sheet.Scroller>
+          <div className="p-4 overflow-auto h-full">{state?.content}</div>
         </Sheet.Content>
       </Sheet.Container>
     </Sheet>

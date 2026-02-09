@@ -3,6 +3,7 @@ import React from 'react';
 import { delay } from 'lodash';
 import { useRouter } from 'next/navigation';
 import { match } from 'ts-pattern';
+import { isMobile } from 'react-device-detect';
 
 import { Button, Card, drawer, Menu, MenuItem, toast } from '$lib/components/core';
 import { useClient, useMutation } from '$lib/graphql/request';
@@ -18,7 +19,6 @@ import { Event, GetEventDocument, GetSpaceDocument, Space } from '$lib/graphql/g
 import { useUpdateEvent } from '$lib/components/features/event-manage/store';
 import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 import { AIChatActionKind, Message, useAIChat } from './provider';
-import { isMobile } from 'react-device-detect';
 
 export function InputChat() {
   const router = useRouter();
