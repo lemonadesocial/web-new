@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.22.0](https://github.com/lemonadesocial/web-new/compare/v9.21.0...v9.22.0) (2026-02-09)
+
+
+### Features
+
+* display wrong passport minted ([73754cc](https://github.com/lemonadesocial/web-new/commit/73754cc2998350bcd10a4960cfa56bccacad1aa7))
+
 ## [9.21.0](https://github.com/lemonadesocial/web-new/compare/v9.20.0...v9.21.0) (2026-02-09)
 
 
