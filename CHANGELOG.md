@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.23.0](https://github.com/lemonadesocial/web-new/compare/v9.22.0...v9.23.0) (2026-02-09)
+
+
+### Features
+
+* update block explore url from chain ([aee7a82](https://github.com/lemonadesocial/web-new/commit/aee7a8299dae425169b54b9672f44f150247a80e))
+
 ## [9.22.0](https://github.com/lemonadesocial/web-new/compare/v9.21.0...v9.22.0) (2026-02-09)
 
 
