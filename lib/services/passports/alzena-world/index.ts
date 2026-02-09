@@ -33,8 +33,7 @@ const titleOffset: Point = { x: secondColumnX, y: secondLineY };
 const regularFont = `36px "${regularFontFamily}"`;
 
 const DESCRIPTION = [
-  'The best way to predict the future is to create it.',
-  'You are among the first to shape Alzena World, villages for those who dream to build a future where humanity is surviving, thriving, and flourishing.',
+  'Alzena World Passport- build with a community that believes in art and culture.',
 ].join('\n');
 
 const createMetadata = (imageUrl: string, passportId: string) => {
