@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.21.0](https://github.com/lemonadesocial/web-new/compare/v9.20.0...v9.21.0) (2026-02-09)
+
+
+### Features
+
+* update alzena-world nft description ([df38d7a](https://github.com/lemonadesocial/web-new/commit/df38d7aa0c24eaabae1963b4fd2bbac60f3af506))
+
 ## [9.20.0](https://github.com/lemonadesocial/web-new/compare/v9.19.0...v9.20.0) (2026-02-09)
 
 
