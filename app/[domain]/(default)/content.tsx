@@ -12,14 +12,14 @@ export function Content() {
   const me = useMe();
   if (!me) {
     return (
-      <div className="w-full flex items-center justify-between max-w-[1200px]">
+      <div className="w-full h-full flex max-sm:px-4 max-sm:pt-44 items-center justify-between max-w-[1200px]">
         <NonLoginContent />
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-[720px]">
+    <div className="w-full max-w-[720px] px-4 md:px-0">
       <AIChat />
     </div>
   );

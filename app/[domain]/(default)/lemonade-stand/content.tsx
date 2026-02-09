@@ -49,14 +49,14 @@ export function Content() {
 
   if (!me) {
     return (
-      <div className="w-full h-full flex items-center justify-between max-w-[1200px]">
+      <div className="w-full h-full max-sm:px-4 max-sm:pt-16 flex items-center justify-between max-w-[1200px]">
         <NonLoginContent />
       </div>
     );
   }
 
   return (
-    <div className="pt-12 flex flex-col gap-6">
+    <div className="flex flex-col gap-6 max-sm:px-4 pt-16 md:pt-8">
       <h1 className="text-2xl font-semibold">Lemonade Stand</h1>
 
       <div className="flex flex-col-reverse md:flex-row gap-6 md:gap-14">

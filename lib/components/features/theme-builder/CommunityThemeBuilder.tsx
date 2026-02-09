@@ -57,11 +57,7 @@ export function CommunityThemeBuilder({ themeData, spaceId }: { themeData: Theme
       />
       <AnimatePresence>
         {isAdvancedOpen && (
-          <CommunityThemeBuilderDrawer
-            initial={themeData}
-            spaceId={spaceId}
-            onClose={() => setIsAdvancedOpen(false)}
-          />
+          <CommunityThemeBuilderDrawer initial={themeData} spaceId={spaceId} onClose={() => setIsAdvancedOpen(false)} />
         )}
       </AnimatePresence>
     </>
@@ -124,11 +120,12 @@ function CommunityThemeBuilderPane({
           onDiscard: () => {
             onClose();
             dispatch({ type: ThemeBuilderActionKind.reset, payload: initial });
+            sheetRef.current?.snapTo(0);
+            modal.close();
           },
         },
         dismissible: false,
       });
-      sheetRef.current?.snapTo(0);
     } else {
       onClose();
     }
@@ -219,17 +216,23 @@ function CommunityThemeBuilderPane({
 
   if (onOpenAdvanced) {
     return (
-      <Sheet ref={sheetRef} isOpen={show ?? false} onClose={handleCloseSheet} snapPoints={[324]} initialSnap={0}>
-      <Sheet.Backdrop onTap={handleCloseSheet} />
+      <Sheet
+        ref={sheetRef}
+        avoidKeyboard
+        isOpen={show ?? false}
+        onClose={handleCloseSheet}
+        snapPoints={[0, 0.324, 1]}
+        initialSnap={1}
+      >
+        <Sheet.Backdrop onTap={handleCloseSheet} />
 
-      <Sheet.Container className="bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
-        <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
-          <div className="flex justify-center items-end h-[20px]">
-            <div className="bg-primary/8 rounded-xs w-[48px] h-1 cursor-row-resize"></div>
-          </div>
-        </Sheet.Header>
-        <Sheet.Content disableDrag>
-          <Sheet.Scroller draggableAt="top" className="no-scrollbar">
+        <Sheet.Container className="bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
+          <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
+            <div className="flex justify-center items-end h-[20px]">
+              <div className="bg-primary/8 rounded-xs w-[48px] h-1 cursor-row-resize"></div>
+            </div>
+          </Sheet.Header>
+          <Sheet.Content disableDrag>
             <CommunityThemeContentBuilder>
               <div className="flex justify-between">
                 <div className="flex gap-2">
@@ -301,10 +304,9 @@ function CommunityThemeBuilderPane({
                 </div>
               </div>
             </CommunityThemeContentBuilder>
-          </Sheet.Scroller>
-        </Sheet.Content>
-      </Sheet.Container>
-    </Sheet>
+          </Sheet.Content>
+        </Sheet.Container>
+      </Sheet>
     );
   }
 
@@ -342,7 +344,9 @@ function CommunityThemeBuilderPane({
               <Menu.Trigger>
                 <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
                   <span className="flex-1 text-left">
-                    {themeName in presets && state.theme === themeName ? presets[themeName as keyof typeof presets].name : 'Default'}
+                    {themeName in presets && state.theme === themeName
+                      ? presets[themeName as keyof typeof presets].name
+                      : 'Default'}
                   </span>
                   <i className="icon-chevrons-up-down text-quaternary" />
                 </div>
@@ -390,7 +394,11 @@ function CommunityThemeBuilderPane({
                       dispatch({ type: ThemeBuilderActionKind.select_font, payload });
                     }}
                   />
-                  <Button icon="icon-upload-sharp" variant="tertiary-alt" onClick={() => toast.success('Upload custom font coming soon')} />
+                  <Button
+                    icon="icon-upload-sharp"
+                    variant="tertiary-alt"
+                    onClick={() => toast.success('Upload custom font coming soon')}
+                  />
                 </div>
               </div>
               <div className="flex flex-col gap-2">
@@ -408,7 +416,11 @@ function CommunityThemeBuilderPane({
                       dispatch({ type: ThemeBuilderActionKind.select_font, payload });
                     }}
                   />
-                  <Button icon="icon-upload-sharp" variant="tertiary-alt" onClick={() => toast.success('Upload custom font coming soon')} />
+                  <Button
+                    icon="icon-upload-sharp"
+                    variant="tertiary-alt"
+                    onClick={() => toast.success('Upload custom font coming soon')}
+                  />
                 </div>
               </div>
             </div>
@@ -431,7 +443,9 @@ function CommunityThemeBuilderPane({
                         <div
                           className={clsx(
                             'size-5 rounded-full border border-card-border flex-shrink-0',
-                            colorVar.isAccent && state.config.color !== 'custom' && `${state.config.color} bg-accent-400`
+                            colorVar.isAccent &&
+                              state.config.color !== 'custom' &&
+                              `${state.config.color} bg-accent-400`,
                           )}
                           style={
                             colorVar.isAccent && state.config.color === 'custom'
@@ -496,7 +510,11 @@ export function CommunityThemeContentBuilder({
 
       <div className="flex flex-col gap-2">
         <div className="flex gap-2 flex-wrap">
-          <PopoverColor disabled={state.theme && themeName in presets && presets[themeName as keyof typeof presets]?.ui?.disabled?.color} />
+          <PopoverColor
+            disabled={
+              state.theme && themeName in presets && presets[themeName as keyof typeof presets]?.ui?.disabled?.color
+            }
+          />
           <PopoverStyle />
           <PopoverEffect />
         </div>

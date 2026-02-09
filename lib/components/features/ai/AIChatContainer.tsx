@@ -5,6 +5,8 @@ import { Pane } from '$lib/components/core/pane/pane';
 import { Button } from '$lib/components/core';
 import clsx from 'clsx';
 import { AIChatActionKind, useAIChat } from './provider';
+import { Sheet } from 'react-modal-sheet';
+import { isMobile } from 'react-device-detect';
 
 interface Option<T> {
   props?: T;
@@ -32,30 +34,37 @@ export const aiChat: AIChatPaneAPI = {
 
 export function AIChatContainer() {
   const [state, setState] = React.useState<AIChatPane>();
-  const [chatStore, chatStoreDispath] = useAIChat();
+  const [_, chatStoreDispath] = useAIChat();
 
   const handleOpen = <T extends object>(opts: Option<T> = {}) => {
     chatStoreDispath({ type: AIChatActionKind.toggle_chat });
-    setState({
-      content: (
-        <Pane.Root className="rounded-none">
-          <Pane.Header.Root>
-            <Pane.Header.Right>
-              <Button
-                size="sm"
-                variant="tertiary-alt"
-                icon="icon-keyboard-double-arrow-left"
-                onClick={() => aiChat.close()}
-              />
-            </Pane.Header.Right>
-          </Pane.Header.Root>
-          <Pane.Content className="p-4 overflow-auto">
-            <AIChat {...(opts.props as T)} />
-          </Pane.Content>
-        </Pane.Root>
-      ),
-      options: { position: 'right', ...opts },
-    });
+    if (isMobile) {
+      setState({
+        content: <AIChat {...(opts.props as T)} />,
+        options: { ...opts },
+      });
+    } else {
+      setState({
+        content: (
+          <Pane.Root className="rounded-none">
+            <Pane.Header.Root>
+              <Pane.Header.Right>
+                <Button
+                  size="sm"
+                  variant="tertiary-alt"
+                  icon="icon-keyboard-double-arrow-left"
+                  onClick={() => aiChat.close()}
+                />
+              </Pane.Header.Right>
+            </Pane.Header.Root>
+            <Pane.Content className="p-4 overflow-auto">
+              <AIChat {...(opts.props as T)} />
+            </Pane.Content>
+          </Pane.Root>
+        ),
+        options: { ...opts },
+      });
+    }
   };
 
   const handleClose = () => {
@@ -72,7 +81,7 @@ export function AIChatContainer() {
     return null;
   }
 
-  return (
+  return !isMobile ? (
     <div
       className={clsx(
         'flex-1 w-full transition-all ease-in-out duration-300 z-0',
@@ -81,5 +90,18 @@ export function AIChatContainer() {
     >
       {state?.content}
     </div>
+  ) : (
+    <Sheet avoidKeyboard isOpen={!!state?.content} onClose={() => handleClose()}>
+      <Sheet.Container className="bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
+        <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
+          <div className="flex justify-center items-end h-[20px]">
+            <div className="bg-primary/8 rounded-xs w-[48px] h-1 cursor-row-resize"></div>
+          </div>
+        </Sheet.Header>
+        <Sheet.Content disableDrag>
+          <div className="p-4 overflow-auto h-full">{state?.content}</div>
+        </Sheet.Content>
+      </Sheet.Container>
+    </Sheet>
   );
 }

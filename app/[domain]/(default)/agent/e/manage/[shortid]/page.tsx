@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { useRef } from 'react';
 import { Event, PublishEventDocument } from '$lib/graphql/generated/backend/graphql';
 import { Button, toast, Skeleton } from '$lib/components/core';
-import { useMutation } from '$lib/graphql/request';
+import { useMutation, useQuery } from '$lib/graphql/request';
 import { useUpdateEvent } from '$lib/components/features/event-manage/store';
 import { EventProtected } from '$lib/components/features/event-manage/EventProtected';
 import { aiChat } from '$lib/components/features/ai/AIChatContainer';
@@ -18,6 +18,9 @@ import { EventMore } from '$lib/components/features/event-manage/EventMore';
 import { EventOverview } from '$lib/components/features/event-manage/overview/EventOverview';
 import { EventRegistration } from '$lib/components/features/event-manage/EventRegistration';
 import { EventPaymentLayout } from './EventPaymentLayout';
+import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { aiChatClient } from '$lib/graphql/request/instances';
+import { isMobile } from 'react-device-detect';
 
 const tabs: Record<string, { label: string; component: React.FC }> = {
   overview: { label: 'Overview', component: EventOverview },
@@ -83,6 +86,20 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [aiChatState, aiChatDispatch] = useAIChat();
+  useQuery(
+    GetListAiConfigDocument,
+    {
+      variables: { filter: { events_eq: event._id } },
+      onComplete: (data) => {
+        if (data?.configs?.items?.length) {
+          const config = data.configs.items[0] as AiConfigFieldsFragment;
+          aiChatDispatch({ type: AIChatActionKind.set_config, payload: { config: config._id } });
+        }
+      },
+      skip: !event._id,
+    },
+    aiChatClient,
+  );
 
   const [selectedTab, setSelectedTab] = React.useState('overview');
 
@@ -114,16 +131,16 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
       aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { data: { event_id: event._id } } });
       aiChatDispatch({ type: AIChatActionKind.add_message, payload: { messages: mockWelcomeEvent(event) } });
 
-      aiChat.open();
+      if (!isMobile) aiChat.open();
     }
   }, []);
 
   const Comp = tabs[selectedTab].component;
 
   return (
-    <div className="relative h-dvh ">
+    <div className="relative h-dvh overflow-auto">
       <div ref={sentinelRef} />
-      <div className="sticky top-0 border-b z-1 px-4">
+      <div className="sticky top-8 md:top-0 border-b z-1 px-4">
         <div className="backdrop-blur-md transition-all duration-300 pt-7 font-default">
           <div className="page mx-auto px-4 md:px-0">
             {event.space_expanded && (
@@ -136,7 +153,7 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
               </div>
             )}
             <div className="flex justify-between items-center">
-              <h1 className={clsx('font-semibold transition-all duration-300 text-2xl')}>{event.title}</h1>
+              <h1 className={clsx('font-semibold transition-all duration-300 text-2xl line-clamp-1')}>{event.title}</h1>
               <div className="flex gap-2">
                 {event.published ? (
                   <Button
@@ -194,13 +211,13 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
         </div>
       </div>
 
-      <div className="px-4">
+      <div className="max-sm:pt-5 md:px-4">
         <Comp />
       </div>
 
       {!aiChatState.toggleChat && (
         <button
-          className="sticky bottom-10 left-10 w-14 h-14 aspect-square flex items-center justify-center rounded-full bg-gradient-to-r from-(--btn-tertiary) via-[rgba(255,255,255,0.08)] via-(--color-page-background-overlay) to-(--btn-tertiary) border cursor-pointer group"
+          className="sticky bottom-4 left-4 w-14 h-14 aspect-square flex items-center justify-center rounded-full bg-gradient-to-r from-(--btn-tertiary) via-[rgba(255,255,255,0.08)] via-(--color-page-background-overlay) to-(--btn-tertiary) border cursor-pointer group backdrop-blur-sm"
           onClick={() => aiChat.open()}
         >
           <i className="icon-lemon-ai text-warning-300 w-8 h-8 aspect-square hover:scale-110  transition-all ease-in-out duration-300" />

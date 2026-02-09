@@ -3,6 +3,8 @@ import { RunResult } from '$lib/graphql/generated/ai/graphql';
 import { v4 as uuidV4 } from 'uuid';
 import React from 'react';
 import { defer } from 'lodash';
+import { AI_CONFIG } from '$lib/utils/constants';
+import { config } from 'process';
 
 export type ToolKey = 'create_event' | 'manage_event' | 'create_community' | 'manage_community';
 
@@ -25,12 +27,14 @@ type State = {
   thinking?: boolean;
   openPane?: boolean;
   data?: unknown;
+  config: string;
 };
 
 const session = uuidV4();
 const defaultState: State = {
   toggleChat: false,
   session: session,
+  config: AI_CONFIG,
   tools: [
     { key: 'create_event', icon: 'icon-ticket', label: 'Create Event' },
     { key: 'manage_event', icon: 'icon-crown', label: 'Create Event' },
@@ -64,6 +68,7 @@ export enum AIChatActionKind {
   'set_thinking',
   'set_open_pane',
   'set_data_run',
+  'set_config',
   'reset',
 }
 
@@ -101,6 +106,10 @@ function reducers(state: State, action: AIChatAction) {
 
     case AIChatActionKind.set_data_run: {
       return { ...state, data: action.payload?.data || {} };
+    }
+
+    case AIChatActionKind.set_config: {
+      return { ...state, config: action.payload?.config };
     }
 
     case AIChatActionKind.reset: {

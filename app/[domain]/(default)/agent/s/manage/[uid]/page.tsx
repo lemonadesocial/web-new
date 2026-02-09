@@ -19,6 +19,9 @@ import { CommunitySettingsLayout } from './CommunitySettingsLayout';
 import { AIChatActionKind, useAIChat } from '$lib/components/features/ai/provider';
 import { aiChat } from '$lib/components/features/ai/AIChatContainer';
 import { mockWelcomeSpace } from '$lib/components/features/ai/InputChat';
+import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
+import { aiChatClient } from '$lib/graphql/request/instances';
+import { isMobile } from 'react-device-detect';
 import { CommunityAgents } from '$lib/components/features/community-manage/CommunityAgents';
 
 const tabs: Record<string, { label: string; component: React.FC<{ space: Space }> }> = {
@@ -129,6 +132,21 @@ function Content({ space, uid }: { space: Space; uid: string }) {
   const [selectedTab, setSelectedTab] = React.useState('overview');
   const [aiChatState, aiChatDispatch] = useAIChat();
 
+  useQuery(
+    GetListAiConfigDocument,
+    {
+      variables: { filter: { spaces_eq: space._id } },
+      onComplete: (data) => {
+        if (data?.configs?.items?.length) {
+          const config = data.configs.items[0] as AiConfigFieldsFragment;
+          aiChatDispatch({ type: AIChatActionKind.set_config, payload: { config: config._id } });
+        }
+      },
+      skip: !space._id,
+    },
+    aiChatClient,
+  );
+
   const Comp = tabs[selectedTab].component;
 
   React.useEffect(() => {
@@ -137,14 +155,14 @@ function Content({ space, uid }: { space: Space; uid: string }) {
       aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { data: { space_id: space._id } } });
       aiChatDispatch({ type: AIChatActionKind.add_message, payload: { messages: mockWelcomeSpace(space) } });
 
-      aiChat.open();
+      if (!isMobile) aiChat.open();
     }
   }, []);
 
   return (
-    <main className="flex flex-col h-dvh overflow-auto">
+    <main className="flex flex-col h-dvh overflow-auto pt-8">
       <Header showUI={false} />
-      <div className="px-4 md:px-0 pt-6 sticky top-0 bg-page-background backdrop-blur-3xl z-2 border-b">
+      <div className="px-4 md:px-0 pt-10 sticky top-0 bg-page-background backdrop-blur-3xl z-2 border-b">
         <div className="page mx-auto">
           <div className="flex justify-between items-center">
             <div className="flex gap-3 items-center">
@@ -191,7 +209,7 @@ function Content({ space, uid }: { space: Space; uid: string }) {
 
       {!aiChatState.toggleChat && (
         <button
-          className="sticky bottom-10 left-10 w-14 h-14 aspect-square flex items-center justify-center rounded-full bg-gradient-to-r from-(--btn-tertiary) via-[rgba(255,255,255,0.08)] via-(--color-page-background-overlay) to-(--btn-tertiary) border cursor-pointer group"
+          className="sticky bottom-5 left-5 w-14 h-14 aspect-square flex items-center justify-center rounded-full bg-gradient-to-r from-(--btn-tertiary) via-[rgba(255,255,255,0.08)] via-(--color-page-background-overlay) to-(--btn-tertiary) border cursor-pointer group backdrop-blur-sm"
           onClick={() => aiChat.open()}
         >
           <i className="icon-lemon-ai text-warning-300 w-8 h-8 aspect-square hover:scale-110  transition-all ease-in-out duration-300" />
