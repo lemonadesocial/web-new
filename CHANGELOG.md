@@ -1,5 +1,13 @@
 # Changelog
 
+## [9.20.0](https://github.com/lemonadesocial/web-new/compare/v9.19.0...v9.20.0) (2026-02-09)
+
+
+### Features
+
+* update keyboard avoid sheet mobile view ([d3ddb02](https://github.com/lemonadesocial/web-new/commit/d3ddb020ef26eb19b1871af5fe0906bd853ec79f))
+* update style sidebar ([2e145f9](https://github.com/lemonadesocial/web-new/commit/2e145f948d62ec3da44259d2b94128adeca69196))
+
 ## [9.19.0](https://github.com/lemonadesocial/web-new/compare/v9.18.1...v9.19.0) (2026-02-07)
 
 
