@@ -72,7 +72,7 @@ const Sidebar = () => {
       {/* Web View */}
       <div
         className={clsx(
-          'relative bg-overlay-secondary transition-all duration-300 h-screen text-tertiary border-r max-sm:hidden z-10',
+          'relative bg-overlay-primary transition-all duration-300 h-screen text-tertiary border-r max-sm:hidden z-10',
           toggle ? 'w-64' : 'w-16',
         )}
       >
@@ -148,13 +148,13 @@ const Sidebar = () => {
               ))}
             </div>
 
-            <div className={clsx('flex-1 overflow-hidden', !toggle && 'hidden')}>
+            <div className={clsx('flex-1 pb-2 overflow-hidden', !toggle && 'hidden')}>
               <Divider className="h-1 w-full" />
               {toggle && <SectionEvents handleNavigate={(path) => handleNavigate(path)} />}
             </div>
           </div>
 
-          <div className=" backdrop-blur-sm bottom-0 left-0 right-0 border-t p-3 pt-4 flex flex-col gap-3">
+          <div className="border-t p-3 pt-4 flex flex-col gap-3">
             <Card.Root
               className={clsx(
                 'border-none hover:bg-(--btn-tertiary)',
@@ -217,7 +217,7 @@ const Sidebar = () => {
                     </div>
                   )}
                 </Menu.Trigger>
-                <Menu.Content className="p-0 min-w-[228px]">
+                <Menu.Content className="p-0 min-w-[228px] backdrop-blur-md!">
                   {({ toggle }) => (
                     <>
                       <div className="p-1">
@@ -277,7 +277,7 @@ const Sidebar = () => {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'tween', ease: 'easeInOut' }}
-              className="fixed bg-overlay-secondary h-screen text-tertiary border-r z-50 w-64"
+              className="fixed bg-overlay-secondary h-screen text-tertiary border-r z-50 w-64 md:hidden"
             >
               <div className="flex flex-col h-full relative">
                 <div className="flex-1 flex flex-col overflow-hidden">
@@ -345,7 +345,7 @@ const Sidebar = () => {
                   </div>
                 </div>
 
-                <div className=" backdrop-blur-sm bottom-0 left-0 right-0 border-t p-3 pt-4 flex flex-col gap-3">
+                <div className="border-t p-3 pt-4 flex flex-col gap-3">
                   <Card.Root className="border-none hover:bg-(--btn-tertiary) bg-(--btn-tertiary)">
                     <Card.Content className="flex justify-between items-center px-3 py-2 gap-3">
                       <div>
@@ -496,7 +496,7 @@ function SectionEvents({ handleNavigate }: { handleNavigate: (path: string) => v
   const me = useMe();
   const [hasMore, setHasMore] = React.useState(true);
 
-  const { data, loading, fetchMore } = useQuery(GetHostingEventsSidebarLelfDocument, {
+  const { data, fetchMore } = useQuery(GetHostingEventsSidebarLelfDocument, {
     variables: { limit: 15, user: me?._id, skip: 0 },
     skip: !me,
   });

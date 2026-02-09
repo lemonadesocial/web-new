@@ -7,12 +7,7 @@ import { isMobile } from 'react-device-detect';
 
 import { Button, Card, drawer, Menu, MenuItem, toast } from '$lib/components/core';
 import { useClient, useMutation } from '$lib/graphql/request';
-import {
-  AiConfigFieldsFragment,
-  GetAiConfigDocument,
-  GetListAiConfigDocument,
-  RunAiChatDocument,
-} from '$lib/graphql/generated/ai/graphql';
+import { AiConfigFieldsFragment, GetListAiConfigDocument, RunAiChatDocument } from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { AI_CONFIG } from '$lib/utils/constants';
 import { Event, GetEventDocument, GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
