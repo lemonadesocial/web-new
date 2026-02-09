@@ -73,7 +73,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   rows = 3,
   ...props
 }, ref) => {
-  const baseClasses = 'w-full rounded-sm focus:outline-none placeholder-quaternary px-2.5 py-2 font-medium resize-none no-scrollbar';
+  const baseClasses = 'w-full rounded-sm focus:outline-none placeholder-quaternary px-2.5 py-2 font-medium resize-none no-scrollbar max-h-60 overflow-auto';
 
   const finalClassName = twMerge(
     clsx(
@@ -99,7 +99,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = 'auto';
-      textarea.style.height = `${textarea.scrollHeight}px`;
+      const maxHeight = Number.parseFloat(getComputedStyle(textarea).maxHeight);
+      if (Number.isFinite(maxHeight) && textarea.scrollHeight > maxHeight) {
+        textarea.style.height = `${maxHeight}px`;
+      } else {
+        textarea.style.height = `${textarea.scrollHeight}px`;
+      }
     }
   }, []);
 

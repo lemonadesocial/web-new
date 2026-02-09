@@ -1,5 +1,24 @@
 # Changelog
 
+## [9.19.0](https://github.com/lemonadesocial/web-new/compare/v9.18.1...v9.19.0) (2026-02-07)
+
+
+### Features
+
+* add agents tab manage community ([d0a14eb](https://github.com/lemonadesocial/web-new/commit/d0a14eb259e7ece3110c8881535a132b9ec2df97))
+
+
+### Bug Fixes
+
+* table coin overlap ([3cd9790](https://github.com/lemonadesocial/web-new/commit/3cd979010d28410a86c1c2dc4b7edaaa27eb6bb7))
+
+## [9.18.1](https://github.com/lemonadesocial/web-new/compare/v9.18.0...v9.18.1) (2026-02-05)
+
+
+### Bug Fixes
+
+* textarea max height ([443ee63](https://github.com/lemonadesocial/web-new/commit/443ee632ac7bb6039a1dea3669e9b27241e60998))
+
 ## [9.18.0](https://github.com/lemonadesocial/web-new/compare/v9.17.1...v9.18.0) (2026-02-04)
 
 

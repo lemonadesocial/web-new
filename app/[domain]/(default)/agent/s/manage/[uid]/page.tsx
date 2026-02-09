@@ -22,11 +22,13 @@ import { mockWelcomeSpace } from '$lib/components/features/ai/InputChat';
 import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { isMobile } from 'react-device-detect';
+import { CommunityAgents } from '$lib/components/features/community-manage/CommunityAgents';
 
 const tabs: Record<string, { label: string; component: React.FC<{ space: Space }> }> = {
   overview: { label: 'Overview', component: CommunityOverview },
   events: { label: 'Events', component: CommunityEvents },
   people: { label: 'People', component: CommunityPeople },
+  agents: { label: 'Agents', component: CommunityAgents },
   launchpad: { label: 'Launchpad', component: CommunityLaunchpad },
   settings: { label: 'Settings', component: CommunitySettingsLayout },
 };
