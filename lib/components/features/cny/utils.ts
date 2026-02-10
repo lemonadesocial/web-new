@@ -11,4 +11,4 @@ const ASSET_MAP: Record<number, string> = {
 };
 
 export const getAsset = (quantity: number) =>
-  ASSET_MAP[quantity] ?? `${ASSET_PREFIX}/assets/images/red-envelope-packs/1000-envelopes.png`;
+  ASSET_MAP[quantity] ?? `${ASSET_PREFIX}/assets/images/red-envelope-packs/1-envelope.png`;

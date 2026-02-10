@@ -17,7 +17,7 @@ import { truncateMiddle } from '$lib/utils/string';
 import { formatNumber } from '$lib/utils/number';
 import { randomUserImage } from '$lib/utils/user';
 import { CardTable } from '$lib/components/core/table';
-import { Avatar, Skeleton, Button, Menu, MenuItem, Divider } from '$lib/components/core';
+import { Avatar, Skeleton, Button, Menu, MenuItem, Divider, Chip } from '$lib/components/core';
 import { RedEnvelopeClient } from '$lib/services/red-envelope';
 import { SentEnvelopesStats } from './SentEnvelopesStats';
 
@@ -78,14 +78,9 @@ function SentEnvelopeRow({
           <p className="text-tertiary">{amount}</p>
         </div>
         <div className="flex-[0.8] min-w-0 flex justify-end">
-          <span
-            className={envelope.claimed
-              ? 'px-3 py-1 rounded-full text-white text-sm font-medium bg-red-600'
-              : 'px-3 py-1 rounded-full text-white text-sm font-medium bg-amber-500'
-            }
-          >
+          <Chip variant={envelope.claimed ? 'secondary' : 'warning'} size="xxs" className="rounded-full">
             {status}
-          </span>
+          </Chip>
         </div>
       </div>
     </CardTable.Row>
