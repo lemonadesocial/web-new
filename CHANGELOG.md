@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.1.0](https://github.com/lemonadesocial/web-new/compare/v10.0.0...v10.1.0) (2026-02-10)
+
+
+### Features
+
+* seal ui ([8547a0a](https://github.com/lemonadesocial/web-new/commit/8547a0a0c916c324d7794ccb7bfdfc8fd964ccb7))
+
+
+### Bug Fixes
+
+* passport chain ([0028022](https://github.com/lemonadesocial/web-new/commit/00280229055435bbbed97742d2f81fa6254f7f9c))
+
 ## [10.0.0](https://github.com/lemonadesocial/web-new/compare/v9.26.0...v10.0.0) (2026-02-10)
 
 
