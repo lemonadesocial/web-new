@@ -480,19 +480,24 @@ function Container({ children }: React.PropsWithChildren) {
       <div className="md:hidden fixed z-50 top-0 bg-background left-0 right-0 p-2.5">
         <button
           className="text-tertiary p-2.5 flex justify-center cursor-pointer"
-          onClick={() => setToggle((prev) => (prev !== 'hide' ? 'hide' : 'open'))}
+          onClick={() => {
+            console.log(toggle);
+            setToggle((prev) => (prev !== 'hide' ? 'open' : 'hide'));
+          }}
         >
           <i className="icon-left-panel-close-outline size-5" />
         </button>
       </div>
       <div
-        className={clsx(
-          'relative bg-overlay-primary transition-all duration-300 h-screen text-tertiary border-r max-sm:hidden z-10',
-          toggle === 'open' && 'w-64',
-          toggle === 'mini' && 'w-16',
-        )}
+        className={clsx('relative bg-overlay-primary transition-all duration-300 h-screen text-tertiary border-r z-10')}
       >
-        <div className="flex flex-col h-full">
+        <div
+          className={clsx(
+            'flex flex-col h-full',
+            toggle === 'open' && 'w-64',
+            toggle === 'mini' && 'w-16 max-sm:hidden',
+          )}
+        >
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="p-3 flex items-center justify-between">
               <div className="group">
