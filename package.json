@@ -61,7 +61,7 @@
     "@vis.gl/react-google-maps": "^1.5.1",
     "@yudiel/react-qr-scanner": "^2.5.0",
     "array-move": "^4.0.0",
-    "axios": "^1.10.0",
+    "axios": "^1.13.5",
     "canvas": "^3.1.2",
     "cid": "multiformats/cid",
     "clsx": "^2.1.1",
