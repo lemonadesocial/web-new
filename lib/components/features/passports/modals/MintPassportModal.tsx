@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Eip1193Provider, ethers } from 'ethers';
 import { useAtomValue } from 'jotai';
 import * as Sentry from '@sentry/nextjs';
@@ -7,7 +7,7 @@ import * as Sentry from '@sentry/nextjs';
 import { Button, modal, ModalContent, toast } from '$lib/components/core';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { appKit, useAppKitProvider } from '$lib/utils/appkit';
-import { AbstractPassportContract, formatError, writeContract } from '$lib/utils/crypto';
+import { approveERC20Spender, AbstractPassportContract, ERC20Contract, formatError, isNativeToken, writeContract } from '$lib/utils/crypto';
 import { SignTransactionModal } from '$lib/components/features/modals/SignTransaction';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
 import { chainsMapAtom } from '$lib/jotai';
@@ -38,6 +38,41 @@ export function MintPassportModal({
 
   const chainsMap = useAtomValue(chainsMapAtom);
   const [status, setStatus] = useState<'signing' | 'confirming' | 'success' | 'none'>('none');
+  const [currency, setCurrency] = useState<string | null>(null);
+  const [currencySymbol, setCurrencySymbol] = useState<string>('');
+  const [currencyDecimals, setCurrencyDecimals] = useState<number>(18);
+
+  const chain = chainsMap[PASSPORT_CHAIN_ID];
+  const contractAddress = chain?.[ContractAddressFieldMapping[provider] as keyof Chain] as string | undefined;
+
+  useEffect(() => {
+    if (!chain?.rpc_url || !contractAddress) return;
+
+    const loadCurrencyAndSymbol = async () => {
+      const rpcProvider = new ethers.JsonRpcProvider(chain.rpc_url);
+      const contract = AbstractPassportContract.attach(contractAddress).connect(rpcProvider) as ethers.Contract;
+      const value = await contract.getFunction('currency')();
+      setCurrency(value);
+
+      const fromChainToken = chain.tokens?.find((t) => t.contract?.toLowerCase() === value?.toLowerCase());
+      if (fromChainToken) {
+        setCurrencySymbol(fromChainToken.symbol);
+        setCurrencyDecimals(fromChainToken.decimals);
+        return;
+      }
+
+      const erc20 = ERC20Contract.attach(value).connect(rpcProvider) as ethers.Contract;
+      const [sym, decimals] = await Promise.all([
+        erc20.getFunction('symbol')(),
+        erc20.getFunction('decimals')(),
+      ]);
+      
+      setCurrencySymbol(sym);
+      setCurrencyDecimals(Number(decimals));
+    };
+
+    loadCurrencyAndSymbol();
+  }, [chain?.rpc_url, chain?.tokens, contractAddress]);
 
   const handleMint = async () => {
     try {
@@ -45,14 +80,27 @@ export function MintPassportModal({
         throw new Error('Mint data not found');
       }
 
-      const contrackKey = ContractAddressFieldMapping[provider] as keyof Chain;
-      const contractAddress = chainsMap[PASSPORT_CHAIN_ID]?.[contrackKey];
-
       if (!contractAddress) {
         throw new Error('Passport contract address not configured');
       }
 
+      if (currency === null) {
+        throw new Error('Currency not loaded');
+      }
+
       setStatus('signing');
+
+      const priceWei = BigInt(mintData.price);
+      const isNative = isNativeToken(currency, PASSPORT_CHAIN_ID);
+
+      if (!isNative && priceWei > 0n) {
+        await approveERC20Spender(
+          currency,
+          contractAddress as string,
+          priceWei,
+          walletProvider as Eip1193Provider,
+        );
+      }
 
       const transaction = await writeContract(
         AbstractPassportContract,
@@ -60,7 +108,7 @@ export function MintPassportModal({
         walletProvider as Eip1193Provider,
         'mint',
         [mintData.metadata, mintData.price, mintData.signature],
-        { value: mintData.price },
+        { value: isNative ? mintData.price : 0 },
       );
 
       const txHash = transaction.hash;
@@ -145,8 +193,8 @@ export function MintPassportModal({
           </p>
         </div>
 
-        <Button variant="secondary" onClick={handleMint}>
-          Mint {mintData?.price && +mintData.price > 0 ? `‣ ${ethers.formatEther(mintData.price)} ETH` : '‣ Free'}
+        <Button variant="secondary" onClick={handleMint} disabled={!currency}>
+          Mint {mintData?.price && +mintData.price > 0 ? `‣ ${ethers.formatUnits(mintData.price, currencyDecimals)} ${currencySymbol}` : '‣ Free'}
         </Button>
       </div>
     </ModalContent>

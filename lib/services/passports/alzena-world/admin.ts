@@ -3,7 +3,7 @@ import { PassportProvider } from '$lib/graphql/generated/backend/graphql';
 
 export const getApproval = async (wallet: string, uri: string) => {
   const opts = {
-    provider: PassportProvider.VinylNation,
+    provider: PassportProvider.AlzenaWorld,
     wallet,
     uri,
   };
