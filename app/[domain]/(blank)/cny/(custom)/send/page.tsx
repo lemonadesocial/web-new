@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { ethers, type Eip1193Provider } from 'ethers';
+import { ethers } from 'ethers';
 
 import { useQuery } from '$lib/graphql/request';
 import { coinClient } from '$lib/graphql/request/instances';
@@ -11,30 +11,18 @@ import {
   type EnvelopeQuery,
   type EnvelopeQueryVariables,
 } from '$lib/graphql/generated/coin/graphql';
-import { useAppKitAccount, useAppKitProvider } from '$lib/utils/appkit';
+import { useAppKitAccount } from '$lib/utils/appkit';
 import { Button, Checkbox, Chip, modal, toast, Menu, MenuItem, Segment, InputField } from '$lib/components/core';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 import { ImportCSVModal } from '$lib/components/features/cny/modals/ImportCSVModal';
+import { SealRedEnvelopesModal } from '$lib/components/features/cny/modals/SealRedEnvelopesModal';
 import {
   getListChains,
-  writeContract,
-  formatError,
-  approveERC20Spender,
-  isNativeToken,
-  RedEnvelopeContract,
 } from '$lib/utils/crypto';
 import { ASSET_PREFIX, MEGAETH_CHAIN_ID } from '$lib/utils/constants';
-import { RED_ENVELOPE_ADDRESS, RedEnvelopeClient } from '$lib/services/red-envelope/client';
+import { RedEnvelopeClient } from '$lib/services/red-envelope/client';
 import { formatNumber } from '$lib/utils/number';
-
-interface EnvelopeRow {
-  id: string;
-  token_id: number;
-  selected: boolean;
-  recipient: string;
-  amount: string;
-  message: string;
-}
+import { EnvelopeRow } from '$lib/components/features/cny/types';
 
 const RECIPIENT_PLACEHOLDER = 'Who do you want to send this to?';
 
@@ -82,11 +70,9 @@ function parseCSVAddresses(text: string): string[] {
 function SendPage() {
   const router = useRouter();
   const { address } = useAppKitAccount();
-  const { walletProvider } = useAppKitProvider('eip155');
   const [localRows, setLocalRows] = useState<EnvelopeRow[]>([]);
   const [focusedRecipientRowId, setFocusedRecipientRowId] = useState<string | null>(null);
   const [openMenuRowId, setOpenMenuRowId] = useState<string | null>(null);
-  const [isSealing, setIsSealing] = useState(false);
   const [currencyDecimals, setCurrencyDecimals] = useState<number | null>(null);
   const [currencySymbol, setCurrencySymbol] = useState<string | null>(null);
   const [isSplitDropdownOpen, setIsSplitDropdownOpen] = useState(false);
@@ -320,29 +306,6 @@ function SendPage() {
   };
 
   const handleSealOrConnect = () => {
-    if (!walletProvider || !address) {
-      const chains = getListChains();
-      const megaEthChain = chains.find((chain) => chain.chain_id === MEGAETH_CHAIN_ID.toString());
-
-      modal.open(ConnectWallet, {
-        props: {
-          chain: megaEthChain,
-          onConnect: () => handleSeal(),
-        },
-      });
-
-      return;
-    }
-
-    handleSeal();
-  };
-
-  const handleSeal = async () => {
-    if (!walletProvider || !address) {
-      toast.error('Please connect your wallet');
-      return;
-    }
-
     if (selectedRows.length === 0) {
       toast.error('Select at least one row to seal');
       return;
@@ -353,12 +316,6 @@ function SendPage() {
       return;
     }
 
-    const rowsWithoutEnvelope = selectedRows.filter((row) => row.token_id === 0);
-    if (rowsWithoutEnvelope.length > 0) {
-      toast.error('Some rows have no envelope assigned. Buy envelopes first.');
-      return;
-    }
-
     const invalidRows = selectedRows.filter((row) => !isRowValid(row));
     if (invalidRows.length > 0) {
       const invalidEnvelopeNumbers = invalidRows.map((r) => `#${r.token_id}`).join(', ');
@@ -366,52 +323,25 @@ function SendPage() {
       return;
     }
 
-    try {
-      const _seals = selectedRows.map((row) => {
-        const recipientWallet = ethers.getAddress(row.recipient.trim());
-        const amountWei = ethers.parseUnits(row.amount || '0', currencyDecimals);
-        return {
-          recipient: { wallet: recipientWallet, amount: amountWei },
-          message: row.message ?? '',
-          envelope: BigInt(row.token_id),
-        };
-      });
+    const chains = getListChains();
+    const megaEthChain = chains.find((chain) => chain.chain_id === MEGAETH_CHAIN_ID.toString());
 
-      const sumAmountWei = _seals.reduce(
-        (acc, s) => acc + s.recipient.amount,
-        0n
-      );
-
-      setIsSealing(true);
-
-      const client = RedEnvelopeClient.getInstance();
-      const currencyAddress = await client.getCurrency();
-
-      if (!isNativeToken(currencyAddress, MEGAETH_CHAIN_ID.toString())) {
-        await approveERC20Spender(
-          currencyAddress,
-          RED_ENVELOPE_ADDRESS,
-          sumAmountWei,
-          walletProvider as Eip1193Provider,
-        );
-      }
-
-      const transaction = await writeContract(
-        RedEnvelopeContract,
-        RED_ENVELOPE_ADDRESS,
-        walletProvider as Eip1193Provider,
-        'seal',
-        [_seals],
-      );
-
-      await transaction.wait();
-      toast.success('Envelopes sealed successfully');
-      refetch();
-    } catch (err) {
-      toast.error(formatError(err));
-    } finally {
-      setIsSealing(false);
-    }
+    modal.open(ConnectWallet, {
+      props: {
+        chain: megaEthChain,
+        onConnect: () => {
+          modal.open(SealRedEnvelopesModal, {
+            props: {
+              selectedRows,
+              currencyDecimals,
+              onComplete: () => {
+                refetch();
+              },
+            },
+          });
+        },
+      },
+    });
   };
 
   const headerCellClass =
@@ -698,8 +628,7 @@ function SendPage() {
         <Button
           variant="secondary"
           onClick={handleSealOrConnect}
-          disabled={isSealing || selectedRows.length === 0 || currencyDecimals == null}
-          loading={isSealing}
+          disabled={selectedRows.length === 0 || currencyDecimals == null}
         >
           Seal & Send
         </Button>
