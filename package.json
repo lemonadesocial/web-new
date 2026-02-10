@@ -142,7 +142,7 @@
     "husky": "^9.1.7",
     "jsdom": "^26.0.0",
     "lint-staged": "^15.4.3",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "motion": "^12.5.0",
     "prettier": "^3.5.2",
     "typescript": "^5",
