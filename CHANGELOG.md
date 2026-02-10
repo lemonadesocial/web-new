@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.26.0](https://github.com/lemonadesocial/web-new/compare/v9.25.0...v9.26.0) (2026-02-10)
+
+
+### Features
+
+* red envelopes ([db08742](https://github.com/lemonadesocial/web-new/commit/db0874258a504373852f904621bb3513318b6bb1))
+
 ## [9.25.0](https://github.com/lemonadesocial/web-new/compare/v9.24.0...v9.25.0) (2026-02-10)
 
 
