@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.24.0](https://github.com/lemonadesocial/web-new/compare/v9.23.0...v9.24.0) (2026-02-10)
+
+
+### Features
+
+* support mint erc20 for minting passport ([e4ca1be](https://github.com/lemonadesocial/web-new/commit/e4ca1be002ca1b44cc63cb7926b4296b3837c02a))
+
 ## [9.23.0](https://github.com/lemonadesocial/web-new/compare/v9.22.0...v9.23.0) (2026-02-09)
 
 
