@@ -20,6 +20,7 @@ import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { MintPassportModal } from './modals/MintPassportModal';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { formatError } from '$lib/utils/crypto';
+import { usePassportChain } from '$lib/hooks/usePassportChain';
 
 export function Footer() {
   const chainsMap = useAtomValue(chainsMapAtom);
@@ -29,6 +30,7 @@ export function Footer() {
   const [isMinting, setIsMinting] = React.useState(false);
 
   const [state, dispatch] = usePassportContext();
+  const chain = usePassportChain(state.provider);
 
   const checkLemonhead = () => {
     if (state.enabled?.shouldMintedLemonhead) {
@@ -79,7 +81,7 @@ export function Footer() {
             onConnect: () => {
               handleMint();
             },
-            chain: chainsMap[PASSPORT_CHAIN_ID],
+            chain: chain,
           },
         });
       })

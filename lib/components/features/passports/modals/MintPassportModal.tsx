@@ -1,7 +1,6 @@
 'use client';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Eip1193Provider, ethers } from 'ethers';
-import { useAtomValue } from 'jotai';
 import * as Sentry from '@sentry/nextjs';
 
 import { Button, modal, ModalContent, toast } from '$lib/components/core';
@@ -10,12 +9,11 @@ import { appKit, useAppKitProvider } from '$lib/utils/appkit';
 import { approveERC20Spender, AbstractPassportContract, ERC20Contract, formatError, isNativeToken, writeContract } from '$lib/utils/crypto';
 import { SignTransactionModal } from '$lib/components/features/modals/SignTransaction';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
-import { chainsMapAtom } from '$lib/jotai';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { AbstractPassportABI } from '$lib/abis/AbstractPassport';
 
-import { PASSPORT_CHAIN_ID } from '../utils';
 import { ContractAddressFieldMapping, PASSPORT_PROVIDER } from '../types';
+import { usePassportChain } from '$lib/hooks/usePassportChain';
 
 type MintData = {
   signature: string;
@@ -36,13 +34,12 @@ export function MintPassportModal({
 }) {
   const { walletProvider } = useAppKitProvider('eip155');
 
-  const chainsMap = useAtomValue(chainsMapAtom);
+  const chain = usePassportChain(provider);
   const [status, setStatus] = useState<'signing' | 'confirming' | 'success' | 'none'>('none');
   const [currency, setCurrency] = useState<string | null>(null);
   const [currencySymbol, setCurrencySymbol] = useState<string>('');
   const [currencyDecimals, setCurrencyDecimals] = useState<number>(18);
 
-  const chain = chainsMap[PASSPORT_CHAIN_ID];
   const contractAddress = chain?.[ContractAddressFieldMapping[provider] as keyof Chain] as string | undefined;
 
   useEffect(() => {
@@ -91,7 +88,7 @@ export function MintPassportModal({
       setStatus('signing');
 
       const priceWei = BigInt(mintData.price);
-      const isNative = isNativeToken(currency, PASSPORT_CHAIN_ID);
+      const isNative = isNativeToken(currency, chain?.chain_id || '');
 
       if (!isNative && priceWei > 0n) {
         await approveERC20Spender(
