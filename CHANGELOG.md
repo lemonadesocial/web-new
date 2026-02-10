@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.25.0](https://github.com/lemonadesocial/web-new/compare/v9.24.0...v9.25.0) (2026-02-10)
+
+
+### Features
+
+* update description intro screen. ([85be871](https://github.com/lemonadesocial/web-new/commit/85be871005e13080a479af66b024c30b30d2b44f))
+
 ## [9.24.0](https://github.com/lemonadesocial/web-new/compare/v9.23.0...v9.24.0) (2026-02-10)
 
 
