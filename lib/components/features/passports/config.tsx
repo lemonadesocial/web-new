@@ -373,7 +373,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
     ui: {
       intro: {
         title: 'Join <br />  Alzena World',
-        subtitle: `Mint your Alzena World passport & lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna.`,
+        subtitle: `Mint your Alzena World passport.`,
         footer: {
           label: '',
           btnText: "Yes, I'm In",
