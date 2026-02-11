@@ -17,6 +17,7 @@ import { useAppKitAccount } from '@reown/appkit/react';
 import { RedEnvelopeClient } from '$lib/services/red-envelope';
 import { parseNumeric } from '$lib/utils/number';
 import { StatCard } from './StatCard';
+import { HorizontalScroll } from '$lib/components/core';
 
 const formatCurrency = (value: number): string => {
   if (value === 0) return '$0';
@@ -44,9 +45,9 @@ export const SentEnvelopesStats = () => {
     : undefined;
   const whereEnvelopes: EnvelopeQueryVariables['where'] = address
     ? {
-        owner: { _eq: address.toLowerCase() },
-        recipient: { _is_null: false },
-      }
+      owner: { _eq: address.toLowerCase() },
+      recipient: { _is_null: false },
+    }
     : undefined;
 
   const { data: sentData, loading: sentLoading } = useQuery<
@@ -84,27 +85,29 @@ export const SentEnvelopesStats = () => {
   const totalAmountFormatted = formatCurrency(totalAmountSentFormatted);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <StatCard
-        label="Envelopes Sent"
-        value={envelopesSent.toLocaleString()}
-        loading={loading}
-      />
-      <StatCard
-        label="Opened by Recipients"
-        value={openedByRecipients.toLocaleString()}
-        loading={loading}
-      />
-      <StatCard
-        label="Not Yet Opened"
-        value={notYetOpened.toLocaleString()}
-        loading={loading}
-      />
-      <StatCard
-        label="Total Amount Sent"
-        value={totalAmountFormatted}
-        loading={loading}
-      />
-    </div>
+    <HorizontalScroll>
+      <div className="flex gap-4 w-full">
+        <StatCard
+          label="Envelopes Sent"
+          value={envelopesSent.toLocaleString()}
+          loading={loading}
+        />
+        <StatCard
+          label="Opened by Recipients"
+          value={openedByRecipients.toLocaleString()}
+          loading={loading}
+        />
+        <StatCard
+          label="Not Yet Opened"
+          value={notYetOpened.toLocaleString()}
+          loading={loading}
+        />
+        <StatCard
+          label="Total Amount Sent"
+          value={totalAmountFormatted}
+          loading={loading}
+        />
+      </div>
+    </HorizontalScroll>
   );
 };

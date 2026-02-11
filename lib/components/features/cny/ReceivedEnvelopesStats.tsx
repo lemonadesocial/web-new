@@ -14,6 +14,7 @@ import { useAppKitAccount } from '@reown/appkit/react';
 import { RedEnvelopeClient } from '$lib/services/red-envelope';
 import { parseNumeric } from '$lib/utils/number';
 import { StatCard } from './StatCard';
+import { HorizontalScroll } from '$lib/components/core';
 
 const formatCurrency = (value: number): string => {
   if (value === 0) return '$0';
@@ -62,27 +63,29 @@ export const ReceivedEnvelopesStats = () => {
   const totalAmountFormatted = formatCurrency(totalAmountReceivedFormatted);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <StatCard
-        label="Envelopes Received"
-        value={envelopesReceived.toLocaleString()}
-        loading={loading}
-      />
-      <StatCard
-        label="Opened by You"
-        value={envelopesOpened.toLocaleString()}
-        loading={loading}
-      />
-      <StatCard
-        label="Pending Envelopes"
-        value={pendingEnvelopes.toLocaleString()}
-        loading={loading}
-      />
-      <StatCard
-        label="Total Amount Received"
-        value={totalAmountFormatted}
-        loading={loading}
-      />
-    </div>
+    <HorizontalScroll>
+      <div className="flex gap-4 w-full">
+        <StatCard
+          label="Envelopes Received"
+          value={envelopesReceived.toLocaleString()}
+          loading={loading}
+        />
+        <StatCard
+          label="Opened by You"
+          value={envelopesOpened.toLocaleString()}
+          loading={loading}
+        />
+        <StatCard
+          label="Pending Envelopes"
+          value={pendingEnvelopes.toLocaleString()}
+          loading={loading}
+        />
+        <StatCard
+          label="Total Amount Received"
+          value={totalAmountFormatted}
+          loading={loading}
+        />
+      </div>
+    </HorizontalScroll>
   );
 };

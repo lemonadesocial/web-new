@@ -28,24 +28,20 @@ export default function Page() {
   };
 
   return (
-    <div className="pt-8 space-y-4">
+    <div className="md:pt-8 space-y-4">
       <div className="max-w-[1200px] mx-auto">
         <div className="flex items-start justify-between">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-bold">Envelopes</h1>
-            <p className="text-tertiary">
-              Track, send, and open red envelopes all in one place.
-            </p>
-          </div>
+          <h1 className="text-2xl font-bold">Envelopes</h1>
           <Button
             variant="tertiary-alt"
             size="sm"
-            iconLeft="icon-plus"
+            icon="icon-plus"
             onClick={() => modal.open(BuyRedEnvelopesListModal)}
-          >
-            Buy Envelopes
-          </Button>
+          />
         </div>
+        <p className="text-tertiary">
+          Track, send, and open red envelopes all in one place.
+        </p>
       </div>
 
       <div className="w-full">

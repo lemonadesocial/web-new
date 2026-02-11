@@ -79,7 +79,7 @@ const PackCard = ({ pack }: { pack: Pack }) => {
     >
       {pack.discountLabel && (
         <div className="absolute top-[-4px] right-2.5 w-[64px] h-[64px]">
-          <img src={`${ASSET_PREFIX}/assets/images/red-envelope-packs/discount-tag.png`} alt="" className="w-full h-full object-contain" />
+          <img src={`${ASSET_PREFIX}/assets/images/red-envelope-packs/discount-tag.png`} alt="" className=":w-full h-full object-contain" />
           <p className="absolute inset-0 flex items-center justify-center text-warning-400 text-sm">
             {pack.discountLabel}
           </p>
@@ -148,7 +148,7 @@ export const RedEnvelopesPacks = () => {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
@@ -159,7 +159,7 @@ export const RedEnvelopesPacks = () => {
       ) : error ? (
         <p className="text-destructive">{error}</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
           {packs.map((pack) => (
             <div key={pack.quantity}>
               <PackCard pack={pack} />

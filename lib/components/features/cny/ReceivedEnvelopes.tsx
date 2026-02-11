@@ -83,7 +83,7 @@ const UnclaimedCard = ({
         <img
           src={`${ASSET_PREFIX}/assets/images/red-envelope-packs/unclaimed.png`}
           alt="Red Envelope"
-          className="w-[184px] h-auto object-contain"
+          className="w-[100px] md:w-[184px] h-auto object-contain"
         />
       </div>
       <div className="relative space-y-1 text-center">
@@ -123,7 +123,7 @@ const ClaimedCard = ({
         <img
           src={`${ASSET_PREFIX}/assets/images/red-envelope-packs/claimed.png`}
           alt="Red Envelope"
-          className="w-[184px] h-auto object-contain"
+          className="w-[100px] md:w-[184px] h-auto object-contain"
         />
       </div>
       <div className="space-y-1 text-center">
