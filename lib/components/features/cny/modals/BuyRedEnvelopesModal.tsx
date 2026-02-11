@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Eip1193Provider, ethers } from 'ethers';
 import * as Sentry from '@sentry/nextjs';
 
@@ -26,6 +27,7 @@ type BuyRedEnvelopesModalProps = {
 type Step = 'confirm' | 'signing' | 'packing' | 'onTheWay' | 'ready';
 
 export function BuyRedEnvelopesModal({ pack, onComplete }: BuyRedEnvelopesModalProps) {
+  const router = useRouter();
   const { address } = useAppKitAccount();
   const { walletProvider } = useAppKitProvider('eip155');
   const [step, setStep] = useState<Step>('confirm');
@@ -95,6 +97,7 @@ export function BuyRedEnvelopesModal({ pack, onComplete }: BuyRedEnvelopesModalP
   const handleSendEnvelopes = () => {
     modal.close();
     onComplete?.();
+    router.push('/cny/send');
   };
 
   const handleDoItLater = () => {
@@ -145,10 +148,10 @@ export function BuyRedEnvelopesModal({ pack, onComplete }: BuyRedEnvelopesModalP
           <div className="space-y-2">
             <p className="text-center text-lg">Red Envelopes Are Ready</p>
             <p className="text-sm text-secondary text-center">
-            Fill them with blessings and send good fortune to those you care about.
+              Fill them with blessings and send good fortune to those you care about.
             </p>
           </div>
-          <Button variant="secondary" className="w-full">
+          <Button variant="secondary" className="w-full" onClick={handleSendEnvelopes}>
             Send Envelopes
           </Button>
           <p
