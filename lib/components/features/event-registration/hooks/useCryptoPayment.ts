@@ -2,22 +2,28 @@ import { useState } from "react";
 import { Eip1193Provider, ethers } from "ethers";
 import type { EthereumProvider } from "@avail-project/nexus-core";
 import { useAccount } from "wagmi";
+import { useAtomValue as useJotaiAtomValue } from "jotai";
+import { type Hex } from "viem";
 
 import { appKit } from "$lib/utils/appkit";
 import { isNativeToken } from "$lib/utils/crypto";
 import { toast } from "$lib/components/core/toast";
 import ERC20 from "$lib/abis/ERC20.json";
+import { chainsMapAtom } from "$lib/jotai";
+import { EthereumAccount } from "$lib/graphql/generated/backend/graphql";
 
-import { pricingInfoAtom, registrationModal, tokenAddressAtom, useEventRegistrationStore } from "../store";
+import { pricingInfoAtom, registrationModal, tokenAddressAtom, currencyAtom, selectedPaymentAccountAtom, useEventRegistrationStore } from "../store";
 import { ConfirmCryptoPaymentModal } from "../modals/ConfirmCryptoPaymentModal";
-import { InsufficientBalanceSwapModal } from "../modals/InsufficientBalanceSwapModal";
+import { InsufficientBalanceSwapModal } from "../../modals/InsufficientBalanceSwapModal";
 import { useBuyTickets } from "./useBuyTickets";
-import { useNexus } from "$lib/components/features/avail/nexus/NexusProvider";
+import { useNexus } from "$lib/components/features/avail/NexusProvider";
+import { modal } from "$lib/components/core";
 
 export function useCryptoPayment() {
   const store = useEventRegistrationStore();
   const { connector } = useAccount();
   const { handleInit } = useNexus();
+  const chainsMap = useJotaiAtomValue(chainsMapAtom);
 
   const { pay: handleBuyTickets, loading: buyTicketsLoading } = useBuyTickets(data => {
     registrationModal.open(ConfirmCryptoPaymentModal, {
@@ -33,7 +39,7 @@ export function useCryptoPayment() {
   const [checkBalanceLoading, setCheckBalanceLoading] = useState(false);
   const loading = buyTicketsLoading || checkBalanceLoading;
 
-  const checkBalance = async() => {
+  const checkBalance = async () => {
     const tokenAddress = store.get(tokenAddressAtom);
 
     if (!tokenAddress) return;
@@ -50,7 +56,7 @@ export function useCryptoPayment() {
     const erc20Token = new ethers.Contract(tokenAddress, ERC20, signer);
     return await erc20Token.balanceOf(address);
   }
-  
+
   const pay = async () => {
     try {
       setCheckBalanceLoading(true);
@@ -58,22 +64,37 @@ export function useCryptoPayment() {
       setCheckBalanceLoading(false);
 
       const total = store.get(pricingInfoAtom)?.total || 0;
-    
-      if (BigInt(balance) < BigInt(total)) {
-        // toast.error('Insufficient balance');
 
+      if (BigInt(balance) < BigInt(total)) {
         const provider = connector
           ? await connector.getProvider()
           : appKit.getProvider("eip155");
         if (provider) {
           handleInit(provider as EthereumProvider);
         }
-        
+
+        const currency = store.get(currencyAtom);
+        const tokenAddress = store.get(tokenAddressAtom);
+        const selectedPaymentAccount = store.get(selectedPaymentAccountAtom);
+
+        const network = (selectedPaymentAccount?.account_info as EthereumAccount)?.network;
+        const chain = network ? chainsMap[network] : null;
+        const toChainId = Number(chain?.chain_id ?? 0);
+        const toTokenAddress = (tokenAddress as Hex) ?? ('0x' as Hex);
+        const token = chain?.tokens?.find(
+          (t) => t.contract?.toLowerCase() === tokenAddress?.toLowerCase()
+        );
+        const tokenDecimals = token?.decimals ?? 18;
+
         const shortfall = BigInt(total) - BigInt(balance);
-        registrationModal.open(InsufficientBalanceSwapModal, {
+        modal.open(InsufficientBalanceSwapModal, {
           props: {
             currentBalance: String(balance),
             neededAmount: String(shortfall),
+            currency: currency || "",
+            toChainId,
+            toTokenAddress,
+            tokenDecimals,
             onSuccess: pay,
           },
         });

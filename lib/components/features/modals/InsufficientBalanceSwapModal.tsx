@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAtomValue as useJotaiAtomValue } from "jotai";
 import {
   formatTokenBalance,
   parseUnits,
@@ -10,20 +9,20 @@ import {
 } from "@avail-project/nexus-core";
 import { type Hex } from "viem";
 
-import { Button, Checkbox, ModalContent, Skeleton } from "$lib/components/core";
-import { chainsMapAtom } from "$lib/jotai";
+import { Button, Checkbox, modal } from "$lib/components/core";
 import { toast } from "$lib/components/core/toast";
-import { useNexus } from "$lib/components/features/avail/nexus/NexusProvider";
-import { TOKEN_IMAGES } from "$lib/components/features/avail/deposit/constants/assets";
-import { usdFormatter } from "$lib/components/features/avail/common";
+import { useNexus } from "$lib/components/features/avail/NexusProvider";
+import { TOKEN_IMAGES } from "$lib/components/features/avail/assets";
+import { usdFormatter } from "$lib/components/features/avail/constant";
 import { formatNumber } from "$lib/utils/number";
-import { registrationModal } from "../store";
-import { currencyAtom, selectedPaymentAccountAtom, tokenAddressAtom, useAtomValue } from "../store";
-import { EthereumAccount } from "$lib/graphql/generated/backend/graphql";
 
 interface InsufficientBalanceSwapModalProps {
   currentBalance: string;
   neededAmount: string;
+  currency: string;
+  toChainId: number;
+  toTokenAddress: Hex;
+  tokenDecimals?: number;
   onSuccess: () => void;
 }
 
@@ -81,23 +80,28 @@ function transformSwapBalanceToChains(
 export function InsufficientBalanceSwapModal({
   currentBalance,
   neededAmount,
+  currency,
+  toChainId,
+  toTokenAddress,
+  tokenDecimals = 18,
   onSuccess,
 }: InsufficientBalanceSwapModalProps) {
   const { nexusSDK, swapBalance, fetchSwapBalance, exchangeRate, requestSwapIntentAutoAllow } =
     useNexus();
-  const chainsMap = useJotaiAtomValue(chainsMapAtom);
-  const selectedPaymentAccount = useAtomValue(selectedPaymentAccountAtom);
-  const tokenAddress = useAtomValue(tokenAddressAtom);
-  const currency = useAtomValue(currencyAtom);
-
-  const network = (selectedPaymentAccount?.account_info as EthereumAccount)?.network;
-  const chain = network ? chainsMap[network] : null;
-  const toChainId = Number(chain?.chain_id ?? 0);
-  const toTokenAddress = (tokenAddress as Hex) ?? ("0x" as Hex);
 
   const [selectedChainIds, setSelectedChainIds] = useState<Set<string>>(new Set());
   const [swapLoading, setSwapLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const swapSupportedChains = useMemo(() => {
+    if (!nexusSDK) return [];
+    return nexusSDK.getSwapSupportedChains();
+  }, [nexusSDK]);
+
+  const isToChainSupported = useMemo(() => {
+    if (!toChainId || swapSupportedChains.length === 0) return false;
+    return swapSupportedChains.some((c) => c.id === toChainId);
+  }, [toChainId, swapSupportedChains]);
 
   const availableChains = useMemo(
     () => transformSwapBalanceToChains(swapBalance),
@@ -115,10 +119,7 @@ export function InsufficientBalanceSwapModal({
   );
 
   const { currentBalanceFormatted, neededAmountFormatted, neededUsd } = useMemo(() => {
-    const token = chain?.tokens?.find(
-      (t) => t.contract?.toLowerCase() === tokenAddress?.toLowerCase()
-    );
-    const decimals = token?.decimals ?? 6;
+    const decimals = tokenDecimals;
     const symbol = currency;
     const rate = exchangeRate?.[symbol.toUpperCase()] ?? 1;
 
@@ -137,18 +138,10 @@ export function InsufficientBalanceSwapModal({
 
     return {
       currentBalanceFormatted: currentBalanceFormattedValue,
-      neededAmountFormatted: (
-        <>
-          {neededAmountFormattedValue}
-          <span className="text-secondary font-normal">
-            {" "}
-            · ~${formatNumber(neededUsdValue)}
-          </span>
-        </>
-      ),
+      neededAmountFormatted: neededAmountFormattedValue,
       neededUsd: neededUsdValue,
     };
-  }, [currentBalance, neededAmount, chain, tokenAddress, currency, exchangeRate]);
+  }, [currentBalance, neededAmount, tokenDecimals, currency, exchangeRate]);
 
   const remainingUsd = neededUsd - totalSelectedUsd;
 
@@ -166,7 +159,7 @@ export function InsufficientBalanceSwapModal({
   }, []);
 
   const handleSwap = async () => {
-    if (!nexusSDK || selectedChains.length === 0) return;
+    if (!nexusSDK || selectedChains.length === 0 || !isToChainSupported) return;
     setError(null);
     setSwapLoading(true);
 
@@ -186,14 +179,14 @@ export function InsufficientBalanceSwapModal({
       requestSwapIntentAutoAllow();
 
       const result = await nexusSDK.swapWithExactOut(input);
-      
+
       if (result.success && result.result) {
         toast.success("Swap completed successfully");
-        registrationModal.close();
+        modal.close();
         onSuccess();
         return;
       }
-      
+
       setError(result.success ? "Swap failed" : (result as { error: string }).error);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Swap failed");
@@ -205,40 +198,35 @@ export function InsufficientBalanceSwapModal({
 
   const hasEnoughBalance = totalSelectedUsd > 0;
   const isNexusReady = Boolean(nexusSDK);
-  const canShowSwapAssets = isNexusReady && availableChains.length > 0;
+  const canShowSwapAssets = isNexusReady && availableChains.length > 0 && isToChainSupported;
 
   return (
-    <ModalContent
-      title={`Not enough ${currency} to continue`}
-      onClose={() => registrationModal.close()}
-      className="min-w-[480px]"
-    >
-      <div className="space-y-4">
-        <div className="space-y-3">
-          <p className="text-secondary">
-            You currently have {currentBalanceFormatted}. You&apos;re short{" "}
-            <span className="font-medium text-danger-400">{neededAmountFormatted}</span>{" "}
-            for this transaction.
-          </p>
+    <div className="p-4 space-y-4 w-full max-w-[340px]">
+      <div className="flex justify-between items-start">
+        <div className="size-[56px] flex justify-center items-center rounded-full bg-danger-400/16 shrink-0">
+          <i className="icon-error text-danger-400" />
         </div>
+        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full shrink-0" onClick={() => modal.close()} />
+      </div>
+      <div className="space-y-2">
+        <p className="text-lg">Insufficient Funds</p>
+        <p className="text-sm text-secondary">
+          You have {currentBalanceFormatted} available. This transaction needs{" "}
+          <span className="font-medium text-danger-400">{neededAmountFormatted}</span>{" "}
+          (about ${formatNumber(neededUsd)}) more.
+        </p>
 
-        {!isNexusReady && (
-          <div className="flex flex-col gap-2">
-            <Skeleton animate className="h-4 w-24 rounded-md" />
-            <Skeleton animate className="h-10 w-full rounded-md" />
-          </div>
-        )}
 
-        {canShowSwapAssets && (
-          <div>
-            <p className="mb-2">Swap another asset into {currency} to proceed.</p>
-            <div className="max-h-[240px] overflow-y-auto rounded-lg border">
+        {canShowSwapAssets ? (
+          <div className="space-y-4">
+            <p className="text-sm text-secondary">Swap one or more assets into {currency} to continue.</p>
+            <div className="max-h-[204px] overflow-y-auto no-scrollbar rounded-md border-card-border bg-card">
               {availableChains.map((c) => (
                 <div
                   key={c.id}
                   role="button"
                   tabIndex={0}
-                  className="flex cursor-pointer items-center justify-between border-b p-4 last:border-b-0 hover:bg-muted/30"
+                  className="flex cursor-pointer items-center justify-between border-b px-3 py-1.5 last:border-b-0"
                   onClick={() => toggleChain(c.id)}
                 >
                   <div className="flex items-center gap-3">
@@ -252,67 +240,79 @@ export function InsufficientBalanceSwapModal({
                     <img
                       src={c.logo}
                       alt={c.symbol}
-                      className="size-8 rounded-full"
+                      className="size-5 rounded-full"
                     />
                     <div>
                       <p className="font-medium">{c.symbol}</p>
-                      <p className="text-sm text-secondary">{c.chainName}</p>
+                      <p className="text-sm text-tertiary">{c.chainName}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <p className="text-sm">{c.balance}</p>
-                      <p className="text-xs text-secondary">
-                        {usdFormatter.format(c.usdValue)}
-                      </p>
-                    </div>
+                  <div className="text-right">
+                    <p className="text-sm">{c.balance}</p>
+                    <p className="text-sm text-tertiary">
+                      {usdFormatter.format(c.usdValue)}
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
+            <p className="text-sm text-secondary">Please note: only the exact amount needed will be swapped.</p>
           </div>
+        ) : (
+          <p className="text-sm text-secondary">
+            {!isNexusReady
+              ? "Nexus swap service is loading and will be ready shortly."
+              : !isToChainSupported
+                ? `Please note: swapping to ${currency} isn't supported on this network. Please add ${currency} to continue.`
+                : "No swapable assets found."}
+          </p>
         )}
 
         {canShowSwapAssets && selectedChains.length > 0 && (
           <p className="text-sm text-secondary">
-            Selected: {usdFormatter.format(totalSelectedUsd)} · Remaining:{" "}
-            {usdFormatter.format(Math.max(0, remainingUsd))}
+            Selected: <span className="text-success-400">{usdFormatter.format(totalSelectedUsd)}</span> · Remaining:{" "}
+            <span className="text-warning-400">{usdFormatter.format(Math.max(0, remainingUsd))}</span>
           </p>
         )}
 
         {error && (
           <p className="text-sm text-danger-400">{error}</p>
         )}
-
-        {canShowSwapAssets && (
-          <p className="text-sm text-warning-300">
-            You will receive exactly the amount needed. The swap uses your selected
-            assets across chains to source the required amount.
-          </p>
-        )}
-
-        <div className="flex gap-3">
-          <Button
-            variant="tertiary"
-            className="flex-1"
-            onClick={() => registrationModal.close()}
-            disabled={swapLoading}
-          >
-            Cancel
-          </Button>
-          {canShowSwapAssets && (
-            <Button
-              className="flex-1"
-              variant="secondary"
-              onClick={handleSwap}
-              loading={swapLoading}
-              disabled={!hasEnoughBalance || swapLoading}
-            >
-              Swap & Continue
-            </Button>
-          )}
-        </div>
       </div>
-    </ModalContent>
+
+      {
+        canShowSwapAssets ? (
+          <div className="flex gap-2">
+            <Button
+              variant="tertiary"
+              className="w-full"
+              onClick={() => modal.close()}
+              disabled={swapLoading}
+            >
+              Cancel
+            </Button>
+            {canShowSwapAssets && (
+              <Button
+                variant="secondary"
+                className="w-full"
+                onClick={handleSwap}
+                loading={swapLoading}
+                disabled={!hasEnoughBalance || swapLoading}
+              >
+                Swap & Continue
+              </Button>
+            )}
+          </div>
+        ) : (
+          <Button
+            variant="secondary"
+            className="w-full"
+            onClick={() => modal.close()}
+          >
+            Done
+          </Button>
+        )
+      }
+    </div>
   );
 }

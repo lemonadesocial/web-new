@@ -109,8 +109,6 @@ const NexusProvider = ({
     }
 
     if (rates?.status === "fulfilled") {
-      // Coinbase returns "units per USD" (e.g., 1 USD = 0.00028 ETH).
-      // Convert to "USD per unit" (e.g., 1 ETH = ~$3514) for straightforward UI calculations.
       const usdPerUnit: Record<string, number> = {};
 
       for (const [symbol, value] of Object.entries(rates.value)) {
@@ -157,27 +155,10 @@ const NexusProvider = ({
 
   const attachEventHooks = () => {
     sdk.setOnAllowanceHook((data: OnAllowanceHookData) => {
-      /**
-       * Useful when you want the user to select, min, max or a custom value
-       * Can use this to capture data and then show it on the UI
-       * @see - always call data.allow() to progress the flow, otherwise it will stay stuck here.
-       * const {allow, sources, deny} = data
-       * @example allow(['min', 'max', '0.5']), the array in allow function should match number of sources.
-       * You can skip setting this hook if you want, sdk will auto progress if this hook is not attached
-       */
       allowance.current = data;
     });
 
     sdk.setOnIntentHook((data: OnIntentHookData) => {
-      /**
-       * Useful when you want to capture the intent, and display it on the UI (bridge, bridgeAndTransfer, bridgeAndExecute)
-       * const {allow, deny, intent, refresh} = data
-       * @see - always call data.allow() to progress the flow, otherwise it will stay stuck here.
-       * deny() to reject the intent
-       * refresh() to refresh the intent, best to call refresh in 15 second intervals
-       * data.intent -> details about the intent, useful when wanting to display info on UI
-       * You can skip setting this hook if you want, sdk will auto progress if this hook is not attached
-       */
       intent.current = data;
     });
 
