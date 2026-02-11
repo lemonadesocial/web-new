@@ -1,5 +1,16 @@
 # Changelog
 
+## [10.2.0](https://github.com/lemonadesocial/web-new/compare/v10.1.0...v10.2.0) (2026-02-11)
+
+
+### Features
+
+* add buy envelopes modal ([217f064](https://github.com/lemonadesocial/web-new/commit/217f064809e22c47057a621a7debd3ff9d80aeb4))
+* add sent modal details ([56e8a27](https://github.com/lemonadesocial/web-new/commit/56e8a275671e67b8502eef8dc9432b2f488960f6))
+* update claim ui ([431af70](https://github.com/lemonadesocial/web-new/commit/431af70057b254ef5346a8a5fa77e2bb79f78f20))
+* update guest list filter ([364fffb](https://github.com/lemonadesocial/web-new/commit/364fffbb6dd848b27e5912a6a3e35a7014c2a360))
+* update layout ([ca41297](https://github.com/lemonadesocial/web-new/commit/ca4129715421a0f7287c6db98531cebb29c04c2e))
+
 ## [10.1.0](https://github.com/lemonadesocial/web-new/compare/v10.0.0...v10.1.0) (2026-02-10)
 
 
