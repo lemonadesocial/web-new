@@ -78,31 +78,34 @@ export const RedEnvelopesStats = () => {
   const totalGiftedFormatted = formatCurrency(totalAmountSentFormatted);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <BackgroundStatCard
-        label="Envelopes Sent"
-        value={envelopesSent.toLocaleString()}
-        loading={loading}
-        backgroundImage={`${ASSET_PREFIX}/assets/images/red-envelope-packs/envelopes-sent.png`}
-      />
-      <BackgroundStatCard
-        label="Envelopes Received"
-        value={envelopesReceived.toLocaleString()}
-        loading={loading}
-        backgroundImage={`${ASSET_PREFIX}/assets/images/red-envelope-packs/envelopes-received.png`}
-      />
-      <BackgroundStatCard
-        label="Total Gifted"
-        value={totalGiftedFormatted}
-        loading={loading}
-        backgroundImage={`${ASSET_PREFIX}/assets/images/red-envelope-packs/total-gifted.png`}
-      />
-      <BackgroundStatCard
-        label="Leaderboard Rank"
-        value="—"
-        loading={false}
-        backgroundImage={`${ASSET_PREFIX}/assets/images/red-envelope-packs/leaderboard-rank.png`}
-      />
+    <div className="space-y-5">
+      <p className="text-xl">Fortune Shared</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <BackgroundStatCard
+          label="Envelopes Sent"
+          value={envelopesSent.toLocaleString()}
+          loading={loading}
+          backgroundImage={`${ASSET_PREFIX}/assets/images/red-envelope-packs/envelopes-sent.png`}
+        />
+        <BackgroundStatCard
+          label="Envelopes Received"
+          value={envelopesReceived.toLocaleString()}
+          loading={loading}
+          backgroundImage={`${ASSET_PREFIX}/assets/images/red-envelope-packs/envelopes-received.png`}
+        />
+        <BackgroundStatCard
+          label="Total Gifted"
+          value={totalGiftedFormatted}
+          loading={loading}
+          backgroundImage={`${ASSET_PREFIX}/assets/images/red-envelope-packs/total-gifted.png`}
+        />
+        <BackgroundStatCard
+          label="Leaderboard Rank"
+          value="—"
+          loading={false}
+          backgroundImage={`${ASSET_PREFIX}/assets/images/red-envelope-packs/leaderboard-rank.png`}
+        />
+      </div>
     </div>
   );
 };

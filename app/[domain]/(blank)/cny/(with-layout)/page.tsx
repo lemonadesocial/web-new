@@ -5,11 +5,9 @@ import { RedEnvelopesStats } from '$lib/components/features/cny/RedEnvelopesStat
 export default function Page() {
   return (
     <div className="max-w-[1200px] mx-auto space-y-12 pb-12">
+      <RedEnvelopesBanners />
       <RedEnvelopesPacks />
-      <div className="space-y-4">
-        <RedEnvelopesBanners />
-        <RedEnvelopesStats />
-      </div>
+      <RedEnvelopesStats />
     </div>
   );
 }
