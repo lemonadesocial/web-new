@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.3.0](https://github.com/lemonadesocial/web-new/compare/v10.2.0...v10.3.0) (2026-02-11)
+
+
+### Features
+
+* optimize red envelopes ([caa97f7](https://github.com/lemonadesocial/web-new/commit/caa97f711ce3dbce29991ae2ae514ca814dafc3e))
+
 ## [10.2.0](https://github.com/lemonadesocial/web-new/compare/v10.1.0...v10.2.0) (2026-02-11)
 
 
