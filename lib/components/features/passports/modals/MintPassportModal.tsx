@@ -6,7 +6,7 @@ import * as Sentry from '@sentry/nextjs';
 import { Button, modal, ModalContent, toast } from '$lib/components/core';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { appKit, useAppKitProvider } from '$lib/utils/appkit';
-import { approveERC20Spender, AbstractPassportContract, ERC20Contract, formatError, isNativeToken, writeContract } from '$lib/utils/crypto';
+import { approveERC20Spender, AbstractPassportContract, ERC20Contract, checkBalanceSufficient, formatError, isNativeToken, writeContract } from '$lib/utils/crypto';
 import { SignTransactionModal } from '$lib/components/features/modals/SignTransaction';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
@@ -77,7 +77,7 @@ export function MintPassportModal({
         throw new Error('Mint data not found');
       }
 
-      if (!contractAddress) {
+      if (!contractAddress || !chain?.chain_id ) {
         throw new Error('Passport contract address not configured');
       }
 
@@ -87,8 +87,17 @@ export function MintPassportModal({
 
       setStatus('signing');
 
-      const priceWei = BigInt(mintData.price);
-      const isNative = isNativeToken(currency, chain?.chain_id || '');
+      const priceWei = BigInt(mintData.price || '0');
+      const isNative = isNativeToken(currency, chain.chain_id);
+
+      if (priceWei > 0n) {
+        await checkBalanceSufficient(
+          currency,
+          chain.chain_id,
+          priceWei,
+          walletProvider as Eip1193Provider,
+        );
+      }
 
       if (!isNative && priceWei > 0n) {
         await approveERC20Spender(

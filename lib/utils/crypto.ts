@@ -93,6 +93,38 @@ export async function writeContract(
   return tx;
 }
 
+export async function getBalance(
+  tokenAddress: string,
+  chainId: string,
+  walletProvider: Eip1193Provider,
+  address?: string
+): Promise<bigint> {
+  const provider = new ethers.BrowserProvider(walletProvider);
+  const signer = await provider.getSigner();
+  const userAddress = address || await signer.getAddress();
+
+  if (isNativeToken(tokenAddress, chainId)) {
+    return await provider.getBalance(userAddress);
+  }
+
+  const erc20Token = new ethers.Contract(tokenAddress, ERC20, signer);
+  return await erc20Token.balanceOf(userAddress);
+}
+
+export async function checkBalanceSufficient(
+  tokenAddress: string,
+  chainId: string,
+  amount: bigint,
+  walletProvider: Eip1193Provider,
+  address?: string
+): Promise<void> {
+  const balance = await getBalance(tokenAddress, chainId, walletProvider, address);
+  
+  if (balance < amount) {
+    throw new Error('insufficient funds');
+  }
+}
+
 export async function approveERC20Spender(tokenAddress: string, spender: string, amount: bigint, walletProvider: Eip1193Provider) {
   const transaction = await writeContract(
     ERC20Contract,

@@ -8,7 +8,7 @@ import { ethers } from 'ethers';
 import debounce from 'lodash/debounce';
 
 import { Button, modal, ModalContent, toast } from "$lib/components/core";
-import { approveERC20Spender, formatError, isNativeToken, writeContract } from '$lib/utils/crypto';
+import { approveERC20Spender, checkBalanceSufficient, formatError, isNativeToken, writeContract } from '$lib/utils/crypto';
 import { listChainsAtom } from '$lib/jotai';
 import { appKit, useAppKitProvider } from '$lib/utils/appkit';
 import { LemonadeUsernameABI } from '$lib/abis/LemonadeUsername';
@@ -103,14 +103,6 @@ export function ClaimLemonadeUsernameModal() {
         wallet: address,
       });
 
-      // const tokenUri = "ipfs://bafkreibf2wymoxnoyyev6ki4uozfnpitjtez2yr55ipdqudrceeymlaaeu"
-
-      // const result = {
-      //   "signature":"0xf05c1a1b9b9208e4c55d1866f237b5611eda88e814a568d11f61c2d882ef9335631933da84866fdb720eb48b0aa5035093c2bdcdbbedabba6966fa4f8363e7051b",
-      //   "price":"0",
-      //   "currency":"0xa19adb1929d2D7C7ABF97dB80a2c231C41eE972B"
-      // }
-
       const contractInstance = new ethers.Contract(
         ethers.ZeroAddress,
         new ethers.Interface(LemonadeUsernameABI)
@@ -118,6 +110,16 @@ export function ClaimLemonadeUsernameModal() {
       const currencyAddress = result.currency as string;
       const price = BigInt(result.price);
       const isNativeCurrency = isNativeToken(currencyAddress, usernameChain.chain_id);
+
+      if (price > 0n) {
+        await checkBalanceSufficient(
+          currencyAddress,
+          usernameChain.chain_id,
+          price,
+          walletProvider as Eip1193Provider,
+          address
+        );
+      }
 
       if (!isNativeCurrency && price > 0n) {
         await approveERC20Spender(
