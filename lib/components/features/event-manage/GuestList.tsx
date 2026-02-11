@@ -25,7 +25,7 @@ export function GuestList({ event }: { event: Event }) {
   const [searchText, setSearchText] = useState('');
   const [debouncedSearchText, setDebouncedSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [selectedFilter, setSelectedFilter] = useState<string>('going');
   const [selectedTicketTypes, setSelectedTicketTypes] = useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState<SortOption | null>(null);
   const pageSize = 100;
@@ -59,11 +59,11 @@ export function GuestList({ event }: { event: Event }) {
       skip: (currentPage - 1) * pageSize,
       limit: pageSize,
       ticketTypes: selectedTicketTypes.length > 0 ? selectedTicketTypes : undefined,
-      going: selectedFilters.includes('going') || undefined,
-      pendingApproval: selectedFilters.includes('pending') || undefined,
-      pendingInvite: selectedFilters.includes('invited') || undefined,
-      declined: selectedFilters.includes('not_going') || undefined,
-      checkedIn: selectedFilters.includes('checked_in') || undefined,
+      going: selectedFilter === 'going' || undefined,
+      pendingApproval: selectedFilter === 'pending' || undefined,
+      pendingInvite: selectedFilter === 'invited' || undefined,
+      declined: selectedFilter === 'not_going' || undefined,
+      checkedIn: selectedFilter === 'checked_in' || undefined,
       sortBy:
         selectedSort?.key === 'register_time'
           ? ListEventGuestsSortBy.RegisterTime
@@ -93,10 +93,8 @@ export function GuestList({ event }: { event: Event }) {
     setCurrentPage(page);
   };
 
-  const handleFilterToggle = (filterKey: string) => {
-    setSelectedFilters((prev) =>
-      prev.includes(filterKey) ? prev.filter((key) => key !== filterKey) : [...prev, filterKey],
-    );
+  const handleFilterChange = (filterKey: string) => {
+    setSelectedFilter(filterKey);
     setCurrentPage(1);
   };
 
@@ -146,78 +144,63 @@ export function GuestList({ event }: { event: Event }) {
         <Menu.Root placement="bottom-start">
           <Menu.Trigger>
             <Button variant="tertiary" size="sm" iconLeft="icon-filter-line" iconRight="icon-chevron-down">
-              {selectedFilters.length === 0 && selectedTicketTypes.length === 0
-                ? 'All Guests'
-                : [
-                    ...selectedFilters.map((filter) =>
-                      filter === 'going'
-                        ? 'Going'
-                        : filter === 'pending'
-                          ? 'Pending'
-                          : filter === 'invited'
-                            ? 'Invited'
-                            : filter === 'not_going'
-                              ? 'Not Going'
-                              : filter === 'checked_in'
-                                ? 'Checked In'
-                                : filter,
-                    ),
-                    ...selectedTicketTypes.map(
-                      (typeKey) => ticketTypeFilters.find((t) => t.key === typeKey)?.value || 'Ticket Type',
-                    ),
-                  ].join(', ')}
+              {[
+                selectedFilter === 'going'
+                  ? 'Going'
+                  : selectedFilter === 'pending'
+                    ? 'Pending'
+                    : selectedFilter === 'invited'
+                      ? 'Invited'
+                      : selectedFilter === 'not_going'
+                        ? 'Not Going'
+                        : selectedFilter === 'checked_in'
+                          ? 'Checked In'
+                          : null,
+                ...selectedTicketTypes.map(
+                  (typeKey) => ticketTypeFilters.find((t) => t.key === typeKey)?.value || 'Ticket Type',
+                ),
+              ]
+                .filter(Boolean)
+                .join(', ')}
             </Button>
           </Menu.Trigger>
           <Menu.Content className="w-48 p-1">
             {({ toggle }) => (
               <>
                 <MenuItem
-                  title="All Guests"
-                  iconRight={
-                    selectedFilters.length === 0 && selectedTicketTypes.length === 0
-                      ? 'text-primary icon-richtext-check'
-                      : undefined
-                  }
-                  onClick={() => {
-                    setSelectedFilters([]);
-                    setSelectedTicketTypes([]);
-                  }}
-                />
-                <hr className="border-t border-t-divider my-1 -mx-2" />
-                <MenuItem
                   title="Going"
-                  iconRight={selectedFilters.includes('going') ? 'text-primary icon-richtext-check' : undefined}
+                  iconRight={selectedFilter === 'going' ? 'text-primary icon-richtext-check' : undefined}
                   onClick={() => {
-                    handleFilterToggle('going');
+                    handleFilterChange('going');
                   }}
                 />
                 <MenuItem
                   title="Invited"
-                  iconRight={selectedFilters.includes('invited') ? 'text-primary icon-richtext-check' : undefined}
+                  iconRight={selectedFilter === 'invited' ? 'text-primary icon-richtext-check' : undefined}
                   onClick={() => {
-                    handleFilterToggle('invited');
+                    handleFilterChange('invited');
                   }}
                 />
                 <MenuItem
                   title="Pending"
-                  iconRight={selectedFilters.includes('pending') ? 'text-primary icon-richtext-check' : undefined}
+                  iconRight={selectedFilter === 'pending' ? 'text-primary icon-richtext-check' : undefined}
                   onClick={() => {
-                    handleFilterToggle('pending');
+                    handleFilterChange('pending');
                   }}
                 />
                 <MenuItem
                   title="Not Going"
-                  iconRight={selectedFilters.includes('not_going') ? 'text-primary icon-richtext-check' : undefined}
+                  iconRight={selectedFilter === 'not_going' ? 'text-primary icon-richtext-check' : undefined}
                   onClick={() => {
-                    handleFilterToggle('not_going');
+                    handleFilterChange('not_going');
                   }}
                 />
                 <hr className="border-t border-t-divider my-1 -mx-2" />
                 <MenuItem
                   title="Checked In"
-                  iconRight={selectedFilters.includes('checked_in') ? 'text-primary icon-richtext-check' : undefined}
+                  iconRight={selectedFilter === 'checked_in' ? 'text-primary icon-richtext-check' : undefined}
                   onClick={() => {
-                    handleFilterToggle('checked_in');
+                    handleFilterChange('checked_in');
                   }}
                 />
                 <hr className="border-t border-t-divider my-1 -mx-2" />
