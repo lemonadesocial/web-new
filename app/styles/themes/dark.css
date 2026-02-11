@@ -35,4 +35,6 @@
   --btn-tertiary-hover: rgba(255, 255, 255, 0.16);
 
   --btn-flat-hover: rgba(255, 255, 255, 0.08);
+
+  --chip-secondary-bg: rgba(255, 255, 255, 0.08);
 }

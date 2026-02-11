@@ -701,6 +701,148 @@ export type PoolSwap_Stream_Cursor_Value_Input = {
   uniFee1?: InputMaybe<Scalars['numeric']['input']>;
 };
 
+/** columns and relationships of "RedEnvelopeReceived" */
+export type RedEnvelopeReceived = {
+  __typename?: 'RedEnvelopeReceived';
+  chain_id: Scalars['numeric']['output'];
+  envelopes_opened: Scalars['numeric']['output'];
+  envelopes_received: Scalars['numeric']['output'];
+  id: Scalars['String']['output'];
+  recipient: Scalars['String']['output'];
+  total_amount_received: Scalars['numeric']['output'];
+  updated_at: Scalars['numeric']['output'];
+};
+
+/** Boolean expression to filter rows from the table "RedEnvelopeReceived". All fields are combined with a logical 'AND'. */
+export type RedEnvelopeReceived_Bool_Exp = {
+  _and?: InputMaybe<Array<RedEnvelopeReceived_Bool_Exp>>;
+  _not?: InputMaybe<RedEnvelopeReceived_Bool_Exp>;
+  _or?: InputMaybe<Array<RedEnvelopeReceived_Bool_Exp>>;
+  chain_id?: InputMaybe<Numeric_Comparison_Exp>;
+  envelopes_opened?: InputMaybe<Numeric_Comparison_Exp>;
+  envelopes_received?: InputMaybe<Numeric_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  recipient?: InputMaybe<String_Comparison_Exp>;
+  total_amount_received?: InputMaybe<Numeric_Comparison_Exp>;
+  updated_at?: InputMaybe<Numeric_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "RedEnvelopeReceived". */
+export type RedEnvelopeReceived_Order_By = {
+  chain_id?: InputMaybe<Order_By>;
+  envelopes_opened?: InputMaybe<Order_By>;
+  envelopes_received?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  recipient?: InputMaybe<Order_By>;
+  total_amount_received?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "RedEnvelopeReceived" */
+export enum RedEnvelopeReceived_Select_Column {
+  /** column name */
+  ChainId = 'chain_id',
+  /** column name */
+  EnvelopesOpened = 'envelopes_opened',
+  /** column name */
+  EnvelopesReceived = 'envelopes_received',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Recipient = 'recipient',
+  /** column name */
+  TotalAmountReceived = 'total_amount_received',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** Streaming cursor of the table "RedEnvelopeReceived" */
+export type RedEnvelopeReceived_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: RedEnvelopeReceived_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type RedEnvelopeReceived_Stream_Cursor_Value_Input = {
+  chain_id?: InputMaybe<Scalars['numeric']['input']>;
+  envelopes_opened?: InputMaybe<Scalars['numeric']['input']>;
+  envelopes_received?: InputMaybe<Scalars['numeric']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  recipient?: InputMaybe<Scalars['String']['input']>;
+  total_amount_received?: InputMaybe<Scalars['numeric']['input']>;
+  updated_at?: InputMaybe<Scalars['numeric']['input']>;
+};
+
+/** columns and relationships of "RedEnvelopeSent" */
+export type RedEnvelopeSent = {
+  __typename?: 'RedEnvelopeSent';
+  chain_id: Scalars['numeric']['output'];
+  envelopes_sent: Scalars['numeric']['output'];
+  id: Scalars['String']['output'];
+  sender: Scalars['String']['output'];
+  total_amount_sent: Scalars['numeric']['output'];
+  updated_at: Scalars['numeric']['output'];
+};
+
+/** Boolean expression to filter rows from the table "RedEnvelopeSent". All fields are combined with a logical 'AND'. */
+export type RedEnvelopeSent_Bool_Exp = {
+  _and?: InputMaybe<Array<RedEnvelopeSent_Bool_Exp>>;
+  _not?: InputMaybe<RedEnvelopeSent_Bool_Exp>;
+  _or?: InputMaybe<Array<RedEnvelopeSent_Bool_Exp>>;
+  chain_id?: InputMaybe<Numeric_Comparison_Exp>;
+  envelopes_sent?: InputMaybe<Numeric_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  sender?: InputMaybe<String_Comparison_Exp>;
+  total_amount_sent?: InputMaybe<Numeric_Comparison_Exp>;
+  updated_at?: InputMaybe<Numeric_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "RedEnvelopeSent". */
+export type RedEnvelopeSent_Order_By = {
+  chain_id?: InputMaybe<Order_By>;
+  envelopes_sent?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  sender?: InputMaybe<Order_By>;
+  total_amount_sent?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "RedEnvelopeSent" */
+export enum RedEnvelopeSent_Select_Column {
+  /** column name */
+  ChainId = 'chain_id',
+  /** column name */
+  EnvelopesSent = 'envelopes_sent',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Sender = 'sender',
+  /** column name */
+  TotalAmountSent = 'total_amount_sent',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** Streaming cursor of the table "RedEnvelopeSent" */
+export type RedEnvelopeSent_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: RedEnvelopeSent_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type RedEnvelopeSent_Stream_Cursor_Value_Input = {
+  chain_id?: InputMaybe<Scalars['numeric']['input']>;
+  envelopes_sent?: InputMaybe<Scalars['numeric']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  sender?: InputMaybe<Scalars['String']['input']>;
+  total_amount_sent?: InputMaybe<Scalars['numeric']['input']>;
+  updated_at?: InputMaybe<Scalars['numeric']['input']>;
+};
+
 /** columns and relationships of "StakingManagerToken" */
 export type StakingManagerToken = {
   __typename?: 'StakingManagerToken';
@@ -1523,6 +1665,14 @@ export type Query_Root = {
   PoolSwap: Array<PoolSwap>;
   /** fetch data from the table: "PoolSwap" using primary key columns */
   PoolSwap_by_pk?: Maybe<PoolSwap>;
+  /** fetch data from the table: "RedEnvelopeReceived" */
+  RedEnvelopeReceived: Array<RedEnvelopeReceived>;
+  /** fetch data from the table: "RedEnvelopeReceived" using primary key columns */
+  RedEnvelopeReceived_by_pk?: Maybe<RedEnvelopeReceived>;
+  /** fetch data from the table: "RedEnvelopeSent" */
+  RedEnvelopeSent: Array<RedEnvelopeSent>;
+  /** fetch data from the table: "RedEnvelopeSent" using primary key columns */
+  RedEnvelopeSent_by_pk?: Maybe<RedEnvelopeSent>;
   /** fetch data from the table: "StakingManagerToken" */
   StakingManagerToken: Array<StakingManagerToken>;
   /** fetch data from the table: "StakingManagerToken" using primary key columns */
@@ -1652,6 +1802,34 @@ export type Query_RootPoolSwapArgs = {
 
 
 export type Query_RootPoolSwap_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootRedEnvelopeReceivedArgs = {
+  distinct_on?: InputMaybe<Array<RedEnvelopeReceived_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<RedEnvelopeReceived_Order_By>>;
+  where?: InputMaybe<RedEnvelopeReceived_Bool_Exp>;
+};
+
+
+export type Query_RootRedEnvelopeReceived_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootRedEnvelopeSentArgs = {
+  distinct_on?: InputMaybe<Array<RedEnvelopeSent_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<RedEnvelopeSent_Order_By>>;
+  where?: InputMaybe<RedEnvelopeSent_Bool_Exp>;
+};
+
+
+export type Query_RootRedEnvelopeSent_By_PkArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -1943,6 +2121,18 @@ export type Subscription_Root = {
   PoolSwap_by_pk?: Maybe<PoolSwap>;
   /** fetch data from the table in a streaming manner: "PoolSwap" */
   PoolSwap_stream: Array<PoolSwap>;
+  /** fetch data from the table: "RedEnvelopeReceived" */
+  RedEnvelopeReceived: Array<RedEnvelopeReceived>;
+  /** fetch data from the table: "RedEnvelopeReceived" using primary key columns */
+  RedEnvelopeReceived_by_pk?: Maybe<RedEnvelopeReceived>;
+  /** fetch data from the table in a streaming manner: "RedEnvelopeReceived" */
+  RedEnvelopeReceived_stream: Array<RedEnvelopeReceived>;
+  /** fetch data from the table: "RedEnvelopeSent" */
+  RedEnvelopeSent: Array<RedEnvelopeSent>;
+  /** fetch data from the table: "RedEnvelopeSent" using primary key columns */
+  RedEnvelopeSent_by_pk?: Maybe<RedEnvelopeSent>;
+  /** fetch data from the table in a streaming manner: "RedEnvelopeSent" */
+  RedEnvelopeSent_stream: Array<RedEnvelopeSent>;
   /** fetch data from the table: "StakingManagerToken" */
   StakingManagerToken: Array<StakingManagerToken>;
   /** fetch data from the table: "StakingManagerToken" using primary key columns */
@@ -2140,6 +2330,48 @@ export type Subscription_RootPoolSwap_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<PoolSwap_Stream_Cursor_Input>>;
   where?: InputMaybe<PoolSwap_Bool_Exp>;
+};
+
+
+export type Subscription_RootRedEnvelopeReceivedArgs = {
+  distinct_on?: InputMaybe<Array<RedEnvelopeReceived_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<RedEnvelopeReceived_Order_By>>;
+  where?: InputMaybe<RedEnvelopeReceived_Bool_Exp>;
+};
+
+
+export type Subscription_RootRedEnvelopeReceived_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootRedEnvelopeReceived_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<RedEnvelopeReceived_Stream_Cursor_Input>>;
+  where?: InputMaybe<RedEnvelopeReceived_Bool_Exp>;
+};
+
+
+export type Subscription_RootRedEnvelopeSentArgs = {
+  distinct_on?: InputMaybe<Array<RedEnvelopeSent_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<RedEnvelopeSent_Order_By>>;
+  where?: InputMaybe<RedEnvelopeSent_Bool_Exp>;
+};
+
+
+export type Subscription_RootRedEnvelopeSent_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootRedEnvelopeSent_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<RedEnvelopeSent_Stream_Cursor_Input>>;
+  where?: InputMaybe<RedEnvelopeSent_Bool_Exp>;
 };
 
 

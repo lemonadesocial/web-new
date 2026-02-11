@@ -509,3 +509,12 @@ query GetSpaceNFTs($skip: Int, $limit: Int, $space: MongoID, $kind: SpaceNFTKind
     total
   }
 }
+
+query GetListMySpaces($skip: Int, $limit: Int) {
+  listMySpaces(skip: $skip, limit: $limit) {
+    items {
+      ...Space
+    }
+    total
+  }
+}
