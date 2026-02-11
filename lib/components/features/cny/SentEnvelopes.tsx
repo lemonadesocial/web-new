@@ -17,7 +17,8 @@ import { truncateMiddle } from '$lib/utils/string';
 import { formatNumber } from '$lib/utils/number';
 import { randomUserImage } from '$lib/utils/user';
 import { CardTable } from '$lib/components/core/table';
-import { Avatar, Skeleton, Button, Menu, MenuItem, Divider, Chip } from '$lib/components/core';
+import { Avatar, Skeleton, Button, Menu, MenuItem, Divider, Chip, modal } from '$lib/components/core';
+import { SentEnvelopeDetailModal } from './modals/SentEnvelopeDetailModal';
 import { RedEnvelopeClient } from '$lib/services/red-envelope';
 import { SentEnvelopesStats } from './SentEnvelopesStats';
 
@@ -58,9 +59,21 @@ function SentEnvelopeRow({
     : '—';
   const status = envelope.claimed ? 'Opened' : 'Pending';
 
+  const handleClick = () => {
+    modal.open(SentEnvelopeDetailModal, {
+      props: { envelope, decimals, symbol },
+    });
+  };
+
   return (
     <CardTable.Row>
-      <div className="flex items-center gap-4 text-tertiary px-4 py-3">
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={handleClick}
+        onKeyDown={(e) => e.key === 'Enter' && handleClick()}
+        className="flex items-center gap-4 text-tertiary px-4 py-3 cursor-pointer hover:bg-primary/4 transition-colors"
+      >
         <div className="flex-[2] min-w-0 flex items-center gap-3">
           <Avatar
             src={randomUserImage(envelope.recipient ?? envelope.id)}

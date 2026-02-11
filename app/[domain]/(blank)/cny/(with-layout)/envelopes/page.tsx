@@ -2,6 +2,9 @@
 
 import React from 'react';
 import clsx from 'clsx';
+
+import { Button, modal } from '$lib/components/core';
+import { BuyRedEnvelopesListModal } from '$lib/components/features/cny/modals/BuyRedEnvelopesListModal';
 import { ReceivedEnvelopes } from '$lib/components/features/cny/ReceivedEnvelopes';
 import { SentEnvelopes } from '$lib/components/features/cny/SentEnvelopes';
 
@@ -27,11 +30,21 @@ export default function Page() {
   return (
     <div className="pt-8 space-y-4">
       <div className="max-w-[1200px] mx-auto">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-bold">Envelopes</h1>
-          <p className="text-tertiary">
-            Track, send, and open red envelopes all in one place.
-          </p>
+        <div className="flex items-start justify-between">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-2xl font-bold">Envelopes</h1>
+            <p className="text-tertiary">
+              Track, send, and open red envelopes all in one place.
+            </p>
+          </div>
+          <Button
+            variant="tertiary-alt"
+            size="sm"
+            iconLeft="icon-plus"
+            onClick={() => modal.open(BuyRedEnvelopesListModal)}
+          >
+            Buy Envelopes
+          </Button>
         </div>
       </div>
 

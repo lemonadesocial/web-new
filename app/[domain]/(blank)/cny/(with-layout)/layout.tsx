@@ -2,7 +2,7 @@ import React from 'react';
 
 import { RedEnvelopesHeader } from '$lib/components/features/cny/Header';
 import { RedEnvelopesSidebar } from '$lib/components/features/cny/Sidebar';
-import { BottomBar } from '$lib/components/layouts/bottombar';
+import { RedEnvelopesBottomBar } from '$lib/components/features/cny/RedEnvelopesBottomBar';
 
 export default async function RedEnvelopesWithLayout(props: {
   params: Promise<{ domain: string }>;
@@ -14,12 +14,12 @@ export default async function RedEnvelopesWithLayout(props: {
         <RedEnvelopesHeader />
       </div>
       <RedEnvelopesSidebar />
-      <div className="pt-[80px]">
+      <div className="pt-[80px] pb-20 lg:pb-0">
         <div className="px-4" style={{ overflowX: 'visible' }}>
           {props.children}
         </div>
       </div>
-      <BottomBar />
+      <RedEnvelopesBottomBar />
     </main>
   );
 }

@@ -1,16 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { formatEther, formatUnits } from 'ethers';
-
 import { RedEnvelopeClient, type Pricing } from '$lib/services/red-envelope';
-import { formatNumber } from '$lib/utils/number';
 import { modal } from '$lib/components/core';
 import { BuyRedEnvelopesModal } from './modals/BuyRedEnvelopesModal';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 import { getListChains } from '$lib/utils/crypto';
 import { ASSET_PREFIX, MEGAETH_CHAIN_ID } from '$lib/utils/constants';
-import { getAsset } from './utils';
+import { formatPriceLabel, getAsset } from './utils';
 
 type Pack = {
   quantity: number;
@@ -33,12 +30,6 @@ const getDiscountLabel = (preDiscountPrice: bigint, price: bigint): string | und
   if (p >= pre) return undefined;
   const discount = Math.round((1 - p / pre) * 100);
   return discount > 0 ? `${discount}%` : undefined;
-};
-
-const formatPriceLabel = (price: bigint, decimals: number) => {
-  const formatted = formatUnits(price, decimals);
-  const n = Number(formatted);
-  return `$${formatNumber(n)}`;
 };
 
 const pricingToPacks = (pricing: readonly Pricing[], decimals: number): Pack[] =>

@@ -36,7 +36,17 @@ const SORT_ORDER_BY: Record<SortOption, NonNullable<EnvelopeQueryVariables['orde
   status: [{ claimed: Order_By.Desc }],
 };
 
-const UnclaimedCard = ({ envelope, onClaimed }: { envelope: Envelope; onClaimed: () => void }) => {
+const UnclaimedCard = ({
+  envelope,
+  decimals,
+  symbol,
+  onClaimed,
+}: {
+  envelope: Envelope;
+  decimals: number;
+  symbol: string;
+  onClaimed: () => void;
+}) => {
   const handleClick = () => {
     const chains = getListChains();
     const megaEthChain = chains.find((chain) => chain.chain_id === MEGAETH_CHAIN_ID.toString());
@@ -47,7 +57,9 @@ const UnclaimedCard = ({ envelope, onClaimed }: { envelope: Envelope; onClaimed:
         onConnect: () => {
           modal.open(ClaimRedEnvelopeModal, {
             props: {
-              envelopeId: envelope.token_id,
+              envelope,
+              decimals,
+              symbol,
               onComplete: onClaimed,
             },
           });
@@ -241,7 +253,13 @@ export const ReceivedEnvelopes = () => {
           envelope.claimed ? (
             <ClaimedCard key={envelope.id} envelope={envelope} decimals={decimals} symbol={symbol} />
           ) : (
-            <UnclaimedCard key={envelope.id} envelope={envelope} onClaimed={refetch} />
+            <UnclaimedCard
+              key={envelope.id}
+              envelope={envelope}
+              decimals={decimals}
+              symbol={symbol}
+              onClaimed={refetch}
+            />
           )
         )}
       </div>
