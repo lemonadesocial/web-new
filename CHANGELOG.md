@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.3.1](https://github.com/lemonadesocial/web-new/compare/v10.3.0...v10.3.1) (2026-02-11)
+
+
+### Bug Fixes
+
+* check balance ([2c9e13c](https://github.com/lemonadesocial/web-new/commit/2c9e13cf9f70c09ad5bbc1d43e2cc5ba59803fe6))
+
 ## [10.3.0](https://github.com/lemonadesocial/web-new/compare/v10.2.0...v10.3.0) (2026-02-11)
 
 
