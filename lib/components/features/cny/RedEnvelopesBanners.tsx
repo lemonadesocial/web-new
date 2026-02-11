@@ -59,12 +59,7 @@ export const RedEnvelopesBanners = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div
-        className="relative rounded-md overflow-hidden cursor-pointer group"
-        onClick={() => {
-          if (receivedCount > 0) {
-            router.push('/cny/envelopes');
-          }
-        }}
+        className="relative rounded-md overflow-hidden"
       >
         <div className="absolute inset-0">
           <img
@@ -93,7 +88,7 @@ export const RedEnvelopesBanners = () => {
           <Button
             variant="secondary"
             className="rounded-full"
-            disabled={receivedCount === 0}
+            onClick={() => router.push('/cny/envelopes')}
           >
             Open Envelopes
           </Button>
@@ -128,11 +123,7 @@ export const RedEnvelopesBanners = () => {
           <Button
             variant="secondary"
             className="rounded-full"
-            disabled={emptyCount === 0}
-            onClick={(e) => {
-              e.stopPropagation();
-              router.push('/cny/send');
-            }}
+            onClick={() => router.push('/cny/send')}
           >
             Fill & Send
           </Button>
