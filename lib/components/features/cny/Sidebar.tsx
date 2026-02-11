@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { Button } from '$lib/components/core';
+import { Button, toast } from '$lib/components/core';
 
 export const RedEnvelopesSidebar = () => {
   const pathname = usePathname();
@@ -29,22 +29,38 @@ export const RedEnvelopesSidebar = () => {
           <i className="icon-lemonade-logo text-[#FDE047]" />
         </div>
         {menu.map((item) => {
+          const content = (
+            <div className={clsx(' w-full', item?.label && 'tooltip tooltip-right')}>
+              {item?.label && (
+                <div className="tooltip-content">
+                  <p className="text-md font-medium ">{item?.label}</p>
+                </div>
+              )}
+              <Button
+                variant={isActive(item) ? 'secondary' : 'flat'}
+                icon={item.icon}
+                iconSize="size-8"
+                size="lg"
+                className="w-full h-[64px] md:max-h-[64px]"
+              />
+            </div>
+          );
+
+          if (item.path === '/cny/leaderboard') {
+            return (
+              <div
+                key={item.path}
+                onClick={() => toast.success('Coming Soon')}
+                className="cursor-pointer"
+              >
+                {content}
+              </div>
+            );
+          }
+
           return (
             <Link href={item.path} key={item.path}>
-              <div className={clsx(' w-full', item?.label && 'tooltip tooltip-right')}>
-                {item?.label && (
-                  <div className="tooltip-content">
-                    <p className="text-md font-medium ">{item?.label}</p>
-                  </div>
-                )}
-                <Button
-                  variant={isActive(item) ? 'secondary' : 'flat'}
-                  icon={item.icon}
-                  iconSize="size-8"
-                  size="lg"
-                  className="w-full h-[64px] md:max-h-[64px]"
-                />
-              </div>
+              {content}
             </Link>
           );
         })}
