@@ -147,6 +147,7 @@ export function MintPassportModal({
       Sentry.captureException(error, {
         extra: {
           walletInfo: appKit.getWalletInfo(),
+          mintData,
         },
       });
       toast.error(formatError(error));
