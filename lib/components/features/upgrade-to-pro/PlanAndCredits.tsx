@@ -224,7 +224,7 @@ export function PlanAndCredits() {
                     </li>
                     {item.features.map((f, idx) => (
                       <li key={idx} className="flex gap-2">
-                        <i className="icon-done" />
+                        <i className="icon-done size-5 aspect-square" />
                         <p>{f}</p>
                       </li>
                     ))}
