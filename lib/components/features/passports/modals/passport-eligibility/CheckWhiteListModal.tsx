@@ -129,7 +129,7 @@ export function CheckWhiteListModal({
     return (
       <SuccessModal
         title="You're On The Whitelist!"
-        description={`"You can now personalize your ${passportTitle} Passport to make it truly yours before minting your on-chain identity.`}
+        description={`You can now personalize your ${passportTitle} Passport to make it truly yours before minting your on-chain identity.`}
         buttonText="Continue"
         onClose={onContinue}
       />
