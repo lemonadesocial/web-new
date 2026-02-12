@@ -13,17 +13,19 @@ import { generateUrl } from '$lib/utils/cnd';
 import { SettingsCommunityDisplay } from '$lib/components/features/community-manage/settings';
 import { CommunityPeople } from '$lib/components/features/community-manage/CommunityPeople';
 import { PlanAndCredits } from '$lib/components/features/upgrade-to-pro/PlanAndCredits';
+import Team from '$lib/components/features/upgrade-to-pro/Team';
+import { CommunityDetail } from '$lib/components/features/upgrade-to-pro/CommunityDetail';
 
 const menu: Record<string, { label: string; icon: string; component: React.FC<{ space: Space }> }> = {
   overview: {
     label: 'Community Details',
     icon: 'icon-info',
-    component: SettingsCommunityDisplay,
+    component: CommunityDetail,
   },
   people: {
-    label: 'People',
+    label: 'Team',
     icon: 'icon-user-group-outline',
-    component: CommunityPeople,
+    component: Team,
   },
   plans: {
     label: 'Plans & Credits',
@@ -141,7 +143,7 @@ function Page() {
         </div>
 
         {selectedSpace && (
-          <div className="w-full px-4 flex-1 overflow-auto no-scrollbar">
+          <div className="w-full flex-1 overflow-auto no-scrollbar">
             <Comp space={selectedSpace} />
           </div>
         )}

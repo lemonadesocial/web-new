@@ -54,12 +54,12 @@ const validationSchema = object().shape({
 function SettingsCommunityDisplay({ space }: { space: Space }) {
   return (
     <ThemeProvider themeData={space.theme_data}>
-      <Content space={space} />
+      <CommunityDetailForm space={space} />
     </ThemeProvider>
   );
 }
 
-function Content({ space }: { space: Space }) {
+export function CommunityDetailForm({ space }: { space: Space }) {
   const [mounted, setMounted] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [uploadingCover, setUploadingCover] = React.useState(false);
@@ -229,7 +229,7 @@ function Content({ space }: { space: Space }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       {isDirty && (
-        <div className="px-4 md:px-0 bg-warning-300/16 backdrop-blur-sm sticky top-[156px] z-50">
+        <div data-submit-content className="px-4 md:px-0 bg-warning-300/16 backdrop-blur-sm sticky top-[156px] z-50">
           <div className="page mx-auto flex justify-between py-3 items-center">
             <p className="text-warning-300">You have unsaved changes.</p>
             <Button type="submit" size="sm" loading={isSubmitting} className="rounded-full" variant="warning">
@@ -239,7 +239,7 @@ function Content({ space }: { space: Space }) {
         </div>
       )}
 
-      <div className="page bg-transparent! mx-auto py-7 px-4 md:px-0">
+      <div data-form-content className="page bg-transparent! mx-auto py-7 px-4 md:px-0">
         <div className="flex flex-col gap-4">
           <Card.Root>
             <Card.Content className="p-0">
