@@ -15,6 +15,7 @@ import { CommunityPeople } from '$lib/components/features/community-manage/Commu
 import { PlanAndCredits } from '$lib/components/features/upgrade-to-pro/PlanAndCredits';
 import Team from '$lib/components/features/upgrade-to-pro/Team';
 import { CommunityDetail } from '$lib/components/features/upgrade-to-pro/CommunityDetail';
+import { Connector } from '$lib/components/features/upgrade-to-pro/Connector';
 
 const menu: Record<string, { label: string; icon: string; component: React.FC<{ space: Space }> }> = {
   overview: {
@@ -45,7 +46,7 @@ const menu: Record<string, { label: string; icon: string; component: React.FC<{ 
   connector: {
     label: 'Connectors',
     icon: 'icon-connector-line',
-    component: () => null,
+    component: Connector,
   },
 };
 
