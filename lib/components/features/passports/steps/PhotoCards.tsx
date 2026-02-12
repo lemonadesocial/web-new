@@ -62,6 +62,7 @@ export function FluffleCard() {
   useEffect(() => {
     if (state.useFluffle && data) {
       dispatch({ type: PassportActionKind.SetPhoto, payload: data.image });
+      dispatch({ type: PassportActionKind.SetFluffleTokenId, payload: data.tokenId });
     }
   }, [state.useFluffle, data, dispatch]);
 

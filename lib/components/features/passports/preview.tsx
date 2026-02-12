@@ -38,7 +38,7 @@ function ImagePreview({ className }: { className?: string }) {
         username: state.lemonadeUsername || state.ensName,
         provider: state.provider,
         wallet: address,
-        fluffleTokenId: state.useFluffle ? '1' : undefined,
+        fluffleTokenId: state.useFluffle ? state.fluffleTokenId : undefined,
       };
 
   const getImage = trpc.passport.getImage.useQuery(variables);

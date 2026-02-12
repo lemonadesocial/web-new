@@ -76,6 +76,7 @@ async function fetchFluffleTokenUri(address: string) {
     return {
       name,
       image,
+      tokenId,
     };
   }
 
@@ -91,12 +92,12 @@ export function useFluffle() {
     error,
   } = useQuery({
     queryKey: ['fluffle', address],
-    queryFn: () => fetchFluffleTokenUri(address!),
+    queryFn: () => fetchFluffleTokenUri('0x242c7f2279a3187279fd61605004a4b477b63a78'),
     enabled: !!address,
   });
 
   return { 
-    data: data ? { name: data.name, image: data.image } : null,
+    data: data ? { name: data.name, image: data.image, tokenId: data.tokenId } : null,
     loading, 
     error 
   };

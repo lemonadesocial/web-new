@@ -112,14 +112,15 @@ export function Footer() {
       if (state.photo) {
         query += `&avatar=${encodeURIComponent(state.photo)}`;
       }
-      if (state.useLemonhead && state.lemonadeUsername) {
+
+      if (state.lemonadeUsername) {
         query += `&username=${encodeURIComponent(state.lemonadeUsername)}`;
-      }
-      if (state.useENS && state.ensName) {
+      } else if (state.useENS && state.ensName) {
         query += `&username=${encodeURIComponent(state.ensName)}`;
       }
-      if (state.useFluffle) {
-        query += `&fluffleTokenId=1`;
+      
+      if (state.useFluffle && state.fluffleTokenId) {
+        query += `&fluffleTokenId=${encodeURIComponent(state.fluffleTokenId)}`;
       }
 
       const response = await fetch(`/api/passport/${state.provider}?${query}`);

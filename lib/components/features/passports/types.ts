@@ -46,6 +46,7 @@ export type PassportState = {
   currentStep?: PassportStep;
   useLemonhead?: boolean;
   useFluffle?: boolean;
+  fluffleTokenId?: string;
   lemonadeUsername?: string;
   useENS?: boolean;
   ensName?: string;
@@ -86,6 +87,7 @@ export enum PassportActionKind {
   PrevStep = 'PREV_STEP',
   SelectLemonhead = 'SELECT_LEMONHEAD',
   SelectFluffle = 'SELECT_FLUFFLE',
+  SetFluffleTokenId = 'SET_FLUFFLE_TOKEN_ID',
   SetLemonadeUsername = 'SET_LEMONADE_USERNAME',
   SelectENS = 'SELECT_ENS',
   SetMintData = 'SET_MINT_DATA',
