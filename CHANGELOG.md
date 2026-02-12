@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.5.0](https://github.com/lemonadesocial/web-new/compare/v10.4.1...v10.5.0) (2026-02-12)
+
+
+### Features
+
+* add mint data log ([3f1f557](https://github.com/lemonadesocial/web-new/commit/3f1f557d45880c4f496f5ada6f1736eb8a187db0))
+
 ## [10.4.1](https://github.com/lemonadesocial/web-new/compare/v10.4.0...v10.4.1) (2026-02-12)
 
 
