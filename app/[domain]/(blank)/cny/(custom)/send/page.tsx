@@ -456,13 +456,13 @@ function SendPage() {
           </Button>
         </div>
 
-        <div className="w-full border-b overflow-x-auto">
-          <table className="w-full table-fixed border-collapse">
+        <div className="w-full border-b overflow-x-auto overflow-y-hidden [-webkit-overflow-scrolling:touch]">
+          <table className="min-w-[1120px] w-full table-fixed border-collapse">
             <colgroup>
-              <col style={{ width: '172px' }} />
-              <col style={{ width: '30%' }} />
-              <col style={{ width: '200px' }} />
-              <col style={{ width: '35%' }} />
+              <col style={{ width: '140px' }} />
+              <col style={{ width: '400px' }} />
+              <col style={{ width: '100px' }} />
+              <col style={{ width: '400px' }} />
               <col style={{ width: '80px' }} />
             </colgroup>
             <thead>
@@ -478,8 +478,8 @@ function SendPage() {
                     <span>Envelope</span>
                   </div>
                 </th>
-                <th className={headerCellClass}>Wallet ID</th>
-                <th className={headerCellClass}>
+                <th className={`${headerCellClass} w-[400px] shrink-0`}>Wallet ID</th>
+                <th className={`${headerCellClass} min-w-[100px]`}>
                   <span className="flex justify-between items-center gap-2">
                     <span>{currencySymbol ?? '—'}</span>
                     <span className="tabular-nums">
@@ -487,7 +487,7 @@ function SendPage() {
                     </span>
                   </span>
                 </th>
-                <th className={headerCellClass}>Message (Optional)</th>
+                <th className={`${headerCellClass} min-w-[400px]`}>Message (Optional)</th>
                 <th className={headerCellClass} />
               </tr>
             </thead>
@@ -523,7 +523,7 @@ function SendPage() {
                       </div>
                     </td>
                     <td
-                      className={`${rowCellClass} focus-within:outline focus-within:outline-[var(--color-primary)] focus-within:outline-offset-[-1px] focus-within:z-10 focus-within:relative cursor-text`}
+                      className={`${rowCellClass} w-[400px] max-w-[400px] shrink-0 focus-within:outline focus-within:outline-[var(--color-primary)] focus-within:outline-offset-[-1px] focus-within:z-10 focus-within:relative cursor-text`}
                       onClick={() => focusCell(rowIndex, 1)}
                     >
                       <input
@@ -541,7 +541,7 @@ function SendPage() {
                       />
                     </td>
                     <td
-                      className={`${rowCellClass} focus-within:outline focus-within:outline-[var(--color-primary)] focus-within:outline-offset-[-1px] focus-within:z-10 focus-within:relative cursor-text`}
+                      className={`${rowCellClass} min-w-[100px] focus-within:outline focus-within:outline-[var(--color-primary)] focus-within:outline-offset-[-1px] focus-within:z-10 focus-within:relative cursor-text`}
                       onClick={() => focusCell(rowIndex, 2)}
                     >
                       <input
@@ -553,11 +553,11 @@ function SendPage() {
                         value={row.amount}
                         onChange={(e) => updateRow(row.id, { amount: e.target.value })}
                         onKeyDown={(e) => handleKeyDown(e, rowIndex, 2)}
-                        className={`${inputClass} w-12 text-right`}
+                        className={`${inputClass} min-w-[80px] w-12 text-right`}
                       />
                     </td>
                     <td
-                      className={`${rowCellClass} focus-within:outline focus-within:outline-[var(--color-primary)] focus-within:outline-offset-[-1px] focus-within:z-10 focus-within:relative cursor-text`}
+                      className={`${rowCellClass} min-w-[400px] focus-within:outline focus-within:outline-[var(--color-primary)] focus-within:outline-offset-[-1px] focus-within:z-10 focus-within:relative cursor-text`}
                       onClick={() => focusCell(rowIndex, 3)}
                     >
                       <input
@@ -623,7 +623,7 @@ function SendPage() {
             <i className="icon-chevron-right size-5 text-quaternary" />
           </div>
         ) : (
-          <p className="text-tertiary">Select multiple rows to perform batch actions</p>
+          <p className="text-tertiary text-sm md:text-base">Select multiple rows to perform batch actions</p>
         )}
         <Button
           variant="secondary"
