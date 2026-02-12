@@ -1,15 +1,19 @@
 'use client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button, Card } from '$lib/components/core';
+import { Badge, Button, Card, Toggle } from '$lib/components/core';
+import { formatCurrency } from '$lib/utils/string';
+import React from 'react';
+import { match } from 'ts-pattern';
 
 const pricingPlans = [
   {
     id: 'pro',
     title: 'Pro',
     description: 'Designed for fast-moving teams building together in real time.',
-    price: '$16',
+    price: 2500,
     priceSuffix: 'per month',
-    savings: 'Save $100',
+    isSaving: false,
+    savings: 5000,
     featureTitle: 'All features in Free, plus:',
     features: [
       '100 monthly AI credits',
@@ -27,9 +31,10 @@ const pricingPlans = [
     id: 'business',
     title: 'Business',
     description: 'Advanced controls and power features for growing departments.',
-    price: '$32',
+    price: 5000,
     priceSuffix: 'per month',
-    savings: 'Save $200',
+    savings: 20000,
+    isSaving: false,
     featureTitle: 'All features in Pro, plus:',
     features: [
       '500 monthly AI credits',
@@ -44,12 +49,10 @@ const pricingPlans = [
     id: 'enterprise',
     title: 'Enterprise',
     description: 'Built for large orgs needing flexibility, scale, and governance.',
-    price: '',
+    price: 0,
     priceSuffix: '',
-    savings: null,
-    buttonText: 'Book a Demo',
-    buttonVariant: 'bg-transparent border border-white text-white',
-    isHighlighted: true,
+    savings: 0,
+    isSaving: null,
     featureTitle: 'All features in Business, plus:',
     features: [
       'Dedicated support',
@@ -63,6 +66,8 @@ const pricingPlans = [
 ];
 
 export function PlanAndCredits() {
+  const [data, setData] = React.useState(pricingPlans);
+
   return (
     <div className="p-12 flex flex-col gap-6">
       <div className="space-y-1">
@@ -70,7 +75,7 @@ export function PlanAndCredits() {
         <p className="text-tertiary">Manage your subscription plan and credit balance.</p>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card.Root className="h-[148px]">
           <Card.Content className="flex h-full flex-col justify-between">
             <div className="flex gap-3 items-center">
@@ -91,7 +96,7 @@ export function PlanAndCredits() {
           </Card.Content>
         </Card.Root>
 
-        <Card.Root className="col-span-2">
+        <Card.Root className="md:col-span-2">
           <Card.Content className="flex flex-col gap-3">
             <div className="flex items-center justify-between text-tertiary">
               <div className="flex items-center gap-1.5">
@@ -138,16 +143,97 @@ export function PlanAndCredits() {
           </Card.Content>
         </Card.Root>
 
-        {pricingPlans.map((plan) => (
-          <Card.Root key={plan.id}>
-            <Card.Content>
-              <div className="flex flex-col gap-2">
-                <p className="text-lg font-semibold">{plan.title}</p>
-                <p className="text-secondary text-sm">{plan.description}</p>
-              </div>
-            </Card.Content>
-          </Card.Root>
-        ))}
+        {data.map((item) => {
+          const isSaving = data.find((i) => i.id === item.id)?.isSaving;
+          return (
+            <Card.Root key={item.id}>
+              <Card.Content className="p-0">
+                <div className="p-4 flex flex-col gap-6">
+                  <div className="flex flex-col gap-2">
+                    <p className="text-lg font-semibold">{item.title}</p>
+                    <p className="text-secondary text-sm">{item.description}</p>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <div className="flex justify-between items-center flex-1 min-h-[40px]">
+                      {item.price > 0 && (
+                        <div className="flex gap-2 items-end">
+                          <p className="text-2xl">
+                            {formatCurrency(isSaving ? (item.price * 12 - item.savings) / 12 : item.price)}
+                          </p>
+                          <p className="text-tertiary">{item.priceSuffix}</p>
+                        </div>
+                      )}
+                      {isSaving && (
+                        <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5">
+                          Save {formatCurrency(item.savings)}
+                        </Badge>
+                      )}
+                    </div>
+                    {item.price > 0 ? (
+                      <p className="text-tertiary text-sm">Shared across unlimited users</p>
+                    ) : (
+                      <p className="text-tertiary text-lg">Custom</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="border border-s-0 border-e-0 px-4 py-3">
+                  {item.price > 0 ? (
+                    <div className="flex items-center justify-between">
+                      <div className="flex gap-2">
+                        <Toggle
+                          id={item.id}
+                          checked={!!data.find((i) => i.id === item.id)?.isSaving}
+                          onChange={(value) => {
+                            setData((prev) =>
+                              prev.map((i) => {
+                                if (i.id === item.id) {
+                                  return { ...i, isSaving: value };
+                                } else {
+                                  return i;
+                                }
+                              }),
+                            );
+                          }}
+                        />
+                        <p className="text-tertiary">Annual</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-tertiary">Flexible Plans</p>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-6 p-4">
+                  {match(item.id)
+                    .with('pro', () => <Button>Upgrade</Button>)
+                    .with('business', () => (
+                      <Button outlined variant="secondary">
+                        Upgrade
+                      </Button>
+                    ))
+                    .otherwise(() => (
+                      <Button variant="secondary" outlined>
+                        Book a Demo
+                      </Button>
+                    ))}
+                  <ul className="flex flex-col gap-3">
+                    <li className="text-tertiary text-sm">
+                      <p>All features in Free, plus:</p>
+                    </li>
+                    {item.features.map((f, idx) => (
+                      <li key={idx} className="flex gap-2">
+                        <i className="icon-done" />
+                        <p>{f}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Card.Content>
+            </Card.Root>
+          );
+        })}
       </div>
     </div>
   );
