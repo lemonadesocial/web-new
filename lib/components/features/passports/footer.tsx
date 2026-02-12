@@ -123,9 +123,14 @@ export function Footer() {
       }
 
       const response = await fetch(`/api/passport/${state.provider}?${query}`);
-      const mintData = await response.json();
+      const data = await response.json();
 
-      dispatch({ type: PassportActionKind.SetMintData, payload: mintData });
+      if (!response.ok) {
+        const message = data?.message ?? data?.error ?? `Request failed (${response.status})`;
+        throw new Error(message);
+      }
+
+      dispatch({ type: PassportActionKind.SetMintData, payload: data });
 
       modal.open(BeforeMintPassportModal, {
         props: {
@@ -139,15 +144,15 @@ export function Footer() {
                   dispatch({ type: PassportActionKind.SetMintState, payload: { txHash, tokenId } });
                   dispatch({ type: PassportActionKind.NextStep });
                 },
-                mintData: mintData,
+                mintData: data,
               },
             });
           },
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       Sentry.captureException(error);
-      toast.error(formatError(error));
+      toast.error(error.message);
     } finally {
       setIsMinting(false);
     }

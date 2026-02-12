@@ -1,0 +1,1 @@
+export { CurrencyClient } from './client';

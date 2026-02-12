@@ -4,20 +4,23 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import * as Sentry from '@sentry/nextjs';
 import type { Eip1193Provider } from 'ethers';
-import { ethers } from 'ethers';
 import debounce from 'lodash/debounce';
 
-import { Button, modal, ModalContent, toast } from "$lib/components/core";
+import { ethers } from 'ethers';
+import { Button, modal, ModalContent, toast } from '$lib/components/core';
+import { CurrencyClient } from '$lib/services/currency';
 import { approveERC20Spender, checkBalanceSufficient, formatError, isNativeToken, writeContract } from '$lib/utils/crypto';
 import { listChainsAtom } from '$lib/jotai';
 import { appKit, useAppKitProvider } from '$lib/utils/appkit';
 import { LemonadeUsernameABI } from '$lib/abis/LemonadeUsername';
 import { trpc } from '$lib/trpc/client';
 import { useClient } from '$lib/graphql/request';
-import { UsernameAvailabilityDocument, UsernameAvailabilityQueryVariables } from '$lib/graphql/generated/backend/graphql';
+import type { IsUsernameAvailableQuery } from '$lib/graphql/generated/backend/graphql';
+import { IsUsernameAvailableDocument, IsUsernameAvailableQueryVariables } from '$lib/graphql/generated/backend/graphql';
 
 import { SuccessModal } from './SuccessModal';
 import { ASSET_PREFIX } from '$lib/utils/constants';
+import { formatNumber } from '$lib/utils/number';
 
 export function ClaimLemonadeUsernameModal() {
   const { walletProvider } = useAppKitProvider('eip155');
@@ -32,23 +35,33 @@ export function ClaimLemonadeUsernameModal() {
   const [username, setUsername] = useState('');
   const [step, setStep] = useState<'search' | 'success'>('search');
   const [status, setStatus] = useState<'idle' | 'checking' | 'available' | 'unavailable'>('idle');
+  const [usernamePrice, setUsernamePrice] = useState<{
+    price: string;
+    currency: string;
+    symbol?: string;
+    decimals?: number;
+  } | null>(null);
+  
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const checkUsernameAvailability = useCallback(async (value: string, toAddress: string) => {
-    const variables: UsernameAvailabilityQueryVariables = {
-      wallet: toAddress,
-      username: value,
-    };
-  
-    const { data } = await client.query({
-      query: UsernameAvailabilityDocument,
-      variables,
-      fetchPolicy: 'network-only',
-    });
-  
-    return data?.isUsernameAvailable ?? false;
-  }, [client]);
+  const checkUsernameAvailability = useCallback(
+    async (value: string, toAddress: string): Promise<IsUsernameAvailableQuery['isUsernameAvailable'] | null> => {
+      const variables: IsUsernameAvailableQueryVariables = {
+        wallet: toAddress,
+        username: value,
+      };
+
+      const { data } = await client.query({
+        query: IsUsernameAvailableDocument,
+        variables,
+        fetchPolicy: 'network-only',
+      });
+
+      return data?.isUsernameAvailable ?? null;
+    },
+    [client]
+  );
   
   const debouncedCheckUsername = useCallback(
     debounce(async (value: string) => {
@@ -64,18 +77,39 @@ export function ClaimLemonadeUsernameModal() {
 
       setStatus('checking');
       setErrorMessage('');
+      setUsernamePrice(null);
 
       try {
-        const isAvailable = await checkUsernameAvailability(value, address);
+        const result = await checkUsernameAvailability(value, address);
 
-        if (isAvailable) {
+        if (result?.available) {
           setStatus('available');
           setErrorMessage('');
+
+          if (result.price != null && result.currency != null) {
+            const price = result.price;
+            const currency = result.currency;
+            
+            if (BigInt(price) > 0n) {
+              const currencyClient = new CurrencyClient(usernameChain, currency);
+              const [symbol, decimals] = await Promise.all([
+                currencyClient.getSymbol(),
+                currencyClient.getDecimals(),
+              ]);
+
+              setUsernamePrice({ price, currency, symbol, decimals });
+              return;
+            }
+
+            setUsernamePrice({ price, currency });
+          }
+
           return;
         }
 
         setStatus('unavailable');
         setErrorMessage('Username is already taken');
+        setUsernamePrice(null);
       } catch (error: any) {
         setErrorMessage(error?.message || 'Error checking username availability');
         setStatus('idle');
@@ -178,6 +212,7 @@ export function ClaimLemonadeUsernameModal() {
     setUsername(value);
     setStatus('idle');
     setErrorMessage('');
+    setUsernamePrice(null);
 
     if (value.length > 0) {
       debouncedCheckUsername(value);
@@ -227,6 +262,14 @@ export function ClaimLemonadeUsernameModal() {
           onChange={onInputChange}
         />
       </div>
+
+      {status === 'available' && usernamePrice && BigInt(usernamePrice.price) > 0n && (
+        <p className='text-warning-400 text-sm mt-2'>
+          Usernames with {username.length} characters cost{' '}
+          {formatNumber(Number(ethers.formatUnits(usernamePrice.price, usernamePrice.decimals ?? 18)))}{' '}
+          {usernamePrice.symbol ?? usernamePrice.currency}.
+        </p>
+      )}
 
       {errorMessage && <p className='text-error text-sm mt-2'>{errorMessage}</p>}
 
