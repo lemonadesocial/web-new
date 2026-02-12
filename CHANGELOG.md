@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.4.0](https://github.com/lemonadesocial/web-new/compare/v10.3.1...v10.4.0) (2026-02-12)
+
+
+### Features
+
+* update price and currency validation ([a5d121f](https://github.com/lemonadesocial/web-new/commit/a5d121f998f0c191775cf634c077ec22897edbc7))
+
 ## [10.3.1](https://github.com/lemonadesocial/web-new/compare/v10.3.0...v10.3.1) (2026-02-11)
 
 
