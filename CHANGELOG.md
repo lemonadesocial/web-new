@@ -1,5 +1,14 @@
 # Changelog
 
+## [10.4.1](https://github.com/lemonadesocial/web-new/compare/v10.4.0...v10.4.1) (2026-02-12)
+
+
+### Bug Fixes
+
+* copy ([c870c1b](https://github.com/lemonadesocial/web-new/commit/c870c1b92de8d9dddce24fcc63e72d7acb4d84e7))
+* fluffle id ([f57b5ab](https://github.com/lemonadesocial/web-new/commit/f57b5ab8735ed7248744e5dbf8efcc2a9b990276))
+* send ui mobile ([23e5bbd](https://github.com/lemonadesocial/web-new/commit/23e5bbdcb0c287f16598c4d59bbbef8f38e5029c))
+
 ## [10.4.0](https://github.com/lemonadesocial/web-new/compare/v10.3.1...v10.4.0) (2026-02-12)
 
 
