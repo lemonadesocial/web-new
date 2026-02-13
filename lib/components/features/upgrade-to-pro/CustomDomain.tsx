@@ -4,7 +4,7 @@ import { CustomDomainSection } from '../community-manage/settings/SettingsCommun
 
 export function CustomDomain({ space }: { space: Space }) {
   return (
-    <div className="p-12 flex flex-col gap-6">
+    <div className="p-4 md:p-12 flex flex-col gap-6">
       <div className="space-y-1">
         <h3 className="text-2xl font-bold">Custom Domain</h3>
         <p className="text-tertiary">

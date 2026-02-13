@@ -10,8 +10,6 @@ import { useQuery } from '$lib/graphql/request';
 import { useMe } from '$lib/hooks/useMe';
 import clsx from 'clsx';
 import { generateUrl } from '$lib/utils/cnd';
-import { SettingsCommunityDisplay } from '$lib/components/features/community-manage/settings';
-import { CommunityPeople } from '$lib/components/features/community-manage/CommunityPeople';
 import { PlanAndCredits } from '$lib/components/features/upgrade-to-pro/PlanAndCredits';
 import Team from '$lib/components/features/upgrade-to-pro/Team';
 import { CommunityDetail } from '$lib/components/features/upgrade-to-pro/CommunityDetail';
@@ -59,6 +57,8 @@ function Page() {
   const [active, setActive] = React.useState('overview');
   const [selectedSpaceId, setSelectedSpaceId] = React.useState();
   const [skip, setSkip] = React.useState(0);
+  const [toggleMenuMobile, setToggleMenuMobile] = React.useState(false);
+  const menuRef = React.useRef<HTMLDivElement>(null);
 
   const { data } = useQuery(GetListMySpacesDocument, {
     variables: { skip, limit: 10 },
@@ -80,8 +80,8 @@ function Page() {
   return (
     <>
       <Header showUI={false} />
-      <div className="h-dvh flex">
-        <div className="flex flex-col flex-1 bg-overlay-primary max-w-[280px] p-3 gap-3">
+      <div className="h-dvh flex flex-col md:flex-row">
+        <div ref={menuRef} className="max-sm:hidden md:flex flex-col flex-1 bg-overlay-primary max-w-[280px] p-3 gap-3">
           <Button iconLeft="icon-chevron-left" variant="flat" onClick={() => router.back()} className="w-fit">
             Back
           </Button>
@@ -142,13 +142,50 @@ function Page() {
                   'flex items-center gap-x-2.5 p-2.5 rounded-sm text-secondary hover:bg-(--btn-tertiary) cursor-pointer',
                   active === key && 'bg-(--btn-tertiary)',
                 )}
-                onClick={() => setActive(key)}
+                onClick={() => {
+                  const classes = [
+                    'max-sm:hidden',
+                    'max-sm:fixed',
+                    'flex',
+                    'max-sm:inset-0',
+                    'max-sm:z-50',
+                    'max-sm:max-w-full',
+                  ];
+                  classes.forEach((i) => menuRef.current?.classList?.toggle(i));
+                  setActive(key);
+                }}
               >
                 <i className={twMerge('w-5 h-5 aspect-square', item.icon)}></i>
                 <p className="text-sm">{item.label}</p>
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="md:hidden p-3 flex justify-between items-center">
+          <div className="flex-1">
+            <Button
+              icon="icon-chevron-left"
+              variant="flat"
+              onClick={() => {
+                const classes = [
+                  'max-sm:hidden',
+                  'max-sm:fixed',
+                  'flex',
+                  'max-sm:inset-0',
+                  'max-sm:z-50',
+                  'max-sm:max-w-full',
+                ];
+                classes.forEach((i) => menuRef.current?.classList?.toggle(i));
+              }}
+              className="w-fit"
+            >
+              Back
+            </Button>
+          </div>
+
+          <p className="flex-2 text-center font-bold">{menu[active].label}</p>
+          <div className="flex-1" />
         </div>
 
         {space && (

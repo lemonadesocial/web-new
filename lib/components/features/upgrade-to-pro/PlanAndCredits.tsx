@@ -69,7 +69,7 @@ export function PlanAndCredits() {
   const [data, setData] = React.useState(pricingPlans);
 
   return (
-    <div className="p-12 flex flex-col gap-6">
+    <div className="p-4 md:p-12 flex flex-col gap-6">
       <div className="space-y-1">
         <h3 className="text-2xl font-bold">Plans & Credits</h3>
         <p className="text-tertiary">Manage your subscription plan and credit balance.</p>
