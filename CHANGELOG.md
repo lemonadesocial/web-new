@@ -1,5 +1,18 @@
 # Changelog
 
+## [10.6.0](https://github.com/lemonadesocial/web-new/compare/v10.5.1...v10.6.0) (2026-02-13)
+
+
+### Features
+
+* improve claim username flow ([9fae9d9](https://github.com/lemonadesocial/web-new/commit/9fae9d99752db30d0018c362936c3f705bb8255b))
+* update gas limit ([0ca238e](https://github.com/lemonadesocial/web-new/commit/0ca238e4d16fff8a65e7edc02955c720ee6880ce))
+
+
+### Bug Fixes
+
+* mint username button ([48b5fbd](https://github.com/lemonadesocial/web-new/commit/48b5fbdcdd85be8b028af71e017328d4592cac41))
+
 ## [10.5.1](https://github.com/lemonadesocial/web-new/compare/v10.5.0...v10.5.1) (2026-02-13)
 
 
