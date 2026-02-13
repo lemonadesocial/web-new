@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { Button, Menu, MenuItem } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
-import { GetListMySpacesDocument, Space } from '$lib/graphql/generated/backend/graphql';
+import { GetListMySpacesDocument, GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { useMe } from '$lib/hooks/useMe';
 import clsx from 'clsx';
@@ -16,6 +16,8 @@ import { PlanAndCredits } from '$lib/components/features/upgrade-to-pro/PlanAndC
 import Team from '$lib/components/features/upgrade-to-pro/Team';
 import { CommunityDetail } from '$lib/components/features/upgrade-to-pro/CommunityDetail';
 import { Connector } from '$lib/components/features/upgrade-to-pro/Connector';
+import { CustomDomain } from '$lib/components/features/upgrade-to-pro/CustomDomain';
+import { Payouts } from '$lib/components/features/upgrade-to-pro/Payouts';
 
 const menu: Record<string, { label: string; icon: string; component: React.FC<{ space: Space }> }> = {
   overview: {
@@ -36,12 +38,12 @@ const menu: Record<string, { label: string; icon: string; component: React.FC<{ 
   payouts: {
     label: 'Payouts',
     icon: 'icon-send-money',
-    component: () => null,
+    component: Payouts,
   },
   domain: {
     label: 'Custom Domain',
     icon: 'icon-globe',
-    component: () => null,
+    component: CustomDomain,
   },
   connector: {
     label: 'Connectors',
@@ -55,7 +57,7 @@ function Page() {
   const me = useMe();
 
   const [active, setActive] = React.useState('overview');
-  const [selectedSpace, setSelectedSpace] = React.useState<Space>();
+  const [selectedSpaceId, setSelectedSpaceId] = React.useState();
   const [skip, setSkip] = React.useState(0);
 
   const { data } = useQuery(GetListMySpacesDocument, {
@@ -65,8 +67,14 @@ function Page() {
   const spaces = (data?.listMySpaces?.items || []) as Space[];
   const Comp = menu[active].component;
 
+  const { data: dataGetSpace } = useQuery(GetSpaceDocument, {
+    variables: { id: selectedSpaceId },
+    skip: !selectedSpaceId,
+  });
+  const space = dataGetSpace?.getSpace as Space;
+
   React.useEffect(() => {
-    setSelectedSpace(spaces[0]);
+    if (spaces.length) setSelectedSpaceId(spaces[0]._id);
   }, [spaces.length]);
 
   return (
@@ -85,14 +93,14 @@ function Page() {
                   className="bg-(--btn-tertiary) h-[40px] rounded-sm! max-w-full"
                   iconLeft={
                     <div className="size-5 object-cover aspect-square rounded-xs overflow-hidden bg-tertiary">
-                      {selectedSpace?.image_avatar && (
-                        <img src={generateUrl(selectedSpace.image_avatar_expanded)} className="w-full h-full" />
+                      {space?.image_avatar && (
+                        <img src={generateUrl(space.image_avatar_expanded)} className="w-full h-full" />
                       )}
                     </div>
                   }
                   iconRight="icon-chevron-down"
                 >
-                  <p className="line-clamp-1 truncate flex-1">{selectedSpace?.title}</p>
+                  <p className="line-clamp-1 truncate flex-1">{space?.title}</p>
                 </MenuItem>
               )}
             </Menu.Trigger>
@@ -110,9 +118,9 @@ function Page() {
                           )}
                         </div>
                       }
-                      iconRight={item._id === selectedSpace?._id && 'icon-done'}
+                      iconRight={item._id === selectedSpaceId && 'icon-done'}
                       onClick={() => {
-                        setSelectedSpace(item);
+                        setSelectedSpaceId(item._id);
                         toggle();
                       }}
                     >
@@ -143,9 +151,9 @@ function Page() {
           </div>
         </div>
 
-        {selectedSpace && (
+        {space && (
           <div className="w-full flex-1 overflow-auto no-scrollbar">
-            <Comp space={selectedSpace} />
+            <Comp space={space} />
           </div>
         )}
       </div>
