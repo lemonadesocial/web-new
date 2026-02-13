@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.5.1](https://github.com/lemonadesocial/web-new/compare/v10.5.0...v10.5.1) (2026-02-13)
+
+
+### Bug Fixes
+
+* send ui buttons responsiveness ([8d57153](https://github.com/lemonadesocial/web-new/commit/8d57153100576be7e1e6002f79ab2a76a99e9c4b))
+
 ## [10.5.0](https://github.com/lemonadesocial/web-new/compare/v10.4.1...v10.5.0) (2026-02-12)
 
 
