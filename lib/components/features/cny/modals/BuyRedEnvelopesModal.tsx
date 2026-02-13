@@ -7,7 +7,7 @@ import * as Sentry from '@sentry/nextjs';
 
 import { Button, ModalContent, modal, toast } from '$lib/components/core';
 import { useAppKitAccount, useAppKitProvider, appKit } from '$lib/utils/appkit';
-import { formatError, writeContract, approveERC20Spender, isNativeToken, RedEnvelopeContract } from '$lib/utils/crypto';
+import { checkBalanceSufficient, formatError, writeContract, approveERC20Spender, isNativeToken, RedEnvelopeContract } from '$lib/utils/crypto';
 import { RedEnvelopeClient } from '$lib/services/red-envelope';
 import { formatUnits } from 'ethers';
 import { formatNumber } from '$lib/utils/number';
@@ -59,6 +59,14 @@ export function BuyRedEnvelopesModal({ pack, onComplete }: BuyRedEnvelopesModalP
 
       const isNative = isNativeToken(currencyAddress, MEGAETH_CHAIN_ID.toString());
 
+      await checkBalanceSufficient(
+        currencyAddress,
+        MEGAETH_CHAIN_ID.toString(),
+        pack.price,
+        walletProvider as Eip1193Provider,
+        address,
+      );
+
       if (!isNative) {
         await approveERC20Spender(
           currencyAddress,
@@ -83,7 +91,6 @@ export function BuyRedEnvelopesModal({ pack, onComplete }: BuyRedEnvelopesModalP
 
       setStep('ready');
     } catch (error: any) {
-      console.log(error)
       Sentry.captureException(error, {
         extra: {
           walletInfo: appKit.getWalletInfo(),

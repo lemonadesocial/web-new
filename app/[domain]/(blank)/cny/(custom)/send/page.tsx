@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import { ethers } from 'ethers';
 
 import { useQuery } from '$lib/graphql/request';
@@ -14,6 +13,7 @@ import {
 import { useAppKitAccount } from '$lib/utils/appkit';
 import { Button, Checkbox, Chip, modal, toast, Menu, MenuItem, Segment, InputField } from '$lib/components/core';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
+import { BuyRedEnvelopesListModal } from '$lib/components/features/cny/modals/BuyRedEnvelopesListModal';
 import { ImportCSVModal } from '$lib/components/features/cny/modals/ImportCSVModal';
 import { SealRedEnvelopesModal } from '$lib/components/features/cny/modals/SealRedEnvelopesModal';
 import {
@@ -23,6 +23,7 @@ import { ASSET_PREFIX, MEGAETH_CHAIN_ID } from '$lib/utils/constants';
 import { RedEnvelopeClient } from '$lib/services/red-envelope/client';
 import { formatNumber } from '$lib/utils/number';
 import { EnvelopeRow } from '$lib/components/features/cny/types';
+import { useMediaQuery } from '$lib/hooks/useMediaQuery';
 
 const RECIPIENT_PLACEHOLDER = 'Who do you want to send this to?';
 
@@ -68,7 +69,6 @@ function parseCSVAddresses(text: string): string[] {
 }
 
 function SendPage() {
-  const router = useRouter();
   const { address } = useAppKitAccount();
   const [localRows, setLocalRows] = useState<EnvelopeRow[]>([]);
   const [focusedRecipientRowId, setFocusedRecipientRowId] = useState<string | null>(null);
@@ -82,6 +82,7 @@ function SendPage() {
   const [maxAmount, setMaxAmount] = useState('');
   const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isDesktop = useMediaQuery('md');
 
   useEffect(() => {
     const client = RedEnvelopeClient.getInstance();
@@ -368,7 +369,7 @@ function SendPage() {
             iconLeft="icon-download"
             onClick={openImportCSVFilePicker}
           >
-            Import CSV
+            {isDesktop ? 'Import CSV' : 'Import'}
           </Button>
           <Menu.Root
             isOpen={isSplitDropdownOpen}
@@ -377,7 +378,7 @@ function SendPage() {
           >
             <Menu.Trigger>
               <Button variant="tertiary-alt" size="sm" iconLeft="icon-arrow-split">
-                Split Amount
+                {isDesktop ? 'Split Amount' : 'Split'}
               </Button>
             </Menu.Trigger>
             <Menu.Content className="w-[340px] p-4">
@@ -448,9 +449,10 @@ function SendPage() {
           <Button
             variant="tertiary-alt"
             size="sm"
-            iconLeft="icon-plus"
+            icon={isDesktop ? undefined : 'icon-plus'}
+            iconLeft={isDesktop ? 'icon-plus' : undefined}
             className="ml-auto"
-            onClick={() => router.push('/cny')}
+            onClick={() => modal.open(BuyRedEnvelopesListModal)}
           >
             Buy Envelopes
           </Button>
