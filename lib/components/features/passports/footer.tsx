@@ -2,10 +2,7 @@
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import { match } from 'ts-pattern';
-import { useAtomValue } from 'jotai';
 import * as Sentry from '@sentry/nextjs';
-
-import { chainsMapAtom } from '$lib/jotai';
 
 import { Button, modal, toast } from '$lib/components/core';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
@@ -14,7 +11,7 @@ import { MAPPING_PASSPORT_STEPS } from './config';
 import { usePassportContext } from './provider';
 import { PassportActionKind, PassportStep } from './types';
 import { PassportEligibilityModal } from './modals/PassportEligibilityModal';
-import { MAPPING_PROVIDER, PASSPORT_CHAIN_ID } from './utils';
+import { MAPPING_PROVIDER } from './utils';
 import { useRouter } from 'next/navigation';
 import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { MintPassportModal } from './modals/MintPassportModal';
@@ -23,7 +20,6 @@ import { formatError } from '$lib/utils/crypto';
 import { usePassportChain } from '$lib/hooks/usePassportChain';
 
 export function Footer() {
-  const chainsMap = useAtomValue(chainsMapAtom);
   const router = useRouter();
 
   const { address } = useAppKitAccount();
@@ -71,7 +67,7 @@ export function Footer() {
             onConnect: () => {
               checkLemonhead();
             },
-            chain: chainsMap[PASSPORT_CHAIN_ID],
+            chain: chain,
           },
         });
       })

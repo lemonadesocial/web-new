@@ -6,7 +6,6 @@ import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
 import { ERC721Contract } from '$lib/utils/crypto';
 import { getClient } from '$lib/graphql/request';
 import { ASSET_PREFIX } from '$lib/utils/constants';
-import { PASSPORT_CHAIN_ID } from '$lib/components/features/passports/utils';
 
 const fetchFont = (url: string) => {
   return fetch(new URL(url)).then((res) => res.arrayBuffer());
@@ -15,7 +14,7 @@ const fetchFont = (url: string) => {
 const fetchChain = async () => {
   const client = getClient();
   const { data } = await client.query({ query: ListChainsDocument });
-  return data?.listChains?.find((i) => i.chain_id === PASSPORT_CHAIN_ID);
+  return data?.listChains?.find((i) => i.lemonade_passport_contract_address);
 };
 
 export async function GET(req: NextRequest) {
