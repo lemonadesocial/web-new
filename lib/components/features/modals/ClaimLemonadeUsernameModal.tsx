@@ -33,7 +33,7 @@ export function ClaimLemonadeUsernameModal() {
   const uploadUsernameMetadataMutation = trpc.uploadUsernameMetadata.useMutation();
 
   const [username, setUsername] = useState('');
-  const [step, setStep] = useState<'search' | 'success'>('search');
+  const [step, setStep] = useState<'search' | 'claiming' | 'signing' | 'success'>('search');
   const [status, setStatus] = useState<'idle' | 'checking' | 'available' | 'unavailable'>('idle');
   const [usernamePrice, setUsernamePrice] = useState<{
     price: string;
@@ -41,9 +41,9 @@ export function ClaimLemonadeUsernameModal() {
     symbol?: string;
     decimals?: number;
   } | null>(null);
-  
-  const [isLoading, setIsLoading] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState('');
+  const isLoading = step === 'claiming' || step === 'signing';
 
   const checkUsernameAvailability = useCallback(
     async (value: string, toAddress: string): Promise<IsUsernameAvailableQuery['isUsernameAvailable'] | null> => {
@@ -125,7 +125,7 @@ export function ClaimLemonadeUsernameModal() {
       const address = appKit.getAddress();
       if (!address) throw new Error('No wallet address found');
 
-      setIsLoading(true);
+      setStep('claiming');
 
       const { tokenUri } = await uploadUsernameMetadataMutation.mutateAsync({
         username,
@@ -154,6 +154,8 @@ export function ClaimLemonadeUsernameModal() {
           address
         );
       }
+      
+      setStep('signing');
 
       if (!isNativeCurrency && price > 0n) {
         await approveERC20Spender(
@@ -186,12 +188,9 @@ export function ClaimLemonadeUsernameModal() {
         username,
       });
 
-      setIsLoading(false);
-
       setStep('success');
     } catch (error: any) {
-      console.log(error)
-      setIsLoading(false);
+      setStep('search');
       Sentry.captureException(error);
       toast.error(formatError(error));
     }
@@ -280,7 +279,7 @@ export function ClaimLemonadeUsernameModal() {
         disabled={status !== 'available'}
         loading={isLoading}
       >
-        Continue
+        {step === 'signing' ? 'Waiting for Signature...' : 'Continue'}
       </Button>
     </ModalContent>
   );
