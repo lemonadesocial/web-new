@@ -43,7 +43,6 @@ export function ClaimLemonadeUsernameModal() {
   } | null>(null);
 
   const [errorMessage, setErrorMessage] = useState('');
-  const isLoading = step === 'claiming' || step === 'signing';
 
   const checkUsernameAvailability = useCallback(
     async (value: string, toAddress: string): Promise<IsUsernameAvailableQuery['isUsernameAvailable'] | null> => {
@@ -62,7 +61,7 @@ export function ClaimLemonadeUsernameModal() {
     },
     [client]
   );
-  
+
   const debouncedCheckUsername = useCallback(
     debounce(async (value: string) => {
       if (!value || value.length === 0) return;
@@ -89,7 +88,7 @@ export function ClaimLemonadeUsernameModal() {
           if (result.price != null && result.currency != null) {
             const price = result.price;
             const currency = result.currency;
-            
+
             if (BigInt(price) > 0n) {
               const currencyClient = new CurrencyClient(usernameChain, currency);
               const [symbol, decimals] = await Promise.all([
@@ -154,7 +153,7 @@ export function ClaimLemonadeUsernameModal() {
           address
         );
       }
-      
+
       setStep('signing');
 
       if (!isNativeCurrency && price > 0n) {
@@ -271,13 +270,13 @@ export function ClaimLemonadeUsernameModal() {
       )}
 
       {errorMessage && <p className='text-error text-sm mt-2'>{errorMessage}</p>}
-
+      
       <Button
         className="w-full mt-4"
         variant="secondary"
         onClick={handleClaimUsername}
-        disabled={status !== 'available'}
-        loading={isLoading}
+        disabled={status !== 'available' || step === 'signing'}
+        loading={step === 'claiming'}
       >
         {step === 'signing' ? 'Waiting for Signature...' : 'Continue'}
       </Button>
