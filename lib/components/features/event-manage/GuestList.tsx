@@ -28,7 +28,7 @@ export function GuestList({ event }: { event: Event }) {
   const [selectedFilter, setSelectedFilter] = useState<string>('going');
   const [selectedTicketTypes, setSelectedTicketTypes] = useState<string[]>([]);
   const [selectedSort, setSelectedSort] = useState<SortOption | null>(null);
-  const pageSize = 100;
+  const pageSize = 25;
 
   useEffect(() => {
     const handler = setTimeout(() => {
