@@ -83,7 +83,7 @@ export function EventPane({ eventId }: { eventId: string }) {
               iconRight="icon-arrow-outward"
               className="rounded-full"
               onClick={() => {
-                router.push(`/e/check-in/${event?.shortid}`);
+                window.open(`/e/check-in/${event?.shortid}`, '_blank');
                 drawer.close();
               }}
             >
