@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.7.0](https://github.com/lemonadesocial/web-new/compare/v10.6.0...v10.7.0) (2026-02-18)
+
+
+### Features
+
+* open check-in page in new tab ([b330f5e](https://github.com/lemonadesocial/web-new/commit/b330f5ed8b208685958968c0bfafe2bdbec7f976))
+* reduce guest list page size ([4430622](https://github.com/lemonadesocial/web-new/commit/443062277281cdb42df70c5f5c19b2b5f1073843))
+
 ## [10.6.0](https://github.com/lemonadesocial/web-new/compare/v10.5.1...v10.6.0) (2026-02-13)
 
 
