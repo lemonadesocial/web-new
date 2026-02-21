@@ -26,7 +26,7 @@ export const RedEnvelopesSidebar = () => {
     <div className="hidden lg:block fixed left-0 top-0 h-screen p-4 border-r z-[9] bg-[#450A0A]">
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-center h-12 cursor-pointer" onClick={() => router.push('/')}>
-          <i className="icon-lemonade-logo text-[#FDE047]" />
+          <i aria-hidden="true" className="icon-lemonade-logo text-[#FDE047]" />
         </div>
         {menu.map((item) => {
           const content = (

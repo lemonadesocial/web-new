@@ -178,7 +178,7 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
         <div className="flex items-center justify-between py-2.5 px-3">
           <div className="flex items-center gap-2">
             <p className="text-sm text-tertiary">{formatNumber(Number(amount))} ETH</p>
-            <i className="icon-arrow-foward-sharp text-tertiary size-4" />
+            <i aria-hidden="true" className="icon-arrow-foward-sharp text-tertiary size-4" />
             <p className="text-sm text-tertiary">{formatNumber(Number(amount) / Number(tokenPrice))} {tokenData.symbol}</p>
           </div>
           {/* <p className="text-sm text-tertiary">~$0</p> */}

@@ -102,7 +102,7 @@ export function EditCouponModal({ event, coupon }: EditCouponModalProps) {
             <p className="text-lg">Edit Coupon</p>
             <div className="flex items-center gap-1.5">
               <span className="text-lg text-tertiary">{coupon.code}</span>
-              <i className="icon-dot size-3 text-tertiary" />
+              <i aria-hidden="true" className="icon-dot size-3 text-tertiary" />
               <span className="text-lg text-tertiary">{percentOff}% off</span>
             </div>
           </div>

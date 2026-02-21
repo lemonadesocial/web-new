@@ -42,7 +42,7 @@ export function CouncilMembers() {
           <div className="tooltip-content backdrop-blur-md border-card text-left! p-3">
             <p>Five LemonHeads entrusted with shaping proposals and helping manage the community treasury.</p>
           </div>
-          <i className="icon-question size-5 aspect-square text-quaternary" />
+          <i aria-hidden="true" className="icon-question size-5 aspect-square text-quaternary" />
         </div>
       </div>
       <div className="flex md:grid grid-cols-5 gap-5 overflow-x-auto no-scrollbar">
@@ -59,7 +59,7 @@ export function CouncilMembers() {
                 className="w-20 h-20 max-sm:mx-7 rounded-full bg-primary/8 flex items-center justify-center cursor-pointer"
                 onClick={() => toast.success('Coming soon')}
               >
-                <i className="icon-plus text-tertiary size-8" />
+                <i aria-hidden="true" className="icon-plus text-tertiary size-8" />
               </div>
               <p className="text-center text-tertiary">Apply</p>
             </div>

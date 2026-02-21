@@ -63,7 +63,7 @@ export function ApplicationProfileCard({ field }: { field: ApplicationProfileFie
           <p className="text-sm text-tertiary">{getFieldLabel(field.field)}</p>
           {field.required && (
             <>
-              <i className="icon-dot size-2 text-tertiary" />
+              <i aria-hidden="true" className="icon-dot size-2 text-tertiary" />
               <p className="text-sm text-tertiary">Required</p>
             </>
           )}

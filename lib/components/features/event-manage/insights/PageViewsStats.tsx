@@ -150,11 +150,11 @@ export function PageViewsStats() {
 
                 return (
                   <div key={index} className="flex items-center gap-3 py-2 px-4 rounded-md bg-card">
-                    <i className={`${isMobile ? 'icon-smartphone' : 'icon-computer'} size-5 text-tertiary`} />
+                    <i aria-hidden="true" className={`${isMobile ? 'icon-smartphone' : 'icon-computer'} size-5 text-tertiary`} />
                     <div className="flex-1">
                       <p className="text-sm">Visitor from Direct</p>
                       <div className="flex items-center gap-0.5">
-                        <i className="icon-location-outline size-3 text-tertiary" />
+                        <i aria-hidden="true" className="icon-location-outline size-3 text-tertiary" />
                         <p className="text-sm text-tertiary">{location}</p>
                       </div>
                     </div>

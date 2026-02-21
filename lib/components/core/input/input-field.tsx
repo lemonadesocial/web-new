@@ -33,7 +33,7 @@ export function InputField(props: Props) {
       <div className={clsx('control', props.error && 'border-error!')}>
         {props.prefix && <div className="prefix text-base font-medium text-secondary">{props.prefix}</div>}
         {typeof props.iconLeft === 'string' ? (
-          <i className={twMerge('size-5 text-tertiary', props.iconLeft)} />
+          <i aria-hidden="true" className={twMerge('size-5 text-tertiary', props.iconLeft)} />
         ) : (
           props.iconLeft
         )}
@@ -53,9 +53,13 @@ export function InputField(props: Props) {
           }}
         />
         {props.right && (
+<<<<<<< HEAD
           <button type="button" aria-label="Clear" className="appearance-none bg-transparent border-none p-0 cursor-pointer" onClick={props.right.onClick}>
             <i className={twMerge('size-5 text-tertiary', props.right.icon)} />
           </button>
+=======
+          <i aria-hidden="true" className={twMerge('size-5 text-tertiary', props.right.icon)} onClick={props.right.onClick} />
+>>>>>>> 1018631b (a11y(icons): add aria-hidden="true" to all 518 decorative <i> icon elements)
         )}
         {props.subfix && <div className="subfix text-base font-medium text-secondary">{props.subfix}</div>}
       </div>

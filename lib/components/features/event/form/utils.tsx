@@ -58,7 +58,7 @@ export function OptionLineItem({
   return (
     <div className="flex justify-between items-center gap-2">
       <div className="pl-3.5">
-        <i className={twMerge('size-5 text-tertiary', icon)} />
+        <i aria-hidden="true" className={twMerge('size-5 text-tertiary', icon)} />
       </div>
       <div className={clsx('flex flex-1 items-center py-2.5 pr-3.5', divide && 'border-b')}>
         <p className="flex-1">{label}</p>

@@ -61,7 +61,7 @@ export function CoinCard({ pool }: { pool: PoolCreated }) {
               )}
             </div>
             <Badge color="var(--color-tertiary)" className="flex items-center gap-1 w-fit">
-              <i className="icon-user size-4" />
+              <i aria-hidden="true" className="icon-user size-4" />
               <span className="text-xs">{holdersCount !== null ? holdersCount : 0}</span>
             </Badge>
           </div>

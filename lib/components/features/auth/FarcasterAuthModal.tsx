@@ -41,7 +41,7 @@ const FarcasterAuthInner = (props: { nonce: string, onSuccess: (data: SignInData
             <div className='absolute -inset-1 rounded-full border-2 border-transparent'>
               <div className='w-full h-full rounded-full border-2 border-tertiary border-t-transparent border-r-transparent animate-spin'></div>
             </div>
-            <i className="icon-farcaster text-accent-400 size-8" />
+            <i aria-hidden="true" className="icon-farcaster text-accent-400 size-8" />
           </div>
           <div className='space-y-1'>
             <p className='text-lg'>Connecting to Farcaster</p>

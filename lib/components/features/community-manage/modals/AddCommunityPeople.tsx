@@ -83,7 +83,7 @@ function DefaultContent({ form }: CommonProps) {
       <div className="flex gap-2">
         <Card.Root className="flex-1" onClick={() => form.setValue('view', 'import_csv')}>
           <Card.Content className="py-3.5">
-            <i className="icon-csv size-8 text-tertiary" />
+            <i aria-hidden="true" className="icon-csv size-8 text-tertiary" />
             <Spacer className="h-3" />
             <p>Import CSV</p>
             <p className="text-tertiary text-sm">Import from other services</p>
@@ -92,7 +92,7 @@ function DefaultContent({ form }: CommonProps) {
 
         <Card.Root className="flex-1" onClick={() => form.setValue('view', 'manual')}>
           <Card.Content className="py-3.5">
-            <i className="icon-edit-square size-8 text-tertiary" />
+            <i aria-hidden="true" className="icon-edit-square size-8 text-tertiary" />
             <Spacer className="h-3" />
             <p>Enter Manually</p>
             <p className="text-tertiary text-sm">Paste in a list of emails</p>
@@ -139,7 +139,7 @@ function ImportCsvContent({ form }: CommonProps) {
             className="flex gap-1.5 items-center text-tertiary"
             download
           >
-            <i className="icon-download size-4" />
+            <i aria-hidden="true" className="icon-download size-4" />
             <p className="text-sm">Download CSV Template</p>
           </a>
         )}
@@ -155,7 +155,7 @@ function ImportCsvContent({ form }: CommonProps) {
                 onClick={open}
               >
                 <>
-                  <i className="icon-csv size-6 text-tertiary" />
+                  <i aria-hidden="true" className="icon-csv size-6 text-tertiary" />
                   <div>
                     <p className="text-center">Import CSV File</p>
                     <div className="text-sm text-center">Drop file or click here to choose file.</div>

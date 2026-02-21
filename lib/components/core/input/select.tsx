@@ -58,7 +58,7 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
                 />
               )
             }
-            <i className="icon-arrow-down size-5 text-quaternary" />
+            <i aria-hidden="true" className="icon-arrow-down size-5 text-quaternary" />
           </Menu.Trigger>
 
           {!disabled && (
@@ -73,7 +73,7 @@ export const Select = React.forwardRef<HTMLDivElement, SelectProps>(
                         onChange(option);
                         toggle();
                       }}
-                      iconRight={option === value ? <i className="icon-done size-4" /> : undefined}
+                      iconRight={option === value ? <i aria-hidden="true" className="icon-done size-4" /> : undefined}
                     />
                   ))}
                 </>

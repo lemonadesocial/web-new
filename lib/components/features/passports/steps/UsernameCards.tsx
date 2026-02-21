@@ -114,7 +114,7 @@ export function ENSDomainCard() {
     return (
       <Card.Root className="border-2 border-dashed">
         <Card.Content className="text-tertiary flex flex-col gap-5 justify-center items-center py-12 px-0">
-          <i className="icon-ens w-[128px] h-[128px] aspect-square" />
+          <i aria-hidden="true" className="icon-ens w-[128px] h-[128px] aspect-square" />
           <div className="flex flex-col gap-2 items-center">
             <p>No ENS Found</p>
             <p className="text-sm">Get your ENS domain to use as your passport name.</p>
@@ -174,7 +174,7 @@ function CardDetail({
     <Card.Root className={containerClass}>
       <Card.Content className="flex gap-4 items-center py-3">
         <div className="size-[38px] flex items-center justify-center rounded-sm bg-primary/8">
-          <i className={twMerge('text-tertiary', icon)} />
+          <i aria-hidden="true" className={twMerge('text-tertiary', icon)} />
         </div>
         <div className="flex-1">
           <p>{title}</p>

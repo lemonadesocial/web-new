@@ -465,14 +465,14 @@ export function CreateCoin() {
             onClick={() => setLaunchMode('fast')}
           >
             <div className={clsx('flex size-9.5 items-center justify-center rounded-sm', launchMode === 'fast' ? 'bg-accent-400/16' : 'bg-primary/8')}>
-              <i className={clsx('icon-flash size-5.5', launchMode === 'fast' ? 'text-accent-400' : 'text-secondary')} />
+              <i aria-hidden="true" className={clsx('icon-flash size-5.5', launchMode === 'fast' ? 'text-accent-400' : 'text-secondary')} />
             </div>
             <div className="flex-1">
               <p>Fast</p>
               <p className="text-tertiary text-xs">Launch a token in seconds.</p>
             </div>
             {
-              launchMode === 'fast' && <i className="icon-check text-accent-400 size-5.5" />
+              launchMode === 'fast' && <i aria-hidden="true" className="icon-check text-accent-400 size-5.5" />
             }
           </div>
 
@@ -481,14 +481,14 @@ export function CreateCoin() {
             onClick={() => setLaunchMode('advanced')}
           >
             <div className={clsx('flex size-9.5 items-center justify-center rounded-sm', launchMode === 'advanced' ? 'bg-accent-400/16' : 'bg-primary/8')}>
-              <i className={clsx('icon-settings size-5.5', launchMode === 'advanced' ? 'text-accent-400' : 'text-secondary')} />
+              <i aria-hidden="true" className={clsx('icon-settings size-5.5', launchMode === 'advanced' ? 'text-accent-400' : 'text-secondary')} />
             </div>
             <div className="flex-1">
               <p>Advanced</p>
               <p className="text-tertiary text-xs">Make the most of your launch.</p>
             </div>
             {
-              launchMode === 'advanced' && <i className="icon-check text-accent-400 size-5.5" />
+              launchMode === 'advanced' && <i aria-hidden="true" className="icon-check text-accent-400 size-5.5" />
             }
           </div>
         </div>
@@ -503,7 +503,7 @@ export function CreateCoin() {
                     <img src={launchChain.logo_url} alt={launchChain.name} className="size-5 rounded-full" />
                   )}
                   <p className="flex-1 text-left">{launchChain?.name || 'Select Network'}</p>
-                  <i className="icon-chevron-down text-tertiary size-4" />
+                  <i aria-hidden="true" className="icon-chevron-down text-tertiary size-4" />
                 </div>
               </Menu.Trigger>
               <Menu.Content className="p-1 w-full">
@@ -523,7 +523,7 @@ export function CreateCoin() {
                           )}
                           <p className="text-sm text-secondary flex-1">{chain.name}</p>
                           {selectedChainId === chain.chain_id && (
-                            <i className="icon-check text-accent-400 size-4" />
+                            <i aria-hidden="true" className="icon-check text-accent-400 size-4" />
                           )}
                         </div>
                       </MenuItem>
@@ -545,7 +545,7 @@ export function CreateCoin() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <i className="icon-image text-tertiary size-5.5" />
+                    <i aria-hidden="true" className="icon-image text-tertiary size-5.5" />
                   )}
                 </div>
                 <div className="flex-1">
@@ -637,7 +637,7 @@ export function CreateCoin() {
 
         {/* <div className="flex items-center gap-3 py-2 px-3 rounded-md border border-card-border bg-card">
           <div className="flex size-9.5 items-center justify-center rounded-sm bg-primary/8 border border-card-border">
-            <i className="icon-image text-tertiary size-5.5" />
+            <i aria-hidden="true" className="icon-image text-tertiary size-5.5" />
           </div>
           <div className="flex-1">
             <p>Sniper Protection</p>
@@ -810,7 +810,7 @@ export function CreateCoin() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 pt-0">
             <div className="flex items-center gap-4">
-              <i className="icon-x size-5 text-tertiary" />
+              <i aria-hidden="true" className="icon-x size-5 text-tertiary" />
               <div className="flex-1">
                 <InputField
                   value={watch('socialTwitter')}
@@ -822,7 +822,7 @@ export function CreateCoin() {
             </div>
 
             <div className="flex items-center gap-4">
-              <i className="icon-telegram size-5 text-tertiary" />
+              <i aria-hidden="true" className="icon-telegram size-5 text-tertiary" />
               <div className="flex-1">
                 <InputField
                   value={watch('socialTelegram')}
@@ -834,7 +834,7 @@ export function CreateCoin() {
             </div>
 
             <div className="flex items-center gap-4">
-              <i className="icon-chat size-5 text-tertiary" />
+              <i aria-hidden="true" className="icon-chat size-5 text-tertiary" />
               <div className="flex-1">
                 <InputField
                   value={watch('socialDiscord')}
@@ -846,7 +846,7 @@ export function CreateCoin() {
             </div>
 
             <div className="flex items-center gap-4">
-              <i className="icon-warpcast size-5 text-tertiary" />
+              <i aria-hidden="true" className="icon-warpcast size-5 text-tertiary" />
               <div className="flex-1">
                 <InputField
                   value={watch('socialWarpcast')}
@@ -858,7 +858,7 @@ export function CreateCoin() {
             </div>
 
             <div className="flex items-center gap-4">
-              <i className="icon-globe size-5 text-tertiary" />
+              <i aria-hidden="true" className="icon-globe size-5 text-tertiary" />
               <div className="flex-1">
                 <InputField
                   value={watch('socialWebsite')}
@@ -879,7 +879,7 @@ export function CreateCoin() {
               >
                 <p className="text-lg font-medium">Starting Marketcap</p>
                 <div className={clsx('p-2 rounded-full bg-primary/8 flex items-center justify-center transition-transform', isMarketcapExpanded && 'rotate-180')}>
-                  <i className="icon-chevron-down size-4 text-tertiary" />
+                  <i aria-hidden="true" className="icon-chevron-down size-4 text-tertiary" />
                 </div>
               </div>
 
@@ -935,7 +935,7 @@ export function CreateCoin() {
                   Core Distribution
                 </p>
                 <div className={clsx('p-2 rounded-full bg-primary/8 flex items-center justify-center transition-transform', isCoinDistributionExpanded && 'rotate-180')}>
-                  <i className="icon-chevron-down size-4 text-tertiary" />
+                  <i aria-hidden="true" className="icon-chevron-down size-4 text-tertiary" />
                 </div>
               </div>
 
@@ -1060,7 +1060,7 @@ export function CreateCoin() {
               >
                 <p className="text-lg font-medium">Schedule</p>
                 <div className={clsx('p-2 rounded-full bg-primary/8 flex items-center justify-center transition-transform', isScheduleExpanded && 'rotate-180')}>
-                  <i className="icon-chevron-down size-4 text-tertiary" />
+                  <i aria-hidden="true" className="icon-chevron-down size-4 text-tertiary" />
                 </div>
               </div>
 
@@ -1072,11 +1072,11 @@ export function CreateCoin() {
                     <Menu.Root placement="top-start" className="flex-1">
                       <Menu.Trigger>
                         <div className="flex items-center gap-3 py-2 px-3 rounded-sm border border-card-border bg-card cursor-pointer hover:bg-primary/8 transition-colors">
-                          <i className="icon-calendar size-5 text-tertiary" />
+                          <i aria-hidden="true" className="icon-calendar size-5 text-tertiary" />
                           <span className="text-primary flex-1 text-left">
                             {watch('launchDate') ? format(new Date(watch('launchDate')!), 'EEE, dd MMM') : 'Select date'}
                           </span>
-                          <i className="icon-chevron-down size-4 text-tertiary" />
+                          <i aria-hidden="true" className="icon-chevron-down size-4 text-tertiary" />
                         </div>
                       </Menu.Trigger>
                       <Menu.Content className="w-[296px] p-0 rounded-lg">
@@ -1103,11 +1103,11 @@ export function CreateCoin() {
                     <Menu.Root placement="top-start" className="flex-1">
                       <Menu.Trigger>
                         <div className="flex items-center gap-3 py-2 px-3 rounded-sm border border-card-border bg-card cursor-pointer hover:bg-primary/8 transition-colors">
-                          <i className="icon-clock size-5 text-tertiary" />
+                          <i aria-hidden="true" className="icon-clock size-5 text-tertiary" />
                           <span className="text-primary flex-1 text-left">
                             {watch('launchDate') ? format(new Date(watch('launchDate')!), 'hh:mm a') : 'Select time'}
                           </span>
-                          <i className="icon-chevron-down size-4 text-tertiary" />
+                          <i aria-hidden="true" className="icon-chevron-down size-4 text-tertiary" />
                         </div>
                       </Menu.Trigger>
                       <Menu.Content className="w-[100px] no-scrollbar rounded-lg overflow-auto h-[200px] p-2">
@@ -1160,11 +1160,11 @@ export function CreateCoin() {
                       }}
                       trigger={() => (
                         <div className="flex items-center gap-3 py-2 px-3 rounded-sm border border-card-border bg-card cursor-pointer hover:bg-primary/8 transition-colors">
-                          <i className="icon-globe size-5 text-tertiary" />
+                          <i aria-hidden="true" className="icon-globe size-5 text-tertiary" />
                           <span className="text-primary flex-1 text-left">
                             {timezoneOption?.short || timezoneOption?.value || 'Select timezone'}
                           </span>
-                          <i className="icon-chevron-down size-4 text-tertiary" />
+                          <i aria-hidden="true" className="icon-chevron-down size-4 text-tertiary" />
                         </div>
                       )}
                     />

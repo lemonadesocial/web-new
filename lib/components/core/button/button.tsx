@@ -91,9 +91,9 @@ export function Button({
         ></path>
       </svg>
       <div className={twMerge('flex justify-center items-center', gaps[size], clsx({ invisible: loading }))}>
-        {iconLeft && <i className={twMerge(iconSize ? iconSize : iconSizeBase[size], iconLeft)} />}
-        {icon ? <i className={twMerge(iconSize ? iconSize : iconSizeBase[size], icon)} /> : children}
-        {iconRight && <i className={twMerge(iconSize ? iconSize : iconSizeBase[size], iconRight)} />}
+        {iconLeft && <i aria-hidden="true" className={twMerge(iconSize ? iconSize : iconSizeBase[size], iconLeft)} />}
+        {icon ? <i aria-hidden="true" className={twMerge(iconSize ? iconSize : iconSizeBase[size], icon)} /> : children}
+        {iconRight && <i aria-hidden="true" className={twMerge(iconSize ? iconSize : iconSizeBase[size], iconRight)} />}
       </div>
     </button>
   );

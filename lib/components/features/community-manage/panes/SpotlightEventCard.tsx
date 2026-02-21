@@ -28,7 +28,7 @@ export function SpotlightEventCard({ event, isSelected, showRemove, onToggle, on
           />
         ) : (
           <div className="size-full flex items-center justify-center">
-            <i className="icon-ticket size-4 text-tertiary" />
+            <i aria-hidden="true" className="icon-ticket size-4 text-tertiary" />
           </div>
         )}
       </div>
@@ -46,13 +46,13 @@ export function SpotlightEventCard({ event, isSelected, showRemove, onToggle, on
           }}
           className="size-6 rounded-full border border-card-border flex items-center justify-center hover:bg-card-hover transition-colors flex-shrink-0"
         >
-          <i className="icon-close size-3 text-tertiary" />
+          <i aria-hidden="true" className="icon-close size-3 text-tertiary" />
         </button>
       ) : isSelected !== undefined ? (
         isSelected ? (
-          <i className="icon-check size-5" />
+          <i aria-hidden="true" className="icon-check size-5" />
         ) : (
-          <i className="icon-circle-outline text-tertiary size-5" />
+          <i aria-hidden="true" className="icon-circle-outline text-tertiary size-5" />
         )
       ) : null}
     </>

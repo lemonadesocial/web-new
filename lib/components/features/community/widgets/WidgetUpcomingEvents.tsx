@@ -152,14 +152,14 @@ function EmptyUpcomingEvents({ space }: { space: Space }) {
             }
           >
             <Card.Content className="flex flex-col justify-center items-center gap-3">
-              <i className="icon-user-plus" />
+              <i aria-hidden="true" className="icon-user-plus" />
               <p>{space.followed ? 'Subscribed' : 'Subscribe'}</p>
             </Card.Content>
           </Card.Root>
 
           <Card.Root className="bg-(--btn-tertiary)">
             <Card.Content className="flex flex-col justify-center items-center gap-3">
-              <i className="icon-calendar-add" />
+              <i aria-hidden="true" className="icon-calendar-add" />
               <p>Submit Event</p>
             </Card.Content>
           </Card.Root>

@@ -99,7 +99,11 @@ export function AddCommentModal({ post, onSuccess }: AddCommentModalProps) {
                 accept="image/*"
                 multiple
               >
+<<<<<<< HEAD
                 {open => <button type="button" aria-label="Add image" className="cursor-pointer" onClick={open}><i className="icon-image size-5 text-tertiary hover:text-primary" /></button>}
+=======
+                {open => <i aria-hidden="true" className="icon-image size-5 text-tertiary hover:text-primary cursor-pointer" onClick={open} />}
+>>>>>>> 1018631b (a11y(icons): add aria-hidden="true" to all 518 decorative <i> icon elements)
               </FileInput>
               <button type="button" aria-label="Add event" className="cursor-pointer" onClick={() => {
                   modal.open(AddEventModal, {

@@ -145,7 +145,7 @@ export function TokenDetailsModal({ event, ticketType, tokenGate, onCreate, onUp
               <div className="flex rounded-sm bg-primary/8 py-2 px-3.5 gap-2.5 items-center">
                 {chain.logo_url && <img src={chain.logo_url} className="size-5" />}
                 <p className="flex-1">{chain.name}</p>
-                <i className="icon-chevron-down size-5 text-quaternary" />
+                <i aria-hidden="true" className="icon-chevron-down size-5 text-quaternary" />
               </div>
             </Menu.Trigger>
 
@@ -180,7 +180,7 @@ export function TokenDetailsModal({ event, ticketType, tokenGate, onCreate, onUp
           {
             loading && (
               <div className="flex">
-                <i className="icon-dot text-warning-300" />
+                <i aria-hidden="true" className="icon-dot text-warning-300" />
                 <p className="text-secondary text-sm">Retrieving contract data...</p>
               </div>
             )

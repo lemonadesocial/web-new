@@ -168,7 +168,7 @@ export function PostComposer({
                     className="absolute top-3 right-3 bg-overlay-secondary rounded-full w-6 h-6 flex items-center justify-center"
                     onClick={() => setGif(undefined)}
                   >
-                    <i className="icon-x text-tertiary size-[14px]" />
+                    <i aria-hidden="true" className="icon-x text-tertiary size-[14px]" />
                   </button>
                 </div>
               )}
@@ -225,7 +225,7 @@ export function PostComposer({
                               title={option.label}
                               iconLeft={option.icon}
                               iconRight={
-                                selectedFeed.key === option.key ? <i className="icon-check size-5" /> : undefined
+                                selectedFeed.key === option.key ? <i aria-hidden="true" className="icon-check size-5" /> : undefined
                               }
                               onClick={() => {
                                 setSelectedFeed(option);
@@ -255,7 +255,7 @@ export function PostComposer({
 
         {!!(account && !isDesktop) && (
           <ProfileMenu>
-            <i className="icon-more-vert size-5 text-tertiary cursor-pointer" />
+            <i aria-hidden="true" className="icon-more-vert size-5 text-tertiary cursor-pointer" />
           </ProfileMenu>
         )}
       </div>
@@ -281,7 +281,7 @@ export function PostLocked({
     <div className="px-4 py-3 gap-3 flex flex-col md:flex-row md:items-center bg-card rounded-b-md">
       <div className="flex items-center gap-3 flex-1">
         <div className="flex items-center justify-center bg-error/16 size-9 rounded-full">
-          <i className="icon-lock size-5 text-error" />
+          <i aria-hidden="true" className="icon-lock size-5 text-error" />
         </div>
         <div className="flex-1">
           <p>{title}</p>

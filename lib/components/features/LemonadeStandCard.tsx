@@ -18,9 +18,9 @@ export function LemonadeStandCard() {
     >
       <div className="flex justify-between">
         <div className="size-14 bg-warning-300/16 rounded-full flex items-center justify-center">
-          <i className="icon-store size-8 text-warning-300" />
+          <i aria-hidden="true" className="icon-store size-8 text-warning-300" />
         </div>
-        <i className="icon-arrow-outward text-quaternary" />
+        <i aria-hidden="true" className="icon-arrow-outward text-quaternary" />
       </div>
 
       <div className="space-y-2">

@@ -85,7 +85,7 @@ function ShareButton({ title, icon, onClick }: ShareButtonProps) {
       onClick={onClick}
       className="flex flex-col items-center justify-center gap-3 px-1 py-4 rounded-sm bg-primary/8 cursor-pointer"
     >
-      <i className={`${icon} size-8 text-secondary`} />
+      <i aria-hidden="true" className={`${icon} size-8 text-secondary`} />
       <span className="text-sm text-secondary">{title}</span>
     </div>
   );

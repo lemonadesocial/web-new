@@ -62,7 +62,7 @@ export function AddTermsQuestion() {
       <div className="space-y-4">
         <div className="flex gap-3 items-center">
           <div className="flex items-center justify-center p-2 rounded-sm bg-primary/8">
-            <i className="icon-signature size-4.5 text-tertiary" />
+            <i aria-hidden="true" className="icon-signature size-4.5 text-tertiary" />
           </div>
           <div>
             <p className="text-sm text-secondary">Terms</p>

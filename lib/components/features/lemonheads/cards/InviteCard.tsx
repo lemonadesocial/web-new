@@ -63,7 +63,7 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
       >
         <div className="flex gap-2.5 flex-1 items-center">
           <div className="flex justify-center items-center rounded-sm bg-alert-400/16 size-8 p-1.5 aspect-square">
-            <i className="icon-user-plus text-alert-400" />
+            <i aria-hidden="true" className="icon-user-plus text-alert-400" />
           </div>
 
           <div className="flex flex-col gpa-1.5">
@@ -91,14 +91,14 @@ export function InviteFriend({ locked }: { locked?: boolean }) {
       >
         <div className="flex justify-between">
           <div className="flex justify-center items-center rounded-full bg-alert-400/16 size-[48px] aspect-square">
-            <i className="icon-user-plus text-alert-400" />
+            <i aria-hidden="true" className="icon-user-plus text-alert-400" />
           </div>
 
           <div className="tooltip tooltip-bottom">
             <div className="tooltip-content backdrop-blur-md border-card text-left! p-3">
               <p>LemonHeads are currently invite-only. Each LemonHead can invite up to 5 wallets to mint their own.</p>
             </div>
-            <i className="icon-info size-5 aspect-square text-quaternary" />
+            <i aria-hidden="true" className="icon-info size-5 aspect-square text-quaternary" />
           </div>
         </div>
 
@@ -222,7 +222,7 @@ export function InviteFriendModal() {
                               setValue('addresses', field.value);
                             }}
                           >
-                            <i className="icon-x size-5" />
+                            <i aria-hidden="true" className="icon-x size-5" />
                           </div>
                         </div>
                       ))}

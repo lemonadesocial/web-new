@@ -123,7 +123,7 @@ export function VerifyingTransactionModal({
           !!(countdown && countdown > 0) ? (
             <p className="text-lg text-tertiary">{countdown}</p>
           ) : (
-            <i className="icon-loader animate-spin" />
+            <i aria-hidden="true" className="icon-loader animate-spin" />
           )
         }
       </div>

@@ -59,7 +59,7 @@ export function EmailListDrawer({ ticketType }: { ticketType: EventTicketType })
                   <p className="truncate">{item.buyer_name || 'Anonymous'}</p>
                   <p className="text-tertiary truncate text-xs md:text-base">{item.buyer_email}</p>
                 </div>
-                <i className="icon-more-vert size-5 cursor-pointer" />
+                <i aria-hidden="true" className="icon-more-vert size-5 cursor-pointer" />
               </Card.Content>
             </Card.Root>
           ))}

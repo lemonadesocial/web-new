@@ -88,7 +88,7 @@ export function MyTicketsPane({ tickets, event }: { tickets: Ticket[]; event: Ev
             className="flex items-center gap-3 p-3 rounded-md bg-card border border-card-border cursor-pointer"
             onClick={() => drawer.open(AdditionalTicketsPane, { props: { tickets }})}
           >
-            <i className="icon-ticket-noti text-xl text-tertiary" />
+            <i aria-hidden="true" className="icon-ticket-noti text-xl text-tertiary" />
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <p className="font-medium">{additionalTickets.length} Additional Tickets</p>
@@ -100,7 +100,7 @@ export function MyTicketsPane({ tickets, event }: { tickets: Ticket[]; event: Ev
               </div>
               <p className="text-sm text-tertiary">Manage tickets you bought for others.</p>
             </div>
-            <i className="icon-chevron-right text-tertiary" />
+            <i aria-hidden="true" className="icon-chevron-right text-tertiary" />
           </div>
         )}
       </div>

@@ -314,9 +314,13 @@ function CommunityThemeBuilderPane({
     <div className="h-full flex flex-col">
       <div className="px-4 py-3 border-b border-divider flex justify-between items-center flex-shrink-0">
         <p className="text-lg font-medium">Advanced Options</p>
+<<<<<<< HEAD
         <button type="button" aria-label="Close" className="cursor-pointer" onClick={onClose}>
           <i className="icon-x size-4 text-tertiary hover:text-secondary" />
         </button>
+=======
+        <i aria-hidden="true" className="icon-x size-4 cursor-pointer text-tertiary hover:text-secondary" onClick={onClose} />
+>>>>>>> 1018631b (a11y(icons): add aria-hidden="true" to all 518 decorative <i> icon elements)
       </div>
 
       <div className="flex-1 overflow-y-auto no-scrollbar">
@@ -350,7 +354,7 @@ function CommunityThemeBuilderPane({
                       ? presets[themeName as keyof typeof presets].name
                       : 'Default'}
                   </span>
-                  <i className="icon-chevrons-up-down text-quaternary" />
+                  <i aria-hidden="true" className="icon-chevrons-up-down text-quaternary" />
                 </div>
               </Menu.Trigger>
               <FloatingPortal>
@@ -559,7 +563,7 @@ function ConfirmModal({ onDiscard }: { onDiscard: () => void }) {
   return (
     <div className="p-4 flex flex-col gap-4 max-w-[308px]">
       <div className="p-3 rounded-full bg-danger-400/16 w-fit">
-        <i className="icon-info text-danger-400" />
+        <i aria-hidden="true" className="icon-info text-danger-400" />
       </div>
       <div className="flex flex-col gap-2">
         <p className="text-lg font-medium">Discard Customizations?</p>

@@ -418,7 +418,7 @@ function Content({ space }: { space: Space }) {
                       render={({ field }) => {
                         return (
                           <div className="flex items-center gap-4 flex-1">
-                            <i className={`text-tertiary ${item.icon}`} />
+                            <i aria-hidden="true" className={`text-tertiary ${item.icon}`} />
                             <InputField
                               prefix={item.prefix}
                               className="w-full"

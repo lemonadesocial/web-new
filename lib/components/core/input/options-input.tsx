@@ -61,7 +61,7 @@ export function OptionsInput({
               }}
               className="text-quaternary hover:text-primary"
             >
-              <i className="icon-x size-4" />
+              <i aria-hidden="true" className="icon-x size-4" />
             </button>
           </div>
         ))}

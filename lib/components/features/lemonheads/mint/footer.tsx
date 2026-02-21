@@ -278,7 +278,7 @@ function BeforeMintModal({ onContinue }: { onContinue: () => void }) {
             <Link href="" target="_blank" className="text-accent-400 text-sm">
               View Full Terms of Use
             </Link>
-            <i className="icon-arrow-outward size-[18px] text-quaternary" />
+            <i aria-hidden="true" className="icon-arrow-outward size-[18px] text-quaternary" />
           </div>
         </div>
 
@@ -434,7 +434,7 @@ function MintModal({
       <ModalContent
         icon={
           <div className="size-[56px] flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
-            {done ? <p>{count}</p> : <i className="icon-loader animate-spin" />}
+            {done ? <p>{count}</p> : <i aria-hidden="true" className="icon-loader animate-spin" />}
           </div>
         }
         title={

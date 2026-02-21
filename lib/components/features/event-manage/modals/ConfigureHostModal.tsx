@@ -189,12 +189,12 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
                   }`}
                   onClick={() => setSelectedRole(EventRole.Cohost)}
                 >
-                  <i className="icon-crown size-5" />
+                  <i aria-hidden="true" className="icon-crown size-5" />
                   <div className="flex-1">
                     <p>Cohost</p>
                     <p className="text-sm text-tertiary">Full manage access to the event</p>
                   </div>
-                  {selectedRole === EventRole.Cohost && <i className="icon-check size-5" />}
+                  {selectedRole === EventRole.Cohost && <i aria-hidden="true" className="icon-check size-5" />}
                 </div>
                 <div
                   className={`flex items-center gap-3 py-1.5 px-3 rounded-sm cursor-pointer border transition-colors ${
@@ -204,12 +204,12 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
                   }`}
                   onClick={() => setSelectedRole(EventRole.Gatekeeper)}
                 >
-                  <i className="icon-person-sharp size-5" />
+                  <i aria-hidden="true" className="icon-person-sharp size-5" />
                   <div className="flex-1">
                     <p>Promoter</p>
                     <p className="text-sm text-tertiary">Check in guests & view guest list</p>
                   </div>
-                  {selectedRole === EventRole.Gatekeeper && <i className="icon-check size-5" />}
+                  {selectedRole === EventRole.Gatekeeper && <i aria-hidden="true" className="icon-check size-5" />}
                 </div>
               </div>
             </div>

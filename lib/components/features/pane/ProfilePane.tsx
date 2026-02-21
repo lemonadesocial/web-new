@@ -271,7 +271,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
               <div className="flex flex-col gap-4">
                 {PROFILE_SOCIAL_LINKS.map((item) => (
                   <div key={item.name} className="flex items-center gap-4">
-                    <i className={twMerge('size-5 text-tertiary', item.icon)} />
+                    <i aria-hidden="true" className={twMerge('size-5 text-tertiary', item.icon)} />
                     <div className="flex-1">
                       <Controller
                         name={item.name as any}

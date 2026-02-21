@@ -11,11 +11,11 @@ interface ToastTypeConfig {
 const TOAST_TYPES: Record<ToastType, ToastTypeConfig> = {
   success: {
     bgColor: 'bg-success-500',
-    Icon: <i className="icon-check" />,
+    Icon: <i aria-hidden="true" className="icon-check" />,
   },
   error: {
     bgColor: 'bg-danger-500',
-    Icon: <i className="icon-error" />,
+    Icon: <i aria-hidden="true" className="icon-error" />,
   },
 };
 

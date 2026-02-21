@@ -66,16 +66,16 @@ export function Calendar({ events, minDate, selected: selectedDate, footer, onSe
               className="cursor-pointer hover:text-primary focus:outline-none"
               onClick={() => setActive((prev) => addMonths(prev, -1))}
             >
-              <i className="icon-chevron-left" />
+              <i aria-hidden="true" className="icon-chevron-left" />
             </button>
-            <i className="icon-dot size-5" />
+            <i aria-hidden="true" className="icon-dot size-5" />
             <button
               type="button"
               aria-label="next-month"
               className="cursor-pointer hover:text-primary focus:outline-none"
               onClick={() => setActive((prev) => addMonths(prev, 1))}
             >
-              <i className="icon-chevron-right" />
+              <i aria-hidden="true" className="icon-chevron-right" />
             </button>
           </div>
         </div>
@@ -121,7 +121,7 @@ export function Calendar({ events, minDate, selected: selectedDate, footer, onSe
               {format(d, 'd')}
               {events && events.some((e) => isSameDay(e, d)) && (
                 <div className="flex absolute bottom-0 left-0 right-0 justify-center">
-                  <i className="icon-dot size-3" />
+                  <i aria-hidden="true" className="icon-dot size-3" />
                 </div>
               )}
             </button>

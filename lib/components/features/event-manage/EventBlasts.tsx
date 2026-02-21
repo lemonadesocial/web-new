@@ -63,7 +63,7 @@ export function EventBlasts() {
                     </div>
 
                     <div className="flex items-center gap-1.5 text-warning-400">
-                      <i className="icon-clock size-4" />
+                      <i aria-hidden="true" className="icon-clock size-4" />
                       <p className="text-sm">{format(item.scheduled_at, 'MMM dd, h:mm a')}</p>
                     </div>
                   </div>
@@ -266,7 +266,7 @@ function ListItem({
   return (
     <div className="flex gap-3 px-4 py-3 items-center">
       <div className="w-7 h-7 rounded-sm bg-(--btn-tertiary) flex items-center justify-center">
-        <i className={twMerge('text-tertiary size-4', icon)} />
+        <i aria-hidden="true" className={twMerge('text-tertiary size-4', icon)} />
       </div>
 
       <div className="flex items-center flex-1 gap-3">

@@ -71,7 +71,7 @@ export function SelfVerificationForm({ config }: { config: SelfVerificationConfi
       <LabeledInput label="Self ID Verification" required={true}>
         {isVerified ? (
           <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-sm bg-success-400/16 w-min">
-            <i className="icon-verified text-success-400 size-5" />
+            <i aria-hidden="true" className="icon-verified text-success-400 size-5" />
             <p className="flex-1 text-success-400">Verified</p>
           </div>
         ) : (

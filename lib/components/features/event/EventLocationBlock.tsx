@@ -26,13 +26,13 @@ export function EventLocationBlock({ loading = false, event }: { loading?: boole
       onClick={googleMapsUrl ? handleOpenGoogleMaps : undefined}
     >
       <div className="border rounded-sm size-12 min-w-12 flex items-center justify-center">
-        <i className="icon-location-outline" />
+        <i aria-hidden="true" className="icon-location-outline" />
       </div>
       <div className="truncate">
         <p className="truncate text-lg">
           {attending ? (
             <>
-              {event.address.title} <i className="icon-arrow-outward text-quaternary size-[18px]" />
+              {event.address.title} <i aria-hidden="true" className="icon-arrow-outward text-quaternary size-[18px]" />
             </>
           ) : (
             'Register to See Address'
@@ -48,7 +48,7 @@ export function EventLocationBlock({ loading = false, event }: { loading?: boole
   if (event?.virtual_url) return (
     <div className="flex gap-4 flex-1 items-center">
       <div className="border rounded-sm size-12 min-w-12 flex items-center justify-center">
-        <i className="icon-video" />
+        <i aria-hidden="true" className="icon-video" />
       </div>
       <p>Virtual</p>
     </div>

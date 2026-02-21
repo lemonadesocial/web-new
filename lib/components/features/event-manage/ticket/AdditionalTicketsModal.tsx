@@ -47,9 +47,13 @@ export function AdditionalTicketsModal({ ticketLimitPer, onChange }: { ticketLim
                 placeholder="Unlimited"
                 min={2}
               />
+<<<<<<< HEAD
               <button type="button" aria-label="Clear limit" className="cursor-pointer absolute right-3.5 top-1/2 -translate-y-1/2" onClick={() => setLimit(null)}>
                 <i className="icon-cancel size-5 text-quaternary" />
               </button>
+=======
+              <i aria-hidden="true" className="icon-cancel size-5 text-quaternary cursor-pointer absolute right-3.5 top-1/2 -translate-y-1/2" onClick={() => setLimit(null)} />
+>>>>>>> 1018631b (a11y(icons): add aria-hidden="true" to all 518 decorative <i> icon elements)
             </div>
           </LabeledInput>
           )

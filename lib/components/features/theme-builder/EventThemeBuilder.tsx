@@ -72,7 +72,7 @@ export function EventThemeBuilder({ eventId }: { eventId?: string }) {
               <p className="text-xs">Theme</p>
               <p className="text-primary">{presets[themeName]?.name}</p>
             </div>
-            <i className="icon-chevrons-up-down size-5" />
+            <i aria-hidden="true" className="icon-chevrons-up-down size-5" />
           </div>
         </button>
         <button
@@ -80,7 +80,7 @@ export function EventThemeBuilder({ eventId }: { eventId?: string }) {
           onClick={() => dispatch({ type: ThemeBuilderActionKind.random })}
           className="btn btn-tertiary inline-flex items-center justify-center p-[21px] backdrop-blur-sm rounded-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-none!"
         >
-          <i className="icon-shuffle size-5" />
+          <i aria-hidden="true" className="icon-shuffle size-5" />
         </button>
       </div>
 
@@ -268,9 +268,9 @@ function EventBuilderPaneOptions() {
           >
             <div className="size-[32px]">
               {data.config?.mode === 'dark' ? (
-                <i className="icon-clear-night text-blue-400" />
+                <i aria-hidden="true" className="icon-clear-night text-blue-400" />
               ) : (
-                <i className="icon-dark-theme-filled size-[24px] rounded-full" />
+                <i aria-hidden="true" className="icon-dark-theme-filled size-[24px] rounded-full" />
               )}
             </div>
             <p className="text-xs">Display</p>
@@ -649,7 +649,7 @@ function ThemeMode() {
               data.config.mode === item.mode && item.active,
             )}
           >
-            <i className={item.icon} />
+            <i aria-hidden="true" className={item.icon} />
           </div>
           <p>{item.label}</p>
         </button>
