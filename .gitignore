@@ -56,3 +56,9 @@ certificates
 .cursor/
 # Sentry Config File
 .env.sentry-build-plugin
+
+# AI agent documentation (managed in lemonade-fe-ops private repo)
+CLAUDE.md
+TODO.md
+AUDIT-REPORT-*.md
+PERF-REPORT-*.md
