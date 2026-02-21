@@ -961,7 +961,10 @@ export function useClaimableAmount(chain: Chain, stakingManagerAddress: string, 
       }
 
       const stakingClient = StakingManagerClient.getInstance(chain, stakingManagerAddress);
-      const ethBalance = await stakingClient.balances(userAddress).catch(() => 0n);
+      const ethBalance = await stakingClient.balances(userAddress).catch((error) => {
+        console.error('Failed to fetch staking balance:', error);
+        return 0n;
+      });
 
       if (ethBalance === 0n) {
         setClaimableUSDC('$0.00');
@@ -970,7 +973,10 @@ export function useClaimableAmount(chain: Chain, stakingManagerAddress: string, 
       }
 
       const flaunchClient = FlaunchClient.getInstance(chain, stakingToken);
-      const usdcAmount = await flaunchClient.getUSDCFromETH(ethBalance).catch(() => 0n);
+      const usdcAmount = await flaunchClient.getUSDCFromETH(ethBalance).catch((error) => {
+        console.error('Failed to convert ETH to USDC:', error);
+        return 0n;
+      });
       const usdcValue = formatUnits(usdcAmount, 6);
       setClaimableUSDC(`$${Number(usdcValue).toFixed(2)}`);
       setIsLoading(false);
