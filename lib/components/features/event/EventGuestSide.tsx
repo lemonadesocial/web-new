@@ -65,7 +65,7 @@ export function EventGuestSideContent({ event }: { event: Event }) {
               className="aspect-square object-contain border rounded-md"
             />
           ) : (
-            <img className="aspect-square object-contain border rounded-md" src={randomEventDP()} />
+            <img className="aspect-square object-contain border rounded-md" src={randomEventDP()} alt="Event cover" />
           )}
 
           {isHost && (
@@ -120,7 +120,7 @@ export function EventGuestSideContent({ event }: { event: Event }) {
               className="aspect-square object-contain border rounded-md"
             />
           ) : (
-            <img className="aspect-square object-contain border rounded-md" src={randomEventDP()} />
+            <img className="aspect-square object-contain border rounded-md" src={randomEventDP()} alt="Event cover" />
           )}
 
           {isHost && (

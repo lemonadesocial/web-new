@@ -52,7 +52,7 @@ export function WidgetLaunchpad({ space, title, subtitle }: Props) {
         <LaunpadDetail filter={filter} spaceId={space._id} />
       ) : (
         <div className="p-6 flex items-center flex-col gap-5 relative">
-          <img src={`${ASSET_PREFIX}/assets/images/passports/templates/${state.template.provider}-launchpad.png`} />
+          <img src={`${ASSET_PREFIX}/assets/images/passports/templates/${state.template.provider}-launchpad.png`} alt="Launchpad template" />
 
           <div className="text-center">
             <h3 className="text-lg font-semibold">{title}</h3>

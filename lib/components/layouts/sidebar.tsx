@@ -206,7 +206,7 @@ const Sidebar = () => {
                 <Menu.Trigger>
                   {() => (
                     <div className="flex gap-2 items-center p-2">
-                      <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
+                      <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" alt="User avatar" />
                       {toggle && (
                         <div className="flex flex-col">
                           <p className="text-sm font-medium text-secondary">
@@ -243,7 +243,7 @@ const Sidebar = () => {
                 className="flex gap-2 items-center p-2 cursor-pointer hover:bg-(--btn-tertiary) rounded-sm"
                 onClick={() => signIn()}
               >
-                <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
+                <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" alt="User avatar" />
                 {toggle && (
                   <div className="flex flex-col">
                     <p className="text-sm font-medium text-secondary">Login</p>
@@ -375,7 +375,7 @@ const Sidebar = () => {
                       <Menu.Trigger>
                         {({ isOpen }) => (
                           <div className="flex gap-2 items-center p-2">
-                            <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
+                            <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" alt="User avatar" />
                             <div className="flex flex-col">
                               <p className="text-sm font-medium text-secondary">
                                 {me?.username || me?.display_name || me?.name}
@@ -410,7 +410,7 @@ const Sidebar = () => {
                       className="flex gap-2 items-center p-2 cursor-pointer hover:bg-(--btn-tertiary) rounded-sm"
                       onClick={() => signIn()}
                     >
-                      <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
+                      <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" alt="User avatar" />
                       {toggle && (
                         <div className="flex flex-col">
                           <p className="text-sm font-medium text-secondary">Login</p>
@@ -545,7 +545,7 @@ function SectionEvents({ handleNavigate }: { handleNavigate: (path: string) => v
           >
             <div className="flex gap-2.5 flex-1">
               <div className="size-5 aspect-square rounded-xs bg-tertiary">
-                {item.new_new_photos_expanded?.[0] && <img src={generateUrl(item.new_new_photos_expanded?.[0])} />}
+                {item.new_new_photos_expanded?.[0] && <img src={generateUrl(item.new_new_photos_expanded?.[0])} alt={item.title || 'Event thumbnail'} />}
               </div>
               <p className="text-secondary line-clamp-1">{item.title}</p>
             </div>

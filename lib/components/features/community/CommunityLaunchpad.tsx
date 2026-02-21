@@ -128,7 +128,7 @@ function CommunityCoin({ stakingToken, chain }: { stakingToken: string; chain: C
       </div>
 
       <div className="p-18 grid grid-cols-2 gap-14">
-        <img src={imageUrl} className="size-full aspect-square rounded-lg object-cover" />
+        <img src={imageUrl} className="size-full aspect-square rounded-lg object-cover" alt={`${tokenData?.name || 'Token'} image`} />
         <div className="space-y-6">
           <div className="space-y-3">
             <div>
