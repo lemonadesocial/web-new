@@ -583,3 +583,15 @@ a[title='Open this area in Google Maps (opens a new window)'],
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* Global focus-visible styles for keyboard accessibility (HIGH-013) */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Ensure outline-none elements still show focus-visible indicator */
+.outline-none:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
