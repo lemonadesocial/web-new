@@ -51,7 +51,7 @@ export function AddGuestsModal({
     <div className="max-w-full w-[448px]">
       <div className="flex justify-between py-3 px-4 border-b">
         <p className="text-lg">{title}</p>
-        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
+        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
       </div>
       <div className="p-4 space-y-4">
         <div className="py-2.5 px-3.5 rounded-sm border bg-card">

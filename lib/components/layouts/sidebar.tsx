@@ -465,8 +465,9 @@ export function CreatingModal() {
           size="lg"
           className="rounded-full hover:bg-(--btn-tertiary)! [*]:text-tertiary! max-h-fit! size-[56px]"
           variant="tertiary"
+          aria-label="Create new"
         />
-        <Button icon="icon-x" size="xs" className="rounded-full" variant="tertiary" onClick={() => modal.close()} />
+        <Button icon="icon-x" size="xs" className="rounded-full" variant="tertiary" onClick={() => modal.close()} aria-label="Close" />
       </Card.Header>
       <Card.Content className="flex flex-col gap-4 pt-0">
         <div className="flex flex-col gap-2">

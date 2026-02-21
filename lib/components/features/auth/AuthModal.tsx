@@ -196,6 +196,7 @@ export function AuthModal({ onSuccess }: Props) {
               setCurrentProvider('google');
               processOidc('google');
             }}
+            aria-label="Sign in with Google"
           />
           <ConnectWalletButton onConnect={onConnect}>
             {(open) => (
@@ -206,6 +207,7 @@ export function AuthModal({ onSuccess }: Props) {
                 disabled={loadingOidcOrWallet}
                 loading={loadingWallet}
                 onClick={open}
+                aria-label="Connect wallet"
               />
             )}
           </ConnectWalletButton>
@@ -225,6 +227,7 @@ export function AuthModal({ onSuccess }: Props) {
               setCurrentProvider('apple');
               processOidc('apple');
             }}
+            aria-label="Sign in with Apple"
           />
         </div>
 

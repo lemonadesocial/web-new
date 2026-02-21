@@ -112,7 +112,7 @@ export function CloneEventModal({ event }: { event: Event }) {
         <div className="size-[56px] rounded-full flex items-center justify-center bg-(--btn-tertiary)">
           <i className="icon-duplicate " />
         </div>
-        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
+        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
       </Card.Header>
       <Card.Content className="flex flex-col gap-4">
         <div>
@@ -412,9 +412,9 @@ function Recurrence({
   return (
     <Card.Root className="w-full md:w-[350px] overflow-visible bg-transparent">
       <Card.Header className="bg-transparent flex justify-between items-center">
-        <Button icon="icon-chevron-left" size="xs" variant="tertiary" className="rounded-full" onClick={onBack} />
+        <Button icon="icon-chevron-left" size="xs" variant="tertiary" className="rounded-full" onClick={onBack} aria-label="Go back" />
         <p className="flex-1 text-center">Choose Times</p>
-        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
+        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
       </Card.Header>
       <Card.Content className="flex flex-col gap-4">
         <Controller
