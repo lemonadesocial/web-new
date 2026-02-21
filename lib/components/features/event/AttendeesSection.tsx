@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { useQuery } from '$lib/graphql/request';
-import { Avatar } from '$lib/components/core';
+import { Avatar, Skeleton } from '$lib/components/core';
 import { Event, PeekEventGuestsDocument, User } from '$lib/graphql/generated/backend/graphql';
 import { userAvatar } from '$lib/utils/user';
 
@@ -11,7 +11,7 @@ interface AttendeesSectionProps {
 }
 
 export function AttendeesSection({ event, limit = 5 }: AttendeesSectionProps) {
-  const { data } = useQuery(PeekEventGuestsDocument, {
+  const { data, loading } = useQuery(PeekEventGuestsDocument, {
     variables: { id: event?._id, limit },
     skip: !event?._id,
   });
@@ -24,6 +24,20 @@ export function AttendeesSection({ event, limit = 5 }: AttendeesSectionProps) {
   }, [guests]);
 
   const othersCount = totalAttendees - visibleAttendees.length;
+
+  if (loading) {
+    return (
+      <div>
+        <Skeleton className="h-4 w-16 rounded-md" animate />
+        <hr className="mt-2 mb-4 border-t border-t-divider" />
+        <div className="flex -space-x-1.5">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="size-8 rounded-full" animate />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (!guests.length || event?.hide_attending === true) return null;
 

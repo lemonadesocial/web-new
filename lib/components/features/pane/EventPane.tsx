@@ -21,10 +21,11 @@ import { EventLocationBlock } from '../event/EventLocationBlock';
 import { AttendeesSection } from '../event/AttendeesSection';
 import { EventAccess } from '../event-access';
 import { useMe } from '$lib/hooks/useMe';
+import { QueryError } from '$lib/components/core/query-error';
 import { Pane } from '$lib/components/core/pane/pane';
 
 export function EventPane({ eventId }: { eventId: string }) {
-  const { data, loading } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
+  const { data, loading, error, refetch } = useQuery(GetEventDocument, { variables: { id: eventId }, skip: !eventId });
   const event = data?.getEvent as Event;
   const me = useMe();
 
@@ -62,6 +63,7 @@ export function EventPane({ eventId }: { eventId: string }) {
         </Pane.Header.Left>
       </Pane.Header.Root>
       <Pane.Content className="flex flex-col">
+        {error && !event && <QueryError message="Failed to load event" onRetry={refetch} />}
         {canManage && (
           <Alert message="You have manage access for this event.">
             <Button

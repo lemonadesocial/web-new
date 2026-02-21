@@ -15,6 +15,7 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { useSession } from '$lib/hooks/useSession';
 import { useSignIn } from '$lib/hooks/useSignIn';
 
+import { QueryError } from '$lib/components/core/query-error';
 import { PageCardItem, PageCardItemSkeleton, PageSection, PageTitle } from '../shared';
 
 export function Content() {
@@ -66,7 +67,7 @@ export function Content() {
 export function MyHubs() {
   const me = useMe();
   const router = useRouter();
-  const { data, loading } = useQuery(GetSpacesDocument, {
+  const { data, loading, error, refetch } = useQuery(GetSpacesDocument, {
     variables: {
       with_my_spaces: true,
       roles: [SpaceRole.Creator, SpaceRole.Admin],
@@ -92,6 +93,8 @@ export function MyHubs() {
     );
   }
 
+  if (error) return <QueryError message="Failed to load communities" onRetry={refetch} />;
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       {list
@@ -115,7 +118,7 @@ export function MyHubs() {
 
 function SubscribedHubs() {
   const router = useRouter();
-  const { data, loading } = useQuery(GetSpacesDocument, {
+  const { data, loading, error, refetch } = useQuery(GetSpacesDocument, {
     variables: { with_my_spaces: false, roles: [SpaceRole.Subscriber] },
     fetchPolicy: 'cache-and-network',
   });
@@ -136,6 +139,8 @@ function SubscribedHubs() {
       </div>
     );
   }
+
+  if (error) return <QueryError message="Failed to load subscriptions" onRetry={refetch} />;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

@@ -3,7 +3,8 @@ import React from 'react';
 import { useAtom } from 'jotai';
 import { endOfDay, startOfDay, format } from 'date-fns';
 
-import { Button, drawer, Menu, MenuItem, modal, Segment } from '$lib/components/core';
+import { Button, drawer, Menu, MenuItem, modal, Segment, Skeleton } from '$lib/components/core';
+import { QueryError } from '$lib/components/core/query-error';
 import {
   Event,
   GetSpaceEventsCalendarDocument,
@@ -206,6 +207,9 @@ export function Content({ initData }: Props) {
               />
             ) : !selectedDate ? (
               <>
+                {eventListType === 'upcoming' && resUpcomingEvents.error && !upcomingEvents.length && (
+                  <QueryError message="Failed to load upcoming events" onRetry={() => resUpcomingEvents.refetch()} />
+                )}
                 {!!upcomingEvents.length && eventListType === 'upcoming' && (
                   <EventsWithMode
                     mode="card"
@@ -215,12 +219,20 @@ export function Content({ initData }: Props) {
                   />
                 )}
 
+                {eventListType === 'past' && resPastEvents.error && !pastEvents.length && (
+                  <QueryError message="Failed to load past events" onRetry={() => resPastEvents.refetch()} />
+                )}
                 {(!upcomingEvents.length || eventListType === 'past') && (
                   <EventsWithMode mode="card" events={pastEvents} loading={resPastEvents.loading} tags={eventTags} />
                 )}
               </>
             ) : (
-              <EventsWithMode mode="card" events={events} loading={resEventsByDate.loading} tags={eventTags} />
+              <>
+                {resEventsByDate.error && !events.length && (
+                  <QueryError message="Failed to load events" onRetry={() => resEventsByDate.refetch()} />
+                )}
+                <EventsWithMode mode="card" events={events} loading={resEventsByDate.loading} tags={eventTags} />
+              </>
             )}
           </div>
 

@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 import { Card, modal, Skeleton } from '$lib/components/core';
+import { QueryError } from '$lib/components/core/query-error';
 import { findConflictTraits, TraitType } from '$lib/services/lemonhead/core';
 import { trpc } from '$lib/trpc/client';
 import lemonHead from '$lib/trpc/lemonheads';
@@ -243,7 +244,7 @@ function SubContent({
     art_style,
   });
 
-  const { data, isLoading, refetch } = trpc.lemonheads.layers.useQuery({
+  const { data, isLoading, isError, refetch } = trpc.lemonheads.layers.useQuery({
     limit: 27,
     page,
     traits: [traitFilter],
@@ -331,6 +332,8 @@ function SubContent({
       )}
 
       {isLoading && ((isMobile && !list.length) || !isMobile) && <Loading loadMore={!!list.length} />}
+
+      {isError && !list.length && <QueryError message="Failed to load layers" onRetry={() => refetch()} />}
 
       {!!colors?.value.length && (
         <ColorTool

@@ -22,6 +22,7 @@ import { formatWallet, getListChains } from '$lib/utils/crypto';
 import { RedEnvelopeClient } from '$lib/services/red-envelope';
 import { ASSET_PREFIX, MEGAETH_CHAIN_ID } from '$lib/utils/constants';
 import { CardTable } from '$lib/components/core/table';
+import { QueryError } from '$lib/components/core/query-error';
 import { ReceivedEnvelopesLayout } from './ReceivedEnvelopesLayout';
 
 type Envelope = NonNullable<EnvelopeQuery['Envelope']>[number];
@@ -176,7 +177,7 @@ export const ReceivedEnvelopes = () => {
     recipient: { _eq: address?.toLowerCase() ?? '' },
   };
 
-  const { data, loading, refetch } = useQuery<EnvelopeQuery, EnvelopeQueryVariables>(
+  const { data, loading, error, refetch } = useQuery<EnvelopeQuery, EnvelopeQueryVariables>(
     EnvelopeDocument,
     {
       variables: {
@@ -218,6 +219,14 @@ export const ReceivedEnvelopes = () => {
             <div key={i} className="aspect-square rounded-lg bg-primary/8 animate-pulse" />
           ))}
         </div>
+      </ReceivedEnvelopesLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <ReceivedEnvelopesLayout filter={filter} sort={sort} onFilterChange={setFilter} onSortChange={setSort}>
+        <QueryError message="Failed to load envelopes" onRetry={refetch} />
       </ReceivedEnvelopesLayout>
     );
   }

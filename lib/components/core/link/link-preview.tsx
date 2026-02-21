@@ -32,7 +32,7 @@ export function LinkPreview({ url }: { url: string }) {
     window.open(url, '_blank');
   };
 
-  const { data: extractUrlData, isLoading } = trpc.openGraph.extractUrl.useQuery({ url });
+  const { data: extractUrlData, isLoading, isError } = trpc.openGraph.extractUrl.useQuery({ url });
 
   React.useEffect(() => {
     if (extractUrlData?.html && url) {
@@ -66,7 +66,7 @@ export function LinkPreview({ url }: { url: string }) {
     return <Skeleton className="h-16 w-full" animate />;
   }
 
-  if (!data) return null;
+  if (isError || !data) return null;
 
   if (data.videoId) {
     return (

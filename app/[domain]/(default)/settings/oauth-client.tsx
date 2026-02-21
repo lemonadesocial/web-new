@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
 import _ from 'lodash';
-import { Button, Input, toast } from '$lib/components/core';
+import { Button, Input, Skeleton, toast } from '$lib/components/core';
+import { QueryError } from '$lib/components/core/query-error';
 import { useMe } from '$lib/hooks/useMe';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
@@ -26,7 +27,7 @@ export function OAuthClient() {
   const [newUrl, setNewUrl] = useState('');
   const [createOauth2, { loading: creating }] = useMutation(CreateOauth2ClientDocument);
   const [updateOauth2, { loading: updating }] = useMutation(UpdateOauth2ClientDocument);
-  const { data: clients, refetch } = useQuery(ListOauth2ClientsDocument, {
+  const { data: clients, loading: loadingClients, error: errorClients, refetch } = useQuery(ListOauth2ClientsDocument, {
     variables: { ids: [currentOauth2Client!] },
     skip: !currentOauth2Client,
   });
@@ -73,6 +74,26 @@ export function OAuthClient() {
     : (clientDetails?.redirect_uris || []).map((url, index) => ({ key: index.toString(), url }));
 
   if (!me) return null;
+
+  if (loadingClients && currentOauth2Client) {
+    return (
+      <div>
+        <ListItem icon="icon-factory" title="OAuth2 client" subtile={currentOauth2Client}>
+          <Skeleton className="h-8 w-32 rounded-md" animate />
+        </ListItem>
+      </div>
+    );
+  }
+
+  if (errorClients && currentOauth2Client) {
+    return (
+      <div>
+        <ListItem icon="icon-factory" title="OAuth2 client" subtile={currentOauth2Client}>
+          <QueryError message="Failed to load client details" onRetry={refetch} />
+        </ListItem>
+      </div>
+    );
+  }
 
   return (
     <div>

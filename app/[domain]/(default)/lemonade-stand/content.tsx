@@ -4,6 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import { useAtomValue } from 'jotai';
 
 import { Accordion, Button, Card, Divider, drawer, modal, Skeleton } from '$lib/components/core';
+import { QueryError } from '$lib/components/core/query-error';
 import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { ASSET_PREFIX, SELF_VERIFICATION_CONFIG } from '$lib/utils/constants';
@@ -130,7 +131,7 @@ export function Content() {
 function UpcomingEventSection() {
   const router = useRouter();
   const me = useMe();
-  const { data } = useQuery(GetUpcomingEventsDocument, { variables: { user: me?._id, skip: 0, limit: 3 } });
+  const { data, loading, error, refetch } = useQuery(GetUpcomingEventsDocument, { variables: { user: me?._id, skip: 0, limit: 3 } });
 
   return (
     <Accordion.Root className="border-none" open>
@@ -198,7 +199,25 @@ function UpcomingEventSection() {
         }}
       </Accordion.Header>
       <Accordion.Content className="pt-1! px-0! flex flex-col gap-3">
-        {data?.events?.map((item) => (
+        {loading && (
+          <>
+            {[1, 2, 3].map((i) => (
+              <Card.Root key={i} className="min-w-fit">
+                <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
+                  <Skeleton className="size-[38px] rounded-sm" animate />
+                  <div className="space-y-1 flex-1">
+                    <Skeleton className="h-5 w-32 rounded-md" animate />
+                    <Skeleton className="h-4 w-48 rounded-md" animate />
+                  </div>
+                </Card.Content>
+              </Card.Root>
+            ))}
+          </>
+        )}
+
+        {error && <QueryError message="Failed to load events" onRetry={refetch} />}
+
+        {!loading && !error && data?.events?.map((item) => (
           <EventCardItem
             item={item as Event}
             key={item._id}
@@ -215,13 +234,13 @@ function UpcomingEventSection() {
           />
         ))}
 
-        <div className="hidden only:block text-center text-gray-500 py-10">
+        {!loading && !error && <div className="hidden only:block text-center text-gray-500 py-10">
           <EmptyCard
             icon="icon-confirmation-number"
             title="No Upcoming Events"
             subtitle="When you create or join events, they’ll show up here."
           />
-        </div>
+        </div>}
       </Accordion.Content>
     </Accordion.Root>
   );
@@ -230,7 +249,7 @@ function UpcomingEventSection() {
 function CommunitySection() {
   const router = useRouter();
 
-  const { data } = useQuery(GetSpacesDocument, {
+  const { data, loading, error, refetch } = useQuery(GetSpacesDocument, {
     variables: { roles: [SpaceRole.Admin, SpaceRole.Creator, SpaceRole.Ambassador] },
   });
 
@@ -306,9 +325,27 @@ function CommunitySection() {
         }}
       </Accordion.Header>
       <Accordion.Content
-        className={clsx('pt-1! px-0! flex flex-col md:grid gap-3', !!data?.listSpaces.length && 'grid-cols-2')}
+        className={clsx('pt-1! px-0! flex flex-col md:grid gap-3', !loading && !error && !!data?.listSpaces.length && 'grid-cols-2')}
       >
-        {(data?.listSpaces as Space[])
+        {loading && (
+          <>
+            {[1, 2].map((i) => (
+              <Card.Root key={i} className="min-w-fit">
+                <Card.Content className="flex gap-3 items-center px-3 md:px-4 py-2.5 md:py-3">
+                  <Skeleton className="size-[38px] rounded-sm" animate />
+                  <div className="space-y-1 flex-1">
+                    <Skeleton className="h-5 w-28 rounded-md" animate />
+                    <Skeleton className="h-4 w-20 rounded-md" animate />
+                  </div>
+                </Card.Content>
+              </Card.Root>
+            ))}
+          </>
+        )}
+
+        {error && <QueryError message="Failed to load communities" onRetry={refetch} />}
+
+        {!loading && !error && (data?.listSpaces as Space[])
           ?.slice(0, 6)
           .map((item) => (
             <CardItem
@@ -319,13 +356,13 @@ function CommunitySection() {
               onClick={() => router.push(`/s/manage/${item.slug || item._id}`)}
             />
           ))}
-        <div className="hidden only:block text-center text-gray-500 py-10">
+        {!loading && !error && <div className="hidden only:block text-center text-gray-500 py-10">
           <EmptyCard
             icon="icon-confirmation-number"
             title="No Communities Yet"
             subtitle="Communities you create and manage will appear here."
           />
-        </div>
+        </div>}
       </Accordion.Content>
     </Accordion.Root>
   );
@@ -682,7 +719,7 @@ function AllCoins() {
     return [...new Set(wallets)];
   }, [address, me?.wallets_new?.ethereum, me?.kratos_wallet_address]);
 
-  const { data, loading } = useQuery(
+  const { data, loading, error, refetch } = useQuery(
     PoolCreatedDocument,
     {
       variables: {
@@ -746,6 +783,8 @@ function AllCoins() {
               <Skeleton className="h-9 w-24 rounded-md" animate />
             </Card.Content>
           </Card.Root>
+        ) : error ? (
+          <QueryError message="Failed to load coins" onRetry={refetch} />
         ) : (
           <>
             {pools.map((pool) => (
