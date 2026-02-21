@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { PinataSDK } from "pinata";
+import * as Sentry from '@sentry/nextjs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
           metadata.attributes = attributes;
         }
       } catch (e) {
-        console.error('Failed to parse attributes:', e);
+        Sentry.captureException(e);
       }
     }
 
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
     }, { status: 200 });
 
   } catch (error) {
-    console.error('Error creating token metadata:', error);
+    Sentry.captureException(error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

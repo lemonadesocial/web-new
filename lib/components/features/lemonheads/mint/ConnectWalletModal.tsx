@@ -2,6 +2,7 @@ import React from 'react';
 import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
 import { ethers } from 'ethers';
 import { useAtomValue } from 'jotai';
+import * as Sentry from '@sentry/nextjs';
 
 import { Button, Card, modal, ModalContent } from '$lib/components/core';
 import {
@@ -49,7 +50,7 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
           setMinted(mintedState);
         }
       } catch (err) {
-        console.log(err);
+        Sentry.captureException(err);
       }
 
       if (!mintedState && !data?.canMintLemonhead?.white_list_enabled) {

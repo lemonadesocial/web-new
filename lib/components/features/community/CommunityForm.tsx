@@ -4,6 +4,7 @@ import { debounce, kebabCase } from 'lodash';
 import React from 'react';
 import { Controller, useForm, UseFormReturn } from 'react-hook-form';
 import { object, string } from 'yup';
+import * as Sentry from '@sentry/nextjs';
 
 import { Button, Card, FileInput, InputField, Map, Segment, TextAreaField, toast } from '$lib/components/core';
 import { PlaceAutoComplete } from '$lib/components/core/map/place-autocomplete';
@@ -139,7 +140,7 @@ export function CommunityFormContent({
         }
         setCanUseSpaceSlug(!!data?.canUseSpaceSlug);
       } catch (err: any) {
-        console.log(err);
+        Sentry.captureException(err);
       } finally {
         setChecking(false);
       }
@@ -174,7 +175,7 @@ export function CommunityFormContent({
         setValue('image_avatar', images[0]._id as any);
       }
     } catch (err) {
-      console.error(err);
+      Sentry.captureException(err);
       toast.error(`Cannot upload ${type} image!`);
     } finally {
       if (type === 'cover') setUploadingCover(false);

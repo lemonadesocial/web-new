@@ -61,7 +61,7 @@ export function LemonHeadFooter() {
     const canMint = dataCanMint?.canMintLemonhead?.can_mint;
 
     if (!canMint) {
-      console.log(error);
+      Sentry.captureException(error);
       toast.error('Not able to mint!');
       return false;
     }
@@ -403,7 +403,7 @@ function MintModal({
 
           return false;
         } catch (error) {
-          console.error('Error parsing log:', error);
+          Sentry.captureException(error);
           return false;
         }
       });

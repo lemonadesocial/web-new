@@ -129,7 +129,6 @@ function QuickBuyProvider({ children }: { children: React.ReactNode }) {
           },
         });
       } catch (error) {
-        console.log(error);
         Sentry.captureException(error);
         toast.error(formatError(error));
       } finally {

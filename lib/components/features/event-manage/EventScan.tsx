@@ -2,6 +2,7 @@
 import { useRouter } from 'next/navigation';
 import NextLink from 'next/link';
 import { IDetectedBarcode, Scanner } from '@yudiel/react-qr-scanner';
+import * as Sentry from '@sentry/nextjs';
 
 import { Button, modal, Spacer, Skeleton } from '$lib/components/core';
 import { Event } from '$lib/graphql/generated/backend/graphql';
@@ -47,7 +48,7 @@ function EventScanContent({ event }: { event: Event }) {
   };
 
   const handleError = (err: unknown) => {
-    console.error(err);
+    Sentry.captureException(err);
   };
 
   return (
