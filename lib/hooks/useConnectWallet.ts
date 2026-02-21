@@ -1,3 +1,4 @@
+'use client';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { getAppKitNetwork } from '$lib/utils/appkit';

@@ -1,3 +1,4 @@
+'use client';
 import { GenerateStripeAccountLinkDocument } from "$lib/graphql/generated/backend/graphql";
 import { useMutation } from "$lib/graphql/request";
 

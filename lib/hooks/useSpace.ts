@@ -1,3 +1,4 @@
+'use client';
 import { useParams } from "next/navigation";
 
 import { GetSpaceDocument, Space } from "$lib/graphql/generated/backend/graphql";

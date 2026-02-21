@@ -1,3 +1,4 @@
+'use client';
 import { useQuery } from '@tanstack/react-query';
 import { createDrift } from '@gud/drift';
 import { mainnet } from 'viem/chains';

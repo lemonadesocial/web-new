@@ -1,3 +1,4 @@
+'use client';
 import { useAtomValue } from 'jotai';
 
 import { userAtom } from '$lib/jotai';
