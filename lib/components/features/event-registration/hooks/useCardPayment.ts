@@ -2,6 +2,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useState } from "react";
 
 import { toast } from "$lib/components/core";
+import { getErrorMessage } from '$lib/utils/error';
 import { StripeAccount, UpdatePaymentDocument } from "$lib/graphql/generated/backend/graphql";
 import { useMutation } from "$lib/graphql/request";
 
@@ -70,8 +71,8 @@ export function useCardPayment() {
         },
         dismissible: false
       });
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
     } finally {
       setLoadingStripe(false);
     }

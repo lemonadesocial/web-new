@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { modal, Button, toast } from '$lib/components/core';
+import { getErrorMessage } from '$lib/utils/error';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { InviteEventDocument } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
@@ -37,8 +38,8 @@ export function AddInvitesModal({
       });
       toast.success('Invites sent successfully!');
       modal.close();
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to send invites');
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, 'Failed to send invites'));
     }
   };
 

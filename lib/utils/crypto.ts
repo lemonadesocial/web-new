@@ -169,13 +169,15 @@ export async function transfer(toAddress: string, amount: string, tokenAddress: 
     });
 
     return transaction.hash;
-  } catch (err: any) {
-    if (err.transactionHash) return err.transactionHash; // workaround for Rainbow
+  } catch (err: unknown) {
+    if (typeof err === 'object' && err !== null && 'transactionHash' in err) {
+      return (err as { transactionHash: string }).transactionHash; // workaround for Rainbow
+    }
     throw err;
   }
 };
 
-export function formatError(error: any): string {
+export function formatError(error: unknown): string {
   if (isError(error, 'ACTION_REJECTED')) {
     return 'Transaction was rejected by user';
   }
@@ -216,8 +218,9 @@ export function formatError(error: any): string {
     return 'Server error occurred. Please try again later';
   }
 
-  if (error?.message) {
-    const message = error.message.toLowerCase();
+  const errorMsg = error instanceof Error ? error.message : typeof error === 'object' && error !== null && 'message' in error ? String((error as { message: unknown }).message) : '';
+  if (errorMsg) {
+    const message = errorMsg.toLowerCase();
     
     if (message.includes('user rejected') || message.includes('user denied')) {
       return 'Transaction was rejected by user';

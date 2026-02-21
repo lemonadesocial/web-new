@@ -143,7 +143,7 @@ export function MintPassportModal({
 
       modal.close();
       onComplete(txHash, tokenId);
-    } catch (error: any) {
+    } catch (error: unknown) {
       Sentry.captureException(error, {
         extra: {
           walletInfo: appKit.getWalletInfo(),

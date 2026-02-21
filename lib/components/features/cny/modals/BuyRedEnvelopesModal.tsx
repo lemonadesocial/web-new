@@ -90,7 +90,7 @@ export function BuyRedEnvelopesModal({ pack, onComplete }: BuyRedEnvelopesModalP
       await transaction.wait();
 
       setStep('ready');
-    } catch (error: any) {
+    } catch (error: unknown) {
       Sentry.captureException(error, {
         extra: {
           walletInfo: appKit.getWalletInfo(),

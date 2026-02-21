@@ -5,6 +5,7 @@ import clsx from "clsx";
 
 import { buyerWalletAtom, formInstancesAtom, registrationModal, useSetAtom } from "../store";
 import { Button, LabeledInput, Menu, MenuItem, modal, toast } from "$lib/components/core";
+import { getErrorMessage } from '$lib/utils/error';
 import { SetUserWalletDocument } from "$lib/graphql/generated/backend/graphql";
 import { formatWallet } from "$lib/utils/crypto";
 import { useAppKit, appKit } from "$lib/utils/appkit";
@@ -72,8 +73,8 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
             });
             
             updateBuyerWallet(currentAddress);
-          } catch (error: any) {
-            toast.error(error.message);
+          } catch (error: unknown) {
+            toast.error(getErrorMessage(error));
           } finally {
             registrationModal.close();
           }

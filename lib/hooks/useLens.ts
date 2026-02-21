@@ -49,6 +49,7 @@ import { useMe } from './useMe';
 import { UpdateUserDocument, UpdateUserMutationVariables, User } from '$lib/graphql/generated/backend/graphql';
 import { uploadFiles } from '$lib/utils/file';
 import { formatError } from '$lib/utils/crypto';
+import { getErrorMessage } from '$lib/utils/error';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 
 export function useResumeSession() {
@@ -280,8 +281,8 @@ export function useFeed(feedId: string) {
       if (result.isOk()) {
         setFeed(result.value);
       }
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -344,8 +345,8 @@ export function useFeedPosts(postFilter: PostFilter) {
           setPosts((prev) => [...prev, ...validPosts]);
         }
       }
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -572,8 +573,8 @@ export function useComments({ postId: targetPostId, feedAddress }: UseCommentsPr
           setComments((prev) => [...prev, ...validComments]);
         }
       }
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -660,8 +661,8 @@ export function useAccountStats(account: Account | null) {
           following: result.value.following,
         });
       }
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -774,8 +775,8 @@ export function useTimeline(timelineFilter: TimelineFilter) {
           setTimelineItems((prev) => [...prev, ...validItems]);
         }
       }
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }

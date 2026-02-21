@@ -10,6 +10,7 @@ import { toast } from '$lib/components/core';
 import { HYDRA_PUBLIC_URL, IDENTITY_TOKEN_KEY } from '$lib/utils/constants';
 import { useAccount } from './useLens';
 import { identityApi } from '$lib/services/identity';
+import { getErrorMessage } from '$lib/utils/error';
 import { oidc } from '$lib/utils/oidc';
 
 export function useAuth(spaceHydraClientId?: string) {
@@ -109,8 +110,8 @@ export function useAuth(spaceHydraClientId?: string) {
         setLoading(false);
         return;
       }
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
     } finally {
       setLoading(false);
     }

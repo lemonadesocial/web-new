@@ -7,6 +7,7 @@ import { Account, evmAddress, Follower } from '@lens-protocol/client';
 import { fetchAccount, follow, unfollow, fetchFollowers } from '@lens-protocol/client/actions';
 
 import { Button, drawer, toast } from '$lib/components/core';
+import { getErrorMessage } from '$lib/utils/error';
 import { User } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
 import { userAvatar } from '$lib/utils/user';
@@ -65,8 +66,8 @@ export function UserProfileHero({ address, user, canEdit, containerClass }: Prop
       // NOTE: need to await lens update state before user can action
       await setFollowed((prev) => !prev);
       toast.success(`Successfully ${followed ? 'followed!' : 'unfollowed!'}`);
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to follow user');
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, 'Failed to follow user'));
     } finally {
       setLoading(false);
     }

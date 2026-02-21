@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import { GetNewPaymentDocument, NewPaymentState } from '$lib/graphql/generated/backend/graphql';
 import { toast } from '$lib/components/core';
+import { getErrorMessage } from '$lib/utils/error';
 import { useClient } from "$lib/graphql/request";
 
 import { registrationModal } from "../store";
@@ -56,9 +57,9 @@ export function PaymentProcessingModal({ paymentId, paymentSecret, hasJoinReques
         }
 
         return false;
-      } catch (error: any) {
+      } catch (error: unknown) {
         registrationModal.close();
-        toast.error(error.message || 'Failed to check payment status');
+        toast.error(getErrorMessage(error, 'Failed to check payment status'));
         return false;
       }
     };

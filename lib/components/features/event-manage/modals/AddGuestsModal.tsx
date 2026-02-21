@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { modal, Button, toast, Menu, MenuItem } from '$lib/components/core';
+import { getErrorMessage } from '$lib/utils/error';
 import { Event as EventType, EventTicketType, CreateTicketsDocument } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
 
@@ -42,8 +43,8 @@ export function AddGuestsModal({
       toast.success('Guests added successfully!');
       window.dispatchEvent(new Event('refetch_guest_list'));
       modal.close();
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to add guests');
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, 'Failed to add guests'));
     }
   };
 

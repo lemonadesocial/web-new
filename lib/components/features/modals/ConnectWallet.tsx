@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Button, modal, ModalContent, toast } from "$lib/components/core";
+import { getErrorMessage } from '$lib/utils/error';
 import { Chain } from "$lib/graphql/generated/backend/graphql";
 import { getAppKitNetwork, useAppKit, useAppKitAccount, useAppKitNetwork } from "$lib/utils/appkit";
 
@@ -44,9 +45,9 @@ export function ConnectWallet({ onConnect, chain, onClose }: { onConnect: () => 
 
     try {
       await switchNetwork(getAppKitNetwork(chain));
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Network switch error:', error);
-      toast.error(error?.message || 'Failed to switch network');
+      toast.error(getErrorMessage(error, 'Failed to switch network'));
     }
   };
 
