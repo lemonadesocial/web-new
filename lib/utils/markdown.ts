@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import TurndownService from 'turndown';
 
@@ -12,7 +13,8 @@ const turndownService = new TurndownService({
 export const markdownToHtml = (markdown: string): string => {
   if (!markdown) return '';
   const result = marked(markdown);
-  return typeof result === 'string' ? result : result.toString();
+  const html = typeof result === 'string' ? result : result.toString();
+  return DOMPurify.sanitize(html);
 };
 
 export const htmlToMarkdown = (html: string): string => {
