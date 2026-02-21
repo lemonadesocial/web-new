@@ -59,7 +59,14 @@ defaultConfig.connectors = [unicornConnector, metaMask() as any, ...(defaultConf
 
 export const config = createConfig(defaultConfig as any);
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000,
+      gcTime: 5 * 60 * 1000,
+    },
+  },
+});
 
 const context = createContext<{ authCookie: string }>({ authCookie: '' });
 const UnicornAuthCookieProvider = context.Provider;
