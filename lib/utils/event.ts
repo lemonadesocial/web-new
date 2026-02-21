@@ -108,7 +108,7 @@ export function getEventDateBlockStart(event: Event) {
   }
 
   if (isSameYear(startTime, new Date())) {
-    return `${format(startTime, 'EEE, MMM dd')} &middot; ${formatDistance(event.start, event.end)}`;
+    return `${format(startTime, 'EEE, MMM dd')} \u00B7 ${formatDistance(event.start, event.end)}`;
   }
 
   return `${format(startTime, 'EEE, dd MMMM yyyy')} `;
