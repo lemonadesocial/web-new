@@ -156,6 +156,6 @@ export const LabeledInput: React.FC<LabeledInputProps> = ({ label, required, chi
   );
 };
 
-export function ErrorText({ message }: { message: string }) {
-  return <p className="text-sm text-error">{message}</p>;
+export function ErrorText({ message, id }: { message: string; id?: string }) {
+  return <p id={id} className="text-sm text-error" role="alert" aria-live="polite">{message}</p>;
 }
