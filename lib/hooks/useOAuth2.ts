@@ -1,3 +1,4 @@
+'use client';
 import { useAtom, useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 
