@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useAtomValue } from 'jotai';
 import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
@@ -23,7 +24,8 @@ import { StatItem } from './StatItem';
 import { SwapCoin } from './SwapCoin';
 import { CoinDetail } from './CoinDetail';
 import { BuybackCharging } from './BuybackCharging';
-import { PriceChart } from './PriceChart';
+
+const PriceChart = dynamic(() => import('./PriceChart').then((m) => ({ default: m.PriceChart })), { ssr: false });
 
 interface CoinPageProps {
   network: string;

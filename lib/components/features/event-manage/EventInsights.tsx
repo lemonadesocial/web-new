@@ -1,10 +1,18 @@
 'use client';
 
+import dynamic from 'next/dynamic';
+
 import { Card } from '$lib/components/core';
 import { useEvent } from './store';
-import { TicketsSoldChart } from './insights/TicketsSoldChart';
-import { PageViewsChart } from './insights/PageViewsChart';
 import { PageViewsStats } from './insights/PageViewsStats';
+
+const TicketsSoldChart = dynamic(() => import('./insights/TicketsSoldChart').then((m) => ({ default: m.TicketsSoldChart })), {
+  ssr: false,
+});
+
+const PageViewsChart = dynamic(() => import('./insights/PageViewsChart').then((m) => ({ default: m.PageViewsChart })), {
+  ssr: false,
+});
 
 export function EventInsights() {
   const event = useEvent();

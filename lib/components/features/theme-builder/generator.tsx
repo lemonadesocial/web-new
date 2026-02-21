@@ -1,12 +1,14 @@
 'use client';
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { generateCssVariables } from '$lib/utils/fetchers';
 import clsx from 'clsx';
 import { isMobile } from 'react-device-detect';
 
-import { ShaderGradient } from './shader';
 import { ThemeValues } from './store';
 import { EmojiAnimate } from './emoji';
+
+const ShaderGradient = dynamic(() => import('./shader').then((m) => ({ default: m.ShaderGradient })), { ssr: false });
 
 export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: React.CSSProperties }) {
   const [mode, setMode] = React.useState(data.config.mode);

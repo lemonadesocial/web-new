@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { groupBy, merge, unionBy } from 'lodash';
 
 import { findConflictTraits } from '$lib/services/lemonhead/core';
@@ -9,7 +10,10 @@ import { TraitExtends, LemonHeadsColor, Gender } from '$lib/trpc/lemonheads/type
 import { LemonHeadGetStarted } from './steps/GetStarted';
 import { LemonHeadAboutYou } from './steps/AboutYou';
 import { LemonHeadCreate } from './steps/LemonHeadCreate';
-import { ClaimLemonHead } from './steps/ClaimLemonHead';
+
+const ClaimLemonHead = dynamic(() => import('./steps/ClaimLemonHead').then((m) => ({ default: m.ClaimLemonHead })), {
+  ssr: false,
+});
 
 export enum LemonHeadStep {
   'getstarted' = 'getstarted',

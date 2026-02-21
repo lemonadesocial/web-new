@@ -1,9 +1,14 @@
+import dynamic from 'next/dynamic';
+
 import { ASSET_PREFIX } from '$lib/utils/constants';
-import { PassportCelebrate } from './steps/Celebrate';
 import { PassportIntro } from './steps/Intro';
 import { PassportPhoto } from './steps/Photo';
 import { PassportUsername } from './steps/Username';
 import { PASSPORT_PROVIDER, PassportConfig, PassportStep } from './types';
+
+const PassportCelebrate = dynamic(() => import('./steps/Celebrate').then((m) => ({ default: m.PassportCelebrate })), {
+  ssr: false,
+});
 
 export const PASSPORT_METADATA: { [key: string]: object } = {
   mint: {

@@ -1,7 +1,7 @@
 import React from 'react';
+import dynamic from 'next/dynamic';
 
 import { WidgetPassport } from '../../community/widgets/WidgetPassport';
-import { WidgetCommunityCoin } from '../../community/widgets/WidgetCommunityCoin';
 import { WidgetMusicNFT } from '../../community/widgets/WidgetMusicNFT';
 import { WidgetUpcomingEvents } from '../../community/widgets/WidgetUpcomingEvents';
 import { WidgetConnectWallet } from '../../community/widgets/WidgetConnectWallet';
@@ -10,6 +10,11 @@ import { WidgetCollectibles } from '../../community/widgets/WidgetCollectibles';
 import { ThemeValues } from '../store';
 import { WidgetPlaces } from '../../community/widgets/WidgetPlaces';
 import { PASSPORT_PROVIDER } from '../../passports/types';
+
+const WidgetCommunityCoin = dynamic(
+  () => import('../../community/widgets/WidgetCommunityCoin').then((m) => ({ default: m.WidgetCommunityCoin })),
+  { ssr: false },
+);
 
 type WidgetKey =
   | 'passport'
