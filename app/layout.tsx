@@ -27,6 +27,9 @@ export default async function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body className={clsx('transition antialiased', fonts)}>
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-primary">
+          Skip to content
+        </a>
         <Web3Provider>
           <StyledJsxRegistry>{children}</StyledJsxRegistry>
           <Script src={`https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_KEY}&libraries=places`}></Script>
