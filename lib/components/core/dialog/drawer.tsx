@@ -90,7 +90,7 @@ export function DrawerContainer() {
       const drawerRef = drawerRefs.current.get(topDrawer.id);
 
       // Prevent closing if clicking inside a modal
-      const modalElements = document.querySelectorAll('[role="modal"]');
+      const modalElements = document.querySelectorAll('[role="dialog"]');
       for (const element of Array.from(modalElements)) {
         if (element.contains(event.target as Node)) return;
       }
@@ -106,6 +106,18 @@ export function DrawerContainer() {
     [drawers, handleClose],
   );
 
+  const handleKeyDown = React.useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && drawers.length > 0) {
+        const topDrawer = drawers[drawers.length - 1];
+        if (topDrawer.options.dismissible) {
+          handleClose(topDrawer.id);
+        }
+      }
+    },
+    [drawers, handleClose],
+  );
+
   React.useEffect(() => {
     drawer.open = handleOpen;
     drawer.close = handleClose;
@@ -113,11 +125,13 @@ export function DrawerContainer() {
     if (drawers.length > 0) {
       document.body.style.overflow = 'hidden';
       document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener('keydown', handleKeyDown);
     }
 
     return () => {
       document.body.style.overflow = 'auto';
       document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [drawers.length, handleOpen, handleClose]);
 
@@ -133,6 +147,8 @@ export function DrawerContainer() {
             layout={!drawer.options.fixed}
             className={clsx(drawer.options.fixed ? 'fixed inset-0' : 'h-dvh')}
             style={{ zIndex: 10000 + index }}
+            role="dialog"
+            aria-modal="true"
           >
             <div className="h-full w-full p-2">
               {drawer.options.showBackdrop && <div className="bg-overlay-backdrop fixed inset-0 z-0" />}
