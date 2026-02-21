@@ -11,12 +11,12 @@ export function SwapCoin ({ chain, address }: { chain: Chain; address: string })
   return (
     <div className="w-full rounded-md bg-card border border-card-border">
       <div className="grid grid-cols-2 border-b border-b-divider">
-        <div className={clsx('cursor-pointer pt-1.5 pb-2.5', tab === 'buy' && 'border-b-2 border-primary')} onClick={() => setTab('buy')}>
+        <button type="button" className={clsx('cursor-pointer pt-1.5 pb-2.5', tab === 'buy' && 'border-b-2 border-primary')} onClick={() => setTab('buy')}>
           <p className={clsx('text-center', tab === 'buy' ? 'text-primary' : 'text-tertiary')}>Buy</p>
-        </div>
-        <div className={clsx('cursor-pointer pt-1.5 pb-2.5', tab === 'sell' && 'border-b-2 border-primary')}  onClick={() => setTab('sell')}>
+        </button>
+        <button type="button" className={clsx('cursor-pointer pt-1.5 pb-2.5', tab === 'sell' && 'border-b-2 border-primary')} onClick={() => setTab('sell')}>
           <p className={clsx('text-center', tab === 'sell' ? 'text-primary' : 'text-tertiary')}>Sell</p>
-        </div>
+        </button>
       </div>
       {
         tab === 'buy' && (

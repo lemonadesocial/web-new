@@ -49,19 +49,18 @@ export function PostToolbar({
       <GifPicker onSelectGif={onSelectGif} />
 
       <FileInput onChange={onSelectFiles} accept="image/*" multiple className="flex">
-        {(open) => <i className="icon-image size-5 text-[#60A5FA] cursor-pointer" onClick={open} />}
+        {(open) => <button type="button" aria-label="Add image" className="cursor-pointer" onClick={open}><i className="icon-image size-5 text-[#60A5FA]" /></button>}
       </FileInput>
       
-      <i
-        className="icon-ticket size-5 text-[#A78BFA] cursor-pointer"
-        onClick={() => {
+      <button type="button" aria-label="Add event" className="cursor-pointer" onClick={() => {
           modal.open(AddEventModal, {
             props: {
               onConfirm: onAddEvent,
             },
           });
-        }}
-      />
+        }}>
+        <i className="icon-ticket size-5 text-[#A78BFA]" />
+      </button>
     </div>
   );
 }

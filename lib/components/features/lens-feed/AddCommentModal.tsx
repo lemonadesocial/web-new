@@ -99,23 +99,21 @@ export function AddCommentModal({ post, onSuccess }: AddCommentModalProps) {
                 accept="image/*"
                 multiple
               >
-                {open => <i className="icon-image size-5 text-tertiary hover:text-primary cursor-pointer" onClick={open} />}
+                {open => <button type="button" aria-label="Add image" className="cursor-pointer" onClick={open}><i className="icon-image size-5 text-tertiary hover:text-primary" /></button>}
               </FileInput>
-              <i
-                className="icon-celebration size-5 text-tertiary hover:text-primary cursor-pointer"
-                onClick={() => {
+              <button type="button" aria-label="Add event" className="cursor-pointer" onClick={() => {
                   modal.open(AddEventModal, {
                     props: {
                       onConfirm: link => setSharingLink(link),
                     },
                   });
-                }}
-              />
+                }}>
+                <i className="icon-celebration size-5 text-tertiary hover:text-primary" />
+              </button>
             </div>
-            <i
-              className={clsx(' size-5 text-tertiary hover:text-primary cursor-pointer', isLoading || isUploading ? 'icon-loader animate-spin' : 'icon-send')}
-              onClick={onPost}
-            />
+            <button type="button" aria-label="Send" className="cursor-pointer" onClick={onPost}>
+              <i className={clsx('size-5 text-tertiary hover:text-primary', isLoading || isUploading ? 'icon-loader animate-spin' : 'icon-send')} />
+            </button>
           </div>
         </div>
       </div>

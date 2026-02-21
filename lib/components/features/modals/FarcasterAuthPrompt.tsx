@@ -125,7 +125,7 @@ export const FarcasterAuthPrompt = (props: {
           Create New Account
         </Button>
         <p className='text-sm text-secondary text-center'>
-          Already have an account? <span className='text-accent-400 cursor-pointer' onClick={link}>Link it here</span>
+          Already have an account? <button type="button" className='text-accent-400 cursor-pointer inline' onClick={link}>Link it here</button>
         </p>
       </div>
     </div>

@@ -109,16 +109,13 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
             <Menu.Root>
               <Menu.Trigger>
                 {({ toggle }) => (
-                  <div className="flex items-center gap-2.5 w-full px-3.5 py-2 rounded-sm bg-primary/8 cursor-pointer" onClick={toggle}>
+                  <button type="button" className="flex items-center gap-2.5 w-full px-3.5 py-2 rounded-sm bg-primary/8 cursor-pointer" onClick={toggle}>
                     <i className="icon-eth text-tertiary size-5" />
                     <p className="flex-1">
                       {formatWallet(selectedAddress)}
                     </p>
-                    <i
-                      className="icon-arrow-down cursor-pointer text-tertiary size-5"
-                      onClick={() => open()}
-                    />
-                  </div>
+                    <i className="icon-arrow-down text-tertiary size-5" />
+                  </button>
                 )}
               </Menu.Trigger>
               <Menu.Content className="p-0 min-w-[372px]">

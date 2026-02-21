@@ -142,10 +142,10 @@ export function RegistrationForm() {
               <Menu.Root>
                 <Menu.Trigger>
                   {({ toggle }) => (
-                    <div className="flex items-center gap-2 cursor-pointer" onClick={toggle}>
+                    <button type="button" className="flex items-center gap-2 cursor-pointer" onClick={toggle}>
                       <p className="text-tertiary">{ethAddressRequirement}</p>
                       <i className="icon-arrow-down text-tertiary size-4" />
-                    </div>
+                    </button>
                   )}
                 </Menu.Trigger>
                 <Menu.Content className="p-1 min-w-[120px]">
@@ -183,10 +183,10 @@ export function RegistrationForm() {
               <Menu.Root>
                 <Menu.Trigger>
                   {({ toggle }) => (
-                    <div className="flex items-center gap-2 cursor-pointer" onClick={toggle}>
+                    <button type="button" className="flex items-center gap-2 cursor-pointer" onClick={toggle}>
                       <p className="text-tertiary">{selfIdRequirement}</p>
                       <i className="icon-arrow-down text-tertiary size-4" />
-                    </div>
+                    </button>
                   )}
                 </Menu.Trigger>
                 <Menu.Content className="p-1 min-w-[120px]">
@@ -310,7 +310,9 @@ function QuestionCard({ question, index }: { question: EventApplicationQuestion;
         )}
       </div>
 
-      <i className="icon-edit-sharp size-5 text-tertiary cursor-pointer" onClick={() => handleEdit(question)} />
+      <button type="button" aria-label="Edit question" className="cursor-pointer" onClick={() => handleEdit(question)}>
+        <i className="icon-edit-sharp size-5 text-tertiary" />
+      </button>
     </div>
   );
 }

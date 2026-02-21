@@ -98,9 +98,9 @@ export function AddInvitesModal({
         <hr className="border-t" />
         <p className="text-sm text-tertiary">
           You can bypass registration and payment by adding guests directly to the guest list.{' '}
-          <span className="text-accent-500 cursor-pointer" onClick={() => setTab('guests')}>
+          <button type="button" className="text-accent-500 cursor-pointer inline" onClick={() => setTab('guests')}>
             Add Guests Directly
-          </span>
+          </button>
         </p>
       </div>
       <div className="flex justify-between py-3 px-4 border-t items-center">
