@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSession } from '$lib/hooks/useSession';
 import { useRawLogout } from "$lib/hooks/useLogout";
 
-import { ory } from '$lib/utils/ory';
+import { getOry } from '$lib/utils/ory';
 
 import { dummyWalletPassword, handlePasswordLogin, handlePasswordRegistration, handleUpdateFlowProfile } from '$lib/services/ory';
 import { decodeAuthCookie } from '$lib/services/unicorn/common';
@@ -25,7 +25,7 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
   const [status, setStatus] = useState<'processing' | 'linking' | 'link-options' | 'creating' | 'linked' | 'processed'>('processing');
 
   const handleLogin = async (identifier: string, cookie: string, siwe: SiwePayload) => {
-    const loginFlow = await ory!.createBrowserLoginFlow().then((response) => response.data);
+    const loginFlow = await getOry().createBrowserLoginFlow().then((response) => response.data);
 
     await handlePasswordLogin({
       flow: loginFlow,
@@ -53,7 +53,7 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
     setStatus('linking');
     const wallet = authCookie?.storedToken.authDetails.walletAddress?.toLowerCase();
 
-    const settingFlow = await ory!.createBrowserSettingsFlow().then((response) => response.data);
+    const settingFlow = await getOry().createBrowserSettingsFlow().then((response) => response.data);
 
     await handleUpdateFlowProfile({
       flow: settingFlow,
@@ -85,7 +85,7 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
       await logOut();
     }
 
-    const registrationFlow = await ory!.createBrowserRegistrationFlow().then((response) => response.data);
+    const registrationFlow = await getOry().createBrowserRegistrationFlow().then((response) => response.data);
 
     await handlePasswordRegistration({
       flow: registrationFlow,

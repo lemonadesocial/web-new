@@ -95,7 +95,7 @@ export function MyTickets({ tickets, payments, event }: { tickets: Ticket[]; pay
                   variant="secondary"
                   size="sm"
                   iconLeft="icon-video"
-                  onClick={() => window.open(event.virtual_url!, '_blank')}
+                  onClick={() => window.open(event.virtual_url ?? '', '_blank')}
                 >
                   Join Event
                 </Button>

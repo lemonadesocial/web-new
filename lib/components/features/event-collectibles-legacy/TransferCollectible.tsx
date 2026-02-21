@@ -35,7 +35,7 @@ export function TransferCollectible({ claim, token }: { claim: Claim; token: Tok
           </div>
           <div className="space-y-[2px]">
             <p className="text-xs text-tertiary">Destination Wallet</p>
-            <p>{formatWallet(walletAddress!)}</p>
+            <p>{formatWallet(walletAddress)}</p>
           </div>
         </div>
         <p className="text-secondary">

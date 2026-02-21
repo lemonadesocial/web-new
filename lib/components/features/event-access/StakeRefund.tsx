@@ -20,7 +20,8 @@ import { SuccessModal } from "../modals/SuccessModal";
 export function StakeRefundItem({ payment }: { payment: PaymentRefundInfo; }) {
   const { refund_policy, refund_requirements_met, payment_account } = payment;
   const chain = getChain((payment_account.account_info as EthereumStakeAccount).network);
-  const { requirements, percent } = refund_policy!;
+  if (!refund_policy) return null;
+  const { requirements, percent } = refund_policy;
   const checkInRequirement = format(new Date(requirements?.checkin_before), 'EEEE, MMMM dd, h:mm a');
 
   const formattedAmount = getDisplayPrice(
@@ -138,7 +139,7 @@ function ClaimStakeModal({ payment }: { payment: PaymentRefundInfo; }) {
         </div>
         <div className="rounded-sm border border-divider px-3 py-2 bg-woodsmoke-950/[0.64] gap-2.5 flex items-center">
           <i className="icon-wallet size-5 text-tertiary" />
-          <p>{formatWallet(address!)}</p>
+          <p>{formatWallet(address ?? '')}</p>
         </div>
         <Button
           onClick={continueClaim}

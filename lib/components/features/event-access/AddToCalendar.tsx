@@ -4,7 +4,7 @@ import { EventCalendarLinks, Event } from "$lib/graphql/generated/backend/graphq
 export function AddToCalendarModal({ event }: { event: Event }) {
   const addToCalendar = (calendar: keyof EventCalendarLinks) => {
     window.open(
-      `${event.calendar_links![calendar]}`,
+      `${event.calendar_links?.[calendar] ?? ''}`,
       '_blank'
     )
   };

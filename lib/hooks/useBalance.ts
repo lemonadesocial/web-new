@@ -30,7 +30,7 @@ export function useBalance() {
     error,
   } = useQuery({
     queryKey: ['balance', address],
-    queryFn: () => fetchBalance(address!, walletProvider as Eip1193Provider) ,
+    queryFn: () => fetchBalance(address as string, walletProvider as Eip1193Provider),
     enabled: !!address && !!walletProvider,
   });
 
@@ -81,9 +81,9 @@ export function useTokenBalance(chain: Chain | undefined, tokenAddress: string |
     queryKey: ['token-balance', chain?.chain_id, address, tokenAddress, decimals],
     queryFn: () =>
       fetchTokenBalance({
-        address: address!,
-        tokenAddress: tokenAddress!,
-        chain: chain!,
+        address: address as string,
+        tokenAddress: tokenAddress as string,
+        chain: chain as Chain,
         decimals: Number(decimals),
       }),
     enabled: !!chain && !!tokenAddress && !!decimals && !!address,

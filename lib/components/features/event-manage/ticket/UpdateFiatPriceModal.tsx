@@ -37,8 +37,8 @@ export function UpdateFiatPriceModal({ price, onChange }: { price?: EventTicketP
       if (res?.createNewPaymentAccount._id) {
         updatePaymentAccount({
           variables: {
-            id: event!._id,
-            payment_accounts_new: [...(event!.payment_accounts_new || []), res.createNewPaymentAccount._id]
+            id: event?._id,
+            payment_accounts_new: [...(event?.payment_accounts_new || []), res.createNewPaymentAccount._id]
           }
         });
       }
@@ -57,8 +57,8 @@ export function UpdateFiatPriceModal({ price, onChange }: { price?: EventTicketP
       if (userAccount) {
         updatePaymentAccount({
           variables: {
-            id: event!._id,
-            payment_accounts_new: [...(event!.payment_accounts_new || []), userAccount._id]
+            id: event?._id,
+            payment_accounts_new: [...(event?.payment_accounts_new || []), userAccount._id]
           }
         });
         

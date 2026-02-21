@@ -17,7 +17,7 @@ export function OrderSummary() {
   const pricingInfo = useAtomValue(pricingInfoAtom);
   const purchaseItems = useAtomValue(purchaseItemsAtom);
   const selectedPaymentAccount = useAtomValue(selectedPaymentAccountAtom);
-  const currency = useAtomValue(currencyAtom)!;
+  const currency = useAtomValue(currencyAtom) ?? '';
   const setPricingInfo = useSetAtom(pricingInfoAtom);
 
   const setDiscountCode = useSetAtom(discountCodeAtom);
@@ -135,7 +135,7 @@ export function OrderSummary() {
                 <div className="flex items-center gap-1">
                   <p className="text-success-500 uppercase">{discountCodeInput}</p>
                   <i className="icon-dot text-success-500 size-2" />
-                  <p className="text-success-500">{getDisplayPrice(pricingInfo!.discount.toString(), currency, pricingPaymentAccount)}</p>
+                  <p className="text-success-500">{getDisplayPrice(pricingInfo?.discount.toString() ?? '0', currency, pricingPaymentAccount)}</p>
                 </div>
                 <i className="icon-cancel size-4 text-tertiary cursor-pointer" onClick={handleClearDiscount} />
               </div>
@@ -179,7 +179,7 @@ export function OrderSummary() {
 function TicketSelect() {
   const ticketTypes = useAtomValue(ticketTypesAtom);
   const purchaseItems = useAtomValue(purchaseItemsAtom);
-  const currency = useAtomValue(currencyAtom)!;
+  const currency = useAtomValue(currencyAtom) ?? '';
   const selectedPaymentAccount = useAtomValue(selectedPaymentAccountAtom);
 
   const [showEdit, setShowEdit] = useState(!purchaseItems.length);

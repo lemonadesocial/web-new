@@ -33,7 +33,7 @@ export function ProfileMenu({
             )}
 
             {account?.username && options.canView && (
-              <MenuItem onClick={async () => router.push(`/l/${account!.username!.localName}`)}>
+              <MenuItem onClick={async () => router.push(`/l/${account.username.localName}`)}>
                 <div className="flex items-center gap-2.5">
                   <i className="icon-account size-4 text-secondary" />
                   <p className="text-sm text-secondary">View Profile</p>

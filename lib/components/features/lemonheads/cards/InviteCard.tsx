@@ -267,7 +267,7 @@ export function InviteFriendModal() {
                   <div className="flex-1">
                     <div className="flex gap-2">
                       {item.user?.username && <p>{item.user.username}</p>}
-                      <p className="text-tertiary">{truncateMiddle(item.invitee_wallet!, 6, 4)}</p>
+                      <p className="text-tertiary">{truncateMiddle(item.invitee_wallet ?? '', 6, 4)}</p>
                     </div>
                     <p className="capitalize text-tertiary text-sm">{item.minted_at ? 'minted' : 'pending'}</p>
                   </div>

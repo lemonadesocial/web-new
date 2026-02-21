@@ -43,7 +43,7 @@ export function useLemonhead() {
     error,
   } = useQuery({
     queryKey: ['lemonhead', address, chainsMap],
-    queryFn: () => fetchLemonheadData(address!, chainsMap),
+    queryFn: () => fetchLemonheadData(address as string, chainsMap),
     enabled: !!address && !!chainsMap,
   });
 

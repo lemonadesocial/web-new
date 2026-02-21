@@ -75,7 +75,7 @@ export function RegistrationForm() {
 
     updateEventRegistrationForm({
       variables: {
-        id: event!._id,
+        id: event?._id,
         input: {
           rsvp_wallet_platforms,
         },
@@ -87,7 +87,7 @@ export function RegistrationForm() {
     setSelfIdRequirement(requirement);
     updateEventSelfVerification({
       variables: {
-        id: event!._id,
+        id: event?._id,
         self_verification: {
           enabled: requirement !== 'Off',
         },

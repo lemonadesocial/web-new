@@ -105,7 +105,7 @@ export function AddEventModal({ onConfirm }: { onConfirm: (event: Event) => void
         <Button
           disabled={!url.trim() || !!error || !event}
           onClick={() => {
-            onConfirm(event!);
+            if (event) onConfirm(event);
             modal.close();
           }}
           variant="secondary"

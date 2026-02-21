@@ -103,7 +103,8 @@ export class GraphqlClient {
     if (this.processing || this.queue.length === 0) return;
 
     this.processing = true;
-    const request = this.queue.shift()!;
+    const request = this.queue.shift();
+    if (!request) return;
 
     try {
       if (request.headers) {
@@ -233,7 +234,8 @@ export class GraphqlClient {
 }
 
 export function getClient() {
+  if (!GRAPHQL_URL) throw new Error('GRAPHQL_URL is not configured');
   return new GraphqlClient({
-    url: GRAPHQL_URL!,
+    url: GRAPHQL_URL,
   });
 }

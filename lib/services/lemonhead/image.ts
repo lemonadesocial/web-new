@@ -60,13 +60,16 @@ export const randomLayers = async (
   return data as Layer[];
 }
 
+const INTERNAL_URL = process.env.INTERNAL_GRAPHQL_URL;
+if (!INTERNAL_URL) throw new Error('INTERNAL_GRAPHQL_URL is not configured');
+
 export const getRandomLayersFromTraits = async (finalTraits: Omit<Trait, 'value'>[]) => {
-  return await randomLayers(process.env.INTERNAL_GRAPHQL_URL!, finalTraits);
+  return await randomLayers(INTERNAL_URL, finalTraits);
 };
 
 //-- this function expects the final traits
 export const getRenderLayersFromTraits = async (finalTraits: Trait[]) => {
-  const layers = await searchLayers(process.env.INTERNAL_GRAPHQL_URL!, finalTraits);
+  const layers = await searchLayers(INTERNAL_URL, finalTraits);
 
   assert.ok(layers.items.length === finalTraits.length && layers.items.every((layer) => !!layer.file));
 
@@ -96,7 +99,7 @@ export const randomUseOutfit = async () => {
       [{ type: TraitType.outfit }],
       [{ type: TraitType.top }],
       [{ type: TraitType.bottom }],
-    ].map((traits) => countLayers(process.env.INTERNAL_GRAPHQL_URL!, traits).then((count) => count.count)));
+    ].map((traits) => countLayers(INTERNAL_URL, traits).then((count) => count.count)));
   }, 86400000);
 
   const top_and_bottom = topCount + bottomCount;

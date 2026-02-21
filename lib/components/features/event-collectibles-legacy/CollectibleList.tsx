@@ -88,7 +88,7 @@ export function CollectibleList({ tokens, offers }: { tokens: TokenComplex[]; of
       variables: {
         where: {
           network_eq: claim.network,
-          contract_eq: claim.to!.toLowerCase(),
+          contract_eq: claim.to?.toLowerCase() ?? '',
           tokenId_eq: '0',
         },
       },

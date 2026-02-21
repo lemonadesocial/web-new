@@ -117,7 +117,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
       client.refetchQuery({
         query: ListEventTicketTypesDocument,
         variables: {
-          event: event!._id,
+          event: event?._id,
         },
       });
 
@@ -171,7 +171,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
       client.refetchQuery({
         query: ListEventTicketTypesDocument,
         variables: {
-          event: event!._id,
+          event: event?._id,
         },
       });
 
@@ -188,7 +188,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
       client.refetchQuery({
         query: ListEventTicketTypesDocument,
         variables: {
-          event: event!._id,
+          event: event?._id,
         },
       });
 
@@ -216,7 +216,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
     }
 
     const newTicket = {
-      event: event!._id,
+      event: event?._id,
       category: category?._id,
       prices: prices.length
         ? prices.map((price) => pick(price, ['cost', 'currency', 'payment_accounts']))

@@ -5,7 +5,7 @@ import { useAtom } from "jotai";
 import { request } from '$lib/utils/request';
 
 import { decodeJwt } from "../utils/jwt";
-import { ory } from "../utils/ory";
+import { getOry } from "../utils/ory";
 
 import { dummyWalletPassword, handlePasswordLogin, handleUpdateFlowProfile } from "../services/ory";
 
@@ -52,7 +52,7 @@ export const useHandleFarcaster = <T extends Record<string, unknown>>() => {
   const { session, reload } = useAuth();
 
   const loginWithFid = async (fid: string, payload: T) => {
-    const loginFlow = await ory!.createBrowserLoginFlow().then((response) => response.data);
+    const loginFlow = await getOry().createBrowserLoginFlow().then((response) => response.data);
 
     await handlePasswordLogin({
       flow: loginFlow,
@@ -81,7 +81,7 @@ export const useHandleFarcaster = <T extends Record<string, unknown>>() => {
       }
 
       //-- link with current session
-      const settingFlow = await ory!.createBrowserSettingsFlow().then((response) => response.data);
+      const settingFlow = await getOry().createBrowserSettingsFlow().then((response) => response.data);
 
       await handleUpdateFlowProfile({
         flow: settingFlow,
@@ -194,7 +194,7 @@ export const useLinkFarcaster = () => {
       props: {
         nonce: signedNonce.nonce,
         onSuccess: async (data) => {
-          const settingFlow = await ory!.createBrowserSettingsFlow().then((response) => response.data);
+          const settingFlow = await getOry().createBrowserSettingsFlow().then((response) => response.data);
 
           handleUpdateFlowProfile({
             flow: settingFlow,

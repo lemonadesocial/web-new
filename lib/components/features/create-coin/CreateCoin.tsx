@@ -387,9 +387,13 @@ export function CreateCoin() {
 
       const rpcProvider = new ethers.JsonRpcProvider(launchChain.rpc_url);
 
+      if (!launchChain.launchpad_zap_contract_address || !launchChain.launchpad_treasury_address_fee_split_manager_implementation_contract_address) {
+        throw new Error('Launchpad contract addresses are not configured for this chain');
+      }
+
       const txParams = await getLaunchTokenParams(
-        launchChain.launchpad_zap_contract_address!,
-        launchChain.launchpad_treasury_address_fee_split_manager_implementation_contract_address!,
+        launchChain.launchpad_zap_contract_address,
+        launchChain.launchpad_treasury_address_fee_split_manager_implementation_contract_address,
         rpcProvider,
         params,
       );
@@ -1074,7 +1078,7 @@ export function CreateCoin() {
                         <div className="flex items-center gap-3 py-2 px-3 rounded-sm border border-card-border bg-card cursor-pointer hover:bg-primary/8 transition-colors">
                           <i className="icon-calendar size-5 text-tertiary" />
                           <span className="text-primary flex-1 text-left">
-                            {watch('launchDate') ? format(new Date(watch('launchDate')!), 'EEE, dd MMM') : 'Select date'}
+                            {watch('launchDate') ? format(new Date(watch('launchDate') as string), 'EEE, dd MMM') : 'Select date'}
                           </span>
                           <i className="icon-chevron-down size-4 text-tertiary" />
                         </div>
@@ -1105,7 +1109,7 @@ export function CreateCoin() {
                         <div className="flex items-center gap-3 py-2 px-3 rounded-sm border border-card-border bg-card cursor-pointer hover:bg-primary/8 transition-colors">
                           <i className="icon-clock size-5 text-tertiary" />
                           <span className="text-primary flex-1 text-left">
-                            {watch('launchDate') ? format(new Date(watch('launchDate')!), 'hh:mm a') : 'Select time'}
+                            {watch('launchDate') ? format(new Date(watch('launchDate') as string), 'hh:mm a') : 'Select time'}
                           </span>
                           <i className="icon-chevron-down size-4 text-tertiary" />
                         </div>

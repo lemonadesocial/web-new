@@ -15,8 +15,8 @@ export function CoinStats({ launchpadGroup }: { launchpadGroup: LaunchpadGroup }
   const [owner, setOwner] = useState<string | null>(null);
   const [isLoadingOwner, setIsLoadingOwner] = useState(true);
 
-  const { apr, isLoading: isLoadingAPR } = useStakingAPR(chain!, launchpadGroup.address);
-  const { tvl, isLoading: isLoadingTVL } = useStakingTVL(chain!, launchpadGroup.address);
+  const { apr, isLoading: isLoadingAPR } = useStakingAPR(chain as Chain, launchpadGroup.address);
+  const { tvl, isLoading: isLoadingTVL } = useStakingTVL(chain as Chain, launchpadGroup.address);
 
   useEffect(() => {
     if (!chain) return;

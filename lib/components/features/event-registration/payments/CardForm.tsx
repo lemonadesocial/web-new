@@ -41,8 +41,8 @@ const elementOptions: StripeCardNumberElementOptions = {
 };
 
 export const CardForm: React.FC = () => {
-  const stripe = useStripe()!;
-  const elements = useElements()!;
+  const stripe = useStripe();
+  const elements = useElements();
 
   const setStripePaymentMethod = useSetAtom(stripePaymentMethodAtom);
   const session = useSession();
@@ -159,10 +159,18 @@ export const CardForm: React.FC = () => {
         }
 
         setLoadingCreatePaymentMethod(true);
+        if (!stripe || !elements) {
+          toast.error('Stripe is not loaded');
+          return;
+        }
         const card = elements.getElement(CardNumberElement);
+        if (!card) {
+          toast.error('Card element not found');
+          return;
+        }
         const paymentMethodData = await stripe.createPaymentMethod({
           type: 'card',
-          card: card!,
+          card,
         });
 
         if (!paymentMethodData.paymentMethod?.id) {

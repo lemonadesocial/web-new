@@ -7,7 +7,7 @@ import { useMutation } from "$lib/graphql/request";
 import { getFarcasterIdentifier } from "$lib/hooks/useConnectFarcaster";
 import { useSignIn } from "$lib/hooks/useSignIn";
 import { dummyWalletPassword, handlePasswordRegistration, handleUpdateFlowProfile } from "$lib/services/ory";
-import { ory } from "$lib/utils/ory";
+import { getOry } from "$lib/utils/ory";
 import { ConfirmTransaction } from "./ConfirmTransaction";
 import { SuccessModal } from "./SuccessModal";
 
@@ -30,7 +30,7 @@ export const FarcasterAuthPrompt = (props: {
       onSuccess: async () => {
         //-- update profile
         try {
-          const settingFlow = await ory!.createBrowserSettingsFlow().then((response) => response.data);
+          const settingFlow = await getOry().createBrowserSettingsFlow().then((response) => response.data);
 
           await handleUpdateFlowProfile({
             flow: settingFlow,
@@ -57,7 +57,7 @@ export const FarcasterAuthPrompt = (props: {
   const register = async () => {
     try {
       setRegistering(true);
-      const registrationFlow = await ory!.createBrowserRegistrationFlow().then((response) => response.data);
+      const registrationFlow = await getOry().createBrowserRegistrationFlow().then((response) => response.data);
 
       await handlePasswordRegistration({
         flow: registrationFlow,

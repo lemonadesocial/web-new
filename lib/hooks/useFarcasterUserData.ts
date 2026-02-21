@@ -33,7 +33,7 @@ async function fetchFarcasterUserData(fid: string): Promise<FarcasterUserData> {
 export function useFarcasterUserData(fid?: string | null) {
   const { data: userData, isLoading: loading, error } = useQuery({
     queryKey: ['farcaster-user-data', fid],
-    queryFn: () => fetchFarcasterUserData(fid!),
+    queryFn: () => fetchFarcasterUserData(fid as string),
     enabled: !!fid,
   });
 

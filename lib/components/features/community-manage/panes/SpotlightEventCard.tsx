@@ -42,7 +42,7 @@ export function SpotlightEventCard({ event, isSelected, showRemove, onToggle, on
         <button
           onClick={(e) => {
             e.stopPropagation();
-            onRemove(event._id!);
+            onRemove(event._id ?? '');
           }}
           className="size-6 rounded-full border border-card-border flex items-center justify-center hover:bg-card-hover transition-colors flex-shrink-0"
         >

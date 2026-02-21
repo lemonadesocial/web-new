@@ -83,7 +83,8 @@ export function CreateCoinModal({
 
       const signer = await getSigner();
 
-      const writeContract = new Contract(launchChain.launchpad_zap_contract_address!, ZapContractABI.abi, signer);
+      if (!launchChain.launchpad_zap_contract_address) throw new Error('Launchpad zap contract address is required');
+      const writeContract = new Contract(launchChain.launchpad_zap_contract_address, ZapContractABI.abi, signer);
 
       const estimatedGas = await writeContract.flaunch.estimateGas(...txParams.flaunchParams, { value: txParams.fee });
       
@@ -97,7 +98,7 @@ export function CreateCoinModal({
       const receipt = await tx.wait();
 
       const rpcProvider = new JsonRpcProvider(launchChain.rpc_url);
-      const zapContract = new ethers.Contract(launchChain.launchpad_zap_contract_address!, ZapContractABI.abi, rpcProvider);
+      const zapContract = new ethers.Contract(launchChain.launchpad_zap_contract_address, ZapContractABI.abi, rpcProvider);
 
       const flaunchAddress = await zapContract.flaunchContract() as string;
       setFlaunchAddress(flaunchAddress);

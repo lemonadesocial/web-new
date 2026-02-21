@@ -15,7 +15,7 @@ export function EventPreview({ event }: { event: Event }) {
         src={`${process.env.NEXT_PUBLIC_HOST_URL}/api/og/event/${event.shortid}`}
         alt="Post attachment"
         className="rounded-sm object-cover border border-card-border h-full w-full aspect-video cursor-pointer"
-        onClick={() => window.open(event.url!, '_blank')}
+        onClick={() => window.open(event.url ?? '', '_blank')}
       />
       <p className="text-sm text-secondary">
         Hosted By{' '}

@@ -100,7 +100,7 @@ export const useLemonadeUsername = () => {
     error,
   } = useQuery({
     queryKey: ['lemonadeUsername', address],
-    queryFn: () => fetchLemonadeUsernameToken(address!, usernameChain),
+    queryFn: () => fetchLemonadeUsernameToken(address as string, usernameChain),
     enabled: !!address && !!usernameChain,
   });
 

@@ -40,7 +40,7 @@ export function usePassport() {
     error,
   } = useQuery({
     queryKey: ['passport', address, chainsMap],
-    queryFn: () => fetchPassportData(address!, chainsMap),
+    queryFn: () => fetchPassportData(address as string, chainsMap),
     enabled: !!address && !!chainsMap,
   });
 

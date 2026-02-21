@@ -22,7 +22,8 @@ export class StakingManagerClient {
       StakingManagerClient.instances.set(key, new StakingManagerClient(chain, address));
     }
 
-    return StakingManagerClient.instances.get(key)!;
+    // Safe: we just set the key above if it didn't exist
+    return StakingManagerClient.instances.get(key) as StakingManagerClient;
   }
 
   private drift: Drift;

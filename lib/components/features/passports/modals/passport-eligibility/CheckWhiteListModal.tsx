@@ -103,7 +103,7 @@ export function CheckWhiteListModal({
             <Card.Content className="justify-between flex items-center py-2 px-3">
               <div className="flex gap-3">
                 <i className="icon-wallet size-5 aspect-square text-tertiary" />
-                {address && <p>{formatWallet(address!)}</p>}
+                {address && <p>{formatWallet(address)}</p>}
               </div>
               <i
                 className="icon-edit-sharp size-5 aspect-square text-quaternary hover:text-primary"
@@ -154,7 +154,7 @@ export function CheckWhiteListModal({
           <Card.Content className="justify-between flex items-center py-2 px-3">
             <div className="flex gap-3">
               <i className="icon-wallet size-5 aspect-square text-tertiary" />
-              {address && <p>{formatWallet(address!)}</p>}
+              {address && <p>{formatWallet(address)}</p>}
             </div>
             <i
               className="icon-edit-sharp size-5 aspect-square text-quaternary hover:text-primary"

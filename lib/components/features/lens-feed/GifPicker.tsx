@@ -3,7 +3,9 @@ import { GiphyFetch } from '@giphy/js-fetch-api';
 import { IGif } from '@giphy/js-types';
 import { Menu, Input } from '$lib/components/core';
 
-const gf = new GiphyFetch(process.env.NEXT_PUBLIC_GIPHY_API_KEY!);
+const GIPHY_API_KEY = process.env.NEXT_PUBLIC_GIPHY_API_KEY;
+if (!GIPHY_API_KEY) throw new Error('NEXT_PUBLIC_GIPHY_API_KEY is not configured');
+const gf = new GiphyFetch(GIPHY_API_KEY);
 
 type GifPickerProps = {
   onSelectGif: (gifUrl: string) => void;

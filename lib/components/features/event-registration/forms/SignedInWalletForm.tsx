@@ -61,10 +61,10 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
               }
             });
 
-            const currentAddress = appKit.getAddress()!;
-            
+            const currentAddress = appKit.getAddress() ?? '';
+            if (!me) return;
             setMe({
-              ...me!,
+              ...me,
               wallets_new: {
                 ...me?.wallets_new,
                 ethereum: [...(me?.wallets_new?.ethereum ?? []), currentAddress]

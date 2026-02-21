@@ -27,9 +27,9 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
   const event = useAtomValue(eventDataAtom);
   const selectedPaymentAccount = useAtomValue(selectedPaymentAccountAtom);
   const pricingInfo = useAtomValue(pricingInfoAtom);
-  const network = (selectedPaymentAccount!.account_info as EthereumAccount)!.network;
+  const network = (selectedPaymentAccount?.account_info as EthereumAccount | undefined)?.network ?? '';
   const chain = useJotaiAtomValue(chainsMapAtom)[network];
-  const tokenAddress = useAtomValue(tokenAddressAtom)!;
+  const tokenAddress = useAtomValue(tokenAddressAtom) ?? '';
 
   const paymentAccount = selectedPaymentAccount ? pricingInfo?.payment_accounts?.find(account => account._id === selectedPaymentAccount._id) : pricingInfo?.payment_accounts?.[0];
   const paymentAccountInfo = paymentAccount?.account_info as (EthereumAccount | EthereumRelayAccount | EthereumStakeAccount);
@@ -53,7 +53,7 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
           _id: paymentId,
           payment_secret: paymentSecret,
           transfer_params: {
-            from: address!,
+            from: address ?? '',
             network,
           }
         }
@@ -180,7 +180,7 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
           </div>
           <div className="space-y-[2px]">
             <p className="text-xs text-tertiary">Connected Wallet</p>
-            <p>{formatWallet(address!)}</p>
+            <p>{formatWallet(address ?? '')}</p>
           </div>
         </div>
         <p>

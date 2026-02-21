@@ -25,7 +25,8 @@ import { formatNumber } from '$lib/utils/number';
 export function ClaimLemonadeUsernameModal() {
   const { walletProvider } = useAppKitProvider('eip155');
   const listChains = useAtomValue(listChainsAtom);
-  const usernameChain = listChains.find(chain => chain.lemonade_username_contract_address)!;
+  const usernameChain = listChains.find(chain => chain.lemonade_username_contract_address);
+  if (!usernameChain) throw new Error('No chain with lemonade_username_contract_address found');
   const { client } = useClient();
   const queryClient = useQueryClient();
 

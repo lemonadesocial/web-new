@@ -11,7 +11,7 @@ import {
   UpdateSettingsFlowWithProfileMethod,
 } from "@ory/client";
 
-import { ory as frontendApi } from "../../utils/ory";
+import { getOry } from "../../utils/ory";
 
 export const dummyWalletPassword = '!!dummy-WALLET-password@@';
 
@@ -41,7 +41,7 @@ export async function handlePasswordRegistration(
     onSuccess?: (flow: SuccessfulNativeRegistration) => void,
   }
 ) {
-  return frontendApi!
+  return getOry()
     .updateRegistrationFlow(
       {
         flow: flow.id,
@@ -56,7 +56,7 @@ export async function handlePasswordRegistration(
       onSuccess?.(response.data);
     })
     .catch((error) => {
-      frontendApi!
+      getOry()
         .getRegistrationFlow({ id: flow.id })
         .then((response) => onError?.(response.data, error));
     });
@@ -78,7 +78,7 @@ export async function handlePasswordLogin(
     onSuccess?: (flow: SuccessfulNativeLogin) => void;
   },
 ) {
-  return frontendApi!
+  return getOry()
     .updateLoginFlow(
       {
         flow: flow.id,
@@ -93,7 +93,7 @@ export async function handlePasswordLogin(
       onSuccess?.(response.data);
     })
     .catch((err) => {
-      frontendApi!
+      getOry()
         .getLoginFlow({ id: flow.id })
         .then((response) => onError?.(response.data, err));
     });
@@ -110,7 +110,7 @@ export async function handleUpdateFlowProfile(
   onError?: (flow: SettingsFlow, err: unknown) => void,
   onSuccess?: () => void,
 ) {
-  return frontendApi!
+  return getOry()
     .updateSettingsFlow(
       {
         //-- first we need to update the flow with the new wallet address
@@ -126,7 +126,7 @@ export async function handleUpdateFlowProfile(
       onSuccess?.();
     })
     .catch((err) => {
-      frontendApi!
+      getOry()
         .getSettingsFlow({ id: flow.id })
         .then((response) => onError?.(response.data, err));
     });

@@ -56,7 +56,8 @@ export class FlaunchClient {
       FlaunchClient.instances.set(key, new FlaunchClient(chain, memecoinAddress));
     }
 
-    return FlaunchClient.instances.get(key)!;
+    // Safe: we just set the key above if it didn't exist
+    return FlaunchClient.instances.get(key) as FlaunchClient;
   }
 
   private drift: Drift;

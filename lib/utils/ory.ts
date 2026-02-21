@@ -13,6 +13,11 @@ export const ory =
       )
     : undefined;
 
+export function getOry(): FrontendApi {
+  if (!ory) throw new Error('Ory FrontendApi is not available (server-side context)');
+  return ory;
+}
+
 export const identity = new IdentityApi(
   new Configuration({
     basePath: KRATOS_PUBLIC_URL,

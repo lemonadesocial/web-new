@@ -21,7 +21,7 @@ export function ImportCollectibleModal({ event }: ImportCollectibleModalProps) {
   const [selectedTicketTypes, setSelectedTicketTypes] = useState<string[]>([]);
 
   const { data: poapInfo, loading: loadingPoapInfo, error: poapError } = useQuery(GetPoapDropInfoByIdDocument, {
-    variables: { getPoapDropInfoByIdId: poapId! },
+    variables: { getPoapDropInfoByIdId: poapId as number },
     skip: !poapId,
     onComplete: () => {
       setPoapIdValid(true);
@@ -31,7 +31,7 @@ export function ImportCollectibleModal({ event }: ImportCollectibleModalProps) {
   const { loading: loadingEditCode, error: editCodeError } = useQuery(CheckPoapDropEditCodeDocument, {
     variables: {
       code: editCode,
-      checkPoapDropEditCodeId: poapId!
+      checkPoapDropEditCodeId: poapId as number
     },
     skip: !poapId || !editCode || editCode.length < 6,
     onComplete: (data) => {

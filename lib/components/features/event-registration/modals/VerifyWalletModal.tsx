@@ -29,7 +29,7 @@ export function VerifyWalletModal({ onSuccess }: { onSuccess: (signature: string
           </div>
           <div className="space-y-[2px]">
             <p className="text-xs text-tertiary">Connected Wallet</p>
-            <p>{formatWallet(address!)}</p>
+            <p>{formatWallet(address ?? '')}</p>
           </div>
         </div>
         <p>
