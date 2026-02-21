@@ -47,10 +47,12 @@ function Header({
   const { isOpen, toggle } = React.useContext(Context);
 
   return (
-    <div
+    <button
+      type="button"
       onClick={!disabled ? toggle : undefined}
-      className={twMerge('trigger cursor-pointer', className)}
-      role="button"
+      className={twMerge('trigger cursor-pointer w-full text-left', className)}
+      aria-expanded={isOpen}
+      disabled={disabled}
     >
       {typeof children === 'function' ? children({ toggle, isOpen }) : <div className="w-full">{children}</div>}
       {chevron && (
@@ -60,7 +62,7 @@ function Header({
           className="icon-arrow-down text-tertiary"
         />
       )}
-    </div>
+    </button>
   );
 }
 
