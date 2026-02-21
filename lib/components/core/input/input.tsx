@@ -142,15 +142,16 @@ interface LabeledInputProps {
   required?: boolean;
   children: React.ReactNode;
   className?: string;
+  htmlFor?: string;
 }
 
-export const LabeledInput: React.FC<LabeledInputProps> = ({ label, required, children, className }) => {
+export const LabeledInput: React.FC<LabeledInputProps> = ({ label, required, children, className, htmlFor }) => {
   return (
     <div className={clsx("flex flex-col gap-1.5", className)}>
-      <p className="font-medium text-sm text-secondary">
+      <label htmlFor={htmlFor} className="font-medium text-sm text-secondary">
         {label}
         {required && <span>{' '}*</span>}
-      </p>
+      </label>
       {children}
     </div>
   );
