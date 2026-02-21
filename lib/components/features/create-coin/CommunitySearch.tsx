@@ -15,7 +15,7 @@ import {
   type ListLaunchpadGroupsQueryVariables,
 } from '$lib/graphql/generated/backend/graphql';
 import { Menu, MenuItem } from '$lib/components/core';
-import { randomUserImage } from '$lib/utils/community';
+import { randomCommunityImage } from '$lib/utils/community';
 
 export type CommunityData = {
   groupAddress: string;
@@ -109,7 +109,7 @@ export function CommunitySearch({ onSuccess }: CommunitySearchProps) {
 
   if (selectedGroup) return (
     <div className="flex items-center gap-3 rounded-md border border-card-border bg-card px-3 py-2">
-      <img src={randomUserImage(selectedGroup.address)} alt={selectedGroup.name} className="size-[38px] rounded-sm object-cover" />
+      <img src={randomCommunityImage(selectedGroup.address)} alt={selectedGroup.name} className="size-[38px] rounded-sm object-cover" />
       <div className="flex-1">
         <p>{selectedGroup.name}</p>
         <p className="text-sm text-tertiary">{selectedGroup.address}</p>
@@ -150,7 +150,7 @@ export function CommunitySearch({ onSuccess }: CommunitySearchProps) {
             onClick={() => handleSelect(group)}
             className="flex items-center gap-3 px-3 py-2 text-left w-full hover:bg-background/64 transition-colors"
           >
-            <img src={randomUserImage(group.address)} alt={group.name} className="size-[38px] rounded-sm object-cover" />
+            <img src={randomCommunityImage(group.address)} alt={group.name} className="size-[38px] rounded-sm object-cover" />
             <div className="flex flex-col">
               <p>{group.name}</p>
               <p className="text-sm text-tertiary">{group.address}</p>
