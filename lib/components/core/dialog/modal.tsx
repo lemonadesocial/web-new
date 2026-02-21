@@ -123,7 +123,8 @@ export function ModalContainer({ onModalReady, ...props }: { modal?: Modal; onMo
                 !modal.options.fullscreen && modal.options.position === 'center' && 'items-center justify-center',
               )}
               style={{ zIndex: 100000 + index }}
-              role="modal"
+              role="dialog"
+              aria-modal="true"
             >
               <motion.div
                 ref={(el) => {
