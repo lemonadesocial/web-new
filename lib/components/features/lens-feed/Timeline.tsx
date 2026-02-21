@@ -54,7 +54,7 @@ export function Timeline({ account, onSelectPost }: Props) {
   return (
     <div className="space-y-4">
       {timelineItems
-        .filter((item: any) => item.primary && !item.primary.root)
+        .filter((item) => item.primary && !item.primary.root)
         .map((item) => (
           <FeedPost 
             key={item.primary.slug} 

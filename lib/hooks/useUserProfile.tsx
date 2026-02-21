@@ -15,7 +15,7 @@ import { isObjectId } from '$lib/utils/helpers';
 export const useUserProfile = (params?: string) => {
   const [data, setData] = React.useState<Partial<User>>();
   const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState(null);
+  const [error, setError] = React.useState<unknown>(null);
 
   const getUser = async ({
     lens_profile_id,
@@ -34,7 +34,7 @@ export const useUserProfile = (params?: string) => {
     });
 
     if (queryError) {
-      setError(queryError);
+      setError(queryError as unknown);
       return;
     }
 
@@ -51,7 +51,7 @@ export const useUserProfile = (params?: string) => {
         });
 
         if (result.isErr()) {
-          setError(result.error as any);
+          setError(result.error);
           return;
         }
 

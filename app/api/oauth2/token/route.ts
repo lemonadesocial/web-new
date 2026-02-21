@@ -17,7 +17,8 @@ export async function POST(request: NextRequest) {
 		return new Response('Unauthorized', { status: 401 });
 	}
 
-	const formData = new URLSearchParams(body as any);
+	const formData = new URLSearchParams();
+	body.forEach((value: FormDataEntryValue, key: string) => formData.append(key, String(value)));
 	formData.append('client_secret', space.hydra_client_secret);
 
 	return await fetch(`${HYDRA_PUBLIC_URL}/oauth2/token`, {

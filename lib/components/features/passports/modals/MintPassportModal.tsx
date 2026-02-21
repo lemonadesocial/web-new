@@ -119,9 +119,9 @@ export function MintPassportModal({
       const receipt = await transaction.wait();
       const iface = new ethers.Interface(AbstractPassportABI);
 
-      let parsedTransferLog: any = null;
+      let parsedTransferLog: ethers.LogDescription | null = null;
 
-      receipt.logs.some((log: any) => {
+      receipt.logs.some((log) => {
         try {
           const parsedLog = iface.parseLog(log);
           if (parsedLog?.name === 'Transfer') {

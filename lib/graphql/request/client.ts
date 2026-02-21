@@ -20,8 +20,8 @@ interface QueryRequest<T, V extends object> {
   initData?: T | null;
   fetchPolicy?: FetchPolicy;
   headers?: HeadersInit;
-  resolve: (result: { data: T | null; error: any }) => void;
-  reject: (error: any) => void;
+  resolve: (result: { data: T | null; error: unknown }) => void;
+  reject: (error: unknown) => void;
 }
 
 interface RequestConfig {
@@ -32,6 +32,7 @@ interface RequestConfig {
 export class GraphqlClient {
   private client: GraphQLClient;
   private cache?: InMemoryCache;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- heterogeneous queue requires type erasure
   private queue: QueryRequest<any, any>[] = [];
   private processing: boolean = false;
   customHeader: Record<string, string> = {};
@@ -61,7 +62,7 @@ export class GraphqlClient {
     variables?: object;
     fetchPolicy?: FetchPolicy;
     initData?: T;
-  }): Promise<{ data: T | null; error: any }> {
+  }): Promise<{ data: T | null; error: unknown }> {
     return new Promise((resolve, reject) => {
       this.queue.push({
         type: 'query',
@@ -85,7 +86,7 @@ export class GraphqlClient {
     query: TypedDocumentNode<T, V>;
     variables?: V;
     headers?: HeadersInit;
-  }): Promise<{ data: T | null; error: any }> {
+  }): Promise<{ data: T | null; error: unknown }> {
     return new Promise((resolve, reject) => {
       this.queue.push({
         type: 'refetch',
@@ -119,6 +120,7 @@ export class GraphqlClient {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- type-erased queue item
   private async executeRequest(request: QueryRequest<any, any>) {
     if (request.type === 'refetch') {
       await this.executeNetworkRequest(request);
@@ -152,6 +154,7 @@ export class GraphqlClient {
     request.resolve({ data: result, error: null });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- type-erased queue item
   private async executeNetworkRequest(request: QueryRequest<any, any>) {
     const { query, variables } = request;
     const result = await this.client.request(query, variables);
@@ -160,7 +163,8 @@ export class GraphqlClient {
     request.resolve({ data: result, error: null });
   }
 
-  private handleRequestError(request: QueryRequest<any, any>, error: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- type-erased queue item
+  private handleRequestError(request: QueryRequest<any, any>, error: unknown) {
     if (error && typeof error === 'object' && 'response' in error) {
       const gqlError = error as { response: { errors: Array<{ message: string }> } };
 
@@ -176,7 +180,7 @@ export class GraphqlClient {
     request.resolve({ data: null, error });
   }
 
-  writeQuery<T, V extends Record<string, any>>({
+  writeQuery<T, V extends Record<string, unknown>>({
     query,
     variables = {} as V,
     data,
@@ -205,7 +209,7 @@ export class GraphqlClient {
     if (queryKey) this.cache?.subscribe(queryKey, callback);
   }
 
-  readQuery<T, V extends Record<string, any>>(query: TypedDocumentNode<T, V>, variables?: V) {
+  readQuery<T, V extends Record<string, unknown>>(query: TypedDocumentNode<T, V>, variables?: V) {
     return this.cache?.readQuery(query, variables);
   }
 

@@ -28,14 +28,14 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
   const [slippage, setSlippage] = useState(5);
 
   const { sendCalls, error, data, reset } = useSendCalls();
-  const [resolver, setResolver] = useState<(id?: string, err?: any) => void>();
+  const [resolver, setResolver] = useState<(id?: string, err?: unknown) => void>();
 
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
   const { formattedBalance, balance } = useTokenBalance(chain, address);
 
-  const send7702Calls = async (calls: any[]) => {
+  const send7702Calls = async (calls: { to: `0x${string}`; value: bigint; data: `0x${string}` }[]) => {
     const promise = new Promise<string>((resolve, reject) => {
-      setResolver(() => (id?: string, err?: any) => {
+      setResolver(() => (id?: string, err?: unknown) => {
         if (err) {
           reject(err);
         } else if (id) {

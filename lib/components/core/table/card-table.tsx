@@ -14,39 +14,37 @@ interface RootProps<T> extends React.PropsWithChildren {
   className?: string;
 }
 
+function getDisplayName(child: React.ReactNode): string | undefined {
+  if (React.isValidElement(child)) {
+    return (child.type as { displayName?: string })?.displayName;
+  }
+  return undefined;
+}
+
 function Root<T>({ data = [], loading: fetching, children, className }: RootProps<T>) {
-  const header = React.Children.map(children, (child: any) => {
-    if (child?.type && child?.type?.displayName === 'Header') {
-      return child;
-    }
+  const header = React.Children.map(children, (child) => {
+    if (getDisplayName(child) === 'Header') return child;
     return null;
   });
 
-  const loading = React.Children.map(children, (child: any) => {
-    if (child?.type && child?.type?.displayName === 'Loading') {
-      return child;
-    }
+  const loading = React.Children.map(children, (child) => {
+    if (getDisplayName(child) === 'Loading') return child;
     return null;
   });
 
-  const empty = React.Children.map(children, (child: any) => {
-    if (child?.type && child?.type?.displayName === 'EmptyState') {
-      return child;
-    }
+  const empty = React.Children.map(children, (child) => {
+    if (getDisplayName(child) === 'EmptyState') return child;
     return null;
   });
 
-  const paginate = React.Children.map(children, (child: any) => {
-    if (child?.type && child?.type?.displayName === 'Pagination') {
-      return child;
-    }
+  const paginate = React.Children.map(children, (child) => {
+    if (getDisplayName(child) === 'Pagination') return child;
     return null;
   });
 
-  const content = React.Children.map(children, (child: any) => {
-    if (!['Loading', 'Header', 'EmptyState', 'Pagination'].includes(child?.type?.displayName)) {
-      return child;
-    }
+  const content = React.Children.map(children, (child) => {
+    const name = getDisplayName(child);
+    if (!name || !['Loading', 'Header', 'EmptyState', 'Pagination'].includes(name)) return child;
     return null;
   });
 

@@ -69,7 +69,7 @@ function FormContent({ data, title }: Props) {
 
       const { data, error } = await create({ variables: { input: { ...values, ...siteInfo } } });
       if (error) {
-        toast.error((error as any).message);
+        toast.error(error instanceof Error ? error.message : 'An error occurred');
         return;
       }
 

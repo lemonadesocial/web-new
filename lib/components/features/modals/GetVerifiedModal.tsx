@@ -27,7 +27,7 @@ export function GetVerifiedModal({ config = SELF_VERIFICATION_CONFIG }: { config
   const [showError, setShowError] = useState(false);
 
   const requirements = useMemo(() => {
-    const requirementMap: Array<{ key: keyof typeof config; label: string | ((value: any) => string) }> = [
+    const requirementMap: Array<{ key: keyof typeof config; label: string | ((value: number) => string) }> = [
       { key: 'minimumAge', label: (age: number) => `Age [over ${age}]` },
       { key: 'name', label: 'Name' },
       { key: 'date_of_birth', label: 'Date of Birth' },

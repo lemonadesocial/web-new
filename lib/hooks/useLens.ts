@@ -737,13 +737,17 @@ function generateRandomAlphanumeric(length: number = 12) {
   return result;
 }
 
+interface TimelineItem {
+  primary: AnyPost;
+}
+
 type TimelineFilter = {
   account?: string;
 };
 
 export function useTimeline(timelineFilter: TimelineFilter) {
   const sessionClient = useAtomValue(sessionClientAtom);
-  const [timelineItems, setTimelineItems] = useState<any[]>([]);
+  const [timelineItems, setTimelineItems] = useState<TimelineItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [cursor, setCursor] = useState<string | undefined>();

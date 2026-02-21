@@ -57,7 +57,7 @@ export function FeedPosts({ feedAddress, authorId, global, showReposts, onSelect
   return (
     <div className="space-y-4">
       {posts
-        .filter((item: any) => !item.root)
+        .filter((item) => !item.root)
         .map((post) => (
           <FeedPost key={post.slug} post={post} showRepost={showReposts} onSelect={() => onSelectPost?.(post.slug)} />
         ))}

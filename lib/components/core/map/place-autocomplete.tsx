@@ -5,6 +5,14 @@ import { Address } from '$lib/graphql/generated/backend/graphql';
 import { GoogleAddressParser } from './parser';
 import { InputField } from '../input';
 
+interface PlacePrediction {
+  place_id: string;
+  structured_formatting: {
+    main_text: string;
+    secondary_text: string;
+  };
+}
+
 export function PlaceAutoComplete({
   label,
   placeholder,
@@ -20,13 +28,13 @@ export function PlaceAutoComplete({
 }) {
   const [toggle, setToggle] = React.useState(false);
   const [query, setQuery] = React.useState('');
-  const [predictions, setPredictions] = React.useState<any>([]);
+  const [predictions, setPredictions] = React.useState<PlacePrediction[]>([]);
 
   React.useEffect(() => {
     if (query) {
       const autocompleteService = new window.google.maps.places.AutocompleteService();
       autocompleteService.getPlacePredictions({ input: query }, (predictions) => {
-        setPredictions(predictions);
+        setPredictions((predictions || []) as PlacePrediction[]);
       });
     } else {
       setPredictions([]);
@@ -38,12 +46,13 @@ export function PlaceAutoComplete({
     if (value && value !== query) {
       const autocompleteService = new window.google.maps.places.AutocompleteService();
       autocompleteService.getPlacePredictions({ input: value }, (predictions) => {
-        handleSelect(predictions?.[0]);
+        const typedPredictions = (predictions || []) as PlacePrediction[];
+        if (typedPredictions[0]) handleSelect(typedPredictions[0]);
       });
     }
   }, [value]);
 
-  const handleSelect = (prediction: any) => {
+  const handleSelect = (prediction: PlacePrediction) => {
     const service = new window.google.maps.places.PlacesService(document.createElement('div'));
     service.getDetails({ placeId: prediction.place_id }, (place, status) => {
       if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
@@ -107,7 +116,7 @@ export function PlaceAutoComplete({
             exit="closed"
             variants={{ open: { opacity: 1 }, closed: { opacity: 0 } }}
           >
-            {predictions?.map((prediction: any, idx: number) => (
+            {predictions?.map((prediction: PlacePrediction, idx: number) => (
               <div
                 key={idx}
                 className="flex gap-2.5 px-2 py-1.5 items-center hover:bg-[var(--btn-tertiary)] rounded-xs"

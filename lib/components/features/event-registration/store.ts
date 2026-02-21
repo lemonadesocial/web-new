@@ -101,11 +101,11 @@ export const tokenAddressAtom = atom<string | null>((get) => {
 });
 
 interface FormInstances {
-  [key: string]: UseFormReturn<any>;
+  [key: string]: UseFormReturn<Record<string, unknown>>;
 }
 
 interface SubmitHandlers {
-  [key: string]: (data: any) => void;
+  [key: string]: (data: Record<string, unknown>) => void;
 }
 
 export const formInstancesAtom = atom<FormInstances>({});

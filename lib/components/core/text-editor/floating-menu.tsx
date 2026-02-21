@@ -108,7 +108,7 @@ export default function TextEdiorFloatingMenu({ editor, toolbar, directory = 'ev
                               toggle();
                               break;
                             case 'image':
-                              pickFile(async (file: any) => {
+                              pickFile(async (file: File) => {
                                 try {
                                   setUploading(true);
                                   const files = (await uploadFiles([file], directory)) as unknown as File[];

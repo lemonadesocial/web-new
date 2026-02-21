@@ -5,16 +5,16 @@ import { print } from 'graphql/language/printer';
 import { GraphQLWSContext } from './context';
 import { OperationVariables } from './types';
 
-export interface SubscriptionHookOptions<TData = any, TVariables = OperationVariables> {
+export interface SubscriptionHookOptions<TData = unknown, TVariables = OperationVariables> {
   variables?: TVariables;
   onData?: (data: TData) => void;
-  onError?: (error: any) => void;
+  onError?: (error: unknown) => void;
 }
 
-export interface SubscriptionHookResult<TData = any> {
+export interface SubscriptionHookResult<TData = unknown> {
   data: TData | null;
   loading: boolean;
-  error: any | null;
+  error: unknown;
 }
 
 export const useSubscription = <T, V>(

@@ -23,7 +23,7 @@ export function LemonHeadMain() {
   );
 }
 
-const skinToneOpts: any = {
+const skinToneOpts: Record<string, { value: string; label: string; color: string }[]> = {
   human: [
     { value: 'soft', label: 'Soft', color: '#FDCCA8' },
     { value: 'medium', label: 'Medium', color: '#E0955F' },

@@ -48,7 +48,7 @@ export const AIChatContext = React.createContext(null);
 
 export function AIChatProvider({ children }: React.PropsWithChildren) {
   const [state, dispatch] = React.useReducer(reducers, defaultState);
-  const value: any = React.useMemo(() => [state, dispatch], [state]);
+  const value = React.useMemo(() => [state, dispatch] as const, [state]);
 
   return <AIChatContext.Provider value={value}>{children}</AIChatContext.Provider>;
 }

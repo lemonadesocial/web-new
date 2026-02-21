@@ -4,9 +4,10 @@ import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { TitleSection } from '../shared';
 import { CommunityEventsWithCalendar } from '$lib/components/features/community/CommunityEventsWithCalendar';
+import { Space, SpaceTag } from '$lib/graphql/generated/backend/graphql';
 
 // TODO: Will re-work on Community component after launch lemonheads community
-export function Content({ space, subSpaces, spaceTags }: any) {
+export function Content({ space, subSpaces, spaceTags }: { space: Space; subSpaces?: Space[]; spaceTags: SpaceTag[] }) {
   const { data } = useLemonhead();
   const { address } = useAppKitAccount();
   const locked = !address || !data || (data && data.tokenId == 0);

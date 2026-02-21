@@ -1,11 +1,26 @@
+interface AddressComponent {
+  long_name: string;
+  short_name: string;
+  types: string[];
+}
+
+interface GoogleAddress {
+  street_number?: string;
+  street_name?: string;
+  city?: string;
+  country?: string;
+  country_code?: string;
+  state?: string;
+  state_code?: string;
+  postal_code?: string;
+}
+
 /**
  * Taken From: https://stackoverflow.com/questions/8082405
  */
 export class GoogleAddressParser {
-  // @ts-expect-error do nothing
   private address: GoogleAddress = {};
 
-  // @ts-expect-error do nothing
   constructor(private address_components: Array<AddressComponent>) {
     this.parseAddress();
   }
@@ -20,7 +35,6 @@ export class GoogleAddressParser {
     }
 
     for (let i = 0; i < this.address_components.length; i++) {
-      // @ts-expect-error do nothing
       const component: AddressComponent = this.address_components[i];
 
       if (this.isStreetNumber(component)) {
@@ -51,33 +65,30 @@ export class GoogleAddressParser {
     }
   }
 
-  // @ts-expect-error do nothing
   private isStreetNumber(component: AddressComponent): boolean {
     return component.types.includes('street_number');
   }
 
-  // @ts-expect-error do nothing
   private isStreetName(component: AddressComponent): boolean {
     return component.types.includes('route');
   }
 
-  private isCity(component: any): boolean {
+  private isCity(component: AddressComponent): boolean {
     return component.types.includes('locality') || component.types.includes('postal_town');
   }
 
-  private isState(component: any): boolean {
+  private isState(component: AddressComponent): boolean {
     return component.types.includes('administrative_area_level_1');
   }
 
-  private isCountry(component: any): boolean {
+  private isCountry(component: AddressComponent): boolean {
     return component.types.includes('country');
   }
 
-  private isPostalCode(component: any): boolean {
+  private isPostalCode(component: AddressComponent): boolean {
     return component.types.includes('postal_code');
   }
 
-  // @ts-expect-error do nothing
   result(): GoogleAddress {
     return this.address;
   }

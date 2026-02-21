@@ -56,9 +56,11 @@ export interface LaunchTokenParams {
   };
 }
 
+type AbiValue = string | bigint | number | AbiValue[];
+
 export interface LaunchTokenTxParams {
-  coinData: any[];
-  flaunchParams: any[];
+  coinData: AbiValue[];
+  flaunchParams: AbiValue[];
   fee: bigint;
 }
 

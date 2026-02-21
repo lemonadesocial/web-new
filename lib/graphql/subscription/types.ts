@@ -1,1 +1,1 @@
-export type OperationVariables = Record<string, any>;
+export type OperationVariables = Record<string, unknown>;

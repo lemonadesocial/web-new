@@ -85,7 +85,7 @@ export async function GET(req: NextRequest) {
   });
 }
 
-function PreviewImageLink({ color, image, portrait, username, tokenId, bio }: any) {
+function PreviewImageLink({ color, image, portrait, username, tokenId, bio }: { color: string; image: string; portrait: string; username: string; tokenId: string; bio: string }) {
   return (
     <div
       style={{
@@ -223,7 +223,7 @@ function PreviewImageLink({ color, image, portrait, username, tokenId, bio }: an
   );
 }
 
-function DownloadImageLink({ color, image, portrait, username, tokenId }: any) {
+function DownloadImageLink({ color, image, portrait, username, tokenId }: { color: string; image: string; portrait: string; username: string; tokenId: string }) {
   return (
     <div
       style={{

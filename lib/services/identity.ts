@@ -29,7 +29,7 @@ export interface RefreshError {
 
 export interface UpdateSettingsRequest {
   flow_id?: string;
-  traits?: any;
+  traits?: Record<string, string>;
   session_token?: string;
   transient_payload?: TransientPayload;
 }
