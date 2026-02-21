@@ -112,7 +112,7 @@ export const getMintDripNationPassportImage = async (avatarImageUrl?: string, us
 
   const layerPromises: Array<Promise<Buffer>> = [
     getBoilerplateImageBuffer(),
-    getPassportIdImageBuffer('XXXXXXXX'),
+    getPassportIdImageBuffer('00000000'),
     getMintDateImageBuffer(creationDate),
     getTitleImageBuffer('Citizen'),
     getUsernameImageBuffer(username ? `@${username}` : 'Username'),

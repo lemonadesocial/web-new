@@ -126,10 +126,10 @@ export const getMintZuGramaPassportImage = async (avatarImageUrl?: string, usern
   const layerPromises: Array<Promise<Buffer>> = [
     getBoilerplateImageBuffer(),
     getUsernameImageBuffer(username || '@USERNAME'),
-    getPassportIdImageBuffer('XXXXXXXX'),
+    getPassportIdImageBuffer('00000000'),
     getMintDateImageBuffer(creationDate),
     // getTitleImageBuffer('Founding Citizen'),
-    // getVerifiedDateImageBuffer('XXXXXXXX'),
+    // getVerifiedDateImageBuffer('00000000'),
     getIssueOnImageBuffer('Etherum'),
   ];
 

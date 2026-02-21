@@ -106,8 +106,8 @@ export const getAlzenaWorldPassportImage = async (avatarImageUrl?: string, usern
 
   const layerPromises: Array<Promise<Buffer>> = [
     getBoilerplateImageBuffer(),
-    getPassportIdImageBuffer('XXXXXXXX'),
-    getWalletAddressImageBuffer('XXXXXXXX'),
+    getPassportIdImageBuffer('00000000'),
+    getWalletAddressImageBuffer('0x0000...0000'),
     getMintDateImageBuffer(creationDate),
     getTitleImageBuffer('Citizen'),
     getUsernameImageBuffer(username ? `@${username}` : '@username'),
