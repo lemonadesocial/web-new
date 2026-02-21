@@ -114,7 +114,9 @@ export function CommunitySearch({ onSuccess }: CommunitySearchProps) {
         <p>{selectedGroup.name}</p>
         <p className="text-sm text-tertiary">{selectedGroup.address}</p>
       </div>
-      <i className="icon-x size-4 text-tertiary cursor-pointer" onClick={() => setSelectedGroup(null)} />
+      <button type="button" aria-label="Clear selection" className="cursor-pointer" onClick={() => setSelectedGroup(null)}>
+        <i className="icon-x size-4 text-tertiary" />
+      </button>
     </div>
   );
 

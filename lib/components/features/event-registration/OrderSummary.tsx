@@ -137,10 +137,12 @@ export function OrderSummary() {
                   <i className="icon-dot text-success-500 size-2" />
                   <p className="text-success-500">{getDisplayPrice(pricingInfo!.discount.toString(), currency, pricingPaymentAccount)}</p>
                 </div>
-                <i className="icon-cancel size-4 text-tertiary cursor-pointer" onClick={handleClearDiscount} />
+                <button type="button" aria-label="Remove coupon" className="cursor-pointer" onClick={handleClearDiscount}>
+                  <i className="icon-cancel size-4 text-tertiary" />
+                </button>
               </div>
             </div>
-          ) : <p className="text-accent-400 cursor-pointer" onClick={() => setShowDiscountInput(true)}>Add Coupon</p>
+          ) : <button type="button" className="text-accent-400 cursor-pointer" onClick={() => setShowDiscountInput(true)}>Add Coupon</button>
         }
         {
           showDiscountInput && (

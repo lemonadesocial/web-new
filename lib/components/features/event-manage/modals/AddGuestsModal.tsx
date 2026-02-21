@@ -113,9 +113,9 @@ export function AddGuestsModal({
         <div>
           <p className="text-sm text-tertiary">
             If you&apos;d like guests to register, send them an invite.{' '}
-            <span className="text-accent-500 cursor-pointer" onClick={onSelectInvite}>
+            <button type="button" className="text-accent-500 cursor-pointer inline" onClick={onSelectInvite}>
               Invite Guests
-            </span>
+            </button>
           </p>
           <p className="text-sm text-tertiary">
             Please only add guests who have already consented to joining this event.

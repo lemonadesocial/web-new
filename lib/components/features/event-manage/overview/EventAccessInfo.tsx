@@ -75,15 +75,15 @@ export function EventAccessInfo({ event }: { event: Event }) {
         <div className="flex items-center justify-between gap-4 font-default">
           <p className="text-sm text-secondary truncate">{`${window.location.host}/e/${event.shortid}`}</p>
           <div className="flex items-center gap-4">
-            <i
-              className="icon-edit-sharp text-tertiary size-5 cursor-pointer"
-              onClick={() => modal.open(UpdateEventLinkModal, { props: { event } })}
-            />
-            <i className="icon-copy text-tertiary size-5 cursor-pointer" onClick={handleCopy} />
-            <i
-              className="icon-share text-tertiary size-5 cursor-pointer"
-              onClick={() => modal.open(InviteFriendModal, { props: { event }, dismissible: true })}
-            />
+            <button type="button" aria-label="Edit link" className="cursor-pointer" onClick={() => modal.open(UpdateEventLinkModal, { props: { event } })}>
+              <i className="icon-edit-sharp text-tertiary size-5" />
+            </button>
+            <button type="button" aria-label="Copy link" className="cursor-pointer" onClick={handleCopy}>
+              <i className="icon-copy text-tertiary size-5" />
+            </button>
+            <button type="button" aria-label="Share" className="cursor-pointer" onClick={() => modal.open(InviteFriendModal, { props: { event }, dismissible: true })}>
+              <i className="icon-share text-tertiary size-5" />
+            </button>
           </div>
         </div>
       </div>
