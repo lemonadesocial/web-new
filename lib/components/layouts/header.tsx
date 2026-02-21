@@ -7,22 +7,16 @@ import { usePathname, useRouter } from 'next/navigation';
 import NextLink from 'next/link';
 
 import { chainsMapAtom, sessionAtom } from '$lib/jotai';
-// import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 import { useMe } from '$lib/hooks/useMe';
 import { useLogOut } from '$lib/hooks/useLogout';
 import { Divider, Menu, MenuItem, Button, Avatar, drawer, modal } from '$lib/components/core';
 import { userAvatar } from '$lib/utils/user';
-// import { useLogOut as useLensLogOut } from '$lib/hooks/useLens';
 import { useAuth } from '$lib/hooks/useAuth';
-
 import { useAccount } from '$lib/hooks/useLens';
 import { useSignIn } from '$lib/hooks/useSignIn';
-// import { getAccountAvatar } from '$lib/utils/lens/utils';
 import { useConnectUnicornWallet } from '$lib/hooks/useConnectUnicornWallet';
 import { useHandleFarcasterMiniApp } from '$lib/hooks/useConnectFarcaster';
-// import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { ProfilePane } from '../features/pane';
-// import { VerifyEmailModal } from '../features/auth/VerifyEmailModal';
 import { ConnectWalletModal } from '../features/auth/ConnectWalletModal';
 import { SelectProfileModal } from '../features/lens-account/SelectProfileModal';
 import { ConnectWallet } from '../features/modals/ConnectWallet';

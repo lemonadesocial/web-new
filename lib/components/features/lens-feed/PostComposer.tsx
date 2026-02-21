@@ -12,8 +12,6 @@ import { useMediaQuery } from '$lib/hooks/useMediaQuery';
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { LEMONADE_FEED_ADDRESS } from '$lib/utils/constants';
 import { htmlToMarkdown, markdownToHtml } from '$lib/utils/markdown';
-// import { chainsMapAtom } from "$lib/jotai";
-
 import { ImageInput } from './ImageInput';
 import { EventPreview } from './EventPreview';
 import { PostTextarea, PostTextareaRef } from './PostTextarea';

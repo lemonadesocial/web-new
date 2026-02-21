@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import { getSiteData } from '$utils/fetchers';
 
 import { HomePageContent } from './content';
-// import { ClaimLemonHeadCard } from '$lib/components/features/lemonheads/ClaimLemonHeadCard';
 import { WhoToFollow } from '$lib/components/features/lens-account/WhoToFollow';
 import { UpcommingEventsCard } from '$lib/components/features/event/UpcommingEventsCard';
 import { LemonadeStandCard } from '$lib/components/features/LemonadeStandCard';

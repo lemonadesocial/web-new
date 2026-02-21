@@ -1,12 +1,9 @@
 'use client';
 
-// import { drawer } from '$lib/components/core';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
-// import { PassportCard } from '../passport/PassportCard';
 import { InviteFriend } from './cards/InviteCard';
 import { LemonHeadsNFTCard } from './cards/LemonHeadsNFTCard';
 import { LemonHeadsTreasuryCard } from './cards/TreasuryCard';
-// import { SharedLemonheadsPane } from './mint/steps/ClaimLemonHead';
 
 export function LemonHeadsRightCol({
   options = { nft: true, treasury: true, invite: true, passport: true },

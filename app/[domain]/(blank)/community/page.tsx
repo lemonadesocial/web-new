@@ -1,15 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { ResolvingMetadata } from 'next';
 
-// import { getClient } from '$lib/graphql/request/client';
-// import {
-//   GetSpaceTagsDocument,
-//   GetSubSpacesDocument,
-//   Space,
-//   PublicSpace,
-//   SpaceTag,
-// } from '$lib/graphql/generated/backend/graphql';
-
 import { Community } from '$lib/components/features/community';
 import { generateUrl } from '$lib/utils/cnd';
 import { getSpace } from '$lib/utils/getSpace';

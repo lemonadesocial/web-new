@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 
 import { FeedPostGallery } from './FeedPostGallery';
 import { EventPreview } from './EventPreview';
-// import { UrlPreview } from './UrlPreview';
 import { GetEventDocument, Event } from '$lib/graphql/generated/backend/graphql';
 import { defaultClient } from '$lib/graphql/request/instances';
 import { LinkPreview } from '$lib/components/core/link';

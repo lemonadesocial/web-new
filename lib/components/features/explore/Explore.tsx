@@ -2,7 +2,6 @@
 import { Button } from '$lib/components/core';
 import { useRouter } from 'next/navigation';
 import { CoinList } from '../coins/CoinList';
-// import { FeaturedCoins } from './FeaturedCoins';
 import { FeaturedCommunityHubs } from './FeaturedCommunityHubs';
 import { TopPerformers } from './TopPerformers';
 

@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import clsx from 'clsx';
-// import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { isMobile } from 'react-device-detect';
