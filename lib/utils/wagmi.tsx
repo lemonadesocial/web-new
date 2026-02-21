@@ -21,7 +21,10 @@ if (typeof window !== 'undefined') {
   } catch {}
 }
 
-const thirdwebClientId = process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || '4e8c81182c3709ee441e30d776223354';
+const thirdwebClientId = process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID;
+if (!thirdwebClientId) {
+  throw new Error('NEXT_PUBLIC_THIRDWEB_CLIENT_ID environment variable is required');
+}
 
 const client = createThirdwebClient({
   clientId: thirdwebClientId,
