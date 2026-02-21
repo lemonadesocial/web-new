@@ -146,7 +146,7 @@ function UpcomingEventSection() {
                   icon={clsx('icon-chevron-down', isOpen && 'rotate-180')}
                   onClick={() => toggle()}
                 />
-                <h3 className="text-xl font-semibold">Upcoming Events</h3>
+                <h2 className="text-xl font-semibold">Upcoming Events</h3>
               </div>
               <div className="hidden md:flex gap-2">
                 <Button
@@ -254,7 +254,7 @@ function CommunitySection() {
                   icon={clsx('icon-chevron-down', isOpen && 'rotate-180')}
                   onClick={() => toggle()}
                 />
-                <h3 className="text-xl font-semibold">Communities</h3>
+                <h2 className="text-xl font-semibold">Communities</h3>
               </div>
               <div className="hidden md:flex gap-2">
                 <Button
@@ -399,9 +399,9 @@ function NonLoginContent() {
           style={{ background: `url(${ASSET_PREFIX}/assets/images/home-bg.png) lightgray 50% / cover no-repeat` }}
         >
           <div className="flex flex-col gap-2 md:gap-4">
-            <h3 className="text-xl md:text-[60px] font-semibold md:leading-[72px] max-w-2/3">
+            <h2 className="text-xl md:text-[60px] font-semibold md:leading-[72px] max-w-2/3">
               Create your Lemonade Stand
-            </h3>
+            </h2>
             <p className="text-sm md:text-[24px] md:leading-9 text-secondary max-w-5/6 md:max-w-1/2">
               Your space for events, communities, and everything in between.
             </p>
@@ -723,7 +723,7 @@ function AllCoins() {
                   icon={clsx('icon-chevron-down', isOpen && 'rotate-180')}
                   onClick={() => toggle()}
                 />
-                <h3 className="text-xl font-semibold">Coins</h3>
+                <h2 className="text-xl font-semibold">Coins</h3>
               </div>
               <div className="hidden md:flex gap-2">
                 <Button size="sm" variant="tertiary-alt" iconLeft="icon-plus" onClick={handleCreateCoin}>

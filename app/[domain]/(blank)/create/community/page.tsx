@@ -7,7 +7,7 @@ export default function Page() {
       <Header />
 
       <div className="w-full max-w-[984px] mx-auto px-4 md: px-0 flex flex-col gap-6 my-6">
-        <h3 className="text-2xl md:text-3xl font-semibold">Create Community</h3>
+        <h1 className="text-2xl md:text-3xl font-semibold">Create Community</h1>
 
         <CommunityForm />
       </div>
