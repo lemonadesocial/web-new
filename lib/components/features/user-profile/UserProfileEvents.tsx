@@ -122,7 +122,7 @@ export default function UserProfileEvents({ user }: { user: User }) {
                           title={value.label}
                           iconLeft={value.icon}
                           onClick={() => {
-                            setFilter((prev) => ({ ...prev, by: key as unknown as FilterItem }));
+                            setFilter((prev) => ({ ...prev, by: Number(key) as FilterItem }));
                             toggle();
                           }}
                         />

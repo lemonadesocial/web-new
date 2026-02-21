@@ -2,11 +2,17 @@ import { createAvatar } from '@dicebear/core';
 import * as identicon from '@dicebear/identicon';
 import * as thumbs from '@dicebear/thumbs';
 
-import { User } from "$lib/graphql/generated/backend/graphql";
+import { File, User } from "$lib/graphql/generated/backend/graphql";
 
 import { EDIT_KEY, generateUrl } from "./cnd";
 
-export function userAvatar(user?: User | null, edits: keyof typeof EDIT_KEY = 'PROFILE') {
+type UserAvatarInput = {
+  _id?: string | null;
+  image_avatar?: string | null;
+  new_photos_expanded?: Array<Pick<File, 'bucket' | 'key' | 'type' | 'url'> | null> | null;
+};
+
+export function userAvatar(user?: UserAvatarInput | null, edits: keyof typeof EDIT_KEY = 'PROFILE') {
   if (user && user.new_photos_expanded?.[0]) {
     return generateUrl(user.new_photos_expanded[0], edits) || '';
   }

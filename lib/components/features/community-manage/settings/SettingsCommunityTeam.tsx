@@ -7,7 +7,6 @@ import {
   Space,
   SpaceMember,
   SpaceRole,
-  User,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { useMe } from '$lib/hooks/useMe';
@@ -107,7 +106,7 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
               <CardTable.Row key={item._id}>
                 <div className="px-4 py-3 flex items-center justify-between">
                   <div className="flex gap-3 items-center">
-                    <Avatar src={userAvatar(item.user_expanded as unknown as User)} />
+                    <Avatar src={userAvatar(item.user_expanded)} />
                     <div className="flex items-center gap-1">
                       <p>{item.user_name || item.user_expanded?.name || 'Anonymous'}</p>
                       <p className="text-tertiary">{item.email || item.user_expanded?.email}</p>
@@ -219,7 +218,7 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
                 <CardTable.Row key={item._id}>
                   <div className="px-4 py-3 flex items-center justify-between">
                     <div className="flex gap-3 items-center">
-                      <Avatar src={userAvatar(item.user_expanded as unknown as User)} />
+                      <Avatar src={userAvatar(item.user_expanded)} />
                       <div className="flex items-center gap-1">
                         <p>{item.user_name || item.user_expanded?.name || 'Anonymous'}</p>
                         <p className="text-tertiary">{item.email || item.user_expanded?.email}</p>

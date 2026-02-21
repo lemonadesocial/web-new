@@ -8,7 +8,6 @@ import clsx from 'clsx';
 import { Card } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
-  File,
   FileCategory,
   GetSystemFilesDocument,
   SystemFile,
@@ -561,7 +560,7 @@ function ThemeImage() {
                       mode: item.category.includes('dark') ? 'dark' : 'light',
                       image: {
                         _id: item._id,
-                        url: generateUrl(item as unknown as File, {
+                        url: generateUrl(item, {
                           resize: { fit: 'cover', height: 1080, width: 1920 },
                         }),
                         name: item.name,
@@ -572,7 +571,7 @@ function ThemeImage() {
               }}
             >
               <img
-                src={generateUrl(item as unknown as File, { resize: { width: 72, height: 54, fit: 'cover' } })}
+                src={generateUrl(item, { resize: { width: 72, height: 54, fit: 'cover' } })}
                 className="rounded-sm"
                 width={72}
                 height={54}
