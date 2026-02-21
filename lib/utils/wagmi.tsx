@@ -17,6 +17,9 @@ if (typeof window !== 'undefined') {
     const cookieFromUrl = new URLSearchParams(window.location.search).get('authCookie');
     if (cookieFromUrl) {
       sessionStorage.setItem(UNICORN_AUTH_COOKIE_STORAGE_KEY, cookieFromUrl);
+      const url = new URL(window.location.href);
+      url.searchParams.delete('authCookie');
+      window.history.replaceState({}, '', url.toString());
     }
   } catch {}
 }
