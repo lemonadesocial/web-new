@@ -63,15 +63,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(mintData);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-    const errorStack = error instanceof Error ? error.stack : undefined;
-
     return NextResponse.json(
-      {
-        error: 'Failed to get mint data',
-        message: errorMessage,
-        ...(errorStack && { stack: errorStack }),
-      },
+      { error: 'Failed to get mint data' },
       { status: 500 },
     );
   }
