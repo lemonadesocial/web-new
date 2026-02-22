@@ -16,6 +16,8 @@
     "codegen": "graphql-codegen"
   },
   "dependencies": {
+    "@craftjs/core": "^0.2.12",
+    "@craftjs/layers": "^0.2.7",
     "@date-fns/tz": "^1.2.0",
     "@dicebear/core": "^9.2.2",
     "@dicebear/glass": "^9.2.2",
@@ -23,8 +25,6 @@
     "@dicebear/thumbs": "^9.2.2",
     "@farcaster/auth-kit": "^0.8.1",
     "@farcaster/miniapp-sdk": "^0.1.8",
-    "@craftjs/core": "^0.2.12",
-    "@craftjs/layers": "^0.2.7",
     "@floating-ui/react": "^0.27.5",
     "@giphy/js-fetch-api": "^5.7.0",
     "@gud/drift": "^1.0.2",

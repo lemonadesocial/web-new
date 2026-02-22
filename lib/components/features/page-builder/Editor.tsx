@@ -10,7 +10,7 @@ import { toast, drawer } from '$lib/components/core';
 import { useMutation } from '$lib/graphql/request/hooks';
 
 import { sectionResolver } from './sections/resolver';
-import { setEditorConnectors } from './utils/use-safe-editor';
+import { setEditorConnectors, setEditorActions, setNodeInfoReader } from './utils/use-safe-editor';
 import {
   pageConfigToCraftState,
   craftStateToPageConfig,
@@ -360,13 +360,33 @@ function CraftStateWatcher() {
     nodeCount: Object.keys(state.nodes).length,
   }));
 
-  const { connectors } = useEditor();
+  const { connectors, actions, editorState } = useEditor((state) => ({
+    editorState: state,
+  }));
 
-  // Register connectors for use by components outside the Editor context (e.g., drawers)
+  // Register connectors, actions, and node reader for components outside the Editor context
   React.useEffect(() => {
     setEditorConnectors(connectors);
     return () => setEditorConnectors(null);
   }, [connectors]);
+
+  React.useEffect(() => {
+    setEditorActions(actions);
+    return () => setEditorActions(null);
+  }, [actions]);
+
+  React.useEffect(() => {
+    const reader = (nodeId: string) => {
+      const node = editorState.nodes[nodeId];
+      if (!node) return null;
+      return {
+        displayName: node.data.displayName ?? node.data.name ?? '',
+        props: { ...node.data.props } as Record<string, unknown>,
+      };
+    };
+    setNodeInfoReader(reader);
+    return () => setNodeInfoReader(null);
+  }, [editorState]);
 
   // Sync undo/redo to atoms
   React.useEffect(() => {
