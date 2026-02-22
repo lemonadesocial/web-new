@@ -2,53 +2,20 @@
 
 import React from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
-import clsx from 'clsx';
 
 import { Button, Skeleton, Badge } from '$lib/components/core';
 import { InputField } from '$lib/components/core/input/input-field';
 import { drawer } from '$lib/components/core/dialog';
 import { toast } from '$lib/components/core/toast';
+import { useQuery, useMutation } from '$lib/graphql/request/hooks';
+import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
 
 import { pageConfigAtom, configIdAtom, isDirtyAtom } from '../store';
-import type { ConfigVersion, PageConfig } from '../types';
-// TODO: Wire GraphQL queries once backend is ready
-// import { LIST_CONFIG_VERSIONS, SAVE_CONFIG_VERSION, RESTORE_CONFIG_VERSION } from '../queries';
-
-// ---------------------------------------------------------------------------
-// Mock Data (TODO: Replace with LIST_CONFIG_VERSIONS query)
-// ---------------------------------------------------------------------------
-
-const MOCK_VERSIONS: ConfigVersion[] = [
-  {
-    _id: 'v3',
-    config_id: 'cfg1',
-    version: 3,
-    snapshot: {} as PageConfig,
-    change_summary: 'Updated hero section',
-    created_by: 'user1',
-    created_at: new Date(Date.now() - 3_600_000).toISOString(),
-  },
-  {
-    _id: 'v2',
-    config_id: 'cfg1',
-    version: 2,
-    snapshot: {} as PageConfig,
-    change_summary: 'Added schedule section',
-    created_by: 'user1',
-    created_at: new Date(Date.now() - 86_400_000).toISOString(),
-  },
-  {
-    _id: 'v1',
-    config_id: 'cfg1',
-    version: 1,
-    snapshot: {} as PageConfig,
-    change_summary: 'Initial creation',
-    created_by: 'user1',
-    created_at: new Date(Date.now() - 172_800_000).toISOString(),
-  },
-];
-
+import type { ConfigVersion } from '../types';
+import { LIST_CONFIG_VERSIONS, SAVE_CONFIG_VERSION, RESTORE_CONFIG_VERSION } from '../queries';
 import { formatRelativeTime } from '../utils';
+
+type AnyDocument = TypedDocumentNode<any, any>;
 
 // ---------------------------------------------------------------------------
 // Sub-components
@@ -153,9 +120,6 @@ export function VersionHistoryPanel() {
   const setPageConfig = useSetAtom(pageConfigAtom);
   const setIsDirty = useSetAtom(isDirtyAtom);
 
-  const [versions, setVersions] = React.useState<ConfigVersion[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [isSavingVersion, setIsSavingVersion] = React.useState(false);
   const [restoringVersionId, setRestoringVersionId] = React.useState<string | null>(null);
   const [changeSummary, setChangeSummary] = React.useState('');
 
@@ -163,55 +127,41 @@ export function VersionHistoryPanel() {
   const publishedVersion = config?.published_version;
 
   // --- Fetch versions ---
-  // TODO: Replace with real LIST_CONFIG_VERSIONS query
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setVersions(MOCK_VERSIONS);
-      setIsLoading(false);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [configId]);
+  const { data: versionsData, loading: isLoading, refetch: refetchVersions } = useQuery(
+    LIST_CONFIG_VERSIONS as AnyDocument,
+    { variables: { configId }, skip: !configId },
+  );
+
+  const versions: ConfigVersion[] = versionsData?.listConfigVersions ?? [];
 
   // --- Save version ---
+  const [saveVersion, { loading: isSavingVersion }] = useMutation(SAVE_CONFIG_VERSION as AnyDocument);
+
   const handleSaveVersion = async () => {
     if (!configId) {
       toast.error('No config loaded. Save your page first.');
       return;
     }
 
-    setIsSavingVersion(true);
-
     try {
-      // TODO: Replace with SAVE_CONFIG_VERSION mutation
-      // const response = await graphqlClient.request(SAVE_CONFIG_VERSION, {
-      //   configId,
-      //   changeSummary: changeSummary || undefined,
-      // });
-      // const newVersion = response.saveConfigVersion;
+      const { data, error } = await saveVersion({
+        variables: { configId, changeSummary: changeSummary || undefined },
+      });
 
-      // Mock response
-      const nextVersion = versions.length > 0 ? versions[0].version + 1 : 1;
-      const newVersion: ConfigVersion = {
-        _id: `v${nextVersion}`,
-        config_id: configId,
-        version: nextVersion,
-        snapshot: config as PageConfig,
-        change_summary: changeSummary || undefined,
-        created_by: 'user1',
-        created_at: new Date().toISOString(),
-      };
+      if (error) throw error;
 
-      setVersions((prev) => [newVersion, ...prev]);
+      const newVersion = data?.saveConfigVersion;
       setChangeSummary('');
-      toast.success(`Version v${nextVersion} saved`);
+      toast.success(`Version v${newVersion?.version ?? ''} saved`);
+      refetchVersions();
     } catch {
       toast.error('Failed to save version.');
-    } finally {
-      setIsSavingVersion(false);
     }
   };
 
   // --- Restore version ---
+  const [restoreVersion] = useMutation(RESTORE_CONFIG_VERSION as AnyDocument);
+
   const handleRestore = async (version: ConfigVersion) => {
     const confirmed = window.confirm(
       `Restore to version ${version.version}? This will replace your current draft.`,
@@ -221,16 +171,15 @@ export function VersionHistoryPanel() {
     setRestoringVersionId(version._id);
 
     try {
-      // TODO: Replace with RESTORE_CONFIG_VERSION mutation
-      // const response = await graphqlClient.request(RESTORE_CONFIG_VERSION, {
-      //   configId,
-      //   version: version.version,
-      // });
-      // setPageConfig(response.restoreConfigVersion);
+      const { data, error } = await restoreVersion({
+        variables: { configId, version: version.version },
+      });
 
-      // Mock: apply snapshot
-      if (version.snapshot && Object.keys(version.snapshot).length > 0) {
-        setPageConfig(version.snapshot);
+      if (error) throw error;
+
+      const restoredConfig = data?.restoreConfigVersion;
+      if (restoredConfig) {
+        setPageConfig(restoredConfig);
       }
 
       setIsDirty(true);

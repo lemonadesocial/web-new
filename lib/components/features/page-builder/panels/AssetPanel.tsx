@@ -8,139 +8,20 @@ import { Button, Skeleton } from '$lib/components/core';
 import { InputField } from '$lib/components/core/input/input-field';
 import { drawer } from '$lib/components/core/dialog';
 import { toast } from '$lib/components/core/toast';
+import { useQuery, useMutation } from '$lib/graphql/request/hooks';
+import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
 
 import { ownerIdAtom } from '../store';
 import type { SpaceAsset, StockPhoto } from '../types';
+import { LIST_SPACE_ASSETS, SEARCH_STOCK_PHOTOS, DELETE_SPACE_ASSET } from '../queries';
+
+type AnyDocument = TypedDocumentNode<any, any>;
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
 type AssetTab = 'my-assets' | 'stock';
-
-// ---------------------------------------------------------------------------
-// Mock Data (TODO: Replace with LIST_SPACE_ASSETS / SEARCH_STOCK_PHOTOS queries)
-// ---------------------------------------------------------------------------
-
-const MOCK_ASSETS: SpaceAsset[] = [
-  {
-    _id: 'asset_001',
-    url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=400&fit=crop',
-    type: 'image/jpeg',
-    size: 245000,
-    description: 'Conference hall',
-  },
-  {
-    _id: 'asset_002',
-    url: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&h=400&fit=crop',
-    type: 'image/jpeg',
-    size: 312000,
-    description: 'Festival crowd',
-  },
-  {
-    _id: 'asset_003',
-    url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=400&fit=crop',
-    type: 'image/jpeg',
-    size: 198000,
-    description: 'Team collaboration',
-  },
-  {
-    _id: 'asset_004',
-    url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=400&fit=crop',
-    type: 'image/jpeg',
-    size: 156000,
-    description: 'Abstract gradient',
-  },
-  {
-    _id: 'asset_005',
-    url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&h=400&fit=crop',
-    type: 'image/jpeg',
-    size: 280000,
-    description: 'Event venue',
-  },
-  {
-    _id: 'asset_006',
-    url: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=400&fit=crop',
-    type: 'image/jpeg',
-    size: 340000,
-    description: 'Concert stage',
-  },
-];
-
-const MOCK_STOCK_PHOTOS: StockPhoto[] = [
-  {
-    id: 'stock_001',
-    url: 'https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=800',
-    thumbnail_url: 'https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=400',
-    width: 1200,
-    height: 800,
-    description: 'Concert crowd with lights',
-    attribution: { photographer: 'John Doe', source: 'Unsplash', source_url: 'https://unsplash.com', license: 'Unsplash License' },
-  },
-  {
-    id: 'stock_002',
-    url: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800',
-    thumbnail_url: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400',
-    width: 1200,
-    height: 1600,
-    description: 'Colorful confetti celebration',
-    attribution: { photographer: 'Jane Smith', source: 'Unsplash', source_url: 'https://unsplash.com', license: 'Unsplash License' },
-  },
-  {
-    id: 'stock_003',
-    url: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800',
-    thumbnail_url: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400',
-    width: 1200,
-    height: 900,
-    description: 'People at outdoor festival',
-    attribution: { photographer: 'Mike Chen', source: 'Unsplash', source_url: 'https://unsplash.com', license: 'Unsplash License' },
-  },
-  {
-    id: 'stock_004',
-    url: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800',
-    thumbnail_url: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=400',
-    width: 800,
-    height: 1200,
-    description: 'Speaker on stage',
-    attribution: { photographer: 'Alex Rivera', source: 'Unsplash', source_url: 'https://unsplash.com', license: 'Unsplash License' },
-  },
-  {
-    id: 'stock_005',
-    url: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800',
-    thumbnail_url: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=400',
-    width: 1200,
-    height: 800,
-    description: 'Friends gathering at table',
-    attribution: { photographer: 'Sara Kim', source: 'Unsplash', source_url: 'https://unsplash.com', license: 'Unsplash License' },
-  },
-  {
-    id: 'stock_006',
-    url: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800',
-    thumbnail_url: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400',
-    width: 1200,
-    height: 1800,
-    description: 'Modern conference room',
-    attribution: { photographer: 'Tom Hill', source: 'Unsplash', source_url: 'https://unsplash.com', license: 'Unsplash License' },
-  },
-  {
-    id: 'stock_007',
-    url: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800',
-    thumbnail_url: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400',
-    width: 1200,
-    height: 750,
-    description: 'Neon lights abstract',
-    attribution: { photographer: 'Lisa Park', source: 'Unsplash', source_url: 'https://unsplash.com', license: 'Unsplash License' },
-  },
-  {
-    id: 'stock_008',
-    url: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800',
-    thumbnail_url: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=400',
-    width: 800,
-    height: 1100,
-    description: 'DJ performing live',
-    attribution: { photographer: 'Dave Wong', source: 'Unsplash', source_url: 'https://unsplash.com', license: 'Unsplash License' },
-  },
-];
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -262,48 +143,24 @@ function StockPhotoCard({
 export function AssetPanel() {
   const [activeTab, setActiveTab] = React.useState<AssetTab>('my-assets');
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [assets, setAssets] = React.useState<SpaceAsset[]>([]);
-  const [stockPhotos, setStockPhotos] = React.useState<StockPhoto[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [isSearching, setIsSearching] = React.useState(false);
 
   const ownerId = useAtomValue(ownerIdAtom);
 
   // --- Load my assets ---
-  // TODO: Replace with LIST_SPACE_ASSETS query via useQuery
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setAssets(MOCK_ASSETS);
-      setIsLoading(false);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, []);
+  const { data: assetsData, loading: isLoading, refetch: refetchAssets } = useQuery(
+    LIST_SPACE_ASSETS as AnyDocument,
+    { variables: { spaceId: ownerId }, skip: !ownerId },
+  );
+
+  const assets: SpaceAsset[] = assetsData?.listSpaceAssets ?? [];
 
   // --- Load stock photos ---
-  // TODO: Replace with SEARCH_STOCK_PHOTOS query via useQuery
-  React.useEffect(() => {
-    if (activeTab !== 'stock') return;
+  const { data: stockData, loading: isSearching } = useQuery(
+    SEARCH_STOCK_PHOTOS as AnyDocument,
+    { variables: { query: searchQuery, perPage: 30 }, skip: !searchQuery },
+  );
 
-    setIsSearching(true);
-    const timer = setTimeout(() => {
-      if (searchQuery.trim()) {
-        // Simulate filtered results
-        const q = searchQuery.toLowerCase();
-        setStockPhotos(
-          MOCK_STOCK_PHOTOS.filter(
-            (p) =>
-              p.description?.toLowerCase().includes(q) ||
-              p.attribution.photographer.toLowerCase().includes(q),
-          ),
-        );
-      } else {
-        setStockPhotos(MOCK_STOCK_PHOTOS);
-      }
-      setIsSearching(false);
-    }, 400);
-
-    return () => clearTimeout(timer);
-  }, [activeTab, searchQuery]);
+  const stockPhotos: StockPhoto[] = stockData?.searchStockPhotos ?? [];
 
   // --- Handlers ---
 
@@ -312,10 +169,21 @@ export function AssetPanel() {
     toast.success('Upload feature coming soon');
   };
 
-  const handleDeleteAsset = (assetId: string) => {
-    // TODO: Wire up DELETE_SPACE_ASSET mutation
-    setAssets((prev) => prev.filter((a) => a._id !== assetId));
-    toast.success('Asset deleted');
+  const [deleteAsset] = useMutation(DELETE_SPACE_ASSET as AnyDocument);
+
+  const handleDeleteAsset = async (assetId: string) => {
+    try {
+      const { error } = await deleteAsset({
+        variables: { spaceId: ownerId, fileId: assetId },
+      });
+
+      if (error) throw error;
+
+      toast.success('Asset deleted');
+      refetchAssets();
+    } catch {
+      toast.error('Failed to delete asset.');
+    }
   };
 
   const handleSelectAsset = (url: string) => {

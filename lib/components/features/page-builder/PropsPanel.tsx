@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useEditor } from '@craftjs/core';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import clsx from 'clsx';
 
 import { Button } from '$lib/components/core';
@@ -9,7 +10,7 @@ import { InputField } from '$lib/components/core/input/input-field';
 import { Pane } from '$lib/components/core/pane/pane';
 import { drawer } from '$lib/components/core/dialog';
 
-import { selectedNodeIdAtom, pageConfigAtom } from './store';
+import { selectedNodeIdAtom, pageConfigAtom, isDirtyAtom } from './store';
 import { getSectionLabel } from './sections/resolver';
 import type {
   SectionAlignment,
@@ -85,7 +86,7 @@ export function PropsPanel() {
 
       <Pane.Content className="p-4 overflow-auto">
         {activeTab === 'properties' && <PropertiesTab section={section} />}
-        {activeTab === 'layout' && <LayoutTab layout={section?.layout} />}
+        {activeTab === 'layout' && <LayoutTab key={selectedNodeId || 'none'} layout={section?.layout} />}
         {activeTab === 'data' && <DataSourceTab />}
       </Pane.Content>
     </Pane.Root>
@@ -140,11 +141,24 @@ const ALIGNMENT_OPTIONS: { value: SectionAlignment; icon: string; label: string 
 ];
 
 function LayoutTab({ layout }: { layout?: SectionLayout }) {
-  // Local state mirrors layout — changes will be pushed via Craft.js actions
+  const { actions } = useEditor();
+  const selectedNodeId = useAtomValue(selectedNodeIdAtom);
+  const setIsDirty = useSetAtom(isDirtyAtom);
+
   const [width, setWidth] = React.useState<SectionWidth>(layout?.width ?? 'contained');
   const [padding, setPadding] = React.useState<SectionPadding>(layout?.padding ?? 'md');
   const [alignment, setAlignment] = React.useState<SectionAlignment>(layout?.alignment ?? 'center');
   const [columns, setColumns] = React.useState(layout?.columns ?? 1);
+
+  /** Push a prop update to Craft.js and mark editor dirty */
+  const updateProp = (key: string, value: unknown) => {
+    if (selectedNodeId) {
+      actions.setProp(selectedNodeId, (props: Record<string, unknown>) => {
+        props[key] = value;
+      });
+      setIsDirty(true);
+    }
+  };
 
   return (
     <div className="space-y-5">
@@ -161,7 +175,7 @@ function LayoutTab({ layout }: { layout?: SectionLayout }) {
                   ? 'bg-primary/12 text-primary'
                   : 'text-tertiary hover:bg-primary/4',
               )}
-              onClick={() => setWidth(opt.value)}
+              onClick={() => { setWidth(opt.value); updateProp('width', opt.value); }}
             >
               {opt.label}
             </button>
@@ -182,7 +196,7 @@ function LayoutTab({ layout }: { layout?: SectionLayout }) {
                   ? 'bg-primary/12 text-primary'
                   : 'text-tertiary hover:bg-primary/4',
               )}
-              onClick={() => setPadding(opt.value)}
+              onClick={() => { setPadding(opt.value); updateProp('padding', opt.value); }}
             >
               {opt.label}
             </button>
@@ -203,7 +217,7 @@ function LayoutTab({ layout }: { layout?: SectionLayout }) {
                   ? 'bg-primary/12 text-primary'
                   : 'text-tertiary hover:bg-primary/4',
               )}
-              onClick={() => setColumns(n as 1 | 2 | 3 | 4)}
+              onClick={() => { setColumns(n as 1 | 2 | 3 | 4); updateProp('columns', n); }}
             >
               {n}
             </button>
@@ -224,7 +238,7 @@ function LayoutTab({ layout }: { layout?: SectionLayout }) {
                   ? 'bg-primary/12 text-primary'
                   : 'text-tertiary hover:bg-primary/4',
               )}
-              onClick={() => setAlignment(opt.value)}
+              onClick={() => { setAlignment(opt.value); updateProp('alignment', opt.value); }}
               title={opt.label}
             >
               <i className={clsx(opt.icon, 'size-4')} />
@@ -239,8 +253,8 @@ function LayoutTab({ layout }: { layout?: SectionLayout }) {
         <InputField
           placeholder="e.g. #1a1a1a or transparent"
           value={layout?.background?.value ?? ''}
-          onChangeText={() => {
-            // Will update via Craft.js actions
+          onChangeText={(text) => {
+            updateProp('background', { type: 'color', value: text });
           }}
         />
       </div>
@@ -251,8 +265,8 @@ function LayoutTab({ layout }: { layout?: SectionLayout }) {
         <InputField
           placeholder="e.g. 400px or auto"
           value={layout?.min_height ?? ''}
-          onChangeText={() => {
-            // Will update via Craft.js actions
+          onChangeText={(text) => {
+            updateProp('min_height', text);
           }}
         />
       </div>

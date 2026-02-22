@@ -8,11 +8,14 @@ import { Button, Badge } from '$lib/components/core';
 import { InputField } from '$lib/components/core/input/input-field';
 import { drawer } from '$lib/components/core/dialog';
 import { toast } from '$lib/components/core/toast';
+import { useMutation } from '$lib/graphql/request/hooks';
+import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
 
 import { pageConfigAtom, configIdAtom, ownerTypeAtom } from '../store';
 import type { TemplateCategory, TemplateTarget, TemplateVisibility } from '../types';
-// TODO: Wire GraphQL mutation once backend is ready
-// import { SAVE_CONFIG_AS_TEMPLATE } from '../queries';
+import { SAVE_CONFIG_AS_TEMPLATE } from '../queries';
+
+type AnyDocument = TypedDocumentNode<any, any>;
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -189,7 +192,8 @@ export function SaveAsTemplatePanel() {
   const [target, setTarget] = React.useState<TemplateTarget>(ownerType === 'space' ? 'space' : 'event');
   const [visibility, setVisibility] = React.useState<TemplateVisibility>('public');
   const [thumbnailUrl, setThumbnailUrl] = React.useState(config?.thumbnail_url ?? '');
-  const [isSaving, setIsSaving] = React.useState(false);
+  // --- Mutation ---
+  const [saveAsTemplate, { loading: isSaving }] = useMutation(SAVE_CONFIG_AS_TEMPLATE as AnyDocument);
 
   // --- Validation ---
   const isValid = name.trim().length > 0;
@@ -206,32 +210,29 @@ export function SaveAsTemplatePanel() {
       return;
     }
 
-    setIsSaving(true);
-
     try {
-      // TODO: Replace with SAVE_CONFIG_AS_TEMPLATE mutation
-      // const response = await graphqlClient.request(SAVE_CONFIG_AS_TEMPLATE, {
-      //   input: {
-      //     config_id: configId,
-      //     name: name.trim(),
-      //     description: description.trim(),
-      //     category,
-      //     tags,
-      //     target,
-      //     visibility,
-      //     thumbnail_url: thumbnailUrl || undefined,
-      //   },
-      // });
+      const { error } = await saveAsTemplate({
+        variables: {
+          configId,
+          input: {
+            name: name.trim(),
+            description: description.trim(),
+            category,
+            tags,
+            target,
+            visibility,
+            thumbnail_url: thumbnailUrl || undefined,
+            preview_urls: [],
+          },
+        },
+      });
 
-      // Mock success
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      if (error) throw error;
 
       toast.success(`Template "${name.trim()}" saved successfully`);
       drawer.close();
     } catch {
       toast.error('Failed to save template. Please try again.');
-    } finally {
-      setIsSaving(false);
     }
   };
 

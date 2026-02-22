@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useEditor } from '@craftjs/core';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
@@ -118,14 +119,15 @@ export function TopToolbar({ entityName, backHref, onSave, onPublish }: TopToolb
     });
   };
 
-  // --- Undo / Redo (placeholder until Craft.js useEditor is wired) ---
+  // --- Undo / Redo via Craft.js ---
+  const { actions } = useEditor();
 
   const handleUndo = () => {
-    // Will call craft editor.actions.history.undo() once integrated
+    actions.history.undo();
   };
 
   const handleRedo = () => {
-    // Will call craft editor.actions.history.redo() once integrated
+    actions.history.redo();
   };
 
   return (
