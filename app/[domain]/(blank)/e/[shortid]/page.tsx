@@ -2,7 +2,7 @@ import React from 'react';
 import { notFound, redirect } from 'next/navigation';
 import { htmlToText } from 'html-to-text';
 
-import { Event, GetEventDocument } from '$lib/graphql/generated/backend/graphql';
+import { Event, GetEventDocument, GetPublishedConfigDocument } from '$lib/graphql/generated/backend/graphql';
 import { getClient } from '$lib/graphql/request';
 import { EventGuestSide } from '$lib/components/features/event/EventGuestSide';
 
@@ -60,6 +60,22 @@ export default async function Page({ params }: { params: Promise<{ shortid: stri
   if (!event) return notFound();
 
   if (event.external_url) redirect(event.external_url);
+
+  // If a published page builder config exists, serve the custom page instead
+  let hasPublishedConfig = false;
+  try {
+    const { data: configData } = await client.query({
+      query: GetPublishedConfigDocument,
+      variables: { owner_type: 'event', owner_id: event._id },
+    });
+    hasPublishedConfig = !!configData?.getPublishedConfig;
+  } catch {
+    // Config query failed — fall through to default page
+  }
+
+  if (hasPublishedConfig) {
+    redirect(`/e/${shortid}/custom`);
+  }
 
   return <EventGuestSide event={event} />;
 }

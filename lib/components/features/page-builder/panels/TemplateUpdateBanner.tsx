@@ -8,8 +8,7 @@ import { toast } from '$lib/components/core/toast';
 
 import { pageConfigAtom, isDirtyAtom } from '../store';
 import type { TemplateUpdateInfo, TemplateChangelog } from '../types';
-// TODO: Wire GraphQL queries once backend is ready
-// import { CHECK_TEMPLATE_UPDATE, APPLY_TEMPLATE_UPDATE } from '../queries';
+// TODO: Wire GraphQL queries (use generated CheckTemplateUpdateDocument / ApplyTemplateUpdateDocument)
 
 // ---------------------------------------------------------------------------
 // Mock Data (TODO: Replace with CHECK_TEMPLATE_UPDATE query)

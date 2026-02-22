@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 import { getClient } from '$lib/graphql/request';
+import { ValidatePreviewLinkDocument } from '$lib/graphql/generated/backend/graphql';
 import { ConfigRuntime } from '$lib/components/features/page-builder/ConfigRuntime';
-import { VALIDATE_PREVIEW_LINK } from '$lib/components/features/page-builder/queries';
 import type { PageConfig } from '$lib/components/features/page-builder/types';
 
 // ---------------------------------------------------------------------------
@@ -23,14 +23,13 @@ async function validatePreview(configId: string, token: string) {
 
   try {
     const { data, error } = await client.query({
-      query: VALIDATE_PREVIEW_LINK,
-      variables: { configId, token },
+      query: ValidatePreviewLinkDocument,
+      variables: { config_id: configId, token },
     });
 
     if (error) return { config: null, error: error.message ?? 'Invalid preview link' };
 
-    const config = (data as Record<string, unknown>)
-      ?.validatePreviewLink as PageConfig | null;
+    const config = data?.validatePreviewLink as PageConfig | null;
 
     if (!config) return { config: null, error: 'Preview link is invalid or has expired' };
 
