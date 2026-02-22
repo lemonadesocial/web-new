@@ -1,12 +1,11 @@
 import { Metadata, ResolvingMetadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 
-import { GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
+import { GetSpaceDocument, Space, GetPublishedConfigDocument } from '$lib/graphql/generated/backend/graphql';
 import { getClient } from '$lib/graphql/request';
 import { isObjectId } from '$lib/utils/helpers';
 import { generateUrl } from '$lib/utils/cnd';
 import { ConfigRuntime } from '$lib/components/features/page-builder/ConfigRuntime';
-import { GET_PUBLISHED_CONFIG } from '$lib/components/features/page-builder/queries';
 import type { PageConfig } from '$lib/components/features/page-builder/types';
 
 // ---------------------------------------------------------------------------
@@ -37,12 +36,11 @@ async function fetchSpaceAndConfig(uid: string) {
   // 2. Fetch published PageConfig for this space
   try {
     const { data: configData } = await client.query({
-      query: GET_PUBLISHED_CONFIG,
-      variables: { ownerType: 'space', ownerId: space._id },
+      query: GetPublishedConfigDocument,
+      variables: { owner_type: 'space', owner_id: space._id },
     });
 
-    const config = (configData as Record<string, unknown>)
-      ?.getPublishedConfig as PageConfig | null;
+    const config = configData?.getPublishedConfig as PageConfig | null;
 
     return { space, config };
   } catch {

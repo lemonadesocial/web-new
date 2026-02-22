@@ -1,4 +1,10 @@
 import React from 'react';
+import { defaultClient } from '$lib/graphql/request/instances';
+import {
+  GetPageConfigDocument,
+  CreatePageConfigDocument,
+} from '$lib/graphql/generated/backend/graphql';
+
 import type { PageConfig, OwnerType } from './types';
 import { DEFAULT_THEME } from './types';
 
@@ -53,29 +59,107 @@ export function renderStars(rating: number): string {
 }
 
 // ---------------------------------------------------------------------------
-// Stub PageConfig hook (dev only — replaced by real query once backend is live)
+// PageConfig hook — find-or-create for the editor
 // ---------------------------------------------------------------------------
 
+const CONFIG_ID_PREFIX = 'pb_config_';
+
+function getCachedConfigId(ownerType: OwnerType, ownerId: string): string | null {
+  try {
+    return localStorage.getItem(`${CONFIG_ID_PREFIX}${ownerType}_${ownerId}`);
+  } catch {
+    return null;
+  }
+}
+
+function setCachedConfigId(ownerType: OwnerType, ownerId: string, configId: string) {
+  try {
+    localStorage.setItem(`${CONFIG_ID_PREFIX}${ownerType}_${ownerId}`, configId);
+  } catch {
+    // localStorage unavailable — non-critical
+  }
+}
+
 /**
- * Returns a minimal PageConfig stub for editor development.
+ * Fetches (or creates) a PageConfig for the given owner.
  *
- * In production this will be replaced by a proper GraphQL query
- * (getPageConfig / createPageConfig) once the backend mutations are live.
+ * 1. Checks localStorage for a previously resolved config ID.
+ * 2. If found, loads it via `getPageConfig`.
+ * 3. If not found (or the config was deleted), creates a new draft
+ *    via `createPageConfig` and caches the ID.
  */
-export function useStubPageConfig(ownerId: string, ownerType: OwnerType): PageConfig {
-  return React.useMemo<PageConfig>(
-    () => ({
-      _id: `stub_${ownerId}`,
-      owner_type: ownerType,
-      owner_id: ownerId,
-      created_by: '',
-      status: 'draft',
-      version: 1,
-      theme: DEFAULT_THEME,
-      sections: [],
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }),
-    [ownerId, ownerType],
-  );
+export function usePageConfig(
+  ownerId: string,
+  ownerType: OwnerType,
+): { config: PageConfig | null; loading: boolean; error: unknown } {
+  const [config, setConfig] = React.useState<PageConfig | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<unknown>(null);
+
+  React.useEffect(() => {
+    if (!ownerId) return;
+
+    let cancelled = false;
+
+    async function resolve() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        // 1. Check localStorage for a cached config ID
+        const cachedId = getCachedConfigId(ownerType, ownerId);
+
+        if (cachedId) {
+          // 2. Try to load the existing config
+          const { data } = await defaultClient.query({
+            query: GetPageConfigDocument,
+            variables: { id: cachedId },
+            fetchPolicy: 'network-only',
+          });
+
+          const existing = data?.getPageConfig as PageConfig | null;
+
+          if (!cancelled && existing) {
+            setConfig(existing);
+            setLoading(false);
+            return;
+          }
+
+          // Cached ID was stale — fall through to create
+        }
+
+        // 3. No cached config (or it was deleted) — create a new draft
+        const { data: createData } = await defaultClient.query({
+          query: CreatePageConfigDocument,
+          variables: {
+            input: {
+              owner_type: ownerType,
+              owner_id: ownerId,
+              theme: DEFAULT_THEME,
+            },
+          },
+          fetchPolicy: 'network-only',
+        });
+
+        const created = createData?.createPageConfig as PageConfig | null;
+
+        if (!cancelled && created) {
+          setCachedConfigId(ownerType, ownerId, created._id);
+          setConfig(created);
+        }
+      } catch (err) {
+        if (!cancelled) setError(err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    resolve();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [ownerId, ownerType]);
+
+  return { config, loading, error };
 }

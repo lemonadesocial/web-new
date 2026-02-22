@@ -2,10 +2,9 @@ import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { htmlToText } from 'html-to-text';
 
-import { Event, GetEventDocument } from '$lib/graphql/generated/backend/graphql';
+import { Event, GetEventDocument, GetPublishedConfigDocument } from '$lib/graphql/generated/backend/graphql';
 import { getClient } from '$lib/graphql/request';
 import { ConfigRuntime } from '$lib/components/features/page-builder/ConfigRuntime';
-import { GET_PUBLISHED_CONFIG } from '$lib/components/features/page-builder/queries';
 import type { PageConfig } from '$lib/components/features/page-builder/types';
 
 // ---------------------------------------------------------------------------
@@ -35,12 +34,11 @@ async function fetchEventAndConfig(shortid: string) {
   // 2. Fetch published PageConfig for this event
   try {
     const { data: configData } = await client.query({
-      query: GET_PUBLISHED_CONFIG,
-      variables: { ownerType: 'event', ownerId: event._id },
+      query: GetPublishedConfigDocument,
+      variables: { owner_type: 'event', owner_id: event._id },
     });
 
-    const config = (configData as Record<string, unknown>)
-      ?.getPublishedConfig as PageConfig | null;
+    const config = configData?.getPublishedConfig as PageConfig | null;
 
     return { event, config };
   } catch {

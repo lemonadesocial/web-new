@@ -14,7 +14,7 @@ import { useQuery } from '$lib/graphql/request';
 
 import { PageBuilderEditor } from '$lib/components/features/page-builder/Editor';
 import { EditorSkeleton } from '$lib/components/features/page-builder/EditorSkeleton';
-import { useStubPageConfig } from '$lib/components/features/page-builder/utils';
+import { usePageConfig } from '$lib/components/features/page-builder/utils';
 
 /**
  * Event Page Builder Route
@@ -85,14 +85,26 @@ function EventEditorContent({ event, shortid }: { event: Event; shortid: string 
     }
   }, []);
 
-  // TODO: Fetch actual PageConfig for this event from the backend.
-  // For now, create a stub config so the editor shell renders.
-  const stubConfig = useStubPageConfig(event._id, 'event');
+  const { config, loading: configLoading, error: configError } = usePageConfig(event._id, 'event');
+
+  if (configLoading) return <EditorSkeleton />;
+
+  if (configError || !config) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-dvh text-center space-y-4 px-4">
+        <div className="w-16 h-16 bg-warning-500/16 rounded-full flex items-center justify-center">
+          <i className="icon-alert-outline size-8 text-warning-500" />
+        </div>
+        <h1 className="text-2xl font-semibold">Unable to load editor</h1>
+        <p className="text-secondary">Could not load or create a page configuration. Please try again.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="relative h-dvh overflow-hidden flex flex-col">
       <PageBuilderEditor
-        config={stubConfig}
+        config={config}
         ownerType="event"
         ownerId={event._id}
         entityName={event.title || 'Untitled Event'}
