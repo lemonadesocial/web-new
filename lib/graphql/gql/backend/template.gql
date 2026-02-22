@@ -1,0 +1,137 @@
+fragment TemplateChangelog on TemplateChangelog {
+  version
+  date
+  summary
+  breaking_changes
+}
+
+fragment Template on Template {
+  _id
+  name
+  slug
+  description
+  category
+  tags
+  config {
+    ...PageConfig
+  }
+  thumbnail_url
+  preview_urls
+  preview_video_url
+  creator_type
+  creator_id
+  space_id
+  target
+  visibility
+  subscription_tier_min
+  marketplace_listed
+  price_cents
+  currency
+  install_count
+  rating_average
+  rating_count
+  version
+  changelog {
+    ...TemplateChangelog
+  }
+  created_at
+  updated_at
+  published_at
+}
+
+fragment TemplateUpdateInfo on TemplateUpdateInfo {
+  has_update
+  current_version
+  latest_version
+  changelog {
+    ...TemplateChangelog
+  }
+}
+
+# Queries
+
+query ListTemplates($filters: ListTemplatesArgs) {
+  listTemplates(filters: $filters) {
+    ...Template
+  }
+}
+
+query GetTemplate($id: ID!) {
+  getTemplate(id: $id) {
+    ...Template
+  }
+}
+
+query CheckTemplateUpdate($configId: ID!) {
+  checkTemplateUpdate(configId: $configId) {
+    ...TemplateUpdateInfo
+  }
+}
+
+# Mutations
+
+mutation CreateTemplate($input: CreateTemplateInput!) {
+  createTemplate(input: $input) {
+    ...Template
+  }
+}
+
+mutation UpdateTemplate($id: ID!, $input: UpdateTemplateInput!) {
+  updateTemplate(id: $id, input: $input) {
+    ...Template
+  }
+}
+
+mutation PublishTemplate($id: ID!) {
+  publishTemplate(id: $id) {
+    ...Template
+  }
+}
+
+mutation ArchiveTemplate($id: ID!) {
+  archiveTemplate(id: $id) {
+    ...Template
+  }
+}
+
+mutation CloneTemplateToConfig($templateId: ID!, $ownerType: String!, $ownerId: ID!) {
+  cloneTemplateToConfig(templateId: $templateId, ownerType: $ownerType, ownerId: $ownerId) {
+    ...PageConfig
+  }
+}
+
+mutation SaveConfigAsTemplate($configId: ID!, $input: SaveAsTemplateInput!) {
+  saveConfigAsTemplate(configId: $configId, input: $input) {
+    ...Template
+  }
+}
+
+mutation PublishTemplateUpdate($templateId: ID!, $input: TemplateUpdateInput!) {
+  publishTemplateUpdate(templateId: $templateId, input: $input) {
+    ...Template
+  }
+}
+
+mutation ApplyTemplateUpdate($configId: ID!) {
+  applyTemplateUpdate(configId: $configId) {
+    ...PageConfig
+  }
+}
+
+mutation ApproveTemplate($id: ID!) {
+  approveTemplate(id: $id) {
+    ...Template
+  }
+}
+
+mutation RejectTemplate($id: ID!, $reason: String!) {
+  rejectTemplate(id: $id, reason: $reason) {
+    ...Template
+  }
+}
+
+mutation FeatureTemplate($id: ID!, $featured: Boolean!) {
+  featureTemplate(id: $id, featured: $featured) {
+    ...Template
+  }
+}

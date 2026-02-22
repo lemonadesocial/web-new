@@ -22,6 +22,8 @@
     "@dicebear/thumbs": "^9.2.2",
     "@farcaster/auth-kit": "^0.8.1",
     "@farcaster/miniapp-sdk": "^0.1.8",
+    "@craftjs/core": "^0.2.12",
+    "@craftjs/layers": "^0.2.7",
     "@floating-ui/react": "^0.27.5",
     "@giphy/js-fetch-api": "^5.7.0",
     "@gud/drift": "^1.0.2",
@@ -148,6 +150,12 @@
     "typescript": "^5",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.0.6"
+  },
+  "resolutions": {
+    "@craftjs/core/**/react": "^19.0.0",
+    "@craftjs/core/**/react-dom": "^19.0.0",
+    "@craftjs/layers/**/react": "^19.0.0",
+    "@craftjs/layers/**/react-dom": "^19.0.0"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

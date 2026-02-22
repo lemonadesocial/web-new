@@ -533,6 +533,35 @@
     viem "^2.27.2"
     zustand "5.0.3"
 
+"@craftjs/core@^0.2.12":
+  version "0.2.12"
+  resolved "https://registry.yarnpkg.com/@craftjs/core/-/core-0.2.12.tgz#b411af3a8c39ba5033e39159911375d9e3299250"
+  integrity sha512-M9WZ6SuvGw6Ue2iXouPiqLzzsxOynn1HVugzlm8q98ulMdhn0BDI3XZdD3ErUdUe4kk4y2Ak9E0dtzVjC51JLw==
+  dependencies:
+    "@craftjs/utils" "^0.2.5"
+    debounce "^1.2.0"
+    lodash "^4.17.21"
+    tiny-invariant "^1.0.6"
+
+"@craftjs/layers@^0.2.7":
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/@craftjs/layers/-/layers-0.2.7.tgz#3e46ccb8f497d074fe31679fe8d6735f0e7efe2a"
+  integrity sha512-l0G6I/7ZI0svl/NWNW+z8DoZaor0VKCz5cAexlccI/70bfR3uH1DJFj1WAd5LefZx6yKj2+jeSZU+Z6ywrt3Fg==
+  dependencies:
+    "@craftjs/utils" "^0.2.5"
+    react-contenteditable "^3.3.3"
+
+"@craftjs/utils@^0.2.5":
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/@craftjs/utils/-/utils-0.2.5.tgz#2778264bb854b51ab34f3194028269d81b59f642"
+  integrity sha512-ANzAkGmQBe6fi7F2x6dhiN2hN9yBDfW+mQ2XJv8bJMIx+0h5Kbv04U4WXaFfMhjcC7DzfPnGkdg7/9gFkd5qVA==
+  dependencies:
+    immer "^9.0.6"
+    lodash "^4.17.21"
+    nanoid "^3.1.23"
+    shallowequal "^1.1.0"
+    tiny-invariant "^1.0.6"
+
 "@csstools/color-helpers@^5.0.2":
   version "5.0.2"
   resolved "https://registry.npmjs.org/@csstools/color-helpers/-/color-helpers-5.0.2.tgz"
@@ -10919,6 +10948,11 @@ immer@^11.0.0:
   resolved "https://registry.yarnpkg.com/immer/-/immer-11.0.1.tgz#2191adadc17afc94553bfb7a4c0ca95e55ec2489"
   integrity sha512-naDCyggtcBWANtIrjQEajhhBEuL9b0Zg4zmlWK2CzS6xCWSE39/vvf4LqnMjUAWHBhot4m9MHCM/Z+mfWhUkiA==
 
+immer@^9.0.6:
+  version "9.0.21"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.21.tgz#1e025ea31a40f24fb064f1fef23e931496330176"
+  integrity sha512-bc4NBHqOqSfRW7POMkHd51LvClaeMXpm8dx0e8oE2GORbq5aRK7Bxl4FyzVLdGtLmvLKL7BTDBG5ACQm4HWjTA==
+
 immutable@~3.7.6:
   version "3.7.6"
   resolved "https://registry.npmjs.org/immutable/-/immutable-3.7.6.tgz"
@@ -12996,15 +13030,15 @@ nanoassert@^2.0.0:
   resolved "https://registry.yarnpkg.com/nanoassert/-/nanoassert-2.0.0.tgz#a05f86de6c7a51618038a620f88878ed1e490c09"
   integrity sha512-7vO7n28+aYO4J+8w96AzhmU8G+Y/xpPDJz/se19ICsqj/momRbb9mh9ZUtkoJ5X3nTnPdhEJyc0qnM6yAsHBaA==
 
+nanoid@^3.1.23, nanoid@^3.3.7:
+  version "3.3.11"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.11.tgz#4f4f112cefbe303202f2199838128936266d185b"
+  integrity sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==
+
 nanoid@^3.3.6, nanoid@^3.3.8:
   version "3.3.8"
   resolved "https://registry.npmjs.org/nanoid/-/nanoid-3.3.8.tgz"
   integrity sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w==
-
-nanoid@^3.3.7:
-  version "3.3.11"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.11.tgz#4f4f112cefbe303202f2199838128936266d185b"
-  integrity sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==
 
 napi-build-utils@^2.0.0:
   version "2.0.0"
@@ -14126,9 +14160,9 @@ prompts@2.4.2:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@15.x, prop-types@^15.7.2, prop-types@^15.8.1:
+prop-types@15.x, prop-types@^15.7.1, prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
-  resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
   dependencies:
     loose-envify "^1.4.0"
@@ -14442,6 +14476,14 @@ rc@^1.2.7:
     ini "~1.3.0"
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
+
+react-contenteditable@^3.3.3:
+  version "3.3.7"
+  resolved "https://registry.yarnpkg.com/react-contenteditable/-/react-contenteditable-3.3.7.tgz#18dd1f281841ba2c2b306e2d28278bc31b7929ed"
+  integrity sha512-GA9NbC0DkDdpN3iGvib/OMHWTJzDX2cfkgy5Tt98JJAbA3kLnyrNbBIpsSpPpq7T8d3scD39DHP+j8mAM7BIfQ==
+  dependencies:
+    fast-deep-equal "^3.1.3"
+    prop-types "^15.7.1"
 
 react-device-detect@^2.2.3:
   version "2.2.3"
@@ -16000,7 +16042,7 @@ tiny-invariant@1.2.0:
   resolved "https://registry.yarnpkg.com/tiny-invariant/-/tiny-invariant-1.2.0.tgz#a1141f86b672a9148c72e978a19a73b9b94a15a9"
   integrity sha512-1Uhn/aqw5C6RI4KejVeTg6mIS7IqxnLJ8Mv2tV5rTc0qWobay7pDUz6Wi392Cnc8ak1H0F2cjoRzb2/AW4+Fvg==
 
-tiny-invariant@^1.3.3:
+tiny-invariant@^1.0.6, tiny-invariant@^1.3.3:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/tiny-invariant/-/tiny-invariant-1.3.3.tgz#46680b7a873a0d5d10005995eb90a70d74d60127"
   integrity sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==
