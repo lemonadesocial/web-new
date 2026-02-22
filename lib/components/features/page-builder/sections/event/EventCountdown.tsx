@@ -39,7 +39,7 @@ function padTwo(n: number): string {
   return String(n).padStart(2, '0');
 }
 
-function _EventCountdown({
+function EventCountdownInner({
   width,
   padding,
   alignment,
@@ -52,7 +52,7 @@ function _EventCountdown({
   show_minutes,
   show_seconds,
   expired_text,
-  ...rest
+  ..._rest
 }: Record<string, unknown> & {
   width?: SectionWidth;
   padding?: SectionPadding;
@@ -146,7 +146,7 @@ function _EventCountdown({
   );
 }
 
-export const EventCountdown = React.memo(_EventCountdown);
+export const EventCountdown = React.memo(EventCountdownInner);
 EventCountdown.craft = {
   displayName: 'EventCountdown',
   props: {

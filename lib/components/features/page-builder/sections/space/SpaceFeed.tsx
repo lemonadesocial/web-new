@@ -2,7 +2,6 @@
 
 import React from 'react';
 
-import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
 import type {
   SectionWidth,

@@ -16,7 +16,6 @@ import { DEFAULT_SECTION_LAYOUT } from './types';
 import type {
   SectionCategory,
   SectionCatalogItem,
-  SectionType,
   SubscriptionTier,
 } from './types';
 

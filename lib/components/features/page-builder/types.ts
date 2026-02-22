@@ -327,21 +327,16 @@ export interface SpaceAsset {
   description?: string;
 }
 
-export interface StockPhotoAttribution {
-  photographer: string;
-  source: string;
-  source_url: string;
-  license: string;
-}
-
 export interface StockPhoto {
   id: string;
   url: string;
   thumbnail_url: string;
   width: number;
   height: number;
-  description?: string;
-  attribution: StockPhotoAttribution;
+  alt_text?: string;
+  photographer?: string;
+  photographer_url?: string;
+  source?: string;
 }
 
 // --- Editor State Types ---

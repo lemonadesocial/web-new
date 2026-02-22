@@ -10,7 +10,7 @@ import type {
   SectionBackground,
 } from '../../types';
 
-function _EventHero({
+function EventHeroInner({
   width,
   padding,
   alignment,
@@ -25,7 +25,7 @@ function _EventHero({
   cta_url,
   show_date,
   show_location,
-  ...rest
+  ..._rest
 }: Record<string, unknown> & {
   width?: SectionWidth;
   padding?: SectionPadding;
@@ -157,7 +157,7 @@ function _EventHero({
   );
 }
 
-export const EventHero = React.memo(_EventHero);
+export const EventHero = React.memo(EventHeroInner);
 EventHero.craft = {
   displayName: 'EventHero',
   props: {

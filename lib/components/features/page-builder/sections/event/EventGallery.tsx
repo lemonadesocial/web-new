@@ -16,7 +16,7 @@ interface GalleryImage {
   caption?: string;
 }
 
-function _EventGallery({
+function EventGalleryInner({
   width,
   padding,
   alignment,
@@ -26,7 +26,7 @@ function _EventGallery({
   images,
   columns,
   aspect_ratio,
-  ...rest
+  ..._rest
 }: Record<string, unknown> & {
   width?: SectionWidth;
   padding?: SectionPadding;
@@ -130,7 +130,7 @@ function _EventGallery({
   );
 }
 
-export const EventGallery = React.memo(_EventGallery);
+export const EventGallery = React.memo(EventGalleryInner);
 EventGallery.craft = {
   displayName: 'EventGallery',
   props: {

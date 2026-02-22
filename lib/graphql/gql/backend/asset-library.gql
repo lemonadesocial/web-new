@@ -1,4 +1,4 @@
-fragment SpaceAsset on File {
+fragment SpaceAssetFields on FileBase {
   _id
   stamp
   state
@@ -11,45 +11,38 @@ fragment SpaceAsset on File {
   description
 }
 
-fragment StockPhotoAttribution on StockPhotoAttribution {
-  photographer
-  source
-  source_url
-  license
-}
-
-fragment StockPhoto on StockPhoto {
+fragment StockPhotoFields on StockPhoto {
   id
   url
   thumbnail_url
   width
   height
-  description
-  attribution {
-    ...StockPhotoAttribution
-  }
+  alt_text
+  photographer
+  photographer_url
+  source
 }
 
 # Queries
 
-query ListSpaceAssets($spaceId: ID!, $limit: Int, $offset: Int) {
-  listSpaceAssets(spaceId: $spaceId, limit: $limit, offset: $offset) {
-    ...SpaceAsset
+query ListSpaceAssets($space_id: MongoID!, $limit: Int, $offset: Int) {
+  listSpaceAssets(space_id: $space_id, limit: $limit, offset: $offset) {
+    ...SpaceAssetFields
   }
 }
 
-query SearchStockPhotos($query: String!, $source: StockPhotoSource, $page: Int, $perPage: Int) {
-  searchStockPhotos(query: $query, source: $source, page: $page, perPage: $perPage) {
-    ...StockPhoto
+query SearchStockPhotos($query: String!, $source: StockPhotoSource, $page: Int, $per_page: Int) {
+  searchStockPhotos(query: $query, source: $source, page: $page, per_page: $per_page) {
+    ...StockPhotoFields
   }
 }
 
 # Mutations
 
-mutation AddSpaceAsset($spaceId: ID!, $fileId: ID!) {
-  addSpaceAsset(spaceId: $spaceId, fileId: $fileId)
+mutation AddSpaceAsset($space_id: MongoID!, $file_id: MongoID!) {
+  addSpaceAsset(space_id: $space_id, file_id: $file_id)
 }
 
-mutation DeleteSpaceAsset($spaceId: ID!, $fileId: ID!) {
-  deleteSpaceAsset(spaceId: $spaceId, fileId: $fileId)
+mutation DeleteSpaceAsset($space_id: MongoID!, $file_id: MongoID!) {
+  deleteSpaceAsset(space_id: $space_id, file_id: $file_id)
 }

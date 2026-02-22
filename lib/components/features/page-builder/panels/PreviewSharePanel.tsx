@@ -11,14 +11,11 @@ import { Pane } from '$lib/components/core/pane/pane';
 import { drawer } from '$lib/components/core/dialog';
 import { toast } from '$lib/components/core/toast';
 import { useMutation } from '$lib/graphql/request/hooks';
-import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import { GeneratePreviewLinkDocument } from '$lib/graphql/generated/backend/graphql';
 
 import { pageConfigAtom, configIdAtom, isDirtyAtom } from '../store';
 import type { PreviewLink, PreviewLinkResponse } from '../types';
 import { formatRelativeTime } from '../utils';
-import { GENERATE_PREVIEW_LINK } from '../queries';
-
-type AnyDocument = TypedDocumentNode<any, any>;
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -93,7 +90,7 @@ export function PreviewSharePanel() {
   const previewLinks = config?.preview_links ?? [];
 
   // -- Generate preview link --
-  const [generatePreviewLink, { loading: isGenerating }] = useMutation(GENERATE_PREVIEW_LINK as AnyDocument);
+  const [generatePreviewLink, { loading: isGenerating }] = useMutation(GeneratePreviewLinkDocument);
 
   const handleGenerate = async () => {
     if (!configId) {

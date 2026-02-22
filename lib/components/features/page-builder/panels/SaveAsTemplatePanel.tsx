@@ -9,13 +9,10 @@ import { InputField } from '$lib/components/core/input/input-field';
 import { drawer } from '$lib/components/core/dialog';
 import { toast } from '$lib/components/core/toast';
 import { useMutation } from '$lib/graphql/request/hooks';
-import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import { SaveConfigAsTemplateDocument } from '$lib/graphql/generated/backend/graphql';
 
 import { pageConfigAtom, configIdAtom, ownerTypeAtom } from '../store';
 import type { TemplateCategory, TemplateTarget, TemplateVisibility } from '../types';
-import { SAVE_CONFIG_AS_TEMPLATE } from '../queries';
-
-type AnyDocument = TypedDocumentNode<any, any>;
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -192,8 +189,10 @@ export function SaveAsTemplatePanel() {
   const [target, setTarget] = React.useState<TemplateTarget>(ownerType === 'space' ? 'space' : 'event');
   const [visibility, setVisibility] = React.useState<TemplateVisibility>('public');
   const [thumbnailUrl, setThumbnailUrl] = React.useState(config?.thumbnail_url ?? '');
+  const [previewUrls, setPreviewUrls] = React.useState<string[]>([]);
+  const [previewUrlInput, setPreviewUrlInput] = React.useState('');
   // --- Mutation ---
-  const [saveAsTemplate, { loading: isSaving }] = useMutation(SAVE_CONFIG_AS_TEMPLATE as AnyDocument);
+  const [saveAsTemplate, { loading: isSaving }] = useMutation(SaveConfigAsTemplateDocument);
 
   // --- Validation ---
   const isValid = name.trim().length > 0;
@@ -222,7 +221,7 @@ export function SaveAsTemplatePanel() {
             target,
             visibility,
             thumbnail_url: thumbnailUrl || undefined,
-            preview_urls: [],
+            preview_urls: previewUrls.length > 0 ? previewUrls : undefined,
           },
         },
       });
@@ -343,6 +342,67 @@ export function SaveAsTemplatePanel() {
           </div>
           <p className="text-xs text-tertiary">
             Leave blank to auto-generate from the current page design.
+          </p>
+        </div>
+
+        {/* Preview Screenshots */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-secondary">Preview Screenshots</label>
+          {previewUrls.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {previewUrls.map((url, i) => (
+                <div key={i} className="relative w-20 h-12 rounded-xs overflow-hidden bg-primary/4 group">
+                  <img
+                    src={url}
+                    alt={`Preview ${i + 1}`}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-0.5 right-0.5 p-0.5 rounded-xs bg-black/50 opacity-0 group-hover:opacity-100 transition cursor-pointer"
+                    onClick={() => setPreviewUrls((prev) => prev.filter((_, idx) => idx !== i))}
+                  >
+                    <i className="icon-x size-3 text-white" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <InputField
+                placeholder="https://example.com/preview.jpg"
+                value={previewUrlInput}
+                onChangeText={setPreviewUrlInput}
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  if (e.key === 'Enter' && previewUrlInput.trim()) {
+                    e.preventDefault();
+                    setPreviewUrls((prev) => [...prev, previewUrlInput.trim()]);
+                    setPreviewUrlInput('');
+                  }
+                }}
+                iconLeft="icon-image"
+              />
+            </div>
+            <Button
+              variant="tertiary-alt"
+              size="sm"
+              disabled={!previewUrlInput.trim()}
+              onClick={() => {
+                if (previewUrlInput.trim()) {
+                  setPreviewUrls((prev) => [...prev, previewUrlInput.trim()]);
+                  setPreviewUrlInput('');
+                }
+              }}
+            >
+              Add
+            </Button>
+          </div>
+          <p className="text-xs text-tertiary">
+            Add screenshot URLs to showcase different views of your template.
           </p>
         </div>
 

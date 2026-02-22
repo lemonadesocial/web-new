@@ -35,7 +35,7 @@ function logoSizeForTier(tierName: string): string {
   return TIER_SIZE_MAP[key] || 'h-12 sm:h-14';
 }
 
-function _EventSponsors({
+function EventSponsorsInner({
   width,
   padding,
   alignment,
@@ -44,7 +44,7 @@ function _EventSponsors({
   heading,
   tiers,
   show_tier_labels,
-  ...rest
+  ..._rest
 }: Record<string, unknown> & {
   width?: SectionWidth;
   padding?: SectionPadding;
@@ -158,7 +158,7 @@ function _EventSponsors({
   );
 }
 
-export const EventSponsors = React.memo(_EventSponsors);
+export const EventSponsors = React.memo(EventSponsorsInner);
 EventSponsors.craft = {
   displayName: 'EventSponsors',
   props: {

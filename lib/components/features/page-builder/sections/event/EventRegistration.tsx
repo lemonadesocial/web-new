@@ -19,7 +19,7 @@ interface TicketTier {
   sold_out?: boolean;
 }
 
-function _EventRegistration({
+function EventRegistrationInner({
   width,
   padding,
   alignment,
@@ -30,7 +30,7 @@ function _EventRegistration({
   tickets,
   show_prices,
   show_descriptions,
-  ...rest
+  ..._rest
 }: Record<string, unknown> & {
   width?: SectionWidth;
   padding?: SectionPadding;
@@ -186,7 +186,7 @@ function _EventRegistration({
   );
 }
 
-export const EventRegistration = React.memo(_EventRegistration);
+export const EventRegistration = React.memo(EventRegistrationInner);
 EventRegistration.craft = {
   displayName: 'EventRegistration',
   props: {

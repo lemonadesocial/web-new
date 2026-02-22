@@ -65,7 +65,7 @@ function _SpaceCoin({
   const hasDescription = description && description.trim().length > 0;
   const hasPrice = price && price.trim().length > 0;
   const hasMarketCap = market_cap && market_cap.trim().length > 0;
-  const hasAnyContent = hasCoinName || hasCoinSymbol || hasPrice;
+  const _hasAnyContent = hasCoinName || hasCoinSymbol || hasPrice;
 
   const isPositiveChange = price_change_24h > 0;
   const isNegativeChange = price_change_24h < 0;

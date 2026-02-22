@@ -1,8 +1,6 @@
 'use client';
 
 import React from 'react';
-import clsx from 'clsx';
-
 import { InputField } from '$lib/components/core/input/input-field';
 import { TextAreaField } from '$lib/components/core/input/textarea';
 import { Checkbox } from '$lib/components/core/input/checkbox';

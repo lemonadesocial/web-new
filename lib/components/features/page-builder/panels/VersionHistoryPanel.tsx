@@ -8,14 +8,15 @@ import { InputField } from '$lib/components/core/input/input-field';
 import { drawer } from '$lib/components/core/dialog';
 import { toast } from '$lib/components/core/toast';
 import { useQuery, useMutation } from '$lib/graphql/request/hooks';
-import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import {
+  ListConfigVersionsDocument,
+  SaveConfigVersionDocument,
+  RestoreConfigVersionDocument,
+} from '$lib/graphql/generated/backend/graphql';
 
 import { pageConfigAtom, configIdAtom, isDirtyAtom } from '../store';
 import type { ConfigVersion } from '../types';
-import { LIST_CONFIG_VERSIONS, SAVE_CONFIG_VERSION, RESTORE_CONFIG_VERSION } from '../queries';
 import { formatRelativeTime } from '../utils';
-
-type AnyDocument = TypedDocumentNode<any, any>;
 
 // ---------------------------------------------------------------------------
 // Sub-components
@@ -128,14 +129,14 @@ export function VersionHistoryPanel() {
 
   // --- Fetch versions ---
   const { data: versionsData, loading: isLoading, refetch: refetchVersions } = useQuery(
-    LIST_CONFIG_VERSIONS as AnyDocument,
+    ListConfigVersionsDocument,
     { variables: { configId }, skip: !configId },
   );
 
   const versions: ConfigVersion[] = versionsData?.listConfigVersions ?? [];
 
   // --- Save version ---
-  const [saveVersion, { loading: isSavingVersion }] = useMutation(SAVE_CONFIG_VERSION as AnyDocument);
+  const [saveVersion, { loading: isSavingVersion }] = useMutation(SaveConfigVersionDocument);
 
   const handleSaveVersion = async () => {
     if (!configId) {
@@ -160,7 +161,7 @@ export function VersionHistoryPanel() {
   };
 
   // --- Restore version ---
-  const [restoreVersion] = useMutation(RESTORE_CONFIG_VERSION as AnyDocument);
+  const [restoreVersion] = useMutation(RestoreConfigVersionDocument);
 
   const handleRestore = async (version: ConfigVersion) => {
     const confirmed = window.confirm(

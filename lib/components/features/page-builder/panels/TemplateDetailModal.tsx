@@ -1,8 +1,6 @@
 'use client';
 
 import React from 'react';
-import clsx from 'clsx';
-
 import { Button, Badge } from '$lib/components/core';
 
 import type { Template, TemplateChangelog } from '../types';
