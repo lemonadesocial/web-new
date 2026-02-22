@@ -9,13 +9,14 @@ import { InputField } from '$lib/components/core/input/input-field';
 import { drawer } from '$lib/components/core/dialog';
 import { toast } from '$lib/components/core/toast';
 import { useQuery, useMutation } from '$lib/graphql/request/hooks';
-import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import {
+  ListSpaceAssetsDocument,
+  SearchStockPhotosDocument,
+  DeleteSpaceAssetDocument,
+} from '$lib/graphql/generated/backend/graphql';
 
 import { ownerIdAtom } from '../store';
 import type { SpaceAsset, StockPhoto } from '../types';
-import { LIST_SPACE_ASSETS, SEARCH_STOCK_PHOTOS, DELETE_SPACE_ASSET } from '../queries';
-
-type AnyDocument = TypedDocumentNode<any, any>;
 
 // ---------------------------------------------------------------------------
 // Types
@@ -107,7 +108,7 @@ function StockPhotoCard({
     >
       <img
         src={photo.thumbnail_url}
-        alt={photo.description ?? 'Stock photo'}
+        alt={photo.alt_text ?? 'Stock photo'}
         className="w-full h-full object-cover"
         loading="lazy"
       />
@@ -115,7 +116,7 @@ function StockPhotoCard({
       {/* Attribution overlay on hover */}
       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-2 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
         <p className="text-[10px] text-white/80 truncate">
-          {photo.attribution.photographer} / {photo.attribution.source}
+          {photo.photographer} / {photo.source}
         </p>
       </div>
     </div>
@@ -148,16 +149,16 @@ export function AssetPanel() {
 
   // --- Load my assets ---
   const { data: assetsData, loading: isLoading, refetch: refetchAssets } = useQuery(
-    LIST_SPACE_ASSETS as AnyDocument,
-    { variables: { spaceId: ownerId }, skip: !ownerId },
+    ListSpaceAssetsDocument,
+    { variables: { space_id: ownerId }, skip: !ownerId },
   );
 
   const assets: SpaceAsset[] = assetsData?.listSpaceAssets ?? [];
 
   // --- Load stock photos ---
   const { data: stockData, loading: isSearching } = useQuery(
-    SEARCH_STOCK_PHOTOS as AnyDocument,
-    { variables: { query: searchQuery, perPage: 30 }, skip: !searchQuery },
+    SearchStockPhotosDocument,
+    { variables: { query: searchQuery, per_page: 30 }, skip: !searchQuery },
   );
 
   const stockPhotos: StockPhoto[] = stockData?.searchStockPhotos ?? [];
@@ -169,12 +170,12 @@ export function AssetPanel() {
     toast.success('Upload feature coming soon');
   };
 
-  const [deleteAsset] = useMutation(DELETE_SPACE_ASSET as AnyDocument);
+  const [deleteAsset] = useMutation(DeleteSpaceAssetDocument);
 
   const handleDeleteAsset = async (assetId: string) => {
     try {
       const { error } = await deleteAsset({
-        variables: { spaceId: ownerId, fileId: assetId },
+        variables: { space_id: ownerId, file_id: assetId },
       });
 
       if (error) throw error;

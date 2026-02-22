@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { useEditor } from '@craftjs/core';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 
-import { Button, drawer, toast } from '$lib/components/core';
+import { Button, drawer } from '$lib/components/core';
 import {
   activeRightPanelAtom,
   canRedoAtom,
@@ -14,7 +14,6 @@ import {
   isDirtyAtom,
   isPublishingAtom,
   isSavingAtom,
-  ownerTypeAtom,
   pageConfigAtom,
 } from './store';
 import type { RightPanelType } from './types';

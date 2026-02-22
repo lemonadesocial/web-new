@@ -20,7 +20,7 @@ interface AccordionPanelCanvasProps {
   children?: React.ReactNode;
 }
 
-function _AccordionPanelCanvas({ children }: AccordionPanelCanvasProps) {
+function AccordionPanelCanvasInner({ children }: AccordionPanelCanvasProps) {
   const {
     connectors: { connect },
   } = useSafeNode();
@@ -49,7 +49,7 @@ function _AccordionPanelCanvas({ children }: AccordionPanelCanvasProps) {
   );
 }
 
-export const AccordionPanelCanvas = React.memo(_AccordionPanelCanvas);
+export const AccordionPanelCanvas = React.memo(AccordionPanelCanvasInner);
 AccordionPanelCanvas.craft = {
   displayName: 'AccordionPanelCanvas',
   props: {},
@@ -97,7 +97,7 @@ interface AccordionContainerProps {
   allow_multiple_open?: boolean;
 }
 
-function _AccordionContainer({
+function AccordionContainerInner({
   width = 'contained',
   padding = 'md',
   alignment,
@@ -192,7 +192,7 @@ function _AccordionContainer({
   );
 }
 
-export const AccordionContainer = React.memo(_AccordionContainer);
+export const AccordionContainer = React.memo(AccordionContainerInner);
 AccordionContainer.craft = {
   displayName: 'AccordionContainer',
   props: {

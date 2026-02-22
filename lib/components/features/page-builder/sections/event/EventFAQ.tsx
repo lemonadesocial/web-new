@@ -15,7 +15,7 @@ interface FAQItem {
   answer: string;
 }
 
-function _EventFAQ({
+function EventFAQInner({
   width,
   padding,
   alignment,
@@ -24,7 +24,7 @@ function _EventFAQ({
   heading,
   faqs,
   allow_multiple_open,
-  ...rest
+  ..._rest
 }: Record<string, unknown> & {
   width?: SectionWidth;
   padding?: SectionPadding;
@@ -137,7 +137,7 @@ function _EventFAQ({
   );
 }
 
-export const EventFAQ = React.memo(_EventFAQ);
+export const EventFAQ = React.memo(EventFAQInner);
 EventFAQ.craft = {
   displayName: 'EventFAQ',
   props: {

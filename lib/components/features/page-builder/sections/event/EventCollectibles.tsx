@@ -32,7 +32,7 @@ function rarityClass(rarity?: string): string {
   return RARITY_STYLES[rarity.toLowerCase().trim()] || 'bg-primary/10 text-secondary';
 }
 
-function _EventCollectibles({
+function EventCollectiblesInner({
   width,
   padding,
   alignment,
@@ -42,7 +42,7 @@ function _EventCollectibles({
   description,
   collectibles,
   columns,
-  ...rest
+  ..._rest
 }: Record<string, unknown> & {
   width?: SectionWidth;
   padding?: SectionPadding;
@@ -182,7 +182,7 @@ function _EventCollectibles({
   );
 }
 
-export const EventCollectibles = React.memo(_EventCollectibles);
+export const EventCollectibles = React.memo(EventCollectiblesInner);
 EventCollectibles.craft = {
   displayName: 'EventCollectibles',
   props: {

@@ -19,7 +19,7 @@ interface Speaker {
   bio?: string;
 }
 
-function _EventSpeakers({
+function EventSpeakersInner({
   width,
   padding,
   alignment,
@@ -29,7 +29,7 @@ function _EventSpeakers({
   speakers,
   columns,
   show_bio,
-  ...rest
+  ..._rest
 }: Record<string, unknown> & {
   width?: SectionWidth;
   padding?: SectionPadding;
@@ -138,7 +138,7 @@ function _EventSpeakers({
   );
 }
 
-export const EventSpeakers = React.memo(_EventSpeakers);
+export const EventSpeakers = React.memo(EventSpeakersInner);
 EventSpeakers.craft = {
   displayName: 'EventSpeakers',
   props: {

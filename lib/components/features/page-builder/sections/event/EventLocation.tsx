@@ -11,7 +11,7 @@ import type {
   SectionBackground,
 } from '../../types';
 
-function _EventLocation({
+function EventLocationInner({
   width,
   padding,
   alignment,
@@ -24,7 +24,7 @@ function _EventLocation({
   description,
   map_embed_url,
   image_url,
-  ...rest
+  ..._rest
 }: Record<string, unknown> & {
   width?: SectionWidth;
   padding?: SectionPadding;
@@ -155,7 +155,7 @@ function _EventLocation({
   );
 }
 
-export const EventLocation = React.memo(_EventLocation);
+export const EventLocation = React.memo(EventLocationInner);
 EventLocation.craft = {
   displayName: 'EventLocation',
   props: {

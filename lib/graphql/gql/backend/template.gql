@@ -1,20 +1,18 @@
-fragment TemplateChangelog on TemplateChangelog {
+fragment TemplateChangelogFields on TemplateChangelog {
   version
   date
   summary
   breaking_changes
 }
 
-fragment Template on Template {
+fragment TemplateFields on Template {
   _id
   name
   slug
   description
   category
   tags
-  config {
-    ...PageConfig
-  }
+  config
   thumbnail_url
   preview_urls
   preview_video_url
@@ -32,39 +30,57 @@ fragment Template on Template {
   rating_count
   version
   changelog {
-    ...TemplateChangelog
+    ...TemplateChangelogFields
   }
-  created_at
-  updated_at
   published_at
+  featured
+  review_status
+  review_notes
 }
 
-fragment TemplateUpdateInfo on TemplateUpdateInfo {
-  has_update
+fragment TemplateUpdateInfoFields on TemplateUpdateInfo {
+  available
   current_version
   latest_version
-  changelog {
-    ...TemplateChangelog
-  }
+  changelog_summary
+  breaking_changes
 }
 
 # Queries
 
-query ListTemplates($filters: ListTemplatesArgs) {
-  listTemplates(filters: $filters) {
-    ...Template
+query ListTemplates(
+  $skip: Int
+  $limit: Int
+  $category: String
+  $target: String
+  $tier_max: String
+  $search: String
+  $featured: Boolean
+  $creator_id: MongoID
+) {
+  listTemplates(
+    skip: $skip
+    limit: $limit
+    category: $category
+    target: $target
+    tier_max: $tier_max
+    search: $search
+    featured: $featured
+    creator_id: $creator_id
+  ) {
+    ...TemplateFields
   }
 }
 
-query GetTemplate($id: ID!) {
+query GetTemplate($id: MongoID!) {
   getTemplate(id: $id) {
-    ...Template
+    ...TemplateFields
   }
 }
 
-query CheckTemplateUpdate($configId: ID!) {
-  checkTemplateUpdate(configId: $configId) {
-    ...TemplateUpdateInfo
+query CheckTemplateUpdate($config_id: MongoID!) {
+  checkTemplateUpdate(config_id: $config_id) {
+    ...TemplateUpdateInfoFields
   }
 }
 
@@ -72,66 +88,60 @@ query CheckTemplateUpdate($configId: ID!) {
 
 mutation CreateTemplate($input: CreateTemplateInput!) {
   createTemplate(input: $input) {
-    ...Template
+    ...TemplateFields
   }
 }
 
-mutation UpdateTemplate($id: ID!, $input: UpdateTemplateInput!) {
+mutation UpdateTemplate($id: MongoID!, $input: UpdateTemplateInput!) {
   updateTemplate(id: $id, input: $input) {
-    ...Template
+    ...TemplateFields
   }
 }
 
-mutation PublishTemplate($id: ID!) {
+mutation PublishTemplate($id: MongoID!) {
   publishTemplate(id: $id) {
-    ...Template
+    ...TemplateFields
   }
 }
 
-mutation ArchiveTemplate($id: ID!) {
+mutation ArchiveTemplate($id: MongoID!) {
   archiveTemplate(id: $id) {
-    ...Template
+    ...TemplateFields
   }
 }
 
-mutation CloneTemplateToConfig($templateId: ID!, $ownerType: String!, $ownerId: ID!) {
-  cloneTemplateToConfig(templateId: $templateId, ownerType: $ownerType, ownerId: $ownerId) {
-    ...PageConfig
+mutation CloneTemplateToConfig($template_id: MongoID!, $owner_type: String!, $owner_id: MongoID!) {
+  cloneTemplateToConfig(template_id: $template_id, owner_type: $owner_type, owner_id: $owner_id) {
+    ...PageConfigFields
   }
 }
 
-mutation SaveConfigAsTemplate($configId: ID!, $input: SaveAsTemplateInput!) {
-  saveConfigAsTemplate(configId: $configId, input: $input) {
-    ...Template
+mutation SaveConfigAsTemplate($config_id: MongoID!, $input: SaveAsTemplateInput!) {
+  saveConfigAsTemplate(config_id: $config_id, input: $input) {
+    ...TemplateFields
   }
 }
 
-mutation PublishTemplateUpdate($templateId: ID!, $input: TemplateUpdateInput!) {
-  publishTemplateUpdate(templateId: $templateId, input: $input) {
-    ...Template
+mutation PublishTemplateUpdate($template_id: MongoID!, $input: TemplateUpdateInput!) {
+  publishTemplateUpdate(template_id: $template_id, input: $input) {
+    ...TemplateFields
   }
 }
 
-mutation ApplyTemplateUpdate($configId: ID!) {
-  applyTemplateUpdate(configId: $configId) {
-    ...PageConfig
+mutation ApplyTemplateUpdate($config_id: MongoID!) {
+  applyTemplateUpdate(config_id: $config_id) {
+    ...PageConfigFields
   }
 }
 
-mutation ApproveTemplate($id: ID!) {
-  approveTemplate(id: $id) {
-    ...Template
+mutation ReviewTemplate($template_id: MongoID!, $status: String!, $notes: String) {
+  reviewTemplate(template_id: $template_id, status: $status, notes: $notes) {
+    ...TemplateFields
   }
 }
 
-mutation RejectTemplate($id: ID!, $reason: String!) {
-  rejectTemplate(id: $id, reason: $reason) {
-    ...Template
-  }
-}
-
-mutation FeatureTemplate($id: ID!, $featured: Boolean!) {
-  featureTemplate(id: $id, featured: $featured) {
-    ...Template
+mutation FeatureTemplate($template_id: MongoID!, $featured: Boolean!) {
+  featureTemplate(template_id: $template_id, featured: $featured) {
+    ...TemplateFields
   }
 }

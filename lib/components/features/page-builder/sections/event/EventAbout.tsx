@@ -11,7 +11,7 @@ import type {
   SectionBackground,
 } from '../../types';
 
-function _EventAbout({
+function EventAboutInner({
   width,
   padding,
   alignment,
@@ -22,7 +22,7 @@ function _EventAbout({
   image_url,
   image_position,
   show_image,
-  ...rest
+  ..._rest
 }: Record<string, unknown> & {
   width?: SectionWidth;
   padding?: SectionPadding;
@@ -129,7 +129,7 @@ function _EventAbout({
   );
 }
 
-export const EventAbout = React.memo(_EventAbout);
+export const EventAbout = React.memo(EventAboutInner);
 EventAbout.craft = {
   displayName: 'EventAbout',
   props: {

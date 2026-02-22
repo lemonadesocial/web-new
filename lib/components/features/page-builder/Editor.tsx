@@ -4,10 +4,15 @@ import React from 'react';
 import { Editor as CraftEditor, useEditor } from '@craftjs/core';
 import { useSetAtom, useAtomValue } from 'jotai';
 import debounce from 'lodash/debounce';
-import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
-
 import { toast, drawer } from '$lib/components/core';
 import { useMutation } from '$lib/graphql/request/hooks';
+import {
+  AcquireConfigLockDocument,
+  HeartbeatConfigLockDocument,
+  ReleaseConfigLockDocument,
+  UpdatePageConfigDocument,
+  PublishPageConfigDocument,
+} from '$lib/graphql/generated/backend/graphql';
 
 import { sectionResolver } from './sections/resolver';
 import { setEditorConnectors, setEditorActions, setNodeInfoReader } from './utils/use-safe-editor';
@@ -35,22 +40,10 @@ import { TopToolbar } from './TopToolbar';
 import { Canvas } from './Canvas';
 import { BottomBar } from './BottomBar';
 import { PropsPanel } from './PropsPanel';
-import {
-  ACQUIRE_CONFIG_LOCK,
-  HEARTBEAT_CONFIG_LOCK,
-  RELEASE_CONFIG_LOCK,
-  UPDATE_PAGE_CONFIG,
-  PUBLISH_PAGE_CONFIG,
-} from './queries';
 
 // ── Constants ──
 
 const LOCK_HEARTBEAT_INTERVAL_MS = 60_000; // 60 seconds
-
-// Cast helper — raw gql templates are DocumentNode, not TypedDocumentNode.
-// This cast is safe at runtime; full type safety comes after codegen (Priority 4).
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyDocument = TypedDocumentNode<any, any>;
 
 // ── Props ──
 
@@ -100,9 +93,9 @@ export function PageBuilderEditor({
   }, [config, ownerType, ownerId, setConfigId, setOwnerType, setOwnerId, setPageConfig, setIsDirty]);
 
   // ── Lock lifecycle ──
-  const [acquireLock] = useMutation(ACQUIRE_CONFIG_LOCK as AnyDocument);
-  const [heartbeatLock] = useMutation(HEARTBEAT_CONFIG_LOCK as AnyDocument);
-  const [releaseLock] = useMutation(RELEASE_CONFIG_LOCK as AnyDocument);
+  const [acquireLock] = useMutation(AcquireConfigLockDocument);
+  const [heartbeatLock] = useMutation(HeartbeatConfigLockDocument);
+  const [releaseLock] = useMutation(ReleaseConfigLockDocument);
 
   const acquireLockRef = React.useRef(acquireLock);
   acquireLockRef.current = acquireLock;
@@ -194,7 +187,7 @@ export function PageBuilderEditor({
 // ---------------------------------------------------------------------------
 
 function EditorInner({
-  config,
+  config: _config,
   entityName,
   backHref,
   initialCraftState,
@@ -212,8 +205,8 @@ function EditorInner({
   const pageConfig = useAtomValue(pageConfigAtom);
 
   // Mutations
-  const [updateConfig] = useMutation(UPDATE_PAGE_CONFIG as AnyDocument);
-  const [publishConfig] = useMutation(PUBLISH_PAGE_CONFIG as AnyDocument);
+  const [updateConfig] = useMutation(UpdatePageConfigDocument);
+  const [publishConfig] = useMutation(PublishPageConfigDocument);
 
   // ── Extract current Craft.js state as PageConfig ──
   const extractPageConfig = React.useCallback((): PageConfig | null => {
@@ -344,7 +337,7 @@ function CraftStateWatcher() {
   const isInitialized = React.useRef(false);
 
   // Split selectors to avoid cross-concern re-render cascades
-  const { canUndo, canRedo } = useEditor((state, query) => ({
+  const { canUndo, canRedo } = useEditor((_state, query) => ({
     canUndo: query.history.canUndo(),
     canRedo: query.history.canRedo(),
   }));

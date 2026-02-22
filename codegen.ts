@@ -4,9 +4,13 @@ import { Types } from '@graphql-codegen/plugin-helpers';
 
 import { addTypenameSelectionDocumentTransform } from '@graphql-codegen/client-preset';
 
+const BACKEND_SCHEMA =
+  process.env.NEXT_PUBLIC_GRAPHQL_URL ||
+  process.env.LOCAL_BACKEND_SCHEMA;
+
 let generates: Record<string, Types.ConfiguredOutput | Types.ConfiguredPlugin[]> = {
   './lib/graphql/generated/backend/': {
-    schema: process.env.NEXT_PUBLIC_GRAPHQL_URL,
+    schema: BACKEND_SCHEMA,
     documents: ['./lib/graphql/gql/backend/*.gql'],
     preset: 'client',
     plugins: [],
@@ -79,13 +83,16 @@ if (COIN_INDEXER) {
 //   };
 // }
 
-generates['./lib/graphql/generated/ai/'] = {
-  schema: process.env.NEXT_PUBLIC_AI_API_HTTP,
-  documents: ['./lib/graphql/gql/ai/*.gql'],
-  preset: 'client',
-  plugins: [],
-  documentTransforms: [addTypenameSelectionDocumentTransform],
-};
+const AI_SCHEMA = process.env.NEXT_PUBLIC_AI_API_HTTP;
+if (AI_SCHEMA) {
+  generates['./lib/graphql/generated/ai/'] = {
+    schema: AI_SCHEMA,
+    documents: ['./lib/graphql/gql/ai/*.gql'],
+    preset: 'client',
+    plugins: [],
+    documentTransforms: [addTypenameSelectionDocumentTransform],
+  };
+}
 
 const config: CodegenConfig = {
   ignoreNoDocuments: true,

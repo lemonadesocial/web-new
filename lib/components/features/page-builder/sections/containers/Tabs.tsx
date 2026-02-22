@@ -20,7 +20,7 @@ interface TabCanvasProps {
   children?: React.ReactNode;
 }
 
-function _TabCanvas({ children }: TabCanvasProps) {
+function TabCanvasInner({ children }: TabCanvasProps) {
   const {
     connectors: { connect },
   } = useSafeNode();
@@ -49,7 +49,7 @@ function _TabCanvas({ children }: TabCanvasProps) {
   );
 }
 
-export const TabCanvas = React.memo(_TabCanvas);
+export const TabCanvas = React.memo(TabCanvasInner);
 TabCanvas.craft = {
   displayName: 'TabCanvas',
   props: {},
@@ -76,7 +76,7 @@ interface TabsProps {
   active_tab?: number;
 }
 
-function _Tabs({
+function TabsInner({
   width = 'contained',
   padding = 'md',
   alignment,
@@ -153,7 +153,7 @@ function _Tabs({
   );
 }
 
-export const Tabs = React.memo(_Tabs);
+export const Tabs = React.memo(TabsInner);
 Tabs.craft = {
   displayName: 'Tabs',
   props: {

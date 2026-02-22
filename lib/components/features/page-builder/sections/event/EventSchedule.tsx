@@ -19,7 +19,7 @@ interface ScheduleSession {
   speaker_names?: string[];
 }
 
-function _EventSchedule({
+function EventScheduleInner({
   width,
   padding,
   alignment,
@@ -29,7 +29,7 @@ function _EventSchedule({
   sessions,
   show_descriptions,
   group_by_stage,
-  ...rest
+  ..._rest
 }: Record<string, unknown> & {
   width?: SectionWidth;
   padding?: SectionPadding;
@@ -182,7 +182,7 @@ function _EventSchedule({
   );
 }
 
-export const EventSchedule = React.memo(_EventSchedule);
+export const EventSchedule = React.memo(EventScheduleInner);
 EventSchedule.craft = {
   displayName: 'EventSchedule',
   props: {

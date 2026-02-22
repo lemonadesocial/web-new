@@ -1,4 +1,4 @@
-fragment PageConfigTheme on PageConfigTheme {
+fragment PageThemeFields on PageTheme {
   mode
   type
   colors {
@@ -8,6 +8,7 @@ fragment PageConfigTheme on PageConfigTheme {
     text_primary
     text_secondary
     border
+    extra
   }
   fonts {
     title {
@@ -36,7 +37,7 @@ fragment PageConfigTheme on PageConfigTheme {
   css_variables
 }
 
-fragment PageConfigSection on PageConfigSection {
+fragment PageSectionFields on PageSection {
   id
   type
   order
@@ -82,7 +83,7 @@ fragment PageConfigSection on PageConfigSection {
   craft_node_id
 }
 
-fragment PageConfig on PageConfig {
+fragment PageConfigFields on PageConfig {
   _id
   owner_type
   owner_id
@@ -92,10 +93,10 @@ fragment PageConfig on PageConfig {
   version
   published_version
   theme {
-    ...PageConfigTheme
+    ...PageThemeFields
   }
   sections {
-    ...PageConfigSection
+    ...PageSectionFields
   }
   custom_code {
     css
@@ -135,87 +136,82 @@ fragment PageConfig on PageConfig {
   locked_by
   locked_at
   last_edited_by
-  created_at
-  updated_at
 }
 
-fragment ConfigVersion on ConfigVersion {
+fragment ConfigVersionFields on ConfigVersion {
   _id
   config_id
   version
-  snapshot {
-    ...PageConfig
-  }
+  snapshot
   change_summary
   created_by
-  created_at
 }
 
-fragment LockResult on LockResult {
+fragment LockResultFields on LockResult {
   success
   locked_by
   locked_at
   message
 }
 
-fragment PreviewLinkResponse on PreviewLinkResponse {
+fragment PreviewLinkResponseFields on PreviewLinkResponse {
   id
   token
   url
   expires_at
 }
 
-fragment SectionCatalogItem on SectionCatalogItem {
+fragment SectionCatalogItemFields on SectionCatalogItem {
   type
   name
   description
   category
-  tier_required
+  supports_children
+  default_props
 }
 
-fragment AISuggestedSection on AISuggestedSection {
+fragment AISuggestedSectionFields on AISuggestedSection {
   type
   name
-  description
-  props
-  layout
+  reason
+  default_props
 }
 
 # Queries
 
-query GetPageConfig($id: ID!) {
+query GetPageConfig($id: MongoID!) {
   getPageConfig(id: $id) {
-    ...PageConfig
+    ...PageConfigFields
   }
 }
 
-query GetPublishedConfig($ownerType: String!, $ownerId: ID!) {
-  getPublishedConfig(ownerType: $ownerType, ownerId: $ownerId) {
-    ...PageConfig
+query GetPublishedConfig($owner_type: String!, $owner_id: MongoID!) {
+  getPublishedConfig(owner_type: $owner_type, owner_id: $owner_id) {
+    ...PageConfigFields
   }
 }
 
-query ListConfigVersions($configId: ID!) {
-  listConfigVersions(configId: $configId) {
-    ...ConfigVersion
+query ListConfigVersions($config_id: MongoID!) {
+  listConfigVersions(config_id: $config_id) {
+    ...ConfigVersionFields
   }
 }
 
-query ValidatePreviewLink($configId: ID!, $token: String!, $password: String) {
-  validatePreviewLink(configId: $configId, token: $token, password: $password) {
-    ...PageConfig
+query ValidatePreviewLink($config_id: MongoID!, $token: String!, $password: String) {
+  validatePreviewLink(config_id: $config_id, token: $token, password: $password) {
+    ...PageConfigFields
   }
 }
 
 query GetSectionCatalog {
   getSectionCatalog {
-    ...SectionCatalogItem
+    ...SectionCatalogItemFields
   }
 }
 
-query AiSuggestSections($ownerType: String!, $ownerId: ID!, $description: String) {
-  aiSuggestSections(ownerType: $ownerType, ownerId: $ownerId, description: $description) {
-    ...AISuggestedSection
+query AiSuggestSections($owner_type: String!, $owner_id: MongoID!, $context: String) {
+  aiSuggestSections(owner_type: $owner_type, owner_id: $owner_id, context: $context) {
+    ...AISuggestedSectionFields
   }
 }
 
@@ -223,57 +219,57 @@ query AiSuggestSections($ownerType: String!, $ownerId: ID!, $description: String
 
 mutation CreatePageConfig($input: CreatePageConfigInput!) {
   createPageConfig(input: $input) {
-    ...PageConfig
+    ...PageConfigFields
   }
 }
 
-mutation UpdatePageConfig($id: ID!, $input: UpdatePageConfigInput!) {
+mutation UpdatePageConfig($id: MongoID!, $input: UpdatePageConfigInput!) {
   updatePageConfig(id: $id, input: $input) {
-    ...PageConfig
+    ...PageConfigFields
   }
 }
 
-mutation PublishPageConfig($id: ID!) {
+mutation PublishPageConfig($id: MongoID!) {
   publishPageConfig(id: $id) {
-    ...PageConfig
+    ...PageConfigFields
   }
 }
 
-mutation ArchivePageConfig($id: ID!) {
+mutation ArchivePageConfig($id: MongoID!) {
   archivePageConfig(id: $id) {
-    ...PageConfig
+    ...PageConfigFields
   }
 }
 
-mutation SaveConfigVersion($configId: ID!, $changeSummary: String) {
-  saveConfigVersion(configId: $configId, changeSummary: $changeSummary) {
-    ...ConfigVersion
+mutation SaveConfigVersion($config_id: MongoID!, $name: String) {
+  saveConfigVersion(config_id: $config_id, name: $name) {
+    ...ConfigVersionFields
   }
 }
 
-mutation RestoreConfigVersion($configId: ID!, $version: Int!) {
-  restoreConfigVersion(configId: $configId, version: $version) {
-    ...PageConfig
+mutation RestoreConfigVersion($config_id: MongoID!, $version: Float!) {
+  restoreConfigVersion(config_id: $config_id, version: $version) {
+    ...PageConfigFields
   }
 }
 
-mutation AcquireConfigLock($configId: ID!) {
-  acquireConfigLock(configId: $configId) {
-    ...LockResult
+mutation AcquireConfigLock($config_id: MongoID!) {
+  acquireConfigLock(config_id: $config_id) {
+    ...LockResultFields
   }
 }
 
-mutation ReleaseConfigLock($configId: ID!) {
-  releaseConfigLock(configId: $configId)
+mutation ReleaseConfigLock($config_id: MongoID!) {
+  releaseConfigLock(config_id: $config_id)
 }
 
-mutation HeartbeatConfigLock($configId: ID!) {
-  heartbeatConfigLock(configId: $configId)
+mutation HeartbeatConfigLock($config_id: MongoID!) {
+  heartbeatConfigLock(config_id: $config_id)
 }
 
-mutation GeneratePreviewLink($configId: ID!, $password: String, $expiresInHours: Float) {
-  generatePreviewLink(configId: $configId, password: $password, expiresInHours: $expiresInHours) {
-    ...PreviewLinkResponse
+mutation GeneratePreviewLink($config_id: MongoID!, $options: PreviewLinkOptionsInput) {
+  generatePreviewLink(config_id: $config_id, options: $options) {
+    ...PreviewLinkResponseFields
   }
 }
 
@@ -281,18 +277,18 @@ mutation GeneratePreviewLink($configId: ID!, $password: String, $expiresInHours:
 
 mutation AiCreatePageConfig($input: AICreatePageConfigInput!) {
   aiCreatePageConfig(input: $input) {
-    ...PageConfig
+    ...PageConfigFields
   }
 }
 
-mutation AiUpdatePageConfigSection($configId: ID!, $sectionIndex: Int!, $input: AIUpdatePageConfigSectionInput!) {
-  aiUpdatePageConfigSection(configId: $configId, sectionIndex: $sectionIndex, input: $input) {
-    ...PageConfigSection
+mutation AiUpdatePageConfigSection($config_id: MongoID!, $section_id: String!, $input: AIUpdatePageConfigSectionInput!) {
+  aiUpdatePageConfigSection(config_id: $config_id, section_id: $section_id, input: $input) {
+    ...PageConfigFields
   }
 }
 
-mutation AiGeneratePageFromDescription($description: String!, $ownerType: String!, $ownerId: ID!) {
-  aiGeneratePageFromDescription(description: $description, ownerType: $ownerType, ownerId: $ownerId) {
-    ...PageConfig
+mutation AiGeneratePageFromDescription($input: AIGeneratePageInput!) {
+  aiGeneratePageFromDescription(input: $input) {
+    ...PageConfigFields
   }
 }

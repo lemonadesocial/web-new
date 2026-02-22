@@ -137,9 +137,14 @@ export function SEOPanel() {
             value={metaTitle}
             onChangeText={(val) => updateSEO({ meta_title: val })}
           />
-          <p className={clsx('text-xs', getCharCountColor(metaTitle.length, META_TITLE_MAX))}>
-            {metaTitle.length}/{META_TITLE_MAX} characters
-          </p>
+          <div className="flex justify-between">
+            <p className="text-xs text-tertiary">
+              {!metaTitle && 'Auto-generated from event/space data if left blank'}
+            </p>
+            <p className={clsx('text-xs', getCharCountColor(metaTitle.length, META_TITLE_MAX))}>
+              {metaTitle.length}/{META_TITLE_MAX}
+            </p>
+          </div>
         </div>
 
         {/* Meta Description */}
@@ -154,9 +159,14 @@ export function SEOPanel() {
               rows={3}
             />
           </div>
-          <p className={clsx('text-xs', getCharCountColor(metaDescription.length, META_DESCRIPTION_MAX))}>
-            {metaDescription.length}/{META_DESCRIPTION_MAX} characters
-          </p>
+          <div className="flex justify-between">
+            <p className="text-xs text-tertiary">
+              {!metaDescription && 'Auto-generated from event/space data if left blank'}
+            </p>
+            <p className={clsx('text-xs', getCharCountColor(metaDescription.length, META_DESCRIPTION_MAX))}>
+              {metaDescription.length}/{META_DESCRIPTION_MAX}
+            </p>
+          </div>
         </div>
 
         {/* OG Image */}
@@ -184,6 +194,11 @@ export function SEOPanel() {
               </div>
             )}
           </div>
+          {!ogImageUrl && (
+            <p className="text-xs text-tertiary">
+              Auto-generated from event/space data if left blank
+            </p>
+          )}
         </div>
 
         {/* OG Type */}

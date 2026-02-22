@@ -9,13 +9,13 @@ import { InputField } from '$lib/components/core/input/input-field';
 import { drawer } from '$lib/components/core/dialog';
 import { toast } from '$lib/components/core/toast';
 import { useQuery, useMutation } from '$lib/graphql/request/hooks';
-import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import {
+  ListTemplatesDocument,
+  CloneTemplateToConfigDocument,
+} from '$lib/graphql/generated/backend/graphql';
 
 import { pageConfigAtom, isDirtyAtom, ownerTypeAtom, ownerIdAtom, configIdAtom } from '../store';
-import type { Template, TemplateCategory, TemplateTarget } from '../types';
-import { LIST_TEMPLATES, CLONE_TEMPLATE_TO_CONFIG } from '../queries';
-
-type AnyDocument = TypedDocumentNode<any, any>;
+import type { Template } from '../types';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -148,10 +148,10 @@ export function TemplatePanel() {
   const setIsDirty = useSetAtom(isDirtyAtom);
   const ownerType = useAtomValue(ownerTypeAtom);
   const ownerId = useAtomValue(ownerIdAtom);
-  const configId = useAtomValue(configIdAtom);
+  const _configId = useAtomValue(configIdAtom);
 
   // --- Fetch templates ---
-  const { data: templatesData, loading: isLoading } = useQuery(LIST_TEMPLATES as AnyDocument);
+  const { data: templatesData, loading: isLoading } = useQuery(ListTemplatesDocument);
 
   const templates: Template[] = templatesData?.listTemplates ?? [];
 
@@ -180,7 +180,7 @@ export function TemplatePanel() {
   }, [templates, selectedCategory, searchQuery]);
 
   // --- Apply template ---
-  const [cloneTemplate] = useMutation(CLONE_TEMPLATE_TO_CONFIG as AnyDocument);
+  const [cloneTemplate] = useMutation(CloneTemplateToConfigDocument);
 
   const handleApplyTemplate = async (template: Template) => {
     setApplyingId(template._id);

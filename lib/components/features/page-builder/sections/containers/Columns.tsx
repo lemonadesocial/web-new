@@ -30,7 +30,7 @@ interface ColumnCanvasProps {
   children?: React.ReactNode;
 }
 
-function _ColumnCanvas({ children }: ColumnCanvasProps) {
+function ColumnCanvasInner({ children }: ColumnCanvasProps) {
   const {
     connectors: { connect },
   } = useSafeNode();
@@ -57,7 +57,7 @@ function _ColumnCanvas({ children }: ColumnCanvasProps) {
   );
 }
 
-export const ColumnCanvas = React.memo(_ColumnCanvas);
+export const ColumnCanvas = React.memo(ColumnCanvasInner);
 ColumnCanvas.craft = {
   displayName: 'ColumnCanvas',
   props: {},
@@ -81,7 +81,7 @@ interface ColumnsProps {
   column_widths?: string;
 }
 
-function _Columns({
+function ColumnsInner({
   width = 'contained',
   padding = 'md',
   alignment,
@@ -126,7 +126,7 @@ function _Columns({
   );
 }
 
-export const Columns = React.memo(_Columns);
+export const Columns = React.memo(ColumnsInner);
 Columns.craft = {
   displayName: 'Columns',
   props: {

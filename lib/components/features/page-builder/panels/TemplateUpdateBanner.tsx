@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import clsx from 'clsx';
 import { useSetAtom } from 'jotai';
 
 import { Button } from '$lib/components/core';
@@ -89,7 +88,7 @@ function ChangelogList({ changelog }: { changelog: TemplateChangelog[] }) {
  * - "Dismiss" to hide for this session
  */
 export function TemplateUpdateBanner({ configId, templateId }: TemplateUpdateBannerProps) {
-  const setPageConfig = useSetAtom(pageConfigAtom);
+  const _setPageConfig = useSetAtom(pageConfigAtom);
   const setIsDirty = useSetAtom(isDirtyAtom);
 
   const [updateInfo, setUpdateInfo] = React.useState<TemplateUpdateInfo | null>(null);
