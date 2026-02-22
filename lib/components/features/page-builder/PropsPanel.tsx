@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useEditor } from '@craftjs/core';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import clsx from 'clsx';
 
@@ -11,11 +10,14 @@ import { Pane } from '$lib/components/core/pane/pane';
 import { drawer } from '$lib/components/core/dialog';
 
 import { selectedNodeIdAtom, pageConfigAtom, isDirtyAtom } from './store';
-import { getSectionLabel } from './sections/resolver';
+import { getSectionLabel, PASCAL_TO_SECTION_TYPE } from './sections/resolver';
+import { getEditorActions, getNodeInfo } from './utils/use-safe-editor';
+import { SectionPropsEditor } from './props-editors/SectionPropsEditor';
 import type {
   SectionAlignment,
   SectionLayout,
   SectionPadding,
+  SectionType,
   SectionWidth,
 } from './types';
 
@@ -33,22 +35,45 @@ const TABS: { value: PropsPanelTab; label: string }[] = [
  * PropsPanel — rendered inside a right drawer when a section node is
  * selected on the canvas.
  *
+ * Uses the editor bridge (use-safe-editor) instead of useEditor()
+ * since the drawer renders outside the Craft.js <Editor> context.
+ *
  * Three tabs:
- *  - Properties: section-specific fields (placeholder for now)
+ *  - Properties: section-specific fields driven by field-registry
  *  - Layout: width, padding, columns, alignment, background
  *  - Data Source: auto/manual toggle and field mapping
- *
- * All changes will update Craft.js node props via `useEditor().actions.setProp`
- * once Craft.js is integrated. Until then, a local state mirror is shown.
  */
 export function PropsPanel() {
   const [selectedNodeId, setSelectedNodeId] = useAtom(selectedNodeIdAtom);
   const config = useAtomValue(pageConfigAtom);
+  const setIsDirty = useSetAtom(isDirtyAtom);
   const [activeTab, setActiveTab] = React.useState<PropsPanelTab>('properties');
 
-  // Find the section data from the config
+  // Read node info from the bridge
+  const nodeInfo = selectedNodeId ? getNodeInfo(selectedNodeId) : null;
+
+  // Resolve section type from Craft.js node displayName
+  const sectionType: SectionType | null = nodeInfo?.displayName
+    ? PASCAL_TO_SECTION_TYPE[nodeInfo.displayName] ?? null
+    : null;
+
+  // Find the section data from the config (for layout tab)
   const section = config?.sections?.find((s) => s.id === selectedNodeId || s.craft_node_id === selectedNodeId);
-  const sectionLabel = section ? getSectionLabel(section.type) : 'Section';
+  const sectionLabel = sectionType ? getSectionLabel(sectionType) : 'Section';
+
+  /** Push a prop update to Craft.js via bridge and mark editor dirty */
+  const handleUpdateProp = React.useCallback(
+    (key: string, value: unknown) => {
+      const actions = getEditorActions();
+      if (selectedNodeId && actions) {
+        actions.setProp(selectedNodeId, (props: Record<string, unknown>) => {
+          props[key] = value;
+        });
+        setIsDirty(true);
+      }
+    },
+    [selectedNodeId, setIsDirty],
+  );
 
   const handleClose = () => {
     drawer.close();
@@ -85,8 +110,21 @@ export function PropsPanel() {
       </div>
 
       <Pane.Content className="p-4 overflow-auto">
-        {activeTab === 'properties' && <PropertiesTab section={section} />}
-        {activeTab === 'layout' && <LayoutTab key={selectedNodeId || 'none'} layout={section?.layout} />}
+        {activeTab === 'properties' && (
+          <PropertiesTab
+            key={selectedNodeId || 'none'}
+            sectionType={sectionType}
+            nodeProps={nodeInfo?.props ?? {}}
+            onUpdateProp={handleUpdateProp}
+          />
+        )}
+        {activeTab === 'layout' && (
+          <LayoutTab
+            key={selectedNodeId || 'none'}
+            layout={section?.layout}
+            onUpdateProp={handleUpdateProp}
+          />
+        )}
         {activeTab === 'data' && <DataSourceTab />}
       </Pane.Content>
     </Pane.Root>
@@ -95,8 +133,16 @@ export function PropsPanel() {
 
 // --- Properties Tab ---
 
-function PropertiesTab({ section }: { section?: { type: string; props: Record<string, unknown> } }) {
-  if (!section) {
+function PropertiesTab({
+  sectionType,
+  nodeProps,
+  onUpdateProp,
+}: {
+  sectionType: SectionType | null;
+  nodeProps: Record<string, unknown>;
+  onUpdateProp: (key: string, value: unknown) => void;
+}) {
+  if (!sectionType) {
     return (
       <div className="text-center py-8">
         <p className="text-sm text-tertiary">Select a section on the canvas to edit its properties.</p>
@@ -105,16 +151,11 @@ function PropertiesTab({ section }: { section?: { type: string; props: Record<st
   }
 
   return (
-    <div className="space-y-4">
-      <p className="text-xs text-tertiary">
-        Section-specific property editors will be rendered here based on the section type.
-      </p>
-      <div className="rounded-sm border border-card-border bg-primary/4 p-4">
-        <p className="text-xs font-mono text-tertiary break-all">
-          {JSON.stringify(section.props, null, 2)}
-        </p>
-      </div>
-    </div>
+    <SectionPropsEditor
+      sectionType={sectionType}
+      props={nodeProps}
+      onUpdateProp={onUpdateProp}
+    />
   );
 }
 
@@ -140,25 +181,17 @@ const ALIGNMENT_OPTIONS: { value: SectionAlignment; icon: string; label: string 
   { value: 'right', icon: 'icon-format-align-right', label: 'Right' },
 ];
 
-function LayoutTab({ layout }: { layout?: SectionLayout }) {
-  const { actions } = useEditor();
-  const selectedNodeId = useAtomValue(selectedNodeIdAtom);
-  const setIsDirty = useSetAtom(isDirtyAtom);
-
+function LayoutTab({
+  layout,
+  onUpdateProp,
+}: {
+  layout?: SectionLayout;
+  onUpdateProp: (key: string, value: unknown) => void;
+}) {
   const [width, setWidth] = React.useState<SectionWidth>(layout?.width ?? 'contained');
   const [padding, setPadding] = React.useState<SectionPadding>(layout?.padding ?? 'md');
   const [alignment, setAlignment] = React.useState<SectionAlignment>(layout?.alignment ?? 'center');
   const [columns, setColumns] = React.useState(layout?.columns ?? 1);
-
-  /** Push a prop update to Craft.js and mark editor dirty */
-  const updateProp = (key: string, value: unknown) => {
-    if (selectedNodeId) {
-      actions.setProp(selectedNodeId, (props: Record<string, unknown>) => {
-        props[key] = value;
-      });
-      setIsDirty(true);
-    }
-  };
 
   return (
     <div className="space-y-5">
@@ -175,7 +208,7 @@ function LayoutTab({ layout }: { layout?: SectionLayout }) {
                   ? 'bg-primary/12 text-primary'
                   : 'text-tertiary hover:bg-primary/4',
               )}
-              onClick={() => { setWidth(opt.value); updateProp('width', opt.value); }}
+              onClick={() => { setWidth(opt.value); onUpdateProp('width', opt.value); }}
             >
               {opt.label}
             </button>
@@ -196,7 +229,7 @@ function LayoutTab({ layout }: { layout?: SectionLayout }) {
                   ? 'bg-primary/12 text-primary'
                   : 'text-tertiary hover:bg-primary/4',
               )}
-              onClick={() => { setPadding(opt.value); updateProp('padding', opt.value); }}
+              onClick={() => { setPadding(opt.value); onUpdateProp('padding', opt.value); }}
             >
               {opt.label}
             </button>
@@ -217,7 +250,7 @@ function LayoutTab({ layout }: { layout?: SectionLayout }) {
                   ? 'bg-primary/12 text-primary'
                   : 'text-tertiary hover:bg-primary/4',
               )}
-              onClick={() => { setColumns(n as 1 | 2 | 3 | 4); updateProp('columns', n); }}
+              onClick={() => { setColumns(n as 1 | 2 | 3 | 4); onUpdateProp('columns', n); }}
             >
               {n}
             </button>
@@ -238,7 +271,7 @@ function LayoutTab({ layout }: { layout?: SectionLayout }) {
                   ? 'bg-primary/12 text-primary'
                   : 'text-tertiary hover:bg-primary/4',
               )}
-              onClick={() => { setAlignment(opt.value); updateProp('alignment', opt.value); }}
+              onClick={() => { setAlignment(opt.value); onUpdateProp('alignment', opt.value); }}
               title={opt.label}
             >
               <i className={clsx(opt.icon, 'size-4')} />
@@ -254,7 +287,7 @@ function LayoutTab({ layout }: { layout?: SectionLayout }) {
           placeholder="e.g. #1a1a1a or transparent"
           value={layout?.background?.value ?? ''}
           onChangeText={(text) => {
-            updateProp('background', { type: 'color', value: text });
+            onUpdateProp('background', { type: 'color', value: text });
           }}
         />
       </div>
@@ -266,7 +299,7 @@ function LayoutTab({ layout }: { layout?: SectionLayout }) {
           placeholder="e.g. 400px or auto"
           value={layout?.min_height ?? ''}
           onChangeText={(text) => {
-            updateProp('min_height', text);
+            onUpdateProp('min_height', text);
           }}
         />
       </div>
