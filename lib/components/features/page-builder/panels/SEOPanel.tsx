@@ -102,11 +102,38 @@ export function SEOPanel() {
 
       {/* --- Form Content --- */}
       <div className="flex-1 overflow-y-auto p-4 space-y-5">
+        {/* Auto-fill from page data */}
+        {(!metaTitle || !metaDescription) && (config?.name || config?.description) && (
+          <div className="rounded-sm border border-dashed border-card-border bg-primary/4 p-3 space-y-2">
+            <p className="text-xs text-secondary">
+              Auto-fill SEO fields from your page data?
+            </p>
+            <Button
+              variant="tertiary-alt"
+              size="xs"
+              onClick={() => {
+                const patch: Partial<SEOConfig> = {};
+                if (!metaTitle && config?.name) {
+                  patch.meta_title = config.name.slice(0, META_TITLE_MAX);
+                }
+                if (!metaDescription && config?.description) {
+                  patch.meta_description = config.description.slice(0, META_DESCRIPTION_MAX);
+                }
+                if (Object.keys(patch).length > 0) {
+                  updateSEO(patch);
+                }
+              }}
+            >
+              Auto-fill
+            </Button>
+          </div>
+        )}
+
         {/* Meta Title */}
         <div className="space-y-1.5">
           <label className="text-xs font-medium text-secondary">Meta Title</label>
           <InputField
-            placeholder="Enter page title for search engines..."
+            placeholder={config?.name || 'Enter page title for search engines...'}
             value={metaTitle}
             onChangeText={(val) => updateSEO({ meta_title: val })}
           />
@@ -121,7 +148,7 @@ export function SEOPanel() {
           <div className="space-y-1">
             <textarea
               className="w-full min-h-[72px] px-3 py-2 rounded-sm border border-card-border bg-primary/4 text-sm text-primary placeholder:text-tertiary resize-y focus:outline-none focus:border-primary/40 transition"
-              placeholder="Write a compelling description for search results..."
+              placeholder={config?.description || 'Write a compelling description for search results...'}
               value={metaDescription}
               onChange={(e) => updateSEO({ meta_description: e.target.value })}
               rows={3}

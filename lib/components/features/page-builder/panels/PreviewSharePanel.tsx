@@ -10,12 +10,15 @@ import { Dropdown, type Option } from '$lib/components/core/input/dropdown';
 import { Pane } from '$lib/components/core/pane/pane';
 import { drawer } from '$lib/components/core/dialog';
 import { toast } from '$lib/components/core/toast';
+import { useMutation } from '$lib/graphql/request/hooks';
+import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
 
 import { pageConfigAtom, configIdAtom, isDirtyAtom } from '../store';
 import type { PreviewLink, PreviewLinkResponse } from '../types';
 import { formatRelativeTime } from '../utils';
-// TODO: Wire GraphQL mutation once backend is ready
-// import { GENERATE_PREVIEW_LINK } from '../queries';
+import { GENERATE_PREVIEW_LINK } from '../queries';
+
+type AnyDocument = TypedDocumentNode<any, any>;
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -85,12 +88,12 @@ export function PreviewSharePanel() {
 
   const [password, setPassword] = React.useState('');
   const [expiresInHours, setExpiresInHours] = React.useState<number | null>(24);
-  const [isGenerating, setIsGenerating] = React.useState(false);
   const [generatedLink, setGeneratedLink] = React.useState<PreviewLinkResponse | null>(null);
 
   const previewLinks = config?.preview_links ?? [];
 
   // -- Generate preview link --
+  const [generatePreviewLink, { loading: isGenerating }] = useMutation(GENERATE_PREVIEW_LINK as AnyDocument);
 
   const handleGenerate = async () => {
     if (!configId) {
@@ -98,55 +101,45 @@ export function PreviewSharePanel() {
       return;
     }
 
-    setIsGenerating(true);
-
     try {
-      // TODO: Replace with actual GraphQL mutation call
-      // const response = await graphqlClient.request(GENERATE_PREVIEW_LINK, {
-      //   configId,
-      //   password: password || undefined,
-      //   expiresInHours: expiresInHours ?? undefined,
-      // });
-      // const link = response.generatePreviewLink;
+      const { data, error } = await generatePreviewLink({
+        variables: {
+          configId,
+          password: password || undefined,
+          expiresInHours: expiresInHours ?? undefined,
+        },
+      });
 
-      // Mock response for development
-      const mockToken = Math.random().toString(36).substring(2, 12);
-      const mockLink: PreviewLinkResponse = {
-        id: `preview_${mockToken}`,
-        token: mockToken,
-        url: `${HOST_URL}/preview/${configId}?token=${mockToken}`,
-        expires_at: expiresInHours
-          ? new Date(Date.now() + expiresInHours * 3_600_000).toISOString()
-          : undefined,
-      };
+      if (error) throw error;
 
-      setGeneratedLink(mockLink);
+      const link = data?.generatePreviewLink;
+      if (link) {
+        setGeneratedLink(link);
 
-      // Add to preview_links in page config
-      const newLink: PreviewLink = {
-        id: mockLink.id,
-        token: mockLink.token,
-        expires_at: mockLink.expires_at,
-        created_by: 'current_user', // TODO: Replace with actual user ID
-        created_at: new Date().toISOString(),
-        view_count: 0,
-      };
+        // Add to preview_links in page config
+        const newLink: PreviewLink = {
+          id: link.id,
+          token: link.token,
+          expires_at: link.expires_at,
+          created_by: 'current_user',
+          created_at: new Date().toISOString(),
+          view_count: 0,
+        };
 
-      setPageConfig((prev) =>
-        prev
-          ? {
-              ...prev,
-              preview_links: [...(prev.preview_links ?? []), newLink],
-            }
-          : prev,
-      );
-      setIsDirty(true);
+        setPageConfig((prev) =>
+          prev
+            ? {
+                ...prev,
+                preview_links: [...(prev.preview_links ?? []), newLink],
+              }
+            : prev,
+        );
+        setIsDirty(true);
+      }
 
       toast.success('Preview link generated!');
     } catch {
       toast.error('Failed to generate preview link.');
-    } finally {
-      setIsGenerating(false);
     }
   };
 

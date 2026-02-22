@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Frame, Element } from '@craftjs/core';
 import { useAtomValue, useSetAtom } from 'jotai';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -8,8 +9,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import { devicePreviewAtom, zoomAtom, pageConfigAtom } from './store';
 import type { DevicePreview } from './types';
-import { PlaceholderSection } from './sections/PlaceholderSection';
-import { getSectionLabel } from './sections/resolver';
 
 // ---------------------------------------------------------------------------
 // Device frame specifications
@@ -97,7 +96,12 @@ function useFitToScreen(device: DevicePreview, containerRef: React.RefObject<HTM
  * element. Until then it renders a static preview of the sections
  * stored in `pageConfigAtom`.
  */
-export function Canvas() {
+interface CanvasProps {
+  /** JSON string of serialized Craft.js nodes for Frame initialization */
+  initialData?: string;
+}
+
+export function Canvas({ initialData }: CanvasProps) {
   const device = useAtomValue(devicePreviewAtom);
   const zoom = useAtomValue(zoomAtom);
   const config = useAtomValue(pageConfigAtom);
@@ -159,20 +163,16 @@ export function Canvas() {
                 maxWidth: '100%',
               }}
             >
-              {/* Craft.js <Frame> will mount here. For now render sections statically. */}
-              <div className="min-h-[60vh]">
-                {config?.sections?.length ? (
-                  config.sections
-                    .slice()
-                    .sort((a, b) => a.order - b.order)
-                    .map((section) => (
-                      <PlaceholderSection
-                        key={section.id}
-                        sectionLabel={getSectionLabel(section.type)}
-                      />
-                    ))
+              <div className="min-h-[60vh] relative">
+                {initialData ? (
+                  <Frame data={initialData}>
+                    <Element canvas is="div" className="min-h-[60vh]" />
+                  </Frame>
                 ) : (
                   <EmptyCanvas />
+                )}
+                {initialData && !config?.sections?.length && (
+                  <EmptyCanvasOverlay />
                 )}
               </div>
             </motion.div>
@@ -258,6 +258,22 @@ function EmptyCanvas() {
         <p className="text-lg font-semibold text-primary">Start building your page</p>
         <p className="text-sm text-tertiary max-w-sm">
           Add sections from the toolbar or ask the AI assistant to generate a layout for you.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function EmptyCanvasOverlay() {
+  return (
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center px-8 pointer-events-none">
+      <div className="size-16 rounded-full bg-primary/8 flex items-center justify-center">
+        <i className="icon-grid-view size-8 text-tertiary" />
+      </div>
+      <div className="space-y-1">
+        <p className="text-lg font-semibold text-primary">Start building your page</p>
+        <p className="text-sm text-tertiary max-w-sm">
+          Drag sections from the toolbar onto this canvas.
         </p>
       </div>
     </div>

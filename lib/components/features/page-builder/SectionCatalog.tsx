@@ -10,13 +10,15 @@ import { Pane } from '$lib/components/core/pane/pane';
 import { drawer } from '$lib/components/core/dialog';
 
 import { ownerTypeAtom } from './store';
+import { sectionResolver, sectionTypeToComponent } from './sections/resolver';
+import { getEditorConnectors } from './utils/use-safe-editor';
+import { DEFAULT_SECTION_LAYOUT } from './types';
 import type {
   SectionCategory,
   SectionCatalogItem,
   SectionType,
   SubscriptionTier,
 } from './types';
-import { BASIC_SECTIONS, ALL_SECTIONS, CONTAINER_SECTIONS, CUSTOM_CODE_SECTIONS } from './types';
 
 // --- Section Catalog Data ---
 
@@ -196,17 +198,31 @@ function SectionCatalogRow({
   item: SectionCatalogItem;
   isLocked: boolean;
 }) {
-  const handleDragStart = (e: React.DragEvent) => {
-    // Craft.js drag-and-drop will be wired here.
-    // For now, encode the section type in dataTransfer for future integration.
-    e.dataTransfer.setData('application/x-section-type', item.type);
-    e.dataTransfer.effectAllowed = 'copy';
-  };
+  // Look up the Craft.js component for this section type
+  const componentName = sectionTypeToComponent[item.type];
+  const Component = componentName ? sectionResolver[componentName] : null;
+
+  // Use module-level connectors bridge (SectionCatalog renders in a drawer
+  // which is outside the Craft.js <Editor> context tree).
+  const refCallback = React.useCallback(
+    (ref: HTMLDivElement | null) => {
+      const connectors = getEditorConnectors();
+      if (ref && !isLocked && Component && connectors) {
+        connectors.create(
+          ref,
+          React.createElement(Component, {
+            width: DEFAULT_SECTION_LAYOUT.width,
+            padding: DEFAULT_SECTION_LAYOUT.padding,
+          }),
+        );
+      }
+    },
+    [isLocked, Component],
+  );
 
   return (
     <div
-      draggable={!isLocked}
-      onDragStart={handleDragStart}
+      ref={refCallback}
       className={clsx(
         'flex items-center gap-3 px-3 py-2.5 rounded-sm border border-transparent transition',
         isLocked
