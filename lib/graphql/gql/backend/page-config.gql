@@ -1,0 +1,298 @@
+fragment PageConfigTheme on PageConfigTheme {
+  mode
+  type
+  colors {
+    accent
+    background
+    card
+    text_primary
+    text_secondary
+    border
+  }
+  fonts {
+    title {
+      family
+      url
+      weight
+      size_scale
+    }
+    body {
+      family
+      url
+      weight
+      size_scale
+    }
+  }
+  background {
+    type
+    value
+    config
+  }
+  effects {
+    type
+    value
+    config
+  }
+  css_variables
+}
+
+fragment PageConfigSection on PageConfigSection {
+  id
+  type
+  order
+  hidden
+  layout {
+    width
+    padding
+    columns
+    alignment
+    min_height
+    background {
+      type
+      value
+    }
+  }
+  props
+  data_binding {
+    mode
+    source {
+      type
+      field
+    }
+    overrides
+  }
+  children {
+    id
+    type
+    order
+    hidden
+    layout {
+      width
+      padding
+      columns
+      alignment
+      min_height
+      background {
+        type
+        value
+      }
+    }
+    props
+  }
+  craft_node_id
+}
+
+fragment PageConfig on PageConfig {
+  _id
+  owner_type
+  owner_id
+  created_by
+  space_id
+  status
+  version
+  published_version
+  theme {
+    ...PageConfigTheme
+  }
+  sections {
+    ...PageConfigSection
+  }
+  custom_code {
+    css
+    head_html
+    body_html
+    scripts {
+      src
+      content
+      strategy
+    }
+  }
+  seo {
+    meta_title
+    meta_description
+    og_image_url
+    og_type
+    canonical_url
+    no_index
+    structured_data {
+      type
+      custom
+    }
+  }
+  name
+  description
+  thumbnail_url
+  template_id
+  template_version_installed
+  preview_links {
+    id
+    token
+    expires_at
+    created_by
+    created_at
+    view_count
+  }
+  locked_by
+  locked_at
+  last_edited_by
+  created_at
+  updated_at
+}
+
+fragment ConfigVersion on ConfigVersion {
+  _id
+  config_id
+  version
+  snapshot {
+    ...PageConfig
+  }
+  change_summary
+  created_by
+  created_at
+}
+
+fragment LockResult on LockResult {
+  success
+  locked_by
+  locked_at
+  message
+}
+
+fragment PreviewLinkResponse on PreviewLinkResponse {
+  id
+  token
+  url
+  expires_at
+}
+
+fragment SectionCatalogItem on SectionCatalogItem {
+  type
+  name
+  description
+  category
+  tier_required
+}
+
+fragment AISuggestedSection on AISuggestedSection {
+  type
+  name
+  description
+  props
+  layout
+}
+
+# Queries
+
+query GetPageConfig($id: ID!) {
+  getPageConfig(id: $id) {
+    ...PageConfig
+  }
+}
+
+query GetPublishedConfig($ownerType: String!, $ownerId: ID!) {
+  getPublishedConfig(ownerType: $ownerType, ownerId: $ownerId) {
+    ...PageConfig
+  }
+}
+
+query ListConfigVersions($configId: ID!) {
+  listConfigVersions(configId: $configId) {
+    ...ConfigVersion
+  }
+}
+
+query ValidatePreviewLink($configId: ID!, $token: String!, $password: String) {
+  validatePreviewLink(configId: $configId, token: $token, password: $password) {
+    ...PageConfig
+  }
+}
+
+query GetSectionCatalog {
+  getSectionCatalog {
+    ...SectionCatalogItem
+  }
+}
+
+query AiSuggestSections($ownerType: String!, $ownerId: ID!, $description: String) {
+  aiSuggestSections(ownerType: $ownerType, ownerId: $ownerId, description: $description) {
+    ...AISuggestedSection
+  }
+}
+
+# Mutations
+
+mutation CreatePageConfig($input: CreatePageConfigInput!) {
+  createPageConfig(input: $input) {
+    ...PageConfig
+  }
+}
+
+mutation UpdatePageConfig($id: ID!, $input: UpdatePageConfigInput!) {
+  updatePageConfig(id: $id, input: $input) {
+    ...PageConfig
+  }
+}
+
+mutation PublishPageConfig($id: ID!) {
+  publishPageConfig(id: $id) {
+    ...PageConfig
+  }
+}
+
+mutation ArchivePageConfig($id: ID!) {
+  archivePageConfig(id: $id) {
+    ...PageConfig
+  }
+}
+
+mutation SaveConfigVersion($configId: ID!, $changeSummary: String) {
+  saveConfigVersion(configId: $configId, changeSummary: $changeSummary) {
+    ...ConfigVersion
+  }
+}
+
+mutation RestoreConfigVersion($configId: ID!, $version: Int!) {
+  restoreConfigVersion(configId: $configId, version: $version) {
+    ...PageConfig
+  }
+}
+
+mutation AcquireConfigLock($configId: ID!) {
+  acquireConfigLock(configId: $configId) {
+    ...LockResult
+  }
+}
+
+mutation ReleaseConfigLock($configId: ID!) {
+  releaseConfigLock(configId: $configId)
+}
+
+mutation HeartbeatConfigLock($configId: ID!) {
+  heartbeatConfigLock(configId: $configId)
+}
+
+mutation GeneratePreviewLink($configId: ID!, $password: String, $expiresInHours: Float) {
+  generatePreviewLink(configId: $configId, password: $password, expiresInHours: $expiresInHours) {
+    ...PreviewLinkResponse
+  }
+}
+
+# AI Mutations
+
+mutation AiCreatePageConfig($input: AICreatePageConfigInput!) {
+  aiCreatePageConfig(input: $input) {
+    ...PageConfig
+  }
+}
+
+mutation AiUpdatePageConfigSection($configId: ID!, $sectionIndex: Int!, $input: AIUpdatePageConfigSectionInput!) {
+  aiUpdatePageConfigSection(configId: $configId, sectionIndex: $sectionIndex, input: $input) {
+    ...PageConfigSection
+  }
+}
+
+mutation AiGeneratePageFromDescription($description: String!, $ownerType: String!, $ownerId: ID!) {
+  aiGeneratePageFromDescription(description: $description, ownerType: $ownerType, ownerId: $ownerId) {
+    ...PageConfig
+  }
+}
