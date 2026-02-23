@@ -20,6 +20,7 @@ import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { MintPassportModal } from './modals/MintPassportModal';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { formatError } from '$lib/utils/crypto';
+import { usePassportChain } from '$lib/hooks/usePassportChain';
 
 export function Footer() {
   const chainsMap = useAtomValue(chainsMapAtom);
@@ -29,6 +30,7 @@ export function Footer() {
   const [isMinting, setIsMinting] = React.useState(false);
 
   const [state, dispatch] = usePassportContext();
+  const chain = usePassportChain(state.provider);
 
   const checkLemonhead = () => {
     if (state.enabled?.shouldMintedLemonhead) {
@@ -79,7 +81,7 @@ export function Footer() {
             onConnect: () => {
               handleMint();
             },
-            chain: chainsMap[PASSPORT_CHAIN_ID],
+            chain: chain,
           },
         });
       })
@@ -110,20 +112,26 @@ export function Footer() {
       if (state.photo) {
         query += `&avatar=${encodeURIComponent(state.photo)}`;
       }
-      if (state.useLemonhead && state.lemonadeUsername) {
+
+      if (state.lemonadeUsername) {
         query += `&username=${encodeURIComponent(state.lemonadeUsername)}`;
-      }
-      if (state.useENS && state.ensName) {
+      } else if (state.useENS && state.ensName) {
         query += `&username=${encodeURIComponent(state.ensName)}`;
       }
-      if (state.useFluffle) {
-        query += `&fluffleTokenId=1`;
+      
+      if (state.useFluffle && state.fluffleTokenId) {
+        query += `&fluffleTokenId=${encodeURIComponent(state.fluffleTokenId)}`;
       }
 
       const response = await fetch(`/api/passport/${state.provider}?${query}`);
-      const mintData = await response.json();
+      const data = await response.json();
 
-      dispatch({ type: PassportActionKind.SetMintData, payload: mintData });
+      if (!response.ok) {
+        const message = data?.message ?? data?.error ?? `Request failed (${response.status})`;
+        throw new Error(message);
+      }
+
+      dispatch({ type: PassportActionKind.SetMintData, payload: data });
 
       modal.open(BeforeMintPassportModal, {
         props: {
@@ -137,15 +145,15 @@ export function Footer() {
                   dispatch({ type: PassportActionKind.SetMintState, payload: { txHash, tokenId } });
                   dispatch({ type: PassportActionKind.NextStep });
                 },
-                mintData: mintData,
+                mintData: data,
               },
             });
           },
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       Sentry.captureException(error);
-      toast.error(formatError(error));
+      toast.error(error.message);
     } finally {
       setIsMinting(false);
     }

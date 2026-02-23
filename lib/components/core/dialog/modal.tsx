@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
 import { createPortal } from 'react-dom';
@@ -98,6 +98,18 @@ export function ModalContainer({ onModalReady, ...props }: { modal?: Modal; onMo
     [modals, handleClose],
   );
 
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && modals.length > 0) {
+        const topModal = modals[modals.length - 1];
+        if (topModal.options.dismissible) {
+          handleClose(topModal.id);
+        }
+      }
+    },
+    [modals, handleClose],
+  );
+
   useEffect(() => {
     currentModal.open = handleOpen;
     currentModal.close = handleClose;
@@ -105,9 +117,11 @@ export function ModalContainer({ onModalReady, ...props }: { modal?: Modal; onMo
 
     if (modals.length > 0) {
       document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener('keydown', handleKeyDown);
     }
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [handleOpen, handleClose, modals.length]);
 
@@ -123,7 +137,8 @@ export function ModalContainer({ onModalReady, ...props }: { modal?: Modal; onMo
                 !modal.options.fullscreen && modal.options.position === 'center' && 'items-center justify-center',
               )}
               style={{ zIndex: 100000 + index }}
-              role="modal"
+              role="dialog"
+              aria-modal="true"
             >
               <motion.div
                 ref={(el) => {
@@ -174,7 +189,7 @@ export function ModalContent({ children, onClose, title, icon, className, onBack
       {(title || icon || onClose || onBack) && (
         <div className={clsx('flex justify-between', icon ? 'items-start' : 'items-center')}>
           {onBack && (
-            <Button icon="icon-chevron-left" size="xs" variant="tertiary" className="rounded-full" onClick={onBack} />
+            <Button icon="icon-chevron-left" size="xs" variant="tertiary" className="rounded-full" onClick={onBack} aria-label="Go back" />
           )}
           {icon && (
             <div className="size-[56px] flex justify-center items-center rounded-full bg-primary/8" data-icon>
@@ -183,7 +198,7 @@ export function ModalContent({ children, onClose, title, icon, className, onBack
           )}
           {title && !onBack && <span className="min-w-6" />}
           <p className="font-medium">{title}</p>
-          {onClose && <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={onClose} />}
+          {onClose && <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={onClose} aria-label="Close" />}
         </div>
       )}
       <div>{children}</div>

@@ -105,7 +105,7 @@ export function InviteGuestsModal({
     <div className="w-[480px] max-w-full">
       <div className="flex justify-between py-3 px-4 border-b">
         <p className="text-lg">{title}</p>
-        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
+        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
       </div>
 
       {!showFiter ? (

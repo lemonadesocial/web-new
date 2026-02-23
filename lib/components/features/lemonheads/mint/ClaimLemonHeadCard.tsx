@@ -16,7 +16,7 @@ export function ClaimLemonHeadCard() {
     <div className="hidden md:block rounded-sm border border-divider space-y-4 p-4">
       <div className="flex justify-between items-start">
         <div className="size-12 rounded-sm">
-          <img src={`${ASSET_PREFIX}/assets/images/lemonheads-montage.gif`} className="rounded-sm w-full h-full" />
+          <img src={`${ASSET_PREFIX}/assets/images/lemonheads-montage.gif`} className="rounded-sm w-full h-full" alt="LemonHeads montage" />
         </div>
         <div className="tooltip">
           <div className="tooltip-content">

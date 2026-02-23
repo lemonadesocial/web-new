@@ -57,7 +57,7 @@ export function AddInvitesModal({
     <div className="w-full max-w-[448px]">
       <div className="flex justify-between py-3 px-4 border-b">
         <p className="text-lg">{title}</p>
-        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
+        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
       </div>
       <div className="p-4 space-y-4">
         <div className="py-2.5 px-3.5 rounded-sm border bg-card">
@@ -98,9 +98,9 @@ export function AddInvitesModal({
         <hr className="border-t" />
         <p className="text-sm text-tertiary">
           You can bypass registration and payment by adding guests directly to the guest list.{' '}
-          <span className="text-accent-500 cursor-pointer" onClick={() => setTab('guests')}>
+          <button type="button" className="text-accent-500 cursor-pointer inline" onClick={() => setTab('guests')}>
             Add Guests Directly
-          </span>
+          </button>
         </p>
       </div>
       <div className="flex justify-between py-3 px-4 border-t items-center">

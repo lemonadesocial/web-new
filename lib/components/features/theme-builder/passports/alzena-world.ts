@@ -14,8 +14,7 @@ const alzenaWorldPassportConfig: PassportTemplate = {
         component: MAPPING_Widgets.passport,
         props: {
           title: 'Become a Citizen',
-          subtitle:
-            'Mint your Alzena World passport & lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna.',
+          subtitle: 'Mint your Alzena World passport.',
         },
       },
       {

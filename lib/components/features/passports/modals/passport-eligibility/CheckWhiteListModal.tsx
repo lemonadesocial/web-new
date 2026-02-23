@@ -1,6 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { useAtomValue } from 'jotai';
+import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
 import { useAppKitAccount, useAppKit } from '$lib/utils/appkit';
@@ -10,9 +9,8 @@ import { Card, ModalContent } from '$lib/components/core';
 import { AbstractPassportContract, formatWallet, ZugramaPassportContract } from '$lib/utils/crypto';
 import { useClient } from '$lib/graphql/request';
 import { CanMintPassportDocument, Chain, PassportProvider } from '$lib/graphql/generated/backend/graphql';
-import { chainsMapAtom } from '$lib/jotai';
-import { PASSPORT_CHAIN_ID } from '../../utils';
 import { ContractAddressFieldMapping, PASSPORT_PROVIDER } from '../../types';
+import { usePassportChain } from '$lib/hooks/usePassportChain';
 
 async function checkPassportBalance(provider: PASSPORT_PROVIDER, address: string, chain: Chain) {
   const field = ContractAddressFieldMapping[provider] as keyof Chain;
@@ -43,8 +41,7 @@ export function CheckWhiteListModal({
   onContinue: () => void;
 }) {
   const { address } = useAppKitAccount();
-  const chainsMap = useAtomValue(chainsMapAtom);
-  const chain = chainsMap[PASSPORT_CHAIN_ID];
+  const chain = usePassportChain(provider);
   const { open } = useAppKit();
   const { client } = useClient();
 
@@ -132,7 +129,7 @@ export function CheckWhiteListModal({
     return (
       <SuccessModal
         title="You're On The Whitelist!"
-        description={`"You can now personalize your ${passportTitle} Passport to make it truly yours before minting your on-chain identity.`}
+        description={`You can now personalize your ${passportTitle} Passport to make it truly yours before minting your on-chain identity.`}
         buttonText="Continue"
         onClose={onContinue}
       />

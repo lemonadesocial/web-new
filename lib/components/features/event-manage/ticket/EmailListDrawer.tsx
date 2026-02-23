@@ -30,7 +30,7 @@ export function EmailListDrawer({ ticketType }: { ticketType: EventTicketType })
   return (
     <div className="flex flex-col h-full">
       <div className="px-3 py-2 border-b border-b-divider gap-3 items-center flex">
-        <Button icon="icon-arrow-back-sharp" variant="tertiary" size="sm" onClick={() => drawer.close()} />
+        <Button icon="icon-arrow-back-sharp" variant="tertiary" size="sm" onClick={() => drawer.close()} aria-label="Go back" />
       </div>
 
       <div className="p-4 flex flex-col gap-4 flex-1 overflow-auto">

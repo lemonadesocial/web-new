@@ -4,20 +4,23 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import * as Sentry from '@sentry/nextjs';
 import type { Eip1193Provider } from 'ethers';
-import { ethers } from 'ethers';
 import debounce from 'lodash/debounce';
 
-import { Button, modal, ModalContent, toast } from "$lib/components/core";
-import { approveERC20Spender, formatError, isNativeToken, writeContract } from '$lib/utils/crypto';
+import { ethers } from 'ethers';
+import { Button, modal, ModalContent, toast } from '$lib/components/core';
+import { CurrencyClient } from '$lib/services/currency';
+import { approveERC20Spender, checkBalanceSufficient, formatError, isNativeToken, writeContract } from '$lib/utils/crypto';
 import { listChainsAtom } from '$lib/jotai';
 import { appKit, useAppKitProvider } from '$lib/utils/appkit';
 import { LemonadeUsernameABI } from '$lib/abis/LemonadeUsername';
 import { trpc } from '$lib/trpc/client';
 import { useClient } from '$lib/graphql/request';
-import { UsernameAvailabilityDocument, UsernameAvailabilityQueryVariables } from '$lib/graphql/generated/backend/graphql';
+import type { IsUsernameAvailableQuery } from '$lib/graphql/generated/backend/graphql';
+import { IsUsernameAvailableDocument, IsUsernameAvailableQueryVariables } from '$lib/graphql/generated/backend/graphql';
 
 import { SuccessModal } from './SuccessModal';
 import { ASSET_PREFIX } from '$lib/utils/constants';
+import { formatNumber } from '$lib/utils/number';
 
 export function ClaimLemonadeUsernameModal() {
   const { walletProvider } = useAppKitProvider('eip155');
@@ -30,26 +33,35 @@ export function ClaimLemonadeUsernameModal() {
   const uploadUsernameMetadataMutation = trpc.uploadUsernameMetadata.useMutation();
 
   const [username, setUsername] = useState('');
-  const [step, setStep] = useState<'search' | 'success'>('search');
+  const [step, setStep] = useState<'search' | 'claiming' | 'signing' | 'success'>('search');
   const [status, setStatus] = useState<'idle' | 'checking' | 'available' | 'unavailable'>('idle');
-  const [isLoading, setIsLoading] = useState(false);
+  const [usernamePrice, setUsernamePrice] = useState<{
+    price: string;
+    currency: string;
+    symbol?: string;
+    decimals?: number;
+  } | null>(null);
+
   const [errorMessage, setErrorMessage] = useState('');
 
-  const checkUsernameAvailability = useCallback(async (value: string, toAddress: string) => {
-    const variables: UsernameAvailabilityQueryVariables = {
-      wallet: toAddress,
-      username: value,
-    };
-  
-    const { data } = await client.query({
-      query: UsernameAvailabilityDocument,
-      variables,
-      fetchPolicy: 'network-only',
-    });
-  
-    return data?.isUsernameAvailable ?? false;
-  }, [client]);
-  
+  const checkUsernameAvailability = useCallback(
+    async (value: string, toAddress: string): Promise<IsUsernameAvailableQuery['isUsernameAvailable'] | null> => {
+      const variables: IsUsernameAvailableQueryVariables = {
+        wallet: toAddress,
+        username: value,
+      };
+
+      const { data } = await client.query({
+        query: IsUsernameAvailableDocument,
+        variables,
+        fetchPolicy: 'network-only',
+      });
+
+      return data?.isUsernameAvailable ?? null;
+    },
+    [client]
+  );
+
   const debouncedCheckUsername = useCallback(
     debounce(async (value: string) => {
       if (!value || value.length === 0) return;
@@ -64,18 +76,39 @@ export function ClaimLemonadeUsernameModal() {
 
       setStatus('checking');
       setErrorMessage('');
+      setUsernamePrice(null);
 
       try {
-        const isAvailable = await checkUsernameAvailability(value, address);
+        const result = await checkUsernameAvailability(value, address);
 
-        if (isAvailable) {
+        if (result?.available) {
           setStatus('available');
           setErrorMessage('');
+
+          if (result.price != null && result.currency != null) {
+            const price = result.price;
+            const currency = result.currency;
+
+            if (BigInt(price) > 0n) {
+              const currencyClient = new CurrencyClient(usernameChain, currency);
+              const [symbol, decimals] = await Promise.all([
+                currencyClient.getSymbol(),
+                currencyClient.getDecimals(),
+              ]);
+
+              setUsernamePrice({ price, currency, symbol, decimals });
+              return;
+            }
+
+            setUsernamePrice({ price, currency });
+          }
+
           return;
         }
 
         setStatus('unavailable');
         setErrorMessage('Username is already taken');
+        setUsernamePrice(null);
       } catch (error: any) {
         setErrorMessage(error?.message || 'Error checking username availability');
         setStatus('idle');
@@ -91,7 +124,7 @@ export function ClaimLemonadeUsernameModal() {
       const address = appKit.getAddress();
       if (!address) throw new Error('No wallet address found');
 
-      setIsLoading(true);
+      setStep('claiming');
 
       const { tokenUri } = await uploadUsernameMetadataMutation.mutateAsync({
         username,
@@ -103,14 +136,6 @@ export function ClaimLemonadeUsernameModal() {
         wallet: address,
       });
 
-      // const tokenUri = "ipfs://bafkreibf2wymoxnoyyev6ki4uozfnpitjtez2yr55ipdqudrceeymlaaeu"
-
-      // const result = {
-      //   "signature":"0xf05c1a1b9b9208e4c55d1866f237b5611eda88e814a568d11f61c2d882ef9335631933da84866fdb720eb48b0aa5035093c2bdcdbbedabba6966fa4f8363e7051b",
-      //   "price":"0",
-      //   "currency":"0xa19adb1929d2D7C7ABF97dB80a2c231C41eE972B"
-      // }
-
       const contractInstance = new ethers.Contract(
         ethers.ZeroAddress,
         new ethers.Interface(LemonadeUsernameABI)
@@ -118,6 +143,18 @@ export function ClaimLemonadeUsernameModal() {
       const currencyAddress = result.currency as string;
       const price = BigInt(result.price);
       const isNativeCurrency = isNativeToken(currencyAddress, usernameChain.chain_id);
+
+      if (price > 0n) {
+        await checkBalanceSufficient(
+          currencyAddress,
+          usernameChain.chain_id,
+          price,
+          walletProvider as Eip1193Provider,
+          address
+        );
+      }
+
+      setStep('signing');
 
       if (!isNativeCurrency && price > 0n) {
         await approveERC20Spender(
@@ -150,12 +187,9 @@ export function ClaimLemonadeUsernameModal() {
         username,
       });
 
-      setIsLoading(false);
-
       setStep('success');
     } catch (error: any) {
-      console.log(error)
-      setIsLoading(false);
+      setStep('search');
       Sentry.captureException(error);
       toast.error(formatError(error));
     }
@@ -176,6 +210,7 @@ export function ClaimLemonadeUsernameModal() {
     setUsername(value);
     setStatus('idle');
     setErrorMessage('');
+    setUsernamePrice(null);
 
     if (value.length > 0) {
       debouncedCheckUsername(value);
@@ -226,16 +261,24 @@ export function ClaimLemonadeUsernameModal() {
         />
       </div>
 
-      {errorMessage && <p className='text-error text-sm mt-2'>{errorMessage}</p>}
+      {status === 'available' && usernamePrice && BigInt(usernamePrice.price) > 0n && (
+        <p className='text-warning-400 text-sm mt-2'>
+          Usernames with {username.length} characters cost{' '}
+          {formatNumber(Number(ethers.formatUnits(usernamePrice.price, usernamePrice.decimals ?? 18)))}{' '}
+          {usernamePrice.symbol ?? usernamePrice.currency}.
+        </p>
+      )}
 
+      {errorMessage && <p className='text-error text-sm mt-2'>{errorMessage}</p>}
+      
       <Button
         className="w-full mt-4"
         variant="secondary"
         onClick={handleClaimUsername}
-        disabled={status !== 'available'}
-        loading={isLoading}
+        disabled={status !== 'available' || step === 'signing'}
+        loading={step === 'claiming'}
       >
-        Continue
+        {step === 'signing' ? 'Waiting for Signature...' : 'Continue'}
       </Button>
     </ModalContent>
   );

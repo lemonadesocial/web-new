@@ -78,7 +78,7 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
     if (!isConnected) return 'icon-wallet';
 
     if (minted && image) {
-      return <img src={image} className="size-[56px] rounded-sm aspect-square" />;
+      return <img src={image} className="size-[56px] rounded-sm aspect-square" alt="Your minted LemonHead" />;
     }
 
     if (address) {
@@ -178,7 +178,7 @@ function MintWhiteList({
           <div className="border-t">
             <div key={sponsor._id} className="flex flex-col gap-3 py-3.5">
               <div className="flex gap-2.5">
-                <img src={sponsor.image_url} className="rounded-sm w-[34px] aspect-square" />
+                <img src={sponsor.image_url} className="rounded-sm w-[34px] aspect-square" alt={`${sponsor.name} logo`} />
                 <div>
                   <p>You’ve unlocked a free mint!</p>
                   <p className="text-tertiary text-xs">Supported by {sponsor.name}</p>

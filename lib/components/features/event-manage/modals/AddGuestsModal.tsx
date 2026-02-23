@@ -51,7 +51,7 @@ export function AddGuestsModal({
     <div className="max-w-full w-[448px]">
       <div className="flex justify-between py-3 px-4 border-b">
         <p className="text-lg">{title}</p>
-        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
+        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
       </div>
       <div className="p-4 space-y-4">
         <div className="py-2.5 px-3.5 rounded-sm border bg-card">
@@ -113,9 +113,9 @@ export function AddGuestsModal({
         <div>
           <p className="text-sm text-tertiary">
             If you&apos;d like guests to register, send them an invite.{' '}
-            <span className="text-accent-500 cursor-pointer" onClick={onSelectInvite}>
+            <button type="button" className="text-accent-500 cursor-pointer inline" onClick={onSelectInvite}>
               Invite Guests
-            </span>
+            </button>
           </p>
           <p className="text-sm text-tertiary">
             Please only add guests who have already consented to joining this event.

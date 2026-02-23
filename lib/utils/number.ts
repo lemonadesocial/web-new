@@ -1,3 +1,9 @@
+export const parseNumeric = (value: unknown): number => {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string') return Number(value) || 0;
+  return 0;
+};
+
 export function formatNumber(num: number, useThousandsFormat?: boolean): string {
   if (isNaN(num)) return "NaN";
   const abs = Math.abs(num);

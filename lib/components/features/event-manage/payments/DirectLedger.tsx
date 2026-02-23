@@ -189,7 +189,7 @@ export function DirectLedger() {
         <div className="flex flex-col gap-3">
           <div className="flex gap-2">
             <h3 className="text-xl font-semibold flex-1">Transactions</h3>
-            <Button icon="icon-download" onClick={download} size="sm" variant="tertiary-alt" />
+            <Button icon="icon-download" onClick={download} size="sm" variant="tertiary-alt" aria-label="Download transactions" />
           </div>
           <InputField
             iconLeft="icon-search"

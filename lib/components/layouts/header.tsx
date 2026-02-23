@@ -27,6 +27,7 @@ import { ConnectWalletModal } from '../features/auth/ConnectWalletModal';
 import { SelectProfileModal } from '../features/lens-account/SelectProfileModal';
 import { ConnectWallet } from '../features/modals/ConnectWallet';
 import { LENS_CHAIN_ID } from '$lib/utils/lens/constants';
+import { UserMenu } from './UserMenu';
 
 type Props = {
   title?: string;
@@ -125,47 +126,7 @@ export default function Header({ showUI = true, title, mainMenu, hideLogo, class
             {/*     </div> */}
             {/*   ) */}
             {/* } */}
-            <Menu.Root>
-              <Menu.Trigger>
-                {({ isOpen }) => (
-                  <div
-                    className={twMerge(
-                      'transition p-2 flex justify-center items-center rounded-full hover:bg-primary/8',
-                      clsx(isOpen && 'bg-primary/8'),
-                    )}
-                  >
-                    <Avatar size="lg" src={userAvatar(me)} />
-                  </div>
-                )}
-              </Menu.Trigger>
-              <Menu.Content className="p-0 min-w-[228px]">
-                {({ toggle }) => (
-                  <>
-                    <div
-                      className={'flex gap-2.5 px-2 py-1.5 items-center hover:bg-primary/8 rounded-t-xs cursor-pointer'}
-                    >
-                      <Avatar size="lg" src={userAvatar(me)} />
-                      <div>
-                        <p className="text-md font-medium whitespace-nowrap">{me.name}</p>
-                        <p className="text-xs font-medium text-tertiary">{me.email}</p>
-                      </div>
-                    </div>
-                    <Divider />
-                    <div className="p-1">
-                      <MenuItem title="Edit Profile" onClick={() => drawer.open(ProfilePane, { dismissible: false })} />
-                      <MenuItem title="Settings" onClick={() => router.push('/settings')} />
-                      <MenuItem
-                        title="Sign Out"
-                        onClick={async () => {
-                          toggle();
-                          logOut();
-                        }}
-                      />
-                    </div>
-                  </>
-                )}
-              </Menu.Content>
-            </Menu.Root>
+            <UserMenu />
           </div>
         ) : (
           <>

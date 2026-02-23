@@ -1,21 +1,20 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Eip1193Provider, ethers } from 'ethers';
-import { useAtomValue } from 'jotai';
 import * as Sentry from '@sentry/nextjs';
 
 import { Button, modal, ModalContent, toast } from '$lib/components/core';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { appKit, useAppKitProvider } from '$lib/utils/appkit';
-import { approveERC20Spender, AbstractPassportContract, ERC20Contract, formatError, isNativeToken, writeContract } from '$lib/utils/crypto';
+import { approveERC20Spender, AbstractPassportContract, checkBalanceSufficient, formatError, isNativeToken, writeContract } from '$lib/utils/crypto';
+import { CurrencyClient } from '$lib/services/currency';
 import { SignTransactionModal } from '$lib/components/features/modals/SignTransaction';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
-import { chainsMapAtom } from '$lib/jotai';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { AbstractPassportABI } from '$lib/abis/AbstractPassport';
 
-import { PASSPORT_CHAIN_ID } from '../utils';
 import { ContractAddressFieldMapping, PASSPORT_PROVIDER } from '../types';
+import { usePassportChain } from '$lib/hooks/usePassportChain';
 
 type MintData = {
   signature: string;
@@ -36,43 +35,36 @@ export function MintPassportModal({
 }) {
   const { walletProvider } = useAppKitProvider('eip155');
 
-  const chainsMap = useAtomValue(chainsMapAtom);
+  const chain = usePassportChain(provider);
   const [status, setStatus] = useState<'signing' | 'confirming' | 'success' | 'none'>('none');
   const [currency, setCurrency] = useState<string | null>(null);
   const [currencySymbol, setCurrencySymbol] = useState<string>('');
   const [currencyDecimals, setCurrencyDecimals] = useState<number>(18);
 
-  const chain = chainsMap[PASSPORT_CHAIN_ID];
   const contractAddress = chain?.[ContractAddressFieldMapping[provider] as keyof Chain] as string | undefined;
 
   useEffect(() => {
-    if (!chain?.rpc_url || !contractAddress) return;
+    if (!chain || !contractAddress) return;
 
     const loadCurrencyAndSymbol = async () => {
       const rpcProvider = new ethers.JsonRpcProvider(chain.rpc_url);
       const contract = AbstractPassportContract.attach(contractAddress).connect(rpcProvider) as ethers.Contract;
-      const value = await contract.getFunction('currency')();
-      setCurrency(value);
+      const currencyAddress = await contract.getFunction('currency')();
 
-      const fromChainToken = chain.tokens?.find((t) => t.contract?.toLowerCase() === value?.toLowerCase());
-      if (fromChainToken) {
-        setCurrencySymbol(fromChainToken.symbol);
-        setCurrencyDecimals(fromChainToken.decimals);
-        return;
-      }
+      setCurrency(currencyAddress);
 
-      const erc20 = ERC20Contract.attach(value).connect(rpcProvider) as ethers.Contract;
-      const [sym, decimals] = await Promise.all([
-        erc20.getFunction('symbol')(),
-        erc20.getFunction('decimals')(),
+      const currencyClient = new CurrencyClient(chain, currencyAddress);
+      const [symbol, decimals] = await Promise.all([
+        currencyClient.getSymbol(),
+        currencyClient.getDecimals(),
       ]);
       
-      setCurrencySymbol(sym);
-      setCurrencyDecimals(Number(decimals));
+      setCurrencySymbol(symbol);
+      setCurrencyDecimals(decimals);
     };
 
     loadCurrencyAndSymbol();
-  }, [chain?.rpc_url, chain?.tokens, contractAddress]);
+  }, [chain, contractAddress]);
 
   const handleMint = async () => {
     try {
@@ -80,7 +72,7 @@ export function MintPassportModal({
         throw new Error('Mint data not found');
       }
 
-      if (!contractAddress) {
+      if (!contractAddress || !chain?.chain_id ) {
         throw new Error('Passport contract address not configured');
       }
 
@@ -90,8 +82,17 @@ export function MintPassportModal({
 
       setStatus('signing');
 
-      const priceWei = BigInt(mintData.price);
-      const isNative = isNativeToken(currency, PASSPORT_CHAIN_ID);
+      const priceWei = BigInt(mintData.price || '0');
+      const isNative = isNativeToken(currency, chain.chain_id);
+
+      if (priceWei > 0n) {
+        await checkBalanceSufficient(
+          currency,
+          chain.chain_id,
+          priceWei,
+          walletProvider as Eip1193Provider,
+        );
+      }
 
       if (!isNative && priceWei > 0n) {
         await approveERC20Spender(
@@ -146,6 +147,7 @@ export function MintPassportModal({
       Sentry.captureException(error, {
         extra: {
           walletInfo: appKit.getWalletInfo(),
+          mintData,
         },
       });
       toast.error(formatError(error));

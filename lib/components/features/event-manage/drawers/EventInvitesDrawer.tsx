@@ -72,7 +72,7 @@ export function EventInvitesDrawer({ event }: { event: Event }) {
   return (
     <div className="h-full flex flex-col">
       <div className="px-3 py-2 border-b border-b-divider gap-3 items-center flex flex-shrink-0">
-        <Button icon="icon-chevron-double-right" variant="tertiary" size="sm" onClick={() => drawer.close()} />
+        <Button icon="icon-chevron-double-right" variant="tertiary" size="sm" onClick={() => drawer.close()} aria-label="Close drawer" />
         <p>Invite Stats</p>
       </div>
       <div className="flex-1 overflow-y-auto no-scrollbar">

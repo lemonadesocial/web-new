@@ -25,7 +25,7 @@ export function CloneEventSuccessModal({ events }: { events: Event[] }) {
         <div className="p-3 w-[56px] aspect-square rounded-full bg-success-400/16 flex items-center justify-center">
           <i className="icon-richtext-check text-success-400 size-8" />
         </div>
-        <Button icon="icon-x" size="xs" variant="tertiary-alt" className="rounded-full" onClick={() => modal.close()} />
+        <Button icon="icon-x" size="xs" variant="tertiary-alt" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
       </Card.Header>
       <Card.Content className="flex flex-col gap-4 max-w-[448px]">
         <div className="flex flex-col gap-2">

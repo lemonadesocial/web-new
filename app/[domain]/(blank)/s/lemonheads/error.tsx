@@ -12,24 +12,15 @@ export default function Error({
   reset: () => void;
 }) {
   React.useEffect(() => {
-    console.error('Lemonheads Error Boundary:', {
-      message: error.message,
-      stack: error.stack,
-      digest: error.digest,
-      name: error.name,
+    Sentry.captureException(error, {
+      tags: {
+        route: 'lemonheads',
+        component: 'error-boundary',
+      },
+      extra: {
+        digest: error.digest,
+      },
     });
-
-    if (typeof window !== 'undefined' && Sentry?.captureException) {
-      Sentry.captureException(error, {
-        tags: {
-          route: 'lemonheads',
-          component: 'error-boundary',
-        },
-        extra: {
-          digest: error.digest,
-        },
-      });
-    }
   }, [error]);
 
   return (
@@ -42,31 +33,11 @@ export default function Error({
           </p>
         </div>
 
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-          <div className="font-mono text-sm space-y-2">
-            <div>
-              <strong>Error:</strong> {error.message || 'Unknown error'}
-            </div>
-            {error.digest && (
-              <div>
-                <strong>Digest:</strong> {error.digest}
-              </div>
-            )}
-            {error.name && (
-              <div>
-                <strong>Type:</strong> {error.name}
-              </div>
-            )}
-            {error.stack && (
-              <details className="mt-4">
-                <summary className="cursor-pointer font-semibold">Stack Trace</summary>
-                <pre className="mt-2 text-xs overflow-auto max-h-64 p-2 rounded">
-                  {error.stack}
-                </pre>
-              </details>
-            )}
-          </div>
-        </div>
+        {error.digest && (
+          <p className="text-center text-sm text-gray-500 dark:text-gray-500">
+            Error ID: {error.digest}
+          </p>
+        )}
 
         <div className="flex gap-4 justify-center">
           <Button onClick={reset} variant="secondary">

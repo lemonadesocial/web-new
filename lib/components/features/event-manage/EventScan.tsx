@@ -61,7 +61,7 @@ function EventScanContent({ event }: { event: Event }) {
           variant="tertiary"
           iconLeft="icon-list-bulleted"
           size="sm"
-          onClick={() => router.push(`/e/check-in/${event.shortid}`)}
+          onClick={() => window.open(`/e/check-in/${event.shortid}`, '_blank')}
         >
           Guest List
         </Button>

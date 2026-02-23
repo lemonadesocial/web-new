@@ -1,3 +1,4 @@
+'use client';
 import { sdk } from "@farcaster/miniapp-sdk";
 import { useEffect, useState } from "react";
 import { useAtom } from "jotai";

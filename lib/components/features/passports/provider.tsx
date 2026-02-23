@@ -50,6 +50,10 @@ function reducers(state: PassportState, action: PassportAction) {
       return { ...state, useLemonhead: false, useFluffle: true };
     }
 
+    case PassportActionKind.SetFluffleTokenId: {
+      return { ...state, fluffleTokenId: action.payload };
+    }
+
     case PassportActionKind.SetLemonadeUsername: {
       return { ...state, lemonadeUsername: action.payload, useENS: false };
     }

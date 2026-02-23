@@ -15,7 +15,7 @@ export function LemonHeadsNFTCard() {
   if (!address || !data || (data && data.tokenId == 0))
     return (
       <div className="hidden md:block backdrop-blur-md p-4 rounded-md space-y-3 border-card border-(length:--card-border-width)">
-        <img src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`} className="rounded-sm" />
+        <img src={`${ASSET_PREFIX}/assets/images/lemonheads-getstarted.gif`} className="rounded-sm" alt="Get started with LemonHeads" />
         <div>
           <p>Unlock Access</p>
           <p className="text-sm text-secondary">Claim your unique LemonHead to unlock exclusive content & features!</p>
@@ -39,7 +39,7 @@ export function LemonHeadsNFTCard() {
           })
         }
       >
-        <img src={data?.image} className="rounded-sm size-8 aspect-square border" />
+        <img src={data?.image} className="rounded-sm size-8 aspect-square border" alt={`LemonHead #${data?.tokenId}`} />
 
         <div className="flex flex-col">
           <p className="text-sm md:text-md">Share</p>
