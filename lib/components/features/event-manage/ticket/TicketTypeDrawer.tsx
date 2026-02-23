@@ -366,10 +366,10 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                   {errors.description?.message && <ErrorText message={errors.description.message} />}
                 </LabeledInput>
               ) : (
-                <div className="flex items-center gap-1.5 cursor-pointer" onClick={() => setShowDescription(true)}>
+                <button type="button" className="flex items-center gap-1.5 cursor-pointer" onClick={() => setShowDescription(true)}>
                   <i className="icon-plus size-5 text-tertiary" />
                   <p className="text-tertiary text-sm">Add Description</p>
-                </div>
+                </button>
               )}
             </div>
 
@@ -506,7 +506,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                       </div>
                     </div>
                     {!loadingTokenGates && (
-                      <div className="flex py-2.5 px-3 items-center cursor-pointer" onClick={handleOpenTokenGating}>
+                      <button type="button" className="flex py-2.5 px-3 items-center cursor-pointer w-full" onClick={handleOpenTokenGating}>
                         <div className="flex items-center gap-2 flex-1">
                           <i className="icon-token size-5 text-tertiary" />
                           <p>Token Gating</p>
@@ -515,7 +515,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                           {!!tokenGates?.length && <p className="text-tertiary">{tokenGates.length}</p>}
                           <i className="icon-chevron-right size-5 text-tertiary" />
                         </div>
-                      </div>
+                      </button>
                     )}
                   </div>
                 </div>
