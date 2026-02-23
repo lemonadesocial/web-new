@@ -196,7 +196,13 @@ const Sidebar = () => {
                 'border-none hover:bg-(--btn-tertiary)',
                 toggle ? 'bg-(--btn-tertiary)' : 'bg-transparent',
               )}
-              onClick={() => router.push('/upgrade-to-pro')}
+              onClick={() => {
+                if (me || account) {
+                  router.push('/upgrade-to-pro');
+                } else {
+                  signIn();
+                }
+              }}
             >
               <Card.Content
                 className={clsx('flex justify-between items-center', toggle === 'open' ? 'px-3 py-2 gap-3' : 'p-2.5')}
@@ -261,7 +267,7 @@ const Sidebar = () => {
                 onClick={() => signIn()}
               >
                 <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
-                {toggle === 'mini' && (
+                {toggle === 'open' && (
                   <div className="flex flex-col">
                     <p className="text-sm font-medium text-secondary">Login</p>
                   </div>
