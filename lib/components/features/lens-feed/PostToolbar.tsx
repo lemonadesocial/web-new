@@ -49,11 +49,7 @@ export function PostToolbar({
       <GifPicker onSelectGif={onSelectGif} />
 
       <FileInput onChange={onSelectFiles} accept="image/*" multiple className="flex">
-<<<<<<< HEAD
         {(open) => <button type="button" aria-label="Add image" className="cursor-pointer" onClick={open}><i className="icon-image size-5 text-[#60A5FA]" /></button>}
-=======
-        {(open) => <i aria-hidden="true" className="icon-image size-5 text-[#60A5FA] cursor-pointer" onClick={open} />}
->>>>>>> 1018631b (a11y(icons): add aria-hidden="true" to all 518 decorative <i> icon elements)
       </FileInput>
       
       <button type="button" aria-label="Add event" className="cursor-pointer" onClick={() => {
