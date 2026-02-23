@@ -19,7 +19,7 @@ export function TokenGatingDrawer({ ticketType }: { ticketType: string }) {
   return (
     <div className="h-full flex flex-col">
       <div className="px-3 py-2 border-b border-b-divider gap-3 items-center flex">
-        <Button icon="icon-chevron-double-right" variant="tertiary" size="sm" onClick={() => drawer.close()} />
+        <Button icon="icon-chevron-double-right" variant="tertiary" size="sm" onClick={() => drawer.close()} aria-label="Close drawer" />
       </div>
       <div className="flex-1 overflow-y-auto no-scrollbar p-4">
         <h1 className="text-xl font-semibold">Crypto Token Gating</h1>

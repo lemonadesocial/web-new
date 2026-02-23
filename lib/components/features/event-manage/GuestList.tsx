@@ -130,7 +130,7 @@ export function GuestList({ event }: { event: Event }) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Guest List</h1>
-        <Button icon="icon-download" variant="tertiary" size="sm" onClick={exportGuestsCSV} />
+        <Button icon="icon-download" variant="tertiary" size="sm" onClick={exportGuestsCSV} aria-label="Export guest list" />
       </div>
 
       <Input

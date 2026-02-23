@@ -52,7 +52,7 @@ export function WidgetPassport({ space, title, subtitle }: Props) {
               onClick={() => toast.success('Comming soon')}
             />
           </div>
-          <img src={data.image} className="w-[365px] h-[228px]" />
+          <img src={data.image} className="w-[365px] h-[228px]" alt="Your passport NFT" />
         </div>
       ) : (
         <div className="flex flex-col gap-12 p-12">
@@ -62,6 +62,7 @@ export function WidgetPassport({ space, title, subtitle }: Props) {
                 ? (passportWidget.props.image as string)
                 : `${ASSET_PREFIX}/assets/images/passports/${state.template.provider}-passport-mini-new.png`
             }
+            alt="Passport template preview"
           />
           <div className="flex flex-col gap-6 text-center items-center">
             <div className="space-y-2">
