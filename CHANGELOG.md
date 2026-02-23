@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.7.2](https://github.com/lemonadesocial/web-new/compare/v10.7.1...v10.7.2) (2026-02-23)
+
+
+### Bug Fixes
+
+* build ([4f5e210](https://github.com/lemonadesocial/web-new/commit/4f5e210bb541a0a9daa001bb940b470aaee0c90e))
+* merge conflict ([5344c59](https://github.com/lemonadesocial/web-new/commit/5344c59467a3ba4da143f15e0e4ef987a198f7fd))
+
 ## [10.7.1](https://github.com/lemonadesocial/web-new/compare/v10.7.0...v10.7.1) (2026-02-23)
 
 
