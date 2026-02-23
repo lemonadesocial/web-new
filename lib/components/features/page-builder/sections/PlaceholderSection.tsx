@@ -16,7 +16,9 @@ interface PlaceholderSectionProps {
   [key: string]: unknown;
 }
 
-export function PlaceholderSection({ sectionLabel = 'Section' }: PlaceholderSectionProps) {
+export const PlaceholderSection = React.memo(function PlaceholderSection({
+  sectionLabel = 'Section',
+}: PlaceholderSectionProps) {
   return (
     <div className="flex items-center justify-center border border-dashed border-card-border rounded-sm bg-primary/4 min-h-[120px] px-6 py-8 my-2 select-none">
       <div className="flex flex-col items-center gap-2 text-center">
@@ -26,4 +28,9 @@ export function PlaceholderSection({ sectionLabel = 'Section' }: PlaceholderSect
       </div>
     </div>
   );
-}
+});
+
+(PlaceholderSection as any).craft = {
+  displayName: 'Placeholder',
+  props: { sectionLabel: 'Section' },
+};
