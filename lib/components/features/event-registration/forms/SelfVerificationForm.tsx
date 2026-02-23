@@ -32,7 +32,7 @@ export function SelfVerificationForm({ config }: { config: SelfVerificationConfi
 
   useEffect(() => {
     if (data?.getSelfVerificationStatus) {
-      const allVerified = data.getSelfVerificationStatus.disclosures?.every((d: any) => d.verified);
+      const allVerified = data.getSelfVerificationStatus.disclosures?.every((d: { verified: boolean }) => d.verified);
       form.setValue('isVerified', allVerified);
     }
   }, [data]);

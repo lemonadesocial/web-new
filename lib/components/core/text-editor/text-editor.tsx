@@ -16,12 +16,17 @@ import TextEditorBubbleMenu from './bubble-menu';
 import TextEditorFloatingMenu from './floating-menu';
 import { ImageResize } from './resize-image';
 
+interface TextEditorToolbar {
+  bubble?: Record<string, boolean | number[]>;
+  float?: Record<string, { enable?: boolean; label?: string; level?: number[]; }>;
+}
+
 type TextEditorProps = {
   label?: string;
   content?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
-  toolbar?: any;
+  toolbar?: TextEditorToolbar;
   containerClass?: string;
   /** directory prop is using for upload file */
   directory?: FileDirectory;

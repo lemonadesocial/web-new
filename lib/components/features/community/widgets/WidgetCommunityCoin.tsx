@@ -194,7 +194,7 @@ function CommunityCoin({ chain, address }: { chain: Chain; address: string }) {
   );
 }
 
-const CustomActiveDot = (props: any) => {
+const CustomActiveDot = (props: { cx: number; cy: number }) => {
   const { cx, cy } = props;
   return (
     <circle cx={cx} cy={cy} r={6} fill="var(--color-accent-500)" stroke="var(--color-accent-500)" strokeWidth={2} />

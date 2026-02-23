@@ -84,14 +84,14 @@ export function PostComposerModal({
     const loadExistingImages = async () => {
       if (post && 'attachments' in post.metadata && post.metadata.attachments) {
         const imageAttachments = post.metadata.attachments.filter(
-          (attachment: any) => attachment.__typename === 'MediaImage'
+          (attachment) => attachment.__typename === 'MediaImage'
         );
 
         if (imageAttachments.length > 0) {
           setIsLoadingImages(true);
           try {
-            const filePromises = imageAttachments.map(async (attachment: any) => {
-              const imageAttachment = attachment as any;
+            const filePromises = imageAttachments.map(async (attachment) => {
+              const imageAttachment = attachment as { item: string };
               const response = await fetch(imageAttachment.item);
 
               if (!response.ok) {
@@ -124,7 +124,7 @@ export function PostComposerModal({
   React.useEffect(() => {
     const loadExistingEvent = async () => {
       if (post && post.metadata.__typename === 'EventMetadata') {
-        const eventMetadata = post.metadata as any;
+        const eventMetadata = post.metadata as { location?: string };
 
         const shortid = eventMetadata.location;
 

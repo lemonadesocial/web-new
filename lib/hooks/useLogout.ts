@@ -1,3 +1,4 @@
+'use client';
 import { useAtomValue, useSetAtom } from 'jotai';
 
 import { ory } from '$lib/utils/ory';

@@ -1,3 +1,4 @@
+'use client';
 import { useQuery } from '@tanstack/react-query';
 import { BrowserProvider, Contract, JsonRpcProvider, type Eip1193Provider, formatEther, formatUnits } from 'ethers';
 

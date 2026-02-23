@@ -1,3 +1,4 @@
+'use client';
 import { Eip1193Provider, ethers } from 'ethers';
 
 import { appKit } from '$lib/utils/appkit';

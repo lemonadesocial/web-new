@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     const { cid: imageCid } = await pinata.upload.public.file(file);
     const imageUrl = await pinata.gateways.public.convert(imageCid);
 
-    const metadata: any = {
+    const metadata: Record<string, unknown> = {
       name: coinName,
       symbol: ticker,
       description: description,

@@ -1,6 +1,6 @@
 import { SiwePayload } from "../../components/features/unicorn/client";
 
-const request = async <T>(uri: string, method: "GET" | "POST" = "GET", body?: any): Promise<T> => {
+const request = async <T>(uri: string, method: "GET" | "POST" = "GET", body?: unknown): Promise<T> => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTITY_URL}${uri}`, {
     method,
     ...(body && {

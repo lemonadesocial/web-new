@@ -80,44 +80,68 @@ export function getAccountCover(account: Account) {
   return account.metadata?.coverPicture;
 }
 
-export function getUsernameValidationMessage(validationResult: any, usernameLength?: number): string {
+interface ValidationConfigEntry {
+  key: string;
+  string?: string;
+  bigDecimal?: string;
+  int?: number;
+  array?: ValidationDictEntry[];
+  dictionary?: ValidationConfigEntry[];
+}
+
+interface ValidationDictEntry {
+  dictionary?: ValidationConfigEntry[];
+}
+
+interface ValidationRule {
+  reason: string;
+  message?: string;
+  config?: ValidationConfigEntry[];
+}
+
+interface UsernameValidationResult {
+  unsatisfiedRules?: { required?: ValidationRule[] };
+  reason?: string;
+}
+
+export function getUsernameValidationMessage(validationResult: UsernameValidationResult, usernameLength?: number): string {
   const requiredRules = validationResult.unsatisfiedRules?.required || [];
 
-  const tokenRule = requiredRules.find((rule: any) => rule.reason === 'TOKEN_GATED_NOT_A_TOKEN_HOLDER');
+  const tokenRule = requiredRules.find((rule) => rule.reason === 'TOKEN_GATED_NOT_A_TOKEN_HOLDER');
   if (tokenRule) {
     const config = tokenRule.config || [];
-    const amount = config.find((c: any) => c.key === 'amount')?.bigDecimal;
-    const symbol = config.find((c: any) => c.key === 'assetSymbol')?.string;
-    const name = config.find((c: any) => c.key === 'assetName')?.string;
+    const amount = config.find((c) => c.key === 'amount')?.bigDecimal;
+    const symbol = config.find((c) => c.key === 'assetSymbol')?.string;
+    const name = config.find((c) => c.key === 'assetName')?.string;
 
     if (amount && symbol) {
       return `You need to hold at least ${amount} ${symbol} (${name}) to claim this username`;
     }
   }
 
-  const priceRule = requiredRules.find((rule: any) => rule.reason === 'USERNAME_PRICE_PER_LENGTH_NOT_ENOUGH_BALANCE');
+  const priceRule = requiredRules.find((rule) => rule.reason === 'USERNAME_PRICE_PER_LENGTH_NOT_ENOUGH_BALANCE');
   if (priceRule) {
     const config = priceRule.config || [];
-    const symbol = config.find((c: any) => c.key === 'assetSymbol')?.string;
-    const overrides = config.find((c: any) => c.key === 'overrides')?.array || [];
+    const symbol = config.find((c) => c.key === 'assetSymbol')?.string;
+    const overrides = config.find((c) => c.key === 'overrides')?.array || [];
 
     if (symbol && overrides.length > 0) {
       if (usernameLength !== undefined) {
-        const specificOverride = overrides.find((override: any) => {
-          const length = override.dictionary?.find((d: any) => d.key === 'length')?.int;
+        const specificOverride = overrides.find((override) => {
+          const length = override.dictionary?.find((d) => d.key === 'length')?.int;
           return length === usernameLength;
         });
 
         if (specificOverride) {
-          const amount = specificOverride.dictionary?.find((d: any) => d.key === 'amount')?.bigDecimal;
+          const amount = specificOverride.dictionary?.find((d) => d.key === 'amount')?.bigDecimal;
           return `You do not have sufficient balance. Username with ${usernameLength} ${usernameLength > 1 ? 'characters' : 'character'} costs ${amount} ${symbol}.`;
         }
       }
 
       const pricingInfo = overrides
-        .map((override: any) => {
-          const length = override.dictionary?.find((d: any) => d.key === 'length')?.int;
-          const amount = override.dictionary?.find((d: any) => d.key === 'amount')?.bigDecimal;
+        .map((override) => {
+          const length = override.dictionary?.find((d) => d.key === 'length')?.int;
+          const amount = override.dictionary?.find((d) => d.key === 'amount')?.bigDecimal;
           return `${length} chars: ${amount} ${symbol}`;
         })
         .join(', ');
@@ -126,7 +150,7 @@ export function getUsernameValidationMessage(validationResult: any, usernameLeng
     }
   }
 
-  if (requiredRules[0]) return requiredRules[0].message;
+  if (requiredRules[0]) return requiredRules[0].message || 'Unknown error';
 
   return validationResult.reason || 'Unknown error';
 }
