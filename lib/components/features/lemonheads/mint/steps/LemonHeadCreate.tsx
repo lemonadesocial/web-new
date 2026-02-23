@@ -81,7 +81,7 @@ export function LemonHeadCreate() {
               <Content
                 key={key}
                 className={clsx(selected !== key ? 'hidden' : '')}
-                tabs={(item as unknown as any).tabs?.filter(Boolean)}
+                tabs={'tabs' in item ? item.tabs?.filter(Boolean) : undefined}
                 layerKey={key as TraitType}
               />
             );

@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     });
     
     const data = await request.formData();
-    const file: File | null = data.get("file") as unknown as File;
+    const file = data.get("file") as File | null;
     const coinName = data.get("coinName") as string;
     const ticker = data.get("ticker") as string;
     const description = data.get("description") as string;

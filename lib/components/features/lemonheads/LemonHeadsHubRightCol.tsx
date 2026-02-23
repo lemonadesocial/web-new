@@ -12,7 +12,6 @@ import {
   GetLemonheadInvitationRankDocument,
   GetSpaceEventsDocument,
   LemonheadUserInfo,
-  User,
 } from '$lib/graphql/generated/backend/graphql';
 import { truncateMiddle } from '$lib/utils/string';
 import { generateUrl } from '$lib/utils/cnd';
@@ -131,7 +130,7 @@ export function LemonHeadsHubRightCol({
                 <div className="flex gap-3 items-center flex-1">
                   <div className="relative">
                     <img
-                      src={userAvatar(item.user as unknown as User)}
+                      src={userAvatar(item.user)}
                       className="size-8 aspect-square rounded-full border"
                     />
                     <div className="absolute bottom-0 right-0 size-4 rounded-full border z-10">

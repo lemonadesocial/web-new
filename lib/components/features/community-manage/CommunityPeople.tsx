@@ -10,7 +10,6 @@ import {
   SpaceMember,
   SpaceTag,
   SpaceTagType,
-  User,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { userAvatar } from '$lib/utils/user';
@@ -262,7 +261,7 @@ export function CommunityPeople({ space }: Props) {
                 <div className="flex-1 flex gap-3 items-center">
                   <Avatar
                     className="size-7 md:size-5 aspect-square"
-                    src={userAvatar(item.user_expanded as unknown as User)}
+                    src={userAvatar(item.user_expanded)}
                   />
                   <div className="flex flex-col md:flex-row md:gap-3 md:items-center flex-1">
                     <p>
@@ -341,7 +340,7 @@ function PeopleDetailPane({
       </Pane.Header.Root>
       <Pane.Content className="p-4 gap-5">
         <div className="flex gap-3 items-center">
-          <Avatar size="xl" src={userAvatar(member.user_expanded as unknown as User)} />
+          <Avatar size="xl" src={userAvatar(member.user_expanded)} />
           <div className="flex flex-col ">
             <p>{member.user_name || member.user_expanded?.display_name || member.user_expanded?.name || 'Anonymous'}</p>
             <p className="text-tertiary line-clamp-1">{member.email || member.user_expanded?.email}</p>

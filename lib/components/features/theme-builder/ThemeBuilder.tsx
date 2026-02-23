@@ -15,7 +15,6 @@ import { twMerge } from 'tailwind-merge';
 import { MenuColorPicker } from './ColorPicker';
 import { join, split } from 'lodash';
 import {
-  File,
   FileCategory,
   GetSystemFilesDocument, SystemFile
 } from '$lib/graphql/generated/backend/graphql';
@@ -391,7 +390,7 @@ function PopoverImage() {
                     mode: item.category.includes('dark') ? 'dark' : 'light',
                     image: {
                       _id: item._id,
-                      url: generateUrl(item as unknown as File, {
+                      url: generateUrl(item, {
                         resize: { fit: 'cover', height: 1080, width: 1920 },
                       }),
                       name: item.name,
