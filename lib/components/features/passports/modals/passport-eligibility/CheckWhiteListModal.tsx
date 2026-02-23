@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
+import * as Sentry from '@sentry/nextjs';
 
 import { useAppKitAccount, useAppKit } from '$lib/utils/appkit';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
@@ -26,7 +27,7 @@ async function checkPassportBalance(provider: PASSPORT_PROVIDER, address: string
     const balance = await contract.getFunction('balanceOf')(address);
     return Number(balance);
   } catch (error) {
-    console.error('Error checking passport balance:', error);
+    Sentry.captureException(error);
     return 0;
   }
 }

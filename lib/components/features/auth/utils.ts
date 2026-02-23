@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { modal } from '$lib/components/core';
 import { CompleteProfile } from './CompleteProfile';
 import { defaultClient } from '$lib/graphql/request/instances';
@@ -19,6 +20,6 @@ export async function completeProfile() {
       modal.open(CompleteProfile);
     }
   } catch (error) {
-    console.error('Failed to fetch user data:', error);
+    Sentry.captureException(error);
   }
 }

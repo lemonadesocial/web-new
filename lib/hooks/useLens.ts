@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import * as Sentry from '@sentry/nextjs';
 import { handleOperationWith, signMessageWith } from '@lens-protocol/client/ethers';
 import {
   createAccountWithUsername,
@@ -619,7 +620,7 @@ export function useComments({ postId: targetPostId, feedAddress }: UseCommentsPr
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create comment';
       toast.error(errorMessage);
-      console.log(error);
+      Sentry.captureException(error);
       throw error;
     } finally {
       setIsCreating(false);

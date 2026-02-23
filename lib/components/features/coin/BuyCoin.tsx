@@ -41,7 +41,7 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
         const ethAmount = await flaunchClient.getEthValueForAmount();
         setTokenPrice(formatEther(ethAmount));
       } catch (error) {
-        console.error('Failed to fetch price', error);
+        Sentry.captureException(error);
         setTokenPrice(null);
       }
     };
@@ -109,7 +109,6 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
         }
       });
     } catch (error) {
-      console.log(error)
       Sentry.captureException(error);
       toast.error(formatError(error));
     } finally {

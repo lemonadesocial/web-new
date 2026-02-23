@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GiphyFetch } from '@giphy/js-fetch-api';
 import { IGif } from '@giphy/js-types';
+import * as Sentry from '@sentry/nextjs';
 import { Menu, Input } from '$lib/components/core';
 
 const gf = new GiphyFetch(process.env.NEXT_PUBLIC_GIPHY_API_KEY!);
@@ -40,7 +41,7 @@ export function GifPicker({ onSelectGif, trigger }: GifPickerProps) {
       setHasMore(newGifs.length === 20);
       setOffset(offsetValue + newGifs.length);
     } catch (error) {
-      console.error('Failed to fetch GIFs:', error);
+      Sentry.captureException(error);
     } finally {
       setLoading(false);
     }

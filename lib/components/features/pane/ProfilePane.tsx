@@ -3,6 +3,7 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { useSetAtom } from 'jotai';
+import * as Sentry from '@sentry/nextjs';
 
 import {
   Button,
@@ -106,7 +107,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
       toast.success('Profile updated successfully');
       drawer.close();
     } catch (err: any) {
-      console.error(err);
+      Sentry.captureException(err);
       toast.error(err.message);
     } finally {
       setIsSubmitting(false);
@@ -140,7 +141,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
                     setValue('cover', file._id, { shouldDirty: true });
                     setFileCover(file);
                   } catch (err) {
-                    console.log(err);
+                    Sentry.captureException(err);
                     toast.error('Upload fail!');
                   } finally {
                     setUploading(false);
@@ -182,7 +183,7 @@ export function ProfilePaneContent({ me }: { me: User }) {
                       setValue('new_photos', [file._id, ...photos], { shouldDirty: true });
                       setFile(file);
                     } catch (err) {
-                      console.log(err);
+                      Sentry.captureException(err);
                       toast.error('Upload fail!');
                     } finally {
                       setUploading(false);

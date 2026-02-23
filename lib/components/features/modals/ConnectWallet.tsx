@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import * as Sentry from '@sentry/nextjs';
 
 import { Button, modal, ModalContent, toast } from "$lib/components/core";
 import { Chain } from "$lib/graphql/generated/backend/graphql";
@@ -45,7 +46,7 @@ export function ConnectWallet({ onConnect, chain, onClose }: { onConnect: () => 
     try {
       await switchNetwork(getAppKitNetwork(chain));
     } catch (error: any) {
-      console.error('Network switch error:', error);
+      Sentry.captureException(error);
       toast.error(error?.message || 'Failed to switch network');
     }
   };

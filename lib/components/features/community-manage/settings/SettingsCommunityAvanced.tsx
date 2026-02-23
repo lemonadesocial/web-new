@@ -1,4 +1,5 @@
 'use client';
+import * as Sentry from '@sentry/nextjs';
 import { Button, Card, Divider, drawer, FileInput, Input, Menu, MenuItem, modal, toast, Toggle } from '$lib/components/core';
 import {
   DeleteSpaceDocument,
@@ -54,7 +55,7 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
         await handleUpdate({ fav_icon_url: uploadedFiles[0].url });
       }
     } catch (err) {
-      console.error(err);
+      Sentry.captureException(err);
       toast.error('Cannot upload favicon!');
     } finally {
       setUploadingFavicon(false);

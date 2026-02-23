@@ -3,6 +3,7 @@ import { formatDistanceToNow } from 'date-fns';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useRouter } from 'next/navigation';
+import * as Sentry from '@sentry/nextjs';
 
 import { Avatar, Button, toast, Menu, MenuItem, modal } from '$lib/components/core';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
@@ -44,7 +45,7 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
     try {
       await deletePost(rootPost.id);
     } catch (error) {
-      console.error('Failed to delete post:', error);
+      Sentry.captureException(error);
     }
   };
 

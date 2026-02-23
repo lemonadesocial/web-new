@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
+import * as Sentry from '@sentry/nextjs';
 
 import { Input, ModalContent, Spacer, modal, Avatar, Toggle, FileInput, Button, toast } from "$lib/components/core";
 import { Event, SearchUsersDocument, User, ManageEventCohostRequestsDocument, GetEventDocument, EventRole } from "$lib/graphql/generated/backend/graphql";
@@ -167,7 +168,7 @@ function ConfigureHostModal({ event, onBack, user, email }: ConfigureHostModalPr
           updateEvent(data.getEvent as Event);
         }
       } catch (error) {
-        console.error('Failed to reload event data:', error);
+        Sentry.captureException(error);
       }
       
       modal.close();

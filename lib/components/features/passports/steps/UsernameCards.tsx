@@ -4,6 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import { ethers } from 'ethers';
 import { mainnet } from 'viem/chains';
 import { useAppKitAccount } from '@reown/appkit/react';
+import * as Sentry from '@sentry/nextjs';
 
 import { Button, Card, Skeleton } from '$lib/components/core';
 import { useClaimUsername, useLemonadeUsername } from '$lib/hooks/useUsername';
@@ -89,7 +90,7 @@ export function ENSDomainCard() {
         setEnsName(name);
         dispatch({ type: PassportActionKind.SetEnsName, payload: name });
       } catch (error) {
-        console.error('Error fetching ENS name:', error);
+        Sentry.captureException(error);
         setEnsName(null);
       } finally {
         setIsLoading(false);
