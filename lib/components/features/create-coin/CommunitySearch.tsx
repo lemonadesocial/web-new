@@ -114,13 +114,9 @@ export function CommunitySearch({ onSuccess }: CommunitySearchProps) {
         <p>{selectedGroup.name}</p>
         <p className="text-sm text-tertiary">{selectedGroup.address}</p>
       </div>
-<<<<<<< HEAD
       <button type="button" aria-label="Clear selection" className="cursor-pointer" onClick={() => setSelectedGroup(null)}>
         <i className="icon-x size-4 text-tertiary" />
       </button>
-=======
-      <i aria-hidden="true" className="icon-x size-4 text-tertiary cursor-pointer" onClick={() => setSelectedGroup(null)} />
->>>>>>> 1018631b (a11y(icons): add aria-hidden="true" to all 518 decorative <i> icon elements)
     </div>
   );
 

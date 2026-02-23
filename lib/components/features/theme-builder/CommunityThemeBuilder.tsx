@@ -314,13 +314,9 @@ function CommunityThemeBuilderPane({
     <div className="h-full flex flex-col">
       <div className="px-4 py-3 border-b border-divider flex justify-between items-center flex-shrink-0">
         <p className="text-lg font-medium">Advanced Options</p>
-<<<<<<< HEAD
         <button type="button" aria-label="Close" className="cursor-pointer" onClick={onClose}>
           <i className="icon-x size-4 text-tertiary hover:text-secondary" />
         </button>
-=======
-        <i aria-hidden="true" className="icon-x size-4 cursor-pointer text-tertiary hover:text-secondary" onClick={onClose} />
->>>>>>> 1018631b (a11y(icons): add aria-hidden="true" to all 518 decorative <i> icon elements)
       </div>
 
       <div className="flex-1 overflow-y-auto no-scrollbar">

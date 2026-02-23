@@ -144,13 +144,8 @@ export function RegistrationForm() {
                   {({ toggle }) => (
                     <button type="button" className="flex items-center gap-2 cursor-pointer" onClick={toggle}>
                       <p className="text-tertiary">{ethAddressRequirement}</p>
-<<<<<<< HEAD
                       <i className="icon-arrow-down text-tertiary size-4" />
                     </button>
-=======
-                      <i aria-hidden="true" className="icon-arrow-down text-tertiary size-4" />
-                    </div>
->>>>>>> 1018631b (a11y(icons): add aria-hidden="true" to all 518 decorative <i> icon elements)
                   )}
                 </Menu.Trigger>
                 <Menu.Content className="p-1 min-w-[120px]">
@@ -190,13 +185,8 @@ export function RegistrationForm() {
                   {({ toggle }) => (
                     <button type="button" className="flex items-center gap-2 cursor-pointer" onClick={toggle}>
                       <p className="text-tertiary">{selfIdRequirement}</p>
-<<<<<<< HEAD
                       <i className="icon-arrow-down text-tertiary size-4" />
                     </button>
-=======
-                      <i aria-hidden="true" className="icon-arrow-down text-tertiary size-4" />
-                    </div>
->>>>>>> 1018631b (a11y(icons): add aria-hidden="true" to all 518 decorative <i> icon elements)
                   )}
                 </Menu.Trigger>
                 <Menu.Content className="p-1 min-w-[120px]">
@@ -320,13 +310,9 @@ function QuestionCard({ question, index }: { question: EventApplicationQuestion;
         )}
       </div>
 
-<<<<<<< HEAD
       <button type="button" aria-label="Edit question" className="cursor-pointer" onClick={() => handleEdit(question)}>
         <i className="icon-edit-sharp size-5 text-tertiary" />
       </button>
-=======
-      <i aria-hidden="true" className="icon-edit-sharp size-5 text-tertiary cursor-pointer" onClick={() => handleEdit(question)} />
->>>>>>> 1018631b (a11y(icons): add aria-hidden="true" to all 518 decorative <i> icon elements)
     </div>
   );
 }

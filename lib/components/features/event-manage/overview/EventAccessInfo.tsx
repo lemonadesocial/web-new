@@ -75,7 +75,6 @@ export function EventAccessInfo({ event }: { event: Event }) {
         <div className="flex items-center justify-between gap-4 font-default">
           <p className="text-sm text-secondary truncate">{`${window.location.host}/e/${event.shortid}`}</p>
           <div className="flex items-center gap-4">
-<<<<<<< HEAD
             <button type="button" aria-label="Edit link" className="cursor-pointer" onClick={() => modal.open(UpdateEventLinkModal, { props: { event } })}>
               <i className="icon-edit-sharp text-tertiary size-5" />
             </button>
@@ -85,17 +84,6 @@ export function EventAccessInfo({ event }: { event: Event }) {
             <button type="button" aria-label="Share" className="cursor-pointer" onClick={() => modal.open(InviteFriendModal, { props: { event }, dismissible: true })}>
               <i className="icon-share text-tertiary size-5" />
             </button>
-=======
-            <i
-              className="icon-edit-sharp text-tertiary size-5 cursor-pointer"
-              onClick={() => modal.open(UpdateEventLinkModal, { props: { event } })}
-            />
-            <i aria-hidden="true" className="icon-copy text-tertiary size-5 cursor-pointer" onClick={handleCopy} />
-            <i
-              className="icon-share text-tertiary size-5 cursor-pointer"
-              onClick={() => modal.open(InviteFriendModal, { props: { event }, dismissible: true })}
-            />
->>>>>>> 1018631b (a11y(icons): add aria-hidden="true" to all 518 decorative <i> icon elements)
           </div>
         </div>
       </div>

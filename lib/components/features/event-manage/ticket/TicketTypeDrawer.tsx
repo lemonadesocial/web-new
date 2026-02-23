@@ -366,13 +366,8 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                   {errors.description?.message && <ErrorText message={errors.description.message} />}
                 </LabeledInput>
               ) : (
-<<<<<<< HEAD
                 <button type="button" className="flex items-center gap-1.5 cursor-pointer" onClick={() => setShowDescription(true)}>
                   <i className="icon-plus size-5 text-tertiary" />
-=======
-                <div className="flex items-center gap-1.5 cursor-pointer" onClick={() => setShowDescription(true)}>
-                  <i aria-hidden="true" className="icon-plus size-5 text-tertiary" />
->>>>>>> 1018631b (a11y(icons): add aria-hidden="true" to all 518 decorative <i> icon elements)
                   <p className="text-tertiary text-sm">Add Description</p>
                 </button>
               )}
