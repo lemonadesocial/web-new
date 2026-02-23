@@ -1,0 +1,284 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["ai", "api", "public"]
+}
+
+// ─── AI Schema (read-only from FE) ───────────────────────────
+
+// NOTE: ai.usage_logs is partitioned — Prisma model is @@ignore'd.
+// Use prisma.$queryRaw for all interactions.
+model AiUsageLog {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  standId         String   @map("stand_id") @db.VarChar(24)
+  userId          String   @map("user_id") @db.VarChar(24)
+  requestId       String   @unique @map("request_id") @db.VarChar(100)
+  conversationId  String?  @map("conversation_id") @db.VarChar(100)
+  sessionId       String?  @map("session_id") @db.VarChar(100)
+  model           String   @db.VarChar(100)
+  inputTokens     Int      @map("input_tokens")
+  outputTokens    Int      @map("output_tokens")
+  totalTokens     Int      @map("total_tokens")
+  inputCostUsd    Decimal  @map("input_cost_usd") @db.Decimal(10, 6)
+  outputCostUsd   Decimal  @map("output_cost_usd") @db.Decimal(10, 6)
+  totalCostUsd    Decimal  @map("total_cost_usd") @db.Decimal(10, 6)
+  creditsUsed     Decimal  @map("credits_used") @db.Decimal(10, 2)
+  feature         String?  @db.VarChar(100)
+  toolCalls       Json?    @map("tool_calls")
+  latencyMs       Int?     @map("latency_ms")
+  totalDurationMs Int?     @map("total_duration_ms")
+  promptSummary   String?  @map("prompt_summary")
+  responseSummary String?  @map("response_summary")
+  ipAddress       String?  @map("ip_address") @db.Inet
+  userAgent       String?  @map("user_agent")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@ignore
+  @@map("usage_logs")
+  @@schema("ai")
+}
+
+model AiCreditTransaction {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  standId         String   @map("stand_id") @db.VarChar(24)
+  userId          String?  @map("user_id") @db.VarChar(24)
+  amount          Decimal  @db.Decimal(10, 2)
+  type            String
+  balanceBefore   Decimal? @map("balance_before") @db.Decimal(10, 2)
+  balanceAfter    Decimal? @map("balance_after") @db.Decimal(10, 2)
+  requestId       String?  @map("request_id") @db.VarChar(100)
+  stripePaymentId String?  @map("stripe_payment_id") @db.VarChar(100)
+  metadata        Json     @default("{}")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@map("credit_transactions")
+  @@schema("ai")
+  @@index([standId, createdAt(sort: Desc)], name: "idx_credit_txn_stand")
+  @@index([type], name: "idx_credit_txn_type")
+  @@index([stripePaymentId], name: "idx_credit_txn_stripe")
+}
+
+// ─── API Schema (read-only from FE) ──────────────────────────
+
+model ApiQuotaUsage {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  spaceId         String    @map("space_id") @db.VarChar(24)
+  period          String    @db.VarChar(7)
+  callCount       Int       @default(0) @map("call_count")
+  overageCalls    Int       @default(0) @map("overage_calls")
+  overageBilled   Decimal   @default(0) @map("overage_billed") @db.Decimal(10, 4)
+  overageBilledAt DateTime? @map("overage_billed_at") @db.Timestamptz()
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz()
+
+  @@unique([spaceId, period])
+  @@map("api_quota_usage")
+  @@schema("api")
+  @@index([spaceId], name: "idx_api_quota_space")
+}
+
+// ─── Public Schema (CQRS synced — read-only, annotations writable) ───
+
+model EventGuest {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mongoTicketId       String    @unique @map("mongo_ticket_id")
+  mongoEventId        String    @map("mongo_event_id")
+  mongoUserId         String?   @map("mongo_user_id")
+  guestName           String?   @map("guest_name")
+  guestEmail          String?   @map("guest_email")
+  guestAvatar         String?   @map("guest_avatar")
+  guestPhone          String?   @map("guest_phone")
+  ticketType          String?   @map("ticket_type")
+  ticketTypeId        String?   @map("ticket_type_id")
+  ticketCount         Int       @default(1) @map("ticket_count")
+  rsvpStatus          String    @default("pending") @map("rsvp_status")
+  paymentStatus       String    @default("none") @map("payment_status")
+  paymentAmount       Decimal?  @map("payment_amount") @db.Decimal(12, 2)
+  paymentCurrency     String    @default("USD") @map("payment_currency")
+  checkedIn           Boolean   @default(false) @map("checked_in")
+  checkedInAt         DateTime? @map("checked_in_at") @db.Timestamptz()
+  invitedBy           String?   @map("invited_by")
+  registrationAnswers Json      @default("{}") @map("registration_answers")
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt           DateTime  @default(now()) @map("updated_at") @db.Timestamptz()
+  syncedAt            DateTime  @default(now()) @map("synced_at") @db.Timestamptz()
+  annotation          GuestAnnotation?
+
+  @@map("event_guests")
+  @@schema("public")
+  @@index([mongoEventId], name: "idx_event_guests_event")
+  @@index([mongoEventId, rsvpStatus], name: "idx_event_guests_status")
+  @@index([mongoEventId, paymentStatus], name: "idx_event_guests_payment")
+  @@index([mongoEventId, checkedIn], name: "idx_event_guests_checkin")
+  @@index([mongoEventId, createdAt(sort: Desc)], name: "idx_event_guests_created")
+  @@index([mongoUserId], name: "idx_event_guests_user")
+}
+
+model SpaceSubscriber {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mongoMemberId  String    @unique @map("mongo_member_id")
+  mongoSpaceId   String    @map("mongo_space_id")
+  mongoUserId    String?   @map("mongo_user_id")
+  memberName     String?   @map("member_name")
+  memberEmail    String?   @map("member_email")
+  memberAvatar   String?   @map("member_avatar")
+  role           String    @default("member")
+  status         String    @default("active")
+  joinedAt       DateTime  @default(now()) @map("joined_at") @db.Timestamptz()
+  updatedAt      DateTime  @default(now()) @map("updated_at") @db.Timestamptz()
+  syncedAt       DateTime  @default(now()) @map("synced_at") @db.Timestamptz()
+  annotation     SubscriberAnnotation?
+
+  @@map("space_subscribers")
+  @@schema("public")
+  @@index([mongoSpaceId], name: "idx_space_subs_space")
+  @@index([mongoSpaceId, role], name: "idx_space_subs_role")
+  @@index([mongoSpaceId, status], name: "idx_space_subs_status")
+  @@index([mongoSpaceId, joinedAt(sort: Desc)], name: "idx_space_subs_joined")
+  @@index([mongoUserId], name: "idx_space_subs_user")
+}
+
+model EventSummary {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mongoEventId   String    @unique @map("mongo_event_id")
+  mongoSpaceId   String?   @map("mongo_space_id")
+  title          String
+  startTime      DateTime? @map("start_time") @db.Timestamptz()
+  endTime        DateTime? @map("end_time") @db.Timestamptz()
+  timezone       String?
+  status         String    @default("draft")
+  eventType      String?   @map("event_type")
+  visibility     String    @default("public")
+  hostUserId     String?   @map("host_user_id")
+  hostName       String?   @map("host_name")
+  totalTickets   Int       @default(0) @map("total_tickets")
+  checkedInCount Int       @default(0) @map("checked_in_count")
+  totalRevenue   Decimal   @default(0) @map("total_revenue") @db.Decimal(12, 2)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt      DateTime  @default(now()) @map("updated_at") @db.Timestamptz()
+  syncedAt       DateTime  @default(now()) @map("synced_at") @db.Timestamptz()
+
+  @@map("event_summary")
+  @@schema("public")
+  @@index([mongoSpaceId], name: "idx_event_summary_space")
+  @@index([hostUserId], name: "idx_event_summary_host")
+  @@index([startTime(sort: Desc)], name: "idx_event_summary_start")
+  @@index([status], name: "idx_event_summary_status")
+}
+
+model UserProfile {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mongoUserId String   @unique @map("mongo_user_id")
+  kratosId    String?  @unique @map("kratos_id")
+  displayName String?  @map("display_name")
+  email       String?
+  avatar      String?
+  syncedAt    DateTime @default(now()) @map("synced_at") @db.Timestamptz()
+
+  @@map("user_profiles")
+  @@schema("public")
+}
+
+model EventOrganizer {
+  id           String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mongoEventId String @map("mongo_event_id")
+  kratosId     String @map("kratos_id")
+  role         String @default("host")
+
+  @@unique([mongoEventId, kratosId])
+  @@map("event_organizers")
+  @@schema("public")
+  @@index([kratosId], name: "idx_event_org_kratos")
+  @@index([mongoEventId], name: "idx_event_org_event")
+}
+
+model SpaceAdmin {
+  id           String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mongoSpaceId String @map("mongo_space_id")
+  kratosId     String @map("kratos_id")
+  role         String @default("admin")
+
+  @@unique([mongoSpaceId, kratosId])
+  @@map("space_admins")
+  @@schema("public")
+  @@index([kratosId], name: "idx_space_adm_kratos")
+  @@index([mongoSpaceId], name: "idx_space_adm_space")
+}
+
+// ─── Organizer-Owned Tables ──────────────────────────────────
+
+model GuestAnnotation {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventGuestId String     @unique @map("event_guest_id") @db.Uuid
+  tags         String[]   @default([])
+  notes        String?
+  segment      String?
+  priority     Int        @default(0)
+  customFields Json       @default("{}") @map("custom_fields")
+  updatedBy    String     @map("updated_by")
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt    DateTime   @default(now()) @map("updated_at") @db.Timestamptz()
+  eventGuest   EventGuest @relation(fields: [eventGuestId], references: [id], onDelete: Cascade)
+
+  @@map("guest_annotations")
+  @@schema("public")
+  @@index([eventGuestId], name: "idx_guest_ann_guest")
+  @@index([segment], name: "idx_guest_ann_segment")
+}
+
+model SubscriberAnnotation {
+  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  spaceSubscriberId String          @unique @map("space_subscriber_id") @db.Uuid
+  tags              String[]        @default([])
+  notes             String?
+  segment           String?
+  priority          Int             @default(0)
+  customFields      Json            @default("{}") @map("custom_fields")
+  updatedBy         String          @map("updated_by")
+  createdAt         DateTime        @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt         DateTime        @default(now()) @map("updated_at") @db.Timestamptz()
+  spaceSubscriber   SpaceSubscriber @relation(fields: [spaceSubscriberId], references: [id], onDelete: Cascade)
+
+  @@map("subscriber_annotations")
+  @@schema("public")
+  @@index([spaceSubscriberId], name: "idx_sub_ann_subscriber")
+  @@index([segment], name: "idx_sub_ann_segment")
+}
+
+model CustomFieldsConfig {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  scope        String
+  scopeId      String   @map("scope_id")
+  fieldName    String   @map("field_name")
+  fieldType    String   @default("text") @map("field_type")
+  fieldOptions Json     @default("{}") @map("field_options")
+  displayOrder Int      @default(0) @map("display_order")
+  createdBy    String   @map("created_by")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@unique([scope, scopeId, fieldName])
+  @@map("custom_fields_config")
+  @@schema("public")
+  @@index([scope, scopeId], name: "idx_custom_fields_scope")
+}
+
+model OrganizerSegment {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  scope        String
+  scopeId      String   @map("scope_id")
+  name         String
+  description  String?
+  filterConfig Json     @map("filter_config")
+  createdBy    String   @map("created_by")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz()
+
+  @@map("organizer_segments")
+  @@schema("public")
+  @@index([scope, scopeId], name: "idx_org_segments_scope")
+}
