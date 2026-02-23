@@ -69,8 +69,8 @@ export default async function Page({ params }: { params: Promise<{ shortid: stri
       variables: { owner_type: 'event', owner_id: event._id },
     });
     hasPublishedConfig = !!configData?.getPublishedConfig;
-  } catch {
-    // Config query failed — fall through to default page
+  } catch (err) {
+    console.error('[page-builder] Failed to check published config for event', event._id, err);
   }
 
   if (hasPublishedConfig) {

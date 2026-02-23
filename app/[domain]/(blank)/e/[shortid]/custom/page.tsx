@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+import { Metadata, ResolvingMetadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { htmlToText } from 'html-to-text';
 
@@ -41,8 +41,8 @@ async function fetchEventAndConfig(shortid: string) {
     const config = configData?.getPublishedConfig as PageConfig | null;
 
     return { event, config };
-  } catch {
-    // If the query fails (e.g. backend branch not deployed yet), fall back
+  } catch (err) {
+    console.error('[page-builder] Failed to fetch published config for event', event._id, err);
     return { event, config: null };
   }
 }
@@ -51,11 +51,16 @@ async function fetchEventAndConfig(shortid: string) {
 // Metadata
 // ---------------------------------------------------------------------------
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: PageProps,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
   const shortid = (await params).shortid;
   const { event, config } = await fetchEventAndConfig(shortid);
 
   if (!event) return {};
+
+  const previousImages = (await parent).openGraph?.images || [];
 
   // Prefer SEO overrides from the PageConfig when available
   const seo = config?.seo;
@@ -74,9 +79,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       : ''
   );
 
-  const ogImage =
-    seo?.og_image_url ||
-    `${process.env.NEXT_PUBLIC_HOST_URL}/api/og/event/${event.shortid}`;
+  let images = [...previousImages];
+  if (seo?.og_image_url) {
+    images = [seo.og_image_url, ...images];
+  } else {
+    // Fall back to the default event OG image
+    images = [
+      `${process.env.NEXT_PUBLIC_HOST_URL}/api/og/event/${event.shortid}`,
+      ...images,
+    ];
+  }
 
   const metadata: Metadata = {
     metadataBase: null,
@@ -85,7 +97,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title,
       description,
-      images: ogImage,
+      images,
       type: (seo?.og_type as 'website' | 'article') || 'website',
     },
   };

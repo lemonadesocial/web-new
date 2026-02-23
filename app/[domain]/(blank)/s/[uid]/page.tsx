@@ -22,8 +22,8 @@ export default async function Page({ params }: { params: Promise<{ uid: string }
       variables: { owner_type: 'space', owner_id: space._id },
     });
     hasPublishedConfig = !!configData?.getPublishedConfig;
-  } catch {
-    // Config query failed — fall through to default page
+  } catch (err) {
+    console.error('[page-builder] Failed to check published config for space', space._id, err);
   }
 
   if (hasPublishedConfig) {

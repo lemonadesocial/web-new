@@ -19,6 +19,7 @@ import { DEFAULT_THEME } from './types';
 export function formatRelativeTime(dateString: string): string {
   const now = Date.now();
   const then = new Date(dateString).getTime();
+  if (Number.isNaN(then)) return '';
   const diffMs = now - then;
   const diffMinutes = Math.floor(diffMs / 60_000);
 
