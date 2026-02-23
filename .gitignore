@@ -61,3 +61,6 @@ certificates
 TODO.md
 AUDIT-REPORT-*.md
 PERF-REPORT-*.md
+
+# Prisma generated client
+src/generated/
