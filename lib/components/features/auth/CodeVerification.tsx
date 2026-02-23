@@ -91,7 +91,7 @@ export function CodeVerification({
               {countdown > 0 ? `Resend in ${countdown}s` : 'Resend Code'}
             </Button>
             {
-              resending && <i className="icon-loader animate-spin size-4 text-tertiary" />
+              resending && <i aria-hidden="true" className="icon-loader animate-spin size-4 text-tertiary" />
             }
           </div>
         </div>

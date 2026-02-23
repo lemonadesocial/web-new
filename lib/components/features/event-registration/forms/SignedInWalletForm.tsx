@@ -141,7 +141,7 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
                           onVerify();
                           toggle();
                         }}
-                        iconLeft={<i className="icon-wallet size-5 text-tertiary" />}
+                        iconLeft={<i aria-hidden="true" className="icon-wallet size-5 text-tertiary" />}
                         title="New Wallet"
                       />
                     </div>

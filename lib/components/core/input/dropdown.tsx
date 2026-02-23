@@ -113,7 +113,7 @@ export function DropdownTags(props: DropdownTagsProps) {
                 />
               ))}
             </div>
-            <i className="icon-chevron-down size-5" />
+            <i aria-hidden="true" className="icon-chevron-down size-5" />
           </div>
         </fieldset>
       </Menu.Trigger>

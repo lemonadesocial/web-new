@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { sdk } from '@farcaster/miniapp-sdk';
+import * as Sentry from '@sentry/nextjs';
 
 import { GraphqlClientProvider } from '$lib/graphql/request';
 import { initializeAppKit } from '$lib/utils/appkit';
@@ -40,7 +41,7 @@ export default function Providers({ children, space }: { children: React.ReactNo
   }, [space]);
 
   useEffect(() => {
-    sdk.actions.ready().then(() => setMiniAppReady(true)).catch(e => console.error(e));
+    sdk.actions.ready().then(() => setMiniAppReady(true)).catch(e => Sentry.captureException(e));
   }, []);
 
   useEffect(() => {

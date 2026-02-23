@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
+import * as Sentry from '@sentry/nextjs';
 
 import { Input, ModalContent, Spacer, modal, Avatar, Toggle, FileInput, Button, toast } from "$lib/components/core";
 import { Event, SearchUsersDocument, User, ManageEventCohostRequestsDocument, GetEventDocument, EventRole } from "$lib/graphql/generated/backend/graphql";
@@ -82,7 +83,7 @@ export function AddHostModal({ event }: { event: Event }) {
               onClick={() => setShowConfigureHostModal(true)}
             >
               <div className="size-8 bg-primary/8 rounded-full flex items-center justify-center">
-                <i className="icon-person-sharp text-tertiary" />
+                <i aria-hidden="true" className="icon-person-sharp text-tertiary" />
               </div>
               <div className="flex-1">
                 <p>
@@ -167,7 +168,7 @@ function ConfigureHostModal({ event, onBack, user, email }: ConfigureHostModalPr
           updateEvent(data.getEvent as Event);
         }
       } catch (error) {
-        console.error('Failed to reload event data:', error);
+        Sentry.captureException(error);
       }
       
       modal.close();
@@ -236,7 +237,7 @@ function ConfigureHostModal({ event, onBack, user, email }: ConfigureHostModalPr
             </div>
           ) : (
             <div className="flex gap-2 items-center">
-              <i className="icon-person-outline text-tertiary size-5" />
+              <i aria-hidden="true" className="icon-person-outline text-tertiary size-5" />
               <p>{email}</p>
             </div>
           )
@@ -296,12 +297,12 @@ function ConfigureHostModal({ event, onBack, user, email }: ConfigureHostModalPr
               }`}
               onClick={() => setSelectedRole(EventRole.Cohost)}
             >
-              <i className="icon-crown size-5" />
+              <i aria-hidden="true" className="icon-crown size-5" />
               <div className="flex-1">
                 <p>Cohost</p>
                 <p className="text-sm text-tertiary">Full manage access to the event</p>
               </div>
-              {selectedRole === EventRole.Cohost && <i className="icon-check size-5" />}
+              {selectedRole === EventRole.Cohost && <i aria-hidden="true" className="icon-check size-5" />}
             </div>
             <div
               className={`flex items-center gap-3 py-1.5 px-3 rounded-sm cursor-pointer border transition-colors ${
@@ -311,12 +312,12 @@ function ConfigureHostModal({ event, onBack, user, email }: ConfigureHostModalPr
               }`}
               onClick={() => setSelectedRole(EventRole.Gatekeeper)}
             >
-              <i className="icon-person-sharp size-5" />
+              <i aria-hidden="true" className="icon-person-sharp size-5" />
               <div className="flex-1">
                 <p>Promoter</p>
                 <p className="text-sm text-tertiary">Check in guests & view guest list</p>
               </div>
-              {selectedRole === EventRole.Gatekeeper && <i className="icon-check size-5" />}
+              {selectedRole === EventRole.Gatekeeper && <i aria-hidden="true" className="icon-check size-5" />}
             </div>
           </div>
         </div>

@@ -23,7 +23,7 @@ export function Footer({ space }: { space: Space }) {
             className={clsx('p-2.5 rounded-full cursor-pointer', isActive(item) && 'bg-[var(--btn-secondary)]')}
             onClick={() => router.push(`/s/${space.slug || space._id}/${item.path}`)}
           >
-            <i className={clsx(item.icon, isActive(item) ? 'text-[var(--btn-secondary-content)]' : 'text-secondary')} />
+            <i aria-hidden="true" className={clsx(item.icon, isActive(item) ? 'text-[var(--btn-secondary-content)]' : 'text-secondary')} />
           </div>
         ))}
 

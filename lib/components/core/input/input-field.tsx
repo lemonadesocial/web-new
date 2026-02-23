@@ -33,7 +33,7 @@ export function InputField(props: Props) {
       <div className={clsx('control', props.error && 'border-error!')}>
         {props.prefix && <div className="prefix text-base font-medium text-secondary">{props.prefix}</div>}
         {typeof props.iconLeft === 'string' ? (
-          <i className={twMerge('size-5 text-tertiary', props.iconLeft)} />
+          <i aria-hidden="true" className={twMerge('size-5 text-tertiary', props.iconLeft)} />
         ) : (
           props.iconLeft
         )}

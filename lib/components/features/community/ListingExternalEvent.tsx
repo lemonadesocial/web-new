@@ -238,7 +238,7 @@ function InputFieldCustom({
   onChange,
 }: {
   onStartExtract?: () => void;
-  onChange?: (data: any) => void;
+  onChange?: (data: Record<string, unknown>) => void;
 }) {
   const [value, setValue] = React.useState('');
 
@@ -265,11 +265,11 @@ function InputFieldCustom({
       let location = {};
 
       if ('jsonLD' in result && result.jsonLD?.length) {
-        startDate = result.jsonLD.find((item: any) => item.startDate)?.startDate || null;
-        endDate = result.jsonLD.find((item: any) => item.endDate)?.endDate || null;
-        host = result.jsonLD.find((item: any) => item.organizer)?.organizer?.name || null;
+        startDate = result.jsonLD.find((item: Record<string, unknown>) => item.startDate)?.startDate || null;
+        endDate = result.jsonLD.find((item: Record<string, unknown>) => item.endDate)?.endDate || null;
+        host = result.jsonLD.find((item: Record<string, unknown>) => item.organizer)?.organizer?.name || null;
 
-        const _location = result.jsonLD.find((item: any) => item.location)?.location || null;
+        const _location = result.jsonLD.find((item: Record<string, unknown>) => item.location)?.location || null;
         location = {
           address: {
             street_1: _location?.address?.streetAddress,
@@ -351,7 +351,7 @@ function InputField({
           clsx(iconLeft && 'px-3.5 gap-2.5'),
         )}
       >
-        {iconLeft && <i className={iconLeft} />}
+        {iconLeft && <i aria-hidden="true" className={iconLeft} />}
         <input
           readOnly={readOnly}
           className="flex-1 outline-none"
@@ -418,10 +418,10 @@ function DateTimeWithTimeZone({
             className="btn btn-tertiary inline-flex items-center w-full rounded-sm h-[40px] pl-3.5 pr-2.5"
           >
             <div className="flex flex-1 w-3xs md:w-auto items-center gap-2.5">
-              <i className="icon-globe size-[20px]" />
+              <i aria-hidden="true" className="icon-globe size-[20px]" />
               <span className="truncate w-fit">{zone?.text}</span>
             </div>
-            <i className="icon-chevron-down size-[20px]" />
+            <i aria-hidden="true" className="icon-chevron-down size-[20px]" />
           </button>
         )}
         onSelect={(data) => {

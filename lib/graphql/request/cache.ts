@@ -1,18 +1,19 @@
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import { OperationDefinitionNode, FieldNode } from 'graphql';
 
 export class InMemoryCache {
-  private store: Record<string, any> = {
+  private store: Record<string, Record<string, unknown>> = {
     ROOT_QUERY: { __typename: 'Query' },
   };
 
   private listeners: Record<string, Set<() => void>> = {};
 
-  private getTypename(data: any): string | null {
+  private getTypename(data: unknown): string | null {
     if (!data || typeof data !== 'object') return null;
-    return data.__typename || null;
+    return (data as Record<string, unknown>).__typename as string || null;
   }
 
-  private generateEntityId(typename: string, id: any): string {
+  private generateEntityId(typename: string, id: string | number): string {
     return `${typename}:${id}`;
   }
 
@@ -28,12 +29,12 @@ export class InMemoryCache {
     return `${fieldName}(${argString})`;
   }
 
-  private denormalizeData(data: any): any {
+  private denormalizeData(data: unknown): unknown {
     if (!data) return data;
 
     // Handle reference
-    if (data.__ref) {
-      const entity = this.store[data.__ref];
+    if (typeof data === 'object' && data !== null && '__ref' in data) {
+      const entity = this.store[(data as { __ref: string }).__ref];
       if (!entity) return null;
       return this.denormalizeData(entity);
     }
@@ -45,7 +46,7 @@ export class InMemoryCache {
 
     // Handle objects
     if (typeof data === 'object') {
-      const result: Record<string, any> = {};
+      const result: Record<string, unknown> = {};
 
       for (const [key, value] of Object.entries(data)) {
         result[key] = this.denormalizeData(value);
@@ -60,14 +61,16 @@ export class InMemoryCache {
 
   readQuery<T, V>(query: TypedDocumentNode<T, V>, variables?: Record<string, V>) {
     try {
-      const operationDef = query.definitions.find((def) => def.kind === 'OperationDefinition') as any;
+      const operationDef = query.definitions.find(
+        (def): def is OperationDefinitionNode => def.kind === 'OperationDefinition',
+      );
 
       if (!operationDef || operationDef.operation !== 'query') return null;
 
-      const result: Record<string, any> = {};
+      const result: Record<string, unknown> = {};
 
       // Process each selection (field) at the root level
-      operationDef.selectionSet.selections.forEach((selection: any) => {
+      operationDef.selectionSet.selections.forEach((selection) => {
         if (selection.kind !== 'Field') return;
 
         const fieldName = selection.name.value;
@@ -99,7 +102,7 @@ export class InMemoryCache {
       return;
     }
 
-    for (const [key, value] of Object.entries(data)) {
+    for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
       if (key === '__typename' || key === 'id' || key === '_id') continue;
       this.store[id][key] = value;
     }
@@ -107,7 +110,7 @@ export class InMemoryCache {
     Object.keys(this.listeners).forEach((key) => this.notifyListeners(key));
   }
 
-  writeQuery<T, V extends Record<string, any>>({
+  writeQuery<T, V extends Record<string, unknown>>({
     query,
     variables = {} as V,
     data,
@@ -128,7 +131,7 @@ export class InMemoryCache {
     }
   }
 
-  private storeEntity(data: any): { __ref: string } | null {
+  private storeEntity(data: Record<string, unknown>): { __ref: string } | null {
     if (!data || typeof data !== 'object') return null;
 
     const typename = this.getTypename(data);
@@ -136,7 +139,7 @@ export class InMemoryCache {
 
     // Try to get ID from common ID fields
     const id = data.id || data._id;
-    if (!id) return null;
+    if (!id || (typeof id !== 'string' && typeof id !== 'number')) return null;
 
     const entityId = this.generateEntityId(typename, id);
 
@@ -155,7 +158,7 @@ export class InMemoryCache {
           if (item && typeof item === 'object') {
             const nestedTypename = this.getTypename(item);
             if (nestedTypename) {
-              const normalized = this.storeEntity(item);
+              const normalized = this.storeEntity(item as Record<string, unknown>);
               return normalized || item;
             }
           }
@@ -165,7 +168,7 @@ export class InMemoryCache {
         // Handle nested objects
         const nestedTypename = this.getTypename(value);
         if (nestedTypename) {
-          const normalized = this.storeEntity(value);
+          const normalized = this.storeEntity(value as Record<string, unknown>);
           this.store[entityId][key] = normalized || value;
         } else {
           this.store[entityId][key] = value;
@@ -204,14 +207,14 @@ export class InMemoryCache {
         // Handle arrays (lists)
         this.store.ROOT_QUERY[fieldKey] = resultData.map((item) => {
           if (item && typeof item === 'object') {
-            const normalized = this.storeEntity(item);
+            const normalized = this.storeEntity(item as Record<string, unknown>);
             return normalized || item;
           }
           return item;
         });
       } else if (resultData && typeof resultData === 'object') {
         // Handle objects
-        const normalized = this.storeEntity(resultData);
+        const normalized = this.storeEntity(resultData as Record<string, unknown>);
         this.store.ROOT_QUERY[fieldKey] = normalized || resultData;
       } else {
         // Handle primitives
@@ -223,12 +226,12 @@ export class InMemoryCache {
   }
 
   // Extract arguments from query field
-  private extractArguments(field: any, variables?: Record<string, any>): Record<string, any> | undefined {
+  private extractArguments(field: FieldNode, variables?: Record<string, unknown>): Record<string, unknown> | undefined {
     if (!field.arguments || field.arguments.length === 0) return undefined;
 
-    const args: Record<string, any> = {};
+    const args: Record<string, unknown> = {};
 
-    field.arguments.forEach((arg: any) => {
+    field.arguments.forEach((arg) => {
       const name = arg.name.value;
 
       // Handle variable references
@@ -255,9 +258,11 @@ export class InMemoryCache {
   }
 
   // Helper to generate a consistent cache key
-  createCacheKey<T, V extends object>(query: TypedDocumentNode<T, V>, variables?: Record<string, any>) {
+  createCacheKey<T, V extends object>(query: TypedDocumentNode<T, V>, variables?: Record<string, unknown>) {
     // Extract operation name
-    const operationDef: any = query.definitions.find((def) => def.kind === 'OperationDefinition' && def.name);
+    const operationDef = query.definitions.find(
+      (def): def is OperationDefinitionNode => def.kind === 'OperationDefinition' && !!def.name,
+    );
 
     if (!operationDef) return null;
 

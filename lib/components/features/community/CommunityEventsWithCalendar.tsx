@@ -438,7 +438,7 @@ function NoUpcomingEvents({ spaceId, followed }: { spaceId?: string; message: st
 
   return (
     <div className="bg-card rounded-md flex gap-3 px-4 py-3 backdrop-blur-md">
-      <i className="icon-dashboard size-[48px] text-primary/16" />
+      <i aria-hidden="true" className="icon-dashboard size-[48px] text-primary/16" />
       <div className="flex-1">
         <p className="text-lg text-primary">No Upcoming Events</p>
         <p className="text-tertiary">Subscribe to the calendar to get notified when new events are posted.</p>

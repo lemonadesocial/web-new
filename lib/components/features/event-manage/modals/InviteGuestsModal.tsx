@@ -149,7 +149,7 @@ export function InviteGuestsModal({
               >
                 <Avatar size="lg" src={randomUserImage(email)} />
                 <p className="truncate flex-1">{email}</p>
-                <i className={clsx('size-5', selected ? 'icon-check-filled' : 'icon-circle-outline text-quaternary')} />
+                <i aria-hidden="true" className={clsx('size-5', selected ? 'icon-check-filled' : 'icon-circle-outline text-quaternary')} />
               </div>
             ))}
         </div>
@@ -166,7 +166,7 @@ export function InviteGuestsModal({
                 )}
                 onClick={open}
               >
-                <i className="icon-csv size-6 text-tertiary" />
+                <i aria-hidden="true" className="icon-csv size-6 text-tertiary" />
                 <div>
                   <p className="text-center">Import CSV File</p>
                   <div className="text-sm text-tertiary text-center">Drop file or click here to choose file.</div>
@@ -180,7 +180,7 @@ export function InviteGuestsModal({
               className="text-sm text-tertiary flex items-center gap-1 hover:underline"
               download="invite-guests-template.csv"
             >
-              <i className="icon-download size-4 text-tertiary" />
+              <i aria-hidden="true" className="icon-download size-4 text-tertiary" />
               Download CSV Template
             </a>
           </div>

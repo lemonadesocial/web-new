@@ -81,13 +81,13 @@ export enum LemonHeadActionKind {
   'reset',
 }
 
-export type LemonHeadAction = { type: LemonHeadActionKind; payload?: any };
+export type LemonHeadAction = { type: LemonHeadActionKind; payload?: unknown };
 
 export const LemonHeadContext = React.createContext(null);
 
 export function LemonHeadProvider({ children }: React.PropsWithChildren) {
   const [state, dispatch] = React.useReducer(reducers, defaultState);
-  const value: any = React.useMemo(() => [state, dispatch], [state]);
+  const value = React.useMemo(() => [state, dispatch] as const, [state]);
 
   return <LemonHeadContext.Provider value={value}>{children}</LemonHeadContext.Provider>;
 }

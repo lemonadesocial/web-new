@@ -46,7 +46,7 @@ export const ReOrderFeatureHubs = ({
           {list.map((item) => (
             <Card.Root key={item._id} className="draggable-item cursor-pointer" onClick={() => null}>
               <Card.Content className="flex gap-3 items-center drag-handle px-3 py-1.5">
-                <i className="icon-drag-indicator text-tertiary" />
+                <i aria-hidden="true" className="icon-drag-indicator text-tertiary" />
                 <Avatar
                   className="size-8 rounded-xs! aspect-square"
                   src={generateUrl(item.image_avatar_expanded) || `${ASSET_PREFIX}/assets/images/default-dp.png`}

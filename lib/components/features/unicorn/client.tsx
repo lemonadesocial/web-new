@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAccount, useDisconnect, useSignMessage } from 'wagmi';
+import * as Sentry from '@sentry/nextjs';
 
 import { getUserWalletRequest } from '../../../services/auth/wallet';
 
@@ -38,7 +39,7 @@ export const useUnicornWalletSignature = (authCookie: string) => {
 
       setSiwe(siwePayload);
     } catch (error) {
-      console.log("signMessage error", error);
+      Sentry.captureException(error);
       disconnect();
     }
   };

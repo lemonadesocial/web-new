@@ -3,6 +3,7 @@ import { formatDistanceToNow } from 'date-fns';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useRouter } from 'next/navigation';
+import * as Sentry from '@sentry/nextjs';
 
 import { Avatar, Button, toast, Menu, MenuItem, modal } from '$lib/components/core';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
@@ -44,7 +45,7 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
     try {
       await deletePost(rootPost.id);
     } catch (error) {
-      console.error('Failed to delete post:', error);
+      Sentry.captureException(error);
     }
   };
 
@@ -100,7 +101,7 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
       >
         {isRepost && (
           <div className="flex items-center gap-2">
-            <i className="icon-repost size-4 text-tertiary" />
+            <i aria-hidden="true" className="icon-repost size-4 text-tertiary" />
             <p className="text-tertiary text-sm">{author.username?.localName} reposted</p>
           </div>
         )}
@@ -119,7 +120,7 @@ export function FeedPost({ post, isComment, onSelect, showRepost }: FeedPostProp
               canEditPost && (
                 <Menu.Root>
                   <Menu.Trigger>
-                    <i className="icon-more-vert size-5 text-tertiary hover:text-primary cursor-pointer" />
+                    <i aria-hidden="true" className="icon-more-vert size-5 text-tertiary hover:text-primary cursor-pointer" />
                   </Menu.Trigger>
                   <Menu.Content className="p-1">
                     {({ toggle }) => (

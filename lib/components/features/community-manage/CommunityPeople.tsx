@@ -10,7 +10,6 @@ import {
   SpaceMember,
   SpaceTag,
   SpaceTagType,
-  User,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { userAvatar } from '$lib/utils/user';
@@ -238,7 +237,7 @@ export function CommunityPeople({ space }: Props) {
 
           <CardTable.EmptyState>
             <div className="flex flex-col gap-5 pt-12 pb-20 items-center justify-center text-tertiary">
-              <i className="icon-user-group-rounded size-44 md:size-[184px] text-quaternary" />
+              <i aria-hidden="true" className="icon-user-group-rounded size-44 md:size-[184px] text-quaternary" />
               <div className="space-y-2 text-center">
                 <h3 className="text-xl font-semibold">No Subscribers</h3>
                 <p>When people subscribe to your calendar, they will appear here.</p>
@@ -262,7 +261,7 @@ export function CommunityPeople({ space }: Props) {
                 <div className="flex-1 flex gap-3 items-center">
                   <Avatar
                     className="size-7 md:size-5 aspect-square"
-                    src={userAvatar(item.user_expanded as unknown as User)}
+                    src={userAvatar(item.user_expanded)}
                   />
                   <div className="flex flex-col md:flex-row md:gap-3 md:items-center flex-1">
                     <p>
@@ -341,7 +340,7 @@ function PeopleDetailPane({
       </Pane.Header.Root>
       <Pane.Content className="p-4 gap-5">
         <div className="flex gap-3 items-center">
-          <Avatar size="xl" src={userAvatar(member.user_expanded as unknown as User)} />
+          <Avatar size="xl" src={userAvatar(member.user_expanded)} />
           <div className="flex flex-col ">
             <p>{member.user_name || member.user_expanded?.display_name || member.user_expanded?.name || 'Anonymous'}</p>
             <p className="text-tertiary line-clamp-1">{member.email || member.user_expanded?.email}</p>

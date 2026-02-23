@@ -58,9 +58,9 @@ export function UpdateVisibilityModal({ event }: UpdateVisibilityModalProps) {
           <p className="text-sm text-tertiary">New Visibility</p>
           <Menu.Root placement="bottom-start" className="w-full">
             <Menu.Trigger className="flex items-center gap-2.5 p-3 bg-card rounded-md border border-card-border cursor-pointer hover:bg-card-hover w-full">
-              <i className={`${isPrivate ? 'icon-sparkles' : 'icon-globe'} size-5 text-tertiary`} />
+              <i aria-hidden="true" className={`${isPrivate ? 'icon-sparkles' : 'icon-globe'} size-5 text-tertiary`} />
               <span className="font-medium">{isPrivate ? 'Private' : 'Public'}</span>
-              <i className="icon-chevron-down size-5 text-tertiary ml-auto" />
+              <i aria-hidden="true" className="icon-chevron-down size-5 text-tertiary ml-auto" />
             </Menu.Trigger>
             <Menu.Content className="w-[300px] p-1">
               {({ toggle }) => (
@@ -76,7 +76,7 @@ export function UpdateVisibilityModal({ event }: UpdateVisibilityModalProps) {
                       <p className="text-sm text-secondary">Public</p>
                       <p className="text-xs text-tertiary whitespace-pre-wrap">Shown on your community hub and eligible to be featured.</p>
                     </div>
-                    {!isPrivate && <i className="icon-check size-4 text-primary" />}
+                    {!isPrivate && <i aria-hidden="true" className="icon-check size-4 text-primary" />}
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
@@ -89,7 +89,7 @@ export function UpdateVisibilityModal({ event }: UpdateVisibilityModalProps) {
                       <p className="text-sm text-secondary">Private</p>
                       <p className="text-xs text-tertiary whitespace-pre-wrap">Unlisted. Only people with the link can register.</p>
                     </div>
-                    {isPrivate && <i className="icon-check size-4 text-primary" />}
+                    {isPrivate && <i aria-hidden="true" className="icon-check size-4 text-primary" />}
                   </MenuItem>
                 </>
               )}

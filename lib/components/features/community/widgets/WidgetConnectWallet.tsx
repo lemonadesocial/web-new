@@ -113,7 +113,7 @@ function ConnectedWalletContent({ chain, address, spaceId }: { chain: Chain; add
         <div className="flex flex-col justify-between w-ful">
           <div className="flex flex-1 justify-between">
             <div className="relative bg-(--btn-tertiary) text-(--btn-tertiary-content) size-16 aspect-square rounded-sm flex items-center justify-center">
-              <i className="icon-account-balance-outline size-10 aspect-square"></i>
+              <i aria-hidden="true" className="icon-account-balance-outline size-10 aspect-square"></i>
               {tokenData?.metadata?.imageUrl && (
                 <img
                   src={tokenData?.metadata.imageUrl}

@@ -414,7 +414,7 @@ export function DirectLedger() {
                     </div>
                     <div className="w-[60px]">
                       <Badge color="var(--color-secondary)" className="rounded-full flex gap-1">
-                        <i className="icon-ticket size-3 aspect-square" />
+                        <i aria-hidden="true" className="icon-ticket size-3 aspect-square" />
                         <span className="text-xs">{sumBy(item.ref_data.items || [], 'count')}</span>
                       </Badge>
                     </div>
@@ -424,7 +424,7 @@ export function DirectLedger() {
                           color="var(--color-accent-400)"
                           className="flex! items-center gap-1 max-w-full overflow-hidden"
                         >
-                          <i className="icon-discount size-3 aspect-square" />
+                          <i aria-hidden="true" className="icon-discount size-3 aspect-square" />
                           <p className="truncate line-clamp-1">{item.ref_data.discount}</p>
                         </Badge>
                       ) : (
@@ -433,7 +433,7 @@ export function DirectLedger() {
                     </div>
                     <div className="flex gap-2 items-center w-[128px]">
                       {item.account_expanded?.provider === NewPaymentProvider.Stripe ? (
-                        <i className="icon-stripe size-5 aspect-square" />
+                        <i aria-hidden="true" className="icon-stripe size-5 aspect-square" />
                       ) : (
                         <img src={chain?.logo_url as string} width={20} />
                       )}
@@ -481,7 +481,7 @@ function CardItem({ icon, title, subtitle }: { icon: string; title: string | num
     <Card.Root className="flex-1 min-w-fit">
       <Card.Content className="px-3 py-2 flex gap-3 items-center">
         <div className="flex items-center justify-center rounded-sm p-2 bg-(--btn-tertiary)">
-          <i className={clsx('text-tertiary size-[22px]', icon)} />
+          <i aria-hidden="true" className={clsx('text-tertiary size-[22px]', icon)} />
         </div>
         <div>
           <p>{title}</p>

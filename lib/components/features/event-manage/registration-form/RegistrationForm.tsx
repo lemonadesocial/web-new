@@ -112,17 +112,17 @@ export function RegistrationForm() {
       <div className="space-y-6">
         <div className="space-y-4">
           <div className="flex items-center gap-2.5">
-            <i className="icon-info size-5 text-success-500" />
+            <i aria-hidden="true" className="icon-info size-5 text-success-500" />
             <p>Personal Information</p>
           </div>
           <div className="grid grid-cols-2 gap-3.5 max-w-[654px]">
             <div className="rounded-md py-2.5 px-3.5 border border-card-border bg-card flex gap-2 items-center">
-              <i className="icon-person-outline size-5 text-tertiary" />
+              <i aria-hidden="true" className="icon-person-outline size-5 text-tertiary" />
               <p className="flex-1">Name</p>
               <p className="text-tertiary">Required</p>
             </div>
             <div className="rounded-md py-2.5 px-3.5 border border-card-border bg-card flex gap-2 items-center">
-              <i className="icon-email size-5 text-tertiary" />
+              <i aria-hidden="true" className="icon-email size-5 text-tertiary" />
               <p className="flex-1">Email</p>
               <p className="text-tertiary">Required</p>
             </div>
@@ -131,13 +131,13 @@ export function RegistrationForm() {
 
         <div className="space-y-4">
           <div className="flex items-center gap-2.5">
-            <i className="icon-wallet size-5 text-accent-400" />
+            <i aria-hidden="true" className="icon-wallet size-5 text-accent-400" />
             <p>Web3 Identity</p>
           </div>
 
           <div className="grid grid-cols-2 gap-3.5 max-w-[654px]">
             <div className="rounded-md py-2.5 px-3.5 border border-card-border bg-card flex gap-2 items-center">
-              <i className="icon-eth size-5 text-tertiary" />
+              <i aria-hidden="true" className="icon-eth size-5 text-tertiary" />
               <p className="flex-1">ETH Address</p>
               <Menu.Root>
                 <Menu.Trigger>
@@ -178,7 +178,7 @@ export function RegistrationForm() {
               </Menu.Root>
             </div>
             <div className="rounded-md py-2.5 px-3.5 border border-card-border bg-card flex gap-2 items-center">
-              <i className="icon-self size-5 text-tertiary" />
+              <i aria-hidden="true" className="icon-self size-5 text-tertiary" />
               <p className="flex-1">Self ID</p>
               <Menu.Root>
                 <Menu.Trigger>
@@ -222,7 +222,7 @@ export function RegistrationForm() {
 
         <div className="space-y-4">
           <div className="flex items-center gap-2.5">
-            <i className="icon-question size-5 text-warning-300" />
+            <i aria-hidden="true" className="icon-question size-5 text-warning-300" />
             <p>Custom Questions</p>
           </div>
           <div className="space-y-3">
@@ -284,7 +284,7 @@ function QuestionCard({ question, index }: { question: EventApplicationQuestion;
 
   return (
     <div className="rounded-md py-2 px-3.5 border border-card-border bg-card flex items-center gap-3">
-      {/* <i className="icon-drag-indicator size-4 text-quaternary cursor-move" /> */}
+      {/* <i aria-hidden="true" className="icon-drag-indicator size-4 text-quaternary cursor-move" /> */}
 
       <div className="flex-1 min-w-0">
         <p>{question.question}</p>
@@ -295,7 +295,7 @@ function QuestionCard({ question, index }: { question: EventApplicationQuestion;
           </p>
           {question.required && (
             <>
-              <i className="icon-dot size-2 text-tertiary" />
+              <i aria-hidden="true" className="icon-dot size-2 text-tertiary" />
               <p className="text-sm text-tertiary">Required</p>
             </>
           )}

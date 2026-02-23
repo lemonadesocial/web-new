@@ -20,10 +20,10 @@ export function Radiobox({
     <div className={twMerge('flex gap-3', containerClass)}>
       <input id={id} name={name} type="radio" checked={value} className="peer hidden" onChange={onChange} />
       <label htmlFor={id} className="hidden peer-checked:block cursor-pointer text-primary">
-        <i className="icon-check" />
+        <i aria-hidden="true" className="icon-check" />
       </label>
       <label htmlFor={id} className="peer-checked:hidden cursor-pointer text-quaternary">
-        <i className="icon-circle-outline" />
+        <i aria-hidden="true" className="icon-circle-outline" />
       </label>
       <label htmlFor={id} className="cursor-pointer w-full">
         {children}

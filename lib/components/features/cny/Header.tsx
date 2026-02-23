@@ -27,7 +27,7 @@ export const RedEnvelopesHeader = ({ showHomeLogo = false, className }: RedEnvel
       className
     )}>
       <Link href="/cny" className={clsx('block', showHomeLogo ? 'md:block' : 'md:hidden')}>
-        <i className="icon-lemonade-logo size-5 text-tertiary" />
+        <i aria-hidden="true" className="icon-lemonade-logo size-5 text-tertiary" />
       </Link>
       <div className="flex items-center gap-3">
         <Button

@@ -74,7 +74,7 @@ export function WelcomeMessagePane({ initialValue = '', initialSpotlightEvents =
           </div>
           {spotlightEvents.length === 0 ? (
             <div className="flex bg-card border border-card-border gap-3 items-center px-4 py-3 rounded-md">
-              <i className="icon-ticket size-8 text-tertiary" />
+              <i aria-hidden="true" className="icon-ticket size-8 text-tertiary" />
               <div className="flex flex-col gap-0.5 flex-1">
                 <p className="text-tertiary">No spotlight events yet</p>
                 <p className="text-sm text-tertiary">

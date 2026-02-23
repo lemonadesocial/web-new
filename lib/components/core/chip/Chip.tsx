@@ -66,9 +66,9 @@ export function Chip({
         className
       )}
     >
-      {leftIcon && <i className={twMerge(iconSizes[size], leftIcon)} />}
-      {iconOnly ? <i className={twMerge(iconSizes[size], icon)} /> : children}
-      {rightIcon && <i className={twMerge(iconSizes[size], rightIcon)} />}
+      {leftIcon && <i aria-hidden="true" className={twMerge(iconSizes[size], leftIcon)} />}
+      {iconOnly ? <i aria-hidden="true" className={twMerge(iconSizes[size], icon)} /> : children}
+      {rightIcon && <i aria-hidden="true" className={twMerge(iconSizes[size], rightIcon)} />}
     </div>
   )
 }

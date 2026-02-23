@@ -79,7 +79,7 @@ export function SignedOutWalletForm({ required }: { required: boolean }) {
         {
           form.watch('connectWalletInput') ? (
             <div className="flex items-center gap-2.5 w-full px-3.5 py-2 rounded-sm bg-primary/8">
-              <i className="icon-eth text-tertiary size-5" />
+              <i aria-hidden="true" className="icon-eth text-tertiary size-5" />
               <p className="flex-1">
                 {formatWallet(address!)}
               </p>

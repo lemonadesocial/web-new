@@ -350,7 +350,7 @@ function CommunityThemeBuilderPane({
                       ? presets[themeName as keyof typeof presets].name
                       : 'Default'}
                   </span>
-                  <i className="icon-chevrons-up-down text-quaternary" />
+                  <i aria-hidden="true" className="icon-chevrons-up-down text-quaternary" />
                 </div>
               </Menu.Trigger>
               <FloatingPortal>
@@ -559,7 +559,7 @@ function ConfirmModal({ onDiscard }: { onDiscard: () => void }) {
   return (
     <div className="p-4 flex flex-col gap-4 max-w-[308px]">
       <div className="p-3 rounded-full bg-danger-400/16 w-fit">
-        <i className="icon-info text-danger-400" />
+        <i aria-hidden="true" className="icon-info text-danger-400" />
       </div>
       <div className="flex flex-col gap-2">
         <p className="text-lg font-medium">Discard Customizations?</p>

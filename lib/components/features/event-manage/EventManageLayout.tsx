@@ -105,7 +105,7 @@ export function EventManageLayout({ children }: React.PropsWithChildren) {
                   onClick={() => router.push(`/s/manage/${event.space_expanded?.slug || event.space}`)}
                 >
                   <p className="group-hover:text-primary">{event.space_expanded?.title}</p>
-                  <i className="icon-chevron-right size-4.5 text-quaternary transition group-hover:translate-x-0.5" />
+                  <i aria-hidden="true" className="icon-chevron-right size-4.5 text-quaternary transition group-hover:translate-x-0.5" />
                 </div>
               )}
               <div className="flex justify-between items-center">

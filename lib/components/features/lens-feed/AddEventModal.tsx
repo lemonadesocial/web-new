@@ -72,7 +72,7 @@ export function AddEventModal({ onConfirm }: { onConfirm: (event: Event) => void
         <div className="flex flex-col gap-1.5">
           <div className="flex justify-between items-center">
             <label className="font-medium text-sm text-secondary">Lemonade Event URL</label>
-            {loading && <i className="icon-loader text-tertiary size-4 animate-spin" />}
+            {loading && <i aria-hidden="true" className="icon-loader text-tertiary size-4 animate-spin" />}
           </div>
           <Input
             value={url}

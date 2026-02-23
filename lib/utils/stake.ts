@@ -1,6 +1,7 @@
 import React from 'react';
 import { atom, getDefaultStore } from 'jotai';
 import { ethers } from 'ethers';
+import * as Sentry from '@sentry/nextjs';
 
 import { getListChains } from '$lib/utils/crypto';
 import { EthereumStakeAccount } from '$lib/graphql/generated/backend/graphql';
@@ -43,7 +44,7 @@ export async function getStakeRefundRate(stakeAccount: EthereumStakeAccount): Pr
     
     return refundRate;
   } catch (error) {
-    console.error('Error reading stake refund rate:', error);
+    Sentry.captureException(error);
     throw error;
   }
 }

@@ -10,7 +10,7 @@ export function RegistrationSuccessModal({
   return (
     <div className="p-4 space-y-4 w-[340px]">
       <div className="size-[56px] flex justify-center items-center rounded-full bg-success-500/16">
-        <i className="icon-done text-success-500" />
+        <i aria-hidden="true" className="icon-done text-success-500" />
       </div>
       <div className="space-y-2">
         <p className="text-lg">You’re in!</p>

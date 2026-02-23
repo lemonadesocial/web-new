@@ -32,7 +32,7 @@ export function BeforeMintPassportModal({
             <Link href={config.termLink || ''} target="_blank" className="text-accent-400 text-sm">
               View Full Terms of Use
             </Link>
-            <i className="icon-arrow-outward size-[18px] text-quaternary" />
+            <i aria-hidden="true" className="icon-arrow-outward size-[18px] text-quaternary" />
           </div>
         </div>
 

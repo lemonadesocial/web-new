@@ -327,7 +327,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                                 }
                               />
                             ) : (
-                              <i className="icon-image size-6 text-tertiary" />
+                              <i aria-hidden="true" className="icon-image size-6 text-tertiary" />
                             )}
 
                             <Button
@@ -406,15 +406,15 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                         })
                       }
                     >
-                      <i className="icon-credit-card size-5 text-tertiary" />
+                      <i aria-hidden="true" className="icon-credit-card size-5 text-tertiary" />
                       <p className="flex-1">Price for Card</p>
                       {fiatPrice ? (
                         <div className="flex items-center gap-2">
                           <p className="text-tertiary">{formatFiatPrice(fiatPrice)}</p>
-                          <i className="icon-edit-sharp size-5 text-tertiary" />
+                          <i aria-hidden="true" className="icon-edit-sharp size-5 text-tertiary" />
                         </div>
                       ) : (
-                        <i className="icon-chevron-right size-5 text-tertiary" />
+                        <i aria-hidden="true" className="icon-chevron-right size-5 text-tertiary" />
                       )}
                     </div>
                     <hr className="border-t border-t-divider" />
@@ -422,9 +422,9 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                       className="flex py-2.5 px-3 items-center gap-2 cursor-pointer"
                       onClick={() => toast.success('Coming soon')}
                     >
-                      <i className="icon-wallet size-5 text-tertiary" />
+                      <i aria-hidden="true" className="icon-wallet size-5 text-tertiary" />
                       <p className="flex-1">Price for Wallet</p>
-                      <i className="icon-chevron-right size-5 text-tertiary" />
+                      <i aria-hidden="true" className="icon-chevron-right size-5 text-tertiary" />
                     </div>
                   </div>
                 </>
@@ -447,12 +447,12 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                   }
                 >
                   <div className="flex items-center gap-2 flex-1">
-                    <i className="icon-vertical-align-top size-5 text-tertiary" />
+                    <i aria-hidden="true" className="icon-vertical-align-top size-5 text-tertiary" />
                     <p>Ticket Capacity</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <p className="text-tertiary">{ticket_limit || 'Unlimited'}</p>
-                    <i className="icon-edit-sharp size-5 text-tertiary" />
+                    <i aria-hidden="true" className="icon-edit-sharp size-5 text-tertiary" />
                   </div>
                 </div>
                 <hr className="border-t border-t-divider" />
@@ -468,7 +468,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                   }
                 >
                   <div className="flex items-center gap-2 flex-1">
-                    <i className="icon-ticket-plus size-5 text-tertiary" />
+                    <i aria-hidden="true" className="icon-ticket-plus size-5 text-tertiary" />
                     <p>Additional Tickets</p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -479,7 +479,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                           ? 'Off'
                           : `${ticket_limit_per} per guest`}
                     </p>
-                    <i className="icon-edit-sharp size-5 text-tertiary" />
+                    <i aria-hidden="true" className="icon-edit-sharp size-5 text-tertiary" />
                   </div>
                 </div>
               </div>
@@ -494,7 +494,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                       onClick={() => toast.success('Coming soon')}
                     >
                       <div className="flex items-center gap-2 flex-1">
-                        <i className="icon-email size-5 text-tertiary" />
+                        <i aria-hidden="true" className="icon-email size-5 text-tertiary" />
                         <p>Email List</p>
                       </div>
 
@@ -502,18 +502,18 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                         {!!dataExportEventTickets?.exportEventTickets.count && (
                           <p>{dataExportEventTickets?.exportEventTickets.count} emails</p>
                         )}
-                        <i className="icon-chevron-right size-5 text-tertiary" />
+                        <i aria-hidden="true" className="icon-chevron-right size-5 text-tertiary" />
                       </div>
                     </div>
                     {!loadingTokenGates && (
                       <button type="button" className="flex py-2.5 px-3 items-center cursor-pointer w-full" onClick={handleOpenTokenGating}>
                         <div className="flex items-center gap-2 flex-1">
-                          <i className="icon-token size-5 text-tertiary" />
+                          <i aria-hidden="true" className="icon-token size-5 text-tertiary" />
                           <p>Token Gating</p>
                         </div>
                         <div className="flex gap-2 items-center">
                           {!!tokenGates?.length && <p className="text-tertiary">{tokenGates.length}</p>}
-                          <i className="icon-chevron-right size-5 text-tertiary" />
+                          <i aria-hidden="true" className="icon-chevron-right size-5 text-tertiary" />
                         </div>
                       </button>
                     )}

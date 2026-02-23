@@ -7,13 +7,13 @@ import { drawer } from '$lib/components/core';
 
 interface GuestTableProps {
   event: Event;
-  guests: any[];
+  guests: EventGuestDetail[];
   loading?: boolean;
-  onGuestClick?: (guest: any) => void;
+  onGuestClick?: (guest: EventGuestDetail) => void;
 }
 
 export function GuestTable({ event, guests, loading = false, onGuestClick }: GuestTableProps) {
-  const handleGuestClick = (guest: any) => {
+  const handleGuestClick = (guest: EventGuestDetail) => {
     if (onGuestClick) {
       onGuestClick(guest);
     } else {

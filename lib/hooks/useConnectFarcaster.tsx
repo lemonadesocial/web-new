@@ -2,6 +2,7 @@
 import { sdk } from "@farcaster/miniapp-sdk";
 import { useEffect, useState } from "react";
 import { useAtom } from "jotai";
+import * as Sentry from '@sentry/nextjs';
 
 import { request } from '$lib/utils/request';
 
@@ -173,7 +174,7 @@ export const useHandleFarcasterMiniApp = (onSignInSuccess: () => Promise<void>) 
 
   useEffect(() => {
     if (!loading && !session) {
-      sdk.quickAuth.getToken().then(({ token }) => setToken(token)).catch(e => console.error(e.message));
+      sdk.quickAuth.getToken().then(({ token }) => setToken(token)).catch(e => Sentry.captureException(e));
     }
   }, [loading, session]);
 

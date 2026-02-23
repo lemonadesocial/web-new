@@ -58,7 +58,7 @@ export function CheckMintedLemonheadModal({provider, onContinue }: { onContinue:
           </div>
 
           <div className="flex items-center gap-2.5 w-full px-3.5 py-2 rounded-sm bg-primary/8 border border-card-border">
-            <i className="icon-wallet text-tertiary size-5" />
+            <i aria-hidden="true" className="icon-wallet text-tertiary size-5" />
             <p className="flex-1 text-sm">{address ? formatWallet(address) : 'No wallet connected'}</p>
             <button type="button" aria-label="Edit wallet" className="cursor-pointer" onClick={handleEditWallet}>
               <i className="icon-edit-sharp text-tertiary size-5" />
@@ -90,9 +90,9 @@ export function CheckMintedLemonheadModal({provider, onContinue }: { onContinue:
         </div>
 
         <div className="flex items-center gap-2.5 w-full px-3.5 py-2 rounded-sm bg-primary/8 border border-card-border">
-          <i className="icon-wallet text-tertiary size-5" />
+          <i aria-hidden="true" className="icon-wallet text-tertiary size-5" />
           <p className="flex-1 text-sm">{address ? formatWallet(address) : 'No wallet connected'}</p>
-          <i className="icon-edit-sharp cursor-pointer text-tertiary size-5" onClick={handleEditWallet} />
+          <i aria-hidden="true" className="icon-edit-sharp cursor-pointer text-tertiary size-5" onClick={handleEditWallet} />
         </div>
 
         <Button variant="secondary" className="w-full" onClick={() => router.push('/lemonheads/mint')}>

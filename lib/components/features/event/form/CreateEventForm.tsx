@@ -204,12 +204,12 @@ export function CreateEventForm({
                             toggle();
                           }}
                         >
-                          <i className={twMerge('size-5 text-tertiary', item.icon)} />
+                          <i aria-hidden="true" className={twMerge('size-5 text-tertiary', item.icon)} />
                           <div className="flex-1">
                             <p className="text-sm">{item.title}</p>
                             <p className="text-xs text-tertiary">{item.subtitle}</p>
                           </div>
-                          <i className={clsx('hidden size-5 icon-check', item.private === field.value && 'block!')} />
+                          <i aria-hidden="true" className={clsx('hidden size-5 icon-check', item.private === field.value && 'block!')} />
                         </div>
                       ))}
                     </>
@@ -257,7 +257,7 @@ export function CreateEventForm({
                 trigger={() => (
                   <Card.Root>
                     <Card.Content className="flex md:flex-col gap-3 items-center md:items-start md:justify-between flex-1 md:w-[142px] md:h-[84px] p-2">
-                      <i className="icon-globe size-5" />
+                      <i aria-hidden="true" className="icon-globe size-5" />
                       <p className="block md:hidden">{timezone?.text}</p>
                       <div className="hidden md:block">
                         <p className="text-sm">{timezone?.short}</p>
@@ -295,7 +295,7 @@ export function CreateEventForm({
                 >
                   <Card.Content className="flex gap-2">
                     <p>
-                      <i className="icon-location-outline size-5 text-tertiary" />
+                      <i aria-hidden="true" className="icon-location-outline size-5 text-tertiary" />
                     </p>
                     <div className=" w-full">
                       <div className="flex items-center justify-between">
@@ -348,7 +348,7 @@ export function CreateEventForm({
                 >
                   <Card.Content className="flex gap-2">
                     <p>
-                      <i className="icon-video size-5 text-tertiary" />
+                      <i aria-hidden="true" className="icon-video size-5 text-tertiary" />
                     </p>
                     <div className="w-full">
                       <div className="flex items-center justify-between">
@@ -546,7 +546,7 @@ function CapacityModal({ value: limit = 0, onSetLimit }: { value?: number; onSet
     <Card.Root className="w-[340px]">
       <Card.Header className="flex justify-between items-start bg-transparent">
         <div className="size-[56px] rounded-full bg-[var(--btn-tertiary)] flex items-center justify-center">
-          <i className="icon-vertical-align-top" />
+          <i aria-hidden="true" className="icon-vertical-align-top" />
         </div>
 
         <Button
@@ -612,7 +612,7 @@ function InviteByGuestModal({ value: limit = 0, onSetLimit }: { value?: number; 
     <Card.Root className="w-[340px]">
       <Card.Header className="flex justify-between items-start bg-transparent">
         <div className="size-[56px] rounded-full bg-[var(--btn-tertiary)] flex items-center justify-center">
-          <i className="icon-user-plus" />
+          <i aria-hidden="true" className="icon-user-plus" />
         </div>
 
         <Button

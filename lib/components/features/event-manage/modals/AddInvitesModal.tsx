@@ -85,7 +85,7 @@ export function AddInvitesModal({
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center size-[34px] min-w-[34px] rounded-sm bg-primary/8">
-              <i className="icon-ticket size-4.5 text-tertiary" />
+              <i aria-hidden="true" className="icon-ticket size-4.5 text-tertiary" />
             </div>
             <div>
               <p className="text-sm">We will send guests an invite link to register for the event.</p>

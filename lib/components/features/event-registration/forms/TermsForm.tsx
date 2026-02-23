@@ -45,7 +45,7 @@ export function TermsForm() {
             onClick={() => form.setValue('acceptTerms', !acceptTerms)}
             className="cursor-pointer flex items-center justify-center"
           >
-            {acceptTerms ? <i className="icon-checkbox-sharp size-5 aspect-square text-white" /> : <i className="icon-checkbox-outline size-5 text-tertiary aspect-square" />}
+            {acceptTerms ? <i aria-hidden="true" className="icon-checkbox-sharp size-5 aspect-square text-white" /> : <i aria-hidden="true" className="icon-checkbox-outline size-5 text-tertiary aspect-square" />}
           </div>
         </div>
         <label htmlFor="acceptTerms" className="text-sm flex-1 cursor-pointer tiptap" dangerouslySetInnerHTML={{ __html: event.terms_text }} />

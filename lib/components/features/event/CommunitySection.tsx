@@ -61,7 +61,7 @@ export function CommunitySection({ event }: { event?: Event }) {
             >
               {space.title}
             </Link>
-            <i className="transition icon-chevron-right text-quaternary group-hover:translate-x-1" />
+            <i aria-hidden="true" className="transition icon-chevron-right text-quaternary group-hover:translate-x-1" />
           </div>
         </div>
         {!canManage && (

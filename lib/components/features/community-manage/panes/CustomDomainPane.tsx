@@ -486,7 +486,7 @@ function CompleteModal({ domains }: { domains: string[] }) {
     <ModalContent className="p-4">
       <div  className="flex flex-col gap-4">
       <div className="flex items-center justify-center size-14 rounded-full bg-warning-300/16">
-        <i className="icon-timer-flash size-8 text-warning-300" />
+        <i aria-hidden="true" className="icon-timer-flash size-8 text-warning-300" />
       </div>
 
       <div className="flex flex-col gap-2">

@@ -186,7 +186,7 @@ export function AddTags({
               }}
               className="flex px-2 py-1.5 gap-2.5 items-center hover:bg-primary/8 rounded-xs cursor-pointer"
             >
-              <i className="icon-dot" style={{ color: t.color }} />
+              <i aria-hidden="true" className="icon-dot" style={{ color: t.color }} />
               <p className="text-sm font-medium">{t.tag}</p>
             </div>
           ))}

@@ -63,7 +63,7 @@ export function CardPayment() {
                       }
 
                     </div>
-                    <i className="icon-arrow-down size-5 text-quaternary" />
+                    <i aria-hidden="true" className="icon-arrow-down size-5 text-quaternary" />
                   </div>
                 )}
               </Menu.Trigger>
@@ -93,7 +93,7 @@ export function CardPayment() {
                           setShowCardForm(true);
                           toggle();
                         }}
-                        iconLeft={<i className="icon-card min-w-6" />}
+                        iconLeft={<i aria-hidden="true" className="icon-card min-w-6" />}
                         title="New Credit or Debit Card"
                       />
                     </div>

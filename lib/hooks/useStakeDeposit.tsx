@@ -98,14 +98,14 @@ export function useStakeDeposit({ chain, stakingToken, stakingManagerAddress, on
 
 export function StepIcon({ status }: { status: StepStatus }) {
   if (status === 'completed') {
-    return <i className="icon-check-filled size-4 text-success-500" />;
+    return <i aria-hidden="true" className="icon-check-filled size-4 text-success-500" />;
   }
   if (status === 'loading') {
-    return <i className="icon-loader size-4 text-tertiary animate-spin" />;
+    return <i aria-hidden="true" className="icon-loader size-4 text-tertiary animate-spin" />;
   }
   if (status === 'error') {
-    return <i className="icon-error size-4 text-danger-500" />;
+    return <i aria-hidden="true" className="icon-error size-4 text-danger-500" />;
   }
-  return <i className="icon-circle-outline size-4 text-tertiary" />;
+  return <i aria-hidden="true" className="icon-circle-outline size-4 text-tertiary" />;
 }
 

@@ -112,7 +112,7 @@ const Sidebar = () => {
                     className="p-2.5 items-center justify-center cursor-pointer hidden group-hover:flex"
                     onClick={() => setToggle((prev) => (prev === 'mini' ? 'open' : 'mini'))}
                   >
-                    <i className="icon-left-panel-close-outline size-5" />
+                    <i aria-hidden="true" className="icon-left-panel-close-outline size-5" />
                   </button>
                 )}
               </div>
@@ -122,7 +122,7 @@ const Sidebar = () => {
                   className="p-2.5 flex items-center justify-center cursor-pointer"
                   onClick={() => setToggle((prev) => (prev === 'mini' ? 'open' : 'mini'))}
                 >
-                  <i className="icon-left-panel-close-outline size-5" />
+                  <i aria-hidden="true" className="icon-left-panel-close-outline size-5" />
                 </button>
               )}
             </div>
@@ -345,7 +345,7 @@ export function CreatingModal() {
           {Object.entries(actions).map(([key, item]) => (
             <Card.Root key={key} className="flex-1" onClick={() => handleClick(key)}>
               <Card.Content className="py-1.5 px-3 md:py-3.5 md:px-4 flex items-center md:items-start md:flex-col gap-3">
-                <i className={twMerge('size-5 md:size-8', item.icon)} />
+                <i aria-hidden="true" className={twMerge('size-5 md:size-8', item.icon)} />
                 <div>
                   <p className="text-primary">{item.title}</p>
                   <p className="text-sm text-tertiary">{item.subtitle}</p>
@@ -421,7 +421,7 @@ function SectionEvents({ handleNavigate }: { handleNavigate: (path: string) => v
               <p className="text-secondary line-clamp-1">{item.title}</p>
             </div>
             <Badge className="text-tertiary bg-(--color-card-hover) text-xs rounded-full px-1.5 py-[1px]">
-              <i className="icon-draft-outline w-3 h-3 aspect-square" />
+              <i aria-hidden="true" className="icon-draft-outline w-3 h-3 aspect-square" />
               <p>Draft</p>
             </Badge>
           </div>

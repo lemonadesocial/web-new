@@ -217,7 +217,7 @@ function EditEventDrawerContent({ event }: { event: Event }) {
                 trigger={() => (
                   <Card.Root>
                     <Card.Content className="flex md:flex-col gap-3 items-center md:items-start md:justify-between flex-1 md:w-[142px] md:h-[84px] p-2">
-                      <i className="icon-globe size-5 text-tertiary" />
+                      <i aria-hidden="true" className="icon-globe size-5 text-tertiary" />
                       <p className="block md:hidden">{timezone?.text}</p>
                       <div className="hidden md:block">
                         <p className="text-sm">{timezone?.short}</p>
