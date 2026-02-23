@@ -249,7 +249,7 @@ export function EventCardItem({
             <div className="flex gap-1.5 items-center">
               {item.private && (
                 <div className="size-5 aspect-square bg-accent-400/16 rounded-full flex items-center justify-center">
-                  <i className="icon-sparkles text-accent-400 size-3" />
+                  <i aria-hidden="true" className="icon-sparkles text-accent-400 size-3" />
                 </div>
               )}
               <p className="font-title text-lg md:text-xl font-semibold text-primary truncate">{item.title}</p>
@@ -290,7 +290,7 @@ export function EventCardItem({
           {!!getLocation(item, me) && (
             <div className="flex flex-col gap-1">
               <div className="inline-flex items-center gap-2">
-                <i className="icon-location-outline size-4" />
+                <i aria-hidden="true" className="icon-location-outline size-4" />
                 <span className="text-sm md:text-md truncate">{getLocation(item, me)}</span>
               </div>
             </div>
@@ -299,7 +299,7 @@ export function EventCardItem({
           {isHost && !!item.guests && (
             <div className="flex flex-col gap-1">
               <div className="inline-flex items-center gap-2">
-                <i className="icon-user-group-outline size-4" />
+                <i aria-hidden="true" className="icon-user-group-outline size-4" />
                 <span className="text-sm md:text-md truncate">{item.guests} guests</span>
               </div>
             </div>
@@ -330,7 +330,7 @@ export function EventCardItem({
                   </div>
 
                   <div className="text-tertiary bg-(--btn-tertiary) rounded-xs size-6 aspect-square flex items-center justify-center">
-                    <i className="icon-ticket size-3.5" />
+                    <i aria-hidden="true" className="icon-ticket size-3.5" />
                   </div>
                 </>
               )}
@@ -450,7 +450,7 @@ function getLocation(event?: Event | null, me?: User | null) {
 function EmptyComp() {
   return (
     <div className="flex flex-col items-center flex-1 gap-5 mt-10 mb-20">
-      <i className="icon-dashboard w-[184px] h-[184px] text-primary/16 blur-md" />
+      <i aria-hidden="true" className="icon-dashboard w-[184px] h-[184px] text-primary/16 blur-md" />
       <div className="text-center">
         <p className="font-title text-tertiary font-semibold! text-xl">No Upcoming Events</p>
         <p className="text-tertiary">Subscribe to keep up with new events.</p>

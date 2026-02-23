@@ -231,7 +231,7 @@ function GuestStatsCard({ event }: { event: Event }) {
         className="flex items-center gap-1 text-tertiary hover:text-primary transition-colors w-fit"
       >
         <p className="text-tertiary">Manage Event Page</p>
-        <i className="icon-arrow-outward size-5 text-quaternary" />
+        <i aria-hidden="true" className="icon-arrow-outward size-5 text-quaternary" />
       </NextLink>
     </div>
   );

@@ -67,7 +67,7 @@ export function Collectibles({ event }: { event: Event; }) {
         <CollectiblesSkeleton />
       ) : poapDrops.length === 0 ? (
         <div className="flex items-center gap-3 py-3 px-4 rounded-md border border-card-border bg-card">
-          <i className="icon-diamond size-9 text-tertiary" />
+          <i aria-hidden="true" className="icon-diamond size-9 text-tertiary" />
           <div>
             <p className="text-tertiary">No Collectibles Added</p>
             <p className="text-tertiary text-sm">You can add digital mementos for your guests to claim and remember the event by.</p>
@@ -157,7 +157,7 @@ function CollectibleItem({ poapDrop, event }: { poapDrop: PoapDrop; event: Event
       }
       <Menu.Root>
         <Menu.Trigger>
-          <i className="icon-more-horiz size-5 text-tertiary" />
+          <i aria-hidden="true" className="icon-more-horiz size-5 text-tertiary" />
         </Menu.Trigger>
         <Menu.Content className="p-1">
           {({ toggle }) => (

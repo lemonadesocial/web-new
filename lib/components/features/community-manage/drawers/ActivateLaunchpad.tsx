@@ -191,7 +191,7 @@ export function ActivateLaunchpad() {
       <Pane.Content className="p-4 flex flex-col gap-5">
         <div className="flex flex-col gap-4">
           <div className="size-[56px] flex items-center justify-center bg-primary/8 rounded-full">
-            <i className="icon-rocket size-8 text-tertiary" />
+            <i aria-hidden="true" className="icon-rocket size-8 text-tertiary" />
           </div>
           <div>
             <h1 className="text-xl font-semibold">Activate Launchpad</h1>
@@ -216,7 +216,7 @@ export function ActivateLaunchpad() {
                   <img src={launchChain.logo_url} alt={launchChain.name} className="size-5 rounded-full" />
                 )}
                 <p className="flex-1 text-left">{launchChain?.name || 'Select Network'}</p>
-                <i className="icon-chevron-down text-tertiary size-4" />
+                <i aria-hidden="true" className="icon-chevron-down text-tertiary size-4" />
               </div>
             </Menu.Trigger>
             <Menu.Content className="p-1 w-full">
@@ -236,7 +236,7 @@ export function ActivateLaunchpad() {
                         )}
                         <p className="text-sm text-secondary flex-1">{chain.name}</p>
                         {selectedChainId === chain.chain_id && (
-                          <i className="icon-check text-accent-400 size-4" />
+                          <i aria-hidden="true" className="icon-check text-accent-400 size-4" />
                         )}
                       </div>
                     </MenuItem>
@@ -251,7 +251,7 @@ export function ActivateLaunchpad() {
           <p className="text-sm">Community Owner</p>
           {ownerAddress ? (
             <div className="flex gap-2.5 py-2 px-3 rounded-sm bg-primary/8">
-              <i className="icon-wallet size-5 aspect-square text-tertiary" />
+              <i aria-hidden="true" className="icon-wallet size-5 aspect-square text-tertiary" />
               <p className="flex-1">{formatWallet(ownerAddress)}</p>
               <i
                 className="icon-edit-sharp size-5 aspect-square text-quaternary hover:text-primary"
@@ -286,19 +286,19 @@ export function ActivateLaunchpad() {
                       <img src={selectedCoin.imageUrl} alt={selectedCoin.name} className="size-5 rounded-xs object-cover border border-card-border" />
                     ) : (
                       <div className="size-5 rounded-xs bg-primary/8 border border-card-border flex items-center justify-center">
-                        <i className="icon-token size-4 text-tertiary" />
+                        <i aria-hidden="true" className="icon-token size-4 text-tertiary" />
                       </div>
                     )}
                     <div className="flex gap-2 items-center flex-1">
                       <p>{selectedCoin.symbol}</p>
                       <p className="text-tertiary">{formatWallet(selectedCoin.address)}</p>
                     </div>
-                    <i className="icon-chevron-down text-tertiary size-4" />
+                    <i aria-hidden="true" className="icon-chevron-down text-tertiary size-4" />
                   </div>
                 ) : (
                   <div className="flex items-center gap-3 py-2 px-3 rounded-sm border border-card-border bg-card cursor-pointer">
                     <p className="flex-1 text-left text-tertiary">Select a coin</p>
-                    <i className="icon-chevron-down text-tertiary size-4" />
+                    <i aria-hidden="true" className="icon-chevron-down text-tertiary size-4" />
                   </div>
                 )}
               </Menu.Trigger>
@@ -321,9 +321,9 @@ export function ActivateLaunchpad() {
                         className="px-2 py-1.5"
                       >
                         <div className="flex items-center gap-2.5 w-full">
-                          <i className="icon-plus size-4 text-tertiary" />
+                          <i aria-hidden="true" className="icon-plus size-4 text-tertiary" />
                           <p className="flex-1 text-sm text-secondary">Create New Coin</p>
-                          <i className="icon-arrow-outward size-4 text-tertiary" />
+                          <i aria-hidden="true" className="icon-arrow-outward size-4 text-tertiary" />
                         </div>
                       </MenuItem>
                       <MenuItem
@@ -334,7 +334,7 @@ export function ActivateLaunchpad() {
                         className="px-2 py-1.5"
                       >
                         <div className="flex items-center gap-2.5 w-full">
-                          <i className="icon-edit-square size-4 text-tertiary" />
+                          <i aria-hidden="true" className="icon-edit-square size-4 text-tertiary" />
                           <p className="flex-1 text-sm text-secondary">Add by Contract Address</p>
                         </div>
                       </MenuItem>
@@ -367,7 +367,7 @@ export function ActivateLaunchpad() {
                     )}
                     {isLoadingUserCoins && (
                       <div className="flex items-center justify-center py-4">
-                        <i className="icon-loader animate-spin size-5 text-tertiary" />
+                        <i aria-hidden="true" className="icon-loader animate-spin size-5 text-tertiary" />
                       </div>
                     )}
                   </div>
@@ -413,7 +413,7 @@ export function ActivateLaunchpad() {
 
           <div className="rounded-md bg-card flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
-              <i className="icon-attach-money text-tertiary size-5" />
+              <i aria-hidden="true" className="icon-attach-money text-tertiary size-5" />
               <div>
                 <p className="text-sm font-medium">Community Owner Fee</p>
                 <p className="text-sm text-tertiary">As Community Owner you can take a fee on all activity</p>
@@ -655,7 +655,7 @@ function CoinListItem({ coin, chain, onSelect, onTokenDataLoad }: CoinListItemPr
         <img src={tokenData.metadata.imageUrl} alt={tokenData.name} className="size-4 rounded-sm object-cover border border-card-border" />
       ) : (
         <div className="size-4 rounded-sm bg-primary/8 border border-card-border flex items-center justify-center">
-          <i className="icon-token size-3 text-tertiary" />
+          <i aria-hidden="true" className="icon-token size-3 text-tertiary" />
         </div>
       )}
       <div className="flex-1 min-w-0">

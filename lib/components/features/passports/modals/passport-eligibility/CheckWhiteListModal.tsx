@@ -91,7 +91,7 @@ export function CheckWhiteListModal({
       <ModalContent>
         <div className="space-y-4">
           <div className="size-[56px] flex justify-center items-center rounded-full bg-warning-300/16">
-            <i className="icon-error text-warning-300" />
+            <i aria-hidden="true" className="icon-error text-warning-300" />
           </div>
           <div className="space-y-2">
             <p className="text-lg">You Already Have a Passport</p>
@@ -103,7 +103,7 @@ export function CheckWhiteListModal({
           <Card.Root className="border-none bg-none">
             <Card.Content className="justify-between flex items-center py-2 px-3">
               <div className="flex gap-3">
-                <i className="icon-wallet size-5 aspect-square text-tertiary" />
+                <i aria-hidden="true" className="icon-wallet size-5 aspect-square text-tertiary" />
                 {address && <p>{formatWallet(address!)}</p>}
               </div>
               <i
@@ -141,7 +141,7 @@ export function CheckWhiteListModal({
     <ModalContent>
       <div className="space-y-4">
         <div className="size-[56px] flex justify-center items-center rounded-full bg-warning-300/16">
-          <i className="icon-error text-warning-300" />
+          <i aria-hidden="true" className="icon-error text-warning-300" />
         </div>
         <div className="space-y-2">
           <p className="text-lg">You're Not on the List Yet</p>
@@ -154,7 +154,7 @@ export function CheckWhiteListModal({
         <Card.Root className="border-none bg-none">
           <Card.Content className="justify-between flex items-center py-2 px-3">
             <div className="flex gap-3">
-              <i className="icon-wallet size-5 aspect-square text-tertiary" />
+              <i aria-hidden="true" className="icon-wallet size-5 aspect-square text-tertiary" />
               {address && <p>{formatWallet(address!)}</p>}
             </div>
             <i

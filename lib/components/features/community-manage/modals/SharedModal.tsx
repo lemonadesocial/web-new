@@ -72,7 +72,7 @@ export function SharedModal({ hostname = '' }: { hostname?: string }) {
           {shareOptions.map((item, idx) => (
             <Card.Root key={idx} onClick={item.onClick}>
               <Card.Content className="flex flex-col items-center gap-3 px-1 pb-2 pt-3">
-                <i className={twMerge('size-8 aspect-square', item.icon)} />
+                <i aria-hidden="true" className={twMerge('size-8 aspect-square', item.icon)} />
                 <p>{item.name}</p>
               </Card.Content>
             </Card.Root>

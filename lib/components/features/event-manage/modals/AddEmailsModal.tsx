@@ -103,7 +103,7 @@ export function AddEmailsModal({ ticketType }: { ticketType: EventTicketType }) 
     <Card.Root className="w-sm max-w-full md:w-[448px] *:bg-overlay-primary border-none">
       <Card.Header className="flex justify-between items-start ">
         <div className="rounded-full bg-(--btn-tertiary) text-tertiary flex items-center justify-center size-14">
-          <i className="size-8 icon-email" />
+          <i aria-hidden="true" className="size-8 icon-email" />
         </div>
         <Button
           variant="tertiary-alt"
@@ -183,7 +183,7 @@ export function AddEmailsModal({ ticketType }: { ticketType: EventTicketType }) 
                   )}
                   onClick={open}
                 >
-                  <i className="icon-csv size-6 text-tertiary" />
+                  <i aria-hidden="true" className="icon-csv size-6 text-tertiary" />
                   <div>
                     <p className="text-center">Import CSV File</p>
                     <div className="text-sm text-tertiary text-center">Drop file or click here to choose file.</div>
@@ -197,7 +197,7 @@ export function AddEmailsModal({ ticketType }: { ticketType: EventTicketType }) 
                 className="text-sm text-tertiary flex items-center gap-1 hover:underline"
                 download="invite-guests-template.csv"
               >
-                <i className="icon-download size-4 text-tertiary" />
+                <i aria-hidden="true" className="icon-download size-4 text-tertiary" />
                 Download CSV Template
               </a>
             </div>

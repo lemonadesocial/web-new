@@ -88,7 +88,7 @@ export function SharedPassportPane({ tokenId }: { tokenId: string }) {
                 onClick={item.onClick}
                 className="flex flex-col items-center gap-1 md:gap-3 pt-4 pb-2 px-1 bg-(--btn-tertiary) text-tertiary hover:(--btn-tertiary-hover) hover:text-primary rounded-sm cursor-pointer"
               >
-                <i className={twMerge('size-5 md:size-8', item.icon)} />
+                <i aria-hidden="true" className={twMerge('size-5 md:size-8', item.icon)} />
                 <p className="text-xs md:text-base">{item.name}</p>
               </div>
             ))}

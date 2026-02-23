@@ -193,7 +193,7 @@ export function ModalContent({ children, onClose, title, icon, className, onBack
           )}
           {icon && (
             <div className="size-[56px] flex justify-center items-center rounded-full bg-primary/8" data-icon>
-              {typeof icon === 'string' ? <i className={clsx(icon, 'size-8 text-tertiary')} /> : icon}
+              {typeof icon === 'string' ? <i aria-hidden="true" className={clsx(icon, 'size-8 text-tertiary')} /> : icon}
             </div>
           )}
           {title && !onBack && <span className="min-w-6" />}

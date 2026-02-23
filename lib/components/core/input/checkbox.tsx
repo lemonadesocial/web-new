@@ -26,10 +26,10 @@ export function Checkbox({ id, value = false, onChange, children, containerClass
     <div className={twMerge('flex gap-3', containerClass)}>
       <input id={id} name={id} type="checkbox" checked={value} className="peer hidden" onChange={onChange} />
       <label htmlFor={id} className="hidden peer-checked:block cursor-pointer">
-        <i className={iconClassMap[variant].checked} />
+        <i aria-hidden="true" className={iconClassMap[variant].checked} />
       </label>
       <label htmlFor={id} className="peer-checked:hidden cursor-pointer">
-        <i className={iconClassMap[variant].unchecked} />
+        <i aria-hidden="true" className={iconClassMap[variant].unchecked} />
       </label>
       {children && (
         <label htmlFor={id} className="cursor-pointer">

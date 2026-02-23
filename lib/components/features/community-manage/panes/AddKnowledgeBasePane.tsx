@@ -209,7 +209,7 @@ function ConfigSelector({ space, selectedConfigs, onConfigsChange }: { space: Sp
               <span className="text-tertiary font-medium ml-2">Select agents</span>
             )}
           </div>
-          <i className="icon-chevron-down size-5 text-tertiary shrink-0" />
+          <i aria-hidden="true" className="icon-chevron-down size-5 text-tertiary shrink-0" />
         </div>
       </Menu.Trigger>
 

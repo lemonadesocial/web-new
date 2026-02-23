@@ -38,22 +38,22 @@ export function EventRecap({ event }: { event: Event }) {
           </div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-3">
-              <i className="icon-calendar size-5 text-tertiary" />
+              <i aria-hidden="true" className="icon-calendar size-5 text-tertiary" />
               <p>{formatEventDate(event.start, timezone)}</p>
             </div>
             <div className="flex items-center gap-3">
-              <i className="icon-clock size-5 text-tertiary" />
+              <i aria-hidden="true" className="icon-clock size-5 text-tertiary" />
               <p>{formatEventTime(event.start, timezone)}</p>
             </div>
             {event.address?.title && (
               <div className="flex items-center gap-3">
-                <i className="icon-location-outline size-5 text-tertiary" />
+                <i aria-hidden="true" className="icon-location-outline size-5 text-tertiary" />
                 <p>{event.address.title}</p>
               </div>
             )}
             {event.virtual_url && (
               <div className="flex items-center gap-3">
-                <i className="icon-video size-5 text-tertiary" />
+                <i aria-hidden="true" className="icon-video size-5 text-tertiary" />
                 <p>{event.virtual_url}</p>
               </div>
             )}
@@ -63,7 +63,7 @@ export function EventRecap({ event }: { event: Event }) {
         <div className="space-y-3 px-4 pt-3 pb-5 rounded-md border border-card-border bg-card">
           <p className="text-xs text-tertiary">FEEDBACK</p>
           <div className="flex flex-col items-center space-y-3">
-            <i className="icon-cards-star size-12 text-quaternary" />
+            <i aria-hidden="true" className="icon-cards-star size-12 text-quaternary" />
             <div className="text-center space-y-1">
               <p className="text-tertiary">No Feedback Collected</p>
               <p className="text-tertiary text-sm">You are not collecting feedback for this event.</p>

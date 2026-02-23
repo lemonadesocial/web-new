@@ -3,7 +3,7 @@ export function LemonHeadsTreasuryCard() {
     <>
       <div className="flex w-full min-w-fit items-center md:hidden p-2.5 border-(length:--card-border-width) border-card-border rounded-md gap-2.5">
         <div className="flex justify-center items-center rounded-sm bg-success-500/16 size-8 p-1.5 aspect-square">
-          <i className="icon-account-balance-outline text-success-500" />
+          <i aria-hidden="true" className="icon-account-balance-outline text-success-500" />
         </div>
 
         <div className="flex flex-col gap-1.5">
@@ -15,7 +15,7 @@ export function LemonHeadsTreasuryCard() {
       <div className="hidden md:flex p-4 border-(length:--card-border-width) border-card-border rounded-md flex-col gap-3">
         <div className="flex justify-between">
           <div className="flex justify-center items-center rounded-full bg-success-500/16 size-[48px] aspect-square">
-            <i className="icon-account-balance-outline text-success-500" />
+            <i aria-hidden="true" className="icon-account-balance-outline text-success-500" />
           </div>
 
           <div className="tooltip tooltip-bottom">
@@ -25,7 +25,7 @@ export function LemonHeadsTreasuryCard() {
                 and voting—funding requests by the community, for the community.
               </p>
             </div>
-            <i className="icon-info size-5 aspect-square text-quaternary" />
+            <i aria-hidden="true" className="icon-info size-5 aspect-square text-quaternary" />
           </div>
         </div>
 

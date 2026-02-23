@@ -48,15 +48,15 @@ export function LemonHeadAboutYou() {
               active={state.gender === 'female'}
               onClick={() => handleChange({ ...state, gender: 'female' })}
             >
-              <i className="icon-lh-female size-8 text-[#F270A4]" />
+              <i aria-hidden="true" className="icon-lh-female size-8 text-[#F270A4]" />
             </SquareButton>
 
             <SquareButton active={state.gender === 'male'} onClick={() => handleChange({ ...state, gender: 'male' })}>
-              <i className="icon-lh-male size-8 text-[#70A4FE]" />
+              <i aria-hidden="true" className="icon-lh-male size-8 text-[#70A4FE]" />
             </SquareButton>
 
             <div className="flex justify-center items-center">
-              <i className="icon-dot text-tertiary size-4" />
+              <i aria-hidden="true" className="icon-dot text-tertiary size-4" />
             </div>
 
             <SquareButton active={state.race === 'human'} onClick={() => handleChange({ ...state, race: 'human' })}>
@@ -74,11 +74,11 @@ export function LemonHeadAboutYou() {
               active={state.gender === 'female'}
               onClick={() => handleChange({ ...state, gender: 'female' })}
             >
-              <i className="icon-lh-female size-10 text-[#F270A4]" />
+              <i aria-hidden="true" className="icon-lh-female size-10 text-[#F270A4]" />
             </SquareButton>
 
             <SquareButton active={state.gender === 'male'} onClick={() => handleChange({ ...state, gender: 'male' })}>
-              <i className="icon-lh-male size-10 text-[#70A4FE]" />
+              <i aria-hidden="true" className="icon-lh-male size-10 text-[#70A4FE]" />
             </SquareButton>
           </div>
 

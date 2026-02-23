@@ -71,7 +71,7 @@ export function LemonHeadsHubRightCol({
             title="Events"
             icon={
               <div className="bg-accent-600/16 size-8 aspect-square rounded-sm flex items-center justify-center">
-                <i className="icon-ticket text-accent-600 size-5 aspect-square" />
+                <i aria-hidden="true" className="icon-ticket text-accent-600 size-5 aspect-square" />
               </div>
             }
             subtitle={`${upcomingEvents.length} upcoming`}
@@ -118,7 +118,7 @@ export function LemonHeadsHubRightCol({
             title="Leaderboard"
             icon={
               <div className="bg-warning-600/16 size-8 aspect-square rounded-sm flex items-center justify-center">
-                <i className="icon-bar-chart text-warning-600 size-5 aspect-square" />
+                <i aria-hidden="true" className="icon-bar-chart text-warning-600 size-5 aspect-square" />
               </div>
             }
             subtitle="Climb the ranks!"
@@ -221,7 +221,7 @@ function CardGroupMobile({
     <Card.Root className="bg-transparent md:hidden min-w-fit" onClick={onViewAll}>
       <Card.Content className="flex items-center py-2.5 px-3 gap-2.5">
         {match(icon)
-          .with(P.string, () => <i className={icon as string} />)
+          .with(P.string, () => <i aria-hidden="true" className={icon as string} />)
           .otherwise(() => icon)}
         <div className="">
           <p className="text-sm">{title}</p>

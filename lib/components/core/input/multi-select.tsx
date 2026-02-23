@@ -69,7 +69,7 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
                 <span className="text-quaternary">{placeholder}</span>
               )}
             </div>
-            <i className="icon-arrow-down size-5 text-quaternary" />
+            <i aria-hidden="true" className="icon-arrow-down size-5 text-quaternary" />
           </Menu.Trigger>
 
           <Menu.Content className="w-full max-h-60 overflow-auto p-1">
@@ -78,7 +78,7 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
                 key={option}
                 title={option}
                 onClick={() => handleToggleOption(option)}
-                iconRight={value?.includes(option) ? <i className="icon-done size-4" /> : undefined}
+                iconRight={value?.includes(option) ? <i aria-hidden="true" className="icon-done size-4" /> : undefined}
               />
             ))}
           </Menu.Content>

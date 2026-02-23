@@ -26,7 +26,7 @@ export function ProfileMenu({
             {account && options.canEdit && (
               <MenuItem onClick={async () => modal.open(EditProfileModal)}>
                 <div className="flex items-center gap-2.5">
-                  <i className="icon-person-edit size-4 text-secondary" />
+                  <i aria-hidden="true" className="icon-person-edit size-4 text-secondary" />
                   <p className="text-sm text-secondary">Edit Profile</p>
                 </div>
               </MenuItem>
@@ -35,7 +35,7 @@ export function ProfileMenu({
             {account?.username && options.canView && (
               <MenuItem onClick={async () => router.push(`/l/${account!.username!.localName}`)}>
                 <div className="flex items-center gap-2.5">
-                  <i className="icon-account size-4 text-secondary" />
+                  <i aria-hidden="true" className="icon-account size-4 text-secondary" />
                   <p className="text-sm text-secondary">View Profile</p>
                 </div>
               </MenuItem>
@@ -48,7 +48,7 @@ export function ProfileMenu({
               }}
             >
               <div className="flex items-center gap-2.5">
-                <i className="icon-renew size-4 text-secondary" />
+                <i aria-hidden="true" className="icon-renew size-4 text-secondary" />
                 <p className="text-sm text-secondary">Switch Profile</p>
               </div>
             </MenuItem>
@@ -59,7 +59,7 @@ export function ProfileMenu({
               }}
             >
               <div className="flex items-center gap-2.5">
-                <i className="icon-exit size-4 text-error" />
+                <i aria-hidden="true" className="icon-exit size-4 text-error" />
                 <p className="text-sm text-error">Disconnect</p>
               </div>
             </MenuItem>

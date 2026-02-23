@@ -58,7 +58,7 @@ export function FeedPostDetailContent({ post }: { post: AnyPost }) {
     <div className="flex flex-col gap-5 w-full">
       <Card.Root onClick={router.back}>
         <Card.Content className="flex items-center gap-3">
-          <i className="icon-arrow-back-sharp size-[20px] text-tertiary" />
+          <i aria-hidden="true" className="icon-arrow-back-sharp size-[20px] text-tertiary" />
           Post
         </Card.Content>
       </Card.Root>

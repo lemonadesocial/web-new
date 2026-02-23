@@ -21,7 +21,7 @@ export function ConfirmModal({
   return (
     <div className="p-4 flex flex-col gap-4 max-w-[308px]">
       <div className="p-3 rounded-full bg-danger-400/16 size-[56px] aspect-square">
-        <i className={twMerge('text-danger-400 size-8 aspect-square', icon)} />
+        <i aria-hidden="true" className={twMerge('text-danger-400 size-8 aspect-square', icon)} />
       </div>
       <div className="flex flex-col gap-2">
         <p className="text-lg font-medium">{title}</p>

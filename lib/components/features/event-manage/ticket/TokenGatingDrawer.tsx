@@ -43,7 +43,7 @@ export function TokenGatingDrawer({ ticketType }: { ticketType: string }) {
                 }}
               >
                 {
-                  tokenGate.is_nft ? <i className="icon-diamond size-5 text-tertiary" /> : <i className="icon-token size-5 text-tertiary" />
+                  tokenGate.is_nft ? <i aria-hidden="true" className="icon-diamond size-5 text-tertiary" /> : <i aria-hidden="true" className="icon-token size-5 text-tertiary" />
                 }
                 <div className="flex-1">
                   <p>
@@ -53,7 +53,7 @@ export function TokenGatingDrawer({ ticketType }: { ticketType: string }) {
                   </p>
                   <p className="text-sm text-tertiary">{tokenGate.is_nft ? 'ERC-721' : 'ERC-20'}</p>
                 </div>
-                <i className="icon-chevron-right size-5 text-tertiary" />
+                <i aria-hidden="true" className="icon-chevron-right size-5 text-tertiary" />
               </div>
             ))
           }

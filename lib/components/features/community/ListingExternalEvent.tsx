@@ -351,7 +351,7 @@ function InputField({
           clsx(iconLeft && 'px-3.5 gap-2.5'),
         )}
       >
-        {iconLeft && <i className={iconLeft} />}
+        {iconLeft && <i aria-hidden="true" className={iconLeft} />}
         <input
           readOnly={readOnly}
           className="flex-1 outline-none"
@@ -418,10 +418,10 @@ function DateTimeWithTimeZone({
             className="btn btn-tertiary inline-flex items-center w-full rounded-sm h-[40px] pl-3.5 pr-2.5"
           >
             <div className="flex flex-1 w-3xs md:w-auto items-center gap-2.5">
-              <i className="icon-globe size-[20px]" />
+              <i aria-hidden="true" className="icon-globe size-[20px]" />
               <span className="truncate w-fit">{zone?.text}</span>
             </div>
-            <i className="icon-chevron-down size-[20px]" />
+            <i aria-hidden="true" className="icon-chevron-down size-[20px]" />
           </button>
         )}
         onSelect={(data) => {

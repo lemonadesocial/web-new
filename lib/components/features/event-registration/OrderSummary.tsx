@@ -134,12 +134,16 @@ export function OrderSummary() {
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1">
                   <p className="text-success-500 uppercase">{discountCodeInput}</p>
-                  <i className="icon-dot text-success-500 size-2" />
+                  <i aria-hidden="true" className="icon-dot text-success-500 size-2" />
                   <p className="text-success-500">{getDisplayPrice(pricingInfo!.discount.toString(), currency, pricingPaymentAccount)}</p>
                 </div>
+<<<<<<< HEAD
                 <button type="button" aria-label="Remove coupon" className="cursor-pointer" onClick={handleClearDiscount}>
                   <i className="icon-cancel size-4 text-tertiary" />
                 </button>
+=======
+                <i aria-hidden="true" className="icon-cancel size-4 text-tertiary cursor-pointer" onClick={handleClearDiscount} />
+>>>>>>> 1018631b (a11y(icons): add aria-hidden="true" to all 518 decorative <i> icon elements)
               </div>
             </div>
           ) : <button type="button" className="text-accent-400 cursor-pointer" onClick={() => setShowDiscountInput(true)}>Add Coupon</button>

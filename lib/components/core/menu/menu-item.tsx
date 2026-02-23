@@ -22,11 +22,11 @@ export function MenuItem({ iconLeft, iconRight, title, onClick, children, classN
       onClick={onClick}
     >
       {iconLeft &&
-        (typeof iconLeft === 'string' ? <i className={twMerge('text-tertiary size-4', iconLeft)} /> : iconLeft)}
+        (typeof iconLeft === 'string' ? <i aria-hidden="true" className={twMerge('text-tertiary size-4', iconLeft)} /> : iconLeft)}
       {title && <p className="font-medium text-sm font-default-body text-secondary flex-1">{title}</p>}
       {children}
       {iconRight &&
-        (typeof iconRight === 'string' ? <i className={twMerge(iconRight, 'text-tertiary size-4')} /> : iconRight)}
+        (typeof iconRight === 'string' ? <i aria-hidden="true" className={twMerge(iconRight, 'text-tertiary size-4')} /> : iconRight)}
     </div>
   );
 }

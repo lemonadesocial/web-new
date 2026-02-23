@@ -121,7 +121,7 @@ export function LemonHeadCreate() {
                 )}
                 {!['skin', 'background'].includes(key) && (
                   <div className="size-6 md:size-8">
-                    <i className={twMerge('', item.icon)} />
+                    <i aria-hidden="true" className={twMerge('', item.icon)} />
                   </div>
                 )}
                 <p className="text-xs">{item.label}</p>

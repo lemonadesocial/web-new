@@ -247,7 +247,7 @@ function CoinListRow({ pool, hiddenColumns }: CoinListRowProps) {
         </div>
 
         <div className="flex items-center gap-2 w-28">
-          <i className="icon-user size-5 aspect-square" />
+          <i aria-hidden="true" className="icon-user size-5 aspect-square" />
           <p>{holdersCount !== null ? formatNumber(holdersCount) : 'N/A'}</p>
         </div>
 

@@ -289,7 +289,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                 <label className="text-sm font-medium text-secondary">
                   Job Title <span className="text-error-500">*</span>
                 </label>
-                <i className="icon-help-circle size-4 text-tertiary" />
+                <i aria-hidden="true" className="icon-help-circle size-4 text-tertiary" />
               </div>
               <Input
                 variant="outlined"
@@ -307,7 +307,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                 <label className="text-sm font-medium text-secondary">
                   Short Bio <span className="text-error-500">*</span>
                 </label>
-                <i className="icon-help-circle size-4 text-tertiary" />
+                <i aria-hidden="true" className="icon-help-circle size-4 text-tertiary" />
               </div>
               <Textarea
                 {...register('shortBio', { required: 'Short Bio is required' })}
@@ -323,7 +323,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-1">
                 <label className="text-sm font-medium text-secondary">Active In</label>
-                <i className="icon-help-circle size-4 text-tertiary" />
+                <i aria-hidden="true" className="icon-help-circle size-4 text-tertiary" />
               </div>
               <CommunitySelector
                 selectedSpaces={activeIn}
@@ -393,7 +393,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
             <div className="flex flex-col divide-y divide-(--color-divider) bg-card rounded-md border border-card-border">
               <div className="flex items-center gap-3 px-4 py-3">
                 <div className="size-7 rounded-sm flex items-center justify-center bg-card">
-                  <i className="icon-info size-4 text-tertiary" />
+                  <i aria-hidden="true" className="icon-info size-4 text-tertiary" />
                 </div>
                 <div className="flex flex-col gap-0.5 min-w-0">
                   <p className="font-medium">Community Details</p>
@@ -408,7 +408,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                   className="flex items-center gap-3 px-4 py-3"
                 >
                   <div className="size-7 rounded-sm flex items-center justify-center bg-card">
-                    <i className="icon-book size-4 text-tertiary" />
+                    <i aria-hidden="true" className="icon-book size-4 text-tertiary" />
                   </div>
                   <div className="flex flex-col gap-0.5 min-w-0 flex-1">
                     <p className="font-medium">{doc.title || 'Untitled'}</p>
@@ -473,7 +473,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                     {welcomeMessage || 'This is the first message members see when they open the chat.'}
                   </p>
                 </div>
-                <i className="icon-chevron-right size-5 text-tertiary shrink-0" />
+                <i aria-hidden="true" className="icon-chevron-right size-5 text-tertiary shrink-0" />
               </button>
 
               <button
@@ -495,7 +495,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                     {backstory || 'Add deeper context that shapes how the agent responds.'}
                   </p>
                 </div>
-                <i className="icon-chevron-right size-5 text-tertiary shrink-0" />
+                <i aria-hidden="true" className="icon-chevron-right size-5 text-tertiary shrink-0" />
               </button>
 
               <button
@@ -517,7 +517,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                     {answerStyle ? ANSWER_STYLES.find(style => style.value === answerStyle)?.label : "Controls how direct or expressive the agent's responses feel."}
                   </p>
                 </div>
-                <i className="icon-chevron-right size-5 text-tertiary shrink-0" />
+                <i aria-hidden="true" className="icon-chevron-right size-5 text-tertiary shrink-0" />
               </button>
 
               <button
@@ -543,7 +543,7 @@ export function CreateAgentPane({ space, config, onCreated }: Props) {
                     )
                   }
                 </div>
-                <i className="icon-chevron-right size-5 text-tertiary shrink-0" />
+                <i aria-hidden="true" className="icon-chevron-right size-5 text-tertiary shrink-0" />
               </button>
             </div>
           </div>
@@ -621,14 +621,14 @@ function CommunitySelector({ selectedSpaces, onSpacesChange, space }: { selected
               <span className="text-tertiary font-medium ml-2">Select communities</span>
             )}
           </div>
-          <i className="icon-chevron-down size-5 text-tertiary shrink-0" />
+          <i aria-hidden="true" className="icon-chevron-down size-5 text-tertiary shrink-0" />
         </div>
       </Menu.Trigger>
 
       <Menu.Content className="w-full p-1 max-h-[300px] overflow-y-auto">
         {loading ? (
           <div className="flex items-center justify-center py-4">
-            <i className="icon-loader animate-spin size-5 text-tertiary" />
+            <i aria-hidden="true" className="icon-loader animate-spin size-5 text-tertiary" />
           </div>
         ) : availableSpaces.length === 0 ? (
           <div className="px-3 py-2 text-sm text-tertiary">

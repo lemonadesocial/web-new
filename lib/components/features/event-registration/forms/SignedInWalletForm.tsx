@@ -109,8 +109,13 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
             <Menu.Root>
               <Menu.Trigger>
                 {({ toggle }) => (
+<<<<<<< HEAD
                   <button type="button" className="flex items-center gap-2.5 w-full px-3.5 py-2 rounded-sm bg-primary/8 cursor-pointer" onClick={toggle}>
                     <i className="icon-eth text-tertiary size-5" />
+=======
+                  <div className="flex items-center gap-2.5 w-full px-3.5 py-2 rounded-sm bg-primary/8 cursor-pointer" onClick={toggle}>
+                    <i aria-hidden="true" className="icon-eth text-tertiary size-5" />
+>>>>>>> 1018631b (a11y(icons): add aria-hidden="true" to all 518 decorative <i> icon elements)
                     <p className="flex-1">
                       {formatWallet(selectedAddress)}
                     </p>
@@ -141,7 +146,7 @@ export function SignedInWalletForm({ required }: { required: boolean }) {
                           onVerify();
                           toggle();
                         }}
-                        iconLeft={<i className="icon-wallet size-5 text-tertiary" />}
+                        iconLeft={<i aria-hidden="true" className="icon-wallet size-5 text-tertiary" />}
                         title="New Wallet"
                       />
                     </div>

@@ -96,7 +96,7 @@ export function SelectExistingKnowledgeBasePane({ currentDocumentIds, onSelected
         ) : availableDocuments.length === 0 ? (
           <Card.Root>
             <div className="p-4 flex gap-3 items-center">
-              <i className="icon-book size-9 aspect-square text-quaternary" />
+              <i aria-hidden="true" className="icon-book size-9 aspect-square text-quaternary" />
               <div className="text-tertiary space-y-0.5">
                 <p>No Knowledge Bases Available</p>
                 <p className="text-sm">All available knowledge bases are already added.</p>
@@ -115,7 +115,7 @@ export function SelectExistingKnowledgeBasePane({ currentDocumentIds, onSelected
                 onClick={() => handleToggleDocument(doc._id)}
               >
                 <div className="size-7 rounded-sm flex items-center justify-center bg-card">
-                  <i className="icon-book size-4 text-tertiary" />
+                  <i aria-hidden="true" className="icon-book size-4 text-tertiary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-base font-medium truncate">{doc.title || 'Untitled'}</p>
@@ -125,9 +125,9 @@ export function SelectExistingKnowledgeBasePane({ currentDocumentIds, onSelected
                 </div>
                 <div className="relative flex items-center justify-center shrink-0">
                   {selectedDocumentIds.includes(doc._id) ? (
-                    <i className="icon-check size-5 text-primary" />
+                    <i aria-hidden="true" className="icon-check size-5 text-primary" />
                   ) : (
-                    <i className="icon-circle-outline size-5 text-quaternary" />
+                    <i aria-hidden="true" className="icon-circle-outline size-5 text-quaternary" />
                   )}
                 </div>
               </div>

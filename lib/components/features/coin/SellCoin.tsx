@@ -232,7 +232,7 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
             <p className="text-sm text-tertiary">
               {formatNumber(Number(amount))} {tokenData.symbol}
             </p>
-            <i className="icon-arrow-foward-sharp text-tertiary size-4" />
+            <i aria-hidden="true" className="icon-arrow-foward-sharp text-tertiary size-4" />
             <p className="text-sm text-tertiary">{formatNumber(Number(amount) * Number(tokenPrice))} ETH</p>
           </div>
           {/* <p className="text-sm text-tertiary">~$0</p> */}

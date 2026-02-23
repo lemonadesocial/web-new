@@ -40,7 +40,7 @@ export function CompleteProfilePane({
                     <p>{item.label}</p>
                   </div>
 
-                  {!item.completed && <i className="icon-chevron-right text-quaternary size-5" />}
+                  {!item.completed && <i aria-hidden="true" className="icon-chevron-right text-quaternary size-5" />}
                 </Card.Content>
               </Card.Root>
             );

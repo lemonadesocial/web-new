@@ -22,28 +22,28 @@ export function AddToCalendarModal({ event }: { event: Event }) {
             className="flex items-center justify-center gap-2.5 px-3 py-2 rounded-sm cursor-pointer bg-blue-400/16"
             onClick={() => addToCalendar('google')}
           >
-            <i className="icon-google size-5 text-blue-400" />
+            <i aria-hidden="true" className="icon-google size-5 text-blue-400" />
             <p className="text-blue-400">Google Calendar</p>
           </div>
           <div
             className="flex items-center justify-center gap-2.5 px-3 py-2 rounded-sm cursor-pointer bg-violet-400/16"
             onClick={() => addToCalendar('yahoo')}
           >
-            <i className="icon-yahoo size-5 text-accent-400" />
+            <i aria-hidden="true" className="icon-yahoo size-5 text-accent-400" />
             <p className="text-accent-400">Yahoo</p>
           </div>
           <div
             className="flex items-center justify-center gap-2.5 px-3 py-2 rounded-sm cursor-pointer bg-amber-400/16"
             onClick={() => addToCalendar('google')}
           >
-            <i className="icon-microsoft size-5 text-warning-300" />
+            <i aria-hidden="true" className="icon-microsoft size-5 text-warning-300" />
             <p className="text-warning-300">Outlook.com</p>
           </div>
           <div
             className="flex items-center justify-center gap-2.5 px-3 py-2 rounded-sm cursor-pointer bg-primary/8"
             onClick={() => addToCalendar('ical')}
           >
-            <i className="icon-calendar-add size-5 text-tertiary" />
+            <i aria-hidden="true" className="icon-calendar-add size-5 text-tertiary" />
             <p className="text-tertiary">iCal (Apple / Outlook)</p>
           </div>
         </div>

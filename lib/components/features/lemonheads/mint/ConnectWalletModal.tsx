@@ -85,11 +85,11 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
     if (address) {
       return canMint || sponsor ? (
         <div className="size-[56px] flex justify-center items-center rounded-full bg-success-500/16" data-icon>
-          <i className="icon-done text-success-500 size-8" />
+          <i aria-hidden="true" className="icon-done text-success-500 size-8" />
         </div>
       ) : (
         <div className="size-[56px] flex justify-center items-center rounded-full bg-warning-500/16" data-icon>
-          <i className="icon-info text-warning-500 size-8" />
+          <i aria-hidden="true" className="icon-info text-warning-500 size-8" />
         </div>
       );
     }
@@ -114,7 +114,7 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
       <ModalContent
         icon={
           <div className="size-[56px] flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
-            <i className="icon-loader animate-spin" />
+            <i aria-hidden="true" className="icon-loader animate-spin" />
           </div>
         }
       >
@@ -213,7 +213,7 @@ function MintWhiteList({
       <Card.Root className="border-none bg-none">
         <Card.Content className="justify-between flex items-center py-2 px-3">
           <div className="flex gap-3">
-            <i className="icon-wallet size-5 aspect-square text-tertiary" />
+            <i aria-hidden="true" className="icon-wallet size-5 aspect-square text-tertiary" />
             {address && <p>{truncateMiddle(address, 6, 4)}</p>}
           </div>
           <i
@@ -246,7 +246,7 @@ export function MintedContent({ address }: { address?: string | null }) {
       <Card.Root className="border-none bg-none">
         <Card.Content className="justify-between flex items-center py-2 px-3">
           <div className="flex gap-3">
-            <i className="icon-wallet size-5 aspect-square text-tertiary" />
+            <i aria-hidden="true" className="icon-wallet size-5 aspect-square text-tertiary" />
             {address && <p>{truncateMiddle(address, 6, 4)}</p>}
           </div>
           <i

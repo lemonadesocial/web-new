@@ -73,7 +73,7 @@ const EventRegistrationContent: React.FC = () => {
         <hr className="border-primary/8" />
         <div className="p-4 space-y-3 bg-primary/8 rounded-sm">
           <div className='size-8 flex items-center justify-center bg-white rounded-full'>
-            <i className='icon-login size-5 text-black' />
+            <i aria-hidden="true" className='icon-login size-5 text-black' />
           </div>
           <p>Please sign in to manage your registration and see more event details.</p>
           <Button size='sm' variant='tertiary' iconRight='icon-chevron-right' onClick={() => signIn()}>Sign In</Button>
@@ -93,7 +93,7 @@ const EventRegistrationContent: React.FC = () => {
             showCheckInEarn && (
               <div className='flex gap-3 items-center'>
                 <div className='rounded-sm bg-card h-[28] w-[28] flex items-center justify-center'>
-                  <i className='icon-send-money size-4 text-tertiary' />
+                  <i aria-hidden="true" className='icon-send-money size-4 text-tertiary' />
                 </div>
                 <div>
                   <p className='font-medium'>Check In to Earn</p>
@@ -106,7 +106,7 @@ const EventRegistrationContent: React.FC = () => {
             !!event.guest_limit && (
               <div className='flex gap-3 items-center'>
                 <div className='rounded-sm bg-card h-[28] w-[28] flex items-center justify-center'>
-                  <i className='icon-alarm size-4 text-tertiary' />
+                  <i aria-hidden="true" className='icon-alarm size-4 text-tertiary' />
                 </div>
                 <div>
                   <p className='font-medium'>Limited Spots Remaining</p>
@@ -119,7 +119,7 @@ const EventRegistrationContent: React.FC = () => {
             approvalRequired && (
               <div className='flex gap-3 items-center'>
                 <div className='rounded-sm bg-card h-[28] w-[28] flex items-center justify-center'>
-                  <i className='icon-list-check size-4 text-tertiary' />
+                  <i aria-hidden="true" className='icon-list-check size-4 text-tertiary' />
                 </div>
                 <div>
                   <p className='font-medium'>Approval required</p>
@@ -262,7 +262,7 @@ const BaseEventRegistration: React.FC<{ event: Event; }> = ({ event: initialEven
       <Card.Header>Registration</Card.Header>
       <Card.Content>
         <div className="flex gap-2 items-center">
-          <i className="icon-ticket size-5" />
+          <i aria-hidden="true" className="icon-ticket size-5" />
           <p className="text-lg">Sold Out</p>
         </div>
         <p className="text-sm text-secondary">This event is sold out and no longer taking registrations.</p>

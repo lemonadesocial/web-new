@@ -92,7 +92,7 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
 
           <CardTable.EmptyState>
             <div className="p-4 flex gap-3 items-center">
-              <i className="icon-user-group-outline size-9 aspect-square text-quaternary" />
+              <i aria-hidden="true" className="icon-user-group-outline size-9 aspect-square text-quaternary" />
               <div className="text-tertiary space-y-0.5">
                 <p>No Admins</p>
                 <p className="text-sm">Add people who can manage community.</p>
@@ -178,7 +178,7 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
           <Card.Root onClick={() => {}}>
             <Card.Content className="flex gap-3 items-center">
               <div className="p-1.5 bg-card rounded-sm text-tertiary aspect-square size-7 flex items-center justify-center">
-                <i className="icon-token size-4 aspect-square" />
+                <i aria-hidden="true" className="icon-token size-4 aspect-square" />
               </div>
               <div className="flex-1">
                 <p>Token Gating</p>
@@ -186,7 +186,7 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
                   Let anyone holding your chosen tokens join as a brand ambassador.
                 </p>
               </div>
-              <i className="icon-chevron-right text-quaternary" />
+              <i aria-hidden="true" className="icon-chevron-right text-quaternary" />
             </Card.Content>
           </Card.Root>
 
@@ -204,7 +204,7 @@ export function SettingsCommunityTeam({ space }: { space: Space }) {
 
             <CardTable.EmptyState>
               <div className="p-4 flex gap-3 items-center">
-                <i className="icon-person-pin-rounded size-9 aspect-square text-quaternary" />
+                <i aria-hidden="true" className="icon-person-pin-rounded size-9 aspect-square text-quaternary" />
                 <div className="text-tertiary space-y-0.5">
                   <p>No Ambassadors</p>
                   <p className="text-sm">Add people who can create or list events without needing admin approval.</p>

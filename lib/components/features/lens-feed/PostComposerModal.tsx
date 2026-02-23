@@ -263,7 +263,7 @@ export function PostComposerModal({
                               className="absolute top-3 right-3 bg-overlay-secondary rounded-full w-6 h-6 flex items-center justify-center"
                               onClick={() => setGif(undefined)}
                             >
-                              <i className="icon-x text-tertiary size-[14px]" />
+                              <i aria-hidden="true" className="icon-x text-tertiary size-[14px]" />
                             </button>
                           </div>
                         )
@@ -318,7 +318,7 @@ export function PostComposerModal({
             ) : (
               <div className="px-4 py-3 gap-3 flex items-center bg-card rounded-b-md">
                 <div className="flex items-center justify-center bg-error/16 size-9 rounded-full">
-                  <i className="icon-lock size-5 text-error" />
+                  <i aria-hidden="true" className="icon-lock size-5 text-error" />
                 </div>
                 <div className="flex-1">
                   <p>Posting is Locked</p>
@@ -364,7 +364,7 @@ export function FeedOptions({
                 key={key}
                 title={item.label}
                 iconLeft={item.icon}
-                iconRight={selected === key ? <i className="icon-check size-5" /> : undefined}
+                iconRight={selected === key ? <i aria-hidden="true" className="icon-check size-5" /> : undefined}
                 onClick={() => {
                   onSelect(key as keyof FeedOptionsType);
                   toggle();

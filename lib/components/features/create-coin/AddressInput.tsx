@@ -87,7 +87,7 @@ export function AddressInput({ value = '', onChange, placeholder = 'Wallet Addre
        {
          isLoading && (
            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-             <i className="icon-loader animate-spin text-tertiary" />
+             <i aria-hidden="true" className="icon-loader animate-spin text-tertiary" />
            </div>
          )
        }

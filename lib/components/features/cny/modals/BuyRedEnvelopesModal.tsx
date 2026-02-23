@@ -120,7 +120,7 @@ export function BuyRedEnvelopesModal({ pack, onComplete }: BuyRedEnvelopesModalP
     return (
       <div className="p-4 w-[340px] max-w-full">
         <div className="flex justify-end">
-          <i className="icon-loader animate-spin text-tertiary size-6" />
+          <i aria-hidden="true" className="icon-loader animate-spin text-tertiary size-6" />
         </div>
         <div className="space-y-6">
           <div className="flex justify-center">
