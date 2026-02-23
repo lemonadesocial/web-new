@@ -290,9 +290,10 @@ describe('usePageConfig', () => {
   it('does not fetch when ownerId is empty', async () => {
     const { result } = renderHook(() => usePageConfig('', 'event'));
 
-    // Should stay in initial state — loading true, no fetch triggered
-    // (the effect returns early when !ownerId)
+    // Should transition to loading: false without making any fetch
+    await waitFor(() => expect(result.current.loading).toBe(false));
     expect(mockQuery).not.toHaveBeenCalled();
+    expect(result.current.config).toBeNull();
   });
 
   it('works for space owner type', async () => {

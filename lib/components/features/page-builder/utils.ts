@@ -97,7 +97,10 @@ export function usePageConfig(
   const [error, setError] = React.useState<unknown>(null);
 
   React.useEffect(() => {
-    if (!ownerId) return;
+    if (!ownerId) {
+      setLoading(false);
+      return;
+    }
 
     let cancelled = false;
 
