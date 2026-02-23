@@ -112,6 +112,11 @@ describe('formatRelativeTime', () => {
     expect(result).not.toBe('Just now');
     expect(result).not.toBe('Yesterday');
   });
+
+  it('returns empty string for malformed date input', () => {
+    expect(formatRelativeTime('not-a-date')).toBe('');
+    expect(formatRelativeTime('')).toBe('');
+  });
 });
 
 // ---------------------------------------------------------------------------

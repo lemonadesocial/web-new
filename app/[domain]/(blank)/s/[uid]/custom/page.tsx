@@ -43,8 +43,8 @@ async function fetchSpaceAndConfig(uid: string) {
     const config = configData?.getPublishedConfig as PageConfig | null;
 
     return { space, config };
-  } catch {
-    // If the query fails (e.g. backend branch not deployed yet), fall back
+  } catch (err) {
+    console.error('[page-builder] Failed to fetch published config for space', space._id, err);
     return { space, config: null };
   }
 }

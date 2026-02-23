@@ -34,7 +34,8 @@ async function validatePreview(configId: string, token: string) {
     if (!config) return { config: null, error: 'Preview link is invalid or has expired' };
 
     return { config, error: null };
-  } catch {
+  } catch (err) {
+    console.error('[page-builder] Failed to validate preview link', configId, err);
     return { config: null, error: 'Unable to validate preview link' };
   }
 }
