@@ -4145,21 +4145,6 @@
     typescript-parser "^2.6.1"
     uuid "^11.1.0"
 
-"@selfxyz/core@^1.1.0-beta.6":
-  version "1.1.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@selfxyz/core/-/core-1.1.0-beta.6.tgz#ee42daa40504ae694e7ca14246cfb53259e80511"
-  integrity sha512-/YEXHWNaYF7nK5By4VPLSjiH/X8EJffXxW4qDaQschWZQahBeQLdbsThKo/lhPgJ5Td0HnSqSqbesvOnHWuA1Q==
-  dependencies:
-    "@selfxyz/common" "^0.0.9"
-    ethers "^6.13.5"
-    js-sha1 "^0.7.0"
-    js-sha256 "^0.11.0"
-    js-sha512 "^0.9.0"
-    node-forge "^1.3.1"
-    poseidon-lite "^0.3.0"
-    snarkjs "^0.7.4"
-    uuid "^11.1.0"
-
 "@selfxyz/qrcode@^1.0.15":
   version "1.0.15"
   resolved "https://registry.yarnpkg.com/@selfxyz/qrcode/-/qrcode-1.0.15.tgz#96d76491982a2a5e7701840060b7842a71798355"
@@ -5711,11 +5696,6 @@
   resolved "https://registry.yarnpkg.com/@trpc/server/-/server-11.4.2.tgz#ed84146132f915546146a229aa9e3137f8d222b5"
   integrity sha512-THyq/V5bSFDHeWEAk6LqHF0IVTGk6voGwWsFEipzRRKOWWMIZINCsKZ4cISG6kWO2X9jBfMWv/S2o9hnC0zQ0w==
 
-"@tweenjs/tween.js@~23.1.3":
-  version "23.1.3"
-  resolved "https://registry.npmjs.org/@tweenjs/tween.js/-/tween.js-23.1.3.tgz"
-  integrity sha512-vJmvvwFxYuGnF2axRtPYocag6Clbb5YS7kLL+SO/TeVFzHqDIWrNKYtcsPMibjDx9O+bu+psAy9NKfWklassUA==
-
 "@types/aria-query@^5.0.1":
   version "5.0.4"
   resolved "https://registry.npmjs.org/@types/aria-query/-/aria-query-5.0.4.tgz"
@@ -6016,11 +5996,6 @@
   resolved "https://registry.yarnpkg.com/@types/sortablejs/-/sortablejs-1.15.8.tgz#11ed555076046e00869a5ef85d1e7651e7a66ef6"
   integrity sha512-b79830lW+RZfwaztgs1aVPgbasJ8e7AXtZYHTELNXZPsERt4ymJdjV4OccDbHQAvHrCcFpbF78jkm0R6h/pZVg==
 
-"@types/stats.js@*":
-  version "0.17.3"
-  resolved "https://registry.npmjs.org/@types/stats.js/-/stats.js-0.17.3.tgz"
-  integrity sha512-pXNfAD3KHOdif9EQXZ9deK82HVNaXP5ZIF5RP2QG6OQFNTaY2YIetfrE9t528vEreGQvEPRDDc8muaoYeK0SxQ==
-
 "@types/stylis@4.2.5":
   version "4.2.5"
   resolved "https://registry.yarnpkg.com/@types/stylis/-/stylis-4.2.5.tgz#1daa6456f40959d06157698a653a9ab0a70281df"
@@ -6033,19 +6008,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/three@^0.174.0":
-  version "0.174.0"
-  resolved "https://registry.npmjs.org/@types/three/-/three-0.174.0.tgz"
-  integrity sha512-De/+vZnfg2aVWNiuy1Ldu+n2ydgw1osinmiZTAn0necE++eOfsygL8JpZgFjR2uHmAPo89MkxBj3JJ+2BMe+Uw==
-  dependencies:
-    "@tweenjs/tween.js" "~23.1.3"
-    "@types/stats.js" "*"
-    "@types/webxr" "*"
-    "@webgpu/types" "*"
-    fflate "~0.8.2"
-    meshoptimizer "~0.18.1"
-
-"@types/trusted-types@^2.0.2":
+"@types/trusted-types@^2.0.2", "@types/trusted-types@^2.0.7":
   version "2.0.7"
   resolved "https://registry.npmjs.org/@types/trusted-types/-/trusted-types-2.0.7.tgz"
   integrity sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==
@@ -7277,11 +7240,6 @@
     "@walletconnect/window-getters" "^1.0.1"
     tslib "1.14.1"
 
-"@webgpu/types@*":
-  version "0.1.56"
-  resolved "https://registry.npmjs.org/@webgpu/types/-/types-0.1.56.tgz"
-  integrity sha512-JkT4ngqwk4gKAFoWtXCcC1+TGhSStVtauS9z27slOGSFYr+QqjS0CoawiAxP7Gq9xkT4Pw9uouvWPT44HwbUiw==
-
 "@whatwg-node/disposablestack@^0.0.5":
   version "0.0.5"
   resolved "https://registry.npmjs.org/@whatwg-node/disposablestack/-/disposablestack-0.0.5.tgz"
@@ -8381,11 +8339,6 @@ cjs-module-lexer@^1.2.2:
   resolved "https://registry.yarnpkg.com/cjs-module-lexer/-/cjs-module-lexer-1.4.3.tgz#0f79731eb8cfe1ec72acd4066efac9d61991b00d"
   integrity sha512-9z8TZaGM1pfswYeXrUpzPrkx8UnWYdhJclsiYMm6x/w5+nN+8Tf/LnAgfLGQCm59qAOxU8WwHEq2vNwF6i4j+Q==
 
-classnames@2.3.1:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
-  integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
-
 clean-stack@^2.0.0:
   version "2.2.0"
   resolved "https://registry.npmjs.org/clean-stack/-/clean-stack-2.2.0.tgz"
@@ -9150,6 +9103,13 @@ domhandler@^5.0.2, domhandler@^5.0.3:
   integrity sha512-cgwlv/1iFQiFnU96XXgROh8xTeetsnJiDsTc7TYCLFd9+/WNkIqPTxiM/8pSd8VIrhXGTf1Ny1q1hquVqDJB5w==
   dependencies:
     domelementtype "^2.3.0"
+
+dompurify@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.3.1.tgz#c7e1ddebfe3301eacd6c0c12a4af284936dbbb86"
+  integrity sha512-qkdCKzLNtrgPFP1Vo+98FRzJnBRGe4ffyCea9IwHB1fyxPOeNTHpLKYGd4Uk9xvNoH0ZoOjwZxNptyMwqrId1Q==
+  optionalDependencies:
+    "@types/trusted-types" "^2.0.7"
 
 domutils@^3.0.1, domutils@^3.1.0:
   version "3.2.2"
@@ -10078,11 +10038,6 @@ fast-deep-equal@^3, fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:
   resolved "https://registry.npmjs.org/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz"
   integrity sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==
 
-fast-equals@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/fast-equals/-/fast-equals-4.0.3.tgz#72884cc805ec3c6679b99875f6b7654f39f0e8c7"
-  integrity sha512-G3BSX9cfKttjr+2o1O22tYMLq0DPluZnYtq1rXumE1SpL/F/SLIfHx08WYQoWSIpeMYf8sRbJ8++71+v6Pnxfg==
-
 fast-glob@3.3.1, fast-glob@^3.2.9:
   version "3.3.1"
   resolved "https://registry.npmjs.org/fast-glob/-/fast-glob-3.3.1.tgz"
@@ -10221,11 +10176,6 @@ ffjavascript@^0.2.45, ffjavascript@^0.2.48:
     wasmcurves "0.2.2"
     web-worker "1.2.0"
 
-fflate@~0.8.2:
-  version "0.8.2"
-  resolved "https://registry.npmjs.org/fflate/-/fflate-0.8.2.tgz"
-  integrity sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==
-
 figures@^3.0.0:
   version "3.2.0"
   resolved "https://registry.npmjs.org/figures/-/figures-3.2.0.tgz"
@@ -10338,7 +10288,16 @@ forwarded-parse@2.1.2:
   resolved "https://registry.yarnpkg.com/forwarded-parse/-/forwarded-parse-2.1.2.tgz#08511eddaaa2ddfd56ba11138eee7df117a09325"
   integrity sha512-alTFZZQDKMporBH77856pXgzhEzaUVmLCDk+egLgIgHst3Tpndzz8MnKe+GzRJRfvVdn69HhpW7cmXzvtLvJAw==
 
-framer-motion@^12.4.10, framer-motion@^12.5.0:
+framer-motion@^12.34.3:
+  version "12.34.3"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-12.34.3.tgz#946f716bfef710d564bf721f4f364274f6278fd4"
+  integrity sha512-v81ecyZKYO/DfpTwHivqkxSUBzvceOpoI+wLfgCgoUIKxlFKEXdg0oR9imxwXumT4SFy8vRk9xzJ5l3/Du/55Q==
+  dependencies:
+    motion-dom "^12.34.3"
+    motion-utils "^12.29.2"
+    tslib "^2.4.0"
+
+framer-motion@^12.4.10:
   version "12.5.0"
   resolved "https://registry.npmjs.org/framer-motion/-/framer-motion-12.5.0.tgz"
   integrity sha512-buPlioFbH9/W7rDzYh1C09AuZHAk2D1xTA1BlounJ2Rb9aRg84OXexP0GLd+R83v0khURdMX7b5MKnGTaSg5iA==
@@ -12501,11 +12460,6 @@ meros@^1.2.1:
   resolved "https://registry.npmjs.org/meros/-/meros-1.3.0.tgz"
   integrity sha512-2BNGOimxEz5hmjUG2FwoxCt5HN7BXdaWyFqEwxPTrJzVdABtrL4TiHTcsWSFAxPQ/tOnEaQEJh3qWq71QRMY+w==
 
-meshoptimizer@~0.18.1:
-  version "0.18.1"
-  resolved "https://registry.npmjs.org/meshoptimizer/-/meshoptimizer-0.18.1.tgz"
-  integrity sha512-ZhoIoL7TNV4s5B6+rx5mC//fw8/POGyNxS/DZyCJeiZ12ScLfVwRE/GfsxwiTkMYYD5DmK2/JXnEVXqL4rF+Sw==
-
 micro-ftch@^0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/micro-ftch/-/micro-ftch-0.3.1.tgz#6cb83388de4c1f279a034fb0cf96dfc050853c5f"
@@ -12921,12 +12875,24 @@ mongodb@^6.15.0:
     bson "^6.10.3"
     mongodb-connection-string-url "^3.0.0"
 
+motion-dom@^12.34.3:
+  version "12.34.3"
+  resolved "https://registry.yarnpkg.com/motion-dom/-/motion-dom-12.34.3.tgz#56224109a20bf2cb38277bfaedeeda5151ce369d"
+  integrity sha512-sYgFe+pR9aIM7o4fhs2aXtOI+oqlUd33N9Yoxcgo1Fv7M20sRkHtCmzE/VRNIcq7uNJ+qio+Xubt1FXH3pQ+eQ==
+  dependencies:
+    motion-utils "^12.29.2"
+
 motion-dom@^12.5.0:
   version "12.5.0"
   resolved "https://registry.npmjs.org/motion-dom/-/motion-dom-12.5.0.tgz"
   integrity sha512-uH2PETDh7m+Hjd1UQQ56yHqwn83SAwNjimNPE/kC+Kds0t4Yh7+29rfo5wezVFpPOv57U4IuWved5d1x0kNhbQ==
   dependencies:
     motion-utils "^12.5.0"
+
+motion-utils@^12.29.2:
+  version "12.29.2"
+  resolved "https://registry.yarnpkg.com/motion-utils/-/motion-utils-12.29.2.tgz#8fdd28babe042c2456b078ab33b32daa3bf5938b"
+  integrity sha512-G3kc34H2cX2gI63RqU+cZq+zWRRPSsNIOjpdl9TN4AQwC4sgwYPl/Q/Obf/d53nOm569T0fYK+tcoSV50BWx8A==
 
 motion-utils@^12.5.0:
   version "12.5.0"
@@ -12945,12 +12911,12 @@ motion@10.16.2:
     "@motionone/utils" "^10.15.1"
     "@motionone/vue" "^10.16.2"
 
-motion@^12.5.0:
-  version "12.5.0"
-  resolved "https://registry.npmjs.org/motion/-/motion-12.5.0.tgz"
-  integrity sha512-BTAYKszMmTvXSsIyeHNMPSicjWgUA4j7OmZv1xPpthm4sPub3ch66fy9U7BhJ1uXNL3YeprsIegzuvps3FkEMw==
+motion@^12.34.3:
+  version "12.34.3"
+  resolved "https://registry.yarnpkg.com/motion/-/motion-12.34.3.tgz#365a8ca9c0748e00ff3917b0f6b08a8aac90676c"
+  integrity sha512-xZIkBGO7v/Uvm+EyaqYd+9IpXu0sZqLywVlGdCFrrMiaO9JI4Kx51mO9KlHSWwll+gZUVY5OJsWgYI5FywJ/tw==
   dependencies:
-    framer-motion "^12.5.0"
+    framer-motion "^12.34.3"
     tslib "^2.4.0"
 
 mpd-parser@^1.3.1:
@@ -14126,7 +14092,7 @@ prompts@2.4.2:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@15.x, prop-types@^15.7.2, prop-types@^15.8.1:
+prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -14465,26 +14431,6 @@ react-dom@^19.0.0:
   dependencies:
     scheduler "^0.25.0"
 
-react-draggable@^4.0.3, react-draggable@^4.4.6:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-4.5.0.tgz#0b274ccb6965fcf97ed38fcf7e3cc223bc48cdf5"
-  integrity sha512-VC+HBLEZ0XJxnOxVAZsdRi8rD04Iz3SiiKOoYzamjylUcju/hP9np/aZdLHf/7WOD268WMoNJMvYfB5yAK45cw==
-  dependencies:
-    clsx "^2.1.1"
-    prop-types "^15.8.1"
-
-react-grid-layout@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/react-grid-layout/-/react-grid-layout-2.1.0.tgz#544a1a7df3411dbfb29a886d398ed2c52b6ce149"
-  integrity sha512-d2UOqsTokpua1iaVN6wpxHxum6OE3+DOEKFzDn3UEOsSHxnb9m4Lzwkh3FaNTvQd4Z/2gjcqt1dfy3AnBfZiQw==
-  dependencies:
-    clsx "^2.1.1"
-    fast-equals "^4.0.3"
-    prop-types "^15.8.1"
-    react-draggable "^4.4.6"
-    react-resizable "^3.0.5"
-    resize-observer-polyfill "^1.5.1"
-
 react-hook-form@^7.54.2:
   version "7.54.2"
   resolved "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.54.2.tgz"
@@ -14562,22 +14508,6 @@ react-remove-scroll@^2.5.7, react-remove-scroll@^2.6.3:
     tslib "^2.1.0"
     use-callback-ref "^1.3.3"
     use-sidecar "^1.1.3"
-
-react-resizable@^3.0.5:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/react-resizable/-/react-resizable-3.0.5.tgz#362721f2efbd094976f1780ae13f1ad7739786c1"
-  integrity sha512-vKpeHhI5OZvYn82kXOs1bC8aOXktGU5AmKAgaZS4F5JPburCtbmDPqE7Pzp+1kN4+Wb81LlF33VpGwWwtXem+w==
-  dependencies:
-    prop-types "15.x"
-    react-draggable "^4.0.3"
-
-react-sortablejs@^6.1.4:
-  version "6.1.4"
-  resolved "https://registry.yarnpkg.com/react-sortablejs/-/react-sortablejs-6.1.4.tgz#420ebfab602bbd935035dec24a04c8b3b836dbbf"
-  integrity sha512-fc7cBosfhnbh53Mbm6a45W+F735jwZ1UFIYSrIqcO/gRIFoDyZeMtgKlpV4DdyQfbCzdh5LoALLTDRxhMpTyXQ==
-  dependencies:
-    classnames "2.3.1"
-    tiny-invariant "1.2.0"
 
 react-spinners@^0.14.1:
   version "0.14.1"
@@ -15360,7 +15290,7 @@ snake-case@^3.0.4:
     dot-case "^3.0.4"
     tslib "^2.0.3"
 
-snarkjs@^0.7.3, snarkjs@^0.7.4, snarkjs@^0.7.5:
+snarkjs@^0.7.3, snarkjs@^0.7.5:
   version "0.7.5"
   resolved "https://registry.yarnpkg.com/snarkjs/-/snarkjs-0.7.5.tgz#334d83b61468bdffbbf922b20734ca47be50b8ab"
   integrity sha512-h+3c4rXZKLhLuHk4LHydZCk/h5GcNvk5GjVKRRkHmfb6Ntf8gHOA9zea3g656iclRuhqQ3iKDWFgiD9ypLrKiA==
@@ -15994,11 +15924,6 @@ tiny-case@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/tiny-case/-/tiny-case-1.0.3.tgz#d980d66bc72b5d5a9ca86fb7c9ffdb9c898ddd03"
   integrity sha512-Eet/eeMhkO6TX8mnUteS9zgPbUMQa4I6Kkp5ORiBD5476/m+PIRiumP5tmh5ioJpH7k51Kehawy2UDfsnxxY8Q==
-
-tiny-invariant@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/tiny-invariant/-/tiny-invariant-1.2.0.tgz#a1141f86b672a9148c72e978a19a73b9b94a15a9"
-  integrity sha512-1Uhn/aqw5C6RI4KejVeTg6mIS7IqxnLJ8Mv2tV5rTc0qWobay7pDUz6Wi392Cnc8ak1H0F2cjoRzb2/AW4+Fvg==
 
 tiny-invariant@^1.3.3:
   version "1.3.3"
