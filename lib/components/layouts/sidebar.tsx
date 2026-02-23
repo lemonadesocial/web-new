@@ -25,7 +25,7 @@ import { match } from 'ts-pattern';
 
 const Sidebar = () => {
   const pathname = usePathname();
-  const [toggle, setToggle] = React.useState<'mini' | 'hide' | 'open'>('mini');
+  const [toggle, setToggle] = React.useState<'mini' | 'open'>('mini');
   const router = useRouter();
   const [_state, dispatch] = useAIChat();
 
@@ -72,15 +72,29 @@ const Sidebar = () => {
       <div className="md:hidden fixed z-50 top-0 bg-background left-0 right-0 p-2.5">
         <button
           className="text-tertiary p-2.5 flex justify-center cursor-pointer"
-          onClick={() => setToggle((prev) => (prev !== 'hide' ? 'open' : 'hide'))}
+          onClick={() => setToggle((prev) => (prev !== 'open' ? 'open' : 'mini'))}
         >
           <i className="icon-left-panel-close-outline size-5" />
         </button>
       </div>
-      <div className={clsx('relative bg-overlay-primary h-screen text-tertiary border-r z-10')}>
+
+      {toggle === 'open' && (
+        <div
+          className="fixed bg-(--color-page-background-overlay) inset-0 z-50 md:hidden"
+          onClick={() => setToggle('mini')}
+        />
+      )}
+
+      <div
+        className={clsx(
+          'relative bg-overlay-primary h-screen text-tertiary border-r z-50 transform transition-transform duration-300 ease-in-out',
+          toggle === 'mini' && 'border-r-0 max-sm:-translate-x-full',
+          toggle === 'open' && 'max-sm:fixed max-sm:left-0',
+        )}
+      >
         <div
           className={clsx(
-            'flex flex-col h-full transition-all duration-300 ',
+            'flex flex-col h-full transition-all duration-300',
             toggle === 'open' && 'w-64',
             toggle === 'mini' && 'w-16 max-sm:hidden',
           )}
@@ -114,9 +128,9 @@ const Sidebar = () => {
             </div>
 
             <div className="px-3 pb-3 flex flex-col gap-1">
-              {mainMenu.map((item) => (
+              {mainMenu.map((item, idx) => (
                 <div
-                  key={item.path}
+                  key={idx}
                   className={clsx(
                     'cursor-pointer text-secondary p-2.5 flex gap-2.5 items-center hover:bg-(--btn-tertiary) rounded-sm',
                     isActive(item) && 'bg-(--btn-tertiary)',
@@ -143,9 +157,9 @@ const Sidebar = () => {
               <div className={clsx('text-tertiary text-sm p-2.5 pb-1.5', toggle === 'mini' && 'invisible')}>
                 <p>Explore</p>
               </div>
-              {exploreMenu.map((item) => (
+              {exploreMenu.map((item, idx) => (
                 <div
-                  key={item.path}
+                  key={idx}
                   className={clsx(
                     'cursor-pointer text-secondary p-2.5 flex gap-2.5 items-center hover:bg-(--btn-tertiary) rounded-sm',
                     isActive(item) && 'bg-(--btn-tertiary)',
@@ -280,8 +294,6 @@ const Sidebar = () => {
     </>
   );
 };
-
-function Container({ children }: React.PropsWithChildren) {}
 
 const actions = {
   event: { icon: 'icon-ticket text-accent-400', title: 'Event', subtitle: 'Virtual & IRL' },
