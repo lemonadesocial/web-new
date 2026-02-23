@@ -171,7 +171,7 @@ function renderTextWithLinks(text?: string) {
   let lastIndex = 0;
   const elements = [];
 
-  matches.forEach((match: any) => {
+  matches.forEach((match: { index: number; lastIndex: number; url: string; text: string }) => {
     // Push the text before the match
     if (lastIndex < match.index) {
       elements.push(text.slice(lastIndex, match.index));

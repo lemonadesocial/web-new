@@ -59,9 +59,9 @@ export async function writeContract(
   contractAddress: string,
   provider: Eip1193Provider,
   functionName: string,
-  args: any[],
-  txOptions: Record<string, any> = {}
-): Promise<any> {
+  args: unknown[],
+  txOptions: Record<string, unknown> = {}
+): Promise<ethers.TransactionResponse> {
   const browserProvider = new ethers.BrowserProvider(provider);
   const signer = await browserProvider.getSigner();
   const contract = contractInstance.attach(contractAddress).connect(signer);
@@ -175,7 +175,7 @@ export async function transfer(toAddress: string, amount: string, tokenAddress: 
   }
 };
 
-export function formatError(error: any): string {
+export function formatError(error: unknown): string {
   if (isError(error, 'ACTION_REJECTED')) {
     return 'Transaction was rejected by user';
   }
@@ -216,8 +216,9 @@ export function formatError(error: any): string {
     return 'Server error occurred. Please try again later';
   }
 
-  if (error?.message) {
-    const message = error.message.toLowerCase();
+  const errorMessage = error instanceof Error ? error.message : (error && typeof error === 'object' && 'message' in error) ? String((error as { message: unknown }).message) : '';
+  if (errorMessage) {
+    const message = errorMessage.toLowerCase();
     
     if (message.includes('user rejected') || message.includes('user denied')) {
       return 'Transaction was rejected by user';

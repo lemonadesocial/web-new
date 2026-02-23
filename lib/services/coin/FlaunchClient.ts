@@ -609,7 +609,7 @@ export class FlaunchClient {
     return txHash;
   }
 
-  async sellCoinWith7702(sendCalls: (calls: any[]) => Promise<string>, {
+  async sellCoinWith7702(sendCalls: (calls: { to: `0x${string}`; value: bigint; data: `0x${string}` }[]) => Promise<string>, {
     sellAmount,
     slippageTolerance = 500,
     recipient,

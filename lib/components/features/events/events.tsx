@@ -44,7 +44,7 @@ export function Events() {
     if (!me) return;
 
     let events = [] as Event[];
-    let showHost: any = null;
+    let showHost: boolean | null = null;
     if (Number(filter.by) === FilterItem.Hosting) showHost = true;
     if (Number(filter.by) === FilterItem.Attending) showHost = false;
 

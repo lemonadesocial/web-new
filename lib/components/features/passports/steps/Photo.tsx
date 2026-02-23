@@ -59,7 +59,7 @@ function VerifySelf() {
 
   React.useEffect(() => {
     if (data?.getSelfVerificationStatus) {
-      const allVerified = data.getSelfVerificationStatus.disclosures?.every((d: any) => d.verified);
+      const allVerified = data.getSelfVerificationStatus.disclosures?.every((d: { verified: boolean }) => d.verified);
       dispatch({ type: PassportActionKind.SetSelfVerified, payload: allVerified });
     }
   }, [data]);

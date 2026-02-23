@@ -3,7 +3,7 @@ import React from 'react';
 import { PassportActionKind, PassportConfig, PassportState, PassportStep } from './types';
 import { match } from 'ts-pattern';
 
-export type PassportAction = { type: PassportActionKind; payload?: any };
+export type PassportAction = { type: PassportActionKind; payload?: unknown };
 
 export const PassportContext = React.createContext(null);
 
@@ -12,7 +12,7 @@ export function PassportProvider({
   value: defaultState,
 }: React.PropsWithChildren & { value: PassportState }) {
   const [state, dispatch] = React.useReducer(reducers, defaultState);
-  const value: any = React.useMemo(() => [state, dispatch], [state]);
+  const value = React.useMemo(() => [state, dispatch] as const, [state]);
 
   return <PassportContext.Provider value={value}>{children}</PassportContext.Provider>;
 }

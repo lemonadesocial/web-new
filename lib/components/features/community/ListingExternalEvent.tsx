@@ -238,7 +238,7 @@ function InputFieldCustom({
   onChange,
 }: {
   onStartExtract?: () => void;
-  onChange?: (data: any) => void;
+  onChange?: (data: Record<string, unknown>) => void;
 }) {
   const [value, setValue] = React.useState('');
 
@@ -265,11 +265,11 @@ function InputFieldCustom({
       let location = {};
 
       if ('jsonLD' in result && result.jsonLD?.length) {
-        startDate = result.jsonLD.find((item: any) => item.startDate)?.startDate || null;
-        endDate = result.jsonLD.find((item: any) => item.endDate)?.endDate || null;
-        host = result.jsonLD.find((item: any) => item.organizer)?.organizer?.name || null;
+        startDate = result.jsonLD.find((item: Record<string, unknown>) => item.startDate)?.startDate || null;
+        endDate = result.jsonLD.find((item: Record<string, unknown>) => item.endDate)?.endDate || null;
+        host = result.jsonLD.find((item: Record<string, unknown>) => item.organizer)?.organizer?.name || null;
 
-        const _location = result.jsonLD.find((item: any) => item.location)?.location || null;
+        const _location = result.jsonLD.find((item: Record<string, unknown>) => item.location)?.location || null;
         location = {
           address: {
             street_1: _location?.address?.streetAddress,

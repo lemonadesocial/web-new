@@ -1,4 +1,4 @@
-const memoryCache: Record<string, { expiredAt: number, value: any }> = {};
+const memoryCache: Record<string, { expiredAt: number, value: unknown }> = {};
 
 export const getOrSet = async <T>(key: string, fn: () => Promise<T>, ttlMs: number) => {
   let cached = memoryCache[key];

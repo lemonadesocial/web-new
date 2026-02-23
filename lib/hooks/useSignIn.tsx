@@ -8,11 +8,11 @@ import { AuthModal } from '$lib/components/features/auth/AuthModal';
 import { LoginFlow, RegistrationFlow, SettingsFlow, UiNodeInputAttributes, VerificationFlow } from '@ory/client';
 import { ory } from '$lib/utils/ory';
 import { dummyWalletPassword } from '../services/ory';
-import { identityApi } from '../services/identity';
+import { identityApi, IdentityError } from '../services/identity';
 import { useOAuth2 } from './useOAuth2';
 
 export function useSignIn() {  
-  return (dismissible = true, props?: any) => {
+  return (dismissible = true, props?: Record<string, unknown>) => {
     modal.open(AuthModal, { dismissible, props });
   };
 }
@@ -142,7 +142,7 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: (token?: string) => v
           });
 
           if (data.error) {
-            const codeSent = data.error.find((err: any) => err.id === 1040005);
+            const codeSent = data.error.find((err: IdentityError) => err.id === 1040005);
             
             if (codeSent) {
               setCodeSent(true);
@@ -166,7 +166,7 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: (token?: string) => v
           });
 
           if (data.error) {
-            const accountNotExists = data.error.find((err: any) => err.id === 4000035);
+            const accountNotExists = data.error.find((err: IdentityError) => err.id === 4000035);
             
             if (accountNotExists) {
               setIsSignup(true);
@@ -250,7 +250,7 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: (token?: string) => v
         });
 
         if (data.error) {
-          const codeSent = data.error.find((err: any) => err.id === 1040005);
+          const codeSent = data.error.find((err: IdentityError) => err.id === 1040005);
           
           if (codeSent && data.flow_id) {
             setIdentityFlowId(data.flow_id);
@@ -314,7 +314,7 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: (token?: string) => v
         });
 
         if (data.error) {
-          const accountNotExists = data.error.find((err: any) => err.id === 4000035);
+          const accountNotExists = data.error.find((err: IdentityError) => err.id === 4000035);
           
           if (accountNotExists) {
             setIsSignup(true);
@@ -322,7 +322,7 @@ export const useHandleEmail = ({ onSuccess }: { onSuccess: (token?: string) => v
             return;
           }
 
-          const codeSent = data.error.find((err: any) => err.id === 1010014);
+          const codeSent = data.error.find((err: IdentityError) => err.id === 1010014);
           
           if (codeSent && data.flow_id) {
             setIdentityFlowId(data.flow_id);
@@ -625,7 +625,7 @@ export const useHandleVerifyEmail = ({ onSuccess }: { onSuccess: () => void }) =
           session_token: session?.token,
         });
 
-        if (data.error && !data.error.some((err: any) => err.id === 1050001)) {
+        if (data.error && !data.error.some((err: IdentityError) => err.id === 1050001)) {
           setError(data.error[0]?.text || 'Unknown error');
           return;
         }
@@ -635,7 +635,7 @@ export const useHandleVerifyEmail = ({ onSuccess }: { onSuccess: () => void }) =
         });
 
         if (verificationData.error) {
-          const codeSent = verificationData.error.some((err: any) => err.id === 1080003);
+          const codeSent = verificationData.error.some((err: IdentityError) => err.id === 1080003);
           
           if (codeSent) {
             setFlowId(verificationData.flow_id);
@@ -719,7 +719,7 @@ export const useHandleVerifyEmail = ({ onSuccess }: { onSuccess: () => void }) =
         });
 
         if (data.error) {
-          const success = data.error.some((err: any) => err.id === 1080002);
+          const success = data.error.some((err: IdentityError) => err.id === 1080002);
           
           if (success) {
             onSuccess();
@@ -785,7 +785,7 @@ export const useHandleVerifyEmail = ({ onSuccess }: { onSuccess: () => void }) =
         });
 
         if (verificationData.error) {
-          const codeSent = verificationData.error.some((err: any) => err.id === 1080003);
+          const codeSent = verificationData.error.some((err: IdentityError) => err.id === 1080003);
           
           if (codeSent) {
             setFlowId(verificationData.flow_id);
