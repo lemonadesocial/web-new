@@ -15,10 +15,10 @@ export function LemonHeadsLockFeature({ title, subtitle, icon }: { title: string
   return (
     <div className="flex flex-col h-full w-full items-center justify-center gap-8 pt-10 pb-32">
       <div className="flex flex-col justify-center items-center relative">
-        {icon && <i className={twMerge('size-[184px] text-quaternary', icon)} />}
+        {icon && <i aria-hidden="true" className={twMerge('size-[184px] text-quaternary', icon)} />}
 
         <div className="bg-danger-500 rounded-full p-3 absolute bottom-0">
-          <i className="icon-lock text-primary size-8 aspect-square" />
+          <i aria-hidden="true" className="icon-lock text-primary size-8 aspect-square" />
         </div>
       </div>
 

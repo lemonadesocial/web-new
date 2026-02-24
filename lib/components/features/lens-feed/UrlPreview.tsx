@@ -91,7 +91,7 @@ export function UrlPreview({ url }: UrlPreviewProps) {
         <p className="mb-2 line-clamp-2">{ogData.ogTitle}</p>
         <p className="text-sm text-tertiary line-clamp-3">{ogData.ogDescription}</p>
         </div>
-        <i className="icon-arrow-outward text-quaternary size-4" />
+        <i aria-hidden="true" className="icon-arrow-outward text-quaternary size-4" />
       </div>
     );
   }

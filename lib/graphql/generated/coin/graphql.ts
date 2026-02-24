@@ -701,6 +701,148 @@ export type PoolSwap_Stream_Cursor_Value_Input = {
   uniFee1?: InputMaybe<Scalars['numeric']['input']>;
 };
 
+/** columns and relationships of "RedEnvelopeReceived" */
+export type RedEnvelopeReceived = {
+  __typename?: 'RedEnvelopeReceived';
+  chain_id: Scalars['numeric']['output'];
+  envelopes_opened: Scalars['numeric']['output'];
+  envelopes_received: Scalars['numeric']['output'];
+  id: Scalars['String']['output'];
+  recipient: Scalars['String']['output'];
+  total_amount_received: Scalars['numeric']['output'];
+  updated_at: Scalars['numeric']['output'];
+};
+
+/** Boolean expression to filter rows from the table "RedEnvelopeReceived". All fields are combined with a logical 'AND'. */
+export type RedEnvelopeReceived_Bool_Exp = {
+  _and?: InputMaybe<Array<RedEnvelopeReceived_Bool_Exp>>;
+  _not?: InputMaybe<RedEnvelopeReceived_Bool_Exp>;
+  _or?: InputMaybe<Array<RedEnvelopeReceived_Bool_Exp>>;
+  chain_id?: InputMaybe<Numeric_Comparison_Exp>;
+  envelopes_opened?: InputMaybe<Numeric_Comparison_Exp>;
+  envelopes_received?: InputMaybe<Numeric_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  recipient?: InputMaybe<String_Comparison_Exp>;
+  total_amount_received?: InputMaybe<Numeric_Comparison_Exp>;
+  updated_at?: InputMaybe<Numeric_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "RedEnvelopeReceived". */
+export type RedEnvelopeReceived_Order_By = {
+  chain_id?: InputMaybe<Order_By>;
+  envelopes_opened?: InputMaybe<Order_By>;
+  envelopes_received?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  recipient?: InputMaybe<Order_By>;
+  total_amount_received?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "RedEnvelopeReceived" */
+export enum RedEnvelopeReceived_Select_Column {
+  /** column name */
+  ChainId = 'chain_id',
+  /** column name */
+  EnvelopesOpened = 'envelopes_opened',
+  /** column name */
+  EnvelopesReceived = 'envelopes_received',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Recipient = 'recipient',
+  /** column name */
+  TotalAmountReceived = 'total_amount_received',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** Streaming cursor of the table "RedEnvelopeReceived" */
+export type RedEnvelopeReceived_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: RedEnvelopeReceived_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type RedEnvelopeReceived_Stream_Cursor_Value_Input = {
+  chain_id?: InputMaybe<Scalars['numeric']['input']>;
+  envelopes_opened?: InputMaybe<Scalars['numeric']['input']>;
+  envelopes_received?: InputMaybe<Scalars['numeric']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  recipient?: InputMaybe<Scalars['String']['input']>;
+  total_amount_received?: InputMaybe<Scalars['numeric']['input']>;
+  updated_at?: InputMaybe<Scalars['numeric']['input']>;
+};
+
+/** columns and relationships of "RedEnvelopeSent" */
+export type RedEnvelopeSent = {
+  __typename?: 'RedEnvelopeSent';
+  chain_id: Scalars['numeric']['output'];
+  envelopes_sent: Scalars['numeric']['output'];
+  id: Scalars['String']['output'];
+  sender: Scalars['String']['output'];
+  total_amount_sent: Scalars['numeric']['output'];
+  updated_at: Scalars['numeric']['output'];
+};
+
+/** Boolean expression to filter rows from the table "RedEnvelopeSent". All fields are combined with a logical 'AND'. */
+export type RedEnvelopeSent_Bool_Exp = {
+  _and?: InputMaybe<Array<RedEnvelopeSent_Bool_Exp>>;
+  _not?: InputMaybe<RedEnvelopeSent_Bool_Exp>;
+  _or?: InputMaybe<Array<RedEnvelopeSent_Bool_Exp>>;
+  chain_id?: InputMaybe<Numeric_Comparison_Exp>;
+  envelopes_sent?: InputMaybe<Numeric_Comparison_Exp>;
+  id?: InputMaybe<String_Comparison_Exp>;
+  sender?: InputMaybe<String_Comparison_Exp>;
+  total_amount_sent?: InputMaybe<Numeric_Comparison_Exp>;
+  updated_at?: InputMaybe<Numeric_Comparison_Exp>;
+};
+
+/** Ordering options when selecting data from "RedEnvelopeSent". */
+export type RedEnvelopeSent_Order_By = {
+  chain_id?: InputMaybe<Order_By>;
+  envelopes_sent?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  sender?: InputMaybe<Order_By>;
+  total_amount_sent?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "RedEnvelopeSent" */
+export enum RedEnvelopeSent_Select_Column {
+  /** column name */
+  ChainId = 'chain_id',
+  /** column name */
+  EnvelopesSent = 'envelopes_sent',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Sender = 'sender',
+  /** column name */
+  TotalAmountSent = 'total_amount_sent',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** Streaming cursor of the table "RedEnvelopeSent" */
+export type RedEnvelopeSent_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: RedEnvelopeSent_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type RedEnvelopeSent_Stream_Cursor_Value_Input = {
+  chain_id?: InputMaybe<Scalars['numeric']['input']>;
+  envelopes_sent?: InputMaybe<Scalars['numeric']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  sender?: InputMaybe<Scalars['String']['input']>;
+  total_amount_sent?: InputMaybe<Scalars['numeric']['input']>;
+  updated_at?: InputMaybe<Scalars['numeric']['input']>;
+};
+
 /** columns and relationships of "StakingManagerToken" */
 export type StakingManagerToken = {
   __typename?: 'StakingManagerToken';
@@ -1523,6 +1665,14 @@ export type Query_Root = {
   PoolSwap: Array<PoolSwap>;
   /** fetch data from the table: "PoolSwap" using primary key columns */
   PoolSwap_by_pk?: Maybe<PoolSwap>;
+  /** fetch data from the table: "RedEnvelopeReceived" */
+  RedEnvelopeReceived: Array<RedEnvelopeReceived>;
+  /** fetch data from the table: "RedEnvelopeReceived" using primary key columns */
+  RedEnvelopeReceived_by_pk?: Maybe<RedEnvelopeReceived>;
+  /** fetch data from the table: "RedEnvelopeSent" */
+  RedEnvelopeSent: Array<RedEnvelopeSent>;
+  /** fetch data from the table: "RedEnvelopeSent" using primary key columns */
+  RedEnvelopeSent_by_pk?: Maybe<RedEnvelopeSent>;
   /** fetch data from the table: "StakingManagerToken" */
   StakingManagerToken: Array<StakingManagerToken>;
   /** fetch data from the table: "StakingManagerToken" using primary key columns */
@@ -1652,6 +1802,34 @@ export type Query_RootPoolSwapArgs = {
 
 
 export type Query_RootPoolSwap_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootRedEnvelopeReceivedArgs = {
+  distinct_on?: InputMaybe<Array<RedEnvelopeReceived_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<RedEnvelopeReceived_Order_By>>;
+  where?: InputMaybe<RedEnvelopeReceived_Bool_Exp>;
+};
+
+
+export type Query_RootRedEnvelopeReceived_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Query_RootRedEnvelopeSentArgs = {
+  distinct_on?: InputMaybe<Array<RedEnvelopeSent_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<RedEnvelopeSent_Order_By>>;
+  where?: InputMaybe<RedEnvelopeSent_Bool_Exp>;
+};
+
+
+export type Query_RootRedEnvelopeSent_By_PkArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -1943,6 +2121,18 @@ export type Subscription_Root = {
   PoolSwap_by_pk?: Maybe<PoolSwap>;
   /** fetch data from the table in a streaming manner: "PoolSwap" */
   PoolSwap_stream: Array<PoolSwap>;
+  /** fetch data from the table: "RedEnvelopeReceived" */
+  RedEnvelopeReceived: Array<RedEnvelopeReceived>;
+  /** fetch data from the table: "RedEnvelopeReceived" using primary key columns */
+  RedEnvelopeReceived_by_pk?: Maybe<RedEnvelopeReceived>;
+  /** fetch data from the table in a streaming manner: "RedEnvelopeReceived" */
+  RedEnvelopeReceived_stream: Array<RedEnvelopeReceived>;
+  /** fetch data from the table: "RedEnvelopeSent" */
+  RedEnvelopeSent: Array<RedEnvelopeSent>;
+  /** fetch data from the table: "RedEnvelopeSent" using primary key columns */
+  RedEnvelopeSent_by_pk?: Maybe<RedEnvelopeSent>;
+  /** fetch data from the table in a streaming manner: "RedEnvelopeSent" */
+  RedEnvelopeSent_stream: Array<RedEnvelopeSent>;
   /** fetch data from the table: "StakingManagerToken" */
   StakingManagerToken: Array<StakingManagerToken>;
   /** fetch data from the table: "StakingManagerToken" using primary key columns */
@@ -2140,6 +2330,48 @@ export type Subscription_RootPoolSwap_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<PoolSwap_Stream_Cursor_Input>>;
   where?: InputMaybe<PoolSwap_Bool_Exp>;
+};
+
+
+export type Subscription_RootRedEnvelopeReceivedArgs = {
+  distinct_on?: InputMaybe<Array<RedEnvelopeReceived_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<RedEnvelopeReceived_Order_By>>;
+  where?: InputMaybe<RedEnvelopeReceived_Bool_Exp>;
+};
+
+
+export type Subscription_RootRedEnvelopeReceived_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootRedEnvelopeReceived_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<RedEnvelopeReceived_Stream_Cursor_Input>>;
+  where?: InputMaybe<RedEnvelopeReceived_Bool_Exp>;
+};
+
+
+export type Subscription_RootRedEnvelopeSentArgs = {
+  distinct_on?: InputMaybe<Array<RedEnvelopeSent_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<RedEnvelopeSent_Order_By>>;
+  where?: InputMaybe<RedEnvelopeSent_Bool_Exp>;
+};
+
+
+export type Subscription_RootRedEnvelopeSent_By_PkArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type Subscription_RootRedEnvelopeSent_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<RedEnvelopeSent_Stream_Cursor_Input>>;
+  where?: InputMaybe<RedEnvelopeSent_Bool_Exp>;
 };
 
 
@@ -2407,6 +2639,30 @@ export type StakingSummaryQueryVariables = Exact<{
 
 export type StakingSummaryQuery = { __typename?: 'query_root', StakingSummary: Array<{ __typename?: 'StakingSummary', chainId: number, date: string, id: string, stakingManagerAddress: string, totalDeposited: any, totalFees: any, updatedAt: any }> };
 
+export type EnvelopeQueryVariables = Exact<{
+  where?: InputMaybe<Envelope_Bool_Exp>;
+  orderBy?: InputMaybe<Array<Envelope_Order_By> | Envelope_Order_By>;
+}>;
+
+
+export type EnvelopeQuery = { __typename?: 'query_root', Envelope: Array<{ __typename?: 'Envelope', amount?: any | null, token_id: any, sealed_at?: any | null, chain_id: any, owner: string, claimed: boolean, claimed_at?: any | null, created_at: any, currency?: string | null, id: string, message?: string | null, recipient?: string | null }> };
+
+export type RedEnvelopeSentQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<RedEnvelopeSent_Bool_Exp>;
+}>;
+
+
+export type RedEnvelopeSentQuery = { __typename?: 'query_root', RedEnvelopeSent: Array<{ __typename?: 'RedEnvelopeSent', envelopes_sent: any, total_amount_sent: any }> };
+
+export type RedEnvelopeReceivedQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<RedEnvelopeReceived_Bool_Exp>;
+}>;
+
+
+export type RedEnvelopeReceivedQuery = { __typename?: 'query_root', RedEnvelopeReceived: Array<{ __typename?: 'RedEnvelopeReceived', envelopes_opened: any, envelopes_received: any, total_amount_received: any }> };
+
 
 export const PoolSwapDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PoolSwap"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"PoolSwap_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PoolSwap_order_by"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"PoolSwap"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"blockNumber"}},{"kind":"Field","name":{"kind":"Name","value":"blockTimestamp"}},{"kind":"Field","name":{"kind":"Name","value":"transactionHash"}},{"kind":"Field","name":{"kind":"Name","value":"flAmount0"}},{"kind":"Field","name":{"kind":"Name","value":"flAmount1"}},{"kind":"Field","name":{"kind":"Name","value":"flFee0"}},{"kind":"Field","name":{"kind":"Name","value":"flFee1"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"ispAmount0"}},{"kind":"Field","name":{"kind":"Name","value":"ispAmount1"}},{"kind":"Field","name":{"kind":"Name","value":"ispFee0"}},{"kind":"Field","name":{"kind":"Name","value":"ispFee1"}},{"kind":"Field","name":{"kind":"Name","value":"poolId"}},{"kind":"Field","name":{"kind":"Name","value":"uniAmount0"}},{"kind":"Field","name":{"kind":"Name","value":"uniAmount1"}},{"kind":"Field","name":{"kind":"Name","value":"uniFee0"}},{"kind":"Field","name":{"kind":"Name","value":"uniFee1"}}]}}]}}]} as unknown as DocumentNode<PoolSwapQuery, PoolSwapQueryVariables>;
 export const MemecoinHolderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MemecoinHolder"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"MemecoinHolder_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MemecoinHolder_order_by"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"MemecoinHolder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"holder"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"memecoin"}}]}}]}}]} as unknown as DocumentNode<MemecoinHolderQuery, MemecoinHolderQueryVariables>;
@@ -2416,3 +2672,6 @@ export const MemecoinMetadataDocument = {"kind":"Document","definitions":[{"kind
 export const FairLaunchDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FairLaunch"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"FairLaunch_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FairLaunch_order_by"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"FairLaunch"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"burnedAmount"}},{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"closeAt"}},{"kind":"Field","name":{"kind":"Name","value":"endAt"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"poolId"}},{"kind":"Field","name":{"kind":"Name","value":"startAt"}}]}}]}}]} as unknown as DocumentNode<FairLaunchQuery, FairLaunchQueryVariables>;
 export const StakingManagerTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"StakingManagerToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"StakingManagerToken_bool_exp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"StakingManagerToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tokenId"}}]}}]}}]} as unknown as DocumentNode<StakingManagerTokenQuery, StakingManagerTokenQueryVariables>;
 export const StakingSummaryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"StakingSummary"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"StakingSummary_bool_exp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"StakingSummary"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"chainId"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"stakingManagerAddress"}},{"kind":"Field","name":{"kind":"Name","value":"totalDeposited"}},{"kind":"Field","name":{"kind":"Name","value":"totalFees"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<StakingSummaryQuery, StakingSummaryQueryVariables>;
+export const EnvelopeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Envelope"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Envelope_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Envelope_order_by"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Envelope"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"token_id"}},{"kind":"Field","name":{"kind":"Name","value":"sealed_at"}},{"kind":"Field","name":{"kind":"Name","value":"chain_id"}},{"kind":"Field","name":{"kind":"Name","value":"owner"}},{"kind":"Field","name":{"kind":"Name","value":"claimed"}},{"kind":"Field","name":{"kind":"Name","value":"claimed_at"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"recipient"}}]}}]}}]} as unknown as DocumentNode<EnvelopeQuery, EnvelopeQueryVariables>;
+export const RedEnvelopeSentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RedEnvelopeSent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"RedEnvelopeSent_bool_exp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"RedEnvelopeSent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"envelopes_sent"}},{"kind":"Field","name":{"kind":"Name","value":"total_amount_sent"}}]}}]}}]} as unknown as DocumentNode<RedEnvelopeSentQuery, RedEnvelopeSentQueryVariables>;
+export const RedEnvelopeReceivedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RedEnvelopeReceived"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"RedEnvelopeReceived_bool_exp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"RedEnvelopeReceived"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"envelopes_opened"}},{"kind":"Field","name":{"kind":"Name","value":"envelopes_received"}},{"kind":"Field","name":{"kind":"Name","value":"total_amount_received"}}]}}]}}]} as unknown as DocumentNode<RedEnvelopeReceivedQuery, RedEnvelopeReceivedQueryVariables>;

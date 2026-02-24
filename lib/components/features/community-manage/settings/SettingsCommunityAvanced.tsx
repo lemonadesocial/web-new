@@ -1,4 +1,5 @@
 'use client';
+import * as Sentry from '@sentry/nextjs';
 import { Button, Card, Divider, drawer, FileInput, Input, Menu, MenuItem, modal, toast, Toggle } from '$lib/components/core';
 import {
   DeleteSpaceDocument,
@@ -54,7 +55,7 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
         await handleUpdate({ fav_icon_url: uploadedFiles[0].url });
       }
     } catch (err) {
-      console.error(err);
+      Sentry.captureException(err);
       toast.error('Cannot upload favicon!');
     } finally {
       setUploadingFavicon(false);
@@ -210,7 +211,7 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
                       {space?.fav_icon_url ? (
                         <img src={space.fav_icon_url} alt="Favicon" className="size-full object-contain" />
                       ) : (
-                        <i className="icon-lemonade-logo text-[#FDE047] size-4" />
+                        <i aria-hidden="true" className="icon-lemonade-logo text-[#FDE047] size-4" />
                       )}
                     </div>
                     <div>
@@ -237,7 +238,7 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
                 >
                   <div className="flex gap-3 items-center">
                     <div className="p-1.5 bg-card rounded-sm size-7 aspect-square flex items-center justify-center">
-                      <i className="icon-info text-tertiary size-4" />
+                      <i aria-hidden="true" className="icon-info text-tertiary size-4" />
                     </div>
                     <div>
                       <p>Title & Description</p>
@@ -246,7 +247,7 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
                       </p>
                     </div>
                   </div>
-                  <i className="icon-chevron-right size-5 aspect-square text-quaternary" />
+                  <i aria-hidden="true" className="icon-chevron-right size-5 aspect-square text-quaternary" />
                 </div>
               </Card.Content>
             </Card.Root>
@@ -275,7 +276,7 @@ export function SettingsCommunityAvanced(props: { space: Space }) {
             <div className="flex justify-between items-center py-3 px-4">
               <div className="flex gap-3 items-center">
                 <div className="p-1.5 rounded-sm size7 aspect-square flex items-center justify-center bg-success-400/16">
-                  <i className="icon-calendar text-success-400 size-4" />
+                  <i aria-hidden="true" className="icon-calendar text-success-400 size-4" />
                 </div>
                 <div>
                   <p className="text-success-400 capitalize"> {space.state}</p>

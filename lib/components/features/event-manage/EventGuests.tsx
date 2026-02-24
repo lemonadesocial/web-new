@@ -24,7 +24,7 @@ export function EventGuests() {
             <Card.Root className="flex-1 min-w-fit" onClick={() => modal.open(InviteGuestsModal, { props: { event } })}>
               <Card.Content className="flex gap-3 p-2 items-center pr-3">
                 <div className="flex items-center justify-center rounded-sm p-2 bg-alert-400/[0.16] w-[38px] aspect-square">
-                  <i className="icon-user-plus size-[22px] text-alert-400" />
+                  <i aria-hidden="true" className="icon-user-plus size-[22px] text-alert-400" />
                 </div>
                 <p>Invite Guests</p>
               </Card.Content>
@@ -36,7 +36,7 @@ export function EventGuests() {
             >
               <Card.Content className="flex gap-3 p-2 items-center pr-3">
                 <div className="flex items-center justify-center rounded-sm p-2 bg-accent-400/[0.16] w-[38px] aspect-square">
-                  <i className="icon-ticket-assign size-[22px] text-accent-400" />
+                  <i aria-hidden="true" className="icon-ticket-assign size-[22px] text-accent-400" />
                 </div>
                 <p>Add Guests</p>
               </Card.Content>
@@ -44,11 +44,11 @@ export function EventGuests() {
 
             <Card.Root
               className="flex-1 min-w-fit"
-              onClick={() => (window.location.href = `/e/check-in/${event.shortid}`)}
+              onClick={() => window.open(`/e/check-in/${event.shortid}`, '_blank')}
             >
               <Card.Content className="flex gap-3 p-2 items-center pr-3">
                 <div className="flex items-center justify-center rounded-sm p-2 bg-success-400/[0.16] w-[38px] aspect-square">
-                  <i className="icon-qr size-[22px] text-success-400" />
+                  <i aria-hidden="true" className="icon-qr size-[22px] text-success-400" />
                 </div>
                 <p>Check In Guests</p>
               </Card.Content>
@@ -60,7 +60,7 @@ export function EventGuests() {
             >
               <Card.Content className="flex gap-3 p-2 items-center pr-3">
                 <div className="flex items-center justify-center rounded-sm p-2 bg-warning-400/[0.16] w-[38px] aspect-square">
-                  <i className="icon-user-group-outline size-[22px] text-warning-400" />
+                  <i aria-hidden="true" className="icon-user-group-outline size-[22px] text-warning-400" />
                 </div>
                 <div>
                   <p>Guest List</p>

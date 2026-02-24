@@ -8,7 +8,7 @@ export function EventCountdown({ event }: { event: Event }) {
 
   return (
     <div className="bg-primary/8 rounded-sm py-2 px-3.5 flex gap-2">
-      <i className="icon-clock size-5 text-secondary mt-0.5" />
+      <i aria-hidden="true" className="icon-clock size-5 text-secondary mt-0.5" />
       <div className="w-full space-y-2">
         <div className="flex justify-between">
           <p className="text-secondary">Event starting in</p>

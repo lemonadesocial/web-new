@@ -64,7 +64,7 @@ export function UpdateFiatPriceModal({ price, onChange }: { price?: EventTicketP
         <div className="space-y-1.5">
           <p className="text-sm text-secondary">Payout Account</p>
           <div className="flex items-center gap-2 py-2 px-3.5 rounded-sm bg-primary/8">
-            <i className="icon-stripe-alt size-5" />
+            <i aria-hidden="true" className="icon-stripe-alt size-5" />
             <p>{(stripeAccount.account_info as DigitalAccount).account_id}</p>
           </div>
         </div>

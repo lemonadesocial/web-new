@@ -8,7 +8,6 @@ import {
   GetLemonheadInvitationRankDocument,
   GetMyLemonheadInvitationRankDocument,
   LemonheadUserInfo,
-  User,
 } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { userAvatar } from '$lib/utils/user';
@@ -49,7 +48,7 @@ export function LemonHeadsLeaderboard() {
               <LemonheadLeaderBoardRank rank={myLemonheadRank?.rank || 0} />
               <div className="flex gap-3 items-center flex-1">
                 <img
-                  src={userAvatar(myLemonheadRank?.user as unknown as User)}
+                  src={userAvatar(myLemonheadRank?.user)}
                   className="size-8 aspect-square rounded-full"
                 />
                 <p>{getUsernameOrWallet(myLemonheadRank?.user as LemonheadUserInfo)}</p>
@@ -144,7 +143,7 @@ export function LemonHeadsLeaderboard() {
                           <LemonheadLeaderBoardRank rank={item.rank} />
                           <div className="flex gap-3 items-center flex-1">
                             <img
-                              src={userAvatar(item?.user as unknown as User)}
+                              src={userAvatar(item?.user)}
                               className="size-8 aspect-square rounded-full"
                             />
                             <p>{getUsernameOrWallet(item.user as LemonheadUserInfo)}</p>

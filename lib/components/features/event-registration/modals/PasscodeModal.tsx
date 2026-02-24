@@ -50,7 +50,7 @@ export function PasscodeModal({ ticketTypeId, ticketTitle, onConfirm }: Passcode
       <div className="space-y-2">
         <div className="flex gap-3 items-center">
           <div className="size-[34px] flex justify-center items-center rounded-full bg-primary/8">
-            <i className="icon-lock text-tertiary size-[18px]" />
+            <i aria-hidden="true" className="icon-lock text-tertiary size-[18px]" />
           </div>
           <p>{ticketTitle}</p>
         </div>

@@ -29,7 +29,7 @@ export function EventCheckIn({ shortid }: { shortid: string }) {
   );
 }
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 25;
 
 function EventCheckInContent({ event }: { event: Event }) {
   const router = useRouter();

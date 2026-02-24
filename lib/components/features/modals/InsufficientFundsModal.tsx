@@ -20,7 +20,7 @@ export function InsufficientFundsModal({ message, onRetry }: Props) {
     <ModalContent
       icon={
         <div className="size-[56px] flex justify-center items-center rounded-full bg-danger-400/16" data-icon>
-          <i className="icon-info text-danger-400 size-8" />
+          <i aria-hidden="true" className="icon-info text-danger-400 size-8" />
         </div>
       }
       onClose={() => modal.close()}
@@ -35,7 +35,7 @@ export function InsufficientFundsModal({ message, onRetry }: Props) {
         <Card.Root className="border-none bg-none">
           <Card.Content className="justify-between flex items-center py-2 px-3">
             <div className="flex gap-3">
-              <i className="icon-wallet size-5 aspect-square text-tertiary" />
+              <i aria-hidden="true" className="icon-wallet size-5 aspect-square text-tertiary" />
               {address && <p>{truncateMiddle(address, 6, 4)}</p>}
             </div>
             <i

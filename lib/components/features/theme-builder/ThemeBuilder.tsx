@@ -15,7 +15,6 @@ import { twMerge } from 'tailwind-merge';
 import { MenuColorPicker } from './ColorPicker';
 import { join, split } from 'lodash';
 import {
-  File,
   FileCategory,
   GetSystemFilesDocument, SystemFile
 } from '$lib/graphql/generated/backend/graphql';
@@ -74,7 +73,7 @@ export function PopoverColor({ disabled }: { disabled?: boolean }) {
           <span className="text-left flex-1  font-general-sans">Accent</span>
           <p className="flex items-center gap-1">
             <span className="capitalize">{state.config.color}</span>
-            <i className="icon-chevrons-up-down text-quaternary" />
+            <i aria-hidden="true" className="icon-chevrons-up-down text-quaternary" />
           </p>
         </div>
       </Menu.Trigger>
@@ -119,7 +118,7 @@ export function PopoverStyle() {
           <span className="text-left flex-1 font-general-sans">Style</span>
           <p className="flex items-center gap-1">
             <span className="capitalize">-</span>
-            <i className="icon-chevrons-up-down text-quaternary" />
+            <i aria-hidden="true" className="icon-chevrons-up-down text-quaternary" />
           </p>
         </div>
       </Menu.Trigger>
@@ -136,14 +135,14 @@ export function PopoverEffect() {
       <Menu.Trigger>
         <div className="w-full bg-primary/8 text-tertiary px-2.5 py-2 rounded-sm flex items-center gap-2">
           {!state.config?.effect?.name ? (
-            <i className="icon-wand-shine-outline-sharp size-[24px] text-primary" />
+            <i aria-hidden="true" className="icon-wand-shine-outline-sharp size-[24px] text-primary" />
           ) : (
             <div className="size-[24px] text-center">{emojis[state.config?.effect.name]?.emoji}</div>
           )}
           <span className="text-left flex-1 font-general-sans">Effect</span>
           <p className="flex items-center gap-1">
             <span className="capitalize">{!state.config?.effect?.name ? '-' : state.config?.effect?.name}</span>
-            <i className="icon-chevrons-up-down text-quaternary" />
+            <i aria-hidden="true" className="icon-chevrons-up-down text-quaternary" />
           </p>
         </div>
       </Menu.Trigger>
@@ -210,7 +209,7 @@ export function PopoverFont({
                 .find((key) => key === selected)
                 ?.replaceAll('_', ' ')}
             </span>
-            <i className="icon-chevrons-up-down text-quaternary" />
+            <i aria-hidden="true" className="icon-chevrons-up-down text-quaternary" />
           </p>
         </div>
       </Menu.Trigger>
@@ -255,7 +254,7 @@ function PopoverShaderColor() {
           <span className="text-left flex-1  font-general-sans">Style</span>
           <p className="flex items-center gap-1">
             <span className="capitalize">{state.config.name}</span>
-            <i className="icon-chevrons-up-down text-quaternary" />
+            <i aria-hidden="true" className="icon-chevrons-up-down text-quaternary" />
           </p>
         </div>
       </Menu.Trigger>
@@ -305,7 +304,7 @@ function PopoverPattern() {
           <span className="text-left flex-1  font-general-sans">Style</span>
           <p className="flex items-center gap-1">
             <span className="capitalize">{state.config.name}</span>
-            <i className="icon-chevrons-up-down text-quaternary" />
+            <i aria-hidden="true" className="icon-chevrons-up-down text-quaternary" />
           </p>
         </div>
       </Menu.Trigger>
@@ -374,7 +373,7 @@ function PopoverImage() {
           <span className="text-left flex-1  font-general-sans">Background</span>
           <p className="flex items-center gap-1">
             <span className="capitalize">{state.config?.image?.name || '-'}</span>
-            <i className="icon-chevrons-up-down text-quaternary" />
+            <i aria-hidden="true" className="icon-chevrons-up-down text-quaternary" />
           </p>
         </div>
       </Menu.Trigger>
@@ -391,7 +390,7 @@ function PopoverImage() {
                     mode: item.category.includes('dark') ? 'dark' : 'light',
                     image: {
                       _id: item._id,
-                      url: generateUrl(item as unknown as File, {
+                      url: generateUrl(item, {
                         resize: { fit: 'cover', height: 1080, width: 1920 },
                       }),
                       name: item.name,
@@ -436,7 +435,7 @@ export function PopoverDisplay() {
         <span className="text-left flex-1">Display</span>
         <p className="flex items-center gap-1">
           <span className="capitalize">{state.config?.mode}</span>
-          <i className="icon-chevrons-up-down text-quaternary" />
+          <i aria-hidden="true" className="icon-chevrons-up-down text-quaternary" />
         </p>
       </div>
     </Menu.Trigger>

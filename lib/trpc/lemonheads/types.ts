@@ -15,7 +15,7 @@ export type LemonHeadsLayer = {
   gender?: Gender;
   size?: BodySize;
   race?: BodyRace;
-  color?: any | null;
+  color?: LemonHeadsColor | null;
   file: File;
 };
 

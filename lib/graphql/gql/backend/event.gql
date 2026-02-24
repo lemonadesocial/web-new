@@ -902,7 +902,7 @@ query GetEventGuestDetailedInfo($event: MongoID!, $email: String) {
         to_type
         to_type_expanded {
           _id
-          title     
+          title
         }
         updated_at
         updated_by
@@ -1614,5 +1614,31 @@ query GetEventCohostRequests($input: GetEventCohostRequestsInput!) {
     to
     profile_image_avatar
     profile_name
+  }
+}
+
+query GetHostingEventsSidebarLelf(
+  $skip: Int! = 0
+  $limit: Int! = 6
+  $site: MongoID
+  $user: MongoID
+  $state: FilterEventInput
+  $sort: JSON
+  $draft: Boolean = true
+) {
+  getHostingEvents(skip: $skip, limit: $limit, site: $site, user: $user, state: $state, sort: $sort, draft: $draft) {
+    _id
+    shortid
+    title
+    published
+    new_new_photos_expanded {
+      _id
+      stamp
+      type
+      url
+      size
+      bucket
+      key
+    }
   }
 }

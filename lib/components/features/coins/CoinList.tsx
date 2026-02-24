@@ -91,33 +91,33 @@ export function CoinListTable({ pools, loading, hiddenColumns = [], skip = 0, to
         <div className="overflow-y-auto no-scrollbar rounded-md">
           <CardTable.Root loading={loading} data={pools} className="table">
             <CardTable.Header className="px-4 py-3">
-              <div className="flex-[2.2] min-w-0">
+              <div className="flex-1">
                 <p>Ticker</p>
               </div>
-              <div className="flex-[1.44] min-w-0">
+              <div className="w-44">
                 <p>Contract Address</p>
               </div>
-              <div className="flex-1 min-w-0">
+              <div className="w-36">
                 <p>Owner</p>
               </div>
               {showColumn('community') && (
-                <div className="flex-[1.44] min-w-0">
+                <div className="w-56">
                   <p>Community</p>
                 </div>
               )}
-              <div className="flex-[0.96] min-w-0">
+              <div className="w-36">
                 <p>Marketcap</p>
               </div>
-              <div className="flex-[0.72] min-w-0">
+              <div className="w-36">
                 <p>Buyback</p>
               </div>
-              <div className="flex-[0.8] min-w-0">
+              <div className="w-36">
                 <p>Liquidity</p>
               </div>
-              <div className="flex-[0.8] min-w-0">
+              <div className="w-28">
                 <p>Holders</p>
               </div>
-              <div className="flex-[0.96] min-w-0">
+              <div className="w-36">
                 <p>Fees Earned</p>
               </div>
               {showColumn('buy') && (
@@ -193,7 +193,7 @@ function CoinListRow({ pool, hiddenColumns }: CoinListRowProps) {
         className="flex items-center gap-4 text-tertiary px-4 py-3 cursor-pointer hover:bg-(--btn-tertiary)"
         onClick={() => router.push(`/coin/${chain.code_name}/${pool.memecoin}`)}
       >
-        <div className="flex items-center gap-3 flex-[2.2] min-w-0">
+        <div className="flex items-center gap-3 flex-1">
           {tokenData?.metadata?.imageUrl ? (
             <img
               src={tokenData.metadata.imageUrl}
@@ -207,7 +207,7 @@ function CoinListRow({ pool, hiddenColumns }: CoinListRowProps) {
           <p className="text-tertiary line-clamp-1 truncate whitespace-nowrap">{displayName}</p>
         </div>
 
-        <div className="flex gap-2 items-center flex-[1.44] min-w-0">
+        <div className="flex gap-2 items-center w-44">
           <p className="text-tertiary">{formatWallet(pool.memecoin, 6)}</p>
           <i 
             className="icon-copy size-4 aspect-square text-quaternary cursor-pointer"
@@ -215,12 +215,12 @@ function CoinListRow({ pool, hiddenColumns }: CoinListRowProps) {
           />
         </div>
 
-        <div className="flex gap-2 items-center flex-1 min-w-0">
+        <div className="flex gap-2 items-center w-36">
           <p>{displayOwner}</p>
         </div>
 
         {showColumn('community') && (
-          <div className="flex gap-2 items-center flex-[1.44] min-w-0">
+          <div className="flex gap-2 items-center w-56">
             {launchpadGroup?.cover_photo_url ? (
               <img
                 src={launchpadGroup.cover_photo_url}
@@ -234,24 +234,24 @@ function CoinListRow({ pool, hiddenColumns }: CoinListRowProps) {
           </div>
         )}
 
-        <div className="flex-[0.96] min-w-0 text-accent-400">
+        <div className="text-accent-400 w-36">
           <p>{formattedMarketCap || 'N/A'}</p>
         </div>
 
-        <div className="flex-[0.72] min-w-0">
+        <div className="w-36">
           <p>-</p>
         </div>
 
-        <div className="flex-[0.8] min-w-0">
+        <div className="w-36">
           <p>{formattedLiquidity || 'N/A'}</p>
         </div>
 
-        <div className="flex-[0.8] min-w-0 flex items-center gap-2">
-          <i className="icon-user size-5 aspect-square" />
+        <div className="flex items-center gap-2 w-28">
+          <i aria-hidden="true" className="icon-user size-5 aspect-square" />
           <p>{holdersCount !== null ? formatNumber(holdersCount) : 'N/A'}</p>
         </div>
 
-        <div className="flex-[0.96] min-w-0 text-success-500">
+        <div className="w-36 text-success-500">
           <p>{formattedFees || 'N/A'}</p>
         </div>
 

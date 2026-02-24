@@ -253,7 +253,7 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <i className="size-5 aspect-square icon-globe" />
+                    <i aria-hidden="true" className="size-5 aspect-square icon-globe" />
                   </a>
                 )}
                 {launchpadCoin?.handle_telegram && (
@@ -262,7 +262,7 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <i className="size-5 aspect-square icon-telegram" />
+                    <i aria-hidden="true" className="size-5 aspect-square icon-telegram" />
                   </a>
                 )}
                 {launchpadCoin?.handle_twitter && (
@@ -271,7 +271,7 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <i className="size-5 aspect-square icon-twitter" />
+                    <i aria-hidden="true" className="size-5 aspect-square icon-twitter" />
                   </a>
                 )}
               </div>
@@ -283,7 +283,7 @@ function CoinInfo({ chain, address }: { chain: Chain; address: string }) {
                   {chain.block_explorer_icon_url ? (
                     <img src={chain.block_explorer_icon_url} alt="Block explorer" className="size-5 aspect-square" />
                   ) : (
-                    <i className="size-5 aspect-square icon-basescan-fill" />
+                    <i aria-hidden="true" className="size-5 aspect-square icon-basescan-fill" />
                   )}
                 </a>
               )

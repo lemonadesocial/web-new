@@ -38,7 +38,7 @@ function ModalHeader({ icon }: { icon: string }) {
   return (
     <Card.Header className="flex justify-between items-start">
       <div className="rounded-full bg-(--btn-tertiary) text-tertiary flex items-center justify-center size-14">
-        <i className={twMerge('size-8', icon)} />
+        <i aria-hidden="true" className={twMerge('size-8', icon)} />
       </div>
       <Button
         variant="tertiary-alt"

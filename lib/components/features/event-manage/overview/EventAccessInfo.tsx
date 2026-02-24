@@ -75,15 +75,15 @@ export function EventAccessInfo({ event }: { event: Event }) {
         <div className="flex items-center justify-between gap-4 font-default">
           <p className="text-sm text-secondary truncate">{`${window.location.host}/e/${event.shortid}`}</p>
           <div className="flex items-center gap-4">
-            <i
-              className="icon-edit-sharp text-tertiary size-5 cursor-pointer"
-              onClick={() => modal.open(UpdateEventLinkModal, { props: { event } })}
-            />
-            <i className="icon-copy text-tertiary size-5 cursor-pointer" onClick={handleCopy} />
-            <i
-              className="icon-share text-tertiary size-5 cursor-pointer"
-              onClick={() => modal.open(InviteFriendModal, { props: { event }, dismissible: true })}
-            />
+            <button type="button" aria-label="Edit link" className="cursor-pointer" onClick={() => modal.open(UpdateEventLinkModal, { props: { event } })}>
+              <i className="icon-edit-sharp text-tertiary size-5" />
+            </button>
+            <button type="button" aria-label="Copy link" className="cursor-pointer" onClick={handleCopy}>
+              <i className="icon-copy text-tertiary size-5" />
+            </button>
+            <button type="button" aria-label="Share" className="cursor-pointer" onClick={() => modal.open(InviteFriendModal, { props: { event }, dismissible: true })}>
+              <i className="icon-share text-tertiary size-5" />
+            </button>
           </div>
         </div>
       </div>
@@ -110,11 +110,11 @@ export function EventAccessInfo({ event }: { event: Event }) {
           {event.address ? (
             <div className="flex gap-4 w-full">
               <div className="border rounded-sm size-12 min-w-12 flex items-center justify-center">
-                <i className="icon-location-outline text-tertiary" />
+                <i aria-hidden="true" className="icon-location-outline text-tertiary" />
               </div>
               <div className="truncate">
                 <p className="truncate">
-                  {event.address.title} <i className="icon-arrow-outward text-quaternary size-[18px]" />
+                  {event.address.title} <i aria-hidden="true" className="icon-arrow-outward text-quaternary size-[18px]" />
                 </p>
                 <span className="text-sm text-secondary">
                   {[event.address.city || event.address.region, event.address.country].filter(Boolean).join(', ')}
@@ -124,7 +124,7 @@ export function EventAccessInfo({ event }: { event: Event }) {
           ) : (
             <div className="flex gap-4">
               <div className="border rounded-sm size-12 min-w-12 flex items-center justify-center">
-                <i className="icon-alert-outline text-tertiary" />
+                <i aria-hidden="true" className="icon-alert-outline text-tertiary" />
               </div>
               <div>
                 <p className={clsx(accessMissing && 'text-warning-300')}>
@@ -137,7 +137,7 @@ export function EventAccessInfo({ event }: { event: Event }) {
           {event.virtual_url ? (
             <div className="flex gap-4 flex-1 w-full">
               <div className="border rounded-sm size-12 min-w-12 flex items-center justify-center">
-                <i className="icon-video text-tertiary" />
+                <i aria-hidden="true" className="icon-video text-tertiary" />
               </div>
               <div className="truncate">
                 <p className="truncate">Virtual Link</p>
@@ -147,7 +147,7 @@ export function EventAccessInfo({ event }: { event: Event }) {
           ) : (
             <div className="flex gap-4">
               <div className="border rounded-sm size-12 min-w-12 flex items-center justify-center">
-                <i className="icon-alert-outline text-tertiary" />
+                <i aria-hidden="true" className="icon-alert-outline text-tertiary" />
               </div>
               <div>
                 <p className={clsx(accessMissing && 'text-warning-300')}>

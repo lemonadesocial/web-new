@@ -51,7 +51,7 @@ export function AddGuestsModal({
     <div className="max-w-full w-[448px]">
       <div className="flex justify-between py-3 px-4 border-b">
         <p className="text-lg">{title}</p>
-        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
+        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
       </div>
       <div className="p-4 space-y-4">
         <div className="py-2.5 px-3.5 rounded-sm border bg-card">
@@ -79,7 +79,7 @@ export function AddGuestsModal({
 
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center size-[34px] rounded-sm bg-success-500/16">
-            <i className="icon-person-add text-success-500 size-4.5" />
+            <i aria-hidden="true" className="icon-person-add text-success-500 size-4.5" />
           </div>
           <p className="flex-1 text-sm">Guests will be added to the guest list, bypassing registration and payment.</p>
         </div>
@@ -89,7 +89,7 @@ export function AddGuestsModal({
           <Menu.Root className="w-full">
             <Menu.Trigger className="flex items-center justify-between rounded-sm border bg-background/64 px-2.5 py-2 w-full">
               <p className="truncate">{selectedTicketType?.title || 'Select a ticket type'}</p>
-              <i className="text-quaternary icon-chevron-down size-5" />
+              <i aria-hidden="true" className="text-quaternary icon-chevron-down size-5" />
             </Menu.Trigger>
             <Menu.Content className="w-full p-1 overflow-auto max-h-40">
               {({ toggle }) => (
@@ -113,9 +113,9 @@ export function AddGuestsModal({
         <div>
           <p className="text-sm text-tertiary">
             If you&apos;d like guests to register, send them an invite.{' '}
-            <span className="text-accent-500 cursor-pointer" onClick={onSelectInvite}>
+            <button type="button" className="text-accent-500 cursor-pointer inline" onClick={onSelectInvite}>
               Invite Guests
-            </span>
+            </button>
           </p>
           <p className="text-sm text-tertiary">
             Please only add guests who have already consented to joining this event.

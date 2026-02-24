@@ -19,7 +19,7 @@ export default async function SiteHomePage({ params }: { params: Promise<{ domai
 
   return (
     <div className="max-w-[1080px] mx-auto">
-      <div className="flex flex-col-reverse md:grid md:grid-cols-[1fr_336px] gap-5 md:gap-[72px] items-start pb-10 mt-0 md:mt-11">
+      <div className="flex flex-col-reverse md:grid md:grid-cols-[1fr_336px] gap-5 md:gap-[72px] items-start pb-10 mt-0 mt-12">
         <HomePageContent />
         <div className="flex flex-col gap-4">
           {/* <ClaimLemonHeadCard /> */}

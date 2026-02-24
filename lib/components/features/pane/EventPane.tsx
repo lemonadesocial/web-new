@@ -77,22 +77,20 @@ export function EventPane({ eventId }: { eventId: string }) {
           </Alert>
         )}
 
-        {
-          canCheckIn && (
-            <Alert message="You have check in access for this event.">
-              <Button
-                iconRight="icon-arrow-outward"
-                className="rounded-full"
-                onClick={() => {
-                  router.push(`/e/check-in/${event?.shortid}`);
-                  drawer.close();
-                }}
-              >
-                Check In
-              </Button>
-            </Alert>
-          )
-        }
+        {canCheckIn && (
+          <Alert message="You have check in access for this event.">
+            <Button
+              iconRight="icon-arrow-outward"
+              className="rounded-full"
+              onClick={() => {
+                window.open(`/e/check-in/${event?.shortid}`, '_blank');
+                drawer.close();
+              }}
+            >
+              Check In
+            </Button>
+          </Alert>
+        )}
 
         <div className="p-4 flex flex-col gap-6">
           {loading ? (

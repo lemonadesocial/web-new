@@ -105,3 +105,35 @@ query StakingSummary($where: StakingSummary_bool_exp) {
     updatedAt
   }
 }
+
+query Envelope($where: Envelope_bool_exp, $orderBy: [Envelope_order_by!]) {
+  Envelope(where: $where, order_by: $orderBy) {
+    amount
+    token_id
+    sealed_at
+    chain_id
+    owner
+    claimed
+    claimed_at
+    created_at
+    currency
+    id
+    message
+    recipient
+  }
+}
+
+query RedEnvelopeSent($limit: Int, $where: RedEnvelopeSent_bool_exp) {
+  RedEnvelopeSent(limit: $limit, where: $where) {
+    envelopes_sent
+    total_amount_sent
+  }
+}
+
+query RedEnvelopeReceived($limit: Int, $where: RedEnvelopeReceived_bool_exp) {
+  RedEnvelopeReceived(limit: $limit, where: $where) {
+    envelopes_opened
+    envelopes_received
+    total_amount_received
+  }
+}

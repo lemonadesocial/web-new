@@ -1,3 +1,5 @@
+import { Chain } from '$lib/graphql/generated/backend/graphql';
+
 export const PASSPORT_PROVIDERS = [
   'mint',
   'zugrama',
@@ -46,6 +48,7 @@ export type PassportState = {
   currentStep?: PassportStep;
   useLemonhead?: boolean;
   useFluffle?: boolean;
+  fluffleTokenId?: string;
   lemonadeUsername?: string;
   useENS?: boolean;
   ensName?: string;
@@ -63,7 +66,7 @@ export type PassportState = {
   };
   enabled?: {
     /** @description Passport Photo */
-    lemohead?: boolean;
+    lemonhead?: boolean;
     /** @description Passport Photo */
     fluffePhoto?: boolean;
 
@@ -86,6 +89,7 @@ export enum PassportActionKind {
   PrevStep = 'PREV_STEP',
   SelectLemonhead = 'SELECT_LEMONHEAD',
   SelectFluffle = 'SELECT_FLUFFLE',
+  SetFluffleTokenId = 'SET_FLUFFLE_TOKEN_ID',
   SetLemonadeUsername = 'SET_LEMONADE_USERNAME',
   SelectENS = 'SELECT_ENS',
   SetMintData = 'SET_MINT_DATA',
@@ -96,11 +100,11 @@ export enum PassportActionKind {
   SetMintState = 'SET_MINT_STATE',
 }
 
-export const ContractAddressFieldMapping: Record<PASSPORT_PROVIDER, string> = {
+export const ContractAddressFieldMapping: Record<PASSPORT_PROVIDER, keyof Chain> = {
   mint: 'lemonade_passport_contract_address',
   zugrama: 'zugrama_passport_contract_address',
   'vinyl-nation': 'vinyl_nation_passport_contract_address',
   'festival-nation': 'festival_nation_passport_contract_address',
   'drip-nation': 'drip_nation_passport_contract_address',
-  'alzena-world': '',
+  'alzena-world': 'alzena_world_passport_contract_address',
 };

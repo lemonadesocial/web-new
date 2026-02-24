@@ -61,7 +61,7 @@ export function LemonHeadFooter() {
     const canMint = dataCanMint?.canMintLemonhead?.can_mint;
 
     if (!canMint) {
-      console.log(error);
+      Sentry.captureException(error);
       toast.error('Not able to mint!');
       return false;
     }
@@ -278,7 +278,7 @@ function BeforeMintModal({ onContinue }: { onContinue: () => void }) {
             <Link href="" target="_blank" className="text-accent-400 text-sm">
               View Full Terms of Use
             </Link>
-            <i className="icon-arrow-outward size-[18px] text-quaternary" />
+            <i aria-hidden="true" className="icon-arrow-outward size-[18px] text-quaternary" />
           </div>
         </div>
 
@@ -403,7 +403,7 @@ function MintModal({
 
           return false;
         } catch (error) {
-          console.error('Error parsing log:', error);
+          Sentry.captureException(error);
           return false;
         }
       });
@@ -434,7 +434,7 @@ function MintModal({
       <ModalContent
         icon={
           <div className="size-[56px] flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
-            {done ? <p>{count}</p> : <i className="icon-loader animate-spin" />}
+            {done ? <p>{count}</p> : <i aria-hidden="true" className="icon-loader animate-spin" />}
           </div>
         }
         title={
@@ -482,7 +482,7 @@ function MintModal({
           <div className="border-t">
             <div key={sponsor._id} className="flex flex-col gap-3 py-3.5">
               <div className="flex gap-2.5">
-                <img src={sponsor.image_url} className="rounded-sm w-[34px] aspect-square" />
+                <img src={sponsor.image_url} className="rounded-sm w-[34px] aspect-square" alt={`${sponsor.name} logo`} />
                 <div>
                   <p>You’ve unlocked a free mint!</p>
                   <p className="text-tertiary text-xs">Supported by {sponsor.name}</p>
@@ -510,7 +510,7 @@ function MintedModal({ image }: { image: string }) {
 
   return (
     <ModalContent
-      icon={<img src={image} className="size-[56px] rounded-sm aspect-square" />}
+      icon={<img src={image} className="size-[56px] rounded-sm aspect-square" alt="Your minted LemonHead" />}
       onClose={() => modal.close()}
     >
       <MintedContent address={address} />

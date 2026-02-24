@@ -70,6 +70,8 @@ jobs:
           echo "NEXT_PUBLIC_AUTH_COOKIE_NAME=${{ vars.STAGING_NEXT_PUBLIC_AUTH_COOKIE_NAME }}" >> .env
           echo "NEXT_PUBLIC_COIN_INDEXER_URL=${{ vars.STAGING_NEXT_PUBLIC_COIN_INDEXER_URL }}" >> .env
           echo "NEXT_PUBLIC_USERNAME_INDEXER=${{ vars.STAGING_NEXT_PUBLIC_USERNAME_INDEXER }}" >> .env
+          echo "NEXT_PUBLIC_AI_API_HTTP=${{ vars.STAGING_NEXT_PUBLIC_AI_API_HTTP }}" >> .env
+          echo "NEXT_PUBLIC_AI_CONFIG=${{ vars.STAGING_NEXT_PUBLIC_AI_CONFIG }}" >> .env
 
       - name: Configure environment
         run: |

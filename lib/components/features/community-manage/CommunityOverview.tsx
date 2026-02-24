@@ -147,7 +147,7 @@ function ListActions({ spaceId, hostname }: { spaceId: string; hostname?: string
                 item.backgroundIcon,
               )}
             >
-              <i className={twMerge('size-[22px] aspect-square', item.icon)} />
+              <i aria-hidden="true" className={twMerge('size-[22px] aspect-square', item.icon)} />
             </div>
             <p>{item.title}</p>
           </Card.Content>
@@ -178,7 +178,7 @@ function UpComingEventsSection({ space, events = [] }: { space: Space; events?: 
 
       <div className="flex flex-col gap-3">
         <div className="p-4 gap-3 items-center hidden only:flex bg-card rounded-md border border-card-border">
-          <i className="icon-confirmation-number size-9 aspect-square text-quaternary" />
+          <i aria-hidden="true" className="icon-confirmation-number size-9 aspect-square text-quaternary" />
           <div className="text-tertiary space-y-0.5">
             <p>No Events</p>
             <p className="text-sm">This community has no upcoming events.</p>
@@ -242,7 +242,7 @@ function AdminListSection({ space, loading }: { space: Space; loading?: boolean 
 
         <CardTable.EmptyState>
           <div className="p-4 flex gap-3 items-center">
-            <i className="icon-user-group-outline size-9 aspect-square text-quaternary" />
+            <i aria-hidden="true" className="icon-user-group-outline size-9 aspect-square text-quaternary" />
             <div className="text-tertiary space-y-0.5">
               <p>No Admins</p>
               <p className="text-sm">Add people who can manage community.</p>
@@ -348,7 +348,7 @@ function FeaturedHubSection({ spaceId }: { spaceId: string }) {
 
         <CardTable.EmptyState>
           <div className="p-4 flex gap-3 items-center">
-            <i className="icon-workspaces size-9 aspect-square text-quaternary" />
+            <i aria-hidden="true" className="icon-workspaces size-9 aspect-square text-quaternary" />
             <div className="text-tertiary space-y-0.5">
               <p>No Featured Hubs</p>
               <p className="text-sm">Add people who can create or list events without needing admin approval.</p>

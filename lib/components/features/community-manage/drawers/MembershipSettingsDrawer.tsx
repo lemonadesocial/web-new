@@ -78,7 +78,7 @@ export function MembershipSettingsDrawer({ launchpadGroup }: MembershipSettingsD
       </Pane.Header.Root>
       <Pane.Content className="p-4 flex flex-col gap-3">
         <div className="size-12 flex justify-center items-center rounded-full bg-primary/8">
-          <i className="size-8 text-tertiary icon-settings" />
+          <i aria-hidden="true" className="size-8 text-tertiary icon-settings" />
         </div>
 
         <div className="space-y-1">

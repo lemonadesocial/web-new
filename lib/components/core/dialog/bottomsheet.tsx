@@ -46,6 +46,20 @@ export function BottomSheetContainer() {
   React.useEffect(() => {
     sheet.open = handleOpen;
     sheet.close = handleClose;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [isOpen]);
 
   return (
@@ -55,6 +69,7 @@ export function BottomSheetContainer() {
       onClose={() => handleClose()}
       snapPoints={options.snapPoints}
       initialSnap={options.initialSnap}
+      avoidKeyboard
     >
       <Sheet.Container className="bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
         <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
@@ -62,11 +77,7 @@ export function BottomSheetContainer() {
             <div className="bg-primary/8 rounded-xs w-[48px] h-1 cursor-row-resize"></div>
           </div>
         </Sheet.Header>
-        <Sheet.Content disableDrag>
-          <Sheet.Scroller draggableAt="top">
-            <div>{content}</div>
-          </Sheet.Scroller>
-        </Sheet.Content>
+        <Sheet.Content disableDrag>{content}</Sheet.Content>
       </Sheet.Container>
     </Sheet>
   );

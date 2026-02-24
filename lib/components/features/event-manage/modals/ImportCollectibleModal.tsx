@@ -205,7 +205,7 @@ export function ImportCollectibleModal({ event }: ImportCollectibleModalProps) {
           <p className="text-sm text-secondary">Attach an existing POAP you've created on poap.xyz to your event.</p>
           <div className="flex items-center gap-1">
             <span className="text-tertiary text-sm">Powered by</span>
-            <i className="icon-poap size-4.5" />
+            <i aria-hidden="true" className="icon-poap size-4.5" />
           </div>
         </div>
 
@@ -231,11 +231,11 @@ export function ImportCollectibleModal({ event }: ImportCollectibleModalProps) {
             {poapId && (
               <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
                 {loadingPoapInfo ? (
-                  <i className="icon-loader animate-spin size-4 text-tertiary" />
+                  <i aria-hidden="true" className="icon-loader animate-spin size-4 text-tertiary" />
                 ) : poapIdValid && !poapError ? (
-                  <i className="icon-done size-4 text-success-500" />
+                  <i aria-hidden="true" className="icon-done size-4 text-success-500" />
                 ) : poapError ? (
-                  <i className="icon-alert-circle size-4 text-error" />
+                  <i aria-hidden="true" className="icon-alert-circle size-4 text-error" />
                 ) : null}
               </div>
             )}
@@ -264,7 +264,7 @@ export function ImportCollectibleModal({ event }: ImportCollectibleModalProps) {
           />
           {editCode.length === 6 && loadingEditCode && (
             <div className="flex">
-              <i className="icon-dot text-warning-300" />
+              <i aria-hidden="true" className="icon-dot text-warning-300" />
               <p className="text-secondary text-sm">Verifying edit code...</p>
             </div>
           )}

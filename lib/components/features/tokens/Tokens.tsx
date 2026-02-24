@@ -8,7 +8,12 @@ import * as Sentry from '@sentry/nextjs';
 
 import { Button, Card, Skeleton, modal, toast } from '$lib/components/core';
 import { useQuery } from '$lib/graphql/request';
-import { PoolCreatedDocument, FairLaunchDocument, Order_By, type PoolCreated } from '$lib/graphql/generated/coin/graphql';
+import {
+  PoolCreatedDocument,
+  FairLaunchDocument,
+  Order_By,
+  type PoolCreated,
+} from '$lib/graphql/generated/coin/graphql';
 import { getCoinClient } from '$lib/graphql/request/instances';
 import { chainsMapAtom } from '$lib/jotai/chains';
 import { useListChainIds } from '$lib/hooks/useListChainIds';
@@ -59,98 +64,106 @@ function QuickBuyProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const executeBuy = React.useCallback(async (pool: PoolCreated) => {
-    const chain = chainsMap[pool.chainId.toString()];
-    if (!chain) {
-      toast.error('Chain not found');
-      return;
-    }
-
-    const walletProvider = appKit.getProvider('eip155');
-    const userAddress = appKit.getAddress();
-
-    if (!walletProvider || !userAddress) {
-      toast.error('Wallet isn\'t fully connected yet. Please try again in a moment.');
-      return;
-    }
-
-    try {
-      setBuyingPoolId(pool.id);
-      const provider = new BrowserProvider(walletProvider as Eip1193Provider);
-      const signer = await provider.getSigner();
-      const flaunchClient = FlaunchClient.getInstance(chain, pool.memecoin, signer);
-
-      const txHash = await flaunchClient.buyCoin({
-        buyAmount: quickBuySize,
-        recipient: userAddress
-      });
-
-      const receipt = await provider.waitForTransaction(txHash);
-
-      let tokenAmount: string | null = null;
-
-      if (receipt && userAddress) {
-        const erc20Interface = new Interface(ERC20);
-        const memecoinAddressLower = pool.memecoin.toLowerCase();
-        const userAddressLower = userAddress.toLowerCase();
-
-        for (const log of receipt.logs) {
-          if (log.address.toLowerCase() !== memecoinAddressLower) continue;
-
-          try {
-            const parsedLog = erc20Interface.parseLog(log);
-            if (parsedLog?.name === 'Transfer' && parsedLog.args.to.toLowerCase() === userAddressLower) {
-              const value = parsedLog.args.value as bigint;
-              tokenAmount = formatNumber(Number(formatEther(value)));
-              break;
-            }
-          } catch {
-            continue;
-          }
-        }
+  const executeBuy = React.useCallback(
+    async (pool: PoolCreated) => {
+      const chain = chainsMap[pool.chainId.toString()];
+      if (!chain) {
+        toast.error('Chain not found');
+        return;
       }
 
-      const buyAmountFormatted = formatEther(quickBuySize);
-      const description = tokenAmount
-        ? `${tokenAmount} tokens have been added to your wallet.`
-        : `You have successfully purchased ${formatNumber(Number(buyAmountFormatted))} ETH worth of tokens.`;
+      const walletProvider = appKit.getProvider('eip155');
+      const userAddress = appKit.getAddress();
 
-      modal.open(TxnConfirmedModal, {
-        props: {
-          title: 'Purchase Complete',
-          description,
-          txUrl: getTransactionUrl(chain, txHash)
+      if (!walletProvider || !userAddress) {
+        toast.error("Wallet isn't fully connected yet. Please try again in a moment.");
+        return;
+      }
+
+      try {
+        setBuyingPoolId(pool.id);
+        const provider = new BrowserProvider(walletProvider as Eip1193Provider);
+        const signer = await provider.getSigner();
+        const flaunchClient = FlaunchClient.getInstance(chain, pool.memecoin, signer);
+
+        const txHash = await flaunchClient.buyCoin({
+          buyAmount: quickBuySize,
+          recipient: userAddress,
+        });
+
+        const receipt = await provider.waitForTransaction(txHash);
+
+        let tokenAmount: string | null = null;
+
+        if (receipt && userAddress) {
+          const erc20Interface = new Interface(ERC20);
+          const memecoinAddressLower = pool.memecoin.toLowerCase();
+          const userAddressLower = userAddress.toLowerCase();
+
+          for (const log of receipt.logs) {
+            if (log.address.toLowerCase() !== memecoinAddressLower) continue;
+
+            try {
+              const parsedLog = erc20Interface.parseLog(log);
+              if (parsedLog?.name === 'Transfer' && parsedLog.args.to.toLowerCase() === userAddressLower) {
+                const value = parsedLog.args.value as bigint;
+                tokenAmount = formatNumber(Number(formatEther(value)));
+                break;
+              }
+            } catch {
+              continue;
+            }
+          }
         }
-      });
-    } catch (error) {
-      console.log(error);
-      Sentry.captureException(error);
-      toast.error(formatError(error));
-    } finally {
-      setBuyingPoolId(null);
-    }
-  }, [quickBuySize, chainsMap]);
 
-  const handleQuickBuy = React.useCallback((pool: PoolCreated) => {
-    const chain = chainsMap[pool.chainId.toString()];
-    if (!chain) {
-      toast.error('Chain not found');
-      return;
-    }
+        const buyAmountFormatted = formatEther(quickBuySize);
+        const description = tokenAmount
+          ? `${tokenAmount} tokens have been added to your wallet.`
+          : `You have successfully purchased ${formatNumber(Number(buyAmountFormatted))} ETH worth of tokens.`;
 
-    modal.open(ConnectWallet, {
-      props: {
-        chain,
-        onConnect: () => {
-          executeBuy(pool);
+        modal.open(TxnConfirmedModal, {
+          props: {
+            title: 'Purchase Complete',
+            description,
+            txUrl: getTransactionUrl(chain, txHash),
+          },
+        });
+      } catch (error) {
+        Sentry.captureException(error);
+        toast.error(formatError(error));
+      } finally {
+        setBuyingPoolId(null);
+      }
+    },
+    [quickBuySize, chainsMap],
+  );
+
+  const handleQuickBuy = React.useCallback(
+    (pool: PoolCreated) => {
+      const chain = chainsMap[pool.chainId.toString()];
+      if (!chain) {
+        toast.error('Chain not found');
+        return;
+      }
+
+      modal.open(ConnectWallet, {
+        props: {
+          chain,
+          onConnect: () => {
+            executeBuy(pool);
+          },
         },
-      },
-    });
-  }, [executeBuy, chainsMap]);
+      });
+    },
+    [executeBuy, chainsMap],
+  );
 
-  const isBuyingPool = React.useCallback((poolId: string) => {
-    return buyingPoolId === poolId;
-  }, [buyingPoolId]);
+  const isBuyingPool = React.useCallback(
+    (poolId: string) => {
+      return buyingPoolId === poolId;
+    },
+    [buyingPoolId],
+  );
 
   const value = React.useMemo(
     () => ({
@@ -169,13 +182,16 @@ function QuickBuyProvider({ children }: { children: React.ReactNode }) {
 export function Tokens() {
   return (
     <QuickBuyProvider>
-      <div className="flex flex-col gap-3 max-sm:pb-28 py-4 md:max-h-[calc(100dvh-56px)]">
-        <Toolbar />
+      <div className="flex flex-col gap-6 pt-16 md:pt-12 px-8 max-sm:px-4 pb-12 flex flex-col">
+        <h1 className="text-2xl font-semibold">Coins</h1>
+        <div className="flex flex-col gap-3">
+          <Toolbar />
 
-        <div className="flex flex-col md:grid grid-cols-3 gap-4 flex-1 overflow-hidden">
-          <NewTokensList />
-          <GraduatingTokensList />
-          <RecentlyGraduatedTokensList />
+          <div className="flex flex-col md:grid grid-cols-3 gap-4 flex-1 overflow-hidden">
+            <NewTokensList />
+            <GraduatingTokensList />
+            <RecentlyGraduatedTokensList />
+          </div>
         </div>
       </div>
     </QuickBuyProvider>
@@ -201,7 +217,13 @@ function Toolbar() {
           <p className="text-secondary w-[75px] text-right">{formattedSize} ETH</p>
         </div>
         <Button icon="icon-arrow-down rotate-180" size="sm" variant="tertiary-alt" onClick={incrementQuickBuy} />
-        <Button icon="icon-arrow-down" size="sm" variant="tertiary-alt" onClick={decrementQuickBuy} disabled={isAtMinimum} />
+        <Button
+          icon="icon-arrow-down"
+          size="sm"
+          variant="tertiary-alt"
+          onClick={decrementQuickBuy}
+          disabled={isAtMinimum}
+        />
       </div>
 
       <Button iconLeft="icon-plus" size="sm" variant="secondary" className="hidden md:block" onClick={handleCreateCoin}>
@@ -250,15 +272,9 @@ function NewTokensList() {
       <div className="flex-1 overflow-auto no-scrollbar">
         <Card.Content>
           <div className="flex flex-col gap-2">
-            {loading ? (
-              Array.from({ length: 5 }).map((_, idx) => (
-                <TokenCardSkeleton key={idx} />
-              ))
-            ) : (
-              pools.map((pool) => (
-                <TokenCard key={pool.id} pool={pool} />
-              ))
-            )}
+            {loading
+              ? Array.from({ length: 5 }).map((_, idx) => <TokenCardSkeleton key={idx} />)
+              : pools.map((pool) => <TokenCard key={pool.id} pool={pool} />)}
           </div>
         </Card.Content>
       </div>
@@ -305,7 +321,7 @@ function GraduatingTokensList() {
           poolId: {
             _in: poolIds,
           },
-        }
+        },
       },
       skip: poolIds.length === 0,
     },
@@ -320,9 +336,7 @@ function GraduatingTokensList() {
 
     const poolMap = new Map(pools.map((pool) => [pool.poolId, pool]));
 
-    return fairLaunches
-      .map((fl) => poolMap.get(fl.poolId))
-      .filter((pool): pool is PoolCreated => pool !== undefined);
+    return fairLaunches.map((fl) => poolMap.get(fl.poolId)).filter((pool): pool is PoolCreated => pool !== undefined);
   }, [pools, fairLaunches]);
 
   return (
@@ -334,15 +348,9 @@ function GraduatingTokensList() {
       <div className="flex-1 overflow-auto no-scrollbar">
         <Card.Content>
           <div className="flex flex-col gap-2">
-            {loading ? (
-              Array.from({ length: 5 }).map((_, idx) => (
-                <TokenCardSkeleton key={idx} />
-              ))
-            ) : (
-              sortedPools.map((pool) => (
-                <TokenCard key={pool.id} pool={pool} />
-              ))
-            )}
+            {loading
+              ? Array.from({ length: 5 }).map((_, idx) => <TokenCardSkeleton key={idx} />)
+              : sortedPools.map((pool) => <TokenCard key={pool.id} pool={pool} />)}
           </div>
         </Card.Content>
       </div>
@@ -402,9 +410,7 @@ function RecentlyGraduatedTokensList() {
 
     const poolMap = new Map(pools.map((pool) => [pool.poolId, pool]));
 
-    return fairLaunches
-      .map((fl) => poolMap.get(fl.poolId))
-      .filter((pool): pool is PoolCreated => pool !== undefined);
+    return fairLaunches.map((fl) => poolMap.get(fl.poolId)).filter((pool): pool is PoolCreated => pool !== undefined);
   }, [pools, fairLaunches]);
 
   return (
@@ -416,15 +422,9 @@ function RecentlyGraduatedTokensList() {
       <div className="flex-1 overflow-auto no-scrollbar">
         <Card.Content>
           <div className="flex flex-col gap-2">
-            {loading ? (
-              Array.from({ length: 5 }).map((_, idx) => (
-                <TokenCardSkeleton key={idx} />
-              ))
-            ) : (
-              sortedPools.map((pool) => (
-                <TokenCard key={pool.id} pool={pool} />
-              ))
-            )}
+            {loading
+              ? Array.from({ length: 5 }).map((_, idx) => <TokenCardSkeleton key={idx} />)
+              : sortedPools.map((pool) => <TokenCard key={pool.id} pool={pool} />)}
           </div>
         </Card.Content>
       </div>
@@ -474,10 +474,7 @@ function TokenCard({ pool }: { pool: PoolCreated }) {
   const { holdersCount, isLoadingHoldersCount } = useHoldersCount(chain.chain_id, pool.memecoin);
   const { formattedVolumeUSDC, isLoadingVolume } = useVolume24h(chain, pool.memecoin);
 
-  const { formattedAmount } = calculateMarketCapData(
-    pool.latestMarketCapETH,
-    pool.previousMarketCapETH,
-  );
+  const { formattedAmount } = calculateMarketCapData(pool.latestMarketCapETH, pool.previousMarketCapETH);
 
   const timestamp = Number(pool.blockTimestamp) * 1000;
   const timeAgo = getTimeAgo(timestamp);
@@ -501,11 +498,7 @@ function TokenCard({ pool }: { pool: PoolCreated }) {
           ) : (
             <div className="h-[114px] max-w-[114px] w-full rounded-sm bg-gray-300 overflow-hidden">
               {tokenData?.metadata?.imageUrl && (
-                <img
-                  src={tokenData.metadata.imageUrl}
-                  alt={displaySymbol}
-                  className="w-full h-full object-cover"
-                />
+                <img src={tokenData.metadata.imageUrl} alt={displaySymbol} className="w-full h-full object-cover" />
               )}
             </div>
           )}
@@ -519,7 +512,7 @@ function TokenCard({ pool }: { pool: PoolCreated }) {
                   </div>
                   <div className="flex gap-1.5 items-center text-sm">
                     <p className="text-tertiary">{formatWallet(pool.memecoin)}</p>
-                    <i className="icon-copy size-3.5 aspect-square text-quaternary" />
+                    <i aria-hidden="true" className="icon-copy size-3.5 aspect-square text-quaternary" />
                   </div>
                 </div>
 
@@ -535,7 +528,7 @@ function TokenCard({ pool }: { pool: PoolCreated }) {
                     <p>VOL: {formattedVolumeUSDC || 'N/A'}</p>
                   )}
                   <div className="flex gap-2 items-center">
-                    <i className="icon-user-group-outline size-4" />
+                    <i aria-hidden="true" className="icon-user-group-outline size-4" />
                     {isLoadingHoldersCount ? (
                       <Skeleton className="h-4 w-8" animate />
                     ) : (

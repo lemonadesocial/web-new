@@ -57,13 +57,13 @@ export function EditEventDrawer({ event }: { event: Event }) {
 
 function EditEventDrawerContent({ event }: { event: Event }) {
   const [timezone, setTimeZone] = React.useState(getUserTimezoneOption(event.timezone || ''));
-  console.log(event.start);
 
   const {
     register,
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
@@ -84,6 +84,26 @@ function EditEventDrawerContent({ event }: { event: Event }) {
       layout_sections: event.layout_sections?.map(({ __typename, ...rest }) => rest) || DEFAULT_LAYOUT_SECTIONS,
     },
   });
+
+  React.useEffect(() => {
+    reset({
+      title: event.title || '',
+      description: event.description || '',
+      theme_data: event.theme_data,
+      date: {
+        start: event.start,
+        end: event.end,
+        timezone: event.timezone || getUserTimezoneOption()?.value || 'UTC',
+      },
+      address: {
+        address: event.address || undefined,
+        latitude: event.latitude ?? undefined,
+        longitude: event.longitude ?? undefined,
+      },
+      virtual_url: event.virtual_url || undefined,
+      layout_sections: event.layout_sections?.map(({ __typename, ...rest }) => rest) || DEFAULT_LAYOUT_SECTIONS,
+    });
+  }, [event]);
 
   const [state] = useTheme();
 
@@ -197,7 +217,7 @@ function EditEventDrawerContent({ event }: { event: Event }) {
                 trigger={() => (
                   <Card.Root>
                     <Card.Content className="flex md:flex-col gap-3 items-center md:items-start md:justify-between flex-1 md:w-[142px] md:h-[84px] p-2">
-                      <i className="icon-globe size-5 text-tertiary" />
+                      <i aria-hidden="true" className="icon-globe size-5 text-tertiary" />
                       <p className="block md:hidden">{timezone?.text}</p>
                       <div className="hidden md:block">
                         <p className="text-sm">{timezone?.short}</p>

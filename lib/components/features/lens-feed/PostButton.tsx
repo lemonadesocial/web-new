@@ -28,7 +28,7 @@ export function PostButton({
       onClick={onClick}
     >
       <div className="w-6 h-6 flex items-center justify-center">
-        <i className={clsx(
+        <i aria-hidden="true" className={clsx(
           icon,
           'size-5 transition-all duration-200 group-hover:size-6 group-hover:text-primary',
         )} />

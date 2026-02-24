@@ -72,7 +72,7 @@ export function LensProfileCard({ account }: { account: Account }) {
           {
             displayAccount.username && (
               <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-primary/8">
-                <i className="icon-lens text-secondary size-4" />
+                <i aria-hidden="true" className="icon-lens text-secondary size-4" />
                 <p className="text-sm text-tertiary max-w-[100px] truncate">{displayAccount.username.localName}</p>
               </div>
             )

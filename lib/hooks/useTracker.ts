@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import Cookies from 'js-cookie';
+import * as Sentry from '@sentry/nextjs';
 
 import { useSession } from './useSession';
 
@@ -51,7 +52,7 @@ export function useTracker(eventId?: string) {
           }),
         });
       } catch (err) {
-        console.error(err);
+        Sentry.captureException(err);
       }
     };
 

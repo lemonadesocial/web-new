@@ -16,6 +16,7 @@ import ZugramaPassport from '$lib/abis/ZuGramaPassport.json';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { AbstractPassportABI } from '$lib/abis/AbstractPassport';
 import MusicNft from '$lib/abis/MusicNft.json';
+import { RedEnvelopeAbi } from '$lib/abis/RedEnvelope';
 
 export const ERC20Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC20));
 export const ERC721Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC721));
@@ -26,6 +27,7 @@ export const LemonadePassportContract = new ethers.Contract(ethers.ZeroAddress, 
 export const ZugramaPassportContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ZugramaPassport.abi));
 export const AbstractPassportContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(AbstractPassportABI));
 export const MusicNftContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(MusicNft.abi));
+export const RedEnvelopeContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(RedEnvelopeAbi));
 
 export function getListChains() {
   return getDefaultStore().get(listChainsAtom);
@@ -57,9 +59,9 @@ export async function writeContract(
   contractAddress: string,
   provider: Eip1193Provider,
   functionName: string,
-  args: any[],
-  txOptions: Record<string, any> = {}
-): Promise<any> {
+  args: unknown[],
+  txOptions: Record<string, unknown> = {}
+): Promise<ethers.TransactionResponse> {
   const browserProvider = new ethers.BrowserProvider(provider);
   const signer = await browserProvider.getSigner();
   const contract = contractInstance.attach(contractAddress).connect(signer);
@@ -89,6 +91,38 @@ export async function writeContract(
   }
   
   return tx;
+}
+
+export async function getBalance(
+  tokenAddress: string,
+  chainId: string,
+  walletProvider: Eip1193Provider,
+  address?: string
+): Promise<bigint> {
+  const provider = new ethers.BrowserProvider(walletProvider);
+  const signer = await provider.getSigner();
+  const userAddress = address || await signer.getAddress();
+
+  if (isNativeToken(tokenAddress, chainId)) {
+    return await provider.getBalance(userAddress);
+  }
+
+  const erc20Token = new ethers.Contract(tokenAddress, ERC20, signer);
+  return await erc20Token.balanceOf(userAddress);
+}
+
+export async function checkBalanceSufficient(
+  tokenAddress: string,
+  chainId: string,
+  amount: bigint,
+  walletProvider: Eip1193Provider,
+  address?: string
+): Promise<void> {
+  const balance = await getBalance(tokenAddress, chainId, walletProvider, address);
+  
+  if (balance < amount) {
+    throw new Error('insufficient funds');
+  }
 }
 
 export async function approveERC20Spender(tokenAddress: string, spender: string, amount: bigint, walletProvider: Eip1193Provider) {
@@ -141,7 +175,7 @@ export async function transfer(toAddress: string, amount: string, tokenAddress: 
   }
 };
 
-export function formatError(error: any): string {
+export function formatError(error: unknown): string {
   if (isError(error, 'ACTION_REJECTED')) {
     return 'Transaction was rejected by user';
   }
@@ -182,8 +216,9 @@ export function formatError(error: any): string {
     return 'Server error occurred. Please try again later';
   }
 
-  if (error?.message) {
-    const message = error.message.toLowerCase();
+  const errorMessage = error instanceof Error ? error.message : (error && typeof error === 'object' && 'message' in error) ? String((error as { message: unknown }).message) : '';
+  if (errorMessage) {
+    const message = errorMessage.toLowerCase();
     
     if (message.includes('user rejected') || message.includes('user denied')) {
       return 'Transaction was rejected by user';

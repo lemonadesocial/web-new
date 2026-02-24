@@ -131,7 +131,7 @@ export function JoinCommunityModal({ launchpadGroup, stakingToken, chain }: Join
               <Skeleton className="h-5 w-48" animate />
             ) : (
               <div className="flex items-center gap-2">
-                <i className="icon-clock size-5 text-tertiary" />
+                <i aria-hidden="true" className="icon-clock size-5 text-tertiary" />
                 <p className="text-sm">Minimum Duration: {Math.round(minDurationMonths)} months</p>
               </div>
             )}
@@ -152,7 +152,7 @@ export function JoinCommunityModal({ launchpadGroup, stakingToken, chain }: Join
                     rel="noopener noreferrer"
                     className="text-tertiary hover:text-primary"
                   >
-                    <i className="icon-arrow-top-right size-4" />
+                    <i aria-hidden="true" className="icon-arrow-top-right size-4" />
                   </a>
                 )}
               </div>

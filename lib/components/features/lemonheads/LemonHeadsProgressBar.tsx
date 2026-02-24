@@ -32,7 +32,7 @@ export function LemonHeadsProgressBar() {
               : 'bg-(--btn-tertiary) backdrop-blur-sm  text-(--btn-tertiary-content)',
           )}
         >
-          <i className="icon-account-balance-outline size-4" />
+          <i aria-hidden="true" className="icon-account-balance-outline size-4" />
         </div>
 
         <div
@@ -43,7 +43,7 @@ export function LemonHeadsProgressBar() {
               : 'bg-primary text-primary-invert',
           )}
         >
-          <i className="icon-celebration size-4" />
+          <i aria-hidden="true" className="icon-celebration size-4" />
         </div>
       </div>
     </div>

@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation';
 import { Button, ModalContent, modal, Skeleton } from '$lib/components/core';
 import { formatWallet } from '$lib/utils/crypto';
 import { useAppKit, useAppKitAccount } from '$lib/utils/appkit';
-import { usePassport } from '$lib/hooks/usePassport';
+import { usePassports } from '$lib/hooks/usePassports';
 import { useLemonhead } from '$lib/hooks/useLemonhead';
 import { ASSET_PREFIX } from '$lib/utils/constants';
+import { PASSPORT_PROVIDER } from '../../types';
 
-export function CheckMintedLemonheadModal({ onContinue }: { onContinue: () => void }) {
+export function CheckMintedLemonheadModal({provider, onContinue }: { onContinue: () => void; provider: PASSPORT_PROVIDER }) {
   const router = useRouter();
-  const { data: passport, loading: loadingPassport } = usePassport();
+  const { data: passport, loading: loadingPassport } = usePassports(provider);
   const { data: lemonhead, loading: loadingLemonhead } = useLemonhead();
   const { address } = useAppKitAccount();
   const { open } = useAppKit();
@@ -57,9 +58,11 @@ export function CheckMintedLemonheadModal({ onContinue }: { onContinue: () => vo
           </div>
 
           <div className="flex items-center gap-2.5 w-full px-3.5 py-2 rounded-sm bg-primary/8 border border-card-border">
-            <i className="icon-wallet text-tertiary size-5" />
+            <i aria-hidden="true" className="icon-wallet text-tertiary size-5" />
             <p className="flex-1 text-sm">{address ? formatWallet(address) : 'No wallet connected'}</p>
-            <i className="icon-edit-sharp cursor-pointer text-tertiary size-5" onClick={handleEditWallet} />
+            <button type="button" aria-label="Edit wallet" className="cursor-pointer" onClick={handleEditWallet}>
+              <i className="icon-edit-sharp text-tertiary size-5" />
+            </button>
           </div>
 
           <Button variant="secondary" className="w-full" onClick={() => modal.close()}>
@@ -87,9 +90,9 @@ export function CheckMintedLemonheadModal({ onContinue }: { onContinue: () => vo
         </div>
 
         <div className="flex items-center gap-2.5 w-full px-3.5 py-2 rounded-sm bg-primary/8 border border-card-border">
-          <i className="icon-wallet text-tertiary size-5" />
+          <i aria-hidden="true" className="icon-wallet text-tertiary size-5" />
           <p className="flex-1 text-sm">{address ? formatWallet(address) : 'No wallet connected'}</p>
-          <i className="icon-edit-sharp cursor-pointer text-tertiary size-5" onClick={handleEditWallet} />
+          <i aria-hidden="true" className="icon-edit-sharp cursor-pointer text-tertiary size-5" onClick={handleEditWallet} />
         </div>
 
         <Button variant="secondary" className="w-full" onClick={() => router.push('/lemonheads/mint')}>

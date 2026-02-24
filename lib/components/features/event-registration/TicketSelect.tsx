@@ -41,7 +41,7 @@ function TicketCategory({ category, ticketTypes }: GroupedTicketTypes) {
     <Collapsible
       header={
         <div className="flex gap-3">
-          <i className="icon-folder text-secondary" />
+          <i aria-hidden="true" className="icon-folder text-secondary" />
           <div>{category?.title || 'Uncategorized'}</div>
         </div>
       }
@@ -59,7 +59,7 @@ function TicketList({ ticketTypes }: { ticketTypes: PurchasableTicketType[] }) {
       <div>
         <div className="flex gap-3 items-center">
           <div className="flex items-center justify-center size-7 bg-card rounded-sm aspect-square">
-            <i className="icon-token size-4 text-tertiary" />
+            <i aria-hidden="true" className="icon-token size-4 text-tertiary" />
           </div>
           <div>
             <p>Token Holder Exclusive</p>

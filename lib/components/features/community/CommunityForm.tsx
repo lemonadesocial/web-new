@@ -2,8 +2,9 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { debounce, kebabCase } from 'lodash';
 import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, UseFormReturn } from 'react-hook-form';
 import { object, string } from 'yup';
+import * as Sentry from '@sentry/nextjs';
 
 import { Button, Card, FileInput, InputField, Map, Segment, TextAreaField, toast } from '$lib/components/core';
 import { PlaceAutoComplete } from '$lib/components/core/map/place-autocomplete';
@@ -41,25 +42,9 @@ export function CommunityForm() {
 
   const [mounted, setMounted] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [uploadingCover, setUploadingCover] = React.useState(false);
-  const [cover, setCover] = React.useState('');
-
-  const [uploadingDp, setUploadingDp] = React.useState(false);
-  const [dp, setDp] = React.useState(`${ASSET_PREFIX}/assets/images/default-dp.png`);
-
-  const [slug, setSlug] = React.useState('');
-  const [checking, setChecking] = React.useState(false);
-  const [canUseSpaceSlug, setCanUseSpaceSlug] = React.useState(false);
-
-  const { client } = useClient();
   const [create] = useMutation(CreateSpaceDocument);
 
-  const {
-    handleSubmit,
-    setValue,
-    control,
-    formState: { isValid, errors, dirtyFields },
-  } = useForm<FormValues>({
+  const form = useForm<FormValues>({
     defaultValues: {
       title: '',
       description: undefined,
@@ -71,6 +56,11 @@ export function CommunityForm() {
     resolver: yupResolver(validationSchema),
   });
 
+  const {
+    handleSubmit,
+    formState: { isValid },
+  } = form;
+
   React.useEffect(() => {
     if (!mounted) setMounted(true);
   }, []);
@@ -78,6 +68,96 @@ export function CommunityForm() {
   React.useEffect(() => {
     if (!me && !session && mounted) signIn(false);
   }, [me, session, mounted]);
+
+  const onSubmit = async (values: FormValues) => {
+    try {
+      setIsSubmitting(true);
+      const siteInfo = values.slug ? { slug: kebabCase(values.slug) } : {};
+
+      const { data, error } = await create({ variables: { input: { ...values, ...siteInfo } } });
+      if (error) {
+        // toast.error(error.message);
+        return;
+      }
+
+      if (data) {
+        const space = data.createSpace as Space;
+        router.push(`/s/manage/${space.slug || space._id}`);
+      }
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      <CommunityFormContent form={form} />
+      <div>
+        <Button type="submit" loading={isSubmitting} variant="secondary" disabled={!isValid}>
+          Create Community
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+export function CommunityFormContent({
+  form,
+  mobile,
+}: {
+  form: UseFormReturn<FormValues>;
+  /** @description force mobile view such as right pane */
+  mobile?: boolean;
+}) {
+  const {
+    control,
+    setValue,
+    setError,
+    formState: { errors, dirtyFields },
+  } = form;
+
+  const [uploadingCover, setUploadingCover] = React.useState(false);
+  const [cover, setCover] = React.useState('');
+
+  const [uploadingDp, setUploadingDp] = React.useState(false);
+  const [dp, setDp] = React.useState(`${ASSET_PREFIX}/assets/images/default-dp.png`);
+
+  const [slug, setSlug] = React.useState('');
+  const [checking, setChecking] = React.useState(false);
+  const [canUseSpaceSlug, setCanUseSpaceSlug] = React.useState(false);
+
+  const { client } = useClient();
+
+  const debouncedFetchData = React.useCallback(
+    debounce(async (query) => {
+      try {
+        const { data } = await client.query({ query: CheckSpaceSlugDocument, variables: { slug: query } });
+
+        if (!!data?.canUseSpaceSlug) {
+          setError('slug', { type: 'validate', message: 'This URL is already taken.' });
+        }
+        setCanUseSpaceSlug(!!data?.canUseSpaceSlug);
+      } catch (err: any) {
+        Sentry.captureException(err);
+      } finally {
+        setChecking(false);
+      }
+    }, 500),
+    [],
+  );
+
+  const getIconSlugField = () => {
+    if (slug.length < 3) return '';
+
+    if (checking) return 'icon-spin animate-spin align-items-center text-warning-400 flex h-full mx-2';
+    if (canUseSpaceSlug) {
+      return 'icon-richtext-check text-success-400 align-items-center flex h-full mx-2';
+    } else {
+      return 'icon-x text-danger-400 align-items-center flex h-full mx-2';
+    }
+  };
 
   const handleUpload = async (files: globalThis.File[], type: 'cover' | 'dp') => {
     try {
@@ -95,7 +175,7 @@ export function CommunityForm() {
         setValue('image_avatar', images[0]._id as any);
       }
     } catch (err) {
-      console.error(err);
+      Sentry.captureException(err);
       toast.error(`Cannot upload ${type} image!`);
     } finally {
       if (type === 'cover') setUploadingCover(false);
@@ -103,57 +183,13 @@ export function CommunityForm() {
     }
   };
 
-  const debouncedFetchData = React.useCallback(
-    debounce(async (query) => {
-      try {
-        const { data } = await client.query({ query: CheckSpaceSlugDocument, variables: { slug: query } });
-        setCanUseSpaceSlug(!!data?.canUseSpaceSlug);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setChecking(false);
-      }
-    }, 500),
-    [],
-  );
-
-  const onSubmit = async (values: FormValues) => {
-    try {
-      setIsSubmitting(true);
-      const siteInfo = values.slug ? { slug: kebabCase(values.slug) } : {};
-
-      const { data, error } = await create({ variables: { input: { ...values, ...siteInfo } } });
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
-
-      if (data) {
-        const space = data.createSpace as Space;
-        router.push(`/s/manage/${space.slug || space._id}`);
-      }
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setIsSubmitting(false);
+  React.useEffect(() => {
+    if (!canUseSpaceSlug) {
     }
-  };
-
-  const getIconSlugField = () => {
-    if (slug.length < 3) return '';
-
-    if (checking) return 'icon-spin animate-spin align-items-center text-warning-400 flex h-full mx-2';
-    if (canUseSpaceSlug) {
-      return 'icon-richtext-check text-success-400 align-items-center flex h-full mx-2';
-    } else {
-      return 'icon-x text-danger-400 align-items-center flex h-full mx-2';
-    }
-
-    return '';
-  };
+  }, [canUseSpaceSlug]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+    <>
       <Card.Root>
         <Card.Content className="p-0">
           <div className="relative">
@@ -237,7 +273,7 @@ export function CommunityForm() {
         </Card.Content>
       </Card.Root>
 
-      <div className="flex flex-col md:flex-row gap-6 justify-between">
+      <div className={clsx('flex flex-col gap-6 justify-between', !mobile && 'md:flex-row')}>
         <Card.Root className="flex-1">
           <Card.Content className="space-y-4">
             <p className="text-lg">Customization</p>
@@ -297,12 +333,6 @@ export function CommunityForm() {
           </Card.Content>
         </Card.Root>
       </div>
-
-      <div>
-        <Button type="submit" loading={isSubmitting} variant="secondary" disabled={!isValid || !canUseSpaceSlug}>
-          Create Community
-        </Button>
-      </div>
-    </form>
+    </>
   );
 }

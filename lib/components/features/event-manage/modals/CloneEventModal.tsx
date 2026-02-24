@@ -110,9 +110,9 @@ export function CloneEventModal({ event }: { event: Event }) {
     <Card.Root className="w-full md:w-[350px] overflow-visible bg-none">
       <Card.Header className="bg-transparent flex justify-between items-start">
         <div className="size-[56px] rounded-full flex items-center justify-center bg-(--btn-tertiary)">
-          <i className="icon-duplicate " />
+          <i aria-hidden="true" className="icon-duplicate " />
         </div>
-        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
+        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
       </Card.Header>
       <Card.Content className="flex flex-col gap-4">
         <div>
@@ -312,10 +312,10 @@ export function CloneEventModal({ event }: { event: Event }) {
                       className="btn btn-tertiary inline-flex items-center w-full rounded-sm h-[40px] pl-3.5 pr-2.5"
                     >
                       <div className="flex flex-1 w-3xs md:w-auto items-center gap-2.5 truncate">
-                        <i className="icon-globe size-[20px]" />
+                        <i aria-hidden="true" className="icon-globe size-[20px]" />
                         <span className="truncate w-fit">{zone?.text}</span>
                       </div>
-                      <i className="icon-chevron-down size-[20px]" />
+                      <i aria-hidden="true" className="icon-chevron-down size-[20px]" />
                     </button>
                   )}
                   onSelect={(data) => {
@@ -412,9 +412,9 @@ function Recurrence({
   return (
     <Card.Root className="w-full md:w-[350px] overflow-visible bg-transparent">
       <Card.Header className="bg-transparent flex justify-between items-center">
-        <Button icon="icon-chevron-left" size="xs" variant="tertiary" className="rounded-full" onClick={onBack} />
+        <Button icon="icon-chevron-left" size="xs" variant="tertiary" className="rounded-full" onClick={onBack} aria-label="Go back" />
         <p className="flex-1 text-center">Choose Times</p>
-        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
+        <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
       </Card.Header>
       <Card.Content className="flex flex-col gap-4">
         <Controller
@@ -490,7 +490,7 @@ function Recurrence({
             onSelect={(item) => setIsUntilMode(item.value === 'until')}
           />
 
-          <i className="icon-chevron-right text-tertiary" />
+          <i aria-hidden="true" className="icon-chevron-right text-tertiary" />
 
           {isUntilMode ? (
             <div className="flex-1">
@@ -594,7 +594,7 @@ export function CancelEventModal({
   return (
     <div className="p-4 flex flex-col gap-4 max-w-[448px]">
       <div className="p-3 rounded-full bg-danger-400/16 w-fit">
-        <i className="icon-ticket text-danger-400" />
+        <i aria-hidden="true" className="icon-ticket text-danger-400" />
       </div>
       <div className="flex flex-col gap-2">
         <p className="text-lg font-medium">{title}</p>

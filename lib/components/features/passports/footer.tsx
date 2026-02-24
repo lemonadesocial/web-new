@@ -14,12 +14,13 @@ import { MAPPING_PASSPORT_STEPS } from './config';
 import { usePassportContext } from './provider';
 import { PassportActionKind, PassportStep } from './types';
 import { PassportEligibilityModal } from './modals/PassportEligibilityModal';
-import { PASSPORT_CHAIN_ID } from './utils';
+import { MAPPING_PROVIDER, PASSPORT_CHAIN_ID } from './utils';
 import { useRouter } from 'next/navigation';
 import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { MintPassportModal } from './modals/MintPassportModal';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { formatError } from '$lib/utils/crypto';
+import { usePassportChain } from '$lib/hooks/usePassportChain';
 
 export function Footer() {
   const chainsMap = useAtomValue(chainsMapAtom);
@@ -29,11 +30,13 @@ export function Footer() {
   const [isMinting, setIsMinting] = React.useState(false);
 
   const [state, dispatch] = usePassportContext();
+  const chain = usePassportChain(state.provider);
 
   const checkLemonhead = () => {
     if (state.enabled?.shouldMintedLemonhead) {
       modal.open(PassportEligibilityModal.CheckMintedLemonheadModal, {
         props: {
+          provider: state.provider,
           onContinue: () => {
             canAccess();
           },
@@ -78,7 +81,7 @@ export function Footer() {
             onConnect: () => {
               handleMint();
             },
-            chain: chainsMap[PASSPORT_CHAIN_ID],
+            chain: chain,
           },
         });
       })
@@ -105,21 +108,30 @@ export function Footer() {
     setIsMinting(true);
 
     try {
-      let query = `wallet=${address}`;
+      let query = `wallet=${address}&provider=${MAPPING_PROVIDER[state.provider]}`;
       if (state.photo) {
         query += `&avatar=${encodeURIComponent(state.photo)}`;
       }
-      if (state.useLemonhead && state.lemonadeUsername) {
+
+      if (state.lemonadeUsername) {
         query += `&username=${encodeURIComponent(state.lemonadeUsername)}`;
-      }
-      if (state.useENS && state.ensName) {
+      } else if (state.useENS && state.ensName) {
         query += `&username=${encodeURIComponent(state.ensName)}`;
+      }
+      
+      if (state.useFluffle && state.fluffleTokenId) {
+        query += `&fluffleTokenId=${encodeURIComponent(state.fluffleTokenId)}`;
       }
 
       const response = await fetch(`/api/passport/${state.provider}?${query}`);
-      const mintData = await response.json();
+      const data = await response.json();
 
-      dispatch({ type: PassportActionKind.SetMintData, payload: mintData });
+      if (!response.ok) {
+        const message = data?.message ?? data?.error ?? `Request failed (${response.status})`;
+        throw new Error(message);
+      }
+
+      dispatch({ type: PassportActionKind.SetMintData, payload: data });
 
       modal.open(BeforeMintPassportModal, {
         props: {
@@ -128,19 +140,20 @@ export function Footer() {
             modal.open(MintPassportModal, {
               props: {
                 provider: state.provider,
+                passportImage: state.passportImage,
                 onComplete: (txHash, tokenId) => {
                   dispatch({ type: PassportActionKind.SetMintState, payload: { txHash, tokenId } });
                   dispatch({ type: PassportActionKind.NextStep });
                 },
-                mintData: mintData,
+                mintData: data,
               },
             });
           },
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       Sentry.captureException(error);
-      toast.error(formatError(error));
+      toast.error(error.message);
     } finally {
       setIsMinting(false);
     }
@@ -149,7 +162,7 @@ export function Footer() {
   const disabled = match(state.currentStep)
     .with(PassportStep.photo, () => !state.photo)
     .with(PassportStep.username, () => {
-      if (state.enabled?.lemonadeUsername) return !state.lemonadeUsername && state.enabled?.ens && !state.ensName;
+      if (state.enabled?.lemonadeUsername) return !state.lemonadeUsername;
       else if (state.enabled?.ens) return !state.ensName;
       else return false;
     })
@@ -188,7 +201,7 @@ export function Footer() {
                     <p className={twMerge('text-quaternary', isActive && 'text-primary')}>{footerConf.label}</p>
                   )}
                   {footerConf?.label && idx < Object.entries(MAPPING_PASSPORT_STEPS).length - 1 && (
-                    <i className={twMerge('icon-chevron-right size-5 text-quaternary', isActive && 'text-primary')} />
+                    <i aria-hidden="true" className={twMerge('icon-chevron-right size-5 text-quaternary', isActive && 'text-primary')} />
                   )}
                 </li>
               );
@@ -197,7 +210,14 @@ export function Footer() {
         )}
 
         <div className="flex flex-1 justify-end">
-          <Button iconRight="icon-chevron-right" disabled={disabled} variant="secondary" size="sm" onClick={handleNext}>
+          <Button
+            iconRight="icon-chevron-right"
+            loading={isMinting}
+            disabled={disabled}
+            variant="secondary"
+            size="sm"
+            onClick={handleNext}
+          >
             {btnText}
           </Button>
         </div>

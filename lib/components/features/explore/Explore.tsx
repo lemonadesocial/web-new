@@ -9,9 +9,9 @@ import { TopPerformers } from './TopPerformers';
 export function ExploreContent() {
   const router = useRouter();
   return (
-    <div className="pt-6 px-8 max-sm:px-0 pb-32 md:pb-8 overflow-visible">
+    <div className="pt-12 px-8 max-sm:px-4 max-sm:pt-16 md:pb-8 overflow-visible">
       <div className="space-y-1 mb-8">
-        <h3 className="text-2xl font-semibold">Explore</h3>
+        <h3 className="text-2xl font-semibold">Discover</h3>
         <p className="text-sm text-tertiary">Discover popular communities, events & coins.</p>
       </div>
       <div className="flex flex-col gap-12">

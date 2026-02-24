@@ -32,7 +32,7 @@ export function UserProfileCommunities({ user }: { user: User }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      {(data?.searchSpaces?.items || []).map((item: any) => (
+      {(data?.searchSpaces?.items || []).map((item) => (
         <HubCardItem
           key={item._id}
           view={isMobile ? 'list-item' : 'card'}

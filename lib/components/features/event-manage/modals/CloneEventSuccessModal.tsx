@@ -23,9 +23,9 @@ export function CloneEventSuccessModal({ events }: { events: Event[] }) {
     <Card.Root className="w-[360px]">
       <Card.Header className="flex justify-between items-start bg-transparent">
         <div className="p-3 w-[56px] aspect-square rounded-full bg-success-400/16 flex items-center justify-center">
-          <i className="icon-richtext-check text-success-400 size-8" />
+          <i aria-hidden="true" className="icon-richtext-check text-success-400 size-8" />
         </div>
-        <Button icon="icon-x" size="xs" variant="tertiary-alt" className="rounded-full" onClick={() => modal.close()} />
+        <Button icon="icon-x" size="xs" variant="tertiary-alt" className="rounded-full" onClick={() => modal.close()} aria-label="Close" />
       </Card.Header>
       <Card.Content className="flex flex-col gap-4 max-w-[448px]">
         <div className="flex flex-col gap-2">
@@ -60,7 +60,7 @@ export function CloneEventSuccessModal({ events }: { events: Event[] }) {
               </div>
 
               <div className="size-5 hover:text-primary flex items-center justify-center">
-                <i className="text-quaternary icon-arrow-outward size-5" />
+                <i aria-hidden="true" className="text-quaternary icon-arrow-outward size-5" />
               </div>
             </Card.Content>
           </Card.Root>
@@ -98,7 +98,7 @@ export function CloneEventSuccessModal({ events }: { events: Event[] }) {
                     </div>
                     <div className="flex gap-1 items-center">
                       <p className="text-tertiary">{formatWithTimezone(event.start, 'hh:mm a', event.timezone)}</p>
-                      <i className="text-quaternary icon-arrow-outward size-5" />
+                      <i aria-hidden="true" className="text-quaternary icon-arrow-outward size-5" />
                     </div>
                   </Card.Content>
                 </Card.Root>

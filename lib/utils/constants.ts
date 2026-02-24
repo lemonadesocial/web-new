@@ -1,4 +1,4 @@
-import type { SelfAppDisclosureConfig } from "@selfxyz/common";
+import type { SelfAppDisclosureConfig } from '@selfxyz/common';
 
 export const GRAPHQL_URL = process.env.NEXT_PUBLIC_GRAPHQL_URL as string;
 export const LEMONADE_DOMAIN = process.env.NEXT_PUBLIC_LEMONADE_DOMAIN as string;
@@ -8,11 +8,12 @@ export const ASSET_PREFIX = process.env.NEXT_PUBLIC_ASSET_PREFIX || '';
 export const KRATOS_PUBLIC_URL = process.env.NEXT_PUBLIC_KRATOS_PUBLIC_URL as string;
 export const IDENTITY_URL = process.env.NEXT_PUBLIC_IDENTITY_URL as string;
 export const LEMONADE_FEED_ADDRESS = process.env.NEXT_PUBLIC_LEMONADE_FEED_ADDRESS as string;
+export const AI_CONFIG = process.env.NEXT_PUBLIC_AI_CONFIG as string;
 
 export const ETHERSCAN = 'https://etherscan.io';
 
 export const LAUNCH_CHAIN_ID = process.env.NEXT_PUBLIC_APP_ENV === 'production' ? '8453' : '84532';
-export const GAS_LIMIT = BigInt(1_000_000);
+export const GAS_LIMIT = BigInt(150_000_000);
 export const MEGAETH_CHAIN_ID = process.env.NEXT_PUBLIC_APP_ENV === 'production' ? 4326 : 6343;
 
 export const ETHNICITIES = [
@@ -89,7 +90,7 @@ export const getFullConfig = (config: Partial<SelfAppDisclosureConfig>) => {
     ofac: config.ofac ?? false,
     excludedCountries: config.excludedCountries ?? [],
     minimumAge: config.minimumAge ?? 0,
-  }
+  };
 
   return finalConfig;
 };

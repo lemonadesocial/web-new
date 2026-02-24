@@ -19,9 +19,14 @@ const useChildrenByComponent = <T extends ComponentType>(
   }, [children, Component]);
 };
 
-function PaneRoot({ children }: React.PropsWithChildren) {
+function PaneRoot({ children, className }: React.PropsWithChildren & { className?: string }) {
   return (
-    <div className="flex flex-col flex-1 bg-overlay-primary overflow-auto no-scrollbar h-full rounded-sm">
+    <div
+      className={twMerge(
+        'flex flex-col flex-1 bg-overlay-primary overflow-auto no-scrollbar h-full rounded-sm',
+        className,
+      )}
+    >
       {children}
     </div>
   );

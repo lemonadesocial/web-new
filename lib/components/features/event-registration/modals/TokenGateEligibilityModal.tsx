@@ -162,7 +162,7 @@ export function TokenGateEligibilityModal({
     <ModalContent
       icon={
         <div className="size-[56px] flex justify-center items-center rounded-full bg-danger-500/16" data-icon>
-          <i className="icon-info text-danger-500 size-8" />
+          <i aria-hidden="true" className="icon-info text-danger-500 size-8" />
         </div>
       }
       onClose={() => registrationModal.close()}
@@ -180,7 +180,7 @@ export function TokenGateEligibilityModal({
         <Card.Root className="border-none bg-none">
           <Card.Content className="justify-between flex items-center py-2 px-3">
             <div className="flex gap-3 items-center">
-              <i className="icon-wallet size-5 aspect-square text-tertiary" />
+              <i aria-hidden="true" className="icon-wallet size-5 aspect-square text-tertiary" />
               {address ? <p>{formatWallet(address)}</p> : <p>No wallet connected</p>}
             </div>
             <i
@@ -205,7 +205,7 @@ export function TokenGateEligibilityModal({
       onClose={() => registrationModal.close()}
       icon={
         <div className="size-[56px] flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
-          <i className="icon-loader animate-spin" />
+          <i aria-hidden="true" className="icon-loader animate-spin" />
         </div>
       }
     >

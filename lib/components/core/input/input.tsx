@@ -73,7 +73,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   rows = 3,
   ...props
 }, ref) => {
-  const baseClasses = 'w-full rounded-sm focus:outline-none placeholder-quaternary px-2.5 py-2 font-medium resize-none no-scrollbar';
+  const baseClasses = 'w-full rounded-sm focus:outline-none placeholder-quaternary px-2.5 py-2 font-medium resize-none no-scrollbar max-h-60 overflow-auto';
 
   const finalClassName = twMerge(
     clsx(
@@ -99,7 +99,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = 'auto';
-      textarea.style.height = `${textarea.scrollHeight}px`;
+      const maxHeight = Number.parseFloat(getComputedStyle(textarea).maxHeight);
+      if (Number.isFinite(maxHeight) && textarea.scrollHeight > maxHeight) {
+        textarea.style.height = `${maxHeight}px`;
+      } else {
+        textarea.style.height = `${textarea.scrollHeight}px`;
+      }
     }
   }, []);
 
@@ -137,20 +142,21 @@ interface LabeledInputProps {
   required?: boolean;
   children: React.ReactNode;
   className?: string;
+  htmlFor?: string;
 }
 
-export const LabeledInput: React.FC<LabeledInputProps> = ({ label, required, children, className }) => {
+export const LabeledInput: React.FC<LabeledInputProps> = ({ label, required, children, className, htmlFor }) => {
   return (
     <div className={clsx("flex flex-col gap-1.5", className)}>
-      <p className="font-medium text-sm text-secondary">
+      <label htmlFor={htmlFor} className="font-medium text-sm text-secondary">
         {label}
         {required && <span>{' '}*</span>}
-      </p>
+      </label>
       {children}
     </div>
   );
 };
 
-export function ErrorText({ message }: { message: string }) {
-  return <p className="text-sm text-error">{message}</p>;
+export function ErrorText({ message, id }: { message: string; id?: string }) {
+  return <p id={id} className="text-sm text-error" role="alert" aria-live="polite">{message}</p>;
 }

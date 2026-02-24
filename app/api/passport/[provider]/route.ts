@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { match } from 'ts-pattern';
 
 import { getData } from '$lib/services/passports/common/admin';
@@ -9,15 +10,14 @@ import { getMintDripNationPassportData } from '$lib/services/passports/drip-nati
 
 import { PassportProvider } from '$lib/graphql/generated/backend/graphql';
 import { getMintLemonadePassportDataNew } from '$lib/services/passports/lemonade';
+import { getMintAlzenaWorldPassportData } from '$lib/services/passports/alzena-world';
 
-type Params = Promise<{ provider: PassportProvider }>;
-
-export async function GET(request: NextRequest, { params }: { params: Params }) {
+export async function GET(request: NextRequest) {
   const wallet = new URL(request.url).searchParams.get('wallet');
   const avatarImageUrl = new URL(request.url).searchParams.get('avatar');
   const fluffleTokenId = new URL(request.url).searchParams.get('fluffleTokenId');
   const username = new URL(request.url).searchParams.get('username');
-  const { provider } = await params;
+  const provider = new URL(request.url).searchParams.get('provider');
 
   if (!username) {
     return NextResponse.json({ error: 'Username parameter is required' }, { status: 400 });
@@ -31,7 +31,11 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
     return NextResponse.json({ error: 'Avatar parameter is required' }, { status: 400 });
   }
 
-  const passportData = await getData({ provider, fluffleTokenId, wallet });
+  if (!provider) {
+    return NextResponse.json({ error: 'Provider parameter is required' }, { status: 400 });
+  }
+
+  const passportData = await getData({ provider: provider as PassportProvider, fluffleTokenId, wallet });
 
   if (!passportData) {
     return NextResponse.json({ error: 'Unable to get passport data' }, { status: 404 });
@@ -42,6 +46,7 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
     .with(PassportProvider.VinylNation, () => getMintVinylNationPassportData)
     .with(PassportProvider.FestivalNation, () => getMintFestivalNationPassportData)
     .with(PassportProvider.DripNation, () => getMintDripNationPassportData)
+    .with(PassportProvider.AlzenaWorld, () => getMintAlzenaWorldPassportData)
     .otherwise(() => null);
 
   if (!getMintData) {
@@ -59,15 +64,10 @@ export async function GET(request: NextRequest, { params }: { params: Params }) 
 
     return NextResponse.json(mintData);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-    const errorStack = error instanceof Error ? error.stack : undefined;
+    Sentry.captureException(error);
 
     return NextResponse.json(
-      {
-        error: 'Failed to get mint data',
-        message: errorMessage,
-        ...(errorStack && { stack: errorStack }),
-      },
+      { error: 'Failed to get mint data' },
       { status: 500 },
     );
   }

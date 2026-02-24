@@ -6,7 +6,6 @@ import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
 import { ERC721Contract } from '$lib/utils/crypto';
 import { getClient } from '$lib/graphql/request';
 import { ASSET_PREFIX } from '$lib/utils/constants';
-import { PASSPORT_CHAIN_ID } from '$lib/components/features/passports/utils';
 
 const fetchFont = (url: string) => {
   return fetch(new URL(url)).then((res) => res.arrayBuffer());
@@ -15,7 +14,7 @@ const fetchFont = (url: string) => {
 const fetchChain = async () => {
   const client = getClient();
   const { data } = await client.query({ query: ListChainsDocument });
-  return data?.listChains?.find((i) => i.chain_id === PASSPORT_CHAIN_ID);
+  return data?.listChains?.find((i) => i.zugrama_passport_contract_address);
 };
 
 export async function GET(req: NextRequest) {
@@ -62,7 +61,7 @@ export async function GET(req: NextRequest) {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          backgroundImage: `url('${ASSET_PREFIX}/assets/images/share-zugrama-passport.png')`,
+          backgroundImage: `url('${ASSET_PREFIX}/assets/images/share-zugrama-passport-bg.png')`,
           padding: '86px',
           width: '100%',
           height: '100%',
@@ -76,7 +75,7 @@ export async function GET(req: NextRequest) {
       >
         <img src={image} style={{ marginTop: 100 }} />
 
-        <div style={{ display: 'flex', position: 'absolute', bottom: 90, left: 160 }}>
+        <div style={{ display: 'flex', position: 'absolute', bottom: 80, left: 150 }}>
           <p style={{ fontSize: 90, fontFamily: 'Orbitron Bold', color: '#587871', margin: 0, padding: 0 }}>
             {tokenId}
           </p>

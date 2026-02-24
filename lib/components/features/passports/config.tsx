@@ -105,7 +105,7 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       },
     },
     enabled: {
-      lemohead: true,
+      lemonhead: true,
       fluffePhoto: true,
       ens: true,
       lemonadeUsername: true,
@@ -156,8 +156,9 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       },
     },
     enabled: {
-      lemohead: true,
+      lemonhead: true,
       fluffePhoto: true,
+      shouldMintedLemonhead: true,
       ens: true,
       lemonadeUsername: true,
       whitelist: true,
@@ -218,8 +219,9 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       },
     },
     enabled: {
-      lemohead: true,
+      lemonhead: true,
       fluffePhoto: true,
+      shouldMintedLemonhead: true,
       ens: true,
       lemonadeUsername: true,
       whitelist: true,
@@ -280,8 +282,9 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       },
     },
     enabled: {
-      lemohead: true,
+      lemonhead: true,
       fluffePhoto: true,
+      lemonadeUsername: true,
       ens: true,
       lemonadeUsername: true,
       whitelist: true,
@@ -353,13 +356,75 @@ export const PASSPORT_CONFIG: Record<PASSPORT_PROVIDER, PassportConfig> = {
       },
     },
     enabled: {
-      lemohead: true,
+      lemonhead: true,
       shouldMintedLemonhead: true,
       fluffePhoto: true,
       // selfVerify: true,
       // uploadPhoto: true,
       ens: true,
       whitelist: true,
+    },
+  },
+  'alzena-world': {
+    provider: 'alzena-world',
+    passportTitle: 'Alzena World',
+    currentStep: PassportStep.intro,
+    useLemonhead: true,
+    ui: {
+      intro: {
+        title: 'Join <br />  Alzena World',
+        subtitle: `Mint your Alzena World passport.`,
+        footer: {
+          label: '',
+          btnText: "Yes, I'm In",
+          index: 0,
+        },
+      },
+      photo: {
+        title: 'Choose Your Passport Photo',
+        subtitle: 'Select the avatar you’d like on your passport.',
+        footer: {
+          label: 'Passport Photo',
+          btnText: 'Next',
+          index: 1,
+        },
+      },
+      username: {
+        title: 'Select Passport Name',
+        subtitle: 'Choose what appears on your passport, your username or ENS.',
+        footer: {
+          label: 'Username',
+          btnText: 'Claim Passport',
+          index: 2,
+        },
+      },
+      celebrate: {
+        showBgVideo: false,
+        footer: {
+          label: 'Celebrate',
+          btnText: 'Done',
+          index: 3,
+        },
+      },
+    },
+    modal: {
+      beforeMint: {
+        description: 'By minting your Passport, you agree to our Terms of Use and acknowledge that:',
+        li: [
+          'Alzena World Passport NFT is non-transferable & non-tradable (soul-bound).',
+          'Your Passport will be permanently recorded on-chain.',
+          'It will be publicly visible and tied to your wallet address.',
+          'All claims are final.',
+        ],
+      },
+    },
+    enabled: {
+      lemonhead: true,
+      fluffePhoto: true,
+      lemonadeUsername: true,
+      whitelist: true,
+      shouldMintedLemonhead: true,
+      sharePassport: true,
     },
   },
 };

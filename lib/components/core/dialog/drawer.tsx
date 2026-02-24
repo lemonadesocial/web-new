@@ -30,6 +30,8 @@ interface Options<T> {
   duration?: number;
   contentClass?: string;
   dismissible?: boolean;
+  showBackdrop?: boolean;
+  fixed?: boolean;
 }
 
 interface DrawerItem {
@@ -65,7 +67,7 @@ export function DrawerContainer() {
         {
           id,
           content: <Component {...(opts.props as T)} />,
-          options: { duration: 0.3, position: 'right', dismissible: true, ...opts },
+          options: { duration: 0.3, position: 'right', dismissible: true, fixed: true, showBackdrop: true, ...opts },
         },
       ]);
       return id;
@@ -88,7 +90,7 @@ export function DrawerContainer() {
       const drawerRef = drawerRefs.current.get(topDrawer.id);
 
       // Prevent closing if clicking inside a modal
-      const modalElements = document.querySelectorAll('[role="modal"]');
+      const modalElements = document.querySelectorAll('[role="dialog"]');
       for (const element of Array.from(modalElements)) {
         if (element.contains(event.target as Node)) return;
       }
@@ -104,6 +106,18 @@ export function DrawerContainer() {
     [drawers, handleClose],
   );
 
+  const handleKeyDown = React.useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && drawers.length > 0) {
+        const topDrawer = drawers[drawers.length - 1];
+        if (topDrawer.options.dismissible) {
+          handleClose(topDrawer.id);
+        }
+      }
+    },
+    [drawers, handleClose],
+  );
+
   React.useEffect(() => {
     drawer.open = handleOpen;
     drawer.close = handleClose;
@@ -111,11 +125,13 @@ export function DrawerContainer() {
     if (drawers.length > 0) {
       document.body.style.overflow = 'hidden';
       document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener('keydown', handleKeyDown);
     }
 
     return () => {
       document.body.style.overflow = 'auto';
       document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [drawers.length, handleOpen, handleClose]);
 
@@ -127,9 +143,15 @@ export function DrawerContainer() {
     <AnimatePresence>
       {drawers.map((drawer, index) => (
         <React.Fragment key={drawer.id}>
-          <div className="fixed inset-0" style={{ zIndex: 10000 + index }}>
+          <motion.div
+            layout={!drawer.options.fixed}
+            className={clsx(drawer.options.fixed ? 'fixed inset-0' : 'h-dvh')}
+            style={{ zIndex: 10000 + index }}
+            role="dialog"
+            aria-modal="true"
+          >
             <div className="h-full w-full p-2">
-              <div className="bg-overlay-backdrop fixed inset-0 z-0" />
+              {drawer.options.showBackdrop && <div className="bg-overlay-backdrop fixed inset-0 z-0" />}
               <div
                 className={clsx('flex h-full', drawer.options.position === 'right' ? 'justify-end' : 'justify-start')}
               >
@@ -159,7 +181,7 @@ export function DrawerContainer() {
                 </motion.div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </React.Fragment>
       ))}
     </AnimatePresence>

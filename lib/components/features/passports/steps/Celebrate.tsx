@@ -8,6 +8,7 @@ import { Card, Button, drawer } from '$lib/components/core';
 import { ETHERSCAN } from '$lib/utils/constants';
 import { SharedPassportPane } from '../SharedPassportPane';
 import { usePassportContext } from '../provider';
+import { usePassportChain } from '$lib/hooks/usePassportChain';
 
 export function PassportCelebrate() {
   const videoRef = React.useRef(null);
@@ -15,6 +16,7 @@ export function PassportCelebrate() {
 
   const [mute, setMute] = React.useState(true);
   const [state] = usePassportContext();
+  const chain = usePassportChain(state.provider);
   const tokenId = state.mintState?.tokenId;
 
   React.useEffect(() => {
@@ -63,7 +65,9 @@ export function PassportCelebrate() {
               <Button
                 iconRight="icon-arrow-outward"
                 variant="tertiary-alt"
-                onClick={() => window.open(`${ETHERSCAN}/tx/${state.mintState?.txHash}`)}
+                onClick={() =>
+                  window.open(`${chain?.block_explorer_url}/tx/${state.mintState?.txHash}`)
+                }
               >
                 View txn.
               </Button>

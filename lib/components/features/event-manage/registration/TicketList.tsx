@@ -77,7 +77,7 @@ function TicketItem({ ticket }: { ticket: EventTicketType }) {
       </div>
 
       <div className="flex gap-1.5 items-center">
-        <i className="icon-user-group-outline size-5 text-tertiary" />
+        <i aria-hidden="true" className="icon-user-group-outline size-5 text-tertiary" />
         <p className="text-tertiary">
           {ticket.ticket_limit ? `${ticket.ticket_count || 0}/${ticket.ticket_limit}` : ticket.ticket_count || 0}
         </p>

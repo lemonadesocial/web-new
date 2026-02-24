@@ -1,3 +1,5 @@
+'use client';
+
 import { useEvent, useUpdateEvent } from "$lib/components/features/event-manage/store";
 import { GenerateStripeAccountLinkDocument, UpdateEventPaymentAccountsDocument, Event, CreateNewPaymentAccountDocument, ListNewPaymentAccountsDocument, NewPaymentProvider, PaymentAccountType } from "$lib/graphql/generated/backend/graphql";
 import { useMutation, useQuery } from "$lib/graphql/request";

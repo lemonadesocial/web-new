@@ -23,7 +23,7 @@ export function VisibilityDiscovery({ event }: { event: Event }) {
           <div className="text-tertiary text-sm">
             {event.private ? (
               <>
-                <i className="icon-sparkles text-warning-300 size-4" />{' '}
+                <i aria-hidden="true" className="icon-sparkles text-warning-300 size-4" />{' '}
                 <span className="text-warning-300 content-baseline text-sm align-middle">Private</span> {' — '}
                 <span className="align-middle">
                   This event is not listed on the calendar page. Calendar admins have manage access to the event.
@@ -31,7 +31,7 @@ export function VisibilityDiscovery({ event }: { event: Event }) {
               </>
             ) : (
               <>
-                <i className="icon-globe text-success-500 size-4" />{' '}
+                <i aria-hidden="true" className="icon-globe text-success-500 size-4" />{' '}
                 <span className="text-success-500 content-baseline text-sm align-middle">Public</span> {' — '}
                 <span className="align-middle">
                   This event is listed on the calendar page. Calendar admins have manage access to the event.
@@ -54,7 +54,7 @@ export function VisibilityDiscovery({ event }: { event: Event }) {
 
       {event.private && (
         <div className="flex gap-2 items-center">
-          <i className="icon-globe size-4 text-tertiary" />
+          <i aria-hidden="true" className="icon-globe size-4 text-tertiary" />
           <p className="text-tertiary text-sm">
             To be eligible for being featured on Lemonade discovery pages and communities, please set the visibility of
             the event to public.

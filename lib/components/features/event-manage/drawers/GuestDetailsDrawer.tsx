@@ -109,7 +109,7 @@ export function GuestDetailsDrawer({ email, event }: { email: string; event: str
           title: 'Ticket Replaced',
           description: <div className="flex items-center gap-0.5">
             <p className="text-tertiary text-sm">{upgrade.from_type_expanded?.title || 'Unknown'}</p>
-            <i className="icon-chevron-right size-4 text-quaternary" />
+            <i aria-hidden="true" className="icon-chevron-right size-4 text-quaternary" />
             <p className="text-tertiary text-sm">{upgrade.to_type_expanded?.title || 'Unknown'}</p>
           </div>,
           date: format(new Date(upgrade.updated_at), 'MMM d, yyyy, h:mm a'),
@@ -182,7 +182,7 @@ export function GuestDetailsDrawer({ email, event }: { email: string; event: str
     return (
       <div className="h-full flex flex-col">
         <div className="px-3 py-2 border-b border-b-divider gap-3 items-center flex flex-shrink-0">
-          <Button icon="icon-chevron-double-right" variant="tertiary" size="sm" onClick={() => drawer.close()} />
+          <Button icon="icon-chevron-double-right" variant="tertiary" size="sm" onClick={() => drawer.close()} aria-label="Close drawer" />
           <p>Guest Details</p>
         </div>
         <div className="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4">
@@ -208,7 +208,7 @@ export function GuestDetailsDrawer({ email, event }: { email: string; event: str
     return (
       <div className="h-full flex flex-col">
         <div className="px-3 py-2 border-b border-b-divider gap-3 items-center flex flex-shrink-0">
-          <Button icon="icon-chevron-double-right" variant="tertiary" size="sm" onClick={() => drawer.close()} />
+          <Button icon="icon-chevron-double-right" variant="tertiary" size="sm" onClick={() => drawer.close()} aria-label="Close drawer" />
           <p>Guest Details</p>
         </div>
         <div className="flex-1 overflow-y-auto no-scrollbar p-4">
@@ -413,7 +413,7 @@ function TimelineItem({
     <div className="relative flex gap-3">
       <div className="relative flex-shrink-0 w-7 pb-4">
         <div className={`size-7 rounded-full flex items-center justify-center ${iconBg} relative z-10`}>
-          <i className={`${icon} size-3.5`} />
+          <i aria-hidden="true" className={`${icon} size-3.5`} />
         </div>
         {!isLast && (
           <div className="absolute top-7 left-1/2 -translate-x-1/2 w-[1px] bottom-0 bg-primary/8" />
@@ -443,7 +443,7 @@ function PaymentItem({ payment }: { payment: EventGuestPayment }) {
             <div className="flex gap-1.5 items-center">
               {
                 payment.crypto_payment_info
-                  ? <i className="icon-wallet size-4 text-tertiary" />
+                  ? <i aria-hidden="true" className="icon-wallet size-4 text-tertiary" />
                   : <CardIcon cardBrand={payment.stripe_payment_info?.card?.brand as string} />
               }
               {
@@ -475,11 +475,11 @@ function PaymentItem({ payment }: { payment: EventGuestPayment }) {
                     payment.crypto_payment_info.tx_hash?.replace(/^(.{7})(.*)(.{4})$/, '$1...$3')
                   }
                 </p>
-                <i className="icon-arrow-outward size-4 text-tertiary" />
+                <i aria-hidden="true" className="icon-arrow-outward size-4 text-tertiary" />
               </div>
             ) : (
               <div className="flex items-center gap-1.5">
-                <i className="icon-stripe size-4 text-tertiary" />
+                <i aria-hidden="true" className="icon-stripe size-4 text-tertiary" />
                 <p className="text-tertiary text-sm">
                   {
                     payment.stripe_payment_info?.payment_intent?.replace(/^(.{7})(.*)(.{4})$/, '$1...$3')

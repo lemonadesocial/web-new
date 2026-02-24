@@ -1,0 +1,100 @@
+fragment AIConfigFields on Config {
+  _id
+  createdAt
+  updatedAt
+  avatar
+  backstory
+  description
+  filter
+  isPublic
+  job
+  modelName
+  name
+  openaiApiKey
+  systemMessage
+  temperature
+  topP
+  user
+  userExpanded {
+    _id
+    name
+    image_avatar
+  }
+  welcomeMessage
+  welcomeMetadata
+  spaces
+  documents
+  documentsExpanded {
+    _id
+    title
+    text
+  }
+}
+
+query GetAIConfig($id: ObjectId!) {
+  config(_id: $id) {
+    ...AIConfigFields
+  }
+}
+
+query GetListAIConfig($filter: ConfigFilter, $limit: Int, $startAfter: String, $endBefore: String) {
+  configs(filter: $filter, limit: $limit, startAfter: $startAfter, endBefore: $endBefore) {
+    items {
+      ...AIConfigFields
+    }
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+    }
+  }
+}
+
+mutation RunAIChat($message: String!, $config: ObjectId!, $session: String, $data: JSON) {
+  run(message: $message, config: $config, session: $session, data: $data) {
+    message
+    sourceDocuments
+    metadata
+  }
+}
+
+mutation UpdateAIConfig($input: ConfigInput!, $id: ObjectId!) {
+  updateConfig(input: $input, _id: $id) {
+    ...AIConfigFields
+  }
+}
+
+mutation CreateAIConfig($input: ConfigInput!) {
+  createConfig(input: $input) {
+    ...AIConfigFields
+  }
+}
+
+mutation CreateDocument($input: DocumentInput!) {
+  createDocument(input: $input) {
+    _id
+    createdAt
+    isPublic
+    metadata
+    text
+    title
+    updatedAt
+    user
+  }
+}
+
+query ListDocuments($skip: Int, $limit: Int) {
+  listDocuments(skip: $skip, limit: $limit) {
+    items {
+      _id
+      createdAt
+      updatedAt
+      metadata
+      title
+      text
+      isPublic
+      user
+    }
+    total
+  }
+}
