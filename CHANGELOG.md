@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.7.3](https://github.com/lemonadesocial/web-new/compare/v10.7.2...v10.7.3) (2026-02-24)
+
+
+### Bug Fixes
+
+* blast email ([6dc072b](https://github.com/lemonadesocial/web-new/commit/6dc072b59fc2adc06b3d687b175141358f61a2f4))
+
 ## [10.7.2](https://github.com/lemonadesocial/web-new/compare/v10.7.1...v10.7.2) (2026-02-23)
 
 
