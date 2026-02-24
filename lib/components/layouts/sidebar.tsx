@@ -224,12 +224,12 @@ const Sidebar = () => {
                 {match(toggle)
                   .with('open', () => (
                     <>
-                      <div className="min-w-full">
+                      <div>
                         <p className="text-sm">Upgrade to Pro</p>
                         <p className="text-quaternary text-xs">Unlock more benefits</p>
                       </div>
                       <div className="p-2 bg-alert-500 rounded-full w-[30px] h-[30px] aspect-square flex items-center justify-center">
-                        <i className="icon-flash w-4 h-4" />
+                        <i className="icon-flash w-4 h-4 aspect-square" />
                       </div>
                     </>
                   ))
