@@ -267,9 +267,8 @@ export function AmbassadorSection({ space }: { space: Space }) {
                     });
                   }}
                 />
-              </div>
-            </CardTable.Row>
-          ))}
+              </CardTable.Row>
+            ))}
         </CardTable.Root>
       </div>
 

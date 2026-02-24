@@ -87,16 +87,16 @@ const Sidebar = () => {
 
       <div
         className={clsx(
-          'relative bg-overlay-primary h-screen text-tertiary border-r z-50 transform transition-transform duration-300 ease-in-out',
+          'relative bg-overlay-primary max-sm:fixed h-screen text-tertiary border-r z-50 transform transition-transform duration-300 ease-in-out',
           toggle === 'mini' && 'border-r-0 max-sm:-translate-x-full',
-          toggle === 'open' && 'max-sm:fixed max-sm:left-0',
+          toggle === 'open' && 'max-sm:left-0',
         )}
       >
         <div
           className={clsx(
             'flex flex-col h-full transition-all duration-300',
             toggle === 'open' && 'w-64',
-            toggle === 'mini' && 'w-16 max-sm:hidden',
+            toggle === 'mini' && 'w-16 max-sm:invisible',
           )}
         >
           <div className="flex-1 flex flex-col overflow-hidden">
@@ -224,7 +224,7 @@ const Sidebar = () => {
                 {match(toggle)
                   .with('open', () => (
                     <>
-                      <div>
+                      <div className="min-w-full">
                         <p className="text-sm">Upgrade to Pro</p>
                         <p className="text-quaternary text-xs">Unlock more benefits</p>
                       </div>
