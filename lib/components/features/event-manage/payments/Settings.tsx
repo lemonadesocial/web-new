@@ -1,84 +1,127 @@
 'use client';
-import { Button, InputField, Menu, MenuItem } from '$lib/components/core';
+
+import { Button, Chip, drawer, modal } from "$lib/components/core";
+import { NewPaymentAccount, NewPaymentProvider, PaymentAccountType } from "$lib/graphql/generated/backend/graphql";
+import { useAttachStripeAccount, useStripeSetup } from "$lib/hooks/useStripeSetup";
+import { groupPaymentAccounts } from "$lib/utils/payment";
+import { AcceptWalletPaymentsModal } from "$lib/components/features/event-manage/ticket/AcceptWalletPaymentsModal";
+import { PaymentNetwork } from "$lib/components/features/event-manage/common/PaymentNetwork";
+import { VaultInfoDrawer } from "$lib/components/features/event-manage/drawers/VaultInfoDrawer";
+import { useEvent } from "$lib/components/features/event-manage/store";
 
 export function Settings() {
+  const event = useEvent();
+
+  const handleCreateVault = () => {
+    modal.open(AcceptWalletPaymentsModal, {
+      props: { event: event! },
+    });
+  };
+
+  if (!event) return null;
+
+  const stripeAttached = event.payment_accounts_expanded?.some((vault) => vault?.provider === NewPaymentProvider.Stripe);
+  const cryptoAccounts = event.payment_accounts_expanded?.filter((vault) => vault?.provider !== NewPaymentProvider.Stripe);
+  const groupedCryptoAccounts = groupPaymentAccounts(cryptoAccounts as NewPaymentAccount[]);
+
   return (
-    <div className="page mx-auto py-6 px-4 md:px-0">
-      <div className="flex flex-col gap-8">
-        <div className="flex flex-col gap-3">
-          <div className="flex gap-2">
-            <h3 className="text-xl font-semibold flex-1">Vaults (5)</h3>
-            <Button iconLeft="icon-plus" size="sm" variant="tertiary-alt">
-              Add Vault
-            </Button>
-          </div>
-          <InputField
-            iconLeft="icon-search"
-            placeholder="Search"
-            // value={search}
-            // onChangeText={(text) => {
-            //   setSearch(text);
-            //   debouncedPerformSearch(text);
-            // }}
-          />
+    <div className="page mx-auto py-6 px-4 md:px-0 space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold">Vaults ({event.payment_accounts_new?.length || 0})</h1>
+        <Button variant="tertiary" onClick={handleCreateVault} iconLeft="icon-plus" size="sm">
+          Add Vault
+        </Button>
+      </div>
 
-          <div className="flex justify-between">
-            <Menu.Root placement="bottom-start">
-              <Menu.Trigger>
-                {({ toggle }) => (
-                  <>
-                    <Button
-                      iconLeft="icon-filter-line"
-                      onClick={toggle}
-                      size="sm"
-                      variant="tertiary-alt"
-                      className="hidden md:block"
-                      iconRight="icon-chevron-down"
-                    >
-                      All Networks
-                    </Button>
-                    <Button
-                      icon="icon-filter-line"
-                      onClick={toggle}
-                      size="sm"
-                      variant="tertiary-alt"
-                      className="md:hidden"
-                    />
-                  </>
-                )}
-              </Menu.Trigger>
-              <Menu.Content className="p-2 w-52">{({ toggle }) => <>Content</>}</Menu.Content>
-            </Menu.Root>
-
-            <Menu.Root placement="bottom-end">
-              <Menu.Trigger>
-                {({ toggle }) => (
-                  <>
-                    <Button
-                      iconLeft="icon-filter-line"
-                      onClick={toggle}
-                      size="sm"
-                      variant="tertiary-alt"
-                      className="hidden md:block"
-                      iconRight="icon-chevron-down"
-                    >
-                      All Vaults
-                    </Button>
-                    <Button
-                      icon="icon-filter-line"
-                      onClick={toggle}
-                      size="sm"
-                      variant="tertiary-alt"
-                      className="md:hidden"
-                    />
-                  </>
-                )}
-              </Menu.Trigger>
-              <Menu.Content className="p-2 w-52">{({ toggle }) => <>Content</>}</Menu.Content>
-            </Menu.Root>
-          </div>
-        </div>
+      <div className="rounded-md border border-card-border bg-card overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-primary/4">
+            <tr>
+              <th className="px-4 py-2 text-left text-sm font-medium text-tertiary">Name</th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-tertiary">Type</th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-tertiary">Networks</th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-tertiary">Assets</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-(--color-divider)">
+            <StripeRow connected={!!stripeAttached} />
+            {Object.values(groupedCryptoAccounts).map((vaults) => (
+              <VaultRow key={vaults[0]?._id} vaults={vaults} />
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
+  );
+}
+
+function StripeRow({ connected }: { connected: boolean }) {
+  const handleStripeSetup = useStripeSetup();
+  useAttachStripeAccount({ skip: connected });
+  
+  return (
+    <tr >
+      <td className="px-4 py-3">
+        <p>Stripe</p>
+      </td>
+      <td className="px-4 py-3">
+        <Chip className="rounded-full w-fit" variant="secondary" size="xxs">
+          Direct Ticketing
+        </Chip>
+      </td>
+      <td className="px-4 py-3">
+      <i className="icon-stripe-alt size-5" />
+      </td>
+      <td className="px-4 py-3">
+        <p className="text-tertiary">_</p>
+      </td>
+      {
+        !connected && (
+          <td className="px-4 py-3 text-right">
+            <Button variant="secondary" size="xs" onClick={handleStripeSetup}>
+              Connect
+            </Button>
+        </td>
+        )
+      }
+    </tr>
+  );
+}
+
+function VaultRow({ vaults }: { vaults: NewPaymentAccount[]; }) {
+  const handleEdit = () => {
+    drawer.open(VaultInfoDrawer, {
+      props: { vaults },
+    });
+  };
+
+  const vault = vaults[0];
+
+  return (
+    <tr>
+      <td className="px-4 py-3">
+        <p>{vault.title || 'Untitled Vault'}</p>
+      </td>
+      <td className="px-4 py-3">
+        <Chip className="rounded-full w-fit" variant="secondary" size="xxs">
+          {vault.type === PaymentAccountType.EthereumStake ? 'Staking' : 'Direct Ticketing'}
+        </Chip>
+      </td>
+      <td className="px-4 py-3 flex gap-3">
+        {vaults.map((vault) => (
+          <PaymentNetwork key={vault._id} vault={vault} />
+        ))}
+      </td>
+      <td className="px-4 py-3">
+        <p className="text-tertiary">_</p>
+      </td>
+      <td className="px-4 py-3 text-right">
+        <i
+          className="icon-edit-sharp size-5 text-tertiary cursor-pointer"
+          onClick={handleEdit}
+        />
+      </td>
+    </tr>
   );
 }

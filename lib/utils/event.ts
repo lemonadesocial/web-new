@@ -9,6 +9,7 @@ import {
   EventTicketCategory,
   EventTicketPrice,
   EventTokenGate,
+  NewPaymentAccount,
   PaymentAccountInfo,
   PaymentAccountType,
   PurchasableTicketType,
@@ -243,6 +244,12 @@ export function getEmailBlastsRecipients(item: EmailSetting) {
   return list.join(', ');
 }
 
-export function getEventDirectPaymentAccounts (event: Event) {
-  return event.payment_accounts_expanded?.filter((account) => account?.type === PaymentAccountType.Ethereum || account?.type === PaymentAccountType.EthereumRelay) || [];
+export function filterDirectPaymentAccounts(
+  accounts: Array<NewPaymentAccount | null | undefined> | null | undefined
+): NewPaymentAccount[] {
+  return (accounts ?? []).filter(
+    (account): account is NewPaymentAccount =>
+      account != null &&
+      (account.type === PaymentAccountType.Ethereum || account.type === PaymentAccountType.EthereumRelay)
+  );
 }

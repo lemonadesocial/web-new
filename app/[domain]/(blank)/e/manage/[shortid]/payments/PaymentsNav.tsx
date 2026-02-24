@@ -6,6 +6,7 @@ import React from 'react';
 
 const routers = [
   { label: 'Direct Ledger', path: 'direct-ledger' },
+  { label: 'Settings', path: 'settings' },
 ];
 
 export function PaymentsNav() {
