@@ -33,7 +33,7 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { UpdateFiatPriceModal } from './UpdateFiatPriceModal';
-import { formatFiatPrice } from '$lib/utils/event';
+import { formatCryptoPrice, formatFiatPrice, getEventDirectPaymentAccounts } from '$lib/utils/event';
 
 import { TicketCapacityModal } from './TicketCapacityModal';
 import { AdditionalTicketsModal } from './AdditionalTicketsModal';
@@ -43,6 +43,8 @@ import { useEvent } from '../store';
 import { generateUrl } from '$lib/utils/cnd';
 import { uploadFiles } from '$lib/utils/file';
 import { Pane } from '$lib/components/core/pane/pane';
+import { AcceptWalletPaymentsModal } from './AcceptWalletPaymentsModal';
+import { UpdateCryptoPriceModal } from './UpdateCryptoPriceModal';
 
 type TicketFormState = {
   title: string;
@@ -145,7 +147,7 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
   ];
 
   const [showDescription, setShowDescription] = useState(!!initialTicketType?.description);
-  const [paymentType, setPaymentType] = useState<PaymentType>(defaultValues.fiatPrice ? 'direct' : 'free');
+  const [paymentType, setPaymentType] = useState<PaymentType>(defaultValues.fiatPrice || defaultValues.cryptoPrice ? 'direct' : 'free');
 
   const { data: dataExportEventTickets } = useQuery(ExportEventTicketsDocument, {
     variables: {
@@ -277,6 +279,47 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
     });
   };
 
+  const handleOpenWalletPrice = () => {
+    if (cryptoPrice) {
+      modal.open(UpdateCryptoPriceModal, {
+        className: 'overflow-visible',
+        props: {
+          onChange: (price) => form.setValue('cryptoPrice', price),
+          price: cryptoPrice,
+        },
+      });
+
+      return;
+    }
+
+    const directPaymentAccounts = getEventDirectPaymentAccounts(event!);
+
+    if (directPaymentAccounts.length) {
+      modal.open(UpdateCryptoPriceModal, {
+        className: 'overflow-visible',
+        props: {
+          onChange: (price) => form.setValue('cryptoPrice', price),
+        },
+      });
+
+      return;
+    }
+
+    modal.open(AcceptWalletPaymentsModal, {
+      props: {
+        event: event!,
+        onAccept: () => {
+          modal.open(UpdateCryptoPriceModal, {
+            className: 'overflow-visible',
+            props: {
+              onChange: (price) => form.setValue('cryptoPrice', price),
+            },
+          });
+        },
+      },
+    });
+  };
+
   const { fiatPrice, cryptoPrice, ticket_limit, ticket_limit_per } = form.watch();
 
   return (
@@ -390,8 +433,8 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
               {paymentType === 'direct' && (
                 <>
                   <p className="mt-2 text-tertiary text-sm">
-                    Guests pay upfront using crypto or card. For approval-based events, they&apos;ll only be charged
-                    once their registration is accepted.
+                    Guests pay upfront using crypto or card. For approval-based events, they&apos;ll only be charged once
+                    their registration is accepted.
                   </p>
                   <div className="rounded-sm bg-primary/8 mt-4">
                     <div
@@ -419,12 +462,22 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
                     </div>
                     <hr className="border-t border-t-divider" />
                     <div
+                      classNametext-tertiary
                       className="flex py-2.5 px-3 items-center gap-2 cursor-pointer"
-                      onClick={() => toast.success('Coming soon')}
+                      onClick={handleOpenWalletPrice}
                     >
                       <i aria-hidden="true" className="icon-wallet size-5 text-tertiary" />
                       <p className="flex-1">Price for Wallet</p>
-                      <i aria-hidden="true" className="icon-chevron-right size-5 text-tertiary" />
+                      {
+                        cryptoPrice ? (
+                          <div className="flex items-center gap-2">
+                            <p className="text-tertiary">{formatCryptoPrice(cryptoPrice)}</p>
+                            <i className="icon-edit-sharp size-5 text-tertiary" />
+                          </div>
+                        ) : (
+                          <i aria-hidden="true" className="icon-chevron-right size-5 text-tertiary" />
+                        )
+                      }
                     </div>
                   </div>
                 </>
