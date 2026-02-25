@@ -35,19 +35,11 @@ query ListSubscriptionItems {
   }
 }
 
-query PreviewUpdateSpaceSubscription($space: MongoID!, $input: UpdateSubscriptionInput!) {
-  previewUpdateSubscription(space: $space, input: $input) {
-    subscription {
-      _id
-      status
-      current_period_end
-      current_period_start
-      space
-    }
-    items {
-      active
-      type
-    }
+query PreviewUpdateSpaceSubscription($id: MongoID!, $space: MongoID!, $input: UpdateSubscriptionInput!) {
+  previewUpdateSubscription(_id: $id, space: $space, input: $input) {
+    price
+    currency
+    decimals
   }
 }
 
@@ -94,13 +86,5 @@ mutation UpdateSpaceSubscription($id: MongoID!, $space: MongoID!, $input: Update
 }
 
 mutation CancelSpaceSubscription($id: MongoID!, $space: MongoID!) {
-  cancelSpaceSubscription(_id: $id, space: $space) {
-    subscription {
-      _id
-      status
-      cancel_at_period_end
-      current_period_end
-      space
-    }
-  }
+  cancelSpaceSubscription(_id: $id, space: $space)
 }

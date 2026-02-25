@@ -184,20 +184,26 @@ export class GraphqlClient {
 
       const firstError = gqlError.response?.errors?.[0];
 
-      if (firstError?.extensions?.code === 'FEATURE_GATED' || gqlError.response?.status === 402) {
-        const ext = firstError?.extensions;
-        request.resolve({
-          data: null,
-          error: {
-            message: firstError?.message || 'This feature requires a plan upgrade',
-            featureGated: true,
-            featureCode: ext?.feature_code,
-            requiredTier: ext?.required_tier,
-            currentTier: ext?.current_tier,
-            upgradeUrl: ext?.upgrade_url,
-          },
-        });
-        return;
+      if (firstError?.extensions?.code === 402) {
+        try {
+          const parsed = JSON.parse(firstError.message);
+          if (parsed.error === 'feature_gated') {
+            request.resolve({
+              data: null,
+              error: {
+                message: parsed.message || 'This feature requires a plan upgrade',
+                featureGated: true,
+                featureCode: parsed.feature_code,
+                requiredTier: parsed.required_tier,
+                currentTier: parsed.current_tier,
+                upgradeUrl: parsed.upgrade_url,
+              },
+            });
+            return;
+          }
+        } catch {
+          // message is not JSON, fall through to generic handler
+        }
       }
 
       if (firstError?.message) {

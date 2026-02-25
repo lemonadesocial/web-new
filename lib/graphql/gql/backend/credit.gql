@@ -32,21 +32,22 @@ query GetUsageAnalytics($standId: String!, $startDate: DateTimeISO!, $endDate: D
       requests
     }
     byModel {
-      modelId
-      modelName
-      credits
+      model
+      tier
       requests
+      credits
+      percentage
     }
     topUsers {
       userId
-      userName
-      credits
       requests
+      credits
+      percentage
     }
     totals {
-      totalCredits
-      totalRequests
-      averageCreditsPerRequest
+      requests
+      credits
+      avgCreditsPerRequest
     }
   }
 }
