@@ -79,7 +79,7 @@ Authentication cookies require a specific hostname. Add to your `/etc/hosts`:
 
 For local auth, either:
 - Run [lemonade-identity](https://github.com/lemonadesocial/lemonade-identity) locally (follow its README)
-- Or remove `IDENTITY_URL` from `.env` to use the staging identity service
+- Or remove `NEXT_PUBLIC_IDENTITY_URL` from `.env` to use the staging identity service
 
 ### 5. Start Development Server
 
