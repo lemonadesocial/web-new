@@ -1,14 +1,12 @@
 'use client';
 
-import React from 'react';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { debounce } from 'lodash';
 import { Button, Card, InputField, modal, Skeleton, toast } from '$lib/components/core';
-import { Space } from '$lib/graphql/generated/backend/graphql';
-import { NewPaymentAccount, NewPaymentProvider, PaymentAccountType } from '$lib/graphql/generated/backend/graphql';
+import { Space, NewPaymentAccount, NewPaymentProvider, PaymentAccountType } from '$lib/graphql/generated/backend/graphql';
 import { CreateDirectVaultModal } from '$lib/components/features/modals/CreateDirectVaultModal';
-import { useMutation, useQuery } from '$lib/graphql/request';
-import { AttachSpacePaymentAccountDocument, ListSpacePaymentAccountsDocument } from '$lib/graphql/generated/backend/graphql';
+import { useMutation } from '$lib/graphql/request';
+import { AttachSpacePaymentAccountDocument } from '$lib/graphql/generated/backend/graphql';
 import { useAtomValue } from 'jotai';
 import { listChainsAtom } from '$lib/jotai';
 import { groupPaymentAccounts } from '$lib/utils/payment';
@@ -29,9 +27,12 @@ function getNetwork(account: NewPaymentAccount): string | undefined {
 
 export type CommunityVaultsSectionProps = {
   space: Space;
+  items: NewPaymentAccount[];
+  loading: boolean;
+  refetch: () => void;
 };
 
-export function CommunityVaultsSection({ space }: CommunityVaultsSectionProps) {
+export function CommunityVaultsSection({ space, items, loading, refetch }: CommunityVaultsSectionProps) {
   const chains = useAtomValue(listChainsAtom);
   const [query, setQuery] = React.useState('');
   const [search, setSearch] = React.useState('');
@@ -49,12 +50,6 @@ export function CommunityVaultsSection({ space }: CommunityVaultsSectionProps) {
     return () => debouncedSetSearch.cancel();
   }, [query, debouncedSetSearch]);
 
-  const { data, loading, refetch } = useQuery(ListSpacePaymentAccountsDocument, {
-    variables: { space: space._id, search: search.trim() || undefined },
-    skip: !space._id,
-  });
-
-  const items = (data?.listSpacePaymentAccounts?.items ?? []) as NewPaymentAccount[];
   const [attachSpacePaymentAccount] = useMutation(AttachSpacePaymentAccountDocument, {
     onComplete: () => {
       toast.success('Vault added to community');
@@ -79,7 +74,10 @@ export function CommunityVaultsSection({ space }: CommunityVaultsSectionProps) {
   };
 
   const vaultItems = items.filter((i) => i.provider !== NewPaymentProvider.Stripe);
-  const groupedPaymentAccounts = groupPaymentAccounts(vaultItems);
+  const filteredVaults = search.trim()
+    ? vaultItems.filter((v) => v.title?.toLowerCase().includes(search.trim().toLowerCase()))
+    : vaultItems;
+  const groupedPaymentAccounts = groupPaymentAccounts(filteredVaults);
   const paymentAccountList = Object.values(groupedPaymentAccounts);
   const total = vaultItems.length;
 
@@ -164,17 +162,17 @@ export function CommunityVaultsSection({ space }: CommunityVaultsSectionProps) {
                           </div>
                         )
                       ) : (
-                        <span className="text-xs text-tertiary">—</span>
+                        <span className="text-xs text-tertiary">&mdash;</span>
                       )}
                     </div>
                     <div className="flex justify-center items-center gap-1 text-secondary">
-                      <span className="text-sm">—</span>
+                      <span className="text-sm">&mdash;</span>
                     </div>
                     <div className="flex justify-center items-center gap-1 text-secondary">
-                      <span className="text-sm">—</span>
+                      <span className="text-sm">&mdash;</span>
                     </div>
                     <div className="flex justify-center items-center gap-1 text-secondary">
-                      <span className="text-sm">—</span>
+                      <span className="text-sm">&mdash;</span>
                     </div>
                   </div>
                 );

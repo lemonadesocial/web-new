@@ -12,27 +12,24 @@ import {
   AttachSpacePaymentAccountDocument,
   CreateNewPaymentAccountDocument,
   ListNewPaymentAccountsDocument,
-  ListSpacePaymentAccountsDocument,
 } from '$lib/graphql/generated/backend/graphql';
-import { useMutation, useQuery } from '$lib/graphql/request';
+import { useMutation } from '$lib/graphql/request';
 import { useStripeSetup } from '$lib/hooks/useStripeSetup';
 import { useMe } from '$lib/hooks/useMe';
 import { Space } from '$lib/graphql/generated/backend/graphql';
 
 export type CommunityStripeSectionProps = {
   space: Space;
+  items: NewPaymentAccount[];
+  loading: boolean;
+  refetch: () => void;
 };
 
-export function CommunityStripeSection({ space }: CommunityStripeSectionProps) {
+export function CommunityStripeSection({ space, items, loading: loadingSpaceAccounts, refetch }: CommunityStripeSectionProps) {
   const handleStripeSetup = useStripeSetup();
   const me = useMe();
+  const [connecting, setConnecting] = React.useState(false);
 
-  const { data, loading: loadingSpaceAccounts, refetch } = useQuery(ListSpacePaymentAccountsDocument, {
-    variables: { space: space._id },
-    skip: !space._id,
-  });
-
-  const items = (data?.listSpacePaymentAccounts?.items ?? []) as NewPaymentAccount[];
   const stripeAttachedToSpace = items.some((i) => i.provider === NewPaymentProvider.Stripe);
   const stripeAccountOnSpace = items.find((i) => i.provider === NewPaymentProvider.Stripe);
 
@@ -41,9 +38,13 @@ export function CommunityStripeSection({ space }: CommunityStripeSectionProps) {
     {
       onComplete: () => {
         toast.success('Stripe added to community');
+        setConnecting(false);
         refetch();
       },
-      onError: (e) => toast.error(e.message),
+      onError: (e) => {
+        toast.error(e.message);
+        setConnecting(false);
+      },
     }
   );
 
@@ -57,35 +58,56 @@ export function CommunityStripeSection({ space }: CommunityStripeSectionProps) {
           });
         }
       },
-      onError: (e) => toast.error(e.message),
+      onError: (e) => {
+        toast.error(e.message);
+        setConnecting(false);
+      },
     }
   );
 
-  const { loading: loadingStripeAccounts } = useQuery(ListNewPaymentAccountsDocument, {
-    variables: { provider: NewPaymentProvider.Stripe },
-    fetchPolicy: 'network-only',
-    skip: stripeAttachedToSpace || !space._id,
-    onComplete: (accountData) => {
-      const userStripeAccount = accountData?.listNewPaymentAccounts?.[0];
-      if (userStripeAccount && space._id) {
-        attachStripeToSpace({
-          variables: { space: space._id, paymentAccount: userStripeAccount._id },
-        });
-        return;
-      }
-      if (me?.stripe_connected_account?.connected) {
-        createStripeAccount({
-          variables: { type: PaymentAccountType.Digital, provider: NewPaymentProvider.Stripe },
-        });
-      }
-    },
-  });
+  const [fetchAndAttach, { loading: loadingFetchAccounts }] = useMutation(
+    ListNewPaymentAccountsDocument,
+    {
+      onComplete: (_, accountData) => {
+        const userStripeAccount = (accountData as { listNewPaymentAccounts?: NewPaymentAccount[] })?.listNewPaymentAccounts?.[0];
+        if (userStripeAccount && space._id) {
+          attachStripeToSpace({
+            variables: { space: space._id, paymentAccount: userStripeAccount._id },
+          });
+          return;
+        }
+        if (me?.stripe_connected_account?.connected) {
+          createStripeAccount({
+            variables: { type: PaymentAccountType.Digital, provider: NewPaymentProvider.Stripe },
+          });
+          return;
+        }
+        // No existing Stripe account — redirect to Stripe setup
+        setConnecting(false);
+        handleStripeSetup();
+      },
+      onError: (e) => {
+        toast.error(e.message);
+        setConnecting(false);
+      },
+    }
+  );
+
+  const handleConnectStripe = () => {
+    if (stripeAttachedToSpace) return;
+    setConnecting(true);
+    // Check if user already has a Stripe payment account we can attach
+    fetchAndAttach({
+      variables: { provider: NewPaymentProvider.Stripe },
+    });
+  };
 
   const loading =
     loadingSpaceAccounts ||
-    loadingStripeAccounts ||
     loadingAttachStripe ||
-    loadingCreateStripe;
+    loadingCreateStripe ||
+    loadingFetchAccounts ||
+    connecting;
 
   return (
     <div className="flex flex-col gap-3">
@@ -96,7 +118,7 @@ export function CommunityStripeSection({ space }: CommunityStripeSectionProps) {
             variant="secondary"
             size="sm"
             iconLeft="icon-plus"
-            onClick={handleStripeSetup}
+            onClick={handleConnectStripe}
             loading={loading}
           >
             Connect Stripe
@@ -129,7 +151,7 @@ export function CommunityStripeSection({ space }: CommunityStripeSectionProps) {
             <Button
               variant="secondary"
               className="mt-4"
-              onClick={handleStripeSetup}
+              onClick={handleConnectStripe}
             >
               Connect Stripe
             </Button>

@@ -1,13 +1,13 @@
 'use client';
 
-import { Button, Chip, drawer, modal } from "$lib/components/core";
-import { NewPaymentAccount, NewPaymentProvider, PaymentAccountType } from "$lib/graphql/generated/backend/graphql";
-import { useAttachStripeAccount, useStripeSetup } from "$lib/hooks/useStripeSetup";
-import { groupPaymentAccounts } from "$lib/utils/payment";
-import { AcceptWalletPaymentsModal } from "$lib/components/features/event-manage/ticket/AcceptWalletPaymentsModal";
-import { PaymentNetwork } from "$lib/components/features/event-manage/common/PaymentNetwork";
-import { VaultInfoDrawer } from "$lib/components/features/event-manage/drawers/VaultInfoDrawer";
-import { useEvent } from "$lib/components/features/event-manage/store";
+import { Button, Chip, drawer, modal } from '$lib/components/core';
+import { NewPaymentAccount, NewPaymentProvider, PaymentAccountType } from '$lib/graphql/generated/backend/graphql';
+import { useAttachStripeAccount, useStripeSetup } from '$lib/hooks/useStripeSetup';
+import { groupPaymentAccounts } from '$lib/utils/payment';
+import { AcceptWalletPaymentsModal } from '$lib/components/features/event-manage/ticket/AcceptWalletPaymentsModal';
+import { PaymentNetwork } from '$lib/components/features/event-manage/common/PaymentNetwork';
+import { VaultInfoDrawer } from '$lib/components/features/event-manage/drawers/VaultInfoDrawer';
+import { useEvent } from '$lib/components/features/event-manage/store';
 
 export function Settings() {
   const event = useEvent();
@@ -59,9 +59,9 @@ export function Settings() {
 function StripeRow({ connected }: { connected: boolean }) {
   const handleStripeSetup = useStripeSetup();
   useAttachStripeAccount({ skip: connected });
-  
+
   return (
-    <tr >
+    <tr>
       <td className="px-4 py-3">
         <p>Stripe</p>
       </td>
@@ -71,25 +71,23 @@ function StripeRow({ connected }: { connected: boolean }) {
         </Chip>
       </td>
       <td className="px-4 py-3">
-      <i className="icon-stripe-alt size-5" />
+        <i aria-hidden="true" className="icon-stripe-alt size-5" />
       </td>
       <td className="px-4 py-3">
-        <p className="text-tertiary">_</p>
+        <p className="text-tertiary">&mdash;</p>
       </td>
-      {
-        !connected && (
-          <td className="px-4 py-3 text-right">
-            <Button variant="secondary" size="xs" onClick={handleStripeSetup}>
-              Connect
-            </Button>
-        </td>
-        )
-      }
+      <td className="px-4 py-3 text-right">
+        {!connected && (
+          <Button variant="secondary" size="xs" onClick={handleStripeSetup}>
+            Connect
+          </Button>
+        )}
+      </td>
     </tr>
   );
 }
 
-function VaultRow({ vaults }: { vaults: NewPaymentAccount[]; }) {
+function VaultRow({ vaults }: { vaults: NewPaymentAccount[] }) {
   const handleEdit = () => {
     drawer.open(VaultInfoDrawer, {
       props: { vaults },
@@ -109,17 +107,19 @@ function VaultRow({ vaults }: { vaults: NewPaymentAccount[]; }) {
         </Chip>
       </td>
       <td className="px-4 py-3 flex gap-3">
-        {vaults.map((vault) => (
-          <PaymentNetwork key={vault._id} vault={vault} />
+        {vaults.map((v) => (
+          <PaymentNetwork key={v._id} vault={v} />
         ))}
       </td>
       <td className="px-4 py-3">
-        <p className="text-tertiary">_</p>
+        <p className="text-tertiary">&mdash;</p>
       </td>
       <td className="px-4 py-3 text-right">
-        <i
+        <button
+          type="button"
           className="icon-edit-sharp size-5 text-tertiary cursor-pointer"
           onClick={handleEdit}
+          aria-label={`Edit ${vault.title || 'vault'}`}
         />
       </td>
     </tr>
