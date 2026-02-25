@@ -1,9 +1,7 @@
 'use client';
 
 import React from 'react';
-import { NewPaymentAccount } from '$lib/graphql/generated/backend/graphql';
-import { ListSpacePaymentAccountsDocument } from '$lib/graphql/generated/backend/graphql';
-import { Space } from '$lib/graphql/generated/backend/graphql';
+import { ListSpacePaymentAccountsDocument, NewPaymentAccount, Space } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { CommunityVaultsSection } from './CommunityVaultsSection';
 import { CommunityStripeSection } from './CommunityStripeSection';
