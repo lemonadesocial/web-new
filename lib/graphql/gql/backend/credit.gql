@@ -1,14 +1,14 @@
 #### Queries
 
 query GetStandCredits($standId: String!) {
-  getStandCredits(standId: $standId) {
+  getStandCredits(stand_id: $standId) {
     credits
-    subscriptionTier
-    subscriptionCredits
-    purchasedCredits
-    subscriptionRenewalDate
-    subscriptionStatus
-    estimatedDepletionDate
+    subscription_tier
+    subscription_credits
+    purchased_credits
+    subscription_renewal_date
+    subscription_status
+    estimated_depletion_date
   }
 }
 
@@ -18,28 +18,28 @@ query GetAvailableModels {
     provider
     name
     tier
-    creditsPerRequest
+    credits_per_request
     capabilities
-    isDefault
+    is_default
   }
 }
 
 query GetUsageAnalytics($standId: String!, $startDate: DateTimeISO!, $endDate: DateTimeISO!) {
-  getUsageAnalytics(standId: $standId, startDate: $startDate, endDate: $endDate) {
-    dailyUsage {
+  getUsageAnalytics(stand_id: $standId, start_date: $startDate, end_date: $endDate) {
+    daily_usage {
       date
       credits
       requests
     }
-    byModel {
+    by_model {
       model
       tier
       requests
       credits
       percentage
     }
-    topUsers {
-      userId
+    top_users {
+      user_id
       requests
       credits
       percentage
@@ -47,7 +47,7 @@ query GetUsageAnalytics($standId: String!, $startDate: DateTimeISO!, $endDate: D
     totals {
       requests
       credits
-      avgCreditsPerRequest
+      avg_credits_per_request
     }
   }
 }
@@ -56,22 +56,22 @@ query GetUsageAnalytics($standId: String!, $startDate: DateTimeISO!, $endDate: D
 
 mutation PurchaseSubscription($input: PurchaseSubscriptionInput!) {
   purchaseSubscription(input: $input) {
-    checkoutUrl
-    sessionId
+    checkout_url
+    session_id
   }
 }
 
 mutation PurchaseCredits($input: PurchaseCreditInput!) {
   purchaseCredits(input: $input) {
-    checkoutUrl
-    sessionId
+    checkout_url
+    session_id
   }
 }
 
 mutation CancelCreditSubscription($input: CancelSubscriptionInput!) {
   cancelSubscription(input: $input) {
     success
-    effectiveDate
+    effective_date
   }
 }
 
@@ -81,8 +81,8 @@ mutation SetPreferredModel($input: SetPreferredModelInput!) {
     provider
     name
     tier
-    creditsPerRequest
+    credits_per_request
     capabilities
-    isDefault
+    is_default
   }
 }
