@@ -1,0 +1,106 @@
+#### Queries
+
+query GetSpaceSubscription($space: MongoID!) {
+  getSpaceSubscription(space: $space) {
+    subscription {
+      _id
+      cancel_at_period_end
+      created_at
+      current_period_end
+      current_period_start
+      status
+      space
+    }
+    items {
+      active
+      type
+    }
+    payment {
+      client_secret
+      publishable_key
+    }
+  }
+}
+
+query ListSubscriptionItems {
+  listSubscriptionItems {
+    title
+    type
+    pricing {
+      currency
+      decimals
+      price
+    }
+    weekly_email_limit
+  }
+}
+
+query PreviewUpdateSpaceSubscription($space: MongoID!, $input: UpdateSubscriptionInput!) {
+  previewUpdateSubscription(space: $space, input: $input) {
+    subscription {
+      _id
+      status
+      current_period_end
+      current_period_start
+      space
+    }
+    items {
+      active
+      type
+    }
+  }
+}
+
+#### Mutations
+
+mutation CreateSpaceSubscription($input: CreateSubscriptionInput!) {
+  createSpaceSubscription(input: $input) {
+    subscription {
+      _id
+      status
+      current_period_end
+      current_period_start
+      space
+    }
+    items {
+      active
+      type
+    }
+    payment {
+      client_secret
+      publishable_key
+    }
+  }
+}
+
+mutation UpdateSpaceSubscription($id: MongoID!, $space: MongoID!, $input: UpdateSubscriptionInput!) {
+  updateSpaceSubscription(_id: $id, space: $space, input: $input) {
+    subscription {
+      _id
+      status
+      current_period_end
+      current_period_start
+      space
+    }
+    items {
+      active
+      type
+    }
+    payment {
+      client_secret
+      publishable_key
+    }
+  }
+}
+
+mutation CancelSpaceSubscription($id: MongoID!, $space: MongoID!) {
+  cancelSpaceSubscription(_id: $id, space: $space) {
+    subscription {
+      _id
+      status
+      cancel_at_period_end
+      current_period_end
+      space
+    }
+  }
+}

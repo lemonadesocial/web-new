@@ -70,6 +70,12 @@ fragment Space on Space {
   theme_name
   hostnames
   fav_icon_url
+  subscription_tier
+  subscription_status
+  subscription_renewal_date
+  credits
+  subscription_credits
+  purchased_credits
 }
 
 fragment SpaceTagFragment on SpaceTag {

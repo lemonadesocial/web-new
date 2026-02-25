@@ -166,12 +166,44 @@ export class GraphqlClient {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- type-erased queue item
   private handleRequestError(request: QueryRequest<any, any>, error: unknown) {
     if (error && typeof error === 'object' && 'response' in error) {
-      const gqlError = error as { response: { errors: Array<{ message: string }> } };
+      const gqlError = error as {
+        response: {
+          status?: number;
+          errors: Array<{
+            message: string;
+            extensions?: {
+              code?: string;
+              feature_code?: string;
+              required_tier?: string;
+              current_tier?: string;
+              upgrade_url?: string;
+            };
+          }>;
+        };
+      };
 
-      if (gqlError.response?.errors?.[0]?.message) {
+      const firstError = gqlError.response?.errors?.[0];
+
+      if (firstError?.extensions?.code === 'FEATURE_GATED' || gqlError.response?.status === 402) {
+        const ext = firstError?.extensions;
         request.resolve({
           data: null,
-          error: { message: gqlError.response.errors[0].message },
+          error: {
+            message: firstError?.message || 'This feature requires a plan upgrade',
+            featureGated: true,
+            featureCode: ext?.feature_code,
+            requiredTier: ext?.required_tier,
+            currentTier: ext?.current_tier,
+            upgradeUrl: ext?.upgrade_url,
+          },
+        });
+        return;
+      }
+
+      if (firstError?.message) {
+        request.resolve({
+          data: null,
+          error: { message: firstError.message },
         });
         return;
       }
