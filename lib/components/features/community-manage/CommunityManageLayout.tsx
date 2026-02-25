@@ -143,22 +143,21 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
             />
           </div>
           <nav className="flex gap-4 pt-3 overflow-auto no-scrollbar">
-            {menu
-              .map((item) => {
-                const url = item.page === 'overview' ? `/s/manage/${uid}` : `/s/manage/${uid}/${item.page}`;
-                const isActive =
-                  item.page === 'overview' ? pathname === `/s/manage/${uid}` || pathname === url : pathname.includes(url);
+            {menu.map((item) => {
+              const url = item.page === 'overview' ? `/s/manage/${uid}` : `/s/manage/${uid}/${item.page}`;
+              const isActive =
+                item.page === 'overview' ? pathname === `/s/manage/${uid}` || pathname === url : pathname.includes(url);
 
-                return (
-                  <NextLink
-                    href={url}
-                    key={item.page}
-                    className={clsx(isActive && 'border-b-2 border-b-primary', 'pb-2.5')}
-                  >
-                    <span className={clsx(isActive ? 'text-primary' : 'text-tertiary', 'font-medium')}>{item.name}</span>
-                  </NextLink>
-                );
-              })}
+              return (
+                <NextLink
+                  href={url}
+                  key={item.page}
+                  className={clsx(isActive && 'border-b-2 border-b-primary', 'pb-2.5')}
+                >
+                  <span className={clsx(isActive ? 'text-primary' : 'text-tertiary', 'font-medium')}>{item.name}</span>
+                </NextLink>
+              );
+            })}
           </nav>
         </div>
       </div>

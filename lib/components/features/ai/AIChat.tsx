@@ -9,11 +9,7 @@ import { useAIChat } from './provider';
 import { ToolsSuggest } from './ToolsSuggest';
 import { WelcomeChat } from './WelcomeChat';
 
-export interface AIChatProps {
-  fullscreen?: boolean;
-}
-
-export function AIChat({}: AIChatProps) {
+export function AIChat() {
   const me = useMe();
   const [state] = useAIChat();
 
