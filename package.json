@@ -8,6 +8,7 @@
     "build": "NODE_ENV=production next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:staged": "lint-staged",
     "prepare": "husky",
     "e2e": "playwright test",
     "test": "vitest run",
