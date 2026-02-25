@@ -13,7 +13,7 @@ import {
   CreateNewPaymentAccountDocument,
   ListNewPaymentAccountsDocument,
 } from '$lib/graphql/generated/backend/graphql';
-import { useMutation, useQuery } from '$lib/graphql/request';
+import { useMutation } from '$lib/graphql/request';
 import { useStripeSetup } from '$lib/hooks/useStripeSetup';
 import { useMe } from '$lib/hooks/useMe';
 import { Space } from '$lib/graphql/generated/backend/graphql';
@@ -65,13 +65,11 @@ export function CommunityStripeSection({ space, items, loading: loadingSpaceAcco
     }
   );
 
-  const { loading: loadingFetchAccounts, error: fetchAccountsError, refetch: fetchUserStripeAccounts } = useQuery(
+  const [fetchAndAttach, { loading: loadingFetchAccounts }] = useMutation(
     ListNewPaymentAccountsDocument,
     {
-      variables: { provider: NewPaymentProvider.Stripe },
-      skip: true,
-      onComplete: (accountData) => {
-        const userStripeAccount = accountData?.listNewPaymentAccounts?.[0];
+      onComplete: (_, accountData) => {
+        const userStripeAccount = (accountData as { listNewPaymentAccounts?: NewPaymentAccount[] })?.listNewPaymentAccounts?.[0];
         if (userStripeAccount && space._id) {
           attachStripeToSpace({
             variables: { space: space._id, paymentAccount: userStripeAccount._id },
@@ -88,21 +86,20 @@ export function CommunityStripeSection({ space, items, loading: loadingSpaceAcco
         setConnecting(false);
         handleStripeSetup();
       },
+      onError: (e) => {
+        toast.error(e.message);
+        setConnecting(false);
+      },
     }
   );
-
-  React.useEffect(() => {
-    if (fetchAccountsError) {
-      toast.error(fetchAccountsError instanceof Error ? fetchAccountsError.message : 'Failed to fetch Stripe accounts');
-      setConnecting(false);
-    }
-  }, [fetchAccountsError]);
 
   const handleConnectStripe = () => {
     if (stripeAttachedToSpace) return;
     setConnecting(true);
     // Check if user already has a Stripe payment account we can attach
-    fetchUserStripeAccounts();
+    fetchAndAttach({
+      variables: { provider: NewPaymentProvider.Stripe },
+    });
   };
 
   const loading =
