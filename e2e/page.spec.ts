@@ -30,4 +30,10 @@ test.describe('API smoke checks', () => {
     const body = await response.json();
     expect(body?.message).toBe('Bad Request');
   });
+
+  test('health endpoint responds', async ({ page }) => {
+    const response = await page.goto('/api/livez');
+    expect(response?.ok()).toBeTruthy();
+    await expect(page.locator('body')).toContainText('OK');
+  });
 });
