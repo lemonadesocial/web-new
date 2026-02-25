@@ -32,6 +32,7 @@ export function CommunityStripeSection({ space, items, loading: loadingSpaceAcco
 
   const stripeAttachedToSpace = items.some((i) => i.provider === NewPaymentProvider.Stripe);
   const stripeAccountOnSpace = items.find((i) => i.provider === NewPaymentProvider.Stripe);
+  const hasConnectedStripeAccount = Boolean(me?.stripe_connected_account?.connected);
 
   const [attachStripeToSpace, { loading: loadingAttachStripe }] = useMutation(
     AttachSpacePaymentAccountDocument,
@@ -113,17 +114,6 @@ export function CommunityStripeSection({ space, items, loading: loadingSpaceAcco
     <div className="flex flex-col gap-3">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h2 className="text-xl font-bold">Stripe</h2>
-        {stripeAttachedToSpace ? null : (
-          <Button
-            variant="secondary"
-            size="sm"
-            iconLeft="icon-plus"
-            onClick={handleConnectStripe}
-            loading={loading}
-          >
-            Connect Stripe
-          </Button>
-        )}
       </div>
       <Card.Root className="w-full">
         {loading && !stripeAttachedToSpace ? (
@@ -134,8 +124,8 @@ export function CommunityStripeSection({ space, items, loading: loadingSpaceAcco
         ) : !stripeAttachedToSpace ? (
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
             <i aria-hidden="true" className="icon-stripe-alt size-16 text-quaternary mb-4" />
-            <p className="text-lg font-medium text-secondary">Accept Card Payments</p>
-            <p className="mt-2 text-sm text-secondary">
+            <p className="text-secondary font-medium">Accept card payments</p>
+            <p className="text-sm text-tertiary mt-1">
               We use{' '}
               <a
                 className="text-accent-500"
@@ -149,11 +139,14 @@ export function CommunityStripeSection({ space, items, loading: loadingSpaceAcco
               payments. It usually takes less than 5 minutes.
             </p>
             <Button
-              variant="secondary"
+              variant="tertiary-alt"
+              size="sm"
+              iconLeft="icon-plus"
               className="mt-4"
               onClick={handleConnectStripe}
+              loading={loading}
             >
-              Connect Stripe
+              {hasConnectedStripeAccount ? 'Attach Stripe Account' : 'Connect Stripe'}
             </Button>
           </div>
         ) : stripeAccountOnSpace ? (
