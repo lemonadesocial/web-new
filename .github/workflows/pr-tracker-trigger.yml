@@ -1,0 +1,25 @@
+name: Notify PR Tracker
+
+# Template workflow for individual repos to trigger PR-TRACKER updates.
+# Copy this file to each repo's .github/workflows/ directory.
+# Requires PR_TRACKER_PAT secret with repo scope on the source repo.
+
+on:
+  pull_request:
+    types: [opened, closed, reopened, converted_to_draft, ready_for_review]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger PR Tracker update
+        env:
+          GH_TOKEN: ${{ secrets.PR_TRACKER_PAT }}
+        run: |
+          gh api repos/lemonadesocial/lemonade-fe-ops/dispatches \
+            -f event_type=pr-tracker-update \
+            -f "client_payload[repo]=${{ github.repository }}" \
+            -f "client_payload[pr]=${{ github.event.pull_request.number }}" \
+            -f "client_payload[action]=${{ github.event.action }}"
