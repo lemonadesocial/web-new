@@ -1,4 +1,3 @@
+import ManageLayout from '$lib/components/features/ai/manage/ManageLayout';
 
-import { EventOverview } from '$lib/components/features/event-manage/overview/EventOverview';
-
-export default EventOverview;
+export default ManageLayout;

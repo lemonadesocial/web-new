@@ -49,33 +49,42 @@ function ManageLayoutToolbar() {
         />
       </motion.div>
 
-      <div className="flex gap-2">
-        <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
-          {Object.entries(tabMappings).map(([key, item]) => (
-            <Button
-              key={key}
-              iconLeft={item.icon}
-              variant="tertiary"
-              size="sm"
-              onClick={() => store.setActiveTab(key as ActiveTabType)}
-              className={clsx(state.activeTab !== key ? 'bg-transparent!' : 'text-primary!')}
-            >
-              {state.activeTab === key && item.label}
-            </Button>
-          ))}
+      <div className="flex flex-1 justify-between items-center gap-2">
+        <div className="flex gap-2">
+          <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
+            {Object.entries(tabMappings).map(([key, item]) => (
+              <Button
+                key={key}
+                iconLeft={item.icon}
+                variant="tertiary"
+                size="sm"
+                onClick={() => store.setActiveTab(key as ActiveTabType)}
+                className={clsx(state.activeTab !== key ? 'bg-transparent!' : 'text-primary!')}
+              >
+                {state.activeTab === key && item.label}
+              </Button>
+            ))}
+          </div>
+
+          <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
+            {Object.entries(devices).map(([key, item]) => (
+              <Button
+                key={key}
+                icon={item.icon}
+                variant="tertiary"
+                size="sm"
+                onClick={() => store.setPreviewMode(key as any)}
+                className={clsx(state.device !== key ? 'bg-transparent!' : 'text-primary!')}
+              ></Button>
+            ))}
+          </div>
         </div>
 
-        <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
-          {Object.entries(devices).map(([key, item]) => (
-            <Button
-              key={key}
-              icon={item.icon}
-              variant="tertiary"
-              size="sm"
-              onClick={() => store.setPreviewMode(key as any)}
-              className={clsx(state.device !== key ? 'bg-transparent!' : 'text-primary!')}
-            ></Button>
-          ))}
+        <div className="flex gap-2">
+          <Button size="sm" variant="secondary" iconLeft="icon-arrow-shape-up-stack-outline">
+            Upgrade
+          </Button>
+          <Button size="sm">Public</Button>
         </div>
       </div>
     </div>
