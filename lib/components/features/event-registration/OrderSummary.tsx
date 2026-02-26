@@ -4,6 +4,7 @@ import { generateUrl } from "$lib/utils/cnd";
 import { getDisplayPrice, getEventCardStart } from "$lib/utils/event";
 import { useClient } from "$lib/graphql/request/provider";
 import { Button, Input, toast } from "$lib/components/core";
+import { getErrorMessage } from '$lib/utils/error';
 import { CalculateTicketsPricingDocument, EthereumStakeAccount } from "$lib/graphql/generated/backend/graphql";
 
 import { currencyAtom, discountCodeAtom, eventDataAtom, pricingInfoAtom, purchaseItemsAtom, selectedPaymentAccountAtom, ticketLimitAtom, ticketTypesAtom, useAtomValue, useSetAtom } from "./store";
@@ -61,8 +62,8 @@ export function OrderSummary() {
         setDiscountCode(discountCodeInput.trim().toUpperCase());
         setShowDiscountInput(false);
       }
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to apply discount code');
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, 'Failed to apply discount code'));
     } finally {
       setIsApplying(false);
     }

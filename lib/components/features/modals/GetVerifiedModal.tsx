@@ -6,6 +6,7 @@ import {
 } from "@selfxyz/qrcode";
 
 import { Button, modal, ModalContent, toast } from "$lib/components/core";
+import { getErrorMessage } from '$lib/utils/error';
 import { useClient, useMutation } from "$lib/graphql/request";
 import { CreateSelfVerificationRequestDocument, GetSelfVerificationStatusDocument, SelfVerificationConfig } from "$lib/graphql/generated/backend/graphql";
 
@@ -71,8 +72,8 @@ export function GetVerifiedModal({ config = SELF_VERIFICATION_CONFIG }: { config
           setSelfApp(app);
           setUniversalLink(getUniversalLink(app));
           setShowCode(true);
-        } catch (error: any) {
-          toast.error(error.message || "Failed to initialize Self app");
+        } catch (error: unknown) {
+          toast.error(getErrorMessage(error, "Failed to initialize Self app"));
         }
       }
     },

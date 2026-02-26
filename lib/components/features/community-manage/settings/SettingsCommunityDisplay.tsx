@@ -23,6 +23,7 @@ import { useClient, useMutation } from '$lib/graphql/request';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { uploadFiles } from '$lib/utils/file';
 import { generateUrl } from '$lib/utils/cnd';
+import { getErrorMessage } from '$lib/utils/error';
 
 import { COMMUNITY_SOCIAL_LINKS } from '../../community/constants';
 import { ThemeProvider, useTheme } from '../../theme-builder/provider';
@@ -205,8 +206,8 @@ function Content({ space }: { space: Space }) {
       setIsSubmitting(true);
       const siteInfo = values.slug ? { slug: kebabCase(values.slug) } : {};
       await update({ variables: { id: space._id, input: { ...values, ...siteInfo } } });
-    } catch (err: any) {
-      toast.error(err.message);
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }

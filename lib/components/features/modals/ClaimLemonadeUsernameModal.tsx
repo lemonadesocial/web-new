@@ -12,6 +12,7 @@ import { CurrencyClient } from '$lib/services/currency';
 import { approveERC20Spender, checkBalanceSufficient, formatError, isNativeToken, writeContract } from '$lib/utils/crypto';
 import { listChainsAtom } from '$lib/jotai';
 import { appKit, useAppKitProvider } from '$lib/utils/appkit';
+import { getErrorMessage } from '$lib/utils/error';
 import { LemonadeUsernameABI } from '$lib/abis/LemonadeUsername';
 import { trpc } from '$lib/trpc/client';
 import { useClient } from '$lib/graphql/request';
@@ -109,8 +110,8 @@ export function ClaimLemonadeUsernameModal() {
         setStatus('unavailable');
         setErrorMessage('Username is already taken');
         setUsernamePrice(null);
-      } catch (error: any) {
-        setErrorMessage(error?.message || 'Error checking username availability');
+      } catch (error: unknown) {
+        setErrorMessage(getErrorMessage(error, 'Error checking username availability'));
         setStatus('idle');
       }
     }, 600),
@@ -188,7 +189,7 @@ export function ClaimLemonadeUsernameModal() {
       });
 
       setStep('success');
-    } catch (error: any) {
+    } catch (error: unknown) {
       setStep('search');
       Sentry.captureException(error);
       toast.error(formatError(error));

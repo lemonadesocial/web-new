@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import * as _ from 'lodash';
 
 import { modal, Avatar, FileInput, Button, Input, InputField, Card, toast } from '$lib/components/core';
+import { getErrorMessage } from '$lib/utils/error';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { randomUserImage } from '$lib/utils/user';
 import { CreateTicketsDocument, EventTicketType } from '$lib/graphql/generated/backend/graphql';
@@ -91,8 +92,8 @@ export function AddEmailsModal({ ticketType }: { ticketType: EventTicketType }) 
       toast.success('Emails added successfully!');
       window.dispatchEvent(new Event('refetch_guest_list'));
       modal.close();
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to add emails');
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, 'Failed to add emails'));
     }
   };
 

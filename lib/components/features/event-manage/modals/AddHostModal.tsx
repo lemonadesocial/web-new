@@ -7,6 +7,7 @@ import { useQuery, useMutation, useClient } from "$lib/graphql/request";
 import { userAvatar } from "$lib/utils/user";
 import { EMAIL_REGEX } from "$lib/utils/regex";
 import { uploadFiles } from "$lib/utils/file";
+import { getErrorMessage } from '$lib/utils/error';
 import { useUpdateEvent } from "../store";
 
 export function AddHostModal({ event }: { event: Event }) {
@@ -207,8 +208,8 @@ function ConfigureHostModal({ event, onBack, user, email }: ConfigureHostModalPr
           }
         }
       });
-    } catch (error: any) {
-      toast.error(error.message)
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error))
     } finally {
       setIsLoading(false);
     }

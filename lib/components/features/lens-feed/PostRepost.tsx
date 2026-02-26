@@ -5,6 +5,7 @@ import { repost } from '@lens-protocol/client/actions';
 import { handleOperationWith } from '@lens-protocol/client/ethers';
 
 import { toast } from '$lib/components/core';
+import { getErrorMessage } from '$lib/utils/error';
 import { sessionClientAtom } from '$lib/jotai/lens';
 import { useSigner } from '$lib/hooks/useSigner';
 import { PostButton } from './PostButton';
@@ -37,9 +38,9 @@ export function PostRepost({ post }: PostRepostProps) {
       } else {
         toast.success('Reposted successfully');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setReposts((prev) => prev - 1);
-      toast.error(error.message);
+      toast.error(getErrorMessage(error));
     }
   };
 

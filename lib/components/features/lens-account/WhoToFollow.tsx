@@ -5,6 +5,7 @@ import { fetchAccountsBulk, follow } from '@lens-protocol/client/actions';
 import { Account } from '@lens-protocol/client';
 
 import { Avatar, Button, drawer, toast } from '$lib/components/core';
+import { getErrorMessage } from '$lib/utils/error';
 import { sessionClientAtom } from '$lib/jotai';
 import { client } from '$lib/utils/lens/client';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
@@ -129,8 +130,8 @@ export function WhoToFollow() {
           setDisplayedAccounts([...currentDisplayed, nextAccount]);
         }
       }
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to follow user');
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, 'Failed to follow user'));
     } finally {
       setFollowLoading(null);
     }

@@ -8,6 +8,7 @@ import { kebabCase } from 'lodash';
 import { useMutation } from '$lib/graphql/request';
 import { Address, CreateSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
 import { Button, toast } from '$lib/components/core';
+import { getErrorMessage } from '$lib/utils/error';
 import { Pane } from '$lib/components/core/pane/pane';
 import { CommunityFormContent } from '../../community/CommunityForm';
 import { ThemeProvider } from '../../theme-builder/provider';
@@ -77,8 +78,8 @@ function FormContent({ data, title }: Props) {
         // const space = data.createSpace as Space;
         toast.success('Created community!');
       }
-    } catch (err: any) {
-      toast.error(err.message);
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
