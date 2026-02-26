@@ -1,5 +1,22 @@
 # Changelog
 
+## [10.8.0](https://github.com/lemonadesocial/web-new/compare/v10.7.3...v10.8.0) (2026-02-26)
+
+
+### Features
+
+* **api:** add AI GraphQL proxy endpoint ([ffdd49f](https://github.com/lemonadesocial/web-new/commit/ffdd49f0580448479edbf8240081825175d8e74d))
+
+
+### Bug Fixes
+
+* **ai:** route browser AI GraphQL via same-origin proxy ([9211c08](https://github.com/lemonadesocial/web-new/commit/9211c08b97550db0dfc6e7f35ec0282c60e939a2))
+* lower gas limit to respect chain cap ([cb2a7ab](https://github.com/lemonadesocial/web-new/commit/cb2a7abc010a00ecfd81609d5628f53520dfe84c))
+* merge conflict ([173a76f](https://github.com/lemonadesocial/web-new/commit/173a76f05063904775cecfd3c0d585ecb5c76fb7))
+* resolve ai chat url ([5950f43](https://github.com/lemonadesocial/web-new/commit/5950f43ed8859fda7273d0e809aa5dbeb7bc26b1))
+* self form ([c93b1df](https://github.com/lemonadesocial/web-new/commit/c93b1df1c33c870573312401f13cc281aec2ba4b))
+* set gas limits by chain ([2d52b79](https://github.com/lemonadesocial/web-new/commit/2d52b795338e65ed4b99dd382996923f4b8b6ba5))
+
 ## [10.7.3](https://github.com/lemonadesocial/web-new/compare/v10.7.2...v10.7.3) (2026-02-24)
 
 
