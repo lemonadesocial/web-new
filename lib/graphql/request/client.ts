@@ -32,7 +32,6 @@ interface RequestConfig {
 export class GraphqlClient {
   private client: GraphQLClient;
   private cache?: InMemoryCache;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- heterogeneous queue requires type erasure
   private queue: QueryRequest<any, any>[] = [];
   private processing: boolean = false;
   customHeader: Record<string, string> = {};
@@ -120,7 +119,6 @@ export class GraphqlClient {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- type-erased queue item
   private async executeRequest(request: QueryRequest<any, any>) {
     if (request.type === 'refetch') {
       await this.executeNetworkRequest(request);
@@ -154,7 +152,6 @@ export class GraphqlClient {
     request.resolve({ data: result, error: null });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- type-erased queue item
   private async executeNetworkRequest(request: QueryRequest<any, any>) {
     const { query, variables } = request;
     const result = await this.client.request(query, variables);
@@ -163,7 +160,6 @@ export class GraphqlClient {
     request.resolve({ data: result, error: null });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- type-erased queue item
   private handleRequestError(request: QueryRequest<any, any>, error: unknown) {
     if (error && typeof error === 'object' && 'response' in error) {
       const gqlError = error as { response: { errors: Array<{ message: string }> } };

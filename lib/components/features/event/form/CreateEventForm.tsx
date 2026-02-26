@@ -88,7 +88,6 @@ export function CreateEventForm({
                   ref={fileInputRef}
                   onChange={handleFileChange}
                   className="hidden"
-                  
                 />
                 <Button
                   icon="icon-upload-sharp"
