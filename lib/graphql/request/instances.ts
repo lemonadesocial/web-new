@@ -6,20 +6,22 @@ const AI_GRAPHQL_PROXY_PATH = '/api/ai/graphql';
 
 function resolveAiChatUrl() {
   const configuredUrl = process.env.NEXT_PUBLIC_AI_API_HTTP;
+  const isBrowser = typeof window !== 'undefined';
+  const proxyUrl = isBrowser ? `${window.location.origin}${AI_GRAPHQL_PROXY_PATH}` : AI_GRAPHQL_PROXY_PATH;
 
   if (!configuredUrl) {
-    return AI_GRAPHQL_PROXY_PATH;
+    return proxyUrl;
   }
 
-  if (typeof window === 'undefined') {
+  if (!isBrowser) {
     return configuredUrl;
   }
 
   try {
     const parsed = new URL(configuredUrl, window.location.origin);
-    return parsed.origin === window.location.origin ? configuredUrl : AI_GRAPHQL_PROXY_PATH;
+    return parsed.origin === window.location.origin ? parsed.toString() : proxyUrl;
   } catch {
-    return AI_GRAPHQL_PROXY_PATH;
+    return proxyUrl;
   }
 }
 
