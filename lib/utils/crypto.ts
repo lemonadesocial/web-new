@@ -1,9 +1,7 @@
 import { getDefaultStore } from 'jotai';
 import { Contract, Eip1193Provider, ethers, isError } from 'ethers';
-import { mainnet } from 'viem/chains';
-
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
-import { MEGAETH_CHAIN_ID, GAS_LIMIT } from '$lib/utils/constants';
+import { DEFAULT_GAS_LIMIT, GAS_LIMIT_BY_CHAIN_ID, MEGAETH_CHAIN_ID } from '$lib/utils/constants';
 
 import ERC20 from '$lib/abis/ERC20.json';
 import LemonadeRelayPayment from '$lib/abis/LemonadeRelayPayment.json';
@@ -49,9 +47,14 @@ export const isNativeToken = (tokenAddress: string, network: string) => {
   return token?.is_native || tokenAddress.toLowerCase() === ethers.ZeroAddress;
 };
 
-export async function getGasOptions(provider: ethers.Provider): Promise<{ gas?: bigint }> {
+export function getGasLimit(chainId: number): bigint {
+  return GAS_LIMIT_BY_CHAIN_ID[chainId] ?? DEFAULT_GAS_LIMIT;
+}
+
+export async function getGasOptions(provider: ethers.Provider): Promise<{ gas: bigint }> {
   const network = await provider.getNetwork();
-  return Number(network.chainId) === MEGAETH_CHAIN_ID ? { gas: GAS_LIMIT } : {};
+  const gasLimit = getGasLimit(Number(network.chainId));
+  return { gas: gasLimit };
 }
 
 export async function writeContract(
@@ -66,13 +69,14 @@ export async function writeContract(
   const signer = await browserProvider.getSigner();
   const contract = contractInstance.attach(contractAddress).connect(signer);
   const network = await browserProvider.getNetwork();
+  const gasLimit = getGasLimit(Number(network.chainId));
   
   const data = contract.interface.encodeFunctionData(functionName, args);
   
   const tx = await signer.sendTransaction({
     to: contractAddress,
     data: ethers.hexlify(data),
-    gasLimit: GAS_LIMIT,
+    gasLimit,
     ...txOptions
   });
 
