@@ -88,7 +88,7 @@ export function CreateEventForm({
                   ref={fileInputRef}
                   onChange={handleFileChange}
                   className="hidden"
-                  aria-hidden="true"
+                  
                 />
                 <Button
                   icon="icon-upload-sharp"
@@ -336,7 +336,7 @@ export function CreateEventForm({
                       props: {
                         onConfirm: (value) => {
                           let _url = value;
-                          if (!/^(?:f|ht)tps?\:\/\//.test(_url)) {
+                          if (!/^(?:f|ht)tps?:\/\//.test(_url)) {
                             _url = 'https://' + _url;
                           }
                           setValue('virtual_url', _url);
