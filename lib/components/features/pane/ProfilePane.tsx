@@ -108,11 +108,8 @@ export function ProfilePaneContent({ me }: { me: User }) {
       toast.success('Profile updated successfully');
       drawer.close();
     } catch (err: unknown) {
-      console.error(err);
       toast.error(getErrorMessage(err));
-    } catch (err: any) {
       Sentry.captureException(err);
-      toast.error(err.message);
     } finally {
       setIsSubmitting(false);
     }
