@@ -5,6 +5,7 @@ import { addReaction, undoReaction } from '@lens-protocol/client/actions';
 import clsx from 'clsx';
 
 import { toast } from '$lib/components/core';
+import { getErrorMessage } from '$lib/utils/error';
 import { useLensAuth } from '$lib/hooks/useLens';
 import { sessionClientAtom } from '$lib/jotai/lens';
 
@@ -52,8 +53,8 @@ export function PostReaction({ post, isComment }: PostReactionProps) {
         setUpvotes((prev) => (isUpvoted ? prev + 1 : prev - 1));
         toast.error('Failed to update reaction');
       }
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
     }
   };
 

@@ -117,7 +117,7 @@ export function CreateGroupModal({ params, launchChain, onSuccess }: CreateGroup
       setManagerAddress(manager);
       onSuccess?.(manager);
       setStatus('success');
-    } catch (err: any) {
+    } catch (err: unknown) {
       Sentry.captureException(err);
       setError(formatError(err));
       setStatus('error');

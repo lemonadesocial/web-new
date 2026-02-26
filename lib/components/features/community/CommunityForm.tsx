@@ -7,6 +7,7 @@ import { object, string } from 'yup';
 import * as Sentry from '@sentry/nextjs';
 
 import { Button, Card, FileInput, InputField, Map, Segment, TextAreaField, toast } from '$lib/components/core';
+import { getErrorMessage } from '$lib/utils/error';
 import { PlaceAutoComplete } from '$lib/components/core/map/place-autocomplete';
 import { Address, CheckSpaceSlugDocument, CreateSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
 import { useClient, useMutation } from '$lib/graphql/request';
@@ -84,8 +85,8 @@ export function CommunityForm() {
         const space = data.createSpace as Space;
         router.push(`/s/manage/${space.slug || space._id}`);
       }
-    } catch (err: any) {
-      toast.error(err.message);
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -139,7 +140,7 @@ export function CommunityFormContent({
           setError('slug', { type: 'validate', message: 'This URL is already taken.' });
         }
         setCanUseSpaceSlug(!!data?.canUseSpaceSlug);
-      } catch (err: any) {
+      } catch (err: unknown) {
         Sentry.captureException(err);
       } finally {
         setChecking(false);

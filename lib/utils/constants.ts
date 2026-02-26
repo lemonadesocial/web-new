@@ -13,8 +13,11 @@ export const AI_CONFIG = process.env.NEXT_PUBLIC_AI_CONFIG as string;
 export const ETHERSCAN = 'https://etherscan.io';
 
 export const LAUNCH_CHAIN_ID = process.env.NEXT_PUBLIC_APP_ENV === 'production' ? '8453' : '84532';
-export const GAS_LIMIT = BigInt(150_000_000);
 export const MEGAETH_CHAIN_ID = process.env.NEXT_PUBLIC_APP_ENV === 'production' ? 4326 : 6343;
+export const DEFAULT_GAS_LIMIT = BigInt(15_000_000);
+export const GAS_LIMIT_BY_CHAIN_ID: Record<number, bigint> = {
+  [MEGAETH_CHAIN_ID]: BigInt(100_000_000),
+};
 
 export const ETHNICITIES = [
   'African American',

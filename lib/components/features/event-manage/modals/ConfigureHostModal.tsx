@@ -5,6 +5,7 @@ import { Event, User, ManageEventCohostRequestsDocument, GetEventDocument, Event
 import { useMutation, useClient } from "$lib/graphql/request";
 import { userAvatar } from "$lib/utils/user";
 import { uploadFiles } from "$lib/utils/file";
+import { getErrorMessage } from '$lib/utils/error';
 
 import { useUpdateEvent } from "../store";
 
@@ -82,8 +83,8 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
           }
         }
       });
-    } catch (error: any) {
-      toast.error(error.message)
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error))
     } finally {
       setIsUpdating(false);
     }
@@ -103,8 +104,8 @@ export function ConfigureHostModal({ event, user, isVisible }: ConfigureHostModa
           }
         }
       });
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
     } finally {
       setIsRemoving(false);
     }

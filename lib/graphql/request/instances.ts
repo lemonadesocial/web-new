@@ -2,6 +2,29 @@ import { GRAPHQL_URL } from '$lib/utils/constants';
 import { InMemoryCache } from './cache';
 import { GraphqlClient } from './client';
 
+const AI_GRAPHQL_PROXY_PATH = '/api/ai/graphql';
+
+function resolveAiChatUrl() {
+  const configuredUrl = process.env.NEXT_PUBLIC_AI_API_HTTP;
+  const isBrowser = typeof window !== 'undefined';
+  const proxyUrl = isBrowser ? `${window.location.origin}${AI_GRAPHQL_PROXY_PATH}` : AI_GRAPHQL_PROXY_PATH;
+
+  if (!configuredUrl) {
+    return proxyUrl;
+  }
+
+  if (!isBrowser) {
+    return configuredUrl;
+  }
+
+  try {
+    const parsed = new URL(configuredUrl, window.location.origin);
+    return parsed.origin === window.location.origin ? parsed.toString() : proxyUrl;
+  } catch {
+    return proxyUrl;
+  }
+}
+
 export const defaultClient = new GraphqlClient({
   url: GRAPHQL_URL,
   cache: new InMemoryCache(),
@@ -42,7 +65,7 @@ export const usernameClient = new GraphqlClient({
 });
 
 export const aiChatClient = new GraphqlClient({
-  url: process.env.NEXT_PUBLIC_AI_API_HTTP as string,
+  url: resolveAiChatUrl(),
   options: {
     credentials: 'include',
   },
