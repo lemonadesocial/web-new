@@ -1,5 +1,44 @@
 # Changelog
 
+## [10.7.3](https://github.com/lemonadesocial/web-new/compare/v10.7.2...v10.7.3) (2026-02-24)
+
+
+### Bug Fixes
+
+* blast email ([6dc072b](https://github.com/lemonadesocial/web-new/commit/6dc072b59fc2adc06b3d687b175141358f61a2f4))
+
+## [10.7.2](https://github.com/lemonadesocial/web-new/compare/v10.7.1...v10.7.2) (2026-02-23)
+
+
+### Bug Fixes
+
+* build ([4f5e210](https://github.com/lemonadesocial/web-new/commit/4f5e210bb541a0a9daa001bb940b470aaee0c90e))
+* merge conflict ([5344c59](https://github.com/lemonadesocial/web-new/commit/5344c59467a3ba4da143f15e0e4ef987a198f7fd))
+
+## [10.7.1](https://github.com/lemonadesocial/web-new/compare/v10.7.0...v10.7.1) (2026-02-23)
+
+
+### Bug Fixes
+
+* **audit:** CRIT-004 — add error boundaries to 5 key route segments ([92b7f03](https://github.com/lemonadesocial/web-new/commit/92b7f03a938098ddee0eedee48997882a7a8bb48))
+* **audit:** CRIT-006 — add try/catch error handling to 5 unprotected API routes ([3b40590](https://github.com/lemonadesocial/web-new/commit/3b4059095564dd1a18f0c495bec850970c78a018))
+* **audit:** CRIT-007 — remove stack trace exposure from error UI and API responses ([9a9f598](https://github.com/lemonadesocial/web-new/commit/9a9f5980fd71e25c6f086ae5b43a98693d486f72))
+* **audit:** CRIT-008 — add alt attributes to 30 images across 14 files ([5823ce7](https://github.com/lemonadesocial/web-new/commit/5823ce70a8e22d0ed7004126f33d10ab483d60f1))
+* **audit:** CRIT-009 — add aria-labels to 22 icon-only buttons across 14 files ([24809c1](https://github.com/lemonadesocial/web-new/commit/24809c1111d2b9f2d727e00a026b9a5916f31d39))
+* **audit:** CRIT-010 — add dialog accessibility to modal, drawer, and bottomsheet ([ab48ad2](https://github.com/lemonadesocial/web-new/commit/ab48ad21c79e79b05284be3b00a16bf6e17400e0))
+* **audit:** HIGH-001 — sanitize marked() output with DOMPurify in markdown utility ([321eacd](https://github.com/lemonadesocial/web-new/commit/321eacd756d1d48ba5ffe7ed114176a9db6f9977))
+* **audit:** HIGH-004 — add SSRF protection to /api/og/extractor ([6f5abfe](https://github.com/lemonadesocial/web-new/commit/6f5abfeeb7d85dc6cc04f8710348610da6271312))
+* **audit:** HIGH-005 — remove hardcoded Thirdweb client ID fallback ([68fecda](https://github.com/lemonadesocial/web-new/commit/68fecda10fbf01b05728febbe8f643ad99865d38))
+* **audit:** HIGH-007 — add 'use client' directive to 25 hook files ([c2059f2](https://github.com/lemonadesocial/web-new/commit/c2059f283656e69459a77208c940113bf31dbc96))
+* **audit:** HIGH-008 — push 'use client' down from payments layout ([177ecce](https://github.com/lemonadesocial/web-new/commit/177eccede2ba83c132f81b2a64c7bff674ce4775))
+* **audit:** HIGH-013 — add global focus-visible styles for keyboard accessibility ([5099e90](https://github.com/lemonadesocial/web-new/commit/5099e9024934371c8d4106c6b97af71cc3eb3ced))
+* **audit:** HIGH-014 — replace non-semantic onClick elements with buttons ([f3c3c2a](https://github.com/lemonadesocial/web-new/commit/f3c3c2a96eaa0765ad407c61f4248229fde2f7e4))
+* **audit:** HIGH-015 — fix label/input associations for accessibility ([bb9a5e7](https://github.com/lemonadesocial/web-new/commit/bb9a5e75da6cbe0727e777cf1bd287d5269ad751))
+* **audit:** HIGH-016 — add role="alert" and aria-live to ErrorText component ([583f4b8](https://github.com/lemonadesocial/web-new/commit/583f4b8bfd64162d2b20fa54be22c6b9e6b82437))
+* **audit:** HIGH-020, HIGH-022 — remove unused deps, move lodash to dependencies ([0442710](https://github.com/lemonadesocial/web-new/commit/04427100f4d0b6c2d4df82a2782af961e30a2746))
+* **audit:** HIGH-021 — delete legacy directories (15 dead files) ([1aee1f8](https://github.com/lemonadesocial/web-new/commit/1aee1f87c75b217223d78287af13f8366d5c0919))
+* eliminate double-assertion patterns across 17 files ([727a4a0](https://github.com/lemonadesocial/web-new/commit/727a4a0b0d683195fc157e09c8df10a1eb7d0ae1))
+
 ## [10.7.0](https://github.com/lemonadesocial/web-new/compare/v10.6.0...v10.7.0) (2026-02-18)
 
 

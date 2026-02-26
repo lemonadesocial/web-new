@@ -28,14 +28,14 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
   const [slippage, setSlippage] = useState(5);
 
   const { sendCalls, error, data, reset } = useSendCalls();
-  const [resolver, setResolver] = useState<(id?: string, err?: any) => void>();
+  const [resolver, setResolver] = useState<(id?: string, err?: unknown) => void>();
 
   const { tokenData, isLoadingTokenData } = useTokenData(chain, address);
   const { formattedBalance, balance } = useTokenBalance(chain, address);
 
-  const send7702Calls = async (calls: any[]) => {
+  const send7702Calls = async (calls: { to: `0x${string}`; value: bigint; data: `0x${string}` }[]) => {
     const promise = new Promise<string>((resolve, reject) => {
-      setResolver(() => (id?: string, err?: any) => {
+      setResolver(() => (id?: string, err?: unknown) => {
         if (err) {
           reject(err);
         } else if (id) {
@@ -73,7 +73,7 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
         const ethAmount = await flaunchClient.getEthValueForAmount();
         setTokenPrice(formatEther(ethAmount));
       } catch (error) {
-        console.error('Failed to fetch price', error);
+        Sentry.captureException(error);
         setTokenPrice(null);
       }
     };
@@ -123,7 +123,6 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
           recipient: userAddress,
         });
       } catch (e) {
-        console.log(e)
         Sentry.captureException(e);
         txHash = await flaunchClient.sellCoin({
           sellAmount,
@@ -140,7 +139,6 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
         },
       });
     } catch (error) {
-      console.log(error);
       Sentry.captureException(error);
       toast.error(formatError(error));
     } finally {
@@ -234,7 +232,7 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
             <p className="text-sm text-tertiary">
               {formatNumber(Number(amount))} {tokenData.symbol}
             </p>
-            <i className="icon-arrow-foward-sharp text-tertiary size-4" />
+            <i aria-hidden="true" className="icon-arrow-foward-sharp text-tertiary size-4" />
             <p className="text-sm text-tertiary">{formatNumber(Number(amount) * Number(tokenPrice))} ETH</p>
           </div>
           {/* <p className="text-sm text-tertiary">~$0</p> */}

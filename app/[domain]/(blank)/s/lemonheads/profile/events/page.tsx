@@ -48,7 +48,7 @@ export default function Page() {
     if (!me) return;
 
     let events = [] as Event[];
-    let showHost: any = null;
+    let showHost: boolean | null = null;
     if (Number(filter.by) === FilterItem.Hosting) showHost = true;
     if (Number(filter.by) === FilterItem.Attending) showHost = false;
 
@@ -135,7 +135,7 @@ export default function Page() {
                           title={value.label}
                           iconLeft={value.icon}
                           onClick={() => {
-                            setFilter((prev) => ({ ...prev, by: key as unknown as FilterItem }));
+                            setFilter((prev) => ({ ...prev, by: Number(key) as FilterItem }));
                             toggle();
                           }}
                         />

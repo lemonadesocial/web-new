@@ -244,7 +244,7 @@ export function ClaimLemonadeUsernameModal() {
       <div className='flex items-center justify-between mt-4 h-6'>
         <p className='text-sm'>Lemonade Username</p>
         <div>
-          {status === 'checking' && <i className='icon-loader animate-spin size-4 text-tertiary' />}
+          {status === 'checking' && <i aria-hidden="true" className='icon-loader animate-spin size-4 text-tertiary' />}
           {status === 'available' && <p className='text-success-500 text-sm'>Available</p>}
           {status === 'unavailable' && <p className='text-error text-sm'>Unavailable</p>}
         </div>

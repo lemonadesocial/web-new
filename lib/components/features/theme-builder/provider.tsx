@@ -8,7 +8,7 @@ export const EventThemeContext = React.createContext(null);
 
 export function EventThemeProvider({ themeData, children }: React.PropsWithChildren & { themeData?: ThemeValues }) {
   const [state, dispatch] = React.useReducer(reducers, themeData || defaultTheme);
-  const value: any = React.useMemo(() => [state, dispatch], [state]);
+  const value = React.useMemo(() => [state, dispatch] as const, [state]);
 
   return <EventThemeContext.Provider value={value}>{children}</EventThemeContext.Provider>;
 }
@@ -24,7 +24,7 @@ export const ThemeContext = React.createContext(null);
 
 export function ThemeProvider({ themeData, children }: React.PropsWithChildren & { themeData?: ThemeValues }) {
   const [state, dispatch] = React.useReducer(reducers, themeData || defaultTheme);
-  const value: any = React.useMemo(() => [state, dispatch], [state]);
+  const value = React.useMemo(() => [state, dispatch] as const, [state]);
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }

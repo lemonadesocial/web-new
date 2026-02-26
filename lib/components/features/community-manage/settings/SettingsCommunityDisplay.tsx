@@ -5,6 +5,7 @@ import React from 'react';
 import { debounce, kebabCase } from 'lodash';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { object, string } from 'yup';
+import * as Sentry from '@sentry/nextjs';
 
 import {
   Button,
@@ -178,7 +179,7 @@ function Content({ space }: { space: Space }) {
 
       handleSubmit(onSubmit)();
     } catch (err) {
-      console.error(err);
+      Sentry.captureException(err);
       toast.error(`Cannot upload ${type} image!`);
     } finally {
       if (type === 'cover') setUploadingCover(false);
@@ -192,7 +193,7 @@ function Content({ space }: { space: Space }) {
         const { data } = await client.query({ query: CheckSpaceSlugDocument, variables: { slug: query } });
         setCanUseSpaceSlug(!!data?.canUseSpaceSlug);
       } catch (err) {
-        console.log(err);
+        Sentry.captureException(err);
       } finally {
         setChecking(false);
       }
@@ -418,7 +419,7 @@ function Content({ space }: { space: Space }) {
                       render={({ field }) => {
                         return (
                           <div className="flex items-center gap-4 flex-1">
-                            <i className={`text-tertiary ${item.icon}`} />
+                            <i aria-hidden="true" className={`text-tertiary ${item.icon}`} />
                             <InputField
                               prefix={item.prefix}
                               className="w-full"

@@ -19,7 +19,7 @@ export function TokenGatingDrawer({ ticketType }: { ticketType: string }) {
   return (
     <div className="h-full flex flex-col">
       <div className="px-3 py-2 border-b border-b-divider gap-3 items-center flex">
-        <Button icon="icon-chevron-double-right" variant="tertiary" size="sm" onClick={() => drawer.close()} />
+        <Button icon="icon-chevron-double-right" variant="tertiary" size="sm" onClick={() => drawer.close()} aria-label="Close drawer" />
       </div>
       <div className="flex-1 overflow-y-auto no-scrollbar p-4">
         <h1 className="text-xl font-semibold">Crypto Token Gating</h1>
@@ -43,7 +43,7 @@ export function TokenGatingDrawer({ ticketType }: { ticketType: string }) {
                 }}
               >
                 {
-                  tokenGate.is_nft ? <i className="icon-diamond size-5 text-tertiary" /> : <i className="icon-token size-5 text-tertiary" />
+                  tokenGate.is_nft ? <i aria-hidden="true" className="icon-diamond size-5 text-tertiary" /> : <i aria-hidden="true" className="icon-token size-5 text-tertiary" />
                 }
                 <div className="flex-1">
                   <p>
@@ -53,7 +53,7 @@ export function TokenGatingDrawer({ ticketType }: { ticketType: string }) {
                   </p>
                   <p className="text-sm text-tertiary">{tokenGate.is_nft ? 'ERC-721' : 'ERC-20'}</p>
                 </div>
-                <i className="icon-chevron-right size-5 text-tertiary" />
+                <i aria-hidden="true" className="icon-chevron-right size-5 text-tertiary" />
               </div>
             ))
           }

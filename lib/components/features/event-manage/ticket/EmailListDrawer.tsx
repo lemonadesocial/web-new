@@ -30,7 +30,7 @@ export function EmailListDrawer({ ticketType }: { ticketType: EventTicketType })
   return (
     <div className="flex flex-col h-full">
       <div className="px-3 py-2 border-b border-b-divider gap-3 items-center flex">
-        <Button icon="icon-arrow-back-sharp" variant="tertiary" size="sm" onClick={() => drawer.close()} />
+        <Button icon="icon-arrow-back-sharp" variant="tertiary" size="sm" onClick={() => drawer.close()} aria-label="Go back" />
       </div>
 
       <div className="p-4 flex flex-col gap-4 flex-1 overflow-auto">
@@ -59,7 +59,7 @@ export function EmailListDrawer({ ticketType }: { ticketType: EventTicketType })
                   <p className="truncate">{item.buyer_name || 'Anonymous'}</p>
                   <p className="text-tertiary truncate text-xs md:text-base">{item.buyer_email}</p>
                 </div>
-                <i className="icon-more-vert size-5 cursor-pointer" />
+                <i aria-hidden="true" className="icon-more-vert size-5 cursor-pointer" />
               </Card.Content>
             </Card.Root>
           ))}

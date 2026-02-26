@@ -202,7 +202,7 @@ export function Footer() {
                     <p className={twMerge('text-quaternary', isActive && 'text-primary')}>{footerConf.label}</p>
                   )}
                   {footerConf?.label && idx < Object.entries(MAPPING_PASSPORT_STEPS).length - 1 && (
-                    <i className={twMerge('icon-chevron-right size-5 text-quaternary', isActive && 'text-primary')} />
+                    <i aria-hidden="true" className={twMerge('icon-chevron-right size-5 text-quaternary', isActive && 'text-primary')} />
                   )}
                 </li>
               );

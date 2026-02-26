@@ -1,21 +1,18 @@
 import { useMemo, useState } from "react";
 import Decimal from 'decimal.js';
 
-import { useMutation, useQuery } from "$lib/graphql/request";
-import { useStripeSetup } from "$lib/hooks/useStripeSetup";
+import { useAttachStripeAccount, useStripeSetup } from "$lib/hooks/useStripeSetup";
 import { Button, Input, modal, ModalContent, Select, Skeleton, toast } from "$lib/components/core";
-import { CreateNewPaymentAccountDocument, DigitalAccount, EventTicketPrice, ListNewPaymentAccountsDocument, NewPaymentProvider, PaymentAccountType, UpdateEventPaymentAccountsDocument, type Event } from "$lib/graphql/generated/backend/graphql";
+import { DigitalAccount, EventTicketPrice } from "$lib/graphql/generated/backend/graphql";
 
-import { useEvent, useUpdateEvent } from "../store";
-import { useMe } from "$lib/hooks/useMe";
+import { useEvent } from "../store";
 
 export function UpdateFiatPriceModal({ price, onChange }: { price?: EventTicketPrice; onChange: (price: EventTicketPrice) => void }) {
   const event = useEvent();
-  const updateEvent = useUpdateEvent();
-  const me = useMe();
 
   const handleStripeSetup = useStripeSetup();
   const stripeAccount = event?.payment_accounts_expanded?.find(account => account?.provider === 'stripe');
+  const { loading } = useAttachStripeAccount({ skip: !!stripeAccount });
 
   const currencies = useMemo(() => [...stripeAccount?.account_info.currencies || []].sort(), [stripeAccount]);
   const initialCurrency = price?.currency && currencies.includes(price.currency) ? price.currency : 'USD';
@@ -23,58 +20,6 @@ export function UpdateFiatPriceModal({ price, onChange }: { price?: EventTicketP
 
   const [currency, setCurrency] = useState<string>(price?.currency && currencies.includes(price.currency) ? price.currency : 'USD');
   const [cost, setCost] = useState<string | undefined>(price?.cost && currencies.includes(price.currency) ? new Decimal(price.cost).div(10 ** decimals).toString() : undefined);
-
-  const [updatePaymentAccount, { loading: loadingUpdatePaymentAccount }] = useMutation(UpdateEventPaymentAccountsDocument, {
-    onComplete(_, data) {
-      if (data?.updateEvent) {
-        updateEvent(data.updateEvent as Event);
-      }
-    },
-  });
-
-  const [createPaymentAccount, { loading: loadingCreatePaymentAccount }] = useMutation(CreateNewPaymentAccountDocument, {
-    onComplete(_, res) {
-      if (res?.createNewPaymentAccount._id) {
-        updatePaymentAccount({
-          variables: {
-            id: event!._id,
-            payment_accounts_new: [...(event!.payment_accounts_new || []), res.createNewPaymentAccount._id]
-          }
-        });
-      }
-    }
-  });
-
-  const { loading: loadingAccounts } = useQuery(ListNewPaymentAccountsDocument, {
-    variables: {
-      provider: NewPaymentProvider.Stripe
-    },
-    fetchPolicy: 'network-only',
-    skip: !!stripeAccount,
-    onComplete: (data) => {
-      const userAccount = data?.listNewPaymentAccounts[0];
-
-      if (userAccount) {
-        updatePaymentAccount({
-          variables: {
-            id: event!._id,
-            payment_accounts_new: [...(event!.payment_accounts_new || []), userAccount._id]
-          }
-        });
-        
-        return;
-      }
-
-      if (me?.stripe_connected_account?.connected) {
-        createPaymentAccount({
-          variables: {
-            type: PaymentAccountType.Digital,
-            provider: NewPaymentProvider.Stripe,
-          }
-        });
-      }
-    }
-  });
 
   const handleUpdatePrice = () => {
     if (!stripeAccount) {
@@ -87,7 +32,7 @@ export function UpdateFiatPriceModal({ price, onChange }: { price?: EventTicketP
   };
 
 
-  if (loadingAccounts || loadingUpdatePaymentAccount || loadingCreatePaymentAccount) return (
+  if (loading) return (
     <ModalContent icon="icon-stripe">
       <div className="space-y-4">
         <Skeleton animate className="w-full min-h-[60px]" />
@@ -119,7 +64,7 @@ export function UpdateFiatPriceModal({ price, onChange }: { price?: EventTicketP
         <div className="space-y-1.5">
           <p className="text-sm text-secondary">Payout Account</p>
           <div className="flex items-center gap-2 py-2 px-3.5 rounded-sm bg-primary/8">
-            <i className="icon-stripe-alt size-5" />
+            <i aria-hidden="true" className="icon-stripe-alt size-5" />
             <p>{(stripeAccount.account_info as DigitalAccount).account_id}</p>
           </div>
         </div>

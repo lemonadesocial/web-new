@@ -81,7 +81,7 @@ export function EventInvites({ event }: { event: Event }) {
               ) : (
                 <div className="flex flex-col items-center gap-3 p-4">
                   <div className="w-12 h-12 bg-primary/8 rounded-sm flex items-center justify-center">
-                    <i className="icon-email-open size-8 text-quaternary" />
+                    <i aria-hidden="true" className="icon-email-open size-8 text-quaternary" />
                   </div>
                   <div className="text-center space-y-0.5">
                     <p className="text-tertiary">No Invites Accepted... Yet.</p>
@@ -93,7 +93,7 @@ export function EventInvites({ event }: { event: Event }) {
         </div>
         ) : (
           <div className="flex items-center gap-3 py-3 px-4 rounded-md border border-card-border bg-card">
-          <i className="icon-email-open size-9 text-tertiary" />
+          <i aria-hidden="true" className="icon-email-open size-9 text-tertiary" />
           <div>
             <p className="text-tertiary">No Invites Sent</p>
             <p className="text-tertiary text-sm">You can invite subscribers, contacts and past guests to the event.</p>

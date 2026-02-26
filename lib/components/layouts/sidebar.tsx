@@ -81,14 +81,14 @@ const Sidebar = () => {
             <div className="p-3 flex items-center justify-between">
               <div className="group">
                 <div className={clsx('p-2 flex items-center justify-center', !toggle && 'group-hover:hidden')}>
-                  <i className="icon-lemonade-logo text-warning-300 size-6" />
+                  <i aria-hidden="true" className="icon-lemonade-logo text-warning-300 size-6" />
                 </div>
                 {!toggle && (
                   <button
                     className="p-2.5 items-center justify-center cursor-pointer hidden group-hover:flex"
                     onClick={() => setToggle(!toggle)}
                   >
-                    <i className="icon-left-panel-close-outline size-5" />
+                    <i aria-hidden="true" className="icon-left-panel-close-outline size-5" />
                   </button>
                 )}
               </div>
@@ -98,7 +98,7 @@ const Sidebar = () => {
                   className="p-2.5 flex items-center justify-center cursor-pointer"
                   onClick={() => setToggle(!toggle)}
                 >
-                  <i className="icon-left-panel-close-outline size-5" />
+                  <i aria-hidden="true" className="icon-left-panel-close-outline size-5" />
                 </button>
               )}
             </div>
@@ -113,7 +113,7 @@ const Sidebar = () => {
                   )}
                   onClick={() => handleNavigate(item.path)}
                 >
-                  <i className={twMerge('size-5 aspect-square', item.icon)} />
+                  <i aria-hidden="true" className={twMerge('size-5 aspect-square', item.icon)} />
                   {toggle && <span className="text-sm whitespace-nowrap">{item.label}</span>}
                 </div>
               ))}
@@ -124,7 +124,7 @@ const Sidebar = () => {
                 )}
                 onClick={() => modal.open(CreatingModal)}
               >
-                <i className="size-5 icon-plus aspect-square" />
+                <i aria-hidden="true" className="size-5 icon-plus aspect-square" />
                 {toggle && <span className="text-sm">Create</span>}
               </div>
             </div>
@@ -142,7 +142,7 @@ const Sidebar = () => {
                   )}
                   onClick={() => handleNavigate(item.path)}
                 >
-                  <i className={twMerge('size-5 aspect-square', item.icon)} />
+                  <i aria-hidden="true" className={twMerge('size-5 aspect-square', item.icon)} />
                   {toggle && <span className="text-sm whitespace-nowrap">{item.label}</span>}
                 </div>
               ))}
@@ -169,11 +169,11 @@ const Sidebar = () => {
                       <p className="text-quaternary text-xs">Earn credits for your hubs</p>
                     </div>
                     <div className="p-2 bg-warning-600 rounded-full w-[30px] h-[30px] aspect-square flex items-center justify-center">
-                      <i className="icon-gift-line w-4 h-4" />
+                      <i aria-hidden="true" className="icon-gift-line w-4 h-4" />
                     </div>
                   </>
                 ) : (
-                  <i className="icon-gift-line size-5 aspect-square" />
+                  <i aria-hidden="true" className="icon-gift-line size-5 aspect-square" />
                 )}
               </Card.Content>
             </Card.Root>
@@ -192,11 +192,11 @@ const Sidebar = () => {
                       <p className="text-quaternary text-xs">Unlock more benefits</p>
                     </div>
                     <div className="p-2 bg-alert-500 rounded-full w-[30px] h-[30px] aspect-square flex items-center justify-center">
-                      <i className="icon-flash w-4 h-4" />
+                      <i aria-hidden="true" className="icon-flash w-4 h-4" />
                     </div>
                   </>
                 ) : (
-                  <i className="icon-flash size-5 aspect-square" />
+                  <i aria-hidden="true" className="icon-flash size-5 aspect-square" />
                 )}
               </Card.Content>
             </Card.Root>
@@ -206,7 +206,7 @@ const Sidebar = () => {
                 <Menu.Trigger>
                   {() => (
                     <div className="flex gap-2 items-center p-2">
-                      <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
+                      <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" alt="User avatar" />
                       {toggle && (
                         <div className="flex flex-col">
                           <p className="text-sm font-medium text-secondary">
@@ -243,7 +243,7 @@ const Sidebar = () => {
                 className="flex gap-2 items-center p-2 cursor-pointer hover:bg-(--btn-tertiary) rounded-sm"
                 onClick={() => signIn()}
               >
-                <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
+                <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" alt="User avatar" />
                 {toggle && (
                   <div className="flex flex-col">
                     <p className="text-sm font-medium text-secondary">Login</p>
@@ -258,7 +258,7 @@ const Sidebar = () => {
       {/* Mobile View */}
       <div className="md:hidden fixed z-50 top-0 bg-background left-0 right-0 p-2.5">
         <button className="text-tertiary p-2.5 flex justify-center cursor-pointer" onClick={() => setToggle(!toggle)}>
-          <i className="icon-left-panel-close-outline size-5" />
+          <i aria-hidden="true" className="icon-left-panel-close-outline size-5" />
         </button>
       </div>
       <AnimatePresence mode="wait">
@@ -283,14 +283,14 @@ const Sidebar = () => {
                 <div className="flex-1 flex flex-col overflow-hidden">
                   <div className="p-3 flex items-center justify-between">
                     <div className="p-2 flex items-center justify-center">
-                      <i className="icon-lemonade-logo text-warning-300 size-6" />
+                      <i aria-hidden="true" className="icon-lemonade-logo text-warning-300 size-6" />
                     </div>
 
                     <button
                       className="p-2.5 flex items-center justify-center cursor-pointer"
                       onClick={() => setToggle(!toggle)}
                     >
-                      <i className="icon-left-panel-close-outline size-5" />
+                      <i aria-hidden="true" className="icon-left-panel-close-outline size-5" />
                     </button>
                   </div>
 
@@ -304,7 +304,7 @@ const Sidebar = () => {
                         )}
                         onClick={() => handleNavigate(item.path)}
                       >
-                        <i className={twMerge('size-5 aspect-square', item.icon)} />
+                        <i aria-hidden="true" className={twMerge('size-5 aspect-square', item.icon)} />
                         <span className="text-sm whitespace-nowrap">{item.label}</span>
                       </div>
                     ))}
@@ -315,7 +315,7 @@ const Sidebar = () => {
                       )}
                       onClick={() => modal.open(CreatingModal)}
                     >
-                      <i className="size-5 icon-plus aspect-square" />
+                      <i aria-hidden="true" className="size-5 icon-plus aspect-square" />
                       <span className="text-sm">Create</span>
                     </div>
                   </div>
@@ -333,7 +333,7 @@ const Sidebar = () => {
                         )}
                         onClick={() => handleNavigate(item.path)}
                       >
-                        <i className={twMerge('size-5 aspect-square', item.icon)} />
+                        <i aria-hidden="true" className={twMerge('size-5 aspect-square', item.icon)} />
                         <span className="text-sm whitespace-nowrap">{item.label}</span>
                       </div>
                     ))}
@@ -353,7 +353,7 @@ const Sidebar = () => {
                         <p className="text-quaternary text-xs">Earn credits for your hubs</p>
                       </div>
                       <div className="p-2 bg-warning-600 rounded-full w-[30px] h-[30px] aspect-square flex items-center justify-center">
-                        <i className="icon-gift-line w-4 h-4" />
+                        <i aria-hidden="true" className="icon-gift-line w-4 h-4" />
                       </div>
                     </Card.Content>
                   </Card.Root>
@@ -365,7 +365,7 @@ const Sidebar = () => {
                         <p className="text-quaternary text-xs">Unlock more benefits</p>
                       </div>
                       <div className="p-2 bg-alert-500 rounded-full w-[30px] h-[30px] aspect-square flex items-center justify-center">
-                        <i className="icon-flash w-4 h-4" />
+                        <i aria-hidden="true" className="icon-flash w-4 h-4" />
                       </div>
                     </Card.Content>
                   </Card.Root>
@@ -375,7 +375,7 @@ const Sidebar = () => {
                       <Menu.Trigger>
                         {({ isOpen }) => (
                           <div className="flex gap-2 items-center p-2">
-                            <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
+                            <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" alt="User avatar" />
                             <div className="flex flex-col">
                               <p className="text-sm font-medium text-secondary">
                                 {me?.username || me?.display_name || me?.name}
@@ -410,7 +410,7 @@ const Sidebar = () => {
                       className="flex gap-2 items-center p-2 cursor-pointer hover:bg-(--btn-tertiary) rounded-sm"
                       onClick={() => signIn()}
                     >
-                      <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
+                      <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" alt="User avatar" />
                       {toggle && (
                         <div className="flex flex-col">
                           <p className="text-sm font-medium text-secondary">Login</p>
@@ -465,8 +465,9 @@ export function CreatingModal() {
           size="lg"
           className="rounded-full hover:bg-(--btn-tertiary)! [*]:text-tertiary! max-h-fit! size-[56px]"
           variant="tertiary"
+          aria-label="Create new"
         />
-        <Button icon="icon-x" size="xs" className="rounded-full" variant="tertiary" onClick={() => modal.close()} />
+        <Button icon="icon-x" size="xs" className="rounded-full" variant="tertiary" onClick={() => modal.close()} aria-label="Close" />
       </Card.Header>
       <Card.Content className="flex flex-col gap-4 pt-0">
         <div className="flex flex-col gap-2">
@@ -478,7 +479,7 @@ export function CreatingModal() {
           {Object.entries(actions).map(([key, item]) => (
             <Card.Root key={key} className="flex-1" onClick={() => handleClick(key)}>
               <Card.Content className="py-1.5 px-3 md:py-3.5 md:px-4 flex items-center md:items-start md:flex-col gap-3">
-                <i className={twMerge('size-5 md:size-8', item.icon)} />
+                <i aria-hidden="true" className={twMerge('size-5 md:size-8', item.icon)} />
                 <div>
                   <p className="text-primary">{item.title}</p>
                   <p className="text-sm text-tertiary">{item.subtitle}</p>
@@ -544,12 +545,12 @@ function SectionEvents({ handleNavigate }: { handleNavigate: (path: string) => v
           >
             <div className="flex gap-2.5 flex-1">
               <div className="size-5 aspect-square rounded-xs bg-tertiary">
-                {item.new_new_photos_expanded?.[0] && <img src={generateUrl(item.new_new_photos_expanded?.[0])} />}
+                {item.new_new_photos_expanded?.[0] && <img src={generateUrl(item.new_new_photos_expanded?.[0])} alt={item.title || 'Event thumbnail'} />}
               </div>
               <p className="text-secondary line-clamp-1">{item.title}</p>
             </div>
             <Badge className="text-tertiary bg-(--color-card-hover) text-xs rounded-full px-1.5 py-[1px]">
-              <i className="icon-draft-outline w-3 h-3 aspect-square" />
+              <i aria-hidden="true" className="icon-draft-outline w-3 h-3 aspect-square" />
               <p>Draft</p>
             </Badge>
           </div>

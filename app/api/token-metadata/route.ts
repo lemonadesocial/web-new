@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { PinataSDK } from "pinata";
+import * as Sentry from '@sentry/nextjs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
     });
     
     const data = await request.formData();
-    const file: File | null = data.get("file") as unknown as File;
+    const file = data.get("file") as File | null;
     const coinName = data.get("coinName") as string;
     const ticker = data.get("ticker") as string;
     const description = data.get("description") as string;
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
     const { cid: imageCid } = await pinata.upload.public.file(file);
     const imageUrl = await pinata.gateways.public.convert(imageCid);
 
-    const metadata: any = {
+    const metadata: Record<string, unknown> = {
       name: coinName,
       symbol: ticker,
       description: description,
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
           metadata.attributes = attributes;
         }
       } catch (e) {
-        console.error('Failed to parse attributes:', e);
+        Sentry.captureException(e);
       }
     }
 
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
     }, { status: 200 });
 
   } catch (error) {
-    console.error('Error creating token metadata:', error);
+    Sentry.captureException(error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

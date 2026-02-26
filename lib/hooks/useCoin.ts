@@ -1,3 +1,4 @@
+'use client';
 import { formatEther, formatUnits, zeroAddress } from 'viem';
 import { useEffect, useState, useMemo } from 'react';
 import { useAtomValue } from 'jotai';

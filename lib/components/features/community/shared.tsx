@@ -21,7 +21,7 @@ export function HubCardItem({
       <Card.Root onClick={onClick} className={containerClass}>
         <Card.Content className="flex gap-3 items-center">
           <div className="w-[48px] h-[48px]">
-            <img className={clsx('w-full h-full', image?.class)} src={image?.src} />
+            <img className={clsx('w-full h-full', image?.class)} src={image?.src} alt={title || ''} />
           </div>
           <div className="flex flex-col gap-1 w-full flex-1">
             <p className="font-title md:text-xl font-semibold">{title}</p>
@@ -36,7 +36,7 @@ export function HubCardItem({
     <Card.Root onClick={onClick} className={containerClass}>
       <Card.Content className="flex flex-col gap-6">
         <div className="w-[32px] h-[32px] md:w-[48px] md:h-[48px]">
-          <img className={clsx('w-full h-full', image?.class)} src={image?.src} />
+          <img className={clsx('w-full h-full', image?.class)} src={image?.src} alt={title || ''} />
         </div>
         <div className="flex flex-col gap-1">
           <p className="font-title md:text-xl font-semibold">{title}</p>

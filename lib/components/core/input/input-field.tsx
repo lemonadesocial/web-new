@@ -29,15 +29,16 @@ type Props = {
 export function InputField(props: Props) {
   return (
     <fieldset className={twMerge('input-field relative', props.className)}>
-      {props.label && <label className="text-secondary text-sm font-medium">{props.label}</label>}
+      {props.label && <label htmlFor={props.name} className="text-secondary text-sm font-medium">{props.label}</label>}
       <div className={clsx('control', props.error && 'border-error!')}>
         {props.prefix && <div className="prefix text-base font-medium text-secondary">{props.prefix}</div>}
         {typeof props.iconLeft === 'string' ? (
-          <i className={twMerge('size-5 text-tertiary', props.iconLeft)} />
+          <i aria-hidden="true" className={twMerge('size-5 text-tertiary', props.iconLeft)} />
         ) : (
           props.iconLeft
         )}
         <input
+          id={props.name}
           value={props.value || ''}
           type={props.type || 'text'}
           name={props.name}
@@ -52,7 +53,9 @@ export function InputField(props: Props) {
           }}
         />
         {props.right && (
-          <i className={twMerge('size-5 text-tertiary', props.right.icon)} onClick={props.right.onClick} />
+          <button type="button" aria-label="Clear" className="appearance-none bg-transparent border-none p-0 cursor-pointer" onClick={props.right.onClick}>
+            <i className={twMerge('size-5 text-tertiary', props.right.icon)} />
+          </button>
         )}
         {props.subfix && <div className="subfix text-base font-medium text-secondary">{props.subfix}</div>}
       </div>

@@ -65,7 +65,7 @@ export function EventGuestSideContent({ event }: { event: Event }) {
               className="aspect-square object-contain border rounded-md"
             />
           ) : (
-            <img className="aspect-square object-contain border rounded-md" src={randomEventDP()} />
+            <img className="aspect-square object-contain border rounded-md" src={randomEventDP()} alt="Event cover" />
           )}
 
           {isHost && (
@@ -120,7 +120,7 @@ export function EventGuestSideContent({ event }: { event: Event }) {
               className="aspect-square object-contain border rounded-md"
             />
           ) : (
-            <img className="aspect-square object-contain border rounded-md" src={randomEventDP()} />
+            <img className="aspect-square object-contain border rounded-md" src={randomEventDP()} alt="Event cover" />
           )}
 
           {isHost && (
@@ -166,7 +166,7 @@ export function EventGuestSideContent({ event }: { event: Event }) {
               <Spacer className="h-6" />
               <Badge className="bg-gradient-to-r from-accent-500/16 to-warning-500/16">
                 <div className="bg-gradient-to-r from-accent-500 to-warning-500 bg-clip-text flex items-center gap-1">
-                  <i className="icon-sparkles size-3.5 bg-gradient-to-r from-accent-500 to-accent-500/70 " />
+                  <i aria-hidden="true" className="icon-sparkles size-3.5 bg-gradient-to-r from-accent-500 to-accent-500/70 " />
                   <span className="text-transparent bg-clip-text">Private Event</span>
                 </div>
               </Badge>

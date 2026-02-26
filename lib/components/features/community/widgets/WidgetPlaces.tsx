@@ -20,7 +20,7 @@ export function WidgetPlaces({ space, title, subtitle }: Props) {
     <WidgetContent space={space} title="Collectibles" className="max-sm:col-span-2">
       <div className="p-6 flex items-center flex-col gap-5 relative">
         <div className="absolute top-0 left-0 right-0">
-          <img src={`${ASSET_PREFIX}/assets/images/passports/templates/${state.template.provider}-places.png`} />
+          <img src={`${ASSET_PREFIX}/assets/images/passports/templates/${state.template.provider}-places.png`} alt="Places template" />
         </div>
 
         <Spacer className="h-[152px]" />

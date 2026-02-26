@@ -35,7 +35,7 @@ export function RegistrationEmails({ event }: { event: Event }) {
   //     <div className="grid grid-cols-3 gap-2">
   //       <div className="rounded-md border border-card-border bg-card">
   //         <div className="p-3 space-y-4 bg-card">
-  //           <i className="icon-pending size-7 text-warning-400" />
+  //           <i aria-hidden="true" className="icon-pending size-7 text-warning-400" />
   //           <div className="space-y-2">
   //             <Skeleton className="h-2.5 w-[240px]" />
   //             <Skeleton className="h-2.5 w-[96px]" />
@@ -51,7 +51,7 @@ export function RegistrationEmails({ event }: { event: Event }) {
   //         onClick={() => modal.open(ConfirmationEmailModal, { props: { setting: confirmationEmailSetting as EmailSetting, event } })}
   //       >
   //         <div className="p-3 space-y-4 bg-card">
-  //           <i className="icon-check size-7 text-success-500" />
+  //           <i aria-hidden="true" className="icon-check size-7 text-success-500" />
   //           <div className="space-y-2">
   //             <Skeleton className="h-2.5 w-[240px]" />
   //             <Skeleton className="h-2.5 w-[96px]" />
@@ -64,7 +64,7 @@ export function RegistrationEmails({ event }: { event: Event }) {
 
   //       <div className="rounded-md border border-card-border bg-card">
   //         <div className="p-3 space-y-4 bg-card">
-  //           <i className="icon-cancel size-7 text-error" />
+  //           <i aria-hidden="true" className="icon-cancel size-7 text-error" />
   //           <div className="space-y-2">
   //             <Skeleton className="h-2.5 w-[240px]" />
   //             <Skeleton className="h-2.5 w-[96px]" />

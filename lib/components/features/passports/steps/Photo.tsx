@@ -59,7 +59,7 @@ function VerifySelf() {
 
   React.useEffect(() => {
     if (data?.getSelfVerificationStatus) {
-      const allVerified = data.getSelfVerificationStatus.disclosures?.every((d: any) => d.verified);
+      const allVerified = data.getSelfVerificationStatus.disclosures?.every((d: { verified: boolean }) => d.verified);
       dispatch({ type: PassportActionKind.SetSelfVerified, payload: allVerified });
     }
   }, [data]);
@@ -83,7 +83,7 @@ function VerifySelf() {
       <Card.Root>
         <Card.Content className="py-3 flex items-center gap-3">
           <div className="flex items-center justify-center p-2 rounded-sm bg-accent-400/16 aspect-square">
-            <i className="icon-verified-outline size-[22px] text-accent-400" />
+            <i aria-hidden="true" className="icon-verified-outline size-[22px] text-accent-400" />
           </div>
           <div className="space-y-0.5 flex-1">
             <p className="text-accent-400">Verified</p>
@@ -97,7 +97,7 @@ function VerifySelf() {
     <Card.Root>
       <Card.Content className="py-3 flex items-center gap-3">
         <div className="flex items-center justify-center p-2 rounded-sm bg-(--btn-tertiary) aspect-square">
-          <i className="icon-verified-outline size-[22px]" />
+          <i aria-hidden="true" className="icon-verified-outline size-[22px]" />
         </div>
         <div className="space-y-0.5 flex-1">
           <p>Get Verified</p>
@@ -152,7 +152,7 @@ function UploadPhoto() {
           </div>
         ) : (
           <div className="flex items-center justify-center p-2 rounded-sm bg-(--btn-tertiary) aspect-square">
-            <i className="icon-image size-[22px]" />
+            <i aria-hidden="true" className="icon-image size-[22px]" />
           </div>
         )}
         <div className="space-y-0.5 flex-1">

@@ -53,7 +53,7 @@ export function RootMenu() {
         {menu.map((item, idx) => (
           <li key={idx} className="inline-flex items-center">
             <NextLink href={item.path} className={clsx('link secondary', pathName === item.path && 'active')}>
-              <i className={twMerge('text-tertiary', item.icon)} />
+              <i aria-hidden="true" className={twMerge('text-tertiary', item.icon)} />
               <span className="hidden md:block">{item.text}</span>
             </NextLink>
           </li>
@@ -86,7 +86,7 @@ export default function Header({ showUI = true, title, mainMenu, hideLogo, class
             aria-label="Lemonade"
             className="text-tertiary hover:text-primary size-10 flex items-center justify-center"
           >
-            <i className="icon-lemonade size-[20]" />
+            <i aria-hidden="true" className="icon-lemonade size-[20]" />
           </NextLink>
         )}
         {title && <h1 className="text-md text-tertiary font-medium">{title}</h1>}
@@ -117,7 +117,7 @@ export default function Header({ showUI = true, title, mainMenu, hideLogo, class
             {/* { */}
             {/*   hasLemonhead ? ( */}
             {/*     <div className="px-2.5 py-1.5 h-8 rounded-sm flex gap-1.5 items-center bg-accent-400/16"> */}
-            {/*       <i className="icon-passport size-5 text-accent-400" /> */}
+            {/*       <i aria-hidden="true" className="icon-passport size-5 text-accent-400" /> */}
             {/*       <p className="text-sm text-accent-400">Citizen</p> */}
             {/*     </div> */}
             {/*   ) : ( */}

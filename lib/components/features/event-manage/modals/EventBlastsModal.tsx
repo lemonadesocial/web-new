@@ -38,7 +38,7 @@ function ModalHeader({ icon }: { icon: string }) {
   return (
     <Card.Header className="flex justify-between items-start">
       <div className="rounded-full bg-(--btn-tertiary) text-tertiary flex items-center justify-center size-14">
-        <i className={twMerge('size-8', icon)} />
+        <i aria-hidden="true" className={twMerge('size-8', icon)} />
       </div>
       <Button
         variant="tertiary-alt"
@@ -106,17 +106,17 @@ export function BlastAdvancedModal({ event, message }: { event: Event; message: 
 
   const handleSendEmail = () => {
     const join_request_states = selectReceipts
-      .filter((i) => i.key in EventJoinRequestState)
+      .filter((i) => Object.values(EventJoinRequestState).includes(i.key as EventJoinRequestState))
       .map((i) => i.key) as EventJoinRequestState[];
     const recipient_types = selectReceipts
-      .filter((i) => i.key in EmailRecipientType)
+      .filter((i) => Object.values(EmailRecipientType).includes(i.key as EmailRecipientType))
       .map((i) => i.key) as EmailRecipientType[];
 
     let ticket_types = selectReceipts
-      .filter((i) => !(i.key in EmailRecipientType && i.key in EmailRecipientType))
+      .filter((i) => !Object.values(EmailRecipientType).includes(i.key as EmailRecipientType))
       .map((i) => i.key) as string[];
 
-    if (ticket_types.includes('all_tickets')) {
+    if (ticket_types.includes(EmailRecipientType.Registration)) {
       ticket_types = event.event_ticket_types?.map((i) => i._id) as string[];
     }
 
@@ -140,7 +140,7 @@ export function BlastAdvancedModal({ event, message }: { event: Event; message: 
 
   React.useEffect(() => {
     if (event) {
-      let list = [{ key: 'all_tickets', value: 'Going All' }];
+      let list = [{ key: EmailRecipientType.Registration, value: 'Going All' }];
       event.event_ticket_types?.map((item) => list.push({ key: item._id, value: `Going - ${item.title}` }));
       list = [
         ...list,

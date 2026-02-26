@@ -42,7 +42,7 @@ export function RecentRegistrations({ event, titleClassName }: RecentRegistratio
   if (guests.length === 0) {
     return (
       <div className="flex items-center gap-3 py-3 px-4 rounded-md border border-card-border bg-card">
-        <i className="icon-user-group-outline size-9 text-tertiary" />
+        <i aria-hidden="true" className="icon-user-group-outline size-9 text-tertiary" />
         <div>
           <p className="text-tertiary">No Guests Yet</p>
           <p className="text-tertiary text-sm">Once people register for your event, you will find them here.</p>

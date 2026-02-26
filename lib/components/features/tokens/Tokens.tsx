@@ -129,7 +129,6 @@ function QuickBuyProvider({ children }: { children: React.ReactNode }) {
           },
         });
       } catch (error) {
-        console.log(error);
         Sentry.captureException(error);
         toast.error(formatError(error));
       } finally {
@@ -513,7 +512,7 @@ function TokenCard({ pool }: { pool: PoolCreated }) {
                   </div>
                   <div className="flex gap-1.5 items-center text-sm">
                     <p className="text-tertiary">{formatWallet(pool.memecoin)}</p>
-                    <i className="icon-copy size-3.5 aspect-square text-quaternary" />
+                    <i aria-hidden="true" className="icon-copy size-3.5 aspect-square text-quaternary" />
                   </div>
                 </div>
 
@@ -529,7 +528,7 @@ function TokenCard({ pool }: { pool: PoolCreated }) {
                     <p>VOL: {formattedVolumeUSDC || 'N/A'}</p>
                   )}
                   <div className="flex gap-2 items-center">
-                    <i className="icon-user-group-outline size-4" />
+                    <i aria-hidden="true" className="icon-user-group-outline size-4" />
                     {isLoadingHoldersCount ? (
                       <Skeleton className="h-4 w-8" animate />
                     ) : (

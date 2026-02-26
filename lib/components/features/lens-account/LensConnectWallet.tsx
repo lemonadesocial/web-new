@@ -32,7 +32,7 @@ export function LensConnectWallet({ onConnect }: { onConnect: () => void }) {
       <div className="rounded-sm border border-divider space-y-4 p-4">
         <div className="flex justify-between">
           <div className="flex items-center justify-center bg-primary/8 rounded-full size-14">
-            <i className="icon-account size-8 text-tertiary" />
+            <i aria-hidden="true" className="icon-account size-8 text-tertiary" />
           </div>
 
           <Menu.Root>
@@ -50,7 +50,7 @@ export function LensConnectWallet({ onConnect }: { onConnect: () => void }) {
                   }}
                 >
                   <div className="flex items-center gap-2.5">
-                    <i className="icon-exit size-4 text-error" />
+                    <i aria-hidden="true" className="icon-exit size-4 text-error" />
                     <p className="text-sm text-error">Disconnect</p>
                   </div>
                 </MenuItem>
@@ -100,7 +100,7 @@ export function LensConnectWallet({ onConnect }: { onConnect: () => void }) {
                   }}
                 >
                   <div className="flex items-center gap-2.5">
-                    <i className="icon-exit size-4 text-error" />
+                    <i aria-hidden="true" className="icon-exit size-4 text-error" />
                     <p className="text-sm text-error">Disconnect</p>
                   </div>
                 </MenuItem>
@@ -115,7 +115,7 @@ export function LensConnectWallet({ onConnect }: { onConnect: () => void }) {
   return (
     <div className="rounded-sm border border-divider flex flex-col gap-4 p-4">
       <div className="hidden size-[56px] md:flex justify-center items-center rounded-full bg-primary/8">
-        <i className="icon-wallet size-8 text-tertiary" />
+        <i aria-hidden="true" className="icon-wallet size-8 text-tertiary" />
       </div>
       <div className="space-y-2">
         <p className="text-lg">Connect Wallet</p>

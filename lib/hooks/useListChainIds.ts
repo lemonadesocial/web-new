@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { useAtomValue } from 'jotai';
 import { listChainsAtom } from '$lib/jotai/chains';

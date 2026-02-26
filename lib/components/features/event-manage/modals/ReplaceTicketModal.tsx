@@ -79,7 +79,7 @@ export function ReplaceTicketModal({
       <div className="space-y-4">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center p-2 rounded-sm bg-primary/8">
-          <i className="icon-ticket size-5 text-tertiary" />
+          <i aria-hidden="true" className="icon-ticket size-5 text-tertiary" />
           </div>
           <div>
             <p className="font-medium">{ticket.type_expanded?.title || 'Unknown'}</p>
@@ -96,7 +96,7 @@ export function ReplaceTicketModal({
               <span className="font-medium flex-1 text-left truncate min-w-0">
                 {selectedTicketTypeId ? ticketTypes.find((t) => t._id === selectedTicketTypeId)?.title : 'Select ticket type'}
               </span>
-              <i className="icon-chevron-down size-5 text-tertiary flex-shrink-0" />
+              <i aria-hidden="true" className="icon-chevron-down size-5 text-tertiary flex-shrink-0" />
             </Menu.Trigger>
             <Menu.Content className="w-full p-1 max-h-[200px] overflow-auto no-scrollbar">
               {({ toggle }) => (
@@ -114,13 +114,13 @@ export function ReplaceTicketModal({
                           }}
                         >
                           <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <i className="icon-ticket size-4 text-tertiary flex-shrink-0" />
+                            <i aria-hidden="true" className="icon-ticket size-4 text-tertiary flex-shrink-0" />
                               <div className="flex-1 min-w-0 overflow-hidden">
                                 <p className="text-sm text-secondary truncate">{ticketType.title}</p>
                                 <p className="text-xs text-tertiary">{priceFormatted}</p>
                               </div>
                           </div>
-                          {selectedTicketTypeId === ticketType._id && <i className="icon-check size-4 text-primary" />}
+                          {selectedTicketTypeId === ticketType._id && <i aria-hidden="true" className="icon-check size-4 text-primary" />}
                         </MenuItem>
                       );
                     })}

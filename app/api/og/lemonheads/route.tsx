@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
 import { ethers } from 'ethers';
+import * as Sentry from '@sentry/nextjs';
 
 import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
 import { LEMONHEAD_CHAIN_ID, LEMONHEAD_COLORS } from '$lib/components/features/lemonheads/mint/utils';
@@ -61,7 +62,7 @@ export async function GET(req: NextRequest) {
     const data = await res.json();
     image = data.image;
   } catch (err) {
-    console.log(err);
+    Sentry.captureException(err);
     return new Response(`Error: Something went wrong!`, { status: 500 });
   }
 
@@ -85,7 +86,7 @@ export async function GET(req: NextRequest) {
   });
 }
 
-function PreviewImageLink({ color, image, portrait, username, tokenId, bio }: any) {
+function PreviewImageLink({ color, image, portrait, username, tokenId, bio }: { color: string; image: string; portrait: string; username: string; tokenId: string; bio: string }) {
   return (
     <div
       style={{
@@ -223,7 +224,7 @@ function PreviewImageLink({ color, image, portrait, username, tokenId, bio }: an
   );
 }
 
-function DownloadImageLink({ color, image, portrait, username, tokenId }: any) {
+function DownloadImageLink({ color, image, portrait, username, tokenId }: { color: string; image: string; portrait: string; username: string; tokenId: string }) {
   return (
     <div
       style={{

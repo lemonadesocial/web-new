@@ -222,7 +222,7 @@ export function SpotlightEventsPane({ space, selectedEvents = [], onSave }: Prop
               </div>
             ) : events.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-tertiary">
-                <i className="icon-ticket size-12 text-quaternary mb-3" />
+                <i aria-hidden="true" className="icon-ticket size-12 text-quaternary mb-3" />
                 <p className="text-sm">No events found</p>
               </div>
             ) : (

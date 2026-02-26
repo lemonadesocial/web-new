@@ -151,7 +151,7 @@ export function SelectProfileModal() {
           >
             <Avatar src={getAccountAvatar(item.account)} className="size-5" />
             <p className="flex-1">{item.account.username?.localName || item.account.metadata?.name || formatWallet(item.account.address)}</p>
-            {selectedAccount === item.account.address && <i className="size-5 animate-spin icon-loader" />}
+            {selectedAccount === item.account.address && <i aria-hidden="true" className="size-5 animate-spin icon-loader" />}
           </div>
         ))}
       </div>

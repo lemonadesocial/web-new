@@ -225,7 +225,7 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
           <p className="text-sm text-secondary">Design and issue a unique collectible for your event attendees.</p>
           <div className="flex items-center gap-1">
             <span className="text-tertiary text-sm">Powered by</span>
-            <i className="icon-poap size-4.5" />
+            <i aria-hidden="true" className="icon-poap size-4.5" />
           </div>
         </div>
 
@@ -242,7 +242,7 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
                     <div className="flex rounded-sm bg-primary/8 py-2 px-3.5 gap-2.5 items-center">
                       {selectedChain?.logo_url && <img src={selectedChain.logo_url} className="size-5" />}
                       <p className="flex-1">{selectedChain?.name || 'Select a network'}</p>
-                      <i className="icon-chevron-down size-5 text-quaternary" />
+                      <i aria-hidden="true" className="icon-chevron-down size-5 text-quaternary" />
                     </div>
                   </Menu.Trigger>
 

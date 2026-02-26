@@ -14,10 +14,10 @@ export function AddToWalletModal({ ticket  }: { ticket: Ticket }) {
 
         <div className="flex justify-between">
           <a href={getTicketPassUrl(ticket, 'apple')} target="_blank">
-            <img src={`${ASSET_PREFIX}/assets/images/add-to-apple-wallet.png`} className="h-[44px]" />
+            <img src={`${ASSET_PREFIX}/assets/images/add-to-apple-wallet.png`} className="h-[44px]" alt="Add to Apple Wallet" />
           </a>
           <a href={getTicketPassUrl(ticket, 'google')} target="_blank">
-            <img src={`${ASSET_PREFIX}/assets/images/add-to-google-wallet.png`} className="h-[44px]" />
+            <img src={`${ASSET_PREFIX}/assets/images/add-to-google-wallet.png`} className="h-[44px]" alt="Add to Google Wallet" />
           </a>
         </div>
       </div>

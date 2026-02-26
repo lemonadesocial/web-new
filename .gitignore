@@ -56,3 +56,8 @@ certificates
 .cursor/
 # Sentry Config File
 .env.sentry-build-plugin
+
+# AI agent reports (managed locally, not committed)
+TODO.md
+AUDIT-REPORT-*.md
+PERF-REPORT-*.md

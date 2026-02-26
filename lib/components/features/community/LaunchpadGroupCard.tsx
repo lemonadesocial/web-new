@@ -319,7 +319,7 @@ function DepositTab({ stakingInfo }: { stakingInfo: StakingInfo }) {
                   rel="noopener noreferrer"
                   className="text-tertiary hover:text-primary"
                 >
-                  <i className="icon-arrow-top-right size-4" />
+                  <i aria-hidden="true" className="icon-arrow-top-right size-4" />
                 </a>
               )}
             </div>
@@ -333,7 +333,7 @@ function DepositTab({ stakingInfo }: { stakingInfo: StakingInfo }) {
                   rel="noopener noreferrer"
                   className="text-tertiary hover:text-primary"
                 >
-                  <i className="icon-arrow-top-right size-4" />
+                  <i aria-hidden="true" className="icon-arrow-top-right size-4" />
                 </a>
               )}
             </div>

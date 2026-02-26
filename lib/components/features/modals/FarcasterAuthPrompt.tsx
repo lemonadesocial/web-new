@@ -110,7 +110,7 @@ export const FarcasterAuthPrompt = (props: {
     <ModalContent>
     <div className='space-y-4'>
       <div className='size-14 flex items-center justify-center rounded-full bg-primary/8'>
-        <i className="icon-farcaster text-accent-400 size-8" />
+        <i aria-hidden="true" className="icon-farcaster text-accent-400 size-8" />
       </div>
       <div className='space-y-1'>
         <p className='text-lg'>Let's Get You Started</p>
@@ -125,7 +125,7 @@ export const FarcasterAuthPrompt = (props: {
           Create New Account
         </Button>
         <p className='text-sm text-secondary text-center'>
-          Already have an account? <span className='text-accent-400 cursor-pointer' onClick={link}>Link it here</span>
+          Already have an account? <button type="button" className='text-accent-400 cursor-pointer inline' onClick={link}>Link it here</button>
         </p>
       </div>
     </div>

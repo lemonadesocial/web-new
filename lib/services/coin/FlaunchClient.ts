@@ -1,6 +1,7 @@
 import { isAddress, JsonRpcProvider, type Signer, Interface } from 'ethers';
 import { createDrift, type Drift, type ReadContract, type Hash, ReadWriteContract } from '@gud/drift';
 import { ethersAdapter } from '@gud/drift-ethers';
+import * as Sentry from '@sentry/nextjs';
 
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { getGasOptions } from '$lib/utils/crypto';
@@ -289,7 +290,7 @@ export class FlaunchClient {
           }
         }
       } catch (error) {
-        console.error('Failed to resolve tokenURI:', error);
+        Sentry.captureException(error);
       }
     }
 
@@ -609,7 +610,7 @@ export class FlaunchClient {
     return txHash;
   }
 
-  async sellCoinWith7702(sendCalls: (calls: any[]) => Promise<string>, {
+  async sellCoinWith7702(sendCalls: (calls: { to: `0x${string}`; value: bigint; data: `0x${string}` }[]) => Promise<string>, {
     sellAmount,
     slippageTolerance = 500,
     recipient,

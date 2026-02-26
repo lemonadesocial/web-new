@@ -1,5 +1,5 @@
 import { getDefaultStore } from 'jotai';
-import { Eip1193Provider, ethers, isError } from 'ethers';
+import { Contract, Eip1193Provider, ethers, isError } from 'ethers';
 import { mainnet } from 'viem/chains';
 
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
@@ -59,9 +59,9 @@ export async function writeContract(
   contractAddress: string,
   provider: Eip1193Provider,
   functionName: string,
-  args: any[],
-  txOptions: Record<string, any> = {}
-): Promise<any> {
+  args: unknown[],
+  txOptions: Record<string, unknown> = {}
+): Promise<ethers.TransactionResponse> {
   const browserProvider = new ethers.BrowserProvider(provider);
   const signer = await browserProvider.getSigner();
   const contract = contractInstance.attach(contractAddress).connect(signer);
@@ -319,6 +319,23 @@ export function multiplyByPowerOf10(amount: string, power: number) {
   const result = BigInt(combined) * (BigInt(10) ** BigInt(totalPower));
 
   return result.toString();
+}
+
+export async function waitForEvent(tx: any, contract: Contract, eventName: string) {
+  const receipt = await tx.wait();
+  const iface = contract.interface;
+
+  let parsedEventLog: any = null;
+
+  for (const log of receipt.logs) {
+    const parsedLog = iface.parseLog(log);
+    if (parsedLog?.name === eventName) {
+      parsedEventLog = parsedLog;
+      break;
+    }
+  }
+
+  return parsedEventLog;
 }
 
 export const MainnetRpcProvider = new ethers.JsonRpcProvider('https://eth-mainnet.public.blastapi.io'); 

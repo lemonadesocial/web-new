@@ -9,7 +9,6 @@ import { FloatingMenuItem } from './toolbars';
 import { toast } from '../toast';
 import { Menu } from '../menu';
 import { Button } from '../button';
-import { File } from '$lib/graphql/generated/backend/graphql';
 
 type HeadingType = { level: Level[]; label: string[] };
 type ControlType = { enable: boolean; label: string };
@@ -108,10 +107,10 @@ export default function TextEdiorFloatingMenu({ editor, toolbar, directory = 'ev
                               toggle();
                               break;
                             case 'image':
-                              pickFile(async (file: any) => {
+                              pickFile(async (file: File) => {
                                 try {
                                   setUploading(true);
-                                  const files = (await uploadFiles([file], directory)) as unknown as File[];
+                                  const files = await uploadFiles([file], directory);
                                   editor?.chain().focus().setImage({ src: files[0].url }).run();
                                 } catch (_e) {
                                   toast.error('Cannot upload file!');

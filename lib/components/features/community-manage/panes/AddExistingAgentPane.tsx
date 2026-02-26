@@ -110,7 +110,7 @@ export function AddExistingAgentPane({ space, onAdded }: Props) {
         ) : availableConfigs.length === 0 ? (
           <Card.Root>
             <div className="p-4 flex gap-3 items-center">
-              <i className="icon-robot size-9 aspect-square text-quaternary" />
+              <i aria-hidden="true" className="icon-robot size-9 aspect-square text-quaternary" />
               <div className="text-tertiary space-y-0.5">
                 <p>No Agents Available</p>
                 <p className="text-sm">All available agents are already in this space.</p>
@@ -153,9 +153,9 @@ export function AddExistingAgentPane({ space, onAdded }: Props) {
                       className="sr-only peer"
                     />
                     {selectedAgentId === config._id ? (
-                      <i className="icon-check size-5 text-primary" />
+                      <i aria-hidden="true" className="icon-check size-5 text-primary" />
                     ) : (
-                      <i className="icon-circle-outline size-5 text-quaternary" />
+                      <i aria-hidden="true" className="icon-circle-outline size-5 text-quaternary" />
                     )}
                   </div>
                 </label>

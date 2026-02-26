@@ -36,8 +36,8 @@ export function Messages() {
             exit={{ opacity: 0, transition: { duration: 0 } }}
           >
             <div className="relative flex items-center justify-center">
-              <i className="absolute icon-loader-thin text-primary animate-spin" />
-              <i className="icon-lemon-ai size-4 aspect-square text-warning-300" />
+              <i aria-hidden="true" className="absolute icon-loader-thin text-primary animate-spin" />
+              <i aria-hidden="true" className="icon-lemon-ai size-4 aspect-square text-warning-300" />
             </div>
             <p className="text-tertiary animate-text-shimmer">Thinking...</p>
           </motion.div>
@@ -53,7 +53,7 @@ function MessageItem({ message: item }: { message: Message }) {
     .with('assistant', () => (
       <div className="flex items-start gap-4">
         <div className="relative flex mt-1 items-center justify-center">
-          <i className="icon-lemon-ai size-4 aspect-square text-warning-300" />
+          <i aria-hidden="true" className="icon-lemon-ai size-4 aspect-square text-warning-300" />
         </div>
         <div className="whitespace-break-spaces flex flex-col gap-6">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.message}</ReactMarkdown>

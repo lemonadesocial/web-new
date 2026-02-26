@@ -2,6 +2,7 @@
 import { useRouter } from 'next/navigation';
 import NextLink from 'next/link';
 import { IDetectedBarcode, Scanner } from '@yudiel/react-qr-scanner';
+import * as Sentry from '@sentry/nextjs';
 
 import { Button, modal, Spacer, Skeleton } from '$lib/components/core';
 import { Event } from '$lib/graphql/generated/backend/graphql';
@@ -47,7 +48,7 @@ function EventScanContent({ event }: { event: Event }) {
   };
 
   const handleError = (err: unknown) => {
-    console.error(err);
+    Sentry.captureException(err);
   };
 
   return (
@@ -230,7 +231,7 @@ function GuestStatsCard({ event }: { event: Event }) {
         className="flex items-center gap-1 text-tertiary hover:text-primary transition-colors w-fit"
       >
         <p className="text-tertiary">Manage Event Page</p>
-        <i className="icon-arrow-outward size-5 text-quaternary" />
+        <i aria-hidden="true" className="icon-arrow-outward size-5 text-quaternary" />
       </NextLink>
     </div>
   );

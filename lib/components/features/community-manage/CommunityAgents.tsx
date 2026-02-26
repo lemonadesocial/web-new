@@ -163,7 +163,7 @@ export function CommunityAgents({ space }: Props) {
         ) : configs.length === 0 ? (
           <Card.Root>
             <div className="p-4 flex gap-3 items-center">
-              <i className="icon-robot size-9 aspect-square text-quaternary" />
+              <i aria-hidden="true" className="icon-robot size-9 aspect-square text-quaternary" />
               <div className="text-tertiary space-y-0.5">
                 <p>No Agents Yet</p>
                 <p className="text-sm">Create your first agent to help members explore and engage with your community.</p>
@@ -188,7 +188,7 @@ export function CommunityAgents({ space }: Props) {
                       className="size-12 aspect-square rounded-full shrink-0"
                     />
                     <div className="flex items-center gap-1.5 text-tertiary text-sm shrink-0">
-                      <i className="icon-ticket size-4 aspect-square" />
+                      <i aria-hidden="true" className="icon-ticket size-4 aspect-square" />
                       <span>{count}</span>
                     </div>
                   </div>
@@ -197,7 +197,7 @@ export function CommunityAgents({ space }: Props) {
                       <div className="flex items-center gap-1.5 flex-wrap">
                         {!config.isPublic && (
                           <div className="size-5 rounded-full flex items-center justify-center bg-accent-400/16">
-                            <i className="icon-sparkles size-3 aspect-square text-accent-400" />
+                            <i aria-hidden="true" className="icon-sparkles size-3 aspect-square text-accent-400" />
                           </div>
                         )}
                         <p className="truncate text-lg">{config.name}</p>
@@ -270,7 +270,7 @@ export function CommunityAgents({ space }: Props) {
           <div className="flex flex-col divide-y divide-(--color-divider) bg-card rounded-md border border-card-border">
             <div className="flex items-center gap-3 px-4 py-3">
               <div className="size-7 rounded-sm flex items-center justify-center bg-card">
-                <i className="icon-info size-4 text-tertiary" />
+                <i aria-hidden="true" className="icon-info size-4 text-tertiary" />
               </div>
               <div className="flex flex-col gap-0.5 min-w-0">
                 <p className="font-medium">Community Details</p>
@@ -298,7 +298,7 @@ export function CommunityAgents({ space }: Props) {
                 return (
                   <div key={doc._id} className="flex items-center gap-3 px-4 py-3">
                     <div className="size-7 shrink-0 rounded-sm flex items-center justify-center bg-card">
-                      <i className="icon-book size-4 text-tertiary" />
+                      <i aria-hidden="true" className="icon-book size-4 text-tertiary" />
                     </div>
                     <div className="flex flex-col gap-0.5 min-w-0 flex-1">
                       <p className="font-medium">{doc.title || 'Untitled'}</p>

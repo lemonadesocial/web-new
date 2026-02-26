@@ -8,7 +8,6 @@ import clsx from 'clsx';
 import { Card } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
-  File,
   FileCategory,
   GetSystemFilesDocument,
   SystemFile,
@@ -73,7 +72,7 @@ export function EventThemeBuilder({ eventId }: { eventId?: string }) {
               <p className="text-xs">Theme</p>
               <p className="text-primary">{presets[themeName]?.name}</p>
             </div>
-            <i className="icon-chevrons-up-down size-5" />
+            <i aria-hidden="true" className="icon-chevrons-up-down size-5" />
           </div>
         </button>
         <button
@@ -81,7 +80,7 @@ export function EventThemeBuilder({ eventId }: { eventId?: string }) {
           onClick={() => dispatch({ type: ThemeBuilderActionKind.random })}
           className="btn btn-tertiary inline-flex items-center justify-center p-[21px] backdrop-blur-sm rounded-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-none!"
         >
-          <i className="icon-shuffle size-5" />
+          <i aria-hidden="true" className="icon-shuffle size-5" />
         </button>
       </div>
 
@@ -269,9 +268,9 @@ function EventBuilderPaneOptions() {
           >
             <div className="size-[32px]">
               {data.config?.mode === 'dark' ? (
-                <i className="icon-clear-night text-blue-400" />
+                <i aria-hidden="true" className="icon-clear-night text-blue-400" />
               ) : (
-                <i className="icon-dark-theme-filled size-[24px] rounded-full" />
+                <i aria-hidden="true" className="icon-dark-theme-filled size-[24px] rounded-full" />
               )}
             </div>
             <p className="text-xs">Display</p>
@@ -561,7 +560,7 @@ function ThemeImage() {
                       mode: item.category.includes('dark') ? 'dark' : 'light',
                       image: {
                         _id: item._id,
-                        url: generateUrl(item as unknown as File, {
+                        url: generateUrl(item, {
                           resize: { fit: 'cover', height: 1080, width: 1920 },
                         }),
                         name: item.name,
@@ -572,7 +571,7 @@ function ThemeImage() {
               }}
             >
               <img
-                src={generateUrl(item as unknown as File, { resize: { width: 72, height: 54, fit: 'cover' } })}
+                src={generateUrl(item, { resize: { width: 72, height: 54, fit: 'cover' } })}
                 className="rounded-sm"
                 width={72}
                 height={54}
@@ -650,7 +649,7 @@ function ThemeMode() {
               data.config.mode === item.mode && item.active,
             )}
           >
-            <i className={item.icon} />
+            <i aria-hidden="true" className={item.icon} />
           </div>
           <p>{item.label}</p>
         </button>

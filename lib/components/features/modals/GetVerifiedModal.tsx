@@ -28,7 +28,7 @@ export function GetVerifiedModal({ config = SELF_VERIFICATION_CONFIG }: { config
   const [showError, setShowError] = useState(false);
 
   const requirements = useMemo(() => {
-    const requirementMap: Array<{ key: keyof typeof config; label: string | ((value: any) => string) }> = [
+    const requirementMap: Array<{ key: keyof typeof config; label: string | ((value: number) => string) }> = [
       { key: 'minimumAge', label: (age: number) => `Age [over ${age}]` },
       { key: 'name', label: 'Name' },
       { key: 'date_of_birth', label: 'Date of Birth' },
@@ -105,7 +105,7 @@ export function GetVerifiedModal({ config = SELF_VERIFICATION_CONFIG }: { config
       <div className="flex justify-between items-start">
         <div className="relative">
           <img src={userAvatar(me)} className="size-[56px] rounded-full" />
-          <i className="icon-verified text-accent-400 absolute bottom-0 right-0 size-4" />
+          <i aria-hidden="true" className="icon-verified text-accent-400 absolute bottom-0 right-0 size-4" />
         </div>
         <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
       </div>
@@ -154,7 +154,7 @@ export function GetVerifiedModal({ config = SELF_VERIFICATION_CONFIG }: { config
     <div className="w-[340px] max-w-full p-4 flex flex-col gap-4">
       <div className="flex justify-between items-start">
         <div className="size-[56px] flex justify-center items-center rounded-full bg-violet-400/16">
-          <i className="icon-verified text-accent-400" />
+          <i aria-hidden="true" className="icon-verified text-accent-400" />
         </div>
         <Button icon="icon-x" size="xs" variant="tertiary" className="rounded-full" onClick={() => modal.close()} />
       </div>
@@ -169,7 +169,7 @@ export function GetVerifiedModal({ config = SELF_VERIFICATION_CONFIG }: { config
           <p className="text-sm text-secondary">You'll be asked to confirm:</p>
           {requirements.map((requirement, index) => (
             <div key={index} className="flex gap-2 items-center">
-              <i className="icon-checkbox-sharp size-4" />
+              <i aria-hidden="true" className="icon-checkbox-sharp size-4" />
               <p className="text-sm">{requirement}</p>
             </div>
           ))}

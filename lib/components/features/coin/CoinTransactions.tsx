@@ -3,6 +3,7 @@ import React from 'react';
 import { getTimeAgo } from '$lib/utils/date';
 import { formatEther } from 'viem';
 import { ethers } from 'ethers';
+import * as Sentry from '@sentry/nextjs';
 
 import { useQuery } from '$lib/graphql/request/hooks';
 import { coinClient } from '$lib/graphql/request/instances';
@@ -48,7 +49,7 @@ function TransactionRow({
           setFromAddress(transaction.from);
         }
       } catch (error) {
-        console.error('Failed to fetch transaction from address:', error);
+        Sentry.captureException(error);
       } finally {
         setIsLoadingFrom(false);
       }

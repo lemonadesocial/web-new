@@ -24,7 +24,7 @@ export function AccessCard({
         {
           status === 'live' && (
             <div className="flex items-center gap-1.5">
-              <i className="icon-dot size-4 text-error" />
+              <i aria-hidden="true" className="icon-dot size-4 text-error" />
               <p className="text-error uppercase text-sm">live</p>
             </div>
           )

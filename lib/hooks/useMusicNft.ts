@@ -1,3 +1,4 @@
+'use client';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom } from '$lib/jotai';
 import { MusicNftContract } from '$lib/utils/crypto';

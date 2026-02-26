@@ -29,7 +29,7 @@ export function ReoderSectionsModal({ list = [], onChange }: { list?: string[]; 
     <Card.Root className="w-[308px] border-none bg-transparent">
       <Card.Header className="flex justify-between">
         <p>Reorder Sections</p>
-        <Button size="xs" icon="icon-x" className="rounded-full" variant="tertiary-alt" onClick={() => modal.close()} />
+        <Button size="xs" icon="icon-x" className="rounded-full" variant="tertiary-alt" onClick={() => modal.close()} aria-label="Close" />
       </Card.Header>
 
       <Card.Content>
@@ -39,7 +39,7 @@ export function ReoderSectionsModal({ list = [], onChange }: { list?: string[]; 
               key={item}
               className="draggable-item flex gap-3 px-3 py-2 rounded-sm bg-(--btn-tertiary) hover:bg-(--btn-tertiary-hover)"
             >
-              <i className="icon-drag-indicator drag-handle cursor-pointer" />
+              <i aria-hidden="true" className="icon-drag-indicator drag-handle cursor-pointer" />
               <p className="capitalize">{item}</p>
             </div>
           ))}

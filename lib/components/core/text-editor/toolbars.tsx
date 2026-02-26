@@ -103,7 +103,7 @@ export function FloatingMenuItem({ icon, busy, label, onClick, active }: Floatin
       }}
     >
       <div className="flex gap-1.5 text-sm items-center">
-        <i className={twMerge('size-4', icons[icon])} />
+        <i aria-hidden="true" className={twMerge('size-4', icons[icon])} />
         <p className="text-nowrap">{label}</p>
       </div>
 

@@ -155,7 +155,7 @@ export function UpgradeTicketTypeModal({ onClose }: Props) {
 
                 <div className="relative h-2 flex items-center justify-center">
                   <div className="bg-(--btn-secondary) text-primary-invert flex items-center justify-center rounded-full p-[5px] w-fit absolute z-10 -top-2">
-                    <i className="size-3.5 icon-arrow-back-sharp -rotate-90" />
+                    <i aria-hidden="true" className="size-3.5 icon-arrow-back-sharp -rotate-90" />
                   </div>
                 </div>
 

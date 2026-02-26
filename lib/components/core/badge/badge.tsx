@@ -21,7 +21,7 @@ export function Badge({
       {children || <p className="truncate">{title}</p>}
       {typeof onClose === 'function' && (
         <button onClick={onClose} className="flex items-center cursor-pointer">
-          <i className="icon-x size-[14]" />
+          <i aria-hidden="true" className="icon-x size-[14]" />
         </button>
       )}
     </div>

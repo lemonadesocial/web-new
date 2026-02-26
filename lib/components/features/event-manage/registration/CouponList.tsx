@@ -27,7 +27,7 @@ export function CouponList({ event }: { event: Event }) {
       
       {discounts.length === 0 ? (
         <div className="flex items-center gap-3 py-3 px-4 rounded-md border border-card-border bg-card">
-          <i className="icon-discount size-9 text-tertiary" />
+          <i aria-hidden="true" className="icon-discount size-9 text-tertiary" />
           <div>
             <p className="text-tertiary">No Discount Codes Yet</p>
             <p className="text-tertiary text-sm">Create discount codes to offer special pricing for your event.</p>
@@ -46,7 +46,7 @@ export function CouponList({ event }: { event: Event }) {
                   <p className="text-tertiary">{discount.ratio * 100}% off</p>
                   {
                     discount.use_count && <>
-                      <i className="icon-dot size-3 text-tertiary" />
+                      <i aria-hidden="true" className="icon-dot size-3 text-tertiary" />
                       <p className="text-tertiary">{discount.use_limit ? `${discount.use_count || 0}/${discount.use_limit}` : discount.use_count || 0} used</p>
                     </>
                   }

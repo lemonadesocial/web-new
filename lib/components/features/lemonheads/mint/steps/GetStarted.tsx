@@ -105,7 +105,7 @@ function StaticCards({ data }: { data: Array<{ icon: string; title: string; subt
       {data.map((item, idx) => (
         <Card.Root key={idx}>
           <Card.Content className="flex flex-col gap-3">
-            <i className={twMerge('size-8', item.icon)} />
+            <i aria-hidden="true" className={twMerge('size-8', item.icon)} />
             <div className="flex-1">
               <p>{item.title}</p>
               <p className="text-sm text-tertiary">{item.subtitle}</p>

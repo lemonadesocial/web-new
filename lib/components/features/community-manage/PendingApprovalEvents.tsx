@@ -100,7 +100,7 @@ export function PendingApprovalEvents({ spaceId, isCommonSection, onCompleted }:
 
               <div className="flex flex-col text-tertiary gap-1">
                 <div className="flex gap-2 items-center">
-                  <i className="icon-calendar size-4 aspect-square" />
+                  <i aria-hidden="true" className="icon-calendar size-4 aspect-square" />
                   <p className="text-sm">
                     {formatWithTimezone(
                       item.event_expanded?.start,
@@ -111,12 +111,12 @@ export function PendingApprovalEvents({ spaceId, isCommonSection, onCompleted }:
                 </div>
                 {getEventAddress(item.event_expanded?.address as Address) && (
                   <div className="flex gap-2 items-center">
-                    <i className="icon-location-outline size-4 aspect-square" />
+                    <i aria-hidden="true" className="icon-location-outline size-4 aspect-square" />
                     <p className="text-sm">{getEventAddress(item.event_expanded?.address as Address)}</p>
                   </div>
                 )}
                 <div className="flex gap-2 items-center">
-                  <i className="icon-user size-4 aspect-square" />
+                  <i aria-hidden="true" className="icon-user size-4 aspect-square" />
                   <p className="text-sm">
                     Submitted by {item.created_by_expanded?.name || item.created_by_expanded?.display_name}{' '}
                     {item.created_by_expanded?.email && `(${item.created_by_expanded?.email})`}
@@ -124,7 +124,7 @@ export function PendingApprovalEvents({ spaceId, isCommonSection, onCompleted }:
                 </div>
                 {!!item.event_expanded?.guests && !isNaN(item.event_expanded?.guests) && (
                   <div className="flex gap-2 items-center">
-                    <i className="icon-user-group-outline size-4 aspect-square" />
+                    <i aria-hidden="true" className="icon-user-group-outline size-4 aspect-square" />
                     <p className="text-sm">
                       {item.event_expanded?.guests} {item.event_expanded.guests > 1 ? 'guests' : 'guest'}
                     </p>

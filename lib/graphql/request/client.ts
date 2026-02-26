@@ -20,8 +20,8 @@ interface QueryRequest<T, V extends object> {
   initData?: T | null;
   fetchPolicy?: FetchPolicy;
   headers?: HeadersInit;
-  resolve: (result: { data: T | null; error: any }) => void;
-  reject: (error: any) => void;
+  resolve: (result: { data: T | null; error: unknown }) => void;
+  reject: (error: unknown) => void;
 }
 
 interface RequestConfig {
@@ -61,7 +61,7 @@ export class GraphqlClient {
     variables?: object;
     fetchPolicy?: FetchPolicy;
     initData?: T;
-  }): Promise<{ data: T | null; error: any }> {
+  }): Promise<{ data: T | null; error: unknown }> {
     return new Promise((resolve, reject) => {
       this.queue.push({
         type: 'query',
@@ -85,7 +85,7 @@ export class GraphqlClient {
     query: TypedDocumentNode<T, V>;
     variables?: V;
     headers?: HeadersInit;
-  }): Promise<{ data: T | null; error: any }> {
+  }): Promise<{ data: T | null; error: unknown }> {
     return new Promise((resolve, reject) => {
       this.queue.push({
         type: 'refetch',
@@ -160,7 +160,7 @@ export class GraphqlClient {
     request.resolve({ data: result, error: null });
   }
 
-  private handleRequestError(request: QueryRequest<any, any>, error: any) {
+  private handleRequestError(request: QueryRequest<any, any>, error: unknown) {
     if (error && typeof error === 'object' && 'response' in error) {
       const gqlError = error as { response: { errors: Array<{ message: string }> } };
 
@@ -176,7 +176,7 @@ export class GraphqlClient {
     request.resolve({ data: null, error });
   }
 
-  writeQuery<T, V extends Record<string, any>>({
+  writeQuery<T, V extends Record<string, unknown>>({
     query,
     variables = {} as V,
     data,
@@ -205,7 +205,7 @@ export class GraphqlClient {
     if (queryKey) this.cache?.subscribe(queryKey, callback);
   }
 
-  readQuery<T, V extends Record<string, any>>(query: TypedDocumentNode<T, V>, variables?: V) {
+  readQuery<T, V extends Record<string, unknown>>(query: TypedDocumentNode<T, V>, variables?: V) {
     return this.cache?.readQuery(query, variables);
   }
 

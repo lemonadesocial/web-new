@@ -2,6 +2,7 @@ import React from 'react';
 import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
 import { ethers } from 'ethers';
 import { useAtomValue } from 'jotai';
+import * as Sentry from '@sentry/nextjs';
 
 import { Button, Card, modal, ModalContent } from '$lib/components/core';
 import {
@@ -49,7 +50,7 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
           setMinted(mintedState);
         }
       } catch (err) {
-        console.log(err);
+        Sentry.captureException(err);
       }
 
       if (!mintedState && !data?.canMintLemonhead?.white_list_enabled) {
@@ -78,17 +79,17 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
     if (!isConnected) return 'icon-wallet';
 
     if (minted && image) {
-      return <img src={image} className="size-[56px] rounded-sm aspect-square" />;
+      return <img src={image} className="size-[56px] rounded-sm aspect-square" alt="Your minted LemonHead" />;
     }
 
     if (address) {
       return canMint || sponsor ? (
         <div className="size-[56px] flex justify-center items-center rounded-full bg-success-500/16" data-icon>
-          <i className="icon-done text-success-500 size-8" />
+          <i aria-hidden="true" className="icon-done text-success-500 size-8" />
         </div>
       ) : (
         <div className="size-[56px] flex justify-center items-center rounded-full bg-warning-500/16" data-icon>
-          <i className="icon-info text-warning-500 size-8" />
+          <i aria-hidden="true" className="icon-info text-warning-500 size-8" />
         </div>
       );
     }
@@ -113,7 +114,7 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
       <ModalContent
         icon={
           <div className="size-[56px] flex justify-center items-center rounded-full bg-background/64 border border-primary/8">
-            <i className="icon-loader animate-spin" />
+            <i aria-hidden="true" className="icon-loader animate-spin" />
           </div>
         }
       >
@@ -178,7 +179,7 @@ function MintWhiteList({
           <div className="border-t">
             <div key={sponsor._id} className="flex flex-col gap-3 py-3.5">
               <div className="flex gap-2.5">
-                <img src={sponsor.image_url} className="rounded-sm w-[34px] aspect-square" />
+                <img src={sponsor.image_url} className="rounded-sm w-[34px] aspect-square" alt={`${sponsor.name} logo`} />
                 <div>
                   <p>You’ve unlocked a free mint!</p>
                   <p className="text-tertiary text-xs">Supported by {sponsor.name}</p>
@@ -212,7 +213,7 @@ function MintWhiteList({
       <Card.Root className="border-none bg-none">
         <Card.Content className="justify-between flex items-center py-2 px-3">
           <div className="flex gap-3">
-            <i className="icon-wallet size-5 aspect-square text-tertiary" />
+            <i aria-hidden="true" className="icon-wallet size-5 aspect-square text-tertiary" />
             {address && <p>{truncateMiddle(address, 6, 4)}</p>}
           </div>
           <i
@@ -245,7 +246,7 @@ export function MintedContent({ address }: { address?: string | null }) {
       <Card.Root className="border-none bg-none">
         <Card.Content className="justify-between flex items-center py-2 px-3">
           <div className="flex gap-3">
-            <i className="icon-wallet size-5 aspect-square text-tertiary" />
+            <i aria-hidden="true" className="icon-wallet size-5 aspect-square text-tertiary" />
             {address && <p>{truncateMiddle(address, 6, 4)}</p>}
           </div>
           <i

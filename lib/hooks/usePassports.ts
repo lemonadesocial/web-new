@@ -1,3 +1,4 @@
+'use client';
 import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import { ethers } from 'ethers';
@@ -13,7 +14,7 @@ async function fetchPassportData(address: string, chain: Chain, provider: PASSPO
   const data = { tokenId: 0, image: '' };
   const contractKey = ContractAddressFieldMapping[provider];
   const contractAddress = contractKey
-    ? (chain[contractKey as unknown as keyof Chain] as string | undefined)
+    ? (chain[contractKey] as string | undefined)
     : undefined;
 
   if (contractAddress) {

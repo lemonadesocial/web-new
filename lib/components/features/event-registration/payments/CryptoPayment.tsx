@@ -36,7 +36,7 @@ export function CryptoPayment({ accounts }: { accounts: NewPaymentAccount[] }) {
               onClick={() => toggle()}
             >
               {selectedPaymentAccount ? <CryptoAccount account={selectedPaymentAccount} /> : <p className="text-secondary">Select a network</p>}
-              <i className="icon-arrow-down size-5 text-quaternary" />
+              <i aria-hidden="true" className="icon-arrow-down size-5 text-quaternary" />
             </div>
           )}
         </Menu.Trigger>

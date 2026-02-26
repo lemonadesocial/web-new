@@ -38,7 +38,7 @@ export function CommunityLaunchpad() {
           <CoinStats launchpadGroup={launchpadGroup as LaunchpadGroup} />
         ) : (
           <div className="flex py-2.5 px-4 items-center gap-3 bg-warning-300/16 rounded-sm">
-            <i className="icon-rocket size-5 text-warning-300" />
+            <i aria-hidden="true" className="icon-rocket size-5 text-warning-300" />
             <div className="flex-1">
               <p className="text-warning-300">Please activate your Launchpad.</p>
               <p className="text-secondary text-sm">You can activate your Launchpad by clicking the button below.</p>
@@ -88,7 +88,7 @@ export function CommunityLaunchpad() {
           <CoinList filter={filter} hiddenColumns={['community', 'buy']} />
         ) : (
           <div className="flex flex-col justify-center items-center py-10">
-            <i className="icon-token size-[184px] text-quaternary" />
+            <i aria-hidden="true" className="icon-token size-[184px] text-quaternary" />
             <div className="text-center mt-5 space-y-2">
               <h3 className="text-xl text-tertiary font-semibold">No Coins</h3>
               <p className="text-tertiary">Activate Launchpad to allow members to launch their own coins.</p>

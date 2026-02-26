@@ -75,7 +75,7 @@ export function SettingsCommunityTags({ space }: { space: Space }) {
 
           <CardTable.EmptyState>
             <div className="p-4 flex gap-3 items-center">
-              <i className="icon-price-tag-filled size-9 aspect-square text-quaternary" />
+              <i aria-hidden="true" className="icon-price-tag-filled size-9 aspect-square text-quaternary" />
               <div className="text-tertiary space-y-0.5">
                 <p>No Tags</p>
                 <p className="text-sm">Create event tags to let visitors filter events by category.</p>
@@ -87,7 +87,7 @@ export function SettingsCommunityTags({ space }: { space: Space }) {
             <CardTable.Row key={item._id}>
               <div className="px-4 py-3 flex items-center justify-between" onClick={() => {}}>
                 <div className="flex gap-3 items-center">
-                  <i className="icon-dot size-5 aspect-square" style={{ color: item.color }} />
+                  <i aria-hidden="true" className="icon-dot size-5 aspect-square" style={{ color: item.color }} />
                   <div className="flex items-center gap-1">
                     <p>{item.tag}</p>
                   </div>
@@ -173,7 +173,7 @@ export function SettingsCommunityTags({ space }: { space: Space }) {
 
           <CardTable.EmptyState>
             <div className="p-4 flex gap-3 items-center">
-              <i className="icon-price-tag-filled size-9 aspect-square text-quaternary" />
+              <i aria-hidden="true" className="icon-price-tag-filled size-9 aspect-square text-quaternary" />
               <div className="text-tertiary space-y-0.5">
                 <p>No Tags</p>
                 <p className="text-sm">Tag members to better organize and communicate with them.</p>
@@ -185,7 +185,7 @@ export function SettingsCommunityTags({ space }: { space: Space }) {
             <CardTable.Row key={item._id}>
               <div className="px-4 py-3 flex items-center justify-between">
                 <div className="flex gap-3 items-center">
-                  <i className="icon-dot size-5 aspect-square" style={{ color: item.color }} />
+                  <i aria-hidden="true" className="icon-dot size-5 aspect-square" style={{ color: item.color }} />
                   <div className="flex items-center gap-1">
                     <p>{item.tag}</p>
                   </div>

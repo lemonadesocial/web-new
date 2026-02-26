@@ -133,7 +133,7 @@ export function BuyRedEnvelopesListModal() {
                 <p>{getQuantityLabel(pack.quantity)}</p>
                 <p className="text-sm text-success-500">{pack.priceLabel}</p>
               </div>
-              <i className="icon-chevron-right size-5 text-tertiary shrink-0" />
+              <i aria-hidden="true" className="icon-chevron-right size-5 text-tertiary shrink-0" />
             </div>
           ))
         )}

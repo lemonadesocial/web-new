@@ -1,3 +1,5 @@
+import { Chain } from '$lib/graphql/generated/backend/graphql';
+
 export const PASSPORT_PROVIDERS = [
   'mint',
   'zugrama',
@@ -98,7 +100,7 @@ export enum PassportActionKind {
   SetMintState = 'SET_MINT_STATE',
 }
 
-export const ContractAddressFieldMapping: Record<PASSPORT_PROVIDER, string> = {
+export const ContractAddressFieldMapping: Record<PASSPORT_PROVIDER, keyof Chain> = {
   mint: 'lemonade_passport_contract_address',
   zugrama: 'zugrama_passport_contract_address',
   'vinyl-nation': 'vinyl_nation_passport_contract_address',

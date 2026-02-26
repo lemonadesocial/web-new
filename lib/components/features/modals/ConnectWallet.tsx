@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import * as Sentry from '@sentry/nextjs';
 
 import { Button, modal, ModalContent, toast } from "$lib/components/core";
 import { getErrorMessage } from '$lib/utils/error';
@@ -46,7 +47,7 @@ export function ConnectWallet({ onConnect, chain, onClose }: { onConnect: () => 
     try {
       await switchNetwork(getAppKitNetwork(chain));
     } catch (error: unknown) {
-      console.error('Network switch error:', error);
+      Sentry.captureException(error);
       toast.error(getErrorMessage(error, 'Failed to switch network'));
     }
   };
