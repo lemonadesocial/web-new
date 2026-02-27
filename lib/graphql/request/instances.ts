@@ -7,6 +7,7 @@ const AI_GRAPHQL_PROXY_PATH = '/api/ai/graphql';
 function resolveAiChatUrl() {
   const configuredUrl = process.env.NEXT_PUBLIC_AI_API_HTTP;
   const isBrowser = typeof window !== 'undefined';
+  const shouldUseProxyForCrossOrigin = isBrowser && window.location.hostname.includes('localhost');
   const proxyUrl = isBrowser ? `${window.location.origin}${AI_GRAPHQL_PROXY_PATH}` : AI_GRAPHQL_PROXY_PATH;
 
   if (!configuredUrl) {
@@ -19,9 +20,14 @@ function resolveAiChatUrl() {
 
   try {
     const parsed = new URL(configuredUrl, window.location.origin);
-    return parsed.origin === window.location.origin ? parsed.toString() : proxyUrl;
+    if (parsed.origin === window.location.origin) {
+      return parsed.toString();
+    }
+
+    // Keep proxy behavior for local development where CORS is most likely to fail.
+    return shouldUseProxyForCrossOrigin ? proxyUrl : parsed.toString();
   } catch {
-    return proxyUrl;
+    return shouldUseProxyForCrossOrigin ? proxyUrl : configuredUrl;
   }
 }
 
