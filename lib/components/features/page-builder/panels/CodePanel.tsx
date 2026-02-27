@@ -136,8 +136,14 @@ export function CodePanel() {
         )}
       </div>
 
-      {/* --- Footer hint --- */}
-      <div className="sticky bottom-0 border-t bg-overlay-primary/80 backdrop-blur-sm px-4 py-2">
+      {/* --- Security warning + Footer hint --- */}
+      <div className="sticky bottom-0 border-t bg-overlay-primary/80 backdrop-blur-sm px-4 py-2 space-y-1.5">
+        <div className="flex items-start gap-1.5">
+          <i className="icon-alert-outline size-3 text-warning-500 shrink-0 mt-0.5" />
+          <p className="text-[11px] text-warning-500/80 leading-relaxed">
+            Custom code runs unsanitized on your published page. Only add code you trust.
+          </p>
+        </div>
         <p className="text-[11px] text-tertiary leading-relaxed">
           Custom code is injected at publish time. Changes are auto-saved.
         </p>

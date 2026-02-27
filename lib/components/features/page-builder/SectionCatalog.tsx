@@ -102,7 +102,9 @@ export function SectionCatalog() {
   const ownerType = useAtomValue(ownerTypeAtom);
   const [search, setSearch] = React.useState('');
 
-  // TODO: Derive from actual subscription data
+  // TODO(karen-remediation): Wire up actual subscription tier from space context.
+  // Currently all non-free sections show as locked.
+  // Depends on: web-new#953 (credit system FE adaptation) merging first.
   const userTier: SubscriptionTier = 'free';
 
   // Filter sections relevant to the current owner type

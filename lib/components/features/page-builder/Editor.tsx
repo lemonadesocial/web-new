@@ -148,11 +148,15 @@ export function PageBuilderEditor({
     doAcquire();
     heartbeatTimer = setInterval(doHeartbeat, LOCK_HEARTBEAT_INTERVAL_MS);
 
-    // Note: async operations in beforeunload are unreliable.
-    // The lock will auto-expire via server-side timeout.
-    // sendBeacon would be ideal but requires a dedicated REST endpoint.
+    // Use fetch with keepalive for more reliable delivery during page teardown.
+    // navigator.sendBeacon would be ideal but requires a dedicated REST endpoint.
+    // The lock will auto-expire via server-side timeout (30min) as a fallback.
     const handleBeforeUnload = () => {
-      doRelease();
+      try {
+        doRelease();
+      } catch {
+        // Best effort -- lock will auto-expire via server-side timeout
+      }
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
 

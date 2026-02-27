@@ -28,7 +28,8 @@ function buildColorVariables(colors: ThemeColors): string {
   for (const { key, variable } of standardKeys) {
     const value = colors[key];
     if (value) {
-      lines.push(`  ${variable}: ${value};`);
+      const safeVal = String(value).replace(/[;{}]/g, '');
+      lines.push(`  ${variable}: ${safeVal};`);
     }
   }
 
@@ -36,7 +37,8 @@ function buildColorVariables(colors: ThemeColors): string {
   for (const [key, value] of Object.entries(colors)) {
     const isStandard = standardKeys.some((s) => s.key === key);
     if (!isStandard && value) {
-      lines.push(`  --pb-${key.replace(/_/g, '-')}: ${value};`);
+      const safeCustomVal = String(value).replace(/[;{}]/g, '');
+      lines.push(`  --pb-${key.replace(/_/g, '-')}: ${safeCustomVal};`);
     }
   }
 
@@ -51,7 +53,7 @@ function buildFontVariables(
   const lines: string[] = [];
 
   if (font.family) {
-    lines.push(`  --pb-font-${prefix}: ${font.family};`);
+    lines.push(`  --pb-font-${prefix}: ${String(font.family).replace(/[;{}]/g, '')};`);
   }
 
   if (font.weight !== undefined) {
@@ -78,7 +80,7 @@ function buildBackgroundCSS(
   switch (type) {
     case 'color':
       lines.push(`  --pb-bg-type: color;`);
-      lines.push(`  --pb-bg-value: ${value};`);
+      lines.push(`  --pb-bg-value: ${String(value).replace(/[;{}]/g, '')};`);
       break;
     case 'image':
       lines.push(`  --pb-bg-type: image;`);
@@ -86,17 +88,17 @@ function buildBackgroundCSS(
       break;
     case 'shader':
       lines.push(`  --pb-bg-type: shader;`);
-      lines.push(`  --pb-bg-value: ${value};`);
+      lines.push(`  --pb-bg-value: ${String(value).replace(/[;{}]/g, '')};`);
       break;
     case 'pattern':
       lines.push(`  --pb-bg-type: pattern;`);
-      lines.push(`  --pb-bg-value: ${value};`);
+      lines.push(`  --pb-bg-value: ${String(value).replace(/[;{}]/g, '')};`);
       break;
     case 'video':
       // Video backgrounds are handled by a separate element, not CSS.
       // Store the URL as a variable so JS can pick it up if needed.
       lines.push(`  --pb-bg-type: video;`);
-      lines.push(`  --pb-bg-value: ${value};`);
+      lines.push(`  --pb-bg-value: ${String(value).replace(/[;{}]/g, '')};`);
       break;
   }
 
@@ -111,7 +113,9 @@ function buildCustomVariables(
     .map(([key, value]) => {
       // Ensure keys are prefixed with '--' for valid CSS custom properties
       const varName = key.startsWith('--') ? key : `--${key}`;
-      return `  ${varName}: ${value};`;
+      // Strip characters that could break out of a CSS declaration
+      const safeValue = String(value).replace(/[;{}]/g, '');
+      return `  ${varName}: ${safeValue};`;
     })
     .join('\n');
 }
@@ -129,7 +133,21 @@ function buildFontImports(theme: ThemeConfig): string {
 
   if (urls.length === 0) return '';
 
-  return urls.map((url) => `@import url('${url}');`).join('\n');
+  return urls
+    .filter((url) => {
+      try {
+        const parsed = new URL(url);
+        return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+      } catch {
+        return false;
+      }
+    })
+    .map((url) => {
+      // Escape single quotes and closing parens to prevent CSS injection
+      const safeUrl = url.replace(/'/g, '%27').replace(/\)/g, '%29');
+      return `@import url('${safeUrl}');`;
+    })
+    .join('\n');
 }
 
 export function ThemeStyleInjector({ theme }: ThemeStyleInjectorProps) {

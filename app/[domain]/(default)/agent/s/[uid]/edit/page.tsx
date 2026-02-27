@@ -128,6 +128,7 @@ function SpaceEditorContent({ space, uid }: { space: Space; uid: string }) {
     if (!isMobile) {
       aiChat.open();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally run once on mount
   }, []);
 
   const { config, loading: configLoading, error: configError } = usePageConfig(space._id, 'space');

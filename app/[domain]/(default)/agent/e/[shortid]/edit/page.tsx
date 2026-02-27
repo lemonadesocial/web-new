@@ -83,6 +83,7 @@ function EventEditorContent({ event, shortid }: { event: Event; shortid: string 
     if (!isMobile) {
       aiChat.open();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally run once on mount
   }, []);
 
   const { config, loading: configLoading, error: configError } = usePageConfig(event._id, 'event');

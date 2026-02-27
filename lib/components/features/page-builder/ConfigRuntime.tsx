@@ -31,18 +31,20 @@ import { ThemeStyleInjector } from './ThemeStyleInjector';
 // Layout utility maps
 // ---------------------------------------------------------------------------
 
+// NOTE: These must stay in sync with SectionWrapper.tsx (editor preview).
 const widthClasses: Record<SectionWidth, string> = {
   full: 'w-full',
-  contained: 'max-w-7xl mx-auto',
-  narrow: 'max-w-3xl mx-auto',
+  contained: 'w-full max-w-5xl mx-auto',
+  narrow: 'w-full max-w-2xl mx-auto',
 };
 
+// NOTE: These must stay in sync with SectionWrapper.tsx (editor preview).
 const paddingClasses: Record<SectionPadding, string> = {
-  none: 'py-0',
-  sm: 'py-4',
-  md: 'py-8',
-  lg: 'py-16',
-  xl: 'py-24',
+  none: '',
+  sm: 'px-4 py-4',
+  md: 'px-6 py-8',
+  lg: 'px-8 py-12',
+  xl: 'px-10 py-16',
 };
 
 const alignmentClasses: Record<SectionAlignment, string> = {
@@ -182,7 +184,22 @@ function renderSection(section: PageSection): React.ReactNode {
 // CustomCode renderer
 // ---------------------------------------------------------------------------
 
-// SECURITY: Custom code is only editable by page owners. Template cloning should strip custom_code.
+/**
+ * SECURITY MODEL: Custom Code Injection
+ *
+ * Custom code (CSS, HTML, scripts) is rendered WITHOUT sanitization.
+ * This is an INTENTIONAL design decision matching Squarespace/Webflow behavior.
+ *
+ * Mitigations:
+ * 1. Only page OWNERS can add custom code (enforced by backend assertConfigPermission)
+ * 2. Template cloning MUST strip custom_code (verified in backend cloneTemplateToConfig)
+ * 3. Backend enforces size limits: 50KB CSS, 10KB HTML, 10 scripts max
+ * 4. Section components (EventAbout, RichText, etc.) use DOMPurify -- only this
+ *    custom code area is intentionally unsanitized
+ *
+ * WARNING: If template cloning does NOT strip custom_code, this is an XSS vector.
+ * Verify backend implementation before enabling template marketplace.
+ */
 
 interface CustomCodeRendererProps {
   customCode: CustomCode;
@@ -221,7 +238,7 @@ function CustomCodeRenderer({ customCode }: CustomCodeRendererProps) {
 
       {/* Scripts — use next/script for proper loading strategies */}
       {customCode.scripts?.map((script, index) => (
-        <ScriptTag key={index} script={script} index={index} />
+        <ScriptTag key={script.src || `inline-${index}`} script={script} index={index} />
       ))}
     </>
   );
