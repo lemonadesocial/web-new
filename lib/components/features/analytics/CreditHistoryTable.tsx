@@ -28,24 +28,37 @@ const TYPE_STYLES: Record<string, string> = {
 
 export function CreditHistoryTable({ standId }: Props) {
   const [cursor, setCursor] = React.useState<string | undefined>();
+  const [allItems, setAllItems] = React.useState<CreditTxnItem[]>([]);
 
-  const { data, isLoading, error } = trpc.analytics.getCreditTransactions.useQuery({
+  const { data, isLoading, isFetching, error } = trpc.analytics.getCreditTransactions.useQuery({
     standId,
     limit: 50,
     cursor,
   });
 
+  // Append new items when data arrives (instead of replacing)
+  React.useEffect(() => {
+    if (data?.items) {
+      const newItems = data.items as CreditTxnItem[];
+      if (!cursor) {
+        // Initial load — replace entirely
+        setAllItems(newItems);
+      } else {
+        // Subsequent pages — append
+        setAllItems((prev) => [...prev, ...newItems]);
+      }
+    }
+  }, [data, cursor]);
+
   if (error) {
     return <div className="text-error p-4">{error.message}</div>;
   }
-
-  const items = (data?.items ?? []) as CreditTxnItem[];
 
   return (
     <div className="space-y-3">
       <h3 className="text-lg font-semibold text-primary">Credit History</h3>
 
-      <CardTable.Root data={items} loading={isLoading}>
+      <CardTable.Root data={allItems} loading={isLoading}>
         <CardTable.Header className="px-4 py-2.5">
           <div className="flex-1 text-xs font-medium">Type</div>
           <div className="w-24 text-xs font-medium">Amount</div>
@@ -62,7 +75,7 @@ export function CreditHistoryTable({ standId }: Props) {
 
         <CardTable.EmptyState title="No credit history" subtile="Credit transactions will appear here once AI features are used." icon="icon-payment" />
 
-        {items.map((txn) => (
+        {allItems.map((txn) => (
           <CardTable.Row key={txn.id}>
             <div className="flex px-4 py-3 items-center gap-3">
               <div className="flex-1">
@@ -97,9 +110,10 @@ export function CreditHistoryTable({ standId }: Props) {
         <div className="flex justify-center">
           <button
             onClick={() => setCursor(data.nextCursor)}
-            className="text-sm text-secondary hover:text-primary transition-colors px-4 py-2"
+            disabled={isFetching}
+            className="text-sm text-secondary hover:text-primary transition-colors px-4 py-2 disabled:opacity-50"
           >
-            Load more
+            {isFetching ? 'Loading...' : 'Load more'}
           </button>
         </div>
       )}

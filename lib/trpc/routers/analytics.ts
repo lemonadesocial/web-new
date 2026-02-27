@@ -4,6 +4,9 @@ import { router, protectedProcedure } from '../trpc';
 import { prisma } from '$lib/prisma';
 import type { Prisma } from '../../../src/generated/prisma/client';
 
+/** MongoDB ObjectId: 24-char lowercase hex */
+const mongoId = z.string().regex(/^[a-f0-9]{24}$/, 'Invalid ObjectId format');
+
 async function assertSpaceAdmin(kratosId: string, spaceId: string) {
   const admin = await prisma.spaceAdmin.findUnique({
     where: { mongoSpaceId_kratosId: { mongoSpaceId: spaceId, kratosId } },
@@ -23,19 +26,27 @@ export const analyticsRouter = router({
   getStandUsage: protectedProcedure
     .input(
       z.object({
-        standId: z.string(),
+        standId: mongoId,
         startDate: z.string().datetime(),
         endDate: z.string().datetime(),
+        limit: z.number().min(1).max(1000).default(100),
+        offset: z.number().min(0).default(0),
       }),
     )
     .query(async ({ ctx, input }) => {
       await assertSpaceAdmin(ctx.user.kratosId, input.standId);
       return prisma.$queryRaw`
-        SELECT * FROM ai.usage_logs
+        SELECT
+          id, stand_id, user_id, request_id, model,
+          input_tokens, output_tokens, total_tokens,
+          total_cost_usd, credits_used, feature,
+          latency_ms, created_at
+        FROM ai.usage_logs
         WHERE stand_id = ${input.standId}
           AND created_at >= ${new Date(input.startDate)}::timestamptz
           AND created_at <= ${new Date(input.endDate)}::timestamptz
         ORDER BY created_at DESC
+        LIMIT ${input.limit} OFFSET ${input.offset}
       `;
     }),
 
@@ -43,7 +54,7 @@ export const analyticsRouter = router({
   getCreditTransactions: protectedProcedure
     .input(
       z.object({
-        standId: z.string(),
+        standId: mongoId,
         limit: z.number().min(1).max(100).default(50),
         cursor: z.string().optional(),
       }),
@@ -70,7 +81,7 @@ export const analyticsRouter = router({
   getEventGuests: protectedProcedure
     .input(
       z.object({
-        eventId: z.string(),
+        eventId: mongoId,
         search: z.string().optional(),
         status: z.enum(['approved', 'declined', 'pending']).optional(),
         limit: z.number().min(1).max(200).default(50),
@@ -113,7 +124,7 @@ export const analyticsRouter = router({
   getSpaceSubscribers: protectedProcedure
     .input(
       z.object({
-        spaceId: z.string(),
+        spaceId: mongoId,
         search: z.string().optional(),
         limit: z.number().min(1).max(200).default(50),
         offset: z.number().min(0).default(0),
@@ -152,13 +163,23 @@ export const analyticsRouter = router({
     .input(
       z.object({
         guestId: z.string().uuid(),
-        eventId: z.string(),
+        eventId: mongoId,
         tags: z.array(z.string()).optional(),
         notes: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       await assertEventOrganizer(ctx.user.kratosId, input.eventId);
+
+      // Verify the guest belongs to this event (prevents IDOR)
+      const guest = await prisma.eventGuest.findUnique({
+        where: { id: input.guestId },
+        select: { mongoEventId: true },
+      });
+      if (!guest || guest.mongoEventId !== input.eventId) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Guest not found for this event' });
+      }
+
       return prisma.guestAnnotation.upsert({
         where: { eventGuestId: input.guestId },
         create: {
@@ -177,7 +198,7 @@ export const analyticsRouter = router({
 
   // Event Analytics (materialized view)
   getEventAnalytics: protectedProcedure
-    .input(z.object({ eventId: z.string() }))
+    .input(z.object({ eventId: mongoId }))
     .query(async ({ ctx, input }) => {
       await assertEventOrganizer(ctx.user.kratosId, input.eventId);
       const rows = await prisma.$queryRaw<Record<string, unknown>[]>`
@@ -189,7 +210,7 @@ export const analyticsRouter = router({
 
   // Space Analytics (materialized view)
   getSpaceAnalytics: protectedProcedure
-    .input(z.object({ spaceId: z.string() }))
+    .input(z.object({ spaceId: mongoId }))
     .query(async ({ ctx, input }) => {
       await assertSpaceAdmin(ctx.user.kratosId, input.spaceId);
       const rows = await prisma.$queryRaw<Record<string, unknown>[]>`
@@ -201,7 +222,7 @@ export const analyticsRouter = router({
 
   // API Daily Usage (materialized view)
   getApiUsage: protectedProcedure
-    .input(z.object({ spaceId: z.string() }))
+    .input(z.object({ spaceId: mongoId }))
     .query(async ({ ctx, input }) => {
       await assertSpaceAdmin(ctx.user.kratosId, input.spaceId);
       return prisma.$queryRaw<Record<string, unknown>[]>`
@@ -214,7 +235,7 @@ export const analyticsRouter = router({
 
   // API Quota
   getApiQuota: protectedProcedure
-    .input(z.object({ spaceId: z.string(), period: z.string() }))
+    .input(z.object({ spaceId: mongoId, period: z.string() }))
     .query(async ({ ctx, input }) => {
       await assertSpaceAdmin(ctx.user.kratosId, input.spaceId);
       return prisma.apiQuotaUsage.findUnique({
