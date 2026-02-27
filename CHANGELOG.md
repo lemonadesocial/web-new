@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.8.1](https://github.com/lemonadesocial/web-new/compare/v10.8.0...v10.8.1) (2026-02-27)
+
+
+### Bug Fixes
+
+* missing config var ([78702e1](https://github.com/lemonadesocial/web-new/commit/78702e1d3e9c035755297a1191a3f3fc07198cd8))
+
 ## [10.8.0](https://github.com/lemonadesocial/web-new/compare/v10.7.3...v10.8.0) (2026-02-26)
 
 
