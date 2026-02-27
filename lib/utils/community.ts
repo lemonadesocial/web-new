@@ -6,7 +6,7 @@ import { Space } from "$lib/graphql/generated/backend/graphql";
 
 export const communityAvatar = (community?: Space | null) => {
   if (!community || !community?.image_avatar_expanded) {
-    return randomUserImage(community?._id);
+    return randomCommunityImage(community?._id);
   }
 
   return generateUrl(community?.image_avatar_expanded, { resize: { width: 384, height: 384, fit: 'contain' } });
