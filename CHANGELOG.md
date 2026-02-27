@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.9.1](https://github.com/lemonadesocial/web-new/compare/v10.9.0...v10.9.1) (2026-02-27)
+
+
+### Bug Fixes
+
+* use randomCommunityImage instead of undefined randomUserImage in communityAvatar ([#969](https://github.com/lemonadesocial/web-new/issues/969)) ([ace43a2](https://github.com/lemonadesocial/web-new/commit/ace43a259158e3499b51d75b859b4f93240edcd6))
+
 ## [10.9.0](https://github.com/lemonadesocial/web-new/compare/v10.8.1...v10.9.0) (2026-02-27)
 
 
