@@ -74,8 +74,8 @@ export function AIUsageDashboard({ standId }: Props) {
 
         <CardTable.EmptyState title="No AI usage" subtile="AI usage logs will appear here once your AI features are used." icon="icon-sparkle" />
 
-        {logs.map((log, idx) => (
-          <CardTable.Row key={(log.request_id as string) ?? idx}>
+        {logs.map((log) => (
+          <CardTable.Row key={(log.id as string) ?? (log.request_id as string)}>
             <div className="flex px-4 py-3 items-center gap-3">
               <div className="flex-1 min-w-0">
                 <p className="text-primary text-sm truncate">{(log.model as string) ?? '—'}</p>

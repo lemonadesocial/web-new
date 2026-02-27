@@ -70,8 +70,8 @@ export function APIUsageDashboard({ spaceId }: Props) {
 
         <CardTable.EmptyState title="No API usage" subtile="API usage data will appear here once your API keys are used." icon="icon-code" />
 
-        {days.map((day, idx) => (
-          <CardTable.Row key={idx}>
+        {days.map((day) => (
+          <CardTable.Row key={day.day as string}>
             <div className="flex px-4 py-3 items-center gap-3">
               <div className="flex-1">
                 <p className="text-primary text-sm">
