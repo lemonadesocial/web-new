@@ -9,6 +9,16 @@ import { sessionAtom } from '$lib/jotai';
 import { InMemoryCache } from './cache';
 import { FetchPolicy } from './type';
 
+/** Structured error returned when a feature-gated mutation is rejected (HTTP 402). */
+export interface FeatureGatedError {
+  message: string;
+  featureGated: boolean;
+  featureCode: string;
+  requiredTier: string;
+  currentTier: string;
+  upgradeUrl?: string;
+}
+
 if (!GRAPHQL_URL) {
   log.error({ message: 'Missing GRAPHQL_URL', exit: true });
 }
@@ -162,12 +172,54 @@ export class GraphqlClient {
 
   private handleRequestError(request: QueryRequest<any, any>, error: unknown) {
     if (error && typeof error === 'object' && 'response' in error) {
-      const gqlError = error as { response: { errors: Array<{ message: string }> } };
+      const gqlError = error as {
+        response: {
+          status?: number;
+          errors: Array<{
+            message: string;
+            extensions?: {
+              code?: string;
+              feature_code?: string;
+              required_tier?: string;
+              current_tier?: string;
+              upgrade_url?: string;
+            };
+          }>;
+        };
+      };
 
-      if (gqlError.response?.errors?.[0]?.message) {
+      const firstError = gqlError.response?.errors?.[0];
+
+      // NOTE: This 402 feature-gating code depends on lemonade-backend PR #1911 (snake_case rename)
+      // being merged first. The Space fragment fields (subscription_tier, subscription_status, etc.)
+      // must exist on the backend schema.
+      if (String(firstError?.extensions?.code) === '402') {
+        try {
+          const parsed = JSON.parse(firstError.message);
+          if (parsed.error === 'feature_gated') {
+            const featureError: FeatureGatedError = {
+                message: parsed.message || 'This feature requires a plan upgrade',
+                featureGated: true,
+                featureCode: parsed.feature_code,
+                requiredTier: parsed.required_tier,
+                currentTier: parsed.current_tier,
+                upgradeUrl: parsed.upgrade_url,
+              };
+            request.resolve({
+              data: null,
+              error: featureError,
+            });
+            return;
+          }
+        } catch {
+          // message is not JSON, fall through to generic handler
+        }
+      }
+
+      if (firstError?.message) {
         request.resolve({
           data: null,
-          error: { message: gqlError.response.errors[0].message },
+          error: { message: firstError.message },
         });
         return;
       }
