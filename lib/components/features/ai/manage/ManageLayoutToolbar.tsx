@@ -4,13 +4,17 @@ import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { match } from 'ts-pattern';
 
-import { Button, Menu, toast } from '$lib/components/core';
-import { useMutation } from '$lib/graphql/request';
-import { Event, PublishEventDocument } from '$lib/graphql/generated/backend/graphql';
+import { Button, Menu, MenuItem, toast } from '$lib/components/core';
+import { useMutation, useQuery } from '$lib/graphql/request';
+import { Event, GetUpcomingEventsDocument, PublishEventDocument } from '$lib/graphql/generated/backend/graphql';
 
 import { useUpdateEvent } from '../../event-manage/store';
 import { tabMappings } from './helpers';
 import { ActiveTabType, storeManageLayout as store, useStoreManageLayout } from './store';
+import { useRouter } from 'next/navigation';
+import React from 'react';
+import { useMe } from '$lib/hooks/useMe';
+import { generateUrl } from '$lib/utils/cnd';
 
 const devices = {
   desktop: {
@@ -22,6 +26,7 @@ const devices = {
 };
 
 function ManageLayoutToolbar() {
+  const router = useRouter();
   const state = useStoreManageLayout();
 
   // NOTE: its bc using different store
@@ -62,20 +67,24 @@ function ManageLayoutToolbar() {
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         className="flex items-center gap-3 overflow-hidden"
       >
-        <i className="icon-lemonade-logo size-5" />
-        <Menu.Root className="flex-1">
-          <Menu.Trigger>
-            {({ toggle }) => (
-              <div className="flex items-center gap-3 cursor-pointer" onClick={toggle}>
-                <div className="w-8 h-8 rounded-sm aspect-square bg-accent-200 shrink-0" />
-                <div className="whitespace-nowrap">
-                  <p className="text-sm font-medium">Culture Fest</p>
-                  <p className="text-tertiary text-xs">Arts & Culture</p>
+        <i className="icon-lemonade-logo size-5" onClick={() => router.push('/')} />
+        <div className="flex-1">
+          <Menu.Root strategy="fixed" placement="bottom-start">
+            <Menu.Trigger>
+              {({ toggle }) => (
+                <div className="flex items-center gap-3 cursor-pointer" onClick={() => toggle()}>
+                  <div className="whitespace-nowrap">
+                    <p className="text-sm font-medium">Culture Fest</p>
+                    <p className="text-tertiary text-xs">Arts & Culture</p>
+                  </div>
                 </div>
-              </div>
-            )}
-          </Menu.Trigger>
-        </Menu.Root>
+              )}
+            </Menu.Trigger>
+            <Menu.Content className="p-0 w-xs">
+              <DropdownComponent />
+            </Menu.Content>
+          </Menu.Root>
+        </div>
 
         <Button
           icon="icon-left-panel-close-outline"
@@ -142,6 +151,76 @@ function ManageLayoutToolbar() {
             {(state.data as Event)?.published ? 'Published' : 'Publish'}
           </Button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+const tabs = [
+  { key: 'events', label: 'Events' },
+  { key: 'communites', label: 'Communities' },
+  { key: 'coins', label: 'Coins' },
+];
+function DropdownComponent() {
+  const router = useRouter();
+  const [active, setActive] = React.useState('events');
+
+  const me = useMe();
+
+  const { data: dataGetEvent } = useQuery(GetUpcomingEventsDocument, {
+    variables: { user: me?._id, sort: { start: 1 } },
+    skip: !me?._id,
+  });
+  const events = dataGetEvent?.events || [];
+
+  return (
+    <div className="space-y-1">
+      <div className="flex px-4 gap-4 border-b pt-1">
+        {tabs.map((item) => (
+          <div
+            key={item.key}
+            className={clsx(
+              'text-sm py-1 cursor-pointer hover:text-primary hover:border-b hover:border-primary',
+              item.key === active ? 'text-primary border-b border-primary' : 'text-tertiary',
+            )}
+            onClick={() => setActive(item.key)}
+          >
+            <p>{item.label}</p>
+          </div>
+        ))}
+      </div>
+      <div className="px-2 pb-1">
+        {match(active)
+          .with('events', () => (
+            <div className='flex flex-col gap-0.5'>
+              {events.map((item) => (
+                <MenuItem
+                  key={item._id}
+                  iconLeft={
+                    item.new_new_photos_expanded?.[0] ? (
+                      <img src={generateUrl(item.new_new_photos_expanded?.[0])} />
+                    ) : (
+                      <></>
+                    )
+                  }
+                  title={item.title}
+                  onClick={() => router.push(`/e/manage/${item.shortid}`)}
+                />
+              ))}
+              <MenuItem iconLeft="icon-plus" title="New Event" onClick={() => window.open('/create/event')} />
+            </div>
+          ))
+          .with('communites', () => (
+            <div className="flex items-center justify-center p-7">
+              <p>Coming Soon.</p>
+            </div>
+          ))
+          .with('coins', () => (
+            <div className="flex items-center justify-center p-7">
+              <p>Coming Soon.</p>
+            </div>
+          ))
+          .otherwise(() => null)}
       </div>
     </div>
   );

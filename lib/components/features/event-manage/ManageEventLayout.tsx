@@ -1,16 +1,12 @@
 'use client';
 import React from 'react';
-import { useParams, useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { useRef } from 'react';
-import { isMobile } from 'react-device-detect';
 
-import { Event, PublishEventDocument } from '$lib/graphql/generated/backend/graphql';
-import { Button, toast, Skeleton } from '$lib/components/core';
-import { useMutation, useQuery } from '$lib/graphql/request';
-import { useUpdateEvent } from '$lib/components/features/event-manage/store';
+import { Event } from '$lib/graphql/generated/backend/graphql';
+import { Skeleton } from '$lib/components/core';
+import { useQuery } from '$lib/graphql/request';
 import { EventProtected } from '$lib/components/features/event-manage/EventProtected';
-import { aiChat } from '$lib/components/features/ai/AIChatContainer';
 import { AIChatActionKind, useAIChat } from '$lib/components/features/ai/provider';
 import { mockWelcomeEvent } from '$lib/components/features/ai/InputChat';
 import { EventBlasts } from '$lib/components/features/event-manage/EventBlasts';
@@ -36,10 +32,7 @@ const tabs: Record<string, { label: string; component: React.FC }> = {
 /**
  * @description ManageEventLayout is using for wrap new AI chat UI. Keep everything same as EventManageLayout but use state instead of page
  */
-function ManageEventLayout() {
-  const params = useParams<{ shortid: string }>();
-  const shortid = params.shortid;
-
+function ManageEventLayout({ shortid }: { shortid: string }) {
   const loadingFallback = (
     <div className="font-default p-4">
       <div className="sticky top-0 backdrop-blur-md transition-all duration-300 z-1 pt-7">
@@ -85,9 +78,6 @@ function ManageEventLayout() {
 }
 
 function Content({ event, shortid }: { event: Event; shortid: string }) {
-  const router = useRouter();
-  const updateEvent = useUpdateEvent();
-
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [_, aiChatDispatch] = useAIChat();
 
@@ -107,28 +97,6 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
   );
 
   const [selectedTab, setSelectedTab] = React.useState('overview');
-
-  const [publishEvent, { loading: publishing }] = useMutation(PublishEventDocument, {
-    onComplete: (_, data) => {
-      if (data?.updateEvent?.published) {
-        toast.success('Event published successfully!');
-        updateEvent({ published: true });
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message || 'Failed to publish event');
-    },
-  });
-
-  const handlePublish = () => {
-    if (!event?._id) return;
-
-    publishEvent({
-      variables: {
-        event: event._id,
-      },
-    });
-  };
 
   React.useEffect(() => {
     if (event.shortid === shortid) {

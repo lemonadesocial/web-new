@@ -16,10 +16,13 @@ import ManageEventLayout from '../../event-manage/ManageEventLayout';
 
 import { tabMappings } from './helpers';
 import { storeManageLayout as store, useStoreManageLayout } from './store';
+import { read } from 'fs';
 
 function ManageLayoutContent() {
   const params = useParams();
   const shortid = params?.shortid as string;
+
+  const [ready, setReady] = React.useState(false);
 
   const state = useStoreManageLayout();
   const [_, aiChatDispatch] = useAIChat();
@@ -48,13 +51,17 @@ function ManageLayoutContent() {
   );
 
   React.useEffect(() => {
-    if (state.layoutType === 'event' && event?.shortid === shortid) {
+    if (state.layoutType === 'event' && event?.shortid === shortid && !ready) {
       aiChatDispatch({ type: AIChatActionKind.reset });
       aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { data: { event_id: event._id } } });
       aiChatDispatch({ type: AIChatActionKind.add_message, payload: { messages: mockWelcomeEvent(event) } });
       store.setData(event);
+
+      if (!ready) setReady(true);
     }
-  }, [state.layoutType, event]);
+  }, [state.layoutType, event, ready]);
+
+  if (!ready) return null;
 
   return (
     <div className="flex px-1 flex-1 overflow-hidden">
@@ -87,7 +94,7 @@ function ManageLayoutContent() {
           )}
         >
           {match(state.layoutType)
-            .with('event', ManageEventLayout)
+            .with('event', () => <ManageEventLayout shortid={shortid} />)
             .otherwise(() => null)}
         </div>
       </div>
