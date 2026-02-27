@@ -73,7 +73,7 @@ export function isValidEmail(input: string) {
  *    formatNumber("1") -> 1
  *    formatNumber("1.2") -> 1.2
  **/
-export function formatNumber(str: string) {
+export function parseNumericString(str: string) {
   const num = parseFloat(str);
   return num.toString();
 }

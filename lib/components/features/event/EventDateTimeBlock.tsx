@@ -23,7 +23,7 @@ export function EventDateTimeBlock({ event }: Props) {
         <span>{format(convertFromUtcToTimezone(event.start, event.timezone as string), 'dd')}</span>
       </div>
       <div className="flex flex-col truncate">
-        <p dangerouslySetInnerHTML={{ __html: getEventDateBlockStart(event) }} className="text-lg"></p>
+        <p className="text-lg">{getEventDateBlockStart(event)}</p>
         <span className="text-sm">{getEventDateBlockRange(event)}</span>
       </div>
     </div>

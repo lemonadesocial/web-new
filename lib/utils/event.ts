@@ -16,7 +16,7 @@ import {
   User,
 } from '$lib/graphql/generated/backend/graphql';
 
-import { formatCurrency, formatNumber } from './string';
+import { formatCurrency, parseNumericString } from './string';
 
 import { convertFromUtcToTimezone, formatWithTimezone } from './date';
 import { getListChains } from './crypto';
@@ -36,7 +36,7 @@ export function formatCryptoPrice(price: EventTicketPrice, skipCurrency: boolean
   if (skipCurrency) return ethers.formatUnits(cost, decimals);
 
   // return `${ethers.formatUnits(cost, decimals)} ${currency.toUpperCase()}`;
-  return `${formatNumber(ethers.formatUnits(cost, decimals))} ${currency.toUpperCase()}`;
+  return `${parseNumericString(ethers.formatUnits(cost, decimals))} ${currency.toUpperCase()}`;
 }
 
 export function formatFiatPrice(price: EventTicketPrice) {
@@ -109,7 +109,7 @@ export function getEventDateBlockStart(event: Event) {
   }
 
   if (isSameYear(startTime, new Date())) {
-    return `${format(startTime, 'EEE, MMM dd')} &middot; ${formatDistance(event.start, event.end)}`;
+    return `${format(startTime, 'EEE, MMM dd')} \u00B7 ${formatDistance(event.start, event.end)}`;
   }
 
   return `${format(startTime, 'EEE, dd MMMM yyyy')} `;
@@ -225,7 +225,7 @@ export function getEventCohosts(event: Event) {
 export function formatTokenGateRange(tokenGate: EventTokenGate) {
   const { min_value, decimals } = tokenGate;
 
-  if (min_value && decimals) return `> ${formatNumber(formatUnits(min_value, decimals))}`;
+  if (min_value && decimals) return `> ${parseNumericString(formatUnits(min_value, decimals))}`;
 
   return `> 0`;
 }

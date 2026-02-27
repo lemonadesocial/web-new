@@ -12,7 +12,7 @@ export const communityAvatar = (community?: Space | null) => {
   return generateUrl(community?.image_avatar_expanded, { resize: { width: 384, height: 384, fit: 'contain' } });
 };
 
-export function randomUserImage(id?: string): string {
+export function randomCommunityImage(id?: string): string {
   const avatar = createAvatar(glass, {
     seed: id,
     flip: false,
