@@ -431,6 +431,14 @@
   }
 }
 
+@variant md {
+  @media (min-width: 768px) {
+    &:not([data-mode='mobile'] &) {
+      @slot;
+    }
+  }
+}
+
 @layer base {
   h1,
   h2,

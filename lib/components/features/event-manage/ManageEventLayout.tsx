@@ -164,7 +164,7 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
         </div>
       </div>
 
-      <div className="max-sm:pt-5">
+      <div className="pt-5 md:pt-0">
         <Comp />
       </div>
     </div>

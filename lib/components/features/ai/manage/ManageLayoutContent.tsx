@@ -69,6 +69,7 @@ function ManageLayoutContent() {
       </AnimatePresence>
       <div className={clsx('bg-(--btn-tertiary) w-full h-full rounded-md m-1', state.device === 'mobile' && 'py-4')}>
         <div
+          data-mode={state.device}
           className={clsx(
             'w-full bg-background h-full rounded-md overflow-auto',
             state.device === 'mobile' && 'max-w-sm mx-auto',
