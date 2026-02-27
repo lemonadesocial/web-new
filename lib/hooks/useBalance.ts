@@ -1,19 +1,26 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
-import { BrowserProvider, Contract, JsonRpcProvider, type Eip1193Provider, formatEther, formatUnits } from 'ethers';
+import { createPublicClient, custom, formatEther, formatUnits, http, type EIP1193Provider } from 'viem';
 
-import { useAppKitAccount, useAppKitProvider } from '$lib/utils/appkit';
+import { useAppKitAccount, useAppKitProvider, useAppKitNetwork } from '$lib/utils/appkit';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
+import { chainsMapAtom } from '$lib/jotai';
+import { useAtomValue } from 'jotai';
 import ERC20 from '$lib/abis/ERC20.json';
+import { getViemChainConfig } from '$lib/utils/crypto';
 import { useTokenData } from './useCoin';
 
-async function fetchBalance(address: string, walletProvider: Eip1193Provider) {
-  if (!walletProvider || !address) {
+async function fetchBalance(address: string, walletProvider: EIP1193Provider, chain: Chain) {
+  if (!walletProvider || !address || !chain) {
     return { raw: BigInt(0), formatted: '0' };
   }
 
-  const provider = new BrowserProvider(walletProvider);
-  const balance = await provider.getBalance(address);
+  const viemChain = getViemChainConfig(chain);
+  const publicClient = createPublicClient({
+    chain: viemChain,
+    transport: custom(walletProvider),
+  });
+  const balance = await publicClient.getBalance({ address: address as `0x${string}` });
 
   return {
     raw: balance,
@@ -24,15 +31,18 @@ async function fetchBalance(address: string, walletProvider: Eip1193Provider) {
 export function useBalance() {
   const { address } = useAppKitAccount();
   const { walletProvider } = useAppKitProvider('eip155');
+  const { chainId } = useAppKitNetwork();
+  const chainsMap = useAtomValue(chainsMapAtom);
+  const chain = chainId ? chainsMap[chainId.toString()] : undefined;
 
   const {
     data,
     isLoading: loading,
     error,
   } = useQuery({
-    queryKey: ['balance', address],
-    queryFn: () => fetchBalance(address!, walletProvider as Eip1193Provider) ,
-    enabled: !!address && !!walletProvider,
+    queryKey: ['balance', address, chainId],
+    queryFn: () => fetchBalance(address!, walletProvider as EIP1193Provider, chain!),
+    enabled: !!address && !!walletProvider && !!chain,
   });
 
   return {
@@ -58,9 +68,17 @@ async function fetchTokenBalance({
     return { raw: BigInt(0), formatted: '0' };
   }
 
-  const provider = new JsonRpcProvider(chain.rpc_url);
-  const contract = new Contract(tokenAddress, ERC20, provider);
-  const raw = await contract.balanceOf(address);
+  const viemChain = getViemChainConfig(chain);
+  const publicClient = createPublicClient({
+    chain: viemChain,
+    transport: http(chain.rpc_url),
+  });
+  const raw = await publicClient.readContract({
+    address: tokenAddress as `0x${string}`,
+    abi: ERC20 as never,
+    functionName: 'balanceOf',
+    args: [address as `0x${string}`],
+  });
 
   return {
     raw: BigInt(raw.toString()),

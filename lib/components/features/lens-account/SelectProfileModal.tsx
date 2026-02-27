@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { AccountManaged, evmAddress } from '@lens-protocol/client';
 import { fetchAccountsAvailable, fetchUsernames } from '@lens-protocol/client/actions';
-import { signMessageWith } from '@lens-protocol/client/ethers';
+import { signMessageWith } from '@lens-protocol/client/viem';
 import { useSetAtom } from 'jotai';
 
 import { Avatar, Button, modal, ModalContent, Skeleton, toast } from '$lib/components/core';
@@ -11,7 +11,8 @@ import { client } from '$lib/utils/lens/client';
 import { useSigner } from '$lib/hooks/useSigner';
 import { accountAtom, sessionClientAtom } from '$lib/jotai';
 import { getAccountAvatar } from '$lib/utils/lens/utils';
-import { formatError, formatWallet } from '$lib/utils/crypto';
+import { formatWallet } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
 
 import { SignTransactionModal } from '../modals/SignTransaction';
 import { ClaimAccountModal } from './ClaimAccountModal';
@@ -53,14 +54,15 @@ export function SelectProfileModal() {
   }, [address]);
 
   const handleSignIn = async () => {
-    if (!signer) return;
+    if (!signer?.account?.address) return;
+    const signerAddress = signer.account.address;
 
     setIsLoadingSignIn(true);
 
     const onboardingResult = await client.login({
       onboardingUser: {
         app: process.env.NEXT_PUBLIC_LENS_APP_ID,
-        wallet: signer.address,
+        wallet: signerAddress,
       },
       signMessage: signMessageWith(signer),
     });

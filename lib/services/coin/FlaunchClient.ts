@@ -1,10 +1,12 @@
-import { isAddress, JsonRpcProvider, type Signer, Interface } from 'ethers';
+import { encodeFunctionData } from 'viem';
 import { createDrift, type Drift, type ReadContract, type Hash, ReadWriteContract } from '@gud/drift';
-import { ethersAdapter } from '@gud/drift-ethers';
+import { viemAdapter } from '@gud/drift-viem';
+import { createPublicClient, http, type WalletClient } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 
 import { Chain } from '$lib/graphql/generated/backend/graphql';
-import { getGasOptions } from '$lib/utils/crypto';
+import { getGasOptionsByChainId, getViemChainConfig } from '$lib/utils/crypto';
+import { isAddress } from 'viem';
 import { Flaunch } from '$lib/abis/token-launch-pad/Flaunch';
 import { FeeEscrow } from '$lib/abis/token-launch-pad/FeeEscrow';
 import { MarketUtils } from '$lib/abis/token-launch-pad/MarketUtils';
@@ -48,8 +50,8 @@ export interface TokenMetadata {
 export class FlaunchClient {
   private static instances: Map<string, FlaunchClient> = new Map();
 
-  static getInstance(chain: Chain, memecoinAddress: string, signer?: Signer): FlaunchClient {
-    if (signer) return new FlaunchClient(chain, memecoinAddress, signer);
+  static getInstance(chain: Chain, memecoinAddress: string, walletClient?: WalletClient): FlaunchClient {
+    if (walletClient) return new FlaunchClient(chain, memecoinAddress, walletClient);
 
     const key = `${chain.chain_id}-${memecoinAddress}`;
 
@@ -61,7 +63,8 @@ export class FlaunchClient {
   }
 
   private drift: Drift;
-  private provider: JsonRpcProvider;
+  private chain: Chain;
+  private publicClient: ReturnType<typeof createPublicClient>;
 
   private zapContract: ReadContract<FlaunchZapABI>;
   private flaunchContract: ReadContract<FlaunchABI> | null = null;
@@ -76,7 +79,7 @@ export class FlaunchClient {
 
   private memecoinAddress: string;
 
-  constructor(chain: Chain, memecoinAddress: string, signer?: Signer) {
+  constructor(chain: Chain, memecoinAddress: string, walletClient?: WalletClient) {
     if (!chain.rpc_url) {
       throw new Error('Chain RPC URL is required');
     }
@@ -94,13 +97,16 @@ export class FlaunchClient {
     }
 
     this.memecoinAddress = memecoinAddress;
+    this.chain = chain;
 
-    this.provider = new JsonRpcProvider(chain.rpc_url);
-
-    const adapterConfig = signer ? { provider: this.provider, signer } : { provider: this.provider };
+    const viemChain = getViemChainConfig(chain);
+    this.publicClient = createPublicClient({
+      chain: viemChain,
+      transport: http(chain.rpc_url),
+    });
 
     this.drift = createDrift({
-      adapter: ethersAdapter(adapterConfig),
+      adapter: viemAdapter({ publicClient: this.publicClient, walletClient }),
     });
 
     this.zapContract = this.drift.contract({
@@ -481,46 +487,47 @@ export class FlaunchClient {
 
     const poolSwapAddress = await this.zapContract.read('poolSwap');
 
-    const lETHInterface = new Interface(LETH);
-    const poolSwapInterface = new Interface(PoolSwap);
-
     const calls: Array<{
       target: string;
       allowFailure: boolean;
       value: bigint;
-      callData: string;
+      callData: `0x${string}`;
     }> = [
         {
           target: nativeToken,
           allowFailure: false,
           value: buyAmount,
-          callData: lETHInterface.encodeFunctionData('deposit', [0]),
+          callData: encodeFunctionData({ abi: LETH, functionName: 'deposit', args: [0n] }),
         },
         {
           target: nativeToken,
           allowFailure: false,
           value: 0n,
-          callData: lETHInterface.encodeFunctionData('approve', [poolSwapAddress, buyAmount]),
+          callData: encodeFunctionData({ abi: LETH, functionName: 'approve', args: [poolSwapAddress, buyAmount] }),
         },
         {
           target: poolSwapAddress,
           allowFailure: false,
           value: 0n,
-          callData: poolSwapInterface.encodeFunctionData('swap', [
-            [
-              poolKey.currency0,
-              poolKey.currency1,
-              poolKey.fee,
-              poolKey.tickSpacing,
-              poolKey.hooks,
+          callData: encodeFunctionData({
+            abi: PoolSwap,
+            functionName: 'swap',
+            args: [
+              {
+                currency0: poolKey.currency0,
+                currency1: poolKey.currency1,
+                fee: poolKey.fee,
+                tickSpacing: poolKey.tickSpacing,
+                hooks: poolKey.hooks,
+              },
+              {
+                zeroForOne: isNativeToken0,
+                amountSpecified: -buyAmount,
+                sqrtPriceLimitX96,
+              },
+              recipient,
             ],
-            {
-              zeroForOne: isNativeToken0,
-              amountSpecified: -buyAmount,
-              sqrtPriceLimitX96,
-            },
-            recipient,
-          ]),
+          }),
         },
       ];
 
@@ -529,7 +536,7 @@ export class FlaunchClient {
       address: MULTICALL3_ADDRESS,
     }) as unknown as ReadWriteContract<typeof MULTICALL>;
 
-    const gasOptions = await getGasOptions(this.provider);
+    const gasOptions = getGasOptionsByChainId(this.chain.chain_id);
     const txHash = await multicall3Contract.write('aggregate3Value', {
       calls,
     }, {
@@ -575,24 +582,20 @@ export class FlaunchClient {
 
     const poolSwapAddress = await this.zapContract.read('poolSwap');
 
-    const gasOptions = await getGasOptions(this.provider);
+    const gasOptions = getGasOptionsByChainId(this.chain.chain_id);
     const approveTxHash = await ERC20Contract.write('approve', {
       spender: poolSwapAddress,
       amount: sellAmount,
     }, gasOptions);
 
-    const approveTx = await this.provider.getTransaction(approveTxHash);
-    if (!approveTx) {
-      throw new Error('Failed to get approval transaction');
-    }
-    await approveTx.wait();
+    await this.publicClient.waitForTransactionReceipt({ hash: approveTxHash as `0x${string}` });
 
     const poolSwapContract = this.drift.contract({
       abi: PoolSwap,
       address: poolSwapAddress,
     }) as unknown as ReadWriteContract<typeof PoolSwap>;
 
-    const gasOptionsForSwap = await getGasOptions(this.provider);
+    const gasOptionsForSwap = getGasOptionsByChainId(this.chain.chain_id);
     const txHash = await poolSwapContract.write(
       'swap',
       {
@@ -639,40 +642,43 @@ export class FlaunchClient {
 
     const poolSwapAddress = await this.zapContract.read('poolSwap');
 
-    const erc20Interface = new Interface(ERC20);
-    const poolSwapInterface = new Interface(PoolSwap);
+    const approveData = encodeFunctionData({
+      abi: ERC20,
+      functionName: 'approve',
+      args: [poolSwapAddress, sellAmount],
+    });
 
-    const approveData = erc20Interface.encodeFunctionData('approve', [
-      poolSwapAddress,
-      sellAmount,
-    ]);
-
-    const swapData = poolSwapInterface.encodeFunctionData('swap', [
-      [
-        poolKey.currency0,
-        poolKey.currency1,
-        poolKey.fee,
-        poolKey.tickSpacing,
-        poolKey.hooks,
+    const key = poolKey as { currency0: string; currency1: string; fee: number; tickSpacing: number; hooks: string };
+    const swapData = encodeFunctionData({
+      abi: PoolSwap,
+      functionName: 'swap',
+      args: [
+        {
+          currency0: key.currency0,
+          currency1: key.currency1,
+          fee: key.fee,
+          tickSpacing: key.tickSpacing,
+          hooks: key.hooks,
+        },
+        {
+          zeroForOne: !isNativeToken0,
+          amountSpecified: -sellAmount,
+          sqrtPriceLimitX96,
+        },
+        recipient,
       ],
-      {
-        zeroForOne: !isNativeToken0,
-        amountSpecified: -sellAmount,
-        sqrtPriceLimitX96,
-      },
-      recipient,
-    ]);
+    });
 
     const userOps = [
       {
         to: this.memecoinAddress as `0x${string}`,
         value: 0n,
-        data: approveData as `0x${string}`,
+        data: approveData,
       },
       {
         to: poolSwapAddress as `0x${string}`,
         value: 0n,
-        data: swapData as `0x${string}`,
+        data: swapData,
       },
     ];
 

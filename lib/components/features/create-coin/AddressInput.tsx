@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { ethers } from 'ethers';
+import { isAddress, type Address } from 'viem';
 
 import { Input } from "$lib/components/core/input";
 import { MainnetRpcProvider } from '$lib/utils/crypto';
@@ -39,13 +39,13 @@ export function AddressInput({ value = '', onChange, placeholder = 'Wallet Addre
     setIsLoading(true);
 
     timeoutRef.current = setTimeout(async () => {
-      const isAddress = ethers.isAddress(trimmedValue);
+      const addressValid = isAddress(trimmedValue);
       const isEnsName = trimmedValue.includes('.eth');
 
-      if (isAddress) {
+      if (addressValid) {
         onChange(trimmedValue);
 
-        const name = await MainnetRpcProvider.lookupAddress(trimmedValue);
+        const name = await MainnetRpcProvider.getEnsName({ address: trimmedValue as Address });
         
         setDisplayText(name);
 
@@ -54,7 +54,7 @@ export function AddressInput({ value = '', onChange, placeholder = 'Wallet Addre
       }
       
       if (isEnsName) {
-        const address = await MainnetRpcProvider.resolveName(trimmedValue);
+        const address = await MainnetRpcProvider.getEnsAddress({ name: trimmedValue });
 
         if (address) {
           onChange(address);

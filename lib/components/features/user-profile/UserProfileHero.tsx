@@ -16,7 +16,7 @@ import { useAccount, useLensAuth } from '$lib/hooks/useLens';
 import { sessionClientAtom } from '$lib/jotai';
 import { useSigner } from '$lib/hooks/useSigner';
 import { ProfilePane } from '../pane';
-import { isAddress } from 'ethers';
+import { isAddress } from 'viem';
 import { client } from '$lib/utils/lens/client';
 import { useAppKitAccount } from '@reown/appkit/react';
 

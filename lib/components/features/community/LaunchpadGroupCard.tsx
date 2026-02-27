@@ -1,8 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { formatUnits, parseUnits } from 'viem';
-import { BrowserProvider, type Eip1193Provider } from 'ethers';
+import { formatUnits, parseUnits, type EIP1193Provider } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 
 import { useTokenData, useStakingAPR, useClaimableAmount } from '$lib/hooks/useCoin';
@@ -13,7 +12,8 @@ import { communityAvatar } from '$lib/utils/community';
 import { Button, modal, toast } from '$lib/components/core';
 import { StakingManagerClient } from '$lib/services/coin/StakingManagerClient';
 import { appKit } from '$lib/utils/appkit';
-import { formatError, getTransactionUrl } from '$lib/utils/crypto';
+import { createViemClients, getTransactionUrl } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
 import { formatNumber } from '$lib/utils/number';
 import { JoinCommunityModal } from './JoinCommunityModal';
 import { TxnConfirmedModal } from '../create-coin/TxnConfirmedModal';
@@ -169,7 +169,7 @@ function ClaimTab({ stakingInfo }: { stakingInfo: StakingInfo }) {
       return;
     }
 
-    const walletProvider = appKit.getProvider('eip155');
+    const walletProvider = appKit.getProvider('eip155') as EIP1193Provider | undefined;
     const userAddress = appKit.getAddress();
 
     if (!walletProvider || !userAddress) {
@@ -179,12 +179,10 @@ function ClaimTab({ stakingInfo }: { stakingInfo: StakingInfo }) {
 
     setIsClaiming(true);
 
-    const provider = new BrowserProvider(walletProvider as Eip1193Provider);
-    const signer = await provider.getSigner();
-
-    const stakingClient = StakingManagerClient.getInstance(chain, stakingManagerAddress, signer);
+    const { walletClient, publicClient } = await createViemClients(chain.chain_id, walletProvider);
+    const stakingClient = StakingManagerClient.getInstance(chain, stakingManagerAddress, walletClient);
     const claimTxHash = await stakingClient.claim();
-    await provider.waitForTransaction(claimTxHash);
+    await publicClient.waitForTransactionReceipt({ hash: claimTxHash as `0x${string}` });
 
     setIsClaiming(false);
 
@@ -370,7 +368,7 @@ function WithdrawTab({ stakingInfo }: { stakingInfo: StakingInfo }) {
       return;
     }
 
-    const walletProvider = appKit.getProvider('eip155');
+    const walletProvider = appKit.getProvider('eip155') as EIP1193Provider | undefined;
     const userAddress = appKit.getAddress();
 
     if (!walletProvider || !userAddress) {
@@ -382,12 +380,10 @@ function WithdrawTab({ stakingInfo }: { stakingInfo: StakingInfo }) {
 
     setIsWithdrawing(true);
 
-    const provider = new BrowserProvider(walletProvider as Eip1193Provider);
-    const signer = await provider.getSigner();
-
-    const stakingClient = StakingManagerClient.getInstance(chain, stakingManagerAddress, signer);
+    const { walletClient, publicClient } = await createViemClients(chain.chain_id, walletProvider);
+    const stakingClient = StakingManagerClient.getInstance(chain, stakingManagerAddress, walletClient);
     const txHash = await stakingClient.unstake(amount);
-    await provider.waitForTransaction(txHash);
+    await publicClient.waitForTransactionReceipt({ hash: txHash as `0x${string}` });
 
     modal.open(TxnConfirmedModal, {
       props: {

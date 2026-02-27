@@ -1,7 +1,12 @@
 'use client';
 import React from 'react';
-import * as ethers from 'ethers';
+import { createPublicClient, http, type Address } from 'viem';
 import { mainnet } from 'viem/chains';
+
+const publicClient = createPublicClient({
+  chain: mainnet,
+  transport: http(mainnet.rpcUrls.default.http[0]),
+});
 
 export function useGetEns(wallet?: string) {
   const [username, setUsername] = React.useState('');
@@ -11,9 +16,7 @@ export function useGetEns(wallet?: string) {
   }, [wallet]);
 
   const getEnsUsername = async (wallet: string) => {
-    const provider = new ethers.JsonRpcProvider(mainnet.rpcUrls.default.http[0]);
-    // Use lookup to get ENS name from wallet address
-    const ensName = await provider.lookupAddress(wallet);
+    const ensName = await publicClient.getEnsName({ address: wallet as Address });
     if (ensName) setUsername(`@${ensName}`);
   };
 

@@ -6,7 +6,7 @@ import { evmAddress } from '@lens-protocol/client';
 import { GetUserDocument, User } from '$lib/graphql/generated/backend/graphql';
 import { getClient } from '$lib/graphql/request';
 import { client } from '$lib/utils/lens/client';
-import { isAddress } from 'ethers';
+import { isAddress } from 'viem';
 import { isObjectId } from '$lib/utils/helpers';
 
 /**

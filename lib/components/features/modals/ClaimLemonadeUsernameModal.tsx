@@ -3,13 +3,13 @@ import { useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import * as Sentry from '@sentry/nextjs';
-import type { Eip1193Provider } from 'ethers';
 import debounce from 'lodash/debounce';
+import { formatUnits, type Address, type EIP1193Provider } from 'viem';
 
-import { ethers } from 'ethers';
 import { Button, modal, ModalContent, toast } from '$lib/components/core';
 import { CurrencyClient } from '$lib/services/currency';
-import { approveERC20Spender, checkBalanceSufficient, formatError, isNativeToken, writeContract } from '$lib/utils/crypto';
+import { approveERC20Spender, checkBalanceSufficient, createViemClients, isNativeToken } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
 import { listChainsAtom } from '$lib/jotai';
 import { appKit, useAppKitProvider } from '$lib/utils/appkit';
 import { getErrorMessage } from '$lib/utils/error';
@@ -24,7 +24,7 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { formatNumber } from '$lib/utils/number';
 
 export function ClaimLemonadeUsernameModal() {
-  const { walletProvider } = useAppKitProvider('eip155');
+  const { walletProvider } = useAppKitProvider<EIP1193Provider>('eip155');
   const listChains = useAtomValue(listChainsAtom);
   const usernameChain = listChains.find(chain => chain.lemonade_username_contract_address)!;
   const { client } = useClient();
@@ -137,52 +137,54 @@ export function ClaimLemonadeUsernameModal() {
         wallet: address,
       });
 
-      const contractInstance = new ethers.Contract(
-        ethers.ZeroAddress,
-        new ethers.Interface(LemonadeUsernameABI)
-      );
       const currencyAddress = result.currency as string;
       const price = BigInt(result.price);
       const isNativeCurrency = isNativeToken(currencyAddress, usernameChain.chain_id);
 
+      const { walletClient, publicClient, account } = await createViemClients(
+        usernameChain.chain_id,
+        walletProvider
+      );
+
       if (price > 0n) {
-        await checkBalanceSufficient(
-          currencyAddress,
-          usernameChain.chain_id,
-          price,
-          walletProvider as Eip1193Provider,
-          address
-        );
+        await checkBalanceSufficient({
+          publicClient,
+          tokenAddress: currencyAddress,
+          chainId: usernameChain.chain_id,
+          amount: price,
+          account: account as Address
+        });
       }
 
       setStep('signing');
 
       if (!isNativeCurrency && price > 0n) {
-        await approveERC20Spender(
-          currencyAddress,
-          usernameChain.lemonade_username_contract_address as string,
-          BigInt(result.price),
-          walletProvider as Eip1193Provider,
-        );
+        await approveERC20Spender({
+          walletClient,
+          tokenAddress: currencyAddress as Address,
+          spender: usernameChain.lemonade_username_contract_address as Address,
+          amount: price,
+          account: account as Address,
+        });
       }
 
-      const transaction = await writeContract(
-        contractInstance,
-        usernameChain.lemonade_username_contract_address as string,
-        walletProvider as Eip1193Provider,
-        'mintWithSignature',
-        [
+      const hash = await walletClient.writeContract({
+        abi: LemonadeUsernameABI,
+        address: usernameChain.lemonade_username_contract_address as Address,
+        functionName: 'mintWithSignature',
+        args: [
           username,
-          address as `0x${string}`,
+          address as Address,
           tokenUri,
           price,
-          currencyAddress as `0x${string}`,
-          result.signature as `0x${string}`,
+          currencyAddress as Address,
+          result.signature as `0x${string}`
         ],
-        { value: isNativeCurrency ? price : 0 },
-      );
+        account,
+        value: isNativeCurrency ? price : 0n
+      });
 
-      await transaction.wait();
+      await publicClient.waitForTransactionReceipt({ hash });
 
       queryClient.setQueryData(['lemonadeUsername', address], {
         username,
@@ -265,7 +267,7 @@ export function ClaimLemonadeUsernameModal() {
       {status === 'available' && usernamePrice && BigInt(usernamePrice.price) > 0n && (
         <p className='text-warning-400 text-sm mt-2'>
           Usernames with {username.length} characters cost{' '}
-          {formatNumber(Number(ethers.formatUnits(usernamePrice.price, usernamePrice.decimals ?? 18)))}{' '}
+          {formatNumber(Number(formatUnits(BigInt(usernamePrice.price), usernamePrice.decimals ?? 18)))}{' '}
           {usernamePrice.symbol ?? usernamePrice.currency}.
         </p>
       )}

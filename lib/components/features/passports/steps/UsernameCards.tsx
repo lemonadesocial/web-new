@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ethers } from 'ethers';
+import { createPublicClient, http, type Address } from 'viem';
 import { mainnet } from 'viem/chains';
 import { useAppKitAccount } from '@reown/appkit/react';
 import * as Sentry from '@sentry/nextjs';
@@ -11,7 +11,11 @@ import { useClaimUsername, useLemonadeUsername } from '$lib/hooks/useUsername';
 
 import { usePassportContext } from '../provider';
 import { PassportActionKind } from '../types';
-import { disconnect } from 'process';
+
+const publicClient = createPublicClient({
+  chain: mainnet,
+  transport: http(mainnet.rpcUrls.default.http[0]),
+});
 
 export function UsernameCard() {
   const handleClaimUsername = useClaimUsername();
@@ -85,8 +89,7 @@ export function ENSDomainCard() {
     const fetchENSName = async () => {
       setIsLoading(true);
       try {
-        const provider = new ethers.JsonRpcProvider(mainnet.rpcUrls.default.http[0]);
-        const name = await provider.lookupAddress(address);
+        const name = await publicClient.getEnsName({ address: address as Address });
         setEnsName(name);
         dispatch({ type: PassportActionKind.SetEnsName, payload: name });
       } catch (error) {

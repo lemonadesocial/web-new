@@ -1,7 +1,7 @@
 'use client';
 import { useAtomValue } from 'jotai';
 import { useState } from 'react';
-import { Eip1193Provider } from 'ethers';
+import { parseEventLogs, type Address, type EIP1193Provider } from 'viem';
 
 import { modal, ModalContent, toast } from '$lib/components/core';
 import { Chain, CreateNewPaymentAccountDocument, EthereumAccount, NewPaymentAccount, PaymentAccountType } from '$lib/graphql/generated/backend/graphql';
@@ -9,8 +9,9 @@ import { listChainsAtom } from '$lib/jotai';
 import { ProcessingTransaction } from '../../modals/ProcessingTransaction';
 import { SignTransactionModal } from '../../modals/SignTransaction';
 import { useMutation } from '$lib/graphql/request';
-import { formatError, waitForEvent } from '$lib/utils/crypto';
-import { LemonadeRelayPaymentContract, writeContract } from '$lib/utils/crypto';
+import { createViemClients } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
+import LemonadeRelayPayment from '$lib/abis/LemonadeRelayPayment.json';
 import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react';
 import { ConnectWallet } from '../../modals/ConnectWallet';
 import { useUpdateEventPaymentAccounts } from '../hooks';
@@ -40,19 +41,34 @@ export function AddNetworkModal({ vault }: AddNetworkModalProps) {
   const createRelayContract = async () => {
     try {
       setStatus('activating');
-      const transaction = await writeContract(
-        LemonadeRelayPaymentContract,
-        selectedNetwork!.relay_payment_contract!,
-        walletProvider as Eip1193Provider,
-        'register',
-        [
-          [address],
-          [1]
-        ],
+      if (!walletProvider || !selectedNetwork || !address) {
+        throw new Error('Wallet not connected');
+      }
+
+      const { walletClient, publicClient, account } = await createViemClients(
+        selectedNetwork.chain_id,
+        walletProvider as EIP1193Provider,
       );
-  
-      const parsedEventLog = await waitForEvent(transaction, LemonadeRelayPaymentContract, 'OnRegister');
-      const paymentSplitter = parsedEventLog?.args?.splitter;
+
+      const hash = await walletClient.writeContract({
+        abi: LemonadeRelayPayment.abi,
+        address: selectedNetwork.relay_payment_contract! as Address,
+        functionName: 'register',
+        args: [
+          [address],
+          [1],
+        ],
+        account,
+        chain: walletClient.chain,
+      });
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      const registerEvents = parseEventLogs({
+        abi: LemonadeRelayPayment.abi as any,
+        eventName: 'OnRegister',
+        logs: receipt.logs,
+      });
+      const paymentSplitter = (registerEvents[0] as any)?.args?.splitter as string | undefined;
 
       if (!paymentSplitter) throw new Error('Payment splitter not found');
       
@@ -148,7 +164,7 @@ export function AddNetworkModal({ vault }: AddNetworkModalProps) {
               onClick={() => handleNetworkClick(network)}
               className="flex items-center py-1.5 px-3 gap-3 rounded-sm bg-primary/8 hover:bg-primary/10 transition-colors cursor-pointer"
             >
-              <img src={network.logo_url} alt={network.name} className="size-5" />
+              <img src={network.logo_url || ''} alt={network.name} className="size-5" />
               <p className="flex-1 text-left">{network.name}</p>
               <i className="icon-chevron-right size-4 text-quaternary" />
             </button>

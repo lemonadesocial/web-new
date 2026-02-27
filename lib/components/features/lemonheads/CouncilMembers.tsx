@@ -1,16 +1,17 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { ethers } from 'ethers';
+import { createPublicClient, http, type Address } from 'viem';
 
 import { GetSpaceDocument, Space, SpaceCouncilMember } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { chainsMapAtom } from '$lib/jotai';
-import { formatWallet, LemonheadNFTContract } from '$lib/utils/crypto';
+import { formatWallet, getViemChainConfig } from '$lib/utils/crypto';
 import { Skeleton } from '$lib/components/core/skeleton';
 import { toast } from '$lib/components/core';
 import { LEMONHEAD_CHAIN_ID } from './mint/utils';
 import { TitleSection } from '$app/[domain]/(blank)/s/lemonheads/shared';
+import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 
 export function CouncilMembers() {
   const { data, loading } = useQuery(GetSpaceDocument, {
@@ -85,16 +86,28 @@ function CouncilMemberCard({ member }: { member: SpaceCouncilMember }) {
         return;
       }
 
-      const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-      const contract = LemonheadNFTContract.attach(contractAddress).connect(provider) as ethers.Contract;
+      const publicClient = createPublicClient({
+        chain: getViemChainConfig(chain),
+        transport: http(chain.rpc_url),
+      });
 
-      const tokenId = await contract.getFunction('bounds')(member.wallet);
+      const tokenId = await publicClient.readContract({
+        abi: LemonheadNFT.abi,
+        address: contractAddress as Address,
+        functionName: 'bounds',
+        args: [member.wallet as Address],
+      }) as number;
       if (tokenId <= 0) {
         setLoading(false);
         return;
       }
 
-      const tokenUri = await contract.getFunction('tokenURI')(tokenId);
+      const tokenUri = await publicClient.readContract({
+        abi: LemonheadNFT.abi,
+        address: contractAddress as Address,
+        functionName: 'tokenURI',
+        args: [BigInt(tokenId)],
+      }) as string;
       const res = await fetch(tokenUri);
       const jsonData = await res.json();
       setImageData(jsonData.image);

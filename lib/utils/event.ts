@@ -1,4 +1,4 @@
-import { ethers, formatUnits } from 'ethers';
+import { formatUnits } from 'viem';
 import { format, formatDistance, isSameDay, isSameYear, isToday, isTomorrow } from 'date-fns';
 
 import {
@@ -34,10 +34,9 @@ export function formatCryptoPrice(price: EventTicketPrice, skipCurrency: boolean
     console.error('Cannot find currency decimals.');
     return '';
   }
-  if (skipCurrency) return ethers.formatUnits(cost, decimals);
+  if (skipCurrency) return formatUnits(cost, decimals);
 
-  // return `${ethers.formatUnits(cost, decimals)} ${currency.toUpperCase()}`;
-  return `${parseNumericString(ethers.formatUnits(cost, decimals))} ${currency.toUpperCase()}`;
+  return `${parseNumericString(formatUnits(cost, decimals))} ${currency.toUpperCase()}`;
 }
 
 export function formatFiatPrice(price: EventTicketPrice) {
@@ -195,7 +194,7 @@ export const getDisplayPrice = (cost: string, currency: string, account?: Paymen
 
   if (account.provider === 'stripe') return formatCurrency(Number(cost), currency, decimals, false);
 
-  return `${ethers.formatUnits(cost, decimals)} ${currency}`;
+  return `${formatUnits(cost, decimals)} ${currency}`;
 };
 
 export function isAttending(event: Event, userId: string): boolean {

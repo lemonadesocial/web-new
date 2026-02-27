@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { mainnet, sepolia } from 'viem/chains';
 import { useAtomValue } from 'jotai';
-import { BrowserProvider, type Eip1193Provider, Interface } from 'ethers';
-import { formatEther, parseEther, formatUnits } from 'viem';
+import { decodeEventLog, formatEther, parseEther, formatUnits, type EIP1193Provider } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 
 import { Button, Skeleton, modal, toast } from '$lib/components/core';
@@ -14,7 +13,8 @@ import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 import { ConnectWallet } from '../modals/ConnectWallet';
 import { useBalance } from '$lib/hooks/useBalance';
 import { formatNumber } from '$lib/utils/number';
-import { formatError, getTransactionUrl } from '$lib/utils/crypto';
+import { createViemClients, getTransactionUrl } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
 import { TxnConfirmedModal } from '../create-coin/TxnConfirmedModal';
 import { ERC20 } from '$lib/abis/ERC20';
 import { SlippageSelect } from './SlippageSelect';
@@ -62,32 +62,34 @@ export function BuyCoin({ chain, address }: { chain: Chain; address: string }) {
       const buyAmount = parseEther(amount || '0');
 
       setIsBuying(true);
-      const provider = new BrowserProvider(walletProvider as Eip1193Provider);
-      const signer = await provider.getSigner();
-      const flaunchClient = FlaunchClient.getInstance(chain, address, signer);
+      const { walletClient, publicClient } = await createViemClients(chain.chain_id, walletProvider as EIP1193Provider);
+      const flaunchClient = FlaunchClient.getInstance(chain, address, walletClient);
 
-      const txHash = await flaunchClient.buyCoin({ 
-        buyAmount, 
+      const txHash = await flaunchClient.buyCoin({
+        buyAmount,
         slippageTolerance: slippage * 100,
-        recipient: userAddress 
+        recipient: userAddress,
       });
-      
-      const receipt = await provider.waitForTransaction(txHash);
-      
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash as `0x${string}` });
+
       let tokenAmount: string | null = null;
-      
+
       if (receipt && tokenData && userAddress) {
-        const erc20Interface = new Interface(ERC20);
         const memecoinAddressLower = address.toLowerCase();
         const userAddressLower = userAddress.toLowerCase();
-        
+
         for (const log of receipt.logs) {
-          if (log.address.toLowerCase() !== memecoinAddressLower) continue;
-          
+          if (log.address?.toLowerCase() !== memecoinAddressLower) continue;
+
           try {
-            const parsedLog = erc20Interface.parseLog(log);
-            if (parsedLog?.name === 'Transfer' && parsedLog.args.to.toLowerCase() === userAddressLower) {
-              const value = parsedLog.args.value as bigint;
+            const decoded = decodeEventLog({
+              abi: ERC20,
+              data: log.data,
+              topics: log.topics,
+            });
+            if (decoded.eventName === 'Transfer' && (decoded.args as { to?: string }).to?.toLowerCase() === userAddressLower) {
+              const value = (decoded.args as { value: bigint }).value;
               tokenAmount = formatNumber(Number(formatUnits(value, tokenData.decimals)));
               break;
             }

@@ -1,7 +1,7 @@
 import { getDefaultStore } from 'jotai';
-import { JsonRpcProvider } from 'ethers';
 import { createDrift, type Drift, type ReadContract } from '@gud/drift';
-import { ethersAdapter } from '@gud/drift-ethers';
+import { viemAdapter } from '@gud/drift-viem';
+import { createPublicClient, http, type Chain as ViemChain } from 'viem';
 
 import { chainsMapAtom } from '$lib/jotai';
 import { MEGAETH_CHAIN_ID } from '$lib/utils/constants';
@@ -32,7 +32,6 @@ export class RedEnvelopeClient {
   }
 
   private drift: Drift;
-  private provider: JsonRpcProvider;
   private contract: ReadContract<RedEnvelopeABI>;
   private currencyAddress: string | null = null;
   private currencyContract: ReadContract<ERC20ABI> | null = null;
@@ -49,9 +48,28 @@ export class RedEnvelopeClient {
       throw new Error('Chain RPC URL is required');
     }
 
-    this.provider = new JsonRpcProvider(chain.rpc_url);
+    const viemChain: ViemChain = {
+      id: Number(chain.chain_id),
+      name: chain.name,
+      nativeCurrency: {
+        name: chain.tokens?.[0]?.name || 'Ether',
+        symbol: chain.tokens?.[0]?.symbol || 'ETH',
+        decimals: chain.tokens?.[0]?.decimals || 18,
+      },
+      rpcUrls: {
+        default: {
+          http: [chain.rpc_url],
+        },
+      },
+    };
+
+    const publicClient = createPublicClient({
+      chain: viemChain,
+      transport: http(chain.rpc_url),
+    });
+
     this.drift = createDrift({
-      adapter: ethersAdapter({ provider: this.provider }),
+      adapter: viemAdapter({ publicClient }),
     });
 
     this.contract = this.drift.contract({

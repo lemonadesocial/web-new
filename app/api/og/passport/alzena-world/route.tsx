@@ -1,9 +1,10 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
-import { ethers } from 'ethers';
+import { createPublicClient, http, type Address } from 'viem';
 
 import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
-import { ERC721Contract } from '$lib/utils/crypto';
+import { getViemChainConfig } from '$lib/utils/crypto';
+import ERC721 from '$lib/abis/ERC721.json';
 import { getClient } from '$lib/graphql/request';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 
@@ -40,10 +41,17 @@ export async function GET(req: NextRequest) {
       return new Response('Alzena world contract address not set', { status: 400 });
     }
 
-    const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-    const contract = ERC721Contract.attach(contractAddress).connect(provider);
+    const publicClient = createPublicClient({
+      chain: getViemChainConfig(chain),
+      transport: http(chain.rpc_url),
+    });
 
-    const tokenUri = await contract.getFunction('tokenURI')(tokenId);
+    const tokenUri = await publicClient.readContract({
+      abi: ERC721,
+      address: contractAddress as Address,
+      functionName: 'tokenURI',
+      args: [BigInt(tokenId)],
+    }) as string;
     const res = await fetch(tokenUri);
     const data = await res.json();
     image = data.image;

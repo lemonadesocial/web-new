@@ -1,26 +1,14 @@
-import * as ethers from 'ethers';
+import { createPublicClient, encodeAbiParameters, http, zeroAddress, zeroHash, type Address } from 'viem';
 
-import ZapContractABI from '../../abis/token-launch-pad/FlaunchZap.json';
+import ZapContractABI from '$lib/abis/token-launch-pad/FlaunchZap.json';
+import { getViemChainConfig } from '$lib/utils/crypto';
+import type { Chain } from '$lib/graphql/generated/backend/graphql';
 
 export const SECONDS_PER_DAY = 86400;
 export const DAYS_PER_MONTH = 30;
 export const SECONDS_PER_MONTH = SECONDS_PER_DAY * DAYS_PER_MONTH;
 
 export const TOTAL_SUPPLY = BigInt(10) ** BigInt(29);
-
-export const parseLogs = (receipt: ethers.TransactionReceipt | null, contractInterface: ethers.Interface) => {
-  if (!receipt) return [];
-
-  return receipt.logs
-    .flatMap((log) => {
-      try {
-        const parsedLog = contractInterface.parseLog(log);
-        return parsedLog ? [{ address: log.address.toLowerCase(), parsedLog }] : [];
-      } catch (_e) {
-        return [];
-      }
-    })
-}
 
 export interface CreateGroupParams {
   groupERC20Token: string; //-- contract address of the group ERC20 token
@@ -65,33 +53,66 @@ export interface LaunchTokenTxParams {
 }
 
 export const getLaunchTokenParams = async (
+  chain: Chain,
   zapContractAddress: string,
   addressFeeSplitManagerImplementationContract: string,
-  rpcProvider: ethers.Provider,
   params: LaunchTokenParams,
 ): Promise<LaunchTokenTxParams> => {
-  const readContract = new ethers.Contract(zapContractAddress, ZapContractABI.abi, rpcProvider);
+  const publicClient = createPublicClient({
+    chain: getViemChainConfig(chain),
+    transport: http(chain.rpc_url),
+  });
 
-  const initialPriceParams = ethers.AbiCoder.defaultAbiCoder().encode(['tuple(uint256)'], [[params.usdcMarketCap]]);
+  const initialPriceParams = encodeAbiParameters(
+    [
+      {
+        name: 'config',
+        type: 'tuple',
+        components: [{ name: 'usdcMarketCap', type: 'uint256' }],
+      },
+    ],
+    [{ usdcMarketCap: params.usdcMarketCap }],
+  );
 
   //-- call to get the fee (read operation)
-  const fee = await readContract.calculateFee(
-    params.premineAmount,
-    0, //--assume no slippage
-    initialPriceParams,
-  );
+  const fee = await publicClient.readContract({
+    abi: ZapContractABI.abi,
+    address: zapContractAddress as Address,
+    functionName: 'calculateFee',
+    args: [
+      params.premineAmount,
+      0n, //--assume no slippage
+      initialPriceParams,
+    ],
+  }) as bigint;
 
   const feeCalculatorParams = '0x'; //-- we use static fee calculator
 
-  const creatorVestingParams = ethers.AbiCoder.defaultAbiCoder().encode(
-    ['uint256', 'tuple(uint256,uint256,uint256,address,uint256)[]'],
-    [params.vesting?.amount || 0, (params.vesting?.recipients || []).map(recipient => [
-      recipient.cliff,
-      recipient.duration,
-      recipient.period,
-      recipient.beneficiary,
-      recipient.percentage * 100 //-- 1% = 1_00
-    ])]
+  const creatorVestingParams = encodeAbiParameters(
+    [
+      { name: 'amount', type: 'uint256' },
+      {
+        name: 'recipients',
+        type: 'tuple[]',
+        components: [
+          { name: 'cliff', type: 'uint256' },
+          { name: 'duration', type: 'uint256' },
+          { name: 'period', type: 'uint256' },
+          { name: 'beneficiary', type: 'address' },
+          { name: 'percentage', type: 'uint256' },
+        ],
+      },
+    ],
+    [
+      params.vesting?.amount ?? 0n,
+      (params.vesting?.recipients || []).map((recipient) => ({
+        cliff: BigInt(recipient.cliff),
+        duration: BigInt(recipient.duration),
+        period: BigInt(recipient.period),
+        beneficiary: recipient.beneficiary as Address,
+        percentage: BigInt(recipient.percentage * 100), //-- 1% = 1_00
+      })),
+    ],
   );
 
   //-- assemble coin data for the launch
@@ -112,22 +133,40 @@ export const getLaunchTokenParams = async (
 
   const flaunchParams = params.feeSplit?.length ? [
     coinData,
-    ethers.ZeroAddress, //-- open permission
-    ethers.ZeroHash, //-- premine swap hook data (bytes32)
-    [ethers.ZeroHash, ethers.ZeroHash, 0], //-- whitelist params (bytes32 for merkleRoot)
-    [0, 0, 0, ethers.ZeroHash, ethers.ZeroHash], //-- airdrop params (bytes32 for merkleRoots)
+    zeroAddress, //-- open permission
+    zeroHash, //-- premine swap hook data (bytes32)
+    [zeroHash, zeroHash, 0n], //-- whitelist params (bytes32 for merkleRoot)
+    [0n, 0n, 0n, zeroHash, zeroHash], //-- airdrop params (bytes32 for merkleRoots)
     [
       addressFeeSplitManagerImplementationContract,
-      ethers.ZeroAddress, //-- open permission
-      ethers.AbiCoder.defaultAbiCoder().encode(
-        ['uint256', 'uint256', 'tuple(address,uint256)[]'],
-        [0, 0, params.feeSplit.map(fee => [fee.recipient, fee.percentage * 100000])], //-- 1% = 1_00000
+      zeroAddress, //-- open permission
+      encodeAbiParameters(
+        [
+          { name: 'a', type: 'uint256' },
+          { name: 'b', type: 'uint256' },
+          {
+            name: 'splits',
+            type: 'tuple[]',
+            components: [
+              { name: 'recipient', type: 'address' },
+              { name: 'percentage', type: 'uint256' },
+            ],
+          },
+        ],
+        [
+          0n,
+          0n,
+          params.feeSplit.map((fee) => ({
+            recipient: fee.recipient as Address,
+            percentage: BigInt(fee.percentage * 100000),
+          })),
+        ],
       ),
-      ethers.ZeroHash, //-- no deposit data (bytes32)
+      zeroHash, //-- no deposit data (bytes32)
     ]
   ] : [
     coinData,
-    ethers.ZeroAddress, //-- open permission
+    zeroAddress, //-- open permission
     '0x', //-- premine swap hook data (empty bytes)
   ];
 

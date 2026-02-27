@@ -1,11 +1,11 @@
 'use client';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom } from '$lib/jotai';
-import { MusicNftContract } from '$lib/utils/crypto';
-import { useAppKitAccount } from '@reown/appkit/react';
+import { createPublicClient, http, type Address } from 'viem';
+import { getViemChainConfig } from '$lib/utils/crypto';
 import { useQuery } from '@tanstack/react-query';
-import { ethers } from 'ethers';
 import { useAtomValue } from 'jotai';
+import MusicNft from '$lib/abis/MusicNft.json';
 
 type Data = {
   totalMinted?: number;
@@ -16,14 +16,23 @@ async function fetchMusicNftData(contractAddress: string, chain: Chain) {
   const data: Data = { totalMinted: 0, owner: undefined };
 
   if (contractAddress) {
-    const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-    const contract = MusicNftContract.attach(contractAddress).connect(provider) as ethers.Contract;
+    const publicClient = createPublicClient({
+      chain: getViemChainConfig(chain),
+      transport: http(chain.rpc_url),
+    });
 
-    const owner = await contract.getFunction('owner')();
+    const owner = await publicClient.readContract({
+      abi: MusicNft.abi,
+      address: contractAddress as Address,
+      functionName: 'owner',
+    }) as string;
     data.owner = owner;
 
-    const nextTokenId = await contract.getFunction('nextTokenId')();
-    // // NOTE: nextTokenId should minus 1
+    const nextTokenId = await publicClient.readContract({
+      abi: MusicNft.abi,
+      address: contractAddress as Address,
+      functionName: 'nextTokenId',
+    }) as bigint;
     data.totalMinted = Number(nextTokenId) > 0 ? Number(nextTokenId) - 1 : 0;
   }
 

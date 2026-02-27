@@ -1,5 +1,5 @@
 'use client';
-import { ethers } from 'ethers';
+import { formatUnits } from 'viem';
 
 import { useQuery } from '$lib/graphql/request';
 import { GetEventTicketSalesDocument, Event } from '$lib/graphql/generated/backend/graphql';
@@ -29,7 +29,7 @@ export function PaymentOverview({ event }: { event: Event }) {
           {sales.map((sale, index) => (
             <div key={index} className="flex gap-2 items-center px-4 py-3">
               <span className="text-tertiary">{sale.currency.toUpperCase()}</span>
-              <span>{ethers.formatUnits(sale.amount, sale.decimals)}</span>
+              <span>{formatUnits(sale.amount, sale.decimals)}</span>
             </div>
           ))}
         </div>

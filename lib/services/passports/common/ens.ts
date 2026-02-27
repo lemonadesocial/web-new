@@ -1,11 +1,13 @@
-import * as ethers from 'ethers';
+import { createPublicClient, http, type Address } from 'viem';
 import { mainnet } from 'viem/chains';
 
-export const getEnsUsername = async (wallet: string) => {
-  const provider = new ethers.JsonRpcProvider(mainnet.rpcUrls.default.http[0]);
+const publicClient = createPublicClient({
+  chain: mainnet,
+  transport: http(mainnet.rpcUrls.default.http[0]),
+});
 
-  // Use lookup to get ENS name from wallet address
-  const ensName = await provider.lookupAddress(wallet);
+export const getEnsUsername = async (wallet: string) => {
+  const ensName = await publicClient.getEnsName({ address: wallet as Address });
 
   if (!ensName) {
     throw new Error('Failed to get ENS username');

@@ -3,16 +3,19 @@
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useAtomValue } from 'jotai';
-import { Eip1193Provider } from 'ethers';
+import { type Address, type EIP1193Provider } from 'viem';
 
 import { Button, InputField, Menu, MenuItem, LabeledInput, ModalContent, modal, ErrorText, toast } from '$lib/components/core';
 import { listChainsAtom } from '$lib/jotai/chains';
 import { Chain, NewPaymentAccount } from '$lib/graphql/generated/backend/graphql';
-import { formatError, LemonadeRelayPaymentContract, waitForEvent, writeContract } from '$lib/utils/crypto';
+import { createViemClients } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
 import { useAppKitAccount, useAppKitProvider } from '$lib/utils/appkit';
 import { useMutation } from '$lib/graphql/request';
 import { CreateNewPaymentAccountDocument } from '$lib/graphql/generated/backend/graphql';
 import { PaymentAccountType } from '$lib/graphql/generated/backend/graphql';
+import LemonadeRelayPayment from '$lib/abis/LemonadeRelayPayment.json';
+import { parseEventLogs } from 'viem';
 
 import { ProcessingTransaction } from './ProcessingTransaction';
 import { ConnectWallet } from './ConnectWallet';
@@ -58,19 +61,35 @@ export function CreateDirectVaultModal({ onCreateVault }: CreateDirectVaultModal
 
     try {
       setStatus('activating');
-      const transaction = await writeContract(
-        LemonadeRelayPaymentContract,
-        network.relay_payment_contract!,
-        walletProvider as Eip1193Provider,
-        'register',
-        [
-          [address],
-          [1]
-        ],
+
+      if (!walletProvider || !network.relay_payment_contract) {
+        throw new Error('Wallet not connected');
+      }
+
+      const { walletClient, publicClient, account } = await createViemClients(
+        network.chain_id,
+        walletProvider as EIP1193Provider,
       );
-  
-      const parsedEventLog = await waitForEvent(transaction, LemonadeRelayPaymentContract, 'OnRegister');
-      const paymentSplitter = parsedEventLog?.args?.splitter;
+
+      const hash = await walletClient.writeContract({
+        abi: LemonadeRelayPayment.abi,
+        address: network.relay_payment_contract as Address,
+        functionName: 'register',
+        args: [
+          [address as Address],
+          [1],
+        ],
+        account,
+        chain: walletClient.chain,
+      });
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      const events = parseEventLogs({
+        abi: LemonadeRelayPayment.abi as any,
+        eventName: 'OnRegister',
+        logs: receipt.logs,
+      });
+      const paymentSplitter = (events[0] as any)?.args?.splitter as string | undefined;
 
       if (!paymentSplitter) throw new Error('Payment splitter not found');
       
