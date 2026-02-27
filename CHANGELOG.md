@@ -1,5 +1,18 @@
 # Changelog
 
+## [10.9.0](https://github.com/lemonadesocial/web-new/compare/v10.8.1...v10.9.0) (2026-02-27)
+
+
+### Features
+
+* adapt frontend for backend release 34.61.0 ([#953](https://github.com/lemonadesocial/web-new/issues/953)) ([7ad46e1](https://github.com/lemonadesocial/web-new/commit/7ad46e179dc7db5172570ff904fefed71694b446))
+
+
+### Bug Fixes
+
+* address Karen review findings for community vaults ([af42168](https://github.com/lemonadesocial/web-new/commit/af42168ac074148b7c439670c7d1768e1f95cf70))
+* **ai:** avoid broken /api proxy for staging chat ([39f30a3](https://github.com/lemonadesocial/web-new/commit/39f30a361baa4ef4384a20300345e1efc1d538c2))
+
 ## [10.8.1](https://github.com/lemonadesocial/web-new/compare/v10.8.0...v10.8.1) (2026-02-27)
 
 
