@@ -60,12 +60,13 @@ function ManageLayoutToolbar() {
         initial={false}
         animate={{ width: state.showSidebarLeft ? 424 : 'auto' }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="flex items-center justify-between gap-3 overflow-hidden"
+        className="flex items-center gap-3 overflow-hidden"
       >
-        <Menu.Root>
+        <i className="icon-lemonade-logo size-5" />
+        <Menu.Root className="flex-1">
           <Menu.Trigger>
             {({ toggle }) => (
-              <div className="flex gap-3 cursor-pointer" onClick={toggle}>
+              <div className="flex items-center gap-3 cursor-pointer" onClick={toggle}>
                 <div className="w-8 h-8 rounded-sm aspect-square bg-accent-200 shrink-0" />
                 <div className="whitespace-nowrap">
                   <p className="text-sm font-medium">Culture Fest</p>
