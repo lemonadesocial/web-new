@@ -36,8 +36,7 @@ const defaultConfig = getDefaultConfig({
   appName: 'lemonade.social',
 });
 
-const unicornFactoryAddress = process.env.NEXT_PUBLIC_UNICORN_FACTORY_ADDRESS;
-if (!unicornFactoryAddress) throw new Error('NEXT_PUBLIC_UNICORN_FACTORY_ADDRESS env var is required');
+const unicornFactoryAddress = process.env.NEXT_PUBLIC_UNICORN_FACTORY_ADDRESS || '0xD771615c873ba5a2149D5312448cE01D677Ee48A';
 
 // Create the Unicorn Wallet Connector (using Thirdweb In-App Wallet)
 // Note: The chain specified here is for the smart account functionality as per Unicorn docs.

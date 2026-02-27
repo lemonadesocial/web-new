@@ -43,6 +43,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   const client = getClient();
+  
   const { data } = await client.query({ query: GetSpaceDocument, variables: { hostname: hostname } });
   if (data?.getSpace) {
     return NextResponse.rewrite(new URL(`/${hostname}/community${path === '/' ? '' : path}`, req.url));
