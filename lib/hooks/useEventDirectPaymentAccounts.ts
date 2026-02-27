@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Event } from '$lib/graphql/generated/backend/graphql';
+import { Event, NewPaymentAccount } from '$lib/graphql/generated/backend/graphql';
 import { ListSpacePaymentAccountsDocument } from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { filterDirectPaymentAccounts } from '$lib/utils/event';

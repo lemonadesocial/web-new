@@ -20,9 +20,10 @@ export function Settings() {
 
   if (!event) return null;
 
-  const stripeAttached = event.payment_accounts_expanded?.some((vault) => vault?.provider === NewPaymentProvider.Stripe);
-  const cryptoAccounts = event.payment_accounts_expanded?.filter((vault) => vault?.provider !== NewPaymentProvider.Stripe);
-  const groupedCryptoAccounts = groupPaymentAccounts(cryptoAccounts as NewPaymentAccount[]);
+  const accounts = (event.payment_accounts_expanded ?? []).filter((v): v is NewPaymentAccount => v != null);
+  const stripeAttached = accounts.some((vault) => vault.provider === NewPaymentProvider.Stripe);
+  const cryptoAccounts = accounts.filter((vault) => vault.provider !== NewPaymentProvider.Stripe);
+  const groupedCryptoAccounts = groupPaymentAccounts(cryptoAccounts);
 
   return (
     <div className="page mx-auto py-6 px-4 md:px-0 space-y-4">

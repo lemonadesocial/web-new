@@ -17,7 +17,6 @@ const menu = [
   { name: 'Events', page: 'events' },
   { name: 'People', page: 'people' },
   { name: 'Agents', page: 'agents' },
-  // { name: 'Vaults', page: 'vaults' },
   { name: 'Payments', page: 'payments' },
   { name: 'Launchpad', page: 'launchpad' },
   { name: 'Settings', page: 'settings' },

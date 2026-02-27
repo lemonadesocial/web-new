@@ -3,20 +3,18 @@
 import React from 'react';
 import { Button, Card, Skeleton, toast } from '$lib/components/core';
 import {
-  DigitalAccount,
-  NewPaymentAccount,
-  NewPaymentProvider,
-  PaymentAccountType,
-} from '$lib/graphql/generated/backend/graphql';
-import {
   AttachSpacePaymentAccountDocument,
   CreateNewPaymentAccountDocument,
   ListNewPaymentAccountsDocument,
+  NewPaymentAccount,
+  NewPaymentProvider,
+  PaymentAccountType,
+  Space,
+  StripeAccount,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation } from '$lib/graphql/request';
 import { useStripeSetup } from '$lib/hooks/useStripeSetup';
 import { useMe } from '$lib/hooks/useMe';
-import { Space } from '$lib/graphql/generated/backend/graphql';
 
 export type CommunityStripeSectionProps = {
   space: Space;
@@ -168,7 +166,7 @@ export function CommunityStripeSection({ space, items, loading: loadingSpaceAcco
               <div className="space-y-2">
                 <p className="text-sm text-secondary">Your Stripe account is active and accepting payments.</p>
                 <p className="text-sm text-secondary">
-                  Connected account: {(stripeAccountOnSpace.account_info as DigitalAccount).account_id}
+                  Connected account: {(stripeAccountOnSpace.account_info as StripeAccount).account_id}
                 </p>
               </div>
               <div className="flex gap-2">
