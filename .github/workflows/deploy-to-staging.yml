@@ -132,3 +132,29 @@ jobs:
       - name: Verify
         run: |
           kubectl rollout status --namespace $NAMESPACE deployment/web-new
+
+  smoke-test:
+    needs: deploy
+    name: Post-deploy smoke tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@lemonadesocial'
+      - name: Install dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: yarn install --frozen-lockfile
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Run smoke tests against staging
+        env:
+          PLAYWRIGHT_BASE_URL: ${{ vars.STAGING_SMOKE_TEST_URL }}
+        run: npx playwright test e2e/smoke/ --project=chromium
+      - name: Alert on failure
+        if: failure()
+        run: echo "::error::Staging smoke tests FAILED after deploy. Do NOT cut a release until fixed."
