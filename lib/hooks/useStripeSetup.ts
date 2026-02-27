@@ -39,11 +39,11 @@ export function useAttachStripeAccount({ skip }: { skip: boolean; }) {
 
   const [createPaymentAccount, { loading: loadingCreatePaymentAccount }] = useMutation(CreateNewPaymentAccountDocument, {
     onComplete(_, res) {
-      if (res?.createNewPaymentAccount._id) {
+      if (res?.createNewPaymentAccount._id && event?._id) {
         updatePaymentAccount({
           variables: {
-            id: event!._id,
-            payment_accounts_new: [...(event!.payment_accounts_new || []), res.createNewPaymentAccount._id]
+            id: event._id,
+            payment_accounts_new: [...(event.payment_accounts_new || []), res.createNewPaymentAccount._id]
           }
         });
       }
@@ -55,18 +55,20 @@ export function useAttachStripeAccount({ skip }: { skip: boolean; }) {
       provider: NewPaymentProvider.Stripe
     },
     fetchPolicy: 'network-only',
-    skip: skip,
+    skip: skip || !event?._id,
     onComplete: (data) => {
+      if (!event?._id) return;
+
       const userAccount = data?.listNewPaymentAccounts[0];
 
       if (userAccount) {
         updatePaymentAccount({
           variables: {
-            id: event!._id,
-            payment_accounts_new: [...(event!.payment_accounts_new || []), userAccount._id]
+            id: event._id,
+            payment_accounts_new: [...(event.payment_accounts_new || []), userAccount._id]
           }
         });
-        
+
         return;
       }
 

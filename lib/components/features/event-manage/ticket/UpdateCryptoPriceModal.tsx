@@ -5,7 +5,7 @@ import { EventTicketPrice, NewPaymentAccount } from "$lib/graphql/generated/back
 
 import { useEvent } from "../store";
 import { CreateDirectVaultModal } from "../../modals/CreateDirectVaultModal";
-import { getEventDirectPaymentAccounts } from "$lib/utils/event";
+import { useEventDirectPaymentAccounts } from "$lib/hooks/useEventDirectPaymentAccounts";
 import { multiplyByPowerOf10 } from "$lib/utils/crypto";
 import { ethers } from "ethers";
 import { useUpdateEventPaymentAccounts } from "../hooks";
@@ -14,9 +14,8 @@ import { groupPaymentAccounts } from "$lib/utils/payment";
 export function UpdateCryptoPriceModal({ price, onChange }: { price?: EventTicketPrice; onChange: (price: EventTicketPrice) => void }) {
   const event = useEvent();
   const { addAccount } = useUpdateEventPaymentAccounts();
-  
-  const paymentAccounts = getEventDirectPaymentAccounts(event!);
-  const groupedPaymentAccounts = groupPaymentAccounts(paymentAccounts as NewPaymentAccount[]);
+  const { directPaymentAccounts } = useEventDirectPaymentAccounts(event);
+  const groupedPaymentAccounts = groupPaymentAccounts(directPaymentAccounts);
   const paymentAccountList = Object.values(groupedPaymentAccounts);
 
   const [selectedPaymentAccounts, setSelectedPaymentAccounts] = useState<NewPaymentAccount[] | null>(price?.payment_accounts_expanded || paymentAccountList[0]);

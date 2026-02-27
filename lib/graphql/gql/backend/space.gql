@@ -509,3 +509,16 @@ query GetSpaceNFTs($skip: Int, $limit: Int, $space: MongoID, $kind: SpaceNFTKind
     total
   }
 }
+
+query ListSpacePaymentAccounts($space: MongoID!, $search: String) {
+  listSpacePaymentAccounts(space: $space, search: $search) {
+    items {
+      ...PaymentAccount
+    }
+    total
+  }
+}
+
+mutation AttachSpacePaymentAccount($space: MongoID!, $paymentAccount: MongoID!) {
+  attachSpacePaymentAccount(space: $space, payment_account: $paymentAccount)
+}

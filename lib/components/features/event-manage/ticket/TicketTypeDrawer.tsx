@@ -33,7 +33,8 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { UpdateFiatPriceModal } from './UpdateFiatPriceModal';
-import { formatCryptoPrice, formatFiatPrice, getEventDirectPaymentAccounts } from '$lib/utils/event';
+import { formatCryptoPrice, formatFiatPrice } from '$lib/utils/event';
+import { useEventDirectPaymentAccounts } from '$lib/hooks/useEventDirectPaymentAccounts';
 
 import { TicketCapacityModal } from './TicketCapacityModal';
 import { AdditionalTicketsModal } from './AdditionalTicketsModal';
@@ -110,6 +111,7 @@ const getInitialValues = (initialTicketType?: EventTicketType): TicketFormState 
 
 export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType?: EventTicketType }) {
   const event = useEvent();
+  const { directPaymentAccounts } = useEventDirectPaymentAccounts(event);
   const defaultValues = getInitialValues(initialTicketType);
 
   const [ticketTypePhotos, setTicketTypePhotos] = React.useState([]);
@@ -291,8 +293,6 @@ export function TicketTypeDrawer({ ticketType: initialTicketType }: { ticketType
 
       return;
     }
-
-    const directPaymentAccounts = getEventDirectPaymentAccounts(event!);
 
     if (directPaymentAccounts.length) {
       modal.open(UpdateCryptoPriceModal, {
