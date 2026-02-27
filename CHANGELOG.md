@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.9.2](https://github.com/lemonadesocial/web-new/compare/v10.9.1...v10.9.2) (2026-02-27)
+
+
+### Bug Fixes
+
+* **security:** replace untyped request body with RequestBody type ([#971](https://github.com/lemonadesocial/web-new/issues/971)) ([48e2b7e](https://github.com/lemonadesocial/web-new/commit/48e2b7e0e229f00ebd9ac218e2d0c0c783842988))
+
 ## [10.9.1](https://github.com/lemonadesocial/web-new/compare/v10.9.0...v10.9.1) (2026-02-27)
 
 
