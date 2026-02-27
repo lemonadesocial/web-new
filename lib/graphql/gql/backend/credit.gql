@@ -18,7 +18,7 @@ query GetAvailableModels {
     provider
     name
     tier
-    credits_per_request
+    minimum_credits_per_request
     capabilities
     is_default
   }
@@ -81,7 +81,7 @@ mutation SetPreferredModel($input: SetPreferredModelInput!) {
     provider
     name
     tier
-    credits_per_request
+    minimum_credits_per_request
     capabilities
     is_default
   }
