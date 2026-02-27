@@ -2,21 +2,57 @@
 
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { ActiveTabType, storeManageLayout as store, useStoreManageLayout } from './store';
-import { Button, Menu } from '$lib/components/core';
+import { match } from 'ts-pattern';
+
+import { Button, Menu, toast } from '$lib/components/core';
+import { useMutation } from '$lib/graphql/request';
+import { Event, PublishEventDocument } from '$lib/graphql/generated/backend/graphql';
+
+import { useUpdateEvent } from '../../event-manage/store';
 import { tabMappings } from './helpers';
+import { ActiveTabType, storeManageLayout as store, useStoreManageLayout } from './store';
 
 const devices = {
   desktop: {
-    icon: 'icon-settings',
+    icon: 'icon-computer',
   },
   mobile: {
-    icon: 'icon-settings',
+    icon: 'icon-smartphone',
   },
 };
 
 function ManageLayoutToolbar() {
   const state = useStoreManageLayout();
+
+  // NOTE: its bc using different store
+  const updateEvent = useUpdateEvent();
+
+  const [publishEvent, { loading: publishingEvent }] = useMutation(PublishEventDocument, {
+    onComplete: (_, data) => {
+      if (data?.updateEvent?.published) {
+        toast.success('Event published successfully!');
+        updateEvent({ published: true });
+        store.setData({ ...state.data, published: true } as Event);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to publish event');
+    },
+  });
+
+  const handlePublish = () => {
+    match(state.layoutType)
+      .with('event', () => {
+        if (state.data?._id) {
+          publishEvent({
+            variables: {
+              event: state.data._id,
+            },
+          });
+        }
+      })
+      .otherwise(() => {});
+  };
 
   return (
     <div className="h-14 flex items-center px-4 gap-4">
@@ -78,13 +114,32 @@ function ManageLayoutToolbar() {
               ></Button>
             ))}
           </div>
+
+          <Button
+            variant="tertiary-alt"
+            icon="icon-arrow-outward"
+            size="sm"
+            onClick={() => {
+              match(state.layoutType).with('event', () => window.open(`/e/${(state.data as Event)?.shortid}`));
+            }}
+          />
         </div>
 
         <div className="flex gap-2">
-          <Button size="sm" variant="secondary" iconLeft="icon-arrow-shape-up-stack-outline">
+          <Button
+            size="sm"
+            variant="secondary"
+            iconLeft="icon-arrow-shape-up-stack-outline"
+            onClick={() => {
+              toast.success('Coming Soon.');
+              // router.push('/upgrade-to-pro');
+            }}
+          >
             Upgrade
           </Button>
-          <Button size="sm">Public</Button>
+          <Button size="sm" onClick={handlePublish} loading={publishingEvent}>
+            {(state.data as Event)?.published ? 'Published' : 'Publish'}
+          </Button>
         </div>
       </div>
     </div>

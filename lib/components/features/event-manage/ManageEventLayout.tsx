@@ -89,7 +89,8 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
   const updateEvent = useUpdateEvent();
 
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const [aiChatState, aiChatDispatch] = useAIChat();
+  const [_, aiChatDispatch] = useAIChat();
+
   useQuery(
     GetListAiConfigDocument,
     {

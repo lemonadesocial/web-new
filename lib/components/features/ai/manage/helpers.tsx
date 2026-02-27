@@ -9,12 +9,12 @@ export const tabMappings: Record<ActiveTabType, { icon: string; label: string; c
     component: AIChat,
   },
   design: {
-    icon: 'icon-settings',
+    icon: 'icon-palette-outline',
     label: 'Design',
     component: () => null,
   },
   preview: {
-    icon: 'icon-settings',
+    icon: 'icon-eye-line',
     label: 'Preview',
     component: () => null,
   },
