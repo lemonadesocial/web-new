@@ -82,10 +82,13 @@ function buildBackgroundCSS(
       lines.push(`  --pb-bg-type: color;`);
       lines.push(`  --pb-bg-value: ${String(value).replace(/[;{}]/g, '')};`);
       break;
-    case 'image':
+    case 'image': {
       lines.push(`  --pb-bg-type: image;`);
-      lines.push(`  --pb-bg-value: url(${value});`);
+      // Escape quotes and closing parens to prevent CSS injection (matches font import pattern)
+      const safeImageUrl = String(value).replace(/'/g, '%27').replace(/\)/g, '%29').replace(/"/g, '%22');
+      lines.push(`  --pb-bg-value: url('${safeImageUrl}');`);
       break;
+    }
     case 'shader':
       lines.push(`  --pb-bg-type: shader;`);
       lines.push(`  --pb-bg-value: ${String(value).replace(/[;{}]/g, '')};`);
@@ -112,11 +115,15 @@ function buildCustomVariables(
   return Object.entries(cssVariables)
     .map(([key, value]) => {
       // Ensure keys are prefixed with '--' for valid CSS custom properties
-      const varName = key.startsWith('--') ? key : `--${key}`;
+      // Strip non-identifier chars (only allow alphanumeric, hyphens, underscores)
+      const sanitizedKey = key.replace(/[^a-zA-Z0-9_-]/g, '');
+      if (!sanitizedKey) return '';
+      const varName = sanitizedKey.startsWith('--') ? sanitizedKey : `--${sanitizedKey}`;
       // Strip characters that could break out of a CSS declaration
       const safeValue = String(value).replace(/[;{}]/g, '');
       return `  ${varName}: ${safeValue};`;
     })
+    .filter(Boolean)
     .join('\n');
 }
 
