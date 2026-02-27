@@ -44,10 +44,7 @@ test.describe('Registration Form Builder', () => {
 
     // ETH Address section should have Off/Optional/Required dropdown
     const ethLabel = page.getByText('ETH Address');
-    if (await ethLabel.isVisible().catch(() => false)) {
-      // The dropdown trigger should be nearby
-      await expect(ethLabel).toBeVisible();
-    }
+    await expect(ethLabel).toBeVisible({ timeout: 5000 });
   });
 
   test('UpdateEventRegistrationForm mutation fires on changes', async ({ page }) => {
@@ -82,8 +79,7 @@ test.describe('Registration Form Builder', () => {
     await page.waitForLoadState('networkidle');
 
     const addButton = page.getByRole('button', { name: /add question/i }).first();
-    // The button may or may not be visible depending on the page structure
-    await expect(page.locator('body')).toBeVisible();
+    await expect(addButton).toBeVisible({ timeout: 5000 });
   });
 
   test('Self ID settings can be toggled', async ({ page }) => {
@@ -110,8 +106,6 @@ test.describe('Registration Form Builder', () => {
 
     // Self ID section should be on the page
     const selfIdLabel = page.getByText('Self ID');
-    if (await selfIdLabel.isVisible().catch(() => false)) {
-      await expect(selfIdLabel).toBeVisible();
-    }
+    await expect(selfIdLabel).toBeVisible({ timeout: 5000 });
   });
 });

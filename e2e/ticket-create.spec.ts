@@ -63,23 +63,21 @@ test.describe('Ticket Management', () => {
 
     // Look for "New Ticket" or "Add Ticket" button
     const addButton = page.getByRole('button', { name: /new ticket|add ticket|create ticket/i }).first();
-    if (await addButton.isVisible().catch(() => false)) {
-      await addButton.click();
-      await page.waitForTimeout(500);
+    await expect(addButton).toBeVisible({ timeout: 5000 });
+    await addButton.click();
 
-      // Fill ticket title
-      const titleInput = page.locator('input[name="title"]').first();
-      if (await titleInput.isVisible().catch(() => false)) {
-        await titleInput.fill('VIP Ticket');
+    // Fill ticket title
+    const titleInput = page.locator('input[name="title"]').first();
+    await expect(titleInput).toBeVisible({ timeout: 5000 });
+    await titleInput.fill('VIP Ticket');
 
-        // Click create/save button
-        const saveButton = page.getByRole('button', { name: /create ticket|save/i }).first();
-        if (await saveButton.isVisible().catch(() => false)) {
-          await saveButton.click();
-          await page.waitForTimeout(1000);
-        }
-      }
-    }
+    // Click create/save button and wait for the GraphQL mutation response
+    const saveButton = page.getByRole('button', { name: /create ticket|save/i }).first();
+    await expect(saveButton).toBeVisible({ timeout: 5000 });
+    await Promise.all([
+      page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200),
+      saveButton.click(),
+    ]);
   });
 
   test('existing ticket types are displayed', async ({ page }) => {

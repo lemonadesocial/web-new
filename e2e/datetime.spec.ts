@@ -77,21 +77,20 @@ test.describe('Date/Time/Timezone', () => {
 
     // Fill title and submit to trigger mutation
     const titleInput = page.locator('input[name="title"]').first();
-    if (await titleInput.isVisible().catch(() => false)) {
-      await titleInput.fill('Date Test Event');
+    await expect(titleInput).toBeVisible({ timeout: 5000 });
+    await titleInput.fill('Date Test Event');
 
-      const submitButton = page.getByRole('button', { name: /create|publish|save/i }).first();
-      if (await submitButton.isVisible().catch(() => false)) {
-        await submitButton.click();
-        await page.waitForTimeout(1000);
+    const submitButton = page.getByRole('button', { name: /create|publish|save/i }).first();
+    await expect(submitButton).toBeVisible({ timeout: 5000 });
+    await Promise.all([
+      page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200),
+      submitButton.click(),
+    ]);
 
-        // If mutation was called, verify date-related fields are present
-        if (capturedVariables.input) {
-          const input = capturedVariables.input as Record<string, unknown>;
-          // The mutation should include start, end, and potentially timezone
-          expect(input).toBeDefined();
-        }
-      }
+    // Verify date-related fields are present in the mutation variables
+    if (capturedVariables.input) {
+      const input = capturedVariables.input as Record<string, unknown>;
+      expect(input).toBeDefined();
     }
   });
 });

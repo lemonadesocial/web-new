@@ -71,16 +71,16 @@ test.describe('Email & Invites', () => {
 
     // Look for the blast message input area
     const blastInput = page.locator('[contenteditable="true"]').first();
-    if (await blastInput.isVisible().catch(() => false)) {
-      await blastInput.fill('Hello everyone!');
+    await expect(blastInput).toBeVisible({ timeout: 5000 });
+    await blastInput.fill('Hello everyone!');
 
-      // Click Send button
-      const sendButton = page.getByRole('button', { name: /send/i }).first();
-      if (await sendButton.isVisible().catch(() => false)) {
-        await sendButton.click();
-        await page.waitForTimeout(1000);
-      }
-    }
+    // Click Send button and wait for mutation response
+    const sendButton = page.getByRole('button', { name: /send/i }).first();
+    await expect(sendButton).toBeVisible({ timeout: 5000 });
+    await Promise.all([
+      page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200),
+      sendButton.click(),
+    ]);
   });
 
   test('InviteEvent fires when inviting guests by email', async ({ page }) => {
@@ -111,10 +111,8 @@ test.describe('Email & Invites', () => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}/blasts`);
     await page.waitForLoadState('networkidle');
 
-    // Event Reminders section should show
+    // Event Reminders section should be visible
     const remindersText = page.getByText('Event Reminders');
-    if (await remindersText.isVisible().catch(() => false)) {
-      await expect(remindersText).toBeVisible();
-    }
+    await expect(remindersText).toBeVisible({ timeout: 5000 });
   });
 });

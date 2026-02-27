@@ -74,11 +74,10 @@ test.describe('Guest Management', () => {
 
     // Find and use the search input
     const searchInput = page.getByPlaceholder(/search/i).first();
-    if (await searchInput.isVisible().catch(() => false)) {
-      await searchInput.fill('Test Guest');
-      // Wait for debounce (300ms)
-      await page.waitForTimeout(500);
-    }
+    await expect(searchInput).toBeVisible({ timeout: 5000 });
+    await searchInput.fill('Test Guest');
+    // Wait for debounced GraphQL request to fire
+    await page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200);
   });
 
   test('filter menu shows status options', async ({ page }) => {
@@ -87,15 +86,13 @@ test.describe('Guest Management', () => {
 
     // Look for Filter button
     const filterButton = page.getByRole('button', { name: /filter/i }).first();
-    if (await filterButton.isVisible().catch(() => false)) {
-      await filterButton.click();
-      await page.waitForTimeout(300);
+    await expect(filterButton).toBeVisible({ timeout: 5000 });
+    await filterButton.click();
 
-      // Filter dropdown should show status options
-      const goingOption = page.getByText('Going');
-      const pendingOption = page.getByText('Pending');
-      // At least one should be visible in the dropdown
-    }
+    // Filter dropdown should show status options — at least one must be visible
+    const goingOption = page.getByText('Going');
+    const pendingOption = page.getByText('Pending');
+    await expect(goingOption.or(pendingOption)).toBeVisible({ timeout: 3000 });
   });
 
   test('sort menu shows sort options', async ({ page }) => {
@@ -104,10 +101,8 @@ test.describe('Guest Management', () => {
 
     // Look for Sort button
     const sortButton = page.getByRole('button', { name: /sort/i }).first();
-    if (await sortButton.isVisible().catch(() => false)) {
-      await sortButton.click();
-      await page.waitForTimeout(300);
-    }
+    await expect(sortButton).toBeVisible({ timeout: 5000 });
+    await sortButton.click();
   });
 
   test('export button exists for CSV download', async ({ page }) => {

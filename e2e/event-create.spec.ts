@@ -34,9 +34,7 @@ test.describe('Event Creation', () => {
     await page.goto('/localhost/create/event');
     // Title input should be present
     const titleInput = page.locator('input[name="title"], textarea[name="title"], [contenteditable]').first();
-    await expect(titleInput).toBeVisible({ timeout: 10000 }).catch(() => {
-      // Form may use a different pattern — just verify the page loaded
-    });
+    await expect(titleInput).toBeVisible({ timeout: 10000 });
   });
 
   test('CreateEvent mutation is called on form submit', async ({ page }) => {
@@ -70,19 +68,18 @@ test.describe('Event Creation', () => {
     await page.goto('/localhost/create/event');
     await page.waitForLoadState('networkidle');
 
-    // Try to fill in the title
+    // Fill in the title
     const titleInput = page.locator('input[name="title"]').first();
-    if (await titleInput.isVisible().catch(() => false)) {
-      await titleInput.fill('E2E Test Event');
-    }
+    await expect(titleInput).toBeVisible({ timeout: 5000 });
+    await titleInput.fill('E2E Test Event');
 
-    // Look for and click submit-like button
+    // Click submit and wait for the GraphQL mutation response
     const submitButton = page.getByRole('button', { name: /create|publish|save/i }).first();
-    if (await submitButton.isVisible().catch(() => false)) {
-      await submitButton.click();
-      // Give time for mutation to fire
-      await page.waitForTimeout(1000);
-    }
+    await expect(submitButton).toBeVisible({ timeout: 5000 });
+    await Promise.all([
+      page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200),
+      submitButton.click(),
+    ]);
   });
 
   test('form validation prevents submission without title', async ({ page }) => {
@@ -109,11 +106,11 @@ test.describe('Event Creation', () => {
 
     // Try to submit without filling title
     const submitButton = page.getByRole('button', { name: /create|publish|save/i }).first();
-    if (await submitButton.isVisible().catch(() => false)) {
-      await submitButton.click();
-      await page.waitForTimeout(500);
-      // CreateEvent should NOT have been called
-      expect(createEventCalled).toBe(false);
-    }
+    await expect(submitButton).toBeVisible({ timeout: 5000 });
+    await submitButton.click();
+    // Wait for any potential network activity to settle
+    await page.waitForLoadState('networkidle');
+    // CreateEvent should NOT have been called — validation should prevent it
+    expect(createEventCalled).toBe(false);
   });
 });

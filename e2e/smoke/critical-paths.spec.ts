@@ -27,6 +27,8 @@ test.describe('Staging Smoke Tests', () => {
     expect(response.status()).toBe(400);
   });
 
+  // Contract test: asserts response shape of the metadata API.
+  // Update assertions here if the API response structure changes.
   test('username metadata API responds', async ({ request }) => {
     const response = await request.post('/api/lemonade-username/metadata', {
       data: { username: 'smoke_test' },

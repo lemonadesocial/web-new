@@ -75,12 +75,13 @@ test.describe('Ticket Purchase / RSVP', () => {
     await page.goto(`/localhost/e/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
-    // Look for register/RSVP button
+    // Look for register/RSVP button and click it
     const registerButton = page.getByRole('button', { name: /register|rsvp|get ticket|one-click/i }).first();
-    if (await registerButton.isVisible().catch(() => false)) {
-      await registerButton.click();
-      await page.waitForTimeout(1000);
-    }
+    await expect(registerButton).toBeVisible({ timeout: 5000 });
+    await Promise.all([
+      page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200),
+      registerButton.click(),
+    ]);
   });
 
   test('paid ticket shows payment form', async ({ page }) => {
