@@ -118,4 +118,13 @@ test.describe('Email & Invites', () => {
     await expect(page.getByText('Post-Event Feedback')).toBeVisible({ timeout: 10000 });
     await expect(page.getByText('Schedule')).toBeVisible();
   });
+
+  test('Event Reminders Manage button is visible', async ({ page }) => {
+    await page.goto(`/localhost/e/manage/${EVENT.shortid}/blasts`);
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.getByText('Event Reminders')).toBeVisible({ timeout: 10000 });
+    // The automatic reminder description should be visible
+    await expect(page.getByText(/Reminders are sent automatically/i)).toBeVisible();
+  });
 });

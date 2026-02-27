@@ -101,4 +101,36 @@ test.describe('Date/Time/Timezone', () => {
     const submitButton = page.locator('[data-testid="event-create-submit"]');
     await expect(submitButton).toBeDisabled();
   });
+
+  test('start and end dates show formatted time buttons', async ({ page }) => {
+    await page.goto('/localhost/create/event');
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.locator('[data-testid="event-create-title"]')).toBeVisible({ timeout: 10000 });
+
+    // DateTimeGroup renders "Start" and "End" labels
+    await expect(page.getByText('Start')).toBeVisible();
+    await expect(page.getByText('End')).toBeVisible();
+
+    // Time picker buttons should show formatted times (hh:mm AM/PM pattern)
+    const timeButtons = page.locator('button').filter({ hasText: /\d{1,2}:\d{2}\s*(AM|PM)/i });
+    const count = await timeButtons.count();
+    expect(count).toBeGreaterThanOrEqual(2);
+  });
+
+  test('user timezone is auto-detected and displayed', async ({ page }) => {
+    await page.goto('/localhost/create/event');
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.locator('[data-testid="event-create-title"]')).toBeVisible({ timeout: 10000 });
+
+    // The timezone component shows the globe icon
+    const timezoneSection = page.locator('.icon-globe').first();
+    await expect(timezoneSection).toBeVisible();
+
+    // The timezone text near the globe should contain a timezone identifier or offset
+    const timezoneParent = timezoneSection.locator('..');
+    const timezoneText = await timezoneParent.textContent();
+    expect(timezoneText?.length).toBeGreaterThan(0);
+  });
 });

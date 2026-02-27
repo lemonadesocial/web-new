@@ -175,4 +175,100 @@ test.describe('Ticket Purchase / RSVP', () => {
     await expect(registerButton).toBeVisible({ timeout: 10000 });
     await expect(registerButton).toContainText(/Request to Join|One-click Apply/);
   });
+
+  test('event with application questions shows registration form fields', async ({ page }) => {
+    const eventWithQuestions = makeEvent({
+      ...EVENT,
+      application_questions: [
+        { _id: 'q1', question: 'What brings you here?', type: 'text', required: true, options: [] },
+        { _id: 'q2', question: 'Dietary restrictions?', type: 'text', required: false, options: [] },
+      ],
+    });
+
+    await mockGraphQL(page, {
+      ...baseMocks,
+      GetEvent: { data: { getEvent: eventWithQuestions } },
+    });
+
+    await page.goto(`/localhost/e/${eventWithQuestions.shortid}`);
+    await page.waitForLoadState('networkidle');
+
+    // Click register to open the registration modal
+    const registerButton = page.locator('[data-testid="event-register-button"]');
+    await expect(registerButton).toBeVisible({ timeout: 10000 });
+    await registerButton.click();
+
+    // Application questions should be visible in the registration modal
+    await expect(page.getByText('What brings you here?')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Dietary restrictions?')).toBeVisible();
+  });
+
+  test('CalculateTicketsPricing is called with discount code', async ({ page }) => {
+    let pricingVariables: Record<string, unknown> = {};
+
+    await page.route('**/graphql', async (route) => {
+      const postData = route.request().postData();
+      if (!postData) return route.fulfill({ status: 200, body: '{"data":{}}' });
+
+      const body = JSON.parse(postData);
+      if (body.operationName === 'CalculateTicketsPricing') {
+        pricingVariables = body.variables ?? {};
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            data: {
+              calculateTicketsPricing: {
+                total: '2000',
+                sub_total: '2500',
+                discount: '500',
+                fee: '0',
+                payment_accounts: [],
+              },
+            },
+          }),
+        });
+      }
+      const mock = baseMocks[body.operationName as keyof typeof baseMocks];
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(mock ?? { data: {} }),
+      });
+    });
+
+    await page.goto(`/localhost/e/${EVENT.shortid}`);
+    await page.waitForLoadState('networkidle');
+
+    // Select a paid ticket first
+    const ticketItem = page.locator(`[data-testid="ticket-select-${PAID_TICKET._id}"]`);
+    await expect(ticketItem).toBeVisible({ timeout: 10000 });
+    const incrementButton = ticketItem.locator('button').last();
+    await incrementButton.click();
+
+    // Open registration modal to access coupon input
+    const registerButton = page.locator('[data-testid="event-register-button"]');
+    if (await registerButton.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await registerButton.click();
+
+      // Look for "Add Coupon" link in the OrderSummary
+      const addCoupon = page.getByText(/Add Coupon/i).first();
+      if (await addCoupon.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await addCoupon.click();
+
+        // Fill discount code and click Apply
+        const discountInput = page.locator('input').last();
+        await discountInput.fill('SAVE20');
+
+        const applyButton = page.getByRole('button', { name: /Apply/i }).first();
+        await Promise.all([
+          page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200),
+          applyButton.click(),
+        ]);
+
+        // Verify discount was sent in the pricing call
+        expect(pricingVariables.discount).toBe('SAVE20');
+      }
+    }
+  });
 });

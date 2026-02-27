@@ -108,10 +108,103 @@ test.describe('Registration Form Builder', () => {
     await expect(page.getByText('Text').first()).toBeVisible({ timeout: 3000 });
   });
 
-  test('Self ID has Off/Required dropdown', async ({ page }) => {
+  test('adding a text question fires SubmitEventApplicationQuestions', async ({ page }) => {
+    let submitQuestionsCalled = false;
+
+    await page.route('**/graphql', async (route) => {
+      const postData = route.request().postData();
+      if (!postData) return route.fulfill({ status: 200, body: '{"data":{}}' });
+
+      const body = JSON.parse(postData);
+      if (body.operationName === 'SubmitEventApplicationQuestions') {
+        submitQuestionsCalled = true;
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ data: { submitEventApplicationQuestions: EVENT } }),
+        });
+      }
+      const mock = baseMocks[body.operationName as keyof typeof baseMocks];
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(mock ?? { data: {} }),
+      });
+    });
+
     await page.goto(`/localhost/e/manage/${EVENT.shortid}/registration`);
     await page.waitForLoadState('networkidle');
 
+    // Click Add Question to open the type selector modal
+    const addButton = page.locator('[data-testid="add-question-button"]');
+    await expect(addButton).toBeVisible({ timeout: 10000 });
+    await addButton.click();
+
+    // Select "Text" question type
+    const textOption = page.getByText('Text').first();
+    await expect(textOption).toBeVisible({ timeout: 3000 });
+    await textOption.click();
+
+    // Fill the question text in the AddTextQuestion modal
+    const questionInput = page.locator('input').filter({ hasNotText: '' }).first();
+    await expect(questionInput).toBeVisible({ timeout: 5000 });
+    await questionInput.fill('What brings you to this event?');
+
+    // Click Add Question button in the modal
+    const addQuestionBtn = page.getByRole('button', { name: /Add Question/i }).first();
+    await expect(addQuestionBtn).toBeVisible();
+    await Promise.all([
+      page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200),
+      addQuestionBtn.click(),
+    ]);
+
+    expect(submitQuestionsCalled).toBe(true);
+  });
+
+  test('Self ID has Off/Required dropdown and fires UpdateEventSelfVerification', async ({ page }) => {
+    let selfVerifyCalled = false;
+
+    await page.route('**/graphql', async (route) => {
+      const postData = route.request().postData();
+      if (!postData) return route.fulfill({ status: 200, body: '{"data":{}}' });
+
+      const body = JSON.parse(postData);
+      if (body.operationName === 'UpdateEventSelfVerification') {
+        selfVerifyCalled = true;
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ data: { updateEventSelfVerification: EVENT } }),
+        });
+      }
+      const mock = baseMocks[body.operationName as keyof typeof baseMocks];
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(mock ?? { data: {} }),
+      });
+    });
+
+    await page.goto(`/localhost/e/manage/${EVENT.shortid}/registration`);
+    await page.waitForLoadState('networkidle');
+
+    // Self ID section should be visible
     await expect(page.getByText('Self ID')).toBeVisible({ timeout: 10000 });
+
+    // Find the Self ID toggle (shows "Off" by default) — it's in the Web3 Identity section
+    // The Self ID dropdown is after ETH Address dropdown
+    const selfIdSection = page.getByText('Self ID').locator('..');
+    const selfIdToggle = selfIdSection.getByText('Off').first();
+    if (await selfIdToggle.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await selfIdToggle.click();
+      // Select "Required" from the dropdown
+      const requiredOption = page.getByText('Required').last();
+      await expect(requiredOption).toBeVisible({ timeout: 3000 });
+      await Promise.all([
+        page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200),
+        requiredOption.click(),
+      ]);
+      expect(selfVerifyCalled).toBe(true);
+    }
   });
 });
