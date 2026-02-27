@@ -1,38 +1,34 @@
 'use client';
 import { useEffect, useState } from "react";
+import { createWalletClient, custom, type Address, type EIP1193Provider, type WalletClient } from "viem";
+import { chains } from "@lens-chain/sdk/viem";
 
-import { Eip1193Provider } from "ethers";
-import { BrowserProvider, Provider, Signer } from "zksync-ethers";
-import { getDefaultProvider, Network } from "@lens-chain/sdk/ethers";
-
-import { useAppKitProvider } from "$lib/utils/appkit";
+import { useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
 
 export function useSigner() {
   const { walletProvider } = useAppKitProvider('eip155');
-  const [signer, setSigner] = useState<Signer | null>(null);
+  const { address } = useAppKitAccount();
+  const [signer, setSigner] = useState<WalletClient | null>(null);
 
   useEffect(() => {
-    if (!walletProvider) return;
+    if (!walletProvider || !address) {
+      setSigner(null);
+      return;
+    }
 
-    (async () => {
-      try {
-        const browserProvider = new BrowserProvider(walletProvider as Eip1193Provider);
-        const network = await browserProvider.getNetwork();
+    try {
+      const chain = process.env.NEXT_PUBLIC_APP_ENV === 'production' ? chains.mainnet : chains.testnet;
+      const walletClient = createWalletClient({
+        account: address as Address,
+        chain,
+        transport: custom(walletProvider as EIP1193Provider),
+      });
 
-        const browserSigner = await browserProvider.getSigner();
-
-        const signer = Signer.from(
-          browserSigner,
-          Number(network.chainId),
-          getDefaultProvider(process.env.NEXT_PUBLIC_APP_ENV === 'production' ? Network.Mainnet : Network.Testnet) as unknown as Provider
-        );
-
-        setSigner(signer);
-      } catch {
-        setSigner(null);
-      }
-    })();
-  }, [walletProvider]);
+      setSigner(walletClient);
+    } catch {
+      setSigner(null);
+    }
+  }, [walletProvider, address]);
 
   return signer;
 }

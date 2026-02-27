@@ -1,7 +1,7 @@
 import { EthereumAccount, EthereumRelayAccount, EthereumStakeAccount, NewPaymentAccount } from "$lib/graphql/generated/backend/graphql";
-import { ethers } from 'ethers';
+import { createPublicClient, http, type Address } from 'viem';
 import PaymentSplitterABI from '$lib/abis/PaymentSplitter.json';
-import { getListChains } from '$lib/utils/crypto';
+import { getListChains, getViemChainConfig } from '$lib/utils/crypto';
 
 export function getPaymentNetworks(paymentAccounts?: NewPaymentAccount[] | null) {
   if (!paymentAccounts) return [];
@@ -46,10 +46,16 @@ export async function getPayee(accountInfo: EthereumRelayAccount) {
   
   if (!chain?.rpc_url) return null;
 
-  const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-  const paymentSplitter = new ethers.Contract(accountInfo.payment_splitter_contract, PaymentSplitterABI.abi, provider);
-
-  const payees = await paymentSplitter.allPayees();
+  const viemChain = getViemChainConfig(chain);
+  const publicClient = createPublicClient({
+    chain: viemChain,
+    transport: http(chain.rpc_url),
+  });
+  const payees = await publicClient.readContract({
+    abi: PaymentSplitterABI.abi,
+    address: accountInfo.payment_splitter_contract as Address,
+    functionName: 'allPayees',
+  });
 
   return payees[0].account;
 }

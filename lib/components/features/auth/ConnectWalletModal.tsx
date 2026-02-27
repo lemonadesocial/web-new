@@ -8,7 +8,7 @@ import { useHandleVerifyWallet } from "$lib/hooks/useSignIn";
 import { useSignWallet } from "$lib/hooks/useSignWallet";
 
 import { completeProfile } from "./utils";
-import { formatError } from "$lib/utils/crypto";
+import { formatError } from "$lib/utils/error";
 
 export function ConnectWalletModal({ verifyRequired }: { verifyRequired: boolean }) {
   const { isConnected } = useAppKitAccount();

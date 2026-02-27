@@ -1,20 +1,20 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
-import { ethers } from 'ethers';
-import { Eip1193Provider } from 'ethers';
+import { formatUnits } from 'viem';
+import { createPublicClient, http, type Address, type EIP1193Provider } from 'viem';
 
 import { ModalContent, Button, Skeleton, toast, modal } from '$lib/components/core';
 import { EthereumAccount, EthereumRelayAccount, NewPaymentAccount, Token } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom } from '$lib/jotai';
 import PaymentSplitterABI from '$lib/abis/PaymentSplitter.json';
 import { useRelayPayee } from '$lib/hooks/useRelayPayee';
-import { writeContract, formatError } from '$lib/utils/crypto';
+import { createViemClients, formatWallet, getViemChainConfig } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
 
 import { ProcessingTransaction } from '../../modals/ProcessingTransaction';
 import { SignTransactionModal } from '../../modals/SignTransaction';
 import { ConnectWallet } from '../../modals/ConnectWallet';
-import { formatWallet } from '$lib/utils/crypto';
 import { SuccessModal } from '../../modals/SuccessModal';
 import { useAppKitProvider } from '$lib/utils/appkit';
 
@@ -70,14 +70,17 @@ export function ClaimDetailsModal({ vault, onClose }: ClaimDetailsModalProps) {
         return;
       }
 
-      const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-      const paymentSplitter = new ethers.Contract(
-        accountInfo.payment_splitter_contract, 
-        PaymentSplitterABI.abi,
-        provider
-      );
+      const publicClient = createPublicClient({
+        chain: getViemChainConfig(chain),
+        transport: http(chain.rpc_url),
+      });
 
-      const pendingAmounts = await paymentSplitter['pending(address[],address)'](tokenAddresses, payee);
+      const pendingAmounts = await publicClient.readContract({
+        abi: PaymentSplitterABI.abi,
+        address: accountInfo.payment_splitter_contract as Address,
+        functionName: 'pending',
+        args: [tokenAddresses as Address[], payee as Address],
+      }) as readonly bigint[];
 
       const assets: AssetInfo[] = [];
       const positiveTokenAddresses: string[] = [];
@@ -111,21 +114,28 @@ export function ClaimDetailsModal({ vault, onClose }: ClaimDetailsModalProps) {
 
   const executeClaim = async () => {
     try {
-      const paymentSplitterContract = new ethers.Contract(
-        ethers.ZeroAddress,
-        PaymentSplitterABI.abi
+      if (!walletProvider || !accountInfo.payment_splitter_contract || !payee) {
+        throw new Error('Wallet not connected or payment splitter missing');
+      }
+
+      const { walletClient, publicClient, account } = await createViemClients(
+        network,
+        walletProvider as EIP1193Provider,
       );
 
-      const transaction = await writeContract(
-        paymentSplitterContract,
-        accountInfo.payment_splitter_contract!,
-        walletProvider as Eip1193Provider,
-        'release(address[],address)',
-        [tokenAddresses, payee]
-      );
+      const paymentSplitterAddress = accountInfo.payment_splitter_contract as Address;
+
+      const hash = await walletClient.writeContract({
+        abi: PaymentSplitterABI.abi,
+        address: paymentSplitterAddress,
+        functionName: 'release',
+        args: [tokenAddresses as Address[], payee as Address],
+        account,
+        chain: walletClient.chain,
+      });
 
       setStatus('processing');
-      await transaction.wait();
+      await publicClient.waitForTransactionReceipt({ hash });
 
       setStatus('success');
     } catch (error) {
@@ -206,7 +216,7 @@ export function ClaimDetailsModal({ vault, onClose }: ClaimDetailsModalProps) {
                      <img src={asset.token.logo_url || ''} alt={asset.token.symbol} className="size-4" />
                      <p className="text-sm">{asset.token.symbol}</p>
                    </div>
-                   <p className="text-sm text-tertiary">{ethers.formatUnits(asset.amount, asset.token.decimals)}</p>
+                   <p className="text-sm text-tertiary">{formatUnits(asset.amount, asset.token.decimals)}</p>
                  </div>
                ))
              )}

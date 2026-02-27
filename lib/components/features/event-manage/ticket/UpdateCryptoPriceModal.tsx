@@ -7,7 +7,7 @@ import { useEvent } from "../store";
 import { CreateDirectVaultModal } from "../../modals/CreateDirectVaultModal";
 import { getEventDirectPaymentAccounts } from "$lib/utils/event";
 import { multiplyByPowerOf10 } from "$lib/utils/crypto";
-import { ethers } from "ethers";
+import { formatUnits } from "viem";
 import { useUpdateEventPaymentAccounts } from "../hooks";
 import { groupPaymentAccounts } from "$lib/utils/payment";
 
@@ -48,7 +48,7 @@ export function UpdateCryptoPriceModal({ price, onChange }: { price?: EventTicke
   }, [selectedPaymentAccounts]);
 
   const [currency, setCurrency] = useState<string>(price?.currency || currencies[0]);
-  const [cost, setCost] = useState<string>(price?.cost ? ethers.formatUnits(price.cost, currencyMap[currency]?.decimals || 18) : '');
+  const [cost, setCost] = useState<string>(price?.cost ? formatUnits(BigInt(price.cost), currencyMap[currency]?.decimals || 18) : '');
 
   const handleCreateVault = () => {
     modal.open(CreateDirectVaultModal, {

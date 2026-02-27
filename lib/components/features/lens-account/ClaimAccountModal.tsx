@@ -6,7 +6,7 @@ import { createAccount, fetchAccount } from "@lens-protocol/client/actions";
 import { nonNullable } from '@lens-protocol/client';
 import { storageClient } from '$lib/utils/lens/client';
 import { account } from '@lens-protocol/metadata';
-import { handleOperationWith } from '@lens-protocol/client/ethers';
+import { handleOperationWith } from '@lens-protocol/client/viem';
 
 import { Avatar, Button, Input, modal, ModalContent, toast, FileInput, LabeledInput } from "$lib/components/core";
 import { randomUserImage } from '$lib/utils/user';

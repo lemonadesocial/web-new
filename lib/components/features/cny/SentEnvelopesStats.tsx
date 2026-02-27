@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { formatUnits } from 'ethers';
+import { formatUnits } from 'viem';
 import { useQuery } from '$lib/graphql/request';
 import { coinClient } from '$lib/graphql/request/instances';
 import {

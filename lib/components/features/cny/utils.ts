@@ -1,4 +1,4 @@
-import { formatUnits } from 'ethers';
+import { formatUnits } from 'viem';
 
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { formatNumber } from '$lib/utils/number';

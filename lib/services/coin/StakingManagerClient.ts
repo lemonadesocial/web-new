@@ -1,11 +1,11 @@
-import { JsonRpcProvider, type Signer } from 'ethers';
 import { createDrift, type Drift, type ReadContract, type ReadWriteContract } from '@gud/drift';
-import { ethersAdapter } from '@gud/drift-ethers';
+import { viemAdapter } from '@gud/drift-viem';
+import { createPublicClient, http, type WalletClient } from 'viem';
 
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { StakingManagerAbi } from '$lib/abis/token-launch-pad/StakingManager';
 import { MarketUtils } from '$lib/abis/token-launch-pad/MarketUtils';
-import { getGasOptions } from '$lib/utils/crypto';
+import { getGasOptionsByChainId, getViemChainConfig } from '$lib/utils/crypto';
 
 type StakingManagerABI = typeof StakingManagerAbi;
 type MarketUtilsABI = typeof MarketUtils;
@@ -13,8 +13,8 @@ type MarketUtilsABI = typeof MarketUtils;
 export class StakingManagerClient {
   private static instances: Map<string, StakingManagerClient> = new Map();
 
-  static getInstance(chain: Chain, address: string, signer?: Signer): StakingManagerClient {
-    if (signer) return new StakingManagerClient(chain, address, signer);
+  static getInstance(chain: Chain, address: string, walletClient?: WalletClient): StakingManagerClient {
+    if (walletClient) return new StakingManagerClient(chain, address, walletClient);
 
     const key = `${chain.chain_id}-${address}`;
 
@@ -26,31 +26,36 @@ export class StakingManagerClient {
   }
 
   private drift: Drift;
-  private provider: JsonRpcProvider;
+  private chain: Chain;
   private contract: ReadContract<StakingManagerABI>;
   private marketUtilsContract: ReadContract<MarketUtilsABI> | null = null;
 
-  constructor(chain: Chain, address: string, signer?: Signer) {
+  constructor(chain: Chain, address: string, walletClient?: WalletClient) {
     if (!chain.rpc_url) {
       throw new Error('Chain RPC URL is required');
     }
 
-    this.provider = new JsonRpcProvider(chain.rpc_url);
-    const adapterConfig = signer ? { provider: this.provider, signer } : { provider: this.provider };
+    this.chain = chain;
+
+    const viemChain = getViemChainConfig(chain);
+    const publicClient = createPublicClient({
+      chain: viemChain,
+      transport: http(chain.rpc_url),
+    });
 
     this.drift = createDrift({
-      adapter: ethersAdapter(adapterConfig),
+      adapter: viemAdapter({ publicClient, walletClient }),
     });
 
     this.contract = this.drift.contract({
       abi: StakingManagerAbi,
-      address,
+      address: address as `0x${string}`,
     });
 
     if (chain.launchpad_market_utils_contract_address) {
       this.marketUtilsContract = this.drift.contract({
         abi: MarketUtils,
-        address: chain.launchpad_market_utils_contract_address,
+        address: chain.launchpad_market_utils_contract_address as `0x${string}`,
       });
     }
   }
@@ -91,7 +96,7 @@ export class StakingManagerClient {
     const stakingToken = await this.getStakingToken();
 
     const marketCap = await this.marketUtilsContract.read('marketCap', {
-      memecoin: stakingToken,
+      memecoin: stakingToken as `0x${string}`,
       tokenAmount,
     });
 
@@ -99,25 +104,25 @@ export class StakingManagerClient {
   }
 
   async stake(amount: bigint): Promise<string> {
-    const gasOptions = await getGasOptions(this.provider);
+    const gasOptions = getGasOptionsByChainId(this.chain.chain_id);
     return (this.contract as ReadWriteContract<StakingManagerABI>).write('stake', { _amount: amount }, gasOptions);
   }
 
   async unstake(amount: bigint): Promise<string> {
-    const gasOptions = await getGasOptions(this.provider);
+    const gasOptions = getGasOptionsByChainId(this.chain.chain_id);
     return (this.contract as ReadWriteContract<StakingManagerABI>).write('unstake', { _amount: amount }, gasOptions);
   }
 
   async userPositions(user: string): Promise<{ amount: bigint; timelockedUntil: bigint; ethRewardsPerTokenSnapshotX128: bigint; ethOwed: bigint }> {
-    return this.contract.read('userPositions', { user });
+    return this.contract.read('userPositions', { user: user as `0x${string}` });
   }
 
   async balances(recipient: string): Promise<bigint> {
-    return this.contract.read('balances', { _recipient: recipient });
+    return this.contract.read('balances', { _recipient: recipient as `0x${string}` });
   }
 
   async claim(): Promise<string> {
-    const gasOptions = await getGasOptions(this.provider);
+    const gasOptions = getGasOptionsByChainId(this.chain.chain_id);
     return (this.contract as ReadWriteContract<StakingManagerABI>).write('claim', {}, gasOptions);
   }
 }

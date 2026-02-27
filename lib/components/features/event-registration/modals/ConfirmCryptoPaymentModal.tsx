@@ -1,14 +1,18 @@
 import { useState } from "react";
 import { useAtomValue as useJotaiAtomValue } from "jotai";
-import { Eip1193Provider } from "ethers";
+import { type Address, type EIP1193Provider } from "viem";
 import * as Sentry from '@sentry/nextjs';
 
 import { Button, ModalContent } from "$lib/components/core";
 import { EthereumAccount, EthereumRelayAccount, EthereumStakeAccount, UpdatePaymentDocument } from "$lib/graphql/generated/backend/graphql";
 import { useMutation } from "$lib/graphql/request";
 import { appKit, useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
-import { approveERC20Spender, formatError, formatWallet, isNativeToken, LemonadeRelayPaymentContract, LemonadeStakePaymentContract, transfer, writeContract } from "$lib/utils/crypto";
+import { approveERC20Spender, createViemClients, formatWallet, isNativeToken } from "$lib/utils/crypto";
+import { formatError } from "$lib/utils/error";
 import { chainsMapAtom } from "$lib/jotai";
+import LemonadeRelayPayment from "$lib/abis/LemonadeRelayPayment.json";
+import LemonadeStakePayment from "$lib/abis/LemonadeStakePayment.json";
+import ERC20 from "$lib/abis/ERC20.json";
 
 import { eventDataAtom, pricingInfoAtom, registrationModal, selectedPaymentAccountAtom, tokenAddressAtom, useAtomValue } from "../store";
 import { VerifyingTransactionModal } from "./VerifyingTransactionModal";
@@ -22,7 +26,7 @@ interface PaymentProcessingModalProps {
 
 export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinRequest }: PaymentProcessingModalProps) {
   const { address } = useAppKitAccount();
-  const { walletProvider } = useAppKitProvider('eip155');
+  const { walletProvider } = useAppKitProvider<EIP1193Provider>('eip155');
 
   const event = useAtomValue(eventDataAtom);
   const selectedPaymentAccount = useAtomValue(selectedPaymentAccountAtom);
@@ -38,11 +42,6 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
   const [handleUpdatePayment, { loading: loadingUpdatePayment }] = useMutation(UpdatePaymentDocument);
   const [loadingSign, setLoadingSign] = useState(false);
   const [error, setError] = useState('');
-
-  const approveERC20Payment = async (contract: string) => {
-    if (isNativeToken(tokenAddress, network)) return;
-    await approveERC20Spender(tokenAddress, contract, payAmount, walletProvider as Eip1193Provider);
-  };
 
   const onSign = async () => {
     setError('');
@@ -63,56 +62,93 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
     try {
       setLoadingSign(true);
 
-      if (paymentAccount?.relay && chain?.relay_payment_contract) {
-        await approveERC20Payment(chain.relay_payment_contract);
+      const { walletClient, account } = await createViemClients(network, walletProvider);
 
-        const transaction = await writeContract(
-          LemonadeRelayPaymentContract,
-          chain.relay_payment_contract,
-          walletProvider as Eip1193Provider,
-          'pay',
-          [
-            paymentAccount.relay.payment_splitter_contract,
+      const approveIfNeeded = async (spender: string) => {
+        if (isNativeToken(tokenAddress, network)) return;
+        await approveERC20Spender({
+          walletClient,
+          tokenAddress: tokenAddress as Address,
+          spender: spender as Address,
+          amount: payAmount,
+          account,
+        });
+      };
+
+      if (paymentAccount?.relay && chain?.relay_payment_contract) {
+        await approveIfNeeded(chain.relay_payment_contract);
+
+        const hash = await walletClient.writeContract({
+          abi: LemonadeRelayPayment.abi,
+          address: chain.relay_payment_contract as Address,
+          functionName: 'pay',
+          args: [
+            paymentAccount.relay.payment_splitter_contract as Address,
             event._id,
             paymentId,
-            tokenAddress,
-            payAmount.toString(),
+            tokenAddress as Address,
+            payAmount,
           ],
-          { value: isNativeToken(tokenAddress, network) ? payAmount.toString() : 0 }
-        );
+          value: isNativeToken(tokenAddress, network) ? payAmount : 0n,
+          account,
+          chain: walletClient.chain,
+        });
 
-        await handleConfirm(transaction.hash);
+        await handleConfirm(hash);
 
         return;
       }
 
       if (paymentAccount?.type === 'ethereum_stake' && chain?.stake_payment_contract) {
-        await approveERC20Payment(chain.stake_payment_contract);
+        await approveIfNeeded(chain.stake_payment_contract);
 
-        const transaction = await writeContract(
-          LemonadeStakePaymentContract,
-          chain.stake_payment_contract,
-          walletProvider as Eip1193Provider,
-          'stake',
-          [
+        const hash = await walletClient.writeContract({
+          abi: LemonadeStakePayment.abi,
+          address: chain.stake_payment_contract as Address,
+          functionName: 'stake',
+          args: [
             (paymentAccountInfo as EthereumStakeAccount).config_id,
             event._id,
             paymentId,
-            tokenAddress,
-            payAmount.toString(),
+            tokenAddress as Address,
+            payAmount,
           ],
-          { value: isNativeToken(tokenAddress, network) ? payAmount.toString() : 0 }
-        );
+          value: isNativeToken(tokenAddress, network) ? payAmount : 0n,
+          account,
+          chain: walletClient.chain,
+        });
 
-        await handleConfirm(transaction.hash);
+        await handleConfirm(hash);
 
         return;
       }
 
-      const toAddress = paymentAccountInfo.address;
-      const txHash = await transfer(toAddress, (pricingInfo?.total || 0).toString(), tokenAddress, walletProvider as Eip1193Provider, network);
+      const toAddress = paymentAccountInfo.address as Address;
+      const totalAmount = BigInt(pricingInfo?.total || 0);
 
-      await handleConfirm(txHash);
+      if (isNativeToken(tokenAddress, network)) {
+        const hash = await walletClient.sendTransaction({
+          to: toAddress,
+          value: totalAmount,
+          account,
+          chain: walletClient.chain,
+        });
+
+        await handleConfirm(hash);
+
+        return;
+      }
+
+      const hash = await walletClient.writeContract({
+        abi: ERC20,
+        address: tokenAddress as Address,
+        functionName: "transfer",
+        args: [toAddress, totalAmount],
+        account,
+        chain: walletClient.chain,
+      });
+
+      await handleConfirm(hash);
     } catch (e) {
       Sentry.captureException(e, {
         extra: {

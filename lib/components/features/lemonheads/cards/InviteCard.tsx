@@ -2,7 +2,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ethers } from 'ethers';
+import { isAddress } from 'viem';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { Avatar, Button, Card, modal, ModalContent, toast } from '$lib/components/core';
 
@@ -206,7 +206,7 @@ export function InviteFriendModal() {
                           <input
                             className={clsx(
                               'px-3.5 py-2 flex-1 outline-none',
-                              address && !ethers.isAddress(address) && 'text-danger-500',
+                              address && !isAddress(address) && 'text-danger-500',
                             )}
                             value={address}
                             placeholder="Enter ENS or wallet address"
@@ -236,7 +236,7 @@ export function InviteFriendModal() {
               variant="secondary"
               type="submit"
               loading={loading}
-              disabled={!addresses.some((i) => i != '' && ethers.isAddress(i))}
+              disabled={!addresses.some((i) => i != '' && isAddress(i))}
               className="w-full"
             >
               Confirm

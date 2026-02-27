@@ -1,4 +1,4 @@
-import * as ethers from 'ethers';
+import { keccak256, stringToBytes } from 'viem';
 import _ from 'lodash';
 
 //-- the order in TraitType enum is also the layer render order
@@ -211,5 +211,5 @@ export function calculateLookHash(finalTraits: Trait[]) {
     )
     .join('\n');
 
-  return ethers.keccak256(ethers.toUtf8Bytes(content));
+  return keccak256(stringToBytes(content));
 }

@@ -1,7 +1,7 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
-import { formatEther } from 'ethers';
+import { formatEther } from 'viem';
 
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { CardTable } from '$lib/components/core/table';

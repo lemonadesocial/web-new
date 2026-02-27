@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { formatUnits, isAddress } from 'ethers';
+import { formatUnits, isAddress } from 'viem';
 import { useAtomValue } from "jotai";
 
 import { Button, Chip, ErrorText, Input, LabeledInput, Menu, MenuItem, modal, ModalContent, toast } from "$lib/components/core";

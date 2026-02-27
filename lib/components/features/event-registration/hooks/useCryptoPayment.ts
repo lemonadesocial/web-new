@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Eip1193Provider, ethers } from "ethers";
+import { createPublicClient, http, type Address, type EIP1193Provider } from "viem";
 
 import { appKit } from "$lib/utils/appkit";
-import { isNativeToken } from "$lib/utils/crypto";
+import { getBalance, getChain, getViemChainConfig } from "$lib/utils/crypto";
 import { toast } from "$lib/components/core/toast";
-import ERC20 from "$lib/abis/ERC20.json";
 
 import { pricingInfoAtom, registrationModal, tokenAddressAtom, useEventRegistrationStore } from "../store";
 import { ConfirmCryptoPaymentModal } from "../modals/ConfirmCryptoPaymentModal";
@@ -32,17 +31,32 @@ export function useCryptoPayment() {
 
     if (!tokenAddress) return;
 
-    const provider = new ethers.BrowserProvider(appKit.getProvider('eip155') as Eip1193Provider);
-    const network = await provider.getNetwork();
-    const signer = await provider.getSigner();
-    const address = await signer.getAddress();
+    const walletProvider = appKit.getProvider('eip155') as EIP1193Provider | undefined;
+    const address = appKit.getAddress();
 
-    if (isNativeToken(tokenAddress, network.chainId.toString())) {
-      return provider.getBalance(address);
+    if (!walletProvider || !address) {
+      throw new Error('Could not find wallet provider');
     }
 
-    const erc20Token = new ethers.Contract(tokenAddress, ERC20, signer);
-    return await erc20Token.balanceOf(address);
+    const chainIdHex = await walletProvider.request({ method: 'eth_chainId' });
+    const chainId = typeof chainIdHex === 'string' ? parseInt(chainIdHex, 16) : Number(chainIdHex);
+    const chain = getChain(chainId.toString());
+
+    if (!chain || !chain.rpc_url) {
+      throw new Error('Chain configuration not found');
+    }
+
+    const publicClient = createPublicClient({
+      chain: getViemChainConfig(chain),
+      transport: http(chain.rpc_url),
+    });
+
+    return getBalance({
+      publicClient,
+      tokenAddress,
+      chainId: chain.chain_id,
+      account: address as Address,
+    });
   }
   
   const pay = async () => {

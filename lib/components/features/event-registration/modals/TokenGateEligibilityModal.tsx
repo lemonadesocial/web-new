@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
+import { createPublicClient, http, type Address } from 'viem';
 import { useAtom, useAtomValue } from 'jotai';
 
 import { Card, ModalContent, toast } from '$lib/components/core';
 import { BlockchainPlatform, EventTokenGate, SetUserWalletDocument } from '$lib/graphql/generated/backend/graphql';
 import { appKit, useAppKit, useAppKitAccount } from '$lib/utils/appkit';
-import { formatError, formatWallet } from '$lib/utils/crypto';
+import { formatWallet, getViemChainConfig } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
 import { chainsMapAtom } from '$lib/jotai/chains';
 
 import { buyerWalletAtom, ethereumWalletInputAtom, registrationModal, useSetAtom } from '../store';
@@ -88,17 +89,18 @@ export function TokenGateEligibilityModal({
     if (!chain?.rpc_url) return false;
 
     try {
-      const provider = new ethers.JsonRpcProvider(chain.rpc_url);
+      const viemChain = getViemChainConfig(chain);
+      const publicClient = createPublicClient({
+        chain: viemChain,
+        transport: http(chain.rpc_url),
+      });
 
-      if (tokenGate.is_nft) {
-        const erc721Contract = new ethers.Contract(tokenGate.token_address, ERC721, provider);
-        const balance = await erc721Contract.balanceOf(wallet);
-
-        return balance > BigInt(0);
-      }
-
-      const erc20Contract = new ethers.Contract(tokenGate.token_address, ERC20, provider);
-      const balance = await erc20Contract.balanceOf(wallet);
+      const balance = await publicClient.readContract({
+        abi: (tokenGate.is_nft ? ERC721 : ERC20) as never[],
+        address: tokenGate.token_address as Address,
+        functionName: 'balanceOf',
+        args: [wallet as Address],
+      });
 
       if (tokenGate.min_value) return balance >= BigInt(tokenGate.min_value);
 
