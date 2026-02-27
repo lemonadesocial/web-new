@@ -12,6 +12,7 @@ const baseMocks = {
   GetSpaces: { data: { getSpaces: [SPACE] } },
   GetSpace: { data: { getSpace: SPACE } },
   GetMyNotifications: { data: { getMyNotifications: [] } },
+  ListSpaces: { data: { listSpaces: [SPACE] } },
 };
 
 test.describe('Event Creation', () => {
@@ -24,21 +25,34 @@ test.describe('Event Creation', () => {
     });
   });
 
-  test('create event page loads for authenticated host', async ({ page }) => {
+  test('create event page renders title input and submit button', async ({ page }) => {
     await page.goto('/localhost/create/event');
-    // Page should load without errors — look for key form elements
-    await expect(page.locator('body')).toBeVisible();
-  });
+    await page.waitForLoadState('networkidle');
 
-  test('event creation form has required fields', async ({ page }) => {
-    await page.goto('/localhost/create/event');
-    // Title input should be present
-    const titleInput = page.locator('input[name="title"], textarea[name="title"], [contenteditable]').first();
+    const titleInput = page.locator('[data-testid="event-create-title"]');
     await expect(titleInput).toBeVisible({ timeout: 10000 });
+    await expect(titleInput).toHaveAttribute('placeholder', 'Event Title');
+
+    const submitButton = page.locator('[data-testid="event-create-submit"]');
+    await expect(submitButton).toBeVisible();
+    await expect(submitButton).toBeDisabled();
   });
 
-  test('CreateEvent mutation is called on form submit', async ({ page }) => {
-    let createEventCalled = false;
+  test('submit button enables after typing title', async ({ page }) => {
+    await page.goto('/localhost/create/event');
+    await page.waitForLoadState('networkidle');
+
+    const titleInput = page.locator('[data-testid="event-create-title"]');
+    await expect(titleInput).toBeVisible({ timeout: 10000 });
+
+    const submitButton = page.locator('[data-testid="event-create-submit"]');
+    await expect(submitButton).toBeDisabled();
+
+    await titleInput.fill('E2E Test Event');
+    await expect(submitButton).toBeEnabled();
+  });
+
+  test('CreateEvent mutation fires with correct title on submit', async ({ page }) => {
     let capturedVariables: Record<string, unknown> = {};
 
     await page.route('**/graphql', async (route) => {
@@ -47,7 +61,6 @@ test.describe('Event Creation', () => {
 
       const body = JSON.parse(postData);
       if (body.operationName === 'CreateEvent') {
-        createEventCalled = true;
         capturedVariables = body.variables ?? {};
         return route.fulfill({
           status: 200,
@@ -56,7 +69,6 @@ test.describe('Event Creation', () => {
         });
       }
 
-      // Handle other operations
       const mock = baseMocks[body.operationName as keyof typeof baseMocks];
       return route.fulfill({
         status: 200,
@@ -68,18 +80,21 @@ test.describe('Event Creation', () => {
     await page.goto('/localhost/create/event');
     await page.waitForLoadState('networkidle');
 
-    // Fill in the title
-    const titleInput = page.locator('input[name="title"]').first();
-    await expect(titleInput).toBeVisible({ timeout: 5000 });
+    const titleInput = page.locator('[data-testid="event-create-title"]');
+    await expect(titleInput).toBeVisible({ timeout: 10000 });
     await titleInput.fill('E2E Test Event');
 
-    // Click submit and wait for the GraphQL mutation response
-    const submitButton = page.getByRole('button', { name: /create|publish|save/i }).first();
-    await expect(submitButton).toBeVisible({ timeout: 5000 });
+    const submitButton = page.locator('[data-testid="event-create-submit"]');
     await Promise.all([
       page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200),
       submitButton.click(),
     ]);
+
+    expect(capturedVariables).toHaveProperty('input');
+    const input = capturedVariables.input as Record<string, unknown>;
+    expect(input.title).toBe('E2E Test Event');
+    expect(input.start).toBeDefined();
+    expect(input.end).toBeDefined();
   });
 
   test('form validation prevents submission without title', async ({ page }) => {
@@ -104,13 +119,12 @@ test.describe('Event Creation', () => {
     await page.goto('/localhost/create/event');
     await page.waitForLoadState('networkidle');
 
-    // Try to submit without filling title
-    const submitButton = page.getByRole('button', { name: /create|publish|save/i }).first();
-    await expect(submitButton).toBeVisible({ timeout: 5000 });
-    await submitButton.click();
-    // Wait for any potential network activity to settle
-    await page.waitForLoadState('networkidle');
-    // CreateEvent should NOT have been called — validation should prevent it
+    // Submit button should be disabled without a title
+    const submitButton = page.locator('[data-testid="event-create-submit"]');
+    await expect(submitButton).toBeVisible({ timeout: 10000 });
+    await expect(submitButton).toBeDisabled();
+
+    // CreateEvent should NOT have been called
     expect(createEventCalled).toBe(false);
   });
 });

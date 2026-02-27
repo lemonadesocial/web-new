@@ -64,19 +64,20 @@ export function RegisterButton() {
   const getTicketText = (purchaseItems.length && purchaseItems.length > 1) ? 'Get Tickets' : 'Get Ticket';
 
   if (selfRequired && !session) return (
-    <Button variant="secondary" disabled={disabled} onClick={() => signIn()}>
+    <Button data-testid="event-register-button" variant="secondary" disabled={disabled} onClick={() => signIn()}>
       Sign In To Register
     </Button>
   );
 
   if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session || selfRequired) return (
-    <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
+    <Button data-testid="event-register-button" variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
       {approvalRequired ? 'Request to Join' : hasSingleFreeTicket ? 'Register' : getTicketText}
     </Button>
   );
 
   return (
     <Button
+      data-testid="event-register-button"
       variant="secondary"
       disabled={disabled}
       onClick={() => (isFree ? redeemTickets() : openRegistrationModal())}

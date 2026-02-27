@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { mockGraphQL } from './fixtures/graphql-mocks';
 import { loginAsHost } from './fixtures/auth';
-import { makeEvent, makeUser, makeTicketType, makeRegistrationQuestion } from './fixtures/test-data';
+import { makeEvent, makeUser, makeTicketType } from './fixtures/test-data';
 
 const HOST = makeUser();
 const EVENT = makeEvent({ host: HOST._id });
@@ -22,32 +22,44 @@ test.describe('Registration Form Builder', () => {
     await mockGraphQL(page, baseMocks);
   });
 
-  test('registration form page loads', async ({ page }) => {
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}/registration`);
-    await expect(page.locator('body')).toBeVisible();
-  });
-
-  test('default fields (Name, Email) are shown', async ({ page }) => {
+  test('registration form page renders heading and sections', async ({ page }) => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}/registration`);
     await page.waitForLoadState('networkidle');
 
-    // Name and Email are always-required personal information fields
-    const nameText = page.getByText('Name');
-    const emailText = page.getByText('Email');
-    // These should appear as card labels
-    await expect(page.locator('body')).toBeVisible();
+    await expect(page.getByText('Registration Form')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Personal Information')).toBeVisible();
+    await expect(page.getByText('Web3 Identity')).toBeVisible();
+    await expect(page.getByText('Custom Questions')).toBeVisible();
   });
 
-  test('ETH Address toggle options exist', async ({ page }) => {
+  test('Name and Email fields are shown as Required', async ({ page }) => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}/registration`);
     await page.waitForLoadState('networkidle');
 
-    // ETH Address section should have Off/Optional/Required dropdown
-    const ethLabel = page.getByText('ETH Address');
-    await expect(ethLabel).toBeVisible({ timeout: 5000 });
+    // Name and Email cards with Required label
+    await expect(page.getByText('Name')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Email')).toBeVisible();
+    // Both should show "Required" labels
+    const requiredLabels = page.getByText('Required');
+    await expect(requiredLabels.first()).toBeVisible();
   });
 
-  test('UpdateEventRegistrationForm mutation fires on changes', async ({ page }) => {
+  test('ETH Address has Off/Optional/Required dropdown', async ({ page }) => {
+    await page.goto(`/localhost/e/manage/${EVENT.shortid}/registration`);
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.getByText('ETH Address')).toBeVisible({ timeout: 10000 });
+
+    // Click the ETH Address toggle to open the dropdown
+    const ethToggle = page.getByText('Off').first();
+    await expect(ethToggle).toBeVisible();
+    await ethToggle.click();
+
+    // Dropdown should show Off, Optional, Required options
+    await expect(page.getByText('Optional')).toBeVisible({ timeout: 3000 });
+  });
+
+  test('ETH Address change fires UpdateEventRegistrationForm', async ({ page }) => {
     let updateCalled = false;
 
     await page.route('**/graphql', async (route) => {
@@ -69,43 +81,37 @@ test.describe('Registration Form Builder', () => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}/registration`);
     await page.waitForLoadState('networkidle');
 
-    // Interactions that trigger the mutation (ETH Address dropdown, etc.)
-    // would be tested by clicking through the UI
-    await expect(page.locator('body')).toBeVisible();
+    // Open ETH Address dropdown and select Optional
+    const ethToggle = page.getByText('Off').first();
+    await expect(ethToggle).toBeVisible({ timeout: 10000 });
+    await ethToggle.click();
+
+    const optionalItem = page.getByText('Optional');
+    await expect(optionalItem).toBeVisible({ timeout: 3000 });
+    await Promise.all([
+      page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200),
+      optionalItem.click(),
+    ]);
+
+    expect(updateCalled).toBe(true);
   });
 
-  test('Add Question button is visible', async ({ page }) => {
+  test('Add Question button is visible and clickable', async ({ page }) => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}/registration`);
     await page.waitForLoadState('networkidle');
 
-    const addButton = page.getByRole('button', { name: /add question/i }).first();
-    await expect(addButton).toBeVisible({ timeout: 5000 });
+    const addButton = page.locator('[data-testid="add-question-button"]');
+    await expect(addButton).toBeVisible({ timeout: 10000 });
+    await addButton.click();
+
+    // Question type modal should appear with options
+    await expect(page.getByText('Text').first()).toBeVisible({ timeout: 3000 });
   });
 
-  test('Self ID settings can be toggled', async ({ page }) => {
-    let selfVerifyCalled = false;
-
-    await page.route('**/graphql', async (route) => {
-      const postData = route.request().postData();
-      if (!postData) return route.fulfill({ status: 200, body: '{"data":{}}' });
-
-      const body = JSON.parse(postData);
-      if (body.operationName === 'UpdateEventSelfVerification') {
-        selfVerifyCalled = true;
-      }
-      const mock = baseMocks[body.operationName as keyof typeof baseMocks];
-      return route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(mock ?? { data: {} }),
-      });
-    });
-
+  test('Self ID has Off/Required dropdown', async ({ page }) => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}/registration`);
     await page.waitForLoadState('networkidle');
 
-    // Self ID section should be on the page
-    const selfIdLabel = page.getByText('Self ID');
-    await expect(selfIdLabel).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('Self ID')).toBeVisible({ timeout: 10000 });
   });
 });

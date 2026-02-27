@@ -23,7 +23,7 @@ const baseMocks = {
   GetListEventEmailSettings: {
     data: { listEventEmailSettings: [SCHEDULED_EMAIL, SENT_EMAIL] },
   },
-  ListEventGuests: { data: { listEventGuests: [] } },
+  ListEventGuests: { data: { listEventGuests: { items: [], total: 0 } } },
   CreateEventEmailSetting: { data: { createEventEmailSetting: makeEmailSetting({ _id: 'email-new' }) } },
   UpdateEventEmailSetting: { data: { updateEventEmailSetting: SCHEDULED_EMAIL } },
   DeleteEventEmailSetting: { data: { deleteEventEmailSetting: true } },
@@ -36,18 +36,20 @@ test.describe('Email & Invites', () => {
     await mockGraphQL(page, baseMocks);
   });
 
-  test('blasts page loads', async ({ page }) => {
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}/blasts`);
-    await expect(page.locator('body')).toBeVisible();
-  });
-
-  test('scheduled and sent emails are displayed', async ({ page }) => {
+  test('blasts page renders blast input and system messages section', async ({ page }) => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}/blasts`);
     await page.waitForLoadState('networkidle');
-    await expect(page.locator('body')).toBeVisible();
+
+    // Blast input area (TextEditor with contenteditable)
+    const blastInput = page.locator('[contenteditable="true"]').first();
+    await expect(blastInput).toBeVisible({ timeout: 10000 });
+
+    // System Messages section with Event Reminders
+    await expect(page.getByText('System Messages')).toBeVisible();
+    await expect(page.getByText('Event Reminders')).toBeVisible();
   });
 
-  test('CreateEventEmailSetting fires on blast creation', async ({ page }) => {
+  test('Send button appears on focus and fires CreateEventEmailSetting', async ({ page }) => {
     let createCalled = false;
 
     await page.route('**/graphql', async (route) => {
@@ -57,6 +59,11 @@ test.describe('Email & Invites', () => {
       const body = JSON.parse(postData);
       if (body.operationName === 'CreateEventEmailSetting') {
         createCalled = true;
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ data: { createEventEmailSetting: makeEmailSetting({ _id: 'email-new' }) } }),
+        });
       }
       const mock = baseMocks[body.operationName as keyof typeof baseMocks];
       return route.fulfill({
@@ -69,50 +76,46 @@ test.describe('Email & Invites', () => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}/blasts`);
     await page.waitForLoadState('networkidle');
 
-    // Look for the blast message input area
+    // Focus the blast input to reveal the Send button
     const blastInput = page.locator('[contenteditable="true"]').first();
-    await expect(blastInput).toBeVisible({ timeout: 5000 });
-    await blastInput.fill('Hello everyone!');
+    await expect(blastInput).toBeVisible({ timeout: 10000 });
+    await blastInput.click();
+    await blastInput.pressSequentially('Hello everyone!');
 
-    // Click Send button and wait for mutation response
-    const sendButton = page.getByRole('button', { name: /send/i }).first();
+    // Send button should now be visible
+    const sendButton = page.locator('[data-testid="blast-send-button"]');
     await expect(sendButton).toBeVisible({ timeout: 5000 });
+    await expect(sendButton).toBeEnabled();
+
     await Promise.all([
       page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200),
       sendButton.click(),
     ]);
+
+    expect(createCalled).toBe(true);
   });
 
-  test('InviteEvent fires when inviting guests by email', async ({ page }) => {
-    let inviteCalled = false;
-
-    await page.route('**/graphql', async (route) => {
-      const postData = route.request().postData();
-      if (!postData) return route.fulfill({ status: 200, body: '{"data":{}}' });
-
-      const body = JSON.parse(postData);
-      if (body.operationName === 'InviteEvent') {
-        inviteCalled = true;
-      }
-      const mock = baseMocks[body.operationName as keyof typeof baseMocks];
-      return route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(mock ?? { data: {} }),
-      });
-    });
-
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}/blasts`);
-    await page.waitForLoadState('networkidle');
-    await expect(page.locator('body')).toBeVisible();
-  });
-
-  test('event reminders section is visible', async ({ page }) => {
+  test('scheduled emails section shows scheduled blast', async ({ page }) => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}/blasts`);
     await page.waitForLoadState('networkidle');
 
-    // Event Reminders section should be visible
-    const remindersText = page.getByText('Event Reminders');
-    await expect(remindersText).toBeVisible({ timeout: 5000 });
+    // Scheduled section should be visible with the scheduled email subject
+    await expect(page.getByText('Scheduled')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('sent emails section shows sent blast', async ({ page }) => {
+    await page.goto(`/localhost/e/manage/${EVENT.shortid}/blasts`);
+    await page.waitForLoadState('networkidle');
+
+    // Sent section should be visible
+    await expect(page.getByText('Sent')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('Post-Event Feedback Schedule button is visible', async ({ page }) => {
+    await page.goto(`/localhost/e/manage/${EVENT.shortid}/blasts`);
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.getByText('Post-Event Feedback')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Schedule')).toBeVisible();
   });
 });

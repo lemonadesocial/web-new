@@ -23,7 +23,7 @@ const baseMocks = {
   GetEvent: { data: { getEvent: EVENT } },
   GetMyNotifications: { data: { getMyNotifications: [] } },
   ListEventGuests: {
-    data: { listEventGuests: [GUEST, PENDING_GUEST, CHECKED_IN_GUEST] },
+    data: { listEventGuests: { items: [GUEST, PENDING_GUEST, CHECKED_IN_GUEST], total: 3 } },
   },
   GetEventGuestsStatistics: { data: { getEventGuestsStatistics: STATS } },
   ListEventTicketTypes: { data: { listEventTicketTypes: [makeTicketType()] } },
@@ -39,18 +39,17 @@ test.describe('Guest Management', () => {
     await mockGraphQL(page, baseMocks);
   });
 
-  test('guest list page loads with guests', async ({ page }) => {
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}/guests`);
-    await expect(page.locator('body')).toBeVisible();
-  });
-
-  test('guest list displays guest names', async ({ page }) => {
+  test('guest list page renders search, filter, sort, and export controls', async ({ page }) => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}/guests`);
     await page.waitForLoadState('networkidle');
-    await expect(page.locator('body')).toBeVisible();
+
+    await expect(page.locator('[data-testid="guest-list-search"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="guest-list-filter"]')).toBeVisible();
+    await expect(page.locator('[data-testid="guest-list-sort"]')).toBeVisible();
+    await expect(page.locator('[data-testid="guest-list-export"]')).toBeVisible();
   });
 
-  test('search input filters guests', async ({ page }) => {
+  test('search input sends ListEventGuests with search variable', async ({ page }) => {
     let searchQuery = '';
 
     await page.route('**/graphql', async (route) => {
@@ -72,58 +71,69 @@ test.describe('Guest Management', () => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}/guests`);
     await page.waitForLoadState('networkidle');
 
-    // Find and use the search input
-    const searchInput = page.getByPlaceholder(/search/i).first();
-    await expect(searchInput).toBeVisible({ timeout: 5000 });
+    const searchInput = page.locator('[data-testid="guest-list-search"]');
+    await expect(searchInput).toBeVisible({ timeout: 10000 });
     await searchInput.fill('Test Guest');
-    // Wait for debounced GraphQL request to fire
+
+    // Wait for debounced GraphQL request (300ms debounce)
     await page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200);
+    expect(searchQuery).toBe('Test Guest');
   });
 
-  test('filter menu shows status options', async ({ page }) => {
+  test('filter menu shows Going, Pending, Invited, Not Going, Checked In options', async ({ page }) => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}/guests`);
     await page.waitForLoadState('networkidle');
 
-    // Look for Filter button
-    const filterButton = page.getByRole('button', { name: /filter/i }).first();
-    await expect(filterButton).toBeVisible({ timeout: 5000 });
+    const filterButton = page.locator('[data-testid="guest-list-filter"]');
+    await expect(filterButton).toBeVisible({ timeout: 10000 });
     await filterButton.click();
 
-    // Filter dropdown should show status options — at least one must be visible
-    const goingOption = page.getByText('Going');
-    const pendingOption = page.getByText('Pending');
-    await expect(goingOption.or(pendingOption)).toBeVisible({ timeout: 3000 });
+    // Filter dropdown should show all status options
+    await expect(page.getByText('Going').first()).toBeVisible({ timeout: 3000 });
+    await expect(page.getByText('Pending').first()).toBeVisible();
+    await expect(page.getByText('Invited').first()).toBeVisible();
+    await expect(page.getByText('Not Going').first()).toBeVisible();
+    await expect(page.getByText('Checked In').first()).toBeVisible();
   });
 
-  test('sort menu shows sort options', async ({ page }) => {
+  test('sort menu shows Register Time and Approval Status options', async ({ page }) => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}/guests`);
     await page.waitForLoadState('networkidle');
 
-    // Look for Sort button
-    const sortButton = page.getByRole('button', { name: /sort/i }).first();
-    await expect(sortButton).toBeVisible({ timeout: 5000 });
+    const sortButton = page.locator('[data-testid="guest-list-sort"]');
+    await expect(sortButton).toBeVisible({ timeout: 10000 });
     await sortButton.click();
+
+    await expect(page.getByText('Register Time').nth(1)).toBeVisible({ timeout: 3000 });
+    await expect(page.getByText('Approval Status')).toBeVisible();
   });
 
-  test('export button exists for CSV download', async ({ page }) => {
+  test('export button triggers CSV download', async ({ page }) => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}/guests`);
     await page.waitForLoadState('networkidle');
 
-    // Look for export/download button
-    const exportButton = page.locator('[class*="icon-download"]').first();
-    await expect(page.locator('body')).toBeVisible();
+    const exportButton = page.locator('[data-testid="guest-list-export"]');
+    await expect(exportButton).toBeVisible({ timeout: 10000 });
+    // Export button should have the aria-label for accessibility
+    await expect(exportButton).toHaveAttribute('aria-label', 'Export guest list');
   });
 
-  test('check-in page loads', async ({ page }) => {
-    await page.goto(`/localhost/e/check-in/${EVENT.shortid}`);
-    await expect(page.locator('body')).toBeVisible();
-  });
-
-  test('check-in page shows guest tabs', async ({ page }) => {
+  test('check-in page renders tabs for guest statuses', async ({ page }) => {
     await page.goto(`/localhost/e/check-in/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     // Check-in page should show tabs: All Guests, Going, Checked In, Invited
-    await expect(page.locator('body')).toBeVisible();
+    await expect(page.getByText('All Guests')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Going')).toBeVisible();
+    await expect(page.getByText('Checked In')).toBeVisible();
+    await expect(page.getByText('Invited')).toBeVisible();
+  });
+
+  test('check-in page has search input and scan button', async ({ page }) => {
+    await page.goto(`/localhost/e/check-in/${EVENT.shortid}`);
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.getByPlaceholder('Search for a guest...')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Scan')).toBeVisible();
   });
 });

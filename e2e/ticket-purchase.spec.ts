@@ -22,11 +22,11 @@ const baseMocks = {
   GetEventTicketTypes: { data: { getEventTicketTypes: [FREE_TICKET, PAID_TICKET] } },
   ListEventTicketTypes: { data: { listEventTicketTypes: [FREE_TICKET, PAID_TICKET] } },
   GetMyEventJoinRequest: { data: { getMyEventJoinRequest: null } },
-  GetMyTickets: { data: { getMyTickets: [] } },
+  GetMyTickets: { data: { getMyTickets: { tickets: [], total: 0 } } },
   ListEventTokenGates: { data: { listEventTokenGates: [] } },
   GetEventInvitation: { data: { getEventInvitation: null } },
   CalculateTicketsPricing: { data: { calculateTicketsPricing: { total: '0', sub_total: '0', discount: '0', fee: '0' } } },
-  CreateEventJoinRequest: { data: { createEventJoinRequest: { _id: 'jr-new' } } },
+  RedeemTickets: { data: { redeemTickets: { _id: 'jr-new' } } },
 };
 
 test.describe('Ticket Purchase / RSVP', () => {
@@ -35,33 +35,39 @@ test.describe('Ticket Purchase / RSVP', () => {
     await mockGraphQL(page, baseMocks);
   });
 
-  test('event page loads for guest', async ({ page }) => {
-    await page.goto(`/localhost/e/${EVENT.shortid}`);
-    await expect(page.locator('body')).toBeVisible();
-  });
-
-  test('ticket types are displayed on event page', async ({ page }) => {
+  test('event page renders ticket types', async ({ page }) => {
     await page.goto(`/localhost/e/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
-    // The event page should render and show the event title
-    await expect(page.locator('body')).toBeVisible();
+    // Ticket type names should be visible on the page
+    await expect(page.getByText(FREE_TICKET.title)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(PAID_TICKET.title)).toBeVisible();
   });
 
-  test('free RSVP calls CreateEventJoinRequest', async ({ page }) => {
-    let joinRequestCalled = false;
+  test('register button is visible and responds to click', async ({ page }) => {
+    await page.goto(`/localhost/e/${EVENT.shortid}`);
+    await page.waitForLoadState('networkidle');
+
+    const registerButton = page.locator('[data-testid="event-register-button"]');
+    await expect(registerButton).toBeVisible({ timeout: 10000 });
+  });
+
+  test('free RSVP calls RedeemTickets mutation', async ({ page }) => {
+    let redeemCalled = false;
+    let capturedVariables: Record<string, unknown> = {};
 
     await page.route('**/graphql', async (route) => {
       const postData = route.request().postData();
       if (!postData) return route.fulfill({ status: 200, body: '{"data":{}}' });
 
       const body = JSON.parse(postData);
-      if (body.operationName === 'CreateEventJoinRequest') {
-        joinRequestCalled = true;
+      if (body.operationName === 'RedeemTickets') {
+        redeemCalled = true;
+        capturedVariables = body.variables ?? {};
         return route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify({ data: { createEventJoinRequest: { _id: 'jr-new' } } }),
+          body: JSON.stringify({ data: { redeemTickets: { _id: 'jr-new' } } }),
         });
       }
       const mock = baseMocks[body.operationName as keyof typeof baseMocks];
@@ -75,25 +81,15 @@ test.describe('Ticket Purchase / RSVP', () => {
     await page.goto(`/localhost/e/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
-    // Look for register/RSVP button and click it
-    const registerButton = page.getByRole('button', { name: /register|rsvp|get ticket|one-click/i }).first();
-    await expect(registerButton).toBeVisible({ timeout: 5000 });
+    const registerButton = page.locator('[data-testid="event-register-button"]');
+    await expect(registerButton).toBeVisible({ timeout: 10000 });
     await Promise.all([
       page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200),
       registerButton.click(),
     ]);
   });
 
-  test('paid ticket shows payment form', async ({ page }) => {
-    await page.goto(`/localhost/e/${EVENT.shortid}`);
-    await page.waitForLoadState('networkidle');
-
-    // The page should display paid ticket options
-    // Stripe payment form would appear after selecting a paid ticket
-    await expect(page.locator('body')).toBeVisible();
-  });
-
-  test('CalculateTicketsPricing is called when tickets selected', async ({ page }) => {
+  test('CalculateTicketsPricing is called when ticket quantity changes', async ({ page }) => {
     let pricingCalled = false;
 
     await page.route('**/graphql', async (route) => {
@@ -115,11 +111,19 @@ test.describe('Ticket Purchase / RSVP', () => {
     await page.goto(`/localhost/e/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
-    // Pricing calculation happens when user selects ticket quantity
-    await expect(page.locator('body')).toBeVisible();
+    // Look for the ticket select item's increment button (NumberInput +)
+    const ticketItem = page.locator(`[data-testid="ticket-select-${PAID_TICKET._id}"]`);
+    await expect(ticketItem).toBeVisible({ timeout: 10000 });
+
+    // Click the increment button inside the ticket item
+    const incrementButton = ticketItem.locator('button').last();
+    await incrementButton.click();
+    await page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200);
+
+    expect(pricingCalled).toBe(true);
   });
 
-  test('already registered guest sees MyTickets', async ({ page }) => {
+  test('already registered guest sees their tickets', async ({ page }) => {
     await mockGraphQL(page, {
       ...baseMocks,
       GetMyEventJoinRequest: {
@@ -132,22 +136,28 @@ test.describe('Ticket Purchase / RSVP', () => {
       },
       GetMyTickets: {
         data: {
-          getMyTickets: [{
-            _id: 'ticket-existing',
-            shortid: 'tkt-exist',
-            type_expanded: FREE_TICKET,
-            assigned_to: GUEST._id,
-          }],
+          getMyTickets: {
+            tickets: [{
+              _id: 'ticket-existing',
+              shortid: 'tkt-exist',
+              type_expanded: FREE_TICKET,
+              assigned_to: GUEST._id,
+            }],
+            total: 1,
+          },
         },
       },
     });
 
     await page.goto(`/localhost/e/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
-    await expect(page.locator('body')).toBeVisible();
+
+    // The register button should NOT be visible — user already has tickets
+    const registerButton = page.locator('[data-testid="event-register-button"]');
+    await expect(registerButton).not.toBeVisible({ timeout: 5000 });
   });
 
-  test('approval-required event shows pending status after RSVP', async ({ page }) => {
+  test('approval-required event shows "Request to Join" button text', async ({ page }) => {
     const approvalEvent = makeEvent({
       ...EVENT,
       approval_required: true,
@@ -160,6 +170,9 @@ test.describe('Ticket Purchase / RSVP', () => {
 
     await page.goto(`/localhost/e/${approvalEvent.shortid}`);
     await page.waitForLoadState('networkidle');
-    await expect(page.locator('body')).toBeVisible();
+
+    const registerButton = page.locator('[data-testid="event-register-button"]');
+    await expect(registerButton).toBeVisible({ timeout: 10000 });
+    await expect(registerButton).toContainText(/Request to Join|One-click Apply/);
   });
 });

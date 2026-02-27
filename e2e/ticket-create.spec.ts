@@ -27,14 +27,34 @@ test.describe('Ticket Management', () => {
     });
   });
 
-  test('event manage page loads with ticket types', async ({ page }) => {
+  test('ticket list renders with existing ticket and Add Ticket Type button', async ({ page }) => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}`);
-    await expect(page.locator('body')).toBeVisible();
+    await page.waitForLoadState('networkidle');
+
+    // The existing ticket title should be visible
+    await expect(page.getByText(TICKET.title)).toBeVisible({ timeout: 10000 });
+
+    // Add Ticket Type button should be visible
+    const addButton = page.locator('[data-testid="add-ticket-type"]');
+    await expect(addButton).toBeVisible();
   });
 
-  test('CreateEventTicketType mutation fires on ticket creation', async ({ page }) => {
+  test('Add Ticket Type button opens ticket drawer', async ({ page }) => {
+    await page.goto(`/localhost/e/manage/${EVENT.shortid}`);
+    await page.waitForLoadState('networkidle');
+
+    const addButton = page.locator('[data-testid="add-ticket-type"]');
+    await expect(addButton).toBeVisible({ timeout: 10000 });
+    await addButton.click();
+
+    // The drawer should open with a title input for the new ticket
+    const titleInput = page.locator('input[name="title"]').first();
+    await expect(titleInput).toBeVisible({ timeout: 5000 });
+  });
+
+  test('CreateEventTicketType mutation fires when saving new ticket', async ({ page }) => {
     let createCalled = false;
-    let capturedInput: Record<string, unknown> = {};
+    let capturedVariables: Record<string, unknown> = {};
 
     await page.route('**/graphql', async (route) => {
       const postData = route.request().postData();
@@ -43,7 +63,7 @@ test.describe('Ticket Management', () => {
       const body = JSON.parse(postData);
       if (body.operationName === 'CreateEventTicketType') {
         createCalled = true;
-        capturedInput = body.variables ?? {};
+        capturedVariables = body.variables ?? {};
         return route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -61,58 +81,38 @@ test.describe('Ticket Management', () => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
-    // Look for "New Ticket" or "Add Ticket" button
-    const addButton = page.getByRole('button', { name: /new ticket|add ticket|create ticket/i }).first();
-    await expect(addButton).toBeVisible({ timeout: 5000 });
+    const addButton = page.locator('[data-testid="add-ticket-type"]');
+    await expect(addButton).toBeVisible({ timeout: 10000 });
     await addButton.click();
 
-    // Fill ticket title
+    // Fill ticket title in the drawer
     const titleInput = page.locator('input[name="title"]').first();
     await expect(titleInput).toBeVisible({ timeout: 5000 });
     await titleInput.fill('VIP Ticket');
 
-    // Click create/save button and wait for the GraphQL mutation response
-    const saveButton = page.getByRole('button', { name: /create ticket|save/i }).first();
-    await expect(saveButton).toBeVisible({ timeout: 5000 });
+    // Click Create Ticket button and wait for mutation
+    const createButton = page.getByRole('button', { name: /Create Ticket/i }).first();
+    await expect(createButton).toBeVisible({ timeout: 5000 });
     await Promise.all([
       page.waitForResponse((resp) => resp.url().includes('/graphql') && resp.status() === 200),
-      saveButton.click(),
+      createButton.click(),
     ]);
+
+    expect(createCalled).toBe(true);
   });
 
-  test('existing ticket types are displayed', async ({ page }) => {
+  test('clicking existing ticket opens edit drawer', async ({ page }) => {
     await page.goto(`/localhost/e/manage/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
-    // The ticket title should be visible somewhere on the page
-    const ticketTitle = page.getByText(TICKET.title);
-    // This may or may not be visible depending on the page layout
-    // The key assertion is the page loaded without errors
-    await expect(page.locator('body')).toBeVisible();
-  });
+    // Click on the existing ticket row
+    const ticketRow = page.getByText(TICKET.title);
+    await expect(ticketRow).toBeVisible({ timeout: 10000 });
+    await ticketRow.click();
 
-  test('UpdateEventTicketType fires on ticket edit', async ({ page }) => {
-    let updateCalled = false;
-
-    await page.route('**/graphql', async (route) => {
-      const postData = route.request().postData();
-      if (!postData) return route.fulfill({ status: 200, body: '{"data":{}}' });
-
-      const body = JSON.parse(postData);
-      if (body.operationName === 'UpdateEventTicketType') {
-        updateCalled = true;
-      }
-      const mock = baseMocks[body.operationName as keyof typeof baseMocks];
-      return route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(mock ?? { data: {} }),
-      });
-    });
-
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}`);
-    await page.waitForLoadState('networkidle');
-    // Page loads successfully — update flow would be tested by clicking on existing ticket
-    await expect(page.locator('body')).toBeVisible();
+    // Drawer should open with the ticket title pre-filled
+    const titleInput = page.locator('input[name="title"]').first();
+    await expect(titleInput).toBeVisible({ timeout: 5000 });
+    await expect(titleInput).toHaveValue(TICKET.title);
   });
 });
