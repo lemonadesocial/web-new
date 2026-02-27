@@ -1,13 +1,14 @@
 'use client';
 import React from 'react';
 import { useAtomValue } from 'jotai';
-import { ethers } from 'ethers';
+import { createPublicClient, http, type Address } from 'viem';
 
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom } from '$lib/jotai';
 import { LEMONHEAD_CHAIN_ID } from '$lib/components/features/lemonheads/mint/utils';
-import { LemonheadNFTContract } from '$lib/utils/crypto';
+import { getViemChainConfig } from '$lib/utils/crypto';
 import { Skeleton } from '$lib/components/core';
+import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 
 interface TokenCardProps {
   tokenId: string;
@@ -22,14 +23,21 @@ async function fetchTokenData(tokenId: string, chainsMap: Record<string, Chain>)
     const chain = chainsMap[LEMONHEAD_CHAIN_ID];
     const contractAddress = chain?.lemonhead_contract_address;
 
-    if (!contractAddress) {
+    if (!chain || !contractAddress) {
       return null;
     }
 
-    const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-    const contract = LemonheadNFTContract.attach(contractAddress).connect(provider) as ethers.Contract;
+    const publicClient = createPublicClient({
+      chain: getViemChainConfig(chain),
+      transport: http(chain.rpc_url),
+    });
 
-    const tokenUri = await contract.getFunction('tokenURI')(tokenId);
+    const tokenUri = await publicClient.readContract({
+      abi: LemonheadNFT.abi,
+      address: contractAddress as Address,
+      functionName: 'tokenURI',
+      args: [BigInt(tokenId)],
+    }) as string;
     const res = await fetch(tokenUri);
     const jsonData = await res.json();
 

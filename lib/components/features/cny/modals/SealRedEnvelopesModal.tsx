@@ -1,18 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Eip1193Provider, ethers } from 'ethers';
+import { getAddress, parseUnits, type Address, type EIP1193Provider } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 
 import { Button, ModalContent, modal, toast } from '$lib/components/core';
 import { useAppKitAccount, useAppKitProvider, appKit } from '$lib/utils/appkit';
-import { formatError, writeContract, approveERC20Spender, isNativeToken, RedEnvelopeContract } from '$lib/utils/crypto';
+import { createViemClients, isNativeToken, approveERC20Spender } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
 import { RedEnvelopeClient } from '$lib/services/red-envelope';
 import { ASSET_PREFIX, MEGAETH_CHAIN_ID } from '$lib/utils/constants';
 import { RED_ENVELOPE_ADDRESS } from '$lib/services/red-envelope/client';
 import { EnvelopeRow } from '../types';
 import { getAsset } from '../utils';
-
+import { RedEnvelopeAbi } from '$lib/abis/RedEnvelope';
 type SealRedEnvelopesModalProps = {
   selectedRows: EnvelopeRow[];
   currencyDecimals: number;
@@ -23,7 +24,7 @@ type Step = 'confirm' | 'signing' | 'sealing' | 'success';
 
 export function SealRedEnvelopesModal({ selectedRows, currencyDecimals, onComplete }: SealRedEnvelopesModalProps) {
   const { address } = useAppKitAccount();
-  const { walletProvider } = useAppKitProvider('eip155');
+  const { walletProvider } = useAppKitProvider<EIP1193Provider>('eip155');
   const [step, setStep] = useState<Step>('confirm');
   const [currencyAddress, setCurrencyAddress] = useState<string | null>(null);
 
@@ -51,9 +52,11 @@ export function SealRedEnvelopesModal({ selectedRows, currencyDecimals, onComple
     try {
       setStep('signing');
 
+      const { walletClient, publicClient, account } = await createViemClients(MEGAETH_CHAIN_ID, walletProvider);
+
       const _seals = selectedRows.map((row) => {
-        const recipientWallet = ethers.getAddress(row.recipient.trim());
-        const amountWei = ethers.parseUnits(row.amount || '0', currencyDecimals);
+        const recipientWallet = getAddress(row.recipient.trim());
+        const amountWei = parseUnits(row.amount || '0', currencyDecimals);
         return {
           recipient: { wallet: recipientWallet, amount: amountWei },
           message: row.message ?? '',
@@ -67,25 +70,26 @@ export function SealRedEnvelopesModal({ selectedRows, currencyDecimals, onComple
       );
 
       if (!isNativeToken(currencyAddress, MEGAETH_CHAIN_ID.toString())) {
-        await approveERC20Spender(
-          currencyAddress,
-          RED_ENVELOPE_ADDRESS,
-          sumAmountWei,
-          walletProvider as Eip1193Provider,
-        );
+        await approveERC20Spender({
+          walletClient,
+          tokenAddress: currencyAddress as Address,
+          spender: RED_ENVELOPE_ADDRESS as Address,
+          amount: sumAmountWei,
+          account,
+        });
       }
 
-      const transaction = await writeContract(
-        RedEnvelopeContract,
-        RED_ENVELOPE_ADDRESS,
-        walletProvider as Eip1193Provider,
-        'seal',
-        [_seals],
-      );
+      const hash = await walletClient.writeContract({
+        abi: RedEnvelopeAbi,
+        address: RED_ENVELOPE_ADDRESS as Address,
+        functionName: 'seal',
+        args: [_seals],
+        account
+      });
 
       setStep('sealing');
 
-      await transaction.wait();
+      await publicClient.waitForTransactionReceipt({ hash });
 
       setStep('success');
     } catch (error: unknown) {

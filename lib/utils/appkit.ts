@@ -1,4 +1,4 @@
-import { EthersAdapter } from '@reown/appkit-adapter-ethers';
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import {
   createAppKit,
   useAppKit,
@@ -11,7 +11,6 @@ import {
   useWalletInfo,
   useAppKitProvider
 } from '@reown/appkit/react';
-import { AppKitNetwork } from '@reown/appkit/networks';
 
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 
@@ -41,17 +40,24 @@ export const getAppKitNetwork = (chain: Chain) => {
         url: chain.block_explorer_url,
       },
     },
-  } as AppKitNetwork;
+  };
 };
 
 let appKit: ReturnType<typeof createAppKit>;
 
 export function initializeAppKit() {
+  const networks = getListChains()
+    .filter((chain) => chain.tokens?.length)
+    .map((chain) => getAppKitNetwork(chain));
+
+  const wagmiAdapter = new WagmiAdapter({
+    networks,
+    projectId: process.env.NEXT_PUBLIC_REOWN_PROJECT_ID as string,
+  });
+
   appKit = createAppKit({
-    adapters: [new EthersAdapter()],
-    networks: getListChains()
-      .filter((chain) => chain.tokens?.length)
-      .map((chain) => getAppKitNetwork(chain)) as [AppKitNetwork, ...AppKitNetwork[]],
+    adapters: [wagmiAdapter],
+    networks,
     metadata: {
       name: 'Lemonade',
       description: 'Discover events & communities, find your tribe! Create your own Lemonade Stand to build and collaborate with creators across the world. #makelemonade',

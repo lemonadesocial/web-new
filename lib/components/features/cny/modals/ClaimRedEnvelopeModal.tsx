@@ -1,19 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { formatUnits } from 'ethers';
-import { Eip1193Provider } from 'ethers';
+import { formatUnits, type Address, type EIP1193Provider } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 
 import { Button, ModalContent, modal, toast } from '$lib/components/core';
 import { useAppKitAccount, useAppKitProvider, appKit } from '$lib/utils/appkit';
-import { formatError, writeContract, RedEnvelopeContract } from '$lib/utils/crypto';
+import { createViemClients, formatWallet } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
 import { RED_ENVELOPE_ADDRESS } from '$lib/services/red-envelope/client';
-import { ASSET_PREFIX } from '$lib/utils/constants';
+import { ASSET_PREFIX, MEGAETH_CHAIN_ID } from '$lib/utils/constants';
 import { formatNumber } from '$lib/utils/number';
-import { formatWallet } from '$lib/utils/crypto';
 
 import type { Envelope } from '$lib/graphql/generated/coin/graphql';
+import { RedEnvelopeAbi } from '$lib/abis/RedEnvelope';
 
 type ClaimRedEnvelopeModalProps = {
   envelope: Envelope;
@@ -31,7 +31,7 @@ export function ClaimRedEnvelopeModal({
   onComplete,
 }: ClaimRedEnvelopeModalProps) {
   const { address } = useAppKitAccount();
-  const { walletProvider } = useAppKitProvider('eip155');
+  const { walletProvider } = useAppKitProvider<EIP1193Provider>('eip155');
   const [step, setStep] = useState<Step>('entry');
 
   const ownerDisplay = formatWallet(envelope.owner);
@@ -52,17 +52,19 @@ export function ClaimRedEnvelopeModal({
     try {
       setStep('signing');
 
-      const transaction = await writeContract(
-        RedEnvelopeContract,
-        RED_ENVELOPE_ADDRESS,
-        walletProvider as Eip1193Provider,
-        'claim',
-        [BigInt(envelope.token_id)],
-      );
+      const { walletClient, publicClient, account } = await createViemClients(MEGAETH_CHAIN_ID, walletProvider);
+
+      const hash = await walletClient.writeContract({
+        abi: RedEnvelopeAbi,
+        address: RED_ENVELOPE_ADDRESS as Address,
+        functionName: 'claim',
+        args: [BigInt(envelope.token_id)],
+        account
+      });
 
       setStep('claiming');
 
-      await transaction.wait();
+      await publicClient.waitForTransactionReceipt({ hash });
 
       setStep('success');
     } catch (error: unknown) {

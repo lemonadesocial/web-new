@@ -1,13 +1,14 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
+import { createPublicClient, http, type Address } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 
 import { useAppKitAccount, useAppKit } from '$lib/utils/appkit';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
 import { SuccessModal } from '$lib/components/features/modals/SuccessModal';
 import { Card, ModalContent } from '$lib/components/core';
-import { AbstractPassportContract, formatWallet, ZugramaPassportContract } from '$lib/utils/crypto';
+import { formatWallet, getViemChainConfig } from '$lib/utils/crypto';
+import { AbstractPassportABI } from '$lib/abis/AbstractPassport';
 import { useClient } from '$lib/graphql/request';
 import { CanMintPassportDocument, Chain, PassportProvider } from '$lib/graphql/generated/backend/graphql';
 import { ContractAddressFieldMapping, PASSPORT_PROVIDER } from '../../types';
@@ -22,9 +23,17 @@ async function checkPassportBalance(provider: PASSPORT_PROVIDER, address: string
   }
 
   try {
-    const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-    const contract = AbstractPassportContract.attach(contractAddress).connect(provider) as ethers.Contract;
-    const balance = await contract.getFunction('balanceOf')(address);
+    const viemChain = getViemChainConfig(chain);
+    const publicClient = createPublicClient({
+      chain: viemChain,
+      transport: http(chain.rpc_url),
+    });
+    const balance = await publicClient.readContract({
+      abi: AbstractPassportABI,
+      address: contractAddress as Address,
+      functionName: 'balanceOf',
+      args: [address as Address],
+    });
     return Number(balance);
   } catch (error) {
     Sentry.captureException(error);

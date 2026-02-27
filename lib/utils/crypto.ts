@@ -1,31 +1,12 @@
 import { getDefaultStore } from 'jotai';
-import { Contract, Eip1193Provider, ethers, isError } from 'ethers';
+import { createPublicClient, createWalletClient, custom, http, type Address, type EIP1193Provider as ViemEIP1193Provider, type PublicClient, type WalletClient } from 'viem';
+import { mainnet } from 'viem/chains';
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
 import { DEFAULT_GAS_LIMIT, GAS_LIMIT_BY_CHAIN_ID, MEGAETH_CHAIN_ID } from '$lib/utils/constants';
 
 import ERC20 from '$lib/abis/ERC20.json';
-import LemonadeRelayPayment from '$lib/abis/LemonadeRelayPayment.json';
-import LemonadeStakePayment from '$lib/abis/LemonadeStakePayment.json';
 import ERC721 from '$lib/abis/ERC721.json'; 
-import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
-import LemonadePassport from '$lib/abis/LemonadePassport.json';
-import { TRPCClientError } from '@trpc/client';
-import ZugramaPassport from '$lib/abis/ZuGramaPassport.json';
-import { Chain } from '$lib/graphql/generated/backend/graphql';
-import { AbstractPassportABI } from '$lib/abis/AbstractPassport';
-import MusicNft from '$lib/abis/MusicNft.json';
-import { RedEnvelopeAbi } from '$lib/abis/RedEnvelope';
-
-export const ERC20Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC20));
-export const ERC721Contract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ERC721));
-export const LemonadeRelayPaymentContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonadeRelayPayment.abi));
-export const LemonadeStakePaymentContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonadeStakePayment.abi));
-export const LemonheadNFTContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonheadNFT.abi));
-export const LemonadePassportContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(LemonadePassport.abi));
-export const ZugramaPassportContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(ZugramaPassport.abi));
-export const AbstractPassportContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(AbstractPassportABI));
-export const MusicNftContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(MusicNft.abi));
-export const RedEnvelopeContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(RedEnvelopeAbi));
+import { Chain as BackendChain } from '$lib/graphql/generated/backend/graphql';
 
 export function getListChains() {
   return getDefaultStore().get(listChainsAtom);
@@ -33,6 +14,49 @@ export function getListChains() {
 
 export function getChain(network: string) {
   return getDefaultStore().get(chainsMapAtom)[network];
+}
+
+export function getViemChainConfig(chain: BackendChain) {
+  const nativeToken = chain.tokens?.[0];
+
+  return {
+    id: Number(chain.chain_id),
+    name: chain.name,
+    nativeCurrency: {
+      name: nativeToken?.name || 'Ether',
+      symbol: nativeToken?.symbol || 'ETH',
+      decimals: nativeToken?.decimals || 18
+    },
+    rpcUrls: {
+      default: {
+        http: [chain.rpc_url]
+      }
+    }
+  };
+}
+
+export async function createViemClients(chainId: string | number, walletProvider: ViemEIP1193Provider) {
+  const chain = getChain(chainId.toString());
+
+  if (!chain || !chain.rpc_url) {
+    throw new Error(`Chain ${chainId} configuration not found`);
+  }
+
+  const viemChain = getViemChainConfig(chain);
+
+  const walletClient = createWalletClient({
+    chain: viemChain,
+    transport: custom(walletProvider),
+  });
+
+  const publicClient = createPublicClient({
+    chain: viemChain,
+    transport: http(chain.rpc_url),
+  });
+
+  const [account] = await walletClient.getAddresses();
+
+  return { walletClient, publicClient, account, chain };
 }
 
 export function formatWallet(address: string, length = 4): string {
@@ -44,220 +68,79 @@ export function formatWallet(address: string, length = 4): string {
 export const isNativeToken = (tokenAddress: string, network: string) => {
   const chain = getListChains().find(c => c.chain_id === network);
   const token = chain?.tokens?.find(t => t.contract === tokenAddress);
-  return token?.is_native || tokenAddress.toLowerCase() === ethers.ZeroAddress;
+  return token?.is_native || tokenAddress.toLowerCase() === zeroAddress;
 };
 
 export function getGasLimit(chainId: number): bigint {
   return GAS_LIMIT_BY_CHAIN_ID[chainId] ?? DEFAULT_GAS_LIMIT;
 }
 
-export async function getGasOptions(provider: ethers.Provider): Promise<{ gas: bigint }> {
-  const network = await provider.getNetwork();
-  const gasLimit = getGasLimit(Number(network.chainId));
-  return { gas: gasLimit };
+export function getGasOptionsByChainId(chainId: string | number): { gas: bigint } {
+  return { gas: getGasLimit(Number(chainId)) };
 }
 
-export async function writeContract(
-  contractInstance: ethers.Contract,
-  contractAddress: string,
-  provider: Eip1193Provider,
-  functionName: string,
-  args: unknown[],
-  txOptions: Record<string, unknown> = {}
-): Promise<ethers.TransactionResponse> {
-  const browserProvider = new ethers.BrowserProvider(provider);
-  const signer = await browserProvider.getSigner();
-  const contract = contractInstance.attach(contractAddress).connect(signer);
-  const network = await browserProvider.getNetwork();
-  const gasLimit = getGasLimit(Number(network.chainId));
-  
-  const data = contract.interface.encodeFunctionData(functionName, args);
-  
-  const tx = await signer.sendTransaction({
-    to: contractAddress,
-    data: ethers.hexlify(data),
-    gasLimit,
-    ...txOptions
+type BalanceParams = {
+  publicClient: PublicClient;
+  tokenAddress: string;
+  chainId: string;
+  account: Address;
+};
+
+export async function getBalance({
+  publicClient,
+  tokenAddress,
+  chainId,
+  account
+}: BalanceParams): Promise<bigint> {
+  if (isNativeToken(tokenAddress, chainId)) {
+    return publicClient.getBalance({ address: account });
+  }
+
+  const erc20Balance = await publicClient.readContract({
+    abi: ERC20,
+    address: tokenAddress as Address,
+    functionName: 'balanceOf',
+    args: [account]
   });
 
-  if (Number(network.chainId) === MEGAETH_CHAIN_ID) {
-    try {
-      const receipt = await browserProvider.send('realtime_getTransactionReceipt', [tx.hash]);
-      if (receipt) {
-        return {
-          ...tx,
-          wait: async () => Promise.resolve(receipt),
-          receipt
-        };
-      }
-    } catch {
-    }
-  }
-  
-  return tx;
-}
-
-export async function getBalance(
-  tokenAddress: string,
-  chainId: string,
-  walletProvider: Eip1193Provider,
-  address?: string
-): Promise<bigint> {
-  const provider = new ethers.BrowserProvider(walletProvider);
-  const signer = await provider.getSigner();
-  const userAddress = address || await signer.getAddress();
-
-  if (isNativeToken(tokenAddress, chainId)) {
-    return await provider.getBalance(userAddress);
-  }
-
-  const erc20Token = new ethers.Contract(tokenAddress, ERC20, signer);
-  return await erc20Token.balanceOf(userAddress);
+  return erc20Balance as bigint;
 }
 
 export async function checkBalanceSufficient(
-  tokenAddress: string,
-  chainId: string,
-  amount: bigint,
-  walletProvider: Eip1193Provider,
-  address?: string
+  params: BalanceParams & { amount: bigint }
 ): Promise<void> {
-  const balance = await getBalance(tokenAddress, chainId, walletProvider, address);
-  
+  const { amount, ...balanceParams } = params;
+  const balance = await getBalance(balanceParams);
+
   if (balance < amount) {
     throw new Error('insufficient funds');
   }
 }
 
-export async function approveERC20Spender(tokenAddress: string, spender: string, amount: bigint, walletProvider: Eip1193Provider) {
-  const transaction = await writeContract(
-    ERC20Contract,
-    tokenAddress,
-    walletProvider,
-    'approve',
-    [spender, amount]
-  );
-
-  await transaction.wait();
-}
-
-export async function transfer(toAddress: string, amount: string, tokenAddress: string, walletProvider: Eip1193Provider, network: string) {
-  try {
-    if (!isNativeToken(tokenAddress, network)) {
-      const transaction = await writeContract(
-        ERC20Contract,
-        tokenAddress,
-        walletProvider,
-        'transfer',
-        [toAddress, amount]
-      );
-
-      return transaction.hash;
-    }
-
-    const browserProvider = new ethers.BrowserProvider(walletProvider);
-    const signer = await browserProvider.getSigner();
-    const fromAddress = await signer.getAddress();
-    const txDetails = {
-      from: fromAddress,
-      to: toAddress,
-      value: amount,
-      data: '0x'
-    };
-
-    const gasLimit = await browserProvider.estimateGas(txDetails);
-
-    const transaction = await signer.sendTransaction({
-      ...txDetails,
-      gasLimit
-    });
-
-    return transaction.hash;
-  } catch (err: unknown) {
-    if (typeof err === 'object' && err !== null && 'transactionHash' in err) {
-      return (err as { transactionHash: string }).transactionHash; // workaround for Rainbow
-    }
-    throw err;
-  }
+type ApproveERC20Params = {
+  walletClient: WalletClient;
+  tokenAddress: Address;
+  spender: Address;
+  amount: bigint;
+  account: Address;
 };
 
-export function formatError(error: unknown): string {
-  if (isError(error, 'ACTION_REJECTED')) {
-    return 'Transaction was rejected by user';
-  }
-
-  if (isError(error, 'INSUFFICIENT_FUNDS')) {
-    return 'Insufficient funds to complete transaction';
-  }
-
-  if (isError(error, 'NETWORK_ERROR')) {
-    return 'Network error. Please check your connection and try again';
-  }
-
-  if (isError(error, 'TIMEOUT')) {
-    return 'Transaction timed out. Please try again';
-  }
-
-  if (isError(error, 'CALL_EXCEPTION')) {
-    return 'Transaction failed. Please check your inputs and try again.';
-  }
-
-  if (isError(error, 'NONCE_EXPIRED')) {
-    return 'Transaction nonce expired. Please try again';
-  }
-
-  if (isError(error, 'REPLACEMENT_UNDERPRICED')) {
-    return 'Transaction replacement under-priced. Please try again with higher gas';
-  }
-
-  if (isError(error, 'UNSUPPORTED_OPERATION')) {
-    return 'Operation not supported. Please try a different approach';
-  }
-
-  if (isError(error, 'INVALID_ARGUMENT')) {
-    return 'Invalid input provided. Please check your parameters';
-  }
-
-  if (isError(error, 'SERVER_ERROR')) {
-    return 'Server error occurred. Please try again later';
-  }
-
-  const errorMsg = error instanceof Error ? error.message : typeof error === 'object' && error !== null && 'message' in error ? String((error as { message: unknown }).message) : '';
-  if (errorMsg) {
-    const message = errorMsg.toLowerCase();
-    
-    if (message.includes('user rejected') || message.includes('user denied')) {
-      return 'Transaction was rejected by user';
-    }
-    
-    if (message.includes('insufficient funds')) {
-      return 'Insufficient funds to complete transaction';
-    }
-    
-    if (message.includes('network') || message.includes('connection')) {
-      return 'Network error. Please check your connection and try again';
-    }
-    
-    if (message.includes('timeout')) {
-      return 'Transaction timed out. Please try again';
-    }
-    
-    if (message.includes('gas') && message.includes('limit')) {
-      return 'Gas limit exceeded. Please try again with higher gas limit';
-    }
-    
-    if (message.includes('nonce')) {
-      return 'Transaction nonce error. Please try again';
-    }
-  }
-
-  if (error instanceof TRPCClientError) {
-    return error.message;
-  }
-
-  return 'An unexpected error occurred. Please try again';
+export async function approveERC20Spender({
+  walletClient,
+  tokenAddress,
+  spender,
+  amount,
+  account,
+}: ApproveERC20Params) {
+  await walletClient.writeContract({
+    abi: ERC20,
+    address: tokenAddress,
+    functionName: 'approve',
+    args: [spender, amount],
+    account,
+    chain: walletClient.chain,
+  });
 }
-
 
 export enum ContractType {
   ERC20 = 'ERC-20',
@@ -273,19 +156,28 @@ export async function getContractType(
   contractAddress: string,
   rpcUrl: string
 ): Promise<{ type: ContractType; symbol?: string; decimals?: number; }> {
-  const provider = new ethers.JsonRpcProvider(rpcUrl);
+  const publicClient = createPublicClient({
+    transport: http(rpcUrl),
+  });
 
   try {
-    const erc165Contract = new ethers.Contract(contractAddress, ERC165_ABI, provider);
     const ERC721_INTERFACE_ID = '0x80ac58cd';
-    const isERC721 = await erc165Contract.supportsInterface(ERC721_INTERFACE_ID);
+    const isERC721 = await publicClient.readContract({
+      address: contractAddress as Address,
+      abi: ERC165_ABI,
+      functionName: 'supportsInterface',
+      args: [ERC721_INTERFACE_ID],
+    });
 
     if (isERC721) {
-      const erc721Contract = new ethers.Contract(contractAddress, ERC721, provider);
       try {
-        const symbol = await erc721Contract.symbol();
+        const symbol = await publicClient.readContract({
+          address: contractAddress as Address,
+          abi: ERC721,
+          functionName: 'symbol',
+        });
 
-        return { type: ContractType.ERC721, symbol };
+        return { type: ContractType.ERC721, symbol: String(symbol) };
       } catch {
         return { type: ContractType.ERC721 };
       }
@@ -294,16 +186,31 @@ export async function getContractType(
   }
 
   try {
-    const erc20Contract = new ethers.Contract(contractAddress, ERC20, provider);
-
     await Promise.all([
-      erc20Contract.totalSupply().catch(() => { throw new Error('Not ERC20: totalSupply failed'); }),
-      erc20Contract.balanceOf(ethers.ZeroAddress).catch(() => { throw new Error('Not ERC20: balanceOf failed'); })
+      publicClient.readContract({
+        address: contractAddress as Address,
+        abi: ERC20,
+        functionName: 'totalSupply',
+      }).catch(() => { throw new Error('Not ERC20: totalSupply failed'); }),
+      publicClient.readContract({
+        address: contractAddress as Address,
+        abi: ERC20,
+        functionName: 'balanceOf',
+        args: [ethers.ZeroAddress],
+      }).catch(() => { throw new Error('Not ERC20: balanceOf failed'); })
     ]);
 
     const [symbol, decimals] = await Promise.all([
-      erc20Contract.symbol(),
-      erc20Contract.decimals()
+      publicClient.readContract({
+        address: contractAddress as Address,
+        abi: ERC20,
+        functionName: 'symbol',
+      }),
+      publicClient.readContract({
+        address: contractAddress as Address,
+        abi: ERC20,
+        functionName: 'decimals',
+      }),
     ]);
 
     return { type: ContractType.ERC20, symbol, decimals: Number(decimals) };
@@ -325,26 +232,12 @@ export function multiplyByPowerOf10(amount: string, power: number) {
   return result.toString();
 }
 
-export async function waitForEvent(tx: any, contract: Contract, eventName: string) {
-  const receipt = await tx.wait();
-  const iface = contract.interface;
+export const MainnetRpcProvider = createPublicClient({
+  chain: mainnet,
+  transport: http('https://eth-mainnet.public.blastapi.io'),
+});
 
-  let parsedEventLog: any = null;
-
-  for (const log of receipt.logs) {
-    const parsedLog = iface.parseLog(log);
-    if (parsedLog?.name === eventName) {
-      parsedEventLog = parsedLog;
-      break;
-    }
-  }
-
-  return parsedEventLog;
-}
-
-export const MainnetRpcProvider = new ethers.JsonRpcProvider('https://eth-mainnet.public.blastapi.io'); 
-
-export const getTransactionUrl = (chain: Chain, txHash: string) => {
+export const getTransactionUrl = (chain: BackendChain, txHash: string) => {
   if (!chain?.block_explorer_url || !chain?.block_explorer_for_tx) {
     return '';
   }
@@ -364,7 +257,7 @@ export const getTransactionUrl = (chain: Chain, txHash: string) => {
   return `${baseUrl}${path}`;
 };
 
-export const getAddressUrl = (chain: Chain, address: string) => {
+export const getAddressUrl = (chain: BackendChain, address: string) => {
   if (!chain?.block_explorer_url || !chain?.block_explorer_for_address) {
     return '';
   }

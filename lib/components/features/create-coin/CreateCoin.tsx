@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAtomValue } from 'jotai';
-import * as ethers from 'ethers';
+import { createPublicClient, encodeAbiParameters, formatEther, http, type Address } from 'viem';
 import { format } from 'date-fns';
 import { toDate } from 'date-fns-tz';
 import clsx from 'clsx';
@@ -15,7 +15,8 @@ import { Calendar } from '$lib/components/core/calendar';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
 import { TOTAL_SUPPLY, getLaunchTokenParams, SECONDS_PER_DAY, DAYS_PER_MONTH } from '$lib/services/token-launch-pad';
-import { formatError } from '$lib/utils/crypto';
+import { getViemChainConfig } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
 import type { LaunchTokenParams } from '$lib/services/token-launch-pad';
 import { getUserTimezoneOption, type TimezoneOption } from '$lib/utils/timezone';
 import { PositionManager } from '$lib/abis/token-launch-pad/PositionManager';
@@ -172,17 +173,37 @@ export function CreateCoin() {
     const fetchDeploymentFee = async () => {
       if (!launchChain?.launchpad_zap_contract_address || !launchChain?.rpc_url || !watchedStartingMarketcap) return;
 
-      const rpcProvider = new ethers.JsonRpcProvider(launchChain.rpc_url);
-      const zapContract = new ethers.Contract(launchChain.launchpad_zap_contract_address, ZapContractABI.abi, rpcProvider);
-      const positionManagerAddress = await zapContract.positionManager();
+      const publicClient = createPublicClient({
+        chain: getViemChainConfig(launchChain),
+        transport: http(launchChain.rpc_url),
+      });
 
-      const positionManagerContract = new ethers.Contract(positionManagerAddress, PositionManager, rpcProvider);
+      const positionManagerAddress = await publicClient.readContract({
+        abi: ZapContractABI.abi,
+        address: launchChain.launchpad_zap_contract_address as Address,
+        functionName: 'positionManager',
+      }) as Address;
 
       const usdcMarketCap = BigInt(watchedStartingMarketcap) * BigInt(1_000_000);
-      const initialPriceParams = ethers.AbiCoder.defaultAbiCoder().encode(['tuple(uint256)'], [[usdcMarketCap]]);
+      const initialPriceParams = encodeAbiParameters(
+        [
+          {
+            name: 'config',
+            type: 'tuple',
+            components: [{ name: 'usdcMarketCap', type: 'uint256' }],
+          },
+        ],
+        [[usdcMarketCap]],
+      );
 
-      const fee = await positionManagerContract.getFlaunchingFee(initialPriceParams);
-      const feeInEth = ethers.formatEther(fee);
+      const fee = await publicClient.readContract({
+        abi: PositionManager,
+        address: positionManagerAddress,
+        functionName: 'getFlaunchingFee',
+        args: [initialPriceParams],
+      }) as bigint;
+
+      const feeInEth = formatEther(fee);
       setDeploymentFee(feeInEth);
     };
 
@@ -385,12 +406,10 @@ export function CreateCoin() {
         launchAt,
       };
 
-      const rpcProvider = new ethers.JsonRpcProvider(launchChain.rpc_url);
-
       const txParams = await getLaunchTokenParams(
+        launchChain,
         launchChain.launchpad_zap_contract_address!,
         launchChain.launchpad_treasury_address_fee_split_manager_implementation_contract_address!,
-        rpcProvider,
         params,
       );
 

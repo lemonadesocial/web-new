@@ -2,8 +2,7 @@
 import React from 'react';
 import { useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
-import { parseEther, formatEther } from 'ethers';
-import { BrowserProvider, type Eip1193Provider, Interface } from 'ethers';
+import { decodeEventLog, formatEther, parseEther, type EIP1193Provider } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 
 import { Button, Card, Skeleton, modal, toast } from '$lib/components/core';
@@ -19,7 +18,8 @@ import { chainsMapAtom } from '$lib/jotai/chains';
 import { useListChainIds } from '$lib/hooks/useListChainIds';
 import { useTokenData, useHoldersCount, useVolume24h } from '$lib/hooks/useCoin';
 import { calculateMarketCapData } from '$lib/utils/coin';
-import { formatWallet, formatError, getTransactionUrl } from '$lib/utils/crypto';
+import { createViemClients, formatWallet, getTransactionUrl } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
 import { getTimeAgo } from '$lib/utils/date';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 import { appKit } from '$lib/utils/appkit';
@@ -82,31 +82,33 @@ function QuickBuyProvider({ children }: { children: React.ReactNode }) {
 
       try {
         setBuyingPoolId(pool.id);
-        const provider = new BrowserProvider(walletProvider as Eip1193Provider);
-        const signer = await provider.getSigner();
-        const flaunchClient = FlaunchClient.getInstance(chain, pool.memecoin, signer);
+        const { walletClient, publicClient } = await createViemClients(chain.chain_id, walletProvider as EIP1193Provider);
+        const flaunchClient = FlaunchClient.getInstance(chain, pool.memecoin, walletClient);
 
         const txHash = await flaunchClient.buyCoin({
           buyAmount: quickBuySize,
           recipient: userAddress,
         });
 
-        const receipt = await provider.waitForTransaction(txHash);
+        const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash as `0x${string}` });
 
         let tokenAmount: string | null = null;
 
         if (receipt && userAddress) {
-          const erc20Interface = new Interface(ERC20);
           const memecoinAddressLower = pool.memecoin.toLowerCase();
           const userAddressLower = userAddress.toLowerCase();
 
           for (const log of receipt.logs) {
-            if (log.address.toLowerCase() !== memecoinAddressLower) continue;
+            if (log.address?.toLowerCase() !== memecoinAddressLower) continue;
 
             try {
-              const parsedLog = erc20Interface.parseLog(log);
-              if (parsedLog?.name === 'Transfer' && parsedLog.args.to.toLowerCase() === userAddressLower) {
-                const value = parsedLog.args.value as bigint;
+              const decoded = decodeEventLog({
+                abi: ERC20,
+                data: log.data,
+                topics: log.topics,
+              });
+              if (decoded.eventName === 'Transfer' && (decoded.args as { to?: string }).to?.toLowerCase() === userAddressLower) {
+                const value = (decoded.args as { value: bigint }).value;
                 tokenAmount = formatNumber(Number(formatEther(value)));
                 break;
               }

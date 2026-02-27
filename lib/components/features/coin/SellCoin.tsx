@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserProvider, type Eip1193Provider } from 'ethers';
-import { formatEther, parseUnits } from 'viem';
+import { formatEther, parseUnits, type EIP1193Provider } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 import { useSendCalls } from 'wagmi';
 import { waitForCallsStatus } from '@wagmi/core';
@@ -12,7 +11,8 @@ import { appKit } from '$lib/utils/appkit';
 import { FlaunchClient } from '$lib/services/coin/FlaunchClient';
 import { useTokenBalance } from '$lib/hooks/useBalance';
 import { formatNumber } from '$lib/utils/number';
-import { formatError, getTransactionUrl } from '$lib/utils/crypto';
+import { createViemClients, getTransactionUrl } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
 import { config } from '$lib/utils/wagmi';
 
 import { ConnectWallet } from '../modals/ConnectWallet';
@@ -109,13 +109,12 @@ export function SellCoin({ chain, address }: { chain: Chain; address: string }) 
       }
 
       setIsSelling(true);
-      
-      const provider = new BrowserProvider(walletProvider as Eip1193Provider);
-      const signer = await provider.getSigner();
-      const flaunchClient = FlaunchClient.getInstance(chain, address, signer);
+
+      const { walletClient } = await createViemClients(chain.chain_id, walletProvider as EIP1193Provider);
+      const flaunchClient = FlaunchClient.getInstance(chain, address, walletClient);
 
       let txHash: string;
-      
+
       try {
         txHash = await flaunchClient.sellCoinWith7702((userOps) => send7702Calls(userOps), {
           sellAmount,

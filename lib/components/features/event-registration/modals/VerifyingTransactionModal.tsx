@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { BrowserProvider, Eip1193Provider } from 'ethers';
+import { createPublicClient, custom, type EIP1193Provider } from 'viem';
 import { useAtomValue as useJotaiAtomValue } from "jotai";
 
 import { useAppKitNetwork, useAppKitProvider } from '$lib/utils/appkit';
+import { getViemChainConfig } from '$lib/utils/crypto';
 import { useMutation } from '$lib/graphql/request';
 import { UpdatePaymentDocument } from "$lib/graphql/generated/backend/graphql";
 import { chainsMapAtom } from "$lib/jotai";
@@ -57,9 +58,15 @@ export function VerifyingTransactionModal({
   const waitAndUpdatePayment = async () => {
     if (!walletProvider) throw new Error('Cannot get Web3Provider');
     if (!txHash) throw new Error('Invalid transaction hash');
+    if (!chain) throw new Error('Chain not configured');
 
-    const provider = new BrowserProvider(walletProvider as Eip1193Provider);
-    const transaction = await provider.getTransaction(txHash);
+    const viemChain = getViemChainConfig(chain);
+    const publicClient = createPublicClient({
+      chain: viemChain,
+      transport: custom(walletProvider as EIP1193Provider),
+    });
+
+    const transaction = await publicClient.getTransaction({ hash: txHash as `0x${string}` });
 
     if (!transaction) throw new Error('Unable to get transaction');
 
@@ -68,11 +75,16 @@ export function VerifyingTransactionModal({
     setConfirmationTime(safeConfirmations * blockTime);
 
     try {
-      await transaction.wait(safeConfirmations);
+      await publicClient.waitForTransactionReceipt({
+        hash: txHash as `0x${string}`,
+        confirmations: safeConfirmations,
+      });
     } catch {
-      // Wait for one block time and retry once
       await new Promise(resolve => setTimeout(resolve, blockTime * 1000));
-      await transaction.wait(safeConfirmations);
+      await publicClient.waitForTransactionReceipt({
+        hash: txHash as `0x${string}`,
+        confirmations: safeConfirmations,
+      });
     }
 
     await handleUpdatePayment({

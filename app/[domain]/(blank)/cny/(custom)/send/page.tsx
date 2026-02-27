@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ethers } from 'ethers';
+import { isAddress, getAddress } from 'viem';
 
 import { useQuery } from '$lib/graphql/request';
 import { coinClient } from '$lib/graphql/request/instances';
@@ -28,7 +28,7 @@ import { useMediaQuery } from '$lib/hooks/useMediaQuery';
 const RECIPIENT_PLACEHOLDER = 'Who do you want to send this to?';
 
 function isRowValid(row: EnvelopeRow): boolean {
-  const addressValid = ethers.isAddress(row.recipient.trim());
+  const addressValid = isAddress(row.recipient.trim());
   const amountTrimmed = row.amount.trim();
   const amountValid =
     amountTrimmed !== '' &&
@@ -58,9 +58,9 @@ function parseCSVAddresses(text: string): string[] {
 
     for (const cell of cells) {
       const trimmed = cell.trim();
-      if (trimmed && ethers.isAddress(trimmed) && !seen.has(trimmed.toLowerCase())) {
+      if (trimmed && isAddress(trimmed) && !seen.has(trimmed.toLowerCase())) {
         seen.add(trimmed.toLowerCase());
-        addresses.push(ethers.getAddress(trimmed));
+        addresses.push(getAddress(trimmed));
       }
     }
   }

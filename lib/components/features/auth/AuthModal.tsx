@@ -15,7 +15,7 @@ import { CodeVerification } from "./CodeVerification";
 import { VerifyEmailModal } from "./VerifyEmailModal";
 import { ConnectWalletModal } from "./ConnectWalletModal";
 import { ConnectWalletButton } from "./ConnectWalletButton";
-import { formatError } from "$lib/utils/crypto";
+import { formatError } from "$lib/utils/error";
 import { useClient } from "$lib/graphql/request";
 import { GetMeDocument } from "$lib/graphql/generated/backend/graphql";
 import { FarcasterConnectButton } from "./FarcasterConnectButton";
