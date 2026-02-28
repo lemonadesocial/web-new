@@ -13,6 +13,7 @@ import { AI_CONFIG } from '$lib/utils/constants';
 import { Event, GetEventDocument, GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
 import { useUpdateEvent } from '$lib/components/features/event-manage/store';
 import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
+import { getAIPageEditTriggers } from '../page-builder/hooks/ai-page-edit-bridge';
 import { AIChatActionKind, Message, useAIChat } from './provider';
 
 export function InputChat() {
@@ -104,6 +105,50 @@ export function InputChat() {
               fetchPolicy: 'network-only',
             });
             if (res.data?.getSpace) client.writeFragment({ id: `Space:${data._id}`, data: res.data.getSpace });
+          })
+          .with('ai_page_edit', async () => {
+            const triggers = getAIPageEditTriggers();
+            if (!triggers) {
+              // eslint-disable-next-line no-console
+              console.warn('[InputChat] ai_page_edit: no triggers registered (page builder not mounted)');
+              return;
+            }
+            const data = tool.data;
+            if (!data || typeof data !== 'object' || typeof data.action !== 'string') {
+              // eslint-disable-next-line no-console
+              console.warn('[InputChat] ai_page_edit: invalid payload — missing or malformed "action"', data);
+              return;
+            }
+            const action: string = data.action;
+            if (action === 'create') {
+              if (!data.input || typeof data.input !== 'object') {
+                // eslint-disable-next-line no-console
+                console.warn('[InputChat] ai_page_edit/create: missing "input" object', data);
+                return;
+              }
+              await triggers.requestCreate(data.input as Record<string, unknown>);
+            } else if (action === 'update_section') {
+              if (typeof data.config_id !== 'string' || typeof data.section_id !== 'string' || !data.input || typeof data.input !== 'object') {
+                // eslint-disable-next-line no-console
+                console.warn('[InputChat] ai_page_edit/update_section: missing config_id, section_id, or input', data);
+                return;
+              }
+              await triggers.requestUpdateSection(
+                data.config_id,
+                data.section_id,
+                data.input as Record<string, unknown>,
+              );
+            } else if (action === 'generate') {
+              if (!data.input || typeof data.input !== 'object') {
+                // eslint-disable-next-line no-console
+                console.warn('[InputChat] ai_page_edit/generate: missing "input" object', data);
+                return;
+              }
+              await triggers.requestGenerate(data.input as Record<string, unknown>);
+            } else {
+              // eslint-disable-next-line no-console
+              console.warn('[InputChat] ai_page_edit: unknown action', action, data);
+            }
           });
       },
       onError: (error) => {

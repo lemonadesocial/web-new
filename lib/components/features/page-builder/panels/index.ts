@@ -8,4 +8,5 @@ export { CodePanel } from './CodePanel';
 export { VersionHistoryPanel } from './VersionHistoryPanel';
 export { SaveAsTemplatePanel } from './SaveAsTemplatePanel';
 export { TemplateUpdateBanner } from './TemplateUpdateBanner';
+export { AIDraftBanner } from './AIDraftBanner';
 export { TemplateDetailModal } from './TemplateDetailModal';
