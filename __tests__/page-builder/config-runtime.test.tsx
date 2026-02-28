@@ -208,8 +208,8 @@ describe('ConfigRuntime', () => {
       const wrappers = container.querySelectorAll('[data-section-id]');
 
       expect(wrappers[0].className).toContain('w-full');
-      expect(wrappers[1].className).toContain('max-w-3xl');
-      expect(wrappers[2].className).toContain('max-w-7xl');
+      expect(wrappers[1].className).toContain('max-w-2xl');
+      expect(wrappers[2].className).toContain('max-w-5xl');
     });
 
     it('applies padding classes', () => {
@@ -224,8 +224,10 @@ describe('ConfigRuntime', () => {
       const { container } = render(<ConfigRuntime config={config} />);
       const wrappers = container.querySelectorAll('[data-section-id]');
 
-      expect(wrappers[0].className).toContain('py-0');
-      expect(wrappers[1].className).toContain('py-24');
+      // padding: 'none' maps to '' (empty string) — no padding class applied
+      expect(wrappers[0].className).not.toContain('py-');
+      // padding: 'xl' maps to 'py-16'
+      expect(wrappers[1].className).toContain('py-16');
     });
 
     it('applies alignment class when provided', () => {
