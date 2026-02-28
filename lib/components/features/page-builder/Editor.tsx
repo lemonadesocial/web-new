@@ -34,6 +34,7 @@ import {
   canRedoAtom,
   selectedNodeIdAtom,
   activeRightPanelAtom,
+  isAIDraftPreviewAtom,
 } from './store';
 import type { OwnerType, PageConfig } from './types';
 import { classifyError, pbEvent, toastMessageFor } from './observability';
@@ -42,6 +43,9 @@ import { Canvas } from './Canvas';
 import { BottomBar } from './BottomBar';
 import { PropsPanel } from './PropsPanel';
 import { TemplateUpdateBanner } from './panels/TemplateUpdateBanner';
+import { AIDraftBanner } from './panels/AIDraftBanner';
+import { useAIPageEdit } from './hooks/useAIPageEdit';
+import { setAIPageEditTriggers } from './hooks/ai-page-edit-bridge';
 
 // ── Constants ──
 
@@ -216,13 +220,36 @@ function EditorInner({
   backHref: string;
   initialCraftState: string;
 }) {
-  const { query } = useEditor();
+  const { query, actions } = useEditor();
   const setIsDirty = useSetAtom(isDirtyAtom);
   const setIsSaving = useSetAtom(isSavingAtom);
   const setIsPublishing = useSetAtom(isPublishingAtom);
   const isDirty = useAtomValue(isDirtyAtom);
   const pageConfig = useAtomValue(pageConfigAtom);
   const configId = useAtomValue(configIdAtom);
+  const isAIDraftPreview = useAtomValue(isAIDraftPreviewAtom);
+
+  // ── AI Draft flow ──
+  const aiPageEdit = useAIPageEdit();
+
+  // Keep a ref so the debounced save can check preview status synchronously
+  const isAIDraftPreviewRef = React.useRef(isAIDraftPreview);
+  isAIDraftPreviewRef.current = isAIDraftPreview;
+
+  // Register bridge for external callers (e.g. InputChat)
+  React.useEffect(() => {
+    setAIPageEditTriggers({
+      requestCreate: aiPageEdit.requestCreate,
+      requestUpdateSection: aiPageEdit.requestUpdateSection,
+      requestGenerate: aiPageEdit.requestGenerate,
+    });
+    return () => setAIPageEditTriggers(null);
+  }, [aiPageEdit.requestCreate, aiPageEdit.requestUpdateSection, aiPageEdit.requestGenerate]);
+
+  // Disable Craft.js editing during AI preview
+  React.useEffect(() => {
+    actions.setOptions((o) => { o.enabled = !isAIDraftPreview; });
+  }, [isAIDraftPreview, actions]);
 
   // Mutations
   const [updateConfig] = useMutation(UpdatePageConfigDocument);
@@ -247,6 +274,7 @@ function EditorInner({
   const debouncedSave = React.useMemo(
     () =>
       debounce(async () => {
+        if (isAIDraftPreviewRef.current) return;
         const currentConfig = extractPageConfigRef.current();
         if (!currentConfig) return;
         try {
@@ -271,9 +299,9 @@ function EditorInner({
   );
 
   React.useEffect(() => {
-    if (isDirty) debouncedSave();
+    if (isDirty && !isAIDraftPreview) debouncedSave();
     return () => debouncedSave.cancel();
-  }, [isDirty, debouncedSave]);
+  }, [isDirty, isAIDraftPreview, debouncedSave]);
 
   // ── Manual save ──
   const handleSave = async () => {
@@ -331,6 +359,12 @@ function EditorInner({
       {configId && pageConfig?.template_id && (
         <TemplateUpdateBanner configId={configId} templateId={pageConfig.template_id} />
       )}
+      <AIDraftBanner
+        onApply={aiPageEdit.applyDraft}
+        onRevert={aiPageEdit.revertDraft}
+        onRetry={aiPageEdit.retryLast}
+        onDismissError={aiPageEdit.dismissError}
+      />
       <TopToolbar
         entityName={entityName}
         backHref={backHref}

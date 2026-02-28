@@ -27,3 +27,12 @@ export const pageConfigAtom = atom<PageConfig | null>(null);
 // --- Derived atoms ---
 export const canUndoAtom = atom(false);
 export const canRedoAtom = atom(false);
+
+// --- AI Draft flow ---
+export type AIDraftPhase = 'idle' | 'loading' | 'previewing' | 'error';
+export const aiDraftPhaseAtom = atom<AIDraftPhase>('idle');
+export const aiPreSnapshotAtom = atom<string | null>(null);
+export const aiPrePageConfigAtom = atom<PageConfig | null>(null);
+export const aiDraftConfigAtom = atom<PageConfig | null>(null);
+export const aiDraftErrorAtom = atom<unknown>(null);
+export const isAIDraftPreviewAtom = atom((get) => get(aiDraftPhaseAtom) === 'previewing');
