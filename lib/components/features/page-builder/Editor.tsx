@@ -34,6 +34,7 @@ import {
   canRedoAtom,
   selectedNodeIdAtom,
   activeRightPanelAtom,
+  isAIDraftPreviewAtom,
 } from './store';
 import type { OwnerType, PageConfig } from './types';
 import { classifyError, pbEvent, toastMessageFor } from './observability';
@@ -45,7 +46,6 @@ import { TemplateUpdateBanner } from './panels/TemplateUpdateBanner';
 import { AIDraftBanner } from './panels/AIDraftBanner';
 import { useAIPageEdit } from './hooks/useAIPageEdit';
 import { setAIPageEditTriggers } from './hooks/ai-page-edit-bridge';
-import { isAIDraftPreviewAtom } from './store';
 
 // ── Constants ──
 

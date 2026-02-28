@@ -80,6 +80,7 @@ export function useAIPageEdit(): UseAIPageEditReturn {
     async (mutationFn: () => Promise<PageConfig | null | undefined>) => {
       // 1. Capture pre-AI snapshot
       cancelledRef.current = false;
+      setDraftError(null);
       const serialized = query.serialize();
       setPreSnapshot(serialized);
       setPrePageConfig(pageConfigRef.current);
@@ -114,7 +115,8 @@ export function useAIPageEdit(): UseAIPageEditReturn {
         } catch {
           // best effort restore
         }
-        setPageConfig(pageConfigRef.current);
+        const prevConfig = prePageConfigRef.current;
+        if (prevConfig) setPageConfig(prevConfig);
         setDraftError(err);
         setPhase('error');
         const ec = classifyError(err);

@@ -12,33 +12,32 @@ import {
 
 /**
  * Extracted handler logic — mirrors the .with('ai_page_edit', ...) block
- * in InputChat.tsx exactly.
+ * in InputChat.tsx exactly, including the warnPageEdit helper.
  */
 async function handleAiPageEdit(toolData: unknown) {
+  // eslint-disable-next-line no-console
+  const warnPageEdit = (msg: string, ...args: unknown[]) => console.warn(`[InputChat] ai_page_edit: ${msg}`, ...args);
+
   const triggers = getAIPageEditTriggers();
   if (!triggers) {
-    // eslint-disable-next-line no-console
-    console.warn('[InputChat] ai_page_edit: no triggers registered (page builder not mounted)');
+    warnPageEdit('no triggers registered (page builder not mounted)');
     return;
   }
   const data = toolData as Record<string, unknown> | undefined;
   if (!data || typeof data !== 'object' || typeof data.action !== 'string') {
-    // eslint-disable-next-line no-console
-    console.warn('[InputChat] ai_page_edit: invalid payload — missing or malformed "action"', data);
+    warnPageEdit('invalid payload — missing or malformed "action"', data);
     return;
   }
   const action: string = data.action;
   if (action === 'create') {
     if (!data.input || typeof data.input !== 'object') {
-      // eslint-disable-next-line no-console
-      console.warn('[InputChat] ai_page_edit/create: missing "input" object', data);
+      warnPageEdit('create: missing "input" object', data);
       return;
     }
     await triggers.requestCreate(data.input as Record<string, unknown>);
   } else if (action === 'update_section') {
     if (typeof data.config_id !== 'string' || typeof data.section_id !== 'string' || !data.input || typeof data.input !== 'object') {
-      // eslint-disable-next-line no-console
-      console.warn('[InputChat] ai_page_edit/update_section: missing config_id, section_id, or input', data);
+      warnPageEdit('update_section: missing config_id, section_id, or input', data);
       return;
     }
     await triggers.requestUpdateSection(
@@ -48,14 +47,12 @@ async function handleAiPageEdit(toolData: unknown) {
     );
   } else if (action === 'generate') {
     if (!data.input || typeof data.input !== 'object') {
-      // eslint-disable-next-line no-console
-      console.warn('[InputChat] ai_page_edit/generate: missing "input" object', data);
+      warnPageEdit('generate: missing "input" object', data);
       return;
     }
     await triggers.requestGenerate(data.input as Record<string, unknown>);
   } else {
-    // eslint-disable-next-line no-console
-    console.warn('[InputChat] ai_page_edit: unknown action', action, data);
+    warnPageEdit('unknown action', action, data);
   }
 }
 
