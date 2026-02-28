@@ -12,6 +12,7 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 
 import { pageConfigAtom, isDirtyAtom } from '../store';
+import { classifyError, pbEvent, toastMessageFor } from '../observability';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -73,8 +74,10 @@ export function TemplateUpdateBanner({ configId, templateId }: TemplateUpdateBan
       toast.success(
         `Template updated from v${updateInfo?.current_version} to v${updateInfo?.latest_version}`,
       );
-    } catch {
-      toast.error('Failed to apply template update.');
+    } catch (err) {
+      const ec = classifyError(err);
+      pbEvent({ op: 'template_update', errorClass: ec, message: 'Template update failed', configId });
+      toast.error(toastMessageFor('Failed to apply template update.', ec));
     }
   };
 

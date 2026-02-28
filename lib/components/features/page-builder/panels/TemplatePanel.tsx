@@ -16,6 +16,7 @@ import {
 
 import { pageConfigAtom, isDirtyAtom, ownerTypeAtom, ownerIdAtom, configIdAtom, subscriptionTierAtom } from '../store';
 import type { Template } from '../types';
+import { classifyError, pbEvent, toastMessageFor } from '../observability';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -202,8 +203,10 @@ export function TemplatePanel() {
 
       setIsDirty(true);
       toast.success(`Template "${template.name}" applied`);
-    } catch {
-      toast.error('Failed to apply template. Please try again.');
+    } catch (err) {
+      const ec = classifyError(err);
+      pbEvent({ op: 'template_apply', errorClass: ec, message: 'Template apply failed', configId: _configId, detail: template._id });
+      toast.error(toastMessageFor('Failed to apply template.', ec));
     } finally {
       setApplyingId(null);
     }

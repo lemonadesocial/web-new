@@ -36,6 +36,7 @@ import {
   activeRightPanelAtom,
 } from './store';
 import type { OwnerType, PageConfig } from './types';
+import { classifyError, pbEvent, toastMessageFor } from './observability';
 import { TopToolbar } from './TopToolbar';
 import { Canvas } from './Canvas';
 import { BottomBar } from './BottomBar';
@@ -126,23 +127,26 @@ export function PageBuilderEditor({
         if (data?.acquireConfigLock?.success) {
           setIsLocked(true);
         } else {
+          pbEvent({ op: 'lock_acquire', errorClass: 'user_fixable', message: 'Lock conflict', configId: config._id });
           toast.error(
             data?.acquireConfigLock?.message ??
-              'Could not acquire editor lock.',
+              'Could not acquire editor lock. Another user may be editing.',
           );
         }
-      } catch {
-        toast.error(
-          'Could not acquire editor lock. Another user may be editing.',
-        );
+      } catch (err) {
+        const ec = classifyError(err);
+        pbEvent({ op: 'lock_acquire', errorClass: ec, message: 'Lock acquire failed', configId: config._id });
+        toast.error(toastMessageFor('Could not acquire editor lock.', ec));
       }
     };
 
     const doHeartbeat = async () => {
       try {
         await heartbeatLockRef.current({ variables: { configId: config._id } });
-      } catch {
+      } catch (err) {
         setIsLocked(false);
+        const ec = classifyError(err);
+        pbEvent({ op: 'lock_heartbeat', errorClass: ec, message: 'Lock heartbeat failed', configId: config._id });
         toast.error('Editor lock lost. Your changes may not save.');
       }
     };
@@ -254,8 +258,10 @@ function EditorInner({
             },
           });
           setIsDirty(false);
-        } catch {
-          toast.error('Auto-save failed. Your work is still in memory.');
+        } catch (err) {
+          const ec = classifyError(err);
+          pbEvent({ op: 'auto_save', errorClass: ec, message: 'Auto-save failed', configId: currentConfig._id });
+          toast.error(toastMessageFor('Auto-save failed. Your work is still in memory.', ec));
         } finally {
           setIsSaving(false);
         }
@@ -284,8 +290,10 @@ function EditorInner({
       });
       setIsDirty(false);
       toast.success('Draft saved');
-    } catch {
-      toast.error('Save failed');
+    } catch (err) {
+      const ec = classifyError(err);
+      pbEvent({ op: 'manual_save', errorClass: ec, message: 'Manual save failed', configId: currentConfig._id });
+      toast.error(toastMessageFor('Save failed.', ec));
     } finally {
       setIsSaving(false);
     }
@@ -308,8 +316,10 @@ function EditorInner({
       await publishConfig({ variables: { id: currentConfig._id } });
       setIsDirty(false);
       toast.success('Page published successfully!');
-    } catch {
-      toast.error('Publish failed');
+    } catch (err) {
+      const ec = classifyError(err);
+      pbEvent({ op: 'publish', errorClass: ec, message: 'Publish failed', configId: currentConfig._id });
+      toast.error(toastMessageFor('Publish failed.', ec));
     } finally {
       setIsPublishing(false);
     }

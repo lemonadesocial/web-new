@@ -16,6 +16,7 @@ import { GeneratePreviewLinkDocument } from '$lib/graphql/generated/backend/grap
 import { pageConfigAtom, configIdAtom, isDirtyAtom } from '../store';
 import type { PreviewLink, PreviewLinkResponse } from '../types';
 import { formatRelativeTime } from '../utils';
+import { classifyError, pbEvent, toastMessageFor } from '../observability';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -137,8 +138,10 @@ export function PreviewSharePanel() {
       }
 
       toast.success('Preview link generated!');
-    } catch {
-      toast.error('Failed to generate preview link.');
+    } catch (err) {
+      const ec = classifyError(err);
+      pbEvent({ op: 'preview_generate', errorClass: ec, message: 'Preview link generation failed', configId });
+      toast.error(toastMessageFor('Failed to generate preview link.', ec));
     }
   };
 
