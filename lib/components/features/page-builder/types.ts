@@ -306,10 +306,11 @@ export interface Template {
 }
 
 export interface TemplateUpdateInfo {
-  has_update: boolean;
+  available: boolean;
   current_version?: string;
   latest_version?: string;
-  changelog?: TemplateChangelog[];
+  changelog_summary?: string;
+  breaking_changes?: boolean;
 }
 
 // --- Asset Types ---

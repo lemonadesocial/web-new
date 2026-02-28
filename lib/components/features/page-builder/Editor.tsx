@@ -40,6 +40,7 @@ import { TopToolbar } from './TopToolbar';
 import { Canvas } from './Canvas';
 import { BottomBar } from './BottomBar';
 import { PropsPanel } from './PropsPanel';
+import { TemplateUpdateBanner } from './panels/TemplateUpdateBanner';
 
 // ── Constants ──
 
@@ -207,6 +208,7 @@ function EditorInner({
   const setIsPublishing = useSetAtom(isPublishingAtom);
   const isDirty = useAtomValue(isDirtyAtom);
   const pageConfig = useAtomValue(pageConfigAtom);
+  const configId = useAtomValue(configIdAtom);
 
   // Mutations
   const [updateConfig] = useMutation(UpdatePageConfigDocument);
@@ -314,6 +316,9 @@ function EditorInner({
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <CraftStateWatcher />
+      {configId && pageConfig?.template_id && (
+        <TemplateUpdateBanner configId={configId} templateId={pageConfig.template_id} />
+      )}
       <TopToolbar
         entityName={entityName}
         backHref={backHref}

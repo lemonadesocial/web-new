@@ -1,10 +1,11 @@
 import { atom } from 'jotai';
-import type { DevicePreview, OwnerType, PageConfig, RightPanelType } from './types';
+import type { DevicePreview, OwnerType, PageConfig, RightPanelType, SubscriptionTier } from './types';
 
 // --- Editor identity ---
 export const configIdAtom = atom<string | null>(null);
 export const ownerTypeAtom = atom<OwnerType>('event');
 export const ownerIdAtom = atom<string>('');
+export const subscriptionTierAtom = atom<SubscriptionTier>('free');
 
 // --- Persistence flags ---
 export const isDirtyAtom = atom(false);

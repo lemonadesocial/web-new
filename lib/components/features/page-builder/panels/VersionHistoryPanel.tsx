@@ -130,7 +130,7 @@ export function VersionHistoryPanel() {
   // --- Fetch versions ---
   const { data: versionsData, loading: isLoading, refetch: refetchVersions } = useQuery(
     ListConfigVersionsDocument,
-    { variables: { configId }, skip: !configId },
+    { variables: { config_id: configId }, skip: !configId },
   );
 
   const versions: ConfigVersion[] = versionsData?.listConfigVersions ?? [];
@@ -146,7 +146,7 @@ export function VersionHistoryPanel() {
 
     try {
       const { data, error } = await saveVersion({
-        variables: { configId, changeSummary: changeSummary || undefined },
+        variables: { config_id: configId, name: changeSummary || undefined },
       });
 
       if (error) throw error;
@@ -173,7 +173,7 @@ export function VersionHistoryPanel() {
 
     try {
       const { data, error } = await restoreVersion({
-        variables: { configId, version: version.version },
+        variables: { config_id: configId, version: version.version },
       });
 
       if (error) throw error;

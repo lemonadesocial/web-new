@@ -14,7 +14,7 @@ import {
   CloneTemplateToConfigDocument,
 } from '$lib/graphql/generated/backend/graphql';
 
-import { pageConfigAtom, isDirtyAtom, ownerTypeAtom, ownerIdAtom, configIdAtom } from '../store';
+import { pageConfigAtom, isDirtyAtom, ownerTypeAtom, ownerIdAtom, configIdAtom, subscriptionTierAtom } from '../store';
 import type { Template } from '../types';
 
 // ---------------------------------------------------------------------------
@@ -149,9 +149,12 @@ export function TemplatePanel() {
   const ownerType = useAtomValue(ownerTypeAtom);
   const ownerId = useAtomValue(ownerIdAtom);
   const _configId = useAtomValue(configIdAtom);
+  const subscriptionTier = useAtomValue(subscriptionTierAtom);
 
   // --- Fetch templates ---
-  const { data: templatesData, loading: isLoading } = useQuery(ListTemplatesDocument);
+  const { data: templatesData, loading: isLoading } = useQuery(ListTemplatesDocument, {
+    variables: { tier_max: subscriptionTier },
+  });
 
   const templates: Template[] = templatesData?.listTemplates ?? [];
 
@@ -187,7 +190,7 @@ export function TemplatePanel() {
 
     try {
       const { data, error } = await cloneTemplate({
-        variables: { templateId: template._id, ownerType, ownerId },
+        variables: { template_id: template._id, owner_type: ownerType, owner_id: ownerId },
       });
 
       if (error) throw error;

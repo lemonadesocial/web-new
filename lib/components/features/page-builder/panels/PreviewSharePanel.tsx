@@ -101,9 +101,11 @@ export function PreviewSharePanel() {
     try {
       const { data, error } = await generatePreviewLink({
         variables: {
-          configId,
-          password: password || undefined,
-          expiresInHours: expiresInHours ?? undefined,
+          config_id: configId,
+          options: {
+            password: password || undefined,
+            expires_in_hours: expiresInHours ?? undefined,
+          },
         },
       });
 

@@ -212,9 +212,10 @@ export function SaveAsTemplatePanel() {
     try {
       const { error } = await saveAsTemplate({
         variables: {
-          configId,
+          config_id: configId,
           input: {
             name: name.trim(),
+            slug: name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
             description: description.trim(),
             category,
             tags,
