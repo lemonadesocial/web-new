@@ -42,7 +42,7 @@ export function TicketCard({ data, link }: TicketCardProps) {
             {[data.event_title, dateStr].filter(Boolean).join(' \u00B7 ')}
           </p>
           <span
-            className={`inline-block text-xs px-1.5 py-0.5 rounded-sm mt-0.5 ${statusStyle}`}
+            className={`inline-block text-xs px-1.5 py-0.5 rounded-sm mt-0.5 capitalize ${statusStyle}`}
           >
             {data.status}
           </span>
