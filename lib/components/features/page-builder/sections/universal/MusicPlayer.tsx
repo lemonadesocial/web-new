@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeIframeSrc } from '../../utils/sanitize-html';
 import type { SectionWidth, SectionPadding, SectionAlignment, SectionBackground } from '../../types';
 
 type EmbedType = 'spotify' | 'soundcloud' | 'custom';
@@ -71,7 +72,7 @@ function _MusicPlayer({
           )}
           <div className="w-full overflow-hidden rounded-xl">
             <iframe
-              src={getSpotifyEmbedUrl(track_url)}
+              src={sanitizeIframeSrc(getSpotifyEmbedUrl(track_url))}
               title={track_title || 'Spotify embed'}
               allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
               className="w-full border-0"
@@ -100,7 +101,7 @@ function _MusicPlayer({
           )}
           <div className="w-full overflow-hidden rounded-xl">
             <iframe
-              src={getSoundCloudEmbedUrl(track_url)}
+              src={sanitizeIframeSrc(getSoundCloudEmbedUrl(track_url))}
               title={track_title || 'SoundCloud embed'}
               allow="autoplay"
               className="w-full border-0"

@@ -46,6 +46,16 @@ import { TemplateUpdateBanner } from './panels/TemplateUpdateBanner';
 
 const LOCK_HEARTBEAT_INTERVAL_MS = 60_000; // 60 seconds
 
+/** Build the GraphQL update input from a PageConfig */
+function buildUpdateInput(cfg: PageConfig) {
+  return {
+    sections: cfg.sections,
+    theme: cfg.theme,
+    custom_code: cfg.custom_code,
+    seo: cfg.seo,
+  };
+}
+
 // ── Props ──
 
 export interface PageBuilderEditorProps {
@@ -225,14 +235,6 @@ function EditorInner({
       return pageConfig;
     }
   }, [query, pageConfig]);
-
-  /** Build the GraphQL update input from a PageConfig */
-  const buildUpdateInput = (cfg: PageConfig) => ({
-    sections: cfg.sections,
-    theme: cfg.theme,
-    custom_code: cfg.custom_code,
-    seo: cfg.seo,
-  });
 
   // ── Auto-save (2 s debounce) ──
   const extractPageConfigRef = React.useRef(extractPageConfig);

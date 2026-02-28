@@ -4,6 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeHref } from '../../utils/sanitize-html';
 import type { SectionWidth, SectionPadding, SectionAlignment, SectionBackground } from '../../types';
 
 interface FooterLink {
@@ -114,7 +115,7 @@ function _Footer({
                       {col.links.map((link, linkIndex) => (
                         <li key={linkIndex}>
                           <a
-                            href={link.url || '#'}
+                            href={sanitizeHref(link.url)}
                             className="text-sm text-secondary transition-colors hover:text-primary"
                           >
                             {link.label}
@@ -142,7 +143,7 @@ function _Footer({
                   return (
                     <a
                       key={index}
-                      href={social.url || '#'}
+                      href={sanitizeHref(social.url)}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={social.platform}

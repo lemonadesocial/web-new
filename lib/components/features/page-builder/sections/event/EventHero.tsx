@@ -3,6 +3,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeHref } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -138,7 +139,7 @@ function EventHeroInner({
         <div className="mt-4">
           {cta_url ? (
             <a
-              href={cta_url as string}
+              href={sanitizeHref(cta_url as string)}
               className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-on-primary transition-opacity hover:opacity-90"
             >
               {displayCtaText}

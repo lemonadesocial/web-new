@@ -30,7 +30,7 @@ export const PlaceholderSection = React.memo(function PlaceholderSection({
   );
 });
 
-(PlaceholderSection as any).craft = {
+PlaceholderSection.craft = {
   displayName: 'Placeholder',
   props: { sectionLabel: 'Section' },
 };

@@ -3,6 +3,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeHref } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -115,7 +116,7 @@ function EventSponsorsInner({
                       return sponsor.url ? (
                         <a
                           key={sponsor.id || `sponsor-${sIdx}`}
-                          href={sponsor.url}
+                          href={sanitizeHref(sponsor.url)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="block"

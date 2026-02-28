@@ -4,6 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeHref } from '../../utils/sanitize-html';
 import type { SectionWidth, SectionPadding, SectionAlignment, SectionBackground } from '../../types';
 
 type AspectRatio = '16/9' | '21/9' | '4/3' | 'auto';
@@ -106,7 +107,7 @@ function _ImageBanner({
               )}
               {hasCta && (
                 <a
-                  href={cta_url || '#'}
+                  href={sanitizeHref(cta_url)}
                   className="mt-2 inline-flex items-center rounded-lg bg-white px-6 py-3 text-sm font-semibold text-black transition-opacity hover:opacity-90"
                 >
                   {cta_text}

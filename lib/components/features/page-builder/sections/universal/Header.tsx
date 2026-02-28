@@ -4,6 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeHref } from '../../utils/sanitize-html';
 import type { SectionWidth, SectionPadding, SectionAlignment, SectionBackground } from '../../types';
 
 interface NavLink {
@@ -86,7 +87,7 @@ function _Header({
                 {nav_links.map((link, index) => (
                   <a
                     key={index}
-                    href={link.url || '#'}
+                    href={sanitizeHref(link.url)}
                     className="text-sm font-medium text-secondary transition-colors hover:text-primary"
                   >
                     {link.label}
@@ -98,7 +99,7 @@ function _Header({
             {/* CTA button */}
             {hasCta && (
               <a
-                href={cta_url || '#'}
+                href={sanitizeHref(cta_url)}
                 className="inline-flex shrink-0 items-center rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
               >
                 {cta_text}

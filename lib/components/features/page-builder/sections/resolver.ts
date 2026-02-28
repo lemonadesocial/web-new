@@ -48,6 +48,9 @@ import { MusicPlayer } from './universal/MusicPlayer';
 import { WalletConnect } from './universal/WalletConnect';
 import { Passport } from './universal/Passport';
 
+// Placeholder
+import { PlaceholderSection } from './PlaceholderSection';
+
 // Container sections + their canvas sub-components
 import { Columns, ColumnCanvas } from './containers/Columns';
 import { Tabs, TabCanvas } from './containers/Tabs';
@@ -144,6 +147,9 @@ export const sectionResolver: Record<string, React.ComponentType<any>> = {
   MusicPlayer,
   WalletConnect,
   Passport,
+
+  // Placeholder (fallback for unknown section types)
+  PlaceholderSection,
 
   // Container sections
   Columns,

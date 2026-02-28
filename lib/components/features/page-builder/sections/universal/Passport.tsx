@@ -4,6 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeHref } from '../../utils/sanitize-html';
 import type { SectionWidth, SectionPadding, SectionAlignment, SectionBackground } from '../../types';
 
 interface RequirementItem {
@@ -137,7 +138,7 @@ function _Passport({
         {/* CTA button */}
         {hasCta && (
           <a
-            href={cta_url || '#'}
+            href={sanitizeHref(cta_url)}
             className="mt-2 inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
           >
             <i className="icon-verified size-4" />

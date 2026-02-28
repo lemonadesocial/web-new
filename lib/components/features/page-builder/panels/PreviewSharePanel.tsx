@@ -328,7 +328,7 @@ function PreviewLinkCard({
   onCopy: (url: string) => void;
   onRevoke: () => void;
 }) {
-  const url = `${HOST_URL}/preview/${configId ?? 'unknown'}?token=${link.token}`;
+  const url = `${HOST_URL}/preview/${configId ?? 'unknown'}/${link.token}`;
   const { label: expirationLabel, isExpired } = formatExpirationStatus(link.expires_at);
 
   return (

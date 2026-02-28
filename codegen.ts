@@ -4,6 +4,8 @@ import { Types } from '@graphql-codegen/plugin-helpers';
 
 import { addTypenameSelectionDocumentTransform } from '@graphql-codegen/client-preset';
 
+// NEXT_PUBLIC_GRAPHQL_URL: production/staging endpoint
+// LOCAL_BACKEND_SCHEMA: local file path for offline codegen (dev-only)
 const BACKEND_SCHEMA =
   process.env.NEXT_PUBLIC_GRAPHQL_URL ||
   process.env.LOCAL_BACKEND_SCHEMA;

@@ -4,6 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeHref } from '../../utils/sanitize-html';
 import type { SectionWidth, SectionPadding, SectionAlignment, SectionBackground } from '../../types';
 
 interface CTABlockProps {
@@ -91,7 +92,7 @@ function _CTABlock({
 
           <div className="mt-2 flex flex-wrap items-center gap-4">
             <a
-              href={primary_cta_url || '#'}
+              href={sanitizeHref(primary_cta_url)}
               className={clsx(
                 'inline-flex items-center rounded-lg px-6 py-3 text-sm font-semibold transition-all',
                 !accent_color && 'bg-accent text-white hover:opacity-90',
@@ -118,7 +119,7 @@ function _CTABlock({
 
             {hasSecondary && (
               <a
-                href={secondary_cta_url || '#'}
+                href={sanitizeHref(secondary_cta_url)}
                 className="inline-flex items-center rounded-lg border border-card-border bg-transparent px-6 py-3 text-sm font-semibold text-primary transition-colors hover:bg-overlay-primary"
               >
                 {secondary_cta_text}

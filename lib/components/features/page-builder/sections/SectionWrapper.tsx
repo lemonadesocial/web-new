@@ -39,12 +39,14 @@ function getBackgroundStyle(bg?: SectionBackground): React.CSSProperties {
   switch (bg.type) {
     case 'color':
       return { backgroundColor: bg.value };
-    case 'image':
+    case 'image': {
+      const safeBgUrl = String(bg.value).replace(/'/g, '%27').replace(/\)/g, '%29').replace(/"/g, '%22');
       return {
-        backgroundImage: `url(${bg.value})`,
+        backgroundImage: `url('${safeBgUrl}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       };
+    }
     case 'gradient':
       return { background: bg.value };
     default:

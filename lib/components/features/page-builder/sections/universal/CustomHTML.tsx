@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { SectionWrapper } from '../SectionWrapper';
-import { sanitizeHtml } from '../../utils/sanitize-html';
+import { sanitizeHtml, sanitizeCss } from '../../utils/sanitize-html';
 import type { SectionWidth, SectionPadding, SectionAlignment, SectionBackground } from '../../types';
 
 interface CustomHTMLProps {
@@ -38,7 +38,7 @@ function _CustomHTML({
       {hasContent ? (
         <div className="rounded-lg border border-dashed border-card-border/50">
           {css_content.trim().length > 0 && (
-            <style dangerouslySetInnerHTML={{ __html: sanitizeHtml(css_content) }} />
+            <style dangerouslySetInnerHTML={{ __html: sanitizeCss(css_content) }} />
           )}
           <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(html_content) }} />
         </div>

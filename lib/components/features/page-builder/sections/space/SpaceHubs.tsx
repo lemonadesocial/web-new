@@ -4,6 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeHref } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -84,7 +85,7 @@ function HubCard({ hub }: { hub: Hub }) {
 
   if (hub.url) {
     return (
-      <a href={hub.url} className="block no-underline">
+      <a href={sanitizeHref(hub.url)} className="block no-underline">
         {content}
       </a>
     );

@@ -4,6 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeHref } from '../../utils/sanitize-html';
 import type { SectionWidth, SectionPadding, SectionAlignment, SectionBackground } from '../../types';
 
 interface SocialLinkItem {
@@ -102,7 +103,7 @@ function _SocialLinks({
                 return (
                   <a
                     key={idx}
-                    href={link.url || '#'}
+                    href={sanitizeHref(link.url)}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
@@ -118,7 +119,7 @@ function _SocialLinks({
                 return (
                   <a
                     key={idx}
-                    href={link.url || '#'}
+                    href={sanitizeHref(link.url)}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
@@ -134,7 +135,7 @@ function _SocialLinks({
               return (
                 <a
                   key={idx}
-                  href={link.url || '#'}
+                  href={sanitizeHref(link.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}

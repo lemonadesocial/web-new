@@ -72,17 +72,20 @@ function buildBackgroundStyle(
   switch (background.type) {
     case 'color':
       return { backgroundColor: background.value };
-    case 'image':
+    case 'image': {
       // Only wrap in url() if the value is a valid URL; otherwise treat as
       // a raw CSS value (e.g. a color or gradient fallback).
-      return isValidUrl(background.value)
-        ? {
-            backgroundImage: `url(${background.value})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-          }
-        : { background: background.value };
+      if (!isValidUrl(background.value)) {
+        return { background: background.value };
+      }
+      const safeBgUrl = String(background.value).replace(/'/g, '%27').replace(/\)/g, '%29').replace(/"/g, '%22');
+      return {
+        backgroundImage: `url('${safeBgUrl}')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      };
+    }
     case 'gradient':
       return { backgroundImage: background.value };
     default:

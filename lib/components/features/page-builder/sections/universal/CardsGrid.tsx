@@ -4,6 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeHref } from '../../utils/sanitize-html';
 import type { SectionWidth, SectionPadding, SectionAlignment, SectionBackground } from '../../types';
 
 interface CardItem {
@@ -105,7 +106,7 @@ function _CardsGrid({
 
               if (card.url) {
                 return (
-                  <a key={idx} href={card.url} className="block no-underline">
+                  <a key={idx} href={sanitizeHref(card.url)} className="block no-underline">
                     {inner}
                   </a>
                 );

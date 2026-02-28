@@ -4,6 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeHref } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -97,7 +98,7 @@ function EventCard({
 
   if (event.url) {
     return (
-      <a href={event.url} className="block no-underline">
+      <a href={sanitizeHref(event.url)} className="block no-underline">
         {content}
       </a>
     );
