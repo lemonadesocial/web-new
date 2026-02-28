@@ -8,6 +8,7 @@ import { Button, drawer } from '$lib/components/core';
 import { Message, useAIChat } from './provider';
 import { EventPane } from '../pane';
 import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
+import { CardList } from './cards';
 
 export function Messages() {
   const [state] = useAIChat();
@@ -58,6 +59,13 @@ function MessageItem({ message: item }: { message: Message }) {
         <div className="whitespace-break-spaces flex flex-col gap-6">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.message}</ReactMarkdown>
 
+          {item.metadata?.cards && (
+            <CardList
+              cards={item.metadata.cards}
+              overflow={item.metadata.overflow}
+            />
+          )}
+
           <div className="flex gap-2">
             {item.metadata?.actions?.map((action, idx) =>
               match(action.type)
@@ -86,34 +94,3 @@ function MessageItem({ message: item }: { message: Message }) {
       </div>
     ));
 }
-
-// function CardDetail({ tool }: { tool: any }) {
-//   if (tool.type === 'lemonade_backend') {
-//     return (
-//       <Card.Root>
-//         <Card.Content className="p-2 flex justify-between items-center gap-3">
-//           <div className="bg-tertiary size-[38px] rounded-sm" />
-//           <div className="flex-1 space-y-0.5">
-//             <p>{tool.data?.shortid}</p>
-//             <p className="text-xs text-tertiary capitalize">{tool.name?.replace('_', ' ')}</p>
-//           </div>
-//           <Button
-//             icon="icon-chevron-right"
-//             variant="tertiary-alt"
-//             className="rounded-full"
-//             onClick={() => {
-//               match(tool.name).with('create_event', () =>
-//                 windowPane.open(BrowserPreview, {
-//                   props: { url: `e/manage/${tool.data?.shortid || tool.data?._id}` },
-//                 }),
-//               );
-//             }}
-//           />
-//         </Card.Content>
-//       </Card.Root>
-//     );
-//   }
-//
-//   console.log('Tool call unsupported.');
-//   return null;
-// }
