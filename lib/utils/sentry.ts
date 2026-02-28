@@ -1,18 +1,14 @@
 import type { ErrorEvent, EventHint } from '@sentry/nextjs';
 
-// --- PII scrubbing patterns (Edge Runtime safe — no lookbehind) ---
-const ETH_ADDRESS_RE = /0x[a-fA-F0-9]{40}/g;
-const JWT_RE = /eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g;
-const ORY_SESSION_RE = /ory_st_[A-Za-z0-9_-]+/g;
-const BEARER_RE = /Bearer\s+[A-Za-z0-9._-]+/g;
-
-/** Replace sensitive patterns in a string with redaction placeholders. */
+/** Replace sensitive patterns in a string with redaction placeholders.
+ * Regex patterns are Edge Runtime safe (no lookbehind). Created inline to
+ * avoid global-flag lastIndex statefulness across calls. */
 export function scrubPII(value: string): string {
   return value
-    .replace(ETH_ADDRESS_RE, '[REDACTED_ETH_ADDRESS]')
-    .replace(JWT_RE, '[REDACTED_JWT]')
-    .replace(ORY_SESSION_RE, '[REDACTED_SESSION]')
-    .replace(BEARER_RE, 'Bearer [REDACTED]');
+    .replace(/0x[a-fA-F0-9]{40}/g, '[REDACTED_ETH_ADDRESS]')
+    .replace(/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g, '[REDACTED_JWT]')
+    .replace(/ory_st_[A-Za-z0-9_-]+/g, '[REDACTED_SESSION]')
+    .replace(/Bearer\s+[A-Za-z0-9._-]+/g, 'Bearer [REDACTED]');
 }
 
 /** Returns true if the event is non-actionable noise that should be dropped. */
@@ -35,12 +31,17 @@ export function isNoiseEvent(event: ErrorEvent): boolean {
   // Sentry non-error noise
   if (message.includes('Non-Error exception captured')) return true;
 
-  // Browser extension errors
-  const filename = event.exception?.values?.[0]?.stacktrace?.frames?.[0]?.filename || '';
+  // Browser extension errors — check all stack frames, not just the first
+  const frames = event.exception?.values?.[0]?.stacktrace?.frames;
   if (
-    filename.includes('chrome-extension://') ||
-    filename.includes('moz-extension://') ||
-    filename.includes('safari-extension://')
+    frames?.some((frame) => {
+      const f = frame.filename || '';
+      return (
+        f.includes('chrome-extension://') ||
+        f.includes('moz-extension://') ||
+        f.includes('safari-extension://')
+      );
+    })
   ) {
     return true;
   }
@@ -124,7 +125,7 @@ export function getCommonSentryConfig() {
     environment:
       process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT ||
       (process.env.NODE_ENV === 'production' ? 'production' : 'development'),
-    release: process.env.NEXT_PUBLIC_SENTRY_RELEASE || '10.9.1',
+    release: process.env.NEXT_PUBLIC_SENTRY_RELEASE || undefined,
     beforeSend,
   };
 }

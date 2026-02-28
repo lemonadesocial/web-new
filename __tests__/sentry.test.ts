@@ -78,9 +78,9 @@ describe('getCommonSentryConfig', () => {
     expect(config.release).toBe('v2.0.0-abc123');
   });
 
-  it('falls back to package.json version when release env var not set', () => {
+  it('returns undefined release when env var not set', () => {
     const config = getCommonSentryConfig();
-    expect(config.release).toBe('10.9.1');
+    expect(config.release).toBeUndefined();
   });
 
   it('includes a beforeSend function', () => {
@@ -273,6 +273,24 @@ describe('isNoiseEvent', () => {
           value: 'some error',
           stacktrace: {
             frames: [{ filename: 'safari-extension://abcdef/content.js' }],
+          },
+        }],
+      },
+    });
+    expect(isNoiseEvent(event)).toBe(true);
+  });
+
+  it('returns true for extension errors in non-first frames', () => {
+    const event = makeEvent({
+      exception: {
+        values: [{
+          type: 'Error',
+          value: 'some error',
+          stacktrace: {
+            frames: [
+              { filename: 'https://app.lemonade.social/main.js' },
+              { filename: 'chrome-extension://abcdef/injected.js' },
+            ],
           },
         }],
       },

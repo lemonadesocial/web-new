@@ -93,6 +93,8 @@ export default function Providers({ children, space }: { children: React.ReactNo
             email: data.getMe.email || undefined,
           });
         }
+      }).catch((error) => {
+        Sentry.captureException(error, { tags: { source: 'providers-get-me' } });
       });
       return;
     }
