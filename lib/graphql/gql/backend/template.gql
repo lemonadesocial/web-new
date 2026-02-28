@@ -1,0 +1,147 @@
+fragment TemplateChangelogFields on TemplateChangelog {
+  version
+  date
+  summary
+  breaking_changes
+}
+
+fragment TemplateFields on Template {
+  _id
+  name
+  slug
+  description
+  category
+  tags
+  config
+  thumbnail_url
+  preview_urls
+  preview_video_url
+  creator_type
+  creator_id
+  space_id
+  target
+  visibility
+  subscription_tier_min
+  marketplace_listed
+  price_cents
+  currency
+  install_count
+  rating_average
+  rating_count
+  version
+  changelog {
+    ...TemplateChangelogFields
+  }
+  published_at
+  featured
+  review_status
+  review_notes
+}
+
+fragment TemplateUpdateInfoFields on TemplateUpdateInfo {
+  available
+  current_version
+  latest_version
+  changelog_summary
+  breaking_changes
+}
+
+# Queries
+
+query ListTemplates(
+  $skip: Int
+  $limit: Int
+  $category: String
+  $target: String
+  $tier_max: String
+  $search: String
+  $featured: Boolean
+  $creator_id: MongoID
+) {
+  listTemplates(
+    skip: $skip
+    limit: $limit
+    category: $category
+    target: $target
+    tier_max: $tier_max
+    search: $search
+    featured: $featured
+    creator_id: $creator_id
+  ) {
+    ...TemplateFields
+  }
+}
+
+query GetTemplate($id: MongoID!) {
+  getTemplate(id: $id) {
+    ...TemplateFields
+  }
+}
+
+query CheckTemplateUpdate($config_id: MongoID!) {
+  checkTemplateUpdate(config_id: $config_id) {
+    ...TemplateUpdateInfoFields
+  }
+}
+
+# Mutations
+
+mutation CreateTemplate($input: CreateTemplateInput!) {
+  createTemplate(input: $input) {
+    ...TemplateFields
+  }
+}
+
+mutation UpdateTemplate($id: MongoID!, $input: UpdateTemplateInput!) {
+  updateTemplate(id: $id, input: $input) {
+    ...TemplateFields
+  }
+}
+
+mutation PublishTemplate($id: MongoID!) {
+  publishTemplate(id: $id) {
+    ...TemplateFields
+  }
+}
+
+mutation ArchiveTemplate($id: MongoID!) {
+  archiveTemplate(id: $id) {
+    ...TemplateFields
+  }
+}
+
+mutation CloneTemplateToConfig($template_id: MongoID!, $owner_type: String!, $owner_id: MongoID!) {
+  cloneTemplateToConfig(template_id: $template_id, owner_type: $owner_type, owner_id: $owner_id) {
+    ...PageConfigFields
+  }
+}
+
+mutation SaveConfigAsTemplate($config_id: MongoID!, $input: SaveAsTemplateInput!) {
+  saveConfigAsTemplate(config_id: $config_id, input: $input) {
+    ...TemplateFields
+  }
+}
+
+mutation PublishTemplateUpdate($template_id: MongoID!, $input: TemplateUpdateInput!) {
+  publishTemplateUpdate(template_id: $template_id, input: $input) {
+    ...TemplateFields
+  }
+}
+
+mutation ApplyTemplateUpdate($config_id: MongoID!) {
+  applyTemplateUpdate(config_id: $config_id) {
+    ...PageConfigFields
+  }
+}
+
+mutation ReviewTemplate($template_id: MongoID!, $status: String!, $notes: String) {
+  reviewTemplate(template_id: $template_id, status: $status, notes: $notes) {
+    ...TemplateFields
+  }
+}
+
+mutation FeatureTemplate($template_id: MongoID!, $featured: Boolean!) {
+  featureTemplate(template_id: $template_id, featured: $featured) {
+    ...TemplateFields
+  }
+}
