@@ -3,7 +3,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
-import { sanitizeHtml } from '../../utils/sanitize-html';
+import { sanitizeHtml, sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -91,7 +91,7 @@ function EventAboutInner({
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={image_url}
+              src={sanitizeMediaSrc(image_url)}
               alt={displayHeading}
               className="h-auto w-full rounded-lg object-cover"
             />

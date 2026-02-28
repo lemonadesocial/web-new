@@ -3,6 +3,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -84,7 +85,7 @@ function EventGalleryInner({
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={image.url}
+                  src={sanitizeMediaSrc(image.url)}
                   alt={image.alt || `Gallery image ${index + 1}`}
                   className={clsx(
                     'w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-105',

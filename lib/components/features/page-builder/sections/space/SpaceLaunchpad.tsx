@@ -4,6 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -84,7 +85,7 @@ function ProjectCard({ project }: { project: LaunchpadProject }) {
       {hasImage ? (
         <div className="aspect-video w-full overflow-hidden bg-primary/8">
           <img
-            src={project.image_url}
+            src={sanitizeMediaSrc(project.image_url)}
             alt={project.name}
             className="h-full w-full object-cover"
           />

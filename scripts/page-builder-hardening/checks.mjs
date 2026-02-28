@@ -439,6 +439,60 @@ function checkSubscriptionMatrix() {
   }
 }
 
+function checkSecuritySanitisation() {
+  // PB-SEC-001: sanitize-html.ts exports the required functions
+  const sanitizeFile = read('lib/components/features/page-builder/utils/sanitize-html.ts');
+  const requiredExports = ['sanitizeHtml', 'sanitizeHref', 'sanitizeIframeSrc', 'sanitizeMediaSrc', 'sanitizeCss'];
+  const missing = requiredExports.filter((fn) => !sanitizeFile.includes(`export function ${fn}`));
+  if (missing.length > 0) fail('security', 'PB-SEC-001', `sanitize-html.ts missing exports: ${missing.join(', ')}`);
+  else pass('security', 'PB-SEC-001', `sanitize-html.ts exports all required sanitizers: ${requiredExports.join(', ')}`);
+
+  // PB-SEC-002: sanitizeHref/sanitizeIframeSrc use case-insensitive comparison
+  const hasLowerCase = sanitizeFile.includes('.toLowerCase()');
+  if (hasLowerCase) pass('security', 'PB-SEC-002', 'URL sanitizers use case-insensitive protocol comparison');
+  else fail('security', 'PB-SEC-002', 'URL sanitizers missing .toLowerCase() — vulnerable to mixed-case bypass');
+
+  // PB-SEC-003: sanitizeCss blocks url() injection
+  const hasUrlBlock = sanitizeFile.includes('blocked-url');
+  if (hasUrlBlock) pass('security', 'PB-SEC-003', 'sanitizeCss blocks dangerous url() content');
+  else fail('security', 'PB-SEC-003', 'sanitizeCss does not block url() injection (missing blocked-url sentinel)');
+
+  // PB-SEC-004: Control character stripping
+  const hasControlStrip = sanitizeFile.includes('stripControlChars');
+  if (hasControlStrip) pass('security', 'PB-SEC-004', 'URL sanitizers strip control characters');
+  else fail('security', 'PB-SEC-004', 'URL sanitizers missing control character stripping');
+
+  // PB-SEC-005: All <img src= in sections use sanitizeMediaSrc
+  const sectionsDir = 'lib/components/features/page-builder/sections';
+  const sectionGlobs = ['universal', 'event', 'space', 'containers'];
+  let unsanitisedImgSrcs = [];
+
+  for (const sub of sectionGlobs) {
+    const dirPath = path.join(root, sectionsDir, sub);
+    if (!fs.existsSync(dirPath)) continue;
+    const files = fs.readdirSync(dirPath).filter((f) => f.endsWith('.tsx'));
+    for (const file of files) {
+      const content = fs.readFileSync(path.join(dirPath, file), 'utf8');
+      const lines = content.split('\n');
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        // Look for img tags whose src= is a variable (not a static string)
+        if (/<img\b/.test(lines[Math.max(0, i - 1)] + line) && /src=\{/.test(line)) {
+          if (!line.includes('sanitizeMediaSrc') && !line.includes('sanitizeIframeSrc')) {
+            unsanitisedImgSrcs.push(`${sub}/${file}:${i + 1}`);
+          }
+        }
+      }
+    }
+  }
+
+  if (unsanitisedImgSrcs.length > 0) {
+    fail('security', 'PB-SEC-005', `Unsanitised <img src=> found: ${unsanitisedImgSrcs.join(', ')}`);
+  } else {
+    pass('security', 'PB-SEC-005', 'All <img src=> in section components use sanitizeMediaSrc');
+  }
+}
+
 function run() {
   const pageConfigOps = extractOperationVariables(read('lib/graphql/gql/backend/page-config.gql'));
   const templateOps = extractOperationVariables(read('lib/graphql/gql/backend/template.gql'));
@@ -449,6 +503,7 @@ function run() {
   checkVariableConformance(opVarsMap);
   checkWhitelabelParity();
   checkSubscriptionMatrix();
+  checkSecuritySanitisation();
 
   const ordered = { FAIL: [], WARN: [], PASS: [] };
   for (const r of results) ordered[r.status].push(r);

@@ -4,7 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
-import { sanitizeHref } from '../../utils/sanitize-html';
+import { sanitizeHref, sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -47,7 +47,7 @@ function HubCard({ hub }: { hub: Hub }) {
       {hasImage ? (
         <div className="aspect-video w-full overflow-hidden bg-primary/8">
           <img
-            src={hub.image_url}
+            src={sanitizeMediaSrc(hub.image_url)}
             alt={hub.name}
             className="h-full w-full object-cover transition group-hover:scale-105"
           />

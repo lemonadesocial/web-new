@@ -4,7 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
-import { sanitizeHref } from '../../utils/sanitize-html';
+import { sanitizeHref, sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -63,7 +63,7 @@ function _SpaceHero({
       {hasCover && (
         <div className="absolute inset-0 z-0">
           <img
-            src={cover_image_url}
+            src={sanitizeMediaSrc(cover_image_url)}
             alt=""
             className="h-full w-full object-cover"
           />
@@ -83,7 +83,7 @@ function _SpaceHero({
         {/* Avatar / Logo */}
         {hasAvatar ? (
           <img
-            src={avatar_url}
+            src={sanitizeMediaSrc(avatar_url)}
             alt={hasName ? name : 'Space avatar'}
             className="size-24 rounded-full border-2 border-card-border object-cover"
           />

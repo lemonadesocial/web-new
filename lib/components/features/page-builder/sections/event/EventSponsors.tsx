@@ -3,7 +3,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
-import { sanitizeHref } from '../../utils/sanitize-html';
+import { sanitizeHref, sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -93,7 +93,7 @@ function EventSponsorsInner({
                       const content = sponsor.logo_url ? (
                         /* eslint-disable-next-line @next/next/no-img-element */
                         <img
-                          src={sponsor.logo_url}
+                          src={sanitizeMediaSrc(sponsor.logo_url)}
                           alt={sponsor.name}
                           className={clsx(
                             'w-auto object-contain opacity-80 transition-opacity hover:opacity-100',

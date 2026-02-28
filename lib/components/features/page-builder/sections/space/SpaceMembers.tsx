@@ -4,6 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -49,7 +50,7 @@ function MemberCard({
       {/* Avatar */}
       {hasAvatar ? (
         <img
-          src={member.avatar_url}
+          src={sanitizeMediaSrc(member.avatar_url)}
           alt={hasName ? member.name : 'Member avatar'}
           className="size-16 rounded-full border-2 border-card-border object-cover"
         />

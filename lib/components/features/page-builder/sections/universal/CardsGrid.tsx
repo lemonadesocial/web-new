@@ -4,7 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
-import { sanitizeHref } from '../../utils/sanitize-html';
+import { sanitizeHref, sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type { SectionWidth, SectionPadding, SectionAlignment, SectionBackground } from '../../types';
 
 interface CardItem {
@@ -74,7 +74,7 @@ function _CardsGrid({
                   {card.image_url ? (
                     <div className="relative aspect-video w-full overflow-hidden">
                       <img
-                        src={card.image_url}
+                        src={sanitizeMediaSrc(card.image_url)}
                         alt={card.title || ''}
                         className="h-full w-full object-cover transition-transform group-hover:scale-105"
                       />

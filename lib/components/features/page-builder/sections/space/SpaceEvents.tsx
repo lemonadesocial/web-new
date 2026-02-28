@@ -4,7 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
-import { sanitizeHref } from '../../utils/sanitize-html';
+import { sanitizeHref, sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -64,7 +64,7 @@ function EventCard({
           )}
         >
           <img
-            src={event.thumbnail_url}
+            src={sanitizeMediaSrc(event.thumbnail_url)}
             alt={event.title}
             className="h-full w-full object-cover transition group-hover:scale-105"
           />

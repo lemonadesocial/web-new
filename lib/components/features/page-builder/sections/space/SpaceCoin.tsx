@@ -4,7 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
-import { sanitizeHref } from '../../utils/sanitize-html';
+import { sanitizeHref, sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -91,7 +91,7 @@ function _SpaceCoin({
           {/* Coin image */}
           {hasCoinImage ? (
             <img
-              src={coin_image_url}
+              src={sanitizeMediaSrc(coin_image_url)}
               alt={hasCoinName ? coin_name : 'Token'}
               className="size-20 rounded-full border-2 border-card-border object-cover"
             />

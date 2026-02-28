@@ -3,6 +3,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -78,7 +79,7 @@ function EventSpeakersInner({
                 {speaker.avatar_url ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
-                    src={speaker.avatar_url}
+                    src={sanitizeMediaSrc(speaker.avatar_url)}
                     alt={speaker.name}
                     className="size-20 rounded-full object-cover"
                   />

@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { SectionWrapper } from '../SectionWrapper';
-import { sanitizeIframeSrc } from '../../utils/sanitize-html';
+import { sanitizeIframeSrc, sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type { SectionWidth, SectionPadding, SectionAlignment, SectionBackground } from '../../types';
 
 type EmbedType = 'spotify' | 'soundcloud' | 'custom';
@@ -133,7 +133,7 @@ function _MusicPlayer({
             {/* Cover art */}
             {cover_image_url.trim().length > 0 ? (
               <img
-                src={cover_image_url}
+                src={sanitizeMediaSrc(cover_image_url)}
                 alt={track_title || 'Cover art'}
                 className="size-20 flex-shrink-0 rounded-lg object-cover"
               />

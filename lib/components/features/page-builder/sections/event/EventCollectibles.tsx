@@ -3,6 +3,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -112,7 +113,7 @@ function EventCollectiblesInner({
                 {item.image_url ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
-                    src={item.image_url}
+                    src={sanitizeMediaSrc(item.image_url)}
                     alt={item.name}
                     className="aspect-square w-full object-cover"
                   />

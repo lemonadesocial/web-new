@@ -4,7 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
-import { sanitizeHref } from '../../utils/sanitize-html';
+import { sanitizeHref, sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type { SectionWidth, SectionPadding, SectionAlignment, SectionBackground } from '../../types';
 
 interface NavLink {
@@ -68,7 +68,7 @@ function _Header({
             <div className="flex shrink-0 items-center gap-3">
               {hasLogo && (
                 <img
-                  src={logo_url}
+                  src={sanitizeMediaSrc(logo_url)}
                   alt={logo_text || 'Logo'}
                   className="h-8 w-auto object-contain"
                 />

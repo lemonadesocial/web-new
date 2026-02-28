@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -63,7 +64,7 @@ function PostCard({ post }: { post: FeedPost }) {
       <div className="flex items-center gap-3">
         {hasAvatar ? (
           <img
-            src={post.author_avatar}
+            src={sanitizeMediaSrc(post.author_avatar)}
             alt={post.author_name}
             className="size-10 rounded-full border border-card-border object-cover"
           />

@@ -4,7 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
-import { sanitizeHref } from '../../utils/sanitize-html';
+import { sanitizeHref, sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type { SectionWidth, SectionPadding, SectionAlignment, SectionBackground } from '../../types';
 
 type AspectRatio = '16/9' | '21/9' | '4/3' | 'auto';
@@ -71,7 +71,7 @@ function _ImageBanner({
         >
           {/* Background image */}
           <img
-            src={image_url}
+            src={sanitizeMediaSrc(image_url)}
             alt={title || 'Banner image'}
             className="absolute inset-0 h-full w-full object-cover"
           />

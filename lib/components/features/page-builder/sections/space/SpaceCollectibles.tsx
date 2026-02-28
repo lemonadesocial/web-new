@@ -4,6 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -49,7 +50,7 @@ function CollectibleCard({ collectible }: { collectible: Collectible }) {
       {hasImage ? (
         <div className="aspect-square w-full overflow-hidden bg-primary/8">
           <img
-            src={collectible.image_url}
+            src={sanitizeMediaSrc(collectible.image_url)}
             alt={collectible.name}
             className="h-full w-full object-cover transition group-hover:scale-105"
           />

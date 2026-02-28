@@ -3,7 +3,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
-import { sanitizeIframeSrc } from '../../utils/sanitize-html';
+import { sanitizeIframeSrc, sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -125,7 +125,7 @@ function EventLocationInner({
             ) : image_url ? (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
-                src={image_url}
+                src={sanitizeMediaSrc(image_url)}
                 alt={venue_name || displayHeading}
                 className="h-64 w-full rounded-lg object-cover md:h-full md:min-h-[280px]"
               />

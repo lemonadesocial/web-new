@@ -4,7 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
-import { sanitizeHtml } from '../../utils/sanitize-html';
+import { sanitizeHtml, sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type {
   SectionWidth,
   SectionPadding,
@@ -111,7 +111,7 @@ function _SpaceAbout({
             )}
           >
             <img
-              src={image_url}
+              src={sanitizeMediaSrc(image_url)}
               alt={heading || 'About'}
               className="h-full w-full object-cover"
             />

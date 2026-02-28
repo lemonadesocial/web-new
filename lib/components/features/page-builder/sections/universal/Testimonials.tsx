@@ -4,6 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
+import { sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type { SectionWidth, SectionPadding, SectionAlignment, SectionBackground } from '../../types';
 
 interface TestimonialItem {
@@ -102,7 +103,7 @@ function _Testimonials({
                 <div className="mt-auto flex items-center gap-3 pt-2 border-t border-card-border">
                   {t.author_avatar_url ? (
                     <img
-                      src={t.author_avatar_url}
+                      src={sanitizeMediaSrc(t.author_avatar_url)}
                       alt={t.author_name || ''}
                       className="size-10 rounded-full object-cover"
                     />

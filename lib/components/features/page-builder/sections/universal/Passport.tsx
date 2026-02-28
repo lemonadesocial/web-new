@@ -4,7 +4,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { SectionWrapper } from '../SectionWrapper';
-import { sanitizeHref } from '../../utils/sanitize-html';
+import { sanitizeHref, sanitizeMediaSrc } from '../../utils/sanitize-html';
 import type { SectionWidth, SectionPadding, SectionAlignment, SectionBackground } from '../../types';
 
 interface RequirementItem {
@@ -91,7 +91,7 @@ function _Passport({
         {/* Badge image */}
         {hasBadgeImage ? (
           <img
-            src={badge_image_url}
+            src={sanitizeMediaSrc(badge_image_url)}
             alt={badge_name || 'Passport badge'}
             className="size-32 rounded-2xl object-cover shadow-lg md:size-40"
           />
