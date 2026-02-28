@@ -1,5 +1,6 @@
 'use client';
 import { useAtomValue, useSetAtom } from 'jotai';
+import * as Sentry from '@sentry/nextjs';
 
 import { ory } from '$lib/utils/ory';
 import { hydraClientIdAtom, sessionAtom } from '$lib/jotai';
@@ -13,6 +14,8 @@ export function useRawLogout() {
       const res = await ory?.createBrowserLogoutFlow();
       await ory?.updateLogoutFlow({ token: res?.data.logout_token });
     }
+
+    Sentry.setUser(null);
 
     setSession(null);
     localStorage.clear();

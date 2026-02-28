@@ -1,6 +1,7 @@
 import { GraphQLClient } from 'graphql-request';
 import { TypedDocumentNode } from '@graphql-typed-document-node/core';
 import { getDefaultStore } from 'jotai';
+import * as Sentry from '@sentry/nextjs';
 
 import { GRAPHQL_URL } from '$lib/utils/constants';
 import { log } from '$lib/utils/helpers';
@@ -171,6 +172,41 @@ export class GraphqlClient {
   }
 
   private handleRequestError(request: QueryRequest<any, any>, error: unknown) {
+    // P0-4: Report GraphQL errors to Sentry with operation context
+    const operationName = (request.query.definitions?.[0] as any)?.name?.value || 'unknown';
+    const operationType = (request.query.definitions?.[0] as any)?.operation || 'query';
+
+    // Gate out 402 feature-gating errors — they are business logic, not errors
+    const is402FeatureGated =
+      error &&
+      typeof error === 'object' &&
+      'response' in error &&
+      String((error as any).response?.errors?.[0]?.extensions?.code) === '402';
+
+    if (!is402FeatureGated) {
+      Sentry.captureException(error, {
+        tags: {
+          'graphql.operation': operationName,
+          'graphql.operationType': operationType,
+          source: 'graphql-client',
+        },
+        extra: {
+          operationName,
+          operationType,
+          httpStatus:
+            error && typeof error === 'object' && 'response' in error
+              ? (error as any).response?.status
+              : undefined,
+          errorMessage:
+            error && typeof error === 'object' && 'response' in error
+              ? (error as any).response?.errors?.[0]?.message
+              : error instanceof Error
+                ? error.message
+                : String(error),
+        },
+      });
+    }
+
     if (error && typeof error === 'object' && 'response' in error) {
       const gqlError = error as {
         response: {

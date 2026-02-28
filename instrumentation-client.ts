@@ -3,16 +3,29 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import { getCommonSentryConfig } from "./lib/utils/sentry";
+
+const commonConfig = getCommonSentryConfig();
 
 Sentry.init({
-  dsn: "https://136a7ae901625d8fa9c8aa3bda0313a5@o415373.ingest.us.sentry.io/4508968908947456",
+  ...commonConfig,
 
   // Add optional integrations for additional features
   integrations: [
-    Sentry.replayIntegration(),
+    Sentry.replayIntegration({
+      maskAllText: true,
+      maskAllInputs: true,
+      blockAllMedia: false,
+      networkDetailAllowUrls: [],
+      networkCaptureBodies: false,
+    }),
   ],
+
   // Enable logs to be sent to Sentry
   enableLogs: true,
+
+  // Performance tracing — configurable via env var (default 5%)
+  tracesSampleRate: parseFloat(process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE || '0.05'),
 
   // Define how likely Replay events are sampled.
   // This sets the sample rate to be 10%. You may want this to be 100% while
