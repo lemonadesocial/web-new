@@ -3878,7 +3878,6 @@ export type Mutation = {
   aiCreateSpace: AiSpace;
   /** AI tool: Create a new page configuration for an event or space */
   aiCreatePageConfig: PageConfig;
-  aiCreateSpace: AiSpace;
   /** AI tool: Generate a complete page configuration from a natural language description */
   aiGeneratePageFromDescription: PageConfig;
   aiInviteEvent: Scalars['Boolean']['output'];
@@ -4890,6 +4889,9 @@ export type MutationDeleteUserFriendshipArgs = {
 export type MutationDetachSpacePaymentAccountArgs = {
   payment_account: Scalars['MongoID']['input'];
   space: Scalars['MongoID']['input'];
+};
+
+
 export type MutationFeatureTemplateArgs = {
   featured: Scalars['Boolean']['input'];
   template_id: Scalars['MongoID']['input'];
