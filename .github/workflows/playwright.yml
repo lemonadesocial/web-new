@@ -21,6 +21,8 @@ jobs:
       env:
         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: yarn install --frozen-lockfile
+    - name: Build application
+      run: yarn build
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright smoke tests on PRs (Chromium)
