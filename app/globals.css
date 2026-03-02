@@ -431,8 +431,40 @@
   }
 }
 
+@variant sm {
+  @media (min-width: 640px) {
+    &:not([data-mode='mobile'] &) {
+      @slot;
+    }
+  }
+}
+
 @variant md {
   @media (min-width: 768px) {
+    &:not([data-mode='mobile'] &) {
+      @slot;
+    }
+  }
+}
+
+@variant lg {
+  @media (min-width: 1024px) {
+    &:not([data-mode='mobile'] &) {
+      @slot;
+    }
+  }
+}
+
+@variant xl {
+  @media (min-width: 1280px) {
+    &:not([data-mode='mobile'] &) {
+      @slot;
+    }
+  }
+}
+
+@variant 2xl {
+  @media (min-width: 1536px) {
     &:not([data-mode='mobile'] &) {
       @slot;
     }

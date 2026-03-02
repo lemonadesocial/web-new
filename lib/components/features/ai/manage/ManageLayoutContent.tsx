@@ -10,6 +10,8 @@ import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/ge
 import { AIChatActionKind, useAIChat } from '../provider';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { Event, GetEventDocument } from '$lib/graphql/generated/backend/graphql';
+import { EventThemeProvider } from '$lib/components/features/theme-builder/provider';
+import { EventGuestSide } from '$lib/components/features/event/EventGuestSide';
 
 import { mockWelcomeEvent } from '../InputChat';
 import ManageEventLayout from '../../event-manage/ManageEventLayout';
@@ -27,6 +29,7 @@ function ManageLayoutContent() {
   const [_, aiChatDispatch] = useAIChat();
 
   const SidebarComp = tabMappings[state.activeTab].component || null;
+  const isDesignOrPreview = state.activeTab === 'design' || state.activeTab === 'preview';
 
   const { data: dataGetEvent } = useQuery(GetEventDocument, {
     variables: { shortid },
@@ -62,6 +65,28 @@ function ManageLayoutContent() {
 
   if (!ready) return null;
 
+  const mainContent = match(state.activeTab)
+    .with('manage', () =>
+      match(state.layoutType)
+        .with('event', () => <ManageEventLayout shortid={shortid} />)
+        .otherwise(() => null),
+    )
+    .otherwise(() =>
+      match(state.layoutType)
+        .with('event', () =>
+          event ? (
+            <EventThemeProvider themeData={event.theme_data}>
+              <main className="relative flex flex-col w-full mt-7 md:mt-11">
+                <div className="page mx-auto px-4 xl:px-0">
+                  <EventGuestSide event={event} />
+                </div>
+              </main>
+            </EventThemeProvider>
+          ) : null,
+        )
+        .otherwise(() => null),
+    );
+
   return (
     <div className="flex px-1 flex-1 overflow-hidden">
       <AnimatePresence initial={false}>
@@ -73,7 +98,7 @@ function ManageLayoutContent() {
             transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
             className="overflow-hidden shrink-0"
           >
-            <div className="w-[440px] h-full pl-4">
+            <div data-mode={isDesignOrPreview ? state.device : undefined} className="w-[440px] h-full pl-4">
               <SidebarComp />
             </div>
           </motion.div>
@@ -86,15 +111,13 @@ function ManageLayoutContent() {
         )}
       >
         <div
-          data-mode={state.device}
+          data-mode={isDesignOrPreview ? state.device : undefined}
           className={clsx(
             'w-full bg-background h-full rounded-md overflow-auto transition-all ease-in-out mx-auto duration-500',
             state.device === 'mobile' && 'w-sm',
           )}
         >
-          {match(state.layoutType)
-            .with('event', () => <ManageEventLayout shortid={shortid} />)
-            .otherwise(() => null)}
+          {mainContent}
         </div>
       </div>
     </div>

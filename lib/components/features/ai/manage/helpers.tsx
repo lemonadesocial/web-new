@@ -15,11 +15,7 @@ export const tabMappings: Record<ActiveTabType, { icon: string; label: string; c
   design: {
     icon: 'icon-palette-outline',
     label: 'Design',
-    component: () => (
-      <div className="flex items-center justify-around py-4">
-        <p>Coming Soon.</p>
-      </div>
-    ),
+    component: DesignTool,
   },
   preview: {
     icon: 'icon-eye-line',
