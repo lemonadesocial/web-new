@@ -12,9 +12,9 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: lts/*
+        node-version: 22
     - name: Install dependencies
-      run: yarn install --frozen-lockfile
+      run: yarn install --frozen-lockfile --ignore-engines
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright smoke tests on PRs (Chromium)
