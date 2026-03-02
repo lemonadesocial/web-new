@@ -29,6 +29,7 @@ const TYPE_STYLES: Record<string, string> = {
 export function CreditHistoryTable({ standId }: Props) {
   const [cursor, setCursor] = React.useState<string | undefined>();
   const [allItems, setAllItems] = React.useState<CreditTxnItem[]>([]);
+  const loadedCursors = React.useRef(new Set<string | undefined>());
 
   const { data, isLoading, isFetching, error } = trpc.analytics.getCreditTransactions.useQuery({
     standId,
@@ -36,15 +37,15 @@ export function CreditHistoryTable({ standId }: Props) {
     cursor,
   });
 
-  // Append new items when data arrives (instead of replacing)
   React.useEffect(() => {
-    if (data?.items) {
+    if (data?.items && !loadedCursors.current.has(cursor)) {
+      loadedCursors.current.add(cursor);
       const newItems = data.items as CreditTxnItem[];
       if (!cursor) {
-        // Initial load — replace entirely
         setAllItems(newItems);
+        loadedCursors.current.clear();
+        loadedCursors.current.add(undefined);
       } else {
-        // Subsequent pages — append
         setAllItems((prev) => [...prev, ...newItems]);
       }
     }

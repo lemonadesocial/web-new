@@ -202,7 +202,10 @@ export const analyticsRouter = router({
     .query(async ({ ctx, input }) => {
       await assertEventOrganizer(ctx.user.kratosId, input.eventId);
       const rows = await prisma.$queryRaw<Record<string, unknown>[]>`
-        SELECT * FROM public.event_analytics
+        SELECT mongo_event_id, total_guests, checked_in_count,
+               approved_count, declined_count, pending_count,
+               total_revenue
+        FROM public.event_analytics
         WHERE mongo_event_id = ${input.eventId}
       `;
       return rows[0] ?? null;
@@ -214,7 +217,9 @@ export const analyticsRouter = router({
     .query(async ({ ctx, input }) => {
       await assertSpaceAdmin(ctx.user.kratosId, input.spaceId);
       const rows = await prisma.$queryRaw<Record<string, unknown>[]>`
-        SELECT * FROM public.space_analytics
+        SELECT mongo_space_id, total_subscribers, active_members,
+               total_events, total_revenue
+        FROM public.space_analytics
         WHERE mongo_space_id = ${input.spaceId}
       `;
       return rows[0] ?? null;
@@ -226,7 +231,8 @@ export const analyticsRouter = router({
     .query(async ({ ctx, input }) => {
       await assertSpaceAdmin(ctx.user.kratosId, input.spaceId);
       return prisma.$queryRaw<Record<string, unknown>[]>`
-        SELECT * FROM api.daily_api_usage
+        SELECT day, space_id, total_calls, avg_response_ms, error_count
+        FROM api.daily_api_usage
         WHERE space_id = ${input.spaceId}
         ORDER BY day DESC
         LIMIT 90
@@ -235,7 +241,7 @@ export const analyticsRouter = router({
 
   // API Quota
   getApiQuota: protectedProcedure
-    .input(z.object({ spaceId: mongoId, period: z.string() }))
+    .input(z.object({ spaceId: mongoId, period: z.string().regex(/^\d{4}-\d{2}$/, 'Period must be YYYY-MM format') }))
     .query(async ({ ctx, input }) => {
       await assertSpaceAdmin(ctx.user.kratosId, input.spaceId);
       return prisma.apiQuotaUsage.findUnique({
