@@ -63,7 +63,7 @@ function ManageLayoutContent() {
 
       if (!ready) setReady(true);
     }
-  }, [state.layoutType, event, ready]);
+  }, [state.layoutType, event, ready, shortid, aiChatDispatch]);
 
   if (!ready) return null;
 

@@ -116,7 +116,9 @@ function ManageLayoutToolbar() {
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         className="flex items-center gap-3 overflow-hidden"
       >
-        <i className="icon-lemonade-logo size-5" onClick={() => router.push('/')} />
+        <button type="button" aria-label="Go to home" className="cursor-pointer" onClick={() => router.push('/')}>
+          <i className="icon-lemonade-logo size-5" />
+        </button>
         <div className="flex-1">
           <Menu.Root strategy="fixed" placement="bottom-start">
             <Menu.Trigger>
@@ -224,7 +226,7 @@ function ManageLayoutToolbar() {
 
 const tabs = [
   { key: 'events', label: 'Events' },
-  { key: 'communites', label: 'Communities' },
+  { key: 'communities', label: 'Communities' },
   { key: 'coins', label: 'Coins' },
 ];
 function DropdownComponent() {
@@ -276,7 +278,7 @@ function DropdownComponent() {
               <MenuItem iconLeft="icon-plus" title="New Event" onClick={() => window.open('/create/event')} />
             </div>
           ))
-          .with('communites', () => (
+          .with('communities', () => (
             <div className="flex items-center justify-center p-7">
               <p>Coming Soon.</p>
             </div>

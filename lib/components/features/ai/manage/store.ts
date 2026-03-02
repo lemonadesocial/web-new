@@ -39,5 +39,5 @@ export const storeManageLayout = {
   setLayoutType: (type: LayoutType) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, layoutType: type })),
   setActiveTab: (tab: ActiveTabType) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, activeTab: tab })),
   setData: (data: Event | Space) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, data })),
-  unsubscribe: () => aiManageLayoutStore.set(storeAtom, { ...defaultStore }),
+  reset: () => aiManageLayoutStore.set(storeAtom, { ...defaultStore }),
 };

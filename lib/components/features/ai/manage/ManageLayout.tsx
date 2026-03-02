@@ -18,7 +18,7 @@ function ManageLayout() {
 
   React.useEffect(() => {
     return () => {
-      storeManageLayout.unsubscribe();
+      storeManageLayout.reset();
     };
   }, []);
 
