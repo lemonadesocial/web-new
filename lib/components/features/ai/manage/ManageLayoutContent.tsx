@@ -11,6 +11,8 @@ import { AIChatActionKind, useAIChat } from '../provider';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { Event, GetEventDocument } from '$lib/graphql/generated/backend/graphql';
 import { EventGuestSide } from '$lib/components/features/event/EventGuestSide';
+import { ThemeGenerator } from '$lib/components/features/theme-builder/generator';
+import { useEventTheme } from '$lib/components/features/theme-builder/provider';
 
 import { mockWelcomeEvent } from '../InputChat';
 import ManageEventLayout from '../../event-manage/ManageEventLayout';
@@ -25,6 +27,7 @@ function ManageLayoutContent() {
   const [ready, setReady] = React.useState(false);
 
   const state = useStoreManageLayout();
+  const [themeState] = useEventTheme();
   const [_, aiChatDispatch] = useAIChat();
 
   const SidebarComp = tabMappings[state.activeTab].component || null;
@@ -74,8 +77,15 @@ function ManageLayoutContent() {
       match(state.layoutType)
         .with('event', () =>
           event ? (
-            <main className="relative flex flex-col w-full mt-7 md:mt-11">
-              <div className="page mx-auto px-4 xl:px-0">
+            <main
+              data-theme-scope="event-preview"
+              className={clsx(
+                'relative isolate overflow-hidden flex flex-col w-full h-full pt-2',
+                themeState.theme !== 'default' && [themeState.config.color, themeState.config.mode],
+              )}
+            >
+              <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
+              <div className="page relative z-10 mx-auto px-4 xl:px-0">
                 <EventGuestSide event={event} />
               </div>
             </main>
