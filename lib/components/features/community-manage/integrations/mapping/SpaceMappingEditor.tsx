@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 import { Button, Card } from '$lib/components/core';
 
 import { FieldMappingRow } from './FieldMappingRow';

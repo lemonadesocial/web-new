@@ -1,9 +1,8 @@
 'use client';
 
-import React from 'react';
 import clsx from 'clsx';
 
-import { Button, Segment } from '$lib/components/core';
+import { Button } from '$lib/components/core';
 
 import { ConflictPolicySelector } from './ConflictPolicySelector';
 import { DryRunPreview } from './DryRunPreview';

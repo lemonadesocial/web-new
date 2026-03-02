@@ -19,7 +19,6 @@ export const mappingConfigAtom = atom<MappingConfig>(createDefaultMappingConfig(
 export const dryRunResultAtom = atom<DryRunResult | null>(null);
 export const dryRunLoadingAtom = atom(false);
 export const saveLoadingAtom = atom(false);
-export const activeScopeAtom = atom<'event' | 'space'>('event');
 
 // ---------------------------------------------------------------------------
 // Hooks
@@ -27,10 +26,6 @@ export const activeScopeAtom = atom<'event' | 'space'>('event');
 
 export function useMappingConfig() {
   return useAtomValue(mappingConfigAtom);
-}
-
-export function useActiveScope() {
-  return useAtom(activeScopeAtom);
 }
 
 export function useDryRunResult() {
@@ -46,7 +41,7 @@ export function useSaveLoading() {
 }
 
 export function useMappingActions() {
-  const setConfig = useSetAtom(mappingConfigAtom);
+  const [config, setConfig] = useAtom(mappingConfigAtom);
   const setDryRun = useSetAtom(dryRunResultAtom);
   const setDryRunLoading = useSetAtom(dryRunLoadingAtom);
   const setSaveLoading = useSetAtom(saveLoadingAtom);
@@ -75,17 +70,8 @@ export function useMappingActions() {
   const handleRunDryRun = async () => {
     setDryRunLoading(true);
     try {
-      const config = createDefaultMappingConfig('event'); // will be replaced by current
-      // We need to read current value — use a workaround via setter
-      let currentConfig: MappingConfig | undefined;
-      setConfig((prev) => {
-        currentConfig = prev;
-        return prev;
-      });
-      if (currentConfig) {
-        const result = await runDryRun(currentConfig);
-        setDryRun(result);
-      }
+      const result = await runDryRun(config);
+      setDryRun(result);
     } finally {
       setDryRunLoading(false);
     }
@@ -94,15 +80,8 @@ export function useMappingActions() {
   const handleSave = async () => {
     setSaveLoading(true);
     try {
-      let currentConfig: MappingConfig | undefined;
-      setConfig((prev) => {
-        currentConfig = prev;
-        return prev;
-      });
-      if (currentConfig) {
-        const saved = await saveMappingConfig(currentConfig);
-        setConfig(saved);
-      }
+      const saved = await saveMappingConfig(config);
+      setConfig(saved);
     } finally {
       setSaveLoading(false);
     }

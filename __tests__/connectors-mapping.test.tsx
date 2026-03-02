@@ -15,7 +15,7 @@ import {
   runDryRun,
 } from '$lib/components/features/community-manage/integrations/mapping/mock-adapter';
 
-import type { MappingConfig, ConflictPolicy } from '$lib/components/features/community-manage/integrations/mapping/types';
+import type { ConflictPolicy } from '$lib/components/features/community-manage/integrations/mapping/types';
 
 // ---------------------------------------------------------------------------
 // Mock adapter unit tests (no DOM needed)
