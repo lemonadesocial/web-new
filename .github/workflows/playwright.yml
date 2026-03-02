@@ -8,6 +8,8 @@ jobs:
   e2e-tests:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_GRAPHQL_URL: https://placeholder.test/graphql
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
