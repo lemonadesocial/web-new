@@ -9,7 +9,7 @@ const SPACE = makeSpace();
 const baseMocks = {
   GetMe: { data: { getMe: HOST } },
   GetMySpaces: { data: { getMySpaces: [SPACE] } },
-  GetSpaces: { data: { listSpaces: [SPACE] } },
+  GetSpaces: { data: { getSpaces: [SPACE] } },
   GetSpace: { data: { getSpace: SPACE } },
   GetMyNotifications: { data: { getMyNotifications: [] } },
   ListSpaces: { data: { listSpaces: [SPACE] } },
