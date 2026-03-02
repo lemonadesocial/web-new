@@ -1,5 +1,6 @@
 'use client';
-
+import React from 'react';
+import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { match } from 'ts-pattern';
@@ -7,14 +8,12 @@ import { match } from 'ts-pattern';
 import { Button, Menu, MenuItem, toast } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { Event, GetUpcomingEventsDocument, PublishEventDocument } from '$lib/graphql/generated/backend/graphql';
+import { useMe } from '$lib/hooks/useMe';
+import { generateUrl } from '$lib/utils/cnd';
 
 import { useUpdateEvent } from '../../event-manage/store';
 import { tabMappings } from './helpers';
 import { ActiveTabType, storeManageLayout as store, useStoreManageLayout } from './store';
-import { useRouter } from 'next/navigation';
-import React from 'react';
-import { useMe } from '$lib/hooks/useMe';
-import { generateUrl } from '$lib/utils/cnd';
 
 const devices = {
   desktop: {
@@ -130,7 +129,12 @@ function ManageLayoutToolbar() {
             icon="icon-arrow-outward"
             size="sm"
             onClick={() => {
-              match(state.layoutType).with('event', () => window.open(`/e/${(state.data as Event)?.shortid}`));
+              match(state.layoutType)
+                .with('event', () => {
+                  const shortid = (state.data as Event)?.shortid;
+                  if (shortid) window.open(`/e/${shortid}`);
+                })
+                .otherwise(() => {});
             }}
           />
         </div>
@@ -192,7 +196,7 @@ function DropdownComponent() {
       <div className="px-2 pb-1">
         {match(active)
           .with('events', () => (
-            <div className='flex flex-col gap-0.5'>
+            <div className="flex flex-col gap-0.5">
               {events.map((item) => (
                 <MenuItem
                   key={item._id}

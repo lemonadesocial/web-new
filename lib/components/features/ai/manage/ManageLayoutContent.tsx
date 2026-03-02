@@ -16,7 +16,6 @@ import ManageEventLayout from '../../event-manage/ManageEventLayout';
 
 import { tabMappings } from './helpers';
 import { storeManageLayout as store, useStoreManageLayout } from './store';
-import { read } from 'fs';
 
 function ManageLayoutContent() {
   const params = useParams();
