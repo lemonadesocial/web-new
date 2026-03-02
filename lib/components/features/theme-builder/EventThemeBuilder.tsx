@@ -125,7 +125,7 @@ function InlineEventThemeBuilderPanel() {
 
   return (
     <div
-      className="h-full bg-overlay-secondary backdrop-blur-md rounded-md p-2 overflow-auto no-scrollbar space-y-2"
+      className="h-full bg-overlay-secondary backdrop-blur-md rounded-md p-2 pt-4 overflow-auto no-scrollbar space-y-3"
       style={
         {
           // @ts-expect-error accept variables
@@ -134,7 +134,7 @@ function InlineEventThemeBuilderPanel() {
         } as React.CSSProperties
       }
     >
-      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+      <div className="flex gap-2 overflow-x-auto no-scrollbar px-1 py-1">
         {Object.entries(presets).map(([key, preset]) => {
           const active = themeName === key;
           return (

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { match } from 'ts-pattern';
-import { isEqual } from 'lodash';
+import { isEqual, merge } from 'lodash';
 
 import { Button, Menu, MenuItem, toast } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
@@ -66,11 +66,14 @@ function ManageLayoutToolbar() {
     },
   });
 
+  const normalizeTheme = (theme: any) => merge({}, defaultTheme, theme || {});
+  const isThemeDirty = !isEqual(normalizeTheme(themeState), normalizeTheme(event?.theme_data));
+
   const canSaveTheme =
     state.layoutType === 'event' &&
     state.activeTab === 'design' &&
     !!event?._id &&
-    !isEqual(themeState, event?.theme_data || defaultTheme);
+    isThemeDirty;
 
   const handlePublish = () => {
     match(state.layoutType)
@@ -206,9 +209,11 @@ function ManageLayoutToolbar() {
               Save
             </Button>
           )}
-          <Button size="sm" onClick={handlePublish} loading={publishingEvent}>
-            {(state.data as Event)?.published ? 'Published' : 'Publish'}
-          </Button>
+          {state.activeTab === 'manage' && (
+            <Button size="sm" onClick={handlePublish} loading={publishingEvent}>
+              {(state.data as Event)?.published ? 'Published' : 'Publish'}
+            </Button>
+          )}
         </div>
       </div>
     </div>

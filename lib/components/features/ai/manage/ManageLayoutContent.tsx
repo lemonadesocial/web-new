@@ -95,7 +95,10 @@ function ManageLayoutContent() {
             transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
             className="overflow-hidden shrink-0"
           >
-            <div data-mode={isDesignOrPreview ? state.device : undefined} className="w-[440px] h-full pl-4">
+            <div
+              data-mode={isDesignOrPreview ? state.device : undefined}
+              className={clsx('w-[440px] h-full pl-4', isDesignOrPreview && 'pt-3')}
+            >
               <SidebarComp />
             </div>
           </motion.div>
