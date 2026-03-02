@@ -4,12 +4,20 @@ import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { match } from 'ts-pattern';
+import { isEqual } from 'lodash';
 
 import { Button, Menu, MenuItem, toast } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
-import { Event, GetUpcomingEventsDocument, PublishEventDocument } from '$lib/graphql/generated/backend/graphql';
+import {
+  Event,
+  GetUpcomingEventsDocument,
+  PublishEventDocument,
+  UpdateEventThemeDocument,
+} from '$lib/graphql/generated/backend/graphql';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
+import { ThemeBuilderActionKind, useEventTheme } from '$lib/components/features/theme-builder/provider';
+import { defaultTheme } from '$lib/components/features/theme-builder/store';
 
 import { useUpdateEvent } from '../../event-manage/store';
 import { tabMappings } from './helpers';
@@ -27,6 +35,8 @@ const devices = {
 function ManageLayoutToolbar() {
   const router = useRouter();
   const state = useStoreManageLayout();
+  const [themeState, themeDispatch] = useEventTheme();
+  const event = state.data as Event | undefined;
 
   // NOTE: its bc using different store
   const updateEvent = useUpdateEvent();
@@ -43,6 +53,24 @@ function ManageLayoutToolbar() {
       toast.error(error.message || 'Failed to publish event');
     },
   });
+  const [updateEventTheme, { loading: savingTheme }] = useMutation(UpdateEventThemeDocument, {
+    onComplete: (_, data) => {
+      const updatedEvent = data?.updateEvent;
+      if (updatedEvent?._id) {
+        toast.success('Theme saved successfully!');
+        store.setData({ ...state.data, theme_data: themeState } as Event);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to save theme');
+    },
+  });
+
+  const canSaveTheme =
+    state.layoutType === 'event' &&
+    state.activeTab === 'design' &&
+    !!event?._id &&
+    !isEqual(themeState, event?.theme_data || defaultTheme);
 
   const handlePublish = () => {
     match(state.layoutType)
@@ -56,6 +84,23 @@ function ManageLayoutToolbar() {
         }
       })
       .otherwise(() => {});
+  };
+
+  const handleSaveTheme = () => {
+    if (!event?._id) return;
+    updateEventTheme({
+      variables: {
+        id: event._id,
+        input: { theme_data: themeState },
+      },
+    });
+  };
+
+  const handleResetTheme = () => {
+    themeDispatch({
+      type: ThemeBuilderActionKind.reset,
+      payload: event?.theme_data || defaultTheme,
+    });
   };
 
   return (
@@ -151,6 +196,16 @@ function ManageLayoutToolbar() {
           >
             Upgrade
           </Button>
+          {canSaveTheme && (
+            <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}>
+              Reset
+            </Button>
+          )}
+          {canSaveTheme && (
+            <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}>
+              Save
+            </Button>
+          )}
           <Button size="sm" onClick={handlePublish} loading={publishingEvent}>
             {(state.data as Event)?.published ? 'Published' : 'Publish'}
           </Button>

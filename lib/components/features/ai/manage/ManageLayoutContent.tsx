@@ -10,7 +10,6 @@ import { AiConfigFieldsFragment, GetListAiConfigDocument } from '$lib/graphql/ge
 import { AIChatActionKind, useAIChat } from '../provider';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { Event, GetEventDocument } from '$lib/graphql/generated/backend/graphql';
-import { EventThemeProvider } from '$lib/components/features/theme-builder/provider';
 import { EventGuestSide } from '$lib/components/features/event/EventGuestSide';
 
 import { mockWelcomeEvent } from '../InputChat';
@@ -75,13 +74,11 @@ function ManageLayoutContent() {
       match(state.layoutType)
         .with('event', () =>
           event ? (
-            <EventThemeProvider themeData={event.theme_data}>
-              <main className="relative flex flex-col w-full mt-7 md:mt-11">
-                <div className="page mx-auto px-4 xl:px-0">
-                  <EventGuestSide event={event} />
-                </div>
-              </main>
-            </EventThemeProvider>
+            <main className="relative flex flex-col w-full mt-7 md:mt-11">
+              <div className="page mx-auto px-4 xl:px-0">
+                <EventGuestSide event={event} />
+              </div>
+            </main>
           ) : null,
         )
         .otherwise(() => null),
