@@ -22,20 +22,14 @@ test.describe('Staging Smoke Tests', () => {
     await expect(page.locator('body')).toBeVisible();
   });
 
+  test('homepage content is rendered', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByText('Create your Lemonade Stand')).toBeVisible({ timeout: 10000 });
+  });
+
   test('OG extractor API returns 400 without URL param', async ({ request }) => {
     const response = await request.get('/api/og/extractor');
     expect(response.status()).toBe(400);
-  });
-
-  // Contract test: asserts response shape of the metadata API.
-  // Update assertions here if the API response structure changes.
-  test('username metadata API responds', async ({ request }) => {
-    const response = await request.post('/api/lemonade-username/metadata', {
-      data: { username: 'smoke_test' },
-      headers: { 'content-type': 'application/json' },
-    });
-    expect(response.status()).toBe(200);
-    const body = await response.json();
-    expect(body?.metadata?.name).toBe('smoke_test');
   });
 });

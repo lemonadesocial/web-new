@@ -7,7 +7,7 @@ const HOST = makeUser();
 
 const baseMocks = {
   GetMe: { data: { getMe: HOST } },
-  GetSpaces: { data: { getSpaces: [] } },
+  GetSpaces: { data: { listSpaces: [] } },
   GetMySpaces: { data: { getMySpaces: [] } },
   GetMyNotifications: { data: { getMyNotifications: [] } },
   ListSpaces: { data: { listSpaces: [] } },
@@ -21,8 +21,10 @@ test.describe('Date/Time/Timezone', () => {
   });
 
   test('event creation page shows title input and date/time section', async ({ page }) => {
-    await page.goto('/localhost/create/event');
+    await page.goto('/create/event');
     await page.waitForLoadState('networkidle');
+
+    console.log(await page.content());
 
     // Title input must be visible
     const titleInput = page.locator('[data-testid="event-create-title"]');
