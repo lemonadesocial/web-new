@@ -19,6 +19,7 @@ export function ConflictPolicySelector() {
   const { setConflictPolicy, setUpsertKeys } = useMappingActions();
 
   const lemonadeFields = getLemonadeFields(config.scope);
+  const upsertField = lemonadeFields.find((f) => f.key === config.upsertKeys[0]);
 
   const selectedPolicy = CONFLICT_POLICIES.find((p) => p.value === config.conflictPolicy);
 
@@ -60,8 +61,11 @@ export function ConflictPolicySelector() {
             Upsert key (field used to detect duplicates):
           </label>
           <Select
-            value={config.upsertKeys[0] ?? ''}
-            onChange={(v) => setUpsertKeys(v ? [v] : [])}
+            value={upsertField?.label ?? ''}
+            onChange={(v) => {
+              const field = lemonadeFields.find((f) => f.label === v);
+              setUpsertKeys(field?.key ? [field.key] : []);
+            }}
             options={lemonadeFields.map((f) => f.label)}
             placeholder="Select a key field"
             variant="outlined"
@@ -69,7 +73,7 @@ export function ConflictPolicySelector() {
           />
           {config.upsertKeys.length > 0 && (
             <p className="text-xs text-quaternary">
-              Rows matching on <span className="font-medium text-secondary">{config.upsertKeys[0]}</span> will
+              Rows matching on <span className="font-medium text-secondary">{upsertField?.label ?? config.upsertKeys[0]}</span> will
               be treated as duplicates.
             </p>
           )}
