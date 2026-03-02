@@ -11,8 +11,9 @@ import { useMe } from '$lib/hooks/useMe';
 import { isObjectId } from '$lib/utils/helpers';
 import Header from '$lib/components/layouts/header';
 import { communityAvatar } from '$lib/utils/community';
+import { CONNECTORS_MAPPING_UI_ENABLED } from './integrations/mapping/feature-flag';
 
-const menu = [
+const baseMenu = [
   { name: 'Overview', page: 'overview' },
   { name: 'Events', page: 'events' },
   { name: 'People', page: 'people' },
@@ -21,6 +22,10 @@ const menu = [
   { name: 'Launchpad', page: 'launchpad' },
   { name: 'Settings', page: 'settings' },
 ];
+
+const menu = CONNECTORS_MAPPING_UI_ENABLED
+  ? [...baseMenu.slice(0, -1), { name: 'Integrations', page: 'integrations' }, baseMenu[baseMenu.length - 1]]
+  : baseMenu;
 
 export function CommunityManageLayout({ children }: React.PropsWithChildren) {
   const me = useMe();
