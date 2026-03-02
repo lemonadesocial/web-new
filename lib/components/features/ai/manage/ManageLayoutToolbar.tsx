@@ -74,6 +74,8 @@ function ManageLayoutToolbar() {
     state.activeTab === 'design' &&
     !!event?._id &&
     isThemeDirty;
+  const brandTitle = event?.title || 'Event Manager';
+  const brandSubtitle = event?.space_expanded?.title || '';
 
   const handlePublish = () => {
     match(state.layoutType)
@@ -121,8 +123,8 @@ function ManageLayoutToolbar() {
               {({ toggle }) => (
                 <div className="flex items-center gap-3 cursor-pointer" onClick={() => toggle()}>
                   <div className="whitespace-nowrap">
-                    <p className="text-sm font-medium">Culture Fest</p>
-                    <p className="text-tertiary text-xs">Arts & Culture</p>
+                    <p className="text-sm font-medium">{brandTitle}</p>
+                    {!!brandSubtitle && <p className="text-tertiary text-xs">{brandSubtitle}</p>}
                   </div>
                 </div>
               )}
