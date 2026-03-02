@@ -55,13 +55,11 @@ function Page() {
   const me = useMe();
 
   const [active, setActive] = React.useState('overview');
-  const [selectedSpaceId, setSelectedSpaceId] = React.useState();
-  const [skip, setSkip] = React.useState(0);
+  const [selectedSpaceId, setSelectedSpaceId] = React.useState<string | undefined>();
   const [toggleMenuMobile, setToggleMenuMobile] = React.useState(false);
-  const menuRef = React.useRef<HTMLDivElement>(null);
 
   const { data } = useQuery(GetListMySpacesDocument, {
-    variables: { skip, limit: 10 },
+    variables: { skip: 0, limit: 100 },
     skip: !me,
   });
   const spaces = (data?.listMySpaces?.items || []) as Space[];
@@ -75,13 +73,16 @@ function Page() {
 
   React.useEffect(() => {
     if (spaces.length) setSelectedSpaceId(spaces[0]._id);
-  }, [spaces.length]);
+  }, [spaces[0]?._id]);
 
   return (
     <>
       <Header showUI={false} />
       <div className="h-dvh flex flex-col md:flex-row">
-        <div ref={menuRef} className="max-sm:hidden md:flex flex-col flex-1 bg-overlay-primary max-w-[280px] p-3 gap-3">
+        <div className={clsx(
+          'md:flex flex-col flex-1 bg-overlay-primary max-w-[280px] p-3 gap-3',
+          toggleMenuMobile ? 'max-sm:fixed max-sm:inset-0 max-sm:z-50 max-sm:max-w-full flex' : 'max-sm:hidden',
+        )}>
           <Button iconLeft="icon-chevron-left" variant="flat" onClick={() => router.back()} className="w-fit">
             Back
           </Button>
@@ -143,15 +144,7 @@ function Page() {
                   active === key && 'bg-(--btn-tertiary)',
                 )}
                 onClick={() => {
-                  const classes = [
-                    'max-sm:hidden',
-                    'max-sm:fixed',
-                    'flex',
-                    'max-sm:inset-0',
-                    'max-sm:z-50',
-                    'max-sm:max-w-full',
-                  ];
-                  classes.forEach((i) => menuRef.current?.classList?.toggle(i));
+                  setToggleMenuMobile(false);
                   setActive(key);
                 }}
               >
@@ -167,17 +160,7 @@ function Page() {
             <Button
               icon="icon-chevron-left"
               variant="flat"
-              onClick={() => {
-                const classes = [
-                  'max-sm:hidden',
-                  'max-sm:fixed',
-                  'flex',
-                  'max-sm:inset-0',
-                  'max-sm:z-50',
-                  'max-sm:max-w-full',
-                ];
-                classes.forEach((i) => menuRef.current?.classList?.toggle(i));
-              }}
+              onClick={() => setToggleMenuMobile(!toggleMenuMobile)}
               className="w-fit"
             >
               Back

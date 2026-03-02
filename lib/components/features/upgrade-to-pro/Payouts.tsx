@@ -15,6 +15,7 @@ export function Payouts({ space }: { space: Space }) {
 
         <Card.Root>
           <Card.Content className="flex flex-col justify-between gap-4">
+            <p className="text-tertiary text-xs mb-2">Sample Data</p>
             <div className="grid grid-cols-2">
               <div>
                 <p className="text-sm text-tertiary">All Time</p>
@@ -64,15 +65,7 @@ function StripCard() {
       <Card.Content className="flex flex-col gap-4 pt-3">
         <div className="space-y-2 text-secondary">
           <p>Your Stripe account is active and accepting payments.</p>
-          <p>Stripe is reporting the following requirements for verification:</p>
-          <ul className="list-disc pl-4">
-            <li>
-              <p>Interv 1RIQWvLbhPLotAOBNPoK1xvE - Business Model Verification.form</p>
-            </li>
-            <li>
-              <p>Other</p>
-            </li>
-          </ul>
+          <p className="text-tertiary text-sm">Stripe verification requirements will appear here when applicable.</p>
         </div>
 
         <div className="flex items-center gap-2">

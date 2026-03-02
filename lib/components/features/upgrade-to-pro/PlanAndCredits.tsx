@@ -222,8 +222,8 @@ export function PlanAndCredits() {
                     <li className="text-tertiary text-sm">
                       <p>All features in Free, plus:</p>
                     </li>
-                    {item.features.map((f, idx) => (
-                      <li key={idx} className="flex gap-2">
+                    {item.features.map((f) => (
+                      <li key={f} className="flex gap-2">
                         <i className="icon-done size-5 aspect-square" />
                         <p>{f}</p>
                       </li>

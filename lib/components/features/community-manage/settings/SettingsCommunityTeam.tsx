@@ -14,7 +14,7 @@ import { userAvatar } from '$lib/utils/user';
 import React from 'react';
 import { ConfirmModal } from '../../modals/ConfirmModal';
 import { AddTeam } from '../modals/AddTeam';
-import { values } from 'lodash';
+
 
 export function SettingsCommunityTeam({ space }: { space: Space }) {
   return (

@@ -1,3 +1,5 @@
+'use client';
+
 import { Card } from '$lib/components/core';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 
@@ -13,7 +15,7 @@ const connectors = [
     description: 'Set up payments',
   },
   {
-    logo: `${ASSET_PREFIX}/images/connectors/connector-elevent-lab.png`,
+    logo: `${ASSET_PREFIX}/images/connectors/connector-eleven-labs.png`,
     brand: 'ElevenLabs',
     description: 'AI voice generation, text-to-speech, and speech-to-text',
   },
@@ -33,14 +35,9 @@ const connectors = [
     description: 'Connect your own Supabase project',
   },
   {
-    logo: `${ASSET_PREFIX}/images/connectors/connector-atlassian.png`,
-    brand: 'Atlassian',
-    description: 'Access your Jira issues and Confluence pages',
-  },
-  {
-    logo: `${ASSET_PREFIX}/images/connectors/connector-perplexity.png`,
-    brand: 'Perplexity',
-    description: 'AI-powered search and answer engine',
+    logo: `${ASSET_PREFIX}/images/connectors/connector-granola.png`,
+    brand: 'Granola',
+    description: 'AI-powered meeting notes',
   },
   {
     logo: `${ASSET_PREFIX}/images/connectors/connector-linear.png`,
@@ -73,12 +70,12 @@ export function Connector() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {connectors.map((item, idx) => (
-          <Card.Root key={idx}>
+        {connectors.map((item) => (
+          <Card.Root key={item.brand}>
             <Card.Content className="flex flex-col gap-4">
               <div className="flex justify-between items-start">
                 <img src={item.logo} className="size-[48px] aspect-square rounded-sm" />
-                <div className="py-[3px] line-clamp-1 px-2 rounded-full text-xs bg-(--btn-tertiary)">Comming Soon</div>
+                <div className="py-[3px] line-clamp-1 px-2 rounded-full text-xs bg-(--btn-tertiary)">Coming Soon</div>
               </div>
 
               <div>
