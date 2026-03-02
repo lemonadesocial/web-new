@@ -1,0 +1,2 @@
+export const CONNECTORS_MAPPING_UI_ENABLED =
+  process.env.NEXT_PUBLIC_CONNECTORS_MAPPING_UI === 'true';
