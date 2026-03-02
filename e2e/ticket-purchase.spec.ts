@@ -36,7 +36,7 @@ test.describe('Ticket Purchase / RSVP', () => {
   });
 
   test('event page renders ticket types', async ({ page }) => {
-    await page.goto(`/localhost/e/${EVENT.shortid}`);
+    await page.goto(`/e/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     // Ticket type names should be visible on the page
@@ -45,7 +45,7 @@ test.describe('Ticket Purchase / RSVP', () => {
   });
 
   test('register button is visible and responds to click', async ({ page }) => {
-    await page.goto(`/localhost/e/${EVENT.shortid}`);
+    await page.goto(`/e/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     const registerButton = page.locator('[data-testid="event-register-button"]');
@@ -78,7 +78,7 @@ test.describe('Ticket Purchase / RSVP', () => {
       });
     });
 
-    await page.goto(`/localhost/e/${EVENT.shortid}`);
+    await page.goto(`/e/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     const registerButton = page.locator('[data-testid="event-register-button"]');
@@ -108,7 +108,7 @@ test.describe('Ticket Purchase / RSVP', () => {
       });
     });
 
-    await page.goto(`/localhost/e/${EVENT.shortid}`);
+    await page.goto(`/e/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     // Look for the ticket select item's increment button (NumberInput +)
@@ -149,7 +149,7 @@ test.describe('Ticket Purchase / RSVP', () => {
       },
     });
 
-    await page.goto(`/localhost/e/${EVENT.shortid}`);
+    await page.goto(`/e/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     // The register button should NOT be visible — user already has tickets
@@ -168,7 +168,7 @@ test.describe('Ticket Purchase / RSVP', () => {
       GetEvent: { data: { getEvent: approvalEvent } },
     });
 
-    await page.goto(`/localhost/e/${approvalEvent.shortid}`);
+    await page.goto(`/e/${approvalEvent.shortid}`);
     await page.waitForLoadState('networkidle');
 
     const registerButton = page.locator('[data-testid="event-register-button"]');
@@ -190,7 +190,7 @@ test.describe('Ticket Purchase / RSVP', () => {
       GetEvent: { data: { getEvent: eventWithQuestions } },
     });
 
-    await page.goto(`/localhost/e/${eventWithQuestions.shortid}`);
+    await page.goto(`/e/${eventWithQuestions.shortid}`);
     await page.waitForLoadState('networkidle');
 
     // Click register to open the registration modal
@@ -237,7 +237,7 @@ test.describe('Ticket Purchase / RSVP', () => {
       });
     });
 
-    await page.goto(`/localhost/e/${EVENT.shortid}`);
+    await page.goto(`/e/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     // Select a paid ticket first

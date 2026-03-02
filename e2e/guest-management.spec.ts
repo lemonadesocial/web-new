@@ -40,7 +40,7 @@ test.describe('Guest Management', () => {
   });
 
   test('guest list page renders search, filter, sort, and export controls', async ({ page }) => {
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}/guests`);
+    await page.goto(`/e/manage/${EVENT.shortid}/guests`);
     await page.waitForLoadState('networkidle');
 
     await expect(page.locator('[data-testid="guest-list-search"]')).toBeVisible({ timeout: 10000 });
@@ -68,7 +68,7 @@ test.describe('Guest Management', () => {
       });
     });
 
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}/guests`);
+    await page.goto(`/e/manage/${EVENT.shortid}/guests`);
     await page.waitForLoadState('networkidle');
 
     const searchInput = page.locator('[data-testid="guest-list-search"]');
@@ -81,7 +81,7 @@ test.describe('Guest Management', () => {
   });
 
   test('filter menu shows Going, Pending, Invited, Not Going, Checked In options', async ({ page }) => {
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}/guests`);
+    await page.goto(`/e/manage/${EVENT.shortid}/guests`);
     await page.waitForLoadState('networkidle');
 
     const filterButton = page.locator('[data-testid="guest-list-filter"]');
@@ -97,7 +97,7 @@ test.describe('Guest Management', () => {
   });
 
   test('sort menu shows Register Time and Approval Status options', async ({ page }) => {
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}/guests`);
+    await page.goto(`/e/manage/${EVENT.shortid}/guests`);
     await page.waitForLoadState('networkidle');
 
     const sortButton = page.locator('[data-testid="guest-list-sort"]');
@@ -109,7 +109,7 @@ test.describe('Guest Management', () => {
   });
 
   test('export button triggers CSV download', async ({ page }) => {
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}/guests`);
+    await page.goto(`/e/manage/${EVENT.shortid}/guests`);
     await page.waitForLoadState('networkidle');
 
     const exportButton = page.locator('[data-testid="guest-list-export"]');
@@ -119,7 +119,7 @@ test.describe('Guest Management', () => {
   });
 
   test('check-in page renders tabs for guest statuses', async ({ page }) => {
-    await page.goto(`/localhost/e/check-in/${EVENT.shortid}`);
+    await page.goto(`/e/check-in/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     // Check-in page should show tabs: All Guests, Going, Checked In, Invited
@@ -130,7 +130,7 @@ test.describe('Guest Management', () => {
   });
 
   test('check-in page has search input and scan button', async ({ page }) => {
-    await page.goto(`/localhost/e/check-in/${EVENT.shortid}`);
+    await page.goto(`/e/check-in/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     await expect(page.getByPlaceholder('Search for a guest...')).toBeVisible({ timeout: 10000 });
@@ -138,7 +138,7 @@ test.describe('Guest Management', () => {
   });
 
   test('guest statistics are displayed on the guest list page', async ({ page }) => {
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}/guests`);
+    await page.goto(`/e/manage/${EVENT.shortid}/guests`);
     await page.waitForLoadState('networkidle');
 
     // The GetEventGuestsStatistics query returns counts — verify stats are rendered
@@ -171,7 +171,7 @@ test.describe('Guest Management', () => {
       },
     });
 
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}/guests`);
+    await page.goto(`/e/manage/${EVENT.shortid}/guests`);
     await page.waitForLoadState('networkidle');
 
     await expect(page.locator('[data-testid="guest-list-search"]')).toBeVisible({ timeout: 10000 });
@@ -224,7 +224,7 @@ test.describe('Guest Management', () => {
       });
     });
 
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}/guests`);
+    await page.goto(`/e/manage/${EVENT.shortid}/guests`);
     await page.waitForLoadState('networkidle');
 
     // Click on a pending guest to open the details drawer

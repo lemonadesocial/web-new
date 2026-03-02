@@ -26,7 +26,7 @@ test.describe('Event Creation', () => {
   });
 
   test('create event page renders title input and submit button', async ({ page }) => {
-    await page.goto('/localhost/create/event');
+    await page.goto('/create/event');
     await page.waitForLoadState('networkidle');
 
     const titleInput = page.locator('[data-testid="event-create-title"]');
@@ -39,7 +39,7 @@ test.describe('Event Creation', () => {
   });
 
   test('submit button enables after typing title', async ({ page }) => {
-    await page.goto('/localhost/create/event');
+    await page.goto('/create/event');
     await page.waitForLoadState('networkidle');
 
     const titleInput = page.locator('[data-testid="event-create-title"]');
@@ -77,7 +77,7 @@ test.describe('Event Creation', () => {
       });
     });
 
-    await page.goto('/localhost/create/event');
+    await page.goto('/create/event');
     await page.waitForLoadState('networkidle');
 
     const titleInput = page.locator('[data-testid="event-create-title"]');
@@ -116,7 +116,7 @@ test.describe('Event Creation', () => {
       });
     });
 
-    await page.goto('/localhost/create/event');
+    await page.goto('/create/event');
     await page.waitForLoadState('networkidle');
 
     // Submit button should be disabled without a title
@@ -152,7 +152,7 @@ test.describe('Event Creation', () => {
       });
     });
 
-    await page.goto('/localhost/create/event');
+    await page.goto('/create/event');
     await page.waitForLoadState('networkidle');
 
     // Toggle approval required
@@ -199,7 +199,7 @@ test.describe('Event Creation', () => {
       });
     });
 
-    await page.goto('/localhost/create/event');
+    await page.goto('/create/event');
     await page.waitForLoadState('networkidle');
 
     // Click the virtual link card to open VirtualModal
@@ -256,7 +256,7 @@ test.describe('Event Creation', () => {
       });
     });
 
-    await page.goto('/localhost/create/event');
+    await page.goto('/create/event');
     await page.waitForLoadState('networkidle');
 
     // Click the Capacity button (shows "Unlimited" by default)
@@ -321,7 +321,7 @@ test.describe('Event Creation', () => {
       });
     });
 
-    await page.goto('/localhost/create/event');
+    await page.goto('/create/event');
     await page.waitForLoadState('networkidle');
 
     // Select the community from the space dropdown

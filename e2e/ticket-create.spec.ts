@@ -28,7 +28,7 @@ test.describe('Ticket Management', () => {
   });
 
   test('ticket list renders with existing ticket and Add Ticket Type button', async ({ page }) => {
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}`);
+    await page.goto(`/e/manage/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     // The existing ticket title should be visible
@@ -40,7 +40,7 @@ test.describe('Ticket Management', () => {
   });
 
   test('Add Ticket Type button opens ticket drawer', async ({ page }) => {
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}`);
+    await page.goto(`/e/manage/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     const addButton = page.locator('[data-testid="add-ticket-type"]');
@@ -78,7 +78,7 @@ test.describe('Ticket Management', () => {
       });
     });
 
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}`);
+    await page.goto(`/e/manage/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     const addButton = page.locator('[data-testid="add-ticket-type"]');
@@ -102,7 +102,7 @@ test.describe('Ticket Management', () => {
   });
 
   test('clicking existing ticket opens edit drawer', async ({ page }) => {
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}`);
+    await page.goto(`/e/manage/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     // Click on the existing ticket row
@@ -140,7 +140,7 @@ test.describe('Ticket Management', () => {
       });
     });
 
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}`);
+    await page.goto(`/e/manage/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     // Open existing ticket drawer
@@ -188,7 +188,7 @@ test.describe('Ticket Management', () => {
       });
     });
 
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}`);
+    await page.goto(`/e/manage/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     // Open existing ticket drawer
@@ -208,7 +208,7 @@ test.describe('Ticket Management', () => {
   });
 
   test('ticket drawer shows visibility toggles (active and private)', async ({ page }) => {
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}`);
+    await page.goto(`/e/manage/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     const addButton = page.locator('[data-testid="add-ticket-type"]');
@@ -225,7 +225,7 @@ test.describe('Ticket Management', () => {
   });
 
   test('ticket drawer shows capacity and per-person limit options', async ({ page }) => {
-    await page.goto(`/localhost/e/manage/${EVENT.shortid}`);
+    await page.goto(`/e/manage/${EVENT.shortid}`);
     await page.waitForLoadState('networkidle');
 
     const addButton = page.locator('[data-testid="add-ticket-type"]');

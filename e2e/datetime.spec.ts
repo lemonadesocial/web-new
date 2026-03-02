@@ -21,7 +21,7 @@ test.describe('Date/Time/Timezone', () => {
   });
 
   test('event creation page shows title input and date/time section', async ({ page }) => {
-    await page.goto('/localhost/create/event');
+    await page.goto('/create/event');
     await page.waitForLoadState('networkidle');
 
     // Title input must be visible
@@ -33,7 +33,7 @@ test.describe('Date/Time/Timezone', () => {
   });
 
   test('timezone selector shows timezone info', async ({ page }) => {
-    await page.goto('/localhost/create/event');
+    await page.goto('/create/event');
     await page.waitForLoadState('networkidle');
 
     // Timezone card should be visible with timezone abbreviation
@@ -65,7 +65,7 @@ test.describe('Date/Time/Timezone', () => {
       });
     });
 
-    await page.goto('/localhost/create/event');
+    await page.goto('/create/event');
     await page.waitForLoadState('networkidle');
 
     const titleInput = page.locator('[data-testid="event-create-title"]');
@@ -90,7 +90,7 @@ test.describe('Date/Time/Timezone', () => {
   });
 
   test('event has default dates pre-filled (not empty)', async ({ page }) => {
-    await page.goto('/localhost/create/event');
+    await page.goto('/create/event');
     await page.waitForLoadState('networkidle');
 
     // The DateTimeGroup renders date text — verify something date-like is visible
@@ -103,7 +103,7 @@ test.describe('Date/Time/Timezone', () => {
   });
 
   test('start and end dates show formatted time buttons', async ({ page }) => {
-    await page.goto('/localhost/create/event');
+    await page.goto('/create/event');
     await page.waitForLoadState('networkidle');
 
     await expect(page.locator('[data-testid="event-create-title"]')).toBeVisible({ timeout: 10000 });
@@ -119,7 +119,7 @@ test.describe('Date/Time/Timezone', () => {
   });
 
   test('user timezone is auto-detected and displayed', async ({ page }) => {
-    await page.goto('/localhost/create/event');
+    await page.goto('/create/event');
     await page.waitForLoadState('networkidle');
 
     await expect(page.locator('[data-testid="event-create-title"]')).toBeVisible({ timeout: 10000 });
