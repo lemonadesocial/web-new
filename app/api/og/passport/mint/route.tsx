@@ -48,8 +48,8 @@ export async function GET(req: NextRequest) {
     const res = await fetch(tokenUri);
     const data = await res.json();
     image = data.image;
-  } catch (err: any) {
-    return new Response(err.message || 'Error: Something went wrong!', { status: 500 });
+  } catch (err: unknown) {
+    return new Response(err instanceof Error ? err.message : 'Error: Something went wrong!', { status: 500 });
   }
 
   if (!image) {

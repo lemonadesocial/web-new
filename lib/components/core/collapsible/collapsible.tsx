@@ -28,10 +28,11 @@ export const Collapsible = ({
 
   return (
     <div className='rounded-sm border'>
-      <div
+      <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className='flex justify-between gap-3 p-2'
-        role="button"
+        className='flex justify-between gap-3 p-2 w-full text-left'
+        aria-expanded={isOpen}
       >
         <div>{header}</div>
         <motion.i
@@ -39,7 +40,7 @@ export const Collapsible = ({
           transition={{ duration: 0.3 }}
           className="icon-arrow-down text-tertiary"
         />
-      </div>
+      </button>
 
       <AnimatePresence initial={false}>
         {isOpen && (

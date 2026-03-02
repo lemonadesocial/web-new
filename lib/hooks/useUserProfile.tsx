@@ -81,8 +81,8 @@ export const useUserProfile = (params?: string) => {
 
         setData(user);
       }
-    } catch (err: any) {
-      setError(err);
+    } catch (err: unknown) {
+      setError(err as any);
     } finally {
       setLoading(false);
     }

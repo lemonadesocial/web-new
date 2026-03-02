@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useAtom } from 'jotai';
 
 import { Avatar, Button, Card, drawer, modal, toast } from '$lib/components/core';
+import { getErrorMessage } from '$lib/utils/error';
 import { VerifyEmailModal } from '$lib/components/features/auth/VerifyEmailModal';
 import { useMe } from '$lib/hooks/useMe';
 import { sessionAtom } from '$lib/jotai';
@@ -50,8 +51,8 @@ export function Content() {
       await deleteUser({});
       toast.success('Account deleted successfully');
       logOut(true);
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
     }
   };
 

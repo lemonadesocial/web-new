@@ -65,7 +65,7 @@ export function ClaimRedEnvelopeModal({
       await transaction.wait();
 
       setStep('success');
-    } catch (error: any) {
+    } catch (error: unknown) {
       Sentry.captureException(error, {
         extra: {
           walletInfo: appKit.getWalletInfo(),

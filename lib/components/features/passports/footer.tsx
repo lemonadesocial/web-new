@@ -20,6 +20,7 @@ import { BeforeMintPassportModal } from './modals/BeforeMintPassportModal';
 import { MintPassportModal } from './modals/MintPassportModal';
 import { useAppKitAccount } from '@reown/appkit/react';
 import { formatError } from '$lib/utils/crypto';
+import { getErrorMessage } from '$lib/utils/error';
 import { usePassportChain } from '$lib/hooks/usePassportChain';
 
 export function Footer() {
@@ -151,9 +152,9 @@ export function Footer() {
           },
         },
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       Sentry.captureException(error);
-      toast.error(error.message);
+      toast.error(getErrorMessage(error));
     } finally {
       setIsMinting(false);
     }

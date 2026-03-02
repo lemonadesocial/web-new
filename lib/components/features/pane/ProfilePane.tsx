@@ -22,6 +22,7 @@ import { File, UpdateUserDocument, User } from '$lib/graphql/generated/backend/g
 import { userAtom } from '$lib/jotai';
 import { uploadFiles } from '$lib/utils/file';
 import { generateUrl } from '$lib/utils/cnd';
+import { getErrorMessage } from '$lib/utils/error';
 
 import { PROFILE_SOCIAL_LINKS } from '$lib/utils/constants';
 import { useClaimUsername } from '$lib/hooks/useUsername';
@@ -106,9 +107,9 @@ export function ProfilePaneContent({ me }: { me: User }) {
 
       toast.success('Profile updated successfully');
       drawer.close();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err));
       Sentry.captureException(err);
-      toast.error(err.message);
     } finally {
       setIsSubmitting(false);
     }

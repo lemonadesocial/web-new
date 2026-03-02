@@ -9,6 +9,7 @@ import { useMutation } from '$lib/graphql/request';
 import { CreatePoapDropDocument } from '$lib/graphql/generated/backend/graphql';
 import { uploadFiles } from '$lib/utils/file';
 import { toast } from '$lib/components/core/toast';
+import { getErrorMessage } from '$lib/utils/error';
 import { ListPoapDropsDocument } from '$lib/graphql/generated/backend/graphql';
 import { listChainsAtom } from '$lib/jotai';
 
@@ -120,8 +121,8 @@ export function CreateNewCollectibleModal({ event }: CreateNewCollectibleModalPr
           }
         }
       });
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
     } finally {
       setImageUploadLoading(false);
     }

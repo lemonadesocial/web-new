@@ -4,6 +4,7 @@ import { GetMyTicketsDocument, Ticket } from "$lib/graphql/generated/backend/gra
 import { useSession } from "$lib/hooks/useSession";
 import { useClient } from "$lib/graphql/request";
 import { modal, toast } from "$lib/components/core";
+import { getErrorMessage } from '$lib/utils/error';
 
 import { eventDataAtom, registrationModal, useAtomValue } from "../store";
 import { RegistrationSuccessModal } from "./RegistrationSuccessModal";
@@ -55,10 +56,10 @@ export function TicketsProcessingModal() {
         }
 
         return false;
-      } catch (error: any) {
+      } catch (error: unknown) {
       stopPolling();
         registrationModal.close();
-        toast.error(error.message || 'Failed to check for tickets. Please try again later.');
+        toast.error(getErrorMessage(error, 'Failed to check for tickets. Please try again later.'));
         return false;
       }
     };

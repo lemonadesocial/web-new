@@ -12,6 +12,7 @@ import { Button, Checkbox, modal, ModalContent, toast } from '$lib/components/co
 import { trpc } from '$lib/trpc/client';
 import { chainsMapAtom } from '$lib/jotai';
 import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
+import { getErrorMessage } from '$lib/utils/error';
 import { useClient, useQuery } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import { ETHERSCAN } from '$lib/utils/constants';
@@ -93,9 +94,8 @@ export function LemonHeadFooter() {
         toast.error('This LemonHead look has already been minted');
         isValid = false;
       }
-    } catch (error: any) {
-      let message = '';
-      if (error?.message) message = error.message.toLowerCase();
+    } catch (error: unknown) {
+      const message = getErrorMessage(error, '').toLowerCase();
 
       if (isError(error, 'INSUFFICIENT_FUNDS') || message.includes('insufficient funds')) {
         const mintPrice = dataCanMint?.canMintLemonhead?.price;
@@ -417,7 +417,7 @@ function MintModal({
           setCount((prev) => prev - 1);
         }, 1000);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       Sentry.captureException(error, {
         extra: {
           walletInfo: appKit.getWalletInfo(),

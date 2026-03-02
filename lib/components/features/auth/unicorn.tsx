@@ -10,6 +10,7 @@ import { dummyWalletPassword, handlePasswordLogin, handlePasswordRegistration, h
 import { decodeAuthCookie } from '$lib/services/unicorn/common';
 import { getUnicornCanLink, linkUnicornWallet } from "$lib/services/unicorn/api";
 import { toast } from '$lib/components/core';
+import { getErrorMessage } from '$lib/utils/error';
 import { useMutation } from '$lib/graphql/request';
 import { SyncUserUnicornWalletDocument } from '$lib/graphql/generated/backend/graphql';
 
@@ -159,8 +160,8 @@ export const useHandleUnicornCookie = (cookie: string, onSuccess?: (reload: bool
 
       setStatus('processed');
     }
-    catch (e: any) {
-      toast.error(e.message);
+    catch (e: unknown) {
+      toast.error(getErrorMessage(e));
     }
   }
 

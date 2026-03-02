@@ -136,7 +136,7 @@ export function CreateCoinModal({
       }
 
       handleSuccess(memecoinAddress, tx.hash);
-    } catch (err: any) {
+    } catch (err: unknown) {
       Sentry.captureException(err);
       setError(formatError(err));
       setStatus('error');

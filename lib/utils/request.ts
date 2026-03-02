@@ -1,4 +1,6 @@
-export const request = async <T>(uri: string, method: 'GET' | 'POST' = 'GET', body?: unknown): Promise<T> => {
+export type RequestBody = Record<string, unknown>;
+
+export const request = async <T>(uri: string, method: 'GET' | 'POST' = 'GET', body?: RequestBody): Promise<T> => {
   const response = await fetch(uri, {
     method,
     headers: {

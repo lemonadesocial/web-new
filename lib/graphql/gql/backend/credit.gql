@@ -1,0 +1,88 @@
+#### Queries
+
+query GetStandCredits($standId: String!) {
+  getStandCredits(stand_id: $standId) {
+    credits
+    subscription_tier
+    subscription_credits
+    purchased_credits
+    subscription_renewal_date
+    subscription_status
+    estimated_depletion_date
+  }
+}
+
+query GetAvailableModels {
+  getAvailableModels {
+    id
+    provider
+    name
+    tier
+    minimum_credits_per_request
+    capabilities
+    is_default
+  }
+}
+
+query GetUsageAnalytics($standId: String!, $startDate: DateTimeISO!, $endDate: DateTimeISO!) {
+  getUsageAnalytics(stand_id: $standId, start_date: $startDate, end_date: $endDate) {
+    daily_usage {
+      date
+      credits
+      requests
+    }
+    by_model {
+      model
+      tier
+      requests
+      credits
+      percentage
+    }
+    top_users {
+      user_id
+      requests
+      credits
+      percentage
+    }
+    totals {
+      requests
+      credits
+      avg_credits_per_request
+    }
+  }
+}
+
+#### Mutations
+
+mutation PurchaseSubscription($input: PurchaseSubscriptionInput!) {
+  purchaseSubscription(input: $input) {
+    checkout_url
+    session_id
+  }
+}
+
+mutation PurchaseCredits($input: PurchaseCreditInput!) {
+  purchaseCredits(input: $input) {
+    checkout_url
+    session_id
+  }
+}
+
+mutation CancelCreditSubscription($input: CancelSubscriptionInput!) {
+  cancelSubscription(input: $input) {
+    success
+    effective_date
+  }
+}
+
+mutation SetPreferredModel($input: SetPreferredModelInput!) {
+  setPreferredModel(input: $input) {
+    id
+    provider
+    name
+    tier
+    minimum_credits_per_request
+    capabilities
+    is_default
+  }
+}

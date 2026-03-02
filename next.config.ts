@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   eslint: {
-    // Disable ESLint during builds
+    // Disable ESLint during builds (Oxlint runs via scripts)
     ignoreDuringBuilds: true,
   },
   images: {

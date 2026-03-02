@@ -17,7 +17,11 @@ jobs:
       run: yarn install --frozen-lockfile
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Run Playwright tests
+    - name: Run Playwright smoke tests on PRs (Chromium)
+      if: ${{ github.event_name == 'pull_request' }}
+      run: npx playwright test --project=chromium
+    - name: Run full Playwright suite on main/master pushes
+      if: ${{ github.event_name != 'pull_request' }}
       run: npx playwright test
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}

@@ -7,6 +7,7 @@ import { formatWallet, getChain, LemonadeStakePaymentContract } from "$lib/utils
 import { useClient } from "$lib/graphql/request";
 import { GetPaymentRefundSignatureDocument } from "$lib/graphql/generated/backend/graphql";
 import { toast, Button, modal, ModalContent } from "$lib/components/core";
+import { getErrorMessage } from '$lib/utils/error';
 import { useAppKitAccount } from "$lib/utils/appkit";
 import { useAppKitProvider } from "$lib/utils/appkit";
 import { writeContract } from "$lib/utils/crypto";
@@ -109,8 +110,8 @@ function ClaimStakeModal({ payment }: { payment: PaymentRefundInfo; }) {
       modal.open(SignClaimStakeTransactionModal, {
         props: { signature: data.getPaymentRefundSignature, payment },
       });
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -180,8 +181,8 @@ function SignClaimStakeTransactionModal({ signature, payment }: {
       await transaction.wait();
 
       setStatus('success');
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error));
       setStatus('none');
     }
   };

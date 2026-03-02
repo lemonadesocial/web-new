@@ -1,5 +1,64 @@
 # Changelog
 
+## [10.9.1](https://github.com/lemonadesocial/web-new/compare/v10.9.0...v10.9.1) (2026-02-27)
+
+
+### Bug Fixes
+
+* use randomCommunityImage instead of undefined randomUserImage in communityAvatar ([#969](https://github.com/lemonadesocial/web-new/issues/969)) ([ace43a2](https://github.com/lemonadesocial/web-new/commit/ace43a259158e3499b51d75b859b4f93240edcd6))
+
+## [10.9.0](https://github.com/lemonadesocial/web-new/compare/v10.8.1...v10.9.0) (2026-02-27)
+
+
+### Features
+
+* adapt frontend for backend release 34.61.0 ([#953](https://github.com/lemonadesocial/web-new/issues/953)) ([7ad46e1](https://github.com/lemonadesocial/web-new/commit/7ad46e179dc7db5172570ff904fefed71694b446))
+
+
+### Bug Fixes
+
+* address Karen review findings for community vaults ([af42168](https://github.com/lemonadesocial/web-new/commit/af42168ac074148b7c439670c7d1768e1f95cf70))
+* **ai:** avoid broken /api proxy for staging chat ([39f30a3](https://github.com/lemonadesocial/web-new/commit/39f30a361baa4ef4384a20300345e1efc1d538c2))
+
+## [10.8.1](https://github.com/lemonadesocial/web-new/compare/v10.8.0...v10.8.1) (2026-02-27)
+
+
+### Bug Fixes
+
+* missing config var ([78702e1](https://github.com/lemonadesocial/web-new/commit/78702e1d3e9c035755297a1191a3f3fc07198cd8))
+
+## [10.8.0](https://github.com/lemonadesocial/web-new/compare/v10.7.3...v10.8.0) (2026-02-26)
+
+
+### Features
+
+* **api:** add AI GraphQL proxy endpoint ([ffdd49f](https://github.com/lemonadesocial/web-new/commit/ffdd49f0580448479edbf8240081825175d8e74d))
+
+
+### Bug Fixes
+
+* **ai:** route browser AI GraphQL via same-origin proxy ([9211c08](https://github.com/lemonadesocial/web-new/commit/9211c08b97550db0dfc6e7f35ec0282c60e939a2))
+* lower gas limit to respect chain cap ([cb2a7ab](https://github.com/lemonadesocial/web-new/commit/cb2a7abc010a00ecfd81609d5628f53520dfe84c))
+* merge conflict ([173a76f](https://github.com/lemonadesocial/web-new/commit/173a76f05063904775cecfd3c0d585ecb5c76fb7))
+* resolve ai chat url ([5950f43](https://github.com/lemonadesocial/web-new/commit/5950f43ed8859fda7273d0e809aa5dbeb7bc26b1))
+* self form ([c93b1df](https://github.com/lemonadesocial/web-new/commit/c93b1df1c33c870573312401f13cc281aec2ba4b))
+* set gas limits by chain ([2d52b79](https://github.com/lemonadesocial/web-new/commit/2d52b795338e65ed4b99dd382996923f4b8b6ba5))
+
+## [10.7.3](https://github.com/lemonadesocial/web-new/compare/v10.7.2...v10.7.3) (2026-02-24)
+
+
+### Bug Fixes
+
+* blast email ([6dc072b](https://github.com/lemonadesocial/web-new/commit/6dc072b59fc2adc06b3d687b175141358f61a2f4))
+
+## [10.7.2](https://github.com/lemonadesocial/web-new/compare/v10.7.1...v10.7.2) (2026-02-23)
+
+
+### Bug Fixes
+
+* build ([4f5e210](https://github.com/lemonadesocial/web-new/commit/4f5e210bb541a0a9daa001bb940b470aaee0c90e))
+* merge conflict ([5344c59](https://github.com/lemonadesocial/web-new/commit/5344c59467a3ba4da143f15e0e4ef987a198f7fd))
+
 ## [10.7.1](https://github.com/lemonadesocial/web-new/compare/v10.7.0...v10.7.1) (2026-02-23)
 
 

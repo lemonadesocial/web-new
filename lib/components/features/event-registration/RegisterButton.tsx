@@ -14,6 +14,7 @@ import {
 import { useSession } from '$lib/hooks/useSession';
 import { useRedeemTickets } from './hooks/useRedeemTickets';
 import { UpgradeTicketTypeModal } from './modals/UpgradeTicketTypeModal';
+import { useSignIn } from '$lib/hooks/useSignIn';
 
 export function RegisterButton() {
   const session = useSession();
@@ -29,7 +30,9 @@ export function RegisterButton() {
   const applicationQuestionsRequired = event.application_questions?.length;
   const connectWalletRequired = event.rsvp_wallet_platforms?.length;
   const hasTerms = event.terms_text;
+  const selfRequired = event.self_verification?.enabled && event.self_verification?.config;
 
+  const signIn = useSignIn();
   const { redeemTickets, loadingRedeem } = useRedeemTickets();
 
   const disabled = purchaseItems.length ? !pricingInfo : true;
@@ -60,12 +63,17 @@ export function RegisterButton() {
 
   const getTicketText = (purchaseItems.length && purchaseItems.length > 1) ? 'Get Tickets' : 'Get Ticket';
 
-  if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session)
-    return (
-      <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
-        {approvalRequired ? 'Request to Join' : hasSingleFreeTicket ? 'Register' : getTicketText}
-      </Button>
-    );
+  if (selfRequired && !session) return (
+    <Button variant="secondary" disabled={disabled} onClick={() => signIn()}>
+      Sign In To Register
+    </Button>
+  );
+
+  if (profileFieldsRequired || applicationQuestionsRequired || connectWalletRequired || hasTerms || !session || selfRequired) return (
+    <Button variant="secondary" disabled={disabled} onClick={openRegistrationModal}>
+      {approvalRequired ? 'Request to Join' : hasSingleFreeTicket ? 'Register' : getTicketText}
+    </Button>
+  );
 
   return (
     <Button

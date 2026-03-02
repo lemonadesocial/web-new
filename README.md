@@ -79,7 +79,7 @@ Authentication cookies require a specific hostname. Add to your `/etc/hosts`:
 
 For local auth, either:
 - Run [lemonade-identity](https://github.com/lemonadesocial/lemonade-identity) locally (follow its README)
-- Or remove `IDENTITY_URL` from `.env` to use the staging identity service
+- Or remove `NEXT_PUBLIC_IDENTITY_URL` from `.env` to use the staging identity service
 
 ### 5. Start Development Server
 
@@ -165,7 +165,7 @@ $request/*  → ./lib/graphql/request/*
 | `yarn dev` | Start dev server (port 8000, Turbopack, HTTPS) |
 | `yarn build` | Production build |
 | `yarn start` | Run production build |
-| `yarn lint` | ESLint checks |
+| `yarn lint` | Oxlint checks |
 | `yarn test` | Run unit tests |
 | `yarn coverage` | Unit tests with coverage report |
 | `yarn e2e` | Run Playwright E2E tests |
@@ -174,8 +174,8 @@ $request/*  → ./lib/graphql/request/*
 ### Code Style
 
 - **Formatting:** Prettier (single quotes, 120 char width, semicolons, 2-space tabs)
-- **Linting:** ESLint with Next.js core-web-vitals and TypeScript rules
-- **Pre-commit:** Husky + lint-staged runs Prettier and ESLint on staged files
+- **Linting:** Oxlint with Next.js, React, and TypeScript rules
+- **Pre-commit:** Husky + lint-staged runs Prettier and Oxlint on staged files
 
 ### GraphQL Workflow
 
