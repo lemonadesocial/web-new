@@ -1,4 +1,5 @@
 import { notFound, redirect } from 'next/navigation';
+import Header, { RootMenu } from '$lib/components/layouts/header';
 
 import { EventThemeProvider } from '$lib/components/features/theme-builder/provider';
 import { GetEventDocument } from '$lib/graphql/generated/backend/graphql';
@@ -22,8 +23,13 @@ export default async function EventLayout({ children, params }: LayoutProps) {
   const themeData = data?.getEvent?.theme_data;
 
   return (
-    <EventThemeProvider themeData={themeData}>
-      <MainEventLayout>{children}</MainEventLayout>
-    </EventThemeProvider>
+    <main className="flex flex-col min-h-dvh w-full overflow-y-auto no-scrollbar">
+      <div className="z-10000">
+        <Header mainMenu={RootMenu} />
+      </div>
+      <EventThemeProvider themeData={themeData}>
+        <MainEventLayout>{children}</MainEventLayout>
+      </EventThemeProvider>
+    </main>
   );
 }

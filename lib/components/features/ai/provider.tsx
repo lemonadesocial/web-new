@@ -2,9 +2,7 @@
 import { RunResult } from '$lib/graphql/generated/ai/graphql';
 import { v4 as uuidV4 } from 'uuid';
 import React from 'react';
-import { defer } from 'lodash';
 import { AI_CONFIG } from '$lib/utils/constants';
-import { config } from 'process';
 
 export type ToolKey = 'create_event' | 'manage_event' | 'create_community' | 'manage_community';
 

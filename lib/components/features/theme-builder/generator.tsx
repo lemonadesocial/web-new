@@ -8,7 +8,17 @@ import { ShaderGradient } from './shader';
 import { ThemeValues } from './store';
 import { EmojiAnimate } from './emoji';
 
-export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: React.CSSProperties }) {
+export function ThemeGenerator({
+  data,
+  style,
+  scoped = false,
+  scopeSelector,
+}: {
+  data: ThemeValues;
+  style?: React.CSSProperties;
+  scoped?: boolean;
+  scopeSelector?: string;
+}) {
   const [mode, setMode] = React.useState(data.config.mode);
   const videoMobRef = React.useRef<HTMLVideoElement>(null);
   const videoWebRef = React.useRef<HTMLVideoElement>(null);
@@ -59,13 +69,31 @@ export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: Rea
   const modeVars = data.variables?.[modeKey === 'dark' ? 'dark' : 'light'];
   const isMinimalTheme = data.theme === 'minimal';
   const backgroundColor = modeVars?.['--color-background'];
+  const selector = scopeSelector || '[data-theme-scope]';
+  const scopedBackgroundStyle = scoped
+    ? ({
+        position: 'absolute',
+        inset: 0,
+        pointerEvents: 'none',
+        zIndex: 0,
+        ...style,
+      } as React.CSSProperties)
+    : style;
 
   return (
     <>
       {data?.variables && (
         <style jsx global>
           {`
-            body {
+            ${scoped
+              ? `${selector} {
+              ${data.variables.font && generateCssVariables(data.variables.font)}
+              ${data.variables?.custom && generateCssVariables(data.variables?.custom)}
+              ${data.variables.pattern && generateCssVariables(data.variables.pattern)}
+              ${mode === 'dark' && data.variables.dark && generateCssVariables(data.variables.dark)}
+              ${mode === 'light' && data.variables.light && generateCssVariables(data.variables.light)}
+            }`
+              : `body {
               ${data.variables.font && generateCssVariables(data.variables.font)}
             }
 
@@ -74,7 +102,7 @@ export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: Rea
               ${data.variables.pattern && generateCssVariables(data.variables.pattern)}
               ${mode === 'dark' && data.variables.dark && generateCssVariables(data.variables.dark)}
               ${mode === 'light' && data.variables.light && generateCssVariables(data.variables.light)}
-            }
+            }`}
           `}
         </style>
       )}
@@ -83,7 +111,7 @@ export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: Rea
         !!(backgroundColor && isMinimalTheme) && (
           <style jsx global>
             {`
-              .background.minimal {
+              ${scoped ? `${selector} .background.minimal` : '.background.minimal'} {
                 --minimal-color-bg: ${backgroundColor} !important;
               }
             `}
@@ -102,20 +130,20 @@ export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: Rea
             data?.config?.class,
             mode,
           )}
-          style={style}
+          style={scopedBackgroundStyle}
         >
-          {data.theme === 'shader' && <ShaderGradient mode={mode} />}
+          {data.theme === 'shader' && <ShaderGradient mode={mode} scoped={scoped} scopeSelector={selector} />}
 
           {data.theme === 'image' && data.config?.image && (
             <div
-              className="min-w-full min-h-full fixed inset-0 aspect-video bg-cover! bg-no-repeat"
+              className={scoped ? 'min-w-full min-h-full absolute inset-0 aspect-video bg-cover! bg-no-repeat' : 'min-w-full min-h-full fixed inset-0 aspect-video bg-cover! bg-no-repeat'}
               style={{ background: `url(${data.config.image?.url})` }}
             />
           )}
 
           {data.theme === 'passport' && (data.config?.image || data.template?.image) && (
             <div
-              className="min-w-full min-h-full fixed inset-0 aspect-video bg-cover! bg-no-repeat"
+              className={scoped ? 'min-w-full min-h-full absolute inset-0 aspect-video bg-cover! bg-no-repeat' : 'min-w-full min-h-full fixed inset-0 aspect-video bg-cover! bg-no-repeat'}
               style={{ background: `url(${data.config?.image?.url || data.template?.image})` }}
             />
           )}
@@ -125,7 +153,7 @@ export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: Rea
               {!isMobile ? (
                 <video
                   ref={videoWebRef}
-                  className="min-w-full min-h-full fixed hidden md:block inset-0"
+                  className={scoped ? 'min-w-full min-h-full absolute hidden md:block inset-0' : 'min-w-full min-h-full fixed hidden md:block inset-0'}
                   autoPlay
                   loop
                   playsInline
@@ -140,7 +168,7 @@ export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: Rea
               ) : (
                 <video
                   ref={videoMobRef}
-                  className="min-w-full min-h-full fixed inset-0 md:hidden"
+                  className={scoped ? 'min-w-full min-h-full absolute inset-0 md:hidden' : 'min-w-full min-h-full fixed inset-0 md:hidden'}
                   autoPlay
                   loop
                   playsInline
@@ -160,7 +188,7 @@ export function ThemeGenerator({ data, style }: { data: ThemeValues; style?: Rea
           )}
 
           {data.config.effect?.type === 'float' && (
-            <EmojiAnimate key={data.config.effect.emoji} emoji={data.config.effect.emoji} />
+            <EmojiAnimate key={data.config.effect.emoji} emoji={data.config.effect.emoji} scoped={scoped} />
           )}
         </div>
       )}
