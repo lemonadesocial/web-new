@@ -11,6 +11,8 @@ import { getMintLemonadePassportData, getMintPassportImage } from '$lib/services
 import { getMintZuGramaPassportImage } from '$lib/services/passports/zugrama';
 
 import { publicProcedure, router } from './trpc';
+export { createContext } from './trpc';
+import { analyticsRouter } from './routers/analytics';
 import lemonheads, { BuildQueryParams } from './lemonheads';
 import { LemonHeadsLayer } from './lemonheads/types';
 import { getMintVinylNationPassportImage } from '$lib/services/passports/vinyl-nation';
@@ -21,6 +23,7 @@ import { uploadUsernameMetadata } from '$lib/services/lemonade-username';
 import { getAlzenaWorldPassportImage } from '$lib/services/passports/alzena-world';
 
 export const appRouter = router({
+  analytics: analyticsRouter,
   ping: publicProcedure.query(async () => {
     return 'pong';
   }),
