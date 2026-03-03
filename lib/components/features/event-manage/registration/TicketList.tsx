@@ -23,7 +23,7 @@ export function TicketList({ event }: { event: Event }) {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-semibold">Tickets</h1>
-        <Button variant="tertiary" size="sm" iconLeft="icon-plus" onClick={() => drawer.open(TicketTypeDrawer)}>
+        <Button data-testid="add-ticket-type" variant="tertiary" size="sm" iconLeft="icon-plus" onClick={() => drawer.open(TicketTypeDrawer)}>
           Add Ticket Type
         </Button>
       </div>

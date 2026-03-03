@@ -233,7 +233,7 @@ export function RegistrationForm() {
               <ApplicationProfileCard key={field.field} field={field} />
             ))}
           </div>
-          <Button variant="tertiary" iconLeft="icon-plus" onClick={() => modal.open(AddQuestionModal)}>
+          <Button data-testid="add-question-button" variant="tertiary" iconLeft="icon-plus" onClick={() => modal.open(AddQuestionModal)}>
             Add Question
           </Button>
         </div>
