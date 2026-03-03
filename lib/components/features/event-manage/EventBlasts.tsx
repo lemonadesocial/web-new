@@ -236,6 +236,7 @@ function BlastsInput({ event }: { event: Event }) {
               </Button>
 
               <Button
+                data-testid="blast-send-button"
                 variant="secondary"
                 size="sm"
                 disabled={!message}

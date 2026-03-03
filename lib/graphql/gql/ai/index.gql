@@ -50,8 +50,8 @@ query GetListAIConfig($filter: ConfigFilter, $limit: Int, $startAfter: String, $
   }
 }
 
-mutation RunAIChat($message: String!, $config: ObjectId!, $session: String, $data: JSON) {
-  run(message: $message, config: $config, session: $session, data: $data) {
+mutation RunAIChat($message: String!, $config: ObjectId!, $session: String, $data: JSON, $standId: String) {
+  run(message: $message, config: $config, session: $session, data: $data, standId: $standId) {
     message
     sourceDocuments
     metadata

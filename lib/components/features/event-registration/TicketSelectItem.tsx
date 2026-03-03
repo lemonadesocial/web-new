@@ -201,6 +201,7 @@ export function TicketSelectItem({
 
   return (
     <div
+      data-testid={`ticket-select-${ticketType._id}`}
       className={clsx(
         'flex flex-col gap-2 p-3 rounded-sm',
         active ? 'border border-primary' : 'border border-transparent bg-primary/8',

@@ -130,7 +130,7 @@ export function InputChat() {
     dispatch({ type: AIChatActionKind.set_thinking, payload: { thinking: true } });
     setInput('');
     run({
-      variables: { message: text, config: state.config || AI_CONFIG, session: state.session, data: state.data || {} },
+      variables: { message: text, config: state.config || AI_CONFIG, session: state.session, data: state.data || {}, standId: state.standId },
     });
   };
 
