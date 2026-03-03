@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev --turbopack -p 8000 --experimental-https -H localhost.staging.lemonade.social",
     "dev:test": "next dev --turbopack",
-    "build": "NODE_ENV=production next build",
+    "build": "prisma generate && NODE_ENV=production next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "oxlint",
     "lint:staged": "lint-staged",
