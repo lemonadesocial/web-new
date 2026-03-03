@@ -1,5 +1,36 @@
 # Changelog
 
+## [10.10.0](https://github.com/lemonadesocial/web-new/compare/v10.9.1...v10.10.0) (2026-03-03)
+
+
+### Features
+
+* add E2E QA pipeline for critical event flows ([020dc00](https://github.com/lemonadesocial/web-new/commit/020dc0011029ed2dd643fde86082070797ad19df))
+* add GraphQL error reporting to Sentry in handleRequestError ([f372861](https://github.com/lemonadesocial/web-new/commit/f372861d773091ee8357ae2f8205fab18a216cfd))
+* add middleware error capture with Sentry reporting ([acdb399](https://github.com/lemonadesocial/web-new/commit/acdb39932f768e0377c14aa151f1ac6772882f22))
+* add Sentry user context and Web3 tags ([bb2700f](https://github.com/lemonadesocial/web-new/commit/bb2700f1d5ecde152ffc4eca101b233e03d61fd7))
+* add shared Sentry config utility with PII scrubbing and noise filtering ([9e04b0a](https://github.com/lemonadesocial/web-new/commit/9e04b0ada6bc58dfaf87f5cec2336bcf21ce6194))
+* add unit tests for Sentry utility functions ([ca65f03](https://github.com/lemonadesocial/web-new/commit/ca65f03e911d133c9728a160cd49e67d347cabfc))
+* implement all PRD-specified test cases across all 5 phases ([1a0d5f5](https://github.com/lemonadesocial/web-new/commit/1a0d5f5d54d88998a873f3708ac898071291a3e4))
+* strengthen E2E tests with data-testid attributes and real assertions ([9438321](https://github.com/lemonadesocial/web-new/commit/94383213e594eb4ce249260b8060a490ffe8c6ad))
+* update deployment vars ([ca40ff3](https://github.com/lemonadesocial/web-new/commit/ca40ff358ade7d057980816b59e044af2cb60cb4))
+* update playwright flow ([dd23536](https://github.com/lemonadesocial/web-new/commit/dd23536e826da03387a68f0c2f3cc787b6009802))
+* update Sentry configs with shared utility, tracing, and replay masking ([552a8aa](https://github.com/lemonadesocial/web-new/commit/552a8aab7f14371584ed9fa55d8871fd396556bd))
+* update smoke test ([14a5ff7](https://github.com/lemonadesocial/web-new/commit/14a5ff79acc52292e36b7c9b86c70d0a9549d675))
+
+
+### Bug Fixes
+
+* address Karen review findings on Sentry Phase 1 ([dc151f3](https://github.com/lemonadesocial/web-new/commit/dc151f30713d4ea444e4d2fd24991300563949e5))
+* karen remediation — broken images, mock data, DOM manipulation, typos ([43340f7](https://github.com/lemonadesocial/web-new/commit/43340f75047f878503c189825ce8ae32176e9a1b))
+* lemonhead tests ([0e07290](https://github.com/lemonadesocial/web-new/commit/0e072900458bd21d3a793674931688a76c0c3027))
+* pass standId to RunAIChat mutation for credit tracking ([e764c85](https://github.com/lemonadesocial/web-new/commit/e764c85c412a41b0381171773e8802276859c644))
+* resolve all Karen review NITs for E2E QA pipeline ([19050ce](https://github.com/lemonadesocial/web-new/commit/19050ce1c9e8e4f4911478f7158649c2b0a91d6f))
+* **security:** replace untyped request body with RequestBody type ([#971](https://github.com/lemonadesocial/web-new/issues/971)) ([48e2b7e](https://github.com/lemonadesocial/web-new/commit/48e2b7e0e229f00ebd9ac218e2d0c0c783842988))
+* smoke tests ([17f7262](https://github.com/lemonadesocial/web-new/commit/17f726258ed05f57ca946e1e264598e22f9fc514))
+* test path ([2604727](https://github.com/lemonadesocial/web-new/commit/2604727b0b3c07f6acea8c217f767e7e4d38d864))
+* unit tests ([d8574ec](https://github.com/lemonadesocial/web-new/commit/d8574ecf1848351238b55f6173458ab501208ba8))
+
 ## [10.9.1](https://github.com/lemonadesocial/web-new/compare/v10.9.0...v10.9.1) (2026-02-27)
 
 
