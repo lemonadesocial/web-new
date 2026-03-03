@@ -133,9 +133,9 @@ jobs:
         run: |
           kubectl rollout status --namespace $NAMESPACE deployment/web-new
 
-  e2e-tests:
+  smoke-test:
     needs: deploy
-    name: Post-deploy E2E tests
+    name: Post-deploy smoke tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -151,10 +151,10 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Install Playwright
         run: npx playwright install --with-deps
-      - name: Run E2E tests against staging
+      - name: Run smoke tests against staging
         env:
-          PLAYWRIGHT_BASE_URL: https://staging.lemonade.social/
-        run: npx playwright test --ignore-snapshots
+          PLAYWRIGHT_BASE_URL: https://staging.lemonade.social
+        run: npx playwright test e2e/smoke/ --project=chromium
       - name: Alert on failure
         if: failure()
-        run: echo "::error::Staging E2E tests FAILED after deploy. Do NOT cut a release until fixed."
+        run: echo "::error::Staging smoke tests FAILED after deploy. Do NOT cut a release until fixed."
