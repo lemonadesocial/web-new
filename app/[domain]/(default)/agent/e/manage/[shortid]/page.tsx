@@ -128,7 +128,7 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
   React.useEffect(() => {
     if (event.shortid === shortid) {
       aiChatDispatch({ type: AIChatActionKind.reset });
-      aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { data: { event_id: event._id } } });
+      aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { data: { event_id: event._id }, standId: event.space } });
       aiChatDispatch({ type: AIChatActionKind.add_message, payload: { messages: mockWelcomeEvent(event) } });
 
       if (!isMobile) aiChat.open();

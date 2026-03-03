@@ -28,6 +28,7 @@ type State = {
   openPane?: boolean;
   data?: unknown;
   config: string;
+  standId?: string;
 };
 
 const session = uuidV4();
@@ -105,7 +106,7 @@ function reducers(state: State, action: AIChatAction) {
     }
 
     case AIChatActionKind.set_data_run: {
-      return { ...state, data: action.payload?.data || {} };
+      return { ...state, data: action.payload?.data || {}, standId: action.payload?.standId };
     }
 
     case AIChatActionKind.set_config: {
