@@ -1,0 +1,48 @@
+fragment SpaceAssetFields on FileBase {
+  _id
+  stamp
+  state
+  owner
+  type
+  size
+  url
+  bucket
+  key
+  description
+}
+
+fragment StockPhotoFields on StockPhoto {
+  id
+  url
+  thumbnail_url
+  width
+  height
+  alt_text
+  photographer
+  photographer_url
+  source
+}
+
+# Queries
+
+query ListSpaceAssets($space_id: MongoID!, $limit: Int, $offset: Int) {
+  listSpaceAssets(space_id: $space_id, limit: $limit, offset: $offset) {
+    ...SpaceAssetFields
+  }
+}
+
+query SearchStockPhotos($query: String!, $source: StockPhotoSource, $page: Int, $per_page: Int) {
+  searchStockPhotos(query: $query, source: $source, page: $page, per_page: $per_page) {
+    ...StockPhotoFields
+  }
+}
+
+# Mutations
+
+mutation AddSpaceAsset($space_id: MongoID!, $file_id: MongoID!) {
+  addSpaceAsset(space_id: $space_id, file_id: $file_id)
+}
+
+mutation DeleteSpaceAsset($space_id: MongoID!, $file_id: MongoID!) {
+  deleteSpaceAsset(space_id: $space_id, file_id: $file_id)
+}

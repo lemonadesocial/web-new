@@ -1,0 +1,294 @@
+fragment PageThemeFields on PageTheme {
+  mode
+  type
+  colors {
+    accent
+    background
+    card
+    text_primary
+    text_secondary
+    border
+    extra
+  }
+  fonts {
+    title {
+      family
+      url
+      weight
+      size_scale
+    }
+    body {
+      family
+      url
+      weight
+      size_scale
+    }
+  }
+  background {
+    type
+    value
+    config
+  }
+  effects {
+    type
+    value
+    config
+  }
+  css_variables
+}
+
+fragment PageSectionFields on PageSection {
+  id
+  type
+  order
+  hidden
+  layout {
+    width
+    padding
+    columns
+    alignment
+    min_height
+    background {
+      type
+      value
+    }
+  }
+  props
+  data_binding {
+    mode
+    source {
+      type
+      field
+    }
+    overrides
+  }
+  children {
+    id
+    type
+    order
+    hidden
+    layout {
+      width
+      padding
+      columns
+      alignment
+      min_height
+      background {
+        type
+        value
+      }
+    }
+    props
+  }
+  craft_node_id
+}
+
+fragment PageConfigFields on PageConfig {
+  _id
+  owner_type
+  owner_id
+  created_by
+  space_id
+  status
+  version
+  published_version
+  theme {
+    ...PageThemeFields
+  }
+  sections {
+    ...PageSectionFields
+  }
+  custom_code {
+    css
+    head_html
+    body_html
+    scripts {
+      src
+      content
+      strategy
+    }
+  }
+  seo {
+    meta_title
+    meta_description
+    og_image_url
+    og_type
+    canonical_url
+    no_index
+    structured_data {
+      type
+      custom
+    }
+  }
+  name
+  description
+  thumbnail_url
+  template_id
+  template_version_installed
+  preview_links {
+    id
+    token
+    expires_at
+    created_by
+    created_at
+    view_count
+  }
+  locked_by
+  locked_at
+  last_edited_by
+}
+
+fragment ConfigVersionFields on ConfigVersion {
+  _id
+  config_id
+  version
+  snapshot
+  change_summary
+  created_by
+}
+
+fragment LockResultFields on LockResult {
+  success
+  locked_by
+  locked_at
+  message
+}
+
+fragment PreviewLinkResponseFields on PreviewLinkResponse {
+  id
+  token
+  url
+  expires_at
+}
+
+fragment SectionCatalogItemFields on SectionCatalogItem {
+  type
+  name
+  description
+  category
+  supports_children
+  default_props
+}
+
+fragment AISuggestedSectionFields on AISuggestedSection {
+  type
+  name
+  reason
+  default_props
+}
+
+# Queries
+
+query GetPageConfig($id: MongoID!) {
+  getPageConfig(id: $id) {
+    ...PageConfigFields
+  }
+}
+
+query GetPublishedConfig($owner_type: String!, $owner_id: MongoID!) {
+  getPublishedConfig(owner_type: $owner_type, owner_id: $owner_id) {
+    ...PageConfigFields
+  }
+}
+
+query ListConfigVersions($config_id: MongoID!) {
+  listConfigVersions(config_id: $config_id) {
+    ...ConfigVersionFields
+  }
+}
+
+query ValidatePreviewLink($config_id: MongoID!, $token: String!, $password: String) {
+  validatePreviewLink(config_id: $config_id, token: $token, password: $password) {
+    ...PageConfigFields
+  }
+}
+
+query GetSectionCatalog {
+  getSectionCatalog {
+    ...SectionCatalogItemFields
+  }
+}
+
+query AiSuggestSections($owner_type: String!, $owner_id: MongoID!, $context: String) {
+  aiSuggestSections(owner_type: $owner_type, owner_id: $owner_id, context: $context) {
+    ...AISuggestedSectionFields
+  }
+}
+
+# Mutations
+
+mutation CreatePageConfig($input: CreatePageConfigInput!) {
+  createPageConfig(input: $input) {
+    ...PageConfigFields
+  }
+}
+
+mutation UpdatePageConfig($id: MongoID!, $input: UpdatePageConfigInput!) {
+  updatePageConfig(id: $id, input: $input) {
+    ...PageConfigFields
+  }
+}
+
+mutation PublishPageConfig($id: MongoID!) {
+  publishPageConfig(id: $id) {
+    ...PageConfigFields
+  }
+}
+
+mutation ArchivePageConfig($id: MongoID!) {
+  archivePageConfig(id: $id) {
+    ...PageConfigFields
+  }
+}
+
+mutation SaveConfigVersion($config_id: MongoID!, $name: String) {
+  saveConfigVersion(config_id: $config_id, name: $name) {
+    ...ConfigVersionFields
+  }
+}
+
+mutation RestoreConfigVersion($config_id: MongoID!, $version: Float!) {
+  restoreConfigVersion(config_id: $config_id, version: $version) {
+    ...PageConfigFields
+  }
+}
+
+mutation AcquireConfigLock($config_id: MongoID!) {
+  acquireConfigLock(config_id: $config_id) {
+    ...LockResultFields
+  }
+}
+
+mutation ReleaseConfigLock($config_id: MongoID!) {
+  releaseConfigLock(config_id: $config_id)
+}
+
+mutation HeartbeatConfigLock($config_id: MongoID!) {
+  heartbeatConfigLock(config_id: $config_id)
+}
+
+mutation GeneratePreviewLink($config_id: MongoID!, $options: PreviewLinkOptionsInput) {
+  generatePreviewLink(config_id: $config_id, options: $options) {
+    ...PreviewLinkResponseFields
+  }
+}
+
+# AI Mutations
+
+mutation AiCreatePageConfig($input: AICreatePageConfigInput!) {
+  aiCreatePageConfig(input: $input) {
+    ...PageConfigFields
+  }
+}
+
+mutation AiUpdatePageConfigSection($config_id: MongoID!, $section_id: String!, $input: AIUpdatePageConfigSectionInput!) {
+  aiUpdatePageConfigSection(config_id: $config_id, section_id: $section_id, input: $input) {
+    ...PageConfigFields
+  }
+}
+
+mutation AiGeneratePageFromDescription($input: AIGeneratePageInput!) {
+  aiGeneratePageFromDescription(input: $input) {
+    ...PageConfigFields
+  }
+}
