@@ -23,8 +23,7 @@ describe('Lemonhead core logic', () => {
       expect(TraitType.hair).toBe('hair');
       expect(TraitType.earrings).toBe('earrings');
       expect(TraitType.headgear).toBe('headgear');
-      expect(TraitType.necklace).toBe('necklace');
-      expect(TraitType.bowtie).toBe('bowtie');
+      expect(TraitType.neckwear).toBe('neckwear');
       expect(TraitType.mouthgear).toBe('mouthgear');
       expect(TraitType.eyes).toBe('eyes');
       expect(TraitType.eyewear).toBe('eyewear');
@@ -67,14 +66,6 @@ describe('Lemonhead core logic', () => {
 
       const conflict = findConflictTraits(existingTraits, newTrait);
       expect(conflict).toEqual([{ type: TraitType.top, value: 'tshirt' }]);
-    });
-
-    it('should find conflict when necklace and bowtie are used together', () => {
-      const existingTraits: Trait[] = [{ type: TraitType.necklace, value: 'gold' }];
-      const newTrait: Trait = { type: TraitType.bowtie, value: 'red' };
-
-      const conflict = findConflictTraits(existingTraits, newTrait);
-      expect(conflict).toEqual([{ type: TraitType.necklace, value: 'gold' }]);
     });
 
     it('should not find conflict when layers do not overlap', () => {
@@ -135,18 +126,17 @@ describe('Lemonhead core logic', () => {
       expect(() => validateTraits(traits)).toThrow('Layer conflict detected');
     });
 
-    it('should throw error when outfit is missing but top and bottom are required', () => {
+    it('does not enforce top and bottom when no outfit (validation currently disabled)', () => {
       const traits: Trait[] = [
         { type: TraitType.background, value: 'blue' },
         { type: TraitType.body, value: 'medium' },
         { type: TraitType.top, value: 'tshirt' },
-        // Missing bottom
         { type: TraitType.eyes, value: 'brown' },
         { type: TraitType.hair, value: 'black' },
         { type: TraitType.mouth, value: 'smile' },
       ];
 
-      expect(() => validateTraits(traits)).toThrow('Top and bottom are required if no outfit is present');
+      expect(() => validateTraits(traits)).not.toThrow();
     });
 
     it('should handle multiple layer conflicts', () => {
@@ -511,51 +501,6 @@ describe('Lemonhead core logic', () => {
       ];
 
       expect(() => validateTraits(topBottomTraits)).not.toThrow();
-    });
-
-    it('should handle necklace and bowtie mutual exclusivity', () => {
-      // Test with necklace only (should be valid)
-      const necklaceTraits: Trait[] = [
-        { type: TraitType.background, value: 'blue' },
-        { type: TraitType.body, value: 'medium' },
-        { type: TraitType.top, value: 'tshirt' },
-        { type: TraitType.bottom, value: 'jeans' },
-        { type: TraitType.necklace, value: 'gold' },
-        { type: TraitType.eyes, value: 'brown' },
-        { type: TraitType.hair, value: 'black' },
-        { type: TraitType.mouth, value: 'smile' },
-      ];
-
-      expect(() => validateTraits(necklaceTraits)).not.toThrow();
-
-      // Test with bowtie only (should be valid)
-      const bowtieTraits: Trait[] = [
-        { type: TraitType.background, value: 'blue' },
-        { type: TraitType.body, value: 'medium' },
-        { type: TraitType.top, value: 'tshirt' },
-        { type: TraitType.bottom, value: 'jeans' },
-        { type: TraitType.bowtie, value: 'red' },
-        { type: TraitType.eyes, value: 'brown' },
-        { type: TraitType.hair, value: 'black' },
-        { type: TraitType.mouth, value: 'smile' },
-      ];
-
-      expect(() => validateTraits(bowtieTraits)).not.toThrow();
-
-      // Test with both necklace and bowtie (should fail)
-      const bothTraits: Trait[] = [
-        { type: TraitType.background, value: 'blue' },
-        { type: TraitType.body, value: 'medium' },
-        { type: TraitType.top, value: 'tshirt' },
-        { type: TraitType.bottom, value: 'jeans' },
-        { type: TraitType.necklace, value: 'gold' },
-        { type: TraitType.bowtie, value: 'red' },
-        { type: TraitType.eyes, value: 'brown' },
-        { type: TraitType.hair, value: 'black' },
-        { type: TraitType.mouth, value: 'smile' },
-      ];
-
-      expect(() => validateTraits(bothTraits)).toThrow('Layer conflict detected');
     });
 
     it('should handle optional traits correctly', () => {

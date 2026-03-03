@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 
 import { GetSpaceDocument } from '$lib/graphql/generated/backend/graphql';
 import { getClient } from '$lib/graphql/request';
@@ -42,11 +43,25 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
   }
 
-  const client = getClient();
-  
-  const { data } = await client.query({ query: GetSpaceDocument, variables: { hostname: hostname } });
-  if (data?.getSpace) {
-    return NextResponse.rewrite(new URL(`/${hostname}/community${path === '/' ? '' : path}`, req.url));
+  try {
+    const client = getClient();
+
+    const { data } = await client.query({ query: GetSpaceDocument, variables: { hostname: hostname } });
+    if (data?.getSpace) {
+      return NextResponse.rewrite(new URL(`/${hostname}/community${path === '/' ? '' : path}`, req.url));
+    }
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: {
+        source: 'middleware',
+        'middleware.hostname': hostname || 'unknown',
+      },
+      extra: {
+        url: req.url,
+        hostname,
+        path,
+      },
+    });
   }
 
   // rewrite everything else to `/[domain]/path dynamic route

@@ -431,6 +431,52 @@
   }
 }
 
+/*
+ * Responsive variant overrides for manage preview panel.
+ * When an ancestor has data-mode='mobile', responsive breakpoints are suppressed
+ * to force mobile layout rendering in the preview. This attribute is ONLY set in
+ * ManageLayoutContent.tsx (sidebar + content panels) — it never appears on non-manage pages.
+ */
+@variant sm {
+  @media (min-width: 640px) {
+    &:not([data-mode='mobile'] &) {
+      @slot;
+    }
+  }
+}
+
+@variant md {
+  @media (min-width: 768px) {
+    &:not([data-mode='mobile'] &) {
+      @slot;
+    }
+  }
+}
+
+@variant lg {
+  @media (min-width: 1024px) {
+    &:not([data-mode='mobile'] &) {
+      @slot;
+    }
+  }
+}
+
+@variant xl {
+  @media (min-width: 1280px) {
+    &:not([data-mode='mobile'] &) {
+      @slot;
+    }
+  }
+}
+
+@variant 2xl {
+  @media (min-width: 1536px) {
+    &:not([data-mode='mobile'] &) {
+      @slot;
+    }
+  }
+}
+
 @layer base {
   h1,
   h2,

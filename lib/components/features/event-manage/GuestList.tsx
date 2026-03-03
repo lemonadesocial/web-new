@@ -130,10 +130,11 @@ export function GuestList({ event }: { event: Event }) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Guest List</h1>
-        <Button icon="icon-download" variant="tertiary" size="sm" onClick={exportGuestsCSV} aria-label="Export guest list" />
+        <Button data-testid="guest-list-export" icon="icon-download" variant="tertiary" size="sm" onClick={exportGuestsCSV} aria-label="Export guest list" />
       </div>
 
       <Input
+        data-testid="guest-list-search"
         placeholder="Search"
         value={searchText}
         onChange={(e) => handleSearch(e.target.value)}
@@ -143,7 +144,7 @@ export function GuestList({ event }: { event: Event }) {
       <div className="flex items-center justify-between">
         <Menu.Root placement="bottom-start">
           <Menu.Trigger>
-            <Button variant="tertiary" size="sm" iconLeft="icon-filter-line" iconRight="icon-chevron-down">
+            <Button data-testid="guest-list-filter" variant="tertiary" size="sm" iconLeft="icon-filter-line" iconRight="icon-chevron-down">
               {[
                 selectedFilter === 'going'
                   ? 'Going'
@@ -225,7 +226,7 @@ export function GuestList({ event }: { event: Event }) {
 
         <Menu.Root>
           <Menu.Trigger>
-            <Button variant="tertiary" size="sm" iconLeft="icon-sort" iconRight="icon-chevron-down">
+            <Button data-testid="guest-list-sort" variant="tertiary" size="sm" iconLeft="icon-sort" iconRight="icon-chevron-down">
               {selectedSort?.value || 'Register Time'}
             </Button>
           </Menu.Trigger>

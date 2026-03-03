@@ -48,9 +48,11 @@ export function EmojiProvider({ children }: { children: React.ReactNode }) {
 export function EmojiAnimateItem({
   emoji = '🚀',
   emojis = ['🚀', '✨', '🌟', '💫', '🎉', '⚡', '🔥', '💎', '🌈', '🦋'],
+  scoped = false,
 }: {
   emoji?: string;
   emojis?: string[];
+  scoped?: boolean;
 }) {
   const time = useTime();
   const rotate = useTransform(time, [0, 4000], [0, 360], { clamp: false });
@@ -229,7 +231,10 @@ export function EmojiAnimateItem({
   if (!emojiState.isActive) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: -1 }}>
+    <div
+      className={scoped ? 'absolute inset-0 pointer-events-none overflow-hidden' : 'fixed inset-0 pointer-events-none overflow-hidden'}
+      style={{ zIndex: -1 }}
+    >
       <motion.div
         key={emojiState.id}
         style={{
@@ -249,7 +254,7 @@ export function EmojiAnimateItem({
 }
 
 // Component for multiple moving emojis with collision detection
-export function EmojiAnimate({ emoji }: { emoji?: string }) {
+export function EmojiAnimate({ emoji, scoped = false }: { emoji?: string; scoped?: boolean }) {
   // just for fun
   // const emojis = ['🚀', '✨', '🌟', '💫', '🎉', '⚡', '🔥', '💎', '🌈', '🦋', '🎨', '🌙', '☀️', '🌊'];
   if (!emoji) return null;
@@ -259,7 +264,7 @@ export function EmojiAnimate({ emoji }: { emoji?: string }) {
   return (
     <EmojiProvider>
       {Array.from({ length: 8 }, (_, i) => (
-        <EmojiAnimateItem key={i} emojis={emojis} />
+        <EmojiAnimateItem key={i} emojis={emojis} scoped={scoped} />
       ))}
     </EmojiProvider>
   );

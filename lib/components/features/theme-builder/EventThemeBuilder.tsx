@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import { join, split } from 'lodash';
 import clsx from 'clsx';
 
-import { Card } from '$lib/components/core';
+import { Card, Menu } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
   FileCategory,
@@ -18,8 +18,17 @@ import { colors, emojis, fonts, getRandomColor, getThemeName, patterns, presets,
 import { useEventTheme, ThemeBuilderActionKind } from './provider';
 import { MenuColorPicker } from './ColorPicker';
 import { generateUrl } from '$lib/utils/cnd';
+import { FloatingPortal } from '@floating-ui/react';
 
-export function EventThemeBuilder({ eventId }: { eventId?: string }) {
+export function EventThemeBuilder({
+  eventId,
+  autoSave = true,
+  inline = false,
+}: {
+  eventId?: string;
+  autoSave?: boolean;
+  inline?: boolean;
+}) {
   const [toggle, setToggle] = React.useState(false);
   const [data, dispatch] = useEventTheme();
   const themeName = getThemeName(data);
@@ -51,12 +60,16 @@ export function EventThemeBuilder({ eventId }: { eventId?: string }) {
   });
 
   React.useEffect(() => {
-    if (mounted.current && eventId) {
+    if (mounted.current && autoSave && eventId) {
       updateEventTheme({ variables: { id: eventId, input: { theme_data: data } } });
     } else {
       mounted.current = true;
     }
-  }, [data, eventId]);
+  }, [autoSave, data, eventId]);
+
+  if (inline) {
+    return <InlineEventThemeBuilderPanel />;
+  }
 
   return (
     <>
@@ -87,6 +100,398 @@ export function EventThemeBuilder({ eventId }: { eventId?: string }) {
       {toggle && <EventThemeBuilderPane show={toggle} onClose={() => setToggle(false)} />}
     </>
   );
+}
+
+function InlineEventThemeBuilderPanel() {
+  const [data, dispatch] = useEventTheme();
+  const themeName = getThemeName(data);
+  const mode = data.config.mode || 'auto';
+  const styleDisabled = !!presets[themeName]?.ui?.disabled?.style;
+  const effectDisabled = !!presets[themeName]?.ui?.disabled?.effect;
+  const displayDisabled = !!presets[themeName]?.ui?.disabled?.mode;
+
+  const { data: dataGetSystemFiles } = useQuery(GetSystemFilesDocument, {
+    variables: {
+      categories: [
+        FileCategory.SpaceDarkTheme,
+        FileCategory.SpaceLightTheme,
+        FileCategory.EventDarkTheme,
+        FileCategory.EventLightTheme,
+      ],
+    },
+    skip: themeName !== 'image',
+  });
+  const images = (dataGetSystemFiles?.getSystemFiles || []) as SystemFile[];
+
+  return (
+    <div
+      className="h-full bg-overlay-secondary backdrop-blur-md rounded-md p-2 pt-4 overflow-auto no-scrollbar space-y-3"
+      style={
+        {
+          // @ts-expect-error accept variables
+          '--font-title': 'var(--font-class-display)',
+          '--font-body': 'var(--font-general-sans)',
+        } as React.CSSProperties
+      }
+    >
+      <div className="flex gap-2 overflow-x-auto no-scrollbar px-1 py-1">
+        {Object.entries(presets).map(([key, preset]) => {
+          const active = themeName === key;
+          return (
+            <button
+              key={key}
+              type="button"
+              className="flex flex-col items-center gap-1 min-w-[72px]"
+              onClick={() => {
+                const config: any = {};
+                if (!data.config.color) config.color = getRandomColor();
+                if (preset.ui?.disabled?.mode) config.mode = 'auto';
+
+                dispatch({
+                  type: ThemeBuilderActionKind.select_template,
+                  payload: { theme: key as any, config },
+                });
+              }}
+            >
+              <img
+                src={preset.image}
+                alt={preset.name}
+                className={clsx(
+                  'h-[48px] w-[72px] rounded-sm border border-transparent',
+                  active && 'outline-2 outline-offset-2 outline-primary',
+                )}
+              />
+              <p className={clsx('text-[11px]', active ? 'text-primary' : 'text-tertiary')}>{preset.name}</p>
+            </button>
+          );
+        })}
+      </div>
+
+      <Menu.Root strategy="fixed" placement="right-start" className="w-full">
+        <Menu.Trigger>
+          <SettingRow
+            icon={
+              <i
+                className={clsx(
+                  'size-6 rounded-full',
+                  data.config.color === 'custom' ? 'bg-[var(--color-custom-400)]' : `${data.config.color} bg-accent-400`,
+                )}
+              />
+            }
+            label="Color"
+            value={data.config.color === 'custom' ? 'Custom' : capitalize(data.config.color || 'Default')}
+          />
+        </Menu.Trigger>
+        <FloatingPortal>
+          <Menu.Content className="w-[260px]">
+            <div className="grid grid-cols-8 gap-2.5">
+              {colors.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => dispatch({ type: ThemeBuilderActionKind.select_color, payload: { config: { color } } })}
+                  className={twMerge(
+                    'size-5 cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
+                    `${color} item-color-fg`,
+                    clsx(color === data.config.color && 'outline-2'),
+                  )}
+                />
+              ))}
+              <MenuColorPicker color={data.config.color} dispatch={dispatch} strategy="fixed" />
+            </div>
+          </Menu.Content>
+        </FloatingPortal>
+      </Menu.Root>
+
+      <Menu.Root strategy="fixed" placement="right-start" className="w-full" disabled={styleDisabled}>
+        <Menu.Trigger>
+          <SettingRow
+            icon={
+              data.theme === 'shader' ? (
+                <div className={twMerge('size-6 rounded-full', `item-color-${data.config.name}`)} />
+              ) : data.theme === 'pattern' ? (
+                <div className="size-6 rounded-full p-[2px]">
+                  <div
+                    className={twMerge(
+                      'pattern w-full h-full rounded-full relative! opacity-100!',
+                      data.config.color,
+                      data.config.name,
+                    )}
+                  />
+                </div>
+              ) : data.theme === 'image' ? (
+                <img src={data.config.image?.url} className="size-6 rounded-full object-cover" />
+              ) : (
+                <div className="size-6 rounded-full bg-quaternary" />
+              )
+            }
+            label="Style"
+            value={capitalize(data.config.name || data.config.image?.name || '-')}
+            disabled={styleDisabled}
+          />
+        </Menu.Trigger>
+        <FloatingPortal>
+          <Menu.Content className="w-[300px]">
+            {themeName === 'shader' && (
+              <div className="grid grid-cols-4 gap-3">
+                {shaders.map((item) => (
+                  <button
+                    key={item.name}
+                    type="button"
+                    onClick={() =>
+                      dispatch({
+                        type: ThemeBuilderActionKind.select_style,
+                        payload: { config: { name: item.name, color: item.accent } },
+                      })
+                    }
+                    className={twMerge(
+                      'size-12 cursor-pointer hover:outline-2 outline-offset-2 rounded-full',
+                      `item-color-${item.name}`,
+                      clsx(item.name === data.config.name && 'outline-2'),
+                    )}
+                  />
+                ))}
+              </div>
+            )}
+            {themeName === 'pattern' && (
+              <div className="grid grid-cols-3 gap-3">
+                {patterns.map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    className="flex flex-col items-center gap-2 cursor-pointer"
+                    onClick={() =>
+                      dispatch({
+                        type: ThemeBuilderActionKind.select_style,
+                        payload: { config: { name: item } },
+                      })
+                    }
+                  >
+                    <div
+                      className={clsx(
+                        'w-12 h-12 rounded-full p-[2px] border border-transparent',
+                        data.config.name === item && 'border-primary',
+                      )}
+                    >
+                      <div className={twMerge('pattern w-full h-full rounded-full opacity-100! relative!', data.config.color, item)} />
+                    </div>
+                    <p className="text-xs capitalize">{item}</p>
+                  </button>
+                ))}
+              </div>
+            )}
+            {themeName === 'image' && (
+              <div className="grid grid-cols-3 gap-3">
+                {images.map((item) => (
+                  <button
+                    key={item._id}
+                    type="button"
+                    className="flex flex-col items-center gap-1 cursor-pointer"
+                    onClick={() =>
+                      dispatch({
+                        type: ThemeBuilderActionKind.select_image,
+                        payload: {
+                          config: {
+                            mode: item.category.includes('dark') ? 'dark' : 'light',
+                            image: {
+                              _id: item._id,
+                              url: generateUrl(item, { resize: { fit: 'cover', height: 1080, width: 1920 } }),
+                              name: item.name,
+                            },
+                          },
+                        },
+                      })
+                    }
+                  >
+                    <img src={item.url} className="h-10 w-14 rounded-sm object-cover" />
+                    <p className="text-[10px] text-tertiary">{item.name}</p>
+                  </button>
+                ))}
+              </div>
+            )}
+          </Menu.Content>
+        </FloatingPortal>
+      </Menu.Root>
+
+      <Menu.Root strategy="fixed" placement="right-start" className="w-full" disabled={effectDisabled}>
+        <Menu.Trigger>
+          <SettingRow
+            icon={
+              data.config.effect?.name ? (
+                <div className="size-7 text-xl leading-7 text-center">{emojis[data.config.effect.name]?.emoji}</div>
+              ) : (
+                <i aria-hidden="true" className="icon-wand-shine-outline-sharp size-6 text-primary" />
+              )
+            }
+            label="Effect"
+            value={data.config.effect?.name ? capitalize(data.config.effect.name) : '-'}
+            disabled={effectDisabled}
+          />
+        </Menu.Trigger>
+        <FloatingPortal>
+          <Menu.Content className="w-[300px]">
+            <div className="grid grid-cols-4 gap-3">
+              {Object.entries(emojis).map(([key, item]) => (
+                <button
+                  key={key}
+                  type="button"
+                  className={clsx(
+                    'border rounded-full w-11 h-11 flex items-center justify-center text-xl',
+                    key === data.config.effect?.name && 'border-primary',
+                  )}
+                  onClick={() => {
+                    const effect =
+                      key === data.config.effect?.name
+                        ? { name: '', type: undefined, url: '', emoji: '' }
+                        : { name: key, type: item.type, url: item.url, emoji: item.emoji };
+                    dispatch({ type: ThemeBuilderActionKind.select_effect, payload: { config: { effect } } });
+                  }}
+                >
+                  {item.emoji}
+                </button>
+              ))}
+            </div>
+          </Menu.Content>
+        </FloatingPortal>
+      </Menu.Root>
+
+      <Menu.Root strategy="fixed" placement="right-start" className="w-full">
+        <Menu.Trigger>
+          <SettingRow
+            icon={
+              <span style={{ fontFamily: fonts.title[data.font_title || 'default'] }} className="size-6 inline-flex items-center justify-center leading-none">
+                Ag
+              </span>
+            }
+            label="Title"
+            value={capitalize(join(split(data.font_title || 'default', '_'), ' '))}
+          />
+        </Menu.Trigger>
+        <FloatingPortal>
+          <Menu.Content className="w-[300px] max-h-80 overflow-auto no-scrollbar p-1">
+            {Object.entries(fonts.title).map(([key]) => (
+              <button
+                key={key}
+                type="button"
+                className="w-full text-left text-sm px-2 py-1.5 rounded-sm hover:bg-card-hover"
+                onClick={() =>
+                  dispatch({
+                    type: ThemeBuilderActionKind.select_font,
+                    payload: { font_title: key, variables: { font: { '--font-title': fonts.title[key] } } },
+                  })
+                }
+              >
+                {capitalize(join(split(key, '_'), ' '))}
+              </button>
+            ))}
+          </Menu.Content>
+        </FloatingPortal>
+      </Menu.Root>
+
+      <Menu.Root strategy="fixed" placement="right-start" className="w-full">
+        <Menu.Trigger>
+          <SettingRow
+            icon={
+              <span style={{ fontFamily: fonts.body[data.font_body || 'default'] }} className="size-6 inline-flex items-center justify-center leading-none">
+                Ag
+              </span>
+            }
+            label="Body"
+            value={capitalize(join(split(data.font_body || 'default', '_'), ' '))}
+          />
+        </Menu.Trigger>
+        <FloatingPortal>
+          <Menu.Content className="w-[300px] max-h-80 overflow-auto no-scrollbar p-1">
+            {Object.entries(fonts.body).map(([key]) => (
+              <button
+                key={key}
+                type="button"
+                className="w-full text-left text-sm px-2 py-1.5 rounded-sm hover:bg-card-hover"
+                onClick={() =>
+                  dispatch({
+                    type: ThemeBuilderActionKind.select_font,
+                    payload: { font_body: key, variables: { font: { '--font-body': fonts.body[key] } } },
+                  })
+                }
+              >
+                {capitalize(join(split(key, '_'), ' '))}
+              </button>
+            ))}
+          </Menu.Content>
+        </FloatingPortal>
+      </Menu.Root>
+
+      <Menu.Root strategy="fixed" placement="right-start" className="w-full" disabled={displayDisabled}>
+        <Menu.Trigger>
+          <SettingRow
+            icon={
+              <i
+                className={clsx(
+                  'size-6 rounded-full',
+                  modes.find((item) => item.mode === mode)?.icon,
+                  modes.find((item) => item.mode === mode)?.active,
+                )}
+              />
+            }
+            label="Display"
+            value={capitalize(mode)}
+            disabled={displayDisabled}
+          />
+        </Menu.Trigger>
+        <FloatingPortal>
+          <Menu.Content className="w-[220px] p-1">
+            {modes.map((item) => (
+              <button
+                key={item.mode}
+                type="button"
+                className="w-full text-left text-sm px-2 py-1.5 rounded-sm hover:bg-card-hover flex items-center gap-2"
+                onClick={() =>
+                  dispatch({
+                    type: ThemeBuilderActionKind.select_color,
+                    payload: { config: { mode: item.mode as any } },
+                  })
+                }
+              >
+                <i aria-hidden="true" className={item.icon} />
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </Menu.Content>
+        </FloatingPortal>
+      </Menu.Root>
+    </div>
+  );
+}
+
+function SettingRow({
+  icon,
+  label,
+  value,
+  disabled,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  disabled?: boolean;
+}) {
+  return (
+    <div
+      className={clsx(
+        'w-full h-10 rounded-sm bg-primary/8 px-2 flex items-center gap-1.5',
+        disabled && 'opacity-50 cursor-not-allowed',
+      )}
+    >
+      <div className="shrink-0 flex items-center justify-center size-6">{icon}</div>
+      <p className="text-tertiary flex-1">{label}</p>
+      <p className="text-tertiary truncate max-w-[92px]">{value}</p>
+      <i aria-hidden="true" className="icon-chevrons-up-down text-quaternary size-3.5" />
+    </div>
+  );
+}
+
+function capitalize(value: string) {
+  if (!value) return '';
+  return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
 function EventThemeBuilderPane({ show, onClose }: { show: boolean; onClose: () => void }) {

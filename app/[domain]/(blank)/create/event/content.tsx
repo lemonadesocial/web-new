@@ -149,7 +149,7 @@ function FormContent({ spaces, space, listToSpace }: { space?: Space; spaces: Sp
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <CreateEventForm control={control} watch={watch} setValue={setValue} spaces={spaces} listToSpace={listToSpace}>
-        <Button loading={loading} disabled={!title} className="w-full" variant="secondary" type="submit">
+        <Button data-testid="event-create-submit" loading={loading} disabled={!title} className="w-full" variant="secondary" type="submit">
           Create Event
         </Button>
       </CreateEventForm>

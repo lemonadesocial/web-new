@@ -1,11 +1,20 @@
 import React from 'react';
 import { ShaderGradientCanvas, ShaderGradient as ReactShaderGradient } from '@shadergradient/react';
 
-export function ShaderGradient({ mode = 'dark' }: { mode?: 'dark' | 'light' | 'auto' }) {
+export function ShaderGradient({
+  mode = 'dark',
+  scoped = false,
+  scopeSelector,
+}: {
+  mode?: 'dark' | 'light' | 'auto';
+  scoped?: boolean;
+  scopeSelector?: string;
+}) {
   const [colors, setColors] = React.useState({ color1: '#e1dbfc', color2: '#ebd0fa', color3: '#ddf9fe' });
+  const shaderSelector = scopeSelector ? `${scopeSelector} .shader` : '.shader';
 
   const getCSSVariable = (variable: string) => {
-    const el = document.querySelector('.shader');
+    const el = document.querySelector(shaderSelector);
     return el ? getComputedStyle(el).getPropertyValue(variable).trim() : '';
   };
 
@@ -23,7 +32,7 @@ export function ShaderGradient({ mode = 'dark' }: { mode?: 'dark' | 'light' | 'a
       updateColorsFromCSS();
     });
 
-    const targetNode = document.querySelector('.shader');
+    const targetNode = document.querySelector(shaderSelector);
     if (targetNode) {
       observer.observe(targetNode, {
         attributes: true,
@@ -40,8 +49,8 @@ export function ShaderGradient({ mode = 'dark' }: { mode?: 'dark' | 'light' | 'a
     <>
       <ShaderGradientCanvas
         pointerEvents="none"
-        className="fixed! top-0 left-0 right-0 bottom-0 z-0"
-        style={{ width: '100vw', height: '100dvh' }}
+        className={scoped ? 'absolute! top-0 left-0 right-0 bottom-0 z-0' : 'fixed! top-0 left-0 right-0 bottom-0 z-0'}
+        style={scoped ? { width: '100%', height: '100%' } : { width: '100vw', height: '100dvh' }}
         fov={10}
         pixelDensity={1}
       >

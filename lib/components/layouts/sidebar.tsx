@@ -21,19 +21,19 @@ import { useLogOut } from '$lib/hooks/useLogout';
 import { ProfilePane } from '../features/pane';
 import { AIChatActionKind, useAIChat } from '../features/ai/provider';
 import { aiChat } from '../features/ai/AIChatContainer';
+import { match } from 'ts-pattern';
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const [toggle, setToggle] = React.useState<'mini' | 'open'>('mini');
   const router = useRouter();
-
-  const logOut = useLogOut();
-  const signIn = useSignIn();
+  const [_state, dispatch] = useAIChat();
 
   const me = useMe();
   const { account } = useAccount();
-  const [_state, dispatch] = useAIChat();
 
-  const [toggle, setToggle] = React.useState(false);
+  const logOut = useLogOut();
+  const signIn = useSignIn();
 
   const mainMenu = useMemo(() => {
     const menu = [
@@ -69,34 +69,58 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Web View */}
+      <div className="md:hidden fixed z-50 top-0 bg-background left-0 right-0 p-2.5">
+        <button
+          className="text-tertiary p-2.5 flex justify-center cursor-pointer"
+          onClick={() => setToggle((prev) => (prev !== 'open' ? 'open' : 'mini'))}
+        >
+          <i className="icon-left-panel-close-outline size-5" />
+        </button>
+      </div>
+
+      {toggle === 'open' && (
+        <div
+          className="fixed bg-(--color-page-background-overlay) inset-0 z-50 md:hidden"
+          onClick={() => setToggle('mini')}
+        />
+      )}
+
       <div
         className={clsx(
-          'relative bg-overlay-primary transition-all duration-300 h-screen text-tertiary border-r max-sm:hidden z-10',
-          toggle ? 'w-64' : 'w-16',
+          'relative bg-overlay-primary max-sm:fixed h-screen text-tertiary border-r z-50 transform transition-transform duration-300 ease-in-out',
+          toggle === 'mini' && 'border-r-0 max-sm:-translate-x-full',
+          toggle === 'open' && 'max-sm:left-0',
         )}
       >
-        <div className="flex flex-col h-full">
+        <div
+          className={clsx(
+            'flex flex-col h-full transition-all duration-300',
+            toggle === 'open' && 'w-64',
+            toggle === 'mini' && 'w-16 max-sm:invisible',
+          )}
+        >
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="p-3 flex items-center justify-between">
               <div className="group">
-                <div className={clsx('p-2 flex items-center justify-center', !toggle && 'group-hover:hidden')}>
-                  <i aria-hidden="true" className="icon-lemonade-logo text-warning-300 size-6" />
+                <div
+                  className={clsx('p-2 flex items-center justify-center', toggle === 'mini' && 'group-hover:hidden')}
+                >
+                  <i className="icon-lemonade-logo text-warning-300 size-6" />
                 </div>
-                {!toggle && (
+                {toggle === 'mini' && (
                   <button
                     className="p-2.5 items-center justify-center cursor-pointer hidden group-hover:flex"
-                    onClick={() => setToggle(!toggle)}
+                    onClick={() => setToggle((prev) => (prev === 'mini' ? 'open' : 'mini'))}
                   >
                     <i aria-hidden="true" className="icon-left-panel-close-outline size-5" />
                   </button>
                 )}
               </div>
 
-              {toggle && (
+              {toggle === 'open' && (
                 <button
                   className="p-2.5 flex items-center justify-center cursor-pointer"
-                  onClick={() => setToggle(!toggle)}
+                  onClick={() => setToggle((prev) => (prev === 'mini' ? 'open' : 'mini'))}
                 >
                   <i aria-hidden="true" className="icon-left-panel-close-outline size-5" />
                 </button>
@@ -104,17 +128,17 @@ const Sidebar = () => {
             </div>
 
             <div className="px-3 pb-3 flex flex-col gap-1">
-              {mainMenu.map((item) => (
+              {mainMenu.map((item, idx) => (
                 <div
-                  key={item.path}
+                  key={idx}
                   className={clsx(
                     'cursor-pointer text-secondary p-2.5 flex gap-2.5 items-center hover:bg-(--btn-tertiary) rounded-sm',
                     isActive(item) && 'bg-(--btn-tertiary)',
                   )}
                   onClick={() => handleNavigate(item.path)}
                 >
-                  <i aria-hidden="true" className={twMerge('size-5 aspect-square', item.icon)} />
-                  {toggle && <span className="text-sm whitespace-nowrap">{item.label}</span>}
+                  <i className={twMerge('size-5 aspect-square', item.icon)} />
+                  {toggle === 'open' && <span className="text-sm whitespace-nowrap">{item.label}</span>}
                 </div>
               ))}
 
@@ -124,33 +148,33 @@ const Sidebar = () => {
                 )}
                 onClick={() => modal.open(CreatingModal)}
               >
-                <i aria-hidden="true" className="size-5 icon-plus aspect-square" />
-                {toggle && <span className="text-sm">Create</span>}
+                <i className="size-5 icon-plus aspect-square" />
+                {toggle === 'open' && <span className="text-sm">Create</span>}
               </div>
             </div>
 
             <div className="px-3 pb-3 flex flex-col gap-1">
-              <div className={clsx('text-tertiary text-sm p-2.5 pb-1.5', !toggle && 'invisible')}>
+              <div className={clsx('text-tertiary text-sm p-2.5 pb-1.5', toggle === 'mini' && 'invisible')}>
                 <p>Explore</p>
               </div>
-              {exploreMenu.map((item) => (
+              {exploreMenu.map((item, idx) => (
                 <div
-                  key={item.path}
+                  key={idx}
                   className={clsx(
                     'cursor-pointer text-secondary p-2.5 flex gap-2.5 items-center hover:bg-(--btn-tertiary) rounded-sm',
                     isActive(item) && 'bg-(--btn-tertiary)',
                   )}
                   onClick={() => handleNavigate(item.path)}
                 >
-                  <i aria-hidden="true" className={twMerge('size-5 aspect-square', item.icon)} />
-                  {toggle && <span className="text-sm whitespace-nowrap">{item.label}</span>}
+                  <i className={twMerge('size-5 aspect-square', item.icon)} />
+                  {toggle === 'open' && <span className="text-sm whitespace-nowrap">{item.label}</span>}
                 </div>
               ))}
             </div>
 
-            <div className={clsx('flex-1 pb-2 overflow-hidden', !toggle && 'hidden')}>
+            <div className={clsx('flex-1 pb-2 overflow-hidden', toggle === 'mini' && 'hidden')}>
               <Divider className="h-1 w-full" />
-              {toggle && <SectionEvents handleNavigate={(path) => handleNavigate(path)} />}
+              {toggle === 'open' && <SectionEvents handleNavigate={(path) => handleNavigate(path)} />}
             </div>
           </div>
 
@@ -161,20 +185,23 @@ const Sidebar = () => {
                 toggle ? 'bg-(--btn-tertiary)' : 'bg-transparent',
               )}
             >
-              <Card.Content className={clsx('flex justify-between items-center', toggle ? 'px-3 py-2 gap-3' : 'p-2.5')}>
-                {toggle ? (
-                  <>
-                    <div>
-                      <p className="text-sm">Rewards</p>
-                      <p className="text-quaternary text-xs">Earn credits for your hubs</p>
-                    </div>
-                    <div className="p-2 bg-warning-600 rounded-full w-[30px] h-[30px] aspect-square flex items-center justify-center">
-                      <i aria-hidden="true" className="icon-gift-line w-4 h-4" />
-                    </div>
-                  </>
-                ) : (
-                  <i aria-hidden="true" className="icon-gift-line size-5 aspect-square" />
-                )}
+              <Card.Content
+                className={clsx('flex justify-between items-center', toggle === 'open' ? 'px-3 py-2 gap-3' : 'p-2.5')}
+              >
+                {match(toggle)
+                  .with('open', () => (
+                    <>
+                      <div>
+                        <p className="text-sm">Rewards</p>
+                        <p className="text-quaternary text-xs">Earn credits for your hubs</p>
+                      </div>
+                      <div className="p-2 bg-warning-600 rounded-full w-[30px] h-[30px] aspect-square flex items-center justify-center">
+                        <i className="icon-gift-line w-4 h-4" />
+                      </div>
+                    </>
+                  ))
+                  .with('mini', () => <i className="icon-gift-line size-5 aspect-square" />)
+                  .otherwise(() => null)}
               </Card.Content>
             </Card.Root>
 
@@ -183,21 +210,31 @@ const Sidebar = () => {
                 'border-none hover:bg-(--btn-tertiary)',
                 toggle ? 'bg-(--btn-tertiary)' : 'bg-transparent',
               )}
+              onClick={() => {
+                if (me || account) {
+                  router.push('/upgrade-to-pro');
+                } else {
+                  signIn();
+                }
+              }}
             >
-              <Card.Content className={clsx('flex justify-between items-center', toggle ? 'px-3 py-2 gap-3' : 'p-2.5')}>
-                {toggle ? (
-                  <>
-                    <div>
-                      <p className="text-sm">Upgrade to Pro</p>
-                      <p className="text-quaternary text-xs">Unlock more benefits</p>
-                    </div>
-                    <div className="p-2 bg-alert-500 rounded-full w-[30px] h-[30px] aspect-square flex items-center justify-center">
-                      <i aria-hidden="true" className="icon-flash w-4 h-4" />
-                    </div>
-                  </>
-                ) : (
-                  <i aria-hidden="true" className="icon-flash size-5 aspect-square" />
-                )}
+              <Card.Content
+                className={clsx('flex justify-between items-center', toggle === 'open' ? 'px-3 py-2 gap-3' : 'p-2.5')}
+              >
+                {match(toggle)
+                  .with('open', () => (
+                    <>
+                      <div>
+                        <p className="text-sm">Upgrade to Pro</p>
+                        <p className="text-quaternary text-xs">Unlock more benefits</p>
+                      </div>
+                      <div className="p-2 bg-alert-500 rounded-full w-[30px] h-[30px] aspect-square flex items-center justify-center">
+                        <i className="icon-flash w-4 h-4 aspect-square" />
+                      </div>
+                    </>
+                  ))
+                  .with('mini', () => <i className="icon-flash size-5 aspect-square" />)
+                  .otherwise(() => null)}
               </Card.Content>
             </Card.Root>
 
@@ -206,8 +243,8 @@ const Sidebar = () => {
                 <Menu.Trigger>
                   {() => (
                     <div className="flex gap-2 items-center p-2">
-                      <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" alt="User avatar" />
-                      {toggle && (
+                      <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
+                      {toggle === 'open' && (
                         <div className="flex flex-col">
                           <p className="text-sm font-medium text-secondary">
                             {me?.username || me?.display_name || me?.name}
@@ -243,8 +280,8 @@ const Sidebar = () => {
                 className="flex gap-2 items-center p-2 cursor-pointer hover:bg-(--btn-tertiary) rounded-sm"
                 onClick={() => signIn()}
               >
-                <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" alt="User avatar" />
-                {toggle && (
+                <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" />
+                {toggle === 'open' && (
                   <div className="flex flex-col">
                     <p className="text-sm font-medium text-secondary">Login</p>
                   </div>
@@ -254,176 +291,6 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
-
-      {/* Mobile View */}
-      <div className="md:hidden fixed z-50 top-0 bg-background left-0 right-0 p-2.5">
-        <button className="text-tertiary p-2.5 flex justify-center cursor-pointer" onClick={() => setToggle(!toggle)}>
-          <i aria-hidden="true" className="icon-left-panel-close-outline size-5" />
-        </button>
-      </div>
-      <AnimatePresence mode="wait">
-        {toggle && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="fixed bg-(--color-page-background-overlay) inset-0 z-50 md:hidden"
-              onClick={() => setToggle(false)}
-            />
-            <motion.div
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'tween', ease: 'easeInOut' }}
-              className="fixed bg-overlay-secondary h-screen text-tertiary border-r z-50 w-64 md:hidden"
-            >
-              <div className="flex flex-col h-full relative">
-                <div className="flex-1 flex flex-col overflow-hidden">
-                  <div className="p-3 flex items-center justify-between">
-                    <div className="p-2 flex items-center justify-center">
-                      <i aria-hidden="true" className="icon-lemonade-logo text-warning-300 size-6" />
-                    </div>
-
-                    <button
-                      className="p-2.5 flex items-center justify-center cursor-pointer"
-                      onClick={() => setToggle(!toggle)}
-                    >
-                      <i aria-hidden="true" className="icon-left-panel-close-outline size-5" />
-                    </button>
-                  </div>
-
-                  <div className="px-3 pb-3 flex flex-col gap-1">
-                    {mainMenu.map((item) => (
-                      <div
-                        key={item.path}
-                        className={clsx(
-                          'cursor-pointer text-secondary p-2.5 flex gap-2.5 items-center hover:bg-(--btn-tertiary) rounded-sm',
-                          isActive(item) && 'bg-(--btn-tertiary)',
-                        )}
-                        onClick={() => handleNavigate(item.path)}
-                      >
-                        <i aria-hidden="true" className={twMerge('size-5 aspect-square', item.icon)} />
-                        <span className="text-sm whitespace-nowrap">{item.label}</span>
-                      </div>
-                    ))}
-
-                    <div
-                      className={clsx(
-                        'cursor-pointer text-secondary p-2.5 flex gap-2.5 items-center hover:bg-(--btn-tertiary) rounded-sm',
-                      )}
-                      onClick={() => modal.open(CreatingModal)}
-                    >
-                      <i aria-hidden="true" className="size-5 icon-plus aspect-square" />
-                      <span className="text-sm">Create</span>
-                    </div>
-                  </div>
-
-                  <div className="px-3 pb-3 flex flex-col gap-1">
-                    <div className="text-tertiary text-sm p-2.5 pb-1.5">
-                      <p>Explore</p>
-                    </div>
-                    {exploreMenu.map((item) => (
-                      <div
-                        key={item.path}
-                        className={clsx(
-                          'cursor-pointer text-secondary p-2.5 flex gap-2.5 items-center hover:bg-(--btn-tertiary) rounded-sm',
-                          isActive(item) && 'bg-(--btn-tertiary)',
-                        )}
-                        onClick={() => handleNavigate(item.path)}
-                      >
-                        <i aria-hidden="true" className={twMerge('size-5 aspect-square', item.icon)} />
-                        <span className="text-sm whitespace-nowrap">{item.label}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex-1 overflow-hidden">
-                    <Divider className="h-1 w-full" />
-                    <SectionEvents handleNavigate={(path) => handleNavigate(path)} />
-                  </div>
-                </div>
-
-                <div className="border-t p-3 pt-4 flex flex-col gap-3">
-                  <Card.Root className="border-none hover:bg-(--btn-tertiary) bg-(--btn-tertiary)">
-                    <Card.Content className="flex justify-between items-center px-3 py-2 gap-3">
-                      <div>
-                        <p className="text-sm">Rewards</p>
-                        <p className="text-quaternary text-xs">Earn credits for your hubs</p>
-                      </div>
-                      <div className="p-2 bg-warning-600 rounded-full w-[30px] h-[30px] aspect-square flex items-center justify-center">
-                        <i aria-hidden="true" className="icon-gift-line w-4 h-4" />
-                      </div>
-                    </Card.Content>
-                  </Card.Root>
-
-                  <Card.Root className="border-none hover:bg-(--btn-tertiary) bg-(--btn-tertiary)">
-                    <Card.Content className="flex justify-between items-center px-3 py-2 gap-3">
-                      <div>
-                        <p className="text-sm">Upgrade to Pro</p>
-                        <p className="text-quaternary text-xs">Unlock more benefits</p>
-                      </div>
-                      <div className="p-2 bg-alert-500 rounded-full w-[30px] h-[30px] aspect-square flex items-center justify-center">
-                        <i aria-hidden="true" className="icon-flash w-4 h-4" />
-                      </div>
-                    </Card.Content>
-                  </Card.Root>
-
-                  {me || account ? (
-                    <Menu.Root strategy="absolute" placement="top">
-                      <Menu.Trigger>
-                        {({ isOpen }) => (
-                          <div className="flex gap-2 items-center p-2">
-                            <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" alt="User avatar" />
-                            <div className="flex flex-col">
-                              <p className="text-sm font-medium text-secondary">
-                                {me?.username || me?.display_name || me?.name}
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </Menu.Trigger>
-                      <Menu.Content className="p-0 min-w-[228px]">
-                        {({ toggle }) => (
-                          <>
-                            <div className="p-1">
-                              <MenuItem
-                                title="Edit Profile"
-                                onClick={() => drawer.open(ProfilePane, { dismissible: false })}
-                              />
-                              <MenuItem title="Settings" onClick={() => router.push('/settings')} />
-                              <MenuItem
-                                title="Sign Out"
-                                onClick={async () => {
-                                  toggle();
-                                  logOut();
-                                }}
-                              />
-                            </div>
-                          </>
-                        )}
-                      </Menu.Content>
-                    </Menu.Root>
-                  ) : (
-                    <div
-                      className="flex gap-2 items-center p-2 cursor-pointer hover:bg-(--btn-tertiary) rounded-sm"
-                      onClick={() => signIn()}
-                    >
-                      <img src={userAvatar(me)} className="rounded-full border aspect-square w-6 h-6" alt="User avatar" />
-                      {toggle && (
-                        <div className="flex flex-col">
-                          <p className="text-sm font-medium text-secondary">Login</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </>
   );
 };
@@ -465,9 +332,8 @@ export function CreatingModal() {
           size="lg"
           className="rounded-full hover:bg-(--btn-tertiary)! [*]:text-tertiary! max-h-fit! size-[56px]"
           variant="tertiary"
-          aria-label="Create new"
         />
-        <Button icon="icon-x" size="xs" className="rounded-full" variant="tertiary" onClick={() => modal.close()} aria-label="Close" />
+        <Button icon="icon-x" size="xs" className="rounded-full" variant="tertiary" onClick={() => modal.close()} />
       </Card.Header>
       <Card.Content className="flex flex-col gap-4 pt-0">
         <div className="flex flex-col gap-2">
@@ -545,7 +411,12 @@ function SectionEvents({ handleNavigate }: { handleNavigate: (path: string) => v
           >
             <div className="flex gap-2.5 flex-1">
               <div className="size-5 aspect-square rounded-xs bg-tertiary">
-                {item.new_new_photos_expanded?.[0] && <img src={generateUrl(item.new_new_photos_expanded?.[0])} alt={item.title || 'Event thumbnail'} />}
+                {item.new_new_photos_expanded?.[0] && (
+                  <img
+                    src={generateUrl(item.new_new_photos_expanded?.[0])}
+                    className="object-contain w-full h-full rounded-xs"
+                  />
+                )}
               </div>
               <p className="text-secondary line-clamp-1">{item.title}</p>
             </div>

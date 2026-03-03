@@ -1,0 +1,184 @@
+'use client';
+import React from 'react';
+import { useRouter } from 'next/navigation';
+import { twMerge } from 'tailwind-merge';
+
+import { Button, Menu, MenuItem } from '$lib/components/core';
+import Header from '$lib/components/layouts/header';
+import { GetListMySpacesDocument, GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
+import { useQuery } from '$lib/graphql/request';
+import { useMe } from '$lib/hooks/useMe';
+import clsx from 'clsx';
+import { generateUrl } from '$lib/utils/cnd';
+import { PlanAndCredits } from '$lib/components/features/upgrade-to-pro/PlanAndCredits';
+import Team from '$lib/components/features/upgrade-to-pro/Team';
+import { CommunityDetail } from '$lib/components/features/upgrade-to-pro/CommunityDetail';
+import { Connector } from '$lib/components/features/upgrade-to-pro/Connector';
+import { CustomDomain } from '$lib/components/features/upgrade-to-pro/CustomDomain';
+import { Payouts } from '$lib/components/features/upgrade-to-pro/Payouts';
+
+const menu: Record<string, { label: string; icon: string; component: React.FC<{ space: Space }> }> = {
+  overview: {
+    label: 'Community Details',
+    icon: 'icon-info',
+    component: CommunityDetail,
+  },
+  people: {
+    label: 'Team',
+    icon: 'icon-user-group-outline',
+    component: Team,
+  },
+  plans: {
+    label: 'Plans & Credits',
+    icon: 'icon-credit-card',
+    component: PlanAndCredits,
+  },
+  payouts: {
+    label: 'Payouts',
+    icon: 'icon-send-money',
+    component: Payouts,
+  },
+  domain: {
+    label: 'Custom Domain',
+    icon: 'icon-globe',
+    component: CustomDomain,
+  },
+  connector: {
+    label: 'Connectors',
+    icon: 'icon-connector-line',
+    component: Connector,
+  },
+};
+
+function Page() {
+  const router = useRouter();
+  const me = useMe();
+
+  const [active, setActive] = React.useState('overview');
+  const [selectedSpaceId, setSelectedSpaceId] = React.useState<string | undefined>();
+  const [toggleMenuMobile, setToggleMenuMobile] = React.useState(false);
+
+  const { data } = useQuery(GetListMySpacesDocument, {
+    variables: { skip: 0, limit: 100 },
+    skip: !me,
+  });
+  const spaces = (data?.listMySpaces?.items || []) as Space[];
+  const Comp = menu[active].component;
+
+  const { data: dataGetSpace } = useQuery(GetSpaceDocument, {
+    variables: { id: selectedSpaceId },
+    skip: !selectedSpaceId,
+  });
+  const space = dataGetSpace?.getSpace as Space;
+
+  React.useEffect(() => {
+    if (spaces.length) setSelectedSpaceId(spaces[0]._id);
+  }, [spaces[0]?._id]);
+
+  return (
+    <>
+      <Header showUI={false} />
+      <div className="h-dvh flex flex-col md:flex-row">
+        <div className={clsx(
+          'md:flex flex-col flex-1 bg-overlay-primary max-w-[280px] p-3 gap-3',
+          toggleMenuMobile ? 'max-sm:fixed max-sm:inset-0 max-sm:z-50 max-sm:max-w-full flex' : 'max-sm:hidden',
+        )}>
+          <Button iconLeft="icon-chevron-left" variant="flat" onClick={() => router.back()} className="w-fit">
+            Back
+          </Button>
+
+          <Menu.Root placement="bottom-start">
+            <Menu.Trigger>
+              {() => (
+                <MenuItem
+                  className="bg-(--btn-tertiary) h-[40px] rounded-sm! max-w-full"
+                  iconLeft={
+                    <div className="size-5 object-cover aspect-square rounded-xs overflow-hidden bg-tertiary">
+                      {space?.image_avatar && (
+                        <img src={generateUrl(space.image_avatar_expanded)} className="w-full h-full" />
+                      )}
+                    </div>
+                  }
+                  iconRight="icon-chevron-down"
+                >
+                  <p className="line-clamp-1 truncate flex-1">{space?.title}</p>
+                </MenuItem>
+              )}
+            </Menu.Trigger>
+            <Menu.Content className="p-2 w-full">
+              {({ toggle }) => (
+                <>
+                  {spaces.map((item) => (
+                    <MenuItem
+                      key={item._id}
+                      className="max-w-full"
+                      iconLeft={
+                        <div className="size-5 object-cover aspect-square rounded-xs overflow-hidden bg-tertiary">
+                          {item?.image_avatar && (
+                            <img src={generateUrl(item.image_avatar_expanded)} className="w-full h-full" />
+                          )}
+                        </div>
+                      }
+                      iconRight={item._id === selectedSpaceId && 'icon-done'}
+                      onClick={() => {
+                        setSelectedSpaceId(item._id);
+                        toggle();
+                      }}
+                    >
+                      <p className="line-clamp-1 truncate flex-1 w-full">{item.title}</p>
+                    </MenuItem>
+                  ))}
+                </>
+              )}
+            </Menu.Content>
+          </Menu.Root>
+
+          <p className="p-2.5 text-tertiary text-sm">Settings</p>
+
+          <div className="space-y-0.5">
+            {Object.entries(menu).map(([key, item]) => (
+              <div
+                key={key}
+                className={clsx(
+                  'flex items-center gap-x-2.5 p-2.5 rounded-sm text-secondary hover:bg-(--btn-tertiary) cursor-pointer',
+                  active === key && 'bg-(--btn-tertiary)',
+                )}
+                onClick={() => {
+                  setToggleMenuMobile(false);
+                  setActive(key);
+                }}
+              >
+                <i className={twMerge('w-5 h-5 aspect-square', item.icon)}></i>
+                <p className="text-sm">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="md:hidden p-3 flex justify-between items-center">
+          <div className="flex-1">
+            <Button
+              icon="icon-chevron-left"
+              variant="flat"
+              onClick={() => setToggleMenuMobile(!toggleMenuMobile)}
+              className="w-fit"
+            >
+              Back
+            </Button>
+          </div>
+
+          <p className="flex-2 text-center font-bold">{menu[active].label}</p>
+          <div className="flex-1" />
+        </div>
+
+        {space && (
+          <div className="w-full flex-1 overflow-auto no-scrollbar">
+            <Comp space={space} />
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+export default Page;

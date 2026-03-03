@@ -2,9 +2,7 @@
 import { RunResult } from '$lib/graphql/generated/ai/graphql';
 import { v4 as uuidV4 } from 'uuid';
 import React from 'react';
-import { defer } from 'lodash';
 import { AI_CONFIG } from '$lib/utils/constants';
-import { config } from 'process';
 
 export type ToolKey = 'create_event' | 'manage_event' | 'create_community' | 'manage_community';
 
@@ -28,6 +26,7 @@ type State = {
   openPane?: boolean;
   data?: unknown;
   config: string;
+  standId?: string;
 };
 
 const session = uuidV4();
@@ -105,7 +104,7 @@ function reducers(state: State, action: AIChatAction) {
     }
 
     case AIChatActionKind.set_data_run: {
-      return { ...state, data: action.payload?.data || {} };
+      return { ...state, data: action.payload?.data || {}, standId: action.payload?.standId };
     }
 
     case AIChatActionKind.set_config: {

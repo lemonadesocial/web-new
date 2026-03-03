@@ -152,7 +152,7 @@ function Content({ space, uid }: { space: Space; uid: string }) {
   React.useEffect(() => {
     if (space.slug === uid || space._id === uid) {
       aiChatDispatch({ type: AIChatActionKind.reset });
-      aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { data: { space_id: space._id } } });
+      aiChatDispatch({ type: AIChatActionKind.set_data_run, payload: { data: { space_id: space._id }, standId: space._id } });
       aiChatDispatch({ type: AIChatActionKind.add_message, payload: { messages: mockWelcomeSpace(space) } });
 
       if (!isMobile) aiChat.open();

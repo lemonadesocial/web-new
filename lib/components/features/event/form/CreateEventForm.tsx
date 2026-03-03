@@ -225,6 +225,7 @@ export function CreateEventForm({
           control={control}
           render={({ field }) => (
             <Input
+              data-testid="event-create-title"
               value={field.value}
               className="bg-transparent rounded-none border-none text-3xl p-0 h-[68px]"
               placeholder="Event Title"
