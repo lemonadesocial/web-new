@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import { Canvas } from '@craftjs/core';
 import type { SectionType } from '../types';
 
 // Event sections
@@ -147,6 +148,9 @@ export const sectionResolver: Record<string, React.ComponentType<any>> = {
   MusicPlayer,
   WalletConnect,
   Passport,
+
+  // Canvas — required for ROOT node resolution at runtime
+  Canvas,
 
   // Placeholder (fallback for unknown section types)
   PlaceholderSection,
