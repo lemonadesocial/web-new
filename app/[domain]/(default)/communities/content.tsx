@@ -14,6 +14,7 @@ import { ASSET_PREFIX } from '$lib/utils/constants';
 import { useRequireLemonadeAccount } from '$lib/hooks/useRequireLemonadeAccount';
 
 import { PageCardItem, PageCardItemSkeleton, PageSection, PageTitle } from '../shared';
+import { useMe } from '$lib/hooks/useMe';
 
 export function Content() {
   const { isAuthenticated } = useRequireLemonadeAccount();
