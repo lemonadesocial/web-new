@@ -50,6 +50,11 @@ export function Messages() {
 }
 
 function MessageItem({ message: item }: { message: Message }) {
+  const messageContent =
+    item.role === 'assistant' && item.metadata?.cards
+      ? item.message.split('\n\n')[0] ?? item.message
+      : item.message;
+
   return match(item.role)
     .with('assistant', () => (
       <div className="flex items-start gap-4">
@@ -57,7 +62,7 @@ function MessageItem({ message: item }: { message: Message }) {
           <i aria-hidden="true" className="icon-lemon-ai size-4 aspect-square text-warning-300" />
         </div>
         <div className="whitespace-break-spaces flex flex-col gap-6">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.message}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{messageContent}</ReactMarkdown>
 
           {item.metadata?.cards && (
             <CardList
@@ -89,7 +94,7 @@ function MessageItem({ message: item }: { message: Message }) {
     .otherwise(() => (
       <div className="w-full flex justify-end">
         <div className="w-fit bg-(--btn-tertiary) text-secondary py-2 px-3 rounded-sm rounded-tr-none">
-          <p className="whitespace-break-spaces">{item.message}</p>
+          <p className="whitespace-break-spaces">{messageContent}</p>
         </div>
       </div>
     ));
