@@ -1,22 +1,35 @@
 'use client';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Badge, Button, Card, Toggle } from '$lib/components/core';
-import { formatCurrency } from '$lib/utils/string';
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { match } from 'ts-pattern';
 
-const pricingPlans = [
+import { Button, Card, Segment, Toggle } from '$lib/components/core';
+import { formatCurrency } from '$lib/utils/string';
+import { Space, SubscriptionItem, SubscriptionItemType } from '$lib/graphql/generated/backend/graphql';
+import clsx from 'clsx';
+
+type PlanCard = {
+  type: SubscriptionItemType | 'enterprise';
+  title?: string;
+  description?: string;
+  price?: number | null;
+  annual: boolean | null;
+  featureTitle: string;
+  method?: 'card' | 'wallet';
+  features: string[];
+  pricing?: SubscriptionItem['pricing'];
+  credits_per_month?: number | null;
+};
+
+const pricingPlans: PlanCard[] = [
   {
-    id: 'pro',
-    title: 'Pro',
-    description: 'Designed for fast-moving teams building together in real time.',
-    price: 2500,
-    priceSuffix: 'per month',
-    isSaving: false,
-    savings: 5000,
+    type: SubscriptionItemType.Plus,
+    // description: 'Designed for fast-moving teams building together in real time.',
+    annual: false,
     featureTitle: 'All features in Free, plus:',
+    method: 'card',
     features: [
-      '100 monthly AI credits',
+      '{{credits_per_month}} monthly AI credits',
       '5 daily credits (up to 150/month)',
       'Usage-based Cloud + AI',
       'Credit rollovers',
@@ -28,16 +41,31 @@ const pricingPlans = [
     ],
   },
   {
-    id: 'business',
-    title: 'Business',
-    description: 'Advanced controls and power features for growing departments.',
-    price: 5000,
-    priceSuffix: 'per month',
-    savings: 20000,
-    isSaving: false,
+    type: SubscriptionItemType.Pro,
+    // description: 'Designed for fast-moving teams building together in real time.',
+    annual: false,
+    method: 'card',
+    featureTitle: 'All features in Lemonade Plus, plus:',
+    features: [
+      '{{credits_per_month}} monthly AI credits',
+      '5 daily credits (up to 150/month)',
+      'Usage-based Cloud + AI',
+      'Credit rollovers',
+      'On-demand credit top-ups',
+      'Unlimited lemonade.social domains',
+      'Custom domains',
+      'Remove the Lovable badge',
+      'User roles & permissions',
+    ],
+  },
+  {
+    type: SubscriptionItemType.Max,
+    // description: 'Advanced controls and power features for growing departments.',
+    annual: false,
+    method: 'card',
     featureTitle: 'All features in Pro, plus:',
     features: [
-      '500 monthly AI credits',
+      '{{credits_per_month}} monthly AI credits',
       'Internal publish',
       'SSO',
       'Personal Projects',
@@ -46,13 +74,11 @@ const pricingPlans = [
     ],
   },
   {
-    id: 'enterprise',
+    type: 'enterprise',
     title: 'Enterprise',
-    description: 'Built for large orgs needing flexibility, scale, and governance.',
-    price: 0,
-    priceSuffix: '',
-    savings: 0,
-    isSaving: null,
+    // description: 'Built for large orgs needing flexibility, scale, and governance.',
+    price: null,
+    annual: null,
     featureTitle: 'All features in Business, plus:',
     features: [
       'Dedicated support',
@@ -65,8 +91,24 @@ const pricingPlans = [
   },
 ];
 
-export function PlanAndCredits() {
-  const [data, setData] = React.useState(pricingPlans);
+function buildPlans(subscriptionItems: SubscriptionItem[]): PlanCard[] {
+  const subscriptionByType = new Map(subscriptionItems.map((item) => [item.type, item]));
+
+  return pricingPlans.map((plan) => {
+    if (plan.type === 'enterprise') return { ...plan };
+
+    const subscription = subscriptionByType.get(plan.type);
+    return subscription ? { ...plan, ...subscription } : { ...plan };
+  });
+}
+
+export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space: Space; data?: SubscriptionItem[] }) {
+  const mergedPlans = React.useMemo(() => buildPlans(subscriptionItems), [subscriptionItems]);
+  const [data, setData] = React.useState<PlanCard[]>(mergedPlans);
+
+  React.useEffect(() => {
+    setData(mergedPlans);
+  }, [mergedPlans]);
 
   return (
     <div className="p-4 md:p-12 flex flex-col gap-6">
@@ -75,7 +117,7 @@ export function PlanAndCredits() {
         <p className="text-tertiary">Manage your subscription plan and credit balance.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card.Root className="h-[148px]">
           <Card.Content className="flex h-full flex-col justify-between">
             <div className="flex gap-3 items-center">
@@ -96,7 +138,7 @@ export function PlanAndCredits() {
           </Card.Content>
         </Card.Root>
 
-        <Card.Root className="md:col-span-2">
+        <Card.Root className="md:col-span-3">
           <Card.Content className="flex flex-col gap-3">
             <div className="flex items-center justify-between text-tertiary">
               <div className="flex items-center gap-1.5">
@@ -144,9 +186,8 @@ export function PlanAndCredits() {
         </Card.Root>
 
         {data.map((item) => {
-          const isSaving = data.find((i) => i.id === item.id)?.isSaving;
           return (
-            <Card.Root key={item.id}>
+            <Card.Root key={item.type}>
               <Card.Content className="p-0">
                 <div className="p-4 flex flex-col gap-6">
                   <div className="flex flex-col gap-2">
@@ -155,22 +196,22 @@ export function PlanAndCredits() {
                   </div>
 
                   <div className="flex flex-col">
-                    <div className="flex justify-between items-center flex-1 min-h-[40px]">
-                      {item.price > 0 && (
+                    <div className="flex justify-between items-center flex-1 min-h-[32px]">
+                      {!!item.pricing && (
                         <div className="flex gap-2 items-end">
                           <p className="text-2xl">
-                            {formatCurrency(isSaving ? (item.price * 12 - item.savings) / 12 : item.price)}
+                            {formatCurrency(Number(item.pricing.price), item.pricing.currency, item.pricing.decimals)}
                           </p>
-                          <p className="text-tertiary">{item.priceSuffix}</p>
+                          <p className="text-tertiary">per month</p>
                         </div>
                       )}
-                      {isSaving && (
-                        <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5">
-                          Save {formatCurrency(item.savings)}
-                        </Badge>
-                      )}
+                      {/* {isSaving && ( */}
+                      {/*   <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5"> */}
+                      {/*     Save {formatCurrency(item.savings)} */}
+                      {/*   </Badge> */}
+                      {/* )} */}
                     </div>
-                    {item.price > 0 ? (
+                    {!!item.pricing ? (
                       <p className="text-tertiary text-sm">Shared across unlimited users</p>
                     ) : (
                       <p className="text-tertiary text-lg">Custom</p>
@@ -179,17 +220,17 @@ export function PlanAndCredits() {
                 </div>
 
                 <div className="border border-s-0 border-e-0 px-4 py-3">
-                  {item.price > 0 ? (
+                  {!!item.pricing ? (
                     <div className="flex items-center justify-between">
                       <div className="flex gap-2">
                         <Toggle
-                          id={item.id}
-                          checked={!!data.find((i) => i.id === item.id)?.isSaving}
+                          id={item.type}
+                          checked={!!data.find((i) => i.type === item.type)?.annual}
                           onChange={(value) => {
                             setData((prev) =>
                               prev.map((i) => {
-                                if (i.id === item.id) {
-                                  return { ...i, isSaving: value };
+                                if (i.type === item.type) {
+                                  return { ...i, annual: value };
                                 } else {
                                   return i;
                                 }
@@ -199,6 +240,16 @@ export function PlanAndCredits() {
                         />
                         <p className="text-tertiary">Annual</p>
                       </div>
+
+                      <Segment
+                        items={[
+                          { value: 'card', iconLeft: 'icon-credit-card', label: 'Card' },
+                          { value: 'wallet', iconLeft: 'icon-wallet', label: 'Wallet' },
+                        ]}
+                        selected={item.method}
+                        size="sm"
+                        className={clsx(item.annual ? 'visible' : 'invisible')}
+                      />
                     </div>
                   ) : (
                     <p className="text-tertiary">Flexible Plans</p>
@@ -206,10 +257,25 @@ export function PlanAndCredits() {
                 </div>
 
                 <div className="flex flex-col gap-6 p-4">
-                  {match(item.id)
-                    .with('pro', () => <Button>Upgrade</Button>)
-                    .with('business', () => (
-                      <Button outlined variant="secondary">
+                  {match(item.type)
+                    .with(SubscriptionItemType.Plus, () => (
+                      <Button disabled={space.subscription_tier === SubscriptionItemType.Plus}>Upgrade</Button>
+                    ))
+                    .with(SubscriptionItemType.Pro, () => (
+                      <Button
+                        outlined
+                        variant="secondary"
+                        disabled={space.subscription_tier === SubscriptionItemType.Pro}
+                      >
+                        Upgrade
+                      </Button>
+                    ))
+                    .with(SubscriptionItemType.Max, () => (
+                      <Button
+                        outlined
+                        variant="secondary"
+                        disabled={space.subscription_tier === SubscriptionItemType.Plus}
+                      >
                         Upgrade
                       </Button>
                     ))
@@ -222,10 +288,10 @@ export function PlanAndCredits() {
                     <li className="text-tertiary text-sm">
                       <p>All features in Free, plus:</p>
                     </li>
-                    {item.features.map((f) => (
+                    {item.features?.map((f) => (
                       <li key={f} className="flex gap-2">
                         <i className="icon-done size-5 aspect-square" />
-                        <p>{f}</p>
+                        <p>{f.replace('{{credits_per_month}}', item.credits_per_month?.toString() ?? '')}</p>
                       </li>
                     ))}
                   </ul>

@@ -520,6 +520,11 @@ query GetListMySpaces($skip: Int, $limit: Int) {
   listMySpaces(skip: $skip, limit: $limit) {
     items {
       ...Space
+    }
+    total
+  }
+}
+
 query ListSpacePaymentAccounts($space: MongoID!, $search: String) {
   listSpacePaymentAccounts(space: $space, search: $search) {
     items {
@@ -531,4 +536,18 @@ query ListSpacePaymentAccounts($space: MongoID!, $search: String) {
 
 mutation AttachSpacePaymentAccount($space: MongoID!, $paymentAccount: MongoID!) {
   attachSpacePaymentAccount(space: $space, payment_account: $paymentAccount)
+}
+
+query GetListSubscription {
+  listSubscriptionItems {
+    type
+    title
+    weekly_email_limit
+    pricing {
+      price
+      currency
+      decimals
+    }
+    credits_per_month
+  }
 }
