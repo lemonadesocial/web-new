@@ -4,9 +4,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'next/navigation';
 
-import { useMe } from '$lib/hooks/useMe';
-import { useSignIn } from '$lib/hooks/useSignIn';
-import { useSession } from '$lib/hooks/useSession';
+import { useRequireLemonadeAccount } from '$lib/hooks/useRequireLemonadeAccount';
 import { Button } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
@@ -25,9 +23,7 @@ import { CreateEventForm } from '$lib/components/features/event/form/CreateEvent
 import { EventFormValue } from '$lib/components/features/event/form/utils';
 
 export function Content() {
-  const signIn = useSignIn();
-  const session = useSession();
-  const me = useMe();
+  const { isAuthenticated } = useRequireLemonadeAccount();
   const searchParams = useSearchParams();
   const spaceId = searchParams.get('space');
 
@@ -43,9 +39,7 @@ export function Content() {
   const { data: dataListToSpace } = useQuery(GetSpaceDocument, { variables: { id: spaceId }, skip: !spaceId });
   const space = dataListToSpace?.getSpace;
 
-  React.useEffect(() => {
-    if (!session && !me) signIn();
-  }, [me, session]);
+  if (!isAuthenticated) return null;
 
   return (
     <div className="pt-4">
@@ -65,7 +59,6 @@ function FormContent({ spaces, space, listToSpace }: { space?: Space; spaces: Sp
     watch,
     setValue,
     handleSubmit,
-    formState: { errors },
   } = useForm<EventFormValue>({
     defaultValues: {
       title: '',

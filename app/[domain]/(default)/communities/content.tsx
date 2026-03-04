@@ -8,32 +8,18 @@ import { Button, Divider } from '$lib/components/core';
 import { useQuery } from '$lib/graphql/request';
 import { GetSpacesDocument, Space, SpaceRole } from '$lib/graphql/generated/backend/graphql';
 import { generateUrl } from '$lib/utils/cnd';
-import { useMe } from '$lib/hooks/useMe';
 import { userAvatar } from '$lib/utils/user';
 
 import { ASSET_PREFIX } from '$lib/utils/constants';
-import { useSession } from '$lib/hooks/useSession';
-import { useSignIn } from '$lib/hooks/useSignIn';
+import { useRequireLemonadeAccount } from '$lib/hooks/useRequireLemonadeAccount';
 
 import { PageCardItem, PageCardItemSkeleton, PageSection, PageTitle } from '../shared';
 
 export function Content() {
-  const session = useSession();
-  const me = useMe();
-  const signIn = useSignIn();
+  const { isAuthenticated } = useRequireLemonadeAccount();
   const router = useRouter();
 
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    if (!mounted) setMounted(true);
-  }, []);
-
-  React.useEffect(() => {
-    if (!me && !session && mounted) signIn(false);
-  }, [me, session, mounted]);
-
-  if (!me && !session) return null;
+  if (!isAuthenticated) return null;
 
   return (
     <div className="flex flex-col gap-8 max-sm:px-4 pt-16 md:pt-8">
