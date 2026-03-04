@@ -1,5 +1,18 @@
 # Changelog
 
+## [10.11.0](https://github.com/lemonadesocial/web-new/compare/v10.10.0...v10.11.0) (2026-03-04)
+
+
+### Features
+
+* enforce auth on protected lemonade pages ([0219ce8](https://github.com/lemonadesocial/web-new/commit/0219ce8d852d4281a52d2fc2a295c766db63a2b9))
+* move manage space fetching client-side ([916f491](https://github.com/lemonadesocial/web-new/commit/916f49112323d40e0e7b640f76b8131294418f58))
+
+
+### Bug Fixes
+
+* guard event query ([72ed351](https://github.com/lemonadesocial/web-new/commit/72ed3513e4fcc74c5c71ee5ab07ff3ee22120dc0))
+
 ## [10.10.0](https://github.com/lemonadesocial/web-new/compare/v10.9.1...v10.10.0) (2026-03-03)
 
 
