@@ -1,5 +1,5 @@
 import { getDefaultStore } from 'jotai';
-import { createPublicClient, createWalletClient, custom, http, type Address, type EIP1193Provider as ViemEIP1193Provider, type PublicClient, type WalletClient } from 'viem';
+import { createPublicClient, createWalletClient, custom, http, type Address, type EIP1193Provider as ViemEIP1193Provider, type PublicClient, type WalletClient, zeroAddress } from 'viem';
 import { mainnet } from 'viem/chains';
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
 import { DEFAULT_GAS_LIMIT, GAS_LIMIT_BY_CHAIN_ID, MEGAETH_CHAIN_ID } from '$lib/utils/constants';
@@ -196,7 +196,7 @@ export async function getContractType(
         address: contractAddress as Address,
         abi: ERC20,
         functionName: 'balanceOf',
-        args: [ethers.ZeroAddress],
+        args: [zeroAddress],
       }).catch(() => { throw new Error('Not ERC20: balanceOf failed'); })
     ]);
 

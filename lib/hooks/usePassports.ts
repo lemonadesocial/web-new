@@ -9,7 +9,7 @@ import { chainsMapAtom } from '$lib/jotai';
 import { getViemChainConfig } from '$lib/utils/crypto';
 import { PASSPORT_CHAIN_ID } from '$lib/components/features/passports/utils';
 import { ContractAddressFieldMapping, PASSPORT_PROVIDER } from '$lib/components/features/passports/types';
-import AbstractPassport from '$lib/abis/AbstractPassport.json';
+import { AbstractPassportABI } from '$lib/abis/AbstractPassport';
 
 async function fetchPassportData(address: string, chain: Chain, provider: PASSPORT_PROVIDER) {
   const data = { tokenId: 0n, image: '' };
@@ -26,7 +26,7 @@ async function fetchPassportData(address: string, chain: Chain, provider: PASSPO
     });
 
     const tokenId = await publicClient.readContract({
-      abi: AbstractPassport.abi,
+      abi: AbstractPassportABI,
       address: contractAddress as Address,
       functionName: 'bounds',
       args: [address as Address],
@@ -36,7 +36,7 @@ async function fetchPassportData(address: string, chain: Chain, provider: PASSPO
 
     if (tokenId > 0n) {
       const tokenUri = await publicClient.readContract({
-        abi: AbstractPassport.abi,
+        abi: AbstractPassportABI,
         address: contractAddress as Address,
         functionName: 'tokenURI',
         args: [tokenId],
