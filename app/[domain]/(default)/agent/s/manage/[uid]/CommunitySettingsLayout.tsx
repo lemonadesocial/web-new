@@ -7,11 +7,13 @@ import { SettingsCommunityAvanced } from '$lib/components/features/community-man
 import { SettingsCommunityEmbed } from '$lib/components/features/community-manage/settings/SettingsCommunityEmbed';
 import { SettingsCommunityTags } from '$lib/components/features/community-manage/settings/SettingsCommunityTags';
 import { SettingsCommunityTeam } from '$lib/components/features/community-manage/settings/SettingsCommunityTeam';
+import { Connectors } from '$lib/components/features/upgrade-to-pro/Connectors';
 
 const tabs: Record<string, { label: string; component: React.FC<{ space: Space }> }> = {
   display: { label: 'Display', component: SettingsCommunityDisplay },
   team: { label: 'Team', component: SettingsCommunityTeam },
   tags: { label: 'Tags', component: SettingsCommunityTags },
+  connectors: { label: 'Connectors', component: Connectors },
   advanced: { label: 'Advanced', component: SettingsCommunityAvanced },
   embed: { label: 'Embed', component: SettingsCommunityEmbed },
   // send_limit: { label: 'Send Limit', component: null },

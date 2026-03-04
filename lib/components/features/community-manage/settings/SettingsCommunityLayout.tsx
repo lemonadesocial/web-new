@@ -4,12 +4,11 @@ import { useParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import clsx from 'clsx';
 
-import { Skeleton } from '$lib/components/core';
-
 const tabs = [
   { label: 'Display', path: 'display' },
   { label: 'Team', path: 'team' },
   { label: 'Tags', path: 'tags' },
+  { label: 'Connectors', path: 'connectors' },
   { label: 'Advanced', path: 'advanced' },
   { label: 'Embed', path: 'embed' },
   // { label: 'Send Limit', path: 'send-limit' },
