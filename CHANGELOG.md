@@ -1,5 +1,19 @@
 # Changelog
 
+## [10.12.0](https://github.com/lemonadesocial/web-new/compare/v10.11.0...v10.12.0) (2026-03-04)
+
+
+### Features
+
+* **ai:** add rich content cards for AI chat responses ([debf79c](https://github.com/lemonadesocial/web-new/commit/debf79c5fac354ba3a8b3a2d05631a4ecbc0a2f4))
+* trim ai assistant markdown when cards rendered ([0c5942d](https://github.com/lemonadesocial/web-new/commit/0c5942d01c3f7535d73900646c93a5bdf4b7ab07))
+
+
+### Bug Fixes
+
+* **ai:** address Karen review findings on rich chat cards ([3e29f92](https://github.com/lemonadesocial/web-new/commit/3e29f925d614cc816f0948e61d5cebdfb6c906ee))
+* missing hook import ([54a4624](https://github.com/lemonadesocial/web-new/commit/54a46245f79feee11d390a50171abc3cb028a71c))
+
 ## [10.11.0](https://github.com/lemonadesocial/web-new/compare/v10.10.0...v10.11.0) (2026-03-04)
 
 
