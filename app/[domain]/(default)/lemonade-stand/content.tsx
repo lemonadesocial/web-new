@@ -130,7 +130,10 @@ export function Content() {
 function UpcomingEventSection() {
   const router = useRouter();
   const me = useMe();
-  const { data } = useQuery(GetUpcomingEventsDocument, { variables: { user: me?._id, skip: 0, limit: 3 } });
+  const { data } = useQuery(GetUpcomingEventsDocument, {
+    variables: { user: me!._id, skip: 0, limit: 3 },
+    skip: !me?._id,
+  });
 
   return (
     <Accordion.Root className="border-none" open>
