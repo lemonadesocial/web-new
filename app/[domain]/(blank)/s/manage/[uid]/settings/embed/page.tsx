@@ -1,19 +1,13 @@
-import { notFound } from 'next/navigation';
+'use client';
 
-import { GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
-import { getClient } from '$lib/graphql/request';
-import { isObjectId } from '$lib/utils/helpers';
 import { SettingsCommunityEmbed } from '$lib/components/features/community-manage/settings/SettingsCommunityEmbed';
+import { useCommunityManageSpace } from '$lib/components/features/community-manage/CommunityManageSpaceContext';
 
-export default async function Page({ params }: { params: Promise<{ uid: string }> }) {
-  const uid = (await params).uid;
-  const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
+export function Page() {
+  const ctx = useCommunityManageSpace();
+  if (!ctx) return null;
 
-  const client = getClient();
-  const { data } = await client.query({ query: GetSpaceDocument, variables });
-  const space = data?.getSpace as Space;
-
-  if (!space) return notFound();
-
-  return <SettingsCommunityEmbed space={space} />;
+  return <SettingsCommunityEmbed space={ctx.space} />;
 }
+
+export default Page;

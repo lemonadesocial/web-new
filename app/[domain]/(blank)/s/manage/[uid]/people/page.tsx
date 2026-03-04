@@ -1,18 +1,13 @@
+'use client';
+
 import { CommunityPeople } from '$lib/components/features/community-manage/CommunityPeople';
-import { GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
-import { getClient } from '$lib/graphql/request';
-import { isObjectId } from '$lib/utils/helpers';
-import { notFound } from 'next/navigation';
+import { useCommunityManageSpace } from '$lib/components/features/community-manage/CommunityManageSpaceContext';
 
-export default async function Page({ params }: { params: Promise<{ uid: string }> }) {
-  const uid = (await params).uid;
-  const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
+export function Page() {
+  const ctx = useCommunityManageSpace();
+  if (!ctx) return null;
 
-  const client = getClient();
-  const { data } = await client.query({ query: GetSpaceDocument, variables });
-  const space = data?.getSpace as Space;
-
-  if (!space) return notFound();
-
-  return <CommunityPeople space={space} />;
+  return <CommunityPeople space={ctx.space} />;
 }
+
+export default Page;
