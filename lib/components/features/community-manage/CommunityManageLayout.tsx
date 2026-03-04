@@ -11,6 +11,7 @@ import { isObjectId } from '$lib/utils/helpers';
 import Header from '$lib/components/layouts/header';
 import { communityAvatar } from '$lib/utils/community';
 import { useRequireLemonadeAccount } from '$lib/hooks/useRequireLemonadeAccount';
+import { CommunityManageSpaceProvider } from './CommunityManageSpaceContext';
 
 const menu = [
   { name: 'Overview', page: 'overview' },
@@ -24,8 +25,10 @@ const menu = [
 
 export function CommunityManageLayout({ children }: React.PropsWithChildren) {
   const { isAuthenticated, me } = useRequireLemonadeAccount();
-  const { uid } = useParams<{ uid: string }>();
+
+  const { uid, domain } = useParams<{ uid: string; domain: string }>();
   const pathname = usePathname();
+  const hostname = domain ? decodeURIComponent(domain) : '';
 
   const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
   const { data, loading } = useQuery(GetSpaceDocument, { variables });
@@ -118,52 +121,54 @@ export function CommunityManageLayout({ children }: React.PropsWithChildren) {
   }
 
   return (
-    <main className="flex flex-col h-dvh overflow-auto">
-      <Header />
-      <div className="px-4 md:px-0 pt-6 sticky top-0 bg-page-background backdrop-blur-3xl z-2 border-b">
-        <div className="page mx-auto">
-          <div className="flex justify-between items-center">
-            <div className="flex gap-3 items-center">
-              <img src={communityAvatar(space)} className="size-7 rounded-xs border-card-border" />
-              <h1 className="font-semibold text-2xl max-sm:line-clamp-1">{space.title}</h1>
+    <CommunityManageSpaceProvider space={space} hostname={hostname}>
+      <main className="flex flex-col h-dvh overflow-auto">
+        <Header />
+        <div className="px-4 md:px-0 pt-6 sticky top-0 bg-page-background backdrop-blur-3xl z-2 border-b">
+          <div className="page mx-auto">
+            <div className="flex justify-between items-center">
+              <div className="flex gap-3 items-center">
+                <img src={communityAvatar(space)} className="size-7 rounded-xs border-card-border" />
+                <h1 className="font-semibold text-2xl max-sm:line-clamp-1">{space.title}</h1>
+              </div>
+              <Button
+                iconRight="icon-arrow-outward"
+                variant="tertiary-alt"
+                size="sm"
+                className="hidden md:block"
+                onClick={() => window.open(`/s/${uid}`, '_blank')}
+              >
+                Community Page
+              </Button>
+              <Button
+                icon="icon-arrow-outward"
+                className="md:hidden"
+                variant="tertiary-alt"
+                size="sm"
+                onClick={() => window.open(`/s/${uid}`, '_blank')}
+              />
             </div>
-            <Button
-              iconRight="icon-arrow-outward"
-              variant="tertiary-alt"
-              size="sm"
-              className="hidden md:block"
-              onClick={() => window.open(`/s/${uid}`, '_blank')}
-            >
-              Community Page
-            </Button>
-            <Button
-              icon="icon-arrow-outward"
-              className="md:hidden"
-              variant="tertiary-alt"
-              size="sm"
-              onClick={() => window.open(`/s/${uid}`, '_blank')}
-            />
-          </div>
-          <nav className="flex gap-4 pt-3 overflow-auto no-scrollbar">
-            {menu.map((item) => {
-              const url = item.page === 'overview' ? `/s/manage/${uid}` : `/s/manage/${uid}/${item.page}`;
-              const isActive =
-                item.page === 'overview' ? pathname === `/s/manage/${uid}` || pathname === url : pathname.includes(url);
+            <nav className="flex gap-4 pt-3 overflow-auto no-scrollbar">
+              {menu.map((item) => {
+                const url = item.page === 'overview' ? `/s/manage/${uid}` : `/s/manage/${uid}/${item.page}`;
+                const isActive =
+                  item.page === 'overview' ? pathname === `/s/manage/${uid}` || pathname === url : pathname.includes(url);
 
-              return (
-                <NextLink
-                  href={url}
-                  key={item.page}
-                  className={clsx(isActive && 'border-b-2 border-b-primary', 'pb-2.5')}
-                >
-                  <span className={clsx(isActive ? 'text-primary' : 'text-tertiary', 'font-medium')}>{item.name}</span>
-                </NextLink>
-              );
-            })}
-          </nav>
+                return (
+                  <NextLink
+                    href={url}
+                    key={item.page}
+                    className={clsx(isActive && 'border-b-2 border-b-primary', 'pb-2.5')}
+                  >
+                    <span className={clsx(isActive ? 'text-primary' : 'text-tertiary', 'font-medium')}>{item.name}</span>
+                  </NextLink>
+                );
+              })}
+            </nav>
+          </div>
         </div>
-      </div>
-      <div className="flex-1">{children}</div>
-    </main>
+        <div className="flex-1">{children}</div>
+      </main>
+    </CommunityManageSpaceProvider>
   );
 }

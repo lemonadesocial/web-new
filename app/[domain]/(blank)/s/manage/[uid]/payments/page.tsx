@@ -1,15 +1,13 @@
-import { notFound } from 'next/navigation';
+'use client';
+
 import { CommunityPayments } from '$lib/components/features/community-manage/CommunityPayments';
-import { getSpace } from '$lib/utils/getSpace';
-import { isObjectId } from '$lib/utils/helpers';
+import { useCommunityManageSpace } from '$lib/components/features/community-manage/CommunityManageSpaceContext';
 
-export default async function Page({ params }: { params: Promise<{ uid: string }> }) {
-  const uid = (await params).uid;
-  const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
+export function Page() {
+  const ctx = useCommunityManageSpace();
+  if (!ctx) return null;
 
-  const space = await getSpace(variables);
-
-  if (!space) return notFound();
-
-  return <CommunityPayments space={space} />;
+  return <CommunityPayments space={ctx.space} />;
 }
+
+export default Page;
