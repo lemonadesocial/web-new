@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.12.1](https://github.com/lemonadesocial/web-new/compare/v10.12.0...v10.12.1) (2026-03-04)
+
+
+### Bug Fixes
+
+* invalid queries ([7a01a7b](https://github.com/lemonadesocial/web-new/commit/7a01a7b0b545d79282adeaefe199c0d4ad2cef66))
+
 ## [10.12.0](https://github.com/lemonadesocial/web-new/compare/v10.11.0...v10.12.0) (2026-03-04)
 
 
