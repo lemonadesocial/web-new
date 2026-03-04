@@ -37,6 +37,7 @@ export type Config = {
   isPublic?: Maybe<Scalars['Boolean']['output']>;
   job: Scalars['String']['output'];
   modelName?: Maybe<Scalars['String']['output']>;
+  modelProvider?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   openaiApiKey?: Maybe<Scalars['String']['output']>;
   /** Ids of spaces this agent is attached */
@@ -148,6 +149,13 @@ export type ConfigFilter = {
   modelName_in?: InputMaybe<Array<Scalars['String']['input']>>;
   modelName_lt?: InputMaybe<Scalars['String']['input']>;
   modelName_lte?: InputMaybe<Scalars['String']['input']>;
+  modelProvider_eq?: InputMaybe<Scalars['String']['input']>;
+  modelProvider_exists?: InputMaybe<Scalars['Boolean']['input']>;
+  modelProvider_gt?: InputMaybe<Scalars['String']['input']>;
+  modelProvider_gte?: InputMaybe<Scalars['String']['input']>;
+  modelProvider_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  modelProvider_lt?: InputMaybe<Scalars['String']['input']>;
+  modelProvider_lte?: InputMaybe<Scalars['String']['input']>;
   name_eq?: InputMaybe<Scalars['String']['input']>;
   name_exists?: InputMaybe<Scalars['Boolean']['input']>;
   name_gt?: InputMaybe<Scalars['String']['input']>;
@@ -239,6 +247,7 @@ export type ConfigInput = {
   isPublic?: InputMaybe<Scalars['Boolean']['input']>;
   job?: InputMaybe<Scalars['String']['input']>;
   modelName?: InputMaybe<Scalars['String']['input']>;
+  modelProvider?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   openaiApiKey?: InputMaybe<Scalars['String']['input']>;
   /** Ids of spaces this agent is attached */
@@ -384,6 +393,7 @@ export type MutationRunArgs = {
   data?: InputMaybe<Scalars['JSON']['input']>;
   message: Scalars['String']['input'];
   session?: InputMaybe<Scalars['String']['input']>;
+  standId?: InputMaybe<Scalars['String']['input']>;
 };
 
 

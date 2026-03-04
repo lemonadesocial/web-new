@@ -1,5 +1,3 @@
-#### Queries
-
 query GetStandCredits($standId: String!) {
   getStandCredits(stand_id: $standId) {
     credits

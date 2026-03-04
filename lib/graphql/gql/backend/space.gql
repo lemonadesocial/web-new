@@ -520,6 +520,10 @@ query GetListMySpaces($skip: Int, $limit: Int) {
   listMySpaces(skip: $skip, limit: $limit) {
     items {
       ...Space
+    }
+  }
+}
+
 query ListSpacePaymentAccounts($space: MongoID!, $search: String) {
   listSpacePaymentAccounts(space: $space, search: $search) {
     items {
