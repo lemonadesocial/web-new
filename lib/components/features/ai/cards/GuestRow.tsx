@@ -1,56 +1,51 @@
 'use client';
 
-import { Card } from '$lib/components/core';
-import { type GuestCardData, getLetterPlaceholder } from './utils';
+import type { EventGuestDetail } from '$lib/graphql/generated/backend/graphql';
+import { randomUserImage } from '$lib/utils/user';
 
 interface GuestRowProps {
-  data: GuestCardData;
+  data: EventGuestDetail;
 }
 
 const STATUS_STYLES: Record<string, string> = {
   going: 'text-green-500',
+  approved: 'text-green-500',
   pending: 'text-yellow-500',
   declined: 'text-red-500',
 };
 
 export function GuestRow({ data }: GuestRowProps) {
-  const displayName = data.name || data.email || 'Anonymous guest';
-  const placeholder = getLetterPlaceholder(displayName);
-  const statusStyle = STATUS_STYLES[data.status] || 'text-tertiary';
+  const displayName =
+    data.user?.display_name || data.user?.name || data.user?.email || 'Anonymous guest';
+  const ticketTypeTitle = data.ticket?.type_expanded?.title;
+  const checkedIn = data.ticket?.checkin?.active ?? false;
+  const status = data.join_request?.state ?? 'pending';
+  const statusStyle = STATUS_STYLES[status] || 'text-tertiary';
+  const avatarUrl = randomUserImage(data.user?._id ?? displayName);
 
   return (
-    <Card.Root className="flex items-center gap-3 p-3 cursor-default">
-      <div
-        className={`${placeholder.bgColor} size-8 rounded-full shrink-0 flex items-center justify-center text-white text-sm font-semibold`}
-      >
-        {placeholder.letter}
-      </div>
+    <div className="flex items-center gap-3 py-3 px-4 rounded-md border border-card-border bg-card cursor-default">
+      <img
+        src={avatarUrl}
+        alt={displayName}
+        className="size-[38px] rounded-full object-cover shrink-0 border border-card-border"
+      />
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-primary truncate">{displayName}</p>
-        <div className="flex items-center gap-2 mt-0.5">
-          {data.ticket_type_title && (
-            <span className="text-xs text-tertiary">
-              {data.ticket_type_title}
-            </span>
+        <p className="text-sm font-medium text-primary truncate">{displayName}</p>
+        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+          {ticketTypeTitle && (
+            <span className="text-sm text-tertiary">{ticketTypeTitle}</span>
           )}
-          <span className={`text-xs capitalize ${statusStyle}`}>
-            {data.status}
-          </span>
+          <span className={`text-sm capitalize ${statusStyle}`}>{status}</span>
         </div>
       </div>
       <div className="shrink-0">
-        {data.checked_in ? (
-          <i
-            aria-hidden="true"
-            className="icon-done size-4 text-green-500"
-          />
+        {checkedIn ? (
+          <i aria-hidden="true" className="icon-done size-4 text-green-500" />
         ) : (
-          <i
-            aria-hidden="true"
-            className="icon-x size-4 text-tertiary"
-          />
+          <i aria-hidden="true" className="icon-x size-4 text-tertiary" />
         )}
       </div>
-    </Card.Root>
+    </div>
   );
 }

@@ -1,19 +1,14 @@
 'use client';
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { match } from 'ts-pattern';
+
+import { Button } from '$lib/components/core';
 import { EventCard } from './EventCard';
 import { TicketCard } from './TicketCard';
 import { SpaceCard } from './SpaceCard';
 import { GuestRow } from './GuestRow';
-import type {
-  CardItem,
-  OverflowData,
-  EventCardData,
-  TicketCardData,
-  SpaceCardData,
-  GuestCardData,
-} from './utils';
+import type { CardItem, OverflowData } from './utils';
 
 interface CardListProps {
   cards: CardItem[];
@@ -21,45 +16,37 @@ interface CardListProps {
 }
 
 export function CardList({ cards, overflow }: CardListProps) {
+  const router = useRouter();
   if (!cards || cards.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-2 mt-2">
+    <div className="flex flex-col gap-3">
       {cards.map((card, idx) =>
-        match(card.type)
-          .with('event', () => (
-            <EventCard
-              key={idx}
-              data={card.data as EventCardData}
-              link={card.link}
-            />
+        match(card)
+          .with({ type: 'event' }, (c) => (
+            <EventCard key={idx} data={c.data} link={c.link} />
           ))
-          .with('ticket', () => (
-            <TicketCard
-              key={idx}
-              data={card.data as TicketCardData}
-              link={card.link}
-            />
+          .with({ type: 'ticket' }, (c) => (
+            <TicketCard key={idx} data={c.data} link={c.link} />
           ))
-          .with('space', () => (
-            <SpaceCard
-              key={idx}
-              data={card.data as SpaceCardData}
-              link={card.link}
-            />
+          .with({ type: 'space' }, (c) => (
+            <SpaceCard key={idx} data={c.data} link={c.link} />
           ))
-          .with('guest', () => (
-            <GuestRow key={idx} data={card.data as GuestCardData} />
+          .with({ type: 'guest' }, (c) => (
+            <GuestRow key={idx} data={c.data} />
           ))
           .exhaustive(),
       )}
       {overflow?.viewAllLink && (
-        <Link
-          href={overflow.viewAllLink}
-          className="text-sm text-primary hover:underline mt-1"
+        <Button
+          variant="tertiary"
+          size="sm"
+          iconRight="icon-chevron-right"
+          className="w-fit"
+          onClick={() => router.push(overflow.viewAllLink)}
         >
-          {overflow.viewAllLabel} &rarr;
-        </Link>
+          {overflow.viewAllLabel}
+        </Button>
       )}
     </div>
   );

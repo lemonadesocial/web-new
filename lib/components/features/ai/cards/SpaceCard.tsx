@@ -1,59 +1,48 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { Card } from '$lib/components/core';
-import { type SpaceCardData, getLetterPlaceholder } from './utils';
+
+import type { Space } from '$lib/graphql/generated/backend/graphql';
+import { randomCommunityImage } from '$lib/utils/community';
+import { generateUrl } from '$lib/utils/cnd';
 
 interface SpaceCardProps {
-  data: SpaceCardData;
+  data: Space;
   link?: string;
 }
 
 export function SpaceCard({ data, link }: SpaceCardProps) {
   const href = link || `/s/${data.slug || data._id}`;
-  const placeholder = getLetterPlaceholder(data.title || '');
+  const avatarUrl = data.image_avatar_expanded
+    ? generateUrl(data.image_avatar_expanded, { resize: { width: 38, height: 38, fit: 'cover' } })
+    : randomCommunityImage(data._id);
 
-  const stats = [
-    data.member_count != null && `${data.member_count} members`,
-    data.event_count != null && `${data.event_count} events`,
-  ]
-    .filter(Boolean)
-    .join(' \u00B7 ');
+  const stats = data.followers_count != null ? `${data.followers_count} followers` : '';
 
   return (
     <Link href={href} className="block">
-      <Card.Root className="flex items-center gap-3 p-3 cursor-pointer">
-        {data.image_avatar_url ? (
-          <Image
-            src={data.image_avatar_url}
-            alt={data.title}
-            width={40}
-            height={40}
-            loading="lazy"
-            className="size-10 rounded-full object-cover shrink-0"
-          />
-        ) : (
-          <div
-            className={`${placeholder.bgColor} size-10 rounded-full shrink-0 flex items-center justify-center text-white font-semibold`}
-          >
-            {placeholder.letter}
-          </div>
-        )}
+      <div className="flex items-center gap-3 py-3 px-4 rounded-md border border-card-border bg-card cursor-pointer">
+        <img
+          src={avatarUrl}
+          alt={data.title ?? ''}
+          loading="lazy"
+          className="size-[38px] rounded-full object-cover shrink-0 border border-card-border"
+        />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-primary truncate">
             {data.title}
           </p>
-          <div className="flex items-center gap-2 mt-0.5">
-            <span
-              className={`text-xs px-1.5 py-0.5 rounded-sm ${data.private ? 'bg-overlay-primary text-tertiary' : 'bg-green-500/10 text-green-500'}`}
-            >
-              {data.private ? 'Private' : 'Public'}
-            </span>
-            {stats && <span className="text-xs text-tertiary">{stats}</span>}
-          </div>
+          <p className="text-sm text-tertiary truncate mt-0.5">
+            {stats}
+          </p>
+          <span
+            className={`inline-block text-xs px-1.5 py-0.5 rounded-sm mt-0.5 ${data.private ? 'bg-overlay-primary text-tertiary' : 'bg-green-500/10 text-green-500'}`}
+          >
+            {data.private ? 'Private' : 'Public'}
+          </span>
         </div>
-      </Card.Root>
+        <i aria-hidden="true" className="icon-chevron-right size-5 text-tertiary shrink-0" />
+      </div>
     </Link>
   );
 }
