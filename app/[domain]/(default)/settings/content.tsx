@@ -14,7 +14,6 @@ import { userAvatar } from '$lib/utils/user';
 import { truncateMiddle } from '$lib/utils/string';
 import { ConnectWalletModal } from '$lib/components/features/auth/ConnectWalletModal';
 import { ProfilePane } from '$lib/components/features/pane';
-import { useSignIn } from '$lib/hooks/useSignIn';
 import { PageTitle } from '../shared';
 import { useLinkFarcaster } from '$lib/hooks/useConnectFarcaster';
 import { useFarcasterUserData } from '$lib/hooks/useFarcasterUserData';
@@ -26,11 +25,11 @@ import { useLogOut } from '$lib/hooks/useLogout';
 import { ListItem } from './list-item';
 import { OAuthClient } from './oauth-client';
 import { useClaimUsername, useLemonadeUsername } from '$lib/hooks/useUsername';
+import { useRequireLemonadeAccount } from '$lib/hooks/useRequireLemonadeAccount';
 
 export function Content() {
   const [session] = useAtom(sessionAtom);
-  const signIn = useSignIn();
-  const [mounted, setMounted] = React.useState(false);
+  const { isAuthenticated } = useRequireLemonadeAccount();
 
   const me = useMe();
   const walletVerified = session?.wallet || me?.kratos_unicorn_wallet_address || me?.kratos_wallet_address;
@@ -68,15 +67,7 @@ export function Content() {
     });
   };
 
-  React.useEffect(() => {
-    if (!mounted) setMounted(true);
-  }, []);
-
-  React.useEffect(() => {
-    if (!me && !session && mounted) signIn(false);
-  }, [me, session, mounted]);
-
-  if (!me && !session) return null;
+  if (!isAuthenticated) return null;
 
   return (
     <div className="flex flex-col gap-8 mt-6 pb-24 md:my-11 max-w-[532px]">

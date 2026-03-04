@@ -6,13 +6,13 @@ import { storeManageLayout, useStoreManageLayout } from './store';
 import ManageLayoutToolbar from './ManageLayoutToolbar';
 import ManageLayoutContent from './ManageLayoutContent';
 import { AIChatProvider } from '../provider';
-import { useMe } from '$lib/hooks/useMe';
 import { DrawerContainer } from '$lib/components/core';
 import { EventThemeProvider } from '$lib/components/features/theme-builder/provider';
 import { Event } from '$lib/graphql/generated/backend/graphql';
+import { useRequireLemonadeAccount } from '$lib/hooks/useRequireLemonadeAccount';
 
 function ManageLayout() {
-  const me = useMe();
+  const { isAuthenticated, me } = useRequireLemonadeAccount();
   const state = useStoreManageLayout();
   const event = state.data as Event | undefined;
 
@@ -22,7 +22,7 @@ function ManageLayout() {
     };
   }, []);
 
-  if (!me) return null;
+  if (!isAuthenticated || !me) return null;
 
   return (
     <>

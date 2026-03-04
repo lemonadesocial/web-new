@@ -7,10 +7,10 @@ import clsx from 'clsx';
 import { GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
 import { Button, Skeleton } from '$lib/components/core';
 import { useQuery } from '$lib/graphql/request';
-import { useMe } from '$lib/hooks/useMe';
 import { isObjectId } from '$lib/utils/helpers';
 import Header from '$lib/components/layouts/header';
 import { communityAvatar } from '$lib/utils/community';
+import { useRequireLemonadeAccount } from '$lib/hooks/useRequireLemonadeAccount';
 
 const menu = [
   { name: 'Overview', page: 'overview' },
@@ -23,12 +23,14 @@ const menu = [
 ];
 
 export function CommunityManageLayout({ children }: React.PropsWithChildren) {
-  const me = useMe();
+  const { isAuthenticated, me } = useRequireLemonadeAccount();
   const { uid } = useParams<{ uid: string }>();
   const pathname = usePathname();
 
   const variables = isObjectId(uid) ? { id: uid, slug: uid } : { slug: uid };
   const { data, loading } = useQuery(GetSpaceDocument, { variables });
+
+  if (!isAuthenticated || !me) return null;
 
   if (loading) {
     return (

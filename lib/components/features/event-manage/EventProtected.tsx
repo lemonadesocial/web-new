@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 import { Event, GetEventDocument } from '$lib/graphql/generated/backend/graphql';
 import { Button, Skeleton } from '$lib/components/core';
 import { useQuery } from '$lib/graphql/request';
-import { useMe } from '$lib/hooks/useMe';
+import { useRequireLemonadeAccount } from '$lib/hooks/useRequireLemonadeAccount';
 
 import { eventAtom } from './store';
 
@@ -16,8 +16,8 @@ interface EventProtectedProps {
 }
 
 export function EventProtected({ shortid, loadingFallback, gate, children }: EventProtectedProps) {
+  const { isAuthenticated, me } = useRequireLemonadeAccount();
   const [event, setEvent] = useAtom(eventAtom);
-  const me = useMe();
 
   const { loading } = useQuery(GetEventDocument, {
     variables: { shortid },
@@ -25,6 +25,8 @@ export function EventProtected({ shortid, loadingFallback, gate, children }: Eve
       setEvent(data?.getEvent as Event);
     },
   });
+
+  if (!isAuthenticated) return null;
 
   if (loading) {
     if (loadingFallback) return <>{loadingFallback}</>;

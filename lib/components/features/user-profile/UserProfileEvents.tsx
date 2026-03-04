@@ -42,6 +42,9 @@ export default function UserProfileEvents({ user }: { user: User }) {
   const { client } = useClient();
 
   const fetchData = React.useCallback(async () => {
+    const userId = user?._id;
+    if (userId == null || userId === '') return;
+
     let events = [] as Event[];
     let showHost: boolean | null = null;
     if (Number(filter.by) === FilterItem.Hosting) showHost = true;
@@ -52,7 +55,7 @@ export default function UserProfileEvents({ user }: { user: User }) {
     const variables = {
       limit: 100,
       skip: 0,
-      user: user?._id,
+      user: userId,
       host: showHost,
       unpublished,
     };

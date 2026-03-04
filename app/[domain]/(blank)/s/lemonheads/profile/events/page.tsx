@@ -8,9 +8,8 @@ import { EventListCard } from '$lib/components/features/EventList';
 import { EventPane } from '$lib/components/features/pane';
 import { Event, GetPastEventsDocument, GetUpcomingEventsDocument } from '$lib/graphql/generated/backend/graphql';
 import { useClient } from '$lib/graphql/request';
-import { useSession } from '$lib/hooks/useSession';
-import { useSignIn } from '$lib/hooks/useSignIn';
 import { useMe } from '$lib/hooks/useMe';
+import { useRequireLemonadeAccount } from '$lib/hooks/useRequireLemonadeAccount';
 // import { ClaimLemonHeadCard } from '$lib/components/features/lemonheads/ClaimLemonHeadCard';
 
 // import { PageTitle } from '../shared';
@@ -29,12 +28,10 @@ const FILTER_OPTIONS = {
 };
 
 export default function Page() {
-  const session = useSession();
   const me = useMe();
-  const signIn = useSignIn();
+  const { isAuthenticated } = useRequireLemonadeAccount();
   const router = useRouter();
 
-  const [mounted, setMounted] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [filter, setFilter] = React.useState({
     type: 'upcoming',
@@ -81,18 +78,10 @@ export default function Page() {
   }, [filter.type, me, filter.by]);
 
   React.useEffect(() => {
-    if (!mounted) setMounted(true);
-  }, []);
-
-  React.useEffect(() => {
-    if (!me && !session && mounted) signIn(false);
-  }, [me, session, mounted]);
-
-  React.useEffect(() => {
     fetchData();
   }, [filter.type, filter.by, me]);
 
-  if (!me && !session) return null;
+  if (!isAuthenticated) return null;
 
   return (
     <div className="flex flex-col">
