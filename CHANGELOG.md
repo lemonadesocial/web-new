@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.13.0](https://github.com/lemonadesocial/web-new/compare/v10.12.1...v10.13.0) (2026-03-05)
+
+
+### Features
+
+* polish AI manage layout controls ([1241eb5](https://github.com/lemonadesocial/web-new/commit/1241eb50b8b015e25bf36884aa1b0238f7d7357b))
+
+
+### Bug Fixes
+
+* remove unused manage toolbar import ([b2acfdb](https://github.com/lemonadesocial/web-new/commit/b2acfdb051d6a0ee742e3b5965457683b5291449))
+
 ## [10.12.1](https://github.com/lemonadesocial/web-new/compare/v10.12.0...v10.12.1) (2026-03-04)
 
 
