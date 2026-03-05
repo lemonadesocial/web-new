@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.13.1](https://github.com/lemonadesocial/web-new/compare/v10.13.0...v10.13.1) (2026-03-05)
+
+
+### Bug Fixes
+
+* handle missing event in event metadata ([cf15f72](https://github.com/lemonadesocial/web-new/commit/cf15f7209049665fcf5fd266fc83a575a488a219))
+
 ## [10.13.0](https://github.com/lemonadesocial/web-new/compare/v10.12.1...v10.13.0) (2026-03-05)
 
 
