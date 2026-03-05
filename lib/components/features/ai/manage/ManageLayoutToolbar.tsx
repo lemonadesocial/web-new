@@ -10,7 +10,6 @@ import { Button, Menu, MenuItem, toast } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
   Event,
-  GetEventsDocument,
   GetUpcomingEventsDocument,
   PublishEventDocument,
   UpdateEventThemeDocument,
