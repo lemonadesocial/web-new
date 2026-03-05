@@ -10,6 +10,7 @@ import { Button, Menu, MenuItem, toast } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
   Event,
+  GetEventsDocument,
   GetUpcomingEventsDocument,
   PublishEventDocument,
   UpdateEventThemeDocument,
@@ -69,11 +70,7 @@ function ManageLayoutToolbar() {
   const normalizeTheme = (theme: any) => merge({}, defaultTheme, theme || {});
   const isThemeDirty = !isEqual(normalizeTheme(themeState), normalizeTheme(event?.theme_data));
 
-  const canSaveTheme =
-    state.layoutType === 'event' &&
-    state.activeTab === 'design' &&
-    !!event?._id &&
-    isThemeDirty;
+  const canSaveTheme = state.layoutType === 'event' && state.activeTab === 'design' && !!event?._id && isThemeDirty;
   const brandTitle = event?.title || 'Event Manager';
   const brandSubtitle = event?.space_expanded?.title || '';
 
@@ -125,14 +122,17 @@ function ManageLayoutToolbar() {
               {({ toggle }) => (
                 <div className="flex items-center gap-3 cursor-pointer" onClick={() => toggle()}>
                   <div className="whitespace-nowrap">
-                    <p className="text-sm font-medium">{brandTitle}</p>
+                    <div className="flex justify-between items-center gap-1">
+                      <p className="text-sm font-medium">{brandTitle}</p>
+                      <i className="icon-arrow-down size-4 text-tertiary" />
+                    </div>
                     {!!brandSubtitle && <p className="text-tertiary text-xs">{brandSubtitle}</p>}
                   </div>
                 </div>
               )}
             </Menu.Trigger>
             <Menu.Content className="p-0 w-xs">
-              <DropdownComponent />
+              <DropdownComponent shortid={event?.shortid} />
             </Menu.Content>
           </Menu.Root>
         </div>
@@ -155,7 +155,12 @@ function ManageLayoutToolbar() {
                 iconLeft={item.icon}
                 variant="tertiary"
                 size="sm"
-                onClick={() => store.setActiveTab(key as ActiveTabType)}
+                onClick={() => {
+                  store.setActiveTab(key as ActiveTabType);
+                  if (!['design', 'preview'].includes(key)) {
+                    store.setPreviewMode('desktop');
+                  }
+                }}
                 className={clsx(state.activeTab !== key ? 'bg-transparent!' : 'text-primary!')}
               >
                 {state.activeTab === key && item.label}
@@ -163,18 +168,20 @@ function ManageLayoutToolbar() {
             ))}
           </div>
 
-          <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
-            {Object.entries(devices).map(([key, item]) => (
-              <Button
-                key={key}
-                icon={item.icon}
-                variant="tertiary"
-                size="sm"
-                onClick={() => store.setPreviewMode(key as any)}
-                className={clsx(state.device !== key ? 'bg-transparent!' : 'text-primary!')}
-              ></Button>
-            ))}
-          </div>
+          {['design', 'preview'].includes(state.activeTab) && (
+            <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
+              {Object.entries(devices).map(([key, item]) => (
+                <Button
+                  key={key}
+                  icon={item.icon}
+                  variant="tertiary"
+                  size="sm"
+                  onClick={() => store.setPreviewMode(key as any)}
+                  className={clsx(state.device !== key ? 'bg-transparent!' : 'text-primary!')}
+                ></Button>
+              ))}
+            </div>
+          )}
 
           <Button
             variant="tertiary-alt"
@@ -197,8 +204,7 @@ function ManageLayoutToolbar() {
             variant="secondary"
             iconLeft="icon-arrow-shape-up-stack-outline"
             onClick={() => {
-              toast.success('Coming Soon.');
-              // router.push('/upgrade-to-pro');
+              router.push('/upgrade-to-pro');
             }}
           >
             Upgrade
@@ -229,15 +235,21 @@ const tabs = [
   { key: 'communities', label: 'Communities' },
   { key: 'coins', label: 'Coins' },
 ];
-function DropdownComponent() {
+function DropdownComponent({ shortid }: { shortid?: string }) {
   const router = useRouter();
   const [active, setActive] = React.useState('events');
 
   const me = useMe();
 
   const { data: dataGetEvent } = useQuery(GetUpcomingEventsDocument, {
-    variables: { user: me?._id, sort: { start: 1 } },
-    skip: !me?._id,
+    variables: {
+      skip: 0,
+      limit: 10,
+      user: me?._id,
+      host: true,
+      sort: { start: -1 },
+    },
+    skip: !me?._id || active !== 'events',
   });
   const events = dataGetEvent?.events || [];
 
@@ -264,11 +276,15 @@ function DropdownComponent() {
               {events.map((item) => (
                 <MenuItem
                   key={item._id}
+                  iconRight={item.shortid === shortid ? <i className="icon-done size-4" /> : undefined}
                   iconLeft={
                     item.new_new_photos_expanded?.[0] ? (
-                      <img src={generateUrl(item.new_new_photos_expanded?.[0])} />
+                      <img
+                        src={generateUrl(item.new_new_photos_expanded?.[0])}
+                        className="w-4 h-4 aspect-square rounded-xs"
+                      />
                     ) : (
-                      <></>
+                      <div className="w-4 h-4 aspect-square rounded-xs border" />
                     )
                   }
                   title={item.title}
