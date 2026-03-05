@@ -103,7 +103,7 @@ function ManageLayoutContent() {
             animate={{ width: 440, opacity: 1, marginRight: 16 }}
             exit={{ width: 0, opacity: 0, marginRight: 0 }}
             transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-            className="overflow-hidden shrink-0"
+            className="overflow-hidden shrink-0 hidden md:block"
           >
             <div
               data-mode={isDesignOrPreview ? state.device : undefined}
@@ -116,7 +116,7 @@ function ManageLayoutContent() {
       </AnimatePresence>
       <div
         className={clsx(
-          'bg-(--btn-tertiary) transition-all ease-in-out duration-500 w-full h-full rounded-md m-1',
+          'bg-(--btn-tertiary) transition-all ease-in-out duration-500 w-full h-full rounded-md md:m-1',
           state.device === 'mobile' && 'py-4',
         )}
       >

@@ -110,7 +110,7 @@ function ManageLayoutToolbar() {
         initial={false}
         animate={{ width: state.showSidebarLeft ? 424 : 'auto' }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="flex items-center gap-3 overflow-hidden"
+        className="flex items-center gap-3 overflow-hidden max-sm:w-full"
       >
         <button type="button" aria-label="Go to home" className="cursor-pointer" onClick={() => router.push('/')}>
           <i className="icon-lemonade-logo size-5" />
@@ -122,7 +122,7 @@ function ManageLayoutToolbar() {
                 <div className="flex items-center gap-3 cursor-pointer" onClick={() => toggle()}>
                   <div className="whitespace-nowrap">
                     <div className="flex justify-between items-center gap-1">
-                      <p className="text-sm font-medium">{brandTitle}</p>
+                      <p className="text-sm font-medium truncate line-clamp-1">{brandTitle}</p>
                       <i className="icon-arrow-down size-4 text-tertiary" />
                     </div>
                     {!!brandSubtitle && <p className="text-tertiary text-xs">{brandSubtitle}</p>}
@@ -141,13 +141,13 @@ function ManageLayoutToolbar() {
           size="sm"
           variant="tertiary-alt"
           onClick={() => store.toggleSidebarLeft()}
-          className="shrink-0"
+          className="shrink-0 hidden md:block"
         />
       </motion.div>
 
       <div className="flex flex-1 justify-between items-center gap-2">
         <div className="flex gap-2">
-          <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
+          <div className="hidden md:block bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
             {Object.entries(tabMappings).map(([key, item]) => (
               <Button
                 key={key}
@@ -202,21 +202,34 @@ function ManageLayoutToolbar() {
             size="sm"
             variant="secondary"
             iconLeft="icon-arrow-shape-up-stack-outline"
+            className="hidden md:block"
             onClick={() => {
               router.push('/upgrade-to-pro');
             }}
           >
             Upgrade
           </Button>
+          <Button
+            size="sm"
+            variant="secondary"
+            icon="icon-arrow-shape-up-stack-outline"
+            className="md:hidden"
+            onClick={() => {
+              router.push('/upgrade-to-pro');
+            }}
+          >
+            Upgrade
+          </Button>
+
           {canSaveTheme && (
-            <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}>
-              Reset
-            </Button>
-          )}
-          {canSaveTheme && (
-            <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}>
-              Save
-            </Button>
+            <>
+              <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}>
+                Reset
+              </Button>
+              <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}>
+                Save
+              </Button>
+            </>
           )}
           {state.activeTab === 'manage' && (
             <Button size="sm" onClick={handlePublish} loading={publishingEvent}>
