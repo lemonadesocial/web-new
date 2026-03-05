@@ -11,43 +11,60 @@ export async function generateMetadata({ params }: { params: Promise<{ shortid: 
 
   const client = getClient();
 
-  const { data } = await client.query({ query: GetEventDocument, variables: { shortid } });
-  const event = data?.getEvent as Event;
-  const fileId = event.new_new_photos_expanded?.[0] ? event.new_new_photos_expanded?.[0]._id : 'default';
+  try {
+    const { data } = await client.query({ query: GetEventDocument, variables: { shortid } });
+    const event = data?.getEvent as Event | null | undefined;
 
-  const miniapp = {
-    version: 'next',
-    imageUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/fc/event/${event.shortid}`,
-    button: {
-      title: 'Get Tickets',
-      action: {
-        type: 'launch_miniapp',
-        name: 'Get Tickets',
+    if (!event) {
+      return {
+        metadataBase: null,
+        title: 'Event not found',
+        description: '',
+      };
+    }
+
+    const fileId = event.new_new_photos_expanded?.[0] ? event.new_new_photos_expanded?.[0]._id : 'default';
+
+    const miniapp = {
+      version: 'next',
+      imageUrl: `${process.env.NEXT_PUBLIC_HOST_URL}/api/fc/event/${event.shortid}`,
+      button: {
+        title: 'Get Tickets',
+        action: {
+          type: 'launch_miniapp',
+          name: 'Get Tickets',
+        }
       }
-    }
-  }
+    };
 
-  return {
-    metadataBase: null,
-    title: event?.title,
-    description: event?.description
-      ? htmlToText(event.description, {
-          selectors: [
-            { selector: 'img', format: 'skip' },
-            { selector: 'hr', format: 'skip' },
-            { selector: 'h1', format: 'skip' },
-            { selector: 'h2', format: 'skip' },
-          ],
-        })
-      : '',
-    openGraph: {
-      images: `${process.env.NEXT_PUBLIC_HOST_URL}/api/og/event/${event.shortid}?file=${fileId}`,
-    },
-    other: {
-      'fc:miniapp': JSON.stringify(miniapp),
-      'fa:frame': JSON.stringify(miniapp),
-    }
-  };
+    return {
+      metadataBase: null,
+      title: event.title,
+      description: event.description
+        ? htmlToText(event.description, {
+            selectors: [
+              { selector: 'img', format: 'skip' },
+              { selector: 'hr', format: 'skip' },
+              { selector: 'h1', format: 'skip' },
+              { selector: 'h2', format: 'skip' },
+            ],
+          })
+        : '',
+      openGraph: {
+        images: `${process.env.NEXT_PUBLIC_HOST_URL}/api/og/event/${event.shortid}?file=${fileId}`,
+      },
+      other: {
+        'fc:miniapp': JSON.stringify(miniapp),
+        'fa:frame': JSON.stringify(miniapp),
+      }
+    };
+  } catch {
+    return {
+      metadataBase: null,
+      title: 'Event not found',
+      description: '',
+    };
+  }
 }
 
 export default async function Page({ params }: { params: Promise<{ shortid: string }> }) {
