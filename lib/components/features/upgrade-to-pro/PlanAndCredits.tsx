@@ -129,7 +129,8 @@ const COMPARE_COLUMNS: Array<{ key: ComparePlan; label: string }> = [
   { key: 'max', label: 'Max' },
   { key: 'enterprise', label: 'Enterprise' },
 ];
-const COMPARE_GRID_TEMPLATE = '300px minmax(160px, 1fr) repeat(4, minmax(max-content, 1fr))';
+const COMPARE_GRID_CLASS =
+  '[grid-template-columns:220px_minmax(132px,1fr)_repeat(4,minmax(max-content,1fr))] md:[grid-template-columns:300px_minmax(160px,1fr)_repeat(4,minmax(max-content,1fr))]';
 
 function renderCompareValue(value: CompareValue) {
   if (typeof value === 'boolean') {
@@ -158,6 +159,7 @@ function buildPlans(subscriptionItems: SubscriptionItem[]): PlanCard[] {
 export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space: Space; data?: SubscriptionItem[] }) {
   const mergedPlans = React.useMemo(() => buildPlans(subscriptionItems), [subscriptionItems]);
   const [data, setData] = React.useState<PlanCard[]>(mergedPlans);
+  const [isCompareExpanded, setIsCompareExpanded] = React.useState(false);
   const [openSections, setOpenSections] = React.useState<Record<string, boolean>>({
     ai_agents: true,
     domain_branding: false,
@@ -319,6 +321,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
       },
     ];
   }, [mergedPlans]);
+  const previewSection = compareSections[0];
 
   React.useEffect(() => {
     setData(mergedPlans);
@@ -530,11 +533,11 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
       </div>
 
       <div className="space-y-3">
-        <div className="overflow-x-auto no-scrollbar">
-          <div className="min-w-[980px] flex flex-col gap-3">
-            <div className="grid gap-2 py-5" style={{ gridTemplateColumns: COMPARE_GRID_TEMPLATE }}>
+        <div className="overflow-x-auto md:no-scrollbar">
+          <div className="min-w-[860px] md:min-w-[980px] flex flex-col gap-3">
+            <div className={clsx('grid gap-2 py-5', COMPARE_GRID_CLASS)}>
               <div className="col-span-2">
-                <p className="text-2xl font-bold">Compare Features</p>
+                <p className="text-xl md:text-2xl font-bold">Compare Features</p>
               </div>
 
               {COMPARE_COLUMNS.map((column) => (
@@ -547,70 +550,141 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
               ))}
             </div>
 
-            {compareSections.map((section) => {
-              const isOpen = openSections[section.id] ?? true;
-
-              return (
-                <div key={section.id} className="border border-divider rounded-sm overflow-hidden bg-overlay-primary">
-                  <button
-                    type="button"
-                    className="cursor-pointer w-full h-12 px-4 bg-(--btn-tertiary) flex items-center justify-between"
-                    onClick={() => setOpenSections((prev) => ({ ...prev, [section.id]: !isOpen }))}
-                    aria-expanded={isOpen}
-                  >
+            <AnimatePresence mode="wait" initial={false}>
+              {!isCompareExpanded && previewSection && (
+                <motion.div
+                  key="compare-preview"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.24, ease: 'easeInOut' }}
+                  className="relative border border-divider rounded-sm overflow-hidden bg-overlay-primary"
+                >
+                  <div className="w-full h-12 px-4 bg-(--btn-tertiary) flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <i aria-hidden="true" className={clsx('size-5 aspect-square text-primary', section.icon)} />
-                      <p className="font-medium">{section.title}</p>
+                      <i
+                        aria-hidden="true"
+                        className={clsx('size-5 aspect-square text-primary', previewSection.icon)}
+                      />
+                      <p className="font-medium">{previewSection.title}</p>
                     </div>
                     <div className="flex items-center justify-center bg-(--btn-tertiary) rounded-xs size-6 aspect-square">
-                      <i
-                        className={clsx(
-                          'size-4 aspect-square text-tertiary',
-                          isOpen ? 'icon-arrow-down rotate-180' : 'icon-arrow-down',
-                        )}
-                      />
+                      <i className="size-4 aspect-square text-tertiary icon-arrow-down rotate-180" />
                     </div>
-                  </button>
+                  </div>
 
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.div
-                        key={`${section.id}-content`}
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.22, ease: 'easeInOut' }}
-                        className="overflow-hidden"
-                      >
-                        <div>
-                          {section.rows.map((row, rowIndex) => (
-                            <div
-                              key={row.label}
-                              className={clsx('grid', rowIndex !== 0 && 'border-t border-divider')}
-                              style={{ gridTemplateColumns: COMPARE_GRID_TEMPLATE }}
-                            >
-                              <div className="px-4 py-3 text-tertiary col-span-2">
-                                <p>{row.label}</p>
-                              </div>
-                              {COMPARE_COLUMNS.map((column) => (
-                                <div
-                                  key={column.key}
-                                  className="px-3 py-3 text-center flex items-center justify-center"
-                                >
-                                  {renderCompareValue(row.values[column.key])}
-                                </div>
-                              ))}
-                            </div>
-                          ))}
+                  {previewSection.rows.slice(0, 6).map((row, rowIndex) => (
+                    <div
+                      key={row.label}
+                      className={clsx('grid', COMPARE_GRID_CLASS, rowIndex !== 0 && 'border-t border-divider')}
+                    >
+                      <div className="px-4 py-3 text-tertiary col-span-2">
+                        <p>{row.label}</p>
+                      </div>
+                      {COMPARE_COLUMNS.map((column) => (
+                        <div key={column.key} className="px-3 py-3 text-center flex items-center justify-center">
+                          {renderCompareValue(row.values[column.key])}
                         </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
+                      ))}
+                    </div>
+                  ))}
+
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-background to-transparent" />
+                </motion.div>
+              )}
+
+              {isCompareExpanded && (
+                <motion.div
+                  key="compare-expanded"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.28, ease: 'easeInOut' }}
+                  className="flex flex-col gap-3"
+                >
+                  {compareSections.map((section) => {
+                    const isOpen = openSections[section.id] ?? true;
+
+                    return (
+                      <div
+                        key={section.id}
+                        className="border border-divider rounded-sm overflow-hidden bg-overlay-primary"
+                      >
+                        <button
+                          type="button"
+                          className="cursor-pointer w-full h-12 px-4 bg-(--btn-tertiary) flex items-center justify-between"
+                          onClick={() => setOpenSections((prev) => ({ ...prev, [section.id]: !isOpen }))}
+                          aria-expanded={isOpen}
+                        >
+                          <div className="flex items-center gap-2">
+                            <i aria-hidden="true" className={clsx('size-5 aspect-square text-primary', section.icon)} />
+                            <p className="font-medium">{section.title}</p>
+                          </div>
+                          <div className="flex items-center justify-center bg-(--btn-tertiary) rounded-xs size-6 aspect-square">
+                            <i
+                              className={clsx(
+                                'size-4 aspect-square text-tertiary',
+                                isOpen ? 'icon-arrow-down rotate-180' : 'icon-arrow-down',
+                              )}
+                            />
+                          </div>
+                        </button>
+
+                        <AnimatePresence initial={false}>
+                          {isOpen && (
+                            <motion.div
+                              key={`${section.id}-content`}
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.22, ease: 'easeInOut' }}
+                              className="overflow-hidden"
+                            >
+                              <div>
+                                {section.rows.map((row, rowIndex) => (
+                                  <div
+                                    key={row.label}
+                                    className={clsx(
+                                      'grid',
+                                      COMPARE_GRID_CLASS,
+                                      rowIndex !== 0 && 'border-t border-divider',
+                                    )}
+                                  >
+                                    <div className="px-4 py-3 text-tertiary col-span-2">
+                                      <p>{row.label}</p>
+                                    </div>
+                                    {COMPARE_COLUMNS.map((column) => (
+                                      <div
+                                        key={column.key}
+                                        className="px-3 py-3 text-center flex items-center justify-center"
+                                      >
+                                        {renderCompareValue(row.values[column.key])}
+                                      </div>
+                                    ))}
+                                  </div>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
+
+        {!isCompareExpanded && (
+          <div className="relative z-10 -mt-20 pb-4 flex justify-center">
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button size="sm" variant="tertiary-alt" onClick={() => setIsCompareExpanded(true)}>
+                Compare Features
+              </Button>
+            </motion.div>
+          </div>
+        )}
       </div>
     </div>
   );
