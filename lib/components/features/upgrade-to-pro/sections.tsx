@@ -9,7 +9,7 @@ import { Payouts } from './Payouts';
 import { PlanAndCredits } from './PlanAndCredits';
 import Team from './Team';
 
-export const DEFAULT_UPGRADE_TO_PRO_SECTION = 'overview' as const;
+export const DEFAULT_UPGRADE_TO_PRO_SECTION = 'plans' as const;
 
 export type UpgradeToProSectionKey = 'overview' | 'team' | 'plans' | 'payouts' | 'custom-domain' | 'connectors';
 
