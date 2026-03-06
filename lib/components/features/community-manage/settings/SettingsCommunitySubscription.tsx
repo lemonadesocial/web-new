@@ -2,27 +2,30 @@
 
 import React from 'react';
 import { Button, Card, Divider, Badge, toast, modal, Toggle } from '$lib/components/core';
+import { Skeleton } from '$lib/components/core/skeleton';
 import {
+  CreditPackageEnum,
   GetStandCreditsDocument,
   ListSubscriptionItemsDocument,
   PurchaseSubscriptionDocument,
   PurchaseCreditsDocument,
   CancelCreditSubscriptionDocument,
   Space,
+  SubscriptionTierEnum,
 } from '$lib/graphql/generated/backend/graphql';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import { ConfirmModal } from '../../modals/ConfirmModal';
 import { formatCurrency } from '$lib/utils/string';
 
 const CREDIT_PACKAGES = [
-  { amount: '5', label: '$5', credits: 500 },
-  { amount: '10', label: '$10', credits: 1_100 },
-  { amount: '25', label: '$25', credits: 3_000 },
-  { amount: '50', label: '$50', credits: 6_500 },
-  { amount: '100', label: '$100', credits: 14_000 },
+  { amount: CreditPackageEnum.Five, label: '$5', credits: 500 },
+  { amount: CreditPackageEnum.Ten, label: '$10', credits: 1_000 },
+  { amount: CreditPackageEnum.TwentyFive, label: '$25', credits: 2_750 },
+  { amount: CreditPackageEnum.Fifty, label: '$50', credits: 6_000 },
+  { amount: CreditPackageEnum.Hundred, label: '$100', credits: 13_000 },
 ] as const;
 
-const TIER_ORDER = ['pro', 'plus', 'max', 'enterprise'] as const;
+const TIER_ORDER = [SubscriptionTierEnum.Pro, SubscriptionTierEnum.Plus, SubscriptionTierEnum.Max, 'enterprise'] as const;
 
 function tierColor(tier?: string | null) {
   switch (tier) {
@@ -72,7 +75,7 @@ export function SettingsCommunitySubscription(props: { space: Space }) {
   const [annual, setAnnual] = React.useState(false);
 
   // Fetch current credits & subscription status
-  const { data: creditsData, loading: creditsLoading } = useQuery(GetStandCreditsDocument, {
+  const { data: creditsData, loading: creditsLoading, refetch: refetchCredits } = useQuery(GetStandCreditsDocument, {
     variables: { standId: spaceId },
     skip: !spaceId,
   });
@@ -117,6 +120,7 @@ export function SettingsCommunitySubscription(props: { space: Space }) {
   const [cancelSubscription] = useMutation(CancelCreditSubscriptionDocument, {
     onComplete: () => {
       toast.success('Subscription cancelled. It will remain active until the end of the current billing period.');
+      refetchCredits();
     },
     onError: (err) => {
       toast.error(err?.message ?? 'Failed to cancel subscription');
@@ -124,9 +128,11 @@ export function SettingsCommunitySubscription(props: { space: Space }) {
   });
 
   const [buyingPackage, setBuyingPackage] = React.useState<string | null>(null);
+  const [upgradingTier, setUpgradingTier] = React.useState<string | null>(null);
 
-  const handleUpgrade = (tier: string) => {
-    purchaseSubscription({
+  const handleUpgrade = async (tier: SubscriptionTierEnum) => {
+    setUpgradingTier(tier);
+    await purchaseSubscription({
       variables: {
         input: {
           stand_id: spaceId,
@@ -135,9 +141,10 @@ export function SettingsCommunitySubscription(props: { space: Space }) {
         },
       },
     });
+    setUpgradingTier(null);
   };
 
-  const handleBuyCredits = async (pkg: string) => {
+  const handleBuyCredits = async (pkg: CreditPackageEnum) => {
     setBuyingPackage(pkg);
     await purchaseCredits({
       variables: {
@@ -172,7 +179,7 @@ export function SettingsCommunitySubscription(props: { space: Space }) {
   };
 
   const currentTier = credits?.subscription_tier?.toLowerCase() ?? 'free';
-  const isSubscribed = credits?.subscription_status === 'active';
+  const isSubscribed = credits?.subscription_status === 'active' || credits?.subscription_status === 'past_due';
 
   return (
     <div className="page mx-auto py-7 px-4 md:px-0 flex flex-col gap-8">
@@ -185,6 +192,14 @@ export function SettingsCommunitySubscription(props: { space: Space }) {
 
         <Card.Root>
           <Card.Content className="p-0 divide-y divide-(--color-divider)">
+            {creditsLoading ? (
+              <div className="p-4 flex flex-col gap-3">
+                <Skeleton className="h-5 w-32" />
+                <Skeleton className="h-5 w-48" />
+                <Skeleton className="h-5 w-40" />
+              </div>
+            ) : (
+            <>
             <div className="flex justify-between items-center py-3 px-4">
               <div>
                 <p className="text-sm text-tertiary">Current Plan</p>
@@ -226,6 +241,8 @@ export function SettingsCommunitySubscription(props: { space: Space }) {
                 </div>
               )}
             </div>
+            </>
+            )}
           </Card.Content>
         </Card.Root>
       </div>
@@ -251,7 +268,8 @@ export function SettingsCommunitySubscription(props: { space: Space }) {
             const tierKey = plan.type?.toLowerCase() ?? '';
             const isCurrentTier = tierKey === currentTier;
             const price = plan.pricing?.price ? Number(plan.pricing.price) : 0;
-            const displayPrice = annual ? Math.round(price * 10) : price; // annual = 12 months, ~17% discount displayed as x10
+            const annualPrice = Math.round(price * 12 * 0.8); // 20% annual discount
+            const displayPrice = annual ? annualPrice : price;
             const currency = plan.pricing?.currency ?? 'USD';
             const decimals = plan.pricing?.decimals ?? 2;
 
@@ -284,7 +302,7 @@ export function SettingsCommunitySubscription(props: { space: Space }) {
                           </span>
                         </p>
                         {annual && price > 0 && (
-                          <p className="text-xs text-success-400">Save ~17% with annual billing</p>
+                          <p className="text-xs text-success-400">Save 20% with annual billing</p>
                         )}
                       </>
                     )}
@@ -295,15 +313,15 @@ export function SettingsCommunitySubscription(props: { space: Space }) {
                       Current Plan
                     </Button>
                   ) : tierKey === 'enterprise' ? (
-                    <Button variant="secondary" className="w-full" onClick={() => toast.success('Contact us at support@lemonade.social')}>
+                    <Button variant="secondary" className="w-full" onClick={() => window.open('mailto:support@lemonade.social', '_blank')}>
                       Contact Sales
                     </Button>
                   ) : (
                     <Button
                       variant="primary"
                       className="w-full"
-                      loading={purchasingPlan}
-                      onClick={() => handleUpgrade(tierKey)}
+                      loading={upgradingTier === tierKey}
+                      onClick={() => handleUpgrade(tierKey as SubscriptionTierEnum)}
                     >
                       Upgrade
                     </Button>
