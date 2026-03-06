@@ -1,12 +1,13 @@
 'use client';
 import React from 'react';
-import { Sheet, SheetRef } from 'react-modal-sheet';
+import { Sheet, SheetDetent, SheetRef } from 'react-modal-sheet';
+import { twMerge } from 'tailwind-merge';
 
 interface Options<T> {
   props?: T;
-  snapPoints?: number[];
   contentClass?: string;
-  initialSnap?: number;
+  containerClass?: string;
+  detent?: SheetDetent;
 }
 
 interface BottomSheet {
@@ -26,10 +27,7 @@ export const sheet: BottomSheet = {
 export function BottomSheetContainer() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [content, setContent] = React.useState<React.ReactNode>();
-  const [options, setOptions] = React.useState<Options<unknown>>({
-    snapPoints: [600, 400, 100, 0],
-    initialSnap: 0,
-  });
+  const [options, setOptions] = React.useState<Options<unknown>>({});
 
   const ref = React.useRef<SheetRef>(null);
 
@@ -63,21 +61,18 @@ export function BottomSheetContainer() {
   }, [isOpen]);
 
   return (
-    <Sheet
-      ref={ref}
-      isOpen={isOpen}
-      onClose={() => handleClose()}
-      snapPoints={options.snapPoints}
-      initialSnap={options.initialSnap}
-      avoidKeyboard
-    >
-      <Sheet.Container className="bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl">
-        <Sheet.Header className="rounded-tl-lg rounded-tr-lg">
+    <Sheet ref={ref} isOpen={isOpen} onClose={() => handleClose()} avoidKeyboard detent={options.detent}>
+      <Sheet.Container
+        className={twMerge('bg-overlay-primary/80! rounded-tl-lg! rounded-tr-lg! backdrop-blur-2xl', options.containerClass)}
+      >
+        <Sheet.Header className="rounded-tl-lg rounded-tr-lg bg-overlay-primary/80 backdrop-blur-2xl">
           <div className="flex justify-center items-end h-[20px]">
             <div className="bg-primary/8 rounded-xs w-[48px] h-1 cursor-row-resize"></div>
           </div>
         </Sheet.Header>
-        <Sheet.Content disableDrag>{content}</Sheet.Content>
+        <Sheet.Content disableDrag className={twMerge('bg-overlay-primary/80 backdrop-blur-2xl', options.contentClass)}>
+          {content}
+        </Sheet.Content>
       </Sheet.Container>
     </Sheet>
   );

@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { match } from 'ts-pattern';
 import { isEqual, merge } from 'lodash';
 
-import { Button, Menu, MenuItem, toast } from '$lib/components/core';
+import { Button, Menu, MenuItem, sheet, toast } from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
   Event,
@@ -16,8 +16,9 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
-import { ThemeBuilderActionKind, useEventTheme } from '$lib/components/features/theme-builder/provider';
-import { defaultTheme } from '$lib/components/features/theme-builder/store';
+import { EventThemeProvider, ThemeBuilderActionKind, useEventTheme } from '$lib/components/features/theme-builder/provider';
+import { defaultTheme, ThemeValues } from '$lib/components/features/theme-builder/store';
+import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
 
 import { useUpdateEvent } from '../../event-manage/store';
 import { tabMappings } from './helpers';
@@ -72,6 +73,7 @@ function ManageLayoutToolbar() {
   const canSaveTheme = state.layoutType === 'event' && state.activeTab === 'design' && !!event?._id && isThemeDirty;
   const brandTitle = event?.title || 'Event Manager';
   const brandSubtitle = event?.space_expanded?.title || '';
+  const isMobileSubPane = state.mobilePane !== 'main';
 
   const handlePublish = () => {
     match(state.layoutType)
@@ -104,141 +106,274 @@ function ManageLayoutToolbar() {
     });
   };
 
+  const handleOpenPublicPage = () => {
+    match(state.layoutType)
+      .with('event', () => {
+        const shortid = (state.data as Event)?.shortid;
+        if (shortid) window.open(`/e/${shortid}`);
+      })
+      .otherwise(() => {});
+  };
+
+  const handleOpenMobileChat = () => {
+    store.setMobilePane('chat');
+  };
+
+  const openDesignSheet = () => {
+    sheet.open(SheetMobileDesignAction, {
+      detent: 'content',
+      containerClass: 'overflow-visible',
+      contentClass: 'overflow-visible',
+      props: {
+        eventId: event?._id,
+        themeData: merge({}, themeState),
+        onThemeChange: (nextTheme: ThemeValues) =>
+          themeDispatch({
+            type: ThemeBuilderActionKind.reset,
+            payload: merge({}, nextTheme),
+          }),
+      },
+    });
+  };
+
   return (
-    <div className="h-14 flex items-center px-4 gap-4">
-      <motion.div
-        initial={false}
-        animate={{ width: state.showSidebarLeft ? 424 : 'auto' }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="flex items-center gap-3 overflow-hidden max-sm:w-full"
-      >
-        <button type="button" aria-label="Go to home" className="cursor-pointer" onClick={() => router.push('/')}>
-          <i className="icon-lemonade-logo size-5" />
-        </button>
-        <div className="flex-1">
-          <Menu.Root strategy="fixed" placement="bottom-start">
-            <Menu.Trigger>
-              {({ toggle }) => (
-                <div className="flex items-center gap-3 cursor-pointer" onClick={() => toggle()}>
-                  <div className="whitespace-nowrap">
-                    <div className="flex justify-between items-center gap-1">
-                      <p className="text-sm font-medium truncate line-clamp-1">{brandTitle}</p>
-                      <i className="icon-arrow-down size-4 text-tertiary" />
+    <>
+      <div className="hidden md:flex h-14 items-center px-4 gap-4">
+        <motion.div
+          initial={false}
+          animate={{ width: state.showSidebarLeft ? 432 : 'auto' }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          className="flex items-center gap-3 overflow-hidden"
+        >
+          <button type="button" aria-label="Go to home" className="cursor-pointer" onClick={() => router.push('/')}>
+            <i className="icon-lemonade-logo size-5" />
+          </button>
+          <div className="flex-1">
+            <Menu.Root strategy="fixed" placement="bottom-start">
+              <Menu.Trigger>
+                {({ toggle }) => (
+                  <div className="flex items-center gap-3 cursor-pointer" onClick={() => toggle()}>
+                    <div className="whitespace-nowrap">
+                      <div className="flex justify-between items-center gap-1">
+                        <p className="text-sm font-medium">{brandTitle}</p>
+                        <i className="icon-arrow-down size-4 text-tertiary" />
+                      </div>
+                      {!!brandSubtitle && <p className="text-tertiary text-xs">{brandSubtitle}</p>}
                     </div>
-                    {!!brandSubtitle && <p className="text-tertiary text-xs">{brandSubtitle}</p>}
                   </div>
-                </div>
-              )}
-            </Menu.Trigger>
-            <Menu.Content className="p-0 w-xs">
-              <DropdownComponent shortid={event?.shortid} />
-            </Menu.Content>
-          </Menu.Root>
-        </div>
-
-        <Button
-          icon="icon-left-panel-close-outline"
-          size="sm"
-          variant="tertiary-alt"
-          onClick={() => store.toggleSidebarLeft()}
-          className="shrink-0 hidden md:block"
-        />
-      </motion.div>
-
-      <div className="flex flex-1 justify-between items-center gap-2">
-        <div className="flex gap-2">
-          <div className="hidden md:block bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
-            {Object.entries(tabMappings).map(([key, item]) => (
-              <Button
-                key={key}
-                iconLeft={item.icon}
-                variant="tertiary"
-                size="sm"
-                onClick={() => {
-                  store.setActiveTab(key as ActiveTabType);
-                  if (!['design', 'preview'].includes(key)) {
-                    store.setPreviewMode('desktop');
-                  }
-                }}
-                className={clsx(state.activeTab !== key ? 'bg-transparent!' : 'text-primary!')}
-              >
-                {state.activeTab === key && item.label}
-              </Button>
-            ))}
+                )}
+              </Menu.Trigger>
+              <Menu.Content className="p-0 w-xs">
+                <DropdownComponent shortid={event?.shortid} />
+              </Menu.Content>
+            </Menu.Root>
           </div>
 
-          {['design', 'preview'].includes(state.activeTab) && (
+          <Button
+            icon="icon-left-panel-close-outline"
+            size="sm"
+            variant="tertiary-alt"
+            onClick={() => store.toggleSidebarLeft()}
+            className="shrink-0"
+          />
+        </motion.div>
+
+        <div className="flex flex-1 justify-between items-center gap-2">
+          <div className="flex gap-2">
             <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
-              {Object.entries(devices).map(([key, item]) => (
+              {Object.entries(tabMappings).map(([key, item]) => (
                 <Button
                   key={key}
-                  icon={item.icon}
+                  iconLeft={item.icon}
                   variant="tertiary"
                   size="sm"
-                  onClick={() => store.setPreviewMode(key as any)}
-                  className={clsx(state.device !== key ? 'bg-transparent!' : 'text-primary!')}
-                ></Button>
+                  onClick={() => {
+                    store.setActiveTab(key as ActiveTabType);
+                    if (!['design', 'preview'].includes(key)) {
+                      store.setPreviewMode('desktop');
+                    }
+                  }}
+                  className={clsx(state.activeTab !== key ? 'bg-transparent!' : 'text-primary!')}
+                >
+                  {state.activeTab === key && item.label}
+                </Button>
               ))}
             </div>
-          )}
 
-          <Button
-            variant="tertiary-alt"
-            icon="icon-arrow-outward"
-            size="sm"
-            onClick={() => {
-              match(state.layoutType)
-                .with('event', () => {
-                  const shortid = (state.data as Event)?.shortid;
-                  if (shortid) window.open(`/e/${shortid}`);
-                })
-                .otherwise(() => {});
-            }}
-          />
-        </div>
+            {['design', 'preview'].includes(state.activeTab) && (
+              <div className="bg-(--btn-tertiary) backdrop-blur-md rounded-sm">
+                {Object.entries(devices).map(([key, item]) => (
+                  <Button
+                    key={key}
+                    icon={item.icon}
+                    variant="tertiary"
+                    size="sm"
+                    onClick={() => store.setPreviewMode(key as any)}
+                    className={clsx(state.device !== key ? 'bg-transparent!' : 'text-primary!')}
+                  ></Button>
+                ))}
+              </div>
+            )}
 
-        <div className="flex gap-2">
-          <Button
-            size="sm"
-            variant="secondary"
-            iconLeft="icon-arrow-shape-up-stack-outline"
-            className="hidden md:block"
-            onClick={() => {
-              router.push('/upgrade-to-pro');
-            }}
-          >
-            Upgrade
-          </Button>
-          <Button
-            size="sm"
-            variant="secondary"
-            icon="icon-arrow-shape-up-stack-outline"
-            className="md:hidden"
-            onClick={() => {
-              router.push('/upgrade-to-pro');
-            }}
-          >
-            Upgrade
-          </Button>
+            <Button variant="tertiary-alt" icon="icon-arrow-outward" size="sm" onClick={handleOpenPublicPage} />
+          </div>
 
-          {canSaveTheme && (
-            <>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="secondary"
+              iconLeft="icon-arrow-shape-up-stack-outline"
+              onClick={() => {
+                router.push('/upgrade-to-pro');
+              }}
+            >
+              Upgrade
+            </Button>
+            {canSaveTheme && (
               <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}>
                 Reset
               </Button>
+            )}
+            {canSaveTheme && (
               <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}>
                 Save
               </Button>
-            </>
-          )}
-          {state.activeTab === 'manage' && (
-            <Button size="sm" onClick={handlePublish} loading={publishingEvent}>
-              {(state.data as Event)?.published ? 'Published' : 'Publish'}
-            </Button>
+            )}
+            {state.activeTab === 'manage' && (
+              <Button size="sm" onClick={handlePublish} loading={publishingEvent}>
+                {(state.data as Event)?.published ? 'Published' : 'Publish'}
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Header Menu */}
+      <div className="md:hidden sticky top-0 z-20 bg-overlay-primary px-3 py-2 flex flex-col gap-2 border-b border-overlay-primary">
+        <div className="h-10 flex items-center justify-between gap-2">
+          <button
+            type="button"
+            aria-label="Go to home"
+            className="cursor-pointer shrink-0 w-[42px] h-[42px] aspect-square"
+            onClick={() => router.push('/')}
+          >
+            <i className="icon-lemonade-logo size-5" />
+          </button>
+          <div className="flex-1 flex justify-center">
+            <Menu.Root strategy="fixed" placement="bottom">
+              <Menu.Trigger>
+                {({ toggle }) => (
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 cursor-pointer min-w-0 text-left"
+                    onClick={() => toggle()}
+                  >
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1">
+                        <p className="text-lg font-medium truncate">{brandTitle}</p>
+                        <i className="icon-arrow-down size-5 text-tertiary shrink-0" />
+                      </div>
+                    </div>
+                  </button>
+                )}
+              </Menu.Trigger>
+              <Menu.Content className="p-0 w-2xs">
+                <DropdownComponent shortid={event?.shortid} />
+              </Menu.Content>
+            </Menu.Root>
+          </div>
+
+          {state.mobilePane === 'chat' ? (
+            <Button variant="flat" icon="icon-settings" onClick={() => store.setMobilePane('main')} />
+          ) : (
+            <Button variant="flat" icon="icon-arrow-outward" onClick={handleOpenPublicPage} />
           )}
         </div>
       </div>
-    </div>
+
+      {/* Mobile Bottom Menu */}
+      <div
+        className={clsx(
+          'md:hidden fixed inset-x-0 bottom-0 z-30 border-t bg-overlay-primary pb-[calc(env(safe-area-inset-bottom)+0.5rem)]',
+          isMobileSubPane && 'hidden',
+        )}
+      >
+        <div className="overflow-x-auto flex justify-between items-center p-3">
+          <Button
+            iconLeft="icon-chat"
+            size="sm"
+            className="rounded-full"
+            variant="tertiary-alt"
+            onClick={handleOpenMobileChat}
+          >
+            Chat
+          </Button>
+          <div className="flex gap-2 w-max">
+            {state.activeTab === 'manage' && state.mobilePane === 'main' && (
+              <Button size="sm" className="rounded-full" onClick={handlePublish} loading={publishingEvent}>
+                {(state.data as Event)?.published ? 'Published' : 'Publish'}
+              </Button>
+            )}
+            <Button
+              size="sm"
+              variant="tertiary-alt"
+              icon="icon-arrow-shape-up-stack-outline"
+              className="rounded-full aspect-square"
+              onClick={() => {
+                router.push('/upgrade-to-pro');
+              }}
+            >
+              Upgrade
+            </Button>
+            {canSaveTheme && (
+              <>
+                <Button size="sm" variant="tertiary-alt" className="rounded-full" onClick={handleResetTheme}>
+                  Reset
+                </Button>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="rounded-full"
+                  loading={savingTheme}
+                  onClick={handleSaveTheme}
+                >
+                  Save
+                </Button>
+              </>
+            )}
+
+            <Button
+              icon="icon-more-horiz"
+              variant="tertiary-alt"
+              className="rounded-full aspect-square"
+              size="sm"
+              onClick={() =>
+                sheet.open(SheetMobileMenuAction, {
+                  detent: 'content',
+                  containerClass: 'overflow-visible',
+                  contentClass: 'overflow-visible',
+                  props: {
+                    active: state.activeTab,
+                    onSelect: (action) => {
+                      store.setActiveTab(action);
+                      store.setMobilePane('main');
+                      if (action === 'design') {
+                        sheet.close();
+                        setTimeout(() => {
+                          openDesignSheet();
+                        }, 180);
+                      } else {
+                        sheet.close();
+                      }
+                    },
+                  },
+                })
+              }
+            ></Button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -320,6 +455,78 @@ function DropdownComponent({ shortid }: { shortid?: string }) {
       </div>
     </div>
   );
+}
+
+function SheetMobileMenuAction({
+  active,
+  onSelect,
+}: {
+  active: ActiveTabType;
+  onSelect: (action: ActiveTabType) => void;
+}) {
+  return (
+    <div className="p-4 flex flex-col gap-3">
+      <Button
+        variant="tertiary-alt"
+        className={clsx(active === 'manage' && 'border-secondary!')}
+        onClick={() => onSelect('manage')}
+      >
+        Manage
+      </Button>
+      <Button
+        variant="tertiary-alt"
+        className={clsx(active === 'design' && 'border-secondary!')}
+        onClick={() => onSelect('design')}
+      >
+        Design
+      </Button>
+      <Button
+        variant="tertiary-alt"
+        className={clsx(active === 'preview' && 'border-secondary!')}
+        onClick={() => onSelect('preview')}
+      >
+        Preview
+      </Button>
+    </div>
+  );
+}
+
+function SheetMobileDesignAction({
+  eventId,
+  themeData,
+  onThemeChange,
+}: {
+  eventId?: string;
+  themeData?: Event['theme_data'];
+  onThemeChange?: (theme: ThemeValues) => void;
+}) {
+  return (
+    <EventThemeProvider key={eventId || 'mobile-theme-default'} themeData={themeData}>
+      <DesignThemeBridge onThemeChange={onThemeChange} />
+      <div className="p-2">
+        <EventThemeBuilder autoSave={false} inline menuInPortal={false} />
+      </div>
+    </EventThemeProvider>
+  );
+}
+
+function DesignThemeBridge({ onThemeChange }: { onThemeChange?: (theme: ThemeValues) => void }) {
+  const [localTheme] = useEventTheme();
+  const latestThemeRef = React.useRef(localTheme);
+
+  latestThemeRef.current = localTheme;
+
+  React.useEffect(() => {
+    onThemeChange?.(localTheme);
+  }, [localTheme, onThemeChange]);
+
+  React.useEffect(() => {
+    return () => {
+      onThemeChange?.(latestThemeRef.current);
+    };
+  }, [onThemeChange]);
+
+  return null;
 }
 
 export default ManageLayoutToolbar;

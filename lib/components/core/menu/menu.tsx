@@ -3,7 +3,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { AnimatePresence, motion, MotionStyle } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
-import { useFloating, offset, Placement, ReferenceType } from '@floating-ui/react';
+import { useFloating, offset, flip, shift, Placement, ReferenceType } from '@floating-ui/react';
 
 type MenuState = {
   isOpen?: boolean;
@@ -104,6 +104,7 @@ function MenuRoot({
   placement = 'bottom-end',
   strategy = 'absolute',
   dismissable = true,
+  withFlip = false,
   isOpen: controlledOpen,
   onOpenChange,
 }: {
@@ -111,6 +112,7 @@ function MenuRoot({
   disabled?: boolean;
   placement?: Placement;
   dismissable?: boolean;
+  withFlip?: boolean;
   strategy?: 'fixed' | 'absolute';
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -137,7 +139,7 @@ function MenuRoot({
     onOpenChange: toggle,
     strategy,
     placement,
-    middleware: [offset(10)],
+    middleware: [offset(10), ...(withFlip ? [flip(), shift({ padding: 8 })] : [])],
   });
 
   const handleClickOutside = (event: MouseEvent) => {
