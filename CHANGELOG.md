@@ -1,5 +1,20 @@
 # Changelog
 
+## [10.14.0](https://github.com/lemonadesocial/web-new/compare/v10.13.1...v10.14.0) (2026-03-06)
+
+
+### Features
+
+* add connector GraphQL operations and types aligned with BE PR [#1912](https://github.com/lemonadesocial/web-new/issues/1912) ([301bb3b](https://github.com/lemonadesocial/web-new/commit/301bb3b70d3b4345cac2b0f522a5f993b1623096))
+* migrate ethers to viem ([8ff4d4e](https://github.com/lemonadesocial/web-new/commit/8ff4d4e396358cda1b6167889f5ec1a408f3b4ea))
+* wire upgrade connectors to backend GraphQL ([33d0800](https://github.com/lemonadesocial/web-new/commit/33d0800e07df0b29697ae85991a203d9d509ad6e))
+
+
+### Bug Fixes
+
+* missing event payment settings ([3b103bc](https://github.com/lemonadesocial/web-new/commit/3b103bcbb9d0a35da7bcf82543ad620cfb9b922b))
+* zero address import ([28434f0](https://github.com/lemonadesocial/web-new/commit/28434f0c72948a7fff5a63d0ca3d2d85594a437a))
+
 ## [10.13.1](https://github.com/lemonadesocial/web-new/compare/v10.13.0...v10.13.1) (2026-03-05)
 
 
