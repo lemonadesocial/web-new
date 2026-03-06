@@ -24,10 +24,12 @@ export function EventThemeBuilder({
   eventId,
   autoSave = true,
   inline = false,
+  menuInPortal = true,
 }: {
   eventId?: string;
   autoSave?: boolean;
   inline?: boolean;
+  menuInPortal?: boolean;
 }) {
   const [toggle, setToggle] = React.useState(false);
   const [data, dispatch] = useEventTheme();
@@ -68,7 +70,7 @@ export function EventThemeBuilder({
   }, [autoSave, data, eventId]);
 
   if (inline) {
-    return <InlineEventThemeBuilderPanel />;
+    return <InlineEventThemeBuilderPanel menuInPortal={menuInPortal} />;
   }
 
   return (
@@ -102,9 +104,12 @@ export function EventThemeBuilder({
   );
 }
 
-function InlineEventThemeBuilderPanel() {
+function InlineEventThemeBuilderPanel({ menuInPortal = true }: { menuInPortal?: boolean }) {
   const [data, dispatch] = useEventTheme();
   const themeName = getThemeName(data);
+  const menuStrategy = menuInPortal ? 'fixed' : 'absolute';
+  const menuPlacement = menuInPortal ? 'right-start' : 'bottom-start';
+  const menuWithFlip = !menuInPortal;
   const mode = data.config.mode || 'auto';
   const styleDisabled = !!presets[themeName]?.ui?.disabled?.style;
   const effectDisabled = !!presets[themeName]?.ui?.disabled?.effect;
@@ -125,7 +130,10 @@ function InlineEventThemeBuilderPanel() {
 
   return (
     <div
-      className="h-full bg-overlay-secondary backdrop-blur-md rounded-md p-2 pt-4 overflow-auto no-scrollbar space-y-3"
+      className={clsx(
+        'h-full bg-overlay-secondary backdrop-blur-md rounded-md p-2 pt-4 no-scrollbar space-y-3',
+        menuInPortal ? 'overflow-auto' : 'overflow-visible',
+      )}
       style={
         {
           // @ts-expect-error accept variables
@@ -167,7 +175,7 @@ function InlineEventThemeBuilderPanel() {
         })}
       </div>
 
-      <Menu.Root strategy="fixed" placement="right-start" className="w-full">
+      <Menu.Root strategy={menuStrategy} placement={menuPlacement} withFlip={menuWithFlip} className="w-full">
         <Menu.Trigger>
           <SettingRow
             icon={
@@ -182,7 +190,7 @@ function InlineEventThemeBuilderPanel() {
             value={data.config.color === 'custom' ? 'Custom' : capitalize(data.config.color || 'Default')}
           />
         </Menu.Trigger>
-        <FloatingPortal>
+        <MaybeFloatingPortal enabled={menuInPortal}>
           <Menu.Content className="w-[260px]">
             <div className="grid grid-cols-8 gap-2.5">
               {colors.map((color) => (
@@ -197,13 +205,13 @@ function InlineEventThemeBuilderPanel() {
                   )}
                 />
               ))}
-              <MenuColorPicker color={data.config.color} dispatch={dispatch} strategy="fixed" />
+              <MenuColorPicker color={data.config.color} dispatch={dispatch} strategy={menuStrategy} />
             </div>
           </Menu.Content>
-        </FloatingPortal>
+        </MaybeFloatingPortal>
       </Menu.Root>
 
-      <Menu.Root strategy="fixed" placement="right-start" className="w-full" disabled={styleDisabled}>
+      <Menu.Root strategy={menuStrategy} placement={menuPlacement} withFlip={menuWithFlip} className="w-full" disabled={styleDisabled}>
         <Menu.Trigger>
           <SettingRow
             icon={
@@ -230,7 +238,7 @@ function InlineEventThemeBuilderPanel() {
             disabled={styleDisabled}
           />
         </Menu.Trigger>
-        <FloatingPortal>
+        <MaybeFloatingPortal enabled={menuInPortal}>
           <Menu.Content className="w-[300px]">
             {themeName === 'shader' && (
               <div className="grid grid-cols-4 gap-3">
@@ -310,10 +318,10 @@ function InlineEventThemeBuilderPanel() {
               </div>
             )}
           </Menu.Content>
-        </FloatingPortal>
+        </MaybeFloatingPortal>
       </Menu.Root>
 
-      <Menu.Root strategy="fixed" placement="right-start" className="w-full" disabled={effectDisabled}>
+      <Menu.Root strategy={menuStrategy} placement={menuPlacement} withFlip={menuWithFlip} className="w-full" disabled={effectDisabled}>
         <Menu.Trigger>
           <SettingRow
             icon={
@@ -328,7 +336,7 @@ function InlineEventThemeBuilderPanel() {
             disabled={effectDisabled}
           />
         </Menu.Trigger>
-        <FloatingPortal>
+        <MaybeFloatingPortal enabled={menuInPortal}>
           <Menu.Content className="w-[300px]">
             <div className="grid grid-cols-4 gap-3">
               {Object.entries(emojis).map(([key, item]) => (
@@ -352,10 +360,10 @@ function InlineEventThemeBuilderPanel() {
               ))}
             </div>
           </Menu.Content>
-        </FloatingPortal>
+        </MaybeFloatingPortal>
       </Menu.Root>
 
-      <Menu.Root strategy="fixed" placement="right-start" className="w-full">
+      <Menu.Root strategy={menuStrategy} placement={menuPlacement} withFlip={menuWithFlip} className="w-full">
         <Menu.Trigger>
           <SettingRow
             icon={
@@ -367,7 +375,7 @@ function InlineEventThemeBuilderPanel() {
             value={capitalize(join(split(data.font_title || 'default', '_'), ' '))}
           />
         </Menu.Trigger>
-        <FloatingPortal>
+        <MaybeFloatingPortal enabled={menuInPortal}>
           <Menu.Content className="w-[300px] max-h-80 overflow-auto no-scrollbar p-1">
             {Object.entries(fonts.title).map(([key]) => (
               <button
@@ -385,10 +393,10 @@ function InlineEventThemeBuilderPanel() {
               </button>
             ))}
           </Menu.Content>
-        </FloatingPortal>
+        </MaybeFloatingPortal>
       </Menu.Root>
 
-      <Menu.Root strategy="fixed" placement="right-start" className="w-full">
+      <Menu.Root strategy={menuStrategy} placement={menuPlacement} withFlip={menuWithFlip} className="w-full">
         <Menu.Trigger>
           <SettingRow
             icon={
@@ -400,7 +408,7 @@ function InlineEventThemeBuilderPanel() {
             value={capitalize(join(split(data.font_body || 'default', '_'), ' '))}
           />
         </Menu.Trigger>
-        <FloatingPortal>
+        <MaybeFloatingPortal enabled={menuInPortal}>
           <Menu.Content className="w-[300px] max-h-80 overflow-auto no-scrollbar p-1">
             {Object.entries(fonts.body).map(([key]) => (
               <button
@@ -418,10 +426,10 @@ function InlineEventThemeBuilderPanel() {
               </button>
             ))}
           </Menu.Content>
-        </FloatingPortal>
+        </MaybeFloatingPortal>
       </Menu.Root>
 
-      <Menu.Root strategy="fixed" placement="right-start" className="w-full" disabled={displayDisabled}>
+      <Menu.Root strategy={menuStrategy} placement={menuPlacement} withFlip={menuWithFlip} className="w-full" disabled={displayDisabled}>
         <Menu.Trigger>
           <SettingRow
             icon={
@@ -438,7 +446,7 @@ function InlineEventThemeBuilderPanel() {
             disabled={displayDisabled}
           />
         </Menu.Trigger>
-        <FloatingPortal>
+        <MaybeFloatingPortal enabled={menuInPortal}>
           <Menu.Content className="w-[220px] p-1">
             {modes.map((item) => (
               <button
@@ -457,10 +465,15 @@ function InlineEventThemeBuilderPanel() {
               </button>
             ))}
           </Menu.Content>
-        </FloatingPortal>
+        </MaybeFloatingPortal>
       </Menu.Root>
     </div>
   );
+}
+
+function MaybeFloatingPortal({ enabled, children }: { enabled: boolean; children: React.ReactNode }) {
+  if (!enabled) return <>{children}</>;
+  return <FloatingPortal>{children}</FloatingPortal>;
 }
 
 function SettingRow({

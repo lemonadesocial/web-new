@@ -6,12 +6,15 @@ export const aiManageLayoutStore = createStore();
 type DeviceType = 'desktop' | 'mobile';
 type LayoutType = 'event' | 'community';
 export type ActiveTabType = 'manage' | 'design' | 'preview';
+export type MobilePaneType = 'main' | 'chat' | 'config';
 
 interface IStore {
   showSidebarLeft: boolean;
   device: DeviceType;
   layoutType: LayoutType;
   activeTab: ActiveTabType;
+  mobilePane: MobilePaneType;
+  mobileNavDirection: 1 | -1;
   data?: Event | Space;
 }
 
@@ -20,6 +23,8 @@ const defaultStore: IStore = {
   showSidebarLeft: true,
   device: 'desktop',
   activeTab: 'manage',
+  mobilePane: 'main',
+  mobileNavDirection: 1,
 };
 
 const storeAtom = atom(defaultStore);
@@ -38,6 +43,12 @@ export const storeManageLayout = {
     })),
   setLayoutType: (type: LayoutType) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, layoutType: type })),
   setActiveTab: (tab: ActiveTabType) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, activeTab: tab })),
+  setMobilePane: (pane: MobilePaneType) =>
+    aiManageLayoutStore.set(storeAtom, (prev) => ({
+      ...prev,
+      mobilePane: pane,
+      mobileNavDirection: pane === 'main' ? -1 : 1,
+    })),
   setData: (data: Event | Space) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, data })),
   reset: () => aiManageLayoutStore.set(storeAtom, { ...defaultStore }),
 };
