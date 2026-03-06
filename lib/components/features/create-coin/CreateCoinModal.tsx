@@ -5,10 +5,11 @@ import * as Sentry from '@sentry/nextjs';
 
 import { useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
 import { modal } from "$lib/components/core";
-import { BrowserProvider, Eip1193Provider, Contract, ethers, JsonRpcProvider } from "ethers";
-import { LaunchTokenTxParams, parseLogs } from "$lib/services/token-launch-pad";
+import { createPublicClient, decodeEventLog, formatEther, http, parseEventLogs, type Address } from "viem";
+import { LaunchTokenTxParams } from "$lib/services/token-launch-pad";
 import { Chain, AddLaunchpadCoinDocument } from "$lib/graphql/generated/backend/graphql";
-import { formatError, getTransactionUrl } from "$lib/utils/crypto";
+import { createViemClients, getTransactionUrl, getViemChainConfig } from "$lib/utils/crypto";
+import { formatError } from "$lib/utils/error";
 import ZapContractABI from "$lib/abis/token-launch-pad/FlaunchZap.json";
 import TreasuryManagerABI from '$lib/abis/token-launch-pad/TreasuryManager.json';
 import { useMutation } from "$lib/graphql/request";
@@ -43,32 +44,37 @@ export function CreateCoinModal({
   const [addLaunchpadCoinMutation] = useMutation(AddLaunchpadCoinDocument);
   const router = useRouter();
 
-  const getSigner = async () => {
-    const browserProvider = new BrowserProvider(walletProvider as Eip1193Provider);
-    const signer = await browserProvider.getSigner();
-    return signer;
-  }
-
   const handleDepositToGroup = async (flaunchAddress: string, tokenId: bigint, memecoinAddress: string, txHash: string) => {
     if (!walletProvider || !groupAddress) {
       throw new Error('Wallet not connected or group address missing');
     }
 
-    const signer = await getSigner();
+    const { walletClient, publicClient, account } = await createViemClients(launchChain.chain_id, walletProvider);
 
-    const flaunchContract = new ethers.Contract(flaunchAddress, FlaunchABI.abi, signer);
-  
+    const flaunchAddressTyped = flaunchAddress as Address;
+    const groupAddressTyped = groupAddress as Address;
+
     setStatus('depositing');
-  
-    const approveTx = await flaunchContract.approve(groupAddress, tokenId);
-    await approveTx.wait();
-  
-    const groupContract = new ethers.Contract(groupAddress, TreasuryManagerABI.abi, signer);
-    const estimatedGas = await groupContract.deposit.estimateGas([flaunchAddress, tokenId], address, '0x');
-    const depositTx = await groupContract.deposit([flaunchAddress, tokenId], address, '0x', {
-      gasLimit: estimatedGas,
+
+    const approveHash = await walletClient.writeContract({
+      abi: FlaunchABI.abi,
+      address: flaunchAddressTyped,
+      functionName: 'approve',
+      args: [groupAddressTyped, tokenId],
+      account,
+      chain: walletClient.chain,
     });
-    await depositTx.wait();
+    await publicClient.waitForTransactionReceipt({ hash: approveHash });
+
+    const depositHash = await walletClient.writeContract({
+      abi: TreasuryManagerABI.abi,
+      address: groupAddressTyped,
+      functionName: 'deposit',
+      args: [[flaunchAddressTyped, tokenId], address as Address, '0x'],
+      account,
+      chain: walletClient.chain,
+    });
+    await publicClient.waitForTransactionReceipt({ hash: depositHash });
 
     handleSuccess(memecoinAddress, txHash);
   };
@@ -81,38 +87,68 @@ export function CreateCoinModal({
         throw new Error('Wallet not connected');
       }
 
-      const signer = await getSigner();
+      const { walletClient, publicClient, account } = await createViemClients(launchChain.chain_id, walletProvider);
 
-      const writeContract = new Contract(launchChain.launchpad_zap_contract_address!, ZapContractABI.abi, signer);
+      const zapAddress = launchChain.launchpad_zap_contract_address! as Address;
 
-      const estimatedGas = await writeContract.flaunch.estimateGas(...txParams.flaunchParams, { value: txParams.fee });
-      
-      const tx = await writeContract.flaunch(...txParams.flaunchParams, {
+      const gas = await publicClient.estimateContractGas({
+        abi: ZapContractABI.abi,
+        address: zapAddress,
+        functionName: 'flaunch',
+        args: txParams.flaunchParams,
         value: txParams.fee,
-        gasLimit: estimatedGas,
+        account,
+      });
+
+      const hash = await walletClient.writeContract({
+        abi: ZapContractABI.abi,
+        address: zapAddress,
+        functionName: 'flaunch',
+        args: txParams.flaunchParams,
+        value: txParams.fee,
+        account,
+        chain: walletClient.chain,
+        gas,
       });
 
       setStatus('confirming');
 
-      const receipt = await tx.wait();
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
-      const rpcProvider = new JsonRpcProvider(launchChain.rpc_url);
-      const zapContract = new ethers.Contract(launchChain.launchpad_zap_contract_address!, ZapContractABI.abi, rpcProvider);
+      const publicClientRead = createPublicClient({
+        chain: getViemChainConfig(launchChain),
+        transport: http(launchChain.rpc_url),
+      });
 
-      const flaunchAddress = await zapContract.flaunchContract() as string;
+      const flaunchAddress = await publicClientRead.readContract({
+        abi: ZapContractABI.abi,
+        address: zapAddress,
+        functionName: 'flaunchContract',
+      }) as string;
       setFlaunchAddress(flaunchAddress);
 
-      const flaunchInterface = new ethers.Interface(FlaunchABI.abi);
-      
-      const event = parseLogs(receipt, flaunchInterface).find(
-        log => log.address === flaunchAddress.toLowerCase() && log.parsedLog.name === 'Transfer'
-      );
+      const events = parseEventLogs({
+        abi: FlaunchABI.abi as any,
+        eventName: 'Transfer',
+        logs: receipt.logs,
+      });
+      const event = (events.find(
+        (log: any) => log.address?.toLowerCase?.() === flaunchAddress.toLowerCase(),
+      ) ?? events[0]) as any;
 
-      const tokenId = event?.parsedLog.args[2] as bigint;
-      setTokenId(tokenId);
+      const tokenId = (event?.args as readonly unknown[] | undefined)?.[2] as bigint | undefined;
+      setTokenId(tokenId ?? null);
 
-      const flaunchContract = new ethers.Contract(flaunchAddress, FlaunchABI.abi, rpcProvider);
-      const memecoinAddress = await flaunchContract.memecoin(tokenId) as string;
+      if (!tokenId) {
+        throw new Error('Token ID not found');
+      }
+
+      const memecoinAddress = await publicClientRead.readContract({
+        abi: FlaunchABI.abi,
+        address: flaunchAddress as Address,
+        functionName: 'memecoin',
+        args: [tokenId],
+      }) as string;
       if (!memecoinAddress) {
         throw new Error('Failed to determine memecoin address');
       }
@@ -131,11 +167,11 @@ export function CreateCoinModal({
       });
 
       if (groupAddress) {
-        await handleDepositToGroup(flaunchAddress, tokenId, memecoinAddress, tx.hash);
+        await handleDepositToGroup(flaunchAddress, tokenId, memecoinAddress, hash);
         return;
       }
 
-      handleSuccess(memecoinAddress, tx.hash);
+      handleSuccess(memecoinAddress, hash);
     } catch (err: unknown) {
       Sentry.captureException(err);
       setError(formatError(err));

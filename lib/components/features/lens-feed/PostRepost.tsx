@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { postId, Post } from '@lens-protocol/client';
 import { repost } from '@lens-protocol/client/actions';
-import { handleOperationWith } from '@lens-protocol/client/ethers';
+import { handleOperationWith } from '@lens-protocol/client/viem';
 
 import { toast } from '$lib/components/core';
 import { getErrorMessage } from '$lib/utils/error';

@@ -1,8 +1,7 @@
 'use client';
 import React from 'react';
 import { getTimeAgo } from '$lib/utils/date';
-import { formatEther } from 'viem';
-import { ethers } from 'ethers';
+import { createPublicClient, formatEther, http } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 
 import { useQuery } from '$lib/graphql/request/hooks';
@@ -42,9 +41,13 @@ function TransactionRow({
       }
 
       try {
-        const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-        const transaction = await provider.getTransaction(swap.transactionHash);
-        
+        const publicClient = createPublicClient({
+          transport: http(chain.rpc_url),
+        });
+        const transaction = await publicClient.getTransaction({
+          hash: swap.transactionHash as `0x${string}`,
+        });
+
         if (transaction?.from) {
           setFromAddress(transaction.from);
         }

@@ -2,7 +2,8 @@
 import * as Sentry from '@sentry/nextjs';
 import { useRouter } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
-import { Eip1193Provider, ethers, isError } from 'ethers';
+import { decodeEventLog, formatEther, zeroAddress, type Address, type EIP1193Provider } from 'viem';
+import { createPublicClient, http } from 'viem';
 import { useAppKit, useAppKitAccount, useAppKitNetwork, useAppKitProvider } from '@reown/appkit/react';
 import { useAtomValue } from 'jotai';
 import React from 'react';
@@ -11,8 +12,8 @@ import Link from 'next/link';
 import { Button, Checkbox, modal, ModalContent, toast } from '$lib/components/core';
 import { trpc } from '$lib/trpc/client';
 import { chainsMapAtom } from '$lib/jotai';
-import { formatError, LemonheadNFTContract, writeContract } from '$lib/utils/crypto';
-import { getErrorMessage } from '$lib/utils/error';
+import { createViemClients, getViemChainConfig } from '$lib/utils/crypto';
+import { getErrorMessage, formatError } from '$lib/utils/error';
 import { useClient, useQuery } from '$lib/graphql/request';
 import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 import { ETHERSCAN } from '$lib/utils/constants';
@@ -68,14 +69,26 @@ export function LemonHeadFooter() {
     }
 
     try {
-      if (!contractAddress) return false;
-      const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-      const contract = LemonheadNFTContract.attach(contractAddress).connect(provider);
-      const tokenId = await contract.getFunction('bounds')(address);
+      if (!contractAddress || !chain) return false;
+      const publicClient = createPublicClient({
+        chain: getViemChainConfig(chain),
+        transport: http(chain.rpc_url),
+      });
+
+      const tokenId = await publicClient.readContract({
+        abi: LemonheadNFT.abi,
+        address: contractAddress as Address,
+        functionName: 'bounds',
+        args: [address as Address],
+      }) as number;
 
       if (tokenId > 0) {
-        // NOTE: fetch nft uri and display when minted
-        const tokenUri = await contract.getFunction('tokenURI')(tokenId);
+        const tokenUri = await publicClient.readContract({
+          abi: LemonheadNFT.abi,
+          address: contractAddress as Address,
+          functionName: 'tokenURI',
+          args: [BigInt(tokenId)],
+        }) as string;
         const res = await fetch(tokenUri);
         const data = await res.json();
 
@@ -83,26 +96,30 @@ export function LemonHeadFooter() {
         return false;
       }
 
-      // check uniqueLooks
       if (!state.traits.length) return false;
 
       const { lookHash } = await validateNft.mutateAsync({ traits: state.traits.filter(Boolean) });
 
-      const owner = await contract.getFunction('uniqueLooks')(lookHash);
+      const owner = await publicClient.readContract({
+        abi: LemonheadNFT.abi,
+        address: contractAddress as Address,
+        functionName: 'uniqueLooks',
+        args: [lookHash as `0x${string}`],
+      }) as string;
 
-      if (owner && owner !== ethers.ZeroAddress) {
+      if (owner && owner !== zeroAddress) {
         toast.error('This LemonHead look has already been minted');
         isValid = false;
       }
     } catch (error: unknown) {
       const message = getErrorMessage(error, '').toLowerCase();
 
-      if (isError(error, 'INSUFFICIENT_FUNDS') || message.includes('insufficient funds')) {
+      if (message.includes('insufficient funds')) {
         const mintPrice = dataCanMint?.canMintLemonhead?.price;
         modal.open(InsufficientFundsModal, {
           onClose: () => setMinting(false),
           props: {
-            message: `You need ${mintPrice && +mintPrice > 0 ? ethers.formatEther(mintPrice) : ''} ETH to mint your LemonHead. Add funds and try again, or switch wallets.`,
+            message: `You need ${mintPrice && +mintPrice > 0 ? formatEther(BigInt(mintPrice)) : ''} ETH to mint your LemonHead. Add funds and try again, or switch wallets.`,
             onRetry: () => {
               modal.close();
               handleMint();
@@ -377,39 +394,42 @@ function MintModal({
       if (!sponsor && !mintData.price) throw new Error('Mint price not set');
 
       const price = BigInt(mintData.price);
+      const { walletClient, publicClient, account } = await createViemClients(chain.chain_id, walletProvider as EIP1193Provider);
 
-      const tx = await writeContract(
-        LemonheadNFTContract,
-        contractAddress,
-        walletProvider as Eip1193Provider,
-        'mint',
-        [mintData.look, mintData.metadata, price, mintData.signature],
-        { value: price },
-      );
-      setMintState((prev) => ({ ...prev, txHash: tx?.hash }));
-
-      const receipt = await tx.wait();
-      const iface = new ethers.Interface(LemonheadNFT.abi);
-
-      let parsedTransferLog: any = null;
-
-      receipt.logs.some((log: any) => {
-        try {
-          const parsedLog = iface.parseLog(log);
-          if (parsedLog?.name === 'Transfer') {
-            parsedTransferLog = parsedLog;
-            return true;
-          }
-
-          return false;
-        } catch (error) {
-          Sentry.captureException(error);
-          return false;
-        }
+      const txHash = await walletClient.writeContract({
+        abi: LemonheadNFT.abi,
+        address: contractAddress as Address,
+        functionName: 'mint',
+        args: [mintData.look, mintData.metadata, price, mintData.signature as `0x${string}`],
+        account,
+        value: price,
+        chain: walletClient.chain,
       });
+      setMintState((prev) => ({ ...prev, txHash }));
 
-      if (parsedTransferLog) {
-        const tokenId = parsedTransferLog.args?.tokenId?.toString();
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+
+      let tokenId: string | undefined;
+      for (const log of receipt.logs) {
+        try {
+          const decoded = decodeEventLog({
+            abi: LemonheadNFT.abi,
+            data: log.data,
+            topics: log.topics,
+          });
+          if (decoded.eventName === 'Transfer') {
+            const id = (decoded.args as { tokenId?: bigint })?.tokenId;
+            if (id != null) {
+              tokenId = id.toString();
+              break;
+            }
+          }
+        } catch {
+          continue;
+        }
+      }
+
+      if (tokenId) {
         setMintState((prev) => ({ ...prev, tokenId }));
         setDone(true);
 
@@ -498,7 +518,7 @@ function MintModal({
         )}
 
         <Button variant="secondary" onClick={handleMint} loading={isMinting}>
-          Mint {mintPrice && +mintPrice > 0 ? `‣ ${ethers.formatEther(mintPrice)} ETH` : '‣ Free'}
+          Mint {mintPrice && +mintPrice > 0 ? `‣ ${formatEther(BigInt(mintPrice))} ETH` : '‣ Free'}
         </Button>
       </div>
     </ModalContent>

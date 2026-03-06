@@ -1,5 +1,5 @@
 'use client';
-import { Eip1193Provider, ethers } from 'ethers';
+import { createWalletClient, custom, type EIP1193Provider } from 'viem';
 
 import { appKit } from '$lib/utils/appkit';
 
@@ -15,12 +15,13 @@ export function useSignWallet() {
     }
 
     const { message, token } = await getUserWalletRequest(address);
-    const provider = new ethers.BrowserProvider(walletProvider as Eip1193Provider);
-
-    const signature = await provider.send('personal_sign', [
-      ethers.hexlify(ethers.toUtf8Bytes(message)),
-      address,
-    ]);
+    const walletClient = createWalletClient({
+      transport: custom(walletProvider as EIP1193Provider),
+    });
+    const signature = await walletClient.signMessage({
+      account: { address: address as `0x${string}` },
+      message,
+    });
 
     return { signature, token };
   };

@@ -1,14 +1,15 @@
 'use client';
 import { useState } from 'react';
-import { BrowserProvider, Contract, type Eip1193Provider } from 'ethers';
+import { type Address, type EIP1193Provider } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 
 import { toast } from '$lib/components/core';
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { StakingManagerClient } from '$lib/services/coin/StakingManagerClient';
-import { formatError } from '$lib/utils/crypto';
+import { createViemClients } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
 import { appKit } from '$lib/utils/appkit';
-import { ERC20 } from '$lib/abis/ERC20';
+import ERC20 from '$lib/abis/ERC20.json';
 
 export type StepStatus = 'pending' | 'loading' | 'completed' | 'error';
 
@@ -52,20 +53,25 @@ export function useStakeDeposit({ chain, stakingToken, stakingManagerAddress, on
     setApproveStatus('loading');
     setStakeStatus('pending');
 
-    const provider = new BrowserProvider(walletProvider as Eip1193Provider);
-    const signer = await provider.getSigner();
+    const { walletClient, publicClient, account } = await createViemClients(chain.chain_id, walletProvider as EIP1193Provider);
 
-    const tokenContract = new Contract(stakingToken, ERC20, signer);
-    const approveTx = await tokenContract.approve(stakingManagerAddress, amount);
-    const approveReceipt = await approveTx.wait();
-    setApproveTxHash(approveReceipt.hash);
+    const approveHash = await walletClient.writeContract({
+      abi: ERC20,
+      address: stakingToken as Address,
+      functionName: 'approve',
+      args: [stakingManagerAddress as Address, amount],
+      account,
+      chain: walletClient.chain,
+    });
+    setApproveTxHash(approveHash);
+    await publicClient.waitForTransactionReceipt({ hash: approveHash });
     setApproveStatus('completed');
 
     setStakeStatus('loading');
-    const stakingClient = StakingManagerClient.getInstance(chain, stakingManagerAddress, signer);
+    const stakingClient = StakingManagerClient.getInstance(chain, stakingManagerAddress, walletClient);
     const txHash = await stakingClient.stake(amount);
     setStakeTxHash(txHash);
-    await provider.waitForTransaction(txHash);
+    await publicClient.waitForTransactionReceipt({ hash: txHash as `0x${string}` });
     setStakeStatus('completed');
 
     onSuccess?.();

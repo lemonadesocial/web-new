@@ -2,7 +2,7 @@ import { User } from '$lib/graphql/generated/backend/graphql';
 import { useAccountStats } from '$lib/hooks/useLens';
 import { PROFILE_SOCIAL_LINKS } from '$lib/utils/constants';
 import { Account } from '@lens-protocol/client';
-import { isAddress } from 'ethers';
+import { isAddress } from 'viem';
 import { twMerge } from 'tailwind-merge';
 
 export function UserProfileInfo({ user, address }: { user: User; address?: string }) {

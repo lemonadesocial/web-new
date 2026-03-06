@@ -1,13 +1,11 @@
 import React from 'react';
 import { atom, getDefaultStore } from 'jotai';
-import { ethers } from 'ethers';
+import { createPublicClient, http, type Address } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 
-import { getListChains } from '$lib/utils/crypto';
+import { getListChains, getViemChainConfig } from '$lib/utils/crypto';
 import { EthereumStakeAccount } from '$lib/graphql/generated/backend/graphql';
 import StakeVaultABI from '$lib/abis/StakeVault.json';
-
-const StakeVaultContract = new ethers.Contract(ethers.ZeroAddress, new ethers.Interface(StakeVaultABI.abi));
 
 const stakeRefundRateCacheAtom = atom<Record<string, number>>({});
 
@@ -29,11 +27,16 @@ export async function getStakeRefundRate(stakeAccount: EthereumStakeAccount): Pr
       throw new Error(`Chain data not found for network ${stakeAccount.network}`);
     }
     
-    const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-    
-    const contract = StakeVaultContract.attach(stakeAccount.config_id).connect(provider);
-    
-    const refundPPM = await contract.getFunction("refundPPM")();
+    const viemChain = getViemChainConfig(chain);
+    const publicClient = createPublicClient({
+      chain: viemChain,
+      transport: http(chain.rpc_url),
+    });
+    const refundPPM = await publicClient.readContract({
+      abi: StakeVaultABI.abi,
+      address: stakeAccount.config_id as Address,
+      functionName: 'refundPPM',
+    });
     
     const refundRate = Number(refundPPM) / 10000;
     

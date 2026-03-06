@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import * as Sentry from '@sentry/nextjs';
-import { handleOperationWith, signMessageWith } from '@lens-protocol/client/ethers';
+import { handleOperationWith, signMessageWith } from '@lens-protocol/client/viem';
 import {
   createAccountWithUsername,
   fetchAccountsAvailable,
@@ -49,8 +49,7 @@ import { useConnectWallet } from './useConnectWallet';
 import { useMe } from './useMe';
 import { UpdateUserDocument, UpdateUserMutationVariables, User } from '$lib/graphql/generated/backend/graphql';
 import { uploadFiles } from '$lib/utils/file';
-import { formatError } from '$lib/utils/crypto';
-import { getErrorMessage } from '$lib/utils/error';
+import { getErrorMessage, formatError } from '$lib/utils/error';
 import { ConnectWallet } from '$lib/components/features/modals/ConnectWallet';
 
 export function useResumeSession() {
@@ -112,7 +111,8 @@ export function useLogIn() {
   const [isLoading, setIsLoading] = useState(false);
 
   const logIn = async () => {
-    if (!signer) return;
+    if (!signer?.account?.address || !address) return;
+    const signerAddress = signer.account.address;
 
     setIsLoading(true);
     try {
@@ -155,7 +155,7 @@ export function useLogIn() {
       const onboardingResult = await client.login({
         onboardingUser: {
           app: process.env.NEXT_PUBLIC_LENS_APP_ID,
-          wallet: signer.address,
+          wallet: signerAddress,
         },
         signMessage: signMessageWith(signer),
       });

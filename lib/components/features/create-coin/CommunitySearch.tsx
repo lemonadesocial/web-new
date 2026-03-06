@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { ethers } from 'ethers';
+import { isAddress } from 'viem';
 
 import { InputField } from '$lib/components/core';
 import { StakingManagerClient } from '$lib/services/coin/StakingManagerClient';
@@ -50,7 +50,7 @@ export function CommunitySearch({ onSuccess }: CommunitySearchProps) {
 
   const normalizedSearch = debouncedSearch || undefined;
   const queryVariables = normalizedSearch
-    ? (ethers.isAddress(normalizedSearch)
+    ? (isAddress(normalizedSearch)
       ? { address: normalizedSearch }
       : { search: normalizedSearch })
     : {};

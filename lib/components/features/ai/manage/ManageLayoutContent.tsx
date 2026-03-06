@@ -15,6 +15,7 @@ import { ThemeGenerator } from '$lib/components/features/theme-builder/generator
 import { useEventTheme } from '$lib/components/features/theme-builder/provider';
 
 import { mockWelcomeEvent } from '../InputChat';
+import { AIChat } from '../AIChat';
 import ManageEventLayout from '../../event-manage/ManageEventLayout';
 
 import { tabMappings } from './helpers';
@@ -29,27 +30,34 @@ function ManageLayoutContent() {
   const state = useStoreManageLayout();
   const [themeState] = useEventTheme();
   const [_, aiChatDispatch] = useAIChat();
+  const initializedConfigEventRef = React.useRef<string | null>(null);
 
   const SidebarComp = tabMappings[state.activeTab].component || null;
   const isDesignOrPreview = state.activeTab === 'design' || state.activeTab === 'preview';
+  const cachedEvent = state.data as Event | undefined;
+  const shouldFetchEvent = state.layoutType === 'event' && !!shortid && cachedEvent?.shortid !== shortid;
 
   const { data: dataGetEvent } = useQuery(GetEventDocument, {
     variables: { shortid },
-    skip: !shortid && state.layoutType !== 'event',
+    skip: !shouldFetchEvent,
   });
-  const event = dataGetEvent?.getEvent as Event;
+  const event = (dataGetEvent?.getEvent as Event | undefined) || (cachedEvent?.shortid === shortid ? cachedEvent : undefined);
+  const eventId = event?._id;
 
   useQuery(
     GetListAiConfigDocument,
     {
-      variables: { filter: { events_eq: event?._id } },
+      variables: { filter: { events_eq: eventId } },
       onComplete: (data) => {
+        if (eventId) {
+          initializedConfigEventRef.current = eventId;
+        }
         if (data?.configs?.items?.length) {
           const config = data.configs.items[0] as AiConfigFieldsFragment;
           aiChatDispatch({ type: AIChatActionKind.set_config, payload: { config: config._id } });
         }
       },
-      skip: !event?._id,
+      skip: !eventId || initializedConfigEventRef.current === eventId,
     },
     aiChatClient,
   );
@@ -66,6 +74,14 @@ function ManageLayoutContent() {
   }, [state.layoutType, event, ready, shortid, aiChatDispatch]);
 
   if (!ready) return null;
+
+  const mobilePaneContent = match(state.mobilePane)
+    .with('chat', () => <AIChat />)
+    .with('config', () => <SidebarComp />)
+    .otherwise(() => null);
+  const isChatPane = state.mobilePane === 'chat';
+  const isConfigPane = state.mobilePane === 'config';
+  const needsMobileBottomInset = state.activeTab === 'manage';
 
   const mainContent = match(state.activeTab)
     .with('manage', () =>
@@ -85,7 +101,7 @@ function ManageLayoutContent() {
               )}
             >
               <ThemeGenerator data={themeState} scoped scopeSelector="[data-theme-scope='event-preview']" />
-              <div className="page relative z-10 mx-auto px-4 xl:px-0">
+              <div className="page relative z-10 mx-auto px-4 xl:px-0 overflow-auto">
                 <EventGuestSide event={event} />
               </div>
             </main>
@@ -95,42 +111,75 @@ function ManageLayoutContent() {
     );
 
   return (
-    <div className="flex px-1 flex-1 overflow-hidden">
-      <AnimatePresence initial={false}>
-        {state.showSidebarLeft && (
-          <motion.div
-            initial={{ width: 0, opacity: 0, marginRight: 0 }}
-            animate={{ width: 440, opacity: 1, marginRight: 16 }}
-            exit={{ width: 0, opacity: 0, marginRight: 0 }}
-            transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-            className="overflow-hidden shrink-0"
-          >
-            <div
-              data-mode={isDesignOrPreview ? state.device : undefined}
-              className={clsx('w-[440px] h-full pl-4', isDesignOrPreview && 'pt-3')}
+    <>
+      <div className="hidden md:flex px-0 md:p-1 flex-1 overflow-hidden pb-10">
+        <AnimatePresence initial={false}>
+          {state.showSidebarLeft && (
+            <motion.div
+              initial={{ width: 0, opacity: 0, marginRight: 0 }}
+              animate={{ width: 440, opacity: 1, marginRight: 16 }}
+              exit={{ width: 0, opacity: 0, marginRight: 0 }}
+              transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+              className="overflow-hidden shrink-0 hidden md:block"
             >
-              <SidebarComp />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <div
-        className={clsx(
-          'bg-(--btn-tertiary) transition-all ease-in-out duration-500 w-full h-full rounded-md m-1',
-          state.device === 'mobile' && 'py-4',
-        )}
-      >
+              <div
+                data-mode={isDesignOrPreview ? state.device : undefined}
+                className={clsx('w-[440px] h-full pl-4', isDesignOrPreview && 'pt-3')}
+              >
+                <SidebarComp />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <div
-          data-mode={isDesignOrPreview ? state.device : undefined}
           className={clsx(
-            'w-full bg-background h-full rounded-md overflow-auto transition-all ease-in-out mx-auto duration-500',
-            state.device === 'mobile' && 'w-sm',
+            'bg-(--btn-tertiary) transition-all ease-in-out duration-500 w-full h-full rounded-none m-0 md:rounded-md md:m-1',
+            state.device === 'mobile' && 'md:py-4',
+          )}
+        >
+          <div
+            data-mode={isDesignOrPreview ? state.device : undefined}
+            className={clsx(
+              'w-full bg-background h-full rounded-none md:rounded-md overflow-auto transition-all ease-in-out mx-auto duration-500',
+              state.device === 'mobile' && 'md:w-sm',
+            )}
+          >
+            {mainContent}
+          </div>
+        </div>
+      </div>
+
+      <div className="md:hidden flex-1 overflow-hidden relative isolate">
+        <div
+          className={clsx(
+            'absolute inset-0 overflow-auto bg-background z-0',
+            needsMobileBottomInset && 'pb-[calc(env(safe-area-inset-bottom)+5.5rem)]',
+            state.mobilePane !== 'main' && 'pointer-events-none',
           )}
         >
           {mainContent}
         </div>
+
+        <AnimatePresence initial={false}>
+          {state.mobilePane !== 'main' && (
+            <motion.div
+              key={`mobile-pane-${state.mobilePane}`}
+              initial={{ x: isChatPane ? '-100%' : '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: isChatPane ? '-100%' : '100%' }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              className={clsx(
+                'absolute inset-0 overflow-auto bg-background z-40',
+                isConfigPane && 'p-4',
+                state.mobilePane === 'chat' && 'px-4 pt-2 pb-3',
+              )}
+            >
+              {mobilePaneContent}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </div>
+    </>
   );
 }
 

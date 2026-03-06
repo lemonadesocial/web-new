@@ -1,12 +1,13 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
-import { ethers } from 'ethers';
+import { createPublicClient, http, type Address } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 
 import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
 import { LEMONHEAD_CHAIN_ID, LEMONHEAD_COLORS } from '$lib/components/features/lemonheads/mint/utils';
-import { ERC721Contract } from '$lib/utils/crypto';
+import { getViemChainConfig } from '$lib/utils/crypto';
 import { getClient } from '$lib/graphql/request';
+import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
 
 const fetchFont = (url: string) => {
   return fetch(new URL(url)).then((res) => res.arrayBuffer());
@@ -54,10 +55,17 @@ export async function GET(req: NextRequest) {
       return new Response('LemonheadNFT contract address not set', { status: 400 });
     }
 
-    const provider = new ethers.JsonRpcProvider(chain.rpc_url);
-    const contract = ERC721Contract.attach(contractAddress).connect(provider);
+    const publicClient = createPublicClient({
+      chain: getViemChainConfig(chain),
+      transport: http(chain.rpc_url),
+    });
 
-    const tokenUri = await contract.getFunction('tokenURI')(tokenId);
+    const tokenUri = await publicClient.readContract({
+      abi: LemonheadNFT.abi,
+      address: contractAddress as Address,
+      functionName: 'tokenURI',
+      args: [BigInt(tokenId)],
+    }) as string;
     const res = await fetch(tokenUri);
     const data = await res.json();
     image = data.image;

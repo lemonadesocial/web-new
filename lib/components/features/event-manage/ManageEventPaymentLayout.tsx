@@ -1,11 +1,13 @@
 'use client';
 
 import { DirectLedger } from '$lib/components/features/event-manage/payments/DirectLedger';
+import { Settings } from '$lib/components/features/event-manage/payments/Settings';
 import clsx from 'clsx';
 import React from 'react';
 
 const tabs: Record<string, { label: string; component: React.FC }> = {
   'direct-ledger': { label: 'Overview', component: DirectLedger },
+  'settings': { label: 'Settings', component: Settings },
 };
 
 export function ManageEventPaymentLayout() {
