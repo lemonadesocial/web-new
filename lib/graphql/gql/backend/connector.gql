@@ -1,0 +1,121 @@
+#### Fragments
+
+fragment ConnectorActionInfoFragment on ConnectorActionInfo {
+  id
+  name
+  description
+  triggerTypes
+}
+
+fragment ConnectorDefinitionFragment on ConnectorDefinition {
+  id
+  name
+  description
+  icon
+  category
+  authType
+  capabilities
+  actions {
+    ...ConnectorActionInfoFragment
+  }
+}
+
+fragment ConnectionOutputFragment on ConnectionOutput {
+  id
+  connectorType
+  connector {
+    ...ConnectorDefinitionFragment
+  }
+  status
+  config
+  installedBy
+  installedAt
+  lastSyncAt
+  lastSyncStatus
+  enabled
+  errorMessage
+}
+
+fragment ConnectorActionResultFragment on ConnectorActionResult {
+  success
+  data
+  message
+  error
+  recordsProcessed
+  recordsFailed
+  externalUrl
+}
+
+fragment ConnectionLogFragment on ConnectionLog {
+  _id
+  connectionId
+  spaceId
+  actionId
+  triggerType
+  triggeredBy
+  status
+  recordsProcessed
+  recordsFailed
+  duration
+  errorMessage
+  createdAt
+}
+
+#### Queries
+
+query AvailableConnectors {
+  availableConnectors {
+    ...ConnectorDefinitionFragment
+  }
+}
+
+query SpaceConnections($spaceId: String!) {
+  spaceConnections(spaceId: $spaceId) {
+    ...ConnectionOutputFragment
+  }
+}
+
+query ConnectionLogs($connectionId: String!, $limit: Int, $offset: Int) {
+  connectionLogs(connectionId: $connectionId, limit: $limit, offset: $offset) {
+    ...ConnectionLogFragment
+  }
+}
+
+query FetchConnectionConfigOptions($connectionId: String!, $optionKey: String!) {
+  fetchConnectionConfigOptions(connectionId: $connectionId, optionKey: $optionKey) {
+    value
+    label
+  }
+}
+
+#### Mutations
+
+mutation ConnectPlatform($input: ConnectPlatformInput!) {
+  connectPlatform(input: $input) {
+    connectionId
+    authUrl
+    requiresApiKey
+  }
+}
+
+mutation SubmitApiKey($input: SubmitApiKeyInput!) {
+  submitApiKey(input: $input) {
+    ...ConnectionOutputFragment
+  }
+}
+
+mutation ConfigureConnection($input: ConfigureConnectionInput!) {
+  configureConnection(input: $input) {
+    ...ConnectionOutputFragment
+  }
+}
+
+mutation DisconnectPlatform($connectionId: String!) {
+  disconnectPlatform(connectionId: $connectionId)
+}
+
+mutation ExecuteConnectorAction($input: ExecuteConnectorActionInput!) {
+  executeConnectorAction(input: $input) {
+    ...ConnectorActionResultFragment
+  }
+}
