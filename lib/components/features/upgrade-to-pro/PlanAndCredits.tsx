@@ -24,69 +24,86 @@ type PlanCard = {
 const pricingPlans: PlanCard[] = [
   {
     type: SubscriptionItemType.Plus,
-    // description: 'Designed for fast-moving teams building together in real time.',
+    description: 'More AI, more reach — for organizers who are scaling up.',
     annual: false,
-    featureTitle: 'All features in Free, plus:',
+    featureTitle: 'All features in Free, and:',
     method: 'card',
     features: [
-      '{{credits_per_month}} monthly AI credits',
-      '5 daily credits (up to 150/month)',
-      'Usage-based Cloud + AI',
-      'Credit rollovers',
-      'On-demand credit top-ups',
-      'Unlimited lemonade.social domains',
-      'Custom domains',
-      'Remove the Lovable badge',
-      'User roles & permissions',
+      '{{credits_per_month}} AI credits per month (with 1.5x top-up bonus)',
+      'Premium AI models (Opus)',
+      '3 custom AI agents',
+      'Basic, Standard & Advanced AI tool categories',
+      'Unlimited AI page generations',
+      'Custom domain',
+      'Unlimited premium themes',
+      'All page builder sections + layout containers',
+      'All integrations & connectors',
+      '12 newsletter sends/month, up to 5,000 recipients',
+      '50 version history saves',
+      'API overage enabled ($2.00/1k)',
+      'Google Sheets & Airtable connectors',
+      'Full read/write API scopes (events + subscribers)',
     ],
   },
   {
     type: SubscriptionItemType.Pro,
-    // description: 'Designed for fast-moving teams building together in real time.',
+    description: 'For creators and organizers ready to build, sell, and grow.',
     annual: false,
     method: 'card',
-    featureTitle: 'All features in Lemonade Plus, plus:',
+    featureTitle: 'All features in Pro, and:',
     features: [
       '{{credits_per_month}} monthly AI credits',
-      '5 daily credits (up to 150/month)',
-      'Usage-based Cloud + AI',
-      'Credit rollovers',
-      'On-demand credit top-ups',
-      'Unlimited lemonade.social domains',
-      'Custom domains',
-      'Remove the Lovable badge',
-      'User roles & permissions',
+      'Premium AI models (Opus)',
+      '3 custom AI agents',
+      'Basic & Standard AI tool categories',
+      '20 AI page generations per month',
+      'Custom event slug',
+      'Remove Lemonade branding',
+      '10 premium themes',
+      'All page builder sections',
+      'CSS code injection',
+      'Newsletter access (4 sends/month, up to 1,000 recipients)',
+      'Google Sheets & Airtable connectors',
+      'API access (3 keys, 60 req/min, 10k monthly quota, events:read scope)',
+      'Marketplace seller access',
+      'Referral stablecoin rewards',
+      '20 version history saves',
     ],
   },
   {
     type: SubscriptionItemType.Max,
-    // description: 'Advanced controls and power features for growing departments.',
+    description: 'High-volume tools for serious event businesses. No compromises.',
     annual: false,
     method: 'card',
-    featureTitle: 'All features in Pro, plus:',
+    featureTitle: 'All features in Plus, and:',
     features: [
-      '{{credits_per_month}} monthly AI credits',
-      'Internal publish',
-      'SSO',
-      'Personal Projects',
+      '{{credits_per_month}} AI credits per month (with 2x top-up bonus)',
+      '10 custom AI agents',
+      '30 newsletter sends/month, up to 25,000 recipients',
+      'CSS & HTML code injection',
+      'Unlimited version history',
       'Opt out of data training',
-      'Design templates',
+      'Higher API limits (25 keys, 300 req/min, 200k monthly quota, 500k hard cap)',
     ],
   },
   {
     type: 'enterprise',
     title: 'Enterprise',
-    // description: 'Built for large orgs needing flexibility, scale, and governance.',
+    description: 'Custom everything, for organizations that need it their way.',
     price: null,
     annual: null,
-    featureTitle: 'All features in Business, plus:',
+    featureTitle: 'All features in Max, and:',
     features: [
+      'Custom AI credits & top-up terms',
       'Dedicated support',
-      'Onboarding services',
-      'Custom connections',
-      'Group-based access control',
-      'SCIM',
-      'Custom design systems',
+      'All AI tool categories',
+      'Unlimited newsletter sends & recipients',
+      'Full custom code injection (CSS, HTML, JS)',
+      'Custom domain & full white-label',
+      'Up to 999 API keys, 1,000 req/min, 1M monthly quota, unlimited hard cap',
+      'Overage at lowest rate ($1.00/1k)',
+      'Larger max page size (250)',
+      'Custom pricing & SLA',
     ],
   },
 ];
@@ -118,7 +135,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card.Root className="h-[148px]">
+        <Card.Root className="h-[148px] md:col-span-2">
           <Card.Content className="flex h-full flex-col justify-between">
             <div className="flex gap-3 items-center">
               <div className="p-2 rounded-sm bg-(--chip-secondary-bg) flex items-center justify-center">
@@ -138,7 +155,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
           </Card.Content>
         </Card.Root>
 
-        <Card.Root className="md:col-span-3">
+        <Card.Root className="md:col-span-2">
           <Card.Content className="flex flex-col gap-3">
             <div className="flex items-center justify-between text-tertiary">
               <div className="flex items-center gap-1.5">
@@ -185,121 +202,125 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
           </Card.Content>
         </Card.Root>
 
-        {data.map((item) => {
-          return (
-            <Card.Root key={item.type}>
-              <Card.Content className="p-0">
-                <div className="p-4 flex flex-col gap-6">
-                  <div className="flex flex-col gap-2">
-                    <p className="text-lg font-semibold">{item.title}</p>
-                    <p className="text-secondary text-sm">{item.description}</p>
+        {data
+          .sort((a, b) => Number(a.pricing?.price) - Number(b.pricing?.price))
+          .map((item) => {
+            return (
+              <Card.Root key={item.type}>
+                <Card.Content className="p-0">
+                  <div className="p-4 flex flex-col gap-6">
+                    <div className="flex flex-col gap-2">
+                      <p className="text-lg font-semibold">{item.title}</p>
+                      <p className="text-secondary text-sm">{item.description}</p>
+                    </div>
+
+                    <div className="flex flex-col">
+                      <div className="flex justify-between items-center flex-1 min-h-[32px]">
+                        {!!item.pricing && (
+                          <div className="flex gap-2 items-end">
+                            <p className="text-2xl">
+                              {formatCurrency(Number(item.pricing.price), item.pricing.currency, item.pricing.decimals)}
+                            </p>
+                            <p className="text-tertiary">per month</p>
+                          </div>
+                        )}
+                        {/* {isSaving && ( */}
+                        {/*   <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5"> */}
+                        {/*     Save {formatCurrency(item.savings)} */}
+                        {/*   </Badge> */}
+                        {/* )} */}
+                      </div>
+                      {!!item.pricing ? (
+                        <p className="text-tertiary text-sm">Shared across unlimited users</p>
+                      ) : (
+                        <p className="text-tertiary text-lg">Custom</p>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="flex flex-col">
-                    <div className="flex justify-between items-center flex-1 min-h-[32px]">
-                      {!!item.pricing && (
-                        <div className="flex gap-2 items-end">
-                          <p className="text-2xl">
-                            {formatCurrency(Number(item.pricing.price), item.pricing.currency, item.pricing.decimals)}
-                          </p>
-                          <p className="text-tertiary">per month</p>
-                        </div>
-                      )}
-                      {/* {isSaving && ( */}
-                      {/*   <Badge color="var(--color-success-400)" className="rounded-full px-2.5 py-1.5"> */}
-                      {/*     Save {formatCurrency(item.savings)} */}
-                      {/*   </Badge> */}
-                      {/* )} */}
-                    </div>
+                  <div className="border border-s-0 border-e-0 px-4 py-3">
                     {!!item.pricing ? (
-                      <p className="text-tertiary text-sm">Shared across unlimited users</p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex gap-2">
+                          <Toggle
+                            id={item.type}
+                            checked={!!data.find((i) => i.type === item.type)?.annual}
+                            onChange={(value) => {
+                              setData((prev) =>
+                                prev.map((i) => {
+                                  if (i.type === item.type) {
+                                    return { ...i, annual: value };
+                                  } else {
+                                    return i;
+                                  }
+                                }),
+                              );
+                            }}
+                          />
+                          <p className="text-tertiary">Annual</p>
+                        </div>
+
+                        <Segment
+                          items={[
+                            { value: 'card', iconLeft: 'icon-credit-card', label: 'Card' },
+                            { value: 'wallet', iconLeft: 'icon-wallet', label: 'Wallet' },
+                          ]}
+                          selected={item.method}
+                          size="sm"
+                          className={clsx(item.annual ? 'visible' : 'invisible')}
+                        />
+                      </div>
                     ) : (
-                      <p className="text-tertiary text-lg">Custom</p>
+                      <p className="text-tertiary py-1">Flexible Plans</p>
                     )}
                   </div>
-                </div>
 
-                <div className="border border-s-0 border-e-0 px-4 py-3">
-                  {!!item.pricing ? (
-                    <div className="flex items-center justify-between">
-                      <div className="flex gap-2">
-                        <Toggle
-                          id={item.type}
-                          checked={!!data.find((i) => i.type === item.type)?.annual}
-                          onChange={(value) => {
-                            setData((prev) =>
-                              prev.map((i) => {
-                                if (i.type === item.type) {
-                                  return { ...i, annual: value };
-                                } else {
-                                  return i;
-                                }
-                              }),
-                            );
-                          }}
-                        />
-                        <p className="text-tertiary">Annual</p>
-                      </div>
-
-                      <Segment
-                        items={[
-                          { value: 'card', iconLeft: 'icon-credit-card', label: 'Card' },
-                          { value: 'wallet', iconLeft: 'icon-wallet', label: 'Wallet' },
-                        ]}
-                        selected={item.method}
-                        size="sm"
-                        className={clsx(item.annual ? 'visible' : 'invisible')}
-                      />
-                    </div>
-                  ) : (
-                    <p className="text-tertiary">Flexible Plans</p>
-                  )}
-                </div>
-
-                <div className="flex flex-col gap-6 p-4">
-                  {match(item.type)
-                    .with(SubscriptionItemType.Plus, () => (
-                      <Button disabled={space.subscription_tier === SubscriptionItemType.Plus}>Upgrade</Button>
-                    ))
-                    .with(SubscriptionItemType.Pro, () => (
-                      <Button
-                        outlined
-                        variant="secondary"
-                        disabled={space.subscription_tier === SubscriptionItemType.Pro}
-                      >
-                        Upgrade
-                      </Button>
-                    ))
-                    .with(SubscriptionItemType.Max, () => (
-                      <Button
-                        outlined
-                        variant="secondary"
-                        disabled={space.subscription_tier === SubscriptionItemType.Plus}
-                      >
-                        Upgrade
-                      </Button>
-                    ))
-                    .otherwise(() => (
-                      <Button variant="secondary" outlined>
-                        Book a Demo
-                      </Button>
-                    ))}
-                  <ul className="flex flex-col gap-3">
-                    <li className="text-tertiary text-sm">
-                      <p>All features in Free, plus:</p>
-                    </li>
-                    {item.features?.map((f) => (
-                      <li key={f} className="flex gap-2">
-                        <i className="icon-done size-5 aspect-square" />
-                        <p>{f.replace('{{credits_per_month}}', item.credits_per_month?.toString() ?? '')}</p>
+                  <div className="flex flex-col gap-6 p-4">
+                    {match(item.type)
+                      .with(SubscriptionItemType.Plus, () => (
+                        <Button
+                          outlined
+                          variant="secondary"
+                          disabled={space.subscription_tier === SubscriptionItemType.Plus}
+                        >
+                          Upgrade
+                        </Button>
+                      ))
+                      .with(SubscriptionItemType.Pro, () => (
+                        <Button disabled={space.subscription_tier === SubscriptionItemType.Pro}>Upgrade</Button>
+                      ))
+                      .with(SubscriptionItemType.Max, () => (
+                        <Button
+                          outlined
+                          variant="secondary"
+                          disabled={space.subscription_tier === SubscriptionItemType.Plus}
+                        >
+                          Upgrade
+                        </Button>
+                      ))
+                      .otherwise(() => (
+                        <Button variant="secondary" outlined>
+                          Book a Demo
+                        </Button>
+                      ))}
+                    <ul className="flex flex-col gap-3">
+                      <li className="text-tertiary text-sm">
+                        <p>All features in Free, plus:</p>
                       </li>
-                    ))}
-                  </ul>
-                </div>
-              </Card.Content>
-            </Card.Root>
-          );
-        })}
+                      {item.features?.map((f) => (
+                        <li key={f} className="flex gap-2">
+                          <i className="icon-done size-5 aspect-square" />
+                          <p>
+                            {f.replace('{{credits_per_month}}', item.credits_per_month?.toLocaleString('en-US') ?? '')}
+                          </p>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </Card.Content>
+              </Card.Root>
+            );
+          })}
       </div>
     </div>
   );

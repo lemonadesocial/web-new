@@ -6,7 +6,12 @@ import clsx from 'clsx';
 
 import { Button, Menu, MenuItem } from '$lib/components/core';
 import Header from '$lib/components/layouts/header';
-import { GetListMySpacesDocument, GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
+import {
+  GetListMySpacesDocument,
+  GetSpaceDocument,
+  Space,
+  SubscriptionItem,
+} from '$lib/graphql/generated/backend/graphql';
 import { useQuery } from '$lib/graphql/request';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
@@ -19,9 +24,10 @@ import {
 
 type UpgradeToProPageProps = {
   activeSection: UpgradeToProSectionKey;
+  subscriptionData?: SubscriptionItem[];
 };
 
-function UpgradeToProPage({ activeSection }: UpgradeToProPageProps) {
+function UpgradeToProPage({ activeSection, subscriptionData }: UpgradeToProPageProps) {
   const router = useRouter();
   const me = useMe();
 
@@ -154,7 +160,7 @@ function UpgradeToProPage({ activeSection }: UpgradeToProPageProps) {
 
         {space && (
           <div className="w-full flex-1 overflow-auto no-scrollbar p-4 md:p-12">
-            <ActiveSection space={space} />
+            <ActiveSection space={space} subscriptionData={subscriptionData} />
           </div>
         )}
       </div>
