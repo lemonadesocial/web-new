@@ -17,9 +17,8 @@ import {
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
 import { EventThemeProvider, ThemeBuilderActionKind, useEventTheme } from '$lib/components/features/theme-builder/provider';
-import { defaultTheme } from '$lib/components/features/theme-builder/store';
+import { defaultTheme, ThemeValues } from '$lib/components/features/theme-builder/store';
 import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
-import { ThemeValues } from '$lib/components/features/theme-builder/store';
 
 import { useUpdateEvent } from '../../event-manage/store';
 import { tabMappings } from './helpers';

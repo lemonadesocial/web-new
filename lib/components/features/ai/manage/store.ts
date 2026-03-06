@@ -14,7 +14,6 @@ interface IStore {
   layoutType: LayoutType;
   activeTab: ActiveTabType;
   mobilePane: MobilePaneType;
-  mobileNavDirection: 1 | -1;
   data?: Event | Space;
 }
 
@@ -24,7 +23,6 @@ const defaultStore: IStore = {
   device: 'desktop',
   activeTab: 'manage',
   mobilePane: 'main',
-  mobileNavDirection: 1,
 };
 
 const storeAtom = atom(defaultStore);
@@ -47,7 +45,6 @@ export const storeManageLayout = {
     aiManageLayoutStore.set(storeAtom, (prev) => ({
       ...prev,
       mobilePane: pane,
-      mobileNavDirection: pane === 'main' ? -1 : 1,
     })),
   setData: (data: Event | Space) => aiManageLayoutStore.set(storeAtom, (prev) => ({ ...prev, data })),
   reset: () => aiManageLayoutStore.set(storeAtom, { ...defaultStore }),
