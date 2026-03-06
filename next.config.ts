@@ -6,10 +6,6 @@ const nextConfig: NextConfig = {
   assetPrefix: '/proxy_static',
   htmlLimitedBots:
     /Mediapartners-Google|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|MyBot/i,
-  typescript: {
-    // ignore type error on some files generated such as farcaster
-    ignoreBuildErrors: true,
-  },
   eslint: {
     // Disable ESLint during builds (Oxlint runs via scripts)
     ignoreDuringBuilds: true,
