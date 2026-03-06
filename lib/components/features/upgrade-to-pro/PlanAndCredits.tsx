@@ -21,6 +21,21 @@ type PlanCard = {
   credits_per_month?: number | null;
 };
 
+type ComparePlan = 'pro' | 'plus' | 'max' | 'enterprise';
+type CompareValue = string | boolean;
+
+type CompareRow = {
+  label: string;
+  values: Record<ComparePlan, CompareValue>;
+};
+
+type CompareSection = {
+  id: string;
+  title: string;
+  icon: string;
+  rows: CompareRow[];
+};
+
 const pricingPlans: PlanCard[] = [
   {
     type: SubscriptionItemType.Plus,
@@ -108,6 +123,26 @@ const pricingPlans: PlanCard[] = [
   },
 ];
 
+const COMPARE_COLUMNS: Array<{ key: ComparePlan; label: string }> = [
+  { key: 'pro', label: 'Pro' },
+  { key: 'plus', label: 'Plus' },
+  { key: 'max', label: 'Max' },
+  { key: 'enterprise', label: 'Enterprise' },
+];
+
+function renderCompareValue(value: CompareValue) {
+  if (typeof value === 'boolean') {
+    return (
+      <i
+        className={clsx('size-5 aspect-square', value ? 'icon-check text-success-500' : 'icon-cancel text-danger-400')}
+        aria-hidden="true"
+      />
+    );
+  }
+
+  return <span className="text-tertiary">{value}</span>;
+}
+
 function buildPlans(subscriptionItems: SubscriptionItem[]): PlanCard[] {
   const subscriptionByType = new Map(subscriptionItems.map((item) => [item.type, item]));
 
@@ -122,6 +157,167 @@ function buildPlans(subscriptionItems: SubscriptionItem[]): PlanCard[] {
 export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space: Space; data?: SubscriptionItem[] }) {
   const mergedPlans = React.useMemo(() => buildPlans(subscriptionItems), [subscriptionItems]);
   const [data, setData] = React.useState<PlanCard[]>(mergedPlans);
+  const [openSections, setOpenSections] = React.useState<Record<string, boolean>>({
+    ai_agents: true,
+    domain_branding: true,
+    design_page_builder: true,
+    newsletter_email: true,
+    integrations: true,
+    api_access: true,
+  });
+
+  const compareSections = React.useMemo<CompareSection[]>(() => {
+    const planByType = new Map(mergedPlans.map((item) => [item.type, item]));
+    const getCredits = (type: SubscriptionItemType) =>
+      planByType.get(type)?.credits_per_month?.toLocaleString('en-US') ?? 'Custom';
+
+    return [
+      {
+        id: 'ai_agents',
+        title: 'AI & Agents',
+        icon: 'icon-sparkles',
+        rows: [
+          {
+            label: 'AI credits / month',
+            values: {
+              pro: getCredits(SubscriptionItemType.Pro),
+              plus: getCredits(SubscriptionItemType.Plus),
+              max: getCredits(SubscriptionItemType.Max),
+              enterprise: 'Custom',
+            },
+          },
+          {
+            label: 'Top-up multiplier bonus',
+            values: {
+              pro: '1x (no bonus)',
+              plus: '1.5x',
+              max: '2x',
+              enterprise: 'Custom',
+            },
+          },
+          {
+            label: 'Advanced AI models (Sonnet, GPT-4o, Gemini Pro)',
+            values: { pro: 'Unlimited', plus: 'Unlimited', max: 'Unlimited', enterprise: 'Unlimited' },
+          },
+          {
+            label: 'Premium AI models (Opus)',
+            values: { pro: false, plus: true, max: true, enterprise: true },
+          },
+          {
+            label: 'Custom AI agents',
+            values: { pro: '1', plus: '3', max: '10', enterprise: 'Unlimited' },
+          },
+          {
+            label: 'AI tool categories',
+            values: {
+              pro: 'Basic, Standard',
+              plus: 'Basic, Standard, Advanced',
+              max: 'Basic, Standard, Advanced',
+              enterprise: 'All',
+            },
+          },
+          {
+            label: 'AI page generations / month',
+            values: { pro: '20', plus: 'Unlimited', max: 'Unlimited', enterprise: 'Unlimited' },
+          },
+        ],
+      },
+      {
+        id: 'domain_branding',
+        title: 'Domain & Branding',
+        icon: 'icon-globe',
+        rows: [
+          { label: 'Custom event slug', values: { pro: true, plus: true, max: true, enterprise: true } },
+          { label: 'Custom domain', values: { pro: false, plus: true, max: true, enterprise: true } },
+          { label: 'Remove Lemonade branding', values: { pro: true, plus: true, max: true, enterprise: true } },
+        ],
+      },
+      {
+        id: 'design_page_builder',
+        title: 'Design & Page Builder',
+        icon: 'icon-palette-outline',
+        rows: [
+          {
+            label: 'Premium themes',
+            values: { pro: '10', plus: 'Unlimited', max: 'Unlimited', enterprise: 'Unlimited' },
+          },
+          {
+            label: 'Page builder sections',
+            values: {
+              pro: 'All sections',
+              plus: 'All sections + Containers',
+              max: 'All sections + Containers',
+              enterprise: 'Full access',
+            },
+          },
+          {
+            label: 'Custom code injection',
+            values: { pro: 'CSS', plus: 'CSS', max: 'CSS, HTML', enterprise: 'CSS, HTML, JS' },
+          },
+        ],
+      },
+      {
+        id: 'newsletter_email',
+        title: 'Newsletter & Email',
+        icon: 'icon-email',
+        rows: [
+          { label: 'Newsletter access', values: { pro: true, plus: true, max: true, enterprise: true } },
+          { label: 'Sends / month', values: { pro: '4', plus: '12', max: '30', enterprise: 'Unlimited' } },
+          {
+            label: 'Recipients / send',
+            values: { pro: '1,000', plus: '5,000', max: '25,000', enterprise: 'Unlimited' },
+          },
+        ],
+      },
+      {
+        id: 'integrations',
+        title: 'Integrations',
+        icon: 'icon-connector-line',
+        rows: [
+          {
+            label: 'Connectors',
+            values: { pro: 'Google Sheets, Airtable', plus: 'All', max: 'All', enterprise: 'All' },
+          },
+          { label: 'API access', values: { pro: true, plus: true, max: true, enterprise: true } },
+          { label: 'Marketplace seller', values: { pro: true, plus: true, max: true, enterprise: true } },
+          { label: 'Referral stablecoin rewards', values: { pro: true, plus: true, max: true, enterprise: true } },
+          {
+            label: 'Config version history',
+            values: { pro: '20', plus: '50', max: 'Unlimited', enterprise: 'Unlimited' },
+          },
+        ],
+      },
+      {
+        id: 'api_access',
+        title: 'API access',
+        icon: 'icon-settings',
+        rows: [
+          { label: 'Max API keys', values: { pro: '3', plus: '10', max: '25', enterprise: '999' } },
+          { label: 'Rate limit / min', values: { pro: '60', plus: '120', max: '300', enterprise: '1,000' } },
+          { label: 'Burst / sec', values: { pro: '3', plus: '5', max: '15', enterprise: '50' } },
+          { label: 'Max page size', values: { pro: '50', plus: '100', max: '100', enterprise: '250' } },
+          {
+            label: 'Monthly quota',
+            values: { pro: '10,000', plus: '50,000', max: '200,000', enterprise: '1,000,000' },
+          },
+          {
+            label: 'Overage enabled',
+            values: { pro: false, plus: '($2.00 / 1k)', max: '($1.50 / 1k)', enterprise: '($1.00 / 1k)' },
+          },
+          { label: 'Hard cap', values: { pro: '10,500', plus: '100,000', max: '500,000', enterprise: 'Unlimited' } },
+          {
+            label: 'Scopes',
+            values: {
+              pro: 'events: read',
+              plus: 'events: read, write subscribers: read, write',
+              max: 'events: read, write subscribers: read, write',
+              enterprise: 'events: read, write subscribers: read, write',
+            },
+          },
+        ],
+      },
+    ];
+  }, [mergedPlans]);
 
   React.useEffect(() => {
     setData(mergedPlans);
@@ -202,7 +398,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
           </Card.Content>
         </Card.Root>
 
-        {data
+        {[...data]
           .sort((a, b) => Number(a.pricing?.price) - Number(b.pricing?.price))
           .map((item) => {
             return (
@@ -230,7 +426,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                         {/*   </Badge> */}
                         {/* )} */}
                       </div>
-                      {!!item.pricing ? (
+                      {item.pricing ? (
                         <p className="text-tertiary text-sm">Shared across unlimited users</p>
                       ) : (
                         <p className="text-tertiary text-lg">Custom</p>
@@ -239,7 +435,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                   </div>
 
                   <div className="border border-s-0 border-e-0 px-4 py-3">
-                    {!!item.pricing ? (
+                    {item.pricing ? (
                       <div className="flex items-center justify-between">
                         <div className="flex gap-2">
                           <Toggle
@@ -321,6 +517,76 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
               </Card.Root>
             );
           })}
+      </div>
+
+      <div className="space-y-3">
+        <div className="overflow-x-auto no-scrollbar">
+          <div className="min-w-[980px] flex flex-col gap-3">
+            <div className="grid grid-cols-[300px_repeat(5,minmax(160px,1fr))] gap-2">
+              <div className="col-span-2">
+                <p className="text-2xl font-bold">Compare Features</p>
+              </div>
+
+              {COMPARE_COLUMNS.map((column) => (
+                <div
+                  key={column.key}
+                  className="h-10 rounded-sm bg-overlay-primary border border-divider flex items-center justify-center"
+                >
+                  <p className="font-medium">{column.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {compareSections.map((section) => {
+              const isOpen = openSections[section.id] ?? true;
+
+              return (
+                <div key={section.id} className="border border-divider rounded-sm overflow-hidden bg-overlay-primary">
+                  <button
+                    type="button"
+                    className="w-full h-12 px-4 border-b border-divider bg-(--btn-tertiary) flex items-center justify-between"
+                    onClick={() => setOpenSections((prev) => ({ ...prev, [section.id]: !isOpen }))}
+                    aria-expanded={isOpen}
+                  >
+                    <div className="flex items-center gap-2">
+                      <i aria-hidden="true" className={clsx('size-5 aspect-square text-primary', section.icon)} />
+                      <p className="font-medium">{section.title}</p>
+                    </div>
+                    <i
+                      className={clsx(
+                        'size-5 aspect-square text-tertiary',
+                        isOpen ? 'icon-arrow-down rotate-180' : 'icon-arrow-down',
+                      )}
+                    />
+                  </button>
+
+                  {isOpen && (
+                    <div>
+                      {section.rows.map((row, rowIndex) => (
+                        <div
+                          key={row.label}
+                          className={clsx(
+                            'grid grid-cols-[300px_repeat(5,minmax(160px,1fr))]',
+                            rowIndex !== 0 && 'border-t border-divider',
+                          )}
+                        >
+                          <div className="px-4 py-3 text-tertiary col-span-2">
+                            <p>{row.label}</p>
+                          </div>
+                          {COMPARE_COLUMNS.map((column) => (
+                            <div key={column.key} className="px-3 py-3 text-center flex items-center justify-center">
+                              {renderCompareValue(row.values[column.key])}
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
