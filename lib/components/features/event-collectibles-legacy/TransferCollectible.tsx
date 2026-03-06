@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ethers } from "ethers";
+import { isAddress } from "viem";
 
 import { Claim, TransferDocument } from "$lib/graphql/generated/wallet/graphql";
 import { Button, Input, LabeledInput, ModalContent, toast } from "$lib/components/core";
@@ -88,7 +88,7 @@ export function TransferCollectible({ claim, token }: { claim: Claim; token: Tok
         variant="secondary"
         className="w-full mt-4"
         onClick={() => {
-          if (!walletAddress || !ethers.isAddress(walletAddress)) {
+          if (!walletAddress || !isAddress(walletAddress)) {
             toast.error("Invalid wallet address");
             return;
           }

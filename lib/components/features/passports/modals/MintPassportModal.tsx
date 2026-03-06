@@ -1,12 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Eip1193Provider, ethers } from 'ethers';
+import { createPublicClient, decodeEventLog, formatUnits, http, type Address, type EIP1193Provider } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 
 import { Button, modal, ModalContent, toast } from '$lib/components/core';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { appKit, useAppKitProvider } from '$lib/utils/appkit';
-import { approveERC20Spender, AbstractPassportContract, checkBalanceSufficient, formatError, isNativeToken, writeContract } from '$lib/utils/crypto';
+import { approveERC20Spender, checkBalanceSufficient, createViemClients, getViemChainConfig, isNativeToken } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
 import { CurrencyClient } from '$lib/services/currency';
 import { SignTransactionModal } from '$lib/components/features/modals/SignTransaction';
 import { ConfirmTransaction } from '$lib/components/features/modals/ConfirmTransaction';
@@ -33,7 +34,7 @@ export function MintPassportModal({
   provider: PASSPORT_PROVIDER;
   passportImage?: string;
 }) {
-  const { walletProvider } = useAppKitProvider('eip155');
+  const { walletProvider } = useAppKitProvider<EIP1193Provider>('eip155');
 
   const chain = usePassportChain(provider);
   const [status, setStatus] = useState<'signing' | 'confirming' | 'success' | 'none'>('none');
@@ -47,9 +48,16 @@ export function MintPassportModal({
     if (!chain || !contractAddress) return;
 
     const loadCurrencyAndSymbol = async () => {
-      const rpcProvider = new ethers.JsonRpcProvider(chain.rpc_url);
-      const contract = AbstractPassportContract.attach(contractAddress).connect(rpcProvider) as ethers.Contract;
-      const currencyAddress = await contract.getFunction('currency')();
+      const viemChain = getViemChainConfig(chain);
+      const publicClient = createPublicClient({
+        chain: viemChain,
+        transport: http(chain.rpc_url),
+      });
+      const currencyAddress = await publicClient.readContract({
+        abi: AbstractPassportABI,
+        address: contractAddress as Address,
+        functionName: 'currency',
+      }) as Address;
 
       setCurrency(currencyAddress);
 
@@ -76,7 +84,7 @@ export function MintPassportModal({
         throw new Error('Passport contract address not configured');
       }
 
-      if (currency === null) {
+      if (currency === null || !walletProvider || !chain?.chain_id) {
         throw new Error('Currency not loaded');
       }
 
@@ -85,60 +93,64 @@ export function MintPassportModal({
       const priceWei = BigInt(mintData.price || '0');
       const isNative = isNativeToken(currency, chain.chain_id);
 
+      const { walletClient, publicClient, account } = await createViemClients(
+        chain.chain_id,
+        walletProvider
+      );
+
       if (priceWei > 0n) {
-        await checkBalanceSufficient(
-          currency,
-          chain.chain_id,
-          priceWei,
-          walletProvider as Eip1193Provider,
-        );
+        await checkBalanceSufficient({
+          publicClient,
+          tokenAddress: currency,
+          chainId: chain.chain_id,
+          amount: priceWei,
+          account: account as Address,
+        });
       }
 
       if (!isNative && priceWei > 0n) {
-        await approveERC20Spender(
-          currency,
-          contractAddress as string,
-          priceWei,
-          walletProvider as Eip1193Provider,
-        );
+        await approveERC20Spender({
+          walletClient,
+          tokenAddress: currency as Address,
+          spender: contractAddress as Address,
+          amount: priceWei,
+          account: account as Address,
+        });
       }
 
-      const transaction = await writeContract(
-        AbstractPassportContract,
-        contractAddress as string,
-        walletProvider as Eip1193Provider,
-        'mint',
-        [mintData.metadata, mintData.price, mintData.signature],
-        { value: isNative ? mintData.price : 0 },
-      );
+      const hash = await walletClient.writeContract({
+        abi: AbstractPassportABI,
+        address: contractAddress as Address,
+        functionName: 'mint',
+        args: [mintData.metadata, priceWei, mintData.signature],
+        account,
+        value: isNative ? priceWei : 0n,
+      });
 
-      const txHash = transaction.hash;
+      const txHash = hash;
 
       setStatus('confirming');
 
-      const receipt = await transaction.wait();
-      const iface = new ethers.Interface(AbstractPassportABI);
-
-      let parsedTransferLog: ethers.LogDescription | null = null;
-
-      receipt.logs.some((log) => {
-        try {
-          const parsedLog = iface.parseLog(log);
-          if (parsedLog?.name === 'Transfer') {
-            parsedTransferLog = parsedLog;
-            return true;
-          }
-
-          return false;
-        } catch (error) {
-          return false;
-        }
-      });
-
       let tokenId = '';
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
-      if (parsedTransferLog) {
-        tokenId = parsedTransferLog.args?.tokenId?.toString();
+      for (const log of receipt.logs) {
+        try {
+          const decoded = decodeEventLog({
+            abi: AbstractPassportABI,
+            data: log.data,
+            topics: log.topics,
+          });
+
+          if (decoded.eventName === 'Transfer') {
+            const id = decoded.args?.tokenId as bigint | undefined;
+            if (id != null) {
+              tokenId = id.toString();
+              break;
+            }
+          }
+        } catch {
+        }
       }
 
       modal.close();
@@ -196,7 +208,9 @@ export function MintPassportModal({
         </div>
 
         <Button variant="secondary" onClick={handleMint} disabled={!currency}>
-          Mint {mintData?.price && +mintData.price > 0 ? `‣ ${ethers.formatUnits(mintData.price, currencyDecimals)} ${currencySymbol}` : '‣ Free'}
+          Mint {mintData?.price && +mintData.price > 0
+            ? `‣ ${formatUnits(BigInt(mintData.price), currencyDecimals)} ${currencySymbol}`
+            : '‣ Free'}
         </Button>
       </div>
     </ModalContent>

@@ -1,6 +1,6 @@
 'use client';
 
-import { formatUnits } from 'ethers';
+import { formatUnits } from 'viem';
 import { format } from 'date-fns';
 
 import { ModalContent, modal } from '$lib/components/core';

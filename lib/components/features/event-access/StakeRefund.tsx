@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { format } from "date-fns";
-import { Eip1193Provider } from "ethers";
+import { type EIP1193Provider } from "viem";
 
 import { EthereumStakeAccount, PaymentAccountInfo, PaymentRefundInfo, PaymentRefundSignature } from '$lib/graphql/generated/backend/graphql';
-import { formatWallet, getChain, LemonadeStakePaymentContract } from "$lib/utils/crypto";
+import { formatWallet, getChain, createViemClients } from "$lib/utils/crypto";
 import { useClient } from "$lib/graphql/request";
 import { GetPaymentRefundSignatureDocument } from "$lib/graphql/generated/backend/graphql";
 import { toast, Button, modal, ModalContent } from "$lib/components/core";
 import { getErrorMessage } from '$lib/utils/error';
 import { useAppKitAccount } from "$lib/utils/appkit";
 import { useAppKitProvider } from "$lib/utils/appkit";
-import { writeContract } from "$lib/utils/crypto";
+import LemonadeStakePayment from "$lib/abis/LemonadeStakePayment.json";
 import { getDisplayPrice } from "$lib/utils/event";
 
 import { ConnectWallet } from "../modals/ConnectWallet";
@@ -160,25 +160,36 @@ function SignClaimStakeTransactionModal({ signature, payment }: {
 }) {
   const { walletProvider } = useAppKitProvider('eip155');
   const [status, setStatus] = useState<'signing' | 'confirming' | 'success' | 'none'>('none');
+  const chain = getChain((payment.payment_account?.account_info as EthereumStakeAccount).network);
 
   const handleRefund = async () => {
     try {
       setStatus('signing');
-      
+
       const contractAddress = (payment.payment_account?.account_info as EthereumStakeAccount).address;
       const { args, signature: sig } = signature;
-      
-      const transaction = await writeContract(
-        LemonadeStakePaymentContract,
-        contractAddress,
-        walletProvider as Eip1193Provider,
-        'refund',
-        [...args, sig]
+
+      if (!walletProvider || !chain) {
+        throw new Error('Wallet not connected');
+      }
+
+      const { walletClient, publicClient, account } = await createViemClients(
+        chain.chain_id,
+        walletProvider as EIP1193Provider,
       );
+
+      const hash = await walletClient.writeContract({
+        abi: LemonadeStakePayment.abi,
+        address: contractAddress,
+        functionName: 'refund',
+        args: [...args, sig],
+        account,
+        chain: walletClient.chain,
+      });
 
       setStatus('confirming');
 
-      await transaction.wait();
+      await publicClient.waitForTransactionReceipt({ hash });
 
       setStatus('success');
     } catch (error: unknown) {

@@ -1,4 +1,4 @@
-import { formatEther } from 'ethers';
+import { formatEther } from 'viem';
 import { formatNumber } from './number';
 
 export function calculateMarketCapData(

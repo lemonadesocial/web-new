@@ -9,7 +9,7 @@ import { User } from '$lib/graphql/generated/backend/graphql';
 import UserProfileEvents from './UserProfileEvents';
 import { UserProfilePost } from './UserProfilePost';
 import { UserProfileCommunities } from './UserProfileCommunities';
-import { isAddress } from 'ethers';
+import { isAddress } from 'viem';
 
 const tabData = [
   { label: 'Post', key: 'feed', component: UserProfilePost },

@@ -2,18 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Eip1193Provider, ethers } from 'ethers';
+import { formatUnits, type Address, type EIP1193Provider } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 
 import { Button, ModalContent, modal, toast } from '$lib/components/core';
 import { useAppKitAccount, useAppKitProvider, appKit } from '$lib/utils/appkit';
-import { checkBalanceSufficient, formatError, writeContract, approveERC20Spender, isNativeToken, RedEnvelopeContract } from '$lib/utils/crypto';
-import { RedEnvelopeClient } from '$lib/services/red-envelope';
-import { formatUnits } from 'ethers';
+import { isNativeToken, createViemClients, checkBalanceSufficient, approveERC20Spender } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
+import { RedEnvelopeClient, RED_ENVELOPE_ADDRESS } from '$lib/services/red-envelope/client';
+import { RedEnvelopeAbi } from '$lib/abis/RedEnvelope';
 import { formatNumber } from '$lib/utils/number';
 import { ASSET_PREFIX, MEGAETH_CHAIN_ID } from '$lib/utils/constants';
 import { getAsset } from '../utils';
-import { RED_ENVELOPE_ADDRESS } from '$lib/services/red-envelope/client';
 
 type BuyRedEnvelopesModalProps = {
   pack: {
@@ -29,7 +29,7 @@ type Step = 'confirm' | 'signing' | 'packing' | 'onTheWay' | 'ready';
 export function BuyRedEnvelopesModal({ pack, onComplete }: BuyRedEnvelopesModalProps) {
   const router = useRouter();
   const { address } = useAppKitAccount();
-  const { walletProvider } = useAppKitProvider('eip155');
+  const { walletProvider } = useAppKitProvider<EIP1193Provider>('eip155');
   const [step, setStep] = useState<Step>('confirm');
   const [currencyAddress, setCurrencyAddress] = useState<string | null>(null);
 
@@ -57,37 +57,38 @@ export function BuyRedEnvelopesModal({ pack, onComplete }: BuyRedEnvelopesModalP
     try {
       setStep('signing');
 
+      const { walletClient, publicClient, account } = await createViemClients(MEGAETH_CHAIN_ID, walletProvider);
       const isNative = isNativeToken(currencyAddress, MEGAETH_CHAIN_ID.toString());
 
-      await checkBalanceSufficient(
-        currencyAddress,
-        MEGAETH_CHAIN_ID.toString(),
-        pack.price,
-        walletProvider as Eip1193Provider,
-        address,
-      );
+      await checkBalanceSufficient({
+        publicClient,
+        tokenAddress: currencyAddress,
+        chainId: MEGAETH_CHAIN_ID.toString(),
+        amount: pack.price,
+        account
+      });
 
       if (!isNative) {
-        await approveERC20Spender(
-          currencyAddress,
-          RED_ENVELOPE_ADDRESS,
-          pack.price,
-          walletProvider as Eip1193Provider,
-        );
+        await approveERC20Spender({
+          walletClient,
+          tokenAddress: currencyAddress as Address,
+          spender: RED_ENVELOPE_ADDRESS as Address,
+          amount: pack.price,
+          account,
+        });
       }
 
-      const transaction = await writeContract(
-        RedEnvelopeContract,
-        RED_ENVELOPE_ADDRESS,
-        walletProvider as Eip1193Provider,
-        'buyEnvelopes',
-        [BigInt(pack.quantity), address],
-        { value: isNative ? pack.price : 0 },
-      );
+      const hash = await walletClient.writeContract({
+        abi: RedEnvelopeAbi,
+        address: RED_ENVELOPE_ADDRESS as Address,
+        functionName: 'buyEnvelopes',
+        args: [BigInt(pack.quantity), address],
+        account,
+        value: isNative ? pack.price : 0n
+      });
 
       setStep('packing');
-
-      await transaction.wait();
+      await publicClient.waitForTransactionReceipt({ hash });
 
       setStep('ready');
     } catch (error: unknown) {

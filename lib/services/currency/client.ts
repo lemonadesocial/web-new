@@ -1,9 +1,10 @@
-import { JsonRpcProvider } from 'ethers';
 import { createDrift, type Drift, type ReadContract } from '@gud/drift';
-import { ethersAdapter } from '@gud/drift-ethers';
+import { viemAdapter } from '@gud/drift-viem';
+import { createPublicClient, http } from 'viem';
 
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { ERC20 } from '$lib/abis/ERC20';
+import { getViemChainConfig } from '$lib/utils/crypto';
 
 type ERC20ABI = typeof ERC20;
 
@@ -34,9 +35,13 @@ export class CurrencyClient {
         throw new Error('Chain RPC URL is required');
       }
 
-      const provider = new JsonRpcProvider(this.chain.rpc_url);
+      const viemChain = getViemChainConfig(this.chain);
+      const publicClient = createPublicClient({
+        chain: viemChain,
+        transport: http(this.chain.rpc_url),
+      });
       this.drift = createDrift({
-        adapter: ethersAdapter({ provider }),
+        adapter: viemAdapter({ publicClient }),
       });
     }
 

@@ -6,7 +6,7 @@ import { useUserProfile } from '$lib/hooks/useUserProfile';
 
 import { UserProfileHero } from './UserProfileHero';
 import { UserProfileTabs } from './UserProfileTabs';
-import { isAddress } from 'ethers';
+import { isAddress } from 'viem';
 import { UserProfileInfo } from './UserProfileInfo';
 import { UpcomingEventsCard } from '$app/[domain]/(blank)/s/lemonheads/shared';
 import { WhoToFollow } from '../lens-account/WhoToFollow';

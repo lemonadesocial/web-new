@@ -1,11 +1,11 @@
 import { fetchAccount } from "@lens-protocol/client/actions";
 import { notFound } from "next/navigation";
+import { isAddress } from "viem";
 
 import { LensProfileCard } from "$lib/components/features/lens-account/LensProfileCard";
 import { client } from "$lib/utils/lens/client";
 
 import { UserFeed } from "./feed";
-import { isAddress } from "ethers";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const id = (await params).id;

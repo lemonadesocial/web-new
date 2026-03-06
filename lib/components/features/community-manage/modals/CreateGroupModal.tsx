@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { BrowserProvider, Contract, Eip1193Provider, ethers } from 'ethers';
+import { encodeAbiParameters, parseEventLogs, zeroAddress, type Address, type EIP1193Provider } from 'viem';
 import * as Sentry from '@sentry/nextjs';
 
 import { modal } from '$lib/components/core';
@@ -11,8 +11,9 @@ import { SuccessModal } from '$lib/components/features/modals/SuccessModal';
 import { ErrorModal } from '$lib/components/features/modals/ErrorModal';
 import { useAppKitProvider } from '$lib/utils/appkit';
 import { Chain, AddLaunchpadGroupDocument, ListLaunchpadGroupsDocument } from '$lib/graphql/generated/backend/graphql';
-import { CreateGroupParams, parseLogs } from '$lib/services/token-launch-pad';
-import { formatError } from '$lib/utils/crypto';
+import { CreateGroupParams } from '$lib/services/token-launch-pad';
+import { createViemClients } from '$lib/utils/crypto';
+import { formatError } from '$lib/utils/error';
 import ZapContractABI from '$lib/abis/token-launch-pad/FlaunchZap.json';
 import TreasuryManagerFactoryABI from '$lib/abis/token-launch-pad/TreasuryManagerFactory.json';
 import { useMutation } from '$lib/graphql/request';
@@ -43,11 +44,6 @@ export function CreateGroupModal({ params, launchChain, onSuccess }: CreateGroup
     },
   });
 
-  const getSigner = async () => {
-    const provider = new BrowserProvider(walletProvider as Eip1193Provider);
-    return provider.getSigner();
-  };
-
   const handleCreateGroup = async () => {
     try {
       setStatus('signing');
@@ -63,36 +59,60 @@ export function CreateGroupModal({ params, launchChain, onSuccess }: CreateGroup
         throw new Error('Chain configuration missing required contracts');
       }
 
-      const signer = await getSigner();
-      const permissionsContractAddress = params.isOpen ? ethers.ZeroAddress : closedPermissions;
+      const { walletClient, publicClient, account } = await createViemClients(
+        launchChain.chain_id,
+        walletProvider as EIP1193Provider,
+      );
+      const rawPermissionsAddress = params.isOpen ? zeroAddress : closedPermissions;
 
-      if (!permissionsContractAddress) {
+      if (!rawPermissionsAddress) {
         throw new Error('Permissions contract address is required');
       }
 
-      const writeContract = new Contract(zapContractAddress, ZapContractABI.abi, signer);
-      const data = ethers.AbiCoder.defaultAbiCoder().encode(['address', 'uint256', 'uint256', 'uint256', 'uint256','uint256'], [
-        params.groupERC20Token,
-        params.minEscrowDuration,
-        params.minStakeDuration,
-        0, // minStakeAmount
-        params.creatorSharePercentage * 100000,
-        params.ownerSharePercentage * 100000,
-      ]);
+      const permissionsContractAddress = rawPermissionsAddress as Address;
 
-      const tx = await writeContract.deployAndInitializeManager(
-        stakingManagerImplementation,
-        params.groupOwner,
-        data,
-        permissionsContractAddress,
+      const data = encodeAbiParameters(
+        [
+          { name: 'groupERC20Token', type: 'address' },
+          { name: 'minEscrowDuration', type: 'uint256' },
+          { name: 'minStakeDuration', type: 'uint256' },
+          { name: 'minStakeAmount', type: 'uint256' },
+          { name: 'creatorSharePercentage', type: 'uint256' },
+          { name: 'ownerSharePercentage', type: 'uint256' },
+        ],
+        [
+          params.groupERC20Token as `0x${string}`,
+          BigInt(params.minEscrowDuration),
+          BigInt(params.minStakeDuration),
+          0n, // minStakeAmount
+          BigInt(params.creatorSharePercentage * 100000),
+          BigInt(params.ownerSharePercentage * 100000),
+        ],
       );
+
+      const hash = await walletClient.writeContract({
+        abi: ZapContractABI.abi,
+        address: zapContractAddress as Address,
+        functionName: 'deployAndInitializeManager',
+        args: [
+          stakingManagerImplementation as Address,
+          params.groupOwner as Address,
+          data,
+          permissionsContractAddress as Address,
+        ],
+        account,
+        chain: walletClient.chain,
+      });
 
       setStatus('confirming');
 
-      const receipt = await tx.wait();
-      const factoryInterface = new ethers.Interface(TreasuryManagerFactoryABI.abi);
-      const event = parseLogs(receipt, factoryInterface).find((log) => log.parsedLog.name === 'ManagerDeployed');
-      const manager = event?.parsedLog.args._manager as string | undefined;
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      const events = parseEventLogs({
+        abi: TreasuryManagerFactoryABI.abi as any,
+        eventName: 'ManagerDeployed',
+        logs: receipt.logs,
+      });
+      const manager = (events[0] as any)?.args?._manager as string | undefined;
 
       if (!manager) {
         throw new Error('Manager address not found');
