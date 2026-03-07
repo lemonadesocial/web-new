@@ -3,9 +3,16 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { match } from 'ts-pattern';
 
-import { Button, Card, Segment, Toggle } from '$lib/components/core';
+import { Button, Card, Segment, Toggle, toast } from '$lib/components/core';
 import { formatCurrency } from '$lib/utils/string';
-import { Space, SubscriptionItem, SubscriptionItemType } from '$lib/graphql/generated/backend/graphql';
+import { useMutation } from '$lib/graphql/request';
+import {
+  PurchaseSubscriptionDocument,
+  Space,
+  SubscriptionItem,
+  SubscriptionItemType,
+  SubscriptionTierEnum,
+} from '$lib/graphql/generated/backend/graphql';
 import clsx from 'clsx';
 
 type PlanCard = {
@@ -160,6 +167,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
   const mergedPlans = React.useMemo(() => buildPlans(subscriptionItems), [subscriptionItems]);
   const [data, setData] = React.useState<PlanCard[]>(mergedPlans);
   const [isCompareExpanded, setIsCompareExpanded] = React.useState(false);
+  const [upgradingTier, setUpgradingTier] = React.useState<SubscriptionTierEnum | null>(null);
   const [openSections, setOpenSections] = React.useState<Record<string, boolean>>({
     ai_agents: true,
     domain_branding: false,
@@ -167,6 +175,19 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
     newsletter_email: false,
     integrations: false,
     api_access: false,
+  });
+  const [purchaseSubscription, { loading: purchasingPlan }] = useMutation(PurchaseSubscriptionDocument, {
+    onComplete: (_client, response) => {
+      const checkoutUrl = response?.purchaseSubscription?.checkout_url;
+
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      }
+    },
+    onError: (error) => {
+      const message = error instanceof Error ? error.message : 'Failed to start checkout';
+      toast.error(message);
+    },
   });
 
   const compareSections = React.useMemo<CompareSection[]>(() => {
@@ -327,6 +348,25 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
     setData(mergedPlans);
   }, [mergedPlans]);
 
+  const handleUpgrade = async (tier: SubscriptionTierEnum, annual: boolean) => {
+    if (purchasingPlan) return;
+
+    setUpgradingTier(tier);
+    try {
+      await purchaseSubscription({
+        variables: {
+          input: {
+            stand_id: space._id,
+            tier,
+            annual,
+          },
+        },
+      });
+    } finally {
+      setUpgradingTier(null);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-6">
@@ -486,19 +526,29 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           <Button
                             outlined
                             variant="secondary"
-                            disabled={space.subscription_tier === SubscriptionItemType.Plus}
+                            disabled={space.subscription_tier === SubscriptionItemType.Plus || purchasingPlan}
+                            loading={upgradingTier === SubscriptionTierEnum.Plus}
+                            onClick={() => handleUpgrade(SubscriptionTierEnum.Plus, Boolean(item.annual))}
                           >
                             Upgrade
                           </Button>
                         ))
                         .with(SubscriptionItemType.Pro, () => (
-                          <Button disabled={space.subscription_tier === SubscriptionItemType.Pro}>Upgrade</Button>
+                          <Button
+                            disabled={space.subscription_tier === SubscriptionItemType.Pro || purchasingPlan}
+                            loading={upgradingTier === SubscriptionTierEnum.Pro}
+                            onClick={() => handleUpgrade(SubscriptionTierEnum.Pro, Boolean(item.annual))}
+                          >
+                            Upgrade
+                          </Button>
                         ))
                         .with(SubscriptionItemType.Max, () => (
                           <Button
                             outlined
                             variant="secondary"
-                            disabled={space.subscription_tier === SubscriptionItemType.Plus}
+                            disabled={space.subscription_tier === SubscriptionItemType.Max || purchasingPlan}
+                            loading={upgradingTier === SubscriptionTierEnum.Max}
+                            onClick={() => handleUpgrade(SubscriptionTierEnum.Max, Boolean(item.annual))}
                           >
                             Upgrade
                           </Button>
