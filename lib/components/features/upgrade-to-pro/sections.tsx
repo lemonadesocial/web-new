@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { type Space } from '$lib/graphql/generated/backend/graphql';
+import { SubscriptionItem, type Space } from '$lib/graphql/generated/backend/graphql';
 
 import { CommunityDetail } from './CommunityDetail';
 import { Connectors } from './Connectors';
@@ -9,15 +9,9 @@ import { Payouts } from './Payouts';
 import { PlanAndCredits } from './PlanAndCredits';
 import Team from './Team';
 
-export const DEFAULT_UPGRADE_TO_PRO_SECTION = 'overview' as const;
+export const DEFAULT_UPGRADE_TO_PRO_SECTION = 'plans' as const;
 
-export type UpgradeToProSectionKey =
-  | 'overview'
-  | 'team'
-  | 'plans'
-  | 'payouts'
-  | 'custom-domain'
-  | 'connectors';
+export type UpgradeToProSectionKey = 'overview' | 'team' | 'plans' | 'payouts' | 'custom-domain' | 'connectors';
 
 export type UpgradeToProSection = {
   key: UpgradeToProSectionKey;
@@ -25,7 +19,7 @@ export type UpgradeToProSection = {
   aliases?: string[];
   label: string;
   icon: string;
-  render: (props: { space: Space }) => ReactNode;
+  render: (props: { space: Space; subscriptionData?: SubscriptionItem[] }) => ReactNode;
 };
 
 export const UPGRADE_TO_PRO_SECTIONS: UpgradeToProSection[] = [
@@ -50,7 +44,7 @@ export const UPGRADE_TO_PRO_SECTIONS: UpgradeToProSection[] = [
     slug: 'plans',
     label: 'Plans & Credits',
     icon: 'icon-credit-card',
-    render: () => <PlanAndCredits />,
+    render: ({ space, subscriptionData = [] }) => <PlanAndCredits space={space} data={subscriptionData} />,
   },
   {
     key: 'payouts',

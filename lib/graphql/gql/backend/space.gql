@@ -224,11 +224,22 @@ query GetSpaceEventRequests($space: MongoID!, $skip: Int!, $limit: Int!, $state:
       decided_at
       decided_by
       created_by_expanded {
+        _id
         name
         display_name
         email
+        image_avatar
+        new_photos_expanded {
+          _id
+          bucket
+          key
+          type
+          url
+        }
       }
       event_expanded {
+        _id
+        shortid
         title
         start
         timezone
@@ -236,6 +247,23 @@ query GetSpaceEventRequests($space: MongoID!, $skip: Int!, $limit: Int!, $state:
           city
           country
           region
+        }
+        host_expanded_new {
+          _id
+          image_avatar
+          name
+          new_photos_expanded {
+            _id
+            bucket
+            key
+            type
+            url
+          }
+        }
+        visible_cohosts_expanded_new {
+          _id
+          image_avatar
+          name
         }
         new_new_photos_expanded {
           _id
@@ -521,6 +549,7 @@ query GetListMySpaces($skip: Int, $limit: Int) {
     items {
       ...Space
     }
+    total
   }
 }
 
