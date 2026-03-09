@@ -16,6 +16,7 @@ import { CommunityManageSpaceProvider } from './CommunityManageSpaceContext';
 const menu = [
   { name: 'Overview', page: 'overview' },
   { name: 'Events', page: 'events' },
+  { name: 'Submissions', page: 'submissions' },
   { name: 'People', page: 'people' },
   { name: 'Agents', page: 'agents' },
   { name: 'Payments', page: 'payments' },

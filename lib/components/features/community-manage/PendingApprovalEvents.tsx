@@ -1,4 +1,6 @@
 'use client';
+
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { Button, Card, toast } from '$lib/components/core';
 import {
@@ -16,13 +18,15 @@ import { CommonSection, SmallCommonSection } from './shared';
 
 interface Props {
   spaceId: string;
+  spaceSlugOrId?: string;
   /** the number events want to show */
   total?: number;
   /** using for render small or default CommonSection */
   isCommonSection?: boolean;
   onCompleted?: () => void;
 }
-export function PendingApprovalEvents({ spaceId, isCommonSection, onCompleted }: Props) {
+export function PendingApprovalEvents({ spaceId, spaceSlugOrId, isCommonSection, onCompleted }: Props) {
+  const router = useRouter();
   const [state, setState] = React.useState<{ id: string; action: SpaceEventRequestState; submitting: boolean }>();
   const { data, refetch } = useQuery(GetSpaceEventRequestsDocument, {
     variables: { space: spaceId, skip: 0, limit: 2, state: EventJoinRequestState.Pending },
@@ -88,7 +92,12 @@ export function PendingApprovalEvents({ spaceId, isCommonSection, onCompleted }:
             <p className="text-xs">{data?.getSpaceEventRequests.total}</p>
           </div>
         </div>
-        <Button variant="tertiary-alt" size="sm" iconRight="icon-chevron-right">
+        <Button
+          variant="tertiary-alt"
+          size="sm"
+          iconRight="icon-chevron-right"
+          onClick={() => spaceSlugOrId && router.push(`/s/manage/${spaceSlugOrId}/submissions`)}
+        >
           All Submissions
         </Button>
       </div>

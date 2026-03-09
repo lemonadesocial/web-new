@@ -83,7 +83,13 @@ export function CommunityOverview({ space: initSpace, hostname }: { space?: Spac
 
           <div className="[&>*:only-child]:hidden flex flex-col gap-5">
             <h3 className="text-xl font-semibold">Events</h3>
-            {space?._id && <PendingApprovalEvents spaceId={space._id} onCompleted={refetch} />}
+            {space?._id && (
+              <PendingApprovalEvents
+                spaceId={space._id}
+                spaceSlugOrId={space.slug || space._id}
+                onCompleted={refetch}
+              />
+            )}
             {space && <UpComingEventsSection space={space} events={events} />}
           </div>
         </div>
