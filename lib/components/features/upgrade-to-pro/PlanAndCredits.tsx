@@ -344,6 +344,8 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
     ];
   }, [mergedPlans]);
   const previewSection = compareSections[0];
+  const isFreePlan = !space.subscription_tier || space.subscription_tier === SubscriptionItemType.Free;
+  const [mobileExpandedPlan, setMobileExpandedPlan] = React.useState<string>(SubscriptionItemType.Pro);
 
   React.useEffect(() => {
     setData(mergedPlans);
@@ -377,14 +379,14 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card.Root className="h-[148px] md:col-span-2">
+          <Card.Root className="min-h-[148px] md:col-span-2">
             <Card.Content className="flex h-full flex-col justify-between">
               <div className="flex gap-3 items-center">
                 <div className="p-2 rounded-sm bg-(--chip-secondary-bg) flex items-center justify-center">
                   <i className="icon-lemonade-logo text-warning-300 w-5 h-5 aspect-square" />
                 </div>
                 <div>
-                  <p>You’re on Free Plan</p>
+                  <p>You’re on {(space.subscription_tier || SubscriptionItemType.Free).toUpperCase()} Plan</p>
                   <p className="text-tertiary text-sm">Upgrade anytime!</p>
                 </div>
               </div>
@@ -399,52 +401,74 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
             </Card.Content>
           </Card.Root>
 
-          <Card.Root className="md:col-span-2">
-            <Card.Content className="flex flex-col gap-3">
-              <div className="flex items-center justify-between text-tertiary">
-                <div className="flex items-center gap-1.5">
-                  <p className="text-primary">Credits Remaining</p>
-                  <div className="bg-(--btn-tertiary) w-fit px-1.5 py-[1px] rounded-full">
-                    <p className="text-xs">What is this?</p>
+          {isFreePlan ? (
+            <Card.Root className="md:col-span-2 overflow-hidden">
+              <Card.Content className="relative">
+                <div className="pointer-events-none absolute inset-0" />
+                <div className="relative flex h-full flex-col justify-between gap-4">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2.5">
+                      <p>Unlock Credits</p>
+                      <div className="rounded-full px-1.5 py-1 bg-(--btn-tertiary) text-tertiary">
+                        <p className="text-xs leading-none">What is this?</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-tertiary">
+                      Upgrade your plan to unlock credits and get the most out of LemonAI; build pages, generate
+                      content, and automate more of your event workflow.
+                    </p>
                   </div>
                 </div>
+              </Card.Content>
+            </Card.Root>
+          ) : (
+            <Card.Root className="md:col-span-2">
+              <Card.Content className="flex flex-col gap-3">
+                <div className="flex items-center justify-between text-tertiary">
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-primary">Credits Remaining</p>
+                    <div className="bg-(--btn-tertiary) w-fit px-1.5 py-[1px] rounded-full">
+                      <p className="text-xs">What is this?</p>
+                    </div>
+                  </div>
 
-                <p>3 of 5</p>
-              </div>
-              <div className="rounded-full bg-alert-400/16">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    initial={{ width: '0%' }}
-                    animate={{ width: '10%' }}
-                    exit={{ width: 0 }}
-                    transition={{ type: 'tween' }}
-                    className="rounded-full bg-linear-to-r from-alert-700 to-alert-400 h-5 p-1 flex justify-end"
-                  >
-                    <div className="h-3 w-3 border-3 border-white rounded-full"></div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-              <div className="flex items-start justify-between text-tertiary">
-                <div className="flex flex-col gap-2">
-                  <div className="flex gap-1.5 items-center">
-                    <i className="icon-x w-4 h-4 aspect-square" />
-                    <p className="text-sm">No credits will rollover</p>
-                  </div>
-                  <div className="flex gap-1.5 items-center">
-                    <i className="icon-done w-4 h-4 aspect-square" />
-                    <p className="text-sm">Daily credits reset at midnight UTC</p>
-                  </div>
+                  <p>3 of 5</p>
                 </div>
+                <div className="rounded-full bg-alert-400/16">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      initial={{ width: '0%' }}
+                      animate={{ width: '10%' }}
+                      exit={{ width: 0 }}
+                      transition={{ type: 'tween' }}
+                      className="rounded-full bg-linear-to-r from-alert-700 to-alert-400 h-5 p-1 flex justify-end"
+                    >
+                      <div className="h-3 w-3 border-3 border-white rounded-full"></div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+                <div className="flex items-start justify-between text-tertiary">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-1.5 items-center">
+                      <i className="icon-x w-4 h-4 aspect-square" />
+                      <p className="text-sm">No credits will rollover</p>
+                    </div>
+                    <div className="flex gap-1.5 items-center">
+                      <i className="icon-done w-4 h-4 aspect-square" />
+                      <p className="text-sm">Daily credits reset at midnight UTC</p>
+                    </div>
+                  </div>
 
-                <div className="flex items-center gap-0.5">
-                  <div className="size-4 flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-alert-400" />
+                  <div className="flex items-center gap-0.5">
+                    <div className="size-4 flex items-center justify-center">
+                      <div className="w-2 h-2 rounded-full bg-alert-400" />
+                    </div>
+                    <p>Daily credits will be used first</p>
                   </div>
-                  <p>Daily credits will be used first</p>
                 </div>
-              </div>
-            </Card.Content>
-          </Card.Root>
+              </Card.Content>
+            </Card.Root>
+          )}
 
           {[...data]
             .sort((a, b) => Number(a.pricing?.price) - Number(b.pricing?.price))
@@ -561,7 +585,24 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                             Book a Demo
                           </Button>
                         ))}
-                      <ul className="flex flex-col gap-3">
+                      <button
+                        type="button"
+                        className="md:hidden py-2 px-3 rounded-sm bg-(--btn-tertiary) text-tertiary flex items-center justify-center gap-1.5"
+                        onClick={() =>
+                          setMobileExpandedPlan((prev) => (prev === item.type ? '' : item.type))
+                        }
+                        aria-expanded={mobileExpandedPlan === item.type}
+                      >
+                        <span>Features</span>
+                        <i
+                          className={clsx(
+                            'icon-arrow-down size-4 aspect-square transition-transform',
+                            mobileExpandedPlan === item.type && 'rotate-180',
+                          )}
+                        />
+                      </button>
+
+                      <ul className="hidden md:flex flex-col gap-3">
                         <li className="text-tertiary text-sm">
                           <p>{item.featureTitle}</p>
                         </li>
@@ -577,6 +618,34 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           </li>
                         ))}
                       </ul>
+
+                      <AnimatePresence initial={false}>
+                        {mobileExpandedPlan === item.type && (
+                          <motion.ul
+                            key={`${item.type}-mobile-features`}
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2, ease: 'easeInOut' }}
+                            className="md:hidden overflow-hidden flex flex-col gap-3"
+                          >
+                            <li className="text-tertiary text-sm">
+                              <p>{item.featureTitle}</p>
+                            </li>
+                            {item.features?.map((f) => (
+                              <li key={f} className="flex gap-2">
+                                <i className="icon-done size-5 aspect-square" />
+                                <p>
+                                  {f.replace(
+                                    '{{credits_per_month}}',
+                                    item.credits_per_month?.toLocaleString('en-US') ?? '',
+                                  )}
+                                </p>
+                              </li>
+                            ))}
+                          </motion.ul>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </Card.Content>
                 </Card.Root>
