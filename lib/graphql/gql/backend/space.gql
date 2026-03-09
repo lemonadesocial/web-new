@@ -521,6 +521,7 @@ query GetListMySpaces($skip: Int, $limit: Int) {
     items {
       ...Space
     }
+    total
   }
 }
 
