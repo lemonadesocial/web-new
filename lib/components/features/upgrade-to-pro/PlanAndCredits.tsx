@@ -2,6 +2,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { match } from 'ts-pattern';
+import Link from 'next/link';
+import clsx from 'clsx';
 
 import { Button, Card, Segment, Toggle, toast } from '$lib/components/core';
 import { formatCurrency } from '$lib/utils/string';
@@ -13,9 +15,6 @@ import {
   SubscriptionItemType,
   SubscriptionTierEnum,
 } from '$lib/graphql/generated/backend/graphql';
-import clsx from 'clsx';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 type PlanCard = {
   type: SubscriptionItemType | 'enterprise';
@@ -166,7 +165,6 @@ function buildPlans(subscriptionItems: SubscriptionItem[]): PlanCard[] {
 }
 
 export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space: Space; data?: SubscriptionItem[] }) {
-  const router = useRouter();
   const mergedPlans = React.useMemo(() => buildPlans(subscriptionItems), [subscriptionItems]);
   const [data, setData] = React.useState<PlanCard[]>(mergedPlans);
   const [isCompareExpanded, setIsCompareExpanded] = React.useState(false);
