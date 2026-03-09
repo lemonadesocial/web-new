@@ -14,6 +14,8 @@ import {
   SubscriptionTierEnum,
 } from '$lib/graphql/generated/backend/graphql';
 import clsx from 'clsx';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 type PlanCard = {
   type: SubscriptionItemType | 'enterprise';
@@ -164,6 +166,7 @@ function buildPlans(subscriptionItems: SubscriptionItem[]): PlanCard[] {
 }
 
 export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space: Space; data?: SubscriptionItem[] }) {
+  const router = useRouter();
   const mergedPlans = React.useMemo(() => buildPlans(subscriptionItems), [subscriptionItems]);
   const [data, setData] = React.useState<PlanCard[]>(mergedPlans);
   const [isCompareExpanded, setIsCompareExpanded] = React.useState(false);
@@ -389,9 +392,11 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
               </div>
 
               <div>
-                <Button size="sm" variant="tertiary-alt">
-                  Manage
-                </Button>
+                <Link href={`/s/manage/${space.slug || space._id}`}>
+                  <Button size="sm" variant="tertiary-alt">
+                    Manage
+                  </Button>
+                </Link>
               </div>
             </Card.Content>
           </Card.Root>
@@ -560,7 +565,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                         ))}
                       <ul className="flex flex-col gap-3">
                         <li className="text-tertiary text-sm">
-                          <p>All features in Free, plus:</p>
+                          <p>{item.featureTitle}</p>
                         </li>
                         {item.features?.map((f) => (
                           <li key={f} className="flex gap-2">
