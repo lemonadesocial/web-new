@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import clsx from 'clsx';
 
 import { Button, Menu, MenuItem } from '$lib/components/core';
@@ -28,10 +28,13 @@ type UpgradeToProPageProps = {
 };
 
 function UpgradeToProPage({ activeSection, subscriptionData }: UpgradeToProPageProps) {
+  const search = useSearchParams();
+  const spaceId = search.get('space') ?? '';
+
   const router = useRouter();
   const me = useMe();
 
-  const [selectedSpaceId, setSelectedSpaceId] = React.useState<string | undefined>();
+  const [selectedSpaceId, setSelectedSpaceId] = React.useState<string | undefined>(spaceId);
   const [toggleMenuMobile, setToggleMenuMobile] = React.useState(false);
 
   const activeMenuItem = getUpgradeToProSection(activeSection);
