@@ -9,6 +9,7 @@ interface SegmentItem<T> {
   value: T;
   icon?: string;
   iconLeft?: string;
+  disabled?: boolean;
 }
 
 interface SegmentProps<T> {
@@ -28,7 +29,7 @@ export function Segment<T>({ items, selected, size, onSelect, className, disable
       {items.map((item) => (
         <li key={item.value as string} className="flex-1">
           <Button
-            disabled={disabled}
+            disabled={item.disabled || disabled}
             className={clsx(
               'w-full hover:bg-initial text-primary! backdrop-blur-none',
               active !== item.value && 'hover:bg-transparent text-tertiary! hover:text-primary',

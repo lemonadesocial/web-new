@@ -602,7 +602,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           <Segment
                             items={[
                               { value: 'card', iconLeft: 'icon-credit-card' },
-                              { value: 'wallet', iconLeft: 'icon-wallet' },
+                              { value: 'wallet', iconLeft: 'icon-wallet', disabled: true },
                             ]}
                             disabled={space.subscription_tier === item.type || purchasingPlan}
                             onSelect={(method) => {
@@ -709,6 +709,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                             <li className="text-tertiary text-sm">
                               <p>{item.featureTitle}</p>
                             </li>
+                            {console.log(item)}
                             {item.features?.map((f) => (
                               <li key={f} className="flex gap-2">
                                 <i className="icon-done size-5 aspect-square" />
