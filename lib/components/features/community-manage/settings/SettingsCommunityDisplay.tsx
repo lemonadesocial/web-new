@@ -3,8 +3,8 @@ import { Controller, useForm } from 'react-hook-form';
 import clsx from 'clsx';
 import React from 'react';
 import { debounce, kebabCase } from 'lodash';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { object, string } from 'yup';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import * as Sentry from '@sentry/nextjs';
 
 import {
@@ -46,11 +46,11 @@ type FormValues = {
   theme_data: ThemeValues;
 };
 
-const validationSchema = object().shape({
-  title: string().required(),
-  slug: string()
-    .min(3, 'URLs must be at least 3 characters and contain only letters, numbers or dashes.')
-    .required('URLs must be at least 3 characters and contain only letters, numbers or dashes.'),
+const validationSchema = z.object({
+  title: z.string().min(1, { message: 'Title is required.' }),
+  slug: z
+    .string()
+    .min(3, { message: 'URLs must be at least 3 characters and contain only letters, numbers or dashes.' }),
 });
 
 function SettingsCommunityDisplay({ space }: { space: Space }) {
@@ -102,7 +102,7 @@ export function CommunityDetailForm({ space }: { space: Space }) {
       website: space.website || '',
       theme_data: space.theme_data || defaultTheme,
     },
-    resolver: yupResolver(validationSchema),
+    resolver: zodResolver(validationSchema),
   });
 
   const [update] = useMutation(UpdateSpaceDocument, {
