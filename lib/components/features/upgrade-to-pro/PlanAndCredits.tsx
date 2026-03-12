@@ -375,8 +375,8 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
   const { data: dataStandCredits } = useQuery(GetStandCreditsDocument, { variables: { standId: space._id } });
   const credits = dataStandCredits?.getStandCredits;
   const totalCredits = credits?.credits_high_water_mark ?? 0;
-  const usedCredits = Math.max(0, credits?.credits ?? 0);
-  const usedCreditsPercentRaw = totalCredits > 0 ? Math.min(100, (usedCredits / totalCredits) * 100) : 0;
+  const remainingCredits = Math.max(0, credits?.credits ?? 0);
+  const usedCreditsPercentRaw = totalCredits > 0 ? Math.min(100, (remainingCredits / totalCredits) * 100) : 0;
   const usedCreditsBarPercent = Math.max(3, usedCreditsPercentRaw);
 
   React.useEffect(() => {
@@ -495,7 +495,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                   </div>
 
                   <p className="ml-auto text-left md:text-right">
-                    <AnimatedCreditCount value={usedCredits} /> of {totalCredits.toLocaleString('en-US')}
+                    <AnimatedCreditCount value={remainingCredits} /> of {totalCredits.toLocaleString('en-US')}
                   </p>
                 </div>
                 <div className="rounded-full bg-alert-400/16 overflow-hidden">
@@ -922,7 +922,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
           <>
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-background via-background to-transparent" />
 
-            <div className="relative z-10  pb-4 flex justify-center">
+            <div className="relative z-10 pb-4 flex justify-center">
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Button size="sm" variant="tertiary-alt" onClick={() => setIsCompareExpanded(true)}>
                   Compare Features
