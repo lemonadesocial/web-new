@@ -7,7 +7,7 @@ import { useAppKitAccount } from '$lib/utils/appkit';
 import { chainsMapAtom } from '$lib/jotai';
 import { getViemChainConfig } from '$lib/utils/crypto';
 import { LEMONHEAD_CHAIN_ID } from '$lib/components/features/lemonheads/mint/utils';
-import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
+import { LemonheadNFT } from '$lib/abis/LemonheadNFT';
 
 async function fetchLemonheadData(address: string, chainsMap: Record<string, Chain>) {
   const data = { tokenId: 0, image: '', totalMinted: 0 };
@@ -21,7 +21,7 @@ async function fetchLemonheadData(address: string, chainsMap: Record<string, Cha
     });
 
     const tokenId = await publicClient.readContract({
-      abi: LemonheadNFT.abi,
+      abi: LemonheadNFT,
       address: contractAddress as Address,
       functionName: 'bounds',
       args: [address as Address],
@@ -29,7 +29,7 @@ async function fetchLemonheadData(address: string, chainsMap: Record<string, Cha
     data.tokenId = tokenId;
     if (tokenId > 0) {
       const tokenUri = await publicClient.readContract({
-        abi: LemonheadNFT.abi,
+        abi: LemonheadNFT,
         address: contractAddress as Address,
         functionName: 'tokenURI',
         args: [BigInt(tokenId)],
@@ -40,7 +40,7 @@ async function fetchLemonheadData(address: string, chainsMap: Record<string, Cha
     }
 
     const totalMinted = await publicClient.readContract({
-      abi: LemonheadNFT.abi,
+      abi: LemonheadNFT,
       address: contractAddress as Address,
       functionName: 'tokenId',
     }) as number;

@@ -14,8 +14,8 @@ import { Chain, AddLaunchpadGroupDocument, ListLaunchpadGroupsDocument } from '$
 import { CreateGroupParams } from '$lib/services/token-launch-pad';
 import { createViemClients } from '$lib/utils/crypto';
 import { formatError } from '$lib/utils/error';
-import ZapContractABI from '$lib/abis/token-launch-pad/FlaunchZap.json';
-import TreasuryManagerFactoryABI from '$lib/abis/token-launch-pad/TreasuryManagerFactory.json';
+import { FlaunchZap } from '$lib/abis/token-launch-pad/FlaunchZap';
+import { TreasuryManagerFactory } from '$lib/abis/token-launch-pad/TreasuryManagerFactory';
 import { useMutation } from '$lib/graphql/request';
 import { useSpace } from '$lib/hooks/useSpace';
 
@@ -91,7 +91,7 @@ export function CreateGroupModal({ params, launchChain, onSuccess }: CreateGroup
       );
 
       const hash = await walletClient.writeContract({
-        abi: ZapContractABI.abi,
+        abi: FlaunchZap,
         address: zapContractAddress as Address,
         functionName: 'deployAndInitializeManager',
         args: [
@@ -108,7 +108,7 @@ export function CreateGroupModal({ params, launchChain, onSuccess }: CreateGroup
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
       const events = parseEventLogs({
-        abi: TreasuryManagerFactoryABI.abi as any,
+        abi: TreasuryManagerFactory as any,
         eventName: 'ManagerDeployed',
         logs: receipt.logs,
       });

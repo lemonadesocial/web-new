@@ -1,6 +1,6 @@
 import { EthereumAccount, EthereumRelayAccount, EthereumStakeAccount, NewPaymentAccount } from "$lib/graphql/generated/backend/graphql";
 import { createPublicClient, http, type Address } from 'viem';
-import PaymentSplitterABI from '$lib/abis/PaymentSplitter.json';
+import { PaymentSplitter } from '$lib/abis/PaymentSplitter';
 import { getListChains, getViemChainConfig } from '$lib/utils/crypto';
 
 export function getPaymentNetworks(paymentAccounts?: NewPaymentAccount[] | null) {
@@ -52,7 +52,7 @@ export async function getPayee(accountInfo: EthereumRelayAccount) {
     transport: http(chain.rpc_url),
   });
   const payees = await publicClient.readContract({
-    abi: PaymentSplitterABI.abi,
+    abi: PaymentSplitter,
     address: accountInfo.payment_splitter_contract as Address,
     functionName: 'allPayees',
   });

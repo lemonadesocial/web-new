@@ -10,7 +10,7 @@ import { toast, Button, modal, ModalContent } from "$lib/components/core";
 import { getErrorMessage } from '$lib/utils/error';
 import { useAppKitAccount } from "$lib/utils/appkit";
 import { useAppKitProvider } from "$lib/utils/appkit";
-import LemonadeStakePayment from "$lib/abis/LemonadeStakePayment.json";
+import { LemonadeStakePayment } from '$lib/abis/LemonadeStakePayment';
 import { getDisplayPrice } from "$lib/utils/event";
 
 import { ConnectWallet } from "../modals/ConnectWallet";
@@ -179,7 +179,7 @@ function SignClaimStakeTransactionModal({ signature, payment }: {
       );
 
       const hash = await walletClient.writeContract({
-        abi: LemonadeStakePayment.abi,
+        abi: LemonadeStakePayment,
         address: contractAddress,
         functionName: 'refund',
         args: [...args, sig],

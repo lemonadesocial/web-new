@@ -10,8 +10,8 @@ import { LaunchTokenTxParams } from "$lib/services/token-launch-pad";
 import { Chain, AddLaunchpadCoinDocument } from "$lib/graphql/generated/backend/graphql";
 import { createViemClients, getTransactionUrl, getViemChainConfig } from "$lib/utils/crypto";
 import { formatError } from "$lib/utils/error";
-import ZapContractABI from "$lib/abis/token-launch-pad/FlaunchZap.json";
-import TreasuryManagerABI from '$lib/abis/token-launch-pad/TreasuryManager.json';
+import { FlaunchZap } from '$lib/abis/token-launch-pad/FlaunchZap';
+import { TreasuryManager } from '$lib/abis/token-launch-pad/TreasuryManager';
 import { useMutation } from "$lib/graphql/request";
 import type { LaunchpadSocials } from "./CreateCoin";
 
@@ -19,7 +19,7 @@ import { SignTransactionModal } from "../modals/SignTransaction";
 import { ConfirmTransaction } from "../modals/ConfirmTransaction";
 import { ErrorModal } from "../modals/ErrorModal";
 
-import FlaunchABI from '$lib/abis/token-launch-pad/Flaunch.json';
+import { Flaunch } from '$lib/abis/token-launch-pad/Flaunch';
 import { TxnConfirmedModal } from "./TxnConfirmedModal";
 
 interface CreateCoinModalProps {
@@ -57,7 +57,7 @@ export function CreateCoinModal({
     setStatus('depositing');
 
     const approveHash = await walletClient.writeContract({
-      abi: FlaunchABI.abi,
+      abi: Flaunch,
       address: flaunchAddressTyped,
       functionName: 'approve',
       args: [groupAddressTyped, tokenId],
@@ -67,7 +67,7 @@ export function CreateCoinModal({
     await publicClient.waitForTransactionReceipt({ hash: approveHash });
 
     const depositHash = await walletClient.writeContract({
-      abi: TreasuryManagerABI.abi,
+      abi: TreasuryManager,
       address: groupAddressTyped,
       functionName: 'deposit',
       args: [[flaunchAddressTyped, tokenId], address as Address, '0x'],
@@ -92,7 +92,7 @@ export function CreateCoinModal({
       const zapAddress = launchChain.launchpad_zap_contract_address! as Address;
 
       const gas = await publicClient.estimateContractGas({
-        abi: ZapContractABI.abi,
+        abi: FlaunchZap,
         address: zapAddress,
         functionName: 'flaunch',
         args: txParams.flaunchParams,
@@ -101,7 +101,7 @@ export function CreateCoinModal({
       });
 
       const hash = await walletClient.writeContract({
-        abi: ZapContractABI.abi,
+        abi: FlaunchZap,
         address: zapAddress,
         functionName: 'flaunch',
         args: txParams.flaunchParams,
@@ -121,14 +121,14 @@ export function CreateCoinModal({
       });
 
       const flaunchAddress = await publicClientRead.readContract({
-        abi: ZapContractABI.abi,
+        abi: FlaunchZap,
         address: zapAddress,
         functionName: 'flaunchContract',
       }) as string;
       setFlaunchAddress(flaunchAddress);
 
       const events = parseEventLogs({
-        abi: FlaunchABI.abi as any,
+        abi: Flaunch as any,
         eventName: 'Transfer',
         logs: receipt.logs,
       });
@@ -144,7 +144,7 @@ export function CreateCoinModal({
       }
 
       const memecoinAddress = await publicClientRead.readContract({
-        abi: FlaunchABI.abi,
+        abi: Flaunch,
         address: flaunchAddress as Address,
         functionName: 'memecoin',
         args: [tokenId],

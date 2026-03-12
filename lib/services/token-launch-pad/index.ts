@@ -1,6 +1,6 @@
 import { createPublicClient, encodeAbiParameters, http, zeroAddress, zeroHash, type Address } from 'viem';
 
-import ZapContractABI from '$lib/abis/token-launch-pad/FlaunchZap.json';
+import { FlaunchZap } from '$lib/abis/token-launch-pad/FlaunchZap';
 import { getViemChainConfig } from '$lib/utils/crypto';
 import type { Chain } from '$lib/graphql/generated/backend/graphql';
 
@@ -76,7 +76,7 @@ export const getLaunchTokenParams = async (
 
   //-- call to get the fee (read operation)
   const fee = await publicClient.readContract({
-    abi: ZapContractABI.abi,
+    abi: FlaunchZap,
     address: zapContractAddress as Address,
     functionName: 'calculateFee',
     args: [

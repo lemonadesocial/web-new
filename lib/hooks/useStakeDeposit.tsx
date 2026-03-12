@@ -9,7 +9,7 @@ import { StakingManagerClient } from '$lib/services/coin/StakingManagerClient';
 import { createViemClients } from '$lib/utils/crypto';
 import { formatError } from '$lib/utils/error';
 import { appKit } from '$lib/utils/appkit';
-import ERC20 from '$lib/abis/ERC20.json';
+import { ERC20 } from '$lib/abis/ERC20';
 
 export type StepStatus = 'pending' | 'loading' | 'completed' | 'error';
 

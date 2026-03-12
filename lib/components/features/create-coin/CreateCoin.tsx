@@ -20,7 +20,7 @@ import { formatError } from '$lib/utils/error';
 import type { LaunchTokenParams } from '$lib/services/token-launch-pad';
 import { getUserTimezoneOption, type TimezoneOption } from '$lib/utils/timezone';
 import { PositionManager } from '$lib/abis/token-launch-pad/PositionManager';
-import ZapContractABI from '$lib/abis/token-launch-pad/FlaunchZap.json';
+import { FlaunchZap } from '$lib/abis/token-launch-pad/FlaunchZap';
 
 import { TokenReleaseScheduleModal } from './TokenReleaseScheduleModal';
 import { CreateCoinModal } from './CreateCoinModal';
@@ -179,7 +179,7 @@ export function CreateCoin() {
       });
 
       const positionManagerAddress = await publicClient.readContract({
-        abi: ZapContractABI.abi,
+        abi: FlaunchZap,
         address: launchChain.launchpad_zap_contract_address as Address,
         functionName: 'positionManager',
       }) as Address;

@@ -7,7 +7,7 @@ import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
 import { LEMONHEAD_CHAIN_ID, LEMONHEAD_COLORS } from '$lib/components/features/lemonheads/mint/utils';
 import { getViemChainConfig } from '$lib/utils/crypto';
 import { getClient } from '$lib/graphql/request';
-import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
+import { LemonheadNFT } from '$lib/abis/LemonheadNFT';
 
 const fetchFont = (url: string) => {
   return fetch(new URL(url)).then((res) => res.arrayBuffer());
@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
     });
 
     const tokenUri = await publicClient.readContract({
-      abi: LemonheadNFT.abi,
+      abi: LemonheadNFT,
       address: contractAddress as Address,
       functionName: 'tokenURI',
       args: [BigInt(tokenId)],

@@ -15,7 +15,7 @@ import { chainsMapAtom } from '$lib/jotai';
 import { createViemClients, getViemChainConfig } from '$lib/utils/crypto';
 import { getErrorMessage, formatError } from '$lib/utils/error';
 import { useClient, useQuery } from '$lib/graphql/request';
-import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
+import { LemonheadNFT } from '$lib/abis/LemonheadNFT';
 import { ETHERSCAN } from '$lib/utils/constants';
 import {
   CanMintLemonheadDocument,
@@ -76,7 +76,7 @@ export function LemonHeadFooter() {
       });
 
       const tokenId = await publicClient.readContract({
-        abi: LemonheadNFT.abi,
+        abi: LemonheadNFT,
         address: contractAddress as Address,
         functionName: 'bounds',
         args: [address as Address],
@@ -84,7 +84,7 @@ export function LemonHeadFooter() {
 
       if (tokenId > 0) {
         const tokenUri = await publicClient.readContract({
-          abi: LemonheadNFT.abi,
+          abi: LemonheadNFT,
           address: contractAddress as Address,
           functionName: 'tokenURI',
           args: [BigInt(tokenId)],
@@ -101,7 +101,7 @@ export function LemonHeadFooter() {
       const { lookHash } = await validateNft.mutateAsync({ traits: state.traits.filter(Boolean) });
 
       const owner = await publicClient.readContract({
-        abi: LemonheadNFT.abi,
+        abi: LemonheadNFT,
         address: contractAddress as Address,
         functionName: 'uniqueLooks',
         args: [lookHash as `0x${string}`],
@@ -397,7 +397,7 @@ function MintModal({
       const { walletClient, publicClient, account } = await createViemClients(chain.chain_id, walletProvider as EIP1193Provider);
 
       const txHash = await walletClient.writeContract({
-        abi: LemonheadNFT.abi,
+        abi: LemonheadNFT,
         address: contractAddress as Address,
         functionName: 'mint',
         args: [mintData.look, mintData.metadata, price, mintData.signature as `0x${string}`],
@@ -413,7 +413,7 @@ function MintModal({
       for (const log of receipt.logs) {
         try {
           const decoded = decodeEventLog({
-            abi: LemonheadNFT.abi,
+            abi: LemonheadNFT,
             data: log.data,
             topics: log.topics,
           });

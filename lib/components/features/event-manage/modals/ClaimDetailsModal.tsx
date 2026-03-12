@@ -7,7 +7,7 @@ import { createPublicClient, http, type Address, type EIP1193Provider } from 'vi
 import { ModalContent, Button, Skeleton, toast, modal } from '$lib/components/core';
 import { EthereumAccount, EthereumRelayAccount, NewPaymentAccount, Token } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom } from '$lib/jotai';
-import PaymentSplitterABI from '$lib/abis/PaymentSplitter.json';
+import { PaymentSplitter } from '$lib/abis/PaymentSplitter';
 import { useRelayPayee } from '$lib/hooks/useRelayPayee';
 import { createViemClients, formatWallet, getViemChainConfig } from '$lib/utils/crypto';
 import { formatError } from '$lib/utils/error';
@@ -76,7 +76,7 @@ export function ClaimDetailsModal({ vault, onClose }: ClaimDetailsModalProps) {
       });
 
       const pendingAmounts = await publicClient.readContract({
-        abi: PaymentSplitterABI.abi,
+        abi: PaymentSplitter,
         address: accountInfo.payment_splitter_contract as Address,
         functionName: 'pending',
         args: [tokenAddresses as Address[], payee as Address],
@@ -126,7 +126,7 @@ export function ClaimDetailsModal({ vault, onClose }: ClaimDetailsModalProps) {
       const paymentSplitterAddress = accountInfo.payment_splitter_contract as Address;
 
       const hash = await walletClient.writeContract({
-        abi: PaymentSplitterABI.abi,
+        abi: PaymentSplitter,
         address: paymentSplitterAddress,
         functionName: 'release',
         args: [tokenAddresses as Address[], payee as Address],

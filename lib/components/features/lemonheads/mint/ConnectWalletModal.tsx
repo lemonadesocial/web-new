@@ -15,7 +15,7 @@ import { truncateMiddle } from '$lib/utils/string';
 import { getViemChainConfig } from '$lib/utils/crypto';
 import { chainsMapAtom } from '$lib/jotai';
 import { LEMONHEAD_CHAIN_ID } from './utils';
-import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
+import { LemonheadNFT } from '$lib/abis/LemonheadNFT';
 
 export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
   const [minted, setMinted] = React.useState(false);
@@ -40,7 +40,7 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
             transport: http(chain.rpc_url),
           });
           const tokenId = await publicClient.readContract({
-            abi: LemonheadNFT.abi,
+            abi: LemonheadNFT,
             address: contractAddress as Address,
             functionName: 'bounds',
             args: [address as Address],
@@ -48,7 +48,7 @@ export function ConnectWalletModal({ onContinue }: { onContinue: () => void }) {
 
           if (tokenId > 0) {
             const tokenUri = await publicClient.readContract({
-              abi: LemonheadNFT.abi,
+              abi: LemonheadNFT,
               address: contractAddress as Address,
               functionName: 'tokenURI',
               args: [BigInt(tokenId)],
