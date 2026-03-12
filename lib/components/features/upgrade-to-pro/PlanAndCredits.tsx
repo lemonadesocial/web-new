@@ -602,8 +602,8 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
 
                           <Segment
                             items={[
-                              { value: 'card', iconLeft: 'icon-credit-card', label: 'Card' },
-                              { value: 'wallet', iconLeft: 'icon-wallet', label: 'Wallet' },
+                              { value: 'card', iconLeft: 'icon-credit-card' },
+                              { value: 'wallet', iconLeft: 'icon-wallet' },
                             ]}
                             selected={item.method}
                             size="sm"
