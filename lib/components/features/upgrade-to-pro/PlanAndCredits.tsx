@@ -730,7 +730,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
       </div>
 
       <div className="space-y-3 relative">
-        <div className="sticky -top-12 z-30 bg-background/95 backdrop-blur-md">
+        <div className="sticky top-0 md:-top-12 z-30 bg-background/95 backdrop-blur-md">
           <div
             ref={compareHeaderScrollRef}
             className="overflow-x-auto md:no-scrollbar"
