@@ -374,10 +374,8 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
 
   const { data: dataStandCredits } = useQuery(GetStandCreditsDocument, { variables: { standId: space._id } });
   const credits = dataStandCredits?.getStandCredits;
-  const hasCreditsData = Boolean(credits);
   const totalCredits = credits?.credits_high_water_mark ?? 0;
-  const remainingCredits = hasCreditsData ? Math.max(0, credits?.credits ?? 0) : totalCredits;
-  const usedCredits = hasCreditsData ? Math.max(0, totalCredits - remainingCredits) : 0;
+  const usedCredits = Math.max(0, credits?.credits ?? 0);
   const usedCreditsPercentRaw = totalCredits > 0 ? Math.min(100, (usedCredits / totalCredits) * 100) : 0;
   const usedCreditsBarPercent = Math.max(3, usedCreditsPercentRaw);
 
@@ -709,7 +707,6 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                             <li className="text-tertiary text-sm">
                               <p>{item.featureTitle}</p>
                             </li>
-                            {console.log(item)}
                             {item.features?.map((f) => (
                               <li key={f} className="flex gap-2">
                                 <i className="icon-done size-5 aspect-square" />
@@ -732,8 +729,8 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
         </div>
       </div>
 
-      <div className="space-y-3">
-        <div className="sticky -top-12 z-30 bg-background/95 backdrop-blur border-b border-divider">
+      <div className="space-y-3 relative">
+        <div className="sticky -top-12 z-30 bg-background/95 backdrop-blur-md">
           <div
             ref={compareHeaderScrollRef}
             className="overflow-x-auto md:no-scrollbar"
@@ -821,11 +818,9 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           ))}
                         </tr>
                       ))}
-                      <tr className="h-24" />
+                      <tr className="h-16" />
                     </tbody>
                   </table>
-
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-background to-transparent" />
                 </motion.div>
               )}
 
@@ -924,13 +919,17 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
         </div>
 
         {!isCompareExpanded && (
-          <div className="relative z-10 -mt-20 pb-4 flex justify-center">
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button size="sm" variant="tertiary-alt" onClick={() => setIsCompareExpanded(true)}>
-                Compare Features
-              </Button>
-            </motion.div>
-          </div>
+          <>
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-background via-background to-transparent" />
+
+            <div className="relative z-10  pb-4 flex justify-center">
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button size="sm" variant="tertiary-alt" onClick={() => setIsCompareExpanded(true)}>
+                  Compare Features
+                </Button>
+              </motion.div>
+            </div>
+          </>
         )}
       </div>
     </div>
