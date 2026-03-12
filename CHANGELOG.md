@@ -1,5 +1,33 @@
 # Changelog
 
+## [10.15.0](https://github.com/lemonadesocial/web-new/compare/v10.14.0...v10.15.0) (2026-03-12)
+
+
+### Features
+
+* add connector detail UI with guest import/export modals ([4a33a98](https://github.com/lemonadesocial/web-new/commit/4a33a988810124c4cb3626d4d6c6eebe2a674568))
+* add sticky ([bb61a4c](https://github.com/lemonadesocial/web-new/commit/bb61a4c28078468f651537be045b29bd38fa7950))
+* generate codegen ([bf076b7](https://github.com/lemonadesocial/web-new/commit/bf076b73a009cbc42999ef57a1fac9b8ef53a01c))
+* missing field ([e7edc02](https://github.com/lemonadesocial/web-new/commit/e7edc0225ca2f4cf74f90f40e8ebb108dda79896))
+* remove duplicate gql ([e9b51b1](https://github.com/lemonadesocial/web-new/commit/e9b51b1be68eb6c9df9df50242e0adec4400288d))
+* remove unused ([41b1027](https://github.com/lemonadesocial/web-new/commit/41b1027154cf2bf90e9721808686424f911288ae))
+* show plans as default page ([387084f](https://github.com/lemonadesocial/web-new/commit/387084f1f4f5f3ef6efbdef879d4486447a27861))
+* update callback url query string ([2cf185c](https://github.com/lemonadesocial/web-new/commit/2cf185c3fb9765b6ec96e29bc0cf078394bd1d70))
+* update content ([f0d7021](https://github.com/lemonadesocial/web-new/commit/f0d702193a427db34d725e1b7b39d6fc6deb4da5))
+* update content compare ([1224f2e](https://github.com/lemonadesocial/web-new/commit/1224f2ee856b03babfad5cec4ef96f2082b2c8cf))
+* update total credits field ([f9e5dd5](https://github.com/lemonadesocial/web-new/commit/f9e5dd5596be9fc74a869432a63e09befb3e9454))
+* update ui pricing ([198fe3c](https://github.com/lemonadesocial/web-new/commit/198fe3ce452d08ea3a1161134cade6aa64f169be))
+
+
+### Bug Fixes
+
+* button compare feature position ([d70fba5](https://github.com/lemonadesocial/web-new/commit/d70fba51be85872c1c254d62be8fe930f8519ebe))
+* remaining value ([10192e6](https://github.com/lemonadesocial/web-new/commit/10192e6662d6d2d475dfb5233758c644c6469edc))
+* remove segment label ([52f3f6d](https://github.com/lemonadesocial/web-new/commit/52f3f6d278e43bbf097fbe62aaa09b8891b831c2))
+* resolve comment ([33284fd](https://github.com/lemonadesocial/web-new/commit/33284fd386e8843f657a1c1b97c6d8fed11097dd))
+* **upgrade-to-pro:** address PR review nits ([d3bdb34](https://github.com/lemonadesocial/web-new/commit/d3bdb34fee3a35381cbe840e81d1e21b8b5a52db))
+* **upgrade-to-pro:** restore container and type menu data prop ([4359894](https://github.com/lemonadesocial/web-new/commit/4359894be28fb6007f959f6e7b3af22892ec63d0))
+
 ## [10.14.0](https://github.com/lemonadesocial/web-new/compare/v10.13.1...v10.14.0) (2026-03-06)
 
 
