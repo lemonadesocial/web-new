@@ -138,8 +138,9 @@ const COMPARE_COLUMNS: Array<{ key: ComparePlan; label: string }> = [
   { key: 'max', label: 'Max' },
   { key: 'enterprise', label: 'Enterprise' },
 ];
-const COMPARE_GRID_CLASS =
-  '[grid-template-columns:220px_minmax(132px,1fr)_repeat(4,minmax(max-content,1fr))] md:[grid-template-columns:300px_minmax(160px,1fr)_repeat(4,minmax(max-content,1fr))]';
+const COMPARE_TABLE_MIN_WIDTH = 'min-w-[860px] md:min-w-[980px]';
+const COMPARE_LABEL_COL_CLASS = 'w-[240px] md:w-[320px]';
+const COMPARE_VALUE_COL_CLASS = 'w-[155px] md:w-[170px]';
 const CREDIT_ANIMATION_DURATION = 0.9;
 
 function AnimatedCreditCount({ value }: { value: number }) {
@@ -197,6 +198,9 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
     integrations: false,
     api_access: false,
   });
+  const compareHeaderScrollRef = React.useRef<HTMLDivElement>(null);
+  const compareBodyScrollRef = React.useRef<HTMLDivElement>(null);
+  const isSyncingCompareScroll = React.useRef(false);
   const [purchaseSubscription, { loading: purchasingPlan }] = useMutation(PurchaseSubscriptionDocument, {
     onComplete: (_client, response) => {
       const checkoutUrl = response?.purchaseSubscription?.checkout_url;
@@ -363,19 +367,16 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
       },
     ];
   }, [mergedPlans]);
+
   const previewSection = compareSections[0];
   const isFreePlan = !space.subscription_tier || space.subscription_tier === SubscriptionItemType.Free;
   const [mobileExpandedPlan, setMobileExpandedPlan] = React.useState<string>(SubscriptionItemType.Pro);
 
   const { data: dataStandCredits } = useQuery(GetStandCreditsDocument, { variables: { standId: space._id } });
   const credits = dataStandCredits?.getStandCredits;
-  const hasCreditsData = Boolean(credits);
-  const totalCredits = hasCreditsData
-    ? (credits?.subscription_credits ?? 0) + (credits?.purchased_credits ?? 0)
-    : (space.subscription_credits ?? 0);
-  const remainingCredits = hasCreditsData ? Math.max(0, credits?.credits ?? 0) : totalCredits;
-  const usedCredits = hasCreditsData ? Math.max(0, totalCredits - remainingCredits) : 0;
-  const usedCreditsPercentRaw = totalCredits > 0 ? Math.min(100, (usedCredits / totalCredits) * 100) : 0;
+  const totalCredits = credits?.credits_high_water_mark ?? 0;
+  const remainingCredits = Math.max(0, credits?.credits ?? 0);
+  const usedCreditsPercentRaw = totalCredits > 0 ? Math.min(100, (remainingCredits / totalCredits) * 100) : 0;
   const usedCreditsBarPercent = Math.max(3, usedCreditsPercentRaw);
 
   React.useEffect(() => {
@@ -400,6 +401,23 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
       setUpgradingTier(null);
     }
   };
+
+  const syncCompareScroll = React.useCallback((source: HTMLDivElement | null, target: HTMLDivElement | null) => {
+    if (!source || !target || isSyncingCompareScroll.current) return;
+    isSyncingCompareScroll.current = true;
+    target.scrollLeft = source.scrollLeft;
+    window.requestAnimationFrame(() => {
+      isSyncingCompareScroll.current = false;
+    });
+  }, []);
+
+  const handleCompareHeaderScroll = React.useCallback(() => {
+    syncCompareScroll(compareHeaderScrollRef.current, compareBodyScrollRef.current);
+  }, [syncCompareScroll]);
+
+  const handleCompareBodyScroll = React.useCallback(() => {
+    syncCompareScroll(compareBodyScrollRef.current, compareHeaderScrollRef.current);
+  }, [syncCompareScroll]);
 
   return (
     <div className="flex flex-col gap-7">
@@ -477,7 +495,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                   </div>
 
                   <p className="ml-auto text-left md:text-right">
-                    <AnimatedCreditCount value={usedCredits} /> of {totalCredits.toLocaleString('en-US')}
+                    <AnimatedCreditCount value={remainingCredits} /> of {totalCredits.toLocaleString('en-US')}
                   </p>
                 </div>
                 <div className="rounded-full bg-alert-400/16 overflow-hidden">
@@ -562,6 +580,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           <div className="flex gap-2">
                             <Toggle
                               id={item.type}
+                              disabled={space.subscription_tier === item.type || purchasingPlan}
                               checked={!!data.find((i) => i.type === item.type)?.annual}
                               onChange={(value) => {
                                 setData((prev) =>
@@ -580,9 +599,21 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
 
                           <Segment
                             items={[
-                              { value: 'card', iconLeft: 'icon-credit-card', label: 'Card' },
-                              { value: 'wallet', iconLeft: 'icon-wallet', label: 'Wallet' },
+                              { value: 'card', iconLeft: 'icon-credit-card' },
+                              { value: 'wallet', iconLeft: 'icon-wallet', disabled: true },
                             ]}
+                            disabled={space.subscription_tier === item.type || purchasingPlan}
+                            onSelect={(method) => {
+                              setData((prev) =>
+                                prev.map((i) => {
+                                  if (i.type === item.type) {
+                                    i.method = method.value as 'card' | 'wallet';
+                                  }
+
+                                  return i;
+                                }),
+                              );
+                            }}
                             selected={item.method}
                             size="sm"
                             className={clsx(item.annual ? 'visible' : 'invisible')}
@@ -698,24 +729,42 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
         </div>
       </div>
 
-      <div className="space-y-3">
-        <div className="overflow-x-auto md:no-scrollbar">
-          <div className="min-w-[860px] md:min-w-[980px] flex flex-col gap-3">
-            <div className={clsx('grid gap-2 py-5', COMPARE_GRID_CLASS)}>
-              <div className="col-span-2">
-                <p className="text-xl md:text-2xl font-bold">Compare Features</p>
-              </div>
-
-              {COMPARE_COLUMNS.map((column) => (
-                <div
-                  key={column.key}
-                  className="py-1.5 w-full px-2.5 rounded-sm bg-(--btn-tertiary) flex items-center justify-center"
-                >
-                  <p className="text-sm">{column.label}</p>
-                </div>
-              ))}
+      <div className="space-y-3 relative">
+        <div className="sticky -top-12 z-30 bg-background/95 backdrop-blur-md">
+          <div
+            ref={compareHeaderScrollRef}
+            className="overflow-x-auto md:no-scrollbar"
+            onScroll={handleCompareHeaderScroll}
+          >
+            <div className={clsx(COMPARE_TABLE_MIN_WIDTH, 'py-5')}>
+              <table className="w-full table-fixed">
+                <colgroup>
+                  <col className={COMPARE_LABEL_COL_CLASS} />
+                  {COMPARE_COLUMNS.map((column) => (
+                    <col key={column.key} className={COMPARE_VALUE_COL_CLASS} />
+                  ))}
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th className="px-2 text-left">
+                      <p className="text-xl md:text-2xl font-bold">Compare Features</p>
+                    </th>
+                    {COMPARE_COLUMNS.map((column) => (
+                      <th key={column.key} className="px-2">
+                        <div className="py-1.5 w-full px-2.5 rounded-sm bg-(--btn-tertiary) flex items-center justify-center">
+                          <p className="text-sm">{column.label}</p>
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+              </table>
             </div>
+          </div>
+        </div>
 
+        <div ref={compareBodyScrollRef} className="overflow-x-auto md:no-scrollbar" onScroll={handleCompareBodyScroll}>
+          <div className={clsx(COMPARE_TABLE_MIN_WIDTH, 'flex flex-col gap-3')}>
             <AnimatePresence mode="wait" initial={false}>
               {!isCompareExpanded && previewSection && (
                 <motion.div
@@ -739,23 +788,39 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                     </div>
                   </div>
 
-                  {previewSection.rows.slice(0, 6).map((row, rowIndex) => (
-                    <div
-                      key={row.label}
-                      className={clsx('grid', COMPARE_GRID_CLASS, rowIndex !== 0 && 'border-t border-divider')}
-                    >
-                      <div className="px-4 py-3 text-tertiary col-span-2">
-                        <p>{row.label}</p>
-                      </div>
+                  <table className="w-full table-fixed">
+                    <colgroup>
+                      <col className={COMPARE_LABEL_COL_CLASS} />
                       {COMPARE_COLUMNS.map((column) => (
-                        <div key={column.key} className="px-3 py-3 text-center flex items-center justify-center">
-                          {renderCompareValue(row.values[column.key])}
-                        </div>
+                        <col key={column.key} className={COMPARE_VALUE_COL_CLASS} />
                       ))}
-                    </div>
-                  ))}
-
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-background to-transparent" />
+                    </colgroup>
+                    <tbody>
+                      {previewSection.rows.slice(0, 6).map((row, rowIndex) => (
+                        <tr key={row.label}>
+                          <th
+                            className={clsx(
+                              'px-4 py-3 text-tertiary text-left font-normal',
+                              rowIndex !== 0 && 'border-t border-divider',
+                            )}
+                          >
+                            <span>{row.label}</span>
+                          </th>
+                          {COMPARE_COLUMNS.map((column) => (
+                            <td
+                              key={column.key}
+                              className={clsx('px-3 py-3 text-center', rowIndex !== 0 && 'border-t border-divider')}
+                            >
+                              <div className="flex items-center justify-center">
+                                {renderCompareValue(row.values[column.key])}
+                              </div>
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                      <tr className="h-16" />
+                    </tbody>
+                  </table>
                 </motion.div>
               )}
 
@@ -806,30 +871,41 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                               transition={{ duration: 0.22, ease: 'easeInOut' }}
                               className="overflow-hidden"
                             >
-                              <div>
-                                {section.rows.map((row, rowIndex) => (
-                                  <div
-                                    key={row.label}
-                                    className={clsx(
-                                      'grid',
-                                      COMPARE_GRID_CLASS,
-                                      rowIndex !== 0 && 'border-t border-divider',
-                                    )}
-                                  >
-                                    <div className="px-4 py-3 text-tertiary col-span-2">
-                                      <p>{row.label}</p>
-                                    </div>
-                                    {COMPARE_COLUMNS.map((column) => (
-                                      <div
-                                        key={column.key}
-                                        className="px-3 py-3 text-center flex items-center justify-center"
+                              <table className="w-full table-fixed">
+                                <colgroup>
+                                  <col className={COMPARE_LABEL_COL_CLASS} />
+                                  {COMPARE_COLUMNS.map((column) => (
+                                    <col key={column.key} className={COMPARE_VALUE_COL_CLASS} />
+                                  ))}
+                                </colgroup>
+                                <tbody>
+                                  {section.rows.map((row, rowIndex) => (
+                                    <tr key={row.label}>
+                                      <th
+                                        className={clsx(
+                                          'px-4 py-3 text-tertiary text-left font-normal',
+                                          rowIndex !== 0 && 'border-t border-divider',
+                                        )}
                                       >
-                                        {renderCompareValue(row.values[column.key])}
-                                      </div>
-                                    ))}
-                                  </div>
-                                ))}
-                              </div>
+                                        <span>{row.label}</span>
+                                      </th>
+                                      {COMPARE_COLUMNS.map((column) => (
+                                        <td
+                                          key={column.key}
+                                          className={clsx(
+                                            'px-3 py-3 text-center',
+                                            rowIndex !== 0 && 'border-t border-divider',
+                                          )}
+                                        >
+                                          <div className="flex items-center justify-center">
+                                            {renderCompareValue(row.values[column.key])}
+                                          </div>
+                                        </td>
+                                      ))}
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
                             </motion.div>
                           )}
                         </AnimatePresence>
@@ -843,13 +919,17 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
         </div>
 
         {!isCompareExpanded && (
-          <div className="relative z-10 -mt-20 pb-4 flex justify-center">
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button size="sm" variant="tertiary-alt" onClick={() => setIsCompareExpanded(true)}>
-                Compare Features
-              </Button>
-            </motion.div>
-          </div>
+          <>
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-background via-background to-transparent" />
+
+            <div className="relative z-10 pb-4 flex justify-center">
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button size="sm" variant="tertiary-alt" onClick={() => setIsCompareExpanded(true)}>
+                  Compare Features
+                </Button>
+              </motion.div>
+            </div>
+          </>
         )}
       </div>
     </div>

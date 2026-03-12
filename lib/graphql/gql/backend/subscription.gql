@@ -32,6 +32,7 @@ query ListSubscriptionItems {
       price
     }
     weekly_email_limit
+    credits_per_month
   }
 }
 

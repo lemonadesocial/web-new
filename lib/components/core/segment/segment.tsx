@@ -9,6 +9,7 @@ interface SegmentItem<T> {
   value: T;
   icon?: string;
   iconLeft?: string;
+  disabled?: boolean;
 }
 
 interface SegmentProps<T> {
@@ -17,9 +18,10 @@ interface SegmentProps<T> {
   onSelect?: (item: SegmentItem<T>) => void;
   className?: string;
   size?: 'base' | 'sm' | 'lg' | 'xs';
+  disabled?: boolean;
 }
 
-export function Segment<T>({ items, selected, size, onSelect, className }: SegmentProps<T>) {
+export function Segment<T>({ items, selected, size, onSelect, className, disabled }: SegmentProps<T>) {
   const [active, setActive] = React.useState(selected);
 
   return (
@@ -27,6 +29,7 @@ export function Segment<T>({ items, selected, size, onSelect, className }: Segme
       {items.map((item) => (
         <li key={item.value as string} className="flex-1">
           <Button
+            disabled={item.disabled || disabled}
             className={clsx(
               'w-full hover:bg-initial text-primary! backdrop-blur-none',
               active !== item.value && 'hover:bg-transparent text-tertiary! hover:text-primary',
