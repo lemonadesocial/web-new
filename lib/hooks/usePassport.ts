@@ -7,7 +7,7 @@ import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { useAppKitAccount } from '$lib/utils/appkit';
 import { chainsMapAtom } from '$lib/jotai';
 import { getViemChainConfig } from '$lib/utils/crypto';
-import LemonadePassport from '$lib/abis/LemonadePassport.json';
+import { LemonadePassport } from '$lib/abis/LemonadePassport';
 import { LEMONHEAD_CHAIN_ID } from '$lib/components/features/lemonheads/mint/utils';
 
 async function fetchPassportData(address: string, chainsMap: Record<string, Chain>) {
@@ -23,7 +23,7 @@ async function fetchPassportData(address: string, chainsMap: Record<string, Chai
     });
 
     const tokenId = await publicClient.readContract({
-      abi: LemonadePassport.abi,
+      abi: LemonadePassport,
       address: contractAddress as Address,
       functionName: 'bounds',
       args: [address as Address],
@@ -33,7 +33,7 @@ async function fetchPassportData(address: string, chainsMap: Record<string, Chai
 
     if (tokenId > 0n) {
       const tokenUri = await publicClient.readContract({
-        abi: LemonadePassport.abi,
+        abi: LemonadePassport,
         address: contractAddress as Address,
         functionName: 'tokenURI',
         args: [tokenId],

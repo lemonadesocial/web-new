@@ -11,7 +11,7 @@ import { SignTransactionModal } from '../../modals/SignTransaction';
 import { useMutation } from '$lib/graphql/request';
 import { createViemClients } from '$lib/utils/crypto';
 import { formatError } from '$lib/utils/error';
-import LemonadeRelayPayment from '$lib/abis/LemonadeRelayPayment.json';
+import { LemonadeRelayPayment } from '$lib/abis/LemonadeRelayPayment';
 import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react';
 import { ConnectWallet } from '../../modals/ConnectWallet';
 import { useUpdateEventPaymentAccounts } from '../hooks';
@@ -51,7 +51,7 @@ export function AddNetworkModal({ vault }: AddNetworkModalProps) {
       );
 
       const hash = await walletClient.writeContract({
-        abi: LemonadeRelayPayment.abi,
+        abi: LemonadeRelayPayment,
         address: selectedNetwork.relay_payment_contract! as Address,
         functionName: 'register',
         args: [
@@ -64,7 +64,7 @@ export function AddNetworkModal({ vault }: AddNetworkModalProps) {
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
       const registerEvents = parseEventLogs({
-        abi: LemonadeRelayPayment.abi as any,
+        abi: LemonadeRelayPayment,
         eventName: 'OnRegister',
         logs: receipt.logs,
       });

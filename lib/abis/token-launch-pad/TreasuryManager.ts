@@ -1,4 +1,4 @@
-export const TreasuruManager = [
+export const TreasuryManager = [
   {
     "type": "receive",
     "stateMutability": "payable"

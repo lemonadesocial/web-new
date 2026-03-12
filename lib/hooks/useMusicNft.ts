@@ -5,7 +5,7 @@ import { createPublicClient, http, type Address } from 'viem';
 import { getViemChainConfig } from '$lib/utils/crypto';
 import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
-import MusicNft from '$lib/abis/MusicNft.json';
+import { MusicNft } from '$lib/abis/MusicNft';
 
 type Data = {
   totalMinted?: number;
@@ -22,14 +22,14 @@ async function fetchMusicNftData(contractAddress: string, chain: Chain) {
     });
 
     const owner = await publicClient.readContract({
-      abi: MusicNft.abi,
+      abi: MusicNft,
       address: contractAddress as Address,
       functionName: 'owner',
     }) as string;
     data.owner = owner;
 
     const nextTokenId = await publicClient.readContract({
-      abi: MusicNft.abi,
+      abi: MusicNft,
       address: contractAddress as Address,
       functionName: 'nextTokenId',
     }) as bigint;

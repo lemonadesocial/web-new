@@ -14,7 +14,7 @@ import { useAppKitAccount, useAppKitProvider } from '$lib/utils/appkit';
 import { useMutation } from '$lib/graphql/request';
 import { CreateNewPaymentAccountDocument } from '$lib/graphql/generated/backend/graphql';
 import { PaymentAccountType } from '$lib/graphql/generated/backend/graphql';
-import LemonadeRelayPayment from '$lib/abis/LemonadeRelayPayment.json';
+import { LemonadeRelayPayment } from '$lib/abis/LemonadeRelayPayment';
 import { parseEventLogs } from 'viem';
 
 import { ProcessingTransaction } from './ProcessingTransaction';
@@ -72,7 +72,7 @@ export function CreateDirectVaultModal({ onCreateVault }: CreateDirectVaultModal
       );
 
       const hash = await walletClient.writeContract({
-        abi: LemonadeRelayPayment.abi,
+        abi: LemonadeRelayPayment,
         address: network.relay_payment_contract as Address,
         functionName: 'register',
         args: [
@@ -85,7 +85,7 @@ export function CreateDirectVaultModal({ onCreateVault }: CreateDirectVaultModal
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
       const events = parseEventLogs({
-        abi: LemonadeRelayPayment.abi as any,
+        abi: LemonadeRelayPayment,
         eventName: 'OnRegister',
         logs: receipt.logs,
       });

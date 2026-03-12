@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/nextjs';
 
 import { getListChains, getViemChainConfig } from '$lib/utils/crypto';
 import { EthereumStakeAccount } from '$lib/graphql/generated/backend/graphql';
-import StakeVaultABI from '$lib/abis/StakeVault.json';
+import { StakeVault } from '$lib/abis/StakeVault';
 
 const stakeRefundRateCacheAtom = atom<Record<string, number>>({});
 
@@ -33,7 +33,7 @@ export async function getStakeRefundRate(stakeAccount: EthereumStakeAccount): Pr
       transport: http(chain.rpc_url),
     });
     const refundPPM = await publicClient.readContract({
-      abi: StakeVaultABI.abi,
+      abi: StakeVault,
       address: stakeAccount.config_id as Address,
       functionName: 'refundPPM',
     });

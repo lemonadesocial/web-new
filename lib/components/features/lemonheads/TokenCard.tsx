@@ -8,7 +8,7 @@ import { chainsMapAtom } from '$lib/jotai';
 import { LEMONHEAD_CHAIN_ID } from '$lib/components/features/lemonheads/mint/utils';
 import { getViemChainConfig } from '$lib/utils/crypto';
 import { Skeleton } from '$lib/components/core';
-import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
+import { LemonheadNFT } from '$lib/abis/LemonheadNFT';
 
 interface TokenCardProps {
   tokenId: string;
@@ -33,7 +33,7 @@ async function fetchTokenData(tokenId: string, chainsMap: Record<string, Chain>)
     });
 
     const tokenUri = await publicClient.readContract({
-      abi: LemonheadNFT.abi,
+      abi: LemonheadNFT,
       address: contractAddress as Address,
       functionName: 'tokenURI',
       args: [BigInt(tokenId)],

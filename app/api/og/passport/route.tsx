@@ -4,7 +4,7 @@ import { createPublicClient, http, type Address } from 'viem';
 
 import { ListChainsDocument } from '$lib/graphql/generated/backend/graphql';
 import { getViemChainConfig } from '$lib/utils/crypto';
-import ERC721 from '$lib/abis/ERC721.json';
+import { ERC721 } from '$lib/abis/ERC721';
 import { getClient } from '$lib/graphql/request';
 import { ASSET_PREFIX } from '$lib/utils/constants';
 import { PASSPORT_CHAIN_ID } from '$lib/components/features/passports/utils';

@@ -10,9 +10,9 @@ import { appKit, useAppKitAccount, useAppKitProvider } from "$lib/utils/appkit";
 import { approveERC20Spender, createViemClients, formatWallet, isNativeToken } from "$lib/utils/crypto";
 import { formatError } from "$lib/utils/error";
 import { chainsMapAtom } from "$lib/jotai";
-import LemonadeRelayPayment from "$lib/abis/LemonadeRelayPayment.json";
-import LemonadeStakePayment from "$lib/abis/LemonadeStakePayment.json";
-import ERC20 from "$lib/abis/ERC20.json";
+import { LemonadeRelayPayment } from '$lib/abis/LemonadeRelayPayment';
+import { LemonadeStakePayment } from '$lib/abis/LemonadeStakePayment';
+import { ERC20 } from "$lib/abis/ERC20";
 
 import { eventDataAtom, pricingInfoAtom, registrationModal, selectedPaymentAccountAtom, tokenAddressAtom, useAtomValue } from "../store";
 import { VerifyingTransactionModal } from "./VerifyingTransactionModal";
@@ -79,7 +79,7 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
         await approveIfNeeded(chain.relay_payment_contract);
 
         const hash = await walletClient.writeContract({
-          abi: LemonadeRelayPayment.abi,
+          abi: LemonadeRelayPayment,
           address: chain.relay_payment_contract as Address,
           functionName: 'pay',
           args: [
@@ -103,7 +103,7 @@ export function ConfirmCryptoPaymentModal({ paymentId, paymentSecret, hasJoinReq
         await approveIfNeeded(chain.stake_payment_contract);
 
         const hash = await walletClient.writeContract({
-          abi: LemonadeStakePayment.abi,
+          abi: LemonadeStakePayment,
           address: chain.stake_payment_contract as Address,
           functionName: 'stake',
           args: [

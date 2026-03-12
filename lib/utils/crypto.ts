@@ -4,8 +4,8 @@ import { mainnet } from 'viem/chains';
 import { chainsMapAtom, listChainsAtom } from '$lib/jotai';
 import { DEFAULT_GAS_LIMIT, GAS_LIMIT_BY_CHAIN_ID, MEGAETH_CHAIN_ID } from '$lib/utils/constants';
 
-import ERC20 from '$lib/abis/ERC20.json';
-import ERC721 from '$lib/abis/ERC721.json'; 
+import { ERC20 } from '$lib/abis/ERC20';
+import { ERC721 } from '$lib/abis/ERC721'; 
 import { Chain as BackendChain } from '$lib/graphql/generated/backend/graphql';
 
 export function getListChains() {

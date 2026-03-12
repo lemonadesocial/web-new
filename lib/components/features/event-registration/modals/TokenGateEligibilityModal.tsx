@@ -10,8 +10,8 @@ import { formatError } from '$lib/utils/error';
 import { chainsMapAtom } from '$lib/jotai/chains';
 
 import { buyerWalletAtom, ethereumWalletInputAtom, registrationModal, useSetAtom } from '../store';
-import ERC20 from '$lib/abis/ERC20.json';
-import ERC721 from '$lib/abis/ERC721.json';
+import { ERC20 } from '$lib/abis/ERC20';
+import { ERC721 } from '$lib/abis/ERC721';
 import { ConnectWallet } from '../../modals/ConnectWallet';
 import { VerifyWalletModal } from './VerifyWalletModal';
 import { useMutation } from '$lib/graphql/request';

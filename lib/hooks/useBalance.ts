@@ -6,7 +6,7 @@ import { useAppKitAccount, useAppKitProvider, useAppKitNetwork } from '$lib/util
 import { Chain } from '$lib/graphql/generated/backend/graphql';
 import { chainsMapAtom } from '$lib/jotai';
 import { useAtomValue } from 'jotai';
-import ERC20 from '$lib/abis/ERC20.json';
+import { ERC20 } from '$lib/abis/ERC20';
 import { getViemChainConfig } from '$lib/utils/crypto';
 import { useTokenData } from './useCoin';
 

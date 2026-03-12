@@ -11,7 +11,7 @@ import { Skeleton } from '$lib/components/core/skeleton';
 import { toast } from '$lib/components/core';
 import { LEMONHEAD_CHAIN_ID } from './mint/utils';
 import { TitleSection } from '$app/[domain]/(blank)/s/lemonheads/shared';
-import LemonheadNFT from '$lib/abis/LemonheadNFT.json';
+import { LemonheadNFT } from '$lib/abis/LemonheadNFT';
 
 export function CouncilMembers() {
   const { data, loading } = useQuery(GetSpaceDocument, {
@@ -92,7 +92,7 @@ function CouncilMemberCard({ member }: { member: SpaceCouncilMember }) {
       });
 
       const tokenId = await publicClient.readContract({
-        abi: LemonheadNFT.abi,
+        abi: LemonheadNFT,
         address: contractAddress as Address,
         functionName: 'bounds',
         args: [member.wallet as Address],
@@ -103,7 +103,7 @@ function CouncilMemberCard({ member }: { member: SpaceCouncilMember }) {
       }
 
       const tokenUri = await publicClient.readContract({
-        abi: LemonheadNFT.abi,
+        abi: LemonheadNFT,
         address: contractAddress as Address,
         functionName: 'tokenURI',
         args: [BigInt(tokenId)],
