@@ -367,6 +367,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
       },
     ];
   }, [mergedPlans]);
+
   const previewSection = compareSections[0];
   const isFreePlan = !space.subscription_tier || space.subscription_tier === SubscriptionItemType.Free;
   const [mobileExpandedPlan, setMobileExpandedPlan] = React.useState<string>(SubscriptionItemType.Pro);
@@ -374,9 +375,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
   const { data: dataStandCredits } = useQuery(GetStandCreditsDocument, { variables: { standId: space._id } });
   const credits = dataStandCredits?.getStandCredits;
   const hasCreditsData = Boolean(credits);
-  const totalCredits = hasCreditsData
-    ? (credits?.subscription_credits ?? 0) + (credits?.purchased_credits ?? 0)
-    : (space.subscription_credits ?? 0);
+  const totalCredits = credits?.credits_high_water_mark ?? 0;
   const remainingCredits = hasCreditsData ? Math.max(0, credits?.credits ?? 0) : totalCredits;
   const usedCredits = hasCreditsData ? Math.max(0, totalCredits - remainingCredits) : 0;
   const usedCreditsPercentRaw = totalCredits > 0 ? Math.min(100, (usedCredits / totalCredits) * 100) : 0;
@@ -605,6 +604,18 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                               { value: 'card', iconLeft: 'icon-credit-card' },
                               { value: 'wallet', iconLeft: 'icon-wallet' },
                             ]}
+                            disabled={space.subscription_tier === item.type || purchasingPlan}
+                            onSelect={(method) => {
+                              setData((prev) =>
+                                prev.map((i) => {
+                                  if (i.type === item.type) {
+                                    i.method = method.value as 'card' | 'wallet';
+                                  }
+
+                                  return i;
+                                }),
+                              );
+                            }}
                             selected={item.method}
                             size="sm"
                             className={clsx(item.annual ? 'visible' : 'invisible')}
