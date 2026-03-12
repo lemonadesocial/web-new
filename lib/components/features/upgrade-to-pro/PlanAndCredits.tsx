@@ -369,7 +369,6 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
   }, [mergedPlans]);
 
   const previewSection = compareSections[0];
-  const isFreePlan = !space.subscription_tier || space.subscription_tier === SubscriptionItemType.Free;
   const [mobileExpandedPlan, setMobileExpandedPlan] = React.useState<string>(SubscriptionItemType.Pro);
 
   const { data: dataStandCredits } = useQuery(GetStandCreditsDocument, { variables: { standId: space._id } });
@@ -455,8 +454,14 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
               <div className="flex flex-wrap items-center justify-between gap-3 text-tertiary">
                 <div className="flex flex-wrap items-center gap-1.5 min-w-0">
                   <p className="text-primary">Credits Remaining</p>
-                  <div className="bg-(--btn-tertiary) w-fit px-1.5 py-[1px] rounded-full">
+                  <div className="bg-(--btn-tertiary) tooltip tooltip-bottom w-fit px-1.5 py-[1px] rounded-full">
                     <p className="text-xs">What is this?</p>
+                    <div className="tooltip-content text-left! max-w-86!">
+                      <p>
+                        Credits power AI interactions in this community. Each AI chat message uses credits from the
+                        community’s daily allowance.
+                      </p>
+                    </div>
                   </div>
                 </div>
 
@@ -548,15 +553,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                               disabled={space.subscription_tier === item.type || purchasingPlan}
                               checked={!!data.find((i) => i.type === item.type)?.annual}
                               onChange={(value) => {
-                                setData((prev) =>
-                                  prev.map((i) => {
-                                    if (i.type === item.type) {
-                                      return { ...i, annual: value };
-                                    } else {
-                                      return i;
-                                    }
-                                  }),
-                                );
+                                setData((prev) => prev.map((i) => ({ ...i, annual: value })));
                               }}
                             />
                             <p className="text-tertiary">Annual</p>
@@ -565,10 +562,15 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           <Segment
                             items={[
                               { value: 'card', iconLeft: 'icon-credit-card' },
-                              { value: 'wallet', iconLeft: 'icon-wallet', disabled: true },
+                              { value: 'wallet', iconLeft: 'icon-wallet', ignore: true },
                             ]}
                             disabled={space.subscription_tier === item.type || purchasingPlan}
                             onSelect={(method) => {
+                              if (method.value === 'wallet') {
+                                toast.success('Coming Soon.');
+                                return;
+                              }
+
                               setData((prev) =>
                                 prev.map((i) => {
                                   if (i.type === item.type) {
