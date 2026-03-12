@@ -795,7 +795,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                               rowIndex !== 0 && 'border-t border-divider',
                             )}
                           >
-                            {row.label}
+                            <span>{row.label}</span>
                           </th>
                           {COMPARE_COLUMNS.map((column) => (
                             <td
@@ -809,6 +809,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                           ))}
                         </tr>
                       ))}
+                      <tr className="h-24" />
                     </tbody>
                   </table>
 
@@ -879,7 +880,7 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
                                           rowIndex !== 0 && 'border-t border-divider',
                                         )}
                                       >
-                                        {row.label}
+                                        <span>{row.label}</span>
                                       </th>
                                       {COMPARE_COLUMNS.map((column) => (
                                         <td
