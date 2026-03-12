@@ -1,9 +1,9 @@
 'use client';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { debounce, kebabCase } from 'lodash';
 import React from 'react';
 import { Controller, useForm, UseFormReturn } from 'react-hook-form';
-import { object, string } from 'yup';
+import { z } from 'zod';
 import * as Sentry from '@sentry/nextjs';
 
 import { Button, Card, FileInput, InputField, Map, Segment, TextAreaField, toast } from '$lib/components/core';
@@ -19,11 +19,11 @@ import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { useSession } from '$lib/hooks/useSession';
 
-const validationSchema = object().shape({
-  title: string().required(),
-  slug: string()
-    .min(3, 'URLs must be at least 3 characters and contain only letters, numbers or dashes.')
-    .required('URLs must be at least 3 characters and contain only letters, numbers or dashes.'),
+const validationSchema = z.object({
+  title: z.string().min(1, { message: 'Title is required.' }),
+  slug: z
+    .string()
+    .min(3, { message: 'URLs must be at least 3 characters and contain only letters, numbers or dashes.' }),
 });
 
 type FormValues = {
@@ -54,7 +54,7 @@ export function CommunityForm() {
       image_cover: undefined,
       address: undefined,
     },
-    resolver: yupResolver(validationSchema),
+    resolver: zodResolver(validationSchema),
   });
 
   const {

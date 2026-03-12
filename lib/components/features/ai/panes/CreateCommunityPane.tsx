@@ -1,8 +1,8 @@
 'use client';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { object, string } from 'yup';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { kebabCase } from 'lodash';
 
 import { useMutation } from '$lib/graphql/request';
@@ -35,11 +35,11 @@ type FormValues = {
   address?: Address;
 };
 
-const validationSchema = object().shape({
-  title: string().required(),
-  slug: string()
-    .min(3, 'URLs must be at least 3 characters and contain only letters, numbers or dashes.')
-    .required('URLs must be at least 3 characters and contain only letters, numbers or dashes.'),
+const validationSchema = z.object({
+  title: z.string().min(1, { message: 'Title is required.' }),
+  slug: z
+    .string()
+    .min(3, { message: 'URLs must be at least 3 characters and contain only letters, numbers or dashes.' }),
 });
 
 function FormContent({ data, title }: Props) {
@@ -55,7 +55,7 @@ function FormContent({ data, title }: Props) {
       image_cover: undefined,
       address: undefined,
     },
-    resolver: yupResolver(validationSchema),
+    resolver: zodResolver(validationSchema),
   });
 
   const {

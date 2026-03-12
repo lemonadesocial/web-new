@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 import { uniqBy } from 'lodash';
 import React from 'react';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { object, array, string } from 'yup';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 import { Button, Card, FileInput, InputField, modal, ModalContent, Spacer } from '$lib/components/core';
 import { ASSET_PREFIX } from '$lib/utils/constants';
@@ -20,20 +20,22 @@ const obj: Record<ContentKey, any> = {
   'manual.confirm': ConfirmImport,
 };
 
-const schemaEmailAddresses = object().shape({
-  people: array()
+const schemaEmailAddresses = z.object({
+  people: z
+    .array(
+      z.object({
+        email: z.string().email().or(z.literal('')),
+        user_name: z.string().optional(),
+      }),
+    )
     .transform((originalValue) => {
       if (originalValue && originalValue.length > 0) {
         return originalValue.slice(0, originalValue.length - 1);
       }
       return originalValue;
-    })
-    .of(
-      object().shape({
-        email: string().email(),
-        user_name: string(),
-      }),
-    ),
+    }),
+  view: z.string().optional(),
+  tags: z.array(z.string()).optional(),
 });
 
 type FormPeopleValue = {
@@ -45,7 +47,7 @@ type FormPeopleValue = {
 export function AddCommunityPeople({ spaceId, onCompleted }: { spaceId: string; onCompleted: () => void }) {
   const form = useForm<FormPeopleValue>({
     defaultValues: { view: 'default', people: [{ email: '', user_name: '' }], tags: [] },
-    resolver: yupResolver(schemaEmailAddresses),
+    resolver: zodResolver(schemaEmailAddresses),
   });
   const view = form.watch('view');
   const Content = obj[view];
@@ -271,7 +273,7 @@ function AddManualContent({ form }: CommonProps) {
 
         <Button
           variant="secondary"
-          disabled={!schemaEmailAddresses.isValidSync({ people: controlledFields })}
+          disabled={!schemaEmailAddresses.safeParse({ people: controlledFields }).success}
           onClick={() => form.setValue('view', 'manual.confirm')}
         >
           Preview
