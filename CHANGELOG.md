@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.15.1](https://github.com/lemonadesocial/web-new/compare/v10.15.0...v10.15.1) (2026-03-12)
+
+
+### Bug Fixes
+
+* sticky compare feature on mweb ([b470701](https://github.com/lemonadesocial/web-new/commit/b470701d3dd11f26a6211ec67ed66f9d639d83ad))
+
 ## [10.15.0](https://github.com/lemonadesocial/web-new/compare/v10.14.0...v10.15.0) (2026-03-12)
 
 
