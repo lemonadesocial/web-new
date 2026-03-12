@@ -736,10 +736,10 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
               {!isCompareExpanded && previewSection && (
                 <motion.div
                   key="compare-preview"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.24, ease: 'easeInOut' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0, ease: 'easeInOut' }}
                   className="relative border border-divider rounded-sm overflow-hidden bg-overlay-primary"
                 >
                   <div className="w-full h-12 px-4 bg-(--btn-tertiary) flex items-center justify-between">
@@ -794,10 +794,10 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
               {isCompareExpanded && (
                 <motion.div
                   key="compare-expanded"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.28, ease: 'easeInOut' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0, ease: 'easeInOut' }}
                   className="flex flex-col gap-3"
                 >
                   {compareSections.map((section) => {
