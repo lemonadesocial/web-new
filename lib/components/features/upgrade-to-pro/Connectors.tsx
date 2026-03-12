@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 import { Button, Card, InputField, Skeleton, toast, modal, Menu, MenuItem } from '$lib/components/core';
 import { Chip } from '$lib/components/core/chip/Chip';
@@ -119,7 +119,7 @@ export function Connectors({ space }: ConnectorsProps) {
                 item={item}
                 isConnected={isConnected}
                 connectionId={connection?.id}
-                spaceId={space._id}
+                space={space}
                 refetchSpaceConnections={refetchSpaceConnections}
               />
             );
@@ -135,11 +135,12 @@ type ConnectorCardProps = {
   item: ConnectorDefinition;
   isConnected: boolean;
   connectionId?: string;
-  spaceId: string;
+  space: Space;
   refetchSpaceConnections: () => Promise<unknown>;
 };
 
-function ConnectorCard({ item, isConnected, connectionId, spaceId, refetchSpaceConnections }: ConnectorCardProps) {
+function ConnectorCard({ item, isConnected, connectionId, space, refetchSpaceConnections }: ConnectorCardProps) {
+  const router = useRouter();
   const logo = CONNECTOR_ICON_MAP[item.icon];
 
   const [connectPlatform, { loading }] = useMutation(ConnectPlatformDocument, {
@@ -154,7 +155,7 @@ function ConnectorCard({ item, isConnected, connectionId, spaceId, refetchSpaceC
     const { data } = await connectPlatform({
       variables: {
         input: {
-          spaceId,
+          spaceId: space._id,
           connectorType: item.id,
         },
       },
@@ -213,7 +214,7 @@ function ConnectorCard({ item, isConnected, connectionId, spaceId, refetchSpaceC
           </div>
           {isConnected ? (
             <div className="flex items-center gap-2">
-              <Chip size="xs" variant="success" className="rounded-full">
+              <Chip size="xs" variant="success" className="rounded-full h-6">
                 Connected
               </Chip>
               {connectionId && (
@@ -223,21 +224,34 @@ function ConnectorCard({ item, isConnected, connectionId, spaceId, refetchSpaceC
                       icon="icon-more-vert"
                       size="xs"
                       variant="tertiary-alt"
-                      className="rounded-full"
+                      className="rounded-full h-6"
                       aria-label="More actions"
                       loading={disconnecting}
                     />
                   </Menu.Trigger>
                   <Menu.Content className="p-1 min-w-[160px]">
                     {({ toggle }) => (
-                      <MenuItem
-                        onClick={() => handleDisconnect(toggle)}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <i aria-hidden="true" className="icon-delete size-4 text-error" />
-                          <p className="text-sm text-error">Disconnect</p>
-                        </div>
-                      </MenuItem>
+                      <>
+                        <MenuItem
+                          onClick={() => {
+                            toggle();
+                            router.push(`/s/manage/${space.slug || space._id}/settings/connectors/${connectionId}`);
+                          }}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <i aria-hidden="true" className="icon-ads-click size-4 text-primary" />
+                            <p className="text-sm text-primary">View Actions</p>
+                          </div>
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => handleDisconnect(toggle)}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <i aria-hidden="true" className="icon-delete size-4 text-error" />
+                            <p className="text-sm text-error">Disconnect</p>
+                          </div>
+                        </MenuItem>
+                      </>
                     )}
                   </Menu.Content>
                 </Menu.Root>
@@ -246,7 +260,7 @@ function ConnectorCard({ item, isConnected, connectionId, spaceId, refetchSpaceC
           ) : loading ? (
             <i aria-hidden="true" className="icon-loader size-4 text-tertiary animate-spin" />
           ) : (
-            <Chip size="xs" variant="secondary" className="rounded-full">
+            <Chip size="xs" variant="secondary" className="rounded-full h-6">
               Connect
             </Chip>
           )}

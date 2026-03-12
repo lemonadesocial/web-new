@@ -84,7 +84,7 @@ export function CodeVerification({
           </Button>
           <div className="flex gap-1 items-center">
             <Button
-              variant="flat"
+              variant="secondary"
               disabled={loading || resending || !canResend}
               onClick={onResend}
             >
