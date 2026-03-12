@@ -422,14 +422,14 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-6">
-        <div className="space-y-1">
+        <div className="hidden md:block space-y-1">
           <h3 className="text-2xl font-bold">Plans & Credits</h3>
           <p className="text-tertiary">Manage your subscription plan and credit balance.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card.Root className="md:col-span-2">
-            <Card.Content className="flex h-full flex-col justify-between">
+            <Card.Content className="flex h-full md:flex-col justify-between max-sm:items-center">
               <div className="flex gap-3 items-center">
                 <div className="p-2 rounded-sm bg-(--chip-secondary-bg) flex items-center justify-center">
                   <i className="icon-lemonade-logo text-warning-300 w-5 h-5 aspect-square" />
@@ -450,89 +450,54 @@ export function PlanAndCredits({ space, data: subscriptionItems = [] }: { space:
             </Card.Content>
           </Card.Root>
 
-          {isFreePlan ? (
-            <Card.Root className="md:col-span-2 overflow-hidden">
-              <Card.Content className="relative">
-                <div className="pointer-events-none absolute inset-0" />
-                <div className="relative flex h-full flex-col justify-between gap-4">
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2.5">
-                      <p>Unlock Credits</p>
-                      <div className="rounded-full px-1.5 py-1 bg-(--btn-tertiary) text-tertiary">
-                        <p className="text-xs leading-none">What is this?</p>
-                      </div>
-                    </div>
-                    <div className="rounded-full bg-(--btn-tertiary)">
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          initial={{ width: '0%' }}
-                          animate={{ width: '3%' }}
-                          exit={{ width: 0 }}
-                          transition={{ type: 'tween' }}
-                          className="rounded-full h-5 p-1 flex justify-end"
-                        >
-                          <div className="h-3 w-3 border-3 border-tertiary rounded-full"></div>
-                        </motion.div>
-                      </AnimatePresence>
-                    </div>
-                    <p className="text-sm text-tertiary">
-                      Upgrade your plan to unlock credits and get the most out of LemonAI; build pages, generate
-                      content, and automate more of your event workflow.
-                    </p>
+          <Card.Root className="md:col-span-2">
+            <Card.Content className="flex flex-col gap-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 text-tertiary">
+                <div className="flex flex-wrap items-center gap-1.5 min-w-0">
+                  <p className="text-primary">Credits Remaining</p>
+                  <div className="bg-(--btn-tertiary) w-fit px-1.5 py-[1px] rounded-full">
+                    <p className="text-xs">What is this?</p>
                   </div>
                 </div>
-              </Card.Content>
-            </Card.Root>
-          ) : (
-            <Card.Root className="md:col-span-2">
-              <Card.Content className="flex flex-col gap-3">
-                <div className="flex flex-wrap items-center justify-between gap-3 text-tertiary">
-                  <div className="flex flex-wrap items-center gap-1.5 min-w-0">
-                    <p className="text-primary">Credits Remaining</p>
-                    <div className="bg-(--btn-tertiary) w-fit px-1.5 py-[1px] rounded-full">
-                      <p className="text-xs">What is this?</p>
-                    </div>
-                  </div>
 
-                  <p className="ml-auto text-left md:text-right">
-                    <AnimatedCreditCount value={remainingCredits} /> of {totalCredits.toLocaleString('en-US')}
-                  </p>
-                </div>
-                <div className="rounded-full bg-alert-400/16 overflow-hidden">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      initial={{ width: '3%' }}
-                      animate={{ width: `${usedCreditsBarPercent}%` }}
-                      exit={{ width: 0 }}
-                      transition={{ type: 'tween', duration: CREDIT_ANIMATION_DURATION, ease: 'easeOut' }}
-                      className="rounded-full bg-linear-to-r from-alert-700 to-alert-400 h-5 p-1 min-w-5 flex justify-end"
-                    >
-                      <div className="h-3 w-3 border-3 border-white rounded-full"></div>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-                <div className="flex flex-col gap-3 text-tertiary">
-                  <div className="flex items-center gap-0.5 order-1">
-                    <div className="size-4 flex items-center justify-center">
-                      <div className="w-2 h-2 rounded-full bg-alert-400" />
-                    </div>
-                    <p>Daily credits will be used first</p>
+                <p className="ml-auto text-left md:text-right">
+                  <AnimatedCreditCount value={remainingCredits} /> of {totalCredits.toLocaleString('en-US')}
+                </p>
+              </div>
+              <div className="rounded-full bg-alert-400/16 overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    initial={{ width: '3%' }}
+                    animate={{ width: `${usedCreditsBarPercent}%` }}
+                    exit={{ width: 0 }}
+                    transition={{ type: 'tween', duration: CREDIT_ANIMATION_DURATION, ease: 'easeOut' }}
+                    className="rounded-full bg-linear-to-r from-alert-700 to-alert-400 h-5 p-1 min-w-5 flex justify-end"
+                  >
+                    <div className="h-3 w-3 border-3 border-white rounded-full"></div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+              <div className="flex flex-col gap-3 text-tertiary">
+                <div className="flex items-center gap-0.5 order-1">
+                  <div className="size-4 flex items-center justify-center">
+                    <div className="w-2 h-2 rounded-full bg-alert-400" />
                   </div>
+                  <p>Daily credits will be used first</p>
+                </div>
 
-                  <div className="flex flex-col gap-2 order-2">
-                    <div className="flex gap-1.5 items-center">
-                      <i className="icon-x w-4 h-4 aspect-square" />
-                      <p className="text-sm">No credits will rollover</p>
-                    </div>
-                    <div className="flex gap-1.5 items-center">
-                      <i className="icon-done w-4 h-4 aspect-square" />
-                      <p className="text-sm">Daily credits reset at midnight UTC</p>
-                    </div>
+                <div className="flex flex-col gap-2 order-2">
+                  <div className="flex gap-1.5 items-center">
+                    <i className="icon-x w-4 h-4 aspect-square" />
+                    <p className="text-sm">No credits will rollover</p>
+                  </div>
+                  <div className="flex gap-1.5 items-center">
+                    <i className="icon-done w-4 h-4 aspect-square" />
+                    <p className="text-sm">Daily credits reset at midnight UTC</p>
                   </div>
                 </div>
-              </Card.Content>
-            </Card.Root>
-          )}
+              </div>
+            </Card.Content>
+          </Card.Root>
 
           {[...data]
             .sort((a, b) => Number(a.pricing?.price) - Number(b.pricing?.price))

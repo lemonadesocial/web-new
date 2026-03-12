@@ -65,7 +65,7 @@ export function AdminSection({ space }: { space: Space }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
+      <div className="space-y-1">
         <div className="flex justify-between items-center">
           <h3 className="text-xl font-semibold flex-1">Admins</h3>
           <Button
@@ -90,7 +90,7 @@ export function AdminSection({ space }: { space: Space }) {
             Add Admin
           </Button>
         </div>
-        <p className="text-secondary">Admins have full access to the community and can approve events.</p>
+        <p className="text-tertiary">Admins have full access to the community and can approve events.</p>
       </div>
 
       <CardTable.Root loading={!mounted && loading}>
@@ -195,7 +195,7 @@ export function AmbassadorSection({ space }: { space: Space }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
-        <div>
+        <div className="space-y-1">
           <div className="flex justify-between items-center">
             <h3 className="text-xl font-semibold flex-1">Ambassadors</h3>
             <Button
@@ -220,7 +220,7 @@ export function AmbassadorSection({ space }: { space: Space }) {
               Add Ambassador
             </Button>
           </div>
-          <p className="text-secondary">
+          <p className="text-tertiary">
             Ambassadors can create events in this community without needing admin approval.
           </p>
         </div>
