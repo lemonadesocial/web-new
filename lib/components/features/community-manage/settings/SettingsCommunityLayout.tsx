@@ -9,6 +9,7 @@ const tabs = [
   { label: 'Team', path: 'team' },
   { label: 'Tags', path: 'tags' },
   { label: 'Connectors', path: 'connectors' },
+  { label: 'API Keys', path: 'api-keys' },
   { label: 'Advanced', path: 'advanced' },
   { label: 'Embed', path: 'embed' },
   // { label: 'Send Limit', path: 'send-limit' },
