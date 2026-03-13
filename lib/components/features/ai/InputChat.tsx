@@ -29,7 +29,8 @@ export function InputChat() {
 
   const [{ phraseIndex, charCount }, setAnim] = React.useState({ phraseIndex: 0, charCount: 0 });
   const [focused, setFocused] = React.useState(false);
-  const isIdle = input.length === 0 && !focused;
+  const hasActivity = !!state.messages.length || !!state.thinking;
+  const isIdle = input.length === 0 && !focused && !hasActivity;
 
   React.useEffect(() => {
     if (!isIdle) return;
@@ -168,6 +169,9 @@ export function InputChat() {
   };
 
   const typingText = isIdle ? PLACEHOLDER_PHRASES[phraseIndex].slice(0, charCount) : '';
+  const textareaBaseClass =
+    'w-full outline-none resize-none overflow-y-auto relative bg-transparent text-primary font-medium';
+  const textareaClass = isIdle ? `${textareaBaseClass} placeholder:invisible` : textareaBaseClass;
 
   return (
     <Card.Root className="backdrop-blur-none! border-0 bg-(--btn-tertiary) rounded-lg overflow-visible">
@@ -192,10 +196,10 @@ export function InputChat() {
             onKeyDown={handleKeyDown}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
-            className="w-full outline-none resize-none overflow-y-auto relative bg-transparent text-primary font-medium placeholder:invisible"
+            className={textareaClass}
             rows={1}
             style={{ maxHeight: 160 }}
-            placeholder=" "
+            placeholder="Ask anything..."
           />
         </div>
         <div className="flex justify-between items-center">
