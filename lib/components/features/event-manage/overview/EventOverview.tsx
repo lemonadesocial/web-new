@@ -1,6 +1,5 @@
 'use client';
 import { modal } from '$lib/components/core';
-import { LEMONADE_DOMAIN } from '$lib/utils/constants';
 
 import { useEvent } from '../store';
 import { InviteGuestsModal } from '../modals/InviteGuestsModal';

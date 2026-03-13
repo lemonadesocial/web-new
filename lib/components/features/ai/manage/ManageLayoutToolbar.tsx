@@ -6,7 +6,18 @@ import { motion } from 'framer-motion';
 import { match } from 'ts-pattern';
 import { isEqual, merge } from 'lodash';
 
-import { Button, Menu, MenuItem, sheet, toast } from '$lib/components/core';
+import {
+  Button,
+  Card,
+  InputField,
+  Menu,
+  MenuItem,
+  modal,
+  ModalContent,
+  sheet,
+  toast,
+  Toggle,
+} from '$lib/components/core';
 import { useMutation, useQuery } from '$lib/graphql/request';
 import {
   Event,
@@ -16,13 +27,20 @@ import {
 } from '$lib/graphql/generated/backend/graphql';
 import { useMe } from '$lib/hooks/useMe';
 import { generateUrl } from '$lib/utils/cnd';
-import { EventThemeProvider, ThemeBuilderActionKind, useEventTheme } from '$lib/components/features/theme-builder/provider';
+import {
+  EventThemeProvider,
+  ThemeBuilderActionKind,
+  useEventTheme,
+} from '$lib/components/features/theme-builder/provider';
 import { defaultTheme, ThemeValues } from '$lib/components/features/theme-builder/store';
 import { EventThemeBuilder } from '$lib/components/features/theme-builder/EventThemeBuilder';
 
-import { useUpdateEvent } from '../../event-manage/store';
+import { useEvent, useUpdateEvent } from '../../event-manage/store';
 import { tabMappings } from './helpers';
 import { ActiveTabType, storeManageLayout as store, useStoreManageLayout } from './store';
+import { EventThemeLayout } from '../../event-manage/EventThemeLayout';
+import { EventGuestSideContent } from '../../event/EventGuestSide';
+import { ListItem } from '$app/[domain]/(default)/settings/list-item';
 
 const devices = {
   desktop: {
@@ -219,26 +237,50 @@ function ManageLayoutToolbar() {
           </div>
 
           <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="secondary"
-              iconLeft="icon-arrow-shape-up-stack-outline"
-              onClick={() => {
-                router.push('/upgrade-to-pro');
-              }}
-            >
-              Upgrade
-            </Button>
-            {canSaveTheme && (
-              <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}>
-                Reset
+            {state.activeTab === 'manage' && (
+              <Button
+                size="sm"
+                outlined
+                iconLeft="icon-arrow-shape-up-stack-outline"
+                onClick={() => {
+                  router.push('/upgrade-to-pro');
+                }}
+              >
+                Upgrade
               </Button>
             )}
-            {canSaveTheme && (
-              <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}>
-                Save
-              </Button>
+
+            {['design', 'preview'].includes(state.activeTab) && (
+              <>
+                <Menu.Root placement="bottom-end">
+                  <Menu.Trigger>
+                    {({ toggle }) => (
+                      <Button size="sm" variant="secondary" iconLeft="icon-share" onClick={toggle}>
+                        Share Preview
+                      </Button>
+                    )}
+                  </Menu.Trigger>
+                  <Menu.Content className="p-0 w-[480px]">
+                    <PreviewLinkPopup />
+                  </Menu.Content>
+                </Menu.Root>
+                <Button size="sm" variant="tertiary-alt" onClick={() => store.setActiveTab('manage')}>
+                  Close
+                </Button>
+              </>
             )}
+
+            {canSaveTheme && (
+              <>
+                <Button size="sm" variant="tertiary-alt" onClick={handleResetTheme}>
+                  Reset
+                </Button>
+                <Button size="sm" variant="secondary" loading={savingTheme} onClick={handleSaveTheme}>
+                  Save
+                </Button>
+              </>
+            )}
+
             {state.activeTab === 'manage' && (
               <Button size="sm" onClick={handlePublish} loading={publishingEvent}>
                 {(state.data as Event)?.published ? 'Published' : 'Publish'}
@@ -527,6 +569,93 @@ function DesignThemeBridge({ onThemeChange }: { onThemeChange?: (theme: ThemeVal
   }, [onThemeChange]);
 
   return null;
+}
+
+function PreviewLinkPopup() {
+  const event = useEvent();
+
+  return (
+    <Card.Root>
+      <Card.Content className="flex flex-col gap-4">
+        <div className="space-y-2">
+          <p className="text-lg">Preview Links</p>
+          <p className="text-secondary text-sm">
+            Create a public view link to allow anyone to access a view-only version of this design. No sign-in required.
+          </p>
+        </div>
+        <div className="aspect-[157/88] bg-tertiary relative overflow-hidden">
+          <div className="absolute scale-50 origin-top-left w-[200%]">
+            {event && (
+              <EventThemeProvider themeData={event.theme_data}>
+                <EventThemeLayout>
+                  <EventGuestSideContent event={event} />
+                </EventThemeLayout>
+              </EventThemeProvider>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-col gap-3 items-center">
+          <Button
+            variant="secondary"
+            className="w-full"
+            onClick={() => modal.open(CreatePreviewLinkModal, { dismissible: false })}
+          >
+            Create Preview Link
+          </Button>
+          <p className="text-sm text-tertiary">This link can be deleted at any time.</p>
+        </div>
+      </Card.Content>
+    </Card.Root>
+  );
+}
+
+const expiredList = [
+  { value: 1, label: '1 hour' },
+  { value: 6, label: '6 hours' },
+  { value: 24, label: '24 hours' },
+  { value: 48, label: '48 hours' },
+  { value: 168, label: '7 days' },
+  { value: 0, label: 'Never' },
+];
+function CreatePreviewLinkModal() {
+  const [requiredPassword, setRequiredPassword] = React.useState(false);
+  const [password, setPassword] = React.useState('');
+  const [expired, setExpired] = React.useState(() => expiredList.at(-1));
+
+  return (
+    <ModalContent icon="icon-link" className="flex flex-col gap-4">
+      <div className="space-y-2">
+        <p className="text-lg">Create Preview Link</p>
+        <p className="text-sm text-secondary">Set access options for this preview link before sharing it.</p>
+      </div>
+      <div>
+        <p>Password Required</p>
+        <Toggle id="preview-link-pw" checked={requiredPassword} onChange={(value) => setRequiredPassword(value)} />
+      </div>
+      {requiredPassword && (
+        <InputField label="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+      )}
+      <div className="flex justify-between">
+        <p>Expires in</p>
+        <Menu.Root>
+          <Menu.Trigger>
+            {({ toggle }) => (
+              <div onClick={toggle} className="cursor-pointer bg-background/64 w-[150px] h-10 flex items-center px-3.5">
+                <p>{expired?.label}</p>
+              </div>
+            )}
+          </Menu.Trigger>
+          <Menu.Content>
+            {({ toggle }) => {
+              return expiredList.map((item) => (
+                <MenuItem key={item.value} onClick={() => setExpired(item)} title={item.label}></MenuItem>
+              ));
+            }}
+          </Menu.Content>
+        </Menu.Root>
+      </div>
+    </ModalContent>
+  );
 }
 
 export default ManageLayoutToolbar;

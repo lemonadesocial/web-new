@@ -7,7 +7,7 @@ import React from 'react';
 
 const tabs: Record<string, { label: string; component: React.FC }> = {
   'direct-ledger': { label: 'Overview', component: DirectLedger },
-  'settings': { label: 'Settings', component: Settings },
+  settings: { label: 'Settings', component: Settings },
 };
 
 export function ManageEventPaymentLayout() {

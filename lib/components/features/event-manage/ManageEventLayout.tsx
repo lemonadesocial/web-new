@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import clsx from 'clsx';
-import { useRef } from 'react';
 
 import { Event } from '$lib/graphql/generated/backend/graphql';
 import { Skeleton } from '$lib/components/core';
@@ -78,7 +77,6 @@ function ManageEventLayout({ shortid }: { shortid: string }) {
 }
 
 function Content({ event, shortid }: { event: Event; shortid: string }) {
-  const sentinelRef = useRef<HTMLDivElement>(null);
   const [_, aiChatDispatch] = useAIChat();
 
   useQuery(
@@ -110,8 +108,7 @@ function Content({ event, shortid }: { event: Event; shortid: string }) {
 
   return (
     <div className="relative h-full overflow-auto">
-      <div ref={sentinelRef} />
-      <div className="sticky top-0 md:top-8 md:top-0 border-b z-1 px-4">
+      <div className="sticky top-0 border-b z-1 px-4">
         <div className="backdrop-blur-md transition-all duration-300 pt-2 font-default">
           <div className="page mx-auto px-4 md:px-0">
             <nav className="flex gap-4 pt-1 overflow-auto no-scrollbar">
