@@ -3,27 +3,8 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Button, Card } from '$lib/components/core';
-import { useMe } from '$lib/hooks/useMe';
 import { useSignIn } from '$lib/hooks/useSignIn';
 import { ASSET_PREFIX } from '$lib/utils/constants';
-import { AIChat } from '$lib/components/features/ai/AIChat';
-
-export function Content() {
-  const me = useMe();
-  if (!me) {
-    return (
-      <div className="w-full h-full flex max-sm:px-4 max-sm:pt-44 items-center justify-between max-w-[1200px]">
-        <NonLoginContent />
-      </div>
-    );
-  }
-
-  return (
-    <div className="w-full max-w-[720px] px-4 md:px-0">
-      <AIChat />
-    </div>
-  );
-}
 
 const cards = [
   {
@@ -34,7 +15,7 @@ const cards = [
         Run <span className="text-alert-400!">events</span> that power your community.
       </p>
     ),
-    subtitle: 'Create & manage events that your community won’t forget.',
+    subtitle: "Create & manage events that your community won't forget.",
   },
   {
     icon: 'icon-community',
@@ -68,7 +49,7 @@ const cards = [
   },
 ];
 
-function NonLoginContent() {
+export function NonLoginContent() {
   const signIn = useSignIn();
 
   return (

@@ -88,7 +88,7 @@ const Sidebar = () => {
       <div
         className={clsx(
           'relative bg-overlay-primary max-sm:fixed h-screen text-tertiary border-r z-50 transform transition-transform duration-300 ease-in-out',
-          toggle === 'mini' && 'border-r-0 max-sm:-translate-x-full',
+          toggle === 'mini' && 'max-sm:-translate-x-full',
           toggle === 'open' && 'max-sm:left-0',
         )}
       >

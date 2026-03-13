@@ -1,11 +1,3 @@
-import { Content } from './content';
+import { Home } from '$lib/components/features/home';
 
-function Page() {
-  return (
-    <div className="flex justify-center h-full w-full">
-      <Content />
-    </div>
-  );
-}
-
-export default Page;
+export default Home;

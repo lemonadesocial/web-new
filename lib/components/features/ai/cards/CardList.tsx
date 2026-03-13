@@ -20,7 +20,7 @@ export function CardList({ cards, overflow }: CardListProps) {
   if (!cards || cards.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 w-full">
       {cards.map((card, idx) =>
         match(card)
           .with({ type: 'event' }, (c) => (

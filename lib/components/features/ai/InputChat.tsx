@@ -6,14 +6,27 @@ import { match } from 'ts-pattern';
 import { isMobile } from 'react-device-detect';
 
 import { Button, Card, drawer, Menu, MenuItem, toast } from '$lib/components/core';
-import { useClient, useMutation } from '$lib/graphql/request';
+
+import { useClient, useMutation, useQuery } from '$lib/graphql/request';
 import { AiConfigFieldsFragment, GetListAiConfigDocument, RunAiChatDocument } from '$lib/graphql/generated/ai/graphql';
 import { aiChatClient } from '$lib/graphql/request/instances';
 import { AI_CONFIG } from '$lib/utils/constants';
-import { Event, GetEventDocument, GetSpaceDocument, Space } from '$lib/graphql/generated/backend/graphql';
+import {
+  Event,
+  GetEventDocument,
+  GetSpaceDocument,
+  GetSpacesDocument,
+  Space,
+  SpaceRole,
+} from '$lib/graphql/generated/backend/graphql';
 import { useUpdateEvent } from '$lib/components/features/event-manage/store';
 import { EditEventDrawer } from '../event-manage/drawers/EditEventDrawer';
 import { AIChatActionKind, Message, useAIChat } from './provider';
+import { communityAvatar } from '$lib/utils/community';
+
+const PLACEHOLDER_PHRASES = ['create an event', 'create a community', 'launch a coin'];
+const TYPING_MS = 80;
+const PAUSE_AFTER_PHRASE_MS = 1500;
 
 export function InputChat() {
   const router = useRouter();
@@ -22,6 +35,29 @@ export function InputChat() {
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const { client } = useClient();
   const updateEvent = useUpdateEvent();
+
+  const [{ phraseIndex, charCount }, setAnim] = React.useState({ phraseIndex: 0, charCount: 0 });
+  const [focused, setFocused] = React.useState(false);
+  const hasActivity = !!state.messages.length || !!state.thinking;
+  const isIdle = input.length === 0 && !focused && !hasActivity;
+
+  React.useEffect(() => {
+    if (!isIdle) return;
+    const phrase = PLACEHOLDER_PHRASES[phraseIndex];
+    const isTyping = charCount < phrase.length;
+    const t = setTimeout(() => {
+      setAnim((prev) =>
+        prev.charCount < phrase.length
+          ? { ...prev, charCount: prev.charCount + 1 }
+          : { charCount: 0, phraseIndex: (prev.phraseIndex + 1) % PLACEHOLDER_PHRASES.length }
+      );
+    }, isTyping ? TYPING_MS : PAUSE_AFTER_PHRASE_MS);
+    return () => clearTimeout(t);
+  }, [isIdle, phraseIndex, charCount]);
+
+  React.useEffect(() => {
+    if (!isIdle) setAnim({ phraseIndex: 0, charCount: 0 });
+  }, [isIdle]);
 
   const [run, { loading }] = useMutation(
     RunAiChatDocument,
@@ -141,26 +177,52 @@ export function InputChat() {
     }
   };
 
+  const typingText = isIdle ? PLACEHOLDER_PHRASES[phraseIndex].slice(0, charCount) : '';
+  const textareaBaseClass =
+    'w-full outline-none resize-none overflow-y-auto relative bg-transparent text-primary font-medium';
+  const textareaClass = isIdle ? `${textareaBaseClass} placeholder:invisible` : textareaBaseClass;
+
   return (
     <Card.Root className="backdrop-blur-none! border-0 bg-(--btn-tertiary) rounded-lg overflow-visible">
       <Card.Content className="space-y-4 flex flex-col">
-        <textarea
-          disabled={loading}
-          ref={textareaRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Enter a prompt here. Use Shift+Enter for new lines."
-          className="w-full outline-none resize-none overflow-y-auto"
-          rows={1}
-          style={{ maxHeight: 160 }}
-        />
+        <div className="relative w-full">
+          {isIdle && (
+            <div
+              className="absolute inset-0 pointer-events-none text-secondary overflow-hidden"
+              aria-hidden
+            >
+              <span className="font-medium">
+                Ask LemonAI to <span>{typingText}</span>
+              </span>
+              <span className="inline-block w-[1px] h-[1em] bg-current align-middle ml-[1px] animate-[blink_1s_step-end_infinite]" />
+            </div>
+          )}
+          <textarea
+            disabled={loading}
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            className={textareaClass}
+            rows={1}
+            style={{ maxHeight: 160 }}
+            placeholder="Ask anything..."
+          />
+        </div>
         <div className="flex justify-between items-center">
           <Menu.Root placement={!!state.messages.length ? 'top-start' : 'bottom-start'}>
             <Menu.Trigger>
               {({ toggle }) => (
-                <Button variant="tertiary-alt" onClick={() => toggle()} size="sm" iconLeft="icon-discover-tune">
-                  {state.selectedTool?.label || 'Tools'}
+                <Button
+                  variant="tertiary-alt"
+                  onClick={() => toggle()}
+                  size="sm"
+                  icon={state.selectedTool?.label ? undefined : 'icon-discover-tune'}
+                  iconLeft={state.selectedTool?.label ? 'icon-discover-tune' : undefined}
+                >
+                  {state.selectedTool?.label}
                 </Button>
               )}
             </Menu.Trigger>
@@ -182,10 +244,81 @@ export function InputChat() {
               )}
             </Menu.Content>
           </Menu.Root>
-          <Button icon="icon-arrow-foward-sharp -rotate-90" size="sm" onClick={handleSubmit} loading={loading} />
+          <div className="flex items-center gap-2">
+            <SpaceSelector
+              currentSpaceId={(state.data as { space_id?: string } | undefined)?.space_id}
+              onSelectSpace={(space) =>
+                dispatch({
+                  type: AIChatActionKind.set_data_run,
+                  payload: { data: { space_id: space._id } },
+                })
+              }
+            />
+            <Button icon="icon-arrow-foward-sharp -rotate-90" size="sm" onClick={handleSubmit} loading={loading} />
+          </div>
         </div>
       </Card.Content>
     </Card.Root>
+  );
+}
+
+type SpaceSelectorProps = {
+  currentSpaceId?: string;
+  onSelectSpace: (space: Space) => void;
+};
+
+function SpaceSelector({ currentSpaceId, onSelectSpace }: SpaceSelectorProps) {
+  const { data } = useQuery(GetSpacesDocument, {
+    variables: { with_my_spaces: true, roles: [SpaceRole.Creator, SpaceRole.Admin] },
+    fetchPolicy: 'cache-and-network',
+  });
+
+  const spaces = (data?.listSpaces || []) as Space[];
+  const personalSpace = spaces.find((space) => space.personal);
+  const selectedSpace = spaces.find((space) => space._id === currentSpaceId) || personalSpace;
+
+  React.useEffect(() => {
+    if (!currentSpaceId && personalSpace) {
+      onSelectSpace(personalSpace);
+    }
+  }, [currentSpaceId, personalSpace, onSelectSpace]);
+
+  return (
+    <Menu.Root placement="top-start">
+      <Menu.Trigger>
+        {({ toggle }) => (
+          <div
+            onClick={() => toggle()}
+            className="h-8 px-2.5 flex items-center gap-1.5 rounded-sm bg-primary/8 border border-card-border cursor-pointer"
+          >
+            <img
+              src={communityAvatar(selectedSpace)}
+              className="w-4 h-4 rounded-full object-cover"
+              alt={selectedSpace?.title || 'Community avatar'}
+            />
+            <p className="text-sm max-w-[132px] truncate text-tertiary">
+              {selectedSpace?.title || 'Select community'}
+            </p>
+            <i className="icon-chevron-down size-4 text-tertiary" aria-hidden />
+          </div>
+        )}
+      </Menu.Trigger>
+      <Menu.Content className="p-1 w-[224px] backdrop-blur-md!">
+        {() => (
+          <>
+            {spaces.map((space) => (
+              <MenuItem
+                key={space._id}
+                title={space.title}
+                onClick={() => {
+                  onSelectSpace(space);
+                }}
+              />
+            ))}
+          </>
+        )}
+      </Menu.Content>
+    </Menu.Root>
   );
 }
 
