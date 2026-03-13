@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.17.0](https://github.com/lemonadesocial/web-new/compare/v10.16.0...v10.17.0) (2026-03-13)
+
+
+### Features
+
+* **ai:** add community selector to LemonAI input ([1e3bf18](https://github.com/lemonadesocial/web-new/commit/1e3bf18cb44ca593ed7df48bd3eab21ff65a728b))
+* **home:** add communities tab on home ([293b0f0](https://github.com/lemonadesocial/web-new/commit/293b0f0285979994e53d1ba01edbd5bc6039558e))
+
 ## [10.16.0](https://github.com/lemonadesocial/web-new/compare/v10.15.1...v10.16.0) (2026-03-13)
 
 
